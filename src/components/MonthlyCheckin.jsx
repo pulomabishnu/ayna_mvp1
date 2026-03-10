@@ -1,201 +1,314 @@
 import React, { useState } from 'react';
 
-const CHECKIN_QUESTIONS = [
-    {
-        id: 'satisfaction',
-        question: 'How are your current products working for you?',
-        type: 'single',
-        options: ['Great — no issues!', 'Okay, but could be better', 'Not solving my problems', 'I have new frustrations']
-    },
-    {
-        id: 'newSymptoms',
-        question: 'Any new symptoms or frustrations this month?',
-        type: 'multi',
-        options: ['None — all good!', 'Increased cramps', 'Heavier flow', 'Irregular timing', 'Skin irritation', 'UTI', 'Mood changes', 'Sleep issues']
-    },
-    {
-        id: 'sexuallyActive',
-        question: 'Are you currently sexually active?',
-        type: 'single',
-        options: ['Yes', 'No', 'Prefer not to answer']
-    },
-    {
-        id: 'lastSTI',
-        question: 'When was your last STI screening?',
-        type: 'single',
-        options: ['Within 6 months', '6-12 months', '1+ years ago', 'Never']
-    },
-    {
-        id: 'lastPap',
-        question: 'When was your last Pap smear?',
-        type: 'single',
-        options: ['Within 1 year', '1-3 years ago', '3+ years ago', 'Never / Not sure']
-    },
-    {
-        id: 'productFeedback',
-        question: 'Any specific product you want to replace?',
-        type: 'single',
-        options: ['No, I\'m happy with everything', 'Yes — my period product', 'Yes — a supplement', 'Yes — an app I\'m using', 'Yes — something else']
+// Map check-in focus options → quiz frustrations (for getRecommendations)
+const FOCUS_TO_FRUSTRATION = {
+  'Heavier flow': 'Heavy flow',
+  'More cramps': 'Painful cramps',
+  'Irregular cycles': 'Irregular cycles',
+  'UTIs': 'Recurrent UTIs',
+  'Mood or sleep': null, // tip only
+  'Skin irritation': null,
+  'Different period product': null,
+  'Different supplement': null,
+  'Different app': null,
+  'Remind me about Pap / STI screenings': null,
+};
+
+// Map focus → newSymptoms for Screenings component
+const FOCUS_TO_SYMPTOM = {
+  'Heavier flow': 'Heavier flow',
+  'More cramps': 'Increased cramps',
+  'Irregular cycles': 'Irregular timing',
+  'UTIs': 'UTI',
+  'Mood or sleep': 'Mood changes',
+  'Skin irritation': 'Skin irritation',
+};
+
+const STEP_MAIN = {
+  id: 'howIsRoutine',
+  question: "How's your current routine working?",
+  type: 'single',
+  options: [
+    'Great — no changes',
+    'Okay, could be better',
+    'New symptoms or frustrations',
+    'I want to switch some products',
+  ],
+};
+
+const STEP_FOCUS = {
+  id: 'focusAreas',
+  question: 'What should we focus on this month?',
+  subtitle: 'Select all that apply — we’ll update your recommendations',
+  type: 'multi',
+  options: [
+    'Heavier flow',
+    'More cramps',
+    'Irregular cycles',
+    'UTIs',
+    'Mood or sleep',
+    'Skin irritation',
+    'Different period product',
+    'Different supplement',
+    'Different app',
+    'Remind me about Pap / STI screenings',
+  ],
+};
+
+const STEP_SCREENING = {
+  id: 'screening',
+  question: 'Quick screening info',
+  subtitle: 'Helps us remind you when care is due',
+  type: 'screening',
+};
+
+export default function MonthlyCheckin({ onComplete, onClose, currentProfile, onProfileUpdate }) {
+  const [stepIndex, setStepIndex] = useState(0);
+  const [answers, setAnswers] = useState({});
+  const [multiSelections, setMultiSelections] = useState(new Set());
+  const [screeningValues, setScreeningValues] = useState({ sexuallyActive: '', lastSTI: '', lastPap: '' });
+  const [isComplete, setIsComplete] = useState(false);
+
+  const showFocusStep = answers.howIsRoutine && answers.howIsRoutine !== 'Great — no changes';
+  const focusIncludesScreening = multiSelections.has('Remind me about Pap / STI screenings');
+  const steps = [
+    STEP_MAIN,
+    ...(showFocusStep ? [STEP_FOCUS] : []),
+    ...(showFocusStep && focusIncludesScreening ? [STEP_SCREENING] : []),
+  ];
+  const step = steps[stepIndex];
+  const progress = steps.length ? ((stepIndex + 1) / steps.length) * 100 : 100;
+
+  const finish = (finalAnswers) => {
+    const checkinPayload = {
+      howIsRoutine: finalAnswers.howIsRoutine,
+      focusAreas: finalAnswers.focusAreas || [],
+      newSymptoms: (finalAnswers.focusAreas || []).map(o => FOCUS_TO_SYMPTOM[o]).filter(Boolean),
+      sexuallyActive: finalAnswers.sexuallyActive ?? screeningValues.sexuallyActive,
+      lastSTI: finalAnswers.lastSTI ?? screeningValues.lastSTI,
+      lastPap: finalAnswers.lastPap ?? screeningValues.lastPap,
+      productFeedback: finalAnswers.productFeedback,
+    };
+
+    onComplete(checkinPayload);
+
+    if (currentProfile && onProfileUpdate && finalAnswers.focusAreas?.length) {
+      const newFrustrations = finalAnswers.focusAreas
+        .map(o => FOCUS_TO_FRUSTRATION[o])
+        .filter(Boolean);
+      const existing = Array.isArray(currentProfile.frustrations) ? currentProfile.frustrations : [];
+      const merged = [...new Set([...existing, ...newFrustrations])];
+      if (merged.length > 0) {
+        onProfileUpdate({ ...currentProfile, frustrations: merged });
+      }
     }
-];
+    setIsComplete(true);
+  };
 
-export default function MonthlyCheckin({ onComplete, onClose }) {
-    const [step, setStep] = useState(0);
-    const [answers, setAnswers] = useState({});
-    const [multiSelections, setMultiSelections] = useState(new Set());
-    const [isComplete, setIsComplete] = useState(false);
-
-    const question = CHECKIN_QUESTIONS[step];
-    const progress = ((step + 1) / CHECKIN_QUESTIONS.length) * 100;
-
-    const handleSingle = (option) => {
-        const newAnswers = { ...answers, [question.id]: option };
-        setAnswers(newAnswers);
-        if (step < CHECKIN_QUESTIONS.length - 1) {
-            setTimeout(() => setStep(s => s + 1), 200);
-        } else {
-            setIsComplete(true);
-            onComplete(newAnswers);
-        }
-    };
-
-    const handleMultiToggle = (option) => {
-        setMultiSelections(prev => {
-            const next = new Set(prev);
-            if (next.has(option)) next.delete(option);
-            else next.add(option);
-            return next;
-        });
-    };
-
-    const handleMultiConfirm = () => {
-        const selected = Array.from(multiSelections);
-        const newAnswers = { ...answers, [question.id]: selected };
-        setMultiSelections(new Set());
-        setAnswers(newAnswers);
-        if (step < CHECKIN_QUESTIONS.length - 1) {
-            setTimeout(() => setStep(s => s + 1), 200);
-        } else {
-            setIsComplete(true);
-            onComplete(newAnswers);
-        }
-    };
-
-    // Provide feedback based on answers
-    const getFeedback = () => {
-        const satisfaction = answers.satisfaction;
-        const symptoms = answers.newSymptoms || [];
-        const replace = answers.productFeedback;
-
-        if (satisfaction === 'Great — no issues!') {
-            return {
-                title: '🎉 Everything looks great!',
-                message: 'Your current ecosystem is working well. We\'ll keep monitoring for safety recalls and new products that match your profile.',
-                tip: null
-            };
-        }
-
-        const tips = [];
-        if (symptoms.includes('Increased cramps')) tips.push('💡 Consider adding Magnesium Glycinate — clinically shown to reduce cramps by 30-50%.');
-        if (symptoms.includes('Heavier flow')) tips.push('💡 MegaFood Blood Builder can help replenish iron lost from heavy flow.');
-        if (symptoms.includes('UTI')) tips.push('💡 Wisp Telehealth can get you same-day UTI treatment without an in-person visit.');
-        if (symptoms.includes('Mood changes')) tips.push('💡 Ash AI Therapy ($10/mo) uses CBT techniques personalized to your patterns.');
-        if (symptoms.includes('Sleep issues')) tips.push('💡 Magnesium Glycinate also helps with sleep quality — double benefit!');
-        if (symptoms.includes('Irregular timing')) tips.push('💡 Consider Clue or Stardust for privacy-first cycle tracking to spot patterns.');
-
-        if (replace?.includes('period product')) tips.push('💡 Take our quiz again to find better period products based on updated needs.');
-        if (replace?.includes('app')) tips.push('💡 Check your Ecosystem page — we may have found overlap between your apps.');
-
-        return {
-            title: satisfaction === 'Not solving my problems' ? '⚡ Let\'s fix that' : '📋 Here\'s what we suggest',
-            message: 'Based on your check-in, here are some things to try:',
-            tip: tips.length > 0 ? tips : ['💡 Browse our Discovery page for new products that match your updated needs.']
-        };
-    };
-
-    if (isComplete) {
-        const feedback = getFeedback();
-        return (
-            <div style={{
-                position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-                backgroundColor: 'rgba(43, 42, 41, 0.4)', backdropFilter: 'blur(4px)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                zIndex: 1000, padding: '1rem'
-            }} onClick={onClose}>
-                <div className="card animate-fade-in-up" style={{ maxWidth: '560px', width: '100%', padding: '2rem' }} onClick={e => e.stopPropagation()}>
-                    <h2 style={{ fontSize: '1.5rem', marginBottom: '0.75rem' }}>{feedback.title}</h2>
-                    <p style={{ color: 'var(--color-text-muted)', marginBottom: '1rem' }}>{feedback.message}</p>
-                    {feedback.tip && (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.5rem' }}>
-                            {feedback.tip.map((t, i) => (
-                                <div key={i} style={{ background: 'var(--color-secondary-fade)', padding: '0.75rem 1rem', borderRadius: 'var(--radius-md)', fontSize: '0.9rem' }}>
-                                    {t}
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                    <button className="btn btn-primary" onClick={onClose} style={{ width: '100%' }}>Done</button>
-                </div>
-            </div>
-        );
+  const handleSingle = (option) => {
+    const next = { ...answers, [step.id]: option };
+    setAnswers(next);
+    if (step.id === 'howIsRoutine' && option === 'Great — no changes') {
+      finish({ ...next, focusAreas: [] });
+      return;
     }
+    if (stepIndex < steps.length - 1) {
+      setTimeout(() => setStepIndex(i => i + 1), 200);
+    } else {
+      finish(next);
+    }
+  };
+
+  const handleMultiToggle = (option) => {
+    setMultiSelections(prev => {
+      const next = new Set(prev);
+      if (next.has(option)) next.delete(option);
+      else next.add(option);
+      return next;
+    });
+  };
+
+  const handleMultiConfirm = () => {
+    const focusAreas = Array.from(multiSelections);
+    const next = { ...answers, focusAreas };
+    setAnswers(next);
+    if (focusIncludesScreening) {
+      setTimeout(() => setStepIndex(i => i + 1), 200);
+    } else {
+      finish(next);
+    }
+  };
+
+  const handleScreeningDone = () => {
+    const next = {
+      ...answers,
+      focusAreas: Array.from(multiSelections),
+      sexuallyActive: screeningValues.sexuallyActive,
+      lastSTI: screeningValues.lastSTI,
+      lastPap: screeningValues.lastPap,
+    };
+    finish(next);
+  };
+
+  if (isComplete) {
+    const satisfaction = answers.howIsRoutine;
+    const focusAreas = answers.focusAreas || [];
+    const tips = [];
+    if (focusAreas.includes('More cramps')) tips.push('Consider magnesium glycinate — shown to reduce cramps.');
+    if (focusAreas.includes('Heavier flow')) tips.push('Iron-rich foods or a supplement can help if you’re losing more blood.');
+    if (focusAreas.includes('UTIs')) tips.push('Wisp and Planned Parenthood Direct offer same-day UTI treatment.');
+    if (focusAreas.includes('Mood or sleep')) tips.push('Cycle-aware tracking can help; we’ve refreshed your recommendations.');
+    if (focusAreas.includes('Different period product') || focusAreas.includes('Different supplement') || focusAreas.includes('Different app')) {
+      tips.push('Your product recommendations have been updated — check your list.');
+    }
+    const title = satisfaction === 'Great — no changes' ? '🎉 You’re all set' : '📋 Updated for you';
+    const message = satisfaction === 'Great — no changes'
+      ? 'We’ll keep monitoring for recalls and new products that match your profile.'
+      : 'We’ve updated your profile and recommendations based on this check-in.';
 
     return (
-        <div style={{
-            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-            backgroundColor: 'rgba(43, 42, 41, 0.4)', backdropFilter: 'blur(4px)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            zIndex: 1000, padding: '1rem'
-        }} onClick={onClose}>
-            <div className="card animate-fade-in-up" style={{ maxWidth: '560px', width: '100%', padding: '2rem' }} onClick={e => e.stopPropagation()}>
-
-                {/* Progress */}
-                <div style={{ width: '100%', background: 'var(--color-border)', height: '4px', borderRadius: 'var(--radius-pill)', marginBottom: '0.75rem', overflow: 'hidden' }}>
-                    <div style={{ width: `${progress}%`, height: '100%', background: 'var(--color-primary)', transition: 'width 0.3s ease' }}></div>
-                </div>
-                <p style={{ textAlign: 'right', fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '1.5rem' }}>
-                    {step + 1} of {CHECKIN_QUESTIONS.length} · ~1 min
-                </p>
-
-                <h2 style={{ fontSize: '1.35rem', marginBottom: '1.25rem', textAlign: 'center' }}>{question.question}</h2>
-
-                {question.type === 'single' && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                        {question.options.map((option, idx) => (
-                            <button key={option} className="btn btn-outline" style={{
-                                justifyContent: 'flex-start', padding: '0.85rem 1.25rem', fontSize: '0.95rem',
-                                animation: `fadeInUp 0.4s ${idx * 0.05}s backwards`
-                            }} onClick={() => handleSingle(option)}>
-                                {option}
-                            </button>
-                        ))}
-                    </div>
-                )}
-
-                {question.type === 'multi' && (
-                    <>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                            {question.options.map((option, idx) => {
-                                const isSelected = multiSelections.has(option);
-                                return (
-                                    <button key={option} className="btn btn-outline" style={{
-                                        justifyContent: 'flex-start', padding: '0.85rem 1.25rem', fontSize: '0.95rem',
-                                        borderColor: isSelected ? 'var(--color-primary)' : 'var(--color-border)',
-                                        backgroundColor: isSelected ? 'var(--color-secondary-fade)' : 'transparent',
-                                        animation: `fadeInUp 0.4s ${idx * 0.05}s backwards`
-                                    }} onClick={() => handleMultiToggle(option)}>
-                                        <span style={{ marginRight: '0.5rem' }}>{isSelected ? '✓' : '○'}</span>
-                                        {option}
-                                    </button>
-                                );
-                            })}
-                        </div>
-                        <button className="btn btn-primary" style={{ marginTop: '1rem', width: '100%', opacity: multiSelections.size === 0 ? 0.5 : 1 }} disabled={multiSelections.size === 0} onClick={handleMultiConfirm}>
-                            Continue →
-                        </button>
-                    </>
-                )}
-            </div>
+      <div
+        style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '1rem',
+        }}
+        onClick={onClose}
+      >
+        <div className="card animate-fade-in-up" style={{ maxWidth: '520px', width: '100%', padding: '2rem' }} onClick={e => e.stopPropagation()}>
+          <h2 style={{ fontSize: '1.5rem', marginBottom: '0.75rem' }}>{title}</h2>
+          <p style={{ color: 'var(--color-text-muted)', marginBottom: '1rem' }}>{message}</p>
+          {tips.length > 0 && (
+            <ul style={{ paddingLeft: '1.25rem', marginBottom: '1.5rem', fontSize: '0.95rem', lineHeight: 1.6 }}>
+              {tips.map((t, i) => <li key={i}>{t}</li>)}
+            </ul>
+          )}
+          <button type="button" className="btn btn-primary" onClick={onClose} style={{ width: '100%' }}>Done</button>
         </div>
+      </div>
     );
+  }
+
+  return (
+    <div
+      style={{
+        position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+        backgroundColor: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '1rem',
+      }}
+      onClick={onClose}
+    >
+      <div className="card animate-fade-in-up" style={{ maxWidth: '520px', width: '100%', padding: '2rem' }} onClick={e => e.stopPropagation()}>
+        <div style={{ width: '100%', background: 'var(--color-border)', height: '4px', borderRadius: 'var(--radius-pill)', marginBottom: '0.75rem', overflow: 'hidden' }}>
+          <div style={{ width: `${progress}%`, height: '100%', background: 'var(--color-primary)', transition: 'width 0.3s ease' }} />
+        </div>
+        <p style={{ textAlign: 'right', fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '1.25rem' }}>
+          {stepIndex + 1} of {steps.length}
+        </p>
+
+        <h2 style={{ fontSize: '1.35rem', marginBottom: '0.5rem', textAlign: 'center' }}>{step.question}</h2>
+        {step.subtitle && <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.95rem', marginBottom: '1.25rem' }}>{step.subtitle}</p>}
+
+        {step.type === 'single' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            {step.options.map((option) => (
+              <button
+                key={option}
+                type="button"
+                className="btn btn-outline"
+                style={{ justifyContent: 'flex-start', padding: '0.85rem 1.25rem', fontSize: '0.95rem' }}
+                onClick={() => handleSingle(option)}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {step.type === 'multi' && (
+          <>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {step.options.map((option) => {
+                const isSelected = multiSelections.has(option);
+                return (
+                  <button
+                    key={option}
+                    type="button"
+                    className="btn btn-outline"
+                    style={{
+                      justifyContent: 'flex-start', padding: '0.85rem 1.25rem', fontSize: '0.95rem',
+                      borderColor: isSelected ? 'var(--color-primary)' : 'var(--color-border)',
+                      backgroundColor: isSelected ? 'var(--color-secondary-fade)' : 'transparent',
+                    }}
+                    onClick={() => handleMultiToggle(option)}
+                  >
+                    <span style={{ marginRight: '0.5rem' }}>{isSelected ? '✓' : '○'}</span>
+                    {option}
+                  </button>
+                );
+              })}
+            </div>
+            <button
+              type="button"
+              className="btn btn-primary"
+              style={{ marginTop: '1rem', width: '100%', opacity: multiSelections.size === 0 ? 0.5 : 1 }}
+              disabled={multiSelections.size === 0}
+              onClick={handleMultiConfirm}
+            >
+              Continue →
+            </button>
+          </>
+        )}
+
+        {step.type === 'screening' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div>
+              <label style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', display: 'block', marginBottom: '0.35rem' }}>Sexually active?</label>
+              <select
+                value={screeningValues.sexuallyActive}
+                onChange={e => setScreeningValues(s => ({ ...s, sexuallyActive: e.target.value }))}
+                style={{ width: '100%', padding: '0.6rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: '1rem' }}
+              >
+                <option value="">Select</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+                <option value="Prefer not to answer">Prefer not to answer</option>
+              </select>
+            </div>
+            <div>
+              <label style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', display: 'block', marginBottom: '0.35rem' }}>Last STI screening?</label>
+              <select
+                value={screeningValues.lastSTI}
+                onChange={e => setScreeningValues(s => ({ ...s, lastSTI: e.target.value }))}
+                style={{ width: '100%', padding: '0.6rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: '1rem' }}
+              >
+                <option value="">Select</option>
+                <option value="Within 6 months">Within 6 months</option>
+                <option value="6-12 months">6–12 months ago</option>
+                <option value="1+ years ago">1+ years ago</option>
+                <option value="Never">Never</option>
+              </select>
+            </div>
+            <div>
+              <label style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', display: 'block', marginBottom: '0.35rem' }}>Last Pap smear?</label>
+              <select
+                value={screeningValues.lastPap}
+                onChange={e => setScreeningValues(s => ({ ...s, lastPap: e.target.value }))}
+                style={{ width: '100%', padding: '0.6rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: '1rem' }}
+              >
+                <option value="">Select</option>
+                <option value="Within 1 year">Within 1 year</option>
+                <option value="1-3 years ago">1–3 years ago</option>
+                <option value="3+ years ago">3+ years ago</option>
+                <option value="Never / Not sure">Never / Not sure</option>
+              </select>
+            </div>
+            <button type="button" className="btn btn-primary" style={{ width: '100%', marginTop: '0.5rem' }} onClick={handleScreeningDone}>
+              Done
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }

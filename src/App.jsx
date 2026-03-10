@@ -34,6 +34,7 @@ function App() {
   const [isPremium, setIsPremium] = useState(false);
   const [showCheckin, setShowCheckin] = useState(false);
   const [checkinData, setCheckinData] = useState(null);
+  const [checkinUpdatedProfile, setCheckinUpdatedProfile] = useState(false);
   const [discoverySearch, setDiscoverySearch] = useState('');
   const [userZipCode, setUserZipCode] = useState('');
   const scrollY = useScrollPosition();
@@ -402,9 +403,19 @@ function App() {
           <MonthlyCheckin
             onComplete={(answers) => {
               setCheckinData(answers);
-              // We do not close here automatically, MonthlyCheckin has its own "Done" button that triggers onClose
             }}
-            onClose={() => setShowCheckin(false)}
+            onClose={() => {
+              setShowCheckin(false);
+              if (checkinUpdatedProfile) {
+                setCurrentView('recommendations');
+                setCheckinUpdatedProfile(false);
+              }
+            }}
+            currentProfile={quizResults}
+            onProfileUpdate={(updated) => {
+              setQuizResults(updated);
+              setCheckinUpdatedProfile(true);
+            }}
           />
         )}
 
