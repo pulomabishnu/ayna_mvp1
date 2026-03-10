@@ -34,7 +34,19 @@ function App() {
   const [showCheckin, setShowCheckin] = useState(false);
   const [checkinData, setCheckinData] = useState(null);
   const [discoverySearch, setDiscoverySearch] = useState('');
+  const [userZipCode, setUserZipCode] = useState('');
   const scrollY = useScrollPosition();
+
+  React.useEffect(() => {
+    try {
+      if (typeof window !== 'undefined' && localStorage.getItem('ayna_zip')) setUserZipCode(localStorage.getItem('ayna_zip') || '');
+    } catch (_) {}
+  }, []);
+
+  const handleZipCodeChange = (zip) => {
+    setUserZipCode(zip);
+    try { if (typeof window !== 'undefined') localStorage.setItem('ayna_zip', zip || ''); } catch (_) {}
+  };
   const isScrolled = scrollY > 20;
 
   const handleStartQuiz = () => setCurrentView('quiz');
@@ -282,7 +294,7 @@ function App() {
           />
         )}
         {currentView === 'tracked' && (
-          <TrackedItems trackedProducts={trackedProducts} joinedWaitlists={joinedWaitlists} onViewWaitlist={handleViewWaitlist} />
+          <TrackedItems trackedProducts={trackedProducts} joinedWaitlists={joinedWaitlists} onViewWaitlist={handleViewWaitlist} userZipCode={userZipCode} onZipCodeChange={handleZipCodeChange} />
         )}
         {currentView === 'waitlist' && (
           <WaitlistHub
@@ -405,6 +417,9 @@ function App() {
             isOmitted={!!omittedProducts[selectedProductModal.id]}
             onToggleCompare={isPremium ? toggleCompare : null}
             isInCompare={compareList.some(p => p.id === selectedProductModal.id)}
+            onAddToEcosystem={toggleMyProduct}
+            isInEcosystem={!!myProducts[selectedProductModal.id]}
+            userZipCode={userZipCode || undefined}
           />
         )}
       </main>

@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
 import { STARTUPS } from '../data/startups';
 import ProductModal from './ProductModal';
+import Disclaimer from './Disclaimer';
 
 const ALL_CATEGORIES = ['all', 'pad', 'tampon', 'cup', 'disc', 'period-underwear', 'supplement', 'tracker', 'telehealth', 'mental-health', 'fitness', 'diagnostics', 'hormone-monitoring', 'menopause', 'fertility', 'pelvic-health', 'postpartum', 'pregnancy', 'sex-tech', 'intimate-care', 'contraception'];
 const TYPE_FILTERS = ['all', 'physical', 'digital', 'startup'];
@@ -29,14 +30,16 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             if (categoryFilter !== 'all' && item.category !== categoryFilter) return false;
             if (typeFilter !== 'all' && item.type !== typeFilter) return false;
 
-            if (searchQuery) {
-                const query = searchQuery.toLowerCase();
+            if (searchQuery.trim()) {
+                const query = searchQuery.toLowerCase().trim();
                 const nameMatch = item.name?.toLowerCase().includes(query);
                 const summaryMatch = item.summary?.toLowerCase().includes(query);
                 const taglineMatch = item.tagline?.toLowerCase().includes(query);
                 const tagsMatch = item.tags?.some(t => t.toLowerCase().includes(query));
+                const categoryLabel = (CATEGORY_LABELS[item.category] || item.category || '').toLowerCase();
+                const categoryMatch = item.category?.toLowerCase().includes(query) || categoryLabel.includes(query);
 
-                if (!nameMatch && !summaryMatch && !taglineMatch && !tagsMatch) {
+                if (!nameMatch && !summaryMatch && !taglineMatch && !tagsMatch && !categoryMatch) {
                     return false;
                 }
             }
@@ -253,6 +256,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     );
                 })}
             </div>
+            <Disclaimer compact style={{ marginTop: '2rem', textAlign: 'center' }} />
         </section>
     );
 }

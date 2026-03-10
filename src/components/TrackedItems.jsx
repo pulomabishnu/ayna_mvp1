@@ -1,9 +1,18 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import Disclaimer from './Disclaimer';
 
-export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewWaitlist }) {
+export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewWaitlist, userZipCode, onZipCodeChange }) {
     const trackedList = Object.values(trackedProducts);
     const joinedList = Object.values(joinedWaitlists);
     const totalItems = trackedList.length + joinedList.length;
+    const [zipInput, setZipInput] = useState(userZipCode || '');
+    useEffect(() => { setZipInput(userZipCode || ''); }, [userZipCode]);
+
+    const handleSaveZip = () => {
+        const z = zipInput.replace(/\D/g, '').slice(0, 5);
+        setZipInput(z);
+        onZipCodeChange?.(z);
+    };
 
     return (
         <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
@@ -24,6 +33,37 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '1.25rem' }}>
                     Track your safety-monitored products and startup waitlists all in one place.
                 </p>
+            </div>
+
+            {/* Profile: Zip code for nearby stores */}
+            <div style={{ maxWidth: '800px', margin: '0 auto 3rem' }}>
+                <h3 style={{ fontSize: '1.25rem', marginBottom: '0.75rem' }}>Profile</h3>
+                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem', marginBottom: '1rem' }}>
+                    Add your zip code to see nearby store availability when viewing products (in-store and online stock is shown when we have data).
+                </p>
+                <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <input
+                        type="text"
+                        inputMode="numeric"
+                        maxLength={5}
+                        placeholder="ZIP code"
+                        value={zipInput}
+                        onChange={(e) => setZipInput(e.target.value.replace(/\D/g, '').slice(0, 5))}
+                        style={{
+                            width: '120px',
+                            padding: '0.6rem 1rem',
+                            borderRadius: 'var(--radius-md)',
+                            border: '1px solid var(--color-border)',
+                            fontSize: '1rem',
+                            outline: 'none'
+                        }}
+                    />
+                    <button type="button" className="btn btn-primary" style={{ padding: '0.6rem 1.25rem' }} onClick={handleSaveZip}>
+                        Save
+                    </button>
+                    {userZipCode && <span style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>Saved: {userZipCode}</span>}
+                </div>
+                <Disclaimer compact style={{ marginTop: '1rem' }} />
             </div>
 
             {totalItems === 0 ? (

@@ -1,76 +1,119 @@
 import React from 'react';
+import Disclaimer from './Disclaimer';
+
+const ARTICLES = [
+  {
+    id: 'intimate-wash',
+    title: 'Intimate Washes: What Clinicians Say',
+    source: 'UpToDate, ACOG',
+    tags: ['Gynecology', 'Vulvovaginal health'],
+    body: (
+      <>
+        <p>The vagina is self-cleaning; douching is not recommended and can increase risk of bacterial vaginosis and yeast infection. For the vulva (external skin), warm water alone is often sufficient. If you use a cleanser, choose one that is fragrance-free and pH-balanced for external use only.</p>
+        <p><strong>Key guidelines (from UpToDate and ACOG):</strong></p>
+        <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem' }}>
+          <li>Avoid douching, scented soaps, and vaginal deodorants.</li>
+          <li>Cleanse the vulva gently with warm water or an unfragranced, mild soap substitute.</li>
+        </ul>
+        <p><strong>Reputable sources:</strong></p>
+        <ul style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
+          <li><a href="https://www.acog.org/womens-health/faqs/vulvovaginal-health" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Vulvovaginal Health</a></li>
+          <li><a href="https://www.uptodate.com/contents/bacterial-vaginosis-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – Bacterial vaginosis (patient education)</a></li>
+        </ul>
+      </>
+    ),
+  },
+  {
+    id: 'heavy-bleeding',
+    title: 'Heavy Menstrual Bleeding: When to See a Clinician',
+    source: 'UpToDate, CDC',
+    tags: ['Menstrual health', 'Clinical guidance'],
+    body: (
+      <>
+        <p>Heavy menstrual bleeding (menorrhagia) can affect quality of life and may signal conditions such as fibroids, bleeding disorders, or hormonal issues. Treatment depends on cause, age, and family plans.</p>
+        <p><strong>When to seek care:</strong> Soaking through pads/tampons every 1–2 hours, bleeding longer than 7 days, or symptoms of anemia (fatigue, dizziness). Only a clinician can diagnose and recommend treatment.</p>
+        <p><strong>Reputable sources:</strong></p>
+        <ul style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
+          <li><a href="https://www.uptodate.com/contents/abnormal-uterine-bleeding-in-adults-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – Abnormal uterine bleeding (patient education)</a></li>
+          <li><a href="https://www.cdc.gov/ncbddd/blooddisorders/women/menorrhagia.html" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>CDC – Heavy menstrual bleeding</a></li>
+        </ul>
+      </>
+    ),
+  },
+  {
+    id: 'menopause-basics',
+    title: 'Menopause & Perimenopause: Evidence-Based Overview',
+    source: 'North American Menopause Society, UpToDate',
+    tags: ['Menopause', 'Hormone therapy'],
+    body: (
+      <>
+        <p>Perimenopause is the transition before menopause; menopause is defined as 12 months without a period. Symptoms can include hot flashes, sleep changes, mood changes, and vaginal dryness. Management options include lifestyle changes and, when appropriate, hormone therapy (HT). HT benefits and risks depend on age, health, and symptoms—decisions should be made with a clinician.</p>
+        <p><strong>Reputable sources:</strong></p>
+        <ul style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
+          <li><a href="https://www.menopause.org/for-women/menopause-faqs-women-s-midlife-health" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>NAMS – Menopause FAQs</a></li>
+          <li><a href="https://www.uptodate.com/contents/menopausal-hormone-therapy-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – Menopausal hormone therapy (patient education)</a></li>
+        </ul>
+      </>
+    ),
+  },
+  {
+    id: 'uti-prevention',
+    title: 'UTI Prevention: What the Evidence Shows',
+    source: 'UpToDate, NIH',
+    tags: ['Urinary health', 'Prevention'],
+    body: (
+      <>
+        <p>Recurrent urinary tract infections (UTIs) are common. Evidence-supported strategies include adequate fluid intake, urinating after intercourse, and in some cases prophylactic antibiotics or topical estrogen (for postmenopausal people). Cranberry products are sometimes used; evidence is mixed. Always consult a clinician for recurrent UTIs—they can rule out other causes and recommend a safe plan.</p>
+        <p><strong>Reputable sources:</strong></p>
+        <ul style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
+          <li><a href="https://www.uptodate.com/contents/urinary-tract-infections-in-adults-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – UTIs in adults (patient education)</a></li>
+          <li><a href="https://www.niddk.nih.gov/health-information/urologic-diseases/bladder-infection-uti-in-adults" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>NIDDK – Bladder infection (UTI) in adults</a></li>
+        </ul>
+      </>
+    ),
+  },
+];
 
 export default function Articles() {
-    return (
-        <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)', maxWidth: '900px', margin: '0 auto' }}>
-            <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-                <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Health Articles Library</h1>
-                <p style={{ fontSize: '1.2rem', color: 'var(--color-text-muted)' }}>Free, evidence-based health information drawn from UpToDate, peer-reviewed literature, and expert physicians.</p>
-            </div>
+  return (
+    <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)', maxWidth: '900px', margin: '0 auto' }}>
+      <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+        <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Health Articles Library</h1>
+        <p style={{ fontSize: '1.2rem', color: 'var(--color-text-muted)' }}>
+          Evidence-based women’s health information from UpToDate, ACOG, CDC, NAMS, and similar clinician resources. Always discuss your care with your own clinician.
+        </p>
+        <Disclaimer compact style={{ marginTop: '1.5rem', textAlign: 'left', maxWidth: '700px', marginLeft: 'auto', marginRight: 'auto' }} />
+      </div>
 
-            <article style={{ background: 'white', padding: '2.5rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-sm)' }}>
-                <h2 style={{ fontSize: '2rem', marginBottom: '1rem', color: 'var(--color-text-main)' }}>Intimate Washes: Good, Bad, or Unnecessary?</h2>
-                <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
-                    <span style={{ padding: '0.2rem 0.6rem', background: 'var(--color-secondary-fade)', color: 'var(--color-primary)', borderRadius: '1rem', fontSize: '0.8rem', fontWeight: 'bold' }}>Source: UpToDate</span>
-                    <span style={{ padding: '0.2rem 0.6rem', background: 'var(--color-surface-soft)', color: 'var(--color-text-muted)', borderRadius: '1rem', fontSize: '0.8rem' }}>Gynecology</span>
-                </div>
-
-                <div style={{ lineHeight: '1.8', fontSize: '1.1rem', color: 'var(--color-text-main)' }}>
-                    <p>
-                        The feminine hygiene aisle is packed with intimate washes, wipes, and deodorants. But are they actually good for your health, or just a marketing gimmick?
-                        We reviewed clinical guidelines from <strong>UpToDate</strong>, the ACOG, and leading gynecologists to break down the pros and cons.
-                    </p>
-
-                    <h3 style={{ marginTop: '2rem', fontSize: '1.4rem' }}>The Vagina is Self-Cleaning</h3>
-                    <p>
-                        It is a medical consensus that the <em>vagina</em> (the internal canal) is self-cleaning and self-regulating. It maintains a delicate pH balance (typically between 3.8 and 4.5)
-                        driven by lactobacilli bacteria. <strong>Douching or internal washing is universally condemned by doctors</strong> because it disrupts this microbiome, leading to an increased risk of Bacterial Vaginosis (BV) and yeast infections.
-                    </p>
-
-                    <h3 style={{ marginTop: '2rem', fontSize: '1.4rem' }}>What About the Vulva?</h3>
-                    <p>
-                        The <em>vulva</em> (the external genitalia) is skin, and it does accumulate sweat, sebum (smegma), and dead skin cells. While warm water alone is often sufficient to clean the vulva,
-                        some people prefer using a cleanser.
-                    </p>
-
-                    <div style={{ display: 'flex', gap: '2rem', marginTop: '1.5rem', flexWrap: 'wrap' }}>
-                        <div style={{ flex: '1 1 300px', background: 'var(--color-surface-contrast)', color: 'white', padding: '1.5rem', borderRadius: 'var(--radius-md)' }}>
-                            <h4 style={{ color: 'var(--color-secondary)', marginBottom: '0.5rem' }}>Pros of Intimate Washes</h4>
-                            <ul style={{ paddingLeft: '1.2rem' }}>
-                                <li>Can cleanly remove accumulated sweat and sebum.</li>
-                                <li>pH-balanced formulas (unlike standard bar soaps) respect the acid mantle of the skin.</li>
-                                <li>Fragrance-free options are less drying than standard body washes.</li>
-                            </ul>
-                        </div>
-                        <div style={{ flex: '1 1 300px', background: '#FFF1F0', padding: '1.5rem', borderRadius: 'var(--radius-md)' }}>
-                            <h4 style={{ color: '#D32F2F', margin: '0', marginBottom: '0.5rem' }}>Cons & Risks</h4>
-                            <ul style={{ paddingLeft: '1.2rem' }}>
-                                <li>Scented washes often contain allergens resulting in contact dermatitis.</li>
-                                <li>Over-washing can strip natural oils, leading to chronic dryness and micro-tears.</li>
-                                <li>May accidentally disrupt the internal pH if the soap runs inside the vaginal opening.</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <h3 style={{ marginTop: '2rem', fontSize: '1.4rem' }}>Doctor Opinions</h3>
-                    <blockquote style={{ borderLeft: '4px solid var(--color-primary)', margin: '1.5rem 0', background: 'var(--color-surface-soft)', padding: '1rem', borderRadius: '0 var(--radius-md) var(--radius-md) 0' }}>
-                        <p style={{ fontStyle: 'italic', margin: 0 }}>
-                            "The golden rule is: water only or a very mild, unscented cleanser for the vulva. Nothing goes inside the vagina. If you are experiencing odor, a scented wash will only mask the problem and could make an underlying infection worse."
-                        </p>
-                        <span style={{ fontSize: '0.9rem', fontWeight: 'bold', display: 'block', marginTop: '0.5rem' }}>— Dr. Jen Gunter, OB-GYN and author of The Vagina Bible</span>
-                    </blockquote>
-
-                    <h3 style={{ marginTop: '2rem', fontSize: '1.4rem' }}>Guidelines Summary</h3>
-                    <p>According to <strong>UpToDate</strong> guidelines on vulvovaginal health:</p>
-                    <ul style={{ paddingLeft: '1.5rem', marginBottom: '2rem' }}>
-                        <li><strong>Avoid</strong> all perfumed soaps, bubble baths, bath salts, and vaginal deodorants.</li>
-                        <li><strong>Cleanse</strong> the vulva gently with your hands (avoid abrasive washcloths/loofahs) using warm water or an unfragranced soap substitute.</li>
-                        <li><strong>Dry</strong> thoroughly before putting on underwear.</li>
-                    </ul>
-
-                    <p><strong>The Verdict:</strong> You do not <em>need</em> an intimate wash. Warm water is medically sufficient. However, if you prefer using a cleanser for comfort or to remove sweat, choose a product that is fragrance-free, pH-balanced for external use, and strictly avoid getting it inside.</p>
-                </div>
-            </article>
-        </section>
-    );
+      {ARTICLES.map((art) => (
+        <article
+          key={art.id}
+          style={{
+            background: 'var(--color-surface-soft)',
+            padding: '2.5rem',
+            borderRadius: 'var(--radius-lg)',
+            border: '1px solid var(--color-border)',
+            boxShadow: 'var(--shadow-sm)',
+            marginBottom: '2rem'
+          }}
+        >
+          <h2 style={{ fontSize: '1.75rem', marginBottom: '1rem', color: 'var(--color-text-main)' }}>{art.title}</h2>
+          <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+            <span style={{ padding: '0.2rem 0.6rem', background: 'var(--color-secondary-fade)', color: 'var(--color-primary)', borderRadius: '1rem', fontSize: '0.8rem', fontWeight: 'bold' }}>
+              Sources: {art.source}
+            </span>
+            {art.tags.map((t) => (
+              <span key={t} style={{ padding: '0.2rem 0.6rem', background: 'var(--color-surface-soft)', color: 'var(--color-text-muted)', border: '1px solid var(--color-border)', borderRadius: '1rem', fontSize: '0.8rem' }}>
+                {t}
+              </span>
+            ))}
+          </div>
+          <div style={{ lineHeight: '1.8', fontSize: '1.05rem', color: 'var(--color-text-main)' }}>
+            {art.body}
+          </div>
+          <Disclaimer compact style={{ marginTop: '1.5rem' }} />
+        </article>
+      ))}
+    </section>
+  );
 }

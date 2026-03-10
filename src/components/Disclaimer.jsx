@@ -1,0 +1,29 @@
+import React from 'react';
+
+/**
+ * Standard medical disclaimer. Use wherever we show products, advice, or health info.
+ */
+export default function Disclaimer({ compact = false, style = {} }) {
+  const text = "This information is for educational purposes only and is not medical advice. Always consult your clinician or healthcare provider for diagnosis, treatment, and personalized medical advice. Ayna cannot and does not provide medical instructions or replace professional care.";
+  if (compact) {
+    return (
+      <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', lineHeight: 1.4, margin: 0, ...style }}>
+        {text}
+      </p>
+    );
+  }
+  return (
+    <div style={{
+      padding: '1rem 1.25rem',
+      background: 'var(--color-secondary-fade)',
+      border: '1px solid var(--color-border)',
+      borderRadius: 'var(--radius-md)',
+      marginTop: '1.5rem',
+      ...style
+    }}>
+      <p style={{ fontSize: '0.8rem', color: 'var(--color-text-main)', lineHeight: 1.5, margin: 0, fontWeight: 500 }}>
+        <strong>Disclaimer:</strong> {text}
+      </p>
+    </div>
+  );
+}

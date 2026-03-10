@@ -1,6 +1,33 @@
 import React, { useState } from 'react';
+import Disclaimer from './Disclaimer';
 
-export default function ProductModal({ product, onClose, onTrack, isTracked, onOmit, isOmitted, onToggleCompare, isInCompare }) {
+// Build purchase/search URLs for common retailers (product name encoded)
+const STORE_SEARCH_URLS = {
+  'Amazon': (q) => `https://www.amazon.com/s?k=${encodeURIComponent(q)}`,
+  'Target': (q) => `https://www.target.com/s?searchTerm=${encodeURIComponent(q)}`,
+  'Walmart': (q) => `https://www.walmart.com/search?q=${encodeURIComponent(q)}`,
+  'CVS': (q) => `https://www.cvs.com/shop/search?searchTerm=${encodeURIComponent(q)}`,
+  'Whole Foods': (q) => `https://www.amazon.com/wholefoods/s?k=${encodeURIComponent(q)}`,
+  'iHerb': (q) => `https://www.iherb.com/search?kw=${encodeURIComponent(q)}`,
+  'Ulta': (q) => `https://www.ulta.com/shop/all?search=${encodeURIComponent(q)}`,
+  'Sephora': (q) => `https://www.sephora.com/search?keyword=${encodeURIComponent(q)}`,
+  'App Store': () => 'https://apps.apple.com/',
+  'Ritual.com': () => 'https://www.ritual.com/',
+  'LOLA.com': (q) => `https://www.mylola.com/search?q=${encodeURIComponent(q)}`,
+  'OurKindra.com': () => 'https://ourkindra.com/',
+  'Maude.com': () => 'https://hellomaude.com/',
+  'VisanaHealth.com': () => 'https://www.visanahealth.com/',
+};
+function getStoreUrl(storeName, productName) {
+  const key = Object.keys(STORE_SEARCH_URLS).find(k => storeName.toLowerCase().includes(k.toLowerCase()));
+  if (key) {
+    const fn = STORE_SEARCH_URLS[key];
+    return typeof fn === 'function' ? fn(productName || '') : fn;
+  }
+  return `https://www.google.com/search?q=${encodeURIComponent((productName || '') + ' ' + storeName)}`;
+}
+
+export default function ProductModal({ product, onClose, onTrack, isTracked, onOmit, isOmitted, onToggleCompare, isInCompare, onAddToEcosystem, isInEcosystem, userZipCode }) {
     const [activeTab, setActiveTab] = useState('safety');
     const [chatMessages, setChatMessages] = useState([{ role: 'assistant', text: `Hi! I'm Ayna. What would you like to know about ${product?.name}?` }]);
     const [chatInput, setChatInput] = useState('');
@@ -265,7 +292,7 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                     <h2 style={{ fontSize: '2rem', marginBottom: '0.75rem', color: 'var(--color-text-main)', letterSpacing: '-0.02em' }}>{product.name}</h2>
                     <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem', lineHeight: '1.6', maxWidth: '600px' }}>{product.summary}</p>
 
-                    <div style={{ marginTop: '2rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                    <div style={{ marginTop: '2rem', display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center' }}>
                         <button
                             className={`btn ${isTracked ? 'btn-outline' : 'btn-primary'}`}
                             onClick={() => onTrack(product)}
@@ -278,8 +305,23 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                         >
                             {isTracked ? '✓ Tracking Safety Alerts' : '🔔 Monitor Safety Recalls'}
                         </button>
+                        {onAddToEcosystem && (
+                            <button
+                                className={`btn ${isInEcosystem ? 'btn-outline' : 'btn-primary'}`}
+                                onClick={() => onAddToEcosystem(product)}
+                                style={{
+                                    padding: '0.75rem 1.5rem',
+                                    backgroundColor: isInEcosystem ? 'transparent' : 'var(--color-primary)',
+                                    color: isInEcosystem ? 'var(--color-primary)' : 'white',
+                                    borderColor: 'var(--color-primary)',
+                                }}
+                            >
+                                {isInEcosystem ? '✓ In My Ecosystem' : '+ Add to My Ecosystem'}
+                            </button>
+                        )}
                         {product.price && <span style={{ fontSize: '1.1rem', fontWeight: '600', color: 'var(--color-text-main)' }}>{product.price}</span>}
                     </div>
+                    <Disclaimer compact style={{ marginTop: '1rem' }} />
                 </div>
 
                 {/* Navigation Tabs */}
@@ -400,21 +442,43 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
 
                     {activeTab === 'buy' && (
                         <div className="animate-fade-in">
-                            <h3 style={{ fontSize: '1.1rem', marginBottom: '1.5rem' }}>Availability</h3>
+                            <h3 style={{ fontSize: '1.1rem', marginBottom: '1.5rem' }}>Where to Buy</h3>
+                            {userZipCode && (
+                                <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1rem' }}>
+                                    In-store and online availability for zip <strong>{userZipCode}</strong> is shown when we have data. We use retailer and zip code data to surface “in stock” when available.
+                                </p>
+                            )}
                             <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-                                {product.whereToBuy?.map(shop => (
-                                    <div key={shop} style={{
-                                        padding: '1rem 1.5rem', background: 'var(--color-bg)',
-                                        borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)',
-                                        fontWeight: '600', color: 'var(--color-text-main)'
-                                    }}>
-                                        {shop}
-                                    </div>
-                                ))}
+                                {(product.whereToBuy || []).map(shop => {
+                                    const url = product.whereToBuyLinks?.[shop] || getStoreUrl(shop, product.name);
+                                    return (
+                                        <a
+                                            key={shop}
+                                            href={url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{
+                                                padding: '1rem 1.5rem',
+                                                background: 'var(--color-bg)',
+                                                borderRadius: 'var(--radius-md)',
+                                                border: '1px solid var(--color-border)',
+                                                fontWeight: '600',
+                                                color: 'var(--color-primary)',
+                                                textDecoration: 'none',
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                gap: '0.35rem'
+                                            }}
+                                        >
+                                            {shop} ↗
+                                        </a>
+                                    );
+                                })}
                             </div>
                             {product.platform && (
                                 <p style={{ marginTop: '1.5rem' }}><strong>Platform:</strong> {product.platform}</p>
                             )}
+                            <Disclaimer compact style={{ marginTop: '1.5rem' }} />
                         </div>
                     )}
 
