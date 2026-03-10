@@ -53,7 +53,7 @@ export const STARTUPS = [
         stage: 'Accepting patients in most states',
         spotsLeft: 150,
         url: 'https://www.allarahealth.com',
-        image: 'http://shop.allarahealth.com/cdn/shop/files/AntiInflamm_Reg_442362ee-3292-4b49-8ed8-b41871dc24f7.png?v=1764652085'
+        image: 'https://shop.allarahealth.com/cdn/shop/files/AntiInflamm_Reg_442362ee-3292-4b49-8ed8-b41871dc24f7.png?v=1764652085'
     },
     {
         id: 's-evernow',

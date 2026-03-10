@@ -41,6 +41,7 @@ export const PHYSICAL_PRODUCTS = [
         tags: ['heavy-flow', 'leaks', 'comfort', 'cost'],
         price: '$8 for 18',
         whereToBuy: ['CVS', 'Target', 'Walmart', 'Amazon'],
+        whereToBuyInStock: { 'Amazon': true, 'Target': true, 'Walmart': true, 'CVS': true },
         image: 'https://images.ctfassets.net/o5hnyn1x0ewo/5fgLjs17hOqXoAJo2hEMQQ/5f3ad4cdbfc5e8f6df300602fd5b6512/Always-Infinity-Size-1-Regular-Pads-with-Wings_640x512.png?fm=webp',
         summary: 'Ultra-thin FlexFoam pad that absorbs 10x its weight. Widely available and affordable.',
         safety: {
@@ -76,7 +77,7 @@ export const PHYSICAL_PRODUCTS = [
                 aiSummary: "Community consensus ranks Always Infinity highly for performance during physical activity and heavy flow. However, a significant subset of users reports discomfort with the outer plastic-like texture, suggesting a preference for natural alternatives among sensitive users.",
                 links: [
                     { url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods Discussion', summary: 'The community frequently recommends FlexFoam for its superior absorption and thin profile.', justification: 'Reddit provides unfiltered, high-volume user data that reveals common edge-case discomforts not captured in clinical settings.' },
-                    { url: 'https://www.tiktok.com/', text: 'TikTok #AlwaysInfinity', summary: 'Viral \"wear tests\" showing the product\'s performance during heavy flow and workouts.', justification: 'Social media trends highlight the visual efficacy and durability of the product in real-world, high-stress scenarios.' }
+                    { url: 'https://www.tiktok.com/search?q=Always+Infinity+pad', text: 'TikTok #AlwaysInfinity', summary: 'Viral \"wear tests\" showing the product\'s performance during heavy flow and workouts.', justification: 'Social media trends highlight the visual efficacy and durability of the product in real-world, high-stress scenarios.' }
                 ]
             }
         }
@@ -610,6 +611,148 @@ export function getRecommendations(quizAnswers) {
     const others = scored.filter(s => s.score === 0).map(s => s.product);
 
     return [...matches, ...others];
+}
+
+const TAG_TO_READABLE = {
+    'heavy-flow': 'heavy flow', 'cramps': 'cramps', 'irregular': 'irregular cycles', 'leaks': 'leaks',
+    'discomfort': 'discomfort', 'safety-concern': 'safety', 'uti': 'UTI care', 'pcos': 'PCOS',
+    'pelvic-floor': 'pelvic comfort', 'menopause': 'menopause', 'fertility': 'fertility',
+    'organic': 'organic/natural', 'cost': 'lower cost', 'comfort': 'comfort', 'privacy': 'privacy', 'sustainability': 'sustainability'
+};
+
+/**
+ * Returns a short explanation for why a product could work (or not) for this profile.
+ */
+export function getRecommendationExplanation(product, quizAnswers) {
+    if (!quizAnswers) return { whyItWorks: null, considerations: null };
+
+    const FRUSTRATION_MAP = {
+        'Heavy flow': 'heavy-flow', 'Painful cramps': 'cramps', 'Irregular cycles': 'irregular',
+        'Leaks & staining': 'leaks', 'General discomfort': 'discomfort', 'Not sure if products are safe': 'safety-concern',
+        'Recurrent UTIs': 'uti', 'PCOS symptoms': 'pcos', 'Pelvic pain': 'pelvic-floor',
+        'Menopause symptoms': 'menopause', 'Endometriosis': 'cramps', 'Fertility / TTC': 'fertility'
+    };
+    const userTags = new Set();
+    (quizAnswers.frustrations || []).forEach(f => { const t = FRUSTRATION_MAP[f]; if (t) userTags.add(t); });
+    if (quizAnswers.preference === 'Organic/Natural only') userTags.add('organic');
+    if (quizAnswers.preference === 'Lower cost') userTags.add('cost');
+    if (quizAnswers.preference === 'Comfort/Convenience') userTags.add('comfort');
+    if (quizAnswers.preference === 'Privacy & data security') userTags.add('privacy');
+    if (quizAnswers.preference === 'Sustainability/Zero-waste') userTags.add('sustainability');
+
+    const productTags = new Set(product.tags || []);
+    const matches = [...userTags].filter(t => productTags.has(t));
+    const labels = matches.slice(0, 3).map(m => TAG_TO_READABLE[m] || m.replace(/-/g, ' '));
+    const whyItWorks = labels.length > 0
+        ? `Why it could work: Matches your focus on ${labels.join(', ')}.`
+        : 'Why it could work: Suggested for your profile.';
+
+    let considerations = null;
+    if (product.safety?.recalls && product.safety.recalls.includes('⚠️')) {
+        considerations = 'Consideration: Check the Safety tab for current recalls or concerns.';
+    } else if (product.safety?.allergens && typeof product.safety.allergens === 'string' && product.safety.allergens.toLowerCase().includes('fragrance')) {
+        considerations = 'Consideration: Scented options exist; choose fragrance-free if you have sensitivity.';
+    } else if (product.safety?.sideEffects) {
+        considerations = 'Consideration: Review side effects in Details to ensure it fits you.';
+    }
+
+    return { whyItWorks, considerations };
+}
+
+// Focus area (check-in) → tag + human reason
+const FOCUS_TO_TAG_AND_REASON = {
+    'Heavier flow': { tag: 'heavy-flow', reason: 'Recommended for heavier flow from your check-in.' },
+    'More cramps': { tag: 'cramps', reason: 'Recommended for cramp relief from your check-in.' },
+    'Irregular cycles': { tag: 'irregular', reason: 'Recommended for cycle tracking or irregular cycles from your check-in.' },
+    'UTIs': { tag: 'uti', reason: 'Recommended for UTI care from your check-in.' },
+    'Mood or sleep': { tag: 'comfort', reason: 'Recommended for mood or sleep support from your check-in.' },
+    'Skin irritation': { tag: 'organic', reason: 'Recommended for gentle, low-irritant options from your check-in.' },
+    'Different period product': { tag: 'heavy-flow', reason: 'Suggested period product swap from your check-in.' },
+    'Different supplement': { tag: 'discomfort', reason: 'Suggested supplement option from your check-in.' },
+    'Different app': { tag: 'privacy', reason: 'Suggested app or tracker from your check-in.' },
+};
+
+/**
+ * Recommendations for the "check-in" list under My Account. Uses check-in focus areas,
+ * quiz profile, and optional tracker data (period + menopause). Returns both physical and
+ * digital products with clear reasons so users see telehealth and apps as well as physical.
+ */
+export function getCheckinRecommendations(profile, checkinData, cycleData = [], menopauseData = []) {
+    const userTags = new Set();
+    const reasonByTag = {};
+
+    if (profile?.frustrations) {
+        const FRUSTRATION_MAP = {
+            'Heavy flow': 'heavy-flow', 'Painful cramps': 'cramps', 'Irregular cycles': 'irregular',
+            'Leaks & staining': 'leaks', 'General discomfort': 'discomfort', 'Not sure if products are safe': 'safety-concern',
+            'Recurrent UTIs': 'uti', 'PCOS symptoms': 'pcos', 'Pelvic pain': 'pelvic-floor',
+            'Menopause symptoms': 'menopause', 'Endometriosis': 'cramps', 'Fertility / TTC': 'fertility'
+        };
+        profile.frustrations.forEach(f => {
+            const tag = FRUSTRATION_MAP[f];
+            if (tag) userTags.add(tag);
+        });
+    }
+
+    const focusAreas = checkinData?.focusAreas || [];
+    focusAreas.forEach(focus => {
+        const entry = FOCUS_TO_TAG_AND_REASON[focus];
+        if (entry) {
+            userTags.add(entry.tag);
+            reasonByTag[entry.tag] = entry.reason;
+        }
+    });
+
+    // Synthesize from menopause tracker: if they log symptoms, boost menopause + symptom-related
+    const hasMenopauseData = menopauseData && menopauseData.length > 0;
+    if (hasMenopauseData) {
+        const recentSymptoms = new Set();
+        menopauseData.slice(0, 14).forEach(entry => {
+            (entry.symptoms || []).forEach(s => recentSymptoms.add(s));
+        });
+        if (recentSymptoms.size > 0) {
+            userTags.add('menopause');
+            reasonByTag['menopause'] = `Matches symptoms you track in Menopause Tracker (e.g. ${[...recentSymptoms].slice(0, 2).join(', ')}).`;
+        }
+    }
+
+    // Synthesize from period tracker: if they use it, boost cycle/tracking and period products
+    const hasCycleData = cycleData && cycleData.length > 0;
+    if (hasCycleData) {
+        userTags.add('irregular');
+        if (!reasonByTag['irregular']) reasonByTag['irregular'] = 'Based on your period tracking in Cycle Tracker.';
+    }
+
+    const scored = ALL_PRODUCTS.map(p => {
+        let score = 0;
+        const matchedTags = [];
+        (p.tags || []).forEach(t => {
+            if (userTags.has(t)) {
+                score += 2;
+                matchedTags.push(t);
+            }
+        });
+        const reason = matchedTags.length > 0
+            ? (reasonByTag[matchedTags[0]] || `Matches your focus: ${matchedTags[0]}.`)
+            : 'Suggested for your health profile.';
+        return { product: p, score, reason, matchedTags };
+    });
+
+    const withScore = scored.filter(s => s.score > 0).sort((a, b) => b.score - a.score);
+    const physical = withScore.filter(s => s.product.type === 'physical');
+    const digital = withScore.filter(s => s.product.type === 'digital');
+    const maxPerType = 4;
+    const combined = [
+        ...physical.slice(0, maxPerType),
+        ...digital.slice(0, maxPerType)
+    ];
+    const seen = new Set();
+    const deduped = combined.filter(({ product }) => {
+        if (seen.has(product.id)) return false;
+        seen.add(product.id);
+        return true;
+    });
+    return deduped.slice(0, 8).map(({ product, reason }) => ({ product, reason }));
 }
 
 export const SIMILAR_PROFILES = {

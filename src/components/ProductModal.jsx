@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Disclaimer from './Disclaimer';
 
-// Build purchase/search URLs for common retailers (product name encoded)
+// Build purchase/search URLs for common retailers (product name encoded). Keys matched by store name.
 const STORE_SEARCH_URLS = {
   'Amazon': (q) => `https://www.amazon.com/s?k=${encodeURIComponent(q)}`,
   'Target': (q) => `https://www.target.com/s?searchTerm=${encodeURIComponent(q)}`,
@@ -12,19 +12,47 @@ const STORE_SEARCH_URLS = {
   'Ulta': (q) => `https://www.ulta.com/shop/all?search=${encodeURIComponent(q)}`,
   'Sephora': (q) => `https://www.sephora.com/search?keyword=${encodeURIComponent(q)}`,
   'App Store': () => 'https://apps.apple.com/',
+  'Google Play': () => 'https://play.google.com/store',
   'Ritual.com': () => 'https://www.ritual.com/',
-  'LOLA.com': (q) => `https://www.mylola.com/search?q=${encodeURIComponent(q)}`,
+  'Ritual': () => 'https://www.ritual.com/',
+  'LOLA.com': (q) => `https://www.mylola.com/search?q=${encodeURIComponent(q || '')}`,
   'OurKindra.com': () => 'https://ourkindra.com/',
-  'Maude.com': () => 'https://hellomaude.com/',
+  'Maude.com': (q) => `https://hellomaude.com/search?q=${encodeURIComponent(q || '')}`,
+  'Maude': () => 'https://hellomaude.com/',
   'VisanaHealth.com': () => 'https://www.visanahealth.com/',
+  'Saalt.com': (q) => `https://saalt.com/search?q=${encodeURIComponent(q || '')}`,
+  'Saalt': (q) => `https://saalt.com/search?q=${encodeURIComponent(q || '')}`,
+  'Thinx.com': () => 'https://www.shethinx.com/',
+  'Thinx': () => 'https://www.shethinx.com/',
+  'Best Buy': (q) => `https://www.bestbuy.com/site/searchpage.jsp?st=${encodeURIComponent(q || '')}`,
+  'Pharmacy with prescription': () => 'https://www.goodrx.com/',
 };
 function getStoreUrl(storeName, productName) {
-  const key = Object.keys(STORE_SEARCH_URLS).find(k => storeName.toLowerCase().includes(k.toLowerCase()));
+  if (!storeName || typeof storeName !== 'string') return 'https://www.google.com/search?q=women+health+products';
+  const key = Object.keys(STORE_SEARCH_URLS).find(k => storeName.toLowerCase().replace(/\s+/g, '').includes(k.toLowerCase().replace(/\s+/g, '')) || k.toLowerCase() === storeName.toLowerCase());
   if (key) {
     const fn = STORE_SEARCH_URLS[key];
-    return typeof fn === 'function' ? fn(productName || '') : fn;
+    const out = typeof fn === 'function' ? fn(productName || '') : fn;
+    return (typeof out === 'string' && out.startsWith('http')) ? out : 'https://www.google.com/search?q=' + encodeURIComponent((productName || '') + ' ' + storeName);
   }
-  return `https://www.google.com/search?q=${encodeURIComponent((productName || '') + ' ' + storeName)}`;
+  const safe = (productName || '') + ' ' + storeName;
+  return `https://www.google.com/search?q=${encodeURIComponent(safe.trim() || 'women health products')}`;
+}
+
+// Ensure social/community links use working URLs (fix bare domains, http→https)
+function normalizeSocialUrl(url) {
+  if (!url || typeof url !== 'string') return url;
+  const u = url.trim();
+  try {
+    const noHash = u.replace(/#.*$/, '');
+    if (/^https?:\/\/(www\.)?tiktok\.com\/?$/i.test(noHash)) return 'https://www.tiktok.com/search?q=women+health';
+    const parsed = new URL(u);
+    const host = (parsed.hostname || '').replace(/^www\./, '');
+    if (parsed.protocol === 'http:' && /^(instagram|facebook|tiktok|youtube)\.com$/i.test(host)) return u.replace(/^http:/i, 'https:');
+    return u;
+  } catch (_) {
+    return u;
+  }
 }
 
 export default function ProductModal({ product, onClose, onTrack, isTracked, onOmit, isOmitted, onToggleCompare, isInCompare, onAddToEcosystem, isInEcosystem, userZipCode }) {
@@ -80,7 +108,7 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
             ? linksOrSection
             : { links: linksOrSection, aiSummary: aiSummaryOverride };
         const { links, aiSummary } = getVerificationSection(section);
-        const linksArray = links.map(l => ({ ...l, url: (l.url || l.href || '').trim() })).filter(l => l.url && (l.url.startsWith('http://') || l.url.startsWith('https://')));
+        const linksArray = links.map(l => ({ ...l, url: normalizeSocialUrl((l.url || l.href || '').trim()) })).filter(l => l.url && (l.url.startsWith('http://') || l.url.startsWith('https://')));
         const hasReputableSources = linksArray.length > 0;
 
         return (
@@ -473,30 +501,37 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                                     In-store and online availability for zip <strong>{userZipCode}</strong> is shown when we have data. We use retailer and zip code data to surface “in stock” when available.
                                 </p>
                             )}
-                            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                                 {(product.whereToBuy || []).map(shop => {
-                                    const url = product.whereToBuyLinks?.[shop] || getStoreUrl(shop, product.name);
+                                    const rawUrl = product.whereToBuyLinks?.[shop] || getStoreUrl(shop, product.name);
+                                    const url = (typeof rawUrl === 'string' && (rawUrl.startsWith('http://') || rawUrl.startsWith('https://'))) ? rawUrl : getStoreUrl(shop, product.name);
+                                    const inStock = product.whereToBuyInStock && product.whereToBuyInStock[shop] === true;
                                     return (
-                                        <a
-                                            key={shop}
-                                            href={url}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            style={{
-                                                padding: '1rem 1.5rem',
-                                                background: 'var(--color-bg)',
-                                                borderRadius: 'var(--radius-md)',
-                                                border: '1px solid var(--color-border)',
-                                                fontWeight: '600',
-                                                color: 'var(--color-primary)',
-                                                textDecoration: 'none',
-                                                display: 'inline-flex',
-                                                alignItems: 'center',
-                                                gap: '0.35rem'
-                                            }}
-                                        >
-                                            {shop} ↗
-                                        </a>
+                                        <div key={shop} style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                                            <a
+                                                href={url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                style={{
+                                                    padding: '1rem 1.5rem',
+                                                    background: 'var(--color-bg)',
+                                                    borderRadius: 'var(--radius-md)',
+                                                    border: '1px solid var(--color-border)',
+                                                    fontWeight: '600',
+                                                    color: 'var(--color-primary)',
+                                                    textDecoration: 'none',
+                                                    display: 'inline-flex',
+                                                    alignItems: 'center',
+                                                    gap: '0.35rem',
+                                                    alignSelf: 'flex-start'
+                                                }}
+                                            >
+                                                {shop} ↗
+                                            </a>
+                                            {inStock && (
+                                                <span style={{ fontSize: '0.85rem', color: 'var(--color-primary)', fontWeight: '500' }}>In stock</span>
+                                            )}
+                                        </div>
                                     );
                                 })}
                             </div>
