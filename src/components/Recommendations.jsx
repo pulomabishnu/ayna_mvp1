@@ -123,6 +123,9 @@ export default function Recommendations({ results, onRetake, trackedProducts, to
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginTop: '0.5rem' }}>
                     🔒 We never sell your data. Every product below is reviewed by OB-GYNs and real women.
                 </p>
+                <p style={{ color: 'var(--color-primary)', fontSize: '0.9rem', marginTop: '0.5rem', fontWeight: '500' }}>
+                    Forgot something? Use the 💬 chat button to add more to your profile — we'll refresh your recommendations.
+                </p>
             </div>
 
             {/* "Women Like You" Section */}

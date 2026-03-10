@@ -563,7 +563,9 @@ export function getRecommendations(quizAnswers) {
         'Recurrent UTIs': 'uti',
         'PCOS symptoms': 'pcos',
         'Pelvic pain': 'pelvic-floor',
-        'Menopause symptoms': 'menopause'
+        'Menopause symptoms': 'menopause',
+        'Endometriosis': 'cramps',
+        'Fertility / TTC': 'fertility'
     };
 
     const userTags = new Set();

@@ -1,0 +1,206 @@
+import React, { useState, useRef, useEffect } from 'react';
+
+// Keyword → profile update. Used to merge chat message into profile (frustrations, sensitivities, preference).
+function parseMessageIntoProfile(message, currentProfile) {
+  const text = (message || '').toLowerCase().trim();
+  if (!text) return null;
+  const profile = {
+    ...currentProfile,
+    frustrations: Array.isArray(currentProfile.frustrations) ? [...currentProfile.frustrations] : [],
+    sensitivities: Array.isArray(currentProfile.sensitivities) ? [...currentProfile.sensitivities] : [],
+  };
+
+  const added = { frustrations: [], sensitivities: [], preference: null };
+
+  // Frustrations / concerns
+  const frustrationPhrases = [
+    { keys: ['heavy', 'heavy flow', 'heavy period'], value: 'Heavy flow' },
+    { keys: ['cramp', 'pain', 'painful period'], value: 'Painful cramps' },
+    { keys: ['irregular', 'cycle', 'period irregular'], value: 'Irregular cycles' },
+    { keys: ['leak', 'stain', 'leaks'], value: 'Leaks & staining' },
+    { keys: ['discomfort', 'uncomfortable'], value: 'General discomfort' },
+    { keys: ['safe', 'safety', 'product safe'], value: 'Not sure if products are safe' },
+    { keys: ['uti', 'urinary', 'bladder infection'], value: 'Recurrent UTIs' },
+    { keys: ['pcos'], value: 'PCOS symptoms' },
+    { keys: ['pelvic', 'pelvic pain'], value: 'Pelvic pain' },
+    { keys: ['menopause', 'menopausal', 'hot flash'], value: 'Menopause symptoms' },
+    { keys: ['endometriosis', 'endo'], value: 'Endometriosis' },
+    { keys: ['fertility', 'ttc', 'trying to conceive', 'pregnant'], value: 'Fertility / TTC' },
+  ];
+  frustrationPhrases.forEach(({ keys, value }) => {
+    if (keys.some(k => text.includes(k)) && !profile.frustrations.includes(value)) {
+      profile.frustrations.push(value);
+      added.frustrations.push(value);
+    }
+  });
+
+  // Sensitivities
+  const sensitivityPhrases = [
+    { keys: ['fragrance', 'scent', 'perfume'], value: 'Fragrance sensitivity' },
+    { keys: ['latex'], value: 'Latex allergy' },
+    { keys: ['synthetic', 'plastic'], value: 'Synthetic materials' },
+    { keys: ['allerg', 'allergy', 'sensitive skin'], value: 'Other allergies' },
+  ];
+  sensitivityPhrases.forEach(({ keys, value }) => {
+    if (keys.some(k => text.includes(k)) && !profile.sensitivities.includes(value)) {
+      profile.sensitivities.push(value);
+      added.sensitivities.push(value);
+    }
+  });
+
+  // Preference
+  if (text.includes('organic') || text.includes('clean ingredient') || text.includes('natural')) {
+    profile.preference = 'Organic/Natural only';
+    added.preference = profile.preference;
+  } else if (text.includes('cost') || text.includes('cheap') || text.includes('budget')) {
+    profile.preference = 'Lower cost';
+    added.preference = profile.preference;
+  } else if (text.includes('comfort') || text.includes('convenience')) {
+    profile.preference = 'Comfort/Convenience';
+    added.preference = profile.preference;
+  } else if (text.includes('privacy') || text.includes('data')) {
+    profile.preference = 'Privacy & data security';
+    added.preference = profile.preference;
+  } else if (text.includes('sustainab') || text.includes('eco') || text.includes('zero waste')) {
+    profile.preference = 'Sustainability/Zero-waste';
+    added.preference = profile.preference;
+  }
+
+  const hasChanges = added.frustrations.length > 0 || added.sensitivities.length > 0 || added.preference;
+  return hasChanges ? { profile, added } : null;
+}
+
+export default function ProfileChatbot({ profile, onProfileUpdate, disabled }) {
+  const [open, setOpen] = useState(false);
+  const [messages, setMessages] = useState([
+    { role: 'assistant', text: "Hi! I'm Ayna. You can tell me more about your health here — for example, 'I have endometriosis' or 'I'm sensitive to fragrance.' I'll update your profile and refresh your recommendations." }
+  ]);
+  const [input, setInput] = useState('');
+  const [sending, setSending] = useState(false);
+  const bottomRef = useRef(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const handleSend = (e) => {
+    e.preventDefault();
+    const msg = input.trim();
+    if (!msg || sending || disabled) return;
+    setInput('');
+    setMessages(prev => [...prev, { role: 'user', text: msg }]);
+    setSending(true);
+
+    const result = parseMessageIntoProfile(msg, profile || {});
+    if (result) {
+      onProfileUpdate(result.profile);
+      const parts = [];
+      if (result.added.frustrations.length) parts.push(`Added concerns: ${result.added.frustrations.join(', ')}.`);
+      if (result.added.sensitivities.length) parts.push(`Added sensitivities: ${result.added.sensitivities.join(', ')}.`);
+      if (result.added.preference) parts.push(`Updated priority: ${result.added.preference}.`);
+      setMessages(prev => [...prev, { role: 'assistant', text: `Got it. ${parts.join(' ')} Your profile and recommendations have been updated.` }]);
+    } else {
+      setMessages(prev => [...prev, { role: 'assistant', text: "Thanks for sharing. I didn't spot specific concerns or preferences to add — try phrases like 'I have heavy flow' or 'I prefer organic products.' You can also retake the quiz to change your answers." }]);
+    }
+    setSending(false);
+  };
+
+  return (
+    <>
+      <button
+        type="button"
+        aria-label="Open profile chatbot"
+        onClick={() => setOpen(!open)}
+        disabled={disabled}
+        style={{
+          position: 'fixed',
+          bottom: '1.5rem',
+          right: '1.5rem',
+          width: '56px',
+          height: '56px',
+          borderRadius: '50%',
+          background: 'var(--color-primary)',
+          color: 'white',
+          border: 'none',
+          boxShadow: 'var(--shadow-lg)',
+          cursor: disabled ? 'not-allowed' : 'pointer',
+          zIndex: 999,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '1.5rem',
+          opacity: disabled ? 0.6 : 1,
+        }}
+      >
+        💬
+      </button>
+
+      {open && (
+        <div
+          style={{
+            position: 'fixed',
+            bottom: '5rem',
+            right: '1.5rem',
+            width: 'min(380px, calc(100vw - 2rem))',
+            maxHeight: '420px',
+            background: 'var(--color-surface-soft)',
+            borderRadius: 'var(--radius-lg)',
+            boxShadow: 'var(--shadow-lg)',
+            border: '1px solid var(--color-border)',
+            zIndex: 1000,
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+          }}
+        >
+          <div style={{ padding: '1rem 1.25rem', borderBottom: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontWeight: 700, color: 'var(--color-text-main)' }}>Tell Ayna more</span>
+            <button type="button" aria-label="Close" onClick={() => setOpen(false)} style={{ background: 'none', border: 'none', fontSize: '1.25rem', cursor: 'pointer', color: 'var(--color-text-muted)' }}>×</button>
+          </div>
+          <div style={{ flex: 1, overflowY: 'auto', padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            {messages.map((m, i) => (
+              <div
+                key={i}
+                style={{
+                  alignSelf: m.role === 'user' ? 'flex-end' : 'flex-start',
+                  maxWidth: '90%',
+                  padding: '0.75rem 1rem',
+                  borderRadius: '1rem',
+                  background: m.role === 'user' ? 'var(--color-primary)' : 'var(--color-bg)',
+                  color: m.role === 'user' ? 'white' : 'var(--color-text-main)',
+                  fontSize: '0.9rem',
+                  lineHeight: 1.4,
+                }}
+              >
+                {m.text}
+              </div>
+            ))}
+            {sending && (
+              <div style={{ alignSelf: 'flex-start', padding: '0.5rem 0.75rem', background: 'var(--color-bg)', borderRadius: '0.75rem', fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
+                Updating…
+              </div>
+            )}
+            <div ref={bottomRef} />
+          </div>
+          <form onSubmit={handleSend} style={{ padding: '0.75rem', borderTop: '1px solid var(--color-border)' }}>
+            <input
+              type="text"
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              placeholder="e.g. I have endometriosis, I prefer organic…"
+              disabled={disabled || sending}
+              style={{
+                width: '100%',
+                padding: '0.75rem 1rem',
+                borderRadius: 'var(--radius-pill)',
+                border: '1px solid var(--color-border)',
+                outline: 'none',
+                fontSize: '0.95rem',
+              }}
+            />
+          </form>
+        </div>
+      )}
+    </>
+  );
+}

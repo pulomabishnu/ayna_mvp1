@@ -17,8 +17,9 @@ import { CATEGORY_LABELS } from './data/products';
 import AynaDeeptech from './components/AynaDeeptech';
 import Screenings from './components/Screenings';
 import { useScrollPosition } from './hooks/useScrollPosition';
-import ProductModal from './components/ProductModal'; // Assuming ProductModal is still used but managed differently
+import ProductModal from './components/ProductModal';
 import Articles from './components/Articles';
+import ProfileChatbot from './components/ProfileChatbot';
 
 function App() {
   const [currentView, setCurrentView] = useState('hero');
@@ -404,6 +405,14 @@ function App() {
               // We do not close here automatically, MonthlyCheckin has its own "Done" button that triggers onClose
             }}
             onClose={() => setShowCheckin(false)}
+          />
+        )}
+
+        {quizResults && (
+          <ProfileChatbot
+            profile={quizResults}
+            onProfileUpdate={setQuizResults}
+            disabled={!quizResults}
           />
         )}
 
