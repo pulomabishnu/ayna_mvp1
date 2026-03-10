@@ -127,7 +127,7 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
             {/* Premium CTA Block */}
             <ScrollReveal className="stagger-4">
                 <div style={{
-                    background: 'linear-gradient(135deg, #F3F4F6 0%, #D1D5DB 100%)',
+                    background: 'linear-gradient(135deg, #FDF2F8 0%, #FCE7F3 40%, #E0F2FE 100%)',
                     padding: '2.5rem',
                     borderRadius: 'var(--radius-xl)',
                     maxWidth: '800px',
@@ -139,11 +139,11 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
                     justifyContent: 'space-between',
                     gap: '2rem',
                     flexWrap: 'wrap',
-                    border: '1px solid #FFFFFF',
-                    boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.5), var(--shadow-md)'
+                    border: '1px solid rgba(255,255,255,0.7)',
+                    boxShadow: '0 22px 45px rgba(236, 90, 163, 0.18)'
                 }}>
                     <div style={{ flex: '1 1 400px' }}>
-                        <h3 style={{ fontSize: '1.4rem', marginBottom: '0.5rem' }}>Want a Personalized Health Plan? ✨</h3>
+                        <h3 style={{ fontSize: '1.4rem', marginBottom: '0.5rem', color: 'var(--color-surface-contrast)' }}>Want a Personalized Health Plan? ✨</h3>
                         <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem' }}>
                             Join Ayna Premium for tailored recommendations, cycle tracking, and safety monitoring specific to your body.
                         </p>

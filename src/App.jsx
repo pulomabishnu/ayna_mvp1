@@ -130,16 +130,17 @@ function App() {
       {/* Premium Banner for Free Users */}
       {!isPremium && (
         <div style={{
-          background: 'var(--color-surface-contrast)',
-          color: 'white',
-          padding: '0.5rem 1rem',
+          background: 'linear-gradient(90deg, #FDF2F8 0%, #FCE7F3 50%, #E0F2FE 100%)',
+          color: 'var(--color-surface-contrast)',
+          padding: '0.7rem 1.25rem',
           textAlign: 'center',
-          fontSize: '0.85rem',
+          fontSize: '0.9rem',
           fontWeight: '500',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          gap: '1rem'
+          gap: '1rem',
+          boxShadow: '0 8px 20px rgba(236, 91, 163, 0.15)'
         }}>
           <span>✨ Upgrade to Premium to save data, compare products, and access Deeptech.</span>
           <button
@@ -147,10 +148,11 @@ function App() {
             style={{
               background: 'var(--color-primary)',
               color: 'white',
-              padding: '0.2rem 0.75rem',
+              padding: '0.25rem 0.9rem',
               borderRadius: 'var(--radius-pill)',
-              fontSize: '0.75rem',
-              fontWeight: '700'
+              fontSize: '0.8rem',
+              fontWeight: '700',
+              boxShadow: '0 4px 10px rgba(217, 76, 147, 0.45)'
             }}
           >
             Upgrade Now
@@ -160,12 +162,13 @@ function App() {
 
       {isPremium && (
         <div style={{
-          background: 'var(--color-secondary-fade)',
+          background: 'rgba(253, 236, 245, 0.9)',
           color: 'var(--color-primary)',
-          padding: '0.4rem 1rem',
+          padding: '0.5rem 1.25rem',
           textAlign: 'center',
           fontSize: '0.8rem',
-          fontWeight: '600'
+          fontWeight: '600',
+          boxShadow: '0 6px 18px rgba(236, 91, 163, 0.12)'
         }}>
           🌟 Premium Member Status: Active
           <button onClick={togglePremium} style={{ marginLeft: '1rem', textDecoration: 'underline', fontSize: '0.7rem' }}>Demo: Downgrade</button>
@@ -179,14 +182,15 @@ function App() {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          background: isScrolled ? 'rgba(255, 255, 255, 0.8)' : 'var(--color-surface-soft)',
-          borderBottom: isScrolled ? '1px solid var(--color-border)' : '1px solid transparent',
+          background: isScrolled ? 'rgba(255, 255, 255, 0.9)' : 'rgba(255, 247, 251, 0.9)',
+          borderBottom: '1px solid var(--color-border)',
           flexWrap: 'wrap',
           gap: '0.5rem',
           position: 'sticky',
           top: 0,
           zIndex: 1000,
-          backdropFilter: isScrolled ? 'blur(10px)' : 'none',
+          backdropFilter: 'blur(14px)',
+          boxShadow: isScrolled ? '0 10px 30px rgba(180, 112, 157, 0.16)' : '0 14px 36px rgba(180, 112, 157, 0.18)',
           transition: 'all 0.3s ease'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
@@ -220,7 +224,7 @@ function App() {
                   style={{ fontSize: '0.9rem', fontWeight: '500', color: currentView === 'ecosystem' ? 'var(--color-primary)' : 'var(--color-text-main)' }}
                   onClick={isPremium ? handleViewEcosystem : togglePremium}
                 >
-                  My Ecosystem {!isPremium && '🔒'} {isPremium && Object.keys(myProducts).length > 0 && <span style={{ background: 'var(--color-surface-contrast)', color: 'white', padding: '0.1rem 0.4rem', borderRadius: '1rem', fontSize: '0.7rem', marginLeft: '0.15rem' }}>{Object.keys(myProducts).length}</span>}
+                  My Ecosystem {!isPremium && '🔒'} {isPremium && Object.keys(myProducts).length > 0 && <span style={{ background: 'var(--color-primary)', color: 'white', padding: '0.1rem 0.4rem', borderRadius: '1rem', fontSize: '0.7rem', marginLeft: '0.15rem' }}>{Object.keys(myProducts).length}</span>}
                 </button>
                 <button
                   style={{ fontSize: '0.9rem', fontWeight: '500', color: currentView === 'cycle-tracker' ? 'var(--color-primary)' : 'var(--color-text-main)' }}

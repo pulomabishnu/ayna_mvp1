@@ -1,28 +1,29 @@
 :root {
-  /* Color Palette - Sleek Chrome/Metallic Aesthetic */
-  --color-bg: #EAECEF;
-  /* Light metallic silver background */
-  --color-surface-soft: #F8F9FA;
-  /* Bright silver reflective surface */
-  --color-surface-contrast: #141517;
-  /* Deep midnight metallic contrast */
+  /* Color Palette – Soft Feminine & Clean */
+  --color-bg: #FFF7FB;
+  /* Soft blush background */
+  --color-surface-soft: #FFFFFF;
+  /* Clean white cards */
+  --color-surface-contrast: #1F2933;
+  /* Deep, soft charcoal for contrast */
 
-  --color-text-main: #242526;
-  /* Dark gunmetal for readability */
-  --color-text-muted: #6B7280;
-  /* Muted steel gray */
+  --color-text-main: #222222;
+  /* High-contrast but gentle body text */
+  --color-text-muted: #8F8CA5;
+  /* Lavender‑gray for secondary copy */
   --color-text-light: #FFFFFF;
 
-  --color-primary: #7C3AED;
-  /* Vibrant electric violet accent */
-  --color-primary-hover: #6D28D9;
-  --color-secondary: #E5E7EB;
-  /* Light steel buffer */
-  --color-secondary-fade: rgba(124, 58, 237, 0.12);
-  /* Soft violet glow */
+  --color-primary: #EC5BA3;
+  /* Rosy pink primary */
+  --color-primary-hover: #D94C93;
+  /* Slightly deeper hover */
+  --color-secondary: #FDECF5;
+  /* Pale pink wash */
+  --color-secondary-fade: rgba(236, 91, 163, 0.12);
+  /* Soft pink glow */
 
-  --color-border: #D1D5DB;
-  /* Polished silver border */
+  --color-border: #F3D7E5;
+  /* Delicate pink border */
 
   /* Typography */
   --font-heading: 'Outfit', sans-serif;
@@ -36,14 +37,14 @@
   --spacing-xl: 4rem;
 
   /* Geometry & Shadows */
-  --radius-sm: 8px;
-  --radius-md: 16px;
-  --radius-lg: 24px;
+  --radius-sm: 10px;
+  --radius-md: 18px;
+  --radius-lg: 26px;
   --radius-pill: 9999px;
 
-  --shadow-sm: 0 4px 12px rgba(43, 42, 41, 0.05);
-  --shadow-md: 0 8px 24px rgba(43, 42, 41, 0.08);
-  --shadow-lg: 0 20px 40px rgba(43, 42, 41, 0.12);
+  --shadow-sm: 0 8px 20px rgba(180, 112, 157, 0.08);
+  --shadow-md: 0 16px 40px rgba(180, 112, 157, 0.12);
+  --shadow-lg: 0 26px 60px rgba(180, 112, 157, 0.16);
 
   --transition-fast: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -138,7 +139,7 @@ button {
 }
 
 .card {
-  background: var(--color-surface-soft);
+  background: linear-gradient(145deg, #FFFFFF 0%, #FFF5FB 40%, #FDF4FF 100%);
   border-radius: var(--radius-lg);
   padding: var(--spacing-lg);
   box-shadow: var(--shadow-sm);
@@ -204,7 +205,7 @@ button {
 .blob-1 {
   width: 50vw;
   height: 50vw;
-  background: var(--color-primary);
+  background: radial-gradient(circle at 30% 30%, #FDECF5, #F9A8D4);
   top: -10%;
   right: -10%;
 }
@@ -212,7 +213,7 @@ button {
 .blob-2 {
   width: 40vw;
   height: 40vw;
-  background: var(--color-primary-hover);
+  background: radial-gradient(circle at 70% 70%, #E0F2FE, #F5D0FE);
   bottom: -5%;
   left: -10%;
 }
@@ -220,7 +221,7 @@ button {
 .blob-3 {
   width: 30vw;
   height: 30vw;
-  background: #E8D3C8;
+  background: #FFE4F0;
   top: 40%;
   left: 15%;
   opacity: 0.06;
