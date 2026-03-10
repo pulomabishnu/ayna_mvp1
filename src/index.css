@@ -13,17 +13,17 @@
   /* Lavender‑gray for secondary copy */
   --color-text-light: #FFFFFF;
 
-  --color-primary: #EC5BA3;
-  /* Rosy pink primary */
-  --color-primary-hover: #D94C93;
-  /* Slightly deeper hover */
-  --color-secondary: #FDECF5;
-  /* Pale pink wash */
-  --color-secondary-fade: rgba(236, 91, 163, 0.12);
-  /* Soft pink glow */
+  --color-primary: #D97791;
+  /* Soft rose primary */
+  --color-primary-hover: #C45A7C;
+  /* Deeper rose hover */
+  --color-secondary: #FBE7EE;
+  /* Gentle rose wash */
+  --color-secondary-fade: rgba(217, 119, 145, 0.12);
+  /* Soft rose glow */
 
-  --color-border: #F3D7E5;
-  /* Delicate pink border */
+  --color-border: #F4CBD8;
+  /* Delicate rose border */
 
   /* Typography */
   --font-heading: 'Outfit', sans-serif;

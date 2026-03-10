@@ -2,14 +2,6 @@ import React, { useState } from 'react';
 
 const MOCK_RECALLS = [
     {
-        id: 'recall-1',
-        productName: 'Boppy Lounger',
-        date: 'Sept 2021',
-        reason: 'Risk of infant suffocation.',
-        action: 'Stop using immediately and contact Boppy for a refund.',
-        severity: 'critical'
-    },
-    {
         id: 'recall-2',
         productName: 'Always Pads & Liners (PFAS Concerns)',
         date: 'Ongoing 2024',
@@ -25,14 +17,7 @@ const MOCK_RECALLS = [
         action: 'If you experience unraveling, stop use and report to FDA MedWatch. Use alternatives if concerned.',
         severity: 'high'
     },
-    {
-        id: 'recall-4',
-        productName: 'Lush Fresh Face Masks',
-        date: 'Jan 2024',
-        reason: 'Potential bacterial contamination in specific batches.',
-        action: 'Check batch number on bottom. Return for exchange.',
-        severity: 'medium'
-    }
+    // Additional recalls can be layered in here as needed.
 ];
 
 export default function Recalls({ trackedProducts, isPremium, onUpgrade }) {

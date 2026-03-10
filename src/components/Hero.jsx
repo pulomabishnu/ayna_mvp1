@@ -16,6 +16,24 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
             padding: 'var(--spacing-xl) var(--spacing-md)',
             position: 'relative'
         }} className="container">
+
+            {/* Floral vulva-inspired art panel on the right quarter */}
+            <div
+                aria-hidden="true"
+                style={{
+                    position: 'absolute',
+                    top: '10%',
+                    right: '5%',
+                    bottom: '10%',
+                    width: '28%',
+                    borderRadius: '32px',
+                    overflow: 'hidden',
+                    boxShadow: '0 32px 60px rgba(140, 72, 108, 0.28)',
+                    backgroundImage: 'radial-gradient(circle at 20% 0%, #FCE7F1 0, #FCE7F1 26%, transparent 26%), radial-gradient(circle at 80% 20%, #FDEAF4 0, #FDEAF4 22%, transparent 22%), radial-gradient(circle at 50% 70%, #F9D1D9 0, #F9D1D9 32%, transparent 32%), radial-gradient(circle at 50% 40%, #E7A7B8 0, #E7A7B8 18%, transparent 18%), radial-gradient(circle at 50% 50%, #D97791 0, #D97791 10%, transparent 10%)',
+                    backgroundColor: '#FDF2F8',
+                    backgroundBlendMode: 'normal'
+                }}
+            />
             <ScrollReveal className="stagger-1">
                 <h1 style={{
                     fontSize: 'clamp(2.5rem, 6vw, 4.5rem)',
@@ -177,6 +195,21 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
                     </p>
                 </div>
             </ScrollReveal>
+
+            {/* Artwork credit */}
+            <div style={{
+                position: 'absolute',
+                right: '6%',
+                bottom: '7%',
+                fontSize: '0.7rem',
+                color: 'var(--color-text-muted)',
+                background: 'rgba(255, 247, 251, 0.95)',
+                padding: '0.35rem 0.8rem',
+                borderRadius: '999px',
+                backdropFilter: 'blur(6px)'
+            }}>
+                Floral vulva-inspired artwork, in the spirit of Georgia O’Keeffe and contemporary femme artists.
+            </div>
 
         </section >
     );
