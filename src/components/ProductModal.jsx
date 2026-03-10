@@ -64,8 +64,23 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
         }, 1500);
     };
 
-    const renderVerificationLinks = (links, aiSummary, label, type) => {
-        const linksArray = Array.isArray(links) ? links : (links ? [links] : []);
+    // Normalize verification section: can be { links, aiSummary }, array of links, or single link object
+    const getVerificationSection = (section) => {
+        if (!section) return { links: [], aiSummary: null };
+        if (Array.isArray(section)) return { links: section.filter(l => l && (l.url || l.href)), aiSummary: null };
+        const url = section.url || section.href;
+        if (url) return { links: [{ ...section, url: url }], aiSummary: section.aiSummary || null };
+        const list = section.links || section.link;
+        const arr = Array.isArray(list) ? list : (list ? [list] : []);
+        return { links: arr.filter(l => l && (l.url || l.href)).map(l => ({ ...l, url: l.url || l.href })), aiSummary: section.aiSummary || null };
+    };
+
+    const renderVerificationLinks = (linksOrSection, aiSummaryOverride, label, type) => {
+        const section = typeof linksOrSection === 'object' && linksOrSection !== null && !Array.isArray(linksOrSection) && (linksOrSection.links || linksOrSection.url || linksOrSection.link)
+            ? linksOrSection
+            : { links: linksOrSection, aiSummary: aiSummaryOverride };
+        const { links, aiSummary } = getVerificationSection(section);
+        const linksArray = links.map(l => ({ ...l, url: (l.url || l.href || '').trim() })).filter(l => l.url && (l.url.startsWith('http://') || l.url.startsWith('https://')));
         const hasReputableSources = linksArray.length > 0;
 
         return (
@@ -388,15 +403,25 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
 
                     {activeTab === 'doctor' && (
                         <div className="animate-fade-in">
-                            <h3 style={{ fontSize: '1.1rem', marginBottom: '1.5rem' }}>Medical & Expert Perspectives</h3>
+                            <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Medical & Expert Perspectives</h3>
+                            <div style={{
+                                marginBottom: '1.25rem', padding: '0.85rem 1rem', borderRadius: 'var(--radius-md)',
+                                background: 'var(--color-secondary-fade)', border: '1px solid var(--color-border)', fontSize: '0.85rem', color: 'var(--color-text-muted)', lineHeight: 1.5
+                            }}>
+                                {product.clinicianOpinionSource === 'independent'
+                                    ? 'Clinician opinions and linked sources below are from independent third parties (e.g. medical societies, academic centers, regulators) and are not affiliated with the product brand. Ayna does not endorse any brand. Always consult your own clinician for medical advice.'
+                                    : product.clinicianOpinionSource === 'brand'
+                                        ? 'Ayna has not found independent clinician opinions for this product. The opinions and links below are from clinicians or content associated with the brand. We still recommend discussing with your own clinician. Ayna does not endorse any brand.'
+                                        : 'Sources below may include both independent and brand-associated perspectives. Where possible we prioritize independent clinical sources; some products have only brand-associated clinician content. Ayna does not endorse any brand. Always consult your own clinician for medical advice.'}
+                            </div>
                             <div style={{ background: 'var(--color-surface)', padding: '1.5rem', borderRadius: 'var(--radius-lg)', marginBottom: '1.5rem', borderLeft: '4px solid var(--color-primary)' }}>
                                 <p style={{ fontSize: '1.1rem', fontStyle: 'italic', lineHeight: '1.6', color: 'var(--color-text-main)' }}>
                                     "{product.doctorOpinion || 'Consult with your OB-GYN for personalized medical advice.'}"
                                 </p>
                             </div>
                             {renderVerificationLinks(
-                                product.verificationLinks?.doctor?.links,
-                                product.verificationLinks?.doctor?.aiSummary,
+                                product.verificationLinks?.doctor,
+                                null,
                                 "Expert & Clinical Verification",
                                 "doctor"
                             )}
@@ -414,8 +439,8 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                                 <p>{product.effectiveness || 'Clinical effectiveness data for this specific product is being aggregated.'}</p>
                             </div>
                             {renderVerificationLinks(
-                                product.verificationLinks?.scientific?.links,
-                                product.verificationLinks?.scientific?.aiSummary,
+                                product.verificationLinks?.scientific,
+                                null,
                                 "Peer-Reviewed Literature",
                                 "science"
                             )}
@@ -432,8 +457,8 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                                 </p>
                             </div>
                             {renderVerificationLinks(
-                                product.verificationLinks?.community?.links,
-                                product.verificationLinks?.community?.aiSummary,
+                                product.verificationLinks?.community,
+                                null,
                                 "Social & Community Verification",
                                 "social"
                             )}

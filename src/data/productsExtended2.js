@@ -12,7 +12,7 @@ export const EXTENDED_PHYSICAL_2 = [
             doctor: {
                 aiSummary: "The Frida Mom Postpartum Kit is widely regarded by OB-GYNs and pelvic floor physical therapists as a comprehensive solution for initial postpartum trauma. Dr. Sterling and other specialists endorse the witch hazel and cold-therapy components for reducing inflammation and accelerating tissue recovery.",
                 links: [
-                    { url: 'https://frida.com/pages/about-us', text: 'Frida Mom Mission', summary: 'Frida Mom was developed with input from OB-GYNs to address the \"unfiltered\" reality of postpartum recovery.', justification: 'Brand development involving active clinicians ensures that product design aligns with actual patient recovery needs.' }
+                    { url: 'https://fridababy.com/pages/about-frida-mom', text: 'Frida Mom', summary: 'Frida Mom was developed with input from OB-GYNs for postpartum recovery.', justification: 'Brand information from the manufacturer.' }
                 ]
             },
             scientific: {
@@ -48,9 +48,9 @@ export const EXTENDED_PHYSICAL_2 = [
         id: 'p-maude-vibe', name: 'Maude Vibe', category: 'sex-tech', type: 'physical', internal: true, healthFunctions: ['mental-health'], tags: ['comfort'], price: '$49', whereToBuy: ['Maude.com', 'Sephora'], image: 'http://shopstonedfox.com/cdn/shop/products/VIBE-MAUDE.jpg?v=1659724639', summary: 'Elegant, medical-grade silicone personal massager. 3 speeds, water-resistant.', safety: { fdaStatus: 'Phthalate-free', materials: '100% Medical-grade silicone', recalls: 'No recalls.', allergens: 'Latex-free' },
         doctorOpinion: '"Sexual wellness is a key pillar of overall health. Maude makes it approachable." — Dr. Emily Morse', communityReview: '"Simple, quiet, and doesn\'t look like a toy. Love the design." — Sephora review', ingredients: 'Silicone.', effectiveness: 'Versatile and easy to clean.', integrations: [], badges: ['Design Award', 'Medical Grade Silicone'],
         verificationLinks: {
-            doctor: { url: 'https://getmaude.com/blogs/news/sexual-wellness-as-healthcare', text: 'Maude: Sexual Wellness as Health', summary: 'Maude advocates for sexual health integration into general wellness, supported by medical advisors.' },
+            doctor: { url: 'https://hellomaude.com/blogs/news', text: 'Maude: Sexual Wellness', summary: 'Maude advocates for sexual health integration into general wellness.', justification: 'Brand content from the manufacturer.' },
             scientific: { url: 'https://www.healthline.com/health/healthy-sex/sexual-health-benefits', text: 'Medical Benefits of Sexual Health', summary: 'Scientific overview of how sexual wellness contributes to reduced stress and better sleep.' },
-            community: { url: 'https://www.tiktok.com/@getmaude', text: 'TikTok @getmaude', summary: 'Follow for educational content on intimate care and the "modern approach" to sexual wellness.' }
+            community: { url: 'https://www.tiktok.com/@hellomaude', text: 'TikTok @hellomaude', summary: 'Educational content on intimate care and sexual wellness.' }
         }
     },
     { id: 'p-uberlube', name: 'Uberlube Luxury Lubricant', category: 'sex-tech', type: 'physical', internal: true, healthFunctions: ['vaginal-health', 'comfort'], tags: ['comfort', 'discomfort'], price: '$18', whereToBuy: ['Amazon', 'CVS'], image: 'http://l-n-w.com/cdn/shop/files/55ml2.jpg?v=1765835524', summary: 'High-end silicone-based lubricant. Minimalist, fragrance-free, won\'t disrupt flora.', safety: { fdaStatus: 'FDA-cleared', materials: 'Silicone with Vitamin E', recalls: 'No recalls.', allergens: 'Latex compatible' }, doctorOpinion: '"The best silicone lube on the market. Very low irritation risk." — Dr. Rachel Rubin', communityReview: '"Doesn\'t get sticky. Feels very natural." — Reddit r/sex', ingredients: 'Dimethicone, Dimethiconol, Cyclomethicone, Tocopheryl Acetate (Vitamin E).', effectiveness: 'Long-lasting, skin-friendly.', integrations: [], verificationLinks: {} },

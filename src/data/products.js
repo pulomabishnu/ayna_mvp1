@@ -61,15 +61,15 @@ export const PHYSICAL_PRODUCTS = [
             doctor: {
                 aiSummary: "The consensus among OB-GYNs is that FlexFoam absorption is reliable for heavy periods, but users with sensitivity history should prioritize the unscented variants to avoid potential dermatitis or pH disruption. No reputable clinican opinions suggest systemic safety issues, though personal consultation is advised if localized irritation occurs.",
                 links: [
-                    { url: 'https://www.acog.org/', text: 'ACOG Guidelines on Menstrual Products', summary: 'The American College of Obstetricians and Gynecologists (ACOG) provides guidance on the safety and use of external menstrual products like pads.', justification: 'ACOG is the gold-standard professional organization for gynecologists, ensuring all advice is evidence-based and clinical.' },
-                    { url: 'https://www.mayocouncil.org/', text: 'Mayo Clinic: Choosing Pads', summary: 'Clinical advice on managing heavy flow and selecting materials to minimize irritation.', justification: 'Mayo Clinic is globally recognized for peer-reviewed medical standards and patient safety protocols.' }
+                    { url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Heavy Menstrual Bleeding', summary: 'ACOG provides evidence-based guidance on managing heavy flow and menstrual health.', justification: 'ACOG is the gold-standard professional organization for gynecologists.' },
+                    { url: 'https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cup/art-20045868', text: 'Mayo Clinic: Menstrual Products & Cups', summary: 'Clinical advice on managing flow and selecting safe menstrual products.', justification: 'Mayo Clinic is globally recognized for peer-reviewed medical standards.' }
                 ]
             },
             scientific: {
                 aiSummary: "Independent and regulatory oversight confirms that FlexFoam technology meets FDA safety standards for medical devices. Recent independent research highlights the effectiveness of polyethylene blends in moisture-wicking, though sustainability remains a scientific trade-off.",
                 links: [
-                    { url: 'https://www.fda.gov/', text: 'FDA Safety Oversight', summary: 'The FDA regulates pads as medical devices, monitoring adverse event reports and material safety.', justification: 'The FDA is the federal authority responsible for public health safety of medical devices in the US.' },
-                    { url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Study on Pad Absorption', summary: 'Research comparing FlexFoam technology to traditional wood-pulp based absorption methods.', justification: 'PubMed is the premier database for peer-reviewed biomedical research and scientific validation.' }
+                    { url: 'https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-how-use-them-safely', text: 'FDA: Tampon & Menstrual Product Safety', summary: 'The FDA regulates pads and tampons as medical devices and monitors safety.', justification: 'The FDA is the federal authority for medical device safety in the US.' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Study on Pad Absorption', summary: 'Research comparing absorbent materials to traditional wood-pulp based methods.', justification: 'PubMed is the premier database for peer-reviewed biomedical research.' }
                 ]
             },
             community: {
@@ -101,6 +101,7 @@ export const PHYSICAL_PRODUCTS = [
             sideEffects: 'Minimal risk of irritation due to organic cotton. Very rare sensitivity to bio-PE backsheet.',
             opinionAlerts: 'Main complaint is higher price compared to conventional pads. Some users find them less absorbent for extremely heavy flow.'
         },
+        clinicianOpinionSource: 'independent',
         doctorOpinion: '"Organic cotton pads are an excellent choice for women with sensitive skin or those concerned about chemical exposure. I frequently recommend Rael." — Dr. Monica Grover, OB-GYN',
         communityReview: '"Switched from Always after the toxin scare. These are just as absorbent and I feel so much better knowing what\'s touching my body." — Reddit r/WomensHealth',
         ingredients: '100% certified organic cotton top sheet, wood pulp core, bio-PE back sheet, natural adhesive.',
@@ -151,6 +152,7 @@ export const PHYSICAL_PRODUCTS = [
             sideEffects: 'Intense "cooling" or "tingling" sensation from mint can be uncomfortable or cause burning for users with sensitive skin.',
             opinionAlerts: 'High rate of split opinions: half the users love the cooling effect for cramps, the other half find it too intense or irritating.'
         },
+        clinicianOpinionSource: 'independent',
         doctorOpinion: '"The herbal infusion provides a cooling sensation that many patients find helpful for cramp relief. A nice complementary approach." — Dr. Jessica Shepherd, OB-GYN',
         communityReview: '"The cooling effect is REAL. My cramps feel noticeably better on the first day compared to regular pads." — Amazon review',
         ingredients: 'Plant-derived fiber, lavender oil, peppermint oil, aloe extract, wood pulp core.',
@@ -173,7 +175,7 @@ export const PHYSICAL_PRODUCTS = [
             community: {
                 aiSummary: "Community data indicates a highly polarized response. Approximately 60% of users report significant relief from localized cramping, while 15% report intense burning sensations from the cooling effect. We recommend a patch test or gradual introduction.",
                 links: [
-                    { url: 'https://www.amazon.com/Honey-Pot-Company-Infused-Regular/product-reviews/B01EBS94W8', text: 'Verified Reviews on Herbal Relief', summary: 'Hundreds of users attest to the cooling sensation providing relief.', justification: 'Verified Amazon purchase reviews provide high-volume sentiment analysis for sensory products.' },
+                    { url: 'https://www.amazon.com/s?k=honey+pot+herbal+pads', text: 'Amazon: Honey Pot Herbal Pads', summary: 'Verified purchase reviews on the cooling sensation and relief.', justification: 'Amazon reviews provide high-volume user feedback on sensory products.' },
                     { url: 'https://www.tiktok.com/tag/honeypotpads', text: 'TikTok #HoneyPotPads', summary: 'Social media dialogue regarding the unique sensation and effectiveness of the herbal infusion.', justification: 'Social media trends often reveal immediate physical reactions and ' + 'watch-outs' + ' faster than clinical surveys.' }
                 ]
             }
@@ -200,6 +202,7 @@ export const PHYSICAL_PRODUCTS = [
             sideEffects: 'TSS (Toxic Shock Syndrome) risk common to all tampons. Possible dryness upon removal.',
             opinionAlerts: 'Some users find the biodegradable/plastic-alternative applicator less smooth than traditional plastic apps.'
         },
+        clinicianOpinionSource: 'brand',
         doctorOpinion: '"I recommend organic cotton tampons to patients who want to minimize exposure to synthetic chemicals. Cora\'s transparency about materials is exemplary." — Dr. Alyssa Dweck, OB-GYN',
         communityReview: '"I was skeptical of CORA but they\'re legitimately clean — no weird residue, great absorption, and I love the social mission." — Reddit r/periods',
         ingredients: '100% GOTS-certified organic cotton, BPA-free polypropylene applicator.',
@@ -207,7 +210,7 @@ export const PHYSICAL_PRODUCTS = [
         badges: ['Female-Owned', 'Social Impact', 'Sustainable'],
         verificationLinks: {
             doctor: [
-                { url: 'https://cora.life/pages/our-products', text: 'Cora Ingredient Transparency', summary: 'Cora provides a full breakdown of their medical-grade materials reviewed by advisors.' },
+                { url: 'https://www.cora.life/pages/our-products', text: 'Cora Ingredient Transparency', summary: 'Cora provides a full breakdown of their medical-grade materials reviewed by advisors.' },
                 { url: 'https://www.healthline.com/health/womens-health/organic-tampons', text: 'Healthline: Organic Tampon Review', summary: 'OB-GYN analysis of organic brands including Cora\'s safety and effectiveness.' }
             ],
             scientific: [
@@ -240,6 +243,7 @@ export const PHYSICAL_PRODUCTS = [
             sideEffects: 'TSS risk. Irritation if worn longer than 8 hours.',
             opinionAlerts: 'Compact applicator can occasionally collapse during use if not fully extended properly.'
         },
+        clinicianOpinionSource: 'independent',
         doctorOpinion: '"LOLA provides full ingredient transparency — something rare in the menstrual product industry. OB-GYNs recommend organic cotton to reduce irritation risk." — Dr. Sara Twogood, OB-GYN',
         communityReview: '"Finally found truly organic tampons for heavy flow. The subscription is super convenient." — Reddit r/periods',
         ingredients: '100% organic cotton core and string, BPA-free plastic applicator.',
@@ -247,12 +251,12 @@ export const PHYSICAL_PRODUCTS = [
         badges: ['Female-Owned', 'B-Corp', 'Sustainable'],
         verificationLinks: {
             doctor: [
-                { url: 'https://www.healthline.com/health/womens-health/organic-pads', text: 'Doctor Review of Organic Period Care', summary: 'Medical professionals highlight the reduced risk of irritation when using organic cotton.' },
-                { url: 'https://www.hopkinsmedicine.org/health/wellness-and-prevention/tampon-safety', text: 'Johns Hopkins: Tampon Safety', summary: 'General clinical advice on tampon materials and health.' }
+                { url: 'https://www.healthline.com/health/womens-health/organic-pads', text: 'Healthline: Organic Period Care', summary: 'Medical professionals highlight the reduced risk of irritation when using organic cotton.' },
+                { url: 'https://www.hopkinsmedicine.org/health/wellness-and-prevention/feminine-hygiene-products', text: 'Johns Hopkins: Feminine Hygiene & Safety', summary: 'Clinical advice on tampon and menstrual product materials and health.' }
             ],
             scientific: [
-                { url: 'https://www.fda.gov/medical-devices/menstrual-products/tampons-and-toxic-shock-syndrome-tss', text: 'FDA Tampon Safety Guidance', summary: 'Ensures LOLA tampons comply with federal safety standards for absorption and materials.' },
-                { url: 'https://www.forbes.com/health/womens-health/best-organic-tampons/', text: 'Forbes Health: Best organic tampons', summary: 'Material analysis and safety rating for top organic brands including Lola.' }
+                { url: 'https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-how-use-them-safely', text: 'FDA: Tampon Safety', summary: 'Federal safety standards for tampon absorption and materials.' },
+                { url: 'https://www.healthline.com/health/womens-health/organic-tampons', text: 'Healthline: Best Organic Tampons', summary: 'Material analysis and safety for organic tampon brands.' }
             ],
             community: [
                 { url: 'https://www.reddit.com/r/periods/search/?q=LOLA', text: 'Reddit LOLA Discussions', summary: 'Users discuss the convenience of LOLA\'s subscription model.' },
@@ -281,6 +285,7 @@ export const PHYSICAL_PRODUCTS = [
             sideEffects: 'Possible cramping from suction, difficulty with insertion/removal, urinary urgency if sized incorrectly.',
             opinionAlerts: 'Steep learning curve. Users often report a 2-3 cycle adjustment period before mastering the product.'
         },
+        clinicianOpinionSource: 'mixed',
         doctorOpinion: '"Menstrual cups are safe for long-term use (up to 12 hours) and have a lower TSS risk than tampons. Saalt\'s medical-grade silicone is body-safe." — Dr. Jen Gunter, OB-GYN',
         communityReview: '"Life changing. I was scared to try it but honestly wish I switched years ago. Zero leaks on heavy days and I forget it\'s there." — Reddit r/menstrualcups',
         ingredients: '100% medical-grade silicone (USP Class VI certified).',
@@ -289,7 +294,7 @@ export const PHYSICAL_PRODUCTS = [
         verificationLinks: {
             doctor: [
                 { url: 'https://saalt.com/pages/our-story', text: 'Saalt Medical Advisory', summary: 'Saalt works with OB-GYNs to ensure their silicone is body-safe.' },
-                { url: 'https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cup/art-20045868', text: 'Mayo Clinic: Menstrual Cups', summary: 'Comprehensive guide to the safe use and cleaning of cups.' }
+                { url: 'https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cup/art-20045868', text: 'Mayo Clinic: Using a Menstrual Cup', summary: 'Comprehensive guide to the safe use and cleaning of cups.' }
             ],
             scientific: [
                 { url: 'https://www.thelancet.com/journals/lanpub/article/PIIS2468-2667(19)30110-3/fulltext', text: 'Lancet Study on Menstrual Cups', summary: 'The most extensive meta-analysis of menstrual cup safety and effectiveness published to date.' },
@@ -312,7 +317,7 @@ export const PHYSICAL_PRODUCTS = [
         tags: ['heavy-flow', 'leaks', 'comfort'],
         price: '$14 for 12 (disposable) / $40 reusable',
         whereToBuy: ['Target', 'CVS', 'Amazon'],
-        image: 'http://flexfits.com/cdn/shop/files/reusable-period-disc-with-packaging-and-review.png?v=1763753790',
+        image: 'https://flexfits.com/cdn/shop/files/reusable-period-disc-with-packaging-and-review.png?v=1763753790',
         summary: 'Sits in the vaginal fornix (not the canal). Can be worn during intimacy. 12-hour wear.',
         safety: {
             fdaStatus: 'FDA-registered',
@@ -322,6 +327,7 @@ export const PHYSICAL_PRODUCTS = [
             sideEffects: 'Messy removal (getting fingers in contact with blood), "autodumping" when using the bathroom (intended but surprising).',
             opinionAlerts: 'Some find the disposable version too wasteful/expensive for every-cycle use.'
         },
+        clinicianOpinionSource: 'mixed',
         doctorOpinion: '"Discs are positioned differently than cups and can be a great option for patients who find cups uncomfortable. The 12-hour wear time is convenient." — Dr. Staci Tanouye, OB-GYN',
         communityReview: '"Game changer for intimacy during periods — no mess. Also zero leaks during heavy days which shocked me." — Reddit r/periods',
         ingredients: 'Medical-grade polymer body, hypoallergenic adhesive rim.',
@@ -329,11 +335,11 @@ export const PHYSICAL_PRODUCTS = [
         badges: ['Intimacy Friendly', 'High Capacity'],
         verificationLinks: {
             doctor: [
-                { url: 'https://flexfits.com/pages/how-it-works', text: 'OB-GYN Guide to Discs', summary: 'Medical experts explain the benefits of position-based comfort.' },
+                { url: 'https://flexfits.com/pages/how-it-works', text: 'Flex: How Discs Work', summary: 'Explanation of disc position and 12-hour wear.' },
                 { url: 'https://www.healthline.com/health/womens-health/menstrual-disc', text: 'Healthline: Menstrual Discs', summary: 'Doctor-reviewed guide on how to use discs vs cups.' }
             ],
             scientific: [
-                { url: 'https://publichealth.jhu.edu/', text: 'Johns Hopkins Women\'s Health Research', summary: 'Research on internal collection devices and leak protection.' },
+                { url: 'https://www.hopkinsmedicine.org/health/wellness-and-prevention/feminine-hygiene-products', text: 'Johns Hopkins: Feminine Hygiene', summary: 'Clinical context on internal collection devices and safety.' },
                 { url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Vaginal Health and Internal Devices', summary: 'Study on the safety of materials used in menstrual discs.' }
             ],
             community: [
@@ -371,10 +377,10 @@ export const PHYSICAL_PRODUCTS = [
         verificationLinks: {
             doctor: [
                 { url: 'https://www.health.harvard.edu/blog/pfas-in-period-underwear-what-you-need-to-know-202302142890', text: 'Harvard Health: PFAS in Period Underwear', summary: 'Doctors discuss safety of period underwear following the settlement.' },
-                { url: 'https://www.nytimes.com/wirecutter/reviews/thinx-period-underwear-pfas/', text: 'Wirecutter: Thinx Safety Update', summary: 'Independent review and material safety analysis of current Thinx products.' }
+                { url: 'https://www.nytimes.com/wirecutter/reviews/best-period-underwear/', text: 'Wirecutter: Period Underwear', summary: 'Independent review and material safety analysis of period underwear.' }
             ],
             scientific: [
-                { url: 'https://www.sgs.com/en/news/2023/01/thinx-pfas-testing-results', text: 'SGS Independent Lab Testing', summary: 'Laboratory testing confirms current production meets safety standards.' },
+                { url: 'https://www.sgs.com/en/consumer-goods-retail/softlines-and-accessories', text: 'SGS Textile & Softlines Testing', summary: 'Independent lab testing for textiles and product safety.' },
                 { url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Environmental Lifecycle of Textiles', summary: 'Study on the environmental benefit of reusable period underwear vs disposables.' }
             ],
             community: [
@@ -404,6 +410,7 @@ export const PHYSICAL_PRODUCTS = [
             sideEffects: 'Mild digestive issues, loose stools (if dose too high), loss of appetite, occasional nausea.',
             opinionAlerts: 'Magnesium glycinate is the "gold standard" for comfort, but users find Thorne/NatureMade capsules quite large.'
         },
+        clinicianOpinionSource: 'mixed',
         doctorOpinion: '"Magnesium glycinate is one of the most evidence-backed supplements for menstrual cramps. The glycinate form is gentle on the stomach and well-absorbed." — Dr. Jolene Brighten, NMD',
         communityReview: '"This literally leveled up my life. My cramps went from debilitating to manageable within 2 cycles. I tell every woman about magnesium." — Reddit r/Supplements',
         ingredients: 'Magnesium glycinate 200mg, cellulose capsule, magnesium stearate.',
@@ -465,6 +472,7 @@ export const DIGITAL_PRODUCTS = [
         summary: 'EU-based tracker with industry-leading privacy. Accurate predictions, no ads on free tier.',
         safety: { fdaStatus: 'CE-marked in EU (medical device certification)', materials: 'N/A (software)', recalls: 'N/A', allergens: 'N/A', sideEffects: 'N/A (Software)', opinionAlerts: 'Subscription cost ($10/mo) is a common pain point compared to free trackers.' },
         privacy: { dataStorage: 'EU servers (Germany) — GDPR-compliant', sellsData: '❌ Explicitly does NOT sell data', hipaa: 'Not HIPAA (EU-based, uses GDPR which is stricter)', keyPolicy: 'Published transparency report. Will not comply with US law enforcement requests for cycle data.' },
+        clinicianOpinionSource: 'brand',
         doctorOpinion: '"Clue is backed by scientific research and partners with universities for menstrual health studies. It\'s the most evidence-based tracker available." — Dr. Anna Druet, Clue Research Lead',
         communityReview: '"Switched from Flo because the paywall was annoying and I didn\'t trust their privacy. Clue is just better — clean UI, no fear-mongering." — Reddit r/WomensHealth',
         integrations: ['Apple Health'],
@@ -499,6 +507,7 @@ export const DIGITAL_PRODUCTS = [
         summary: 'Privacy-first tracker with end-to-end encryption. Syncs with lunar cycles.',
         safety: { fdaStatus: 'N/A (Software)', materials: 'N/A', recalls: 'N/A', allergens: 'N/A', sideEffects: 'N/A', opinionAlerts: 'Lunar sync features are highly aesthetic but some users find them less "scientific" than Clue.' },
         privacy: { dataStorage: 'End-to-end encrypted', sellsData: '❌ No', hipaa: 'No', keyPolicy: 'Uses dual-key encryption so even Stardust can\'t see your data.' },
+        clinicianOpinionSource: 'brand',
         doctorOpinion: '"Stardust offers unique privacy protections that are increasingly important for reproductive health data." — Dr. Jane Doe',
         communityReview: '"The UI is gorgeous and I trust their encryption. Best post-Roe tracker." — Reddit r/periods',
         integrations: ['Apple Health'],
