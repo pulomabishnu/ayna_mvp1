@@ -3,10 +3,34 @@ import Disclaimer from './Disclaimer';
 import { ALL_PRODUCTS } from '../data/products';
 import { RELEASED_STARTUPS } from '../data/startups';
 
-/** Telehealth platforms listed on Ayna: products + released startups with category telehealth */
-function getTelehealthPlatforms() {
+/** Article id → product-style tags/healthFunctions for matching relevant telehealth platforms */
+const ARTICLE_FOCUS_TAGS = {
+  'intimate-wash': ['vaginal-health', 'discomfort', 'intimate-care'],
+  'heavy-bleeding': ['heavy-flow', 'cramps', 'discomfort'],
+  'menopause-basics': ['menopause', 'discomfort'],
+  'uti-prevention': ['uti'],
+  'yeast-infection-basics': ['vaginal-health', 'discomfort'],
+  'period-pain-when-to-seek-care': ['cramps', 'discomfort', 'heavy-flow'],
+};
+
+function getProductUrl(p) {
+  const raw = p.whereToBuy && p.whereToBuy[0];
+  if (!raw || typeof raw !== 'string') return null;
+  const s = raw.trim();
+  if (/^https?:\/\//i.test(s)) return s;
+  return 'https://' + s.replace(/^www\./i, '');
+}
+
+/** Telehealth platforms from Ayna that match this article's focus (tags or healthFunctions). */
+function getRelevantTelehealth(articleId) {
+  const focus = ARTICLE_FOCUS_TAGS[articleId] || [];
   const fromProducts = (ALL_PRODUCTS || [])
     .filter((p) => p.category === 'telehealth')
+    .filter((p) => {
+      if (focus.length === 0) return true;
+      const tags = new Set([...(p.tags || []), ...(p.healthFunctions || [])]);
+      return focus.some((t) => tags.has(t));
+    })
     .map((p) => ({
       id: p.id,
       name: p.name,
@@ -16,6 +40,11 @@ function getTelehealthPlatforms() {
     }));
   const fromStartups = (RELEASED_STARTUPS || [])
     .filter((s) => s.category === 'telehealth')
+    .filter((s) => {
+      if (focus.length === 0) return true;
+      const tags = new Set([...(s.tags || []), ...(s.healthFunctions || [])]);
+      return focus.some((t) => tags.has(t));
+    })
     .map((s) => ({
       id: s.id,
       name: s.name,
@@ -30,17 +59,18 @@ function getTelehealthPlatforms() {
   return Array.from(byId.values());
 }
 
-function getProductUrl(p) {
-  const raw = p.whereToBuy && p.whereToBuy[0];
-  if (!raw || typeof raw !== 'string') return null;
-  const s = raw.trim();
-  if (/^https?:\/\//i.test(s)) return s;
-  return 'https://' + s.replace(/^www\./i, '');
-}
+const SUGGESTION_OPTIONS = [
+  { value: '', label: 'Choose an option…' },
+  { value: 'nurse-line', label: 'Nurse line (insurer)' },
+  { value: 'pph', label: 'Planned Parenthood (in-person & telehealth)' },
+  { value: 'clinics', label: 'Find clinics near you (by zip)' },
+  { value: 'telehealth', label: 'Telehealth / digital (from Ayna)' },
+];
 
-function TelehealthSuggestions() {
-  const platforms = useMemo(() => getTelehealthPlatforms(), []);
-  if (platforms.length === 0) return null;
+function TelehealthSuggestions({ articleId }) {
+  const [selected, setSelected] = useState('');
+  const platforms = useMemo(() => getRelevantTelehealth(articleId), [articleId]);
+
   return (
     <div
       style={{
@@ -51,31 +81,103 @@ function TelehealthSuggestions() {
         border: '1px solid var(--color-border)',
       }}
     >
-      <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem', color: 'var(--color-text-main)', fontWeight: '600' }}>
+      <h3 style={{ fontSize: '1.1rem', marginBottom: '0.5rem', color: 'var(--color-text-main)', fontWeight: '600' }}>
         Can&apos;t reach your doctor?
       </h3>
-      <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', marginBottom: '1rem', lineHeight: 1.5 }}>
-        These telehealth platforms we list on Ayna can help you get care when you can&apos;t get in with your OB-GYN or primary care provider:
+      <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1rem', lineHeight: 1.5 }}>
+        Options relevant to this topic — nurse line, in-person care, or telehealth:
       </p>
-      <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-        {platforms.map((t) => (
-          <li key={t.id} style={{ marginBottom: '0.75rem' }}>
-            {t.url ? (
-              <a href={t.url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600, fontSize: '0.95rem' }}>
-                {t.name}
-              </a>
-            ) : (
-              <strong style={{ color: 'var(--color-text-main)', fontSize: '0.95rem' }}>{t.name}</strong>
-            )}
-            {t.price && (
-              <span style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem' }}> — {t.price}</span>
-            )}
-            {t.summary && (
-              <span style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}> {t.summary}</span>
-            )}
-          </li>
+      <select
+        value={selected}
+        onChange={(e) => setSelected(e.target.value)}
+        style={{
+          width: '100%',
+          maxWidth: '420px',
+          padding: '0.6rem 0.75rem',
+          fontSize: '0.95rem',
+          borderRadius: 'var(--radius-md)',
+          border: '1px solid var(--color-border)',
+          background: 'var(--color-surface-soft)',
+          color: 'var(--color-text-main)',
+          cursor: 'pointer',
+        }}
+      >
+        {SUGGESTION_OPTIONS.map((opt) => (
+          <option key={opt.value || 'placeholder'} value={opt.value}>
+            {opt.label}
+          </option>
         ))}
-      </ul>
+      </select>
+
+      {selected === 'nurse-line' && (
+        <div style={{ marginTop: '1rem', fontSize: '0.95rem', color: 'var(--color-text-main)', lineHeight: 1.6 }}>
+          <p style={{ marginBottom: '0.5rem' }}><strong>Your insurer&apos;s nurse line</strong></p>
+          <p style={{ color: 'var(--color-text-muted)', margin: 0 }}>
+            Many plans offer a 24/7 nurse line for symptom guidance and when to seek care. Check your insurance card or member portal for the number.
+          </p>
+        </div>
+      )}
+
+      {selected === 'pph' && (
+        <div style={{ marginTop: '1rem', fontSize: '0.95rem', color: 'var(--color-text-main)', lineHeight: 1.6 }}>
+          <p style={{ marginBottom: '0.5rem' }}><strong>Planned Parenthood</strong></p>
+          <p style={{ color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>
+            In-person health centers and telehealth for reproductive and sexual health; sliding-scale and low-cost options.
+          </p>
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+            <li style={{ marginBottom: '0.35rem' }}>
+              <a href="https://www.plannedparenthood.org/health-center" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Find a health center (in-person)</a>
+            </li>
+            <li>
+              <a href="https://www.plannedparenthood.org/get-care" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Get care (telehealth & in-person)</a>
+            </li>
+          </ul>
+        </div>
+      )}
+
+      {selected === 'clinics' && (
+        <div style={{ marginTop: '1rem', fontSize: '0.95rem', color: 'var(--color-text-main)', lineHeight: 1.6 }}>
+          <p style={{ marginBottom: '0.5rem' }}><strong>Find clinics by zip code</strong></p>
+          <p style={{ color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>
+            Search for low-cost and sliding-scale health centers near you.
+          </p>
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+            <li style={{ marginBottom: '0.35rem' }}>
+              <a href="https://www.plannedparenthood.org/health-center" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Planned Parenthood — enter zip to find locations</a>
+            </li>
+            <li>
+              <a href="https://findahealthcenter.hrsa.gov/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>HRSA — Federally qualified health centers by zip</a>
+            </li>
+          </ul>
+        </div>
+      )}
+
+      {selected === 'telehealth' && (
+        <div style={{ marginTop: '1rem', fontSize: '0.95rem', color: 'var(--color-text-main)', lineHeight: 1.6 }}>
+          <p style={{ marginBottom: '0.5rem', color: 'var(--color-text-muted)' }}>
+            Telehealth platforms we list on Ayna that match this article:
+          </p>
+          {platforms.length === 0 ? (
+            <p style={{ color: 'var(--color-text-muted)', margin: 0 }}>No specific telehealth platforms match this topic. Try &quot;Planned Parenthood (in-person & telehealth)&quot; or &quot;Find clinics near you&quot; for general care.</p>
+          ) : (
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+              {platforms.map((t) => (
+                <li key={t.id} style={{ marginBottom: '0.6rem' }}>
+                  {t.url ? (
+                    <a href={t.url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>
+                      {t.name}
+                    </a>
+                  ) : (
+                    <strong>{t.name}</strong>
+                  )}
+                  {t.price && <span style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}> — {t.price}</span>}
+                  {t.summary && <span style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', display: 'block', marginTop: '0.15rem' }}>{t.summary}</span>}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -261,7 +363,7 @@ export default function Articles() {
           </div>
           <Disclaimer compact style={{ marginTop: '1.5rem' }} />
 
-          <TelehealthSuggestions />
+          <TelehealthSuggestions articleId={selected.id} />
         </article>
       ) : (
         <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
