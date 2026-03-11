@@ -78,10 +78,16 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 const query = searchQuery.toLowerCase().trim();
                 const stopWords = new Set(['a', 'an', 'the', 'best', 'good', 'top', 'for', 'my', 'me', 'to', 'and', 'or', 'of', 'in', 'on', 'with']);
                 const words = query.split(/\s+/).filter(w => w.length > 1 && !stopWords.has(w));
+                const safetyStr = item.safety && typeof item.safety === 'object'
+                    ? [item.safety.fdaStatus, item.safety.materials, item.safety.recalls, item.safety.allergens].filter(Boolean).join(' ')
+                    : '';
                 const searchText = [
                     item.name,
                     item.summary,
                     item.tagline,
+                    item.doctorOpinion,
+                    item.communityReview,
+                    safetyStr,
                     (item.tags || []).join(' '),
                     item.category,
                     CATEGORY_LABELS[item.category]
