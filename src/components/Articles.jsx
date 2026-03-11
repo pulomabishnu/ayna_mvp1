@@ -449,11 +449,8 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults 
     <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)', maxWidth: '900px', margin: '0 auto' }}>
       <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
         <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Health Articles Library</h1>
-        <p style={{ fontSize: '1.1rem', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>
-          Diagnostic products and startups · evidence-based articles. Can&apos;t reach your doctor? See options below each article.
-        </p>
         <p style={{ fontSize: '1rem', color: 'var(--color-text-muted)' }}>
-          Click a headline to read the full article. Always discuss your care with your own clinician.
+          Click a headline to read the full article. Always discuss your care with your own clinician. Can&apos;t reach your doctor? See alternatives below each article.
         </p>
         <Disclaimer compact style={{ marginTop: '1.5rem', textAlign: 'left', maxWidth: '700px', marginLeft: 'auto', marginRight: 'auto' }} />
       </div>
