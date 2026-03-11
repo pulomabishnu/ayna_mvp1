@@ -1,5 +1,84 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import Disclaimer from './Disclaimer';
+import { ALL_PRODUCTS } from '../data/products';
+import { RELEASED_STARTUPS } from '../data/startups';
+
+/** Telehealth platforms listed on Ayna: products + released startups with category telehealth */
+function getTelehealthPlatforms() {
+  const fromProducts = (ALL_PRODUCTS || [])
+    .filter((p) => p.category === 'telehealth')
+    .map((p) => ({
+      id: p.id,
+      name: p.name,
+      summary: p.summary,
+      price: p.price,
+      url: getProductUrl(p),
+    }));
+  const fromStartups = (RELEASED_STARTUPS || [])
+    .filter((s) => s.category === 'telehealth')
+    .map((s) => ({
+      id: s.id,
+      name: s.name,
+      summary: s.description || s.tagline,
+      price: s.stage,
+      url: s.url || null,
+    }));
+  const byId = new Map();
+  [...fromProducts, ...fromStartups].forEach((t) => {
+    if (!byId.has(t.id)) byId.set(t.id, t);
+  });
+  return Array.from(byId.values());
+}
+
+function getProductUrl(p) {
+  const raw = p.whereToBuy && p.whereToBuy[0];
+  if (!raw || typeof raw !== 'string') return null;
+  const s = raw.trim();
+  if (/^https?:\/\//i.test(s)) return s;
+  return 'https://' + s.replace(/^www\./i, '');
+}
+
+function TelehealthSuggestions() {
+  const platforms = useMemo(() => getTelehealthPlatforms(), []);
+  if (platforms.length === 0) return null;
+  return (
+    <div
+      style={{
+        marginTop: '2rem',
+        padding: '1.5rem',
+        background: 'var(--color-surface)',
+        borderRadius: 'var(--radius-md)',
+        border: '1px solid var(--color-border)',
+      }}
+    >
+      <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem', color: 'var(--color-text-main)', fontWeight: '600' }}>
+        Can&apos;t reach your doctor?
+      </h3>
+      <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', marginBottom: '1rem', lineHeight: 1.5 }}>
+        These telehealth platforms we list on Ayna can help you get care when you can&apos;t get in with your OB-GYN or primary care provider:
+      </p>
+      <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+        {platforms.map((t) => (
+          <li key={t.id} style={{ marginBottom: '0.75rem' }}>
+            {t.url ? (
+              <a href={t.url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600, fontSize: '0.95rem' }}>
+                {t.name}
+              </a>
+            ) : (
+              <strong style={{ color: 'var(--color-text-main)', fontSize: '0.95rem' }}>{t.name}</strong>
+            )}
+            {t.price && (
+              <span style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem' }}> — {t.price}</span>
+            )}
+            {t.summary && (
+              <span style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}> {t.summary}</span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 const ARTICLES = [
   {
@@ -182,40 +261,7 @@ export default function Articles() {
           </div>
           <Disclaimer compact style={{ marginTop: '1.5rem' }} />
 
-          <div
-            style={{
-              marginTop: '2rem',
-              padding: '1.5rem',
-              background: 'var(--color-surface)',
-              borderRadius: 'var(--radius-md)',
-              border: '1px solid var(--color-border)'
-            }}
-          >
-            <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem', color: 'var(--color-text-main)', fontWeight: '600' }}>
-              Can&apos;t reach your doctor?
-            </h3>
-            <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', marginBottom: '1rem', lineHeight: 1.5 }}>
-              If you need guidance before you can get in with your OB-GYN or primary care provider, these telehealth options can help:
-            </p>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-              <li style={{ marginBottom: '0.75rem' }}>
-                <strong style={{ color: 'var(--color-text-main)', fontSize: '0.95rem' }}>Your insurer&apos;s nurse line</strong>
-                <span style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}> — Many plans offer a 24/7 nurse line for symptom guidance and when to seek care.</span>
-              </li>
-              <li style={{ marginBottom: '0.75rem' }}>
-                <a href="https://www.plannedparenthood.org/get-care" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600, fontSize: '0.95rem' }}>Planned Parenthood</a>
-                <span style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}> — In-person and telehealth visits for reproductive and sexual health; sliding-scale and low-cost options.</span>
-              </li>
-              <li style={{ marginBottom: '0.75rem' }}>
-                <strong style={{ color: 'var(--color-text-main)', fontSize: '0.95rem' }}>Urgent care video visits</strong>
-                <span style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}> — Retail clinics and health systems often offer same-day video visits for non-emergency issues.</span>
-              </li>
-              <li>
-                <strong style={{ color: 'var(--color-text-main)', fontSize: '0.95rem' }}>Hospital or health system patient portals</strong>
-                <span style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}> — Many offer e-visits or secure messaging so a clinician can respond when you can&apos;t get an appointment right away.</span>
-              </li>
-            </ul>
-          </div>
+          <TelehealthSuggestions />
         </article>
       ) : (
         <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
