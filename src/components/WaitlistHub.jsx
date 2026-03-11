@@ -195,23 +195,32 @@ export default function WaitlistHub({ joinedWaitlists, toggleJoinWaitlist, quizR
                                         </button>
                                     </>
                                 )}
-                                {isReleased && startup.url && (
-                                    <div style={{ width: '100%', marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid var(--color-border)' }}>
-                                        <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.35rem', fontWeight: '600' }}>Where to get it</p>
-                                        <a href={startup.url.startsWith('http') ? startup.url : `https://${startup.url}`} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--color-primary)', textDecoration: 'none' }}>
-                                            Product website ↗
-                                        </a>
-                                    </div>
+                                {isReleased && (() => {
+                                    const hasValidUrl = startup.url && startup.url !== '#' && (startup.url.startsWith('http://') || startup.url.startsWith('https://'));
+                                    return hasValidUrl && (
+                                        <div style={{ width: '100%', marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid var(--color-border)' }}>
+                                            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.35rem', fontWeight: '600' }}>Where to get it</p>
+                                            <a href={startup.url.startsWith('http') ? startup.url : `https://${startup.url}`} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--color-primary)', textDecoration: 'none' }}>
+                                                Product website ↗
+                                            </a>
+                                        </div>
+                                    );
+                                })()}
+                                {startup.url && startup.url !== '#' && (startup.url.startsWith('http://') || startup.url.startsWith('https://')) ? (
+                                    <a
+                                        href={startup.url.startsWith('http') ? startup.url : `https://${startup.url}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="btn btn-outline"
+                                        style={{ textDecoration: 'none', padding: '0.5rem 0.75rem', fontSize: '0.85rem' }}
+                                    >
+                                        Website ↗
+                                    </a>
+                                ) : (
+                                    <span className="btn btn-outline" style={{ padding: '0.5rem 0.75rem', fontSize: '0.85rem', opacity: 0.7, cursor: 'default' }}>
+                                        Website coming soon
+                                    </span>
                                 )}
-                                <a
-                                    href={startup.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="btn btn-outline"
-                                    style={{ textDecoration: 'none', padding: '0.5rem 0.75rem', fontSize: '0.85rem' }}
-                                >
-                                    Website ↗
-                                </a>
                             </div>
                         </div>
                     );

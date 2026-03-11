@@ -383,7 +383,7 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                             width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center',
                             flexDirection: 'column', gap: '0.5rem', background: 'white'
                         }}>
-                            <img src={`https://logo.clearbit.com/${product.url ? product.url.replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split('/')[0] : (product.whereToBuy?.[0] ? product.whereToBuy[0].toLowerCase().replace(/\s+/g, '') + '.com' : 'ayna.com')}`}
+                            <img src={`https://logo.clearbit.com/${(product.url && product.url !== '#' && (product.url.startsWith('http://') || product.url.startsWith('https://'))) ? product.url.replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split('/')[0] : (product.whereToBuy?.[0] ? product.whereToBuy[0].toLowerCase().replace(/\s+/g, '') + '.com' : 'ayna.com')}`}
                                 alt={`${product.name} Logo`}
                                 style={{ maxWidth: '150px', maxHeight: '150px', objectFit: 'contain' }}
                                 onError={(e) => {
@@ -501,6 +501,8 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', alignItems: 'center' }}>
                                 {product.url && (() => {
                                     const websiteUrl = (product.url || '').trim();
+                                    const isValidUrl = websiteUrl !== '#' && (websiteUrl.startsWith('http://') || websiteUrl.startsWith('https://'));
+                                    if (!isValidUrl) return null;
                                     const href = websiteUrl.startsWith('http') ? websiteUrl : `https://${websiteUrl.replace(/^(https?:\/\/)?/i, '')}`;
                                     return (
                                         <a href={href} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--color-primary)', textDecoration: 'none', padding: '0.35rem 0.6rem', border: '1px solid var(--color-primary)', borderRadius: 'var(--radius-pill)' }}>

@@ -284,7 +284,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                     <img src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                 ) : (
                                     <>
-                                        <img src={`https://logo.clearbit.com/${item.url ? item.url.replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split('/')[0] : (item.whereToBuy?.[0] ? item.whereToBuy[0].toLowerCase().replace(/\s+/g, '') + '.com' : 'ayna.com')}`}
+                                        <img src={`https://logo.clearbit.com/${(item.url && item.url !== '#' && (item.url.startsWith('http://') || item.url.startsWith('https://'))) ? item.url.replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split('/')[0] : (item.whereToBuy?.[0] ? item.whereToBuy[0].toLowerCase().replace(/\s+/g, '') + '.com' : 'ayna.com')}`}
                                             alt={`${item.name} Logo`}
                                             style={{ maxWidth: '100px', maxHeight: '100px', objectFit: 'contain' }}
                                             onError={(e) => {
@@ -371,7 +371,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                                     {(item.url || (item.whereToBuy && item.whereToBuy.length > 0)) && (
                                                         <div style={{ width: '100%', marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid var(--color-border)' }}>
                                                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem', alignItems: 'center', fontSize: '0.75rem' }}>
-                                                                {item.url && (
+                                                                {item.url && item.url !== '#' && (item.url.startsWith('http://') || item.url.startsWith('https://')) && (
                                                                     <a href={item.url.startsWith('http') ? item.url : `https://${item.url}`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: '600', textDecoration: 'none' }}>
                                                                         Website ↗
                                                                     </a>
