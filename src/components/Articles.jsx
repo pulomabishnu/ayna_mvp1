@@ -45,15 +45,26 @@ function getRelevantTelehealth(articleId) {
   return Array.from(byId.values());
 }
 
-const DROPDOWN_OPTIONS = [
-  { value: '', label: 'Choose an option…' },
-  { value: 'nurse-line', label: "Nurse line (insurer)" },
-  { value: 'clinics', label: 'Find clinics near you (by zip)' },
-  { value: 'telehealth', label: 'Telehealth options' },
-];
+const dropdownSummaryStyle = {
+  padding: '0.5rem 0',
+  fontSize: '1rem',
+  fontWeight: '600',
+  color: 'var(--color-text-main)',
+  cursor: 'pointer',
+  listStyle: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '0.35rem',
+};
+const dropdownDetailStyle = {
+  paddingLeft: '0.5rem',
+  paddingBottom: '0.75rem',
+  fontSize: '0.95rem',
+  color: 'var(--color-text-main)',
+  lineHeight: 1.6,
+};
 
 function TelehealthSuggestions({ articleId, onOpenProduct }) {
-  const [selected, setSelected] = useState('');
   const platforms = useMemo(() => getRelevantTelehealth(articleId), [articleId]);
 
   return (
@@ -66,75 +77,72 @@ function TelehealthSuggestions({ articleId, onOpenProduct }) {
         border: '1px solid var(--color-border)',
       }}
     >
-      <h3 style={{ fontSize: '1.1rem', marginBottom: '0.5rem', color: 'var(--color-text-main)', fontWeight: '600' }}>
+      <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem', color: 'var(--color-text-main)', fontWeight: '600' }}>
         Can&apos;t reach your doctor?
       </h3>
-      <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1rem', lineHeight: 1.5 }}>
-        Options relevant to this topic — nurse line, in-person care, or telehealth. Pick one below to see details.
-      </p>
 
-      <select
-        value={selected}
-        onChange={(e) => setSelected(e.target.value)}
-        style={{
-          width: '100%',
-          maxWidth: '420px',
-          padding: '0.6rem 0.75rem',
-          fontSize: '0.95rem',
-          borderRadius: 'var(--radius-md)',
-          border: '1px solid var(--color-border)',
-          background: 'var(--color-surface-soft)',
-          color: 'var(--color-text-main)',
-          cursor: 'pointer',
-        }}
-      >
-        {DROPDOWN_OPTIONS.map((opt) => (
-          <option key={opt.value || 'placeholder'} value={opt.value}>
-            {opt.label}
-          </option>
-        ))}
-      </select>
-
-      {selected === 'nurse-line' && (
-        <div style={{ marginTop: '1rem', fontSize: '0.95rem', color: 'var(--color-text-main)', lineHeight: 1.6 }}>
-          <h4 style={{ fontSize: '1rem', marginBottom: '0.5rem', fontWeight: '600' }}>Your insurer&apos;s nurse line</h4>
+      <details style={{ marginBottom: '0.25rem' }}>
+        <summary style={dropdownSummaryStyle}>
+          Nurse line (insurer)
+        </summary>
+        <div style={dropdownDetailStyle}>
           <p style={{ color: 'var(--color-text-muted)', margin: 0 }}>
             Many plans offer a 24/7 nurse line for symptom guidance and when to seek care. Check your insurance card or member portal for the number.
           </p>
         </div>
-      )}
+      </details>
 
-      {selected === 'clinics' && (
-        <div style={{ marginTop: '1rem', fontSize: '0.95rem', color: 'var(--color-text-main)', lineHeight: 1.6 }}>
-          <h4 style={{ fontSize: '1rem', marginBottom: '0.5rem', fontWeight: '600' }}>Find clinics by zip code</h4>
-          <p style={{ color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>
-            Search for low-cost and sliding-scale health centers near you. Planned Parenthood offers both in-person and telehealth.
+      <details style={{ marginBottom: '0.25rem' }}>
+        <summary style={dropdownSummaryStyle}>
+          Planned Parenthood (in-person & telehealth)
+        </summary>
+        <div style={dropdownDetailStyle}>
+          <p style={{ color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>
+            In-person health centers and telehealth for reproductive and sexual health; sliding-scale and low-cost options.
           </p>
           <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
             <li style={{ marginBottom: '0.35rem' }}>
-              <a href="https://www.plannedparenthood.org/health-center" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Planned Parenthood — find a health center (in-person)</a>
+              <a href="https://www.plannedparenthood.org/health-center" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Find a health center (in-person)</a>
             </li>
+            <li>
+              <a href="https://www.plannedparenthood.org/get-care" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Get care (telehealth & in-person)</a>
+            </li>
+          </ul>
+        </div>
+      </details>
+
+      <details style={{ marginBottom: '0.25rem' }}>
+        <summary style={dropdownSummaryStyle}>
+          Find clinics near you (by zip)
+        </summary>
+        <div style={dropdownDetailStyle}>
+          <p style={{ color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>
+            Search for low-cost and sliding-scale health centers by zip code.
+          </p>
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
             <li style={{ marginBottom: '0.35rem' }}>
-              <a href="https://www.plannedparenthood.org/get-care" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Planned Parenthood — get care (telehealth & in-person)</a>
+              <a href="https://www.plannedparenthood.org/health-center" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Planned Parenthood — enter zip to find locations</a>
             </li>
             <li>
               <a href="https://findahealthcenter.hrsa.gov/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>HRSA — Federally qualified health centers by zip</a>
             </li>
           </ul>
         </div>
-      )}
+      </details>
 
-      {selected === 'telehealth' && (
-        <div style={{ marginTop: '1rem', fontSize: '0.95rem', color: 'var(--color-text-main)', lineHeight: 1.6 }}>
-          <h4 style={{ fontSize: '1rem', marginBottom: '0.5rem', fontWeight: '600' }}>Telehealth options</h4>
+      <details style={{ marginBottom: '0.25rem' }}>
+        <summary style={dropdownSummaryStyle}>
+          Telehealth / digital (from Ayna)
+        </summary>
+        <div style={dropdownDetailStyle}>
           <p style={{ color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>
-            Relevant services we list for this topic. Click to open the Ayna product card.
+            Platforms we list that match this topic. {onOpenProduct ? 'Click a name to open the product card.' : ''}
           </p>
-          <p style={{ color: 'var(--color-text-muted)', marginBottom: '0.75rem', fontSize: '0.9rem' }}>
+          <p style={{ color: 'var(--color-text-muted)', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
             <a href="https://www.plannedparenthood.org/get-care" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Planned Parenthood — get care (telehealth & in-person)</a>
           </p>
           {platforms.length === 0 ? (
-            <p style={{ color: 'var(--color-text-muted)', margin: 0 }}>No other telehealth platforms match this topic. See &quot;Find clinics near you&quot; for more options.</p>
+            <p style={{ color: 'var(--color-text-muted)', margin: 0, fontSize: '0.9rem' }}>No other telehealth platforms match this topic. See &quot;Find clinics near you&quot; above for more options.</p>
           ) : (
             <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
               {platforms.map((t) => {
@@ -171,7 +179,7 @@ function TelehealthSuggestions({ articleId, onOpenProduct }) {
             </ul>
           )}
         </div>
-      )}
+      </details>
     </div>
   );
 }
