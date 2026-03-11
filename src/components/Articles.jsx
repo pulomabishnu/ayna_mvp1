@@ -64,7 +64,7 @@ const SUGGESTION_OPTIONS = [
   { value: 'nurse-line', label: 'Nurse line (insurer)' },
   { value: 'pph', label: 'Planned Parenthood (in-person & telehealth)' },
   { value: 'clinics', label: 'Find clinics near you (by zip)' },
-  { value: 'telehealth', label: 'Telehealth / digital (from Ayna)' },
+  { value: 'telehealth', label: 'Telehealth / digital' },
 ];
 
 function TelehealthSuggestions({ articleId }) {
@@ -304,9 +304,50 @@ const ARTICLES = [
   },
 ];
 
-export default function Articles() {
+/** Quiz frustrations → tags used in ARTICLE_FOCUS_TAGS (align with products.js mapping). */
+const FRUSTRATION_TO_TAG = {
+  'Heavy flow': 'heavy-flow',
+  'Painful cramps': 'cramps',
+  'Irregular cycles': 'irregular',
+  'Recurrent UTIs': 'uti',
+  'Menopause symptoms': 'menopause',
+  'General discomfort': 'discomfort',
+  'Pelvic pain': 'pelvic-floor',
+  'Endometriosis': 'endometriosis',
+};
+
+/** Return articles relevant to quiz answers (for recommendations page). */
+export function getRecommendedArticles(quizAnswers) {
+  if (!quizAnswers?.frustrations?.length) {
+    return ARTICLES.slice(0, 3);
+  }
+  const userTags = new Set(
+    (quizAnswers.frustrations || [])
+      .map((f) => FRUSTRATION_TO_TAG[f])
+      .filter(Boolean)
+  );
+  const scored = ARTICLES.map((art) => {
+    const focus = ARTICLE_FOCUS_TAGS[art.id] || [];
+    const score = focus.filter((t) => userTags.has(t)).length;
+    return { article: art, score };
+  });
+  const withScore = scored.filter((s) => s.score > 0).sort((a, b) => b.score - a.score).map((s) => s.article);
+  const rest = scored.filter((s) => s.score === 0).map((s) => s.article);
+  const out = [...withScore, ...rest];
+  return out.slice(0, 5);
+}
+
+export { ARTICLES };
+
+export default function Articles({ initialArticleId }) {
   const [selectedId, setSelectedId] = useState(null);
   const selected = ARTICLES.find((a) => a.id === selectedId);
+
+  React.useEffect(() => {
+    if (initialArticleId && ARTICLES.some((a) => a.id === initialArticleId)) {
+      setSelectedId(initialArticleId);
+    }
+  }, [initialArticleId]);
 
   return (
     <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)', maxWidth: '900px', margin: '0 auto' }}>
