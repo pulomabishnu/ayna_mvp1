@@ -261,7 +261,7 @@ const ARTICLES = [
   {
     id: 'uti-prevention',
     title: 'UTI Prevention',
-    source: 'UpToDate, NIH',
+    source: 'UpToDate, NIH, CDC',
     tags: ['Urinary health', 'Prevention'],
     teaser: 'Evidence-backed ways to reduce UTI risk and when to see a clinician for recurrent infections.',
     body: (
@@ -299,7 +299,7 @@ const ARTICLES = [
   {
     id: 'period-pain-when-to-seek-care',
     title: 'Period Pain: When to Seek Care',
-    source: 'ACOG, UpToDate',
+    source: 'ACOG, UpToDate, Mayo Clinic',
     tags: ['Menstrual health', 'Pain'],
     teaser: 'Normal cramps vs. signs that something else may be going on, and what treatments and workups clinicians may suggest.',
     body: (
@@ -310,6 +310,7 @@ const ARTICLES = [
         <ul style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
           <li><a href="https://www.acog.org/womens-health/faqs/dysmenorrhea-painful-periods" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Dysmenorrhea (painful periods)</a></li>
           <li><a href="https://www.uptodate.com/contents/dysmenorrhea-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – Dysmenorrhea (patient education)</a></li>
+          <li><a href="https://www.mayoclinic.org/diseases-conditions/menstrual-cramps/symptoms-causes/syc-20374938" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Mayo Clinic – Menstrual cramps</a></li>
         </ul>
       </>
     ),
