@@ -21,7 +21,7 @@ function getProductUrl(p) {
   return 'https://' + s.replace(/^www\./i, '');
 }
 
-/** Telehealth platforms from Ayna that match this article's focus (tags or healthFunctions). */
+/** Telehealth platforms from Ayna that match this article's focus (tags or healthFunctions). Returns full product/startup objects for opening in product card. */
 function getRelevantTelehealth(articleId) {
   const focus = ARTICLE_FOCUS_TAGS[articleId] || [];
   const fromProducts = (ALL_PRODUCTS || [])
@@ -30,31 +30,17 @@ function getRelevantTelehealth(articleId) {
       if (focus.length === 0) return true;
       const tags = new Set([...(p.tags || []), ...(p.healthFunctions || [])]);
       return focus.some((t) => tags.has(t));
-    })
-    .map((p) => ({
-      id: p.id,
-      name: p.name,
-      summary: p.summary,
-      price: p.price,
-      url: getProductUrl(p),
-    }));
+    });
   const fromStartups = (RELEASED_STARTUPS || [])
     .filter((s) => s.category === 'telehealth')
     .filter((s) => {
       if (focus.length === 0) return true;
       const tags = new Set([...(s.tags || []), ...(s.healthFunctions || [])]);
       return focus.some((t) => tags.has(t));
-    })
-    .map((s) => ({
-      id: s.id,
-      name: s.name,
-      summary: s.description || s.tagline,
-      price: s.stage,
-      url: s.url || null,
-    }));
+    });
   const byId = new Map();
-  [...fromProducts, ...fromStartups].forEach((t) => {
-    if (!byId.has(t.id)) byId.set(t.id, t);
+  [...fromProducts, ...fromStartups].forEach((item) => {
+    if (!byId.has(item.id)) byId.set(item.id, item);
   });
   return Array.from(byId.values());
 }
@@ -67,7 +53,7 @@ const DROPDOWN_OPTIONS = [
   { value: 'telehealth', label: 'Telehealth options' },
 ];
 
-function TelehealthSuggestions({ articleId }) {
+function TelehealthSuggestions({ articleId, onOpenProduct }) {
   const [selected, setSelected] = useState('');
   const platforms = useMemo(() => getRelevantTelehealth(articleId), [articleId]);
 
@@ -157,25 +143,43 @@ function TelehealthSuggestions({ articleId }) {
         <div style={{ marginTop: '1rem', fontSize: '0.95rem', color: 'var(--color-text-main)', lineHeight: 1.6 }}>
           <h4 style={{ fontSize: '1rem', marginBottom: '0.5rem', fontWeight: '600' }}>Telehealth options</h4>
           <p style={{ color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>
-            Relevant services we list for this topic:
+            Relevant services we list for this topic. Click to open the Ayna product card:
           </p>
           {platforms.length === 0 ? (
             <p style={{ color: 'var(--color-text-muted)', margin: 0 }}>No specific telehealth platforms match this topic. Try Planned Parenthood or Find clinics near you for general care.</p>
           ) : (
             <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-              {platforms.map((t) => (
-                <li key={t.id} style={{ marginBottom: '0.6rem' }}>
-                  {t.url ? (
-                    <a href={t.url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>
-                      {t.name}
-                    </a>
-                  ) : (
-                    <strong>{t.name}</strong>
-                  )}
-                  {t.price && <span style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}> — {t.price}</span>}
-                  {t.summary && <span style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', display: 'block', marginTop: '0.15rem' }}>{t.summary}</span>}
-                </li>
-              ))}
+              {platforms.map((t) => {
+                const displayPrice = t.price || t.stage;
+                const displaySummary = t.summary || t.description || t.tagline;
+                return (
+                  <li key={t.id} style={{ marginBottom: '0.6rem' }}>
+                    {onOpenProduct ? (
+                      <button
+                        type="button"
+                        onClick={() => onOpenProduct(t)}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          padding: 0,
+                          cursor: 'pointer',
+                          color: 'var(--color-primary)',
+                          fontWeight: 600,
+                          fontSize: 'inherit',
+                          textAlign: 'left',
+                          textDecoration: 'underline',
+                        }}
+                      >
+                        {t.name}
+                      </button>
+                    ) : (
+                      <strong>{t.name}</strong>
+                    )}
+                    {displayPrice && <span style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}> — {displayPrice}</span>}
+                    {displaySummary && <span style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', display: 'block', marginTop: '0.15rem' }}>{displaySummary}</span>}
+                  </li>
+                );
+              })}
             </ul>
           )}
         </div>
@@ -341,7 +345,7 @@ export function getRecommendedArticles(quizAnswers) {
 
 export { ARTICLES };
 
-export default function Articles({ initialArticleId }) {
+export default function Articles({ initialArticleId, onOpenProduct }) {
   const [selectedId, setSelectedId] = useState(null);
   const selected = ARTICLES.find((a) => a.id === selectedId);
 
@@ -406,7 +410,7 @@ export default function Articles({ initialArticleId }) {
           </div>
           <Disclaimer compact style={{ marginTop: '1.5rem' }} />
 
-          <TelehealthSuggestions articleId={selected.id} />
+          <TelehealthSuggestions articleId={selected.id} onOpenProduct={onOpenProduct} />
         </article>
       ) : (
         <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>

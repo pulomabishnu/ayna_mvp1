@@ -38,6 +38,7 @@ function App() {
   const [discoverySearch, setDiscoverySearch] = useState('');
   const [userZipCode, setUserZipCode] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
+  const [selectedArticleId, setSelectedArticleId] = useState(null);
   const scrollY = useScrollPosition();
 
   React.useEffect(() => {
@@ -61,7 +62,14 @@ function App() {
     setCurrentView('discovery');
   };
   const handleViewDeeptech = () => setCurrentView('deeptech');
-  const handleViewArticles = () => setCurrentView('articles');
+  const handleViewArticles = () => {
+    setSelectedArticleId(null);
+    setCurrentView('articles');
+  };
+  const handleViewArticle = (articleId) => {
+    setSelectedArticleId(articleId);
+    setCurrentView('articles');
+  };
   const handleViewCycleTracker = () => setCurrentView('cycle-tracker');
   const handleViewMenopauseTracker = () => setCurrentView('menopause-tracker');
   const handleViewScreenings = () => setCurrentView('screenings');
@@ -341,7 +349,7 @@ function App() {
           />
         )}
         {currentView === 'articles' && (
-          <Articles />
+          <Articles initialArticleId={selectedArticleId} onOpenProduct={handleOpenProduct} />
         )}
         {currentView === 'ecosystem' && (
           <MyEcosystem

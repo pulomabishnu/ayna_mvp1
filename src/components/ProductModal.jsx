@@ -463,7 +463,7 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                             <strong>No longer sold.</strong> This brand is out of business. We keep this page so you can still view safety and care information if you have the product.
                         </div>
                     )}
-                    <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem', lineHeight: '1.6', maxWidth: '600px' }}>{product.summary}</p>
+                    <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem', lineHeight: '1.6', maxWidth: '600px' }}>{product.summary || product.description || product.tagline}</p>
 
                     <div style={{ marginTop: '2rem', display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center' }}>
                         <button
@@ -492,7 +492,7 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                                 {isInEcosystem ? '✓ In My Ecosystem' : '+ Add to My Ecosystem'}
                             </button>
                         )}
-                        {product.price && <span style={{ fontSize: '1.1rem', fontWeight: '600', color: 'var(--color-text-main)' }}>{product.price}</span>}
+                        {(product.price || product.stage) && <span style={{ fontSize: '1.1rem', fontWeight: '600', color: 'var(--color-text-main)' }}>{product.price || product.stage}</span>}
                     </div>
 
                     {/* Where to buy + product website — visible under the action buttons */}
