@@ -8,7 +8,7 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
     const [searchValue, setSearchValue] = useState('');
 
     const handleSearch = (e) => {
-        if (e && e.preventDefault) e.preventDefault();
+        if (e && typeof e.preventDefault === 'function') e.preventDefault();
         const q = (searchValue || '').trim();
         if (typeof onViewDiscovery === 'function') onViewDiscovery(q);
     };
@@ -58,7 +58,7 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
                     position: 'relative'
                 }}>
                     <form
-                        onSubmit={(e) => handleSearch(e)}
+                        onSubmit={(e) => { e.preventDefault(); handleSearch(e); }}
                         style={{
                             background: 'white',
                             border: '1px solid var(--color-border)',
@@ -96,7 +96,7 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
                                 alignItems: 'center',
                                 gap: '0.5rem'
                             }}
-                            onClick={() => handleSearch()}
+                            onClick={(e) => { e.preventDefault(); handleSearch(e); }}
                         >
                             <span>Search</span>
                             <span>→</span>
