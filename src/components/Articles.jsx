@@ -95,7 +95,7 @@ export default function Articles() {
       <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
         <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Health Articles Library</h1>
         <p style={{ fontSize: '1.2rem', color: 'var(--color-text-muted)' }}>
-          We use ACOG (including <a href="https://www.acog.org/wellwomanchart" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>well-woman care at every life stage</a>) and UpToDate when available as our baseline; articles also draw on CDC, NAMS, and similar clinician resources. <strong>Every article and claim on this site is backed by at least 3 reputable sources.</strong> Click a headline to read the full article. Always discuss your care with your own clinician.
+          We use ACOG (including <a href="https://www.acog.org/wellwomanchart" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>well-woman care at every life stage</a>) and UpToDate when available as our baseline; articles also draw on CDC, NAMS, and similar clinician resources. Click a headline to read the full article. Always discuss your care with your own clinician.
         </p>
         <Disclaimer compact showSources style={{ marginTop: '1.5rem', textAlign: 'left', maxWidth: '700px', marginLeft: 'auto', marginRight: 'auto' }} />
       </div>

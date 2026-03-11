@@ -227,7 +227,7 @@ export default function Screenings({ checkinData, onNavigate }) {
 
             <div style={{ marginTop: '4rem', textAlign: 'center', padding: '2rem', background: '#F4F5F7', borderRadius: 'var(--radius-lg)' }}>
                 <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', maxWidth: '600px', margin: '0 auto' }}>
-                    <strong>Disclaimer:</strong> Ayna does not provide medical diagnosis. Every recommendation on this site is backed by at least 3 reputable sources (ACOG, CDC, USPSTF, UpToDate, or similar). Please consult a healthcare professional for all medical concerns.
+                    <strong>Disclaimer:</strong> Ayna does not provide medical diagnosis. Please consult a healthcare professional for all medical concerns.
                 </p>
             </div>
         </section>

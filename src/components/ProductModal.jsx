@@ -644,7 +644,7 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                         <div className="animate-fade-in">
                             <h3 style={{ fontSize: '1.1rem', marginBottom: '1.5rem' }}>Scientific Literature & Clinical Evidence</h3>
                             <p style={{ color: 'var(--color-text-muted)', marginBottom: '1.5rem' }}>
-                                We prioritize products backed by peer-reviewed studies and clinical trials. Verification links point to official repositories like PubMed or clinical journals. Every claim on this site is backed by a minimum of 3 reputable sources where available.
+                                We prioritize products backed by peer-reviewed studies and clinical trials. Verification links point to official repositories like PubMed or clinical journals.
                             </p>
                             <div style={{ background: 'var(--color-surface)', padding: '1rem', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem' }}>
                                 <h4 style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Effectiveness Summary</h4>
