@@ -59,8 +59,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
     const combined = useMemo(() => {
         const products = ALL_PRODUCTS.map(p => ({ ...p, isStartup: false }));
-        // Released startups appear as normal products (no startup badge); unreleased are only on Startups page
-        const releasedAsProducts = RELEASED_STARTUPS.map(s => ({
+        // Released startups appear as normal products; exclude brands whose products are listed separately (e.g. Cora)
+        const startupsWithSeparateProducts = new Set(['s-cora']);
+        const releasedAsProducts = RELEASED_STARTUPS
+            .filter(s => !startupsWithSeparateProducts.has(s.id))
+            .map(s => ({
             ...s,
             isStartup: false,
             type: 'digital',
