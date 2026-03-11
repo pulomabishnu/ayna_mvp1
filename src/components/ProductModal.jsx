@@ -458,6 +458,11 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                     </div>
 
                     <h2 style={{ fontSize: '2rem', marginBottom: '0.75rem', color: 'var(--color-text-main)', letterSpacing: '-0.02em' }}>{product.name}</h2>
+                    {product.outOfBusiness && (
+                        <div style={{ marginBottom: '1rem', padding: '0.75rem 1rem', background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', fontSize: '0.9rem', color: 'var(--color-text-main)' }}>
+                            <strong>No longer sold.</strong> This brand is out of business. We keep this page so you can still view safety and care information if you have the product.
+                        </div>
+                    )}
                     <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem', lineHeight: '1.6', maxWidth: '600px' }}>{product.summary}</p>
 
                     <div style={{ marginTop: '2rem', display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center' }}>
@@ -497,6 +502,8 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                         </p>
                         {isPrescriptionOnly ? (
                             renderPrescriptionWorkflow(true)
+                        ) : product.outOfBusiness ? (
+                            <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>This product is no longer available for purchase. If you already have it, you can continue to use it and reference the safety info above.</p>
                         ) : (
                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', alignItems: 'center' }}>
                                 {product.url && (() => {
@@ -688,6 +695,8 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                                     {renderPrescriptionWorkflow()}
                                     <Disclaimer compact style={{ marginTop: '1.5rem' }} />
                                 </>
+                            ) : product.outOfBusiness ? (
+                                <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', lineHeight: 1.6 }}>This brand is out of business and the product is no longer sold. We keep this listing so you can still view safety and care information if you have the product.</p>
                             ) : (
                                 <>
                             {userZipCode && (
