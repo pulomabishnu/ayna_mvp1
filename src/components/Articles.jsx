@@ -410,11 +410,34 @@ export function getRecommendedArticles(quizAnswers) {
   return out.slice(0, 5);
 }
 
+/** All articles sorted by relevance to health profile (for Articles page filter). */
+function getArticlesByProfileRelevance(quizAnswers) {
+  if (!quizAnswers?.frustrations?.length) return [];
+  const userTags = new Set(
+    (quizAnswers.frustrations || [])
+      .map((f) => FRUSTRATION_TO_TAG[f])
+      .filter(Boolean)
+  );
+  const scored = ARTICLES.map((art) => {
+    const focus = ARTICLE_FOCUS_TAGS[art.id] || [];
+    const score = focus.filter((t) => userTags.has(t)).length;
+    return { article: art, score };
+  });
+  const withScore = scored.filter((s) => s.score > 0).sort((a, b) => b.score - a.score).map((s) => s.article);
+  const rest = scored.filter((s) => s.score === 0).map((s) => s.article);
+  return [...withScore, ...rest];
+}
+
 export { ARTICLES };
 
-export default function Articles({ initialArticleId, onOpenProduct }) {
+export default function Articles({ initialArticleId, onOpenProduct, quizResults }) {
   const [selectedId, setSelectedId] = useState(null);
+  const [filter, setFilter] = useState('all');
   const selected = ARTICLES.find((a) => a.id === selectedId);
+
+  const recommendedArticles = useMemo(() => getArticlesByProfileRelevance(quizResults || {}), [quizResults]);
+  const hasProfile = !!(quizResults?.frustrations?.length);
+  const articlesToShow = filter === 'recommended' ? (hasProfile ? recommendedArticles : []) : ARTICLES;
 
   React.useEffect(() => {
     if (initialArticleId && ARTICLES.some((a) => a.id === initialArticleId)) {
@@ -434,6 +457,56 @@ export default function Articles({ initialArticleId, onOpenProduct }) {
         </p>
         <Disclaimer compact style={{ marginTop: '1.5rem', textAlign: 'left', maxWidth: '700px', marginLeft: 'auto', marginRight: 'auto' }} />
       </div>
+
+      <div style={{ marginBottom: '1.25rem', display: 'flex', flexWrap: 'wrap', gap: '0.5rem', justifyContent: 'center', alignItems: 'center' }}>
+        <span style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginRight: '0.25rem' }}>Show:</span>
+        <button
+          type="button"
+          onClick={() => setFilter('all')}
+          style={{
+            padding: '0.4rem 0.85rem',
+            fontSize: '0.9rem',
+            fontWeight: '500',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--color-border)',
+            background: filter === 'all' ? 'var(--color-primary)' : 'var(--color-surface-soft)',
+            color: filter === 'all' ? 'var(--color-bg)' : 'var(--color-text-main)',
+            cursor: 'pointer',
+          }}
+        >
+          All articles
+        </button>
+        <button
+          type="button"
+          onClick={() => hasProfile && setFilter('recommended')}
+          disabled={!hasProfile}
+          title={!hasProfile ? 'Complete the quiz to see articles recommended for your health profile' : ''}
+          style={{
+            padding: '0.4rem 0.85rem',
+            fontSize: '0.9rem',
+            fontWeight: '500',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--color-border)',
+            background: filter === 'recommended' ? 'var(--color-primary)' : 'var(--color-surface-soft)',
+            color: filter === 'recommended' ? 'var(--color-bg)' : (hasProfile ? 'var(--color-text-main)' : 'var(--color-text-muted)'),
+            cursor: hasProfile ? 'pointer' : 'not-allowed',
+            opacity: hasProfile ? 1 : 0.7,
+          }}
+        >
+          Recommended for you
+        </button>
+        {filter === 'recommended' && hasProfile && (
+          <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
+            {recommendedArticles.length} {recommendedArticles.length === 1 ? 'article' : 'articles'} match your profile
+          </span>
+        )}
+      </div>
+
+      {filter === 'recommended' && !hasProfile && (
+        <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', marginBottom: '1.5rem', fontSize: '0.95rem' }}>
+          Complete your health profile in the quiz to see articles recommended for your concerns and goals.
+        </p>
+      )}
 
       {selected ? (
         <article
@@ -484,7 +557,7 @@ export default function Articles({ initialArticleId, onOpenProduct }) {
         </article>
       ) : (
         <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-          {ARTICLES.map((art) => (
+          {articlesToShow.map((art) => (
             <li key={art.id}>
               <button
                 type="button"

@@ -354,7 +354,7 @@ function App() {
           />
         )}
         {currentView === 'articles' && (
-          <Articles initialArticleId={selectedArticleId} onOpenProduct={handleOpenProduct} />
+          <Articles initialArticleId={selectedArticleId} onOpenProduct={handleOpenProduct} quizResults={quizResults} />
         )}
         {currentView === 'ecosystem' && (
           <MyEcosystem
