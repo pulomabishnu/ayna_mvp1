@@ -8,7 +8,7 @@ import { FILLER_PHYSICAL, FILLER_DIGITAL } from './categoryFillers.js';
 import { MVP_PHYSICAL, MVP_DIGITAL } from './mvpProducts.js';
 
 // Tags used for quiz → product matching
-// frustrations: heavy-flow, cramps, irregular, leaks, discomfort, safety-concern, uti, pcos, pelvic-floor
+// frustrations: heavy-flow, cramps, bloating, irregular, leaks, discomfort, safety-concern, uti, pcos, pelvic-floor
 // preferences: organic, cost, comfort, privacy, sustainability
 // type: physical, digital
 // category: pad, tampon, cup, disc, period-underwear, supplement, telehealth, tracker, mental-health, fitness, pelvic-floor, cramp-relief, menopause, intimate-care
@@ -392,7 +392,7 @@ export const PHYSICAL_PRODUCTS = [
         type: 'physical',
         internal: false,
         healthFunctions: ['cramp-relief', 'supplement'],
-        tags: ['cramps', 'endometriosis', 'discomfort', 'cost'],
+        tags: ['cramps', 'endometriosis', 'discomfort', 'bloating', 'cost'],
         price: '$15 for 60 capsules',
         userRating: 4.5,
         whereToBuy: ['CVS', 'Target', 'Walmart', 'Amazon'],
@@ -739,6 +739,7 @@ export function getRecommendations(quizAnswers) {
     const FRUSTRATION_MAP = {
         'Heavy flow': 'heavy-flow',
         'Painful cramps': 'cramps',
+        'Hormonal bloating': 'bloating',
         'Irregular cycles': 'irregular',
         'Leaks & staining': 'leaks',
         'General discomfort': 'discomfort',
@@ -806,7 +807,7 @@ export function getRecommendations(quizAnswers) {
 }
 
 const TAG_TO_READABLE = {
-    'heavy-flow': 'heavy flow', 'cramps': 'cramps', 'irregular': 'irregular cycles', 'leaks': 'leaks',
+    'heavy-flow': 'heavy flow', 'cramps': 'cramps', 'bloating': 'hormonal bloating', 'irregular': 'irregular cycles', 'leaks': 'leaks',
     'discomfort': 'discomfort', 'safety-concern': 'safety', 'uti': 'UTI care', 'pcos': 'PCOS',
     'pelvic-floor': 'pelvic floor', 'menopause': 'menopause', 'fertility': 'fertility', 'endometriosis': 'endometriosis',
     'organic': 'organic/natural', 'cost': 'lower cost', 'comfort': 'comfort', 'privacy': 'privacy', 'sustainability': 'sustainability', 'contraception': 'contraception'
@@ -819,7 +820,7 @@ export function getRecommendationExplanation(product, quizAnswers) {
     if (!quizAnswers) return { whyItWorks: null, considerations: null };
 
     const FRUSTRATION_MAP = {
-        'Heavy flow': 'heavy-flow', 'Painful cramps': 'cramps', 'Irregular cycles': 'irregular',
+        'Heavy flow': 'heavy-flow', 'Painful cramps': 'cramps', 'Hormonal bloating': 'bloating', 'Irregular cycles': 'irregular',
         'Leaks & staining': 'leaks', 'General discomfort': 'discomfort', 'Not sure if products are safe': 'safety-concern',
         'Recurrent UTIs': 'uti', 'PCOS symptoms': 'pcos', 'Pelvic pain': 'pelvic-floor',
         'Menopause symptoms': 'menopause', 'Endometriosis': 'endometriosis', 'Fertility / TTC': 'fertility'
@@ -866,6 +867,7 @@ const FOCUS_TO_TAG_AND_REASON = {
     'Different period product': { tag: 'heavy-flow', reason: 'Suggested period product swap from your check-in.' },
     'Different supplement': { tag: 'discomfort', reason: 'Suggested supplement option from your check-in.' },
     'Different app': { tag: 'privacy', reason: 'Suggested app or tracker from your check-in.' },
+    'More bloating': { tag: 'bloating', reason: 'Recommended for hormonal bloating from your check-in.' },
 };
 
 /**
@@ -879,7 +881,7 @@ export function getCheckinRecommendations(profile, checkinData, cycleData = [], 
 
     if (profile?.frustrations) {
         const FRUSTRATION_MAP = {
-            'Heavy flow': 'heavy-flow', 'Painful cramps': 'cramps', 'Irregular cycles': 'irregular',
+            'Heavy flow': 'heavy-flow', 'Painful cramps': 'cramps', 'Hormonal bloating': 'bloating', 'Irregular cycles': 'irregular',
             'Leaks & staining': 'leaks', 'General discomfort': 'discomfort', 'Not sure if products are safe': 'safety-concern',
             'Recurrent UTIs': 'uti', 'PCOS symptoms': 'pcos', 'Pelvic pain': 'pelvic-floor',
             'Menopause symptoms': 'menopause', 'Endometriosis': 'cramps', 'Fertility / TTC': 'fertility'
@@ -971,6 +973,11 @@ export const SIMILAR_PROFILES = {
         label: 'Users with Period Pain',
         topProducts: ['p-magnesium-glycinate', 'p-honeypot-pad', 'p-thermacare'],
         quote: "The combination of magnesium glycinate and herbal heat therapy completely changed my day 1 experience."
+    },
+    'bloating': {
+        label: 'Users with Hormonal Bloating',
+        topProducts: ['p-pink-stork-bloat', 'p-flo-gummies', 'p-hum-flatter-me', 'p-evening-primrose', 'p-magnesium-glycinate'],
+        quote: "Flo gummies and digestive enzymes made a real difference for my cycle-related bloating."
     },
     'uti': {
         label: 'Users with Recurrent UTIs',

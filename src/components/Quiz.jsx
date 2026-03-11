@@ -17,6 +17,7 @@ const REST_STEPS = [
     options: [
       'Heavy flow',
       'Painful cramps',
+      'Hormonal bloating',
       'Irregular cycles',
       'Leaks & staining',
       'General discomfort',
@@ -79,6 +80,19 @@ const REST_STEPS = [
     ]
   },
   {
+    id: 'productsToAvoid',
+    question: "Any products or ingredients you already know you don't want to use?",
+    subtitle: "We'll exclude these from your recommendations (e.g. essential oils, certain brands).",
+    type: 'multi',
+    options: [
+      'Essential oils',
+      'Fragrance / scented products',
+      'Latex',
+      'Synthetic materials',
+      'None / I\'m open to suggestions',
+    ]
+  },
+  {
     id: 'budget',
     question: "Roughly, what's your monthly budget for health & wellness products?",
     type: 'single',
@@ -134,6 +148,7 @@ const VOICE_GUIDING_QUESTIONS = [
   "Are you comfortable with internal products like tampons or cups?",
   "What do you use today? (pads, tampons, cup, apps like Clue or Flo)",
   "Any sensitivities or allergies? (fragrance, latex, etc.)",
+  "Any products or ingredients you already know you don't want to use? (e.g. essential oils, bad experience with a certain ingredient)",
   "If you're 50 or under: are you using or interested in birth control? What type?"
 ];
 
@@ -145,6 +160,7 @@ function parseTranscriptToProfile(transcript) {
     frustrations: [],
     preference: null,
     sensitivities: [],
+    productsToAvoid: [],
     internalComfort: null,
     currentUse: [],
     budget: null,
@@ -158,6 +174,7 @@ function parseTranscriptToProfile(transcript) {
   const frustrationPhrases = [
     { keys: ['heavy', 'heavy flow', 'heavy period', 'really heavy', 'bleeding a lot', 'heavy bleeding'], value: 'Heavy flow' },
     { keys: ['cramp', 'cramping', 'pain', 'painful period', 'bad cramps', 'really painful', 'hurt'], value: 'Painful cramps' },
+    { keys: ['bloat', 'bloating', 'hormonal bloating', 'water retention', 'puffy', 'swollen belly', 'period bloat'], value: 'Hormonal bloating' },
     { keys: ['irregular', 'irregular cycle', 'irregular period', 'unpredictable', 'cycle is off', 'not regular'], value: 'Irregular cycles' },
     { keys: ['leak', 'stain', 'leaks', 'leaking', 'accidents', 'bleed through'], value: 'Leaks & staining' },
     { keys: ['discomfort', 'uncomfortable', 'uncomfort'], value: 'General discomfort' },
@@ -186,6 +203,15 @@ function parseTranscriptToProfile(transcript) {
   if (text.includes('synthetic') || text.includes('plastic') || text.includes('chemicals')) add(out.sensitivities, 'Synthetic materials');
   if (text.includes('allerg') || text.includes('allergic')) add(out.sensitivities, 'Other allergies');
   if (text.includes('none') && (text.includes('sensitivit') || text.includes('allerg'))) add(out.sensitivities, 'None that I know of');
+
+  // Products/ingredients to avoid (don't want to use, bad experience, etc.)
+  if (text.includes('essential oil') || text.includes('essential oils') || (text.includes('bad experience') && (text.includes('oil') || text.includes('mint') || text.includes('lavender') || text.includes('herbal')))) add(out.productsToAvoid, 'Essential oils');
+  if (text.includes('don\'t want') || text.includes('dont want') || text.includes('won\'t use') || text.includes('wont use') || text.includes('avoid') || text.includes('don\'t use') || text.includes('dont use')) {
+    if (text.includes('fragrance') || text.includes('scent')) add(out.productsToAvoid, 'Fragrance / scented products');
+    if (text.includes('latex')) add(out.productsToAvoid, 'Latex');
+    if (text.includes('synthetic')) add(out.productsToAvoid, 'Synthetic materials');
+  }
+  if (text.includes('none') && (text.includes('don\'t want') || text.includes('open to'))) add(out.productsToAvoid, 'None / I\'m open to suggestions');
 
   // Internal comfort
   if (text.includes('tampon') || text.includes('cup') || text.includes('disc') || text.includes('internal')) {
@@ -520,6 +546,7 @@ export default function Quiz({ onComplete }) {
                 {profile.internalComfort && <p style={{ marginBottom: '0.5rem' }}><strong>Internal products:</strong> {profile.internalComfort}</p>}
                 {profile.currentUse?.length > 0 && <p style={{ marginBottom: '0.5rem' }}><strong>Currently use:</strong> {profile.currentUse.join(', ')}</p>}
                 {profile.sensitivities?.length > 0 && <p style={{ marginBottom: '0.5rem' }}><strong>Sensitivities:</strong> {profile.sensitivities.join(', ')}</p>}
+                {profile.productsToAvoid?.length > 0 && <p style={{ marginBottom: '0.5rem' }}><strong>Prefer to avoid:</strong> {profile.productsToAvoid.join(', ')}</p>}
                 {profile.budget && <p style={{ marginBottom: '0.5rem' }}><strong>Budget:</strong> {profile.budget}</p>}
                 {(!profile.frustrations?.length && !profile.preference && !profile.age && !profile.internalComfort && !profile.currentUse?.length) && (
                   <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>Add or edit text in the transcript so we can build your profile. Mention age, concerns, what you use, and preferences.</p>

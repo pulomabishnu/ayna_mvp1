@@ -8,14 +8,16 @@ function parseMessageIntoProfile(message, currentProfile) {
     ...currentProfile,
     frustrations: Array.isArray(currentProfile.frustrations) ? [...currentProfile.frustrations] : [],
     sensitivities: Array.isArray(currentProfile.sensitivities) ? [...currentProfile.sensitivities] : [],
+    productsToAvoid: Array.isArray(currentProfile.productsToAvoid) ? [...currentProfile.productsToAvoid] : [],
   };
 
-  const added = { frustrations: [], sensitivities: [], preference: null };
+  const added = { frustrations: [], sensitivities: [], productsToAvoid: [], preference: null };
 
   // Frustrations / concerns
   const frustrationPhrases = [
     { keys: ['heavy', 'heavy flow', 'heavy period'], value: 'Heavy flow' },
     { keys: ['cramp', 'pain', 'painful period'], value: 'Painful cramps' },
+    { keys: ['bloat', 'bloating', 'hormonal bloating', 'water retention', 'puffy'], value: 'Hormonal bloating' },
     { keys: ['irregular', 'cycle', 'period irregular'], value: 'Irregular cycles' },
     { keys: ['leak', 'stain', 'leaks'], value: 'Leaks & staining' },
     { keys: ['discomfort', 'uncomfortable'], value: 'General discomfort' },
@@ -48,6 +50,24 @@ function parseMessageIntoProfile(message, currentProfile) {
     }
   });
 
+  // Products/ingredients to avoid (e.g. "bad experience with essential oils", "don't want to use X")
+  const avoidPhrases = [
+    { keys: ['essential oil', 'essential oils', 'lavender oil', 'peppermint', 'mint oil', 'herbal-infused', 'bad experience with oil', 'bad experience with mint', 'bad experience with lavender'], value: 'Essential oils' },
+    { keys: ['don\'t want fragrance', 'dont want fragrance', 'avoid fragrance', 'don\'t want scented', 'bad experience with fragrance'], value: 'Fragrance / scented products' },
+    { keys: ['don\'t want latex', 'avoid latex', 'bad experience with latex'], value: 'Latex' },
+    { keys: ['don\'t want synthetic', 'avoid synthetic'], value: 'Synthetic materials' },
+  ];
+  avoidPhrases.forEach(({ keys, value }) => {
+    if (keys.some(k => text.includes(k)) && !profile.productsToAvoid.includes(value)) {
+      profile.productsToAvoid.push(value);
+      added.productsToAvoid.push(value);
+    }
+  });
+  if ((text.includes('bad experience') || text.includes('don\'t want') || text.includes('dont want') || text.includes('won\'t use') || text.includes('wont use')) && (text.includes('essential') || text.includes('oil') || text.includes('mint') || text.includes('lavender')) && !profile.productsToAvoid.includes('Essential oils')) {
+    profile.productsToAvoid.push('Essential oils');
+    added.productsToAvoid.push('Essential oils');
+  }
+
   // Preference
   if (text.includes('organic') || text.includes('clean ingredient') || text.includes('natural')) {
     profile.preference = 'Organic/Natural only';
@@ -66,7 +86,7 @@ function parseMessageIntoProfile(message, currentProfile) {
     added.preference = profile.preference;
   }
 
-  const hasChanges = added.frustrations.length > 0 || added.sensitivities.length > 0 || added.preference;
+  const hasChanges = added.frustrations.length > 0 || added.sensitivities.length > 0 || added.productsToAvoid.length > 0 || added.preference;
   return hasChanges ? { profile, added } : null;
 }
 
@@ -102,6 +122,7 @@ export default function ProfileChatbot({ profile, onProfileUpdate, chatHistory =
       const parts = [];
       if (result.added.frustrations.length) parts.push(`Added concerns: ${result.added.frustrations.join(', ')}.`);
       if (result.added.sensitivities.length) parts.push(`Added sensitivities: ${result.added.sensitivities.join(', ')}.`);
+      if (result.added.productsToAvoid.length) parts.push(`We'll avoid recommending: ${result.added.productsToAvoid.join(', ')}.`);
       if (result.added.preference) parts.push(`Updated priority: ${result.added.preference}.`);
       assistantText = `Got it. ${parts.join(' ')} Your profile and recommendations have been updated.`;
     } else {
