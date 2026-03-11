@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo, useEffect } from 'react';
 
 const AGE_OPTIONS = ['Under 25', '25-34', '35-44', '45-50', '51-55', '56+'];
 const AGE_50_OR_BELOW = new Set(['Under 25', '25-34', '35-44', '45-50']);
@@ -139,7 +139,8 @@ const VOICE_GUIDING_QUESTIONS = [
 
 // Parse voice transcript into quiz-answer shape (frustrations, preference, sensitivities, age, contraception, etc.)
 function parseTranscriptToProfile(transcript) {
-  const text = (transcript || '').toLowerCase().trim();
+  const raw = (transcript || '').trim();
+  const text = raw.toLowerCase();
   const out = {
     frustrations: [],
     preference: null,
@@ -151,69 +152,99 @@ function parseTranscriptToProfile(transcript) {
     contraceptionUse: null,
     contraceptionPreference: []
   };
+  const add = (arr, item) => { if (item && !arr.includes(item)) arr.push(item); };
+
+  // Frustrations — broad phrase coverage so profile reflects what was said
   const frustrationPhrases = [
-    { keys: ['heavy', 'heavy flow', 'heavy period'], value: 'Heavy flow' },
-    { keys: ['cramp', 'pain', 'painful period'], value: 'Painful cramps' },
-    { keys: ['irregular', 'cycle', 'period irregular'], value: 'Irregular cycles' },
-    { keys: ['leak', 'stain', 'leaks'], value: 'Leaks & staining' },
-    { keys: ['discomfort', 'uncomfortable'], value: 'General discomfort' },
-    { keys: ['safe', 'safety', 'product safe'], value: 'Not sure if products are safe' },
-    { keys: ['uti', 'urinary', 'bladder infection'], value: 'Recurrent UTIs' },
+    { keys: ['heavy', 'heavy flow', 'heavy period', 'really heavy', 'bleeding a lot', 'heavy bleeding'], value: 'Heavy flow' },
+    { keys: ['cramp', 'cramping', 'pain', 'painful period', 'bad cramps', 'really painful', 'hurt'], value: 'Painful cramps' },
+    { keys: ['irregular', 'irregular cycle', 'irregular period', 'unpredictable', 'cycle is off', 'not regular'], value: 'Irregular cycles' },
+    { keys: ['leak', 'stain', 'leaks', 'leaking', 'accidents', 'bleed through'], value: 'Leaks & staining' },
+    { keys: ['discomfort', 'uncomfortable', 'uncomfort'], value: 'General discomfort' },
+    { keys: ['safe', 'safety', 'product safe', 'are products safe', 'worried about', 'concerned about safety'], value: 'Not sure if products are safe' },
+    { keys: ['uti', 'utis', 'urinary', 'bladder infection', 'bladder'], value: 'Recurrent UTIs' },
     { keys: ['pcos'], value: 'PCOS symptoms' },
     { keys: ['pelvic', 'pelvic pain'], value: 'Pelvic pain' },
-    { keys: ['menopause', 'menopausal', 'hot flash'], value: 'Menopause symptoms' },
+    { keys: ['menopause', 'menopausal', 'perimenopause', 'hot flash', 'hot flashes', 'night sweat', 'dryness'], value: 'Menopause symptoms' },
     { keys: ['endometriosis', 'endo'], value: 'Endometriosis' },
-    { keys: ['fertility', 'ttc', 'trying to conceive'], value: 'Fertility / TTC' }
+    { keys: ['fertility', 'ttc', 'trying to conceive', 'trying to get pregnant', 'conceiving'], value: 'Fertility / TTC' }
   ];
-  frustrationPhrases.forEach(({ keys, value }) => {
-    if (keys.some(k => text.includes(k)) && !out.frustrations.includes(value)) out.frustrations.push(value);
+  frustrationPhrases.forEach(({ keys = [], value }) => {
+    if (value && keys.some(k => text.includes(k)) && !out.frustrations.includes(value)) out.frustrations.push(value);
   });
-  if (text.includes('organic') || text.includes('natural') || text.includes('clean')) out.preference = 'Organic/Natural only';
-  else if (text.includes('cost') || text.includes('cheap') || text.includes('budget')) out.preference = 'Lower cost';
-  else if (text.includes('comfort') || text.includes('convenience')) out.preference = 'Comfort/Convenience';
-  else if (text.includes('privacy') || text.includes('data')) out.preference = 'Privacy & data security';
-  else if (text.includes('sustainab') || text.includes('eco') || text.includes('zero waste')) out.preference = 'Sustainability/Zero-waste';
-  if (text.includes('fragrance') || text.includes('scent')) out.sensitivities.push('Fragrance sensitivity');
-  if (text.includes('latex')) out.sensitivities.push('Latex allergy');
-  if (text.includes('synthetic') || text.includes('plastic')) out.sensitivities.push('Synthetic materials');
-  if (text.includes('tampon') && (text.includes('comfortable') || text.includes('yes') || text.includes('ok'))) out.internalComfort = 'Yes';
-  if (text.includes('tampon') && (text.includes('not') || text.includes('no ') || text.includes("don't"))) out.internalComfort = 'No';
-  if (text.includes('open to try') || text.includes('trying')) out.internalComfort = 'Open to trying';
-  if (text.includes('pad')) out.currentUse.push('Pads');
-  if (text.includes('tampon')) out.currentUse.push('Tampons');
-  if (text.includes('cup') || text.includes('menstrual cup')) out.currentUse.push('Menstrual cup');
-  if (text.includes('disc')) out.currentUse.push('Menstrual disc');
-  if (text.includes('period underwear') || text.includes('thinx')) out.currentUse.push('Period underwear');
-  if (text.includes('clue') || text.includes('flo') || text.includes('stardust')) out.currentUse.push('Flo / Clue / Stardust');
-  if (text.includes('apple health') || text.includes('garmin') || text.includes('fitbit')) out.currentUse.push('Apple Health / Garmin / Fitbit');
-  if (text.match(/\bunder\s*25\b/) || text.match(/\b(19|20|21|22|23|24)\s*(years?|y\.?o\.?)/)) out.age = 'Under 25';
-  else if (text.match(/\b(25|26|27|28|29|30|31|32|33|34)\s*(years?|y\.?o\.?)/) || (text.includes('25') && text.includes('34'))) out.age = '25-34';
-  else if (text.match(/\b(35|36|37|38|39|40|41|42|43|44)\s*(years?|y\.?o\.?)/) || text.includes('35') || text.includes('40')) out.age = '35-44';
-  else if (text.match(/\b(45|46|47|48|49|50)\s*(years?|y\.?o\.?)/) || text.includes('45') || text.includes('50')) out.age = '45-50';
-  else if (text.match(/\b(51|52|53|54|55)\s*(years?|y\.?o\.?)/)) out.age = '51-55';
-  else if (text.match(/\b(56|57|58|59|60|61|62|63|64|65)\s*(years?|y\.?o\.?)/) || text.includes('60') || text.includes('menopause')) out.age = '56+';
-  // Birth control: detect "no" / "don't use" first so we don't show contraception questions
-  const noBcPhrases = ["don't use", "do not use", "not using", "no birth control", "not on birth control", "not interested", "no contraception", "not taking", "don't take", "no i'm not", "no im not", "nope", " no "];
+
+  // Preference
+  if (text.includes('organic') || text.includes('natural') || text.includes('clean') || text.includes('chemical')) out.preference = 'Organic/Natural only';
+  else if (text.includes('cost') || text.includes('cheap') || text.includes('budget') || text.includes('affordable') || text.includes('inexpensive')) out.preference = 'Lower cost';
+  else if (text.includes('comfort') || text.includes('convenience') || text.includes('easy') || text.includes('convenient')) out.preference = 'Comfort/Convenience';
+  else if (text.includes('privacy') || text.includes('data') || text.includes('don\'t share')) out.preference = 'Privacy & data security';
+  else if (text.includes('sustainab') || text.includes('eco') || text.includes('zero waste') || text.includes('environment') || text.includes('reusable')) out.preference = 'Sustainability/Zero-waste';
+
+  // Sensitivities
+  if (text.includes('fragrance') || text.includes('scent') || text.includes('scented') || text.includes('perfume')) add(out.sensitivities, 'Fragrance sensitivity');
+  if (text.includes('latex')) add(out.sensitivities, 'Latex allergy');
+  if (text.includes('synthetic') || text.includes('plastic') || text.includes('chemicals')) add(out.sensitivities, 'Synthetic materials');
+  if (text.includes('allerg') || text.includes('allergic')) add(out.sensitivities, 'Other allergies');
+  if (text.includes('none') && (text.includes('sensitivit') || text.includes('allerg'))) add(out.sensitivities, 'None that I know of');
+
+  // Internal comfort
+  if (text.includes('tampon') || text.includes('cup') || text.includes('disc') || text.includes('internal')) {
+    if (text.includes('comfortable') || text.includes('yes') || text.includes('ok') || text.includes('fine') || text.includes('use tampons') || text.includes('use a cup')) out.internalComfort = 'Yes';
+    else if (text.includes('not') || text.includes('no ') || text.includes("don't") || text.includes('uncomfortable') || text.includes('never')) out.internalComfort = 'No';
+    else if (text.includes('open to try') || text.includes('open to trying') || text.includes('willing to try')) out.internalComfort = 'Open to trying';
+  }
+  if (!out.internalComfort && (text.includes('open to try') || text.includes('might try'))) out.internalComfort = 'Open to trying';
+
+  // Current use (avoid duplicates)
+  if (text.includes('pad') || text.includes('pads')) add(out.currentUse, 'Pads');
+  if (text.includes('tampon')) add(out.currentUse, 'Tampons');
+  if (text.includes('menstrual cup') || (text.includes('cup') && (text.includes('period') || text.includes('menstrual') || text.includes('diva')))) add(out.currentUse, 'Menstrual cup');
+  if (text.includes('disc') || text.includes('flex')) add(out.currentUse, 'Menstrual disc');
+  if (text.includes('period underwear') || text.includes('thinx') || text.includes('period pant')) add(out.currentUse, 'Period underwear');
+  if (text.includes('supplement')) add(out.currentUse, 'Supplements');
+  if (text.includes('clue') || text.includes('flo') || text.includes('stardust') || text.includes('period app') || text.includes('tracking app')) add(out.currentUse, 'Flo / Clue / Stardust');
+  if (text.includes('apple health') || text.includes('garmin') || text.includes('fitbit') || text.includes('fitness tracker')) add(out.currentUse, 'Apple Health / Garmin / Fitbit');
+  if (text.includes('wisp') || text.includes('nurx') || text.includes('telehealth') || text.includes('online doctor')) add(out.currentUse, 'Telehealth (Wisp, Nurx, etc.)');
+  if (text.includes('nothing') || text.includes('none') && (text.includes('use') || text.includes('currently'))) add(out.currentUse, 'None');
+
+  // Age — more patterns and number ranges
+  if (text.match(/\bunder\s*25\b/) || text.match(/\b(19|20|21|22|23|24)\s*(years?|y\.?o\.?|and)/) || text.includes('early 20') || text.includes('early twenties')) out.age = 'Under 25';
+  else if (text.match(/\b(25|26|27|28|29|30|31|32|33|34)\s*(years?|y\.?o\.?|and)/) || text.includes('late 20') || text.includes('early 30') || text.includes('twenties') || text.includes('thirties')) out.age = '25-34';
+  else if (text.match(/\b(35|36|37|38|39|40|41|42|43|44)\s*(years?|y\.?o\.?|and)/) || text.includes('mid 30') || text.includes('late 30') || text.includes('early 40')) out.age = '35-44';
+  else if (text.match(/\b(45|46|47|48|49|50)\s*(years?|y\.?o\.?|and)/) || text.includes('late 40') || text.includes('around 50')) out.age = '45-50';
+  else if (text.match(/\b(51|52|53|54|55)\s*(years?|y\.?o\.?|and)/)) out.age = '51-55';
+  else if (text.match(/\b(56|57|58|59|60|61|62|63|64|65)\s*(years?|y\.?o\.?|and)/) || text.includes('60') || text.includes('menopause') || text.includes('postmenopausal')) out.age = '56+';
+
+  // Birth control
+  const noBcPhrases = ["don't use", "do not use", "not using", "no birth control", "not on birth control", "not interested", "no contraception", "not taking", "don't take", "no i'm not", "no im not", "nope", " no ", "stopped", "off the pill", "no longer"];
   const saysNoBc = noBcPhrases.some(phrase => text.includes(phrase)) || /\bno\b.*(birth control|contraception|pill|iud)/.test(text) || /(birth control|contraception).*\bno\b/.test(text);
   if (saysNoBc) {
     out.contraceptionUse = 'No';
-  } else if (text.includes('birth control') || text.includes('contraception') || text.includes('pill') || text.includes('iud')) {
-    if (text.includes('yes') || text.includes('use') || text.includes('taking') || text.includes('on the pill') || text.includes('have an iud')) out.contraceptionUse = 'Yes';
+  } else if (text.includes('birth control') || text.includes('contraception') || text.includes('pill') || text.includes('iud') || text.includes('implant') || text.includes('ring') || text.includes('patch')) {
+    if (text.includes('yes') || text.includes('use') || text.includes('taking') || text.includes('on the pill') || text.includes('have an iud') || text.includes('have iud') || text.includes('using')) out.contraceptionUse = 'Yes';
     if (out.contraceptionUse === 'Yes') {
-      if (text.includes('pill')) out.contraceptionPreference.push('Pill');
-      if (text.includes('iud')) out.contraceptionPreference.push('IUD');
-      if (text.includes('implant')) out.contraceptionPreference.push('Implant');
-      if (text.includes('ring')) out.contraceptionPreference.push('Ring');
-      if (text.includes('patch')) out.contraceptionPreference.push('Patch');
-      if (text.includes('condom')) out.contraceptionPreference.push('Condoms');
-      if (text.includes('natural') || text.includes('fam')) out.contraceptionPreference.push('Natural / FAM');
+      if (text.includes('pill')) add(out.contraceptionPreference, 'Pill');
+      if (text.includes('iud')) add(out.contraceptionPreference, 'IUD');
+      if (text.includes('implant')) add(out.contraceptionPreference, 'Implant');
+      if (text.includes('ring') || text.includes('nuvaring')) add(out.contraceptionPreference, 'Ring');
+      if (text.includes('patch')) add(out.contraceptionPreference, 'Patch');
+      if (text.includes('condom')) add(out.contraceptionPreference, 'Condoms');
+      if (text.includes('natural') || text.includes('fam') || text.includes('tracking')) add(out.contraceptionPreference, 'Natural / FAM');
     }
   }
-  if (text.includes('under $20') || text.includes('20 dollar')) out.budget = 'Under $20';
-  else if (text.includes('20') && text.includes('50')) out.budget = '$20–$50';
-  else if (text.includes('50') && text.includes('100')) out.budget = '$50–$100';
-  else if (text.includes('100+') || text.includes('over 100')) out.budget = '$100+';
-  if (out.frustrations.length === 0) out.frustrations = ['General discomfort'];
+
+  // Budget
+  if (text.includes('under $20') || text.includes('under 20') || text.includes('20 dollar') || text.includes('cheap')) out.budget = 'Under $20';
+  else if ((text.includes('20') && text.includes('50')) || text.includes('$20') || text.includes('$50')) out.budget = '$20–$50';
+  else if ((text.includes('50') && text.includes('100')) || text.includes('$50') || text.includes('$100')) out.budget = '$50–$100';
+  else if (text.includes('100+') || text.includes('over 100') || text.includes('over $100')) out.budget = '$100+';
+
+  // Only default frustrations when transcript is empty or we truly got nothing
+  if (out.frustrations.length === 0 && raw.length > 20) {
+    // Leave empty so user sees what we missed and can edit
+  } else if (out.frustrations.length === 0) {
+    out.frustrations = ['General discomfort'];
+  }
   return out;
 }
 
@@ -229,6 +260,8 @@ export default function Quiz({ onComplete }) {
   const [voiceTranscript, setVoiceTranscript] = useState('');
   const [voiceProfile, setVoiceProfile] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
+  const [appendToTranscript, setAppendToTranscript] = useState(false); // true when "Speak to add more" from confirm
+  const [liveRecordingText, setLiveRecordingText] = useState(''); // current session's text so "Adding:" re-renders
   const recognitionRef = useRef(null);
   const transcriptAccumRef = useRef('');
 
@@ -282,14 +315,16 @@ export default function Quiz({ onComplete }) {
     }
   };
 
-  const handleVoiceStart = () => {
+  const handleVoiceStart = (append = false) => {
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
       setVoiceTranscript('Voice input is not supported in this browser. Try Chrome or Edge.');
       setVoicePhase('confirm');
       return;
     }
+    setAppendToTranscript(append);
     transcriptAccumRef.current = '';
-    setVoiceTranscript('');
+    setLiveRecordingText('');
+    if (!append) setVoiceTranscript('');
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const rec = new SpeechRecognition();
     rec.continuous = true;
@@ -305,7 +340,8 @@ export default function Quiz({ onComplete }) {
           transcriptAccumRef.current += sep + transcript.trim();
         }
       }
-      setVoiceTranscript(transcriptAccumRef.current);
+      setLiveRecordingText(transcriptAccumRef.current);
+      if (!append) setVoiceTranscript(transcriptAccumRef.current);
     };
     rec.onerror = () => {};
     rec.start();
@@ -320,14 +356,27 @@ export default function Quiz({ onComplete }) {
       recognitionRef.current = null;
     }
     setIsRecording(false);
-    const parsed = parseTranscriptToProfile(voiceTranscript);
-    setVoiceProfile(parsed);
+    const nextTranscript = appendToTranscript
+      ? (voiceTranscript + ' ' + transcriptAccumRef.current).trim()
+      : voiceTranscript;
+    if (appendToTranscript) {
+      setVoiceTranscript(nextTranscript);
+      setAppendToTranscript(false);
+    }
+    setVoiceProfile(parseTranscriptToProfile(nextTranscript));
     setVoicePhase('confirm');
   };
 
   const handleVoiceConfirm = () => {
     onComplete(voiceProfile || parseTranscriptToProfile(voiceTranscript));
   };
+
+  // When user edits the transcript in confirm phase, re-parse to update the profile
+  useEffect(() => {
+    if (voicePhase === 'confirm' && voiceTranscript !== undefined) {
+      setVoiceProfile(parseTranscriptToProfile(voiceTranscript));
+    }
+  }, [voicePhase, voiceTranscript]);
 
   // —— Mode choice (step-by-step vs voice) ——
   if (completionMode === null) {
@@ -387,7 +436,9 @@ export default function Quiz({ onComplete }) {
     if (voicePhase === 'recording') {
       return (
         <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)', maxWidth: '720px' }}>
-          <p style={{ textAlign: 'center', fontSize: '1.1rem', marginBottom: '1rem' }}>Listening… speak clearly. When you're done, click Stop.</p>
+          <p style={{ textAlign: 'center', fontSize: '1.1rem', marginBottom: '1rem' }}>
+            {appendToTranscript ? 'Listening… add more. When you\'re done, click Stop to append to your transcript.' : 'Listening… speak clearly. When you\'re done, click Stop.'}
+          </p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', alignItems: 'start' }}>
             <div>
               <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.5rem', fontWeight: '600' }}>You can cover any of these:</p>
@@ -398,13 +449,21 @@ export default function Quiz({ onComplete }) {
               </ul>
             </div>
             <div>
-              <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.5rem', fontWeight: '600' }}>Live transcript:</p>
+              {appendToTranscript && voiceTranscript && (
+                <>
+                  <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.35rem', fontWeight: '600' }}>Current transcript:</p>
+                  <div style={{ minHeight: '60px', padding: '0.75rem', background: 'var(--color-surface-soft)', borderRadius: 'var(--radius-md)', whiteSpace: 'pre-wrap', fontSize: '0.85rem', marginBottom: '0.75rem', border: '1px solid var(--color-border)' }}>
+                    {voiceTranscript}
+                  </div>
+                </>
+              )}
+              <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.5rem', fontWeight: '600' }}>{appendToTranscript ? 'Adding:' : 'Live transcript:'}</p>
               <div style={{ minHeight: '120px', padding: '1rem', background: 'var(--color-surface-soft)', borderRadius: 'var(--radius-md)', whiteSpace: 'pre-wrap', fontSize: '0.95rem' }}>
-                {voiceTranscript || '(speak now)'}
+                {appendToTranscript ? (liveRecordingText || '(speak now)') : (voiceTranscript || liveRecordingText || '(speak now)')}
               </div>
               <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
                 <button type="button" className="btn btn-primary" style={{ padding: '1rem 2rem' }} onClick={handleVoiceStop}>
-                  Stop and build my profile
+                  {appendToTranscript ? 'Stop and add to transcript' : 'Stop and build my profile'}
                 </button>
               </div>
             </div>
@@ -412,31 +471,67 @@ export default function Quiz({ onComplete }) {
         </section>
       );
     }
-    if (voicePhase === 'confirm' && (voiceProfile || voiceTranscript)) {
+    if (voicePhase === 'confirm' && (voiceProfile || voiceTranscript !== undefined)) {
       const profile = voiceProfile || parseTranscriptToProfile(voiceTranscript);
       return (
-        <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)', maxWidth: '640px' }}>
-          <h2 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', textAlign: 'center' }}>Here's your profile — confirm or edit</h2>
-          <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', marginBottom: '1.5rem', fontSize: '0.95rem' }}>We interpreted what you said. Confirm to see recommendations, or go back to add more.</p>
-          <div style={{ background: 'var(--color-surface-soft)', padding: '1.25rem', borderRadius: 'var(--radius-lg)', marginBottom: '1.5rem', border: '1px solid var(--color-border)' }}>
-            {profile.age && <p><strong>Age range:</strong> {profile.age}</p>}
-            {profile.frustrations?.length > 0 && <p><strong>Concerns:</strong> {profile.frustrations.join(', ')}</p>}
-            {profile.preference && <p><strong>Priority:</strong> {profile.preference}</p>}
-            {profile.contraceptionUse && <p><strong>Birth control:</strong> {profile.contraceptionUse}</p>}
-            {profile.contraceptionPreference?.length > 0 && <p><strong>Contraception type:</strong> {profile.contraceptionPreference.join(', ')}</p>}
-            {profile.internalComfort && <p><strong>Internal products:</strong> {profile.internalComfort}</p>}
-            {profile.currentUse?.length > 0 && <p><strong>Currently use:</strong> {profile.currentUse.join(', ')}</p>}
-            {profile.sensitivities?.length > 0 && <p><strong>Sensitivities:</strong> {profile.sensitivities.join(', ')}</p>}
-            {profile.budget && <p><strong>Budget:</strong> {profile.budget}</p>}
-            {(!profile.frustrations?.length && !profile.preference && !profile.age) && (
-              <p style={{ color: 'var(--color-text-muted)' }}>We didn't catch much — we'll show general recommendations. You can refine your profile later in My Account.</p>
-            )}
+        <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)', maxWidth: '960px' }}>
+          <h2 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', textAlign: 'center' }}>Your transcript & health profile</h2>
+          <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', marginBottom: '1.5rem', fontSize: '0.95rem' }}>
+            Edit the transcript (type or speak to add more) — the profile updates as you change it. Confirm when it looks right.
+          </p>
+          <div className="quiz-confirm-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', alignItems: 'stretch', marginBottom: '1.5rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', minHeight: '280px' }}>
+              <label style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.5rem', fontWeight: '600' }}>Transcript (edit or speak to update)</label>
+              <textarea
+                value={voiceTranscript}
+                onChange={(e) => setVoiceTranscript(e.target.value)}
+                placeholder="Your recorded words will appear here. You can type to fix or add details."
+                style={{
+                  flex: 1,
+                  minHeight: '260px',
+                  padding: '1rem',
+                  background: 'var(--color-surface-soft)',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: 'var(--radius-md)',
+                  fontSize: '0.95rem',
+                  lineHeight: 1.5,
+                  resize: 'vertical',
+                  fontFamily: 'var(--font-body)',
+                  outline: 'none'
+                }}
+              />
+              <button
+                type="button"
+                className="btn btn-outline"
+                style={{ marginTop: '0.75rem', alignSelf: 'flex-start' }}
+                onClick={() => { setVoicePhase('recording'); handleVoiceStart(true); }}
+              >
+                🎤 Speak to add more
+              </button>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', minHeight: '280px' }}>
+              <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.5rem', fontWeight: '600' }}>Health profile (from transcript)</p>
+              <div style={{ flex: 1, background: 'var(--color-surface-soft)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', overflowY: 'auto' }}>
+                {profile.age && <p style={{ marginBottom: '0.5rem' }}><strong>Age range:</strong> {profile.age}</p>}
+                {profile.frustrations?.length > 0 && <p style={{ marginBottom: '0.5rem' }}><strong>Concerns:</strong> {profile.frustrations.join(', ')}</p>}
+                {profile.preference && <p style={{ marginBottom: '0.5rem' }}><strong>Priority:</strong> {profile.preference}</p>}
+                {profile.contraceptionUse && <p style={{ marginBottom: '0.5rem' }}><strong>Birth control:</strong> {profile.contraceptionUse}</p>}
+                {profile.contraceptionPreference?.length > 0 && <p style={{ marginBottom: '0.5rem' }}><strong>Contraception type:</strong> {profile.contraceptionPreference.join(', ')}</p>}
+                {profile.internalComfort && <p style={{ marginBottom: '0.5rem' }}><strong>Internal products:</strong> {profile.internalComfort}</p>}
+                {profile.currentUse?.length > 0 && <p style={{ marginBottom: '0.5rem' }}><strong>Currently use:</strong> {profile.currentUse.join(', ')}</p>}
+                {profile.sensitivities?.length > 0 && <p style={{ marginBottom: '0.5rem' }}><strong>Sensitivities:</strong> {profile.sensitivities.join(', ')}</p>}
+                {profile.budget && <p style={{ marginBottom: '0.5rem' }}><strong>Budget:</strong> {profile.budget}</p>}
+                {(!profile.frustrations?.length && !profile.preference && !profile.age && !profile.internalComfort && !profile.currentUse?.length) && (
+                  <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>Add or edit text in the transcript so we can build your profile. Mention age, concerns, what you use, and preferences.</p>
+                )}
+              </div>
+            </div>
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '0.75rem' }}>
             <button type="button" className="btn btn-primary" style={{ padding: '0.75rem 1.5rem' }} onClick={handleVoiceConfirm}>
               Confirm and see recommendations
             </button>
-            <button type="button" className="btn btn-outline" onClick={() => { setVoicePhase('prompt'); setVoiceTranscript(''); setVoiceProfile(null); }}>
+            <button type="button" className="btn btn-outline" onClick={() => { setVoicePhase('prompt'); setVoiceTranscript(''); setVoiceProfile(null); setAppendToTranscript(false); }}>
               Record again
             </button>
             <button type="button" style={{ color: 'var(--color-text-muted)', textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer' }} onClick={() => setCompletionMode(null)}>

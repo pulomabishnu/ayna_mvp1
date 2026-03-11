@@ -11,6 +11,9 @@ const ARTICLE_FOCUS_TAGS = {
   'uti-prevention': ['uti'],
   'yeast-infection-basics': ['vaginal-health', 'discomfort'],
   'period-pain-when-to-seek-care': ['cramps', 'discomfort', 'heavy-flow'],
+  'pcos-basics': ['pcos', 'irregular'],
+  'pelvic-floor-dysfunction': ['pelvic-floor', 'pelvic-health', 'discomfort'],
+  'endometriosis-basics': ['endometriosis', 'cramps', 'discomfort'],
 };
 
 function getProductUrl(p) {
@@ -80,9 +83,12 @@ function TelehealthSuggestions({ articleId, onOpenProduct }) {
         border: '1px solid var(--color-border)',
       }}
     >
-      <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem', color: 'var(--color-text-main)', fontWeight: '600' }}>
+      <h3 style={{ fontSize: '1.1rem', marginBottom: '0.25rem', color: 'var(--color-text-main)', fontWeight: '600' }}>
         Can&apos;t reach your doctor?
       </h3>
+      <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>
+        Diagnostic products and startups · nurse lines, clinics, telehealth
+      </p>
 
       <details style={{ marginBottom: '0.25rem' }}>
         <summary style={dropdownSummaryStyle}>
@@ -308,6 +314,66 @@ const ARTICLES = [
       </>
     ),
   },
+  {
+    id: 'pcos-basics',
+    title: 'PCOS: What It Is and How It\'s Managed',
+    source: 'ACOG, Endocrine Society, UpToDate',
+    tags: ['Hormones', 'Reproductive health'],
+    teaser: 'Polycystic ovary syndrome explained — diagnosis, symptoms, and evidence-based treatment options including lifestyle and medication.',
+    body: (
+      <>
+        <p>Polycystic ovary syndrome (PCOS) is a common hormonal condition that affects how the ovaries work. Diagnosis is based on criteria that may include irregular or absent periods, high androgen levels (e.g., excess hair growth, acne), and/or polycystic-appearing ovaries on ultrasound. Not everyone has all features; a clinician makes the diagnosis and rules out other conditions (e.g., thyroid, prolactin).</p>
+        <p>Management focuses on your goals and symptoms: cycle regulation (often with birth control or metformin), improving insulin sensitivity (lifestyle, metformin, inositol in some cases), and treating acne or excess hair. Lifestyle changes—balanced diet, regular exercise, and weight management when relevant—are first-line and can improve both metabolic and reproductive outcomes. If you're trying to conceive, ovulation induction or other fertility treatments may be recommended.</p>
+        <p><strong>When to seek care:</strong> Irregular periods, unexplained weight changes, severe acne or excess hair, or difficulty conceiving. Early diagnosis and treatment can reduce long-term risks (e.g., diabetes, cardiovascular).</p>
+        <p><strong>Sources:</strong></p>
+        <ul style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
+          <li><a href="https://www.acog.org/womens-health/faqs/polycystic-ovary-syndrome-pcos" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Polycystic ovary syndrome (PCOS)</a></li>
+          <li><a href="https://www.endocrine.org/patient-engagement/endocrine-library/pcos" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Endocrine Society – PCOS</a></li>
+          <li><a href="https://www.uptodate.com/contents/polycystic-ovary-syndrome-pcos-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – PCOS (patient education)</a></li>
+        </ul>
+      </>
+    ),
+  },
+  {
+    id: 'pelvic-floor-dysfunction',
+    title: 'Pelvic Floor Dysfunction',
+    source: 'ACOG, UpToDate, APTA',
+    tags: ['Pelvic health', 'Physical therapy'],
+    teaser: 'What the pelvic floor does, common symptoms of dysfunction, and how pelvic floor physical therapy and at-home tools can help.',
+    body: (
+      <>
+        <p>The pelvic floor is a group of muscles and tissues that support the bladder, uterus, vagina, and rectum. Dysfunction can mean these muscles are too tight (holding tension, pain with sex or insertion, constipation), too weak (leaking with cough or exercise, pelvic pressure), or uncoordinated. Causes can include childbirth, surgery, chronic straining, or prolonged sitting.</p>
+        <p>Pelvic floor physical therapy (PFPT) is the mainstay of treatment: a specially trained PT evaluates and treats with internal and external techniques, exercises, and lifestyle guidance. At-home tools—such as dilators, pelvic wands, or biofeedback devices—are often used as part of a prescribed plan. It's important not to self-treat with devices if you have pain or unexplained symptoms; a clinician or pelvic PT can tailor a safe plan.</p>
+        <p><strong>When to seek care:</strong> Leaking urine or stool, pain with sex or tampon use, persistent pelvic pain, pressure or bulging, or difficulty emptying. Early evaluation can prevent worsening and improve quality of life.</p>
+        <p><strong>Sources:</strong></p>
+        <ul style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
+          <li><a href="https://www.acog.org/womens-health/faqs/pelvic-floor-disorders" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Pelvic floor disorders</a></li>
+          <li><a href="https://www.uptodate.com/contents/pelvic-floor-muscle-training-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – Pelvic floor muscle training (patient education)</a></li>
+          <li><a href="https://www.apta.org/your-practice/patient-populations/womens-health/pelvic-floor" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>APTA – Pelvic floor</a></li>
+        </ul>
+      </>
+    ),
+  },
+  {
+    id: 'endometriosis-basics',
+    title: 'Endometriosis: Symptoms, Diagnosis, and Care',
+    source: 'ACOG, EndoFound, UpToDate',
+    tags: ['Chronic pain', 'Reproductive health'],
+    teaser: 'What endometriosis is, how it\'s diagnosed, and treatment options — from pain management to surgery and fertility support.',
+    body: (
+      <>
+        <p>Endometriosis is a condition where tissue similar to the uterine lining grows outside the uterus (e.g., on the ovaries, pelvic lining, bowel). It can cause painful periods, chronic pelvic pain, pain with sex, and sometimes bowel or bladder symptoms. In some people it also affects fertility. Diagnosis can be suspected by history and exam; imaging (ultrasound, sometimes MRI) or laparoscopy may be used to confirm.</p>
+        <p>Treatment depends on your symptoms and goals. Options include pain management (NSAIDs, hormonal birth control, or other hormone-suppressing medications), pelvic floor physical therapy for pain and muscle tension, and surgery to remove or ablate lesions when appropriate. There is no cure, but symptoms can be managed. If you're trying to conceive, a specialist can discuss fertility-preserving or assisted-reproduction options.</p>
+        <p><strong>When to seek care:</strong> Severe period or pelvic pain, pain with sex, heavy bleeding, or difficulty conceiving. Early diagnosis can help you get effective treatment and avoid unnecessary delay.</p>
+        <p><strong>Sources:</strong></p>
+        <ul style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
+          <li><a href="https://www.acog.org/womens-health/faqs/endometriosis" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Endometriosis</a></li>
+          <li><a href="https://www.endofound.org/endometriosis" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Endometriosis Foundation of America – Endometriosis</a></li>
+          <li><a href="https://www.uptodate.com/contents/endometriosis-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – Endometriosis (patient education)</a></li>
+        </ul>
+      </>
+    ),
+  },
 ];
 
 /** Quiz frustrations → tags used in ARTICLE_FOCUS_TAGS (align with products.js mapping). */
@@ -358,8 +424,11 @@ export default function Articles({ initialArticleId, onOpenProduct }) {
   return (
     <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)', maxWidth: '900px', margin: '0 auto' }}>
       <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-        <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Health Articles Library</h1>
-        <p style={{ fontSize: '1.2rem', color: 'var(--color-text-muted)' }}>
+        <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Health Articles Library</h1>
+        <p style={{ fontSize: '1.1rem', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>
+          Diagnostic products and startups · evidence-based articles. Can&apos;t reach your doctor? See options below each article.
+        </p>
+        <p style={{ fontSize: '1rem', color: 'var(--color-text-muted)' }}>
           Click a headline to read the full article. Always discuss your care with your own clinician.
         </p>
         <Disclaimer compact style={{ marginTop: '1.5rem', textAlign: 'left', maxWidth: '700px', marginLeft: 'auto', marginRight: 'auto' }} />

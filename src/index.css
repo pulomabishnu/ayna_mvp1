@@ -217,3 +217,10 @@ html {
 .article-body ul {
   padding-left: 1.5rem;
 }
+
+/* Quiz voice confirm: transcript + profile side-by-side; stack on small screens */
+@media (max-width: 640px) {
+  .quiz-confirm-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
