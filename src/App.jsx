@@ -191,85 +191,85 @@ function App() {
       )}
 
       <main>
-        {/* Navigation */}
+        {/* Navigation — condensed */}
         <nav style={{
-          padding: isScrolled ? '0.75rem 1.5rem' : '1rem 1.5rem',
+          padding: isScrolled ? '0.4rem 1rem' : '0.5rem 1rem',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           background: isScrolled ? 'rgba(255, 255, 255, 0.9)' : 'rgba(255, 247, 251, 0.9)',
           borderBottom: '1px solid var(--color-border)',
           flexWrap: 'wrap',
-          gap: '0.5rem',
+          gap: '0.35rem',
           position: 'sticky',
           top: 0,
           zIndex: 1000,
           backdropFilter: 'blur(14px)',
-          boxShadow: isScrolled ? '0 10px 30px rgba(180, 112, 157, 0.16)' : '0 14px 36px rgba(180, 112, 157, 0.18)',
+          boxShadow: isScrolled ? '0 8px 24px rgba(180, 112, 157, 0.12)' : '0 10px 28px rgba(180, 112, 157, 0.14)',
           transition: 'all 0.3s ease'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '1.5rem', fontWeight: '700', color: 'var(--color-primary)', cursor: 'pointer' }} onClick={navigateHome}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '1.2rem', fontWeight: '700', color: 'var(--color-primary)', cursor: 'pointer' }} onClick={navigateHome}>
               Ayna
             </div>
 
             {/* Public Research Tools (Free) */}
-            <div style={{ display: 'flex', gap: '1rem', borderRight: '1px solid var(--color-border)', paddingRight: '1rem' }}>
-              <button style={{ fontSize: '0.9rem', fontWeight: (currentView === 'discovery' || currentView === 'hero') ? '700' : '500', color: currentView === 'discovery' ? 'var(--color-primary)' : 'var(--color-text-main)' }} onClick={() => handleViewDiscovery('')}>
+            <div style={{ display: 'flex', gap: '0.35rem', borderRight: '1px solid var(--color-border)', paddingRight: '0.5rem' }}>
+              <button style={{ fontSize: '0.8rem', fontWeight: (currentView === 'discovery' || currentView === 'hero') ? '700' : '500', color: currentView === 'discovery' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem' }} onClick={() => handleViewDiscovery('')}>
                 Search
               </button>
-              <button style={{ fontSize: '0.9rem', fontWeight: '500', color: currentView === 'recalls' ? 'var(--color-primary)' : 'var(--color-text-main)' }} onClick={handleViewRecalls}>
-                Safety Recall
+              <button style={{ fontSize: '0.8rem', fontWeight: '500', color: currentView === 'recalls' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem' }} onClick={handleViewRecalls}>
+                Recall
               </button>
-              <button style={{ fontSize: '0.9rem', fontWeight: '500', color: currentView === 'waitlist' ? 'var(--color-primary)' : 'var(--color-text-main)' }} onClick={handleViewWaitlist}>
+              <button style={{ fontSize: '0.8rem', fontWeight: '500', color: currentView === 'waitlist' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem' }} onClick={handleViewWaitlist}>
                 Startups
               </button>
-              <button style={{ fontSize: '0.9rem', fontWeight: '500', color: currentView === 'deeptech' ? 'var(--color-primary)' : 'var(--color-text-main)' }} onClick={handleViewDeeptech}>
+              <button style={{ fontSize: '0.8rem', fontWeight: '500', color: currentView === 'deeptech' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem' }} onClick={handleViewDeeptech}>
                 Deeptech
               </button>
-              <button style={{ fontSize: '0.9rem', fontWeight: '500', color: currentView === 'articles' ? 'var(--color-primary)' : 'var(--color-text-main)' }} onClick={handleViewArticles}>
+              <button style={{ fontSize: '0.8rem', fontWeight: '500', color: currentView === 'articles' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem' }} onClick={handleViewArticles}>
                 Articles
               </button>
             </div>
 
             {/* Personalized Ecosystem (Premium Gated) */}
-            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-              <div style={{ display: 'flex', gap: '1rem', opacity: isPremium ? 1 : 0.6 }}>
+            <div style={{ display: 'flex', gap: '0.35rem', alignItems: 'center' }}>
+              <div style={{ display: 'flex', gap: '0.35rem', opacity: isPremium ? 1 : 0.6 }}>
                 <button
-                  style={{ fontSize: '0.9rem', fontWeight: '500', color: currentView === 'ecosystem' ? 'var(--color-primary)' : 'var(--color-text-main)' }}
+                  style={{ fontSize: '0.8rem', fontWeight: '500', color: currentView === 'ecosystem' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem', border: 'none', background: 'none', cursor: 'pointer' }}
                   onClick={isPremium ? handleViewEcosystem : togglePremium}
                 >
-                  My Ecosystem {!isPremium && '🔒'} {isPremium && Object.keys(myProducts).length > 0 && <span style={{ background: 'var(--color-primary)', color: 'white', padding: '0.1rem 0.4rem', borderRadius: '1rem', fontSize: '0.7rem', marginLeft: '0.15rem' }}>{Object.keys(myProducts).length}</span>}
+                  Ecosystem {!isPremium && '🔒'} {isPremium && Object.keys(myProducts).length > 0 && <span style={{ background: 'var(--color-primary)', color: 'white', padding: '0.05rem 0.3rem', borderRadius: '1rem', fontSize: '0.65rem', marginLeft: '0.1rem' }}>{Object.keys(myProducts).length}</span>}
                 </button>
                 <button
-                  style={{ fontSize: '0.9rem', fontWeight: '500', color: currentView === 'cycle-tracker' ? 'var(--color-primary)' : 'var(--color-text-main)' }}
+                  style={{ fontSize: '0.8rem', fontWeight: '500', color: currentView === 'cycle-tracker' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem', border: 'none', background: 'none', cursor: 'pointer' }}
                   onClick={isPremium ? handleViewCycleTracker : togglePremium}
                 >
                   Period {!isPremium && '🔒'}
                 </button>
                 <button
-                  style={{ fontSize: '0.9rem', fontWeight: '500', color: currentView === 'menopause-tracker' ? 'var(--color-primary)' : 'var(--color-text-main)' }}
+                  style={{ fontSize: '0.8rem', fontWeight: '500', color: currentView === 'menopause-tracker' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem', border: 'none', background: 'none', cursor: 'pointer' }}
                   onClick={isPremium ? handleViewMenopauseTracker : togglePremium}
                 >
                   Menopause {!isPremium && '🔒'}
                 </button>
                 {isPremium && (
-                  <button style={{ fontSize: '0.9rem', fontWeight: '500', color: currentView === 'comparison' ? 'var(--color-primary)' : 'var(--color-text-main)' }} onClick={handleViewComparison}>
+                  <button style={{ fontSize: '0.8rem', fontWeight: '500', color: currentView === 'comparison' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem', border: 'none', background: 'none', cursor: 'pointer' }} onClick={handleViewComparison}>
                     Compare
                   </button>
                 )}
-                <button style={{ fontSize: '0.9rem', fontWeight: '500', border: 'none', background: 'none', cursor: 'pointer', color: currentView === 'omitted' ? 'var(--color-primary)' : 'var(--color-text-main)', display: 'flex', alignItems: 'center', gap: '0.25rem' }} onClick={handleViewOmitted}>
-                  Hidden products {Object.keys(omittedProducts).length > 0 && <span style={{ background: 'var(--color-primary)', color: 'white', padding: '0.1rem 0.4rem', borderRadius: '1rem', fontSize: '0.7rem' }}>{Object.keys(omittedProducts).length}</span>}
+                <button style={{ fontSize: '0.8rem', fontWeight: '500', border: 'none', background: 'none', cursor: 'pointer', color: currentView === 'omitted' ? 'var(--color-primary)' : 'var(--color-text-main)', display: 'flex', alignItems: 'center', gap: '0.2rem', padding: '0.2rem 0.4rem' }} onClick={handleViewOmitted}>
+                  Hidden {Object.keys(omittedProducts).length > 0 && <span style={{ background: 'var(--color-primary)', color: 'white', padding: '0.05rem 0.3rem', borderRadius: '1rem', fontSize: '0.65rem' }}>{Object.keys(omittedProducts).length}</span>}
                 </button>
               </div>
             </div>
           </div>
 
           {/* Account Actions */}
-          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', flexWrap: 'wrap' }}>
             <button
               style={{
-                fontSize: '0.8rem', fontWeight: '600', padding: '0.4rem 0.75rem',
+                fontSize: '0.75rem', fontWeight: '600', padding: '0.25rem 0.5rem',
                 background: 'var(--color-secondary-fade)', color: 'var(--color-primary)',
                 borderRadius: 'var(--radius-pill)', border: '1px solid var(--color-primary)',
                 opacity: isPremium ? 1 : 0.5
@@ -278,11 +278,9 @@ function App() {
             >
               Check-in {!isPremium && '🔒'}
             </button>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <button style={{ fontSize: '0.9rem', fontWeight: '500', border: 'none', background: 'none', cursor: 'pointer', color: currentView === 'tracked' ? 'var(--color-primary)' : 'var(--color-text-main)' }} onClick={handleViewTracked}>
-                {isPremium ? 'My Profile' : 'Guest'} {totalBadge > 0 && <span style={{ background: 'var(--color-primary)', color: 'white', padding: '0.1rem 0.4rem', borderRadius: '1rem', fontSize: '0.7rem', marginLeft: '0.15rem' }}>{totalBadge}</span>}
-              </button>
-            </div>
+            <button style={{ fontSize: '0.8rem', fontWeight: '500', border: 'none', background: 'none', cursor: 'pointer', color: currentView === 'tracked' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem', display: 'flex', alignItems: 'center', gap: '0.2rem' }} onClick={handleViewTracked}>
+              {isPremium ? 'Profile' : 'Guest'} {totalBadge > 0 && <span style={{ background: 'var(--color-primary)', color: 'white', padding: '0.05rem 0.3rem', borderRadius: '1rem', fontSize: '0.65rem', marginLeft: '0.1rem' }}>{totalBadge}</span>}
+            </button>
           </div>
         </nav>
 
