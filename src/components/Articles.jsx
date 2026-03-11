@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import Disclaimer from './Disclaimer';
-import { ALL_PRODUCTS } from '../data/products';
+import { ALL_PRODUCTS, getRecommendations } from '../data/products';
 import { RELEASED_STARTUPS } from '../data/startups';
 
 /** Article id → product-style tags/healthFunctions for matching relevant telehealth platforms */
@@ -14,6 +14,20 @@ const ARTICLE_FOCUS_TAGS = {
   'pcos-basics': ['pcos', 'irregular'],
   'pelvic-floor-dysfunction': ['pelvic-floor', 'pelvic-health', 'discomfort'],
   'endometriosis-basics': ['endometriosis', 'cramps', 'discomfort'],
+};
+
+/** Quiz frustrations → tags (align with products.js). */
+const FRUSTRATION_TO_TAG = {
+  'Heavy flow': 'heavy-flow',
+  'Painful cramps': 'cramps',
+  'Irregular cycles': 'irregular',
+  'Recurrent UTIs': 'uti',
+  'Menopause symptoms': 'menopause',
+  'General discomfort': 'discomfort',
+  'Pelvic pain': 'pelvic-floor',
+  'Endometriosis': 'endometriosis',
+  'PCOS symptoms': 'pcos',
+  'Leaks & staining': 'leaks',
 };
 
 function getProductUrl(p) {
@@ -49,6 +63,55 @@ function getRelevantTelehealth(articleId) {
     byName.set(key, item);
   });
   return Array.from(byName.values());
+}
+
+/** Products and released startups relevant to this article AND (when provided) the user's profile. Returns items in product-like shape for onOpenProduct. */
+function getArticleAndProfileRelevantItems(articleId, quizResults) {
+  const focus = ARTICLE_FOCUS_TAGS[articleId] || [];
+  const hasFocus = focus.length > 0;
+
+  const matchesArticle = (item) => {
+    if (!hasFocus) return true;
+    const tags = new Set([
+      ...(item.tags || []),
+      ...(item.healthFunctions || []),
+      ...(item.category ? [item.category] : []),
+    ]);
+    return focus.some((t) => tags.has(t));
+  };
+
+  let products = (ALL_PRODUCTS || []).filter(matchesArticle);
+  let startups = (RELEASED_STARTUPS || []).filter(matchesArticle);
+
+  if (quizResults?.frustrations?.length) {
+    const recs = getRecommendations(quizResults);
+    const recIds = new Set(recs.map((p) => p.id));
+    products = products.filter((p) => recIds.has(p.id));
+    const userTagSet = new Set(
+      (quizResults.frustrations || [])
+        .map((f) => FRUSTRATION_TO_TAG[f])
+        .filter(Boolean)
+    );
+    if (userTagSet.size > 0) {
+      startups = startups.filter((s) => {
+        const st = new Set([...(s.tags || []), ...(s.healthFunctions || [])]);
+        return [...userTagSet].some((t) => st.has(t));
+      });
+    }
+  }
+
+  const byId = new Map();
+  products.forEach((p) => byId.set(p.id, { ...p, isStartup: false }));
+  startups.forEach((s) => {
+    if (byId.has(s.id)) return;
+    byId.set(s.id, {
+      ...s,
+      isStartup: true,
+      summary: s.description || s.tagline,
+      price: s.stage || s.price || '',
+    });
+  });
+  return Array.from(byId.values());
 }
 
 const dropdownSummaryStyle = {
@@ -187,6 +250,106 @@ function TelehealthSuggestions({ articleId, onOpenProduct }) {
               })}
             </ul>
           )}
+        </div>
+      </details>
+    </div>
+  );
+}
+
+function DiagnosticProductsAndStartups({ articleId, quizResults, onOpenProduct }) {
+  const items = useMemo(
+    () => getArticleAndProfileRelevantItems(articleId, quizResults),
+    [articleId, quizResults]
+  );
+  const hasProfile = !!(quizResults?.frustrations?.length);
+
+  if (items.length === 0) return null;
+
+  return (
+    <div
+      style={{
+        marginTop: '2rem',
+        padding: '1.5rem',
+        background: 'var(--color-surface)',
+        borderRadius: 'var(--radius-md)',
+        border: '1px solid var(--color-border)',
+      }}
+    >
+      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
+        <h3 style={{ fontSize: '1.1rem', margin: 0, color: 'var(--color-text-main)', fontWeight: '600' }}>
+          Diagnostic products and startups
+        </h3>
+        {hasProfile && (
+          <span
+            style={{
+              fontSize: '0.75rem',
+              fontWeight: '600',
+              color: 'var(--color-primary)',
+              background: 'var(--color-secondary-fade)',
+              padding: '0.25rem 0.6rem',
+              borderRadius: 'var(--radius-pill)',
+            }}
+          >
+            Personalized based on your health profile
+          </span>
+        )}
+      </div>
+      <details style={{ marginTop: '0.5rem' }}>
+        <summary style={{ ...dropdownSummaryStyle, marginBottom: '0.5rem' }}>
+          See {items.length} product{items.length !== 1 ? 's' : ''} and startup{items.length !== 1 ? 's' : ''} relevant to this article
+        </summary>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.5rem' }}>
+          {items.map((item) => {
+            const name = item.name;
+            const summary = item.summary || item.description || item.tagline || '';
+            const price = item.price || item.stage || '';
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => onOpenProduct && onOpenProduct(item)}
+                style={{
+                  textAlign: 'left',
+                  padding: '0.85rem 1rem',
+                  background: 'var(--color-surface-soft)',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: 'var(--radius-md)',
+                  cursor: onOpenProduct ? 'pointer' : 'default',
+                  transition: 'border-color 0.2s, box-shadow 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  if (onOpenProduct) {
+                    e.currentTarget.style.borderColor = 'var(--color-primary)';
+                    e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = '';
+                  e.currentTarget.style.boxShadow = '';
+                }}
+              >
+                <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.35rem', marginBottom: '0.25rem' }}>
+                  <span style={{ fontWeight: '600', color: 'var(--color-primary)', fontSize: '0.95rem' }}>{name}</span>
+                  {item.isStartup && (
+                    <span style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', background: 'var(--color-surface)', padding: '0.1rem 0.4rem', borderRadius: 'var(--radius-pill)' }}>
+                      Startup
+                    </span>
+                  )}
+                  {price && <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>— {price}</span>}
+                </div>
+                {summary && (
+                  <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', margin: 0, lineHeight: 1.4 }}>
+                    {summary.length > 140 ? summary.slice(0, 140) + '…' : summary}
+                  </p>
+                )}
+                {onOpenProduct && (
+                  <span style={{ fontSize: '0.8rem', color: 'var(--color-primary)', fontWeight: '500', marginTop: '0.35rem', display: 'inline-block' }}>
+                    Open details →
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
       </details>
     </div>
@@ -377,18 +540,6 @@ const ARTICLES = [
   },
 ];
 
-/** Quiz frustrations → tags used in ARTICLE_FOCUS_TAGS (align with products.js mapping). */
-const FRUSTRATION_TO_TAG = {
-  'Heavy flow': 'heavy-flow',
-  'Painful cramps': 'cramps',
-  'Irregular cycles': 'irregular',
-  'Recurrent UTIs': 'uti',
-  'Menopause symptoms': 'menopause',
-  'General discomfort': 'discomfort',
-  'Pelvic pain': 'pelvic-floor',
-  'Endometriosis': 'endometriosis',
-};
-
 /** Return articles relevant to quiz answers (for recommendations page). */
 export function getRecommendedArticles(quizAnswers) {
   if (!quizAnswers?.frustrations?.length) {
@@ -551,6 +702,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults 
           <Disclaimer compact style={{ marginTop: '1.5rem' }} />
 
           <TelehealthSuggestions articleId={selected.id} onOpenProduct={onOpenProduct} />
+          <DiagnosticProductsAndStartups articleId={selected.id} quizResults={quizResults} onOpenProduct={onOpenProduct} />
         </article>
       ) : (
         <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
