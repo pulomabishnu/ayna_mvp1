@@ -31,7 +31,7 @@ export default function DoctorPrep({ cycleData = [], myProducts = {}, quizResult
                     Clinical Advocacy Tool
                 </div>
                 <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Doctor Visit Prep</h2>
-                <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem' }}>We've synthesized your data into a clear summary for your OB-GYN or Primary Care provider.</p>
+                <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem' }}>We've synthesized your data into a clear summary for your OB-GYN or Primary Care provider. Our synthesis uses ACOG (well-woman care at every life stage) and UpToDate when available as the baseline.</p>
             </div>
 
             <div className="card" style={{ padding: '3rem', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-md)' }}>

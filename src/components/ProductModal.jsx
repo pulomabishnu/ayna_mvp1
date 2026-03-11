@@ -55,6 +55,29 @@ function normalizeSocialUrl(url) {
   }
 }
 
+// Platform order and labels for grouped social links
+const SOCIAL_PLATFORMS = [
+  { key: 'instagram', label: 'Instagram Reels & Posts', icon: '📷' },
+  { key: 'tiktok', label: 'TikTok', icon: '🎵' },
+  { key: 'youtube', label: 'YouTube & Shorts', icon: '▶️' },
+  { key: 'reddit', label: 'Reddit', icon: '💬' },
+  { key: 'facebook', label: 'Facebook', icon: '👥' },
+  { key: 'other', label: 'Other', icon: '🔗' }
+];
+
+function inferPlatform(url) {
+  if (!url) return 'other';
+  try {
+    const host = (new URL(url).hostname || '').toLowerCase();
+    if (host.includes('instagram.com')) return 'instagram';
+    if (host.includes('tiktok.com')) return 'tiktok';
+    if (host.includes('youtube.com') || host.includes('youtu.be')) return 'youtube';
+    if (host.includes('reddit.com')) return 'reddit';
+    if (host.includes('facebook.com') || host.includes('fb.com') || host.includes('fb.me')) return 'facebook';
+  } catch (_) {}
+  return 'other';
+}
+
 export default function ProductModal({ product, onClose, onTrack, isTracked, onOmit, isOmitted, onToggleCompare, isInCompare, onAddToEcosystem, isInEcosystem, userZipCode }) {
     const [activeTab, setActiveTab] = useState('safety');
     const [chatMessages, setChatMessages] = useState([{ role: 'assistant', text: `Hi! I'm Ayna. What would you like to know about ${product?.name}?` }]);
@@ -67,9 +90,9 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
 
     const tabs = [
         { id: 'safety', label: isDigital ? 'Privacy & Safety' : 'Safety & Ingredients', icon: '🛡️' },
-        { id: 'doctor', label: "Doctor's Opinion", icon: '👩‍⚕️' },
-        { id: 'science', label: 'Scientific Literature', icon: '🔬' },
+        { id: 'doctor', label: 'Clinician', icon: '👩‍⚕️' },
         { id: 'social', label: 'Community', icon: '💬' },
+        { id: 'science', label: 'Scientific Literature', icon: '🔬' },
         { id: 'buy', label: isDigital ? 'Get It' : 'Where to Buy', icon: '🛒' },
         { id: 'chat', label: 'Ask Ayna', icon: '✨' },
     ];
@@ -223,6 +246,79 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
         );
     };
 
+    // Social tab: group community links by platform (Instagram, TikTok, YouTube, Reddit, Facebook), summarized
+    const renderSocialLinks = (linksOrSection, aiSummaryOverride) => {
+        const section = typeof linksOrSection === 'object' && linksOrSection !== null && !Array.isArray(linksOrSection) && (linksOrSection.links || linksOrSection.url || linksOrSection.link)
+            ? linksOrSection
+            : { links: linksOrSection, aiSummary: aiSummaryOverride };
+        const { links, aiSummary } = getVerificationSection(section);
+        const linksArray = links
+            .map(l => ({ ...l, url: normalizeSocialUrl((l.url || l.href || '').trim()), platform: (l.platform || inferPlatform(l.url || l.href)).toLowerCase() }))
+            .filter(l => l.url && (l.url.startsWith('http://') || l.url.startsWith('https://')));
+        const byPlatform = {};
+        linksArray.forEach(l => {
+            const p = (l.platform === 'instagram' || l.platform === 'tiktok' || l.platform === 'youtube' || l.platform === 'reddit' || l.platform === 'facebook') ? l.platform : 'other';
+            if (!byPlatform[p]) byPlatform[p] = [];
+            byPlatform[p].push(l);
+        });
+        const hasAny = linksArray.length > 0;
+
+        return (
+            <div style={{ marginTop: '1rem' }}>
+                {aiSummary && (
+                    <div style={{
+                        padding: '1.25rem',
+                        background: 'linear-gradient(135deg, #FDF4FF 0%, #F5F3FF 100%)',
+                        borderRadius: 'var(--radius-lg)',
+                        border: '1px solid #E9D5FF',
+                        marginBottom: '1.5rem'
+                    }}>
+                        <h4 style={{ fontSize: '0.85rem', fontWeight: '700', color: '#7E22CE', marginBottom: '0.5rem' }}>✨ Summary</h4>
+                        <p style={{ fontSize: '0.9rem', color: '#581C87', lineHeight: '1.55' }}>{aiSummary}</p>
+                    </div>
+                )}
+                {!hasAny && (
+                    <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>No social or community links for this product yet.</p>
+                )}
+                {hasAny && SOCIAL_PLATFORMS.map(({ key, label, icon }) => {
+                    const list = byPlatform[key];
+                    if (!list || list.length === 0) return null;
+                    return (
+                        <div key={key} style={{ marginBottom: '1.5rem' }}>
+                            <h4 style={{ fontSize: '0.8rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                <span>{icon}</span> {label} ({list.length})
+                            </h4>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                                {list.map((link, idx) => (
+                                    <div key={idx} style={{
+                                        padding: '1rem 1.25rem',
+                                        background: 'var(--color-surface)',
+                                        borderRadius: 'var(--radius-md)',
+                                        border: '1px solid var(--color-border)'
+                                    }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.75rem', flexWrap: 'wrap' }}>
+                                            <div style={{ flex: '1 1 200px' }}>
+                                                <p style={{ fontSize: '0.95rem', fontWeight: '600', color: 'var(--color-text-main)', marginBottom: '0.25rem' }}>{link.text}</p>
+                                                <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', lineHeight: '1.45' }}>{link.summary}</p>
+                                            </div>
+                                            <a href={link.url} target="_blank" rel="noopener noreferrer" style={{
+                                                fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-primary)',
+                                                textDecoration: 'none', padding: '0.35rem 0.75rem',
+                                                background: 'var(--color-primary-fade)', borderRadius: '8px',
+                                                whiteSpace: 'nowrap', flexShrink: 0
+                                            }}>
+                                                Open ↗
+                                            </a>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+        );
+    };
 
     return (
         <div style={{
@@ -436,11 +532,14 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                                 marginBottom: '1.25rem', padding: '0.85rem 1rem', borderRadius: 'var(--radius-md)',
                                 background: 'var(--color-secondary-fade)', border: '1px solid var(--color-border)', fontSize: '0.85rem', color: 'var(--color-text-muted)', lineHeight: 1.5
                             }}>
+                                <p style={{ margin: 0 }}>Ayna uses ACOG (well-woman care at every life stage) and UpToDate when available as the baseline for clinician perspectives and synthesized product information.</p>
+                                <p style={{ margin: '0.6rem 0 0' }}>
                                 {product.clinicianOpinionSource === 'independent'
                                     ? 'Clinician opinions and linked sources below are from independent third parties (e.g. medical societies, academic centers, regulators) and are not affiliated with the product brand. Ayna does not endorse any brand. Always consult your own clinician for medical advice.'
                                     : product.clinicianOpinionSource === 'brand'
                                         ? 'Ayna has not found independent clinician opinions for this product. The opinions and links below are from clinicians or content associated with the brand. We still recommend discussing with your own clinician. Ayna does not endorse any brand.'
                                         : 'Sources below may include both independent and brand-associated perspectives. Where possible we prioritize independent clinical sources; some products have only brand-associated clinician content. Ayna does not endorse any brand. Always consult your own clinician for medical advice.'}
+                                </p>
                             </div>
                             <div style={{ background: 'var(--color-surface)', padding: '1.5rem', borderRadius: 'var(--radius-lg)', marginBottom: '1.5rem', borderLeft: '4px solid var(--color-primary)' }}>
                                 <p style={{ fontSize: '1.1rem', fontStyle: 'italic', lineHeight: '1.6', color: 'var(--color-text-main)' }}>
@@ -484,12 +583,10 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                                     "{product.communityReview || 'No community reviews available yet.'}"
                                 </p>
                             </div>
-                            {renderVerificationLinks(
-                                product.verificationLinks?.community,
-                                null,
-                                "Social & Community Verification",
-                                "social"
-                            )}
+                            <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1rem' }}>
+                                Real experiences from Instagram reels, TikTok, YouTube Shorts, Reddit, and Facebook. All links open to search or official pages so you can browse multiple posts and reels.
+                            </p>
+                            {renderSocialLinks(product.verificationLinks?.community, null)}
                         </div>
                     )}
 

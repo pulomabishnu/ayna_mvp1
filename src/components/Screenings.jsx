@@ -203,7 +203,7 @@ export default function Screenings({ checkinData, onNavigate }) {
 
             <div style={{ marginTop: '4rem', textAlign: 'center', padding: '2rem', background: '#F4F5F7', borderRadius: 'var(--radius-lg)' }}>
                 <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', maxWidth: '600px', margin: '0 auto' }}>
-                    <strong>Disclaimer:</strong> Ayna does not provide medical diagnosis. Our recommendations are based on standard clinical guidelines (CDC, ACOG). Please consult a healthcare professional for all medical concerns.
+                    <strong>Disclaimer:</strong> Ayna does not provide medical diagnosis. Our recommendations use ACOG (including well-woman care at every life stage) and UpToDate when available as the baseline, plus CDC and other guidelines as appropriate. Please consult a healthcare professional for all medical concerns.
                 </p>
             </div>
         </section>
