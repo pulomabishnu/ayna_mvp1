@@ -152,7 +152,7 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
                     boxShadow: '0 22px 45px rgba(236, 90, 163, 0.18)'
                 }}>
                     <div style={{ flex: '1 1 400px' }}>
-                        <h3 style={{ fontSize: '1.4rem', marginBottom: '0.5rem', color: 'var(--color-surface-contrast)' }}>Want a Personalized Health Plan? ✨</h3>
+                        <h3 style={{ fontSize: '1.4rem', marginBottom: '0.5rem', color: 'var(--color-surface-contrast)' }}>Want personalized recommendations without the work? ✨</h3>
                         <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem' }}>
                             Join Ayna Premium for tailored recommendations, cycle tracking, and safety monitoring specific to your body.
                         </p>
