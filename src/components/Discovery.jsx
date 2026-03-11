@@ -19,8 +19,25 @@ function getSortPrice(item) {
     return null;
 }
 
+/** Score for default sort: top rated + positive clinical/social/scientific consensus + safety first. */
+function getQualityScore(item) {
+    const v = item.verificationLinks || {};
+    const hasLinks = (section) => {
+        if (!section) return 0;
+        const links = Array.isArray(section) ? section : (section.links || (section.url ? [section] : []));
+        return (links.length > 0 ? 1 : 0);
+    };
+    const clinical = hasLinks(v.doctor);
+    const social = hasLinks(v.community);
+    const scientific = hasLinks(v.scientific);
+    const consensusScore = clinical + social + scientific;
+    const rating = item.userRating != null ? Number(item.userRating) / 5 : 0.5;
+    const safetyOk = !(item.safety?.recalls && String(item.safety.recalls).includes('⚠️')) ? 1 : 0;
+    return (rating * 2) + consensusScore + safetyOk;
+}
+
 const SORT_OPTIONS = [
-    { value: 'default', label: 'Default' },
+    { value: 'default', label: 'Best match (rating, consensus & safety)' },
     { value: 'price-asc', label: 'Price: low to high' },
     { value: 'price-desc', label: 'Price: high to low' },
     { value: 'rating', label: 'Best rated' },
@@ -52,15 +69,28 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
             if (searchQuery.trim()) {
                 const query = searchQuery.toLowerCase().trim();
-                const nameMatch = item.name?.toLowerCase().includes(query);
-                const summaryMatch = item.summary?.toLowerCase().includes(query);
-                const taglineMatch = item.tagline?.toLowerCase().includes(query);
-                const tagsMatch = item.tags?.some(t => t.toLowerCase().includes(query));
-                const categoryLabel = (CATEGORY_LABELS[item.category] || item.category || '').toLowerCase();
-                const categoryMatch = item.category?.toLowerCase().includes(query) || categoryLabel.includes(query);
+                const stopWords = new Set(['a', 'an', 'the', 'best', 'good', 'top', 'for', 'my', 'me', 'to', 'and', 'or', 'of', 'in', 'on', 'with']);
+                const words = query.split(/\s+/).filter(w => w.length > 1 && !stopWords.has(w));
+                const searchText = [
+                    item.name,
+                    item.summary,
+                    item.tagline,
+                    (item.tags || []).join(' '),
+                    item.category,
+                    CATEGORY_LABELS[item.category]
+                ].filter(Boolean).join(' ').toLowerCase();
 
-                if (!nameMatch && !summaryMatch && !taglineMatch && !tagsMatch && !categoryMatch) {
-                    return false;
+                if (words.length === 0) {
+                    if (!searchText.includes(query)) return false;
+                } else {
+                    const wordMatches = (word) => {
+                        if (searchText.includes(word)) return true;
+                        if (word.endsWith('s') && searchText.includes(word.slice(0, -1))) return true;
+                        if (!word.endsWith('s') && searchText.includes(word + 's')) return true;
+                        return false;
+                    };
+                    const allWordsMatch = words.every(word => wordMatches(word));
+                    if (!allWordsMatch) return false;
                 }
             }
 
@@ -93,6 +123,13 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 if (ra == null) return 1;
                 if (rb == null) return -1;
                 return rb - ra;
+            });
+        } else {
+            // default: best quality first — top rated, positive clinical/social/sci consensus, and safety
+            list = [...list].sort((a, b) => {
+                const qa = getQualityScore(a);
+                const qb = getQualityScore(b);
+                return qb - qa;
             });
         }
         return list;

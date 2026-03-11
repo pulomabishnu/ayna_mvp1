@@ -1,0 +1,14 @@
+---
+description: After making code changes, always commit and push so the user can preview on Vercel
+alwaysApply: true
+---
+
+# Deploy after changes
+
+After implementing any requested changes to this project:
+
+1. Run `git add` for the modified (and any new) files.
+2. Run `git commit` with a clear, short message describing the change.
+3. Run `git push` to push to origin (e.g. ayna_mvp1 on GitHub).
+
+The user relies on Vercel to preview the site; pushing to the connected branch triggers a new deploy.
