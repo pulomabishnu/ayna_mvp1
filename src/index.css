@@ -182,51 +182,6 @@ button {
   transform: translateY(0) scale(1);
 }
 
-/* Floating Elements Parallax Background */
-.parallax-bg {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.floating-blob {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(100px);
-  opacity: 0.12;
-  will-change: transform;
-}
-
-.blob-1 {
-  width: 50vw;
-  height: 50vw;
-  background: radial-gradient(circle at 30% 30%, #FDECF5, #F9A8D4);
-  top: -10%;
-  right: -10%;
-}
-
-.blob-2 {
-  width: 40vw;
-  height: 40vw;
-  background: radial-gradient(circle at 70% 70%, #E0F2FE, #F5D0FE);
-  bottom: -5%;
-  left: -10%;
-}
-
-.blob-3 {
-  width: 30vw;
-  height: 30vw;
-  background: #FFE4F0;
-  top: 40%;
-  left: 15%;
-  opacity: 0.06;
-}
-
 /* Smooth Scrolling */
 html {
   scroll-behavior: smooth;

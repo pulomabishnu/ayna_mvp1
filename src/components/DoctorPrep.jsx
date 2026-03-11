@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function DoctorPrep({ cycleData = [], myProducts = {}, quizResults = {}, onBack }) {
+export default function DoctorPrep({ cycleData = [], myProducts = {}, quizResults = {}, chatHistory = [], onBack }) {
     // Synthesize data for the doctor
     const recentSymptoms = (cycleData || []).slice(0, 5).reduce((acc, curr) => {
         if (curr && curr.symptoms) {
@@ -13,6 +13,9 @@ export default function DoctorPrep({ cycleData = [], myProducts = {}, quizResult
     const goal = quizResults?.frustration || 'General Wellness';
     const age = quizResults?.age || 'N/A';
     const sensitivities = quizResults?.sensitivities || 'None reported';
+
+    // User messages from chatbot (for suggested questions)
+    const userChatMessages = (chatHistory || []).filter(m => m.role === 'user').map(m => (m.text || '').trim()).filter(Boolean);
 
     return (
         <div className="container animate-fade-in" style={{ padding: 'var(--spacing-lg) var(--spacing-md)', maxWidth: '900px' }}>
@@ -37,7 +40,7 @@ export default function DoctorPrep({ cycleData = [], myProducts = {}, quizResult
             <div className="card" style={{ padding: '3rem', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-md)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '2.5rem', borderBottom: '2px solid var(--color-bg)', pb: '1.5rem' }}>
                     <div>
-                        <h1 style={{ fontSize: '1.8rem', fontWeight: '800', marginBottom: '0.25rem', color: 'var(--color-primary)' }}>Ayana Health Summary</h1>
+                        <h1 style={{ fontSize: '1.8rem', fontWeight: '800', marginBottom: '0.25rem', color: 'var(--color-primary)' }}>Ayna Health Summary</h1>
                         <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>Generated on {new Date().toLocaleDateString()}</p>
                     </div>
                     <button className="btn btn-outline" onClick={() => window.print()}>🖨️ Print Summary</button>
@@ -64,11 +67,17 @@ export default function DoctorPrep({ cycleData = [], myProducts = {}, quizResult
                 <div style={{ marginBottom: '3rem' }}>
                     <h4 style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: '1rem', letterSpacing: '0.05em' }}>Current Product Ecosystem ({ecosystemStats} items)</h4>
                     <div style={{ background: 'var(--color-bg)', padding: '1.5rem', borderRadius: 'var(--radius-md)' }}>
-                        <p style={{ fontSize: '0.9rem', color: 'var(--color-text-main)', display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                             {Object.values(myProducts).map(p => (
-                                <span key={p.id} style={{ background: 'white', border: '1px solid var(--color-border)', padding: '0.2rem 0.6rem', borderRadius: 'var(--radius-sm)' }}>{p.name}</span>
+                                <li key={p.id} style={{ background: 'white', border: '1px solid var(--color-border)', padding: '0.75rem 1rem', borderRadius: 'var(--radius-sm)' }}>
+                                    <strong style={{ fontSize: '0.95rem', display: 'block', marginBottom: '0.35rem' }}>{p.name}</strong>
+                                    <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
+                                        <strong style={{ color: 'var(--color-text-main)' }}>Active / main ingredients:</strong>{' '}
+                                        {p.ingredients || p.tagline || '— See product label or brand for full ingredient list.'}
+                                    </span>
+                                </li>
                             ))}
-                        </p>
+                        </ul>
                         <p style={{ marginTop: '1rem', fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
                             *Providing this list helps your doctor identify potential irritants or supplement interactions.
                         </p>
@@ -76,7 +85,7 @@ export default function DoctorPrep({ cycleData = [], myProducts = {}, quizResult
                 </div>
 
                 <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '2rem' }}>
-                    <h4 style={{ fontSize: '1rem', fontWeight: '700', marginBottom: '1rem' }}>Suggested Questions for Your Provider:</h4>
+                    <h4 style={{ fontSize: '1rem', fontWeight: '700', marginBottom: '1rem' }}>Suggested Questions for Your Provider</h4>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', background: 'var(--color-surface-soft)', padding: '1rem', borderRadius: 'var(--radius-sm)' }}>
                             <span style={{ fontSize: '1.2rem' }}>🙋‍♀️</span>
@@ -86,6 +95,20 @@ export default function DoctorPrep({ cycleData = [], myProducts = {}, quizResult
                             <span style={{ fontSize: '1.2rem' }}>💊</span>
                             <p style={{ fontSize: '0.95rem' }}>"I am currently using <strong>{Object.values(myProducts)[0]?.name || 'these products'}</strong>. Do you see any concerns with my current health goals?"</p>
                         </div>
+                        {userChatMessages.length > 0 && (
+                            <>
+                                <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginTop: '0.5rem', marginBottom: '0.25rem', letterSpacing: '0.05em' }}>Based on what you shared with Ayna</p>
+                                {userChatMessages.slice(0, 5).map((text, i) => (
+                                    <div key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', background: 'var(--color-primary-fade)', padding: '1rem', borderRadius: 'var(--radius-sm)', borderLeft: '4px solid var(--color-primary)' }}>
+                                        <span style={{ fontSize: '1.2rem' }}>💬</span>
+                                        <div>
+                                            <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.35rem' }}>You told Ayna: &quot;{text.length > 120 ? text.slice(0, 120) + '…' : text}&quot;</p>
+                                            <p style={{ fontSize: '0.95rem', fontWeight: '500' }}>Consider asking your provider: &quot;I shared this with my health app — can we discuss whether it affects my care or anything I should follow up on?&quot;</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </>
+                        )}
                     </div>
                 </div>
             </div>

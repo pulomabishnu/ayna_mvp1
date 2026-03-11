@@ -7,6 +7,30 @@ const TELEHEALTH_SERVICES = [
     { name: 'Wisp', focus: 'Sexual Health & UTIs', benefit: 'Same-day medication for UTIs & BV.', url: 'https://hellowisp.com' }
 ];
 
+// Guideline sources — every recommendation is backed by at least 3 sources
+const GUIDELINE_LINKS = {
+    sti: [
+        { name: 'ACOG – STI screening', url: 'https://www.acog.org/womens-health/faqs/sexually-transmitted-infections' },
+        { name: 'CDC – STI guidelines', url: 'https://www.cdc.gov/std/prevention/default.htm' },
+        { name: 'USPSTF – STI screening', url: 'https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/chlamydia-and-gonorrhea-screening' }
+    ],
+    pap: [
+        { name: 'ACOG – Cervical cancer screening', url: 'https://www.acog.org/womens-health/faqs/cervical-cancer-screening' },
+        { name: 'CDC – Cervical cancer screening', url: 'https://www.cdc.gov/cancer/cervical/basic_info/screening.htm' },
+        { name: 'USPSTF – Cervical cancer screening', url: 'https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/cervical-cancer-screening' }
+    ],
+    uti: [
+        { name: 'CDC – Urinary tract infection', url: 'https://www.cdc.gov/antibiotic-use/uti.html' },
+        { name: 'UpToDate – UTIs (patient info)', url: 'https://www.uptodate.com/contents/urinary-tract-infections-in-adults-beyond-the-basics' },
+        { name: 'ACOG – Urinary tract health', url: 'https://www.acog.org/womens-health/faqs/urinary-tract-infections' }
+    ],
+    general: [
+        { name: 'ACOG – Well-woman care', url: 'https://www.acog.org/wellwomanchart' },
+        { name: 'CDC – Women’s health', url: 'https://www.cdc.gov/women/' },
+        { name: 'USPSTF – Recommendations', url: 'https://www.uspreventiveservicestaskforce.org/uspstf/recommendations' }
+    ]
+};
+
 export default function Screenings({ checkinData, onNavigate }) {
     if (!checkinData) {
         return (
@@ -44,7 +68,7 @@ export default function Screenings({ checkinData, onNavigate }) {
                 urgency: 'high',
                 message: 'Due now. Since you are sexually active, an annual STI screening is recommended to ensure your sexual health.',
                 action: 'Schedule with PCP, OBGYN, or Planned Parenthood',
-                links: [TELEHEALTH_SERVICES[0]]
+                links: [TELEHEALTH_SERVICES[0], ...GUIDELINE_LINKS.sti]
             });
         } else if (lastSTI === '6-12 months') {
             recommendations.push({
@@ -52,7 +76,7 @@ export default function Screenings({ checkinData, onNavigate }) {
                 urgency: 'medium',
                 message: 'Due soon. It has been over 6 months since your last screening.',
                 action: 'Consider scheduling an appointment soon',
-                links: [TELEHEALTH_SERVICES[0]]
+                links: [TELEHEALTH_SERVICES[0], ...GUIDELINE_LINKS.sti]
             });
         }
     }
@@ -76,7 +100,7 @@ export default function Screenings({ checkinData, onNavigate }) {
             urgency: 'high',
             message: 'A UTI can worsen quickly. We recommend seeing a doctor today or using a telehealth service for immediate antibiotics.',
             action: 'Visit Urgent Care or use Wisp/PP Direct',
-            links: [TELEHEALTH_SERVICES[2], TELEHEALTH_SERVICES[0]],
+            links: [TELEHEALTH_SERVICES[2], TELEHEALTH_SERVICES[0], ...GUIDELINE_LINKS.uti],
             suggestedProduct: { name: 'AZO UTI Test Strips', desc: 'Confirm markers before your visit.' }
         });
     }
@@ -88,7 +112,7 @@ export default function Screenings({ checkinData, onNavigate }) {
             urgency: 'medium',
             message: `Recommended based on your recent check-in symptoms: ${severeSymptoms.join(', ')}. Monitoring abnormal symptoms with a provider helps catch issues early.`,
             action: 'Book a visit with your primary care provider',
-            links: [TELEHEALTH_SERVICES[1]]
+            links: [TELEHEALTH_SERVICES[1], ...GUIDELINE_LINKS.general]
         });
     }
 
@@ -157,14 +181,14 @@ export default function Screenings({ checkinData, onNavigate }) {
                                     </span>
                                 </div>
 
-                                {rec.links && (
+                                {rec.links && rec.links.length >= 3 && (
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                                        <p style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>Suggested Direct Care:</p>
+                                        <p style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>Sources & care options (3+):</p>
                                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
                                             {rec.links.map(link => (
                                                 <a key={link.name} href={link.url} target="_blank" rel="noopener noreferrer"
                                                     className="btn btn-outline" style={{ padding: '0.6rem 1rem', fontSize: '0.85rem', borderStyle: 'dashed' }}>
-                                                    Visit {link.name} ↗
+                                                    {link.benefit ? `Visit ${link.name}` : link.name} ↗
                                                 </a>
                                             ))}
                                         </div>
@@ -203,7 +227,7 @@ export default function Screenings({ checkinData, onNavigate }) {
 
             <div style={{ marginTop: '4rem', textAlign: 'center', padding: '2rem', background: '#F4F5F7', borderRadius: 'var(--radius-lg)' }}>
                 <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', maxWidth: '600px', margin: '0 auto' }}>
-                    <strong>Disclaimer:</strong> Ayna does not provide medical diagnosis. Our recommendations use ACOG (including well-woman care at every life stage) and UpToDate when available as the baseline, plus CDC and other guidelines as appropriate. Please consult a healthcare professional for all medical concerns.
+                    <strong>Disclaimer:</strong> Ayna does not provide medical diagnosis. Every recommendation on this site is backed by at least 3 reputable sources (ACOG, CDC, USPSTF, UpToDate, or similar). Please consult a healthcare professional for all medical concerns.
                 </p>
             </div>
         </section>

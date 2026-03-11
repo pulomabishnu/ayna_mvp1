@@ -38,7 +38,17 @@ export const EXTENDED_PHYSICAL_2 = [
         verificationLinks: {
             doctor: { url: 'https://ritual.com/science', text: 'Ritual Science Portal', summary: 'A breakdown of their ingredient sourcing, clinical trials, and why they use specific forms like Methylfolate.' },
             scientific: { url: 'https://pubmed.ncbi.nlm.nih.gov/30283731/', text: 'Study on Supplement Traceability', summary: 'Research highlighting the importance of ingredient transparency in the unregulated supplement market.' },
-            community: { url: 'https://www.instagram.com/ritual/', text: 'Ritual Instagram Support', summary: 'Thousands of women share their "prenatal journey" and how the mint-essenced capsule helps with morning sickness.' }
+            community: {
+                aiSummary: "Prenatal and TTC communities frequently recommend Ritual for traceability and reduced nausea. Instagram and Reddit have strong discussion volume.",
+                links: [
+                    { platform: 'reddit', url: 'https://www.reddit.com/r/BabyBumps/', text: 'Reddit r/BabyBumps', summary: 'Prenatal and pregnancy supplement discussions.' },
+                    { platform: 'reddit', url: 'https://www.reddit.com/r/BabyBumps/search/?q=ritual+prenatal&restrict_sr=1', text: 'Reddit r/BabyBumps — Ritual', summary: 'Posts on Ritual prenatal and morning sickness.' },
+                    { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=ritual%20prenatal%20review', text: 'TikTok — Ritual prenatal', summary: 'Short-form reviews and prenatal journey content.' },
+                    { platform: 'youtube', url: 'https://www.youtube.com/results?search_query=ritual+prenatal+vitamin+review', text: 'YouTube — Ritual prenatal reviews', summary: 'In-depth reviews of Ritual prenatal.' },
+                    { platform: 'instagram', url: 'https://www.instagram.com/ritual/', text: 'Ritual on Instagram', summary: 'Prenatal journey and mint-essenced capsule content; high engagement.' },
+                    { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=ritual%20prenatal', text: 'Facebook — Ritual prenatal', summary: 'Group and public discussions.' }
+                ]
+            }
         }
     },
     { id: 'p-belly-bandit', name: 'Belly Bandit Upsie Belly', category: 'pregnancy', type: 'physical', internal: false, healthFunctions: ['comfort'], tags: ['comfort'], price: '$50', whereToBuy: ['Amazon'], image: 'http://www.macrobaby.com/cdn/shop/files/belly-bandit-upsie-belly-maternity-support-black_image_1.jpg?v=1736336829&width=600', summary: 'Abdominal support band for pregnancy. Relieves pressure on bladder and back.', safety: { fdaStatus: 'Registered Class I', materials: 'Bamboo-derived viscose', recalls: 'No recalls.', allergens: 'Latex-free' }, doctorOpinion: '"Excellent for pelvic girdle pain during the third trimester." — Pelvic PT', communityReview: '"Made working 8-hour shifts possible while 34 weeks pregnant." — Amazon review', ingredients: 'Bamboo from viscose, spandex.', effectiveness: 'Doctor-recommended for pregnancy back pain.', integrations: [], verificationLinks: {} },
@@ -50,7 +60,16 @@ export const EXTENDED_PHYSICAL_2 = [
         verificationLinks: {
             doctor: { url: 'https://hellomaude.com/blogs/news', text: 'Maude: Sexual Wellness', summary: 'Maude advocates for sexual health integration into general wellness.', justification: 'Brand content from the manufacturer.' },
             scientific: { url: 'https://www.healthline.com/health/healthy-sex/sexual-health-benefits', text: 'Medical Benefits of Sexual Health', summary: 'Scientific overview of how sexual wellness contributes to reduced stress and better sleep.' },
-            community: { url: 'https://www.tiktok.com/@hellomaude', text: 'TikTok @hellomaude', summary: 'Educational content on intimate care and sexual wellness.' }
+            community: {
+                aiSummary: "Maude is widely recommended for approachable, design-forward sexual wellness. TikTok and Instagram have strong brand and community content.",
+                links: [
+                    { platform: 'reddit', url: 'https://www.reddit.com/r/Healthyhooha/search/?q=maude&restrict_sr=1', text: 'Reddit — Maude', summary: 'Discussions on intimate wellness products.' },
+                    { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=maude%20vibe%20review', text: 'TikTok — Maude', summary: 'Educational content on intimate care and sexual wellness.' },
+                    { platform: 'youtube', url: 'https://www.youtube.com/results?search_query=maude+sexual+wellness+review', text: 'YouTube — Maude reviews', summary: 'Reviews of Maude products and wellness approach.' },
+                    { platform: 'instagram', url: 'https://www.instagram.com/hellomaude/', text: 'Maude on Instagram', summary: 'Brand reels and sexual wellness education.' },
+                    { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=maude%20vibe', text: 'Facebook — Maude', summary: 'Community discussions on sexual wellness.' }
+                ]
+            }
         }
     },
     { id: 'p-uberlube', name: 'Uberlube Luxury Lubricant', category: 'sex-tech', type: 'physical', internal: true, healthFunctions: ['vaginal-health', 'comfort'], tags: ['comfort', 'discomfort'], price: '$18', whereToBuy: ['Amazon', 'CVS'], image: 'http://l-n-w.com/cdn/shop/files/55ml2.jpg?v=1765835524', summary: 'High-end silicone-based lubricant. Minimalist, fragrance-free, won\'t disrupt flora.', safety: { fdaStatus: 'FDA-cleared', materials: 'Silicone with Vitamin E', recalls: 'No recalls.', allergens: 'Latex compatible' }, doctorOpinion: '"The best silicone lube on the market. Very low irritation risk." — Dr. Rachel Rubin', communityReview: '"Doesn\'t get sticky. Feels very natural." — Reddit r/sex', ingredients: 'Dimethicone, Dimethiconol, Cyclomethicone, Tocopheryl Acetate (Vitamin E).', effectiveness: 'Long-lasting, skin-friendly.', integrations: [], verificationLinks: {} },
@@ -61,7 +80,7 @@ export const EXTENDED_PHYSICAL_2 = [
 
     // ─── CONTRACEPTION (NON-DIGITAL) ─────────────────────
     {
-        id: 'p-phexxi', name: 'Phexxi (Non-hormonal gel)', category: 'contraception', type: 'physical', internal: true, healthFunctions: ['contraception'], tags: ['privacy', 'discomfort'], price: 'Varies with insurance', whereToBuy: ['Pharmacy with prescription'], image: 'https://birthcontrolpharmacist.com/wp-content/uploads/2020/10/img_3042.jpg?w=826', summary: 'On-demand, hormone-free contraceptive gel. Prescription only.', safety: { fdaStatus: 'FDA-approved (2020)', materials: 'Lactic acid, citric acid, potassium bitartrate', recalls: 'No recalls.', allergens: 'Can cause UTI-like symptoms in some' },
+        id: 'p-phexxi', name: 'Phexxi (Non-hormonal gel)', category: 'contraception', type: 'physical', internal: true, healthFunctions: ['contraception'], tags: ['privacy', 'discomfort'], price: 'Varies with insurance', whereToBuy: ['Pharmacy with prescription'], requiresPrescription: true, prescriptionPatientUrl: 'https://www.phexxi.com/howtogetphexxi', prescriptionSavingsUrl: 'https://www.phexxi.com/savings-program', image: 'https://birthcontrolpharmacist.com/wp-content/uploads/2020/10/img_3042.jpg?w=826', summary: 'On-demand, hormone-free contraceptive gel. Prescription only.', safety: { fdaStatus: 'FDA-approved (2020)', materials: 'Lactic acid, citric acid, potassium bitartrate', recalls: 'No recalls.', allergens: 'Can cause UTI-like symptoms in some' },
         doctorOpinion: '"A good option for women who want to avoid systemic hormones and use something as-needed." — Dr. Lauren Streicher', communityReview: '"Love that it\'s hormone-free, but it can be a bit messy." — Reddit r/birthcontrol', ingredients: 'Lactic acid, citric acid, potassium bitartrate.', effectiveness: '86% typical use, 93% perfect use.', badges: ['Hormone-Free', 'FDA-Approved'],
         integrations: [],
         verificationLinks: {
@@ -75,7 +94,7 @@ export const EXTENDED_PHYSICAL_2 = [
         id: 'p-kindra-lotion', name: 'Kindra Daily Vaginal Lotion', category: 'menopause', type: 'physical', internal: true, healthFunctions: ['vaginal-health', 'comfort'], tags: ['discomfort', 'comfort'], price: '$45', whereToBuy: ['OurKindra.com'], image: 'https://ourkindra.com/cdn/shop/files/Kindra_ProductShot_LotionPackagingOTC_FSA2.jpg?v=1738344965', summary: 'Hormone-free daily lotion to address vaginal dryness and thinning associated with menopause.', safety: { fdaStatus: 'Gynecologist tested', materials: 'Coconut oil, niacinamide', recalls: 'No recalls.', allergens: 'Fragrance-free' },
         doctorOpinion: '"An excellent non-hormonal treatment for GSM (Genitourinary Syndrome of Menopause)." — Dr. Kelly Casperson', communityReview: '"Better than any prescription cream I\'ve tried. No mess." — Kindra review', ingredients: 'Niacinamide, coconut oil, sunflower seed oil.', effectiveness: 'Clinically shown to improve moisture in 7 days.', integrations: [], badges: ['Hormone-Free', 'Estrogen-Free'], verificationLinks: {}
     },
-    { id: 'p-menopause-patch', name: 'Estrogen Patch (Generic/Vive-Dot)', category: 'menopause', type: 'physical', internal: false, healthFunctions: ['telehealth'], tags: ['discomfort'], price: 'Varies with insurance', whereToBuy: ['Pharmacy with prescription'], image: 'https://mmassets.universaldrugstore.com/wp-content/uploads/product-image-vivelle-dot-1052x1052.webp', summary: 'Transdermal hormone replacement therapy for menopause symptoms. Prescribed via Midi or Evernow.', safety: { fdaStatus: 'FDA-approved', materials: 'Estradiol patch', recalls: 'N/A', allergens: 'Adhesive sensitivity' }, doctorOpinion: '"Transdermal estrogen is preferred over oral due to lower stroke/lot risk." — North American Menopause Society', communityReview: '"The patch changed my life. Hot flashes gone in 48 hours." — Reddit r/Menopause', ingredients: 'Estradiol.', effectiveness: 'Highly effective for vasomotor symptoms.', integrations: [], verificationLinks: {} },
+    { id: 'p-menopause-patch', name: 'Estrogen Patch (Generic/Vive-Dot)', category: 'menopause', type: 'physical', internal: false, healthFunctions: ['telehealth'], tags: ['discomfort'], price: 'Varies with insurance', whereToBuy: ['Pharmacy with prescription'], requiresPrescription: true, image: 'https://mmassets.universaldrugstore.com/wp-content/uploads/product-image-vivelle-dot-1052x1052.webp', summary: 'Transdermal hormone replacement therapy for menopause symptoms. Prescribed via Midi or Evernow.', safety: { fdaStatus: 'FDA-approved', materials: 'Estradiol patch', recalls: 'N/A', allergens: 'Adhesive sensitivity' }, doctorOpinion: '"Transdermal estrogen is preferred over oral due to lower stroke/lot risk." — North American Menopause Society', communityReview: '"The patch changed my life. Hot flashes gone in 48 hours." — Reddit r/Menopause', ingredients: 'Estradiol.', effectiveness: 'Highly effective for vasomotor symptoms.', integrations: [], verificationLinks: {} },
 ];
 
 export const EXTENDED_DIGITAL_2 = [
@@ -100,7 +119,11 @@ export const EXTENDED_DIGITAL_2 = [
             community: {
                 aiSummary: "Social media sentiment is high regarding Bloom's user interface and the 'personal feel' of the video sessions. Community members frequently self-report improved mood and better coping mechanisms after consistently using the app's daily morning check-in feature.",
                 links: [
-                    { url: 'https://www.tiktok.com/search?q=bloom%20app%20review', text: 'TikTok Bloom Reviews', summary: 'Users share their daily \"mental health check-ins\" and progress using the app\'s video-therapy modules.', justification: 'User-generated content on social media provides real-time data on the habit-forming aspects of digital health apps.' }
+                    { platform: 'reddit', url: 'https://www.reddit.com/r/mentalhealth/search/?q=bloom+app&restrict_sr=1', text: 'Reddit — Bloom app', summary: 'Discussions on CBT apps and self-care tools.' },
+                    { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=bloom%20app%20review', text: 'TikTok — Bloom app', summary: 'Daily check-ins and video-therapy progress; high engagement.' },
+                    { platform: 'youtube', url: 'https://www.youtube.com/results?search_query=bloom+cbt+app+review', text: 'YouTube — Bloom CBT reviews', summary: 'Reviews of Bloom and digital CBT apps.' },
+                    { platform: 'instagram', url: 'https://www.instagram.com/bloomapp/', text: 'Bloom on Instagram', summary: 'Mental health and self-care content.' },
+                    { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=bloom%20cbt%20app', text: 'Facebook — Bloom app', summary: 'Group discussions on mental health apps.' }
                 ]
             }
         }

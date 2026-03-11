@@ -70,14 +70,18 @@ function parseMessageIntoProfile(message, currentProfile) {
   return hasChanges ? { profile, added } : null;
 }
 
-export default function ProfileChatbot({ profile, onProfileUpdate, disabled }) {
+const DEFAULT_WELCOME = [{ role: 'assistant', text: "Hi! I'm Ayna. You can tell me more about your health here — for example, 'I have endometriosis' or 'I'm sensitive to fragrance.' I'll update your profile and refresh your recommendations." }];
+
+export default function ProfileChatbot({ profile, onProfileUpdate, chatHistory = [], onChatHistoryUpdate, disabled }) {
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState([
-    { role: 'assistant', text: "Hi! I'm Ayna. You can tell me more about your health here — for example, 'I have endometriosis' or 'I'm sensitive to fragrance.' I'll update your profile and refresh your recommendations." }
-  ]);
+  const [messages, setMessages] = useState(chatHistory?.length > 0 ? chatHistory : DEFAULT_WELCOME);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const bottomRef = useRef(null);
+
+  useEffect(() => {
+    if (chatHistory?.length > 0) setMessages(chatHistory);
+  }, [chatHistory?.length]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -88,20 +92,25 @@ export default function ProfileChatbot({ profile, onProfileUpdate, disabled }) {
     const msg = input.trim();
     if (!msg || sending || disabled) return;
     setInput('');
-    setMessages(prev => [...prev, { role: 'user', text: msg }]);
+    const userMsg = { role: 'user', text: msg };
     setSending(true);
 
     const result = parseMessageIntoProfile(msg, profile || {});
+    let assistantText;
     if (result) {
       onProfileUpdate(result.profile);
       const parts = [];
       if (result.added.frustrations.length) parts.push(`Added concerns: ${result.added.frustrations.join(', ')}.`);
       if (result.added.sensitivities.length) parts.push(`Added sensitivities: ${result.added.sensitivities.join(', ')}.`);
       if (result.added.preference) parts.push(`Updated priority: ${result.added.preference}.`);
-      setMessages(prev => [...prev, { role: 'assistant', text: `Got it. ${parts.join(' ')} Your profile and recommendations have been updated.` }]);
+      assistantText = `Got it. ${parts.join(' ')} Your profile and recommendations have been updated.`;
     } else {
-      setMessages(prev => [...prev, { role: 'assistant', text: "Thanks for sharing. I didn't spot specific concerns or preferences to add — try phrases like 'I have heavy flow' or 'I prefer organic products.' You can also retake the quiz to change your answers." }]);
+      assistantText = "Thanks for sharing. I didn't spot specific concerns or preferences to add — try phrases like 'I have heavy flow' or 'I prefer organic products.' You can also retake the quiz to change your answers.";
     }
+    const assistantMsg = { role: 'assistant', text: assistantText };
+    const newMessages = [...messages, userMsg, assistantMsg];
+    setMessages(newMessages);
+    onChatHistoryUpdate?.(newMessages);
     setSending(false);
   };
 

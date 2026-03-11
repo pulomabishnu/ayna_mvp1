@@ -106,14 +106,17 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
   };
 
   const handleSingle = (option) => {
-    const next = { ...answers, [step.id]: option };
-    setAnswers(next);
-    if (step.id === 'howIsRoutine' && option === 'Great — no changes') {
+    setAnswers(prev => ({ ...prev, [step.id]: option }));
+  };
+
+  const handleSingleNext = () => {
+    const next = { ...answers, [step.id]: answers[step.id] };
+    if (step.id === 'howIsRoutine' && next.howIsRoutine === 'Great — no changes') {
       finish({ ...next, focusAreas: [] });
       return;
     }
     if (stepIndex < steps.length - 1) {
-      setTimeout(() => setStepIndex(i => i + 1), 200);
+      setStepIndex(i => i + 1);
     } else {
       finish(next);
     }
@@ -133,7 +136,7 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
     const next = { ...answers, focusAreas };
     setAnswers(next);
     if (focusIncludesScreening) {
-      setTimeout(() => setStepIndex(i => i + 1), 200);
+      setStepIndex(i => i + 1);
     } else {
       finish(next);
     }
@@ -210,19 +213,40 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
         {step.subtitle && <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.95rem', marginBottom: '1.25rem' }}>{step.subtitle}</p>}
 
         {step.type === 'single' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            {step.options.map((option) => (
+          <>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {step.options.map((option) => {
+                const isSelected = answers[step.id] === option;
+                return (
+                  <button
+                    key={option}
+                    type="button"
+                    className="btn btn-outline"
+                    style={{
+                      justifyContent: 'flex-start',
+                      padding: '0.85rem 1.25rem',
+                      fontSize: '0.95rem',
+                      borderColor: isSelected ? 'var(--color-primary)' : 'var(--color-border)',
+                      backgroundColor: isSelected ? 'var(--color-secondary-fade)' : 'transparent',
+                    }}
+                    onClick={() => handleSingle(option)}
+                  >
+                    {option}
+                  </button>
+                );
+              })}
+            </div>
+            {answers[step.id] != null && (
               <button
-                key={option}
                 type="button"
-                className="btn btn-outline"
-                style={{ justifyContent: 'flex-start', padding: '0.85rem 1.25rem', fontSize: '0.95rem' }}
-                onClick={() => handleSingle(option)}
+                className="btn btn-primary"
+                style={{ marginTop: '1rem', width: '100%' }}
+                onClick={handleSingleNext}
               >
-                {option}
+                Continue →
               </button>
-            ))}
-          </div>
+            )}
+          </>
         )}
 
         {step.type === 'multi' && (

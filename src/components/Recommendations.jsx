@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { getRecommendations, SIMILAR_PROFILES, ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
+import { getRecommendations, getRecommendationExplanation, SIMILAR_PROFILES, ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
 
 export default function Recommendations({ results, onRetake, trackedProducts, toggleTrackProduct, myProducts, toggleMyProduct, omittedProducts, toggleOmitProduct, onOpenProduct }) {
     const recommended = useMemo(() => {
@@ -7,8 +7,19 @@ export default function Recommendations({ results, onRetake, trackedProducts, to
         return base.filter(p => !omittedProducts[p.id]);
     }, [results, omittedProducts]);
 
-    const physicalProducts = recommended.filter(p => p.type === 'physical');
-    const digitalProducts = recommended.filter(p => p.type === 'digital');
+    // Group by category so products are linked by category (pad, tampon, supplement, tracker, etc.)
+    const byCategory = useMemo(() => {
+        const map = {};
+        recommended.forEach(p => {
+            const cat = p.category || 'other';
+            if (!map[cat]) map[cat] = [];
+            map[cat].push(p);
+        });
+        const order = ['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'supplement', 'tracker', 'telehealth', 'mental-health', 'menopause', 'intimate-care', 'sex-tech', 'postpartum', 'pregnancy', 'fitness-cycle', 'pelvic-floor', 'cramp-relief', 'other'];
+        const ordered = order.filter(c => map[c]).map(c => ({ category: c, label: CATEGORY_LABELS[c] || c, products: map[c] }));
+        const rest = Object.keys(map).filter(c => !order.includes(c));
+        return [...ordered, ...rest.map(c => ({ category: c, label: CATEGORY_LABELS[c] || c, products: map[c] }))];
+    }, [recommended]);
 
     // Find matching similar profiles
     const matchedProfiles = useMemo(() => {
@@ -29,6 +40,7 @@ export default function Recommendations({ results, onRetake, trackedProducts, to
     const renderProductCard = (product) => {
         const isTracked = !!trackedProducts[product.id];
         const isInEcosystem = !!myProducts[product.id];
+        const { whyItWorks, considerations } = getRecommendationExplanation(product, results);
         return (
             <div key={product.id} className="card hover-lift" style={{
                 padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column',
@@ -45,7 +57,7 @@ export default function Recommendations({ results, onRetake, trackedProducts, to
                     title="Don't recommend this again"
                 >✕</button>
 
-                <div style={{ height: '160px', width: '100%', overflow: 'hidden', position: 'relative' }}>
+                <div style={{ height: '140px', width: '100%', overflow: 'hidden', position: 'relative' }}>
                     <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     <span style={{
                         position: 'absolute', top: '0.75rem', left: '0.75rem',
@@ -67,11 +79,19 @@ export default function Recommendations({ results, onRetake, trackedProducts, to
                 </div>
 
                 <div style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-                    <span style={{ color: 'var(--color-primary)', fontSize: '0.8rem', fontWeight: '600', marginBottom: '0.25rem' }}>
-                        {CATEGORY_LABELS[product.category] || product.category}
-                    </span>
-                    <h3 style={{ fontSize: '1.25rem', marginBottom: '0.35rem' }}>{product.name}</h3>
-                    <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', flexGrow: 1, marginBottom: '1rem', lineHeight: '1.5' }}>{product.summary}</p>
+                    <h3 style={{ fontSize: '1.2rem', marginBottom: '0.35rem' }}>{product.name}</h3>
+                    <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '0.75rem', lineHeight: '1.45' }}>{product.summary}</p>
+
+                    {whyItWorks && (
+                        <p style={{ fontSize: '0.85rem', color: 'var(--color-primary-hover)', fontWeight: '500', marginBottom: '0.5rem', lineHeight: 1.4 }}>
+                            {whyItWorks}
+                        </p>
+                    )}
+                    {considerations && (
+                        <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '0.75rem', lineHeight: 1.4, fontStyle: 'italic' }}>
+                            {considerations}
+                        </p>
+                    )}
 
                     <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
                         {product.safety?.recalls && !product.safety.recalls.includes('⚠️') && (
@@ -85,7 +105,7 @@ export default function Recommendations({ results, onRetake, trackedProducts, to
                         )}
                     </div>
 
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', marginTop: 'auto' }}>
                         <span style={{ fontSize: '1rem', fontWeight: '600', color: 'var(--color-text-main)' }}>{product.price}</span>
                         <div style={{ display: 'flex', gap: '0.4rem' }}>
                             <button className="btn btn-outline" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }} onClick={() => toggleMyProduct(product)}>
@@ -158,36 +178,28 @@ export default function Recommendations({ results, onRetake, trackedProducts, to
                             <p style={{ fontStyle: 'italic', color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>
                                 {profile.quote}
                             </p>
+                            <p style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', marginTop: '0.35rem', fontWeight: '600' }}>
+                                — Community experience; not brand-affiliated
+                            </p>
                         </div>
                     ))}
                 </div>
             )}
 
-            {/* Physical Products */}
-            {physicalProducts.length > 0 && (
-                <div style={{ marginBottom: 'var(--spacing-xl)' }}>
-                    <h3 style={{ fontSize: '1.5rem', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        Physical Products
-                        <span style={{ fontSize: '0.8rem', fontWeight: '400', color: 'var(--color-text-muted)' }}>— shipped or in-store</span>
+            {/* Recommendations by category — products linked by category with why it could work / considerations */}
+            {byCategory.map(({ category, label, products }) => (
+                <div key={category} style={{ marginBottom: 'var(--spacing-xl)' }}>
+                    <h3 style={{ fontSize: '1.35rem', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        {label}
                     </h3>
+                    <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1.25rem' }}>
+                        {products.length === 1 ? '1 product' : `${products.length} products`} in this category that match your profile.
+                    </p>
                     <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
-                        {physicalProducts.map(renderProductCard)}
+                        {products.map(renderProductCard)}
                     </div>
                 </div>
-            )}
-
-            {/* Digital Tools */}
-            {digitalProducts.length > 0 && (
-                <div style={{ marginBottom: 'var(--spacing-xl)' }}>
-                    <h3 style={{ fontSize: '1.5rem', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        Digital Tools
-                        <span style={{ fontSize: '0.8rem', fontWeight: '400', color: 'var(--color-text-muted)' }}>— apps & telehealth</span>
-                    </h3>
-                    <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
-                        {digitalProducts.map(renderProductCard)}
-                    </div>
-                </div>
-            )}
+            ))}
 
             <div style={{ textAlign: 'center', marginTop: 'var(--spacing-lg)' }}>
                 <button className="btn btn-outline" onClick={onRetake}>Retake Assessment</button>

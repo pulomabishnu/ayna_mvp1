@@ -1,12 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Disclaimer from './Disclaimer';
+import { getCheckinRecommendations, CATEGORY_LABELS } from '../data/products';
 
-export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewWaitlist, userZipCode, onZipCodeChange }) {
+export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewWaitlist, userZipCode, onZipCodeChange, checkinData, quizResults, cycleData, menopauseData, myProducts = {}, onOpenProduct, omittedProducts = {}, onViewOmitted }) {
     const trackedList = Object.values(trackedProducts);
     const joinedList = Object.values(joinedWaitlists);
     const totalItems = trackedList.length + joinedList.length;
     const [zipInput, setZipInput] = useState(userZipCode || '');
     useEffect(() => { setZipInput(userZipCode || ''); }, [userZipCode]);
+
+    const checkinRecs = useMemo(
+        () => (checkinData && (checkinData.focusAreas?.length > 0 || checkinData.howIsRoutine))
+            ? getCheckinRecommendations(quizResults || {}, checkinData, cycleData || [], menopauseData || [])
+            : [],
+        [checkinData, quizResults, cycleData, menopauseData]
+    );
 
     const handleSaveZip = () => {
         const z = zipInput.replace(/\D/g, '').slice(0, 5);
@@ -33,6 +41,15 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '1.25rem' }}>
                     Track your safety-monitored products and startup waitlists all in one place.
                 </p>
+                {/* Hidden products — prominent so users can find it */}
+                {onViewOmitted && (
+                    <div style={{ marginTop: '1.5rem' }}>
+                        <button type="button" className="btn btn-outline" style={{ padding: '0.6rem 1.25rem', fontSize: '1rem', fontWeight: '600' }} onClick={onViewOmitted}>
+                            🙈 View hidden products {Object.keys(omittedProducts).length > 0 && `(${Object.keys(omittedProducts).length})`}
+                        </button>
+                        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginTop: '0.5rem' }}>Products you hid from recommendations — view or restore them anytime.</p>
+                    </div>
+                )}
             </div>
 
             {/* Profile: Zip code for nearby stores */}
@@ -64,6 +81,80 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                     {userZipCode && <span style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>Saved: {userZipCode}</span>}
                 </div>
                 <Disclaimer compact style={{ marginTop: '1rem' }} />
+            </div>
+
+            {/* Recommendations from your check-in — always visible under account when check-in was done */}
+            {checkinRecs.length > 0 && (
+                <div style={{ maxWidth: '800px', margin: '0 auto 3rem' }}>
+                    <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span>📋</span> Recommendations from your check-in
+                    </h3>
+                    <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem', marginBottom: '1rem' }}>
+                        These match your latest check-in and, when you use them, your Period or Menopause Tracker. If you're not sure you completed a check-in, you can always see your latest recommendations here. Each product links to the same catalog on Search.
+                    </p>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                        {checkinRecs.map(({ product, reason }) => {
+                            const inEcosystem = myProducts && myProducts[product.id];
+                            return (
+                                <div
+                                    key={product.id}
+                                    role="button"
+                                    tabIndex={0}
+                                    onClick={() => onOpenProduct?.(product)}
+                                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpenProduct?.(product); } }}
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '1rem',
+                                        padding: '1rem 1.25rem',
+                                        background: 'var(--color-surface-soft)',
+                                        border: '1px solid var(--color-border)',
+                                        borderRadius: 'var(--radius-md)',
+                                        cursor: onOpenProduct ? 'pointer' : 'default',
+                                        transition: 'all 0.2s ease'
+                                    }}
+                                    onMouseEnter={(e) => onOpenProduct && (e.currentTarget.style.borderColor = 'var(--color-primary)', e.currentTarget.style.background = 'var(--color-secondary-fade)')}
+                                    onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--color-border)', e.currentTarget.style.background = 'var(--color-surface-soft)')}
+                                >
+                                    <div style={{ width: '56px', height: '56px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0 }}>
+                                        <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    </div>
+                                    <div style={{ flexGrow: 1, minWidth: 0 }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.25rem' }}>
+                                            <h4 style={{ fontSize: '1rem', fontWeight: '600' }}>{product.name}</h4>
+                                            <span style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>{CATEGORY_LABELS[product.category] || product.category}</span>
+                                            {inEcosystem && (
+                                                <span style={{ fontSize: '0.7rem', fontWeight: '600', color: 'var(--color-primary)', background: 'var(--color-secondary-fade)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>
+                                                    In your ecosystem
+                                                </span>
+                                            )}
+                                        </div>
+                                        <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', lineHeight: 1.4 }}>{reason}</p>
+                                    </div>
+                                    {onOpenProduct && <span style={{ flexShrink: 0, color: 'var(--color-primary)', fontSize: '0.9rem' }}>View →</span>}
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
+
+            {/* Hidden (omitted) products — also linked from header above */}
+            <div style={{ maxWidth: '800px', margin: '0 auto 3rem' }}>
+                <h3 style={{ fontSize: '1.25rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span>🙈</span> Hidden products
+                    {Object.keys(omittedProducts).length > 0 && (
+                        <span style={{ background: 'var(--color-secondary-fade)', color: 'var(--color-primary-hover)', padding: '0.1rem 0.6rem', borderRadius: 'var(--radius-pill)', fontSize: '0.75rem', fontWeight: '600' }}>{Object.keys(omittedProducts).length}</span>
+                    )}
+                </h3>
+                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '1rem' }}>
+                    Products you chose to hide won't appear in Search or Recommendations. You can view and restore them anytime.
+                </p>
+                {onViewOmitted && (
+                    <button type="button" className="btn btn-outline" style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }} onClick={onViewOmitted}>
+                        {Object.keys(omittedProducts).length > 0 ? `View hidden products (${Object.keys(omittedProducts).length})` : 'View hidden products'}
+                    </button>
+                )}
             </div>
 
             {totalItems === 0 ? (

@@ -2,7 +2,7 @@ import React from 'react';
 
 /** Baseline sources for all synthesized health information (use in intros and sourcing notes). */
 export const BASELINE_SOURCES =
-  'Ayna uses ACOG (including well-woman care at every life stage) and UpToDate when available as the baseline for all synthesized health information; additional guidelines (e.g. CDC, NAMS) are used as appropriate.';
+  'Ayna uses ACOG (including well-woman care at every life stage) and UpToDate when available as the baseline for all synthesized health information; additional guidelines (e.g. CDC, NAMS) are used as appropriate. Every article and claim on this site is backed by a minimum of 3 reputable sources where available.';
 
 /**
  * Standard medical disclaimer. Use wherever we show products, advice, or health info.

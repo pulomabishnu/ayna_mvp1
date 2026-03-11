@@ -4,13 +4,33 @@ import { STARTUPS } from '../data/startups';
 import ProductModal from './ProductModal';
 import Disclaimer from './Disclaimer';
 
-const ALL_CATEGORIES = ['all', 'pad', 'tampon', 'cup', 'disc', 'period-underwear', 'supplement', 'tracker', 'telehealth', 'mental-health', 'fitness', 'diagnostics', 'hormone-monitoring', 'menopause', 'fertility', 'pelvic-health', 'postpartum', 'pregnancy', 'sex-tech', 'intimate-care', 'contraception'];
+const ALL_CATEGORIES = ['all', 'pad', 'tampon', 'cup', 'disc', 'period-underwear', 'supplement', 'tracker', 'telehealth', 'mental-health', 'fitness', 'diagnostics', 'hormone-monitoring', 'menopause', 'fertility', 'pelvic-health', 'pelvic-floor', 'cramp-relief', 'postpartum', 'pregnancy', 'sex-tech', 'intimate-care', 'contraception'];
 const TYPE_FILTERS = ['all', 'physical', 'digital', 'startup'];
+
+/** Extract a numeric price for sorting (rough proxy: first $ amount, or monthly equivalent when obvious). */
+function getSortPrice(item) {
+    const s = (item.price || item.stage || '').toString().trim();
+    const perMonth = s.match(/\$(\d+)(?:\.\d+)?\s*\/?\s*month/i);
+    if (perMonth) return parseFloat(perMonth[1]);
+    const range = s.match(/\$(\d+)\s*[–\-]\s*\$(\d+)/);
+    if (range) return (parseFloat(range[1]) + parseFloat(range[2])) / 2;
+    const single = s.match(/\$(\d+)(?:\.\d+)?/);
+    if (single) return parseFloat(single[1]);
+    return null;
+}
+
+const SORT_OPTIONS = [
+    { value: 'default', label: 'Default' },
+    { value: 'price-asc', label: 'Price: low to high' },
+    { value: 'price-desc', label: 'Price: high to low' },
+    { value: 'rating', label: 'Best rated' },
+];
 
 export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, isPremium, onUpgrade, initialSearch }) {
     const [categoryFilter, setCategoryFilter] = useState('all');
     const [typeFilter, setTypeFilter] = useState('all');
     const [searchQuery, setSearchQuery] = useState(initialSearch || '');
+    const [sortBy, setSortBy] = useState('default');
 
     React.useEffect(() => {
         if (initialSearch !== undefined) {
@@ -20,12 +40,12 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
     const combined = useMemo(() => {
         const products = ALL_PRODUCTS.map(p => ({ ...p, isStartup: false }));
-        const startups = STARTUPS.map(s => ({ ...s, isStartup: true, type: 'startup' }));
+        const startups = STARTUPS.map(s => ({ ...s, isStartup: true, type: 'startup', productReleased: s.productReleased === true }));
         return [...products, ...startups];
     }, []);
 
     const filtered = useMemo(() => {
-        return combined.filter(item => {
+        let list = combined.filter(item => {
             if (omittedProducts[item.id]) return false;
             if (categoryFilter !== 'all' && item.category !== categoryFilter) return false;
             if (typeFilter !== 'all' && item.type !== typeFilter) return false;
@@ -46,13 +66,45 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
             return true;
         });
-    }, [combined, categoryFilter, typeFilter, omittedProducts, searchQuery]);
+
+        if (sortBy === 'price-asc') {
+            list = [...list].sort((a, b) => {
+                const pa = getSortPrice(a);
+                const pb = getSortPrice(b);
+                if (pa == null && pb == null) return 0;
+                if (pa == null) return 1;
+                if (pb == null) return -1;
+                return pa - pb;
+            });
+        } else if (sortBy === 'price-desc') {
+            list = [...list].sort((a, b) => {
+                const pa = getSortPrice(a);
+                const pb = getSortPrice(b);
+                if (pa == null && pb == null) return 0;
+                if (pa == null) return 1;
+                if (pb == null) return -1;
+                return pb - pa;
+            });
+        } else if (sortBy === 'rating') {
+            list = [...list].sort((a, b) => {
+                const ra = a.userRating != null ? Number(a.userRating) : null;
+                const rb = b.userRating != null ? Number(b.userRating) : null;
+                if (ra == null && rb == null) return 0;
+                if (ra == null) return 1;
+                if (rb == null) return -1;
+                return rb - ra;
+            });
+        }
+        return list;
+    }, [combined, categoryFilter, typeFilter, omittedProducts, searchQuery, sortBy]);
 
     const handleSmartSearch = (e) => {
         e.preventDefault();
         const q = searchQuery.toLowerCase();
 
-        if (q.includes('track') || q.includes('cycle') || q.includes('period') || q.includes('log')) {
+        if (q.includes('menopause')) {
+            if (setCurrentView) setCurrentView('menopause-tracker');
+        } else if (q.includes('track') || q.includes('cycle') || q.includes('period') || q.includes('log')) {
             if (setCurrentView) setCurrentView('cycle-tracker');
         } else if (q.includes('waitlist') || q.includes('startup') || q.includes('new')) {
             if (setCurrentView) setCurrentView('waitlist');
@@ -142,21 +194,46 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 ))}
             </div>
 
-            <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
-                Showing {filtered.length} result{filtered.length !== 1 ? 's' : ''}
-            </p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
+                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', margin: 0 }}>
+                    Showing {filtered.length} result{filtered.length !== 1 ? 's' : ''}
+                </p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <label htmlFor="discovery-sort" style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', fontWeight: '500' }}>Sort by:</label>
+                    <select
+                        id="discovery-sort"
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value)}
+                        style={{
+                            padding: '0.4rem 0.75rem',
+                            borderRadius: 'var(--radius-md)',
+                            border: '1px solid var(--color-border)',
+                            fontSize: '0.9rem',
+                            background: 'var(--color-surface-soft)',
+                            color: 'var(--color-text-main)',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        {SORT_OPTIONS.map(opt => (
+                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                        ))}
+                    </select>
+                </div>
+            </div>
 
             {/* Product Grid */}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', justifyContent: 'center' }}>
                 {filtered.map((item, idx) => {
-                    const isInEcosystem = !item.isStartup && !!myProducts[item.id];
-                    const isJoined = item.isStartup && !!joinedWaitlists[item.id];
+                    const isStartup = item.isStartup === true;
+                    const releasedStartup = isStartup && item.productReleased === true;
+                    const isInEcosystem = !!myProducts[item.id];
+                    const isJoined = isStartup && !releasedStartup && !!joinedWaitlists[item.id];
 
                     return (
                         <div key={item.id} className="card hover-lift" style={{
                             padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column',
                             width: '280px', animation: `fadeInUp 0.4s ${Math.min(idx * 0.05, 0.3)}s backwards`,
-                            border: isJoined ? '2px solid var(--color-primary)' : '1px solid var(--color-border)'
+                            border: (isInEcosystem || isJoined) ? '2px solid var(--color-primary)' : '1px solid var(--color-border)'
                         }}>
                             <div style={{ height: '140px', width: '100%', overflow: 'hidden', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'white' }}>
                                 {item.image && item.image !== '/ayna_placeholder.png' ? (
@@ -180,11 +257,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                 )}
                                 <span style={{
                                     position: 'absolute', top: '0.5rem', left: '0.5rem',
-                                    background: item.type === 'physical' ? 'var(--color-surface-contrast)' : 'var(--color-primary)',
+                                    background: isStartup ? 'var(--color-primary-hover)' : (item.type === 'physical' ? 'var(--color-surface-contrast)' : 'var(--color-primary)'),
                                     color: 'white', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)',
                                     fontSize: '0.65rem', fontWeight: '600', textTransform: 'uppercase'
                                 }}>
-                                    {item.type}
+                                    {isStartup ? 'Startup' : item.type}
                                 </span>
                                 {isInEcosystem && (
                                     <span style={{
@@ -192,7 +269,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                         background: '#10B981', color: 'white', padding: '0.2rem 0.5rem',
                                         borderRadius: 'var(--radius-pill)', fontSize: '0.65rem', fontWeight: '600'
                                     }}>
-                                        Added to Ecosystem
+                                        In ecosystem
                                     </span>
                                 )}
                                 {isJoined && (
@@ -207,38 +284,97 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                             </div>
                             <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
                                 <span style={{ color: 'var(--color-primary)', fontSize: '0.7rem', fontWeight: '600', marginBottom: '0.25rem' }}>
-                                    {CATEGORY_LABELS[item.category] || item.category.charAt(0) + item.category.slice(1)}
+                                    {CATEGORY_LABELS[item.category] || (item.category && item.category.charAt(0) + item.category.slice(1)) || 'Startup'}
                                 </span>
                                 <h3 style={{ fontSize: '1.05rem', marginBottom: '0.25rem' }}>{item.name}</h3>
                                 <p style={{ color: 'var(--color-text-muted)', fontSize: '0.8rem', flexGrow: 1, marginBottom: '0.75rem', lineHeight: '1.4' }}>
                                     {item.isStartup ? item.tagline : item.summary}
                                 </p>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
                                     <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>{item.isStartup ? item.stage : item.price}</span>
-                                    <div style={{ display: 'flex', gap: '0.4rem' }}>
+                                    {item.userRating != null && (
+                                        <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }} title="Average user rating (online reviews)">★ {Number(item.userRating).toFixed(1)}</span>
+                                    )}
+                                    <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
                                         {item.isStartup ? (
-                                            <button
-                                                className={`btn ${isJoined ? 'btn-outline' : 'btn-primary'}`}
-                                                style={{
-                                                    padding: '0.35rem 0.7rem',
-                                                    fontSize: '0.75rem',
-                                                    opacity: (!isPremium && !isJoined) ? 0.8 : 1
-                                                }}
-                                                onClick={() => {
-                                                    if (isPremium || isJoined) {
-                                                        toggleJoinWaitlist(item);
-                                                    } else {
-                                                        onUpgrade();
-                                                    }
-                                                }}
-                                            >
-                                                {isJoined ? 'Leave' : (
-                                                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                                                        {!isPremium && <span>🔒</span>}
-                                                        {isPremium ? 'Join' : 'Upgrade'}
-                                                    </span>
-                                                )}
-                                            </button>
+                                            releasedStartup ? (
+                                                <>
+                                                    <button
+                                                        className={`btn ${isInEcosystem ? 'btn-outline' : 'btn-primary'}`}
+                                                        style={{
+                                                            padding: '0.35rem 0.7rem',
+                                                            fontSize: '0.75rem',
+                                                            opacity: (!isPremium && !isInEcosystem) ? 0.8 : 1
+                                                        }}
+                                                        onClick={() => {
+                                                            if (isPremium || isInEcosystem) {
+                                                                onToggleProduct(item);
+                                                            } else {
+                                                                onUpgrade();
+                                                            }
+                                                        }}
+                                                    >
+                                                        {isInEcosystem ? '✓' : 'Add to ecosystem'}
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-outline"
+                                                        style={{ padding: '0.35rem 0.7rem', fontSize: '0.75rem' }}
+                                                        onClick={() => setCurrentView?.('recalls')}
+                                                    >
+                                                        Monitor recalls
+                                                    </button>
+                                                    {(item.url || (item.whereToBuy && item.whereToBuy.length > 0)) && (
+                                                        <div style={{ width: '100%', marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid var(--color-border)' }}>
+                                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem', alignItems: 'center', fontSize: '0.75rem' }}>
+                                                                {item.url && (
+                                                                    <a href={item.url.startsWith('http') ? item.url : `https://${item.url}`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: '600', textDecoration: 'none' }}>
+                                                                        Website ↗
+                                                                    </a>
+                                                                )}
+                                                                {(item.whereToBuy || []).map(shop => {
+                                                                    const getStoreUrl = (s, q) => {
+                                                                        const k = s?.toLowerCase?.().replace(/\s+/g, '');
+                                                                        if (k?.includes('amazon')) return `https://www.amazon.com/s?k=${encodeURIComponent(q || '')}`;
+                                                                        if (k?.includes('target')) return `https://www.target.com/s?searchTerm=${encodeURIComponent(q || '')}`;
+                                                                        if (k?.includes('walmart')) return `https://www.walmart.com/search?q=${encodeURIComponent(q || '')}`;
+                                                                        return `https://www.google.com/search?q=${encodeURIComponent((q || '') + ' ' + (s || ''))}`;
+                                                                    };
+                                                                    const url = item.whereToBuyLinks?.[shop] || getStoreUrl(shop, item.name);
+                                                                    return (
+                                                                        <a key={shop} href={typeof url === 'string' && url.startsWith('http') ? url : getStoreUrl(shop, item.name)} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'none' }}>
+                                                                            {shop} ↗
+                                                                        </a>
+                                                                    );
+                                                                })}
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </>
+                                            ) : (
+                                                <button
+                                                    className={`btn ${isJoined ? 'btn-outline' : 'btn-primary'}`}
+                                                    style={{
+                                                        padding: '0.35rem 0.7rem',
+                                                        fontSize: '0.75rem',
+                                                        opacity: (!isPremium && !isJoined) ? 0.8 : 1
+                                                    }}
+                                                    onClick={() => {
+                                                        if (isPremium || isJoined) {
+                                                            toggleJoinWaitlist(item);
+                                                        } else {
+                                                            onUpgrade();
+                                                        }
+                                                    }}
+                                                >
+                                                    {isJoined ? 'Leave' : (
+                                                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                                                            {!isPremium && <span>🔒</span>}
+                                                            {isPremium ? 'Join' : 'Upgrade'}
+                                                        </span>
+                                                    )}
+                                                </button>
+                                            )
                                         ) : (
                                             <>
                                                 <button className="btn btn-outline" style={{ padding: '0.35rem 0.7rem', fontSize: '0.75rem' }} onClick={() => onToggleProduct(item)}>

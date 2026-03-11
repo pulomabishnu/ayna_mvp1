@@ -4,31 +4,32 @@ import Disclaimer from './Disclaimer';
 const ARTICLES = [
   {
     id: 'intimate-wash',
-    title: 'Intimate Washes: What Clinicians Say',
-    source: 'UpToDate, ACOG',
+    title: 'Intimate Washes',
+    source: 'UpToDate, ACOG, CDC',
     tags: ['Gynecology', 'Vulvovaginal health'],
     teaser: 'Why the vagina is self-cleaning, when to use (or skip) cleansers, and what OB-GYNs recommend for external care.',
     body: (
       <>
         <p>The vagina is self-cleaning and maintains its own pH and bacterial balance. Douching is not recommended by major medical organizations and can increase the risk of bacterial vaginosis, yeast infection, and pelvic inflammatory disease. For the vulva (the external skin), warm water alone is often sufficient for daily hygiene.</p>
         <p>If you choose to use a cleanser—for example after exercise or for personal preference—clinicians advise selecting one that is fragrance-free, pH-balanced (around 3.5–4.5 for the vulvar area), and labeled for external use only. Avoid anything that goes inside the vagina, as well as scented soaps, body washes with strong surfactants, and vaginal deodorants or sprays.</p>
-        <p><strong>Key guidelines (from UpToDate and ACOG):</strong></p>
+        <p><strong>Key guidelines (from UpToDate, ACOG, and CDC):</strong></p>
         <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
           <li>Avoid douching, scented soaps, and vaginal deodorants.</li>
           <li>Cleanse the vulva gently with warm water or an unfragranced, mild soap substitute.</li>
           <li>If you have recurrent irritation or infection, discuss your routine with a clinician; sometimes less is more.</li>
         </ul>
-        <p><strong>Reputable sources:</strong></p>
+        <p><strong>Reputable sources (minimum 3):</strong></p>
         <ul style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
           <li><a href="https://www.acog.org/womens-health/faqs/vulvovaginal-health" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Vulvovaginal Health</a></li>
           <li><a href="https://www.uptodate.com/contents/bacterial-vaginosis-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – Bacterial vaginosis (patient education)</a></li>
+          <li><a href="https://www.cdc.gov/std/bv/default.htm" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>CDC – Bacterial vaginosis</a></li>
         </ul>
       </>
     ),
   },
   {
     id: 'heavy-bleeding',
-    title: 'Heavy Menstrual Bleeding: When to See a Clinician',
+    title: 'Heavy Menstrual Bleeding',
     source: 'UpToDate, ACOG, CDC',
     tags: ['Menstrual health', 'Clinical guidance'],
     teaser: 'What counts as heavy bleeding, possible causes, when to seek care, and how it’s evaluated and treated.',
@@ -37,7 +38,7 @@ const ARTICLES = [
         <p>Heavy menstrual bleeding (menorrhagia) is common and can significantly affect quality of life, work, and relationships. It may also signal underlying conditions such as fibroids, polyps, bleeding disorders, hormonal imbalances, or thyroid issues. How it’s treated depends on the cause, your age, and whether you plan to have children.</p>
         <p>There’s no single definition of “heavy,” but clinicians often use practical signs: needing to change pads or tampons every 1–2 hours, passing large clots, bleeding longer than 7 days, or having symptoms of anemia (fatigue, dizziness, pale skin, shortness of breath). If any of these describe you, or if your period has changed suddenly, it’s worth seeing a clinician. They can run tests (e.g., blood count, thyroid, imaging) and recommend options ranging from hormonal birth control or tranexamic acid to procedures like an IUD or surgery, depending on the cause.</p>
         <p><strong>When to seek care:</strong> Soaking through pads or tampons every 1–2 hours, bleeding longer than 7 days, or symptoms of anemia. Only a clinician can diagnose the cause and recommend a safe, effective treatment plan.</p>
-        <p><strong>Reputable sources:</strong></p>
+        <p><strong>Reputable sources (minimum 3):</strong></p>
         <ul style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
           <li><a href="https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Heavy Menstrual Bleeding</a></li>
           <li><a href="https://www.uptodate.com/contents/abnormal-uterine-bleeding-in-adults-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – Abnormal uterine bleeding (patient education)</a></li>
@@ -48,8 +49,8 @@ const ARTICLES = [
   },
   {
     id: 'menopause-basics',
-    title: 'Menopause & Perimenopause: Evidence-Based Overview',
-    source: 'North American Menopause Society, UpToDate',
+    title: 'Menopause & Perimenopause',
+    source: 'NAMS, UpToDate, ACOG',
     tags: ['Menopause', 'Hormone therapy'],
     teaser: 'What perimenopause and menopause are, common symptoms, and how hormone therapy and lifestyle changes can help.',
     body: (
@@ -66,7 +67,7 @@ const ARTICLES = [
   },
   {
     id: 'uti-prevention',
-    title: 'UTI Prevention: What the Evidence Shows',
+    title: 'UTI Prevention',
     source: 'UpToDate, NIH',
     tags: ['Urinary health', 'Prevention'],
     teaser: 'Evidence-backed ways to reduce UTI risk and when to see a clinician for recurrent infections.',
@@ -74,10 +75,11 @@ const ARTICLES = [
       <>
         <p>Recurrent urinary tract infections (UTIs) are common, especially in women. Evidence-supported prevention strategies include drinking adequate fluids, urinating after intercourse, and—when recommended by a clinician—prophylactic low-dose antibiotics or topical estrogen for postmenopausal people (to support vaginal and urethral tissue). Cranberry products are sometimes used; evidence on effectiveness is mixed, and they are not a substitute for medical evaluation if you have frequent UTIs.</p>
         <p>If you have recurrent UTIs (e.g., several per year), it’s important to see a clinician. They can rule out structural or other causes and tailor a prevention or treatment plan, which might include behavioral changes, short-course antibiotics, or post-coital prophylaxis. Self-treating repeatedly without evaluation can mask other conditions or lead to resistance.</p>
-        <p><strong>Reputable sources:</strong></p>
+        <p><strong>Reputable sources (minimum 3):</strong></p>
         <ul style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
           <li><a href="https://www.uptodate.com/contents/urinary-tract-infections-in-adults-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – UTIs in adults (patient education)</a></li>
-          <li><a href="https://www.niddk.nih.gov/health-information/urologic-diseases/bladder-infection-uti-in-adults" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>NIDDK – Bladder infection (UTI) in adults</a></li>
+          <li><a href="https://www.niddk.nih.gov/health-information/urologic-diseases/bladder-infection-uti-in-adults" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>NIDDK/NIH – Bladder infection (UTI) in adults</a></li>
+          <li><a href="https://www.cdc.gov/antibiotic-use/uti.html" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>CDC – Urinary tract infection</a></li>
         </ul>
       </>
     ),
@@ -93,7 +95,7 @@ export default function Articles() {
       <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
         <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Health Articles Library</h1>
         <p style={{ fontSize: '1.2rem', color: 'var(--color-text-muted)' }}>
-          We use ACOG (including <a href="https://www.acog.org/wellwomanchart" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>well-woman care at every life stage</a>) and UpToDate when available as our baseline; articles also draw on CDC, NAMS, and similar clinician resources. Click a headline to read the full article. Always discuss your care with your own clinician.
+          We use ACOG (including <a href="https://www.acog.org/wellwomanchart" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>well-woman care at every life stage</a>) and UpToDate when available as our baseline; articles also draw on CDC, NAMS, and similar clinician resources. <strong>Every article and claim on this site is backed by at least 3 reputable sources.</strong> Click a headline to read the full article. Always discuss your care with your own clinician.
         </p>
         <Disclaimer compact showSources style={{ marginTop: '1.5rem', textAlign: 'left', maxWidth: '700px', marginLeft: 'auto', marginRight: 'auto' }} />
       </div>

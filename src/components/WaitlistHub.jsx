@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { STARTUPS, getPersonalizedStartups } from '../data/startups';
 
-export default function WaitlistHub({ joinedWaitlists, toggleJoinWaitlist, quizResults, isPremium, onUpgrade }) {
+export default function WaitlistHub({ joinedWaitlists, toggleJoinWaitlist, quizResults, isPremium, onUpgrade, myProducts = {}, onAddToEcosystem, onViewRecalls }) {
     const startups = useMemo(() => getPersonalizedStartups(quizResults), [quizResults]);
     const hasProfile = !!(quizResults?.frustrations?.length);
 
@@ -70,15 +70,25 @@ export default function WaitlistHub({ joinedWaitlists, toggleJoinWaitlist, quizR
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', justifyContent: 'center' }}>
                 {filtered.map((startup, idx) => {
-                    const isJoined = !!joinedWaitlists[startup.id];
+                    const isReleased = startup.productReleased === true;
+                    const isInEcosystem = !!myProducts[startup.id];
+                    const isJoined = !isReleased && !!joinedWaitlists[startup.id];
                     return (
                         <div key={startup.id} className="card hover-lift" style={{
                             padding: '1.5rem', maxWidth: '380px', flex: '1 1 320px',
-                            border: isJoined ? '2px solid var(--color-primary)' : '1px solid var(--color-border)',
+                            border: (isInEcosystem || isJoined) ? '2px solid var(--color-primary)' : '1px solid var(--color-border)',
                             animation: `fadeInUp 0.4s ${Math.min(idx * 0.05, 0.3)}s backwards`,
                             position: 'relative'
                         }}>
-                            {isJoined && (
+                            {isReleased && isInEcosystem && (
+                                <span style={{
+                                    position: 'absolute', top: '-0.5rem', right: '1rem',
+                                    background: '#10B981', color: 'white',
+                                    padding: '0.2rem 0.6rem', borderRadius: 'var(--radius-pill)',
+                                    fontSize: '0.7rem', fontWeight: '600'
+                                }}>✓ In ecosystem</span>
+                            )}
+                            {!isReleased && isJoined && (
                                 <span style={{
                                     position: 'absolute', top: '-0.5rem', right: '1rem',
                                     background: 'var(--color-primary)', color: 'white',
@@ -108,37 +118,87 @@ export default function WaitlistHub({ joinedWaitlists, toggleJoinWaitlist, quizR
                                 <span style={{ fontSize: '0.75rem', background: 'var(--color-bg)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>
                                     {startup.stage}
                                 </span>
-                                <span style={{ fontSize: '0.75rem', background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>
-                                    {startup.spotsLeft} spots left
-                                </span>
+                                {!isReleased && (
+                                    <span style={{ fontSize: '0.75rem', background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>
+                                        {startup.spotsLeft} spots left
+                                    </span>
+                                )}
                             </div>
 
-                            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                                <button
-                                    className={`btn ${isJoined ? 'btn-outline' : 'btn-primary'}`}
-                                    style={{
-                                        flexGrow: 1,
-                                        opacity: (!isPremium && !isJoined) ? 0.8 : 1,
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        gap: '0.5rem'
-                                    }}
-                                    onClick={() => {
-                                        if (isPremium || isJoined) {
-                                            toggleJoinWaitlist(startup);
-                                        } else {
-                                            onUpgrade();
-                                        }
-                                    }}
-                                >
-                                    {isJoined ? 'Leave Waitlist' : (
-                                        <>
-                                            {!isPremium && <span>🔒</span>}
-                                            {isPremium ? '🔔 Join Waitlist' : 'Upgrade to Join'}
-                                        </>
-                                    )}
-                                </button>
+                            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                                {isReleased ? (
+                                    <>
+                                        <button
+                                            className={`btn ${isInEcosystem ? 'btn-outline' : 'btn-primary'}`}
+                                            style={{
+                                                flexGrow: 1,
+                                                opacity: (!isPremium && !isInEcosystem) ? 0.8 : 1,
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                gap: '0.5rem'
+                                            }}
+                                            onClick={() => {
+                                                if (isPremium || isInEcosystem) {
+                                                    onAddToEcosystem?.(startup);
+                                                } else {
+                                                    onUpgrade?.();
+                                                }
+                                            }}
+                                        >
+                                            {isInEcosystem ? 'Remove from ecosystem' : (
+                                                <>
+                                                    {!isPremium && <span>🔒</span>}
+                                                    {isPremium ? 'Add to ecosystem' : 'Upgrade to Add'}
+                                                </>
+                                            )}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="btn btn-outline"
+                                            style={{ padding: '0.5rem 0.75rem', fontSize: '0.85rem' }}
+                                            onClick={() => onViewRecalls?.()}
+                                        >
+                                            Monitor for safety recalls
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <button
+                                            className={`btn ${isJoined ? 'btn-outline' : 'btn-primary'}`}
+                                            style={{
+                                                flexGrow: 1,
+                                                opacity: (!isPremium && !isJoined) ? 0.8 : 1,
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                gap: '0.5rem'
+                                            }}
+                                            onClick={() => {
+                                                if (isPremium || isJoined) {
+                                                    toggleJoinWaitlist(startup);
+                                                } else {
+                                                    onUpgrade?.();
+                                                }
+                                            }}
+                                        >
+                                            {isJoined ? 'Leave Waitlist' : (
+                                                <>
+                                                    {!isPremium && <span>🔒</span>}
+                                                    {isPremium ? '🔔 Join Waitlist' : 'Upgrade to Join'}
+                                                </>
+                                            )}
+                                        </button>
+                                    </>
+                                )}
+                                {isReleased && startup.url && (
+                                    <div style={{ width: '100%', marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid var(--color-border)' }}>
+                                        <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.35rem', fontWeight: '600' }}>Where to get it</p>
+                                        <a href={startup.url.startsWith('http') ? startup.url : `https://${startup.url}`} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--color-primary)', textDecoration: 'none' }}>
+                                            Product website ↗
+                                        </a>
+                                    </div>
+                                )}
                                 <a
                                     href={startup.url}
                                     target="_blank"

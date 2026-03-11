@@ -56,17 +56,23 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
                     margin: '0 auto 4rem',
                     position: 'relative'
                 }}>
-                    <div style={{
-                        background: 'white',
-                        border: '1px solid var(--color-border)',
-                        borderRadius: '2rem',
-                        padding: '0.75rem 0.75rem 0.75rem 1.5rem',
-                        display: 'flex',
-                        alignItems: 'center',
-                        boxShadow: 'var(--shadow-lg)',
-                        transition: 'all 0.3s ease',
-                    }}
-                        className="hero-search-container">
+                    <form
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            handleSearch();
+                        }}
+                        style={{
+                            background: 'white',
+                            border: '1px solid var(--color-border)',
+                            borderRadius: '2rem',
+                            padding: '0.75rem 0.75rem 0.75rem 1.5rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            boxShadow: 'var(--shadow-lg)',
+                            transition: 'all 0.3s ease',
+                        }}
+                        className="hero-search-container"
+                    >
                         <input
                             type="text"
                             value={searchValue}
@@ -80,15 +86,10 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
                                 color: 'var(--color-text-main)',
                                 background: 'transparent'
                             }}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                    e.preventDefault();
-                                    handleSearch();
-                                }
-                            }}
+                            aria-label="Search products and articles"
                         />
                         <button
-                            type="button"
+                            type="submit"
                             className="btn btn-primary"
                             style={{
                                 borderRadius: '1.5rem',
@@ -97,12 +98,11 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
                                 alignItems: 'center',
                                 gap: '0.5rem'
                             }}
-                            onClick={handleSearch}
                         >
                             <span>Search</span>
                             <span>→</span>
                         </button>
-                    </div>
+                    </form>
 
                     <div style={{
                         marginTop: '1.5rem',

@@ -1,6 +1,71 @@
 import React, { useMemo, useState } from 'react';
 import { HEALTH_FUNCTIONS, ALL_PRODUCTS, detectDuplicates } from '../data/products';
 
+/** Estimate monthly cost in USD from a price string. Returns null if unparseable. */
+function estimateMonthlyCost(priceStr, product) {
+    if (!priceStr || typeof priceStr !== 'string') return null;
+    const s = priceStr.trim();
+    const category = product?.category || '';
+    const isReusable = /reusable|per pair|per pair/i.test(s) || ['cup', 'disc', 'period-underwear'].includes(category);
+
+    // Explicit per month: e.g. "$10/month" or "Clue Plus $10/month"
+    const perMonthMatch = s.match(/\$(\d+)(?:\.\d+)?\s*\/?\s*month/i);
+    if (perMonthMatch) return parseFloat(perMonthMatch[1]);
+
+    // Range: $25–$38 → use average
+    const rangeMatch = s.match(/\$(\d+)\s*[–\-]\s*\$(\d+)/);
+    if (rangeMatch) {
+        const avg = (parseFloat(rangeMatch[1]) + parseFloat(rangeMatch[2])) / 2;
+        if (/per pair|underwear|pair/i.test(s)) return avg / 18; // ~18 months life
+        return avg;
+    }
+
+    // Single price: $8 or $29
+    const singleMatch = s.match(/\$(\d+)(?:\.\d+)?/);
+    const price = singleMatch ? parseFloat(singleMatch[1]) : null;
+    if (price == null) return null;
+
+    // "for 60 capsules" etc → assume 2-month supply
+    const forMatch = s.match(/for\s*(\d+)\s*(?:capsules|softgels|tablets|pads|tampons)/i);
+    if (forMatch) {
+        const count = parseInt(forMatch[1], 10);
+        if (count >= 30 && count <= 120) return price / (count / 30); // ~monthly
+        if (count < 30) return price; // small pack = ~1 month
+        return price / 2; // 60 = 2 months typical
+    }
+
+    // "$14 for 12 (disposable)" → ~2 packs per 2 months
+    if (/disposable/i.test(s)) {
+        const dMatch = s.match(/\$(\d+)(?:\.\d+)?\s+for\s+\d+/i);
+        if (dMatch) return parseFloat(dMatch[1]) / 2;
+    }
+
+    // "$8 for 18" (pads/tampons) → ~1 pack per month
+    const forPacksMatch = s.match(/\$(\d+)(?:\.\d+)?\s+for\s+\d+/i);
+    if (forPacksMatch && (category.includes('pad') || category.includes('tampon'))) {
+        return parseFloat(forPacksMatch[1]);
+    }
+    if (forPacksMatch) return parseFloat(forPacksMatch[1]); // other "for N" consumables
+
+    // Reusable: "10 years" or "up to 10 years"
+    if (/\d+\s*years?|reusable\s*(?:up to)?\s*\d+/i.test(s)) {
+        const yearsMatch = s.match(/(\d+)\s*years?|reusable\s*(?:up to)?\s*(\d+)/i);
+        const years = yearsMatch ? parseFloat(yearsMatch[1] || yearsMatch[2]) : 5;
+        return price / (years * 12);
+    }
+
+    // Reusable (cup, disc) without years
+    if (/reusable/i.test(s) || ['cup', 'disc'].includes(category)) return price / 60; // 5 years
+
+    // Per pair (underwear)
+    if (/per pair|pair/i.test(s)) return price / 18;
+
+    // "Free" only (no paid tier mentioned)
+    if (/^free\s*$/i.test(s.replace(/\(.*\)/g, '').trim())) return 0;
+
+    return null;
+}
+
 export default function MyEcosystem({ myProducts, onToggleProduct, trackedProducts, toggleTrackProduct, toggleOmitProduct, omittedProducts, onOpenProduct, onOpenDoctorPrep }) {
     const [showAddModal, setShowAddModal] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
@@ -9,7 +74,22 @@ export default function MyEcosystem({ myProducts, onToggleProduct, trackedProduc
     const myProductIds = Object.keys(myProducts);
     const myProductList = Object.values(myProducts);
     const { functionMap, duplicates } = useMemo(() => detectDuplicates(myProductIds), [myProductIds]);
+    const ecosystemStartups = useMemo(() => myProductList.filter(p => !ALL_PRODUCTS.find(x => x.id === p.id)), [myProductList]);
     const duplicateCount = Object.keys(duplicates).length;
+
+    const estimatedMonthlyTotal = useMemo(() => {
+        let total = 0;
+        let counted = 0;
+        myProductList.forEach(p => {
+            const priceStr = p.price || p.stage;
+            const est = estimateMonthlyCost(priceStr, p);
+            if (est != null && !Number.isNaN(est)) {
+                total += est;
+                counted += 1;
+            }
+        });
+        return { total: Math.round(total * 100) / 100, counted, totalItems: myProductList.length };
+    }, [myProductList]);
 
     const integrationMap = useMemo(() => {
         const map = {};
@@ -53,6 +133,19 @@ export default function MyEcosystem({ myProducts, onToggleProduct, trackedProduc
                     display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap',
                     marginBottom: 'var(--spacing-lg)'
                 }}>
+                    {myProductList.length > 0 && (
+                        <div style={{ background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '1rem 1.5rem', textAlign: 'center', minWidth: '140px' }}>
+                            <div style={{ fontSize: '2rem', fontWeight: '700', color: 'var(--color-primary)' }}>
+                                {estimatedMonthlyTotal.total > 0 ? `~$${estimatedMonthlyTotal.total.toFixed(0)}` : '—'}
+                            </div>
+                            <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>Est. per month</div>
+                            {estimatedMonthlyTotal.counted < estimatedMonthlyTotal.totalItems && (
+                                <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', marginTop: '0.2rem' }}>
+                                    {estimatedMonthlyTotal.totalItems - estimatedMonthlyTotal.counted} item{estimatedMonthlyTotal.totalItems - estimatedMonthlyTotal.counted !== 1 ? 's' : ''} not priced
+                                </div>
+                            )}
+                        </div>
+                    )}
                     <div style={{ background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '1rem 1.5rem', textAlign: 'center', minWidth: '140px' }}>
                         <div style={{ fontSize: '2rem', fontWeight: '700', color: 'var(--color-primary)' }}>{myProductList.length}</div>
                         <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>Products Tracked</div>
@@ -165,6 +258,34 @@ export default function MyEcosystem({ myProducts, onToggleProduct, trackedProduc
                                         </div>
                                     </div>
                                 ))}
+                                {ecosystemStartups.length > 0 && (
+                                    <div style={{ marginBottom: '1.75rem' }}>
+                                        <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                            🚀 Startups in your ecosystem
+                                        </h3>
+                                        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>Released products you added from our startup list.</p>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                            {ecosystemStartups.map(product => (
+                                                <div key={product.id} className="card" style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.75rem 1rem', cursor: 'pointer' }} onClick={() => onOpenProduct(product)}>
+                                                    <div style={{ width: '48px', height: '48px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0 }}>
+                                                        <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                    </div>
+                                                    <div style={{ flexGrow: 1, minWidth: 0 }}>
+                                                        <h4 style={{ fontSize: '0.95rem', marginBottom: '0.1rem' }}>{product.name}</h4>
+                                                        <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{product.stage || product.tagline}</span>
+                                                    </div>
+                                                    <span style={{
+                                                        fontSize: '0.7rem', fontWeight: '600', textTransform: 'uppercase',
+                                                        padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)',
+                                                        background: 'var(--color-primary-hover)', color: 'white'
+                                                    }}>
+                                                        Startup
+                                                    </span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                             </>
                         ) : (
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
@@ -181,9 +302,12 @@ export default function MyEcosystem({ myProducts, onToggleProduct, trackedProduc
                                                     </div>
                                                     <div style={{ flexGrow: 1, minWidth: 0 }}>
                                                         <h4 style={{ fontSize: '0.95rem', marginBottom: '0.1rem' }}>{product.name}</h4>
-                                                        <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{product.category}</span>
+                                                        <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{product.stage || product.category}</span>
                                                     </div>
-                                                    <div style={{ display: 'flex', gap: '0.4rem' }}>
+                                                    <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                                                        {product.isStartup && (
+                                                            <span style={{ fontSize: '0.65rem', background: 'var(--color-primary-hover)', color: 'white', padding: '0.15rem 0.4rem', borderRadius: 'var(--radius-pill)', fontWeight: '600' }}>Startup</span>
+                                                        )}
                                                         {Array.isArray(product.integrations) ? product.integrations.map(i => (
                                                             <span key={i} style={{ fontSize: '0.65rem', background: 'var(--color-secondary)', color: 'var(--color-text-main)', padding: '0.15rem 0.4rem', borderRadius: 'var(--radius-pill)', fontWeight: '600' }}>{i}</span>
                                                         )) : product.integrations && (

@@ -37,6 +37,7 @@ function App() {
   const [checkinUpdatedProfile, setCheckinUpdatedProfile] = useState(false);
   const [discoverySearch, setDiscoverySearch] = useState('');
   const [userZipCode, setUserZipCode] = useState('');
+  const [chatHistory, setChatHistory] = useState([]);
   const scrollY = useScrollPosition();
 
   React.useEffect(() => {
@@ -244,13 +245,22 @@ function App() {
                   style={{ fontSize: '0.9rem', fontWeight: '500', color: currentView === 'cycle-tracker' ? 'var(--color-primary)' : 'var(--color-text-main)' }}
                   onClick={isPremium ? handleViewCycleTracker : togglePremium}
                 >
-                  Trackers {!isPremium && '🔒'}
+                  Period {!isPremium && '🔒'}
+                </button>
+                <button
+                  style={{ fontSize: '0.9rem', fontWeight: '500', color: currentView === 'menopause-tracker' ? 'var(--color-primary)' : 'var(--color-text-main)' }}
+                  onClick={isPremium ? handleViewMenopauseTracker : togglePremium}
+                >
+                  Menopause {!isPremium && '🔒'}
                 </button>
                 {isPremium && (
                   <button style={{ fontSize: '0.9rem', fontWeight: '500', color: currentView === 'comparison' ? 'var(--color-primary)' : 'var(--color-text-main)' }} onClick={handleViewComparison}>
                     Compare
                   </button>
                 )}
+                <button style={{ fontSize: '0.9rem', fontWeight: '500', border: 'none', background: 'none', cursor: 'pointer', color: currentView === 'omitted' ? 'var(--color-primary)' : 'var(--color-text-main)', display: 'flex', alignItems: 'center', gap: '0.25rem' }} onClick={handleViewOmitted}>
+                  Hidden products {Object.keys(omittedProducts).length > 0 && <span style={{ background: 'var(--color-primary)', color: 'white', padding: '0.1rem 0.4rem', borderRadius: '1rem', fontSize: '0.7rem' }}>{Object.keys(omittedProducts).length}</span>}
+                </button>
               </div>
             </div>
           </div>
@@ -296,7 +306,21 @@ function App() {
           />
         )}
         {currentView === 'tracked' && (
-          <TrackedItems trackedProducts={trackedProducts} joinedWaitlists={joinedWaitlists} onViewWaitlist={handleViewWaitlist} userZipCode={userZipCode} onZipCodeChange={handleZipCodeChange} />
+          <TrackedItems
+            trackedProducts={trackedProducts}
+            joinedWaitlists={joinedWaitlists}
+            onViewWaitlist={handleViewWaitlist}
+            userZipCode={userZipCode}
+            onZipCodeChange={handleZipCodeChange}
+            checkinData={checkinData}
+            quizResults={quizResults}
+            cycleData={cycleData}
+            menopauseData={menopauseData}
+            myProducts={myProducts}
+            onOpenProduct={handleOpenProduct}
+            omittedProducts={omittedProducts}
+            onViewOmitted={handleViewOmitted}
+          />
         )}
         {currentView === 'waitlist' && (
           <WaitlistHub
@@ -305,6 +329,9 @@ function App() {
             quizResults={quizResults}
             isPremium={isPremium}
             onUpgrade={togglePremium}
+            myProducts={myProducts}
+            onAddToEcosystem={toggleMyProduct}
+            onViewRecalls={handleViewRecalls}
           />
         )}
         {currentView === 'deeptech' && (
@@ -385,6 +412,9 @@ function App() {
             onRemove={toggleCompare}
             onClear={() => setCompareList([])}
             CATEGORY_LABELS={CATEGORY_LABELS}
+            myProducts={myProducts}
+            onBrowseProducts={() => handleViewDiscovery('')}
+            onAddToCompare={toggleCompare}
           />
         )}
         {currentView === 'recalls' && (
@@ -395,6 +425,7 @@ function App() {
             cycleData={cycleData}
             myProducts={myProducts}
             quizResults={quizResults}
+            chatHistory={chatHistory}
             onBack={() => setCurrentView('ecosystem')}
           />
         )}
@@ -407,7 +438,7 @@ function App() {
             onClose={() => {
               setShowCheckin(false);
               if (checkinUpdatedProfile) {
-                setCurrentView('recommendations');
+                setCurrentView('tracked');
                 setCheckinUpdatedProfile(false);
               }
             }}
@@ -423,6 +454,8 @@ function App() {
           <ProfileChatbot
             profile={quizResults}
             onProfileUpdate={setQuizResults}
+            chatHistory={chatHistory}
+            onChatHistoryUpdate={setChatHistory}
             disabled={!quizResults}
           />
         )}

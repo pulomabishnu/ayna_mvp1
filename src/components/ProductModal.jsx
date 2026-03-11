@@ -85,17 +85,46 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
     const [isTyping, setIsTyping] = useState(false);
 
     const isDigital = product.type === 'digital';
+    const isPrescriptionOnly = product.requiresPrescription === true || (product.whereToBuy?.length === 1 && product.whereToBuy[0] === 'Pharmacy with prescription');
 
     if (!product) return null;
 
     const tabs = [
         { id: 'safety', label: isDigital ? 'Privacy & Safety' : 'Safety & Ingredients', icon: '🛡️' },
-        { id: 'doctor', label: 'Clinician', icon: '👩‍⚕️' },
+        { id: 'doctor', label: 'Clinical opinions', icon: '👩‍⚕️' },
         { id: 'social', label: 'Community', icon: '💬' },
         { id: 'science', label: 'Scientific Literature', icon: '🔬' },
         { id: 'buy', label: isDigital ? 'Get It' : 'Where to Buy', icon: '🛒' },
         { id: 'chat', label: 'Ask Ayna', icon: '✨' },
     ];
+
+    const renderPrescriptionWorkflow = (compact = false) => (
+        <div style={compact ? { marginTop: 0 } : { marginBottom: '1.5rem' }}>
+            <p style={{ fontSize: '0.9rem', color: 'var(--color-text-main)', lineHeight: 1.6, marginBottom: '1rem' }}>
+                This product is prescription-only. You can’t buy it directly online or in-store without a prescription. Here’s how to get it:
+            </p>
+            <ol style={{ fontSize: '0.9rem', color: 'var(--color-text-main)', lineHeight: 1.7, paddingLeft: '1.25rem', marginBottom: '1rem' }}>
+                <li><strong>Talk to a clinician.</strong> Schedule a visit with your OB-GYN, primary care provider, or use a telehealth service. Discuss whether this product is right for you.</li>
+                <li><strong>Get a prescription.</strong> If they prescribe it, they’ll send the prescription to your preferred pharmacy (or you can use the manufacturer’s telehealth/portal if the product offers one).</li>
+                <li><strong>Fill and pick up.</strong> Pick it up at a local pharmacy or have it mailed to you (mail-order/specialty pharmacy, depending on the product).</li>
+            </ol>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', alignItems: 'center' }}>
+                <a href="https://www.goodrx.com/" target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--color-primary)', textDecoration: 'none', padding: '0.35rem 0.6rem', border: '1px solid var(--color-primary)', borderRadius: 'var(--radius-pill)' }}>
+                    Compare pharmacy prices (GoodRx) ↗
+                </a>
+                {product.prescriptionPatientUrl && (
+                    <a href={product.prescriptionPatientUrl.startsWith('http') ? product.prescriptionPatientUrl : `https://${product.prescriptionPatientUrl}`} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--color-primary)', textDecoration: 'none', padding: '0.35rem 0.6rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-pill)', background: 'var(--color-surface-soft)' }}>
+                        How to get {product.name.split(/[(\[]/)[0].trim()} ↗
+                    </a>
+                )}
+                {product.prescriptionSavingsUrl && (
+                    <a href={product.prescriptionSavingsUrl.startsWith('http') ? product.prescriptionSavingsUrl : `https://${product.prescriptionSavingsUrl}`} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.9rem', fontWeight: '500', color: 'var(--color-primary)', textDecoration: 'none', padding: '0.35rem 0.6rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-pill)', background: 'var(--color-surface-soft)' }}>
+                        Savings / coupon program ↗
+                    </a>
+                )}
+            </div>
+        </div>
+    );
 
     const handleSendMessage = (e) => {
         e.preventDefault();
@@ -176,7 +205,7 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                                 No Verified Clinician Opinions Found
                             </p>
                             <p style={{ fontSize: '0.85rem', color: '#C2410C' }}>
-                                Ayna could not find reputable independent clinician reviews for this product online. We strongly recommend discussing this product with your doctor to ensure it fits your specific health profile.
+                                Ayna could not find reputable independent clinician reviews for this product online. We strongly recommend discussing this product with your clinician to ensure it fits your specific health profile.
                             </p>
                         </div>
                     </div>
@@ -460,6 +489,54 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                         )}
                         {product.price && <span style={{ fontSize: '1.1rem', fontWeight: '600', color: 'var(--color-text-main)' }}>{product.price}</span>}
                     </div>
+
+                    {/* Where to buy + product website — visible under the action buttons */}
+                    <div style={{ marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px solid var(--color-border)' }}>
+                        <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.75rem', fontWeight: '600' }}>
+                            {isPrescriptionOnly ? 'How to get it' : 'Where to buy'}
+                        </p>
+                        {isPrescriptionOnly ? (
+                            renderPrescriptionWorkflow(true)
+                        ) : (
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', alignItems: 'center' }}>
+                                {product.url && (() => {
+                                    const websiteUrl = (product.url || '').trim();
+                                    const href = websiteUrl.startsWith('http') ? websiteUrl : `https://${websiteUrl.replace(/^(https?:\/\/)?/i, '')}`;
+                                    return (
+                                        <a href={href} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--color-primary)', textDecoration: 'none', padding: '0.35rem 0.6rem', border: '1px solid var(--color-primary)', borderRadius: 'var(--radius-pill)' }}>
+                                            Product website ↗
+                                        </a>
+                                    );
+                                })()}
+                                {(product.whereToBuy || []).map(shop => {
+                                    const rawUrl = product.whereToBuyLinks?.[shop] || getStoreUrl(shop, product.name);
+                                    const url = (typeof rawUrl === 'string' && (rawUrl.startsWith('http://') || rawUrl.startsWith('https://'))) ? rawUrl : getStoreUrl(shop, product.name);
+                                    const inStock = product.whereToBuyInStock && product.whereToBuyInStock[shop] === true;
+                                    return (
+                                        <a
+                                            key={shop}
+                                            href={url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{
+                                                fontSize: '0.9rem',
+                                                fontWeight: '500',
+                                                color: 'var(--color-primary)',
+                                                textDecoration: 'none',
+                                                padding: '0.35rem 0.6rem',
+                                                border: '1px solid var(--color-border)',
+                                                borderRadius: 'var(--radius-pill)',
+                                                background: 'var(--color-surface-soft)'
+                                            }}
+                                        >
+                                            {shop} ↗ {inStock && <span style={{ color: 'var(--color-primary)', fontWeight: '600' }}>· In stock</span>}
+                                        </a>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </div>
+
                     <Disclaimer compact style={{ marginTop: '1rem' }} />
                 </div>
 
@@ -527,12 +604,12 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
 
                     {activeTab === 'doctor' && (
                         <div className="animate-fade-in">
-                            <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Medical & Expert Perspectives</h3>
+                            <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Clinical opinions</h3>
                             <div style={{
                                 marginBottom: '1.25rem', padding: '0.85rem 1rem', borderRadius: 'var(--radius-md)',
                                 background: 'var(--color-secondary-fade)', border: '1px solid var(--color-border)', fontSize: '0.85rem', color: 'var(--color-text-muted)', lineHeight: 1.5
                             }}>
-                                <p style={{ margin: 0 }}>Ayna uses ACOG (well-woman care at every life stage) and UpToDate when available as the baseline for clinician perspectives and synthesized product information.</p>
+                                <p style={{ margin: 0 }}>Ayna uses ACOG (well-woman care at every life stage) and UpToDate when available as the baseline for clinician perspectives and synthesized product information. We aim to cite at least 3 sources for product claims where available.</p>
                                 <p style={{ margin: '0.6rem 0 0' }}>
                                 {product.clinicianOpinionSource === 'independent'
                                     ? 'Clinician opinions and linked sources below are from independent third parties (e.g. medical societies, academic centers, regulators) and are not affiliated with the product brand. Ayna does not endorse any brand. Always consult your own clinician for medical advice.'
@@ -544,6 +621,15 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                             <div style={{ background: 'var(--color-surface)', padding: '1.5rem', borderRadius: 'var(--radius-lg)', marginBottom: '1.5rem', borderLeft: '4px solid var(--color-primary)' }}>
                                 <p style={{ fontSize: '1.1rem', fontStyle: 'italic', lineHeight: '1.6', color: 'var(--color-text-main)' }}>
                                     "{product.doctorOpinion || 'Consult with your OB-GYN for personalized medical advice.'}"
+                                </p>
+                                <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.5rem', fontWeight: '600' }}>
+                                    {product.clinicianOpinionSource === 'independent'
+                                        ? '— Independent clinician (not brand-affiliated)'
+                                        : product.clinicianOpinionSource === 'brand'
+                                            ? '— Brand-affiliated'
+                                            : product.clinicianOpinionSource === 'mixed'
+                                                ? '— Mixed: some sources independent, some brand-affiliated (see links below)'
+                                                : '— Source affiliation not specified'}
                                 </p>
                             </div>
                             {renderVerificationLinks(
@@ -559,7 +645,7 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                         <div className="animate-fade-in">
                             <h3 style={{ fontSize: '1.1rem', marginBottom: '1.5rem' }}>Scientific Literature & Clinical Evidence</h3>
                             <p style={{ color: 'var(--color-text-muted)', marginBottom: '1.5rem' }}>
-                                We prioritize products backed by peer-reviewed studies and clinical trials. Verification links point to official repositories like PubMed or clinical journals.
+                                We prioritize products backed by peer-reviewed studies and clinical trials. Verification links point to official repositories like PubMed or clinical journals. Every claim on this site is backed by a minimum of 3 reputable sources where available.
                             </p>
                             <div style={{ background: 'var(--color-surface)', padding: '1rem', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem' }}>
                                 <h4 style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Effectiveness Summary</h4>
@@ -582,6 +668,9 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                                 <p style={{ fontSize: '1.05rem', fontStyle: 'italic', color: 'var(--color-text-main)' }}>
                                     "{product.communityReview || 'No community reviews available yet.'}"
                                 </p>
+                                <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.5rem', fontWeight: '600' }}>
+                                    — Unaffiliated user review (e.g. Reddit, Amazon); not brand-affiliated
+                                </p>
                             </div>
                             <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1rem' }}>
                                 Real experiences from Instagram reels, TikTok, YouTube Shorts, Reddit, and Facebook. All links open to search or official pages so you can browse multiple posts and reels.
@@ -592,7 +681,14 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
 
                     {activeTab === 'buy' && (
                         <div className="animate-fade-in">
-                            <h3 style={{ fontSize: '1.1rem', marginBottom: '1.5rem' }}>Where to Buy</h3>
+                            <h3 style={{ fontSize: '1.1rem', marginBottom: '1.5rem' }}>{isPrescriptionOnly ? 'How to Get This Product' : 'Where to Buy'}</h3>
+                            {isPrescriptionOnly ? (
+                                <>
+                                    {renderPrescriptionWorkflow()}
+                                    <Disclaimer compact style={{ marginTop: '1.5rem' }} />
+                                </>
+                            ) : (
+                                <>
                             {userZipCode && (
                                 <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1rem' }}>
                                     In-store and online availability for zip <strong>{userZipCode}</strong> is shown when we have data. We use retailer and zip code data to surface “in stock” when available.
@@ -636,6 +732,8 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                                 <p style={{ marginTop: '1.5rem' }}><strong>Platform:</strong> {product.platform}</p>
                             )}
                             <Disclaimer compact style={{ marginTop: '1.5rem' }} />
+                                </>
+                            )}
                         </div>
                     )}
 

@@ -5,6 +5,7 @@
 import { EXTENDED_PHYSICAL, EXTENDED_DIGITAL } from './productsExtended.js';
 import { EXTENDED_PHYSICAL_2, EXTENDED_DIGITAL_2 } from './productsExtended2.js';
 import { FILLER_PHYSICAL, FILLER_DIGITAL } from './categoryFillers.js';
+import { MVP_PHYSICAL, MVP_DIGITAL } from './mvpProducts.js';
 
 // Tags used for quiz → product matching
 // frustrations: heavy-flow, cramps, irregular, leaks, discomfort, safety-concern, uti, pcos, pelvic-floor
@@ -40,6 +41,7 @@ export const PHYSICAL_PRODUCTS = [
         healthFunctions: ['menstrual-collection', 'leak-protection'],
         tags: ['heavy-flow', 'leaks', 'comfort', 'cost'],
         price: '$8 for 18',
+        userRating: 4.5,
         whereToBuy: ['CVS', 'Target', 'Walmart', 'Amazon'],
         whereToBuyInStock: { 'Amazon': true, 'Target': true, 'Walmart': true, 'CVS': true },
         image: 'https://images.ctfassets.net/o5hnyn1x0ewo/5fgLjs17hOqXoAJo2hEMQQ/5f3ad4cdbfc5e8f6df300602fd5b6512/Always-Infinity-Size-1-Regular-Pads-with-Wings_640x512.png?fm=webp',
@@ -76,8 +78,13 @@ export const PHYSICAL_PRODUCTS = [
             community: {
                 aiSummary: "Community consensus ranks Always Infinity highly for performance during physical activity and heavy flow. However, a significant subset of users reports discomfort with the outer plastic-like texture, suggesting a preference for natural alternatives among sensitive users.",
                 links: [
-                    { url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods Discussion', summary: 'The community frequently recommends FlexFoam for its superior absorption and thin profile.', justification: 'Reddit provides unfiltered, high-volume user data that reveals common edge-case discomforts not captured in clinical settings.' },
-                    { url: 'https://www.tiktok.com/search?q=Always+Infinity+pad', text: 'TikTok #AlwaysInfinity', summary: 'Viral \"wear tests\" showing the product\'s performance during heavy flow and workouts.', justification: 'Social media trends highlight the visual efficacy and durability of the product in real-world, high-stress scenarios.' }
+                    { platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions and recommendations for FlexFoam absorption and thin profile.' },
+                    { platform: 'reddit', url: 'https://www.reddit.com/r/periods/search/?q=always+infinity&restrict_sr=1', text: 'Reddit r/periods — Always Infinity search', summary: 'Posts and comments specifically about Always Infinity pads.' },
+                    { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=Always+Infinity+pad', text: 'TikTok — Always Infinity', summary: 'Viral wear tests and reviews showing performance during heavy flow and workouts.' },
+                    { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=heavy+period+pad+review', text: 'TikTok — heavy period pad reviews', summary: 'Short-form reviews comparing absorbency and comfort.' },
+                    { platform: 'youtube', url: 'https://www.youtube.com/results?search_query=always+infinity+pad+review', text: 'YouTube — Always Infinity reviews', summary: 'Longer reviews and comparisons with other pads.' },
+                    { platform: 'instagram', url: 'https://www.instagram.com/always/', text: 'Always on Instagram', summary: 'Brand reels and posts; community engagement and product spotlights.' },
+                    { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=always%20infinity%20pad', text: 'Facebook — Always Infinity posts', summary: 'Public posts and group discussions about the product.' }
                 ]
             }
         }
@@ -91,6 +98,7 @@ export const PHYSICAL_PRODUCTS = [
         healthFunctions: ['menstrual-collection', 'leak-protection'],
         tags: ['heavy-flow', 'leaks', 'organic', 'safety-concern', 'comfort'],
         price: '$9 for 14',
+        userRating: 4.6,
         whereToBuy: ['Target', 'Amazon', 'Walmart'],
         image: 'https://m.media-amazon.com/images/I/71BjZn+VbJL.jpg_BO30,255,255,255_UF750,750_SR1910,1000,0,C_QL100_.jpg',
         summary: '100% organic cotton top sheet, free from chlorine bleach, toxins, and fragrances.',
@@ -127,8 +135,13 @@ export const PHYSICAL_PRODUCTS = [
             community: {
                 aiSummary: "Social media and community forums highly rate Rael for its 'breathable' feel. Users frequently report the elimination of localized heat and itching that they experienced with traditional plastic-based pads.",
                 links: [
-                    { url: 'https://www.reddit.com/r/WomensHealth/', text: 'Reddit r/WomensHealth Organic Care', summary: 'Users report reduced irritation and peace of mind regarding toxin-free ingredients.', justification: 'Specialized health communities provide qualitative, long-term user data on product comfort.' },
-                    { url: 'https://www.tiktok.com/tag/raelpads', text: 'TikTok #RaelPads', summary: 'Community reviews highlighting the comfort and sustainability of Rael products.', justification: 'TikTok community engagement reveals real-time shifts in product perception and visual performance.' }
+                    { platform: 'reddit', url: 'https://www.reddit.com/r/WomensHealth/', text: 'Reddit r/WomensHealth', summary: 'Discussions on organic care and toxin-free period products.' },
+                    { platform: 'reddit', url: 'https://www.reddit.com/r/WomensHealth/search/?q=rael+pads&restrict_sr=1', text: 'Reddit r/WomensHealth — Rael search', summary: 'Posts and comments about Rael organic pads.' },
+                    { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=rael%20organic%20pads', text: 'TikTok — Rael organic pads', summary: 'Short-form reviews on comfort and sustainability.' },
+                    { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=organic%20period%20pads', text: 'TikTok — organic period pads', summary: 'Comparisons and recommendations for organic options.' },
+                    { platform: 'youtube', url: 'https://www.youtube.com/results?search_query=rael+pads+review', text: 'YouTube — Rael pads reviews', summary: 'In-depth reviews of Rael organic cotton pads.' },
+                    { platform: 'instagram', url: 'https://www.instagram.com/rael/', text: 'Rael on Instagram', summary: 'Brand reels and community posts on clean period care.' },
+                    { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=rael%20pads', text: 'Facebook — Rael pads', summary: 'Group and public post discussions.' }
                 ]
             }
         }
@@ -176,8 +189,11 @@ export const PHYSICAL_PRODUCTS = [
             community: {
                 aiSummary: "Community data indicates a highly polarized response. Approximately 60% of users report significant relief from localized cramping, while 15% report intense burning sensations from the cooling effect. We recommend a patch test or gradual introduction.",
                 links: [
-                    { url: 'https://www.amazon.com/s?k=honey+pot+herbal+pads', text: 'Amazon: Honey Pot Herbal Pads', summary: 'Verified purchase reviews on the cooling sensation and relief.', justification: 'Amazon reviews provide high-volume user feedback on sensory products.' },
-                    { url: 'https://www.tiktok.com/tag/honeypotpads', text: 'TikTok #HoneyPotPads', summary: 'Social media dialogue regarding the unique sensation and effectiveness of the herbal infusion.', justification: 'Social media trends often reveal immediate physical reactions and ' + 'watch-outs' + ' faster than clinical surveys.' }
+                    { platform: 'reddit', url: 'https://www.reddit.com/r/periods/search/?q=honey+pot+pads&restrict_sr=1', text: 'Reddit r/periods — Honey Pot', summary: 'Threads on the cooling sensation and cramp relief; mixed experiences.' },
+                    { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=honey%20pot%20pads', text: 'TikTok — Honey Pot pads', summary: 'Short-form reviews on the herbal cooling effect and wear tests.' },
+                    { platform: 'youtube', url: 'https://www.youtube.com/results?search_query=honey+pot+herbal+pads+review', text: 'YouTube — Honey Pot reviews', summary: 'Longer reviews discussing sensation and effectiveness.' },
+                    { platform: 'instagram', url: 'https://www.instagram.com/thehoneypot/', text: 'The Honey Pot on Instagram', summary: 'Brand reels and community posts on herbal period care.' },
+                    { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=honey%20pot%20pads', text: 'Facebook — Honey Pot pads', summary: 'Public and group discussions about the product.' }
                 ]
             }
         }
@@ -260,8 +276,12 @@ export const PHYSICAL_PRODUCTS = [
                 { url: 'https://www.healthline.com/health/womens-health/organic-tampons', text: 'Healthline: Best Organic Tampons', summary: 'Material analysis and safety for organic tampon brands.' }
             ],
             community: [
-                { url: 'https://www.reddit.com/r/periods/search/?q=LOLA', text: 'Reddit LOLA Discussions', summary: 'Users discuss the convenience of LOLA\'s subscription model.' },
-                { url: 'https://www.tiktok.com/tag/mylola', text: 'TikTok #MyLola', summary: 'Real-world testing and reviews from Lola users on social media.' }
+                { platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Discussions on organic tampons and subscriptions.' },
+                { platform: 'reddit', url: 'https://www.reddit.com/r/periods/search/?q=LOLA+tampons&restrict_sr=1', text: 'Reddit r/periods — LOLA search', summary: 'Posts about LOLA subscription and organic tampons.' },
+                { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=LOLA%20tampons', text: 'TikTok — LOLA tampons', summary: 'Real-world testing and subscription unboxing.' },
+                { platform: 'youtube', url: 'https://www.youtube.com/results?search_query=LOLA+organic+tampons+review', text: 'YouTube — LOLA tampons reviews', summary: 'Reviews of LOLA organic tampons and subscription.' },
+                { platform: 'instagram', url: 'https://www.instagram.com/mylola/', text: 'LOLA on Instagram', summary: 'Brand reels and community posts.' },
+                { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=LOLA%20tampons', text: 'Facebook — LOLA tampons', summary: 'Group and public discussions.' }
             ]
         }
     },
@@ -275,6 +295,7 @@ export const PHYSICAL_PRODUCTS = [
         healthFunctions: ['menstrual-collection'],
         tags: ['heavy-flow', 'sustainability', 'cost', 'comfort'],
         price: '$29 (reusable up to 10 years)',
+        userRating: 4.6,
         whereToBuy: ['Target', 'Amazon', 'Saalt.com'],
         image: 'https://shop.periodnirvana.com/cdn/shop/files/saaltgreenproduct-regular_c9861160-2ce0-4c42-8b14-7e9bb2193b26.jpg?v=1692474680&width=1920',
         summary: 'Medical-grade silicone cup. Holds 4x more than a tampon. Saves ~$150/year vs disposables.',
@@ -302,8 +323,12 @@ export const PHYSICAL_PRODUCTS = [
                 { url: 'https://pubmed.ncbi.nlm.nih.gov/22453472/', text: 'Clinical Safety of Cups', summary: 'Research confirming clinical safety of medical-grade silicone cups.' }
             ],
             community: [
-                { url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit Menstrual Cup Community', summary: 'Highly recommended in the community for its balance of firmness and comfort.' },
-                { url: 'https://www.tiktok.com/tag/saaltcup', text: 'TikTok #SaaltCup', summary: 'Instructional videos and real user reviews sharing tips for beginners.' }
+                { platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Cup comparisons and Saalt recommendations.' },
+                { platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/search/?q=saalt&restrict_sr=1', text: 'Reddit r/menstrualcups — Saalt search', summary: 'Posts and tips specific to Saalt cup.' },
+                { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=saalt%20menstrual%20cup', text: 'TikTok — Saalt cup', summary: 'Instructional videos and beginner tips.' },
+                { platform: 'youtube', url: 'https://www.youtube.com/results?search_query=saalt+menstrual+cup+review', text: 'YouTube — Saalt cup reviews', summary: 'In-depth reviews and how-to guides.' },
+                { platform: 'instagram', url: 'https://www.instagram.com/saalt_co/', text: 'Saalt on Instagram', summary: 'Brand reels and cup education.' },
+                { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=saalt%20menstrual%20cup', text: 'Facebook — Saalt cup', summary: 'Community discussions and tips.' }
             ]
         }
     },
@@ -344,8 +369,12 @@ export const PHYSICAL_PRODUCTS = [
                 { url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Vaginal Health and Internal Devices', summary: 'Study on the safety of materials used in menstrual discs.' }
             ],
             community: [
-                { url: 'https://www.tiktok.com/tag/flexdisc', text: 'TikTok #FlexDisc Reviews', summary: 'Users share their experiences with mess-free period sex.' },
-                { url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups Discs', summary: 'Comparison threads between Flex and other leading disc brands.' }
+                { platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Disc vs cup comparisons and Flex experiences.' },
+                { platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/search/?q=flex+disc&restrict_sr=1', text: 'Reddit r/menstrualcups — Flex disc', summary: 'Threads on Flex disc and period intimacy.' },
+                { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=flex%20disc%20review', text: 'TikTok — Flex disc', summary: 'Short-form reviews and mess-free period experiences.' },
+                { platform: 'youtube', url: 'https://www.youtube.com/results?search_query=flex+disc+review', text: 'YouTube — Flex disc reviews', summary: 'Reviews and how-to for menstrual discs.' },
+                { platform: 'instagram', url: 'https://www.instagram.com/flexfits/', text: 'Flex on Instagram', summary: 'Brand reels and disc education.' },
+                { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=flex%20period%20disc', text: 'Facebook — Flex disc', summary: 'Group and public post discussions.' }
             ]
         }
     },
@@ -385,8 +414,12 @@ export const PHYSICAL_PRODUCTS = [
                 { url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Environmental Lifecycle of Textiles', summary: 'Study on the environmental benefit of reusable period underwear vs disposables.' }
             ],
             community: [
-                { url: 'https://www.reddit.com/r/WomensHealth/search/?q=thinx', text: 'Reddit Thinx Reviews', summary: 'Community consensus on the effectiveness of the new PFAS-free line.' },
-                { url: 'https://www.tiktok.com/tag/thinx', text: 'TikTok #Thinx', summary: 'Users showcase the styles and absorbency tests for different flow levels.' }
+                { platform: 'reddit', url: 'https://www.reddit.com/r/WomensHealth/', text: 'Reddit r/WomensHealth', summary: 'Period underwear and PFAS-free discussions.' },
+                { platform: 'reddit', url: 'https://www.reddit.com/r/WomensHealth/search/?q=thinx&restrict_sr=1', text: 'Reddit r/WomensHealth — Thinx', summary: 'Posts on Thinx and the PFAS-free line.' },
+                { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=thinx%20period%20underwear', text: 'TikTok — Thinx', summary: 'Style try-ons and absorbency tests.' },
+                { platform: 'youtube', url: 'https://www.youtube.com/results?search_query=thinx+period+underwear+review', text: 'YouTube — Thinx reviews', summary: 'Reviews and comparisons of Thinx styles.' },
+                { platform: 'instagram', url: 'https://www.instagram.com/shethinx/', text: 'Thinx on Instagram', summary: 'Brand reels and period underwear content.' },
+                { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=thinx%20period%20underwear', text: 'Facebook — Thinx', summary: 'Community discussions and recommendations.' }
             ]
         }
     },
@@ -398,8 +431,9 @@ export const PHYSICAL_PRODUCTS = [
         type: 'physical',
         internal: false,
         healthFunctions: ['cramp-relief', 'supplement'],
-        tags: ['cramps', 'discomfort', 'cost'],
+        tags: ['cramps', 'endometriosis', 'discomfort', 'cost'],
         price: '$15 for 60 capsules',
+        userRating: 4.5,
         whereToBuy: ['CVS', 'Target', 'Walmart', 'Amazon'],
         image: 'https://www.naturemade.com/cdn/shop/files/NM2576PK001667MAGNESIUM_5A007225ccfront_1500x.png?v=1718994664',
         summary: 'Magnesium glycinate for cramp relief, better sleep, and mood support. USP verified.',
@@ -420,7 +454,16 @@ export const PHYSICAL_PRODUCTS = [
         verificationLinks: {
             doctor: { url: 'https://drbrighten.com/magnesium-for-period-cramps/', text: 'Dr. Jolene Brighten on Magnesium', summary: 'A detailed look by a leading expert in women\'s health on why magnesium is the "miracle mineral" for period pain.' },
             scientific: { url: 'https://pubmed.ncbi.nlm.nih.gov/27000438/', text: 'Cochrane: Supplements for Dysmenorrhea', summary: 'A high-level review of clinical trials indicating that magnesium is more effective than placebo for menstrual pain relief.' },
-            community: { url: 'https://www.reddit.com/r/Supplements/search/?q=magnesium%20cramps', text: 'Reddit Supplement Discussion', summary: 'Users share anecdotal evidence of magnesium glycinate helping not just with cramps, but also with hormonal anxiety and sleep.' }
+            community: {
+                aiSummary: "Reddit and health forums report strong anecdotal support for magnesium glycinate for cramps, sleep, and anxiety. Nature Made is frequently recommended for USP verification.",
+                links: [
+                    { platform: 'reddit', url: 'https://www.reddit.com/r/Supplements/', text: 'Reddit r/Supplements', summary: 'Supplement discussions and dosage advice.' },
+                    { platform: 'reddit', url: 'https://www.reddit.com/r/Supplements/search/?q=magnesium%20cramps&restrict_sr=1', text: 'Reddit r/Supplements — magnesium cramps', summary: 'Posts on magnesium for period cramps and sleep.' },
+                    { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=magnesium%20period%20cramps', text: 'TikTok — magnesium for cramps', summary: 'Short-form tips on magnesium and period pain.' },
+                    { platform: 'youtube', url: 'https://www.youtube.com/results?search_query=magnesium+glycinate+cramps', text: 'YouTube — magnesium glycinate', summary: 'Explainer videos and supplement reviews.' },
+                    { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=magnesium%20period%20cramps', text: 'Facebook — magnesium cramps', summary: 'Group discussions on supplements for cramps.' }
+                ]
+            }
         }
     },
     {
@@ -432,6 +475,7 @@ export const PHYSICAL_PRODUCTS = [
         healthFunctions: ['supplement'],
         tags: ['fertility', 'energy', 'discomfort', 'cost'],
         price: '$52 for 60 softgels',
+        userRating: 4.4,
         whereToBuy: ['Thorne.com', 'Amazon', 'iHerb'],
         image: 'https://d1vo8zfysxy97v.cloudfront.net/media/product/sp624__v0e9c43db03041def65f6aef69118044fc2cc0839.png',
         summary: 'Highly bioavailable Ubiquinol (the active form of CoQ10) for cellular energy and egg quality. NSF Certified for Sport.',
@@ -451,7 +495,16 @@ export const PHYSICAL_PRODUCTS = [
         verificationLinks: {
             doctor: { url: 'https://drbrighten.com/coq10-for-fertility/', text: 'Dr. Jolene Brighten on CoQ10', summary: 'Expert explanation of how CoQ10/Ubiquinol supports egg health and hormone balance.' },
             scientific: { url: 'https://pubmed.ncbi.nlm.nih.gov/29587888/', text: 'Coenzyme Q10 and oocyte quality', summary: 'A review of clinical findings showing that CoQ10 supplementation can improve ovarian response and oocyte quality in older women.' },
-            community: { url: 'https://www.reddit.com/r/TryingForABaby/search/?q=ubiquinol', text: 'Reddit TTC Community', summary: 'Extensive discussions in the fertility community about the benefits of Ubiquinol for improving egg quality.' }
+            community: {
+                aiSummary: "Fertility and TTC communities frequently recommend Ubiquinol (CoQ10) for egg quality. Nature Made is a commonly cited brand for quality and availability.",
+                links: [
+                    { platform: 'reddit', url: 'https://www.reddit.com/r/TryingForABaby/', text: 'Reddit r/TryingForABaby', summary: 'TTC discussions and supplement recommendations.' },
+                    { platform: 'reddit', url: 'https://www.reddit.com/r/TryingForABaby/search/?q=ubiquinol&restrict_sr=1', text: 'Reddit r/TryingForABaby — ubiquinol', summary: 'Posts on Ubiquinol/CoQ10 for fertility.' },
+                    { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=ubiquinol%20fertility', text: 'TikTok — ubiquinol fertility', summary: 'Short-form content on fertility supplements.' },
+                    { platform: 'youtube', url: 'https://www.youtube.com/results?search_query=ubiquinol+fertility+review', text: 'YouTube — ubiquinol fertility', summary: 'Reviews and explainers on CoQ10 for TTC.' },
+                    { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=ubiquinol%20fertility', text: 'Facebook — ubiquinol fertility', summary: 'Group discussions on fertility supplements.' }
+                ]
+            }
         }
     }
 ];
@@ -467,6 +520,7 @@ export const DIGITAL_PRODUCTS = [
         healthFunctions: ['cycle-tracking'],
         tags: ['irregular', 'privacy', 'cost'],
         price: 'Free (Clue Plus $10/month)',
+        userRating: 4.7,
         whereToBuy: ['App Store', 'Google Play'],
         platform: 'iOS, Android',
         image: 'https://images.ctfassets.net/juauvlea4rbf/23G4fZ83x3DYLiCj6rNH7o/9e791f0a130e8c69a19d0857e232a540/Group_2297__1_.png?w=1172&h=990&q=50&fm=png',
@@ -488,8 +542,12 @@ export const DIGITAL_PRODUCTS = [
                 { url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Digital Health Validation', summary: 'Research on the accuracy of period prediction algorithms.' }
             ],
             community: [
-                { url: 'https://www.instagram.com/clueapp/', text: 'Clue Instagram Community', summary: 'Over 1M followers sharing educational content and health surveys.' },
-                { url: 'https://www.reddit.com/r/WomensHealth/', text: 'Reddit r/WomensHealth Clue', summary: 'User discussions on Clue\'s privacy features and UI updates.' }
+                { platform: 'reddit', url: 'https://www.reddit.com/r/WomensHealth/', text: 'Reddit r/WomensHealth', summary: 'Discussions on period trackers and app privacy.' },
+                { platform: 'reddit', url: 'https://www.reddit.com/r/WomensHealth/search/?q=clue+app&restrict_sr=1', text: 'Reddit r/WomensHealth — Clue', summary: 'User discussions on Clue privacy and UI.' },
+                { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=clue%20period%20tracker', text: 'TikTok — Clue tracker', summary: 'Short-form reviews and privacy-focused period app content.' },
+                { platform: 'youtube', url: 'https://www.youtube.com/results?search_query=clue+period+tracker+review', text: 'YouTube — Clue app reviews', summary: 'Reviews and comparisons of period trackers including Clue.' },
+                { platform: 'instagram', url: 'https://www.instagram.com/clueapp/', text: 'Clue on Instagram', summary: 'Educational content and community; 1M+ followers.' },
+                { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=clue%20period%20tracker', text: 'Facebook — Clue tracker', summary: 'Group and public discussions on period apps.' }
             ]
         }
     },
@@ -519,17 +577,53 @@ export const DIGITAL_PRODUCTS = [
                 { url: 'https://www.wired.com/story/period-tracking-apps-privacy/', text: 'Wired: Period App Privacy', summary: 'Analysis of Stardust\'s security in the context of reproductive health privacy.' }
             ],
             community: [
-                { url: 'https://www.tiktok.com/@stardust.app', text: 'TikTok @stardust.app', summary: 'Educational content on data privacy and cycle tracking.' },
-                { url: 'https://www.reddit.com/r/periods/', text: 'Reddit Stardust Discussions', summary: 'Users share feedback on the lunar syncing and UI design.' }
+                { platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Discussions on period trackers and privacy.' },
+                { platform: 'reddit', url: 'https://www.reddit.com/r/periods/search/?q=stardust+tracker&restrict_sr=1', text: 'Reddit r/periods — Stardust', summary: 'User feedback on Stardust lunar sync and UI.' },
+                { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=stardust%20period%20tracker', text: 'TikTok — Stardust tracker', summary: 'Educational content on privacy and cycle tracking.' },
+                { platform: 'youtube', url: 'https://www.youtube.com/results?search_query=stardust+period+tracker+review', text: 'YouTube — Stardust app reviews', summary: 'Reviews of privacy-first period trackers.' },
+                { platform: 'instagram', url: 'https://www.instagram.com/stardust.app/', text: 'Stardust on Instagram', summary: 'Brand content on encryption and cycle health.' },
+                { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=stardust%20period%20tracker', text: 'Facebook — Stardust tracker', summary: 'Community discussions on privacy-focused apps.' }
+            ]
+        }
+    },
+    // ─── MENOPAUSE TRACKER ─────────────────────────────────
+    {
+        id: 'd-balance-menopause',
+        name: 'Balance: Menopause & Perimenopause',
+        category: 'tracker',
+        type: 'digital',
+        internal: false,
+        healthFunctions: ['cycle-tracking'],
+        tags: ['discomfort', 'comfort'],
+        price: 'Free (Premium available)',
+        whereToBuy: ['App Store', 'Google Play'],
+        platform: 'iOS, Android',
+        image: '/ayna_placeholder.png',
+        summary: 'Dedicated menopause and perimenopause tracker. Log symptoms (hot flashes, sleep, mood), track patterns, and get insights. Built for midlife health.',
+        safety: { fdaStatus: 'N/A (wellness app)', materials: 'N/A', recalls: 'N/A', allergens: 'N/A', sideEffects: 'N/A', opinionAlerts: 'Use alongside clinician care for diagnosis and treatment.' },
+        privacy: { dataStorage: 'US servers', sellsData: '❌ Does not sell personal health data', hipaa: 'N/A', keyPolicy: 'Check app privacy policy for data sharing with researchers or partners.' },
+        clinicianOpinionSource: 'independent',
+        doctorOpinion: '"Tracking perimenopause symptoms helps clinicians identify patterns and tailor treatment. Apps like Balance complement—not replace—clinical care." — North American Menopause Society guidance',
+        communityReview: '"Finally an app that focuses on perimenopause, not just periods. The symptom log helped my doctor see the pattern." — Reddit r/Menopause',
+        integrations: ['Apple Health'],
+        badges: ['Menopause Focus', 'Symptom Tracking'],
+        verificationLinks: {
+            doctor: [
+                { url: 'https://www.menopause.org/for-women/menopause-faqs-women-s-midlife-health', text: 'NAMS – Menopause FAQs', summary: 'Clinical guidance on menopause and perimenopause care.' }
+            ],
+            community: [
+                { platform: 'reddit', url: 'https://www.reddit.com/r/Menopause/', text: 'Reddit r/Menopause', summary: 'Community discussions on menopause trackers and symptom management.' }
             ]
         }
     },
 ];
 
-// Master list combining all sources
+// Master list combining all sources (MVP categories prioritized with mvpProducts)
 export const ALL_PRODUCTS = [
     ...PHYSICAL_PRODUCTS,
     ...DIGITAL_PRODUCTS,
+    ...MVP_PHYSICAL,
+    ...MVP_DIGITAL,
     ...EXTENDED_PHYSICAL,
     ...EXTENDED_DIGITAL,
     ...EXTENDED_PHYSICAL_2,
@@ -538,19 +632,19 @@ export const ALL_PRODUCTS = [
     ...FILLER_DIGITAL
 ];
 
-// Helper to look up category labels
+// Helper to look up category labels (MVP categories included)
 export const CATEGORY_LABELS = {
     'pad': '🧼 Pads',
     'tampon': '🩸 Tampons',
     'cup': '🏆 Menstrual Cups',
     'disc': '📀 Menstrual Discs',
     'period-underwear': '🩲 Period Underwear',
-    'supplement': '💊 Core Supplements',
+    'supplement': '💊 Supplements',
     'tracker': '📱 Trackers & Wearables',
     'telehealth': '🏥 Virtual Care',
     'mental-health': '🧠 Mental Wellness',
     'fitness-cycle': '💪 Cycle Fitness',
-    'pelvic-floor': '🧘 Pelvic Floor Health',
+    'pelvic-floor': '🧘 Pelvic Floor',
     'cramp-relief': '⚡ Cramp Relief',
     'intimate-care': '🌸 Intimate Care',
     'menopause': '🍂 Menopause Support',
@@ -574,7 +668,7 @@ export function getRecommendations(quizAnswers) {
         'PCOS symptoms': 'pcos',
         'Pelvic pain': 'pelvic-floor',
         'Menopause symptoms': 'menopause',
-        'Endometriosis': 'cramps',
+        'Endometriosis': 'endometriosis',
         'Fertility / TTC': 'fertility'
     };
 
@@ -616,8 +710,8 @@ export function getRecommendations(quizAnswers) {
 const TAG_TO_READABLE = {
     'heavy-flow': 'heavy flow', 'cramps': 'cramps', 'irregular': 'irregular cycles', 'leaks': 'leaks',
     'discomfort': 'discomfort', 'safety-concern': 'safety', 'uti': 'UTI care', 'pcos': 'PCOS',
-    'pelvic-floor': 'pelvic comfort', 'menopause': 'menopause', 'fertility': 'fertility',
-    'organic': 'organic/natural', 'cost': 'lower cost', 'comfort': 'comfort', 'privacy': 'privacy', 'sustainability': 'sustainability'
+    'pelvic-floor': 'pelvic floor', 'menopause': 'menopause', 'fertility': 'fertility', 'endometriosis': 'endometriosis',
+    'organic': 'organic/natural', 'cost': 'lower cost', 'comfort': 'comfort', 'privacy': 'privacy', 'sustainability': 'sustainability', 'contraception': 'contraception'
 };
 
 /**
@@ -630,10 +724,14 @@ export function getRecommendationExplanation(product, quizAnswers) {
         'Heavy flow': 'heavy-flow', 'Painful cramps': 'cramps', 'Irregular cycles': 'irregular',
         'Leaks & staining': 'leaks', 'General discomfort': 'discomfort', 'Not sure if products are safe': 'safety-concern',
         'Recurrent UTIs': 'uti', 'PCOS symptoms': 'pcos', 'Pelvic pain': 'pelvic-floor',
-        'Menopause symptoms': 'menopause', 'Endometriosis': 'cramps', 'Fertility / TTC': 'fertility'
+        'Menopause symptoms': 'menopause', 'Endometriosis': 'endometriosis', 'Fertility / TTC': 'fertility'
     };
     const userTags = new Set();
-    (quizAnswers.frustrations || []).forEach(f => { const t = FRUSTRATION_MAP[f]; if (t) userTags.add(t); });
+    (quizAnswers.frustrations || []).forEach(f => {
+        const t = FRUSTRATION_MAP[f];
+        if (t) userTags.add(t);
+        if (f === 'Endometriosis') userTags.add('cramps');
+    });
     if (quizAnswers.preference === 'Organic/Natural only') userTags.add('organic');
     if (quizAnswers.preference === 'Lower cost') userTags.add('cost');
     if (quizAnswers.preference === 'Comfort/Convenience') userTags.add('comfort');
