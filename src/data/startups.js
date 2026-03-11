@@ -226,9 +226,15 @@ export const STARTUPS = [
     }
 ];
 
+/** Startups with unreleased US products only (for Startups / waitlist page). */
+export const UNRELEASED_STARTUPS = STARTUPS.filter(s => s.productReleased === false);
+
+/** Startups that have released US products (shown as products in Discovery, not as startups). */
+export const RELEASED_STARTUPS = STARTUPS.filter(s => s.productReleased !== false);
+
 // ─── STARTUP MATCHING ──────────────────────────────────
 export function getPersonalizedStartups(quizAnswers) {
-    if (!quizAnswers) return STARTUPS;
+    if (!quizAnswers) return UNRELEASED_STARTUPS;
 
     const FRUSTRATION_MAP = {
         'Heavy flow': 'heavy-flow',
@@ -252,9 +258,9 @@ export function getPersonalizedStartups(quizAnswers) {
         });
     }
 
-    if (userTags.size === 0) return STARTUPS;
+    if (userTags.size === 0) return UNRELEASED_STARTUPS;
 
-    const scored = STARTUPS.map(s => {
+    const scored = UNRELEASED_STARTUPS.map(s => {
         let score = 0;
         s.tags.forEach(t => { if (userTags.has(t)) score += 2; });
         return { startup: s, score };

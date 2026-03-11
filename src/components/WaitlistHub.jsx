@@ -1,12 +1,12 @@
 import React, { useState, useMemo } from 'react';
-import { STARTUPS, getPersonalizedStartups } from '../data/startups';
+import { UNRELEASED_STARTUPS, getPersonalizedStartups } from '../data/startups';
 
 export default function WaitlistHub({ joinedWaitlists, toggleJoinWaitlist, quizResults, isPremium, onUpgrade, myProducts = {}, onAddToEcosystem, onViewRecalls }) {
     const startups = useMemo(() => getPersonalizedStartups(quizResults), [quizResults]);
     const hasProfile = !!(quizResults?.frustrations?.length);
 
     const [filterCategory, setFilterCategory] = useState('all');
-    const categories = ['all', ...new Set(STARTUPS.map(s => s.category))];
+    const categories = ['all', ...new Set(UNRELEASED_STARTUPS.map(s => s.category))];
 
     const categoryLabels = {
         'all': 'All',

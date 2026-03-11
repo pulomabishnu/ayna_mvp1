@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
-import { STARTUPS } from '../data/startups';
+import { RELEASED_STARTUPS } from '../data/startups';
 import ProductModal from './ProductModal';
 import Disclaimer from './Disclaimer';
 
@@ -57,8 +57,15 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
     const combined = useMemo(() => {
         const products = ALL_PRODUCTS.map(p => ({ ...p, isStartup: false }));
-        const startups = STARTUPS.map(s => ({ ...s, isStartup: true, type: 'startup', productReleased: s.productReleased === true }));
-        return [...products, ...startups];
+        // Released startups appear as normal products (no startup badge); unreleased are only on Startups page
+        const releasedAsProducts = RELEASED_STARTUPS.map(s => ({
+            ...s,
+            isStartup: false,
+            type: 'digital',
+            summary: s.description || s.tagline,
+            price: s.stage || ''
+        }));
+        return [...products, ...releasedAsProducts];
     }, []);
 
     const filtered = useMemo(() => {
