@@ -609,8 +609,7 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                                 marginBottom: '1.25rem', padding: '0.85rem 1rem', borderRadius: 'var(--radius-md)',
                                 background: 'var(--color-secondary-fade)', border: '1px solid var(--color-border)', fontSize: '0.85rem', color: 'var(--color-text-muted)', lineHeight: 1.5
                             }}>
-                                <p style={{ margin: 0 }}>Ayna uses ACOG (well-woman care at every life stage) and UpToDate when available as the baseline for clinician perspectives and synthesized product information. We aim to cite at least 3 sources for product claims where available.</p>
-                                <p style={{ margin: '0.6rem 0 0' }}>
+                                <p style={{ margin: 0 }}>
                                 {product.clinicianOpinionSource === 'independent'
                                     ? 'Clinician opinions and linked sources below are from independent third parties (e.g. medical societies, academic centers, regulators) and are not affiliated with the product brand. Ayna does not endorse any brand. Always consult your own clinician for medical advice.'
                                     : product.clinicianOpinionSource === 'brand'
