@@ -628,7 +628,7 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                             </div>
                             <div style={{ background: 'var(--color-surface)', padding: '1.5rem', borderRadius: 'var(--radius-lg)', marginBottom: '1.5rem', borderLeft: '4px solid var(--color-primary)' }}>
                                 <p style={{ fontSize: '1.1rem', fontStyle: 'italic', lineHeight: '1.6', color: 'var(--color-text-main)' }}>
-                                    "{product.doctorOpinion || 'Consult with your OB-GYN for personalized medical advice.'}"
+                                    {product.doctorOpinion || 'Consult with your OB-GYN for personalized medical advice.'}
                                 </p>
                                 <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.5rem', fontWeight: '600' }}>
                                     {product.clinicianOpinionSource === 'independent'
@@ -639,6 +639,18 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                                                 ? '— Mixed: some sources independent, some brand-affiliated (see links below)'
                                                 : '— Source affiliation not specified'}
                                 </p>
+                                {(() => {
+                                    const doctorLinks = product.verificationLinks?.doctor?.links ?? (Array.isArray(product.verificationLinks?.doctor) ? product.verificationLinks.doctor : null);
+                                    const firstLink = Array.isArray(doctorLinks) && doctorLinks.length > 0 ? doctorLinks[0] : null;
+                                    if (firstLink?.url && firstLink?.text) {
+                                        return (
+                                            <p style={{ fontSize: '0.8rem', marginTop: '0.5rem' }}>
+                                                Source: <a href={firstLink.url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'underline' }}>{firstLink.text}</a>
+                                            </p>
+                                        );
+                                    }
+                                    return null;
+                                })()}
                             </div>
                             {renderVerificationLinks(
                                 product.verificationLinks?.doctor,
@@ -673,12 +685,29 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                             <h3 style={{ fontSize: '1.1rem', marginBottom: '1.5rem' }}>Community Experience & Social Proof</h3>
                             <div style={{ background: 'var(--color-surface)', padding: '1.5rem', borderRadius: 'var(--radius-lg)', marginBottom: '1.5rem' }}>
                                 <h4 style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Top Anecdotal Experience</h4>
-                                <p style={{ fontSize: '1.05rem', fontStyle: 'italic', color: 'var(--color-text-main)' }}>
-                                    "{product.communityReview || 'No community reviews available yet.'}"
-                                </p>
-                                <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.5rem', fontWeight: '600' }}>
-                                    — Unaffiliated user review (e.g. Reddit, Amazon); not brand-affiliated
-                                </p>
+                                {(() => {
+                                    const raw = product.communityReview || 'No community reviews available yet.';
+                                    const dashIdx = raw.indexOf(' — ');
+                                    const quotePart = dashIdx >= 0 ? raw.slice(0, dashIdx).trim() : raw;
+                                    const sourceLabel = product.communityReviewSourceLabel || (dashIdx >= 0 ? raw.slice(dashIdx + 3).trim() : null);
+                                    const sourceUrl = product.communityReviewSourceUrl;
+                                    return (
+                                        <>
+                                            <p style={{ fontSize: '1.05rem', fontStyle: 'italic', color: 'var(--color-text-main)', marginBottom: '0.5rem' }}>
+                                                {quotePart}
+                                            </p>
+                                            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', fontWeight: '600' }}>
+                                                — {sourceUrl && sourceLabel ? (
+                                                    <a href={sourceUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'underline' }}>{sourceLabel}</a>
+                                                ) : sourceLabel ? (
+                                                    <span>{sourceLabel}</span>
+                                                ) : (
+                                                    'Unaffiliated user review (e.g. Reddit, Amazon); not brand-affiliated'
+                                                )}
+                                            </p>
+                                        </>
+                                    );
+                                })()}
                             </div>
                             <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1rem' }}>
                                 Real experiences from Instagram reels, TikTok, YouTube Shorts, Reddit, and Facebook. All links open to search or official pages so you can browse multiple posts and reels.

@@ -21,7 +21,7 @@ function getProductUrl(p) {
   return 'https://' + s.replace(/^www\./i, '');
 }
 
-/** Telehealth platforms from Ayna that match this article's focus (tags or healthFunctions). Returns full product/startup objects for opening in product card. */
+/** Telehealth platforms that match this article's focus (tags or healthFunctions). Returns full product/startup objects for opening in product card. Deduped by name. */
 function getRelevantTelehealth(articleId) {
   const focus = ARTICLE_FOCUS_TAGS[articleId] || [];
   const fromProducts = (ALL_PRODUCTS || [])
@@ -38,11 +38,14 @@ function getRelevantTelehealth(articleId) {
       const tags = new Set([...(s.tags || []), ...(s.healthFunctions || [])]);
       return focus.some((t) => tags.has(t));
     });
-  const byId = new Map();
+  // Dedupe by name so the same platform (e.g. Tia in products + startups) appears once; prefer product entry.
+  const byName = new Map();
   [...fromProducts, ...fromStartups].forEach((item) => {
-    if (!byId.has(item.id)) byId.set(item.id, item);
+    const key = (item.name || '').trim().toLowerCase();
+    if (!key || byName.has(key)) return;
+    byName.set(key, item);
   });
-  return Array.from(byId.values());
+  return Array.from(byName.values());
 }
 
 const dropdownSummaryStyle = {
@@ -132,11 +135,11 @@ function TelehealthSuggestions({ articleId, onOpenProduct }) {
 
       <details style={{ marginBottom: '0.25rem' }}>
         <summary style={dropdownSummaryStyle}>
-          Telehealth / digital (from Ayna)
+          Telehealth / digital
         </summary>
         <div style={dropdownDetailStyle}>
           <p style={{ color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>
-            Platforms we list that match this topic. {onOpenProduct ? 'Click a name to open the product card.' : ''}
+            Relevant telehealth options for this topic. {onOpenProduct ? 'Click a name to open the product card.' : ''}
           </p>
           <p style={{ color: 'var(--color-text-muted)', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
             <a href="https://www.plannedparenthood.org/get-care" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Planned Parenthood — get care (telehealth & in-person)</a>
@@ -244,6 +247,7 @@ const ARTICLES = [
         <ul style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
           <li><a href="https://www.menopause.org/for-women/menopause-faqs-women-s-midlife-health" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>NAMS – Menopause FAQs</a></li>
           <li><a href="https://www.uptodate.com/contents/menopausal-hormone-therapy-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – Menopausal hormone therapy (patient education)</a></li>
+          <li><a href="https://www.acog.org/womens-health/faqs/the-menopause-years" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – The menopause years</a></li>
         </ul>
       </>
     ),
