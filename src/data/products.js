@@ -54,6 +54,7 @@ export const PHYSICAL_PRODUCTS = [
             sideEffects: 'Possible contact dermatitis or irritation, especially with scented versions. Rash or itching from synthetic materials.',
             opinionAlerts: 'Common complaints include the "plastic feel" and environmental concerns regarding non-biodegradability.'
         },
+        clinicianOpinionSource: 'independent',
         doctorOpinion: '"FlexFoam technology provides reliable absorption for heavy flow days. I recommend the unscented version to minimize irritation risk." — Dr. Sarah Chen, OB-GYN',
         communityReview: '"I have super heavy periods and these don\'t leak even overnight. The thin profile is a game-changer vs bulky pads." — Reddit r/periods',
         ingredients: 'Polyethylene, polypropylene, wood pulp, adhesive. Fragrance-free version omits parfum.',
@@ -154,6 +155,7 @@ export const PHYSICAL_PRODUCTS = [
         internal: false,
         healthFunctions: ['menstrual-collection', 'cramp-relief'],
         tags: ['cramps', 'discomfort', 'organic', 'comfort'],
+        avoidIfSensitivity: ['essential-oils', 'fragrance'],
         price: '$10 for 16',
         whereToBuy: ['Target', 'Walmart', 'Amazon'],
         image: 'https://www.kroger.com/product/images/large/front/0085166900880',
@@ -446,6 +448,7 @@ export const PHYSICAL_PRODUCTS = [
             sideEffects: 'Generally well-tolerated. Rare reports of mild nausea, stomach upset, or diarrhea. May interact with blood thinners like warfarin.',
             opinionAlerts: 'Main complaint is the high price point compared to standard CoQ10 supplements. Some users find the large softgels difficult to swallow.'
         },
+        clinicianOpinionSource: 'independent',
         doctorOpinion: '"Ubiquinol is frequently recommended for women over 35 to support mitochondrial health and egg quality. Thorne\'s NSF certification ensures purity and potency." — Dr. Jolene Brighten, NMD',
         communityReview: '"My fertility specialist put me on this. It\'s expensive but it\'s the highest quality Ubiquinol out there. No stomach issues at all." — Reddit r/TTC35',
         ingredients: 'Ubiquinol 100mg, Olive Oil, Gelatin, Glycerin, Water, Lycopene.',
@@ -619,7 +622,117 @@ export const CATEGORY_LABELS = {
     'hormone-monitoring': '🧬 Hormone Monitoring'
 };
 
+// ─── CLINICAL WORKFLOW (e.g. Recurrent UTIs: prevent → test → treat → get care) ───
+export const CLINICAL_WORKFLOW_STEPS = {
+    uti: [
+        { id: 'prevent', label: 'Prevent (supplements & daily care)', order: 1 },
+        { id: 'test', label: 'Test at home', order: 2 },
+        { id: 'treat', label: 'Treat & manage (suppositories, products)', order: 3 },
+        { id: 'get_care', label: 'Get care (telehealth)', order: 4 },
+    ],
+};
+
+const FRUSTRATION_TO_WORKFLOW = {
+    'Recurrent UTIs': 'uti',
+};
+
+/** Assign a workflow step for a given frustration (e.g. uti) based on product attributes. */
+function getWorkflowStep(product, frustrationTag) {
+    if (frustrationTag !== 'uti') return null;
+    const tags = new Set(product.tags || []);
+    const healthFns = new Set(product.healthFunctions || []);
+    const name = (product.name || '').toLowerCase();
+    const summary = (product.summary || '').toLowerCase();
+    const hasUti = tags.has('uti') || healthFns.has('uti-prevention');
+
+    if (!hasUti) return null;
+
+    if (product.category === 'telehealth') return 'get_care';
+    if (name.includes('test') || name.includes('strip') || summary.includes('test') || summary.includes('strip')) return 'test';
+    if (healthFns.has('vaginal-health') || healthFns.has('intimate-care') || name.includes('suppository') || summary.includes('suppository') || product.id === 'p-boric-acid') return 'treat';
+    if (product.category === 'supplement' || product.category === 'supplements') return 'prevent';
+    return 'treat';
+}
+
+/**
+ * Returns recommendations grouped by clinical workflow when the user has a matching concern
+ * (e.g. Recurrent UTIs → Prevent, Test, Treat, Get care), plus remaining by category.
+ */
+export function getRecommendationsGroupedByWorkflow(quizAnswers, omittedProductIds = {}) {
+    const base = getRecommendations(quizAnswers || {});
+    const filtered = base.filter(p => !omittedProductIds[p.id]);
+    const workflowTag = quizAnswers?.frustrations?.find(f => FRUSTRATION_TO_WORKFLOW[f]);
+    const tag = workflowTag ? FRUSTRATION_TO_WORKFLOW[workflowTag] : null;
+
+    if (!tag || !CLINICAL_WORKFLOW_STEPS[tag]) {
+        return { byWorkflow: [], byCategory: groupByCategory(filtered) };
+    }
+
+    const steps = CLINICAL_WORKFLOW_STEPS[tag];
+    const byStep = {};
+    steps.forEach(s => { byStep[s.id] = []; });
+    const rest = [];
+
+    filtered.forEach(p => {
+        const step = getWorkflowStep(p, tag);
+        if (step && byStep[step]) byStep[step].push(p);
+        else rest.push(p);
+    });
+
+    const byWorkflow = [{
+        frustration: workflowTag,
+        frustrationLabel: workflowTag,
+        steps: steps.map(s => ({ stepId: s.id, stepLabel: s.label, products: byStep[s.id] || [] })).filter(s => s.products.length > 0),
+    }];
+
+    return { byWorkflow, byCategory: groupByCategory(rest) };
+}
+
+function groupByCategory(products) {
+    const map = {};
+    products.forEach(p => {
+        const cat = p.category || 'other';
+        if (!map[cat]) map[cat] = [];
+        map[cat].push(p);
+    });
+    const order = ['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'supplement', 'tracker', 'telehealth', 'mental-health', 'menopause', 'intimate-care', 'cramp-relief', 'pelvic-floor', 'other'];
+    const ordered = order.filter(c => map[c]).map(c => ({ category: c, label: CATEGORY_LABELS[c] || c, products: map[c] }));
+    const rest = Object.keys(map).filter(c => !order.includes(c));
+    return [...ordered, ...rest.map(c => ({ category: c, label: CATEGORY_LABELS[c] || c, products: map[c] }))];
+}
+
 // ─── RECOMMENDATION LOGIC ───────────────────────────────
+// Map quiz "sensitivities" and "productsToAvoid" labels to canonical keys for filtering
+const SENSITIVITY_AVOID_TO_TRIGGER = {
+    'Fragrance sensitivity': 'fragrance',
+    'Fragrance / scented products': 'fragrance',
+    'Essential oils': 'essential-oils',
+    'Latex allergy': 'latex',
+    'Latex': 'latex',
+    'Synthetic materials': 'synthetic',
+    'Other allergies': null, // no product-level mapping by default
+};
+// Keywords to detect trigger in product text (ingredients, summary, safety)
+const AVOID_TRIGGER_KEYWORDS = {
+    'fragrance': ['fragrance', 'parfum', 'scented', 'perfume', 'scent'],
+    'essential-oils': ['essential oil', 'lavender oil', 'peppermint oil', 'mint oil', 'tea tree', 'eucalyptus oil', 'herbal-infused', 'herb-infused', 'lavender', 'peppermint'],
+    'latex': ['latex'],
+    'synthetic': [], // only use product.avoidIfSensitivity for synthetic to avoid over-excluding
+};
+
+function productMatchesAvoidTrigger(product, trigger) {
+    if (product.avoidIfSensitivity && product.avoidIfSensitivity.includes(trigger)) return true;
+    const keywords = AVOID_TRIGGER_KEYWORDS[trigger];
+    if (!keywords || keywords.length === 0) return false;
+    const text = [
+        product.ingredients,
+        product.summary,
+        product.safety?.materials,
+        product.safety?.allergens,
+    ].filter(Boolean).join(' ').toLowerCase();
+    return keywords.some(kw => text.includes(kw.toLowerCase()));
+}
+
 export function getRecommendations(quizAnswers) {
     if (!quizAnswers || !quizAnswers.frustrations) return ALL_PRODUCTS;
 
@@ -656,10 +769,20 @@ export function getRecommendations(quizAnswers) {
     const skipContraception = quizAnswers.contraceptionUse === 'No' || quizAnswers.contraceptionUse === 'Prefer not to say';
     const skipInternal = quizAnswers.internalComfort === 'No';
 
+    // Build set of avoid triggers from sensitivities + productsToAvoid (exclude products user can't use)
+    const userAvoidSet = new Set();
+    [...(quizAnswers.sensitivities || []), ...(quizAnswers.productsToAvoid || [])].forEach(label => {
+        const key = SENSITIVITY_AVOID_TO_TRIGGER[label];
+        if (key) userAvoidSet.add(key);
+    });
+    // Don't filter by "None that I know of" / "None / I'm open to suggestions"
+    userAvoidSet.delete(null);
+
     const scored = ALL_PRODUCTS
         .filter(p => {
             if (skipContraception && p.healthFunctions && p.healthFunctions.includes('contraception')) return false;
             if (skipInternal && p.internal === true) return false;
+            if (userAvoidSet.size > 0 && [...userAvoidSet].some(trigger => productMatchesAvoidTrigger(p, trigger))) return false;
             return true;
         })
         .map(p => {
@@ -796,7 +919,17 @@ export function getCheckinRecommendations(profile, checkinData, cycleData = [], 
         if (!reasonByTag['irregular']) reasonByTag['irregular'] = 'Based on your period tracking in Cycle Tracker.';
     }
 
-    const scored = ALL_PRODUCTS.map(p => {
+    // Exclude products that match user's sensitivities or productsToAvoid
+    const userAvoidSet = new Set();
+    [...(profile?.sensitivities || []), ...(profile?.productsToAvoid || [])].forEach(label => {
+        const key = SENSITIVITY_AVOID_TO_TRIGGER[label];
+        if (key) userAvoidSet.add(key);
+    });
+    const checkinPool = userAvoidSet.size > 0
+        ? ALL_PRODUCTS.filter(p => ![...userAvoidSet].some(trigger => productMatchesAvoidTrigger(p, trigger)))
+        : ALL_PRODUCTS;
+
+    const scored = checkinPool.map(p => {
         let score = 0;
         const matchedTags = [];
         (p.tags || []).forEach(t => {
