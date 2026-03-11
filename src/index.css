@@ -203,3 +203,17 @@ html {
 .stagger-4 {
   animation-delay: 0.4s;
 }
+
+/* Article body – readable paragraph spacing */
+.article-body p,
+.article-body ul {
+  margin-top: 0;
+  margin-bottom: 1.25em;
+}
+.article-body p:last-of-type,
+.article-body ul:last-of-type {
+  margin-bottom: 0;
+}
+.article-body ul {
+  padding-left: 1.5rem;
+}

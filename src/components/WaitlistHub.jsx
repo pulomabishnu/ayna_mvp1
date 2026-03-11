@@ -18,7 +18,11 @@ export default function WaitlistHub({ joinedWaitlists, toggleJoinWaitlist, quizR
         'fertility': '🤰 Fertility',
         'supplements': '💊 Supplements',
         'pelvic-health': '💪 Pelvic Health',
-        'fitness': '🏃‍♀️ Fitness'
+        'fitness': '🏃‍♀️ Fitness',
+        'pregnancy': '🤰 Pregnancy',
+        'postpartum': '🤱 Postpartum',
+        'intimate-care': '🌸 Intimate Care',
+        'mental-health': '🧠 Mental Health'
     };
 
     const filtered = filterCategory === 'all' ? startups : startups.filter(s => s.category === filterCategory);

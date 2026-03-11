@@ -639,18 +639,25 @@ export const CATEGORY_LABELS = {
     'cup': '🏆 Menstrual Cups',
     'disc': '📀 Menstrual Discs',
     'period-underwear': '🩲 Period Underwear',
+    'period-care': '🩸 Period Care',
     'supplement': '💊 Supplements',
+    'supplements': '💊 Supplements',
     'tracker': '📱 Trackers & Wearables',
     'telehealth': '🏥 Virtual Care',
     'mental-health': '🧠 Mental Wellness',
+    'fitness': '🏃‍♀️ Fitness',
     'fitness-cycle': '💪 Cycle Fitness',
     'pelvic-floor': '🧘 Pelvic Floor',
+    'pelvic-health': '💪 Pelvic Health',
     'cramp-relief': '⚡ Cramp Relief',
     'intimate-care': '🌸 Intimate Care',
     'menopause': '🍂 Menopause Support',
     'sex-tech': '🔥 Sexual Wellness',
     'postpartum': '🤱 Postpartum Recovery',
-    'pregnancy': '🤰 Pregnancy Support'
+    'pregnancy': '🤰 Pregnancy Support',
+    'fertility': '🤰 Fertility',
+    'diagnostics': '🔬 Diagnostics',
+    'hormone-monitoring': '🧬 Hormone Monitoring'
 };
 
 // ─── RECOMMENDATION LOGIC ───────────────────────────────

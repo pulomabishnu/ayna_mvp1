@@ -84,6 +84,43 @@ const ARTICLES = [
       </>
     ),
   },
+  {
+    id: 'yeast-infection-basics',
+    title: 'Yeast Infection Basics',
+    source: 'UpToDate, CDC, ACOG',
+    tags: ['Vulvovaginal health', 'Infections'],
+    teaser: 'What causes yeast infections, how to recognize them, when to treat at home vs. see a clinician, and how to prevent recurrence.',
+    body: (
+      <>
+        <p>Vulvovaginal candidiasis (yeast infection) is common and is usually caused by the fungus <em>Candida albicans</em>. Symptoms often include itching, burning, redness, and a thick white discharge. Many people can recognize recurring yeast infections and use an over-the-counter antifungal (e.g., clotrimazole, miconazole) with success, but it’s important not to self-diagnose if you’re unsure—other conditions (like bacterial vaginosis or sexually transmitted infections) can look similar and need different treatment.</p>
+        <p>See a clinician if this is your first time with these symptoms, if OTC treatment hasn’t helped after a few days, if you have severe symptoms, or if infections keep coming back. Recurrent yeast infections may need a longer course of treatment or maintenance therapy. Avoiding unnecessary antibiotics, wearing breathable underwear, and limiting douches and scented products can help reduce the risk of recurrence.</p>
+        <p><strong>Reputable sources (minimum 3):</strong></p>
+        <ul style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
+          <li><a href="https://www.uptodate.com/contents/candidiasis-vulvovaginal-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – Vulvovaginal candidiasis (patient education)</a></li>
+          <li><a href="https://www.cdc.gov/fungal/diseases/candidiasis/genital/index.html" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>CDC – Genital / vulvovaginal candidiasis</a></li>
+          <li><a href="https://www.acog.org/womens-health/faqs/vulvovaginal-health" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Vulvovaginal health</a></li>
+        </ul>
+      </>
+    ),
+  },
+  {
+    id: 'period-pain-when-to-seek-care',
+    title: 'Period Pain: When to Seek Care',
+    source: 'ACOG, UpToDate',
+    tags: ['Menstrual health', 'Pain'],
+    teaser: 'Normal cramps vs. signs that something else may be going on, and what treatments and workups clinicians may suggest.',
+    body: (
+      <>
+        <p>Mild to moderate menstrual cramps are common and often improve with over-the-counter pain relievers (e.g., ibuprofen, naproxen), heat, and exercise. For some people, period pain is severe enough to affect daily life—this is sometimes called dysmenorrhea and can be primary (no underlying condition) or secondary (due to conditions such as endometriosis, fibroids, or adenomyosis).</p>
+        <p>It’s worth seeing a clinician if your cramps are severe, suddenly worse than usual, or don’t respond to OTC options; if you have heavy bleeding, pain between periods, or pain with sex; or if you’re missing school or work regularly because of period symptoms. A clinician can help rule out other causes and suggest treatments such as hormonal birth control, prescription pain relievers, or further evaluation (e.g., ultrasound) if needed.</p>
+        <p><strong>Reputable sources:</strong></p>
+        <ul style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
+          <li><a href="https://www.acog.org/womens-health/faqs/dysmenorrhea-painful-periods" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Dysmenorrhea (painful periods)</a></li>
+          <li><a href="https://www.uptodate.com/contents/dysmenorrhea-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – Dysmenorrhea (patient education)</a></li>
+        </ul>
+      </>
+    ),
+  },
 ];
 
 export default function Articles() {
@@ -140,7 +177,7 @@ export default function Articles() {
               </span>
             ))}
           </div>
-          <div style={{ lineHeight: '1.85', fontSize: '1.05rem', color: 'var(--color-text-main)' }}>
+          <div className="article-body" style={{ lineHeight: '1.85', fontSize: '1.05rem', color: 'var(--color-text-main)' }}>
             {selected.body}
           </div>
           <Disclaimer compact style={{ marginTop: '1.5rem' }} />
