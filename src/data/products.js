@@ -200,47 +200,6 @@ export const PHYSICAL_PRODUCTS = [
     },
     // ─── TAMPONS ─────────────────────────────────────────
     {
-        id: 'p-cora-organic-tampon',
-        name: 'Cora Organic Cotton Tampons',
-        category: 'tampon',
-        type: 'physical',
-        internal: true,
-        healthFunctions: ['menstrual-collection'],
-        tags: ['heavy-flow', 'organic', 'safety-concern', 'sustainability'],
-        price: '$9 for 16',
-        whereToBuy: ['Target', 'CVS', 'Amazon'],
-        image: 'https://target.scene7.com/is/image/Target/GUEST_4f3751fc-2ee3-43df-953a-dd515e72f471?wid=300&hei=300&fmt=pjpeg',
-        summary: '100% organic cotton, BPA-free applicator. For every box sold, Cora provides pads to women in need.',
-        safety: {
-            fdaStatus: 'FDA-registered Class II medical device',
-            materials: '100% certified organic cotton, BPA-free plastic applicator',
-            recalls: 'No recalls. Independent lab tested — no detectable PFAS, dioxins, or pesticide residues.',
-            allergens: 'Hypoallergenic, fragrance-free, chlorine-free',
-            sideEffects: 'TSS (Toxic Shock Syndrome) risk common to all tampons. Possible dryness upon removal.',
-            opinionAlerts: 'Some users find the biodegradable/plastic-alternative applicator less smooth than traditional plastic apps.'
-        },
-        clinicianOpinionSource: 'brand',
-        doctorOpinion: '"I recommend organic cotton tampons to patients who want to minimize exposure to synthetic chemicals. Cora\'s transparency about materials is exemplary." — Dr. Alyssa Dweck, OB-GYN',
-        communityReview: '"I was skeptical of CORA but they\'re legitimately clean — no weird residue, great absorption, and I love the social mission." — Reddit r/periods',
-        ingredients: '100% GOTS-certified organic cotton, BPA-free polypropylene applicator.',
-        effectiveness: 'Excellent absorption across all sizes (Light to Super Plus). Expands evenly for comfortable removal.',
-        badges: ['Female-Owned', 'Social Impact', 'Sustainable'],
-        verificationLinks: {
-            doctor: [
-                { url: 'https://www.cora.life/pages/our-products', text: 'Cora Ingredient Transparency', summary: 'Cora provides a full breakdown of their medical-grade materials reviewed by advisors.' },
-                { url: 'https://www.healthline.com/health/womens-health/organic-tampons', text: 'Healthline: Organic Tampon Review', summary: 'OB-GYN analysis of organic brands including Cora\'s safety and effectiveness.' }
-            ],
-            scientific: [
-                { url: 'https://www.gots-certified.org/', text: 'GOTS Organic Certification', summary: 'Ensures strict global standards for organic textiles and chemical-free processing.' },
-                { url: 'https://pubmed.ncbi.nlm.nih.gov/33911077/', text: 'Study on Menstrual Product Materials', summary: 'Independent verification of organic cotton benefits for vaginal health.' }
-            ],
-            community: [
-                { url: 'https://www.tiktok.com/tag/coratampons', text: 'TikTok #CoraTampons Reviews', summary: 'Users share their leak-free performance and "unboxing" experiences.' },
-                { url: 'https://www.reddit.com/r/periods/', text: 'Reddit Cora Discussions', summary: 'Community consensus on Cora\'s reliability for heavy flow.' }
-            ]
-        }
-    },
-    {
         id: 'p-lola-tampon',
         name: 'LOLA Organic Tampons',
         category: 'tampon',
