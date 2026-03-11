@@ -693,19 +693,28 @@ export function getRecommendations(quizAnswers) {
         if (quizAnswers.preference === 'Sustainability/Zero-waste') userTags.add('sustainability');
     }
 
-    // Scored matching
-    const scored = ALL_PRODUCTS.map(p => {
-        let score = 0;
-        p.tags.forEach(t => {
-            if (userTags.has(t)) score += 2;
+    // Exclude contraception products when user said they don't use / aren't interested in birth control
+    const skipContraception = quizAnswers.contraceptionUse === 'No' || quizAnswers.contraceptionUse === 'Prefer not to say';
+    const skipInternal = quizAnswers.internalComfort === 'No';
+
+    const scored = ALL_PRODUCTS
+        .filter(p => {
+            if (skipContraception && p.healthFunctions && p.healthFunctions.includes('contraception')) return false;
+            if (skipInternal && p.internal === true) return false;
+            return true;
+        })
+        .map(p => {
+            let score = 0;
+            p.tags.forEach(t => {
+                if (userTags.has(t)) score += 2;
+            });
+
+            // Boost for preference matches
+            if (quizAnswers.preference === 'Sustainability/Zero-waste' && p.badges?.includes('Sustainable')) score += 3;
+            if (quizAnswers.preference === 'Organic/Natural only' && p.tags?.includes('organic')) score += 3;
+
+            return { product: p, score };
         });
-
-        // Boost for preference matches
-        if (quizAnswers.preference === 'Sustainability/Zero-waste' && p.badges?.includes('Sustainable')) score += 3;
-        if (quizAnswers.preference === 'Organic/Natural only' && p.tags?.includes('organic')) score += 3;
-
-        return { product: p, score };
-    });
 
     // Return products with score > 0, sorted by score, then the rest
     const matches = scored.filter(s => s.score > 0).sort((a, b) => b.score - a.score).map(s => s.product);

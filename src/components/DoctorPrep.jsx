@@ -10,9 +10,13 @@ export default function DoctorPrep({ cycleData = [], myProducts = {}, quizResult
     }, new Set());
 
     const ecosystemStats = Object.values(myProducts || {}).length;
-    const goal = quizResults?.frustration || 'General Wellness';
+    const goal = Array.isArray(quizResults?.frustrations) && quizResults.frustrations.length > 0
+        ? quizResults.frustrations.join(', ')
+        : (quizResults?.frustration || 'General Wellness');
     const age = quizResults?.age || 'N/A';
-    const sensitivities = quizResults?.sensitivities || 'None reported';
+    const sensitivities = Array.isArray(quizResults?.sensitivities) && quizResults.sensitivities.length > 0
+        ? quizResults.sensitivities.join(', ')
+        : (quizResults?.sensitivities || 'None reported');
 
     // User messages from chatbot (for suggested questions)
     const userChatMessages = (chatHistory || []).filter(m => m.role === 'user').map(m => (m.text || '').trim()).filter(Boolean);
@@ -34,7 +38,7 @@ export default function DoctorPrep({ cycleData = [], myProducts = {}, quizResult
                     Clinical Advocacy Tool
                 </div>
                 <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Doctor Visit Prep</h2>
-                <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem' }}>We've synthesized your data into a clear summary for your OB-GYN or Primary Care provider. Our synthesis uses ACOG (well-woman care at every life stage) and UpToDate when available as the baseline.</p>
+                <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem' }}>We've synthesized your data into a clear summary for your OB-GYN or Primary Care provider. Our synthesis uses ACOG and UpToDate when available as the baseline.</p>
             </div>
 
             <div className="card" style={{ padding: '3rem', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-md)' }}>

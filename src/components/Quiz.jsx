@@ -116,7 +116,14 @@ function buildSteps(answers) {
     type: 'single',
     options: AGE_OPTIONS
   };
-  const contraceptionSteps = isAge50OrBelow(answers.age) ? [CONTRACEPTION_USE_STEP, CONTRACEPTION_PREFERENCE_STEP] : [];
+  const contraceptionSteps = [];
+  if (isAge50OrBelow(answers.age)) {
+    contraceptionSteps.push(CONTRACEPTION_USE_STEP);
+    // Only ask contraception type if they said Yes to using or interested in birth control
+    if (answers.contraceptionUse === 'Yes') {
+      contraceptionSteps.push(CONTRACEPTION_PREFERENCE_STEP);
+    }
+  }
   return [ageStep, ...contraceptionSteps, ...REST_STEPS];
 }
 
@@ -185,15 +192,22 @@ function parseTranscriptToProfile(transcript) {
   else if (text.match(/\b(45|46|47|48|49|50)\s*(years?|y\.?o\.?)/) || text.includes('45') || text.includes('50')) out.age = '45-50';
   else if (text.match(/\b(51|52|53|54|55)\s*(years?|y\.?o\.?)/)) out.age = '51-55';
   else if (text.match(/\b(56|57|58|59|60|61|62|63|64|65)\s*(years?|y\.?o\.?)/) || text.includes('60') || text.includes('menopause')) out.age = '56+';
-  if (text.includes('birth control') || text.includes('contraception') || text.includes('pill') || text.includes('iud')) {
-    if (text.includes('yes') || text.includes('use') || text.includes('taking')) out.contraceptionUse = 'Yes';
-    if (text.includes('pill')) out.contraceptionPreference.push('Pill');
-    if (text.includes('iud')) out.contraceptionPreference.push('IUD');
-    if (text.includes('implant')) out.contraceptionPreference.push('Implant');
-    if (text.includes('ring')) out.contraceptionPreference.push('Ring');
-    if (text.includes('patch')) out.contraceptionPreference.push('Patch');
-    if (text.includes('condom')) out.contraceptionPreference.push('Condoms');
-    if (text.includes('natural') || text.includes('fam')) out.contraceptionPreference.push('Natural / FAM');
+  // Birth control: detect "no" / "don't use" first so we don't show contraception questions
+  const noBcPhrases = ["don't use", "do not use", "not using", "no birth control", "not on birth control", "not interested", "no contraception", "not taking", "don't take", "no i'm not", "no im not", "nope", " no "];
+  const saysNoBc = noBcPhrases.some(phrase => text.includes(phrase)) || /\bno\b.*(birth control|contraception|pill|iud)/.test(text) || /(birth control|contraception).*\bno\b/.test(text);
+  if (saysNoBc) {
+    out.contraceptionUse = 'No';
+  } else if (text.includes('birth control') || text.includes('contraception') || text.includes('pill') || text.includes('iud')) {
+    if (text.includes('yes') || text.includes('use') || text.includes('taking') || text.includes('on the pill') || text.includes('have an iud')) out.contraceptionUse = 'Yes';
+    if (out.contraceptionUse === 'Yes') {
+      if (text.includes('pill')) out.contraceptionPreference.push('Pill');
+      if (text.includes('iud')) out.contraceptionPreference.push('IUD');
+      if (text.includes('implant')) out.contraceptionPreference.push('Implant');
+      if (text.includes('ring')) out.contraceptionPreference.push('Ring');
+      if (text.includes('patch')) out.contraceptionPreference.push('Patch');
+      if (text.includes('condom')) out.contraceptionPreference.push('Condoms');
+      if (text.includes('natural') || text.includes('fam')) out.contraceptionPreference.push('Natural / FAM');
+    }
   }
   if (text.includes('under $20') || text.includes('20 dollar')) out.budget = 'Under $20';
   else if (text.includes('20') && text.includes('50')) out.budget = '$20–$50';
@@ -283,7 +297,13 @@ export default function Quiz({ onComplete }) {
     rec.lang = 'en-US';
     rec.onresult = (e) => {
       for (let i = e.resultIndex; i < e.results.length; i++) {
-        transcriptAccumRef.current += e.results[i][0].transcript;
+        const result = e.results[i];
+        const transcript = result[0].transcript;
+        // Only append final results to avoid duplicate text (interim results get re-sent as final)
+        if (result.isFinal && transcript.trim()) {
+          const sep = transcriptAccumRef.current ? ' ' : '';
+          transcriptAccumRef.current += sep + transcript.trim();
+        }
       }
       setVoiceTranscript(transcriptAccumRef.current);
     };
@@ -366,15 +386,28 @@ export default function Quiz({ onComplete }) {
     }
     if (voicePhase === 'recording') {
       return (
-        <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)', maxWidth: '640px' }}>
+        <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)', maxWidth: '720px' }}>
           <p style={{ textAlign: 'center', fontSize: '1.1rem', marginBottom: '1rem' }}>Listening… speak clearly. When you're done, click Stop.</p>
-          <div style={{ minHeight: '120px', padding: '1rem', background: 'var(--color-surface-soft)', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem', whiteSpace: 'pre-wrap', fontSize: '0.95rem' }}>
-            {voiceTranscript || '(speak now)'}
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
-            <button type="button" className="btn btn-primary" style={{ padding: '1rem 2rem' }} onClick={handleVoiceStop}>
-              Stop and build my profile
-            </button>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', alignItems: 'start' }}>
+            <div>
+              <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.5rem', fontWeight: '600' }}>You can cover any of these:</p>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: '0.9rem', color: 'var(--color-text-main)' }}>
+                {VOICE_GUIDING_QUESTIONS.map((q, i) => (
+                  <li key={i} style={{ padding: '0.35rem 0', borderBottom: '1px solid var(--color-border)' }}>{i + 1}. {q}</li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.5rem', fontWeight: '600' }}>Live transcript:</p>
+              <div style={{ minHeight: '120px', padding: '1rem', background: 'var(--color-surface-soft)', borderRadius: 'var(--radius-md)', whiteSpace: 'pre-wrap', fontSize: '0.95rem' }}>
+                {voiceTranscript || '(speak now)'}
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
+                <button type="button" className="btn btn-primary" style={{ padding: '1rem 2rem' }} onClick={handleVoiceStop}>
+                  Stop and build my profile
+                </button>
+              </div>
+            </div>
           </div>
         </section>
       );
