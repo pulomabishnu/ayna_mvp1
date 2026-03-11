@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Hero from './components/Hero';
 import Quiz from './components/Quiz';
 import Recommendations from './components/Recommendations';
@@ -13,7 +13,7 @@ import OmittedProducts from './components/OmittedProducts';
 import Comparison from './components/Comparison';
 import Recalls from './components/Recalls';
 import DoctorPrep from './components/DoctorPrep';
-import { CATEGORY_LABELS } from './data/products';
+import { CATEGORY_LABELS, getRecommendations } from './data/products';
 import AynaDeeptech from './components/AynaDeeptech';
 import Screenings from './components/Screenings';
 import { useScrollPosition } from './hooks/useScrollPosition';
@@ -40,6 +40,11 @@ function App() {
   const [chatHistory, setChatHistory] = useState([]);
   const [selectedArticleId, setSelectedArticleId] = useState(null);
   const scrollY = useScrollPosition();
+
+  const recommendedProductIds = useMemo(() => {
+    if (!quizResults) return [];
+    return getRecommendations(quizResults).map(p => p.id);
+  }, [quizResults]);
 
   React.useEffect(() => {
     try {
@@ -378,6 +383,7 @@ function App() {
             isPremium={isPremium}
             onUpgrade={togglePremium}
             initialSearch={discoverySearch}
+            recommendedProductIds={recommendedProductIds}
           />
         )}
         {currentView === 'cycle-tracker' && (

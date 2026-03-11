@@ -43,11 +43,13 @@ const SORT_OPTIONS = [
     { value: 'rating', label: 'Best rated' },
 ];
 
-export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, isPremium, onUpgrade, initialSearch }) {
+export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, isPremium, onUpgrade, initialSearch, recommendedProductIds }) {
     const [categoryFilter, setCategoryFilter] = useState('all');
     const [typeFilter, setTypeFilter] = useState('all');
     const [searchQuery, setSearchQuery] = useState(initialSearch || '');
     const [sortBy, setSortBy] = useState('default');
+    const [personalizationFilter, setPersonalizationFilter] = useState(false);
+    const recommendedSet = useMemo(() => new Set(recommendedProductIds || []), [recommendedProductIds]);
 
     React.useEffect(() => {
         if (initialSearch !== undefined) {
@@ -71,6 +73,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const filtered = useMemo(() => {
         let list = combined.filter(item => {
             if (omittedProducts[item.id]) return false;
+            if (personalizationFilter && recommendedSet.size > 0 && !recommendedSet.has(item.id)) return false;
             if (categoryFilter !== 'all' && item.category !== categoryFilter) return false;
             if (typeFilter !== 'all' && item.type !== typeFilter) return false;
 
@@ -146,7 +149,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             });
         }
         return list;
-    }, [combined, categoryFilter, typeFilter, omittedProducts, searchQuery, sortBy]);
+    }, [combined, categoryFilter, typeFilter, omittedProducts, searchQuery, sortBy, personalizationFilter, recommendedSet]);
 
     const handleSmartSearch = (e) => {
         e.preventDefault();
@@ -218,6 +221,17 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
             {/* Filters */}
             <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
+                {recommendedSet.size > 0 && (
+                    <button onClick={() => setPersonalizationFilter(!personalizationFilter)} style={{
+                        padding: '0.5rem 1.25rem', borderRadius: 'var(--radius-pill)', fontSize: '0.85rem',
+                        fontWeight: '500', border: '1px solid var(--color-border)',
+                        background: personalizationFilter ? 'var(--color-primary)' : 'transparent',
+                        color: personalizationFilter ? 'white' : 'var(--color-text-main)',
+                        cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '0.35rem'
+                    }}>
+                        ✨ For you
+                    </button>
+                )}
                 {TYPE_FILTERS.map(t => (
                     <button key={t} onClick={() => setTypeFilter(t)} style={{
                         padding: '0.5rem 1.25rem', borderRadius: 'var(--radius-pill)', fontSize: '0.85rem',
@@ -331,12 +345,26 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                         On Waitlist
                                     </span>
                                 )}
+                                {item.outOfBusiness && (
+                                    <span style={{
+                                        position: 'absolute', bottom: '0.5rem', left: '0.5rem',
+                                        background: '#374151', color: 'white', padding: '0.3rem 0.6rem',
+                                        borderRadius: 'var(--radius-pill)', fontSize: '0.7rem', fontWeight: '700'
+                                    }}>
+                                        No longer sold
+                                    </span>
+                                )}
                             </div>
                             <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
                                 <span style={{ color: 'var(--color-primary)', fontSize: '0.7rem', fontWeight: '600', marginBottom: '0.25rem' }}>
                                     {CATEGORY_LABELS[item.category] || (item.category && item.category.charAt(0) + item.category.slice(1)) || 'Startup'}
                                 </span>
                                 <h3 style={{ fontSize: '1.05rem', marginBottom: '0.25rem' }}>{item.name}</h3>
+                                {item.outOfBusiness && (
+                                    <div style={{ marginBottom: '0.75rem', padding: '0.5rem 0.75rem', background: '#374151', color: 'white', borderRadius: 'var(--radius-md)', fontSize: '0.8rem', fontWeight: '700' }}>
+                                        No longer sold — company closed. Listing kept for safety info if you have this product.
+                                    </div>
+                                )}
                                 <p style={{ color: 'var(--color-text-muted)', fontSize: '0.8rem', flexGrow: 1, marginBottom: '0.75rem', lineHeight: '1.4' }}>
                                     {item.isStartup ? item.tagline : item.summary}
                                 </p>

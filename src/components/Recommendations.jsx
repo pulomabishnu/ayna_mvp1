@@ -1,16 +1,28 @@
-import React, { useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { getRecommendations, getRecommendationExplanation, SIMILAR_PROFILES, ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
+import { getRecommendedArticles } from './Articles';
 
-export default function Recommendations({ results, onRetake, trackedProducts, toggleTrackProduct, myProducts, toggleMyProduct, omittedProducts, toggleOmitProduct, onOpenProduct }) {
+const TYPE_FILTERS = ['all', 'physical', 'digital'];
+
+export default function Recommendations({ results, onRetake, trackedProducts, toggleTrackProduct, myProducts, toggleMyProduct, omittedProducts, toggleOmitProduct, onOpenProduct, onViewArticle }) {
+    const [categoryFilter, setCategoryFilter] = useState('all');
+    const [typeFilter, setTypeFilter] = useState('all');
+
     const recommended = useMemo(() => {
         const base = getRecommendations(results || {});
         return base.filter(p => !omittedProducts[p.id]);
     }, [results, omittedProducts]);
 
+    // Apply type filter, then group by category
+    const filteredRecommended = useMemo(() => {
+        if (typeFilter === 'all') return recommended;
+        return recommended.filter(p => (p.type || 'physical') === typeFilter);
+    }, [recommended, typeFilter]);
+
     // Group by category so products are linked by category (pad, tampon, supplement, tracker, etc.)
     const byCategory = useMemo(() => {
         const map = {};
-        recommended.forEach(p => {
+        filteredRecommended.forEach(p => {
             const cat = p.category || 'other';
             if (!map[cat]) map[cat] = [];
             map[cat].push(p);
@@ -19,7 +31,14 @@ export default function Recommendations({ results, onRetake, trackedProducts, to
         const ordered = order.filter(c => map[c]).map(c => ({ category: c, label: CATEGORY_LABELS[c] || c, products: map[c] }));
         const rest = Object.keys(map).filter(c => !order.includes(c));
         return [...ordered, ...rest.map(c => ({ category: c, label: CATEGORY_LABELS[c] || c, products: map[c] }))];
-    }, [recommended]);
+    }, [filteredRecommended]);
+
+    // When a category is selected, show only that section
+    const displayedSections = useMemo(() => {
+        if (categoryFilter === 'all') return byCategory;
+        const section = byCategory.find(s => s.category === categoryFilter);
+        return section ? [section] : [];
+    }, [byCategory, categoryFilter]);
 
     // Find matching similar profiles
     const matchedProfiles = useMemo(() => {
@@ -36,6 +55,8 @@ export default function Recommendations({ results, onRetake, trackedProducts, to
             .map(t => ({ tag: t, ...SIMILAR_PROFILES[t] }))
             .slice(0, 2);
     }, [results]);
+
+    const recommendedArticles = useMemo(() => getRecommendedArticles(results || {}), [results]);
 
     const renderProductCard = (product) => {
         const isTracked = !!trackedProducts[product.id];
@@ -74,6 +95,15 @@ export default function Recommendations({ results, onRetake, trackedProducts, to
                             borderRadius: 'var(--radius-pill)', fontSize: '0.7rem', fontWeight: '600'
                         }}>
                             ✓ Tracked
+                        </span>
+                    )}
+                    {product.outOfBusiness && (
+                        <span style={{
+                            position: 'absolute', bottom: '0.75rem', left: '0.75rem',
+                            background: 'var(--color-text-muted)', color: 'white', padding: '0.25rem 0.6rem',
+                            borderRadius: 'var(--radius-pill)', fontSize: '0.7rem', fontWeight: '600'
+                        }}>
+                            No longer sold
                         </span>
                     )}
                 </div>
@@ -148,6 +178,48 @@ export default function Recommendations({ results, onRetake, trackedProducts, to
                 </p>
             </div>
 
+            {/* Filters: Type + Category (like Discovery) */}
+            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
+                {TYPE_FILTERS.map(t => (
+                    <button key={t} onClick={() => setTypeFilter(t)} style={{
+                        padding: '0.5rem 1.25rem', borderRadius: 'var(--radius-pill)', fontSize: '0.85rem',
+                        fontWeight: '500', border: '1px solid var(--color-border)',
+                        background: typeFilter === t ? 'var(--color-primary)' : 'transparent',
+                        color: typeFilter === t ? 'white' : 'var(--color-text-main)',
+                        cursor: 'pointer', transition: 'all 0.2s'
+                    }}>
+                        {t === 'all' ? 'All Types' : t.charAt(0).toUpperCase() + t.slice(1)}
+                    </button>
+                ))}
+            </div>
+            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: 'var(--spacing-lg)' }}>
+                <button onClick={() => setCategoryFilter('all')} style={{
+                    padding: '0.4rem 1rem', borderRadius: 'var(--radius-pill)', fontSize: '0.8rem',
+                    fontWeight: '500', border: '1px solid var(--color-border)',
+                    background: categoryFilter === 'all' ? 'var(--color-surface-contrast)' : 'transparent',
+                    color: categoryFilter === 'all' ? 'white' : 'var(--color-text-muted)',
+                    cursor: 'pointer', transition: 'all 0.2s'
+                }}>
+                    All
+                </button>
+                {byCategory.map(({ category, label }) => (
+                    <button key={category} onClick={() => setCategoryFilter(category)} style={{
+                        padding: '0.4rem 1rem', borderRadius: 'var(--radius-pill)', fontSize: '0.8rem',
+                        fontWeight: '500', border: '1px solid var(--color-border)',
+                        background: categoryFilter === category ? 'var(--color-surface-contrast)' : 'transparent',
+                        color: categoryFilter === category ? 'white' : 'var(--color-text-muted)',
+                        cursor: 'pointer', transition: 'all 0.2s'
+                    }}>
+                        {label}
+                    </button>
+                ))}
+            </div>
+            {(categoryFilter !== 'all' || typeFilter !== 'all') && (
+                <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '1rem' }}>
+                    Showing {displayedSections.reduce((n, s) => n + s.products.length, 0)} product{displayedSections.reduce((n, s) => n + s.products.length, 0) !== 1 ? 's' : ''}
+                </p>
+            )}
+
             {/* "Women Like You" Section */}
             {matchedProfiles.length > 0 && (
                 <div style={{ maxWidth: '800px', margin: '0 auto var(--spacing-xl)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -186,8 +258,47 @@ export default function Recommendations({ results, onRetake, trackedProducts, to
                 </div>
             )}
 
+            {/* Recommended articles */}
+            {onViewArticle && recommendedArticles.length > 0 && (
+              <div style={{ maxWidth: '800px', margin: '0 auto var(--spacing-xl)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <h3 style={{ fontSize: '1.35rem', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  📖 Recommended articles
+                </h3>
+                <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1rem' }}>
+                  Health reads that match your focus areas.
+                </p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  {recommendedArticles.map((art) => (
+                    <div
+                      key={art.id}
+                      style={{
+                        background: 'var(--color-surface-soft)',
+                        border: '1px solid var(--color-border)',
+                        borderRadius: 'var(--radius-md)',
+                        padding: '1.25rem 1.5rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '0.5rem',
+                      }}
+                    >
+                      <div style={{ fontWeight: '600', fontSize: '1.05rem', color: 'var(--color-text-main)' }}>{art.title}</div>
+                      <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', lineHeight: 1.5, margin: 0 }}>{art.teaser}</p>
+                      <button
+                        type="button"
+                        className="btn btn-outline"
+                        style={{ alignSelf: 'flex-start', padding: '0.4rem 0.9rem', fontSize: '0.85rem' }}
+                        onClick={() => onViewArticle(art.id)}
+                      >
+                        Read article
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Recommendations by category — products linked by category with why it could work / considerations */}
-            {byCategory.map(({ category, label, products }) => (
+            {displayedSections.map(({ category, label, products }) => (
                 <div key={category} style={{ marginBottom: 'var(--spacing-xl)' }}>
                     <h3 style={{ fontSize: '1.35rem', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                         {label}
