@@ -32,7 +32,7 @@ function getQualityScore(item, aynaReviews = {}) {
     const scientific = hasLinks(v.scientific);
     const consensusScore = clinical + social + scientific;
     const aynaRating = getAynaRating(item, aynaReviews[item.id]);
-    const baseRating = item.userRating != null ? Number(item.userRating) / 5 : 0.5;
+    const baseRating = item.userRating != null ? Number(item.userRating) / 5 : 0;
     const rating = aynaRating != null ? aynaRating / 5 : baseRating;
     const safetyOk = !(item.safety?.recalls && String(item.safety.recalls).includes('⚠️')) ? 1 : 0;
     return (rating * 2) + consensusScore + safetyOk;
@@ -376,9 +376,22 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                     <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>{item.isStartup ? item.stage : item.price}</span>
                                     {(() => {
                                         const displayRating = getAynaRating(item, aynaReviews[item.id]) ?? item.userRating;
-                                        return displayRating != null && (
-                                            <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }} title={aynaReviews[item.id]?.ratings?.length ? 'Ayna rating (includes community ratings)' : 'Average user rating (online reviews)'}>★ {Number(displayRating).toFixed(1)}</span>
-                                        );
+                                        const note = item.ratingNote;
+                                        const hasRating = displayRating != null;
+                                        const tooltip = aynaReviews[item.id]?.ratings?.length
+                                            ? 'Ayna rating (includes community ratings)'
+                                            : note || (hasRating ? 'Based on user reviews, clinical opinions, and scientific literature' : null);
+                                        if (hasRating) {
+                                            return (
+                                                <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }} title={tooltip}>★ {Number(displayRating).toFixed(1)}</span>
+                                            );
+                                        }
+                                        if (note) {
+                                            return (
+                                                <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', fontStyle: 'italic' }} title={note}>—</span>
+                                            );
+                                        }
+                                        return null;
                                     })()}
                                     <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
                                         {item.isStartup ? (

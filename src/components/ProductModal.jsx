@@ -601,15 +601,6 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                     {activeTab === 'safety' && (
                         <div className="animate-fade-in">
                             <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Safety & Privacy Standards</h3>
-                            <AynaInsight>{(() => {
-                                const s = product.safety;
-                                if (s?.fdaStatus || s?.materials || s?.recalls) {
-                                    const parts = [s.fdaStatus && `Regulatory status: ${s.fdaStatus}`, s.materials && `Materials: ${s.materials}`, s.recalls].filter(Boolean);
-                                    const main = parts.join('. ');
-                                    return s.opinionAlerts ? `${main}. Community watch-outs: ${s.opinionAlerts}` : main + '.';
-                                }
-                                return "Regulatory status, materials, and community watch-outs for this product are summarized below.";
-                            })()}</AynaInsight>
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                                 <div style={{ background: 'var(--color-bg)', padding: '1rem', borderRadius: 'var(--radius-md)' }}>
                                     <h4 style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>FDA Regulatory Status</h4>
