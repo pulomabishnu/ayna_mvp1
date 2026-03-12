@@ -163,15 +163,15 @@ export const EXTENDED_PHYSICAL = [
         tags: ['cramps', 'discomfort', 'bloating'],
         price: '$25 for 60 gummies',
         userRating: 4.4,
-        ratingNote: 'Evidence for key ingredients is mixed. Chasteberry has the most support but studies show high heterogeneity and bias. Cochrane found B6 evidence weak. Dong Quai has no PMS-specific trials. Amazon reviews may be partially incentivized (Fakespot grade B).',
+        ratingNote: 'Evidence mixed; Amazon reviews may be incentivized. See Clinical, Science, and Community tabs for details.',
         incentivizedReviewSites: [{ site: 'Amazon', source: 'Fakespot grade B' }],
         whereToBuy: ['Target', 'Amazon', 'Flo.com'],
         image: 'https://m.media-amazon.com/images/I/81RReWPD2+L.jpg',
         summary: 'Gummy vitamins formulated to relieve PMS symptoms like bloating, cramps, and mood swings.',
-        safety: { fdaStatus: 'Supplement', materials: 'Vegan, Non-GMO', recalls: 'No recalls.', allergens: 'Gluten-free', sideEffects: 'Some users report mild stomach upset or acne flare-ups.', opinionAlerts: 'Evidence is mixed. Chasteberry has the most support but studies have high heterogeneity and bias; Cochrane found B6 evidence weak; Dong Quai has no PMS-specific trials. User experiences vary widely—some report benefit, others report no effect. Amazon reviews may be partially incentivized.' },
+        safety: { fdaStatus: 'Supplement', materials: 'Vegan, Non-GMO', recalls: 'No recalls.', allergens: 'Gluten-free', sideEffects: 'Some users report mild stomach upset or acne flare-ups.', opinionAlerts: 'User experiences vary widely—some report benefit, others report no effect or call it a sugar pill.' },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and systematic reviews. Not a direct clinician quote.',
-        doctorOpinion: 'Chasteberry has the most evidence among the ingredients, though study quality varies. Vitamin B6 has weaker support. Dong Quai lacks PMS-specific trials. Individual response varies—some women report improvement, others see no benefit.',
+        doctorOpinion: 'Chasteberry has the most evidence; B6 and Dong Quai have weaker support. Individual response varies. See Scientific Literature tab for evidence details.',
         communityReview: '"My period bloating is literally gone. I used to go up a pants size and now I don\'t." — Amazon review',
         ingredients: 'Chasteberry extract, Dong Quai, Vitamin B6, Lemon Balm.',
         effectiveness: 'Chasteberry has moderate evidence for PMS; studies show high heterogeneity and bias. Vitamin B6: Cochrane found evidence weak. Dong Quai: no PMS-specific trials. Lemon balm: one small RCT. Not enough evidence to confidently support the full blend.',
@@ -191,7 +191,7 @@ export const EXTENDED_PHYSICAL = [
                 ]
             },
             community: {
-                aiSummary: "User experiences are mixed. Many report reduced bloating and mood improvement; others find no benefit or call it a 'sugar pill.' Commonly discussed on Reddit r/PMDD and r/periods. Amazon reviews may be partially incentivized (Fakespot grade B).",
+                aiSummary: "User experiences are mixed. Many report reduced bloating and mood improvement; others find no benefit or call it a sugar pill. Commonly discussed on Reddit r/PMDD and r/periods.",
                 links: [
                     { platform: 'reddit', url: 'https://www.reddit.com/r/periods/search/?q=flo+gummies&restrict_sr=1', text: 'Reddit r/periods — Flo', summary: 'Community discussions on Flo gummies and PMS supplements.' },
                     { platform: 'reddit', url: 'https://www.reddit.com/r/PMDD/search/?q=chasteberry&restrict_sr=1', text: 'Reddit r/PMDD — Chasteberry', summary: 'Discussions on chasteberry and PMS/PMDD symptom relief.' }

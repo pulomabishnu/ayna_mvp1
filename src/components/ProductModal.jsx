@@ -179,7 +179,7 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
         return { links: arr.filter(l => l && (l.url || l.href)).map(l => ({ ...l, url: l.url || l.href })), aiSummary: section.aiSummary || null };
     };
 
-    const renderVerificationLinks = (linksOrSection, aiSummaryOverride, label, type) => {
+    const renderVerificationLinks = (linksOrSection, aiSummaryOverride, label, type, productRef) => {
         const section = typeof linksOrSection === 'object' && linksOrSection !== null && !Array.isArray(linksOrSection) && (linksOrSection.links || linksOrSection.url || linksOrSection.link)
             ? linksOrSection
             : { links: linksOrSection, aiSummary: aiSummaryOverride };
@@ -187,8 +187,8 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
         const linksArray = links.map(l => ({ ...l, url: normalizeSocialUrl((l.url || l.href || '').trim()) })).filter(l => l.url && (l.url.startsWith('http://') || l.url.startsWith('https://')));
         const hasReputableSources = linksArray.length > 0;
 
-        // Skip aiSummary for Doctor tab — clinician quote already covers it; avoids duplicate pink box
-        const showAiSummary = aiSummary && type !== 'doctor';
+        // Avoid duplication: Doctor tab has clinician quote; Science tab has Effectiveness Summary
+        const showAiSummary = aiSummary && type !== 'doctor' && !(type === 'science' && productRef?.effectiveness);
 
         return (
             <div style={{ marginTop: '1.5rem' }}>
@@ -699,7 +699,8 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                                 product.verificationLinks?.doctor,
                                 null,
                                 "Expert & Clinical Verification",
-                                "doctor"
+                                "doctor",
+                                product
                             )}
                         </div>
                     )}
@@ -716,7 +717,8 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                                 product.verificationLinks?.scientific,
                                 null,
                                 "Peer-Reviewed Literature",
-                                "science"
+                                "science",
+                                product
                             )}
                         </div>
                     )}
@@ -724,6 +726,18 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                     {activeTab === 'social' && (
                         <div className="animate-fade-in">
                             <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Community Experience & Social Proof</h3>
+                            {product.incentivizedReviewSites && product.incentivizedReviewSites.length > 0 && (
+                                <div style={{ marginBottom: '1.25rem', padding: '0.85rem 1rem', borderRadius: 'var(--radius-md)', background: '#FFF7ED', border: '1px solid #FFEDD5', fontSize: '0.9rem', color: '#9A3412' }}>
+                                    <strong>Incentivized reviews:</strong>{' '}
+                                    {product.incentivizedReviewSites.map((s, i) => (
+                                        <span key={i}>
+                                            {i > 0 && '; '}
+                                            Reviews on {s.site} may be incentivized{s.source ? ` (${s.source})` : ''}.
+                                        </span>
+                                    ))}
+                                    {' '}Star ratings on these platforms may be inflated.
+                                </div>
+                            )}
                             <div style={{ background: 'var(--color-surface)', padding: '1.5rem', borderRadius: 'var(--radius-lg)', marginBottom: '1.5rem' }}>
                                 <h4 style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Top Anecdotal Experience</h4>
                                 {(() => {
