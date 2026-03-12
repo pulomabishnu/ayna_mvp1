@@ -186,15 +186,14 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
                         color: 'var(--color-surface-contrast)',
                         fontWeight: '700'
                     }}>
-                        Everyone is either general or clinical. Nobody makes the everyday simple.
+                        Nobody makes the everyday simple — introducing Ayna.
                     </h3>
                     <p style={{
                         color: 'var(--color-text-muted)',
                         lineHeight: '1.85',
                         fontSize: '1.05rem'
                     }}>
-                        Services like Allara and Hers give you specialized <strong style={{ color: 'var(--color-primary)' }}>care</strong> — then leave you on your own for the rest: which products to use, how to decide, where to look. Ayna fills that gap. We’re not replacing your clinician; we’re making the day-to-day management of women’s health actually simple.
-                    </p>
+                        Whether you want a new period pad, a clinician for menopause solutions, or a digital health tracker, we're here to help you. Online platforms and in-person doctor's appointments give you specialized care for specific issues — then leave you on your own for the rest of your health as a woman: which products to use, how to decide, where to look. Ayna fills that gap. We’re not replacing your clinician; we’re making the day-to-day management of women’s health actually simple.                     </p>
                 </div>
             </ScrollReveal>
 
