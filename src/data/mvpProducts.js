@@ -300,7 +300,7 @@ export const MVP_PHYSICAL = [
     type: 'physical',
     internal: false,
     healthFunctions: ['supplement', 'fitness-cycle'],
-    tags: ['menopause', 'energy', 'discomfort', 'cost'],
+    tags: ['creatine', 'menopause', 'energy', 'discomfort', 'cost'],
     price: '$15–25 for 300–500g',
     whereToBuy: ['Amazon', 'iHerb', 'NOW Foods', 'Thorne', 'CVS'],
     image: '/ayna_placeholder.png',

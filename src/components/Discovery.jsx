@@ -93,6 +93,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     item.tagline,
                     item.doctorOpinion,
                     item.communityReview,
+                    item.ingredients,
+                    item.effectiveness,
                     safetyStr,
                     (item.tags || []).join(' '),
                     item.category,
