@@ -538,20 +538,6 @@ export const STARTUPS = [
         image: '/ayna_placeholder.png'
     },
     {
-        id: 's-cora',
-        name: 'Cora',
-        tagline: 'Organic period care with impact',
-        description: 'Organic tampons, pads, and liners. For every purchase, period products are donated to people in need. B-Corp and plastic-free options.',
-        tags: ['heavy-flow', 'organic', 'sustainability'],
-        healthFunctions: ['menstrual-collection'],
-        category: 'period-care',
-        stage: 'Available, DTC',
-        productReleased: true,
-        spotsLeft: 380,
-        url: 'https://www.cora.life',
-        image: '/ayna_placeholder.png'
-    },
-    {
         id: 's-honeypot',
         name: 'The Honey Pot',
         tagline: 'Plant-based feminine care',
@@ -1651,6 +1637,7 @@ export function getPersonalizedStartups(quizAnswers) {
     const FRUSTRATION_MAP = {
         'Heavy flow': 'heavy-flow',
         'Painful cramps': 'cramps',
+        'Hormonal bloating': 'bloating',
         'Irregular cycles': 'irregular',
         'Leaks & staining': 'leaks',
         'General discomfort': 'discomfort',

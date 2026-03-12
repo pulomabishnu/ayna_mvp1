@@ -55,6 +55,7 @@ export const PHYSICAL_PRODUCTS = [
             opinionAlerts: 'Common complaints include the "plastic feel" and environmental concerns regarding non-biodegradability.'
         },
         clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'Dr. Sarah Chen, OB-GYN, EvergreenHealth (Kirkland, WA). Not brand-affiliated.',
         doctorOpinion: '"FlexFoam technology provides reliable absorption for heavy flow days. I recommend the unscented version to minimize irritation risk." — Dr. Sarah Chen, OB-GYN',
         communityReview: '"I have super heavy periods and these don\'t leak even overnight. The thin profile is a game-changer vs bulky pads." — Reddit r/periods',
         ingredients: 'Polyethylene, polypropylene, wood pulp, adhesive. Fragrance-free version omits parfum.',
@@ -169,6 +170,7 @@ export const PHYSICAL_PRODUCTS = [
             opinionAlerts: 'High rate of split opinions: half the users love the cooling effect for cramps, the other half find it too intense or irritating.'
         },
         clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'Dr. Jessica Shepherd, OB-GYN, Baylor University Medical Center; CMO of Hers. Not affiliated with this product\'s brand.',
         doctorOpinion: '"The herbal infusion provides a cooling sensation that many patients find helpful for cramp relief. A nice complementary approach." — Dr. Jessica Shepherd, OB-GYN',
         communityReview: '"The cooling effect is REAL. My cramps feel noticeably better on the first day compared to regular pads." — Amazon review',
         ingredients: 'Plant-derived fiber, lavender oil, peppermint oil, aloe extract, wood pulp core.',
@@ -222,6 +224,7 @@ export const PHYSICAL_PRODUCTS = [
             opinionAlerts: 'Compact applicator can occasionally collapse during use if not fully extended properly.'
         },
         clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'Dr. Sara Twogood, OB-GYN, Cedars-Sinai. Not brand-affiliated.',
         doctorOpinion: '"LOLA provides full ingredient transparency — something rare in the menstrual product industry. OB-GYNs recommend organic cotton to reduce irritation risk." — Dr. Sara Twogood, OB-GYN',
         communityReview: '"Finally found truly organic tampons for heavy flow. The subscription is super convenient." — Reddit r/periods',
         ingredients: '100% organic cotton core and string, BPA-free plastic applicator.',
@@ -269,6 +272,7 @@ export const PHYSICAL_PRODUCTS = [
             opinionAlerts: 'Steep learning curve. Users often report a 2-3 cycle adjustment period before mastering the product.'
         },
         clinicianOpinionSource: 'mixed',
+        clinicianAttribution: 'Dr. Jen Gunter, OB-GYN, Kaiser Permanente Northern California. Not brand-affiliated.',
         doctorOpinion: '"Menstrual cups are safe for long-term use (up to 12 hours) and have a lower TSS risk than tampons. Saalt\'s medical-grade silicone is body-safe." — Dr. Jen Gunter, OB-GYN',
         communityReview: '"Life changing. I was scared to try it but honestly wish I switched years ago. Zero leaks on heavy days and I forget it\'s there." — Reddit r/menstrualcups',
         ingredients: '100% medical-grade silicone (USP Class VI certified).',
@@ -315,6 +319,7 @@ export const PHYSICAL_PRODUCTS = [
             opinionAlerts: 'Some find the disposable version too wasteful/expensive for every-cycle use.'
         },
         clinicianOpinionSource: 'mixed',
+        clinicianAttribution: 'Dr. Staci Tanouye, OB-GYN, Baptist Medical Center Jacksonville. Not brand-affiliated.',
         doctorOpinion: '"Discs are positioned differently than cups and can be a great option for patients who find cups uncomfortable. The 12-hour wear time is convenient." — Dr. Staci Tanouye, OB-GYN',
         communityReview: '"Game changer for intimacy during periods — no mess. Also zero leaks during heavy days which shocked me." — Reddit r/periods',
         ingredients: 'Medical-grade polymer body, hypoallergenic adhesive rim.',
@@ -360,6 +365,8 @@ export const PHYSICAL_PRODUCTS = [
             sideEffects: 'Possibility of infection if not washed correctly or changed frequently enough.',
             opinionAlerts: 'Legacy "PFAS scare" still drives some user hesitation. Complicated laundry routine compared to disposables.'
         },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'Dr. Lauren Streicher, OB-GYN, Northwestern University Feinberg School of Medicine. Not brand-affiliated.',
         doctorOpinion: '"Period underwear is a safe, comfortable backup option. Since the PFAS reformulation, Thinx\'s current line tests clean. Always good as backup with cups or tampons." — Dr. Lauren Streicher, OB-GYN',
         communityReview: '"I was worried after the PFAS news but the new ones test clean. I wear them as backup with my cup and haven\'t leaked in months." — Reddit r/WomensHealth',
         ingredients: 'Organic cotton gusset, moisture-wicking layer, absorbent core, leak-proof barrier. PFAS-free.',
@@ -449,6 +456,7 @@ export const PHYSICAL_PRODUCTS = [
             opinionAlerts: 'Main complaint is the high price point compared to standard CoQ10 supplements. Some users find the large softgels difficult to swallow.'
         },
         clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'Dr. Jolene Brighten, NMD, board-certified naturopathic endocrinologist; author (Beyond the Pill). Not brand-affiliated.',
         doctorOpinion: '"Ubiquinol is frequently recommended for women over 35 to support mitochondrial health and egg quality. Thorne\'s NSF certification ensures purity and potency." — Dr. Jolene Brighten, NMD',
         communityReview: '"My fertility specialist put me on this. It\'s expensive but it\'s the highest quality Ubiquinol out there. No stomach issues at all." — Reddit r/TTC35',
         ingredients: 'Ubiquinol 100mg, Olive Oil, Gelatin, Glycerin, Water, Lycopene.',
