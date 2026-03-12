@@ -174,6 +174,7 @@ export const MVP_PHYSICAL = [
     healthFunctions: ['cramp-relief'],
     tags: ['cramps', 'endometriosis', 'discomfort'],
     price: '$12 for 4',
+    userRating: 4.6,
     whereToBuy: ['CVS', 'Target', 'Walmart', 'Amazon'],
     image: '/ayna_placeholder.png',
     summary: 'Wearable heat wraps that provide up to 8 hours of heat for menstrual and pelvic pain. Drug-free.',
