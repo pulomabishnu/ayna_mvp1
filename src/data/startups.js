@@ -1,6 +1,9 @@
 // ============================================================
 // Ayna Startups Database — Real Women's Health Startups
 // ============================================================
+// VERIFICATION: Before adding a startup, confirm (1) url resolves and is real,
+// (2) company/product is findable and real. Do not add placeholders or defunct sites.
+// ============================================================
 
 export const STARTUPS = [
     {

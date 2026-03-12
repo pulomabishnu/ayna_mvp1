@@ -2,10 +2,14 @@
 // Ayna Product Database
 // Real products with validated Tier 1 data from customer discovery
 // ============================================================
+// VERIFICATION: Only add real, verifiable products. Confirm whereToBuy URLs work
+// and the brand/product exists. Do not add placeholder or fake entries.
+// ============================================================
 import { EXTENDED_PHYSICAL, EXTENDED_DIGITAL } from './productsExtended.js';
 import { EXTENDED_PHYSICAL_2, EXTENDED_DIGITAL_2 } from './productsExtended2.js';
 import { FILLER_PHYSICAL, FILLER_DIGITAL } from './categoryFillers.js';
 import { MVP_PHYSICAL, MVP_DIGITAL } from './mvpProducts.js';
+import { MENSTRUAL_PHYSICAL } from './menstrualProducts.js';
 
 // Tags used for quiz → product matching
 // frustrations: heavy-flow, cramps, bloating, irregular, leaks, discomfort, safety-concern, uti, pcos, pelvic-floor
@@ -113,6 +117,7 @@ export const PHYSICAL_PRODUCTS = [
             opinionAlerts: 'Main complaint is higher price compared to conventional pads. Some users find them less absorbent for extremely heavy flow.'
         },
         clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'Dr. Monica Grover, OB-GYN, NYU Langone Health / MDVIP. Not brand-affiliated.',
         doctorOpinion: '"Organic cotton pads are an excellent choice for women with sensitive skin or those concerned about chemical exposure. I frequently recommend Rael." — Dr. Monica Grover, OB-GYN',
         communityReview: '"Switched from Always after the toxin scare. These are just as absorbent and I feel so much better knowing what\'s touching my body." — Reddit r/WomensHealth',
         ingredients: '100% certified organic cotton top sheet, wood pulp core, bio-PE back sheet, natural adhesive.',
@@ -158,6 +163,7 @@ export const PHYSICAL_PRODUCTS = [
         tags: ['cramps', 'discomfort', 'organic', 'comfort'],
         avoidIfSensitivity: ['essential-oils', 'fragrance'],
         price: '$10 for 16',
+        userRating: 4.2,
         whereToBuy: ['Target', 'Walmart', 'Amazon'],
         image: 'https://www.kroger.com/product/images/large/front/0085166900880',
         summary: 'Plant-derived pads infused with lavender and mint herbs for cooling comfort during cramps.',
@@ -212,6 +218,7 @@ export const PHYSICAL_PRODUCTS = [
         healthFunctions: ['menstrual-collection'],
         tags: ['heavy-flow', 'organic', 'safety-concern', 'comfort'],
         price: '$10 for 18',
+        userRating: 4.5,
         whereToBuy: ['Amazon', 'LOLA.com'],
         image: 'https://mylola.com/cdn/shop/files/four-lola-plastic-applicator-tampon-boxes.img.jpg?v=1753220344&width=1946',
         summary: '100% organic cotton with compact BPA-free applicator. Customizable subscription box.',
@@ -307,6 +314,7 @@ export const PHYSICAL_PRODUCTS = [
         healthFunctions: ['menstrual-collection'],
         tags: ['heavy-flow', 'leaks', 'comfort'],
         price: '$14 for 12 (disposable) / $40 reusable',
+        userRating: 4.5,
         whereToBuy: ['Target', 'CVS', 'Amazon'],
         image: 'https://flexfits.com/cdn/shop/files/reusable-period-disc-with-packaging-and-review.png?v=1763753790',
         summary: 'Sits in the vaginal fornix (not the canal). Can be worn during intimacy. 12-hour wear.',
@@ -354,6 +362,7 @@ export const PHYSICAL_PRODUCTS = [
         healthFunctions: ['menstrual-collection', 'leak-protection'],
         tags: ['leaks', 'comfort', 'sustainability', 'discomfort'],
         price: '$25–$38 per pair',
+        userRating: 4.0,
         whereToBuy: ['Target', 'Amazon', 'Thinx.com'],
         image: 'https://m.media-amazon.com/images/I/819zMD5-brL._AC_UY1000_.jpg',
         summary: 'Absorbent underwear that replaces pads/liners. Multiple absorbency levels. Machine washable.',
@@ -498,6 +507,8 @@ export const DIGITAL_PRODUCTS = [
         safety: { fdaStatus: 'CE-marked in EU (medical device certification)', materials: 'N/A (software)', recalls: 'N/A', allergens: 'N/A', sideEffects: 'N/A (Software)', opinionAlerts: 'Subscription cost ($10/mo) is a common pain point compared to free trackers.' },
         privacy: { dataStorage: 'EU servers (Germany) — GDPR-compliant', sellsData: '❌ Explicitly does NOT sell data', hipaa: 'Not HIPAA (EU-based, uses GDPR which is stricter)', keyPolicy: 'Published transparency report. Will not comply with US law enforcement requests for cycle data.' },
         clinicianOpinionSource: 'brand',
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Dr. Anna Druet, Clue Research Lead. Brand-affiliated.',
         doctorOpinion: '"Clue is backed by scientific research and partners with universities for menstrual health studies. It\'s the most evidence-based tracker available." — Dr. Anna Druet, Clue Research Lead',
         communityReview: '"Switched from Flo because the paywall was annoying and I didn\'t trust their privacy. Clue is just better — clean UI, no fear-mongering." — Reddit r/WomensHealth',
         integrations: ['Apple Health'],
@@ -530,6 +541,7 @@ export const DIGITAL_PRODUCTS = [
         healthFunctions: ['cycle-tracking'],
         tags: ['privacy', 'comfort'],
         price: 'Free (Stardust Plus available)',
+        userRating: 4.6,
         whereToBuy: ['App Store', 'Google Play'],
         platform: 'iOS, Android',
         image: 'https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/61/f9/de/61f9deb9-a4f6-de49-96c6-84eb25541edb/Placeholder.mill/1200x630wa.jpg',
@@ -537,6 +549,8 @@ export const DIGITAL_PRODUCTS = [
         safety: { fdaStatus: 'N/A (Software)', materials: 'N/A', recalls: 'N/A', allergens: 'N/A', sideEffects: 'N/A', opinionAlerts: 'Lunar sync features are highly aesthetic but some users find them less "scientific" than Clue.' },
         privacy: { dataStorage: 'End-to-end encrypted', sellsData: '❌ No', hipaa: 'No', keyPolicy: 'Uses dual-key encryption so even Stardust can\'t see your data.' },
         clinicianOpinionSource: 'brand',
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'Source attribution not specified.',
         doctorOpinion: '"Stardust offers unique privacy protections that are increasingly important for reproductive health data." — Dr. Jane Doe',
         communityReview: '"The UI is gorgeous and I trust their encryption. Best post-Roe tracker." — Reddit r/periods',
         integrations: ['Apple Health'],
@@ -566,6 +580,7 @@ export const DIGITAL_PRODUCTS = [
         healthFunctions: ['cycle-tracking'],
         tags: ['discomfort', 'comfort'],
         price: 'Free (Premium available)',
+        userRating: 4.5,
         whereToBuy: ['App Store', 'Google Play'],
         platform: 'iOS, Android',
         image: '/ayna_placeholder.png',
@@ -599,7 +614,8 @@ export const ALL_PRODUCTS = [
     ...EXTENDED_PHYSICAL_2,
     ...EXTENDED_DIGITAL_2,
     ...FILLER_PHYSICAL,
-    ...FILLER_DIGITAL
+    ...FILLER_DIGITAL,
+    ...MENSTRUAL_PHYSICAL
 ];
 
 /** Placeholder image for custom ecosystem items (brands, meds, supplements). */

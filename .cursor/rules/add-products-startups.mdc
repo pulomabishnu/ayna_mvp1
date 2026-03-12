@@ -1,0 +1,21 @@
+---
+description: When adding or editing products or startups, verify they are real and links work
+globs: src/data/**/*.js
+---
+
+# Adding products or startups
+
+Only add **real, verifiable** products and startups. Do not add placeholder or fake entries.
+
+## Before adding a new product or startup
+
+1. **URL works** — Confirm the website (e.g. `whereToBuy`, `url`) resolves and is the real company/product. If the site is down or doesn’t exist, do not add it.
+2. **Company/product is real** — The brand, app, or company should be findable (official site, app stores, or reputable coverage). Remove or do not add if you cannot verify.
+3. **Details are accurate** — Name, category, type (physical/digital), and description should match what the company actually offers.
+
+## Where entries live
+
+- **Products:** `src/data/products.js` (main), `mvpProducts.js`, `productsExtended.js`, `productsExtended2.js`, `categoryFillers.js`, `menstrualProducts.js`
+- **Startups:** `src/data/startups.js` — released startups (`productReleased: true`) also appear in Discovery as products.
+
+When in doubt, omit the entry or mark it clearly so it can be verified later (e.g. in a comment), rather than adding an unverifiable product.
