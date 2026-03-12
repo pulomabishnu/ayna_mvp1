@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Disclaimer from './Disclaimer';
+import { getAynaRating } from '../data/aynaReviews';
 
 // Build purchase/search URLs for common retailers (product name encoded). Keys matched by store name.
 const STORE_SEARCH_URLS = {
@@ -186,10 +187,13 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
         const linksArray = links.map(l => ({ ...l, url: normalizeSocialUrl((l.url || l.href || '').trim()) })).filter(l => l.url && (l.url.startsWith('http://') || l.url.startsWith('https://')));
         const hasReputableSources = linksArray.length > 0;
 
+        // Skip aiSummary for Doctor tab — clinician quote already covers it; avoids duplicate pink box
+        const showAiSummary = aiSummary && type !== 'doctor';
+
         return (
             <div style={{ marginTop: '1.5rem' }}>
-                {/* AI Summary Section */}
-                {aiSummary && (
+                {/* AI Summary Section (purple box — not shown for Doctor tab) */}
+                {showAiSummary && (
                     <div style={{
                         padding: '1.5rem',
                         background: 'linear-gradient(135deg, #FDF4FF 0%, #F5F3FF 100%)',
@@ -488,6 +492,12 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                     )}
                     <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem', lineHeight: '1.6', maxWidth: '600px' }}>{product.summary || product.description || product.tagline}</p>
 
+                    {product.ratingNote && (
+                        <div style={{ marginTop: '1rem', padding: '0.75rem 1rem', background: '#FFF7ED', border: '1px solid #FFEDD5', borderRadius: 'var(--radius-md)', fontSize: '0.9rem', color: '#9A3412' }}>
+                            <strong>Rating note:</strong> {product.ratingNote}
+                        </div>
+                    )}
+
                     <div style={{ marginTop: '2rem', display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center' }}>
                         <button
                             className={`btn ${isTracked ? 'btn-outline' : 'btn-primary'}`}
@@ -516,6 +526,11 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                             </button>
                         )}
                         {(product.price || product.stage) && <span style={{ fontSize: '1.1rem', fontWeight: '600', color: 'var(--color-text-main)' }}>{product.price || product.stage}</span>}
+                        {!product.ratingNote && (getAynaRating(product, aynaReviews?.[product.id]) ?? product.userRating) != null && (
+                            <span style={{ fontSize: '1rem', color: 'var(--color-text-muted)' }} title="Based on user reviews, clinical opinions, and scientific literature">
+                                ★ {(getAynaRating(product, aynaReviews?.[product.id]) ?? product.userRating).toFixed(1)}
+                            </span>
+                        )}
                     </div>
 
                     {/* Where to buy + product website — visible under the action buttons */}
@@ -640,7 +655,6 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                     {activeTab === 'doctor' && (
                         <div className="animate-fade-in">
                             <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Clinical opinions</h3>
-                            <AynaInsight>{getVerificationSection(product.verificationLinks?.doctor).aiSummary || "No synthesized clinical summary for this product yet. Quote and links below."}</AynaInsight>
                             <div style={{
                                 marginBottom: '1.25rem', padding: '0.85rem 1rem', borderRadius: 'var(--radius-md)',
                                 background: 'var(--color-secondary-fade)', border: '1px solid var(--color-border)', fontSize: '0.85rem', color: 'var(--color-text-muted)', lineHeight: 1.5
@@ -710,7 +724,6 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                     {activeTab === 'social' && (
                         <div className="animate-fade-in">
                             <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Community Experience & Social Proof</h3>
-                            <AynaInsight>{getVerificationSection(product.verificationLinks?.community).aiSummary || "No synthesized community summary for this product yet. Anecdotal quote and links are below."}</AynaInsight>
                             <div style={{ background: 'var(--color-surface)', padding: '1.5rem', borderRadius: 'var(--radius-lg)', marginBottom: '1.5rem' }}>
                                 <h4 style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Top Anecdotal Experience</h4>
                                 {(() => {

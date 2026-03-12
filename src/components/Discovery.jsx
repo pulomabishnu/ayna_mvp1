@@ -32,8 +32,8 @@ function getQualityScore(item, aynaReviews = {}) {
     const scientific = hasLinks(v.scientific);
     const consensusScore = clinical + social + scientific;
     const aynaRating = getAynaRating(item, aynaReviews[item.id]);
-    const baseRating = item.userRating != null ? Number(item.userRating) / 5 : 0;
-    const rating = aynaRating != null ? aynaRating / 5 : baseRating;
+    const baseRating = item.ratingNote ? 0 : (item.userRating != null ? Number(item.userRating) / 5 : 0);
+    const rating = item.ratingNote ? 0 : (aynaRating != null ? aynaRating / 5 : baseRating);
     const safetyOk = !(item.safety?.recalls && String(item.safety.recalls).includes('⚠️')) ? 1 : 0;
     return (rating * 2) + consensusScore + safetyOk;
 }
@@ -137,8 +137,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             });
         } else if (sortBy === 'rating') {
             list = [...list].sort((a, b) => {
-                const ra = getAynaRating(a, aynaReviews[a.id]) ?? (a.userRating != null ? Number(a.userRating) : null);
-                const rb = getAynaRating(b, aynaReviews[b.id]) ?? (b.userRating != null ? Number(b.userRating) : null);
+                const ra = a.ratingNote ? null : (getAynaRating(a, aynaReviews[a.id]) ?? (a.userRating != null ? Number(a.userRating) : null));
+                const rb = b.ratingNote ? null : (getAynaRating(b, aynaReviews[b.id]) ?? (b.userRating != null ? Number(b.userRating) : null));
                 if (ra == null && rb == null) return 0;
                 if (ra == null) return 1;
                 if (rb == null) return -1;
@@ -375,20 +375,21 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
                                     <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>{item.isStartup ? item.stage : item.price}</span>
                                     {(() => {
-                                        const displayRating = getAynaRating(item, aynaReviews[item.id]) ?? item.userRating;
                                         const note = item.ratingNote;
-                                        const hasRating = displayRating != null;
-                                        const tooltip = aynaReviews[item.id]?.ratings?.length
-                                            ? 'Ayna rating (includes community ratings)'
-                                            : note || (hasRating ? 'Based on user reviews, clinical opinions, and scientific literature' : null);
-                                        if (hasRating) {
-                                            return (
-                                                <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }} title={tooltip}>★ {Number(displayRating).toFixed(1)}</span>
-                                            );
-                                        }
+                                        // When rating is unreliable or reviews incentivized, show — with note; otherwise show rating
                                         if (note) {
                                             return (
                                                 <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', fontStyle: 'italic' }} title={note}>—</span>
+                                            );
+                                        }
+                                        const displayRating = getAynaRating(item, aynaReviews[item.id]) ?? item.userRating;
+                                        const hasRating = displayRating != null;
+                                        const tooltip = aynaReviews[item.id]?.ratings?.length
+                                            ? 'Ayna rating (includes community ratings)'
+                                            : hasRating ? 'Based on user reviews, clinical opinions, and scientific literature' : null;
+                                        if (hasRating) {
+                                            return (
+                                                <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }} title={tooltip}>★ {Number(displayRating).toFixed(1)}</span>
                                             );
                                         }
                                         return null;
