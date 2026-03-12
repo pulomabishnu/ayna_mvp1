@@ -20,6 +20,7 @@ const ARTICLE_FOCUS_TAGS = {
 const FRUSTRATION_TO_TAG = {
   'Heavy flow': 'heavy-flow',
   'Painful cramps': 'cramps',
+  'Hormonal bloating': 'bloating',
   'Irregular cycles': 'irregular',
   'Recurrent UTIs': 'uti',
   'Menopause symptoms': 'menopause',

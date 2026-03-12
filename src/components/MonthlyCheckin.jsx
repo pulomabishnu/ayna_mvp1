@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 const FOCUS_TO_FRUSTRATION = {
   'Heavier flow': 'Heavy flow',
   'More cramps': 'Painful cramps',
+  'More bloating': 'Hormonal bloating',
   'Irregular cycles': 'Irregular cycles',
   'UTIs': 'Recurrent UTIs',
   'Mood or sleep': null, // tip only
@@ -18,6 +19,7 @@ const FOCUS_TO_FRUSTRATION = {
 const FOCUS_TO_SYMPTOM = {
   'Heavier flow': 'Heavier flow',
   'More cramps': 'Increased cramps',
+  'More bloating': 'Bloating',
   'Irregular cycles': 'Irregular timing',
   'UTIs': 'UTI',
   'Mood or sleep': 'Mood changes',
@@ -44,6 +46,7 @@ const STEP_FOCUS = {
   options: [
     'Heavier flow',
     'More cramps',
+    'More bloating',
     'Irregular cycles',
     'UTIs',
     'Mood or sleep',

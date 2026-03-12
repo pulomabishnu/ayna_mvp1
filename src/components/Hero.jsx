@@ -172,6 +172,32 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
                 </div>
             </ScrollReveal>
 
+            {/* The gap we fill */}
+            <ScrollReveal>
+                <div style={{
+                    maxWidth: '720px',
+                    textAlign: 'center',
+                    padding: '2.5rem 1.5rem 3rem',
+                    marginBottom: '0.5rem'
+                }}>
+                    <h3 style={{
+                        fontSize: '1.35rem',
+                        marginBottom: '1rem',
+                        color: 'var(--color-surface-contrast)',
+                        fontWeight: '700'
+                    }}>
+                        Everyone is either general or clinical. Nobody makes the everyday simple.
+                    </h3>
+                    <p style={{
+                        color: 'var(--color-text-muted)',
+                        lineHeight: '1.85',
+                        fontSize: '1.05rem'
+                    }}>
+                        Services like Allara and Hers give you specialized <strong style={{ color: 'var(--color-primary)' }}>care</strong> — then leave you on your own for the rest: which products to use, how to decide, where to look. Ayna fills that gap. We’re not replacing your clinician; we’re making the day-to-day management of women’s health actually simple.
+                    </p>
+                </div>
+            </ScrollReveal>
+
             {/* Founder Story */}
             <ScrollReveal>
                 <div style={{

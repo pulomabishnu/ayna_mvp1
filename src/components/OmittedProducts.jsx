@@ -20,7 +20,7 @@ export default function OmittedProducts({ omittedProducts, toggleOmitProduct }) 
                         <div key={product.id} className="card" style={{ padding: '1rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
                             <img src={product.image} alt={product.name} style={{ width: '60px', height: '60px', borderRadius: 'var(--radius-md)', objectFit: 'cover' }} />
                             <div style={{ flexGrow: 1 }}>
-                                <h3 style={{ fontSize: '1rem', marginBottom: '0.15rem' }}>{product.name}</h3>
+                                <h3 style={{ fontSize: '1rem', marginBottom: '0.15rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>{product.name}{product.outOfBusiness && <span style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-surface-soft)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No longer sold</span>}</h3>
                                 <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{product.category}</p>
                             </div>
                             <button

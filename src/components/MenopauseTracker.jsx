@@ -421,7 +421,12 @@ export default function MenopauseTracker({ menopauseData, setMenopauseData, myPr
                                                                             <span style={{ color: 'var(--color-primary)', fontSize: '0.65rem', fontWeight: '600', textTransform: 'uppercase' }}>
                                                                                 {categoryLabel}
                                                                             </span>
-                                                                            <h4 style={{ fontSize: '0.95rem', fontWeight: '600', marginBottom: '0.2rem' }}>{product.name}</h4>
+                                                                            <h4 style={{ fontSize: '0.95rem', fontWeight: '600', marginBottom: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                                                                {product.name}
+                                                                                {product.outOfBusiness && (
+                                                                                    <span style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-surface-soft)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No longer sold</span>
+                                                                                )}
+                                                                            </h4>
                                                                             <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.4rem' }}>
                                                                                 {inEcosystem ? (
                                                                                     <span style={{ fontSize: '0.7rem', fontWeight: 'bold', color: 'var(--color-primary)', background: 'var(--color-secondary-fade)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>✅ In Ecosystem</span>

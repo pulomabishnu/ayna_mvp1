@@ -78,16 +78,21 @@ function inferPlatform(url) {
   return 'other';
 }
 
-export default function ProductModal({ product, onClose, onTrack, isTracked, onOmit, isOmitted, onToggleCompare, isInCompare, onAddToEcosystem, isInEcosystem, userZipCode }) {
+export default function ProductModal({ product, onClose, onTrack, isTracked, onOmit, isOmitted, onToggleCompare, isInCompare, onAddToEcosystem, isInEcosystem, userZipCode, aynaReviews = null, onRate, onReview }) {
     const [activeTab, setActiveTab] = useState('safety');
     const [chatMessages, setChatMessages] = useState([{ role: 'assistant', text: `Hi! I'm Ayna. What would you like to know about ${product?.name}?` }]);
     const [chatInput, setChatInput] = useState('');
     const [isTyping, setIsTyping] = useState(false);
+    const [reviewInput, setReviewInput] = useState('');
+    const [hoverRating, setHoverRating] = useState(0);
 
     const isDigital = product.type === 'digital';
     const isPrescriptionOnly = product.requiresPrescription === true || (product.whereToBuy?.length === 1 && product.whereToBuy[0] === 'Pharmacy with prescription');
 
     if (!product) return null;
+
+    const aynaData = aynaReviews && product ? (aynaReviews[product.id] || { ratings: [], reviews: [] }) : { ratings: [], reviews: [] };
+    const aynaReviewCount = (aynaData.reviews || []).length;
 
     const tabs = [
         { id: 'safety', label: isDigital ? 'Privacy & Safety' : 'Safety & Ingredients', icon: '🛡️' },
@@ -95,8 +100,26 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
         { id: 'social', label: 'Community', icon: '💬' },
         { id: 'science', label: 'Scientific Literature', icon: '🔬' },
         { id: 'buy', label: isDigital ? 'Get It' : 'Where to Buy', icon: '🛒' },
+        { id: 'ayna-reviews', label: 'Ayna Reviews', icon: '⭐', badge: aynaReviewCount > 0 ? aynaReviewCount : null },
         { id: 'chat', label: 'Ask Ayna', icon: '✨' },
     ];
+
+    const aynaInsightBoxStyle = {
+        marginBottom: '1.25rem',
+        padding: '0.85rem 1rem',
+        borderRadius: 'var(--radius-md)',
+        background: 'var(--color-secondary-fade)',
+        border: '1px solid var(--color-border)',
+        fontSize: '0.85rem',
+        color: 'var(--color-text-muted)',
+        lineHeight: 1.5,
+    };
+    const AynaInsight = ({ children }) => (children ? (
+        <div style={aynaInsightBoxStyle}>
+            <div style={{ fontSize: '0.75rem', color: 'var(--color-primary)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.35rem' }}>Ayna AI insight</div>
+            <p style={{ margin: 0 }}>{children}</p>
+        </div>
+    ) : null);
 
     const renderPrescriptionWorkflow = (compact = false) => (
         <div style={compact ? { marginTop: 0 } : { marginBottom: '1.5rem' }}>
@@ -565,6 +588,9 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                                 onClick={() => setActiveTab(tab.id)}
                             >
                                 <span style={{ fontSize: '1.1rem' }}>{tab.icon}</span> {tab.label}
+                                {tab.badge != null && (
+                                    <span style={{ background: 'var(--color-primary)', color: 'white', padding: '0.1rem 0.4rem', borderRadius: '1rem', fontSize: '0.7rem', fontWeight: '700' }}>{tab.badge}</span>
+                                )}
                             </button>
                         ))}
                     </div>
@@ -574,7 +600,16 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                 <div style={{ padding: '2rem 2.5rem 3rem' }}>
                     {activeTab === 'safety' && (
                         <div className="animate-fade-in">
-                            <h3 style={{ fontSize: '1.1rem', marginBottom: '1.5rem' }}>Safety & Privacy Standards</h3>
+                            <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Safety & Privacy Standards</h3>
+                            <AynaInsight>{(() => {
+                                const s = product.safety;
+                                if (s?.fdaStatus || s?.materials || s?.recalls) {
+                                    const parts = [s.fdaStatus && `Regulatory status: ${s.fdaStatus}`, s.materials && `Materials: ${s.materials}`, s.recalls].filter(Boolean);
+                                    const main = parts.join('. ');
+                                    return s.opinionAlerts ? `${main}. Community watch-outs: ${s.opinionAlerts}` : main + '.';
+                                }
+                                return "Regulatory status, materials, and community watch-outs for this product are summarized below.";
+                            })()}</AynaInsight>
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                                 <div style={{ background: 'var(--color-bg)', padding: '1rem', borderRadius: 'var(--radius-md)' }}>
                                     <h4 style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>FDA Regulatory Status</h4>
@@ -614,6 +649,7 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                     {activeTab === 'doctor' && (
                         <div className="animate-fade-in">
                             <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Clinical opinions</h3>
+                            <AynaInsight>{getVerificationSection(product.verificationLinks?.doctor).aiSummary || "No synthesized clinical summary for this product yet. Quote and links below."}</AynaInsight>
                             <div style={{
                                 marginBottom: '1.25rem', padding: '0.85rem 1rem', borderRadius: 'var(--radius-md)',
                                 background: 'var(--color-secondary-fade)', border: '1px solid var(--color-border)', fontSize: '0.85rem', color: 'var(--color-text-muted)', lineHeight: 1.5
@@ -631,13 +667,15 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                                     {product.doctorOpinion || 'Consult with your OB-GYN for personalized medical advice.'}
                                 </p>
                                 <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.5rem', fontWeight: '600' }}>
-                                    {product.clinicianOpinionSource === 'independent'
-                                        ? '— Independent clinician (not brand-affiliated)'
-                                        : product.clinicianOpinionSource === 'brand'
-                                            ? '— Brand-affiliated'
-                                            : product.clinicianOpinionSource === 'mixed'
-                                                ? '— Mixed: some sources independent, some brand-affiliated (see links below)'
-                                                : '— Source affiliation not specified'}
+                                    {product.clinicianAttribution
+                                        ? `— ${product.clinicianAttribution}`
+                                        : product.clinicianOpinionSource === 'independent'
+                                            ? '— Independent clinician (not brand-affiliated)'
+                                            : product.clinicianOpinionSource === 'brand'
+                                                ? '— Brand-affiliated'
+                                                : product.clinicianOpinionSource === 'mixed'
+                                                    ? '— Mixed: some sources independent, some brand-affiliated (see links below)'
+                                                    : '— Source affiliation not specified'}
                                 </p>
                                 {(() => {
                                     const doctorLinks = product.verificationLinks?.doctor?.links ?? (Array.isArray(product.verificationLinks?.doctor) ? product.verificationLinks.doctor : null);
@@ -663,10 +701,8 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
 
                     {activeTab === 'science' && (
                         <div className="animate-fade-in">
-                            <h3 style={{ fontSize: '1.1rem', marginBottom: '1.5rem' }}>Scientific Literature & Clinical Evidence</h3>
-                            <p style={{ color: 'var(--color-text-muted)', marginBottom: '1.5rem' }}>
-                                We prioritize products backed by peer-reviewed studies and clinical trials. Verification links point to official repositories like PubMed or clinical journals.
-                            </p>
+                            <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Scientific Literature & Clinical Evidence</h3>
+                            <AynaInsight>Ayna prioritizes peer-reviewed studies and clinical evidence; verification links go to PubMed, Lancet, and other trusted sources so you can check the science yourself.</AynaInsight>
                             <div style={{ background: 'var(--color-surface)', padding: '1rem', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem' }}>
                                 <h4 style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Effectiveness Summary</h4>
                                 <p>{product.effectiveness || 'Clinical effectiveness data for this specific product is being aggregated.'}</p>
@@ -682,7 +718,8 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
 
                     {activeTab === 'social' && (
                         <div className="animate-fade-in">
-                            <h3 style={{ fontSize: '1.1rem', marginBottom: '1.5rem' }}>Community Experience & Social Proof</h3>
+                            <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Community Experience & Social Proof</h3>
+                            <AynaInsight>{getVerificationSection(product.verificationLinks?.community).aiSummary || "No synthesized community summary for this product yet. Anecdotal quote and links are below."}</AynaInsight>
                             <div style={{ background: 'var(--color-surface)', padding: '1.5rem', borderRadius: 'var(--radius-lg)', marginBottom: '1.5rem' }}>
                                 <h4 style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Top Anecdotal Experience</h4>
                                 {(() => {
@@ -718,7 +755,10 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
 
                     {activeTab === 'buy' && (
                         <div className="animate-fade-in">
-                            <h3 style={{ fontSize: '1.1rem', marginBottom: '1.5rem' }}>{isPrescriptionOnly ? 'How to Get This Product' : 'Where to Buy'}</h3>
+                            <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>{isPrescriptionOnly ? 'How to Get This Product' : 'Where to Buy'}</h3>
+                            <AynaInsight>{isPrescriptionOnly
+                                ? 'Ayna outlines the prescription workflow and links to tools like GoodRx so you can get this product safely and compare pharmacy options.'
+                                : 'Ayna aggregates where to buy and, when available, in-stock signals for your zip so you can find the product without the guesswork.'}</AynaInsight>
                             {isPrescriptionOnly ? (
                                 <>
                                     {renderPrescriptionWorkflow()}
@@ -776,8 +816,89 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                         </div>
                     )}
 
+                    {activeTab === 'ayna-reviews' && (
+                        <div className="animate-fade-in">
+                            <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Ayna Reviews</h3>
+                            <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1.5rem', lineHeight: 1.5 }}>
+                                Anonymous reviews from Ayna users. Your rating and review help others make informed decisions.
+                            </p>
+
+                            {isInEcosystem && onRate && (
+                                <div style={{ marginBottom: '2rem', padding: '1.25rem', background: 'var(--color-bg)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
+                                    <h4 style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--color-text-main)', marginBottom: '0.75rem' }}>Rate this product</h4>
+                                    <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>You have this in your ecosystem. How would you rate it?</p>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.75rem' }}>
+                                        {[1, 2, 3, 4, 5].map(star => (
+                                            <button
+                                                key={star}
+                                                type="button"
+                                                onClick={() => onRate(product, star)}
+                                                onMouseEnter={() => setHoverRating(star)}
+                                                onMouseLeave={() => setHoverRating(0)}
+                                                style={{
+                                                    background: 'none', border: 'none', cursor: 'pointer', padding: '0.2rem', fontSize: '1.5rem',
+                                                    color: (hoverRating || 0) >= star ? '#EAB308' : 'var(--color-border)'
+                                                }}
+                                                title={`${star} star${star > 1 ? 's' : ''}`}
+                                            >
+                                                ★
+                                            </button>
+                                        ))}
+                                    </div>
+                                    <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Your rating helps Ayna compute the overall product rating.</p>
+                                </div>
+                            )}
+
+                            <div style={{ marginBottom: '2rem', padding: '1.25rem', background: 'var(--color-bg)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
+                                <h4 style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--color-text-main)', marginBottom: '0.75rem' }}>Write an anonymous review</h4>
+                                <textarea
+                                    value={reviewInput}
+                                    onChange={(e) => setReviewInput(e.target.value)}
+                                    placeholder="Share your experience with this product..."
+                                    rows={3}
+                                    style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: '0.9rem', resize: 'vertical', marginBottom: '0.75rem' }}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        if (reviewInput.trim() && onReview) {
+                                            onReview(product, reviewInput.trim());
+                                            setReviewInput('');
+                                        }
+                                    }}
+                                    disabled={!reviewInput.trim() || !onReview}
+                                    className="btn btn-primary"
+                                    style={{ padding: '0.5rem 1rem', fontSize: '0.85rem' }}
+                                >
+                                    Post review
+                                </button>
+                            </div>
+
+                            <h4 style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--color-text-main)', marginBottom: '0.75rem' }}>
+                                Community reviews {aynaReviewCount > 0 && `(${aynaReviewCount})`}
+                            </h4>
+                            {aynaReviewCount === 0 ? (
+                                <div style={{ padding: '2rem', textAlign: 'center', background: 'var(--color-surface)', borderRadius: 'var(--radius-md)', border: '1px dashed var(--color-border)', color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>
+                                    No Ayna reviews yet. Be the first to share your experience!
+                                </div>
+                            ) : (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                    {(aynaData.reviews || []).map((r, idx) => (
+                                        <div key={idx} style={{ padding: '1rem', background: 'var(--color-surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
+                                            <p style={{ margin: 0, fontSize: '0.9rem', lineHeight: 1.5, color: 'var(--color-text-main)' }}>{r.text}</p>
+                                            <p style={{ margin: '0.5rem 0 0', fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
+                                                Anonymous · {r.date ? new Date(r.date).toLocaleDateString() : ''}
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
                     {activeTab === 'chat' && (
                         <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', height: '400px' }}>
+                            <AynaInsight>Ask Ayna anything about this product. Answers are for education only and are not medical advice; always consult your clinician for personalized care.</AynaInsight>
                             <div style={{ flexGrow: 1, overflowY: 'auto', padding: '1rem', background: 'var(--color-bg)', borderRadius: 'var(--radius-lg)', marginBottom: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                                 {chatMessages.map((msg, idx) => (
                                     <div key={idx} style={{

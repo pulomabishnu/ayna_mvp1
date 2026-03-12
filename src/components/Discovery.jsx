@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
 import { RELEASED_STARTUPS } from '../data/startups';
-import ProductModal from './ProductModal';
+import { getAynaRating } from '../data/aynaReviews';
 import Disclaimer from './Disclaimer';
 
 const ALL_CATEGORIES = ['all', 'pad', 'tampon', 'cup', 'disc', 'period-underwear', 'supplement', 'tracker', 'telehealth', 'mental-health', 'fitness', 'diagnostics', 'hormone-monitoring', 'menopause', 'fertility', 'pelvic-health', 'pelvic-floor', 'cramp-relief', 'postpartum', 'pregnancy', 'sex-tech', 'intimate-care', 'contraception'];
@@ -20,7 +20,7 @@ function getSortPrice(item) {
 }
 
 /** Score for default sort: top rated + positive clinical/social/scientific consensus + safety first. */
-function getQualityScore(item) {
+function getQualityScore(item, aynaReviews = {}) {
     const v = item.verificationLinks || {};
     const hasLinks = (section) => {
         if (!section) return 0;
@@ -31,7 +31,9 @@ function getQualityScore(item) {
     const social = hasLinks(v.community);
     const scientific = hasLinks(v.scientific);
     const consensusScore = clinical + social + scientific;
-    const rating = item.userRating != null ? Number(item.userRating) / 5 : 0.5;
+    const aynaRating = getAynaRating(item, aynaReviews[item.id]);
+    const baseRating = item.userRating != null ? Number(item.userRating) / 5 : 0.5;
+    const rating = aynaRating != null ? aynaRating / 5 : baseRating;
     const safetyOk = !(item.safety?.recalls && String(item.safety.recalls).includes('⚠️')) ? 1 : 0;
     return (rating * 2) + consensusScore + safetyOk;
 }
@@ -43,7 +45,7 @@ const SORT_OPTIONS = [
     { value: 'rating', label: 'Best rated' },
 ];
 
-export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, isPremium, onUpgrade, initialSearch, recommendedProductIds }) {
+export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, isPremium, onUpgrade, initialSearch, recommendedProductIds, aynaReviews = {} }) {
     const [categoryFilter, setCategoryFilter] = useState('all');
     const [typeFilter, setTypeFilter] = useState('all');
     const [searchQuery, setSearchQuery] = useState(initialSearch || '');
@@ -135,8 +137,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             });
         } else if (sortBy === 'rating') {
             list = [...list].sort((a, b) => {
-                const ra = a.userRating != null ? Number(a.userRating) : null;
-                const rb = b.userRating != null ? Number(b.userRating) : null;
+                const ra = getAynaRating(a, aynaReviews[a.id]) ?? (a.userRating != null ? Number(a.userRating) : null);
+                const rb = getAynaRating(b, aynaReviews[b.id]) ?? (b.userRating != null ? Number(b.userRating) : null);
                 if (ra == null && rb == null) return 0;
                 if (ra == null) return 1;
                 if (rb == null) return -1;
@@ -145,13 +147,13 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         } else {
             // default: best quality first — top rated, positive clinical/social/sci consensus, and safety
             list = [...list].sort((a, b) => {
-                const qa = getQualityScore(a);
-                const qb = getQualityScore(b);
+                const qa = getQualityScore(a, aynaReviews);
+                const qb = getQualityScore(b, aynaReviews);
                 return qb - qa;
             });
         }
         return list;
-    }, [combined, categoryFilter, typeFilter, omittedProducts, searchQuery, sortBy, personalizationFilter, recommendedSet]);
+    }, [combined, categoryFilter, typeFilter, omittedProducts, searchQuery, sortBy, personalizationFilter, recommendedSet, aynaReviews]);
 
     const handleSmartSearch = (e) => {
         e.preventDefault();
@@ -372,9 +374,12 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                 </p>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
                                     <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>{item.isStartup ? item.stage : item.price}</span>
-                                    {item.userRating != null && (
-                                        <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }} title="Average user rating (online reviews)">★ {Number(item.userRating).toFixed(1)}</span>
-                                    )}
+                                    {(() => {
+                                        const displayRating = getAynaRating(item, aynaReviews[item.id]) ?? item.userRating;
+                                        return displayRating != null && (
+                                            <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }} title={aynaReviews[item.id]?.ratings?.length ? 'Ayna rating (includes community ratings)' : 'Average user rating (online reviews)'}>★ {Number(displayRating).toFixed(1)}</span>
+                                        );
+                                    })()}
                                     <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
                                         {item.isStartup ? (
                                             releasedStartup ? (

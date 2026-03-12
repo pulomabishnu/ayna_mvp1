@@ -1,50 +1,62 @@
 import React, { useState, useMemo } from 'react';
-import { getRecommendations, getRecommendationExplanation, SIMILAR_PROFILES, ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
+import { getRecommendationExplanation, SIMILAR_PROFILES, ALL_PRODUCTS, CATEGORY_LABELS, getRecommendationsGroupedByWorkflow } from '../data/products';
 import { getRecommendedArticles } from './Articles';
 
-const TYPE_FILTERS = ['all', 'physical', 'digital'];
+const TYPE_OPTIONS = [
+    { value: 'all', label: 'All types' },
+    { value: 'physical', label: 'Physical' },
+    { value: 'digital', label: 'Digital' },
+];
 
 export default function Recommendations({ results, onRetake, trackedProducts, toggleTrackProduct, myProducts, toggleMyProduct, omittedProducts, toggleOmitProduct, onOpenProduct, onViewArticle }) {
     const [categoryFilter, setCategoryFilter] = useState('all');
     const [typeFilter, setTypeFilter] = useState('all');
+    const [expandedSections, setExpandedSections] = useState({});
 
-    const recommended = useMemo(() => {
-        const base = getRecommendations(results || {});
-        return base.filter(p => !omittedProducts[p.id]);
-    }, [results, omittedProducts]);
+    const { byWorkflow, byCategory: byCategoryRaw } = useMemo(
+        () => getRecommendationsGroupedByWorkflow(results || {}, omittedProducts || {}),
+        [results, omittedProducts]
+    );
 
-    // Apply type filter, then group by category
-    const filteredRecommended = useMemo(() => {
-        if (typeFilter === 'all') return recommended;
-        return recommended.filter(p => (p.type || 'physical') === typeFilter);
-    }, [recommended, typeFilter]);
+    const applyTypeFilter = (products) => {
+        if (!products || typeFilter === 'all') return products || [];
+        return products.filter(p => (p.type || 'physical') === typeFilter);
+    };
 
-    // Group by category so products are linked by category (pad, tampon, supplement, tracker, etc.)
+    const workflowWithFilter = useMemo(() => {
+        return byWorkflow.map(w => ({
+            ...w,
+            steps: w.steps.map(s => ({ ...s, products: applyTypeFilter(s.products) })).filter(s => s.products.length > 0),
+        })).filter(w => w.steps.length > 0);
+    }, [byWorkflow, typeFilter]);
+
     const byCategory = useMemo(() => {
-        const map = {};
-        filteredRecommended.forEach(p => {
-            const cat = p.category || 'other';
-            if (!map[cat]) map[cat] = [];
-            map[cat].push(p);
-        });
-        const order = ['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'supplement', 'tracker', 'telehealth', 'mental-health', 'menopause', 'intimate-care', 'sex-tech', 'postpartum', 'pregnancy', 'fitness-cycle', 'pelvic-floor', 'cramp-relief', 'other'];
-        const ordered = order.filter(c => map[c]).map(c => ({ category: c, label: CATEGORY_LABELS[c] || c, products: map[c] }));
-        const rest = Object.keys(map).filter(c => !order.includes(c));
-        return [...ordered, ...rest.map(c => ({ category: c, label: CATEGORY_LABELS[c] || c, products: map[c] }))];
-    }, [filteredRecommended]);
+        return byCategoryRaw.map(c => ({
+            ...c,
+            products: applyTypeFilter(c.products),
+        })).filter(c => c.products.length > 0);
+    }, [byCategoryRaw, typeFilter]);
 
-    // When a category is selected, show only that section
+    const categoryOptions = useMemo(() => {
+        const opts = [{ value: 'all', label: 'All categories' }];
+        byCategory.forEach(({ category, label }) => opts.push({ value: category, label }));
+        return opts;
+    }, [byCategory]);
+
     const displayedSections = useMemo(() => {
         if (categoryFilter === 'all') return byCategory;
         const section = byCategory.find(s => s.category === categoryFilter);
         return section ? [section] : [];
     }, [byCategory, categoryFilter]);
 
+    const isExpanded = (key) => expandedSections[key] === true;
+    const toggleExpanded = (key) => setExpandedSections(prev => ({ ...prev, [key]: !prev[key] }));
+
     // Find matching similar profiles
     const matchedProfiles = useMemo(() => {
         if (!results?.frustrations) return [];
         const tags = results.frustrations.map(f => {
-            const map = { 'Heavy flow': 'heavy-flow', 'Painful cramps': 'cramps', 'Recurrent UTIs': 'uti', 'Irregular cycles': 'irregular' };
+            const map = { 'Heavy flow': 'heavy-flow', 'Painful cramps': 'cramps', 'Hormonal bloating': 'bloating', 'Recurrent UTIs': 'uti', 'Irregular cycles': 'irregular' };
             return map[f];
         }).filter(Boolean);
 
@@ -154,8 +166,8 @@ export default function Recommendations({ results, onRetake, trackedProducts, to
     return (
         <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
 
-            {/* Header */}
-            <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-xl)', maxWidth: '700px', margin: '0 auto var(--spacing-xl)' }}>
+            {/* Header + Retake at top */}
+            <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-lg)', maxWidth: '700px', margin: '0 auto var(--spacing-lg)' }}>
                 <div style={{
                     background: 'var(--color-secondary-fade)', color: 'var(--color-primary-hover)',
                     padding: '0.5rem 1rem', borderRadius: 'var(--radius-pill)', fontSize: '0.875rem',
@@ -176,49 +188,112 @@ export default function Recommendations({ results, onRetake, trackedProducts, to
                 <p style={{ color: 'var(--color-primary)', fontSize: '0.9rem', marginTop: '0.5rem', fontWeight: '500' }}>
                     Forgot something? Use the 💬 chat button to add more to your profile — we'll refresh your recommendations.
                 </p>
+                <div style={{ marginTop: '1.25rem' }}>
+                    <button type="button" className="btn btn-outline" onClick={onRetake}>
+                        Retake Assessment
+                    </button>
+                </div>
             </div>
 
-            {/* Filters: Type + Category (like Discovery) */}
-            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
-                {TYPE_FILTERS.map(t => (
-                    <button key={t} onClick={() => setTypeFilter(t)} style={{
-                        padding: '0.5rem 1.25rem', borderRadius: 'var(--radius-pill)', fontSize: '0.85rem',
-                        fontWeight: '500', border: '1px solid var(--color-border)',
-                        background: typeFilter === t ? 'var(--color-primary)' : 'transparent',
-                        color: typeFilter === t ? 'white' : 'var(--color-text-main)',
-                        cursor: 'pointer', transition: 'all 0.2s'
-                    }}>
-                        {t === 'all' ? 'All Types' : t.charAt(0).toUpperCase() + t.slice(1)}
-                    </button>
-                ))}
-            </div>
-            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: 'var(--spacing-lg)' }}>
-                <button onClick={() => setCategoryFilter('all')} style={{
-                    padding: '0.4rem 1rem', borderRadius: 'var(--radius-pill)', fontSize: '0.8rem',
-                    fontWeight: '500', border: '1px solid var(--color-border)',
-                    background: categoryFilter === 'all' ? 'var(--color-surface-contrast)' : 'transparent',
-                    color: categoryFilter === 'all' ? 'white' : 'var(--color-text-muted)',
-                    cursor: 'pointer', transition: 'all 0.2s'
-                }}>
-                    All
-                </button>
-                {byCategory.map(({ category, label }) => (
-                    <button key={category} onClick={() => setCategoryFilter(category)} style={{
-                        padding: '0.4rem 1rem', borderRadius: 'var(--radius-pill)', fontSize: '0.8rem',
-                        fontWeight: '500', border: '1px solid var(--color-border)',
-                        background: categoryFilter === category ? 'var(--color-surface-contrast)' : 'transparent',
-                        color: categoryFilter === category ? 'white' : 'var(--color-text-muted)',
-                        cursor: 'pointer', transition: 'all 0.2s'
-                    }}>
-                        {label}
-                    </button>
-                ))}
+            {/* Filters: dropdowns for Type and Category */}
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: 'var(--spacing-lg)', alignItems: 'center' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>
+                    Type
+                    <select
+                        value={typeFilter}
+                        onChange={(e) => setTypeFilter(e.target.value)}
+                        style={{
+                            padding: '0.5rem 2rem 0.5rem 0.75rem',
+                            borderRadius: 'var(--radius-md)',
+                            border: '1px solid var(--color-border)',
+                            background: 'var(--color-surface-soft)',
+                            color: 'var(--color-text-main)',
+                            fontSize: '0.9rem',
+                            cursor: 'pointer',
+                            minWidth: '140px'
+                        }}
+                    >
+                        {TYPE_OPTIONS.map(opt => (
+                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                        ))}
+                    </select>
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>
+                    Category
+                    <select
+                        value={categoryFilter}
+                        onChange={(e) => setCategoryFilter(e.target.value)}
+                        style={{
+                            padding: '0.5rem 2rem 0.5rem 0.75rem',
+                            borderRadius: 'var(--radius-md)',
+                            border: '1px solid var(--color-border)',
+                            background: 'var(--color-surface-soft)',
+                            color: 'var(--color-text-main)',
+                            fontSize: '0.9rem',
+                            cursor: 'pointer',
+                            minWidth: '180px'
+                        }}
+                    >
+                        {categoryOptions.map(opt => (
+                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                        ))}
+                    </select>
+                </label>
             </div>
             {(categoryFilter !== 'all' || typeFilter !== 'all') && (
                 <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '1rem' }}>
                     Showing {displayedSections.reduce((n, s) => n + s.products.length, 0)} product{displayedSections.reduce((n, s) => n + s.products.length, 0) !== 1 ? 's' : ''}
                 </p>
             )}
+
+            {/* Clinical workflow: e.g. For Recurrent UTIs → Prevent, Test, Treat, Get care */}
+            {workflowWithFilter.length > 0 && workflowWithFilter.map((wf) => (
+                <div key={wf.frustration} style={{ maxWidth: '900px', margin: '0 auto var(--spacing-xl)' }}>
+                    <h3 style={{ fontSize: '1.35rem', marginBottom: '0.5rem', color: 'var(--color-text-main)' }}>
+                        For {wf.frustrationLabel}
+                    </h3>
+                    <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', marginBottom: '1rem', lineHeight: 1.5 }}>
+                        Recommendations follow a typical care path: prevent, test at home, treat or manage, and get care when needed.
+                    </p>
+                    {wf.steps.map((step) => {
+                        const sectionKey = `wf-${wf.frustration}-${step.stepId}`;
+                        const open = isExpanded(sectionKey);
+                        return (
+                            <div key={step.stepId} style={{ marginBottom: '0.75rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', overflow: 'hidden', background: 'var(--color-surface-soft)' }}>
+                                <button
+                                    type="button"
+                                    onClick={() => toggleExpanded(sectionKey)}
+                                    style={{
+                                        width: '100%',
+                                        padding: '1rem 1.25rem',
+                                        textAlign: 'left',
+                                        background: 'none',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                        fontSize: '1rem',
+                                        fontWeight: '600',
+                                        color: 'var(--color-text-main)'
+                                    }}
+                                >
+                                    <span>{step.stepLabel}</span>
+                                    <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', fontWeight: '500' }}>{step.products.length} product{step.products.length !== 1 ? 's' : ''}</span>
+                                    <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{open ? '▼' : '▶'}</span>
+                                </button>
+                                {open && (
+                                    <div style={{ padding: '0 1.25rem 1.25rem', borderTop: '1px solid var(--color-border)' }}>
+                                        <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+                                            {step.products.map(p => renderProductCard(p))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
+            ))}
 
             {/* "Women Like You" Section */}
             {matchedProfiles.length > 0 && (
@@ -297,29 +372,60 @@ export default function Recommendations({ results, onRetake, trackedProducts, to
               </div>
             )}
 
-            {/* Recommendations by category — products linked by category with why it could work / considerations */}
-            {displayedSections.map(({ category, label, products }) => (
-                <div key={category} style={{ marginBottom: 'var(--spacing-xl)' }}>
-                    <h3 style={{ fontSize: '1.35rem', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        {label}
+            {/* Recommendations by category — collapsible sections */}
+            {displayedSections.length > 0 && (
+                <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+                    <h3 style={{ fontSize: '1.35rem', marginBottom: '1rem', color: 'var(--color-text-main)' }}>
+                        More for you by category
                     </h3>
-                    <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1.25rem' }}>
-                        {products.length === 1 ? '1 product' : `${products.length} products`} in this category that match your profile.
-                    </p>
-                    <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
-                        {products.map(renderProductCard)}
-                    </div>
+                    {displayedSections.map(({ category, label, products }) => {
+                        const sectionKey = `cat-${category}`;
+                        const open = isExpanded(sectionKey);
+                        return (
+                            <div key={category} style={{ marginBottom: '0.75rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', overflow: 'hidden', background: 'var(--color-surface-soft)' }}>
+                                <button
+                                    type="button"
+                                    onClick={() => toggleExpanded(sectionKey)}
+                                    style={{
+                                        width: '100%',
+                                        padding: '1rem 1.25rem',
+                                        textAlign: 'left',
+                                        background: 'none',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                        fontSize: '1rem',
+                                        fontWeight: '600',
+                                        color: 'var(--color-text-main)'
+                                    }}
+                                >
+                                    <span>{label}</span>
+                                    <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', fontWeight: '500' }}>{products.length} product{products.length !== 1 ? 's' : ''}</span>
+                                    <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{open ? '▼' : '▶'}</span>
+                                </button>
+                                {open && (
+                                    <div style={{ padding: '0 1.25rem 1.25rem', borderTop: '1px solid var(--color-border)' }}>
+                                        <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1rem' }}>
+                                            {products.length === 1 ? '1 product' : `${products.length} products`} in this category that match your profile.
+                                        </p>
+                                        <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+                                            {products.map(p => renderProductCard(p))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
                 </div>
-            ))}
+            )}
 
-            <div style={{ textAlign: 'center', marginTop: 'var(--spacing-lg)' }}>
-                <button className="btn btn-outline" onClick={onRetake}>Retake Assessment</button>
-                {Object.keys(omittedProducts).length > 0 && (
-                    <p style={{ marginTop: '1rem', fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
-                        Note: {Object.keys(omittedProducts).length} products are hidden based on your preference.
-                    </p>
-                )}
-            </div>
+            {Object.keys(omittedProducts).length > 0 && (
+                <p style={{ textAlign: 'center', marginTop: 'var(--spacing-lg)', fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
+                    Note: {Object.keys(omittedProducts).length} products are hidden based on your preference.
+                </p>
+            )}
         </section>
     );
 }

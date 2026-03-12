@@ -14,6 +14,7 @@ import Comparison from './components/Comparison';
 import Recalls from './components/Recalls';
 import DoctorPrep from './components/DoctorPrep';
 import { CATEGORY_LABELS, getRecommendations, createCustomEcosystemProducts } from './data/products';
+import { loadAynaReviews, addRating, addReview } from './data/aynaReviews';
 import AynaDeeptech from './components/AynaDeeptech';
 import Screenings from './components/Screenings';
 import { useScrollPosition } from './hooks/useScrollPosition';
@@ -39,7 +40,12 @@ function App() {
   const [userZipCode, setUserZipCode] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
   const [selectedArticleId, setSelectedArticleId] = useState(null);
+  const [aynaReviews, setAynaReviews] = useState({});
   const scrollY = useScrollPosition();
+
+  React.useEffect(() => {
+    setAynaReviews(loadAynaReviews());
+  }, []);
 
   const recommendedProductIds = useMemo(() => {
     if (!quizResults) return [];
@@ -156,6 +162,16 @@ function App() {
 
   const handleOpenProduct = (product) => setSelectedProductModal(product);
   const handleCloseProduct = () => setSelectedProductModal(null);
+
+  const handleRateProduct = (product, rating) => {
+    const next = addRating(product.id, rating);
+    setAynaReviews(next);
+  };
+
+  const handleReviewProduct = (product, text) => {
+    const next = addReview(product.id, text);
+    setAynaReviews(next);
+  };
 
   return (
     <div className="app-container">
@@ -388,6 +404,7 @@ function App() {
             onUpgrade={togglePremium}
             initialSearch={discoverySearch}
             recommendedProductIds={recommendedProductIds}
+            aynaReviews={aynaReviews}
           />
         )}
         {currentView === 'cycle-tracker' && (
@@ -489,6 +506,9 @@ function App() {
             onAddToEcosystem={toggleMyProduct}
             isInEcosystem={!!myProducts[selectedProductModal.id]}
             userZipCode={userZipCode || undefined}
+            aynaReviews={aynaReviews}
+            onRate={handleRateProduct}
+            onReview={handleReviewProduct}
           />
         )}
       </main>

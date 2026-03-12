@@ -122,6 +122,9 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                                     <div style={{ flexGrow: 1, minWidth: 0 }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.25rem' }}>
                                             <h4 style={{ fontSize: '1rem', fontWeight: '600' }}>{product.name}</h4>
+                                            {product.outOfBusiness && (
+                                                <span style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-surface-soft)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No longer sold</span>
+                                            )}
                                             <span style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>{CATEGORY_LABELS[product.category] || product.category}</span>
                                             {inEcosystem && (
                                                 <span style={{ fontSize: '0.7rem', fontWeight: '600', color: 'var(--color-primary)', background: 'var(--color-secondary-fade)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>
@@ -183,7 +186,12 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                                         </div>
                                         <div style={{ flexGrow: 1 }}>
                                             <span style={{ color: 'var(--color-primary)', fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase' }}>Active Tracking</span>
-                                            <h4 style={{ fontSize: '1.1rem', marginBottom: '0.15rem' }}>{product.name}</h4>
+                                            <h4 style={{ fontSize: '1.1rem', marginBottom: '0.15rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                                {product.name}
+                                                {product.outOfBusiness && (
+                                                    <span style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-surface-soft)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No longer sold</span>
+                                                )}
+                                            </h4>
                                             <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>{product.type}</p>
                                         </div>
                                         <div style={{ textAlign: 'right', flexShrink: 0 }}>
