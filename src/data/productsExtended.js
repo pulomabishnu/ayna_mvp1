@@ -163,33 +163,35 @@ export const EXTENDED_PHYSICAL = [
         tags: ['cramps', 'discomfort', 'bloating'],
         price: '$25 for 60 gummies',
         userRating: 4.4,
+        ratingNote: 'Evidence for key ingredients is mixed. Chasteberry has the most support but studies show high heterogeneity and bias. Cochrane found B6 evidence weak. Dong Quai has no PMS-specific trials. Amazon reviews may be partially incentivized (Fakespot grade B).',
+        incentivizedReviewSites: [{ site: 'Amazon', source: 'Fakespot grade B' }],
         whereToBuy: ['Target', 'Amazon', 'Flo.com'],
         image: 'https://m.media-amazon.com/images/I/81RReWPD2+L.jpg',
         summary: 'Gummy vitamins formulated to relieve PMS symptoms like bloating, cramps, and mood swings.',
-        safety: { fdaStatus: 'Supplement', materials: 'Vegan, Non-GMO', recalls: 'No recalls.', allergens: 'Gluten-free', sideEffects: 'Some users report mild stomach upset or acne flare-ups.' },
+        safety: { fdaStatus: 'Supplement', materials: 'Vegan, Non-GMO', recalls: 'No recalls.', allergens: 'Gluten-free', sideEffects: 'Some users report mild stomach upset or acne flare-ups.', opinionAlerts: 'Evidence is mixed. Chasteberry has the most support but studies have high heterogeneity and bias; Cochrane found B6 evidence weak; Dong Quai has no PMS-specific trials. User experiences vary widely—some report benefit, others report no effect. Amazon reviews may be partially incentivized.' },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'Dr. Kiarra King, OB-GYN. Not brand-affiliated.',
-        doctorOpinion: '"The ingredients—especially Chasteberry and Vitamin B6—have clinical backing for PMS symptom reduction, including hormonal bloating." — Dr. Kiarra King',
+        doctorOpinion: '"Chasteberry has the most evidence among the ingredients, though study quality varies. Vitamin B6 has weaker support. Dong Quai lacks PMS-specific trials. Individual response varies—some women report improvement, others see no benefit." — Dr. Kiarra King',
         communityReview: '"My period bloating is literally gone. I used to go up a pants size and now I don\'t." — Amazon review',
         ingredients: 'Chasteberry extract, Dong Quai, Vitamin B6, Lemon Balm.',
-        effectiveness: 'Clinically-studied herbal ingredients known to reduce water retention and regulate hormones.',
+        effectiveness: 'Chasteberry has moderate evidence for PMS; studies show high heterogeneity and bias. Vitamin B6: Cochrane found evidence weak. Dong Quai: no PMS-specific trials. Lemon balm: one small RCT. Not enough evidence to confidently support the full blend.',
         verificationLinks: {
             doctor: {
-                aiSummary: "Chasteberry (Vitex agnus-castus) and Vitamin B6 have moderate evidence for PMS symptom relief in clinical trials. OB-GYNs note individual response varies; some women report significant improvement in bloating and mood, while others see minimal effect.",
+                aiSummary: "Chasteberry has the most evidence for PMS among the ingredients, but meta-analyses note high heterogeneity, publication bias, and risk of bias in trials—definitive conclusions are limited. Vitamin B6: Cochrane found poor-quality studies; evidence does not strongly support routine use. Dong Quai: no PMS-specific clinical trials; traditional use only. Individual response varies widely.",
                 links: [
-                    { url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3610640/', text: 'Vitex agnus-castus for PMS', summary: 'Systematic review of chasteberry efficacy for premenstrual syndrome.', justification: 'PubMed peer-reviewed research.' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/28237870/', text: 'Vitex agnus-castus for PMS (meta-analysis)', summary: 'Meta-analysis of chasteberry for PMS; notes high heterogeneity and need for higher-quality trials.', justification: 'PubMed peer-reviewed.' },
                     { url: 'https://www.acog.org/womens-health/faqs/premenstrual-syndrome', text: 'ACOG: Premenstrual Syndrome', summary: 'Clinical guidance on PMS management and evidence-based approaches.', justification: 'ACOG is the leading OB-GYN professional society.' }
                 ]
             },
             scientific: {
-                aiSummary: "Meta-analyses show chasteberry and B6 can reduce PMS symptoms including bloating and breast tenderness. Effect sizes are modest; not all women respond.",
+                aiSummary: "Chasteberry meta-analyses show positive effects but with high heterogeneity and publication bias—effect sizes may be overstated. Vitamin B6: Cochrane concluded poor-quality studies suggest benefit; evidence is weak. Dong Quai: no PMS trials. Lemon balm: one small RCT. Overall, insufficient high-quality evidence to confidently support this specific product blend.",
                 links: [
-                    { url: 'https://pubmed.ncbi.nlm.nih.gov/19585478/', text: 'Vitamin B6 for PMS', summary: 'Cochrane review of pyridoxine for premenstrual syndrome.', justification: 'Cochrane provides high-quality systematic reviews.' },
-                    { url: 'https://pubmed.ncbi.nlm.nih.gov/28276607/', text: 'Herbal supplements for PMS', summary: 'Review of herbal interventions for menstrual symptoms.', justification: 'PubMed peer-reviewed literature.' }
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC27878/', text: 'Vitamin B6 for PMS (BMJ review)', summary: 'Systematic review; mixed results; evidence quality concerns.', justification: 'BMJ peer-reviewed.' },
+                    { url: 'https://www.ncbi.nlm.nih.gov/books/NBK72353/', text: 'Dietary supplements for PMS', summary: 'Systematic review of supplements; mixed or insufficient evidence for many herbs.', justification: 'NCBI/NIH.' }
                 ]
             },
             community: {
-                aiSummary: "User experiences are mixed. Many report reduced bloating and mood improvement; others find no benefit. Commonly discussed on Reddit r/PMDD and r/periods.",
+                aiSummary: "User experiences are mixed. Many report reduced bloating and mood improvement; others find no benefit or call it a 'sugar pill.' Commonly discussed on Reddit r/PMDD and r/periods. Amazon reviews may be partially incentivized (Fakespot grade B).",
                 links: [
                     { platform: 'reddit', url: 'https://www.reddit.com/r/periods/search/?q=flo+gummies&restrict_sr=1', text: 'Reddit r/periods — Flo', summary: 'Community discussions on Flo gummies and PMS supplements.' },
                     { platform: 'reddit', url: 'https://www.reddit.com/r/PMDD/search/?q=chasteberry&restrict_sr=1', text: 'Reddit r/PMDD — Chasteberry', summary: 'Discussions on chasteberry and PMS/PMDD symptom relief.' }
