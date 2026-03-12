@@ -4,6 +4,179 @@ import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
 const SYMPTOMS = ['Cramps', 'Bloating', 'Back Pain', 'Headache', 'Acne', 'Fatigue', 'Mood Swings', 'Breast Tenderness', 'Heaviness'];
 const FLOW_LEVELS = ['Spotting', 'Light', 'Medium', 'Heavy', 'Super Heavy'];
 
+// --- Cycle phase prediction (aligned with Clue, Ava, Ovia, research) ---
+// Phases: Menstruation → Follicular → Ovulation/Fertile → Luteal.
+// Luteal phase is relatively consistent per person (10–17 days; ~14 typical). Ovulation ≈ cycleLength - luteal.
+// Fertile window: ~5–6 days (sperm survival + egg life); we use 5 days centered on estimated ovulation.
+// Refs: npj Digital Medicine (cycle characteristics), Ava/Clue/Ovia algorithms (recent cycles, calendar method).
+const DEFAULT_CYCLE_LENGTH = 28;
+const DEFAULT_PERIOD_LENGTH = 5;
+const LUTEAL_DAYS = 14; // 10–17 typical; consistent per person (npj 2019)
+const FERTILE_WINDOW_DAYS = 5; // 5-day fertile window (ovulDay ± 2) like major trackers
+const MIN_GAP_DAYS_NEW_PERIOD = 3; // gap of 3+ days without flow = new period
+const RECENT_CYCLES_FOR_PREDICTION = 6; // use last N cycles for median (Clue/Ovia style)
+
+function parsePeriodsFromFlow(cycleData) {
+    const withFlow = cycleData
+        .filter(e => e.flow)
+        .map(e => ({ date: e.date, ts: new Date(e.date).getTime() }))
+        .sort((a, b) => a.ts - b.ts);
+    if (withFlow.length === 0) return [];
+
+    const periods = [];
+    let start = withFlow[0].date;
+    let prev = withFlow[0].date;
+
+    for (let i = 1; i < withFlow.length; i++) {
+        const d = withFlow[i].date;
+        const prevDate = new Date(prev);
+        const currDate = new Date(d);
+        const diffDays = Math.round((currDate - prevDate) / (24 * 60 * 60 * 1000));
+        if (diffDays > MIN_GAP_DAYS_NEW_PERIOD) {
+            periods.push({ start, end: prev });
+            start = d;
+        }
+        prev = d;
+    }
+    periods.push({ start, end: prev });
+    return periods;
+}
+
+function getCycleLengths(periods) {
+    if (periods.length < 2) return [];
+    const lengths = [];
+    for (let i = 0; i < periods.length - 1; i++) {
+        const a = new Date(periods[i].start);
+        const b = new Date(periods[i + 1].start);
+        lengths.push(Math.round((b - a) / (24 * 60 * 60 * 1000)));
+    }
+    return lengths;
+}
+
+function getPeriodLengths(periods) {
+    return periods.map(p => {
+        const a = new Date(p.start);
+        const b = new Date(p.end);
+        return Math.round((b - a) / (24 * 60 * 60 * 1000)) + 1;
+    });
+}
+
+function median(arr) {
+    if (arr.length === 0) return null;
+    const s = [...arr].sort((a, b) => a - b);
+    const m = Math.floor(s.length / 2);
+    return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+}
+
+function getPhaseForDay(cycleDay, periodLength, cycleLength) {
+    // Ovulation day = cycle length - luteal phase (fixed ~14 days; most variation is follicular).
+    const ovulDay = Math.max(periodLength + 1, cycleLength - LUTEAL_DAYS);
+    const fertileStart = Math.max(periodLength + 1, ovulDay - Math.floor(FERTILE_WINDOW_DAYS / 2));
+    const fertileEnd = Math.min(cycleLength, ovulDay + Math.floor(FERTILE_WINDOW_DAYS / 2));
+    if (cycleDay <= 0) return null;
+    if (cycleDay <= periodLength) return { phase: 'menstruation', label: 'Menstruation', cycleDay };
+    if (cycleDay < fertileStart) return { phase: 'follicular', label: 'Follicular', cycleDay };
+    if (cycleDay <= fertileEnd) return { phase: 'ovulation', label: 'Ovulation / Fertile', cycleDay, ovulDay };
+    if (cycleDay <= cycleLength) return { phase: 'luteal', label: 'Luteal', cycleDay };
+    return { phase: 'luteal', label: 'Luteal (expected period)', cycleDay };
+}
+
+function computeCyclePhaseState(cycleData) {
+    const periods = parsePeriodsFromFlow(cycleData);
+    const cycleLengths = getCycleLengths(periods);
+    const periodLengths = getPeriodLengths(periods);
+    // Use recent cycles only for prediction (like Clue/Ovia) so predictions adapt to recent patterns.
+    const recentCycleLengths = cycleLengths.length > RECENT_CYCLES_FOR_PREDICTION
+        ? cycleLengths.slice(-RECENT_CYCLES_FOR_PREDICTION)
+        : cycleLengths;
+    const avgCycle = recentCycleLengths.length > 0
+        ? Math.round(median(recentCycleLengths))
+        : DEFAULT_CYCLE_LENGTH;
+    const avgPeriod = periodLengths.length > 0
+        ? Math.round(median(periodLengths))
+        : DEFAULT_PERIOD_LENGTH;
+    const lastPeriod = periods[periods.length - 1];
+    const lastStart = lastPeriod ? new Date(lastPeriod.start) : null;
+
+    // Next period prediction: last start + avg cycle length
+    let nextStart = null;
+    let nextEnd = null;
+    if (lastStart) {
+        nextStart = new Date(lastStart);
+        nextStart.setDate(nextStart.getDate() + avgCycle);
+        nextEnd = new Date(nextStart);
+        nextEnd.setDate(nextEnd.getDate() + avgPeriod - 1);
+    }
+
+    // Per-cycle length for historical accuracy: cycle i has length to period i+1, or avgCycle for last.
+    const getCycleLengthForPeriodIndex = (periodIndex) => {
+        if (periodIndex < 0 || periodIndex >= periods.length) return avgCycle;
+        if (periodIndex < periods.length - 1) {
+            const a = new Date(periods[periodIndex].start);
+            const b = new Date(periods[periodIndex + 1].start);
+            return Math.round((b - a) / (24 * 60 * 60 * 1000));
+        }
+        return avgCycle;
+    };
+
+    const getPhaseForDate = (dateStr) => {
+        if (!lastStart || periods.length === 0) return null;
+        const d = new Date(dateStr);
+        d.setHours(0, 0, 0, 0);
+        const nextStartNorm = nextStart ? new Date(nextStart) : null;
+        if (nextStartNorm) nextStartNorm.setHours(0, 0, 0, 0);
+
+        let cycleStart;
+        let periodLength;
+        let cycleLength;
+
+        const lastStartNorm = new Date(lastStart);
+        lastStartNorm.setHours(0, 0, 0, 0);
+
+        if (nextStartNorm && d >= nextStartNorm) {
+            // Date is on or after predicted next period: treat as new cycle (roll forward like Avia/Clue).
+            cycleStart = new Date(nextStartNorm);
+            periodLength = avgPeriod;
+            cycleLength = avgCycle;
+        } else if (d >= lastStartNorm) {
+            // Current cycle (from last period start to before next predicted).
+            cycleStart = new Date(lastStartNorm);
+            periodLength = avgPeriod;
+            cycleLength = avgCycle;
+        } else {
+            // Historical: find which period this date falls in.
+            let periodIndex = -1;
+            for (let i = periods.length - 1; i >= 0; i--) {
+                const pStart = new Date(periods[i].start);
+                pStart.setHours(0, 0, 0, 0);
+                if (d >= pStart) {
+                    periodIndex = i;
+                    break;
+                }
+            }
+            if (periodIndex < 0) return null;
+            cycleStart = new Date(periods[periodIndex].start);
+            cycleStart.setHours(0, 0, 0, 0);
+            const periodLenArr = getPeriodLengths(periods);
+            periodLength = periodIndex < periodLenArr.length ? periodLenArr[periodIndex] : avgPeriod;
+            cycleLength = getCycleLengthForPeriodIndex(periodIndex);
+        }
+
+        const cycleDay = Math.round((d - cycleStart) / (24 * 60 * 60 * 1000)) + 1;
+        return getPhaseForDay(cycleDay, periodLength, cycleLength);
+    };
+
+    return {
+        periods,
+        avgCycleLength: avgCycle,
+        avgPeriodLength: avgPeriod,
+        lastPeriodStart: lastStart,
+        nextStart,
+        nextEnd,
+        getPhaseForDate
+    };
+}
+
 export default function CycleTracker({ cycleData, setCycleData, myProducts, trackedProducts, onToggleMyProduct, onToggleTrackedProduct, omittedProducts, toggleOmitProduct, onOpenProduct }) {
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
@@ -54,24 +227,16 @@ export default function CycleTracker({ cycleData, setCycleData, myProducts, trac
         setSelectedSymptoms(next);
     };
 
-    // Calendar & Prediction Logic
-    const predictions = useMemo(() => {
-        const flowDays = cycleData.filter(e => e.flow).sort((a, b) => new Date(b.date) - new Date(a.date));
+    // Calendar & prediction: use period-based cycle length + phase logic (like Clue/Avia/Ovia)
+    const cycleState = useMemo(() => computeCyclePhaseState(cycleData), [cycleData]);
+    const predictions = useMemo(() => ({
+        nextStart: cycleState.nextStart,
+        nextEnd: cycleState.nextEnd
+    }), [cycleState.nextStart, cycleState.nextEnd]);
 
-        if (flowDays.length === 0) return { nextStart: null, nextEnd: null };
-
-        const lastFlowDate = new Date(flowDays[0].date);
-        const nextStart = new Date(lastFlowDate);
-        nextStart.setDate(lastFlowDate.getDate() + 28);
-
-        const nextEnd = new Date(nextStart);
-        nextEnd.setDate(nextStart.getDate() + 4);
-
-        return {
-            nextStart,
-            nextEnd
-        };
-    }, [cycleData]);
+    // Current phase for selected date (and today)
+    const phaseForSelected = cycleState.getPhaseForDate(selectedDate);
+    const phaseForToday = cycleState.getPhaseForDate(new Date().toISOString().split('T')[0]);
 
     const getDaysInMonth = (year, month) => new Date(year, month + 1, 0).getDate();
     const getFirstDayOfMonth = (year, month) => new Date(year, month, 1).getDay();
@@ -177,9 +342,12 @@ export default function CycleTracker({ cycleData, setCycleData, myProducts, trac
             totalEntries: cycleData.length,
             flowDays,
             topSymptom,
-            commonFlow
+            commonFlow,
+            avgCycleLength: cycleState.avgCycleLength,
+            avgPeriodLength: cycleState.avgPeriodLength,
+            periodCount: cycleState.periods.length
         };
-    }, [cycleData]);
+    }, [cycleData, cycleState.avgCycleLength, cycleState.avgPeriodLength, cycleState.periods.length]);
 
 
     const calendarDays = generateCalendarDays();
@@ -194,26 +362,47 @@ export default function CycleTracker({ cycleData, setCycleData, myProducts, trac
                 <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem', color: 'var(--color-text-main)' }}>Cycle Tracker</h2>
 
                 {predictions.nextStart ? (
-                    <div style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-                        background: 'var(--color-surface-soft)',
-                        padding: '1rem 2rem',
-                        borderRadius: 'var(--radius-pill)',
-                        boxShadow: 'var(--shadow-sm)',
-                        border: '1px solid var(--color-border)',
-                        color: 'var(--color-text-main)'
-                    }}>
-                        <span style={{ fontSize: '1.2rem' }}>🔮</span>
-                        <span style={{ fontWeight: '500' }}>Predicted next cycle:</span>
-                        <strong style={{ color: 'var(--color-primary)', fontSize: '1.1rem' }}>
-                            {predictions.nextStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                        </strong>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}>
+                        <div style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.5rem',
+                            background: 'var(--color-surface-soft)',
+                            padding: '1rem 2rem',
+                            borderRadius: 'var(--radius-pill)',
+                            boxShadow: 'var(--shadow-sm)',
+                            border: '1px solid var(--color-border)',
+                            color: 'var(--color-text-main)'
+                        }}>
+                            <span style={{ fontSize: '1.2rem' }}>🔮</span>
+                            <span style={{ fontWeight: '500' }}>Predicted next cycle:</span>
+                            <strong style={{ color: 'var(--color-primary)', fontSize: '1.1rem' }}>
+                                {predictions.nextStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                            </strong>
+                        </div>
+                        {phaseForToday && (
+                            <div style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.5rem',
+                                padding: '0.5rem 1.25rem',
+                                background: 'var(--color-secondary-fade)',
+                                borderRadius: 'var(--radius-pill)',
+                                fontSize: '0.95rem',
+                                color: 'var(--color-text-main)'
+                            }}>
+                                <span style={{ opacity: 0.9 }}>Today:</span>
+                                <strong style={{ color: 'var(--color-primary)' }}>{phaseForToday.label}</strong>
+                                <span style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>
+                                    (Day {phaseForToday.cycleDay}
+                                    {cycleState.avgCycleLength && ` of ~${cycleState.avgCycleLength}`})
+                                </span>
+                            </div>
+                        )}
                     </div>
                 ) : (
                     <p style={{ color: 'var(--color-text-muted)', fontSize: '1.05rem', maxWidth: '600px', margin: '0 auto' }}>
-                        Log your flow to activate smart predictions.
+                        Log your flow to activate smart predictions and phase tracking (Menstruation → Follicular → Ovulation → Luteal).
                     </p>
                 )}
             </div>
@@ -252,11 +441,20 @@ export default function CycleTracker({ cycleData, setCycleData, myProducts, trac
                             const hasFlow = !!(entry && entry.flow);
                             const hasSymptoms = !!(entry && entry.symptoms && entry.symptoms.length > 0);
                             const isPredicted = isDateInPredictedWindow(dateStr);
+                            const phaseInfo = cycleState.getPhaseForDate(dateStr);
+                            const phaseColors = {
+                                menstruation: 'rgba(180, 80, 100, 0.2)',
+                                follicular: 'rgba(100, 140, 200, 0.15)',
+                                ovulation: 'rgba(220, 160, 80, 0.2)',
+                                luteal: 'rgba(120, 160, 120, 0.15)'
+                            };
+                            const phaseBg = phaseInfo && !hasFlow && !isSelected ? phaseColors[phaseInfo.phase] || 'transparent' : undefined;
 
                             return (
                                 <div
                                     key={dateStr}
                                     onClick={() => setSelectedDate(dateStr)}
+                                    title={phaseInfo ? `${phaseInfo.label} (Day ${phaseInfo.cycleDay})` : undefined}
                                     style={{
                                         aspectRatio: '1',
                                         display: 'flex',
@@ -269,7 +467,7 @@ export default function CycleTracker({ cycleData, setCycleData, myProducts, trac
                                         fontWeight: '500',
                                         fontSize: '0.95rem',
                                         transition: 'all 0.2s',
-                                        background: isSelected ? 'var(--color-primary)' : hasFlow ? 'var(--color-secondary)' : isPredicted ? 'var(--color-secondary-fade)' : 'transparent',
+                                        background: isSelected ? 'var(--color-primary)' : hasFlow ? 'var(--color-secondary)' : isPredicted ? 'var(--color-secondary-fade)' : phaseBg || 'transparent',
                                         color: isSelected ? 'white' : hasFlow ? 'var(--color-primary-hover)' : 'var(--color-text-main)',
                                         border: isPredicted && !isSelected && !hasFlow ? '1px dashed var(--color-primary)' : '1px solid transparent',
                                         boxShadow: isSelected ? 'var(--shadow-md)' : 'none',
@@ -286,6 +484,14 @@ export default function CycleTracker({ cycleData, setCycleData, myProducts, trac
                             );
                         })}
                     </div>
+                    {cycleState.periods.length > 0 && (
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem 1rem', marginTop: '1rem', fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
+                            <span><span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: 2, background: 'rgba(180,80,100,0.4)', verticalAlign: 'middle', marginRight: 4 }} /> Menstruation</span>
+                            <span><span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: 2, background: 'rgba(100,140,200,0.4)', verticalAlign: 'middle', marginRight: 4 }} /> Follicular</span>
+                            <span><span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: 2, background: 'rgba(220,160,80,0.4)', verticalAlign: 'middle', marginRight: 4 }} /> Ovulation / Fertile</span>
+                            <span><span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: 2, background: 'rgba(120,160,120,0.4)', verticalAlign: 'middle', marginRight: 4 }} /> Luteal</span>
+                        </div>
+                    )}
                 </div>
 
                 {/* Right Panel: Tabs for Logger & Recommendations */}
@@ -340,10 +546,16 @@ export default function CycleTracker({ cycleData, setCycleData, myProducts, trac
                     <div style={{ padding: '2rem' }}>
                         {activeTab === 'log' && (
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', animation: 'fadeInUp 0.3s ease' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
                                     <h3 style={{ fontSize: '1.3rem', color: 'var(--color-text-main)' }}>
                                         {new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', timeZone: 'UTC' })}
                                     </h3>
+                                    {phaseForSelected && (
+                                        <div style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>
+                                            <span style={{ color: 'var(--color-primary)', fontWeight: '600' }}>{phaseForSelected.label}</span>
+                                            {' · '}Cycle day {phaseForSelected.cycleDay}
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div>
@@ -464,7 +676,12 @@ export default function CycleTracker({ cycleData, setCycleData, myProducts, trac
                                                                             <span style={{ color: 'var(--color-primary)', fontSize: '0.65rem', fontWeight: '600', textTransform: 'uppercase' }}>
                                                                                 {categoryLabel}
                                                                             </span>
-                                                                            <h4 style={{ fontSize: '0.95rem', fontWeight: '600', marginBottom: '0.2rem' }}>{product.name}</h4>
+                                                                            <h4 style={{ fontSize: '0.95rem', fontWeight: '600', marginBottom: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                                                                {product.name}
+                                                                                {product.outOfBusiness && (
+                                                                                    <span style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-surface-soft)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No longer sold</span>
+                                                                                )}
+                                                                            </h4>
                                                                             <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.4rem' }}>
                                                                                 {inEcosystem ? (
                                                                                     <span style={{ fontSize: '0.7rem', fontWeight: 'bold', color: 'var(--color-primary)', background: 'var(--color-secondary-fade)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>✅ In Ecosystem</span>
@@ -522,6 +739,22 @@ export default function CycleTracker({ cycleData, setCycleData, myProducts, trac
                                             <div style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', fontWeight: '500', textTransform: 'uppercase' }}>Total Flow Days</div>
                                             <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--color-primary)', marginTop: '0.2rem' }}>{insights.flowDays} Days</div>
                                         </div>
+                                        {insights.periodCount > 0 && insights.avgCycleLength != null && (
+                                            <div style={{ background: 'var(--color-surface-soft)', padding: '1.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', textAlign: 'center', gridColumn: '1 / -1' }}>
+                                                <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📊</div>
+                                                <div style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', fontWeight: '500', textTransform: 'uppercase' }}>Phase prediction</div>
+                                                <div style={{ fontSize: '0.95rem', color: 'var(--color-text-main)', marginTop: '0.5rem' }}>
+                                                    Average cycle: <strong style={{ color: 'var(--color-primary)' }}>{insights.avgCycleLength} days</strong>
+                                                    {insights.avgPeriodLength != null && (
+                                                        <> · Average period: <strong style={{ color: 'var(--color-primary)' }}>{insights.avgPeriodLength} days</strong></>
+                                                    )}
+                                                    <> · Based on <strong>{insights.periodCount} period{insights.periodCount !== 1 ? 's' : ''}</strong></>
+                                                </div>
+                                                <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginTop: '0.5rem', marginBottom: 0 }}>
+                                                    Ovulation window is estimated at ~day {insights.avgCycleLength - 14} (±2 days). We use your last 6 cycles and a 5-day fertile window (like Clue/Avia). More data improves accuracy.
+                                                </p>
+                                            </div>
+                                        )}
                                     </div>
                                 ) : (
                                     <div style={{ padding: '2rem 1rem', textAlign: 'center', background: 'var(--color-bg)', borderRadius: 'var(--radius-md)', border: '1px dashed var(--color-border)' }}>
