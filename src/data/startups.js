@@ -581,20 +581,6 @@ export const STARTUPS = [
     },
     // ─── Pelvic health & diagnostics ──────────────────────
     {
-        id: 's-priya',
-        name: 'Priya',
-        tagline: 'Bladder health and UTI prevention',
-        description: 'Digital clinic and products for bladder health. UTI prevention, pelvic floor support, and education. At-home testing and clinician-backed plans.',
-        tags: ['uti', 'pelvic-floor', 'discomfort'],
-        healthFunctions: ['uti-prevention', 'vaginal-health'],
-        category: 'pelvic-health',
-        stage: 'Available in US',
-        productReleased: true,
-        spotsLeft: 350,
-        url: 'https://priya.health',
-        image: '/ayna_placeholder.png'
-    },
-    {
         id: 's-joylux',
         name: 'Joylux',
         tagline: 'Vaginal health and wellness devices',
