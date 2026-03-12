@@ -189,6 +189,27 @@ export const MVP_PHYSICAL = [
     effectiveness: 'Clinically proven to reduce menstrual blood loss.',
     badges: ['Prescription', 'Heavy Bleeding']
   },
+  // ─── HORMONAL BLOATING ─────────────────────────────────────
+  {
+    id: 'p-pink-stork-bloat',
+    name: 'Pink Stork Bloat Support',
+    category: 'supplement',
+    type: 'physical',
+    internal: false,
+    healthFunctions: ['supplement'],
+    tags: ['bloating', 'discomfort', 'organic'],
+    price: '$22 for 30 capsules',
+    whereToBuy: ['Amazon', 'PinkStork.com', 'Target'],
+    image: '/ayna_placeholder.png',
+    summary: 'Herbal blend with fennel, dandelion, and ginger to support digestion and ease cycle-related bloating and water retention.',
+    safety: { fdaStatus: 'Dietary supplement', materials: 'Fennel, dandelion root, ginger, organic ingredients', recalls: 'No recalls.', allergens: 'Vegan, gluten-free' },
+    clinicianOpinionSource: 'independent',
+    doctorOpinion: '"Herbal digestive supports like fennel and ginger have traditional use for bloating; discuss with your clinician if you have liver conditions or take blood thinners." — OB-GYN',
+    communityReview: '"Helps with my period bloat so I don\'t feel so puffy." — Amazon review',
+    ingredients: 'Fennel seed, dandelion root, ginger root, lemon balm.',
+    effectiveness: 'Supports healthy digestion and may reduce water retention around your cycle.',
+    badges: ['Hormonal Bloating', 'Organic Herbs']
+  },
   // ─── PELVIC FLOOR ────────────────────────────────────────
   {
     id: 'p-intimina-kegel',
@@ -270,6 +291,27 @@ export const MVP_PHYSICAL = [
     ingredients: 'Black cohosh extract (standardized).',
     effectiveness: 'Modest benefit for hot flashes in some women.',
     badges: ['Herbal', 'Menopause']
+  },
+  // ─── ENERGY / STRENGTH (women's health) ──────────────────
+  {
+    id: 'p-creatine-womens',
+    name: 'Creatine Monohydrate (Women\'s Health)',
+    category: 'supplement',
+    type: 'physical',
+    internal: false,
+    healthFunctions: ['supplement', 'fitness-cycle'],
+    tags: ['menopause', 'energy', 'discomfort', 'cost'],
+    price: '$15–25 for 300–500g',
+    whereToBuy: ['Amazon', 'iHerb', 'NOW Foods', 'Thorne', 'CVS'],
+    image: '/ayna_placeholder.png',
+    summary: 'Creatine supports muscle strength, cognitive function, and energy. Evidence-based for perimenopause: helps preserve lean mass, may improve brain fog and sleep when combined with resistance training.',
+    safety: { fdaStatus: 'Dietary supplement', materials: 'Creatine monohydrate', recalls: 'No recalls.', allergens: 'Vegan options available' },
+    clinicianOpinionSource: 'independent',
+    doctorOpinion: '"Creatine is well-studied and safe. For perimenopausal women it can help offset muscle loss and support cognition when used with exercise." — NAMS / sports medicine consensus',
+    communityReview: '"Started taking creatine for perimenopause muscle loss. My energy and brain fog improved." — Reddit r/Menopause',
+    ingredients: 'Creatine monohydrate (typically 3–5 g daily).',
+    effectiveness: 'Strong evidence for strength and lean mass; growing evidence for cognitive and sleep benefits in menopausal women.',
+    badges: ['Evidence-Based', 'Perimenopause Support']
   }
 ];
 
@@ -315,5 +357,26 @@ export const MVP_DIGITAL = [
     communityReview: '"Simple and effective. My PT said to use this at home." — App Store',
     effectiveness: 'Structured programs for pelvic floor strength.',
     badges: ['Pelvic Health', 'PT Recommended']
+  },
+  {
+    id: 'd-hers',
+    name: 'Hers',
+    category: 'telehealth',
+    type: 'digital',
+    internal: false,
+    healthFunctions: ['mental-health', 'telehealth'],
+    tags: ['discomfort', 'privacy', 'mental-health'],
+    price: 'Subscription + per-visit; varies by treatment',
+    whereToBuy: ['forhers.com'],
+    platform: 'Web, iOS, Android',
+    image: '/ayna_placeholder.png',
+    summary: 'Ro\'s brand for women. Telehealth for anxiety, depression, and skin. Prescriptions and products delivered with ongoing support.',
+    safety: { fdaStatus: 'Prescription via licensed clinicians', materials: 'N/A', recalls: 'N/A', allergens: 'N/A' },
+    privacy: { dataStorage: 'US', sellsData: 'Check policy', hipaa: 'HIPAA-compliant for Rx', keyPolicy: 'Telehealth and prescription service' },
+    clinicianOpinionSource: 'independent',
+    doctorOpinion: '"Telehealth improves access to mental health and dermatology. Same clinical standards as in-person care." — ACOG',
+    communityReview: '"Got my anxiety medication without leaving home. Easy and discrete." — Reddit',
+    effectiveness: 'Licensed clinicians; prescriptions same as in-person.',
+    badges: ['Telehealth', 'Mental Health']
   }
 ];

@@ -13,7 +13,7 @@ import OmittedProducts from './components/OmittedProducts';
 import Comparison from './components/Comparison';
 import Recalls from './components/Recalls';
 import DoctorPrep from './components/DoctorPrep';
-import { CATEGORY_LABELS, getRecommendations } from './data/products';
+import { CATEGORY_LABELS, getRecommendations, createCustomEcosystemProducts } from './data/products';
 import AynaDeeptech from './components/AynaDeeptech';
 import Screenings from './components/Screenings';
 import { useScrollPosition } from './hooks/useScrollPosition';
@@ -89,6 +89,10 @@ function App() {
 
   const handleQuizComplete = (results) => {
     setQuizResults(results);
+    const customProducts = createCustomEcosystemProducts(results);
+    if (Object.keys(customProducts).length > 0) {
+      setMyProducts(prev => ({ ...prev, ...customProducts }));
+    }
     setCurrentView('recommendations');
   };
 
@@ -430,7 +434,7 @@ function App() {
           />
         )}
         {currentView === 'recalls' && (
-          <Recalls trackedProducts={trackedProducts} isPremium={isPremium} onUpgrade={togglePremium} />
+          <Recalls trackedProducts={trackedProducts} myProducts={myProducts} isPremium={isPremium} onUpgrade={togglePremium} />
         )}
         {currentView === 'doctor-prep' && isPremium && (
           <DoctorPrep

@@ -20,8 +20,9 @@ const MOCK_RECALLS = [
     // Additional recalls can be layered in here as needed.
 ];
 
-export default function Recalls({ trackedProducts, isPremium, onUpgrade }) {
+export default function Recalls({ trackedProducts, myProducts = {}, isPremium, onUpgrade }) {
     const trackedList = Object.values(trackedProducts);
+    const ecosystemList = Object.values(myProducts);
     const [searchQuery, setSearchQuery] = useState('');
 
     const filteredRecalls = MOCK_RECALLS.filter(r =>
@@ -84,6 +85,9 @@ export default function Recalls({ trackedProducts, isPremium, onUpgrade }) {
                             Your Monitored Products
                             {!isPremium && <span style={{ fontSize: '1rem' }}>🔒</span>}
                         </h3>
+                        <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1rem' }}>
+                            By default, everything in your Ecosystem is monitored for safety recalls and alerts.
+                        </p>
 
                         {!isPremium ? (
                             <div style={{
@@ -100,16 +104,16 @@ export default function Recalls({ trackedProducts, isPremium, onUpgrade }) {
                                     Activate Monitoring
                                 </button>
                             </div>
-                        ) : trackedList.length === 0 ? (
-                            <p style={{ color: 'var(--color-text-muted)', fontStyle: 'italic' }}>You aren't monitoring any products for safety recalls yet.</p>
+                        ) : ecosystemList.length === 0 ? (
+                            <p style={{ color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Add products to your Ecosystem to monitor them for safety recalls.</p>
                         ) : (
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                                {trackedList.map(p => (
+                                {ecosystemList.map(p => (
                                     <div key={p.id} style={{ display: 'flex', gap: '1rem', alignItems: 'center', padding: '1rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', background: 'var(--color-surface)' }}>
                                         <img src={p.image} alt={p.name} style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '50%' }} />
                                         <div>
                                             <h4 style={{ fontSize: '0.9rem', fontWeight: '600' }}>{p.name}</h4>
-                                            <span style={{ fontSize: '0.7rem', color: '#10B981', fontWeight: '700' }}>🟢 ACTIVE MONITORING</span>
+                                            <span style={{ fontSize: '0.7rem', color: '#10B981', fontWeight: '700' }}>🟢 MONITORED</span>
                                         </div>
                                     </div>
                                 ))}

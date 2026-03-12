@@ -594,6 +594,72 @@ export const ALL_PRODUCTS = [
     ...FILLER_DIGITAL
 ];
 
+/** Placeholder image for custom ecosystem items (brands, meds, supplements). */
+const CUSTOM_PRODUCT_IMAGE = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80"><rect fill="%23f3f4f6" width="80" height="80" rx="8"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%239ca3af" font-size="10" font-family="sans-serif">?</text></svg>');
+
+/**
+ * Create custom ecosystem product objects from quiz "current products" (brands, medications, supplements).
+ * Adds them to the ecosystem and they are monitored for safety by default.
+ * @param {{ currentProductBrands?: string[], currentMedications?: string[], currentSupplements?: string[] }} quizResults
+ * @returns {{ [id: string]: object }} Map of id -> product for merging into myProducts
+ */
+export function createCustomEcosystemProducts(quizResults) {
+    const out = {};
+    if (!quizResults) return out;
+
+    const slug = (s) => s.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() || 'item';
+
+    (quizResults.currentProductBrands || []).forEach((name, i) => {
+        const id = `custom-brand-${slug(name)}-${i}`;
+        out[id] = {
+            id,
+            name: name.trim(),
+            category: 'custom-brand',
+            type: 'physical',
+            healthFunctions: ['menstrual-collection'],
+            image: CUSTOM_PRODUCT_IMAGE,
+            summary: `Brand/product you use — added from your profile. Monitored for safety.`,
+            safety: { fdaStatus: 'N/A', materials: 'User-reported brand', recalls: 'We monitor recalls and alerts for this item.', allergens: 'N/A', sideEffects: 'Discuss with your provider if concerned.' },
+            isCustom: true,
+            monitoredByDefault: true,
+        };
+    });
+
+    (quizResults.currentMedications || []).forEach((name, i) => {
+        const id = `custom-medication-${slug(name)}-${i}`;
+        out[id] = {
+            id,
+            name: name.trim(),
+            category: 'medication',
+            type: 'physical',
+            healthFunctions: ['supplement'],
+            image: CUSTOM_PRODUCT_IMAGE,
+            summary: `Medication you use — added from your profile. Monitored for safety and interactions.`,
+            safety: { fdaStatus: 'Prescription or OTC', materials: 'User-reported medication', recalls: 'We monitor FDA and safety alerts.', allergens: 'N/A', sideEffects: 'Always discuss interactions with your doctor or pharmacist.' },
+            isCustom: true,
+            monitoredByDefault: true,
+        };
+    });
+
+    (quizResults.currentSupplements || []).forEach((name, i) => {
+        const id = `custom-supplement-${slug(name)}-${i}`;
+        out[id] = {
+            id,
+            name: name.trim(),
+            category: 'supplement',
+            type: 'physical',
+            healthFunctions: ['supplement'],
+            image: CUSTOM_PRODUCT_IMAGE,
+            summary: `Supplement you use — added from your profile. Monitored for safety and interactions.`,
+            safety: { fdaStatus: 'Dietary supplement', materials: 'User-reported supplement', recalls: 'We monitor FDA and safety alerts.', allergens: 'N/A', sideEffects: 'Discuss interactions with your provider.' },
+            isCustom: true,
+            monitoredByDefault: true,
+        };
+    });
+
+    return out;
+}
+
 // Helper to look up category labels (MVP categories included)
 export const CATEGORY_LABELS = {
     'pad': '🧼 Pads',
@@ -619,7 +685,9 @@ export const CATEGORY_LABELS = {
     'pregnancy': '🤰 Pregnancy Support',
     'fertility': '🤰 Fertility',
     'diagnostics': '🔬 Diagnostics',
-    'hormone-monitoring': '🧬 Hormone Monitoring'
+    'hormone-monitoring': '🧬 Hormone Monitoring',
+    'custom-brand': '🏷️ Your brands',
+    'medication': '💊 Medications'
 };
 
 // ─── CLINICAL WORKFLOW (e.g. Recurrent UTIs: prevent → test → treat → get care) ───
@@ -1004,13 +1072,15 @@ export const CHECK_IN_CATEGORIES = [
     { id: 'urinary', label: 'Urinary Health', icon: '🦠' },
     { id: 'wellness', label: 'General Wellness', icon: '✨' },
 ];
-// Helper to detect functionality overlaps in a set of products
-export function detectDuplicates(productIds) {
+// Helper to detect functionality overlaps in a set of products.
+// productMap: optional id -> product (for custom ecosystem items not in ALL_PRODUCTS).
+export function detectDuplicates(productIds, productMap = {}) {
     const functionMap = {};
     const duplicates = {};
 
     productIds.forEach(id => {
-        const p = ALL_PRODUCTS.find(item => item.id === id);
+        let p = ALL_PRODUCTS.find(item => item.id === id);
+        if (!p && productMap[id]) p = productMap[id];
         if (!p) return;
 
         const fns = p.healthFunctions || [];

@@ -67,6 +67,12 @@ const REST_STEPS = [
     ]
   },
   {
+    id: 'currentProductsDetail',
+    question: "Add specific brands, medications, or supplements you use",
+    subtitle: "These will be added to Your Ecosystem and monitored for safety. One per line or comma-separated. Optional — skip if you prefer.",
+    type: 'customProducts'
+  },
+  {
     id: 'sensitivities',
     question: "Any sensitivities or allergies we should know about?",
     subtitle: "Select all that apply",
@@ -280,6 +286,7 @@ export default function Quiz({ onComplete }) {
   const [answers, setAnswers] = useState({});
   const [multiSelections, setMultiSelections] = useState(new Set());
   const [emailValue, setEmailValue] = useState('');
+  const [customProductsInput, setCustomProductsInput] = useState({ brands: '', medications: '', supplements: '' });
 
   // Voice flow state
   const [voicePhase, setVoicePhase] = useState('prompt'); // 'prompt' | 'recording' | 'confirm'
@@ -324,6 +331,27 @@ export default function Quiz({ onComplete }) {
       newAnswers.currentPhysical = selected.filter(o => physical.includes(o));
       newAnswers.currentApps = selected.filter(o => apps.includes(o));
     }
+    advance(newAnswers);
+  };
+
+  // Parse comma or newline separated list into trimmed non-empty strings
+  function parseList(text) {
+    if (!text || typeof text !== 'string') return [];
+    return text.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+  }
+
+  const handleCustomProductsConfirm = () => {
+    const currentProductBrands = parseList(customProductsInput.brands);
+    const currentMedications = parseList(customProductsInput.medications);
+    const currentSupplements = parseList(customProductsInput.supplements);
+    const newAnswers = {
+      ...answers,
+      currentProductsDetail: true,
+      currentProductBrands,
+      currentMedications,
+      currentSupplements
+    };
+    setAnswers(newAnswers);
     advance(newAnswers);
   };
 
@@ -663,6 +691,62 @@ export default function Quiz({ onComplete }) {
               Continue →
             </button>
           </>
+        )}
+
+        {step.type === 'customProducts' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', maxWidth: '480px', margin: '0 auto', width: '100%' }}>
+            <label style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', fontWeight: '600' }}>Brands or products (e.g. Always, Thinx, Clue)</label>
+            <textarea
+              placeholder="Always, Thinx, Flo app..."
+              value={customProductsInput.brands}
+              onChange={e => setCustomProductsInput(prev => ({ ...prev, brands: e.target.value }))}
+              rows={2}
+              style={{
+                padding: '0.75rem 1rem',
+                fontSize: '1rem',
+                border: '1px solid var(--color-border)',
+                borderRadius: 'var(--radius-md)',
+                outline: 'none',
+                fontFamily: 'var(--font-body)',
+                resize: 'vertical'
+              }}
+            />
+            <label style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', fontWeight: '600' }}>Medications (e.g. birth control, metformin)</label>
+            <textarea
+              placeholder="Birth control pill, Synthroid..."
+              value={customProductsInput.medications}
+              onChange={e => setCustomProductsInput(prev => ({ ...prev, medications: e.target.value }))}
+              rows={2}
+              style={{
+                padding: '0.75rem 1rem',
+                fontSize: '1rem',
+                border: '1px solid var(--color-border)',
+                borderRadius: 'var(--radius-md)',
+                outline: 'none',
+                fontFamily: 'var(--font-body)',
+                resize: 'vertical'
+              }}
+            />
+            <label style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', fontWeight: '600' }}>Supplements (e.g. Ritual, magnesium, vitamin D)</label>
+            <textarea
+              placeholder="Ritual vitamins, magnesium, vitamin D..."
+              value={customProductsInput.supplements}
+              onChange={e => setCustomProductsInput(prev => ({ ...prev, supplements: e.target.value }))}
+              rows={2}
+              style={{
+                padding: '0.75rem 1rem',
+                fontSize: '1rem',
+                border: '1px solid var(--color-border)',
+                borderRadius: 'var(--radius-md)',
+                outline: 'none',
+                fontFamily: 'var(--font-body)',
+                resize: 'vertical'
+              }}
+            />
+            <button type="button" className="btn btn-primary" style={{ marginTop: '0.5rem', alignSelf: 'center' }} onClick={handleCustomProductsConfirm}>
+              Continue →
+            </button>
+          </div>
         )}
 
         {step.type === 'email' && (

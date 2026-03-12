@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { HEALTH_FUNCTIONS, ALL_PRODUCTS, detectDuplicates } from '../data/products';
+import { getInteractions } from '../data/interactions';
 
 /** Estimate monthly cost in USD from a price string. Returns null if unparseable. */
 function estimateMonthlyCost(priceStr, product) {
@@ -70,10 +71,11 @@ export default function MyEcosystem({ myProducts, onToggleProduct, trackedProduc
     const [showAddModal, setShowAddModal] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [viewMode, setViewMode] = useState('function'); // 'function' or 'integration'
+    const [interactionSelection, setInteractionSelection] = useState(new Set()); // product ids for interaction check
 
     const myProductIds = Object.keys(myProducts);
     const myProductList = Object.values(myProducts);
-    const { functionMap, duplicates } = useMemo(() => detectDuplicates(myProductIds), [myProductIds]);
+    const { functionMap, duplicates } = useMemo(() => detectDuplicates(myProductIds, myProducts), [myProductIds, myProducts]);
     const ecosystemStartups = useMemo(() => myProductList.filter(p => !ALL_PRODUCTS.find(x => x.id === p.id)), [myProductList]);
     const duplicateCount = Object.keys(duplicates).length;
 
@@ -111,6 +113,19 @@ export default function MyEcosystem({ myProducts, onToggleProduct, trackedProduc
         );
     }, [searchTerm, omittedProducts]);
 
+    const interactionProductList = useMemo(() => {
+        return myProductList.filter(p => interactionSelection.has(p.id));
+    }, [myProductList, interactionSelection]);
+    const interactionResults = useMemo(() => getInteractions(interactionProductList), [interactionProductList]);
+    const toggleInteractionSelect = (product) => {
+        setInteractionSelection(prev => {
+            const next = new Set(prev);
+            if (next.has(product.id)) next.delete(product.id);
+            else next.add(product.id);
+            return next;
+        });
+    };
+
     return (
         <>
             <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
@@ -124,7 +139,7 @@ export default function MyEcosystem({ myProducts, onToggleProduct, trackedProduc
                     </div>
                     <h2 style={{ fontSize: '2.25rem', marginBottom: '0.75rem' }}>Everything You Use, One Place</h2>
                     <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem' }}>
-                        Track all your health products and apps. We'll tell you what each does and if any overlap.
+                        Track all your health products and apps. Everything here is monitored for safety by default. We'll tell you what each does, if any overlap, and if products may interact.
                     </p>
                 </div>
 
@@ -168,6 +183,78 @@ export default function MyEcosystem({ myProducts, onToggleProduct, trackedProduc
                         <div style={{ fontSize: '0.85rem', color: 'white', fontWeight: '700' }}>Doctor Prep</div>
                     </div>
                 </div>
+
+                {/* Safety & interactions: compare 2+ products */}
+                {myProductList.length >= 2 && (
+                    <div style={{ marginBottom: 'var(--spacing-xl)', maxWidth: '800px', margin: '0 auto var(--spacing-xl)' }}>
+                        <h3 style={{ fontSize: '1.15rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            🛡️ Safety & interactions
+                        </h3>
+                        <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1rem' }}>
+                            Select 2 or more products to check if they may interact or if they're safe to use together.
+                        </p>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
+                            {myProductList.map(p => {
+                                const selected = interactionSelection.has(p.id);
+                                return (
+                                    <button
+                                        key={p.id}
+                                        type="button"
+                                        onClick={() => toggleInteractionSelect(p)}
+                                        style={{
+                                            padding: '0.4rem 0.75rem',
+                                            borderRadius: 'var(--radius-pill)',
+                                            border: `2px solid ${selected ? 'var(--color-primary)' : 'var(--color-border)'}`,
+                                            background: selected ? 'var(--color-secondary-fade)' : 'var(--color-surface-soft)',
+                                            fontSize: '0.85rem',
+                                            cursor: 'pointer',
+                                            fontWeight: selected ? '600' : '500'
+                                        }}
+                                    >
+                                        {selected ? '✓ ' : ''}{p.name}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                        {interactionProductList.length >= 2 && (
+                            <div style={{ background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '1.25rem' }}>
+                                <h4 style={{ fontSize: '1rem', marginBottom: '0.75rem' }}>Comparing: {interactionProductList.map(p => p.name).join(', ')}</h4>
+                                {interactionResults.length === 0 ? (
+                                    <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem' }}>
+                                        No known safety interactions found between these. This doesn't replace medical advice — discuss with your provider if unsure.
+                                    </p>
+                                ) : (
+                                    <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                                        {interactionResults.map((r, i) => (
+                                            <li key={i} style={{
+                                                marginBottom: '0.75rem',
+                                                padding: '0.75rem',
+                                                background: r.severity === 'high' ? '#FEF2F2' : r.severity === 'medium' ? '#FFFBEB' : 'white',
+                                                borderLeft: `4px solid ${r.severity === 'high' ? '#DC2626' : r.severity === 'medium' ? '#F59E0B' : '#6B7280'}`,
+                                                borderRadius: 'var(--radius-sm)',
+                                                fontSize: '0.9rem'
+                                            }}>
+                                                <span style={{ fontWeight: '600', color: r.severity === 'high' ? '#B91C1C' : 'var(--color-text-main)' }}>
+                                                    {r.severity === 'high' ? '⚠️ ' : r.severity === 'medium' ? '⚡ ' : 'ℹ️ '}
+                                                    {r.productNames.join(' + ')}
+                                                </span>
+                                                <p style={{ margin: '0.35rem 0 0', color: 'var(--color-text-main)' }}>{r.message}</p>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                                <button
+                                    type="button"
+                                    className="btn btn-outline"
+                                    style={{ marginTop: '0.75rem', fontSize: '0.85rem' }}
+                                    onClick={() => setInteractionSelection(new Set())}
+                                >
+                                    Clear selection
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                )}
 
                 <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-lg)', display: 'flex', justifyContent: 'center', gap: '1rem' }}>
                     <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>+ Add a Product or App</button>
@@ -242,7 +329,7 @@ export default function MyEcosystem({ myProducts, onToggleProduct, trackedProduc
                                                         <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                                     </div>
                                                     <div style={{ flexGrow: 1, minWidth: 0 }}>
-                                                        <h4 style={{ fontSize: '0.95rem', marginBottom: '0.1rem' }}>{product.name}</h4>
+                                                        <h4 style={{ fontSize: '0.95rem', marginBottom: '0.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>{product.name}{product.outOfBusiness && <span style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-surface-soft)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No longer sold</span>}</h4>
                                                         <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{product.price}</span>
                                                     </div>
                                                     <span style={{
@@ -271,7 +358,7 @@ export default function MyEcosystem({ myProducts, onToggleProduct, trackedProduc
                                                         <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                                     </div>
                                                     <div style={{ flexGrow: 1, minWidth: 0 }}>
-                                                        <h4 style={{ fontSize: '0.95rem', marginBottom: '0.1rem' }}>{product.name}</h4>
+                                                        <h4 style={{ fontSize: '0.95rem', marginBottom: '0.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>{product.name}{product.outOfBusiness && <span style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-surface-soft)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No longer sold</span>}</h4>
                                                         <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{product.stage || product.tagline}</span>
                                                     </div>
                                                     <span style={{
@@ -301,7 +388,7 @@ export default function MyEcosystem({ myProducts, onToggleProduct, trackedProduc
                                                         <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                                     </div>
                                                     <div style={{ flexGrow: 1, minWidth: 0 }}>
-                                                        <h4 style={{ fontSize: '0.95rem', marginBottom: '0.1rem' }}>{product.name}</h4>
+                                                        <h4 style={{ fontSize: '0.95rem', marginBottom: '0.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>{product.name}{product.outOfBusiness && <span style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-surface-soft)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No longer sold</span>}</h4>
                                                         <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{product.stage || product.category}</span>
                                                     </div>
                                                     <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
@@ -367,7 +454,7 @@ export default function MyEcosystem({ myProducts, onToggleProduct, trackedProduc
                                             <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                         </div>
                                         <div style={{ flexGrow: 1, minWidth: 0 }}>
-                                            <div style={{ fontSize: '0.9rem', fontWeight: '500' }}>{product.name}</div>
+                                            <div style={{ fontSize: '0.9rem', fontWeight: '500', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>{product.name}{product.outOfBusiness && <span style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-surface-soft)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No longer sold</span>}</div>
                                             <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{product.category} · {product.type}</div>
                                         </div>
                                         <span style={{ fontSize: '0.8rem', fontWeight: '600', color: isAdded ? 'var(--color-primary)' : 'var(--color-text-muted)' }}>
