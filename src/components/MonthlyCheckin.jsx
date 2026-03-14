@@ -204,20 +204,22 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
       }}
       onClick={onClose}
     >
-      <div className="card animate-fade-in-up" style={{ maxWidth: '520px', width: '100%', padding: '2rem' }} onClick={e => e.stopPropagation()}>
-        <div style={{ width: '100%', background: 'var(--color-border)', height: '4px', borderRadius: 'var(--radius-pill)', marginBottom: '0.75rem', overflow: 'hidden' }}>
-          <div style={{ width: `${progress}%`, height: '100%', background: 'var(--color-primary)', transition: 'width 0.3s ease' }} />
-        </div>
-        <p style={{ textAlign: 'right', fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '1.25rem' }}>
-          {stepIndex + 1} of {steps.length}
-        </p>
+      <div className="card animate-fade-in-up" style={{ maxWidth: '520px', width: '100%', maxHeight: 'min(90vh, 600px)', display: 'flex', flexDirection: 'column', padding: '2rem' }} onClick={e => e.stopPropagation()}>
+        <div style={{ flexShrink: 0 }}>
+          <div style={{ width: '100%', background: 'var(--color-border)', height: '4px', borderRadius: 'var(--radius-pill)', marginBottom: '0.75rem', overflow: 'hidden' }}>
+            <div style={{ width: `${progress}%`, height: '100%', background: 'var(--color-primary)', transition: 'width 0.3s ease' }} />
+          </div>
+          <p style={{ textAlign: 'right', fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '1.25rem' }}>
+            {stepIndex + 1} of {steps.length}
+          </p>
 
-        <h2 style={{ fontSize: '1.35rem', marginBottom: '0.5rem', textAlign: 'center' }}>{step.question}</h2>
-        {step.subtitle && <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.95rem', marginBottom: '1.25rem' }}>{step.subtitle}</p>}
+          <h2 style={{ fontSize: '1.35rem', marginBottom: '0.5rem', textAlign: 'center' }}>{step.question}</h2>
+          {step.subtitle && <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.95rem', marginBottom: '1.25rem' }}>{step.subtitle}</p>}
+        </div>
 
         {step.type === 'single' && (
           <>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', overflowY: 'auto', flex: '1 1 0', minHeight: 0, marginBottom: '1rem' }}>
               {step.options.map((option) => {
                 const isSelected = answers[step.id] === option;
                 return (
@@ -229,6 +231,7 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
                       justifyContent: 'flex-start',
                       padding: '0.85rem 1.25rem',
                       fontSize: '0.95rem',
+                      flexShrink: 0,
                       borderColor: isSelected ? 'var(--color-primary)' : 'var(--color-border)',
                       backgroundColor: isSelected ? 'var(--color-secondary-fade)' : 'transparent',
                     }}
@@ -243,7 +246,7 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
               <button
                 type="button"
                 className="btn btn-primary"
-                style={{ marginTop: '1rem', width: '100%' }}
+                style={{ width: '100%', flexShrink: 0 }}
                 onClick={handleSingleNext}
               >
                 Continue →
@@ -254,7 +257,7 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
 
         {step.type === 'multi' && (
           <>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', overflowY: 'auto', flex: '1 1 0', minHeight: 0, marginBottom: '1rem' }}>
               {step.options.map((option) => {
                 const isSelected = multiSelections.has(option);
                 return (
@@ -264,6 +267,7 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
                     className="btn btn-outline"
                     style={{
                       justifyContent: 'flex-start', padding: '0.85rem 1.25rem', fontSize: '0.95rem',
+                      flexShrink: 0,
                       borderColor: isSelected ? 'var(--color-primary)' : 'var(--color-border)',
                       backgroundColor: isSelected ? 'var(--color-secondary-fade)' : 'transparent',
                     }}
@@ -278,7 +282,7 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
             <button
               type="button"
               className="btn btn-primary"
-              style={{ marginTop: '1rem', width: '100%', opacity: multiSelections.size === 0 ? 0.5 : 1 }}
+              style={{ width: '100%', flexShrink: 0, opacity: multiSelections.size === 0 ? 0.5 : 1 }}
               disabled={multiSelections.size === 0}
               onClick={handleMultiConfirm}
             >
