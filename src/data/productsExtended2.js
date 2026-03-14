@@ -40,8 +40,13 @@ export const EXTENDED_PHYSICAL_2 = [
         clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Traceability and delayed-release capsules are valued in prenatal supplements. Ritual uses third-party verified ingredients.', communityReview: 'Community discussions on Reddit r/BabyBumps note reduced nausea compared to other prenatals.', ingredients: 'MTHF Folate, Omega-3 DHA, Iron, Choline, etc.', effectiveness: 'Optimized for absorption and reduced nausea.', integrations: [], badges: ['Female-Founded', 'High Bioavailability'],
         verificationLinks: {
-            doctor: { url: 'https://ritual.com/science', text: 'Ritual Science Portal', summary: 'A breakdown of their ingredient sourcing, clinical trials, and why they use specific forms like Methylfolate.' },
-            scientific: { url: 'https://pubmed.ncbi.nlm.nih.gov/30283731/', text: 'Study on Supplement Traceability', summary: 'Research highlighting the importance of ingredient transparency in the unregulated supplement market.' },
+            doctor: [
+                { url: 'https://www.acog.org/topics/prenatal-care', text: 'ACOG: Prenatal Care', summary: 'Clinical guidance on prenatal nutrition and supplementation.' }
+            ],
+            scientific: [
+                { url: 'https://ritual.com/science', text: 'Ritual Science Portal', summary: 'Ingredient sourcing, clinical trials, and forms like Methylfolate.' },
+                { url: 'https://pubmed.ncbi.nlm.nih.gov/30283731/', text: 'Study on Supplement Traceability', summary: 'Research highlighting the importance of ingredient transparency in the unregulated supplement market.' }
+            ],
             community: {
                 aiSummary: "Prenatal and TTC communities frequently recommend Ritual for traceability and reduced nausea. Instagram and Reddit have strong discussion volume.",
                 links: [

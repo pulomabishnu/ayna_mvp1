@@ -177,15 +177,15 @@ export const EXTENDED_PHYSICAL = [
         effectiveness: 'Chasteberry has moderate evidence for PMS; studies show high heterogeneity and bias. Vitamin B6: Cochrane found evidence weak. Dong Quai: no PMS-specific trials. Lemon balm: one small RCT. Not enough evidence to confidently support the full blend.',
         verificationLinks: {
             doctor: {
-                aiSummary: "Chasteberry has the most evidence for PMS among the ingredients, but meta-analyses note high heterogeneity, publication bias, and risk of bias in trials—definitive conclusions are limited. Vitamin B6: Cochrane found poor-quality studies; evidence does not strongly support routine use. Dong Quai: no PMS-specific clinical trials; traditional use only. Individual response varies widely.",
+                aiSummary: "ACOG provides clinical guidance on PMS management for OB-GYNs. Individual response to supplements varies; discuss with your clinician.",
                 links: [
-                    { url: 'https://pubmed.ncbi.nlm.nih.gov/28237870/', text: 'Vitex agnus-castus for PMS (meta-analysis)', summary: 'Meta-analysis of chasteberry for PMS; notes high heterogeneity and need for higher-quality trials.', justification: 'PubMed peer-reviewed.' },
                     { url: 'https://www.acog.org/womens-health/faqs/premenstrual-syndrome', text: 'ACOG: Premenstrual Syndrome', summary: 'Clinical guidance on PMS management and evidence-based approaches.', justification: 'ACOG is the leading OB-GYN professional society.' }
                 ]
             },
             scientific: {
                 aiSummary: "Chasteberry meta-analyses show positive effects but with high heterogeneity and publication bias—effect sizes may be overstated. Vitamin B6: Cochrane concluded poor-quality studies suggest benefit; evidence is weak. Dong Quai: no PMS trials. Lemon balm: one small RCT. Overall, insufficient high-quality evidence to confidently support this specific product blend.",
                 links: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/28237870/', text: 'Vitex agnus-castus for PMS (meta-analysis)', summary: 'Meta-analysis of chasteberry for PMS; notes high heterogeneity and need for higher-quality trials.', justification: 'PubMed peer-reviewed.' },
                     { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC27878/', text: 'Vitamin B6 for PMS (BMJ review)', summary: 'Systematic review; mixed results; evidence quality concerns.', justification: 'BMJ peer-reviewed.' },
                     { url: 'https://www.ncbi.nlm.nih.gov/books/NBK72353/', text: 'Dietary supplements for PMS', summary: 'Systematic review of supplements; mixed or insufficient evidence for many herbs.', justification: 'NCBI/NIH.' }
                 ]
@@ -435,8 +435,13 @@ export const EXTENDED_DIGITAL = [
         communityReview: 'Community discussions on Reddit r/Menopause note Sleep Stories helpful for perimenopausal insomnia.',
         integrations: ['Apple Health'], effectiveness: 'Award-winning sleep and meditation content. Clinical studies show improved sleep quality.',
         verificationLinks: {
-            doctor: { url: 'https://www.calm.com/science', text: 'The Science of Calm', summary: 'Calm works with sleep scientists and researchers to develop content that effectively reduces pre-sleep arousal and anxiety.' },
-            scientific: { url: 'https://pubmed.ncbi.nlm.nih.gov/31336040/', text: 'Study: Calm and Sleep Quality', summary: 'Clinical trial demonstrating that using Calm significantly decreased daytime fatigue and improved sleep quality in adults.' },
+            doctor: [
+                { url: 'https://www.health.harvard.edu/blog/sleep-sleeping-problems-and-solutions', text: 'Harvard Health: Sleep & Insomnia', summary: 'Clinical guidance on sleep hygiene and insomnia management.' }
+            ],
+            scientific: [
+                { url: 'https://www.calm.com/science', text: 'The Science of Calm', summary: 'Calm\'s research on sleep science and pre-sleep arousal.' },
+                { url: 'https://pubmed.ncbi.nlm.nih.gov/31336040/', text: 'Study: Calm and Sleep Quality', summary: 'Clinical trial demonstrating that using Calm significantly decreased daytime fatigue and improved sleep quality in adults.' }
+            ],
             community: { url: 'https://www.reddit.com/r/Menopause/search/?q=Calm', text: 'Reddit Menopause & Sleep', summary: 'Frequent recommendations in the menopause community for "Sleep Stories" as a tool for managing perimenopausal insomnia.' }
         }
     },

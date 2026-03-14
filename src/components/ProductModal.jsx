@@ -28,13 +28,24 @@ const STORE_SEARCH_URLS = {
   'Best Buy': (q) => `https://www.bestbuy.com/site/searchpage.jsp?st=${encodeURIComponent(q || '')}`,
   'Pharmacy with prescription': () => 'https://www.goodrx.com/',
 };
+// If the store name looks like a brand domain (e.g. Rael.com, Cora.life), return direct URL instead of Google search.
+function isBrandDomain(storeName) {
+  if (!storeName || typeof storeName !== 'string') return false;
+  const normalized = storeName.trim().toLowerCase().replace(/\s+/g, '');
+  return /^[a-z0-9][a-z0-9.-]*\.(com|io|co|life|health|org|net)$/i.test(normalized);
+}
+function brandDomainToUrl(storeName) {
+  const normalized = storeName.trim().toLowerCase().replace(/\s+/g, '');
+  return normalized.startsWith('http') ? normalized : `https://${normalized}`;
+}
 function getStoreUrl(storeName, productName) {
   if (!storeName || typeof storeName !== 'string') return 'https://www.google.com/search?q=women+health+products';
+  if (isBrandDomain(storeName)) return brandDomainToUrl(storeName);
   const key = Object.keys(STORE_SEARCH_URLS).find(k => storeName.toLowerCase().replace(/\s+/g, '').includes(k.toLowerCase().replace(/\s+/g, '')) || k.toLowerCase() === storeName.toLowerCase());
   if (key) {
     const fn = STORE_SEARCH_URLS[key];
     const out = typeof fn === 'function' ? fn(productName || '') : fn;
-    return (typeof out === 'string' && out.startsWith('http')) ? out : 'https://www.google.com/search?q=' + encodeURIComponent((productName || '') + ' ' + storeName);
+    return (typeof out === 'string' && out.startsWith('http')) ? out : `https://www.google.com/search?q=${encodeURIComponent((productName || '') + ' ' + storeName)}`;
   }
   const safe = (productName || '') + ' ' + storeName;
   return `https://www.google.com/search?q=${encodeURIComponent(safe.trim() || 'women health products')}`;

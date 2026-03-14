@@ -433,10 +433,14 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                                                 )}
                                                                 {(item.whereToBuy || []).map(shop => {
                                                                     const getStoreUrl = (s, q) => {
-                                                                        const k = s?.toLowerCase?.().replace(/\s+/g, '');
-                                                                        if (k?.includes('amazon')) return `https://www.amazon.com/s?k=${encodeURIComponent(q || '')}`;
-                                                                        if (k?.includes('target')) return `https://www.target.com/s?searchTerm=${encodeURIComponent(q || '')}`;
-                                                                        if (k?.includes('walmart')) return `https://www.walmart.com/search?q=${encodeURIComponent(q || '')}`;
+                                                                        if (!s || typeof s !== 'string') return 'https://www.google.com/search?q=women+health+products';
+                                                                        const norm = s.trim().toLowerCase().replace(/\s+/g, '');
+                                                                        if (/^[a-z0-9][a-z0-9.-]*\.(com|io|co|life|health|org|net)$/i.test(norm)) return norm.startsWith('http') ? norm : `https://${norm}`;
+                                                                        if (norm.includes('amazon')) return `https://www.amazon.com/s?k=${encodeURIComponent(q || '')}`;
+                                                                        if (norm.includes('target')) return `https://www.target.com/s?searchTerm=${encodeURIComponent(q || '')}`;
+                                                                        if (norm.includes('walmart')) return `https://www.walmart.com/search?q=${encodeURIComponent(q || '')}`;
+                                                                        if (norm.includes('cvs')) return `https://www.cvs.com/shop/search?searchTerm=${encodeURIComponent(q || '')}`;
+                                                                        if (norm.includes('iherb')) return `https://www.iherb.com/search?kw=${encodeURIComponent(q || '')}`;
                                                                         return `https://www.google.com/search?q=${encodeURIComponent((q || '') + ' ' + (s || ''))}`;
                                                                     };
                                                                     const url = item.whereToBuyLinks?.[shop] || getStoreUrl(shop, item.name);
