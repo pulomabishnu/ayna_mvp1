@@ -219,7 +219,7 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
 
         {step.type === 'single' && (
           <>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', overflowY: 'auto', flex: '1 1 0', minHeight: 0, marginBottom: '1rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', overflowY: 'auto', maxHeight: 'min(50vh, 320px)', marginBottom: '1rem' }}>
               {step.options.map((option) => {
                 const isSelected = answers[step.id] === option;
                 return (
@@ -257,7 +257,7 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
 
         {step.type === 'multi' && (
           <>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', overflowY: 'auto', flex: '1 1 0', minHeight: 0, marginBottom: '1rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', overflowY: 'auto', maxHeight: 'min(50vh, 320px)', marginBottom: '1rem' }}>
               {step.options.map((option) => {
                 const isSelected = multiSelections.has(option);
                 return (
