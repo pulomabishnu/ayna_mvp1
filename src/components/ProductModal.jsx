@@ -108,9 +108,9 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
 
     const tabs = [
         { id: 'safety', label: isDigital ? 'Privacy & Safety' : 'Safety & Ingredients', icon: '🛡️' },
-        { id: 'doctor', label: 'Clinical opinions', icon: '👩‍⚕️' },
+        { id: 'doctor', label: 'Clinician opinions', icon: '👩‍⚕️' },
         { id: 'social', label: 'Community', icon: '💬' },
-        { id: 'science', label: 'Scientific Literature', icon: '🔬' },
+        { id: 'science', label: 'Scientific literature', icon: '🔬' },
         { id: 'buy', label: isDigital ? 'Get It' : 'Where to Buy', icon: '🛒' },
         { id: 'ayna-reviews', label: 'Ayna Reviews', icon: '⭐', badge: aynaReviewCount > 0 ? aynaReviewCount : null },
         { id: 'chat', label: 'Ask Ayna', icon: '✨' },
@@ -409,31 +409,28 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                 }}>✕</button>
 
                 {/* Hero Image Section */}
-                <div style={{ position: 'relative', height: '240px', width: '100%', overflow: 'hidden', background: product.image ? 'transparent' : 'var(--color-primary-fade)' }}>
+                <div style={{ position: 'relative', height: '240px', width: '100%', overflow: 'hidden', background: 'var(--color-secondary-fade, #fdf2f4)' }}>
                     {product.image && product.image !== '/ayna_placeholder.png' ? (
-                        <img
-                            src={product.image}
-                            alt={product.name}
-                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                        />
-                    ) : (
-                        <div style={{
-                            width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            flexDirection: 'column', gap: '0.5rem', background: 'white'
-                        }}>
-                            <img src={`https://logo.clearbit.com/${(product.url && product.url !== '#' && (product.url.startsWith('http://') || product.url.startsWith('https://'))) ? product.url.replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split('/')[0] : (product.whereToBuy?.[0] ? product.whereToBuy[0].toLowerCase().replace(/\s+/g, '') + '.com' : 'ayna.com')}`}
-                                alt={`${product.name} Logo`}
-                                style={{ maxWidth: '150px', maxHeight: '150px', objectFit: 'contain' }}
+                        <>
+                            <img
+                                src={product.image}
+                                alt={product.name}
+                                style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }}
                                 onError={(e) => {
-                                    e.target.onerror = null; // prevents looping
+                                    e.target.onerror = null;
                                     e.target.style.display = 'none';
-                                    e.target.nextSibling.style.display = 'flex';
+                                    e.target.nextElementSibling.style.display = 'flex';
                                 }}
                             />
-                            <div style={{ display: 'none', flexDirection: 'column', alignItems: 'center', gap: '0.2rem' }}>
-                                <span style={{ fontSize: '3rem', fontWeight: '900', color: 'var(--color-primary)', letterSpacing: '-0.05em' }}>AYNA</span>
-                                <span style={{ fontSize: '1rem', color: 'var(--color-primary)' }}>Your women's health assistant</span>
+                            <div style={{ display: 'none', width: '100%', height: '100%', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                                <span style={{ fontSize: '2.5rem', fontWeight: '900', color: 'var(--color-primary)', letterSpacing: '0.02em' }}>AYNA</span>
+                                <span style={{ fontSize: '0.9rem', color: 'var(--color-primary)', opacity: 0.9 }}>Your women's health assistant</span>
                             </div>
+                        </>
+                    ) : (
+                        <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                            <span style={{ fontSize: '2.5rem', fontWeight: '900', color: 'var(--color-primary)', letterSpacing: '0.02em' }}>AYNA</span>
+                            <span style={{ fontSize: '0.9rem', color: 'var(--color-primary)', opacity: 0.9 }}>Your women's health assistant</span>
                         </div>
                     )}
                     <div style={{
@@ -665,17 +662,17 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
 
                     {activeTab === 'doctor' && (
                         <div className="animate-fade-in">
-                            <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Clinical opinions</h3>
+                            <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Clinician opinions</h3>
                             <div style={{
                                 marginBottom: '1.25rem', padding: '0.85rem 1rem', borderRadius: 'var(--radius-md)',
                                 background: 'var(--color-secondary-fade)', border: '1px solid var(--color-border)', fontSize: '0.85rem', color: 'var(--color-text-muted)', lineHeight: 1.5
                             }}>
                                 <p style={{ margin: 0 }}>
                                 {product.clinicianOpinionSource === 'independent'
-                                    ? 'Clinician opinions and linked sources below are from independent third parties (e.g. medical societies, academic centers, regulators) and are not affiliated with the product brand. Ayna does not endorse any brand. Always consult your own clinician for medical advice.'
+                                    ? 'This tab shows clinician opinions and clinical guidance only—not scientific literature. Links are from independent third parties (e.g. medical societies, OB-GYNs, clinical guidelines) and are not affiliated with the product brand. Ayna does not endorse any brand. Always consult your own clinician for medical advice.'
                                     : product.clinicianOpinionSource === 'brand'
                                         ? 'Ayna has not found independent clinician opinions for this product. The opinions and links below are from clinicians or content associated with the brand. We still recommend discussing with your own clinician. Ayna does not endorse any brand.'
-                                        : 'Sources below may include both independent and brand-associated perspectives. Where possible we prioritize independent clinical sources; some products have only brand-associated clinician content. Ayna does not endorse any brand. Always consult your own clinician for medical advice.'}
+                                        : 'This tab shows clinician opinions only—not literature. Sources may include both independent and brand-associated perspectives. Ayna does not endorse any brand. Always consult your own clinician for medical advice.'}
                                 </p>
                             </div>
                             <div style={{ background: 'var(--color-surface)', padding: '1.5rem', borderRadius: 'var(--radius-lg)', marginBottom: '1.5rem', borderLeft: '4px solid var(--color-primary)' }}>
@@ -709,7 +706,7 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                             {renderVerificationLinks(
                                 product.verificationLinks?.doctor,
                                 null,
-                                "Expert & Clinical Verification",
+                                "Clinician opinions & clinical guidance",
                                 "doctor",
                                 product
                             )}
@@ -718,8 +715,8 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
 
                     {activeTab === 'science' && (
                         <div className="animate-fade-in">
-                            <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Scientific Literature & Clinical Evidence</h3>
-                            <AynaInsight>Ayna prioritizes peer-reviewed studies and clinical evidence; verification links go to PubMed, Lancet, and other trusted sources so you can check the science yourself.</AynaInsight>
+                            <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Scientific literature</h3>
+                            <AynaInsight>Peer-reviewed studies and research only. Links go to PubMed, Lancet, Cochrane, and other trusted literature sources—not clinician opinions.</AynaInsight>
                             <div style={{ background: 'var(--color-surface)', padding: '1rem', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem' }}>
                                 <h4 style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Effectiveness Summary</h4>
                                 <p>{product.effectiveness || 'Clinical effectiveness data for this specific product is being aggregated.'}</p>
@@ -727,7 +724,7 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                             {renderVerificationLinks(
                                 product.verificationLinks?.scientific,
                                 null,
-                                "Peer-Reviewed Literature",
+                                "Scientific literature",
                                 "science",
                                 product
                             )}

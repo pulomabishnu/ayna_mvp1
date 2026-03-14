@@ -303,25 +303,29 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                             width: '280px', animation: `fadeInUp 0.4s ${Math.min(idx * 0.05, 0.3)}s backwards`,
                             border: (isInEcosystem || isJoined) ? '2px solid var(--color-primary)' : '1px solid var(--color-border)'
                         }}>
-                            <div style={{ height: '140px', width: '100%', overflow: 'hidden', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'white' }}>
+                            <div style={{ height: '140px', width: '100%', overflow: 'hidden', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-secondary-fade, #fdf2f4)' }}>
                                 {item.image && item.image !== '/ayna_placeholder.png' ? (
-                                    <img src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                ) : (
                                     <>
-                                        <img src={`https://logo.clearbit.com/${(item.url && item.url !== '#' && (item.url.startsWith('http://') || item.url.startsWith('https://'))) ? item.url.replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split('/')[0] : (item.whereToBuy?.[0] ? item.whereToBuy[0].toLowerCase().replace(/\s+/g, '') + '.com' : 'ayna.com')}`}
-                                            alt={`${item.name} Logo`}
-                                            style={{ maxWidth: '100px', maxHeight: '100px', objectFit: 'contain' }}
+                                        <img
+                                            src={item.image}
+                                            alt={item.name}
+                                            style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }}
                                             onError={(e) => {
-                                                e.target.onerror = null; // prevents looping
+                                                e.target.onerror = null;
                                                 e.target.style.display = 'none';
-                                                e.target.nextSibling.style.display = 'flex';
+                                                e.target.nextElementSibling.style.display = 'flex';
                                             }}
                                         />
-                                        <div style={{ display: 'none', flexDirection: 'column', alignItems: 'center', gap: '0.2rem' }}>
-                                            <span style={{ fontSize: '1.5rem', fontWeight: '900', color: 'var(--color-primary)' }}>AYNA</span>
-                                            <span style={{ fontSize: '0.75rem', color: 'var(--color-primary)' }}>Your women's health assistant</span>
+                                        <div style={{ display: 'none', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.25rem', padding: '1rem' }}>
+                                            <span style={{ fontSize: '1.75rem', fontWeight: '900', color: 'var(--color-primary)', letterSpacing: '0.02em' }}>AYNA</span>
+                                            <span style={{ fontSize: '0.75rem', color: 'var(--color-primary)', opacity: 0.9 }}>Your women's health assistant</span>
                                         </div>
                                     </>
+                                ) : (
+                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.25rem', padding: '1rem' }}>
+                                        <span style={{ fontSize: '1.75rem', fontWeight: '900', color: 'var(--color-primary)', letterSpacing: '0.02em' }}>AYNA</span>
+                                        <span style={{ fontSize: '0.75rem', color: 'var(--color-primary)', opacity: 0.9 }}>Your women's health assistant</span>
+                                    </div>
                                 )}
                                 <span style={{
                                     position: 'absolute', top: '0.5rem', left: '0.5rem',
