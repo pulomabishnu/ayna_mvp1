@@ -16,6 +16,14 @@ const ARTICLE_TOPIC_TAGS = {
   'endometriosis-basics': ['endometriosis', 'cramps'],
 };
 
+/** Optional: article id → filter fn. Further narrows products to match article heading (e.g. intimate wash = only wash/cleanser products). */
+const ARTICLE_PRODUCT_TYPE_FILTER = {
+  'intimate-wash': (item) => {
+    const text = `${item.name || ''} ${item.summary || ''} ${item.description || ''} ${item.tagline || ''}`.toLowerCase();
+    return /\b(wash|cleanser|cleans|foaming|soap)\b/.test(text);
+  },
+};
+
 /** Alias for getRecommendedArticles / getArticlesByProfileRelevance (they use focus for scoring). */
 const ARTICLE_FOCUS_TAGS = ARTICLE_TOPIC_TAGS;
 
@@ -45,20 +53,25 @@ function getProductUrl(p) {
 /** Telehealth platforms that match this article's topic (tags or healthFunctions). Products must have topic-specific tags matching the article heading. */
 function getRelevantTelehealth(articleId) {
   const topicTags = ARTICLE_TOPIC_TAGS[articleId] || [];
-  const fromProducts = (ALL_PRODUCTS || [])
+  const typeFilter = ARTICLE_PRODUCT_TYPE_FILTER[articleId];
+  let fromProducts = (ALL_PRODUCTS || [])
     .filter((p) => p.category === 'telehealth')
     .filter((p) => {
       if (topicTags.length === 0) return true;
       const tags = new Set([...(p.tags || []), ...(p.healthFunctions || []), ...(p.category ? [p.category] : [])]);
       return topicTags.some((t) => tags.has(t));
     });
-  const fromStartups = (RELEASED_STARTUPS || [])
+  let fromStartups = (RELEASED_STARTUPS || [])
     .filter((s) => s.category === 'telehealth')
     .filter((s) => {
       if (topicTags.length === 0) return true;
       const tags = new Set([...(s.tags || []), ...(s.healthFunctions || []), ...(s.category ? [s.category] : [])]);
       return topicTags.some((t) => tags.has(t));
     });
+  if (typeFilter) {
+    fromProducts = fromProducts.filter((p) => typeFilter({ ...p, summary: p.summary, description: p.summary, tagline: '' }));
+    fromStartups = fromStartups.filter((s) => typeFilter({ ...s, summary: s.description || s.tagline, description: s.description, tagline: s.tagline }));
+  }
   // Dedupe by name so the same platform (e.g. Tia in products + startups) appears once; prefer product entry.
   const byName = new Map();
   [...fromProducts, ...fromStartups].forEach((item) => {
@@ -84,8 +97,13 @@ function getArticleAndProfileRelevantItems(articleId, quizResults) {
     return topicTags.some((t) => tags.has(t));
   };
 
+  const typeFilter = ARTICLE_PRODUCT_TYPE_FILTER[articleId];
   let products = (ALL_PRODUCTS || []).filter(matchesArticleTopic);
   let startups = (RELEASED_STARTUPS || []).filter(matchesArticleTopic);
+  if (typeFilter) {
+    products = products.filter((p) => typeFilter({ ...p, summary: p.summary, description: p.summary, tagline: '' }));
+    startups = startups.filter((s) => typeFilter({ ...s, summary: s.description || s.tagline, description: s.description, tagline: s.tagline }));
+  }
 
   if (quizResults?.frustrations?.length) {
     const recs = getRecommendations(quizResults);
