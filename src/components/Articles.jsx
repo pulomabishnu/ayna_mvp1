@@ -3,51 +3,21 @@ import Disclaimer from './Disclaimer';
 import { ALL_PRODUCTS, getRecommendations } from '../data/products';
 import { RELEASED_STARTUPS } from '../data/startups';
 
-/** Article id → product-style tags/healthFunctions for matching relevant telehealth platforms */
-const ARTICLE_FOCUS_TAGS = {
-  'intimate-wash': ['vaginal-health', 'discomfort', 'intimate-care'],
-  'heavy-bleeding': ['heavy-flow', 'cramps', 'discomfort'],
-  'menopause-basics': ['menopause', 'discomfort'],
-  'uti-prevention': ['uti'],
-  'yeast-infection-basics': ['vaginal-health', 'discomfort'],
-  'period-pain-when-to-seek-care': ['cramps', 'discomfort', 'heavy-flow'],
-  'pcos-basics': ['pcos', 'irregular'],
-  'pelvic-floor-dysfunction': ['pelvic-floor', 'pelvic-health', 'discomfort'],
-  'endometriosis-basics': ['endometriosis', 'cramps', 'discomfort'],
-};
-
-/** Article id → tags that exclude a product if it lacks the article's topic-specific focus. E.g. menopause should not show birth-control-only products. */
-const ARTICLE_EXCLUDE_IF_NOT_FOCUSED = {
-  'menopause-basics': ['contraception'],
-  'intimate-wash': ['contraception'],
-  'yeast-infection-basics': ['contraception'],
-  'pelvic-floor-dysfunction': ['contraception'],
-  'uti-prevention': ['contraception'],
-};
-
-/** Topic-specific tags per article (subset of focus). Used to override exclusions — e.g. contraception is excluded from menopause unless item also has menopause. */
-const ARTICLE_PRIMARY_FOCUS = {
-  'menopause-basics': ['menopause'],
+/** Article id → topic-specific tags. Products must have at least one of these to appear under the article. No broad tags (e.g. discomfort) — only tags that match the article heading. */
+const ARTICLE_TOPIC_TAGS = {
   'intimate-wash': ['vaginal-health', 'intimate-care'],
-  'yeast-infection-basics': ['vaginal-health'],
-  'pelvic-floor-dysfunction': ['pelvic-floor', 'pelvic-health'],
+  'heavy-bleeding': ['heavy-flow', 'cramps'],
+  'menopause-basics': ['menopause'],
   'uti-prevention': ['uti'],
+  'yeast-infection-basics': ['vaginal-health'],
+  'period-pain-when-to-seek-care': ['cramps', 'heavy-flow'],
+  'pcos-basics': ['pcos', 'irregular'],
+  'pelvic-floor-dysfunction': ['pelvic-floor', 'pelvic-health'],
+  'endometriosis-basics': ['endometriosis', 'cramps'],
 };
 
-/** Returns true if item should be excluded from this article (e.g. birth control under menopause). */
-function isExcludedForArticle(item, articleId) {
-  const excludeTags = ARTICLE_EXCLUDE_IF_NOT_FOCUSED[articleId];
-  if (!excludeTags?.length) return false;
-  const itemTags = new Set([
-    ...(item.tags || []),
-    ...(item.healthFunctions || []),
-    ...(item.category ? [item.category] : []),
-  ]);
-  const primaryFocus = ARTICLE_PRIMARY_FOCUS[articleId] || ARTICLE_FOCUS_TAGS[articleId] || [];
-  const hasExcludedTag = excludeTags.some((t) => itemTags.has(t));
-  const hasTopicFocus = primaryFocus.some((t) => itemTags.has(t));
-  return hasExcludedTag && !hasTopicFocus;
-}
+/** Alias for getRecommendedArticles / getArticlesByProfileRelevance (they use focus for scoring). */
+const ARTICLE_FOCUS_TAGS = ARTICLE_TOPIC_TAGS;
 
 /** Quiz frustrations → tags (align with products.js). */
 const FRUSTRATION_TO_TAG = {
@@ -72,25 +42,23 @@ function getProductUrl(p) {
   return 'https://' + s.replace(/^www\./i, '');
 }
 
-/** Telehealth platforms that match this article's focus (tags or healthFunctions). Returns full product/startup objects for opening in product card. Deduped by name. Excludes off-topic items (e.g. birth control under menopause). */
+/** Telehealth platforms that match this article's topic (tags or healthFunctions). Products must have topic-specific tags matching the article heading. */
 function getRelevantTelehealth(articleId) {
-  const focus = ARTICLE_FOCUS_TAGS[articleId] || [];
+  const topicTags = ARTICLE_TOPIC_TAGS[articleId] || [];
   const fromProducts = (ALL_PRODUCTS || [])
     .filter((p) => p.category === 'telehealth')
     .filter((p) => {
-      if (focus.length === 0) return true;
-      const tags = new Set([...(p.tags || []), ...(p.healthFunctions || [])]);
-      return focus.some((t) => tags.has(t));
-    })
-    .filter((p) => !isExcludedForArticle(p, articleId));
+      if (topicTags.length === 0) return true;
+      const tags = new Set([...(p.tags || []), ...(p.healthFunctions || []), ...(p.category ? [p.category] : [])]);
+      return topicTags.some((t) => tags.has(t));
+    });
   const fromStartups = (RELEASED_STARTUPS || [])
     .filter((s) => s.category === 'telehealth')
     .filter((s) => {
-      if (focus.length === 0) return true;
-      const tags = new Set([...(s.tags || []), ...(s.healthFunctions || [])]);
-      return focus.some((t) => tags.has(t));
-    })
-    .filter((s) => !isExcludedForArticle(s, articleId));
+      if (topicTags.length === 0) return true;
+      const tags = new Set([...(s.tags || []), ...(s.healthFunctions || []), ...(s.category ? [s.category] : [])]);
+      return topicTags.some((t) => tags.has(t));
+    });
   // Dedupe by name so the same platform (e.g. Tia in products + startups) appears once; prefer product entry.
   const byName = new Map();
   [...fromProducts, ...fromStartups].forEach((item) => {
@@ -101,25 +69,23 @@ function getRelevantTelehealth(articleId) {
   return Array.from(byName.values());
 }
 
-/** Products and released startups relevant to this article AND (when provided) the user's profile. Returns items in product-like shape for onOpenProduct. */
+/** Products and released startups relevant to this article AND (when provided) the user's profile. Products must have topic-specific tags matching the article heading. */
 function getArticleAndProfileRelevantItems(articleId, quizResults) {
-  const focus = ARTICLE_FOCUS_TAGS[articleId] || [];
-  const hasFocus = focus.length > 0;
+  const topicTags = ARTICLE_TOPIC_TAGS[articleId] || [];
+  const hasTopic = topicTags.length > 0;
 
-  const matchesArticle = (item) => {
-    if (!hasFocus) return true;
+  const matchesArticleTopic = (item) => {
+    if (!hasTopic) return true;
     const tags = new Set([
       ...(item.tags || []),
       ...(item.healthFunctions || []),
       ...(item.category ? [item.category] : []),
     ]);
-    return focus.some((t) => tags.has(t));
+    return topicTags.some((t) => tags.has(t));
   };
 
-  const notExcluded = (item) => !isExcludedForArticle(item, articleId);
-
-  let products = (ALL_PRODUCTS || []).filter(matchesArticle).filter(notExcluded);
-  let startups = (RELEASED_STARTUPS || []).filter(matchesArticle).filter(notExcluded);
+  let products = (ALL_PRODUCTS || []).filter(matchesArticleTopic);
+  let startups = (RELEASED_STARTUPS || []).filter(matchesArticleTopic);
 
   if (quizResults?.frustrations?.length) {
     const recs = getRecommendations(quizResults);
