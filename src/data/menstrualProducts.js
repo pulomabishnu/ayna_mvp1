@@ -132,7 +132,7 @@ export const MENSTRUAL_PHYSICAL = [
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Organic overnight option for heavy sleepers.',
-        communityReview: '"Finally can sleep through the night without leaks." — Rael review',
+        communityReview: 'Community discussions note satisfaction with overnight leak protection.',
         ingredients: '100% organic cotton.',
         effectiveness: 'Extended coverage for overnight protection.',
         badges: ['Organic', 'Overnight', 'WOC Owned']
@@ -221,7 +221,7 @@ export const MENSTRUAL_PHYSICAL = [
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Clean option for daily or light-day use.',
-        communityReview: '"Gentle on sensitive skin." — Rael review',
+        communityReview: 'Community discussions note gentleness for sensitive skin.',
         ingredients: 'Organic cotton.',
         effectiveness: 'Light organic protection.',
         badges: ['Organic', 'Sustainable', 'WOC Owned']
@@ -355,7 +355,7 @@ export const MENSTRUAL_PHYSICAL = [
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Full ingredient transparency. Good for sensitive users.',
-        communityReview: '"Organic and actually works for heavy flow." — Rael review',
+        communityReview: 'Community discussions note organic materials and effectiveness for heavy flow.',
         ingredients: 'Organic cotton, BPA-free applicator.',
         effectiveness: 'Organic with strong absorption.',
         badges: ['Organic', 'WOC Owned', 'Sustainable']
@@ -401,7 +401,7 @@ export const MENSTRUAL_PHYSICAL = [
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Social impact model with quality product.',
-        communityReview: '"Love that my purchase helps someone else." — Ruby Cup review',
+        communityReview: 'Community discussions note appreciation for buy-one-give-one model.',
         ingredients: 'Medical-grade silicone.',
         effectiveness: 'Standard cup performance with social mission.',
         badges: ['Social Impact', 'Buy One Give One', 'Sustainable']
@@ -581,7 +581,7 @@ export const MENSTRUAL_PHYSICAL = [
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Modular design allows customization for different flow levels.',
-        communityReview: '"The swap system is genius. One pair, multiple inserts." — Aisle review',
+        communityReview: 'Community discussions note satisfaction with swap system and multiple inserts.',
         ingredients: 'Organic cotton, PFAS-free absorbent layer.',
         effectiveness: 'Modular inserts for customizable absorbency.',
         badges: ['Modular Design', 'PFAS-Free', 'Inclusive Sizing']
@@ -625,7 +625,7 @@ export const MENSTRUAL_PHYSICAL = [
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Sport styles good for active users.',
-        communityReview: '"Wore these for a 10K. Zero leaks." — Wuka review',
+        communityReview: 'Community discussions note reliable performance during exercise and running.',
         ingredients: 'Organic cotton, PFAS-free technology.',
         effectiveness: 'Sport and heavy-flow options.',
         badges: ['Sport Styles', 'Carbon Neutral', 'PFAS-Free']
@@ -647,7 +647,7 @@ export const MENSTRUAL_PHYSICAL = [
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Inclusive design meets a real need.',
-        communityReview: '"Finally period underwear that fits my style." — TomboyX review',
+        communityReview: 'Community discussions note style options and fit for diverse preferences.',
         ingredients: 'Cotton, absorbent gusset.',
         effectiveness: 'Inclusive sizing and styles.',
         badges: ['Inclusive', 'Gender Neutral', 'LGBTQ+ Owned']
@@ -669,7 +669,7 @@ export const MENSTRUAL_PHYSICAL = [
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Stylish option that doesn\'t look like period underwear.',
-        communityReview: '"The lace ones are actually cute. Wear as regular undies." — Dear Kate review',
+        communityReview: 'Community discussions note lace styles suitable for regular wear.',
         ingredients: 'Cotton, lace, PFAS-free absorbent.',
         effectiveness: 'Fashion-forward with protection.',
         badges: ['Fashion Forward', 'PFAS-Free', 'Female Founded']
@@ -691,7 +691,7 @@ export const MENSTRUAL_PHYSICAL = [
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Dual use for periods and light bladder leaks.',
-        communityReview: '"Use for both period and postpartum. Versatile." — Proof review',
+        communityReview: 'Community discussions note versatility for period and postpartum use.',
         ingredients: 'Cotton, PFAS-free absorbent.',
         effectiveness: 'Period and bladder leak protection.',
         badges: ['Dual Use', 'PFAS-Free']
