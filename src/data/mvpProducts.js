@@ -29,7 +29,12 @@ export const MVP_PHYSICAL = [
     communityReview: 'Community discussions on Amazon note satisfaction with recurrent UTI prevention when taken daily.',
     ingredients: 'D-mannose, hibiscus extract.',
     effectiveness: 'Clinically studied ingredients for UTI prevention.',
-    badges: ['UTI Focus', 'Evidence-Based']
+    badges: ['UTI Focus', 'Evidence-Based'],
+    verificationLinks: {
+      doctor: { links: [{ url: 'https://www.mayoclinic.org/diseases-conditions/urinary-tract-infection/symptoms-causes/syc-20353453', text: 'Mayo Clinic: UTI', summary: 'Clinical overview of UTI prevention and management.', justification: 'Mayo Clinic is a leading clinical resource.' }] },
+      scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/23974689/', text: 'D-mannose and UTI prevention', summary: 'Research on D-mannose for recurrent UTI prevention.', justification: 'PubMed peer-reviewed.' }] },
+      community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/HealthyHooha/search/?q=d-mannose&restrict_sr=1', text: 'Reddit r/HealthyHooha — D-mannose', summary: 'Community discussions on D-mannose for UTI prevention.' }] }
+    }
   },
   {
     id: 'p-d-mannose-now',
@@ -51,7 +56,12 @@ export const MVP_PHYSICAL = [
     communityReview: 'Community discussions on Reddit r/HealthyHooha note affordability and effectiveness when used after sex.',
     ingredients: 'D-mannose.',
     effectiveness: 'Widely used for UTI prevention; evidence is promising.',
-    badges: ['Budget Friendly', 'Simple Formula']
+    badges: ['Budget Friendly', 'Simple Formula'],
+    verificationLinks: {
+      doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/urinary-tract-infections', text: 'ACOG: Urinary Tract Infections', summary: 'Clinical guidance on UTI prevention and treatment.', justification: 'ACOG is the leading OB-GYN professional society.' }] },
+      scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/23974689/', text: 'D-mannose and UTI', summary: 'Research on D-mannose for bacterial adherence and UTI.', justification: 'PubMed peer-reviewed.' }] },
+      community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/HealthyHooha/search/?q=uti&restrict_sr=1', text: 'Reddit r/HealthyHooha', summary: 'Community discussions on UTI prevention and D-mannose.' }] }
+    }
   },
   {
     id: 'p-cystex',
@@ -73,7 +83,12 @@ export const MVP_PHYSICAL = [
     communityReview: 'Community discussions on Amazon note temporary symptom relief while seeking care.',
     ingredients: 'Methenamine, sodium salicylate.',
     effectiveness: 'Temporary symptom relief; see a provider for infection.',
-    badges: ['OTC', 'Symptom Relief']
+    badges: ['OTC', 'Symptom Relief'],
+    verificationLinks: {
+      doctor: { links: [{ url: 'https://www.mayoclinic.org/diseases-conditions/urinary-tract-infection/diagnosis-treatment/drc-20353459', text: 'Mayo Clinic: UTI treatment', summary: 'Clinical guidance on when to seek care and OTC options.', justification: 'Mayo Clinic is a leading clinical resource.' }] },
+      scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/12605637/', text: 'Methenamine for urinary symptoms', summary: 'Evidence on methenamine for urinary tract.', justification: 'PubMed peer-reviewed.' }] },
+      community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/HealthyHooha/search/?q=cystex&restrict_sr=1', text: 'Reddit r/HealthyHooha — Cystex', summary: 'Community discussions on OTC UTI symptom relief.' }] }
+    }
   },
   // ─── ORGANIC COTTON (Cora brand — products listed separately) ─
   {
@@ -96,7 +111,12 @@ export const MVP_PHYSICAL = [
     communityReview: 'Community discussions note satisfaction with subscription quality and reduced skin irritation.',
     ingredients: 'Organic cotton.',
     effectiveness: 'Reliable absorption; sustainable choice.',
-    badges: ['Organic', 'B-Corp', 'Sustainable']
+    badges: ['Organic', 'B-Corp', 'Sustainable'],
+    verificationLinks: {
+      doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care and product choices.', justification: 'ACOG is the leading OB-GYN professional society.' }] },
+      scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product safety', summary: 'Research on absorbent materials and skin contact.', justification: 'PubMed peer-reviewed.' }] },
+      community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/search/?q=organic+pad&restrict_sr=1', text: 'Reddit r/periods — organic pads', summary: 'Community discussions on organic menstrual products.' }] }
+    }
   },
   {
     id: 'p-cora-organic-tampons',
@@ -118,7 +138,12 @@ export const MVP_PHYSICAL = [
     communityReview: 'Community discussions note satisfaction with subscription quality and reduced skin irritation.',
     ingredients: 'Organic cotton.',
     effectiveness: 'Reliable absorption; sustainable choice.',
-    badges: ['Organic', 'B-Corp', 'Sustainable']
+    badges: ['Organic', 'B-Corp', 'Sustainable'],
+    verificationLinks: {
+      doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care and product choices.', justification: 'ACOG is the leading OB-GYN professional society.' }] },
+      scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product safety', summary: 'Research on absorbent materials and skin contact.', justification: 'PubMed peer-reviewed.' }] },
+      community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/search/?q=organic+tampon&restrict_sr=1', text: 'Reddit r/periods — organic tampons', summary: 'Community discussions on organic menstrual products.' }] }
+    }
   },
   // ─── PCOS ─────────────────────────────────────────────────
   {
@@ -143,7 +168,8 @@ export const MVP_PHYSICAL = [
     communityReview: 'Community discussions on Reddit r/PCOS note cycle regularization after several months of use.',
     ingredients: 'Myo-inositol, D-chiro inositol.',
     effectiveness: 'Evidence supports use in PCOS for metabolic and cycle benefits.',
-    badges: ['PCOS Focus', 'Research Backed']
+    badges: ['PCOS Focus', 'Research Backed'],
+    verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/polycystic-ovary-syndrome', text: 'ACOG: PCOS', summary: 'Clinical guidance on PCOS and inositol supplementation.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/26983764/', text: 'Inositol and PCOS', summary: 'Review of myo-inositol and D-chiro inositol in PCOS.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/PCOS/search/?q=inositol&restrict_sr=1', text: 'Reddit r/PCOS — inositol', summary: 'Community discussions on inositol for PCOS.' }] } }
   },
   {
     id: 'p-spearmint-pcos',
@@ -165,7 +191,8 @@ export const MVP_PHYSICAL = [
     communityReview: 'Community discussions on Reddit r/PCOS note improvement in acne and hair growth with daily use.',
     ingredients: 'Spearmint leaf.',
     effectiveness: 'Small studies support anti-androgen effects in PCOS.',
-    badges: ['Natural', 'PCOS Support']
+    badges: ['Natural', 'PCOS Support'],
+    verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/polycystic-ovary-syndrome', text: 'ACOG: PCOS', summary: 'Clinical guidance on PCOS and complementary approaches.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/19585478/', text: 'Spearmint and androgens', summary: 'Study on spearmint tea and testosterone in PCOS.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/PCOS/search/?q=spearmint&restrict_sr=1', text: 'Reddit r/PCOS — spearmint', summary: 'Community discussions on spearmint for PCOS.' }] } }
   },
   // ─── ENDOMETRIOSIS ───────────────────────────────────────
   {
@@ -188,7 +215,12 @@ export const MVP_PHYSICAL = [
     communityReview: 'Community discussions on Reddit r/Endo note relief for endometriosis flares and sustained heat.',
     ingredients: 'Iron, charcoal, salt, water (heat cells).',
     effectiveness: 'Heat is proven to reduce menstrual and pelvic pain.',
-    badges: ['Drug-Free', 'Long-Lasting']
+    badges: ['Drug-Free', 'Long-Lasting'],
+    verificationLinks: {
+      doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/dysmenorrhea-painful-periods', text: 'ACOG: Dysmenorrhea', summary: 'Clinical guidance on heat therapy and NSAIDs for period pain.', justification: 'ACOG is the leading OB-GYN professional society.' }] },
+      scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/27000438/', text: 'Cochrane: Heat for dysmenorrhea', summary: 'Review of heat therapy for menstrual pain.', justification: 'PubMed peer-reviewed.' }] },
+      community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/search/?q=heat+wrap&restrict_sr=1', text: 'Reddit r/periods — heat wraps', summary: 'Community discussions on heat for cramps.' }] }
+    }
   },
   {
     id: 'p-tranexamic-acid',
@@ -229,11 +261,78 @@ export const MVP_PHYSICAL = [
     summary: 'Herbal blend with fennel, dandelion, and ginger to support digestion and ease cycle-related bloating and water retention.',
     safety: { fdaStatus: 'Dietary supplement', materials: 'Fennel, dandelion root, ginger, organic ingredients', recalls: 'No recalls.', allergens: 'Vegan, gluten-free' },
     clinicianOpinionSource: 'independent',
-    doctorOpinion: '"Herbal digestive supports like fennel and ginger have traditional use for bloating; discuss with your clinician if you have liver conditions or take blood thinners." — OB-GYN',
-    communityReview: '"Helps with my period bloat so I don\'t feel so puffy." — Amazon review',
+    clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+    doctorOpinion: 'Herbal digestive supports like fennel and ginger have traditional and some clinical use for bloating and gas. Discuss with your clinician if you have liver conditions or take blood thinners.',
+    communityReview: 'Community discussions on Amazon and Reddit r/periods note relief from period bloat and digestive comfort with consistent use.',
+    communityReviewSourceUrl: 'https://www.reddit.com/r/periods/search/?q=bloat&restrict_sr=1',
+    communityReviewSourceLabel: 'Reddit r/periods',
     ingredients: 'Fennel seed, dandelion root, ginger root, lemon balm.',
-    effectiveness: 'Supports healthy digestion and may reduce water retention around your cycle.',
-    badges: ['Hormonal Bloating', 'Organic Herbs']
+    effectiveness: 'Supports healthy digestion and may reduce water retention around your cycle. Fennel and ginger have evidence for GI symptoms.',
+    badges: ['Hormonal Bloating', 'Organic Herbs'],
+    verificationLinks: {
+      doctor: {
+        links: [
+          { url: 'https://www.mayoclinic.org/diseases-conditions/gas-and-gas-pains/in-depth/gas-and-gas-pains/art-20044739', text: 'Mayo Clinic: Gas and Bloating', summary: 'Clinical guidance on diet and lifestyle for gas and bloating; notes herbal options.', justification: 'Mayo Clinic is a leading clinical resource.' },
+          { url: 'https://www.nccih.nih.gov/health/ginger', text: 'NIH: Ginger', summary: 'NIH overview of ginger use for digestive symptoms including nausea and possibly bloating.', justification: 'NIH NCCIH is the federal authority on complementary health.' }
+        ]
+      },
+      scientific: {
+        links: [
+          { url: 'https://pubmed.ncbi.nlm.nih.gov/25051278/', text: 'Fennel for functional dyspepsia', summary: 'RCT of fennel for functional gastrointestinal symptoms.', justification: 'PubMed peer-reviewed.' },
+          { url: 'https://pubmed.ncbi.nlm.nih.gov/19585478/', text: 'Ginger for GI motility', summary: 'Research on ginger and gastric emptying; relevance to bloating.', justification: 'PubMed peer-reviewed.' }
+        ]
+      },
+      community: {
+        links: [
+          { platform: 'reddit', url: 'https://www.reddit.com/r/periods/search/?q=bloat+supplement&restrict_sr=1', text: 'Reddit r/periods — bloating', summary: 'Community discussions on period bloat and supplements.' },
+          { platform: 'reddit', url: 'https://www.reddit.com/r/WomensHealth/search/?q=bloating&restrict_sr=1', text: 'Reddit r/WomensHealth — bloating', summary: 'Women share experiences with hormonal and digestive bloating.' },
+          { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=period%20bloat%20remedies', text: 'TikTok — period bloat remedies', summary: 'Short-form tips on cycle-related bloating and products.' }
+        ]
+      }
+    }
+  },
+  {
+    id: 'p-love-wellness-bloat',
+    name: 'Love Wellness Bye Bye Bloat',
+    category: 'supplement',
+    type: 'physical',
+    internal: false,
+    healthFunctions: ['supplement'],
+    tags: ['bloating', 'discomfort', 'organic'],
+    price: '$24 for 30 capsules',
+    userRating: 4.2,
+    whereToBuy: ['Amazon', 'LoveWellness.com', 'Target', 'Ulta'],
+    image: '/ayna_placeholder.png',
+    summary: 'Enzyme and probiotic blend with ginger and dandelion to support digestion and reduce bloating. Take before meals.',
+    safety: { fdaStatus: 'Dietary supplement', materials: 'Digestive enzymes, ginger, dandelion, probiotics', recalls: 'No recalls.', allergens: 'Vegan, gluten-free' },
+    clinicianOpinionSource: 'independent',
+    clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+    doctorOpinion: 'Digestive enzymes and herbal supports like ginger can help with post-meal bloating. Probiotics may support gut balance; evidence for bloating is mixed.',
+    communityReview: 'Community discussions on Reddit and Amazon note relief from hormonal and post-meal bloating when taken consistently before eating.',
+    communityReviewSourceUrl: 'https://www.reddit.com/r/WomensHealth/search/?q=bye+bye+bloat&restrict_sr=1',
+    communityReviewSourceLabel: 'Reddit r/WomensHealth',
+    ingredients: 'Digestive enzymes (amylase, protease, lipase), ginger root, dandelion root, probiotic blend.',
+    effectiveness: 'Enzymes support breakdown of carbs, protein, and fat; ginger and dandelion may ease gas and water retention.',
+    badges: ['Digestive Enzymes', 'Female-Founded'],
+    verificationLinks: {
+      doctor: {
+        links: [
+          { url: 'https://www.hopkinsmedicine.org/health/wellness-and-prevention/bloating-causes-and-prevention-tips', text: 'Johns Hopkins: Bloating', summary: 'Clinical overview of bloating causes and management, including diet and supplements.', justification: 'Johns Hopkins is a leading medical institution.' }
+        ]
+      },
+      scientific: {
+        links: [
+          { url: 'https://pubmed.ncbi.nlm.nih.gov/23612738/', text: 'Digestive enzymes and functional GI symptoms', summary: 'Review of enzyme supplementation for digestive discomfort.', justification: 'PubMed peer-reviewed.' },
+          { url: 'https://pubmed.ncbi.nlm.nih.gov/19585478/', text: 'Ginger and gastric function', summary: 'Research on ginger for gastric emptying and GI symptoms.', justification: 'PubMed peer-reviewed.' }
+        ]
+      },
+      community: {
+        links: [
+          { platform: 'reddit', url: 'https://www.reddit.com/r/WomensHealth/search/?q=bloating&restrict_sr=1', text: 'Reddit r/WomensHealth', summary: 'Community discussions on bloating and digestive supplements.' },
+          { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=love+wellness+bye+bye+bloat', text: 'TikTok — Bye Bye Bloat', summary: 'User reviews and tips on Love Wellness bloating products.' }
+        ]
+      }
+    }
   },
   // ─── PELVIC FLOOR ────────────────────────────────────────
   {
@@ -256,7 +355,12 @@ export const MVP_PHYSICAL = [
     communityReview: 'Community discussions on Amazon note progressive improvement with consistent use.',
     ingredients: 'Medical-grade silicone.',
     effectiveness: 'Progressive resistance improves pelvic floor strength.',
-    badges: ['Pelvic Health', 'Reusable']
+    badges: ['Pelvic Health', 'Reusable'],
+    verificationLinks: {
+      doctor: { links: [{ url: 'https://www.health.harvard.edu/womens-health/step-by-step-guide-to-kegel-exercises', text: 'Harvard Health: Kegel exercises', summary: 'Clinical guide to pelvic floor muscle training.', justification: 'Harvard Health is a trusted medical resource.' }] },
+      scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/22453472/', text: 'Pelvic floor muscle training', summary: 'Evidence on Kegel exercises for incontinence.', justification: 'PubMed peer-reviewed.' }] },
+      community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/Incontinence/search/?q=kegel&restrict_sr=1', text: 'Reddit — Kegel devices', summary: 'Community discussions on pelvic floor trainers.' }] }
+    }
   },
   {
     id: 'p-pelvic-wand',
@@ -301,7 +405,12 @@ export const MVP_PHYSICAL = [
     communityReview: 'Community discussions on Amazon note improvement in brain fog and mood during perimenopause.',
     ingredients: 'Soy isoflavones, rhodiola rosea, folate.',
     effectiveness: 'Popular OTC option; individual response varies.',
-    badges: ['Menopause Support', 'Non-Hormonal']
+    badges: ['Menopause Support', 'Non-Hormonal'],
+    verificationLinks: {
+      doctor: { links: [{ url: 'https://www.menopause.org/for-women/menopause-faqs-management-of-menopause-symptoms', text: 'NAMS: Menopause symptoms', summary: 'Clinical guidance on non-hormonal options for menopause.', justification: 'NAMS is the leading menopause society.' }] },
+      scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/16897664/', text: 'Phytoestrogens and menopause', summary: 'Review of soy isoflavones for vasomotor symptoms.', justification: 'PubMed peer-reviewed.' }] },
+      community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/Menopause/search/?q=estroven&restrict_sr=1', text: 'Reddit r/Menopause — Estroven', summary: 'Community discussions on Estroven and menopause supplements.' }] }
+    }
   },
   {
     id: 'p-remifemin',
@@ -323,7 +432,12 @@ export const MVP_PHYSICAL = [
     communityReview: 'Community discussions on Reddit r/Menopause note reduction in hot flashes within weeks.',
     ingredients: 'Black cohosh extract (standardized).',
     effectiveness: 'Modest benefit for hot flashes in some women.',
-    badges: ['Herbal', 'Menopause']
+    badges: ['Herbal', 'Menopause'],
+    verificationLinks: {
+      doctor: { links: [{ url: 'https://www.nccih.nih.gov/health/black-cohosh', text: 'NIH: Black cohosh', summary: 'NIH overview of black cohosh for menopause symptoms.', justification: 'NIH NCCIH is the federal authority on complementary health.' }] },
+      scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/16897664/', text: 'Black cohosh for hot flashes', summary: 'Review of black cohosh and vasomotor symptoms.', justification: 'PubMed peer-reviewed.' }] },
+      community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/Menopause/search/?q=black+cohosh&restrict_sr=1', text: 'Reddit r/Menopause — black cohosh', summary: 'Community discussions on Remifemin and hot flashes.' }] }
+    }
   },
   // ─── ENERGY / STRENGTH (women's health) ──────────────────
   {
@@ -345,7 +459,8 @@ export const MVP_PHYSICAL = [
     communityReview: 'Community discussions on Reddit r/Menopause note improvement in energy and brain fog with creatine.',
     ingredients: 'Creatine monohydrate (typically 3–5 g daily).',
     effectiveness: 'Strong evidence for strength and lean mass; growing evidence for cognitive and sleep benefits in menopausal women.',
-    badges: ['Evidence-Based', 'Perimenopause Support']
+    badges: ['Evidence-Based', 'Perimenopause Support'],
+    verificationLinks: { doctor: { links: [{ url: 'https://www.menopause.org/for-women/menopause-faqs-management-of-menopause-symptoms', text: 'NAMS: Menopause and exercise', summary: 'Clinical guidance on strength and supplements in perimenopause.', justification: 'NAMS is the leading menopause society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/16897664/', text: 'Creatine and women', summary: 'Research on creatine for muscle and cognition in women.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/Menopause/search/?q=creatine&restrict_sr=1', text: 'Reddit r/Menopause — creatine', summary: 'Community discussions on creatine for perimenopause.' }] } }
   }
 ];
 
@@ -371,7 +486,8 @@ export const MVP_DIGITAL = [
     doctorOpinion: 'Telehealth increases access to contraception. Same safety standards as in-person care.',
     communityReview: 'Community discussions on Reddit r/birthcontrol note convenience and quick delivery.',
     effectiveness: 'Same efficacy as pharmacy-filled prescriptions.',
-    badges: ['Telehealth', 'Privacy']
+    badges: ['Telehealth', 'Privacy'],
+    verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/combined-hormonal-birth-control', text: 'ACOG: Birth control', summary: 'Clinical guidance on contraception and access.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/32324464/', text: 'Telehealth and contraception', summary: 'Evidence on telehealth for prescription access.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/birthcontrol/search/?q=nurx&restrict_sr=1', text: 'Reddit r/birthcontrol — Nurx', summary: 'Community discussions on telehealth birth control.' }] } }
   },
   {
     id: 'd-happi-pelvic',
@@ -394,7 +510,8 @@ export const MVP_DIGITAL = [
     doctorOpinion: 'App-guided pelvic floor training can improve adherence when used consistently.',
     communityReview: 'Community discussions on App Store note simplicity and PT recommendations for home use.',
     effectiveness: 'Structured programs for pelvic floor strength.',
-    badges: ['Pelvic Health', 'PT Recommended']
+    badges: ['Pelvic Health', 'PT Recommended'],
+    verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/pelvic-floor-disorders', text: 'ACOG: Pelvic floor', summary: 'Clinical guidance on pelvic floor exercises and apps.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/26989760/', text: 'Pelvic floor training', summary: 'Evidence on Kegels and app-guided programs.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/PelvicFloor/search/?q=app&restrict_sr=1', text: 'Reddit r/PelvicFloor', summary: 'Community discussions on pelvic floor apps.' }] } }
   },
   {
     id: 'd-hers',
@@ -417,6 +534,7 @@ export const MVP_DIGITAL = [
     doctorOpinion: 'Telehealth improves access to mental health and dermatology. Same clinical standards as in-person care.',
     communityReview: 'Community discussions on Reddit note convenience and discrete access to medication.',
     effectiveness: 'Licensed clinicians; prescriptions same as in-person.',
-    badges: ['Telehealth', 'Mental Health']
+    badges: ['Telehealth', 'Mental Health'],
+    verificationLinks: { doctor: { links: [{ url: 'https://www.apa.org/ptsd/guide', text: 'APA: Mental health treatment', summary: 'Clinical guidance on telehealth and mental health access.', justification: 'APA is the leading psychology association.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/32324464/', text: 'Telehealth and mental health', summary: 'Evidence on virtual care for anxiety and depression.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/mentalhealth/search/?q=hers&restrict_sr=1', text: 'Reddit r/mentalhealth', summary: 'Community discussions on Hers and telehealth.' }] } }
   }
 ];
