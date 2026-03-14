@@ -16,6 +16,39 @@ const ARTICLE_FOCUS_TAGS = {
   'endometriosis-basics': ['endometriosis', 'cramps', 'discomfort'],
 };
 
+/** Article id → tags that exclude a product if it lacks the article's topic-specific focus. E.g. menopause should not show birth-control-only products. */
+const ARTICLE_EXCLUDE_IF_NOT_FOCUSED = {
+  'menopause-basics': ['contraception'],
+  'intimate-wash': ['contraception'],
+  'yeast-infection-basics': ['contraception'],
+  'pelvic-floor-dysfunction': ['contraception'],
+  'uti-prevention': ['contraception'],
+};
+
+/** Topic-specific tags per article (subset of focus). Used to override exclusions — e.g. contraception is excluded from menopause unless item also has menopause. */
+const ARTICLE_PRIMARY_FOCUS = {
+  'menopause-basics': ['menopause'],
+  'intimate-wash': ['vaginal-health', 'intimate-care'],
+  'yeast-infection-basics': ['vaginal-health'],
+  'pelvic-floor-dysfunction': ['pelvic-floor', 'pelvic-health'],
+  'uti-prevention': ['uti'],
+};
+
+/** Returns true if item should be excluded from this article (e.g. birth control under menopause). */
+function isExcludedForArticle(item, articleId) {
+  const excludeTags = ARTICLE_EXCLUDE_IF_NOT_FOCUSED[articleId];
+  if (!excludeTags?.length) return false;
+  const itemTags = new Set([
+    ...(item.tags || []),
+    ...(item.healthFunctions || []),
+    ...(item.category ? [item.category] : []),
+  ]);
+  const primaryFocus = ARTICLE_PRIMARY_FOCUS[articleId] || ARTICLE_FOCUS_TAGS[articleId] || [];
+  const hasExcludedTag = excludeTags.some((t) => itemTags.has(t));
+  const hasTopicFocus = primaryFocus.some((t) => itemTags.has(t));
+  return hasExcludedTag && !hasTopicFocus;
+}
+
 /** Quiz frustrations → tags (align with products.js). */
 const FRUSTRATION_TO_TAG = {
   'Heavy flow': 'heavy-flow',
@@ -39,7 +72,7 @@ function getProductUrl(p) {
   return 'https://' + s.replace(/^www\./i, '');
 }
 
-/** Telehealth platforms that match this article's focus (tags or healthFunctions). Returns full product/startup objects for opening in product card. Deduped by name. */
+/** Telehealth platforms that match this article's focus (tags or healthFunctions). Returns full product/startup objects for opening in product card. Deduped by name. Excludes off-topic items (e.g. birth control under menopause). */
 function getRelevantTelehealth(articleId) {
   const focus = ARTICLE_FOCUS_TAGS[articleId] || [];
   const fromProducts = (ALL_PRODUCTS || [])
@@ -48,14 +81,16 @@ function getRelevantTelehealth(articleId) {
       if (focus.length === 0) return true;
       const tags = new Set([...(p.tags || []), ...(p.healthFunctions || [])]);
       return focus.some((t) => tags.has(t));
-    });
+    })
+    .filter((p) => !isExcludedForArticle(p, articleId));
   const fromStartups = (RELEASED_STARTUPS || [])
     .filter((s) => s.category === 'telehealth')
     .filter((s) => {
       if (focus.length === 0) return true;
       const tags = new Set([...(s.tags || []), ...(s.healthFunctions || [])]);
       return focus.some((t) => tags.has(t));
-    });
+    })
+    .filter((s) => !isExcludedForArticle(s, articleId));
   // Dedupe by name so the same platform (e.g. Tia in products + startups) appears once; prefer product entry.
   const byName = new Map();
   [...fromProducts, ...fromStartups].forEach((item) => {
@@ -81,8 +116,10 @@ function getArticleAndProfileRelevantItems(articleId, quizResults) {
     return focus.some((t) => tags.has(t));
   };
 
-  let products = (ALL_PRODUCTS || []).filter(matchesArticle);
-  let startups = (RELEASED_STARTUPS || []).filter(matchesArticle);
+  const notExcluded = (item) => !isExcludedForArticle(item, articleId);
+
+  let products = (ALL_PRODUCTS || []).filter(matchesArticle).filter(notExcluded);
+  let startups = (RELEASED_STARTUPS || []).filter(matchesArticle).filter(notExcluded);
 
   if (quizResults?.frustrations?.length) {
     const recs = getRecommendations(quizResults);
