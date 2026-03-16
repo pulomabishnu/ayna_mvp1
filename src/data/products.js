@@ -1066,7 +1066,7 @@ export const SIMILAR_PROFILES = {
     },
     'bloating': {
         label: 'Users with Hormonal Bloating',
-        topProducts: ['p-pink-stork-bloat', 'p-flo-gummies', 'p-hum-flatter-me', 'p-evening-primrose', 'p-magnesium-glycinate'],
+        topProducts: ['p-pink-stork-bloat', 'p-love-wellness-bloat', 'p-flo-gummies', 'p-hum-flatter-me', 'p-evening-primrose', 'p-magnesium-glycinate'],
         quote: "Flo gummies and digestive enzymes made a real difference for my cycle-related bloating."
     },
     'uti': {

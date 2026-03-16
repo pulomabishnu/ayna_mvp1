@@ -20,6 +20,7 @@ import Screenings from './components/Screenings';
 import { useScrollPosition } from './hooks/useScrollPosition';
 import ProductModal from './components/ProductModal';
 import Articles from './components/Articles';
+import DonateProducts from './components/DonateProducts';
 import ProfileChatbot from './components/ProfileChatbot';
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
   const [checkinData, setCheckinData] = useState(null);
   const [checkinUpdatedProfile, setCheckinUpdatedProfile] = useState(false);
   const [discoverySearch, setDiscoverySearch] = useState('');
+  const [discoveryInitial, setDiscoveryInitial] = useState(null); // { initialCategory, initialPadFlow, initialPadPreference, initialPadUseCase }
   const [userZipCode, setUserZipCode] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
   const [selectedArticleId, setSelectedArticleId] = useState(null);
@@ -68,8 +70,20 @@ function App() {
   const handleViewWaitlist = () => setCurrentView('waitlist');
   const handleViewTracked = () => setCurrentView('tracked');
   const handleViewEcosystem = () => setCurrentView('ecosystem');
-  const handleViewDiscovery = (query = '') => {
-    setDiscoverySearch(query);
+  const handleViewDiscovery = (queryOrOptions = '') => {
+    if (typeof queryOrOptions === 'object' && queryOrOptions !== null) {
+      setDiscoverySearch(queryOrOptions.query || '');
+      setDiscoveryInitial({
+        initialCategory: queryOrOptions.initialCategory || null,
+        initialPadFlow: queryOrOptions.initialPadFlow || null,
+        initialPadPreference: queryOrOptions.initialPadPreference || null,
+        initialPadUseCase: queryOrOptions.initialPadUseCase || null,
+        initialSymptom: queryOrOptions.initialSymptom || null,
+      });
+    } else {
+      setDiscoverySearch(String(queryOrOptions || ''));
+      setDiscoveryInitial(null);
+    }
     setCurrentView('discovery');
   };
   const handleViewDeeptech = () => setCurrentView('deeptech');
@@ -77,6 +91,7 @@ function App() {
     setSelectedArticleId(null);
     setCurrentView('articles');
   };
+  const handleViewDonate = () => setCurrentView('donate');
   const handleViewArticle = (articleId) => {
     setSelectedArticleId(articleId);
     setCurrentView('articles');
@@ -263,6 +278,9 @@ function App() {
               <button style={{ fontSize: '0.8rem', fontWeight: '500', color: currentView === 'articles' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem' }} onClick={handleViewArticles}>
                 Articles
               </button>
+              <button style={{ fontSize: '0.8rem', fontWeight: '500', color: currentView === 'donate' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem' }} onClick={handleViewDonate}>
+                Donate
+              </button>
             </div>
 
             {/* Personalized Ecosystem (Premium Gated) */}
@@ -376,6 +394,9 @@ function App() {
         {currentView === 'articles' && (
           <Articles initialArticleId={selectedArticleId} onOpenProduct={handleOpenProduct} quizResults={quizResults} />
         )}
+        {currentView === 'donate' && (
+          <DonateProducts omittedProducts={omittedProducts} onViewOmitted={handleViewOmitted} />
+        )}
         {currentView === 'ecosystem' && (
           <MyEcosystem
             myProducts={myProducts}
@@ -397,6 +418,11 @@ function App() {
             joinedWaitlists={joinedWaitlists}
             toggleJoinWaitlist={toggleJoinWaitlist}
             omittedProducts={omittedProducts}
+            initialCategory={discoveryInitial?.initialCategory}
+            initialPadFlow={discoveryInitial?.initialPadFlow}
+            initialPadPreference={discoveryInitial?.initialPadPreference}
+            initialPadUseCase={discoveryInitial?.initialPadUseCase}
+            initialSymptom={discoveryInitial?.initialSymptom}
             toggleOmitProduct={toggleOmitProduct}
             setCurrentView={setCurrentView}
             onOpenProduct={handleOpenProduct}
@@ -490,6 +516,7 @@ function App() {
             chatHistory={chatHistory}
             onChatHistoryUpdate={setChatHistory}
             disabled={!quizResults}
+            onNavigateToDiscovery={handleViewDiscovery}
           />
         )}
 
