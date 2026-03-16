@@ -720,28 +720,46 @@ export const CLINICAL_WORKFLOW_STEPS = {
         { id: 'treat', label: 'Treat & manage (suppositories, products)', order: 3 },
         { id: 'get_care', label: 'Get care (telehealth)', order: 4 },
     ],
+    cramps: [
+        { id: 'supplement', label: 'Supplements (magnesium, omega-3)', order: 1 },
+        { id: 'heat', label: 'Heat therapy', order: 2 },
+        { id: 'checkin', label: 'Track & check in', order: 3 },
+    ],
 };
 
 const FRUSTRATION_TO_WORKFLOW = {
     'Recurrent UTIs': 'uti',
+    'Painful cramps': 'cramps',
 };
 
-/** Assign a workflow step for a given frustration (e.g. uti) based on product attributes. */
+/** Assign a workflow step for a given frustration (e.g. uti, cramps) based on product attributes. */
 function getWorkflowStep(product, frustrationTag) {
-    if (frustrationTag !== 'uti') return null;
-    const tags = new Set(product.tags || []);
-    const healthFns = new Set(product.healthFunctions || []);
-    const name = (product.name || '').toLowerCase();
-    const summary = (product.summary || '').toLowerCase();
-    const hasUti = tags.has('uti') || healthFns.has('uti-prevention');
-
-    if (!hasUti) return null;
-
-    if (product.category === 'telehealth') return 'get_care';
-    if (name.includes('test') || name.includes('strip') || summary.includes('test') || summary.includes('strip')) return 'test';
-    if (healthFns.has('vaginal-health') || healthFns.has('intimate-care') || name.includes('suppository') || summary.includes('suppository') || product.id === 'p-boric-acid') return 'treat';
-    if (product.category === 'supplement' || product.category === 'supplements') return 'prevent';
-    return 'treat';
+    if (frustrationTag === 'uti') {
+        const tags = new Set(product.tags || []);
+        const healthFns = new Set(product.healthFunctions || []);
+        const name = (product.name || '').toLowerCase();
+        const summary = (product.summary || '').toLowerCase();
+        const hasUti = tags.has('uti') || healthFns.has('uti-prevention');
+        if (!hasUti) return null;
+        if (product.category === 'telehealth') return 'get_care';
+        if (name.includes('test') || name.includes('strip') || summary.includes('test') || summary.includes('strip')) return 'test';
+        if (healthFns.has('vaginal-health') || healthFns.has('intimate-care') || name.includes('suppository') || summary.includes('suppository') || product.id === 'p-boric-acid') return 'treat';
+        if (product.category === 'supplement' || product.category === 'supplements') return 'prevent';
+        return 'treat';
+    }
+    if (frustrationTag === 'cramps') {
+        const tags = new Set(product.tags || []);
+        const healthFns = new Set(product.healthFunctions || []);
+        const name = (product.name || '').toLowerCase();
+        const summary = (product.summary || '').toLowerCase();
+        const hasCramps = tags.has('cramps') || healthFns.has('cramp-relief');
+        if (!hasCramps) return null;
+        if (product.category === 'tracker' || name.includes('track') || summary.includes('track')) return 'checkin';
+        if (name.includes('heat') || name.includes('therma') || summary.includes('heat') || product.category === 'cramp-relief') return 'heat';
+        if (product.category === 'supplement' || product.category === 'supplements') return 'supplement';
+        return 'supplement';
+    }
+    return null;
 }
 
 /**
@@ -1084,6 +1102,17 @@ export const SIMILAR_PROFILES = {
         topProducts: ['p-zinc', 'p-evening-primrose', 'd-clue'],
         quote: "Zinc and Chasteberry helped stabilize my hormonal acne and regulate my cycles after years of guessing."
     }
+};
+
+/** Symptom → product IDs for supplement/symptom browse. Used when category=supplement. */
+export const SYMPTOM_TO_SUPPLEMENTS = {
+    cramps: ['p-magnesium-glycinate', 'p-evening-primrose', 'p-fish-oil', 'p-honeypot-pad', 'p-thermacare', 'p-thermacare-patch', 'p-vitex'],
+    bloating: ['p-pink-stork-bloat', 'p-love-wellness-bloat', 'p-flo-gummies', 'p-hum-flatter-me', 'p-evening-primrose', 'p-magnesium-glycinate'],
+    uti: ['p-cranberry-supplement', 'p-d-mannose-now', 'p-uqora-control', 'p-probiotics-women', 'p-azo-test', 'p-boric-acid', 'p-cystex'],
+    pcos: ['p-inositol-wholesome', 'p-spearmint-pcos', 'p-zinc', 'p-evening-primrose', 'p-vitex'],
+    menopause: ['p-estroven-mood', 'p-remifemin', 'p-creatine-womens'],
+    irregular: ['p-vitex', 'p-inositol-wholesome', 'p-evening-primrose'],
+    fertility: ['p-ubiquinol-thorne'],
 };
 
 // Filter options for checking in
