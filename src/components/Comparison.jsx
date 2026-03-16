@@ -89,12 +89,14 @@ export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LA
         );
     }
 
+    const hasPads = compareList.some(p => p.category === 'pad');
     const categories = [
         { key: 'category', label: 'Category' },
         { key: 'price', label: 'Price' },
+        { key: 'effectiveness', label: hasPads ? 'Absorbency / Flow' : 'Clinical Effectiveness' },
         { key: 'safety.fdaStatus', label: 'FDA Status' },
         { key: 'safety.materials', label: 'Materials/Ingredients' },
-        { key: 'effectiveness', label: 'Clinical Effectiveness' },
+        { key: 'safety.recalls', label: hasPads ? 'Recalls / PFAS' : 'Recalls' },
         { key: 'doctorOpinion', label: 'Clinical opinions' },
         { key: 'badges', label: 'Appeal Badges' },
     ];

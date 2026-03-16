@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from 'react';
-import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
+import { ALL_PRODUCTS, CATEGORY_LABELS, SYMPTOM_TO_SUPPLEMENTS } from '../data/products';
 import { RELEASED_STARTUPS } from '../data/startups';
 import { getAynaRating } from '../data/aynaReviews';
 import Disclaimer from './Disclaimer';
+import FindYourPadModal from './FindYourPadModal';
 
 const ALL_CATEGORIES = ['all', 'pad', 'tampon', 'cup', 'disc', 'period-underwear', 'supplement', 'tracker', 'telehealth', 'mental-health', 'fitness', 'diagnostics', 'hormone-monitoring', 'menopause', 'fertility', 'pelvic-health', 'pelvic-floor', 'cramp-relief', 'postpartum', 'pregnancy', 'sex-tech', 'intimate-care', 'contraception'];
 const TYPE_FILTERS = ['all', 'physical', 'digital', 'startup'];
@@ -45,12 +46,74 @@ const SORT_OPTIONS = [
     { value: 'rating', label: 'Best rated' },
 ];
 
-export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, isPremium, onUpgrade, initialSearch, recommendedProductIds, aynaReviews = {} }) {
-    const [categoryFilter, setCategoryFilter] = useState('all');
+// Pad sub-filters: flow, preference, use case
+const PAD_FLOW_OPTIONS = [
+    { value: 'all', label: 'All flow' },
+    { value: 'heavy', label: 'Heavy flow', tag: 'heavy-flow' },
+    { value: 'regular', label: 'Regular' },
+    { value: 'light', label: 'Light / Liners', matchText: ['liner', 'light'] },
+];
+const PAD_PREFERENCE_OPTIONS = [
+    { value: 'all', label: 'All' },
+    { value: 'organic', label: 'Organic', tag: 'organic' },
+    { value: 'mainstream', label: 'Mainstream' },
+    { value: 'budget', label: 'Budget', tag: 'cost' },
+];
+const PAD_USE_CASE_OPTIONS = [
+    { value: 'all', label: 'All' },
+    { value: 'overnight', label: 'Overnight', matchText: ['overnight'] },
+    { value: 'active', label: 'Active', matchText: ['active', 'flexible', 'workout', 'athletic'] },
+    { value: 'everyday', label: 'Everyday' },
+];
+
+function padMatchesSubFilters(item, padFlow, padPreference, padUseCase) {
+    if (item.category !== 'pad') return true;
+    const tags = new Set(item.tags || []);
+    const text = [(item.name || ''), (item.summary || '')].join(' ').toLowerCase();
+
+    if (padFlow !== 'all') {
+        if (padFlow === 'heavy' && !tags.has('heavy-flow')) return false;
+        if (padFlow === 'light') {
+            const hasLight = PAD_FLOW_OPTIONS.find(o => o.value === 'light')?.matchText?.some(m => text.includes(m));
+            if (!hasLight) return false;
+        }
+        if (padFlow === 'regular') {
+            if (tags.has('heavy-flow')) return false;
+            const hasLight = PAD_FLOW_OPTIONS.find(o => o.value === 'light')?.matchText?.some(m => text.includes(m));
+            if (hasLight) return false;
+        }
+    }
+    if (padPreference !== 'all') {
+        if (padPreference === 'organic' && !tags.has('organic')) return false;
+        if (padPreference === 'budget' && !tags.has('cost')) return false;
+        if (padPreference === 'mainstream' && tags.has('organic')) return false;
+    }
+    if (padUseCase !== 'all') {
+        const opt = PAD_USE_CASE_OPTIONS.find(o => o.value === padUseCase);
+        if (opt?.matchText) {
+            const hasMatch = opt.matchText.some(m => text.includes(m));
+            if (!hasMatch) return false;
+        }
+        if (padUseCase === 'everyday') {
+            const hasOvernight = text.includes('overnight');
+            const hasActive = ['active', 'flexible', 'workout', 'athletic'].some(m => text.includes(m));
+            if (hasOvernight || hasActive) return false;
+        }
+    }
+    return true;
+}
+
+export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, isPremium, onUpgrade, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom }) {
+    const [categoryFilter, setCategoryFilter] = useState(initialCategory || 'all');
     const [typeFilter, setTypeFilter] = useState('all');
     const [searchQuery, setSearchQuery] = useState(initialSearch || '');
     const [sortBy, setSortBy] = useState('default');
     const [personalizationFilter, setPersonalizationFilter] = useState(false);
+    const [padFlowFilter, setPadFlowFilter] = useState(initialPadFlow || 'all');
+    const [padPreferenceFilter, setPadPreferenceFilter] = useState(initialPadPreference || 'all');
+    const [padUseCaseFilter, setPadUseCaseFilter] = useState(initialPadUseCase || 'all');
+    const [showFindPadModal, setShowFindPadModal] = useState(false);
+    const [symptomFilter, setSymptomFilter] = useState(initialSymptom || 'all');
     const recommendedSet = useMemo(() => new Set(recommendedProductIds || []), [recommendedProductIds]);
 
     React.useEffect(() => {
@@ -58,6 +121,16 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             setSearchQuery(initialSearch);
         }
     }, [initialSearch]);
+
+    React.useEffect(() => {
+        if (initialCategory) setCategoryFilter(initialCategory);
+    }, [initialCategory]);
+
+    React.useEffect(() => {
+        if (initialPadFlow) setPadFlowFilter(initialPadFlow);
+        if (initialPadPreference) setPadPreferenceFilter(initialPadPreference);
+        if (initialPadUseCase) setPadUseCaseFilter(initialPadUseCase);
+    }, [initialPadFlow, initialPadPreference, initialPadUseCase]);
 
     const combined = useMemo(() => {
         const products = ALL_PRODUCTS.map(p => ({ ...p, isStartup: false }));
@@ -78,6 +151,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             if (personalizationFilter && recommendedSet.size > 0 && !recommendedSet.has(item.id)) return false;
             if (categoryFilter !== 'all' && item.category !== categoryFilter) return false;
             if (typeFilter !== 'all' && item.type !== typeFilter) return false;
+            if (categoryFilter === 'pad' && !padMatchesSubFilters(item, padFlowFilter, padPreferenceFilter, padUseCaseFilter)) return false;
+            if (categoryFilter === 'supplement' && symptomFilter !== 'all') {
+                const ids = SYMPTOM_TO_SUPPLEMENTS[symptomFilter];
+                if (ids && !ids.includes(item.id)) return false;
+            }
 
             if (searchQuery.trim()) {
                 const query = searchQuery.toLowerCase().trim();
@@ -153,7 +231,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             });
         }
         return list;
-    }, [combined, categoryFilter, typeFilter, omittedProducts, searchQuery, sortBy, personalizationFilter, recommendedSet, aynaReviews]);
+    }, [combined, categoryFilter, typeFilter, omittedProducts, searchQuery, sortBy, personalizationFilter, recommendedSet, aynaReviews, padFlowFilter, padPreferenceFilter, padUseCaseFilter, symptomFilter]);
 
     const handleSmartSearch = (e) => {
         e.preventDefault();
@@ -261,6 +339,84 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     </button>
                 ))}
             </div>
+
+            {categoryFilter === 'pad' && (
+                <div style={{ marginBottom: 'var(--spacing-lg)', padding: '1rem', background: 'var(--color-surface-soft)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)' }}>
+                    <p style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>Narrow by pad type</p>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginRight: '0.25rem' }}>Flow:</span>
+                        {PAD_FLOW_OPTIONS.map(o => (
+                            <button key={o.value} onClick={() => setPadFlowFilter(o.value)} style={{
+                                padding: '0.3rem 0.75rem', borderRadius: 'var(--radius-pill)', fontSize: '0.75rem',
+                                fontWeight: '500', border: '1px solid var(--color-border)',
+                                background: padFlowFilter === o.value ? 'var(--color-primary)' : 'transparent',
+                                color: padFlowFilter === o.value ? 'white' : 'var(--color-text-main)',
+                                cursor: 'pointer', transition: 'all 0.2s'
+                            }}>{o.label}</button>
+                        ))}
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginRight: '0.25rem' }}>Preference:</span>
+                        {PAD_PREFERENCE_OPTIONS.map(o => (
+                            <button key={o.value} onClick={() => setPadPreferenceFilter(o.value)} style={{
+                                padding: '0.3rem 0.75rem', borderRadius: 'var(--radius-pill)', fontSize: '0.75rem',
+                                fontWeight: '500', border: '1px solid var(--color-border)',
+                                background: padPreferenceFilter === o.value ? 'var(--color-primary)' : 'transparent',
+                                color: padPreferenceFilter === o.value ? 'white' : 'var(--color-text-main)',
+                                cursor: 'pointer', transition: 'all 0.2s'
+                            }}>{o.label}</button>
+                        ))}
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginRight: '0.25rem' }}>Use case:</span>
+                        {PAD_USE_CASE_OPTIONS.map(o => (
+                            <button key={o.value} onClick={() => setPadUseCaseFilter(o.value)} style={{
+                                padding: '0.3rem 0.75rem', borderRadius: 'var(--radius-pill)', fontSize: '0.75rem',
+                                fontWeight: '500', border: '1px solid var(--color-border)',
+                                background: padUseCaseFilter === o.value ? 'var(--color-primary)' : 'transparent',
+                                color: padUseCaseFilter === o.value ? 'white' : 'var(--color-text-main)',
+                                cursor: 'pointer', transition: 'all 0.2s'
+                            }}>{o.label}</button>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {categoryFilter === 'supplement' && (
+                <div style={{ marginBottom: 'var(--spacing-lg)', padding: '1rem', background: 'var(--color-surface-soft)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)' }}>
+                    <p style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>Browse by symptom</p>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                        <button onClick={() => setSymptomFilter('all')} style={{
+                            padding: '0.3rem 0.75rem', borderRadius: 'var(--radius-pill)', fontSize: '0.75rem',
+                            fontWeight: '500', border: '1px solid var(--color-border)',
+                            background: symptomFilter === 'all' ? 'var(--color-primary)' : 'transparent',
+                            color: symptomFilter === 'all' ? 'white' : 'var(--color-text-main)',
+                            cursor: 'pointer', transition: 'all 0.2s'
+                        }}>All</button>
+                        {Object.keys(SYMPTOM_TO_SUPPLEMENTS).map(symptom => (
+                            <button key={symptom} onClick={() => setSymptomFilter(symptom)} style={{
+                                padding: '0.3rem 0.75rem', borderRadius: 'var(--radius-pill)', fontSize: '0.75rem',
+                                fontWeight: '500', border: '1px solid var(--color-border)',
+                                background: symptomFilter === symptom ? 'var(--color-primary)' : 'transparent',
+                                color: symptomFilter === symptom ? 'white' : 'var(--color-text-main)',
+                                cursor: 'pointer', transition: 'all 0.2s'
+                            }}>{symptom.charAt(0).toUpperCase() + symptom.slice(1)}</button>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {showFindPadModal && (
+                <FindYourPadModal
+                    onClose={() => setShowFindPadModal(false)}
+                    onFind={(opts) => {
+                        setPadFlowFilter(opts.initialPadFlow || 'all');
+                        setPadPreferenceFilter(opts.initialPadPreference || 'all');
+                        setPadUseCaseFilter(opts.initialPadUseCase || 'all');
+                        setShowFindPadModal(false);
+                    }}
+                />
+            )}
 
             <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', margin: 0 }}>

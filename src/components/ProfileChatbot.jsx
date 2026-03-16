@@ -13,7 +13,7 @@ function parseMessageIntoProfile(message, currentProfile) {
 
   const added = { frustrations: [], sensitivities: [], productsToAvoid: [], preference: null };
 
-  // Frustrations / concerns
+  // Frustrations / concerns (pad/pads trigger navigation only, not profile update)
   const frustrationPhrases = [
     { keys: ['heavy', 'heavy flow', 'heavy period'], value: 'Heavy flow' },
     { keys: ['cramp', 'pain', 'painful period'], value: 'Painful cramps' },
@@ -92,7 +92,7 @@ function parseMessageIntoProfile(message, currentProfile) {
 
 const DEFAULT_WELCOME = [{ role: 'assistant', text: "Hi! I'm Ayna. You can tell me more about your health here — for example, 'I have endometriosis' or 'I'm sensitive to fragrance.' I'll update your profile and refresh your recommendations." }];
 
-export default function ProfileChatbot({ profile, onProfileUpdate, chatHistory = [], onChatHistoryUpdate, disabled }) {
+export default function ProfileChatbot({ profile, onProfileUpdate, chatHistory = [], onChatHistoryUpdate, disabled, onNavigateToDiscovery }) {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState(chatHistory?.length > 0 ? chatHistory : DEFAULT_WELCOME);
   const [input, setInput] = useState('');
@@ -115,6 +115,10 @@ export default function ProfileChatbot({ profile, onProfileUpdate, chatHistory =
     const userMsg = { role: 'user', text: msg };
     setSending(true);
 
+    const text = msg.toLowerCase();
+    const wantsPads = text.includes('pad') || text.includes('pads') || text.includes('period pad');
+    const wantsSupplements = text.includes('supplement') && (text.includes('cramp') || text.includes('bloat') || text.includes('pcos') || text.includes('menopause') || text.includes('uti'));
+
     const result = parseMessageIntoProfile(msg, profile || {});
     let assistantText;
     if (result) {
@@ -125,6 +129,39 @@ export default function ProfileChatbot({ profile, onProfileUpdate, chatHistory =
       if (result.added.productsToAvoid.length) parts.push(`We'll avoid recommending: ${result.added.productsToAvoid.join(', ')}.`);
       if (result.added.preference) parts.push(`Updated priority: ${result.added.preference}.`);
       assistantText = `Got it. ${parts.join(' ')} Your profile and recommendations have been updated.`;
+      if (wantsPads && onNavigateToDiscovery) {
+        const opts = { query: 'pads', initialCategory: 'pad' };
+        if (text.includes('heavy')) opts.initialPadFlow = 'heavy';
+        if (text.includes('organic')) opts.initialPadPreference = 'organic';
+        if (text.includes('overnight')) opts.initialPadUseCase = 'overnight';
+        onNavigateToDiscovery(opts);
+        assistantText += " I've opened Discovery filtered to pads for you.";
+      } else if (wantsSupplements && onNavigateToDiscovery) {
+        const opts = { query: msg, initialCategory: 'supplement' };
+        if (text.includes('cramp')) opts.initialSymptom = 'cramps';
+        else if (text.includes('bloat')) opts.initialSymptom = 'bloating';
+        else if (text.includes('pcos')) opts.initialSymptom = 'pcos';
+        else if (text.includes('menopause')) opts.initialSymptom = 'menopause';
+        else if (text.includes('uti')) opts.initialSymptom = 'uti';
+        onNavigateToDiscovery(opts);
+        assistantText += " I've opened Discovery filtered to supplements for you.";
+      }
+    } else if (wantsPads && onNavigateToDiscovery) {
+      const opts = { query: 'pads', initialCategory: 'pad' };
+      if (text.includes('heavy')) opts.initialPadFlow = 'heavy';
+      if (text.includes('organic')) opts.initialPadPreference = 'organic';
+      if (text.includes('overnight')) opts.initialPadUseCase = 'overnight';
+      onNavigateToDiscovery(opts);
+      assistantText = "I've opened Discovery filtered to pads for you. Browse and compare to find your best fit.";
+    } else if (wantsSupplements && onNavigateToDiscovery) {
+      const opts = { query: msg, initialCategory: 'supplement' };
+      if (text.includes('cramp')) opts.initialSymptom = 'cramps';
+      else if (text.includes('bloat')) opts.initialSymptom = 'bloating';
+      else if (text.includes('pcos')) opts.initialSymptom = 'pcos';
+      else if (text.includes('menopause')) opts.initialSymptom = 'menopause';
+      else if (text.includes('uti')) opts.initialSymptom = 'uti';
+      onNavigateToDiscovery(opts);
+      assistantText = "I've opened Discovery filtered to supplements for you. Browse by symptom to find options.";
     } else {
       assistantText = "Thanks for sharing. I didn't spot specific concerns or preferences to add — try phrases like 'I have heavy flow' or 'I prefer organic products.' You can also retake the quiz to change your answers.";
     }

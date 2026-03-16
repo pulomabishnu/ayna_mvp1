@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useScrollPosition } from '../hooks/useScrollPosition';
 import ScrollReveal from './ScrollReveal';
+import FindYourPadModal from './FindYourPadModal';
 
 // Landing page: no photo carousel, no rotating images — text, search, and CTA only.
 export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
@@ -10,7 +11,18 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
     const handleSearch = (e) => {
         if (e && typeof e.preventDefault === 'function') e.preventDefault();
         const q = (searchValue || '').trim();
-        if (typeof onViewDiscovery === 'function') onViewDiscovery(q);
+        if (typeof onViewDiscovery === 'function') {
+            const lower = q.toLowerCase();
+            if (lower.includes('pad') || lower.includes('pads')) {
+                const opts = { query: q, initialCategory: 'pad' };
+                if (lower.includes('organic')) opts.initialPadPreference = 'organic';
+                else if (lower.includes('overnight')) opts.initialPadUseCase = 'overnight';
+                else if (lower.includes('heavy')) opts.initialPadFlow = 'heavy';
+                onViewDiscovery(opts);
+            } else {
+                onViewDiscovery(q);
+            }
+        }
     };
 
     return (
@@ -75,7 +87,7 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
                             type="text"
                             value={searchValue}
                             onChange={(e) => setSearchValue(e.target.value)}
-                            placeholder="Ask Ayna: 'best organic tampons', 'PCOS supplements', 'privacy-first trackers'..."
+                            placeholder="Ask Ayna: 'best pads for heavy flow', 'organic pads', 'supplements for cramps'..."
                             style={{
                                 flexGrow: 1,
                                 border: 'none',
@@ -110,10 +122,26 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
                         justifyContent: 'center',
                         flexWrap: 'wrap'
                     }}>
-                        {['PCOS', 'Endometriosis', 'Heavy Flow', 'Privacy', 'Fertility'].map(tag => (
+                        {['Best pads for heavy flow', 'Organic pads', 'Overnight pads', 'PCOS supplements', 'Supplements for cramps'].map(tag => (
                             <button
                                 key={tag}
-                                onClick={() => onViewDiscovery(tag)}
+                                onClick={() => {
+                                    const lower = tag.toLowerCase();
+                                    if (lower.includes('pad')) {
+                                        const opts = { query: tag, initialCategory: 'pad' };
+                                        if (lower.includes('organic')) opts.initialPadPreference = 'organic';
+                                        else if (lower.includes('overnight')) opts.initialPadUseCase = 'overnight';
+                                        else if (lower.includes('heavy')) opts.initialPadFlow = 'heavy';
+                                        onViewDiscovery(opts);
+                                    } else if (lower.includes('supplement')) {
+                                        const opts = { query: tag, initialCategory: 'supplement' };
+                                        if (lower.includes('cramps')) opts.initialSymptom = 'cramps';
+                                        else if (lower.includes('pcos')) opts.initialSymptom = 'pcos';
+                                        onViewDiscovery(opts);
+                                    } else {
+                                        onViewDiscovery(tag);
+                                    }
+                                }}
                                 style={{
                                     background: 'var(--color-surface-soft)',
                                     border: '1px solid var(--color-border)',
@@ -130,9 +158,30 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
                                 {tag}
                             </button>
                         ))}
+                        <button
+                            onClick={() => setShowFindPadModal(true)}
+                            style={{
+                                background: 'var(--color-primary)',
+                                color: 'white',
+                                border: 'none',
+                                padding: '0.4rem 1rem',
+                                borderRadius: 'var(--radius-pill)',
+                                fontSize: '0.85rem',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                            }}
+                        >
+                            Find your pad →
+                        </button>
                     </div>
                 </div>
             </ScrollReveal>
+            {showFindPadModal && (
+                <FindYourPadModal
+                    onClose={() => setShowFindPadModal(false)}
+                    onFind={(opts) => onViewDiscovery(opts)}
+                />
+            )}
             {/* Premium CTA Block */}
             <ScrollReveal className="stagger-4">
                 <div style={{
