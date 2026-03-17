@@ -17,7 +17,14 @@
 </head>
 
 <body>
-  <div id="root"></div>
+  <div id="root">Loading Ayna…</div>
+  <script>
+    window.onerror = function(msg, url, line, col, err) {
+      var el = document.getElementById('root');
+      if (el) el.innerHTML = '<div style="padding:2rem;font-family:sans-serif"><h2>Error</h2><p>' + (msg || err?.message || 'Unknown error') + '</p></div>';
+      return false;
+    };
+  </script>
   <script type="module" src="/src/main.jsx"></script>
 </body>
 
