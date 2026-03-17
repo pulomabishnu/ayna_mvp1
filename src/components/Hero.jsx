@@ -7,6 +7,7 @@ import FindYourPadModal from './FindYourPadModal';
 export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
     const scrollY = useScrollPosition();
     const [searchValue, setSearchValue] = useState('');
+    const [showFindPadModal, setShowFindPadModal] = useState(false);
 
     const handleSearch = (e) => {
         if (e && typeof e.preventDefault === 'function') e.preventDefault();
