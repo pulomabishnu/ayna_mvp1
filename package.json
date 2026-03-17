@@ -5,16 +5,17 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "cross-env PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1 vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
-    "puppeteer": "^24.38.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
+    "puppeteer": "^24.38.0",
+    "cross-env": "^7.0.3",
     "@eslint/js": "^9.39.1",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
