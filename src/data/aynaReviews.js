@@ -6,7 +6,8 @@ const STORAGE_KEY = 'ayna_reviews';
 
 function loadFromStorage() {
   try {
-    const raw = typeof window !== 'undefined' && localStorage.getItem(STORAGE_KEY);
+    if (typeof window === 'undefined') return {};
+    const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
       if (parsed && typeof parsed === 'object') return parsed;
