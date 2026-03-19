@@ -28,14 +28,18 @@ const REST_STEPS = [
       'Menopause symptoms',
       'Endometriosis',
       'Fertility / TTC',
+      'Pregnancy',
+      'Postpartum recovery',
     ]
   },
   {
     id: 'preference',
     question: "What matters most to you in a product?",
-    type: 'single',
+    subtitle: "Select all that apply — we'll prioritize products that match",
+    type: 'multi',
     options: [
       'Organic/Natural only',
+      'Non-hormonal / hormone-free',
       'Lower cost',
       'Comfort/Convenience',
       'Privacy & data security',
@@ -149,8 +153,8 @@ function buildSteps(answers) {
 
 // Guiding questions for voice profile
 const VOICE_GUIDING_QUESTIONS = [
-  "What are your main period or health concerns? (e.g. heavy flow, cramps, irregular cycles, menopause symptoms)",
-  "Any product preferences? (organic, lower cost, comfort, privacy, sustainability)",
+  "What are your main period or health concerns? (e.g. heavy flow, cramps, irregular cycles, menopause symptoms, pregnancy, postpartum)",
+  "Any product preferences? (organic, lower cost, comfort, privacy, sustainability, non-hormonal)",
   "Are you comfortable with internal products like tampons or cups?",
   "What do you use today? (pads, tampons, cup, apps like Clue or Flo)",
   "Any sensitivities or allergies? (fragrance, latex, etc.)",
@@ -164,7 +168,7 @@ function parseTranscriptToProfile(transcript) {
   const text = raw.toLowerCase();
   const out = {
     frustrations: [],
-    preference: null,
+    preference: [],
     sensitivities: [],
     productsToAvoid: [],
     internalComfort: null,
@@ -190,18 +194,22 @@ function parseTranscriptToProfile(transcript) {
     { keys: ['pelvic', 'pelvic pain'], value: 'Pelvic pain' },
     { keys: ['menopause', 'menopausal', 'perimenopause', 'hot flash', 'hot flashes', 'night sweat', 'dryness'], value: 'Menopause symptoms' },
     { keys: ['endometriosis', 'endo'], value: 'Endometriosis' },
-    { keys: ['fertility', 'ttc', 'trying to conceive', 'trying to get pregnant', 'conceiving'], value: 'Fertility / TTC' }
+    { keys: ['fertility', 'ttc', 'trying to conceive', 'trying to get pregnant', 'conceiving'], value: 'Fertility / TTC' },
+    { keys: ['pregnant', 'pregnancy', 'expecting', 'prenatal'], value: 'Pregnancy' },
+    { keys: ['postpartum', 'post partum', 'after birth', 'new mom', 'new mother', 'recovery after birth', 'breastfeeding', 'nursing', 'lactation'], value: 'Postpartum recovery' }
   ];
   frustrationPhrases.forEach(({ keys = [], value }) => {
     if (value && keys.some(k => text.includes(k)) && !out.frustrations.includes(value)) out.frustrations.push(value);
   });
 
-  // Preference
-  if (text.includes('organic') || text.includes('natural') || text.includes('clean') || text.includes('chemical')) out.preference = 'Organic/Natural only';
-  else if (text.includes('cost') || text.includes('cheap') || text.includes('budget') || text.includes('affordable') || text.includes('inexpensive')) out.preference = 'Lower cost';
-  else if (text.includes('comfort') || text.includes('convenience') || text.includes('easy') || text.includes('convenient')) out.preference = 'Comfort/Convenience';
-  else if (text.includes('privacy') || text.includes('data') || text.includes('don\'t share')) out.preference = 'Privacy & data security';
-  else if (text.includes('sustainab') || text.includes('eco') || text.includes('zero waste') || text.includes('environment') || text.includes('reusable')) out.preference = 'Sustainability/Zero-waste';
+  // Preference — can select multiple (e.g. organic AND non-hormonal)
+  const prefAdd = (p) => { if (p && !out.preference.includes(p)) out.preference.push(p); };
+  if (text.includes('organic') || text.includes('natural') || text.includes('clean') || text.includes('chemical')) prefAdd('Organic/Natural only');
+  if (text.includes('non-hormonal') || text.includes('nonhormonal') || text.includes('hormone-free') || text.includes('hormone free') || text.includes('no hormones')) prefAdd('Non-hormonal / hormone-free');
+  if (text.includes('cost') || text.includes('cheap') || text.includes('budget') || text.includes('affordable') || text.includes('inexpensive')) prefAdd('Lower cost');
+  if (text.includes('comfort') || text.includes('convenience') || text.includes('easy') || text.includes('convenient')) prefAdd('Comfort/Convenience');
+  if (text.includes('privacy') || text.includes('data') || text.includes('don\'t share')) prefAdd('Privacy & data security');
+  if (text.includes('sustainab') || text.includes('eco') || text.includes('zero waste') || text.includes('environment') || text.includes('reusable')) prefAdd('Sustainability/Zero-waste');
 
   // Sensitivities
   if (text.includes('fragrance') || text.includes('scent') || text.includes('scented') || text.includes('perfume')) add(out.sensitivities, 'Fragrance sensitivity');
@@ -568,7 +576,7 @@ export default function Quiz({ onComplete }) {
               <div style={{ flex: 1, background: 'var(--color-surface-soft)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', overflowY: 'auto' }}>
                 {profile.age && <p style={{ marginBottom: '0.5rem' }}><strong>Age range:</strong> {profile.age}</p>}
                 {profile.frustrations?.length > 0 && <p style={{ marginBottom: '0.5rem' }}><strong>Concerns:</strong> {profile.frustrations.join(', ')}</p>}
-                {profile.preference && <p style={{ marginBottom: '0.5rem' }}><strong>Priority:</strong> {profile.preference}</p>}
+                {profile.preference?.length > 0 && <p style={{ marginBottom: '0.5rem' }}><strong>Priority:</strong> {Array.isArray(profile.preference) ? profile.preference.join(', ') : profile.preference}</p>}
                 {profile.contraceptionUse && <p style={{ marginBottom: '0.5rem' }}><strong>Birth control:</strong> {profile.contraceptionUse}</p>}
                 {profile.contraceptionPreference?.length > 0 && <p style={{ marginBottom: '0.5rem' }}><strong>Contraception type:</strong> {profile.contraceptionPreference.join(', ')}</p>}
                 {profile.internalComfort && <p style={{ marginBottom: '0.5rem' }}><strong>Internal products:</strong> {profile.internalComfort}</p>}
@@ -576,7 +584,7 @@ export default function Quiz({ onComplete }) {
                 {profile.sensitivities?.length > 0 && <p style={{ marginBottom: '0.5rem' }}><strong>Sensitivities:</strong> {profile.sensitivities.join(', ')}</p>}
                 {profile.productsToAvoid?.length > 0 && <p style={{ marginBottom: '0.5rem' }}><strong>Prefer to avoid:</strong> {profile.productsToAvoid.join(', ')}</p>}
                 {profile.budget && <p style={{ marginBottom: '0.5rem' }}><strong>Budget:</strong> {profile.budget}</p>}
-                {(!profile.frustrations?.length && !profile.preference && !profile.age && !profile.internalComfort && !profile.currentUse?.length) && (
+                {(!profile.frustrations?.length && !profile.preference?.length && !profile.age && !profile.internalComfort && !profile.currentUse?.length) && (
                   <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>Add or edit text in the transcript so we can build your profile. Mention age, concerns, what you use, and preferences.</p>
                 )}
               </div>

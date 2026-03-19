@@ -857,7 +857,9 @@ export function getRecommendations(quizAnswers) {
         'Pelvic pain': 'pelvic-floor',
         'Menopause symptoms': 'menopause',
         'Endometriosis': 'endometriosis',
-        'Fertility / TTC': 'fertility'
+        'Fertility / TTC': 'fertility',
+        'Pregnancy': 'pregnancy',
+        'Postpartum recovery': 'postpartum'
     };
 
     const userTags = new Set();
@@ -866,13 +868,15 @@ export function getRecommendations(quizAnswers) {
         if (tag) userTags.add(tag);
     });
 
-    if (quizAnswers.preference) {
-        if (quizAnswers.preference === 'Organic/Natural only') userTags.add('organic');
-        if (quizAnswers.preference === 'Lower cost') userTags.add('cost');
-        if (quizAnswers.preference === 'Comfort/Convenience') userTags.add('comfort');
-        if (quizAnswers.preference === 'Privacy & data security') userTags.add('privacy');
-        if (quizAnswers.preference === 'Sustainability/Zero-waste') userTags.add('sustainability');
-    }
+    const prefs = Array.isArray(quizAnswers.preference) ? quizAnswers.preference : (quizAnswers.preference ? [quizAnswers.preference] : []);
+    prefs.forEach(p => {
+        if (p === 'Organic/Natural only') userTags.add('organic');
+        if (p === 'Non-hormonal / hormone-free') userTags.add('non-hormonal');
+        if (p === 'Lower cost') userTags.add('cost');
+        if (p === 'Comfort/Convenience') userTags.add('comfort');
+        if (p === 'Privacy & data security') userTags.add('privacy');
+        if (p === 'Sustainability/Zero-waste') userTags.add('sustainability');
+    });
 
     // Exclude contraception products when user said they don't use / aren't interested in birth control
     const skipContraception = quizAnswers.contraceptionUse === 'No' || quizAnswers.contraceptionUse === 'Prefer not to say';
@@ -900,9 +904,12 @@ export function getRecommendations(quizAnswers) {
                 if (userTags.has(t)) score += 2;
             });
 
-            // Boost for preference matches
-            if (quizAnswers.preference === 'Sustainability/Zero-waste' && p.badges?.includes('Sustainable')) score += 3;
-            if (quizAnswers.preference === 'Organic/Natural only' && p.tags?.includes('organic')) score += 3;
+            // Boost for each preference match (supports multiple: organic AND non-hormonal, etc.)
+            prefs.forEach(pref => {
+                if (pref === 'Sustainability/Zero-waste' && p.badges?.includes('Sustainable')) score += 3;
+                if (pref === 'Organic/Natural only' && p.tags?.includes('organic')) score += 3;
+                if (pref === 'Non-hormonal / hormone-free' && p.tags?.includes('non-hormonal')) score += 3;
+            });
 
             return { product: p, score };
         });
@@ -918,6 +925,7 @@ const TAG_TO_READABLE = {
     'heavy-flow': 'heavy flow', 'cramps': 'cramps', 'bloating': 'hormonal bloating', 'irregular': 'irregular cycles', 'leaks': 'leaks',
     'discomfort': 'discomfort', 'safety-concern': 'safety', 'uti': 'UTI care', 'pcos': 'PCOS',
     'pelvic-floor': 'pelvic floor', 'menopause': 'menopause', 'fertility': 'fertility', 'endometriosis': 'endometriosis',
+    'pregnancy': 'pregnancy', 'postpartum': 'postpartum', 'non-hormonal': 'non-hormonal',
     'organic': 'organic/natural', 'cost': 'lower cost', 'comfort': 'comfort', 'privacy': 'privacy', 'sustainability': 'sustainability', 'contraception': 'contraception'
 };
 
@@ -931,7 +939,8 @@ export function getRecommendationExplanation(product, quizAnswers) {
         'Heavy flow': 'heavy-flow', 'Painful cramps': 'cramps', 'Hormonal bloating': 'bloating', 'Irregular cycles': 'irregular',
         'Leaks & staining': 'leaks', 'General discomfort': 'discomfort', 'Not sure if products are safe': 'safety-concern',
         'Recurrent UTIs': 'uti', 'PCOS symptoms': 'pcos', 'Pelvic pain': 'pelvic-floor',
-        'Menopause symptoms': 'menopause', 'Endometriosis': 'endometriosis', 'Fertility / TTC': 'fertility'
+        'Menopause symptoms': 'menopause', 'Endometriosis': 'endometriosis', 'Fertility / TTC': 'fertility',
+        'Pregnancy': 'pregnancy', 'Postpartum recovery': 'postpartum'
     };
     const userTags = new Set();
     (quizAnswers.frustrations || []).forEach(f => {
@@ -939,11 +948,15 @@ export function getRecommendationExplanation(product, quizAnswers) {
         if (t) userTags.add(t);
         if (f === 'Endometriosis') userTags.add('cramps');
     });
-    if (quizAnswers.preference === 'Organic/Natural only') userTags.add('organic');
-    if (quizAnswers.preference === 'Lower cost') userTags.add('cost');
-    if (quizAnswers.preference === 'Comfort/Convenience') userTags.add('comfort');
-    if (quizAnswers.preference === 'Privacy & data security') userTags.add('privacy');
-    if (quizAnswers.preference === 'Sustainability/Zero-waste') userTags.add('sustainability');
+    const prefs = Array.isArray(quizAnswers.preference) ? quizAnswers.preference : (quizAnswers.preference ? [quizAnswers.preference] : []);
+    prefs.forEach(p => {
+        if (p === 'Organic/Natural only') userTags.add('organic');
+        if (p === 'Non-hormonal / hormone-free') userTags.add('non-hormonal');
+        if (p === 'Lower cost') userTags.add('cost');
+        if (p === 'Comfort/Convenience') userTags.add('comfort');
+        if (p === 'Privacy & data security') userTags.add('privacy');
+        if (p === 'Sustainability/Zero-waste') userTags.add('sustainability');
+    });
 
     const productTags = new Set(product.tags || []);
     const matches = [...userTags].filter(t => productTags.has(t));
@@ -992,7 +1005,8 @@ export function getCheckinRecommendations(profile, checkinData, cycleData = [], 
             'Heavy flow': 'heavy-flow', 'Painful cramps': 'cramps', 'Hormonal bloating': 'bloating', 'Irregular cycles': 'irregular',
             'Leaks & staining': 'leaks', 'General discomfort': 'discomfort', 'Not sure if products are safe': 'safety-concern',
             'Recurrent UTIs': 'uti', 'PCOS symptoms': 'pcos', 'Pelvic pain': 'pelvic-floor',
-            'Menopause symptoms': 'menopause', 'Endometriosis': 'cramps', 'Fertility / TTC': 'fertility'
+            'Menopause symptoms': 'menopause', 'Endometriosis': 'cramps', 'Fertility / TTC': 'fertility',
+            'Pregnancy': 'pregnancy', 'Postpartum recovery': 'postpartum'
         };
         profile.frustrations.forEach(f => {
             const tag = FRUSTRATION_MAP[f];
