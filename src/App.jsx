@@ -318,18 +318,6 @@ function App() {
 
           {/* Account Actions */}
           <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', flexWrap: 'wrap' }}>
-            <a
-              href="https://forms.gle/AnaaVhW2vjYr5r5RA"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                fontSize: '0.8rem', fontWeight: '600', padding: '0.25rem 0.5rem',
-                background: 'var(--color-primary)', color: 'white',
-                borderRadius: 'var(--radius-pill)', textDecoration: 'none'
-              }}
-            >
-              Join Ayna's Early Access Waitlist
-            </a>
             <button
               style={{
                 fontSize: '0.75rem', fontWeight: '600', padding: '0.25rem 0.5rem',

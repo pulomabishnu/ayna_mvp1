@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import { useScrollPosition } from '../hooks/useScrollPosition';
 import ScrollReveal from './ScrollReveal';
-import FindYourPadModal from './FindYourPadModal';
 
 // Landing page: no photo carousel, no rotating images — text, search, and CTA only.
 export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
     const scrollY = useScrollPosition();
     const [searchValue, setSearchValue] = useState('');
-    const [showFindPadModal, setShowFindPadModal] = useState(false);
 
     const handleSearch = (e) => {
         if (e && typeof e.preventDefault === 'function') e.preventDefault();
@@ -195,30 +193,9 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
                                 {tag}
                             </button>
                         ))}
-                        <button
-                            onClick={() => setShowFindPadModal(true)}
-                            style={{
-                                background: 'var(--color-primary)',
-                                color: 'white',
-                                border: 'none',
-                                padding: '0.4rem 1rem',
-                                borderRadius: 'var(--radius-pill)',
-                                fontSize: '0.85rem',
-                                fontWeight: '600',
-                                cursor: 'pointer',
-                            }}
-                        >
-                            Find your pad →
-                        </button>
                     </div>
                 </div>
             </ScrollReveal>
-            {showFindPadModal && (
-                <FindYourPadModal
-                    onClose={() => setShowFindPadModal(false)}
-                    onFind={(opts) => onViewDiscovery(opts)}
-                />
-            )}
             {/* Premium CTA Block */}
             <ScrollReveal className="stagger-4">
                 <div style={{
