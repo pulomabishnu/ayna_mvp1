@@ -48,6 +48,27 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
             position: 'relative'
         }} className="container">
             <ScrollReveal className="stagger-1">
+                <a
+                    href="https://forms.gle/AnaaVhW2vjYr5r5RA"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                        display: 'inline-block',
+                        background: 'var(--color-primary)',
+                        color: 'white',
+                        padding: '0.6rem 1.5rem',
+                        borderRadius: 'var(--radius-pill)',
+                        fontSize: '1rem',
+                        fontWeight: '700',
+                        textDecoration: 'none',
+                        marginBottom: '2rem',
+                        boxShadow: '0 4px 14px rgba(217, 76, 147, 0.4)'
+                    }}
+                >
+                    Join Ayna Early Access →
+                </a>
+            </ScrollReveal>
+            <ScrollReveal className="stagger-1">
                 <h1 style={{
                     fontSize: 'clamp(2.5rem, 6vw, 4.5rem)',
                     maxWidth: '900px',
@@ -230,20 +251,6 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
                         >
                             Start Your Health Profile
                         </button>
-                        <a
-                            href="https://forms.gle/AnaaVhW2vjYr5r5RA"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{
-                                fontSize: '0.9rem',
-                                color: 'var(--color-primary)',
-                                fontWeight: '600',
-                                textDecoration: 'underline',
-                                textUnderlineOffset: '0.2em'
-                            }}
-                        >
-                            Join Ayna Early Access →
-                        </a>
                         <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', textAlign: 'center', maxWidth: '200px', lineHeight: '1.2' }}>
                             *Premium upgrade required to unlock your personalized recommendation plan
                         </span>
