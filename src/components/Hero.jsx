@@ -20,6 +20,16 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
                 else if (lower.includes('overnight')) opts.initialPadUseCase = 'overnight';
                 else if (lower.includes('heavy')) opts.initialPadFlow = 'heavy';
                 onViewDiscovery(opts);
+            } else if (lower.includes('postpartum') || lower.includes('breastfeeding') || lower.includes('nursing')) {
+                onViewDiscovery({ query: q, initialCategory: 'postpartum' });
+            } else if (lower.includes('prenatal') || (lower.includes('pregnancy') && !lower.includes('postpartum'))) {
+                const opts = { query: q, initialCategory: (lower.includes('prenatal') || lower.includes('vitamin')) ? 'supplement' : 'pregnancy' };
+                onViewDiscovery(opts);
+            } else if (lower.includes('supplement')) {
+                const opts = { query: q, initialCategory: 'supplement' };
+                if (lower.includes('cramps')) opts.initialSymptom = 'cramps';
+                else if (lower.includes('pcos')) opts.initialSymptom = 'pcos';
+                onViewDiscovery(opts);
             } else {
                 onViewDiscovery(q);
             }
@@ -88,7 +98,7 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
                             type="text"
                             value={searchValue}
                             onChange={(e) => setSearchValue(e.target.value)}
-                            placeholder="Ask Ayna: 'best pads for heavy flow', 'organic pads', 'supplements for cramps'..."
+                            placeholder="Ask Ayna: 'prenatal vitamins', 'postpartum recovery', 'organic pads', 'supplements for cramps'..."
                             style={{
                                 flexGrow: 1,
                                 border: 'none',
@@ -123,7 +133,7 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
                         justifyContent: 'center',
                         flexWrap: 'wrap'
                     }}>
-                        {['Best pads for heavy flow', 'Organic pads', 'Overnight pads', 'PCOS supplements', 'Supplements for cramps'].map(tag => (
+                        {['Prenatal vitamins', 'Postpartum recovery', 'Organic pads', 'Breastfeeding essentials', 'Supplements for cramps', 'Pregnancy support'].map(tag => (
                             <button
                                 key={tag}
                                 onClick={() => {
@@ -134,6 +144,11 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
                                         else if (lower.includes('overnight')) opts.initialPadUseCase = 'overnight';
                                         else if (lower.includes('heavy')) opts.initialPadFlow = 'heavy';
                                         onViewDiscovery(opts);
+                                    } else if (lower.includes('prenatal') || lower.includes('pregnancy support')) {
+                                        const opts = { query: tag, initialCategory: lower.includes('prenatal') ? 'supplement' : 'pregnancy' };
+                                        onViewDiscovery(opts);
+                                    } else if (lower.includes('postpartum') || lower.includes('breastfeeding')) {
+                                        onViewDiscovery({ query: tag, initialCategory: 'postpartum' });
                                     } else if (lower.includes('supplement')) {
                                         const opts = { query: tag, initialCategory: 'supplement' };
                                         if (lower.includes('cramps')) opts.initialSymptom = 'cramps';
@@ -215,6 +230,20 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
                         >
                             Start Your Health Profile
                         </button>
+                        <a
+                            href="https://forms.gle/AnaaVhW2vjYr5r5RA"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                                fontSize: '0.9rem',
+                                color: 'var(--color-primary)',
+                                fontWeight: '600',
+                                textDecoration: 'underline',
+                                textUnderlineOffset: '0.2em'
+                            }}
+                        >
+                            Join Ayna Early Access →
+                        </a>
                         <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', textAlign: 'center', maxWidth: '200px', lineHeight: '1.2' }}>
                             *Premium upgrade required to unlock your personalized recommendation plan
                         </span>
