@@ -328,7 +328,7 @@ function App() {
                 borderRadius: 'var(--radius-pill)', textDecoration: 'none'
               }}
             >
-              Waitlist
+              Join Ayna's Early Access Waitlist
             </a>
             <button
               style={{

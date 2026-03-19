@@ -65,7 +65,7 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
                         boxShadow: '0 4px 14px rgba(217, 76, 147, 0.4)'
                     }}
                 >
-                    Waitlist
+                    Join Ayna's Early Access Waitlist
                 </a>
             </ScrollReveal>
             <ScrollReveal className="stagger-1">
