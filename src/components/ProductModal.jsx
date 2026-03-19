@@ -25,6 +25,8 @@ const STORE_SEARCH_URLS = {
   'Saalt': (q) => `https://saalt.com/search?q=${encodeURIComponent(q || '')}`,
   'Thinx.com': () => 'https://www.shethinx.com/',
   'Thinx': () => 'https://www.shethinx.com/',
+  'Bodily': () => 'https://itsbodily.com/',
+  'ItsBodily.com': () => 'https://itsbodily.com/',
   'Best Buy': (q) => `https://www.bestbuy.com/site/searchpage.jsp?st=${encodeURIComponent(q || '')}`,
   'Pharmacy with prescription': () => 'https://www.goodrx.com/',
 };
