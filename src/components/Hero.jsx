@@ -1,11 +1,23 @@
 import React, { useState } from 'react';
 import { useScrollPosition } from '../hooks/useScrollPosition';
+import { useSpeechToText } from '../hooks/useSpeechToText';
 import ScrollReveal from './ScrollReveal';
+import SearchMicButton from './SearchMicButton';
 
 // Landing page: no photo carousel, no rotating images — text, search, and CTA only.
 export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
     const scrollY = useScrollPosition();
     const [searchValue, setSearchValue] = useState('');
+    const speech = useSpeechToText();
+
+    const toggleVoiceSearch = () => {
+        if (speech.isRecording) {
+            const t = speech.stop();
+            if (t) setSearchValue((prev) => (prev.trim() ? `${prev.trim()} ${t}` : t));
+        } else {
+            speech.start();
+        }
+    };
 
     const handleSearch = (e) => {
         if (e && typeof e.preventDefault === 'function') e.preventDefault();
@@ -128,6 +140,12 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
                             }}
                             aria-label="Search products and articles"
                         />
+                        {speech.supported && (
+                            <SearchMicButton
+                                isRecording={speech.isRecording}
+                                onClick={toggleVoiceSearch}
+                            />
+                        )}
                         <button
                             type="submit"
                             className="btn btn-primary"
@@ -144,6 +162,27 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
                             <span>→</span>
                         </button>
                     </form>
+                    {speech.isRecording && (
+                        <p
+                            style={{
+                                marginTop: '0.65rem',
+                                fontSize: '0.85rem',
+                                color: 'var(--color-text-muted)',
+                                textAlign: 'left',
+                                paddingLeft: '0.25rem',
+                                lineHeight: 1.45,
+                            }}
+                            aria-live="polite"
+                        >
+                            {speech.liveText ? (
+                                <>
+                                    <strong style={{ color: 'var(--color-text-main)' }}>Listening:</strong> {speech.liveText}
+                                </>
+                            ) : (
+                                'Listening… describe what you need or ask for product ideas.'
+                            )}
+                        </p>
+                    )}
 
                     <div style={{
                         marginTop: '1.5rem',

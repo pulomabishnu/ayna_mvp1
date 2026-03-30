@@ -1,4 +1,6 @@
 import React, { useState, useMemo } from 'react';
+import { useSpeechToText } from '../hooks/useSpeechToText';
+import SearchMicButton from './SearchMicButton';
 import { ALL_PRODUCTS, CATEGORY_LABELS, SYMPTOM_TO_SUPPLEMENTS } from '../data/products';
 import { RELEASED_STARTUPS } from '../data/startups';
 import { getAynaRating } from '../data/aynaReviews';
@@ -115,6 +117,16 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [showFindPadModal, setShowFindPadModal] = useState(false);
     const [symptomFilter, setSymptomFilter] = useState(initialSymptom || 'all');
     const recommendedSet = useMemo(() => new Set(recommendedProductIds || []), [recommendedProductIds]);
+    const speech = useSpeechToText();
+
+    const toggleVoiceSearch = () => {
+        if (speech.isRecording) {
+            const t = speech.stop();
+            if (t) setSearchQuery((prev) => (prev.trim() ? `${prev.trim()} ${t}` : t));
+        } else {
+            speech.start();
+        }
+    };
 
     React.useEffect(() => {
         if (initialSearch !== undefined) {
@@ -283,38 +295,74 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             </div>
 
             {/* Smart Search */}
-            <form onSubmit={handleSmartSearch} style={{ maxWidth: '600px', margin: '0 auto 2rem', position: 'relative' }}>
+            <div style={{ maxWidth: '640px', margin: '0 auto 2rem' }}>
+            <form
+                onSubmit={handleSmartSearch}
+                style={{
+                    display: 'flex',
+                    gap: '0.5rem',
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
+                }}
+            >
                 <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Ask a question, search for a product, or type a health symptom..."
                     style={{
-                        width: '100%',
-                        padding: '1rem 1.5rem',
+                        flex: '1 1 200px',
+                        minWidth: 0,
+                        padding: '1rem 1.25rem',
                         fontSize: '1rem',
                         borderRadius: 'var(--radius-pill)',
                         border: '1px solid var(--color-border)',
                         boxShadow: 'var(--shadow-sm)',
                         outline: 'none'
                     }}
+                    aria-label="Search products and articles"
                 />
+                {speech.supported && (
+                    <SearchMicButton
+                        isRecording={speech.isRecording}
+                        onClick={toggleVoiceSearch}
+                        size="compact"
+                    />
+                )}
                 <button type="submit" style={{
-                    position: 'absolute',
-                    right: '0.4rem',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
                     background: 'var(--color-primary)',
                     color: 'white',
                     border: 'none',
                     borderRadius: 'var(--radius-pill)',
                     padding: '0.7rem 1.4rem',
                     fontWeight: '600',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    flexShrink: 0,
                 }}>
                     Search
                 </button>
             </form>
+            {speech.isRecording && (
+                <p
+                    style={{
+                        marginTop: '0.65rem',
+                        fontSize: '0.85rem',
+                        color: 'var(--color-text-muted)',
+                        lineHeight: 1.45,
+                        paddingLeft: '0.15rem',
+                    }}
+                    aria-live="polite"
+                >
+                    {speech.liveText ? (
+                        <>
+                            <strong style={{ color: 'var(--color-text-main)' }}>Listening:</strong> {speech.liveText}
+                        </>
+                    ) : (
+                        'Listening… describe what you need or ask for product ideas.'
+                    )}
+                </p>
+            )}
+            </div>
 
             {/* Filters */}
             <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
