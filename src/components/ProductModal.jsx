@@ -113,7 +113,6 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
         { id: 'doctor', label: 'Clinician opinions', icon: '👩‍⚕️' },
         { id: 'social', label: 'Community', icon: '💬' },
         { id: 'science', label: 'Scientific literature', icon: '🔬' },
-        { id: 'buy', label: isDigital ? 'Get It' : 'Where to Buy', icon: '🛒' },
         { id: 'ayna-reviews', label: 'Ayna Reviews', icon: '⭐', badge: aynaReviewCount > 0 ? aynaReviewCount : null },
         { id: 'chat', label: 'Ask Ayna', icon: '✨' },
     ];
@@ -553,6 +552,12 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                         ) : product.outOfBusiness ? (
                             <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>This product is no longer available for purchase. If you already have it, you can continue to use it and reference the safety info above.</p>
                         ) : (
+                            <div>
+                                {userZipCode && (
+                                    <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '0.75rem', lineHeight: 1.5 }}>
+                                        In-store and online availability for zip <strong>{userZipCode}</strong> is shown when we have data. We use retailer and zip code data to surface “in stock” when available.
+                                    </p>
+                                )}
                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', alignItems: 'center' }}>
                                 {product.url && (() => {
                                     const websiteUrl = (product.url || '').trim();
@@ -590,6 +595,12 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                                         </a>
                                     );
                                 })}
+                            </div>
+                            {product.platform && (
+                                <p style={{ marginTop: '1rem', fontSize: '0.9rem', color: 'var(--color-text-main)' }}>
+                                    <strong>Platform:</strong> {product.platform}
+                                </p>
+                            )}
                             </div>
                         )}
                     </div>
@@ -778,69 +789,6 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                                 Real experiences from Instagram reels, TikTok, YouTube Shorts, Reddit, and Facebook. All links open to search or official pages so you can browse multiple posts and reels.
                             </p>
                             {renderSocialLinks(product.verificationLinks?.community, null)}
-                        </div>
-                    )}
-
-                    {activeTab === 'buy' && (
-                        <div className="animate-fade-in">
-                            <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>{isPrescriptionOnly ? 'How to Get This Product' : 'Where to Buy'}</h3>
-                            <AynaInsight>{isPrescriptionOnly
-                                ? 'Ayna outlines the prescription workflow and links to tools like GoodRx so you can get this product safely and compare pharmacy options.'
-                                : 'Ayna aggregates where to buy and, when available, in-stock signals for your zip so you can find the product without the guesswork.'}</AynaInsight>
-                            {isPrescriptionOnly ? (
-                                <>
-                                    {renderPrescriptionWorkflow()}
-                                    <Disclaimer compact style={{ marginTop: '1.5rem' }} />
-                                </>
-                            ) : product.outOfBusiness ? (
-                                <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', lineHeight: 1.6 }}>This brand is out of business and the product is no longer sold. We keep this listing so you can still view safety and care information if you have the product.</p>
-                            ) : (
-                                <>
-                            {userZipCode && (
-                                <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1rem' }}>
-                                    In-store and online availability for zip <strong>{userZipCode}</strong> is shown when we have data. We use retailer and zip code data to surface “in stock” when available.
-                                </p>
-                            )}
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                {(product.whereToBuy || []).map(shop => {
-                                    const rawUrl = product.whereToBuyLinks?.[shop] || getStoreUrl(shop, product.name);
-                                    const url = (typeof rawUrl === 'string' && (rawUrl.startsWith('http://') || rawUrl.startsWith('https://'))) ? rawUrl : getStoreUrl(shop, product.name);
-                                    const inStock = product.whereToBuyInStock && product.whereToBuyInStock[shop] === true;
-                                    return (
-                                        <div key={shop} style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                                            <a
-                                                href={url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                style={{
-                                                    padding: '1rem 1.5rem',
-                                                    background: 'var(--color-bg)',
-                                                    borderRadius: 'var(--radius-md)',
-                                                    border: '1px solid var(--color-border)',
-                                                    fontWeight: '600',
-                                                    color: 'var(--color-primary)',
-                                                    textDecoration: 'none',
-                                                    display: 'inline-flex',
-                                                    alignItems: 'center',
-                                                    gap: '0.35rem',
-                                                    alignSelf: 'flex-start'
-                                                }}
-                                            >
-                                                {shop} ↗
-                                            </a>
-                                            {inStock && (
-                                                <span style={{ fontSize: '0.85rem', color: 'var(--color-primary)', fontWeight: '500' }}>In stock</span>
-                                            )}
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                            {product.platform && (
-                                <p style={{ marginTop: '1.5rem' }}><strong>Platform:</strong> {product.platform}</p>
-                            )}
-                            <Disclaimer compact style={{ marginTop: '1.5rem' }} />
-                                </>
-                            )}
                         </div>
                     )}
 
