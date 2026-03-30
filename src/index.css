@@ -21,6 +21,8 @@
   /* Gentle rose wash */
   --color-secondary-fade: rgba(217, 119, 145, 0.12);
   /* Soft rose glow */
+  --color-primary-fade: rgba(217, 119, 145, 0.12);
+  --color-surface: #FFFFFF;
 
   --color-border: #F4CBD8;
   /* Delicate rose border */

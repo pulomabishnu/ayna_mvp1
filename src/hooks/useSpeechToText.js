@@ -7,6 +7,7 @@ import { useRef, useState, useEffect, useCallback } from 'react';
 export function useSpeechToText() {
   const recognitionRef = useRef(null);
   const transcriptAccumRef = useRef('');
+  const lastInterimRef = useRef('');
   const [isRecording, setIsRecording] = useState(false);
   const [liveText, setLiveText] = useState('');
   const [supported, setSupported] = useState(false);
@@ -22,6 +23,7 @@ export function useSpeechToText() {
     if (typeof window === 'undefined') return false;
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) return false;
     transcriptAccumRef.current = '';
+    lastInterimRef.current = '';
     setLiveText('');
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const rec = new SpeechRecognition();
@@ -29,15 +31,22 @@ export function useSpeechToText() {
     rec.interimResults = true;
     rec.lang = 'en-US';
     rec.onresult = (e) => {
+      let interimChunk = '';
       for (let i = e.resultIndex; i < e.results.length; i++) {
         const result = e.results[i];
-        const transcript = result[0].transcript;
-        if (result.isFinal && transcript.trim()) {
+        const transcript = String(result[0]?.transcript || '').trim();
+        if (!transcript) continue;
+        if (result.isFinal) {
           const sep = transcriptAccumRef.current ? ' ' : '';
-          transcriptAccumRef.current += sep + transcript.trim();
+          transcriptAccumRef.current += sep + transcript;
+        } else {
+          interimChunk = transcript;
         }
       }
-      setLiveText(transcriptAccumRef.current);
+      lastInterimRef.current = interimChunk;
+      const display = transcriptAccumRef.current
+        + (interimChunk ? `${transcriptAccumRef.current ? ' ' : ''}${interimChunk}` : '');
+      setLiveText(display.trim());
     };
     rec.onerror = () => {};
     rec.start();
@@ -52,10 +61,15 @@ export function useSpeechToText() {
       recognitionRef.current = null;
     }
     setIsRecording(false);
-    const out = transcriptAccumRef.current.trim();
+    const pending = lastInterimRef.current.trim();
+    lastInterimRef.current = '';
+    let out = transcriptAccumRef.current.trim();
+    if (pending && !out.toLowerCase().includes(pending.toLowerCase())) {
+      out = out ? `${out} ${pending}` : pending;
+    }
     transcriptAccumRef.current = '';
     setLiveText('');
-    return out;
+    return out.trim();
   }, []);
 
   useEffect(() => {

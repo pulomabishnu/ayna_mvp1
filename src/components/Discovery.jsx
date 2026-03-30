@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useSpeechToText } from '../hooks/useSpeechToText';
 import SearchMicButton from './SearchMicButton';
 import { ALL_PRODUCTS, CATEGORY_LABELS, SYMPTOM_TO_SUPPLEMENTS } from '../data/products';
+import { buildSearchTextForItem, scoreQueryAgainstProduct } from '../utils/naturalLanguageSearch';
 import { RELEASED_STARTUPS } from '../data/startups';
 import { getAynaRating } from '../data/aynaReviews';
 import Disclaimer from './Disclaimer';
@@ -158,7 +159,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     }, []);
 
     const filtered = useMemo(() => {
-        let list = combined.filter(item => {
+        let list = combined.filter((item) => {
             if (omittedProducts[item.id]) return false;
             if (personalizationFilter && recommendedSet.size > 0 && !recommendedSet.has(item.id)) return false;
             if (categoryFilter !== 'all' && item.category !== categoryFilter) return false;
@@ -168,75 +169,69 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 const ids = SYMPTOM_TO_SUPPLEMENTS[symptomFilter];
                 if (ids && !ids.includes(item.id)) return false;
             }
-
-            if (searchQuery.trim()) {
-                const query = searchQuery.toLowerCase().trim();
-                const stopWords = new Set(['a', 'an', 'the', 'best', 'good', 'top', 'for', 'my', 'me', 'to', 'and', 'or', 'of', 'in', 'on', 'with']);
-                const words = query.split(/\s+/).filter(w => w.length > 1 && !stopWords.has(w));
-                const safetyStr = item.safety && typeof item.safety === 'object'
-                    ? [item.safety.fdaStatus, item.safety.materials, item.safety.recalls, item.safety.allergens].filter(Boolean).join(' ')
-                    : '';
-                const searchText = [
-                    item.name,
-                    item.summary,
-                    item.tagline,
-                    item.doctorOpinion,
-                    item.communityReview,
-                    item.ingredients,
-                    item.effectiveness,
-                    safetyStr,
-                    (item.tags || []).join(' '),
-                    item.category,
-                    CATEGORY_LABELS[item.category]
-                ].filter(Boolean).join(' ').toLowerCase();
-
-                if (words.length === 0) {
-                    if (!searchText.includes(query)) return false;
-                } else {
-                    const wordMatches = (word) => {
-                        if (searchText.includes(word)) return true;
-                        if (word.endsWith('s') && searchText.includes(word.slice(0, -1))) return true;
-                        if (!word.endsWith('s') && searchText.includes(word + 's')) return true;
-                        return false;
-                    };
-                    const allWordsMatch = words.every(word => wordMatches(word));
-                    if (!allWordsMatch) return false;
-                }
-            }
-
             return true;
         });
+
+        const qTrim = searchQuery.trim();
+        let scoreById = null;
+        if (qTrim) {
+            const scored = list
+                .map((item) => ({
+                    item,
+                    matchScore: scoreQueryAgainstProduct(qTrim, buildSearchTextForItem(item, CATEGORY_LABELS)),
+                }))
+                .filter((x) => x.matchScore > 0);
+            list = scored.map((x) => x.item);
+            scoreById = new Map(scored.map((x) => [x.item.id, x.matchScore]));
+        }
+
+        const matchTieBreak = (a, b) => {
+            if (!scoreById) return 0;
+            return (scoreById.get(b.id) ?? 0) - (scoreById.get(a.id) ?? 0);
+        };
 
         if (sortBy === 'price-asc') {
             list = [...list].sort((a, b) => {
                 const pa = getSortPrice(a);
                 const pb = getSortPrice(b);
-                if (pa == null && pb == null) return 0;
+                if (pa == null && pb == null) {
+                    const m = matchTieBreak(a, b);
+                    if (m !== 0) return m;
+                    return 0;
+                }
                 if (pa == null) return 1;
                 if (pb == null) return -1;
-                return pa - pb;
+                if (pa !== pb) return pa - pb;
+                return matchTieBreak(a, b);
             });
         } else if (sortBy === 'price-desc') {
             list = [...list].sort((a, b) => {
                 const pa = getSortPrice(a);
                 const pb = getSortPrice(b);
-                if (pa == null && pb == null) return 0;
+                if (pa == null && pb == null) {
+                    const m = matchTieBreak(a, b);
+                    if (m !== 0) return m;
+                    return 0;
+                }
                 if (pa == null) return 1;
                 if (pb == null) return -1;
-                return pb - pa;
+                if (pa !== pb) return pb - pa;
+                return matchTieBreak(a, b);
             });
         } else if (sortBy === 'rating') {
             list = [...list].sort((a, b) => {
                 const ra = a.ratingNote ? null : (getAynaRating(a, aynaReviews[a.id]) ?? (a.userRating != null ? Number(a.userRating) : null));
                 const rb = b.ratingNote ? null : (getAynaRating(b, aynaReviews[b.id]) ?? (b.userRating != null ? Number(b.userRating) : null));
-                if (ra == null && rb == null) return 0;
+                if (ra == null && rb == null) return matchTieBreak(a, b);
                 if (ra == null) return 1;
                 if (rb == null) return -1;
-                return rb - ra;
+                if (rb !== ra) return rb - ra;
+                return matchTieBreak(a, b);
             });
         } else {
-            // default: best quality first — top rated, positive clinical/social/sci consensus, and safety
             list = [...list].sort((a, b) => {
+                const m = matchTieBreak(a, b);
+                if (m !== 0) return m;
                 const qa = getQualityScore(a, aynaReviews);
                 const qb = getQualityScore(b, aynaReviews);
                 return qb - qa;
