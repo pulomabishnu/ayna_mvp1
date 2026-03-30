@@ -567,15 +567,20 @@ const ARTICLES = [
 ];
 
 /** Return articles relevant to quiz answers (for recommendations page). */
-export function getRecommendedArticles(quizAnswers) {
-  if (!quizAnswers?.frustrations?.length) {
+export function getRecommendedArticles(quizAnswers, healthProfile = null) {
+  const userTags = new Set([
+    ...(quizAnswers?.frustrations || []).map((f) => FRUSTRATION_TO_TAG[f]).filter(Boolean),
+    ...inferTagsFromHealthProfile(healthProfile),
+  ]);
+
+  const prefs = Array.isArray(quizAnswers?.preference)
+    ? quizAnswers.preference
+    : (quizAnswers?.preference ? [quizAnswers.preference] : []);
+  if (prefs.includes('Privacy & data security')) userTags.add('privacy');
+
+  if (userTags.size === 0) {
     return ARTICLES.slice(0, 3);
   }
-  const userTags = new Set(
-    (quizAnswers.frustrations || [])
-      .map((f) => FRUSTRATION_TO_TAG[f])
-      .filter(Boolean)
-  );
   const scored = ARTICLES.map((art) => {
     const focus = ARTICLE_FOCUS_TAGS[art.id] || [];
     const score = focus.filter((t) => userTags.has(t)).length;
@@ -593,6 +598,10 @@ function getArticlesByProfileRelevance(quizAnswers, healthProfile = null) {
     ...(quizAnswers?.frustrations || []).map((f) => FRUSTRATION_TO_TAG[f]).filter(Boolean),
     ...inferTagsFromHealthProfile(healthProfile),
   ]);
+  const prefs = Array.isArray(quizAnswers?.preference)
+    ? quizAnswers.preference
+    : (quizAnswers?.preference ? [quizAnswers.preference] : []);
+  if (prefs.includes('Privacy & data security')) userTags.add('privacy');
   if (userTags.size === 0) return [];
   const scored = ARTICLES.map((art) => {
     const focus = ARTICLE_FOCUS_TAGS[art.id] || [];

@@ -61,7 +61,10 @@ export default function Recommendations({ results, onRetake, trackedProducts, to
             return map[f];
         }).filter(Boolean);
 
-        if (results?.preference === 'Privacy & data security') tags.push('privacy');
+        const prefs = Array.isArray(results?.preference)
+            ? results.preference
+            : (results?.preference ? [results.preference] : []);
+        if (prefs.includes('Privacy & data security')) tags.push('privacy');
 
         return tags
             .filter(t => SIMILAR_PROFILES[t])
@@ -74,7 +77,7 @@ export default function Recommendations({ results, onRetake, trackedProducts, to
     const renderProductCard = (product) => {
         const isTracked = !!trackedProducts[product.id];
         const isInEcosystem = !!myProducts[product.id];
-        const { whyItWorks, considerations } = getRecommendationExplanation(product, results);
+        const { whyItWorks, considerations } = getRecommendationExplanation(product, results, healthProfile);
         return (
             <div key={product.id} className="card hover-lift" style={{
                 padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column',
