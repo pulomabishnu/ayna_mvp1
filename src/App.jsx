@@ -19,6 +19,7 @@ import { useScrollPosition } from './hooks/useScrollPosition';
 import ProductModal from './components/ProductModal';
 import Articles from './components/Articles';
 import ProfileChatbot from './components/ProfileChatbot';
+import { loadHealthProfile, inferTagsFromHealthProfile } from './utils/healthDataProfile';
 
 function App() {
   const [currentView, setCurrentView] = useState('hero');
@@ -38,16 +39,21 @@ function App() {
   const [chatHistory, setChatHistory] = useState([]);
   const [selectedArticleId, setSelectedArticleId] = useState(null);
   const [aynaReviews, setAynaReviews] = useState({});
+  const [healthProfile, setHealthProfile] = useState(() => loadHealthProfile());
   const scrollY = useScrollPosition();
+
+  const hasHealthImport = useMemo(
+    () => inferTagsFromHealthProfile(healthProfile).length > 0,
+    [healthProfile]
+  );
 
   React.useEffect(() => {
     setAynaReviews(loadAynaReviews());
   }, []);
 
   const recommendedProductIds = useMemo(() => {
-    if (!quizResults) return [];
-    return getRecommendations(quizResults).map(p => p.id);
-  }, [quizResults]);
+    return getRecommendations(quizResults || null, healthProfile).map(p => p.id);
+  }, [quizResults, healthProfile]);
 
   React.useEffect(() => {
     try {
@@ -329,6 +335,7 @@ function App() {
             omittedProducts={omittedProducts}
             toggleOmitProduct={toggleOmitProduct}
             onOpenProduct={handleOpenProduct}
+            healthProfile={healthProfile}
           />
         )}
         {currentView === 'tracked' && (
@@ -344,6 +351,7 @@ function App() {
             onOpenProduct={handleOpenProduct}
             omittedProducts={omittedProducts}
             onViewOmitted={handleViewOmitted}
+            onHealthProfileUpdate={setHealthProfile}
           />
         )}
         {currentView === 'waitlist' && (
@@ -367,7 +375,7 @@ function App() {
           />
         )}
         {currentView === 'articles' && (
-          <Articles initialArticleId={selectedArticleId} onOpenProduct={handleOpenProduct} quizResults={quizResults} />
+          <Articles initialArticleId={selectedArticleId} onOpenProduct={handleOpenProduct} quizResults={quizResults} healthProfile={healthProfile} />
         )}
         {currentView === 'ecosystem' && (
           <MyEcosystem
@@ -403,6 +411,8 @@ function App() {
             initialSearch={discoverySearch}
             recommendedProductIds={recommendedProductIds}
             aynaReviews={aynaReviews}
+            hasQuizFrustrations={!!(quizResults?.frustrations?.length)}
+            hasHealthImport={hasHealthImport}
           />
         )}
         {currentView === 'screenings' && (

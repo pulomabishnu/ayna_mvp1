@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { getRecommendationExplanation, SIMILAR_PROFILES, ALL_PRODUCTS, CATEGORY_LABELS, getRecommendationsGroupedByWorkflow } from '../data/products';
 import { getRecommendedArticles } from './Articles';
+import { inferTagsFromHealthProfile } from '../utils/healthDataProfile';
 
 const TYPE_OPTIONS = [
     { value: 'all', label: 'All types' },
@@ -8,14 +9,14 @@ const TYPE_OPTIONS = [
     { value: 'digital', label: 'Digital' },
 ];
 
-export default function Recommendations({ results, onRetake, trackedProducts, toggleTrackProduct, myProducts, toggleMyProduct, omittedProducts, toggleOmitProduct, onOpenProduct, onViewArticle }) {
+export default function Recommendations({ results, onRetake, trackedProducts, toggleTrackProduct, myProducts, toggleMyProduct, omittedProducts, toggleOmitProduct, onOpenProduct, onViewArticle, healthProfile = null }) {
     const [categoryFilter, setCategoryFilter] = useState('all');
     const [typeFilter, setTypeFilter] = useState('all');
     const [expandedSections, setExpandedSections] = useState({});
 
     const { byWorkflow, byCategory: byCategoryRaw } = useMemo(
-        () => getRecommendationsGroupedByWorkflow(results || {}, omittedProducts || {}),
-        [results, omittedProducts]
+        () => getRecommendationsGroupedByWorkflow(results || {}, omittedProducts || {}, healthProfile),
+        [results, omittedProducts, healthProfile]
     );
 
     const applyTypeFilter = (products) => {
@@ -68,7 +69,7 @@ export default function Recommendations({ results, onRetake, trackedProducts, to
             .slice(0, 2);
     }, [results]);
 
-    const recommendedArticles = useMemo(() => getRecommendedArticles(results || {}), [results]);
+    const recommendedArticles = useMemo(() => getRecommendedArticles(results || {}, healthProfile), [results, healthProfile]);
 
     const renderProductCard = (product) => {
         const isTracked = !!trackedProducts[product.id];
@@ -182,6 +183,11 @@ export default function Recommendations({ results, onRetake, trackedProducts, to
                         : 'Here are our top recommendations for you.'
                     }
                 </p>
+                {inferTagsFromHealthProfile(healthProfile).length > 0 && (
+                    <p style={{ color: 'var(--color-primary)', fontSize: '0.95rem', marginTop: '0.75rem', lineHeight: 1.5 }}>
+                        Your imported health data (conditions, medications, or EHR summary) is also informing ranking — not a diagnosis, but extra signal for what might fit.
+                    </p>
+                )}
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginTop: '0.5rem' }}>
                     🔒 We never sell your data. Every product below is reviewed by OB-GYNs and real women.
                 </p>

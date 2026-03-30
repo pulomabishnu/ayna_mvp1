@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Disclaimer from './Disclaimer';
+import HealthDataImport from './HealthDataImport';
 import { getCheckinRecommendations, CATEGORY_LABELS } from '../data/products';
 
-export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewWaitlist, userZipCode, onZipCodeChange, checkinData, quizResults, myProducts = {}, onOpenProduct, omittedProducts = {}, onViewOmitted }) {
+export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewWaitlist, userZipCode, onZipCodeChange, checkinData, quizResults, myProducts = {}, onOpenProduct, omittedProducts = {}, onViewOmitted, onHealthProfileUpdate }) {
     const trackedList = Object.values(trackedProducts);
     const joinedList = Object.values(joinedWaitlists);
     const totalItems = trackedList.length + joinedList.length;
@@ -82,6 +83,8 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                 </div>
                 <Disclaimer compact style={{ marginTop: '1rem' }} />
             </div>
+
+            <HealthDataImport onUpdate={onHealthProfileUpdate} />
 
             {/* Recommendations from your check-in — always visible under account when check-in was done */}
             {checkinRecs.length > 0 && (

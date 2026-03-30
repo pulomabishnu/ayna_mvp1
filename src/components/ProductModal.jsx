@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Disclaimer from './Disclaimer';
 import { getAynaRating } from '../data/aynaReviews';
+import { fetchProductInsights } from '../utils/fetchProductInsights';
 
 // Build purchase/search URLs for common retailers (product name encoded). Keys matched by store name.
 const STORE_SEARCH_URLS = {
@@ -99,11 +100,59 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
     const [isTyping, setIsTyping] = useState(false);
     const [reviewInput, setReviewInput] = useState('');
     const [hoverRating, setHoverRating] = useState(0);
+    const [aiInsights, setAiInsights] = useState(null);
+    const [aiLoading, setAiLoading] = useState(false);
+    const [aiError, setAiError] = useState(null);
+
+    useEffect(() => {
+        setAiInsights(null);
+        setAiError(null);
+    }, [product?.id]);
+
+    if (!product) return null;
 
     const isDigital = product.type === 'digital';
     const isPrescriptionOnly = product.requiresPrescription === true || (product.whereToBuy?.length === 1 && product.whereToBuy[0] === 'Pharmacy with prescription');
 
-    if (!product) return null;
+    const loadAiInsights = async () => {
+        setAiLoading(true);
+        setAiError(null);
+        try {
+            const data = await fetchProductInsights(product);
+            setAiInsights(data);
+            setActiveTab('doctor');
+        } catch (e) {
+            setAiError(e?.message || 'Could not load AI research');
+        } finally {
+            setAiLoading(false);
+        }
+    };
+
+    const renderAiReferenceCards = (links, heading) => {
+        if (!links || links.length === 0) return null;
+        return (
+            <div style={{ marginTop: '1.25rem' }}>
+                <h4 style={{ fontSize: '0.8rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>{heading}</h4>
+                <div style={{ display: 'grid', gap: '0.75rem' }}>
+                    {links.map((link, idx) => (
+                        <div key={idx} style={{ padding: '1rem 1.25rem', background: 'var(--color-bg)', borderRadius: 'var(--radius-md)', border: '1px solid #E9D5FF' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.75rem', flexWrap: 'wrap' }}>
+                                <div style={{ flex: '1 1 200px' }}>
+                                    <p style={{ fontSize: '0.95rem', fontWeight: '700', color: 'var(--color-text-main)', marginBottom: '0.25rem' }}>{link.text}</p>
+                                    <span style={{ fontSize: '0.7rem', color: '#7E22CE', fontWeight: '600' }}>{link.justification}</span>
+                                </div>
+                                <a href={link.url} target="_blank" rel="noopener noreferrer" style={{
+                                    fontSize: '0.75rem', fontWeight: '700', color: 'var(--color-primary)', textDecoration: 'none',
+                                    padding: '0.4rem 0.8rem', background: 'var(--color-primary-fade)', borderRadius: '8px', whiteSpace: 'nowrap',
+                                }}>Open ↗</a>
+                            </div>
+                            {link.summary && <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginTop: '0.5rem', lineHeight: 1.5 }}>{link.summary}</p>}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    };
 
     const aynaData = aynaReviews && product ? (aynaReviews[product.id] || { ratings: [], reviews: [] }) : { ratings: [], reviews: [] };
     const aynaReviewCount = (aynaData.reviews || []).length;
@@ -630,6 +679,22 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                             </button>
                         ))}
                     </div>
+                    <div style={{ padding: '0.65rem 2.5rem 0.85rem', borderTop: '1px solid var(--color-border)', background: 'var(--color-surface)' }}>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.75rem' }}>
+                            <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem' }} onClick={loadAiInsights} disabled={aiLoading}>
+                                {aiLoading ? 'Loading…' : aiInsights ? 'Refresh AI-sourced links' : 'Load AI-sourced links & context'}
+                            </button>
+                            {aiError && <span style={{ color: '#b91c1c', fontSize: '0.85rem' }}>{aiError}</span>}
+                            {aiInsights?.generatedAt && (
+                                <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
+                                    Research run {new Date(aiInsights.generatedAt).toLocaleString()}
+                                </span>
+                            )}
+                        </div>
+                        <p style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', margin: '0.5rem 0 0', lineHeight: 1.45 }}>
+                            Uses an AI API on Ayna&apos;s servers to propose vetted links (PubMed, CDC, professional societies, etc.). Not medical advice. Add OPENAI_API_KEY in Vercel for production.
+                        </p>
+                    </div>
                 </div>
 
                 {/* Tab Panel Content */}
@@ -676,6 +741,19 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                     {activeTab === 'doctor' && (
                         <div className="animate-fade-in">
                             <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Clinician opinions</h3>
+                            {aiInsights?.clinicalNarrative && (
+                                <div style={{
+                                    marginBottom: '1.25rem', padding: '1.25rem', borderRadius: 'var(--radius-lg)',
+                                    background: 'linear-gradient(135deg, #FDF4FF 0%, #F5F3FF 100%)', border: '1px solid #E9D5FF',
+                                }}>
+                                    <h4 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#7E22CE', marginBottom: '0.5rem' }}>✨ Live research (AI-assisted)</h4>
+                                    <p style={{ fontSize: '0.95rem', color: '#581C87', lineHeight: 1.6, margin: 0 }}>{aiInsights.clinicalNarrative}</p>
+                                    <p style={{ fontSize: '0.72rem', color: '#7E22CE', margin: '0.75rem 0 0', fontWeight: '600' }}>
+                                        Educational context only. Always confirm with your own clinician.
+                                    </p>
+                                </div>
+                            )}
+                            {renderAiReferenceCards(aiInsights?.clinicianLinks, 'AI-suggested clinical references')}
                             <div style={{
                                 marginBottom: '1.25rem', padding: '0.85rem 1rem', borderRadius: 'var(--radius-md)',
                                 background: 'var(--color-secondary-fade)', border: '1px solid var(--color-border)', fontSize: '0.85rem', color: 'var(--color-text-muted)', lineHeight: 1.5
@@ -788,6 +866,19 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                             <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1rem' }}>
                                 Real experiences from Instagram reels, TikTok, YouTube Shorts, Reddit, and Facebook. All links open to search or official pages so you can browse multiple posts and reels.
                             </p>
+                            {aiInsights?.communityLinks?.length > 0 && (
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <h4 style={{ fontSize: '0.8rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>AI-suggested community starting points</h4>
+                                    {renderSocialLinks({
+                                        links: aiInsights.communityLinks.map((c) => ({
+                                            url: c.url,
+                                            text: c.text,
+                                            summary: c.summary || '',
+                                            platform: c.platform || 'other',
+                                        })),
+                                    }, null)}
+                                </div>
+                            )}
                             {renderSocialLinks(product.verificationLinks?.community, null)}
                         </div>
                     )}

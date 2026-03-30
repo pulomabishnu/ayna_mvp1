@@ -10,6 +10,7 @@ import { EXTENDED_PHYSICAL_2, EXTENDED_DIGITAL_2 } from './productsExtended2.js'
 import { FILLER_PHYSICAL, FILLER_DIGITAL } from './categoryFillers.js';
 import { MVP_PHYSICAL, MVP_DIGITAL } from './mvpProducts.js';
 import { MENSTRUAL_PHYSICAL } from './menstrualProducts.js';
+import { inferTagsFromHealthProfile } from '../utils/healthDataProfile.js';
 
 // Tags used for quiz → product matching
 // frustrations: heavy-flow, cramps, bloating, irregular, leaks, discomfort, safety-concern, uti, pcos, pelvic-floor
@@ -766,8 +767,8 @@ function getWorkflowStep(product, frustrationTag) {
  * Returns recommendations grouped by clinical workflow when the user has a matching concern
  * (e.g. Recurrent UTIs → Prevent, Test, Treat, Get care), plus remaining by category.
  */
-export function getRecommendationsGroupedByWorkflow(quizAnswers, omittedProductIds = {}) {
-    const base = getRecommendations(quizAnswers || {});
+export function getRecommendationsGroupedByWorkflow(quizAnswers, omittedProductIds = {}, healthProfile = null) {
+    const base = getRecommendations(quizAnswers || {}, healthProfile);
     const filtered = base.filter(p => !omittedProductIds[p.id]);
     const workflowTag = quizAnswers?.frustrations?.find(f => FRUSTRATION_TO_WORKFLOW[f]);
     const tag = workflowTag ? FRUSTRATION_TO_WORKFLOW[workflowTag] : null;
@@ -841,8 +842,34 @@ function productMatchesAvoidTrigger(product, trigger) {
     return keywords.some(kw => text.includes(kw.toLowerCase()));
 }
 
-export function getRecommendations(quizAnswers) {
-    if (!quizAnswers || !quizAnswers.frustrations) return ALL_PRODUCTS;
+/** Rank catalog when only imported health signals exist (no quiz frustrations). */
+function rankProductsByHealthTags(healthTags) {
+    const userTags = healthTags instanceof Set ? healthTags : new Set(healthTags || []);
+    if (userTags.size === 0) return ALL_PRODUCTS;
+    const scored = ALL_PRODUCTS.map((p) => {
+        let score = 0;
+        (p.tags || []).forEach((t) => {
+            if (userTags.has(t)) score += 2;
+        });
+        (p.healthFunctions || []).forEach((h) => {
+            if (userTags.has(h)) score += 1;
+        });
+        if (userTags.has('mental-health') && p.category === 'mental-health') score += 2;
+        return { product: p, score };
+    });
+    const matches = scored.filter((s) => s.score > 0).sort((a, b) => b.score - a.score).map((s) => s.product);
+    const rest = scored.filter((s) => s.score === 0).map((s) => s.product);
+    return [...matches, ...rest];
+}
+
+export function getRecommendations(quizAnswers, healthProfile = null) {
+    const healthTagList = inferTagsFromHealthProfile(healthProfile);
+    const healthTags = new Set(healthTagList);
+
+    if (!quizAnswers || !quizAnswers.frustrations) {
+        if (healthTags.size === 0) return ALL_PRODUCTS;
+        return rankProductsByHealthTags(healthTags);
+    }
 
     const FRUSTRATION_MAP = {
         'Heavy flow': 'heavy-flow',
@@ -867,6 +894,7 @@ export function getRecommendations(quizAnswers) {
         const tag = FRUSTRATION_MAP[f];
         if (tag) userTags.add(tag);
     });
+    healthTagList.forEach((t) => userTags.add(t));
 
     const prefs = Array.isArray(quizAnswers.preference) ? quizAnswers.preference : (quizAnswers.preference ? [quizAnswers.preference] : []);
     prefs.forEach(p => {
@@ -932,8 +960,11 @@ const TAG_TO_READABLE = {
 /**
  * Returns a short explanation for why a product could work (or not) for this profile.
  */
-export function getRecommendationExplanation(product, quizAnswers) {
-    if (!quizAnswers) return { whyItWorks: null, considerations: null };
+export function getRecommendationExplanation(product, quizAnswers, healthProfile = null) {
+    const healthOnlyTags = inferTagsFromHealthProfile(healthProfile);
+    if ((!quizAnswers || !quizAnswers.frustrations?.length) && healthOnlyTags.length === 0) {
+        return { whyItWorks: null, considerations: null };
+    }
 
     const FRUSTRATION_MAP = {
         'Heavy flow': 'heavy-flow', 'Painful cramps': 'cramps', 'Hormonal bloating': 'bloating', 'Irregular cycles': 'irregular',
@@ -943,12 +974,13 @@ export function getRecommendationExplanation(product, quizAnswers) {
         'Pregnancy': 'pregnancy', 'Postpartum recovery': 'postpartum'
     };
     const userTags = new Set();
-    (quizAnswers.frustrations || []).forEach(f => {
+    (quizAnswers?.frustrations || []).forEach(f => {
         const t = FRUSTRATION_MAP[f];
         if (t) userTags.add(t);
         if (f === 'Endometriosis') userTags.add('cramps');
     });
-    const prefs = Array.isArray(quizAnswers.preference) ? quizAnswers.preference : (quizAnswers.preference ? [quizAnswers.preference] : []);
+    healthOnlyTags.forEach((t) => userTags.add(t));
+    const prefs = Array.isArray(quizAnswers?.preference) ? quizAnswers.preference : (quizAnswers?.preference ? [quizAnswers.preference] : []);
     prefs.forEach(p => {
         if (p === 'Organic/Natural only') userTags.add('organic');
         if (p === 'Non-hormonal / hormone-free') userTags.add('non-hormonal');
@@ -961,9 +993,12 @@ export function getRecommendationExplanation(product, quizAnswers) {
     const productTags = new Set(product.tags || []);
     const matches = [...userTags].filter(t => productTags.has(t));
     const labels = matches.slice(0, 3).map(m => TAG_TO_READABLE[m] || m.replace(/-/g, ' '));
+    const healthNote = healthOnlyTags.length > 0 ? ' Also aligned with signals from your imported health data (not a diagnosis).' : '';
     const whyItWorks = labels.length > 0
-        ? `Why it could work: Matches your focus on ${labels.join(', ')}.`
-        : 'Why it could work: Suggested for your profile.';
+        ? `Why it could work: Matches your focus on ${labels.join(', ')}.${healthNote}`
+        : healthNote
+            ? `Why it could work: Suggested for your profile.${healthNote}`
+            : 'Why it could work: Suggested for your profile.';
 
     let considerations = null;
     if (product.safety?.recalls && product.safety.recalls.includes('⚠️')) {

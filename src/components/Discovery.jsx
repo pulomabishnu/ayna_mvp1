@@ -106,7 +106,7 @@ function padMatchesSubFilters(item, padFlow, padPreference, padUseCase) {
     return true;
 }
 
-export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, isPremium, onUpgrade, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom }) {
+export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, isPremium, onUpgrade, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false }) {
     const [categoryFilter, setCategoryFilter] = useState(initialCategory || 'all');
     const [typeFilter, setTypeFilter] = useState('all');
     const [searchQuery, setSearchQuery] = useState(initialSearch || '');
@@ -282,9 +282,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem' }}>
                     Explore our curated database of women's health products and digital tools — each reviewed by doctors and real women.
                 </p>
-                {recommendedSet.size === 0 && (
-                    <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginTop: '0.75rem' }}>
-                        Complete your health profile (quiz) to unlock the &quot;For you&quot; filter on Search.
+                {!hasQuizFrustrations && !hasHealthImport && (
+                    <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginTop: '0.75rem', lineHeight: 1.5 }}>
+                        Complete the assessment or import health data under <strong>My Account → Profile</strong> to unlock the &quot;For you&quot; filter and stronger personalization on Search.
                     </p>
                 )}
             </div>

@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import Disclaimer from './Disclaimer';
 import { ALL_PRODUCTS, getRecommendations } from '../data/products';
+import { inferTagsFromHealthProfile } from '../utils/healthDataProfile';
 import { RELEASED_STARTUPS } from '../data/startups';
 
 /** Article id → topic-specific tags. Products must have at least one of these to appear under the article. No broad tags (e.g. discomfort) — only tags that match the article heading. */
@@ -83,7 +84,7 @@ function getRelevantTelehealth(articleId) {
 }
 
 /** Products and released startups relevant to this article AND (when provided) the user's profile. Products must have topic-specific tags matching the article heading. */
-function getArticleAndProfileRelevantItems(articleId, quizResults) {
+function getArticleAndProfileRelevantItems(articleId, quizResults, healthProfile = null) {
   const topicTags = ARTICLE_TOPIC_TAGS[articleId] || [];
   const hasTopic = topicTags.length > 0;
 
@@ -105,15 +106,17 @@ function getArticleAndProfileRelevantItems(articleId, quizResults) {
     startups = startups.filter((s) => typeFilter({ ...s, summary: s.description || s.tagline, description: s.description, tagline: s.tagline }));
   }
 
-  if (quizResults?.frustrations?.length) {
-    const recs = getRecommendations(quizResults);
+  const hasProfileSignal =
+    (quizResults?.frustrations?.length > 0) ||
+    inferTagsFromHealthProfile(healthProfile).length > 0;
+  if (hasProfileSignal) {
+    const recs = getRecommendations(quizResults || {}, healthProfile);
     const recIds = new Set(recs.map((p) => p.id));
     products = products.filter((p) => recIds.has(p.id));
-    const userTagSet = new Set(
-      (quizResults.frustrations || [])
-        .map((f) => FRUSTRATION_TO_TAG[f])
-        .filter(Boolean)
-    );
+    const userTagSet = new Set([
+      ...(quizResults?.frustrations || []).map((f) => FRUSTRATION_TO_TAG[f]).filter(Boolean),
+      ...inferTagsFromHealthProfile(healthProfile),
+    ]);
     if (userTagSet.size > 0) {
       startups = startups.filter((s) => {
         const st = new Set([...(s.tags || []), ...(s.healthFunctions || [])]);
@@ -278,12 +281,13 @@ function TelehealthSuggestions({ articleId, onOpenProduct }) {
   );
 }
 
-function DiagnosticProductsAndStartups({ articleId, quizResults, onOpenProduct }) {
+function DiagnosticProductsAndStartups({ articleId, quizResults, healthProfile, onOpenProduct }) {
   const items = useMemo(
-    () => getArticleAndProfileRelevantItems(articleId, quizResults),
-    [articleId, quizResults]
+    () => getArticleAndProfileRelevantItems(articleId, quizResults, healthProfile),
+    [articleId, quizResults, healthProfile]
   );
-  const hasProfile = !!(quizResults?.frustrations?.length);
+  const hasProfile =
+    !!(quizResults?.frustrations?.length) || inferTagsFromHealthProfile(healthProfile).length > 0;
 
   if (items.length === 0) return null;
 
@@ -584,13 +588,12 @@ export function getRecommendedArticles(quizAnswers) {
 }
 
 /** All articles sorted by relevance to health profile (for Articles page filter). */
-function getArticlesByProfileRelevance(quizAnswers) {
-  if (!quizAnswers?.frustrations?.length) return [];
-  const userTags = new Set(
-    (quizAnswers.frustrations || [])
-      .map((f) => FRUSTRATION_TO_TAG[f])
-      .filter(Boolean)
-  );
+function getArticlesByProfileRelevance(quizAnswers, healthProfile = null) {
+  const userTags = new Set([
+    ...(quizAnswers?.frustrations || []).map((f) => FRUSTRATION_TO_TAG[f]).filter(Boolean),
+    ...inferTagsFromHealthProfile(healthProfile),
+  ]);
+  if (userTags.size === 0) return [];
   const scored = ARTICLES.map((art) => {
     const focus = ARTICLE_FOCUS_TAGS[art.id] || [];
     const score = focus.filter((t) => userTags.has(t)).length;
@@ -603,13 +606,17 @@ function getArticlesByProfileRelevance(quizAnswers) {
 
 export { ARTICLES };
 
-export default function Articles({ initialArticleId, onOpenProduct, quizResults }) {
+export default function Articles({ initialArticleId, onOpenProduct, quizResults, healthProfile = null }) {
   const [selectedId, setSelectedId] = useState(null);
   const [filter, setFilter] = useState('all');
   const selected = ARTICLES.find((a) => a.id === selectedId);
 
-  const recommendedArticles = useMemo(() => getArticlesByProfileRelevance(quizResults || {}), [quizResults]);
-  const hasProfile = !!(quizResults?.frustrations?.length);
+  const recommendedArticles = useMemo(
+    () => getArticlesByProfileRelevance(quizResults || {}, healthProfile),
+    [quizResults, healthProfile]
+  );
+  const hasProfile =
+    !!(quizResults?.frustrations?.length) || inferTagsFromHealthProfile(healthProfile).length > 0;
   const articlesToShow = filter === 'recommended' ? (hasProfile ? recommendedArticles : []) : ARTICLES;
 
   React.useEffect(() => {
@@ -724,7 +731,7 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults 
           <Disclaimer compact style={{ marginTop: '1.5rem' }} />
 
           <TelehealthSuggestions articleId={selected.id} onOpenProduct={onOpenProduct} />
-          <DiagnosticProductsAndStartups articleId={selected.id} quizResults={quizResults} onOpenProduct={onOpenProduct} />
+          <DiagnosticProductsAndStartups articleId={selected.id} quizResults={quizResults} healthProfile={healthProfile} onOpenProduct={onOpenProduct} />
         </article>
       ) : (
         <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
