@@ -237,18 +237,28 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         e.preventDefault();
         const q = searchQuery.toLowerCase();
 
+        // Nudge category filters without leaving Discovery (so "period pads", "menopause", etc. still search here)
         if (q.includes('menopause')) {
-            if (setCurrentView) setCurrentView('menopause-tracker');
-        } else if (q.includes('track') || q.includes('cycle') || q.includes('period') || q.includes('log')) {
-            if (setCurrentView) setCurrentView('cycle-tracker');
-        } else if (q.includes('waitlist') || q.includes('startup') || q.includes('new')) {
+            setCategoryFilter('menopause');
+            return;
+        }
+        if (q.includes('pregnancy') || q.includes('prenatal')) {
+            setCategoryFilter('pregnancy');
+            return;
+        }
+        if (q.includes('postpartum') || q.includes('breastfeeding') || q.includes('nursing')) {
+            setCategoryFilter('postpartum');
+            return;
+        }
+
+        if (q.includes('waitlist') || q.includes('startup') || q.includes('new')) {
             if (setCurrentView) setCurrentView('waitlist');
         } else if (q.includes('ecosystem') || q.includes('routine')) {
             if (setCurrentView) setCurrentView('ecosystem');
         } else if (q.includes('quiz') || q.includes('assess')) {
             if (setCurrentView) setCurrentView('quiz');
         }
-        // If it doesn't match these keywords, the filtered useMemo will naturally fuzzy-filter the Discovery page products below.
+        // Otherwise fuzzy filter in useMemo applies to the current search query.
     };
 
     return (
@@ -265,6 +275,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem' }}>
                     Explore our curated database of women's health products and digital tools — each reviewed by doctors and real women.
                 </p>
+                {recommendedSet.size === 0 && (
+                    <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginTop: '0.75rem' }}>
+                        Complete your health profile (quiz) to unlock the &quot;For you&quot; filter on Search.
+                    </p>
+                )}
             </div>
 
             {/* Smart Search */}

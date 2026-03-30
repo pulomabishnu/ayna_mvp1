@@ -1,14 +1,6 @@
 import React from 'react';
 
-export default function DoctorPrep({ cycleData = [], myProducts = {}, quizResults = {}, chatHistory = [], onBack }) {
-    // Synthesize data for the doctor
-    const recentSymptoms = (cycleData || []).slice(0, 5).reduce((acc, curr) => {
-        if (curr && curr.symptoms) {
-            curr.symptoms.forEach(s => acc.add(s));
-        }
-        return acc;
-    }, new Set());
-
+export default function DoctorPrep({ checkinData = null, myProducts = {}, quizResults = {}, chatHistory = [], onBack }) {
     const ecosystemStats = Object.values(myProducts || {}).length;
     const goal = Array.isArray(quizResults?.frustrations) && quizResults.frustrations.length > 0
         ? quizResults.frustrations.join(', ')
@@ -17,6 +9,15 @@ export default function DoctorPrep({ cycleData = [], myProducts = {}, quizResult
     const sensitivities = Array.isArray(quizResults?.sensitivities) && quizResults.sensitivities.length > 0
         ? quizResults.sensitivities.join(', ')
         : (quizResults?.sensitivities || 'None reported');
+    const prefs = Array.isArray(quizResults?.preference) ? quizResults.preference.join(', ') : (quizResults?.preference || '');
+
+    const focusAreas = checkinData?.focusAreas || [];
+    const routineNote = checkinData?.howIsRoutine;
+    const checkinSummary = focusAreas.length > 0
+        ? `Recent focus: ${focusAreas.join(', ')}.`
+        : (routineNote && routineNote !== 'Great — no changes'
+            ? `Routine check-in: ${routineNote}.`
+            : null);
 
     // User messages from chatbot (for suggested questions)
     const userChatMessages = (chatHistory || []).filter(m => m.role === 'user').map(m => (m.text || '').trim()).filter(Boolean);
@@ -57,13 +58,15 @@ export default function DoctorPrep({ cycleData = [], myProducts = {}, quizResult
                             <li><strong>Goal:</strong> {goal}</li>
                             <li><strong>Age:</strong> {age}</li>
                             <li><strong>Sensitivities:</strong> {sensitivities}</li>
+                            {prefs && <li><strong>Product priorities:</strong> {prefs}</li>}
                         </ul>
                     </div>
                     <div>
-                        <h4 style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: '1rem', letterSpacing: '0.05em' }}>Recent Cycle Data</h4>
+                        <h4 style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: '1rem', letterSpacing: '0.05em' }}>Check-in &amp; notes</h4>
                         <p style={{ fontSize: '0.95rem', lineHeight: '1.6' }}>
-                            Over the last 30 days, <strong>{Array.from(recentSymptoms).join(', ') || 'no major symptoms'}</strong> were recorded.
-                            The most common flow intensity was <strong>{cycleData[0]?.flow || 'not yet logged'}</strong>.
+                            {checkinSummary || (
+                                <>Complete a monthly check-in from your Profile to add short focus areas (e.g. flow, cramps, sleep) for your next visit.</>
+                            )}
                         </p>
                     </div>
                 </div>
@@ -93,7 +96,7 @@ export default function DoctorPrep({ cycleData = [], myProducts = {}, quizResult
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', background: 'var(--color-surface-soft)', padding: '1rem', borderRadius: 'var(--radius-sm)' }}>
                             <span style={{ fontSize: '1.2rem' }}>🙋‍♀️</span>
-                            <p style={{ fontSize: '0.95rem' }}>"I've been tracking <strong>{Array.from(recentSymptoms)[0] || 'cycle symptoms'}</strong>. Is this typical for my profile?"</p>
+                            <p style={{ fontSize: '0.95rem' }}>"I've shared my concerns with Ayna: <strong>{goal}</strong>. Is this a fit for my care plan?"</p>
                         </div>
                         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', background: 'var(--color-surface-soft)', padding: '1rem', borderRadius: 'var(--radius-sm)' }}>
                             <span style={{ fontSize: '1.2rem' }}>💊</span>

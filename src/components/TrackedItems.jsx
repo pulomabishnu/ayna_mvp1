@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import Disclaimer from './Disclaimer';
 import { getCheckinRecommendations, CATEGORY_LABELS } from '../data/products';
 
-export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewWaitlist, userZipCode, onZipCodeChange, checkinData, quizResults, cycleData, menopauseData, myProducts = {}, onOpenProduct, omittedProducts = {}, onViewOmitted }) {
+export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewWaitlist, userZipCode, onZipCodeChange, checkinData, quizResults, myProducts = {}, onOpenProduct, omittedProducts = {}, onViewOmitted }) {
     const trackedList = Object.values(trackedProducts);
     const joinedList = Object.values(joinedWaitlists);
     const totalItems = trackedList.length + joinedList.length;
@@ -11,9 +11,9 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
 
     const checkinRecs = useMemo(
         () => (checkinData && (checkinData.focusAreas?.length > 0 || checkinData.howIsRoutine))
-            ? getCheckinRecommendations(quizResults || {}, checkinData, cycleData || [], menopauseData || [])
+            ? getCheckinRecommendations(quizResults || {}, checkinData, [], [])
             : [],
-        [checkinData, quizResults, cycleData, menopauseData]
+        [checkinData, quizResults]
     );
 
     const handleSaveZip = () => {

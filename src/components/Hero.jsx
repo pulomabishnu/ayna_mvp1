@@ -217,7 +217,7 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
                     <div style={{ flex: '1 1 400px' }}>
                         <h3 style={{ fontSize: '1.4rem', marginBottom: '0.5rem', color: 'var(--color-surface-contrast)' }}>Want personalized recommendations without the work? ✨</h3>
                         <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem' }}>
-                            Join Ayna Premium for tailored recommendations, cycle tracking, and safety monitoring specific to your body.
+                            Join Ayna Premium for tailored recommendations, your product ecosystem, and safety-aware discovery.
                         </p>
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>

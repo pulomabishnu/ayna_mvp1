@@ -7,8 +7,6 @@ import TrackedItems from './components/TrackedItems';
 import MyEcosystem from './components/MyEcosystem';
 import Discovery from './components/Discovery';
 import MonthlyCheckin from './components/MonthlyCheckin';
-import CycleTracker from './components/CycleTracker';
-import MenopauseTracker from './components/MenopauseTracker';
 import OmittedProducts from './components/OmittedProducts';
 import Comparison from './components/Comparison';
 import Recalls from './components/Recalls';
@@ -20,7 +18,6 @@ import Screenings from './components/Screenings';
 import { useScrollPosition } from './hooks/useScrollPosition';
 import ProductModal from './components/ProductModal';
 import Articles from './components/Articles';
-import DonateProducts from './components/DonateProducts';
 import ProfileChatbot from './components/ProfileChatbot';
 
 function App() {
@@ -30,8 +27,6 @@ function App() {
   const [joinedWaitlists, setJoinedWaitlists] = useState({});
   const [myProducts, setMyProducts] = useState({});
   const [omittedProducts, setOmittedProducts] = useState({});
-  const [cycleData, setCycleData] = useState([]);
-  const [menopauseData, setMenopauseData] = useState([]);
   const [compareList, setCompareList] = useState([]);
   const [isPremium, setIsPremium] = useState(false);
   const [showCheckin, setShowCheckin] = useState(false);
@@ -91,13 +86,10 @@ function App() {
     setSelectedArticleId(null);
     setCurrentView('articles');
   };
-  const handleViewDonate = () => setCurrentView('donate');
   const handleViewArticle = (articleId) => {
     setSelectedArticleId(articleId);
     setCurrentView('articles');
   };
-  const handleViewCycleTracker = () => setCurrentView('cycle-tracker');
-  const handleViewMenopauseTracker = () => setCurrentView('menopause-tracker');
   const handleViewScreenings = () => setCurrentView('screenings');
   const handleViewOmitted = () => setCurrentView('omitted');
   const handleViewComparison = () => setCurrentView('comparison');
@@ -278,9 +270,6 @@ function App() {
               <button style={{ fontSize: '0.8rem', fontWeight: '500', color: currentView === 'articles' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem' }} onClick={handleViewArticles}>
                 Articles
               </button>
-              <button style={{ fontSize: '0.8rem', fontWeight: '500', color: currentView === 'donate' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem' }} onClick={handleViewDonate}>
-                Donate
-              </button>
             </div>
 
             {/* Personalized Ecosystem (Premium Gated) */}
@@ -291,18 +280,6 @@ function App() {
                   onClick={isPremium ? handleViewEcosystem : togglePremium}
                 >
                   Ecosystem {!isPremium && '🔒'} {isPremium && Object.keys(myProducts).length > 0 && <span style={{ background: 'var(--color-primary)', color: 'white', padding: '0.05rem 0.3rem', borderRadius: '1rem', fontSize: '0.65rem', marginLeft: '0.1rem' }}>{Object.keys(myProducts).length}</span>}
-                </button>
-                <button
-                  style={{ fontSize: '0.8rem', fontWeight: '500', color: currentView === 'cycle-tracker' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem', border: 'none', background: 'none', cursor: 'pointer' }}
-                  onClick={isPremium ? handleViewCycleTracker : togglePremium}
-                >
-                  Period {!isPremium && '🔒'}
-                </button>
-                <button
-                  style={{ fontSize: '0.8rem', fontWeight: '500', color: currentView === 'menopause-tracker' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem', border: 'none', background: 'none', cursor: 'pointer' }}
-                  onClick={isPremium ? handleViewMenopauseTracker : togglePremium}
-                >
-                  Menopause {!isPremium && '🔒'}
                 </button>
                 {isPremium && (
                   <button style={{ fontSize: '0.8rem', fontWeight: '500', color: currentView === 'comparison' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem', border: 'none', background: 'none', cursor: 'pointer' }} onClick={handleViewComparison}>
@@ -363,8 +340,6 @@ function App() {
             onZipCodeChange={handleZipCodeChange}
             checkinData={checkinData}
             quizResults={quizResults}
-            cycleData={cycleData}
-            menopauseData={menopauseData}
             myProducts={myProducts}
             onOpenProduct={handleOpenProduct}
             omittedProducts={omittedProducts}
@@ -393,9 +368,6 @@ function App() {
         )}
         {currentView === 'articles' && (
           <Articles initialArticleId={selectedArticleId} onOpenProduct={handleOpenProduct} quizResults={quizResults} />
-        )}
-        {currentView === 'donate' && (
-          <DonateProducts omittedProducts={omittedProducts} onViewOmitted={handleViewOmitted} />
         )}
         {currentView === 'ecosystem' && (
           <MyEcosystem
@@ -433,32 +405,6 @@ function App() {
             aynaReviews={aynaReviews}
           />
         )}
-        {currentView === 'cycle-tracker' && (
-          <CycleTracker
-            cycleData={cycleData}
-            setCycleData={setCycleData}
-            myProducts={myProducts}
-            trackedProducts={trackedProducts}
-            onToggleMyProduct={toggleMyProduct}
-            onToggleTrackedProduct={toggleTrackProduct}
-            omittedProducts={omittedProducts}
-            toggleOmitProduct={toggleOmitProduct}
-            onOpenProduct={handleOpenProduct}
-          />
-        )}
-        {currentView === 'menopause-tracker' && (
-          <MenopauseTracker
-            menopauseData={menopauseData}
-            setMenopauseData={setMenopauseData}
-            myProducts={myProducts}
-            trackedProducts={trackedProducts}
-            onToggleMyProduct={toggleMyProduct}
-            onToggleTrackedProduct={toggleTrackProduct}
-            omittedProducts={omittedProducts}
-            toggleOmitProduct={toggleOmitProduct}
-            onOpenProduct={handleOpenProduct}
-          />
-        )}
         {currentView === 'screenings' && (
           <Screenings checkinData={checkinData} onNavigate={setCurrentView} onOpenProduct={handleOpenProduct} />
         )}
@@ -481,7 +427,7 @@ function App() {
         )}
         {currentView === 'doctor-prep' && isPremium && (
           <DoctorPrep
-            cycleData={cycleData}
+            checkinData={checkinData}
             myProducts={myProducts}
             quizResults={quizResults}
             chatHistory={chatHistory}
