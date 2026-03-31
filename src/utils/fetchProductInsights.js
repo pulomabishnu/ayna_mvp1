@@ -37,6 +37,8 @@ export async function fetchProductInsights(product) {
     const msg = data?.message || data?.error || `HTTP ${res.status}`;
     const err = new Error(msg);
     err.code = data?.error;
+    err.hint = data?.hint;
+    err.envPresent = data?.envPresent;
     throw err;
   }
   return data;

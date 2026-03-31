@@ -253,6 +253,20 @@ function getGeminiApiKey() {
   ).trim() || null;
 }
 
+/** Safe booleans only — helps verify env vars reached this serverless function (no secret values). */
+function providerEnvPresence() {
+  return {
+    GEMINI_API_KEY: !!process.env.GEMINI_API_KEY,
+    GOOGLE_AI_API_KEY: !!process.env.GOOGLE_AI_API_KEY,
+    GOOGLE_GENERATIVE_AI_API_KEY: !!process.env.GOOGLE_GENERATIVE_AI_API_KEY,
+    GOOGLE_API_KEY: !!process.env.GOOGLE_API_KEY,
+    GEMINI_AI_GATEWAY_API_KEY: !!process.env.GEMINI_AI_GATEWAY_API_KEY,
+    AI_GATEWAY_API_KEY: !!process.env.AI_GATEWAY_API_KEY,
+    ANTHROPIC_API_KEY: !!process.env.ANTHROPIC_API_KEY,
+    OPENAI_API_KEY: !!process.env.OPENAI_API_KEY,
+  };
+}
+
 const DEFAULT_GATEWAY_GEMINI_MODEL = 'google/gemini-2.5-flash';
 
 /**
@@ -387,10 +401,16 @@ export default async function handler(req, res) {
   }
 
   if (!anyApiKeyConfigured()) {
+    console.warn(
+      'product-insights: no provider keys visible to this function. Set GEMINI_API_KEY (or others) in Vercel and redeploy.'
+    );
     return res.status(503).json({
       error: 'not_configured',
       message:
-        'No AI provider key set. For your own Gemini key (Google AI Studio): set GEMINI_API_KEY. Optional Vercel AI Gateway: GEMINI_AI_GATEWAY_API_KEY. Others: ANTHROPIC_API_KEY, OPENAI_API_KEY. Optional: AI_INSIGHTS_PROVIDER_ORDER=gemini,openai',
+        'No AI provider key set. For Google AI Studio: add GEMINI_API_KEY in Vercel (exact name). Optional: GEMINI_AI_GATEWAY_API_KEY, ANTHROPIC_API_KEY, OPENAI_API_KEY. Set AI_INSIGHTS_PROVIDER_ORDER=gemini,openai if needed.',
+      hint:
+        'In Vercel: Project → Settings → Environment Variables → add GEMINI_API_KEY for Production (and Preview if you test previews). Save, then Deployments → Redeploy — env vars apply at deploy time.',
+      envPresent: providerEnvPresence(),
     });
   }
 
