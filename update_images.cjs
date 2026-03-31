@@ -1,7 +1,16 @@
 const fs = require('fs');
 const https = require('https');
 
-const API_KEY = '8504480ca280fefe7b2f444a114effcb526a9662';
+/** Serper.dev image search — get a key at https://serper.dev (never commit keys). */
+const API_KEY = (process.env.SERPER_API_KEY || '').trim();
+if (!API_KEY) {
+    console.error(
+        'Missing SERPER_API_KEY. Set it in your environment before running this script, e.g.\n' +
+            '  PowerShell: $env:SERPER_API_KEY="your_key"; node update_images.cjs\n' +
+            '  bash:       SERPER_API_KEY=your_key node update_images.cjs'
+    );
+    process.exit(1);
+}
 
 async function searchImage(query) {
     return new Promise((resolve, reject) => {
