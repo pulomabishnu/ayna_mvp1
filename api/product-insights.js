@@ -201,33 +201,54 @@ async function callOpenAI(product) {
   return typeof raw === 'string' ? raw : null;
 }
 
+/** Model ids to try; override first with ANTHROPIC_MODEL. */
+function anthropicModelCandidates() {
+  const preferred = (process.env.ANTHROPIC_MODEL || '').trim();
+  const out = [];
+  const add = (m) => {
+    if (m && !out.includes(m)) out.push(m);
+  };
+  add(preferred);
+  add('claude-3-5-haiku-20241022');
+  add('claude-3-5-haiku-latest');
+  return out;
+}
+
+const ANTHROPIC_SYSTEM =
+  "You produce only valid JSON for a women's health education app. Never include URLs, links, domains, or fabricated citations. Use short search phrases only. Output a single JSON object only — no markdown, no code fences, no text before or after the JSON.";
+
 async function callAnthropic(product) {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) return null;
-  const model = process.env.ANTHROPIC_MODEL || 'claude-3-5-haiku-20241022';
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'content-type': 'application/json',
-    },
-    body: JSON.stringify({
-      model,
-      max_tokens: 1200,
-      temperature: 0.25,
-      system:
-        'You produce only valid JSON for a women\'s health education app. Never include URLs, links, domains, or fabricated citations. Use short search phrases only.',
-      messages: [{ role: 'user', content: buildUserPrompt(product) }],
-    }),
-  });
-  if (!res.ok) {
-    console.error('Anthropic error', res.status, (await res.text()).slice(0, 300));
-    return null;
+
+  const payloadBase = {
+    max_tokens: 1200,
+    temperature: 0.25,
+    system: ANTHROPIC_SYSTEM,
+    messages: [{ role: 'user', content: buildUserPrompt(product) }],
+  };
+
+  for (const model of anthropicModelCandidates()) {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({ ...payloadBase, model }),
+    });
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error('Anthropic error', model, res.status, errText.slice(0, 400));
+      if (res.status === 404) continue;
+      return null;
+    }
+    const data = await res.json();
+    const text = data?.content?.[0]?.text;
+    if (typeof text === 'string' && text.trim()) return text;
   }
-  const data = await res.json();
-  const text = data?.content?.[0]?.text;
-  return typeof text === 'string' ? text : null;
+  return null;
 }
 
 /**
@@ -306,38 +327,72 @@ async function callGeminiViaVercelAiGateway(product) {
   return typeof raw === 'string' ? raw : null;
 }
 
+/** Model ids to try in order (AI Studio); override first with GEMINI_MODEL. */
+function geminiModelCandidates() {
+  const preferred = (process.env.GEMINI_MODEL || '').trim();
+  const out = [];
+  const add = (m) => {
+    if (m && !out.includes(m)) out.push(m);
+  };
+  add(preferred);
+  add('gemini-2.0-flash');
+  add('gemini-1.5-flash');
+  add('gemini-1.5-flash-8b');
+  return out;
+}
+
 /** Direct Gemini REST API (when you use a Google AI Studio key in env, not the Gateway key). */
 async function callGeminiDirect(product) {
   const apiKey = getGeminiApiKey();
   if (!apiKey) return null;
-  const model = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{ role: 'user', parts: [{ text: buildUserPrompt(product) }] }],
-      generationConfig: {
-        temperature: 0.25,
-        maxOutputTokens: 1200,
-        responseMimeType: 'application/json',
-      },
-      systemInstruction: {
-        parts: [
-          {
-            text: 'Output valid JSON only. Never include URLs or http. Short conservative search phrases only.',
-          },
-        ],
-      },
-    }),
-  });
-  if (!res.ok) {
-    console.error('Gemini error', res.status, (await res.text()).slice(0, 300));
-    return null;
+
+  const body = {
+    contents: [{ role: 'user', parts: [{ text: buildUserPrompt(product) }] }],
+    generationConfig: {
+      temperature: 0.25,
+      maxOutputTokens: 1200,
+      responseMimeType: 'application/json',
+    },
+    systemInstruction: {
+      parts: [
+        {
+          text: 'Output valid JSON only. Never include URLs or http. Short conservative search phrases only.',
+        },
+      ],
+    },
+  };
+
+  for (const model of geminiModelCandidates()) {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error('Gemini error', model, res.status, errText.slice(0, 400));
+      if (res.status === 404) continue;
+      return null;
+    }
+    let data;
+    try {
+      data = await res.json();
+    } catch {
+      return null;
+    }
+    const cand = data?.candidates?.[0];
+    if (!cand) {
+      console.error('Gemini no candidates', model, JSON.stringify(data).slice(0, 500));
+      continue;
+    }
+    if (cand.finishReason && cand.finishReason !== 'STOP' && cand.finishReason !== 'MAX_TOKENS') {
+      console.error('Gemini finishReason', model, cand.finishReason);
+    }
+    const raw = cand?.content?.parts?.[0]?.text;
+    if (typeof raw === 'string' && raw.trim()) return raw;
   }
-  const data = await res.json();
-  const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-  return typeof raw === 'string' ? raw : null;
+  return null;
 }
 
 /** @returns {{ raw: string, geminiRoute?: 'gateway' | 'direct' } | null} */
@@ -407,7 +462,7 @@ export default async function handler(req, res) {
     return res.status(503).json({
       error: 'not_configured',
       message:
-        'No AI provider key set. For Google AI Studio: add GEMINI_API_KEY in Vercel (exact name). Optional: GEMINI_AI_GATEWAY_API_KEY, ANTHROPIC_API_KEY, OPENAI_API_KEY. Set AI_INSIGHTS_PROVIDER_ORDER=gemini,openai if needed.',
+        'No AI provider key set. Add one of: ANTHROPIC_API_KEY (Claude), GEMINI_API_KEY (Google AI Studio), GEMINI_AI_GATEWAY_API_KEY, OPENAI_API_KEY. Default order is claude,gemini,openai — override with AI_INSIGHTS_PROVIDER_ORDER.',
       hint:
         'In Vercel: Project → Settings → Environment Variables → add GEMINI_API_KEY for Production (and Preview if you test previews). Save, then Deployments → Redeploy — env vars apply at deploy time.',
       envPresent: providerEnvPresence(),
