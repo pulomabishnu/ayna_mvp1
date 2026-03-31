@@ -231,8 +231,8 @@ async function callAnthropic(product) {
 }
 
 /**
- * Vercel AI Gateway key for Gemini (OpenAI-compatible chat/completions).
- * Prefer GEMINI_AI_GATEWAY_API_KEY; AI_GATEWAY_API_KEY still works for older setups.
+ * Optional: Vercel AI Gateway (OpenAI-compatible) — only if you use a gateway API key from Vercel.
+ * Not the same as a Google AI Studio / Gemini API key (use GEMINI_API_KEY for that).
  */
 function getGeminiAiGatewayApiKey() {
   return (
@@ -256,8 +256,7 @@ function getGeminiApiKey() {
 const DEFAULT_GATEWAY_GEMINI_MODEL = 'google/gemini-2.5-flash';
 
 /**
- * Gemini through Vercel AI Gateway (recommended when you added Gemini in the Vercel dashboard).
- * Uses OpenAI Chat Completions shape: https://ai-gateway.vercel.sh/v1/chat/completions
+ * Gemini through Vercel AI Gateway (optional). Uses OpenAI Chat Completions shape.
  */
 async function callGeminiViaVercelAiGateway(product) {
   const apiKey = getGeminiAiGatewayApiKey();
@@ -329,10 +328,15 @@ async function callGeminiDirect(product) {
 
 /** @returns {{ raw: string, geminiRoute?: 'gateway' | 'direct' } | null} */
 async function callGemini(product) {
-  const viaGateway = await callGeminiViaVercelAiGateway(product);
-  if (viaGateway) return { raw: viaGateway, geminiRoute: 'gateway' };
-  const direct = await callGeminiDirect(product);
-  if (direct) return { raw: direct, geminiRoute: 'direct' };
+  // Prefer direct Google Gemini API (GEMINI_API_KEY / AI Studio). Optional fallback: Vercel AI Gateway.
+  if (getGeminiApiKey()) {
+    const direct = await callGeminiDirect(product);
+    if (direct) return { raw: direct, geminiRoute: 'direct' };
+  }
+  if (getGeminiAiGatewayApiKey()) {
+    const viaGateway = await callGeminiViaVercelAiGateway(product);
+    if (viaGateway) return { raw: viaGateway, geminiRoute: 'gateway' };
+  }
   return null;
 }
 
@@ -386,7 +390,7 @@ export default async function handler(req, res) {
     return res.status(503).json({
       error: 'not_configured',
       message:
-        'No AI provider key set. For Gemini via Vercel AI Gateway: set GEMINI_AI_GATEWAY_API_KEY (or legacy AI_GATEWAY_API_KEY). Direct Google: GEMINI_API_KEY. Others: ANTHROPIC_API_KEY, OPENAI_API_KEY. Optional: AI_INSIGHTS_PROVIDER_ORDER=gemini,openai',
+        'No AI provider key set. For your own Gemini key (Google AI Studio): set GEMINI_API_KEY. Optional Vercel AI Gateway: GEMINI_AI_GATEWAY_API_KEY. Others: ANTHROPIC_API_KEY, OPENAI_API_KEY. Optional: AI_INSIGHTS_PROVIDER_ORDER=gemini,openai',
     });
   }
 

@@ -682,17 +682,18 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                     <div style={{ padding: '0.65rem 2.5rem 0.85rem', borderTop: '1px solid var(--color-border)', background: 'var(--color-surface)' }}>
                         <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.75rem' }}>
                             <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem' }} onClick={loadAiInsights} disabled={aiLoading}>
-                                {aiLoading ? 'Loading…' : aiInsights ? 'Refresh AI-sourced links' : 'Load AI-sourced links & context'}
+                                {aiLoading ? 'Loading…' : aiInsights ? 'Refresh AI summaries & searches' : 'Load AI summaries & safe searches'}
                             </button>
                             {aiError && <span style={{ color: '#b91c1c', fontSize: '0.85rem' }}>{aiError}</span>}
                             {aiInsights?.generatedAt && (
                                 <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
-                                    Research run {new Date(aiInsights.generatedAt).toLocaleString()}
+                                    {aiInsights.providerUsed ? `${aiInsights.providerUsed} · ` : ''}
+                                    {new Date(aiInsights.generatedAt).toLocaleString()}
                                 </span>
                             )}
                         </div>
                         <p style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', margin: '0.5rem 0 0', lineHeight: 1.45 }}>
-                            Uses an AI API on Ayna&apos;s servers to propose vetted links (PubMed, CDC, professional societies, etc.). Not medical advice. Add OPENAI_API_KEY in Vercel for production.
+                            Summaries come from AI (Claude, Gemini, or OpenAI — your server tries them in order). Outbound links are only official <strong>search</strong> URLs built on our servers from short phrases, so models never supply raw URLs. Not medical advice. On Vercel, set keys such as <code style={{ fontSize: '0.68rem' }}>GEMINI_API_KEY</code> (Google AI Studio) or <code style={{ fontSize: '0.68rem' }}>ANTHROPIC_API_KEY</code> / <code style={{ fontSize: '0.68rem' }}>OPENAI_API_KEY</code>, and optionally <code style={{ fontSize: '0.68rem' }}>AI_INSIGHTS_PROVIDER_ORDER</code>.
                         </p>
                     </div>
                 </div>
@@ -746,14 +747,14 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                                     marginBottom: '1.25rem', padding: '1.25rem', borderRadius: 'var(--radius-lg)',
                                     background: 'linear-gradient(135deg, #FDF4FF 0%, #F5F3FF 100%)', border: '1px solid #E9D5FF',
                                 }}>
-                                    <h4 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#7E22CE', marginBottom: '0.5rem' }}>✨ Live research (AI-assisted)</h4>
+                                    <h4 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#7E22CE', marginBottom: '0.5rem' }}>✨ AI summary (clinical context)</h4>
                                     <p style={{ fontSize: '0.95rem', color: '#581C87', lineHeight: 1.6, margin: 0 }}>{aiInsights.clinicalNarrative}</p>
                                     <p style={{ fontSize: '0.72rem', color: '#7E22CE', margin: '0.75rem 0 0', fontWeight: '600' }}>
-                                        Educational context only. Always confirm with your own clinician.
+                                        Educational only; may be imperfect. Confirm anything important with your clinician.
                                     </p>
                                 </div>
                             )}
-                            {renderAiReferenceCards(aiInsights?.clinicianLinks, 'AI-suggested clinical references')}
+                            {renderAiReferenceCards(aiInsights?.clinicianLinks, 'MedlinePlus searches (government patient-education results)')}
                             <div style={{
                                 marginBottom: '1.25rem', padding: '0.85rem 1rem', borderRadius: 'var(--radius-md)',
                                 background: 'var(--color-secondary-fade)', border: '1px solid var(--color-border)', fontSize: '0.85rem', color: 'var(--color-text-muted)', lineHeight: 1.5
@@ -807,7 +808,18 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                     {activeTab === 'science' && (
                         <div className="animate-fade-in">
                             <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Scientific literature</h3>
-                            <AynaInsight>Peer-reviewed studies and research only. Links go to PubMed, Lancet, Cochrane, and other trusted literature sources—not clinician opinions.</AynaInsight>
+                            {aiInsights?.scienceSummary && (
+                                <div style={{
+                                    marginBottom: '1.25rem', padding: '1.25rem', borderRadius: 'var(--radius-lg)',
+                                    background: 'linear-gradient(135deg, #FDF4FF 0%, #F5F3FF 100%)', border: '1px solid #E9D5FF',
+                                }}>
+                                    <h4 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#7E22CE', marginBottom: '0.5rem' }}>✨ AI summary (how evidence is usually discussed)</h4>
+                                    <p style={{ fontSize: '0.95rem', color: '#581C87', lineHeight: 1.55, margin: 0 }}>{aiInsights.scienceSummary}</p>
+                                    <p style={{ fontSize: '0.72rem', color: '#7E22CE', margin: '0.65rem 0 0', fontWeight: '600' }}>Not a systematic review; use PubMed results yourself.</p>
+                                </div>
+                            )}
+                            {renderAiReferenceCards(aiInsights?.literatureLinks, 'PubMed searches (phrases from AI — URLs generated by Ayna)')}
+                            <AynaInsight>Peer-reviewed studies and research only. Curated links below go to PubMed, Lancet, Cochrane, and other trusted literature sources—not clinician opinions.</AynaInsight>
                             <div style={{ background: 'var(--color-surface)', padding: '1rem', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem' }}>
                                 <h4 style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Effectiveness Summary</h4>
                                 <p>{product.effectiveness || 'Clinical effectiveness data for this specific product is being aggregated.'}</p>
@@ -825,6 +837,16 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                     {activeTab === 'social' && (
                         <div className="animate-fade-in">
                             <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Community Experience & Social Proof</h3>
+                            {aiInsights?.communitySummary && (
+                                <div style={{
+                                    marginBottom: '1.25rem', padding: '1.25rem', borderRadius: 'var(--radius-lg)',
+                                    background: 'linear-gradient(135deg, #FDF4FF 0%, #F5F3FF 100%)', border: '1px solid #E9D5FF',
+                                }}>
+                                    <h4 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#7E22CE', marginBottom: '0.5rem' }}>✨ AI summary (online discussions)</h4>
+                                    <p style={{ fontSize: '0.95rem', color: '#581C87', lineHeight: 1.55, margin: 0 }}>{aiInsights.communitySummary}</p>
+                                    <p style={{ fontSize: '0.72rem', color: '#7E22CE', margin: '0.65rem 0 0', fontWeight: '600' }}>Anecdotal framing only — not evidence of safety or efficacy.</p>
+                                </div>
+                            )}
                             {product.incentivizedReviewSites && product.incentivizedReviewSites.length > 0 && (
                                 <div style={{ marginBottom: '1.25rem', padding: '0.85rem 1rem', borderRadius: 'var(--radius-md)', background: '#FFF7ED', border: '1px solid #FFEDD5', fontSize: '0.9rem', color: '#9A3412' }}>
                                     <strong>Incentivized reviews:</strong>{' '}
@@ -868,7 +890,7 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                             </p>
                             {aiInsights?.communityLinks?.length > 0 && (
                                 <div style={{ marginBottom: '1.5rem' }}>
-                                    <h4 style={{ fontSize: '0.8rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>AI-suggested community starting points</h4>
+                                    <h4 style={{ fontSize: '0.8rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>Reddit &amp; YouTube searches (no direct thread URLs)</h4>
                                     {renderSocialLinks({
                                         links: aiInsights.communityLinks.map((c) => ({
                                             url: c.url,
