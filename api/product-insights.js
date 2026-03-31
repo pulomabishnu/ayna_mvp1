@@ -1,6 +1,6 @@
 /**
  * Vercel serverless: AI summaries + server-built search links only (no model-supplied URLs).
- * Providers: Anthropic Claude, Google Gemini, OpenAI — try in order from AI_INSIGHTS_PROVIDER_ORDER.
+ * Providers: Anthropic Claude, OpenAI (default order). Optional: Gemini via AI_INSIGHTS_PROVIDER_ORDER.
  */
 /* global process */
 
@@ -462,7 +462,7 @@ export default async function handler(req, res) {
     return res.status(503).json({
       error: 'not_configured',
       message:
-        'No AI provider key set. Add one of: ANTHROPIC_API_KEY (Claude), GEMINI_API_KEY (Google AI Studio), GEMINI_AI_GATEWAY_API_KEY, OPENAI_API_KEY. Default order is claude,gemini,openai — override with AI_INSIGHTS_PROVIDER_ORDER.',
+        'No AI provider key set. Add one of: ANTHROPIC_API_KEY (Claude), OPENAI_API_KEY, or optionally GEMINI_API_KEY / GEMINI_AI_GATEWAY_API_KEY. Default order is claude,openai — add gemini to AI_INSIGHTS_PROVIDER_ORDER if needed.',
       hint:
         'In Vercel: Project → Settings → Environment Variables → add GEMINI_API_KEY for Production (and Preview if you test previews). Save, then Deployments → Redeploy — env vars apply at deploy time.',
       envPresent: providerEnvPresence(),
@@ -481,13 +481,17 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Missing product' });
   }
 
-  const order = envList('AI_INSIGHTS_PROVIDER_ORDER', 'claude,gemini,openai');
+  const order = envList('AI_INSIGHTS_PROVIDER_ORDER', 'claude,openai');
   const normalizedIds = order.filter((p) => ['claude', 'anthropic', 'gemini', 'google', 'openai'].includes(p));
-  const fallback = ['claude', 'gemini', 'openai'];
-  const tryProviders = (normalizedIds.length ? normalizedIds : fallback).filter((p) => canUseProvider(p));
+  const fallback = ['claude', 'openai'];
+  const anyConfigured = ['claude', 'gemini', 'openai'];
+  let tryProviders = (normalizedIds.length ? normalizedIds : fallback).filter((p) => canUseProvider(p));
+  if (tryProviders.length === 0) {
+    tryProviders = anyConfigured.filter((p) => canUseProvider(p));
+  }
 
   let lastError = null;
-  for (const p of tryProviders.length ? tryProviders : fallback.filter(canUseProvider)) {
+  for (const p of tryProviders) {
     try {
       const out = await runModel(product, p === 'anthropic' ? 'claude' : p === 'google' ? 'gemini' : p);
       if (!out) continue;

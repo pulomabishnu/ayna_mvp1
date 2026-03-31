@@ -693,7 +693,7 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
                             )}
                         </div>
                         <p style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', margin: '0.5rem 0 0', lineHeight: 1.45 }}>
-                            Summaries come from AI (Claude, Gemini, or OpenAI — your server tries them in order). Outbound links are only official <strong>search</strong> URLs built on our servers from short phrases, so models never supply raw URLs. Not medical advice. On Vercel, set at least one key, e.g. <code style={{ fontSize: '0.68rem' }}>ANTHROPIC_API_KEY</code> (Claude), <code style={{ fontSize: '0.68rem' }}>GEMINI_API_KEY</code> (Google AI Studio), or <code style={{ fontSize: '0.68rem' }}>OPENAI_API_KEY</code>, and optionally <code style={{ fontSize: '0.68rem' }}>AI_INSIGHTS_PROVIDER_ORDER</code> (default: claude, then gemini, then openai).
+                            Summaries come from AI (Claude or OpenAI by default; Gemini only if you configure it). Outbound links are only official <strong>search</strong> URLs built on our servers from short phrases, so models never supply raw URLs. Not medical advice. On Vercel, set e.g. <code style={{ fontSize: '0.68rem' }}>ANTHROPIC_API_KEY</code> and optionally <code style={{ fontSize: '0.68rem' }}>OPENAI_API_KEY</code> or <code style={{ fontSize: '0.68rem' }}>AI_INSIGHTS_PROVIDER_ORDER</code>.
                         </p>
                     </div>
                 </div>
