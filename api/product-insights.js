@@ -230,9 +230,16 @@ async function callAnthropic(product) {
   return typeof text === 'string' ? text : null;
 }
 
-/** Vercel AI Gateway: one key routes to many models (OpenAI-compatible API). */
-function getAiGatewayApiKey() {
-  return (process.env.AI_GATEWAY_API_KEY || '').trim() || null;
+/**
+ * Vercel AI Gateway key for Gemini (OpenAI-compatible chat/completions).
+ * Prefer GEMINI_AI_GATEWAY_API_KEY; AI_GATEWAY_API_KEY still works for older setups.
+ */
+function getGeminiAiGatewayApiKey() {
+  return (
+    process.env.GEMINI_AI_GATEWAY_API_KEY ||
+    process.env.AI_GATEWAY_API_KEY ||
+    ''
+  ).trim() || null;
 }
 
 /** Direct Google Generative Language API (AI Studio / BYOK env names). */
@@ -253,7 +260,7 @@ const DEFAULT_GATEWAY_GEMINI_MODEL = 'google/gemini-2.5-flash';
  * Uses OpenAI Chat Completions shape: https://ai-gateway.vercel.sh/v1/chat/completions
  */
 async function callGeminiViaVercelAiGateway(product) {
-  const apiKey = getAiGatewayApiKey();
+  const apiKey = getGeminiAiGatewayApiKey();
   if (!apiKey) return null;
   const base = (process.env.AI_GATEWAY_BASE_URL || 'https://ai-gateway.vercel.sh/v1').replace(/\/$/, '');
   const model = process.env.AI_GATEWAY_GEMINI_MODEL || DEFAULT_GATEWAY_GEMINI_MODEL;
@@ -349,7 +356,7 @@ async function runModel(product, provider) {
 function anyApiKeyConfigured() {
   return !!(
     process.env.ANTHROPIC_API_KEY ||
-    getAiGatewayApiKey() ||
+    getGeminiAiGatewayApiKey() ||
     getGeminiApiKey() ||
     process.env.OPENAI_API_KEY
   );
@@ -358,7 +365,7 @@ function anyApiKeyConfigured() {
 function canUseProvider(p) {
   const x = p === 'anthropic' ? 'claude' : p === 'google' ? 'gemini' : p;
   if (x === 'claude') return !!process.env.ANTHROPIC_API_KEY;
-  if (x === 'gemini') return !!(getAiGatewayApiKey() || getGeminiApiKey());
+  if (x === 'gemini') return !!(getGeminiAiGatewayApiKey() || getGeminiApiKey());
   if (x === 'openai') return !!process.env.OPENAI_API_KEY;
   return false;
 }
@@ -379,7 +386,7 @@ export default async function handler(req, res) {
     return res.status(503).json({
       error: 'not_configured',
       message:
-        'No AI provider key set. For Vercel AI Gateway (recommended): set AI_GATEWAY_API_KEY. Or use direct APIs: ANTHROPIC_API_KEY, GEMINI_API_KEY, OPENAI_API_KEY. Optional: AI_INSIGHTS_PROVIDER_ORDER=gemini,openai',
+        'No AI provider key set. For Gemini via Vercel AI Gateway: set GEMINI_AI_GATEWAY_API_KEY (or legacy AI_GATEWAY_API_KEY). Direct Google: GEMINI_API_KEY. Others: ANTHROPIC_API_KEY, OPENAI_API_KEY. Optional: AI_INSIGHTS_PROVIDER_ORDER=gemini,openai',
     });
   }
 
