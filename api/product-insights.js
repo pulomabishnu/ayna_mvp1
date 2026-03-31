@@ -209,8 +209,7 @@ function anthropicModelCandidates() {
     if (m && !out.includes(m)) out.push(m);
   };
   add(preferred);
-  add('claude-3-5-haiku-20241022');
-  add('claude-3-5-haiku-latest');
+  add('claude-haiku-4-5-20251001');
   return out;
 }
 
