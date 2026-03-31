@@ -1,63 +1,45 @@
 /**
- * Vercel serverless: AI-assisted sourcing for clinical guidance, literature, and community starting points.
- * Requires OPENAI_API_KEY in project env. Never expose the key to the client.
+ * Vercel serverless: AI summaries + server-built search links only (no model-supplied URLs).
+ * Providers: Anthropic Claude, Google Gemini, OpenAI — try in order from AI_INSIGHTS_PROVIDER_ORDER.
  */
 /* global process */
 
-const ALLOWED_HOST_PATTERNS = [
-  /^(.+\.)?pubmed\.ncbi\.nlm\.nih\.gov$/i,
-  /^(.+\.)?ncbi\.nlm\.nih\.gov$/i,
-  /^(.+\.)?pmc\.ncbi\.nlm\.nih\.gov$/i,
-  /^(.+\.)?cdc\.gov$/i,
-  /^(.+\.)?who\.int$/i,
-  /^(.+\.)?acog\.org$/i,
-  /^(.+\.)?merckmanuals\.com$/i,
-  /^(.+\.)?mayoclinic\.org$/i,
-  /^(.+\.)?cochranelibrary\.com$/i,
-  /^(.+\.)?nice\.org\.uk$/i,
-  /^(.+\.)?clinicaltrials\.gov$/i,
-  /^(.+\.)?medlineplus\.gov$/i,
-  /^(.+\.)?nih\.gov$/i,
-  /^(.+\.)?uspreventiveservicestaskforce\.org$/i,
-  /^(.+\.)?womenhealth\.gov$/i,
-  /^(.+\.)?ahrq\.gov$/i,
-];
+const MAX_NARRATIVE_LEN = 2200;
+const MAX_EXTRA_SUMMARY_LEN = 800;
 
-const COMMUNITY_HOST_PATTERNS = [
-  /^(.+\.)?reddit\.com$/i,
-  /^(.+\.)?youtube\.com$/i,
-  /^(.+\.)?youtu\.be$/i,
-  /^(.+\.)?tiktok\.com$/i,
-  /^(.+\.)?instagram\.com$/i,
-  /^(.+\.)?facebook\.com$/i,
-  /^(.+\.)?fb\.com$/i,
-  /^(.+\.)?x\.com$/i,
-  /^(.+\.)?twitter\.com$/i,
-];
-
-function hostAllowed(url, community = false) {
-  try {
-    const u = new URL(url);
-    if (u.protocol !== 'https:' && u.protocol !== 'http:') return false;
-    const host = u.hostname.replace(/^www\./, '');
-    const list = community ? [...ALLOWED_HOST_PATTERNS, ...COMMUNITY_HOST_PATTERNS] : ALLOWED_HOST_PATTERNS;
-    return list.some((re) => re.test(host));
-  } catch {
-    return false;
-  }
+function envList(key, fallback) {
+  const raw = (process.env[key] || fallback || '').trim();
+  return raw
+    .split(',')
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean);
 }
 
-function sanitizeLink(url, title, summary, community) {
-  if (!url || typeof url !== 'string') return null;
-  const trimmed = url.trim();
-  if (!trimmed.startsWith('http://') && !trimmed.startsWith('https://')) return null;
-  if (!hostAllowed(trimmed, community)) return null;
-  return {
-    url: trimmed.startsWith('http://') ? trimmed.replace('http://', 'https://') : trimmed,
-    text: typeof title === 'string' && title.trim() ? title.trim().slice(0, 200) : 'Reference',
-    summary: typeof summary === 'string' ? summary.trim().slice(0, 500) : '',
-    justification: community ? 'AI-suggested community starting point — not medical advice' : 'AI-suggested authoritative reference — verify with your clinician',
-  };
+function hasUrlLike(s) {
+  if (typeof s !== 'string') return false;
+  return /https?:\/\/|www\.\w/i.test(s);
+}
+
+function sanitizePhrase(s, maxLen) {
+  if (typeof s !== 'string') return '';
+  const t = s.trim().replace(/\s+/g, ' ');
+  if (!t || hasUrlLike(t)) return '';
+  return t.slice(0, maxLen);
+}
+
+function uniquePhrases(arr, maxCount, maxLen) {
+  const seen = new Set();
+  const out = [];
+  for (const item of Array.isArray(arr) ? arr : []) {
+    const p = sanitizePhrase(String(item), maxLen);
+    if (!p || p.length < 3) continue;
+    const k = p.toLowerCase();
+    if (seen.has(k)) continue;
+    seen.add(k);
+    out.push(p);
+    if (out.length >= maxCount) break;
+  }
+  return out;
 }
 
 function buildUserPrompt(product) {
@@ -66,27 +48,257 @@ function buildUserPrompt(product) {
   const summary = product?.summary || '';
   const tags = Array.isArray(product?.tags) ? product.tags.join(', ') : '';
   const type = product?.type || '';
-  return `Product name: ${name}
-Category: ${category}
-Type: ${type}
-Summary: ${summary}
-Tags: ${tags}
+  return `Product context (for educational writing only):
+- Name: ${name}
+- Category: ${category}
+- Type: ${type}
+- Summary: ${summary}
+- Tags: ${tags}
 
-Return JSON with this exact shape:
+Return a SINGLE JSON object with this exact shape (no markdown, no URLs anywhere in any field):
 {
-  "clinicalNarrative": "2-4 sentences: general clinical context for this product category or ingredient class. Educational only, no direct medical advice.",
-  "clinicianLinks": [ { "url": "https://...", "title": "short label", "why": "one sentence" } ],
-  "literatureLinks": [ { "url": "https://...", "title": "short label", "why": "one sentence" } ],
-  "communityLinks": [ { "url": "https://...", "platform": "reddit|youtube|tiktok|instagram|facebook|other", "description": "what to search for / why" } ]
+  "clinicalNarrative": "2-4 sentences: neutral clinical / product-category context. Educational only. No diagnosis or treatment instructions for the reader.",
+  "scienceSummary": "1-2 sentences: how evidence or trials are typically discussed for this category (not about this specific product unless clearly a named drug/device).",
+  "communitySummary": "1-2 sentences: how patients often discuss this topic in forums — clearly anecdotal, not factual claims.",
+  "pubmedSearchQueries": ["short search phrase 1", "short search phrase 2"],
+  "patientEducationQueries": ["plain phrase for patient-education search 1"],
+  "communitySearchQueries": ["short phrase to search Reddit/YouTube"]
 }
 
-Rules:
-- clinicianLinks and literatureLinks: ONLY use URLs you know exist on PubMed (pubmed.ncbi.nlm.nih.gov), CDC, WHO, ACOG, NIH/NLM, MedlinePlus, Cochrane, NICE, clinicaltrials.gov, Merck Manual, or Mayo Clinic. Prefer PubMed article URLs or official society pages.
-- If you cannot name a specific real URL, use a PubMed search URL like https://pubmed.ncbi.nlm.nih.gov/?term=ENCODED_QUERY with terms related to the product (no spaces in path — encode).
-- communityLinks: only reddit.com, youtube.com, tiktok.com, instagram.com, or facebook.com search or subpath URLs.
-- At least 2 literatureLinks and 1 clinicianLinks when possible; communityLinks 2-4 items.
-- No paywalled-only journal homepages; prefer free-to-read portals above.
-- Do not fabricate PubMed IDs; use search URLs if unsure.`;
+STRICT RULES:
+- Do NOT include links, domains, "http", "www", PMIDs, or citation strings.
+- pubmedSearchQueries: 2-4 items, each 3-80 characters, MeSH-friendly short phrases (English).
+- patientEducationQueries: 1-2 items for consumer health search (symptom or topic).
+- communitySearchQueries: 1-3 items for social search (product type + use case, not brand hype).
+- If unsure, use shorter, more generic phrases rather than specific claims.`;
+}
+
+function stripJsonFence(s) {
+  if (typeof s !== 'string') return s;
+  let t = s.trim();
+  const m = t.match(/^```(?:json)?\s*([\s\S]*?)```$/i);
+  if (m) t = m[1].trim();
+  return t;
+}
+
+function normalizeParsed(raw) {
+  let obj = raw;
+  if (typeof raw === 'string') {
+    try {
+      obj = JSON.parse(stripJsonFence(raw));
+    } catch {
+      return null;
+    }
+  }
+  if (!obj || typeof obj !== 'object') return null;
+
+  const clinicalNarrative = sanitizePhrase(obj.clinicalNarrative, MAX_NARRATIVE_LEN);
+  const scienceSummary = sanitizePhrase(obj.scienceSummary, MAX_EXTRA_SUMMARY_LEN);
+  const communitySummary = sanitizePhrase(obj.communitySummary, MAX_EXTRA_SUMMARY_LEN);
+
+  const pubmedSearchQueries = uniquePhrases(obj.pubmedSearchQueries, 4, 120);
+  const patientEducationQueries = uniquePhrases(obj.patientEducationQueries, 2, 120);
+  let communitySearchQueries = uniquePhrases(obj.communitySearchQueries, 3, 100);
+
+  if (!clinicalNarrative && !scienceSummary && pubmedSearchQueries.length === 0) return null;
+
+  if (communitySearchQueries.length === 0) {
+    const base = pubmedSearchQueries[0];
+    communitySearchQueries = uniquePhrases(
+      base ? [`${base} patient experience`, `${base} review`] : ['women health product discussion'],
+      3,
+      100
+    );
+  }
+
+  return {
+    clinicalNarrative:
+      clinicalNarrative ||
+      scienceSummary ||
+      'Below are safe search links you can use to explore evidence and patient-oriented sources. This is not medical advice.',
+    scienceSummary,
+    communitySummary,
+    pubmedSearchQueries,
+    patientEducationQueries:
+      patientEducationQueries.length > 0 ? patientEducationQueries : pubmedSearchQueries.slice(0, 2),
+    communitySearchQueries,
+  };
+}
+
+function buildSafeLinks(parsed) {
+  const literatureLinks = [];
+  for (const q of parsed.pubmedSearchQueries) {
+    literatureLinks.push({
+      url: `https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(q)}`,
+      text: `PubMed search: ${q.length > 55 ? `${q.slice(0, 52)}…` : q}`,
+      summary: 'Opens PubMed with this query. Link is generated by Ayna — not supplied by the AI.',
+      justification: 'Official NLM search URL',
+    });
+  }
+
+  const clinicianLinks = [];
+  for (const q of parsed.patientEducationQueries) {
+    clinicianLinks.push({
+      url: `https://medlineplus.gov/search.html?query=${encodeURIComponent(q)}`,
+      text: `MedlinePlus search: ${q.length > 50 ? `${q.slice(0, 47)}…` : q}`,
+      summary: 'NIH MedlinePlus patient-oriented results for this phrase.',
+      justification: 'Official MedlinePlus search URL',
+    });
+  }
+
+  const communityLinks = [];
+  for (const q of parsed.communitySearchQueries) {
+    const tail = q.toLowerCase().includes('women') || q.toLowerCase().includes("women's") ? q : `${q} women's health`;
+    communityLinks.push({
+      url: `https://www.reddit.com/search/?q=${encodeURIComponent(tail)}`,
+      text: `Reddit search: ${q.length > 45 ? `${q.slice(0, 42)}…` : q}`,
+      summary: 'Jump to Reddit search — verify posts yourself; not medical advice.',
+      justification: 'Official Reddit search URL',
+      platform: 'reddit',
+    });
+    communityLinks.push({
+      url: `https://www.youtube.com/results?search_query=${encodeURIComponent(tail)}`,
+      text: `YouTube search: ${q.length > 45 ? `${q.slice(0, 42)}…` : q}`,
+      summary: 'Jump to YouTube search results — creator content varies in quality.',
+      justification: 'Official YouTube search URL',
+      platform: 'youtube',
+    });
+  }
+
+  return { clinicianLinks, literatureLinks, communityLinks };
+}
+
+async function callOpenAI(product) {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) return null;
+  const model = process.env.OPENAI_MODEL || 'gpt-4o-mini';
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model,
+      temperature: 0.25,
+      response_format: { type: 'json_object' },
+      messages: [
+        {
+          role: 'system',
+          content:
+            'You write careful JSON for a women\'s health education product. Never output URLs or fake citations. Prefer short, generic search phrases when uncertain.',
+        },
+        { role: 'user', content: buildUserPrompt(product) },
+      ],
+    }),
+  });
+  if (!res.ok) {
+    console.error('OpenAI error', res.status, (await res.text()).slice(0, 300));
+    return null;
+  }
+  const data = await res.json();
+  const raw = data?.choices?.[0]?.message?.content;
+  return typeof raw === 'string' ? raw : null;
+}
+
+async function callAnthropic(product) {
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) return null;
+  const model = process.env.ANTHROPIC_MODEL || 'claude-3-5-haiku-20241022';
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify({
+      model,
+      max_tokens: 1200,
+      temperature: 0.25,
+      system:
+        'You produce only valid JSON for a women\'s health education app. Never include URLs, links, domains, or fabricated citations. Use short search phrases only.',
+      messages: [{ role: 'user', content: buildUserPrompt(product) }],
+    }),
+  });
+  if (!res.ok) {
+    console.error('Anthropic error', res.status, (await res.text()).slice(0, 300));
+    return null;
+  }
+  const data = await res.json();
+  const text = data?.content?.[0]?.text;
+  return typeof text === 'string' ? text : null;
+}
+
+/** Gemini / Google AI Studio keys — BYOK on Vercel may use different names. */
+function getGeminiApiKey() {
+  return (
+    process.env.GEMINI_API_KEY ||
+    process.env.GOOGLE_AI_API_KEY ||
+    process.env.GOOGLE_GENERATIVE_AI_API_KEY ||
+    process.env.GOOGLE_API_KEY ||
+    ''
+  ).trim() || null;
+}
+
+async function callGemini(product) {
+  const apiKey = getGeminiApiKey();
+  if (!apiKey) return null;
+  const model = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ role: 'user', parts: [{ text: buildUserPrompt(product) }] }],
+      generationConfig: {
+        temperature: 0.25,
+        maxOutputTokens: 1200,
+        responseMimeType: 'application/json',
+      },
+      systemInstruction: {
+        parts: [
+          {
+            text: 'Output valid JSON only. Never include URLs or http. Short conservative search phrases only.',
+          },
+        ],
+      },
+    }),
+  });
+  if (!res.ok) {
+    console.error('Gemini error', res.status, (await res.text()).slice(0, 300));
+    return null;
+  }
+  const data = await res.json();
+  const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+  return typeof raw === 'string' ? raw : null;
+}
+
+async function runModel(product, provider) {
+  let raw = null;
+  if (provider === 'claude' || provider === 'anthropic') raw = await callAnthropic(product);
+  else if (provider === 'gemini' || provider === 'google') raw = await callGemini(product);
+  else if (provider === 'openai') raw = await callOpenAI(product);
+  if (!raw) return null;
+  const normalized = normalizeParsed(raw);
+  if (!normalized) return null;
+  return { provider: provider === 'anthropic' ? 'claude' : provider === 'google' ? 'gemini' : provider, normalized };
+}
+
+function anyApiKeyConfigured() {
+  return !!(
+    process.env.ANTHROPIC_API_KEY ||
+    getGeminiApiKey() ||
+    process.env.OPENAI_API_KEY
+  );
+}
+
+function canUseProvider(p) {
+  const x = p === 'anthropic' ? 'claude' : p === 'google' ? 'gemini' : p;
+  if (x === 'claude') return !!process.env.ANTHROPIC_API_KEY;
+  if (x === 'gemini') return !!getGeminiApiKey();
+  if (x === 'openai') return !!process.env.OPENAI_API_KEY;
+  return false;
 }
 
 export default async function handler(req, res) {
@@ -101,11 +313,11 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) {
+  if (!anyApiKeyConfigured()) {
     return res.status(503).json({
       error: 'not_configured',
-      message: 'OPENAI_API_KEY is not set. Add it in Vercel project settings to enable live research.',
+      message:
+        'No AI provider key set. Add one or more in Vercel: ANTHROPIC_API_KEY, GEMINI_API_KEY (or GOOGLE_AI_API_KEY), OPENAI_API_KEY. Optional: AI_INSIGHTS_PROVIDER_ORDER=claude,gemini,openai',
     });
   }
 
@@ -121,82 +333,36 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Missing product' });
   }
 
-  try {
-    const openaiRes = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
-        temperature: 0.35,
-        response_format: { type: 'json_object' },
-        messages: [
-          {
-            role: 'system',
-            content:
-              'You help women\'s health researchers surface reputable public links. Output valid JSON only. Never invent PubMed PMIDs; use pubmed search URLs when needed. No diagnosis or treatment instructions for the user.',
-          },
-          { role: 'user', content: buildUserPrompt(product) },
-        ],
-      }),
-    });
+  const order = envList('AI_INSIGHTS_PROVIDER_ORDER', 'claude,gemini,openai');
+  const normalizedIds = order.filter((p) => ['claude', 'anthropic', 'gemini', 'google', 'openai'].includes(p));
+  const fallback = ['claude', 'gemini', 'openai'];
+  const tryProviders = (normalizedIds.length ? normalizedIds : fallback).filter((p) => canUseProvider(p));
 
-    if (!openaiRes.ok) {
-      const errText = await openaiRes.text();
-      console.error('OpenAI error', openaiRes.status, errText.slice(0, 500));
-      return res.status(502).json({ error: 'upstream_error', message: 'AI service unavailable' });
-    }
-
-    const data = await openaiRes.json();
-    const raw = data?.choices?.[0]?.message?.content;
-    if (!raw || typeof raw !== 'string') {
-      return res.status(502).json({ error: 'empty_response' });
-    }
-
-    let parsed;
+  let lastError = null;
+  for (const p of tryProviders.length ? tryProviders : fallback.filter(canUseProvider)) {
     try {
-      parsed = JSON.parse(raw);
-    } catch {
-      return res.status(502).json({ error: 'parse_error' });
+      const out = await runModel(product, p === 'anthropic' ? 'claude' : p === 'google' ? 'gemini' : p);
+      if (!out) continue;
+      const { clinicianLinks, literatureLinks, communityLinks } = buildSafeLinks(out.normalized);
+      return res.status(200).json({
+        clinicalNarrative: out.normalized.clinicalNarrative,
+        scienceSummary: out.normalized.scienceSummary || '',
+        communitySummary: out.normalized.communitySummary || '',
+        clinicianLinks,
+        literatureLinks,
+        communityLinks,
+        providerUsed: out.provider,
+        linkMode: 'server_built_search',
+        generatedAt: new Date().toISOString(),
+      });
+    } catch (e) {
+      console.error(e);
+      lastError = e;
     }
-
-    const clinicalNarrative =
-      typeof parsed.clinicalNarrative === 'string' ? parsed.clinicalNarrative.trim().slice(0, 2000) : '';
-
-    const clinicianLinks = [];
-    for (const row of Array.isArray(parsed.clinicianLinks) ? parsed.clinicianLinks : []) {
-      const s = sanitizeLink(row?.url, row?.title, row?.why, false);
-      if (s) clinicianLinks.push(s);
-    }
-
-    const literatureLinks = [];
-    for (const row of Array.isArray(parsed.literatureLinks) ? parsed.literatureLinks : []) {
-      const s = sanitizeLink(row?.url, row?.title, row?.why, false);
-      if (s) literatureLinks.push(s);
-    }
-
-    const communityLinks = [];
-    for (const row of Array.isArray(parsed.communityLinks) ? parsed.communityLinks : []) {
-      const s = sanitizeLink(row?.url, row?.description || row?.title, row?.description, true);
-      if (s) {
-        communityLinks.push({
-          ...s,
-          platform: typeof row?.platform === 'string' ? row.platform.toLowerCase().slice(0, 32) : 'other',
-        });
-      }
-    }
-
-    return res.status(200).json({
-      clinicalNarrative,
-      clinicianLinks,
-      literatureLinks,
-      communityLinks,
-      generatedAt: new Date().toISOString(),
-    });
-  } catch (e) {
-    console.error(e);
-    return res.status(500).json({ error: 'server_error' });
   }
+
+  return res.status(502).json({
+    error: 'all_providers_failed',
+    message: lastError?.message || 'Could not generate insights. Check provider keys and quotas.',
+  });
 }
