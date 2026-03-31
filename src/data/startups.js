@@ -212,7 +212,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 500,
         url: 'https://hellowisp.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://clpmag.com/wp-content/uploads/2024/01/Qvin-Q-Pad.jpeg'
     },
     {
         id: 's-wildai',
@@ -241,7 +241,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 400,
         url: 'https://natalist.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://img.freepik.com/premium-photo/wild-boar-white-background_407474-27719.jpg'
     },
     {
         id: 's-kindbody',
@@ -255,7 +255,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 180,
         url: 'https://www.kindbody.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://images.squarespace-cdn.com/content/v1/524b9ac2e4b067caf1ceeff8/1579147540028-5J3DDQ6ATXWTG8EO8CRI/2019.8.26.Kindbody.Product15294.jpg'
     },
     {
         id: 's-maven',
@@ -269,7 +269,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 220,
         url: 'https://www.mavenclinic.com',
-        image: '/ayna_placeholder.png'
+        image: 'http://mavenbuilt.com/cdn/shop/products/B6_GreyOrange_03_25049eca-c4e2-4164-ab31-923749b0828f_grande.jpg?v=1650904614'
     },
     {
         id: 's-alife',
@@ -283,7 +283,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 310,
         url: 'https://www.alifehealth.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://images.ctfassets.net/qwbbe6jrhloh/5COezplMJCFppM9MkJD59E/3edb593cc9285563d40a4314082965e3/Alife.png?w=1248&h=408&q=50&fm=png'
     },
     {
         id: 's-parla',
@@ -297,7 +297,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 450,
         url: 'https://parla.co',
-        image: '/ayna_placeholder.png'
+        image: 'https://www.shutterstock.com/image-photo/imphal-manipur-india-10-01-260nw-2525669843.jpg'
     },
     {
         id: 's-proov',
@@ -311,7 +311,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 290,
         url: 'https://proovtest.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://proovtest.com/cdn/shop/products/1_ProHero.jpg?v=1669147223&width=3840'
     },
     {
         id: 's-premom',
@@ -325,7 +325,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 350,
         url: 'https://www.premom.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://premom.com/wp-content/uploads/2024/10/press-supplement-line-2024.webp'
     },
     {
         id: 's-birdandbe',
@@ -339,7 +339,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 420,
         url: 'https://birdandbe.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://mma.prnewswire.com/media/2785348/Bird_Be_Hi_Res_Logo.jpg?p=twitter'
     },
     {
         id: 's-beafertility',
@@ -353,7 +353,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 520,
         url: 'https://beafertility.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://www.theconduit.com/wp-content/uploads/2024/06/bea-1.jpg.webp'
     },
     {
         id: 's-apricity',
@@ -367,7 +367,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 380,
         url: 'https://apricity.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://sweetapricity.com/cdn/shop/files/Vanilla_Marshmallow_Knockout.png?v=1726869291&width=1946'
     },
     // ─── Menopause ────────────────────────────────────────
     {
@@ -382,7 +382,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 410,
         url: 'https://elektrahealth.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://i.vimeocdn.com/video/1607189844-00be211e412cac07e4a7b79a46d3d66f346dbb1cadecc1124a10eccd97821b1e-d?f=webp'
     },
     {
         id: 's-gennev',
@@ -396,7 +396,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 330,
         url: 'https://gennev.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://gennev.com/wp-content/uploads/2025/05/65e626b823c2e022a3cbd26d_62689486b8427a092ac2f085_yWfe6jrySnOSp2ANHeFm.png'
     },
     {
         id: 's-embr',
@@ -410,7 +410,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 270,
         url: 'https://embrlabs.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://embrlabs.com/cdn/shop/products/embr-wave-2-travel-case-product-addon-accessory-109272.jpg?v=1698986426&width=533'
     },
     {
         id: 's-lisahealth',
@@ -424,7 +424,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 360,
         url: 'https://lisahealth.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://assets.delawaretoday.com/2023/07/302h-1068x712.jpg'
     },
     {
         id: 's-astin',
@@ -438,7 +438,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 600,
         url: 'https://astin.health',
-        image: '/ayna_placeholder.png'
+        image: 'https://irp.cdn-website.com/2b28bbae/dms3rep/multi/Bigs+minis.jpg'
     },
     {
         id: 's-peppy',
@@ -452,7 +452,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 200,
         url: 'https://peppy.health',
-        image: '/ayna_placeholder.png'
+        image: 'https://www.peppyforall.com/cdn/shop/files/1_4.jpg?v=1700559327&width=510'
     },
     // ─── Contraception & sexual health ────────────────────
     {
@@ -467,7 +467,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 480,
         url: 'https://www.nurx.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://nurx-www.imgix.net/wp-content/uploads/2024/09/09064825/WHL-RegrowRX-group-Product-Image-Desktop-1000x1000-1.png?w=320&auto=format,compress&fit=crop&h=320'
     },
     {
         id: 's-pandia',
@@ -481,7 +481,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 390,
         url: 'https://www.pandiahealth.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://www.pandiahealth.com/wp-content/uploads/2024/07/Mask-group.png'
     },
     {
         id: 's-favor',
@@ -495,7 +495,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 440,
         url: 'https://www.favor.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://thumbs.dreamstime.com/b/party-favor-12361808.jpg'
     },
     {
         id: 's-stix',
@@ -509,7 +509,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 500,
         url: 'https://getstix.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://cdn.shopify.com/s/files/1/0120/2752/7227/files/Pink_Ave_Lustre_Blush_Beauty_Stix_d7cd17c3-769c-487d-8c01-2e4847259aec.png?v=1761070580'
     },
     {
         id: 's-evofem',
@@ -523,7 +523,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 340,
         url: 'https://www.phexxi.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://qtxasset.com/quartz/qcloud5/media/image/fiercepharma/1631496575/PhexxiBoxOpenEvofem.jpg/PhexxiBoxOpenEvofem.jpg?VersionId=DBzO9O.Y8BEYWr0wSyFMqNpr7WpWqiGN'
     },
     // ─── Period care & feminine care ───────────────────────
     {
@@ -538,7 +538,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 460,
         url: 'https://august.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://media.macphun.com/img/uploads/customer/blog/3654/Why_Use_a_White_Background-9096.png?q=85&w=1680'
     },
     {
         id: 's-honeypot',
@@ -552,7 +552,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 420,
         url: 'https://thehoneypot.co',
-        image: '/ayna_placeholder.png'
+        image: 'https://media.istockphoto.com/id/155308208/photo/honey.jpg?s=612x612&w=0&k=20&c=okAEZAiMoOgIS9OA1OI1HABa58Zh6Z5p0hXuWWXIHUg='
     },
     {
         id: 's-lovewellness',
@@ -566,7 +566,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 390,
         url: 'https://lovewellness.com',
-        image: '/ayna_placeholder.png'
+        image: 'http://lovewellness.com/cdn/shop/files/01_LW_DLE_Silo_a5657d39-129c-4b59-8599-dffc1b1ccfb8.jpg?v=1774346766'
     },
     {
         id: 's-rory',
@@ -580,7 +580,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 280,
         url: 'https://www.rory.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://roryfacestuff.co/cdn/shop/files/RORY_Face_Stuff_Mother_Lovin_Trio.png?v=1759992264&width=1178'
     },
     // ─── Pelvic health & diagnostics ──────────────────────
     {
@@ -595,7 +595,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 320,
         url: 'https://www.joylux.com',
-        image: '/ayna_placeholder.png'
+        image: 'http://joylux.com/cdn/shop/articles/femtech-leader-joylux-closes-on-oversubscribed-13m-series-a-round-to-expand-menopause-platform-686703.jpg?v=1667362254'
     },
     {
         id: 's-elitone',
@@ -609,7 +609,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 410,
         url: 'https://elitone.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://thebreastfeedingshop.com/wp-content/uploads/2024/08/Elitone-Pelvic-Floor-Exerciser-1-scaled.webp'
     },
     {
         id: 's-kegg',
@@ -623,7 +623,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 380,
         url: 'https://kegg.tech',
-        image: '/ayna_placeholder.png'
+        image: 'https://kegg.tech/cdn/shop/files/kegg_3.webp?v=1745860535&width=1200'
     },
     // ─── Pregnancy & postpartum ───────────────────────────
     {
@@ -638,7 +638,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 440,
         url: 'https://itsbodily.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://img.freepik.com/premium-photo/skincare-products-isolated-white-background_621955-41975.jpg'
     },
     {
         id: 's-oula',
@@ -652,7 +652,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 260,
         url: 'https://oulahealth.com',
-        image: '/ayna_placeholder.png'
+        image: 'http://createcornwall.com/cdn/shop/products/IMG-2842.jpg?v=1642337350'
     },
     {
         id: 's-mahmee',
@@ -666,7 +666,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 290,
         url: 'https://www.mahmee.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://i0.wp.com/tomcrowl.com/wp-content/uploads/2022/04/white-background-product-photos.jpg?fit=1600%2C1000&ssl=1'
     },
     {
         id: 's-poppyseed',
@@ -680,7 +680,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 370,
         url: 'https://poppyseedhealth.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://media.istockphoto.com/id/1298603314/photo/poppy-seeds-spilled-on-white-background-overhead-view.jpg?s=612x612&w=0&k=20&c=nLEuuNyUOLBXum9yDn3lVdQGlagRD4Xf93tO9FdFjjw='
     },
     {
         id: 's-milkstork',
@@ -694,7 +694,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 330,
         url: 'https://www.milkstork.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://go.milkstork.com/hs-fs/hubfs/for-parent-page-01-2.png?width=1200&height=900&name=for-parent-page-01-2.png'
     },
     // ─── Mental health & wellness ─────────────────────────
     {
@@ -709,7 +709,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 400,
         url: 'https://www.forhers.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://www.forhers.com/forhims/image/upload/w_440,q_auto:good:sensitive,fl_lossy,c_scale,f_auto,dpr_1.0/Hers-pdp-hair-shampoo-conditioner-5050-01-d-2x'
     },
     {
         id: 's-tia',
@@ -723,7 +723,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 310,
         url: 'https://www.tia.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://4ubytia.com/cdn/shop/files/PDP-4x5_Tia_Favorites_cooler2.jpg?v=1767644852'
     },
     {
         id: 's-cleo',
@@ -737,7 +737,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 220,
         url: 'https://www.cleo.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://www.shutterstock.com/image-photo/sukabumi-indonesia-october-24-2024-600nw-2534791327.jpg'
     },
     // ─── Diagnostics & biotech ─────────────────────────────
     {
@@ -752,7 +752,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 580,
         url: 'https://dotlab.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://assets.website-files.com/5daccee8d26b0a2091d9bcf8/5f7ce4abf2008605a73e005c_Science_coolpink_cricle.png'
     },
     {
         id: 's-femtec',
@@ -766,7 +766,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 350,
         url: 'https://femtechealth.com',
-        image: '/ayna_placeholder.png'
+        image: 'http://joylux.com/cdn/shop/articles/femtech-leader-joylux-closes-on-oversubscribed-13m-series-a-round-to-expand-menopause-platform-686703.jpg?v=1667362254'
     },
     {
         id: 's-sandstone',
@@ -780,7 +780,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 420,
         url: 'https://sandstonedx.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://www.hbarsci.com/cdn/shop/products/tb9ankw82eblofth2xqu_aac989b6-121f-4432-831a-d13057c9555c_1024x1024.jpg?v=1748464437'
     },
     {
         id: 's-alyce',
@@ -794,7 +794,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 490,
         url: 'https://alycehealth.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://mbsseed.com/wp-content/uploads/2016/08/cloaly2_1.jpg'
     },
     // ─── Supplements & nutrition ─────────────────────────
     {
@@ -809,7 +809,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 380,
         url: 'https://fullwellfertility.com',
-        image: '/ayna_placeholder.png'
+        image: 'http://fullwellfertility.com/cdn/shop/files/New_DHA_Women_s_Fish_Oil_Render.png?v=1763043615'
     },
     {
         id: 's-perelel',
@@ -823,7 +823,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 410,
         url: 'https://perelel.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://perelelhealth.com/cdn/shop/files/conception_-_29.png?v=1767981485&width=1000'
     },
     {
         id: 's-needed',
@@ -837,7 +837,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 360,
         url: 'https://thisisneeded.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://www.volusion.com/blog/content/images/2018/10/WhiteItem.jpg'
     },
     // ─── Cycle & fertility apps ───────────────────────────
     {
@@ -852,7 +852,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 290,
         url: 'https://www.naturalcycles.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://www.shutterstock.com/image-photo/dry-pine-cone-small-twig-260nw-2753122653.jpg'
     },
     {
         id: 's-clue',
@@ -866,7 +866,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 340,
         url: 'https://helloclue.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://www.shutterstock.com/image-photo/photo-color-clue-on-white-260nw-29426464.jpg'
     },
     {
         id: 's-ovia',
@@ -880,7 +880,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 380,
         url: 'https://www.oviahealth.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://oviawellness.com/cdn/shop/files/Endurance_1_46a87c26-cb00-4128-a7e4-669a59c0a19f.webp?v=1771708037&width=3840'
     },
     {
         id: 's-femometry',
@@ -894,7 +894,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 430,
         url: 'https://femometry.com',
-        image: '/ayna_placeholder.png'
+        image: 'https://i.ytimg.com/vi/P6Z8f3PcZxg/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLC9m7w-IaatPOF3INeupFtf0E4atQ'
     },
     // ─── UNRELEASED STARTUPS (Startups / waitlist page only) ─
     {
@@ -909,7 +909,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 420,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://cdn.shoplightspeed.com/shops/609820/files/70033092/1600x2048x2/luna-optics-luna-optics-6-36x50-quantum-digital-da.jpg'
     },
     {
         id: 's-cycle-labs',
@@ -923,7 +923,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 600,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://m.media-amazon.com/images/I/71LX5Gt6Z3S.jpg_BO30,255,255,255_UF750,750_SR1910,1000,0,C_QL100_.jpg'
     },
     {
         id: 's-ovula-signal',
@@ -937,7 +937,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 550,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://i.redd.it/white-product-on-white-background-issues-v0-yrgvoh19e12g1.jpg?width=6000&format=pjpg&auto=webp&s=1cee3577884a8449e05d5442e6e6658950827746'
     },
     {
         id: 's-menocore',
@@ -951,7 +951,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 480,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://clothingphotographystudio.com/wp-content/uploads/2024/07/Clothing_and_Product_Photography_Studio_The_Psychology_of_White_Backgrounds_in_Beauty_Photography_.jpg'
     },
     {
         id: 's-flow-sense',
@@ -965,7 +965,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 380,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://i.ytimg.com/vi/P6Z8f3PcZxg/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLC9m7w-IaatPOF3INeupFtf0E4atQ'
     },
     {
         id: 's-cramp-block',
@@ -979,7 +979,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 520,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://macgrif.com/cdn/shop/files/usn-cramp-block.webp?v=1761656151&width=3840'
     },
     {
         id: 's-pelvisync',
@@ -993,7 +993,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 440,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://preview.redd.it/white-product-on-white-background-issues-v0-yrgvoh19e12g1.jpg?width=640&crop=smart&auto=webp&s=7815b4f3c685ed8e15b5de43bcce783a6ef93ac6'
     },
     {
         id: 's-uti-guard',
@@ -1007,7 +1007,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 590,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://m.media-amazon.com/images/I/61R8I1dvrAL.jpg'
     },
     {
         id: 's-endo-detect',
@@ -1021,7 +1021,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 470,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://www.steris.com/-/media/images/products/or-environment/orlocate-sponge-solution/orlocate-surgical-counting-and-detection-system_01.png?h=306&w=538&hash=8F6AC3E9DCEDB2AA2CE7ED16357F4B85'
     },
     {
         id: 's-pcos-panel',
@@ -1035,7 +1035,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 510,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://www.lifeextension.com/-/media/lifeextension/protocolheroes/p_hero_pcos.jpg?rev=7681bdb26e9d464d9941d8838bd9139f&h=480&w=1844&la=en&hash=CEE5E2A83C6A05E06B1366B09A80AF6C'
     },
     {
         id: 's-meno-mind',
@@ -1049,7 +1049,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 400,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://cdn.shopify.com/s/files/1/0588/9340/2261/files/meno-bh-pdp.png?v=1764614213'
     },
     {
         id: 's-fertility-lens',
@@ -1063,7 +1063,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 360,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://130343495.cdn6.editmysite.com/uploads/1/3/0/3/130343495/SNDACTCG5K77I4MDX3ITIYLV.png'
     },
     {
         id: 's-ovary-ai',
@@ -1077,7 +1077,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 430,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://pebblely.com/_nuxt/hero-examples.b6d99771.webp'
     },
     {
         id: 's-nurture-stack',
@@ -1091,7 +1091,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 450,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://media.macphun.com/img/uploads/customer/blog/3654/Why_Use_a_White_Background-9096.png?q=85&w=1680'
     },
     {
         id: 's-period-patch',
@@ -1105,7 +1105,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 540,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://images.ctfassets.net/wdwuacyi45cu/EMtCDB3NkI4o8TrCt9Tx1/a8be1eb8c09432c1675e19a27284354e/patch.jpg?w=1020&h=680&fl=progressive&q=50&fm=jpg'
     },
     {
         id: 's-vulva-care',
@@ -1119,7 +1119,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 390,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://www.phdfemininehealth.com/cdn/shop/files/1_Foam_Wash.jpg?v=1758574254&width=2400'
     },
     {
         id: 's-bloom-fertility',
@@ -1133,7 +1133,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 380,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://m.media-amazon.com/images/I/61sPWlrYHcL.jpg'
     },
     {
         id: 's-leak-less',
@@ -1161,7 +1161,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 410,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://amarecdn.azureedge.net/webassets/web/prod/products/Happy_Hormones_Pack_Slim2Fit_Ignite_For_Her_800.jpg'
     },
     {
         id: 's-midlife-mate',
@@ -1175,7 +1175,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 500,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://cdn.shopify.com/s/files/1/0024/2810/8869/files/how_we_should_get_a_perfect_white_background_in_product_photography_fac7c117-b246-45da-9502-f379a5a2bc1d_480x480.jpg?v=1644597509'
     },
     {
         id: 's-pregnancy-pulse',
@@ -1189,7 +1189,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 350,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://www.shutterstock.com/image-vector/pregnant-woman-heartbeat-pulse-icon-260nw-2609954083.jpg'
     },
     {
         id: 's-milk-match',
@@ -1203,7 +1203,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 420,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://static.vecteezy.com/system/resources/thumbnails/073/179/762/small/minimalist-mockup-of-various-unbranded-dairy-product-packaging-featuring-a-glass-bottle-of-fresh-milk-a-white-carton-and-a-sealed-cup-isolated-on-a-clean-background-photo.jpg'
     },
     {
         id: 's-cycle-sport',
@@ -1217,7 +1217,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 480,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://img.freepik.com/premium-photo/bicycle-different-modern-sport-equipment-white-background_1339860-202.jpg'
     },
     {
         id: 's-mood-cycle',
@@ -1231,7 +1231,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 440,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://www.shutterstock.com/image-vector/mood-scale-vector-icon-isolated-260nw-1632696847.jpg'
     },
     {
         id: 's-birth-control-scan',
@@ -1245,7 +1245,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 530,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://www.shutterstock.com/image-illustration/birth-control-pills-combined-oral-600nw-2621761217.jpg'
     },
     {
         id: 's-pelvic-mapper',
@@ -1259,7 +1259,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 370,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://www.shutterstock.com/image-illustration/anatomical-illustration-human-pelvis-bone-260nw-2737090097.jpg'
     },
     {
         id: 's-organic-pad-lab',
@@ -1273,7 +1273,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 490,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://tampontribe.com/cdn/shop/products/DayPad_1_5e62dd02-77b1-4a5a-82a8-da422ea77d40.png?v=1679942637&width=1445'
     },
     {
         id: 's-ivf-companion',
@@ -1301,7 +1301,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 340,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'http://lovewellness.com/cdn/shop/files/01_LW_PDP_voph.jpg?v=1762528637'
     },
     {
         id: 's-hot-flash-cool',
@@ -1315,7 +1315,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 560,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'http://cdn.supadupa.me/shop/2705/images/3191750/IMG_3846_2_grande.jpg'
     },
     {
         id: 's-egg-freeze-track',
@@ -1329,7 +1329,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 390,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://img.freepik.com/premium-photo/cryopreservation-genetic-material-ovum-ice-cube-white-background_144356-57323.jpg?semt=ais_hybrid&w=740&q=80'
     },
     {
         id: 's-postpartum-ring',
@@ -1343,7 +1343,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 310,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://www.thephotoforum.com/attachments/1724205071797-b-webp.278898/'
     },
     {
         id: 's-pms-predict',
@@ -1357,7 +1357,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 470,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://cdn.prod.website-files.com/6256995755a7ea0a3d8fbd11/67504e44528adbf3d0d00382_67504cde62855465cf0337fd_Clean%2520background.jpeg'
     },
     {
         id: 's-fertility-clinic-match',
@@ -1371,7 +1371,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 430,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://www.seekinghealth.com/cdn/shop/files/Fertility_Bundle.png?v=1765996480&width=538'
     },
     {
         id: 's-period-pantry',
@@ -1385,7 +1385,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 520,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://c8.alamy.com/comp/2F17A8N/pantry-food-for-crisis-period-different-size-and-shape-jars-with-grains-for-staying-home-during-covid-19-time-white-background-2F17A8N.jpg'
     },
     {
         id: 's-sleep-meno',
@@ -1399,7 +1399,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 450,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://m.media-amazon.com/images/I/71qn25NoPlL.jpg'
     },
     {
         id: 's-bone-meno',
@@ -1413,7 +1413,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 380,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://img.freepik.com/premium-photo/white-bone-with-white-background_668290-347.jpg?w=360'
     },
     {
         id: 's-intimate-wellness-kit',
@@ -1427,7 +1427,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 410,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://m.media-amazon.com/images/I/61wktyi+dPL._AC_UF1000,1000_QL80_.jpg'
     },
     {
         id: 's-ovulation-breathe',
@@ -1441,7 +1441,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 360,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://mybaba.com/wp-content/uploads/2021/09/breathe-ilo.jpg'
     },
     {
         id: 's-heavy-flow-hub',
@@ -1455,7 +1455,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 440,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://preview.redd.it/white-product-on-white-background-issues-v0-yrgvoh19e12g1.jpg?width=640&crop=smart&auto=webp&s=7815b4f3c685ed8e15b5de43bcce783a6ef93ac6'
     },
     {
         id: 's-tele-pelvic',
@@ -1469,7 +1469,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 390,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://cdn.shopify.com/s/files/1/0613/7800/3076/files/fringe_pelvic_wand_vibration_therapy-1024x1024_542fe6c5-6ca8-43b7-9973-b351d05beedc_480x480.jpg?v=1749246155'
     },
     {
         id: 's-cycle-capsule',
@@ -1483,7 +1483,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 500,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://www.shutterstock.com/image-photo/many-vitamin-capsules-isolated-on-600nw-2434184559.jpg'
     },
     {
         id: 's-endo-care',
@@ -1497,7 +1497,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 460,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://www.cantabrialabs.com/dam/jcr:234ae577-edc4-4aa2-8aa3-bd426b6737cd/ESSENTIALS_LINE%20SLIDER_Desktop_1920x644%202.jpg'
     },
     {
         id: 's-birth-prep',
@@ -1511,7 +1511,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 430,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://healthcare.lansinoh.com/cdn/shop/files/Organic_Massage_Oil.png?v=1748843824&width=500'
     },
     {
         id: 's-menostem',
@@ -1525,7 +1525,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 280,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://i.ytimg.com/vi/P6Z8f3PcZxg/maxresdefault.jpg'
     },
     {
         id: 's-fertile-genes',
@@ -1539,7 +1539,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 350,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://www.seekinghealth.com/cdn/shop/files/Fertility_Bundle.png?v=1765996480&width=538'
     },
     {
         id: 's-rebalance-hrt',
@@ -1553,7 +1553,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 420,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://s.turbifycdn.com/aah/yhst-135855760451349/rebalance-oral-suspension-946-4ml-55.jpg'
     },
     {
         id: 's-pad-recycle',
@@ -1567,7 +1567,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 550,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://www.shutterstock.com/image-photo/recycle-crumpled-paper-pad-on-260nw-446990380.jpg'
     },
     {
         id: 's-womb-space',
@@ -1581,7 +1581,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 370,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://img.freepik.com/premium-photo/baby-womb-pregnancy-white-background_407474-26844.jpg'
     },
     {
         id: 's-vulva-screen',
@@ -1595,7 +1595,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 340,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://www.shutterstock.com/image-photo/vaginal-blue-kegel-smart-trainer-260nw-2663671895.jpg'
     },
     {
         id: 's-ovary-print',
@@ -1609,7 +1609,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 410,
         url: '#',
-        image: '/ayna_placeholder.png'
+        image: 'https://www.mimiwatercolorprints.com/cdn/shop/products/Ovary-Anatomy-Art-Watercolor-Print-Ob-Gyn-Poster-Fertility-Clinic-Wall-Decor.jpg?v=1644451709&width=2500'
     }
 ];
 

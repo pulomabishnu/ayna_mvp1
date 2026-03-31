@@ -582,7 +582,7 @@ export const DIGITAL_PRODUCTS = [
         userRating: 4.5,
         whereToBuy: ['App Store', 'Google Play'],
         platform: 'iOS, Android',
-        image: '/ayna_placeholder.png',
+        image: 'https://target.scene7.com/is/image/Target/GUEST_cb89dfb0-209a-4fd5-bf81-1e392f636b23',
         summary: 'Dedicated menopause and perimenopause tracker. Log symptoms (hot flashes, sleep, mood), track patterns, and get insights. Built for midlife health.',
         safety: { fdaStatus: 'N/A (wellness app)', materials: 'N/A', recalls: 'N/A', allergens: 'N/A', sideEffects: 'N/A', opinionAlerts: 'Use alongside clinician care for diagnosis and treatment.' },
         privacy: { dataStorage: 'US servers', sellsData: '❌ Does not sell personal health data', hipaa: 'N/A', keyPolicy: 'Check app privacy policy for data sharing with researchers or partners.' },
