@@ -492,6 +492,8 @@ function App() {
             aynaReviews={aynaReviews}
             onRate={handleRateProduct}
             onReview={handleReviewProduct}
+            quizResults={quizResults}
+            healthProfile={healthProfile}
           />
         )}
       </main>

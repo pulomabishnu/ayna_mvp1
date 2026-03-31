@@ -2,6 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import Disclaimer from './Disclaimer';
 import { getAynaRating } from '../data/aynaReviews';
 import { fetchProductInsights } from '../utils/fetchProductInsights';
+import { buildUserHealthContextString } from '../utils/userHealthContextForInsights';
+import { buildProfileTailoring } from '../utils/profileProductTailoring';
 
 // Build purchase/search URLs for common retailers (product name encoded). Keys matched by store name.
 const STORE_SEARCH_URLS = {
@@ -109,9 +111,12 @@ function scienceEvidenceIsLimited(product) {
   return false;
 }
 
-function buildSafetyCondensed(product, isDigital) {
+function buildSafetyCondensed(product, isDigital, profileTailoring) {
   const s = product.safety || {};
   const lines = [];
+  if (profileTailoring) {
+    lines.push(`**For your profile:** ${profileTailoring}`);
+  }
   lines.push(
     `**Regulation:** ${s.fdaStatus || 'Not specified.'} **Materials:** ${s.materials || 'See label or manufacturer.'}`
   );
@@ -126,8 +131,9 @@ function buildSafetyCondensed(product, isDigital) {
   return lines;
 }
 
-function buildDoctorCondensed(product, aiInsights) {
+function buildDoctorCondensed(product, aiInsights, profileTailoring) {
   const parts = [];
+  if (profileTailoring) parts.push(`**For your profile:** ${profileTailoring}`);
   if (aiInsights?.clinicalNarrative) parts.push(aiInsights.clinicalNarrative);
   if (product.doctorOpinion) parts.push(`**Clinician-oriented summary:** ${product.doctorOpinion}`);
   const src =
@@ -141,8 +147,9 @@ function buildDoctorCondensed(product, aiInsights) {
   return parts.join('\n\n');
 }
 
-function buildScienceCondensed(product, aiInsights) {
+function buildScienceCondensed(product, aiInsights, profileTailoring) {
   const parts = [];
+  if (profileTailoring) parts.push(`**For your profile:** ${profileTailoring}`);
   if (aiInsights?.scienceSummary) parts.push(aiInsights.scienceSummary);
   const eff = product.effectiveness || 'Clinical effectiveness for this specific product is still being summarized in Ayna.';
   parts.push(`**Effectiveness snapshot:** ${eff}`);
@@ -158,8 +165,9 @@ function buildScienceCondensed(product, aiInsights) {
   return parts.join('\n\n');
 }
 
-function buildSocialCondensed(product, aiInsights) {
+function buildSocialCondensed(product, aiInsights, profileTailoring) {
   const parts = [];
+  if (profileTailoring) parts.push(`**For your profile:** ${profileTailoring}`);
   if (aiInsights?.communitySummary) parts.push(aiInsights.communitySummary);
   const raw = product.communityReview || '';
   if (raw) {
@@ -219,7 +227,24 @@ function renderRichText(text) {
   });
 }
 
-export default function ProductModal({ product, onClose, onTrack, isTracked, onOmit, isOmitted, onToggleCompare, isInCompare, onAddToEcosystem, isInEcosystem, userZipCode, aynaReviews = null, onRate, onReview }) {
+export default function ProductModal({
+    product,
+    onClose,
+    onTrack,
+    isTracked,
+    onOmit,
+    isOmitted,
+    onToggleCompare,
+    isInCompare,
+    onAddToEcosystem,
+    isInEcosystem,
+    userZipCode,
+    aynaReviews = null,
+    onRate,
+    onReview,
+    quizResults = null,
+    healthProfile = null,
+}) {
     const [activeTab, setActiveTab] = useState('safety');
     const [chatMessages, setChatMessages] = useState([{ role: 'assistant', text: `Hi! I'm Ayna. What would you like to know about ${product?.name}?` }]);
     const [chatInput, setChatInput] = useState('');
@@ -230,22 +255,32 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
     const [aiLoading, setAiLoading] = useState(false);
     const [aiError, setAiError] = useState(null);
 
+    const healthContextKey = useMemo(
+        () => buildUserHealthContextString(quizResults, healthProfile),
+        [quizResults, healthProfile]
+    );
+
+    const profileTailoring = useMemo(
+        () => buildProfileTailoring(product, quizResults, healthProfile),
+        [product, quizResults, healthProfile]
+    );
+
     useEffect(() => {
         setAiInsights(null);
         setAiError(null);
-    }, [product?.id]);
+    }, [product?.id, healthContextKey]);
 
     const condensed = useMemo(() => {
         if (!product) return null;
         const isDig = product.type === 'digital';
         return {
-            safetyLines: buildSafetyCondensed(product, isDig),
-            doctor: buildDoctorCondensed(product, aiInsights),
-            science: buildScienceCondensed(product, aiInsights),
-            social: buildSocialCondensed(product, aiInsights),
-            overall: buildOverallOverview(product, aiInsights),
+            safetyLines: buildSafetyCondensed(product, isDig, profileTailoring),
+            doctor: buildDoctorCondensed(product, aiInsights, profileTailoring),
+            science: buildScienceCondensed(product, aiInsights, profileTailoring),
+            social: buildSocialCondensed(product, aiInsights, profileTailoring),
+            overall: buildOverallOverview(product, aiInsights, profileTailoring),
         };
-    }, [product, aiInsights]);
+    }, [product, aiInsights, profileTailoring]);
 
     if (!product) return null;
 
@@ -256,7 +291,7 @@ export default function ProductModal({ product, onClose, onTrack, isTracked, onO
         setAiLoading(true);
         setAiError(null);
         try {
-            const data = await fetchProductInsights(product);
+            const data = await fetchProductInsights(product, { quizResults, healthProfile });
             setAiInsights(data);
             setActiveTab('doctor');
         } catch (e) {

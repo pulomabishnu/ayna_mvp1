@@ -1,3 +1,5 @@
+import { buildUserHealthContextString } from './userHealthContextForInsights';
+
 const API_PATH = '/api/product-insights';
 
 export function buildProductInsightPayload(product) {
@@ -14,18 +16,31 @@ export function buildProductInsightPayload(product) {
 }
 
 /**
+ * POST body for /api/product-insights: product fields + optional userContext from quiz + health profile.
+ */
+export function buildProductInsightsRequestBody(product, quizResults, healthProfile) {
+  const payload = buildProductInsightPayload(product);
+  if (!payload?.name) return null;
+  const userContext = buildUserHealthContextString(quizResults, healthProfile);
+  return userContext ? { product: payload, userContext } : { product: payload };
+}
+
+/**
  * Calls the Vercel serverless route (same origin in production).
  * Locally, run `vercel dev` or expect 404 until deployed.
+ * @param {object} product
+ * @param {{ quizResults?: object|null, healthProfile?: object|null }} [options]
  */
-export async function fetchProductInsights(product) {
-  const payload = buildProductInsightPayload(product);
-  if (!payload?.name) {
+export async function fetchProductInsights(product, options = {}) {
+  const { quizResults, healthProfile } = options;
+  const body = buildProductInsightsRequestBody(product, quizResults, healthProfile);
+  if (!body) {
     throw new Error('Invalid product');
   }
   const res = await fetch(API_PATH, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ product: payload }),
+    body: JSON.stringify(body),
   });
   let data;
   try {

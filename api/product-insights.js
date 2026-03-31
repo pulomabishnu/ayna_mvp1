@@ -42,24 +42,38 @@ function uniquePhrases(arr, maxCount, maxLen) {
   return out;
 }
 
-function buildUserPrompt(product) {
+function buildUserPrompt(product, userContextText = '') {
   const name = product?.name || 'Unknown product';
   const category = product?.category || '';
   const summary = product?.summary || '';
   const tags = Array.isArray(product?.tags) ? product.tags.join(', ') : '';
   const type = product?.type || '';
+  const readerBlock =
+    userContextText && userContextText.trim().length > 0
+      ? `
+
+Reader health context (tailor summaries to this person when relevant; educational only; never diagnose; never tell them to stop a prescribed medication—suggest discussing with their clinician for interactions or contraindications):
+${userContextText.trim()}
+
+Tailoring rules when reader context is present:
+- Personalize clinicalNarrative, scienceSummary, and communitySummary: briefly note why this category might matter for their stated concerns (e.g. heavy flow, menopause, UTI history, latex or fragrance sensitivity, imported conditions)—without individual medical directives.
+- pubmedSearchQueries, patientEducationQueries, and communitySearchQueries may include one helpful qualifier tied to their context (e.g. "heavy menstrual bleeding management", "latex-free menstrual cup") when it fits the product category. Never echo names, emails, or street addresses.
+- If context is irrelevant to this product type, keep text generic as usual.
+`
+      : '';
+
   return `Product context (for educational writing only):
 - Name: ${name}
 - Category: ${category}
 - Type: ${type}
 - Summary: ${summary}
 - Tags: ${tags}
-
+${readerBlock}
 Return a SINGLE JSON object with this exact shape (no markdown, no URLs anywhere in any field):
 {
-  "clinicalNarrative": "2-4 sentences: neutral clinical / product-category context. Educational only. No diagnosis or treatment instructions for the reader.",
-  "scienceSummary": "1-2 sentences: how evidence or trials are typically discussed for this category (not about this specific product unless clearly a named drug/device).",
-  "communitySummary": "1-2 sentences: how patients often discuss this topic in forums — clearly anecdotal, not factual claims.",
+  "clinicalNarrative": "2-4 sentences: neutral clinical / product-category context. Educational only. No diagnosis or treatment instructions for the reader. When reader context is provided, open with one short clause on relevance to their profile when appropriate.",
+  "scienceSummary": "1-2 sentences: how evidence or trials are typically discussed for this category (not about this specific product unless clearly a named drug/device). Mention evidence limitations when the reader has complex conditions and evidence may not be product-specific.",
+  "communitySummary": "1-2 sentences: how patients often discuss this topic in forums — clearly anecdotal, not factual claims. If reader sensitivities apply (e.g. fragrance), note that forum posts are unverified.",
   "pubmedSearchQueries": ["short search phrase 1", "short search phrase 2"],
   "patientEducationQueries": ["plain phrase for patient-education search 1"],
   "communitySearchQueries": ["short phrase to search Reddit/YouTube"]
@@ -168,7 +182,7 @@ function buildSafeLinks(parsed) {
   return { clinicianLinks, literatureLinks, communityLinks };
 }
 
-async function callOpenAI(product) {
+async function callOpenAI(product, userContextText = '') {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) return null;
   const model = process.env.OPENAI_MODEL || 'gpt-4o-mini';
@@ -188,7 +202,7 @@ async function callOpenAI(product) {
           content:
             'You write careful JSON for a women\'s health education product. Never output URLs or fake citations. Prefer short, generic search phrases when uncertain.',
         },
-        { role: 'user', content: buildUserPrompt(product) },
+        { role: 'user', content: buildUserPrompt(product, userContextText) },
       ],
     }),
   });
@@ -216,7 +230,7 @@ function anthropicModelCandidates() {
 const ANTHROPIC_SYSTEM =
   "You produce only valid JSON for a women's health education app. Never include URLs, links, domains, or fabricated citations. Use short search phrases only. Output a single JSON object only — no markdown, no code fences, no text before or after the JSON.";
 
-async function callAnthropic(product) {
+async function callAnthropic(product, userContextText = '') {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) return null;
 
@@ -224,7 +238,7 @@ async function callAnthropic(product) {
     max_tokens: 1200,
     temperature: 0.25,
     system: ANTHROPIC_SYSTEM,
-    messages: [{ role: 'user', content: buildUserPrompt(product) }],
+    messages: [{ role: 'user', content: buildUserPrompt(product, userContextText) }],
   };
 
   for (const model of anthropicModelCandidates()) {
@@ -292,7 +306,7 @@ const DEFAULT_GATEWAY_GEMINI_MODEL = 'google/gemini-2.5-flash';
 /**
  * Gemini through Vercel AI Gateway (optional). Uses OpenAI Chat Completions shape.
  */
-async function callGeminiViaVercelAiGateway(product) {
+async function callGeminiViaVercelAiGateway(product, userContextText = '') {
   const apiKey = getGeminiAiGatewayApiKey();
   if (!apiKey) return null;
   const base = (process.env.AI_GATEWAY_BASE_URL || 'https://ai-gateway.vercel.sh/v1').replace(/\/$/, '');
@@ -313,7 +327,7 @@ async function callGeminiViaVercelAiGateway(product) {
           content:
             'You write careful JSON for a women\'s health education product. Never output URLs or fake citations. Prefer short, generic search phrases when uncertain.',
         },
-        { role: 'user', content: buildUserPrompt(product) },
+        { role: 'user', content: buildUserPrompt(product, userContextText) },
       ],
     }),
   });
@@ -341,12 +355,12 @@ function geminiModelCandidates() {
 }
 
 /** Direct Gemini REST API (when you use a Google AI Studio key in env, not the Gateway key). */
-async function callGeminiDirect(product) {
+async function callGeminiDirect(product, userContextText = '') {
   const apiKey = getGeminiApiKey();
   if (!apiKey) return null;
 
   const body = {
-    contents: [{ role: 'user', parts: [{ text: buildUserPrompt(product) }] }],
+    contents: [{ role: 'user', parts: [{ text: buildUserPrompt(product, userContextText) }] }],
     generationConfig: {
       temperature: 0.25,
       maxOutputTokens: 1200,
@@ -395,30 +409,30 @@ async function callGeminiDirect(product) {
 }
 
 /** @returns {{ raw: string, geminiRoute?: 'gateway' | 'direct' } | null} */
-async function callGemini(product) {
+async function callGemini(product, userContextText = '') {
   // Prefer direct Google Gemini API (GEMINI_API_KEY / AI Studio). Optional fallback: Vercel AI Gateway.
   if (getGeminiApiKey()) {
-    const direct = await callGeminiDirect(product);
+    const direct = await callGeminiDirect(product, userContextText);
     if (direct) return { raw: direct, geminiRoute: 'direct' };
   }
   if (getGeminiAiGatewayApiKey()) {
-    const viaGateway = await callGeminiViaVercelAiGateway(product);
+    const viaGateway = await callGeminiViaVercelAiGateway(product, userContextText);
     if (viaGateway) return { raw: viaGateway, geminiRoute: 'gateway' };
   }
   return null;
 }
 
-async function runModel(product, provider) {
+async function runModel(product, provider, userContextText = '') {
   let raw = null;
   let providerUsed = provider === 'anthropic' ? 'claude' : provider === 'google' ? 'gemini' : provider;
-  if (provider === 'claude' || provider === 'anthropic') raw = await callAnthropic(product);
+  if (provider === 'claude' || provider === 'anthropic') raw = await callAnthropic(product, userContextText);
   else if (provider === 'gemini' || provider === 'google') {
-    const g = await callGemini(product);
+    const g = await callGemini(product, userContextText);
     if (g) {
       raw = g.raw;
       providerUsed = g.geminiRoute === 'gateway' ? 'gemini (Vercel AI Gateway)' : 'gemini';
     }
-  } else if (provider === 'openai') raw = await callOpenAI(product);
+  } else if (provider === 'openai') raw = await callOpenAI(product, userContextText);
   if (!raw) return null;
   const normalized = normalizeParsed(raw);
   if (!normalized) return null;
@@ -480,6 +494,10 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Missing product' });
   }
 
+  const userContextRaw = body?.userContext;
+  const userContextText =
+    typeof userContextRaw === 'string' ? userContextRaw.trim().slice(0, 4000) : '';
+
   const order = envList('AI_INSIGHTS_PROVIDER_ORDER', 'claude,openai');
   const normalizedIds = order.filter((p) => ['claude', 'anthropic', 'gemini', 'google', 'openai'].includes(p));
   const fallback = ['claude', 'openai'];
@@ -492,7 +510,11 @@ export default async function handler(req, res) {
   let lastError = null;
   for (const p of tryProviders) {
     try {
-      const out = await runModel(product, p === 'anthropic' ? 'claude' : p === 'google' ? 'gemini' : p);
+      const out = await runModel(
+        product,
+        p === 'anthropic' ? 'claude' : p === 'google' ? 'gemini' : p,
+        userContextText
+      );
       if (!out) continue;
       const { clinicianLinks, literatureLinks, communityLinks } = buildSafeLinks(out.normalized);
       return res.status(200).json({
