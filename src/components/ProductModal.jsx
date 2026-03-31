@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Disclaimer from './Disclaimer';
+import { getProfileMatchLabelsForProduct } from '../data/products';
 import { getAynaRating } from '../data/aynaReviews';
 import { fetchProductInsights } from '../utils/fetchProductInsights';
 import { buildUserHealthContextString } from '../utils/userHealthContextForInsights';
@@ -185,35 +186,57 @@ function buildSocialCondensed(product, aiInsights, profileTailoring) {
   return parts.join('\n\n');
 }
 
-/** Short bullets for hero “Quick overview” (below where to buy). */
-function buildOverallOverview(product, aiInsights) {
-  const bullets = [];
-  const s = product.safety;
-  if (s) {
-    bullets.push({
-      k: 'Safety',
-      v: `${truncate(s.fdaStatus || 'Regulatory status varies', 100)} · ${s.recalls?.includes('⚠️') || (s.recalls && !/no active|none/i.test(s.recalls)) ? 'Check recalls.' : 'No active recalls in our data.'}`,
-    });
+/** One paragraph summarizing Safety, Clinician, Science, and Community tabs (below where to buy). */
+function buildOverallSummary(product, aiInsights, quizResults, healthProfile) {
+  const s = product.safety || {};
+  const recallPhrase = s.recalls?.includes('⚠️')
+    ? 'Review the Safety tab for any recall or alert details we list.'
+    : 'No active recall is listed in our database; always confirm on the product label.';
+
+  const clinical = (aiInsights?.clinicalNarrative || product.doctorOpinion || '').replace(/\s+/g, ' ').trim();
+  const scienceFromAi = (aiInsights?.scienceSummary || '').trim();
+  const eff = (product.effectiveness || '').trim();
+  const scienceMerged = scienceFromAi || (eff.length > 45 ? eff : '');
+
+  const communityAi = (aiInsights?.communitySummary || '').trim();
+  let communityMerged = communityAi;
+  if (!communityMerged && product.communityReview) {
+    const raw = product.communityReview;
+    const dashIdx = raw.indexOf(' — ');
+    communityMerged = (dashIdx >= 0 ? raw.slice(0, dashIdx) : raw).replace(/\s+/g, ' ').trim();
   }
-  if (aiInsights?.clinicalNarrative || product.doctorOpinion) {
-    bullets.push({
-      k: 'Clinical',
-      v: truncate(aiInsights?.clinicalNarrative || product.doctorOpinion || '', 220),
-    });
+
+  const parts = [];
+  parts.push(
+    `${truncate(product.name, 100)} is listed as ${s.fdaStatus || 'a consumer health product'}; materials: ${s.materials || 'see packaging'}. ${recallPhrase}`
+  );
+  if (clinical) {
+    parts.push(truncate(clinical, 300));
   }
-  bullets.push({
-    k: 'Evidence',
-    v: scienceEvidenceIsLimited(product)
-      ? 'Published evidence for this exact product may be limited; use literature links as starting points.'
-      : 'See the Science tab for effectiveness notes; this is not a full evidence review.',
-  });
-  bullets.push({
-    k: 'Community',
-    v: product.incentivizedReviewSites?.length
-      ? 'Some review sources may be incentivized—read critically.'
-      : 'Community views are anecdotal, not clinical proof.',
-  });
-  return bullets;
+  if (scienceMerged) {
+    parts.push(truncate(scienceMerged, 280));
+  } else {
+    parts.push('The Science tab lays out effectiveness notes and literature search shortcuts for this category.');
+  }
+  if (communityMerged) {
+    parts.push(`Community angle: ${truncate(communityMerged, 220)}`);
+  } else {
+    parts.push('The Community tab summarizes how people discuss similar products—anecdotal, not medical proof.');
+  }
+  if (product.type === 'digital' && product.privacy) {
+    const p = product.privacy;
+    parts.push(
+      `Privacy & safety (digital): data ${p.dataStorage || '—'}${p.hipaa ? `; ${p.hipaa}` : ''}${p.sellsData ? ` ${p.sellsData}` : ''}.`
+    );
+  }
+
+  const matchLabels = getProfileMatchLabelsForProduct(product, quizResults, healthProfile);
+  let text = parts.join(' ');
+  if (matchLabels.length > 0) {
+    text += ` **For you:** Based on your health profile, this product aligns with your ${matchLabels.join(', ')} needs.`;
+  }
+
+  return text.trim();
 }
 
 /** Render markdown-like **bold** in plain text as <strong> */
@@ -278,9 +301,9 @@ export default function ProductModal({
             doctor: buildDoctorCondensed(product, aiInsights, profileTailoring),
             science: buildScienceCondensed(product, aiInsights, profileTailoring),
             social: buildSocialCondensed(product, aiInsights, profileTailoring),
-            overall: buildOverallOverview(product, aiInsights, profileTailoring),
+            overallSummary: buildOverallSummary(product, aiInsights, quizResults, healthProfile),
         };
-    }, [product, aiInsights, profileTailoring]);
+    }, [product, aiInsights, quizResults, healthProfile]);
 
     if (!product) return null;
 
@@ -844,7 +867,7 @@ export default function ProductModal({
                         )}
                     </div>
 
-                    {condensed?.overall && condensed.overall.length > 0 && (
+                    {condensed?.overallSummary && (
                         <div
                             style={{
                                 marginTop: '1.25rem',
@@ -866,23 +889,11 @@ export default function ProductModal({
                             >
                                 Quick overview
                             </p>
-                            <ul
-                                style={{
-                                    margin: 0,
-                                    paddingLeft: '1.15rem',
-                                    fontSize: '0.9rem',
-                                    color: 'var(--color-text-main)',
-                                    lineHeight: 1.55,
-                                }}
-                            >
-                                {condensed.overall.map((b) => (
-                                    <li key={b.k} style={{ marginBottom: '0.4rem' }}>
-                                        <strong style={{ color: 'var(--color-text-main)' }}>{b.k}:</strong> {b.v}
-                                    </li>
-                                ))}
-                            </ul>
+                            <p style={{ fontSize: '0.92rem', color: 'var(--color-text-main)', lineHeight: 1.6, margin: 0 }}>
+                                {renderRichText(condensed.overallSummary)}
+                            </p>
                             <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', margin: '0.65rem 0 0', lineHeight: 1.45 }}>
-                                Use the tabs below for sources and detail. This overview is educational only—not medical advice.
+                                Summarizes the tabs below (Safety, Clinician, Science, Community). Educational only—not medical advice.
                             </p>
                         </div>
                     )}

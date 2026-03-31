@@ -958,6 +958,42 @@ const TAG_TO_READABLE = {
 };
 
 /**
+ * Readable labels for product tags that overlap the user’s quiz + imported health profile.
+ * Empty when there is no tag match — use this to show a positive “for you” line only when appropriate.
+ */
+export function getProfileMatchLabelsForProduct(product, quizAnswers, healthProfile = null) {
+    const healthOnlyTags = inferTagsFromHealthProfile(healthProfile);
+    if ((!quizAnswers || !quizAnswers.frustrations?.length) && healthOnlyTags.length === 0) {
+        return [];
+    }
+    const FRUSTRATION_MAP = {
+        'Heavy flow': 'heavy-flow', 'Painful cramps': 'cramps', 'Hormonal bloating': 'bloating', 'Irregular cycles': 'irregular',
+        'Leaks & staining': 'leaks', 'General discomfort': 'discomfort', 'Not sure if products are safe': 'safety-concern',
+        'Recurrent UTIs': 'uti', 'PCOS symptoms': 'pcos', 'Pelvic pain': 'pelvic-floor',
+        'Menopause symptoms': 'menopause', 'Endometriosis': 'endometriosis', 'Fertility / TTC': 'fertility',
+        'Pregnancy': 'pregnancy', 'Postpartum recovery': 'postpartum'
+    };
+    const userTags = new Set();
+    (quizAnswers?.frustrations || []).forEach(f => {
+        const t = FRUSTRATION_MAP[f];
+        if (t) userTags.add(t);
+        if (f === 'Endometriosis') userTags.add('cramps');
+    });
+    healthOnlyTags.forEach((t) => userTags.add(t));
+    const prefs = Array.isArray(quizAnswers?.preference) ? quizAnswers.preference : (quizAnswers?.preference ? [quizAnswers.preference] : []);
+    prefs.forEach(p => {
+        if (p === 'Organic/Natural only') userTags.add('organic');
+        if (p === 'Non-hormonal / hormone-free') userTags.add('non-hormonal');
+        if (p === 'Lower cost') userTags.add('cost');
+        if (p === 'Comfort/Convenience') userTags.add('comfort');
+        if (p === 'Privacy & data security') userTags.add('privacy');
+        if (p === 'Sustainability/Zero-waste') userTags.add('sustainability');
+    });
+    const productTags = new Set(product.tags || []);
+    return [...userTags].filter(t => productTags.has(t)).slice(0, 4).map(m => TAG_TO_READABLE[m] || m.replace(/-/g, ' '));
+}
+
+/**
  * Returns a short explanation for why a product could work (or not) for this profile.
  */
 export function getRecommendationExplanation(product, quizAnswers, healthProfile = null) {
