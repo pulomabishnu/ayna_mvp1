@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { getRecommendationExplanation, SIMILAR_PROFILES, ALL_PRODUCTS, CATEGORY_LABELS, getRecommendationsGroupedByWorkflow } from '../data/products';
 import { getRecommendedArticles } from './Articles';
 import { inferTagsFromHealthProfile } from '../utils/healthDataProfile';
+import CareNearYouPanel from './CareNearYouPanel';
 
 const TYPE_OPTIONS = [
     { value: 'all', label: 'All types' },
@@ -9,7 +10,21 @@ const TYPE_OPTIONS = [
     { value: 'digital', label: 'Digital' },
 ];
 
-export default function Recommendations({ results, onRetake, trackedProducts, toggleTrackProduct, myProducts, toggleMyProduct, omittedProducts, toggleOmitProduct, onOpenProduct, onViewArticle, healthProfile = null }) {
+export default function Recommendations({
+    results,
+    onRetake,
+    trackedProducts,
+    toggleTrackProduct,
+    myProducts,
+    toggleMyProduct,
+    omittedProducts,
+    toggleOmitProduct,
+    onOpenProduct,
+    onViewArticle,
+    healthProfile = null,
+    userZipCode = '',
+    onZipCodeChange,
+}) {
     const [categoryFilter, setCategoryFilter] = useState('all');
     const [typeFilter, setTypeFilter] = useState('all');
     const [expandedSections, setExpandedSections] = useState({});
@@ -177,25 +192,25 @@ export default function Recommendations({ results, onRetake, trackedProducts, to
                     padding: '0.5rem 1rem', borderRadius: 'var(--radius-pill)', fontSize: '0.875rem',
                     fontWeight: '600', marginBottom: '1rem', display: 'inline-block'
                 }}>
-                    Your Personalized Results
+                    Your personalized ecosystem
                 </div>
                 <h2 style={{ fontSize: '2.25rem', marginBottom: '0.75rem' }}>Products curated for you</h2>
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem' }}>
                     {results?.frustrations?.length > 0
-                        ? <>Based on your focus areas: <strong>{results.frustrations.join(', ')}</strong></>
-                        : 'Here are our top recommendations for you.'
+                        ? <>Ranking uses your quiz focus areas (<strong>{results.frustrations.join(', ')}</strong>), anything you’ve told us in chat, imported records (FHIR or manual), and wearable summaries from My Account.</>
+                        : 'Ranking combines your quiz, chat updates, imported health records, and wearable notes when you add them under My Account.'
                     }
                 </p>
                 {inferTagsFromHealthProfile(healthProfile).length > 0 && (
                     <p style={{ color: 'var(--color-primary)', fontSize: '0.95rem', marginTop: '0.75rem', lineHeight: 1.5 }}>
-                        Your imported health data (conditions, medications, or EHR summary) is also informing ranking — not a diagnosis, but extra signal for what might fit.
+                        Your imported profile (conditions, medications, EHR summary, or wearable text) is informing these picks — not a diagnosis, but extra signal for what might fit.
                     </p>
                 )}
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginTop: '0.5rem' }}>
                     🔒 We never sell your data. Every product below is reviewed by OB-GYNs and real women.
                 </p>
                 <p style={{ color: 'var(--color-primary)', fontSize: '0.9rem', marginTop: '0.5rem', fontWeight: '500' }}>
-                    Forgot something? Use the 💬 chat button to add more to your profile — we'll refresh your recommendations.
+                    Forgot something? Use the 💬 chat button to speak or type more — we’ll refresh your ecosystem.
                 </p>
                 <div style={{ marginTop: '1.25rem' }}>
                     <button type="button" className="btn btn-outline" onClick={onRetake}>
@@ -203,6 +218,14 @@ export default function Recommendations({ results, onRetake, trackedProducts, to
                     </button>
                 </div>
             </div>
+
+            <CareNearYouPanel
+                quizResults={results}
+                healthProfile={healthProfile}
+                userZipCode={userZipCode}
+                onZipCodeChange={onZipCodeChange}
+                onOpenProduct={onOpenProduct}
+            />
 
             {/* Filters: dropdowns for Type and Category */}
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: 'var(--spacing-lg)', alignItems: 'center' }}>

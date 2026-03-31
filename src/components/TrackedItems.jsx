@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Disclaimer from './Disclaimer';
 import HealthDataImport from './HealthDataImport';
+import CareNearYouPanel from './CareNearYouPanel';
 import { getCheckinRecommendations, CATEGORY_LABELS } from '../data/products';
 
-export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewWaitlist, userZipCode, onZipCodeChange, checkinData, quizResults, myProducts = {}, onOpenProduct, omittedProducts = {}, onViewOmitted, onHealthProfileUpdate }) {
+export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewWaitlist, userZipCode, onZipCodeChange, checkinData, quizResults, myProducts = {}, onOpenProduct, omittedProducts = {}, onViewOmitted, onHealthProfileUpdate, healthProfile = null }) {
     const trackedList = Object.values(trackedProducts);
     const joinedList = Object.values(joinedWaitlists);
     const totalItems = trackedList.length + joinedList.length;
@@ -40,7 +41,7 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                 </div>
                 <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Your Dashboard</h2>
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '1.25rem' }}>
-                    Track your safety-monitored products and startup waitlists all in one place.
+                    Build your ecosystem: products, imported health and wearable data, and care options — all in one place.
                 </p>
                 {/* Hidden products — prominent so users can find it */}
                 {onViewOmitted && (
@@ -85,6 +86,15 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
             </div>
 
             <HealthDataImport onUpdate={onHealthProfileUpdate} />
+
+            <CareNearYouPanel
+                quizResults={quizResults}
+                healthProfile={healthProfile}
+                userZipCode={userZipCode}
+                onZipCodeChange={onZipCodeChange}
+                onOpenProduct={onOpenProduct}
+                compact
+            />
 
             {/* Recommendations from your check-in — always visible under account when check-in was done */}
             {checkinRecs.length > 0 && (

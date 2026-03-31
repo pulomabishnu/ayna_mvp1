@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useSpeechToText } from '../hooks/useSpeechToText';
+import SearchMicButton from './SearchMicButton';
 
 // Keyword → profile update. Used to merge chat message into profile (frustrations, sensitivities, preference).
 function parseMessageIntoProfile(message, currentProfile) {
@@ -90,7 +92,7 @@ function parseMessageIntoProfile(message, currentProfile) {
   return hasChanges ? { profile, added } : null;
 }
 
-const DEFAULT_WELCOME = [{ role: 'assistant', text: "Hi! I'm Ayna. You can tell me more about your health here — for example, 'I have endometriosis' or 'I'm sensitive to fragrance.' I'll update your profile and refresh your recommendations." }];
+const DEFAULT_WELCOME = [{ role: 'assistant', text: "Hi! I'm Ayna. Speak or type your health needs — for example, 'I have endometriosis' or 'I'm sensitive to fragrance.' We combine this chat with your quiz, imported records, and wearable summary to personalize your ecosystem and recommendations." }];
 
 export default function ProfileChatbot({ profile, onProfileUpdate, chatHistory = [], onChatHistoryUpdate, disabled, onNavigateToDiscovery }) {
   const [open, setOpen] = useState(false);
@@ -98,6 +100,16 @@ export default function ProfileChatbot({ profile, onProfileUpdate, chatHistory =
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const bottomRef = useRef(null);
+  const speech = useSpeechToText();
+
+  const toggleVoice = () => {
+    if (speech.isRecording) {
+      const t = speech.stop();
+      if (t) setInput((prev) => (prev.trim() ? `${prev.trim()} ${t}` : t));
+    } else {
+      speech.start();
+    }
+  };
 
   useEffect(() => {
     if (chatHistory?.length > 0) setMessages(chatHistory);
@@ -250,21 +262,37 @@ export default function ProfileChatbot({ profile, onProfileUpdate, chatHistory =
             <div ref={bottomRef} />
           </div>
           <form onSubmit={handleSend} style={{ padding: '0.75rem', borderTop: '1px solid var(--color-border)' }}>
-            <input
-              type="text"
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              placeholder="e.g. I have endometriosis, I prefer organic…"
-              disabled={disabled || sending}
-              style={{
-                width: '100%',
-                padding: '0.75rem 1rem',
-                borderRadius: 'var(--radius-pill)',
-                border: '1px solid var(--color-border)',
-                outline: 'none',
-                fontSize: '0.95rem',
-              }}
-            />
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="e.g. I have endometriosis, I prefer organic…"
+                disabled={disabled || sending || speech.isRecording}
+                style={{
+                  flex: 1,
+                  minWidth: 0,
+                  padding: '0.75rem 1rem',
+                  borderRadius: 'var(--radius-pill)',
+                  border: '1px solid var(--color-border)',
+                  outline: 'none',
+                  fontSize: '0.95rem',
+                }}
+              />
+              {speech.supported && (
+                <SearchMicButton
+                  size="compact"
+                  isRecording={speech.isRecording}
+                  disabled={disabled || sending}
+                  onClick={toggleVoice}
+                />
+              )}
+            </div>
+            {speech.isRecording && (
+              <p style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', margin: '0.35rem 0 0', lineHeight: 1.4 }}>
+                Listening… {speech.liveText ? <span style={{ color: 'var(--color-text-main)' }}>{speech.liveText}</span> : '(speak now)'}
+              </p>
+            )}
           </form>
         </div>
       )}

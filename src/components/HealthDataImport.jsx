@@ -17,6 +17,7 @@ function readInitialFields() {
       medications: '',
       allergies: '',
       notes: '',
+      wearableText: '',
       appleHealth: false,
       googleFit: false,
       fhirConnected: false,
@@ -28,6 +29,7 @@ function readInitialFields() {
     medications: p.medications.join('\n'),
     allergies: p.allergies.join('\n'),
     notes: p.notes || '',
+    wearableText: p.wearableSummary?.text || '',
     appleHealth: !!p.sources?.appleHealth,
     googleFit: !!p.sources?.googleFit,
     fhirConnected: !!p.sources?.fhir,
@@ -41,6 +43,7 @@ export default function HealthDataImport({ onUpdate }) {
   const [medications, setMedications] = useState(init.medications);
   const [allergies, setAllergies] = useState(init.allergies);
   const [notes, setNotes] = useState(init.notes);
+  const [wearableText, setWearableText] = useState(init.wearableText);
   const [appleHealth, setAppleHealth] = useState(init.appleHealth);
   const [googleFit, setGoogleFit] = useState(init.googleFit);
   const [fhirConnected, setFhirConnected] = useState(init.fhirConnected);
@@ -55,11 +58,16 @@ export default function HealthDataImport({ onUpdate }) {
       medications: parseCommaLines(medications),
       allergies: parseCommaLines(allergies),
       notes,
+      wearableSummary: { text: wearableText.trim() },
       sources: {
         appleHealth,
         googleFit,
         fhir: fhirConnected || (mergedFhir.conditions?.length > 0 || mergedFhir.medications?.length > 0),
-        manual: parseCommaLines(conditions).length > 0 || parseCommaLines(medications).length > 0 || !!notes.trim(),
+        manual:
+          parseCommaLines(conditions).length > 0 ||
+          parseCommaLines(medications).length > 0 ||
+          !!notes.trim() ||
+          !!wearableText.trim(),
       },
       fhirSummary: mergedFhir,
     });
@@ -96,7 +104,7 @@ export default function HealthDataImport({ onUpdate }) {
     <div style={{ maxWidth: '800px', margin: '0 auto 3rem', padding: '1.5rem', background: 'var(--color-surface-soft)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)' }}>
       <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>Health data import</h3>
       <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem', lineHeight: 1.55, marginBottom: '1.25rem' }}>
-        Connect summaries from apps and electronic health records so Search and recommendations can weigh the same context you share with your care team. Data stays in this browser unless you choose to sync (premium). We never sell health data.
+        Connect EHR exports, manual conditions, and wearable summaries so your ecosystem ranking matches what you share with your care team. Data stays in this browser unless you choose to sync (premium). We never sell health data.
       </p>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem' }}>
@@ -114,7 +122,7 @@ export default function HealthDataImport({ onUpdate }) {
           <p style={{ fontWeight: '600', marginBottom: '0.5rem' }}>Google Fit &amp; other apps</p>
           <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.9rem' }}>
             <input type="checkbox" checked={googleFit} onChange={(e) => setGoogleFit(e.target.checked)} />
-            I use Google Fit or another tracker and will summarize cycle/sleep/activity patterns in the notes field.
+            I use Google Fit, Apple Watch, Oura, or similar — I’ll paste a short summary below (sleep, steps, cycle estimates).
           </label>
         </div>
         <div style={{ padding: '1rem', background: 'var(--color-surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
@@ -167,6 +175,18 @@ export default function HealthDataImport({ onUpdate }) {
         rows={3}
         style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', marginBottom: '1rem', fontSize: '0.9rem' }}
         placeholder="Anything else Ayna should weigh when ranking products for you."
+      />
+
+      <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.35rem', fontSize: '0.9rem' }}>Wearable &amp; activity summary (optional)</label>
+      <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.5rem', lineHeight: 1.5 }}>
+        Paste averages or trends from Apple Health, Google Fit, Oura, Garmin, etc. (e.g. sleep 6.5h/night, 7k steps, resting HR 62). Used with your quiz and chat to tune recommendations — stays in this browser.
+      </p>
+      <textarea
+        value={wearableText}
+        onChange={(e) => setWearableText(e.target.value)}
+        rows={3}
+        style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', marginBottom: '1rem', fontSize: '0.9rem' }}
+        placeholder="e.g. Last 30 days: avg sleep 6h20m; cycle app predicts period ±2 days; walking 8k steps/day."
       />
 
       <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>

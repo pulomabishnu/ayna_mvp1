@@ -336,6 +336,8 @@ function App() {
             toggleOmitProduct={toggleOmitProduct}
             onOpenProduct={handleOpenProduct}
             healthProfile={healthProfile}
+            userZipCode={userZipCode}
+            onZipCodeChange={handleZipCodeChange}
           />
         )}
         {currentView === 'tracked' && (
@@ -352,6 +354,7 @@ function App() {
             omittedProducts={omittedProducts}
             onViewOmitted={handleViewOmitted}
             onHealthProfileUpdate={setHealthProfile}
+            healthProfile={healthProfile}
           />
         )}
         {currentView === 'waitlist' && (

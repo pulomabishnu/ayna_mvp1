@@ -1,6 +1,6 @@
 const STORAGE_KEY = 'ayna_health_profile_v1';
 
-/** @typedef {{ conditions: string[], medications: string[], allergies: string[], notes: string, sources: { appleHealth: boolean, googleFit: boolean, fhir: boolean, manual: boolean }, updatedAt: string|null, fhirSummary?: { conditions: string[], medications: string[] } }} HealthProfile */
+/** @typedef {{ conditions: string[], medications: string[], allergies: string[], notes: string, wearableSummary?: { text?: string }, sources: { appleHealth: boolean, googleFit: boolean, fhir: boolean, manual: boolean }, updatedAt: string|null, fhirSummary?: { conditions: string[], medications: string[] } }} HealthProfile */
 
 const KEYWORD_TAGS = [
   { re: /endometriosis|adenomyosis/i, tags: ['endometriosis', 'cramps'] },
@@ -15,6 +15,11 @@ const KEYWORD_TAGS = [
   { re: /vaginal dryness|gsm|genitourinary syndrome/i, tags: ['menopause', 'discomfort'] },
   { re: /irregular cycle|oligomenorrhea|amenorrhea/i, tags: ['irregular'] },
   { re: /infertility|fertility|ttc|trying to conceive/i, tags: ['fertility'] },
+  /** Wearable / tracker free text (Apple Health, Google Fit exports summarized by user) */
+  { re: /sleep score|sleep duration|poor sleep|sleep debt|insomnia|awake time/i, tags: ['comfort', 'mental-health'] },
+  { re: /cycle tracking|period prediction|irregular period|cycle length/i, tags: ['irregular'] },
+  { re: /heart rate|hrv|resting heart|vo2|cardio/i, tags: ['comfort'] },
+  { re: /steps|active calories|workout|walking|exercise minutes/i, tags: ['comfort'] },
 ];
 
 export function loadHealthProfile() {
@@ -56,6 +61,9 @@ export function normalizeProfile(p) {
         medications: Array.isArray(p.fhirSummary.medications) ? p.fhirSummary.medications.map(String) : [],
       }
       : { conditions: [], medications: [] },
+    wearableSummary: p.wearableSummary && typeof p.wearableSummary === 'object'
+      ? { text: typeof p.wearableSummary.text === 'string' ? p.wearableSummary.text : '' }
+      : { text: '' },
     updatedAt: p.updatedAt || null,
   };
 }
@@ -74,6 +82,7 @@ export function inferTagsFromHealthProfile(profile) {
     ...(profile.fhirSummary?.conditions || []),
     ...(profile.fhirSummary?.medications || []),
     profile.notes || '',
+    profile.wearableSummary?.text || '',
   ];
   const text = chunks.join(' ');
   if (!text.trim()) return [];

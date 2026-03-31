@@ -95,11 +95,11 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
                 <p style={{
                     fontSize: '1.25rem',
                     color: 'var(--color-text-muted)',
-                    maxWidth: '640px',
+                    maxWidth: '680px',
                     marginBottom: '3rem',
                     lineHeight: '1.6'
                 }}>
-                    Interrogate our database of 500+ women's health products, apps, and startups.
+                    Build a personalized ecosystem of women’s health products, talk or type your needs, import records and wearable summaries, and find telehealth and nearby care matched to your symptoms — all in one place.
                 </p>
             </ScrollReveal>
 
