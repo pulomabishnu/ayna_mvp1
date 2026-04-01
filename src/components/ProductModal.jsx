@@ -159,17 +159,11 @@ function appendBrandComparisonLine(product, parts, role) {
   const { brandName, deviceKindLabel } = ctx;
   const dk = deviceKindLabel || 'this category';
   if (role === 'clinical') {
-    parts.push(
-      `**Comparing brands:** ${brandName} is one of several ${dk} options—use the clinician-oriented sources below to contrast materials, fit, and evidence with other brands.`
-    );
+    parts.push(`**Brands:** ${brandName} is one option in ${dk}—use sources to compare.`);
   } else if (role === 'science') {
-    parts.push(
-      `**Comparing brands:** Look for studies or summaries that mention ${brandName} or compare ${dk} across manufacturers.`
-    );
+    parts.push(`**Brands:** Search for ${brandName} or ${dk} comparisons in the links below.`);
   } else if (role === 'social') {
-    parts.push(
-      `**Comparing brands:** ${brandName} is one of many ${dk} offerings—load Ayna insights so searches can surface brand-specific threads as well as category-wide discussion.`
-    );
+    parts.push(`**Brands:** Load Ayna insights for ${brandName}-specific threads vs other ${dk}.`);
   }
 }
 
@@ -187,12 +181,11 @@ function buildSafetyInsight(product, isDigital, profileTailoring, quizResults, h
   if (!s) return null;
   const parts = [];
   const matchLabels = getProfileMatchLabelsForProduct(product, quizResults, healthProfile);
-  if (matchLabels.length > 0) {
-    parts.push(
-      `**For you:** Your profile overlaps this product on ${matchLabels.join(', ')}—verify materials and alerts below match what you need.`
-    );
+  if (profileTailoring) {
+    parts.push(profileTailoring);
+  } else if (matchLabels.length > 0) {
+    parts.push(`**For you:** ${matchLabels.join(', ')}—check materials and alerts below.`);
   }
-  if (profileTailoring) parts.push(profileTailoring);
   const recallHot = s.recalls?.includes('⚠️') || hasRecallConcern(product);
   const mat = truncate(s.materials || 'see the label', 110);
   parts.push(`**Regulatory:** ${s.fdaStatus || 'Not specified.'} **Materials:** ${mat}.`);
@@ -245,17 +238,15 @@ function buildScienceInsight(product, aiInsights, quizResults, healthProfile) {
   const matchLabels = getProfileMatchLabelsForProduct(product, quizResults, healthProfile);
   const parts = [];
   if (matchLabels.length > 0) {
-    parts.push(
-      `**For you:** If ${matchLabels.join(', ')} are priorities, check whether the studies below measure outcomes that matter for you—not just the brand name.`
-    );
+    parts.push(`**For you:** ${matchLabels.join(', ')}—confirm studies match your priorities.`);
   }
-  if (aiSci) parts.push(truncate(aiSci, 420));
-  else if (eff) parts.push(truncate(eff, 380));
+  if (aiSci) parts.push(truncate(aiSci, 220));
+  else if (eff) parts.push(truncate(eff, 220));
   if (hasScienceBody) {
     parts.push(
       limited
-        ? '**Evidence snapshot:** Rigorous studies on this exact product or brand may be limited—use the linked literature to verify claims.'
-        : '**Evidence snapshot:** The evidence trail here looks somewhat stronger than many consumer products—still read primary sources.'
+        ? '**Evidence:** May be thin for this exact brand—see linked papers.'
+        : '**Evidence:** Somewhat stronger on file than many alternatives—still verify in sources.'
     );
   }
   appendBrandComparisonLine(product, parts, 'science');
@@ -280,11 +271,9 @@ function buildSocialInsight(product, aiInsights, quizResults, healthProfile) {
   const matchLabels = getProfileMatchLabelsForProduct(product, quizResults, healthProfile);
   const parts = [];
   if (matchLabels.length > 0) {
-    parts.push(
-      `**For you:** Others focused on ${matchLabels.join(', ')} often read forums for texture and fit—stories are not medical proof.`
-    );
+    parts.push(`**For you:** ${matchLabels.join(', ')}—stories below are anecdotal.`);
   }
-  if (ai) parts.push(truncate(ai, 380));
+  if (ai) parts.push(truncate(ai, 220));
   if (quotePart && !quoteRedundant) parts.push(`**Forum excerpt:** ${truncate(quotePart, 200)}`);
   appendBrandComparisonLine(product, parts, 'social');
   if (parts.length === 0) return null;
