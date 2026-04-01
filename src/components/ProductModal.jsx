@@ -117,138 +117,121 @@ function buildSafetyCondensed(product, isDigital, profileTailoring, fdaSignals) 
   const s = product.safety || {};
   const lines = [];
   if (profileTailoring) {
-    lines.push(`**For your profile:** ${profileTailoring}`);
+    lines.push(profileTailoring);
   }
   lines.push(
-    `**Regulation:** ${s.fdaStatus || 'Not specified.'} **Materials:** ${s.materials || 'See label or manufacturer.'}`
+    `**What it is:** ${s.fdaStatus || 'Not specified.'} **What it’s made of:** ${s.materials || 'See the label.'}`
   );
-  lines.push(`**Recalls:** ${s.recalls || 'None listed in our data.'}`);
-  lines.push(`**Side effects & watch-outs:** ${s.sideEffects || 'Varies by individual; ask your clinician.'} ${s.opinionAlerts ? `Community notes: ${truncate(s.opinionAlerts, 220)}` : ''}`);
+  const recallShort = s.recalls?.includes('⚠️')
+    ? `**Recalls / alerts:** ${truncate(s.recalls, 140)}`
+    : `**Recalls:** ${truncate(s.recalls || 'None in our data—check the label.', 100)}`;
+  lines.push(recallShort);
+  const se = s.sideEffects ? truncate(s.sideEffects, 200) : 'Varies by person—ask your clinician if unsure.';
+  const op = s.opinionAlerts ? truncate(s.opinionAlerts, 120) : '';
+  lines.push(`**Side effects & tips:** ${se}${op ? ` ${op}` : ''}`);
   if (fdaSignals?.status === 'loading') {
-    lines.push('**FDA MedWatch (openFDA):** Loading public FAERS/MAUDE aggregates (voluntary adverse event reports)…');
+    lines.push('**FDA public reports:** Loading…');
   } else if (fdaSignals?.status === 'error') {
-    lines.push('**FDA MedWatch (openFDA):** Could not load public aggregates; use official FDA links in this tab.');
+    lines.push('**FDA public reports:** Couldn’t load counts—links are in this tab.');
   } else if (fdaSignals?.status === 'ready' && fdaSignals.data) {
     const d = fdaSignals.data;
     if (d.error) {
-      lines.push(`**FDA MedWatch (openFDA):** ${d.error}`);
+      lines.push(`**FDA public reports:** ${truncate(d.error, 120)}`);
     } else if (d.skipped) {
-      lines.push(`**FDA MedWatch (openFDA):** ${d.message || 'No brand search term derived.'}`);
+      lines.push(`**FDA public reports:** ${d.message || 'No search term.'}`);
     } else {
       const dt = d.drugTotal;
       const dv = d.deviceTotal;
-      const drugStr = dt !== null && dt !== undefined ? `${Number(dt).toLocaleString()} drug (FAERS)` : 'drug (FAERS) n/a';
-      const devStr = dv !== null && dv !== undefined ? `${Number(dv).toLocaleString()} device (MAUDE)` : 'device (MAUDE) n/a';
+      const drugStr = dt !== null && dt !== undefined ? `${Number(dt).toLocaleString()} drug-related` : '—';
+      const devStr = dv !== null && dv !== undefined ? `${Number(dv).toLocaleString()} device-related` : '—';
       lines.push(
-        `**FDA MedWatch (openFDA):** Approximate public adverse event reports matching “${d.searchTerm}”: ${drugStr}; ${devStr}. Data are voluntary MedWatch-related filings in FDA databases, not proof of causality or population frequency.`
+        `**FDA public reports (optional context):** For “${d.searchTerm}”, FDA’s open databases list about ${drugStr} and ${devStr} voluntary reports. That doesn’t mean the product caused them—see links below.`
       );
     }
   }
   if (isDigital && product.privacy) {
     const p = product.privacy;
     lines.push(
-      `**Privacy:** Data ${p.dataStorage || '—'}. ${p.sellsData || ''} ${p.hipaa ? `HIPAA: ${p.hipaa}.` : ''}`
+      `**App privacy:** ${truncate([p.dataStorage, p.sellsData, p.hipaa].filter(Boolean).join(' · '), 220)}`
     );
   }
   return lines;
 }
 
-function buildDoctorCondensed(product, aiInsights, profileTailoring) {
+function buildDoctorCondensed(product, aiInsights) {
   const parts = [];
-  if (profileTailoring) parts.push(`**For your profile:** ${profileTailoring}`);
-  if (aiInsights?.clinicalNarrative) parts.push(aiInsights.clinicalNarrative);
-  if (product.doctorOpinion) parts.push(`**Clinician-oriented summary:** ${product.doctorOpinion}`);
-  const src =
-    product.clinicianOpinionSource === 'independent'
-      ? 'Sources aim to be independent of the brand; still confirm with your own clinician.'
-      : product.clinicianOpinionSource === 'brand'
-        ? 'Some perspectives may be brand-associated—verify with your own clinician.'
-        : 'Sources may mix independent and brand content.';
-  parts.push(`**Source stance:** ${src}`);
-  if (product.clinicianAttribution) parts.push(`**Attribution:** ${product.clinicianAttribution}`);
+  if (aiInsights?.clinicalNarrative) parts.push(truncate(aiInsights.clinicalNarrative, 450));
+  if (product.doctorOpinion) parts.push(truncate(product.doctorOpinion, 450));
+  if (parts.length === 0) {
+    parts.push('Use the sources below to dig deeper. Ask your clinician if this product fits your situation.');
+  }
+  const brandNote =
+    product.clinicianOpinionSource === 'brand'
+      ? 'Some info here may come from the brand—double-check with your own provider.'
+      : product.clinicianOpinionSource === 'independent'
+        ? 'Sources are chosen to be independent when possible.'
+        : null;
+  if (brandNote) parts.push(brandNote);
+  if (product.clinicianAttribution) parts.push(truncate(product.clinicianAttribution, 200));
   return parts.join('\n\n');
 }
 
-function buildScienceCondensed(product, aiInsights, profileTailoring) {
+function buildScienceCondensed(product, aiInsights) {
   const parts = [];
-  if (profileTailoring) parts.push(`**For your profile:** ${profileTailoring}`);
-  if (aiInsights?.scienceSummary) parts.push(aiInsights.scienceSummary);
-  const eff = product.effectiveness || 'Clinical effectiveness for this specific product is still being summarized in Ayna.';
-  parts.push(`**Effectiveness snapshot:** ${eff}`);
+  if (aiInsights?.scienceSummary) parts.push(truncate(aiInsights.scienceSummary, 400));
+  const eff = product.effectiveness ? truncate(product.effectiveness, 320) : '';
+  if (eff) parts.push(`**Does it work?** ${eff}`);
+  if (parts.length === 0) {
+    parts.push('Below are links to real studies and databases—not ads.');
+  }
   if (scienceEvidenceIsLimited(product)) {
-    parts.push(
-      '**Evidence strength:** Rigorous, product-specific trial data may be limited or mixed. PubMed links are search starting points—not a systematic review or medical recommendation.'
-    );
+    parts.push('**Research:** There may not be strong studies on this exact brand. Skim the links with a critical eye.');
   } else {
-    parts.push(
-      '**Evidence strength:** Below is curated literature context; it is not a substitute for reading primary studies or talking to your clinician.'
-    );
+    parts.push('**Research:** Use the links for deeper reading; your clinician can help you apply them.');
   }
   return parts.join('\n\n');
 }
 
-function buildSocialCondensed(product, aiInsights, profileTailoring) {
+function buildSocialCondensed(product, aiInsights) {
   const parts = [];
-  if (profileTailoring) parts.push(`**For your profile:** ${profileTailoring}`);
-  if (aiInsights?.communitySummary) parts.push(aiInsights.communitySummary);
+  if (aiInsights?.communitySummary) parts.push(truncate(aiInsights.communitySummary, 350));
   const raw = product.communityReview || '';
   if (raw) {
     const dashIdx = raw.indexOf(' — ');
     const quotePart = dashIdx >= 0 ? raw.slice(0, dashIdx).trim() : raw;
-    parts.push(`**Community snapshot:** “${truncate(quotePart, 320)}”`);
+    parts.push(`**What people say:** “${truncate(quotePart, 200)}”`);
   }
   if (product.incentivizedReviewSites?.length) {
-    parts.push(
-      '**Reviews caveat:** Some listed platforms may host incentivized reviews—treat star ratings and praise as potentially inflated.'
-    );
+    parts.push('**Reviews:** Some sites pay for reviews—take glowing ratings with a grain of salt.');
   } else {
-    parts.push('**Reviews caveat:** Social and retailer reviews are anecdotal and not proof of safety or efficacy.');
+    parts.push('**Reviews:** Online reviews are personal stories, not medical proof.');
   }
   return parts.join('\n\n');
 }
 
-/** One paragraph summarizing Safety, Clinician, Science, and Community tabs (below where to buy). */
+/** Short “should I buy this?” snapshot below where to buy. */
 function buildOverallSummary(product, aiInsights, quizResults, healthProfile, fdaSignals) {
   const s = product.safety || {};
-  const recallPhrase = s.recalls?.includes('⚠️')
-    ? 'Review the Safety tab for any recall or alert details we list.'
-    : 'No active recall is listed in our database; always confirm on the product label.';
+  const bits = [];
 
-  const clinical = (aiInsights?.clinicalNarrative || product.doctorOpinion || '').replace(/\s+/g, ' ').trim();
-  const scienceFromAi = (aiInsights?.scienceSummary || '').trim();
-  const eff = (product.effectiveness || '').trim();
-  const scienceMerged = scienceFromAi || (eff.length > 45 ? eff : '');
-
-  const communityAi = (aiInsights?.communitySummary || '').trim();
-  let communityMerged = communityAi;
-  if (!communityMerged && product.communityReview) {
-    const raw = product.communityReview;
-    const dashIdx = raw.indexOf(' — ');
-    communityMerged = (dashIdx >= 0 ? raw.slice(0, dashIdx) : raw).replace(/\s+/g, ' ').trim();
-  }
-
-  const parts = [];
-  parts.push(
-    `${truncate(product.name, 100)} is listed as ${s.fdaStatus || 'a consumer health product'}; materials: ${s.materials || 'see packaging'}. ${recallPhrase}`
+  const recallWarn = s.recalls?.includes('⚠️');
+  bits.push(
+    `**Basics:** ${truncate(product.name, 70)} — ${truncate(s.fdaStatus || 'health product', 60)}. Materials: ${truncate(s.materials || 'see label', 90)}.${recallWarn ? ' **Check Safety for a recall or alert.**' : ''}`
   );
-  if (clinical) {
-    parts.push(truncate(clinical, 300));
+
+  const matchLabels = getProfileMatchLabelsForProduct(product, quizResults, healthProfile);
+  if (matchLabels.length > 0) {
+    bits.push(`**Good fit if:** you care about ${matchLabels.join(', ')}.`);
   }
-  if (scienceMerged) {
-    parts.push(truncate(scienceMerged, 280));
-  } else {
-    parts.push('The Science tab lays out effectiveness notes and literature search shortcuts for this category.');
+
+  if (scienceEvidenceIsLimited(product)) {
+    bits.push('**Research:** May not be a lot of rigorous studies on this exact brand—use the Science tab before you decide.');
+  } else if ((product.effectiveness || '').trim().length > 40) {
+    bits.push(`**Effectiveness:** ${truncate(product.effectiveness, 140)}`);
   }
-  if (communityMerged) {
-    parts.push(`Community angle: ${truncate(communityMerged, 220)}`);
-  } else {
-    parts.push('The Community tab summarizes how people discuss similar products—anecdotal, not medical proof.');
-  }
-  if (product.type === 'digital' && product.privacy) {
-    const p = product.privacy;
-    parts.push(
-      `Privacy & safety (digital): data ${p.dataStorage || '—'}${p.hipaa ? `; ${p.hipaa}` : ''}${p.sellsData ? ` ${p.sellsData}` : ''}.`
-    );
+
+  if (product.incentivizedReviewSites?.length) {
+    bits.push('**Reviews:** Some listed sites may show paid or biased reviews.');
   }
 
   if (
@@ -262,22 +245,14 @@ function buildOverallSummary(product, aiInsights, quizResults, healthProfile, fd
     const dt = d.drugTotal;
     const dv = d.deviceTotal;
     if ((dt !== null && dt !== undefined) || (dv !== null && dv !== undefined)) {
-      const bits = [];
-      if (dt !== null && dt !== undefined) bits.push(`${Number(dt).toLocaleString()} drug (FAERS)`);
-      if (dv !== null && dv !== undefined) bits.push(`${Number(dv).toLocaleString()} device (MAUDE)`);
-      parts.push(
-        `FDA openFDA aggregates (MedWatch-related) for “${d.searchTerm}”: ${bits.join('; ')} voluntary adverse event reports in public data (not causal).`
-      );
+      const a = [];
+      if (dt !== null && dt !== undefined) a.push(`${Number(dt).toLocaleString()} drug reports`);
+      if (dv !== null && dv !== undefined) a.push(`${Number(dv).toLocaleString()} device reports`);
+      bits.push(`**FDA database (rough match for “${d.searchTerm}”):** ${a.join(', ')}—voluntary reports, not a safety score.`);
     }
   }
 
-  const matchLabels = getProfileMatchLabelsForProduct(product, quizResults, healthProfile);
-  let text = parts.join(' ');
-  if (matchLabels.length > 0) {
-    text += ` **For you:** Based on your health profile, this product aligns with your ${matchLabels.join(', ')} needs.`;
-  }
-
-  return text.trim();
+  return bits.join(' ');
 }
 
 /** Render markdown-like **bold** in plain text as <strong> */
@@ -359,9 +334,9 @@ export default function ProductModal({
         const isDig = product.type === 'digital';
         return {
             safetyLines: buildSafetyCondensed(product, isDig, profileTailoring, fdaSignals),
-            doctor: buildDoctorCondensed(product, aiInsights, profileTailoring),
-            science: buildScienceCondensed(product, aiInsights, profileTailoring),
-            social: buildSocialCondensed(product, aiInsights, profileTailoring),
+            doctor: buildDoctorCondensed(product, aiInsights),
+            science: buildScienceCondensed(product, aiInsights),
+            social: buildSocialCondensed(product, aiInsights),
             overallSummary: buildOverallSummary(product, aiInsights, quizResults, healthProfile, fdaSignals),
         };
     }, [product, aiInsights, quizResults, healthProfile, profileTailoring, fdaSignals]);
@@ -954,7 +929,7 @@ export default function ProductModal({
                                 {renderRichText(condensed.overallSummary)}
                             </p>
                             <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', margin: '0.65rem 0 0', lineHeight: 1.45 }}>
-                                Summarizes the tabs below (Safety, Clinician, Science, Community). Educational only—not medical advice.
+                                Quick read before you buy—not medical advice.
                             </p>
                         </div>
                     )}
@@ -1007,7 +982,7 @@ export default function ProductModal({
                 <div style={{ padding: '2rem 2.5rem 3rem' }}>
                     {activeTab === 'safety' && (
                         <div className="animate-fade-in">
-                            <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Safety & Privacy Standards</h3>
+                            <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Safety &amp; what to know</h3>
                             <div
                                 style={{
                                     marginBottom: '1.25rem',
@@ -1034,13 +1009,11 @@ export default function ProductModal({
                                 }}
                             >
                                 <h4 style={{ fontSize: '0.8rem', fontWeight: '700', color: '#0369A1', marginBottom: '0.5rem' }}>
-                                    FDA MedWatch &amp; public adverse event aggregates
+                                    FDA safety reports (optional background)
                                 </h4>
                                 <p style={{ fontSize: '0.85rem', color: 'var(--color-text-main)', lineHeight: 1.55, marginBottom: '0.75rem' }}>
-                                    MedWatch reports feed into FDA&apos;s public databases: <strong>FAERS</strong> (drugs and therapeutic biologics) and{' '}
-                                    <strong>MAUDE</strong> (devices). Ayna queries NIH <strong>openFDA</strong> for approximate counts that match a brand term
-                                    derived from this product (or <code style={{ fontSize: '0.78rem' }}>safety.openfdaBrand</code> if set in our catalog). Counts are
-                                    voluntary reports—not evidence of causality, frequency, or that the product caused an event.
+                                    People can report problems to the FDA (MedWatch). Those reports are stored in public databases (drugs: FAERS; devices: MAUDE).
+                                    We show rough counts from NIH openFDA for a brand word from this product—they don’t predict whether <em>you</em> will have an issue.
                                 </p>
                                 <ul style={{ margin: 0, paddingLeft: '1.1rem', fontSize: '0.88rem', lineHeight: 1.55, color: 'var(--color-text-main)' }}>
                                     <li style={{ marginBottom: '0.35rem' }}>
@@ -1130,7 +1103,7 @@ export default function ProductModal({
                                         ))}
                                 </div>
                                 <p style={{ fontSize: '0.72rem', color: '#7E22CE', margin: '0.75rem 0 0', fontWeight: '600' }}>
-                                    Educational only; not medical advice. Confirm anything important with your clinician.
+                                    For learning only—not a substitute for your clinician.
                                 </p>
                             </div>
                             {renderAiReferenceCards(aiInsights?.clinicianLinks, 'MedlinePlus search shortcuts (government patient education)', true)}
