@@ -3,6 +3,7 @@ import Disclaimer from './Disclaimer';
 import { getProfileMatchLabelsForProduct } from '../data/products';
 import { getAynaRating } from '../data/aynaReviews';
 import { fetchProductInsights } from '../utils/fetchProductInsights';
+import { fetchFdaSafetySignals } from '../utils/fetchFdaSafetySignals';
 import { buildUserHealthContextString } from '../utils/userHealthContextForInsights';
 import { buildProfileTailoring } from '../utils/profileProductTailoring';
 
@@ -112,7 +113,7 @@ function scienceEvidenceIsLimited(product) {
   return false;
 }
 
-function buildSafetyCondensed(product, isDigital, profileTailoring) {
+function buildSafetyCondensed(product, isDigital, profileTailoring, fdaSignals) {
   const s = product.safety || {};
   const lines = [];
   if (profileTailoring) {
@@ -123,6 +124,26 @@ function buildSafetyCondensed(product, isDigital, profileTailoring) {
   );
   lines.push(`**Recalls:** ${s.recalls || 'None listed in our data.'}`);
   lines.push(`**Side effects & watch-outs:** ${s.sideEffects || 'Varies by individual; ask your clinician.'} ${s.opinionAlerts ? `Community notes: ${truncate(s.opinionAlerts, 220)}` : ''}`);
+  if (fdaSignals?.status === 'loading') {
+    lines.push('**FDA MedWatch (openFDA):** Loading public FAERS/MAUDE aggregates (voluntary adverse event reports)…');
+  } else if (fdaSignals?.status === 'error') {
+    lines.push('**FDA MedWatch (openFDA):** Could not load public aggregates; use official FDA links in this tab.');
+  } else if (fdaSignals?.status === 'ready' && fdaSignals.data) {
+    const d = fdaSignals.data;
+    if (d.error) {
+      lines.push(`**FDA MedWatch (openFDA):** ${d.error}`);
+    } else if (d.skipped) {
+      lines.push(`**FDA MedWatch (openFDA):** ${d.message || 'No brand search term derived.'}`);
+    } else {
+      const dt = d.drugTotal;
+      const dv = d.deviceTotal;
+      const drugStr = dt !== null && dt !== undefined ? `${Number(dt).toLocaleString()} drug (FAERS)` : 'drug (FAERS) n/a';
+      const devStr = dv !== null && dv !== undefined ? `${Number(dv).toLocaleString()} device (MAUDE)` : 'device (MAUDE) n/a';
+      lines.push(
+        `**FDA MedWatch (openFDA):** Approximate public adverse event reports matching “${d.searchTerm}”: ${drugStr}; ${devStr}. Data are voluntary MedWatch-related filings in FDA databases, not proof of causality or population frequency.`
+      );
+    }
+  }
   if (isDigital && product.privacy) {
     const p = product.privacy;
     lines.push(
@@ -187,7 +208,7 @@ function buildSocialCondensed(product, aiInsights, profileTailoring) {
 }
 
 /** One paragraph summarizing Safety, Clinician, Science, and Community tabs (below where to buy). */
-function buildOverallSummary(product, aiInsights, quizResults, healthProfile) {
+function buildOverallSummary(product, aiInsights, quizResults, healthProfile, fdaSignals) {
   const s = product.safety || {};
   const recallPhrase = s.recalls?.includes('⚠️')
     ? 'Review the Safety tab for any recall or alert details we list.'
@@ -228,6 +249,26 @@ function buildOverallSummary(product, aiInsights, quizResults, healthProfile) {
     parts.push(
       `Privacy & safety (digital): data ${p.dataStorage || '—'}${p.hipaa ? `; ${p.hipaa}` : ''}${p.sellsData ? ` ${p.sellsData}` : ''}.`
     );
+  }
+
+  if (
+    fdaSignals?.status === 'ready' &&
+    fdaSignals.data &&
+    !fdaSignals.data.skipped &&
+    !fdaSignals.data.error &&
+    fdaSignals.data.searchTerm
+  ) {
+    const d = fdaSignals.data;
+    const dt = d.drugTotal;
+    const dv = d.deviceTotal;
+    if ((dt !== null && dt !== undefined) || (dv !== null && dv !== undefined)) {
+      const bits = [];
+      if (dt !== null && dt !== undefined) bits.push(`${Number(dt).toLocaleString()} drug (FAERS)`);
+      if (dv !== null && dv !== undefined) bits.push(`${Number(dv).toLocaleString()} device (MAUDE)`);
+      parts.push(
+        `FDA openFDA aggregates (MedWatch-related) for “${d.searchTerm}”: ${bits.join('; ')} voluntary adverse event reports in public data (not causal).`
+      );
+    }
   }
 
   const matchLabels = getProfileMatchLabelsForProduct(product, quizResults, healthProfile);
@@ -277,6 +318,7 @@ export default function ProductModal({
     const [aiInsights, setAiInsights] = useState(null);
     const [aiLoading, setAiLoading] = useState(false);
     const [aiError, setAiError] = useState(null);
+    const [fdaSignals, setFdaSignals] = useState({ status: 'loading', data: null });
 
     const healthContextKey = useMemo(
         () => buildUserHealthContextString(quizResults, healthProfile),
@@ -293,17 +335,36 @@ export default function ProductModal({
         setAiError(null);
     }, [product?.id, healthContextKey]);
 
+    useEffect(() => {
+        if (!product?.id) return undefined;
+        let cancelled = false;
+        setFdaSignals({ status: 'loading', data: null });
+        fetchFdaSafetySignals({
+            productName: product.name,
+            openfdaBrand: product.safety?.openfdaBrand,
+        })
+            .then((data) => {
+                if (!cancelled) setFdaSignals({ status: 'ready', data });
+            })
+            .catch(() => {
+                if (!cancelled) setFdaSignals({ status: 'error', data: null });
+            });
+        return () => {
+            cancelled = true;
+        };
+    }, [product?.id, product?.name, product?.safety?.openfdaBrand]);
+
     const condensed = useMemo(() => {
         if (!product) return null;
         const isDig = product.type === 'digital';
         return {
-            safetyLines: buildSafetyCondensed(product, isDig, profileTailoring),
+            safetyLines: buildSafetyCondensed(product, isDig, profileTailoring, fdaSignals),
             doctor: buildDoctorCondensed(product, aiInsights, profileTailoring),
             science: buildScienceCondensed(product, aiInsights, profileTailoring),
             social: buildSocialCondensed(product, aiInsights, profileTailoring),
-            overallSummary: buildOverallSummary(product, aiInsights, quizResults, healthProfile),
+            overallSummary: buildOverallSummary(product, aiInsights, quizResults, healthProfile, fdaSignals),
         };
-    }, [product, aiInsights, quizResults, healthProfile]);
+    }, [product, aiInsights, quizResults, healthProfile, profileTailoring, fdaSignals]);
 
     if (!product) return null;
 
@@ -962,6 +1023,47 @@ export default function ProductModal({
                                         <p key={i} style={{ margin: i === 0 ? 0 : '0.6rem 0 0' }}>{renderRichText(line)}</p>
                                     ))}
                                 </div>
+                            </div>
+                            <div
+                                style={{
+                                    marginTop: '1rem',
+                                    padding: '1rem 1.25rem',
+                                    background: '#F0F9FF',
+                                    borderRadius: 'var(--radius-md)',
+                                    border: '1px solid #BAE6FD',
+                                }}
+                            >
+                                <h4 style={{ fontSize: '0.8rem', fontWeight: '700', color: '#0369A1', marginBottom: '0.5rem' }}>
+                                    FDA MedWatch &amp; public adverse event aggregates
+                                </h4>
+                                <p style={{ fontSize: '0.85rem', color: 'var(--color-text-main)', lineHeight: 1.55, marginBottom: '0.75rem' }}>
+                                    MedWatch reports feed into FDA&apos;s public databases: <strong>FAERS</strong> (drugs and therapeutic biologics) and{' '}
+                                    <strong>MAUDE</strong> (devices). Ayna queries NIH <strong>openFDA</strong> for approximate counts that match a brand term
+                                    derived from this product (or <code style={{ fontSize: '0.78rem' }}>safety.openfdaBrand</code> if set in our catalog). Counts are
+                                    voluntary reports—not evidence of causality, frequency, or that the product caused an event.
+                                </p>
+                                <ul style={{ margin: 0, paddingLeft: '1.1rem', fontSize: '0.88rem', lineHeight: 1.55, color: 'var(--color-text-main)' }}>
+                                    <li style={{ marginBottom: '0.35rem' }}>
+                                        <a href="https://www.fda.gov/safety/medwatch-fda-safety-information-and-adverse-event-reporting-program" target="_blank" rel="noopener noreferrer" style={{ fontWeight: '600', color: '#0369A1' }}>
+                                            MedWatch — report or learn about safety issues ↗
+                                        </a>
+                                    </li>
+                                    <li style={{ marginBottom: '0.35rem' }}>
+                                        <a href="https://www.fda.gov/drugs/drug-approvals-and-databases/fda-adverse-event-reporting-system-faers-public-dashboard" target="_blank" rel="noopener noreferrer" style={{ fontWeight: '600', color: '#0369A1' }}>
+                                            FAERS public dashboard ↗
+                                        </a>
+                                    </li>
+                                    <li style={{ marginBottom: '0.35rem' }}>
+                                        <a href="https://www.accessdata.fda.gov/scripts/cdrh/cfdocs/cfMAUDE/search.cfm" target="_blank" rel="noopener noreferrer" style={{ fontWeight: '600', color: '#0369A1' }}>
+                                            MAUDE (device adverse events) search ↗
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="https://open.fda.gov/apis/drug/event/" target="_blank" rel="noopener noreferrer" style={{ fontWeight: '600', color: '#0369A1' }}>
+                                            openFDA drug event API documentation ↗
+                                        </a>
+                                    </li>
+                                </ul>
                             </div>
                             <details style={{ marginTop: '1rem' }}>
                                 <summary style={{ cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600', color: 'var(--color-primary)', marginBottom: '0.75rem' }}>
