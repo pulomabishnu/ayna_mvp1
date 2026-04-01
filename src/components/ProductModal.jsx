@@ -5,6 +5,7 @@ import { getAynaRating } from '../data/aynaReviews';
 import { fetchProductInsights } from '../utils/fetchProductInsights';
 import { buildUserHealthContextString } from '../utils/userHealthContextForInsights';
 import { buildProfileTailoring } from '../utils/profileProductTailoring';
+import { deriveBrandSearchContext } from '../utils/productBrandContext.js';
 
 // Build purchase/search URLs for common retailers (product name encoded). Keys matched by store name.
 const STORE_SEARCH_URLS = {
@@ -151,6 +152,27 @@ function nonEmptyInsight(s) {
   return t.length > 0 ? t : null;
 }
 
+/** Extra line when this category has many competing brands (cups, pads, trackers, etc.). */
+function appendBrandComparisonLine(product, parts, role) {
+  const ctx = deriveBrandSearchContext(product);
+  if (!ctx.emphasizeBrandInSearches || !ctx.brandName) return;
+  const { brandName, deviceKindLabel } = ctx;
+  const dk = deviceKindLabel || 'this category';
+  if (role === 'clinical') {
+    parts.push(
+      `**Comparing brands:** ${brandName} is one of several ${dk} options—use the clinician-oriented sources below to contrast materials, fit, and evidence with other brands.`
+    );
+  } else if (role === 'science') {
+    parts.push(
+      `**Comparing brands:** Look for studies or summaries that mention ${brandName} or compare ${dk} across manufacturers.`
+    );
+  } else if (role === 'social') {
+    parts.push(
+      `**Comparing brands:** ${brandName} is one of many ${dk} offerings—load AI summaries so searches can surface brand-specific threads as well as category-wide discussion.`
+    );
+  }
+}
+
 const purpleInsightBoxStyle = {
   marginBottom: '1.25rem',
   padding: '1.25rem',
@@ -208,6 +230,7 @@ function buildClinicalInsight(product, aiInsights, quizResults, healthProfile, p
   } else if (product.clinicianOpinionSource === 'independent' && (narrative || doctor)) {
     parts.push('**Sources note:** We aim for society and educational sources that are independent of the brand where possible.');
   }
+  appendBrandComparisonLine(product, parts, 'clinical');
   return nonEmptyInsight(parts.join(' '));
 }
 
@@ -217,7 +240,7 @@ function buildScienceInsight(product, aiInsights, quizResults, healthProfile) {
   const aiLit = (aiInsights?.literatureLinks || []).length;
   const aiSci = (aiInsights?.scienceSummary || '').trim();
   const eff = (product.effectiveness || '').trim();
-  if (curated === 0 && aiLit === 0 && !aiSci && !eff) return null;
+  const hasScienceBody = curated > 0 || aiLit > 0 || !!aiSci || !!eff;
   const limited = scienceEvidenceIsLimited(product);
   const matchLabels = getProfileMatchLabelsForProduct(product, quizResults, healthProfile);
   const parts = [];
@@ -228,11 +251,15 @@ function buildScienceInsight(product, aiInsights, quizResults, healthProfile) {
   }
   if (aiSci) parts.push(truncate(aiSci, 420));
   else if (eff) parts.push(truncate(eff, 380));
-  parts.push(
-    limited
-      ? '**Evidence snapshot:** Rigorous studies on this exact product or brand may be limited—use the linked literature to verify claims.'
-      : '**Evidence snapshot:** The evidence trail here looks somewhat stronger than many consumer products—still read primary sources.'
-  );
+  if (hasScienceBody) {
+    parts.push(
+      limited
+        ? '**Evidence snapshot:** Rigorous studies on this exact product or brand may be limited—use the linked literature to verify claims.'
+        : '**Evidence snapshot:** The evidence trail here looks somewhat stronger than many consumer products—still read primary sources.'
+    );
+  }
+  appendBrandComparisonLine(product, parts, 'science');
+  if (parts.length === 0) return null;
   return nonEmptyInsight(parts.join(' '));
 }
 
@@ -259,6 +286,7 @@ function buildSocialInsight(product, aiInsights, quizResults, healthProfile) {
   }
   if (ai) parts.push(truncate(ai, 380));
   if (quotePart && !quoteRedundant) parts.push(`**Forum excerpt:** ${truncate(quotePart, 200)}`);
+  appendBrandComparisonLine(product, parts, 'social');
   if (parts.length === 0) return null;
   parts.push('Online discussion is anecdotal, not evidence of safety or efficacy.');
   return nonEmptyInsight(parts.join(' '));

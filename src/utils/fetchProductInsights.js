@@ -1,9 +1,11 @@
 import { buildUserHealthContextString } from './userHealthContextForInsights';
+import { deriveBrandSearchContext } from './productBrandContext.js';
 
 const API_PATH = '/api/product-insights';
 
 export function buildProductInsightPayload(product) {
   if (!product) return null;
+  const brandCtx = deriveBrandSearchContext(product);
   return {
     id: product.id,
     name: product.name,
@@ -12,6 +14,10 @@ export function buildProductInsightPayload(product) {
     type: product.type,
     tags: product.tags,
     healthFunctions: product.healthFunctions,
+    brand: product.brand,
+    brandName: brandCtx.brandName,
+    deviceKindLabel: brandCtx.deviceKindLabel,
+    brandComparisonRelevant: brandCtx.emphasizeBrandInSearches,
   };
 }
 

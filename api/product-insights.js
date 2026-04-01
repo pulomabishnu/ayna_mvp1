@@ -4,6 +4,8 @@
  */
 /* global process */
 
+import { deriveBrandSearchContext } from '../src/utils/productBrandContext.js';
+
 const MAX_NARRATIVE_LEN = 2200;
 const MAX_EXTRA_SUMMARY_LEN = 800;
 
@@ -48,6 +50,21 @@ function buildUserPrompt(product, userContextText = '') {
   const summary = product?.summary || '';
   const tags = Array.isArray(product?.tags) ? product.tags.join(', ') : '';
   const type = product?.type || '';
+  const brandCtx = deriveBrandSearchContext(product);
+  const brandBlock =
+    brandCtx.emphasizeBrandInSearches && brandCtx.brandName
+      ? `
+
+Brand / comparison context (use this so readers can compare this brand to others in the same category):
+- Brand to surface in searches and narrative: ${brandCtx.brandName}
+- Product kind (plain language): ${brandCtx.deviceKindLabel || category}
+- Many vendors sell ${brandCtx.deviceKindLabel || 'this kind of product'} under different brand names. In clinicalNarrative, scienceSummary, and communitySummary, add one short sentence acknowledging that materials, fit, sizing, app behavior, or evidence may differ by brand—without claiming this brand is better or worse than others.
+- pubmedSearchQueries: include at least one phrase that combines the product kind with the brand name or with comparison-relevant terms (e.g. efficacy, safety, sizing) so results are not only generic category reviews.
+- patientEducationQueries: include at least one phrase that names the brand plus the device or product kind (short), OR a neutral phrase about choosing between brands in this category if the brand name is long.
+- communitySearchQueries: include at least one phrase that includes the brand name plus product kind (e.g. for forum/video search) so users find brand-specific threads; you may also keep one broader category query.
+`
+      : '';
+
   const readerBlock =
     userContextText && userContextText.trim().length > 0
       ? `
@@ -83,7 +100,7 @@ STRICT RULES:
 - Do NOT include links, domains, "http", "www", PMIDs, or citation strings.
 - pubmedSearchQueries: 2-4 items, each 3-80 characters, MeSH-friendly short phrases (English).
 - patientEducationQueries: 1-2 items for consumer health search (symptom or topic).
-- communitySearchQueries: 1-3 items for social search (product type + use case, not brand hype).
+- communitySearchQueries: 1-3 items for social search. When brand/comparison context is provided above, include the brand in at least one query; otherwise use product type + use case.
 - If unsure, use shorter, more generic phrases rather than specific claims.`;
 }
 
@@ -136,6 +153,40 @@ function normalizeParsed(raw) {
     patientEducationQueries:
       patientEducationQueries.length > 0 ? patientEducationQueries : pubmedSearchQueries.slice(0, 2),
     communitySearchQueries,
+  };
+}
+
+/** If this is a multi-brand category, ensure at least one PubMed / Medline / community query names the brand. */
+function mergeBrandSearchQueries(product, normalized) {
+  const ctx = deriveBrandSearchContext(product);
+  if (!ctx.emphasizeBrandInSearches || !ctx.brandName) return normalized;
+  const b = ctx.brandName;
+  const dk = ctx.deviceKindLabel || 'product';
+  const brandToken = b.split(/\s+/)[0].toLowerCase();
+
+  const mentionsBrand = (arr) =>
+    Array.isArray(arr) &&
+    arr.some((q) => typeof q === 'string' && brandToken.length >= 2 && q.toLowerCase().includes(brandToken));
+
+  const pubmed = [...(normalized.pubmedSearchQueries || [])];
+  const patient = [...(normalized.patientEducationQueries || [])];
+  const community = [...(normalized.communitySearchQueries || [])];
+
+  if (!mentionsBrand(community)) {
+    community.unshift(sanitizePhrase(`${b} ${dk}`, 100));
+  }
+  if (!mentionsBrand(pubmed)) {
+    pubmed.unshift(sanitizePhrase(`${dk} ${b}`, 120));
+  }
+  if (!mentionsBrand(patient)) {
+    patient.unshift(sanitizePhrase(`${b} ${dk}`, 120));
+  }
+
+  return {
+    ...normalized,
+    pubmedSearchQueries: uniquePhrases(pubmed, 6, 120),
+    patientEducationQueries: uniquePhrases(patient, 4, 120),
+    communitySearchQueries: uniquePhrases(community, 5, 100),
   };
 }
 
@@ -436,7 +487,8 @@ async function runModel(product, provider, userContextText = '') {
   if (!raw) return null;
   const normalized = normalizeParsed(raw);
   if (!normalized) return null;
-  return { provider: providerUsed, normalized };
+  const merged = mergeBrandSearchQueries(product, normalized);
+  return { provider: providerUsed, normalized: merged };
 }
 
 function anyApiKeyConfigured() {
