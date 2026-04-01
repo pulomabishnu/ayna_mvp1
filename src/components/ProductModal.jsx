@@ -175,53 +175,20 @@ const purpleInsightBoxStyle = {
   border: '1px solid #E9D5FF',
 };
 
-/** Purple-box insight: profile + safety snapshot (full detail stays under Sources). */
-function buildSafetyInsight(product, isDigital, profileTailoring, quizResults, healthProfile) {
-  const s = product?.safety;
-  if (!s) return null;
-  const parts = [];
-  const matchLabels = getProfileMatchLabelsForProduct(product, quizResults, healthProfile);
-  if (profileTailoring) {
-    parts.push(profileTailoring);
-  } else if (matchLabels.length > 0) {
-    parts.push(`**For you:** ${matchLabels.join(', ')}—check materials and alerts below.`);
-  }
-  const recallHot = s.recalls?.includes('⚠️') || hasRecallConcern(product);
-  const mat = truncate(s.materials || 'see the label', 110);
-  parts.push(`**Regulatory:** ${s.fdaStatus || 'Not specified.'} **Materials:** ${mat}.`);
-  if (recallHot) {
-    parts.push(`**Recalls / alerts:** ${truncate(s.recalls || '', 170)}`);
-  } else {
-    parts.push('No recall flags in our dataset; confirm packaging and official notices.');
-  }
-  if (isDigital && product.privacy) {
-    parts.push(
-      `**App privacy (headline):** ${truncate([product.privacy.dataStorage, product.privacy.sellsData, product.privacy.hipaa].filter(Boolean).join(' · '), 180)}`
-    );
-  }
-  return nonEmptyInsight(parts.join(' '));
-}
-
-/** Clinical insight: profile + AI or in-database view + how to read sources. */
+/** Clinical insight: one profile line + short narrative—details under Sources. */
 function buildClinicalInsight(product, aiInsights, quizResults, healthProfile, profileTailoring) {
   const narrative = (aiInsights?.clinicalNarrative || '').trim();
   const doctor = (product.doctorOpinion || '').trim();
   const matchLabels = getProfileMatchLabelsForProduct(product, quizResults, healthProfile);
   const parts = [];
-  if (matchLabels.length > 0) {
-    parts.push(
-      `**For you:** Because you care about ${matchLabels.join(', ')}, use the sources below with your clinician to see if this product fits.`
-    );
+  if (profileTailoring) {
+    parts.push(profileTailoring);
+  } else if (matchLabels.length > 0) {
+    parts.push(`**For you:** ${matchLabels.join(', ')}.`);
   }
-  if (profileTailoring) parts.push(profileTailoring);
-  if (narrative) parts.push(truncate(narrative, 500));
-  // Curated doctor text stays under Summarized info only—don’t repeat it in the insight box.
+  if (narrative) parts.push(truncate(narrative, 220));
   if (product.clinicianOpinionSource === 'brand' && (narrative || doctor)) {
-    parts.push(
-      '**Sources note:** We do not list independent non-brand clinician opinions in our database for this item—use links as starting points, not endorsements.'
-    );
-  } else if (product.clinicianOpinionSource === 'independent' && (narrative || doctor)) {
-    parts.push('**Sources note:** We aim for society and educational sources that are independent of the brand where possible.');
+    parts.push('**Sources:** Some links may be brand-leaning—verify with your clinician.');
   }
   appendBrandComparisonLine(product, parts, 'clinical');
   return nonEmptyInsight(parts.join(' '));
@@ -372,10 +339,8 @@ export default function ProductModal({
 
     const condensed = useMemo(() => {
         if (!product) return null;
-        const isDig = product.type === 'digital';
         return {
             quickOverview: buildQuickOverviewBlocks(product, aiInsights, quizResults, healthProfile, profileTailoring),
-            safetyInsight: buildSafetyInsight(product, isDig, profileTailoring, quizResults, healthProfile),
             clinicalInsight: buildClinicalInsight(product, aiInsights, quizResults, healthProfile, profileTailoring),
             scienceInsight: buildScienceInsight(product, aiInsights, quizResults, healthProfile),
             socialInsight: buildSocialInsight(product, aiInsights, quizResults, healthProfile),
@@ -1037,14 +1002,6 @@ export default function ProductModal({
                     {activeTab === 'safety' && (
                         <div className="animate-fade-in">
                             <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Safety &amp; what to know</h3>
-                            {condensed?.safetyInsight && (
-                                <div style={purpleInsightBoxStyle}>
-                                    <h4 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#7E22CE', marginBottom: '0.65rem' }}>Insight</h4>
-                                    <p style={{ fontSize: '0.95rem', color: '#581C87', lineHeight: 1.65, margin: 0 }}>
-                                        {renderRichText(condensed.safetyInsight)}
-                                    </p>
-                                </div>
-                            )}
                             <h4 style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', margin: '0 0 0.65rem' }}>Sources &amp; summarized detail</h4>
                             <details style={{ marginTop: 0 }}>
                                 <summary style={{ cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600', color: 'var(--color-primary)', marginBottom: '0.75rem' }}>
