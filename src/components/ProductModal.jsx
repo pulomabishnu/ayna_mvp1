@@ -3,7 +3,6 @@ import Disclaimer from './Disclaimer';
 import { getProfileMatchLabelsForProduct } from '../data/products';
 import { getAynaRating } from '../data/aynaReviews';
 import { fetchProductInsights } from '../utils/fetchProductInsights';
-import { fetchFdaSafetySignals } from '../utils/fetchFdaSafetySignals';
 import { buildUserHealthContextString } from '../utils/userHealthContextForInsights';
 import { buildProfileTailoring } from '../utils/profileProductTailoring';
 
@@ -104,6 +103,18 @@ function truncate(s, max) {
   return `${t.slice(0, max - 1)}…`;
 }
 
+/** Show FDA MedWatch only when our recall text suggests something to look into (not routine “no recalls”). */
+function hasRecallConcern(product) {
+  const r = product?.safety?.recalls || '';
+  if (!r.trim()) return false;
+  if (r.includes('⚠️')) return true;
+  if (/no active|none listed|no recalls|no recall\b/i.test(r)) return false;
+  return /\brecall\b|\balert\b|\bwarning\b|voluntary|withdrawn|fda has/i.test(r);
+}
+
+const MEDWATCH_URL =
+  'https://www.fda.gov/safety/medwatch-fda-safety-information-and-adverse-event-reporting-program';
+
 /** Heuristic: product-level evidence text looks thin or explicitly limited. */
 function scienceEvidenceIsLimited(product) {
   const eff = (product.effectiveness || '').toLowerCase();
@@ -113,7 +124,7 @@ function scienceEvidenceIsLimited(product) {
   return false;
 }
 
-function buildSafetyCondensed(product, isDigital, profileTailoring, fdaSignals) {
+function buildSafetyCondensed(product, isDigital, profileTailoring) {
   const s = product.safety || {};
   const lines = [];
   if (profileTailoring) {
@@ -129,26 +140,6 @@ function buildSafetyCondensed(product, isDigital, profileTailoring, fdaSignals) 
   const se = s.sideEffects ? truncate(s.sideEffects, 200) : 'Varies by person—ask your clinician if unsure.';
   const op = s.opinionAlerts ? truncate(s.opinionAlerts, 120) : '';
   lines.push(`**Side effects & tips:** ${se}${op ? ` ${op}` : ''}`);
-  if (fdaSignals?.status === 'loading') {
-    lines.push('**FDA public reports:** Loading…');
-  } else if (fdaSignals?.status === 'error') {
-    lines.push('**FDA public reports:** Couldn’t load counts—links are in this tab.');
-  } else if (fdaSignals?.status === 'ready' && fdaSignals.data) {
-    const d = fdaSignals.data;
-    if (d.error) {
-      lines.push(`**FDA public reports:** ${truncate(d.error, 120)}`);
-    } else if (d.skipped) {
-      lines.push(`**FDA public reports:** ${d.message || 'No search term.'}`);
-    } else {
-      const dt = d.drugTotal;
-      const dv = d.deviceTotal;
-      const drugStr = dt !== null && dt !== undefined ? `${Number(dt).toLocaleString()} drug-related` : '—';
-      const devStr = dv !== null && dv !== undefined ? `${Number(dv).toLocaleString()} device-related` : '—';
-      lines.push(
-        `**FDA public reports (optional context):** For “${d.searchTerm}”, FDA’s open databases list about ${drugStr} and ${devStr} voluntary reports. That doesn’t mean the product caused them—see links below.`
-      );
-    }
-  }
   if (isDigital && product.privacy) {
     const p = product.privacy;
     lines.push(
@@ -210,13 +201,13 @@ function buildSocialCondensed(product, aiInsights) {
 }
 
 /** Short “should I buy this?” snapshot below where to buy. */
-function buildOverallSummary(product, aiInsights, quizResults, healthProfile, fdaSignals) {
+function buildOverallSummary(product, aiInsights, quizResults, healthProfile) {
   const s = product.safety || {};
   const bits = [];
 
-  const recallWarn = s.recalls?.includes('⚠️');
+  const recallWarn = s.recalls?.includes('⚠️') || hasRecallConcern(product);
   bits.push(
-    `**Basics:** ${truncate(product.name, 70)} — ${truncate(s.fdaStatus || 'health product', 60)}. Materials: ${truncate(s.materials || 'see label', 90)}.${recallWarn ? ' **Check Safety for a recall or alert.**' : ''}`
+    `**Basics:** ${truncate(product.name, 70)} — ${truncate(s.fdaStatus || 'health product', 60)}. Materials: ${truncate(s.materials || 'see label', 90)}.${recallWarn ? ' **Check Safety for recalls.**' : ''}`
   );
 
   const matchLabels = getProfileMatchLabelsForProduct(product, quizResults, healthProfile);
@@ -232,24 +223,6 @@ function buildOverallSummary(product, aiInsights, quizResults, healthProfile, fd
 
   if (product.incentivizedReviewSites?.length) {
     bits.push('**Reviews:** Some listed sites may show paid or biased reviews.');
-  }
-
-  if (
-    fdaSignals?.status === 'ready' &&
-    fdaSignals.data &&
-    !fdaSignals.data.skipped &&
-    !fdaSignals.data.error &&
-    fdaSignals.data.searchTerm
-  ) {
-    const d = fdaSignals.data;
-    const dt = d.drugTotal;
-    const dv = d.deviceTotal;
-    if ((dt !== null && dt !== undefined) || (dv !== null && dv !== undefined)) {
-      const a = [];
-      if (dt !== null && dt !== undefined) a.push(`${Number(dt).toLocaleString()} drug reports`);
-      if (dv !== null && dv !== undefined) a.push(`${Number(dv).toLocaleString()} device reports`);
-      bits.push(`**FDA database (rough match for “${d.searchTerm}”):** ${a.join(', ')}—voluntary reports, not a safety score.`);
-    }
   }
 
   return bits.join(' ');
@@ -293,8 +266,6 @@ export default function ProductModal({
     const [aiInsights, setAiInsights] = useState(null);
     const [aiLoading, setAiLoading] = useState(false);
     const [aiError, setAiError] = useState(null);
-    const [fdaSignals, setFdaSignals] = useState({ status: 'loading', data: null });
-
     const healthContextKey = useMemo(
         () => buildUserHealthContextString(quizResults, healthProfile),
         [quizResults, healthProfile]
@@ -310,36 +281,17 @@ export default function ProductModal({
         setAiError(null);
     }, [product?.id, healthContextKey]);
 
-    useEffect(() => {
-        if (!product?.id) return undefined;
-        let cancelled = false;
-        setFdaSignals({ status: 'loading', data: null });
-        fetchFdaSafetySignals({
-            productName: product.name,
-            openfdaBrand: product.safety?.openfdaBrand,
-        })
-            .then((data) => {
-                if (!cancelled) setFdaSignals({ status: 'ready', data });
-            })
-            .catch(() => {
-                if (!cancelled) setFdaSignals({ status: 'error', data: null });
-            });
-        return () => {
-            cancelled = true;
-        };
-    }, [product?.id, product?.name, product?.safety?.openfdaBrand]);
-
     const condensed = useMemo(() => {
         if (!product) return null;
         const isDig = product.type === 'digital';
         return {
-            safetyLines: buildSafetyCondensed(product, isDig, profileTailoring, fdaSignals),
+            safetyLines: buildSafetyCondensed(product, isDig, profileTailoring),
             doctor: buildDoctorCondensed(product, aiInsights),
             science: buildScienceCondensed(product, aiInsights),
             social: buildSocialCondensed(product, aiInsights),
-            overallSummary: buildOverallSummary(product, aiInsights, quizResults, healthProfile, fdaSignals),
+            overallSummary: buildOverallSummary(product, aiInsights, quizResults, healthProfile),
         };
-    }, [product, aiInsights, quizResults, healthProfile, profileTailoring, fdaSignals]);
+    }, [product, aiInsights, quizResults, healthProfile, profileTailoring]);
 
     if (!product) return null;
 
@@ -999,45 +951,6 @@ export default function ProductModal({
                                     ))}
                                 </div>
                             </div>
-                            <div
-                                style={{
-                                    marginTop: '1rem',
-                                    padding: '1rem 1.25rem',
-                                    background: '#F0F9FF',
-                                    borderRadius: 'var(--radius-md)',
-                                    border: '1px solid #BAE6FD',
-                                }}
-                            >
-                                <h4 style={{ fontSize: '0.8rem', fontWeight: '700', color: '#0369A1', marginBottom: '0.5rem' }}>
-                                    FDA safety reports (optional background)
-                                </h4>
-                                <p style={{ fontSize: '0.85rem', color: 'var(--color-text-main)', lineHeight: 1.55, marginBottom: '0.75rem' }}>
-                                    People can report problems to the FDA (MedWatch). Those reports are stored in public databases (drugs: FAERS; devices: MAUDE).
-                                    We show rough counts from NIH openFDA for a brand word from this product—they don’t predict whether <em>you</em> will have an issue.
-                                </p>
-                                <ul style={{ margin: 0, paddingLeft: '1.1rem', fontSize: '0.88rem', lineHeight: 1.55, color: 'var(--color-text-main)' }}>
-                                    <li style={{ marginBottom: '0.35rem' }}>
-                                        <a href="https://www.fda.gov/safety/medwatch-fda-safety-information-and-adverse-event-reporting-program" target="_blank" rel="noopener noreferrer" style={{ fontWeight: '600', color: '#0369A1' }}>
-                                            MedWatch — report or learn about safety issues ↗
-                                        </a>
-                                    </li>
-                                    <li style={{ marginBottom: '0.35rem' }}>
-                                        <a href="https://www.fda.gov/drugs/drug-approvals-and-databases/fda-adverse-event-reporting-system-faers-public-dashboard" target="_blank" rel="noopener noreferrer" style={{ fontWeight: '600', color: '#0369A1' }}>
-                                            FAERS public dashboard ↗
-                                        </a>
-                                    </li>
-                                    <li style={{ marginBottom: '0.35rem' }}>
-                                        <a href="https://www.accessdata.fda.gov/scripts/cdrh/cfdocs/cfMAUDE/search.cfm" target="_blank" rel="noopener noreferrer" style={{ fontWeight: '600', color: '#0369A1' }}>
-                                            MAUDE (device adverse events) search ↗
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="https://open.fda.gov/apis/drug/event/" target="_blank" rel="noopener noreferrer" style={{ fontWeight: '600', color: '#0369A1' }}>
-                                            openFDA drug event API documentation ↗
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
                             <details style={{ marginTop: '1rem' }}>
                                 <summary style={{ cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600', color: 'var(--color-primary)', marginBottom: '0.75rem' }}>
                                     Show regulatory &amp; ingredient details
@@ -1053,7 +966,18 @@ export default function ProductModal({
                                     </div>
                                     <div style={{ gridColumn: 'span 2', background: product.safety?.recalls?.includes('⚠️') ? '#F1F5F9' : '#F8FAFC', padding: '1rem', borderRadius: 'var(--radius-md)' }}>
                                         <h4 style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Safety Alerts & Recalls</h4>
-                                        <p>{product.safety?.recalls || 'No active recalls.'}</p>
+                                        <p style={{ marginBottom: hasRecallConcern(product) ? '0.85rem' : 0 }}>{product.safety?.recalls || 'No active recalls.'}</p>
+                                        {hasRecallConcern(product) && (
+                                            <div style={{ paddingTop: '0.75rem', borderTop: '1px solid var(--color-border)', fontSize: '0.88rem', lineHeight: 1.55 }}>
+                                                <p style={{ margin: '0 0 0.5rem', fontWeight: '600', color: 'var(--color-text-main)' }}>FDA MedWatch</p>
+                                                <p style={{ margin: '0 0 0.5rem', color: 'var(--color-text-muted)' }}>
+                                                    Serious problems with drugs, devices, or other products can be reported to the FDA through MedWatch.
+                                                </p>
+                                                <a href={MEDWATCH_URL} target="_blank" rel="noopener noreferrer" style={{ fontWeight: '600', color: 'var(--color-primary)' }}>
+                                                    Report or learn more at FDA MedWatch ↗
+                                                </a>
+                                            </div>
+                                        )}
                                     </div>
                                     <div style={{ gridColumn: 'span 2', background: 'var(--color-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', borderLeft: '4px solid #EAB308' }}>
                                         <h4 style={{ fontSize: '0.8rem', color: '#854D0E', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Potential Side Effects</h4>
