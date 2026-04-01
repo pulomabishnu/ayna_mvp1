@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Disclaimer from './Disclaimer';
-import { getProfileMatchLabelsForProduct } from '../data/products';
+import { getProfileMatchLabelsForProduct, getRecommendationExplanation } from '../data/products';
 import { getAynaRating } from '../data/aynaReviews';
 import { fetchProductInsights } from '../utils/fetchProductInsights';
 import { buildUserHealthContextString } from '../utils/userHealthContextForInsights';
@@ -103,6 +103,28 @@ function truncate(s, max) {
   return `${t.slice(0, max - 1)}…`;
 }
 
+/** Normalize verification section: { links, aiSummary }, array, or single link */
+function getVerificationSection(section) {
+  if (!section) return { links: [], aiSummary: null };
+  if (Array.isArray(section)) return { links: section.filter((l) => l && (l.url || l.href)), aiSummary: null };
+  const url = section.url || section.href;
+  if (url) return { links: [{ ...section, url }], aiSummary: section.aiSummary || null };
+  const list = section.links || section.link;
+  const arr = Array.isArray(list) ? list : list ? [list] : [];
+  return {
+    links: arr.filter((l) => l && (l.url || l.href)).map((l) => ({ ...l, url: l.url || l.href })),
+    aiSummary: section.aiSummary || null,
+  };
+}
+
+function countHttpsLinksInSection(section) {
+  const { links } = getVerificationSection(section);
+  return links.filter((l) => {
+    const u = (l.url || l.href || '').trim();
+    return u.startsWith('http://') || u.startsWith('https://');
+  }).length;
+}
+
 /** Show FDA MedWatch only when our recall text suggests something to look into (not routine “no recalls”). */
 function hasRecallConcern(product) {
   const r = product?.safety?.recalls || '';
@@ -124,108 +146,149 @@ function scienceEvidenceIsLimited(product) {
   return false;
 }
 
-function buildSafetyCondensed(product, isDigital, profileTailoring) {
+/** One paragraph: safety facts only (profile “for you” lives in quick overview). */
+function buildSafetyTabSummary(product, isDigital) {
   const s = product.safety || {};
-  const lines = [];
-  if (profileTailoring) {
-    lines.push(profileTailoring);
-  }
-  lines.push(
-    `**What it is:** ${s.fdaStatus || 'Not specified.'} **What it’s made of:** ${s.materials || 'See the label.'}`
-  );
-  const recallShort = s.recalls?.includes('⚠️')
-    ? `**Recalls / alerts:** ${truncate(s.recalls, 140)}`
-    : `**Recalls:** ${truncate(s.recalls || 'None in our data—check the label.', 100)}`;
-  lines.push(recallShort);
-  const se = s.sideEffects ? truncate(s.sideEffects, 200) : 'Varies by person—ask your clinician if unsure.';
-  const op = s.opinionAlerts ? truncate(s.opinionAlerts, 120) : '';
-  lines.push(`**Side effects & tips:** ${se}${op ? ` ${op}` : ''}`);
+  const recall = s.recalls?.includes('⚠️')
+    ? `Recalls or alerts: ${truncate(s.recalls, 220)}`
+    : `Recalls: ${truncate(s.recalls || 'None in our data—check the label.', 130)}`;
+  const se = s.sideEffects ? truncate(s.sideEffects, 220) : 'Varies by person—ask your clinician if unsure.';
+  const op = s.opinionAlerts ? ` Community themes: ${truncate(s.opinionAlerts, 140)}` : '';
+  let t = `${s.fdaStatus || 'Regulatory status not specified.'} Materials: ${s.materials || 'See the label.'} ${recall} Side effects and typical use: ${se}.${op}`;
   if (isDigital && product.privacy) {
     const p = product.privacy;
-    lines.push(
-      `**App privacy:** ${truncate([p.dataStorage, p.sellsData, p.hipaa].filter(Boolean).join(' · '), 220)}`
+    t += ` App privacy: ${truncate([p.dataStorage, p.sellsData, p.hipaa].filter(Boolean).join(' · '), 200)}`;
+  }
+  return t;
+}
+
+/** Single narrative for clinician tab (sources listed separately). */
+function buildClinicalTabSummary(product, aiInsights) {
+  const narrative = (aiInsights?.clinicalNarrative || '').trim();
+  const doctor = (product.doctorOpinion || '').trim();
+  const core = narrative || doctor;
+  let text = '';
+  if (core) {
+    text = truncate(core, 520);
+  } else {
+    text =
+      'We have not loaded an AI clinical snapshot for this product yet. Use “Load AI summaries” below, then review the sources list.';
+  }
+  if (product.clinicianOpinionSource === 'brand') {
+    text +=
+      ' We do not have independent non-brand clinician opinions in our database for this product; curated notes may reflect brand or general medical orientation.';
+  } else if (product.clinicianOpinionSource === 'independent') {
+    text += ' Where we cite clinicians or societies, we aim for sources that are independent of the brand.';
+  }
+  return text;
+}
+
+/** Single narrative for science tab; states robust vs thin evidence. */
+function buildScienceTabSummary(product, aiInsights) {
+  const curated = countHttpsLinksInSection(product.verificationLinks?.scientific);
+  const aiLit = (aiInsights?.literatureLinks || []).length;
+  const aiSci = (aiInsights?.scienceSummary || '').trim();
+  const eff = (product.effectiveness || '').trim();
+  const limited = scienceEvidenceIsLimited(product);
+
+  if (curated === 0 && aiLit === 0 && !aiSci && !eff) {
+    return 'We do not have scientific literature or study links listed for this product in Ayna’s data yet. Try “Load AI summaries” for PubMed-style shortcuts, or ask your clinician for evidence.';
+  }
+
+  const parts = [];
+  if (aiSci) parts.push(truncate(aiSci, 420));
+  else if (eff) parts.push(`Product-level effectiveness notes: ${truncate(eff, 360)}`);
+  parts.push(
+    limited
+      ? '**Evidence strength:** Rigorous studies on this exact brand may be limited or mixed—treat this as orientation and read the sources below.'
+      : '**Evidence strength:** The trail on file looks somewhat stronger than many consumer products—still verify claims in the primary sources.'
+  );
+  return parts.join(' ');
+}
+
+/** Single narrative for community tab. */
+function buildSocialTabSummary(product, aiInsights) {
+  const ai = (aiInsights?.communitySummary || '').trim();
+  const raw = product.communityReview || '';
+  const quotePart = raw
+    ? raw.indexOf(' — ') >= 0
+      ? raw.slice(0, raw.indexOf(' — ')).trim()
+      : raw.trim()
+    : '';
+  const parts = [];
+  if (ai) parts.push(truncate(ai, 380));
+  if (quotePart) parts.push(`Representative online chatter includes: “${truncate(quotePart, 200)}”`);
+  if (product.incentivizedReviewSites?.length) {
+    parts.push('Some platforms we link to may host incentivized or biased reviews—read critically.');
+  }
+  if (parts.length === 0) {
+    return 'We have little synthesized community context yet. Load AI summaries for Reddit/YouTube shortcuts, or browse the sources below.';
+  }
+  parts.push('This is anecdotal, not proof of safety or efficacy.');
+  return parts.join(' ');
+}
+
+/**
+ * Quick overview: profile fit + one insight each for clinical, science, community.
+ * Each item: { id, title, body } with `body` using **bold** via renderRichText.
+ */
+function buildQuickOverviewBlocks(product, aiInsights, quizResults, healthProfile, profileTailoring) {
+  const matchLabels = getProfileMatchLabelsForProduct(product, quizResults, healthProfile);
+  const { whyItWorks, considerations } = getRecommendationExplanation(product, quizResults, healthProfile);
+  const recallBad = product.safety?.recalls?.includes('⚠️') || hasRecallConcern(product);
+  const hasProfile =
+    (quizResults?.frustrations?.length ?? 0) > 0 ||
+    matchLabels.length > 0 ||
+    !!profileTailoring ||
+    (healthProfile && Object.keys(healthProfile).length > 0);
+
+  const forYouParts = [];
+  if (!hasProfile) {
+    forYouParts.push(
+      '**For you:** Add a health profile or complete the quiz so we can say whether this product fits your priorities.'
+    );
+  } else if (matchLabels.length > 0) {
+    forYouParts.push(
+      `**For you:** Based on what you shared, this product is **a plausible match** for themes you care about: ${matchLabels.join(', ')}.`
+    );
+  } else {
+    forYouParts.push(
+      '**For you:** Overlap between this product and your profile tags is **limited**—use the tabs below before you decide.'
     );
   }
-  return lines;
-}
+  if (whyItWorks && (quizResults?.frustrations?.length || matchLabels.length)) forYouParts.push(whyItWorks);
+  if (considerations) forYouParts.push(considerations);
+  if (profileTailoring) forYouParts.push(profileTailoring);
+  if (recallBad) forYouParts.push('**Safety:** Check the Safety tab for recalls or alerts before you buy.');
 
-function buildDoctorCondensed(product, aiInsights) {
-  const parts = [];
-  if (aiInsights?.clinicalNarrative) parts.push(truncate(aiInsights.clinicalNarrative, 450));
-  if (product.doctorOpinion) parts.push(truncate(product.doctorOpinion, 450));
-  if (parts.length === 0) {
-    parts.push('Use the sources below to dig deeper. Ask your clinician if this product fits your situation.');
-  }
-  const brandNote =
-    product.clinicianOpinionSource === 'brand'
-      ? 'Some info here may come from the brand—double-check with your own provider.'
-      : product.clinicianOpinionSource === 'independent'
-        ? 'Sources are chosen to be independent when possible.'
-        : null;
-  if (brandNote) parts.push(brandNote);
-  if (product.clinicianAttribution) parts.push(truncate(product.clinicianAttribution, 200));
-  return parts.join('\n\n');
-}
+  const clinicalLead = aiInsights?.clinicalNarrative || product.doctorOpinion;
+  const clinicalBody = clinicalLead
+    ? truncate(clinicalLead, 280)
+    : 'Load AI summaries or open the Clinician tab for synthesized clinical orientation and links.';
 
-function buildScienceCondensed(product, aiInsights) {
-  const parts = [];
-  if (aiInsights?.scienceSummary) parts.push(truncate(aiInsights.scienceSummary, 400));
-  const eff = product.effectiveness ? truncate(product.effectiveness, 320) : '';
-  if (eff) parts.push(`**Does it work?** ${eff}`);
-  if (parts.length === 0) {
-    parts.push('Below are links to real studies and databases—not ads.');
-  }
-  if (scienceEvidenceIsLimited(product)) {
-    parts.push('**Research:** There may not be strong studies on this exact brand. Skim the links with a critical eye.');
-  } else {
-    parts.push('**Research:** Use the links for deeper reading; your clinician can help you apply them.');
-  }
-  return parts.join('\n\n');
-}
+  const sciLead = aiInsights?.scienceSummary || (product.effectiveness || '').trim();
+  const scienceBody = sciLead
+    ? `${truncate(sciLead, 240)} ${scienceEvidenceIsLimited(product) ? 'Evidence for this exact brand may be thin—see Science.' : 'Evidence on file looks somewhat stronger than many alternatives—still verify.'}`
+    : 'Load AI summaries or open the Science tab to see whether we list studies and how strong the evidence is.';
 
-function buildSocialCondensed(product, aiInsights) {
-  const parts = [];
-  if (aiInsights?.communitySummary) parts.push(truncate(aiInsights.communitySummary, 350));
+  const socAi = (aiInsights?.communitySummary || '').trim();
   const raw = product.communityReview || '';
-  if (raw) {
-    const dashIdx = raw.indexOf(' — ');
-    const quotePart = dashIdx >= 0 ? raw.slice(0, dashIdx).trim() : raw;
-    parts.push(`**What people say:** “${truncate(quotePart, 200)}”`);
-  }
-  if (product.incentivizedReviewSites?.length) {
-    parts.push('**Reviews:** Some sites pay for reviews—take glowing ratings with a grain of salt.');
-  } else {
-    parts.push('**Reviews:** Online reviews are personal stories, not medical proof.');
-  }
-  return parts.join('\n\n');
-}
+  const quotePart = raw
+    ? raw.indexOf(' — ') >= 0
+      ? raw.slice(0, raw.indexOf(' — ')).trim()
+      : raw.trim()
+    : '';
+  let communityBody = '';
+  if (socAi) communityBody = truncate(socAi, 220);
+  if (quotePart) communityBody += `${communityBody ? ' ' : ''}“${truncate(quotePart, 120)}”`;
+  if (!communityBody) communityBody = 'Open the Community tab for social links and forum-style context.';
 
-/** Short “should I buy this?” snapshot below where to buy. */
-function buildOverallSummary(product, aiInsights, quizResults, healthProfile) {
-  const s = product.safety || {};
-  const bits = [];
-
-  const recallWarn = s.recalls?.includes('⚠️') || hasRecallConcern(product);
-  bits.push(
-    `**Basics:** ${truncate(product.name, 70)} — ${truncate(s.fdaStatus || 'health product', 60)}. Materials: ${truncate(s.materials || 'see label', 90)}.${recallWarn ? ' **Check Safety for recalls.**' : ''}`
-  );
-
-  const matchLabels = getProfileMatchLabelsForProduct(product, quizResults, healthProfile);
-  if (matchLabels.length > 0) {
-    bits.push(`**Good fit if:** you care about ${matchLabels.join(', ')}.`);
-  }
-
-  if (scienceEvidenceIsLimited(product)) {
-    bits.push('**Research:** May not be a lot of rigorous studies on this exact brand—use the Science tab before you decide.');
-  } else if ((product.effectiveness || '').trim().length > 40) {
-    bits.push(`**Effectiveness:** ${truncate(product.effectiveness, 140)}`);
-  }
-
-  if (product.incentivizedReviewSites?.length) {
-    bits.push('**Reviews:** Some listed sites may show paid or biased reviews.');
-  }
-
-  return bits.join(' ');
+  return [
+    { id: 'you', title: 'For you', body: forYouParts.join(' ') },
+    { id: 'clinical', title: 'Clinical orientation', body: clinicalBody },
+    { id: 'science', title: 'Evidence & literature', body: scienceBody },
+    { id: 'community', title: 'Community & social', body: communityBody },
+  ];
 }
 
 /** Render markdown-like **bold** in plain text as <strong> */
@@ -285,11 +348,11 @@ export default function ProductModal({
         if (!product) return null;
         const isDig = product.type === 'digital';
         return {
-            safetyLines: buildSafetyCondensed(product, isDig, profileTailoring),
-            doctor: buildDoctorCondensed(product, aiInsights),
-            science: buildScienceCondensed(product, aiInsights),
-            social: buildSocialCondensed(product, aiInsights),
-            overallSummary: buildOverallSummary(product, aiInsights, quizResults, healthProfile),
+            quickOverview: buildQuickOverviewBlocks(product, aiInsights, quizResults, healthProfile, profileTailoring),
+            safetySummary: buildSafetyTabSummary(product, isDig),
+            clinicalSummary: buildClinicalTabSummary(product, aiInsights),
+            scienceSummary: buildScienceTabSummary(product, aiInsights),
+            socialSummary: buildSocialTabSummary(product, aiInsights),
         };
     }, [product, aiInsights, quizResults, healthProfile, profileTailoring]);
 
@@ -430,18 +493,8 @@ export default function ProductModal({
         }, 1500);
     };
 
-    // Normalize verification section: can be { links, aiSummary }, array of links, or single link object
-    const getVerificationSection = (section) => {
-        if (!section) return { links: [], aiSummary: null };
-        if (Array.isArray(section)) return { links: section.filter(l => l && (l.url || l.href)), aiSummary: null };
-        const url = section.url || section.href;
-        if (url) return { links: [{ ...section, url: url }], aiSummary: section.aiSummary || null };
-        const list = section.links || section.link;
-        const arr = Array.isArray(list) ? list : (list ? [list] : []);
-        return { links: arr.filter(l => l && (l.url || l.href)).map(l => ({ ...l, url: l.url || l.href })), aiSummary: section.aiSummary || null };
-    };
-
-    const renderVerificationLinks = (linksOrSection, aiSummaryOverride, label, type, productRef) => {
+    const renderVerificationLinks = (linksOrSection, aiSummaryOverride, label, type, productRef, options = {}) => {
+        const { suppressAiSummary = false, suppressDoctorEmptyBanner = false } = options;
         const section = typeof linksOrSection === 'object' && linksOrSection !== null && !Array.isArray(linksOrSection) && (linksOrSection.links || linksOrSection.url || linksOrSection.link)
             ? linksOrSection
             : { links: linksOrSection, aiSummary: aiSummaryOverride };
@@ -450,7 +503,7 @@ export default function ProductModal({
         const hasReputableSources = linksArray.length > 0;
 
         // Avoid duplication: Doctor tab has clinician quote; Science tab has Effectiveness Summary
-        const showAiSummary = aiSummary && type !== 'doctor' && !(type === 'science' && productRef?.effectiveness);
+        const showAiSummary = !suppressAiSummary && aiSummary && type !== 'doctor' && !(type === 'science' && productRef?.effectiveness);
 
         return (
             <div style={{ marginTop: '1.5rem' }}>
@@ -477,7 +530,7 @@ export default function ProductModal({
                     </div>
                 )}
 
-                {!hasReputableSources && type === 'doctor' && (
+                {!suppressDoctorEmptyBanner && !hasReputableSources && type === 'doctor' && (
                     <div style={{
                         padding: '1.5rem',
                         background: '#FFF7ED',
@@ -565,7 +618,8 @@ export default function ProductModal({
     };
 
     // Social tab: group community links by platform (Instagram, TikTok, YouTube, Reddit, Facebook), summarized
-    const renderSocialLinks = (linksOrSection, aiSummaryOverride) => {
+    const renderSocialLinks = (linksOrSection, aiSummaryOverride, options = {}) => {
+        const { suppressAiSummary = false } = options;
         const section = typeof linksOrSection === 'object' && linksOrSection !== null && !Array.isArray(linksOrSection) && (linksOrSection.links || linksOrSection.url || linksOrSection.link)
             ? linksOrSection
             : { links: linksOrSection, aiSummary: aiSummaryOverride };
@@ -583,7 +637,7 @@ export default function ProductModal({
 
         return (
             <div style={{ marginTop: '1rem' }}>
-                {aiSummary && (
+                {!suppressAiSummary && aiSummary && (
                     <div style={{
                         padding: '1.25rem',
                         background: 'linear-gradient(135deg, #FDF4FF 0%, #F5F3FF 100%)',
@@ -855,7 +909,7 @@ export default function ProductModal({
                         )}
                     </div>
 
-                    {condensed?.overallSummary && (
+                    {condensed?.quickOverview?.length > 0 && (
                         <div
                             style={{
                                 marginTop: '1.25rem',
@@ -872,15 +926,33 @@ export default function ProductModal({
                                     textTransform: 'uppercase',
                                     letterSpacing: '0.06em',
                                     color: 'var(--color-text-muted)',
-                                    margin: '0 0 0.65rem',
+                                    margin: '0 0 0.85rem',
                                 }}
                             >
                                 Quick overview
                             </p>
-                            <p style={{ fontSize: '0.92rem', color: 'var(--color-text-main)', lineHeight: 1.6, margin: 0 }}>
-                                {renderRichText(condensed.overallSummary)}
-                            </p>
-                            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', margin: '0.65rem 0 0', lineHeight: 1.45 }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+                                {condensed.quickOverview.map((block) => (
+                                    <div key={block.id}>
+                                        <p
+                                            style={{
+                                                fontSize: '0.7rem',
+                                                fontWeight: '700',
+                                                textTransform: 'uppercase',
+                                                letterSpacing: '0.04em',
+                                                color: 'var(--color-primary)',
+                                                margin: '0 0 0.35rem',
+                                            }}
+                                        >
+                                            {block.title}
+                                        </p>
+                                        <p style={{ fontSize: '0.92rem', color: 'var(--color-text-main)', lineHeight: 1.6, margin: 0 }}>
+                                            {renderRichText(block.body)}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', margin: '0.75rem 0 0', lineHeight: 1.45 }}>
                                 Quick read before you buy—not medical advice.
                             </p>
                         </div>
@@ -1016,27 +1088,39 @@ export default function ProductModal({
                                 }}
                             >
                                 <h4 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#7E22CE', marginBottom: '0.65rem' }}>Summary</h4>
-                                <div style={{ fontSize: '0.95rem', color: '#581C87', lineHeight: 1.65 }}>
-                                    {String(condensed?.doctor || '')
-                                        .split(/\n\n+/)
-                                        .filter(Boolean)
-                                        .map((para, i) => (
-                                            <p key={i} style={{ margin: i === 0 ? 0 : '0.6rem 0 0' }}>
-                                                {renderRichText(para)}
-                                            </p>
-                                        ))}
-                                </div>
+                                <p style={{ fontSize: '0.95rem', color: '#581C87', lineHeight: 1.65, margin: 0 }}>
+                                    {condensed?.clinicalSummary || ''}
+                                </p>
                                 <p style={{ fontSize: '0.72rem', color: '#7E22CE', margin: '0.75rem 0 0', fontWeight: '600' }}>
                                     For learning only—not a substitute for your clinician.
                                 </p>
                             </div>
+                            {(product.doctorOpinion || product.clinicianAttribution) && (
+                                <div style={{ marginBottom: '1.25rem' }}>
+                                    <h4 style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>Clinician notes in our data</h4>
+                                    <ul style={{ margin: 0, paddingLeft: '1.1rem', fontSize: '0.9rem', lineHeight: 1.55, color: 'var(--color-text-main)' }}>
+                                        {product.doctorOpinion && (
+                                            <li style={{ marginBottom: '0.5rem' }}>
+                                                <strong>Curated summary:</strong> {product.doctorOpinion}
+                                            </li>
+                                        )}
+                                        {product.clinicianAttribution && (
+                                            <li>
+                                                <strong>Attribution:</strong> {product.clinicianAttribution}
+                                            </li>
+                                        )}
+                                    </ul>
+                                </div>
+                            )}
+                            <h4 style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>Sources</h4>
                             {renderAiReferenceCards(aiInsights?.clinicianLinks, 'MedlinePlus search shortcuts (government patient education)', true)}
                             {renderVerificationLinks(
                                 product.verificationLinks?.doctor,
                                 null,
                                 'Sources & citations',
                                 'doctor',
-                                product
+                                product,
+                                { suppressDoctorEmptyBanner: true }
                             )}
                         </div>
                     )}
@@ -1054,24 +1138,19 @@ export default function ProductModal({
                                 }}
                             >
                                 <h4 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#7E22CE', marginBottom: '0.65rem' }}>Summary</h4>
-                                <div style={{ fontSize: '0.95rem', color: '#581C87', lineHeight: 1.65 }}>
-                                    {String(condensed?.science || '')
-                                        .split(/\n\n+/)
-                                        .filter(Boolean)
-                                        .map((para, i) => (
-                                            <p key={i} style={{ margin: i === 0 ? 0 : '0.6rem 0 0' }}>
-                                                {renderRichText(para)}
-                                            </p>
-                                        ))}
-                                </div>
+                                <p style={{ fontSize: '0.95rem', color: '#581C87', lineHeight: 1.65, margin: 0 }}>
+                                    {renderRichText(condensed?.scienceSummary || '')}
+                                </p>
                             </div>
+                            <h4 style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>Sources</h4>
                             {renderAiReferenceCards(aiInsights?.literatureLinks, 'PubMed search shortcuts', true)}
                             {renderVerificationLinks(
                                 product.verificationLinks?.scientific,
                                 null,
                                 'Peer-reviewed & clinical sources',
                                 'science',
-                                product
+                                product,
+                                { suppressAiSummary: true }
                             )}
                         </div>
                     )}
@@ -1089,16 +1168,9 @@ export default function ProductModal({
                                 }}
                             >
                                 <h4 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#7E22CE', marginBottom: '0.65rem' }}>Summary</h4>
-                                <div style={{ fontSize: '0.95rem', color: '#581C87', lineHeight: 1.65 }}>
-                                    {String(condensed?.social || '')
-                                        .split(/\n\n+/)
-                                        .filter(Boolean)
-                                        .map((para, i) => (
-                                            <p key={i} style={{ margin: i === 0 ? 0 : '0.6rem 0 0' }}>
-                                                {renderRichText(para)}
-                                            </p>
-                                        ))}
-                                </div>
+                                <p style={{ fontSize: '0.95rem', color: '#581C87', lineHeight: 1.65, margin: 0 }}>
+                                    {condensed?.socialSummary || ''}
+                                </p>
                                 {product.incentivizedReviewSites && product.incentivizedReviewSites.length > 0 && (
                                     <div
                                         style={{
@@ -1125,20 +1197,24 @@ export default function ProductModal({
                                     Anecdotal only — not evidence of safety or efficacy.
                                 </p>
                             </div>
+                            <h4 style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', margin: '1.25rem 0 0.5rem' }}>Sources</h4>
                             {aiInsights?.communityLinks?.length > 0 && (
-                                <div style={{ marginBottom: '1.25rem' }}>
-                                    <h4 style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>Reddit &amp; YouTube search shortcuts</h4>
-                                    {renderSocialLinks({
-                                        links: aiInsights.communityLinks.map((c) => ({
-                                            url: c.url,
-                                            text: c.text,
-                                            summary: c.summary || '',
-                                            platform: c.platform || 'other',
-                                        })),
-                                    }, null)}
+                                <div style={{ marginBottom: '1rem' }}>
+                                    {renderSocialLinks(
+                                        {
+                                            links: aiInsights.communityLinks.map((c) => ({
+                                                url: c.url,
+                                                text: c.text,
+                                                summary: c.summary || '',
+                                                platform: c.platform || 'other',
+                                            })),
+                                        },
+                                        null,
+                                        { suppressAiSummary: true }
+                                    )}
                                 </div>
                             )}
-                            {renderSocialLinks(product.verificationLinks?.community, null)}
+                            {renderSocialLinks(product.verificationLinks?.community, null, { suppressAiSummary: true })}
                         </div>
                     )}
 
