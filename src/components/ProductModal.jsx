@@ -146,33 +146,37 @@ function scienceEvidenceIsLimited(product) {
   return false;
 }
 
-/** One paragraph: safety facts only (profile “for you” lives in quick overview). */
+/**
+ * Short safety “at a glance” only — full FDA/materials/recalls/side effects live under Sources & detail
+ * so we don’t repeat the same paragraphs twice on one tab.
+ */
 function buildSafetyTabSummary(product, isDigital) {
   const s = product.safety || {};
-  const recall = s.recalls?.includes('⚠️')
-    ? `Recalls or alerts: ${truncate(s.recalls, 220)}`
-    : `Recalls: ${truncate(s.recalls || 'None in our data—check the label.', 130)}`;
-  const se = s.sideEffects ? truncate(s.sideEffects, 220) : 'Varies by person—ask your clinician if unsure.';
-  const op = s.opinionAlerts ? ` Community themes: ${truncate(s.opinionAlerts, 140)}` : '';
-  let t = `${s.fdaStatus || 'Regulatory status not specified.'} Materials: ${s.materials || 'See the label.'} ${recall} Side effects and typical use: ${se}.${op}`;
-  if (isDigital && product.privacy) {
-    const p = product.privacy;
-    t += ` App privacy: ${truncate([p.dataStorage, p.sellsData, p.hipaa].filter(Boolean).join(' · '), 200)}`;
+  const recallHot = s.recalls?.includes('⚠️') || hasRecallConcern(product);
+  const mat = truncate(s.materials || 'see the label', 90);
+  let t = `**At a glance:** ${s.fdaStatus || 'Regulatory status not specified.'} Key materials: ${mat}.`;
+  if (recallHot) {
+    t += ` **Recalls / alerts:** ${truncate(s.recalls || 'See expandable section below.', 140)}`;
+  } else {
+    t += ' No recall flags in our dataset—still confirm packaging and official notices.';
   }
+  t += ' Expand **Sources & detail** below for full side effects, community watch-outs, and privacy (apps).';
   return t;
 }
 
-/** Single narrative for clinician tab (sources listed separately). */
+/** Single narrative for clinician tab — avoid repeating curated doctor text that appears in the list below. */
 function buildClinicalTabSummary(product, aiInsights) {
   const narrative = (aiInsights?.clinicalNarrative || '').trim();
   const doctor = (product.doctorOpinion || '').trim();
-  const core = narrative || doctor;
   let text = '';
-  if (core) {
-    text = truncate(core, 520);
+  if (narrative) {
+    text = truncate(narrative, 520);
+  } else if (doctor) {
+    text =
+      '**Curated clinician note:** We keep the full text under **Clinician notes in our data** below so it isn’t duplicated here.';
   } else {
     text =
-      'We have not loaded an AI clinical snapshot for this product yet. Use “Load AI summaries” below, then review the sources list.';
+      'We have not loaded an AI clinical snapshot yet. Use **Load AI summaries**, then review **Sources**.';
   }
   if (product.clinicianOpinionSource === 'brand') {
     text +=
@@ -206,7 +210,7 @@ function buildScienceTabSummary(product, aiInsights) {
   return parts.join(' ');
 }
 
-/** Single narrative for community tab. */
+/** Single narrative for community tab — don’t repeat the same quote if AI summary already includes it. */
 function buildSocialTabSummary(product, aiInsights) {
   const ai = (aiInsights?.communitySummary || '').trim();
   const raw = product.communityReview || '';
@@ -215,21 +219,27 @@ function buildSocialTabSummary(product, aiInsights) {
       ? raw.slice(0, raw.indexOf(' — ')).trim()
       : raw.trim()
     : '';
+  const quoteRedundant =
+    !!(
+      quotePart &&
+      ai &&
+      ai.includes(quotePart.slice(0, Math.min(50, quotePart.length)))
+    );
   const parts = [];
   if (ai) parts.push(truncate(ai, 380));
-  if (quotePart) parts.push(`Representative online chatter includes: “${truncate(quotePart, 200)}”`);
+  if (quotePart && !quoteRedundant) parts.push(`Representative online chatter includes: “${truncate(quotePart, 200)}”`);
   if (product.incentivizedReviewSites?.length) {
     parts.push('Some platforms we link to may host incentivized or biased reviews—read critically.');
   }
   if (parts.length === 0) {
-    return 'We have little synthesized community context yet. Load AI summaries for Reddit/YouTube shortcuts, or browse the sources below.';
+    return 'No community synthesis yet. Use **Load AI summaries** for Reddit/YouTube shortcuts, or open **Sources** below.';
   }
   parts.push('This is anecdotal, not proof of safety or efficacy.');
   return parts.join(' ');
 }
 
 /**
- * Quick overview: profile fit + one insight each for clinical, science, community.
+ * Quick overview: profile fit only — clinical/science/community live in their tabs (avoids repeating the same blurbs).
  * Each item: { id, title, body } with `body` using **bold** via renderRichText.
  */
 function buildQuickOverviewBlocks(product, aiInsights, quizResults, healthProfile, profileTailoring) {
@@ -260,35 +270,11 @@ function buildQuickOverviewBlocks(product, aiInsights, quizResults, healthProfil
   if (considerations) forYouParts.push(considerations);
   if (profileTailoring) forYouParts.push(profileTailoring);
   if (recallBad) forYouParts.push('**Safety:** Check the Safety tab for recalls or alerts before you buy.');
+  forYouParts.push(
+    '**Detail:** Open **Clinician opinions**, **Scientific literature**, and **Community** for full summaries and sources—we keep them out of this box on purpose.'
+  );
 
-  const clinicalLead = aiInsights?.clinicalNarrative || product.doctorOpinion;
-  const clinicalBody = clinicalLead
-    ? truncate(clinicalLead, 280)
-    : 'Load AI summaries or open the Clinician tab for synthesized clinical orientation and links.';
-
-  const sciLead = aiInsights?.scienceSummary || (product.effectiveness || '').trim();
-  const scienceBody = sciLead
-    ? `${truncate(sciLead, 240)} ${scienceEvidenceIsLimited(product) ? 'Evidence for this exact brand may be thin—see Science.' : 'Evidence on file looks somewhat stronger than many alternatives—still verify.'}`
-    : 'Load AI summaries or open the Science tab to see whether we list studies and how strong the evidence is.';
-
-  const socAi = (aiInsights?.communitySummary || '').trim();
-  const raw = product.communityReview || '';
-  const quotePart = raw
-    ? raw.indexOf(' — ') >= 0
-      ? raw.slice(0, raw.indexOf(' — ')).trim()
-      : raw.trim()
-    : '';
-  let communityBody = '';
-  if (socAi) communityBody = truncate(socAi, 220);
-  if (quotePart) communityBody += `${communityBody ? ' ' : ''}“${truncate(quotePart, 120)}”`;
-  if (!communityBody) communityBody = 'Open the Community tab for social links and forum-style context.';
-
-  return [
-    { id: 'you', title: 'For you', body: forYouParts.join(' ') },
-    { id: 'clinical', title: 'Clinical orientation', body: clinicalBody },
-    { id: 'science', title: 'Evidence & literature', body: scienceBody },
-    { id: 'community', title: 'Community & social', body: communityBody },
-  ];
+  return [{ id: 'you', title: 'For you', body: forYouParts.join(' ') }];
 }
 
 /** Render markdown-like **bold** in plain text as <strong> */
@@ -355,6 +341,14 @@ export default function ProductModal({
             socialSummary: buildSocialTabSummary(product, aiInsights),
         };
     }, [product, aiInsights, quizResults, healthProfile, profileTailoring]);
+
+    /** Hide curated doctor bullet when AI narrative already contains the same opening (avoids duplicate). */
+    const suppressDoctorDuplicateInList = useMemo(() => {
+        const n = (aiInsights?.clinicalNarrative || '').trim();
+        const d = (product?.doctorOpinion || '').trim();
+        if (!n || !d || d.length < 12) return false;
+        return n.includes(d.slice(0, Math.min(48, d.length)));
+    }, [aiInsights?.clinicalNarrative, product?.doctorOpinion]);
 
     if (!product) return null;
 
@@ -1017,15 +1011,14 @@ export default function ProductModal({
                                 }}
                             >
                                 <h4 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#7E22CE', marginBottom: '0.65rem' }}>Summary</h4>
-                                <div style={{ fontSize: '0.95rem', color: '#581C87', lineHeight: 1.6 }}>
-                                    {(condensed?.safetyLines || []).map((line, i) => (
-                                        <p key={i} style={{ margin: i === 0 ? 0 : '0.6rem 0 0' }}>{renderRichText(line)}</p>
-                                    ))}
-                                </div>
+                                <p style={{ fontSize: '0.95rem', color: '#581C87', lineHeight: 1.65, margin: 0 }}>
+                                    {renderRichText(condensed?.safetySummary || '')}
+                                </p>
                             </div>
-                            <details style={{ marginTop: '1rem' }}>
+                            <h4 style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', margin: '1.25rem 0 0.65rem' }}>Sources &amp; detail</h4>
+                            <details style={{ marginTop: 0 }}>
                                 <summary style={{ cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600', color: 'var(--color-primary)', marginBottom: '0.75rem' }}>
-                                    Show regulatory &amp; ingredient details
+                                    Regulatory status, label-style materials, recalls, and privacy
                                 </summary>
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                                     <div style={{ background: 'var(--color-bg)', padding: '1rem', borderRadius: 'var(--radius-md)' }}>
@@ -1089,17 +1082,17 @@ export default function ProductModal({
                             >
                                 <h4 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#7E22CE', marginBottom: '0.65rem' }}>Summary</h4>
                                 <p style={{ fontSize: '0.95rem', color: '#581C87', lineHeight: 1.65, margin: 0 }}>
-                                    {condensed?.clinicalSummary || ''}
+                                    {renderRichText(condensed?.clinicalSummary || '')}
                                 </p>
                                 <p style={{ fontSize: '0.72rem', color: '#7E22CE', margin: '0.75rem 0 0', fontWeight: '600' }}>
                                     For learning only—not a substitute for your clinician.
                                 </p>
                             </div>
-                            {(product.doctorOpinion || product.clinicianAttribution) && (
+                            {((product.doctorOpinion && !suppressDoctorDuplicateInList) || product.clinicianAttribution) && (
                                 <div style={{ marginBottom: '1.25rem' }}>
                                     <h4 style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>Clinician notes in our data</h4>
                                     <ul style={{ margin: 0, paddingLeft: '1.1rem', fontSize: '0.9rem', lineHeight: 1.55, color: 'var(--color-text-main)' }}>
-                                        {product.doctorOpinion && (
+                                        {product.doctorOpinion && !suppressDoctorDuplicateInList && (
                                             <li style={{ marginBottom: '0.5rem' }}>
                                                 <strong>Curated summary:</strong> {product.doctorOpinion}
                                             </li>
@@ -1169,7 +1162,7 @@ export default function ProductModal({
                             >
                                 <h4 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#7E22CE', marginBottom: '0.65rem' }}>Summary</h4>
                                 <p style={{ fontSize: '0.95rem', color: '#581C87', lineHeight: 1.65, margin: 0 }}>
-                                    {condensed?.socialSummary || ''}
+                                    {renderRichText(condensed?.socialSummary || '')}
                                 </p>
                                 {product.incentivizedReviewSites && product.incentivizedReviewSites.length > 0 && (
                                     <div
