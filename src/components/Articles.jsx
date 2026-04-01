@@ -239,7 +239,7 @@ function TelehealthSuggestions({ articleId, onOpenProduct }) {
             <a href="https://www.plannedparenthood.org/get-care" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Planned Parenthood — get care (telehealth & in-person)</a>
           </p>
           {platforms.length === 0 ? (
-            <p style={{ color: 'var(--color-text-muted)', margin: 0, fontSize: '0.9rem' }}>No other telehealth platforms match this topic. See &quot;Find clinics near you&quot; above for more options.</p>
+            <p style={{ color: 'var(--color-text-muted)', margin: 0, fontSize: '0.9rem' }}>No other telehealth platforms match this topic. See Find clinics near you above for more options.</p>
           ) : (
             <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
               {platforms.map((t) => {
@@ -417,7 +417,7 @@ const ARTICLES = [
     body: (
       <>
         <p>Heavy menstrual bleeding (menorrhagia) is common and can significantly affect quality of life, work, and relationships. It may also signal underlying conditions such as fibroids, polyps, bleeding disorders, hormonal imbalances, or thyroid issues. How it’s treated depends on the cause, your age, and whether you plan to have children.</p>
-        <p>There’s no single definition of “heavy,” but clinicians often use practical signs: needing to change pads or tampons every 1–2 hours, passing large clots, bleeding longer than 7 days, or having symptoms of anemia (fatigue, dizziness, pale skin, shortness of breath). If any of these describe you, or if your period has changed suddenly, it’s worth seeing a clinician. They can run tests (e.g., blood count, thyroid, imaging) and recommend options ranging from hormonal birth control or tranexamic acid to procedures like an IUD or surgery, depending on the cause.</p>
+        <p>There’s no single definition of heavy flow, but clinicians often use practical signs: needing to change pads or tampons every 1–2 hours, passing large clots, bleeding longer than 7 days, or having symptoms of anemia (fatigue, dizziness, pale skin, shortness of breath). If any of these describe you, or if your period has changed suddenly, it’s worth seeing a clinician. They can run tests (e.g., blood count, thyroid, imaging) and recommend options ranging from hormonal birth control or tranexamic acid to procedures like an IUD or surgery, depending on the cause.</p>
         <p><strong>When to seek care:</strong> Soaking through pads or tampons every 1–2 hours, bleeding longer than 7 days, or symptoms of anemia. Only a clinician can diagnose the cause and recommend a safe, effective treatment plan.</p>
         <p><strong>Sources:</strong></p>
         <ul style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>

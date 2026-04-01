@@ -100,7 +100,7 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
                         </div>
                         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', background: 'var(--color-surface-soft)', padding: '1rem', borderRadius: 'var(--radius-sm)' }}>
                             <span style={{ fontSize: '1.2rem' }}>💊</span>
-                            <p style={{ fontSize: '0.95rem' }}>"I am currently using <strong>{Object.values(myProducts)[0]?.name || 'these products'}</strong>. Do you see any concerns with my current health goals?"</p>
+                            <p style={{ fontSize: '0.95rem' }}><em>I am currently using <strong>{Object.values(myProducts)[0]?.name || 'these products'}</strong>. Do you see any concerns with my current health goals?</em></p>
                         </div>
                         {userChatMessages.length > 0 && (
                             <>
@@ -109,8 +109,9 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
                                     <div key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', background: 'var(--color-primary-fade)', padding: '1rem', borderRadius: 'var(--radius-sm)', borderLeft: '4px solid var(--color-primary)' }}>
                                         <span style={{ fontSize: '1.2rem' }}>💬</span>
                                         <div>
-                                            <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.35rem' }}>You told Ayna: &quot;{text.length > 120 ? text.slice(0, 120) + '…' : text}&quot;</p>
-                                            <p style={{ fontSize: '0.95rem', fontWeight: '500' }}>Consider asking your provider: &quot;I shared this with my health app — can we discuss whether it affects my care or anything I should follow up on?&quot;</p>
+                                            <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.35rem' }}>You told Ayna:</p>
+                                            <blockquote style={{ margin: '0 0 0.5rem', paddingLeft: '0.75rem', borderLeft: '3px solid var(--color-primary)', fontSize: '0.9rem', color: 'var(--color-text-main)' }}>{text.length > 120 ? text.slice(0, 120) + '…' : text}</blockquote>
+                                            <p style={{ fontSize: '0.95rem', fontWeight: '500' }}>Consider asking your provider: I shared this with my health app — can we discuss whether it affects my care or anything I should follow up on?</p>
                                         </div>
                                     </div>
                                 ))}

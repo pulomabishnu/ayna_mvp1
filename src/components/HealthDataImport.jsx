@@ -128,7 +128,7 @@ export default function HealthDataImport({ onUpdate }) {
         <div style={{ padding: '1rem', background: 'var(--color-surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
           <p style={{ fontWeight: '600', marginBottom: '0.5rem' }}>Electronic health record (FHIR)</p>
           <p style={{ fontSize: '0.88rem', color: 'var(--color-text-muted)', lineHeight: 1.5, marginBottom: '0.75rem' }}>
-            Many Epic / MyChart portals offer &quot;Download my data&quot; as a FHIR JSON bundle. Upload it here — we parse conditions and medication statements locally in your browser; the file is not sent to our servers.
+            Many Epic / MyChart portals offer a <strong>Download my data</strong> export as a FHIR JSON bundle. Upload it here — we parse conditions and medication statements locally in your browser; the file is not sent to our servers.
           </p>
           <label style={{ fontSize: '0.9rem', cursor: 'pointer', display: 'inline-block' }}>
             <span className="btn btn-outline" style={{ padding: '0.45rem 1rem', fontSize: '0.85rem' }}>Choose FHIR JSON file</span>

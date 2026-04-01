@@ -69,7 +69,7 @@ export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LA
                                         style={{ width: '100%', maxWidth: '240px', padding: '0.5rem 1rem', fontSize: '0.9rem' }}
                                         onClick={() => onAddToCompare(p)}
                                     >
-                                        Add “{p.name}” to comparison
+                                        Add {p.name} to comparison
                                     </button>
                                 ))}
                                 {ecosystemList.length > 5 && (

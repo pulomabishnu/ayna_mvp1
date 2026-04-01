@@ -284,7 +284,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 </p>
                 {!hasQuizFrustrations && !hasHealthImport && (
                     <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginTop: '0.75rem', lineHeight: 1.5 }}>
-                        Complete the assessment or import health data under <strong>My Account → Profile</strong> to unlock the &quot;For you&quot; filter and stronger personalization on Search.
+                        Complete the assessment or import health data under <strong>My Account → Profile</strong> to unlock the <strong>For you</strong> filter and stronger personalization on Search.
                     </p>
                 )}
             </div>

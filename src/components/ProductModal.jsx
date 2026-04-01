@@ -125,7 +125,7 @@ function countHttpsLinksInSection(section) {
   }).length;
 }
 
-/** Show FDA MedWatch only when our recall text suggests something to look into (not routine “no recalls”). */
+/** Show FDA MedWatch only when our recall text suggests something to look into (not routine no-recalls boilerplate). */
 function hasRecallConcern(product) {
   const r = product?.safety?.recalls || '';
   if (!r.trim()) return false;
@@ -200,7 +200,7 @@ function buildClinicalInsight(product, aiInsights, quizResults, healthProfile, p
   }
   if (profileTailoring) parts.push(profileTailoring);
   if (narrative) parts.push(truncate(narrative, 500));
-  // Curated doctor text stays under “Summarized info” only—don’t repeat it in the insight box.
+  // Curated doctor text stays under Summarized info only—don’t repeat it in the insight box.
   if (product.clinicianOpinionSource === 'brand' && (narrative || doctor)) {
     parts.push(
       '**Sources note:** We do not list independent non-brand clinician opinions in our database for this item—use links as starting points, not endorsements.'
@@ -258,7 +258,7 @@ function buildSocialInsight(product, aiInsights, quizResults, healthProfile) {
     );
   }
   if (ai) parts.push(truncate(ai, 380));
-  if (quotePart && !quoteRedundant) parts.push(`Representative chatter: “${truncate(quotePart, 200)}”`);
+  if (quotePart && !quoteRedundant) parts.push(`**Forum excerpt:** ${truncate(quotePart, 200)}`);
   if (parts.length === 0) return null;
   parts.push('Online discussion is anecdotal, not evidence of safety or efficacy.');
   return nonEmptyInsight(parts.join(' '));
@@ -876,7 +876,7 @@ export default function ProductModal({
                             <div>
                                 {userZipCode && (
                                     <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '0.75rem', lineHeight: 1.5 }}>
-                                        In-store and online availability for zip <strong>{userZipCode}</strong> is shown when we have data. We use retailer and zip code data to surface “in stock” when available.
+                                        In-store and online availability for zip <strong>{userZipCode}</strong> is shown when we have data. We use retailer and zip code data to surface in-stock status when available.
                                     </p>
                                 )}
                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', alignItems: 'center' }}>
@@ -1076,7 +1076,7 @@ export default function ProductModal({
                                                 <p><strong>Storage:</strong> {product.privacy.dataStorage}</p>
                                                 <p><strong>Data Sharing:</strong> {product.privacy.sellsData}</p>
                                                 <p><strong>Compliance:</strong> {product.privacy.hipaa}</p>
-                                                <p style={{ fontStyle: 'italic', background: 'var(--color-bg)', padding: '0.75rem', borderRadius: 'var(--radius-sm)' }}>"{product.privacy.keyPolicy}"</p>
+                                                <p style={{ fontStyle: 'italic', background: 'var(--color-bg)', padding: '0.75rem', borderRadius: 'var(--radius-sm)' }}>{product.privacy.keyPolicy}</p>
                                             </div>
                                         </div>
                                     )}

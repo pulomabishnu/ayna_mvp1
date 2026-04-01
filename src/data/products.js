@@ -959,7 +959,7 @@ const TAG_TO_READABLE = {
 
 /**
  * Readable labels for product tags that overlap the user’s quiz + imported health profile.
- * Empty when there is no tag match — use this to show a positive “for you” line only when appropriate.
+ * Empty when there is no tag match — use this to show a positive for-you line only when appropriate.
  */
 export function getProfileMatchLabelsForProduct(product, quizAnswers, healthProfile = null) {
     const healthOnlyTags = inferTagsFromHealthProfile(healthProfile);
