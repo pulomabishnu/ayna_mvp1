@@ -168,7 +168,7 @@ function appendBrandComparisonLine(product, parts, role) {
     );
   } else if (role === 'social') {
     parts.push(
-      `**Comparing brands:** ${brandName} is one of many ${dk} offerings—load AI summaries so searches can surface brand-specific threads as well as category-wide discussion.`
+      `**Comparing brands:** ${brandName} is one of many ${dk} offerings—load Ayna insights so searches can surface brand-specific threads as well as category-wide discussion.`
     );
   }
 }
@@ -414,7 +414,7 @@ export default function ProductModal({
             setAiInsights(data);
             setActiveTab('doctor');
         } catch (e) {
-            setAiError(e?.message || 'Could not load AI research');
+            setAiError(e?.message || 'Could not load Ayna insights');
         } finally {
             setAiLoading(false);
         }
@@ -487,7 +487,7 @@ export default function ProductModal({
     };
     const AynaInsight = ({ children }) => (children ? (
         <div style={aynaInsightBoxStyle}>
-            <div style={{ fontSize: '0.75rem', color: 'var(--color-primary)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.35rem' }}>Ayna AI insight</div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--color-primary)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.35rem' }}>Ayna insight</div>
             <p style={{ margin: 0 }}>{children}</p>
         </div>
     ) : null);
@@ -564,10 +564,10 @@ export default function ProductModal({
                         overflow: 'hidden'
                     }}>
                         <div style={{ position: 'absolute', top: 0, right: 0, padding: '0.5rem 1rem', background: '#FAF5FF', fontSize: '0.7rem', fontWeight: '800', color: '#A855F7', borderBottomLeftRadius: '12px' }}>
-                            ✨ AYNA AI INSIGHT
+                            ✨ Ayna insight
                         </div>
                         <h4 style={{ fontSize: '0.9rem', fontWeight: '800', color: '#7E22CE', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            Research Summary
+                            Summary
                         </h4>
                         <p style={{ fontSize: '0.95rem', color: '#581C87', lineHeight: '1.6', fontWeight: '500' }}>
                             {aiSummary}
@@ -690,7 +690,7 @@ export default function ProductModal({
                         border: '1px solid #E9D5FF',
                         marginBottom: '1.5rem'
                     }}>
-                        <h4 style={{ fontSize: '0.85rem', fontWeight: '700', color: '#7E22CE', marginBottom: '0.5rem' }}>✨ Summary</h4>
+                        <h4 style={{ fontSize: '0.85rem', fontWeight: '700', color: '#7E22CE', marginBottom: '0.5rem' }}>Summary</h4>
                         <p style={{ fontSize: '0.9rem', color: '#581C87', lineHeight: '1.55' }}>{aiSummary}</p>
                     </div>
                 )}
@@ -1031,19 +1031,15 @@ export default function ProductModal({
                     <div style={{ padding: '0.65rem 2.5rem 0.85rem', borderTop: '1px solid var(--color-border)', background: 'var(--color-surface)' }}>
                         <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.75rem' }}>
                             <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem' }} onClick={loadAiInsights} disabled={aiLoading}>
-                                {aiLoading ? 'Loading…' : aiInsights ? 'Refresh AI summaries & searches' : 'Load AI summaries & safe searches'}
+                                {aiLoading ? 'Loading…' : aiInsights ? 'Refresh Ayna insights' : 'Load Ayna insights'}
                             </button>
                             {aiError && <span style={{ color: '#b91c1c', fontSize: '0.85rem' }}>{aiError}</span>}
                             {aiInsights?.generatedAt && (
                                 <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
-                                    {aiInsights.providerUsed ? `${aiInsights.providerUsed} · ` : ''}
-                                    {new Date(aiInsights.generatedAt).toLocaleString()}
+                                    Updated {new Date(aiInsights.generatedAt).toLocaleString()}
                                 </span>
                             )}
                         </div>
-                        <p style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', margin: '0.5rem 0 0', lineHeight: 1.45 }}>
-                            Summaries come from AI (Claude or OpenAI by default; Gemini only if you configure it). Outbound links are only official <strong>search</strong> URLs built on our servers from short phrases, so models never supply raw URLs. Not medical advice. On Vercel, set e.g. <code style={{ fontSize: '0.68rem' }}>ANTHROPIC_API_KEY</code> and optionally <code style={{ fontSize: '0.68rem' }}>OPENAI_API_KEY</code> or <code style={{ fontSize: '0.68rem' }}>AI_INSIGHTS_PROVIDER_ORDER</code>.
-                        </p>
                     </div>
                 </div>
 
