@@ -146,72 +146,98 @@ function scienceEvidenceIsLimited(product) {
   return false;
 }
 
-/**
- * Short safety “at a glance” only — full FDA/materials/recalls/side effects live under Sources & detail
- * so we don’t repeat the same paragraphs twice on one tab.
- */
-function buildSafetyTabSummary(product, isDigital) {
-  const s = product.safety || {};
-  const recallHot = s.recalls?.includes('⚠️') || hasRecallConcern(product);
-  const mat = truncate(s.materials || 'see the label', 90);
-  let t = `**At a glance:** ${s.fdaStatus || 'Regulatory status not specified.'} Key materials: ${mat}.`;
-  if (recallHot) {
-    t += ` **Recalls / alerts:** ${truncate(s.recalls || 'See expandable section below.', 140)}`;
-  } else {
-    t += ' No recall flags in our dataset—still confirm packaging and official notices.';
-  }
-  t += ' Expand **Sources & detail** below for full side effects, community watch-outs, and privacy (apps).';
-  return t;
+function nonEmptyInsight(s) {
+  const t = (s || '').trim();
+  return t.length > 0 ? t : null;
 }
 
-/** Single narrative for clinician tab — avoid repeating curated doctor text that appears in the list below. */
-function buildClinicalTabSummary(product, aiInsights) {
+const purpleInsightBoxStyle = {
+  marginBottom: '1.25rem',
+  padding: '1.25rem',
+  borderRadius: 'var(--radius-lg)',
+  background: 'linear-gradient(135deg, #FDF4FF 0%, #F5F3FF 100%)',
+  border: '1px solid #E9D5FF',
+};
+
+/** Purple-box insight: profile + safety snapshot (full detail stays under Sources). */
+function buildSafetyInsight(product, isDigital, profileTailoring, quizResults, healthProfile) {
+  const s = product?.safety;
+  if (!s) return null;
+  const parts = [];
+  const matchLabels = getProfileMatchLabelsForProduct(product, quizResults, healthProfile);
+  if (matchLabels.length > 0) {
+    parts.push(
+      `**For you:** Your profile overlaps this product on ${matchLabels.join(', ')}—verify materials and alerts below match what you need.`
+    );
+  }
+  if (profileTailoring) parts.push(profileTailoring);
+  const recallHot = s.recalls?.includes('⚠️') || hasRecallConcern(product);
+  const mat = truncate(s.materials || 'see the label', 110);
+  parts.push(`**Regulatory:** ${s.fdaStatus || 'Not specified.'} **Materials:** ${mat}.`);
+  if (recallHot) {
+    parts.push(`**Recalls / alerts:** ${truncate(s.recalls || '', 170)}`);
+  } else {
+    parts.push('No recall flags in our dataset; confirm packaging and official notices.');
+  }
+  if (isDigital && product.privacy) {
+    parts.push(
+      `**App privacy (headline):** ${truncate([product.privacy.dataStorage, product.privacy.sellsData, product.privacy.hipaa].filter(Boolean).join(' · '), 180)}`
+    );
+  }
+  return nonEmptyInsight(parts.join(' '));
+}
+
+/** Clinical insight: profile + AI or in-database view + how to read sources. */
+function buildClinicalInsight(product, aiInsights, quizResults, healthProfile, profileTailoring) {
   const narrative = (aiInsights?.clinicalNarrative || '').trim();
   const doctor = (product.doctorOpinion || '').trim();
-  let text = '';
-  if (narrative) {
-    text = truncate(narrative, 520);
-  } else if (doctor) {
-    text =
-      '**Curated clinician note:** We keep the full text under **Clinician notes in our data** below so it isn’t duplicated here.';
-  } else {
-    text =
-      'We have not loaded an AI clinical snapshot yet. Use **Load AI summaries**, then review **Sources**.';
+  const matchLabels = getProfileMatchLabelsForProduct(product, quizResults, healthProfile);
+  const parts = [];
+  if (matchLabels.length > 0) {
+    parts.push(
+      `**For you:** Because you care about ${matchLabels.join(', ')}, use the sources below with your clinician to see if this product fits.`
+    );
   }
-  if (product.clinicianOpinionSource === 'brand') {
-    text +=
-      ' We do not have independent non-brand clinician opinions in our database for this product; curated notes may reflect brand or general medical orientation.';
-  } else if (product.clinicianOpinionSource === 'independent') {
-    text += ' Where we cite clinicians or societies, we aim for sources that are independent of the brand.';
+  if (profileTailoring) parts.push(profileTailoring);
+  if (narrative) parts.push(truncate(narrative, 500));
+  // Curated doctor text stays under “Summarized info” only—don’t repeat it in the insight box.
+  if (product.clinicianOpinionSource === 'brand' && (narrative || doctor)) {
+    parts.push(
+      '**Sources note:** We do not list independent non-brand clinician opinions in our database for this item—use links as starting points, not endorsements.'
+    );
+  } else if (product.clinicianOpinionSource === 'independent' && (narrative || doctor)) {
+    parts.push('**Sources note:** We aim for society and educational sources that are independent of the brand where possible.');
   }
-  return text;
+  return nonEmptyInsight(parts.join(' '));
 }
 
-/** Single narrative for science tab; states robust vs thin evidence. */
-function buildScienceTabSummary(product, aiInsights) {
+/** Science insight: profile + literature trail (null if no data yet). */
+function buildScienceInsight(product, aiInsights, quizResults, healthProfile) {
   const curated = countHttpsLinksInSection(product.verificationLinks?.scientific);
   const aiLit = (aiInsights?.literatureLinks || []).length;
   const aiSci = (aiInsights?.scienceSummary || '').trim();
   const eff = (product.effectiveness || '').trim();
+  if (curated === 0 && aiLit === 0 && !aiSci && !eff) return null;
   const limited = scienceEvidenceIsLimited(product);
-
-  if (curated === 0 && aiLit === 0 && !aiSci && !eff) {
-    return 'We do not have scientific literature or study links listed for this product in Ayna’s data yet. Try “Load AI summaries” for PubMed-style shortcuts, or ask your clinician for evidence.';
-  }
-
+  const matchLabels = getProfileMatchLabelsForProduct(product, quizResults, healthProfile);
   const parts = [];
+  if (matchLabels.length > 0) {
+    parts.push(
+      `**For you:** If ${matchLabels.join(', ')} are priorities, check whether the studies below measure outcomes that matter for you—not just the brand name.`
+    );
+  }
   if (aiSci) parts.push(truncate(aiSci, 420));
-  else if (eff) parts.push(`Product-level effectiveness notes: ${truncate(eff, 360)}`);
+  else if (eff) parts.push(truncate(eff, 380));
   parts.push(
     limited
-      ? '**Evidence strength:** Rigorous studies on this exact brand may be limited or mixed—treat this as orientation and read the sources below.'
-      : '**Evidence strength:** The trail on file looks somewhat stronger than many consumer products—still verify claims in the primary sources.'
+      ? '**Evidence snapshot:** Rigorous studies on this exact product or brand may be limited—use the linked literature to verify claims.'
+      : '**Evidence snapshot:** The evidence trail here looks somewhat stronger than many consumer products—still read primary sources.'
   );
-  return parts.join(' ');
+  return nonEmptyInsight(parts.join(' '));
 }
 
-/** Single narrative for community tab — don’t repeat the same quote if AI summary already includes it. */
-function buildSocialTabSummary(product, aiInsights) {
+/** Community insight: profile + social synthesis (null if nothing to add). */
+function buildSocialInsight(product, aiInsights, quizResults, healthProfile) {
   const ai = (aiInsights?.communitySummary || '').trim();
   const raw = product.communityReview || '';
   const quotePart = raw
@@ -219,23 +245,23 @@ function buildSocialTabSummary(product, aiInsights) {
       ? raw.slice(0, raw.indexOf(' — ')).trim()
       : raw.trim()
     : '';
-  const quoteRedundant =
-    !!(
-      quotePart &&
-      ai &&
-      ai.includes(quotePart.slice(0, Math.min(50, quotePart.length)))
-    );
+  const quoteRedundant = !!(
+    quotePart &&
+    ai &&
+    ai.includes(quotePart.slice(0, Math.min(50, quotePart.length)))
+  );
+  const matchLabels = getProfileMatchLabelsForProduct(product, quizResults, healthProfile);
   const parts = [];
+  if (matchLabels.length > 0) {
+    parts.push(
+      `**For you:** Others focused on ${matchLabels.join(', ')} often read forums for texture and fit—stories are not medical proof.`
+    );
+  }
   if (ai) parts.push(truncate(ai, 380));
-  if (quotePart && !quoteRedundant) parts.push(`Representative online chatter includes: “${truncate(quotePart, 200)}”`);
-  if (product.incentivizedReviewSites?.length) {
-    parts.push('Some platforms we link to may host incentivized or biased reviews—read critically.');
-  }
-  if (parts.length === 0) {
-    return 'No community synthesis yet. Use **Load AI summaries** for Reddit/YouTube shortcuts, or open **Sources** below.';
-  }
-  parts.push('This is anecdotal, not proof of safety or efficacy.');
-  return parts.join(' ');
+  if (quotePart && !quoteRedundant) parts.push(`Representative chatter: “${truncate(quotePart, 200)}”`);
+  if (parts.length === 0) return null;
+  parts.push('Online discussion is anecdotal, not evidence of safety or efficacy.');
+  return nonEmptyInsight(parts.join(' '));
 }
 
 /**
@@ -270,9 +296,6 @@ function buildQuickOverviewBlocks(product, aiInsights, quizResults, healthProfil
   if (considerations) forYouParts.push(considerations);
   if (profileTailoring) forYouParts.push(profileTailoring);
   if (recallBad) forYouParts.push('**Safety:** Check the Safety tab for recalls or alerts before you buy.');
-  forYouParts.push(
-    '**Detail:** Open **Clinician opinions**, **Scientific literature**, and **Community** for full summaries and sources—we keep them out of this box on purpose.'
-  );
 
   return [{ id: 'you', title: 'For you', body: forYouParts.join(' ') }];
 }
@@ -335,10 +358,10 @@ export default function ProductModal({
         const isDig = product.type === 'digital';
         return {
             quickOverview: buildQuickOverviewBlocks(product, aiInsights, quizResults, healthProfile, profileTailoring),
-            safetySummary: buildSafetyTabSummary(product, isDig),
-            clinicalSummary: buildClinicalTabSummary(product, aiInsights),
-            scienceSummary: buildScienceTabSummary(product, aiInsights),
-            socialSummary: buildSocialTabSummary(product, aiInsights),
+            safetyInsight: buildSafetyInsight(product, isDig, profileTailoring, quizResults, healthProfile),
+            clinicalInsight: buildClinicalInsight(product, aiInsights, quizResults, healthProfile, profileTailoring),
+            scienceInsight: buildScienceInsight(product, aiInsights, quizResults, healthProfile),
+            socialInsight: buildSocialInsight(product, aiInsights, quizResults, healthProfile),
         };
     }, [product, aiInsights, quizResults, healthProfile, profileTailoring]);
 
@@ -1001,21 +1024,15 @@ export default function ProductModal({
                     {activeTab === 'safety' && (
                         <div className="animate-fade-in">
                             <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Safety &amp; what to know</h3>
-                            <div
-                                style={{
-                                    marginBottom: '1.25rem',
-                                    padding: '1.25rem',
-                                    borderRadius: 'var(--radius-lg)',
-                                    background: 'linear-gradient(135deg, #FDF4FF 0%, #F5F3FF 100%)',
-                                    border: '1px solid #E9D5FF',
-                                }}
-                            >
-                                <h4 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#7E22CE', marginBottom: '0.65rem' }}>Summary</h4>
-                                <p style={{ fontSize: '0.95rem', color: '#581C87', lineHeight: 1.65, margin: 0 }}>
-                                    {renderRichText(condensed?.safetySummary || '')}
-                                </p>
-                            </div>
-                            <h4 style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', margin: '1.25rem 0 0.65rem' }}>Sources &amp; detail</h4>
+                            {condensed?.safetyInsight && (
+                                <div style={purpleInsightBoxStyle}>
+                                    <h4 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#7E22CE', marginBottom: '0.65rem' }}>Insight</h4>
+                                    <p style={{ fontSize: '0.95rem', color: '#581C87', lineHeight: 1.65, margin: 0 }}>
+                                        {renderRichText(condensed.safetyInsight)}
+                                    </p>
+                                </div>
+                            )}
+                            <h4 style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', margin: '0 0 0.65rem' }}>Sources &amp; summarized detail</h4>
                             <details style={{ marginTop: 0 }}>
                                 <summary style={{ cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600', color: 'var(--color-primary)', marginBottom: '0.75rem' }}>
                                     Regulatory status, label-style materials, recalls, and privacy
@@ -1071,26 +1088,25 @@ export default function ProductModal({
                     {activeTab === 'doctor' && (
                         <div className="animate-fade-in">
                             <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Clinician opinions</h3>
-                            <div
-                                style={{
-                                    marginBottom: '1.25rem',
-                                    padding: '1.25rem',
-                                    borderRadius: 'var(--radius-lg)',
-                                    background: 'linear-gradient(135deg, #FDF4FF 0%, #F5F3FF 100%)',
-                                    border: '1px solid #E9D5FF',
-                                }}
-                            >
-                                <h4 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#7E22CE', marginBottom: '0.65rem' }}>Summary</h4>
-                                <p style={{ fontSize: '0.95rem', color: '#581C87', lineHeight: 1.65, margin: 0 }}>
-                                    {renderRichText(condensed?.clinicalSummary || '')}
-                                </p>
-                                <p style={{ fontSize: '0.72rem', color: '#7E22CE', margin: '0.75rem 0 0', fontWeight: '600' }}>
+                            {condensed?.clinicalInsight && (
+                                <div style={purpleInsightBoxStyle}>
+                                    <h4 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#7E22CE', marginBottom: '0.65rem' }}>Insight</h4>
+                                    <p style={{ fontSize: '0.95rem', color: '#581C87', lineHeight: 1.65, margin: 0 }}>
+                                        {renderRichText(condensed.clinicalInsight)}
+                                    </p>
+                                    <p style={{ fontSize: '0.72rem', color: '#7E22CE', margin: '0.75rem 0 0', fontWeight: '600' }}>
+                                        For learning only—not a substitute for your clinician.
+                                    </p>
+                                </div>
+                            )}
+                            {!condensed?.clinicalInsight && (
+                                <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', margin: '0 0 1rem', lineHeight: 1.5 }}>
                                     For learning only—not a substitute for your clinician.
                                 </p>
-                            </div>
+                            )}
                             {((product.doctorOpinion && !suppressDoctorDuplicateInList) || product.clinicianAttribution) && (
                                 <div style={{ marginBottom: '1.25rem' }}>
-                                    <h4 style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>Clinician notes in our data</h4>
+                                    <h4 style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>Summarized info (our database)</h4>
                                     <ul style={{ margin: 0, paddingLeft: '1.1rem', fontSize: '0.9rem', lineHeight: 1.55, color: 'var(--color-text-main)' }}>
                                         {product.doctorOpinion && !suppressDoctorDuplicateInList && (
                                             <li style={{ marginBottom: '0.5rem' }}>
@@ -1105,7 +1121,7 @@ export default function ProductModal({
                                     </ul>
                                 </div>
                             )}
-                            <h4 style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>Sources</h4>
+                            <h4 style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', margin: '1.25rem 0 0.5rem' }}>Sources</h4>
                             {renderAiReferenceCards(aiInsights?.clinicianLinks, 'MedlinePlus search shortcuts (government patient education)', true)}
                             {renderVerificationLinks(
                                 product.verificationLinks?.doctor,
@@ -1121,21 +1137,15 @@ export default function ProductModal({
                     {activeTab === 'science' && (
                         <div className="animate-fade-in">
                             <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Scientific literature</h3>
-                            <div
-                                style={{
-                                    marginBottom: '1.25rem',
-                                    padding: '1.25rem',
-                                    borderRadius: 'var(--radius-lg)',
-                                    background: 'linear-gradient(135deg, #FDF4FF 0%, #F5F3FF 100%)',
-                                    border: '1px solid #E9D5FF',
-                                }}
-                            >
-                                <h4 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#7E22CE', marginBottom: '0.65rem' }}>Summary</h4>
-                                <p style={{ fontSize: '0.95rem', color: '#581C87', lineHeight: 1.65, margin: 0 }}>
-                                    {renderRichText(condensed?.scienceSummary || '')}
-                                </p>
-                            </div>
-                            <h4 style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>Sources</h4>
+                            {condensed?.scienceInsight && (
+                                <div style={purpleInsightBoxStyle}>
+                                    <h4 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#7E22CE', marginBottom: '0.65rem' }}>Insight</h4>
+                                    <p style={{ fontSize: '0.95rem', color: '#581C87', lineHeight: 1.65, margin: 0 }}>
+                                        {renderRichText(condensed.scienceInsight)}
+                                    </p>
+                                </div>
+                            )}
+                            <h4 style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', margin: '1.25rem 0 0.5rem' }}>Sources</h4>
                             {renderAiReferenceCards(aiInsights?.literatureLinks, 'PubMed search shortcuts', true)}
                             {renderVerificationLinks(
                                 product.verificationLinks?.scientific,
@@ -1151,45 +1161,36 @@ export default function ProductModal({
                     {activeTab === 'social' && (
                         <div className="animate-fade-in">
                             <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Community Experience & Social Proof</h3>
-                            <div
-                                style={{
-                                    marginBottom: '1.25rem',
-                                    padding: '1.25rem',
-                                    borderRadius: 'var(--radius-lg)',
-                                    background: 'linear-gradient(135deg, #FDF4FF 0%, #F5F3FF 100%)',
-                                    border: '1px solid #E9D5FF',
-                                }}
-                            >
-                                <h4 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#7E22CE', marginBottom: '0.65rem' }}>Summary</h4>
-                                <p style={{ fontSize: '0.95rem', color: '#581C87', lineHeight: 1.65, margin: 0 }}>
-                                    {renderRichText(condensed?.socialSummary || '')}
-                                </p>
-                                {product.incentivizedReviewSites && product.incentivizedReviewSites.length > 0 && (
-                                    <div
-                                        style={{
-                                            marginTop: '0.85rem',
-                                            padding: '0.65rem 0.75rem',
-                                            borderRadius: 'var(--radius-sm)',
-                                            background: '#FFF7ED',
-                                            border: '1px solid #FFEDD5',
-                                            fontSize: '0.82rem',
-                                            color: '#9A3412',
-                                        }}
-                                    >
-                                        <strong>Platforms flagged as potentially incentivized:</strong>{' '}
-                                        {product.incentivizedReviewSites.map((s, i) => (
-                                            <span key={i}>
-                                                {i > 0 && '; '}
-                                                {s.site}
-                                                {s.source ? ` (${s.source})` : ''}
-                                            </span>
-                                        ))}
-                                    </div>
-                                )}
-                                <p style={{ fontSize: '0.72rem', color: '#7E22CE', margin: '0.75rem 0 0', fontWeight: '600' }}>
-                                    Anecdotal only — not evidence of safety or efficacy.
-                                </p>
-                            </div>
+                            {condensed?.socialInsight && (
+                                <div style={purpleInsightBoxStyle}>
+                                    <h4 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#7E22CE', marginBottom: '0.65rem' }}>Insight</h4>
+                                    <p style={{ fontSize: '0.95rem', color: '#581C87', lineHeight: 1.65, margin: 0 }}>
+                                        {renderRichText(condensed.socialInsight)}
+                                    </p>
+                                </div>
+                            )}
+                            {product.incentivizedReviewSites && product.incentivizedReviewSites.length > 0 && (
+                                <div
+                                    style={{
+                                        marginBottom: '1rem',
+                                        padding: '0.65rem 0.75rem',
+                                        borderRadius: 'var(--radius-sm)',
+                                        background: '#FFF7ED',
+                                        border: '1px solid #FFEDD5',
+                                        fontSize: '0.82rem',
+                                        color: '#9A3412',
+                                    }}
+                                >
+                                    <strong>Platforms flagged as potentially incentivized:</strong>{' '}
+                                    {product.incentivizedReviewSites.map((s, i) => (
+                                        <span key={i}>
+                                            {i > 0 && '; '}
+                                            {s.site}
+                                            {s.source ? ` (${s.source})` : ''}
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
                             <h4 style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', margin: '1.25rem 0 0.5rem' }}>Sources</h4>
                             {aiInsights?.communityLinks?.length > 0 && (
                                 <div style={{ marginBottom: '1rem' }}>
