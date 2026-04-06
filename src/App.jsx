@@ -21,6 +21,8 @@ import Articles from './components/Articles';
 import ProfileChatbot from './components/ProfileChatbot';
 import { loadHealthProfile, inferTagsFromHealthProfile } from './utils/healthDataProfile';
 
+const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted'];
+
 function App() {
   const [currentView, setCurrentView] = useState('hero');
   const [quizResults, setQuizResults] = useState(null);
@@ -173,6 +175,24 @@ function App() {
 
   const totalBadge = Object.keys(trackedProducts).length + Object.keys(joinedWaitlists).length;
 
+  const ecosystemNavViews = useMemo(() => ['ecosystem', 'comparison', 'omitted'], []);
+  const ecosystemSelectValue = ecosystemNavViews.includes(currentView) ? currentView : 'ecosystem';
+  const omittedCount = Object.keys(omittedProducts).length;
+  const ecosystemCount = Object.keys(myProducts).length;
+
+  const handleEcosystemSelect = (e) => {
+    const v = e.target.value;
+    if (v === 'ecosystem') {
+      if (isPremium) handleViewEcosystem();
+      else togglePremium();
+    } else if (v === 'comparison') {
+      if (isPremium) handleViewComparison();
+      else togglePremium();
+    } else if (v === 'omitted') {
+      handleViewOmitted();
+    }
+  };
+
   const handleOpenProduct = (product) => setSelectedProductModal(product);
   const handleCloseProduct = () => setSelectedProductModal(null);
 
@@ -278,24 +298,38 @@ function App() {
               </button>
             </div>
 
-            {/* Personalized Ecosystem (Premium Gated) */}
+            {/* Personalized Ecosystem: single dropdown (My ecosystem, Compare, Hidden) */}
             <div style={{ display: 'flex', gap: '0.35rem', alignItems: 'center' }}>
-              <div style={{ display: 'flex', gap: '0.35rem', opacity: isPremium ? 1 : 0.6 }}>
-                <button
-                  style={{ fontSize: '0.8rem', fontWeight: '500', color: currentView === 'ecosystem' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem', border: 'none', background: 'none', cursor: 'pointer' }}
-                  onClick={isPremium ? handleViewEcosystem : togglePremium}
-                >
-                  Ecosystem {!isPremium && '🔒'} {isPremium && Object.keys(myProducts).length > 0 && <span style={{ background: 'var(--color-primary)', color: 'white', padding: '0.05rem 0.3rem', borderRadius: '1rem', fontSize: '0.65rem', marginLeft: '0.1rem' }}>{Object.keys(myProducts).length}</span>}
-                </button>
-                {isPremium && (
-                  <button style={{ fontSize: '0.8rem', fontWeight: '500', color: currentView === 'comparison' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem', border: 'none', background: 'none', cursor: 'pointer' }} onClick={handleViewComparison}>
-                    Compare
-                  </button>
-                )}
-                <button style={{ fontSize: '0.8rem', fontWeight: '500', border: 'none', background: 'none', cursor: 'pointer', color: currentView === 'omitted' ? 'var(--color-primary)' : 'var(--color-text-main)', display: 'flex', alignItems: 'center', gap: '0.2rem', padding: '0.2rem 0.4rem' }} onClick={handleViewOmitted}>
-                  Hidden {Object.keys(omittedProducts).length > 0 && <span style={{ background: 'var(--color-primary)', color: 'white', padding: '0.05rem 0.3rem', borderRadius: '1rem', fontSize: '0.65rem' }}>{Object.keys(omittedProducts).length}</span>}
-                </button>
-              </div>
+              <label htmlFor="nav-ecosystem-select" style={{ position: 'absolute', width: 1, height: 1, padding: 0, margin: -1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0 }}>
+                Ecosystem: my products, compare, or hidden
+              </label>
+              <select
+                id="nav-ecosystem-select"
+                value={ecosystemSelectValue}
+                onChange={handleEcosystemSelect}
+                style={{
+                  fontSize: '0.8rem',
+                  fontWeight: ECOSYSTEM_NAV_VIEWS.includes(currentView) ? '700' : '500',
+                  color: ECOSYSTEM_NAV_VIEWS.includes(currentView) ? 'var(--color-primary)' : 'var(--color-text-main)',
+                  padding: '0.25rem 1.6rem 0.25rem 0.35rem',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: 'var(--radius-md)',
+                  background: 'var(--color-surface-soft)',
+                  cursor: 'pointer',
+                  opacity: isPremium ? 1 : 0.85,
+                  maxWidth: '11rem',
+                }}
+              >
+                <option value="ecosystem">
+                  {`My ecosystem${!isPremium ? ' 🔒' : ''}${isPremium && ecosystemCount > 0 ? ` (${ecosystemCount})` : ''}`}
+                </option>
+                <option value="comparison" disabled={!isPremium}>
+                  {`Compare${!isPremium ? ' 🔒' : compareList.length > 0 ? ` (${compareList.length})` : ''}`}
+                </option>
+                <option value="omitted">
+                  {`Hidden${omittedCount > 0 ? ` (${omittedCount})` : ''}`}
+                </option>
+              </select>
             </div>
           </div>
 
