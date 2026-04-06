@@ -60,6 +60,16 @@ export async function fetchProductInsights(product, options = {}) {
     err.code = data?.error;
     err.hint = data?.hint;
     err.envPresent = data?.envPresent;
+    err.status = res.status;
+    if (res.status === 429) {
+      const ra = res.headers.get('Retry-After');
+      err.retryAfterSeconds =
+        typeof data?.retryAfterSeconds === 'number'
+          ? data.retryAfterSeconds
+          : ra
+            ? parseInt(ra, 10)
+            : undefined;
+    }
     throw err;
   }
   return data;

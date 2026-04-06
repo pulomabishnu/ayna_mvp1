@@ -368,7 +368,17 @@ export default function ProductModal({
             setAiInsights(data);
             setActiveTab('doctor');
         } catch (e) {
-            setAiError(e?.message || 'Could not load Ayna insights');
+            if (e?.status === 429) {
+                const sec = e.retryAfterSeconds;
+                const mins = sec != null && sec >= 60 ? Math.ceil(sec / 60) : null;
+                setAiError(
+                    mins != null
+                        ? `Too many insight requests. Try again in about ${mins} min.`
+                        : 'Too many insight requests. Please wait a bit and try again.'
+                );
+            } else {
+                setAiError(e?.message || 'Could not load Ayna insights');
+            }
         } finally {
             setAiLoading(false);
         }

@@ -5,6 +5,7 @@
 /* global process */
 
 import { deriveBrandSearchContext } from '../src/utils/productBrandContext.js';
+import { checkProductInsightsRateLimit } from './rateLimitProductInsights.js';
 
 const MAX_NARRATIVE_LEN = 2200;
 const MAX_EXTRA_SUMMARY_LEN = 800;
@@ -85,7 +86,7 @@ Tailoring rules when reader context is present:
 - Type: ${type}
 - Summary: ${summary}
 - Tags: ${tags}
-${readerBlock}
+${brandBlock}${readerBlock}
 Return a SINGLE JSON object with this exact shape (no markdown, no URLs anywhere in any field):
 {
   "clinicalNarrative": "2-4 sentences: neutral clinical / product-category context. Educational only. No diagnosis or treatment instructions for the reader. When reader context is provided, open with one short clause on relevance to their profile when appropriate.",
@@ -518,6 +519,18 @@ export default async function handler(req, res) {
   }
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const rate = await checkProductInsightsRateLimit(req);
+  if (!rate.ok) {
+    const retrySec = rate.retryAfterSec ?? 60;
+    res.setHeader('Retry-After', String(retrySec));
+    return res.status(429).json({
+      error: 'rate_limited',
+      message:
+        'Too many Ayna insight requests from this network. Please wait before trying again.',
+      retryAfterSeconds: retrySec,
+    });
   }
 
   if (!anyApiKeyConfigured()) {
