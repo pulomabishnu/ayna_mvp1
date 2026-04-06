@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import Hero from './components/Hero';
 import Quiz from './components/Quiz';
 import Recommendations from './components/Recommendations';
@@ -175,23 +175,39 @@ function App() {
 
   const totalBadge = Object.keys(trackedProducts).length + Object.keys(joinedWaitlists).length;
 
-  const ecosystemNavViews = useMemo(() => ['ecosystem', 'comparison', 'omitted'], []);
-  const ecosystemSelectValue = ecosystemNavViews.includes(currentView) ? currentView : 'ecosystem';
   const omittedCount = Object.keys(omittedProducts).length;
   const ecosystemCount = Object.keys(myProducts).length;
+  const ecoNavRef = useRef(null);
+  const [ecoMenuOpen, setEcoMenuOpen] = useState(false);
+  const [touchUi, setTouchUi] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches
+  );
 
-  const handleEcosystemSelect = (e) => {
-    const v = e.target.value;
-    if (v === 'ecosystem') {
-      if (isPremium) handleViewEcosystem();
-      else togglePremium();
-    } else if (v === 'comparison') {
-      if (isPremium) handleViewComparison();
-      else togglePremium();
-    } else if (v === 'omitted') {
-      handleViewOmitted();
-    }
-  };
+  useEffect(() => {
+    const mq = window.matchMedia('(hover: none)');
+    const sync = () => setTouchUi(mq.matches);
+    sync();
+    mq.addEventListener('change', sync);
+    return () => mq.removeEventListener('change', sync);
+  }, []);
+
+  useEffect(() => {
+    if (!ecoMenuOpen) return;
+    const close = (e) => {
+      if (ecoNavRef.current && !ecoNavRef.current.contains(e.target)) setEcoMenuOpen(false);
+    };
+    document.addEventListener('pointerdown', close);
+    return () => document.removeEventListener('pointerdown', close);
+  }, [ecoMenuOpen]);
+
+  useEffect(() => {
+    if (!ecoMenuOpen) return;
+    const onKey = (e) => {
+      if (e.key === 'Escape') setEcoMenuOpen(false);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [ecoMenuOpen]);
 
   const handleOpenProduct = (product) => setSelectedProductModal(product);
   const handleCloseProduct = () => setSelectedProductModal(null);
@@ -298,38 +314,75 @@ function App() {
               </button>
             </div>
 
-            {/* Personalized Ecosystem: single dropdown (My ecosystem, Compare, Hidden) */}
-            <div style={{ display: 'flex', gap: '0.35rem', alignItems: 'center' }}>
-              <label htmlFor="nav-ecosystem-select" style={{ position: 'absolute', width: 1, height: 1, padding: 0, margin: -1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0 }}>
-                Ecosystem: my products, compare, or hidden
-              </label>
-              <select
-                id="nav-ecosystem-select"
-                value={ecosystemSelectValue}
-                onChange={handleEcosystemSelect}
-                style={{
-                  fontSize: '0.8rem',
-                  fontWeight: ECOSYSTEM_NAV_VIEWS.includes(currentView) ? '700' : '500',
-                  color: ECOSYSTEM_NAV_VIEWS.includes(currentView) ? 'var(--color-primary)' : 'var(--color-text-main)',
-                  padding: '0.25rem 1.6rem 0.25rem 0.35rem',
-                  border: '1px solid var(--color-border)',
-                  borderRadius: 'var(--radius-md)',
-                  background: 'var(--color-surface-soft)',
-                  cursor: 'pointer',
-                  opacity: isPremium ? 1 : 0.85,
-                  maxWidth: '11rem',
-                }}
-              >
-                <option value="ecosystem">
-                  {`My ecosystem${!isPremium ? ' 🔒' : ''}${isPremium && ecosystemCount > 0 ? ` (${ecosystemCount})` : ''}`}
-                </option>
-                <option value="comparison" disabled={!isPremium}>
-                  {`Compare${!isPremium ? ' 🔒' : compareList.length > 0 ? ` (${compareList.length})` : ''}`}
-                </option>
-                <option value="omitted">
-                  {`Hidden${omittedCount > 0 ? ` (${omittedCount})` : ''}`}
-                </option>
-              </select>
+            {/* Ecosystem: label + hover menu (Compare, Hidden) */}
+            <div
+              ref={ecoNavRef}
+              className={`nav-ecosystem ${ecoMenuOpen ? 'nav-ecosystem--open' : ''} ${ecoMenuOpen && touchUi ? 'nav-ecosystem--caret-open' : ''}`}
+              style={{ opacity: isPremium ? 1 : 0.6 }}
+            >
+              <div className="nav-ecosystem__row">
+                <button
+                  type="button"
+                  id="nav-ecosystem-trigger"
+                  className={`nav-ecosystem__trigger ${ECOSYSTEM_NAV_VIEWS.includes(currentView) ? 'nav-ecosystem__trigger--active' : ''}`}
+                  onClick={() => (isPremium ? handleViewEcosystem() : togglePremium())}
+                  aria-haspopup="menu"
+                  aria-expanded={touchUi ? ecoMenuOpen : undefined}
+                  aria-controls="nav-ecosystem-menu"
+                >
+                  Ecosystem
+                  {!isPremium && <span aria-hidden>🔒</span>}
+                  {isPremium && ecosystemCount > 0 && (
+                    <span className="nav-ecosystem__pill">{ecosystemCount}</span>
+                  )}
+                  {!touchUi && <span className="nav-ecosystem__hint" aria-hidden>▾</span>}
+                </button>
+                {touchUi && (
+                  <button
+                    type="button"
+                    className="nav-ecosystem__caret-btn"
+                    aria-label="Open Compare and Hidden menu"
+                    aria-expanded={ecoMenuOpen}
+                    aria-controls="nav-ecosystem-menu"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setEcoMenuOpen((v) => !v);
+                    }}
+                  >
+                    ▾
+                  </button>
+                )}
+              </div>
+              <div className="nav-ecosystem__panel" role="menu" id="nav-ecosystem-menu" aria-labelledby="nav-ecosystem-trigger">
+                <button
+                  type="button"
+                  role="menuitem"
+                  className={`nav-ecosystem__item ${currentView === 'comparison' ? 'nav-ecosystem__item--active' : ''}`}
+                  onClick={() => {
+                    setEcoMenuOpen(false);
+                    if (isPremium) handleViewComparison();
+                    else togglePremium();
+                  }}
+                >
+                  <span>Compare</span>
+                  {!isPremium && <span aria-hidden>🔒</span>}
+                  {isPremium && compareList.length > 0 && (
+                    <span className="nav-ecosystem__item-pill">{compareList.length}</span>
+                  )}
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  className={`nav-ecosystem__item ${currentView === 'omitted' ? 'nav-ecosystem__item--active' : ''}`}
+                  onClick={() => {
+                    setEcoMenuOpen(false);
+                    handleViewOmitted();
+                  }}
+                >
+                  <span>Hidden</span>
+                  {omittedCount > 0 && <span className="nav-ecosystem__item-pill">{omittedCount}</span>}
+                </button>
+              </div>
             </div>
           </div>
 

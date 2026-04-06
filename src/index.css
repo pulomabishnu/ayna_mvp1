@@ -226,3 +226,187 @@ html {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* Header: Ecosystem hover dropdown (Compare, Hidden) */
+.nav-ecosystem {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+}
+
+.nav-ecosystem__row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.05rem;
+}
+
+.nav-ecosystem__trigger {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-text-main);
+  padding: 0.2rem 0.4rem;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.nav-ecosystem__trigger:hover {
+  color: var(--color-primary);
+}
+
+.nav-ecosystem__trigger--active {
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.nav-ecosystem__pill {
+  background: var(--color-primary);
+  color: white;
+  padding: 0.05rem 0.3rem;
+  border-radius: 1rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+}
+
+.nav-ecosystem__hint {
+  font-size: 0.55rem;
+  opacity: 0.38;
+  margin-left: 0.05rem;
+  line-height: 1;
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+
+.nav-ecosystem:hover .nav-ecosystem__hint {
+  opacity: 0.72;
+}
+
+@media (hover: none) {
+  .nav-ecosystem__hint {
+    display: none;
+  }
+}
+
+.nav-ecosystem__caret-btn {
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  line-height: 1;
+  color: var(--color-text-muted);
+  padding: 0.15rem 0.25rem;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--transition-fast), background var(--transition-fast), transform var(--transition-fast);
+}
+
+.nav-ecosystem__caret-btn:hover,
+.nav-ecosystem__caret-btn:focus-visible {
+  color: var(--color-primary);
+  background: var(--color-secondary-fade);
+  outline: none;
+}
+
+.nav-ecosystem--caret-open .nav-ecosystem__caret-btn {
+  color: var(--color-primary);
+  transform: rotate(180deg);
+}
+
+.nav-ecosystem__panel {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  left: 0;
+  min-width: 10.5rem;
+  padding: 0.35rem 0;
+  margin: 0;
+  list-style: none;
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  z-index: 1002;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px) scale(0.98);
+  transform-origin: top center;
+  pointer-events: none;
+  transition:
+    opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+    visibility 0.22s;
+}
+
+@media (hover: hover) {
+  .nav-ecosystem:hover .nav-ecosystem__panel,
+  .nav-ecosystem:focus-within .nav-ecosystem__panel {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+  }
+}
+
+@media (hover: none) {
+  .nav-ecosystem.nav-ecosystem--open .nav-ecosystem__panel,
+  .nav-ecosystem:focus-within .nav-ecosystem__panel {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-ecosystem__panel {
+    transition: opacity 0.12s ease, visibility 0.12s;
+    transform: none;
+  }
+
+  .nav-ecosystem:hover .nav-ecosystem__panel,
+  .nav-ecosystem:focus-within .nav-ecosystem__panel,
+  .nav-ecosystem.nav-ecosystem--open .nav-ecosystem__panel {
+    transform: none;
+  }
+}
+
+.nav-ecosystem__item {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-text-main);
+  width: 100%;
+  text-align: left;
+  padding: 0.5rem 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.nav-ecosystem__item:hover,
+.nav-ecosystem__item:focus-visible {
+  background: var(--color-secondary-fade);
+  color: var(--color-primary);
+  outline: none;
+}
+
+.nav-ecosystem__item--active {
+  font-weight: 700;
+  color: var(--color-primary);
+  background: rgba(217, 119, 145, 0.08);
+}
+
+.nav-ecosystem__item-pill {
+  background: var(--color-primary);
+  color: white;
+  padding: 0.05rem 0.35rem;
+  border-radius: 1rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
