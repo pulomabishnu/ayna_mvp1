@@ -106,7 +106,7 @@ function padMatchesSubFilters(item, padFlow, padPreference, padUseCase) {
     return true;
 }
 
-export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, isPremium, onUpgrade, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false }) {
+export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false }) {
     const [categoryFilter, setCategoryFilter] = useState(initialCategory || 'all');
     const [typeFilter, setTypeFilter] = useState('all');
     const [searchQuery, setSearchQuery] = useState(initialSearch || '');
@@ -621,15 +621,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                                         style={{
                                                             padding: '0.35rem 0.7rem',
                                                             fontSize: '0.75rem',
-                                                            opacity: (!isPremium && !isInEcosystem) ? 0.8 : 1
                                                         }}
-                                                        onClick={() => {
-                                                            if (isPremium || isInEcosystem) {
-                                                                onToggleProduct(item);
-                                                            } else {
-                                                                onUpgrade();
-                                                            }
-                                                        }}
+                                                        onClick={() => onToggleProduct(item)}
                                                     >
                                                         {isInEcosystem ? '✓' : 'Add to ecosystem'}
                                                     </button>
@@ -678,22 +671,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                                     style={{
                                                         padding: '0.35rem 0.7rem',
                                                         fontSize: '0.75rem',
-                                                        opacity: (!isPremium && !isJoined) ? 0.8 : 1
                                                     }}
-                                                    onClick={() => {
-                                                        if (isPremium || isJoined) {
-                                                            toggleJoinWaitlist(item);
-                                                        } else {
-                                                            onUpgrade();
-                                                        }
-                                                    }}
+                                                    onClick={() => toggleJoinWaitlist(item)}
                                                 >
-                                                    {isJoined ? 'Leave' : (
-                                                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                                                            {!isPremium && <span>🔒</span>}
-                                                            {isPremium ? 'Join' : 'Upgrade'}
-                                                        </span>
-                                                    )}
+                                                    {isJoined ? 'Leave' : 'Join'}
                                                 </button>
                                             )
                                         ) : (

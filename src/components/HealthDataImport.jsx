@@ -104,7 +104,7 @@ export default function HealthDataImport({ onUpdate }) {
     <div style={{ maxWidth: '800px', margin: '0 auto 3rem', padding: '1.5rem', background: 'var(--color-surface-soft)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)' }}>
       <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>Health data import</h3>
       <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem', lineHeight: 1.55, marginBottom: '1.25rem' }}>
-        Connect EHR exports, manual conditions, and wearable summaries so your ecosystem ranking matches what you share with your care team. Data stays in this browser unless you choose to sync (premium). We never sell health data.
+        Connect EHR exports, manual conditions, and wearable summaries so your ecosystem ranking matches what you share with your care team. Data stays in this browser. We never sell health data.
       </p>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem' }}>

@@ -578,7 +578,7 @@ export const DIGITAL_PRODUCTS = [
         internal: false,
         healthFunctions: ['cycle-tracking'],
         tags: ['discomfort', 'comfort'],
-        price: 'Free (Premium available)',
+        price: 'Free',
         userRating: 4.5,
         whereToBuy: ['App Store', 'Google Play'],
         platform: 'iOS, Android',

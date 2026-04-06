@@ -31,7 +31,6 @@ function App() {
   const [myProducts, setMyProducts] = useState({});
   const [omittedProducts, setOmittedProducts] = useState({});
   const [compareList, setCompareList] = useState([]);
-  const [isPremium, setIsPremium] = useState(false);
   const [showCheckin, setShowCheckin] = useState(false);
   const [checkinData, setCheckinData] = useState(null);
   const [checkinUpdatedProfile, setCheckinUpdatedProfile] = useState(false);
@@ -116,8 +115,6 @@ function App() {
     }
     setCurrentView('recommendations');
   };
-
-  const togglePremium = () => setIsPremium(!isPremium);
 
   const toggleCompare = (product) => {
     setCompareList(prev => {
@@ -224,54 +221,6 @@ function App() {
 
   return (
     <div className="app-container">
-      {/* Premium Banner for Free Users */}
-      {!isPremium && (
-        <div style={{
-          background: 'linear-gradient(90deg, #FDF2F8 0%, #FCE7F3 50%, #E0F2FE 100%)',
-          color: 'var(--color-surface-contrast)',
-          padding: '0.7rem 1.25rem',
-          textAlign: 'center',
-          fontSize: '0.9rem',
-          fontWeight: '500',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          gap: '1rem',
-          boxShadow: '0 8px 20px rgba(236, 91, 163, 0.15)'
-        }}>
-          <span>✨ Upgrade to Premium to save data, compare products, and access Deeptech.</span>
-          <button
-            onClick={togglePremium}
-            style={{
-              background: 'var(--color-primary)',
-              color: 'white',
-              padding: '0.25rem 0.9rem',
-              borderRadius: 'var(--radius-pill)',
-              fontSize: '0.8rem',
-              fontWeight: '700',
-              boxShadow: '0 4px 10px rgba(217, 76, 147, 0.45)'
-            }}
-          >
-            Upgrade Now
-          </button>
-        </div>
-      )}
-
-      {isPremium && (
-        <div style={{
-          background: 'rgba(253, 236, 245, 0.9)',
-          color: 'var(--color-primary)',
-          padding: '0.5rem 1.25rem',
-          textAlign: 'center',
-          fontSize: '0.8rem',
-          fontWeight: '600',
-          boxShadow: '0 6px 18px rgba(236, 91, 163, 0.12)'
-        }}>
-          🌟 Premium Member Status: Active
-          <button onClick={togglePremium} style={{ marginLeft: '1rem', textDecoration: 'underline', fontSize: '0.7rem' }}>Demo: Downgrade</button>
-        </div>
-      )}
-
       <main>
         {/* Navigation — condensed */}
         <nav style={{
@@ -318,21 +267,19 @@ function App() {
             <div
               ref={ecoNavRef}
               className={`nav-ecosystem ${ecoMenuOpen ? 'nav-ecosystem--open' : ''} ${ecoMenuOpen && touchUi ? 'nav-ecosystem--caret-open' : ''}`}
-              style={{ opacity: isPremium ? 1 : 0.6 }}
             >
               <div className="nav-ecosystem__row">
                 <button
                   type="button"
                   id="nav-ecosystem-trigger"
                   className={`nav-ecosystem__trigger ${ECOSYSTEM_NAV_VIEWS.includes(currentView) ? 'nav-ecosystem__trigger--active' : ''}`}
-                  onClick={() => (isPremium ? handleViewEcosystem() : togglePremium())}
+                  onClick={handleViewEcosystem}
                   aria-haspopup="menu"
                   aria-expanded={touchUi ? ecoMenuOpen : undefined}
                   aria-controls="nav-ecosystem-menu"
                 >
                   Ecosystem
-                  {!isPremium && <span aria-hidden>🔒</span>}
-                  {isPremium && ecosystemCount > 0 && (
+                  {ecosystemCount > 0 && (
                     <span className="nav-ecosystem__pill">{ecosystemCount}</span>
                   )}
                   {!touchUi && <span className="nav-ecosystem__hint" aria-hidden>▾</span>}
@@ -360,13 +307,11 @@ function App() {
                   className={`nav-ecosystem__item ${currentView === 'comparison' ? 'nav-ecosystem__item--active' : ''}`}
                   onClick={() => {
                     setEcoMenuOpen(false);
-                    if (isPremium) handleViewComparison();
-                    else togglePremium();
+                    handleViewComparison();
                   }}
                 >
                   <span>Compare</span>
-                  {!isPremium && <span aria-hidden>🔒</span>}
-                  {isPremium && compareList.length > 0 && (
+                  {compareList.length > 0 && (
                     <span className="nav-ecosystem__item-pill">{compareList.length}</span>
                   )}
                 </button>
@@ -393,14 +338,13 @@ function App() {
                 fontSize: '0.75rem', fontWeight: '600', padding: '0.25rem 0.5rem',
                 background: 'var(--color-secondary-fade)', color: 'var(--color-primary)',
                 borderRadius: 'var(--radius-pill)', border: '1px solid var(--color-primary)',
-                opacity: isPremium ? 1 : 0.5
               }}
-              onClick={() => isPremium ? setShowCheckin(true) : togglePremium()}
+              onClick={() => setShowCheckin(true)}
             >
-              Check-in {!isPremium && '🔒'}
+              Check-in
             </button>
             <button style={{ fontSize: '0.8rem', fontWeight: '500', border: 'none', background: 'none', cursor: 'pointer', color: currentView === 'tracked' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem', display: 'flex', alignItems: 'center', gap: '0.2rem' }} onClick={handleViewTracked}>
-              {isPremium ? 'Profile' : 'Guest'} {totalBadge > 0 && <span style={{ background: 'var(--color-primary)', color: 'white', padding: '0.05rem 0.3rem', borderRadius: '1rem', fontSize: '0.65rem', marginLeft: '0.1rem' }}>{totalBadge}</span>}
+              Profile {totalBadge > 0 && <span style={{ background: 'var(--color-primary)', color: 'white', padding: '0.05rem 0.3rem', borderRadius: '1rem', fontSize: '0.65rem', marginLeft: '0.1rem' }}>{totalBadge}</span>}
             </button>
           </div>
         </nav>
@@ -449,8 +393,6 @@ function App() {
             joinedWaitlists={joinedWaitlists}
             toggleJoinWaitlist={toggleJoinWaitlist}
             quizResults={quizResults}
-            isPremium={isPremium}
-            onUpgrade={togglePremium}
             myProducts={myProducts}
             onAddToEcosystem={toggleMyProduct}
             onViewRecalls={handleViewRecalls}
@@ -460,8 +402,6 @@ function App() {
           <AynaDeeptech
             joinedWaitlists={joinedWaitlists}
             toggleJoinWaitlist={toggleJoinWaitlist}
-            isPremium={isPremium}
-            onUpgrade={togglePremium}
           />
         )}
         {currentView === 'articles' && (
@@ -496,8 +436,6 @@ function App() {
             toggleOmitProduct={toggleOmitProduct}
             setCurrentView={setCurrentView}
             onOpenProduct={handleOpenProduct}
-            isPremium={isPremium}
-            onUpgrade={togglePremium}
             initialSearch={discoverySearch}
             recommendedProductIds={recommendedProductIds}
             aynaReviews={aynaReviews}
@@ -511,7 +449,7 @@ function App() {
         {currentView === 'omitted' && (
           <OmittedProducts omittedProducts={omittedProducts} toggleOmitProduct={toggleOmitProduct} />
         )}
-        {currentView === 'comparison' && isPremium && (
+        {currentView === 'comparison' && (
           <Comparison
             compareList={compareList}
             onRemove={toggleCompare}
@@ -523,9 +461,9 @@ function App() {
           />
         )}
         {currentView === 'recalls' && (
-          <Recalls trackedProducts={trackedProducts} myProducts={myProducts} isPremium={isPremium} onUpgrade={togglePremium} />
+          <Recalls trackedProducts={trackedProducts} myProducts={myProducts} />
         )}
-        {currentView === 'doctor-prep' && isPremium && (
+        {currentView === 'doctor-prep' && (
           <DoctorPrep
             checkinData={checkinData}
             myProducts={myProducts}
@@ -574,7 +512,7 @@ function App() {
             onTrack={toggleTrackProduct}
             onOmit={toggleOmitProduct}
             isOmitted={!!omittedProducts[selectedProductModal.id]}
-            onToggleCompare={isPremium ? toggleCompare : null}
+            onToggleCompare={toggleCompare}
             isInCompare={compareList.some(p => p.id === selectedProductModal.id)}
             onAddToEcosystem={toggleMyProduct}
             isInEcosystem={!!myProducts[selectedProductModal.id]}
