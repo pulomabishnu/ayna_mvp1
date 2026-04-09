@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { UNRELEASED_STARTUPS, getPersonalizedStartups } from '../data/startups';
 
-export default function WaitlistHub({ joinedWaitlists, toggleJoinWaitlist, quizResults, myProducts = {}, onAddToEcosystem, onViewRecalls }) {
+export default function WaitlistHub({ joinedWaitlists, toggleJoinWaitlist, quizResults, isPremium, onUpgrade, myProducts = {}, onAddToEcosystem, onViewRecalls }) {
     const startups = useMemo(() => getPersonalizedStartups(quizResults), [quizResults]);
     const hasProfile = !!(quizResults?.frustrations?.length);
 
@@ -136,14 +136,26 @@ export default function WaitlistHub({ joinedWaitlists, toggleJoinWaitlist, quizR
                                             className={`btn ${isInEcosystem ? 'btn-outline' : 'btn-primary'}`}
                                             style={{
                                                 flexGrow: 1,
+                                                opacity: (!isPremium && !isInEcosystem) ? 0.8 : 1,
                                                 display: 'flex',
                                                 alignItems: 'center',
                                                 justifyContent: 'center',
                                                 gap: '0.5rem'
                                             }}
-                                            onClick={() => onAddToEcosystem?.(startup)}
+                                            onClick={() => {
+                                                if (isPremium || isInEcosystem) {
+                                                    onAddToEcosystem?.(startup);
+                                                } else {
+                                                    onUpgrade?.();
+                                                }
+                                            }}
                                         >
-                                            {isInEcosystem ? 'Remove from ecosystem' : 'Add to ecosystem'}
+                                            {isInEcosystem ? 'Remove from ecosystem' : (
+                                                <>
+                                                    {!isPremium && <span>🔒</span>}
+                                                    {isPremium ? 'Add to ecosystem' : 'Upgrade to Add'}
+                                                </>
+                                            )}
                                         </button>
                                         <button
                                             type="button"
@@ -160,14 +172,26 @@ export default function WaitlistHub({ joinedWaitlists, toggleJoinWaitlist, quizR
                                             className={`btn ${isJoined ? 'btn-outline' : 'btn-primary'}`}
                                             style={{
                                                 flexGrow: 1,
+                                                opacity: (!isPremium && !isJoined) ? 0.8 : 1,
                                                 display: 'flex',
                                                 alignItems: 'center',
                                                 justifyContent: 'center',
                                                 gap: '0.5rem'
                                             }}
-                                            onClick={() => toggleJoinWaitlist(startup)}
+                                            onClick={() => {
+                                                if (isPremium || isJoined) {
+                                                    toggleJoinWaitlist(startup);
+                                                } else {
+                                                    onUpgrade?.();
+                                                }
+                                            }}
                                         >
-                                            {isJoined ? 'Leave Waitlist' : '🔔 Join Waitlist'}
+                                            {isJoined ? 'Leave Waitlist' : (
+                                                <>
+                                                    {!isPremium && <span>🔒</span>}
+                                                    {isPremium ? '🔔 Join Waitlist' : 'Upgrade to Join'}
+                                                </>
+                                            )}
                                         </button>
                                     </>
                                 )}

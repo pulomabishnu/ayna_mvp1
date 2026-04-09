@@ -235,7 +235,7 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
                     </div>
                 </div>
             </ScrollReveal>
-            {/* Personalized recommendations CTA */}
+            {/* Premium CTA Block */}
             <ScrollReveal className="stagger-4">
                 <div style={{
                     background: 'linear-gradient(135deg, #FDF2F8 0%, #FCE7F3 40%, #E0F2FE 100%)',
@@ -256,7 +256,7 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
                     <div style={{ flex: '1 1 400px' }}>
                         <h3 style={{ fontSize: '1.4rem', marginBottom: '0.5rem', color: 'var(--color-surface-contrast)' }}>Want personalized recommendations without the work? ✨</h3>
                         <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem' }}>
-                            Ayna is free to use. Build your health profile for tailored recommendations, your product ecosystem, and safety-aware discovery.
+                            Join Ayna Premium for tailored recommendations, your product ecosystem, and safety-aware discovery.
                         </p>
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
@@ -267,8 +267,8 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
                         >
                             Start Your Health Profile
                         </button>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', textAlign: 'center', maxWidth: '220px', lineHeight: '1.2' }}>
-                            Free — takes a few minutes
+                        <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', textAlign: 'center', maxWidth: '200px', lineHeight: '1.2' }}>
+                            *Premium upgrade required to unlock your personalized recommendation plan
                         </span>
                     </div>
                 </div>
