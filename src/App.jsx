@@ -10,7 +10,6 @@ import Discovery from './components/Discovery';
 import MonthlyCheckin from './components/MonthlyCheckin';
 import OmittedProducts from './components/OmittedProducts';
 import Comparison from './components/Comparison';
-import Recalls from './components/Recalls';
 import DoctorPrep from './components/DoctorPrep';
 import { CATEGORY_LABELS, getRecommendations, createCustomEcosystemProducts } from './data/products';
 import { loadAynaReviews, addRating, addReview } from './data/aynaReviews';
@@ -102,7 +101,6 @@ function App() {
   const handleViewScreenings = () => setCurrentView('screenings');
   const handleViewOmitted = () => setCurrentView('omitted');
   const handleViewComparison = () => setCurrentView('comparison');
-  const handleViewRecalls = () => setCurrentView('recalls');
   const handleViewDoctorPrep = () => setCurrentView('doctor-prep');
   const navigateHome = () => {
     setDiscoverySearch('');
@@ -301,9 +299,6 @@ function App() {
               <button style={{ fontSize: '0.8rem', fontWeight: (currentView === 'discovery' || currentView === 'hero') ? '700' : '500', color: currentView === 'discovery' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem' }} onClick={() => handleViewDiscovery('')}>
                 Search
               </button>
-              <button style={{ fontSize: '0.8rem', fontWeight: '500', color: currentView === 'recalls' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem' }} onClick={handleViewRecalls}>
-                Recall
-              </button>
               <button style={{ fontSize: '0.8rem', fontWeight: '500', color: currentView === 'waitlist' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem' }} onClick={handleViewWaitlist}>
                 Startups
               </button>
@@ -457,7 +452,6 @@ function App() {
             onUpgrade={togglePremium}
             myProducts={myProducts}
             onAddToEcosystem={toggleMyProduct}
-            onViewRecalls={handleViewRecalls}
           />
         )}
         {currentView === 'deeptech' && (
@@ -525,9 +519,6 @@ function App() {
             onBrowseProducts={() => handleViewDiscovery('')}
             onAddToCompare={toggleCompare}
           />
-        )}
-        {currentView === 'recalls' && (
-          <Recalls trackedProducts={trackedProducts} myProducts={myProducts} isPremium={isPremium} onUpgrade={togglePremium} />
         )}
         {currentView === 'doctor-prep' && isPremium && (
           <DoctorPrep

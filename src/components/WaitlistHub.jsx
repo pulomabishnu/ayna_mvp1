@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { UNRELEASED_STARTUPS, getPersonalizedStartups } from '../data/startups';
 
-export default function WaitlistHub({ joinedWaitlists, toggleJoinWaitlist, quizResults, isPremium, onUpgrade, myProducts = {}, onAddToEcosystem, onViewRecalls }) {
+export default function WaitlistHub({ joinedWaitlists, toggleJoinWaitlist, quizResults, isPremium, onUpgrade, myProducts = {}, onAddToEcosystem }) {
     const startups = useMemo(() => getPersonalizedStartups(quizResults), [quizResults]);
     const hasProfile = !!(quizResults?.frustrations?.length);
 
@@ -156,14 +156,6 @@ export default function WaitlistHub({ joinedWaitlists, toggleJoinWaitlist, quizR
                                                     {isPremium ? 'Add to ecosystem' : 'Upgrade to Add'}
                                                 </>
                                             )}
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className="btn btn-outline"
-                                            style={{ padding: '0.5rem 0.75rem', fontSize: '0.85rem' }}
-                                            onClick={() => onViewRecalls?.()}
-                                        >
-                                            Monitor for safety recalls
                                         </button>
                                     </>
                                 ) : (
