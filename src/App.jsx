@@ -106,7 +106,7 @@ function App() {
   const handleViewDoctorPrep = () => setCurrentView('doctor-prep');
   const navigateHome = () => {
     setDiscoverySearch('');
-    setCurrentView('welcome');
+    setCurrentView('hero');
   };
 
   const handleQuizComplete = (results) => {
