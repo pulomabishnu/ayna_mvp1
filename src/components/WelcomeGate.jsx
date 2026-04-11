@@ -39,14 +39,14 @@ export default function WelcomeGate({ onPersonalizedPath, onBrowsePath }) {
             <ScrollReveal className="stagger-2">
                 <p
                     style={{
-                        fontSize: '1.1rem',
-                        color: 'var(--color-text-muted)',
-                        maxWidth: '520px',
+                        fontSize: '1.05rem',
+                        color: 'var(--color-text-main)',
+                        maxWidth: '640px',
                         marginBottom: '2.5rem',
-                        lineHeight: 1.6,
+                        lineHeight: 1.65,
                     }}
                 >
-                    Pick how you want to get started.
+                    We build you a personalized ecosystem: of women’s health products, telehealth, and nearby care options across all brands, matched to your own health profile—no one else’s.
                 </p>
             </ScrollReveal>
 
@@ -54,7 +54,7 @@ export default function WelcomeGate({ onPersonalizedPath, onBrowsePath }) {
                 <div
                     style={{
                         width: '100%',
-                        maxWidth: '520px',
+                        maxWidth: '560px',
                         display: 'flex',
                         flexDirection: 'column',
                         gap: '1rem',
@@ -74,7 +74,7 @@ export default function WelcomeGate({ onPersonalizedPath, onBrowsePath }) {
                         }}
                         onClick={onPersonalizedPath}
                     >
-                        We tell you the best products for you
+                        Yes, build me my ecosystem!
                     </button>
                     <button
                         type="button"
@@ -91,7 +91,7 @@ export default function WelcomeGate({ onPersonalizedPath, onBrowsePath }) {
                         }}
                         onClick={onBrowsePath}
                     >
-                        Browse all services and products you want
+                        No thanks, I would rather browse myself
                     </button>
                 </div>
             </ScrollReveal>
