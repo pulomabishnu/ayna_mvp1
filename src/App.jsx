@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import Hero from './components/Hero';
+import WelcomeGate from './components/WelcomeGate';
 import Quiz from './components/Quiz';
 import Recommendations from './components/Recommendations';
 import WaitlistHub from './components/WaitlistHub';
@@ -24,7 +25,7 @@ import { loadHealthProfile, inferTagsFromHealthProfile } from './utils/healthDat
 const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted'];
 
 function App() {
-  const [currentView, setCurrentView] = useState('hero');
+  const [currentView, setCurrentView] = useState('welcome');
   const [quizResults, setQuizResults] = useState(null);
   const [trackedProducts, setTrackedProducts] = useState({});
   const [joinedWaitlists, setJoinedWaitlists] = useState({});
@@ -105,7 +106,7 @@ function App() {
   const handleViewDoctorPrep = () => setCurrentView('doctor-prep');
   const navigateHome = () => {
     setDiscoverySearch('');
-    setCurrentView('hero');
+    setCurrentView('welcome');
   };
 
   const handleQuizComplete = (results) => {
@@ -405,6 +406,9 @@ function App() {
           </div>
         </nav>
 
+        {currentView === 'welcome' && (
+          <WelcomeGate onPersonalizedPath={handleStartQuiz} onBrowsePath={() => handleViewDiscovery('')} />
+        )}
         {currentView === 'hero' && (
           <Hero onStartQuiz={handleStartQuiz} onViewWaitlist={handleViewWaitlist} onViewDiscovery={handleViewDiscovery} />
         )}
