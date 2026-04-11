@@ -489,6 +489,7 @@ function App() {
             omittedProducts={omittedProducts}
             onOpenProduct={handleOpenProduct}
             onOpenDoctorPrep={() => setCurrentView('doctor-prep')}
+            onBuildEcosystem={handleStartQuiz}
           />
         )}
         {currentView === 'discovery' && (

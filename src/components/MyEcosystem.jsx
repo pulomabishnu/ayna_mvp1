@@ -67,7 +67,7 @@ function estimateMonthlyCost(priceStr, product) {
     return null;
 }
 
-export default function MyEcosystem({ myProducts, onToggleProduct, trackedProducts, toggleTrackProduct, toggleOmitProduct, omittedProducts, onOpenProduct, onOpenDoctorPrep }) {
+export default function MyEcosystem({ myProducts, onToggleProduct, trackedProducts, toggleTrackProduct, toggleOmitProduct, omittedProducts, onOpenProduct, onOpenDoctorPrep, onBuildEcosystem }) {
     const [showAddModal, setShowAddModal] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [viewMode, setViewMode] = useState('function'); // 'function' or 'integration'
@@ -142,6 +142,24 @@ export default function MyEcosystem({ myProducts, onToggleProduct, trackedProduc
                         Track all your health products and apps. Everything here is monitored for safety by default. We'll tell you what each does, if any overlap, and if products may interact.
                     </p>
                 </div>
+
+                {typeof onBuildEcosystem === 'function' && (
+                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 'var(--spacing-lg)' }}>
+                        <button
+                            type="button"
+                            className="btn btn-primary"
+                            style={{
+                                padding: '0.75rem 1.75rem',
+                                fontSize: '1rem',
+                                fontWeight: 600,
+                                boxShadow: '0 4px 14px rgba(217, 76, 147, 0.35)',
+                            }}
+                            onClick={onBuildEcosystem}
+                        >
+                            Build me my ecosystem!
+                        </button>
+                    </div>
+                )}
 
                 {/* Summary Bar */}
                 <div style={{
