@@ -633,6 +633,14 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                                     >
                                                         {isInEcosystem ? '✓' : 'Add to ecosystem'}
                                                     </button>
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-outline"
+                                                        style={{ padding: '0.35rem 0.7rem', fontSize: '0.75rem' }}
+                                                        onClick={() => setCurrentView?.('recalls')}
+                                                    >
+                                                        Monitor recalls
+                                                    </button>
                                                     {(item.url || (item.whereToBuy && item.whereToBuy.length > 0)) && (
                                                         <div style={{ width: '100%', marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid var(--color-border)' }}>
                                                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem', alignItems: 'center', fontSize: '0.75rem' }}>

@@ -11,6 +11,7 @@ import MonthlyCheckin from './components/MonthlyCheckin';
 import OmittedProducts from './components/OmittedProducts';
 import Comparison from './components/Comparison';
 import DoctorPrep from './components/DoctorPrep';
+import Recalls from './components/Recalls';
 import { CATEGORY_LABELS, getRecommendations, createCustomEcosystemProducts } from './data/products';
 import { loadAynaReviews, addRating, addReview } from './data/aynaReviews';
 import AynaDeeptech from './components/AynaDeeptech';
@@ -21,7 +22,7 @@ import Articles from './components/Articles';
 import ProfileChatbot from './components/ProfileChatbot';
 import { loadHealthProfile, inferTagsFromHealthProfile } from './utils/healthDataProfile';
 
-const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted'];
+const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls'];
 
 function App() {
   const [currentView, setCurrentView] = useState('welcome');
@@ -337,7 +338,7 @@ function App() {
                   <button
                     type="button"
                     className="nav-ecosystem__caret-btn"
-                    aria-label="Open Compare and Hidden menu"
+                    aria-label="Open Ecosystem menu (Compare, Hidden, Recall)"
                     aria-expanded={ecoMenuOpen}
                     aria-controls="nav-ecosystem-menu"
                     onClick={(e) => {
@@ -377,6 +378,17 @@ function App() {
                 >
                   <span>Hidden</span>
                   {omittedCount > 0 && <span className="nav-ecosystem__item-pill">{omittedCount}</span>}
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  className={`nav-ecosystem__item ${currentView === 'recalls' ? 'nav-ecosystem__item--active' : ''}`}
+                  onClick={() => {
+                    setEcoMenuOpen(false);
+                    handleViewRecalls();
+                  }}
+                >
+                  <span>Recall</span>
                 </button>
               </div>
             </div>
@@ -452,6 +464,7 @@ function App() {
             onUpgrade={togglePremium}
             myProducts={myProducts}
             onAddToEcosystem={toggleMyProduct}
+            onViewRecalls={handleViewRecalls}
           />
         )}
         {currentView === 'deeptech' && (
@@ -508,6 +521,9 @@ function App() {
         )}
         {currentView === 'omitted' && (
           <OmittedProducts omittedProducts={omittedProducts} toggleOmitProduct={toggleOmitProduct} />
+        )}
+        {currentView === 'recalls' && (
+          <Recalls trackedProducts={trackedProducts} myProducts={myProducts} isPremium={isPremium} onUpgrade={togglePremium} />
         )}
         {currentView === 'comparison' && isPremium && (
           <Comparison
