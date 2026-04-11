@@ -102,6 +102,7 @@ function App() {
   const handleViewScreenings = () => setCurrentView('screenings');
   const handleViewOmitted = () => setCurrentView('omitted');
   const handleViewComparison = () => setCurrentView('comparison');
+  const handleViewRecalls = () => setCurrentView('recalls');
   const handleViewDoctorPrep = () => setCurrentView('doctor-prep');
   const navigateHome = () => {
     setDiscoverySearch('');
