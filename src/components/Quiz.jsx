@@ -288,6 +288,9 @@ function parseTranscriptToProfile(transcript) {
   return out;
 }
 
+/** Pause after picking a single-select option so the choice registers before advancing */
+const AUTO_ADVANCE_SINGLE_MS = 900;
+
 export default function Quiz({ onComplete }) {
   const [completionMode, setCompletionMode] = useState(null); // null | 'step' | 'voice'
   const [currentStep, setCurrentStep] = useState(0);
@@ -295,6 +298,7 @@ export default function Quiz({ onComplete }) {
   const [multiSelections, setMultiSelections] = useState(new Set());
   const [emailValue, setEmailValue] = useState('');
   const [customProductsInput, setCustomProductsInput] = useState({ brands: '', medications: '', supplements: '' });
+  const singleAdvanceTimerRef = useRef(null);
 
   // Voice flow state
   const [voicePhase, setVoicePhase] = useState('prompt'); // 'prompt' | 'recording' | 'confirm'
@@ -310,13 +314,49 @@ export default function Quiz({ onComplete }) {
   const step = steps[currentStep];
   const progress = completionMode === 'step' ? ((currentStep + 1) / steps.length) * 100 : 0;
 
-  const handleSingle = (option) => {
-    setAnswers(prev => ({ ...prev, [step.id]: option }));
+  useEffect(() => {
+    if (completionMode !== 'step' || !step || step.type !== 'multi') return;
+    const v = answers[step.id];
+    setMultiSelections(new Set(Array.isArray(v) ? v : []));
+  }, [currentStep, step?.id, completionMode]);
+
+  useEffect(() => {
+    return () => {
+      if (singleAdvanceTimerRef.current) {
+        clearTimeout(singleAdvanceTimerRef.current);
+        singleAdvanceTimerRef.current = null;
+      }
+    };
+  }, [currentStep]);
+
+  const handleBack = () => {
+    if (currentStep <= 0) return;
+    if (singleAdvanceTimerRef.current) {
+      clearTimeout(singleAdvanceTimerRef.current);
+      singleAdvanceTimerRef.current = null;
+    }
+    setCurrentStep((prev) => prev - 1);
   };
 
-  const handleSingleNext = () => {
-    const newAnswers = { ...answers, [step.id]: answers[step.id] };
-    advance(newAnswers);
+  const handleSingle = (option) => {
+    if (!step || step.type !== 'single') return;
+    if (singleAdvanceTimerRef.current) {
+      clearTimeout(singleAdvanceTimerRef.current);
+      singleAdvanceTimerRef.current = null;
+    }
+    const stepId = step.id;
+    const newAnswers = { ...answers, [stepId]: option };
+    setAnswers(newAnswers);
+    const stepIndex = currentStep;
+    const nextSteps = buildSteps(newAnswers);
+    singleAdvanceTimerRef.current = setTimeout(() => {
+      singleAdvanceTimerRef.current = null;
+      if (stepIndex < nextSteps.length - 1) {
+        setCurrentStep((c) => c + 1);
+      } else if (stepId !== 'email') {
+        onComplete(newAnswers);
+      }
+    }, AUTO_ADVANCE_SINGLE_MS);
   };
 
   const handleMultiToggle = (option) => {
@@ -608,12 +648,41 @@ export default function Quiz({ onComplete }) {
 
   return (
     <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)', maxWidth: '800px' }}>
-      <div style={{ width: '100%', background: 'var(--color-border)', height: '6px', borderRadius: 'var(--radius-pill)', marginBottom: '1rem', overflow: 'hidden' }}>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: '1rem',
+        marginBottom: '1rem',
+        minHeight: '2.25rem',
+      }}>
+        {currentStep > 0 ? (
+          <button
+            type="button"
+            onClick={handleBack}
+            style={{
+              fontSize: '0.95rem',
+              fontWeight: '600',
+              color: 'var(--color-primary)',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: '0.35rem 0',
+              textDecoration: 'none',
+            }}
+          >
+            ← Back
+          </button>
+        ) : (
+          <span aria-hidden style={{ width: '1px' }} />
+        )}
+        <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--color-text-muted)', fontWeight: '500' }}>
+          {currentStep + 1} of {steps.length}
+        </p>
+      </div>
+      <div style={{ width: '100%', background: 'var(--color-border)', height: '6px', borderRadius: 'var(--radius-pill)', marginBottom: 'var(--spacing-lg)', overflow: 'hidden' }}>
         <div style={{ width: `${progress}%`, height: '100%', background: 'var(--color-primary)', transition: 'width 0.4s ease' }} />
       </div>
-      <p style={{ textAlign: 'right', fontSize: '0.875rem', color: 'var(--color-text-muted)', marginBottom: 'var(--spacing-lg)' }}>
-        {currentStep + 1} of {steps.length}
-      </p>
 
       <div className="card" style={{ minHeight: '380px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
         <h2 style={{ fontSize: '1.75rem', marginBottom: '0.5rem', textAlign: 'center' }}>
@@ -650,16 +719,9 @@ export default function Quiz({ onComplete }) {
                 );
               })}
             </div>
-            {answers[step.id] != null && (
-              <button
-                type="button"
-                className="btn btn-primary"
-                style={{ marginTop: '1.5rem', alignSelf: 'center' }}
-                onClick={handleSingleNext}
-              >
-                Continue →
-              </button>
-            )}
+            <p style={{ textAlign: 'center', fontSize: '0.82rem', color: 'var(--color-text-muted)', marginTop: '1rem', marginBottom: 0 }}>
+              Next step opens shortly after you choose. Tap <strong>Back</strong> (top left) to edit a previous answer.
+            </p>
           </>
         )}
 
