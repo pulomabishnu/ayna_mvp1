@@ -646,40 +646,10 @@ export default function Quiz({ onComplete }) {
     }
   }
 
+  const showTopContinue = step.type === 'multi' || step.type === 'customProducts';
+
   return (
     <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)', maxWidth: '800px' }}>
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: '1rem',
-        marginBottom: '1rem',
-        minHeight: '2.25rem',
-      }}>
-        {currentStep > 0 ? (
-          <button
-            type="button"
-            onClick={handleBack}
-            style={{
-              fontSize: '0.95rem',
-              fontWeight: '600',
-              color: 'var(--color-primary)',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              padding: '0.35rem 0',
-              textDecoration: 'none',
-            }}
-          >
-            ← Back
-          </button>
-        ) : (
-          <span aria-hidden style={{ width: '1px' }} />
-        )}
-        <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--color-text-muted)', fontWeight: '500' }}>
-          {currentStep + 1} of {steps.length}
-        </p>
-      </div>
       <div style={{ width: '100%', background: 'var(--color-border)', height: '6px', borderRadius: 'var(--radius-pill)', marginBottom: 'var(--spacing-lg)', overflow: 'hidden' }}>
         <div style={{ width: `${progress}%`, height: '100%', background: 'var(--color-primary)', transition: 'width 0.4s ease' }} />
       </div>
@@ -689,10 +659,69 @@ export default function Quiz({ onComplete }) {
           {step.question}
         </h2>
         {step.subtitle && (
-          <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', marginBottom: 'var(--spacing-lg)', fontSize: '1rem' }}>
+          <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', marginBottom: 'var(--spacing-md)', fontSize: '1rem' }}>
             {step.subtitle}
           </p>
         )}
+
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '0.75rem',
+            marginBottom: 'var(--spacing-lg)',
+            minHeight: '2.25rem',
+            flexWrap: 'wrap',
+          }}
+        >
+          <div style={{ flex: '0 0 auto', minWidth: '4.5rem' }}>
+            {currentStep > 0 ? (
+              <button
+                type="button"
+                onClick={handleBack}
+                style={{
+                  fontSize: '0.95rem',
+                  fontWeight: '600',
+                  color: 'var(--color-primary)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '0.35rem 0',
+                  textDecoration: 'none',
+                }}
+              >
+                ← Back
+              </button>
+            ) : null}
+          </div>
+          <p style={{ margin: 0, flex: '1 1 auto', textAlign: 'center', fontSize: '0.875rem', color: 'var(--color-text-muted)', fontWeight: '500', minWidth: '5rem' }}>
+            {currentStep + 1} of {steps.length}
+          </p>
+          <div style={{ flex: '0 0 auto', minWidth: '4.5rem', display: 'flex', justifyContent: 'flex-end' }}>
+            {showTopContinue && step.type === 'multi' && (
+              <button
+                type="button"
+                className="btn btn-primary"
+                style={{ padding: '0.45rem 0.9rem', fontSize: '0.9rem', opacity: multiSelections.size === 0 ? 0.5 : 1 }}
+                disabled={multiSelections.size === 0}
+                onClick={handleMultiConfirm}
+              >
+                Continue →
+              </button>
+            )}
+            {showTopContinue && step.type === 'customProducts' && (
+              <button
+                type="button"
+                className="btn btn-primary"
+                style={{ padding: '0.45rem 0.9rem', fontSize: '0.9rem' }}
+                onClick={handleCustomProductsConfirm}
+              >
+                Continue →
+              </button>
+            )}
+          </div>
+        </div>
 
         {step.type === 'single' && (
           <>
@@ -720,7 +749,7 @@ export default function Quiz({ onComplete }) {
               })}
             </div>
             <p style={{ textAlign: 'center', fontSize: '0.82rem', color: 'var(--color-text-muted)', marginTop: '1rem', marginBottom: 0 }}>
-              Next step opens shortly after you choose. Tap <strong>Back</strong> (top left) to edit a previous answer.
+              Next step opens shortly after you choose. Tap <strong>Back</strong> above to edit a previous answer.
             </p>
           </>
         )}
@@ -751,15 +780,6 @@ export default function Quiz({ onComplete }) {
                 );
               })}
             </div>
-            <button
-              type="button"
-              className="btn btn-primary"
-              style={{ marginTop: '1.5rem', alignSelf: 'center', opacity: multiSelections.size === 0 ? 0.5 : 1 }}
-              disabled={multiSelections.size === 0}
-              onClick={handleMultiConfirm}
-            >
-              Continue →
-            </button>
           </>
         )}
 
@@ -813,9 +833,6 @@ export default function Quiz({ onComplete }) {
                 resize: 'vertical'
               }}
             />
-            <button type="button" className="btn btn-primary" style={{ marginTop: '0.5rem', alignSelf: 'center' }} onClick={handleCustomProductsConfirm}>
-              Continue →
-            </button>
           </div>
         )}
 
