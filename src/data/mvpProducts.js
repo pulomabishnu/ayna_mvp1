@@ -382,7 +382,10 @@ export const MVP_PHYSICAL = [
     communityReview: 'Community discussions on Reddit r/Endo note PT recommendations and relief for endo pain.',
     ingredients: 'Silicone.',
     effectiveness: 'Effective when used as part of a pelvic PT plan.',
-    badges: ['PT Recommended', 'Pelvic Pain']
+    badges: ['PT Recommended', 'Pelvic Pain'],
+    /** Richer than tag-only “why” so the modal doesn’t repeat “cramps” without explaining the tool */
+    recommendationWhyDetail:
+      'Curved pelvic wands are used for directed pressure and myofascial release on tight pelvic floor muscles and trigger points—something many people only learn about in pelvic floor physical therapy. They’re not a substitute for heating pads or OTC cramp meds; they address muscle tension and referred pelvic pain that can overlap with period pain, endometriosis, postpartum recovery, or pain with sex. Technique matters (angle, pressure, breathing), so a pelvic PT who teaches you how to use one safely is ideal before treating this like general self-massage.',
   },
   // ─── PERIMENOPAUSE / MENOPAUSE ────────────────────────────
   {

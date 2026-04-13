@@ -990,7 +990,14 @@ export function getProfileMatchLabelsForProduct(product, quizAnswers, healthProf
         if (p === 'Sustainability/Zero-waste') userTags.add('sustainability');
     });
     const productTags = new Set(product.tags || []);
-    return [...userTags].filter(t => productTags.has(t)).slice(0, 4).map(m => TAG_TO_READABLE[m] || m.replace(/-/g, ' '));
+    let matches = [...userTags].filter(t => productTags.has(t));
+    if (product.tags?.includes('pelvic-floor')) {
+        matches.sort((a, b) => {
+            const pri = (t) => (t === 'pelvic-floor' ? 0 : t === 'discomfort' ? 1 : t === 'endometriosis' ? 2 : t === 'cramps' ? 5 : 3);
+            return pri(a) - pri(b);
+        });
+    }
+    return matches.slice(0, 4).map(m => TAG_TO_READABLE[m] || m.replace(/-/g, ' '));
 }
 
 /**
@@ -1027,14 +1034,25 @@ export function getRecommendationExplanation(product, quizAnswers, healthProfile
     });
 
     const productTags = new Set(product.tags || []);
-    const matches = [...userTags].filter(t => productTags.has(t));
+    let matches = [...userTags].filter(t => productTags.has(t));
+    if (product.tags?.includes('pelvic-floor')) {
+        matches.sort((a, b) => {
+            const pri = (t) => (t === 'pelvic-floor' ? 0 : t === 'discomfort' ? 1 : t === 'endometriosis' ? 2 : t === 'cramps' ? 5 : 3);
+            return pri(a) - pri(b);
+        });
+    }
     const labels = matches.slice(0, 3).map(m => TAG_TO_READABLE[m] || m.replace(/-/g, ' '));
     const healthNote = healthOnlyTags.length > 0 ? ' Also aligned with signals from your imported health data (not a diagnosis).' : '';
-    const whyItWorks = labels.length > 0
-        ? `Why it could work: Matches your focus on ${labels.join(', ')}.${healthNote}`
-        : healthNote
+    let whyItWorks;
+    if (product.recommendationWhyDetail && typeof product.recommendationWhyDetail === 'string') {
+        whyItWorks = `Why it could work: ${product.recommendationWhyDetail.trim()}${healthNote}`;
+    } else if (labels.length > 0) {
+        whyItWorks = `Why it could work: Matches your focus on ${labels.join(', ')}.${healthNote}`;
+    } else {
+        whyItWorks = healthNote
             ? `Why it could work: Suggested for your profile.${healthNote}`
             : 'Why it could work: Suggested for your profile.';
+    }
 
     let considerations = null;
     if (product.safety?.recalls && product.safety.recalls.includes('⚠️')) {
