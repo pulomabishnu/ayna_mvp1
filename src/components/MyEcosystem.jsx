@@ -4,8 +4,6 @@ import {
     ALL_PRODUCTS,
     detectDuplicates,
     getEcosystemAlternatives,
-    getRecommendationsByFrustration,
-    getRecommendations,
 } from '../data/products';
 import { getInteractions } from '../data/interactions';
 import CareNearYouPanel from './CareNearYouPanel';
@@ -16,7 +14,7 @@ function EcosystemProductAlternatives({ product, seedEntry, quizResults, healthP
     const [open, setOpen] = useState(false);
     const rootRef = useRef(null);
     const alternatives = useMemo(
-        () => (seedEntry ? getEcosystemAlternatives(product.id, seedEntry.tag, quizResults || {}, healthProfile, 4) : []),
+        () => (seedEntry ? getEcosystemAlternatives(product.id, seedEntry.tag, quizResults || {}, healthProfile, 3) : []),
         [product.id, seedEntry, quizResults, healthProfile]
     );
     useEffect(() => {
@@ -51,7 +49,7 @@ function EcosystemProductAlternatives({ product, seedEntry, quizResults, healthP
                     fontFamily: 'var(--font-body)',
                 }}
             >
-                Suggested alternatives · {seedEntry.frustration}
+                Top 3 alternatives · {seedEntry.frustration}
             </p>
             <button
                 type="button"
@@ -76,7 +74,7 @@ function EcosystemProductAlternatives({ product, seedEntry, quizResults, healthP
                     textAlign: 'left',
                 }}
             >
-                <span style={{ flex: 1, minWidth: 0, color: 'var(--color-text-muted)' }}>Swap for another pick…</span>
+                <span style={{ flex: 1, minWidth: 0, color: 'var(--color-text-muted)' }}>Compare or swap for another top pick…</span>
                 <span aria-hidden style={{ flexShrink: 0, fontSize: '0.65rem', color: 'var(--color-text-muted)' }}>{open ? '▴' : '▾'}</span>
             </button>
             {open && (
@@ -319,17 +317,34 @@ export default function MyEcosystem({
         });
     };
 
-    const recommendationSections = useMemo(() => {
-        if (quizResults?.frustrations?.length) {
-            return getRecommendationsByFrustration(quizResults, healthProfile, 6);
-        }
-        const tags = inferTagsFromHealthProfile(healthProfile);
-        if (tags.length) {
-            const recs = getRecommendations(null, healthProfile).slice(0, 9);
-            if (recs.length) return [{ frustration: 'From your health profile', tag: null, products: recs }];
-        }
-        return [];
-    }, [quizResults, healthProfile]);
+    /** One row per quiz concern: the seeded product (already in ecosystem) + top 3 alternatives in dropdown. */
+    const seededConcernsList = useMemo(() => {
+        const entries = Object.entries(ecosystemSeedMeta || {});
+        if (!entries.length) return [];
+        const order = quizResults?.frustrations || [];
+        const byFrustration = new Map();
+        entries.forEach(([pid, meta]) => {
+            const p = myProducts[pid];
+            if (p && meta?.frustration && !byFrustration.has(meta.frustration)) {
+                byFrustration.set(meta.frustration, { product: p, seedEntry: meta });
+            }
+        });
+        const rows = [];
+        order.forEach((f) => {
+            if (byFrustration.has(f)) rows.push(byFrustration.get(f));
+        });
+        byFrustration.forEach((row, f) => {
+            if (!order.includes(f)) rows.push(row);
+        });
+        return rows;
+    }, [ecosystemSeedMeta, myProducts, quizResults]);
+
+    const seededProductIds = useMemo(() => new Set(seededConcernsList.map((r) => r.product.id)), [seededConcernsList]);
+
+    const hasNonSeededProducts = useMemo(
+        () => myProductList.some((p) => !seededProductIds.has(p.id)),
+        [myProductList, seededProductIds]
+    );
 
     const ecosystemArticles = useMemo(
         () => getRecommendedArticles(quizResults || {}, healthProfile),
@@ -377,6 +392,106 @@ export default function MyEcosystem({
                         Track all your health products and apps. Everything here is monitored for safety by default. We'll tell you what each does, if any overlap, and if products may interact.
                     </p>
                 </div>
+
+                {/* Top: one primary product per quiz concern (already added) + top 3 alternatives */}
+                {seededConcernsList.length > 0 && (
+                    <div style={{ maxWidth: '960px', margin: '0 auto var(--spacing-xl)', padding: '0 0.25rem' }}>
+                        <h3 style={{ fontSize: '1.35rem', marginBottom: '0.35rem', textAlign: 'center', color: 'var(--color-text-main)' }}>
+                            Your ecosystem
+                        </h3>
+                        <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.95rem', marginBottom: '1.25rem' }}>
+                            Your top suggested pick per concern is already saved here. Open the menu to compare the next best matches.
+                        </p>
+                        <div
+                            className="ecosystem-seed-grid"
+                            style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+                                gap: '1rem',
+                            }}
+                        >
+                            {seededConcernsList.map(({ product, seedEntry }) => (
+                                <div
+                                    key={product.id}
+                                    className="card"
+                                    style={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'stretch',
+                                        padding: '1rem',
+                                        border: '1px solid var(--color-border)',
+                                        background: 'var(--color-surface-soft)',
+                                    }}
+                                >
+                                    <p
+                                        style={{
+                                            fontSize: '0.72rem',
+                                            fontWeight: '700',
+                                            textTransform: 'uppercase',
+                                            letterSpacing: '0.05em',
+                                            color: 'var(--color-primary)',
+                                            margin: '0 0 0.65rem',
+                                        }}
+                                    >
+                                        {seedEntry.frustration}
+                                    </p>
+                                    <div
+                                        role="button"
+                                        tabIndex={0}
+                                        style={{ display: 'flex', alignItems: 'flex-start', gap: '0.85rem', cursor: 'pointer', marginBottom: '0.35rem' }}
+                                        onClick={() => onOpenProduct(product)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter' || e.key === ' ') {
+                                                e.preventDefault();
+                                                onOpenProduct(product);
+                                            }
+                                        }}
+                                    >
+                                        <div style={{ width: '56px', height: '56px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0, border: '1px solid var(--color-border)' }}>
+                                            <img src={product.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                        </div>
+                                        <div style={{ flex: 1, minWidth: 0 }}>
+                                            <span
+                                                style={{
+                                                    fontSize: '0.65rem',
+                                                    fontWeight: '700',
+                                                    textTransform: 'uppercase',
+                                                    letterSpacing: '0.04em',
+                                                    color: 'white',
+                                                    background: 'var(--color-primary)',
+                                                    padding: '0.15rem 0.45rem',
+                                                    borderRadius: 'var(--radius-pill)',
+                                                    display: 'inline-block',
+                                                    marginBottom: '0.35rem',
+                                                }}
+                                            >
+                                                In your ecosystem
+                                            </span>
+                                            <h4 style={{ fontSize: '0.98rem', margin: '0 0 0.2rem', lineHeight: 1.3, color: 'var(--color-text-main)' }}>{product.name}</h4>
+                                            <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{product.price || product.stage}</span>
+                                        </div>
+                                    </div>
+                                    <EcosystemProductAlternatives
+                                        product={product}
+                                        seedEntry={seedEntry}
+                                        quizResults={quizResults}
+                                        healthProfile={healthProfile}
+                                        onSwap={onSwapSeedProduct}
+                                        onGoToSearch={onGoToSearch}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                        <style>{`
+              @media (max-width: 800px) {
+                .ecosystem-seed-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+              }
+              @media (max-width: 520px) {
+                .ecosystem-seed-grid { grid-template-columns: 1fr !important; }
+              }
+            `}</style>
+                    </div>
+                )}
 
                 {/* Health profile: quiz + imported / manual context */}
                 <div className="card" style={{ maxWidth: '720px', margin: '0 auto var(--spacing-xl)', padding: '1.5rem', fontFamily: 'var(--font-body)' }}>
@@ -553,63 +668,6 @@ export default function MyEcosystem({
                     </div>
                 )}
 
-                {recommendationSections.length > 0 && (
-                    <div style={{ marginBottom: 'var(--spacing-xl)', maxWidth: '960px', marginLeft: 'auto', marginRight: 'auto' }}>
-                        <h3 style={{ fontSize: '1.35rem', marginBottom: '0.5rem', textAlign: 'center' }}>Suggested for you</h3>
-                        <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.95rem', marginBottom: '1.5rem' }}>
-                            Ranked for your concerns—not a medical diagnosis. Tap to compare details.
-                        </p>
-                        {recommendationSections.map((section) => (
-                            <div key={section.frustration} style={{ marginBottom: '2rem' }}>
-                                <h4 style={{ fontSize: '1.05rem', marginBottom: '1rem', color: 'var(--color-primary)' }}>{section.frustration}</h4>
-                                <div
-                                    style={{
-                                        display: 'grid',
-                                        gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-                                        gap: '0.75rem',
-                                    }}
-                                    className="ecosystem-rec-grid"
-                                >
-                                    {section.products.map((p) => (
-                                        <button
-                                            key={p.id}
-                                            type="button"
-                                            className="card"
-                                            onClick={() => onOpenProduct(p)}
-                                            style={{
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                alignItems: 'stretch',
-                                                textAlign: 'left',
-                                                padding: '0.75rem',
-                                                cursor: 'pointer',
-                                                border: '1px solid var(--color-border)',
-                                                background: 'var(--color-surface-soft)',
-                                                fontFamily: 'var(--font-body)',
-                                                minHeight: '120px',
-                                            }}
-                                        >
-                                            <div style={{ width: '100%', aspectRatio: '4/3', borderRadius: 'var(--radius-sm)', overflow: 'hidden', marginBottom: '0.5rem', background: 'var(--color-bg)' }}>
-                                                <img src={p.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                            </div>
-                                            <span style={{ fontSize: '0.88rem', fontWeight: '600', color: 'var(--color-text-main)', lineHeight: 1.35 }}>{p.name}</span>
-                                            <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>{p.price || p.category}</span>
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        ))}
-                        <style>{`
-              @media (max-width: 700px) {
-                .ecosystem-rec-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
-              }
-              @media (max-width: 440px) {
-                .ecosystem-rec-grid { grid-template-columns: 1fr !important; }
-              }
-            `}</style>
-                    </div>
-                )}
-
                 {ecosystemArticles.length > 0 && (
                     <div style={{ maxWidth: '720px', margin: '0 auto var(--spacing-xl)', padding: '0 0.25rem' }}>
                         <h3 style={{ fontSize: '1.35rem', marginBottom: '0.5rem', textAlign: 'center' }}>Health articles</h3>
@@ -776,6 +834,11 @@ export default function MyEcosystem({
                     </div>
                 )}
 
+                {seededConcernsList.length > 0 && hasNonSeededProducts && (
+                    <p style={{ textAlign: 'center', fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '0.75rem', maxWidth: '560px', marginLeft: 'auto', marginRight: 'auto' }}>
+                        Below: the rest of your products by category (your top picks per concern stay above).
+                    </p>
+                )}
                 <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-lg)', display: 'flex', justifyContent: 'center', gap: '1rem' }}>
                     <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>+ Add a Product or App</button>
                     <div style={{ background: 'var(--color-surface-soft)', padding: '0.25rem', borderRadius: 'var(--radius-pill)', border: '1px solid var(--color-border)', display: 'flex' }}>
@@ -835,7 +898,10 @@ export default function MyEcosystem({
                                     </div>
                                 )}
 
-                                {Object.entries(functionMap).map(([fn, products]) => (
+                                {Object.entries(functionMap).map(([fn, products]) => {
+                                    const rest = products.filter((p) => !seededProductIds.has(p.id));
+                                    if (rest.length === 0) return null;
+                                    return (
                                     <div key={fn} style={{ marginBottom: '1.75rem' }}>
                                         <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                             <span>{HEALTH_FUNCTIONS[fn]?.icon}</span> {HEALTH_FUNCTIONS[fn]?.label}
@@ -843,7 +909,7 @@ export default function MyEcosystem({
                                         </h3>
                                         <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>{HEALTH_FUNCTIONS[fn]?.desc}</p>
                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                            {products.map((product) => {
+                                            {rest.map((product) => {
                                                 const seedEntry = ecosystemSeedMeta[product.id];
                                                 return (
                                                     <div key={product.id} className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', padding: '0.75rem 1rem' }}>
@@ -883,7 +949,8 @@ export default function MyEcosystem({
                                             })}
                                         </div>
                                     </div>
-                                ))}
+                                    );
+                                })}
                                 {ecosystemStartups.length > 0 && (
                                     <div style={{ marginBottom: '1.75rem' }}>
                                         <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -915,13 +982,16 @@ export default function MyEcosystem({
                             </>
                         ) : (
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                                {Object.entries(integrationMap).map(([int, products]) => (
+                                {Object.entries(integrationMap).map(([int, products]) => {
+                                    const rest = products.filter((p) => !seededProductIds.has(p.id));
+                                    if (rest.length === 0) return null;
+                                    return (
                                     <div key={int}>
                                         <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: int === 'No Integration' ? 'var(--color-text-muted)' : 'var(--color-text-main)' }}>
                                             {int === 'No Integration' ? '📦 Standalone Products' : `✨ Syncs with ${int}`}
                                         </h3>
                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                            {products.map((product) => {
+                                            {rest.map((product) => {
                                                 const seedEntry = ecosystemSeedMeta[product.id];
                                                 return (
                                                     <div key={product.id} className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', padding: '0.75rem 1rem' }}>
@@ -963,7 +1033,8 @@ export default function MyEcosystem({
                                             })}
                                         </div>
                                     </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         )}
                     </div>
