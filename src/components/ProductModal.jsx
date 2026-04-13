@@ -250,7 +250,7 @@ function buildSocialInsight(product, aiInsights, quizResults, healthProfile) {
 
 /**
  * Quick overview: profile fit only — clinical/science/community live in their tabs (avoids repeating the same blurbs).
- * Each item: { id, title, body } with `body` using **bold** via renderRichText.
+ * Each item: { id, title?, bullets } — strings use **bold** via renderRichText per bullet.
  */
 function buildQuickOverviewBlocks(product, aiInsights, quizResults, healthProfile, profileTailoring) {
   const matchLabels = getProfileMatchLabelsForProduct(product, quizResults, healthProfile);
@@ -262,26 +262,43 @@ function buildQuickOverviewBlocks(product, aiInsights, quizResults, healthProfil
     !!profileTailoring ||
     (healthProfile && Object.keys(healthProfile).length > 0);
 
-  const forYouParts = [];
+  const bullets = [];
   if (!hasProfile) {
-    forYouParts.push(
-      '**For you:** Add a health profile or complete the quiz so we can say whether this product fits your priorities.'
+    bullets.push(
+      '**Match:** Add a health profile or complete the quiz so we can say whether this product fits your priorities.'
     );
   } else if (matchLabels.length > 0) {
-    forYouParts.push(
-      `**For you:** Based on what you shared, this product is **a plausible match** for themes you care about: ${matchLabels.join(', ')}.`
+    bullets.push(
+      `**Match:** Based on what you shared, this product is **a plausible fit** for themes you care about: ${matchLabels.join(', ')}.`
     );
   } else {
-    forYouParts.push(
-      '**For you:** Overlap between this product and your profile tags is **limited**—use the tabs below before you decide.'
+    bullets.push(
+      '**Match:** Overlap between this product and your profile tags is **limited**—use the tabs below before you decide.'
     );
   }
-  if (whyItWorks && (quizResults?.frustrations?.length || matchLabels.length)) forYouParts.push(whyItWorks);
-  if (considerations) forYouParts.push(considerations);
-  if (profileTailoring) forYouParts.push(profileTailoring);
-  if (recallBad) forYouParts.push('**Safety:** Check the Safety tab for recalls or alerts before you buy.');
+  if (whyItWorks && (quizResults?.frustrations?.length || matchLabels.length)) {
+    const w = whyItWorks.trim();
+    bullets.push(...splitOverviewBulletIfLong(w, 320));
+  }
+  if (considerations) bullets.push(considerations);
+  if (profileTailoring) bullets.push(profileTailoring);
+  if (recallBad) bullets.push('**Safety:** Check the Safety tab for recalls or alerts before you buy.');
 
-  return [{ id: 'you', title: 'For you', body: forYouParts.join(' ') }];
+  return [{ id: 'you', title: null, bullets }];
+}
+
+/** Break very long “why it works” copy into two bullets on sentence boundaries for scannability. */
+function splitOverviewBulletIfLong(text, maxChars) {
+  const t = (text || '').trim();
+  if (t.length <= maxChars) return [t];
+  const cut = t.slice(0, maxChars);
+  const lastPeriod = cut.lastIndexOf('. ');
+  if (lastPeriod >= 80) {
+    const a = t.slice(0, lastPeriod + 1).trim();
+    const b = t.slice(lastPeriod + 2).trim();
+    return b ? [a, b] : [t];
+  }
+  return [t];
 }
 
 /** Render markdown-like **bold** in plain text as <strong> */
@@ -943,21 +960,47 @@ export default function ProductModal({
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
                                 {condensed.quickOverview.map((block) => (
                                     <div key={block.id}>
-                                        <p
-                                            style={{
-                                                fontSize: '0.7rem',
-                                                fontWeight: '700',
-                                                textTransform: 'uppercase',
-                                                letterSpacing: '0.04em',
-                                                color: 'var(--color-primary)',
-                                                margin: '0 0 0.35rem',
-                                            }}
-                                        >
-                                            {block.title}
-                                        </p>
-                                        <p style={{ fontSize: '0.92rem', color: 'var(--color-text-main)', lineHeight: 1.6, margin: 0 }}>
-                                            {renderRichText(block.body)}
-                                        </p>
+                                        {block.title ? (
+                                            <p
+                                                style={{
+                                                    fontSize: '0.7rem',
+                                                    fontWeight: '700',
+                                                    textTransform: 'uppercase',
+                                                    letterSpacing: '0.04em',
+                                                    color: 'var(--color-primary)',
+                                                    margin: '0 0 0.35rem',
+                                                }}
+                                            >
+                                                {block.title}
+                                            </p>
+                                        ) : null}
+                                        {Array.isArray(block.bullets) && block.bullets.length > 0 ? (
+                                            <ul
+                                                style={{
+                                                    margin: 0,
+                                                    paddingLeft: '1.15rem',
+                                                    color: 'var(--color-text-main)',
+                                                }}
+                                            >
+                                                {block.bullets.map((line, i) => (
+                                                    <li
+                                                        key={i}
+                                                        style={{
+                                                            fontSize: '0.9rem',
+                                                            lineHeight: 1.55,
+                                                            marginBottom: i < block.bullets.length - 1 ? '0.55rem' : 0,
+                                                            paddingLeft: '0.2rem',
+                                                        }}
+                                                    >
+                                                        {renderRichText(line)}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        ) : block.body ? (
+                                            <p style={{ fontSize: '0.92rem', color: 'var(--color-text-main)', lineHeight: 1.6, margin: 0 }}>
+                                                {renderRichText(block.body)}
+                                            </p>
+                                        ) : null}
                                     </div>
                                 ))}
                             </div>
