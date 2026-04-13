@@ -1,72 +1,171 @@
-import React, { useMemo, useState } from 'react';
-import { HEALTH_FUNCTIONS, ALL_PRODUCTS, detectDuplicates, getEcosystemAlternatives } from '../data/products';
+import React, { useMemo, useState, useRef, useEffect } from 'react';
+import {
+    HEALTH_FUNCTIONS,
+    ALL_PRODUCTS,
+    detectDuplicates,
+    getEcosystemAlternatives,
+    getRecommendationsByFrustration,
+    getRecommendations,
+} from '../data/products';
 import { getInteractions } from '../data/interactions';
 import CareNearYouPanel from './CareNearYouPanel';
+import { getRecommendedArticles } from './Articles';
+import { inferTagsFromHealthProfile, saveHealthProfile } from '../utils/healthDataProfile';
 
 function EcosystemProductAlternatives({ product, seedEntry, quizResults, healthProfile, onSwap, onGoToSearch }) {
-    const [val, setVal] = useState('');
+    const [open, setOpen] = useState(false);
+    const rootRef = useRef(null);
     const alternatives = useMemo(
-        () => (seedEntry ? getEcosystemAlternatives(product.id, seedEntry.tag, quizResults || {}, healthProfile, 3) : []),
+        () => (seedEntry ? getEcosystemAlternatives(product.id, seedEntry.tag, quizResults || {}, healthProfile, 4) : []),
         [product.id, seedEntry, quizResults, healthProfile]
     );
+    useEffect(() => {
+        if (!open) return;
+        const close = (e) => {
+            if (rootRef.current && !rootRef.current.contains(e.target)) setOpen(false);
+        };
+        document.addEventListener('mousedown', close);
+        return () => document.removeEventListener('mousedown', close);
+    }, [open]);
+
     if (!seedEntry) return null;
     return (
         <div
+            ref={rootRef}
             style={{
                 marginTop: '0.65rem',
                 paddingTop: '0.65rem',
                 borderTop: '1px solid var(--color-border)',
                 width: '100%',
+                position: 'relative',
             }}
             onClick={(e) => e.stopPropagation()}
             onKeyDown={(e) => e.stopPropagation()}
         >
-            <label
+            <p
                 style={{
                     fontSize: '0.72rem',
                     fontWeight: '600',
                     color: 'var(--color-text-muted)',
-                    display: 'block',
-                    marginBottom: '0.35rem',
+                    margin: '0 0 0.4rem',
+                    fontFamily: 'var(--font-body)',
                 }}
             >
                 Suggested alternatives · {seedEntry.frustration}
-            </label>
-            <select
-                aria-label={`Alternatives for ${product.name}`}
-                value={val}
-                onChange={(e) => {
-                    const v = e.target.value;
-                    if (v === '__search__') {
-                        onGoToSearch?.();
-                        setVal('');
-                        return;
-                    }
-                    if (v) {
-                        const pick = alternatives.find((a) => a.id === v);
-                        if (pick) onSwap?.(product.id, pick);
-                        setVal('');
-                    }
-                }}
+            </p>
+            <button
+                type="button"
+                aria-expanded={open}
+                aria-haspopup="listbox"
+                onClick={() => setOpen((o) => !o)}
                 style={{
                     width: '100%',
-                    maxWidth: '100%',
-                    fontSize: '0.85rem',
-                    padding: '0.45rem 0.65rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '0.5rem',
+                    fontSize: '0.88rem',
+                    fontFamily: 'var(--font-body)',
+                    fontWeight: '500',
+                    padding: '0.55rem 0.75rem',
                     borderRadius: 'var(--radius-md)',
                     border: '1px solid var(--color-border)',
                     background: 'var(--color-surface-soft)',
+                    color: 'var(--color-text-main)',
                     cursor: 'pointer',
+                    textAlign: 'left',
                 }}
             >
-                <option value="">Choose another pick or search…</option>
-                {alternatives.map((a) => (
-                    <option key={a.id} value={a.id}>
-                        {a.name}
-                    </option>
-                ))}
-                <option value="__search__">Search for more products →</option>
-            </select>
+                <span style={{ flex: 1, minWidth: 0, color: 'var(--color-text-muted)' }}>Swap for another pick…</span>
+                <span aria-hidden style={{ flexShrink: 0, fontSize: '0.65rem', color: 'var(--color-text-muted)' }}>{open ? '▴' : '▾'}</span>
+            </button>
+            {open && (
+                <ul
+                    role="listbox"
+                    style={{
+                        position: 'absolute',
+                        left: 0,
+                        right: 0,
+                        top: '100%',
+                        marginTop: '0.35rem',
+                        zIndex: 50,
+                        listStyle: 'none',
+                        padding: '0.35rem',
+                        margin: 0,
+                        maxHeight: '280px',
+                        overflowY: 'auto',
+                        borderRadius: 'var(--radius-md)',
+                        border: '1px solid var(--color-border)',
+                        background: 'var(--color-surface-soft)',
+                        boxShadow: 'var(--shadow-lg)',
+                    }}
+                >
+                    {alternatives.map((a) => (
+                        <li key={a.id} role="option">
+                            <button
+                                type="button"
+                                style={{
+                                    width: '100%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.65rem',
+                                    padding: '0.5rem 0.55rem',
+                                    border: 'none',
+                                    borderRadius: 'var(--radius-sm)',
+                                    background: 'transparent',
+                                    cursor: 'pointer',
+                                    textAlign: 'left',
+                                    fontFamily: 'var(--font-body)',
+                                }}
+                                onClick={() => {
+                                    onSwap?.(product.id, a);
+                                    setOpen(false);
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        width: '40px',
+                                        height: '40px',
+                                        borderRadius: 'var(--radius-sm)',
+                                        overflow: 'hidden',
+                                        flexShrink: 0,
+                                        border: '1px solid var(--color-border)',
+                                        background: 'var(--color-bg)',
+                                    }}
+                                >
+                                    <img src={a.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                </div>
+                                <span style={{ fontSize: '0.85rem', fontWeight: '500', color: 'var(--color-text-main)', lineHeight: 1.35 }}>
+                                    {a.name}
+                                </span>
+                            </button>
+                        </li>
+                    ))}
+                    <li style={{ borderTop: '1px solid var(--color-border)', marginTop: '0.25rem', paddingTop: '0.35rem' }}>
+                        <button
+                            type="button"
+                            style={{
+                                width: '100%',
+                                padding: '0.5rem 0.55rem',
+                                border: 'none',
+                                borderRadius: 'var(--radius-sm)',
+                                background: 'var(--color-secondary-fade)',
+                                cursor: 'pointer',
+                                fontSize: '0.85rem',
+                                fontWeight: '600',
+                                color: 'var(--color-primary)',
+                                fontFamily: 'var(--font-body)',
+                            }}
+                            onClick={() => {
+                                onGoToSearch?.();
+                                setOpen(false);
+                            }}
+                        >
+                            Search all products →
+                        </button>
+                    </li>
+                </ul>
+            )}
         </div>
     );
 }
@@ -153,7 +252,15 @@ export default function MyEcosystem({
     ecosystemSeedMeta = {},
     onSwapSeedProduct,
     onGoToSearch,
+    onHealthProfileUpdate,
+    onViewRecommendedArticles,
+    onOpenArticle,
 }) {
+    const [profileEditOpen, setProfileEditOpen] = useState(false);
+    const [conditionsDraft, setConditionsDraft] = useState('');
+    const [medicationsDraft, setMedicationsDraft] = useState('');
+    const [allergiesDraft, setAllergiesDraft] = useState('');
+    const [notesDraft, setNotesDraft] = useState('');
     const [showAddModal, setShowAddModal] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [viewMode, setViewMode] = useState('function'); // 'function' or 'integration'
@@ -212,6 +319,48 @@ export default function MyEcosystem({
         });
     };
 
+    const recommendationSections = useMemo(() => {
+        if (quizResults?.frustrations?.length) {
+            return getRecommendationsByFrustration(quizResults, healthProfile, 6);
+        }
+        const tags = inferTagsFromHealthProfile(healthProfile);
+        if (tags.length) {
+            const recs = getRecommendations(null, healthProfile).slice(0, 9);
+            if (recs.length) return [{ frustration: 'From your health profile', tag: null, products: recs }];
+        }
+        return [];
+    }, [quizResults, healthProfile]);
+
+    const ecosystemArticles = useMemo(
+        () => getRecommendedArticles(quizResults || {}, healthProfile),
+        [quizResults, healthProfile]
+    );
+
+    useEffect(() => {
+        if (!profileEditOpen) return;
+        const hp = healthProfile;
+        setConditionsDraft((hp?.conditions || []).join(', '));
+        setMedicationsDraft((hp?.medications || []).join(', '));
+        setAllergiesDraft((hp?.allergies || []).join(', '));
+        setNotesDraft(hp?.notes || '');
+    }, [profileEditOpen, healthProfile]);
+
+    const handleSaveHealthProfileDraft = () => {
+        const base = healthProfile || {
+            conditions: [], medications: [], allergies: [], notes: '',
+            sources: { appleHealth: false, googleFit: false, fhir: false, manual: true },
+        };
+        const next = saveHealthProfile({
+            ...base,
+            conditions: conditionsDraft.split(/[,;\n]+/).map((s) => s.trim()).filter(Boolean),
+            medications: medicationsDraft.split(/[,;\n]+/).map((s) => s.trim()).filter(Boolean),
+            allergies: allergiesDraft.split(/[,;\n]+/).map((s) => s.trim()).filter(Boolean),
+            notes: notesDraft,
+        });
+        onHealthProfileUpdate?.(next);
+        setProfileEditOpen(false);
+    };
+
     return (
         <>
             <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
@@ -227,6 +376,163 @@ export default function MyEcosystem({
                     <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem' }}>
                         Track all your health products and apps. Everything here is monitored for safety by default. We'll tell you what each does, if any overlap, and if products may interact.
                     </p>
+                </div>
+
+                {/* Health profile: quiz + imported / manual context */}
+                <div className="card" style={{ maxWidth: '720px', margin: '0 auto var(--spacing-xl)', padding: '1.5rem', fontFamily: 'var(--font-body)' }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem', marginBottom: '1rem' }}>
+                        <div>
+                            <h3 style={{ fontSize: '1.2rem', margin: '0 0 0.35rem', color: 'var(--color-text-main)' }}>Your health profile</h3>
+                            <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>
+                                Concerns from your quiz, plus conditions and meds you add here, shape recommendations.
+                            </p>
+                        </div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                            {typeof onBuildEcosystem === 'function' && (
+                                <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem' }} onClick={onBuildEcosystem}>
+                                    Update quiz / concerns
+                                </button>
+                            )}
+                            <button
+                                type="button"
+                                className="btn btn-outline"
+                                style={{ fontSize: '0.85rem' }}
+                                onClick={() => setProfileEditOpen((o) => !o)}
+                            >
+                                {profileEditOpen ? 'Close editor' : 'Add or fix diagnoses & meds'}
+                            </button>
+                        </div>
+                    </div>
+                    {quizResults?.frustrations?.length > 0 && (
+                        <div style={{ marginBottom: '0.85rem' }}>
+                            <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)', margin: '0 0 0.4rem' }}>Concerns & goals</p>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                                {quizResults.frustrations.map((f) => (
+                                    <span
+                                        key={f}
+                                        style={{
+                                            fontSize: '0.82rem',
+                                            padding: '0.25rem 0.65rem',
+                                            borderRadius: 'var(--radius-pill)',
+                                            background: 'var(--color-secondary-fade)',
+                                            color: 'var(--color-text-main)',
+                                            border: '1px solid var(--color-border)',
+                                        }}
+                                    >
+                                        {f}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                    {(healthProfile?.conditions?.length > 0 || healthProfile?.fhirSummary?.conditions?.length > 0) && (
+                        <div style={{ marginBottom: '0.85rem' }}>
+                            <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)', margin: '0 0 0.4rem' }}>Conditions & diagnoses</p>
+                            <p style={{ margin: 0, fontSize: '0.9rem', lineHeight: 1.5, color: 'var(--color-text-main)' }}>
+                                {[...(healthProfile.conditions || []), ...(healthProfile.fhirSummary?.conditions || [])].filter(Boolean).join(' · ')}
+                            </p>
+                        </div>
+                    )}
+                    {(healthProfile?.medications?.length > 0 || healthProfile?.fhirSummary?.medications?.length > 0) && (
+                        <div style={{ marginBottom: '0.85rem' }}>
+                            <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)', margin: '0 0 0.4rem' }}>Medications</p>
+                            <p style={{ margin: 0, fontSize: '0.9rem', lineHeight: 1.5, color: 'var(--color-text-main)' }}>
+                                {[...(healthProfile.medications || []), ...(healthProfile.fhirSummary?.medications || [])].filter(Boolean).join(' · ')}
+                            </p>
+                        </div>
+                    )}
+                    {healthProfile?.allergies?.length > 0 && (
+                        <div style={{ marginBottom: '0.85rem' }}>
+                            <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)', margin: '0 0 0.4rem' }}>Allergies</p>
+                            <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--color-text-main)' }}>{healthProfile.allergies.join(' · ')}</p>
+                        </div>
+                    )}
+                    {healthProfile?.notes && (
+                        <p style={{ margin: '0 0 0.5rem', fontSize: '0.88rem', color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Notes: {healthProfile.notes}</p>
+                    )}
+                    {!quizResults?.frustrations?.length && !inferTagsFromHealthProfile(healthProfile).length && !healthProfile?.conditions?.length && (
+                        <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', margin: 0 }}>
+                            Complete the quiz or add conditions below so picks and articles match you better.
+                        </p>
+                    )}
+                    {profileEditOpen && (
+                        <div
+                            style={{
+                                marginTop: '1.25rem',
+                                paddingTop: '1.25rem',
+                                borderTop: '1px solid var(--color-border)',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '0.75rem',
+                            }}
+                        >
+                            <label style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-text-muted)' }}>Conditions (comma-separated)</label>
+                            <input
+                                value={conditionsDraft}
+                                onChange={(e) => setConditionsDraft(e.target.value)}
+                                placeholder="e.g. PCOS, endometriosis"
+                                style={{
+                                    padding: '0.65rem 0.85rem',
+                                    fontSize: '0.95rem',
+                                    borderRadius: 'var(--radius-md)',
+                                    border: '1px solid var(--color-border)',
+                                    fontFamily: 'var(--font-body)',
+                                    outline: 'none',
+                                }}
+                            />
+                            <label style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-text-muted)' }}>Medications</label>
+                            <input
+                                value={medicationsDraft}
+                                onChange={(e) => setMedicationsDraft(e.target.value)}
+                                placeholder="e.g. levothyroxine 50mcg"
+                                style={{
+                                    padding: '0.65rem 0.85rem',
+                                    fontSize: '0.95rem',
+                                    borderRadius: 'var(--radius-md)',
+                                    border: '1px solid var(--color-border)',
+                                    fontFamily: 'var(--font-body)',
+                                    outline: 'none',
+                                }}
+                            />
+                            <label style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-text-muted)' }}>Allergies</label>
+                            <input
+                                value={allergiesDraft}
+                                onChange={(e) => setAllergiesDraft(e.target.value)}
+                                placeholder="e.g. latex, penicillin"
+                                style={{
+                                    padding: '0.65rem 0.85rem',
+                                    fontSize: '0.95rem',
+                                    borderRadius: 'var(--radius-md)',
+                                    border: '1px solid var(--color-border)',
+                                    fontFamily: 'var(--font-body)',
+                                    outline: 'none',
+                                }}
+                            />
+                            <label style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-text-muted)' }}>Notes</label>
+                            <textarea
+                                value={notesDraft}
+                                onChange={(e) => setNotesDraft(e.target.value)}
+                                rows={3}
+                                style={{
+                                    padding: '0.65rem 0.85rem',
+                                    fontSize: '0.95rem',
+                                    borderRadius: 'var(--radius-md)',
+                                    border: '1px solid var(--color-border)',
+                                    fontFamily: 'var(--font-body)',
+                                    outline: 'none',
+                                    resize: 'vertical',
+                                }}
+                            />
+                            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                <button type="button" className="btn btn-primary" style={{ fontSize: '0.9rem' }} onClick={handleSaveHealthProfileDraft}>
+                                    Save profile
+                                </button>
+                                <button type="button" className="btn btn-outline" style={{ fontSize: '0.9rem' }} onClick={() => setProfileEditOpen(false)}>
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {typeof onBuildEcosystem === 'function' && (
@@ -245,6 +551,116 @@ export default function MyEcosystem({
                             Build me my ecosystem!
                         </button>
                     </div>
+                )}
+
+                {recommendationSections.length > 0 && (
+                    <div style={{ marginBottom: 'var(--spacing-xl)', maxWidth: '960px', marginLeft: 'auto', marginRight: 'auto' }}>
+                        <h3 style={{ fontSize: '1.35rem', marginBottom: '0.5rem', textAlign: 'center' }}>Suggested for you</h3>
+                        <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.95rem', marginBottom: '1.5rem' }}>
+                            Ranked for your concerns—not a medical diagnosis. Tap to compare details.
+                        </p>
+                        {recommendationSections.map((section) => (
+                            <div key={section.frustration} style={{ marginBottom: '2rem' }}>
+                                <h4 style={{ fontSize: '1.05rem', marginBottom: '1rem', color: 'var(--color-primary)' }}>{section.frustration}</h4>
+                                <div
+                                    style={{
+                                        display: 'grid',
+                                        gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+                                        gap: '0.75rem',
+                                    }}
+                                    className="ecosystem-rec-grid"
+                                >
+                                    {section.products.map((p) => (
+                                        <button
+                                            key={p.id}
+                                            type="button"
+                                            className="card"
+                                            onClick={() => onOpenProduct(p)}
+                                            style={{
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                alignItems: 'stretch',
+                                                textAlign: 'left',
+                                                padding: '0.75rem',
+                                                cursor: 'pointer',
+                                                border: '1px solid var(--color-border)',
+                                                background: 'var(--color-surface-soft)',
+                                                fontFamily: 'var(--font-body)',
+                                                minHeight: '120px',
+                                            }}
+                                        >
+                                            <div style={{ width: '100%', aspectRatio: '4/3', borderRadius: 'var(--radius-sm)', overflow: 'hidden', marginBottom: '0.5rem', background: 'var(--color-bg)' }}>
+                                                <img src={p.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            </div>
+                                            <span style={{ fontSize: '0.88rem', fontWeight: '600', color: 'var(--color-text-main)', lineHeight: 1.35 }}>{p.name}</span>
+                                            <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>{p.price || p.category}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                        <style>{`
+              @media (max-width: 700px) {
+                .ecosystem-rec-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+              }
+              @media (max-width: 440px) {
+                .ecosystem-rec-grid { grid-template-columns: 1fr !important; }
+              }
+            `}</style>
+                    </div>
+                )}
+
+                {ecosystemArticles.length > 0 && (
+                    <div style={{ maxWidth: '720px', margin: '0 auto var(--spacing-xl)', padding: '0 0.25rem' }}>
+                        <h3 style={{ fontSize: '1.35rem', marginBottom: '0.5rem', textAlign: 'center' }}>Health articles</h3>
+                        <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.95rem', marginBottom: '1.25rem' }}>
+                            Evidence-based reads matched to your profile.
+                        </p>
+                        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                            {ecosystemArticles.map((art) => (
+                                <li key={art.id}>
+                                    <button
+                                        type="button"
+                                        onClick={() => onOpenArticle?.(art.id)}
+                                        style={{
+                                            width: '100%',
+                                            textAlign: 'left',
+                                            padding: '0.85rem 1rem',
+                                            borderRadius: 'var(--radius-md)',
+                                            border: '1px solid var(--color-border)',
+                                            background: 'var(--color-surface-soft)',
+                                            cursor: 'pointer',
+                                            fontFamily: 'var(--font-body)',
+                                        }}
+                                    >
+                                        <span style={{ fontSize: '0.95rem', fontWeight: '600', color: 'var(--color-text-main)', display: 'block' }}>{art.title}</span>
+                                        {art.teaser && (
+                                            <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginTop: '0.35rem', display: 'block', lineHeight: 1.45 }}>
+                                                {(art.teaser || '').slice(0, 140)}{(art.teaser || '').length > 140 ? '…' : ''}
+                                            </span>
+                                        )}
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                        {typeof onViewRecommendedArticles === 'function' && (
+                            <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+                                <button type="button" className="btn btn-outline" style={{ fontSize: '0.9rem' }} onClick={onViewRecommendedArticles}>
+                                    Browse all articles
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {quizResults?.frustrations?.length > 0 && (
+                    <CareNearYouPanel
+                        quizResults={quizResults}
+                        healthProfile={healthProfile}
+                        userZipCode={userZipCode}
+                        onZipCodeChange={onZipCodeChange}
+                        onOpenProduct={onOpenProduct}
+                    />
                 )}
 
                 {/* Summary Bar */}
@@ -287,16 +703,6 @@ export default function MyEcosystem({
                         <div style={{ fontSize: '0.85rem', color: 'white', fontWeight: '700' }}>Doctor Prep</div>
                     </div>
                 </div>
-
-                {quizResults?.frustrations?.length > 0 && (
-                    <CareNearYouPanel
-                        quizResults={quizResults}
-                        healthProfile={healthProfile}
-                        userZipCode={userZipCode}
-                        onZipCodeChange={onZipCodeChange}
-                        onOpenProduct={onOpenProduct}
-                    />
-                )}
 
                 {/* Safety & interactions: compare 2+ products */}
                 {myProductList.length >= 2 && (

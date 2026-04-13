@@ -862,13 +862,112 @@ function rankProductsByHealthTags(healthTags) {
     return [...matches, ...rest];
 }
 
-export function getRecommendations(quizAnswers, healthProfile = null) {
+/** True when the catalog item typically requires a clinician/Rx and is not itself a care-access product. */
+export function isPrescriptionRestrictedProduct(p) {
+    if (!p) return false;
+    if (p.category === 'telehealth') return false;
+    if (p.prescriptionPatientUrl || p.prescriptionSavingsUrl) return false;
+    if (p.requiresPrescription === true) return true;
+    const wtb = (p.whereToBuy || []).map((x) => String(x).toLowerCase());
+    if (wtb.some((s) => s.includes('pharmacy with prescription'))) return true;
+    return false;
+}
+
+let _telehealthCatalog = null;
+function getTelehealthCatalog() {
+    if (!_telehealthCatalog) {
+        _telehealthCatalog = ALL_PRODUCTS.filter((x) => x.category === 'telehealth');
+    }
+    return _telehealthCatalog;
+}
+
+/**
+ * Best-effort telehealth/clinic product that could plausibly prescribe or coordinate access for this item.
+ * Returns null when we should not imply a prescribing path exists.
+ */
+export function findTelehealthAccessForProduct(p) {
+    if (!isPrescriptionRestrictedProduct(p)) return null;
+    const tele = getTelehealthCatalog();
+    const pTags = new Set(p.tags || []);
+    const pFuncs = new Set(p.healthFunctions || []);
+    const textBlob = `${p.name || ''} ${p.summary || ''}`.toLowerCase();
+    let best = null;
+    let bestScore = 0;
+    tele.forEach((t) => {
+        let s = 0;
+        (t.tags || []).forEach((tt) => {
+            if (pTags.has(tt)) s += 4;
+        });
+        (t.healthFunctions || []).forEach((h) => {
+            if (pFuncs.has(h)) s += 2;
+        });
+        if (s > bestScore) {
+            bestScore = s;
+            best = t;
+        }
+    });
+    if (bestScore >= 4 && best) return best;
+
+    if (/uti|cystitis|bladder/i.test(textBlob)) {
+        const hit = tele.find(
+            (t) => /uti|planned parenthood|pp direct|wisp|lemonaid|stix/i.test(`${t.name} ${t.summary || ''}`)
+        );
+        if (hit) return hit;
+    }
+    if ((p.healthFunctions || []).includes('contraception') || /contraceptive|birth control|pill|ring|iud/i.test(textBlob)) {
+        const hit = tele.find((t) => /nurx|wisp|planned parenthood|birth control|contraception/i.test(`${t.name} ${t.summary || ''}`));
+        if (hit) return hit;
+    }
+    if (p.category === 'menopause' || (p.tags || []).includes('menopause')) {
+        const hit = tele.find((t) => /evernow|midi|menopause|gennev|alloy/i.test(`${t.name} ${t.summary || ''}`));
+        if (hit) return hit;
+    }
+    if ((p.tags || []).includes('endometriosis') || (p.tags || []).includes('heavy-flow')) {
+        const hit = tele.find((t) => /visana|virtual|clinic/i.test(`${t.name} ${t.summary || ''}`));
+        if (hit) return hit;
+    }
+
+    return bestScore >= 2 ? best : null;
+}
+
+function shouldExcludePrescriptionWithoutCarePath(p) {
+    if (!isPrescriptionRestrictedProduct(p)) return false;
+    if (p.prescriptionPatientUrl || p.prescriptionSavingsUrl) return false;
+    return !findTelehealthAccessForProduct(p);
+}
+
+function filterPrescriptionCareGate(products) {
+    return (products || []).filter((p) => !shouldExcludePrescriptionWithoutCarePath(p));
+}
+
+/**
+ * When opening a prescription-type product: manufacturer / savings URLs and/or telehealth that could support access.
+ */
+export function getPrescriptionAccessGuidance(product) {
+    if (!product || product.category === 'telehealth') return null;
+    const patientUrl = product.prescriptionPatientUrl || null;
+    const savingsUrl = product.prescriptionSavingsUrl || null;
+    if (patientUrl || savingsUrl) {
+        return { patientUrl, savingsUrl, telehealthProduct: null };
+    }
+    if (!isPrescriptionRestrictedProduct(product)) return null;
+    const tele = findTelehealthAccessForProduct(product);
+    if (!tele) return null;
+    return { patientUrl: null, savingsUrl: null, telehealthProduct: tele };
+}
+
+/** Ranked lists (tag matches first) with prescription-only items removed unless a care path exists. */
+export function getRecommendationMatchesAndRest(quizAnswers, healthProfile = null) {
     const healthTagList = inferTagsFromHealthProfile(healthProfile);
     const healthTags = new Set(healthTagList);
 
     if (!quizAnswers || !quizAnswers.frustrations) {
-        if (healthTags.size === 0) return ALL_PRODUCTS;
-        return rankProductsByHealthTags(healthTags);
+        if (healthTags.size === 0) {
+            const all = filterPrescriptionCareGate(ALL_PRODUCTS);
+            return { matches: all, others: [] };
+        }
+        const ranked = filterPrescriptionCareGate(rankProductsByHealthTags(healthTags));
+        return { matches: ranked, others: [] };
     }
 
     const FRUSTRATION_MAP = {
@@ -886,66 +985,102 @@ export function getRecommendations(quizAnswers, healthProfile = null) {
         'Endometriosis': 'endometriosis',
         'Fertility / TTC': 'fertility',
         'Pregnancy': 'pregnancy',
-        'Postpartum recovery': 'postpartum'
+        'Postpartum recovery': 'postpartum',
     };
 
     const userTags = new Set();
-    quizAnswers.frustrations.forEach(f => {
+    quizAnswers.frustrations.forEach((f) => {
         const tag = FRUSTRATION_MAP[f];
         if (tag) userTags.add(tag);
     });
     healthTagList.forEach((t) => userTags.add(t));
 
     const prefs = Array.isArray(quizAnswers.preference) ? quizAnswers.preference : (quizAnswers.preference ? [quizAnswers.preference] : []);
-    prefs.forEach(p => {
-        if (p === 'Organic/Natural only') userTags.add('organic');
-        if (p === 'Non-hormonal / hormone-free') userTags.add('non-hormonal');
-        if (p === 'Lower cost') userTags.add('cost');
-        if (p === 'Comfort/Convenience') userTags.add('comfort');
-        if (p === 'Privacy & data security') userTags.add('privacy');
-        if (p === 'Sustainability/Zero-waste') userTags.add('sustainability');
+    prefs.forEach((pref) => {
+        if (pref === 'Organic/Natural only') userTags.add('organic');
+        if (pref === 'Non-hormonal / hormone-free') userTags.add('non-hormonal');
+        if (pref === 'Lower cost') userTags.add('cost');
+        if (pref === 'Comfort/Convenience') userTags.add('comfort');
+        if (pref === 'Privacy & data security') userTags.add('privacy');
+        if (pref === 'Sustainability/Zero-waste') userTags.add('sustainability');
     });
 
-    // Exclude contraception products when user said they don't use / aren't interested in birth control
     const skipContraception = quizAnswers.contraceptionUse === 'No' || quizAnswers.contraceptionUse === 'Prefer not to say';
     const skipInternal = quizAnswers.internalComfort === 'No';
 
-    // Build set of avoid triggers from sensitivities + productsToAvoid (exclude products user can't use)
     const userAvoidSet = new Set();
-    [...(quizAnswers.sensitivities || []), ...(quizAnswers.productsToAvoid || [])].forEach(label => {
+    [...(quizAnswers.sensitivities || []), ...(quizAnswers.productsToAvoid || [])].forEach((label) => {
         const key = SENSITIVITY_AVOID_TO_TRIGGER[label];
         if (key) userAvoidSet.add(key);
     });
-    // Don't filter by "None that I know of" / "None / I'm open to suggestions"
     userAvoidSet.delete(null);
 
-    const scored = ALL_PRODUCTS
-        .filter(p => {
-            if (skipContraception && p.healthFunctions && p.healthFunctions.includes('contraception')) return false;
-            if (skipInternal && p.internal === true) return false;
-            if (userAvoidSet.size > 0 && [...userAvoidSet].some(trigger => productMatchesAvoidTrigger(p, trigger))) return false;
-            return true;
-        })
-        .map(p => {
-            let score = 0;
-            p.tags.forEach(t => {
-                if (userTags.has(t)) score += 2;
-            });
-
-            // Boost for each preference match (supports multiple: organic AND non-hormonal, etc.)
-            prefs.forEach(pref => {
-                if (pref === 'Sustainability/Zero-waste' && p.badges?.includes('Sustainable')) score += 3;
-                if (pref === 'Organic/Natural only' && p.tags?.includes('organic')) score += 3;
-                if (pref === 'Non-hormonal / hormone-free' && p.tags?.includes('non-hormonal')) score += 3;
-            });
-
-            return { product: p, score };
+    const scored = ALL_PRODUCTS.filter((p) => {
+        if (skipContraception && p.healthFunctions && p.healthFunctions.includes('contraception')) return false;
+        if (skipInternal && p.internal === true) return false;
+        if (userAvoidSet.size > 0 && [...userAvoidSet].some((trigger) => productMatchesAvoidTrigger(p, trigger))) return false;
+        return true;
+    }).map((p) => {
+        let score = 0;
+        (p.tags || []).forEach((t) => {
+            if (userTags.has(t)) score += 2;
         });
+        prefs.forEach((pref) => {
+            if (pref === 'Sustainability/Zero-waste' && p.badges?.includes('Sustainable')) score += 3;
+            if (pref === 'Organic/Natural only' && p.tags?.includes('organic')) score += 3;
+            if (pref === 'Non-hormonal / hormone-free' && p.tags?.includes('non-hormonal')) score += 3;
+        });
+        return { product: p, score };
+    });
 
-    // Return products with score > 0, sorted by score, then the rest
-    const matches = scored.filter(s => s.score > 0).sort((a, b) => b.score - a.score).map(s => s.product);
-    const others = scored.filter(s => s.score === 0).map(s => s.product);
+    const matches = filterPrescriptionCareGate(
+        scored.filter((s) => s.score > 0).sort((a, b) => b.score - a.score).map((s) => s.product)
+    );
+    const others = filterPrescriptionCareGate(scored.filter((s) => s.score === 0).map((s) => s.product));
+    return { matches, others };
+}
 
+/** Suggested picks per quiz concern for ecosystem layout (deduped, preference to tag-strong matches). */
+export function getRecommendationsByFrustration(quizAnswers, healthProfile = null, perFrustrationCap = 6) {
+    const FRUSTRATION_MAP = {
+        'Heavy flow': 'heavy-flow',
+        'Painful cramps': 'cramps',
+        'Hormonal bloating': 'bloating',
+        'Irregular cycles': 'irregular',
+        'Leaks & staining': 'leaks',
+        'General discomfort': 'discomfort',
+        'Not sure if products are safe': 'safety-concern',
+        'Recurrent UTIs': 'uti',
+        'PCOS symptoms': 'pcos',
+        'Pelvic pain': 'pelvic-floor',
+        'Menopause symptoms': 'menopause',
+        'Endometriosis': 'endometriosis',
+        'Fertility / TTC': 'fertility',
+        'Pregnancy': 'pregnancy',
+        'Postpartum recovery': 'postpartum',
+    };
+    const { matches, others } = getRecommendationMatchesAndRest(quizAnswers, healthProfile);
+    const ranked = [...matches, ...others];
+    const seen = new Set();
+    const sections = [];
+    (quizAnswers?.frustrations || []).forEach((f) => {
+        const tag = FRUSTRATION_MAP[f];
+        if (!tag) return;
+        const products = [];
+        for (const p of ranked) {
+            if (products.length >= perFrustrationCap) break;
+            if (!(p.tags || []).includes(tag)) continue;
+            if (seen.has(p.id)) continue;
+            seen.add(p.id);
+            products.push(p);
+        }
+        if (products.length) sections.push({ frustration: f, tag, products });
+    });
+    return sections;
+}
+
+export function getRecommendations(quizAnswers, healthProfile = null) {
+    const { matches, others } = getRecommendationMatchesAndRest(quizAnswers, healthProfile);
     return [...matches, ...others];
 }
 
@@ -959,7 +1094,8 @@ export function getEcosystemSeedFromQuiz(quizAnswers, healthProfile = null) {
     if (!quizAnswers?.frustrations?.length) {
         return { mergedProducts, seedMeta };
     }
-    const recs = getRecommendations(quizAnswers, healthProfile);
+    const { matches, others } = getRecommendationMatchesAndRest(quizAnswers, healthProfile);
+    const recs = matches.length > 0 ? matches : [...matches, ...others];
     const picked = new Set();
     const FRUSTRATION_MAP = {
         'Heavy flow': 'heavy-flow',

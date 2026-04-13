@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Disclaimer from './Disclaimer';
-import { getProfileMatchLabelsForProduct, getRecommendationExplanation } from '../data/products';
+import { getProfileMatchLabelsForProduct, getRecommendationExplanation, getPrescriptionAccessGuidance } from '../data/products';
 import { getAynaRating } from '../data/aynaReviews';
 import { fetchProductInsights } from '../utils/fetchProductInsights';
 import { buildUserHealthContextString } from '../utils/userHealthContextForInsights';
@@ -348,6 +348,8 @@ export default function ProductModal({
         () => buildProfileTailoring(product, quizResults, healthProfile),
         [product, quizResults, healthProfile]
     );
+
+    const prescriptionAccess = useMemo(() => (product ? getPrescriptionAccessGuidance(product) : null), [product]);
 
     useEffect(() => {
         setAiInsights(null);
@@ -1007,6 +1009,100 @@ export default function ProductModal({
                             <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', margin: '0.75rem 0 0', lineHeight: 1.45 }}>
                                 Quick read before you buy—not medical advice.
                             </p>
+                        </div>
+                    )}
+
+                    {prescriptionAccess && (prescriptionAccess.patientUrl || prescriptionAccess.savingsUrl || prescriptionAccess.telehealthProduct) && (
+                        <div
+                            style={{
+                                marginTop: '1rem',
+                                padding: '1rem 1.15rem',
+                                background: 'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)',
+                                borderRadius: 'var(--radius-md)',
+                                border: '1px solid #bbf7d0',
+                            }}
+                        >
+                            <p
+                                style={{
+                                    fontSize: '0.72rem',
+                                    fontWeight: '700',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.06em',
+                                    color: 'var(--color-text-muted)',
+                                    margin: '0 0 0.65rem',
+                                }}
+                            >
+                                Prescription or clinical access
+                            </p>
+                            <p style={{ fontSize: '0.88rem', color: 'var(--color-text-main)', lineHeight: 1.55, margin: '0 0 0.75rem' }}>
+                                Many items like this require a prescription or clinician visit. Ayna only points you to licensed paths—not medical advice.
+                            </p>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                {prescriptionAccess.patientUrl && (
+                                    <a
+                                        href={prescriptionAccess.patientUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--color-primary)' }}
+                                    >
+                                        How to get this product (manufacturer / patient program) ↗
+                                    </a>
+                                )}
+                                {prescriptionAccess.savingsUrl && (
+                                    <a
+                                        href={prescriptionAccess.savingsUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--color-primary)' }}
+                                    >
+                                        Savings or access program ↗
+                                    </a>
+                                )}
+                                {prescriptionAccess.telehealthProduct && (() => {
+                                    const tp = prescriptionAccess.telehealthProduct;
+                                    const raw = tp.whereToBuy && tp.whereToBuy[0];
+                                    const href =
+                                        raw && /^https?:\/\//i.test(String(raw).trim())
+                                            ? String(raw).trim()
+                                            : raw
+                                              ? `https://${String(raw).replace(/^www\./i, '')}`
+                                              : '#';
+                                    return (
+                                        <div
+                                            style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '0.75rem',
+                                                padding: '0.65rem',
+                                                background: 'var(--color-surface-soft)',
+                                                borderRadius: 'var(--radius-md)',
+                                                border: '1px solid var(--color-border)',
+                                            }}
+                                        >
+                                            <div style={{ width: '44px', height: '44px', borderRadius: 'var(--radius-sm)', overflow: 'hidden', flexShrink: 0 }}>
+                                                <img src={tp.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            </div>
+                                            <div style={{ flex: 1, minWidth: 0 }}>
+                                                <p style={{ margin: 0, fontSize: '0.85rem', fontWeight: '600', color: 'var(--color-text-main)' }}>{tp.name}</p>
+                                                <p style={{ margin: '0.15rem 0 0', fontSize: '0.8rem', color: 'var(--color-text-muted)', lineHeight: 1.4 }}>
+                                                    Virtual care that may prescribe or coordinate access in your situation—confirm coverage and state rules.
+                                                </p>
+                                            </div>
+                                            {href !== '#' && (
+                                                <a
+                                                    href={href}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="btn btn-outline"
+                                                    style={{ fontSize: '0.8rem', padding: '0.35rem 0.65rem', flexShrink: 0 }}
+                                                >
+                                                    Visit
+                                                </a>
+                                            )}
+                                        </div>
+                                    );
+                                })()}
+                            </div>
                         </div>
                     )}
 

@@ -515,6 +515,12 @@ function App() {
             ecosystemSeedMeta={ecosystemSeedMeta}
             onSwapSeedProduct={handleSwapEcosystemSeedProduct}
             onGoToSearch={() => handleViewDiscovery('')}
+            onHealthProfileUpdate={(next) => setHealthProfile(next)}
+            onViewRecommendedArticles={handleViewArticles}
+            onOpenArticle={(articleId) => {
+              setSelectedArticleId(articleId);
+              setCurrentView('articles');
+            }}
           />
         )}
         {currentView === 'discovery' && (
