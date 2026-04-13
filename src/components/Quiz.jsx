@@ -592,7 +592,7 @@ export default function Quiz({ onComplete }) {
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '0.75rem' }}>
             <button type="button" className="btn btn-primary" style={{ padding: '0.75rem 1.5rem' }} onClick={handleVoiceConfirm}>
-              Confirm and see recommendations
+              Confirm and open my ecosystem
             </button>
             <button type="button" className="btn btn-outline" onClick={() => { setVoicePhase('prompt'); setVoiceTranscript(''); setVoiceProfile(null); setAppendToTranscript(false); }}>
               Record again
@@ -782,7 +782,7 @@ export default function Quiz({ onComplete }) {
               style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', textDecoration: 'underline' }}
               onClick={() => onComplete({ ...answers, email: '' })}
             >
-              Skip — show recommendations without saving
+              Skip — open ecosystem without saving
             </button>
           </div>
         )}

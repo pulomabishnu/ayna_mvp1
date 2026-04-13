@@ -12,7 +12,7 @@ import OmittedProducts from './components/OmittedProducts';
 import Comparison from './components/Comparison';
 import DoctorPrep from './components/DoctorPrep';
 import Recalls from './components/Recalls';
-import { CATEGORY_LABELS, getRecommendations, createCustomEcosystemProducts } from './data/products';
+import { CATEGORY_LABELS, getRecommendations, createCustomEcosystemProducts, getEcosystemSeedFromQuiz } from './data/products';
 import { loadAynaReviews, addRating, addReview } from './data/aynaReviews';
 import AynaDeeptech from './components/AynaDeeptech';
 import Screenings from './components/Screenings';
@@ -43,6 +43,7 @@ function App() {
   const [selectedArticleId, setSelectedArticleId] = useState(null);
   const [aynaReviews, setAynaReviews] = useState({});
   const [healthProfile, setHealthProfile] = useState(() => loadHealthProfile());
+  const [ecosystemSeedMeta, setEcosystemSeedMeta] = useState({});
   const scrollY = useScrollPosition();
 
   const hasHealthImport = useMemo(
@@ -112,10 +113,27 @@ function App() {
   const handleQuizComplete = (results) => {
     setQuizResults(results);
     const customProducts = createCustomEcosystemProducts(results);
-    if (Object.keys(customProducts).length > 0) {
-      setMyProducts(prev => ({ ...prev, ...customProducts }));
-    }
-    setCurrentView('recommendations');
+    const { mergedProducts: seededProducts, seedMeta } = getEcosystemSeedFromQuiz(results, healthProfile);
+    setMyProducts((prev) => ({ ...prev, ...customProducts, ...seededProducts }));
+    setEcosystemSeedMeta(seedMeta);
+    setCurrentView('ecosystem');
+  };
+
+  const handleSwapEcosystemSeedProduct = (oldProductId, newProduct) => {
+    setMyProducts((prev) => {
+      const next = { ...prev };
+      delete next[oldProductId];
+      next[newProduct.id] = newProduct;
+      return next;
+    });
+    setEcosystemSeedMeta((prev) => {
+      const meta = prev[oldProductId];
+      if (!meta) return prev;
+      const n = { ...prev };
+      delete n[oldProductId];
+      n[newProduct.id] = meta;
+      return n;
+    });
   };
 
   const togglePremium = () => setIsPremium(!isPremium);
@@ -490,6 +508,13 @@ function App() {
             onOpenProduct={handleOpenProduct}
             onOpenDoctorPrep={() => setCurrentView('doctor-prep')}
             onBuildEcosystem={handleStartQuiz}
+            quizResults={quizResults}
+            healthProfile={healthProfile}
+            userZipCode={userZipCode}
+            onZipCodeChange={handleZipCodeChange}
+            ecosystemSeedMeta={ecosystemSeedMeta}
+            onSwapSeedProduct={handleSwapEcosystemSeedProduct}
+            onGoToSearch={() => handleViewDiscovery('')}
           />
         )}
         {currentView === 'discovery' && (

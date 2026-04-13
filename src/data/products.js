@@ -949,6 +949,55 @@ export function getRecommendations(quizAnswers, healthProfile = null) {
     return [...matches, ...others];
 }
 
+/**
+ * Top catalog pick per quiz frustration (for post–health-profile ecosystem seeding).
+ * Uses the same ranking as getRecommendations; picks one distinct product per concern in frustration order.
+ */
+export function getEcosystemSeedFromQuiz(quizAnswers, healthProfile = null) {
+    const mergedProducts = {};
+    const seedMeta = {};
+    if (!quizAnswers?.frustrations?.length) {
+        return { mergedProducts, seedMeta };
+    }
+    const recs = getRecommendations(quizAnswers, healthProfile);
+    const picked = new Set();
+    const FRUSTRATION_MAP = {
+        'Heavy flow': 'heavy-flow',
+        'Painful cramps': 'cramps',
+        'Hormonal bloating': 'bloating',
+        'Irregular cycles': 'irregular',
+        'Leaks & staining': 'leaks',
+        'General discomfort': 'discomfort',
+        'Not sure if products are safe': 'safety-concern',
+        'Recurrent UTIs': 'uti',
+        'PCOS symptoms': 'pcos',
+        'Pelvic pain': 'pelvic-floor',
+        'Menopause symptoms': 'menopause',
+        'Endometriosis': 'endometriosis',
+        'Fertility / TTC': 'fertility',
+        'Pregnancy': 'pregnancy',
+        'Postpartum recovery': 'postpartum',
+    };
+    for (const f of quizAnswers.frustrations) {
+        const tag = FRUSTRATION_MAP[f];
+        if (!tag) continue;
+        const product = recs.find((p) => (p.tags || []).includes(tag) && !picked.has(p.id));
+        if (product) {
+            picked.add(product.id);
+            mergedProducts[product.id] = product;
+            seedMeta[product.id] = { frustration: f, tag };
+        }
+    }
+    return { mergedProducts, seedMeta };
+}
+
+/** Up to `limit` other ranked products for the same concern tag (excludes current product). */
+export function getEcosystemAlternatives(productId, tag, quizAnswers, healthProfile = null, limit = 3) {
+    if (!tag) return [];
+    const recs = getRecommendations(quizAnswers || {}, healthProfile);
+    return recs.filter((p) => p.id !== productId && (p.tags || []).includes(tag)).slice(0, limit);
+}
+
 const TAG_TO_READABLE = {
     'heavy-flow': 'heavy flow', 'cramps': 'cramps', 'bloating': 'hormonal bloating', 'irregular': 'irregular cycles', 'leaks': 'leaks',
     'discomfort': 'discomfort', 'safety-concern': 'safety', 'uti': 'UTI care', 'pcos': 'PCOS',

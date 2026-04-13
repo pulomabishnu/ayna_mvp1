@@ -1,6 +1,75 @@
 import React, { useMemo, useState } from 'react';
-import { HEALTH_FUNCTIONS, ALL_PRODUCTS, detectDuplicates } from '../data/products';
+import { HEALTH_FUNCTIONS, ALL_PRODUCTS, detectDuplicates, getEcosystemAlternatives } from '../data/products';
 import { getInteractions } from '../data/interactions';
+import CareNearYouPanel from './CareNearYouPanel';
+
+function EcosystemProductAlternatives({ product, seedEntry, quizResults, healthProfile, onSwap, onGoToSearch }) {
+    const [val, setVal] = useState('');
+    const alternatives = useMemo(
+        () => (seedEntry ? getEcosystemAlternatives(product.id, seedEntry.tag, quizResults || {}, healthProfile, 3) : []),
+        [product.id, seedEntry, quizResults, healthProfile]
+    );
+    if (!seedEntry) return null;
+    return (
+        <div
+            style={{
+                marginTop: '0.65rem',
+                paddingTop: '0.65rem',
+                borderTop: '1px solid var(--color-border)',
+                width: '100%',
+            }}
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
+        >
+            <label
+                style={{
+                    fontSize: '0.72rem',
+                    fontWeight: '600',
+                    color: 'var(--color-text-muted)',
+                    display: 'block',
+                    marginBottom: '0.35rem',
+                }}
+            >
+                Suggested alternatives · {seedEntry.frustration}
+            </label>
+            <select
+                aria-label={`Alternatives for ${product.name}`}
+                value={val}
+                onChange={(e) => {
+                    const v = e.target.value;
+                    if (v === '__search__') {
+                        onGoToSearch?.();
+                        setVal('');
+                        return;
+                    }
+                    if (v) {
+                        const pick = alternatives.find((a) => a.id === v);
+                        if (pick) onSwap?.(product.id, pick);
+                        setVal('');
+                    }
+                }}
+                style={{
+                    width: '100%',
+                    maxWidth: '100%',
+                    fontSize: '0.85rem',
+                    padding: '0.45rem 0.65rem',
+                    borderRadius: 'var(--radius-md)',
+                    border: '1px solid var(--color-border)',
+                    background: 'var(--color-surface-soft)',
+                    cursor: 'pointer',
+                }}
+            >
+                <option value="">Choose another pick or search…</option>
+                {alternatives.map((a) => (
+                    <option key={a.id} value={a.id}>
+                        {a.name}
+                    </option>
+                ))}
+                <option value="__search__">Search for more products →</option>
+            </select>
+        </div>
+    );
+}
 
 /** Estimate monthly cost in USD from a price string. Returns null if unparseable. */
 function estimateMonthlyCost(priceStr, product) {
@@ -67,7 +136,24 @@ function estimateMonthlyCost(priceStr, product) {
     return null;
 }
 
-export default function MyEcosystem({ myProducts, onToggleProduct, trackedProducts, toggleTrackProduct, toggleOmitProduct, omittedProducts, onOpenProduct, onOpenDoctorPrep, onBuildEcosystem }) {
+export default function MyEcosystem({
+    myProducts,
+    onToggleProduct,
+    trackedProducts,
+    toggleTrackProduct,
+    toggleOmitProduct,
+    omittedProducts,
+    onOpenProduct,
+    onOpenDoctorPrep,
+    onBuildEcosystem,
+    quizResults = null,
+    healthProfile = null,
+    userZipCode = '',
+    onZipCodeChange,
+    ecosystemSeedMeta = {},
+    onSwapSeedProduct,
+    onGoToSearch,
+}) {
     const [showAddModal, setShowAddModal] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [viewMode, setViewMode] = useState('function'); // 'function' or 'integration'
@@ -201,6 +287,16 @@ export default function MyEcosystem({ myProducts, onToggleProduct, trackedProduc
                         <div style={{ fontSize: '0.85rem', color: 'white', fontWeight: '700' }}>Doctor Prep</div>
                     </div>
                 </div>
+
+                {quizResults?.frustrations?.length > 0 && (
+                    <CareNearYouPanel
+                        quizResults={quizResults}
+                        healthProfile={healthProfile}
+                        userZipCode={userZipCode}
+                        onZipCodeChange={onZipCodeChange}
+                        onOpenProduct={onOpenProduct}
+                    />
+                )}
 
                 {/* Safety & interactions: compare 2+ products */}
                 {myProductList.length >= 2 && (
@@ -341,25 +437,44 @@ export default function MyEcosystem({ myProducts, onToggleProduct, trackedProduc
                                         </h3>
                                         <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>{HEALTH_FUNCTIONS[fn]?.desc}</p>
                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                            {products.map(product => (
-                                                <div key={product.id} className="card" style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.75rem 1rem', cursor: 'pointer' }} onClick={() => onOpenProduct(product)}>
-                                                    <div style={{ width: '48px', height: '48px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0 }}>
-                                                        <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            {products.map((product) => {
+                                                const seedEntry = ecosystemSeedMeta[product.id];
+                                                return (
+                                                    <div key={product.id} className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', padding: '0.75rem 1rem' }}>
+                                                        <div
+                                                            role="button"
+                                                            tabIndex={0}
+                                                            style={{ display: 'flex', alignItems: 'center', gap: '1rem', cursor: 'pointer' }}
+                                                            onClick={() => onOpenProduct(product)}
+                                                            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpenProduct(product); } }}
+                                                        >
+                                                            <div style={{ width: '48px', height: '48px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0 }}>
+                                                                <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                            </div>
+                                                            <div style={{ flexGrow: 1, minWidth: 0 }}>
+                                                                <h4 style={{ fontSize: '0.95rem', marginBottom: '0.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>{product.name}{product.outOfBusiness && <span style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-surface-soft)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No longer sold</span>}</h4>
+                                                                <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{product.price}</span>
+                                                            </div>
+                                                            <span style={{
+                                                                fontSize: '0.7rem', fontWeight: '600', textTransform: 'uppercase',
+                                                                padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)',
+                                                                background: product.type === 'physical' ? 'var(--color-surface-contrast)' : 'var(--color-primary)',
+                                                                color: 'white',
+                                                            }}>
+                                                                {product.type}
+                                                            </span>
+                                                        </div>
+                                                        <EcosystemProductAlternatives
+                                                            product={product}
+                                                            seedEntry={seedEntry}
+                                                            quizResults={quizResults}
+                                                            healthProfile={healthProfile}
+                                                            onSwap={onSwapSeedProduct}
+                                                            onGoToSearch={onGoToSearch}
+                                                        />
                                                     </div>
-                                                    <div style={{ flexGrow: 1, minWidth: 0 }}>
-                                                        <h4 style={{ fontSize: '0.95rem', marginBottom: '0.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>{product.name}{product.outOfBusiness && <span style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-surface-soft)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No longer sold</span>}</h4>
-                                                        <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{product.price}</span>
-                                                    </div>
-                                                    <span style={{
-                                                        fontSize: '0.7rem', fontWeight: '600', textTransform: 'uppercase',
-                                                        padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)',
-                                                        background: product.type === 'physical' ? 'var(--color-surface-contrast)' : 'var(--color-primary)',
-                                                        color: 'white'
-                                                    }}>
-                                                        {product.type}
-                                                    </span>
-                                                </div>
-                                            ))}
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                 ))}
@@ -400,27 +515,46 @@ export default function MyEcosystem({ myProducts, onToggleProduct, trackedProduc
                                             {int === 'No Integration' ? '📦 Standalone Products' : `✨ Syncs with ${int}`}
                                         </h3>
                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                            {products.map(product => (
-                                                <div key={product.id} className="card" style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.75rem 1rem', cursor: 'pointer' }} onClick={() => onOpenProduct(product)}>
-                                                    <div style={{ width: '48px', height: '48px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0 }}>
-                                                        <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            {products.map((product) => {
+                                                const seedEntry = ecosystemSeedMeta[product.id];
+                                                return (
+                                                    <div key={product.id} className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', padding: '0.75rem 1rem' }}>
+                                                        <div
+                                                            role="button"
+                                                            tabIndex={0}
+                                                            style={{ display: 'flex', alignItems: 'center', gap: '1rem', cursor: 'pointer' }}
+                                                            onClick={() => onOpenProduct(product)}
+                                                            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpenProduct(product); } }}
+                                                        >
+                                                            <div style={{ width: '48px', height: '48px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0 }}>
+                                                                <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                            </div>
+                                                            <div style={{ flexGrow: 1, minWidth: 0 }}>
+                                                                <h4 style={{ fontSize: '0.95rem', marginBottom: '0.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>{product.name}{product.outOfBusiness && <span style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-surface-soft)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No longer sold</span>}</h4>
+                                                                <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{product.stage || product.category}</span>
+                                                            </div>
+                                                            <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', flexShrink: 0 }}>
+                                                                {product.isStartup && (
+                                                                    <span style={{ fontSize: '0.65rem', background: 'var(--color-primary-hover)', color: 'white', padding: '0.15rem 0.4rem', borderRadius: 'var(--radius-pill)', fontWeight: '600' }}>Startup</span>
+                                                                )}
+                                                                {Array.isArray(product.integrations) ? product.integrations.map((i) => (
+                                                                    <span key={i} style={{ fontSize: '0.65rem', background: 'var(--color-secondary)', color: 'var(--color-text-main)', padding: '0.15rem 0.4rem', borderRadius: 'var(--radius-pill)', fontWeight: '600' }}>{i}</span>
+                                                                )) : product.integrations && (
+                                                                    <span style={{ fontSize: '0.65rem', background: 'var(--color-secondary)', color: 'var(--color-text-main)', padding: '0.15rem 0.4rem', borderRadius: 'var(--radius-pill)', fontWeight: '600' }}>{product.integrations}</span>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                        <EcosystemProductAlternatives
+                                                            product={product}
+                                                            seedEntry={seedEntry}
+                                                            quizResults={quizResults}
+                                                            healthProfile={healthProfile}
+                                                            onSwap={onSwapSeedProduct}
+                                                            onGoToSearch={onGoToSearch}
+                                                        />
                                                     </div>
-                                                    <div style={{ flexGrow: 1, minWidth: 0 }}>
-                                                        <h4 style={{ fontSize: '0.95rem', marginBottom: '0.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>{product.name}{product.outOfBusiness && <span style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-surface-soft)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No longer sold</span>}</h4>
-                                                        <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{product.stage || product.category}</span>
-                                                    </div>
-                                                    <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
-                                                        {product.isStartup && (
-                                                            <span style={{ fontSize: '0.65rem', background: 'var(--color-primary-hover)', color: 'white', padding: '0.15rem 0.4rem', borderRadius: 'var(--radius-pill)', fontWeight: '600' }}>Startup</span>
-                                                        )}
-                                                        {Array.isArray(product.integrations) ? product.integrations.map(i => (
-                                                            <span key={i} style={{ fontSize: '0.65rem', background: 'var(--color-secondary)', color: 'var(--color-text-main)', padding: '0.15rem 0.4rem', borderRadius: 'var(--radius-pill)', fontWeight: '600' }}>{i}</span>
-                                                        )) : product.integrations && (
-                                                            <span style={{ fontSize: '0.65rem', background: 'var(--color-secondary)', color: 'var(--color-text-main)', padding: '0.15rem 0.4rem', borderRadius: 'var(--radius-pill)', fontWeight: '600' }}>{product.integrations}</span>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            ))}
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                 ))}
