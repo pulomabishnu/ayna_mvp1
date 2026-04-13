@@ -22,7 +22,9 @@ export function buildUserHealthContextString(quizResults, healthProfile) {
       preference,
       sensitivities,
       productsToAvoid,
-      currentProductsDetail,
+      currentProductBrands,
+      currentMedications,
+      currentSupplements,
       contraceptionUse,
       contraceptionPreference,
     } = quizResults;
@@ -50,8 +52,18 @@ export function buildUserHealthContextString(quizResults, healthProfile) {
           .join('; ')}`
       );
     }
-    if (currentProductsDetail && String(currentProductsDetail).trim()) {
-      lines.push(`Current products (user-supplied): ${truncateItem(currentProductsDetail, 400)}`);
+    const customListed = [
+      ...(Array.isArray(currentProductBrands) ? currentProductBrands : []),
+      ...(Array.isArray(currentMedications) ? currentMedications : []),
+      ...(Array.isArray(currentSupplements) ? currentSupplements : []),
+    ].filter(Boolean);
+    if (customListed.length) {
+      lines.push(
+        `User-listed products/meds/supplements: ${customListed
+          .slice(0, 24)
+          .map((t) => truncateItem(t, 80))
+          .join('; ')}`
+      );
     }
     if (contraceptionUse && contraceptionUse !== 'Prefer not to say') {
       lines.push(`Contraception: ${truncateItem(contraceptionUse, 40)}`);
