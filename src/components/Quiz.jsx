@@ -283,7 +283,7 @@ function parseTranscriptToProfile(transcript) {
 }
 
 /** Pause after picking a single-select option so the choice registers before advancing */
-const AUTO_ADVANCE_SINGLE_MS = 900;
+const AUTO_ADVANCE_SINGLE_MS = 750;
 
 export default function Quiz({ onComplete }) {
   const [completionMode, setCompletionMode] = useState(null); // null | 'step' | 'voice'
