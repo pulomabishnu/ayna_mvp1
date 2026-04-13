@@ -4,6 +4,7 @@ import {
     ALL_PRODUCTS,
     detectDuplicates,
     getEcosystemAlternatives,
+    getEcosystemSeedFromQuiz,
 } from '../data/products';
 import { getInteractions } from '../data/interactions';
 import CareNearYouPanel from './CareNearYouPanel';
@@ -317,18 +318,27 @@ export default function MyEcosystem({
         });
     };
 
-    /** One row per quiz concern: the seeded product (already in ecosystem) + top 3 alternatives in dropdown. */
+    /** One row per quiz concern: top pick + top 3 alternatives. Uses App seed meta when present; otherwise recomputes from quiz so rows still show. */
     const seededConcernsList = useMemo(() => {
+        if (!quizResults?.frustrations?.length) return [];
+        const order = quizResults.frustrations;
         const entries = Object.entries(ecosystemSeedMeta || {});
-        if (!entries.length) return [];
-        const order = quizResults?.frustrations || [];
         const byFrustration = new Map();
-        entries.forEach(([pid, meta]) => {
-            const p = myProducts[pid];
-            if (p && meta?.frustration && !byFrustration.has(meta.frustration)) {
-                byFrustration.set(meta.frustration, { product: p, seedEntry: meta });
-            }
-        });
+        if (entries.length) {
+            entries.forEach(([pid, meta]) => {
+                const p = myProducts[pid];
+                if (p && meta?.frustration && !byFrustration.has(meta.frustration)) {
+                    byFrustration.set(meta.frustration, { product: p, seedEntry: meta });
+                }
+            });
+        }
+        if (byFrustration.size === 0) {
+            const { seedMeta } = getEcosystemSeedFromQuiz(quizResults, healthProfile);
+            order.forEach((f) => {
+                const pid = Object.keys(seedMeta).find((id) => seedMeta[id].frustration === f && myProducts[id]);
+                if (pid) byFrustration.set(f, { product: myProducts[pid], seedEntry: seedMeta[pid] });
+            });
+        }
         const rows = [];
         order.forEach((f) => {
             if (byFrustration.has(f)) rows.push(byFrustration.get(f));
@@ -337,7 +347,7 @@ export default function MyEcosystem({
             if (!order.includes(f)) rows.push(row);
         });
         return rows;
-    }, [ecosystemSeedMeta, myProducts, quizResults]);
+    }, [ecosystemSeedMeta, myProducts, quizResults, healthProfile]);
 
     const seededProductIds = useMemo(() => new Set(seededConcernsList.map((r) => r.product.id)), [seededConcernsList]);
 
@@ -391,6 +401,46 @@ export default function MyEcosystem({
                     <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem' }}>
                         Track all your health products and apps. Everything here is monitored for safety by default. We'll tell you what each does, if any overlap, and if products may interact.
                     </p>
+                </div>
+
+                {/* Summary stats first — matches the main ecosystem dashboard layout */}
+                <div style={{
+                    display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap',
+                    marginBottom: 'var(--spacing-lg)',
+                }}>
+                    {myProductList.length > 0 && (
+                        <div style={{ background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '1rem 1.5rem', textAlign: 'center', minWidth: '140px' }}>
+                            <div style={{ fontSize: '2rem', fontWeight: '700', color: 'var(--color-primary)' }}>
+                                {estimatedMonthlyTotal.total > 0 ? `~$${estimatedMonthlyTotal.total.toFixed(0)}` : '—'}
+                            </div>
+                            <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>Est. per month</div>
+                            {estimatedMonthlyTotal.counted < estimatedMonthlyTotal.totalItems && (
+                                <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', marginTop: '0.2rem' }}>
+                                    {estimatedMonthlyTotal.totalItems - estimatedMonthlyTotal.counted} item{estimatedMonthlyTotal.totalItems - estimatedMonthlyTotal.counted !== 1 ? 's' : ''} not priced
+                                </div>
+                            )}
+                        </div>
+                    )}
+                    <div style={{ background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '1rem 1.5rem', textAlign: 'center', minWidth: '140px' }}>
+                        <div style={{ fontSize: '2rem', fontWeight: '700', color: 'var(--color-primary)' }}>{myProductList.length}</div>
+                        <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>Products Tracked</div>
+                    </div>
+                    <div style={{ background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '1rem 1.5rem', textAlign: 'center', minWidth: '140px' }}>
+                        <div style={{ fontSize: '2rem', fontWeight: '700', color: 'var(--color-surface-contrast)' }}>{Object.keys(functionMap).length}</div>
+                        <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>Health Functions</div>
+                    </div>
+                    <div style={{
+                        background: duplicateCount > 0 ? '#F8F9FA' : 'var(--color-secondary-fade)',
+                        border: `1px solid ${duplicateCount > 0 ? '#D1D5DB' : 'var(--color-border)'}`,
+                        borderRadius: 'var(--radius-md)', padding: '1rem 1.5rem', textAlign: 'center', minWidth: '140px',
+                    }}>
+                        <div style={{ fontSize: '2rem', fontWeight: '700', color: 'var(--color-text-main)' }}>{duplicateCount}</div>
+                        <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>Overlaps Found</div>
+                    </div>
+                    <div style={{ background: 'var(--color-primary)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '1rem 1.5rem', textAlign: 'center', minWidth: '140px', cursor: 'pointer' }} onClick={onOpenDoctorPrep}>
+                        <div style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>👩‍⚕️</div>
+                        <div style={{ fontSize: '0.85rem', color: 'white', fontWeight: '700' }}>Doctor Prep</div>
+                    </div>
                 </div>
 
                 {/* Top: one primary product per quiz concern (already added) + top 3 alternatives */}
@@ -490,347 +540,6 @@ export default function MyEcosystem({
                 .ecosystem-seed-grid { grid-template-columns: 1fr !important; }
               }
             `}</style>
-                    </div>
-                )}
-
-                {/* Health profile: quiz + imported / manual context */}
-                <div className="card" style={{ maxWidth: '720px', margin: '0 auto var(--spacing-xl)', padding: '1.5rem', fontFamily: 'var(--font-body)' }}>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem', marginBottom: '1rem' }}>
-                        <div>
-                            <h3 style={{ fontSize: '1.2rem', margin: '0 0 0.35rem', color: 'var(--color-text-main)' }}>Your health profile</h3>
-                            <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>
-                                Concerns from your quiz, plus conditions and meds you add here, shape recommendations.
-                            </p>
-                        </div>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                            {typeof onBuildEcosystem === 'function' && (
-                                <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem' }} onClick={onBuildEcosystem}>
-                                    Update quiz / concerns
-                                </button>
-                            )}
-                            <button
-                                type="button"
-                                className="btn btn-outline"
-                                style={{ fontSize: '0.85rem' }}
-                                onClick={() => setProfileEditOpen((o) => !o)}
-                            >
-                                {profileEditOpen ? 'Close editor' : 'Add or fix diagnoses & meds'}
-                            </button>
-                        </div>
-                    </div>
-                    {quizResults?.frustrations?.length > 0 && (
-                        <div style={{ marginBottom: '0.85rem' }}>
-                            <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)', margin: '0 0 0.4rem' }}>Concerns & goals</p>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-                                {quizResults.frustrations.map((f) => (
-                                    <span
-                                        key={f}
-                                        style={{
-                                            fontSize: '0.82rem',
-                                            padding: '0.25rem 0.65rem',
-                                            borderRadius: 'var(--radius-pill)',
-                                            background: 'var(--color-secondary-fade)',
-                                            color: 'var(--color-text-main)',
-                                            border: '1px solid var(--color-border)',
-                                        }}
-                                    >
-                                        {f}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-                    {(healthProfile?.conditions?.length > 0 || healthProfile?.fhirSummary?.conditions?.length > 0) && (
-                        <div style={{ marginBottom: '0.85rem' }}>
-                            <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)', margin: '0 0 0.4rem' }}>Conditions & diagnoses</p>
-                            <p style={{ margin: 0, fontSize: '0.9rem', lineHeight: 1.5, color: 'var(--color-text-main)' }}>
-                                {[...(healthProfile.conditions || []), ...(healthProfile.fhirSummary?.conditions || [])].filter(Boolean).join(' · ')}
-                            </p>
-                        </div>
-                    )}
-                    {(healthProfile?.medications?.length > 0 || healthProfile?.fhirSummary?.medications?.length > 0) && (
-                        <div style={{ marginBottom: '0.85rem' }}>
-                            <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)', margin: '0 0 0.4rem' }}>Medications</p>
-                            <p style={{ margin: 0, fontSize: '0.9rem', lineHeight: 1.5, color: 'var(--color-text-main)' }}>
-                                {[...(healthProfile.medications || []), ...(healthProfile.fhirSummary?.medications || [])].filter(Boolean).join(' · ')}
-                            </p>
-                        </div>
-                    )}
-                    {healthProfile?.allergies?.length > 0 && (
-                        <div style={{ marginBottom: '0.85rem' }}>
-                            <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)', margin: '0 0 0.4rem' }}>Allergies</p>
-                            <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--color-text-main)' }}>{healthProfile.allergies.join(' · ')}</p>
-                        </div>
-                    )}
-                    {healthProfile?.notes && (
-                        <p style={{ margin: '0 0 0.5rem', fontSize: '0.88rem', color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Notes: {healthProfile.notes}</p>
-                    )}
-                    {!quizResults?.frustrations?.length && !inferTagsFromHealthProfile(healthProfile).length && !healthProfile?.conditions?.length && (
-                        <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', margin: 0 }}>
-                            Complete the quiz or add conditions below so picks and articles match you better.
-                        </p>
-                    )}
-                    {profileEditOpen && (
-                        <div
-                            style={{
-                                marginTop: '1.25rem',
-                                paddingTop: '1.25rem',
-                                borderTop: '1px solid var(--color-border)',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                gap: '0.75rem',
-                            }}
-                        >
-                            <label style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-text-muted)' }}>Conditions (comma-separated)</label>
-                            <input
-                                value={conditionsDraft}
-                                onChange={(e) => setConditionsDraft(e.target.value)}
-                                placeholder="e.g. PCOS, endometriosis"
-                                style={{
-                                    padding: '0.65rem 0.85rem',
-                                    fontSize: '0.95rem',
-                                    borderRadius: 'var(--radius-md)',
-                                    border: '1px solid var(--color-border)',
-                                    fontFamily: 'var(--font-body)',
-                                    outline: 'none',
-                                }}
-                            />
-                            <label style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-text-muted)' }}>Medications</label>
-                            <input
-                                value={medicationsDraft}
-                                onChange={(e) => setMedicationsDraft(e.target.value)}
-                                placeholder="e.g. levothyroxine 50mcg"
-                                style={{
-                                    padding: '0.65rem 0.85rem',
-                                    fontSize: '0.95rem',
-                                    borderRadius: 'var(--radius-md)',
-                                    border: '1px solid var(--color-border)',
-                                    fontFamily: 'var(--font-body)',
-                                    outline: 'none',
-                                }}
-                            />
-                            <label style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-text-muted)' }}>Allergies</label>
-                            <input
-                                value={allergiesDraft}
-                                onChange={(e) => setAllergiesDraft(e.target.value)}
-                                placeholder="e.g. latex, penicillin"
-                                style={{
-                                    padding: '0.65rem 0.85rem',
-                                    fontSize: '0.95rem',
-                                    borderRadius: 'var(--radius-md)',
-                                    border: '1px solid var(--color-border)',
-                                    fontFamily: 'var(--font-body)',
-                                    outline: 'none',
-                                }}
-                            />
-                            <label style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-text-muted)' }}>Notes</label>
-                            <textarea
-                                value={notesDraft}
-                                onChange={(e) => setNotesDraft(e.target.value)}
-                                rows={3}
-                                style={{
-                                    padding: '0.65rem 0.85rem',
-                                    fontSize: '0.95rem',
-                                    borderRadius: 'var(--radius-md)',
-                                    border: '1px solid var(--color-border)',
-                                    fontFamily: 'var(--font-body)',
-                                    outline: 'none',
-                                    resize: 'vertical',
-                                }}
-                            />
-                            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                                <button type="button" className="btn btn-primary" style={{ fontSize: '0.9rem' }} onClick={handleSaveHealthProfileDraft}>
-                                    Save profile
-                                </button>
-                                <button type="button" className="btn btn-outline" style={{ fontSize: '0.9rem' }} onClick={() => setProfileEditOpen(false)}>
-                                    Cancel
-                                </button>
-                            </div>
-                        </div>
-                    )}
-                </div>
-
-                {typeof onBuildEcosystem === 'function' && (
-                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 'var(--spacing-lg)' }}>
-                        <button
-                            type="button"
-                            className="btn btn-primary"
-                            style={{
-                                padding: '0.75rem 1.75rem',
-                                fontSize: '1rem',
-                                fontWeight: 600,
-                                boxShadow: '0 4px 14px rgba(217, 76, 147, 0.35)',
-                            }}
-                            onClick={onBuildEcosystem}
-                        >
-                            Build me my ecosystem!
-                        </button>
-                    </div>
-                )}
-
-                {ecosystemArticles.length > 0 && (
-                    <div style={{ maxWidth: '720px', margin: '0 auto var(--spacing-xl)', padding: '0 0.25rem' }}>
-                        <h3 style={{ fontSize: '1.35rem', marginBottom: '0.5rem', textAlign: 'center' }}>Health articles</h3>
-                        <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.95rem', marginBottom: '1.25rem' }}>
-                            Evidence-based reads matched to your profile.
-                        </p>
-                        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
-                            {ecosystemArticles.map((art) => (
-                                <li key={art.id}>
-                                    <button
-                                        type="button"
-                                        onClick={() => onOpenArticle?.(art.id)}
-                                        style={{
-                                            width: '100%',
-                                            textAlign: 'left',
-                                            padding: '0.85rem 1rem',
-                                            borderRadius: 'var(--radius-md)',
-                                            border: '1px solid var(--color-border)',
-                                            background: 'var(--color-surface-soft)',
-                                            cursor: 'pointer',
-                                            fontFamily: 'var(--font-body)',
-                                        }}
-                                    >
-                                        <span style={{ fontSize: '0.95rem', fontWeight: '600', color: 'var(--color-text-main)', display: 'block' }}>{art.title}</span>
-                                        {art.teaser && (
-                                            <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginTop: '0.35rem', display: 'block', lineHeight: 1.45 }}>
-                                                {(art.teaser || '').slice(0, 140)}{(art.teaser || '').length > 140 ? '…' : ''}
-                                            </span>
-                                        )}
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
-                        {typeof onViewRecommendedArticles === 'function' && (
-                            <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-                                <button type="button" className="btn btn-outline" style={{ fontSize: '0.9rem' }} onClick={onViewRecommendedArticles}>
-                                    Browse all articles
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                )}
-
-                {quizResults?.frustrations?.length > 0 && (
-                    <CareNearYouPanel
-                        quizResults={quizResults}
-                        healthProfile={healthProfile}
-                        userZipCode={userZipCode}
-                        onZipCodeChange={onZipCodeChange}
-                        onOpenProduct={onOpenProduct}
-                    />
-                )}
-
-                {/* Summary Bar */}
-                <div style={{
-                    display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap',
-                    marginBottom: 'var(--spacing-lg)'
-                }}>
-                    {myProductList.length > 0 && (
-                        <div style={{ background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '1rem 1.5rem', textAlign: 'center', minWidth: '140px' }}>
-                            <div style={{ fontSize: '2rem', fontWeight: '700', color: 'var(--color-primary)' }}>
-                                {estimatedMonthlyTotal.total > 0 ? `~$${estimatedMonthlyTotal.total.toFixed(0)}` : '—'}
-                            </div>
-                            <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>Est. per month</div>
-                            {estimatedMonthlyTotal.counted < estimatedMonthlyTotal.totalItems && (
-                                <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', marginTop: '0.2rem' }}>
-                                    {estimatedMonthlyTotal.totalItems - estimatedMonthlyTotal.counted} item{estimatedMonthlyTotal.totalItems - estimatedMonthlyTotal.counted !== 1 ? 's' : ''} not priced
-                                </div>
-                            )}
-                        </div>
-                    )}
-                    <div style={{ background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '1rem 1.5rem', textAlign: 'center', minWidth: '140px' }}>
-                        <div style={{ fontSize: '2rem', fontWeight: '700', color: 'var(--color-primary)' }}>{myProductList.length}</div>
-                        <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>Products Tracked</div>
-                    </div>
-                    <div style={{ background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '1rem 1.5rem', textAlign: 'center', minWidth: '140px' }}>
-                        <div style={{ fontSize: '2rem', fontWeight: '700', color: 'var(--color-surface-contrast)' }}>{Object.keys(functionMap).length}</div>
-                        <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>Health Functions</div>
-                    </div>
-                    <div style={{
-                        background: duplicateCount > 0 ? '#F8F9FA' : 'var(--color-secondary-fade)',
-                        border: `1px solid ${duplicateCount > 0 ? '#D1D5DB' : 'var(--color-border)'}`,
-                        borderRadius: 'var(--radius-md)', padding: '1rem 1.5rem', textAlign: 'center', minWidth: '140px'
-                    }}>
-                        <div style={{ fontSize: '2rem', fontWeight: '700', color: duplicateCount > 0 ? 'var(--color-text-main)' : 'var(--color-text-main)' }}>{duplicateCount}</div>
-                        <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>Overlaps Found</div>
-                    </div>
-
-                    <div style={{ background: 'var(--color-primary)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '1rem 1.5rem', textAlign: 'center', minWidth: '140px', cursor: 'pointer' }} onClick={onOpenDoctorPrep}>
-                        <div style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>👩‍⚕️</div>
-                        <div style={{ fontSize: '0.85rem', color: 'white', fontWeight: '700' }}>Doctor Prep</div>
-                    </div>
-                </div>
-
-                {/* Safety & interactions: compare 2+ products */}
-                {myProductList.length >= 2 && (
-                    <div style={{ marginBottom: 'var(--spacing-xl)', maxWidth: '800px', margin: '0 auto var(--spacing-xl)' }}>
-                        <h3 style={{ fontSize: '1.15rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            🛡️ Safety & interactions
-                        </h3>
-                        <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1rem' }}>
-                            Select 2 or more products to check if they may interact or if they're safe to use together.
-                        </p>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
-                            {myProductList.map(p => {
-                                const selected = interactionSelection.has(p.id);
-                                return (
-                                    <button
-                                        key={p.id}
-                                        type="button"
-                                        onClick={() => toggleInteractionSelect(p)}
-                                        style={{
-                                            padding: '0.4rem 0.75rem',
-                                            borderRadius: 'var(--radius-pill)',
-                                            border: `2px solid ${selected ? 'var(--color-primary)' : 'var(--color-border)'}`,
-                                            background: selected ? 'var(--color-secondary-fade)' : 'var(--color-surface-soft)',
-                                            fontSize: '0.85rem',
-                                            cursor: 'pointer',
-                                            fontWeight: selected ? '600' : '500'
-                                        }}
-                                    >
-                                        {selected ? '✓ ' : ''}{p.name}
-                                    </button>
-                                );
-                            })}
-                        </div>
-                        {interactionProductList.length >= 2 && (
-                            <div style={{ background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '1.25rem' }}>
-                                <h4 style={{ fontSize: '1rem', marginBottom: '0.75rem' }}>Comparing: {interactionProductList.map(p => p.name).join(', ')}</h4>
-                                {interactionResults.length === 0 ? (
-                                    <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem' }}>
-                                        No known safety interactions found between these. This doesn't replace medical advice — discuss with your provider if unsure.
-                                    </p>
-                                ) : (
-                                    <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                                        {interactionResults.map((r, i) => (
-                                            <li key={i} style={{
-                                                marginBottom: '0.75rem',
-                                                padding: '0.75rem',
-                                                background: r.severity === 'high' ? '#FEF2F2' : r.severity === 'medium' ? '#FFFBEB' : 'white',
-                                                borderLeft: `4px solid ${r.severity === 'high' ? '#DC2626' : r.severity === 'medium' ? '#F59E0B' : '#6B7280'}`,
-                                                borderRadius: 'var(--radius-sm)',
-                                                fontSize: '0.9rem'
-                                            }}>
-                                                <span style={{ fontWeight: '600', color: r.severity === 'high' ? '#B91C1C' : 'var(--color-text-main)' }}>
-                                                    {r.severity === 'high' ? '⚠️ ' : r.severity === 'medium' ? '⚡ ' : 'ℹ️ '}
-                                                    {r.productNames.join(' + ')}
-                                                </span>
-                                                <p style={{ margin: '0.35rem 0 0', color: 'var(--color-text-main)' }}>{r.message}</p>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
-                                <button
-                                    type="button"
-                                    className="btn btn-outline"
-                                    style={{ marginTop: '0.75rem', fontSize: '0.85rem' }}
-                                    onClick={() => setInteractionSelection(new Set())}
-                                >
-                                    Clear selection
-                                </button>
-                            </div>
-                        )}
                     </div>
                 )}
 
@@ -1035,6 +744,306 @@ export default function MyEcosystem({
                                     </div>
                                     );
                                 })}
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {ecosystemArticles.length > 0 && (
+                    <div style={{ maxWidth: '720px', margin: '0 auto var(--spacing-xl)', padding: '0 0.25rem' }}>
+                        <h3 style={{ fontSize: '1.35rem', marginBottom: '0.5rem', textAlign: 'center' }}>Health articles</h3>
+                        <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.95rem', marginBottom: '1.25rem' }}>
+                            Evidence-based reads matched to your profile.
+                        </p>
+                        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                            {ecosystemArticles.map((art) => (
+                                <li key={art.id}>
+                                    <button
+                                        type="button"
+                                        onClick={() => onOpenArticle?.(art.id)}
+                                        style={{
+                                            width: '100%',
+                                            textAlign: 'left',
+                                            padding: '0.85rem 1rem',
+                                            borderRadius: 'var(--radius-md)',
+                                            border: '1px solid var(--color-border)',
+                                            background: 'var(--color-surface-soft)',
+                                            cursor: 'pointer',
+                                            fontFamily: 'var(--font-body)',
+                                        }}
+                                    >
+                                        <span style={{ fontSize: '0.95rem', fontWeight: '600', color: 'var(--color-text-main)', display: 'block' }}>{art.title}</span>
+                                        {art.teaser && (
+                                            <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginTop: '0.35rem', display: 'block', lineHeight: 1.45 }}>
+                                                {(art.teaser || '').slice(0, 140)}{(art.teaser || '').length > 140 ? '…' : ''}
+                                            </span>
+                                        )}
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                        {typeof onViewRecommendedArticles === 'function' && (
+                            <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+                                <button type="button" className="btn btn-outline" style={{ fontSize: '0.9rem' }} onClick={onViewRecommendedArticles}>
+                                    Browse all articles
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {quizResults?.frustrations?.length > 0 && (
+                    <CareNearYouPanel
+                        quizResults={quizResults}
+                        healthProfile={healthProfile}
+                        userZipCode={userZipCode}
+                        onZipCodeChange={onZipCodeChange}
+                        onOpenProduct={onOpenProduct}
+                    />
+                )}
+
+                {/* Health profile: quiz + imported / manual context */}
+                <div className="card" style={{ maxWidth: '720px', margin: '0 auto var(--spacing-xl)', padding: '1.5rem', fontFamily: 'var(--font-body)' }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem', marginBottom: '1rem' }}>
+                        <div>
+                            <h3 style={{ fontSize: '1.2rem', margin: '0 0 0.35rem', color: 'var(--color-text-main)' }}>Your health profile</h3>
+                            <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>
+                                Concerns from your quiz, plus conditions and meds you add here, shape recommendations.
+                            </p>
+                        </div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                            {typeof onBuildEcosystem === 'function' && (
+                                <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem' }} onClick={onBuildEcosystem}>
+                                    Update quiz / concerns
+                                </button>
+                            )}
+                            <button
+                                type="button"
+                                className="btn btn-outline"
+                                style={{ fontSize: '0.85rem' }}
+                                onClick={() => setProfileEditOpen((o) => !o)}
+                            >
+                                {profileEditOpen ? 'Close editor' : 'Add or fix diagnoses & meds'}
+                            </button>
+                        </div>
+                    </div>
+                    {quizResults?.frustrations?.length > 0 && (
+                        <div style={{ marginBottom: '0.85rem' }}>
+                            <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)', margin: '0 0 0.4rem' }}>Concerns & goals</p>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                                {quizResults.frustrations.map((f) => (
+                                    <span
+                                        key={f}
+                                        style={{
+                                            fontSize: '0.82rem',
+                                            padding: '0.25rem 0.65rem',
+                                            borderRadius: 'var(--radius-pill)',
+                                            background: 'var(--color-secondary-fade)',
+                                            color: 'var(--color-text-main)',
+                                            border: '1px solid var(--color-border)',
+                                        }}
+                                    >
+                                        {f}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                    {(healthProfile?.conditions?.length > 0 || healthProfile?.fhirSummary?.conditions?.length > 0) && (
+                        <div style={{ marginBottom: '0.85rem' }}>
+                            <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)', margin: '0 0 0.4rem' }}>Conditions & diagnoses</p>
+                            <p style={{ margin: 0, fontSize: '0.9rem', lineHeight: 1.5, color: 'var(--color-text-main)' }}>
+                                {[...(healthProfile.conditions || []), ...(healthProfile.fhirSummary?.conditions || [])].filter(Boolean).join(' · ')}
+                            </p>
+                        </div>
+                    )}
+                    {(healthProfile?.medications?.length > 0 || healthProfile?.fhirSummary?.medications?.length > 0) && (
+                        <div style={{ marginBottom: '0.85rem' }}>
+                            <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)', margin: '0 0 0.4rem' }}>Medications</p>
+                            <p style={{ margin: 0, fontSize: '0.9rem', lineHeight: 1.5, color: 'var(--color-text-main)' }}>
+                                {[...(healthProfile.medications || []), ...(healthProfile.fhirSummary?.medications || [])].filter(Boolean).join(' · ')}
+                            </p>
+                        </div>
+                    )}
+                    {healthProfile?.allergies?.length > 0 && (
+                        <div style={{ marginBottom: '0.85rem' }}>
+                            <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)', margin: '0 0 0.4rem' }}>Allergies</p>
+                            <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--color-text-main)' }}>{healthProfile.allergies.join(' · ')}</p>
+                        </div>
+                    )}
+                    {healthProfile?.notes && (
+                        <p style={{ margin: '0 0 0.5rem', fontSize: '0.88rem', color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Notes: {healthProfile.notes}</p>
+                    )}
+                    {!quizResults?.frustrations?.length && !inferTagsFromHealthProfile(healthProfile).length && !healthProfile?.conditions?.length && (
+                        <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', margin: 0 }}>
+                            Complete the quiz or add conditions below so picks and articles match you better.
+                        </p>
+                    )}
+                    {profileEditOpen && (
+                        <div
+                            style={{
+                                marginTop: '1.25rem',
+                                paddingTop: '1.25rem',
+                                borderTop: '1px solid var(--color-border)',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '0.75rem',
+                            }}
+                        >
+                            <label style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-text-muted)' }}>Conditions (comma-separated)</label>
+                            <input
+                                value={conditionsDraft}
+                                onChange={(e) => setConditionsDraft(e.target.value)}
+                                placeholder="e.g. PCOS, endometriosis"
+                                style={{
+                                    padding: '0.65rem 0.85rem',
+                                    fontSize: '0.95rem',
+                                    borderRadius: 'var(--radius-md)',
+                                    border: '1px solid var(--color-border)',
+                                    fontFamily: 'var(--font-body)',
+                                    outline: 'none',
+                                }}
+                            />
+                            <label style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-text-muted)' }}>Medications</label>
+                            <input
+                                value={medicationsDraft}
+                                onChange={(e) => setMedicationsDraft(e.target.value)}
+                                placeholder="e.g. levothyroxine 50mcg"
+                                style={{
+                                    padding: '0.65rem 0.85rem',
+                                    fontSize: '0.95rem',
+                                    borderRadius: 'var(--radius-md)',
+                                    border: '1px solid var(--color-border)',
+                                    fontFamily: 'var(--font-body)',
+                                    outline: 'none',
+                                }}
+                            />
+                            <label style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-text-muted)' }}>Allergies</label>
+                            <input
+                                value={allergiesDraft}
+                                onChange={(e) => setAllergiesDraft(e.target.value)}
+                                placeholder="e.g. latex, penicillin"
+                                style={{
+                                    padding: '0.65rem 0.85rem',
+                                    fontSize: '0.95rem',
+                                    borderRadius: 'var(--radius-md)',
+                                    border: '1px solid var(--color-border)',
+                                    fontFamily: 'var(--font-body)',
+                                    outline: 'none',
+                                }}
+                            />
+                            <label style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-text-muted)' }}>Notes</label>
+                            <textarea
+                                value={notesDraft}
+                                onChange={(e) => setNotesDraft(e.target.value)}
+                                rows={3}
+                                style={{
+                                    padding: '0.65rem 0.85rem',
+                                    fontSize: '0.95rem',
+                                    borderRadius: 'var(--radius-md)',
+                                    border: '1px solid var(--color-border)',
+                                    fontFamily: 'var(--font-body)',
+                                    outline: 'none',
+                                    resize: 'vertical',
+                                }}
+                            />
+                            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                <button type="button" className="btn btn-primary" style={{ fontSize: '0.9rem' }} onClick={handleSaveHealthProfileDraft}>
+                                    Save profile
+                                </button>
+                                <button type="button" className="btn btn-outline" style={{ fontSize: '0.9rem' }} onClick={() => setProfileEditOpen(false)}>
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                {typeof onBuildEcosystem === 'function' && (
+                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 'var(--spacing-lg)' }}>
+                        <button
+                            type="button"
+                            className="btn btn-primary"
+                            style={{
+                                padding: '0.75rem 1.75rem',
+                                fontSize: '1rem',
+                                fontWeight: 600,
+                                boxShadow: '0 4px 14px rgba(217, 76, 147, 0.35)',
+                            }}
+                            onClick={onBuildEcosystem}
+                        >
+                            Build me my ecosystem!
+                        </button>
+                    </div>
+                )}
+
+                {/* Safety & interactions: compare 2+ products */}
+                {myProductList.length >= 2 && (
+                    <div style={{ marginBottom: 'var(--spacing-xl)', maxWidth: '800px', margin: '0 auto var(--spacing-xl)' }}>
+                        <h3 style={{ fontSize: '1.15rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            🛡️ Safety & interactions
+                        </h3>
+                        <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1rem' }}>
+                            Select 2 or more products to check if they may interact or if they're safe to use together.
+                        </p>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
+                            {myProductList.map(p => {
+                                const selected = interactionSelection.has(p.id);
+                                return (
+                                    <button
+                                        key={p.id}
+                                        type="button"
+                                        onClick={() => toggleInteractionSelect(p)}
+                                        style={{
+                                            padding: '0.4rem 0.75rem',
+                                            borderRadius: 'var(--radius-pill)',
+                                            border: `2px solid ${selected ? 'var(--color-primary)' : 'var(--color-border)'}`,
+                                            background: selected ? 'var(--color-secondary-fade)' : 'var(--color-surface-soft)',
+                                            fontSize: '0.85rem',
+                                            cursor: 'pointer',
+                                            fontWeight: selected ? '600' : '500'
+                                        }}
+                                    >
+                                        {selected ? '✓ ' : ''}{p.name}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                        {interactionProductList.length >= 2 && (
+                            <div style={{ background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '1.25rem' }}>
+                                <h4 style={{ fontSize: '1rem', marginBottom: '0.75rem' }}>Comparing: {interactionProductList.map(p => p.name).join(', ')}</h4>
+                                {interactionResults.length === 0 ? (
+                                    <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem' }}>
+                                        No known safety interactions found between these. This doesn't replace medical advice — discuss with your provider if unsure.
+                                    </p>
+                                ) : (
+                                    <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                                        {interactionResults.map((r, i) => (
+                                            <li key={i} style={{
+                                                marginBottom: '0.75rem',
+                                                padding: '0.75rem',
+                                                background: r.severity === 'high' ? '#FEF2F2' : r.severity === 'medium' ? '#FFFBEB' : 'white',
+                                                borderLeft: `4px solid ${r.severity === 'high' ? '#DC2626' : r.severity === 'medium' ? '#F59E0B' : '#6B7280'}`,
+                                                borderRadius: 'var(--radius-sm)',
+                                                fontSize: '0.9rem'
+                                            }}>
+                                                <span style={{ fontWeight: '600', color: r.severity === 'high' ? '#B91C1C' : 'var(--color-text-main)' }}>
+                                                    {r.severity === 'high' ? '⚠️ ' : r.severity === 'medium' ? '⚡ ' : 'ℹ️ '}
+                                                    {r.productNames.join(' + ')}
+                                                </span>
+                                                <p style={{ margin: '0.35rem 0 0', color: 'var(--color-text-main)' }}>{r.message}</p>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                                <button
+                                    type="button"
+                                    className="btn btn-outline"
+                                    style={{ marginTop: '0.75rem', fontSize: '0.85rem' }}
+                                    onClick={() => setInteractionSelection(new Set())}
+                                >
+                                    Clear selection
+                                </button>
                             </div>
                         )}
                     </div>
