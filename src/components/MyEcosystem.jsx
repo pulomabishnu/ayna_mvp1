@@ -792,15 +792,13 @@ export default function MyEcosystem({
                     </div>
                 )}
 
-                {quizResults?.frustrations?.length > 0 && (
-                    <CareNearYouPanel
-                        quizResults={quizResults}
-                        healthProfile={healthProfile}
-                        userZipCode={userZipCode}
-                        onZipCodeChange={onZipCodeChange}
-                        onOpenProduct={onOpenProduct}
-                    />
-                )}
+                <CareNearYouPanel
+                    quizResults={quizResults}
+                    healthProfile={healthProfile}
+                    userZipCode={userZipCode}
+                    onZipCodeChange={onZipCodeChange}
+                    onOpenProduct={onOpenProduct}
+                />
 
                 {/* Health profile: quiz + imported / manual context */}
                 <div className="card" style={{ maxWidth: '720px', margin: '0 auto var(--spacing-xl)', padding: '1.5rem', fontFamily: 'var(--font-body)' }}>
