@@ -283,7 +283,7 @@ function parseTranscriptToProfile(transcript) {
 }
 
 /** Pause after picking a single-select option so the choice registers before advancing */
-const AUTO_ADVANCE_SINGLE_MS = 750;
+const AUTO_ADVANCE_SINGLE_MS = 500;
 
 export default function Quiz({ onComplete }) {
   const [completionMode, setCompletionMode] = useState(null); // null | 'step' | 'voice'
@@ -469,7 +469,7 @@ export default function Quiz({ onComplete }) {
           </button>
           <button
             type="button"
-            className="btn btn-outline"
+            className="btn btn-primary"
             style={{ padding: '1.25rem 1.5rem', fontSize: '1.1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
             onClick={() => { setCompletionMode('voice'); setVoicePhase('prompt'); }}
           >
