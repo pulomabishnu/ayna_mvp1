@@ -480,18 +480,18 @@ export default function Quiz({ onComplete }) {
           <button
             type="button"
             className="btn btn-primary"
-            style={{ padding: '1.25rem 1.5rem', fontSize: '1.1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
-            onClick={() => { setCompletionMode('voice'); setVoicePhase('prompt'); }}
-          >
-            <span>🎤</span> Autocreate profile using voice
-          </button>
-          <button
-            type="button"
-            className="btn btn-primary"
             style={{ padding: '1.25rem 1.5rem', fontSize: '1.1rem' }}
             onClick={() => { setCompletionMode('step'); }}
           >
             Step-by-step (click through questions)
+          </button>
+          <button
+            type="button"
+            className="btn btn-outline"
+            style={{ padding: '1.25rem 1.5rem', fontSize: '1.1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+            onClick={() => { setCompletionMode('voice'); setVoicePhase('prompt'); }}
+          >
+            <span>🎤</span> Autocreate profile using voice
           </button>
         </div>
       </section>
