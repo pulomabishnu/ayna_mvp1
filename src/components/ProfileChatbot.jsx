@@ -281,6 +281,7 @@ export default function ProfileChatbot({ profile, onProfileUpdate, chatHistory =
               />
               {speech.supported && (
                 <SearchMicButton
+                  variant="primary"
                   size="compact"
                   isRecording={speech.isRecording}
                   disabled={disabled || sending}
