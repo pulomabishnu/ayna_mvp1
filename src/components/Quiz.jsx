@@ -473,7 +473,7 @@ export default function Quiz({ onComplete }) {
             style={{ padding: '1.25rem 1.5rem', fontSize: '1.1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
             onClick={() => { setCompletionMode('voice'); setVoicePhase('prompt'); }}
           >
-            <span>🎤</span> Speak in my own words (voice)
+            <span>🎤</span> Autocreate profile using voice
           </button>
         </div>
       </section>
