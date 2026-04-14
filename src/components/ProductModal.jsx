@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Disclaimer from './Disclaimer';
 import { getProfileMatchLabelsForProduct, getRecommendationExplanation, getPrescriptionAccessGuidance } from '../data/products';
+import { getHowToUseContent } from '../data/productHowToUse';
 import { getAynaRating } from '../data/aynaReviews';
 import { fetchProductInsights } from '../utils/fetchProductInsights';
 import { buildUserHealthContextString } from '../utils/userHealthContextForInsights';
@@ -351,6 +352,8 @@ export default function ProductModal({
 
     const prescriptionAccess = useMemo(() => (product ? getPrescriptionAccessGuidance(product) : null), [product]);
 
+    const howToUse = useMemo(() => (product ? getHowToUseContent(product) : null), [product]);
+
     useEffect(() => {
         setAiInsights(null);
         setAiError(null);
@@ -451,6 +454,7 @@ export default function ProductModal({
 
     const tabs = [
         { id: 'safety', label: isDigital ? 'Privacy & Safety' : 'Safety & Ingredients', icon: '🛡️' },
+        { id: 'how-to-use', label: 'How to use', icon: '📖' },
         { id: 'doctor', label: 'Clinician opinions', icon: '👩‍⚕️' },
         { id: 'social', label: 'Community', icon: '💬' },
         { id: 'science', label: 'Scientific literature', icon: '🔬' },
@@ -1148,6 +1152,90 @@ export default function ProductModal({
 
                 {/* Tab Panel Content */}
                 <div style={{ padding: '2rem 2.5rem 3rem' }}>
+                    {activeTab === 'how-to-use' && howToUse && (
+                        <div className="animate-fade-in">
+                            <h3 style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>How to use</h3>
+                            <p style={{ fontSize: '0.88rem', color: 'var(--color-text-muted)', lineHeight: 1.55, marginBottom: '1.25rem' }}>
+                                From our product database, plus common guidance and links to brand resources, tutorials, and videos. Not medical advice.
+                            </p>
+                            {howToUse.fromBrand?.paragraphs?.length > 0 && (
+                                <div style={{ marginBottom: '1.5rem', padding: '1.1rem 1.25rem', background: 'var(--color-bg)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
+                                    <h4 style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', margin: '0 0 0.65rem' }}>From the brand &amp; Ayna database</h4>
+                                    {howToUse.fromBrand.paragraphs.map((p, i) => (
+                                        <p key={i} style={{ fontSize: '0.92rem', lineHeight: 1.6, color: 'var(--color-text-main)', margin: i === 0 ? 0 : '0.75rem 0 0' }}>{p}</p>
+                                    ))}
+                                </div>
+                            )}
+                            {howToUse.aggregatedIntro && (
+                                <p style={{ fontSize: '0.9rem', color: 'var(--color-text-main)', lineHeight: 1.6, marginBottom: '1.25rem' }}>{howToUse.aggregatedIntro}</p>
+                            )}
+                            {howToUse.steps?.length > 0 && (
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <h4 style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', margin: '0 0 0.65rem' }}>Steps</h4>
+                                    <ol style={{ margin: 0, paddingLeft: '1.25rem', fontSize: '0.92rem', lineHeight: 1.65, color: 'var(--color-text-main)' }}>
+                                        {howToUse.steps.map((s, i) => (
+                                            <li key={i} style={{ marginBottom: '0.45rem' }}>{s}</li>
+                                        ))}
+                                    </ol>
+                                </div>
+                            )}
+                            {(howToUse.signupBullets?.length > 0 || howToUse.whatToExpectBullets?.length > 0) && (
+                                <div style={{ display: 'grid', gap: '1.25rem', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', marginBottom: '1.5rem' }}>
+                                    {howToUse.signupBullets?.length > 0 && (
+                                        <div style={{ padding: '1rem 1.15rem', background: 'var(--color-secondary-fade)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
+                                            <h4 style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-primary)', margin: '0 0 0.65rem' }}>How to sign up</h4>
+                                            <ul style={{ margin: 0, paddingLeft: '1.1rem', fontSize: '0.9rem', lineHeight: 1.55 }}>
+                                                {howToUse.signupBullets.map((s, i) => (
+                                                    <li key={i} style={{ marginBottom: '0.4rem' }}>{s}</li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
+                                    {howToUse.whatToExpectBullets?.length > 0 && (
+                                        <div style={{ padding: '1rem 1.15rem', background: 'var(--color-bg)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
+                                            <h4 style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', margin: '0 0 0.65rem' }}>What to expect</h4>
+                                            <ul style={{ margin: 0, paddingLeft: '1.1rem', fontSize: '0.9rem', lineHeight: 1.55 }}>
+                                                {howToUse.whatToExpectBullets.map((s, i) => (
+                                                    <li key={i} style={{ marginBottom: '0.4rem' }}>{s}</li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                            {howToUse.tutorialLinks?.length > 0 && (
+                                <div style={{ marginBottom: '1.25rem' }}>
+                                    <h4 style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', margin: '0 0 0.65rem' }}>Tutorials &amp; official resources</h4>
+                                    <ul style={{ margin: 0, paddingLeft: '1.1rem', fontSize: '0.9rem', lineHeight: 1.55 }}>
+                                        {howToUse.tutorialLinks.map((link, idx) => (
+                                            <li key={idx} style={{ marginBottom: '0.5rem' }}>
+                                                <a href={link.url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: '600' }}>
+                                                    {link.label} ↗
+                                                </a>
+                                                {link.hint ? <span style={{ color: 'var(--color-text-muted)' }}> — {link.hint}</span> : null}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+                            {howToUse.videoLinks?.length > 0 && (
+                                <div style={{ marginBottom: '1rem' }}>
+                                    <h4 style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', margin: '0 0 0.65rem' }}>Videos &amp; search shortcuts</h4>
+                                    <ul style={{ margin: 0, paddingLeft: '1.1rem', fontSize: '0.9rem', lineHeight: 1.55 }}>
+                                        {howToUse.videoLinks.map((v, idx) => (
+                                            <li key={idx} style={{ marginBottom: '0.45rem' }}>
+                                                <a href={v.url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: '600' }}>
+                                                    {v.label} ↗
+                                                </a>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+                            <p style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', lineHeight: 1.5, marginTop: '0.75rem', fontStyle: 'italic' }}>{howToUse.disclaimer}</p>
+                        </div>
+                    )}
+
                     {activeTab === 'safety' && (
                         <div className="animate-fade-in">
                             <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Safety &amp; what to know</h3>
