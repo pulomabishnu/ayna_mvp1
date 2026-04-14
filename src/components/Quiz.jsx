@@ -302,6 +302,8 @@ export default function Quiz({ onComplete }) {
   const [liveRecordingText, setLiveRecordingText] = useState(''); // current session's text so "Adding:" re-renders
   const recognitionRef = useRef(null);
   const transcriptAccumRef = useRef('');
+  const lastInterimRef = useRef(''); // latest partial phrase (shown live before it becomes final)
+  const voiceSessionAppendRef = useRef(false); // mirrors append flag for stop handler (sync, not async state)
 
   const steps = useMemo(() => buildSteps(answers), [answers]);
   const step = steps[currentStep];
@@ -395,8 +397,10 @@ export default function Quiz({ onComplete }) {
       setVoicePhase('confirm');
       return;
     }
+    voiceSessionAppendRef.current = append;
     setAppendToTranscript(append);
     transcriptAccumRef.current = '';
+    lastInterimRef.current = '';
     setLiveRecordingText('');
     if (!append) setVoiceTranscript('');
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -405,17 +409,24 @@ export default function Quiz({ onComplete }) {
     rec.interimResults = true;
     rec.lang = 'en-US';
     rec.onresult = (e) => {
+      let interimChunk = '';
       for (let i = e.resultIndex; i < e.results.length; i++) {
         const result = e.results[i];
-        const transcript = result[0].transcript;
-        // Only append final results to avoid duplicate text (interim results get re-sent as final)
-        if (result.isFinal && transcript.trim()) {
+        const transcript = String(result[0]?.transcript || '').trim();
+        if (!transcript) continue;
+        if (result.isFinal) {
           const sep = transcriptAccumRef.current ? ' ' : '';
-          transcriptAccumRef.current += sep + transcript.trim();
+          transcriptAccumRef.current += sep + transcript;
+        } else {
+          interimChunk = transcript;
         }
       }
-      setLiveRecordingText(transcriptAccumRef.current);
-      if (!append) setVoiceTranscript(transcriptAccumRef.current);
+      lastInterimRef.current = interimChunk;
+      const finals = transcriptAccumRef.current;
+      const display = finals + (interimChunk ? `${finals ? ' ' : ''}${interimChunk}` : '');
+      const trimmed = display.trim();
+      setLiveRecordingText(trimmed);
+      if (!append) setVoiceTranscript(trimmed);
     };
     rec.onerror = () => {};
     rec.start();
@@ -430,11 +441,18 @@ export default function Quiz({ onComplete }) {
       recognitionRef.current = null;
     }
     setIsRecording(false);
-    const nextTranscript = appendToTranscript
-      ? (voiceTranscript + ' ' + transcriptAccumRef.current).trim()
-      : voiceTranscript;
-    if (appendToTranscript) {
-      setVoiceTranscript(nextTranscript);
+    const pending = lastInterimRef.current.trim();
+    let sessionText = transcriptAccumRef.current.trim();
+    if (pending && !sessionText.toLowerCase().includes(pending.toLowerCase())) {
+      sessionText = sessionText ? `${sessionText} ${pending}` : pending;
+    }
+    lastInterimRef.current = '';
+    const isAppendSession = voiceSessionAppendRef.current;
+    const nextTranscript = isAppendSession
+      ? `${voiceTranscript.trim()} ${sessionText}`.trim()
+      : sessionText;
+    setVoiceTranscript(nextTranscript);
+    if (isAppendSession) {
       setAppendToTranscript(false);
     }
     setVoiceProfile(parseTranscriptToProfile(nextTranscript));
