@@ -39,6 +39,70 @@ const baseIntake = {
 };
 
 const AUTO_ADVANCE_MS = 450;
+const CONCERN_FOLLOWUP_DEFAULT_HISTORY_OPTIONS = ['first time', 'occasional', 'recurring for 6+ months', 'recurring for 1+ year', 'not sure'];
+const CONCERN_FOLLOWUP_CONFIG = {
+  'UTI support': {
+    symptoms: ['burning urination', 'frequent urination', 'urgency', 'pelvic pressure', 'odor changes', 'recurring after sex'],
+    historyQuestion: 'How often have your UTI symptoms happened recently?',
+  },
+  'PCOS management (supplements, telehealth, apps)': {
+    symptoms: ['irregular periods', 'acne', 'hair thinning', 'facial hair growth', 'weight changes', 'insulin resistance concerns'],
+    historyQuestion: 'How long have PCOS symptoms been affecting you?',
+  },
+  'Endometriosis management (supplements, devices, telehealth)': {
+    symptoms: ['severe period pain', 'pain between periods', 'pain with sex', 'pain with bowel movements', 'fatigue', 'nausea'],
+    historyQuestion: 'How long have these endometriosis-related symptoms been present?',
+  },
+  'Period care (pads, tampons, cups, discs, underwear)': {
+    symptoms: ['leaks/staining', 'comfort issues', 'odor concerns', 'skin irritation', 'overnight protection issues', 'fit/sizing issues'],
+    historyQuestion: 'How long have period product issues been a concern?',
+  },
+  'Cramp and pain relief (devices, supplements, heat)': {
+    symptoms: ['cramps', 'lower back pain', 'radiating leg pain', 'nausea', 'headaches', 'missed work/school from pain'],
+    historyQuestion: 'How frequently do these pain symptoms impact you?',
+  },
+  'Fertility and conception (supplements, trackers, telehealth)': {
+    symptoms: ['irregular ovulation signs', 'short luteal phase concerns', 'difficulty timing intercourse', 'pregnancy loss history concern', 'age-related concern', 'stress around TTC'],
+    historyQuestion: 'How long have you been trying or planning to conceive?',
+  },
+  'STI support': {
+    symptoms: ['discharge changes', 'pelvic discomfort', 'burning', 'itching', 'odor changes', 'concern after unprotected sex'],
+    historyQuestion: 'How recent are these STI-related concerns?',
+  },
+  'Gut and vaginal health (probiotics, pH balance)': {
+    symptoms: ['recurrent BV/yeast symptoms', 'bloating', 'constipation', 'pH imbalance concern', 'odor changes', 'sensitivity to products'],
+    historyQuestion: 'How long have gut/vaginal health symptoms been recurring?',
+  },
+  'Perimenopause and menopause support': {
+    symptoms: ['hot flashes', 'night sweats', 'sleep disruption', 'vaginal dryness', 'mood changes', 'brain fog'],
+    historyQuestion: 'How long have menopause-related symptoms affected you?',
+  },
+  'Sexual health and comfort (lubricants, pelvic floor)': {
+    symptoms: ['pain with intercourse', 'dryness', 'low libido', 'pelvic tightness', 'post-sex irritation', 'anxiety around intimacy'],
+    historyQuestion: 'How long have sexual comfort concerns been present?',
+  },
+  'Mental health and cycle mood support': {
+    symptoms: ['anxiety', 'low mood', 'irritability', 'mood swings before period', 'panic symptoms', 'sleep-related mood impact'],
+    historyQuestion: 'How frequently do mood symptoms interfere with daily life?',
+  },
+  'Sleep and energy': {
+    symptoms: ['trouble falling asleep', 'night waking', 'morning fatigue', 'daytime crashes', 'brain fog', 'low stamina'],
+    historyQuestion: 'How long have sleep/energy symptoms been affecting you?',
+  },
+  'Skin and hair (hormone-related)': {
+    symptoms: ['hormonal acne', 'hair shedding', 'scalp oil changes', 'dry skin', 'chin/jawline breakouts', 'cycle-linked flare-ups'],
+    historyQuestion: 'How long have skin/hair symptoms been recurring?',
+  },
+  'Telehealth and provider matching': {
+    symptoms: ['hard to find specialist', 'long wait times', 'cost concerns', 'not feeling heard by providers', 'need second opinion', 'care coordination issues'],
+    historyQuestion: 'How long have provider access issues been affecting your care?',
+  },
+  'Hormone balance (supplements, lifestyle)': {
+    symptoms: ['cycle irregularity', 'bloating', 'mood swings', 'sleep disruption', 'acne', 'energy crashes'],
+    historyQuestion: 'How long have hormone-related symptoms been recurring?',
+  },
+};
+
 const OTHER_TEXT_BY_STEP = {
   primaryConcerns: {
     option: OTHER_CONCERN_OPTION,
@@ -66,6 +130,27 @@ function parseCsvLike(value) {
     .filter(Boolean);
 }
 
+function concernSlug(concern) {
+  return String(concern || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+}
+
+function extractConcernFollowups(intakeObj = {}) {
+  const out = {};
+  Object.entries(intakeObj).forEach(([k, v]) => {
+    if (!k.startsWith('cf__')) return;
+    const parts = k.split('__');
+    if (parts.length < 3) return;
+    const slug = parts[1];
+    const type = parts[2];
+    if (!out[slug]) out[slug] = {};
+    out[slug][type] = v;
+  });
+  return out;
+}
+
 export default function HealthIntakeForm({ onComplete }) {
   const [intake, setIntake] = useState(baseIntake);
   const [errors, setErrors] = useState({});
@@ -76,10 +161,36 @@ export default function HealthIntakeForm({ onComplete }) {
 
   const steps = useMemo(() => {
     const concernOptions = [...CONCERN_AREAS, OTHER_CONCERN_OPTION];
+    const concernFollowupSteps = (Array.isArray(intake.primaryConcerns) ? intake.primaryConcerns : [])
+      .filter((c) => c && c !== OTHER_CONCERN_OPTION)
+      .flatMap((concern) => {
+        const cfg = CONCERN_FOLLOWUP_CONFIG[concern] || {
+          symptoms: ['pain', 'discomfort', 'irregularity', 'daily impact', 'cost burden', 'product side effects'],
+          historyQuestion: `How long have ${concern.toLowerCase()} symptoms been affecting you?`,
+        };
+        const slug = concernSlug(concern);
+        return [
+          {
+            id: `cf__${slug}__symptoms`,
+            question: `${concern}: which symptoms/issues are most relevant for you?`,
+            subtitle: 'Select all that apply',
+            type: 'multi',
+            options: cfg.symptoms,
+          },
+          {
+            id: `cf__${slug}__history`,
+            question: cfg.historyQuestion,
+            subtitle: 'Helps us prioritize recommendations for your symptom history',
+            type: 'single',
+            options: CONCERN_FOLLOWUP_DEFAULT_HISTORY_OPTIONS,
+          },
+        ];
+      });
     const all = [
       { id: 'age', question: 'How old are you?', subtitle: 'Required', type: 'input', required: true, inputMode: 'number', placeholder: 'e.g. 29' },
       { id: 'location', question: 'Where are you located?', subtitle: 'Optional, used for telehealth availability', type: 'input', placeholder: 'City, State or ZIP' },
       { id: 'primaryConcerns', question: 'What are your top concerns right now?', subtitle: 'Required. Select all that apply.', type: 'multi', required: true, options: concernOptions },
+      ...concernFollowupSteps,
       { id: 'menstrualCycle', question: 'Do you have a menstrual cycle?', type: 'single', options: CYCLE_STATUSES },
       { id: 'averageCycleLength', question: 'Average cycle length', subtitle: 'Optional', type: 'input', placeholder: 'e.g. 28 days' },
       { id: 'averagePeriodLength', question: 'Average period length', subtitle: 'Optional', type: 'input', placeholder: 'e.g. 5 days' },
@@ -100,7 +211,7 @@ export default function HealthIntakeForm({ onComplete }) {
       all.splice(12, 0, { id: 'hormonalBirthControlType', question: 'If yes, what type?', type: 'input', placeholder: 'e.g. pill, IUD' });
     }
     return all;
-  }, [intake.hormonalBirthControl]);
+  }, [intake.hormonalBirthControl, intake.primaryConcerns]);
 
   const step = steps[currentStep];
   const progress = ((currentStep + 1) / steps.length) * 100;
@@ -109,7 +220,8 @@ export default function HealthIntakeForm({ onComplete }) {
     const currentProducts = parseCsvLike(intake.currentProductsText);
     const dislikedProducts = parseCsvLike(intake.dislikedProductsText);
     const customConcerns = parseCsvLike(intake.customConcernsText);
-    return { ...intake, currentProducts, dislikedProducts, customConcerns };
+    const concernFollowups = extractConcernFollowups(intake);
+    return { ...intake, currentProducts, dislikedProducts, customConcerns, concernFollowups };
   }, [intake]);
 
   const finish = async (intakeSnapshot = normalizedIntake) => {

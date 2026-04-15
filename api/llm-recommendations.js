@@ -110,6 +110,7 @@ function productLite(p) {
 function buildPrompt(intake = {}, feedback = {}, candidates = []) {
   const concerns = selectedConcerns(intake);
   const cycle = `menstrualCycle=${intake?.menstrualCycle || 'unknown'}, cycleLength=${intake?.averageCycleLength || 'unknown'}, periodLength=${intake?.averagePeriodLength || 'unknown'}`;
+  const concernFollowups = intake?.concernFollowups && typeof intake.concernFollowups === 'object' ? intake.concernFollowups : {};
   return `
 You are generating recommendations for Ayna, a women's health app.
 
@@ -128,6 +129,7 @@ USER PROFILE:
 - Current products: ${(Array.isArray(intake?.currentProducts) ? intake.currentProducts : []).join(', ') || 'none'}
 - Tried and disliked: ${(Array.isArray(intake?.dislikedProducts) ? intake.dislikedProducts : []).join(', ') || 'none'}; reason=${intake?.dislikedReason || 'none'}
 - Goals: ${(Array.isArray(intake?.goals) ? intake.goals : []).join(', ') || 'none'}
+- Concern-specific symptom/history follow-ups: ${JSON.stringify(concernFollowups)}
 
 LEARNING SIGNALS (use these to get better over time for this user):
 - Tracked/liked product IDs: ${(feedback?.trackedProductIds || []).join(', ') || 'none'}
