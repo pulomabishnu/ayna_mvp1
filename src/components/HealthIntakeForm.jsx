@@ -196,7 +196,7 @@ export default function HealthIntakeForm({ onComplete }) {
       setMultiSelections(new Set());
       setInputValue('');
     }
-  }, [currentStep, step?.id, step?.type, intake]);
+  }, [currentStep, step?.id, step?.type]);
 
   return (
     <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)', maxWidth: '820px' }}>
