@@ -39,6 +39,8 @@ const baseIntake = {
 };
 
 const AUTO_ADVANCE_MS = 450;
+const NONE_OPTION = 'None';
+const GENERIC_OTHER_OPTION = 'Other (type your own)';
 const CONCERN_FOLLOWUP_DEFAULT_HISTORY_OPTIONS = ['first time', 'occasional', 'recurring for 6+ months', 'recurring for 1+ year', 'not sure'];
 const CONCERN_FOLLOWUP_CONFIG = {
   'UTI support': {
@@ -148,6 +150,23 @@ function extractConcernFollowups(intakeObj = {}) {
     if (!out[slug]) out[slug] = {};
     out[slug][type] = v;
   });
+  Object.entries(intakeObj).forEach(([k, v]) => {
+    if (!k.startsWith('otherText__cf__')) return;
+    const rest = k.replace('otherText__', '');
+    const parts = rest.split('__');
+    if (parts.length < 3) return;
+    const slug = parts[1];
+    const type = parts[2];
+    if (!out[slug]) out[slug] = {};
+    out[slug][`${type}OtherText`] = String(v || '').trim();
+  });
+  return out;
+}
+
+function withNoneAndOther(options = [], { includeNone = true, includeOther = true } = {}) {
+  const out = [...options];
+  if (includeNone && !out.includes(NONE_OPTION)) out.push(NONE_OPTION);
+  if (includeOther && !out.includes(GENERIC_OTHER_OPTION)) out.push(GENERIC_OTHER_OPTION);
   return out;
 }
 
@@ -175,7 +194,7 @@ export default function HealthIntakeForm({ onComplete }) {
             question: `${concern}: which symptoms/issues are most relevant for you?`,
             subtitle: 'Select all that apply',
             type: 'multi',
-            options: cfg.symptoms,
+            options: withNoneAndOther(cfg.symptoms),
           },
           {
             id: `cf__${slug}__history`,
@@ -194,18 +213,18 @@ export default function HealthIntakeForm({ onComplete }) {
       { id: 'menstrualCycle', question: 'Do you have a menstrual cycle?', type: 'single', options: CYCLE_STATUSES },
       { id: 'averageCycleLength', question: 'Average cycle length', subtitle: 'Optional', type: 'input', placeholder: 'e.g. 28 days' },
       { id: 'averagePeriodLength', question: 'Average period length', subtitle: 'Optional', type: 'input', placeholder: 'e.g. 5 days' },
-      { id: 'flowLevel', question: 'Flow level', type: 'single', options: FLOW_LEVELS },
-      { id: 'painLevel', question: 'Pain level during period (1-10)', type: 'single', options: ['1','2','3','4','5','6','7','8','9','10'] },
-      { id: 'symptoms', question: 'Symptoms', subtitle: 'Select all that apply', type: 'multi', options: CYCLE_SYMPTOMS },
+      { id: 'flowLevel', question: 'Flow level', type: 'single', options: [...FLOW_LEVELS, 'not sure / not applicable'] },
+      { id: 'painLevel', question: 'Pain level during period (1-10)', type: 'single', options: ['1','2','3','4','5','6','7','8','9','10', 'not sure / not applicable'] },
+      { id: 'symptoms', question: 'Symptoms', subtitle: 'Select all that apply', type: 'multi', options: withNoneAndOther(CYCLE_SYMPTOMS) },
       { id: 'conditions', question: 'Diagnosed conditions', subtitle: 'Select all that apply', type: 'multi', options: DIAGNOSED_CONDITIONS },
       { id: 'tryingToConceive', question: 'Are you currently trying to conceive?', type: 'single', options: ['yes', 'no', 'not sure'] },
-      { id: 'hormonalBirthControl', question: 'Are you on hormonal birth control?', type: 'single', options: ['yes', 'no'] },
-      { id: 'productPreferences', question: 'Product preferences', subtitle: 'Select all that apply', type: 'multi', options: PRODUCT_PREFERENCES },
-      { id: 'preferredProductTypes', question: 'Preferred product types', subtitle: 'Select all that apply', type: 'multi', options: PREFERRED_PRODUCT_TYPES },
+      { id: 'hormonalBirthControl', question: 'Are you on hormonal birth control?', type: 'single', options: ['yes', 'no', 'not sure'] },
+      { id: 'productPreferences', question: 'Product preferences', subtitle: 'Select all that apply', type: 'multi', options: withNoneAndOther(PRODUCT_PREFERENCES) },
+      { id: 'preferredProductTypes', question: 'Preferred product types', subtitle: 'Select all that apply', type: 'multi', options: withNoneAndOther(PREFERRED_PRODUCT_TYPES) },
       { id: 'currentProductsText', question: 'Products you currently use', subtitle: 'Optional, comma-separated', type: 'input', placeholder: 'Always pads, Midol, Flo app' },
       { id: 'dislikedProductsText', question: 'Products you tried and disliked', subtitle: 'Optional, comma-separated', type: 'input', placeholder: 'Brand/product names' },
       { id: 'dislikedReason', question: "Why didn't it work?", subtitle: 'Optional', type: 'input', placeholder: 'Brief reason' },
-      { id: 'goals', question: 'What are you hoping Ayna helps you with?', subtitle: 'Select all that apply', type: 'multi', options: GOALS },
+      { id: 'goals', question: 'What are you hoping Ayna helps you with?', subtitle: 'Select all that apply', type: 'multi', options: withNoneAndOther(GOALS) },
     ];
     if (intake.hormonalBirthControl === 'yes') {
       all.splice(12, 0, { id: 'hormonalBirthControlType', question: 'If yes, what type?', type: 'input', placeholder: 'e.g. pill, IUD' });
@@ -247,7 +266,16 @@ export default function HealthIntakeForm({ onComplete }) {
 
   const [multiSelections, setMultiSelections] = useState(new Set());
   const [inputValue, setInputValue] = useState('');
-  const stepOtherCfg = OTHER_TEXT_BY_STEP[step?.id];
+  const stepOtherCfg = useMemo(() => {
+    if (!step?.id || step?.type !== 'multi') return null;
+    if (OTHER_TEXT_BY_STEP[step.id]) return OTHER_TEXT_BY_STEP[step.id];
+    return {
+      option: GENERIC_OTHER_OPTION,
+      field: `otherText__${step.id}`,
+      label: 'Type your other answer',
+      placeholder: 'Type your answer',
+    };
+  }, [step?.id, step?.type]);
 
   const updateValue = (id, value) => {
     setIntake((p) => ({ ...p, [id]: value }));
@@ -286,8 +314,18 @@ export default function HealthIntakeForm({ onComplete }) {
   const handleMultiToggle = (option) => {
     setMultiSelections((prev) => {
       const next = new Set(prev);
-      if (next.has(option)) next.delete(option);
-      else next.add(option);
+      const selectingNone = option === NONE_OPTION;
+      if (next.has(option)) {
+        next.delete(option);
+      } else {
+        if (selectingNone) {
+          next.clear();
+          next.add(NONE_OPTION);
+        } else {
+          next.delete(NONE_OPTION);
+          next.add(option);
+        }
+      }
       return next;
     });
   };
