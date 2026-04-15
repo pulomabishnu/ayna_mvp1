@@ -1383,6 +1383,16 @@ export function detectDuplicates(productIds, productMap = {}) {
     const functionMap = {};
     const duplicates = {};
 
+    const isTechOrTelehealthService = (p) => {
+        const type = String(p?.type || '').toLowerCase();
+        const category = String(p?.category || '').toLowerCase();
+        const integrations = Array.isArray(p?.integrations) ? p.integrations.map((x) => String(x || '').toLowerCase()) : [];
+        if (type === 'digital') return true;
+        if (category.includes('telehealth') || category.includes('tracker') || category.includes('app')) return true;
+        if (integrations.some((x) => x.includes('api') || x.includes('integration') || x.includes('sync'))) return true;
+        return false;
+    };
+
     productIds.forEach(id => {
         let p = ALL_PRODUCTS.find(item => item.id === id);
         if (!p && productMap[id]) p = productMap[id];
@@ -1396,8 +1406,9 @@ export function detectDuplicates(productIds, productMap = {}) {
     });
 
     Object.entries(functionMap).forEach(([fn, products]) => {
-        if (products.length > 1) {
-            duplicates[fn] = products;
+        const serviceProducts = products.filter(isTechOrTelehealthService);
+        if (serviceProducts.length > 1) {
+            duplicates[fn] = serviceProducts;
         }
     });
 
