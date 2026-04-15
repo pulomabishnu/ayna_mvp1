@@ -112,14 +112,14 @@ export default function HealthIntakeForm({ onComplete }) {
     return { ...intake, currentProducts, dislikedProducts, customConcerns };
   }, [intake]);
 
-  const finish = async () => {
-    const nextErrors = validateHealthIntake(normalizedIntake);
+  const finish = async (intakeSnapshot = normalizedIntake) => {
+    const nextErrors = validateHealthIntake(intakeSnapshot);
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
     setSaving(true);
     setSaveMessage('');
     try {
-      const saveResult = await saveHealthIntakeForCurrentUser(normalizedIntake);
+      const saveResult = await saveHealthIntakeForCurrentUser(intakeSnapshot);
       if (!saveResult.saved) {
         setSaveMessage('Profile completed. Sign in with Supabase auth to persist this profile to your account.');
       } else {
@@ -129,7 +129,7 @@ export default function HealthIntakeForm({ onComplete }) {
       setSaveMessage('Profile completed, but we could not save to Supabase right now.');
     } finally {
       setSaving(false);
-      onComplete(mapIntakeToLegacyQuizProfile(normalizedIntake));
+      onComplete(mapIntakeToLegacyQuizProfile(intakeSnapshot));
     }
   };
 
@@ -153,7 +153,7 @@ export default function HealthIntakeForm({ onComplete }) {
       setCurrentStep((s) => s + 1);
       return;
     }
-    await finish();
+    await finish(nextIntake);
   };
 
   const onSinglePick = (value) => {
