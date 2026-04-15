@@ -116,6 +116,7 @@ function inferFrustrationsFromFreeTextConcerns(textItems = []) {
   if (/endo/.test(joined)) out.add('Endometriosis');
   if (/fertility|conceive|ttc/.test(joined)) out.add('Fertility / TTC');
   if (/uti|vaginal|gut|ph/.test(joined)) out.add('Recurrent UTIs');
+  if (/sti|std|sexual infection/.test(joined)) out.add('General discomfort');
   if (/menopause|perimenopause/.test(joined)) out.add('Menopause symptoms');
   if (/pelvic|sex|comfort|vaginismus|vulvodynia/.test(joined)) out.add('Pelvic pain');
   if (/provider|doctor|telehealth/.test(joined)) out.add('Not sure if products are safe');
@@ -169,6 +170,9 @@ export function validateHealthIntake(intake) {
   if (concerns.length === 0) errors.primaryConcerns = 'Select at least one concern.';
   if (concerns.includes(OTHER_CONCERN_OPTION) && (!Array.isArray(intake?.customConcerns) || intake.customConcerns.length === 0)) {
     errors.customConcernsText = 'Please type your other concern(s).';
+  }
+  if ((intake?.conditions || []).includes('other') && !String(intake?.conditionOtherText || '').trim()) {
+    errors.conditionOtherText = 'Please type your other diagnosed condition.';
   }
   return errors;
 }

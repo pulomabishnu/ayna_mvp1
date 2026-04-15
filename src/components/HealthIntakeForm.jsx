@@ -34,10 +34,25 @@ const baseIntake = {
   currentProductsText: '',
   dislikedProductsText: '',
   dislikedReason: '',
+  conditionOtherText: '',
   goals: [],
 };
 
 const AUTO_ADVANCE_MS = 450;
+const OTHER_TEXT_BY_STEP = {
+  primaryConcerns: {
+    option: OTHER_CONCERN_OPTION,
+    field: 'customConcernsText',
+    label: 'Type your other concern(s)',
+    placeholder: 'e.g. breast tenderness, migraines before period',
+  },
+  conditions: {
+    option: 'other',
+    field: 'conditionOtherText',
+    label: 'Type your other diagnosed condition',
+    placeholder: 'e.g. PMDD, chronic pelvic inflammatory disease',
+  },
+};
 
 function toggle(arr, value) {
   if (arr.includes(value)) return arr.filter((x) => x !== value);
@@ -120,6 +135,7 @@ export default function HealthIntakeForm({ onComplete }) {
 
   const [multiSelections, setMultiSelections] = useState(new Set());
   const [inputValue, setInputValue] = useState('');
+  const stepOtherCfg = OTHER_TEXT_BY_STEP[step?.id];
 
   const updateValue = (id, value) => {
     setIntake((p) => ({ ...p, [id]: value }));
@@ -166,15 +182,17 @@ export default function HealthIntakeForm({ onComplete }) {
 
   const handleMultiConfirm = () => {
     const nextValue = Array.from(multiSelections);
-    const needsOther = step.id === 'primaryConcerns' && nextValue.includes(OTHER_CONCERN_OPTION);
+    const needsOther = !!stepOtherCfg && nextValue.includes(stepOtherCfg.option);
     const nextIntake = {
       ...intake,
       [step.id]: nextValue,
-      customConcernsText: needsOther ? intake.customConcernsText : '',
+      ...(stepOtherCfg ? { [stepOtherCfg.field]: needsOther ? intake[stepOtherCfg.field] : '' } : {}),
     };
     setIntake(nextIntake);
     if (errors[step.id]) setErrors((p) => ({ ...p, [step.id]: null }));
-    if (!needsOther && errors.customConcernsText) setErrors((p) => ({ ...p, customConcernsText: null }));
+    if (stepOtherCfg && !needsOther && errors[stepOtherCfg.field]) {
+      setErrors((p) => ({ ...p, [stepOtherCfg.field]: null }));
+    }
     setMultiSelections(new Set());
     goNext(nextIntake);
   };
@@ -218,9 +236,9 @@ export default function HealthIntakeForm({ onComplete }) {
                 step.required
                   ? (
                     multiSelections.size === 0 ||
-                    (step.id === 'primaryConcerns' &&
-                      multiSelections.has(OTHER_CONCERN_OPTION) &&
-                      !String(intake.customConcernsText || '').trim())
+                    (stepOtherCfg &&
+                      multiSelections.has(stepOtherCfg.option) &&
+                      !String(intake[stepOtherCfg.field] || '').trim())
                   )
                   : false
               }
@@ -297,21 +315,21 @@ export default function HealthIntakeForm({ onComplete }) {
                 </button>
               );
             })}
-            {step.id === 'primaryConcerns' && multiSelections.has(OTHER_CONCERN_OPTION) && (
+            {stepOtherCfg && multiSelections.has(stepOtherCfg.option) && (
               <div style={{ marginTop: '0.25rem', padding: '0.85rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', background: 'var(--color-surface-soft)' }}>
                 <label style={{ display: 'block', fontSize: '0.9rem', color: 'var(--color-text-main)', marginBottom: '0.45rem', fontWeight: 600 }}>
-                  Type your other concern(s)
+                  {stepOtherCfg.label}
                 </label>
                 <input
                   type="text"
-                  value={intake.customConcernsText || ''}
-                  placeholder="e.g. breast tenderness, migraines before period"
-                  onChange={(e) => updateValue('customConcernsText', e.target.value)}
+                  value={intake[stepOtherCfg.field] || ''}
+                  placeholder={stepOtherCfg.placeholder}
+                  onChange={(e) => updateValue(stepOtherCfg.field, e.target.value)}
                   style={{ width: '100%', padding: '0.8rem 0.95rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', fontFamily: 'var(--font-body)' }}
                 />
-                {errors.customConcernsText && (
+                {errors[stepOtherCfg.field] && (
                   <p style={{ color: '#b42318', fontSize: '0.85rem', marginTop: '0.45rem', marginBottom: 0 }}>
-                    {errors.customConcernsText}
+                    {errors[stepOtherCfg.field]}
                   </p>
                 )}
               </div>
