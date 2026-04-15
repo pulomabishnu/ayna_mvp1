@@ -7,6 +7,8 @@ const CONCERN_CONFIG = [
   { key: 'PCOS management (supplements, telehealth, apps)', tags: ['pcos'], categories: ['supplement', 'app', 'telehealth'] },
   { key: 'Endometriosis management (supplements, devices, telehealth)', tags: ['endometriosis', 'cramps'], categories: ['supplement', 'device', 'telehealth'] },
   { key: 'Fertility and conception (supplements, trackers, telehealth)', tags: ['fertility'], categories: ['supplement', 'app', 'telehealth'] },
+  { key: 'UTI support', tags: ['uti'], categories: ['supplement', 'telehealth', 'app'] },
+  { key: 'STI support', tags: ['uti', 'pelvic-floor'], categories: ['telehealth', 'app'] },
   { key: 'Gut and vaginal health (probiotics, pH balance)', tags: ['uti'], categories: ['supplement'] },
   { key: 'Perimenopause and menopause support', tags: ['menopause'], categories: ['supplement', 'app', 'telehealth'] },
   { key: 'Sexual health and comfort (lubricants, pelvic floor)', tags: ['pelvic-floor'], categories: ['device', 'supplement'] },

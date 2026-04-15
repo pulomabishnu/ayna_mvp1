@@ -81,20 +81,11 @@ export default function HealthIntakeForm({ onComplete }) {
       { id: 'dislikedReason', question: "Why didn't it work?", subtitle: 'Optional', type: 'input', placeholder: 'Brief reason' },
       { id: 'goals', question: 'What are you hoping Ayna helps you with?', subtitle: 'Select all that apply', type: 'multi', options: GOALS },
     ];
-    if ((intake.primaryConcerns || []).includes(OTHER_CONCERN_OPTION)) {
-      all.splice(3, 0, {
-        id: 'customConcernsText',
-        question: 'Tell us your other concern(s)',
-        subtitle: 'Optional, comma-separated',
-        type: 'input',
-        placeholder: 'e.g. breast tenderness, migraines before period',
-      });
-    }
     if (intake.hormonalBirthControl === 'yes') {
       all.splice(12, 0, { id: 'hormonalBirthControlType', question: 'If yes, what type?', type: 'input', placeholder: 'e.g. pill, IUD' });
     }
     return all;
-  }, [intake.hormonalBirthControl, intake.primaryConcerns]);
+  }, [intake.hormonalBirthControl]);
 
   const step = steps[currentStep];
   const progress = ((currentStep + 1) / steps.length) * 100;
@@ -175,9 +166,15 @@ export default function HealthIntakeForm({ onComplete }) {
 
   const handleMultiConfirm = () => {
     const nextValue = Array.from(multiSelections);
-    const nextIntake = { ...intake, [step.id]: nextValue };
+    const needsOther = step.id === 'primaryConcerns' && nextValue.includes(OTHER_CONCERN_OPTION);
+    const nextIntake = {
+      ...intake,
+      [step.id]: nextValue,
+      customConcernsText: needsOther ? intake.customConcernsText : '',
+    };
     setIntake(nextIntake);
     if (errors[step.id]) setErrors((p) => ({ ...p, [step.id]: null }));
+    if (!needsOther && errors.customConcernsText) setErrors((p) => ({ ...p, customConcernsText: null }));
     setMultiSelections(new Set());
     goNext(nextIntake);
   };
@@ -217,7 +214,16 @@ export default function HealthIntakeForm({ onComplete }) {
               type="button"
               className="btn btn-primary"
               onClick={handleMultiConfirm}
-              disabled={step.required ? multiSelections.size === 0 : false}
+              disabled={
+                step.required
+                  ? (
+                    multiSelections.size === 0 ||
+                    (step.id === 'primaryConcerns' &&
+                      multiSelections.has(OTHER_CONCERN_OPTION) &&
+                      !String(intake.customConcernsText || '').trim())
+                  )
+                  : false
+              }
             >
               Continue →
             </button>
@@ -291,6 +297,25 @@ export default function HealthIntakeForm({ onComplete }) {
                 </button>
               );
             })}
+            {step.id === 'primaryConcerns' && multiSelections.has(OTHER_CONCERN_OPTION) && (
+              <div style={{ marginTop: '0.25rem', padding: '0.85rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', background: 'var(--color-surface-soft)' }}>
+                <label style={{ display: 'block', fontSize: '0.9rem', color: 'var(--color-text-main)', marginBottom: '0.45rem', fontWeight: 600 }}>
+                  Type your other concern(s)
+                </label>
+                <input
+                  type="text"
+                  value={intake.customConcernsText || ''}
+                  placeholder="e.g. breast tenderness, migraines before period"
+                  onChange={(e) => updateValue('customConcernsText', e.target.value)}
+                  style={{ width: '100%', padding: '0.8rem 0.95rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', fontFamily: 'var(--font-body)' }}
+                />
+                {errors.customConcernsText && (
+                  <p style={{ color: '#b42318', fontSize: '0.85rem', marginTop: '0.45rem', marginBottom: 0 }}>
+                    {errors.customConcernsText}
+                  </p>
+                )}
+              </div>
+            )}
           </div>
         )}
 
