@@ -10,14 +10,17 @@ import { getInteractions } from '../data/interactions';
 import CareNearYouPanel from './CareNearYouPanel';
 import { getRecommendedArticles } from './Articles';
 import { inferTagsFromHealthProfile, saveHealthProfile } from '../utils/healthDataProfile';
+import { generateTieredRecommendations } from '../utils/recommendationEngine';
 
-function EcosystemProductAlternatives({ product, seedEntry, quizResults, healthProfile, onSwap, onGoToSearch }) {
+function EcosystemProductAlternatives({ product, seedEntry, quizResults, healthProfile, onSwap, onGoToSearch, precomputedAlternatives = [] }) {
     const [open, setOpen] = useState(false);
     const rootRef = useRef(null);
-    const alternatives = useMemo(
-        () => (seedEntry ? getEcosystemAlternatives(product.id, seedEntry.tag, quizResults || {}, healthProfile, 3) : []),
-        [product.id, seedEntry, quizResults, healthProfile]
-    );
+    const alternatives = useMemo(() => {
+        if (Array.isArray(precomputedAlternatives) && precomputedAlternatives.length > 0) {
+            return precomputedAlternatives.slice(0, 3);
+        }
+        return seedEntry ? getEcosystemAlternatives(product.id, seedEntry.tag, quizResults || {}, healthProfile, 3) : [];
+    }, [precomputedAlternatives, product.id, seedEntry, quizResults, healthProfile]);
     useEffect(() => {
         if (!open) return;
         const close = (e) => {
@@ -318,8 +321,25 @@ export default function MyEcosystem({
         });
     };
 
-    /** One row per quiz concern: top pick + top 3 alternatives. Uses App seed meta when present; otherwise recomputes from quiz so rows still show. */
+    /** One row per intake concern: top pick + top 3 alternatives (strictly concern-driven). */
     const seededConcernsList = useMemo(() => {
+        const intake = quizResults?.fullHealthIntake || null;
+        if (intake && Object.keys(intake).length > 0) {
+            const tiered = generateTieredRecommendations(intake);
+            return tiered
+                .map((entry) => {
+                    const topTier = Array.isArray(entry.tiers) ? entry.tiers[0] : null;
+                    const topProduct = topTier?.product || null;
+                    if (!topProduct) return null;
+                    return {
+                        product: topProduct,
+                        seedEntry: { frustration: entry.concern, tag: '' },
+                        alternatives: Array.isArray(topTier?.alternatives) ? topTier.alternatives.slice(0, 3) : [],
+                    };
+                })
+                .filter(Boolean);
+        }
+
         if (!quizResults?.frustrations?.length) return [];
         const order = quizResults.frustrations;
         const entries = Object.entries(ecosystemSeedMeta || {});
@@ -328,7 +348,7 @@ export default function MyEcosystem({
             entries.forEach(([pid, meta]) => {
                 const p = myProducts[pid];
                 if (p && meta?.frustration && !byFrustration.has(meta.frustration)) {
-                    byFrustration.set(meta.frustration, { product: p, seedEntry: meta });
+                    byFrustration.set(meta.frustration, { product: p, seedEntry: meta, alternatives: [] });
                 }
             });
         }
@@ -336,7 +356,7 @@ export default function MyEcosystem({
             const { seedMeta } = getEcosystemSeedFromQuiz(quizResults, healthProfile);
             order.forEach((f) => {
                 const pid = Object.keys(seedMeta).find((id) => seedMeta[id].frustration === f && myProducts[id]);
-                if (pid) byFrustration.set(f, { product: myProducts[pid], seedEntry: seedMeta[pid] });
+                if (pid) byFrustration.set(f, { product: myProducts[pid], seedEntry: seedMeta[pid], alternatives: [] });
             });
         }
         const rows = [];
@@ -460,7 +480,7 @@ export default function MyEcosystem({
                                 gap: '1rem',
                             }}
                         >
-                            {seededConcernsList.map(({ product, seedEntry }) => (
+                            {seededConcernsList.map(({ product, seedEntry, alternatives = [] }) => (
                                 <div
                                     key={product.id}
                                     className="card"
@@ -528,6 +548,7 @@ export default function MyEcosystem({
                                         healthProfile={healthProfile}
                                         onSwap={onSwapSeedProduct}
                                         onGoToSearch={onGoToSearch}
+                                        precomputedAlternatives={alternatives}
                                     />
                                 </div>
                             ))}

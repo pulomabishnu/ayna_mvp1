@@ -133,7 +133,7 @@ function App() {
     const { mergedProducts: seededProducts, seedMeta } = getEcosystemSeedFromQuiz(results, healthProfile);
     setMyProducts((prev) => ({ ...prev, ...customProducts, ...seededProducts }));
     setEcosystemSeedMeta(seedMeta);
-    setCurrentView('ecosystem');
+    setCurrentView('recommendations');
   };
 
   const handleSwapEcosystemSeedProduct = (oldProductId, newProduct) => {
