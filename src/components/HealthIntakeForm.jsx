@@ -207,6 +207,29 @@ export default function HealthIntakeForm({ onComplete }) {
         <div style={{ width: `${progress}%`, height: '100%', background: 'var(--color-primary)', transition: 'width 0.35s ease' }} />
       </div>
       <div className="card" style={{ minHeight: '430px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '1rem', alignItems: 'center' }}>
+          <button type="button" onClick={handleBack} style={{ visibility: currentStep === 0 ? 'hidden' : 'visible', border: 'none', background: 'none', color: 'var(--color-primary)', cursor: 'pointer', fontWeight: 600 }}>
+            ← Back
+          </button>
+          <p style={{ margin: 0, color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>{currentStep + 1} of {steps.length}</p>
+          {step.type === 'multi' && (
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={handleMultiConfirm}
+              disabled={step.required ? multiSelections.size === 0 : false}
+            >
+              Continue →
+            </button>
+          )}
+          {step.type === 'input' && (
+            <button type="button" className="btn btn-primary" onClick={handleInputConfirm} disabled={saving || (step.required && !String(inputValue || '').trim())}>
+              {currentStep === steps.length - 1 ? (saving ? 'Saving...' : 'Build My Recommendations') : 'Continue →'}
+            </button>
+          )}
+          {step.type === 'single' && <span style={{ width: 90 }} />}
+        </div>
+
         <h2 style={{ textAlign: 'center', fontSize: '1.7rem', marginBottom: '0.5rem' }}>{step.question}</h2>
         {step.subtitle && (
           <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', marginBottom: 'var(--spacing-md)' }}>
@@ -271,28 +294,6 @@ export default function HealthIntakeForm({ onComplete }) {
           </div>
         )}
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', marginTop: '1.4rem', alignItems: 'center' }}>
-          <button type="button" onClick={handleBack} style={{ visibility: currentStep === 0 ? 'hidden' : 'visible', border: 'none', background: 'none', color: 'var(--color-primary)', cursor: 'pointer', fontWeight: 600 }}>
-            ← Back
-          </button>
-          <p style={{ margin: 0, color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>{currentStep + 1} of {steps.length}</p>
-          {step.type === 'multi' && (
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={handleMultiConfirm}
-              disabled={step.required ? multiSelections.size === 0 : false}
-            >
-              Continue →
-            </button>
-          )}
-          {step.type === 'input' && (
-            <button type="button" className="btn btn-primary" onClick={handleInputConfirm} disabled={saving || (step.required && !String(inputValue || '').trim())}>
-              {currentStep === steps.length - 1 ? (saving ? 'Saving...' : 'Build My Recommendations') : 'Continue →'}
-            </button>
-          )}
-          {step.type === 'single' && <span style={{ width: 90 }} />}
-        </div>
         {saveMessage && <p style={{ margin: 0, color: 'var(--color-text-muted)' }}>{saveMessage}</p>}
       </div>
     </section>
