@@ -539,5 +539,33 @@ export const MVP_DIGITAL = [
     effectiveness: 'Licensed clinicians; prescriptions same as in-person.',
     badges: ['Telehealth', 'Mental Health'],
     verificationLinks: { doctor: { links: [{ url: 'https://www.apa.org/ptsd/guide', text: 'APA: Mental health treatment', summary: 'Clinical guidance on telehealth and mental health access.', justification: 'APA is the leading psychology association.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/32324464/', text: 'Telehealth and mental health', summary: 'Evidence on virtual care for anxiety and depression.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/mentalhealth/search/?q=hers&restrict_sr=1', text: 'Reddit r/mentalhealth', summary: 'Community discussions on Hers and telehealth.' }] } }
+  },
+  {
+    id: 'd-midi-health',
+    name: 'Midi Health',
+    category: 'telehealth',
+    type: 'digital',
+    internal: false,
+    healthFunctions: ['menopause', 'telehealth'],
+    tags: ['menopause', 'comfort', 'privacy', 'hormone-monitoring'],
+    price: 'Membership / per visit; varies by plan and state',
+    userRating: 4.5,
+    whereToBuy: ['midihealth.com'],
+    platform: 'Web, iOS, Android',
+    image: '/ayna_placeholder.png',
+    summary: 'Virtual women\'s health clinic focused on perimenopause and menopause: visits with clinicians, personalized care plans, and prescription support (e.g. hormone therapy) where appropriate - without needing an in-person visit in many areas.',
+    safety: { fdaStatus: 'Prescription via licensed clinicians', materials: 'N/A', recalls: 'N/A', allergens: 'N/A' },
+    privacy: { dataStorage: 'US', sellsData: 'Check policy', hipaa: 'HIPAA-compliant for clinical care', keyPolicy: 'Telehealth and prescription service' },
+    clinicianOpinionSource: 'independent',
+    clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+    doctorOpinion: 'Virtual access can help women navigate perimenopause and menopause symptoms and discuss hormone therapy with licensed clinicians using the same standards as in-person care.',
+    communityReview: 'Community discussions on Reddit r/Menopause note convenience of virtual visits and clinician-led plans for midlife symptoms.',
+    effectiveness: 'Licensed clinicians; prescriptions and follow-up same framework as in-person menopause care when clinically indicated.',
+    badges: ['Telehealth', 'Menopause'],
+    verificationLinks: {
+      doctor: { links: [{ url: 'https://www.menopause.org/for-women/menopause-faqs-management-of-menopause-symptoms', text: 'NAMS: Managing menopause symptoms', summary: 'Clinical guidance on menopause care and treatment options.', justification: 'NAMS is the leading menopause society.' }] },
+      scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/32324464/', text: 'Telehealth in women\'s health', summary: 'Evidence on virtual care access for chronic and specialty needs.', justification: 'PubMed peer-reviewed.' }] },
+      community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/Menopause/search/?q=telehealth&restrict_sr=1', text: 'Reddit r/Menopause — telehealth', summary: 'Community discussions on virtual menopause care.' }] }
+    }
   }
 ];
