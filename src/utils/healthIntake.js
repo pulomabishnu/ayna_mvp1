@@ -101,9 +101,12 @@ const GOAL_TO_FRUSTRATION = {
 
 export function mapIntakeToLegacyQuizProfile(intake) {
   const frustrations = new Set();
-  if (intake?.primaryConcern && PRIMARY_CONCERN_TO_FRUSTRATION[intake.primaryConcern]) {
-    frustrations.add(PRIMARY_CONCERN_TO_FRUSTRATION[intake.primaryConcern]);
-  }
+  const concerns = Array.isArray(intake?.primaryConcerns)
+    ? intake.primaryConcerns
+    : (intake?.primaryConcern ? [intake.primaryConcern] : []);
+  concerns.forEach((c) => {
+    if (PRIMARY_CONCERN_TO_FRUSTRATION[c]) frustrations.add(PRIMARY_CONCERN_TO_FRUSTRATION[c]);
+  });
   (intake?.goals || []).forEach((g) => {
     if (GOAL_TO_FRUSTRATION[g]) frustrations.add(GOAL_TO_FRUSTRATION[g]);
   });
@@ -124,7 +127,8 @@ export function mapIntakeToLegacyQuizProfile(intake) {
     sensitivities: (intake?.productPreferences || []).includes('fragrance-free') ? ['Fragrance sensitivity'] : [],
     contraceptionUse: intake?.hormonalBirthControl || '',
     contraceptionPreference: intake?.hormonalBirthControlType ? [intake.hormonalBirthControlType] : [],
-    primaryConcern: intake?.primaryConcern || '',
+    primaryConcern: concerns[0] || intake?.primaryConcern || '',
+    primaryConcerns: concerns,
     fullHealthIntake: intake,
   };
 }
@@ -132,6 +136,9 @@ export function mapIntakeToLegacyQuizProfile(intake) {
 export function validateHealthIntake(intake) {
   const errors = {};
   if (!intake?.age || Number.isNaN(Number(intake.age))) errors.age = 'Age is required.';
-  if (!intake?.primaryConcern) errors.primaryConcern = 'Primary concern is required.';
+  const concerns = Array.isArray(intake?.primaryConcerns)
+    ? intake.primaryConcerns
+    : (intake?.primaryConcern ? [intake.primaryConcern] : []);
+  if (concerns.length === 0) errors.primaryConcerns = 'Select at least one concern.';
   return errors;
 }

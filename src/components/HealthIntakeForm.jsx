@@ -16,7 +16,7 @@ import { saveHealthIntakeForCurrentUser } from '../utils/healthIntakeStore';
 const baseIntake = {
   age: '',
   location: '',
-  primaryConcern: '',
+  primaryConcerns: [],
   menstrualCycle: '',
   averageCycleLength: '',
   averagePeriodLength: '',
@@ -61,7 +61,7 @@ export default function HealthIntakeForm({ onComplete }) {
     const all = [
       { id: 'age', question: 'How old are you?', subtitle: 'Required', type: 'input', required: true, inputMode: 'number', placeholder: 'e.g. 29' },
       { id: 'location', question: 'Where are you located?', subtitle: 'Optional, used for telehealth availability', type: 'input', placeholder: 'City, State or ZIP' },
-      { id: 'primaryConcern', question: 'What is your primary concern?', subtitle: 'Required', type: 'single', required: true, options: CONCERN_AREAS },
+      { id: 'primaryConcerns', question: 'What are your top concerns right now?', subtitle: 'Required. Select all that apply.', type: 'multi', required: true, options: CONCERN_AREAS },
       { id: 'menstrualCycle', question: 'Do you have a menstrual cycle?', type: 'single', options: CYCLE_STATUSES },
       { id: 'averageCycleLength', question: 'Average cycle length', subtitle: 'Optional', type: 'input', placeholder: 'e.g. 28 days' },
       { id: 'averagePeriodLength', question: 'Average period length', subtitle: 'Optional', type: 'input', placeholder: 'e.g. 5 days' },
@@ -123,7 +123,9 @@ export default function HealthIntakeForm({ onComplete }) {
   };
 
   const goNext = async (nextIntake = intake) => {
-    if (step.required && !String(nextIntake[step.id] || '').trim()) {
+    const value = nextIntake[step.id];
+    const isEmpty = Array.isArray(value) ? value.length === 0 : !String(value || '').trim();
+    if (step.required && isEmpty) {
       setErrors((p) => ({ ...p, [step.id]: `${step.question} is required.` }));
       return;
     }
@@ -159,9 +161,12 @@ export default function HealthIntakeForm({ onComplete }) {
   };
 
   const handleMultiConfirm = () => {
-    updateValue(step.id, Array.from(multiSelections));
+    const nextValue = Array.from(multiSelections);
+    const nextIntake = { ...intake, [step.id]: nextValue };
+    setIntake(nextIntake);
+    if (errors[step.id]) setErrors((p) => ({ ...p, [step.id]: null }));
     setMultiSelections(new Set());
-    goNext();
+    goNext(nextIntake);
   };
 
   const handleBack = () => {
@@ -259,7 +264,12 @@ export default function HealthIntakeForm({ onComplete }) {
           </button>
           <p style={{ margin: 0, color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>{currentStep + 1} of {steps.length}</p>
           {step.type === 'multi' && (
-            <button type="button" className="btn btn-primary" onClick={handleMultiConfirm} disabled={multiSelections.size === 0}>
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={handleMultiConfirm}
+              disabled={step.required ? multiSelections.size === 0 : false}
+            >
               Continue →
             </button>
           )}

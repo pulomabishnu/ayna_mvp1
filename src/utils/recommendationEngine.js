@@ -25,6 +25,12 @@ function asArray(value) {
   return [value];
 }
 
+function selectedConcerns(intake) {
+  if (Array.isArray(intake?.primaryConcerns) && intake.primaryConcerns.length > 0) return intake.primaryConcerns;
+  if (intake?.primaryConcern) return [intake.primaryConcern];
+  return [];
+}
+
 function textForSafety(product) {
   return [product?.safety?.materials, product?.safety?.allergens, product?.safety?.sideEffects, product?.summary]
     .filter(Boolean)
@@ -83,7 +89,8 @@ function safetyNotes(product, intake) {
 }
 
 function isRelevantConcern(concern, intake) {
-  if (intake?.primaryConcern === concern.key) return true;
+  const selected = selectedConcerns(intake);
+  if (selected.includes(concern.key)) return true;
   const tags = concern.tags;
   if ((intake?.conditions || []).includes('PCOS') && tags.includes('pcos')) return true;
   if ((intake?.conditions || []).includes('endometriosis') && tags.includes('endometriosis')) return true;
@@ -94,6 +101,21 @@ function isRelevantConcern(concern, intake) {
   if ((intake?.symptoms || []).includes('cramps') && tags.includes('cramps')) return true;
   if ((intake?.goals || []).includes('find a provider') && concern.key.includes('Telehealth')) return true;
   return false;
+}
+
+function concernRelevanceScore(concern, intake) {
+  let score = 0;
+  const selected = selectedConcerns(intake);
+  if (selected.includes(concern.key)) score += 20;
+  if ((intake?.conditions || []).includes('PCOS') && concern.tags.includes('pcos')) score += 8;
+  if ((intake?.conditions || []).includes('endometriosis') && concern.tags.includes('endometriosis')) score += 8;
+  if (((intake?.conditions || []).includes('perimenopause') || (intake?.conditions || []).includes('menopause')) && concern.tags.includes('menopause')) score += 8;
+  if ((intake?.tryingToConceive || '') === 'yes' && concern.tags.includes('fertility')) score += 7;
+  if ((intake?.symptoms || []).includes('cramps') && concern.tags.includes('cramps')) score += 5;
+  if ((intake?.symptoms || []).includes('bloating') && concern.tags.includes('bloating')) score += 4;
+  if ((intake?.flowLevel || '').toLowerCase().includes('heavy') && concern.tags.includes('heavy-flow')) score += 6;
+  if ((intake?.goals || []).includes('find a provider') && concern.key.includes('Telehealth')) score += 4;
+  return score;
 }
 
 function selectTierProduct(products, intake, concern, tierType, alreadyChosen = new Set()) {
@@ -114,6 +136,7 @@ function selectTierProduct(products, intake, concern, tierType, alreadyChosen = 
 export function buildRecommendationPrompt(intake, concern) {
   return `USER PROFILE:
 - Age: ${intake?.age || 'unknown'}
+- Primary concerns: ${selectedConcerns(intake).join(', ') || 'none provided'}
 - Conditions: ${asArray(intake?.conditions).join(', ') || 'none provided'}
 - Cycle: menstrual cycle=${intake?.menstrualCycle || 'unknown'}, average cycle length=${intake?.averageCycleLength || 'unknown'}, average period length=${intake?.averagePeriodLength || 'unknown'}
 - Flow: ${intake?.flowLevel || 'unknown'}, Pain: ${intake?.painLevel || 'unknown'}/10
@@ -146,8 +169,15 @@ RULES:
 }
 
 export function generateTieredRecommendations(intake = {}) {
-  const concerns = CONCERN_CONFIG.filter((c) => isRelevantConcern(c, intake));
-  const scopedConcerns = concerns.length > 0 ? concerns : CONCERN_CONFIG.filter((c) => c.key === intake?.primaryConcern);
+  const concerns = CONCERN_CONFIG
+    .map((c) => ({ concern: c, score: concernRelevanceScore(c, intake) }))
+    .filter(({ concern, score }) => score > 0 || isRelevantConcern(concern, intake))
+    .sort((a, b) => b.score - a.score)
+    .map(({ concern }) => concern);
+  const fallbackConcern = selectedConcerns(intake)[0] || intake?.primaryConcern;
+  const scopedConcerns = concerns.length > 0
+    ? concerns.slice(0, 5)
+    : CONCERN_CONFIG.filter((c) => c.key === fallbackConcern);
 
   return scopedConcerns.map((concern) => {
     const concernPool = ALL_PRODUCTS.filter((p) => {
