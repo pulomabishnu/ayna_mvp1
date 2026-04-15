@@ -1240,11 +1240,7 @@ export default function ProductModal({
                         <div className="animate-fade-in">
                             <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Safety &amp; what to know</h3>
                             <h4 style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', margin: '0 0 0.65rem' }}>Sources &amp; summarized detail</h4>
-                            <details style={{ marginTop: 0 }}>
-                                <summary style={{ cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600', color: 'var(--color-primary)', marginBottom: '0.75rem' }}>
-                                    Regulatory status, label-style materials, recalls, and privacy
-                                </summary>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                                     <div style={{ background: 'var(--color-bg)', padding: '1rem', borderRadius: 'var(--radius-md)' }}>
                                         <h4 style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>FDA Regulatory Status</h4>
                                         <p>{product.safety?.fdaStatus || 'N/A'}</p>
@@ -1287,8 +1283,7 @@ export default function ProductModal({
                                             </div>
                                         </div>
                                     )}
-                                </div>
-                            </details>
+                            </div>
                         </div>
                     )}
 
