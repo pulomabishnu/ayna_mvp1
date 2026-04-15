@@ -193,7 +193,6 @@ export default function HealthIntakeForm({ onComplete }) {
     if (stepOtherCfg && !needsOther && errors[stepOtherCfg.field]) {
       setErrors((p) => ({ ...p, [stepOtherCfg.field]: null }));
     }
-    setMultiSelections(new Set());
     goNext(nextIntake);
   };
 
