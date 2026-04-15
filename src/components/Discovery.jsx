@@ -12,23 +12,6 @@ import FindYourPadModal from './FindYourPadModal';
 const ALL_CATEGORIES = ['all', 'pad', 'tampon', 'cup', 'disc', 'period-underwear', 'supplement', 'tracker', 'telehealth', 'mental-health', 'fitness', 'diagnostics', 'hormone-monitoring', 'menopause', 'fertility', 'pelvic-health', 'pelvic-floor', 'cramp-relief', 'postpartum', 'pregnancy', 'sex-tech', 'intimate-care', 'contraception'];
 const TYPE_FILTERS = ['all', 'physical', 'digital', 'startup'];
 
-/** Retailer label → search URL (same idea as catalog / ProductModal; no model-supplied URLs). */
-function getStoreSearchUrl(storeName, productName) {
-    const q = productName || '';
-    if (!storeName || typeof storeName !== 'string') return 'https://www.google.com/search?q=women+health+products';
-    const norm = storeName.trim().toLowerCase().replace(/\s+/g, '');
-    if (/^[a-z0-9][a-z0-9.-]*\.(com|io|co|life|health|org|net)$/i.test(norm)) return norm.startsWith('http') ? norm : `https://${norm}`;
-    if (norm.includes('amazon')) return `https://www.amazon.com/s?k=${encodeURIComponent(q || '')}`;
-    if (norm.includes('target')) return `https://www.target.com/s?searchTerm=${encodeURIComponent(q || '')}`;
-    if (norm.includes('walmart')) return `https://www.walmart.com/search?q=${encodeURIComponent(q || '')}`;
-    if (norm.includes('cvs')) return `https://www.cvs.com/shop/search?searchTerm=${encodeURIComponent(q || '')}`;
-    if (norm.includes('walgreens')) return `https://www.walgreens.com/search/results.jsp?Ntt=${encodeURIComponent(q || '')}`;
-    if (norm.includes('iherb')) return `https://www.iherb.com/search?kw=${encodeURIComponent(q || '')}`;
-    if (norm.includes('google') && norm.includes('play')) return `https://play.google.com/store/search?q=${encodeURIComponent(q || '')}&c=apps`;
-    if (norm.includes('app') && norm.includes('store')) return 'https://apps.apple.com/search?term=' + encodeURIComponent(q || '');
-    return `https://www.google.com/search?q=${encodeURIComponent((q || '') + ' ' + (storeName || ''))}`;
-}
-
 /** Extract a numeric price for sorting (rough proxy: first $ amount, or monthly equivalent when obvious). */
 function getSortPrice(item) {
     const s = (item.price || item.stage || '').toString().trim();
@@ -630,7 +613,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             {/* Product Grid */}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', justifyContent: 'center' }}>
                 {displayItems.map((item, idx) => {
-                    const isLlm = item.llmGenerated === true;
                     const isStartup = item.isStartup === true;
                     const releasedStartup = isStartup && item.productReleased === true;
                     const isInEcosystem = !!myProducts[item.id];
@@ -674,15 +656,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                 }}>
                                     {isStartup ? 'Startup' : item.type}
                                 </span>
-                                {isLlm && (
-                                    <span style={{
-                                        position: 'absolute', bottom: '0.45rem', right: '0.45rem',
-                                        background: 'rgba(0,0,0,0.55)', color: 'white', padding: '0.15rem 0.45rem',
-                                        borderRadius: 'var(--radius-pill)', fontSize: '0.58rem', fontWeight: '700', letterSpacing: '0.04em',
-                                    }}>
-                                        AI preview
-                                    </span>
-                                )}
                                 {isInEcosystem && (
                                     <span style={{
                                         position: 'absolute', top: '0.5rem', right: '0.5rem',
@@ -714,9 +687,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                             <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
                                 <span style={{ color: 'var(--color-primary)', fontSize: '0.7rem', fontWeight: '600', marginBottom: '0.25rem' }}>
                                     {CATEGORY_LABELS[item.category] || (item.category && item.category.charAt(0) + item.category.slice(1)) || 'Startup'}
-                                    {isLlm && item.brand && (
-                                        <span style={{ color: 'var(--color-text-muted)', fontWeight: '500' }}> · {item.brand}</span>
-                                    )}
                                 </span>
                                 <h3 style={{ fontSize: '1.05rem', marginBottom: '0.25rem' }}>{item.name}</h3>
                                 {item.outOfBusiness && (
@@ -842,28 +812,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                                     )}
                                                 </button>
                                             )
-                                        ) : isLlm ? (
-                                            <>
-                                                <button type="button" className="btn btn-primary" style={{ padding: '0.35rem 0.7rem', fontSize: '0.75rem' }} onClick={() => onOpenProduct(item)}>
-                                                    Details
-                                                </button>
-                                                <div style={{ width: '100%', marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid var(--color-border)' }}>
-                                                    <div style={{ fontSize: '0.68rem', fontWeight: '600', color: 'var(--color-text-muted)', marginBottom: '0.35rem' }}>Where to buy</div>
-                                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem', alignItems: 'center', fontSize: '0.75rem' }}>
-                                                        {(item.whereToBuy || []).map((shop) => (
-                                                            <a
-                                                                key={shop}
-                                                                href={getStoreSearchUrl(shop, item.name)}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                style={{ color: 'var(--color-primary)', textDecoration: 'none' }}
-                                                            >
-                                                                {shop} ↗
-                                                            </a>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            </>
                                         ) : (
                                             <>
                                                 <button className="btn btn-outline" style={{ padding: '0.35rem 0.7rem', fontSize: '0.75rem' }} onClick={() => onToggleProduct(item)}>
