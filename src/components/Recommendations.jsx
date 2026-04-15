@@ -1,9 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { getRecommendationExplanation, SIMILAR_PROFILES, ALL_PRODUCTS, CATEGORY_LABELS, getRecommendationsGroupedByWorkflow } from '../data/products';
 import { getRecommendedArticles } from './Articles';
 import { inferTagsFromHealthProfile } from '../utils/healthDataProfile';
 import CareNearYouPanel from './CareNearYouPanel';
 import { generateTieredRecommendations } from '../utils/recommendationEngine';
+import { fetchLlmRecommendations } from '../utils/fetchLlmRecommendations';
 
 const TYPE_OPTIONS = [
     { value: 'all', label: 'All types' },
@@ -29,6 +30,8 @@ export default function Recommendations({
     const [categoryFilter, setCategoryFilter] = useState('all');
     const [typeFilter, setTypeFilter] = useState('all');
     const [expandedSections, setExpandedSections] = useState({});
+    const [llmTiered, setLlmTiered] = useState([]);
+    const [llmProvider, setLlmProvider] = useState('');
 
     const { byWorkflow, byCategory: byCategoryRaw } = useMemo(
         () => getRecommendationsGroupedByWorkflow(results || {}, omittedProducts || {}, healthProfile),
@@ -92,7 +95,43 @@ export default function Recommendations({
     }, [results]);
 
     const recommendedArticles = useMemo(() => getRecommendedArticles(results || {}, healthProfile), [results, healthProfile]);
-    const tiered = useMemo(() => generateTieredRecommendations(results?.fullHealthIntake || {}), [results]);
+    const fallbackTiered = useMemo(() => generateTieredRecommendations(results?.fullHealthIntake || {}), [results]);
+    const tiered = llmTiered.length > 0 ? llmTiered : fallbackTiered;
+
+    useEffect(() => {
+        let active = true;
+        const intake = results?.fullHealthIntake || null;
+        if (!intake || Object.keys(intake).length === 0) {
+            setLlmTiered([]);
+            setLlmProvider('');
+            return () => {
+                active = false;
+            };
+        }
+
+        (async () => {
+            try {
+                const data = await fetchLlmRecommendations({
+                    intake,
+                    trackedProducts,
+                    myProducts,
+                    omittedProducts,
+                });
+                if (!active) return;
+                const recs = Array.isArray(data?.recommendations) ? data.recommendations : [];
+                setLlmTiered(recs.length > 0 ? recs : []);
+                setLlmProvider(String(data?.providerUsed || ''));
+            } catch (_) {
+                if (!active) return;
+                setLlmTiered([]);
+                setLlmProvider('');
+            }
+        })();
+
+        return () => {
+            active = false;
+        };
+    }, [results, trackedProducts, myProducts, omittedProducts]);
 
     const renderProductCard = (product) => {
         const isTracked = !!trackedProducts[product.id];
@@ -254,6 +293,11 @@ export default function Recommendations({
             {tiered.length > 0 && (
                 <div style={{ maxWidth: '980px', margin: '0 auto var(--spacing-xl)', display: 'grid', gap: '1rem' }}>
                     <h3 style={{ fontSize: '1.35rem', marginBottom: '0.4rem' }}>Tiered recommendations</h3>
+                    {llmProvider && (
+                        <p style={{ margin: '0 0 0.45rem', fontSize: '0.82rem', color: 'var(--color-text-muted)' }}>
+                            Personalized with intake + feedback signals via {llmProvider}.
+                        </p>
+                    )}
                     {tiered.map((entry) => (
                         <div key={entry.concern} className="card" style={{ padding: '1rem' }}>
                             <p style={{ fontWeight: '700', marginBottom: '0.75rem' }}>{entry.concern}</p>
