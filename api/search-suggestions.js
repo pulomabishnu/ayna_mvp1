@@ -1,6 +1,6 @@
 /**
- * Vercel serverless: when Discovery search has no catalog hits, suggest product ideas via Claude (Anthropic).
- * Ephemeral JSON only — not persisted. No model-supplied URLs (we build search links client-side).
+ * Vercel serverless: when Discovery search has no catalog hits, Claude suggests real branded
+ * products (retail names only — no model URLs). Ephemeral JSON, not persisted.
  */
 /* global process */
 
@@ -58,34 +58,12 @@ function stripJsonFence(raw) {
   return t.trim();
 }
 
-function normalizeSuggestion(raw, index) {
-  const name = sanitizeStr(raw?.name, 120);
-  const summary = sanitizeStr(raw?.summary, 900);
-  const priceHint = sanitizeStr(raw?.priceHint || raw?.price || 'Varies', 80);
-  const safetyNote = sanitizeStr(raw?.safetyNote, 400);
-  let category = sanitizeStr(raw?.category, 64).toLowerCase().replace(/\s+/g, '-');
-  if (!ALLOWED_CATEGORIES.has(category)) category = 'other';
-  const type = String(raw?.type || 'physical').toLowerCase() === 'digital' ? 'digital' : 'physical';
-  const searchTerms = uniqueStrings(raw?.searchTerms, 6, 80);
-
-  if (!name || name.length < 2 || !summary || summary.length < 20) return null;
-
-  const id = `gen-${Date.now().toString(36)}-${index}-${Math.random().toString(36).slice(2, 8)}`;
-
-  return {
-    id,
-    name,
-    category,
-    type,
-    summary,
-    price: priceHint || 'Varies',
-    safetyNote: safetyNote || 'This is general information only. Ask your clinician before trying new treatments or supplements.',
-    searchTerms: searchTerms.length ? searchTerms : [name],
-    llmGenerated: true,
-    ratingNote: 'AI suggestion — not in Ayna catalog',
-    tags: [],
-    image: '/ayna_placeholder.png',
-  };
+function clampTypicalRating(n) {
+  const x = Number(n);
+  if (!Number.isFinite(x)) return null;
+  const r = Math.round(x * 10) / 10;
+  if (r < 3 || r > 5) return null;
+  return r;
 }
 
 function uniqueStrings(arr, max, maxLen) {
@@ -93,7 +71,7 @@ function uniqueStrings(arr, max, maxLen) {
   const out = [];
   for (const x of Array.isArray(arr) ? arr : []) {
     const s = sanitizeStr(String(x), maxLen);
-    if (s.length < 3) continue;
+    if (s.length < 2) continue;
     const k = s.toLowerCase();
     if (seen.has(k)) continue;
     seen.add(k);
@@ -103,30 +81,121 @@ function uniqueStrings(arr, max, maxLen) {
   return out;
 }
 
+/** Retailer labels only (no URLs). */
+function sanitizeRetailers(arr, max) {
+  const out = [];
+  const seen = new Set();
+  for (const x of Array.isArray(arr) ? arr : []) {
+    const s = sanitizeStr(String(x), 48);
+    if (s.length < 2 || hasUrlLike(s)) continue;
+    if (!/^[a-zA-Z0-9 &.'+\-]{2,48}$/.test(s)) continue;
+    const low = s.toLowerCase();
+    if (seen.has(low)) continue;
+    seen.add(low);
+    out.push(s);
+    if (out.length >= max) break;
+  }
+  return out;
+}
+
+function buildDisplayName(brand, name) {
+  const b = sanitizeStr(brand, 80);
+  const n = sanitizeStr(name, 130);
+  if (!n) return '';
+  if (!b) return n;
+  if (n.toLowerCase().includes(b.toLowerCase())) return n;
+  return `${b} ${n}`.trim().slice(0, 140);
+}
+
+function normalizeSuggestion(raw, index) {
+  const brandRaw = sanitizeStr(raw?.brand, 80);
+  const name = buildDisplayName(brandRaw, raw?.name || raw?.productName);
+  const summary = sanitizeStr(raw?.summary, 900);
+  const priceHint = sanitizeStr(raw?.priceHint || raw?.price || 'See retailer', 80);
+  const safetyNote = sanitizeStr(raw?.safetyNote, 400);
+  let category = sanitizeStr(raw?.category, 64).toLowerCase().replace(/\s+/g, '-');
+  if (!ALLOWED_CATEGORIES.has(category)) category = 'other';
+  const type = String(raw?.type || 'physical').toLowerCase() === 'digital' ? 'digital' : 'physical';
+  const tags = uniqueStrings(raw?.tags, 8, 48);
+  const whereToBuy = sanitizeRetailers(raw?.whereToBuy || raw?.retailers, 6);
+  const searchTerms = uniqueStrings(raw?.searchTerms, 6, 100);
+  const typical = clampTypicalRating(raw?.typicalUserRating ?? raw?.estimatedRating);
+
+  if (!name || name.length < 3 || !summary || summary.length < 25) return null;
+
+  const id = `gen-${Date.now().toString(36)}-${index}-${Math.random().toString(36).slice(2, 8)}`;
+
+  return {
+    id,
+    brand: brandRaw || undefined,
+    name,
+    category,
+    type,
+    summary,
+    price: priceHint || 'See retailer',
+    safetyNote:
+      safetyNote ||
+      'Educational information only. Check labels, availability, and pricing with retailers. Ask your clinician before changing care.',
+    searchTerms: searchTerms.length ? searchTerms : [name],
+    whereToBuy: whereToBuy.length ? whereToBuy : ['Amazon', 'Target', 'Google'],
+    tags,
+    llmGenerated: true,
+    aiEstimatedRating: typical != null,
+    userRating: typical != null ? typical : undefined,
+    ratingNote: typical != null ? undefined : 'Not in Ayna database — no verified rating',
+    badges: uniqueStrings(raw?.badges, 2, 32),
+    image: '/ayna_placeholder.png',
+  };
+}
+
+function normalizeQuerySummary(s) {
+  const t = sanitizeStr(s, 700);
+  return t.length >= 20 ? t : '';
+}
+
 function buildPrompt(query, categoryHint, symptomHint) {
   const cat =
     categoryHint && categoryHint !== 'all'
-      ? `User has category filter: "${categoryHint}". Prefer suggestions in or near this category when it fits the query.`
+      ? `User category filter: "${categoryHint}". Prefer products that fit this aisle when relevant.`
       : '';
   const sym =
     symptomHint && symptomHint !== 'all'
       ? `User filtered supplements by symptom theme: "${symptomHint}".`
       : '';
-  return `You help with women's health product discovery for the app Ayna.
+  const cats = [...ALLOWED_CATEGORIES].join(', ');
+  return `You are the product-discovery layer for Ayna, a women's health app. The catalog search returned no rows; your job is to propose REAL, SHIPPABLE products and apps that best match the user's intent — specific brand names and product lines that a shopper could find at major US retailers or official brand/app stores.
 
-User search query: "${query.replace(/"/g, '\\"')}"
+User search: "${query.replace(/"/g, '\\"')}"
 ${cat}
 ${sym}
 
-Return a single JSON object ONLY (no markdown) with this exact shape:
-{"suggestions":[{"name":"string","category":"one of the allowed slugs","type":"physical"|"digital","summary":"2-4 sentences, educational, no brand endorsement","priceHint":"short string like \\"Varies\\" or \\"~$15–40\\" — never a URL","safetyNote":"one sentence: consult a clinician when relevant","searchTerms":["2-5 short generic search phrases for web shopping — no URLs, no http"]}]}
+Return ONE JSON object ONLY (no markdown) with this shape:
+{
+  "querySummary": "2-4 sentences: tie the user's words to the kinds of products below; name categories (e.g. pads, telehealth); remind that Ayna is surfacing common options and they should verify fit with a clinician when medical.",
+  "suggestions": [
+    {
+      "brand": "Brand name",
+      "name": "Product line or SKU name (include brand in name OR set brand separately)",
+      "category": "slug from allowed list",
+      "type": "physical" | "digital",
+      "summary": "2-3 sentences: what it is, who it is for, how it helps — neutral, not medical advice",
+      "priceHint": "e.g. ~$12-18 or Subscription ~$15/mo — approximate, no links",
+      "tags": ["up to 6 short tags: heavy-flow", "organic", "app", ...],
+      "whereToBuy": ["Amazon","Target","CVS","Walmart","Brand website","App Store","Google Play"] — retailer NAMES only, no URLs,
+      "typicalUserRating": 4.2,
+      "safetyNote": "one short line: e.g. consult clinician for prescriptions, patch tests for topicals",
+      "searchTerms": ["2-4 web search phrases that include brand + product kind for Google"]
+    }
+  ]
+}
 
 Rules:
-- Suggest 3 to 5 items that could plausibly match what the user is looking for.
-- Use generic product types (e.g. "overnight organic pads", "period tracking app") — do not claim a specific commercial product exists or is safe/effective.
-- category must be one of: ${[...ALLOWED_CATEGORIES].join(', ')}
-- Never include URLs, links, or "http" in any field.
-- If the query is not health-related, return {"suggestions":[]} .`;
+- Suggest 6 to 10 DISTINCT real branded products or well-known apps, ranked most relevant first.
+- Use brands and products that actually exist in the US market (or global apps). Do not invent fake companies.
+- category must be one of: ${cats}
+- Never include URLs, domains as links, or "http" in any string. Retailers are plain words only.
+- typicalUserRating: optional number 3.0-5.0 (one decimal) as a rough community-average style estimate — not a medical claim.
+- If the query is not women's health / wellness shopping related, return {"querySummary":"","suggestions":[]} .`;
 }
 
 async function callClaudeJson(prompt) {
@@ -143,10 +212,10 @@ async function callClaudeJson(prompt) {
     },
     body: JSON.stringify({
       model,
-      max_tokens: 2000,
-      temperature: 0.35,
+      max_tokens: 8192,
+      temperature: 0.2,
       system:
-        "Return a single valid JSON object only. No markdown code fences unless the JSON is the only content. No URLs or http in any string. Educational women's health assistant.",
+        "Return a single valid JSON object only. No markdown fences. You must not output URLs or http(s) in any field. Real brand and product names only. Educational women's health context; never diagnose.",
       messages: [{ role: 'user', content: prompt }],
     }),
   });
@@ -218,9 +287,11 @@ export default async function handler(req, res) {
   }
 
   const list = Array.isArray(parsed?.suggestions) ? parsed.suggestions : [];
-  const suggestions = list.map((s, i) => normalizeSuggestion(s, i)).filter(Boolean).slice(0, 6);
+  const suggestions = list.map((s, i) => normalizeSuggestion(s, i)).filter(Boolean).slice(0, 10);
+  const querySummary = normalizeQuerySummary(parsed?.querySummary);
 
   return res.status(200).json({
+    querySummary,
     suggestions,
     generatedAt: new Date().toISOString(),
   });

@@ -6,11 +6,28 @@ function googleUrl(q) {
   return `https://www.google.com/search?q=${encodeURIComponent(q)}`;
 }
 
+function getStoreSearchUrl(storeName, productName) {
+  const q = productName || '';
+  if (!storeName || typeof storeName !== 'string') return googleUrl(productName || 'women health products');
+  const norm = storeName.trim().toLowerCase().replace(/\s+/g, '');
+  if (/^[a-z0-9][a-z0-9.-]*\.(com|io|co|life|health|org|net)$/i.test(norm)) return norm.startsWith('http') ? norm : `https://${norm}`;
+  if (norm.includes('amazon')) return `https://www.amazon.com/s?k=${encodeURIComponent(q || '')}`;
+  if (norm.includes('target')) return `https://www.target.com/s?searchTerm=${encodeURIComponent(q || '')}`;
+  if (norm.includes('walmart')) return `https://www.walmart.com/search?q=${encodeURIComponent(q || '')}`;
+  if (norm.includes('cvs')) return `https://www.cvs.com/shop/search?searchTerm=${encodeURIComponent(q || '')}`;
+  if (norm.includes('walgreens')) return `https://www.walgreens.com/search/results.jsp?Ntt=${encodeURIComponent(q || '')}`;
+  if (norm.includes('iherb')) return `https://www.iherb.com/search?kw=${encodeURIComponent(q || '')}`;
+  if (norm.includes('google') && norm.includes('play')) return `https://play.google.com/store/search?q=${encodeURIComponent(q || '')}&c=apps`;
+  if (norm.includes('app') && norm.includes('store')) return 'https://apps.apple.com/search?term=' + encodeURIComponent(q || '');
+  return googleUrl(`${q} ${storeName}`);
+}
+
 export default function LlmSearchSuggestionModal({ product, onClose }) {
   if (!product?.llmGenerated) return null;
 
   const terms = Array.isArray(product.searchTerms) ? product.searchTerms : [];
-  const label = CATEGORY_LABELS[product.category] || product.category || 'Product idea';
+  const retailers = Array.isArray(product.whereToBuy) ? product.whereToBuy : [];
+  const label = CATEGORY_LABELS[product.category] || product.category || 'Product';
 
   return (
     <div
@@ -86,15 +103,23 @@ export default function LlmSearchSuggestionModal({ product, onClose }) {
               border: '1px solid #E9D5FF',
             }}
           >
-            Suggested — not in catalog
+            Ayna preview · not in database
           </span>
-          <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '0.35rem' }}>{label}</p>
+          <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '0.35rem' }}>
+            {label}
+            {product.brand ? <span> · {product.brand}</span> : null}
+          </p>
           <h2 id="llm-suggestion-title" style={{ fontSize: '1.35rem', marginBottom: '0.75rem', lineHeight: 1.3 }}>
             {product.name}
           </h2>
           <p style={{ fontSize: '0.95rem', color: 'var(--color-text-main)', lineHeight: 1.6, marginBottom: '1rem' }}>
             {product.summary}
           </p>
+          {product.price && (
+            <p style={{ fontSize: '0.88rem', fontWeight: '600', color: 'var(--color-text-main)', marginBottom: '0.75rem' }}>
+              {product.price}
+            </p>
+          )}
           {product.safetyNote && (
             <div
               style={{
@@ -111,10 +136,39 @@ export default function LlmSearchSuggestionModal({ product, onClose }) {
               <strong>Safety:</strong> {product.safetyNote}
             </div>
           )}
+          {retailers.length > 0 && (
+            <div style={{ marginBottom: '1rem' }}>
+              <p style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>
+                Where to buy
+              </p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                {retailers.map((shop) => (
+                  <a
+                    key={shop}
+                    href={getStoreSearchUrl(shop, product.name)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      fontSize: '0.82rem',
+                      fontWeight: '600',
+                      color: 'var(--color-primary)',
+                      textDecoration: 'none',
+                      padding: '0.35rem 0.75rem',
+                      border: '1px solid var(--color-border)',
+                      borderRadius: 'var(--radius-pill)',
+                      background: 'var(--color-surface-soft)',
+                    }}
+                  >
+                    {shop} ↗
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
           {terms.length > 0 && (
             <div>
               <p style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>
-                Search the web (generic phrases)
+                Web search
               </p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                 {terms.map((t) => (

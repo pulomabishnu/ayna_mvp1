@@ -20,15 +20,21 @@ function readSessionCache(key) {
       sessionStorage.removeItem(key);
       return null;
     }
-    return o.suggestions;
+    return {
+      suggestions: o.suggestions,
+      querySummary: typeof o.querySummary === 'string' ? o.querySummary : '',
+    };
   } catch {
     return null;
   }
 }
 
-function writeSessionCache(key, suggestions) {
+function writeSessionCache(key, suggestions, querySummary) {
   try {
-    sessionStorage.setItem(key, JSON.stringify({ ts: Date.now(), suggestions }));
+    sessionStorage.setItem(
+      key,
+      JSON.stringify({ ts: Date.now(), suggestions, querySummary: querySummary || '' })
+    );
   } catch {
     /* quota */
   }
@@ -36,12 +42,12 @@ function writeSessionCache(key, suggestions) {
 
 /**
  * @param {{ query: string, category?: string, symptom?: string, signal?: AbortSignal }} opts
- * @returns {Promise<{ suggestions: object[], error?: string, code?: string }>}
+ * @returns {Promise<{ suggestions: object[], querySummary?: string, error?: string, code?: string, fromCache?: boolean }>}
  */
 export async function fetchSearchSuggestions(opts) {
   const query = (opts?.query || '').trim();
   if (query.length < 2) {
-    return { suggestions: [], error: 'Query too short' };
+    return { suggestions: [], querySummary: '', error: 'Query too short' };
   }
 
   const category = opts?.category && opts.category !== 'all' ? String(opts.category) : '';
@@ -49,7 +55,11 @@ export async function fetchSearchSuggestions(opts) {
   const cacheKey = sessionCacheKey(query, category, symptom);
   const cached = readSessionCache(cacheKey);
   if (cached) {
-    return { suggestions: cached, fromCache: true };
+    return {
+      suggestions: cached.suggestions,
+      querySummary: cached.querySummary,
+      fromCache: true,
+    };
   }
 
   const res = await fetch('/api/search-suggestions', {
@@ -64,6 +74,7 @@ export async function fetchSearchSuggestions(opts) {
   if (res.status === 429) {
     return {
       suggestions: [],
+      querySummary: '',
       error: 'Too many AI search requests. Try again in a little while.',
       code: 'rate_limited',
     };
@@ -72,6 +83,7 @@ export async function fetchSearchSuggestions(opts) {
   if (res.status === 503 && (data?.error === 'no_anthropic_key' || data?.error === 'no_gemini_key')) {
     return {
       suggestions: [],
+      querySummary: '',
       error: 'AI search is not configured on the server (missing ANTHROPIC_API_KEY).',
       code: 'no_key',
     };
@@ -80,12 +92,14 @@ export async function fetchSearchSuggestions(opts) {
   if (!res.ok) {
     return {
       suggestions: [],
+      querySummary: '',
       error: data?.message || data?.error || 'Could not load suggestions.',
       code: data?.error || 'request_failed',
     };
   }
 
   const suggestions = Array.isArray(data.suggestions) ? data.suggestions : [];
-  writeSessionCache(cacheKey, suggestions);
-  return { suggestions };
+  const querySummary = typeof data.querySummary === 'string' ? data.querySummary : '';
+  writeSessionCache(cacheKey, suggestions, querySummary);
+  return { suggestions, querySummary };
 }

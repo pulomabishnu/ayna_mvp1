@@ -12,6 +12,23 @@ import FindYourPadModal from './FindYourPadModal';
 const ALL_CATEGORIES = ['all', 'pad', 'tampon', 'cup', 'disc', 'period-underwear', 'supplement', 'tracker', 'telehealth', 'mental-health', 'fitness', 'diagnostics', 'hormone-monitoring', 'menopause', 'fertility', 'pelvic-health', 'pelvic-floor', 'cramp-relief', 'postpartum', 'pregnancy', 'sex-tech', 'intimate-care', 'contraception'];
 const TYPE_FILTERS = ['all', 'physical', 'digital', 'startup'];
 
+/** Retailer label → search URL (same idea as catalog / ProductModal; no model-supplied URLs). */
+function getStoreSearchUrl(storeName, productName) {
+    const q = productName || '';
+    if (!storeName || typeof storeName !== 'string') return 'https://www.google.com/search?q=women+health+products';
+    const norm = storeName.trim().toLowerCase().replace(/\s+/g, '');
+    if (/^[a-z0-9][a-z0-9.-]*\.(com|io|co|life|health|org|net)$/i.test(norm)) return norm.startsWith('http') ? norm : `https://${norm}`;
+    if (norm.includes('amazon')) return `https://www.amazon.com/s?k=${encodeURIComponent(q || '')}`;
+    if (norm.includes('target')) return `https://www.target.com/s?searchTerm=${encodeURIComponent(q || '')}`;
+    if (norm.includes('walmart')) return `https://www.walmart.com/search?q=${encodeURIComponent(q || '')}`;
+    if (norm.includes('cvs')) return `https://www.cvs.com/shop/search?searchTerm=${encodeURIComponent(q || '')}`;
+    if (norm.includes('walgreens')) return `https://www.walgreens.com/search/results.jsp?Ntt=${encodeURIComponent(q || '')}`;
+    if (norm.includes('iherb')) return `https://www.iherb.com/search?kw=${encodeURIComponent(q || '')}`;
+    if (norm.includes('google') && norm.includes('play')) return `https://play.google.com/store/search?q=${encodeURIComponent(q || '')}&c=apps`;
+    if (norm.includes('app') && norm.includes('store')) return 'https://apps.apple.com/search?term=' + encodeURIComponent(q || '');
+    return `https://www.google.com/search?q=${encodeURIComponent((q || '') + ' ' + (storeName || ''))}`;
+}
+
 /** Extract a numeric price for sorting (rough proxy: first $ amount, or monthly equivalent when obvious). */
 function getSortPrice(item) {
     const s = (item.price || item.stage || '').toString().trim();
@@ -119,6 +136,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [showFindPadModal, setShowFindPadModal] = useState(false);
     const [symptomFilter, setSymptomFilter] = useState(initialSymptom || 'all');
     const [aiSuggestions, setAiSuggestions] = useState([]);
+    const [aiQuerySummary, setAiQuerySummary] = useState('');
     const [aiLoading, setAiLoading] = useState(false);
     const [aiError, setAiError] = useState(null);
     const recommendedSet = useMemo(() => new Set(recommendedProductIds || []), [recommendedProductIds]);
@@ -251,12 +269,14 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     React.useEffect(() => {
         if (qTrimForAi.length < 2) {
             setAiSuggestions([]);
+            setAiQuerySummary('');
             setAiLoading(false);
             setAiError(null);
             return;
         }
         if (catalogMatchCount > 0) {
             setAiSuggestions([]);
+            setAiQuerySummary('');
             setAiLoading(false);
             setAiError(null);
             return;
@@ -272,16 +292,18 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 symptom: symptomFilter,
                 signal: ac.signal,
             })
-                .then(({ suggestions, error }) => {
+                .then(({ suggestions, querySummary, error }) => {
                     if (ac.signal.aborted) return;
                     setAiLoading(false);
                     setAiSuggestions(Array.isArray(suggestions) ? suggestions : []);
+                    setAiQuerySummary(typeof querySummary === 'string' ? querySummary : '');
                     setAiError(error || null);
                 })
                 .catch((e) => {
                     if (e?.name === 'AbortError') return;
                     setAiLoading(false);
                     setAiSuggestions([]);
+                    setAiQuerySummary('');
                     setAiError(e?.message || 'Could not load suggestions');
                 });
         }, 480);
@@ -540,19 +562,40 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 />
             )}
 
+            {catalogMatchCount === 0 && qTrimForAi.length >= 2 && aiQuerySummary && !aiLoading && (
+                <div
+                    style={{
+                        maxWidth: '720px',
+                        margin: '0 auto 1.25rem',
+                        padding: '1rem 1.25rem',
+                        borderRadius: 'var(--radius-lg)',
+                        border: '1px solid var(--color-border)',
+                        background: 'linear-gradient(135deg, #FDF4FF 0%, #F5F3FF 100%)',
+                        fontSize: '0.95rem',
+                        lineHeight: 1.55,
+                        color: 'var(--color-text-main)',
+                    }}
+                >
+                    <span style={{ fontSize: '0.7rem', fontWeight: '800', color: '#7E22CE', letterSpacing: '0.06em', textTransform: 'uppercase', display: 'block', marginBottom: '0.5rem' }}>
+                        Ayna · matched search
+                    </span>
+                    {aiQuerySummary}
+                </div>
+            )}
+
             <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', margin: 0, textAlign: 'center', maxWidth: '640px', lineHeight: 1.45 }}>
                     {catalogMatchCount > 0 ? (
                         <>Showing {catalogMatchCount} result{catalogMatchCount !== 1 ? 's' : ''}</>
                     ) : qTrimForAi.length >= 2 ? (
                         aiLoading ? (
-                            <>No catalog matches — generating ideas…</>
+                            <>No catalog matches — finding brands…</>
                         ) : aiError && displayItems.length === 0 ? (
                             <>No catalog matches. {aiError}</>
                         ) : displayItems.length > 0 ? (
                             <>
-                                No catalog matches for &ldquo;{qTrimForAi}&rdquo; — showing {displayItems.length} AI idea{displayItems.length !== 1 ? 's' : ''}{' '}
-                                <span style={{ color: 'var(--color-text-muted)' }}>(not in our database; educational only)</span>
+                                No catalog rows for &ldquo;{qTrimForAi}&rdquo; — showing {displayItems.length} real product{displayItems.length !== 1 ? 's' : ''}{' '}
+                                <span style={{ color: 'var(--color-text-muted)' }}>(AI-ranked; not stored in Ayna&apos;s database)</span>
                             </>
                         ) : (
                             <>No catalog matches. Try different words or clear filters.</>
@@ -625,12 +668,21 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                 )}
                                 <span style={{
                                     position: 'absolute', top: '0.5rem', left: '0.5rem',
-                                    background: isLlm ? '#7E22CE' : (isStartup ? 'var(--color-primary-hover)' : (item.type === 'physical' ? 'var(--color-surface-contrast)' : 'var(--color-primary)')),
+                                    background: isStartup ? 'var(--color-primary-hover)' : (item.type === 'physical' ? 'var(--color-surface-contrast)' : 'var(--color-primary)'),
                                     color: 'white', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)',
                                     fontSize: '0.65rem', fontWeight: '600', textTransform: 'uppercase'
                                 }}>
-                                    {isLlm ? 'Suggested' : isStartup ? 'Startup' : item.type}
+                                    {isStartup ? 'Startup' : item.type}
                                 </span>
+                                {isLlm && (
+                                    <span style={{
+                                        position: 'absolute', bottom: '0.45rem', right: '0.45rem',
+                                        background: 'rgba(0,0,0,0.55)', color: 'white', padding: '0.15rem 0.45rem',
+                                        borderRadius: 'var(--radius-pill)', fontSize: '0.58rem', fontWeight: '700', letterSpacing: '0.04em',
+                                    }}>
+                                        AI preview
+                                    </span>
+                                )}
                                 {isInEcosystem && (
                                     <span style={{
                                         position: 'absolute', top: '0.5rem', right: '0.5rem',
@@ -662,6 +714,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                             <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
                                 <span style={{ color: 'var(--color-primary)', fontSize: '0.7rem', fontWeight: '600', marginBottom: '0.25rem' }}>
                                     {CATEGORY_LABELS[item.category] || (item.category && item.category.charAt(0) + item.category.slice(1)) || 'Startup'}
+                                    {isLlm && item.brand && (
+                                        <span style={{ color: 'var(--color-text-muted)', fontWeight: '500' }}> · {item.brand}</span>
+                                    )}
                                 </span>
                                 <h3 style={{ fontSize: '1.05rem', marginBottom: '0.25rem' }}>{item.name}</h3>
                                 {item.outOfBusiness && (
@@ -676,7 +731,16 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                     <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>{item.isStartup ? item.stage : item.price}</span>
                                     {(() => {
                                         const note = item.ratingNote;
-                                        // When rating is unreliable or reviews incentivized, show — with note; otherwise show rating
+                                        if (item.aiEstimatedRating && item.userRating != null) {
+                                            return (
+                                                <span
+                                                    style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}
+                                                    title="Approximate typical user rating (AI) — not verified by Ayna"
+                                                >
+                                                    ★ {Number(item.userRating).toFixed(1)}
+                                                </span>
+                                            );
+                                        }
                                         if (note) {
                                             return (
                                                 <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', fontStyle: 'italic' }} title={note}>—</span>
@@ -780,12 +844,25 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                             )
                                         ) : isLlm ? (
                                             <>
-                                                <span style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', fontStyle: 'italic', padding: '0.35rem 0' }} title="Not in Ayna catalog">
-                                                    Not in catalog
-                                                </span>
                                                 <button type="button" className="btn btn-primary" style={{ padding: '0.35rem 0.7rem', fontSize: '0.75rem' }} onClick={() => onOpenProduct(item)}>
                                                     Details
                                                 </button>
+                                                <div style={{ width: '100%', marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid var(--color-border)' }}>
+                                                    <div style={{ fontSize: '0.68rem', fontWeight: '600', color: 'var(--color-text-muted)', marginBottom: '0.35rem' }}>Where to buy</div>
+                                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem', alignItems: 'center', fontSize: '0.75rem' }}>
+                                                        {(item.whereToBuy || []).map((shop) => (
+                                                            <a
+                                                                key={shop}
+                                                                href={getStoreSearchUrl(shop, item.name)}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                style={{ color: 'var(--color-primary)', textDecoration: 'none' }}
+                                                            >
+                                                                {shop} ↗
+                                                            </a>
+                                                        ))}
+                                                    </div>
+                                                </div>
                                             </>
                                         ) : (
                                             <>
