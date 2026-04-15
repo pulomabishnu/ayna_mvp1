@@ -1,6 +1,4 @@
 /* global process */
-import { ALL_PRODUCTS } from '../src/data/products.js';
-import { generateTieredRecommendations } from '../src/utils/recommendationEngine.js';
 
 function getGeminiApiKey() {
   return (
@@ -9,7 +7,8 @@ function getGeminiApiKey() {
     process.env.GOOGLE_GENERATIVE_AI_API_KEY ||
     process.env.GOOGLE_API_KEY ||
     ''
-  ).trim() || null;
+  )
+    .trim() || null;
 }
 
 function anyApiKeyConfigured() {
@@ -22,194 +21,205 @@ function selectedConcerns(intake = {}) {
   return [];
 }
 
-function concernTags(concernKey = '') {
-  const key = String(concernKey).toLowerCase();
-  const tags = new Set();
-  if (/period|flow|leak|pad|tampon|cup|disc|underwear/.test(key)) tags.add('heavy-flow'), tags.add('leaks');
-  if (/cramp|pain/.test(key)) tags.add('cramps');
-  if (/pcos|hormone/.test(key)) tags.add('pcos');
-  if (/endo/.test(key)) tags.add('endometriosis');
-  if (/fertility|conceiv|ttc/.test(key)) tags.add('fertility');
-  if (/uti|vaginal|ph/.test(key)) tags.add('uti');
-  if (/menopause|perimenopause/.test(key)) tags.add('menopause');
-  if (/sexual|pelvic/.test(key)) tags.add('pelvic-floor');
-  if (/mental|mood|sleep|energy/.test(key)) tags.add('comfort');
-  if (/telehealth|provider/.test(key)) tags.add('uti'), tags.add('pcos'), tags.add('endometriosis'), tags.add('fertility');
-  return [...tags];
+function stripJsonFence(raw) {
+  let t = String(raw || '').trim();
+  t = t.replace(/^```(?:json)?\s*/i, '');
+  const last = t.lastIndexOf('```');
+  if (last >= 0) t = t.slice(0, last);
+  return t.trim();
 }
 
-function isSupplementProduct(product) {
-  const category = String(product?.category || '').toLowerCase();
-  const tags = (product?.tags || []).map((t) => String(t || '').toLowerCase());
-  return category.includes('supplement') || category.includes('vitamin') || category.includes('wellness') || tags.includes('supplement');
-}
-
-function isDigitalOrTelehealthProduct(product) {
-  const type = String(product?.type || 'physical').toLowerCase();
-  const category = String(product?.category || '').toLowerCase();
-  return type === 'digital' || category.includes('telehealth') || category.includes('app') || category.includes('tracker');
-}
-
-function isTierMatch(product, tierName = '', tierIndex = 0) {
-  const name = String(tierName || '').toLowerCase();
-  const expectsPhysical = tierIndex === 0 || name.includes('physical');
-  const expectsSupplement = tierIndex === 1 || name.includes('supplement') || name.includes('wellness');
-  const expectsDigital = tierIndex === 2 || name.includes('digital') || name.includes('telehealth');
-
-  if (expectsPhysical) return String(product?.type || 'physical').toLowerCase() === 'physical' && !isSupplementProduct(product);
-  if (expectsSupplement) return isSupplementProduct(product);
-  if (expectsDigital) return isDigitalOrTelehealthProduct(product);
-  return true;
-}
-
-function isConcernMatch(product, concernKey = '') {
-  const tags = product?.tags || [];
-  const expected = concernTags(concernKey);
-  if (!expected.length) return true;
-  return expected.some((t) => tags.includes(t));
-}
-
-function shortlistCandidates(intake = {}) {
-  const concerns = selectedConcerns(intake);
-  const concernDriven = concerns.length
-    ? ALL_PRODUCTS.filter((p) => concerns.some((c) => concernTags(c).some((t) => (p.tags || []).includes(t))))
-    : [];
-
-  const fallbackTiered = generateTieredRecommendations(intake);
-  const fallbackProducts = fallbackTiered.flatMap((entry) =>
-    entry.tiers.flatMap((tier) => [tier.product, ...(Array.isArray(tier.alternatives) ? tier.alternatives : [])])
-  );
-
-  const map = new Map();
-  [...concernDriven, ...fallbackProducts, ...ALL_PRODUCTS.slice(0, 140)].forEach((p) => {
-    if (!p?.id || map.has(p.id)) return;
-    map.set(p.id, p);
-  });
-  return [...map.values()].slice(0, 180);
-}
-
-function productLite(p) {
-  return {
-    id: p.id,
-    name: p.name,
-    category: p.category,
-    type: p.type || 'physical',
-    tags: Array.isArray(p.tags) ? p.tags.slice(0, 12) : [],
-    clinicianOpinionSource: p.clinicianOpinionSource || '',
-    clinicianAttribution: p.clinicianAttribution || '',
-    safety: {
-      recalls: p?.safety?.recalls || '',
-      materials: p?.safety?.materials || '',
-      sideEffects: p?.safety?.sideEffects || '',
-      opinionAlerts: p?.safety?.opinionAlerts || '',
-    },
-    summary: p.summary || '',
-  };
-}
-
-function buildPrompt(intake = {}, feedback = {}, candidates = []) {
-  const concerns = selectedConcerns(intake);
-  const cycle = `menstrualCycle=${intake?.menstrualCycle || 'unknown'}, cycleLength=${intake?.averageCycleLength || 'unknown'}, periodLength=${intake?.averagePeriodLength || 'unknown'}`;
-  const concernFollowups = intake?.concernFollowups && typeof intake.concernFollowups === 'object' ? intake.concernFollowups : {};
-  return `
-You are generating recommendations for Ayna, a women's health app.
-
-USER PROFILE:
-- Age: ${intake?.age || 'unknown'}
-- Location: ${intake?.location || 'unknown'}
-- Concerns: ${concerns.join(', ') || 'none provided'}
-- Custom concerns: ${(Array.isArray(intake?.customConcerns) ? intake.customConcerns : []).join(', ') || 'none'}
-- Conditions: ${(Array.isArray(intake?.conditions) ? intake.conditions : []).join(', ') || 'none'}
-- Cycle: ${cycle}
-- Flow level: ${intake?.flowLevel || 'unknown'}
-- Pain level: ${intake?.painLevel || 'unknown'}/10
-- Symptoms: ${(Array.isArray(intake?.symptoms) ? intake.symptoms : []).join(', ') || 'none'}
-- Product preferences: ${(Array.isArray(intake?.productPreferences) ? intake.productPreferences : []).join(', ') || 'none'}
-- Preferred product types: ${(Array.isArray(intake?.preferredProductTypes) ? intake.preferredProductTypes : []).join(', ') || 'none'}
-- Current products: ${(Array.isArray(intake?.currentProducts) ? intake.currentProducts : []).join(', ') || 'none'}
-- Tried and disliked: ${(Array.isArray(intake?.dislikedProducts) ? intake.dislikedProducts : []).join(', ') || 'none'}; reason=${intake?.dislikedReason || 'none'}
-- Goals: ${(Array.isArray(intake?.goals) ? intake.goals : []).join(', ') || 'none'}
-- Concern-specific symptom/history follow-ups: ${JSON.stringify(concernFollowups)}
-
-LEARNING SIGNALS (use these to get better over time for this user):
-- Tracked/liked product IDs: ${(feedback?.trackedProductIds || []).join(', ') || 'none'}
-- In ecosystem product IDs: ${(feedback?.ecosystemProductIds || []).join(', ') || 'none'}
-- Hidden product IDs: ${(feedback?.omittedProductIds || []).join(', ') || 'none'}
-- Persistent learning memory (cross-session): ${JSON.stringify(feedback?.learningMemory || {})}
-
-AVAILABLE CANDIDATES (you MUST only use these IDs):
-${JSON.stringify(candidates.map(productLite))}
-
-TASK:
-Return a SINGLE JSON object:
-{
-  "recommendations": [
-    {
-      "concern": "string concern label",
-      "tiers": [
-        { "name": "TIER 1 - IMMEDIATE PHYSICAL PRODUCT", "topProductId": "id", "alternativeProductIds": ["id1","id2","id3"] },
-        { "name": "TIER 2 - SUPPLEMENT OR WELLNESS PRODUCT", "topProductId": "id", "alternativeProductIds": ["id1","id2","id3"] },
-        { "name": "TIER 3 - DIGITAL OR TELEHEALTH OPTION", "topProductId": "id", "alternativeProductIds": ["id1","id2","id3"] }
-      ],
-      "notes": ["optional note"]
-    }
-  ]
-}
-
-RULES:
-- Only include relevant concerns; do not invent unrelated categories.
-- Do not assume heavy flow, cramps, or high pain unless explicitly present in profile.
-- Never use products user disliked.
-- Never use products with recall warnings.
-- Favor independent clinician-verified products when possible.
-- For each tier: 1 top product + up to 3 alternatives.
-- Never output markdown.
-  `.trim();
-}
-
-function safeParse(raw) {
-  if (typeof raw !== 'string') return null;
+function safeHttpsUrl(u) {
+  if (!u || typeof u !== 'string') return '';
+  const t = u.trim();
+  if (!/^https:\/\//i.test(t)) return '';
   try {
-    return JSON.parse(raw);
+    const x = new URL(t);
+    if (x.protocol !== 'https:') return '';
+    return t.slice(0, 800);
   } catch {
-    return null;
+    return '';
   }
 }
 
-function normalizeOutput(parsed, byId, intake) {
-  const out = [];
-  const allowedConcerns = new Set(generateTieredRecommendations(intake).map((x) => x.concern));
-  const source = Array.isArray(parsed?.recommendations) ? parsed.recommendations : [];
-  source.forEach((entry) => {
-    const concern = String(entry?.concern || '').trim();
-    if (!concern) return;
-    if (allowedConcerns.size > 0 && !allowedConcerns.has(concern)) return;
-    const tiers = [];
-    (Array.isArray(entry?.tiers) ? entry.tiers : []).forEach((t, idx) => {
-      const top = byId.get(String(t?.topProductId || ''));
-      if (!top) return;
-      if (!isConcernMatch(top, concern)) return;
-      if (!isTierMatch(top, t?.name, idx)) return;
-      const altIds = Array.isArray(t?.alternativeProductIds) ? t.alternativeProductIds : [];
-      const alt = altIds
-        .map((id) => byId.get(String(id)))
-        .filter(Boolean)
-        .filter((p) => p.id !== top.id)
-        .filter((p) => isConcernMatch(p, concern))
-        .filter((p) => isTierMatch(p, t?.name, idx))
-        .slice(0, 3);
-      tiers.push({
-        name: String(t?.name || '').trim() || 'Tier',
-        product: top,
-        safetyFlags: [],
-        alternatives: alt,
-      });
-    });
-    if (!tiers.length) return;
-    out.push({ concern, tiers, notes: Array.isArray(entry?.notes) ? entry.notes.slice(0, 3) : [] });
-  });
-  if (out.length) return out;
-  return generateTieredRecommendations(intake);
+function enrichProduct(p, idSuffix = '') {
+  if (!p || typeof p !== 'object' || !String(p.name || '').trim()) return null;
+  const id =
+    p.id && String(p.id).trim()
+      ? String(p.id).trim().slice(0, 120)
+      : `gen-${String(p.name)
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-|-$/g, '')
+          .slice(0, 48)}${idSuffix}-${Math.random().toString(36).slice(2, 7)}`;
+  const url = safeHttpsUrl(p.url);
+  return {
+    ...p,
+    id,
+    category: String(p.category || 'other').toLowerCase().replace(/\s+/g, '-').slice(0, 64),
+    type: String(p.type || 'physical').toLowerCase() === 'digital' ? 'digital' : 'physical',
+    image: typeof p.image === 'string' && p.image.trim() ? p.image.trim() : '',
+    tags: Array.isArray(p.tags) ? p.tags.map((x) => String(x)).slice(0, 12) : [],
+    safety: {
+      recalls: p.safety?.recalls != null ? String(p.safety.recalls) : '',
+      materials: p.safety?.materials != null ? String(p.safety.materials) : '',
+      sideEffects: p.safety?.sideEffects != null ? String(p.safety.sideEffects) : '',
+      opinionAlerts: p.safety?.opinionAlerts != null ? String(p.safety.opinionAlerts) : '',
+    },
+    url: url || undefined,
+    searchTerms:
+      Array.isArray(p.searchTerms) && p.searchTerms.length > 0
+        ? p.searchTerms.map((x) => String(x)).slice(0, 6)
+        : [p.name, p.brand].filter(Boolean),
+    whereToBuy: url ? ['Brand site'] : [],
+    llmGenerated: true,
+    intakeGenerated: true,
+  };
+}
+
+function enrichRecommendations(recs) {
+  const list = Array.isArray(recs) ? recs : [];
+  return list
+    .map((entry) => {
+      const tiers = (Array.isArray(entry?.tiers) ? entry.tiers : [])
+        .map((tier) => {
+          const product = enrichProduct(tier?.product);
+          if (!product) return null;
+          const alternatives = (Array.isArray(tier?.alternatives) ? tier.alternatives : [])
+            .map((alt, i) => enrichProduct(alt, `-alt${i}`))
+            .filter(Boolean)
+            .slice(0, 3);
+          return {
+            ...tier,
+            name: String(tier?.name || '').trim() || 'Tier',
+            product,
+            alternatives,
+            safetyFlags: Array.isArray(tier?.safetyFlags) ? tier.safetyFlags : [],
+          };
+        })
+        .filter(Boolean);
+      if (!tiers.length) return null;
+      return {
+        concern: String(entry?.concern || '').trim() || 'Recommendations',
+        tiers,
+        notes: Array.isArray(entry?.notes) ? entry.notes.slice(0, 5).map((x) => String(x)) : [],
+      };
+    })
+    .filter(Boolean);
+}
+
+function buildPrompt(intake = {}, feedback = {}) {
+  const concerns = selectedConcerns(intake);
+  const concernFollowups = intake?.concernFollowups && typeof intake.concernFollowups === 'object' ? intake.concernFollowups : {};
+
+  return `
+You are Ayna's recommendation engine — a women's health AI that generates deeply personalized product recommendations.
+
+USER HEALTH PROFILE:
+- Age: ${intake?.age || 'unknown'}
+- Location: ${intake?.location || 'unknown'}
+- Primary concerns: ${concerns.join(', ') || 'none provided'}
+- Custom concerns: ${(Array.isArray(intake?.customConcerns) ? intake.customConcerns : []).join(', ') || 'none'}
+- Diagnosed conditions: ${(Array.isArray(intake?.conditions) ? intake.conditions : []).join(', ') || 'none'}
+- Menstrual cycle: ${intake?.menstrualCycle || 'unknown'}
+- Cycle length: ${intake?.averageCycleLength || 'unknown'} days
+- Period length: ${intake?.averagePeriodLength || 'unknown'} days
+- Flow level: ${intake?.flowLevel || 'unknown'}
+- Pain level: ${intake?.painLevel || 'unknown'}/10
+- Symptoms: ${(Array.isArray(intake?.symptoms) ? intake.symptoms : []).join(', ') || 'none'}
+- Trying to conceive: ${intake?.tryingToConceive || 'unknown'}
+- Hormonal birth control: ${intake?.hormonalBirthControl || 'unknown'} ${intake?.hormonalBirthControlType ? `(${intake.hormonalBirthControlType})` : ''}
+- Product preferences: ${(Array.isArray(intake?.productPreferences) ? intake.productPreferences : []).join(', ') || 'none'}
+- Preferred product types: ${(Array.isArray(intake?.preferredProductTypes) ? intake.preferredProductTypes : []).join(', ') || 'none'}
+- Currently uses: ${intake?.currentProductsText || 'none'}
+- Tried and disliked: ${intake?.dislikedProductsText || 'none'} — reason: ${intake?.dislikedReason || 'none'}
+- Goals: ${(Array.isArray(intake?.goals) ? intake.goals : []).join(', ') || 'none'}
+- Concern-specific follow-ups: ${JSON.stringify(concernFollowups)}
+
+LEARNING SIGNALS — use these to get smarter for this user over time:
+- Products she has saved/tracked: ${(feedback?.trackedProductIds || []).join(', ') || 'none'}
+- Products in her ecosystem: ${(feedback?.ecosystemProductIds || []).join(', ') || 'none'}
+- Products she has hidden: ${(feedback?.omittedProductIds || []).join(', ') || 'none'}
+- Cross-session memory: ${JSON.stringify(feedback?.learningMemory || {})}
+
+TASK:
+Generate product recommendations for this specific user. For each concern area relevant to her profile, generate three tiers of recommendations. Each recommendation must be a REAL product that actually exists and is available for purchase.
+
+IMPORTANT RULES:
+- Never recommend products she has tried and disliked
+- Never recommend products she has already hidden
+- If she has endometriosis: always flag products with synthetic fragrances, dioxins, chlorine bleaching, or BPA
+- If she has PCOS: prioritize products that support hormone balance; flag hormone-disrupting ingredients
+- If she is trying to conceive: flag any supplements contraindicated in pregnancy
+- If pain level is 8 or higher: always include a telehealth recommendation
+- Only show concern areas relevant to her profile — do not show all concerns to every user
+- Never make diagnostic claims — say "may help with" not "treats" or "cures"
+- Every whyItWorks explanation must reference at least one specific detail from her profile
+- Never recommend products with active FDA recalls
+- Use the learning signals to avoid repeating products she has already seen and to weight toward her demonstrated preferences
+- The more times this user has interacted with Ayna, the smarter and more specific your recommendations should get
+- Product "url" fields must be valid https URLs to the brand or major retailer product page when possible; otherwise use https://www.google.com/search?q= plus encoded product name
+
+Return ONLY a valid JSON object in exactly this format — no markdown, no explanation, just JSON:
+
+{
+  "recommendations": [
+    {
+      "concern": "string — the concern area label",
+      "tiers": [
+        {
+          "name": "TIER 1 - IMMEDIATE PHYSICAL PRODUCT",
+          "product": {
+            "id": "unique-slug-no-spaces",
+            "name": "Exact real product name",
+            "brand": "Brand name",
+            "category": "category string",
+            "type": "physical",
+            "summary": "2-3 sentence description of what this product is and does",
+            "whyItWorks": "2-3 sentences explaining exactly why this product fits THIS user's specific profile, conditions, and preferences — must reference her specific details",
+            "considerations": "Any ingredients, materials, or interactions she should be aware of given her specific conditions. Leave empty string if none.",
+            "price": "$XX or $XX/month",
+            "image": "",
+            "tags": ["tag1", "tag2"],
+            "safety": {
+              "recalls": "No known recalls",
+              "materials": "brief materials note",
+              "sideEffects": "brief side effects note if relevant",
+              "opinionAlerts": ""
+            },
+            "clinicianOpinionSource": "",
+            "clinicianAttribution": "",
+            "url": "https://product-website.com"
+          },
+          "alternatives": [
+            {
+              "id": "unique-slug",
+              "name": "Alternative product name",
+              "brand": "Brand",
+              "summary": "1-2 sentence description",
+              "price": "$XX",
+              "type": "physical",
+              "image": "",
+              "url": "https://product-website.com"
+            }
+          ]
+        },
+        {
+          "name": "TIER 2 - SUPPLEMENT OR WELLNESS PRODUCT",
+          "product": { },
+          "alternatives": [ ]
+        },
+        {
+          "name": "TIER 3 - DIGITAL OR TELEHEALTH OPTION",
+          "product": { },
+          "alternatives": [ ]
+        }
+      ],
+      "notes": ["optional safety or personalization note for this concern"]
+    }
+  ]
+}
+`.trim();
 }
 
 async function callOpenAI(prompt) {
@@ -224,6 +234,7 @@ async function callOpenAI(prompt) {
     body: JSON.stringify({
       model,
       temperature: 0.2,
+      max_tokens: 4000,
       response_format: { type: 'json_object' },
       messages: [
         { role: 'system', content: 'Output valid JSON only.' },
@@ -248,9 +259,9 @@ async function callAnthropic(prompt) {
     },
     body: JSON.stringify({
       model,
-      max_tokens: 1200,
+      max_tokens: 4000,
       temperature: 0.2,
-      system: 'Return a single valid JSON object only.',
+      system: 'Return a single valid JSON object only. No markdown code fences.',
       messages: [{ role: 'user', content: prompt }],
     }),
   });
@@ -269,7 +280,7 @@ async function callGemini(prompt) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      generationConfig: { temperature: 0.2, responseMimeType: 'application/json', maxOutputTokens: 1200 },
+      generationConfig: { temperature: 0.2, responseMimeType: 'application/json', maxOutputTokens: 8192 },
     }),
   });
   if (!res.ok) return null;
@@ -278,7 +289,7 @@ async function callGemini(prompt) {
 }
 
 async function generateWithProviders(prompt) {
-  const order = (process.env.AI_RECOMMENDATIONS_PROVIDER_ORDER || 'openai,anthropic,gemini')
+  const order = (process.env.AI_RECOMMENDATIONS_PROVIDER_ORDER || 'anthropic,openai,gemini')
     .split(',')
     .map((x) => x.trim().toLowerCase())
     .filter(Boolean);
@@ -305,7 +316,7 @@ export default async function handler(req, res) {
   if (!anyApiKeyConfigured()) {
     return res.status(503).json({
       error: 'not_configured',
-      message: 'No LLM API key found. Set OPENAI_API_KEY, ANTHROPIC_API_KEY, or GEMINI_API_KEY.',
+      message: 'No LLM API key found. Set ANTHROPIC_API_KEY, OPENAI_API_KEY, or GEMINI_API_KEY.',
     });
   }
 
@@ -315,28 +326,36 @@ export default async function handler(req, res) {
   } catch {
     return res.status(400).json({ error: 'invalid_json' });
   }
+
   const intake = body?.intake || {};
   const feedback = body?.feedback || {};
+
   if (!intake || typeof intake !== 'object') {
     return res.status(400).json({ error: 'missing_intake' });
   }
 
-  const candidates = shortlistCandidates(intake);
-  const byId = new Map(candidates.map((p) => [p.id, p]));
-  const prompt = buildPrompt(intake, feedback, candidates);
+  const prompt = buildPrompt(intake, feedback);
   const ai = await generateWithProviders(prompt);
 
   if (!ai?.raw) {
-    return res.status(200).json({
-      recommendations: generateTieredRecommendations(intake),
-      providerUsed: 'rule_based_fallback',
+    return res.status(503).json({
+      error: 'no_ai_response',
+      message: 'Could not generate recommendations. Check your API key and quota.',
     });
   }
 
-  const parsed = safeParse(ai.raw);
-  const normalized = normalizeOutput(parsed, byId, intake);
+  let parsed;
+  try {
+    const clean = stripJsonFence(ai.raw);
+    parsed = JSON.parse(clean);
+  } catch {
+    return res.status(500).json({ error: 'parse_error', message: 'AI returned invalid JSON.' });
+  }
+
+  const recs = enrichRecommendations(parsed?.recommendations);
+
   return res.status(200).json({
-    recommendations: normalized,
+    recommendations: recs,
     providerUsed: ai.provider,
     generatedAt: new Date().toISOString(),
   });

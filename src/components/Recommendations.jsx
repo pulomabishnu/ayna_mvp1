@@ -3,7 +3,6 @@ import { getRecommendationExplanation, SIMILAR_PROFILES, ALL_PRODUCTS, CATEGORY_
 import { getRecommendedArticles } from './Articles';
 import { inferTagsFromHealthProfile } from '../utils/healthDataProfile';
 import CareNearYouPanel from './CareNearYouPanel';
-import { generateTieredRecommendations } from '../utils/recommendationEngine';
 import { fetchLlmRecommendations, loadLearningMemory, saveLearningMemory } from '../utils/fetchLlmRecommendations';
 
 const TYPE_OPTIONS = [
@@ -34,6 +33,8 @@ export default function Recommendations({
     const [expandedSubcategoryByConcern, setExpandedSubcategoryByConcern] = useState({});
     const [llmTiered, setLlmTiered] = useState([]);
     const [llmProvider, setLlmProvider] = useState('');
+    const [llmLoading, setLlmLoading] = useState(false);
+    const [llmError, setLlmError] = useState('');
 
     const { byWorkflow, byCategory: byCategoryRaw } = useMemo(
         () => getRecommendationsGroupedByWorkflow(results || {}, omittedProducts || {}, healthProfile),
@@ -97,8 +98,7 @@ export default function Recommendations({
     }, [results]);
 
     const recommendedArticles = useMemo(() => getRecommendedArticles(results || {}, healthProfile), [results, healthProfile]);
-    const fallbackTiered = useMemo(() => generateTieredRecommendations(results?.fullHealthIntake || {}), [results]);
-    const tiered = llmTiered.length > 0 ? llmTiered : fallbackTiered;
+    const tiered = llmTiered;
 
     useEffect(() => {
         let active = true;
@@ -106,12 +106,16 @@ export default function Recommendations({
         if (!intake || Object.keys(intake).length === 0) {
             setLlmTiered([]);
             setLlmProvider('');
+            setLlmLoading(false);
+            setLlmError('');
             return () => {
                 active = false;
             };
         }
 
         (async () => {
+            setLlmLoading(true);
+            setLlmError('');
             try {
                 const memory = loadLearningMemory();
                 const data = await fetchLlmRecommendations({
@@ -123,13 +127,15 @@ export default function Recommendations({
                 });
                 if (!active) return;
                 const recs = Array.isArray(data?.recommendations) ? data.recommendations : [];
-                setLlmTiered(recs.length > 0 ? recs : []);
+                setLlmTiered(recs);
                 setLlmProvider(String(data?.providerUsed || ''));
                 const recommendedProductIds = recs.flatMap((entry) =>
                     (entry?.tiers || []).flatMap((tier) => [tier?.product?.id, ...((tier?.alternatives || []).map((a) => a?.id))].filter(Boolean))
                 );
                 const nextMemory = {
                     ...memory,
+                    interactionCount: (memory.interactionCount || 0) + 1,
+                    lastConcerns: Array.isArray(intake?.primaryConcerns) ? intake.primaryConcerns.map((x) => String(x)) : [],
                     lastSeenAt: new Date().toISOString(),
                     shownProductIds: Array.from(new Set([...(memory.shownProductIds || []), ...recommendedProductIds])).slice(-300),
                     selectedConcernHistory: Array.from(new Set([...(memory.selectedConcernHistory || []), ...((intake?.primaryConcerns || []).map((x) => String(x)))])),
@@ -138,10 +144,13 @@ export default function Recommendations({
                     omittedHistory: Array.from(new Set([...(memory.omittedHistory || []), ...Object.keys(omittedProducts || {})])).slice(-300),
                 };
                 saveLearningMemory(nextMemory);
-            } catch (_) {
+            } catch (e) {
                 if (!active) return;
                 setLlmTiered([]);
                 setLlmProvider('');
+                setLlmError(e?.message || 'Could not load recommendations');
+            } finally {
+                if (active) setLlmLoading(false);
             }
         })();
 
@@ -154,7 +163,15 @@ export default function Recommendations({
         const isTracked = !!trackedProducts[product.id];
         const isInEcosystem = !!myProducts[product.id];
         const hasIndependentClinician = product?.clinicianOpinionSource === 'independent' && String(product?.clinicianAttribution || '').trim().length > 0;
-        const { whyItWorks, considerations } = getRecommendationExplanation(product, results, healthProfile);
+        const engine = getRecommendationExplanation(product, results, healthProfile);
+        const useLlmNarrative = product?.whyItWorks != null && String(product.whyItWorks).trim().length > 0;
+        const whyItWorks = useLlmNarrative ? String(product.whyItWorks).trim() : engine.whyItWorks;
+        const considerations = useLlmNarrative
+            ? (String(product.considerations || '').trim() || null)
+            : engine.considerations;
+        const hideClinicianCallout = product.llmGenerated === true || product.intakeGenerated === true;
+        const imgSrc = product.image && String(product.image).trim();
+        const buyUrl = product.url && /^https:\/\//i.test(String(product.url).trim()) ? String(product.url).trim() : '';
         return (
             <div key={product.id} className="card hover-lift" style={{
                 padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column',
@@ -172,7 +189,18 @@ export default function Recommendations({
                 >✕</button>
 
                 <div style={{ height: '140px', width: '100%', overflow: 'hidden', position: 'relative' }}>
-                    <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    {imgSrc ? (
+                        <img src={imgSrc} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : (
+                        <div style={{
+                            width: '100%', height: '100%',
+                            background: 'linear-gradient(135deg, var(--color-secondary-fade), var(--color-primary-fade, #f3e8ff))',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            fontSize: '2rem',
+                        }}>
+                            🌸
+                        </div>
+                    )}
                     <span style={{
                         position: 'absolute', top: '0.75rem', left: '0.75rem',
                         background: product.type === 'physical' ? 'var(--color-surface-contrast)' : 'var(--color-primary)',
@@ -199,7 +227,7 @@ export default function Recommendations({
                             No longer sold
                         </span>
                     )}
-                    {hasIndependentClinician && (
+                    {!hideClinicianCallout && hasIndependentClinician && (
                         <span style={{
                             position: 'absolute', bottom: '0.75rem', right: '0.75rem',
                             background: '#DCFCE7', color: '#166534', padding: '0.25rem 0.6rem',
@@ -208,7 +236,7 @@ export default function Recommendations({
                             Independent clinician verified
                         </span>
                     )}
-                    {!hasIndependentClinician && (
+                    {!hideClinicianCallout && !hasIndependentClinician && (
                         <span style={{
                             position: 'absolute', bottom: '0.75rem', right: '0.75rem',
                             background: '#FEF3C7', color: '#92400E', padding: '0.25rem 0.6rem',
@@ -248,10 +276,21 @@ export default function Recommendations({
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', marginTop: 'auto' }}>
                         <span style={{ fontSize: '1rem', fontWeight: '600', color: 'var(--color-text-main)' }}>{product.price}</span>
-                        <div style={{ display: 'flex', gap: '0.4rem' }}>
+                        <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                             <button className="btn btn-outline" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }} onClick={() => toggleMyProduct(product)}>
                                 {isInEcosystem ? '✓ Added' : '+ Add'}
                             </button>
+                            {buyUrl && (
+                                <a
+                                    href={buyUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="btn btn-outline"
+                                    style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}
+                                >
+                                    Buy ↗
+                                </a>
+                            )}
                             <button className="btn btn-primary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }} onClick={() => onOpenProduct(product)}>
                                 Details
                             </button>
@@ -287,7 +326,7 @@ export default function Recommendations({
                     </p>
                 )}
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginTop: '0.5rem' }}>
-                    🔒 We never sell your data. Every product below is reviewed by OB-GYNs and real women.
+                    🔒 We never sell your data. Workflow cards use the vetted in-app catalog; tiered picks above are AI-generated from your profile — use clinical judgment.
                 </p>
                 <p style={{ color: 'var(--color-primary)', fontSize: '0.9rem', marginTop: '0.5rem', fontWeight: '500' }}>
                     Forgot something? Use the 💬 chat button to speak or type more — we’ll refresh your ecosystem.
@@ -307,12 +346,36 @@ export default function Recommendations({
                 onOpenProduct={onOpenProduct}
             />
 
-            {tiered.length > 0 && (
+            {results?.fullHealthIntake && Object.keys(results.fullHealthIntake).length > 0 && llmLoading && (
+                <div style={{ maxWidth: '720px', margin: '0 auto var(--spacing-xl)', textAlign: 'center', padding: '3rem', color: 'var(--color-text-muted)' }}>
+                    <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>🌸</div>
+                    <p style={{ fontSize: '1.1rem', fontWeight: '600', color: 'var(--color-text-main)' }}>Building your personalized ecosystem...</p>
+                    <p style={{ fontSize: '0.9rem', marginTop: '0.5rem' }}>This takes a few seconds — Claude is reading your full health profile.</p>
+                </div>
+            )}
+
+            {results?.fullHealthIntake && Object.keys(results.fullHealthIntake).length > 0 && !llmLoading && llmError && (
+                <div style={{ maxWidth: '720px', margin: '0 auto var(--spacing-xl)', textAlign: 'center', padding: '2rem', color: '#b42318', background: '#fef3f2', borderRadius: 'var(--radius-lg)', border: '1px solid #fecdca' }}>
+                    <p style={{ fontWeight: '600', marginBottom: '0.5rem' }}>Could not load AI recommendations</p>
+                    <p style={{ fontSize: '0.9rem' }}>{llmError}</p>
+                </div>
+            )}
+
+            {results?.fullHealthIntake && Object.keys(results.fullHealthIntake).length > 0 && !llmLoading && !llmError && tiered.length === 0 && (
+                <div style={{ maxWidth: '720px', margin: '0 auto var(--spacing-xl)', textAlign: 'center', padding: '2rem', color: 'var(--color-text-muted)' }}>
+                    <p style={{ fontSize: '0.95rem' }}>No tiered recommendations were returned. Try refreshing or updating your intake in chat.</p>
+                </div>
+            )}
+
+            {!llmLoading && !llmError && tiered.length > 0 && (
                 <div style={{ maxWidth: '980px', margin: '0 auto var(--spacing-xl)', display: 'grid', gap: '1rem' }}>
                     <h3 style={{ fontSize: '1.35rem', marginBottom: '0.4rem' }}>Tiered recommendations</h3>
+                    <p style={{ margin: '0 0 0.45rem', fontSize: '0.82rem', color: 'var(--color-text-muted)', lineHeight: 1.45 }}>
+                        These picks are generated from your intake and learning signals (separate from the fixed in-app catalog). Always confirm fit, safety, and availability with a clinician and the brand.
+                    </p>
                     {llmProvider && (
                         <p style={{ margin: '0 0 0.45rem', fontSize: '0.82rem', color: 'var(--color-text-muted)' }}>
-                            Personalized with intake + feedback signals via {llmProvider}.
+                            Model: {llmProvider}.
                         </p>
                     )}
                     {tiered.map((entry) => (
@@ -376,7 +439,8 @@ export default function Recommendations({
                                                             {tier.product.name}
                                                         </button>
                                                         <p style={{ fontSize: '0.82rem', marginTop: '0.3rem', color: 'var(--color-text-muted)', lineHeight: 1.5 }}>
-                                                            <strong>Match:</strong> {tier.matchExplanation || 'Selected from your health intake signals and safety filters.'}
+                                                            <strong>Match:</strong>{' '}
+                                                            {tier.matchExplanation || tier.product?.whyItWorks || 'Personalized from your health intake.'}
                                                         </p>
                                                         {tier.safetyFlags?.length > 0 && (
                                                             <p style={{ fontSize: '0.82rem', marginTop: '0.25rem', color: '#b42318' }}>

@@ -28,6 +28,8 @@ export default function LlmSearchSuggestionModal({ product, onClose }) {
   const terms = Array.isArray(product.searchTerms) ? product.searchTerms : [];
   const retailers = Array.isArray(product.whereToBuy) ? product.whereToBuy : [];
   const label = CATEGORY_LABELS[product.category] || product.category || 'Product';
+  const isIntake = product.intakeGenerated === true;
+  const safe = product.safety && typeof product.safety === 'object' ? product.safety : null;
 
   return (
     <div
@@ -103,7 +105,7 @@ export default function LlmSearchSuggestionModal({ product, onClose }) {
               border: '1px solid #E9D5FF',
             }}
           >
-            Ayna preview · not in database
+            {isIntake ? 'AI personalized recommendation' : 'Ayna preview · not in database'}
           </span>
           <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '0.35rem' }}>
             {label}
@@ -115,12 +117,34 @@ export default function LlmSearchSuggestionModal({ product, onClose }) {
           <p style={{ fontSize: '0.95rem', color: 'var(--color-text-main)', lineHeight: 1.6, marginBottom: '1rem' }}>
             {product.summary}
           </p>
+          {product.whyItWorks && String(product.whyItWorks).trim() && (
+            <div
+              style={{
+                marginBottom: '1rem',
+                padding: '0.85rem 1rem',
+                borderRadius: 'var(--radius-md)',
+                border: '1px solid var(--color-border)',
+                background: 'var(--color-bg)',
+                fontSize: '0.9rem',
+                lineHeight: 1.55,
+                color: 'var(--color-text-main)',
+              }}
+            >
+              <strong style={{ color: 'var(--color-primary)' }}>Why it may fit you</strong>
+              <p style={{ margin: '0.35rem 0 0', fontWeight: '500' }}>{product.whyItWorks}</p>
+            </div>
+          )}
+          {product.considerations && String(product.considerations).trim() && (
+            <p style={{ fontSize: '0.88rem', color: 'var(--color-text-muted)', lineHeight: 1.5, marginBottom: '1rem', fontStyle: 'italic' }}>
+              {product.considerations}
+            </p>
+          )}
           {product.price && (
             <p style={{ fontSize: '0.88rem', fontWeight: '600', color: 'var(--color-text-main)', marginBottom: '0.75rem' }}>
               {product.price}
             </p>
           )}
-          {product.safetyNote && (
+          {(product.safetyNote || (safe && (safe.recalls || safe.materials || safe.sideEffects))) && (
             <div
               style={{
                 padding: '0.75rem 1rem',
@@ -133,8 +157,31 @@ export default function LlmSearchSuggestionModal({ product, onClose }) {
                 marginBottom: '1rem',
               }}
             >
-              <strong>Safety:</strong> {product.safetyNote}
+              <strong>Safety</strong>
+              {product.safetyNote && <p style={{ margin: '0.35rem 0 0' }}>{product.safetyNote}</p>}
+              {safe?.recalls && <p style={{ margin: '0.35rem 0 0' }}>Recalls: {safe.recalls}</p>}
+              {safe?.materials && <p style={{ margin: '0.35rem 0 0' }}>Materials: {safe.materials}</p>}
+              {safe?.sideEffects && <p style={{ margin: '0.35rem 0 0' }}>Side effects: {safe.sideEffects}</p>}
             </div>
+          )}
+          {product.url && /^https:\/\//i.test(product.url) && (
+            <a
+              href={product.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-primary"
+              style={{
+                display: 'inline-block',
+                marginBottom: '1rem',
+                padding: '0.5rem 1rem',
+                fontSize: '0.9rem',
+                fontWeight: '600',
+                textDecoration: 'none',
+                borderRadius: 'var(--radius-pill)',
+              }}
+            >
+              Open product site ↗
+            </a>
           )}
           {retailers.length > 0 && (
             <div style={{ marginBottom: '1rem' }}>
