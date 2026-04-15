@@ -11,6 +11,7 @@ import CareNearYouPanel from './CareNearYouPanel';
 import { getRecommendedArticles } from './Articles';
 import { inferTagsFromHealthProfile, saveHealthProfile } from '../utils/healthDataProfile';
 import { generateTieredRecommendations } from '../utils/recommendationEngine';
+import { fetchLlmRecommendations, loadLearningMemory, saveLearningMemory } from '../utils/fetchLlmRecommendations';
 
 function EcosystemProductAlternatives({ product, seedEntry, quizResults, healthProfile, onSwap, onGoToSearch, precomputedAlternatives = [] }) {
     const [open, setOpen] = useState(false);
@@ -269,6 +270,10 @@ export default function MyEcosystem({
     const [interactionSelection, setInteractionSelection] = useState(new Set()); // product ids for interaction check
     const [expandedConcern, setExpandedConcern] = useState('');
     const [expandedSubByConcern, setExpandedSubByConcern] = useState({});
+    const [llmTiered, setLlmTiered] = useState([]);
+    const [llmLoading, setLlmLoading] = useState(false);
+    const [llmError, setLlmError] = useState('');
+    const [llmProvider, setLlmProvider] = useState('');
 
     const myProductIds = Object.keys(myProducts);
     const myProductList = Object.values(myProducts);
@@ -327,7 +332,7 @@ export default function MyEcosystem({
     const seededConcernsList = useMemo(() => {
         const intake = quizResults?.fullHealthIntake || null;
         if (intake && Object.keys(intake).length > 0) {
-            const tiered = generateTieredRecommendations(intake);
+            const tiered = llmTiered.length > 0 ? llmTiered : generateTieredRecommendations(intake);
             return tiered
                 .map((entry) => {
                     const topTier = Array.isArray(entry.tiers) ? entry.tiers[0] : null;
@@ -369,7 +374,7 @@ export default function MyEcosystem({
             if (!order.includes(f)) rows.push(row);
         });
         return rows;
-    }, [ecosystemSeedMeta, myProducts, quizResults, healthProfile]);
+    }, [ecosystemSeedMeta, myProducts, quizResults, healthProfile, llmTiered]);
 
     const seededProductIds = useMemo(() => new Set(seededConcernsList.map((r) => r.product.id)), [seededConcernsList]);
     const intakeTieredRecommendations = useMemo(() => {
@@ -377,7 +382,80 @@ export default function MyEcosystem({
         if (!intake || Object.keys(intake).length === 0) return [];
         return generateTieredRecommendations(intake);
     }, [quizResults]);
-    const showCategoryFlowOnly = intakeTieredRecommendations.length > 0;
+
+    useEffect(() => {
+        let active = true;
+        const intake = quizResults?.fullHealthIntake || null;
+        if (!intake || Object.keys(intake).length === 0) {
+            setLlmTiered([]);
+            setLlmLoading(false);
+            setLlmError('');
+            setLlmProvider('');
+            return () => {
+                active = false;
+            };
+        }
+
+        (async () => {
+            setLlmLoading(true);
+            setLlmError('');
+            try {
+                const memory = loadLearningMemory();
+                const data = await fetchLlmRecommendations({
+                    intake,
+                    trackedProducts,
+                    myProducts,
+                    omittedProducts,
+                    learningMemory: memory,
+                });
+                if (!active) return;
+                const recs = Array.isArray(data?.recommendations) ? data.recommendations : [];
+                setLlmTiered(recs);
+                setLlmProvider(String(data?.providerUsed || ''));
+                const recommendedProductIds = recs.flatMap((entry) =>
+                    (entry?.tiers || []).flatMap((tier) =>
+                        [tier?.product?.id, ...((tier?.alternatives || []).map((a) => a?.id))].filter(Boolean)
+                    )
+                );
+                const nextMemory = {
+                    ...memory,
+                    interactionCount: (memory.interactionCount || 0) + 1,
+                    lastConcerns: Array.isArray(intake?.primaryConcerns) ? intake.primaryConcerns.map((x) => String(x)) : [],
+                    lastSeenAt: new Date().toISOString(),
+                    shownProductIds: Array.from(new Set([...(memory.shownProductIds || []), ...recommendedProductIds])).slice(-300),
+                    selectedConcernHistory: Array.from(new Set([...(memory.selectedConcernHistory || []), ...((intake?.primaryConcerns || []).map((x) => String(x)))])),
+                    trackedHistory: Array.from(new Set([...(memory.trackedHistory || []), ...Object.keys(trackedProducts || {})])).slice(-300),
+                    ecosystemHistory: Array.from(new Set([...(memory.ecosystemHistory || []), ...Object.keys(myProducts || {})])).slice(-300),
+                    omittedHistory: Array.from(new Set([...(memory.omittedHistory || []), ...Object.keys(omittedProducts || {})])).slice(-300),
+                };
+                saveLearningMemory(nextMemory);
+            } catch (e) {
+                if (!active) return;
+                setLlmTiered([]);
+                setLlmProvider('');
+                setLlmError(e?.message || 'Could not load recommendations');
+            } finally {
+                if (active) setLlmLoading(false);
+            }
+        })();
+
+        return () => {
+            active = false;
+        };
+    }, [quizResults, trackedProducts, myProducts, omittedProducts]);
+
+    const activeTiered = useMemo(
+        () => (llmTiered.length > 0 ? llmTiered : intakeTieredRecommendations),
+        [llmTiered, intakeTieredRecommendations]
+    );
+
+    const hasHealthIntakeForFlow = useMemo(() => {
+        const intake = quizResults?.fullHealthIntake || null;
+        return !!(intake && Object.keys(intake).length > 0);
+    }, [quizResults]);
+    const showCategoryFlowOnly = hasHealthIntakeForFlow && (
+        intakeTieredRecommendations.length > 0 || llmLoading || llmTiered.length > 0 || !!llmError
+    );
 
     const hasNonSeededProducts = useMemo(
         () => myProductList.some((p) => !seededProductIds.has(p.id)),
@@ -480,8 +558,25 @@ export default function MyEcosystem({
                         <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.95rem', marginBottom: '1.1rem' }}>
                             Category → subcategory symptoms → top pick for you, with 3 alternatives.
                         </p>
+                        {llmLoading && (
+                            <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--color-text-muted)' }}>
+                                <div style={{ fontSize: '2rem', marginBottom: '0.75rem' }}>🌸</div>
+                                <p style={{ fontWeight: '600' }}>Building your personalized ecosystem...</p>
+                                <p style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>Claude is reading your full health profile.</p>
+                            </div>
+                        )}
+                        {llmError && (
+                            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textAlign: 'center' }}>
+                                Could not generate personalized recommendations: {llmError}
+                            </p>
+                        )}
+                        {llmProvider && llmTiered.length > 0 && (
+                            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.75rem', textAlign: 'center', marginBottom: '0.75rem' }}>
+                                Powered by {llmProvider}
+                            </p>
+                        )}
                         <div style={{ display: 'grid', gap: '0.8rem' }}>
-                            {intakeTieredRecommendations.map((entry) => (
+                            {activeTiered.map((entry) => (
                                 <div key={entry.concern} className="card" style={{ padding: '1rem' }}>
                                     <button
                                         type="button"
@@ -507,6 +602,12 @@ export default function MyEcosystem({
                                                 const tierKey = tier.id || tier.name;
                                                 const subLabel = tier.subcategory || tier.name;
                                                 const open = expandedSubByConcern[entry.concern] === tierKey;
+                                                const product = tier.product;
+                                                const imgSrc = product?.image && String(product.image).trim();
+                                                const buyUrl = product?.url && /^https:\/\//i.test(String(product.url).trim()) ? String(product.url).trim() : '';
+                                                const matchCopy = (tier.matchExplanation && String(tier.matchExplanation).trim())
+                                                    || (product?.whyItWorks && String(product.whyItWorks).trim())
+                                                    || '';
                                                 return (
                                                     <div key={tierKey} style={{ border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '0.75rem' }}>
                                                         <button
@@ -532,7 +633,7 @@ export default function MyEcosystem({
                                                                 <div style={{ display: 'flex', gap: '0.85rem', alignItems: 'center', marginBottom: '0.4rem' }}>
                                                                     <button
                                                                         type="button"
-                                                                        onClick={() => onOpenProduct(tier.product)}
+                                                                        onClick={() => onOpenProduct(product)}
                                                                         style={{
                                                                             width: '62px',
                                                                             height: '62px',
@@ -544,24 +645,46 @@ export default function MyEcosystem({
                                                                             cursor: 'pointer',
                                                                             flexShrink: 0,
                                                                         }}
-                                                                        aria-label={`Open ${tier.product.name}`}
+                                                                        aria-label={`Open ${product.name}`}
                                                                     >
-                                                                        <img src={tier.product.image} alt={tier.product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                                        {imgSrc ? (
+                                                                            <img src={imgSrc} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                                        ) : (
+                                                                            <div style={{
+                                                                                width: '100%', height: '100%',
+                                                                                background: 'linear-gradient(135deg, var(--color-secondary-fade), #f3e8ff)',
+                                                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                                                fontSize: '2rem',
+                                                                            }}>🌸</div>
+                                                                        )}
                                                                     </button>
-                                                                    <div>
+                                                                    <div style={{ flex: 1, minWidth: 0 }}>
                                                                         <div style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', fontWeight: '700' }}>Top pick for you</div>
                                                                         <button
                                                                             type="button"
-                                                                            onClick={() => onOpenProduct(tier.product)}
+                                                                            onClick={() => onOpenProduct(product)}
                                                                             style={{ border: 'none', background: 'none', padding: 0, color: 'var(--color-primary)', fontWeight: '700', cursor: 'pointer', textAlign: 'left' }}
                                                                         >
-                                                                            {tier.product.name}
+                                                                            {product.name}
                                                                         </button>
+                                                                        {buyUrl && (
+                                                                            <div style={{ marginTop: '0.35rem' }}>
+                                                                                <a
+                                                                                    href={buyUrl}
+                                                                                    target="_blank"
+                                                                                    rel="noopener noreferrer"
+                                                                                    className="btn btn-outline"
+                                                                                    style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', display: 'inline-block' }}
+                                                                                >
+                                                                                    Buy ↗
+                                                                                </a>
+                                                                            </div>
+                                                                        )}
                                                                     </div>
                                                                 </div>
-                                                                {tier.matchExplanation && (
+                                                                {matchCopy && (
                                                                     <p style={{ fontSize: '0.83rem', color: 'var(--color-text-muted)', margin: '0.35rem 0 0.45rem', lineHeight: 1.45 }}>
-                                                                        <strong>Match:</strong> {tier.matchExplanation}
+                                                                        <strong>Match:</strong> {matchCopy}
                                                                     </p>
                                                                 )}
                                                                 <details>
