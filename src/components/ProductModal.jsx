@@ -1311,6 +1311,21 @@ export default function ProductModal({
                                     For learning only—not a substitute for your clinician.
                                 </p>
                             )}
+                            {(product.clinicianOpinionSource === 'independent') && String(product.clinicianAttribution || '').trim().length > 0 && (
+                                <div style={{ marginBottom: '1rem' }}>
+                                    <span style={{
+                                        display: 'inline-block',
+                                        background: '#DCFCE7',
+                                        color: '#166534',
+                                        padding: '0.3rem 0.6rem',
+                                        borderRadius: 'var(--radius-pill)',
+                                        fontSize: '0.75rem',
+                                        fontWeight: '700'
+                                    }}>
+                                        Independent clinician verified
+                                    </span>
+                                </div>
+                            )}
                             {!((product.clinicianOpinionSource === 'independent') && String(product.clinicianAttribution || '').trim().length > 0) && (
                                 <div style={{ marginBottom: '1rem' }}>
                                     <span style={{

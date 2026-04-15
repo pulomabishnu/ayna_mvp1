@@ -143,6 +143,15 @@ export default function Recommendations({
                             No longer sold
                         </span>
                     )}
+                    {hasIndependentClinician && (
+                        <span style={{
+                            position: 'absolute', bottom: '0.75rem', right: '0.75rem',
+                            background: '#DCFCE7', color: '#166534', padding: '0.25rem 0.6rem',
+                            borderRadius: 'var(--radius-pill)', fontSize: '0.7rem', fontWeight: '700'
+                        }}>
+                            Independent clinician verified
+                        </span>
+                    )}
                     {!hasIndependentClinician && (
                         <span style={{
                             position: 'absolute', bottom: '0.75rem', right: '0.75rem',
@@ -258,6 +267,11 @@ export default function Recommendations({
                                     >
                                         {tier.product.name}
                                     </button>
+                                    {(tier.product?.clinicianOpinionSource === 'independent' && String(tier.product?.clinicianAttribution || '').trim().length > 0) && (
+                                        <p style={{ fontSize: '0.78rem', marginTop: '0.25rem', color: '#166534', fontWeight: 600 }}>
+                                            Independent clinician verified.
+                                        </p>
+                                    )}
                                     {!(tier.product?.clinicianOpinionSource === 'independent' && String(tier.product?.clinicianAttribution || '').trim().length > 0) && (
                                         <p style={{ fontSize: '0.78rem', marginTop: '0.25rem', color: '#92400E' }}>
                                             No independent clinician opinion available yet.
