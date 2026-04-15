@@ -70,6 +70,18 @@ function buildMatchExplanation(product, intake, concern, tierType) {
   const disliked = lowerList(intake?.dislikedProducts);
   const dislikedReason = String(intake?.dislikedReason || '').toLowerCase();
   const concernKey = String(concern?.key || '').toLowerCase();
+  const dislikedDisplay = asArray(intake?.dislikedProducts).map((x) => String(x || '').trim()).filter(Boolean);
+
+  const avoidedDisliked = dislikedDisplay
+    .filter((d) => !name.includes(d.toLowerCase()))
+    .slice(0, 2);
+  if (avoidedDisliked.length > 0) {
+    if (dislikedReason.trim().length > 0) {
+      lines.push(`You said ${avoidedDisliked.join(' and ')} did not work for you (${dislikedReason.slice(0, 90)}), so this pick avoids that downside.`);
+    } else {
+      lines.push(`You said ${avoidedDisliked.join(' and ')} did not work for you, so this recommendation avoids those products.`);
+    }
+  }
 
   const dislikedAzo = disliked.some((d) => d.includes('azo'));
   if (dislikedAzo && !name.includes('azo') && concernKey.includes('uti')) {
@@ -104,10 +116,20 @@ function buildMatchExplanation(product, intake, concern, tierType) {
     lines.push('This digital option is included to support ongoing tracking or clinician access, not just one-time symptom relief.');
   }
 
-  if (lines.length === 0) {
-    lines.push('This was selected because it best matches your health intake details and safety filters.');
+  // Deduplicate near-identical match statements for cleaner copy.
+  const deduped = [];
+  const seen = new Set();
+  lines.forEach((line) => {
+    const key = line.toLowerCase();
+    if (seen.has(key)) return;
+    seen.add(key);
+    deduped.push(line);
+  });
+
+  if (deduped.length === 0) {
+    deduped.push('This was selected because it best matches your health intake details and safety filters.');
   }
-  return lines.join(' ');
+  return deduped.join(' ');
 }
 
 function textForSafety(product) {
