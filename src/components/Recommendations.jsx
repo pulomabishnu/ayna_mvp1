@@ -30,6 +30,8 @@ export default function Recommendations({
     const [categoryFilter, setCategoryFilter] = useState('all');
     const [typeFilter, setTypeFilter] = useState('all');
     const [expandedSections, setExpandedSections] = useState({});
+    const [expandedConcern, setExpandedConcern] = useState('');
+    const [expandedSubcategoryByConcern, setExpandedSubcategoryByConcern] = useState({});
     const [llmTiered, setLlmTiered] = useState([]);
     const [llmProvider, setLlmProvider] = useState('');
 
@@ -300,54 +302,99 @@ export default function Recommendations({
                     )}
                     {tiered.map((entry) => (
                         <div key={entry.concern} className="card" style={{ padding: '1rem' }}>
-                            <p style={{ fontWeight: '700', marginBottom: '0.75rem' }}>{entry.concern}</p>
-                            {entry.tiers.map((tier) => (
-                                <div key={tier.name} style={{ marginBottom: '0.75rem' }}>
-                                    <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', fontWeight: '700' }}>{tier.name}</div>
-                                    <button
-                                        type="button"
-                                        style={{ marginTop: '0.35rem', background: 'none', border: 'none', padding: 0, color: 'var(--color-primary)', fontWeight: '600', cursor: 'pointer' }}
-                                        onClick={() => onOpenProduct(tier.product)}
-                                    >
-                                        {tier.product.name}
-                                    </button>
-                                    {(tier.product?.clinicianOpinionSource === 'independent' && String(tier.product?.clinicianAttribution || '').trim().length > 0) && (
-                                        <p style={{ fontSize: '0.78rem', marginTop: '0.25rem', color: '#166534', fontWeight: 600 }}>
-                                            Independent clinician verified.
-                                        </p>
-                                    )}
-                                    {!(tier.product?.clinicianOpinionSource === 'independent' && String(tier.product?.clinicianAttribution || '').trim().length > 0) && (
-                                        <p style={{ fontSize: '0.78rem', marginTop: '0.25rem', color: '#92400E' }}>
-                                            No independent clinician opinion available yet.
-                                        </p>
-                                    )}
-                                    {tier.safetyFlags?.length > 0 && (
-                                        <p style={{ fontSize: '0.82rem', marginTop: '0.25rem', color: '#b42318' }}>
-                                            Safety: {tier.safetyFlags.join(' ')}
-                                        </p>
-                                    )}
-                                    {Array.isArray(tier.alternatives) && tier.alternatives.length > 0 && (
-                                        <div style={{ marginTop: '0.45rem' }}>
-                                            <p style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', margin: '0 0 0.3rem' }}>
-                                                Alternatives
-                                            </p>
-                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem' }}>
-                                                {tier.alternatives.map((alt) => (
-                                                    <button
-                                                        key={alt.id}
-                                                        type="button"
-                                                        className="btn btn-outline"
-                                                        style={{ padding: '0.25rem 0.55rem', fontSize: '0.75rem' }}
-                                                        onClick={() => onOpenProduct(alt)}
-                                                    >
-                                                        {alt.name}
-                                                    </button>
-                                                ))}
+                            <button
+                                type="button"
+                                onClick={() => setExpandedConcern((prev) => (prev === entry.concern ? '' : entry.concern))}
+                                style={{
+                                    width: '100%',
+                                    background: 'none',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    padding: 0,
+                                    marginBottom: '0.75rem',
+                                    textAlign: 'left',
+                                }}
+                            >
+                                <span style={{ fontWeight: '700' }}>{entry.concern}</span>
+                                <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
+                                    {expandedConcern === entry.concern ? '▼' : '▶'}
+                                </span>
+                            </button>
+                            {expandedConcern === entry.concern && (
+                                <div style={{ display: 'grid', gap: '0.6rem' }}>
+                                    {entry.tiers.map((tier) => {
+                                        const tierKey = tier.id || tier.name;
+                                        const subcategoryLabel = tier.subcategory || tier.name;
+                                        const selectedSub = expandedSubcategoryByConcern[entry.concern];
+                                        const openSubcategory = selectedSub === tierKey;
+                                        return (
+                                            <div key={tierKey} style={{ border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '0.7rem' }}>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setExpandedSubcategoryByConcern((prev) => ({ ...prev, [entry.concern]: prev[entry.concern] === tierKey ? '' : tierKey }))}
+                                                    style={{
+                                                        width: '100%',
+                                                        background: 'none',
+                                                        border: 'none',
+                                                        cursor: 'pointer',
+                                                        display: 'flex',
+                                                        justifyContent: 'space-between',
+                                                        alignItems: 'center',
+                                                        textAlign: 'left',
+                                                        padding: 0,
+                                                    }}
+                                                >
+                                                    <span style={{ fontSize: '0.92rem', fontWeight: '600' }}>{subcategoryLabel}</span>
+                                                    <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{openSubcategory ? '▼' : '▶'}</span>
+                                                </button>
+                                                {openSubcategory && (
+                                                    <div style={{ marginTop: '0.6rem' }}>
+                                                        <div style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', fontWeight: '700' }}>Primary recommendation</div>
+                                                        <button
+                                                            type="button"
+                                                            style={{ marginTop: '0.25rem', background: 'none', border: 'none', padding: 0, color: 'var(--color-primary)', fontWeight: '700', cursor: 'pointer' }}
+                                                            onClick={() => onOpenProduct(tier.product)}
+                                                        >
+                                                            {tier.product.name}
+                                                        </button>
+                                                        <p style={{ fontSize: '0.82rem', marginTop: '0.3rem', color: 'var(--color-text-muted)', lineHeight: 1.5 }}>
+                                                            <strong>Match:</strong> {tier.matchExplanation || 'Selected from your health intake signals and safety filters.'}
+                                                        </p>
+                                                        {tier.safetyFlags?.length > 0 && (
+                                                            <p style={{ fontSize: '0.82rem', marginTop: '0.25rem', color: '#b42318' }}>
+                                                                Safety: {tier.safetyFlags.join(' ')}
+                                                            </p>
+                                                        )}
+                                                        {Array.isArray(tier.alternatives) && tier.alternatives.length > 0 && (
+                                                            <div style={{ marginTop: '0.45rem' }}>
+                                                                <p style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', margin: '0 0 0.3rem' }}>
+                                                                    3 alternatives
+                                                                </p>
+                                                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem' }}>
+                                                                    {tier.alternatives.map((alt) => (
+                                                                        <button
+                                                                            key={alt.id}
+                                                                            type="button"
+                                                                            className="btn btn-outline"
+                                                                            style={{ padding: '0.25rem 0.55rem', fontSize: '0.75rem' }}
+                                                                            onClick={() => onOpenProduct(alt)}
+                                                                        >
+                                                                            {alt.name}
+                                                                        </button>
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
                                             </div>
-                                        </div>
-                                    )}
+                                        );
+                                    })}
                                 </div>
-                            ))}
+                            )}
                             {entry.notes?.length > 0 && (
                                 <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: 0 }}>
                                     {entry.notes.join(' ')} This recommendation may help with symptom support and should be confirmed with a provider.

@@ -33,6 +33,83 @@ function selectedConcerns(intake) {
   return [];
 }
 
+function lowerList(arr = []) {
+  return asArray(arr).map((x) => String(x || '').toLowerCase());
+}
+
+function buildSubcategoryLabel(concern, tierType) {
+  const key = String(concern?.key || '').toLowerCase();
+  if (key.includes('uti')) {
+    if (tierType === 'physical') return 'UTI Prevention';
+    if (tierType === 'supplement') return 'UTI Symptom Support';
+    return 'UTI Care Access';
+  }
+  if (key.includes('period care')) {
+    if (tierType === 'physical') return 'Period Products';
+    if (tierType === 'supplement') return 'Cycle Support';
+    return 'Period Tracking & Telehealth';
+  }
+  if (key.includes('pcos')) {
+    if (tierType === 'physical') return 'Daily PCOS Support Tools';
+    if (tierType === 'supplement') return 'Hormone Balance Support';
+    return 'PCOS Digital & Telehealth Support';
+  }
+  if (key.includes('endometriosis')) {
+    if (tierType === 'physical') return 'Pain & Flare Comfort';
+    if (tierType === 'supplement') return 'Inflammation & Symptom Support';
+    return 'Specialist Care Access';
+  }
+  if (tierType === 'physical') return 'Immediate Product Support';
+  if (tierType === 'supplement') return 'Supplement or Wellness Support';
+  return 'Digital or Telehealth Support';
+}
+
+function buildMatchExplanation(product, intake, concern, tierType) {
+  const lines = [];
+  const name = String(product?.name || '').toLowerCase();
+  const disliked = lowerList(intake?.dislikedProducts);
+  const dislikedReason = String(intake?.dislikedReason || '').toLowerCase();
+  const concernKey = String(concern?.key || '').toLowerCase();
+
+  const dislikedAzo = disliked.some((d) => d.includes('azo'));
+  if (dislikedAzo && !name.includes('azo') && concernKey.includes('uti')) {
+    if (/yellow|neon|stain/.test(dislikedReason)) {
+      lines.push("You shared that AZO side effects (like neon yellow staining) were a problem, so this non-AZO option is prioritized.");
+    } else {
+      lines.push('You shared AZO did not work well for you, so this recommendation avoids AZO-like picks.');
+    }
+  }
+
+  const flow = String(intake?.flowLevel || '').toLowerCase();
+  if (concernKey.includes('period care') && /(heavy|very heavy)/.test(flow)) {
+    lines.push('This was prioritized for higher absorbency and leak protection based on your reported flow.');
+  }
+
+  const prefs = lowerList(intake?.productPreferences);
+  if (prefs.includes('fragrance-free') && String(product?.safety?.materials || '').toLowerCase().includes('fragrance')) {
+    lines.push('Review materials closely: your profile prefers fragrance-free options.');
+  } else if (prefs.length > 0) {
+    lines.push(`This aligns with your stated preferences (${prefs.slice(0, 2).join(', ')}).`);
+  }
+
+  const conditions = lowerList(intake?.conditions);
+  if (conditions.includes('pcos') && (product?.tags || []).includes('pcos')) {
+    lines.push('This matches your PCOS profile and was ranked for hormone-support relevance.');
+  }
+  if (conditions.includes('endometriosis')) {
+    lines.push('Safety filters were applied for endometriosis-sensitive materials.');
+  }
+
+  if (tierType === 'digital') {
+    lines.push('This digital option is included to support ongoing tracking or clinician access, not just one-time symptom relief.');
+  }
+
+  if (lines.length === 0) {
+    lines.push('This was selected because it best matches your health intake details and safety filters.');
+  }
+  return lines.join(' ');
+}
+
 function textForSafety(product) {
   return [product?.safety?.materials, product?.safety?.allergens, product?.safety?.sideEffects, product?.summary]
     .filter(Boolean)
@@ -256,9 +333,33 @@ export function generateTieredRecommendations(intake = {}) {
       concern: concern.key,
       prompt: buildRecommendationPrompt(intake, concern.key),
       tiers: [
-        tier1 ? { name: 'TIER 1 - IMMEDIATE PHYSICAL PRODUCT', product: tier1, safetyFlags: safetyNotes(tier1, intake), alternatives: tier1Candidates.slice(1, 4) } : null,
-        tier2 ? { name: 'TIER 2 - SUPPLEMENT OR WELLNESS PRODUCT', product: tier2, safetyFlags: safetyNotes(tier2, intake), alternatives: tier2Candidates.slice(1, 4) } : null,
-        tier3 ? { name: 'TIER 3 - DIGITAL OR TELEHEALTH OPTION', product: tier3, safetyFlags: safetyNotes(tier3, intake), alternatives: tier3Candidates.slice(1, 4) } : null,
+        tier1 ? {
+          id: 'tier-physical',
+          name: 'TIER 1 - IMMEDIATE PHYSICAL PRODUCT',
+          subcategory: buildSubcategoryLabel(concern, 'physical'),
+          product: tier1,
+          matchExplanation: buildMatchExplanation(tier1, intake, concern, 'physical'),
+          safetyFlags: safetyNotes(tier1, intake),
+          alternatives: tier1Candidates.slice(1, 4),
+        } : null,
+        tier2 ? {
+          id: 'tier-supplement',
+          name: 'TIER 2 - SUPPLEMENT OR WELLNESS PRODUCT',
+          subcategory: buildSubcategoryLabel(concern, 'supplement'),
+          product: tier2,
+          matchExplanation: buildMatchExplanation(tier2, intake, concern, 'supplement'),
+          safetyFlags: safetyNotes(tier2, intake),
+          alternatives: tier2Candidates.slice(1, 4),
+        } : null,
+        tier3 ? {
+          id: 'tier-digital',
+          name: 'TIER 3 - DIGITAL OR TELEHEALTH OPTION',
+          subcategory: buildSubcategoryLabel(concern, 'digital'),
+          product: tier3,
+          matchExplanation: buildMatchExplanation(tier3, intake, concern, 'digital'),
+          safetyFlags: safetyNotes(tier3, intake),
+          alternatives: tier3Candidates.slice(1, 4),
+        } : null,
       ].filter(Boolean),
       notes,
     };
