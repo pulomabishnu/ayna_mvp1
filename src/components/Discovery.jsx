@@ -3,6 +3,7 @@ import { useSpeechToText } from '../hooks/useSpeechToText';
 import SearchMicButton from './SearchMicButton';
 import { ALL_PRODUCTS, CATEGORY_LABELS, SYMPTOM_TO_SUPPLEMENTS } from '../data/products';
 import { buildSearchTextForItem, scoreQueryAgainstProduct } from '../utils/naturalLanguageSearch';
+import { fetchSearchSuggestions } from '../utils/fetchSearchSuggestions';
 import { RELEASED_STARTUPS } from '../data/startups';
 import { getAynaRating } from '../data/aynaReviews';
 import Disclaimer from './Disclaimer';
@@ -117,6 +118,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [padUseCaseFilter, setPadUseCaseFilter] = useState(initialPadUseCase || 'all');
     const [showFindPadModal, setShowFindPadModal] = useState(false);
     const [symptomFilter, setSymptomFilter] = useState(initialSymptom || 'all');
+    const [aiSuggestions, setAiSuggestions] = useState([]);
+    const [aiLoading, setAiLoading] = useState(false);
+    const [aiError, setAiError] = useState(null);
     const recommendedSet = useMemo(() => new Set(recommendedProductIds || []), [recommendedProductIds]);
     const speech = useSpeechToText();
 
@@ -239,6 +243,66 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         }
         return list;
     }, [combined, categoryFilter, typeFilter, omittedProducts, searchQuery, sortBy, personalizationFilter, recommendedSet, aynaReviews, padFlowFilter, padPreferenceFilter, padUseCaseFilter, symptomFilter]);
+
+    const qTrimForAi = searchQuery.trim();
+    const catalogMatchCount = filtered.length;
+    const displayItems = catalogMatchCount > 0 ? filtered : aiSuggestions;
+
+    React.useEffect(() => {
+        if (qTrimForAi.length < 2) {
+            setAiSuggestions([]);
+            setAiLoading(false);
+            setAiError(null);
+            return;
+        }
+        if (catalogMatchCount > 0) {
+            setAiSuggestions([]);
+            setAiLoading(false);
+            setAiError(null);
+            return;
+        }
+
+        const ac = new AbortController();
+        const t = setTimeout(() => {
+            setAiLoading(true);
+            setAiError(null);
+            fetchSearchSuggestions({
+                query: qTrimForAi,
+                category: categoryFilter,
+                symptom: symptomFilter,
+                signal: ac.signal,
+            })
+                .then(({ suggestions, error }) => {
+                    if (ac.signal.aborted) return;
+                    setAiLoading(false);
+                    setAiSuggestions(Array.isArray(suggestions) ? suggestions : []);
+                    setAiError(error || null);
+                })
+                .catch((e) => {
+                    if (e?.name === 'AbortError') return;
+                    setAiLoading(false);
+                    setAiSuggestions([]);
+                    setAiError(e?.message || 'Could not load suggestions');
+                });
+        }, 480);
+
+        return () => {
+            clearTimeout(t);
+            ac.abort();
+        };
+    }, [
+        qTrimForAi,
+        catalogMatchCount,
+        categoryFilter,
+        symptomFilter,
+        typeFilter,
+        padFlowFilter,
+        padPreferenceFilter,
+        padUseCaseFilter,
+        personalizationFilter,
+        omittedProducts,
+        recommendedSet,
+    ]);
 
     const handleSmartSearch = (e) => {
         e.preventDefault();
@@ -477,8 +541,25 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             )}
 
             <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
-                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', margin: 0 }}>
-                    Showing {filtered.length} result{filtered.length !== 1 ? 's' : ''}
+                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', margin: 0, textAlign: 'center', maxWidth: '640px', lineHeight: 1.45 }}>
+                    {catalogMatchCount > 0 ? (
+                        <>Showing {catalogMatchCount} result{catalogMatchCount !== 1 ? 's' : ''}</>
+                    ) : qTrimForAi.length >= 2 ? (
+                        aiLoading ? (
+                            <>No catalog matches — generating ideas…</>
+                        ) : aiError && displayItems.length === 0 ? (
+                            <>No catalog matches. {aiError}</>
+                        ) : displayItems.length > 0 ? (
+                            <>
+                                No catalog matches for &ldquo;{qTrimForAi}&rdquo; — showing {displayItems.length} AI idea{displayItems.length !== 1 ? 's' : ''}{' '}
+                                <span style={{ color: 'var(--color-text-muted)' }}>(not in our database; educational only)</span>
+                            </>
+                        ) : (
+                            <>No catalog matches. Try different words or clear filters.</>
+                        )
+                    ) : (
+                        <>Showing {catalogMatchCount} result{catalogMatchCount !== 1 ? 's' : ''}</>
+                    )}
                 </p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <label htmlFor="discovery-sort" style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', fontWeight: '500' }}>Sort by:</label>
@@ -505,7 +586,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
             {/* Product Grid */}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', justifyContent: 'center' }}>
-                {filtered.map((item, idx) => {
+                {displayItems.map((item, idx) => {
+                    const isLlm = item.llmGenerated === true;
                     const isStartup = item.isStartup === true;
                     const releasedStartup = isStartup && item.productReleased === true;
                     const isInEcosystem = !!myProducts[item.id];
@@ -543,11 +625,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                 )}
                                 <span style={{
                                     position: 'absolute', top: '0.5rem', left: '0.5rem',
-                                    background: isStartup ? 'var(--color-primary-hover)' : (item.type === 'physical' ? 'var(--color-surface-contrast)' : 'var(--color-primary)'),
+                                    background: isLlm ? '#7E22CE' : (isStartup ? 'var(--color-primary-hover)' : (item.type === 'physical' ? 'var(--color-surface-contrast)' : 'var(--color-primary)')),
                                     color: 'white', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)',
                                     fontSize: '0.65rem', fontWeight: '600', textTransform: 'uppercase'
                                 }}>
-                                    {isStartup ? 'Startup' : item.type}
+                                    {isLlm ? 'Suggested' : isStartup ? 'Startup' : item.type}
                                 </span>
                                 {isInEcosystem && (
                                     <span style={{
@@ -696,6 +778,15 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                                     )}
                                                 </button>
                                             )
+                                        ) : isLlm ? (
+                                            <>
+                                                <span style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', fontStyle: 'italic', padding: '0.35rem 0' }} title="Not in Ayna catalog">
+                                                    Not in catalog
+                                                </span>
+                                                <button type="button" className="btn btn-primary" style={{ padding: '0.35rem 0.7rem', fontSize: '0.75rem' }} onClick={() => onOpenProduct(item)}>
+                                                    Details
+                                                </button>
+                                            </>
                                         ) : (
                                             <>
                                                 <button className="btn btn-outline" style={{ padding: '0.35rem 0.7rem', fontSize: '0.75rem' }} onClick={() => onToggleProduct(item)}>

@@ -18,6 +18,7 @@ import AynaDeeptech from './components/AynaDeeptech';
 import Screenings from './components/Screenings';
 import { useScrollPosition } from './hooks/useScrollPosition';
 import ProductModal from './components/ProductModal';
+import LlmSearchSuggestionModal from './components/LlmSearchSuggestionModal';
 import Articles from './components/Articles';
 import ProfileChatbot from './components/ProfileChatbot';
 import { loadHealthProfile, inferTagsFromHealthProfile } from './utils/healthDataProfile';
@@ -208,6 +209,7 @@ function App() {
   };
 
   const [selectedProductModal, setSelectedProductModal] = useState(null);
+  const [selectedLlmProduct, setSelectedLlmProduct] = useState(null);
 
   const totalBadge = Object.keys(trackedProducts).length + Object.keys(joinedWaitlists).length;
 
@@ -245,8 +247,17 @@ function App() {
     return () => document.removeEventListener('keydown', onKey);
   }, [ecoMenuOpen]);
 
-  const handleOpenProduct = (product) => setSelectedProductModal(product);
+  const handleOpenProduct = (product) => {
+    if (product?.llmGenerated) {
+      setSelectedProductModal(null);
+      setSelectedLlmProduct(product);
+      return;
+    }
+    setSelectedLlmProduct(null);
+    setSelectedProductModal(product);
+  };
   const handleCloseProduct = () => setSelectedProductModal(null);
+  const handleCloseLlmProduct = () => setSelectedLlmProduct(null);
 
   const handleRateProduct = (product, rating) => {
     const next = addRating(product.id, rating);
@@ -625,6 +636,10 @@ function App() {
             disabled={!quizResults}
             onNavigateToDiscovery={handleViewDiscovery}
           />
+        )}
+
+        {selectedLlmProduct && (
+          <LlmSearchSuggestionModal product={selectedLlmProduct} onClose={handleCloseLlmProduct} />
         )}
 
         {selectedProductModal && (
