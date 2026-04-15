@@ -16,6 +16,7 @@ function truncateItem(s, max) {
  */
 export function buildUserHealthContextString(quizResults, healthProfile) {
   const lines = [];
+  let safetyConcern = false;
   if (quizResults && typeof quizResults === 'object') {
     const {
       frustrations,
@@ -35,6 +36,7 @@ export function buildUserHealthContextString(quizResults, healthProfile) {
           .map((t) => truncateItem(t, 80))
           .join('; ')}`
       );
+      if (frustrations.includes('Not sure if products are safe')) safetyConcern = true;
     }
     const prefs = Array.isArray(preference) ? preference : preference ? [preference] : [];
     if (prefs.length) {
@@ -115,6 +117,19 @@ export function buildUserHealthContextString(quizResults, healthProfile) {
   const tags = inferTagsFromHealthProfile(hp || healthProfile);
   if (tags.length) {
     lines.push(`Inferred topic tags: ${tags.join(', ')}`);
+  }
+
+  const intake = quizResults?.fullHealthIntake || {};
+  const primaryConcerns = Array.isArray(quizResults?.primaryConcerns) ? quizResults.primaryConcerns : [];
+  const customConcerns = Array.isArray(intake?.customConcerns) ? intake.customConcerns : [];
+  const concernBlob = [...primaryConcerns, ...customConcerns].join(' ').toLowerCase();
+  if (/safe|safety|ingredients|materials|toxins|chemical/.test(concernBlob)) {
+    safetyConcern = true;
+  }
+  if (safetyConcern) {
+    lines.push(
+      'Safety priority: User wants product-safety-focused guidance. Prioritize ingredient/material transparency, recall status, evidence quality, and plain-language risk flags over convenience or brand popularity.'
+    );
   }
 
   const text = lines.join('\n').trim();

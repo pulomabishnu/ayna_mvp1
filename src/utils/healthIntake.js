@@ -93,11 +93,11 @@ const PRIMARY_CONCERN_TO_FRUSTRATION = {
   'Mental health and cycle mood support': 'General discomfort',
   'Sleep and energy': 'General discomfort',
   'Skin and hair (hormone-related)': 'Hormonal bloating',
-  'Telehealth and provider matching': 'Not sure if products are safe',
+  'Telehealth and provider matching': 'General discomfort',
 };
 
 const GOAL_TO_FRUSTRATION = {
-  'find safer products': 'Not sure if products are safe',
+  'find safer products': 'General discomfort',
   'manage symptoms': 'Painful cramps',
   'track my cycle': 'Irregular cycles',
   'understand my condition': 'General discomfort',
@@ -119,7 +119,7 @@ function inferFrustrationsFromFreeTextConcerns(textItems = []) {
   if (/sti|std|sexual infection/.test(joined)) out.add('General discomfort');
   if (/menopause|perimenopause/.test(joined)) out.add('Menopause symptoms');
   if (/pelvic|sex|comfort|vaginismus|vulvodynia/.test(joined)) out.add('Pelvic pain');
-  if (/provider|doctor|telehealth/.test(joined)) out.add('Not sure if products are safe');
+  if (/provider|doctor|telehealth/.test(joined)) out.add('General discomfort');
   return [...out];
 }
 
