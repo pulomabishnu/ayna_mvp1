@@ -1,5 +1,5 @@
 /**
- * Vercel serverless: when Discovery search has no catalog hits, suggest product ideas via Gemini.
+ * Vercel serverless: when Discovery search has no catalog hits, suggest product ideas via Claude (Anthropic).
  * Ephemeral JSON only — not persisted. No model-supplied URLs (we build search links client-side).
  */
 /* global process */
@@ -32,28 +32,8 @@ const ALLOWED_CATEGORIES = new Set([
   'other',
 ]);
 
-function getGeminiApiKey() {
-  return (
-    process.env.GEMINI_API_KEY ||
-    process.env.GOOGLE_AI_API_KEY ||
-    process.env.GOOGLE_GENERATIVE_AI_API_KEY ||
-    process.env.GOOGLE_API_KEY ||
-    ''
-  )
-    .trim() || null;
-}
-
-function geminiModelCandidates() {
-  const preferred = (process.env.GEMINI_MODEL || '').trim();
-  const out = [];
-  const add = (m) => {
-    if (m && !out.includes(m)) out.push(m);
-  };
-  add(preferred);
-  add('gemini-2.0-flash');
-  add('gemini-1.5-flash');
-  add('gemini-1.5-flash-8b');
-  return out;
+function getAnthropicApiKey() {
+  return (process.env.ANTHROPIC_API_KEY || '').trim() || null;
 }
 
 function hasUrlLike(s) {
@@ -149,50 +129,41 @@ Rules:
 - If the query is not health-related, return {"suggestions":[]} .`;
 }
 
-async function callGeminiJson(prompt) {
-  const apiKey = getGeminiApiKey();
+async function callClaudeJson(prompt) {
+  const apiKey = getAnthropicApiKey();
   if (!apiKey) return null;
 
-  const bodyBase = {
-    contents: [{ role: 'user', parts: [{ text: prompt }] }],
-    generationConfig: {
+  const model = process.env.ANTHROPIC_MODEL || 'claude-haiku-4-5-20251001';
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify({
+      model,
+      max_tokens: 2000,
       temperature: 0.35,
-      maxOutputTokens: 2000,
-      responseMimeType: 'application/json',
-    },
-    systemInstruction: {
-      parts: [
-        {
-          text: 'Output valid JSON only. No URLs or http in any string. Educational women\'s health assistant.',
-        },
-      ],
-    },
-  };
-
-  for (const model of geminiModelCandidates()) {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(bodyBase),
-    });
-    if (!res.ok) {
-      const errText = await res.text();
-      console.error('search-suggestions Gemini', model, res.status, errText.slice(0, 400));
-      if (res.status === 404) continue;
-      return null;
-    }
-    let data;
-    try {
-      data = await res.json();
-    } catch {
-      return null;
-    }
-    const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (typeof raw !== 'string' || !raw.trim()) continue;
-    return stripJsonFence(raw);
+      system:
+        "Return a single valid JSON object only. No markdown code fences unless the JSON is the only content. No URLs or http in any string. Educational women's health assistant.",
+      messages: [{ role: 'user', content: prompt }],
+    }),
+  });
+  if (!res.ok) {
+    const errText = await res.text();
+    console.error('search-suggestions Claude', res.status, errText.slice(0, 400));
+    return null;
   }
-  return null;
+  let data;
+  try {
+    data = await res.json();
+  } catch {
+    return null;
+  }
+  const raw = data?.content?.[0]?.text;
+  if (typeof raw !== 'string' || !raw.trim()) return null;
+  return stripJsonFence(raw);
 }
 
 export default async function handler(req, res) {
@@ -212,10 +183,10 @@ export default async function handler(req, res) {
     });
   }
 
-  if (!getGeminiApiKey()) {
+  if (!getAnthropicApiKey()) {
     return res.status(503).json({
-      error: 'no_gemini_key',
-      message: 'Set GEMINI_API_KEY (or GOOGLE_AI_API_KEY) in project environment variables.',
+      error: 'no_anthropic_key',
+      message: 'Set ANTHROPIC_API_KEY in project environment variables.',
     });
   }
 
@@ -234,9 +205,9 @@ export default async function handler(req, res) {
   const categoryHint = typeof body?.category === 'string' ? body.category.trim() : '';
   const symptomHint = typeof body?.symptom === 'string' ? body.symptom.trim() : '';
 
-  const rawJson = await callGeminiJson(buildPrompt(query, categoryHint, symptomHint));
+  const rawJson = await callClaudeJson(buildPrompt(query, categoryHint, symptomHint));
   if (!rawJson) {
-    return res.status(502).json({ error: 'gemini_failed' });
+    return res.status(502).json({ error: 'claude_failed' });
   }
 
   let parsed;

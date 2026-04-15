@@ -1,5 +1,5 @@
 /**
- * Calls /api/search-suggestions (Gemini on the server). Same-origin on Vercel.
+ * Calls /api/search-suggestions (Claude on the server). Same-origin on Vercel.
  */
 
 function sessionCacheKey(query, category, symptom) {
@@ -69,10 +69,10 @@ export async function fetchSearchSuggestions(opts) {
     };
   }
 
-  if (res.status === 503 && data?.error === 'no_gemini_key') {
+  if (res.status === 503 && (data?.error === 'no_anthropic_key' || data?.error === 'no_gemini_key')) {
     return {
       suggestions: [],
-      error: 'AI search is not configured on the server (missing GEMINI_API_KEY).',
+      error: 'AI search is not configured on the server (missing ANTHROPIC_API_KEY).',
       code: 'no_key',
     };
   }
