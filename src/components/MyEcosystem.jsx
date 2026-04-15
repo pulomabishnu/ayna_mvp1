@@ -267,6 +267,8 @@ export default function MyEcosystem({
     const [searchTerm, setSearchTerm] = useState('');
     const [viewMode, setViewMode] = useState('function'); // 'function' or 'integration'
     const [interactionSelection, setInteractionSelection] = useState(new Set()); // product ids for interaction check
+    const [expandedConcern, setExpandedConcern] = useState('');
+    const [expandedSubByConcern, setExpandedSubByConcern] = useState({});
 
     const myProductIds = Object.keys(myProducts);
     const myProductList = Object.values(myProducts);
@@ -370,6 +372,12 @@ export default function MyEcosystem({
     }, [ecosystemSeedMeta, myProducts, quizResults, healthProfile]);
 
     const seededProductIds = useMemo(() => new Set(seededConcernsList.map((r) => r.product.id)), [seededConcernsList]);
+    const intakeTieredRecommendations = useMemo(() => {
+        const intake = quizResults?.fullHealthIntake || null;
+        if (!intake || Object.keys(intake).length === 0) return [];
+        return generateTieredRecommendations(intake);
+    }, [quizResults]);
+    const showCategoryFlowOnly = intakeTieredRecommendations.length > 0;
 
     const hasNonSeededProducts = useMemo(
         () => myProductList.some((p) => !seededProductIds.has(p.id)),
@@ -463,8 +471,132 @@ export default function MyEcosystem({
                     </div>
                 </div>
 
-                {/* Top: one primary product per quiz concern (already added) + top 3 alternatives */}
-                {seededConcernsList.length > 0 && (
+                {/* Category -> Subcategory -> Top pick + alternatives (post-intake primary flow) */}
+                {showCategoryFlowOnly && (
+                    <div style={{ maxWidth: '960px', margin: '0 auto var(--spacing-xl)', padding: '0 0.25rem' }}>
+                        <h3 style={{ fontSize: '1.35rem', marginBottom: '0.35rem', textAlign: 'center', color: 'var(--color-text-main)' }}>
+                            Your personalized recommendations
+                        </h3>
+                        <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.95rem', marginBottom: '1.1rem' }}>
+                            Category → subcategory symptoms → top pick for you, with 3 alternatives.
+                        </p>
+                        <div style={{ display: 'grid', gap: '0.8rem' }}>
+                            {intakeTieredRecommendations.map((entry) => (
+                                <div key={entry.concern} className="card" style={{ padding: '1rem' }}>
+                                    <button
+                                        type="button"
+                                        onClick={() => setExpandedConcern((prev) => (prev === entry.concern ? '' : entry.concern))}
+                                        style={{
+                                            width: '100%',
+                                            background: 'none',
+                                            border: 'none',
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center',
+                                            textAlign: 'left',
+                                            padding: 0,
+                                        }}
+                                    >
+                                        <span style={{ fontSize: '1rem', fontWeight: '700', color: 'var(--color-text-main)' }}>{entry.concern}</span>
+                                        <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{expandedConcern === entry.concern ? '▼' : '▶'}</span>
+                                    </button>
+                                    {expandedConcern === entry.concern && (
+                                        <div style={{ marginTop: '0.7rem', display: 'grid', gap: '0.65rem' }}>
+                                            {entry.tiers.map((tier) => {
+                                                const tierKey = tier.id || tier.name;
+                                                const subLabel = tier.subcategory || tier.name;
+                                                const open = expandedSubByConcern[entry.concern] === tierKey;
+                                                return (
+                                                    <div key={tierKey} style={{ border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '0.75rem' }}>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setExpandedSubByConcern((prev) => ({ ...prev, [entry.concern]: prev[entry.concern] === tierKey ? '' : tierKey }))}
+                                                            style={{
+                                                                width: '100%',
+                                                                background: 'none',
+                                                                border: 'none',
+                                                                cursor: 'pointer',
+                                                                display: 'flex',
+                                                                justifyContent: 'space-between',
+                                                                alignItems: 'center',
+                                                                textAlign: 'left',
+                                                                padding: 0,
+                                                            }}
+                                                        >
+                                                            <span style={{ fontSize: '0.93rem', fontWeight: '600', color: 'var(--color-text-main)' }}>{subLabel}</span>
+                                                            <span style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)' }}>{open ? '▼' : '▶'}</span>
+                                                        </button>
+                                                        {open && (
+                                                            <div style={{ marginTop: '0.6rem' }}>
+                                                                <div style={{ display: 'flex', gap: '0.85rem', alignItems: 'center', marginBottom: '0.4rem' }}>
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => onOpenProduct(tier.product)}
+                                                                        style={{
+                                                                            width: '62px',
+                                                                            height: '62px',
+                                                                            borderRadius: 'var(--radius-md)',
+                                                                            overflow: 'hidden',
+                                                                            border: '1px solid var(--color-border)',
+                                                                            background: 'none',
+                                                                            padding: 0,
+                                                                            cursor: 'pointer',
+                                                                            flexShrink: 0,
+                                                                        }}
+                                                                        aria-label={`Open ${tier.product.name}`}
+                                                                    >
+                                                                        <img src={tier.product.image} alt={tier.product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                                    </button>
+                                                                    <div>
+                                                                        <div style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', fontWeight: '700' }}>Top pick for you</div>
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => onOpenProduct(tier.product)}
+                                                                            style={{ border: 'none', background: 'none', padding: 0, color: 'var(--color-primary)', fontWeight: '700', cursor: 'pointer', textAlign: 'left' }}
+                                                                        >
+                                                                            {tier.product.name}
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                {tier.matchExplanation && (
+                                                                    <p style={{ fontSize: '0.83rem', color: 'var(--color-text-muted)', margin: '0.35rem 0 0.45rem', lineHeight: 1.45 }}>
+                                                                        <strong>Match:</strong> {tier.matchExplanation}
+                                                                    </p>
+                                                                )}
+                                                                <details>
+                                                                    <summary style={{ cursor: 'pointer', fontSize: '0.82rem', fontWeight: '600', color: 'var(--color-primary)' }}>
+                                                                        3 alternatives
+                                                                    </summary>
+                                                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem', marginTop: '0.45rem' }}>
+                                                                        {(tier.alternatives || []).slice(0, 3).map((alt) => (
+                                                                            <button
+                                                                                key={alt.id}
+                                                                                type="button"
+                                                                                className="btn btn-outline"
+                                                                                style={{ padding: '0.25rem 0.55rem', fontSize: '0.75rem' }}
+                                                                                onClick={() => onOpenProduct(alt)}
+                                                                            >
+                                                                                {alt.name}
+                                                                            </button>
+                                                                        ))}
+                                                                    </div>
+                                                                </details>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Legacy seeded concern row cards */}
+                {!showCategoryFlowOnly && seededConcernsList.length > 0 && (
                     <div style={{ maxWidth: '960px', margin: '0 auto var(--spacing-xl)', padding: '0 0.25rem' }}>
                         <h3 style={{ fontSize: '1.35rem', marginBottom: '0.35rem', textAlign: 'center', color: 'var(--color-text-main)' }}>
                             Your ecosystem
@@ -564,11 +696,12 @@ export default function MyEcosystem({
                     </div>
                 )}
 
-                {seededConcernsList.length > 0 && hasNonSeededProducts && (
+                {!showCategoryFlowOnly && seededConcernsList.length > 0 && hasNonSeededProducts && (
                     <p style={{ textAlign: 'center', fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '0.75rem', maxWidth: '560px', marginLeft: 'auto', marginRight: 'auto' }}>
                         Below: the rest of your products by category (your top picks per concern stay above).
                     </p>
                 )}
+                {!showCategoryFlowOnly && (
                 <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-lg)', display: 'flex', justifyContent: 'center', gap: '1rem' }}>
                     <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>+ Add a Product or App</button>
                     <div style={{ background: 'var(--color-surface-soft)', padding: '0.25rem', borderRadius: 'var(--radius-pill)', border: '1px solid var(--color-border)', display: 'flex' }}>
@@ -592,8 +725,9 @@ export default function MyEcosystem({
                         >By Integration</button>
                     </div>
                 </div>
+                )}
 
-                {myProductList.length === 0 ? (
+                {!showCategoryFlowOnly && (myProductList.length === 0 ? (
                     <div style={{ textAlign: 'center', padding: '3rem', background: 'var(--color-surface-soft)', borderRadius: 'var(--radius-lg)', border: '1px dashed var(--color-border)' }}>
                         <h3 style={{ fontSize: '1.25rem', marginBottom: '0.75rem', color: 'var(--color-text-muted)' }}>Your ecosystem is empty.</h3>
                         <p style={{ color: 'var(--color-text-muted)' }}>Add the products and apps you currently use and we'll organize them for you.</p>
@@ -768,7 +902,7 @@ export default function MyEcosystem({
                             </div>
                         )}
                     </div>
-                )}
+                ))}
 
                 {ecosystemArticles.length > 0 && (
                     <div style={{ maxWidth: '720px', margin: '0 auto var(--spacing-xl)', padding: '0 0.25rem' }}>
