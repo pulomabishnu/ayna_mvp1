@@ -78,6 +78,9 @@ const TERM_ALIASES = {
   pads: ['pad', 'liner', 'maxi'],
   tampon: ['tampons'],
   cup: ['menstrual'],
+  /** Underwear-shaped / minimal coverage — product copy rarely says "thong" */
+  thong: ['thongs', 'bikini', 'g-string', 'underwear', 'liner', 'liners', 'discreet', 'narrow', 'gusset', 'invisible', 'mini', 'light', 'string'],
+  thongs: ['thong', 'bikini', 'g-string', 'underwear', 'liner', 'liners', 'discreet', 'narrow', 'gusset', 'invisible', 'mini', 'light', 'string'],
 };
 
 function termMatchesWithVariants(term, haystack) {
@@ -100,11 +103,14 @@ function meaningfulTerms(query) {
 }
 
 /**
- * Minimum term hits: long questions need a fraction of terms; 1–2 word queries need all.
+ * Minimum term hits: long questions need a fraction of terms; single-word queries need that term;
+ * two-word queries need at least one match (e.g. category + niche use case).
  */
 function minHitsForMatch(termCount) {
   if (termCount <= 0) return 0;
-  if (termCount <= 2) return termCount;
+  if (termCount === 1) return 1;
+  /** Two-word questions (e.g. "pads thongs") often pair a category word with a rare use case — require one strong hit */
+  if (termCount === 2) return 1;
   return Math.max(2, Math.ceil(termCount * 0.35));
 }
 
