@@ -8,6 +8,7 @@ import {
   GOALS,
   PREFERRED_PRODUCT_TYPES,
   PRODUCT_PREFERENCES,
+  OTHER_CONCERN_OPTION,
   mapIntakeToLegacyQuizProfile,
   validateHealthIntake,
 } from '../utils/healthIntake';
@@ -17,6 +18,7 @@ const baseIntake = {
   age: '',
   location: '',
   primaryConcerns: [],
+  customConcernsText: '',
   menstrualCycle: '',
   averageCycleLength: '',
   averagePeriodLength: '',
@@ -58,10 +60,11 @@ export default function HealthIntakeForm({ onComplete }) {
   const timerRef = useRef(null);
 
   const steps = useMemo(() => {
+    const concernOptions = [...CONCERN_AREAS, OTHER_CONCERN_OPTION];
     const all = [
       { id: 'age', question: 'How old are you?', subtitle: 'Required', type: 'input', required: true, inputMode: 'number', placeholder: 'e.g. 29' },
       { id: 'location', question: 'Where are you located?', subtitle: 'Optional, used for telehealth availability', type: 'input', placeholder: 'City, State or ZIP' },
-      { id: 'primaryConcerns', question: 'What are your top concerns right now?', subtitle: 'Required. Select all that apply.', type: 'multi', required: true, options: CONCERN_AREAS },
+      { id: 'primaryConcerns', question: 'What are your top concerns right now?', subtitle: 'Required. Select all that apply.', type: 'multi', required: true, options: concernOptions },
       { id: 'menstrualCycle', question: 'Do you have a menstrual cycle?', type: 'single', options: CYCLE_STATUSES },
       { id: 'averageCycleLength', question: 'Average cycle length', subtitle: 'Optional', type: 'input', placeholder: 'e.g. 28 days' },
       { id: 'averagePeriodLength', question: 'Average period length', subtitle: 'Optional', type: 'input', placeholder: 'e.g. 5 days' },
@@ -78,11 +81,20 @@ export default function HealthIntakeForm({ onComplete }) {
       { id: 'dislikedReason', question: "Why didn't it work?", subtitle: 'Optional', type: 'input', placeholder: 'Brief reason' },
       { id: 'goals', question: 'What are you hoping Ayna helps you with?', subtitle: 'Select all that apply', type: 'multi', options: GOALS },
     ];
+    if ((intake.primaryConcerns || []).includes(OTHER_CONCERN_OPTION)) {
+      all.splice(3, 0, {
+        id: 'customConcernsText',
+        question: 'Tell us your other concern(s)',
+        subtitle: 'Optional, comma-separated',
+        type: 'input',
+        placeholder: 'e.g. breast tenderness, migraines before period',
+      });
+    }
     if (intake.hormonalBirthControl === 'yes') {
       all.splice(12, 0, { id: 'hormonalBirthControlType', question: 'If yes, what type?', type: 'input', placeholder: 'e.g. pill, IUD' });
     }
     return all;
-  }, [intake.hormonalBirthControl]);
+  }, [intake.hormonalBirthControl, intake.primaryConcerns]);
 
   const step = steps[currentStep];
   const progress = ((currentStep + 1) / steps.length) * 100;
@@ -90,7 +102,8 @@ export default function HealthIntakeForm({ onComplete }) {
   const normalizedIntake = useMemo(() => {
     const currentProducts = parseCsvLike(intake.currentProductsText);
     const dislikedProducts = parseCsvLike(intake.dislikedProductsText);
-    return { ...intake, currentProducts, dislikedProducts };
+    const customConcerns = parseCsvLike(intake.customConcernsText);
+    return { ...intake, currentProducts, dislikedProducts, customConcerns };
   }, [intake]);
 
   const finish = async () => {

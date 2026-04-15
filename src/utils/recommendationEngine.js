@@ -39,7 +39,8 @@ function textForSafety(product) {
 }
 
 function hasRecall(product) {
-  return String(product?.safety?.recalls || '').toLowerCase().includes('recall');
+  const recalls = String(product?.safety?.recalls || '').toLowerCase();
+  return recalls.includes('⚠️') || (recalls.includes('recall') && !recalls.includes('no recalls'));
 }
 
 function includesAny(text, terms) {
@@ -49,6 +50,26 @@ function includesAny(text, terms) {
 function productDisliked(product, dislikedList) {
   const n = String(product?.name || '').toLowerCase();
   return dislikedList.some((d) => n.includes(String(d || '').toLowerCase()));
+}
+
+function hasReliabilityConcern(product) {
+  const source = String(product?.clinicianOpinionSource || '').toLowerCase();
+  if (source === 'brand' || source === 'mixed') return true;
+
+  const concernText = [
+    product?.safety?.opinionAlerts,
+    product?.communityReview,
+    product?.doctorOpinion,
+    product?.summary,
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase();
+
+  if (/less scientific|split opinions|polarized|class-action|not robust|unreliable|incentivized|affiliate|sponsored/.test(concernText)) {
+    return true;
+  }
+  return false;
 }
 
 function scoreProduct(product, intake, concern) {
@@ -100,6 +121,7 @@ function isRelevantConcern(concern, intake) {
   if ((intake?.tryingToConceive || '') === 'yes' && tags.includes('fertility')) return true;
   if ((intake?.symptoms || []).includes('cramps') && tags.includes('cramps')) return true;
   if ((intake?.goals || []).includes('find a provider') && concern.key.includes('Telehealth')) return true;
+  if ((intake?.menstrualCycle === 'yes' || intake?.menstrualCycle === 'irregular') && concern.key.startsWith('Period care')) return true;
   return false;
 }
 
@@ -114,6 +136,8 @@ function concernRelevanceScore(concern, intake) {
   if ((intake?.symptoms || []).includes('cramps') && concern.tags.includes('cramps')) score += 5;
   if ((intake?.symptoms || []).includes('bloating') && concern.tags.includes('bloating')) score += 4;
   if ((intake?.flowLevel || '').toLowerCase().includes('heavy') && concern.tags.includes('heavy-flow')) score += 6;
+  if ((intake?.menstrualCycle === 'yes' || intake?.menstrualCycle === 'irregular') && concern.key.startsWith('Period care')) score += 9;
+  if ((intake?.menstrualCycle === 'yes' || intake?.menstrualCycle === 'irregular') && concern.tags.includes('leaks')) score += 4;
   if ((intake?.goals || []).includes('find a provider') && concern.key.includes('Telehealth')) score += 4;
   return score;
 }
@@ -124,6 +148,7 @@ function selectTierProduct(products, intake, concern, tierType, alreadyChosen = 
     .filter((p) => !alreadyChosen.has(p.id))
     .filter((p) => !productDisliked(p, disliked))
     .filter((p) => !hasRecall(p))
+    .filter((p) => !hasReliabilityConcern(p))
     .filter((p) => {
       if (tierType === 'physical') return (p.type || 'physical') === 'physical';
       return (p.type || 'physical') === 'digital' || p.category === 'supplement';
@@ -137,6 +162,7 @@ export function buildRecommendationPrompt(intake, concern) {
   return `USER PROFILE:
 - Age: ${intake?.age || 'unknown'}
 - Primary concerns: ${selectedConcerns(intake).join(', ') || 'none provided'}
+- Other concerns: ${asArray(intake?.customConcerns).join(', ') || 'none provided'}
 - Conditions: ${asArray(intake?.conditions).join(', ') || 'none provided'}
 - Cycle: menstrual cycle=${intake?.menstrualCycle || 'unknown'}, average cycle length=${intake?.averageCycleLength || 'unknown'}, average period length=${intake?.averagePeriodLength || 'unknown'}
 - Flow: ${intake?.flowLevel || 'unknown'}, Pain: ${intake?.painLevel || 'unknown'}/10
