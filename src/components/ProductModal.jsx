@@ -1311,6 +1311,21 @@ export default function ProductModal({
                                     For learning only—not a substitute for your clinician.
                                 </p>
                             )}
+                            {!((product.clinicianOpinionSource === 'independent') && String(product.clinicianAttribution || '').trim().length > 0) && (
+                                <div style={{ marginBottom: '1rem' }}>
+                                    <span style={{
+                                        display: 'inline-block',
+                                        background: '#FEF3C7',
+                                        color: '#92400E',
+                                        padding: '0.3rem 0.6rem',
+                                        borderRadius: 'var(--radius-pill)',
+                                        fontSize: '0.75rem',
+                                        fontWeight: '700'
+                                    }}>
+                                        No independent clinician opinion available yet
+                                    </span>
+                                </div>
+                            )}
                             {((product.doctorOpinion && !suppressDoctorDuplicateInList) || product.clinicianAttribution) && (
                                 <div style={{ marginBottom: '1.25rem' }}>
                                     <h4 style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>Summarized info (our database)</h4>

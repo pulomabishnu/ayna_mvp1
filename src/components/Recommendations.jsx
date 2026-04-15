@@ -97,6 +97,7 @@ export default function Recommendations({
     const renderProductCard = (product) => {
         const isTracked = !!trackedProducts[product.id];
         const isInEcosystem = !!myProducts[product.id];
+        const hasIndependentClinician = product?.clinicianOpinionSource === 'independent' && String(product?.clinicianAttribution || '').trim().length > 0;
         const { whyItWorks, considerations } = getRecommendationExplanation(product, results, healthProfile);
         return (
             <div key={product.id} className="card hover-lift" style={{
@@ -140,6 +141,15 @@ export default function Recommendations({
                             borderRadius: 'var(--radius-pill)', fontSize: '0.7rem', fontWeight: '600'
                         }}>
                             No longer sold
+                        </span>
+                    )}
+                    {!hasIndependentClinician && (
+                        <span style={{
+                            position: 'absolute', bottom: '0.75rem', right: '0.75rem',
+                            background: '#FEF3C7', color: '#92400E', padding: '0.25rem 0.6rem',
+                            borderRadius: 'var(--radius-pill)', fontSize: '0.7rem', fontWeight: '700'
+                        }}>
+                            No independent clinician opinion yet
                         </span>
                     )}
                 </div>
@@ -248,6 +258,11 @@ export default function Recommendations({
                                     >
                                         {tier.product.name}
                                     </button>
+                                    {!(tier.product?.clinicianOpinionSource === 'independent' && String(tier.product?.clinicianAttribution || '').trim().length > 0) && (
+                                        <p style={{ fontSize: '0.78rem', marginTop: '0.25rem', color: '#92400E' }}>
+                                            No independent clinician opinion available yet.
+                                        </p>
+                                    )}
                                     {tier.safetyFlags?.length > 0 && (
                                         <p style={{ fontSize: '0.82rem', marginTop: '0.25rem', color: '#b42318' }}>
                                             Safety: {tier.safetyFlags.join(' ')}

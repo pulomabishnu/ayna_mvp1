@@ -72,6 +72,12 @@ function hasReliabilityConcern(product) {
   return false;
 }
 
+function hasIndependentClinicianOpinion(product) {
+  const source = String(product?.clinicianOpinionSource || '').toLowerCase();
+  const attribution = String(product?.clinicianAttribution || '').trim();
+  return source === 'independent' && attribution.length > 0;
+}
+
 function scoreProduct(product, intake, concern) {
   const tags = new Set(product?.tags || []);
   let score = 0;
@@ -149,6 +155,7 @@ function selectTierProduct(products, intake, concern, tierType, alreadyChosen = 
     .filter((p) => !productDisliked(p, disliked))
     .filter((p) => !hasRecall(p))
     .filter((p) => !hasReliabilityConcern(p))
+    .filter((p) => hasIndependentClinicianOpinion(p))
     .filter((p) => {
       if (tierType === 'physical') return (p.type || 'physical') === 'physical';
       return (p.type || 'physical') === 'digital' || p.category === 'supplement';
