@@ -122,9 +122,9 @@ export default function HealthIntakeForm({ onComplete }) {
     if (errors[id]) setErrors((p) => ({ ...p, [id]: null }));
   };
 
-  const goNext = async () => {
-    if (step.required && !String(intake[step.id] || '').trim()) {
-      setErrors((p) => ({ ...p, [step.id]: `${step.label.replace(' *', '')} is required.` }));
+  const goNext = async (nextIntake = intake) => {
+    if (step.required && !String(nextIntake[step.id] || '').trim()) {
+      setErrors((p) => ({ ...p, [step.id]: `${step.question} is required.` }));
       return;
     }
     if (currentStep < steps.length - 1) {
@@ -142,8 +142,11 @@ export default function HealthIntakeForm({ onComplete }) {
     }, AUTO_ADVANCE_MS);
   };
   const handleInputConfirm = () => {
-    updateValue(step.id, inputValue.trim());
-    goNext();
+    const nextValue = inputValue.trim();
+    const nextIntake = { ...intake, [step.id]: nextValue };
+    setIntake(nextIntake);
+    if (errors[step.id]) setErrors((p) => ({ ...p, [step.id]: null }));
+    goNext(nextIntake);
   };
 
   const handleMultiToggle = (option) => {
