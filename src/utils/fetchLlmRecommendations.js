@@ -1,4 +1,5 @@
 const API_PATH = '/api/llm-recommendations';
+const MEMORY_KEY = 'ayna_llm_learning_memory_v1';
 
 function asIdList(mapLike) {
   if (!mapLike || typeof mapLike !== 'object') return [];
@@ -10,6 +11,7 @@ export function buildLlmRecommendationsRequestBody({
   trackedProducts = {},
   myProducts = {},
   omittedProducts = {},
+  learningMemory = null,
 } = {}) {
   if (!intake || typeof intake !== 'object') return null;
   return {
@@ -18,8 +20,30 @@ export function buildLlmRecommendationsRequestBody({
       trackedProductIds: asIdList(trackedProducts),
       ecosystemProductIds: asIdList(myProducts),
       omittedProductIds: asIdList(omittedProducts),
+      learningMemory: learningMemory || {},
     },
   };
+}
+
+export function loadLearningMemory() {
+  try {
+    if (typeof window === 'undefined') return {};
+    const raw = window.localStorage.getItem(MEMORY_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+export function saveLearningMemory(memory) {
+  try {
+    if (typeof window === 'undefined') return;
+    window.localStorage.setItem(MEMORY_KEY, JSON.stringify(memory || {}));
+  } catch {
+    // no-op
+  }
 }
 
 export async function fetchLlmRecommendations(options = {}) {

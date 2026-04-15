@@ -179,6 +179,25 @@ function hasIndependentClinicianOpinion(product) {
   return source === 'independent' && attribution.length > 0;
 }
 
+function isSupplementProduct(product) {
+  const category = String(product?.category || '').toLowerCase();
+  const tags = (product?.tags || []).map((t) => String(t || '').toLowerCase());
+  return category.includes('supplement') || category.includes('vitamin') || category.includes('wellness') || tags.includes('supplement');
+}
+
+function isDigitalOrTelehealthProduct(product) {
+  const type = String(product?.type || 'physical').toLowerCase();
+  const category = String(product?.category || '').toLowerCase();
+  return type === 'digital' || category.includes('telehealth') || category.includes('app') || category.includes('tracker');
+}
+
+function matchesTierType(product, tierType) {
+  if (tierType === 'physical') return String(product?.type || 'physical').toLowerCase() === 'physical' && !isSupplementProduct(product);
+  if (tierType === 'supplement') return isSupplementProduct(product);
+  if (tierType === 'digital') return isDigitalOrTelehealthProduct(product);
+  return false;
+}
+
 function scoreProduct(product, intake, concern) {
   const tags = new Set(product?.tags || []);
   let score = 0;
@@ -274,10 +293,7 @@ function selectTierCandidates(products, intake, concern, tierType, alreadyChosen
     .filter((p) => !hasRecall(p))
     .filter((p) => !hasReliabilityConcern(p))
     .filter((p) => hasIndependentClinicianOpinion(p))
-    .filter((p) => {
-      if (tierType === 'physical') return (p.type || 'physical') === 'physical';
-      return (p.type || 'physical') === 'digital' || p.category === 'supplement';
-    })
+    .filter((p) => matchesTierType(p, tierType))
     .sort((a, b) => scoreProduct(b, intake, concern) - scoreProduct(a, intake, concern))
     .slice(0, limit);
 }
@@ -319,9 +335,10 @@ RULES:
 }
 
 export function generateTieredRecommendations(intake = {}) {
+  const selected = selectedConcerns(intake);
   const concerns = CONCERN_CONFIG
     .map((c) => ({ concern: c, score: concernRelevanceScore(c, intake) }))
-    .filter(({ concern, score }) => score > 0 || isRelevantConcern(concern, intake))
+    .filter(({ concern, score }) => (selected.length > 0 ? selected.includes(concern.key) : (score > 0 || isRelevantConcern(concern, intake))))
     .sort((a, b) => b.score - a.score)
     .map(({ concern }) => concern);
   const fallbackConcern = selectedConcerns(intake)[0] || intake?.primaryConcern;

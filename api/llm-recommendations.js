@@ -38,6 +38,37 @@ function concernTags(concernKey = '') {
   return [...tags];
 }
 
+function isSupplementProduct(product) {
+  const category = String(product?.category || '').toLowerCase();
+  const tags = (product?.tags || []).map((t) => String(t || '').toLowerCase());
+  return category.includes('supplement') || category.includes('vitamin') || category.includes('wellness') || tags.includes('supplement');
+}
+
+function isDigitalOrTelehealthProduct(product) {
+  const type = String(product?.type || 'physical').toLowerCase();
+  const category = String(product?.category || '').toLowerCase();
+  return type === 'digital' || category.includes('telehealth') || category.includes('app') || category.includes('tracker');
+}
+
+function isTierMatch(product, tierName = '', tierIndex = 0) {
+  const name = String(tierName || '').toLowerCase();
+  const expectsPhysical = tierIndex === 0 || name.includes('physical');
+  const expectsSupplement = tierIndex === 1 || name.includes('supplement') || name.includes('wellness');
+  const expectsDigital = tierIndex === 2 || name.includes('digital') || name.includes('telehealth');
+
+  if (expectsPhysical) return String(product?.type || 'physical').toLowerCase() === 'physical' && !isSupplementProduct(product);
+  if (expectsSupplement) return isSupplementProduct(product);
+  if (expectsDigital) return isDigitalOrTelehealthProduct(product);
+  return true;
+}
+
+function isConcernMatch(product, concernKey = '') {
+  const tags = product?.tags || [];
+  const expected = concernTags(concernKey);
+  if (!expected.length) return true;
+  return expected.some((t) => tags.includes(t));
+}
+
 function shortlistCandidates(intake = {}) {
   const concerns = selectedConcerns(intake);
   const concernDriven = concerns.length
@@ -102,6 +133,7 @@ LEARNING SIGNALS (use these to get better over time for this user):
 - Tracked/liked product IDs: ${(feedback?.trackedProductIds || []).join(', ') || 'none'}
 - In ecosystem product IDs: ${(feedback?.ecosystemProductIds || []).join(', ') || 'none'}
 - Hidden product IDs: ${(feedback?.omittedProductIds || []).join(', ') || 'none'}
+- Persistent learning memory (cross-session): ${JSON.stringify(feedback?.learningMemory || {})}
 
 AVAILABLE CANDIDATES (you MUST only use these IDs):
 ${JSON.stringify(candidates.map(productLite))}
@@ -144,16 +176,26 @@ function safeParse(raw) {
 
 function normalizeOutput(parsed, byId, intake) {
   const out = [];
+  const allowedConcerns = new Set(generateTieredRecommendations(intake).map((x) => x.concern));
   const source = Array.isArray(parsed?.recommendations) ? parsed.recommendations : [];
   source.forEach((entry) => {
     const concern = String(entry?.concern || '').trim();
     if (!concern) return;
+    if (allowedConcerns.size > 0 && !allowedConcerns.has(concern)) return;
     const tiers = [];
-    (Array.isArray(entry?.tiers) ? entry.tiers : []).forEach((t) => {
+    (Array.isArray(entry?.tiers) ? entry.tiers : []).forEach((t, idx) => {
       const top = byId.get(String(t?.topProductId || ''));
       if (!top) return;
+      if (!isConcernMatch(top, concern)) return;
+      if (!isTierMatch(top, t?.name, idx)) return;
       const altIds = Array.isArray(t?.alternativeProductIds) ? t.alternativeProductIds : [];
-      const alt = altIds.map((id) => byId.get(String(id))).filter(Boolean).filter((p) => p.id !== top.id).slice(0, 3);
+      const alt = altIds
+        .map((id) => byId.get(String(id)))
+        .filter(Boolean)
+        .filter((p) => p.id !== top.id)
+        .filter((p) => isConcernMatch(p, concern))
+        .filter((p) => isTierMatch(p, t?.name, idx))
+        .slice(0, 3);
       tiers.push({
         name: String(t?.name || '').trim() || 'Tier',
         product: top,

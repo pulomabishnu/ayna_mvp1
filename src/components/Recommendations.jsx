@@ -4,7 +4,7 @@ import { getRecommendedArticles } from './Articles';
 import { inferTagsFromHealthProfile } from '../utils/healthDataProfile';
 import CareNearYouPanel from './CareNearYouPanel';
 import { generateTieredRecommendations } from '../utils/recommendationEngine';
-import { fetchLlmRecommendations } from '../utils/fetchLlmRecommendations';
+import { fetchLlmRecommendations, loadLearningMemory, saveLearningMemory } from '../utils/fetchLlmRecommendations';
 
 const TYPE_OPTIONS = [
     { value: 'all', label: 'All types' },
@@ -113,16 +113,31 @@ export default function Recommendations({
 
         (async () => {
             try {
+                const memory = loadLearningMemory();
                 const data = await fetchLlmRecommendations({
                     intake,
                     trackedProducts,
                     myProducts,
                     omittedProducts,
+                    learningMemory: memory,
                 });
                 if (!active) return;
                 const recs = Array.isArray(data?.recommendations) ? data.recommendations : [];
                 setLlmTiered(recs.length > 0 ? recs : []);
                 setLlmProvider(String(data?.providerUsed || ''));
+                const recommendedProductIds = recs.flatMap((entry) =>
+                    (entry?.tiers || []).flatMap((tier) => [tier?.product?.id, ...((tier?.alternatives || []).map((a) => a?.id))].filter(Boolean))
+                );
+                const nextMemory = {
+                    ...memory,
+                    lastSeenAt: new Date().toISOString(),
+                    shownProductIds: Array.from(new Set([...(memory.shownProductIds || []), ...recommendedProductIds])).slice(-300),
+                    selectedConcernHistory: Array.from(new Set([...(memory.selectedConcernHistory || []), ...((intake?.primaryConcerns || []).map((x) => String(x)))])),
+                    trackedHistory: Array.from(new Set([...(memory.trackedHistory || []), ...Object.keys(trackedProducts || {})])).slice(-300),
+                    ecosystemHistory: Array.from(new Set([...(memory.ecosystemHistory || []), ...Object.keys(myProducts || {})])).slice(-300),
+                    omittedHistory: Array.from(new Set([...(memory.omittedHistory || []), ...Object.keys(omittedProducts || {})])).slice(-300),
+                };
+                saveLearningMemory(nextMemory);
             } catch (_) {
                 if (!active) return;
                 setLlmTiered([]);
