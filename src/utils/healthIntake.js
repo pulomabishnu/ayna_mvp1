@@ -79,7 +79,7 @@ export const CONCERN_AREAS = [
 export const OTHER_CONCERN_OPTION = 'Other (type your own)';
 
 const PRIMARY_CONCERN_TO_FRUSTRATION = {
-  'Period care (pads, tampons, cups, discs, underwear)': 'Heavy flow',
+  'Period care (pads, tampons, cups, discs, underwear)': 'Leaks & staining',
   'Cramp and pain relief (devices, supplements, heat)': 'Painful cramps',
   'Hormone balance (supplements, lifestyle)': 'Hormonal bloating',
   'PCOS management (supplements, telehealth, apps)': 'PCOS symptoms',
@@ -98,7 +98,7 @@ const PRIMARY_CONCERN_TO_FRUSTRATION = {
 
 const GOAL_TO_FRUSTRATION = {
   'find safer products': 'General discomfort',
-  'manage symptoms': 'Painful cramps',
+  'manage symptoms': 'General discomfort',
   'track my cycle': 'Irregular cycles',
   'understand my condition': 'General discomfort',
   'find a provider': 'General discomfort',
@@ -108,7 +108,8 @@ const GOAL_TO_FRUSTRATION = {
 function inferFrustrationsFromFreeTextConcerns(textItems = []) {
   const joined = textItems.join(' ').toLowerCase();
   const out = new Set();
-  if (/heavy|leak|stain|bleed/.test(joined)) out.add('Heavy flow');
+  if (/heavy|bleeding a lot|flooding/.test(joined)) out.add('Heavy flow');
+  if (/leak|stain|spot through|bleed through/.test(joined)) out.add('Leaks & staining');
   if (/cramp|pain/.test(joined)) out.add('Painful cramps');
   if (/bloat/.test(joined)) out.add('Hormonal bloating');
   if (/irregular|cycle/.test(joined)) out.add('Irregular cycles');

@@ -282,6 +282,26 @@ export default function Recommendations({
                                             Safety: {tier.safetyFlags.join(' ')}
                                         </p>
                                     )}
+                                    {Array.isArray(tier.alternatives) && tier.alternatives.length > 0 && (
+                                        <div style={{ marginTop: '0.45rem' }}>
+                                            <p style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', margin: '0 0 0.3rem' }}>
+                                                Alternatives
+                                            </p>
+                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem' }}>
+                                                {tier.alternatives.map((alt) => (
+                                                    <button
+                                                        key={alt.id}
+                                                        type="button"
+                                                        className="btn btn-outline"
+                                                        style={{ padding: '0.25rem 0.55rem', fontSize: '0.75rem' }}
+                                                        onClick={() => onOpenProduct(alt)}
+                                                    >
+                                                        {alt.name}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                             {entry.notes?.length > 0 && (

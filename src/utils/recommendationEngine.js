@@ -167,6 +167,22 @@ function selectTierProduct(products, intake, concern, tierType, alreadyChosen = 
   return candidates[0] || null;
 }
 
+function selectTierCandidates(products, intake, concern, tierType, alreadyChosen = new Set(), limit = 4) {
+  const disliked = asArray(intake?.dislikedProducts);
+  return products
+    .filter((p) => !alreadyChosen.has(p.id))
+    .filter((p) => !productDisliked(p, disliked))
+    .filter((p) => !hasRecall(p))
+    .filter((p) => !hasReliabilityConcern(p))
+    .filter((p) => hasIndependentClinicianOpinion(p))
+    .filter((p) => {
+      if (tierType === 'physical') return (p.type || 'physical') === 'physical';
+      return (p.type || 'physical') === 'digital' || p.category === 'supplement';
+    })
+    .sort((a, b) => scoreProduct(b, intake, concern) - scoreProduct(a, intake, concern))
+    .slice(0, limit);
+}
+
 export function buildRecommendationPrompt(intake, concern) {
   return `USER PROFILE:
 - Age: ${intake?.age || 'unknown'}
@@ -221,11 +237,14 @@ export function generateTieredRecommendations(intake = {}) {
     });
 
     const chosen = new Set();
-    const tier1 = selectTierProduct(concernPool, intake, concern, 'physical', chosen);
-    if (tier1) chosen.add(tier1.id);
-    const tier2 = selectTierProduct(concernPool, intake, concern, 'supplement', chosen);
-    if (tier2) chosen.add(tier2.id);
-    const tier3 = selectTierProduct(concernPool, intake, concern, 'digital', chosen);
+    const tier1Candidates = selectTierCandidates(concernPool, intake, concern, 'physical', chosen, 4);
+    if (tier1Candidates[0]) chosen.add(tier1Candidates[0].id);
+    const tier2Candidates = selectTierCandidates(concernPool, intake, concern, 'supplement', chosen, 4);
+    if (tier2Candidates[0]) chosen.add(tier2Candidates[0].id);
+    const tier3Candidates = selectTierCandidates(concernPool, intake, concern, 'digital', chosen, 4);
+    const tier1 = tier1Candidates[0] || null;
+    const tier2 = tier2Candidates[0] || null;
+    const tier3 = tier3Candidates[0] || null;
 
     const notes = [];
     const painLevel = Number(intake?.painLevel || 0);
@@ -237,9 +256,9 @@ export function generateTieredRecommendations(intake = {}) {
       concern: concern.key,
       prompt: buildRecommendationPrompt(intake, concern.key),
       tiers: [
-        tier1 ? { name: 'TIER 1 - IMMEDIATE PHYSICAL PRODUCT', product: tier1, safetyFlags: safetyNotes(tier1, intake) } : null,
-        tier2 ? { name: 'TIER 2 - SUPPLEMENT OR WELLNESS PRODUCT', product: tier2, safetyFlags: safetyNotes(tier2, intake) } : null,
-        tier3 ? { name: 'TIER 3 - DIGITAL OR TELEHEALTH OPTION', product: tier3, safetyFlags: safetyNotes(tier3, intake) } : null,
+        tier1 ? { name: 'TIER 1 - IMMEDIATE PHYSICAL PRODUCT', product: tier1, safetyFlags: safetyNotes(tier1, intake), alternatives: tier1Candidates.slice(1, 4) } : null,
+        tier2 ? { name: 'TIER 2 - SUPPLEMENT OR WELLNESS PRODUCT', product: tier2, safetyFlags: safetyNotes(tier2, intake), alternatives: tier2Candidates.slice(1, 4) } : null,
+        tier3 ? { name: 'TIER 3 - DIGITAL OR TELEHEALTH OPTION', product: tier3, safetyFlags: safetyNotes(tier3, intake), alternatives: tier3Candidates.slice(1, 4) } : null,
       ].filter(Boolean),
       notes,
     };
