@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import Hero from './components/Hero';
 import WelcomeGate from './components/WelcomeGate';
-import Quiz from './components/Quiz';
+import HealthIntakeForm from './components/HealthIntakeForm';
 import Recommendations from './components/Recommendations';
 import WaitlistHub from './components/WaitlistHub';
 import TrackedItems from './components/TrackedItems';
@@ -21,6 +21,8 @@ import ProductModal from './components/ProductModal';
 import Articles from './components/Articles';
 import ProfileChatbot from './components/ProfileChatbot';
 import { loadHealthProfile, inferTagsFromHealthProfile } from './utils/healthDataProfile';
+import { loadHealthIntakeForCurrentUser } from './utils/healthIntakeStore';
+import { mapIntakeToLegacyQuizProfile } from './utils/healthIntake';
 
 const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls'];
 
@@ -54,6 +56,21 @@ function App() {
   React.useEffect(() => {
     setAynaReviews(loadAynaReviews());
   }, []);
+
+  React.useEffect(() => {
+    let active = true;
+    (async () => {
+      try {
+        const savedIntake = await loadHealthIntakeForCurrentUser();
+        if (active && savedIntake && !quizResults) {
+          setQuizResults(mapIntakeToLegacyQuizProfile(savedIntake));
+        }
+      } catch (_) {}
+    })();
+    return () => {
+      active = false;
+    };
+  }, [quizResults]);
 
   const recommendedProductIds = useMemo(() => {
     return getRecommendations(quizResults || null, healthProfile).map(p => p.id);
@@ -439,7 +456,7 @@ function App() {
           <Hero onStartQuiz={handleStartQuiz} onViewWaitlist={handleViewWaitlist} onViewDiscovery={handleViewDiscovery} />
         )}
         {currentView === 'quiz' && (
-          <Quiz onComplete={handleQuizComplete} />
+          <HealthIntakeForm onComplete={handleQuizComplete} />
         )}
         {currentView === 'recommendations' && (
           <Recommendations

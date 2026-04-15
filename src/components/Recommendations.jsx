@@ -3,6 +3,7 @@ import { getRecommendationExplanation, SIMILAR_PROFILES, ALL_PRODUCTS, CATEGORY_
 import { getRecommendedArticles } from './Articles';
 import { inferTagsFromHealthProfile } from '../utils/healthDataProfile';
 import CareNearYouPanel from './CareNearYouPanel';
+import { generateTieredRecommendations } from '../utils/recommendationEngine';
 
 const TYPE_OPTIONS = [
     { value: 'all', label: 'All types' },
@@ -34,12 +35,11 @@ export default function Recommendations({
         [results, omittedProducts, healthProfile]
     );
 
-    const applyTypeFilter = (products) => {
-        if (!products || typeFilter === 'all') return products || [];
-        return products.filter(p => (p.type || 'physical') === typeFilter);
-    };
-
     const workflowWithFilter = useMemo(() => {
+        const applyTypeFilter = (products) => {
+            if (!products || typeFilter === 'all') return products || [];
+            return products.filter(p => (p.type || 'physical') === typeFilter);
+        };
         return byWorkflow.map(w => ({
             ...w,
             steps: w.steps.map(s => ({ ...s, products: applyTypeFilter(s.products) })).filter(s => s.products.length > 0),
@@ -47,6 +47,10 @@ export default function Recommendations({
     }, [byWorkflow, typeFilter]);
 
     const byCategory = useMemo(() => {
+        const applyTypeFilter = (products) => {
+            if (!products || typeFilter === 'all') return products || [];
+            return products.filter(p => (p.type || 'physical') === typeFilter);
+        };
         return byCategoryRaw.map(c => ({
             ...c,
             products: applyTypeFilter(c.products),
@@ -88,6 +92,7 @@ export default function Recommendations({
     }, [results]);
 
     const recommendedArticles = useMemo(() => getRecommendedArticles(results || {}, healthProfile), [results, healthProfile]);
+    const tiered = useMemo(() => generateTieredRecommendations(results?.fullHealthIntake || {}), [results]);
 
     const renderProductCard = (product) => {
         const isTracked = !!trackedProducts[product.id];
@@ -226,6 +231,39 @@ export default function Recommendations({
                 onZipCodeChange={onZipCodeChange}
                 onOpenProduct={onOpenProduct}
             />
+
+            {tiered.length > 0 && (
+                <div style={{ maxWidth: '980px', margin: '0 auto var(--spacing-xl)', display: 'grid', gap: '1rem' }}>
+                    <h3 style={{ fontSize: '1.35rem', marginBottom: '0.4rem' }}>Tiered recommendations</h3>
+                    {tiered.map((entry) => (
+                        <div key={entry.concern} className="card" style={{ padding: '1rem' }}>
+                            <p style={{ fontWeight: '700', marginBottom: '0.75rem' }}>{entry.concern}</p>
+                            {entry.tiers.map((tier) => (
+                                <div key={tier.name} style={{ marginBottom: '0.75rem' }}>
+                                    <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', fontWeight: '700' }}>{tier.name}</div>
+                                    <button
+                                        type="button"
+                                        style={{ marginTop: '0.35rem', background: 'none', border: 'none', padding: 0, color: 'var(--color-primary)', fontWeight: '600', cursor: 'pointer' }}
+                                        onClick={() => onOpenProduct(tier.product)}
+                                    >
+                                        {tier.product.name}
+                                    </button>
+                                    {tier.safetyFlags?.length > 0 && (
+                                        <p style={{ fontSize: '0.82rem', marginTop: '0.25rem', color: '#b42318' }}>
+                                            Safety: {tier.safetyFlags.join(' ')}
+                                        </p>
+                                    )}
+                                </div>
+                            ))}
+                            {entry.notes?.length > 0 && (
+                                <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: 0 }}>
+                                    {entry.notes.join(' ')} This recommendation may help with symptom support and should be confirmed with a provider.
+                                </p>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            )}
 
             {/* Filters: dropdowns for Type and Category */}
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: 'var(--spacing-lg)', alignItems: 'center' }}>
