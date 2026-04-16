@@ -1312,24 +1312,6 @@ export default function MyEcosystem({
                     </div>
                 )}
 
-                {typeof onBuildEcosystem === 'function' && (
-                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 'var(--spacing-lg)' }}>
-                        <button
-                            type="button"
-                            className="btn btn-primary"
-                            style={{
-                                padding: '0.75rem 1.75rem',
-                                fontSize: '1rem',
-                                fontWeight: 600,
-                                boxShadow: '0 4px 14px rgba(217, 76, 147, 0.35)',
-                            }}
-                            onClick={onBuildEcosystem}
-                        >
-                            Build me my ecosystem!
-                        </button>
-                    </div>
-                )}
-
                 {/* Safety & interactions: compare 2+ products */}
                 {myProductList.length >= 2 && (
                     <div style={{ marginBottom: 'var(--spacing-xl)', maxWidth: '800px', margin: '0 auto var(--spacing-xl)' }}>
@@ -1410,6 +1392,24 @@ export default function MyEcosystem({
                     onZipCodeChange={onZipCodeChange}
                     onOpenProduct={onOpenProduct}
                 />
+
+                {typeof onBuildEcosystem === 'function' && (
+                    <div style={{ display: 'flex', justifyContent: 'center', marginTop: 'var(--spacing-xl)', marginBottom: 'var(--spacing-lg)' }}>
+                        <button
+                            type="button"
+                            className="btn btn-primary"
+                            style={{
+                                padding: '0.75rem 1.75rem',
+                                fontSize: '1rem',
+                                fontWeight: 600,
+                                boxShadow: '0 4px 14px rgba(217, 76, 147, 0.35)',
+                            }}
+                            onClick={onBuildEcosystem}
+                        >
+                            Rebuild my whole ecosystem
+                        </button>
+                    </div>
+                )}
             </section>
 
             {showAddModal && (
