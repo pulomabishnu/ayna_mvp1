@@ -489,6 +489,7 @@ export default function MyEcosystem({
     onHealthProfileUpdate,
     onViewRecommendedArticles,
     onOpenArticle,
+    onLlmRecommendationsLoaded,
 }) {
     const [profileEditOpen, setProfileEditOpen] = useState(false);
     const [conditionsDraft, setConditionsDraft] = useState('');
@@ -613,6 +614,9 @@ export default function MyEcosystem({
                 const recs = Array.isArray(data?.recommendations) ? data.recommendations : [];
                 setLlmTiered(recs);
                 if (recs.length > 0) {
+                    onLlmRecommendationsLoaded?.(recs);
+                }
+                if (recs.length > 0) {
                     saveCachedLlmRecommendations(intakeFingerprint, recs);
                 }
                 const recommendedProductIds = recs.flatMap((entry) =>
@@ -652,14 +656,6 @@ export default function MyEcosystem({
     const activeTiered = useMemo(
         () => (llmTiered.length > 0 ? llmTiered : intakeTieredRecommendations),
         [llmTiered, intakeTieredRecommendations]
-    );
-
-    const hasHealthIntakeForFlow = useMemo(() => {
-        const intake = quizResults?.fullHealthIntake || null;
-        return !!(intake && Object.keys(intake).length > 0);
-    }, [quizResults]);
-    const showCategoryFlowOnly = hasHealthIntakeForFlow && (
-        intakeTieredRecommendations.length > 0 || llmLoading || llmTiered.length > 0 || !!llmError
     );
 
     useEffect(() => {
@@ -714,71 +710,7 @@ export default function MyEcosystem({
                     </p>
                 </div>
 
-                {/* SECTION 1 — AI recommendations */}
-                <div style={{ maxWidth: '1000px', margin: '0 auto var(--spacing-xl)', padding: '0 0.25rem' }}>
-                    <h3 style={{ fontSize: '1.35rem', marginBottom: '0.5rem', textAlign: 'center', color: 'var(--color-text-main)' }}>AI Recommendations</h3>
-                    {showCategoryFlowOnly ? (
-                        <>
-                            <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.95rem', marginBottom: '1.1rem' }}>
-                                Picks from your intake — add to My Ecosystem, compare alternatives, or open details.
-                            </p>
-                            {llmLoading && (
-                                <LlmRecommendationsLoadingBlock loadStartedAt={llmLoadStartedAt} compact />
-                            )}
-                            {llmError && (
-                                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textAlign: 'center' }}>
-                                    Could not generate personalized recommendations: {llmError}
-                                </p>
-                            )}
-                            <div style={{ display: 'grid', gap: '1.25rem' }}>
-                                {activeTiered.map((entry) => (
-                                    <div key={entry.concern} className="card" style={{ padding: '1.1rem' }}>
-                                        <h4 style={{ fontSize: '1.05rem', fontWeight: '800', marginBottom: '0.85rem', color: 'var(--color-text-main)' }}>{entry.concern}</h4>
-                                        <div style={{ display: 'grid', gap: '1rem' }}>
-                                            {(entry.tiers || []).map((tier, tierIdx) => {
-                                                const tierKey = tier.id || tier.name;
-                                                const subLabel = tier.subcategory || tier.name;
-                                                const ck = `${entry.concern}::${tierKey}`;
-                                                return (
-                                                    <div key={tierKey}>
-                                                        <IntakeRecommendationsProductCard
-                                                            product={tier.product}
-                                                            tierSubLabel={subLabel}
-                                                            quizResults={quizResults}
-                                                            healthProfile={healthProfile}
-                                                            trackedProducts={trackedProducts}
-                                                            myProducts={myProducts}
-                                                            onToggleProduct={onToggleProduct}
-                                                            onOpenProduct={onOpenProduct}
-                                                            showTopPickBadge={tierIdx === 0}
-                                                            compareKey={ck}
-                                                            compareOpen={ecosystemCompareOpen}
-                                                            onToggleCompare={toggleEcosystemCompare}
-                                                            alternatives={tier.alternatives}
-                                                            altMiniKey={ecosystemAltMiniKey}
-                                                            onSelectAltMini={selectEcosystemAltMini}
-                                                        />
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-                                        {typeof onGoToSearch === 'function' && (
-                                            <div style={{ marginTop: '0.9rem', textAlign: 'center' }}>
-                                                <button type="button" className="btn btn-outline" style={{ fontSize: '0.88rem' }} onClick={() => onGoToSearch(entry.concern)}>
-                                                    Search all products for this concern →
-                                                </button>
-                                            </div>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
-                        </>
-                    ) : hasHealthIntakeForFlow ? (
-                        <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.9rem', margin: 0 }}>Recommendations will load here when ready.</p>
-                    ) : null}
-                </div>
-
-                {/* SECTION 2 — My Ecosystem */}
+                {/* SECTION 1 — My Ecosystem */}
                 <h3 style={{ fontSize: '1.35rem', marginBottom: '0.75rem', textAlign: 'center', color: 'var(--color-text-main)' }}>My Ecosystem</h3>
                 <div style={{
                     display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap',
@@ -1019,6 +951,178 @@ export default function MyEcosystem({
                         )}
                     </div>
                 ))}
+
+                {/* SECTION 2: AI Recommendations Grid */}
+                {(llmLoading || llmError || activeTiered.length > 0) && (
+                    <div style={{ maxWidth: '1100px', margin: '0 auto var(--spacing-xl)', padding: '0 0.25rem' }}>
+                        <h3 style={{ fontSize: '1.35rem', marginBottom: '0.35rem', color: 'var(--color-text-main)' }}>
+                            Recommended for You
+                        </h3>
+                        <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '1.25rem' }}>
+                            Top picks for each of your concerns — pre-added to your ecosystem. Swap any for an alternative.
+                        </p>
+                        {llmLoading && (
+                            <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--color-text-muted)' }}>
+                                <div style={{ fontSize: '2rem', marginBottom: '0.75rem' }}>🌸</div>
+                                <p style={{ fontWeight: '600' }}>Building your personalized ecosystem...</p>
+                                <p style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>Claude is reading your full health profile.</p>
+                            </div>
+                        )}
+                        {llmError && !llmLoading && (
+                            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textAlign: 'center' }}>
+                                Could not load recommendations: {llmError}
+                            </p>
+                        )}
+                        {!llmLoading && activeTiered.length > 0 && (
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                                gap: '1.25rem',
+                            }}>
+                                {activeTiered.map((entry) => {
+                                    const product = entry.topProduct || entry.tiers?.[0]?.product;
+                                    const alternatives = entry.alternatives || entry.tiers?.[0]?.alternatives || [];
+                                    if (!product) return null;
+                                    const imgSrc = product?.image && String(product.image).trim();
+                                    const buyUrl = product?.url && /^https?:\/\//i.test(String(product.url).trim()) ? String(product.url).trim() : '';
+                                    const isInEcosystem = !!myProducts[product.id];
+                                    return (
+                                        <div key={entry.concern} className="card hover-lift" style={{
+                                            padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', position: 'relative'
+                                        }}>
+                                            {/* Concern badge */}
+                                            <div style={{
+                                                position: 'absolute', top: '0.6rem', left: '0.6rem', zIndex: 5,
+                                                background: 'var(--color-primary)', color: 'white',
+                                                padding: '0.2rem 0.6rem', borderRadius: 'var(--radius-pill)',
+                                                fontSize: '0.68rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.04em',
+                                                maxWidth: '60%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                                            }}>
+                                                {entry.concern}
+                                            </div>
+                                            {/* Image */}
+                                            <div style={{ height: '140px', width: '100%', overflow: 'hidden', position: 'relative' }}>
+                                                {imgSrc ? (
+                                                    <img src={imgSrc} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                ) : (
+                                                    <div style={{
+                                                        width: '100%', height: '100%',
+                                                        background: 'linear-gradient(135deg, var(--color-secondary-fade), #f3e8ff)',
+                                                        display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem',
+                                                    }}>🌸</div>
+                                                )}
+                                                {/* Type badge */}
+                                                <span style={{
+                                                    position: 'absolute', bottom: '0.5rem', left: '0.5rem',
+                                                    background: product.type === 'digital' ? 'var(--color-primary)' : 'var(--color-surface-contrast)',
+                                                    color: 'white', padding: '0.2rem 0.55rem', borderRadius: 'var(--radius-pill)',
+                                                    fontSize: '0.68rem', fontWeight: '600', textTransform: 'uppercase',
+                                                }}>
+                                                    {product.type === 'digital' ? 'Digital' : 'Physical'}
+                                                </span>
+                                                {/* Pre-added badge */}
+                                                {isInEcosystem && (
+                                                    <span style={{
+                                                        position: 'absolute', bottom: '0.5rem', right: '0.5rem',
+                                                        background: '#DCFCE7', color: '#166534', padding: '0.2rem 0.55rem',
+                                                        borderRadius: 'var(--radius-pill)', fontSize: '0.68rem', fontWeight: '700',
+                                                    }}>✓ In Ecosystem</span>
+                                                )}
+                                            </div>
+                                            {/* Card body */}
+                                            <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+                                                <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', fontWeight: '600', marginBottom: '0.2rem' }}>
+                                                    {product.brand}
+                                                </div>
+                                                <h4 style={{ fontSize: '1rem', margin: '0 0 0.4rem', lineHeight: 1.3, color: 'var(--color-text-main)' }}>
+                                                    {product.name}
+                                                </h4>
+                                                <p style={{ fontSize: '0.82rem', color: 'var(--color-text-muted)', marginBottom: '0.5rem', lineHeight: 1.45 }}>
+                                                    {product.summary}
+                                                </p>
+                                                {product.whyItWorks && (
+                                                    <p style={{ fontSize: '0.8rem', color: 'var(--color-primary-hover)', fontWeight: '500', marginBottom: '0.5rem', lineHeight: 1.4 }}>
+                                                        {product.whyItWorks}
+                                                    </p>
+                                                )}
+                                                {product.considerations && (
+                                                    <p style={{ fontSize: '0.76rem', color: 'var(--color-text-muted)', fontStyle: 'italic', marginBottom: '0.5rem', lineHeight: 1.4 }}>
+                                                        ⚠️ {product.considerations}
+                                                    </p>
+                                                )}
+                                                {/* Safety tags */}
+                                                <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
+                                                    {product.safety?.recalls && !product.safety.recalls.includes('⚠️') && (
+                                                        <span style={{ fontSize: '0.7rem', background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.15rem 0.45rem', borderRadius: 'var(--radius-pill)' }}>✓ No recalls</span>
+                                                    )}
+                                                </div>
+                                                {/* Alternatives */}
+                                                {alternatives.length > 0 && (
+                                                    <details style={{ marginBottom: '0.75rem' }}>
+                                                        <summary style={{ cursor: 'pointer', fontSize: '0.78rem', fontWeight: '600', color: 'var(--color-primary)', userSelect: 'none' }}>
+                                                            {alternatives.length} alternative{alternatives.length !== 1 ? 's' : ''} →
+                                                        </summary>
+                                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', marginTop: '0.45rem' }}>
+                                                            {alternatives.map((alt) => (
+                                                                <div key={alt.id} style={{
+                                                                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                                                                    padding: '0.4rem 0.6rem', background: 'var(--color-surface-soft)',
+                                                                    borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)',
+                                                                    gap: '0.5rem',
+                                                                }}>
+                                                                    <div style={{ flex: 1, minWidth: 0 }}>
+                                                                        <div style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-text-main)', lineHeight: 1.2 }}>{alt.name}</div>
+                                                                        <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)' }}>{alt.price}</div>
+                                                                    </div>
+                                                                    <div style={{ display: 'flex', gap: '0.3rem', flexShrink: 0 }}>
+                                                                        <button className="btn btn-outline" style={{ padding: '0.25rem 0.5rem', fontSize: '0.72rem' }}
+                                                                            onClick={() => onToggleProduct(alt)}>
+                                                                            {myProducts[alt.id] ? '✓' : '+'}
+                                                                        </button>
+                                                                        <button className="btn btn-outline" style={{ padding: '0.25rem 0.5rem', fontSize: '0.72rem' }}
+                                                                            onClick={() => onOpenProduct(alt)}>
+                                                                            Details
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </details>
+                                                )}
+                                                {/* Search all link */}
+                                                <button type="button"
+                                                    style={{ background: 'none', border: 'none', padding: 0, fontSize: '0.75rem', color: 'var(--color-text-muted)', cursor: 'pointer', textAlign: 'left', marginBottom: '0.75rem', textDecoration: 'underline' }}
+                                                    onClick={() => onGoToSearch && onGoToSearch(entry.concern)}>
+                                                    Search all products for this concern →
+                                                </button>
+                                                {/* Price + Actions */}
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.4rem', marginTop: 'auto' }}>
+                                                    <span style={{ fontSize: '0.95rem', fontWeight: '600' }}>{product.price}</span>
+                                                    <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                                                        <button className="btn btn-outline" style={{ padding: '0.35rem 0.7rem', fontSize: '0.78rem' }}
+                                                            onClick={() => onToggleProduct(product)}>
+                                                            {isInEcosystem ? '✓ Added' : '+ Add'}
+                                                        </button>
+                                                        <button className="btn btn-primary" style={{ padding: '0.35rem 0.7rem', fontSize: '0.78rem' }}
+                                                            onClick={() => onOpenProduct(product)}>
+                                                            Details
+                                                        </button>
+                                                        {buyUrl && (
+                                                            <a href={buyUrl} target="_blank" rel="noopener noreferrer"
+                                                                className="btn btn-outline" style={{ padding: '0.35rem 0.7rem', fontSize: '0.78rem' }}>
+                                                                Buy ↗
+                                                            </a>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </div>
+                )}
 
                 {/* Health profile: quiz + imported / manual context */}
                 <div className="card" style={{ maxWidth: '720px', margin: '0 auto var(--spacing-xl)', padding: '1.5rem', fontFamily: 'var(--font-body)' }}>

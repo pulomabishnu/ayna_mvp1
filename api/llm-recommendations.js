@@ -73,28 +73,24 @@ function enrichRecommendations(recs) {
   const list = Array.isArray(recs) ? recs : [];
   return list
     .map((entry) => {
-      const tiers = (Array.isArray(entry?.tiers) ? entry.tiers : [])
-        .map((tier) => {
-          const product = enrichProduct(tier?.product);
-          if (!product) return null;
-          const alternatives = (Array.isArray(tier?.alternatives) ? tier.alternatives : [])
-            .map((alt, i) => enrichProduct(alt, `-alt${i}`))
-            .filter(Boolean)
-            .slice(0, 3);
-          return {
-            ...tier,
-            name: String(tier?.name || '').trim() || 'Tier',
-            product,
-            alternatives,
-            safetyFlags: Array.isArray(tier?.safetyFlags) ? tier.safetyFlags : [],
-          };
-        })
-        .filter(Boolean);
-      if (!tiers.length) return null;
+      const topProduct = enrichProduct(entry?.topProduct);
+      if (!topProduct) return null;
+      const alternatives = (Array.isArray(entry?.alternatives) ? entry.alternatives : [])
+        .map((alt, i) => enrichProduct(alt, `-alt${i}`))
+        .filter(Boolean)
+        .slice(0, 3);
       return {
         concern: String(entry?.concern || '').trim() || 'Recommendations',
-        tiers,
+        topProduct,
+        alternatives,
         notes: Array.isArray(entry?.notes) ? entry.notes.slice(0, 5).map((x) => String(x)) : [],
+        // Keep tiers array for backward compatibility with any code still using it
+        tiers: [{
+          name: 'Top pick',
+          product: topProduct,
+          alternatives,
+          safetyFlags: [],
+        }],
       };
     })
     .filter(Boolean);
@@ -105,7 +101,9 @@ function buildPrompt(intake = {}, feedback = {}) {
   const concernFollowups = intake?.concernFollowups && typeof intake.concernFollowups === 'object' ? intake.concernFollowups : {};
 
   return `
-You are Ayna's recommendation engine — a women's health AI that generates deeply personalized product recommendations.
+You are Ayna's recommendation engine. Ayna is a women's health product platform. Your job is to act like a knowledgeable women's health expert and recommend the BEST real products available for this specific user based on her health profile.
+
+You have access to all publicly known women's health products — supplements, period care, devices, apps, telehealth services, skincare, and more. Do NOT limit yourself to a predefined list. Recommend the actual best products that exist in the real world for each of this user's concerns.
 
 USER HEALTH PROFILE:
 - Age: ${intake?.age || 'unknown'}
@@ -113,7 +111,7 @@ USER HEALTH PROFILE:
 - Primary concerns: ${concerns.join(', ') || 'none provided'}
 - Custom concerns: ${(Array.isArray(intake?.customConcerns) ? intake.customConcerns : []).join(', ') || 'none'}
 - Diagnosed conditions: ${(Array.isArray(intake?.conditions) ? intake.conditions : []).join(', ') || 'none'}
-- Menstrual cycle: ${intake?.menstrualCycle || 'unknown'}
+- Menstrual cycle status: ${intake?.menstrualCycle || 'unknown'}
 - Cycle length: ${intake?.averageCycleLength || 'unknown'} days
 - Period length: ${intake?.averagePeriodLength || 'unknown'} days
 - Flow level: ${intake?.flowLevel || 'unknown'}
@@ -126,88 +124,77 @@ USER HEALTH PROFILE:
 - Currently uses: ${intake?.currentProductsText || 'none'}
 - Tried and disliked: ${intake?.dislikedProductsText || 'none'} — reason: ${intake?.dislikedReason || 'none'}
 - Goals: ${(Array.isArray(intake?.goals) ? intake.goals : []).join(', ') || 'none'}
-- Concern-specific follow-ups: ${JSON.stringify(concernFollowups)}
+- Concern-specific details: ${JSON.stringify(concernFollowups)}
 
-LEARNING SIGNALS — use these to get smarter for this user over time:
-- Products she has saved/tracked: ${(feedback?.trackedProductIds || []).join(', ') || 'none'}
+LEARNING SIGNALS:
+- Products she has saved: ${(feedback?.trackedProductIds || []).join(', ') || 'none'}
 - Products in her ecosystem: ${(feedback?.ecosystemProductIds || []).join(', ') || 'none'}
 - Products she has hidden: ${(feedback?.omittedProductIds || []).join(', ') || 'none'}
-- Cross-session memory: ${JSON.stringify(feedback?.learningMemory || {})}
+- Interaction count (how many times she has used Ayna): ${feedback?.learningMemory?.interactionCount || 0}
+- Last concerns she viewed: ${(feedback?.learningMemory?.lastConcerns || []).join(', ') || 'none'}
 
 TASK:
-Generate product recommendations for this specific user. For each concern area relevant to her profile, generate three tiers of recommendations. Each recommendation must be a REAL product that actually exists and is available for purchase.
+For each of her primary concerns, generate the single best product recommendation. The best product is whatever actually works best for that concern given her specific profile — it could be a pad, a supplement, an app, a device, a telehealth service, anything. Do not force one physical + one supplement + one digital for every concern. Just recommend what is actually best.
 
-IMPORTANT RULES:
+Also generate 3 real alternative products for each top pick.
+
+RULES:
+- Only generate concerns she actually has based on her profile. If she selected "PCOS management", recommend PCOS products. If she selected "Period care", recommend period products. Match the concern label exactly to what she selected.
 - Never recommend products she has tried and disliked
 - Never recommend products she has already hidden
-- If she has endometriosis: always flag products with synthetic fragrances, dioxins, chlorine bleaching, or BPA
-- If she has PCOS: prioritize products that support hormone balance; flag hormone-disrupting ingredients
+- If she has endometriosis: always flag synthetic fragrances, dioxins, chlorine bleaching, BPA
+- If she has PCOS: prioritize hormone-balancing products; flag endocrine disruptors
 - If she is trying to conceive: flag any supplements contraindicated in pregnancy
-- If pain level is 8 or higher: always include a telehealth recommendation
-- Only show concern areas relevant to her profile — do not show all concerns to every user
-- Never make diagnostic claims — say "may help with" not "treats" or "cures"
-- Every whyItWorks explanation must reference at least one specific detail from her profile
+- If pain level 8+: include a telehealth option
+- Never say "treats" or "cures" — say "may help with"
+- Every whyItWorks must reference at least one specific detail from her profile
 - Never recommend products with active FDA recalls
-- Use the learning signals to avoid repeating products she has already seen and to weight toward her demonstrated preferences
-- The more times this user has interacted with Ayna, the smarter and more specific your recommendations should get
-- Product "url" fields must be valid https URLs to the brand or major retailer product page when possible; otherwise use https://www.google.com/search?q= plus encoded product name
+- Product names must be real products that actually exist and can be purchased
+- url must be a valid https link to the brand website or major retailer (Amazon, Target, etc.) — if unsure, use https://www.google.com/search?q= plus the URL-encoded product name
 
-Return ONLY a valid JSON object in exactly this format — no markdown, no explanation, just JSON:
+Return ONLY a valid JSON object. No markdown, no explanation, just JSON:
 
 {
   "recommendations": [
     {
-      "concern": "string — the concern area label",
-      "tiers": [
-        {
-          "name": "TIER 1 - IMMEDIATE PHYSICAL PRODUCT",
-          "product": {
-            "id": "unique-slug-no-spaces",
-            "name": "Exact real product name",
-            "brand": "Brand name",
-            "category": "category string",
-            "type": "physical",
-            "summary": "2-3 sentence description of what this product is and does",
-            "whyItWorks": "2-3 sentences explaining exactly why this product fits THIS user's specific profile, conditions, and preferences — must reference her specific details",
-            "considerations": "Any ingredients, materials, or interactions she should be aware of given her specific conditions. Leave empty string if none.",
-            "price": "$XX or $XX/month",
-            "image": "",
-            "tags": ["tag1", "tag2"],
-            "safety": {
-              "recalls": "No known recalls",
-              "materials": "brief materials note",
-              "sideEffects": "brief side effects note if relevant",
-              "opinionAlerts": ""
-            },
-            "clinicianOpinionSource": "",
-            "clinicianAttribution": "",
-            "url": "https://product-website.com"
-          },
-          "alternatives": [
-            {
-              "id": "unique-slug",
-              "name": "Alternative product name",
-              "brand": "Brand",
-              "summary": "1-2 sentence description",
-              "price": "$XX",
-              "type": "physical",
-              "image": "",
-              "url": "https://product-website.com"
-            }
-          ]
+      "concern": "exact concern label from her primary concerns",
+      "topProduct": {
+        "id": "brand-productname-slug",
+        "name": "Exact real product name",
+        "brand": "Brand name",
+        "category": "category",
+        "type": "physical or digital",
+        "summary": "2-3 sentences describing what this product is",
+        "whyItWorks": "2-3 sentences explaining why this fits THIS user specifically, referencing her profile details",
+        "considerations": "Ingredient or safety notes relevant to her conditions. Empty string if none.",
+        "price": "$XX",
+        "image": "",
+        "tags": ["tag1", "tag2"],
+        "safety": {
+          "recalls": "No known recalls",
+          "materials": "",
+          "sideEffects": "",
+          "opinionAlerts": ""
         },
+        "clinicianOpinionSource": "",
+        "clinicianAttribution": "",
+        "url": "https://..."
+      },
+      "alternatives": [
         {
-          "name": "TIER 2 - SUPPLEMENT OR WELLNESS PRODUCT",
-          "product": { },
-          "alternatives": [ ]
-        },
-        {
-          "name": "TIER 3 - DIGITAL OR TELEHEALTH OPTION",
-          "product": { },
-          "alternatives": [ ]
+          "id": "brand-productname-slug-alt1",
+          "name": "Alternative product name",
+          "brand": "Brand",
+          "summary": "1-2 sentence description",
+          "whyItWorks": "1 sentence on why this is a good alternative",
+          "price": "$XX",
+          "type": "physical or digital",
+          "image": "",
+          "url": "https://...",
+          "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" }
         }
       ],
-      "notes": ["optional safety or personalization note for this concern"]
+      "notes": []
     }
   ]
 }

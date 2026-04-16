@@ -208,6 +208,20 @@ function App() {
     });
   };
 
+  const handleLlmRecommendationsLoaded = (recommendations) => {
+    if (!Array.isArray(recommendations) || recommendations.length === 0) return;
+    setMyProducts((prev) => {
+      const next = { ...prev };
+      recommendations.forEach((entry) => {
+        const product = entry.topProduct || entry.tiers?.[0]?.product;
+        if (product && product.id && !next[product.id]) {
+          next[product.id] = product;
+        }
+      });
+      return next;
+    });
+  };
+
   const [selectedProductModal, setSelectedProductModal] = useState(null);
   const [selectedLlmProduct, setSelectedLlmProduct] = useState(null);
 
@@ -549,6 +563,7 @@ function App() {
               setSelectedArticleId(articleId);
               setCurrentView('articles');
             }}
+            onLlmRecommendationsLoaded={handleLlmRecommendationsLoaded}
           />
         )}
         {currentView === 'discovery' && (
