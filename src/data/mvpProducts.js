@@ -115,7 +115,9 @@ export const MVP_PHYSICAL = [
     verificationLinks: {
       doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care and product choices.', justification: 'ACOG is the leading OB-GYN professional society.' }] },
       scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product safety', summary: 'Research on absorbent materials and skin contact.', justification: 'PubMed peer-reviewed.' }] },
-      community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/search/?q=organic+pad&restrict_sr=1', text: 'Reddit r/periods — organic pads', summary: 'Community discussions on organic menstrual products.' }] }
+      community: { links: [
+        { platform: 'reddit', url: 'https://www.reddit.com/r/periods/search/?q=organic+pad&restrict_sr=1', text: 'Reddit r/periods — organic pads', summary: 'Community discussions on organic menstrual products.' },
+      ] }
     }
   },
   {
@@ -142,7 +144,10 @@ export const MVP_PHYSICAL = [
     verificationLinks: {
       doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care and product choices.', justification: 'ACOG is the leading OB-GYN professional society.' }] },
       scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product safety', summary: 'Research on absorbent materials and skin contact.', justification: 'PubMed peer-reviewed.' }] },
-      community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/search/?q=organic+tampon&restrict_sr=1', text: 'Reddit r/periods — organic tampons', summary: 'Community discussions on organic menstrual products.' }] }
+      community: { links: [
+        { platform: 'reddit', url: 'https://www.reddit.com/r/periods/search/?q=organic+tampon&restrict_sr=1', text: 'Reddit r/periods — organic tampons', summary: 'Community discussions on organic menstrual products.' },
+        { platform: 'wirecutter', url: 'https://www.nytimes.com/wirecutter/reviews/best-tampons/', text: 'Wirecutter: Best Tampons', summary: 'NYT Wirecutter independent tampon testing and recommendations.' },
+      ] }
     }
   },
   // ─── PCOS ─────────────────────────────────────────────────

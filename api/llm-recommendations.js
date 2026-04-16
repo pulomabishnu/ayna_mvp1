@@ -177,10 +177,16 @@ HOW TO REFERENCE THESE SOURCES:
 - ONLY say "consistent with" or "aligned with" or "supported by" — never claim to be directly quoting
 - Only reference an organization when you are confident their guidance genuinely covers this area
 
+EDITORIAL REVIEW SOURCES:
+When selecting products, factor in evaluations from trusted independent reviewers:
+- NYT Wirecutter — lab-tested reviews for menstrual products (period underwear, tampons, cups, discs), fitness trackers, and health gear. If a product is a Wirecutter top pick or has been positively reviewed there, mention it in whyItWorks.
+- InStyle — expert-tested reviews for period underwear and personal care products.
+If a recommended product was reviewed or tested by these outlets, note it briefly (e.g. "Wirecutter top pick" or "reviewed favorably by independent outlets"). This helps users trust the recommendation.
+
 PRODUCT SELECTION PROCESS — follow this for every concern:
 1. Identify what category of product would genuinely help this user's specific concern and profile
 2. Draw on your full knowledge of ALL brands that make products in that category — large mainstream brands, small indie brands, DTC brands, clinical brands, everything
-3. Rank candidates by: (a) clinical reputation and safety record, (b) relevance to this user's specific conditions and preferences, (c) availability in the US market, (d) user and community reputation
+3. Rank candidates by: (a) clinical reputation and safety record, (b) relevance to this user's specific conditions and preferences, (c) availability in the US market, (d) user and community reputation, (e) independent editorial reviews (e.g. Wirecutter, InStyle)
 4. Recommend the single best match — not the most popular product, the most relevant one for her specific profile
 
 TASK:

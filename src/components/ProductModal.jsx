@@ -83,6 +83,8 @@ const SOCIAL_PLATFORMS = [
   { key: 'youtube', label: 'YouTube & Shorts', icon: '▶️' },
   { key: 'reddit', label: 'Reddit', icon: '💬' },
   { key: 'facebook', label: 'Facebook', icon: '👥' },
+  { key: 'wirecutter', label: 'NYT Wirecutter', icon: '📰' },
+  { key: 'instyle', label: 'InStyle', icon: '📰' },
   { key: 'other', label: 'Other', icon: '🔗' }
 ];
 
@@ -95,6 +97,8 @@ function inferPlatform(url) {
     if (host.includes('youtube.com') || host.includes('youtu.be')) return 'youtube';
     if (host.includes('reddit.com')) return 'reddit';
     if (host.includes('facebook.com') || host.includes('fb.com') || host.includes('fb.me')) return 'facebook';
+    if (host.includes('nytimes.com') || host.includes('wirecutter.com') || host.includes('thewirecutter.com')) return 'wirecutter';
+    if (host.includes('instyle.com')) return 'instyle';
   } catch (_) {}
   return 'other';
 }

@@ -96,6 +96,13 @@ Ground clinicalNarrative and scienceSummary in guidance from these organizations
 - UpToDate for how clinicians approach a condition or product category at point of care
 - OpenEvidence (grounded in NEJM, JAMA, NCCN, Cochrane) as a reference for clinical evidence quality
 
+EDITORIAL REVIEW SOURCES FOR COMMUNITY CONTEXT:
+When writing communitySummary, reference trusted editorial reviews if relevant to this product category:
+- NYT Wirecutter — independent, lab-tested reviews for menstrual products, fitness trackers, and health gear
+- InStyle — expert-tested reviews for period underwear and personal care
+In communitySummary, you may say things like "Independent testing by outlets like NYT Wirecutter has evaluated products in this category" or "Editorial reviews note [observation]" when it genuinely applies.
+In communitySearchQueries, include one query that would surface editorial reviews (e.g. "best [category] wirecutter review") when relevant.
+
 HOW TO USE THESE SOURCES:
 - In clinicalNarrative: open with or include one phrase grounding the category in clinical guidance, e.g. "ACOG recognizes menstrual pain management as a key area of OB/GYN care" or "The NIH Office of Dietary Supplements notes that evidence for magnesium in menstrual pain is emerging"
 - In scienceSummary: reference the type and quality of evidence, e.g. "Cochrane reviews note limited RCT evidence for most menstrual supplements" or "ACOG clinical guidelines address this condition category"
@@ -208,7 +215,26 @@ function mergeBrandSearchQueries(product, normalized) {
   };
 }
 
-function buildSafeLinks(parsed) {
+const EDITORIAL_REVIEWS = {
+  'period-underwear': [
+    { url: 'https://www.nytimes.com/wirecutter/reviews/best-period-underwear/', text: 'Wirecutter: Best Period Underwear', summary: 'NYT Wirecutter independent testing of 50+ styles across 25 brands.', platform: 'wirecutter' },
+    { url: 'https://www.instyle.com/fashion/clothing/the-best-period-underwear', text: 'InStyle: Best Period Underwear', summary: 'InStyle tested and reviewed period underwear picks.', platform: 'instyle' },
+  ],
+  'tampon': [
+    { url: 'https://www.nytimes.com/wirecutter/reviews/best-tampons/', text: 'Wirecutter: Best Tampons', summary: 'NYT Wirecutter independent tampon testing and recommendations.', platform: 'wirecutter' },
+  ],
+  'cup': [
+    { url: 'https://www.nytimes.com/wirecutter/reviews/best-menstrual-cup/', text: 'Wirecutter: Best Menstrual Cups & Discs', summary: 'NYT Wirecutter testing of 50+ menstrual cups and discs.', platform: 'wirecutter' },
+  ],
+  'disc': [
+    { url: 'https://www.nytimes.com/wirecutter/reviews/best-menstrual-cup/', text: 'Wirecutter: Best Menstrual Cups & Discs', summary: 'NYT Wirecutter testing of 50+ menstrual cups and discs.', platform: 'wirecutter' },
+  ],
+  'tracker': [
+    { url: 'https://www.nytimes.com/wirecutter/reviews/the-best-fitness-trackers/', text: 'Wirecutter: Best Fitness Trackers', summary: 'NYT Wirecutter testing of 52+ fitness trackers for accuracy and comfort.', platform: 'wirecutter' },
+  ],
+};
+
+function buildSafeLinks(parsed, productCategory) {
   const literatureLinks = [];
   for (const q of parsed.pubmedSearchQueries) {
     literatureLinks.push({
@@ -245,6 +271,18 @@ function buildSafeLinks(parsed) {
       summary: 'Jump to YouTube search results — creator content varies in quality.',
       justification: 'Official YouTube search URL',
       platform: 'youtube',
+    });
+  }
+
+  const cat = (productCategory || '').toLowerCase();
+  const editorialLinks = EDITORIAL_REVIEWS[cat] || [];
+  for (const ed of editorialLinks) {
+    communityLinks.push({
+      url: ed.url,
+      text: ed.text,
+      summary: ed.summary,
+      justification: 'Curated editorial review URL',
+      platform: ed.platform,
     });
   }
 
@@ -598,7 +636,7 @@ export default async function handler(req, res) {
         userContextText
       );
       if (!out) continue;
-      const { clinicianLinks, literatureLinks, communityLinks } = buildSafeLinks(out.normalized);
+      const { clinicianLinks, literatureLinks, communityLinks } = buildSafeLinks(out.normalized, product?.category);
       return res.status(200).json({
         clinicalNarrative: out.normalized.clinicalNarrative,
         scienceSummary: out.normalized.scienceSummary || '',
