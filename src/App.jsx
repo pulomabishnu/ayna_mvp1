@@ -358,7 +358,7 @@ function App() {
                   aria-expanded={touchUi ? ecoMenuOpen : undefined}
                   aria-controls="nav-ecosystem-menu"
                 >
-                  Ecosystem
+                  My Ecosystem
                   {!isPremium && <span aria-hidden>🔒</span>}
                   {isPremium && ecosystemCount > 0 && (
                     <span className="nav-ecosystem__pill">{ecosystemCount}</span>
@@ -427,7 +427,7 @@ function App() {
             {/* Public Research Tools (Free) */}
             <div style={{ display: 'flex', gap: '0.35rem', borderLeft: '1px solid var(--color-border)', paddingLeft: '0.5rem' }}>
               <button style={{ fontSize: '0.8rem', fontWeight: (currentView === 'discovery' || currentView === 'hero') ? '700' : '500', color: currentView === 'discovery' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem' }} onClick={() => handleViewDiscovery('')}>
-                Search
+                Product Discovery
               </button>
               <button style={{ fontSize: '0.8rem', fontWeight: '500', color: currentView === 'waitlist' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem' }} onClick={handleViewWaitlist}>
                 Startups
@@ -436,7 +436,7 @@ function App() {
                 Deeptech
               </button>
               <button style={{ fontSize: '0.8rem', fontWeight: '500', color: currentView === 'articles' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem' }} onClick={handleViewArticles}>
-                Articles
+                My Health Library
               </button>
             </div>
           </div>
@@ -542,7 +542,7 @@ function App() {
             onZipCodeChange={handleZipCodeChange}
             ecosystemSeedMeta={ecosystemSeedMeta}
             onSwapSeedProduct={handleSwapEcosystemSeedProduct}
-            onGoToSearch={() => handleViewDiscovery('')}
+            onGoToSearch={(query) => handleViewDiscovery(query || '')}
             onHealthProfileUpdate={(next) => setHealthProfile(next)}
             onViewRecommendedArticles={handleViewArticles}
             onOpenArticle={(articleId) => {

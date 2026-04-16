@@ -4,7 +4,15 @@ import { getRecommendedArticles } from './Articles';
 import { inferTagsFromHealthProfile } from '../utils/healthDataProfile';
 import CareNearYouPanel from './CareNearYouPanel';
 import LlmRecommendationsLoadingBlock from './LlmRecommendationsLoadingBlock';
-import { fetchLlmRecommendations, loadLearningMemory, saveLearningMemory } from '../utils/fetchLlmRecommendations';
+import {
+    fetchLlmRecommendations,
+    loadLearningMemory,
+    saveLearningMemory,
+    fingerprintIntake,
+    loadCachedLlmRecommendations,
+    saveCachedLlmRecommendations,
+    clearCachedLlmRecommendations,
+} from '../utils/fetchLlmRecommendations';
 
 const TYPE_OPTIONS = [
     { value: 'all', label: 'All types' },
@@ -101,10 +109,15 @@ export default function Recommendations({
     const recommendedArticles = useMemo(() => getRecommendedArticles(results || {}, healthProfile), [results, healthProfile]);
     const tiered = llmTiered;
 
+    const intakeFingerprint = useMemo(
+        () => fingerprintIntake(results?.fullHealthIntake || null),
+        [results]
+    );
+
     useEffect(() => {
         let active = true;
-        const intake = results?.fullHealthIntake || null;
-        if (!intake || Object.keys(intake).length === 0) {
+        if (!intakeFingerprint) {
+            clearCachedLlmRecommendations();
             setLlmTiered([]);
             setLlmLoading(false);
             setLlmError('');
@@ -113,6 +126,19 @@ export default function Recommendations({
                 active = false;
             };
         }
+
+        const cached = loadCachedLlmRecommendations(intakeFingerprint);
+        if (cached) {
+            setLlmTiered(cached);
+            setLlmLoading(false);
+            setLlmError('');
+            setLlmLoadStartedAt(0);
+            return () => {
+                active = false;
+            };
+        }
+
+        const intake = results?.fullHealthIntake || null;
 
         (async () => {
             setLlmLoadStartedAt(Date.now());
@@ -130,6 +156,9 @@ export default function Recommendations({
                 if (!active) return;
                 const recs = Array.isArray(data?.recommendations) ? data.recommendations : [];
                 setLlmTiered(recs);
+                if (recs.length > 0) {
+                    saveCachedLlmRecommendations(intakeFingerprint, recs);
+                }
                 const recommendedProductIds = recs.flatMap((entry) =>
                     (entry?.tiers || []).flatMap((tier) => [tier?.product?.id, ...((tier?.alternatives || []).map((a) => a?.id))].filter(Boolean))
                 );
@@ -160,7 +189,7 @@ export default function Recommendations({
         return () => {
             active = false;
         };
-    }, [results, trackedProducts, myProducts, omittedProducts]);
+    }, [intakeFingerprint]);
 
     const renderProductCard = (product) => {
         const isTracked = !!trackedProducts[product.id];

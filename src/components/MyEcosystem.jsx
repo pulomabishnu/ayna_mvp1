@@ -1,18 +1,25 @@
-import React, { useMemo, useState, useRef, useEffect } from 'react';
+import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react';
 import {
     HEALTH_FUNCTIONS,
     ALL_PRODUCTS,
     detectDuplicates,
     getEcosystemAlternatives,
-    getEcosystemSeedFromQuiz,
+    getRecommendationExplanation,
 } from '../data/products';
 import { getInteractions } from '../data/interactions';
 import CareNearYouPanel from './CareNearYouPanel';
 import LlmRecommendationsLoadingBlock from './LlmRecommendationsLoadingBlock';
-import { getRecommendedArticles } from './Articles';
 import { inferTagsFromHealthProfile, saveHealthProfile } from '../utils/healthDataProfile';
 import { generateTieredRecommendations } from '../utils/recommendationEngine';
-import { fetchLlmRecommendations, loadLearningMemory, saveLearningMemory } from '../utils/fetchLlmRecommendations';
+import {
+    fetchLlmRecommendations,
+    loadLearningMemory,
+    saveLearningMemory,
+    fingerprintIntake,
+    loadCachedLlmRecommendations,
+    saveCachedLlmRecommendations,
+    clearCachedLlmRecommendations,
+} from '../utils/fetchLlmRecommendations';
 
 function EcosystemProductAlternatives({ product, seedEntry, quizResults, healthProfile, onSwap, onGoToSearch, precomputedAlternatives = [] }) {
     const [open, setOpen] = useState(false);
@@ -174,6 +181,229 @@ function EcosystemProductAlternatives({ product, seedEntry, quizResults, healthP
     );
 }
 
+function IntakeRecAltMini({ alt, myProducts, onToggleProduct, onOpenProduct }) {
+    const imgSrc = alt?.image && String(alt.image).trim();
+    const buyUrl = alt?.url && /^https:\/\//i.test(String(alt.url).trim()) ? String(alt.url).trim() : '';
+    const inEco = !!myProducts[alt.id];
+    return (
+        <div
+            className="card"
+            style={{
+                padding: '0.75rem',
+                border: '1px solid var(--color-border)',
+                borderRadius: 'var(--radius-md)',
+                background: 'var(--color-surface-soft)',
+            }}
+        >
+            <div style={{ display: 'flex', gap: '0.65rem', alignItems: 'flex-start' }}>
+                <div style={{ width: '48px', height: '48px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0, border: '1px solid var(--color-border)' }}>
+                    {imgSrc ? (
+                        <img src={imgSrc} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : (
+                        <div style={{
+                            width: '100%', height: '100%',
+                            background: 'linear-gradient(135deg, var(--color-secondary-fade), #f3e8ff)',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            fontSize: '1.25rem',
+                        }}>🌸</div>
+                    )}
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '0.88rem', fontWeight: '700', color: 'var(--color-text-main)', lineHeight: 1.3 }}>{alt.name}</div>
+                    {alt.brand && <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{alt.brand}</div>}
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem', marginTop: '0.45rem' }}>
+                        <button type="button" className="btn btn-outline" style={{ padding: '0.3rem 0.55rem', fontSize: '0.75rem' }} onClick={() => onToggleProduct(alt)}>
+                            {inEco ? '✓ In ecosystem' : '+ Add to Ecosystem'}
+                        </button>
+                        <button type="button" className="btn btn-primary" style={{ padding: '0.3rem 0.55rem', fontSize: '0.75rem' }} onClick={() => onOpenProduct(alt)}>
+                            Details
+                        </button>
+                        {buyUrl && (
+                            <a href={buyUrl} target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ padding: '0.3rem 0.55rem', fontSize: '0.75rem', textDecoration: 'none' }}>
+                                Buy ↗
+                            </a>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function IntakeRecommendationsProductCard({
+    product,
+    tierSubLabel,
+    quizResults,
+    healthProfile,
+    trackedProducts,
+    myProducts,
+    onToggleProduct,
+    onOpenProduct,
+    showTopPickBadge,
+    compareKey,
+    compareOpen,
+    onToggleCompare,
+    alternatives,
+    altMiniKey,
+    onSelectAltMini,
+}) {
+    const isTracked = !!trackedProducts[product.id];
+    const isInEcosystem = !!myProducts[product.id];
+    const hasIndependentClinician = product?.clinicianOpinionSource === 'independent' && String(product?.clinicianAttribution || '').trim().length > 0;
+    const engine = getRecommendationExplanation(product, quizResults, healthProfile);
+    const useLlmNarrative = product?.whyItWorks != null && String(product.whyItWorks).trim().length > 0;
+    const whyItWorks = useLlmNarrative ? String(product.whyItWorks).trim() : engine.whyItWorks;
+    const considerations = useLlmNarrative ? (String(product.considerations || '').trim() || null) : engine.considerations;
+    const imgSrc = product.image && String(product.image).trim();
+    const buyUrl = product.url && /^https:\/\//i.test(String(product.url).trim()) ? String(product.url).trim() : '';
+    const recallTxt = (product.safety?.recalls || '').trim();
+    const showNoRecallsTag = recallTxt && !recallTxt.includes('⚠️');
+    const showRecallWarning = recallTxt && recallTxt.includes('⚠️');
+    const alts = Array.isArray(alternatives) ? alternatives.slice(0, 3) : [];
+    const compareOn = !!compareOpen[compareKey];
+    const selectedMiniAlt =
+        !compareOn && altMiniKey && altMiniKey.startsWith(`${compareKey}::`)
+            ? alts.find((a) => `${compareKey}::${a.id}` === altMiniKey)
+            : null;
+
+    return (
+        <div className="card hover-lift" style={{
+            padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column',
+            position: 'relative', marginBottom: '0.5rem',
+        }}
+        >
+            <div style={{ height: '140px', width: '100%', overflow: 'hidden', position: 'relative' }}>
+                {imgSrc ? (
+                    <img src={imgSrc} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                    <div style={{
+                        width: '100%', height: '100%',
+                        background: 'linear-gradient(135deg, var(--color-secondary-fade), var(--color-primary-fade, #f3e8ff))',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: '2rem',
+                    }}>🌸</div>
+                )}
+                <span style={{
+                    position: 'absolute', top: '0.75rem', left: '0.75rem',
+                    background: product.type === 'physical' ? 'var(--color-surface-contrast)' : 'var(--color-primary)',
+                    color: 'white', padding: '0.25rem 0.75rem', borderRadius: 'var(--radius-pill)',
+                    fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase',
+                }}>
+                    {product.type === 'physical' ? 'Physical' : 'Digital'}
+                </span>
+                {isTracked && (
+                    <span style={{
+                        position: 'absolute', top: '0.75rem', right: '0.75rem',
+                        background: 'var(--color-primary)', color: 'white', padding: '0.25rem 0.6rem',
+                        borderRadius: 'var(--radius-pill)', fontSize: '0.7rem', fontWeight: '600',
+                    }}>✓ Tracked</span>
+                )}
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', alignItems: 'center', padding: '0.5rem 0.75rem', background: 'var(--color-bg)', borderBottom: '1px solid var(--color-border)' }}>
+                {showTopPickBadge && (
+                    <span style={{
+                        background: 'linear-gradient(135deg, #FEF9C3, #FDE68A)', color: '#854D0E',
+                        padding: '0.22rem 0.55rem', borderRadius: 'var(--radius-pill)', fontSize: '0.7rem', fontWeight: '700',
+                        border: '1px solid #FACC15',
+                    }}>⭐ Top pick for you</span>
+                )}
+                {hasIndependentClinician ? (
+                    <span style={{
+                        background: '#DCFCE7', color: '#166534', padding: '0.22rem 0.55rem',
+                        borderRadius: 'var(--radius-pill)', fontSize: '0.7rem', fontWeight: '700',
+                    }}>Independent clinician verified</span>
+                ) : (
+                    <span style={{
+                        background: '#FEF3C7', color: '#92400E', padding: '0.22rem 0.55rem',
+                        borderRadius: 'var(--radius-pill)', fontSize: '0.7rem', fontWeight: '700',
+                    }}>No independent clinician opinion yet</span>
+                )}
+            </div>
+            <div style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+                {tierSubLabel && (
+                    <p style={{ fontSize: '0.78rem', fontWeight: '700', color: 'var(--color-text-muted)', margin: '0 0 0.35rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{tierSubLabel}</p>
+                )}
+                <h3 style={{ fontSize: '1.2rem', marginBottom: '0.35rem' }}>{product.name}</h3>
+                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '0.75rem', lineHeight: '1.45' }}>{product.summary || ''}</p>
+                {whyItWorks && (
+                    <p style={{ fontSize: '0.85rem', color: 'var(--color-primary-hover)', fontWeight: '500', marginBottom: '0.5rem', lineHeight: 1.4 }}>
+                        {whyItWorks}
+                    </p>
+                )}
+                {considerations && (
+                    <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '0.75rem', lineHeight: 1.4, fontStyle: 'italic' }}>
+                        {considerations}
+                    </p>
+                )}
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
+                    {showNoRecallsTag && (
+                        <span style={{ fontSize: '0.75rem', background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>✓ No recalls</span>
+                    )}
+                    {showRecallWarning && (
+                        <span style={{ fontSize: '0.75rem', background: '#F8F9FA', color: 'var(--color-text-main)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>⚠️ Safety note</span>
+                    )}
+                    {product.privacy?.sellsData?.includes('❌') && (
+                        <span style={{ fontSize: '0.75rem', background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>🔒 No data selling</span>
+                    )}
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', marginBottom: '0.65rem', flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: '1rem', fontWeight: '600', color: 'var(--color-text-main)' }}>{product.price || '—'}</span>
+                </div>
+                <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginTop: 'auto' }}>
+                    <button type="button" className="btn btn-outline" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }} onClick={() => onToggleProduct(product)}>
+                        {isInEcosystem ? '✓ Added' : '+ Add to Ecosystem'}
+                    </button>
+                    <button type="button" className="btn btn-outline" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }} onClick={() => onToggleCompare(compareKey)}>
+                        {compareOn ? 'Hide compare' : 'Compare'}
+                    </button>
+                    <button type="button" className="btn btn-primary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }} onClick={() => onOpenProduct(product)}>
+                        Details
+                    </button>
+                    {buyUrl && (
+                        <a href={buyUrl} target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>
+                            Buy ↗
+                        </a>
+                    )}
+                </div>
+                {alts.length > 0 && (
+                    <div style={{ marginTop: '0.85rem', paddingTop: '0.85rem', borderTop: '1px solid var(--color-border)' }}>
+                        <div style={{ fontSize: '0.72rem', fontWeight: '700', color: 'var(--color-text-muted)', marginBottom: '0.4rem' }}>3 alternatives</div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+                            {alts.map((alt) => {
+                                const mk = `${compareKey}::${alt.id}`;
+                                const pillOpen = altMiniKey === mk;
+                                return (
+                                    <button
+                                        key={alt.id}
+                                        type="button"
+                                        className="btn btn-outline"
+                                        style={{ padding: '0.25rem 0.65rem', fontSize: '0.78rem', borderRadius: 'var(--radius-pill)' }}
+                                        onClick={() => onSelectAltMini(pillOpen ? '' : mk)}
+                                    >
+                                        {alt.name}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                        {selectedMiniAlt && (
+                            <div style={{ marginTop: '0.55rem' }}>
+                                <IntakeRecAltMini alt={selectedMiniAlt} myProducts={myProducts} onToggleProduct={onToggleProduct} onOpenProduct={onOpenProduct} />
+                            </div>
+                        )}
+                        {compareOn && (
+                            <div style={{ marginTop: '0.65rem', display: 'grid', gap: '0.5rem' }}>
+                                {alts.map((alt) => (
+                                    <IntakeRecAltMini key={`cmp-${alt.id}`} alt={alt} myProducts={myProducts} onToggleProduct={onToggleProduct} onOpenProduct={onOpenProduct} />
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
+
 /** Estimate monthly cost in USD from a price string. Returns null if unparseable. */
 function estimateMonthlyCost(priceStr, product) {
     if (!priceStr || typeof priceStr !== 'string') return null;
@@ -269,8 +499,8 @@ export default function MyEcosystem({
     const [searchTerm, setSearchTerm] = useState('');
     const [viewMode, setViewMode] = useState('function'); // 'function' or 'integration'
     const [interactionSelection, setInteractionSelection] = useState(new Set()); // product ids for interaction check
-    const [expandedConcern, setExpandedConcern] = useState('');
-    const [expandedSubByConcern, setExpandedSubByConcern] = useState({});
+    const [ecosystemCompareOpen, setEcosystemCompareOpen] = useState({});
+    const [ecosystemAltMiniKey, setEcosystemAltMiniKey] = useState('');
     const [llmTiered, setLlmTiered] = useState([]);
     const [llmLoading, setLlmLoading] = useState(false);
     const [llmError, setLlmError] = useState('');
@@ -329,65 +559,21 @@ export default function MyEcosystem({
         });
     };
 
-    /** One row per intake concern: top pick + top 3 alternatives (strictly concern-driven). */
-    const seededConcernsList = useMemo(() => {
-        const intake = quizResults?.fullHealthIntake || null;
-        if (intake && Object.keys(intake).length > 0) {
-            const tiered = llmTiered.length > 0 ? llmTiered : generateTieredRecommendations(intake);
-            return tiered
-                .map((entry) => {
-                    const topTier = Array.isArray(entry.tiers) ? entry.tiers[0] : null;
-                    const topProduct = topTier?.product || null;
-                    if (!topProduct) return null;
-                    return {
-                        product: topProduct,
-                        seedEntry: { frustration: entry.concern, tag: '' },
-                        alternatives: Array.isArray(topTier?.alternatives) ? topTier.alternatives.slice(0, 3) : [],
-                    };
-                })
-                .filter(Boolean);
-        }
-
-        if (!quizResults?.frustrations?.length) return [];
-        const order = quizResults.frustrations;
-        const entries = Object.entries(ecosystemSeedMeta || {});
-        const byFrustration = new Map();
-        if (entries.length) {
-            entries.forEach(([pid, meta]) => {
-                const p = myProducts[pid];
-                if (p && meta?.frustration && !byFrustration.has(meta.frustration)) {
-                    byFrustration.set(meta.frustration, { product: p, seedEntry: meta, alternatives: [] });
-                }
-            });
-        }
-        if (byFrustration.size === 0) {
-            const { seedMeta } = getEcosystemSeedFromQuiz(quizResults, healthProfile);
-            order.forEach((f) => {
-                const pid = Object.keys(seedMeta).find((id) => seedMeta[id].frustration === f && myProducts[id]);
-                if (pid) byFrustration.set(f, { product: myProducts[pid], seedEntry: seedMeta[pid], alternatives: [] });
-            });
-        }
-        const rows = [];
-        order.forEach((f) => {
-            if (byFrustration.has(f)) rows.push(byFrustration.get(f));
-        });
-        byFrustration.forEach((row, f) => {
-            if (!order.includes(f)) rows.push(row);
-        });
-        return rows;
-    }, [ecosystemSeedMeta, myProducts, quizResults, healthProfile, llmTiered]);
-
-    const seededProductIds = useMemo(() => new Set(seededConcernsList.map((r) => r.product.id)), [seededConcernsList]);
     const intakeTieredRecommendations = useMemo(() => {
         const intake = quizResults?.fullHealthIntake || null;
         if (!intake || Object.keys(intake).length === 0) return [];
         return generateTieredRecommendations(intake);
     }, [quizResults]);
 
+    const intakeFingerprint = useMemo(
+        () => fingerprintIntake(quizResults?.fullHealthIntake || null),
+        [quizResults]
+    );
+
     useEffect(() => {
         let active = true;
-        const intake = quizResults?.fullHealthIntake || null;
-        if (!intake || Object.keys(intake).length === 0) {
+        if (!intakeFingerprint) {
+            clearCachedLlmRecommendations();
             setLlmTiered([]);
             setLlmLoading(false);
             setLlmError('');
@@ -396,6 +582,19 @@ export default function MyEcosystem({
                 active = false;
             };
         }
+
+        const cached = loadCachedLlmRecommendations(intakeFingerprint);
+        if (cached) {
+            setLlmTiered(cached);
+            setLlmLoading(false);
+            setLlmError('');
+            setLlmLoadStartedAt(0);
+            return () => {
+                active = false;
+            };
+        }
+
+        const intake = quizResults?.fullHealthIntake || null;
 
         (async () => {
             setLlmLoadStartedAt(Date.now());
@@ -413,7 +612,9 @@ export default function MyEcosystem({
                 if (!active) return;
                 const recs = Array.isArray(data?.recommendations) ? data.recommendations : [];
                 setLlmTiered(recs);
-                setLlmProvider(String(data?.providerUsed || ''));
+                if (recs.length > 0) {
+                    saveCachedLlmRecommendations(intakeFingerprint, recs);
+                }
                 const recommendedProductIds = recs.flatMap((entry) =>
                     (entry?.tiers || []).flatMap((tier) =>
                         [tier?.product?.id, ...((tier?.alternatives || []).map((a) => a?.id))].filter(Boolean)
@@ -446,7 +647,7 @@ export default function MyEcosystem({
         return () => {
             active = false;
         };
-    }, [quizResults, trackedProducts, myProducts, omittedProducts]);
+    }, [intakeFingerprint]);
 
     const activeTiered = useMemo(
         () => (llmTiered.length > 0 ? llmTiered : intakeTieredRecommendations),
@@ -459,16 +660,6 @@ export default function MyEcosystem({
     }, [quizResults]);
     const showCategoryFlowOnly = hasHealthIntakeForFlow && (
         intakeTieredRecommendations.length > 0 || llmLoading || llmTiered.length > 0 || !!llmError
-    );
-
-    const hasNonSeededProducts = useMemo(
-        () => myProductList.some((p) => !seededProductIds.has(p.id)),
-        [myProductList, seededProductIds]
-    );
-
-    const ecosystemArticles = useMemo(
-        () => getRecommendedArticles(quizResults || {}, healthProfile),
-        [quizResults, healthProfile]
     );
 
     useEffect(() => {
@@ -496,6 +687,16 @@ export default function MyEcosystem({
         setProfileEditOpen(false);
     };
 
+    const toggleEcosystemCompare = useCallback((k) => {
+        setEcosystemCompareOpen((prev) => ({ ...prev, [k]: !prev[k] }));
+        setEcosystemAltMiniKey('');
+    }, []);
+
+    const selectEcosystemAltMini = useCallback((key) => {
+        setEcosystemAltMiniKey(key);
+        if (key) setEcosystemCompareOpen({});
+    }, []);
+
     return (
         <>
             <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
@@ -513,7 +714,72 @@ export default function MyEcosystem({
                     </p>
                 </div>
 
-                {/* Summary stats first — matches the main ecosystem dashboard layout */}
+                {/* SECTION 1 — AI recommendations */}
+                <div style={{ maxWidth: '1000px', margin: '0 auto var(--spacing-xl)', padding: '0 0.25rem' }}>
+                    <h3 style={{ fontSize: '1.35rem', marginBottom: '0.5rem', textAlign: 'center', color: 'var(--color-text-main)' }}>AI Recommendations</h3>
+                    {showCategoryFlowOnly ? (
+                        <>
+                            <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.95rem', marginBottom: '1.1rem' }}>
+                                Picks from your intake — add to My Ecosystem, compare alternatives, or open details.
+                            </p>
+                            {llmLoading && (
+                                <LlmRecommendationsLoadingBlock loadStartedAt={llmLoadStartedAt} compact />
+                            )}
+                            {llmError && (
+                                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textAlign: 'center' }}>
+                                    Could not generate personalized recommendations: {llmError}
+                                </p>
+                            )}
+                            <div style={{ display: 'grid', gap: '1.25rem' }}>
+                                {activeTiered.map((entry) => (
+                                    <div key={entry.concern} className="card" style={{ padding: '1.1rem' }}>
+                                        <h4 style={{ fontSize: '1.05rem', fontWeight: '800', marginBottom: '0.85rem', color: 'var(--color-text-main)' }}>{entry.concern}</h4>
+                                        <div style={{ display: 'grid', gap: '1rem' }}>
+                                            {(entry.tiers || []).map((tier, tierIdx) => {
+                                                const tierKey = tier.id || tier.name;
+                                                const subLabel = tier.subcategory || tier.name;
+                                                const ck = `${entry.concern}::${tierKey}`;
+                                                return (
+                                                    <div key={tierKey}>
+                                                        <IntakeRecommendationsProductCard
+                                                            product={tier.product}
+                                                            tierSubLabel={subLabel}
+                                                            quizResults={quizResults}
+                                                            healthProfile={healthProfile}
+                                                            trackedProducts={trackedProducts}
+                                                            myProducts={myProducts}
+                                                            onToggleProduct={onToggleProduct}
+                                                            onOpenProduct={onOpenProduct}
+                                                            showTopPickBadge={tierIdx === 0}
+                                                            compareKey={ck}
+                                                            compareOpen={ecosystemCompareOpen}
+                                                            onToggleCompare={toggleEcosystemCompare}
+                                                            alternatives={tier.alternatives}
+                                                            altMiniKey={ecosystemAltMiniKey}
+                                                            onSelectAltMini={selectEcosystemAltMini}
+                                                        />
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                        {typeof onGoToSearch === 'function' && (
+                                            <div style={{ marginTop: '0.9rem', textAlign: 'center' }}>
+                                                <button type="button" className="btn btn-outline" style={{ fontSize: '0.88rem' }} onClick={() => onGoToSearch(entry.concern)}>
+                                                    Search all products for this concern →
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </>
+                    ) : hasHealthIntakeForFlow ? (
+                        <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.9rem', margin: 0 }}>Recommendations will load here when ready.</p>
+                    ) : null}
+                </div>
+
+                {/* SECTION 2 — My Ecosystem */}
+                <h3 style={{ fontSize: '1.35rem', marginBottom: '0.75rem', textAlign: 'center', color: 'var(--color-text-main)' }}>My Ecosystem</h3>
                 <div style={{
                     display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap',
                     marginBottom: 'var(--spacing-lg)',
@@ -553,273 +819,6 @@ export default function MyEcosystem({
                     </div>
                 </div>
 
-                {/* Category -> Subcategory -> Top pick + alternatives (post-intake primary flow) */}
-                {showCategoryFlowOnly && (
-                    <div style={{ maxWidth: '960px', margin: '0 auto var(--spacing-xl)', padding: '0 0.25rem' }}>
-                        <h3 style={{ fontSize: '1.35rem', marginBottom: '0.35rem', textAlign: 'center', color: 'var(--color-text-main)' }}>
-                            Your personalized recommendations
-                        </h3>
-                        <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.95rem', marginBottom: '1.1rem' }}>
-                            Category → subcategory symptoms → top pick for you, with 3 alternatives.
-                        </p>
-                        {llmLoading && (
-                            <LlmRecommendationsLoadingBlock loadStartedAt={llmLoadStartedAt} compact />
-                        )}
-                        {llmError && (
-                            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textAlign: 'center' }}>
-                                Could not generate personalized recommendations: {llmError}
-                            </p>
-                        )}
-                        <div style={{ display: 'grid', gap: '0.8rem' }}>
-                            {activeTiered.map((entry) => (
-                                <div key={entry.concern} className="card" style={{ padding: '1rem' }}>
-                                    <button
-                                        type="button"
-                                        onClick={() => setExpandedConcern((prev) => (prev === entry.concern ? '' : entry.concern))}
-                                        style={{
-                                            width: '100%',
-                                            background: 'none',
-                                            border: 'none',
-                                            cursor: 'pointer',
-                                            display: 'flex',
-                                            justifyContent: 'space-between',
-                                            alignItems: 'center',
-                                            textAlign: 'left',
-                                            padding: 0,
-                                        }}
-                                    >
-                                        <span style={{ fontSize: '1rem', fontWeight: '700', color: 'var(--color-text-main)' }}>{entry.concern}</span>
-                                        <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{expandedConcern === entry.concern ? '▼' : '▶'}</span>
-                                    </button>
-                                    {expandedConcern === entry.concern && (
-                                        <div style={{ marginTop: '0.7rem', display: 'grid', gap: '0.65rem' }}>
-                                            {entry.tiers.map((tier) => {
-                                                const tierKey = tier.id || tier.name;
-                                                const subLabel = tier.subcategory || tier.name;
-                                                const open = expandedSubByConcern[entry.concern] === tierKey;
-                                                const product = tier.product;
-                                                const imgSrc = product?.image && String(product.image).trim();
-                                                const buyUrl = product?.url && /^https:\/\//i.test(String(product.url).trim()) ? String(product.url).trim() : '';
-                                                const matchCopy = (tier.matchExplanation && String(tier.matchExplanation).trim())
-                                                    || (product?.whyItWorks && String(product.whyItWorks).trim())
-                                                    || '';
-                                                return (
-                                                    <div key={tierKey} style={{ border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '0.75rem' }}>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => setExpandedSubByConcern((prev) => ({ ...prev, [entry.concern]: prev[entry.concern] === tierKey ? '' : tierKey }))}
-                                                            style={{
-                                                                width: '100%',
-                                                                background: 'none',
-                                                                border: 'none',
-                                                                cursor: 'pointer',
-                                                                display: 'flex',
-                                                                justifyContent: 'space-between',
-                                                                alignItems: 'center',
-                                                                textAlign: 'left',
-                                                                padding: 0,
-                                                            }}
-                                                        >
-                                                            <span style={{ fontSize: '0.93rem', fontWeight: '600', color: 'var(--color-text-main)' }}>{subLabel}</span>
-                                                            <span style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)' }}>{open ? '▼' : '▶'}</span>
-                                                        </button>
-                                                        {open && (
-                                                            <div style={{ marginTop: '0.6rem' }}>
-                                                                <div style={{ display: 'flex', gap: '0.85rem', alignItems: 'center', marginBottom: '0.4rem' }}>
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={() => onOpenProduct(product)}
-                                                                        style={{
-                                                                            width: '62px',
-                                                                            height: '62px',
-                                                                            borderRadius: 'var(--radius-md)',
-                                                                            overflow: 'hidden',
-                                                                            border: '1px solid var(--color-border)',
-                                                                            background: 'none',
-                                                                            padding: 0,
-                                                                            cursor: 'pointer',
-                                                                            flexShrink: 0,
-                                                                        }}
-                                                                        aria-label={`Open ${product.name}`}
-                                                                    >
-                                                                        {imgSrc ? (
-                                                                            <img src={imgSrc} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                                                        ) : (
-                                                                            <div style={{
-                                                                                width: '100%', height: '100%',
-                                                                                background: 'linear-gradient(135deg, var(--color-secondary-fade), #f3e8ff)',
-                                                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                                                                fontSize: '2rem',
-                                                                            }}>🌸</div>
-                                                                        )}
-                                                                    </button>
-                                                                    <div style={{ flex: 1, minWidth: 0 }}>
-                                                                        <div style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', fontWeight: '700' }}>Top pick for you</div>
-                                                                        <button
-                                                                            type="button"
-                                                                            onClick={() => onOpenProduct(product)}
-                                                                            style={{ border: 'none', background: 'none', padding: 0, color: 'var(--color-primary)', fontWeight: '700', cursor: 'pointer', textAlign: 'left' }}
-                                                                        >
-                                                                            {product.name}
-                                                                        </button>
-                                                                        {buyUrl && (
-                                                                            <div style={{ marginTop: '0.35rem' }}>
-                                                                                <a
-                                                                                    href={buyUrl}
-                                                                                    target="_blank"
-                                                                                    rel="noopener noreferrer"
-                                                                                    className="btn btn-outline"
-                                                                                    style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', display: 'inline-block' }}
-                                                                                >
-                                                                                    Buy ↗
-                                                                                </a>
-                                                                            </div>
-                                                                        )}
-                                                                    </div>
-                                                                </div>
-                                                                {matchCopy && (
-                                                                    <p style={{ fontSize: '0.83rem', color: 'var(--color-text-muted)', margin: '0.35rem 0 0.45rem', lineHeight: 1.45 }}>
-                                                                        <strong>Match:</strong> {matchCopy}
-                                                                    </p>
-                                                                )}
-                                                                <details>
-                                                                    <summary style={{ cursor: 'pointer', fontSize: '0.82rem', fontWeight: '600', color: 'var(--color-primary)' }}>
-                                                                        3 alternatives
-                                                                    </summary>
-                                                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem', marginTop: '0.45rem' }}>
-                                                                        {(tier.alternatives || []).slice(0, 3).map((alt) => (
-                                                                            <button
-                                                                                key={alt.id}
-                                                                                type="button"
-                                                                                className="btn btn-outline"
-                                                                                style={{ padding: '0.25rem 0.55rem', fontSize: '0.75rem' }}
-                                                                                onClick={() => onOpenProduct(alt)}
-                                                                            >
-                                                                                {alt.name}
-                                                                            </button>
-                                                                        ))}
-                                                                    </div>
-                                                                </details>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-                                    )}
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
-
-                {/* Legacy seeded concern row cards */}
-                {!showCategoryFlowOnly && seededConcernsList.length > 0 && (
-                    <div style={{ maxWidth: '960px', margin: '0 auto var(--spacing-xl)', padding: '0 0.25rem' }}>
-                        <h3 style={{ fontSize: '1.35rem', marginBottom: '0.35rem', textAlign: 'center', color: 'var(--color-text-main)' }}>
-                            Your ecosystem
-                        </h3>
-                        <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.95rem', marginBottom: '1.25rem' }}>
-                            Your top suggested pick per concern is already saved here. Open the menu to compare the next best matches.
-                        </p>
-                        <div
-                            className="ecosystem-seed-grid"
-                            style={{
-                                display: 'grid',
-                                gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-                                gap: '1rem',
-                            }}
-                        >
-                            {seededConcernsList.map(({ product, seedEntry, alternatives = [] }) => (
-                                <div
-                                    key={product.id}
-                                    className="card"
-                                    style={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'stretch',
-                                        padding: '1rem',
-                                        border: '1px solid var(--color-border)',
-                                        background: 'var(--color-surface-soft)',
-                                    }}
-                                >
-                                    <p
-                                        style={{
-                                            fontSize: '0.72rem',
-                                            fontWeight: '700',
-                                            textTransform: 'uppercase',
-                                            letterSpacing: '0.05em',
-                                            color: 'var(--color-primary)',
-                                            margin: '0 0 0.65rem',
-                                        }}
-                                    >
-                                        {seedEntry.frustration}
-                                    </p>
-                                    <div
-                                        role="button"
-                                        tabIndex={0}
-                                        style={{ display: 'flex', alignItems: 'flex-start', gap: '0.85rem', cursor: 'pointer', marginBottom: '0.35rem' }}
-                                        onClick={() => onOpenProduct(product)}
-                                        onKeyDown={(e) => {
-                                            if (e.key === 'Enter' || e.key === ' ') {
-                                                e.preventDefault();
-                                                onOpenProduct(product);
-                                            }
-                                        }}
-                                    >
-                                        <div style={{ width: '56px', height: '56px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0, border: '1px solid var(--color-border)' }}>
-                                            <img src={product.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                        </div>
-                                        <div style={{ flex: 1, minWidth: 0 }}>
-                                            <span
-                                                style={{
-                                                    fontSize: '0.65rem',
-                                                    fontWeight: '700',
-                                                    textTransform: 'uppercase',
-                                                    letterSpacing: '0.04em',
-                                                    color: 'white',
-                                                    background: 'var(--color-primary)',
-                                                    padding: '0.15rem 0.45rem',
-                                                    borderRadius: 'var(--radius-pill)',
-                                                    display: 'inline-block',
-                                                    marginBottom: '0.35rem',
-                                                }}
-                                            >
-                                                In your ecosystem
-                                            </span>
-                                            <h4 style={{ fontSize: '0.98rem', margin: '0 0 0.2rem', lineHeight: 1.3, color: 'var(--color-text-main)' }}>{product.name}</h4>
-                                            <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{product.price || product.stage}</span>
-                                        </div>
-                                    </div>
-                                    <EcosystemProductAlternatives
-                                        product={product}
-                                        seedEntry={seedEntry}
-                                        quizResults={quizResults}
-                                        healthProfile={healthProfile}
-                                        onSwap={onSwapSeedProduct}
-                                        onGoToSearch={onGoToSearch}
-                                        precomputedAlternatives={alternatives}
-                                    />
-                                </div>
-                            ))}
-                        </div>
-                        <style>{`
-              @media (max-width: 800px) {
-                .ecosystem-seed-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
-              }
-              @media (max-width: 520px) {
-                .ecosystem-seed-grid { grid-template-columns: 1fr !important; }
-              }
-            `}</style>
-                    </div>
-                )}
-
-                {!showCategoryFlowOnly && seededConcernsList.length > 0 && hasNonSeededProducts && (
-                    <p style={{ textAlign: 'center', fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '0.75rem', maxWidth: '560px', marginLeft: 'auto', marginRight: 'auto' }}>
-                        Below: the rest of your products by category (your top picks per concern stay above).
-                    </p>
-                )}
-                {!showCategoryFlowOnly && (
                 <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-lg)', display: 'flex', justifyContent: 'center', gap: '1rem' }}>
                     <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>+ Add a Product or App</button>
                     <div style={{ background: 'var(--color-surface-soft)', padding: '0.25rem', borderRadius: 'var(--radius-pill)', border: '1px solid var(--color-border)', display: 'flex' }}>
@@ -843,9 +842,8 @@ export default function MyEcosystem({
                         >By Integration</button>
                     </div>
                 </div>
-                )}
 
-                {!showCategoryFlowOnly && (myProductList.length === 0 ? (
+                {(myProductList.length === 0 ? (
                     <div style={{ textAlign: 'center', padding: '3rem', background: 'var(--color-surface-soft)', borderRadius: 'var(--radius-lg)', border: '1px dashed var(--color-border)' }}>
                         <h3 style={{ fontSize: '1.25rem', marginBottom: '0.75rem', color: 'var(--color-text-muted)' }}>Your ecosystem is empty.</h3>
                         <p style={{ color: 'var(--color-text-muted)' }}>Add the products and apps you currently use and we'll organize them for you.</p>
@@ -881,7 +879,7 @@ export default function MyEcosystem({
                                 )}
 
                                 {Object.entries(functionMap).map(([fn, products]) => {
-                                    const rest = products.filter((p) => !seededProductIds.has(p.id));
+                                    const rest = products;
                                     if (rest.length === 0) return null;
                                     return (
                                     <div key={fn} style={{ marginBottom: '1.75rem' }}>
@@ -965,7 +963,7 @@ export default function MyEcosystem({
                         ) : (
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                                 {Object.entries(integrationMap).map(([int, products]) => {
-                                    const rest = products.filter((p) => !seededProductIds.has(p.id));
+                                    const rest = products;
                                     if (rest.length === 0) return null;
                                     return (
                                     <div key={int}>
@@ -1021,57 +1019,6 @@ export default function MyEcosystem({
                         )}
                     </div>
                 ))}
-
-                {ecosystemArticles.length > 0 && (
-                    <div style={{ maxWidth: '720px', margin: '0 auto var(--spacing-xl)', padding: '0 0.25rem' }}>
-                        <h3 style={{ fontSize: '1.35rem', marginBottom: '0.5rem', textAlign: 'center' }}>Health articles</h3>
-                        <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.95rem', marginBottom: '1.25rem' }}>
-                            Evidence-based reads matched to your profile.
-                        </p>
-                        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
-                            {ecosystemArticles.map((art) => (
-                                <li key={art.id}>
-                                    <button
-                                        type="button"
-                                        onClick={() => onOpenArticle?.(art.id)}
-                                        style={{
-                                            width: '100%',
-                                            textAlign: 'left',
-                                            padding: '0.85rem 1rem',
-                                            borderRadius: 'var(--radius-md)',
-                                            border: '1px solid var(--color-border)',
-                                            background: 'var(--color-surface-soft)',
-                                            cursor: 'pointer',
-                                            fontFamily: 'var(--font-body)',
-                                        }}
-                                    >
-                                        <span style={{ fontSize: '0.95rem', fontWeight: '600', color: 'var(--color-text-main)', display: 'block' }}>{art.title}</span>
-                                        {art.teaser && (
-                                            <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginTop: '0.35rem', display: 'block', lineHeight: 1.45 }}>
-                                                {(art.teaser || '').slice(0, 140)}{(art.teaser || '').length > 140 ? '…' : ''}
-                                            </span>
-                                        )}
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
-                        {typeof onViewRecommendedArticles === 'function' && (
-                            <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-                                <button type="button" className="btn btn-outline" style={{ fontSize: '0.9rem' }} onClick={onViewRecommendedArticles}>
-                                    Browse all articles
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                )}
-
-                <CareNearYouPanel
-                    quizResults={quizResults}
-                    healthProfile={healthProfile}
-                    userZipCode={userZipCode}
-                    onZipCodeChange={onZipCodeChange}
-                    onOpenProduct={onOpenProduct}
-                />
 
                 {/* Health profile: quiz + imported / manual context */}
                 <div className="card" style={{ maxWidth: '720px', margin: '0 auto var(--spacing-xl)', padding: '1.5rem', fontFamily: 'var(--font-body)' }}>
@@ -1319,6 +1266,15 @@ export default function MyEcosystem({
                         )}
                     </div>
                 )}
+
+                <h3 style={{ fontSize: '1.35rem', marginBottom: '0.75rem', textAlign: 'center', color: 'var(--color-text-main)', marginTop: 'var(--spacing-xl)' }}>Care Recommended for You</h3>
+                <CareNearYouPanel
+                    quizResults={quizResults}
+                    healthProfile={healthProfile}
+                    userZipCode={userZipCode}
+                    onZipCodeChange={onZipCodeChange}
+                    onOpenProduct={onOpenProduct}
+                />
             </section>
 
             {showAddModal && (

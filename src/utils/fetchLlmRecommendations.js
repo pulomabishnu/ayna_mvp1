@@ -1,5 +1,51 @@
 const API_PATH = '/api/llm-recommendations';
 const MEMORY_KEY = 'ayna_llm_learning_memory_v1';
+/** Session-scoped cache so revisiting Ecosystem does not re-call the LLM for the same intake. */
+const RECS_CACHE_KEY = 'ayna_llm_recommendations_by_intake_v1';
+
+export function fingerprintIntake(intake) {
+  if (!intake || typeof intake !== 'object' || Object.keys(intake).length === 0) return '';
+  try {
+    return JSON.stringify(intake);
+  } catch {
+    return '';
+  }
+}
+
+export function loadCachedLlmRecommendations(fingerprint) {
+  if (!fingerprint || typeof window === 'undefined') return null;
+  try {
+    const raw = window.sessionStorage.getItem(RECS_CACHE_KEY);
+    if (!raw) return null;
+    const o = JSON.parse(raw);
+    if (!o || o.fingerprint !== fingerprint) return null;
+    const recs = o.recommendations;
+    return Array.isArray(recs) && recs.length > 0 ? recs : null;
+  } catch {
+    return null;
+  }
+}
+
+export function saveCachedLlmRecommendations(fingerprint, recommendations) {
+  if (!fingerprint || typeof window === 'undefined') return;
+  try {
+    window.sessionStorage.setItem(
+      RECS_CACHE_KEY,
+      JSON.stringify({ fingerprint, recommendations })
+    );
+  } catch {
+    // quota or private mode
+  }
+}
+
+export function clearCachedLlmRecommendations() {
+  try {
+    if (typeof window === 'undefined') return;
+    window.sessionStorage.removeItem(RECS_CACHE_KEY);
+  } catch {
+    // no-op
+  }
+}
 
 function asIdList(mapLike) {
   if (!mapLike || typeof mapLike !== 'object') return [];

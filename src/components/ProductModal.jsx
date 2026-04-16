@@ -136,6 +136,26 @@ function hasRecallConcern(product) {
   return /\brecall\b|\balert\b|\bwarning\b|voluntary|withdrawn|fda has/i.test(r);
 }
 
+function productHasMeaningfulSafety(product) {
+  const s = product?.safety;
+  if (!s || typeof s !== 'object') return false;
+  return ['fdaStatus', 'materials', 'recalls', 'sideEffects', 'opinionAlerts'].some((k) => String(s[k] || '').trim().length > 0);
+}
+
+function productHasScienceSignals(product, aiInsights) {
+  if ((product.effectiveness || '').trim().length >= 40) return true;
+  if (countHttpsLinksInSection(product.verificationLinks?.scientific) > 0) return true;
+  if ((aiInsights?.literatureLinks || []).length > 0) return true;
+  return false;
+}
+
+function productHasCommunitySignals(product, aiInsights) {
+  if ((product.communityReview || '').trim().length > 0) return true;
+  if ((aiInsights?.communityLinks || []).length > 0) return true;
+  if (countHttpsLinksInSection(product.verificationLinks?.community) > 0) return true;
+  return false;
+}
+
 const MEDWATCH_URL =
   'https://www.fda.gov/safety/medwatch-fda-safety-information-and-adverse-event-reporting-program';
 
@@ -1239,7 +1259,13 @@ export default function ProductModal({
                     {activeTab === 'safety' && (
                         <div className="animate-fade-in">
                             <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Safety &amp; what to know</h3>
+                            {!productHasMeaningfulSafety(product) && (
+                                <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', marginBottom: '1rem', lineHeight: 1.55 }}>
+                                    No safety data available yet for this product.
+                                </p>
+                            )}
                             <h4 style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', margin: '0 0 0.65rem' }}>Sources &amp; summarized detail</h4>
+                            {productHasMeaningfulSafety(product) && (
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                                     <div style={{ background: 'var(--color-bg)', padding: '1rem', borderRadius: 'var(--radius-md)' }}>
                                         <h4 style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>FDA Regulatory Status</h4>
@@ -1284,6 +1310,7 @@ export default function ProductModal({
                                         </div>
                                     )}
                             </div>
+                            )}
                         </div>
                     )}
 
@@ -1332,7 +1359,7 @@ export default function ProductModal({
                                         fontSize: '0.75rem',
                                         fontWeight: '700'
                                     }}>
-                                        No independent clinician opinion available yet
+                                        No independent clinician opinion yet
                                     </span>
                                 </div>
                             )}
@@ -1369,6 +1396,11 @@ export default function ProductModal({
                     {activeTab === 'science' && (
                         <div className="animate-fade-in">
                             <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Scientific literature</h3>
+                            {!condensed?.scienceInsight && !productHasScienceSignals(product, aiInsights) && (
+                                <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', marginBottom: '1rem', lineHeight: 1.55 }}>
+                                    No peer-reviewed literature indexed yet for this product.
+                                </p>
+                            )}
                             {condensed?.scienceInsight && (
                                 <div style={purpleInsightBoxStyle}>
                                     <h4 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#7E22CE', marginBottom: '0.65rem' }}>Insight</h4>
@@ -1393,6 +1425,11 @@ export default function ProductModal({
                     {activeTab === 'social' && (
                         <div className="animate-fade-in">
                             <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Community Experience & Social Proof</h3>
+                            {!condensed?.socialInsight && !productHasCommunitySignals(product, aiInsights) && (
+                                <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', marginBottom: '1rem', lineHeight: 1.55 }}>
+                                    No community reviews yet.
+                                </p>
+                            )}
                             {condensed?.socialInsight && (
                                 <div style={purpleInsightBoxStyle}>
                                     <h4 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#7E22CE', marginBottom: '0.65rem' }}>Insight</h4>
