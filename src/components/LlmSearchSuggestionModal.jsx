@@ -90,23 +90,25 @@ export default function LlmSearchSuggestionModal({ product, onClose }) {
         </button>
 
         <div style={{ padding: '1.75rem 1.5rem 1.25rem' }}>
-          <span
-            style={{
-              display: 'inline-block',
-              background: 'linear-gradient(135deg, #FDF4FF 0%, #F5F3FF 100%)',
-              color: '#7E22CE',
-              padding: '0.25rem 0.75rem',
-              borderRadius: 'var(--radius-pill)',
-              fontSize: '0.7rem',
-              fontWeight: '700',
-              textTransform: 'uppercase',
-              letterSpacing: '0.04em',
-              marginBottom: '0.75rem',
-              border: '1px solid #E9D5FF',
-            }}
-          >
-            {isIntake ? 'AI personalized recommendation' : 'Ayna preview · not in database'}
-          </span>
+          {!isIntake && (
+            <span
+              style={{
+                display: 'inline-block',
+                background: 'linear-gradient(135deg, #FDF4FF 0%, #F5F3FF 100%)',
+                color: '#7E22CE',
+                padding: '0.25rem 0.75rem',
+                borderRadius: 'var(--radius-pill)',
+                fontSize: '0.7rem',
+                fontWeight: '700',
+                textTransform: 'uppercase',
+                letterSpacing: '0.04em',
+                marginBottom: '0.75rem',
+                border: '1px solid #E9D5FF',
+              }}
+            >
+              Ayna preview · not in database
+            </span>
+          )}
           <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '0.35rem' }}>
             {label}
             {product.brand ? <span> · {product.brand}</span> : null}
