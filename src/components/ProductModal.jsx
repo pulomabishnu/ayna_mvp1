@@ -387,7 +387,7 @@ export default function ProductModal({
         if (!product?.name) return;
         setFdaRecallData(null);
         setFdaRecallLoading(true);
-        fetchFdaRecall(product.name, product.brand || '').then((data) => {
+        fetchFdaRecall(product.name, product.brand || '', product.category || '').then((data) => {
             setFdaRecallData(data);
             setFdaRecallLoading(false);
         });
