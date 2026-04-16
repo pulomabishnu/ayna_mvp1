@@ -453,6 +453,11 @@ function IntakeRecommendationsProductCard({
                     <p style={{ fontSize: '0.78rem', fontWeight: '700', color: 'var(--color-text-muted)', margin: '0 0 0.35rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{tierSubLabel}</p>
                 )}
                 <h3 style={{ fontSize: '1.2rem', marginBottom: '0.35rem' }}>{product.name}</h3>
+                {product.dsldVerified && (
+                    <span style={{ fontSize: '0.68rem', background: '#DCFCE7', color: '#166534', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)', fontWeight: '700', display: 'inline-block', marginBottom: '0.35rem' }}>
+                        ✓ NIH Verified Supplement
+                    </span>
+                )}
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '0.75rem', lineHeight: '1.45' }}>{product.summary || ''}</p>
                 {whyItWorks && (
                     <p style={{ fontSize: '0.85rem', color: 'var(--color-primary-hover)', fontWeight: '500', marginBottom: '0.5rem', lineHeight: 1.4 }}>

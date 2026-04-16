@@ -7,6 +7,8 @@ import { fetchProductInsights } from '../utils/fetchProductInsights';
 import { buildUserHealthContextString } from '../utils/userHealthContextForInsights';
 import { buildProfileTailoring } from '../utils/profileProductTailoring';
 import { deriveBrandSearchContext } from '../utils/productBrandContext.js';
+import { fetchFdaRecall } from '../utils/fetchFdaRecall';
+import { fetchPubmedArticles } from '../utils/fetchPubmedArticles';
 
 // Build purchase/search URLs for common retailers (product name encoded). Keys matched by store name.
 const STORE_SEARCH_URLS = {
@@ -360,6 +362,10 @@ export default function ProductModal({
     const [aiInsights, setAiInsights] = useState(null);
     const [aiLoading, setAiLoading] = useState(false);
     const [aiError, setAiError] = useState(null);
+    const [fdaRecallData, setFdaRecallData] = useState(null);
+    const [fdaRecallLoading, setFdaRecallLoading] = useState(false);
+    const [pubmedArticles, setPubmedArticles] = useState([]);
+    const [pubmedLoading, setPubmedLoading] = useState(false);
     const healthContextKey = useMemo(
         () => buildUserHealthContextString(quizResults, healthProfile),
         [quizResults, healthProfile]
@@ -396,6 +402,27 @@ export default function ProductModal({
         if (!n || !d || d.length < 12) return false;
         return n.includes(d.slice(0, Math.min(48, d.length)));
     }, [aiInsights?.clinicalNarrative, product?.doctorOpinion]);
+
+    useEffect(() => {
+        if (!product?.name) return;
+        setFdaRecallData(null);
+        setFdaRecallLoading(true);
+        fetchFdaRecall(product.name, product.brand || '').then((data) => {
+            setFdaRecallData(data);
+            setFdaRecallLoading(false);
+        });
+    }, [product?.name, product?.brand]);
+
+    useEffect(() => {
+        if (!product?.name) return;
+        setPubmedArticles([]);
+        setPubmedLoading(true);
+        const query = `${product.name} ${product.category || ''}`.trim().slice(0, 100);
+        fetchPubmedArticles(query, 5).then((articles) => {
+            setPubmedArticles(articles);
+            setPubmedLoading(false);
+        });
+    }, [product?.name, product?.category]);
 
     if (!product) return null;
 
@@ -1278,6 +1305,32 @@ export default function ProductModal({
                                     <div style={{ gridColumn: 'span 2', background: product.safety?.recalls?.includes('⚠️') ? '#F1F5F9' : '#F8FAFC', padding: '1rem', borderRadius: 'var(--radius-md)' }}>
                                         <h4 style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Safety Alerts & Recalls</h4>
                                         <p style={{ marginBottom: hasRecallConcern(product) ? '0.85rem' : 0 }}>{product.safety?.recalls || 'No active recalls.'}</p>
+                                        {fdaRecallLoading && (
+                                            <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', fontStyle: 'italic', marginTop: '0.5rem' }}>
+                                                Checking FDA recall database...
+                                            </p>
+                                        )}
+                                        {fdaRecallData && !fdaRecallLoading && (
+                                            <div style={{ marginTop: '0.75rem', padding: '0.75rem 1rem', borderRadius: 'var(--radius-md)', background: fdaRecallData.hasRecalls ? '#FEF2F2' : '#F0FDF4', border: `1px solid ${fdaRecallData.hasRecalls ? '#FECACA' : '#BBF7D0'}` }}>
+                                                <div style={{ fontSize: '0.75rem', fontWeight: '700', color: fdaRecallData.hasRecalls ? '#DC2626' : '#166534', marginBottom: '0.35rem' }}>
+                                                    {fdaRecallData.hasRecalls ? '⚠️ FDA Recall Records Found' : '✓ No FDA Recalls Found'}
+                                                </div>
+                                                <p style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', margin: 0 }}>
+                                                    {fdaRecallData.hasRecalls
+                                                        ? `${fdaRecallData.recalls.length} recall record(s) found in OpenFDA. Review carefully before purchasing.`
+                                                        : 'No recall records found in OpenFDA at time of check.'}
+                                                </p>
+                                                {fdaRecallData.hasRecalls && fdaRecallData.recalls.map((r, i) => (
+                                                    <div key={i} style={{ marginTop: '0.5rem', fontSize: '0.76rem', color: '#DC2626', lineHeight: 1.4 }}>
+                                                        <strong>{r.date}</strong> — {r.reason || r.description}
+                                                    </div>
+                                                ))}
+                                                <a href="https://www.accessdata.fda.gov/scripts/enforcement/enforce_rpt-Product-Tabs.cfm" target="_blank" rel="noopener noreferrer"
+                                                    style={{ fontSize: '0.72rem', color: 'var(--color-primary)', display: 'inline-block', marginTop: '0.35rem' }}>
+                                                    Check full FDA enforcement database →
+                                                </a>
+                                            </div>
+                                        )}
                                         {hasRecallConcern(product) && (
                                             <div style={{ paddingTop: '0.75rem', borderTop: '1px solid var(--color-border)', fontSize: '0.88rem', lineHeight: 1.55 }}>
                                                 <p style={{ margin: '0 0 0.5rem', fontWeight: '600', color: 'var(--color-text-main)' }}>FDA MedWatch</p>
@@ -1407,6 +1460,31 @@ export default function ProductModal({
                                     <p style={{ fontSize: '0.95rem', color: '#581C87', lineHeight: 1.65, margin: 0 }}>
                                         {renderRichText(condensed.scienceInsight)}
                                     </p>
+                                </div>
+                            )}
+                            {pubmedLoading && (
+                                <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', fontStyle: 'italic', marginBottom: '1rem' }}>
+                                    Fetching PubMed literature...
+                                </p>
+                            )}
+                            {pubmedArticles.length > 0 && (
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <h4 style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--color-text-main)', marginBottom: '0.75rem' }}>
+                                        Related PubMed Articles
+                                    </h4>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                                        {pubmedArticles.map((article) => (
+                                            <div key={article.pmid} style={{ padding: '0.75rem', background: 'var(--color-surface-soft)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
+                                                <a href={article.url} target="_blank" rel="noopener noreferrer"
+                                                    style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--color-primary)', textDecoration: 'none', lineHeight: 1.4, display: 'block', marginBottom: '0.25rem' }}>
+                                                    {article.title}
+                                                </a>
+                                                <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', margin: 0, lineHeight: 1.4 }}>
+                                                    {[article.authors, article.journal, article.year ? `(${article.year})` : ''].filter(Boolean).join(' · ')}
+                                                </p>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                             )}
                             <h4 style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', margin: '1.25rem 0 0.5rem' }}>Sources</h4>

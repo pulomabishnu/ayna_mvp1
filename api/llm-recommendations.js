@@ -96,6 +96,34 @@ function enrichRecommendations(recs) {
     .filter(Boolean);
 }
 
+async function lookupDsldProduct(name) {
+  if (!name || name.length < 3) return null;
+  try {
+    const url = `https://api.ods.od.nih.gov/dsld/v9/label?name=${encodeURIComponent(name)}&status=Y&size=1`;
+    const r = await fetch(url, {
+      headers: { Accept: 'application/json', 'User-Agent': 'Ayna-Health-App/1.0' },
+      signal: AbortSignal.timeout(4000),
+    });
+    if (!r.ok) return null;
+    const data = await r.json();
+    const hit = data?.hits?.hits?.[0]?._source;
+    if (!hit) return null;
+    const ingredients = Array.isArray(hit.dietaryIngredients)
+      ? hit.dietaryIngredients.map((i) => i.ingredientName || i.name).filter(Boolean).slice(0, 8)
+      : [];
+    return {
+      verified: true,
+      brand: hit.brandName || hit.manufacturerName || '',
+      ingredients,
+      dsldId: hit.dsldId || '',
+      imageUrl: (hit.imageUrl || '').startsWith('https://') ? hit.imageUrl : '',
+      labelUrl: hit.dsldId ? `https://dsld.od.nih.gov/product-label/${hit.dsldId}` : '',
+    };
+  } catch {
+    return null;
+  }
+}
+
 function buildPrompt(intake = {}, feedback = {}) {
   const concerns = selectedConcerns(intake);
   const concernFollowups = intake?.concernFollowups && typeof intake.concernFollowups === 'object' ? intake.concernFollowups : {};
@@ -130,6 +158,24 @@ LEARNING SIGNALS:
 - Products she has hidden: ${(feedback?.omittedProductIds || []).join(', ') || 'none'}
 - Times she has used Ayna: ${feedback?.learningMemory?.interactionCount || 0}
 - Last concerns she viewed: ${(feedback?.learningMemory?.lastConcerns || []).join(', ') || 'none'}
+
+CLINICAL AUTHORITY SOURCES:
+When generating recommendations and writing whyItWorks and considerations, ground your reasoning in guidance from these authoritative sources where relevant:
+- ACOG (American College of Obstetricians and Gynecologists) — the gold standard for OB/GYN clinical guidance in the US. Reference ACOG guidance for: menstrual disorders, PCOS, endometriosis, menopause, perimenopause, fertility, contraception, postpartum health, UTIs, and pelvic floor conditions.
+- UpToDate — evidence-based clinical decision support used by clinicians at point of care. Reference when describing how clinicians approach a condition or product category.
+- OpenEvidence — medical AI grounded in NEJM, JAMA, NCCN, Cochrane, and peer-reviewed literature. Reference when describing the quality of evidence for a product category.
+- NIH Office of Dietary Supplements — the authoritative US source for supplement safety, ingredient data, and evidence quality. Reference for all supplement recommendations.
+- FDA — device safety, recall status, and regulatory standing for devices and period care products.
+- PubMed / NCBI — peer-reviewed biomedical literature. Reference when describing the research base for a product category.
+- Cochrane Reviews — systematic review evidence for supplement and device categories.
+
+HOW TO REFERENCE THESE SOURCES:
+- In whyItWorks: include one short phrase grounding the recommendation in clinical evidence, e.g. "consistent with ACOG guidance on PCOS management" or "aligned with NIH ODS evidence on magnesium for menstrual pain"
+- In considerations: reference ACOG or FDA guidance when flagging safety concerns, e.g. "ACOG advises discussing with your clinician before starting" or "FDA has no active recalls for this product category"
+- In notes: include a source-grounded note where relevant, e.g. "ACOG recommends tracking symptoms before trying supplements for menstrual disorders"
+- NEVER fabricate a specific bulletin number, PMID, guideline number, or direct quote
+- ONLY say "consistent with" or "aligned with" or "supported by" — never claim to be directly quoting
+- Only reference an organization when you are confident their guidance genuinely covers this area
 
 PRODUCT SELECTION PROCESS — follow this for every concern:
 1. Identify what category of product would genuinely help this user's specific concern and profile
@@ -366,8 +412,38 @@ export default async function handler(req, res) {
 
   const recs = enrichRecommendations(parsed?.recommendations);
 
+  const verifiedRecs = await Promise.all(
+    recs.map(async (entry) => {
+      const product = entry.topProduct;
+      if (!product || product.type === 'digital') return entry;
+      if (!/(supplement|vitamin|mineral|probiotic)/i.test(product.category || '')) return entry;
+      const dsld = await lookupDsldProduct(product.name);
+      if (!dsld) return entry;
+      return {
+        ...entry,
+        topProduct: {
+          ...product,
+          brand: dsld.brand || product.brand,
+          image: dsld.imageUrl || product.image || '',
+          url: dsld.labelUrl || product.url,
+          dsldVerified: true,
+          dsldId: dsld.dsldId,
+          summary:
+            dsld.ingredients.length > 0
+              ? `${product.summary} Key ingredients: ${dsld.ingredients.slice(0, 4).join(', ')}.`
+              : product.summary,
+          safety: {
+            ...product.safety,
+            materials: dsld.ingredients.slice(0, 5).join(', ') || product.safety?.materials || '',
+            recalls: product.safety?.recalls || 'No active FDA recalls on file',
+          },
+        },
+      };
+    })
+  );
+
   return res.status(200).json({
-    recommendations: recs,
+    recommendations: verifiedRecs,
     providerUsed: ai.provider,
     generatedAt: new Date().toISOString(),
   });

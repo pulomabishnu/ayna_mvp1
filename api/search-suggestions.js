@@ -171,7 +171,7 @@ ${sym}
 
 Return ONE JSON object ONLY (no markdown) with this shape:
 {
-  "querySummary": "2-4 sentences: tie the user's words to the kinds of products below; name categories (e.g. pads, telehealth); remind that Ayna is surfacing common options and they should verify fit with a clinician when medical.",
+  "querySummary": "2-4 sentences: tie the user's words to the kinds of products below; name categories (e.g. pads, telehealth); where relevant, note that options in this category are consistent with guidance from ACOG, NIH, or FDA — for example 'Options like these are commonly discussed in ACOG guidance on menstrual health' or 'The NIH Office of Dietary Supplements has reviewed evidence for supplements in this category'. Never fabricate specific citation numbers or direct quotes. Always remind users to verify fit with a clinician when medical.",
   "suggestions": [
     {
       "brand": "Brand name",
@@ -200,7 +200,16 @@ ANTI-HALLUCINATION RULES:
 - Never invent brand names or product lines
 - Never include URLs, domains, or "http" in any field — retailer names as plain text only
 - typicalUserRating: optional number 3.0-5.0 only if you have real signal — omit if unsure
-- If the query is not women's health or wellness shopping related, return {"querySummary":"","suggestions":[]}`;
+- If the query is not women's health or wellness shopping related, return {"querySummary":"","suggestions":[]}
+
+CLINICAL AUTHORITY RULES:
+- In querySummary only, where genuinely applicable, reference ACOG, NIH ODS, FDA, or Cochrane by name to add clinical credibility
+- Reference ACOG for: menstrual health, PCOS, endometriosis, menopause, fertility, contraception, UTIs, pelvic floor
+- Reference NIH ODS for: any supplement category
+- Reference FDA for: device safety, period care product regulatory standing
+- Reference Cochrane for: evidence quality on supplements or devices
+- Never fabricate specific guideline numbers, bulletin numbers, PMIDs, or direct quotes
+- Only reference an organization when confident their guidance genuinely covers the query topic`;
 }
 
 async function callClaudeJson(prompt) {

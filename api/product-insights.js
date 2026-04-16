@@ -87,6 +87,23 @@ Tailoring rules when reader context is present:
 - Summary: ${summary}
 - Tags: ${tags}
 ${brandBlock}${readerBlock}
+CLINICAL AUTHORITY SOURCES TO REFERENCE:
+Ground clinicalNarrative and scienceSummary in guidance from these organizations where relevant:
+- ACOG (American College of Obstetricians and Gynecologists) for OB/GYN conditions: menstrual health, PCOS, endometriosis, menopause, perimenopause, fertility, contraception, UTIs, pelvic floor
+- NIH Office of Dietary Supplements for all supplement categories — ingredient safety, evidence quality, dosing guidance
+- FDA for device and period care product regulatory standing
+- Cochrane Reviews for systematic review evidence on supplement and device categories
+- UpToDate for how clinicians approach a condition or product category at point of care
+- OpenEvidence (grounded in NEJM, JAMA, NCCN, Cochrane) as a reference for clinical evidence quality
+
+HOW TO USE THESE SOURCES:
+- In clinicalNarrative: open with or include one phrase grounding the category in clinical guidance, e.g. "ACOG recognizes menstrual pain management as a key area of OB/GYN care" or "The NIH Office of Dietary Supplements notes that evidence for magnesium in menstrual pain is emerging"
+- In scienceSummary: reference the type and quality of evidence, e.g. "Cochrane reviews note limited RCT evidence for most menstrual supplements" or "ACOG clinical guidelines address this condition category"
+- NEVER fabricate specific bulletin numbers, PMIDs, guideline numbers, or direct quotes
+- ONLY say "consistent with", "aligned with", "noted by", or "referenced in" — never claim to directly quote
+- Only reference an organization when confident their guidance genuinely covers this area
+- If clinical authority is not relevant to this product type, skip this block
+
 Return a SINGLE JSON object with this exact shape (no markdown, no URLs anywhere in any field):
 {
   "clinicalNarrative": "2-4 sentences: neutral clinical / product-category context. Educational only. No diagnosis or treatment instructions for the reader. When reader context is provided, open with one short clause on relevance to their profile when appropriate.",
