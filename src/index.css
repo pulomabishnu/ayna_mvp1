@@ -410,3 +410,29 @@ html {
   font-weight: 600;
   flex-shrink: 0;
 }
+
+/* My Ecosystem: at least 4 columns on wide viewports, responsive below */
+.ecosystem-product-grid {
+  display: grid;
+  gap: 0.65rem;
+  width: 100%;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 1100px) {
+  .ecosystem-product-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 820px) {
+  .ecosystem-product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .ecosystem-product-grid {
+    grid-template-columns: 1fr;
+  }
+}
