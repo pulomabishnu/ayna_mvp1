@@ -10,6 +10,7 @@ import { getInteractions } from '../data/interactions';
 import CareNearYouPanel from './CareNearYouPanel';
 import LlmRecommendationsLoadingBlock from './LlmRecommendationsLoadingBlock';
 import { inferTagsFromHealthProfile, saveHealthProfile } from '../utils/healthDataProfile';
+import { buildQuizIntakeSummaryText } from '../utils/healthIntake';
 import { generateTieredRecommendations } from '../utils/recommendationEngine';
 import {
     fetchLlmRecommendations,
@@ -632,6 +633,7 @@ export default function MyEcosystem({
     const [medicationsDraft, setMedicationsDraft] = useState('');
     const [allergiesDraft, setAllergiesDraft] = useState('');
     const [notesDraft, setNotesDraft] = useState('');
+    const [intakeSummaryDraft, setIntakeSummaryDraft] = useState('');
     const [showAddModal, setShowAddModal] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const viewMode = 'function';
@@ -702,6 +704,14 @@ export default function MyEcosystem({
         if (!intake || Object.keys(intake).length === 0) return [];
         return generateTieredRecommendations(intake);
     }, [quizResults]);
+
+    const quizIntakeSummaryKey = useMemo(() => {
+        try {
+            return quizResults?.fullHealthIntake ? JSON.stringify(quizResults.fullHealthIntake) : '';
+        } catch {
+            return '';
+        }
+    }, [quizResults?.fullHealthIntake]);
 
     const intakeFingerprint = useMemo(
         () => fingerprintIntake(quizResults?.fullHealthIntake || null),
@@ -815,6 +825,15 @@ export default function MyEcosystem({
     }, [activeTiered]);
 
     useEffect(() => {
+        const saved = (healthProfile?.intakeSummary || '').trim();
+        if (saved) {
+            setIntakeSummaryDraft(healthProfile.intakeSummary);
+            return;
+        }
+        setIntakeSummaryDraft(buildQuizIntakeSummaryText(quizResults) || '');
+    }, [healthProfile?.intakeSummary, quizIntakeSummaryKey, quizResults]);
+
+    useEffect(() => {
         if (!profileEditOpen) return;
         const hp = healthProfile;
         setConditionsDraft((hp?.conditions || []).join(', '));
@@ -825,7 +844,7 @@ export default function MyEcosystem({
 
     const handleSaveHealthProfileDraft = () => {
         const base = healthProfile || {
-            conditions: [], medications: [], allergies: [], notes: '',
+            conditions: [], medications: [], allergies: [], notes: '', intakeSummary: '',
             sources: { appleHealth: false, googleFit: false, fhir: false, manual: true },
         };
         const next = saveHealthProfile({
@@ -837,6 +856,18 @@ export default function MyEcosystem({
         });
         onHealthProfileUpdate?.(next);
         setProfileEditOpen(false);
+    };
+
+    const handleSaveIntakeSummary = () => {
+        const base = healthProfile || {
+            conditions: [], medications: [], allergies: [], notes: '', intakeSummary: '',
+            sources: { appleHealth: false, googleFit: false, fhir: false, manual: true },
+        };
+        const next = saveHealthProfile({
+            ...base,
+            intakeSummary: intakeSummaryDraft.trim(),
+        });
+        onHealthProfileUpdate?.(next);
     };
 
     const toggleEcosystemCompare = useCallback((k) => {
@@ -913,7 +944,7 @@ export default function MyEcosystem({
                         <div>
                             <h3 style={{ fontSize: '1.2rem', margin: '0 0 0.35rem', color: 'var(--color-text-main)' }}>Your health profile</h3>
                             <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>
-                                Concerns from your quiz, plus conditions and meds you add here, shape recommendations.
+                                Your assessment is summarized below. Conditions and medications you add under Update Health Profile also shape recommendations.
                             </p>
                         </div>
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
@@ -942,28 +973,46 @@ export default function MyEcosystem({
                             )}
                         </div>
                     </div>
-                    {quizResults?.frustrations?.length > 0 && (
-                        <div style={{ marginBottom: '0.85rem' }}>
-                            <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)', margin: '0 0 0.4rem' }}>Concerns & goals</p>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-                                {quizResults.frustrations.map((f) => (
-                                    <span
-                                        key={f}
-                                        style={{
-                                            fontSize: '0.82rem',
-                                            padding: '0.25rem 0.65rem',
-                                            borderRadius: 'var(--radius-pill)',
-                                            background: 'var(--color-secondary-fade)',
-                                            color: 'var(--color-text-main)',
-                                            border: '1px solid var(--color-border)',
-                                        }}
-                                    >
-                                        {f}
-                                    </span>
-                                ))}
-                            </div>
+                    <div style={{ marginBottom: '1rem' }}>
+                        <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)', margin: '0 0 0.4rem' }}>
+                            Health profile summary
+                        </p>
+                        <p style={{ margin: '0 0 0.5rem', fontSize: '0.82rem', color: 'var(--color-text-muted)', lineHeight: 1.45 }}>
+                            Condensed from your quiz (concerns, follow-ups, cycle, conditions, products, and goals). Edit anytime — save to store it in this browser only.
+                        </p>
+                        <textarea
+                            value={intakeSummaryDraft}
+                            onChange={(e) => setIntakeSummaryDraft(e.target.value)}
+                            rows={12}
+                            spellCheck
+                            aria-label="Health profile summary from your assessment"
+                            placeholder="Complete the health assessment to auto-fill this summary, or write your own."
+                            style={{
+                                width: '100%',
+                                padding: '0.75rem 1rem',
+                                borderRadius: 'var(--radius-md)',
+                                border: '1px solid var(--color-border)',
+                                fontSize: '0.88rem',
+                                lineHeight: 1.5,
+                                color: 'var(--color-text-main)',
+                                background: 'var(--color-bg)',
+                                fontFamily: 'var(--font-body)',
+                                resize: 'vertical',
+                                minHeight: '180px',
+                                boxSizing: 'border-box',
+                            }}
+                        />
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center', marginTop: '0.6rem' }}>
+                            <button type="button" className="btn btn-primary" style={{ fontSize: '0.85rem' }} onClick={handleSaveIntakeSummary}>
+                                Save summary
+                            </button>
+                            {healthProfile?.intakeSummary?.trim() && healthProfile?.updatedAt && (
+                                <span style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)' }}>
+                                    Summary last saved {new Date(healthProfile.updatedAt).toLocaleString()}
+                                </span>
+                            )}
                         </div>
-                    )}
+                    </div>
                     {(healthProfile?.conditions?.length > 0 || healthProfile?.fhirSummary?.conditions?.length > 0) && (
                         <div style={{ marginBottom: '0.85rem' }}>
                             <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)', margin: '0 0 0.4rem' }}>Conditions & diagnoses</p>
@@ -989,9 +1038,9 @@ export default function MyEcosystem({
                     {healthProfile?.notes && (
                         <p style={{ margin: '0 0 0.5rem', fontSize: '0.88rem', color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Notes: {healthProfile.notes}</p>
                     )}
-                    {!quizResults?.frustrations?.length && !inferTagsFromHealthProfile(healthProfile).length && !healthProfile?.conditions?.length && (
-                        <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', margin: 0 }}>
-                            Complete the quiz or add conditions below so picks and articles match you better.
+                    {!intakeSummaryDraft?.trim() && !inferTagsFromHealthProfile(healthProfile).length && !healthProfile?.conditions?.length && (
+                        <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', margin: '0.5rem 0 0' }}>
+                            Complete the quiz or add conditions under Update Health Profile so picks and articles match you better.
                         </p>
                     )}
                     {profileEditOpen && (

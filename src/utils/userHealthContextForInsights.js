@@ -109,6 +109,9 @@ export function buildUserHealthContextString(quizResults, healthProfile) {
     if (hp.notes?.trim()) {
       lines.push(`Notes: ${truncateItem(hp.notes, 500)}`);
     }
+    if (hp.intakeSummary?.trim()) {
+      lines.push(`Health profile summary (user-edited): ${truncateItem(hp.intakeSummary, 1200)}`);
+    }
     if (hp.wearableSummary?.text?.trim()) {
       lines.push(`Wearable / activity summary: ${truncateItem(hp.wearableSummary.text, 600)}`);
     }

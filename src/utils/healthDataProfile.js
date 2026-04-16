@@ -1,6 +1,6 @@
 const STORAGE_KEY = 'ayna_health_profile_v1';
 
-/** @typedef {{ conditions: string[], medications: string[], allergies: string[], notes: string, wearableSummary?: { text?: string }, sources: { appleHealth: boolean, googleFit: boolean, fhir: boolean, manual: boolean }, updatedAt: string|null, fhirSummary?: { conditions: string[], medications: string[] } }} HealthProfile */
+/** @typedef {{ conditions: string[], medications: string[], allergies: string[], notes: string, intakeSummary?: string, wearableSummary?: { text?: string }, sources: { appleHealth: boolean, googleFit: boolean, fhir: boolean, manual: boolean }, updatedAt: string|null, fhirSummary?: { conditions: string[], medications: string[] } }} HealthProfile */
 
 const KEYWORD_TAGS = [
   { re: /endometriosis|adenomyosis/i, tags: ['endometriosis', 'cramps'] },
@@ -49,6 +49,7 @@ export function normalizeProfile(p) {
     medications: Array.isArray(p.medications) ? p.medications.map(String) : [],
     allergies: Array.isArray(p.allergies) ? p.allergies.map(String) : [],
     notes: typeof p.notes === 'string' ? p.notes : '',
+    intakeSummary: typeof p.intakeSummary === 'string' ? p.intakeSummary : '',
     sources: {
       appleHealth: !!p.sources?.appleHealth,
       googleFit: !!p.sources?.googleFit,
@@ -82,6 +83,7 @@ export function inferTagsFromHealthProfile(profile) {
     ...(profile.fhirSummary?.conditions || []),
     ...(profile.fhirSummary?.medications || []),
     profile.notes || '',
+    profile.intakeSummary || '',
     profile.wearableSummary?.text || '',
   ];
   const text = chunks.join(' ');
@@ -106,6 +108,7 @@ export function hasHealthProfileSignals(profile) {
     p.medications.length > 0 ||
     p.allergies.length > 0 ||
     p.notes.trim().length > 0 ||
+    (p.intakeSummary || '').trim().length > 0 ||
     (p.wearableSummary?.text || '').trim().length > 0 ||
     p.fhirSummary.conditions.length > 0 ||
     p.fhirSummary.medications.length > 0 ||

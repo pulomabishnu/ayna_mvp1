@@ -177,3 +177,102 @@ export function validateHealthIntake(intake) {
   }
   return errors;
 }
+
+function concernSlug(concern) {
+  return String(concern || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+}
+
+/**
+ * Builds a concise multi-line summary from quiz intake for display and editing in the health profile.
+ * @param {object|null|undefined} quizResults - Legacy quiz profile including `fullHealthIntake` when available.
+ * @returns {string}
+ */
+export function buildQuizIntakeSummaryText(quizResults) {
+  const intake = quizResults?.fullHealthIntake;
+  if (!intake || typeof intake !== 'object') {
+    const fr = quizResults?.frustrations;
+    if (Array.isArray(fr) && fr.length) {
+      return `Focus areas from your assessment: ${fr.join('; ')}.`;
+    }
+    return '';
+  }
+
+  const lines = [];
+  const push = (s) => {
+    const t = String(s || '').trim();
+    if (t) lines.push(t);
+  };
+
+  if (intake.age) push(`Age: ${intake.age}.`);
+  if (intake.location) push(`Location: ${intake.location}.`);
+
+  const concerns = Array.isArray(intake.primaryConcerns) ? intake.primaryConcerns.filter(Boolean) : [];
+  if (concerns.length) push(`Primary focus areas: ${concerns.join('; ')}.`);
+
+  if (Array.isArray(intake.customConcerns) && intake.customConcerns.length) {
+    push(`Additional concerns: ${intake.customConcerns.join('; ')}.`);
+  }
+
+  const cf = intake.concernFollowups && typeof intake.concernFollowups === 'object' ? intake.concernFollowups : {};
+  Object.entries(cf).forEach(([slug, data]) => {
+    if (!data || typeof data !== 'object') return;
+    const label = concerns.find((c) => concernSlug(c) === slug) || slug.replace(/-/g, ' ');
+    const parts = [];
+    const sym = data.symptoms;
+    if (Array.isArray(sym) && sym.length) {
+      const cleaned = sym.filter((s) => s && s !== 'None' && s !== 'Other (type your own)');
+      if (cleaned.length) parts.push(`Symptoms: ${cleaned.join(', ')}`);
+    }
+    if (data.symptomsOtherText) parts.push(`Other symptoms: ${String(data.symptomsOtherText).trim()}`);
+    const hist = data.history;
+    if (hist && hist !== 'None') parts.push(`Symptom history: ${hist}`);
+    if (parts.length) push(`• ${label}: ${parts.join('. ')}.`);
+  });
+
+  if (intake.menstrualCycle) push(`Menstrual cycle: ${intake.menstrualCycle}.`);
+  if (intake.averageCycleLength) push(`Average cycle length: ${intake.averageCycleLength}.`);
+  if (intake.averagePeriodLength) push(`Average period length: ${intake.averagePeriodLength}.`);
+  if (intake.flowLevel) push(`Flow: ${intake.flowLevel}.`);
+  if (intake.painLevel) push(`Period pain level: ${intake.painLevel}/10.`);
+
+  const cycSym = Array.isArray(intake.symptoms) ? intake.symptoms.filter((s) => s && s !== 'None') : [];
+  if (cycSym.length) push(`Cycle-related symptoms: ${cycSym.join(', ')}.`);
+
+  const cond = Array.isArray(intake.conditions) ? intake.conditions.filter((c) => c && c !== 'none') : [];
+  if (cond.length) push(`Diagnosed conditions: ${cond.join(', ')}.`);
+  if (intake.conditionOtherText) push(`Other condition details: ${String(intake.conditionOtherText).trim()}.`);
+
+  if (intake.tryingToConceive) push(`Trying to conceive: ${intake.tryingToConceive}.`);
+  if (intake.hormonalBirthControl) {
+    push(
+      `Hormonal birth control: ${intake.hormonalBirthControl}${
+        intake.hormonalBirthControlType ? ` (${intake.hormonalBirthControlType})` : ''
+      }.`
+    );
+  }
+
+  const prefs = Array.isArray(intake.productPreferences) ? intake.productPreferences.filter((p) => p && p !== 'None') : [];
+  if (prefs.length) push(`Product preferences: ${prefs.join(', ')}.`);
+
+  const ptypes = Array.isArray(intake.preferredProductTypes) ? intake.preferredProductTypes.filter((p) => p && p !== 'None') : [];
+  if (ptypes.length) push(`Preferred product types: ${ptypes.join(', ')}.`);
+
+  if (Array.isArray(intake.currentProducts) && intake.currentProducts.length) {
+    push(`Currently using: ${intake.currentProducts.join(', ')}.`);
+  }
+  if (Array.isArray(intake.dislikedProducts) && intake.dislikedProducts.length) {
+    push(
+      `Products that did not work: ${intake.dislikedProducts.join(', ')}${
+        intake.dislikedReason ? ` (${intake.dislikedReason})` : ''
+      }.`
+    );
+  }
+
+  const goals = Array.isArray(intake.goals) ? intake.goals.filter((g) => g && g !== 'None') : [];
+  if (goals.length) push(`Goals for using Ayna: ${goals.join('; ')}.`);
+
+  return lines.join('\n');
+}

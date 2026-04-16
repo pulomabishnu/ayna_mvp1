@@ -58,6 +58,7 @@ export default function HealthDataImport({ onUpdate }) {
       medications: parseCommaLines(medications),
       allergies: parseCommaLines(allergies),
       notes,
+      intakeSummary: (existing && typeof existing.intakeSummary === 'string') ? existing.intakeSummary : '',
       wearableSummary: { text: wearableText.trim() },
       sources: {
         appleHealth,
