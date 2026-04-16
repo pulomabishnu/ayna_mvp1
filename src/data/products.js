@@ -1375,18 +1375,17 @@ export const CHECK_IN_CATEGORIES = [
     { id: 'wellness', label: 'General Wellness', icon: '✨' },
 ];
 // Helper to detect functionality overlaps in a set of products.
+// Overlap warnings apply only to digital apps and telehealth services (not physical goods).
 // productMap: optional id -> product (for custom ecosystem items not in ALL_PRODUCTS).
 export function detectDuplicates(productIds, productMap = {}) {
     const functionMap = {};
     const duplicates = {};
 
-    const isTechOrTelehealthService = (p) => {
+    const isDigitalOrTelehealth = (p) => {
         const type = String(p?.type || '').toLowerCase();
         const category = String(p?.category || '').toLowerCase();
-        const integrations = Array.isArray(p?.integrations) ? p.integrations.map((x) => String(x || '').toLowerCase()) : [];
         if (type === 'digital') return true;
-        if (category.includes('telehealth') || category.includes('tracker') || category.includes('app')) return true;
-        if (integrations.some((x) => x.includes('api') || x.includes('integration') || x.includes('sync'))) return true;
+        if (category === 'telehealth') return true;
         return false;
     };
 
@@ -1403,9 +1402,9 @@ export function detectDuplicates(productIds, productMap = {}) {
     });
 
     Object.entries(functionMap).forEach(([fn, products]) => {
-        const serviceProducts = products.filter(isTechOrTelehealthService);
-        if (serviceProducts.length > 1) {
-            duplicates[fn] = serviceProducts;
+        const overlapCandidates = products.filter(isDigitalOrTelehealth);
+        if (overlapCandidates.length > 1) {
+            duplicates[fn] = overlapCandidates;
         }
     });
 
