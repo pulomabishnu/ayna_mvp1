@@ -274,7 +274,6 @@ export default function MyEcosystem({
     const [llmTiered, setLlmTiered] = useState([]);
     const [llmLoading, setLlmLoading] = useState(false);
     const [llmError, setLlmError] = useState('');
-    const [llmProvider, setLlmProvider] = useState('');
     const [llmLoadStartedAt, setLlmLoadStartedAt] = useState(0);
 
     const myProductIds = Object.keys(myProducts);
@@ -392,7 +391,6 @@ export default function MyEcosystem({
             setLlmTiered([]);
             setLlmLoading(false);
             setLlmError('');
-            setLlmProvider('');
             setLlmLoadStartedAt(0);
             return () => {
                 active = false;
@@ -436,7 +434,6 @@ export default function MyEcosystem({
             } catch (e) {
                 if (!active) return;
                 setLlmTiered([]);
-                setLlmProvider('');
                 setLlmError(e?.message || 'Could not load recommendations');
             } finally {
                 if (active) {
@@ -571,11 +568,6 @@ export default function MyEcosystem({
                         {llmError && (
                             <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textAlign: 'center' }}>
                                 Could not generate personalized recommendations: {llmError}
-                            </p>
-                        )}
-                        {llmProvider && llmTiered.length > 0 && (
-                            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.75rem', textAlign: 'center', marginBottom: '0.75rem' }}>
-                                Powered by {llmProvider}
                             </p>
                         )}
                         <div style={{ display: 'grid', gap: '0.8rem' }}>

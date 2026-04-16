@@ -33,7 +33,6 @@ export default function Recommendations({
     const [expandedConcern, setExpandedConcern] = useState('');
     const [expandedSubcategoryByConcern, setExpandedSubcategoryByConcern] = useState({});
     const [llmTiered, setLlmTiered] = useState([]);
-    const [llmProvider, setLlmProvider] = useState('');
     const [llmLoading, setLlmLoading] = useState(false);
     const [llmError, setLlmError] = useState('');
     const [llmLoadStartedAt, setLlmLoadStartedAt] = useState(0);
@@ -107,7 +106,6 @@ export default function Recommendations({
         const intake = results?.fullHealthIntake || null;
         if (!intake || Object.keys(intake).length === 0) {
             setLlmTiered([]);
-            setLlmProvider('');
             setLlmLoading(false);
             setLlmError('');
             setLlmLoadStartedAt(0);
@@ -132,7 +130,6 @@ export default function Recommendations({
                 if (!active) return;
                 const recs = Array.isArray(data?.recommendations) ? data.recommendations : [];
                 setLlmTiered(recs);
-                setLlmProvider(String(data?.providerUsed || ''));
                 const recommendedProductIds = recs.flatMap((entry) =>
                     (entry?.tiers || []).flatMap((tier) => [tier?.product?.id, ...((tier?.alternatives || []).map((a) => a?.id))].filter(Boolean))
                 );
@@ -151,7 +148,6 @@ export default function Recommendations({
             } catch (e) {
                 if (!active) return;
                 setLlmTiered([]);
-                setLlmProvider('');
                 setLlmError(e?.message || 'Could not load recommendations');
             } finally {
                 if (active) {
@@ -376,11 +372,6 @@ export default function Recommendations({
                     <p style={{ margin: '0 0 0.45rem', fontSize: '0.82rem', color: 'var(--color-text-muted)', lineHeight: 1.45 }}>
                         These picks are generated from your intake and learning signals (separate from the fixed in-app catalog). Always confirm fit, safety, and availability with a clinician and the brand.
                     </p>
-                    {llmProvider && (
-                        <p style={{ margin: '0 0 0.45rem', fontSize: '0.82rem', color: 'var(--color-text-muted)' }}>
-                            Model: {llmProvider}.
-                        </p>
-                    )}
                     {tiered.map((entry) => (
                         <div key={entry.concern} className="card" style={{ padding: '1rem' }}>
                             <button
