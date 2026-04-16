@@ -493,6 +493,7 @@ export default function MyEcosystem({
     onViewRecommendedArticles,
     onOpenArticle,
     onLlmRecommendationsLoaded,
+    onOpenHealthData,
 }) {
     const [profileEditOpen, setProfileEditOpen] = useState(false);
     const [conditionsDraft, setConditionsDraft] = useState('');
@@ -787,6 +788,16 @@ export default function MyEcosystem({
                             {typeof onBuildEcosystem === 'function' && (
                                 <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem' }} onClick={onBuildEcosystem}>
                                     Update quiz / concerns
+                                </button>
+                            )}
+                            {typeof onOpenHealthData === 'function' && (
+                                <button
+                                    type="button"
+                                    className="btn btn-outline"
+                                    style={{ fontSize: '0.85rem' }}
+                                    onClick={onOpenHealthData}
+                                >
+                                    Health data from wearables & records
                                 </button>
                             )}
                             <button

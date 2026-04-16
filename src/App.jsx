@@ -564,6 +564,7 @@ function App() {
               setCurrentView('articles');
             }}
             onLlmRecommendationsLoaded={handleLlmRecommendationsLoaded}
+            onOpenHealthData={() => setCurrentView('profile')}
           />
         )}
         {currentView === 'discovery' && (
