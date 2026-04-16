@@ -360,11 +360,6 @@ export default function ProductModal({
 
     const howToUse = useMemo(() => (product ? getHowToUseContent(product) : null), [product]);
 
-    useEffect(() => {
-        setAiInsights(null);
-        setAiError(null);
-    }, [product?.id, healthContextKey]);
-
     const condensed = useMemo(() => {
         if (!product) return null;
         return {
@@ -404,6 +399,38 @@ export default function ProductModal({
         });
     }, [product?.name, product?.category]);
 
+    useEffect(() => {
+        setAiInsights(null);
+        setAiError(null);
+        if (!product?.id) return;
+        let cancelled = false;
+        setAiLoading(true);
+        fetchProductInsights(product, { quizResults, healthProfile })
+            .then((data) => {
+                if (!cancelled) setAiInsights(data);
+            })
+            .catch((e) => {
+                if (cancelled) return;
+                if (e?.status === 429) {
+                    const sec = e.retryAfterSeconds;
+                    const mins = sec != null && sec >= 60 ? Math.ceil(sec / 60) : null;
+                    setAiError(
+                        mins != null
+                            ? `Too many insight requests. Try again in about ${mins} min.`
+                            : 'Too many insight requests. Please wait a bit and try again.'
+                    );
+                } else {
+                    setAiError(e?.message || 'Could not load Ayna insights');
+                }
+            })
+            .finally(() => {
+                if (!cancelled) setAiLoading(false);
+            });
+        return () => {
+            cancelled = true;
+        };
+    }, [product?.id, healthContextKey, product, quizResults, healthProfile]);
+
     if (!product) return null;
 
     const isDigital = product.type === 'digital';
@@ -415,7 +442,6 @@ export default function ProductModal({
         try {
             const data = await fetchProductInsights(product, { quizResults, healthProfile });
             setAiInsights(data);
-            setActiveTab('doctor');
         } catch (e) {
             if (e?.status === 429) {
                 const sec = e.retryAfterSeconds;
@@ -1165,7 +1191,7 @@ export default function ProductModal({
                     <div style={{ padding: '0.65rem 2.5rem 0.85rem', borderTop: '1px solid var(--color-border)', background: 'var(--color-surface)' }}>
                         <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.75rem' }}>
                             <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem' }} onClick={loadAiInsights} disabled={aiLoading}>
-                                {aiLoading ? 'Loading…' : aiInsights ? 'Refresh Ayna insights' : 'Load Ayna insights'}
+                                {aiLoading ? 'Loading…' : 'Refresh Ayna insights'}
                             </button>
                             {aiError && <span style={{ color: '#b91c1c', fontSize: '0.85rem' }}>{aiError}</span>}
                             {aiInsights?.generatedAt && (
