@@ -10,6 +10,8 @@ import Disclaimer from './Disclaimer';
 import FindYourPadModal from './FindYourPadModal';
 import { getPricePerUnitLabel } from '../utils/pricePerUnit';
 import { fetchDsldProducts } from '../utils/fetchDsldProducts';
+import { enrichLlmProductForDiscovery } from '../utils/enrichLlmProductForDiscovery';
+import { buildDiscoveryProfileSummary } from '../utils/discoveryIntroSummary';
 
 const ALL_CATEGORIES = ['all', 'pad', 'tampon', 'cup', 'disc', 'period-underwear', 'supplement', 'tracker', 'telehealth', 'mental-health', 'fitness', 'diagnostics', 'hormone-monitoring', 'menopause', 'fertility', 'pelvic-health', 'pelvic-floor', 'cramp-relief', 'postpartum', 'pregnancy', 'sex-tech', 'intimate-care', 'contraception'];
 const TYPE_FILTERS = ['all', 'physical', 'digital', 'startup'];
@@ -109,7 +111,14 @@ function padMatchesSubFilters(item, padFlow, padPreference, padUseCase) {
     return true;
 }
 
-export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, isPremium, onUpgrade, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false }) {
+function truncateCardSummary(text, max = 200) {
+    if (!text || typeof text !== 'string') return '';
+    const t = text.trim();
+    if (t.length <= max) return t;
+    return `${t.slice(0, max - 1)}…`;
+}
+
+export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, isPremium, onUpgrade, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, healthProfile = null }) {
     const [categoryFilter, setCategoryFilter] = useState(initialCategory || 'all');
     const [typeFilter, setTypeFilter] = useState('all');
     const [searchQuery, setSearchQuery] = useState(initialSearch || '');
@@ -250,8 +259,35 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     }, [combined, categoryFilter, typeFilter, omittedProducts, searchQuery, sortBy, personalizationFilter, recommendedSet, aynaReviews, padFlowFilter, padPreferenceFilter, padUseCaseFilter, symptomFilter]);
 
     const qTrimForAi = searchQuery.trim();
-    const catalogMatchCount = filtered.length;
-    const displayItems = filtered;
+
+    const enrichedAiSuggestions = useMemo(
+        () => (Array.isArray(aiSuggestions) ? aiSuggestions.map((p) => enrichLlmProductForDiscovery(p)) : []),
+        [aiSuggestions]
+    );
+
+    const gridItems = useMemo(() => {
+        const catalog = filtered;
+        const names = new Set(catalog.map((p) => (p.name || '').trim().toLowerCase()).filter(Boolean));
+        const out = [...catalog];
+        for (const p of enrichedAiSuggestions) {
+            const n = (p.name || '').trim().toLowerCase();
+            if (n && names.has(n)) continue;
+            out.push(p);
+        }
+        return out;
+    }, [filtered, enrichedAiSuggestions]);
+
+    const profileIntro = useMemo(
+        () => buildDiscoveryProfileSummary({ quizResults, healthProfile, categoryFilter, searchQuery }),
+        [quizResults, healthProfile, categoryFilter, searchQuery]
+    );
+
+    const hasIntroContent =
+        profileIntro.trim().length > 0 ||
+        (typeof aiQuerySummary === 'string' && aiQuerySummary.trim().length > 0 && !aiLoading);
+
+    const showDiscoveryIntro =
+        hasIntroContent && (gridItems.length > 0 || qTrimForAi.length >= 2);
 
     React.useEffect(() => {
         if (qTrimForAi.length < 2) {
@@ -555,7 +591,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 />
             )}
 
-            {catalogMatchCount === 0 && qTrimForAi.length >= 2 && aiQuerySummary && !aiLoading && (
+            {showDiscoveryIntro && (
                 <div
                     style={{
                         maxWidth: '720px',
@@ -570,31 +606,23 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     }}
                 >
                     <span style={{ fontSize: '0.7rem', fontWeight: '800', color: '#7E22CE', letterSpacing: '0.06em', textTransform: 'uppercase', display: 'block', marginBottom: '0.5rem' }}>
-                        Ayna · matched search
+                        Your context
                     </span>
-                    {aiQuerySummary}
+                    {profileIntro.trim() ? <p style={{ margin: 0 }}>{profileIntro}</p> : null}
+                    {typeof aiQuerySummary === 'string' && aiQuerySummary.trim() && !aiLoading ? (
+                        <p style={{ margin: profileIntro.trim() ? '0.75rem 0 0' : 0 }}>{aiQuerySummary.trim()}</p>
+                    ) : null}
                 </div>
             )}
 
             <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', margin: 0, textAlign: 'center', maxWidth: '640px', lineHeight: 1.45 }}>
-                    {catalogMatchCount > 0 ? (
-                        <>Showing {catalogMatchCount} result{catalogMatchCount !== 1 ? 's' : ''}</>
-                    ) : qTrimForAi.length >= 2 ? (
-                        aiLoading ? (
-                            <>No catalog matches — finding brands…</>
-                        ) : aiError && displayItems.length === 0 ? (
-                            <>No catalog matches. {aiError}</>
-                        ) : displayItems.length > 0 ? (
-                            <>
-                                No catalog rows for &ldquo;{qTrimForAi}&rdquo; — showing {displayItems.length} real product{displayItems.length !== 1 ? 's' : ''}{' '}
-                                <span style={{ color: 'var(--color-text-muted)' }}>(AI-ranked; not stored in Ayna&apos;s database)</span>
-                            </>
-                        ) : (
-                            <>No catalog matches. Try different words or clear filters.</>
-                        )
+                    {qTrimForAi.length >= 2 && aiLoading && gridItems.length === 0 ? (
+                        <>Finding matches…</>
+                    ) : aiError && gridItems.length === 0 && qTrimForAi.length >= 2 ? (
+                        <>No results yet. {aiError}</>
                     ) : (
-                        <>Showing {catalogMatchCount} result{catalogMatchCount !== 1 ? 's' : ''}</>
+                        <>Showing {gridItems.length} result{gridItems.length !== 1 ? 's' : ''}</>
                     )}
                 </p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -622,7 +650,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
             {/* Product Grid */}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', justifyContent: 'center' }}>
-                {displayItems.map((item, idx) => {
+                {gridItems.map((item, idx) => {
                     const isStartup = item.isStartup === true;
                     const releasedStartup = isStartup && item.productReleased === true;
                     const isInEcosystem = !!myProducts[item.id];
@@ -632,10 +660,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     return (
                         <div key={item.id} className="card hover-lift" style={{
                             padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column',
-                            width: '280px', animation: `fadeInUp 0.4s ${Math.min(idx * 0.05, 0.3)}s backwards`,
+                            width: '252px', animation: `fadeInUp 0.4s ${Math.min(idx * 0.05, 0.3)}s backwards`,
                             border: (isInEcosystem || isJoined) ? '2px solid var(--color-primary)' : '1px solid var(--color-border)'
                         }}>
-                            <div style={{ height: '140px', width: '100%', overflow: 'hidden', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-secondary-fade, #fdf2f4)' }}>
+                            <div style={{ height: '118px', width: '100%', overflow: 'hidden', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-secondary-fade, #fdf2f4)' }}>
                                 {item.image && item.image !== '/ayna_placeholder.png' ? (
                                     <>
                                         <img
@@ -706,7 +734,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                     </div>
                                 )}
                                 <p style={{ color: 'var(--color-text-muted)', fontSize: '0.8rem', flexGrow: 1, marginBottom: '0.75rem', lineHeight: '1.4' }}>
-                                    {item.isStartup ? item.tagline : item.summary}
+                                    {truncateCardSummary(item.isStartup ? item.tagline : item.summary, item.llmGenerated ? 200 : 400)}
                                 </p>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
                                     <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>
@@ -893,61 +921,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                 </div>
                             </div>
                         ))}
-                    </div>
-                </div>
-            )}
-            {aiSuggestions.length > 0 && (
-                <div style={{ marginTop: '2.5rem' }}>
-                    <h3 style={{ fontSize: '1.1rem', marginBottom: '0.25rem', color: 'var(--color-text-main)' }}>
-                        More from Ayna
-                    </h3>
-                    <p style={{ fontSize: '0.82rem', color: 'var(--color-text-muted)', marginBottom: '1.25rem' }}>
-                        Products sourced from public data beyond our catalog. Verify before purchasing.
-                    </p>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '1.25rem' }}>
-                        {aiSuggestions.map((product) => {
-                            const isInEcosystem = !!myProducts?.[product.id];
-                            return (
-                                <div key={product.id} className="card hover-lift" style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-                                    <div style={{ height: '140px', width: '100%', overflow: 'hidden', position: 'relative' }}>
-                                        {product.image && String(product.image).startsWith('https://') ? (
-                                            <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.style.display = 'none'; }} />
-                                        ) : (
-                                            <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, var(--color-secondary-fade), #f3e8ff)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem' }}>🌸</div>
-                                        )}
-                                        <span style={{ position: 'absolute', bottom: '0.5rem', left: '0.5rem', background: product.type === 'digital' ? 'var(--color-primary)' : 'var(--color-surface-contrast)', color: 'white', padding: '0.2rem 0.55rem', borderRadius: 'var(--radius-pill)', fontSize: '0.68rem', fontWeight: '600', textTransform: 'uppercase' }}>
-                                            {product.type === 'digital' ? 'Digital' : 'Physical'}
-                                        </span>
-                                    </div>
-                                    <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-                                        {product.brand && <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', fontWeight: '600', marginBottom: '0.15rem' }}>{product.brand}</div>}
-                                        <h4 style={{ fontSize: '1rem', margin: '0 0 0.25rem', lineHeight: 1.3 }}>{product.name}</h4>
-                                        <p style={{ fontSize: '0.68rem', color: 'var(--color-text-muted)', fontStyle: 'italic', marginBottom: '0.4rem' }}>
-                                            Sourced from public product data · verify before purchasing
-                                        </p>
-                                        <p style={{ fontSize: '0.82rem', color: 'var(--color-text-muted)', marginBottom: '0.5rem', lineHeight: 1.45, flexGrow: 1 }}>{product.summary}</p>
-                                        {product.price && <div style={{ fontSize: '0.9rem', fontWeight: '600', marginBottom: '0.5rem' }}>{product.price}</div>}
-                                        {Array.isArray(product.whereToBuy) && product.whereToBuy.length > 0 && (
-                                            <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
-                                                {product.whereToBuy.slice(0, 3).map((shop) => (
-                                                    <span key={shop} style={{ fontSize: '0.7rem', padding: '0.15rem 0.45rem', background: 'var(--color-secondary-fade)', borderRadius: 'var(--radius-pill)', color: 'var(--color-text-muted)' }}>{shop}</span>
-                                                ))}
-                                            </div>
-                                        )}
-                                        <div style={{ display: 'flex', gap: '0.4rem', marginTop: 'auto' }}>
-                                            <button className="btn btn-outline" style={{ padding: '0.35rem 0.7rem', fontSize: '0.78rem', flex: 1 }}
-                                                onClick={() => onToggleProduct && onToggleProduct(product)}>
-                                                {isInEcosystem ? '✓ Added' : '+ Add'}
-                                            </button>
-                                            <button className="btn btn-primary" style={{ padding: '0.35rem 0.7rem', fontSize: '0.78rem', flex: 1 }}
-                                                onClick={() => onOpenProduct && onOpenProduct(product)}>
-                                                Details
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        })}
                     </div>
                 </div>
             )}

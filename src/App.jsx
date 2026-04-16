@@ -18,7 +18,7 @@ import AynaDeeptech from './components/AynaDeeptech';
 import Screenings from './components/Screenings';
 import { useScrollPosition } from './hooks/useScrollPosition';
 import ProductModal from './components/ProductModal';
-import LlmSearchSuggestionModal from './components/LlmSearchSuggestionModal';
+import { enrichLlmProductForDiscovery } from './utils/enrichLlmProductForDiscovery';
 import Articles from './components/Articles';
 import ProfileChatbot from './components/ProfileChatbot';
 import { loadHealthProfile, hasHealthProfileSignals } from './utils/healthDataProfile';
@@ -220,7 +220,6 @@ function App() {
   };
 
   const [selectedProductModal, setSelectedProductModal] = useState(null);
-  const [selectedLlmProduct, setSelectedLlmProduct] = useState(null);
 
   const totalBadge = Object.keys(trackedProducts).length + Object.keys(joinedWaitlists).length;
 
@@ -259,16 +258,10 @@ function App() {
   }, [ecoMenuOpen]);
 
   const handleOpenProduct = (product) => {
-    if (product?.llmGenerated) {
-      setSelectedProductModal(null);
-      setSelectedLlmProduct(product);
-      return;
-    }
-    setSelectedLlmProduct(null);
-    setSelectedProductModal(product);
+    const p = product?.llmGenerated ? enrichLlmProductForDiscovery(product) : product;
+    setSelectedProductModal(p);
   };
   const handleCloseProduct = () => setSelectedProductModal(null);
-  const handleCloseLlmProduct = () => setSelectedLlmProduct(null);
 
   const handleRateProduct = (product, rating) => {
     const next = addRating(product.id, rating);
@@ -593,6 +586,8 @@ function App() {
             aynaReviews={aynaReviews}
             hasQuizFrustrations={!!(quizResults?.frustrations?.length)}
             hasHealthImport={hasHealthImport}
+            quizResults={quizResults}
+            healthProfile={healthProfile}
           />
         )}
         {currentView === 'screenings' && (
@@ -654,10 +649,6 @@ function App() {
             disabled={!quizResults}
             onNavigateToDiscovery={handleViewDiscovery}
           />
-        )}
-
-        {selectedLlmProduct && (
-          <LlmSearchSuggestionModal product={selectedLlmProduct} onClose={handleCloseLlmProduct} />
         )}
 
         {selectedProductModal && (
