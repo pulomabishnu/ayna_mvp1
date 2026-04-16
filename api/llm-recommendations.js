@@ -21,14 +21,6 @@ function selectedConcerns(intake = {}) {
   return [];
 }
 
-function stripJsonFence(raw) {
-  let t = String(raw || '').trim();
-  t = t.replace(/^```(?:json)?\s*/i, '');
-  const last = t.lastIndexOf('```');
-  if (last >= 0) t = t.slice(0, last);
-  return t.trim();
-}
-
 function safeHttpsUrl(u) {
   if (!u || typeof u !== 'string') return '';
   const t = u.trim();
@@ -346,10 +338,22 @@ export default async function handler(req, res) {
 
   let parsed;
   try {
-    const clean = stripJsonFence(ai.raw);
+    let clean = String(ai.raw ?? '');
+    // Strip markdown code fences
+    clean = clean.replace(/```json\s*/gi, '').replace(/```\s*/gi, '').trim();
+    // Extract just the JSON object if there's surrounding text
+    const jsonMatch = clean.match(/\{[\s\S]*\}/);
+    if (jsonMatch) clean = jsonMatch[0];
     parsed = JSON.parse(clean);
   } catch {
-    return res.status(500).json({ error: 'parse_error', message: 'AI returned invalid JSON.' });
+    // Last resort: log the raw response for debugging
+    const rawStr = String(ai.raw ?? '');
+    console.error('Parse error. Raw AI response:', rawStr.slice(0, 500));
+    return res.status(500).json({
+      error: 'parse_error',
+      message: 'AI returned invalid JSON.',
+      raw: rawStr.slice(0, 200),
+    });
   }
 
   const recs = enrichRecommendations(parsed?.recommendations);
