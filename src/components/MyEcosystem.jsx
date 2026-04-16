@@ -41,7 +41,7 @@ function EcosystemFunctionProductCard({
     const { brandName } = deriveBrandSearchContext(product);
     const brandDisplay = brandName || '—';
     const rawSummary = (product.summary || '').trim();
-    const summaryShort = rawSummary.length > 180 ? `${rawSummary.slice(0, 177)}…` : rawSummary;
+    const summaryShort = rawSummary.length > 110 ? `${rawSummary.slice(0, 107)}…` : rawSummary;
 
     return (
         <div
@@ -50,7 +50,7 @@ function EcosystemFunctionProductCard({
                 display: 'flex',
                 flexDirection: 'column',
                 height: '100%',
-                padding: '1rem',
+                padding: '0.65rem',
                 border: '1px solid var(--color-border)',
                 background: 'var(--color-surface-soft)',
                 borderRadius: 'var(--radius-md)',
@@ -60,19 +60,19 @@ function EcosystemFunctionProductCard({
                 style={{
                     width: '100%',
                     aspectRatio: '4 / 3',
-                    maxHeight: '160px',
-                    borderRadius: 'var(--radius-md)',
+                    maxHeight: '96px',
+                    borderRadius: 'var(--radius-sm)',
                     overflow: 'hidden',
                     background: 'var(--color-secondary-fade)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    marginBottom: '0.75rem',
+                    marginBottom: '0.5rem',
                     border: '1px solid var(--color-border)',
                 }}
             >
                 {imgError || !product.image ? (
-                    <span style={{ fontSize: '3rem', lineHeight: 1 }} aria-hidden>🌸</span>
+                    <span style={{ fontSize: '2rem', lineHeight: 1 }} aria-hidden>🌸</span>
                 ) : (
                     <img
                         src={product.image}
@@ -82,34 +82,34 @@ function EcosystemFunctionProductCard({
                     />
                 )}
             </div>
-            <h4 style={{ fontSize: '1rem', margin: '0 0 0.35rem', lineHeight: 1.25, color: 'var(--color-text-main)' }}>
+            <h4 style={{ fontSize: '0.88rem', margin: '0 0 0.25rem', lineHeight: 1.25, color: 'var(--color-text-main)' }}>
                 {product.name}
                 {product.outOfBusiness && (
-                    <span style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-bg)', padding: '0.15rem 0.45rem', borderRadius: 'var(--radius-pill)', marginLeft: '0.35rem', verticalAlign: 'middle' }}>
+                    <span style={{ fontSize: '0.6rem', fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-bg)', padding: '0.1rem 0.35rem', borderRadius: 'var(--radius-pill)', marginLeft: '0.25rem', verticalAlign: 'middle' }}>
                         No longer sold
                     </span>
                 )}
             </h4>
-            <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', margin: '0 0 0.5rem', fontWeight: '600' }}>{brandDisplay}</p>
+            <p style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', margin: '0 0 0.35rem', fontWeight: '600' }}>{brandDisplay}</p>
             {summaryShort ? (
-                <p style={{ fontSize: '0.82rem', color: 'var(--color-text-main)', lineHeight: 1.45, margin: '0 0 0.75rem', flex: 1 }}>{summaryShort}</p>
+                <p style={{ fontSize: '0.75rem', color: 'var(--color-text-main)', lineHeight: 1.4, margin: '0 0 0.5rem', flex: 1 }}>{summaryShort}</p>
             ) : (
-                <p style={{ fontSize: '0.82rem', color: 'var(--color-text-muted)', fontStyle: 'italic', margin: '0 0 0.75rem', flex: 1 }}>No summary in database.</p>
+                <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', fontStyle: 'italic', margin: '0 0 0.5rem', flex: 1 }}>No summary in database.</p>
             )}
-            <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--color-primary)', marginBottom: perUnitPrice ? '0.15rem' : '0.5rem' }}>
+            <div style={{ fontSize: '0.82rem', fontWeight: '600', color: 'var(--color-primary)', marginBottom: perUnitPrice ? '0.1rem' : '0.35rem' }}>
                 {product.price || product.stage || '—'}
             </div>
             {perUnitPrice ? (
-                <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>{perUnitPrice}</div>
+                <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)', marginBottom: '0.35rem' }}>{perUnitPrice}</div>
             ) : null}
-            <div style={{ marginBottom: '0.75rem' }}>
+            <div style={{ marginBottom: '0.5rem' }}>
                 <span
                     style={{
-                        fontSize: '0.72rem',
+                        fontSize: '0.65rem',
                         fontWeight: '600',
                         display: 'inline-block',
                         maxWidth: '100%',
-                        padding: '0.3rem 0.55rem',
+                        padding: '0.2rem 0.45rem',
                         borderRadius: 'var(--radius-pill)',
                         background: 'var(--color-secondary-fade)',
                         color: 'var(--color-primary-hover)',
@@ -119,11 +119,11 @@ function EcosystemFunctionProductCard({
                     {healthFunctionLabel}
                 </span>
             </div>
-            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: 'auto' }}>
+            <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', marginTop: 'auto' }}>
                 <button
                     type="button"
                     className="btn btn-primary"
-                    style={{ flex: 1, minWidth: '108px', fontSize: '0.85rem', padding: '0.5rem 0.65rem' }}
+                    style={{ flex: 1, minWidth: '72px', fontSize: '0.75rem', padding: '0.35rem 0.45rem' }}
                     onClick={() => onOpenProduct(product)}
                 >
                     Details
@@ -131,10 +131,11 @@ function EcosystemFunctionProductCard({
                 <button
                     type="button"
                     className="btn btn-outline"
-                    style={{ flex: 1, minWidth: '108px', fontSize: '0.85rem', padding: '0.5rem 0.65rem' }}
+                    style={{ flex: 1, minWidth: '72px', fontSize: '0.75rem', padding: '0.35rem 0.45rem' }}
                     onClick={() => onToggleProduct(product)}
+                    title="Remove from ecosystem"
                 >
-                    Remove from Ecosystem
+                    Remove
                 </button>
             </div>
             <EcosystemProductAlternatives
@@ -398,10 +399,10 @@ function IntakeRecommendationsProductCard({
     return (
         <div className="card hover-lift" style={{
             padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column',
-            position: 'relative', marginBottom: '0.5rem',
+            position: 'relative', marginBottom: '0.35rem',
         }}
         >
-            <div style={{ height: '140px', width: '100%', overflow: 'hidden', position: 'relative' }}>
+            <div style={{ height: '96px', width: '100%', overflow: 'hidden', position: 'relative' }}>
                 {imgSrc ? (
                     <img src={imgSrc} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
@@ -409,26 +410,26 @@ function IntakeRecommendationsProductCard({
                         width: '100%', height: '100%',
                         background: 'linear-gradient(135deg, var(--color-secondary-fade), var(--color-primary-fade, #f3e8ff))',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: '2rem',
+                        fontSize: '1.5rem',
                     }}>🌸</div>
                 )}
                 <span style={{
-                    position: 'absolute', top: '0.75rem', left: '0.75rem',
+                    position: 'absolute', top: '0.45rem', left: '0.45rem',
                     background: product.type === 'physical' ? 'var(--color-surface-contrast)' : 'var(--color-primary)',
-                    color: 'white', padding: '0.25rem 0.75rem', borderRadius: 'var(--radius-pill)',
-                    fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase',
+                    color: 'white', padding: '0.15rem 0.45rem', borderRadius: 'var(--radius-pill)',
+                    fontSize: '0.62rem', fontWeight: '600', textTransform: 'uppercase',
                 }}>
                     {product.type === 'physical' ? 'Physical' : 'Digital'}
                 </span>
                 {isTracked && (
                     <span style={{
-                        position: 'absolute', top: '0.75rem', right: '0.75rem',
-                        background: 'var(--color-primary)', color: 'white', padding: '0.25rem 0.6rem',
-                        borderRadius: 'var(--radius-pill)', fontSize: '0.7rem', fontWeight: '600',
+                        position: 'absolute', top: '0.45rem', right: '0.45rem',
+                        background: 'var(--color-primary)', color: 'white', padding: '0.15rem 0.45rem',
+                        borderRadius: 'var(--radius-pill)', fontSize: '0.62rem', fontWeight: '600',
                     }}>✓ Tracked</span>
                 )}
             </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', alignItems: 'center', padding: '0.5rem 0.75rem', background: 'var(--color-bg)', borderBottom: '1px solid var(--color-border)' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem', alignItems: 'center', padding: '0.35rem 0.55rem', background: 'var(--color-bg)', borderBottom: '1px solid var(--color-border)' }}>
                 {showTopPickBadge && (
                     <span style={{
                         background: 'linear-gradient(135deg, #FEF9C3, #FDE68A)', color: '#854D0E',
@@ -448,53 +449,53 @@ function IntakeRecommendationsProductCard({
                     }}>No independent clinician opinion yet</span>
                 )}
             </div>
-            <div style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+            <div style={{ padding: '0.65rem 0.75rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
                 {tierSubLabel && (
-                    <p style={{ fontSize: '0.78rem', fontWeight: '700', color: 'var(--color-text-muted)', margin: '0 0 0.35rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{tierSubLabel}</p>
+                    <p style={{ fontSize: '0.68rem', fontWeight: '700', color: 'var(--color-text-muted)', margin: '0 0 0.25rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{tierSubLabel}</p>
                 )}
-                <h3 style={{ fontSize: '1.2rem', marginBottom: '0.35rem' }}>{product.name}</h3>
+                <h3 style={{ fontSize: '0.95rem', marginBottom: '0.25rem', lineHeight: 1.25 }}>{product.name}</h3>
                 {product.dsldVerified && (
-                    <span style={{ fontSize: '0.68rem', background: '#DCFCE7', color: '#166534', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)', fontWeight: '700', display: 'inline-block', marginBottom: '0.35rem' }}>
+                    <span style={{ fontSize: '0.6rem', background: '#DCFCE7', color: '#166534', padding: '0.12rem 0.4rem', borderRadius: 'var(--radius-pill)', fontWeight: '700', display: 'inline-block', marginBottom: '0.35rem' }}>
                         ✓ NIH Verified Supplement
                     </span>
                 )}
-                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '0.75rem', lineHeight: '1.45' }}>{product.summary || ''}</p>
+                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.78rem', marginBottom: '0.5rem', lineHeight: 1.4 }}>{(product.summary || '').length > 120 ? `${(product.summary || '').slice(0, 117)}…` : (product.summary || '')}</p>
                 {whyItWorks && (
-                    <p style={{ fontSize: '0.85rem', color: 'var(--color-primary-hover)', fontWeight: '500', marginBottom: '0.5rem', lineHeight: 1.4 }}>
-                        {whyItWorks}
+                    <p style={{ fontSize: '0.75rem', color: 'var(--color-primary-hover)', fontWeight: '500', marginBottom: '0.4rem', lineHeight: 1.35 }}>
+                        {(whyItWorks || '').length > 140 ? `${whyItWorks.slice(0, 137)}…` : whyItWorks}
                     </p>
                 )}
                 {considerations && (
-                    <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '0.75rem', lineHeight: 1.4, fontStyle: 'italic' }}>
-                        {considerations}
+                    <p style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', marginBottom: '0.5rem', lineHeight: 1.35, fontStyle: 'italic' }}>
+                        {(considerations || '').length > 120 ? `${considerations.slice(0, 117)}…` : considerations}
                     </p>
                 )}
-                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
+                <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', marginBottom: '0.5rem' }}>
                     {showNoRecallsTag && (
-                        <span style={{ fontSize: '0.75rem', background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>✓ No recalls</span>
+                        <span style={{ fontSize: '0.65rem', background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.45rem', borderRadius: 'var(--radius-pill)' }}>✓ No recalls</span>
                     )}
                     {showRecallWarning && (
-                        <span style={{ fontSize: '0.75rem', background: '#F8F9FA', color: 'var(--color-text-main)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>⚠️ Safety note</span>
+                        <span style={{ fontSize: '0.65rem', background: '#F8F9FA', color: 'var(--color-text-main)', padding: '0.2rem 0.45rem', borderRadius: 'var(--radius-pill)' }}>⚠️ Safety note</span>
                     )}
                     {product.privacy?.sellsData?.includes('❌') && (
-                        <span style={{ fontSize: '0.75rem', background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>🔒 No data selling</span>
+                        <span style={{ fontSize: '0.65rem', background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.45rem', borderRadius: 'var(--radius-pill)' }}>🔒 No data selling</span>
                     )}
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', marginBottom: '0.65rem', flexWrap: 'wrap' }}>
-                    <span style={{ fontSize: '1rem', fontWeight: '600', color: 'var(--color-text-main)' }}>{product.price || '—'}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', marginBottom: '0.45rem', flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: '0.88rem', fontWeight: '600', color: 'var(--color-text-main)' }}>{product.price || '—'}</span>
                 </div>
-                <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginTop: 'auto' }}>
-                    <button type="button" className="btn btn-outline" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }} onClick={() => onToggleProduct(product)}>
-                        {isInEcosystem ? '✓ Added' : '+ Add to Ecosystem'}
+                <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', marginTop: 'auto' }}>
+                    <button type="button" className="btn btn-outline" style={{ padding: '0.32rem 0.55rem', fontSize: '0.72rem' }} onClick={() => onToggleProduct(product)}>
+                        {isInEcosystem ? '✓ Added' : '+ Add'}
                     </button>
-                    <button type="button" className="btn btn-outline" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }} onClick={() => onToggleCompare(compareKey)}>
+                    <button type="button" className="btn btn-outline" style={{ padding: '0.32rem 0.55rem', fontSize: '0.72rem' }} onClick={() => onToggleCompare(compareKey)}>
                         {compareOn ? 'Hide compare' : 'Compare'}
                     </button>
-                    <button type="button" className="btn btn-primary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }} onClick={() => onOpenProduct(product)}>
+                    <button type="button" className="btn btn-primary" style={{ padding: '0.32rem 0.55rem', fontSize: '0.72rem' }} onClick={() => onOpenProduct(product)}>
                         Details
                     </button>
                     {buyUrl && (
-                        <a href={buyUrl} target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>
+                        <a href={buyUrl} target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ padding: '0.32rem 0.55rem', fontSize: '0.72rem', textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>
                             Buy ↗
                         </a>
                     )}
@@ -1125,8 +1126,8 @@ export default function MyEcosystem({
                                         <div
                                             style={{
                                                 display: 'grid',
-                                                gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-                                                gap: '1rem',
+                                                gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                                                gap: '0.65rem',
                                             }}
                                         >
                                             {rest.map((product) => {
@@ -1159,8 +1160,8 @@ export default function MyEcosystem({
                                         <div
                                             style={{
                                                 display: 'grid',
-                                                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-                                                gap: '0.6rem',
+                                                gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+                                                gap: '0.5rem',
                                             }}
                                         >
                                             {ecosystemStartups.map(product => (
@@ -1198,8 +1199,8 @@ export default function MyEcosystem({
                                         <div
                                             style={{
                                                 display: 'grid',
-                                                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-                                                gap: '0.6rem',
+                                                gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+                                                gap: '0.5rem',
                                             }}
                                         >
                                             {rest.map((product) => {
@@ -1275,8 +1276,8 @@ export default function MyEcosystem({
                         {!llmLoading && activeTiered.length > 0 && (
                             <div style={{
                                 display: 'grid',
-                                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-                                gap: '1.25rem',
+                                gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))',
+                                gap: '0.75rem',
                             }}>
                                 {activeTiered.map((entry) => {
                                     const product = entry.topProduct || entry.tiers?.[0]?.product;
@@ -1285,77 +1286,83 @@ export default function MyEcosystem({
                                     const imgSrc = resolvedImages[product.id] || (product?.image && String(product.image).trim()) || '';
                                     const buyUrl = product?.url && /^https?:\/\//i.test(String(product.url).trim()) ? String(product.url).trim() : '';
                                     const isInEcosystem = !!myProducts[product.id];
+                                    const rawSum = (product.summary || '').trim();
+                                    const summaryShort = rawSum.length > 110 ? `${rawSum.slice(0, 107)}…` : rawSum;
+                                    const wi = (product.whyItWorks || '').trim();
+                                    const whyShort = wi.length > 140 ? `${wi.slice(0, 137)}…` : wi;
+                                    const cons = (product.considerations || '').trim();
+                                    const consShort = cons.length > 110 ? `${cons.slice(0, 107)}…` : cons;
                                     return (
                                         <div key={entry.concern} className="card hover-lift" style={{
                                             padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', position: 'relative'
                                         }}>
                                             {/* Concern badge */}
                                             <div style={{
-                                                position: 'absolute', top: '0.6rem', left: '0.6rem', zIndex: 5,
+                                                position: 'absolute', top: '0.45rem', left: '0.45rem', zIndex: 5,
                                                 background: 'var(--color-primary)', color: 'white',
-                                                padding: '0.2rem 0.6rem', borderRadius: 'var(--radius-pill)',
-                                                fontSize: '0.68rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.04em',
-                                                maxWidth: '60%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                                                padding: '0.15rem 0.45rem', borderRadius: 'var(--radius-pill)',
+                                                fontSize: '0.6rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.04em',
+                                                maxWidth: '65%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                                             }}>
                                                 {entry.concern}
                                             </div>
                                             {/* Image */}
-                                            <div style={{ height: '140px', width: '100%', overflow: 'hidden', position: 'relative' }}>
+                                            <div style={{ height: '96px', width: '100%', overflow: 'hidden', position: 'relative' }}>
                                                 {imgSrc ? (
                                                     <img src={imgSrc} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                                 ) : (
                                                     <div style={{
                                                         width: '100%', height: '100%',
                                                         background: 'linear-gradient(135deg, var(--color-secondary-fade), #f3e8ff)',
-                                                        display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem',
+                                                        display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem',
                                                     }}>🌸</div>
                                                 )}
                                                 {/* Type badge */}
                                                 <span style={{
-                                                    position: 'absolute', bottom: '0.5rem', left: '0.5rem',
+                                                    position: 'absolute', bottom: '0.35rem', left: '0.35rem',
                                                     background: product.type === 'digital' ? 'var(--color-primary)' : 'var(--color-surface-contrast)',
-                                                    color: 'white', padding: '0.2rem 0.55rem', borderRadius: 'var(--radius-pill)',
-                                                    fontSize: '0.68rem', fontWeight: '600', textTransform: 'uppercase',
+                                                    color: 'white', padding: '0.12rem 0.4rem', borderRadius: 'var(--radius-pill)',
+                                                    fontSize: '0.6rem', fontWeight: '600', textTransform: 'uppercase',
                                                 }}>
                                                     {product.type === 'digital' ? 'Digital' : 'Physical'}
                                                 </span>
                                                 {/* Pre-added badge */}
                                                 {isInEcosystem && (
                                                     <span style={{
-                                                        position: 'absolute', bottom: '0.5rem', right: '0.5rem',
-                                                        background: '#DCFCE7', color: '#166534', padding: '0.2rem 0.55rem',
-                                                        borderRadius: 'var(--radius-pill)', fontSize: '0.68rem', fontWeight: '700',
+                                                        position: 'absolute', bottom: '0.35rem', right: '0.35rem',
+                                                        background: '#DCFCE7', color: '#166534', padding: '0.12rem 0.4rem',
+                                                        borderRadius: 'var(--radius-pill)', fontSize: '0.6rem', fontWeight: '700',
                                                     }}>✓ In Ecosystem</span>
                                                 )}
                                             </div>
                                             {/* Card body */}
-                                            <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-                                                <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', fontWeight: '600', marginBottom: '0.2rem' }}>
+                                            <div style={{ padding: '0.65rem 0.75rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+                                                <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)', fontWeight: '600', marginBottom: '0.15rem' }}>
                                                     {product.brand}
                                                 </div>
-                                                <h4 style={{ fontSize: '1rem', margin: '0 0 0.4rem', lineHeight: 1.3, color: 'var(--color-text-main)' }}>
+                                                <h4 style={{ fontSize: '0.9rem', margin: '0 0 0.35rem', lineHeight: 1.25, color: 'var(--color-text-main)' }}>
                                                     {product.name}
                                                 </h4>
                                                 {product.llmGenerated && (
-                                                    <p style={{ fontSize: '0.68rem', color: 'var(--color-text-muted)', fontStyle: 'italic', marginBottom: '0.35rem' }}>
+                                                    <p style={{ fontSize: '0.62rem', color: 'var(--color-text-muted)', fontStyle: 'italic', marginBottom: '0.3rem' }}>
                                                         Sourced from public product data · verify before purchasing
                                                     </p>
                                                 )}
-                                                <p style={{ fontSize: '0.82rem', color: 'var(--color-text-muted)', marginBottom: '0.5rem', lineHeight: 1.45 }}>
-                                                    {product.summary}
+                                                <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginBottom: '0.4rem', lineHeight: 1.4 }}>
+                                                    {summaryShort}
                                                 </p>
                                                 {product.whyItWorks && (
-                                                    <p style={{ fontSize: '0.8rem', color: 'var(--color-primary-hover)', fontWeight: '500', marginBottom: '0.5rem', lineHeight: 1.4 }}>
-                                                        {product.whyItWorks}
+                                                    <p style={{ fontSize: '0.74rem', color: 'var(--color-primary-hover)', fontWeight: '500', marginBottom: '0.4rem', lineHeight: 1.35 }}>
+                                                        {whyShort}
                                                     </p>
                                                 )}
                                                 {product.considerations && (
-                                                    <p style={{ fontSize: '0.76rem', color: 'var(--color-text-muted)', fontStyle: 'italic', marginBottom: '0.5rem', lineHeight: 1.4 }}>
-                                                        ⚠️ {product.considerations}
+                                                    <p style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', fontStyle: 'italic', marginBottom: '0.4rem', lineHeight: 1.35 }}>
+                                                        ⚠️ {consShort}
                                                     </p>
                                                 )}
                                                 {/* Safety tags */}
-                                                <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
+                                                <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', marginBottom: '0.5rem' }}>
                                                     {product.safety?.recalls && !product.safety.recalls.includes('⚠️') && (
                                                         <span style={{ fontSize: '0.7rem', background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.15rem 0.45rem', borderRadius: 'var(--radius-pill)' }}>✓ No recalls</span>
                                                     )}
@@ -1405,32 +1412,32 @@ export default function MyEcosystem({
                                                 )}
                                                 {/* Search all link */}
                                                 <button type="button"
-                                                    style={{ background: 'none', border: 'none', padding: 0, fontSize: '0.75rem', color: 'var(--color-text-muted)', cursor: 'pointer', textAlign: 'left', marginBottom: '0.75rem', textDecoration: 'underline' }}
+                                                    style={{ background: 'none', border: 'none', padding: 0, fontSize: '0.68rem', color: 'var(--color-text-muted)', cursor: 'pointer', textAlign: 'left', marginBottom: '0.5rem', textDecoration: 'underline' }}
                                                     onClick={() => onGoToSearch && onGoToSearch(entry.concern)}>
                                                     Search all products for this concern →
                                                 </button>
                                                 {/* Price + Actions */}
-                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.4rem', marginTop: 'auto' }}>
-                                                    <span style={{ fontSize: '0.95rem', fontWeight: '600' }}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.35rem', marginTop: 'auto' }}>
+                                                    <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>
                                                         {product.price}
                                                         {getPricePerUnitLabel(product) ? (
-                                                            <span style={{ display: 'block', fontSize: '0.72rem', fontWeight: '500', color: 'var(--color-text-muted)' }}>
+                                                            <span style={{ display: 'block', fontSize: '0.65rem', fontWeight: '500', color: 'var(--color-text-muted)' }}>
                                                                 {getPricePerUnitLabel(product)}
                                                             </span>
                                                         ) : null}
                                                     </span>
-                                                    <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-                                                        <button className="btn btn-outline" style={{ padding: '0.35rem 0.7rem', fontSize: '0.78rem' }}
+                                                    <div style={{ display: 'flex', gap: '0.3rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                                                        <button className="btn btn-outline" style={{ padding: '0.28rem 0.5rem', fontSize: '0.72rem' }}
                                                             onClick={() => onToggleProduct(product)}>
                                                             {isInEcosystem ? '✓ Added' : '+ Add'}
                                                         </button>
-                                                        <button className="btn btn-primary" style={{ padding: '0.35rem 0.7rem', fontSize: '0.78rem' }}
+                                                        <button className="btn btn-primary" style={{ padding: '0.28rem 0.5rem', fontSize: '0.72rem' }}
                                                             onClick={() => onOpenProduct(product)}>
                                                             Details
                                                         </button>
                                                         {buyUrl && (
                                                             <a href={buyUrl} target="_blank" rel="noopener noreferrer"
-                                                                className="btn btn-outline" style={{ padding: '0.35rem 0.7rem', fontSize: '0.78rem' }}>
+                                                                className="btn btn-outline" style={{ padding: '0.28rem 0.5rem', fontSize: '0.72rem' }}>
                                                                 Buy ↗
                                                             </a>
                                                         )}
