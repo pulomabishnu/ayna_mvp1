@@ -3,6 +3,7 @@ import { getRecommendationExplanation, SIMILAR_PROFILES, ALL_PRODUCTS, CATEGORY_
 import { getRecommendedArticles } from './Articles';
 import { inferTagsFromHealthProfile } from '../utils/healthDataProfile';
 import CareNearYouPanel from './CareNearYouPanel';
+import LlmRecommendationsLoadingBlock from './LlmRecommendationsLoadingBlock';
 import { fetchLlmRecommendations, loadLearningMemory, saveLearningMemory } from '../utils/fetchLlmRecommendations';
 
 const TYPE_OPTIONS = [
@@ -35,6 +36,7 @@ export default function Recommendations({
     const [llmProvider, setLlmProvider] = useState('');
     const [llmLoading, setLlmLoading] = useState(false);
     const [llmError, setLlmError] = useState('');
+    const [llmLoadStartedAt, setLlmLoadStartedAt] = useState(0);
 
     const { byWorkflow, byCategory: byCategoryRaw } = useMemo(
         () => getRecommendationsGroupedByWorkflow(results || {}, omittedProducts || {}, healthProfile),
@@ -108,12 +110,14 @@ export default function Recommendations({
             setLlmProvider('');
             setLlmLoading(false);
             setLlmError('');
+            setLlmLoadStartedAt(0);
             return () => {
                 active = false;
             };
         }
 
         (async () => {
+            setLlmLoadStartedAt(Date.now());
             setLlmLoading(true);
             setLlmError('');
             try {
@@ -150,7 +154,10 @@ export default function Recommendations({
                 setLlmProvider('');
                 setLlmError(e?.message || 'Could not load recommendations');
             } finally {
-                if (active) setLlmLoading(false);
+                if (active) {
+                    setLlmLoading(false);
+                    setLlmLoadStartedAt(0);
+                }
             }
         })();
 
@@ -347,11 +354,7 @@ export default function Recommendations({
             />
 
             {results?.fullHealthIntake && Object.keys(results.fullHealthIntake).length > 0 && llmLoading && (
-                <div style={{ maxWidth: '720px', margin: '0 auto var(--spacing-xl)', textAlign: 'center', padding: '3rem', color: 'var(--color-text-muted)' }}>
-                    <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>🌸</div>
-                    <p style={{ fontSize: '1.1rem', fontWeight: '600', color: 'var(--color-text-main)' }}>Building your personalized ecosystem...</p>
-                    <p style={{ fontSize: '0.9rem', marginTop: '0.5rem' }}>This takes a few seconds — Claude is reading your full health profile.</p>
-                </div>
+                <LlmRecommendationsLoadingBlock loadStartedAt={llmLoadStartedAt} />
             )}
 
             {results?.fullHealthIntake && Object.keys(results.fullHealthIntake).length > 0 && !llmLoading && llmError && (

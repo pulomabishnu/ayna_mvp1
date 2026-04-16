@@ -8,6 +8,7 @@ import {
 } from '../data/products';
 import { getInteractions } from '../data/interactions';
 import CareNearYouPanel from './CareNearYouPanel';
+import LlmRecommendationsLoadingBlock from './LlmRecommendationsLoadingBlock';
 import { getRecommendedArticles } from './Articles';
 import { inferTagsFromHealthProfile, saveHealthProfile } from '../utils/healthDataProfile';
 import { generateTieredRecommendations } from '../utils/recommendationEngine';
@@ -274,6 +275,7 @@ export default function MyEcosystem({
     const [llmLoading, setLlmLoading] = useState(false);
     const [llmError, setLlmError] = useState('');
     const [llmProvider, setLlmProvider] = useState('');
+    const [llmLoadStartedAt, setLlmLoadStartedAt] = useState(0);
 
     const myProductIds = Object.keys(myProducts);
     const myProductList = Object.values(myProducts);
@@ -391,12 +393,14 @@ export default function MyEcosystem({
             setLlmLoading(false);
             setLlmError('');
             setLlmProvider('');
+            setLlmLoadStartedAt(0);
             return () => {
                 active = false;
             };
         }
 
         (async () => {
+            setLlmLoadStartedAt(Date.now());
             setLlmLoading(true);
             setLlmError('');
             try {
@@ -435,7 +439,10 @@ export default function MyEcosystem({
                 setLlmProvider('');
                 setLlmError(e?.message || 'Could not load recommendations');
             } finally {
-                if (active) setLlmLoading(false);
+                if (active) {
+                    setLlmLoading(false);
+                    setLlmLoadStartedAt(0);
+                }
             }
         })();
 
@@ -559,11 +566,7 @@ export default function MyEcosystem({
                             Category → subcategory symptoms → top pick for you, with 3 alternatives.
                         </p>
                         {llmLoading && (
-                            <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--color-text-muted)' }}>
-                                <div style={{ fontSize: '2rem', marginBottom: '0.75rem' }}>🌸</div>
-                                <p style={{ fontWeight: '600' }}>Building your personalized ecosystem...</p>
-                                <p style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>Claude is reading your full health profile.</p>
-                            </div>
+                            <LlmRecommendationsLoadingBlock loadStartedAt={llmLoadStartedAt} compact />
                         )}
                         {llmError && (
                             <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textAlign: 'center' }}>
