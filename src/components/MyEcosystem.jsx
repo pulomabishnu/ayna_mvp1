@@ -501,7 +501,7 @@ export default function MyEcosystem({
     const [notesDraft, setNotesDraft] = useState('');
     const [showAddModal, setShowAddModal] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
-    const [viewMode, setViewMode] = useState('function'); // 'function' or 'integration'
+    const viewMode = 'function';
     const [interactionSelection, setInteractionSelection] = useState(new Set()); // product ids for interaction check
     const [ecosystemCompareOpen, setEcosystemCompareOpen] = useState({});
     const [ecosystemAltMiniKey, setEcosystemAltMiniKey] = useState('');
@@ -933,26 +933,6 @@ export default function MyEcosystem({
 
                 <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-lg)', display: 'flex', justifyContent: 'center', gap: '1rem' }}>
                     <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>+ Add a Product or App</button>
-                    <div style={{ background: 'var(--color-surface-soft)', padding: '0.25rem', borderRadius: 'var(--radius-pill)', border: '1px solid var(--color-border)', display: 'flex' }}>
-                        <button
-                            onClick={() => setViewMode('function')}
-                            style={{
-                                padding: '0.4rem 1rem', borderRadius: 'var(--radius-pill)', border: 'none', fontSize: '0.85rem', cursor: 'pointer',
-                                background: viewMode === 'function' ? 'white' : 'transparent',
-                                boxShadow: viewMode === 'function' ? 'var(--shadow-sm)' : 'none',
-                                fontWeight: viewMode === 'function' ? '600' : '500'
-                            }}
-                        >By Function</button>
-                        <button
-                            onClick={() => setViewMode('integration')}
-                            style={{
-                                padding: '0.4rem 1rem', borderRadius: 'var(--radius-pill)', border: 'none', fontSize: '0.85rem', cursor: 'pointer',
-                                background: viewMode === 'integration' ? 'white' : 'transparent',
-                                boxShadow: viewMode === 'integration' ? 'var(--shadow-sm)' : 'none',
-                                fontWeight: viewMode === 'integration' ? '600' : '500'
-                            }}
-                        >By Integration</button>
-                    </div>
                 </div>
 
                 {(myProductList.length === 0 ? (
