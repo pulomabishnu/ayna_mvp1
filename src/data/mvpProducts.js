@@ -567,5 +567,34 @@ export const MVP_DIGITAL = [
       scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/32324464/', text: 'Telehealth in women\'s health', summary: 'Evidence on virtual care access for chronic and specialty needs.', justification: 'PubMed peer-reviewed.' }] },
       community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/Menopause/search/?q=telehealth&restrict_sr=1', text: 'Reddit r/Menopause — telehealth', summary: 'Community discussions on virtual menopause care.' }] }
     }
+  },
+  {
+    id: 'd-pomelo-care',
+    name: 'Pomelo Care',
+    category: 'telehealth',
+    type: 'digital',
+    internal: false,
+    healthFunctions: ['telehealth', 'mental-health', 'cycle-tracking'],
+    tags: ['pregnancy', 'postpartum', 'fertility', 'menopause', 'comfort', 'privacy', 'telehealth'],
+    price: 'Covered by many employers & health plans; confirm eligibility',
+    userRating: 4.7,
+    whereToBuy: ['PomeloCare.com'],
+    url: 'https://www.pomelocare.com/',
+    platform: 'Web, iOS, Android',
+    image: '/ayna_placeholder.png',
+    summary: 'National virtual care for women and children: 24/7 text, phone, or video access to a multidisciplinary team (clinicians, midwives, doulas, lactation, therapists, dietitians). Services span fertility and preconception, prenatal and postpartum care, pediatric and NICU support, and midlife/menopause—typically through employers and health plans; complements your in-person OB-GYN or pediatrician.',
+    safety: { fdaStatus: 'Clinical care via licensed professionals; not an emergency service', materials: 'N/A', recalls: 'N/A', allergens: 'N/A' },
+    privacy: { dataStorage: 'US', sellsData: 'Check policy', hipaa: 'HIPAA-aligned clinical platform', keyPolicy: 'Virtual women\'s and pediatric care; confirm coverage with your plan' },
+    clinicianOpinionSource: 'independent',
+    clinicianAttribution: 'Ayna synthesis of public program descriptions and clinical norms. Not a direct clinician quote.',
+    doctorOpinion: 'Integrated virtual maternity and women\'s health programs can improve access to education, triage, and follow-up between in-person visits; eligibility and scope depend on your plan.',
+    communityReview: 'Patients often cite fast responses and coordinated support across pregnancy and postpartum; access is plan-dependent.',
+    effectiveness: 'Team-based virtual care with evidence-based protocols; outcomes vary by population and program design.',
+    badges: ['Telehealth', 'Maternity & Women\'s Health'],
+    verificationLinks: {
+      doctor: { links: [{ url: 'https://www.acog.org/womens-health', text: 'ACOG: Women\'s health', summary: 'Clinical context for prenatal, postpartum, and gynecologic care.', justification: 'ACOG is the leading OB-GYN society.' }] },
+      scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/?term=telehealth+maternal+health', text: 'PubMed: telehealth and maternal health', summary: 'Peer-reviewed literature on virtual models in maternity care.', justification: 'PubMed peer-reviewed.' }] },
+      community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/BabyBumps/search/?q=telehealth&restrict_sr=1', text: 'Reddit r/BabyBumps — telehealth', summary: 'Community discussions on virtual pregnancy and postpartum support.' }] }
+    }
   }
 ];
