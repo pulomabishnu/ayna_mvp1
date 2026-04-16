@@ -189,13 +189,18 @@ Return ONE JSON object ONLY (no markdown) with this shape:
   ]
 }
 
-Rules:
-- Suggest 6 to 10 DISTINCT real branded products or well-known apps, ranked most relevant first.
-- Use brands and products that actually exist in the US market (or global apps). Do not invent fake companies.
-- category must be one of: ${cats}
-- Never include URLs, domains as links, or "http" in any string. Retailers are plain words only.
-- typicalUserRating: optional number 3.0-5.0 (one decimal) as a rough community-average style estimate — not a medical claim.
-- If the query is not women's health / wellness shopping related, return {"querySummary":"","suggestions":[]} .`;
+PRODUCT SELECTION PROCESS:
+1. Identify what the user is actually looking for based on their search query
+2. Draw on your full knowledge of ALL brands that make relevant products — mainstream, indie, DTC, clinical, international brands available in the US market
+3. Rank by: (a) clinical reputation and safety record, (b) relevance to the specific query, (c) availability, (d) community reputation
+4. Suggest the most relevant and reputable options — not just the most popular ones. Small and indie brands are encouraged if reputable.
+
+ANTI-HALLUCINATION RULES:
+- Only suggest products from brands you are confident exist and sell in the US market
+- Never invent brand names or product lines
+- Never include URLs, domains, or "http" in any field — retailer names as plain text only
+- typicalUserRating: optional number 3.0-5.0 only if you have real signal — omit if unsure
+- If the query is not women's health or wellness shopping related, return {"querySummary":"","suggestions":[]}`;
 }
 
 async function callClaudeJson(prompt) {

@@ -358,7 +358,7 @@ export default function Recommendations({
                     </p>
                 )}
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginTop: '0.5rem' }}>
-                    🔒 We never sell your data. Workflow cards use the vetted in-app catalog; tiered picks above are AI-generated from your profile — use clinical judgment.
+                    🔒 We never sell your data. Workflow cards use the vetted in-app catalog; tiered picks above are Ayna-curated from your profile — use clinical judgment.
                 </p>
                 <p style={{ color: 'var(--color-primary)', fontSize: '0.9rem', marginTop: '0.5rem', fontWeight: '500' }}>
                     Forgot something? Use the 💬 chat button to speak or type more — we’ll refresh your ecosystem.

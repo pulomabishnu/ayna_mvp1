@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useSpeechToText } from '../hooks/useSpeechToText';
 import SearchMicButton from './SearchMicButton';
 import { ALL_PRODUCTS, CATEGORY_LABELS, SYMPTOM_TO_SUPPLEMENTS } from '../data/products';
@@ -8,6 +8,7 @@ import { RELEASED_STARTUPS } from '../data/startups';
 import { getAynaRating } from '../data/aynaReviews';
 import Disclaimer from './Disclaimer';
 import FindYourPadModal from './FindYourPadModal';
+import { resolveProductImage } from '../utils/resolveProductImage';
 
 const ALL_CATEGORIES = ['all', 'pad', 'tampon', 'cup', 'disc', 'period-underwear', 'supplement', 'tracker', 'telehealth', 'mental-health', 'fitness', 'diagnostics', 'hormone-monitoring', 'menopause', 'fertility', 'pelvic-health', 'pelvic-floor', 'cramp-relief', 'postpartum', 'pregnancy', 'sex-tech', 'intimate-care', 'contraception'];
 const TYPE_FILTERS = ['all', 'physical', 'digital', 'startup'];
@@ -122,6 +123,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [aiQuerySummary, setAiQuerySummary] = useState('');
     const [aiLoading, setAiLoading] = useState(false);
     const [aiError, setAiError] = useState(null);
+    const [resolvedImages, setResolvedImages] = useState({});
     const recommendedSet = useMemo(() => new Set(recommendedProductIds || []), [recommendedProductIds]);
     const speech = useSpeechToText();
 
@@ -247,17 +249,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
     const qTrimForAi = searchQuery.trim();
     const catalogMatchCount = filtered.length;
-    const displayItems = catalogMatchCount > 0 ? filtered : aiSuggestions;
+    const displayItems = filtered;
 
     React.useEffect(() => {
         if (qTrimForAi.length < 2) {
-            setAiSuggestions([]);
-            setAiQuerySummary('');
-            setAiLoading(false);
-            setAiError(null);
-            return;
-        }
-        if (catalogMatchCount > 0) {
             setAiSuggestions([]);
             setAiQuerySummary('');
             setAiLoading(false);
@@ -297,7 +292,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         };
     }, [
         qTrimForAi,
-        catalogMatchCount,
         categoryFilter,
         symptomFilter,
         typeFilter,
@@ -308,6 +302,16 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         omittedProducts,
         recommendedSet,
     ]);
+
+    useEffect(() => {
+        if (!aiSuggestions || !aiSuggestions.length) return;
+        aiSuggestions.forEach((product) => {
+            if (!product || !product.name || resolvedImages[product.id] !== undefined) return;
+            resolveProductImage(product.name, product.brand).then((url) => {
+                if (url) setResolvedImages((prev) => ({ ...prev, [product.id]: url }));
+            });
+        });
+    }, [aiSuggestions]);
 
     const handleSmartSearch = (e) => {
         e.preventDefault();
@@ -829,6 +833,93 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     );
                 })}
             </div>
+            {aiSuggestions.length > 0 && (
+              <div style={{ marginTop: '2.5rem' }}>
+                <h3 style={{ fontSize: '1.1rem', marginBottom: '0.25rem', color: 'var(--color-text-main)' }}>
+                  More from Ayna
+                </h3>
+                <p style={{ fontSize: '0.82rem', color: 'var(--color-text-muted)', marginBottom: '1.25rem' }}>
+                  Products sourced from public data beyond our catalog. Verify before purchasing.
+                </p>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+                  gap: '1.25rem',
+                }}>
+                  {aiSuggestions.map((product) => {
+                    const imgSrc = resolvedImages[product.id] || (product?.image && String(product.image).trim()) || '';
+                    const isInEcosystem = !!myProducts?.[product.id];
+                    return (
+                      <div key={product.id} className="card hover-lift" style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                        <div style={{ height: '140px', width: '100%', overflow: 'hidden', position: 'relative' }}>
+                          {imgSrc ? (
+                            <img src={imgSrc} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.style.display = 'none'; }} />
+                          ) : (
+                            <div style={{
+                              width: '100%', height: '100%',
+                              background: 'linear-gradient(135deg, var(--color-secondary-fade), #f3e8ff)',
+                              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem',
+                            }}>🌸</div>
+                          )}
+                          <span style={{
+                            position: 'absolute', bottom: '0.5rem', left: '0.5rem',
+                            background: product.type === 'digital' ? 'var(--color-primary)' : 'var(--color-surface-contrast)',
+                            color: 'white', padding: '0.2rem 0.55rem', borderRadius: 'var(--radius-pill)',
+                            fontSize: '0.68rem', fontWeight: '600', textTransform: 'uppercase',
+                          }}>
+                            {product.type === 'digital' ? 'Digital' : 'Physical'}
+                          </span>
+                        </div>
+                        <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+                          {product.brand && (
+                            <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', fontWeight: '600', marginBottom: '0.15rem' }}>
+                              {product.brand}
+                            </div>
+                          )}
+                          <h4 style={{ fontSize: '1rem', margin: '0 0 0.25rem', lineHeight: 1.3 }}>{product.name}</h4>
+                          <p style={{ fontSize: '0.68rem', color: 'var(--color-text-muted)', fontStyle: 'italic', marginBottom: '0.4rem' }}>
+                            Sourced from public product data · verify before purchasing
+                          </p>
+                          <p style={{ fontSize: '0.82rem', color: 'var(--color-text-muted)', marginBottom: '0.5rem', lineHeight: 1.45, flexGrow: 1 }}>
+                            {product.summary}
+                          </p>
+                          {product.price && (
+                            <div style={{ fontSize: '0.9rem', fontWeight: '600', marginBottom: '0.5rem' }}>{product.price}</div>
+                          )}
+                          {Array.isArray(product.whereToBuy) && product.whereToBuy.length > 0 && (
+                            <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
+                              {product.whereToBuy.slice(0, 3).map((shop) => (
+                                <span key={shop} style={{
+                                  fontSize: '0.7rem', padding: '0.15rem 0.45rem',
+                                  background: 'var(--color-secondary-fade)', borderRadius: 'var(--radius-pill)',
+                                  color: 'var(--color-text-muted)',
+                                }}>{shop}</span>
+                              ))}
+                            </div>
+                          )}
+                          <div style={{ display: 'flex', gap: '0.4rem', marginTop: 'auto' }}>
+                            <button
+                              className="btn btn-outline"
+                              style={{ padding: '0.35rem 0.7rem', fontSize: '0.78rem', flex: 1 }}
+                              onClick={() => onToggleProduct && onToggleProduct(product)}
+                            >
+                              {isInEcosystem ? '✓ Added' : '+ Add'}
+                            </button>
+                            <button
+                              className="btn btn-primary"
+                              style={{ padding: '0.35rem 0.7rem', fontSize: '0.78rem', flex: 1 }}
+                              onClick={() => onOpenProduct && onOpenProduct(product)}
+                            >
+                              Details
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
             <Disclaimer compact style={{ marginTop: '2rem', textAlign: 'center' }} />
         </section>
     );

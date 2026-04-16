@@ -20,6 +20,7 @@ import {
     saveCachedLlmRecommendations,
     clearCachedLlmRecommendations,
 } from '../utils/fetchLlmRecommendations';
+import { resolveProductImage } from '../utils/resolveProductImage';
 
 function EcosystemProductAlternatives({ product, seedEntry, quizResults, healthProfile, onSwap, onGoToSearch, precomputedAlternatives = [] }) {
     const [open, setOpen] = useState(false);
@@ -181,8 +182,8 @@ function EcosystemProductAlternatives({ product, seedEntry, quizResults, healthP
     );
 }
 
-function IntakeRecAltMini({ alt, myProducts, onToggleProduct, onOpenProduct }) {
-    const imgSrc = alt?.image && String(alt.image).trim();
+function IntakeRecAltMini({ alt, myProducts, onToggleProduct, onOpenProduct, resolvedImages = {} }) {
+    const imgSrc = resolvedImages[alt.id] || (alt?.image && String(alt.image).trim()) || '';
     const buyUrl = alt?.url && /^https:\/\//i.test(String(alt.url).trim()) ? String(alt.url).trim() : '';
     const inEco = !!myProducts[alt.id];
     return (
@@ -246,6 +247,7 @@ function IntakeRecommendationsProductCard({
     alternatives,
     altMiniKey,
     onSelectAltMini,
+    resolvedImages = {},
 }) {
     const isTracked = !!trackedProducts[product.id];
     const isInEcosystem = !!myProducts[product.id];
@@ -254,7 +256,7 @@ function IntakeRecommendationsProductCard({
     const useLlmNarrative = product?.whyItWorks != null && String(product.whyItWorks).trim().length > 0;
     const whyItWorks = useLlmNarrative ? String(product.whyItWorks).trim() : engine.whyItWorks;
     const considerations = useLlmNarrative ? (String(product.considerations || '').trim() || null) : engine.considerations;
-    const imgSrc = product.image && String(product.image).trim();
+    const imgSrc = resolvedImages[product.id] || (product?.image && String(product.image).trim()) || '';
     const buyUrl = product.url && /^https:\/\//i.test(String(product.url).trim()) ? String(product.url).trim() : '';
     const recallTxt = (product.safety?.recalls || '').trim();
     const showNoRecallsTag = recallTxt && !recallTxt.includes('⚠️');
@@ -387,13 +389,13 @@ function IntakeRecommendationsProductCard({
                         </div>
                         {selectedMiniAlt && (
                             <div style={{ marginTop: '0.55rem' }}>
-                                <IntakeRecAltMini alt={selectedMiniAlt} myProducts={myProducts} onToggleProduct={onToggleProduct} onOpenProduct={onOpenProduct} />
+                                <IntakeRecAltMini alt={selectedMiniAlt} myProducts={myProducts} onToggleProduct={onToggleProduct} onOpenProduct={onOpenProduct} resolvedImages={resolvedImages} />
                             </div>
                         )}
                         {compareOn && (
                             <div style={{ marginTop: '0.65rem', display: 'grid', gap: '0.5rem' }}>
                                 {alts.map((alt) => (
-                                    <IntakeRecAltMini key={`cmp-${alt.id}`} alt={alt} myProducts={myProducts} onToggleProduct={onToggleProduct} onOpenProduct={onOpenProduct} />
+                                    <IntakeRecAltMini key={`cmp-${alt.id}`} alt={alt} myProducts={myProducts} onToggleProduct={onToggleProduct} onOpenProduct={onOpenProduct} resolvedImages={resolvedImages} />
                                 ))}
                             </div>
                         )}
@@ -506,6 +508,7 @@ export default function MyEcosystem({
     const [llmLoading, setLlmLoading] = useState(false);
     const [llmError, setLlmError] = useState('');
     const [llmLoadStartedAt, setLlmLoadStartedAt] = useState(0);
+    const [resolvedImages, setResolvedImages] = useState({});
 
     const myProductIds = Object.keys(myProducts);
     const myProductList = Object.values(myProducts);
@@ -657,6 +660,25 @@ export default function MyEcosystem({
         () => (llmTiered.length > 0 ? llmTiered : intakeTieredRecommendations),
         [llmTiered, intakeTieredRecommendations]
     );
+
+    useEffect(() => {
+        if (!activeTiered || !activeTiered.length) return;
+        activeTiered.forEach((entry) => {
+            const product = entry.topProduct || entry.tiers?.[0]?.product;
+            if (!product || !product.llmGenerated || !product.name) return;
+            if (resolvedImages[product.id] !== undefined) return;
+            resolveProductImage(product.name, product.brand).then((url) => {
+                if (url) setResolvedImages((prev) => ({ ...prev, [product.id]: url }));
+            });
+            const alts = entry.alternatives || entry.tiers?.[0]?.alternatives || [];
+            alts.forEach((alt) => {
+                if (!alt || !alt.name || resolvedImages[alt.id] !== undefined) return;
+                resolveProductImage(alt.name, alt.brand).then((url) => {
+                    if (url) setResolvedImages((prev) => ({ ...prev, [alt.id]: url }));
+                });
+            });
+        });
+    }, [activeTiered]);
 
     useEffect(() => {
         if (!profileEditOpen) return;
@@ -965,7 +987,7 @@ export default function MyEcosystem({
                             <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--color-text-muted)' }}>
                                 <div style={{ fontSize: '2rem', marginBottom: '0.75rem' }}>🌸</div>
                                 <p style={{ fontWeight: '600' }}>Building your personalized ecosystem...</p>
-                                <p style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>Claude is reading your full health profile.</p>
+                                <p style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>Ayna is personalizing your ecosystem...</p>
                             </div>
                         )}
                         {llmError && !llmLoading && (
@@ -983,7 +1005,7 @@ export default function MyEcosystem({
                                     const product = entry.topProduct || entry.tiers?.[0]?.product;
                                     const alternatives = entry.alternatives || entry.tiers?.[0]?.alternatives || [];
                                     if (!product) return null;
-                                    const imgSrc = product?.image && String(product.image).trim();
+                                    const imgSrc = resolvedImages[product.id] || (product?.image && String(product.image).trim()) || '';
                                     const buyUrl = product?.url && /^https?:\/\//i.test(String(product.url).trim()) ? String(product.url).trim() : '';
                                     const isInEcosystem = !!myProducts[product.id];
                                     return (
@@ -1037,6 +1059,11 @@ export default function MyEcosystem({
                                                 <h4 style={{ fontSize: '1rem', margin: '0 0 0.4rem', lineHeight: 1.3, color: 'var(--color-text-main)' }}>
                                                     {product.name}
                                                 </h4>
+                                                {product.llmGenerated && (
+                                                    <p style={{ fontSize: '0.68rem', color: 'var(--color-text-muted)', fontStyle: 'italic', marginBottom: '0.35rem' }}>
+                                                        Sourced from public product data · verify before purchasing
+                                                    </p>
+                                                )}
                                                 <p style={{ fontSize: '0.82rem', color: 'var(--color-text-muted)', marginBottom: '0.5rem', lineHeight: 1.45 }}>
                                                     {product.summary}
                                                 </p>
