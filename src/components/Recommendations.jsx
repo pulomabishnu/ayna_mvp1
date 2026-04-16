@@ -4,6 +4,7 @@ import { getRecommendedArticles } from './Articles';
 import { inferTagsFromHealthProfile } from '../utils/healthDataProfile';
 import CareNearYouPanel from './CareNearYouPanel';
 import LlmRecommendationsLoadingBlock from './LlmRecommendationsLoadingBlock';
+import { getPricePerUnitLabel } from '../utils/pricePerUnit';
 import {
     fetchLlmRecommendations,
     loadLearningMemory,
@@ -194,6 +195,7 @@ export default function Recommendations({
     const renderProductCard = (product) => {
         const isTracked = !!trackedProducts[product.id];
         const isInEcosystem = !!myProducts[product.id];
+        const perUnitPrice = getPricePerUnitLabel(product);
         const hasIndependentClinician = product?.clinicianOpinionSource === 'independent' && String(product?.clinicianAttribution || '').trim().length > 0;
         const engine = getRecommendationExplanation(product, results, healthProfile);
         const useLlmNarrative = product?.whyItWorks != null && String(product.whyItWorks).trim().length > 0;
@@ -307,7 +309,14 @@ export default function Recommendations({
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', marginTop: 'auto' }}>
-                        <span style={{ fontSize: '1rem', fontWeight: '600', color: 'var(--color-text-main)' }}>{product.price}</span>
+                        <span style={{ fontSize: '1rem', fontWeight: '600', color: 'var(--color-text-main)' }}>
+                            {product.price}
+                            {perUnitPrice && (
+                                <span style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: 'var(--color-text-muted)' }}>
+                                    {perUnitPrice}
+                                </span>
+                            )}
+                        </span>
                         <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                             <button className="btn btn-outline" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }} onClick={() => toggleMyProduct(product)}>
                                 {isInEcosystem ? '✓ Added' : '+ Add'}

@@ -333,6 +333,19 @@ export default function Quiz({ onComplete }) {
     setCurrentStep((prev) => prev - 1);
   };
 
+  const handleSkipQuestion = () => {
+    const stepId = step.id;
+    const nextAnswers = { ...answers };
+    delete nextAnswers[stepId];
+    setAnswers(nextAnswers);
+    setMultiSelections(new Set());
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+      return;
+    }
+    onComplete(nextAnswers);
+  };
+
   const handleSingle = (option) => {
     if (!step || step.type !== 'single') return;
     if (singleAdvanceTimerRef.current) {
@@ -687,17 +700,37 @@ export default function Quiz({ onComplete }) {
             {currentStep + 1} of {steps.length}
           </p>
           <div style={{ flex: '0 0 auto', minWidth: '4.5rem', display: 'flex', justifyContent: 'flex-end' }}>
-            {step.type === 'multi' && (
-              <button
-                type="button"
-                className="btn btn-primary"
-                style={{ padding: '0.45rem 0.9rem', fontSize: '0.9rem', opacity: multiSelections.size === 0 ? 0.5 : 1 }}
-                disabled={multiSelections.size === 0}
-                onClick={handleMultiConfirm}
-              >
-                Continue →
-              </button>
-            )}
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              {(step.type === 'single' || step.type === 'multi') && (
+                <button
+                  type="button"
+                  style={{
+                    fontSize: '0.88rem',
+                    color: 'var(--color-text-muted)',
+                    textDecoration: 'underline',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: '0.25rem 0.1rem',
+                    whiteSpace: 'nowrap',
+                  }}
+                  onClick={handleSkipQuestion}
+                >
+                  Skip
+                </button>
+              )}
+              {step.type === 'multi' && (
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  style={{ padding: '0.45rem 0.9rem', fontSize: '0.9rem', opacity: multiSelections.size === 0 ? 0.5 : 1 }}
+                  disabled={multiSelections.size === 0}
+                  onClick={handleMultiConfirm}
+                >
+                  Continue →
+                </button>
+              )}
+            </div>
           </div>
         </div>
 

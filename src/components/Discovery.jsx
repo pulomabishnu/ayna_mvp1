@@ -9,6 +9,7 @@ import { getAynaRating } from '../data/aynaReviews';
 import Disclaimer from './Disclaimer';
 import FindYourPadModal from './FindYourPadModal';
 import { resolveProductImage } from '../utils/resolveProductImage';
+import { getPricePerUnitLabel } from '../utils/pricePerUnit';
 
 const ALL_CATEGORIES = ['all', 'pad', 'tampon', 'cup', 'disc', 'period-underwear', 'supplement', 'tracker', 'telehealth', 'mental-health', 'fitness', 'diagnostics', 'hormone-monitoring', 'menopause', 'fertility', 'pelvic-health', 'pelvic-floor', 'cramp-relief', 'postpartum', 'pregnancy', 'sex-tech', 'intimate-care', 'contraception'];
 const TYPE_FILTERS = ['all', 'physical', 'digital', 'startup'];
@@ -621,6 +622,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     const releasedStartup = isStartup && item.productReleased === true;
                     const isInEcosystem = !!myProducts[item.id];
                     const isJoined = isStartup && !releasedStartup && !!joinedWaitlists[item.id];
+                    const perUnitPrice = getPricePerUnitLabel(item);
 
                     return (
                         <div key={item.id} className="card hover-lift" style={{
@@ -702,7 +704,14 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                     {item.isStartup ? item.tagline : item.summary}
                                 </p>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
-                                    <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>{item.isStartup ? item.stage : item.price}</span>
+                                    <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>
+                                        {item.isStartup ? item.stage : item.price}
+                                        {!item.isStartup && perUnitPrice ? (
+                                            <span style={{ display: 'block', fontSize: '0.72rem', fontWeight: '500', color: 'var(--color-text-muted)' }}>
+                                                {perUnitPrice}
+                                            </span>
+                                        ) : null}
+                                    </span>
                                     {(() => {
                                         const note = item.ratingNote;
                                         if (item.aiEstimatedRating && item.userRating != null) {
@@ -849,6 +858,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                   {aiSuggestions.map((product) => {
                     const imgSrc = resolvedImages[product.id] || (product?.image && String(product.image).trim()) || '';
                     const isInEcosystem = !!myProducts?.[product.id];
+                    const perUnitPrice = getPricePerUnitLabel(product);
                     return (
                       <div key={product.id} className="card hover-lift" style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                         <div style={{ height: '140px', width: '100%', overflow: 'hidden', position: 'relative' }}>
@@ -884,7 +894,14 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                             {product.summary}
                           </p>
                           {product.price && (
-                            <div style={{ fontSize: '0.9rem', fontWeight: '600', marginBottom: '0.5rem' }}>{product.price}</div>
+                            <div style={{ fontSize: '0.9rem', fontWeight: '600', marginBottom: '0.5rem' }}>
+                              {product.price}
+                              {perUnitPrice && (
+                                <span style={{ display: 'block', fontSize: '0.72rem', fontWeight: '500', color: 'var(--color-text-muted)' }}>
+                                  {perUnitPrice}
+                                </span>
+                              )}
+                            </div>
                           )}
                           {Array.isArray(product.whereToBuy) && product.whereToBuy.length > 0 && (
                             <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>

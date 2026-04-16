@@ -21,6 +21,7 @@ import {
     clearCachedLlmRecommendations,
 } from '../utils/fetchLlmRecommendations';
 import { resolveProductImage } from '../utils/resolveProductImage';
+import { getPricePerUnitLabel } from '../utils/pricePerUnit';
 
 function EcosystemProductAlternatives({ product, seedEntry, quizResults, healthProfile, onSwap, onGoToSearch, precomputedAlternatives = [] }) {
     const [open, setOpen] = useState(false);
@@ -773,6 +774,13 @@ export default function MyEcosystem({
                     </div>
                 </div>
 
+                <div className="card" style={{ maxWidth: '720px', margin: '0 auto var(--spacing-lg)', padding: '1rem 1.25rem', fontFamily: 'var(--font-body)' }}>
+                    <h3 style={{ fontSize: '1.1rem', margin: '0 0 0.35rem', color: 'var(--color-text-main)' }}>Your health profile</h3>
+                    <p style={{ margin: 0, fontSize: '0.88rem', color: 'var(--color-text-muted)' }}>
+                        Concerns from your quiz, plus diagnoses and meds you add here, shape recommendations.
+                    </p>
+                </div>
+
                 <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-lg)', display: 'flex', justifyContent: 'center', gap: '1rem' }}>
                     <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>+ Add a Product or App</button>
                     <div style={{ background: 'var(--color-surface-soft)', padding: '0.25rem', borderRadius: 'var(--radius-pill)', border: '1px solid var(--color-border)', display: 'flex' }}>
@@ -845,6 +853,7 @@ export default function MyEcosystem({
                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                             {rest.map((product) => {
                                                 const seedEntry = ecosystemSeedMeta[product.id];
+                                                const perUnitPrice = getPricePerUnitLabel(product);
                                                 return (
                                                     <div key={product.id} className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', padding: '0.75rem 1rem' }}>
                                                         <div
@@ -859,7 +868,12 @@ export default function MyEcosystem({
                                                             </div>
                                                             <div style={{ flexGrow: 1, minWidth: 0 }}>
                                                                 <h4 style={{ fontSize: '0.95rem', marginBottom: '0.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>{product.name}{product.outOfBusiness && <span style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-surface-soft)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No longer sold</span>}</h4>
-                                                                <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{product.price}</span>
+                                                                <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
+                                                                    {product.price}
+                                                                    {perUnitPrice ? (
+                                                                        <span style={{ display: 'block', fontSize: '0.72rem' }}>{perUnitPrice}</span>
+                                                                    ) : null}
+                                                                </span>
                                                             </div>
                                                             <span style={{
                                                                 fontSize: '0.7rem', fontWeight: '600', textTransform: 'uppercase',
@@ -1091,6 +1105,9 @@ export default function MyEcosystem({
                                                         </summary>
                                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', marginTop: '0.45rem' }}>
                                                             {alternatives.map((alt) => (
+                                                                (() => {
+                                                                    const perUnitPrice = getPricePerUnitLabel(alt);
+                                                                    return (
                                                                 <div key={alt.id} style={{
                                                                     display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                                                                     padding: '0.4rem 0.6rem', background: 'var(--color-surface-soft)',
@@ -1099,7 +1116,12 @@ export default function MyEcosystem({
                                                                 }}>
                                                                     <div style={{ flex: 1, minWidth: 0 }}>
                                                                         <div style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-text-main)', lineHeight: 1.2 }}>{alt.name}</div>
-                                                                        <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)' }}>{alt.price}</div>
+                                                                        <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)' }}>
+                                                                            {alt.price}
+                                                                            {perUnitPrice ? (
+                                                                                <span style={{ display: 'block', fontSize: '0.68rem' }}>{perUnitPrice}</span>
+                                                                            ) : null}
+                                                                        </div>
                                                                     </div>
                                                                     <div style={{ display: 'flex', gap: '0.3rem', flexShrink: 0 }}>
                                                                         <button className="btn btn-outline" style={{ padding: '0.25rem 0.5rem', fontSize: '0.72rem' }}
@@ -1112,6 +1134,8 @@ export default function MyEcosystem({
                                                                         </button>
                                                                     </div>
                                                                 </div>
+                                                                    );
+                                                                })()
                                                             ))}
                                                         </div>
                                                     </details>
@@ -1124,7 +1148,14 @@ export default function MyEcosystem({
                                                 </button>
                                                 {/* Price + Actions */}
                                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.4rem', marginTop: 'auto' }}>
-                                                    <span style={{ fontSize: '0.95rem', fontWeight: '600' }}>{product.price}</span>
+                                                    <span style={{ fontSize: '0.95rem', fontWeight: '600' }}>
+                                                        {product.price}
+                                                        {getPricePerUnitLabel(product) ? (
+                                                            <span style={{ display: 'block', fontSize: '0.72rem', fontWeight: '500', color: 'var(--color-text-muted)' }}>
+                                                                {getPricePerUnitLabel(product)}
+                                                            </span>
+                                                        ) : null}
+                                                    </span>
                                                     <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                                                         <button className="btn btn-outline" style={{ padding: '0.35rem 0.7rem', fontSize: '0.78rem' }}
                                                             onClick={() => onToggleProduct(product)}>
