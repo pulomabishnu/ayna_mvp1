@@ -21,7 +21,7 @@ import ProductModal from './components/ProductModal';
 import LlmSearchSuggestionModal from './components/LlmSearchSuggestionModal';
 import Articles from './components/Articles';
 import ProfileChatbot from './components/ProfileChatbot';
-import { loadHealthProfile, inferTagsFromHealthProfile } from './utils/healthDataProfile';
+import { loadHealthProfile, hasHealthProfileSignals } from './utils/healthDataProfile';
 import { loadHealthIntakeForCurrentUser } from './utils/healthIntakeStore';
 import { mapIntakeToLegacyQuizProfile } from './utils/healthIntake';
 
@@ -49,10 +49,7 @@ function App() {
   const [ecosystemSeedMeta, setEcosystemSeedMeta] = useState({});
   const scrollY = useScrollPosition();
 
-  const hasHealthImport = useMemo(
-    () => inferTagsFromHealthProfile(healthProfile).length > 0,
-    [healthProfile]
-  );
+  const hasHealthImport = useMemo(() => hasHealthProfileSignals(healthProfile), [healthProfile]);
 
   React.useEffect(() => {
     setAynaReviews(loadAynaReviews());
@@ -564,7 +561,12 @@ function App() {
               setCurrentView('articles');
             }}
             onLlmRecommendationsLoaded={handleLlmRecommendationsLoaded}
-            onOpenHealthData={() => setCurrentView('profile')}
+            onOpenHealthData={() => {
+              setCurrentView('tracked');
+              window.setTimeout(() => {
+                document.getElementById('health-data-import')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }, 150);
+            }}
           />
         )}
         {currentView === 'discovery' && (

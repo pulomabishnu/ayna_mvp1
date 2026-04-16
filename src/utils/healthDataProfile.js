@@ -94,6 +94,28 @@ export function inferTagsFromHealthProfile(profile) {
 }
 
 /**
+ * True if the user has saved any importable health context (manual, FHIR, wearables, or source flags),
+ * even when free text does not match keyword tags yet.
+ */
+export function hasHealthProfileSignals(profile) {
+  if (!profile) return false;
+  if (inferTagsFromHealthProfile(profile).length > 0) return true;
+  const p = normalizeProfile(profile);
+  return (
+    p.conditions.length > 0 ||
+    p.medications.length > 0 ||
+    p.allergies.length > 0 ||
+    p.notes.trim().length > 0 ||
+    (p.wearableSummary?.text || '').trim().length > 0 ||
+    p.fhirSummary.conditions.length > 0 ||
+    p.fhirSummary.medications.length > 0 ||
+    p.sources.appleHealth ||
+    p.sources.googleFit ||
+    p.sources.fhir
+  );
+}
+
+/**
  * Minimal FHIR R4 Bundle parse: Condition.code, MedicationStatement.medicationCodeableConcept
  * @param {string} jsonText
  * @returns {{ conditions: string[], medications: string[], error?: string }}
