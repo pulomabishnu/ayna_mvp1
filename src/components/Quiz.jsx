@@ -759,6 +759,23 @@ export default function Quiz({ onComplete }) {
                 );
               })}
             </div>
+            <div style={{ textAlign: 'center', marginTop: '0.85rem' }}>
+              <button
+                type="button"
+                style={{
+                  fontSize: '0.9rem',
+                  color: 'var(--color-text-muted)',
+                  textDecoration: 'underline',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '0.25rem 0.35rem',
+                }}
+                onClick={handleSkipQuestion}
+              >
+                Skip this question
+              </button>
+            </div>
             <p style={{ textAlign: 'center', fontSize: '0.82rem', color: 'var(--color-text-muted)', marginTop: '1rem', marginBottom: 0 }}>
               Next step opens shortly after you choose. Tap <strong>Back</strong> above to edit a previous answer.
             </p>

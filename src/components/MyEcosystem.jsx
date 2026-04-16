@@ -774,11 +774,161 @@ export default function MyEcosystem({
                     </div>
                 </div>
 
-                <div className="card" style={{ maxWidth: '720px', margin: '0 auto var(--spacing-lg)', padding: '1rem 1.25rem', fontFamily: 'var(--font-body)' }}>
-                    <h3 style={{ fontSize: '1.1rem', margin: '0 0 0.35rem', color: 'var(--color-text-main)' }}>Your health profile</h3>
-                    <p style={{ margin: 0, fontSize: '0.88rem', color: 'var(--color-text-muted)' }}>
-                        Concerns from your quiz, plus diagnoses and meds you add here, shape recommendations.
-                    </p>
+                {/* Health profile: quiz + imported / manual context */}
+                <div className="card" style={{ maxWidth: '720px', margin: '0 auto var(--spacing-xl)', padding: '1.5rem', fontFamily: 'var(--font-body)' }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem', marginBottom: '1rem' }}>
+                        <div>
+                            <h3 style={{ fontSize: '1.2rem', margin: '0 0 0.35rem', color: 'var(--color-text-main)' }}>Your health profile</h3>
+                            <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>
+                                Concerns from your quiz, plus conditions and meds you add here, shape recommendations.
+                            </p>
+                        </div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                            {typeof onBuildEcosystem === 'function' && (
+                                <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem' }} onClick={onBuildEcosystem}>
+                                    Update quiz / concerns
+                                </button>
+                            )}
+                            <button
+                                type="button"
+                                className="btn btn-outline"
+                                style={{ fontSize: '0.85rem' }}
+                                onClick={() => setProfileEditOpen((o) => !o)}
+                            >
+                                {profileEditOpen ? 'Close editor' : 'Add or fix diagnoses & meds'}
+                            </button>
+                        </div>
+                    </div>
+                    {quizResults?.frustrations?.length > 0 && (
+                        <div style={{ marginBottom: '0.85rem' }}>
+                            <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)', margin: '0 0 0.4rem' }}>Concerns & goals</p>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                                {quizResults.frustrations.map((f) => (
+                                    <span
+                                        key={f}
+                                        style={{
+                                            fontSize: '0.82rem',
+                                            padding: '0.25rem 0.65rem',
+                                            borderRadius: 'var(--radius-pill)',
+                                            background: 'var(--color-secondary-fade)',
+                                            color: 'var(--color-text-main)',
+                                            border: '1px solid var(--color-border)',
+                                        }}
+                                    >
+                                        {f}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                    {(healthProfile?.conditions?.length > 0 || healthProfile?.fhirSummary?.conditions?.length > 0) && (
+                        <div style={{ marginBottom: '0.85rem' }}>
+                            <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)', margin: '0 0 0.4rem' }}>Conditions & diagnoses</p>
+                            <p style={{ margin: 0, fontSize: '0.9rem', lineHeight: 1.5, color: 'var(--color-text-main)' }}>
+                                {[...(healthProfile.conditions || []), ...(healthProfile.fhirSummary?.conditions || [])].filter(Boolean).join(' · ')}
+                            </p>
+                        </div>
+                    )}
+                    {(healthProfile?.medications?.length > 0 || healthProfile?.fhirSummary?.medications?.length > 0) && (
+                        <div style={{ marginBottom: '0.85rem' }}>
+                            <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)', margin: '0 0 0.4rem' }}>Medications</p>
+                            <p style={{ margin: 0, fontSize: '0.9rem', lineHeight: 1.5, color: 'var(--color-text-main)' }}>
+                                {[...(healthProfile.medications || []), ...(healthProfile.fhirSummary?.medications || [])].filter(Boolean).join(' · ')}
+                            </p>
+                        </div>
+                    )}
+                    {healthProfile?.allergies?.length > 0 && (
+                        <div style={{ marginBottom: '0.85rem' }}>
+                            <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)', margin: '0 0 0.4rem' }}>Allergies</p>
+                            <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--color-text-main)' }}>{healthProfile.allergies.join(' · ')}</p>
+                        </div>
+                    )}
+                    {healthProfile?.notes && (
+                        <p style={{ margin: '0 0 0.5rem', fontSize: '0.88rem', color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Notes: {healthProfile.notes}</p>
+                    )}
+                    {!quizResults?.frustrations?.length && !inferTagsFromHealthProfile(healthProfile).length && !healthProfile?.conditions?.length && (
+                        <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', margin: 0 }}>
+                            Complete the quiz or add conditions below so picks and articles match you better.
+                        </p>
+                    )}
+                    {profileEditOpen && (
+                        <div
+                            style={{
+                                marginTop: '1.25rem',
+                                paddingTop: '1.25rem',
+                                borderTop: '1px solid var(--color-border)',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '0.75rem',
+                            }}
+                        >
+                            <label style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-text-muted)' }}>Conditions (comma-separated)</label>
+                            <input
+                                value={conditionsDraft}
+                                onChange={(e) => setConditionsDraft(e.target.value)}
+                                placeholder="e.g. PCOS, endometriosis"
+                                style={{
+                                    padding: '0.65rem 0.85rem',
+                                    fontSize: '0.95rem',
+                                    borderRadius: 'var(--radius-md)',
+                                    border: '1px solid var(--color-border)',
+                                    fontFamily: 'var(--font-body)',
+                                    outline: 'none',
+                                }}
+                            />
+                            <label style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-text-muted)' }}>Medications</label>
+                            <input
+                                value={medicationsDraft}
+                                onChange={(e) => setMedicationsDraft(e.target.value)}
+                                placeholder="e.g. levothyroxine 50mcg"
+                                style={{
+                                    padding: '0.65rem 0.85rem',
+                                    fontSize: '0.95rem',
+                                    borderRadius: 'var(--radius-md)',
+                                    border: '1px solid var(--color-border)',
+                                    fontFamily: 'var(--font-body)',
+                                    outline: 'none',
+                                }}
+                            />
+                            <label style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-text-muted)' }}>Allergies</label>
+                            <input
+                                value={allergiesDraft}
+                                onChange={(e) => setAllergiesDraft(e.target.value)}
+                                placeholder="e.g. latex, penicillin"
+                                style={{
+                                    padding: '0.65rem 0.85rem',
+                                    fontSize: '0.95rem',
+                                    borderRadius: 'var(--radius-md)',
+                                    border: '1px solid var(--color-border)',
+                                    fontFamily: 'var(--font-body)',
+                                    outline: 'none',
+                                }}
+                            />
+                            <label style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-text-muted)' }}>Notes</label>
+                            <textarea
+                                value={notesDraft}
+                                onChange={(e) => setNotesDraft(e.target.value)}
+                                rows={3}
+                                style={{
+                                    padding: '0.65rem 0.85rem',
+                                    fontSize: '0.95rem',
+                                    borderRadius: 'var(--radius-md)',
+                                    border: '1px solid var(--color-border)',
+                                    fontFamily: 'var(--font-body)',
+                                    outline: 'none',
+                                    resize: 'vertical',
+                                }}
+                            />
+                            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                <button type="button" className="btn btn-primary" style={{ fontSize: '0.9rem' }} onClick={handleSaveHealthProfileDraft}>
+                                    Save profile
+                                </button>
+                                <button type="button" className="btn btn-outline" style={{ fontSize: '0.9rem' }} onClick={() => setProfileEditOpen(false)}>
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-lg)', display: 'flex', justifyContent: 'center', gap: '1rem' }}>
@@ -1181,163 +1331,6 @@ export default function MyEcosystem({
                         )}
                     </div>
                 )}
-
-                {/* Health profile: quiz + imported / manual context */}
-                <div className="card" style={{ maxWidth: '720px', margin: '0 auto var(--spacing-xl)', padding: '1.5rem', fontFamily: 'var(--font-body)' }}>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem', marginBottom: '1rem' }}>
-                        <div>
-                            <h3 style={{ fontSize: '1.2rem', margin: '0 0 0.35rem', color: 'var(--color-text-main)' }}>Your health profile</h3>
-                            <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>
-                                Concerns from your quiz, plus conditions and meds you add here, shape recommendations.
-                            </p>
-                        </div>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                            {typeof onBuildEcosystem === 'function' && (
-                                <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem' }} onClick={onBuildEcosystem}>
-                                    Update quiz / concerns
-                                </button>
-                            )}
-                            <button
-                                type="button"
-                                className="btn btn-outline"
-                                style={{ fontSize: '0.85rem' }}
-                                onClick={() => setProfileEditOpen((o) => !o)}
-                            >
-                                {profileEditOpen ? 'Close editor' : 'Add or fix diagnoses & meds'}
-                            </button>
-                        </div>
-                    </div>
-                    {quizResults?.frustrations?.length > 0 && (
-                        <div style={{ marginBottom: '0.85rem' }}>
-                            <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)', margin: '0 0 0.4rem' }}>Concerns & goals</p>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-                                {quizResults.frustrations.map((f) => (
-                                    <span
-                                        key={f}
-                                        style={{
-                                            fontSize: '0.82rem',
-                                            padding: '0.25rem 0.65rem',
-                                            borderRadius: 'var(--radius-pill)',
-                                            background: 'var(--color-secondary-fade)',
-                                            color: 'var(--color-text-main)',
-                                            border: '1px solid var(--color-border)',
-                                        }}
-                                    >
-                                        {f}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-                    {(healthProfile?.conditions?.length > 0 || healthProfile?.fhirSummary?.conditions?.length > 0) && (
-                        <div style={{ marginBottom: '0.85rem' }}>
-                            <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)', margin: '0 0 0.4rem' }}>Conditions & diagnoses</p>
-                            <p style={{ margin: 0, fontSize: '0.9rem', lineHeight: 1.5, color: 'var(--color-text-main)' }}>
-                                {[...(healthProfile.conditions || []), ...(healthProfile.fhirSummary?.conditions || [])].filter(Boolean).join(' · ')}
-                            </p>
-                        </div>
-                    )}
-                    {(healthProfile?.medications?.length > 0 || healthProfile?.fhirSummary?.medications?.length > 0) && (
-                        <div style={{ marginBottom: '0.85rem' }}>
-                            <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)', margin: '0 0 0.4rem' }}>Medications</p>
-                            <p style={{ margin: 0, fontSize: '0.9rem', lineHeight: 1.5, color: 'var(--color-text-main)' }}>
-                                {[...(healthProfile.medications || []), ...(healthProfile.fhirSummary?.medications || [])].filter(Boolean).join(' · ')}
-                            </p>
-                        </div>
-                    )}
-                    {healthProfile?.allergies?.length > 0 && (
-                        <div style={{ marginBottom: '0.85rem' }}>
-                            <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)', margin: '0 0 0.4rem' }}>Allergies</p>
-                            <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--color-text-main)' }}>{healthProfile.allergies.join(' · ')}</p>
-                        </div>
-                    )}
-                    {healthProfile?.notes && (
-                        <p style={{ margin: '0 0 0.5rem', fontSize: '0.88rem', color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Notes: {healthProfile.notes}</p>
-                    )}
-                    {!quizResults?.frustrations?.length && !inferTagsFromHealthProfile(healthProfile).length && !healthProfile?.conditions?.length && (
-                        <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', margin: 0 }}>
-                            Complete the quiz or add conditions below so picks and articles match you better.
-                        </p>
-                    )}
-                    {profileEditOpen && (
-                        <div
-                            style={{
-                                marginTop: '1.25rem',
-                                paddingTop: '1.25rem',
-                                borderTop: '1px solid var(--color-border)',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                gap: '0.75rem',
-                            }}
-                        >
-                            <label style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-text-muted)' }}>Conditions (comma-separated)</label>
-                            <input
-                                value={conditionsDraft}
-                                onChange={(e) => setConditionsDraft(e.target.value)}
-                                placeholder="e.g. PCOS, endometriosis"
-                                style={{
-                                    padding: '0.65rem 0.85rem',
-                                    fontSize: '0.95rem',
-                                    borderRadius: 'var(--radius-md)',
-                                    border: '1px solid var(--color-border)',
-                                    fontFamily: 'var(--font-body)',
-                                    outline: 'none',
-                                }}
-                            />
-                            <label style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-text-muted)' }}>Medications</label>
-                            <input
-                                value={medicationsDraft}
-                                onChange={(e) => setMedicationsDraft(e.target.value)}
-                                placeholder="e.g. levothyroxine 50mcg"
-                                style={{
-                                    padding: '0.65rem 0.85rem',
-                                    fontSize: '0.95rem',
-                                    borderRadius: 'var(--radius-md)',
-                                    border: '1px solid var(--color-border)',
-                                    fontFamily: 'var(--font-body)',
-                                    outline: 'none',
-                                }}
-                            />
-                            <label style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-text-muted)' }}>Allergies</label>
-                            <input
-                                value={allergiesDraft}
-                                onChange={(e) => setAllergiesDraft(e.target.value)}
-                                placeholder="e.g. latex, penicillin"
-                                style={{
-                                    padding: '0.65rem 0.85rem',
-                                    fontSize: '0.95rem',
-                                    borderRadius: 'var(--radius-md)',
-                                    border: '1px solid var(--color-border)',
-                                    fontFamily: 'var(--font-body)',
-                                    outline: 'none',
-                                }}
-                            />
-                            <label style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-text-muted)' }}>Notes</label>
-                            <textarea
-                                value={notesDraft}
-                                onChange={(e) => setNotesDraft(e.target.value)}
-                                rows={3}
-                                style={{
-                                    padding: '0.65rem 0.85rem',
-                                    fontSize: '0.95rem',
-                                    borderRadius: 'var(--radius-md)',
-                                    border: '1px solid var(--color-border)',
-                                    fontFamily: 'var(--font-body)',
-                                    outline: 'none',
-                                    resize: 'vertical',
-                                }}
-                            />
-                            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                                <button type="button" className="btn btn-primary" style={{ fontSize: '0.9rem' }} onClick={handleSaveHealthProfileDraft}>
-                                    Save profile
-                                </button>
-                                <button type="button" className="btn btn-outline" style={{ fontSize: '0.9rem' }} onClick={() => setProfileEditOpen(false)}>
-                                    Cancel
-                                </button>
-                            </div>
-                        </div>
-                    )}
-                </div>
 
                 {typeof onBuildEcosystem === 'function' && (
                     <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 'var(--spacing-lg)' }}>
