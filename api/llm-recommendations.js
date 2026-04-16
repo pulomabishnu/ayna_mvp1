@@ -21,6 +21,98 @@ function selectedConcerns(intake = {}) {
   return [];
 }
 
+/** Strip BOM, markdown fences, and outer ``` wrappers. */
+function stripLlmJsonWrapper(raw) {
+  let t = String(raw ?? '').trim().replace(/^\uFEFF/, '');
+  t = t.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+  return t;
+}
+
+/**
+ * First complete `{ ... }` slice, respecting double-quoted strings and escapes.
+ * (Greedy `/\{[\s\S]*\}/` breaks when a string value contains `}`.)
+ */
+function extractBalancedJsonObject(text) {
+  const s = String(text);
+  const start = s.indexOf('{');
+  if (start < 0) return null;
+
+  let depth = 0;
+  let inString = false;
+
+  for (let i = start; i < s.length; i++) {
+    const c = s[i];
+
+    if (inString) {
+      if (c === '\\') {
+        i += 1;
+        continue;
+      }
+      if (c === '"') inString = false;
+      continue;
+    }
+
+    if (c === '"') {
+      inString = true;
+      continue;
+    }
+
+    if (c === '{') depth += 1;
+    else if (c === '}') {
+      depth -= 1;
+      if (depth === 0) return s.slice(start, i + 1);
+    }
+  }
+
+  return null;
+}
+
+/** Common LLM mistake: trailing commas before } or ]. Run repeatedly for nested cases. */
+function relaxTrailingCommas(jsonStr) {
+  let s = String(jsonStr);
+  for (let n = 0; n < 12; n++) {
+    const next = s.replace(/,\s*([}\]])/g, '$1');
+    if (next === s) break;
+    s = next;
+  }
+  return s;
+}
+
+function parseRecommendationsJson(raw) {
+  const tried = new Set();
+  const attempt = (s) => {
+    const t = String(s ?? '').trim();
+    if (!t || tried.has(t)) return null;
+    tried.add(t);
+    try {
+      return JSON.parse(t);
+    } catch {
+      return null;
+    }
+  };
+
+  const variants = [];
+  const stripped = stripLlmJsonWrapper(raw);
+  variants.push(stripped, relaxTrailingCommas(stripped));
+
+  const balStripped = extractBalancedJsonObject(stripped);
+  if (balStripped) {
+    variants.push(balStripped, relaxTrailingCommas(balStripped));
+  }
+
+  const balRaw = extractBalancedJsonObject(String(raw ?? ''));
+  if (balRaw && balRaw !== balStripped) {
+    variants.push(stripLlmJsonWrapper(balRaw), relaxTrailingCommas(stripLlmJsonWrapper(balRaw)));
+  }
+
+  for (const v of variants) {
+    const parsed = attempt(v);
+    if (parsed && typeof parsed === 'object') return parsed;
+  }
+
+  throw new Error('invalid JSON');
+}
+
 function safeHttpsUrl(u) {
   if (!u || typeof u !== 'string') return '';
   const t = u.trim();
@@ -251,7 +343,7 @@ async function callAnthropic(prompt) {
     },
     body: JSON.stringify({
       model,
-      max_tokens: 4000,
+      max_tokens: Number(process.env.ANTHROPIC_MAX_TOKENS || 8192),
       temperature: 0.2,
       system: 'Return a single valid JSON object only. No markdown code fences.',
       messages: [{ role: 'user', content: prompt }],
@@ -338,21 +430,14 @@ export default async function handler(req, res) {
 
   let parsed;
   try {
-    let clean = String(ai.raw ?? '');
-    // Strip markdown code fences
-    clean = clean.replace(/```json\s*/gi, '').replace(/```\s*/gi, '').trim();
-    // Extract just the JSON object if there's surrounding text
-    const jsonMatch = clean.match(/\{[\s\S]*\}/);
-    if (jsonMatch) clean = jsonMatch[0];
-    parsed = JSON.parse(clean);
+    parsed = parseRecommendationsJson(ai.raw);
   } catch {
-    // Last resort: log the raw response for debugging
     const rawStr = String(ai.raw ?? '');
-    console.error('Parse error. Raw AI response:', rawStr.slice(0, 500));
+    console.error('Parse error. Raw AI response (first 800 chars):', rawStr.slice(0, 800));
     return res.status(500).json({
       error: 'parse_error',
       message: 'AI returned invalid JSON.',
-      raw: rawStr.slice(0, 200),
+      raw: rawStr.slice(0, 400),
     });
   }
 
