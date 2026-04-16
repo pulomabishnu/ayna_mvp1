@@ -787,17 +787,7 @@ export default function MyEcosystem({
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                             {typeof onBuildEcosystem === 'function' && (
                                 <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem' }} onClick={onBuildEcosystem}>
-                                    Update quiz / concerns
-                                </button>
-                            )}
-                            {typeof onOpenHealthData === 'function' && (
-                                <button
-                                    type="button"
-                                    className="btn btn-outline"
-                                    style={{ fontSize: '0.85rem' }}
-                                    onClick={onOpenHealthData}
-                                >
-                                    Health data from wearables & records
+                                    Retake Quiz
                                 </button>
                             )}
                             <button
@@ -806,8 +796,18 @@ export default function MyEcosystem({
                                 style={{ fontSize: '0.85rem' }}
                                 onClick={() => setProfileEditOpen((o) => !o)}
                             >
-                                {profileEditOpen ? 'Close editor' : 'Add or fix diagnoses & meds'}
+                                Update Health Profile
                             </button>
+                            {typeof onOpenHealthData === 'function' && (
+                                <button
+                                    type="button"
+                                    className="btn btn-outline"
+                                    style={{ fontSize: '0.85rem' }}
+                                    onClick={onOpenHealthData}
+                                >
+                                    Import Health Data
+                                </button>
+                            )}
                         </div>
                     </div>
                     {quizResults?.frustrations?.length > 0 && (
