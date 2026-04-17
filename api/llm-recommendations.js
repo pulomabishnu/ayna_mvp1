@@ -389,17 +389,68 @@ async function callGemini(prompt) {
   return data?.candidates?.[0]?.content?.parts?.[0]?.text || null;
 }
 
-async function generateWithProviders(prompt) {
-  const order = (process.env.AI_RECOMMENDATIONS_PROVIDER_ORDER || 'anthropic,openai,gemini')
+function getProviderOrder() {
+  return (process.env.AI_RECOMMENDATIONS_PROVIDER_ORDER || 'anthropic,openai,gemini')
     .split(',')
     .map((x) => x.trim().toLowerCase())
     .filter(Boolean);
-  for (const provider of order) {
-    let raw = null;
-    if (provider === 'openai') raw = await callOpenAI(prompt);
-    else if (provider === 'anthropic' || provider === 'claude') raw = await callAnthropic(prompt);
-    else if (provider === 'gemini' || provider === 'google') raw = await callGemini(prompt);
-    if (raw) return { raw, provider };
+}
+
+async function callProvider(provider, prompt) {
+  if (provider === 'openai') return callOpenAI(prompt);
+  if (provider === 'anthropic' || provider === 'claude') return callAnthropic(prompt);
+  if (provider === 'gemini' || provider === 'google') return callGemini(prompt);
+  return null;
+}
+
+function extractBalancedJsonObject(input) {
+  const s = String(input || '');
+  const start = s.indexOf('{');
+  if (start === -1) return '';
+  let depth = 0;
+  let inString = false;
+  let escaping = false;
+  for (let i = start; i < s.length; i += 1) {
+    const ch = s[i];
+    if (inString) {
+      if (escaping) escaping = false;
+      else if (ch === '\\') escaping = true;
+      else if (ch === '"') inString = false;
+      continue;
+    }
+    if (ch === '"') {
+      inString = true;
+      continue;
+    }
+    if (ch === '{') depth += 1;
+    else if (ch === '}') {
+      depth -= 1;
+      if (depth === 0) return s.slice(start, i + 1);
+    }
+  }
+  return '';
+}
+
+function tryParseJsonCandidate(raw) {
+  const text = String(raw || '')
+    .replace(/^\uFEFF/, '')
+    .replace(/```json\s*/gi, '')
+    .replace(/```\s*/gi, '')
+    .trim();
+  if (!text) return null;
+  const balanced = extractBalancedJsonObject(text);
+  const candidates = [text, balanced].filter(Boolean);
+  for (const candidate of candidates) {
+    try {
+      return JSON.parse(candidate);
+    } catch {
+      try {
+        const fixed = candidate.replace(/,\s*([}\]])/g, '$1');
+        return JSON.parse(fixed);
+      } catch {
+        // continue
+      }
+    }
   }
   return null;
 }
@@ -436,44 +487,47 @@ export default async function handler(req, res) {
   }
 
   const prompt = buildPrompt(intake, feedback);
-  const ai = await generateWithProviders(prompt);
-  console.log(
-    'AI provider used:',
-    ai?.provider,
-    '| Response length:',
-    ai?.raw?.length,
-    '| First 200 chars:',
-    String(ai?.raw || '').slice(0, 200)
-  );
+  const order = getProviderOrder();
+  let parsed = null;
+  let providerUsed = '';
+  let lastRaw = '';
+  for (const provider of order) {
+    const raw = await callProvider(provider, prompt);
+    if (!raw) continue;
+    lastRaw = raw;
+    const parsedAttempt = tryParseJsonCandidate(raw);
+    console.log(
+      'AI provider tried:',
+      provider,
+      '| Response length:',
+      String(raw || '').length,
+      '| First 200 chars:',
+      String(raw || '').slice(0, 200),
+      '| Parsed:',
+      !!parsedAttempt
+    );
+    if (parsedAttempt) {
+      parsed = parsedAttempt;
+      providerUsed = provider;
+      break;
+    }
+  }
 
-  if (!ai?.raw) {
+  if (!lastRaw) {
     return res.status(503).json({
       error: 'no_ai_response',
       message: 'Could not generate recommendations. Check your API key and quota.',
     });
   }
 
-  let parsed;
-  try {
-    let clean = ai.raw || '';
-    // Strip markdown fences
-    clean = String(clean)
-      .replace(/```json\s*/gi, '')
-      .replace(/```\s*/gi, '')
-      .trim();
-    // Extract the outermost JSON object
-    const start = clean.indexOf('{');
-    const end = clean.lastIndexOf('}');
-    if (start !== -1 && end !== -1 && end > start) {
-      clean = clean.slice(start, end + 1);
-    }
-    parsed = JSON.parse(clean);
-  } catch {
-    console.error('JSON parse error. Raw response (first 800 chars):', String(ai.raw || '').slice(0, 800));
-    return res.status(500).json({
-      error: 'parse_error',
-      message: 'AI returned invalid JSON.',
-      preview: String(ai.raw || '').slice(0, 300),
+  if (!parsed || typeof parsed !== 'object') {
+    console.error('JSON parse error after all providers. Last raw (first 800 chars):', String(lastRaw || '').slice(0, 800));
+    return res.status(200).json({
+      recommendations: [],
+      providerUsed: providerUsed || null,
+      generatedAt: new Date().toISOString(),
+      warning: 'parse_error_fallback',
+      message: 'AI response was malformed; returned fallback recommendations.',
     });
   }
 
@@ -511,7 +565,7 @@ export default async function handler(req, res) {
 
   return res.status(200).json({
     recommendations: verifiedRecs,
-    providerUsed: ai.provider,
+    providerUsed,
     generatedAt: new Date().toISOString(),
   });
 }
