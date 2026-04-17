@@ -587,7 +587,7 @@ export const MVP_DIGITAL = [
     url: 'https://www.pomelocare.com/',
     platform: 'Web, iOS, Android',
     image: '/ayna_placeholder.png',
-    summary: 'National virtual care for women and children: 24/7 access to clinicians, midwives, doulas, and therapists. Covers fertility, prenatal, postpartum, and menopause — typically through employers and health plans.',
+    summary: 'Virtual women\'s health care: 24/7 access to clinicians, midwives, doulas, and therapists. Employer and health-plan covered.',
     safety: { fdaStatus: 'Clinical care via licensed professionals; not an emergency service', materials: 'N/A', recalls: 'N/A', allergens: 'N/A' },
     privacy: { dataStorage: 'US', sellsData: 'Check policy', hipaa: 'HIPAA-aligned clinical platform', keyPolicy: 'Virtual women\'s and pediatric care; confirm coverage with your plan' },
     clinicianOpinionSource: 'independent',
