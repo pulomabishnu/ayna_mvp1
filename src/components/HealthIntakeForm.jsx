@@ -352,6 +352,20 @@ export default function HealthIntakeForm({ onComplete }) {
     setCurrentStep((s) => s - 1);
   };
 
+  const handleSkip = () => {
+    if (step.required) return;
+    if (timerRef.current) clearTimeout(timerRef.current);
+    const cleared = { ...intake };
+    if (step.type === 'multi') cleared[step.id] = [];
+    else cleared[step.id] = '';
+    setIntake(cleared);
+    if (currentStep < steps.length - 1) {
+      setCurrentStep((s) => s + 1);
+    } else {
+      finish(cleared);
+    }
+  };
+
   React.useEffect(() => {
     if (!step) return;
     if (step.type === 'multi') {
@@ -376,31 +390,48 @@ export default function HealthIntakeForm({ onComplete }) {
             ← Back
           </button>
           <p style={{ margin: 0, color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>{currentStep + 1} of {steps.length}</p>
-          {step.type === 'multi' && (
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={handleMultiConfirm}
-              disabled={
-                step.required
-                  ? (
-                    multiSelections.size === 0 ||
-                    (stepOtherCfg &&
-                      multiSelections.has(stepOtherCfg.option) &&
-                      !String(intake[stepOtherCfg.field] || '').trim())
-                  )
-                  : false
-              }
-            >
-              Continue →
-            </button>
-          )}
-          {step.type === 'input' && (
-            <button type="button" className="btn btn-primary" onClick={handleInputConfirm} disabled={saving || (step.required && !String(inputValue || '').trim())}>
-              {currentStep === steps.length - 1 ? (saving ? 'Saving...' : 'Build My Recommendations') : 'Continue →'}
-            </button>
-          )}
-          {step.type === 'single' && <span style={{ width: 90 }} />}
+          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+            {!step.required && (
+              <button
+                type="button"
+                onClick={handleSkip}
+                style={{
+                  fontSize: '0.85rem', fontWeight: '600', color: 'var(--color-text-muted)',
+                  background: 'var(--color-surface-soft, #f5f5f5)', border: '1px solid var(--color-border)',
+                  borderRadius: 'var(--radius-pill)', cursor: 'pointer', padding: '0.4rem 1rem',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                Skip →
+              </button>
+            )}
+            {step.type === 'multi' && (
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleMultiConfirm}
+                disabled={
+                  step.required
+                    ? (
+                      multiSelections.size === 0 ||
+                      (stepOtherCfg &&
+                        multiSelections.has(stepOtherCfg.option) &&
+                        !String(intake[stepOtherCfg.field] || '').trim())
+                    )
+                    : false
+                }
+              >
+                Continue →
+              </button>
+            )}
+            {step.type === 'input' && (
+              <button type="button" className="btn btn-primary" onClick={handleInputConfirm} disabled={saving || (step.required && !String(inputValue || '').trim())}>
+                {currentStep === steps.length - 1 ? (saving ? 'Saving...' : 'Build My Recommendations') : 'Continue →'}
+              </button>
+            )}
+            {step.type === 'single' && !step.required && <span />}
+            {step.type === 'single' && step.required && <span style={{ width: 90 }} />}
+          </div>
         </div>
 
         <h2 style={{ textAlign: 'center', fontSize: '1.7rem', marginBottom: '0.5rem' }}>{step.question}</h2>
@@ -412,22 +443,39 @@ export default function HealthIntakeForm({ onComplete }) {
         {errors[step.id] && <p style={{ color: '#b42318', textAlign: 'center' }}>{errors[step.id]}</p>}
 
         {step.type === 'single' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            {step.options.map((opt) => {
-              const selected = intake[step.id] === opt;
-              return (
+          <>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              {step.options.map((opt) => {
+                const selected = intake[step.id] === opt;
+                return (
+                  <button
+                    type="button"
+                    key={opt}
+                    className="btn btn-outline"
+                    onClick={() => onSinglePick(opt)}
+                    style={{ justifyContent: 'flex-start', padding: '1rem 1.4rem', fontSize: '1rem', borderColor: selected ? 'var(--color-primary)' : 'var(--color-border)', backgroundColor: selected ? 'var(--color-secondary-fade)' : 'transparent' }}
+                  >
+                    {opt}
+                  </button>
+                );
+              })}
+            </div>
+            {!step.required && (
+              <div style={{ textAlign: 'center', marginTop: '1rem' }}>
                 <button
                   type="button"
-                  key={opt}
-                  className="btn btn-outline"
-                  onClick={() => onSinglePick(opt)}
-                  style={{ justifyContent: 'flex-start', padding: '1rem 1.4rem', fontSize: '1rem', borderColor: selected ? 'var(--color-primary)' : 'var(--color-border)', backgroundColor: selected ? 'var(--color-secondary-fade)' : 'transparent' }}
+                  onClick={handleSkip}
+                  style={{
+                    fontSize: '0.9rem', fontWeight: '600', color: 'var(--color-text-muted)',
+                    background: 'var(--color-surface-soft, #f5f5f5)', border: '1px solid var(--color-border)',
+                    borderRadius: 'var(--radius-pill)', cursor: 'pointer', padding: '0.5rem 1.25rem',
+                  }}
                 >
-                  {opt}
+                  Skip this question →
                 </button>
-              );
-            })}
-          </div>
+              </div>
+            )}
+          </>
         )}
 
         {step.type === 'input' && (
