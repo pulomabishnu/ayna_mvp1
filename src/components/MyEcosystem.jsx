@@ -161,6 +161,17 @@ function EcosystemFunctionProductCard({
     );
 }
 
+function toConciseReason(text, fallback) {
+    const raw = String(text || '').replace(/\s+/g, ' ').trim();
+    const fb = String(fallback || '').trim();
+    if (!raw) return fb;
+    const firstSentence = raw.match(/[^.!?]+[.!?]?/);
+    const candidate = (firstSentence ? firstSentence[0] : raw).trim();
+    const maxLen = 135;
+    if (candidate.length <= maxLen) return candidate;
+    return `${candidate.slice(0, maxLen - 1).trim()}…`;
+}
+
 function EcosystemProductAlternatives({ product, seedEntry, quizResults, healthProfile, onSwap, onGoToSearch, precomputedAlternatives = [] }) {
     const [open, setOpen] = useState(false);
     const rootRef = useRef(null);
@@ -1066,7 +1077,10 @@ export default function MyEcosystem({
                                                     const llmReason = String(product?.whyItWorks || '').trim();
                                                     const reasonRaw = getRecommendationExplanation(product, quizResults, healthProfile)?.whyItWorks || '';
                                                     const fallbackReason = String(reasonRaw).replace(/^Why it could work:\s*/i, '').trim();
-                                                    const tierReason = llmReason || String(tier.matchExplanation || '').trim() || fallbackReason || `Matched to your concern: ${section.concern}.`;
+                                                    const tierReason = toConciseReason(
+                                                        llmReason || String(tier.matchExplanation || '').trim() || fallbackReason,
+                                                        `Matched to your concern: ${section.concern}.`
+                                                    );
                                                     return (
                                                         <div key={swapKey} style={{ minWidth: 0 }}>
                                                             <div style={{ fontSize: '0.78rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.02em', color: 'var(--color-text-muted)', marginBottom: '0.35rem' }}>
