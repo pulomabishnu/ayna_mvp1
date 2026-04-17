@@ -705,18 +705,20 @@ export default function Quiz({ onComplete }) {
                 <button
                   type="button"
                   style={{
-                    fontSize: '0.88rem',
+                    fontSize: '0.85rem',
+                    fontWeight: '600',
                     color: 'var(--color-text-muted)',
-                    textDecoration: 'underline',
-                    background: 'none',
-                    border: 'none',
+                    background: 'var(--color-surface-soft, #f5f5f5)',
+                    border: '1px solid var(--color-border)',
+                    borderRadius: 'var(--radius-pill)',
                     cursor: 'pointer',
-                    padding: '0.25rem 0.1rem',
+                    padding: '0.4rem 1rem',
                     whiteSpace: 'nowrap',
+                    transition: 'all 0.2s',
                   }}
                   onClick={handleSkipQuestion}
                 >
-                  Skip
+                  Skip →
                 </button>
               )}
               {step.type === 'multi' && (
@@ -759,21 +761,23 @@ export default function Quiz({ onComplete }) {
                 );
               })}
             </div>
-            <div style={{ textAlign: 'center', marginTop: '0.85rem' }}>
+            <div style={{ textAlign: 'center', marginTop: '1rem' }}>
               <button
                 type="button"
                 style={{
                   fontSize: '0.9rem',
+                  fontWeight: '600',
                   color: 'var(--color-text-muted)',
-                  textDecoration: 'underline',
-                  background: 'none',
-                  border: 'none',
+                  background: 'var(--color-surface-soft, #f5f5f5)',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: 'var(--radius-pill)',
                   cursor: 'pointer',
-                  padding: '0.25rem 0.35rem',
+                  padding: '0.5rem 1.25rem',
+                  transition: 'all 0.2s',
                 }}
                 onClick={handleSkipQuestion}
               >
-                Skip this question
+                Skip this question →
               </button>
             </div>
             <p style={{ textAlign: 'center', fontSize: '0.82rem', color: 'var(--color-text-muted)', marginTop: '1rem', marginBottom: 0 }}>
