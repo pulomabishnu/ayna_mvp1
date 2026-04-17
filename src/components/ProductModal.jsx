@@ -144,8 +144,21 @@ function hasRecallConcern(product) {
 
 function productHasMeaningfulSafety(product) {
   const s = product?.safety;
-  if (!s || typeof s !== 'object') return false;
-  return ['fdaStatus', 'materials', 'recalls', 'sideEffects', 'opinionAlerts'].some((k) => String(s[k] || '').trim().length > 0);
+  const safetyFields = s && typeof s === 'object'
+    ? ['fdaStatus', 'materials', 'recalls', 'sideEffects', 'opinionAlerts']
+    : [];
+  const hasSafetyFields = safetyFields.some((k) => String(s[k] || '').trim().length > 0);
+  const hasIngredients = String(product?.ingredients || '').trim().length > 0;
+  return hasSafetyFields || hasIngredients;
+}
+
+function getMaterialsAndComponentsText(product) {
+  const materials = String(product?.safety?.materials || '').trim();
+  const ingredients = String(product?.ingredients || '').trim();
+  if (materials && ingredients && materials.toLowerCase() !== ingredients.toLowerCase()) {
+    return `${materials}\n\nIngredients: ${ingredients}`;
+  }
+  return materials || ingredients || 'N/A';
 }
 
 function productHasScienceSignals(product, aiInsights) {
@@ -1417,7 +1430,7 @@ export default function ProductModal({
                                     </div>
                                     <div style={{ background: 'var(--color-bg)', padding: '1rem', borderRadius: 'var(--radius-md)' }}>
                                         <h4 style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Materials & Components</h4>
-                                        <p>{product.safety?.materials || 'N/A'}</p>
+                                        <p style={{ whiteSpace: 'pre-line' }}>{getMaterialsAndComponentsText(product)}</p>
                                     </div>
                                     <div style={{ gridColumn: 'span 2', background: product.safety?.recalls?.includes('⚠️') ? '#F1F5F9' : '#F8FAFC', padding: '1rem', borderRadius: 'var(--radius-md)' }}>
                                         <h4 style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Safety Alerts & Recalls</h4>
