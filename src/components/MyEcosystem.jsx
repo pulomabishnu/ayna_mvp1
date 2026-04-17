@@ -951,6 +951,90 @@ export default function MyEcosystem({
         setRecommendedSwapByKey((prev) => ({ ...prev, [cardKey]: newProduct }));
     }, []);
 
+    const recommendedSection = hasCompletedPersonalization && (llmLoading || llmError || recommendedProductsForDisplay.length > 0 || activeTiered.length > 0) ? (
+        <div style={{ maxWidth: '1200px', margin: '0 auto var(--spacing-xl)', padding: '0 0.25rem' }}>
+            <h3 style={{ fontSize: '1.35rem', marginBottom: '0.35rem', color: 'var(--color-text-main)' }}>
+                Recommended for You
+            </h3>
+            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '1rem' }}>
+                One top pick per concern from your quiz, with 3 alternatives.
+            </p>
+            {llmLoading && llmLoadStartedAt > 0 && (
+                <LlmRecommendationsLoadingBlock loadStartedAt={llmLoadStartedAt} compact />
+            )}
+            {llmLoading && !llmLoadStartedAt && (
+                <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.9rem', padding: '1.5rem' }}>
+                    Loading recommendations…
+                </p>
+            )}
+            {llmError && !llmLoading && (
+                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textAlign: 'center' }}>
+                    Could not load recommendations: {llmError}
+                </p>
+            )}
+            {!llmLoading && recommendedProductsForDisplay.length > 0 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    {recommendedProductsForDisplay.map((section) => {
+                        const isOpen = recommendedSectionOpen[section.id] !== false;
+                        const product = recommendedSwapByKey[section.id] || section.topProduct;
+                        const reasonRaw = product ? (getRecommendationExplanation(product, quizResults, healthProfile)?.whyItWorks || '') : '';
+                        const recommendationReason = reasonRaw.replace(/^Why it could work:\s*/i, '').trim() || `Matched to your concern: ${section.concern}.`;
+                        return (
+                            <div key={section.id} className="card" style={{ padding: '0.75rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', background: 'var(--color-surface-soft)' }}>
+                                <button
+                                    type="button"
+                                    onClick={() => setRecommendedSectionOpen((prev) => ({ ...prev, [section.id]: !isOpen }))}
+                                    style={{
+                                        width: '100%',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
+                                        background: 'transparent',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        padding: 0,
+                                        textAlign: 'left',
+                                    }}
+                                >
+                                    <span style={{ fontSize: '1rem', fontWeight: '700', color: 'var(--color-text-main)' }}>
+                                        {section.concern}
+                                    </span>
+                                    <span style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>{isOpen ? 'Hide ▴' : 'Show ▾'}</span>
+                                </button>
+                                {isOpen && (
+                                    <div style={{ marginTop: '0.65rem' }}>
+                                        {product ? (
+                                            <div className="ecosystem-product-grid">
+                                                <EcosystemFunctionProductCard
+                                                    product={{ ...product, image: resolvedImages[product.id] || product.image }}
+                                                    healthFunctionLabel={section.concern}
+                                                    onOpenProduct={onOpenProduct}
+                                                    onToggleProduct={onToggleProduct}
+                                                    seedEntry={{ frustration: section.concern, tag: section.tag }}
+                                                    quizResults={quizResults}
+                                                    healthProfile={healthProfile}
+                                                    precomputedAlternatives={section.alternatives}
+                                                    onSwapSeedProduct={(oldProductId, newProduct) => handleSwapFromRecommendedCard(section.id, oldProductId, newProduct)}
+                                                    onGoToSearch={onGoToSearch}
+                                                    isInEcosystem={!!myProducts[product.id]}
+                                                    recommendationReason={recommendationReason}
+                                                />
+                                            </div>
+                                        ) : (
+                                            <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', margin: 0 }}>
+                                                No matching product found for this concern yet. Try the full search.
+                                            </p>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
+        </div>
+    ) : null;
+
     return (
         <>
             <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
@@ -967,6 +1051,8 @@ export default function MyEcosystem({
                         Track all your health products and apps. Everything here is monitored for safety by default. We'll tell you what each does, if any overlap, and if products may interact.
                     </p>
                 </div>
+
+                {recommendedSection}
 
                 {/* SECTION 1 — My Ecosystem */}
                 <h3 style={{ fontSize: '1.35rem', marginBottom: '0.75rem', textAlign: 'center', color: 'var(--color-text-main)' }}>My Ecosystem</h3>
@@ -1026,90 +1112,7 @@ export default function MyEcosystem({
                     )}
                 </div>
 
-                {/* Recommended for you — same card layout as ecosystem; directly under health profile */}
-                {hasCompletedPersonalization && (llmLoading || llmError || recommendedProductsForDisplay.length > 0 || activeTiered.length > 0) && (
-                    <div style={{ maxWidth: '1200px', margin: '0 auto var(--spacing-xl)', padding: '0 0.25rem' }}>
-                        <h3 style={{ fontSize: '1.35rem', marginBottom: '0.35rem', color: 'var(--color-text-main)' }}>
-                            Recommended for You
-                        </h3>
-                        <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '1rem' }}>
-                            Quiz-matched recommendations. Add the ones you want into your ecosystem.
-                        </p>
-                        {llmLoading && llmLoadStartedAt > 0 && (
-                            <LlmRecommendationsLoadingBlock loadStartedAt={llmLoadStartedAt} compact />
-                        )}
-                        {llmLoading && !llmLoadStartedAt && (
-                            <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.9rem', padding: '1.5rem' }}>
-                                Loading recommendations…
-                            </p>
-                        )}
-                        {llmError && !llmLoading && (
-                            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textAlign: 'center' }}>
-                                Could not load recommendations: {llmError}
-                            </p>
-                        )}
-                        {!llmLoading && recommendedProductsForDisplay.length > 0 && (
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                                {recommendedProductsForDisplay.map((section) => {
-                                    const isOpen = recommendedSectionOpen[section.id] !== false;
-                                    const product = recommendedSwapByKey[section.id] || section.topProduct;
-                                    const reasonRaw = product ? (getRecommendationExplanation(product, quizResults, healthProfile)?.whyItWorks || '') : '';
-                                    const recommendationReason = reasonRaw.replace(/^Why it could work:\s*/i, '').trim();
-                                    return (
-                                        <div key={section.id} className="card" style={{ padding: '0.75rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', background: 'var(--color-surface-soft)' }}>
-                                            <button
-                                                type="button"
-                                                onClick={() => setRecommendedSectionOpen((prev) => ({ ...prev, [section.id]: !isOpen }))}
-                                                style={{
-                                                    width: '100%',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'space-between',
-                                                    background: 'transparent',
-                                                    border: 'none',
-                                                    cursor: 'pointer',
-                                                    padding: 0,
-                                                    textAlign: 'left',
-                                                }}
-                                            >
-                                                <span style={{ fontSize: '1rem', fontWeight: '700', color: 'var(--color-text-main)' }}>
-                                                    {section.concern}
-                                                </span>
-                                                <span style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>{isOpen ? 'Hide ▴' : 'Show ▾'}</span>
-                                            </button>
-                                            {isOpen && (
-                                                <div style={{ marginTop: '0.65rem' }}>
-                                                    {product ? (
-                                                        <div className="ecosystem-product-grid">
-                                                            <EcosystemFunctionProductCard
-                                                                product={{ ...product, image: resolvedImages[product.id] || product.image }}
-                                                                healthFunctionLabel={section.concern}
-                                                                onOpenProduct={onOpenProduct}
-                                                                onToggleProduct={onToggleProduct}
-                                                                seedEntry={{ frustration: section.concern, tag: section.tag }}
-                                                                quizResults={quizResults}
-                                                                healthProfile={healthProfile}
-                                                                precomputedAlternatives={section.alternatives}
-                                                                onSwapSeedProduct={(oldProductId, newProduct) => handleSwapFromRecommendedCard(section.id, oldProductId, newProduct)}
-                                                                onGoToSearch={onGoToSearch}
-                                                                isInEcosystem={!!myProducts[product.id]}
-                                                                recommendationReason={recommendationReason}
-                                                            />
-                                                        </div>
-                                                    ) : (
-                                                        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', margin: 0 }}>
-                                                            No matching product found for this concern yet. Try the full search.
-                                                        </p>
-                                                    )}
-                                                </div>
-                                            )}
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        )}
-                    </div>
-                )}
+                
 
                 <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-lg)', display: 'flex', justifyContent: 'center', gap: '1rem' }}>
                     <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>+ Add a Product or App</button>
