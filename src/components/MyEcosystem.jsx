@@ -21,6 +21,8 @@ import {
     loadCachedLlmRecommendations,
     saveCachedLlmRecommendations,
     clearCachedLlmRecommendations,
+    loadFetchedLlmFingerprint,
+    saveFetchedLlmFingerprint,
 } from '../utils/fetchLlmRecommendations';
 import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
 import { getPricePerUnitLabel } from '../utils/pricePerUnit';
@@ -806,10 +808,21 @@ export default function MyEcosystem({
         }
 
         const bypassCache = recommendationRefreshNonce > 0;
+        const fetchedFingerprint = loadFetchedLlmFingerprint();
+        const alreadyFetchedForFingerprint = fetchedFingerprint === intakeFingerprint;
         if (!bypassCache) {
             const cached = loadCachedLlmRecommendations(intakeFingerprint);
             if (cached) {
                 setLlmTiered(cached);
+                setLlmLoading(false);
+                setLlmError('');
+                setLlmLoadStartedAt(0);
+                return () => {
+                    active = false;
+                };
+            }
+            if (alreadyFetchedForFingerprint) {
+                setLlmTiered([]);
                 setLlmLoading(false);
                 setLlmError('');
                 setLlmLoadStartedAt(0);
@@ -843,6 +856,7 @@ export default function MyEcosystem({
                 if (recs.length > 0) {
                     saveCachedLlmRecommendations(intakeFingerprint, recs);
                 }
+                saveFetchedLlmFingerprint(intakeFingerprint);
                 const recommendedProductIds = recs.flatMap((entry) =>
                     (entry?.tiers || []).flatMap((tier) =>
                         [tier?.product?.id, ...((tier?.alternatives || []).map((a) => a?.id))].filter(Boolean)
@@ -864,6 +878,7 @@ export default function MyEcosystem({
                 if (!active) return;
                 setLlmTiered([]);
                 setLlmError(e?.message || 'Could not load recommendations');
+                saveFetchedLlmFingerprint(intakeFingerprint);
             } finally {
                 if (active) {
                     setLlmLoading(false);
