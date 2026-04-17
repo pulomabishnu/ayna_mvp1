@@ -654,6 +654,7 @@ export default function MyEcosystem({
     const [healthDataImportOpen, setHealthDataImportOpen] = useState(false);
     const [recommendedSwapByKey, setRecommendedSwapByKey] = useState({});
     const [recommendedSectionOpen, setRecommendedSectionOpen] = useState({});
+    const [recommendationRefreshNonce, setRecommendationRefreshNonce] = useState(0);
     const hasCompletedPersonalization = useMemo(() => {
         if (!quizResults) return false;
         if (quizResults?.personalizationCompleted === true) return true;
@@ -768,15 +769,18 @@ export default function MyEcosystem({
             };
         }
 
-        const cached = loadCachedLlmRecommendations(intakeFingerprint);
-        if (cached) {
-            setLlmTiered(cached);
-            setLlmLoading(false);
-            setLlmError('');
-            setLlmLoadStartedAt(0);
-            return () => {
-                active = false;
-            };
+        const bypassCache = recommendationRefreshNonce > 0;
+        if (!bypassCache) {
+            const cached = loadCachedLlmRecommendations(intakeFingerprint);
+            if (cached) {
+                setLlmTiered(cached);
+                setLlmLoading(false);
+                setLlmError('');
+                setLlmLoadStartedAt(0);
+                return () => {
+                    active = false;
+                };
+            }
         }
 
         const intake = quizResults?.fullHealthIntake || null;
@@ -835,7 +839,7 @@ export default function MyEcosystem({
         return () => {
             active = false;
         };
-    }, [intakeFingerprint, hasCompletedPersonalization]);
+    }, [intakeFingerprint, hasCompletedPersonalization, recommendationRefreshNonce]);
 
     const activeTiered = useMemo(
         () => (llmTiered.length > 0 ? llmTiered : intakeTieredRecommendations),
@@ -985,11 +989,30 @@ export default function MyEcosystem({
         setRecommendedSwapByKey((prev) => ({ ...prev, [cardKey]: newProduct }));
     }, []);
 
+    const handleRefreshRecommendations = useCallback(() => {
+        clearCachedLlmRecommendations();
+        setLlmTiered([]);
+        setLlmError('');
+        setRecommendationRefreshNonce((n) => n + 1);
+    }, []);
+
     const recommendedSection = hasCompletedPersonalization && (llmLoading || llmError || recommendedProductsForDisplay.length > 0 || activeTiered.length > 0) ? (
         <div style={{ maxWidth: '1200px', margin: '0 auto var(--spacing-xl)', padding: '0 0.25rem' }}>
-            <h3 style={{ fontSize: '1.35rem', marginBottom: '0.35rem', color: 'var(--color-text-main)' }}>
-                Recommended for You
-            </h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem', marginBottom: '0.35rem', flexWrap: 'wrap' }}>
+                <h3 style={{ fontSize: '1.35rem', margin: 0, color: 'var(--color-text-main)' }}>
+                    Recommended for You
+                </h3>
+                <button
+                    type="button"
+                    className="btn btn-outline"
+                    style={{ fontSize: '0.8rem', padding: '0.35rem 0.7rem' }}
+                    onClick={handleRefreshRecommendations}
+                    disabled={llmLoading || !hasCompletedPersonalization}
+                    title="Re-run personalized recommendations from your latest profile"
+                >
+                    {llmLoading ? 'Refreshing…' : 'Refresh recommendations'}
+                </button>
+            </div>
             <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '1rem' }}>
                 Per concern: multiple solution types (supplement, device/physical, telehealth/digital), each with 3 alternatives.
             </p>
