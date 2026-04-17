@@ -627,6 +627,7 @@ export default function MyEcosystem({
     onOpenProduct,
     onOpenDoctorPrep,
     onBuildEcosystem,
+    onEditHealthProfile,
     quizResults = null,
     healthProfile = null,
     userZipCode = '',
@@ -1154,6 +1155,11 @@ export default function MyEcosystem({
                     {typeof onBuildEcosystem === 'function' && (
                         <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem' }} onClick={onBuildEcosystem}>
                             Retake Quiz
+                        </button>
+                    )}
+                    {typeof onEditHealthProfile === 'function' && (
+                        <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem' }} onClick={onEditHealthProfile}>
+                            Update Health Profile
                         </button>
                     )}
                 </div>

@@ -2,6 +2,7 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import Hero from './components/Hero';
 import WelcomeGate from './components/WelcomeGate';
 import HealthIntakeForm from './components/HealthIntakeForm';
+import HealthProfileEditor from './components/HealthProfileEditor';
 import Recommendations from './components/Recommendations';
 import WaitlistHub from './components/WaitlistHub';
 import TrackedItems from './components/TrackedItems';
@@ -95,6 +96,7 @@ function App() {
   const isScrolled = scrollY > 20;
 
   const handleStartQuiz = () => setCurrentView('quiz');
+  const handleOpenHealthProfileEditor = () => setCurrentView('profile-edit');
   const handleViewWaitlist = () => setCurrentView('waitlist');
   const handleViewTracked = () => setCurrentView('tracked');
   const handleViewEcosystem = () => setCurrentView('ecosystem');
@@ -141,6 +143,17 @@ function App() {
     };
     setQuizResults(completedResults);
     const { seedMeta } = getEcosystemSeedFromQuiz(completedResults, healthProfile);
+    setEcosystemSeedMeta(seedMeta);
+    setCurrentView('ecosystem');
+  };
+
+  const handleHealthProfileEditorSave = (updatedResults) => {
+    if (!updatedResults) {
+      setCurrentView('ecosystem');
+      return;
+    }
+    setQuizResults(updatedResults);
+    const { seedMeta } = getEcosystemSeedFromQuiz(updatedResults, healthProfile);
     setEcosystemSeedMeta(seedMeta);
     setCurrentView('ecosystem');
   };
@@ -475,6 +488,13 @@ function App() {
         {currentView === 'quiz' && (
           <HealthIntakeForm onComplete={handleQuizComplete} />
         )}
+        {currentView === 'profile-edit' && (
+          <HealthProfileEditor
+            currentProfile={quizResults}
+            onSave={handleHealthProfileEditorSave}
+            onCancel={() => setCurrentView('ecosystem')}
+          />
+        )}
         {currentView === 'recommendations' && (
           <Recommendations
             results={quizResults}
@@ -542,6 +562,7 @@ function App() {
             onOpenProduct={handleOpenProduct}
             onOpenDoctorPrep={() => setCurrentView('doctor-prep')}
             onBuildEcosystem={handleStartQuiz}
+            onEditHealthProfile={handleOpenHealthProfileEditor}
             quizResults={quizResults}
             healthProfile={healthProfile}
             userZipCode={userZipCode}
