@@ -371,9 +371,26 @@ function buildQuickOverviewBlocks(product, aiInsights, quizResults, healthProfil
     (healthProfile && Object.keys(healthProfile).length > 0);
 
   const concise = (text, max = 180) => truncate(String(text || '').replace(/\s+/g, ' ').trim(), max);
+  const aiPros = Array.isArray(aiInsights?.quickOverviewPros)
+    ? aiInsights.quickOverviewPros.map((x) => concise(x, 180)).filter(Boolean)
+    : [];
+  const aiCons = Array.isArray(aiInsights?.quickOverviewCons)
+    ? aiInsights.quickOverviewCons.map((x) => concise(x, 180)).filter(Boolean)
+    : [];
+  const aiFit = Array.isArray(aiInsights?.quickOverviewFit)
+    ? aiInsights.quickOverviewFit.map((x) => concise(x, 180)).filter(Boolean)
+    : [];
   const pros = [];
   const cons = [];
   const fit = [];
+
+  if (aiPros.length > 0 || aiCons.length > 0 || aiFit.length > 0) {
+    return [
+      { id: 'pros', title: 'Pros for your profile', bullets: aiPros.slice(0, 3) },
+      { id: 'cons', title: 'Cons or cautions', bullets: (aiCons.length > 0 ? aiCons : ['**Watch-outs:** Review safety details and side effects for your profile before using.']).slice(0, 3) },
+      { id: 'fit', title: 'Fit for you', bullets: (aiFit.length > 0 ? aiFit : ['**Why/why not:** Profile-specific fit details are limited; compare alternatives before deciding.']).slice(0, 2) },
+    ];
+  }
 
   if (!hasProfile) {
     fit.push('**Why/why not:** Complete your profile to get a personalized fit decision.');

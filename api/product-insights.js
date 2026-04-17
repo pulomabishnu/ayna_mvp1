@@ -116,6 +116,9 @@ Return a SINGLE JSON object with this exact shape (no markdown, no URLs anywhere
   "clinicalNarrative": "2-4 sentences: neutral clinical / product-category context. Educational only. No diagnosis or treatment instructions for the reader. When reader context is provided, open with one short clause on relevance to their profile when appropriate.",
   "scienceSummary": "1-2 sentences: how evidence or trials are typically discussed for this category (not about this specific product unless clearly a named drug/device). Mention evidence limitations when the reader has complex conditions and evidence may not be product-specific.",
   "communitySummary": "1-2 sentences: how patients often discuss this topic in forums — clearly anecdotal, not factual claims. If reader sensitivities apply (e.g. fragrance), note that forum posts are unverified.",
+  "quickOverviewPros": ["2-4 concise bullets, each explicitly tied to the reader context when possible"],
+  "quickOverviewCons": ["2-4 concise bullets on cautions, downsides, or mismatch risks for this specific reader"],
+  "quickOverviewFit": ["1-2 concise bullets stating why this is or is not a good fit for this reader profile"],
   "pubmedSearchQueries": ["short search phrase 1", "short search phrase 2"],
   "patientEducationQueries": ["plain phrase for patient-education search 1"],
   "communitySearchQueries": ["short phrase to search Reddit/YouTube"]
@@ -123,6 +126,7 @@ Return a SINGLE JSON object with this exact shape (no markdown, no URLs anywhere
 
 STRICT RULES:
 - Do NOT include links, domains, "http", "www", PMIDs, or citation strings.
+- quickOverviewPros / quickOverviewCons / quickOverviewFit must be personalized to the provided reader context (if available), not generic category statements.
 - pubmedSearchQueries: 2-4 items, each 3-80 characters, MeSH-friendly short phrases (English).
 - patientEducationQueries: 1-2 items for consumer health search (symptom or topic).
 - communitySearchQueries: 1-3 items for social search. When brand/comparison context is provided above, include the brand in at least one query; otherwise use product type + use case.
@@ -151,6 +155,9 @@ function normalizeParsed(raw) {
   const clinicalNarrative = sanitizePhrase(obj.clinicalNarrative, MAX_NARRATIVE_LEN);
   const scienceSummary = sanitizePhrase(obj.scienceSummary, MAX_EXTRA_SUMMARY_LEN);
   const communitySummary = sanitizePhrase(obj.communitySummary, MAX_EXTRA_SUMMARY_LEN);
+  const quickOverviewPros = uniquePhrases(obj.quickOverviewPros, 4, 220);
+  const quickOverviewCons = uniquePhrases(obj.quickOverviewCons, 4, 220);
+  const quickOverviewFit = uniquePhrases(obj.quickOverviewFit, 2, 220);
 
   const pubmedSearchQueries = uniquePhrases(obj.pubmedSearchQueries, 4, 120);
   const patientEducationQueries = uniquePhrases(obj.patientEducationQueries, 2, 120);
@@ -174,6 +181,9 @@ function normalizeParsed(raw) {
       'Below are safe search links you can use to explore evidence and patient-oriented sources. This is not medical advice.',
     scienceSummary,
     communitySummary,
+    quickOverviewPros,
+    quickOverviewCons,
+    quickOverviewFit,
     pubmedSearchQueries,
     patientEducationQueries:
       patientEducationQueries.length > 0 ? patientEducationQueries : pubmedSearchQueries.slice(0, 2),
@@ -641,6 +651,9 @@ export default async function handler(req, res) {
         clinicalNarrative: out.normalized.clinicalNarrative,
         scienceSummary: out.normalized.scienceSummary || '',
         communitySummary: out.normalized.communitySummary || '',
+        quickOverviewPros: Array.isArray(out.normalized.quickOverviewPros) ? out.normalized.quickOverviewPros : [],
+        quickOverviewCons: Array.isArray(out.normalized.quickOverviewCons) ? out.normalized.quickOverviewCons : [],
+        quickOverviewFit: Array.isArray(out.normalized.quickOverviewFit) ? out.normalized.quickOverviewFit : [],
         clinicianLinks,
         literatureLinks,
         communityLinks,
