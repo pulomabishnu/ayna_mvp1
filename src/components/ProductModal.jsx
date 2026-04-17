@@ -370,31 +370,47 @@ function buildQuickOverviewBlocks(product, aiInsights, quizResults, healthProfil
     !!profileTailoring ||
     (healthProfile && Object.keys(healthProfile).length > 0);
 
-  const bullets = [];
-  if (!hasProfile) {
-    bullets.push(
-      '**Match:** Add a health profile or complete the quiz so we can say whether this product fits your priorities.'
-    );
-  } else if (matchLabels.length > 0) {
-    bullets.push(
-      `**Match:** Based on what you shared, this product is **a plausible fit** for themes you care about: ${matchLabels.join(', ')}.`
-    );
-  } else {
-    bullets.push(
-      '**Match:** Overlap between this product and your profile tags is **limited**—use the tabs below before you decide.'
-    );
-  }
-  if (whyItWorks && (quizResults?.frustrations?.length || matchLabels.length)) {
-    const w = whyItWorks.trim();
-    bullets.push(...splitOverviewBulletIfLong(w, 320));
-  }
-  if (bridgeCare?.shortTerm) bullets.push(bridgeCare.shortTerm);
-  if (bridgeCare?.escalation) bullets.push(bridgeCare.escalation);
-  if (considerations) bullets.push(considerations);
-  if (profileTailoring) bullets.push(profileTailoring);
-  if (recallBad) bullets.push('**Safety:** Check the Safety tab for recalls or alerts before you buy.');
+  const concise = (text, max = 180) => truncate(String(text || '').replace(/\s+/g, ' ').trim(), max);
+  const pros = [];
+  const cons = [];
+  const fit = [];
 
-  return [{ id: 'you', title: null, bullets }];
+  if (!hasProfile) {
+    fit.push('**Why/why not:** Complete your profile to get a personalized fit decision.');
+  } else if (matchLabels.length >= 2) {
+    fit.push(`**Why this may fit:** Strong overlap with your profile (${matchLabels.slice(0, 3).join(', ')}).`);
+  } else if (matchLabels.length === 1) {
+    fit.push(`**Why this may fit:** Some overlap with your profile (${matchLabels[0]}).`);
+  } else {
+    fit.push('**Why this may not fit:** Limited overlap with your profile priorities.');
+  }
+
+  if (whyItWorks && (quizResults?.frustrations?.length || matchLabels.length)) {
+    pros.push(`**Potential benefit:** ${concise(whyItWorks, 170)}`);
+  } else if (profileTailoring) {
+    pros.push(`**Potential benefit:** ${concise(profileTailoring, 170)}`);
+  }
+  if (matchLabels.length > 0) {
+    pros.push(`**Profile alignment:** Supports ${matchLabels.slice(0, 3).join(', ')}.`);
+  }
+
+  if (considerations) cons.push(`**Watch-outs:** ${concise(considerations, 170)}`);
+  if (bridgeCare?.shortTerm) cons.push(concise(bridgeCare.shortTerm, 170));
+  if (bridgeCare?.escalation) cons.push(concise(bridgeCare.escalation, 170));
+  if (recallBad) cons.push('**Safety check:** Review recall/alert details in the Safety tab before purchasing.');
+
+  if (cons.length === 0) {
+    cons.push('**Watch-outs:** No major profile-specific cautions flagged, but confirm fit with your clinician if symptoms persist.');
+  }
+  if (pros.length === 0) {
+    pros.push('**Potential benefit:** This product may help some users, but your profile fit signal is limited so compare alternatives.');
+  }
+
+  return [
+    { id: 'pros', title: 'Pros for your profile', bullets: pros.slice(0, 3) },
+    { id: 'cons', title: 'Cons or cautions', bullets: cons.slice(0, 3) },
+    { id: 'fit', title: 'Fit for you', bullets: fit.slice(0, 2) },
+  ];
 }
 
 /** Break very long “why it works” copy into two bullets on sentence boundaries for scannability. */
