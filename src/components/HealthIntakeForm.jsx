@@ -465,21 +465,6 @@ export default function HealthIntakeForm({ onComplete }) {
                 );
               })}
             </div>
-            {!step.required && (
-              <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-                <button
-                  type="button"
-                  onClick={handleSkip}
-                  style={{
-                    fontSize: '0.9rem', fontWeight: '600', color: 'var(--color-text-muted)',
-                    background: 'var(--color-surface-soft, #f5f5f5)', border: '1px solid var(--color-border)',
-                    borderRadius: 'var(--radius-pill)', cursor: 'pointer', padding: '0.5rem 1.25rem',
-                  }}
-                >
-                  Skip this question →
-                </button>
-              </div>
-            )}
           </>
         )}
 
