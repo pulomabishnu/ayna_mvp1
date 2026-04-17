@@ -215,11 +215,59 @@ function renderInsightBullets(insight) {
   );
 }
 
+function getBridgeToCareGuidance(product) {
+  if (!product) return null;
+  if (String(product.category || '').toLowerCase() === 'telehealth') return null;
+
+  const textBlob = [
+    product.name,
+    product.summary,
+    product.effectiveness,
+    product.doctorOpinion,
+    product.communityReview,
+    product.safety?.sideEffects,
+    product.safety?.opinionAlerts,
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase();
+
+  const tags = new Set((product.tags || []).map((t) => String(t).toLowerCase()));
+  const isUtiRelated =
+    tags.has('uti') ||
+    tags.has('uti-prevention') ||
+    /uti|urinary|cystitis|bladder/.test(textBlob);
+  const isAzoOrCystex = /(^|\s)azo(\s|$)|cystex/.test(textBlob);
+  const isBoricAcid = /boric acid|suppositor/.test(textBlob);
+  const symptomOnlySignals = /pain relief|symptom relief|at-home.*test|test strip|while.*seek care|not a substitute|temporary/.test(textBlob);
+
+  if (isBoricAcid) {
+    return {
+      shortTerm:
+        '**Care pathway:** This is typically a short-term or adjunct option for vaginal pH/BV-type symptoms while you follow a clinician-guided plan.',
+      escalation:
+        '**Escalate care if:** symptoms persist/return, pain worsens, or you are pregnant/trying to conceive before using boric acid products.',
+    };
+  }
+
+  if (isAzoOrCystex || (isUtiRelated && symptomOnlySignals)) {
+    return {
+      shortTerm:
+        '**Care pathway:** This is best treated as bridge care (short-term symptom check/relief), not definitive UTI treatment by itself.',
+      escalation:
+        '**Escalate care if:** fever, flank/back pain, blood in urine, pregnancy, or symptoms that do not improve quickly.',
+    };
+  }
+
+  return null;
+}
+
 /** Clinical insight: bullet format with relevance + validity + takeaway. */
 function buildClinicalInsight(product, aiInsights, quizResults, healthProfile, profileTailoring) {
   const narrative = (aiInsights?.clinicalNarrative || '').trim();
   const doctor = (product.doctorOpinion || '').trim();
   const matchLabels = getProfileMatchLabelsForProduct(product, quizResults, healthProfile);
+  const bridgeCare = getBridgeToCareGuidance(product);
   const bullets = [];
   if (profileTailoring) {
     bullets.push(`**Relevance for you:** ${profileTailoring}`);
@@ -236,6 +284,8 @@ function buildClinicalInsight(product, aiInsights, quizResults, healthProfile, p
   } else if (narrative || doctor) {
     bullets.push('**Validity:** Use this as educational context; final fit depends on your medical history, meds, and clinician guidance.');
   }
+  if (bridgeCare?.shortTerm) bullets.push(bridgeCare.shortTerm);
+  if (bridgeCare?.escalation) bullets.push(bridgeCare.escalation);
   return toInsightObject(bullets);
 }
 
@@ -300,6 +350,7 @@ function buildQuickOverviewBlocks(product, aiInsights, quizResults, healthProfil
   const matchLabels = getProfileMatchLabelsForProduct(product, quizResults, healthProfile);
   const { whyItWorks, considerations } = getRecommendationExplanation(product, quizResults, healthProfile);
   const recallBad = product.safety?.recalls?.includes('⚠️') || hasRecallConcern(product);
+  const bridgeCare = getBridgeToCareGuidance(product);
   const hasProfile =
     (quizResults?.frustrations?.length ?? 0) > 0 ||
     matchLabels.length > 0 ||
@@ -324,6 +375,8 @@ function buildQuickOverviewBlocks(product, aiInsights, quizResults, healthProfil
     const w = whyItWorks.trim();
     bullets.push(...splitOverviewBulletIfLong(w, 320));
   }
+  if (bridgeCare?.shortTerm) bullets.push(bridgeCare.shortTerm);
+  if (bridgeCare?.escalation) bullets.push(bridgeCare.escalation);
   if (considerations) bullets.push(considerations);
   if (profileTailoring) bullets.push(profileTailoring);
   if (recallBad) bullets.push('**Safety:** Check the Safety tab for recalls or alerts before you buy.');
