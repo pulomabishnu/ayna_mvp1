@@ -1053,8 +1053,6 @@ export default function MyEcosystem({
                     </p>
                 </div>
 
-                {recommendedSection}
-
                 {/* SECTION 1 — My Ecosystem */}
                 <h3 style={{ fontSize: '1.35rem', marginBottom: '0.75rem', textAlign: 'center', color: 'var(--color-text-main)' }}>My Ecosystem</h3>
                 <div style={{
@@ -1358,6 +1356,8 @@ export default function MyEcosystem({
                         )}
                     </div>
                 )}
+
+                {recommendedSection}
 
                 <h3 style={{ fontSize: '1.35rem', marginBottom: '0.75rem', textAlign: 'center', color: 'var(--color-text-main)', marginTop: 'var(--spacing-xl)' }}>Care Recommended for You</h3>
                 <CareNearYouPanel
