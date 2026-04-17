@@ -656,8 +656,9 @@ export default function MyEcosystem({
     const [recommendedSectionOpen, setRecommendedSectionOpen] = useState({});
     const hasCompletedPersonalization = useMemo(() => {
         if (!quizResults) return false;
+        if (quizResults?.personalizationCompleted === true) return true;
         if (quizResults?.fullHealthIntake?.personalizationCompleted === true) return true;
-        return Array.isArray(quizResults?.frustrations) && quizResults.frustrations.length > 0;
+        return false;
     }, [quizResults]);
 
     const myProductIds = Object.keys(myProducts);

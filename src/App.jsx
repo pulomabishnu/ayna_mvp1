@@ -52,8 +52,9 @@ function App() {
   const hasHealthImport = useMemo(() => hasHealthProfileSignals(healthProfile), [healthProfile]);
   const hasCompletedPersonalization = useMemo(() => {
     if (!quizResults) return false;
+    if (quizResults?.personalizationCompleted === true) return true;
     if (quizResults?.fullHealthIntake?.personalizationCompleted === true) return true;
-    return Array.isArray(quizResults?.frustrations) && quizResults.frustrations.length > 0;
+    return false;
   }, [quizResults]);
 
   React.useEffect(() => {
@@ -133,8 +134,13 @@ function App() {
   };
 
   const handleQuizComplete = (results) => {
-    setQuizResults(results);
-    const { seedMeta } = getEcosystemSeedFromQuiz(results, healthProfile);
+    const completedResults = {
+      ...results,
+      personalizationCompleted: true,
+      personalizationCompletedAt: new Date().toISOString(),
+    };
+    setQuizResults(completedResults);
+    const { seedMeta } = getEcosystemSeedFromQuiz(completedResults, healthProfile);
     setEcosystemSeedMeta(seedMeta);
     setCurrentView('ecosystem');
   };

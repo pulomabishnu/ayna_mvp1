@@ -158,6 +158,8 @@ export function mapIntakeToLegacyQuizProfile(intake) {
     primaryConcern: concerns[0] || intake?.primaryConcern || '',
     primaryConcerns: concerns,
     customConcerns: intake?.customConcerns || [],
+    personalizationCompleted: intake?.personalizationCompleted === true,
+    personalizationCompletedAt: intake?.personalizationCompletedAt || null,
     fullHealthIntake: intake,
   };
 }
