@@ -43,8 +43,28 @@ function safeHttpsUrl(u) {
   }
 }
 
+function isBlockedRecommendationProduct(p) {
+  if (!p || typeof p !== 'object') return false;
+  const text = [
+    p.id,
+    p.name,
+    p.brand,
+    p.summary,
+    p.whyItWorks,
+    p.considerations,
+    p.category,
+    p.searchTerms,
+  ]
+    .flat()
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase();
+  return /tranexamic|tranexemic|\blysteda\b/.test(text);
+}
+
 function enrichProduct(p, idSuffix = '') {
   if (!p || typeof p !== 'object' || !String(p.name || '').trim()) return null;
+  if (isBlockedRecommendationProduct(p)) return null;
   const id =
     p.id && String(p.id).trim()
       ? String(p.id).trim().slice(0, 120)
@@ -255,6 +275,7 @@ ANTI-HALLUCINATION RULES:
 PERSONALIZATION RULES:
 - Never recommend products she has tried and disliked
 - Never recommend products she has hidden
+- Never recommend tranexamic acid products (including Lysteda)
 - If she has endometriosis: always flag synthetic fragrances, dioxins, chlorine bleaching, BPA
 - If she has PCOS: prioritize hormone-balancing products; flag endocrine disruptors
 - If she is trying to conceive: flag supplements contraindicated in pregnancy

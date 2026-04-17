@@ -199,14 +199,38 @@ function toConciseReason(text, fallback) {
     return `${candidate.slice(0, maxLen - 1).trim()}…`;
 }
 
+function isBlockedRecommendationProduct(product) {
+    if (!product || typeof product !== 'object') return false;
+    const text = [
+        product.id,
+        product.name,
+        product.brand,
+        product.summary,
+        product.whyItWorks,
+        product.considerations,
+        product.category,
+    ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+    return /tranexamic|tranexemic|\blysteda\b/.test(text);
+}
+
 function EcosystemProductAlternatives({ product, seedEntry, quizResults, healthProfile, onSwap, onGoToSearch, precomputedAlternatives = [] }) {
     const [open, setOpen] = useState(false);
     const rootRef = useRef(null);
     const alternatives = useMemo(() => {
         if (Array.isArray(precomputedAlternatives) && precomputedAlternatives.length > 0) {
-            return precomputedAlternatives.slice(0, 3);
+            return precomputedAlternatives
+                .filter(Boolean)
+                .filter((p) => !isBlockedRecommendationProduct(p))
+                .slice(0, 3);
         }
-        return seedEntry?.tag != null ? getEcosystemAlternatives(product.id, seedEntry.tag, quizResults || {}, healthProfile, 3) : [];
+        const generated = seedEntry?.tag != null ? getEcosystemAlternatives(product.id, seedEntry.tag, quizResults || {}, healthProfile, 3) : [];
+        return generated
+            .filter(Boolean)
+            .filter((p) => !isBlockedRecommendationProduct(p))
+            .slice(0, 3);
     }, [precomputedAlternatives, product.id, seedEntry, quizResults, healthProfile]);
     useEffect(() => {
         if (!open) return;
@@ -917,10 +941,11 @@ export default function MyEcosystem({
                 const tiers = (Array.isArray(entry?.tiers) ? entry.tiers : [])
                     .map((tier, tierIdx) => {
                         const tierProduct = tier?.product || null;
-                        if (!tierProduct) return null;
+                        if (!tierProduct || isBlockedRecommendationProduct(tierProduct)) return null;
                         const tierAltPool = Array.isArray(tier?.alternatives) ? tier.alternatives : [];
                         const tierAlternatives = tierAltPool
                             .filter(Boolean)
+                            .filter((p) => !isBlockedRecommendationProduct(p))
                             .filter((p) => p.id !== tierProduct.id)
                             .slice(0, 3);
                         const tierLabel = String(tier?.subcategory || tier?.name || '').trim() || `Option ${tierIdx + 1}`;
@@ -934,9 +959,10 @@ export default function MyEcosystem({
                     })
                     .filter(Boolean);
 
-                const fallbackTop = entry?.topProduct || null;
+                const fallbackTop = isBlockedRecommendationProduct(entry?.topProduct) ? null : (entry?.topProduct || null);
                 const fallbackAlternatives = (Array.isArray(entry?.alternatives) ? entry.alternatives : [])
                     .filter(Boolean)
+                    .filter((p) => !isBlockedRecommendationProduct(p))
                     .filter((p) => !fallbackTop || p.id !== fallbackTop.id)
                     .slice(0, 3);
                 const normalizedTiers = tiers.length > 0
