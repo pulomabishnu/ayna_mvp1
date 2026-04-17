@@ -12,6 +12,7 @@ import { getPricePerUnitLabel } from '../utils/pricePerUnit';
 import { fetchDsldProducts } from '../utils/fetchDsldProducts';
 import { enrichLlmProductForDiscovery } from '../utils/enrichLlmProductForDiscovery';
 import { buildDiscoveryProfileSummary } from '../utils/discoveryIntroSummary';
+import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
 
 const ALL_CATEGORIES = ['all', 'pad', 'tampon', 'cup', 'disc', 'period-underwear', 'supplement', 'tracker', 'telehealth', 'mental-health', 'fitness', 'diagnostics', 'hormone-monitoring', 'menopause', 'fertility', 'pelvic-health', 'pelvic-floor', 'cramp-relief', 'postpartum', 'pregnancy', 'sex-tech', 'intimate-care', 'contraception'];
 const TYPE_FILTERS = ['all', 'physical', 'digital', 'startup'];
@@ -135,6 +136,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [aiError, setAiError] = useState(null);
     const [dsldProducts, setDsldProducts] = useState([]);
     const [dsldLoading, setDsldLoading] = useState(false);
+    const [resolvedImages, setResolvedImages] = useState({});
     const recommendedSet = useMemo(() => new Set(recommendedProductIds || []), [recommendedProductIds]);
     const speech = useSpeechToText();
 
@@ -289,6 +291,20 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         }
         return out;
     }, [filtered, enrichedAiSuggestions]);
+
+    useEffect(() => {
+        const visible = gridItems.slice(0, 80);
+        const missing = visible
+            .filter((item) => item && item.id && item.name)
+            .filter((item) => resolvedImages[item.id] === undefined)
+            .filter((item) => isPlaceholderProductImage(item.image));
+        if (missing.length === 0) return;
+        missing.forEach((item) => {
+            resolveProductImage(item.name, item.brand || '').then((url) => {
+                if (url) setResolvedImages((prev) => ({ ...prev, [item.id]: url }));
+            });
+        });
+    }, [gridItems, resolvedImages]);
 
     const profileIntro = useMemo(
         () => buildDiscoveryProfileSummary({ quizResults, healthProfile, categoryFilter, searchQuery }),
@@ -679,6 +695,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     const isJoined = isStartup && !releasedStartup && !!joinedWaitlists[item.id];
                     const perUnitPrice = getPricePerUnitLabel(item);
 
+                    const cardImageSrc = resolvedImages[item.id] || item.image;
                     return (
                         <div key={item.id} className="card hover-lift" style={{
                             padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column',
@@ -686,10 +703,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                             border: (isInEcosystem || isJoined) ? '2px solid var(--color-primary)' : '1px solid var(--color-border)'
                         }}>
                             <div style={{ height: '118px', width: '100%', overflow: 'hidden', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-secondary-fade, #fdf2f4)' }}>
-                                {item.image && item.image !== '/ayna_placeholder.png' ? (
+                                {cardImageSrc && !isPlaceholderProductImage(cardImageSrc) ? (
                                     <>
                                         <img
-                                            src={item.image}
+                                            src={cardImageSrc}
                                             alt={item.name}
                                             style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }}
                                             onError={(e) => {

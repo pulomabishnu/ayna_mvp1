@@ -22,7 +22,7 @@ import {
     saveCachedLlmRecommendations,
     clearCachedLlmRecommendations,
 } from '../utils/fetchLlmRecommendations';
-import { resolveProductImage } from '../utils/resolveProductImage';
+import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
 import { getPricePerUnitLabel } from '../utils/pricePerUnit';
 import { deriveBrandSearchContext } from '../utils/productBrandContext.js';
 
@@ -849,6 +849,19 @@ export default function MyEcosystem({
         });
     }, [activeTiered]);
 
+    useEffect(() => {
+        const productsNeedingImage = [...myProductList, ...ecosystemStartups]
+            .filter((p) => p && p.id && p.name)
+            .filter((p) => resolvedImages[p.id] === undefined)
+            .filter((p) => isPlaceholderProductImage(p.image));
+        if (productsNeedingImage.length === 0) return;
+        productsNeedingImage.forEach((p) => {
+            resolveProductImage(p.name, p.brand || '').then((url) => {
+                if (url) setResolvedImages((prev) => ({ ...prev, [p.id]: url }));
+            });
+        });
+    }, [myProductList, ecosystemStartups, resolvedImages]);
+
 
     const toggleEcosystemCompare = useCallback((k) => {
         setEcosystemCompareOpen((prev) => ({ ...prev, [k]: !prev[k] }));
@@ -1051,11 +1064,12 @@ export default function MyEcosystem({
                                                     </div>
                                                     <div className="ecosystem-product-grid">
                                                         {products.map((product) => {
-                                                            const seedEntry = ecosystemSeedMeta[product.id];
+                                            const seedEntry = ecosystemSeedMeta[product.id];
+                                            const p = resolvedImages[product.id] ? { ...product, image: resolvedImages[product.id] } : product;
                                                             return (
                                                                 <EcosystemFunctionProductCard
                                                                     key={product.id}
-                                                                    product={product}
+                                                    product={p}
                                                                     healthFunctionLabel={HEALTH_FUNCTIONS[fn]?.label || fn}
                                                                     onOpenProduct={onOpenProduct}
                                                                     onToggleProduct={onToggleProduct}
@@ -1083,7 +1097,7 @@ export default function MyEcosystem({
                                                 <a key={startup.id} href={startup.url} target="_blank" rel="noopener noreferrer" className="card" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '0.85rem 1rem', cursor: 'pointer', textDecoration: 'none', color: 'inherit', height: '100%' }}>
                                                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                                                         <div style={{ width: '44px', height: '44px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0, background: 'var(--color-surface-soft)' }}>
-                                                            <img src={startup.image} alt={startup.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.style.display = 'none'; }} />
+                                                            <img src={resolvedImages[startup.id] || startup.image} alt={startup.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.style.display = 'none'; }} />
                                                         </div>
                                                         <div style={{ flexGrow: 1, minWidth: 0 }}>
                                                             <h4 style={{ fontSize: '0.95rem', marginBottom: '0.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>

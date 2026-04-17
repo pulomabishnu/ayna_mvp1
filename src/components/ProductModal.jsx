@@ -8,6 +8,7 @@ import { buildUserHealthContextString } from '../utils/userHealthContextForInsig
 import { buildProfileTailoring } from '../utils/profileProductTailoring';
 import { fetchFdaRecall } from '../utils/fetchFdaRecall';
 import { fetchPubmedArticles } from '../utils/fetchPubmedArticles';
+import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
 
 // Build purchase/search URLs for common retailers (product name encoded). Keys matched by store name.
 const STORE_SEARCH_URLS = {
@@ -386,6 +387,7 @@ export default function ProductModal({
     const [fdaRecallLoading, setFdaRecallLoading] = useState(false);
     const [pubmedArticles, setPubmedArticles] = useState([]);
     const [pubmedLoading, setPubmedLoading] = useState(false);
+    const [resolvedModalImage, setResolvedModalImage] = useState('');
     const healthContextKey = useMemo(
         () => buildUserHealthContextString(quizResults, healthProfile),
         [quizResults, healthProfile]
@@ -409,6 +411,22 @@ export default function ProductModal({
             socialInsight: buildSocialInsight(product, aiInsights, quizResults, healthProfile),
         };
     }, [product, aiInsights, quizResults, healthProfile, profileTailoring]);
+
+    useEffect(() => {
+        let active = true;
+        setResolvedModalImage('');
+        if (!product?.name) return () => { active = false; };
+        if (!isPlaceholderProductImage(product.image)) return () => { active = false; };
+        resolveProductImage(product.name, product.brand || '').then((url) => {
+            if (!active || !url) return;
+            setResolvedModalImage(url);
+        });
+        return () => {
+            active = false;
+        };
+    }, [product?.id, product?.name, product?.brand, product?.image]);
+
+    const heroImageSrc = resolvedModalImage || product?.image || '';
 
     /** Hide curated doctor bullet when AI narrative already contains the same opening (avoids duplicate). */
     const suppressDoctorDuplicateInList = useMemo(() => {
@@ -840,10 +858,10 @@ export default function ProductModal({
 
                 {/* Hero Image Section */}
                 <div style={{ position: 'relative', height: '240px', width: '100%', overflow: 'hidden', background: 'var(--color-secondary-fade, #fdf2f4)' }}>
-                    {product.image && product.image !== '/ayna_placeholder.png' ? (
+                    {heroImageSrc && !isPlaceholderProductImage(heroImageSrc) ? (
                         <>
                             <img
-                                src={product.image}
+                                src={heroImageSrc}
                                 alt={product.name}
                                 style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }}
                                 onError={(e) => {

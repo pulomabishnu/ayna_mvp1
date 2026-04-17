@@ -3,6 +3,12 @@
 
 const cache = new Map();
 
+export function isPlaceholderProductImage(imageUrl) {
+  const src = String(imageUrl || '').trim();
+  if (!src) return true;
+  return src === '/ayna_placeholder.png' || src === '/startup_placeholder.png';
+}
+
 export async function resolveProductImage(name, brand) {
   if (!name) return '';
   const key = `${brand || ''}|${name}`;
