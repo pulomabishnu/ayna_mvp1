@@ -9,9 +9,9 @@ import {
 import { getInteractions } from '../data/interactions';
 import CareNearYouPanel from './CareNearYouPanel';
 import LlmRecommendationsLoadingBlock from './LlmRecommendationsLoadingBlock';
-import { inferTagsFromHealthProfile, saveHealthProfile } from '../utils/healthDataProfile';
+import HealthDataImport from './HealthDataImport';
+import { inferTagsFromHealthProfile } from '../utils/healthDataProfile';
 import { RELEASED_STARTUPS } from '../data/startups';
-import { buildQuizIntakeSummaryText } from '../utils/healthIntake';
 import { generateTieredRecommendations } from '../utils/recommendationEngine';
 import {
     fetchLlmRecommendations,
@@ -631,14 +631,7 @@ export default function MyEcosystem({
     onViewRecommendedArticles,
     onOpenArticle,
     onLlmRecommendationsLoaded,
-    onOpenHealthData,
 }) {
-    const [profileEditOpen, setProfileEditOpen] = useState(false);
-    const [conditionsDraft, setConditionsDraft] = useState('');
-    const [medicationsDraft, setMedicationsDraft] = useState('');
-    const [allergiesDraft, setAllergiesDraft] = useState('');
-    const [notesDraft, setNotesDraft] = useState('');
-    const [intakeSummaryDraft, setIntakeSummaryDraft] = useState('');
     const [showAddModal, setShowAddModal] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const viewMode = 'function';
@@ -650,26 +643,7 @@ export default function MyEcosystem({
     const [llmError, setLlmError] = useState('');
     const [llmLoadStartedAt, setLlmLoadStartedAt] = useState(0);
     const [resolvedImages, setResolvedImages] = useState({});
-    const [healthProfileExpanded, setHealthProfileExpanded] = useState(true);
-
-    const isHealthProfileComplete = useMemo(() => {
-        const hp = healthProfile;
-        const hasHp =
-            (hp?.intakeSummary || '').trim().length > 0 ||
-            (hp?.conditions || []).length > 0 ||
-            (hp?.medications || []).length > 0 ||
-            (hp?.allergies || []).length > 0 ||
-            (hp?.notes || '').trim().length > 0 ||
-            (hp?.fhirSummary?.conditions || []).length > 0 ||
-            (hp?.fhirSummary?.medications || []).length > 0;
-        const hasQuiz = (quizResults?.frustrations || []).length > 0 || !!quizResults?.fullHealthIntake;
-        return hasHp || hasQuiz;
-    }, [healthProfile, quizResults]);
-
-    useEffect(() => {
-        if (isHealthProfileComplete) setHealthProfileExpanded(false);
-        else setHealthProfileExpanded(true);
-    }, [isHealthProfileComplete]);
+    const [healthDataImportOpen, setHealthDataImportOpen] = useState(false);
 
     const myProductIds = Object.keys(myProducts);
     const myProductList = Object.values(myProducts);
@@ -758,14 +732,6 @@ export default function MyEcosystem({
         if (!intake || Object.keys(intake).length === 0) return [];
         return generateTieredRecommendations(intake);
     }, [quizResults]);
-
-    const quizIntakeSummaryKey = useMemo(() => {
-        try {
-            return quizResults?.fullHealthIntake ? JSON.stringify(quizResults.fullHealthIntake) : '';
-        } catch {
-            return '';
-        }
-    }, [quizResults?.fullHealthIntake]);
 
     const intakeFingerprint = useMemo(
         () => fingerprintIntake(quizResults?.fullHealthIntake || null),
@@ -878,51 +844,6 @@ export default function MyEcosystem({
         });
     }, [activeTiered]);
 
-    useEffect(() => {
-        const saved = (healthProfile?.intakeSummary || '').trim();
-        if (saved) {
-            setIntakeSummaryDraft(healthProfile.intakeSummary);
-            return;
-        }
-        setIntakeSummaryDraft(buildQuizIntakeSummaryText(quizResults) || '');
-    }, [healthProfile?.intakeSummary, quizIntakeSummaryKey, quizResults]);
-
-    useEffect(() => {
-        if (!profileEditOpen) return;
-        const hp = healthProfile;
-        setConditionsDraft((hp?.conditions || []).join(', '));
-        setMedicationsDraft((hp?.medications || []).join(', '));
-        setAllergiesDraft((hp?.allergies || []).join(', '));
-        setNotesDraft(hp?.notes || '');
-    }, [profileEditOpen, healthProfile]);
-
-    const handleSaveHealthProfileDraft = () => {
-        const base = healthProfile || {
-            conditions: [], medications: [], allergies: [], notes: '', intakeSummary: '',
-            sources: { appleHealth: false, googleFit: false, fhir: false, manual: true },
-        };
-        const next = saveHealthProfile({
-            ...base,
-            conditions: conditionsDraft.split(/[,;\n]+/).map((s) => s.trim()).filter(Boolean),
-            medications: medicationsDraft.split(/[,;\n]+/).map((s) => s.trim()).filter(Boolean),
-            allergies: allergiesDraft.split(/[,;\n]+/).map((s) => s.trim()).filter(Boolean),
-            notes: notesDraft,
-        });
-        onHealthProfileUpdate?.(next);
-        setProfileEditOpen(false);
-    };
-
-    const handleSaveIntakeSummary = () => {
-        const base = healthProfile || {
-            conditions: [], medications: [], allergies: [], notes: '', intakeSummary: '',
-            sources: { appleHealth: false, googleFit: false, fhir: false, manual: true },
-        };
-        const next = saveHealthProfile({
-            ...base,
-            intakeSummary: intakeSummaryDraft.trim(),
-        });
-        onHealthProfileUpdate?.(next);
-    };
 
     const toggleEcosystemCompare = useCallback((k) => {
         setEcosystemCompareOpen((prev) => ({ ...prev, [k]: !prev[k] }));
@@ -992,213 +913,20 @@ export default function MyEcosystem({
                     </div>
                 </div>
 
-                {/* Health profile: quiz + imported / manual context (collapsible when complete) */}
-                <div className="card" style={{ maxWidth: '720px', margin: '0 auto var(--spacing-xl)', padding: '1.5rem', fontFamily: 'var(--font-body)' }}>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem', marginBottom: '1rem' }}>
-                        <div>
-                            <h3 style={{ fontSize: '1.2rem', margin: '0 0 0.35rem', color: 'var(--color-text-main)' }}>Your health profile</h3>
-                            <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>
-                                Your assessment is summarized below. Conditions and medications you add under Update Health Profile also shape recommendations.
-                            </p>
-                        </div>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', alignItems: 'center' }}>
-                            {isHealthProfileComplete && (
-                                <button
-                                    type="button"
-                                    className="btn btn-outline"
-                                    style={{ fontSize: '0.85rem' }}
-                                    onClick={() => setHealthProfileExpanded((v) => !v)}
-                                    aria-expanded={healthProfileExpanded}
-                                >
-                                    {healthProfileExpanded ? 'Collapse' : 'Expand'}
-                                </button>
-                            )}
-                            {typeof onBuildEcosystem === 'function' && (
-                                <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem' }} onClick={onBuildEcosystem}>
-                                    Retake Quiz
-                                </button>
-                            )}
-                            <button
-                                type="button"
-                                className="btn btn-outline"
-                                style={{ fontSize: '0.85rem' }}
-                                onClick={() => {
-                                    setProfileEditOpen((o) => !o);
-                                    setHealthProfileExpanded(true);
-                                }}
-                            >
-                                Update Health Profile
-                            </button>
-                            {typeof onOpenHealthData === 'function' && (
-                                <button
-                                    type="button"
-                                    className="btn btn-outline"
-                                    style={{ fontSize: '0.85rem' }}
-                                    onClick={onOpenHealthData}
-                                >
-                                    Import Health Data
-                                </button>
-                            )}
-                        </div>
-                    </div>
-                    {isHealthProfileComplete && !healthProfileExpanded && (
-                        <p style={{ fontSize: '0.88rem', color: 'var(--color-text-muted)', lineHeight: 1.45, margin: '0 0 0.75rem' }}>
-                            {(intakeSummaryDraft || '').trim()
-                                ? `${(intakeSummaryDraft || '').trim().slice(0, 180)}${(intakeSummaryDraft || '').trim().length > 180 ? '…' : ''}`
-                                : 'Profile saved — expand to view or edit your summary.'}
-                        </p>
-                    )}
-                    {(healthProfileExpanded || !isHealthProfileComplete) && (
-                    <>
-                    <div style={{ marginBottom: '1rem' }}>
-                        <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)', margin: '0 0 0.4rem' }}>
-                            Health profile summary
-                        </p>
-                        <p style={{ margin: '0 0 0.5rem', fontSize: '0.82rem', color: 'var(--color-text-muted)', lineHeight: 1.45 }}>
-                            Condensed from your quiz (concerns, follow-ups, cycle, conditions, products, and goals). Edit anytime — save to store it in this browser only.
-                        </p>
-                        <textarea
-                            value={intakeSummaryDraft}
-                            onChange={(e) => setIntakeSummaryDraft(e.target.value)}
-                            rows={12}
-                            spellCheck
-                            aria-label="Health profile summary from your assessment"
-                            placeholder="Complete the health assessment to auto-fill this summary, or write your own."
-                            style={{
-                                width: '100%',
-                                padding: '0.75rem 1rem',
-                                borderRadius: 'var(--radius-md)',
-                                border: '1px solid var(--color-border)',
-                                fontSize: '0.88rem',
-                                lineHeight: 1.5,
-                                color: 'var(--color-text-main)',
-                                background: 'var(--color-bg)',
-                                fontFamily: 'var(--font-body)',
-                                resize: 'vertical',
-                                minHeight: '180px',
-                                boxSizing: 'border-box',
-                            }}
-                        />
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center', marginTop: '0.6rem' }}>
-                            <button type="button" className="btn btn-primary" style={{ fontSize: '0.85rem' }} onClick={handleSaveIntakeSummary}>
-                                Save summary
-                            </button>
-                            {healthProfile?.intakeSummary?.trim() && healthProfile?.updatedAt && (
-                                <span style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)' }}>
-                                    Summary last saved {new Date(healthProfile.updatedAt).toLocaleString()}
-                                </span>
-                            )}
-                        </div>
-                    </div>
-                    {(healthProfile?.conditions?.length > 0 || healthProfile?.fhirSummary?.conditions?.length > 0) && (
-                        <div style={{ marginBottom: '0.85rem' }}>
-                            <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)', margin: '0 0 0.4rem' }}>Conditions & diagnoses</p>
-                            <p style={{ margin: 0, fontSize: '0.9rem', lineHeight: 1.5, color: 'var(--color-text-main)' }}>
-                                {[...(healthProfile.conditions || []), ...(healthProfile.fhirSummary?.conditions || [])].filter(Boolean).join(' · ')}
-                            </p>
-                        </div>
-                    )}
-                    {(healthProfile?.medications?.length > 0 || healthProfile?.fhirSummary?.medications?.length > 0) && (
-                        <div style={{ marginBottom: '0.85rem' }}>
-                            <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)', margin: '0 0 0.4rem' }}>Medications</p>
-                            <p style={{ margin: 0, fontSize: '0.9rem', lineHeight: 1.5, color: 'var(--color-text-main)' }}>
-                                {[...(healthProfile.medications || []), ...(healthProfile.fhirSummary?.medications || [])].filter(Boolean).join(' · ')}
-                            </p>
-                        </div>
-                    )}
-                    {healthProfile?.allergies?.length > 0 && (
-                        <div style={{ marginBottom: '0.85rem' }}>
-                            <p style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-text-muted)', margin: '0 0 0.4rem' }}>Allergies</p>
-                            <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--color-text-main)' }}>{healthProfile.allergies.join(' · ')}</p>
-                        </div>
-                    )}
-                    {healthProfile?.notes && (
-                        <p style={{ margin: '0 0 0.5rem', fontSize: '0.88rem', color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Notes: {healthProfile.notes}</p>
-                    )}
-                    {!intakeSummaryDraft?.trim() && !inferTagsFromHealthProfile(healthProfile).length && !healthProfile?.conditions?.length && (
-                        <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', margin: '0.5rem 0 0' }}>
-                            Complete the quiz or add conditions under Update Health Profile so picks and articles match you better.
-                        </p>
-                    )}
-                    {profileEditOpen && (
-                        <div
-                            style={{
-                                marginTop: '1.25rem',
-                                paddingTop: '1.25rem',
-                                borderTop: '1px solid var(--color-border)',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                gap: '0.75rem',
-                            }}
-                        >
-                            <label style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-text-muted)' }}>Conditions (comma-separated)</label>
-                            <input
-                                value={conditionsDraft}
-                                onChange={(e) => setConditionsDraft(e.target.value)}
-                                placeholder="e.g. PCOS, endometriosis"
-                                style={{
-                                    padding: '0.65rem 0.85rem',
-                                    fontSize: '0.95rem',
-                                    borderRadius: 'var(--radius-md)',
-                                    border: '1px solid var(--color-border)',
-                                    fontFamily: 'var(--font-body)',
-                                    outline: 'none',
-                                }}
-                            />
-                            <label style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-text-muted)' }}>Medications</label>
-                            <input
-                                value={medicationsDraft}
-                                onChange={(e) => setMedicationsDraft(e.target.value)}
-                                placeholder="e.g. levothyroxine 50mcg"
-                                style={{
-                                    padding: '0.65rem 0.85rem',
-                                    fontSize: '0.95rem',
-                                    borderRadius: 'var(--radius-md)',
-                                    border: '1px solid var(--color-border)',
-                                    fontFamily: 'var(--font-body)',
-                                    outline: 'none',
-                                }}
-                            />
-                            <label style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-text-muted)' }}>Allergies</label>
-                            <input
-                                value={allergiesDraft}
-                                onChange={(e) => setAllergiesDraft(e.target.value)}
-                                placeholder="e.g. latex, penicillin"
-                                style={{
-                                    padding: '0.65rem 0.85rem',
-                                    fontSize: '0.95rem',
-                                    borderRadius: 'var(--radius-md)',
-                                    border: '1px solid var(--color-border)',
-                                    fontFamily: 'var(--font-body)',
-                                    outline: 'none',
-                                }}
-                            />
-                            <label style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-text-muted)' }}>Notes</label>
-                            <textarea
-                                value={notesDraft}
-                                onChange={(e) => setNotesDraft(e.target.value)}
-                                rows={3}
-                                style={{
-                                    padding: '0.65rem 0.85rem',
-                                    fontSize: '0.95rem',
-                                    borderRadius: 'var(--radius-md)',
-                                    border: '1px solid var(--color-border)',
-                                    fontFamily: 'var(--font-body)',
-                                    outline: 'none',
-                                    resize: 'vertical',
-                                }}
-                            />
-                            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                                <button type="button" className="btn btn-primary" style={{ fontSize: '0.9rem' }} onClick={handleSaveHealthProfileDraft}>
-                                    Save profile
-                                </button>
-                                <button type="button" className="btn btn-outline" style={{ fontSize: '0.9rem' }} onClick={() => setProfileEditOpen(false)}>
-                                    Cancel
-                                </button>
-                            </div>
-                        </div>
-                    )}
-                    </>
+                {/* Action bar: Import Health Data + Retake Quiz */}
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: 'var(--spacing-lg)' }}>
+                    <button
+                        type="button"
+                        className="btn btn-outline"
+                        style={{ fontSize: '0.85rem' }}
+                        onClick={() => setHealthDataImportOpen(true)}
+                    >
+                        📋 Import Health Data
+                    </button>
+                    {typeof onBuildEcosystem === 'function' && (
+                        <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem' }} onClick={onBuildEcosystem}>
+                            Retake Quiz
+                        </button>
                     )}
                 </div>
 
@@ -1576,8 +1304,37 @@ export default function MyEcosystem({
                     </div>
                 </div>
             )}
+            {healthDataImportOpen && (
+                <div
+                    style={{
+                        position: 'fixed', inset: 0, zIndex: 2000,
+                        background: 'rgba(0,0,0,0.45)',
+                        display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
+                        overflowY: 'auto', padding: '2rem 1rem',
+                    }}
+                    onClick={(e) => { if (e.target === e.currentTarget) setHealthDataImportOpen(false); }}
+                >
+                    <div style={{ position: 'relative', width: '100%', maxWidth: '860px' }}>
+                        <button
+                            type="button"
+                            onClick={() => setHealthDataImportOpen(false)}
+                            aria-label="Close"
+                            style={{
+                                position: 'absolute', top: '0.75rem', right: '0.75rem', zIndex: 1,
+                                background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)',
+                                borderRadius: '50%', width: '36px', height: '36px',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                fontSize: '1.1rem', cursor: 'pointer', color: 'var(--color-text-main)',
+                            }}
+                        >
+                            ✕
+                        </button>
+                        <HealthDataImport onUpdate={(saved) => {
+                            onHealthProfileUpdate?.(saved);
+                        }} />
+                    </div>
+                </div>
+            )}
         </>
     );
 }
-
-

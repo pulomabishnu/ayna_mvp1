@@ -554,12 +554,6 @@ function App() {
               setCurrentView('articles');
             }}
             onLlmRecommendationsLoaded={handleLlmRecommendationsLoaded}
-            onOpenHealthData={() => {
-              setCurrentView('tracked');
-              window.setTimeout(() => {
-                document.getElementById('health-data-import')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              }, 150);
-            }}
           />
         )}
         {currentView === 'discovery' && (
