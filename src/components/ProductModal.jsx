@@ -186,25 +186,59 @@ const purpleInsightBoxStyle = {
   border: '1px solid #E9D5FF',
 };
 
-/** Clinical insight: one profile line + short narrative—details under Sources. */
+function toInsightObject(bullets = []) {
+  const cleaned = (bullets || []).map((b) => String(b || '').trim()).filter(Boolean);
+  if (cleaned.length === 0) return null;
+  return { bullets: cleaned };
+}
+
+function renderInsightBullets(insight) {
+  if (!insight) return null;
+  if (typeof insight === 'string') {
+    return (
+      <ul style={{ margin: 0, paddingLeft: '1.05rem', lineHeight: 1.65 }}>
+        <li>{renderRichText(insight)}</li>
+      </ul>
+    );
+  }
+  const bullets = Array.isArray(insight?.bullets) ? insight.bullets : [];
+  if (bullets.length === 0) return null;
+  return (
+    <ul style={{ margin: 0, paddingLeft: '1.05rem', lineHeight: 1.65 }}>
+      {bullets.map((b, idx) => (
+        <li key={idx} style={{ marginBottom: idx === bullets.length - 1 ? 0 : '0.35rem' }}>
+          {renderRichText(b)}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/** Clinical insight: bullet format with relevance + validity + takeaway. */
 function buildClinicalInsight(product, aiInsights, quizResults, healthProfile, profileTailoring) {
   const narrative = (aiInsights?.clinicalNarrative || '').trim();
   const doctor = (product.doctorOpinion || '').trim();
   const matchLabels = getProfileMatchLabelsForProduct(product, quizResults, healthProfile);
-  const parts = [];
+  const bullets = [];
   if (profileTailoring) {
-    parts.push(profileTailoring);
+    bullets.push(`**Relevance for you:** ${profileTailoring}`);
   } else if (matchLabels.length > 0) {
-    parts.push(`**For you:** ${matchLabels.join(', ')}.`);
+    bullets.push(`**Relevance for you:** This aligns with your priorities: ${matchLabels.join(', ')}.`);
   }
-  if (narrative) parts.push(truncate(narrative, 220));
+  if (narrative) {
+    bullets.push(`**Clinician signal:** ${narrative}`);
+  } else if (doctor) {
+    bullets.push(`**Clinician signal:** ${doctor}`);
+  }
   if (product.clinicianOpinionSource === 'brand' && (narrative || doctor)) {
-    parts.push('**Sources:** Some links may be brand-leaning—verify with your clinician.');
+    bullets.push('**Validity:** Some citations may be brand-leaning, so treat this as directional and confirm with independent clinical sources.');
+  } else if (narrative || doctor) {
+    bullets.push('**Validity:** Use this as educational context; final fit depends on your medical history, meds, and clinician guidance.');
   }
-  return nonEmptyInsight(parts.join(' '));
+  return toInsightObject(bullets);
 }
 
-/** Science insight: profile + literature trail (null if no data yet). */
+/** Science insight: bullet format with evidence validity + personalization. */
 function buildScienceInsight(product, aiInsights, quizResults, healthProfile) {
   const curated = countHttpsLinksInSection(product.verificationLinks?.scientific);
   const aiLit = (aiInsights?.literatureLinks || []).length;
@@ -213,24 +247,24 @@ function buildScienceInsight(product, aiInsights, quizResults, healthProfile) {
   const hasScienceBody = curated > 0 || aiLit > 0 || !!aiSci || !!eff;
   const limited = scienceEvidenceIsLimited(product);
   const matchLabels = getProfileMatchLabelsForProduct(product, quizResults, healthProfile);
-  const parts = [];
+  const bullets = [];
   if (matchLabels.length > 0) {
-    parts.push(`**For you:** ${matchLabels.join(', ')}—confirm studies match your priorities.`);
+    bullets.push(`**Relevance for you:** This may fit your priorities (${matchLabels.join(', ')}), but check whether study populations match your profile.`);
   }
-  if (aiSci) parts.push(truncate(aiSci, 220));
-  else if (eff) parts.push(truncate(eff, 220));
+  if (aiSci) bullets.push(`**Key finding:** ${aiSci}`);
+  else if (eff) bullets.push(`**Key finding:** ${eff}`);
   if (hasScienceBody) {
-    parts.push(
+    bullets.push(
       limited
-        ? '**Evidence:** May be thin for this exact brand—see linked papers.'
-        : '**Evidence:** Somewhat stronger on file than many alternatives—still verify in sources.'
+        ? `**Validity:** Evidence is limited for this exact brand (about ${curated + aiLit} literature links available), so confidence is moderate-to-low.`
+        : `**Validity:** Evidence is comparatively stronger here (about ${curated + aiLit} literature links available), but still verify study quality and applicability.`
     );
+    bullets.push('**What this means for you:** Prefer products with stronger independent evidence when your goals are symptom control and safety confidence.');
   }
-  if (parts.length === 0) return null;
-  return nonEmptyInsight(parts.join(' '));
+  return toInsightObject(bullets);
 }
 
-/** Community insight: profile + social synthesis (null if nothing to add). */
+/** Community insight: bullet format with relevance + opinion validity. */
 function buildSocialInsight(product, aiInsights, quizResults, healthProfile) {
   const ai = (aiInsights?.communitySummary || '').trim();
   const raw = product.communityReview || '';
@@ -245,14 +279,16 @@ function buildSocialInsight(product, aiInsights, quizResults, healthProfile) {
     ai.includes(quotePart.slice(0, Math.min(50, quotePart.length)))
   );
   const matchLabels = getProfileMatchLabelsForProduct(product, quizResults, healthProfile);
-  const parts = [];
+  const bullets = [];
   if (matchLabels.length > 0) {
-    parts.push(`**For you:** ${matchLabels.join(', ')}—stories below are anecdotal.`);
+    bullets.push(`**Relevance for you:** Community reports overlap with your priorities (${matchLabels.join(', ')}).`);
   }
-  if (ai) parts.push(truncate(ai, 220));
-  if (quotePart && !quoteRedundant) parts.push(`**Forum excerpt:** ${truncate(quotePart, 200)}`);
-  if (parts.length === 0) return null;
-  return nonEmptyInsight(parts.join(' '));
+  if (ai) bullets.push(`**What people report:** ${ai}`);
+  if (quotePart && !quoteRedundant) bullets.push(`**Example report:** ${quotePart}`);
+  if (ai || quotePart) {
+    bullets.push('**Validity:** Community feedback is anecdotal and can be biased by incentives, extremes, and selection effects—treat as supportive context, not proof.');
+  }
+  return toInsightObject(bullets);
 }
 
 /**
@@ -1383,9 +1419,9 @@ export default function ProductModal({
                             {condensed?.clinicalInsight && (
                                 <div style={purpleInsightBoxStyle}>
                                     <h4 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#7E22CE', marginBottom: '0.65rem' }}>Insight</h4>
-                                    <p style={{ fontSize: '0.95rem', color: '#581C87', lineHeight: 1.65, margin: 0 }}>
-                                        {renderRichText(condensed.clinicalInsight)}
-                                    </p>
+                                    <div style={{ fontSize: '0.95rem', color: '#581C87', margin: 0 }}>
+                                        {renderInsightBullets(condensed.clinicalInsight)}
+                                    </div>
                                     <p style={{ fontSize: '0.72rem', color: '#7E22CE', margin: '0.75rem 0 0', fontWeight: '600' }}>
                                         For learning only—not a substitute for your clinician.
                                     </p>
@@ -1467,9 +1503,9 @@ export default function ProductModal({
                             {condensed?.scienceInsight && (
                                 <div style={purpleInsightBoxStyle}>
                                     <h4 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#7E22CE', marginBottom: '0.65rem' }}>Insight</h4>
-                                    <p style={{ fontSize: '0.95rem', color: '#581C87', lineHeight: 1.65, margin: 0 }}>
-                                        {renderRichText(condensed.scienceInsight)}
-                                    </p>
+                                    <div style={{ fontSize: '0.95rem', color: '#581C87', margin: 0 }}>
+                                        {renderInsightBullets(condensed.scienceInsight)}
+                                    </div>
                                 </div>
                             )}
                             {pubmedLoading && (
@@ -1521,9 +1557,9 @@ export default function ProductModal({
                             {condensed?.socialInsight && (
                                 <div style={purpleInsightBoxStyle}>
                                     <h4 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#7E22CE', marginBottom: '0.65rem' }}>Insight</h4>
-                                    <p style={{ fontSize: '0.95rem', color: '#581C87', lineHeight: 1.65, margin: 0 }}>
-                                        {renderRichText(condensed.socialInsight)}
-                                    </p>
+                                    <div style={{ fontSize: '0.95rem', color: '#581C87', margin: 0 }}>
+                                        {renderInsightBullets(condensed.socialInsight)}
+                                    </div>
                                 </div>
                             )}
                             {product.incentivizedReviewSites && product.incentivizedReviewSites.length > 0 && (

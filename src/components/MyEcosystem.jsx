@@ -644,6 +644,7 @@ export default function MyEcosystem({
     const [llmLoadStartedAt, setLlmLoadStartedAt] = useState(0);
     const [resolvedImages, setResolvedImages] = useState({});
     const [healthDataImportOpen, setHealthDataImportOpen] = useState(false);
+    const [recommendedSwapByKey, setRecommendedSwapByKey] = useState({});
 
     const myProductIds = Object.keys(myProducts);
     const myProductList = Object.values(myProducts);
@@ -826,6 +827,10 @@ export default function MyEcosystem({
     );
 
     useEffect(() => {
+        setRecommendedSwapByKey({});
+    }, [intakeFingerprint, activeTiered.length]);
+
+    useEffect(() => {
         if (!activeTiered || !activeTiered.length) return;
         activeTiered.forEach((entry) => {
             const product = entry.topProduct || entry.tiers?.[0]?.product;
@@ -854,6 +859,12 @@ export default function MyEcosystem({
         setEcosystemAltMiniKey(key);
         if (key) setEcosystemCompareOpen({});
     }, []);
+
+    const handleSwapFromRecommendedCard = useCallback((cardKey, oldProductId, newProduct) => {
+        if (!cardKey || !newProduct?.id) return;
+        setRecommendedSwapByKey((prev) => ({ ...prev, [cardKey]: newProduct }));
+        onSwapSeedProduct?.(oldProductId, newProduct);
+    }, [onSwapSeedProduct]);
 
     return (
         <>
@@ -958,13 +969,15 @@ export default function MyEcosystem({
                                     const product = entry.topProduct || entry.tiers?.[0]?.product;
                                     const alternatives = entry.alternatives || entry.tiers?.[0]?.alternatives || [];
                                     if (!product) return null;
-                                    const imgResolved = resolvedImages[product.id] || product.image;
-                                    const p = { ...product, image: imgResolved };
+                                    const cardKey = `${entry.concern || 'c'}-${recIdx}`;
+                                    const displayProduct = recommendedSwapByKey[cardKey] || product;
+                                    const imgResolved = resolvedImages[displayProduct.id] || displayProduct.image;
+                                    const p = { ...displayProduct, image: imgResolved };
                                     const seedMeta = ecosystemSeedMeta[product.id];
                                     const seedForAlts = seedMeta || (alternatives.length ? { frustration: entry.concern, tag: 'recommendation' } : null);
                                     return (
                                         <EcosystemFunctionProductCard
-                                            key={`${entry.concern || 'c'}-${recIdx}`}
+                                            key={cardKey}
                                             product={p}
                                             healthFunctionLabel={entry.concern}
                                             onOpenProduct={onOpenProduct}
@@ -973,7 +986,7 @@ export default function MyEcosystem({
                                             precomputedAlternatives={alternatives}
                                             quizResults={quizResults}
                                             healthProfile={healthProfile}
-                                            onSwapSeedProduct={onSwapSeedProduct}
+                                            onSwapSeedProduct={(oldProductId, newProduct) => handleSwapFromRecommendedCard(cardKey, oldProductId, newProduct)}
                                             onGoToSearch={onGoToSearch}
                                         />
                                     );
@@ -1022,40 +1035,42 @@ export default function MyEcosystem({
                                     </div>
                                 )}
 
-                                <div className="ecosystem-product-grid">
-                                {Object.entries(functionMap)
-                                    .filter(([fn]) => fn !== 'leak-protection')
-                                    .map(([fn, products]) => {
-                                    if (products.length === 0) return null;
-                                    return (
-                                    <React.Fragment key={fn}>
-                                        <div style={{ gridColumn: '1 / -1', marginTop: '0.75rem' }}>
-                                            <h3 style={{ fontSize: '1.1rem', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                                <span>{HEALTH_FUNCTIONS[fn]?.icon}</span> {HEALTH_FUNCTIONS[fn]?.label}
-                                                {duplicates[fn] && <span style={{ fontSize: '0.75rem', background: '#F8F9FA', color: 'var(--color-text-main)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>overlap</span>}
-                                            </h3>
-                                            <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', margin: 0 }}>{HEALTH_FUNCTIONS[fn]?.desc}</p>
-                                        </div>
-                                        {products.map((product) => {
-                                            const seedEntry = ecosystemSeedMeta[product.id];
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                    {Object.entries(functionMap)
+                                        .filter(([fn]) => fn !== 'leak-protection')
+                                        .map(([fn, products]) => {
+                                            if (products.length === 0) return null;
                                             return (
-                                                <EcosystemFunctionProductCard
-                                                    key={product.id}
-                                                    product={product}
-                                                    healthFunctionLabel={HEALTH_FUNCTIONS[fn]?.label || fn}
-                                                    onOpenProduct={onOpenProduct}
-                                                    onToggleProduct={onToggleProduct}
-                                                    seedEntry={seedEntry}
-                                                    quizResults={quizResults}
-                                                    healthProfile={healthProfile}
-                                                    onSwapSeedProduct={onSwapSeedProduct}
-                                                    onGoToSearch={onGoToSearch}
-                                                />
+                                                <section key={fn}>
+                                                    <div style={{ marginTop: '0.75rem', marginBottom: '0.65rem' }}>
+                                                        <h3 style={{ fontSize: '1.1rem', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                                            <span>{HEALTH_FUNCTIONS[fn]?.icon}</span> {HEALTH_FUNCTIONS[fn]?.label}
+                                                            {duplicates[fn] && <span style={{ fontSize: '0.75rem', background: '#F8F9FA', color: 'var(--color-text-main)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>overlap</span>}
+                                                        </h3>
+                                                        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', margin: 0 }}>{HEALTH_FUNCTIONS[fn]?.desc}</p>
+                                                    </div>
+                                                    <div className="ecosystem-product-grid">
+                                                        {products.map((product) => {
+                                                            const seedEntry = ecosystemSeedMeta[product.id];
+                                                            return (
+                                                                <EcosystemFunctionProductCard
+                                                                    key={product.id}
+                                                                    product={product}
+                                                                    healthFunctionLabel={HEALTH_FUNCTIONS[fn]?.label || fn}
+                                                                    onOpenProduct={onOpenProduct}
+                                                                    onToggleProduct={onToggleProduct}
+                                                                    seedEntry={seedEntry}
+                                                                    quizResults={quizResults}
+                                                                    healthProfile={healthProfile}
+                                                                    onSwapSeedProduct={onSwapSeedProduct}
+                                                                    onGoToSearch={onGoToSearch}
+                                                                />
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </section>
                                             );
                                         })}
-                                    </React.Fragment>
-                                    );
-                                })}
                                 </div>
                                 {ecosystemStartups.length > 0 && (
                                     <div style={{ marginBottom: '1.75rem' }}>
@@ -1065,7 +1080,7 @@ export default function MyEcosystem({
                                         <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>Curated women's health startups matched to your profile.</p>
                                         <div className="ecosystem-product-grid">
                                             {ecosystemStartups.map(startup => (
-                                                <a key={startup.id} href={startup.url} target="_blank" rel="noopener noreferrer" className="card" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '0.85rem 1rem', cursor: 'pointer', minHeight: '96px', textDecoration: 'none', color: 'inherit' }}>
+                                                <a key={startup.id} href={startup.url} target="_blank" rel="noopener noreferrer" className="card" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '0.85rem 1rem', cursor: 'pointer', textDecoration: 'none', color: 'inherit', height: '100%' }}>
                                                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                                                         <div style={{ width: '44px', height: '44px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0, background: 'var(--color-surface-soft)' }}>
                                                             <img src={startup.image} alt={startup.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.style.display = 'none'; }} />
@@ -1078,7 +1093,9 @@ export default function MyEcosystem({
                                                             <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{startup.tagline}</span>
                                                         </div>
                                                     </div>
-                                                    <p style={{ fontSize: '0.8rem', color: 'var(--color-text-main)', margin: 0, lineHeight: '1.35' }}>{startup.description?.length > 120 ? startup.description.slice(0, 120) + '…' : startup.description}</p>
+                                                    <p style={{ fontSize: '0.8rem', color: 'var(--color-text-main)', margin: 0, lineHeight: '1.35', flex: 1 }}>
+                                                        {startup.description || 'No startup description available yet.'}
+                                                    </p>
                                                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap', marginTop: 'auto' }}>
                                                         <span style={{ fontSize: '0.7rem', fontWeight: '600', color: 'var(--color-primary)', background: 'var(--color-secondary-fade)', padding: '0.15rem 0.4rem', borderRadius: 'var(--radius-pill)' }}>{startup.stage}</span>
                                                         <span style={{ fontSize: '0.7rem', color: 'var(--color-primary)', marginLeft: 'auto' }}>Visit →</span>

@@ -247,10 +247,15 @@ export default function HealthIntakeForm({ onComplete }) {
     const nextErrors = validateHealthIntake(intakeSnapshot);
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
+    const completedIntakeSnapshot = {
+      ...intakeSnapshot,
+      personalizationCompleted: true,
+      personalizationCompletedAt: new Date().toISOString(),
+    };
     setSaving(true);
     setSaveMessage('');
     try {
-      const saveResult = await saveHealthIntakeForCurrentUser(intakeSnapshot);
+      const saveResult = await saveHealthIntakeForCurrentUser(completedIntakeSnapshot);
       if (!saveResult.saved) {
         setSaveMessage('Profile completed. Sign in with Supabase auth to persist this profile to your account.');
       } else {
@@ -260,7 +265,7 @@ export default function HealthIntakeForm({ onComplete }) {
       setSaveMessage('Profile completed, but we could not save to Supabase right now.');
     } finally {
       setSaving(false);
-      onComplete(mapIntakeToLegacyQuizProfile(intakeSnapshot));
+      onComplete(mapIntakeToLegacyQuizProfile(completedIntakeSnapshot));
     }
   };
 

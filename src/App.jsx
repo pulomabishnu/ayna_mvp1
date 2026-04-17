@@ -60,7 +60,8 @@ function App() {
     (async () => {
       try {
         const savedIntake = await loadHealthIntakeForCurrentUser();
-        if (active && savedIntake && !quizResults) {
+        const completedIntake = savedIntake && savedIntake.personalizationCompleted === true;
+        if (active && completedIntake && !quizResults) {
           setQuizResults(mapIntakeToLegacyQuizProfile(savedIntake));
         }
       } catch (_) {}

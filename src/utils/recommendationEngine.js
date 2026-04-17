@@ -336,15 +336,13 @@ RULES:
 
 export function generateTieredRecommendations(intake = {}) {
   const selected = selectedConcerns(intake);
+  if (selected.length === 0) return [];
   const concerns = CONCERN_CONFIG
     .map((c) => ({ concern: c, score: concernRelevanceScore(c, intake) }))
-    .filter(({ concern, score }) => (selected.length > 0 ? selected.includes(concern.key) : (score > 0 || isRelevantConcern(concern, intake))))
+    .filter(({ concern }) => selected.includes(concern.key))
     .sort((a, b) => b.score - a.score)
     .map(({ concern }) => concern);
-  const fallbackConcern = selectedConcerns(intake)[0] || intake?.primaryConcern;
-  const scopedConcerns = concerns.length > 0
-    ? concerns.slice(0, 5)
-    : CONCERN_CONFIG.filter((c) => c.key === fallbackConcern);
+  const scopedConcerns = concerns.slice(0, 5);
 
   return scopedConcerns.map((concern) => {
     const concernPool = ALL_PRODUCTS.filter((p) => {
