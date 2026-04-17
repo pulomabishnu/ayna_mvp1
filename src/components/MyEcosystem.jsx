@@ -5,7 +5,6 @@ import {
     detectDuplicates,
     getEcosystemAlternatives,
     getRecommendationExplanation,
-    getRecommendations,
 } from '../data/products';
 import { getInteractions } from '../data/interactions';
 import CareNearYouPanel from './CareNearYouPanel';
@@ -843,45 +842,44 @@ export default function MyEcosystem({
     );
     const recommendedProductsForDisplay = useMemo(() => {
         if (!hasCompletedPersonalization) return [];
-        const concerns = Array.isArray(quizResults?.frustrations) ? quizResults.frustrations.filter(Boolean) : [];
-        if (concerns.length === 0) return [];
-        const ranked = getRecommendations(quizResults || {}, healthProfile);
-        const FRUSTRATION_TAG_MAP = {
-            'Heavy flow': 'heavy-flow',
-            'Painful cramps': 'cramps',
-            'Hormonal bloating': 'bloating',
-            'Irregular cycles': 'irregular',
-            'Leaks & staining': 'leaks',
-            'General discomfort': 'discomfort',
-            'Recurrent UTIs': 'uti',
-            'PCOS symptoms': 'pcos',
-            'Pelvic pain': 'pelvic-floor',
-            'Menopause symptoms': 'menopause',
-            'Endometriosis': 'endometriosis',
-            'Fertility / TTC': 'fertility',
-            'Pregnancy': 'pregnancy',
-            'Postpartum recovery': 'postpartum',
-        };
-        const usedTopIds = new Set();
-        return concerns.map((concern, idx) => {
-            const tag = FRUSTRATION_TAG_MAP[concern];
-            const matching = tag
-                ? ranked.filter((p) => (p.tags || []).includes(tag))
-                : [];
-            let topProduct = matching.find((p) => !usedTopIds.has(p.id)) || matching[0] || null;
-            if (topProduct) usedTopIds.add(topProduct.id);
-            const alternatives = topProduct
-                ? matching.filter((p) => p.id !== topProduct.id).slice(0, 3)
-                : matching.slice(0, 3);
-            return {
-                id: `${concern}-${idx}`,
-                concern,
-                tag,
-                topProduct,
-                alternatives,
-            };
+        if (!Array.isArray(activeTiered) || activeTiered.length === 0) return [];
+
+        const concernPriority = [
+            ...(Array.isArray(quizResults?.frustrations) ? quizResults.frustrations : []),
+            ...(Array.isArray(quizResults?.fullHealthIntake?.primaryConcerns) ? quizResults.fullHealthIntake.primaryConcerns : []),
+        ]
+            .map((x) => String(x || '').trim())
+            .filter(Boolean);
+        const concernRank = new Map(concernPriority.map((c, i) => [c.toLowerCase(), i]));
+
+        const sections = activeTiered
+            .map((entry, idx) => {
+                const concern = String(entry?.concern || concernPriority[idx] || `Concern ${idx + 1}`).trim();
+                const topProduct = entry?.topProduct || entry?.tiers?.[0]?.product || null;
+                const altPool = Array.isArray(entry?.alternatives) && entry.alternatives.length > 0
+                    ? entry.alternatives
+                    : (entry?.tiers?.[0]?.alternatives || []);
+                const alternatives = altPool
+                    .filter(Boolean)
+                    .filter((p) => !topProduct || p.id !== topProduct.id)
+                    .slice(0, 3);
+                return {
+                    id: `${concern}-${idx}-${topProduct?.id || 'none'}`,
+                    concern,
+                    tag: null,
+                    topProduct,
+                    alternatives,
+                    notes: Array.isArray(entry?.notes) ? entry.notes : [],
+                };
+            })
+            .filter((section) => section.topProduct || section.alternatives.length > 0);
+
+        return sections.sort((a, b) => {
+            const ai = concernRank.has(a.concern.toLowerCase()) ? concernRank.get(a.concern.toLowerCase()) : Number.MAX_SAFE_INTEGER;
+            const bi = concernRank.has(b.concern.toLowerCase()) ? concernRank.get(b.concern.toLowerCase()) : Number.MAX_SAFE_INTEGER;
+            return ai - bi;
         });
-    }, [hasCompletedPersonalization, quizResults, healthProfile]);
+    }, [hasCompletedPersonalization, activeTiered, quizResults]);
 
     useEffect(() => {
         setRecommendedSwapByKey({});
@@ -958,7 +956,7 @@ export default function MyEcosystem({
                 Recommended for You
             </h3>
             <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '1rem' }}>
-                One top pick per concern from your quiz, with 3 alternatives.
+                LLM-personalized top pick per concern from your health profile, with 3 alternatives.
             </p>
             {llmLoading && llmLoadStartedAt > 0 && (
                 <LlmRecommendationsLoadingBlock loadStartedAt={llmLoadStartedAt} compact />
@@ -978,8 +976,10 @@ export default function MyEcosystem({
                     {recommendedProductsForDisplay.map((section) => {
                         const isOpen = recommendedSectionOpen[section.id] !== false;
                         const product = recommendedSwapByKey[section.id] || section.topProduct;
+                        const llmReason = String(product?.whyItWorks || '').trim();
                         const reasonRaw = product ? (getRecommendationExplanation(product, quizResults, healthProfile)?.whyItWorks || '') : '';
-                        const recommendationReason = reasonRaw.replace(/^Why it could work:\s*/i, '').trim() || `Matched to your concern: ${section.concern}.`;
+                        const fallbackReason = reasonRaw.replace(/^Why it could work:\s*/i, '').trim();
+                        const recommendationReason = llmReason || fallbackReason || `Matched to your concern: ${section.concern}.`;
                         return (
                             <div key={section.id} className="card" style={{ padding: '0.75rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', background: 'var(--color-surface-soft)' }}>
                                 <button
