@@ -843,18 +843,21 @@ export default function MyEcosystem({
     const recommendedProductsForDisplay = useMemo(() => {
         if (!hasCompletedPersonalization) return [];
         if (!Array.isArray(activeTiered) || activeTiered.length === 0) return [];
+        const blockedConcernLabels = new Set(['general discomfort']);
 
         const concernPriority = [
             ...(Array.isArray(quizResults?.frustrations) ? quizResults.frustrations : []),
             ...(Array.isArray(quizResults?.fullHealthIntake?.primaryConcerns) ? quizResults.fullHealthIntake.primaryConcerns : []),
         ]
             .map((x) => String(x || '').trim())
-            .filter(Boolean);
+            .filter(Boolean)
+            .filter((x) => !blockedConcernLabels.has(x.toLowerCase()));
         const concernRank = new Map(concernPriority.map((c, i) => [c.toLowerCase(), i]));
 
         const sections = activeTiered
             .map((entry, idx) => {
                 const concern = String(entry?.concern || concernPriority[idx] || `Concern ${idx + 1}`).trim();
+                if (!concern || blockedConcernLabels.has(concern.toLowerCase())) return null;
                 const tiers = (Array.isArray(entry?.tiers) ? entry.tiers : [])
                     .map((tier, tierIdx) => {
                         const tierProduct = tier?.product || null;
@@ -901,6 +904,7 @@ export default function MyEcosystem({
                     notes: Array.isArray(entry?.notes) ? entry.notes : [],
                 };
             })
+            .filter(Boolean)
             .filter((section) => section.tiers.length > 0);
 
         return sections.sort((a, b) => {

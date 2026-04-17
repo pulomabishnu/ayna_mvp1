@@ -16,8 +16,17 @@ function anyApiKeyConfigured() {
 }
 
 function selectedConcerns(intake = {}) {
-  if (Array.isArray(intake.primaryConcerns) && intake.primaryConcerns.length) return intake.primaryConcerns;
-  if (intake.primaryConcern) return [intake.primaryConcern];
+  const blocked = new Set(['general discomfort']);
+  if (Array.isArray(intake.primaryConcerns) && intake.primaryConcerns.length) {
+    return intake.primaryConcerns
+      .map((x) => String(x || '').trim())
+      .filter(Boolean)
+      .filter((x) => !blocked.has(x.toLowerCase()));
+  }
+  if (intake.primaryConcern) {
+    const v = String(intake.primaryConcern).trim();
+    if (v && !blocked.has(v.toLowerCase())) return [v];
+  }
   return [];
 }
 
