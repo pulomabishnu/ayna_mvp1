@@ -42,11 +42,36 @@ function EcosystemFunctionProductCard({
     recommendationReason = '',
 }) {
     const [imgError, setImgError] = useState(false);
+    const [resolvedCardImage, setResolvedCardImage] = useState('');
+    const [triedResolveFallback, setTriedResolveFallback] = useState(false);
     const perUnitPrice = getPricePerUnitLabel(product);
     const { brandName } = deriveBrandSearchContext(product);
     const brandDisplay = brandName || '—';
     const rawSummary = (product.summary || '').trim();
     const summaryShort = rawSummary.length > 110 ? `${rawSummary.slice(0, 107)}…` : rawSummary;
+    const displayImage = resolvedCardImage || product.image || '';
+
+    useEffect(() => {
+        setImgError(false);
+        setResolvedCardImage('');
+        setTriedResolveFallback(false);
+    }, [product?.id, product?.image, product?.name, product?.brand]);
+
+    const handleImageError = useCallback(() => {
+        if (triedResolveFallback || !product?.name) {
+            setImgError(true);
+            return;
+        }
+        setTriedResolveFallback(true);
+        resolveProductImage(product.name, product.brand || '').then((url) => {
+            if (url) {
+                setResolvedCardImage(url);
+                setImgError(false);
+                return;
+            }
+            setImgError(true);
+        });
+    }, [triedResolveFallback, product?.name, product?.brand]);
 
     return (
         <div
@@ -76,14 +101,14 @@ function EcosystemFunctionProductCard({
                     border: '1px solid var(--color-border)',
                 }}
             >
-                {imgError || !product.image ? (
+                {imgError || !displayImage ? (
                     <span style={{ fontSize: '2rem', lineHeight: 1 }} aria-hidden>🌸</span>
                 ) : (
                     <img
-                        src={product.image}
+                        src={displayImage}
                         alt=""
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                        onError={() => setImgError(true)}
+                        onError={handleImageError}
                     />
                 )}
             </div>
