@@ -50,6 +50,11 @@ function App() {
   const scrollY = useScrollPosition();
 
   const hasHealthImport = useMemo(() => hasHealthProfileSignals(healthProfile), [healthProfile]);
+  const hasCompletedPersonalization = useMemo(() => {
+    if (!quizResults) return false;
+    if (quizResults?.fullHealthIntake?.personalizationCompleted === true) return true;
+    return Array.isArray(quizResults?.frustrations) && quizResults.frustrations.length > 0;
+  }, [quizResults]);
 
   React.useEffect(() => {
     setAynaReviews(loadAynaReviews());
@@ -72,8 +77,9 @@ function App() {
   }, [quizResults]);
 
   const recommendedProductIds = useMemo(() => {
+    if (!hasCompletedPersonalization) return [];
     return getRecommendations(quizResults || null, healthProfile).map(p => p.id);
-  }, [quizResults, healthProfile]);
+  }, [quizResults, healthProfile, hasCompletedPersonalization]);
 
   React.useEffect(() => {
     try {
@@ -207,6 +213,7 @@ function App() {
   };
 
   const handleLlmRecommendationsLoaded = (recommendations) => {
+    if (!hasCompletedPersonalization) return;
     if (!Array.isArray(recommendations) || recommendations.length === 0) return;
     setMyProducts((prev) => {
       const next = { ...prev };

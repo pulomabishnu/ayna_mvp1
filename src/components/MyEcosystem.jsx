@@ -645,6 +645,11 @@ export default function MyEcosystem({
     const [resolvedImages, setResolvedImages] = useState({});
     const [healthDataImportOpen, setHealthDataImportOpen] = useState(false);
     const [recommendedSwapByKey, setRecommendedSwapByKey] = useState({});
+    const hasCompletedPersonalization = useMemo(() => {
+        if (!quizResults) return false;
+        if (quizResults?.fullHealthIntake?.personalizationCompleted === true) return true;
+        return Array.isArray(quizResults?.frustrations) && quizResults.frustrations.length > 0;
+    }, [quizResults]);
 
     const myProductIds = Object.keys(myProducts);
     const myProductList = Object.values(myProducts);
@@ -729,14 +734,15 @@ export default function MyEcosystem({
     };
 
     const intakeTieredRecommendations = useMemo(() => {
+        if (!hasCompletedPersonalization) return [];
         const intake = quizResults?.fullHealthIntake || null;
         if (!intake || Object.keys(intake).length === 0) return [];
         return generateTieredRecommendations(intake);
-    }, [quizResults]);
+    }, [quizResults, hasCompletedPersonalization]);
 
     const intakeFingerprint = useMemo(
-        () => fingerprintIntake(quizResults?.fullHealthIntake || null),
-        [quizResults]
+        () => (hasCompletedPersonalization ? fingerprintIntake(quizResults?.fullHealthIntake || null) : ''),
+        [quizResults, hasCompletedPersonalization]
     );
 
     useEffect(() => {
@@ -782,7 +788,7 @@ export default function MyEcosystem({
                 const recs = Array.isArray(data?.recommendations) ? data.recommendations : [];
                 setLlmTiered(recs);
                 if (recs.length > 0) {
-                    onLlmRecommendationsLoaded?.(recs);
+                    if (hasCompletedPersonalization) onLlmRecommendationsLoaded?.(recs);
                 }
                 if (recs.length > 0) {
                     saveCachedLlmRecommendations(intakeFingerprint, recs);
@@ -819,7 +825,7 @@ export default function MyEcosystem({
         return () => {
             active = false;
         };
-    }, [intakeFingerprint]);
+    }, [intakeFingerprint, hasCompletedPersonalization]);
 
     const activeTiered = useMemo(
         () => (llmTiered.length > 0 ? llmTiered : intakeTieredRecommendations),
