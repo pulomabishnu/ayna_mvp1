@@ -78,6 +78,9 @@ const TERM_ALIASES = {
   pads: ['pad', 'liner', 'maxi'],
   tampon: ['tampons'],
   cup: ['menstrual'],
+  underwear: ['period-underwear', 'panty', 'panties', 'briefs', 'absorbent', 'leak-proof', 'leakproof'],
+  panty: ['panties', 'underwear', 'period-underwear', 'briefs'],
+  panties: ['panty', 'underwear', 'period-underwear', 'briefs'],
   /** Underwear-shaped / minimal coverage — product copy rarely says "thong" */
   thong: ['thongs', 'bikini', 'g-string', 'underwear', 'liner', 'liners', 'discreet', 'narrow', 'gusset', 'invisible', 'mini', 'light', 'string'],
   thongs: ['thong', 'bikini', 'g-string', 'underwear', 'liner', 'liners', 'discreet', 'narrow', 'gusset', 'invisible', 'mini', 'light', 'string'],

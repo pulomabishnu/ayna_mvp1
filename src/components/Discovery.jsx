@@ -177,28 +177,41 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     }, []);
 
     const filtered = useMemo(() => {
-        let list = combined.filter((item) => {
+        const applyFilters = (items, skipCategory = false) => items.filter((item) => {
             if (omittedProducts[item.id]) return false;
             if (personalizationFilter && recommendedSet.size > 0 && !recommendedSet.has(item.id)) return false;
-            if (categoryFilter !== 'all' && item.category !== categoryFilter) return false;
+            if (!skipCategory && categoryFilter !== 'all' && item.category !== categoryFilter) return false;
             if (typeFilter !== 'all' && item.type !== typeFilter) return false;
-            if (categoryFilter === 'pad' && !padMatchesSubFilters(item, padFlowFilter, padPreferenceFilter, padUseCaseFilter)) return false;
-            if (categoryFilter === 'supplement' && symptomFilter !== 'all') {
+            if (!skipCategory && categoryFilter === 'pad' && !padMatchesSubFilters(item, padFlowFilter, padPreferenceFilter, padUseCaseFilter)) return false;
+            if (!skipCategory && categoryFilter === 'supplement' && symptomFilter !== 'all') {
                 const ids = SYMPTOM_TO_SUPPLEMENTS[symptomFilter];
                 if (ids && !ids.includes(item.id)) return false;
             }
             return true;
         });
 
+        let list = applyFilters(combined);
+
         const qTrim = searchQuery.trim();
         let scoreById = null;
         if (qTrim) {
-            const scored = list
+            let scored = list
                 .map((item) => ({
                     item,
                     matchScore: scoreQueryAgainstProduct(qTrim, buildSearchTextForItem(item, CATEGORY_LABELS)),
                 }))
                 .filter((x) => x.matchScore > 0);
+
+            if (scored.length === 0 && categoryFilter !== 'all') {
+                const broadList = applyFilters(combined, true);
+                scored = broadList
+                    .map((item) => ({
+                        item,
+                        matchScore: scoreQueryAgainstProduct(qTrim, buildSearchTextForItem(item, CATEGORY_LABELS)),
+                    }))
+                    .filter((x) => x.matchScore > 0);
+            }
+
             list = scored.map((x) => x.item);
             scoreById = new Map(scored.map((x) => [x.item.id, x.matchScore]));
         }
@@ -359,18 +372,26 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         e.preventDefault();
         const q = searchQuery.toLowerCase();
 
-        // Nudge category filters without leaving Discovery (so "period pads", "menopause", etc. still search here)
-        if (q.includes('menopause')) {
-            setCategoryFilter('menopause');
-            return;
-        }
-        if (q.includes('pregnancy') || q.includes('prenatal')) {
-            setCategoryFilter('pregnancy');
-            return;
-        }
-        if (q.includes('postpartum') || q.includes('breastfeeding') || q.includes('nursing')) {
-            setCategoryFilter('postpartum');
-            return;
+        const categoryNudges = [
+            { test: (s) => s.includes('underwear') || s.includes('panty') || s.includes('panties'), cat: 'period-underwear' },
+            { test: (s) => (s.includes('pad') || s.includes('pads')) && !s.includes('underwear'), cat: 'pad' },
+            { test: (s) => s.includes('tampon'), cat: 'tampon' },
+            { test: (s) => (s.includes('cup') && s.includes('menstrual')) || (s.includes('cup') && !s.includes('supplement')), cat: 'cup' },
+            { test: (s) => s.includes('disc') && !s.includes('discover'), cat: 'disc' },
+            { test: (s) => s.includes('menopause') || s.includes('perimenopause'), cat: 'menopause' },
+            { test: (s) => s.includes('pregnancy') || s.includes('prenatal'), cat: 'pregnancy' },
+            { test: (s) => s.includes('postpartum') || s.includes('breastfeeding') || s.includes('nursing'), cat: 'postpartum' },
+            { test: (s) => s.includes('fertility') || s.includes('conceive') || s.includes('ttc'), cat: 'fertility' },
+            { test: (s) => s.includes('cramp') || s.includes('dysmenorrhea'), cat: 'cramp-relief' },
+            { test: (s) => s.includes('pelvic floor') || s.includes('kegel'), cat: 'pelvic-floor' },
+            { test: (s) => s.includes('tracker') || s.includes('tracking') || s.includes('wearable'), cat: 'tracker' },
+        ];
+
+        for (const { test, cat } of categoryNudges) {
+            if (test(q)) {
+                setCategoryFilter(cat);
+                return;
+            }
         }
 
         if (q.includes('waitlist') || q.includes('startup') || q.includes('new')) {
@@ -379,8 +400,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             if (setCurrentView) setCurrentView('ecosystem');
         } else if (q.includes('quiz') || q.includes('assess')) {
             if (setCurrentView) setCurrentView('quiz');
+        } else {
+            setCategoryFilter('all');
         }
-        // Otherwise fuzzy filter in useMemo applies to the current search query.
     };
 
     return (
