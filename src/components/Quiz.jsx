@@ -103,6 +103,13 @@ const REST_STEPS = [
     options: ['Under $20', '$20–$50', '$50–$100', '$100+']
   },
   {
+    id: 'healthGoals',
+    question: "Any other health goals we didn't cover today?",
+    subtitle: "Type anything — fertility, fitness, sleep, stress, skin, nutrition, etc. We'll factor it into your recommendations.",
+    type: 'text',
+    placeholder: "e.g. I want to improve my sleep, manage stress better, and learn more about hormone health..."
+  },
+  {
     id: 'email',
     question: "Save your profile (optional)",
     subtitle: "Enter email to save recommendations, or skip to see results now.",
@@ -291,6 +298,7 @@ export default function Quiz({ onComplete }) {
   const [answers, setAnswers] = useState({});
   const [multiSelections, setMultiSelections] = useState(new Set());
   const [emailValue, setEmailValue] = useState('');
+  const [textValue, setTextValue] = useState('');
   const singleAdvanceTimerRef = useRef(null);
 
   // Voice flow state
@@ -313,6 +321,11 @@ export default function Quiz({ onComplete }) {
     if (completionMode !== 'step' || !step || step.type !== 'multi') return;
     const v = answers[step.id];
     setMultiSelections(new Set(Array.isArray(v) ? v : []));
+  }, [currentStep, step?.id, completionMode]);
+
+  useEffect(() => {
+    if (completionMode !== 'step' || !step || step.type !== 'text') return;
+    setTextValue(answers[step.id] || '');
   }, [currentStep, step?.id, completionMode]);
 
   useEffect(() => {
@@ -387,6 +400,12 @@ export default function Quiz({ onComplete }) {
       newAnswers.currentPhysical = selected.filter(o => physical.includes(o));
       newAnswers.currentApps = selected.filter(o => apps.includes(o));
     }
+    advance(newAnswers);
+  };
+
+  const handleTextSubmit = () => {
+    const newAnswers = { ...answers, [step.id]: textValue.trim() };
+    setAnswers(newAnswers);
     advance(newAnswers);
   };
 
@@ -701,7 +720,7 @@ export default function Quiz({ onComplete }) {
           </p>
           <div style={{ flex: '0 0 auto', minWidth: '4.5rem', display: 'flex', justifyContent: 'flex-end' }}>
             <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-              {(step.type === 'single' || step.type === 'multi') && (
+              {(step.type === 'single' || step.type === 'multi' || step.type === 'text') && (
                 <button
                   type="button"
                   style={{
@@ -813,6 +832,36 @@ export default function Quiz({ onComplete }) {
               })}
             </div>
           </>
+        )}
+
+        {step.type === 'text' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '500px', margin: '0 auto', width: '100%' }}>
+            <textarea
+              value={textValue}
+              onChange={e => setTextValue(e.target.value)}
+              placeholder={step.placeholder || 'Type your answer here...'}
+              style={{
+                padding: '1rem',
+                fontSize: '1rem',
+                minHeight: '120px',
+                border: '1px solid var(--color-border)',
+                borderRadius: 'var(--radius-md)',
+                outline: 'none',
+                fontFamily: 'var(--font-body)',
+                lineHeight: 1.5,
+                resize: 'vertical',
+                background: 'var(--color-surface-soft)',
+              }}
+            />
+            <button
+              type="button"
+              className="btn btn-primary"
+              style={{ fontSize: '1.05rem', padding: '0.75rem 1.5rem' }}
+              onClick={handleTextSubmit}
+            >
+              {textValue.trim() ? 'Continue →' : 'Nothing else — continue →'}
+            </button>
+          </div>
         )}
 
         {step.type === 'email' && (
