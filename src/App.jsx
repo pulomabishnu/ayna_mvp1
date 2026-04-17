@@ -12,7 +12,7 @@ import OmittedProducts from './components/OmittedProducts';
 import Comparison from './components/Comparison';
 import DoctorPrep from './components/DoctorPrep';
 import Recalls from './components/Recalls';
-import { CATEGORY_LABELS, getRecommendations, createCustomEcosystemProducts, getEcosystemSeedFromQuiz } from './data/products';
+import { CATEGORY_LABELS, getRecommendations, getEcosystemSeedFromQuiz } from './data/products';
 import { loadAynaReviews, addRating, addReview } from './data/aynaReviews';
 import AynaDeeptech from './components/AynaDeeptech';
 import Screenings from './components/Screenings';
@@ -134,9 +134,7 @@ function App() {
 
   const handleQuizComplete = (results) => {
     setQuizResults(results);
-    const customProducts = createCustomEcosystemProducts(results);
-    const { mergedProducts: seededProducts, seedMeta } = getEcosystemSeedFromQuiz(results, healthProfile);
-    setMyProducts((prev) => ({ ...prev, ...customProducts, ...seededProducts }));
+    const { seedMeta } = getEcosystemSeedFromQuiz(results, healthProfile);
     setEcosystemSeedMeta(seedMeta);
     setCurrentView('ecosystem');
   };
@@ -215,16 +213,6 @@ function App() {
   const handleLlmRecommendationsLoaded = (recommendations) => {
     if (!hasCompletedPersonalization) return;
     if (!Array.isArray(recommendations) || recommendations.length === 0) return;
-    setMyProducts((prev) => {
-      const next = { ...prev };
-      recommendations.forEach((entry) => {
-        const product = entry.topProduct || entry.tiers?.[0]?.product;
-        if (product && product.id && !next[product.id]) {
-          next[product.id] = product;
-        }
-      });
-      return next;
-    });
   };
 
   const [selectedProductModal, setSelectedProductModal] = useState(null);
