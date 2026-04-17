@@ -1,6 +1,7 @@
 /* global process */
-// Returns a real product image URL using Google Custom Search Image API
-// Required Vercel env vars: GOOGLE_CSE_API_KEY, GOOGLE_CSE_CX
+// Returns a product image URL using Serper.dev Google Image Search API
+// Required Vercel env var: SERPER_API_KEY
+// Get a free key at serper.dev — 2,500 free searches/month
 // If not configured, returns empty string — UI falls back to 🌸 placeholder gracefully
 
 export default async function handler(req, res) {
@@ -12,22 +13,28 @@ export default async function handler(req, res) {
   const { name, brand } = req.query;
   if (!name) return res.status(400).json({ error: 'missing_name' });
 
-  const apiKey = process.env.GOOGLE_CSE_API_KEY;
-  const cx = process.env.GOOGLE_CSE_CX;
+  const apiKey = process.env.SERPER_API_KEY;
+  if (!apiKey) return res.status(200).json({ imageUrl: '' });
 
-  if (!apiKey || !cx) {
-    return res.status(200).json({ imageUrl: '' });
-  }
-
-  const query = encodeURIComponent(`${brand || ''} ${name} product`.trim().replace(/\s+/g, ' '));
-  const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${query}&searchType=image&num=1&imgSize=medium&safe=active&imgType=photo`;
+  const query = `${brand || ''} ${name} product`.trim().replace(/\s+/g, ' ');
 
   try {
-    const r = await fetch(url);
+    const r = await fetch('https://google.serper.dev/images', {
+      method: 'POST',
+      headers: {
+        'X-API-KEY': apiKey,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ q: query, num: 3 }),
+    });
+
     if (!r.ok) return res.status(200).json({ imageUrl: '' });
     const data = await r.json();
-    const imageUrl = data?.items?.[0]?.link || '';
-    if (!imageUrl.startsWith('https://')) return res.status(200).json({ imageUrl: '' });
+
+    // Find first https image result
+    const images = Array.isArray(data?.images) ? data.images : [];
+    const imageUrl = images.map((i) => i.imageUrl || i.url || '').find((u) => u.startsWith('https://')) || '';
+
     return res.status(200).json({ imageUrl });
   } catch {
     return res.status(200).json({ imageUrl: '' });
