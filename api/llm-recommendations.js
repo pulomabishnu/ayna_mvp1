@@ -73,24 +73,57 @@ function enrichRecommendations(recs) {
   const list = Array.isArray(recs) ? recs : [];
   return list
     .map((entry) => {
-      const topProduct = enrichProduct(entry?.topProduct);
-      if (!topProduct) return null;
-      const alternatives = (Array.isArray(entry?.alternatives) ? entry.alternatives : [])
+      const normalizedTiers = (Array.isArray(entry?.tiers) ? entry.tiers : [])
+        .map((tier, tierIdx) => {
+          const tierProduct = enrichProduct(tier?.product || tier?.topProduct, `-tier${tierIdx}`);
+          if (!tierProduct) return null;
+          const tierAlternatives = (Array.isArray(tier?.alternatives) ? tier.alternatives : [])
+            .map((alt, altIdx) => enrichProduct(alt, `-tier${tierIdx}-alt${altIdx}`))
+            .filter(Boolean)
+            .filter((alt) => alt.id !== tierProduct.id)
+            .slice(0, 3);
+          const tierName = String(tier?.name || '').trim() || `Option ${tierIdx + 1}`;
+          const tierSubcategory = String(tier?.subcategory || '').trim();
+          return {
+            id: String(tier?.id || `tier-${tierIdx + 1}`).trim(),
+            name: tierName,
+            subcategory: tierSubcategory || tierName,
+            product: tierProduct,
+            alternatives: tierAlternatives,
+            safetyFlags: Array.isArray(tier?.safetyFlags) ? tier.safetyFlags.slice(0, 5).map((x) => String(x)) : [],
+            matchExplanation: String(tier?.matchExplanation || tierProduct?.whyItWorks || '').trim(),
+          };
+        })
+        .filter(Boolean);
+
+      const fallbackTop = enrichProduct(entry?.topProduct);
+      const fallbackAlts = (Array.isArray(entry?.alternatives) ? entry.alternatives : [])
         .map((alt, i) => enrichProduct(alt, `-alt${i}`))
         .filter(Boolean)
         .slice(0, 3);
+
+      const tiers = normalizedTiers.length > 0
+        ? normalizedTiers
+        : (fallbackTop
+          ? [{
+              id: 'tier-1',
+              name: 'Top pick',
+              subcategory: 'Top pick',
+              product: fallbackTop,
+              alternatives: fallbackAlts.filter((alt) => alt.id !== fallbackTop.id),
+              safetyFlags: [],
+              matchExplanation: String(fallbackTop?.whyItWorks || '').trim(),
+            }]
+          : []);
+      const topProduct = tiers[0]?.product || fallbackTop || null;
+      if (!topProduct) return null;
+      const alternatives = tiers[0]?.alternatives || fallbackAlts;
       return {
         concern: String(entry?.concern || '').trim() || 'Recommendations',
         topProduct,
         alternatives,
         notes: Array.isArray(entry?.notes) ? entry.notes.slice(0, 5).map((x) => String(x)) : [],
-        // Keep tiers array for backward compatibility with any code still using it
-        tiers: [{
-          name: 'Top pick',
-          product: topProduct,
-          alternatives,
-          safetyFlags: [],
-        }],
+        tiers,
       };
     })
     .filter(Boolean);
@@ -190,7 +223,17 @@ PRODUCT SELECTION PROCESS — follow this for every concern:
 4. Recommend the single best match — not the most popular product, the most relevant one for her specific profile
 
 TASK:
-For each of her primary concerns, generate the single best product recommendation and 3 real alternatives. The best product is whatever actually works best for that concern given her specific profile — it could be a pad, a supplement, an app, a device, a telehealth service, anything. Do not force one physical and one supplement and one digital for every concern. Just recommend what is actually best.
+For each of her primary concerns, generate MULTIPLE solution tracks (at least 3 when realistic for that concern), such as:
+- supplement / wellness
+- physical device or product
+- digital or telehealth
+- any additional clinically relevant track
+
+Each solution track must include:
+- one top product
+- exactly 3 alternatives
+
+Prioritize tracks that are genuinely useful for that specific concern and profile. If a track is not clinically relevant for a specific concern, skip it.
 
 ANTI-HALLUCINATION RULES:
 - Only recommend a product if you are highly confident it exists and is currently sold
@@ -219,40 +262,49 @@ Return ONLY a valid JSON object. No markdown, no explanation, just JSON:
   "recommendations": [
     {
       "concern": "exact concern label from her primary concerns",
-      "topProduct": {
-        "id": "brand-productname-slug",
-        "name": "Exact real product name",
-        "brand": "Brand name",
-        "category": "category",
-        "type": "physical or digital",
-        "summary": "2-3 sentences describing what this product is",
-        "whyItWorks": "2-3 sentences explaining why this fits THIS user specifically, referencing her profile details",
-        "considerations": "Ingredient or safety notes relevant to her conditions. Empty string if none.",
-        "price": "$XX",
-        "image": "",
-        "tags": ["tag1", "tag2"],
-        "safety": {
-          "recalls": "No known recalls",
-          "materials": "",
-          "sideEffects": "",
-          "opinionAlerts": ""
-        },
-        "clinicianOpinionSource": "",
-        "clinicianAttribution": "",
-        "url": "https://brandhomepage.com"
-      },
-      "alternatives": [
+      "tiers": [
         {
-          "id": "brand-productname-slug-alt1",
-          "name": "Alternative product name",
-          "brand": "Brand",
-          "summary": "1-2 sentence description",
-          "whyItWorks": "1 sentence on why this is a good alternative",
-          "price": "$XX",
-          "type": "physical or digital",
-          "image": "",
-          "url": "https://brandhomepage.com",
-          "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" }
+          "id": "tier-supplement",
+          "name": "Supplement option",
+          "subcategory": "supplement",
+          "matchExplanation": "1-2 sentences on why this solution type fits this user profile for this concern",
+          "safetyFlags": ["optional warning"],
+          "product": {
+            "id": "brand-productname-slug",
+            "name": "Exact real product name",
+            "brand": "Brand name",
+            "category": "category",
+            "type": "physical or digital",
+            "summary": "2-3 sentences describing what this product is",
+            "whyItWorks": "2-3 sentences explaining why this fits THIS user specifically, referencing her profile details",
+            "considerations": "Ingredient or safety notes relevant to her conditions. Empty string if none.",
+            "price": "$XX",
+            "image": "",
+            "tags": ["tag1", "tag2"],
+            "safety": {
+              "recalls": "No known recalls",
+              "materials": "",
+              "sideEffects": "",
+              "opinionAlerts": ""
+            },
+            "clinicianOpinionSource": "",
+            "clinicianAttribution": "",
+            "url": "https://brandhomepage.com"
+          },
+          "alternatives": [
+            {
+              "id": "brand-productname-slug-alt1",
+              "name": "Alternative product name",
+              "brand": "Brand",
+              "summary": "1-2 sentence description",
+              "whyItWorks": "1 sentence on why this is a good alternative",
+              "price": "$XX",
+              "type": "physical or digital",
+              "image": "",
+              "url": "https://brandhomepage.com",
+              "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" }
+            }
+          ]
         }
       ],
       "notes": []

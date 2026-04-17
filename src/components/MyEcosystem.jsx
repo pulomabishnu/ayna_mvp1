@@ -855,24 +855,53 @@ export default function MyEcosystem({
         const sections = activeTiered
             .map((entry, idx) => {
                 const concern = String(entry?.concern || concernPriority[idx] || `Concern ${idx + 1}`).trim();
-                const topProduct = entry?.topProduct || entry?.tiers?.[0]?.product || null;
-                const altPool = Array.isArray(entry?.alternatives) && entry.alternatives.length > 0
-                    ? entry.alternatives
-                    : (entry?.tiers?.[0]?.alternatives || []);
-                const alternatives = altPool
+                const tiers = (Array.isArray(entry?.tiers) ? entry.tiers : [])
+                    .map((tier, tierIdx) => {
+                        const tierProduct = tier?.product || null;
+                        if (!tierProduct) return null;
+                        const tierAltPool = Array.isArray(tier?.alternatives) ? tier.alternatives : [];
+                        const tierAlternatives = tierAltPool
+                            .filter(Boolean)
+                            .filter((p) => p.id !== tierProduct.id)
+                            .slice(0, 3);
+                        const tierLabel = String(tier?.subcategory || tier?.name || '').trim() || `Option ${tierIdx + 1}`;
+                        return {
+                            id: String(tier?.id || `tier-${tierIdx + 1}`),
+                            label: tierLabel,
+                            product: tierProduct,
+                            alternatives: tierAlternatives,
+                            matchExplanation: String(tier?.matchExplanation || '').trim(),
+                        };
+                    })
+                    .filter(Boolean);
+
+                const fallbackTop = entry?.topProduct || null;
+                const fallbackAlternatives = (Array.isArray(entry?.alternatives) ? entry.alternatives : [])
                     .filter(Boolean)
-                    .filter((p) => !topProduct || p.id !== topProduct.id)
+                    .filter((p) => !fallbackTop || p.id !== fallbackTop.id)
                     .slice(0, 3);
+                const normalizedTiers = tiers.length > 0
+                    ? tiers
+                    : (fallbackTop
+                        ? [{
+                            id: 'tier-1',
+                            label: 'Top pick',
+                            product: fallbackTop,
+                            alternatives: fallbackAlternatives,
+                            matchExplanation: '',
+                        }]
+                        : []);
                 return {
-                    id: `${concern}-${idx}-${topProduct?.id || 'none'}`,
+                    id: `${concern}-${idx}`,
                     concern,
                     tag: null,
-                    topProduct,
-                    alternatives,
+                    topProduct: normalizedTiers[0]?.product || fallbackTop || null,
+                    alternatives: normalizedTiers[0]?.alternatives || fallbackAlternatives,
+                    tiers: normalizedTiers,
                     notes: Array.isArray(entry?.notes) ? entry.notes : [],
                 };
             })
-            .filter((section) => section.topProduct || section.alternatives.length > 0);
+            .filter((section) => section.tiers.length > 0);
 
         return sections.sort((a, b) => {
             const ai = concernRank.has(a.concern.toLowerCase()) ? concernRank.get(a.concern.toLowerCase()) : Number.MAX_SAFE_INTEGER;
@@ -920,7 +949,8 @@ export default function MyEcosystem({
 
     useEffect(() => {
         const recommendedProducts = recommendedProductsForDisplay
-            .flatMap((s) => [s?.topProduct, ...(Array.isArray(s?.alternatives) ? s.alternatives : [])])
+            .flatMap((s) => (Array.isArray(s?.tiers) ? s.tiers : []))
+            .flatMap((tier) => [tier?.product, ...(Array.isArray(tier?.alternatives) ? tier.alternatives : [])])
             .filter(Boolean);
         const productsNeedingImage = [...myProductList, ...ecosystemStartups, ...recommendedProducts]
             .filter((p) => p && p.id && p.name)
@@ -956,7 +986,7 @@ export default function MyEcosystem({
                 Recommended for You
             </h3>
             <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '1rem' }}>
-                LLM-personalized top pick per concern from your health profile, with 3 alternatives.
+                Per concern: multiple solution types (supplement, device/physical, telehealth/digital), each with 3 alternatives.
             </p>
             {llmLoading && llmLoadStartedAt > 0 && (
                 <LlmRecommendationsLoadingBlock loadStartedAt={llmLoadStartedAt} compact />
@@ -975,11 +1005,6 @@ export default function MyEcosystem({
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                     {recommendedProductsForDisplay.map((section) => {
                         const isOpen = recommendedSectionOpen[section.id] !== false;
-                        const product = recommendedSwapByKey[section.id] || section.topProduct;
-                        const llmReason = String(product?.whyItWorks || '').trim();
-                        const reasonRaw = product ? (getRecommendationExplanation(product, quizResults, healthProfile)?.whyItWorks || '') : '';
-                        const fallbackReason = reasonRaw.replace(/^Why it could work:\s*/i, '').trim();
-                        const recommendationReason = llmReason || fallbackReason || `Matched to your concern: ${section.concern}.`;
                         return (
                             <div key={section.id} className="card" style={{ padding: '0.75rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', background: 'var(--color-surface-soft)' }}>
                                 <button
@@ -1004,26 +1029,44 @@ export default function MyEcosystem({
                                 </button>
                                 {isOpen && (
                                     <div style={{ marginTop: '0.65rem' }}>
-                                        {product ? (
-                                            <div className="ecosystem-product-grid">
-                                                <EcosystemFunctionProductCard
-                                                    product={{ ...product, image: resolvedImages[product.id] || product.image }}
-                                                    healthFunctionLabel={section.concern}
-                                                    onOpenProduct={onOpenProduct}
-                                                    onToggleProduct={onToggleProduct}
-                                                    seedEntry={{ frustration: section.concern, tag: section.tag }}
-                                                    quizResults={quizResults}
-                                                    healthProfile={healthProfile}
-                                                    precomputedAlternatives={section.alternatives}
-                                                    onSwapSeedProduct={(oldProductId, newProduct) => handleSwapFromRecommendedCard(section.id, oldProductId, newProduct)}
-                                                    onGoToSearch={onGoToSearch}
-                                                    isInEcosystem={!!myProducts[product.id]}
-                                                    recommendationReason={recommendationReason}
-                                                />
+                                        {Array.isArray(section.tiers) && section.tiers.length > 0 ? (
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                                                {section.tiers.map((tier, tierIdx) => {
+                                                    const swapKey = `${section.id}::${tier.id || tierIdx}`;
+                                                    const product = recommendedSwapByKey[swapKey] || tier.product;
+                                                    if (!product) return null;
+                                                    const llmReason = String(product?.whyItWorks || '').trim();
+                                                    const reasonRaw = getRecommendationExplanation(product, quizResults, healthProfile)?.whyItWorks || '';
+                                                    const fallbackReason = String(reasonRaw).replace(/^Why it could work:\s*/i, '').trim();
+                                                    const tierReason = llmReason || String(tier.matchExplanation || '').trim() || fallbackReason || `Matched to your concern: ${section.concern}.`;
+                                                    return (
+                                                        <div key={swapKey}>
+                                                            <div style={{ fontSize: '0.78rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.02em', color: 'var(--color-text-muted)', marginBottom: '0.35rem' }}>
+                                                                {tier.label}
+                                                            </div>
+                                                            <div className="ecosystem-product-grid">
+                                                                <EcosystemFunctionProductCard
+                                                                    product={{ ...product, image: resolvedImages[product.id] || product.image }}
+                                                                    healthFunctionLabel={`${section.concern} • ${tier.label}`}
+                                                                    onOpenProduct={onOpenProduct}
+                                                                    onToggleProduct={onToggleProduct}
+                                                                    seedEntry={{ frustration: section.concern, tag: section.tag }}
+                                                                    quizResults={quizResults}
+                                                                    healthProfile={healthProfile}
+                                                                    precomputedAlternatives={tier.alternatives}
+                                                                    onSwapSeedProduct={(oldProductId, newProduct) => handleSwapFromRecommendedCard(swapKey, oldProductId, newProduct)}
+                                                                    onGoToSearch={onGoToSearch}
+                                                                    isInEcosystem={!!myProducts[product.id]}
+                                                                    recommendationReason={tierReason}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })}
                                             </div>
                                         ) : (
                                             <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', margin: 0 }}>
-                                                No matching product found for this concern yet. Try the full search.
+                                                No recommendation tracks available for this concern yet. Try the full search.
                                             </p>
                                         )}
                                     </div>
