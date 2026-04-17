@@ -1128,7 +1128,7 @@ export default function MyEcosystem({
                                                             </div>
                                                             <EcosystemFunctionProductCard
                                                                 product={{ ...product, image: resolvedImages[product.id] || product.image }}
-                                                                healthFunctionLabel={`${section.concern} • ${tier.label}`}
+                                                                healthFunctionLabel={tier.label}
                                                                 onOpenProduct={onOpenProduct}
                                                                 onToggleProduct={onToggleProduct}
                                                                 seedEntry={{ frustration: section.concern, tag: section.tag }}
