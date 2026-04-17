@@ -1035,7 +1035,7 @@ export default function MyEcosystem({
                                 {isOpen && (
                                     <div style={{ marginTop: '0.65rem' }}>
                                         {Array.isArray(section.tiers) && section.tiers.length > 0 ? (
-                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                                            <div className="ecosystem-product-grid" style={{ alignItems: 'stretch' }}>
                                                 {section.tiers.map((tier, tierIdx) => {
                                                     const swapKey = `${section.id}::${tier.id || tierIdx}`;
                                                     const product = recommendedSwapByKey[swapKey] || tier.product;
@@ -1045,26 +1045,24 @@ export default function MyEcosystem({
                                                     const fallbackReason = String(reasonRaw).replace(/^Why it could work:\s*/i, '').trim();
                                                     const tierReason = llmReason || String(tier.matchExplanation || '').trim() || fallbackReason || `Matched to your concern: ${section.concern}.`;
                                                     return (
-                                                        <div key={swapKey}>
+                                                        <div key={swapKey} style={{ minWidth: 0 }}>
                                                             <div style={{ fontSize: '0.78rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.02em', color: 'var(--color-text-muted)', marginBottom: '0.35rem' }}>
                                                                 {tier.label}
                                                             </div>
-                                                            <div className="ecosystem-product-grid">
-                                                                <EcosystemFunctionProductCard
-                                                                    product={{ ...product, image: resolvedImages[product.id] || product.image }}
-                                                                    healthFunctionLabel={`${section.concern} • ${tier.label}`}
-                                                                    onOpenProduct={onOpenProduct}
-                                                                    onToggleProduct={onToggleProduct}
-                                                                    seedEntry={{ frustration: section.concern, tag: section.tag }}
-                                                                    quizResults={quizResults}
-                                                                    healthProfile={healthProfile}
-                                                                    precomputedAlternatives={tier.alternatives}
-                                                                    onSwapSeedProduct={(oldProductId, newProduct) => handleSwapFromRecommendedCard(swapKey, oldProductId, newProduct)}
-                                                                    onGoToSearch={onGoToSearch}
-                                                                    isInEcosystem={!!myProducts[product.id]}
-                                                                    recommendationReason={tierReason}
-                                                                />
-                                                            </div>
+                                                            <EcosystemFunctionProductCard
+                                                                product={{ ...product, image: resolvedImages[product.id] || product.image }}
+                                                                healthFunctionLabel={`${section.concern} • ${tier.label}`}
+                                                                onOpenProduct={onOpenProduct}
+                                                                onToggleProduct={onToggleProduct}
+                                                                seedEntry={{ frustration: section.concern, tag: section.tag }}
+                                                                quizResults={quizResults}
+                                                                healthProfile={healthProfile}
+                                                                precomputedAlternatives={tier.alternatives}
+                                                                onSwapSeedProduct={(oldProductId, newProduct) => handleSwapFromRecommendedCard(swapKey, oldProductId, newProduct)}
+                                                                onGoToSearch={onGoToSearch}
+                                                                isInEcosystem={!!myProducts[product.id]}
+                                                                recommendationReason={tierReason}
+                                                            />
                                                         </div>
                                                     );
                                                 })}
