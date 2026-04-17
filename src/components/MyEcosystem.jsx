@@ -10,6 +10,7 @@ import { getInteractions } from '../data/interactions';
 import CareNearYouPanel from './CareNearYouPanel';
 import LlmRecommendationsLoadingBlock from './LlmRecommendationsLoadingBlock';
 import { inferTagsFromHealthProfile, saveHealthProfile } from '../utils/healthDataProfile';
+import { RELEASED_STARTUPS } from '../data/startups';
 import { buildQuizIntakeSummaryText } from '../utils/healthIntake';
 import { generateTieredRecommendations } from '../utils/recommendationEngine';
 import {
@@ -673,7 +674,36 @@ export default function MyEcosystem({
     const myProductIds = Object.keys(myProducts);
     const myProductList = Object.values(myProducts);
     const { functionMap, duplicates } = useMemo(() => detectDuplicates(myProductIds, myProducts), [myProductIds, myProducts]);
-    const ecosystemStartups = useMemo(() => myProductList.filter(p => !ALL_PRODUCTS.find(x => x.id === p.id)), [myProductList]);
+    const ecosystemStartups = useMemo(() => {
+        const FRUSTRATION_TAG = {
+            'Heavy flow': 'heavy-flow', 'Painful cramps': 'cramps', 'Hormonal bloating': 'bloating',
+            'Irregular cycles': 'irregular', 'Leaks & staining': 'leaks', 'General discomfort': 'discomfort',
+            'Not sure if products are safe': 'safety-concern', 'Recurrent UTIs': 'uti', 'PCOS symptoms': 'pcos',
+            'Pelvic pain': 'pelvic-floor', 'Menopause symptoms': 'menopause', 'Endometriosis': 'endometriosis',
+            'Fertility / TTC': 'fertility', 'Pregnancy': 'pregnancy', 'Postpartum recovery': 'postpartum',
+        };
+        const userTags = new Set();
+        (quizResults?.frustrations || []).forEach(f => { const t = FRUSTRATION_TAG[f]; if (t) userTags.add(t); });
+        (inferTagsFromHealthProfile(healthProfile) || []).forEach(t => userTags.add(t));
+
+        const alreadyInEcosystem = new Set(myProductList.map(p => (p.name || '').toLowerCase()));
+
+        const scored = RELEASED_STARTUPS
+            .filter(s => !alreadyInEcosystem.has(s.name.toLowerCase()))
+            .map(s => {
+                let score = 0;
+                (s.tags || []).forEach(t => { if (userTags.has(t)) score += 2; });
+                (s.healthFunctions || []).forEach(fn => {
+                    if (Object.keys(functionMap).includes(fn)) score += 1;
+                });
+                return { ...s, _score: score };
+            })
+            .filter(s => s._score > 0)
+            .sort((a, b) => b._score - a._score)
+            .slice(0, 6);
+
+        return scored;
+    }, [myProductList, quizResults, healthProfile, functionMap]);
     const duplicateCount = Object.keys(duplicates).length;
 
     const estimatedMonthlyTotal = useMemo(() => {
@@ -1302,27 +1332,30 @@ export default function MyEcosystem({
                                 {ecosystemStartups.length > 0 && (
                                     <div style={{ marginBottom: '1.75rem' }}>
                                         <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                            🚀 Startups in your ecosystem
+                                            🚀 Startups relevant to you
                                         </h3>
-                                        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>Released products you added from our startup list.</p>
+                                        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>Curated women's health startups matched to your profile.</p>
                                         <div className="ecosystem-product-grid">
-                                            {ecosystemStartups.map(product => (
-                                                <div key={product.id} className="card" style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.75rem 1rem', cursor: 'pointer', minHeight: '96px' }} onClick={() => onOpenProduct(product)}>
-                                                    <div style={{ width: '48px', height: '48px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0 }}>
-                                                        <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            {ecosystemStartups.map(startup => (
+                                                <a key={startup.id} href={startup.url} target="_blank" rel="noopener noreferrer" className="card" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '0.85rem 1rem', cursor: 'pointer', minHeight: '96px', textDecoration: 'none', color: 'inherit' }}>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                                        <div style={{ width: '44px', height: '44px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0, background: 'var(--color-surface-soft)' }}>
+                                                            <img src={startup.image} alt={startup.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.style.display = 'none'; }} />
+                                                        </div>
+                                                        <div style={{ flexGrow: 1, minWidth: 0 }}>
+                                                            <h4 style={{ fontSize: '0.95rem', marginBottom: '0.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                                                {startup.name}
+                                                                <span style={{ fontSize: '0.65rem', fontWeight: '600', textTransform: 'uppercase', padding: '0.15rem 0.4rem', borderRadius: 'var(--radius-pill)', background: 'var(--color-primary-hover)', color: 'white' }}>Startup</span>
+                                                            </h4>
+                                                            <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{startup.tagline}</span>
+                                                        </div>
                                                     </div>
-                                                    <div style={{ flexGrow: 1, minWidth: 0 }}>
-                                                        <h4 style={{ fontSize: '0.95rem', marginBottom: '0.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>{product.name}{product.outOfBusiness && <span style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-surface-soft)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No longer sold</span>}</h4>
-                                                        <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{product.stage || product.tagline}</span>
+                                                    <p style={{ fontSize: '0.8rem', color: 'var(--color-text-main)', margin: 0, lineHeight: '1.35' }}>{startup.description?.length > 120 ? startup.description.slice(0, 120) + '…' : startup.description}</p>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap', marginTop: 'auto' }}>
+                                                        <span style={{ fontSize: '0.7rem', fontWeight: '600', color: 'var(--color-primary)', background: 'var(--color-secondary-fade)', padding: '0.15rem 0.4rem', borderRadius: 'var(--radius-pill)' }}>{startup.stage}</span>
+                                                        <span style={{ fontSize: '0.7rem', color: 'var(--color-primary)', marginLeft: 'auto' }}>Visit →</span>
                                                     </div>
-                                                    <span style={{
-                                                        fontSize: '0.7rem', fontWeight: '600', textTransform: 'uppercase',
-                                                        padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)',
-                                                        background: 'var(--color-primary-hover)', color: 'white'
-                                                    }}>
-                                                        Startup
-                                                    </span>
-                                                </div>
+                                                </a>
                                             ))}
                                         </div>
                                     </div>
