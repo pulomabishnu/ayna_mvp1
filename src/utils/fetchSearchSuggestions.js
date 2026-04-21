@@ -80,7 +80,7 @@ export async function fetchSearchSuggestions(opts) {
     };
   }
 
-  if (res.status === 503 && (data?.error === 'no_anthropic_key' || data?.error === 'no_gemini_key')) {
+  if (res.status === 503 && data?.error === 'no_anthropic_key') {
     return {
       suggestions: [],
       querySummary: '',

@@ -1,6 +1,6 @@
 /**
  * Vercel serverless: AI summaries + server-built search links only (no model-supplied URLs).
- * Providers: Anthropic Claude, OpenAI (default order). Optional: Gemini via AI_INSIGHTS_PROVIDER_ORDER.
+ * Providers: Anthropic Claude, OpenAI (default order).
  */
 /* global process */
 
@@ -381,175 +381,19 @@ async function callAnthropic(product, userContextText = '') {
   return null;
 }
 
-/**
- * Optional: Vercel AI Gateway (OpenAI-compatible) — only if you use a gateway API key from Vercel.
- * Not the same as a Google AI Studio / Gemini API key (use GEMINI_API_KEY for that).
- */
-function getGeminiAiGatewayApiKey() {
-  return (
-    process.env.GEMINI_AI_GATEWAY_API_KEY ||
-    process.env.AI_GATEWAY_API_KEY ||
-    ''
-  ).trim() || null;
-}
-
-/** Direct Google Generative Language API (AI Studio / BYOK env names). */
-function getGeminiApiKey() {
-  return (
-    process.env.GEMINI_API_KEY ||
-    process.env.GOOGLE_AI_API_KEY ||
-    process.env.GOOGLE_GENERATIVE_AI_API_KEY ||
-    process.env.GOOGLE_API_KEY ||
-    ''
-  ).trim() || null;
-}
-
 /** Safe booleans only — helps verify env vars reached this serverless function (no secret values). */
 function providerEnvPresence() {
   return {
-    GEMINI_API_KEY: !!process.env.GEMINI_API_KEY,
-    GOOGLE_AI_API_KEY: !!process.env.GOOGLE_AI_API_KEY,
-    GOOGLE_GENERATIVE_AI_API_KEY: !!process.env.GOOGLE_GENERATIVE_AI_API_KEY,
-    GOOGLE_API_KEY: !!process.env.GOOGLE_API_KEY,
-    GEMINI_AI_GATEWAY_API_KEY: !!process.env.GEMINI_AI_GATEWAY_API_KEY,
-    AI_GATEWAY_API_KEY: !!process.env.AI_GATEWAY_API_KEY,
     ANTHROPIC_API_KEY: !!process.env.ANTHROPIC_API_KEY,
     OPENAI_API_KEY: !!process.env.OPENAI_API_KEY,
   };
 }
 
-const DEFAULT_GATEWAY_GEMINI_MODEL = 'google/gemini-2.5-flash';
-
-/**
- * Gemini through Vercel AI Gateway (optional). Uses OpenAI Chat Completions shape.
- */
-async function callGeminiViaVercelAiGateway(product, userContextText = '') {
-  const apiKey = getGeminiAiGatewayApiKey();
-  if (!apiKey) return null;
-  const base = (process.env.AI_GATEWAY_BASE_URL || 'https://ai-gateway.vercel.sh/v1').replace(/\/$/, '');
-  const model = process.env.AI_GATEWAY_GEMINI_MODEL || DEFAULT_GATEWAY_GEMINI_MODEL;
-  const res = await fetch(`${base}/chat/completions`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model,
-      temperature: 0.25,
-      response_format: { type: 'json_object' },
-      messages: [
-        {
-          role: 'system',
-          content:
-            'You write careful JSON for a women\'s health education product. Never output URLs or fake citations. Prefer short, generic search phrases when uncertain.',
-        },
-        { role: 'user', content: buildUserPrompt(product, userContextText) },
-      ],
-    }),
-  });
-  if (!res.ok) {
-    console.error('AI Gateway (Gemini) error', res.status, (await res.text()).slice(0, 400));
-    return null;
-  }
-  const data = await res.json();
-  const raw = data?.choices?.[0]?.message?.content;
-  return typeof raw === 'string' ? raw : null;
-}
-
-/** Model ids to try in order (AI Studio); override first with GEMINI_MODEL. */
-function geminiModelCandidates() {
-  const preferred = (process.env.GEMINI_MODEL || '').trim();
-  const out = [];
-  const add = (m) => {
-    if (m && !out.includes(m)) out.push(m);
-  };
-  add(preferred);
-  add('gemini-2.0-flash');
-  add('gemini-1.5-flash');
-  add('gemini-1.5-flash-8b');
-  return out;
-}
-
-/** Direct Gemini REST API (when you use a Google AI Studio key in env, not the Gateway key). */
-async function callGeminiDirect(product, userContextText = '') {
-  const apiKey = getGeminiApiKey();
-  if (!apiKey) return null;
-
-  const body = {
-    contents: [{ role: 'user', parts: [{ text: buildUserPrompt(product, userContextText) }] }],
-    generationConfig: {
-      temperature: 0.25,
-      maxOutputTokens: 1200,
-      responseMimeType: 'application/json',
-    },
-    systemInstruction: {
-      parts: [
-        {
-          text: 'Output valid JSON only. Never include URLs or http. Short conservative search phrases only.',
-        },
-      ],
-    },
-  };
-
-  for (const model of geminiModelCandidates()) {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
-    if (!res.ok) {
-      const errText = await res.text();
-      console.error('Gemini error', model, res.status, errText.slice(0, 400));
-      if (res.status === 404) continue;
-      return null;
-    }
-    let data;
-    try {
-      data = await res.json();
-    } catch {
-      return null;
-    }
-    const cand = data?.candidates?.[0];
-    if (!cand) {
-      console.error('Gemini no candidates', model, JSON.stringify(data).slice(0, 500));
-      continue;
-    }
-    if (cand.finishReason && cand.finishReason !== 'STOP' && cand.finishReason !== 'MAX_TOKENS') {
-      console.error('Gemini finishReason', model, cand.finishReason);
-    }
-    const raw = cand?.content?.parts?.[0]?.text;
-    if (typeof raw === 'string' && raw.trim()) return raw;
-  }
-  return null;
-}
-
-/** @returns {{ raw: string, geminiRoute?: 'gateway' | 'direct' } | null} */
-async function callGemini(product, userContextText = '') {
-  // Prefer direct Google Gemini API (GEMINI_API_KEY / AI Studio). Optional fallback: Vercel AI Gateway.
-  if (getGeminiApiKey()) {
-    const direct = await callGeminiDirect(product, userContextText);
-    if (direct) return { raw: direct, geminiRoute: 'direct' };
-  }
-  if (getGeminiAiGatewayApiKey()) {
-    const viaGateway = await callGeminiViaVercelAiGateway(product, userContextText);
-    if (viaGateway) return { raw: viaGateway, geminiRoute: 'gateway' };
-  }
-  return null;
-}
-
 async function runModel(product, provider, userContextText = '') {
   let raw = null;
-  let providerUsed = provider === 'anthropic' ? 'claude' : provider === 'google' ? 'gemini' : provider;
+  let providerUsed = provider === 'anthropic' ? 'claude' : provider;
   if (provider === 'claude' || provider === 'anthropic') raw = await callAnthropic(product, userContextText);
-  else if (provider === 'gemini' || provider === 'google') {
-    const g = await callGemini(product, userContextText);
-    if (g) {
-      raw = g.raw;
-      providerUsed = g.geminiRoute === 'gateway' ? 'gemini (Vercel AI Gateway)' : 'gemini';
-    }
-  } else if (provider === 'openai') raw = await callOpenAI(product, userContextText);
+  else if (provider === 'openai') raw = await callOpenAI(product, userContextText);
   if (!raw) return null;
   const normalized = normalizeParsed(raw);
   if (!normalized) return null;
@@ -558,18 +402,12 @@ async function runModel(product, provider, userContextText = '') {
 }
 
 function anyApiKeyConfigured() {
-  return !!(
-    process.env.ANTHROPIC_API_KEY ||
-    getGeminiAiGatewayApiKey() ||
-    getGeminiApiKey() ||
-    process.env.OPENAI_API_KEY
-  );
+  return !!(process.env.ANTHROPIC_API_KEY || process.env.OPENAI_API_KEY);
 }
 
 function canUseProvider(p) {
-  const x = p === 'anthropic' ? 'claude' : p === 'google' ? 'gemini' : p;
+  const x = p === 'anthropic' ? 'claude' : p;
   if (x === 'claude') return !!process.env.ANTHROPIC_API_KEY;
-  if (x === 'gemini') return !!(getGeminiAiGatewayApiKey() || getGeminiApiKey());
   if (x === 'openai') return !!process.env.OPENAI_API_KEY;
   return false;
 }
@@ -600,14 +438,14 @@ export default async function handler(req, res) {
 
   if (!anyApiKeyConfigured()) {
     console.warn(
-      'product-insights: no provider keys visible to this function. Set GEMINI_API_KEY (or others) in Vercel and redeploy.'
+      'product-insights: no provider keys visible to this function. Set ANTHROPIC_API_KEY or OPENAI_API_KEY in Vercel and redeploy.'
     );
     return res.status(503).json({
       error: 'not_configured',
       message:
-        'No AI provider key set. Add one of: ANTHROPIC_API_KEY (Claude), OPENAI_API_KEY, or optionally GEMINI_API_KEY / GEMINI_AI_GATEWAY_API_KEY. Default order is claude,openai — add gemini to AI_INSIGHTS_PROVIDER_ORDER if needed.',
+        'No AI provider key set. Add ANTHROPIC_API_KEY (Claude) or OPENAI_API_KEY in Vercel.',
       hint:
-        'In Vercel: Project → Settings → Environment Variables → add GEMINI_API_KEY for Production (and Preview if you test previews). Save, then Deployments → Redeploy — env vars apply at deploy time.',
+        'In Vercel: Project → Settings → Environment Variables → add ANTHROPIC_API_KEY for Production (and Preview if you test previews). Save, then Deployments → Redeploy — env vars apply at deploy time.',
       envPresent: providerEnvPresence(),
     });
   }
@@ -629,12 +467,11 @@ export default async function handler(req, res) {
     typeof userContextRaw === 'string' ? userContextRaw.trim().slice(0, 4000) : '';
 
   const order = envList('AI_INSIGHTS_PROVIDER_ORDER', 'claude,openai');
-  const normalizedIds = order.filter((p) => ['claude', 'anthropic', 'gemini', 'google', 'openai'].includes(p));
+  const normalizedIds = order.filter((p) => ['claude', 'anthropic', 'openai'].includes(p));
   const fallback = ['claude', 'openai'];
-  const anyConfigured = ['claude', 'gemini', 'openai'];
   let tryProviders = (normalizedIds.length ? normalizedIds : fallback).filter((p) => canUseProvider(p));
   if (tryProviders.length === 0) {
-    tryProviders = anyConfigured.filter((p) => canUseProvider(p));
+    tryProviders = fallback.filter((p) => canUseProvider(p));
   }
 
   let lastError = null;
@@ -642,7 +479,7 @@ export default async function handler(req, res) {
     try {
       const out = await runModel(
         product,
-        p === 'anthropic' ? 'claude' : p === 'google' ? 'gemini' : p,
+        p === 'anthropic' ? 'claude' : p,
         userContextText
       );
       if (!out) continue;

@@ -1,18 +1,7 @@
 /* global process */
 
-function getGeminiApiKey() {
-  return (
-    process.env.GEMINI_API_KEY ||
-    process.env.GOOGLE_AI_API_KEY ||
-    process.env.GOOGLE_GENERATIVE_AI_API_KEY ||
-    process.env.GOOGLE_API_KEY ||
-    ''
-  )
-    .trim() || null;
-}
-
 function anyApiKeyConfigured() {
-  return !!(process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY || getGeminiApiKey());
+  return !!(process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY);
 }
 
 function selectedConcerns(intake = {}) {
@@ -392,26 +381,8 @@ async function callAnthropic(prompt) {
   return data?.content?.[0]?.text || null;
 }
 
-async function callGemini(prompt) {
-  const apiKey = getGeminiApiKey();
-  if (!apiKey) return null;
-  const model = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      generationConfig: { temperature: 0.2, responseMimeType: 'application/json', maxOutputTokens: 8192 },
-    }),
-  });
-  if (!res.ok) return null;
-  const data = await res.json();
-  return data?.candidates?.[0]?.content?.parts?.[0]?.text || null;
-}
-
 function getProviderOrder() {
-  return (process.env.AI_RECOMMENDATIONS_PROVIDER_ORDER || 'anthropic,openai,gemini')
+  return (process.env.AI_RECOMMENDATIONS_PROVIDER_ORDER || 'anthropic,openai')
     .split(',')
     .map((x) => x.trim().toLowerCase())
     .filter(Boolean);
@@ -420,7 +391,6 @@ function getProviderOrder() {
 async function callProvider(provider, prompt) {
   if (provider === 'openai') return callOpenAI(prompt);
   if (provider === 'anthropic' || provider === 'claude') return callAnthropic(prompt);
-  if (provider === 'gemini' || provider === 'google') return callGemini(prompt);
   return null;
 }
 
@@ -489,7 +459,7 @@ export default async function handler(req, res) {
   if (!anyApiKeyConfigured()) {
     return res.status(503).json({
       error: 'not_configured',
-      message: 'No LLM API key found. Set ANTHROPIC_API_KEY, OPENAI_API_KEY, or GEMINI_API_KEY.',
+      message: 'No LLM API key found. Set ANTHROPIC_API_KEY or OPENAI_API_KEY.',
     });
   }
 
