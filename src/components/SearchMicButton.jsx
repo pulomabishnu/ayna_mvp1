@@ -6,12 +6,14 @@ export default function SearchMicButton({
   onClick,
   disabled = false,
   size = 'default',
+  className = '',
 }) {
   const pad = size === 'compact' ? '0.45rem 0.55rem' : '0.55rem 0.65rem';
   const fontSize = size === 'compact' ? '1rem' : '1.15rem';
   return (
     <button
       type="button"
+      className={className.trim() || undefined}
       onClick={onClick}
       disabled={disabled}
       aria-pressed={isRecording}
