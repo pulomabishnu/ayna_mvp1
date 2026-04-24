@@ -18,9 +18,6 @@ export default function WelcomeGate({ onPersonalizedPath, onBrowsePath }) {
         aria-labelledby="welcome-heading"
       >
         <ScrollReveal className="stagger-1">
-          <span className="ayna-eyebrow" style={{ textAlign: 'center', display: 'block', width: '100%' }}>
-            Women&apos;s health, personalized
-          </span>
           <h1
             id="welcome-heading"
             style={{
@@ -28,11 +25,15 @@ export default function WelcomeGate({ onPersonalizedPath, onBrowsePath }) {
               margin: '0 auto 0.75rem',
             }}
           >
-            Welcome to Ayna
+            Welcome to <span className="ayna-landing-brand-caps" aria-label="Ayna">AYNA</span>
           </h1>
+          <span className="ayna-eyebrow" style={{ textAlign: 'center', display: 'block', width: '100%' }}>
+            Women&apos;s health, personalized
+          </span>
           <RotatingWordHeadline
             as="p"
             style={{
+              marginTop: '0.25rem',
               marginBottom: 'var(--spacing-lg)',
             }}
           />

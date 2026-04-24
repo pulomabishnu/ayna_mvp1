@@ -303,6 +303,14 @@ button {
   margin-right: auto;
 }
 
+/* Waitlist accent #c8841a — brand word in all caps on welcome */
+.ayna-landing .ayna-landing-brand-caps {
+  color: #c8841a;
+  font-style: normal;
+  font-weight: 500;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+}
+
 .ayna-landing p,
 .ayna-landing__body {
   /* Waitlist: .subheadline */
