@@ -21,20 +21,21 @@ export default function WelcomeGate({ onPersonalizedPath, onBrowsePath }) {
           <span className="ayna-eyebrow" style={{ textAlign: 'center', display: 'block', width: '100%' }}>
             Women&apos;s health, personalized
           </span>
-          <RotatingWordHeadline
+          <h1
             id="welcome-heading"
             style={{
-              marginBottom: '0.75rem',
-            }}
-          />
-          <h2
-            style={{
               maxWidth: '720px',
-              margin: '0 auto var(--spacing-lg)',
+              margin: '0 auto 0.75rem',
             }}
           >
             Welcome to Ayna
-          </h2>
+          </h1>
+          <RotatingWordHeadline
+            as="p"
+            style={{
+              marginBottom: 'var(--spacing-lg)',
+            }}
+          />
         </ScrollReveal>
 
         <ScrollReveal className="stagger-2">
