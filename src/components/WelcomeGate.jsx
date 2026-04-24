@@ -14,7 +14,7 @@ const REDUCED_MOTION_INTRO_TO_MAIN_MS = 1500;
  * First screen: letter-by-letter "Welcome to AYNA", then after 3s a soft crossfade
  * to the full welcome (eyebrow, rotating line, copy, CTA buttons).
  */
-export default function WelcomeGate({ onPersonalizedPath, onBrowsePath }) {
+export default function WelcomeGate({ onPersonalizedPath, onBrowsePath, onWelcomePhaseChange }) {
   const [phase, setPhase] = useState('intro');
   const [reveal, setReveal] = useState(0);
   const [reduceMotion, setReduceMotion] = useState(false);
@@ -45,11 +45,15 @@ export default function WelcomeGate({ onPersonalizedPath, onBrowsePath }) {
     return () => window.clearTimeout(t);
   }, [reduceMotion]);
 
+  useEffect(() => {
+    onWelcomePhaseChange?.(phase);
+  }, [phase, onWelcomePhaseChange]);
+
   return (
-    <WaitlistLandingLayout>
+    <WaitlistLandingLayout fullViewport={phase === 'intro'}>
       <section
         className={`ayna-landing-section welcome-gate ${phase === 'main' ? 'welcome-gate--main' : 'welcome-gate--intro'}`}
-        style={{ minHeight: '90vh' }}
+        style={{ minHeight: phase === 'intro' ? '100dvh' : '90vh' }}
         aria-label={phase === 'intro' ? 'Welcome' : undefined}
         aria-labelledby={phase === 'main' ? 'welcome-heading' : undefined}
       >

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react';
+import React, { useState, useMemo, useRef, useEffect, useLayoutEffect } from 'react';
 import Hero from './components/Hero';
 import WelcomeGate from './components/WelcomeGate';
 import HealthIntakeForm from './components/HealthIntakeForm';
@@ -48,6 +48,7 @@ function App() {
   const [aynaReviews, setAynaReviews] = useState({});
   const [healthProfile, setHealthProfile] = useState(() => loadHealthProfile());
   const [ecosystemSeedMeta, setEcosystemSeedMeta] = useState({});
+  const [welcomeSubPhase, setWelcomeSubPhase] = useState('intro');
   const scrollY = useScrollPosition();
 
   const hasHealthImport = useMemo(() => hasHealthProfileSignals(healthProfile), [healthProfile]);
@@ -109,6 +110,18 @@ function App() {
     try { if (typeof window !== 'undefined') localStorage.setItem('ayna_zip', zip || ''); } catch (_) {}
   };
   const isScrolled = scrollY > 20;
+
+  const previousViewRef = useRef(null);
+  // When *entering* the welcome view from elsewhere, show the full intro (nav hidden) again.
+  useLayoutEffect(() => {
+    const was = previousViewRef.current;
+    if (currentView === 'welcome' && was != null && was !== 'welcome') {
+      setWelcomeSubPhase('intro');
+    }
+    previousViewRef.current = currentView;
+  }, [currentView]);
+
+  const hideWelcomeIntroChrome = currentView === 'welcome' && welcomeSubPhase === 'intro';
 
   const handleStartQuiz = () => setCurrentView('quiz');
   const handleOpenHealthProfileEditor = () => setCurrentView('profile-edit');
@@ -304,9 +317,11 @@ function App() {
   };
 
   return (
-    <div className="app-container">
+    <div
+      className={`app-container${hideWelcomeIntroChrome ? ' app--welcome-intro-immersive' : ''}`.trim()}
+    >
       {/* Premium Banner for Free Users */}
-      {!isPremium && (
+      {!hideWelcomeIntroChrome && !isPremium && (
         <div style={{
           background: 'linear-gradient(90deg, #F5EFEA 0%, #EDE4DD 50%, #E3DDD6 100%)',
           color: 'var(--color-surface-contrast)',
@@ -338,7 +353,7 @@ function App() {
         </div>
       )}
 
-      {isPremium && (
+      {!hideWelcomeIntroChrome && isPremium && (
         <div style={{
           background: 'rgba(237, 228, 224, 0.95)',
           color: 'var(--color-primary)',
@@ -354,7 +369,8 @@ function App() {
       )}
 
       <main>
-        {/* Navigation — condensed */}
+        {/* Navigation — condensed (hidden during welcome intro for full-bleed first screen) */}
+        {!hideWelcomeIntroChrome && (
         <nav style={{
           padding: isScrolled ? '0.4rem 1rem' : '0.5rem 1rem',
           display: 'flex',
@@ -493,9 +509,14 @@ function App() {
             </button>
           </div>
         </nav>
+        )}
 
         {currentView === 'welcome' && (
-          <WelcomeGate onPersonalizedPath={handleStartQuiz} onBrowsePath={() => handleViewDiscovery('')} />
+          <WelcomeGate
+            onPersonalizedPath={handleStartQuiz}
+            onBrowsePath={() => handleViewDiscovery('')}
+            onWelcomePhaseChange={setWelcomeSubPhase}
+          />
         )}
         {currentView === 'hero' && (
           <Hero onStartQuiz={handleStartQuiz} onViewWaitlist={handleViewWaitlist} onViewDiscovery={handleViewDiscovery} />

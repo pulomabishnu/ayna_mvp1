@@ -61,6 +61,21 @@ body {
   overflow-x: hidden;
 }
 
+/* Welcome first screen: fill viewport under main when nav / banners are hidden */
+.app--welcome-intro-immersive {
+  min-height: 100dvh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app--welcome-intro-immersive main {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
 h1,
 h2,
 h3,
@@ -244,6 +259,26 @@ button {
   padding: 5rem 2rem 6rem;
 }
 
+/* Full-viewport first screen (no nav) — used by welcome intro */
+.ayna-landing.ayna-landing--full-viewport {
+  min-height: 100dvh;
+  min-height: 100svh;
+  padding-bottom: 0;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.ayna-landing--full-viewport .ayna-landing__content.ayna-landing__content--full-bleed {
+  padding: max(0.5rem, env(safe-area-inset-top, 0px)) max(1.25rem, env(safe-area-inset-right, 0px)) max(0.5rem, env(safe-area-inset-bottom, 0px)) max(1.25rem, env(safe-area-inset-left, 0px));
+  max-width: 100%;
+  min-height: 100dvh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+}
+
 .ayna-landing-section {
   display: flex;
   flex-direction: column;
@@ -278,6 +313,12 @@ button {
   justify-content: center;
   padding: 0 var(--spacing-md);
   z-index: 1;
+}
+
+.ayna-landing--full-viewport .welcome-gate__layer--intro {
+  min-height: 100dvh;
+  min-height: 100svh;
+  padding: 0 max(0.5rem, env(safe-area-inset-left, 0px)) 0 max(0.5rem, env(safe-area-inset-right, 0px));
 }
 
 .welcome-gate__layer--main {
@@ -319,7 +360,15 @@ button {
 }
 
 .welcome-gate__intro-h1 {
-  max-width: 900px;
+  max-width: 100%;
+}
+
+/* Larger typewriter title on the immersive first screen */
+.ayna-landing--full-viewport .welcome-gate--intro .welcome-gate__intro-h1 {
+  font-size: clamp(2.75rem, 9.5vw, 4.75rem) !important;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  max-width: min(96vw, 34rem);
 }
 
 .welcome-gate__intro-ch {
