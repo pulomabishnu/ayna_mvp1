@@ -289,7 +289,7 @@ button {
   text-align: center;
 }
 
-/* Welcome gate: intro (letter reveal) + main (choices) with soft crossfade */
+/* Welcome gate: one-line typewriter → shrink/move headline → then rest of page */
 .welcome-gate {
   position: relative;
   width: 100%;
@@ -297,96 +297,137 @@ button {
   padding: 0;
 }
 
-.welcome-gate__layer {
-  width: 100%;
-  max-width: 100%;
+.welcome-gate--immersive {
+  min-height: 0;
+}
+
+.welcome-gate__morph {
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
-  box-sizing: border-box;
-  transition: opacity 0.85s ease, visibility 0.85s ease;
-}
-
-.welcome-gate__layer--intro {
-  min-height: 90vh;
   justify-content: center;
-  padding: 0 var(--spacing-md);
-  z-index: 1;
+  width: 100%;
+  box-sizing: border-box;
+  will-change: min-height, padding;
+  transition:
+    min-height 1s cubic-bezier(0.2, 0.85, 0.2, 1),
+    padding 1s cubic-bezier(0.2, 0.85, 0.2, 1),
+    justify-content 1s cubic-bezier(0.2, 0.85, 0.2, 1);
 }
 
-.ayna-landing--full-viewport .welcome-gate__layer--intro {
+.welcome-gate__morph--hero {
   min-height: 100dvh;
   min-height: 100svh;
   padding: 0 max(0.5rem, env(safe-area-inset-left, 0px)) 0 max(0.5rem, env(safe-area-inset-right, 0px));
 }
 
-.welcome-gate__layer--main {
-  min-height: 90vh;
-  padding: 0;
-  z-index: 0;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
+.welcome-gate__morph--docked {
+  min-height: 0;
+  justify-content: flex-start;
+  padding: 0.5rem 0 0.35rem;
 }
 
-.welcome-gate--main .welcome-gate__layer--intro {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  min-height: 90vh;
-  z-index: 0;
+.welcome-gate__title-h1 {
+  width: 100%;
+  text-align: center;
+  font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  color: #fff;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
+  font-weight: 400;
+  max-width: min(100vw, 100%);
+  box-sizing: border-box;
+  will-change: font-size, line-height, transform;
+  transition:
+    font-size 1s cubic-bezier(0.2, 0.85, 0.2, 1),
+    line-height 1s cubic-bezier(0.2, 0.85, 0.2, 1),
+    transform 1s cubic-bezier(0.2, 0.85, 0.2, 1),
+    letter-spacing 1s cubic-bezier(0.2, 0.85, 0.2, 1);
+  transform-origin: center top;
 }
 
-.welcome-gate--main .welcome-gate__layer--main {
-  position: relative;
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-  z-index: 1;
-  min-height: 90vh;
-  justify-content: center;
-  padding: 0;
+.welcome-gate__morph--hero .welcome-gate__title-h1 {
+  font-size: clamp(2.6rem, 8.5vw, 4.5rem);
+  line-height: 1.06;
+  letter-spacing: 0;
+  white-space: nowrap;
+  transform: translateY(-4vh);
 }
 
-.welcome-gate__intro-h1 {
-  max-width: 100%;
-}
-
-/* Larger typewriter title on the immersive first screen */
-.ayna-landing--full-viewport .welcome-gate--intro .welcome-gate__intro-h1 {
-  font-size: clamp(2.75rem, 9.5vw, 4.75rem) !important;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-  max-width: min(96vw, 34rem);
+.welcome-gate__morph--docked .welcome-gate__title-h1 {
+  font-size: clamp(1.4rem, 3.2vw, 2.25rem);
+  line-height: 1.12;
+  letter-spacing: 0;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+  white-space: normal;
+  transform: translateY(0);
 }
 
 .welcome-gate__intro-ch {
-  display: inline-block;
-  transition: opacity 0.42s ease;
+  display: inline;
+  transition: opacity 0.4s ease;
   white-space: pre;
+  font-weight: 400;
 }
 
+.welcome-gate__rest {
+  width: 100%;
+  max-width: 100%;
+  animation: welcomeRestEnter 0.7s ease 0.15s both;
+}
+
+/* Eyebrow sits under the morphed title, waitlist-style gap */
+.welcome-gate__rest .ayna-eyebrow {
+  margin-top: 1.05em;
+  margin-bottom: 0.55rem;
+}
+
+@keyframes welcomeRestEnter {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .welcome-gate__morph--hero .welcome-gate__title-h1 {
+    white-space: normal;
+  }
+
+  .welcome-gate__morph--hero .ayna-landing-ayna-wordmark {
+    letter-spacing: 0.4em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .welcome-gate__morph,
+  .welcome-gate__title-h1,
+  .welcome-gate__rest {
+    animation: none;
+    transition: none;
+  }
+
+  .welcome-gate__morph--hero .welcome-gate__title-h1 {
+    transform: none;
+  }
+}
+
+/* Waitlist: .sub-wordmark — Jost, all-caps, wide (screenshot) */
 .ayna-landing .ayna-eyebrow {
-  /* Waitlist: .sub-wordmark */
-  font-size: 0.63rem;
-  letter-spacing: 0.25em;
+  font-family: 'Jost', system-ui, -apple-system, sans-serif;
+  font-size: clamp(0.5rem, 0.5vw + 0.45rem, 0.7rem);
+  font-weight: 300;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.75);
-  font-weight: 400;
-  font-family: 'Jost', system-ui, sans-serif;
-  margin-bottom: 0.75rem;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  color: rgba(255, 255, 255, 0.94);
+  line-height: 1.45;
+  margin-top: 0.75rem;
+  margin-bottom: 0.6rem;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
 }
 
 .ayna-landing .ayna-rotating-headline {
@@ -426,11 +467,56 @@ button {
   margin-right: auto;
 }
 
-/* Waitlist accent #c8841a — brand word in all caps on welcome */
+/* "Welcome to " — waitlist / landing lead */
+.ayna-landing .ayna-landing-welcome-lead {
+  color: #fff;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+}
+
+/* Waitlist wordmark: AYNA, wide Cormorant, gold (ayna_waitlist / screenshot) */
+.ayna-landing .ayna-landing-ayna-wordmark {
+  display: inline-block;
+  font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  font-weight: 300;
+  font-style: normal;
+  letter-spacing: 0.48em;
+  text-indent: 0.2em;
+  color: #c8841a;
+  margin-left: 0.1em;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+}
+
+/* Hero landing: first line with wordmark, matches welcome docked scale */
+.ayna-landing .ayna-landing-hero-welcome {
+  display: block;
+  font-size: clamp(1.4rem, 3.2vw, 2.25rem);
+  line-height: 1.15;
+  letter-spacing: 0;
+}
+
+.ayna-landing .ayna-landing-hero-welcome .ayna-landing-ayna-wordmark {
+  letter-spacing: 0.45em;
+}
+
+/* Immersive intro: AYNA tracks slightly wider on the large typewriter line */
+.welcome-gate__morph--hero .ayna-landing-ayna-wordmark {
+  letter-spacing: 0.55em;
+  font-size: 1em;
+}
+
+/* Docked: tighter tracking at smaller size (still “A Y N A” look) */
+.welcome-gate__morph--docked .ayna-landing-ayna-wordmark {
+  letter-spacing: 0.4em;
+  text-indent: 0.15em;
+  margin-left: 0.08em;
+}
+
+/* Waitlist accent (legacy: inline segments not using wordmark wrapper) */
 .ayna-landing .ayna-landing-brand-caps {
   color: #c8841a;
   font-style: normal;
-  font-weight: 500;
+  font-weight: 400;
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
 }
 

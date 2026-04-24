@@ -68,7 +68,23 @@ export default function Hero({ onStartQuiz, onViewWaitlist: _onViewWaitlist, onV
             </a>
           </ScrollReveal>
           <ScrollReveal className="stagger-1">
-            <span className="ayna-eyebrow">Women&apos;s health, personalized</span>
+            <h1
+              className="ayna-landing-hero-welcome"
+              style={{
+                maxWidth: '900px',
+                margin: '0 auto 0',
+                textAlign: 'center',
+              }}
+            >
+              <span className="ayna-landing-welcome-lead">Welcome to </span>
+              <span className="ayna-landing-ayna-wordmark" aria-label="Ayna">AYNA</span>
+            </h1>
+            <span
+              className="ayna-eyebrow"
+              style={{ textAlign: 'center', display: 'block', width: '100%' }}
+            >
+              Women&apos;s health, personalized
+            </span>
             <RotatingWordHeadline
               style={{
                 maxWidth: '900px',

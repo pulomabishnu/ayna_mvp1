@@ -1,23 +1,26 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import ScrollReveal from './ScrollReveal';
 import RotatingWordHeadline from './RotatingWordHeadline';
 import WaitlistLandingLayout from './WaitlistLandingLayout';
 
-const INTRO_TEXT = 'Welcome to AYNA';
-/** First "A" of AYNA — index 11 for "Welcome to AYNA" (15 chars) */
-const GOLD_LETTER_START = 11;
+const WELCOME_PREFIX = 'Welcome to ';
+const AYNA_WORD = 'AYNA';
+const INTRO_TEXT = `${WELCOME_PREFIX}${AYNA_WORD}`;
+const AYNA_START_INDEX = WELCOME_PREFIX.length;
 const LETTER_MS = 88;
-const INTRO_TO_MAIN_MS = 3000;
-const REDUCED_MOTION_INTRO_TO_MAIN_MS = 1500;
+const PAUSE_AFTER_TYPING_MS = 380;
+const MORPH_DURATION_MS = 1000;
 
 /**
- * First screen: letter-by-letter "Welcome to AYNA", then after 3s a soft crossfade
- * to the full welcome (eyebrow, rotating line, copy, CTA buttons).
+ * One-line typewriter, then the headline shrinks and moves to its final place;
+ * the rest of the page appears after the morph completes.
  */
 export default function WelcomeGate({ onPersonalizedPath, onBrowsePath, onWelcomePhaseChange }) {
-  const [phase, setPhase] = useState('intro');
   const [reveal, setReveal] = useState(0);
+  const [headlineMode, setHeadlineMode] = useState('hero');
+  const [showRest, setShowRest] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
+  const morphDoneTimerRef = useRef(null);
 
   useLayoutEffect(() => {
     if (typeof window === 'undefined') return;
@@ -28,77 +31,105 @@ export default function WelcomeGate({ onPersonalizedPath, onBrowsePath, onWelcom
     return () => mq.removeEventListener('change', onChange);
   }, []);
 
+  // Reduced motion: static final layout, all content at once
   useLayoutEffect(() => {
-    if (reduceMotion) setReveal(INTRO_TEXT.length);
+    if (!reduceMotion) return;
+    setReveal(INTRO_TEXT.length);
+    setHeadlineMode('docked');
+    setShowRest(true);
   }, [reduceMotion]);
 
+  // Letter stream (hero only)
   useEffect(() => {
-    if (phase !== 'intro' || reduceMotion) return;
+    if (reduceMotion) return;
+    if (headlineMode !== 'hero') return;
     if (reveal >= INTRO_TEXT.length) return;
     const t = window.setTimeout(() => setReveal((r) => r + 1), LETTER_MS);
     return () => window.clearTimeout(t);
-  }, [phase, reveal, reduceMotion]);
+  }, [reveal, headlineMode, reduceMotion]);
 
+  // When typing is complete, short pause, then start dock (shrink + move)
   useEffect(() => {
-    const delay = reduceMotion ? REDUCED_MOTION_INTRO_TO_MAIN_MS : INTRO_TO_MAIN_MS;
-    const t = window.setTimeout(() => setPhase('main'), delay);
+    if (reduceMotion) return;
+    if (reveal < INTRO_TEXT.length) return;
+    if (headlineMode === 'docked' || showRest) return;
+    const t = window.setTimeout(() => setHeadlineMode('docked'), PAUSE_AFTER_TYPING_MS);
     return () => window.clearTimeout(t);
-  }, [reduceMotion]);
+  }, [reveal, headlineMode, showRest, reduceMotion]);
 
+  // After morph animation, reveal eyebrow, rotating line, copy, CTA
   useEffect(() => {
-    onWelcomePhaseChange?.(phase);
-  }, [phase, onWelcomePhaseChange]);
+    if (reduceMotion) return;
+    if (headlineMode !== 'docked' || showRest) return;
+    if (morphDoneTimerRef.current) window.clearTimeout(morphDoneTimerRef.current);
+    morphDoneTimerRef.current = window.setTimeout(() => {
+      setShowRest(true);
+      morphDoneTimerRef.current = null;
+    }, MORPH_DURATION_MS);
+    return () => {
+      if (morphDoneTimerRef.current) {
+        window.clearTimeout(morphDoneTimerRef.current);
+        morphDoneTimerRef.current = null;
+      }
+    };
+  }, [headlineMode, showRest, reduceMotion]);
+
+  // Sync app chrome: immersive until second screen content is ready
+  useEffect(() => {
+    onWelcomePhaseChange?.(showRest ? 'main' : 'intro');
+  }, [showRest, onWelcomePhaseChange]);
 
   return (
-    <WaitlistLandingLayout fullViewport={phase === 'intro'}>
+    <WaitlistLandingLayout fullViewport={!showRest}>
       <section
-        className={`ayna-landing-section welcome-gate ${phase === 'main' ? 'welcome-gate--main' : 'welcome-gate--intro'}`}
-        style={{ minHeight: phase === 'intro' ? '100dvh' : '90vh' }}
-        aria-label={phase === 'intro' ? 'Welcome' : undefined}
-        aria-labelledby={phase === 'main' ? 'welcome-heading' : undefined}
+        className={`ayna-landing-section welcome-gate ${showRest ? 'welcome-gate--with-rest' : 'welcome-gate--immersive'}`}
+        style={{ minHeight: showRest ? '90vh' : undefined }}
+        aria-label={!showRest ? 'Welcome' : undefined}
+        aria-labelledby={showRest ? 'welcome-heading' : undefined}
       >
         <div
-          className="welcome-gate__layer welcome-gate__layer--intro"
-          aria-hidden={phase === 'main'}
+          className={[
+            'welcome-gate__morph',
+            headlineMode === 'docked' ? 'welcome-gate__morph--docked' : 'welcome-gate__morph--hero',
+          ].join(' ')}
         >
-          <h1 className="welcome-gate__intro-h1" style={{ margin: 0 }}>
-            {INTRO_TEXT.split('').map((ch, i) => (
+          <h1
+            className="welcome-gate__title-h1"
+            id={showRest ? 'welcome-heading' : undefined}
+            style={{ margin: 0 }}
+          >
+            {WELCOME_PREFIX.split('').map((ch, i) => (
               <span
                 key={i}
-                className={[
-                  'welcome-gate__intro-ch',
-                  i >= GOLD_LETTER_START ? 'ayna-landing-brand-caps' : '',
-                ]
-                  .filter(Boolean)
-                  .join(' ')}
-                style={{
-                  opacity: i < reveal ? 1 : 0,
-                }}
+                className="welcome-gate__intro-ch ayna-landing-welcome-lead"
+                style={{ opacity: i < reveal ? 1 : 0 }}
               >
                 {ch === ' ' ? '\u00A0' : ch}
               </span>
             ))}
+            <span className="ayna-landing-ayna-wordmark" aria-label="Ayna">
+              {AYNA_WORD.split('').map((ch, j) => {
+                const i = AYNA_START_INDEX + j;
+                return (
+                  <span
+                    key={i}
+                    className="welcome-gate__intro-ch"
+                    style={{ opacity: i < reveal ? 1 : 0 }}
+                  >
+                    {ch}
+                  </span>
+                );
+              })}
+            </span>
           </h1>
         </div>
 
-        <div
-          className="welcome-gate__layer welcome-gate__layer--main"
-          aria-hidden={phase === 'intro'}
-        >
+        {showRest && (
           <div
-            key={phase}
-            className="welcome-gate__main-inner"
+            key="welcome-rest"
+            className="welcome-gate__rest"
           >
             <ScrollReveal className="stagger-1">
-              <h1
-                id="welcome-heading"
-                style={{
-                  maxWidth: '720px',
-                  margin: '0 auto 0.75rem',
-                }}
-              >
-                Welcome to <span className="ayna-landing-brand-caps" aria-label="Ayna">AYNA</span>
-              </h1>
               <span className="ayna-eyebrow" style={{ textAlign: 'center', display: 'block', width: '100%' }}>
                 Women&apos;s health, personalized
               </span>
@@ -155,7 +186,7 @@ export default function WelcomeGate({ onPersonalizedPath, onBrowsePath, onWelcom
               </div>
             </ScrollReveal>
           </div>
-        </div>
+        )}
       </section>
     </WaitlistLandingLayout>
   );
