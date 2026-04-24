@@ -53,11 +53,7 @@ export default function RotatingWordHeadline({
     <Tag
       id={id}
       className={`${headlineClassName} ${className}`.trim()}
-      style={{
-        fontSize: 'clamp(1.35rem, 3.8vw, 2.15rem)',
-        fontWeight: 600,
-        ...style,
-      }}
+      style={style}
     >
       {before}
       <span

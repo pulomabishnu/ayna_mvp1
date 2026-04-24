@@ -77,12 +77,7 @@ export default function Hero({ onStartQuiz, onViewWaitlist: _onViewWaitlist, onV
             />
             <h2
               style={{
-                fontSize: 'clamp(1.5rem, 3.5vw, 2.25rem)',
-                maxWidth: '900px',
                 marginBottom: 'var(--spacing-md)',
-                lineHeight: '1.2',
-                fontWeight: 600,
-                letterSpacing: '-0.03em',
               }}
             >
               What are you looking for today?
@@ -93,7 +88,6 @@ export default function Hero({ onStartQuiz, onViewWaitlist: _onViewWaitlist, onV
             <p
               className="ayna-landing__body"
               style={{
-                fontSize: '1.15rem',
                 maxWidth: '680px',
                 margin: '0 auto 3rem',
               }}
@@ -116,25 +110,12 @@ export default function Hero({ onStartQuiz, onViewWaitlist: _onViewWaitlist, onV
               <form
                 onSubmit={(e) => { e.preventDefault(); handleSearch(e); }}
                 className="ayna-landing-glass ayna-landing-search"
-                style={{
-                  padding: '0.75rem 0.75rem 0.75rem 1.5rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  transition: 'all 0.3s ease',
-                }}
               >
                 <input
                   type="text"
                   value={searchValue}
                   onChange={(e) => setSearchValue(e.target.value)}
                   placeholder="Ask Ayna: 'prenatal vitamins', 'postpartum recovery', 'organic pads', 'supplements for cramps'..."
-                  style={{
-                    flexGrow: 1,
-                    border: 'none',
-                    outline: 'none',
-                    fontSize: '1.1rem',
-                    background: 'transparent',
-                  }}
                   aria-label="Search products and articles"
                 />
                 {speech.supported && (
@@ -146,14 +127,16 @@ export default function Hero({ onStartQuiz, onViewWaitlist: _onViewWaitlist, onV
                 )}
                 <button
                   type="submit"
-                  className="btn btn-primary"
+                  className="btn btn-primary ayna-landing-search-submit"
                   style={{
-                    borderRadius: '1.5rem',
-                    padding: '0.6rem 1.5rem',
-                    display: 'flex',
+                    display: 'inline-flex',
                     alignItems: 'center',
                     gap: '0.5rem',
-                    marginLeft: '0.35rem',
+                    flex: '0 0 auto',
+                    padding: '0.7rem 1.25rem',
+                    fontSize: '0.72rem',
+                    letterSpacing: '0.12em',
+                    textTransform: 'uppercase',
                   }}
                   onClick={(e) => { e.preventDefault(); handleSearch(e); }}
                 >
@@ -218,13 +201,6 @@ export default function Hero({ onStartQuiz, onViewWaitlist: _onViewWaitlist, onV
                       } else {
                         onViewDiscovery(tag);
                       }
-                    }}
-                    style={{
-                      padding: '0.4rem 1rem',
-                      borderRadius: 'var(--radius-pill)',
-                      fontSize: '0.85rem',
-                      cursor: 'pointer',
-                      transition: 'background 0.2s, border-color 0.2s',
                     }}
                   >
                     {tag}

@@ -29,11 +29,8 @@ export default function WelcomeGate({ onPersonalizedPath, onBrowsePath }) {
           />
           <h2
             style={{
-              fontSize: 'clamp(1.5rem, 3.2vw, 2rem)',
               maxWidth: '720px',
               margin: '0 auto var(--spacing-lg)',
-              lineHeight: 1.2,
-              fontWeight: 600,
             }}
           >
             Welcome to Ayna
@@ -44,7 +41,6 @@ export default function WelcomeGate({ onPersonalizedPath, onBrowsePath }) {
           <p
             className="ayna-landing__body"
             style={{
-              fontSize: '1.08rem',
               maxWidth: '640px',
               margin: '0 auto 2.5rem',
             }}
@@ -55,25 +51,12 @@ export default function WelcomeGate({ onPersonalizedPath, onBrowsePath }) {
         </ScrollReveal>
 
         <ScrollReveal className="stagger-3">
-          <div
-            className="ayna-landing-glass"
-            style={{
-              width: '100%',
-              maxWidth: '560px',
-              margin: '0 auto',
-              padding: '1.5rem 1.25rem',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '1rem',
-            }}
-          >
+          <div className="ayna-landing-glass ayna-landing-cta-card" style={{ width: '100%' }}>
             <button
               type="button"
               className="btn btn-primary"
               style={{
                 padding: '1rem 1.5rem',
-                fontSize: '1rem',
-                fontWeight: 600,
                 lineHeight: 1.35,
                 whiteSpace: 'normal',
                 textAlign: 'center',
@@ -87,12 +70,9 @@ export default function WelcomeGate({ onPersonalizedPath, onBrowsePath }) {
               className="btn btn-outline"
               style={{
                 padding: '1rem 1.5rem',
-                fontSize: '1rem',
-                fontWeight: 600,
                 lineHeight: 1.35,
                 whiteSpace: 'normal',
                 textAlign: 'center',
-                borderWidth: '2px',
               }}
               onClick={onBrowsePath}
             >
