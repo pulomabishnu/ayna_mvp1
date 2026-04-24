@@ -1,4 +1,6 @@
 const API_PATH = '/api/llm-recommendations';
+/** Prevents the ecosystem page from showing “Loading…” forever if the server never responds. */
+const DEFAULT_FETCH_TIMEOUT_MS = 90_000;
 const MEMORY_KEY = 'ayna_llm_learning_memory_v1';
 /** Session-scoped cache so revisiting Ecosystem does not re-call the LLM for the same intake. */
 const RECS_CACHE_KEY = 'ayna_llm_recommendations_by_intake_v1';
@@ -112,15 +114,36 @@ export function saveLearningMemory(memory) {
   }
 }
 
-export async function fetchLlmRecommendations(options = {}) {
+/**
+ * @param {object} options — passed to build body (intake, feedback maps, etc.)
+ * @param {{ timeoutMs?: number }} [fetchOpts]
+ */
+export async function fetchLlmRecommendations(options = {}, fetchOpts = {}) {
   const body = buildLlmRecommendationsRequestBody(options);
   if (!body) throw new Error('Missing intake profile');
 
-  const res = await fetch(API_PATH, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
+  const timeoutMs = typeof fetchOpts.timeoutMs === 'number' ? fetchOpts.timeoutMs : DEFAULT_FETCH_TIMEOUT_MS;
+  const controller = new AbortController();
+  const tid = setTimeout(() => controller.abort(), timeoutMs);
+
+  let res;
+  try {
+    res = await fetch(API_PATH, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    });
+  } catch (e) {
+    if (e?.name === 'AbortError') {
+      const err = new Error('Recommendations request timed out. Check your connection and try “Refresh recommendations”.');
+      err.code = 'timeout';
+      throw err;
+    }
+    throw e;
+  } finally {
+    clearTimeout(tid);
+  }
 
   let data;
   try {

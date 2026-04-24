@@ -65,13 +65,28 @@ function App() {
   React.useEffect(() => {
     let active = true;
     (async () => {
+      let timeoutId;
       try {
-        const savedIntake = await loadHealthIntakeForCurrentUser();
+        const timeoutMs = 12_000;
+        const timeoutP = new Promise((_, reject) => {
+          timeoutId = window.setTimeout(() => reject(new Error('intake_load_timeout')), timeoutMs);
+        });
+        const savedIntake = await Promise.race([loadHealthIntakeForCurrentUser(), timeoutP])
+          .then((v) => {
+            if (timeoutId) window.clearTimeout(timeoutId);
+            return v;
+          })
+          .catch(() => {
+            if (timeoutId) window.clearTimeout(timeoutId);
+            return null;
+          });
         const completedIntake = savedIntake && savedIntake.personalizationCompleted === true;
         if (active && completedIntake && !quizResults) {
           setQuizResults(mapIntakeToLegacyQuizProfile(savedIntake));
         }
-      } catch (_) {}
+      } catch (_) {
+        if (timeoutId) window.clearTimeout(timeoutId);
+      }
     })();
     return () => {
       active = false;
