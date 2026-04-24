@@ -1,8 +1,8 @@
 import React from 'react';
 
 /**
- * Matches ayna_waitlist: fixed soft coral base + dark wash (no background photo in source).
- * @see https://github.com/pulomabishnu/ayna_waitlist/blob/main/index.html
+ * Waitlist tokens (coral base + wash) with a full-bleed motion-blur wellness photo.
+ * Photo: public/landing-bg.png (asset from product; same waitlist overlay on top).
  */
 export default function WaitlistLandingLayout({ children, className = '' }) {
   return (
@@ -11,6 +11,7 @@ export default function WaitlistLandingLayout({ children, className = '' }) {
       data-landing
     >
       <div className="ayna-landing__bg" aria-hidden />
+      <div className="ayna-landing__photo" aria-hidden />
       <div className="ayna-landing__overlay" aria-hidden />
       <div className="ayna-landing__content container">
         {children}

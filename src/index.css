@@ -212,14 +212,26 @@ button {
   position: absolute;
   inset: 0;
   z-index: 0;
-  /* Waitlist: .bg { background: #ffd0c0; } (no image in repo) */
+  /* Waitlist: .bg { background: #ffd0c0; } — shows while the image loads */
   background: #ffd0c0;
+}
+
+.ayna-landing__photo {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-color: #f5f0e6;
+  background-image: url('/landing-bg.png');
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  transform: scale(1.02);
 }
 
 .ayna-landing__overlay {
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: 2;
   pointer-events: none;
   /* Waitlist: .bg-overlay { background: rgba(20, 12, 5, 0.26); } */
   background: rgba(20, 12, 5, 0.26);
@@ -227,7 +239,7 @@ button {
 
 .ayna-landing__content {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   text-align: center;
   padding: 5rem 2rem 6rem;
 }
