@@ -293,7 +293,7 @@ function App() {
       {/* Premium Banner for Free Users */}
       {!isPremium && (
         <div style={{
-          background: 'linear-gradient(90deg, #FDF2F8 0%, #FCE7F3 50%, #E0F2FE 100%)',
+          background: 'linear-gradient(90deg, #F5EFEA 0%, #EDE4DD 50%, #E3DDD6 100%)',
           color: 'var(--color-surface-contrast)',
           padding: '0.7rem 1.25rem',
           textAlign: 'center',
@@ -303,7 +303,7 @@ function App() {
           justifyContent: 'center',
           alignItems: 'center',
           gap: '1rem',
-          boxShadow: '0 8px 20px rgba(236, 91, 163, 0.15)'
+          boxShadow: '0 8px 24px rgba(28, 25, 23, 0.06)'
         }}>
           <span>✨ Upgrade to Premium to save data, compare products, and access Deeptech.</span>
           <button
@@ -315,7 +315,7 @@ function App() {
               borderRadius: 'var(--radius-pill)',
               fontSize: '0.8rem',
               fontWeight: '700',
-              boxShadow: '0 4px 10px rgba(217, 76, 147, 0.45)'
+              boxShadow: '0 2px 12px rgba(111, 72, 76, 0.25)'
             }}
           >
             Upgrade Now
@@ -325,13 +325,13 @@ function App() {
 
       {isPremium && (
         <div style={{
-          background: 'rgba(253, 236, 245, 0.9)',
+          background: 'rgba(237, 228, 224, 0.95)',
           color: 'var(--color-primary)',
           padding: '0.5rem 1.25rem',
           textAlign: 'center',
           fontSize: '0.8rem',
           fontWeight: '600',
-          boxShadow: '0 6px 18px rgba(236, 91, 163, 0.12)'
+          boxShadow: '0 4px 20px rgba(28, 25, 23, 0.05)'
         }}>
           🌟 Premium Member Status: Active
           <button onClick={togglePremium} style={{ marginLeft: '1rem', textDecoration: 'underline', fontSize: '0.7rem' }}>Demo: Downgrade</button>
@@ -345,15 +345,15 @@ function App() {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          background: isScrolled ? 'rgba(255, 255, 255, 0.9)' : 'rgba(255, 247, 251, 0.9)',
+          background: isScrolled ? 'rgba(255, 252, 249, 0.94)' : 'rgba(250, 247, 243, 0.88)',
           borderBottom: '1px solid var(--color-border)',
           flexWrap: 'wrap',
           gap: '0.35rem',
           position: 'sticky',
           top: 0,
           zIndex: 1000,
-          backdropFilter: 'blur(14px)',
-          boxShadow: isScrolled ? '0 8px 24px rgba(180, 112, 157, 0.12)' : '0 10px 28px rgba(180, 112, 157, 0.14)',
+          backdropFilter: 'blur(16px)',
+          boxShadow: isScrolled ? '0 4px 24px rgba(28, 25, 23, 0.07)' : '0 1px 0 rgba(28, 25, 23, 0.04)',
           transition: 'all 0.3s ease'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>

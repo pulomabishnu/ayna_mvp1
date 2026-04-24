@@ -1,35 +1,25 @@
 :root {
-  /* Color Palette – Soft Feminine & Clean */
-  --color-bg: #FFF7FB;
-  /* Soft blush background */
-  --color-surface-soft: #FFFFFF;
-  /* Clean white cards */
-  --color-surface-contrast: #1F2933;
-  /* Deep, soft charcoal for contrast */
+  /* Aligned with aynawaitlist: warm paper, terracotta rose, calm neutrals, DM Sans + Inter */
+  --color-bg: #F3EFE9;
+  --color-surface-soft: #FFFCF9;
+  --color-surface-contrast: #1C1917;
 
-  --color-text-main: #222222;
-  /* High-contrast but gentle body text */
-  --color-text-muted: #8F8CA5;
-  /* Lavender‑gray for secondary copy */
+  --color-text-main: #292524;
+  --color-text-muted: #78716C;
   --color-text-light: #FFFFFF;
 
-  --color-primary: #D97791;
-  /* Soft rose primary */
-  --color-primary-hover: #C45A7C;
-  /* Deeper rose hover */
-  --color-secondary: #FBE7EE;
-  /* Gentle rose wash */
-  --color-secondary-fade: rgba(217, 119, 145, 0.12);
-  /* Soft rose glow */
-  --color-primary-fade: rgba(217, 119, 145, 0.12);
+  --color-primary: #8B5A5F;
+  --color-primary-hover: #6F484C;
+  --color-secondary: #EDE4E0;
+  --color-secondary-fade: rgba(139, 90, 95, 0.1);
+  --color-primary-fade: rgba(139, 90, 95, 0.1);
   --color-surface: #FFFFFF;
 
-  --color-border: #F4CBD8;
-  /* Delicate rose border */
+  --color-border: #E1D5CE;
 
-  /* Typography */
-  --font-heading: 'Outfit', sans-serif;
-  --font-body: 'Inter', sans-serif;
+  /* Typography — same feel as the public waitlist (clean, editorial weight) */
+  --font-heading: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
 
   /* Spacing */
   --spacing-xs: 0.25rem;
@@ -39,14 +29,15 @@
   --spacing-xl: 4rem;
 
   /* Geometry & Shadows */
-  --radius-sm: 10px;
-  --radius-md: 18px;
-  --radius-lg: 26px;
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 28px;
   --radius-pill: 9999px;
 
-  --shadow-sm: 0 8px 20px rgba(180, 112, 157, 0.08);
-  --shadow-md: 0 16px 40px rgba(180, 112, 157, 0.12);
-  --shadow-lg: 0 26px 60px rgba(180, 112, 157, 0.16);
+  --shadow-sm: 0 2px 12px rgba(28, 25, 23, 0.05);
+  --shadow-md: 0 8px 32px rgba(28, 25, 23, 0.08);
+  --shadow-lg: 0 20px 48px rgba(28, 25, 23, 0.09);
 
   --transition-fast: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -119,13 +110,13 @@ button {
 .btn-primary {
   background-color: var(--color-primary);
   color: #FFFFFF;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 2px 10px rgba(111, 72, 76, 0.22);
 }
 
 .btn-primary:hover {
   background-color: var(--color-primary-hover);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(111, 72, 76, 0.28);
+  transform: translateY(-1px);
 }
 
 .btn-outline {
@@ -141,12 +132,24 @@ button {
 }
 
 .card {
-  background: linear-gradient(145deg, #FFFFFF 0%, #FFF5FB 40%, #FDF4FF 100%);
+  background: var(--color-surface-soft);
   border-radius: var(--radius-lg);
   padding: var(--spacing-lg);
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--color-border);
   transition: all var(--transition-smooth);
+}
+
+/* Waitlist-style eyebrow above hero / welcome titles */
+.ayna-eyebrow {
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  margin-bottom: 0.75rem;
+  display: block;
 }
 
 .hover-lift:hover {
@@ -398,7 +401,7 @@ html {
 .nav-ecosystem__item--active {
   font-weight: 700;
   color: var(--color-primary);
-  background: rgba(217, 119, 145, 0.08);
+  background: var(--color-secondary-fade);
 }
 
 .nav-ecosystem__item-pill {

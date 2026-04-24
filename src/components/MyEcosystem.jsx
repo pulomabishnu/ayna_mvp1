@@ -1532,7 +1532,7 @@ export default function MyEcosystem({
                                 padding: '0.75rem 1.75rem',
                                 fontSize: '1rem',
                                 fontWeight: 600,
-                                boxShadow: '0 4px 14px rgba(217, 76, 147, 0.35)',
+                                boxShadow: '0 2px 12px rgba(111, 72, 76, 0.2)',
                             }}
                             onClick={onBuildEcosystem}
                         >

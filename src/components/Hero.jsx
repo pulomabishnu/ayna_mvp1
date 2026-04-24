@@ -66,26 +66,28 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
                         display: 'inline-block',
                         background: 'var(--color-primary)',
                         color: 'white',
-                        padding: '0.6rem 1.5rem',
+                        padding: '0.55rem 1.35rem',
                         borderRadius: 'var(--radius-pill)',
-                        fontSize: '1rem',
-                        fontWeight: '700',
+                        fontSize: '0.95rem',
+                        fontWeight: '600',
+                        fontFamily: 'var(--font-heading)',
                         textDecoration: 'none',
-                        marginBottom: '2rem',
-                        boxShadow: '0 4px 14px rgba(217, 76, 147, 0.4)'
+                        marginBottom: '1.75rem',
+                        boxShadow: '0 2px 12px rgba(111, 72, 76, 0.25)',
                     }}
                 >
-                    Join Ayna's Early Access Waitlist
+                    Join the waitlist
                 </a>
             </ScrollReveal>
             <ScrollReveal className="stagger-1">
+                <span className="ayna-eyebrow">Women&apos;s health, personalized</span>
                 <h1 style={{
-                    fontSize: 'clamp(2.5rem, 6vw, 4.5rem)',
+                    fontSize: 'clamp(2.35rem, 5.5vw, 4rem)',
                     maxWidth: '900px',
                     marginBottom: 'var(--spacing-md)',
                     color: 'var(--color-surface-contrast)',
-                    lineHeight: '1.1',
-                    fontWeight: '800'
+                    lineHeight: '1.12',
+                    fontWeight: '600'
                 }}>
                     What are you looking for today?
                 </h1>
@@ -93,11 +95,11 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
 
             <ScrollReveal className="stagger-2">
                 <p style={{
-                    fontSize: '1.25rem',
+                    fontSize: '1.15rem',
                     color: 'var(--color-text-muted)',
                     maxWidth: '680px',
                     marginBottom: '3rem',
-                    lineHeight: '1.6'
+                    lineHeight: '1.65'
                 }}>
                     Build a personalized ecosystem of women’s health products, talk or type your needs, import records and wearable summaries, and find telehealth and nearby care matched to your symptoms — all in one place.
                 </p>
@@ -114,13 +116,13 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
                     <form
                         onSubmit={(e) => { e.preventDefault(); handleSearch(e); }}
                         style={{
-                            background: 'white',
+                            background: 'var(--color-surface-soft)',
                             border: '1px solid var(--color-border)',
                             borderRadius: '2rem',
                             padding: '0.75rem 0.75rem 0.75rem 1.5rem',
                             display: 'flex',
                             alignItems: 'center',
-                            boxShadow: 'var(--shadow-lg)',
+                            boxShadow: 'var(--shadow-md)',
                             transition: 'all 0.3s ease',
                         }}
                         className="hero-search-container"
@@ -238,7 +240,7 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
             {/* Premium CTA Block */}
             <ScrollReveal className="stagger-4">
                 <div style={{
-                    background: 'linear-gradient(135deg, #FDF2F8 0%, #FCE7F3 40%, #E0F2FE 100%)',
+                    background: 'linear-gradient(145deg, #FAF5F0 0%, #F0E8E1 100%)',
                     padding: '2.5rem',
                     borderRadius: 'var(--radius-xl)',
                     maxWidth: '800px',
@@ -250,8 +252,8 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
                     justifyContent: 'space-between',
                     gap: '2rem',
                     flexWrap: 'wrap',
-                    border: '1px solid rgba(255,255,255,0.7)',
-                    boxShadow: '0 22px 45px rgba(236, 90, 163, 0.18)'
+                    border: '1px solid var(--color-border)',
+                    boxShadow: 'var(--shadow-sm)'
                 }}>
                     <div style={{ flex: '1 1 400px' }}>
                         <h3 style={{ fontSize: '1.4rem', marginBottom: '0.5rem', color: 'var(--color-surface-contrast)' }}>Want personalized recommendations without the work? ✨</h3>
