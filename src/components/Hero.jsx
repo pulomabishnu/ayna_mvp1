@@ -3,6 +3,7 @@ import { useScrollPosition } from '../hooks/useScrollPosition';
 import { useSpeechToText } from '../hooks/useSpeechToText';
 import ScrollReveal from './ScrollReveal';
 import SearchMicButton from './SearchMicButton';
+import RotatingWordHeadline from './RotatingWordHeadline';
 
 // Landing page: no photo carousel, no rotating images — text, search, and CTA only.
 export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
@@ -81,16 +82,26 @@ export default function Hero({ onStartQuiz, onViewWaitlist, onViewDiscovery }) {
             </ScrollReveal>
             <ScrollReveal className="stagger-1">
                 <span className="ayna-eyebrow">Women&apos;s health, personalized</span>
-                <h1 style={{
-                    fontSize: 'clamp(2.35rem, 5.5vw, 4rem)',
+                <RotatingWordHeadline
+                    style={{
+                        maxWidth: '900px',
+                        marginBottom: '0.75rem',
+                    }}
+                />
+                <h2
+                    style={{
+                    fontSize: 'clamp(1.5rem, 3.5vw, 2.25rem)',
                     maxWidth: '900px',
                     marginBottom: 'var(--spacing-md)',
                     color: 'var(--color-surface-contrast)',
-                    lineHeight: '1.12',
-                    fontWeight: '600'
-                }}>
+                    lineHeight: '1.2',
+                    fontWeight: 600,
+                    fontFamily: 'var(--font-heading)',
+                    letterSpacing: '-0.03em',
+                }}
+                >
                     What are you looking for today?
-                </h1>
+                </h2>
             </ScrollReveal>
 
             <ScrollReveal className="stagger-2">

@@ -1,0 +1,20 @@
+/** Same list as ayna_waitlist / index.html — rotating hero phrases */
+export const ROTATING_INTRO_WORDS = [
+  'period pad',
+  'OBGYN',
+  'health wearable',
+  'hot flash solution',
+  'PCOS lifestyle app',
+  'menstrual cup',
+  'menopause specialist',
+  'pelvic floor trainer',
+  'prenatal vitamin',
+  'cycle tracking app',
+  'pelvic floor PT',
+  'smart basal thermometer',
+  'probiotic',
+  'perimenopause app',
+  'birth control',
+  'mental health app',
+  'tampon',
+];

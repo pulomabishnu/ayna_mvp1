@@ -1,5 +1,6 @@
 import React from 'react';
 import ScrollReveal from './ScrollReveal';
+import RotatingWordHeadline from './RotatingWordHeadline';
 
 /**
  * First screen on load: choose personalized recommendations (quiz / health profile)
@@ -22,19 +23,25 @@ export default function WelcomeGate({ onPersonalizedPath, onBrowsePath }) {
         >
             <ScrollReveal className="stagger-1">
                 <span className="ayna-eyebrow" style={{ textAlign: 'center', display: 'block', width: '100%' }}>Women&apos;s health, personalized</span>
-                <h1
+                <RotatingWordHeadline
                     id="welcome-heading"
                     style={{
-                        fontSize: 'clamp(2.1rem, 5vw, 3.4rem)',
+                        marginBottom: '0.75rem',
+                    }}
+                />
+                <h2
+                    style={{
+                        fontSize: 'clamp(1.5rem, 3.2vw, 2rem)',
                         maxWidth: '720px',
-                        marginBottom: 'var(--spacing-lg)',
+                        margin: '0 auto var(--spacing-lg)',
                         color: 'var(--color-surface-contrast)',
-                        lineHeight: 1.15,
+                        lineHeight: 1.2,
                         fontWeight: 600,
+                        fontFamily: 'var(--font-heading)',
                     }}
                 >
                     Welcome to Ayna
-                </h1>
+                </h2>
             </ScrollReveal>
 
             <ScrollReveal className="stagger-2">

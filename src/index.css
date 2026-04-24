@@ -152,6 +152,48 @@ button {
   display: block;
 }
 
+/* Rotating word (aynawaitlist-style crossfade) */
+@keyframes rotatingWordFadeIn {
+  0% { opacity: 0; transform: translateY(6px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes rotatingWordFadeOut {
+  0% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-6px); }
+}
+.ayna-rotating-word {
+  display: inline-block;
+  min-width: 6.5ch;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--color-primary);
+  font-style: italic;
+  font-weight: 600;
+  vertical-align: baseline;
+  animation: rotatingWordFadeIn 0.4s ease both;
+}
+.ayna-rotating-word--out {
+  animation: rotatingWordFadeOut 0.4s ease forwards;
+}
+.ayna-rotating-headline {
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+  font-family: var(--font-heading);
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  color: var(--color-surface-contrast);
+}
+@media (max-width: 480px) {
+  .ayna-rotating-headline {
+    line-height: 1.28;
+  }
+  .ayna-rotating-word {
+    min-width: 0;
+    white-space: normal;
+  }
+}
+
 .hover-lift:hover {
   transform: translateY(-8px);
   box-shadow: var(--shadow-lg);
