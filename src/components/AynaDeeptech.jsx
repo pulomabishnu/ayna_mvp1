@@ -30,7 +30,7 @@ const deeptechProjects = [
     }
 ];
 
-export default function AynaDeeptech({ joinedWaitlists, toggleJoinWaitlist, isPremium, onUpgrade }) {
+export default function AynaDeeptech({ joinedWaitlists, toggleJoinWaitlist }) {
     const [searchTerm, setSearchTerm] = useState('');
 
     const filteredProjects = deeptechProjects.filter(p =>
@@ -101,13 +101,7 @@ export default function AynaDeeptech({ joinedWaitlists, toggleJoinWaitlist, isPr
                             </div>
 
                             <button
-                                onClick={() => {
-                                    if (isPremium || isJoined) {
-                                        toggleJoinWaitlist(project);
-                                    } else {
-                                        onUpgrade();
-                                    }
-                                }}
+                                onClick={() => toggleJoinWaitlist(project)}
                                 style={{
                                     marginTop: 'auto', width: '100%', padding: '0.75rem',
                                     borderRadius: 'var(--radius-pill)', fontWeight: '600', fontSize: '0.9rem',
@@ -116,15 +110,9 @@ export default function AynaDeeptech({ joinedWaitlists, toggleJoinWaitlist, isPr
                                     color: isJoined ? 'var(--color-text-main)' : '#FFFFFF',
                                     border: isJoined ? '1px solid var(--color-border)' : '1px solid transparent',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
-                                    opacity: (!isPremium && !isJoined) ? 0.8 : 1
                                 }}
                             >
-                                {isJoined ? '✓ Joined Waitlist' : (
-                                    <>
-                                        {!isPremium && <span>🔒</span>}
-                                        {isPremium ? 'Join Early Access Waitlist' : 'Upgrade to Join'}
-                                    </>
-                                )}
+                                {isJoined ? '✓ Joined Waitlist' : 'Join Early Access Waitlist'}
                             </button>
                         </div>
                     );

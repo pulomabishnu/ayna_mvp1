@@ -76,6 +76,28 @@ body {
   flex-direction: column;
 }
 
+/* Second welcome page: top banner + nav fade in with the hero (not a hard cut). */
+.app-welcome-chrome-entrance {
+  animation: appWelcomeTopChromeIn 0.8s ease 0.06s both;
+}
+
+@keyframes appWelcomeTopChromeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-welcome-chrome-entrance {
+    animation: none;
+    opacity: 1;
+  }
+}
+
 h1,
 h2,
 h3,

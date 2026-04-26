@@ -20,7 +20,7 @@ const MOCK_RECALLS = [
     // Additional recalls can be layered in here as needed.
 ];
 
-export default function Recalls({ trackedProducts, myProducts = {}, isPremium, onUpgrade }) {
+export default function Recalls({ trackedProducts, myProducts = {} }) {
     const trackedList = Object.values(trackedProducts);
     const ecosystemList = Object.values(myProducts);
     const [searchQuery, setSearchQuery] = useState('');
@@ -83,28 +83,12 @@ export default function Recalls({ trackedProducts, myProducts = {}, isPremium, o
                     <div style={{ marginTop: '3rem', position: 'relative' }}>
                         <h3 style={{ fontSize: '1.3rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                             Your Monitored Products
-                            {!isPremium && <span style={{ fontSize: '1rem' }}>🔒</span>}
                         </h3>
                         <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1rem' }}>
                             By default, everything in your Ecosystem is monitored for safety recalls and alerts.
                         </p>
 
-                        {!isPremium ? (
-                            <div style={{
-                                padding: '2rem',
-                                border: '1px dashed var(--color-border)',
-                                borderRadius: 'var(--radius-lg)',
-                                textAlign: 'center',
-                                background: 'linear-gradient(to bottom, rgba(255,255,255,0.5), white)'
-                            }}>
-                                <p style={{ color: 'var(--color-text-muted)', marginBottom: '1.5rem' }}>
-                                    Upgrade to <strong>Ayna Premium</strong> to actively monitor your specific ecosystem for safety recalls.
-                                </p>
-                                <button className="btn btn-primary" onClick={onUpgrade}>
-                                    Activate Monitoring
-                                </button>
-                            </div>
-                        ) : ecosystemList.length === 0 ? (
+                        {ecosystemList.length === 0 ? (
                             <p style={{ color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Add products to your Ecosystem to monitor them for safety recalls.</p>
                         ) : (
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>

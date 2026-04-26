@@ -36,7 +36,6 @@ function App() {
   const [myProducts, setMyProducts] = useState({});
   const [omittedProducts, setOmittedProducts] = useState({});
   const [compareList, setCompareList] = useState([]);
-  const [isPremium, setIsPremium] = useState(false);
   const [showCheckin, setShowCheckin] = useState(false);
   const [checkinData, setCheckinData] = useState(null);
   const [checkinUpdatedProfile, setCheckinUpdatedProfile] = useState(false);
@@ -122,6 +121,8 @@ function App() {
   }, [currentView]);
 
   const hideWelcomeIntroChrome = currentView === 'welcome' && welcomeSubPhase === 'intro';
+  /** Second welcome screen: fade top chrome in with the page (not an instant pop). */
+  const welcomeMainChromeEntrance = currentView === 'welcome' && welcomeSubPhase === 'main';
 
   const handleStartQuiz = () => setCurrentView('quiz');
   const handleOpenHealthProfileEditor = () => setCurrentView('profile-edit');
@@ -202,8 +203,6 @@ function App() {
       return n;
     });
   };
-
-  const togglePremium = () => setIsPremium(!isPremium);
 
   const toggleCompare = (product) => {
     setCompareList(prev => {
@@ -320,57 +319,12 @@ function App() {
     <div
       className={`app-container${hideWelcomeIntroChrome ? ' app--welcome-intro-immersive' : ''}`.trim()}
     >
-      {/* Premium Banner for Free Users */}
-      {!hideWelcomeIntroChrome && !isPremium && (
-        <div style={{
-          background: 'linear-gradient(90deg, #F5EFEA 0%, #EDE4DD 50%, #E3DDD6 100%)',
-          color: 'var(--color-surface-contrast)',
-          padding: '0.7rem 1.25rem',
-          textAlign: 'center',
-          fontSize: '0.9rem',
-          fontWeight: '500',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          gap: '1rem',
-          boxShadow: '0 8px 24px rgba(28, 25, 23, 0.06)'
-        }}>
-          <span>✨ Upgrade to Premium to save data, compare products, and access Deeptech.</span>
-          <button
-            onClick={togglePremium}
-            style={{
-              background: 'var(--color-primary)',
-              color: 'white',
-              padding: '0.25rem 0.9rem',
-              borderRadius: 'var(--radius-pill)',
-              fontSize: '0.8rem',
-              fontWeight: '700',
-              boxShadow: '0 2px 12px rgba(111, 72, 76, 0.25)'
-            }}
-          >
-            Upgrade Now
-          </button>
-        </div>
-      )}
-
-      {!hideWelcomeIntroChrome && isPremium && (
-        <div style={{
-          background: 'rgba(237, 228, 224, 0.95)',
-          color: 'var(--color-primary)',
-          padding: '0.5rem 1.25rem',
-          textAlign: 'center',
-          fontSize: '0.8rem',
-          fontWeight: '600',
-          boxShadow: '0 4px 20px rgba(28, 25, 23, 0.05)'
-        }}>
-          🌟 Premium Member Status: Active
-          <button onClick={togglePremium} style={{ marginLeft: '1rem', textDecoration: 'underline', fontSize: '0.7rem' }}>Demo: Downgrade</button>
-        </div>
-      )}
-
       <main>
-        {/* Navigation — condensed (hidden during welcome intro for full-bleed first screen) */}
+        {/* Navigation — hidden during welcome intro; fades in on first frame of “main” with the landing body */}
         {!hideWelcomeIntroChrome && (
+        <div
+          className={welcomeMainChromeEntrance ? 'app-welcome-chrome-entrance' : undefined}
+        >
         <nav style={{
           padding: isScrolled ? '0.4rem 1rem' : '0.5rem 1rem',
           display: 'flex',
@@ -396,21 +350,19 @@ function App() {
             <div
               ref={ecoNavRef}
               className={`nav-ecosystem ${ecoMenuOpen ? 'nav-ecosystem--open' : ''} ${ecoMenuOpen && touchUi ? 'nav-ecosystem--caret-open' : ''}`}
-              style={{ opacity: isPremium ? 1 : 0.6 }}
             >
               <div className="nav-ecosystem__row">
                 <button
                   type="button"
                   id="nav-ecosystem-trigger"
                   className={`nav-ecosystem__trigger ${ECOSYSTEM_NAV_VIEWS.includes(currentView) ? 'nav-ecosystem__trigger--active' : ''}`}
-                  onClick={() => (isPremium ? handleViewEcosystem() : togglePremium())}
+                  onClick={() => handleViewEcosystem()}
                   aria-haspopup="menu"
                   aria-expanded={touchUi ? ecoMenuOpen : undefined}
                   aria-controls="nav-ecosystem-menu"
                 >
                   My Ecosystem
-                  {!isPremium && <span aria-hidden>🔒</span>}
-                  {isPremium && ecosystemCount > 0 && (
+                  {ecosystemCount > 0 && (
                     <span className="nav-ecosystem__pill">{ecosystemCount}</span>
                   )}
                   {!touchUi && <span className="nav-ecosystem__hint" aria-hidden>▾</span>}
@@ -438,13 +390,11 @@ function App() {
                   className={`nav-ecosystem__item ${currentView === 'comparison' ? 'nav-ecosystem__item--active' : ''}`}
                   onClick={() => {
                     setEcoMenuOpen(false);
-                    if (isPremium) handleViewComparison();
-                    else togglePremium();
+                    handleViewComparison();
                   }}
                 >
                   <span>Compare</span>
-                  {!isPremium && <span aria-hidden>🔒</span>}
-                  {isPremium && compareList.length > 0 && (
+                  {compareList.length > 0 && (
                     <span className="nav-ecosystem__item-pill">{compareList.length}</span>
                   )}
                 </button>
@@ -474,7 +424,7 @@ function App() {
               </div>
             </div>
 
-            {/* Public Research Tools (Free) */}
+            {/* Public research tools */}
             <div style={{ display: 'flex', gap: '0.35rem', borderLeft: '1px solid var(--color-border)', paddingLeft: '0.5rem' }}>
               <button style={{ fontSize: '0.8rem', fontWeight: (currentView === 'discovery' || currentView === 'hero') ? '700' : '500', color: currentView === 'discovery' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem' }} onClick={() => handleViewDiscovery('')}>
                 Product Discovery
@@ -498,17 +448,18 @@ function App() {
                 fontSize: '0.75rem', fontWeight: '600', padding: '0.25rem 0.5rem',
                 background: 'var(--color-secondary-fade)', color: 'var(--color-primary)',
                 borderRadius: 'var(--radius-pill)', border: '1px solid var(--color-primary)',
-                opacity: isPremium ? 1 : 0.5
+                opacity: 1
               }}
-              onClick={() => isPremium ? setShowCheckin(true) : togglePremium()}
+              onClick={() => setShowCheckin(true)}
             >
-              Check-in {!isPremium && '🔒'}
+              Check-in
             </button>
             <button style={{ fontSize: '0.8rem', fontWeight: '500', border: 'none', background: 'none', cursor: 'pointer', color: currentView === 'tracked' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem', display: 'flex', alignItems: 'center', gap: '0.2rem' }} onClick={handleViewTracked}>
-              {isPremium ? 'Profile' : 'Guest'} {totalBadge > 0 && <span style={{ background: 'var(--color-primary)', color: 'white', padding: '0.05rem 0.3rem', borderRadius: '1rem', fontSize: '0.65rem', marginLeft: '0.1rem' }}>{totalBadge}</span>}
+              Profile {totalBadge > 0 && <span style={{ background: 'var(--color-primary)', color: 'white', padding: '0.05rem 0.3rem', borderRadius: '1rem', fontSize: '0.65rem', marginLeft: '0.1rem' }}>{totalBadge}</span>}
             </button>
           </div>
         </nav>
+        </div>
         )}
 
         {currentView === 'welcome' && (
@@ -569,8 +520,6 @@ function App() {
             joinedWaitlists={joinedWaitlists}
             toggleJoinWaitlist={toggleJoinWaitlist}
             quizResults={quizResults}
-            isPremium={isPremium}
-            onUpgrade={togglePremium}
             myProducts={myProducts}
             onAddToEcosystem={toggleMyProduct}
             onViewRecalls={handleViewRecalls}
@@ -580,8 +529,6 @@ function App() {
           <AynaDeeptech
             joinedWaitlists={joinedWaitlists}
             toggleJoinWaitlist={toggleJoinWaitlist}
-            isPremium={isPremium}
-            onUpgrade={togglePremium}
           />
         )}
         {currentView === 'articles' && (
@@ -632,8 +579,6 @@ function App() {
             toggleOmitProduct={toggleOmitProduct}
             setCurrentView={setCurrentView}
             onOpenProduct={handleOpenProduct}
-            isPremium={isPremium}
-            onUpgrade={togglePremium}
             initialSearch={discoverySearch}
             recommendedProductIds={recommendedProductIds}
             aynaReviews={aynaReviews}
@@ -650,9 +595,9 @@ function App() {
           <OmittedProducts omittedProducts={omittedProducts} toggleOmitProduct={toggleOmitProduct} />
         )}
         {currentView === 'recalls' && (
-          <Recalls trackedProducts={trackedProducts} myProducts={myProducts} isPremium={isPremium} onUpgrade={togglePremium} />
+          <Recalls trackedProducts={trackedProducts} myProducts={myProducts} />
         )}
-        {currentView === 'comparison' && isPremium && (
+        {currentView === 'comparison' && (
           <Comparison
             compareList={compareList}
             onRemove={toggleCompare}
@@ -663,7 +608,7 @@ function App() {
             onAddToCompare={toggleCompare}
           />
         )}
-        {currentView === 'doctor-prep' && isPremium && (
+        {currentView === 'doctor-prep' && (
           <DoctorPrep
             checkinData={checkinData}
             myProducts={myProducts}
@@ -712,7 +657,7 @@ function App() {
             onTrack={toggleTrackProduct}
             onOmit={toggleOmitProduct}
             isOmitted={!!omittedProducts[selectedProductModal.id]}
-            onToggleCompare={isPremium ? toggleCompare : null}
+            onToggleCompare={toggleCompare}
             isInCompare={compareList.some(p => p.id === selectedProductModal.id)}
             onAddToEcosystem={toggleMyProduct}
             isInEcosystem={!!myProducts[selectedProductModal.id]}

@@ -264,7 +264,7 @@ export default function Hero({ onStartQuiz, onViewWaitlist: _onViewWaitlist, onV
                 Want personalized recommendations without the work? ✨
               </h3>
               <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem' }}>
-                Join Ayna Premium for tailored recommendations, your product ecosystem, and safety-aware
+                Build your health profile for tailored recommendations, your product ecosystem, and safety-aware
                 discovery.
               </p>
             </div>
@@ -286,7 +286,7 @@ export default function Hero({ onStartQuiz, onViewWaitlist: _onViewWaitlist, onV
                   lineHeight: '1.2',
                 }}
               >
-                *Premium upgrade required to unlock your personalized recommendation plan
+                *Complete your health profile to unlock a personalized plan
               </span>
             </div>
           </div>
