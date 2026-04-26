@@ -127,7 +127,6 @@ function App() {
   const handleStartQuiz = () => setCurrentView('quiz');
   const handleOpenHealthProfileEditor = () => setCurrentView('profile-edit');
   const handleViewWaitlist = () => setCurrentView('waitlist');
-  const handleViewTracked = () => setCurrentView('tracked');
   const handleViewEcosystem = () => setCurrentView('ecosystem');
   const handleViewDiscovery = (queryOrOptions = '') => {
     if (typeof queryOrOptions === 'object' && queryOrOptions !== null) {
@@ -262,8 +261,6 @@ function App() {
   };
 
   const [selectedProductModal, setSelectedProductModal] = useState(null);
-
-  const totalBadge = Object.keys(trackedProducts).length + Object.keys(joinedWaitlists).length;
 
   const omittedCount = Object.keys(omittedProducts).length;
   const ecosystemCount = Object.keys(myProducts).length;
@@ -441,9 +438,6 @@ function App() {
               onClick={() => setShowCheckin(true)}
             >
               Check-in
-            </button>
-            <button style={{ fontSize: '0.8rem', fontWeight: '500', border: 'none', background: 'none', cursor: 'pointer', color: currentView === 'tracked' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem', display: 'flex', alignItems: 'center', gap: '0.2rem' }} onClick={handleViewTracked}>
-              Profile {totalBadge > 0 && <span style={{ background: 'var(--color-primary)', color: 'white', padding: '0.05rem 0.3rem', borderRadius: '1rem', fontSize: '0.65rem', marginLeft: '0.1rem' }}>{totalBadge}</span>}
             </button>
           </div>
         </nav>
