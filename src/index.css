@@ -102,7 +102,7 @@ body {
   }
 }
 
-/* Sticky top bar — frosted glass (content shows through; blur + light edge) */
+/* Sticky top bar — visible frosted glass: gradient sell the “lens” on top of blur (same-cream page was hiding the old look). */
 .app-nav {
   display: flex;
   justify-content: space-between;
@@ -113,13 +113,21 @@ body {
   top: 0;
   z-index: 1000;
   padding: 0.5rem 1rem;
-  background: rgba(255, 252, 249, 0.45);
-  -webkit-backdrop-filter: blur(22px) saturate(1.2);
-  backdrop-filter: blur(22px) saturate(1.2);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  /* Layer: bright frost + let backdrop blur read against body/cards/imagery */
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.92) 0%,
+      rgba(255, 255, 255, 0.45) 45%,
+      rgba(255, 252, 248, 0.18) 100%
+    );
+  -webkit-backdrop-filter: blur(32px) saturate(1.5);
+  backdrop-filter: blur(32px) saturate(1.5);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.75);
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.4) inset,
-    0 4px 24px rgba(28, 25, 23, 0.05);
+    0 1px 0 rgba(255, 255, 255, 1) inset,
+    0 8px 32px rgba(28, 25, 23, 0.08),
+    0 1px 0 rgba(139, 90, 95, 0.08);
   transition:
     background 0.3s ease,
     box-shadow 0.3s ease,
@@ -129,11 +137,18 @@ body {
 
 .app-nav--scrolled {
   padding: 0.4rem 1rem;
-  background: rgba(255, 252, 249, 0.6);
-  border-bottom-color: rgba(255, 255, 255, 0.35);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.98) 0%,
+      rgba(255, 255, 255, 0.62) 50%,
+      rgba(255, 250, 246, 0.35) 100%
+    );
+  border-bottom-color: rgba(255, 255, 255, 0.55);
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.32) inset,
-    0 8px 32px rgba(28, 25, 23, 0.08);
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 12px 40px rgba(28, 25, 23, 0.1),
+    0 1px 0 rgba(139, 90, 95, 0.1);
 }
 
 .app-nav__research-cluster {
@@ -145,11 +160,11 @@ body {
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .app-nav {
-    background: rgba(255, 252, 249, 0.92);
+    background: linear-gradient(180deg, #fff 0%, rgba(255, 250, 246, 0.95) 100%);
   }
 
   .app-nav--scrolled {
-    background: rgba(255, 252, 249, 0.96);
+    background: linear-gradient(180deg, #fff 0%, #fff8f4 100%);
   }
 }
 
