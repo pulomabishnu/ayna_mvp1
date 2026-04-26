@@ -289,7 +289,7 @@ button {
   text-align: center;
 }
 
-/* Welcome gate: one-line typewriter → shrink/move headline → then rest of page */
+/* Welcome: page 1 = full-viewport typewriter; page 2 = fade in full landing (no morph-to-top) */
 .welcome-gate {
   position: relative;
   width: 100%;
@@ -297,71 +297,96 @@ button {
   padding: 0;
 }
 
-.welcome-gate--immersive {
+.welcome-gate--page-first {
   min-height: 0;
 }
 
-.welcome-gate__morph {
+.welcome-gate--page-second {
+  min-height: 0;
+}
+
+.welcome-gate__page--first {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  min-height: 100svh;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0 max(0.5rem, env(safe-area-inset-left, 0px)) 0 max(0.5rem, env(safe-area-inset-right, 0px));
+}
+
+.welcome-gate__first-stack {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100%;
-  box-sizing: border-box;
-  will-change: min-height, padding;
-  transition:
-    min-height 1s cubic-bezier(0.2, 0.85, 0.2, 1),
-    padding 1s cubic-bezier(0.2, 0.85, 0.2, 1),
-    justify-content 1s cubic-bezier(0.2, 0.85, 0.2, 1);
+  max-width: 100%;
 }
 
-.welcome-gate__morph--hero {
-  min-height: 100dvh;
-  min-height: 100svh;
-  padding: 0 max(0.5rem, env(safe-area-inset-left, 0px)) 0 max(0.5rem, env(safe-area-inset-right, 0px));
-}
-
-.welcome-gate__morph--docked {
-  min-height: 0;
-  justify-content: flex-start;
-  padding: 0.5rem 0 0.35rem;
-}
-
-.welcome-gate__title-h1 {
-  width: 100%;
+.welcome-gate__typewriter-h1 {
   text-align: center;
   font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
   color: #fff;
   text-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
-  font-weight: 400;
-  max-width: min(100vw, 100%);
+  font-size: clamp(2.2rem, 7vw, 3.6rem);
+  line-height: 1.08;
+  letter-spacing: 0;
+  max-width: min(100%, 100vw);
   box-sizing: border-box;
-  will-change: font-size, line-height, transform;
-  transition:
-    font-size 1s cubic-bezier(0.2, 0.85, 0.2, 1),
-    line-height 1s cubic-bezier(0.2, 0.85, 0.2, 1),
-    transform 1s cubic-bezier(0.2, 0.85, 0.2, 1),
-    letter-spacing 1s cubic-bezier(0.2, 0.85, 0.2, 1);
-  transform-origin: center top;
-}
-
-.welcome-gate__morph--hero .welcome-gate__title-h1 {
-  font-size: clamp(2.6rem, 8.5vw, 4.5rem);
-  line-height: 1.06;
-  letter-spacing: 0;
   white-space: nowrap;
-  transform: translateY(-4vh);
 }
 
-.welcome-gate__morph--docked .welcome-gate__title-h1 {
-  font-size: clamp(1.4rem, 3.2vw, 2.25rem);
-  line-height: 1.12;
-  letter-spacing: 0;
-  max-width: 900px;
-  margin-left: auto;
-  margin-right: auto;
-  white-space: normal;
-  transform: translateY(0);
+.welcome-gate__typewriter-h1 .ayna-landing-ayna-wordmark {
+  letter-spacing: 0.55em;
+}
+
+/* Off + on keep identical box size so the hero line does not re-center when the subline fades in. */
+.ayna-landing .welcome-gate__first-eyebrow {
+  margin-top: 0.65rem;
+  margin-bottom: 0.6rem;
+  max-width: 32rem;
+  padding: 0 0.75rem;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.ayna-landing .welcome-gate__first-eyebrow--off {
+  opacity: 0;
+  pointer-events: none;
+  animation: none;
+}
+
+.ayna-landing .welcome-gate__first-eyebrow--on {
+  animation: welcomeFirstEyebrow 0.5s ease 0.05s both;
+}
+
+@keyframes welcomeFirstEyebrow {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.welcome-gate__page--second {
+  width: 100%;
+  max-width: 100%;
+  animation: welcomePageEnter 0.55s ease 0.05s both;
+  /* full-bleed + sticky nav: breathing room the non–full-bleed path used to get from .ayna-landing__content */
+  padding-top: clamp(3.25rem, 6vh, 4.5rem);
+  box-sizing: border-box;
+}
+
+.welcome-gate__page--second .ayna-eyebrow {
+  margin-top: 0.7rem;
+  margin-bottom: 0.5rem;
 }
 
 .welcome-gate__intro-ch {
@@ -371,19 +396,7 @@ button {
   font-weight: 400;
 }
 
-.welcome-gate__rest {
-  width: 100%;
-  max-width: 100%;
-  animation: welcomeRestEnter 0.7s ease 0.15s both;
-}
-
-/* Eyebrow sits under the morphed title, waitlist-style gap */
-.welcome-gate__rest .ayna-eyebrow {
-  margin-top: 1.05em;
-  margin-bottom: 0.55rem;
-}
-
-@keyframes welcomeRestEnter {
+@keyframes welcomePageEnter {
   from {
     opacity: 0;
   }
@@ -394,25 +407,23 @@ button {
 }
 
 @media (max-width: 480px) {
-  .welcome-gate__morph--hero .welcome-gate__title-h1 {
+  .welcome-gate__typewriter-h1 {
     white-space: normal;
   }
 
-  .welcome-gate__morph--hero .ayna-landing-ayna-wordmark {
+  .welcome-gate__typewriter-h1 .ayna-landing-ayna-wordmark {
     letter-spacing: 0.4em;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .welcome-gate__morph,
-  .welcome-gate__title-h1,
-  .welcome-gate__rest {
+  .welcome-gate__page--second {
     animation: none;
-    transition: none;
   }
 
-  .welcome-gate__morph--hero .welcome-gate__title-h1 {
-    transform: none;
+  .ayna-landing .welcome-gate__first-eyebrow--on {
+    animation: none;
+    opacity: 1;
   }
 }
 
@@ -467,11 +478,11 @@ button {
   margin-right: auto;
 }
 
-/* "Welcome to " — waitlist / landing lead */
+/* "Welcome to " — same tracking as body line (only AYNA is wide-tracked) */
 .ayna-landing .ayna-landing-welcome-lead {
   color: #fff;
   font-weight: 400;
-  letter-spacing: 0.04em;
+  letter-spacing: normal;
 }
 
 /* Waitlist wordmark: AYNA, wide Cormorant, gold (ayna_waitlist / screenshot) */
@@ -497,19 +508,6 @@ button {
 
 .ayna-landing .ayna-landing-hero-welcome .ayna-landing-ayna-wordmark {
   letter-spacing: 0.45em;
-}
-
-/* Immersive intro: AYNA tracks slightly wider on the large typewriter line */
-.welcome-gate__morph--hero .ayna-landing-ayna-wordmark {
-  letter-spacing: 0.55em;
-  font-size: 1em;
-}
-
-/* Docked: tighter tracking at smaller size (still “A Y N A” look) */
-.welcome-gate__morph--docked .ayna-landing-ayna-wordmark {
-  letter-spacing: 0.4em;
-  text-indent: 0.15em;
-  margin-left: 0.08em;
 }
 
 /* Waitlist accent (legacy: inline segments not using wordmark wrapper) */
