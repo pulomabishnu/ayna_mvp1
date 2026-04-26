@@ -10,6 +10,8 @@ const AYNA_START_INDEX = WELCOME_PREFIX.length;
 const LETTER_MS = 88;
 /** After "Welcome to AYNA" + subline are shown, time before the second landing page. */
 const PAUSE_BEFORE_SECOND_PAGE_MS = 1200;
+/** Let the second screen begin fading in before the app nav mounts (stagger = softer handoff). */
+const WELCOME_MAIN_PHASE_DELAY_MS = 420;
 
 /**
  * First page: typewriter + eyebrow; then second page: same headline (static) + the rest, simple fade.
@@ -50,8 +52,20 @@ export default function WelcomeGate({ onPersonalizedPath, onBrowsePath, onWelcom
   }, [reveal, page, reduceMotion, INTRO_TEXT.length]);
 
   useEffect(() => {
-    onWelcomePhaseChange?.(page === 'first' ? 'intro' : 'main');
-  }, [page, onWelcomePhaseChange]);
+    if (page === 'first') {
+      onWelcomePhaseChange?.('intro');
+      return;
+    }
+    if (reduceMotion) {
+      onWelcomePhaseChange?.('main');
+      return;
+    }
+    const t = window.setTimeout(
+      () => onWelcomePhaseChange?.('main'),
+      WELCOME_MAIN_PHASE_DELAY_MS
+    );
+    return () => window.clearTimeout(t);
+  }, [page, reduceMotion, onWelcomePhaseChange]);
 
   return (
     <WaitlistLandingLayout fullViewport>

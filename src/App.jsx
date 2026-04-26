@@ -325,22 +325,10 @@ function App() {
         <div
           className={welcomeMainChromeEntrance ? 'app-welcome-chrome-entrance' : undefined}
         >
-        <nav style={{
-          padding: isScrolled ? '0.4rem 1rem' : '0.5rem 1rem',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          background: isScrolled ? 'rgba(255, 252, 249, 0.94)' : 'rgba(250, 247, 243, 0.88)',
-          borderBottom: '1px solid var(--color-border)',
-          flexWrap: 'wrap',
-          gap: '0.35rem',
-          position: 'sticky',
-          top: 0,
-          zIndex: 1000,
-          backdropFilter: 'blur(16px)',
-          boxShadow: isScrolled ? '0 4px 24px rgba(28, 25, 23, 0.07)' : '0 1px 0 rgba(28, 25, 23, 0.04)',
-          transition: 'all 0.3s ease'
-        }}>
+        <nav
+          className={`app-nav${isScrolled ? ' app-nav--scrolled' : ''}`}
+          aria-label="Primary"
+        >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
             <div style={{ fontFamily: 'var(--font-heading)', fontSize: '1.2rem', fontWeight: '700', color: 'var(--color-primary)', cursor: 'pointer' }} onClick={navigateHome}>
               Ayna
@@ -425,7 +413,7 @@ function App() {
             </div>
 
             {/* Public research tools */}
-            <div style={{ display: 'flex', gap: '0.35rem', borderLeft: '1px solid var(--color-border)', paddingLeft: '0.5rem' }}>
+            <div className="app-nav__research-cluster">
               <button style={{ fontSize: '0.8rem', fontWeight: (currentView === 'discovery' || currentView === 'hero') ? '700' : '500', color: currentView === 'discovery' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem' }} onClick={() => handleViewDiscovery('')}>
                 Product Discovery
               </button>
