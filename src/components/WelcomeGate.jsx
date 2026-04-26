@@ -50,8 +50,26 @@ export default function WelcomeGate({ onPersonalizedPath, onBrowsePath, onWelcom
   }, [reveal, page, reduceMotion, INTRO_TEXT.length]);
 
   useEffect(() => {
-    onWelcomePhaseChange?.(page === 'first' ? 'intro' : 'main');
-  }, [page, onWelcomePhaseChange]);
+    if (page === 'first') {
+      onWelcomePhaseChange?.('intro');
+      return;
+    }
+    if (reduceMotion) {
+      onWelcomePhaseChange?.('main');
+      return;
+    }
+    // Defer “main” two frames so the second landing can paint first; then nav mounts with a long fade.
+    let id2;
+    const id1 = requestAnimationFrame(() => {
+      id2 = requestAnimationFrame(() => {
+        onWelcomePhaseChange?.('main');
+      });
+    });
+    return () => {
+      cancelAnimationFrame(id1);
+      if (id2) cancelAnimationFrame(id2);
+    };
+  }, [page, reduceMotion, onWelcomePhaseChange]);
 
   return (
     <WaitlistLandingLayout fullViewport>
