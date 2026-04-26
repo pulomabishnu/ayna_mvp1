@@ -12,6 +12,11 @@ export default function RotatingWordHeadline({
   words = ROTATING_INTRO_WORDS,
   before = "The women's health assistant built to find the best ",
   after = ' for your body.',
+  /** "inline" = one line (default); "stacked" = four centered lines (line1, line2, word, line4). */
+  layout = 'inline',
+  line1 = "The women's health assistant",
+  line2 = 'built to find the best',
+  line4 = 'for your body.',
   as: Tag = 'h1',
   className = '',
   headlineClassName = 'ayna-rotating-headline',
@@ -48,6 +53,28 @@ export default function RotatingWordHeadline({
     const intervalId = window.setInterval(tick, CYCLE_MS);
     return () => window.clearInterval(intervalId);
   }, [words.length]);
+
+  if (layout === 'stacked') {
+    return (
+      <Tag
+        id={id}
+        className={`${headlineClassName} ayna-rotating-headline--stacked ${className}`.trim()}
+        style={style}
+      >
+        <span className="ayna-rotating-headline__row">{line1}</span>
+        <span className="ayna-rotating-headline__row">{line2}</span>
+        <span className="ayna-rotating-headline__row ayna-rotating-headline__row--word">
+          <span
+            ref={wordRef}
+            className="ayna-rotating-word"
+            aria-live="polite"
+            aria-atomic="true"
+          />
+        </span>
+        <span className="ayna-rotating-headline__row">{line4}</span>
+      </Tag>
+    );
+  }
 
   return (
     <Tag

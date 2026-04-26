@@ -134,9 +134,10 @@ export default function WelcomeGate({ onPersonalizedPath, onBrowsePath, onWelcom
                 Women&apos;s health, personalized
               </span>
               <RotatingWordHeadline
-                as="p"
+                layout="stacked"
+                as="div"
                 style={{
-                  marginTop: '0.25rem',
+                  marginTop: '0.35rem',
                   marginBottom: 'var(--spacing-lg)',
                 }}
               />

@@ -560,6 +560,33 @@ button {
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
 }
 
+/* Welcome (and any landing): four fixed, centered lines — text / text / rotating word / text */
+.ayna-landing .ayna-rotating-headline.ayna-rotating-headline--stacked {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.1em;
+  max-width: min(42rem, 100%);
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ayna-landing .ayna-rotating-headline--stacked .ayna-rotating-headline__row {
+  display: block;
+  width: 100%;
+  margin: 0;
+}
+
+.ayna-landing .ayna-rotating-headline--stacked .ayna-rotating-headline__row--word {
+  min-height: 1.2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .ayna-landing h1,
 .ayna-landing h2,
 .ayna-landing h3 {
