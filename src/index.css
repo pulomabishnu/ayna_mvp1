@@ -476,9 +476,33 @@ button {
   box-sizing: border-box;
 }
 
-.welcome-gate__page--second .ayna-eyebrow {
-  margin-top: 0.7rem;
-  margin-bottom: 0.5rem;
+/* Second landing: equal vertical rhythm between eyebrow ↔ intro lines ↔ body */
+.welcome-gate__second-text-stack {
+  --welcome-second-block-gap: clamp(1.85rem, 4.5vw, 2.85rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--welcome-second-block-gap);
+  width: 100%;
+  max-width: 100%;
+  margin-top: 0.35rem;
+}
+
+.welcome-gate__second-text-stack .welcome-gate__second-eyebrow,
+.welcome-gate__second-text-stack .ayna-eyebrow {
+  margin: 0;
+  text-align: center;
+  display: block;
+  width: 100%;
+}
+
+.welcome-gate__second-text-stack .ayna-rotating-headline--stacked {
+  margin: 0;
+}
+
+.welcome-gate__second-text-stack .welcome-gate__second-lead {
+  margin: 0 auto 2.75rem;
+  max-width: 640px;
 }
 
 .welcome-gate__intro-ch {
@@ -535,6 +559,11 @@ button {
   margin-top: 0.75rem;
   margin-bottom: 0.6rem;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+.ayna-landing .welcome-gate__second-text-stack .ayna-eyebrow {
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .ayna-landing .ayna-rotating-headline {

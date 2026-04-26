@@ -130,30 +130,16 @@ export default function WelcomeGate({ onPersonalizedPath, onBrowsePath, onWelcom
               <span className="ayna-landing-ayna-wordmark" aria-label="Ayna">AYNA</span>
             </h1>
             <ScrollReveal className="stagger-1">
-              <span className="ayna-eyebrow" style={{ textAlign: 'center', display: 'block', width: '100%' }}>
-                Women&apos;s health, personalized
-              </span>
-              <RotatingWordHeadline
-                layout="stacked"
-                as="div"
-                style={{
-                  marginTop: '0.35rem',
-                  marginBottom: 'var(--spacing-lg)',
-                }}
-              />
-            </ScrollReveal>
-
-            <ScrollReveal className="stagger-2">
-              <p
-                className="ayna-landing__body"
-                style={{
-                  maxWidth: '640px',
-                  margin: '0 auto 2.5rem',
-                }}
-              >
-                Ayna builds your health ecosystem using clinical guidance, community signal, and evidence — so
-                you can find products and care that fit you, from big names and small brands alike.
-              </p>
+              <div className="welcome-gate__second-text-stack">
+                <span className="ayna-eyebrow welcome-gate__second-eyebrow">
+                  Women&apos;s health, personalized
+                </span>
+                <RotatingWordHeadline layout="stacked" as="div" />
+                <p className="ayna-landing__body welcome-gate__second-lead">
+                  Ayna builds your health ecosystem using clinical guidance, community signal, and evidence — so
+                  you can find products and care that fit you, from big names and small brands alike.
+                </p>
+              </div>
             </ScrollReveal>
 
             <ScrollReveal className="stagger-3">
