@@ -5,7 +5,7 @@ import { getHowToUseContent } from '../data/productHowToUse';
 import { getAynaRating } from '../data/aynaReviews';
 import { fetchProductInsights } from '../utils/fetchProductInsights';
 import { buildUserHealthContextString } from '../utils/userHealthContextForInsights';
-import { buildProfileTailoring } from '../utils/profileProductTailoring';
+import { buildProfileTailoring, getIngredientSafetyFlags } from '../utils/profileProductTailoring';
 import { fetchFdaRecall } from '../utils/fetchFdaRecall';
 import { fetchPubmedArticles } from '../utils/fetchPubmedArticles';
 import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
@@ -1199,6 +1199,9 @@ export default function ProductModal({
                                                 }}
                                             >
                                                 {block.bullets.map((line, i) => (
+                                                    (() => {
+                                                        const isWarning = String(line || '').trim().startsWith('**⚠️');
+                                                        return (
                                                     <li
                                                         key={i}
                                                         style={{
@@ -1206,10 +1209,19 @@ export default function ProductModal({
                                                             lineHeight: 1.55,
                                                             marginBottom: i < block.bullets.length - 1 ? '0.55rem' : 0,
                                                             paddingLeft: '0.2rem',
+                                                            listStyleType: isWarning ? 'none' : undefined,
+                                                            marginLeft: isWarning ? '-0.9rem' : undefined,
+                                                            padding: isWarning ? '0.5rem 0.65rem' : undefined,
+                                                            background: isWarning ? '#FFFBEB' : undefined,
+                                                            border: isWarning ? '1px solid #FDE68A' : undefined,
+                                                            borderRadius: isWarning ? 'var(--radius-md)' : undefined,
+                                                            color: isWarning ? '#92400E' : undefined,
                                                         }}
                                                     >
                                                         {renderRichText(line)}
                                                     </li>
+                                                        );
+                                                    })()
                                                 ))}
                                             </ul>
                                         ) : block.body ? (
@@ -1223,6 +1235,22 @@ export default function ProductModal({
                             <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', margin: '0.75rem 0 0', lineHeight: 1.45 }}>
                                 Quick read before you buy—not medical advice.
                             </p>
+                        </div>
+                    )}
+                    {product.llmGenerated && product.considerations && (
+                        <div
+                            style={{
+                                padding: '0.6rem 0.75rem',
+                                background: '#FFFBEB',
+                                border: '1px solid #FDE68A',
+                                borderRadius: 'var(--radius-md)',
+                                fontSize: '0.8rem',
+                                color: '#92400E',
+                                marginBottom: '0.5rem',
+                                marginTop: '0.75rem',
+                            }}
+                        >
+                            ⚠️ {product.considerations}
                         </div>
                     )}
 
@@ -1527,6 +1555,43 @@ export default function ProductModal({
                                     )}
                             </div>
                             )}
+                            {(() => {
+                                const conditions = [
+                                    ...(quizResults?.fullHealthIntake?.conditions || []),
+                                    ...(healthProfile?.conditions || []),
+                                ].filter(Boolean);
+                                const flags = getIngredientSafetyFlags(
+                                    product,
+                                    conditions,
+                                    quizResults?.sensitivities || [],
+                                    quizResults?.productsToAvoid || []
+                                );
+                                if (!flags.length) return null;
+                                return (
+                                    <div style={{ marginTop: '0.75rem' }}>
+                                        <div style={{ fontSize: '0.78rem', fontWeight: '700', color: '#92400E', marginBottom: '0.4rem' }}>
+                                            ⚠️ Ingredient flags for your profile
+                                        </div>
+                                        {flags.map((flag, i) => (
+                                            <div
+                                                key={i}
+                                                style={{
+                                                    padding: '0.5rem 0.75rem',
+                                                    background: '#FFFBEB',
+                                                    border: '1px solid #FDE68A',
+                                                    borderRadius: 'var(--radius-md)',
+                                                    fontSize: '0.78rem',
+                                                    color: '#92400E',
+                                                    marginBottom: '0.35rem',
+                                                    lineHeight: 1.4,
+                                                }}
+                                            >
+                                                {flag.replace(/\*\*/g, '')}
+                                            </div>
+                                        ))}
+                                    </div>
+                                );
+                            })()}
                         </div>
                     )}
 

@@ -203,6 +203,24 @@ export default function HealthIntakeForm({ onComplete }) {
             type: 'single',
             options: CONCERN_FOLLOWUP_DEFAULT_HISTORY_OPTIONS,
           },
+          {
+            id: `cf__${slug}__ingredients`,
+            question: `${concern}: are there any ingredients you want Ayna to watch out for?`,
+            subtitle: 'Optional - helps Ayna flag unsafe ingredients in product cards',
+            type: 'multi',
+            options: withNoneAndOther([
+              'synthetic fragrance / perfume',
+              'parabens',
+              'BPA / plastic applicators',
+              'chlorine-bleached cotton',
+              'glycerin',
+              'dyes / colorants',
+              'retinol / vitamin A (if pregnant or TTC)',
+              'high-dose herbs (vitex, black cohosh)',
+              'gluten (celiac)',
+              'soy',
+            ]),
+          },
         ];
       });
     const all = [

@@ -1,4 +1,5 @@
 /* global process */
+import { retrieveKnowledgeForIntake, buildKnowledgeContext } from '../src/utils/ragRetrieval.js';
 
 function anyApiKeyConfigured() {
   return !!(process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY);
@@ -178,6 +179,8 @@ async function lookupDsldProduct(name) {
 function buildPrompt(intake = {}, feedback = {}) {
   const concerns = selectedConcerns(intake);
   const concernFollowups = intake?.concernFollowups && typeof intake.concernFollowups === 'object' ? intake.concernFollowups : {};
+  const knowledgeChunks = retrieveKnowledgeForIntake(intake, 8);
+  const knowledgeContext = buildKnowledgeContext(knowledgeChunks);
 
   return `
 You are Ayna's recommendation engine. Ayna is a women's health product platform. Your job is to act like a knowledgeable women's health expert and recommend the BEST real products available for this specific user based on her health profile.
@@ -210,35 +213,20 @@ LEARNING SIGNALS:
 - Times she has used Ayna: ${feedback?.learningMemory?.interactionCount || 0}
 - Last concerns she viewed: ${(feedback?.learningMemory?.lastConcerns || []).join(', ') || 'none'}
 
-CLINICAL AUTHORITY SOURCES:
-When generating recommendations and writing whyItWorks and considerations, ground your reasoning in guidance from these authoritative sources where relevant:
-- ACOG (American College of Obstetricians and Gynecologists) — the gold standard for OB/GYN clinical guidance in the US. Reference ACOG guidance for: menstrual disorders, PCOS, endometriosis, menopause, perimenopause, fertility, contraception, postpartum health, UTIs, and pelvic floor conditions.
-- UpToDate — evidence-based clinical decision support used by clinicians at point of care. Reference when describing how clinicians approach a condition or product category.
-- OpenEvidence — medical AI grounded in NEJM, JAMA, NCCN, Cochrane, and peer-reviewed literature. Reference when describing the quality of evidence for a product category.
-- NIH Office of Dietary Supplements — the authoritative US source for supplement safety, ingredient data, and evidence quality. Reference for all supplement recommendations.
-- FDA — device safety, recall status, and regulatory standing for devices and period care products.
-- PubMed / NCBI — peer-reviewed biomedical literature. Reference when describing the research base for a product category.
-- Cochrane Reviews — systematic review evidence for supplement and device categories.
+${knowledgeContext ? `${knowledgeContext}\n\n` : ''}PRODUCT SELECTION PROCESS — follow this for every concern:
+1. Read the clinical knowledge base above carefully — it contains ACOG guidance, NIH ODS evidence, and safety information specific to this user's conditions
+2. Identify what the clinical knowledge says about this concern for this specific user's profile
+3. Draw on your full knowledge of ALL brands that make products in that category — large mainstream, small indie, DTC, clinical brands
+4. Rank candidates by: (a) alignment with clinical guidance above, (b) ingredient safety for her specific conditions, (c) relevance to her profile, (d) availability in the US market
+5. Recommend the single best match — grounded in the clinical knowledge provided, not just general AI memory
 
-HOW TO REFERENCE THESE SOURCES:
-- In whyItWorks: include one short phrase grounding the recommendation in clinical evidence, e.g. "consistent with ACOG guidance on PCOS management" or "aligned with NIH ODS evidence on magnesium for menstrual pain"
-- In considerations: reference ACOG or FDA guidance when flagging safety concerns, e.g. "ACOG advises discussing with your clinician before starting" or "FDA has no active recalls for this product category"
-- In notes: include a source-grounded note where relevant, e.g. "ACOG recommends tracking symptoms before trying supplements for menstrual disorders"
-- NEVER fabricate a specific bulletin number, PMID, guideline number, or direct quote
-- ONLY say "consistent with" or "aligned with" or "supported by" — never claim to be directly quoting
-- Only reference an organization when you are confident their guidance genuinely covers this area
-
-EDITORIAL REVIEW SOURCES:
-When selecting products, factor in evaluations from trusted independent reviewers:
-- NYT Wirecutter — lab-tested reviews for menstrual products (period underwear, tampons, cups, discs), fitness trackers, and health gear. If a product is a Wirecutter top pick or has been positively reviewed there, mention it in whyItWorks.
-- InStyle — expert-tested reviews for period underwear and personal care products.
-If a recommended product was reviewed or tested by these outlets, note it briefly (e.g. "Wirecutter top pick" or "reviewed favorably by independent outlets"). This helps users trust the recommendation.
-
-PRODUCT SELECTION PROCESS — follow this for every concern:
-1. Identify what category of product would genuinely help this user's specific concern and profile
-2. Draw on your full knowledge of ALL brands that make products in that category — large mainstream brands, small indie brands, DTC brands, clinical brands, everything
-3. Rank candidates by: (a) clinical reputation and safety record, (b) relevance to this user's specific conditions and preferences, (c) availability in the US market, (d) user and community reputation, (e) independent editorial reviews (e.g. Wirecutter, InStyle)
-4. Recommend the single best match — not the most popular product, the most relevant one for her specific profile
+INGREDIENT SAFETY RULES — apply these based on her conditions:
+- If she has endometriosis: flag any product containing synthetic fragrance, dioxins, chlorine-bleached materials, BPA, or parabens in the considerations field
+- If she has PCOS: flag endocrine disruptors (synthetic fragrance, parabens, BPA, phthalates) in considerations; prioritize hormone-balancing ingredients
+- If she is trying to conceive: flag retinol/high-dose vitamin A, St. John's Wort, high-dose vitamin E; note folate requirements
+- If she has vaginismus or vulvodynia: flag glycerin and fragranced lubricants; recommend pH-balanced, paraben-free options
+- For ALL supplement recommendations: include the key active ingredients and note any relevant NIH ODS evidence level in whyItWorks
+- For ALL period care recommendations: note if the product is organic/unbleached/fragrance-free and why that matters for her specific conditions
 
 TASK:
 For each of her primary concerns, generate MULTIPLE solution tracks (at least 3 when realistic for that concern), such as:

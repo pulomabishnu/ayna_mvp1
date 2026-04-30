@@ -4,12 +4,22 @@ export const CYCLE_STATUSES = ['yes', 'no', 'irregular'];
 
 export const CYCLE_SYMPTOMS = [
   'cramps',
+  'severe cramps',
   'bloating',
   'headaches',
+  'migraines',
   'mood changes',
+  'anxiety before period',
+  'depression before period',
   'fatigue',
+  'brain fog',
   'clots',
-  'spotting',
+  'spotting between periods',
+  'breast tenderness',
+  'back pain',
+  'nausea',
+  'diarrhea during period',
+  'insomnia before period',
 ];
 
 export const DIAGNOSED_CONDITIONS = [
@@ -19,11 +29,18 @@ export const DIAGNOSED_CONDITIONS = [
   'adenomyosis',
   'perimenopause',
   'menopause',
-  'thyroid disorder',
-  'anemia',
+  'thyroid disorder (hypothyroid)',
+  'thyroid disorder (hyperthyroid)',
+  'anemia / iron deficiency',
   'vaginismus',
   'vulvodynia',
   'interstitial cystitis',
+  'PMDD',
+  'chronic pelvic pain',
+  'ovarian cysts',
+  'hypothalamic amenorrhea',
+  'premature ovarian insufficiency',
+  'MTHFR gene variant',
   'none',
   'other',
 ];
@@ -31,10 +48,16 @@ export const DIAGNOSED_CONDITIONS = [
 export const PRODUCT_PREFERENCES = [
   'organic',
   'fragrance-free',
+  'dye-free',
+  'paraben-free',
+  'BPA-free',
   'vegan',
   'cruelty-free',
   'sustainable/eco-friendly',
   'budget-conscious',
+  'clinically studied ingredients',
+  'third-party tested',
+  'minimal ingredients',
 ];
 
 export const PREFERRED_PRODUCT_TYPES = [
@@ -54,8 +77,14 @@ export const GOALS = [
   'manage symptoms',
   'track my cycle',
   'understand my condition',
-  'find a provider',
+  'find a provider or specialist',
   'build my health routine',
+  'reduce chemical exposure',
+  'support fertility / TTC',
+  'manage perimenopause or menopause',
+  'improve my gut or vaginal health',
+  'find mental health support for cycle symptoms',
+  'learn what ingredients to avoid for my conditions',
 ];
 
 export const CONCERN_AREAS = [
@@ -101,7 +130,7 @@ const GOAL_TO_FRUSTRATION = {
   'manage symptoms': 'General discomfort',
   'track my cycle': 'Irregular cycles',
   'understand my condition': 'General discomfort',
-  'find a provider': 'General discomfort',
+  'find a provider or specialist': 'General discomfort',
   'build my health routine': 'General discomfort',
 };
 

@@ -5,6 +5,7 @@
 /* global process */
 
 import { deriveBrandSearchContext } from '../src/utils/productBrandContext.js';
+import { retrieveKnowledgeForProduct, buildKnowledgeContext } from '../src/utils/ragRetrieval.js';
 import { checkProductInsightsRateLimit } from './rateLimitProductInsights.js';
 
 const MAX_NARRATIVE_LEN = 2200;
@@ -79,6 +80,10 @@ Tailoring rules when reader context is present:
 - If context is irrelevant to this product type, keep text generic as usual.
 `
       : '';
+  const conditionMatches = (userContextText || '').match(/conditions?:\s*([^\n.]+)/i);
+  const conditions = conditionMatches ? conditionMatches[1].split(',').map((s) => s.trim()) : [];
+  const productKnowledge = retrieveKnowledgeForProduct(product, { conditions }, 4);
+  const productKnowledgeContext = buildKnowledgeContext(productKnowledge);
 
   return `Product context (for educational writing only):
 - Name: ${name}
@@ -111,13 +116,13 @@ HOW TO USE THESE SOURCES:
 - Only reference an organization when confident their guidance genuinely covers this area
 - If clinical authority is not relevant to this product type, skip this block
 
-Return a SINGLE JSON object with this exact shape (no markdown, no URLs anywhere in any field):
+${productKnowledgeContext ? `${productKnowledgeContext}\n\n` : ''}Return a SINGLE JSON object with this exact shape (no markdown, no URLs anywhere in any field):
 {
-  "clinicalNarrative": "2-4 sentences: neutral clinical / product-category context. Educational only. No diagnosis or treatment instructions for the reader. When reader context is provided, open with one short clause on relevance to their profile when appropriate.",
+  "clinicalNarrative": "2-4 sentences grounded in the clinical knowledge base above. Reference ACOG, NIH ODS, or Cochrane where the knowledge supports it. When reader context is present, open with one clause on relevance to their specific conditions. Educational only - no diagnosis.",
   "scienceSummary": "1-2 sentences: how evidence or trials are typically discussed for this category (not about this specific product unless clearly a named drug/device). Mention evidence limitations when the reader has complex conditions and evidence may not be product-specific.",
   "communitySummary": "1-2 sentences: how patients often discuss this topic in forums — clearly anecdotal, not factual claims. If reader sensitivities apply (e.g. fragrance), note that forum posts are unverified.",
   "quickOverviewPros": ["2-4 concise bullets, each explicitly tied to the reader context when possible"],
-  "quickOverviewCons": ["2-4 concise bullets on cautions, downsides, or mismatch risks for this specific reader"],
+  "quickOverviewCons": ["2-4 bullets on ingredient safety concerns, contraindications, or mismatch risks SPECIFIC to this reader's conditions - use the clinical knowledge base above to identify relevant ingredient flags for their conditions"],
   "quickOverviewFit": ["1-2 concise bullets stating why this is or is not a good fit for this reader profile"],
   "pubmedSearchQueries": ["short search phrase 1", "short search phrase 2"],
   "patientEducationQueries": ["plain phrase for patient-education search 1"],
