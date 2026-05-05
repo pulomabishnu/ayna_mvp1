@@ -4,6 +4,7 @@ import { getSupabaseClient } from '../utils/supabaseClient';
 const SUBTITLES = {
   quiz: 'Create an account to save your health profile and keep your ecosystem across sessions.',
   browse: 'Create an account to save your discoveries and track products over time.',
+  login: 'Welcome back. Sign in to access your health ecosystem.',
   default: 'Your personal women\'s health manager',
 };
 
@@ -162,7 +163,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
           By continuing, you agree that your data is stored securely and never sold.
         </p>
 
-        {isModal && onSkip && (
+        {isModal && onSkip && context !== 'login' && (
           <button type="button" onClick={onSkip} style={styles.skipBtn}>
             Skip for now
           </button>

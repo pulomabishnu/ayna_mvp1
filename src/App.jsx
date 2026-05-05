@@ -59,6 +59,8 @@ function App() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [pendingAction, setPendingAction] = useState(null);
   const [pendingQuizResults, setPendingQuizResults] = useState(null);
+  const [showAccountMenu, setShowAccountMenu] = useState(false);
+  const accountMenuRef = useRef(null);
   const scrollY = useScrollPosition();
 
   const hasHealthImport = useMemo(() => hasHealthProfileSignals(healthProfile), [healthProfile]);
@@ -137,9 +139,29 @@ function App() {
       setPendingQuizResults(null);
     } else if (pendingAction === 'browse') {
       handleViewDiscovery('');
+    } else if (pendingAction === 'login') {
+      setCurrentView('ecosystem');
     }
     setPendingAction(null);
   }, [user, pendingAction]);
+
+  useEffect(() => {
+    if (!showAccountMenu) return;
+    const close = (e) => {
+      if (accountMenuRef.current && !accountMenuRef.current.contains(e.target)) setShowAccountMenu(false);
+    };
+    document.addEventListener('pointerdown', close);
+    return () => document.removeEventListener('pointerdown', close);
+  }, [showAccountMenu]);
+
+  const PROTECTED_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls', 'doctor-prep', 'profile-edit', 'tracked', 'screenings'];
+  useEffect(() => {
+    if (!authLoading && !user && PROTECTED_VIEWS.includes(currentView)) {
+      setCurrentView('welcome');
+      setPendingAction('login');
+      setShowAuthModal(true);
+    }
+  }, [user, currentView, authLoading]);
 
   React.useEffect(() => {
     let active = true;
@@ -576,29 +598,58 @@ function App() {
                 fontSize: '0.75rem', fontWeight: '600', padding: '0.25rem 0.5rem',
                 background: 'var(--color-secondary-fade)', color: 'var(--color-primary)',
                 borderRadius: 'var(--radius-pill)', border: '1px solid var(--color-primary)',
-                opacity: 1
               }}
               onClick={() => setShowCheckin(true)}
             >
               Check-in
             </button>
-            {user && (
-              <>
-                <span style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', maxWidth: '140px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {user.email}
-                </span>
+            {user ? (
+              <div ref={accountMenuRef} style={{ position: 'relative' }}>
                 <button
-                  onClick={() => getSupabaseClient()?.auth.signOut()}
+                  onClick={() => setShowAccountMenu(v => !v)}
                   style={{
-                    fontSize: '0.7rem', fontWeight: '500', padding: '0.2rem 0.5rem',
-                    background: 'transparent', color: 'var(--color-text-muted)',
-                    borderRadius: 'var(--radius-pill)', border: '1px solid var(--color-border)',
-                    cursor: 'pointer',
+                    fontSize: '0.75rem', fontWeight: '600', padding: '0.25rem 0.6rem',
+                    background: 'var(--color-primary)', color: 'var(--color-text-light)',
+                    borderRadius: 'var(--radius-pill)', border: 'none', cursor: 'pointer',
                   }}
                 >
-                  Sign out
+                  Account
                 </button>
-              </>
+                {showAccountMenu && (
+                  <div style={{
+                    position: 'absolute', right: 0, top: 'calc(100% + 6px)',
+                    background: 'var(--color-surface)', border: '1px solid var(--color-border)',
+                    borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-md)',
+                    padding: '0.9rem 1.1rem', minWidth: '200px', zIndex: 200,
+                    display: 'flex', flexDirection: 'column', gap: '0.6rem',
+                  }}>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', wordBreak: 'break-all', lineHeight: 1.4 }}>
+                      {user.email}
+                    </span>
+                    <button
+                      onClick={() => { getSupabaseClient()?.auth.signOut(); setShowAccountMenu(false); }}
+                      style={{
+                        fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-primary)',
+                        background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+                        textAlign: 'left',
+                      }}
+                    >
+                      Log out
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <button
+                onClick={() => { setPendingAction('login'); setShowAuthModal(true); }}
+                style={{
+                  fontSize: '0.75rem', fontWeight: '600', padding: '0.25rem 0.6rem',
+                  background: 'var(--color-primary)', color: 'var(--color-text-light)',
+                  borderRadius: 'var(--radius-pill)', border: 'none', cursor: 'pointer',
+                }}
+              >
+                Log in
+              </button>
             )}
           </div>
         </nav>
@@ -823,7 +874,7 @@ function App() {
         {showAuthModal && (
           <AuthGate
             isModal
-            context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : undefined}
+            context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : pendingAction === 'login' ? 'login' : undefined}
             onBeforeOAuthRedirect={pendingAction === 'quiz-complete' && pendingQuizResults ? () => {
               try { sessionStorage.setItem('ayna_pending_quiz_results', JSON.stringify(pendingQuizResults)); } catch (_) {}
             } : undefined}
