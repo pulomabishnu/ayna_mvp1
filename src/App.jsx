@@ -90,9 +90,16 @@ function App() {
   React.useEffect(() => {
     const supabase = getSupabaseClient();
     if (!supabase) { setAuthLoading(false); return; }
-    // If this is the OAuth popup, let Supabase exchange the code then close.
+    // If this is the OAuth popup, wait for SIGNED_IN then close.
     if (window.opener) {
-      supabase.auth.getSession().then(() => window.close());
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+          subscription.unsubscribe();
+          window.close();
+        }
+      });
+      // Fallback: close after 8s regardless so the popup never hangs.
+      setTimeout(() => window.close(), 8000);
       return;
     }
     supabase.auth.getSession().then(({ data: { session } }) => {
