@@ -75,22 +75,14 @@ function App() {
     setAynaReviews(loadAynaReviews());
   }, []);
 
-  // Read pending action from URL params — encoded before OAuth redirect and
-  // guaranteed to survive the full redirect chain unlike sessionStorage.
+  // Restore quiz results saved before a Google OAuth redirect.
   React.useEffect(() => {
     try {
-      const params = new URLSearchParams(window.location.search);
-      const pending = params.get('_ayna');
-      if (pending) {
-        setPendingAction(decodeURIComponent(pending));
-        window.history.replaceState(null, '', window.location.pathname);
-        if (pending === 'quiz-complete') {
-          const storedQuiz = sessionStorage.getItem('ayna_pending_quiz_results');
-          if (storedQuiz) {
-            setPendingQuizResults(JSON.parse(storedQuiz));
-            sessionStorage.removeItem('ayna_pending_quiz_results');
-          }
-        }
+      const storedQuiz = sessionStorage.getItem('ayna_pending_quiz_results');
+      if (storedQuiz) {
+        setPendingQuizResults(JSON.parse(storedQuiz));
+        setPendingAction('quiz-complete');
+        sessionStorage.removeItem('ayna_pending_quiz_results');
       }
     } catch (_) {}
   }, []);
@@ -102,8 +94,11 @@ function App() {
       setUser(session?.user ?? null);
       setAuthLoading(false);
     });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
+      if (event === 'SIGNED_IN' && session?.user) {
+        setCurrentView('ecosystem');
+      }
       if (!session) {
         setMyProducts({});
         setTrackedProducts({});
@@ -869,9 +864,6 @@ function App() {
           <AuthGate
             isModal
             context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : pendingAction === 'login' ? 'login' : undefined}
-            redirectTo={pendingAction
-              ? `${window.location.origin}?_ayna=${encodeURIComponent(pendingAction)}`
-              : window.location.origin}
             onBeforeOAuthRedirect={pendingAction === 'quiz-complete' && pendingQuizResults ? () => {
               try { sessionStorage.setItem('ayna_pending_quiz_results', JSON.stringify(pendingQuizResults)); } catch (_) {}
             } : undefined}
