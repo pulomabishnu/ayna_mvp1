@@ -41,15 +41,20 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
   };
 
   const handleGoogle = async () => {
+    if (!supabase) {
+      setError('Supabase is not configured. Check environment variables.');
+      return;
+    }
     setError('');
     setGoogleLoading(true);
     try {
       if (onBeforeOAuthRedirect) onBeforeOAuthRedirect();
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: { redirectTo: window.location.origin },
       });
       if (error) throw error;
+      if (!data?.url) throw new Error('No redirect URL returned from Supabase. Check Google provider is enabled in Supabase dashboard.');
     } catch (err) {
       setError(err.message || 'Could not sign in with Google.');
       setGoogleLoading(false);
@@ -146,7 +151,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
         <button
           type="button"
           onClick={handleGoogle}
-          disabled={googleLoading || !supabase}
+          disabled={googleLoading}
           style={styles.googleBtn}
         >
           <GoogleIcon />
