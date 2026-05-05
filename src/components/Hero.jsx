@@ -67,7 +67,7 @@ export default function Hero({ onStartQuiz, onViewWaitlist: _onViewWaitlist, onV
               Join the waitlist
             </a>
           </ScrollReveal>
-          <ScrollReveal className="stagger-1">
+          <div className="welcome-gate__page welcome-gate__page--second">
             <h1
               className="ayna-landing-hero-welcome"
               style={{
@@ -79,40 +79,28 @@ export default function Hero({ onStartQuiz, onViewWaitlist: _onViewWaitlist, onV
               <span className="ayna-landing-welcome-lead">Welcome to </span>
               <span className="ayna-landing-ayna-wordmark" aria-label="Ayna">AYNA</span>
             </h1>
-            <span
-              className="ayna-eyebrow"
-              style={{ textAlign: 'center', display: 'block', width: '100%' }}
-            >
-              Women&apos;s health, personalized
-            </span>
-            <RotatingWordHeadline
-              style={{
-                maxWidth: '900px',
-                marginBottom: '0.75rem',
-              }}
-            />
-            <h2
-              style={{
-                marginBottom: 'var(--spacing-md)',
-              }}
-            >
-              What are you looking for today?
-            </h2>
-          </ScrollReveal>
-
-          <ScrollReveal className="stagger-2">
-            <p
-              className="ayna-landing__body"
-              style={{
-                maxWidth: '680px',
-                margin: '0 auto 3rem',
-              }}
-            >
-              Build a personalized ecosystem of women’s health products, talk or type your needs, import
-              records and wearable summaries, and find telehealth and nearby care matched to your symptoms —
-              all in one place.
-            </p>
-          </ScrollReveal>
+            <ScrollReveal className="stagger-1">
+              <div className="welcome-gate__second-text-stack">
+                <span className="ayna-eyebrow welcome-gate__second-eyebrow">
+                  Women&apos;s health, personalized
+                </span>
+                <RotatingWordHeadline layout="stacked" as="div" />
+                <p className="ayna-landing__body welcome-gate__second-lead">
+                  Ayna builds your health ecosystem using clinical guidance, community signal, and evidence — so
+                  you can find products and care that fit you, from big names and small brands alike.
+                </p>
+              </div>
+            </ScrollReveal>
+            <ScrollReveal className="stagger-2">
+              <h2
+                style={{
+                  marginBottom: 'var(--spacing-md)',
+                }}
+              >
+                What are you looking for today?
+              </h2>
+            </ScrollReveal>
+          </div>
 
           <ScrollReveal className="stagger-3">
             <div

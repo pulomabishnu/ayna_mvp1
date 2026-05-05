@@ -25,6 +25,11 @@ import ProfileChatbot from './components/ProfileChatbot';
 import { loadHealthProfile, hasHealthProfileSignals } from './utils/healthDataProfile';
 import { loadHealthIntakeForCurrentUser } from './utils/healthIntakeStore';
 import { mapIntakeToLegacyQuizProfile } from './utils/healthIntake';
+import AuthGate from './components/AuthGate';
+import { getSupabaseClient } from './utils/supabaseClient';
+import { loadEcosystemForUser, upsertProductState } from './utils/ecosystemStore';
+import { loadLearningMemoryForUser, saveLearningMemoryForUser } from './utils/learningMemoryStore';
+import { loadReviewsForUser, upsertProductReviews } from './utils/reviewsStore';
 
 const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls'];
 
@@ -48,6 +53,9 @@ function App() {
   const [healthProfile, setHealthProfile] = useState(() => loadHealthProfile());
   const [ecosystemSeedMeta, setEcosystemSeedMeta] = useState({});
   const [welcomeSubPhase, setWelcomeSubPhase] = useState('intro');
+  const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
+  const [dataLoading, setDataLoading] = useState(false);
   const scrollY = useScrollPosition();
 
   const hasHealthImport = useMemo(() => hasHealthProfileSignals(healthProfile), [healthProfile]);
@@ -61,6 +69,41 @@ function App() {
   React.useEffect(() => {
     setAynaReviews(loadAynaReviews());
   }, []);
+
+  React.useEffect(() => {
+    const supabase = getSupabaseClient();
+    if (!supabase) { setAuthLoading(false); return; }
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      setAuthLoading(false);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  React.useEffect(() => {
+    if (!user) return;
+    const supabase = getSupabaseClient();
+    if (!supabase) return;
+    setDataLoading(true);
+    Promise.all([
+      loadEcosystemForUser(supabase, user.id).catch(() => null),
+      loadReviewsForUser(supabase, user.id).catch(() => null),
+      loadLearningMemoryForUser(supabase, user.id).catch(() => null),
+    ]).then(([ecosystem, reviews, memory]) => {
+      if (ecosystem) {
+        setMyProducts(ecosystem.myProducts);
+        setTrackedProducts(ecosystem.trackedProducts);
+        setOmittedProducts(ecosystem.omittedProducts);
+      }
+      if (reviews) setAynaReviews(reviews);
+      if (memory) {
+        try { localStorage.setItem('ayna_llm_learning_memory_v1', JSON.stringify(memory)); } catch (_) {}
+      }
+    }).finally(() => setDataLoading(false));
+  }, [user?.id]);
 
   React.useEffect(() => {
     let active = true;
@@ -216,8 +259,16 @@ function App() {
   const toggleTrackProduct = (product) => {
     setTrackedProducts(prev => {
       const next = { ...prev };
-      if (next[product.id]) delete next[product.id];
+      const wasTracked = !!next[product.id];
+      if (wasTracked) delete next[product.id];
       else next[product.id] = product;
+      if (user) {
+        upsertProductState(getSupabaseClient(), user.id, product, {
+          inEcosystem: !!myProducts[product.id],
+          isTracked: !wasTracked,
+          isOmitted: !!omittedProducts[product.id],
+        }).catch(console.error);
+      }
       return next;
     });
   };
@@ -234,8 +285,16 @@ function App() {
   const toggleMyProduct = (product) => {
     setMyProducts(prev => {
       const next = { ...prev };
-      if (next[product.id]) delete next[product.id];
+      const wasIn = !!next[product.id];
+      if (wasIn) delete next[product.id];
       else next[product.id] = product;
+      if (user) {
+        upsertProductState(getSupabaseClient(), user.id, product, {
+          inEcosystem: !wasIn,
+          isTracked: !!trackedProducts[product.id],
+          isOmitted: !!omittedProducts[product.id],
+        }).catch(console.error);
+      }
       return next;
     });
   };
@@ -245,11 +304,24 @@ function App() {
       const next = { ...prev };
       if (next[product.id]) {
         delete next[product.id];
+        if (user) {
+          upsertProductState(getSupabaseClient(), user.id, product, {
+            inEcosystem: !!myProducts[product.id],
+            isTracked: !!trackedProducts[product.id],
+            isOmitted: false,
+          }).catch(console.error);
+        }
       } else {
         next[product.id] = product;
-        // Also remove from tracked/ecosystem if omitted
         setTrackedProducts(curr => { const n = { ...curr }; delete n[product.id]; return n; });
         setMyProducts(curr => { const n = { ...curr }; delete n[product.id]; return n; });
+        if (user) {
+          upsertProductState(getSupabaseClient(), user.id, product, {
+            inEcosystem: false,
+            isTracked: false,
+            isOmitted: true,
+          }).catch(console.error);
+        }
       }
       return next;
     });
@@ -258,6 +330,12 @@ function App() {
   const handleLlmRecommendationsLoaded = (recommendations) => {
     if (!hasCompletedPersonalization) return;
     if (!Array.isArray(recommendations) || recommendations.length === 0) return;
+    if (user) {
+      try {
+        const memory = JSON.parse(localStorage.getItem('ayna_llm_learning_memory_v1') || 'null');
+        if (memory) saveLearningMemoryForUser(getSupabaseClient(), user.id, memory).catch(console.error);
+      } catch (_) {}
+    }
   };
 
   const [selectedProductModal, setSelectedProductModal] = useState(null);
@@ -305,12 +383,39 @@ function App() {
   const handleRateProduct = (product, rating) => {
     const next = addRating(product.id, rating);
     setAynaReviews(next);
+    if (user && next[product.id]) {
+      upsertProductReviews(getSupabaseClient(), user.id, product.id, next[product.id]).catch(console.error);
+    }
   };
 
   const handleReviewProduct = (product, text) => {
     const next = addReview(product.id, text);
     setAynaReviews(next);
+    if (user && next[product.id]) {
+      upsertProductReviews(getSupabaseClient(), user.id, product.id, next[product.id]).catch(console.error);
+    }
   };
+
+  if (authLoading) {
+    return (
+      <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-bg)' }}>
+        <span style={{ fontFamily: 'var(--font-heading)', color: 'var(--color-primary)', fontSize: '1.5rem', fontWeight: 700 }}>Ayna</span>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <AuthGate />;
+  }
+
+  if (dataLoading) {
+    return (
+      <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'var(--color-bg)', gap: '0.75rem' }}>
+        <span style={{ fontFamily: 'var(--font-heading)', color: 'var(--color-primary)', fontSize: '1.5rem', fontWeight: 700 }}>Ayna</span>
+        <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>Loading your health profile…</span>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -438,6 +543,20 @@ function App() {
               onClick={() => setShowCheckin(true)}
             >
               Check-in
+            </button>
+            <span style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', maxWidth: '140px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {user.email}
+            </span>
+            <button
+              onClick={() => getSupabaseClient()?.auth.signOut()}
+              style={{
+                fontSize: '0.7rem', fontWeight: '500', padding: '0.2rem 0.5rem',
+                background: 'transparent', color: 'var(--color-text-muted)',
+                borderRadius: 'var(--radius-pill)', border: '1px solid var(--color-border)',
+                cursor: 'pointer',
+              }}
+            >
+              Sign out
             </button>
           </div>
         </nav>
@@ -652,6 +771,19 @@ function App() {
           />
         )}
       </main>
+      {!hideWelcomeIntroChrome && (
+        <footer style={{
+          padding: '1.25rem 1.5rem',
+          textAlign: 'center',
+          fontSize: '0.72rem',
+          color: 'var(--color-text-muted)',
+          lineHeight: 1.6,
+          borderTop: '1px solid var(--color-border)',
+          marginTop: '2rem',
+        }}>
+          Ayna provides wellness information only. Nothing on this platform is medical advice. Always consult a qualified healthcare provider for medical decisions. By using Ayna, you agree that your data is stored securely and never sold.
+        </footer>
+      )}
     </div>
   );
 }
