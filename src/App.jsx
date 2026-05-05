@@ -23,7 +23,7 @@ import { enrichLlmProductForDiscovery } from './utils/enrichLlmProductForDiscove
 import Articles from './components/Articles';
 import ProfileChatbot from './components/ProfileChatbot';
 import { loadHealthProfile, hasHealthProfileSignals } from './utils/healthDataProfile';
-import { loadHealthIntakeForCurrentUser } from './utils/healthIntakeStore';
+import { loadHealthIntakeForCurrentUser, saveHealthIntakeForCurrentUser } from './utils/healthIntakeStore';
 import { mapIntakeToLegacyQuizProfile } from './utils/healthIntake';
 import AuthGate from './components/AuthGate';
 import { getSupabaseClient } from './utils/supabaseClient';
@@ -125,7 +125,8 @@ function App() {
       loadEcosystemForUser(supabase, user.id).catch(() => null),
       loadReviewsForUser(supabase, user.id).catch(() => null),
       loadLearningMemoryForUser(supabase, user.id).catch(() => null),
-    ]).then(([ecosystem, reviews, memory]) => {
+      loadHealthIntakeForCurrentUser().catch(() => null),
+    ]).then(([ecosystem, reviews, memory, intake]) => {
       if (ecosystem) {
         setMyProducts(ecosystem.myProducts);
         setTrackedProducts(ecosystem.trackedProducts);
@@ -134,6 +135,9 @@ function App() {
       if (reviews) setAynaReviews(reviews);
       if (memory) {
         try { localStorage.setItem('ayna_llm_learning_memory_v1', JSON.stringify(memory)); } catch (_) {}
+      }
+      if (intake?.personalizationCompleted) {
+        setQuizResults(mapIntakeToLegacyQuizProfile(intake));
       }
     }).finally(() => setDataLoading(false));
   }, [user?.id]);
@@ -146,6 +150,7 @@ function App() {
       const { seedMeta } = getEcosystemSeedFromQuiz(pendingQuizResults, healthProfile);
       setEcosystemSeedMeta(seedMeta);
       setCurrentView('ecosystem');
+      saveHealthIntakeForCurrentUser(pendingQuizResults).catch(console.error);
       setPendingQuizResults(null);
     } else if (pendingAction === 'browse') {
       handleViewDiscovery('');
