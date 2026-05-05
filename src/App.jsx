@@ -89,6 +89,11 @@ function App() {
             setPendingAction('quiz-complete');
             sessionStorage.removeItem('ayna_pending_quiz_results');
           }
+          const storedAction = sessionStorage.getItem('ayna_pending_action');
+          if (storedAction) {
+            setPendingAction(storedAction);
+            sessionStorage.removeItem('ayna_pending_action');
+          }
         } catch (_) {}
       }
     });
@@ -875,9 +880,16 @@ function App() {
           <AuthGate
             isModal
             context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : pendingAction === 'login' ? 'login' : undefined}
-            onBeforeOAuthRedirect={pendingAction === 'quiz-complete' && pendingQuizResults ? () => {
-              try { sessionStorage.setItem('ayna_pending_quiz_results', JSON.stringify(pendingQuizResults)); } catch (_) {}
-            } : undefined}
+            onBeforeOAuthRedirect={() => {
+              try {
+                if (pendingAction === 'quiz-complete' && pendingQuizResults) {
+                  sessionStorage.setItem('ayna_pending_quiz_results', JSON.stringify(pendingQuizResults));
+                }
+                if (pendingAction) {
+                  sessionStorage.setItem('ayna_pending_action', pendingAction);
+                }
+              } catch (_) {}
+            }}
             onSkip={() => {
               setShowAuthModal(false);
               if (pendingAction === 'quiz-complete' && pendingQuizResults) {
