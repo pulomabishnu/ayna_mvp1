@@ -52,10 +52,15 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
       if (onBeforeOAuthRedirect) onBeforeOAuthRedirect();
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo: window.location.origin },
+        options: { redirectTo: window.location.origin, skipBrowserRedirect: true },
       });
       if (error) throw error;
-      if (!data?.url) throw new Error('No redirect URL returned from Supabase. Check Google provider is enabled in Supabase dashboard.');
+      if (!data?.url) throw new Error('No redirect URL returned from Supabase.');
+      const popup = window.open(data.url, 'oauth', 'width=520,height=620,left=200,top=100');
+      if (!popup) {
+        setError('Popup blocked — please allow popups for this site and try again.');
+        setGoogleLoading(false);
+      }
     } catch (err) {
       setError(err.message || 'Could not sign in with Google.');
       setGoogleLoading(false);

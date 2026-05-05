@@ -90,6 +90,11 @@ function App() {
   React.useEffect(() => {
     const supabase = getSupabaseClient();
     if (!supabase) { setAuthLoading(false); return; }
+    // If this is the OAuth popup, let Supabase exchange the code then close.
+    if (window.opener) {
+      supabase.auth.getSession().then(() => window.close());
+      return;
+    }
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       setAuthLoading(false);
