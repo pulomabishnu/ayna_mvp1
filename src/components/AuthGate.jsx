@@ -52,7 +52,11 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
       if (onBeforeOAuthRedirect) onBeforeOAuthRedirect();
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo: window.location.origin, skipBrowserRedirect: true },
+        options: {
+          redirectTo: window.location.origin,
+          skipBrowserRedirect: true,
+          queryParams: { prompt: 'select_account' },
+        },
       });
       if (error) throw error;
       if (!data?.url) throw new Error('No redirect URL returned from Supabase.');
