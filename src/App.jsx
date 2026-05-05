@@ -79,6 +79,16 @@ function App() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       setAuthLoading(false);
+      if (session?.user) {
+        try {
+          const stored = sessionStorage.getItem('ayna_pending_quiz_results');
+          if (stored) {
+            setPendingQuizResults(JSON.parse(stored));
+            setPendingAction('quiz-complete');
+            sessionStorage.removeItem('ayna_pending_quiz_results');
+          }
+        } catch (_) {}
+      }
     });
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
@@ -572,20 +582,24 @@ function App() {
             >
               Check-in
             </button>
-            <span style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', maxWidth: '140px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {user.email}
-            </span>
-            <button
-              onClick={() => getSupabaseClient()?.auth.signOut()}
-              style={{
-                fontSize: '0.7rem', fontWeight: '500', padding: '0.2rem 0.5rem',
-                background: 'transparent', color: 'var(--color-text-muted)',
-                borderRadius: 'var(--radius-pill)', border: '1px solid var(--color-border)',
-                cursor: 'pointer',
-              }}
-            >
-              Sign out
-            </button>
+            {user && (
+              <>
+                <span style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', maxWidth: '140px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {user.email}
+                </span>
+                <button
+                  onClick={() => getSupabaseClient()?.auth.signOut()}
+                  style={{
+                    fontSize: '0.7rem', fontWeight: '500', padding: '0.2rem 0.5rem',
+                    background: 'transparent', color: 'var(--color-text-muted)',
+                    borderRadius: 'var(--radius-pill)', border: '1px solid var(--color-border)',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Sign out
+                </button>
+              </>
+            )}
           </div>
         </nav>
         </div>
@@ -810,6 +824,9 @@ function App() {
           <AuthGate
             isModal
             context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : undefined}
+            onBeforeOAuthRedirect={pendingAction === 'quiz-complete' && pendingQuizResults ? () => {
+              try { sessionStorage.setItem('ayna_pending_quiz_results', JSON.stringify(pendingQuizResults)); } catch (_) {}
+            } : undefined}
             onSkip={() => {
               setShowAuthModal(false);
               if (pendingAction === 'quiz-complete' && pendingQuizResults) {

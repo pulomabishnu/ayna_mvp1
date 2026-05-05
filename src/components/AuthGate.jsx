@@ -7,7 +7,7 @@ const SUBTITLES = {
   default: 'Your personal women\'s health manager',
 };
 
-export default function AuthGate({ isModal = false, onSkip, context }) {
+export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAuthRedirect }) {
   const [mode, setMode] = useState('signup');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -44,6 +44,7 @@ export default function AuthGate({ isModal = false, onSkip, context }) {
     setError('');
     setGoogleLoading(true);
     try {
+      if (onBeforeOAuthRedirect) onBeforeOAuthRedirect();
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: { redirectTo: window.location.origin },
