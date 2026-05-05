@@ -8,7 +8,7 @@ const SUBTITLES = {
   default: 'Your personal women\'s health manager',
 };
 
-export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAuthRedirect }) {
+export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAuthRedirect, redirectTo }) {
   const [mode, setMode] = useState('signup');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -52,7 +52,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
       if (onBeforeOAuthRedirect) onBeforeOAuthRedirect();
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo: window.location.origin },
+        options: { redirectTo: redirectTo || window.location.origin },
       });
       if (error) throw error;
       if (!data?.url) throw new Error('No redirect URL returned from Supabase. Check Google provider is enabled in Supabase dashboard.');

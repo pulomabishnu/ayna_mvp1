@@ -75,20 +75,22 @@ function App() {
     setAynaReviews(loadAynaReviews());
   }, []);
 
-  // Read any pending action saved before an OAuth redirect — do this immediately
-  // on mount before auth resolves so the action is ready when the user lands.
+  // Read pending action from URL params — encoded before OAuth redirect and
+  // guaranteed to survive the full redirect chain unlike sessionStorage.
   React.useEffect(() => {
     try {
-      const storedQuiz = sessionStorage.getItem('ayna_pending_quiz_results');
-      if (storedQuiz) {
-        setPendingQuizResults(JSON.parse(storedQuiz));
-        setPendingAction('quiz-complete');
-        sessionStorage.removeItem('ayna_pending_quiz_results');
-      }
-      const storedAction = sessionStorage.getItem('ayna_pending_action');
-      if (storedAction && !storedQuiz) {
-        setPendingAction(storedAction);
-        sessionStorage.removeItem('ayna_pending_action');
+      const params = new URLSearchParams(window.location.search);
+      const pending = params.get('_ayna');
+      if (pending) {
+        setPendingAction(decodeURIComponent(pending));
+        window.history.replaceState(null, '', window.location.pathname);
+        if (pending === 'quiz-complete') {
+          const storedQuiz = sessionStorage.getItem('ayna_pending_quiz_results');
+          if (storedQuiz) {
+            setPendingQuizResults(JSON.parse(storedQuiz));
+            sessionStorage.removeItem('ayna_pending_quiz_results');
+          }
+        }
       }
     } catch (_) {}
   }, []);
@@ -867,16 +869,12 @@ function App() {
           <AuthGate
             isModal
             context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : pendingAction === 'login' ? 'login' : undefined}
-            onBeforeOAuthRedirect={() => {
-              try {
-                if (pendingAction === 'quiz-complete' && pendingQuizResults) {
-                  sessionStorage.setItem('ayna_pending_quiz_results', JSON.stringify(pendingQuizResults));
-                }
-                if (pendingAction) {
-                  sessionStorage.setItem('ayna_pending_action', pendingAction);
-                }
-              } catch (_) {}
-            }}
+            redirectTo={pendingAction
+              ? `${window.location.origin}?_ayna=${encodeURIComponent(pendingAction)}`
+              : window.location.origin}
+            onBeforeOAuthRedirect={pendingAction === 'quiz-complete' && pendingQuizResults ? () => {
+              try { sessionStorage.setItem('ayna_pending_quiz_results', JSON.stringify(pendingQuizResults)); } catch (_) {}
+            } : undefined}
             onSkip={() => {
               setShowAuthModal(false);
               if (pendingAction === 'quiz-complete' && pendingQuizResults) {
