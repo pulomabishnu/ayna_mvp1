@@ -97,8 +97,23 @@ function App() {
         } catch (_) {}
       }
     });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
+      if (event === 'SIGNED_IN' && session?.user) {
+        try {
+          const stored = sessionStorage.getItem('ayna_pending_quiz_results');
+          if (stored) {
+            setPendingQuizResults(JSON.parse(stored));
+            setPendingAction('quiz-complete');
+            sessionStorage.removeItem('ayna_pending_quiz_results');
+          }
+          const storedAction = sessionStorage.getItem('ayna_pending_action');
+          if (storedAction) {
+            setPendingAction(storedAction);
+            sessionStorage.removeItem('ayna_pending_action');
+          }
+        } catch (_) {}
+      }
       if (!session) {
         setMyProducts({});
         setTrackedProducts({});
@@ -465,22 +480,6 @@ function App() {
     }
   };
 
-  if (authLoading) {
-    return (
-      <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-bg)' }}>
-        <span style={{ fontFamily: 'var(--font-heading)', color: 'var(--color-primary)', fontSize: '1.5rem', fontWeight: 700 }}>Ayna</span>
-      </div>
-    );
-  }
-
-  if (dataLoading) {
-    return (
-      <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'var(--color-bg)', gap: '0.75rem' }}>
-        <span style={{ fontFamily: 'var(--font-heading)', color: 'var(--color-primary)', fontSize: '1.5rem', fontWeight: 700 }}>Ayna</span>
-        <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>Loading your health profile…</span>
-      </div>
-    );
-  }
 
   return (
     <div
