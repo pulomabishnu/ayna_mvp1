@@ -56,6 +56,9 @@ function App() {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [dataLoading, setDataLoading] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [pendingAction, setPendingAction] = useState(null);
+  const [pendingQuizResults, setPendingQuizResults] = useState(null);
   const scrollY = useScrollPosition();
 
   const hasHealthImport = useMemo(() => hasHealthProfileSignals(healthProfile), [healthProfile]);
@@ -79,6 +82,14 @@ function App() {
     });
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
+      if (!session) {
+        setMyProducts({});
+        setTrackedProducts({});
+        setOmittedProducts({});
+        setQuizResults(null);
+        setAynaReviews({});
+        setCurrentView('welcome');
+      }
     });
     return () => subscription.unsubscribe();
   }, []);
@@ -104,6 +115,21 @@ function App() {
       }
     }).finally(() => setDataLoading(false));
   }, [user?.id]);
+
+  React.useEffect(() => {
+    if (!user || !pendingAction) return;
+    setShowAuthModal(false);
+    if (pendingAction === 'quiz-complete' && pendingQuizResults) {
+      setQuizResults(pendingQuizResults);
+      const { seedMeta } = getEcosystemSeedFromQuiz(pendingQuizResults, healthProfile);
+      setEcosystemSeedMeta(seedMeta);
+      setCurrentView('ecosystem');
+      setPendingQuizResults(null);
+    } else if (pendingAction === 'browse') {
+      handleViewDiscovery('');
+    }
+    setPendingAction(null);
+  }, [user, pendingAction]);
 
   React.useEffect(() => {
     let active = true;
@@ -212,6 +238,12 @@ function App() {
       personalizationCompleted: true,
       personalizationCompletedAt: new Date().toISOString(),
     };
+    if (!user) {
+      setPendingQuizResults(completedResults);
+      setPendingAction('quiz-complete');
+      setShowAuthModal(true);
+      return;
+    }
     setQuizResults(completedResults);
     const { seedMeta } = getEcosystemSeedFromQuiz(completedResults, healthProfile);
     setEcosystemSeedMeta(seedMeta);
@@ -404,10 +436,6 @@ function App() {
     );
   }
 
-  if (!user) {
-    return <AuthGate />;
-  }
-
   if (dataLoading) {
     return (
       <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'var(--color-bg)', gap: '0.75rem' }}>
@@ -566,7 +594,14 @@ function App() {
         {currentView === 'welcome' && (
           <WelcomeGate
             onPersonalizedPath={handleStartQuiz}
-            onBrowsePath={() => handleViewDiscovery('')}
+            onBrowsePath={() => {
+              if (!user) {
+                setPendingAction('browse');
+                setShowAuthModal(true);
+              } else {
+                handleViewDiscovery('');
+              }
+            }}
             onWelcomePhaseChange={setWelcomeSubPhase}
           />
         )}
@@ -768,6 +803,26 @@ function App() {
             onReview={handleReviewProduct}
             quizResults={quizResults}
             healthProfile={healthProfile}
+          />
+        )}
+
+        {showAuthModal && (
+          <AuthGate
+            isModal
+            context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : undefined}
+            onSkip={() => {
+              setShowAuthModal(false);
+              if (pendingAction === 'quiz-complete' && pendingQuizResults) {
+                setQuizResults(pendingQuizResults);
+                const { seedMeta } = getEcosystemSeedFromQuiz(pendingQuizResults, healthProfile);
+                setEcosystemSeedMeta(seedMeta);
+                setCurrentView('ecosystem');
+                setPendingQuizResults(null);
+              } else if (pendingAction === 'browse') {
+                handleViewDiscovery('');
+              }
+              setPendingAction(null);
+            }}
           />
         )}
       </main>

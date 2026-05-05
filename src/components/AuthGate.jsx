@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
 import { getSupabaseClient } from '../utils/supabaseClient';
 
-export default function AuthGate() {
-  const [mode, setMode] = useState('signin');
+const SUBTITLES = {
+  quiz: 'Create an account to save your health profile and keep your ecosystem across sessions.',
+  browse: 'Create an account to save your discoveries and track products over time.',
+  default: 'Your personal women\'s health manager',
+};
+
+export default function AuthGate({ isModal = false, onSkip, context }) {
+  const [mode, setMode] = useState('signup');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -11,6 +17,7 @@ export default function AuthGate() {
   const [successMsg, setSuccessMsg] = useState('');
 
   const supabase = getSupabaseClient();
+  const subtitle = SUBTITLES[context] || SUBTITLES.default;
 
   const handleEmailAuth = async (e) => {
     e.preventDefault();
@@ -54,26 +61,51 @@ export default function AuthGate() {
     setSuccessMsg('');
   };
 
+  const overlayStyle = isModal ? {
+    position: 'fixed',
+    inset: 0,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: 'rgba(28, 25, 23, 0.55)',
+    zIndex: 1000,
+    padding: '1.5rem',
+  } : {
+    minHeight: '100dvh',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: 'var(--color-bg)',
+    padding: '1.5rem',
+  };
+
   return (
-    <div style={styles.overlay}>
+    <div
+      style={overlayStyle}
+      onClick={isModal && onSkip ? (e) => { if (e.target === e.currentTarget) onSkip(); } : undefined}
+    >
       <div style={styles.card}>
+        {isModal && onSkip && (
+          <button type="button" onClick={onSkip} style={styles.closeBtn} aria-label="Skip for now">×</button>
+        )}
+
         <div style={styles.logo}>Ayna</div>
-        <p style={styles.tagline}>Your personal women's health manager</p>
+        <p style={styles.tagline}>{subtitle}</p>
 
         <div style={styles.toggleRow}>
-          <button
-            type="button"
-            style={{ ...styles.toggleBtn, ...(mode === 'signin' ? styles.toggleBtnActive : {}) }}
-            onClick={() => switchMode('signin')}
-          >
-            Sign in
-          </button>
           <button
             type="button"
             style={{ ...styles.toggleBtn, ...(mode === 'signup' ? styles.toggleBtnActive : {}) }}
             onClick={() => switchMode('signup')}
           >
             Create account
+          </button>
+          <button
+            type="button"
+            style={{ ...styles.toggleBtn, ...(mode === 'signin' ? styles.toggleBtnActive : {}) }}
+            onClick={() => switchMode('signin')}
+          >
+            Sign in
           </button>
         </div>
 
@@ -123,6 +155,12 @@ export default function AuthGate() {
         <p style={styles.fine}>
           By continuing, you agree that your data is stored securely and never sold.
         </p>
+
+        {isModal && onSkip && (
+          <button type="button" onClick={onSkip} style={styles.skipBtn}>
+            Skip for now
+          </button>
+        )}
       </div>
     </div>
   );
@@ -140,15 +178,8 @@ function GoogleIcon() {
 }
 
 const styles = {
-  overlay: {
-    minHeight: '100dvh',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    background: 'var(--color-bg)',
-    padding: '1.5rem',
-  },
   card: {
+    position: 'relative',
     background: 'var(--color-surface)',
     borderRadius: 'var(--radius-lg)',
     boxShadow: 'var(--shadow-lg)',
@@ -158,6 +189,18 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     gap: '1rem',
+  },
+  closeBtn: {
+    position: 'absolute',
+    top: '1rem',
+    right: '1rem',
+    background: 'none',
+    border: 'none',
+    fontSize: '1.4rem',
+    color: 'var(--color-text-muted)',
+    cursor: 'pointer',
+    lineHeight: 1,
+    padding: '0.1rem 0.3rem',
   },
   logo: {
     fontFamily: 'var(--font-heading)',
@@ -172,6 +215,7 @@ const styles = {
     color: 'var(--color-text-muted)',
     textAlign: 'center',
     margin: '-0.25rem 0 0.25rem',
+    lineHeight: 1.45,
   },
   toggleRow: {
     display: 'flex',
@@ -279,5 +323,16 @@ const styles = {
     textAlign: 'center',
     lineHeight: 1.45,
     margin: '0.25rem 0 0',
+  },
+  skipBtn: {
+    background: 'none',
+    border: 'none',
+    color: 'var(--color-text-muted)',
+    fontSize: '0.78rem',
+    cursor: 'pointer',
+    textDecoration: 'underline',
+    textAlign: 'center',
+    padding: '0.25rem',
+    fontFamily: 'var(--font-body)',
   },
 };
