@@ -75,45 +75,33 @@ function App() {
     setAynaReviews(loadAynaReviews());
   }, []);
 
+  // Read any pending action saved before an OAuth redirect — do this immediately
+  // on mount before auth resolves so the action is ready when the user lands.
+  React.useEffect(() => {
+    try {
+      const storedQuiz = sessionStorage.getItem('ayna_pending_quiz_results');
+      if (storedQuiz) {
+        setPendingQuizResults(JSON.parse(storedQuiz));
+        setPendingAction('quiz-complete');
+        sessionStorage.removeItem('ayna_pending_quiz_results');
+      }
+      const storedAction = sessionStorage.getItem('ayna_pending_action');
+      if (storedAction && !storedQuiz) {
+        setPendingAction(storedAction);
+        sessionStorage.removeItem('ayna_pending_action');
+      }
+    } catch (_) {}
+  }, []);
+
   React.useEffect(() => {
     const supabase = getSupabaseClient();
     if (!supabase) { setAuthLoading(false); return; }
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       setAuthLoading(false);
-      if (session?.user) {
-        try {
-          const stored = sessionStorage.getItem('ayna_pending_quiz_results');
-          if (stored) {
-            setPendingQuizResults(JSON.parse(stored));
-            setPendingAction('quiz-complete');
-            sessionStorage.removeItem('ayna_pending_quiz_results');
-          }
-          const storedAction = sessionStorage.getItem('ayna_pending_action');
-          if (storedAction) {
-            setPendingAction(storedAction);
-            sessionStorage.removeItem('ayna_pending_action');
-          }
-        } catch (_) {}
-      }
     });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
-      if (event === 'SIGNED_IN' && session?.user) {
-        try {
-          const stored = sessionStorage.getItem('ayna_pending_quiz_results');
-          if (stored) {
-            setPendingQuizResults(JSON.parse(stored));
-            setPendingAction('quiz-complete');
-            sessionStorage.removeItem('ayna_pending_quiz_results');
-          }
-          const storedAction = sessionStorage.getItem('ayna_pending_action');
-          if (storedAction) {
-            setPendingAction(storedAction);
-            sessionStorage.removeItem('ayna_pending_action');
-          }
-        } catch (_) {}
-      }
       if (!session) {
         setMyProducts({});
         setTrackedProducts({});
