@@ -57,16 +57,6 @@ export default function Hero({ onStartQuiz, onViewWaitlist: _onViewWaitlist, onV
             minHeight: 'min(100vh, 1200px)',
           }}
         >
-          <ScrollReveal className="stagger-1">
-            <a
-              href="https://forms.gle/AnaaVhW2vjYr5r5RA"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="ayna-landing-waitlist"
-            >
-              Join the waitlist
-            </a>
-          </ScrollReveal>
           <div className="welcome-gate__page welcome-gate__page--second">
             <h1
               className="ayna-landing-hero-welcome"
