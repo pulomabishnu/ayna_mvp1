@@ -631,10 +631,10 @@ function App() {
                 </button>
                 {showAccountMenu && (
                   <div style={{
-                    position: 'absolute', right: 0, top: 'calc(100% + 6px)',
+                    position: 'fixed', top: '56px', right: '12px',
                     background: 'var(--color-surface)', border: '1px solid var(--color-border)',
                     borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-md)',
-                    padding: '0.9rem 1.1rem', minWidth: '200px', zIndex: 200,
+                    padding: '0.9rem 1.1rem', minWidth: '200px', zIndex: 9999,
                     display: 'flex', flexDirection: 'column', gap: '0.6rem',
                   }}>
                     <span style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', wordBreak: 'break-all', lineHeight: 1.4 }}>
