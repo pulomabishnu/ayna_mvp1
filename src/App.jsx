@@ -116,8 +116,9 @@ function App() {
         setAynaReviews({});
         setCurrentView('welcome');
         try {
-          localStorage.removeItem('ayna_llm_recommendations_by_intake_v1');
-          localStorage.removeItem('ayna_llm_recommendations_fetched_fingerprint_v1');
+          // Keep LLM recommendations cache — it's fingerprint-keyed so a
+          // different quiz will naturally miss. Clearing it caused a re-fetch
+          // on every login for the same user.
           localStorage.removeItem('ayna_llm_learning_memory_v1');
         } catch (_) {}
       }

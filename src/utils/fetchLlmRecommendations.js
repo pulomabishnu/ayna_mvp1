@@ -6,10 +6,17 @@ const MEMORY_KEY = 'ayna_llm_learning_memory_v1';
 const RECS_CACHE_KEY = 'ayna_llm_recommendations_by_intake_v1';
 const FETCHED_FINGERPRINT_KEY = 'ayna_llm_recommendations_fetched_fingerprint_v1';
 
+function stableStringify(val) {
+  if (val === null || typeof val !== 'object') return JSON.stringify(val);
+  if (Array.isArray(val)) return '[' + val.map(stableStringify).join(',') + ']';
+  const keys = Object.keys(val).sort();
+  return '{' + keys.map(k => JSON.stringify(k) + ':' + stableStringify(val[k])).join(',') + '}';
+}
+
 export function fingerprintIntake(intake) {
   if (!intake || typeof intake !== 'object' || Object.keys(intake).length === 0) return '';
   try {
-    return JSON.stringify(intake);
+    return stableStringify(intake);
   } catch {
     return '';
   }
