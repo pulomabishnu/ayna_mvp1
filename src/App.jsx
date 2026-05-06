@@ -917,7 +917,7 @@ function App() {
           color: 'var(--color-text-muted)',
           lineHeight: 1.6,
           borderTop: '1px solid var(--color-border)',
-          marginTop: '2rem',
+          marginTop: 0,
         }}>
           Ayna provides wellness information only. Nothing on this platform is medical advice. Always consult a qualified healthcare provider for medical decisions. By using Ayna, you agree that your data is stored securely and never sold.
         </footer>
