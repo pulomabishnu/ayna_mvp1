@@ -500,6 +500,7 @@ function App() {
         {!hideWelcomeIntroChrome && (
         <div
           className={welcomeMainChromeEntrance ? 'app-welcome-chrome-entrance' : undefined}
+          style={{ position: 'relative', zIndex: 1001 }}
         >
         <nav
           className={`app-nav${isScrolled ? ' app-nav--scrolled' : ''}`}
@@ -631,7 +632,7 @@ function App() {
                 </button>
                 {showAccountMenu && (
                   <div style={{
-                    position: 'fixed', top: '56px', right: '12px',
+                    position: 'absolute', right: 0, top: 'calc(100% + 6px)',
                     background: 'var(--color-surface)', border: '1px solid var(--color-border)',
                     borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-md)',
                     padding: '0.9rem 1.1rem', minWidth: '200px', zIndex: 9999,
