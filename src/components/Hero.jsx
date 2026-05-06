@@ -283,6 +283,10 @@ export default function Hero({ onStartQuiz, onViewWaitlist: _onViewWaitlist, onV
         <ScrollReveal>
           <div
             style={{
+              background: 'linear-gradient(145deg, #FAF5F0 0%, #F0E8E1 100%)',
+              border: '1px solid var(--color-border)',
+              borderRadius: 'var(--radius-xl)',
+              boxShadow: 'var(--shadow-sm)',
               maxWidth: '720px',
               textAlign: 'center',
               padding: '2.5rem 1.5rem 3rem',
@@ -319,9 +323,13 @@ export default function Hero({ onStartQuiz, onViewWaitlist: _onViewWaitlist, onV
         <ScrollReveal>
           <div
             style={{
+              background: 'linear-gradient(145deg, #FAF5F0 0%, #F0E8E1 100%)',
+              border: '1px solid var(--color-border)',
+              borderRadius: 'var(--radius-xl)',
+              boxShadow: 'var(--shadow-sm)',
               maxWidth: '700px',
               textAlign: 'center',
-              padding: '3rem 0',
+              padding: '3rem 2rem',
               margin: '0 auto',
               opacity: Math.min(scrollY / 1000 + 0.5, 1),
             }}
