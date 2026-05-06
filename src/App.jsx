@@ -115,6 +115,11 @@ function App() {
         setQuizResults(null);
         setAynaReviews({});
         setCurrentView('welcome');
+        try {
+          localStorage.removeItem('ayna_llm_recommendations_by_intake_v1');
+          localStorage.removeItem('ayna_llm_recommendations_fetched_fingerprint_v1');
+          localStorage.removeItem('ayna_llm_learning_memory_v1');
+        } catch (_) {}
       }
     });
     return () => subscription.unsubscribe();

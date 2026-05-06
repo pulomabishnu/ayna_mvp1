@@ -2,7 +2,7 @@ const API_PATH = '/api/llm-recommendations';
 /** Prevents the ecosystem page from showing “Loading…” forever if the server never responds. */
 const DEFAULT_FETCH_TIMEOUT_MS = 90_000;
 const MEMORY_KEY = 'ayna_llm_learning_memory_v1';
-/** Session-scoped cache so revisiting Ecosystem does not re-call the LLM for the same intake. */
+/** Persistent cache so re-login does not re-call the LLM for the same intake. */
 const RECS_CACHE_KEY = 'ayna_llm_recommendations_by_intake_v1';
 const FETCHED_FINGERPRINT_KEY = 'ayna_llm_recommendations_fetched_fingerprint_v1';
 
@@ -18,7 +18,7 @@ export function fingerprintIntake(intake) {
 export function loadCachedLlmRecommendations(fingerprint) {
   if (!fingerprint || typeof window === 'undefined') return null;
   try {
-    const raw = window.sessionStorage.getItem(RECS_CACHE_KEY);
+    const raw = window.localStorage.getItem(RECS_CACHE_KEY);
     if (!raw) return null;
     const o = JSON.parse(raw);
     if (!o || o.fingerprint !== fingerprint) return null;
@@ -32,7 +32,7 @@ export function loadCachedLlmRecommendations(fingerprint) {
 export function saveCachedLlmRecommendations(fingerprint, recommendations) {
   if (!fingerprint || typeof window === 'undefined') return;
   try {
-    window.sessionStorage.setItem(
+    window.localStorage.setItem(
       RECS_CACHE_KEY,
       JSON.stringify({ fingerprint, recommendations })
     );
@@ -44,8 +44,8 @@ export function saveCachedLlmRecommendations(fingerprint, recommendations) {
 export function clearCachedLlmRecommendations() {
   try {
     if (typeof window === 'undefined') return;
-    window.sessionStorage.removeItem(RECS_CACHE_KEY);
-    window.sessionStorage.removeItem(FETCHED_FINGERPRINT_KEY);
+    window.localStorage.removeItem(RECS_CACHE_KEY);
+    window.localStorage.removeItem(FETCHED_FINGERPRINT_KEY);
   } catch {
     // no-op
   }
@@ -54,7 +54,7 @@ export function clearCachedLlmRecommendations() {
 export function loadFetchedLlmFingerprint() {
   if (typeof window === 'undefined') return '';
   try {
-    return String(window.sessionStorage.getItem(FETCHED_FINGERPRINT_KEY) || '');
+    return String(window.localStorage.getItem(FETCHED_FINGERPRINT_KEY) || '');
   } catch {
     return '';
   }
@@ -63,7 +63,7 @@ export function loadFetchedLlmFingerprint() {
 export function saveFetchedLlmFingerprint(fingerprint) {
   if (!fingerprint || typeof window === 'undefined') return;
   try {
-    window.sessionStorage.setItem(FETCHED_FINGERPRINT_KEY, String(fingerprint));
+    window.localStorage.setItem(FETCHED_FINGERPRINT_KEY, String(fingerprint));
   } catch {
     // no-op
   }
