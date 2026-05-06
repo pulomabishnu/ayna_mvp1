@@ -108,9 +108,6 @@ function App() {
     });
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
-      if (event === 'SIGNED_IN' && session?.user) {
-        setCurrentView('ecosystem');
-      }
       if (!session) {
         setMyProducts({});
         setTrackedProducts({});
@@ -150,7 +147,12 @@ function App() {
   }, [user?.id]);
 
   React.useEffect(() => {
-    if (!user || !pendingAction) return;
+    if (!user) return;
+    if (!pendingAction) {
+      // No pending action — user was already signed in (e.g. returning session).
+      // Stay on welcome so they can navigate themselves.
+      return;
+    }
     setShowAuthModal(false);
     if (pendingAction === 'quiz-complete' && pendingQuizResults) {
       setQuizResults(pendingQuizResults);
@@ -353,7 +355,7 @@ function App() {
           inEcosystem: !!myProducts[product.id],
           isTracked: !wasTracked,
           isOmitted: !!omittedProducts[product.id],
-        }).catch(console.error);
+        }).catch(e => console.error('[Ayna] upsert failed:', e));
       }
       return next;
     });
@@ -379,7 +381,7 @@ function App() {
           inEcosystem: !wasIn,
           isTracked: !!trackedProducts[product.id],
           isOmitted: !!omittedProducts[product.id],
-        }).catch(console.error);
+        }).catch(e => console.error('[Ayna] upsert failed:', e));
       }
       return next;
     });
@@ -395,7 +397,7 @@ function App() {
             inEcosystem: !!myProducts[product.id],
             isTracked: !!trackedProducts[product.id],
             isOmitted: false,
-          }).catch(console.error);
+          }).catch(e => console.error('[Ayna] upsert failed:', e));
         }
       } else {
         next[product.id] = product;
@@ -406,7 +408,7 @@ function App() {
             inEcosystem: false,
             isTracked: false,
             isOmitted: true,
-          }).catch(console.error);
+          }).catch(e => console.error('[Ayna] upsert failed:', e));
         }
       }
       return next;
