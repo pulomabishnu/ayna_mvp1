@@ -361,6 +361,7 @@ export const MVP_PHYSICAL = [
     ingredients: 'Medical-grade silicone.',
     effectiveness: 'Progressive resistance improves pelvic floor strength.',
     badges: ['Pelvic Health', 'Reusable'],
+    recommendationWhyDetail: 'Kegel trainers like Luna Beads use progressive vaginal weights to strengthen the pelvic floor muscles — the same muscles targeted by Kegel exercises your OB-GYN or PT might recommend for leakage, prolapse prevention, or pelvic discomfort. They work by adding gentle resistance you contract against, building strength over weeks of daily use. They\'re different from Kegel apps or biofeedback devices — no technology, just weighted silicone balls that give your muscles something to work against.',
     verificationLinks: {
       doctor: { links: [{ url: 'https://www.health.harvard.edu/womens-health/step-by-step-guide-to-kegel-exercises', text: 'Harvard Health: Kegel exercises', summary: 'Clinical guide to pelvic floor muscle training.', justification: 'Harvard Health is a trusted medical resource.' }] },
       scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/22453472/', text: 'Pelvic floor muscle training', summary: 'Evidence on Kegel exercises for incontinence.', justification: 'PubMed peer-reviewed.' }] },
@@ -519,6 +520,7 @@ export const MVP_DIGITAL = [
     communityReview: 'Community discussions on App Store note simplicity and PT recommendations for home use.',
     effectiveness: 'Structured programs for pelvic floor strength.',
     badges: ['Pelvic Health', 'PT Recommended'],
+    recommendationWhyDetail: 'Happi guides you through pelvic floor exercises the way a physical therapist would — with timing, breathing cues, and progressive difficulty. The pelvic floor is a hammock of muscles you can\'t see or feel easily, which makes Kegels notoriously easy to do wrong (many people inadvertently bear down instead of lifting). An app with structured programs and reminders dramatically improves consistency, which is what makes pelvic floor training effective over time.',
     verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/pelvic-floor-disorders', text: 'ACOG: Pelvic floor', summary: 'Clinical guidance on pelvic floor exercises and apps.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/26989760/', text: 'Pelvic floor training', summary: 'Evidence on Kegels and app-guided programs.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/PelvicFloor/search/?q=app&restrict_sr=1', text: 'Reddit r/PelvicFloor', summary: 'Community discussions on pelvic floor apps.' }] } }
   },
   {

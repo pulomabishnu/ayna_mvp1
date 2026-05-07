@@ -384,49 +384,42 @@ function buildQuickOverviewBlocks(product, aiInsights, quizResults, healthProfil
   const cons = [];
   const fit = [];
 
+  // AI-generated flow (2 sections — no "Fit" duplicate)
   if (aiPros.length > 0 || aiCons.length > 0 || aiFit.length > 0) {
+    const combinedWhy = [...aiPros, ...(aiFit.length > 0 ? aiFit : [])].slice(0, 3);
     return [
-      { id: 'pros', title: 'Pros for your profile', bullets: aiPros.slice(0, 3) },
-      { id: 'cons', title: 'Cons or cautions', bullets: (aiCons.length > 0 ? aiCons : ['**Watch-outs:** Review safety details and side effects for your profile before using.']).slice(0, 3) },
-      { id: 'fit', title: 'Fit for you', bullets: (aiFit.length > 0 ? aiFit : ['**Why/why not:** Profile-specific fit details are limited; compare alternatives before deciding.']).slice(0, 2) },
+      { id: 'why', title: 'Why this may work for you', bullets: combinedWhy.length > 0 ? combinedWhy : ['**Potential benefit:** Review the detail below to assess fit for your profile.'] },
+      { id: 'cons', title: 'Things to watch for', bullets: (aiCons.length > 0 ? aiCons : ['**Watch-outs:** Review safety details and side effects for your profile before using.']).slice(0, 3) },
     ];
   }
 
-  if (!hasProfile) {
-    fit.push('**Why/why not:** Complete your profile to get a personalized fit decision.');
-  } else if (matchLabels.length >= 2) {
-    fit.push(`**Why this may fit:** Strong overlap with your profile (${matchLabels.slice(0, 3).join(', ')}).`);
-  } else if (matchLabels.length === 1) {
-    fit.push(`**Why this may fit:** Some overlap with your profile (${matchLabels[0]}).`);
-  } else {
-    fit.push('**Why this may not fit:** Limited overlap with your profile priorities.');
-  }
-
+  // Rule-based flow — "Why this may work for you" (full text, not truncated)
   if (whyItWorks && (quizResults?.frustrations?.length || matchLabels.length)) {
-    pros.push(`**Potential benefit:** ${concise(whyItWorks, 170)}`);
+    pros.push(String(whyItWorks).trim());
   } else if (profileTailoring) {
-    pros.push(`**Potential benefit:** ${concise(profileTailoring, 170)}`);
+    pros.push(String(profileTailoring).trim());
   }
-  if (matchLabels.length > 0) {
-    pros.push(`**Profile alignment:** Supports ${matchLabels.slice(0, 3).join(', ')}.`);
+  if (matchLabels.length > 0 && !pros.length) {
+    pros.push(`Supports priorities relevant to your profile: ${matchLabels.slice(0, 3).join(', ')}.`);
+  }
+  if (!hasProfile) {
+    pros.push('Complete your health profile to get a personalized fit assessment.');
+  }
+  if (pros.length === 0) {
+    pros.push('This product may help some users — compare with alternatives before deciding.');
   }
 
-  if (considerations) cons.push(`**Watch-outs:** ${concise(considerations, 170)}`);
-  if (bridgeCare?.shortTerm) cons.push(concise(bridgeCare.shortTerm, 170));
-  if (bridgeCare?.escalation) cons.push(concise(bridgeCare.escalation, 170));
+  if (considerations) cons.push(`**Watch-outs:** ${concise(considerations, 220)}`);
+  if (bridgeCare?.shortTerm) cons.push(concise(bridgeCare.shortTerm, 220));
+  if (bridgeCare?.escalation) cons.push(concise(bridgeCare.escalation, 220));
   if (recallBad) cons.push('**Safety check:** Review recall/alert details in the Safety tab before purchasing.');
-
   if (cons.length === 0) {
     cons.push('**Watch-outs:** No major profile-specific cautions flagged, but confirm fit with your clinician if symptoms persist.');
   }
-  if (pros.length === 0) {
-    pros.push('**Potential benefit:** This product may help some users, but your profile fit signal is limited so compare alternatives.');
-  }
 
   return [
-    { id: 'pros', title: 'Pros for your profile', bullets: pros.slice(0, 3) },
-    { id: 'cons', title: 'Cons or cautions', bullets: cons.slice(0, 3) },
-    { id: 'fit', title: 'Fit for you', bullets: fit.slice(0, 2) },
+    { id: 'why', title: 'Why this may work for you', bullets: pros.slice(0, 3) },
+    { id: 'cons', title: 'Things to watch for', bullets: cons.slice(0, 3) },
   ];
 }
 
@@ -1150,6 +1143,23 @@ export default function ProductModal({
                             </div>
                         )}
                     </div>
+
+                    {product.recommendationWhyDetail && (
+                        <div style={{
+                            marginTop: '1.25rem',
+                            padding: '1rem 1.25rem',
+                            background: 'var(--color-secondary-fade)',
+                            borderRadius: 'var(--radius-md)',
+                            borderLeft: '3px solid var(--color-primary)',
+                        }}>
+                            <p style={{ fontSize: '0.72rem', fontWeight: '700', color: 'var(--color-primary)', marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                New to this product?
+                            </p>
+                            <p style={{ fontSize: '0.88rem', color: 'var(--color-text-main)', lineHeight: 1.65, margin: 0 }}>
+                                {product.recommendationWhyDetail}
+                            </p>
+                        </div>
+                    )}
 
                     {condensed?.quickOverview?.length > 0 && (
                         <div

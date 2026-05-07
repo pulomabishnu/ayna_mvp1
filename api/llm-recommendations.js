@@ -259,7 +259,7 @@ PERSONALIZATION RULES:
 - If pain level is 8 or higher: always include a telehealth recommendation
 - Only generate concerns she actually has — match concern labels exactly to what she selected
 - Never say "treats" or "cures" — say "may help with"
-- Every whyItWorks must reference at least one specific detail from her profile
+- Every whyItWorks must do TWO things: (1) briefly explain HOW this product works mechanically or clinically for this type of concern (the mechanism), and (2) reference at least one specific detail from her profile (the personal fit). Example: "Pelvic wands apply targeted pressure to myofascial trigger points that cause referred period pain — given your reported 8/10 pain level, muscle tension is likely a significant contributor to your cramps." Keep to 2-3 sentences. Never just say "this fits your X concern" without explaining the mechanism.
 - Never recommend products with active FDA recalls
 - Use learning signals to avoid repeating products she has already seen
 
