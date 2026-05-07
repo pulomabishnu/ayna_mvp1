@@ -1,31 +1,215 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import {
   CONCERN_AREAS,
-  CYCLE_STATUSES,
   CYCLE_SYMPTOMS,
   DIAGNOSED_CONDITIONS,
-  FLOW_LEVELS,
   GOALS,
-  PREFERRED_PRODUCT_TYPES,
   PRODUCT_PREFERENCES,
   OTHER_CONCERN_OPTION,
   mapIntakeToLegacyQuizProfile,
-  validateHealthIntake,
 } from '../utils/healthIntake';
 import { saveHealthIntakeForCurrentUser } from '../utils/healthIntakeStore';
 
-const baseIntake = {
+// ─── Condensed symptom list (top clinical signals) ───────────────────────────
+const KEY_SYMPTOMS = [
+  'Cramps', 'Severe cramps', 'Bloating', 'Mood changes', 'Anxiety before period',
+  'Depression before period', 'Fatigue', 'Brain fog', 'Headaches', 'Migraines',
+  'Clots', 'Spotting between periods', 'Back pain', 'Nausea', 'Insomnia before period',
+  'Breast tenderness',
+];
+
+const FLOW_OPTIONS = ['Light', 'Medium', 'Heavy', 'Very heavy'];
+const CYCLE_OPTIONS = [
+  { value: 'yes', label: 'Yes' },
+  { value: 'no', label: 'No' },
+  { value: 'irregular', label: 'Irregular' },
+];
+const TTC_OPTIONS = ['Yes', 'No', 'Not right now'];
+const BC_OPTIONS = ['Yes', 'No'];
+
+const SCREEN_ORDER = ['basics', 'concerns', 'period', 'health', 'products', 'healthdata'];
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+function ScreenHeader({ title, subtitle }) {
+  return (
+    <div style={{ marginBottom: '1.5rem' }}>
+      <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.45rem', fontWeight: 700, color: 'var(--color-text-main)', marginBottom: '0.35rem', lineHeight: 1.25 }}>
+        {title}
+      </h2>
+      {subtitle && <p style={{ fontSize: '0.88rem', color: 'var(--color-text-muted)', lineHeight: 1.5 }}>{subtitle}</p>}
+    </div>
+  );
+}
+
+function FieldLabel({ children, optional }) {
+  return (
+    <p style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-text-main)', marginBottom: '0.6rem', marginTop: '1.25rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+      {children}
+      {optional && <span style={{ fontWeight: 400, textTransform: 'none', color: 'var(--color-text-muted)', marginLeft: '0.4rem' }}>optional</span>}
+    </p>
+  );
+}
+
+function Chip({ label, selected, onClick, small }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      style={{
+        padding: small ? '0.35rem 0.8rem' : '0.45rem 1rem',
+        borderRadius: 'var(--radius-pill)',
+        border: selected ? '2px solid var(--color-primary)' : '1.5px solid var(--color-border)',
+        background: selected ? 'var(--color-secondary-fade)' : 'var(--color-surface)',
+        color: selected ? 'var(--color-primary)' : 'var(--color-text-main)',
+        cursor: 'pointer',
+        fontSize: small ? '0.8rem' : '0.86rem',
+        fontWeight: selected ? 700 : 400,
+        fontFamily: 'var(--font-body)',
+        transition: 'border-color 0.15s, background 0.15s',
+        textAlign: 'left',
+        lineHeight: 1.3,
+      }}
+    >
+      {label}
+    </button>
+  );
+}
+
+function ChipGrid({ items, selected = [], onToggle, small }) {
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+      {items.map((item) => (
+        <Chip key={item} label={item} selected={selected.includes(item)} onClick={() => onToggle(item)} small={small} />
+      ))}
+    </div>
+  );
+}
+
+function SingleSelect({ options, value, onSelect }) {
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+      {options.map((opt) => {
+        const v = typeof opt === 'object' ? opt.value : opt;
+        const label = typeof opt === 'object' ? opt.label : opt;
+        return (
+          <Chip key={v} label={label} selected={value === v} onClick={() => onSelect(v)} />
+        );
+      })}
+    </div>
+  );
+}
+
+function PainScale({ value, onChange }) {
+  return (
+    <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
+      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
+        <button
+          key={n}
+          type="button"
+          onClick={() => onChange(String(n))}
+          style={{
+            width: '2.4rem', height: '2.4rem', borderRadius: '50%',
+            border: value === String(n) ? '2px solid var(--color-primary)' : '1.5px solid var(--color-border)',
+            background: value === String(n) ? 'var(--color-primary)' : 'var(--color-surface)',
+            color: value === String(n) ? '#fff' : 'var(--color-text-main)',
+            fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}
+        >
+          {n}
+        </button>
+      ))}
+      <span style={{ alignSelf: 'center', fontSize: '0.75rem', color: 'var(--color-text-muted)', marginLeft: '0.25rem' }}>
+        {value ? (Number(value) <= 3 ? '(mild)' : Number(value) <= 6 ? '(moderate)' : '(severe)') : ''}
+      </span>
+    </div>
+  );
+}
+
+function TextInput({ value, onChange, placeholder, type = 'text' }) {
+  return (
+    <input
+      type={type}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      style={{
+        width: '100%', padding: '0.7rem 1rem', fontSize: '0.92rem',
+        border: '1.5px solid var(--color-border)', borderRadius: 'var(--radius-sm)',
+        background: 'var(--color-surface-soft)', color: 'var(--color-text-main)',
+        fontFamily: 'var(--font-body)', outline: 'none',
+      }}
+    />
+  );
+}
+
+function TextArea({ value, onChange, placeholder, rows = 4 }) {
+  return (
+    <textarea
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      rows={rows}
+      style={{
+        width: '100%', padding: '0.7rem 1rem', fontSize: '0.88rem',
+        border: '1.5px solid var(--color-border)', borderRadius: 'var(--radius-sm)',
+        background: 'var(--color-surface-soft)', color: 'var(--color-text-main)',
+        fontFamily: 'var(--font-body)', outline: 'none', resize: 'vertical', lineHeight: 1.55,
+      }}
+    />
+  );
+}
+
+function ContinueButton({ onClick, disabled, children }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      style={{
+        marginTop: '1.75rem', width: '100%', padding: '0.85rem',
+        background: disabled ? 'var(--color-border)' : 'var(--color-primary)',
+        color: disabled ? 'var(--color-text-muted)' : '#fff',
+        border: 'none', borderRadius: 'var(--radius-sm)', cursor: disabled ? 'not-allowed' : 'pointer',
+        fontSize: '0.95rem', fontWeight: 700, fontFamily: 'var(--font-body)',
+        transition: 'background 0.15s',
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
+function SkipLink({ onClick, label = 'Skip this step →' }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      style={{
+        marginTop: '0.75rem', width: '100%', background: 'none', border: 'none',
+        color: 'var(--color-text-muted)', fontSize: '0.82rem', cursor: 'pointer',
+        textDecoration: 'underline', fontFamily: 'var(--font-body)',
+      }}
+    >
+      {label}
+    </button>
+  );
+}
+
+// ─── Main component ───────────────────────────────────────────────────────────
+
+const emptyIntake = {
   age: '',
   location: '',
   primaryConcerns: [],
   customConcernsText: '',
   menstrualCycle: '',
-  averageCycleLength: '',
-  averagePeriodLength: '',
   flowLevel: '',
   painLevel: '',
   symptoms: [],
   conditions: [],
+  conditionOtherText: '',
   tryingToConceive: '',
   hormonalBirthControl: '',
   hormonalBirthControlType: '',
@@ -34,516 +218,246 @@ const baseIntake = {
   currentProductsText: '',
   dislikedProductsText: '',
   dislikedReason: '',
-  conditionOtherText: '',
   goals: [],
+  healthDataText: '',
 };
-
-const AUTO_ADVANCE_MS = 450;
-const NONE_OPTION = 'None';
-const GENERIC_OTHER_OPTION = 'Other (type your own)';
-const CONCERN_FOLLOWUP_DEFAULT_HISTORY_OPTIONS = ['first time', 'occasional', 'recurring for 6+ months', 'recurring for 1+ year', 'not sure'];
-const CONCERN_FOLLOWUP_CONFIG = {
-  'UTI support': {
-    symptoms: ['burning urination', 'frequent urination', 'urgency', 'pelvic pressure', 'odor changes', 'recurring after sex'],
-    historyQuestion: 'How often have your UTI symptoms happened recently?',
-  },
-  'PCOS management (supplements, telehealth, apps)': {
-    symptoms: ['irregular periods', 'acne', 'hair thinning', 'facial hair growth', 'weight changes', 'insulin resistance concerns'],
-    historyQuestion: 'How long have PCOS symptoms been affecting you?',
-  },
-  'Endometriosis management (supplements, devices, telehealth)': {
-    symptoms: ['severe period pain', 'pain between periods', 'pain with sex', 'pain with bowel movements', 'fatigue', 'nausea'],
-    historyQuestion: 'How long have these endometriosis-related symptoms been present?',
-  },
-  'Period care (pads, tampons, cups, discs, underwear)': {
-    symptoms: ['leaks/staining', 'comfort issues', 'odor concerns', 'skin irritation', 'overnight protection issues', 'fit/sizing issues'],
-    historyQuestion: 'How long have period product issues been a concern?',
-  },
-  'Cramp and pain relief (devices, supplements, heat)': {
-    symptoms: ['cramps', 'lower back pain', 'radiating leg pain', 'nausea', 'headaches', 'missed work/school from pain'],
-    historyQuestion: 'How frequently do these pain symptoms impact you?',
-  },
-  'Fertility and conception (supplements, trackers, telehealth)': {
-    symptoms: ['irregular ovulation signs', 'short luteal phase concerns', 'difficulty timing intercourse', 'pregnancy loss history concern', 'age-related concern', 'stress around TTC'],
-    historyQuestion: 'How long have you been trying or planning to conceive?',
-  },
-  'STI support': {
-    symptoms: ['discharge changes', 'pelvic discomfort', 'burning', 'itching', 'odor changes', 'concern after unprotected sex'],
-    historyQuestion: 'How recent are these STI-related concerns?',
-  },
-  'Gut and vaginal health (probiotics, pH balance)': {
-    symptoms: ['recurrent BV/yeast symptoms', 'bloating', 'constipation', 'pH imbalance concern', 'odor changes', 'sensitivity to products'],
-    historyQuestion: 'How long have gut/vaginal health symptoms been recurring?',
-  },
-  'Perimenopause and menopause support': {
-    symptoms: ['hot flashes', 'night sweats', 'sleep disruption', 'vaginal dryness', 'mood changes', 'brain fog'],
-    historyQuestion: 'How long have menopause-related symptoms affected you?',
-  },
-  'Sexual health and comfort (lubricants, pelvic floor)': {
-    symptoms: ['pain with intercourse', 'dryness', 'low libido', 'pelvic tightness', 'post-sex irritation', 'anxiety around intimacy'],
-    historyQuestion: 'How long have sexual comfort concerns been present?',
-  },
-  'Mental health and cycle mood support': {
-    symptoms: ['anxiety', 'low mood', 'irritability', 'mood swings before period', 'panic symptoms', 'sleep-related mood impact'],
-    historyQuestion: 'How frequently do mood symptoms interfere with daily life?',
-  },
-  'Sleep and energy': {
-    symptoms: ['trouble falling asleep', 'night waking', 'morning fatigue', 'daytime crashes', 'brain fog', 'low stamina'],
-    historyQuestion: 'How long have sleep/energy symptoms been affecting you?',
-  },
-  'Skin and hair (hormone-related)': {
-    symptoms: ['hormonal acne', 'hair shedding', 'scalp oil changes', 'dry skin', 'chin/jawline breakouts', 'cycle-linked flare-ups'],
-    historyQuestion: 'How long have skin/hair symptoms been recurring?',
-  },
-  'Telehealth and provider matching': {
-    symptoms: ['hard to find specialist', 'long wait times', 'cost concerns', 'not feeling heard by providers', 'need second opinion', 'care coordination issues'],
-    historyQuestion: 'How long have provider access issues been affecting your care?',
-  },
-  'Hormone balance (supplements, lifestyle)': {
-    symptoms: ['cycle irregularity', 'bloating', 'mood swings', 'sleep disruption', 'acne', 'energy crashes'],
-    historyQuestion: 'How long have hormone-related symptoms been recurring?',
-  },
-};
-
-const OTHER_TEXT_BY_STEP = {
-  primaryConcerns: {
-    option: OTHER_CONCERN_OPTION,
-    field: 'customConcernsText',
-    label: 'Type your other concern(s)',
-    placeholder: 'e.g. breast tenderness, migraines before period',
-  },
-  conditions: {
-    option: 'other',
-    field: 'conditionOtherText',
-    label: 'Type your other diagnosed condition',
-    placeholder: 'e.g. PMDD, chronic pelvic inflammatory disease',
-  },
-};
-
-function toggle(arr, value) {
-  if (arr.includes(value)) return arr.filter((x) => x !== value);
-  return [...arr, value];
-}
-
-function parseCsvLike(value) {
-  return String(value || '')
-    .split(',')
-    .map((s) => s.trim())
-    .filter(Boolean);
-}
-
-function concernSlug(concern) {
-  return String(concern || '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '');
-}
-
-function extractConcernFollowups(intakeObj = {}) {
-  const out = {};
-  Object.entries(intakeObj).forEach(([k, v]) => {
-    if (!k.startsWith('cf__')) return;
-    const parts = k.split('__');
-    if (parts.length < 3) return;
-    const slug = parts[1];
-    const type = parts[2];
-    if (!out[slug]) out[slug] = {};
-    out[slug][type] = v;
-  });
-  Object.entries(intakeObj).forEach(([k, v]) => {
-    if (!k.startsWith('otherText__cf__')) return;
-    const rest = k.replace('otherText__', '');
-    const parts = rest.split('__');
-    if (parts.length < 3) return;
-    const slug = parts[1];
-    const type = parts[2];
-    if (!out[slug]) out[slug] = {};
-    out[slug][`${type}OtherText`] = String(v || '').trim();
-  });
-  return out;
-}
-
-function withNoneAndOther(options = [], { includeNone = true, includeOther = true } = {}) {
-  const out = [...options];
-  if (includeNone && !out.includes(NONE_OPTION)) out.push(NONE_OPTION);
-  if (includeOther && !out.includes(GENERIC_OTHER_OPTION)) out.push(GENERIC_OTHER_OPTION);
-  return out;
-}
 
 export default function HealthIntakeForm({ onComplete }) {
-  const [intake, setIntake] = useState(baseIntake);
-  const [errors, setErrors] = useState({});
+  const [intake, setIntake] = useState(emptyIntake);
+  const [screenId, setScreenId] = useState('basics');
   const [saving, setSaving] = useState(false);
-  const [saveMessage, setSaveMessage] = useState('');
-  const [currentStep, setCurrentStep] = useState(0);
-  const timerRef = useRef(null);
 
-  const steps = useMemo(() => {
-    const concernOptions = [...CONCERN_AREAS, OTHER_CONCERN_OPTION];
-    const concernFollowupSteps = (Array.isArray(intake.primaryConcerns) ? intake.primaryConcerns : [])
-      .filter((c) => c && c !== OTHER_CONCERN_OPTION)
-      .flatMap((concern) => {
-        const cfg = CONCERN_FOLLOWUP_CONFIG[concern] || {
-          symptoms: ['pain', 'discomfort', 'irregularity', 'daily impact', 'cost burden', 'product side effects'],
-          historyQuestion: `How long have ${concern.toLowerCase()} symptoms been affecting you?`,
-        };
-        const slug = concernSlug(concern);
-        return [
-          {
-            id: `cf__${slug}__symptoms`,
-            question: `${concern}: which symptoms/issues are most relevant for you?`,
-            subtitle: 'Select all that apply',
-            type: 'multi',
-            options: withNoneAndOther(cfg.symptoms),
-          },
-          {
-            id: `cf__${slug}__history`,
-            question: cfg.historyQuestion,
-            subtitle: 'Helps us prioritize recommendations for your symptom history',
-            type: 'single',
-            options: CONCERN_FOLLOWUP_DEFAULT_HISTORY_OPTIONS,
-          },
-          {
-            id: `cf__${slug}__ingredients`,
-            question: `${concern}: are there any ingredients you want Ayna to watch out for?`,
-            subtitle: 'Optional - helps Ayna flag unsafe ingredients in product cards',
-            type: 'multi',
-            options: withNoneAndOther([
-              'synthetic fragrance / perfume',
-              'parabens',
-              'BPA / plastic applicators',
-              'chlorine-bleached cotton',
-              'glycerin',
-              'dyes / colorants',
-              'retinol / vitamin A (if pregnant or TTC)',
-              'high-dose herbs (vitex, black cohosh)',
-              'gluten (celiac)',
-              'soy',
-            ]),
-          },
-        ];
-      });
-    const all = [
-      { id: 'age', question: 'How old are you?', subtitle: 'Required', type: 'input', required: true, inputMode: 'number', placeholder: 'e.g. 29' },
-      { id: 'location', question: 'Where are you located?', subtitle: 'Optional, used for telehealth availability', type: 'input', placeholder: 'City, State or ZIP' },
-      { id: 'primaryConcerns', question: 'What are your top concerns right now?', subtitle: 'Required. Select all that apply.', type: 'multi', required: true, options: concernOptions },
-      ...concernFollowupSteps,
-      { id: 'menstrualCycle', question: 'Do you have a menstrual cycle?', type: 'single', options: CYCLE_STATUSES },
-      { id: 'averageCycleLength', question: 'Average cycle length', subtitle: 'Optional', type: 'input', placeholder: 'e.g. 28 days' },
-      { id: 'averagePeriodLength', question: 'Average period length', subtitle: 'Optional', type: 'input', placeholder: 'e.g. 5 days' },
-      { id: 'flowLevel', question: 'Flow level', type: 'single', options: [...FLOW_LEVELS, 'not sure / not applicable'] },
-      { id: 'painLevel', question: 'Pain level during period (1-10)', type: 'single', options: ['1','2','3','4','5','6','7','8','9','10', 'not sure / not applicable'] },
-      { id: 'symptoms', question: 'Symptoms', subtitle: 'Select all that apply', type: 'multi', options: withNoneAndOther(CYCLE_SYMPTOMS) },
-      { id: 'conditions', question: 'Diagnosed conditions', subtitle: 'Select all that apply', type: 'multi', options: DIAGNOSED_CONDITIONS },
-      { id: 'tryingToConceive', question: 'Are you currently trying to conceive?', type: 'single', options: ['yes', 'no', 'not sure'] },
-      { id: 'hormonalBirthControl', question: 'Are you on hormonal birth control?', type: 'single', options: ['yes', 'no', 'not sure'] },
-      { id: 'productPreferences', question: 'Product preferences', subtitle: 'Select all that apply', type: 'multi', options: withNoneAndOther(PRODUCT_PREFERENCES) },
-      { id: 'preferredProductTypes', question: 'Preferred product types', subtitle: 'Select all that apply', type: 'multi', options: withNoneAndOther(PREFERRED_PRODUCT_TYPES) },
-      { id: 'currentProductsText', question: 'Products you currently use', subtitle: 'Optional, comma-separated', type: 'input', placeholder: 'Always pads, Midol, Flo app' },
-      { id: 'dislikedProductsText', question: 'Products you tried and disliked', subtitle: 'Optional, comma-separated', type: 'input', placeholder: 'Brand/product names' },
-      { id: 'dislikedReason', question: "Why didn't it work?", subtitle: 'Optional', type: 'input', placeholder: 'Brief reason' },
-      { id: 'goals', question: 'What are you hoping Ayna helps you with?', subtitle: 'Select all that apply', type: 'multi', options: withNoneAndOther(GOALS) },
-    ];
-    if (intake.hormonalBirthControl === 'yes') {
-      all.splice(12, 0, { id: 'hormonalBirthControlType', question: 'If yes, what type?', type: 'input', placeholder: 'e.g. pill, IUD' });
+  const hasPeriod = intake.menstrualCycle !== 'no';
+
+  const screens = SCREEN_ORDER.filter((s) => {
+    if (s === 'period' && !hasPeriod && intake.menstrualCycle !== '') return false;
+    return true;
+  });
+
+  const currentIndex = screens.indexOf(screenId);
+  const total = screens.length;
+  const progressPct = Math.round(((currentIndex + 1) / total) * 100);
+
+  const set = (field, value) => setIntake((prev) => ({ ...prev, [field]: value }));
+  const toggle = (field, value) => setIntake((prev) => {
+    const arr = prev[field] || [];
+    return { ...prev, [field]: arr.includes(value) ? arr.filter((v) => v !== value) : [...arr, value] };
+  });
+
+  const goNext = () => {
+    if (currentIndex < screens.length - 1) {
+      setScreenId(screens[currentIndex + 1]);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      handleFinish();
     }
-    return all;
-  }, [intake.hormonalBirthControl, intake.primaryConcerns]);
+  };
 
-  const step = steps[currentStep];
-  const progress = ((currentStep + 1) / steps.length) * 100;
+  const goBack = () => {
+    if (currentIndex > 0) {
+      setScreenId(screens[currentIndex - 1]);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
-  const normalizedIntake = useMemo(() => {
-    const currentProducts = parseCsvLike(intake.currentProductsText);
-    const dislikedProducts = parseCsvLike(intake.dislikedProductsText);
-    const customConcerns = parseCsvLike(intake.customConcernsText);
-    const concernFollowups = extractConcernFollowups(intake);
-    return { ...intake, currentProducts, dislikedProducts, customConcerns, concernFollowups };
-  }, [intake]);
-
-  const finish = async (intakeSnapshot = normalizedIntake) => {
-    const nextErrors = validateHealthIntake(intakeSnapshot);
-    setErrors(nextErrors);
-    if (Object.keys(nextErrors).length > 0) return;
-    const completedIntakeSnapshot = {
-      ...intakeSnapshot,
+  const handleFinish = async () => {
+    setSaving(true);
+    const snapshot = {
+      ...intake,
+      currentProducts: intake.currentProductsText ? intake.currentProductsText.split(',').map((s) => s.trim()).filter(Boolean) : [],
+      dislikedProducts: intake.dislikedProductsText ? intake.dislikedProductsText.split(',').map((s) => s.trim()).filter(Boolean) : [],
+      customConcerns: intake.customConcernsText ? intake.customConcernsText.split(',').map((s) => s.trim()).filter(Boolean) : [],
+      concernFollowups: {},
+      ...(intake.healthDataText ? { wearableSummary: { text: intake.healthDataText } } : {}),
       personalizationCompleted: true,
       personalizationCompletedAt: new Date().toISOString(),
     };
-    setSaving(true);
-    setSaveMessage('');
     try {
-      const saveResult = await saveHealthIntakeForCurrentUser(completedIntakeSnapshot);
-      if (!saveResult.saved) {
-        setSaveMessage('Profile completed. Sign in with Supabase auth to persist this profile to your account.');
-      } else {
-        setSaveMessage('Profile saved to your Supabase account.');
-      }
-    } catch (_error) {
-      setSaveMessage('Profile completed, but we could not save to Supabase right now.');
-    } finally {
-      setSaving(false);
-      onComplete(mapIntakeToLegacyQuizProfile(completedIntakeSnapshot));
-    }
+      await saveHealthIntakeForCurrentUser(snapshot);
+    } catch (_) {}
+    setSaving(false);
+    onComplete(mapIntakeToLegacyQuizProfile(snapshot));
   };
 
-  const [multiSelections, setMultiSelections] = useState(new Set());
-  const [inputValue, setInputValue] = useState('');
-  const stepOtherCfg = useMemo(() => {
-    if (!step?.id || step?.type !== 'multi') return null;
-    if (OTHER_TEXT_BY_STEP[step.id]) return OTHER_TEXT_BY_STEP[step.id];
-    return {
-      option: GENERIC_OTHER_OPTION,
-      field: `otherText__${step.id}`,
-      label: 'Type your other answer',
-      placeholder: 'Type your answer',
-    };
-  }, [step?.id, step?.type]);
-
-  const updateValue = (id, value) => {
-    setIntake((p) => ({ ...p, [id]: value }));
-    if (errors[id]) setErrors((p) => ({ ...p, [id]: null }));
-  };
-
-  const goNext = async (nextIntake = intake) => {
-    const value = nextIntake[step.id];
-    const isEmpty = Array.isArray(value) ? value.length === 0 : !String(value || '').trim();
-    if (step.required && isEmpty) {
-      setErrors((p) => ({ ...p, [step.id]: `${step.question} is required.` }));
-      return;
-    }
-    if (currentStep < steps.length - 1) {
-      setCurrentStep((s) => s + 1);
-      return;
-    }
-    await finish(nextIntake);
-  };
-
-  const onSinglePick = (value) => {
-    updateValue(step.id, value);
-    if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => {
-      goNext();
-    }, AUTO_ADVANCE_MS);
-  };
-  const handleInputConfirm = () => {
-    const nextValue = inputValue.trim();
-    const nextIntake = { ...intake, [step.id]: nextValue };
-    setIntake(nextIntake);
-    if (errors[step.id]) setErrors((p) => ({ ...p, [step.id]: null }));
-    goNext(nextIntake);
-  };
-
-  const handleMultiToggle = (option) => {
-    setMultiSelections((prev) => {
-      const next = new Set(prev);
-      const selectingNone = option === NONE_OPTION;
-      if (next.has(option)) {
-        next.delete(option);
-      } else {
-        if (selectingNone) {
-          next.clear();
-          next.add(NONE_OPTION);
-        } else {
-          next.delete(NONE_OPTION);
-          next.add(option);
-        }
-      }
-      return next;
-    });
-  };
-
-  const handleMultiConfirm = () => {
-    const nextValue = Array.from(multiSelections);
-    const needsOther = !!stepOtherCfg && nextValue.includes(stepOtherCfg.option);
-    const nextIntake = {
-      ...intake,
-      [step.id]: nextValue,
-      ...(stepOtherCfg ? { [stepOtherCfg.field]: needsOther ? intake[stepOtherCfg.field] : '' } : {}),
-    };
-    setIntake(nextIntake);
-    if (errors[step.id]) setErrors((p) => ({ ...p, [step.id]: null }));
-    if (stepOtherCfg && !needsOther && errors[stepOtherCfg.field]) {
-      setErrors((p) => ({ ...p, [stepOtherCfg.field]: null }));
-    }
-    goNext(nextIntake);
-  };
-
-  const handleBack = () => {
-    if (currentStep <= 0) return;
-    if (timerRef.current) clearTimeout(timerRef.current);
-    setCurrentStep((s) => s - 1);
-  };
-
-  const handleSkip = () => {
-    if (step.required) return;
-    if (timerRef.current) clearTimeout(timerRef.current);
-    const cleared = { ...intake };
-    if (step.type === 'multi') cleared[step.id] = [];
-    else cleared[step.id] = '';
-    setIntake(cleared);
-    if (currentStep < steps.length - 1) {
-      setCurrentStep((s) => s + 1);
-    } else {
-      finish(cleared);
-    }
-  };
-
-  React.useEffect(() => {
-    if (!step) return;
-    if (step.type === 'multi') {
-      setMultiSelections(new Set(Array.isArray(intake[step.id]) ? intake[step.id] : []));
-      setInputValue('');
-    } else if (step.type === 'input') {
-      setInputValue(String(intake[step.id] || ''));
-    } else {
-      setMultiSelections(new Set());
-      setInputValue('');
-    }
-  }, [currentStep, step?.id, step?.type]);
+  const isLastScreen = currentIndex === screens.length - 1;
+  const isHealthDataScreen = screenId === 'healthdata';
 
   return (
-    <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)', maxWidth: '820px' }}>
-      <div style={{ width: '100%', background: 'var(--color-border)', height: '6px', borderRadius: 'var(--radius-pill)', marginBottom: 'var(--spacing-lg)', overflow: 'hidden' }}>
-        <div style={{ width: `${progress}%`, height: '100%', background: 'var(--color-primary)', transition: 'width 0.35s ease' }} />
-      </div>
-      <div className="card" style={{ minHeight: '430px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '1rem', alignItems: 'center' }}>
-          <button type="button" onClick={handleBack} style={{ visibility: currentStep === 0 ? 'hidden' : 'visible', border: 'none', background: 'none', color: 'var(--color-primary)', cursor: 'pointer', fontWeight: 600 }}>
-            ← Back
-          </button>
-          <p style={{ margin: 0, color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>{currentStep + 1} of {steps.length}</p>
-          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-            {!step.required && (
-              <button
-                type="button"
-                onClick={handleSkip}
-                style={{
-                  fontSize: '0.85rem', fontWeight: '600', color: 'var(--color-text-muted)',
-                  background: 'var(--color-surface-soft, #f5f5f5)', border: '1px solid var(--color-border)',
-                  borderRadius: 'var(--radius-pill)', cursor: 'pointer', padding: '0.4rem 1rem',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                Skip →
+    <div style={{ minHeight: '100dvh', background: 'var(--color-bg)', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2rem 1rem 4rem' }}>
+      <div style={{ width: '100%', maxWidth: '560px' }}>
+
+        {/* Progress bar */}
+        <div style={{ marginBottom: '2rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+            {currentIndex > 0 && (
+              <button type="button" onClick={goBack} style={{ background: 'none', border: 'none', color: 'var(--color-text-muted)', fontSize: '0.82rem', cursor: 'pointer', padding: 0, fontFamily: 'var(--font-body)' }}>
+                ← Back
               </button>
             )}
-            {step.type === 'multi' && (
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={handleMultiConfirm}
-                disabled={
-                  step.required
-                    ? (
-                      multiSelections.size === 0 ||
-                      (stepOtherCfg &&
-                        multiSelections.has(stepOtherCfg.option) &&
-                        !String(intake[stepOtherCfg.field] || '').trim())
-                    )
-                    : false
-                }
-              >
-                Continue →
-              </button>
-            )}
-            {step.type === 'input' && (
-              <button type="button" className="btn btn-primary" onClick={handleInputConfirm} disabled={saving || (step.required && !String(inputValue || '').trim())}>
-                {currentStep === steps.length - 1 ? (saving ? 'Saving...' : 'Build My Recommendations') : 'Continue →'}
-              </button>
-            )}
-            {step.type === 'single' && !step.required && <span />}
-            {step.type === 'single' && step.required && <span style={{ width: 90 }} />}
+            <span style={{ marginLeft: 'auto', fontSize: '0.78rem', color: 'var(--color-text-muted)', fontWeight: 600 }}>
+              {currentIndex + 1} of {total}
+            </span>
+          </div>
+          <div style={{ height: '4px', background: 'var(--color-border)', borderRadius: 'var(--radius-pill)', overflow: 'hidden' }}>
+            <div style={{ height: '100%', width: `${progressPct}%`, background: 'var(--color-primary)', borderRadius: 'var(--radius-pill)', transition: 'width 0.3s ease' }} />
           </div>
         </div>
 
-        <h2 style={{ textAlign: 'center', fontSize: '1.7rem', marginBottom: '0.5rem' }}>{step.question}</h2>
-        {step.subtitle && (
-          <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', marginBottom: 'var(--spacing-md)' }}>
-            {step.subtitle}
-          </p>
-        )}
-        {errors[step.id] && <p style={{ color: '#b42318', textAlign: 'center' }}>{errors[step.id]}</p>}
-
-        {step.type === 'single' && (
-          <>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              {step.options.map((opt) => {
-                const selected = intake[step.id] === opt;
-                return (
-                  <button
-                    type="button"
-                    key={opt}
-                    className="btn btn-outline"
-                    onClick={() => onSinglePick(opt)}
-                    style={{ justifyContent: 'flex-start', padding: '1rem 1.4rem', fontSize: '1rem', borderColor: selected ? 'var(--color-primary)' : 'var(--color-border)', backgroundColor: selected ? 'var(--color-secondary-fade)' : 'transparent' }}
-                  >
-                    {opt}
-                  </button>
-                );
-              })}
-            </div>
-          </>
-        )}
-
-        {step.type === 'input' && (
-          <div style={{ maxWidth: '500px', margin: '0 auto', width: '100%' }}>
-            <input
-              type={step.inputMode === 'number' ? 'number' : 'text'}
-              value={inputValue}
-              placeholder={step.placeholder || ''}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault();
-                  handleInputConfirm();
-                }
-              }}
-              style={{ width: '100%', padding: '0.9rem 1rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', fontFamily: 'var(--font-body)' }}
-            />
+        {/* Screen: basics */}
+        {screenId === 'basics' && (
+          <div>
+            <ScreenHeader title="Let's build your ecosystem." subtitle="Two quick questions — takes about 20 seconds." />
+            <FieldLabel>How old are you?</FieldLabel>
+            <TextInput type="number" value={intake.age} onChange={(v) => set('age', v)} placeholder="e.g. 28" />
+            <FieldLabel optional>Where are you based?</FieldLabel>
+            <TextInput value={intake.location} onChange={(v) => set('location', v)} placeholder="e.g. New York, NY" />
+            <ContinueButton onClick={goNext} disabled={!intake.age.trim()}>Continue →</ContinueButton>
           </div>
         )}
 
-        {step.type === 'multi' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            {step.options.map((opt) => {
-              const selected = multiSelections.has(opt);
-              return (
-                <button
-                  type="button"
-                  key={opt}
-                  className="btn btn-outline"
-                  onClick={() => handleMultiToggle(opt)}
-                  style={{ justifyContent: 'flex-start', padding: '0.95rem 1.25rem', fontSize: '1rem', borderColor: selected ? 'var(--color-primary)' : 'var(--color-border)', backgroundColor: selected ? 'var(--color-secondary-fade)' : 'transparent' }}
-                >
-                  <span style={{ marginRight: '0.55rem' }}>{selected ? '✓' : '○'}</span> {opt}
-                </button>
-              );
-            })}
-            {stepOtherCfg && multiSelections.has(stepOtherCfg.option) && (
-              <div style={{ marginTop: '0.25rem', padding: '0.85rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', background: 'var(--color-surface-soft)' }}>
-                <label style={{ display: 'block', fontSize: '0.9rem', color: 'var(--color-text-main)', marginBottom: '0.45rem', fontWeight: 600 }}>
-                  {stepOtherCfg.label}
-                </label>
-                <input
-                  type="text"
-                  value={intake[stepOtherCfg.field] || ''}
-                  placeholder={stepOtherCfg.placeholder}
-                  onChange={(e) => updateValue(stepOtherCfg.field, e.target.value)}
-                  style={{ width: '100%', padding: '0.8rem 0.95rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', fontFamily: 'var(--font-body)' }}
-                />
-                {errors[stepOtherCfg.field] && (
-                  <p style={{ color: '#b42318', fontSize: '0.85rem', marginTop: '0.45rem', marginBottom: 0 }}>
-                    {errors[stepOtherCfg.field]}
-                  </p>
-                )}
+        {/* Screen: concerns */}
+        {screenId === 'concerns' && (
+          <div>
+            <ScreenHeader title="What do you most want support with?" subtitle="Pick everything that applies — this shapes every recommendation Ayna makes for you." />
+            <ChipGrid
+              items={CONCERN_AREAS.filter((c) => c !== OTHER_CONCERN_OPTION)}
+              selected={intake.primaryConcerns}
+              onToggle={(v) => toggle('primaryConcerns', v)}
+            />
+            {intake.primaryConcerns.includes(OTHER_CONCERN_OPTION) && (
+              <div style={{ marginTop: '0.75rem' }}>
+                <TextInput value={intake.customConcernsText} onChange={(v) => set('customConcernsText', v)} placeholder="Describe your concern..." />
               </div>
             )}
+
+            <FieldLabel>Do you have a menstrual cycle?</FieldLabel>
+            <SingleSelect options={CYCLE_OPTIONS} value={intake.menstrualCycle} onSelect={(v) => set('menstrualCycle', v)} />
+
+            <FieldLabel optional>Goals — what are you hoping Ayna helps you with?</FieldLabel>
+            <ChipGrid items={GOALS} selected={intake.goals} onToggle={(v) => toggle('goals', v)} small />
+
+            <ContinueButton onClick={goNext} disabled={!intake.primaryConcerns.length || !intake.menstrualCycle}>
+              Continue →
+            </ContinueButton>
           </div>
         )}
 
-        {saveMessage && <p style={{ margin: 0, color: 'var(--color-text-muted)' }}>{saveMessage}</p>}
+        {/* Screen: period */}
+        {screenId === 'period' && (
+          <div>
+            <ScreenHeader title="Tell us about your period." subtitle="All on one screen — about 30 seconds." />
+
+            <FieldLabel>How heavy is your flow?</FieldLabel>
+            <SingleSelect options={FLOW_OPTIONS} value={intake.flowLevel} onSelect={(v) => set('flowLevel', v)} />
+
+            <FieldLabel>Period pain level</FieldLabel>
+            <PainScale value={intake.painLevel} onChange={(v) => set('painLevel', v)} />
+            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.35rem' }}>1 = no pain &nbsp;·&nbsp; 10 = debilitating</p>
+
+            <FieldLabel optional>Symptoms you experience (pick all that apply)</FieldLabel>
+            <ChipGrid items={KEY_SYMPTOMS} selected={intake.symptoms} onToggle={(v) => toggle('symptoms', v)} small />
+
+            <ContinueButton onClick={goNext}>Continue →</ContinueButton>
+          </div>
+        )}
+
+        {/* Screen: health */}
+        {screenId === 'health' && (
+          <div>
+            <ScreenHeader title="Your health history." subtitle="This helps Ayna flag relevant safety info and find the right products and care." />
+
+            <FieldLabel optional>Any diagnosed conditions?</FieldLabel>
+            <ChipGrid
+              items={DIAGNOSED_CONDITIONS.filter((c) => c !== 'other' && c !== 'none')}
+              selected={intake.conditions}
+              onToggle={(v) => toggle('conditions', v)}
+              small
+            />
+            <div style={{ marginTop: '0.5rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <Chip label="None" selected={intake.conditions.includes('none')} onClick={() => set('conditions', ['none'])} small />
+              <Chip label="Other" selected={intake.conditions.includes('other')} onClick={() => toggle('conditions', 'other')} small />
+            </div>
+            {intake.conditions.includes('other') && (
+              <div style={{ marginTop: '0.6rem' }}>
+                <TextInput value={intake.conditionOtherText} onChange={(v) => set('conditionOtherText', v)} placeholder="Describe your condition..." />
+              </div>
+            )}
+
+            <FieldLabel optional>Are you trying to conceive?</FieldLabel>
+            <SingleSelect options={TTC_OPTIONS} value={intake.tryingToConceive} onSelect={(v) => set('tryingToConceive', v)} />
+
+            <FieldLabel optional>Hormonal birth control?</FieldLabel>
+            <SingleSelect options={BC_OPTIONS} value={intake.hormonalBirthControl} onSelect={(v) => set('hormonalBirthControl', v)} />
+            {intake.hormonalBirthControl === 'Yes' && (
+              <div style={{ marginTop: '0.6rem' }}>
+                <TextInput value={intake.hormonalBirthControlType} onChange={(v) => set('hormonalBirthControlType', v)} placeholder="e.g. Mirena IUD, combination pill, patch…" />
+              </div>
+            )}
+
+            <ContinueButton onClick={goNext}>Continue →</ContinueButton>
+          </div>
+        )}
+
+        {/* Screen: products */}
+        {screenId === 'products' && (
+          <div>
+            <ScreenHeader title="What matters to you in products?" subtitle="Ayna uses this to filter recommendations and flag ingredient concerns." />
+
+            <FieldLabel optional>Ingredient & material preferences</FieldLabel>
+            <ChipGrid items={PRODUCT_PREFERENCES} selected={intake.productPreferences} onToggle={(v) => toggle('productPreferences', v)} small />
+
+            <FieldLabel optional>What have you tried that didn't work?</FieldLabel>
+            <TextInput
+              value={intake.dislikedProductsText}
+              onChange={(v) => set('dislikedProductsText', v)}
+              placeholder="e.g. Always pads, Diva Cup, spearmint tea…"
+            />
+
+            <FieldLabel optional>Why didn't it work?</FieldLabel>
+            <TextInput
+              value={intake.dislikedReason}
+              onChange={(v) => set('dislikedReason', v)}
+              placeholder="e.g. caused a rash, too expensive, leaked, uncomfortable…"
+            />
+
+            <ContinueButton onClick={goNext}>Continue →</ContinueButton>
+          </div>
+        )}
+
+        {/* Screen: healthdata */}
+        {screenId === 'healthdata' && (
+          <div>
+            <ScreenHeader
+              title="Got health app data?"
+              subtitle="Optional — but it helps Claude give you dramatically better recommendations."
+            />
+
+            <div style={{ padding: '1rem 1.25rem', background: 'var(--color-secondary-fade)', borderRadius: 'var(--radius-md)', marginBottom: '1.25rem', borderLeft: '3px solid var(--color-primary)' }}>
+              <p style={{ fontSize: '0.85rem', color: 'var(--color-text-main)', lineHeight: 1.6, margin: 0 }}>
+                Paste any summary from <strong>Apple Health, Oura, Whoop, Fitbit, Clue, Flo, PCOS Diary</strong>, or any wearable.
+                Or just describe in plain English: <em>"My Oura shows I average 5h 40m sleep, resting HR 68, HRV 22. Clue shows 35-day cycles."</em>
+              </p>
+            </div>
+
+            <TextArea
+              value={intake.healthDataText}
+              onChange={(v) => set('healthDataText', v)}
+              placeholder="Paste your health data or describe it here… (lab results, cycle app summaries, wearable stats, anything relevant)"
+              rows={5}
+            />
+
+            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.5rem', lineHeight: 1.4 }}>
+              Your data is stored securely and never shared or sold. It's used only to personalize your ecosystem.
+            </p>
+
+            <ContinueButton onClick={goNext} disabled={saving}>
+              {saving ? 'Building your ecosystem…' : 'Build my ecosystem →'}
+            </ContinueButton>
+            <SkipLink onClick={goNext} label={saving ? '' : 'Skip — build my ecosystem without health data →'} />
+          </div>
+        )}
+
       </div>
-    </section>
+    </div>
   );
 }
