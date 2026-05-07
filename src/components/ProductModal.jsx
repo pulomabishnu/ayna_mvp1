@@ -480,6 +480,8 @@ export default function ProductModal({
     const [pubmedArticles, setPubmedArticles] = useState([]);
     const [pubmedLoading, setPubmedLoading] = useState(false);
     const [resolvedModalImage, setResolvedModalImage] = useState('');
+    const [openBlocks, setOpenBlocks] = useState({});
+    const toggleBlock = (id) => setOpenBlocks(prev => ({ ...prev, [id]: !prev[id] }));
     const healthContextKey = useMemo(
         () => buildUserHealthContextString(quizResults, healthProfile),
         [quizResults, healthProfile]
@@ -1147,17 +1149,32 @@ export default function ProductModal({
                     {product.recommendationWhyDetail && (
                         <div style={{
                             marginTop: '1.25rem',
-                            padding: '1rem 1.25rem',
                             background: 'var(--color-secondary-fade)',
                             borderRadius: 'var(--radius-md)',
                             borderLeft: '3px solid var(--color-primary)',
+                            overflow: 'hidden',
                         }}>
-                            <p style={{ fontSize: '0.72rem', fontWeight: '700', color: 'var(--color-primary)', marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                                New to this product?
-                            </p>
-                            <p style={{ fontSize: '0.88rem', color: 'var(--color-text-main)', lineHeight: 1.65, margin: 0 }}>
-                                {product.recommendationWhyDetail}
-                            </p>
+                            <button
+                                type="button"
+                                onClick={() => toggleBlock('newToThis')}
+                                style={{
+                                    width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                                    padding: '0.75rem 1.25rem', background: 'none', border: 'none', cursor: 'pointer',
+                                    textAlign: 'left', gap: '0.5rem',
+                                }}
+                            >
+                                <span style={{ fontSize: '0.72rem', fontWeight: '700', color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                    New to this product?
+                                </span>
+                                <span style={{ fontSize: '0.75rem', color: 'var(--color-primary)', flexShrink: 0 }}>
+                                    {openBlocks['newToThis'] ? '▾' : '▸'}
+                                </span>
+                            </button>
+                            {openBlocks['newToThis'] && (
+                                <p style={{ fontSize: '0.88rem', color: 'var(--color-text-main)', lineHeight: 1.65, margin: 0, padding: '0 1.25rem 0.9rem' }}>
+                                    {product.recommendationWhyDetail}
+                                </p>
+                            )}
                         </div>
                     )}
 
@@ -1183,67 +1200,73 @@ export default function ProductModal({
                             >
                                 Quick overview
                             </p>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-                                {condensed.quickOverview.map((block) => (
-                                    <div key={block.id}>
-                                        {block.title ? (
-                                            <p
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                {condensed.quickOverview.map((block, blockIdx) => {
+                                    const isOpen = !!openBlocks[`qo-${block.id}`];
+                                    const isLast = blockIdx === condensed.quickOverview.length - 1;
+                                    return (
+                                        <div key={block.id} style={{ borderTop: blockIdx > 0 ? '1px solid var(--color-border)' : undefined }}>
+                                            <button
+                                                type="button"
+                                                onClick={() => toggleBlock(`qo-${block.id}`)}
                                                 style={{
-                                                    fontSize: '0.7rem',
-                                                    fontWeight: '700',
-                                                    textTransform: 'uppercase',
-                                                    letterSpacing: '0.04em',
-                                                    color: 'var(--color-primary)',
-                                                    margin: '0 0 0.35rem',
+                                                    width: '100%', display: 'flex', alignItems: 'center',
+                                                    justifyContent: 'space-between', gap: '0.5rem',
+                                                    padding: '0.7rem 0', background: 'none', border: 'none',
+                                                    cursor: 'pointer', textAlign: 'left',
                                                 }}
                                             >
-                                                {block.title}
-                                            </p>
-                                        ) : null}
-                                        {Array.isArray(block.bullets) && block.bullets.length > 0 ? (
-                                            <ul
-                                                style={{
-                                                    margin: 0,
-                                                    paddingLeft: '1.15rem',
-                                                    color: 'var(--color-text-main)',
-                                                }}
-                                            >
-                                                {block.bullets.map((line, i) => (
-                                                    (() => {
-                                                        const isWarning = String(line || '').trim().startsWith('**⚠️');
-                                                        return (
-                                                    <li
-                                                        key={i}
-                                                        style={{
-                                                            fontSize: '0.9rem',
-                                                            lineHeight: 1.55,
-                                                            marginBottom: i < block.bullets.length - 1 ? '0.55rem' : 0,
-                                                            paddingLeft: '0.2rem',
-                                                            listStyleType: isWarning ? 'none' : undefined,
-                                                            marginLeft: isWarning ? '-0.9rem' : undefined,
-                                                            padding: isWarning ? '0.5rem 0.65rem' : undefined,
-                                                            background: isWarning ? '#FFFBEB' : undefined,
-                                                            border: isWarning ? '1px solid #FDE68A' : undefined,
-                                                            borderRadius: isWarning ? 'var(--radius-md)' : undefined,
-                                                            color: isWarning ? '#92400E' : undefined,
-                                                        }}
-                                                    >
-                                                        {renderRichText(line)}
-                                                    </li>
-                                                        );
-                                                    })()
-                                                ))}
-                                            </ul>
-                                        ) : block.body ? (
-                                            <p style={{ fontSize: '0.92rem', color: 'var(--color-text-main)', lineHeight: 1.6, margin: 0 }}>
-                                                {renderRichText(block.body)}
-                                            </p>
-                                        ) : null}
-                                    </div>
-                                ))}
+                                                <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                                    <span style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--color-primary)' }}>
+                                                        {block.title}
+                                                    </span>
+                                                    {block.id === 'why' && (quizResults?.frustrations?.length > 0 || quizResults?.primaryConcerns?.length > 0) && (
+                                                        <span style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--color-primary)', background: 'var(--color-secondary-fade)', padding: '0.1rem 0.45rem', borderRadius: 'var(--radius-pill)', border: '1px solid var(--color-primary)', opacity: 0.8 }}>
+                                                            personalized
+                                                        </span>
+                                                    )}
+                                                </span>
+                                                <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', flexShrink: 0 }}>
+                                                    {isOpen ? '▾' : '▸'}
+                                                </span>
+                                            </button>
+                                            {isOpen && (
+                                                <div style={{ paddingBottom: isLast ? '0.25rem' : '0.75rem' }}>
+                                                    {Array.isArray(block.bullets) && block.bullets.length > 0 ? (
+                                                        <ul style={{ margin: 0, paddingLeft: '1.15rem', color: 'var(--color-text-main)' }}>
+                                                            {block.bullets.map((line, i) => {
+                                                                const isWarning = String(line || '').trim().startsWith('**⚠️');
+                                                                return (
+                                                                    <li key={i} style={{
+                                                                        fontSize: '0.88rem', lineHeight: 1.6,
+                                                                        marginBottom: i < block.bullets.length - 1 ? '0.5rem' : 0,
+                                                                        paddingLeft: '0.2rem',
+                                                                        listStyleType: isWarning ? 'none' : undefined,
+                                                                        marginLeft: isWarning ? '-0.9rem' : undefined,
+                                                                        padding: isWarning ? '0.5rem 0.65rem' : undefined,
+                                                                        background: isWarning ? '#FFFBEB' : undefined,
+                                                                        border: isWarning ? '1px solid #FDE68A' : undefined,
+                                                                        borderRadius: isWarning ? 'var(--radius-md)' : undefined,
+                                                                        color: isWarning ? '#92400E' : undefined,
+                                                                    }}>
+                                                                        {renderRichText(line)}
+                                                                    </li>
+                                                                );
+                                                            })}
+                                                        </ul>
+                                                    ) : block.body ? (
+                                                        <p style={{ fontSize: '0.88rem', color: 'var(--color-text-main)', lineHeight: 1.6, margin: 0 }}>
+                                                            {renderRichText(block.body)}
+                                                        </p>
+                                                    ) : null}
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                })}
                             </div>
-                            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', margin: '0.75rem 0 0', lineHeight: 1.45 }}>
-                                Quick read before you buy—not medical advice.
+                            <p style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', margin: '0.5rem 0 0', lineHeight: 1.45 }}>
+                                Personalized · Not medical advice
                             </p>
                         </div>
                     )}
@@ -1609,14 +1632,21 @@ export default function ProductModal({
                         <div className="animate-fade-in">
                             <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Clinician opinions</h3>
                             {condensed?.clinicalInsight && (
-                                <div style={purpleInsightBoxStyle}>
-                                    <h4 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#7E22CE', marginBottom: '0.65rem' }}>Insight</h4>
-                                    <div style={{ fontSize: '0.95rem', color: '#581C87', margin: 0 }}>
-                                        {renderInsightBullets(condensed.clinicalInsight)}
-                                    </div>
-                                    <p style={{ fontSize: '0.72rem', color: '#7E22CE', margin: '0.75rem 0 0', fontWeight: '600' }}>
-                                        For learning only—not a substitute for your clinician.
-                                    </p>
+                                <div style={{ ...purpleInsightBoxStyle, padding: 0, overflow: 'hidden' }}>
+                                    <button type="button" onClick={() => toggleBlock('clinicalInsight')} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', padding: '0.75rem 1rem', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}>
+                                        <span style={{ fontSize: '0.8rem', fontWeight: '800', color: '#7E22CE' }}>Ayna clinical insight</span>
+                                        <span style={{ fontSize: '0.75rem', color: '#7E22CE', flexShrink: 0 }}>{openBlocks['clinicalInsight'] ? '▾' : '▸'}</span>
+                                    </button>
+                                    {openBlocks['clinicalInsight'] && (
+                                        <div style={{ padding: '0 1rem 0.85rem' }}>
+                                            <div style={{ fontSize: '0.9rem', color: '#581C87', margin: 0 }}>
+                                                {renderInsightBullets(condensed.clinicalInsight)}
+                                            </div>
+                                            <p style={{ fontSize: '0.7rem', color: '#7E22CE', margin: '0.65rem 0 0', fontWeight: '600' }}>
+                                                For learning only — not a substitute for your clinician.
+                                            </p>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                             {!condensed?.clinicalInsight && (
@@ -1693,11 +1723,16 @@ export default function ProductModal({
                                 </p>
                             )}
                             {condensed?.scienceInsight && (
-                                <div style={purpleInsightBoxStyle}>
-                                    <h4 style={{ fontSize: '0.85rem', fontWeight: '800', color: '#7E22CE', marginBottom: '0.65rem' }}>Insight</h4>
-                                    <div style={{ fontSize: '0.95rem', color: '#581C87', margin: 0 }}>
-                                        {renderInsightBullets(condensed.scienceInsight)}
-                                    </div>
+                                <div style={{ ...purpleInsightBoxStyle, padding: 0, overflow: 'hidden' }}>
+                                    <button type="button" onClick={() => toggleBlock('scienceInsight')} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', padding: '0.75rem 1rem', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}>
+                                        <span style={{ fontSize: '0.8rem', fontWeight: '800', color: '#7E22CE' }}>Ayna science insight</span>
+                                        <span style={{ fontSize: '0.75rem', color: '#7E22CE', flexShrink: 0 }}>{openBlocks['scienceInsight'] ? '▾' : '▸'}</span>
+                                    </button>
+                                    {openBlocks['scienceInsight'] && (
+                                        <div style={{ padding: '0 1rem 0.85rem', fontSize: '0.9rem', color: '#581C87' }}>
+                                            {renderInsightBullets(condensed.scienceInsight)}
+                                        </div>
+                                    )}
                                 </div>
                             )}
                             {pubmedLoading && (
