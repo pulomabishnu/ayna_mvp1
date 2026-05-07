@@ -176,7 +176,9 @@ function hasReliabilityConcern(product) {
 function hasIndependentClinicianOpinion(product) {
   const source = String(product?.clinicianOpinionSource || '').toLowerCase();
   const attribution = String(product?.clinicianAttribution || '').trim();
-  return source === 'independent' && attribution.length > 0;
+  const doctorOpinion = String(product?.doctorOpinion || '').trim();
+  // Accept: explicit independent source with attribution, OR any product with a substantive doctor opinion
+  return (source === 'independent' && attribution.length > 0) || doctorOpinion.length > 20;
 }
 
 function isSupplementProduct(product) {

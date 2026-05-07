@@ -297,7 +297,7 @@ export const EXTENDED_PHYSICAL = [
 export const EXTENDED_DIGITAL = [
     // ─── MORE TRACKERS ──────────────────────────────────
     {
-        id: 'd-natural-cycles', name: 'Natural Cycles', category: 'tracker', type: 'digital', internal: false, healthFunctions: ['cycle-tracking', 'contraception'], tags: ['irregular', 'privacy'], price: '$100/year or $13/month', userRating: 4.6, whereToBuy: ['App Store', 'Google Play'], platform: 'iOS, Android', image: '/startup_placeholder.png', summary: 'The only FDA-cleared birth control app. Uses basal body temperature to identify fertile/infertile days.',
+        id: 'd-natural-cycles', name: 'Natural Cycles', category: 'tracker', type: 'digital', internal: false, healthFunctions: ['cycle-tracking', 'contraception'], tags: ['irregular', 'pcos', 'privacy'], price: '$100/year or $13/month', userRating: 4.6, whereToBuy: ['App Store', 'Google Play'], platform: 'iOS, Android', image: '/startup_placeholder.png', summary: 'The only FDA-cleared birth control app. Uses basal body temperature to identify fertile/infertile days.',
         safety: {
             fdaStatus: 'FDA-cleared (De Novo) as contraception', materials: 'N/A', recalls: 'N/A', allergens: 'N/A',
             sideEffects: 'N/A (Software). Risk of pregnancy if the method is not followed perfectly.',
@@ -325,7 +325,7 @@ export const EXTENDED_DIGITAL = [
         }
     },
     {
-        id: 'd-ovia', name: 'Ovia Health', category: 'tracker', type: 'digital', internal: false, healthFunctions: ['cycle-tracking'], tags: ['irregular', 'comfort'], price: 'Free (employer-sponsored)', whereToBuy: ['App Store', 'Google Play'], platform: 'iOS, Android', image: 'http://oviawellness.com/cdn/shop/files/1762267614936-generated-label-image-0.jpg?v=1762267644', summary: 'Period, fertility, and pregnancy tracker. Often free through employers. Covers full reproductive journey.',
+        id: 'd-ovia', name: 'Ovia Health', category: 'tracker', type: 'digital', internal: false, healthFunctions: ['cycle-tracking'], tags: ['irregular', 'pcos', 'comfort'], price: 'Free (employer-sponsored)', whereToBuy: ['App Store', 'Google Play'], platform: 'iOS, Android', image: 'http://oviawellness.com/cdn/shop/files/1762267614936-generated-label-image-0.jpg?v=1762267644', summary: 'Period, fertility, and pregnancy tracker. Often free through employers. Covers full reproductive journey.',
         safety: {
             fdaStatus: 'Not FDA-cleared', materials: 'N/A', recalls: 'N/A', allergens: 'N/A',
             sideEffects: 'N/A',
@@ -344,7 +344,7 @@ export const EXTENDED_DIGITAL = [
         }
     },
     {
-        id: 'd-glow', name: 'Glow Period & Ovulation Tracker', category: 'tracker', type: 'digital', internal: false, healthFunctions: ['cycle-tracking'], tags: ['irregular', 'comfort'], price: 'Free (Premium $48/year)', userRating: 4.4, whereToBuy: ['App Store', 'Google Play'], platform: 'iOS, Android', image: '/startup_placeholder.png', summary: 'Period and fertility tracker with community forum. Also offers fertility courses and clinic matching.',
+        id: 'd-glow', name: 'Glow Period & Ovulation Tracker', category: 'tracker', type: 'digital', internal: false, healthFunctions: ['cycle-tracking'], tags: ['irregular', 'pcos', 'comfort'], price: 'Free (Premium $48/year)', userRating: 4.4, whereToBuy: ['App Store', 'Google Play'], platform: 'iOS, Android', image: '/startup_placeholder.png', summary: 'Period and fertility tracker with community forum. Also offers fertility courses and clinic matching.',
         safety: {
             fdaStatus: 'Not FDA-cleared', materials: 'N/A', recalls: 'N/A', allergens: 'N/A',
             sideEffects: 'N/A',

@@ -229,17 +229,25 @@ INGREDIENT SAFETY RULES — apply these based on her conditions:
 - For ALL period care recommendations: note if the product is organic/unbleached/fragrance-free and why that matters for her specific conditions
 
 TASK:
-For each of her primary concerns, generate MULTIPLE solution tracks (at least 3 when realistic for that concern), such as:
+You MUST generate a recommendation entry for EVERY concern listed in her primaryConcerns. Do not skip any concern — this is mandatory. If she has 5 concerns, you must return exactly 5 recommendation objects. Do not stop early due to length.
+
+For each concern, generate at least 2 solution tracks (aim for 3 when clinically relevant):
 - supplement / wellness
 - physical device or product
 - digital or telehealth
-- any additional clinically relevant track
 
 Each solution track must include:
 - one top product
 - exactly 3 alternatives
 
-Prioritize tracks that are genuinely useful for that specific concern and profile. If a track is not clinically relevant for a specific concern, skip it.
+For each concern, always consider:
+- PCOS symptoms → Inositol (myo-inositol + d-chiro-inositol), spearmint, magnesium, Allara Health telehealth, Flo app, cycle tracking apps
+- Irregular cycles → cycle tracking apps (Natural Cycles, Clue, Flo), inositol supplements, Oova hormone testing, Allara Health
+- Hormonal bloating → magnesium glycinate, probiotics (women's formula), bloat-specific supplements (Love Wellness, Pink Stork), anti-inflammatory diet support apps
+- Leaks & staining → organic cotton pads/tampons, period underwear (Thinx, Knix), menstrual cups/discs for reliability; if organic/fragrance-free preference noted, prioritize those
+- Fragrance sensitivity → flag any product with fragrance; always recommend fragrance-free alternatives first
+
+Prioritize tracks that are genuinely useful for that specific concern and profile. If a track is not clinically relevant for a specific concern, note why briefly and include 2 tracks minimum.
 
 ANTI-HALLUCINATION RULES:
 - Only recommend a product if you are highly confident it exists and is currently sold
@@ -333,7 +341,7 @@ async function callOpenAI(prompt) {
     body: JSON.stringify({
       model,
       temperature: 0.2,
-      max_tokens: 4000,
+      max_tokens: 8000,
       response_format: { type: 'json_object' },
       messages: [
         { role: 'system', content: 'Output valid JSON only.' },
@@ -358,7 +366,7 @@ async function callAnthropic(prompt) {
     },
     body: JSON.stringify({
       model,
-      max_tokens: 6000,
+      max_tokens: 12000,
       temperature: 0.2,
       system: 'Return a single valid JSON object only. No markdown code fences.',
       messages: [{ role: 'user', content: prompt }],
