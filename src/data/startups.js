@@ -32,7 +32,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 890,
         url: 'https://www.inne.io',
-        image: 'https://cdn-bjpdk.nitrocdn.com/dyjDRTumiVVFLKEpXMADzKdEUUbypNrL/assets/images/optimized/rev-007776e/www.visualeducation.com/wp-content/uploads/2020/05/Beats_headphones-2-1558px.jpg'
+        image: 'https://inne.io/cdn/shop/files/66f8e9b17901a3db0460604b71918692-removebg-preview_1.webp?v=1771858648&width=400'
     },
     {
         id: 's-daye',
@@ -46,7 +46,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 620,
         url: 'https://www.yourdaye.com',
-        image: 'https://cdn.shopify.com/s/files/1/0024/2810/8869/files/how_we_should_get_a_perfect_white_background_in_product_photography_fac7c117-b246-45da-9502-f379a5a2bc1d_480x480.jpg?v=1644597509'
+        image: 'https://images.prismic.io/ecommerce-website/7c1d4603-2d8e-4b9a-8f74-4ea6ad77abbb_CBD+Organic+Tampon+Box%402x.jpg?auto=compress%2Cformat&fit=max&q=75'
     },
     {
         id: 's-allara',
@@ -102,7 +102,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 750,
         url: 'https://www.hertilityhealth.com',
-        image: 'https://pinkstork.com/cdn/shop/files/Fertility-Support-1.jpg?v=1772558656&width=2000'
+        image: '/startup_placeholder.png'
     },
     {
         id: 's-oova',
@@ -142,8 +142,8 @@ export const STARTUPS = [
         stage: 'Available, DTC',
         productReleased: true,
         spotsLeft: 320,
-        url: 'https://www.wile.co',
-        image: 'https://cdn.shopify.com/s/files/1/0024/2810/8869/files/how_we_should_get_a_perfect_white_background_in_product_photography_fac7c117-b246-45da-9502-f379a5a2bc1d_480x480.jpg?v=1644597509'
+        url: 'https://wilewomen.com',
+        image: 'https://wilewomen.com/cdn/shop/files/Untitled-1_750x.png?v=1724791346'
     },
     {
         id: 's-nextgenjane',
@@ -1175,7 +1175,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 500,
         url: '#',
-        image: 'https://cdn.shopify.com/s/files/1/0024/2810/8869/files/how_we_should_get_a_perfect_white_background_in_product_photography_fac7c117-b246-45da-9502-f379a5a2bc1d_480x480.jpg?v=1644597509'
+        image: '/startup_placeholder.png'
     },
     {
         id: 's-pregnancy-pulse',
