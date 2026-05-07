@@ -296,8 +296,8 @@ export const STARTUPS = [
         stage: 'Available UK, expanding US',
         productReleased: true,
         spotsLeft: 450,
-        url: 'https://parla.co',
-        image: 'https://www.shutterstock.com/image-photo/imphal-manipur-india-10-01-260nw-2525669843.jpg'
+        url: 'https://app.myparla.com',
+        image: '/startup_placeholder.png'
     },
     {
         id: 's-proov',
