@@ -348,16 +348,24 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             intake.productPreferences?.length ? `Preferences: ${intake.productPreferences.join(', ')}` : '',
             intake.goals?.length ? `Goals: ${intake.goals.join(', ')}` : '',
         ].filter(Boolean).join('. ') : '';
+        const dislikedProducts = intake?.dislikedProductsText || '';
+        // Build a set of disliked brand/product name fragments for client-side filtering
+        const dislikedTerms = dislikedProducts.split(/[,\n]+/).map(s => s.trim().toLowerCase()).filter(s => s.length > 1);
         try {
             const { suggestions, querySummary, relatedSearches, error } = await fetchSearchSuggestions({
                 query, category, symptom, signal: ac.signal,
                 personalized: personalizationFilter,
                 profileSummary,
+                dislikedProducts,
                 maxResults: personalizationFilter ? 10 : 20,
             });
             if (ac.signal.aborted) return;
             setAiLoading(false);
-            setAiSuggestions(Array.isArray(suggestions) ? suggestions : []);
+            const filteredSuggestions = (Array.isArray(suggestions) ? suggestions : []).filter(s => {
+                const nameAndBrand = `${s.name || ''} ${s.brand || ''}`.toLowerCase();
+                return !dislikedTerms.some(term => nameAndBrand.includes(term));
+            });
+            setAiSuggestions(filteredSuggestions);
             setAiQuerySummary(typeof querySummary === 'string' ? querySummary : '');
             setAiRelatedSearches(Array.isArray(relatedSearches) ? relatedSearches : []);
             setAiError(error || null);

@@ -54,6 +54,7 @@ export async function fetchSearchSuggestions(opts) {
   const symptom = opts?.symptom && opts.symptom !== 'all' ? String(opts.symptom) : '';
   const personalized = !!opts?.personalized;
   const profileSummary = typeof opts?.profileSummary === 'string' ? opts.profileSummary : '';
+  const dislikedProducts = typeof opts?.dislikedProducts === 'string' ? opts.dislikedProducts : '';
   const maxResults = typeof opts?.maxResults === 'number' ? opts.maxResults : 20;
   // Don't cache personalized results — they're user-specific
   const cacheKey = personalized ? null : sessionCacheKey(query, category, symptom, maxResults);
@@ -65,7 +66,7 @@ export async function fetchSearchSuggestions(opts) {
   const res = await fetch('/api/search-suggestions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query, category, symptom, personalized, profileSummary, maxResults }),
+    body: JSON.stringify({ query, category, symptom, personalized, profileSummary, dislikedProducts, maxResults }),
     signal: opts?.signal,
   });
 

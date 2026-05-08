@@ -153,7 +153,7 @@ function normalizeQuerySummary(s) {
   return t.length >= 20 ? t : '';
 }
 
-function buildPrompt(query, categoryHint, symptomHint, personalized, profileSummary, maxResults) {
+function buildPrompt(query, categoryHint, symptomHint, personalized, profileSummary, maxResults, dislikedProducts) {
   const cat =
     categoryHint && categoryHint !== 'all'
       ? `User category filter: "${categoryHint}". Prefer products that fit this aisle when relevant.`
@@ -163,7 +163,10 @@ function buildPrompt(query, categoryHint, symptomHint, personalized, profileSumm
       ? `User filtered supplements by symptom theme: "${symptomHint}".`
       : '';
   const profileLine = personalized && profileSummary
-    ? `User health profile: ${profileSummary}. Rank results by relevance to this specific user first.`
+    ? `User health profile: ${profileSummary}. Use this to rank which products within the searched category are most relevant — do NOT use it to recommend products from a different category.`
+    : '';
+  const dislikedLine = dislikedProducts
+    ? `The user has tried and disliked these products — do NOT include them: ${dislikedProducts}`
     : '';
   const countLine = personalized
     ? `Return the top ${maxResults} most relevant options for this specific user's profile.`
@@ -172,7 +175,7 @@ function buildPrompt(query, categoryHint, symptomHint, personalized, profileSumm
   return `You are the product-discovery layer for Ayna, a women's health app. Your job is to propose REAL, SHIPPABLE products and apps that best match the user's intent — specific brand names and product lines that a shopper could find at major US retailers or official brand/app stores. ${countLine}
 
 User search: "${query.replace(/"/g, '\\"')}"
-${cat}${sym ? '\n' + sym : ''}${profileLine ? '\n' + profileLine : ''}
+${cat}${sym ? '\n' + sym : ''}${profileLine ? '\n' + profileLine : ''}${dislikedLine ? '\n' + dislikedLine : ''}
 
 Return ONE JSON object ONLY (no markdown) with up to 20 suggestions in this shape:
 {
@@ -196,10 +199,11 @@ Return ONE JSON object ONLY (no markdown) with up to 20 suggestions in this shap
 }
 
 PRODUCT SELECTION PROCESS:
-1. Identify what the user is actually looking for based on their search query
-2. Draw on your full knowledge of ALL brands that make relevant products — mainstream, indie, DTC, clinical, international brands available in the US market
-3. Rank by: (a) clinical reputation and safety record, (b) relevance to the specific query, (c) availability, (d) community reputation
-4. Suggest the most relevant and reputable options — not just the most popular ones. Small and indie brands are encouraged if reputable.
+1. Identify what the user is actually looking for based on their search query — the query defines what TYPE of product to return
+2. Every suggestion must be a product of the type described in the search query. If the user searches "iron supplements", return only iron supplements — not cycle trackers, apps, period care products, or anything else, no matter what their health profile says
+3. User profile context (concerns, conditions) should only influence WHICH products within that category are most relevant — it must never cause you to recommend a different category entirely
+4. Draw on your full knowledge of ALL brands that make relevant products — mainstream, indie, DTC, clinical, international brands available in the US market
+5. Rank by: (a) direct relevance to the search query, (b) clinical reputation and safety record, (c) availability, (d) community reputation
 
 ANTI-HALLUCINATION RULES:
 - Only suggest products from brands you are confident exist and sell in the US market
@@ -303,9 +307,10 @@ export default async function handler(req, res) {
   const symptomHint = typeof body?.symptom === 'string' ? body.symptom.trim() : '';
   const personalized = !!body?.personalized;
   const profileSummary = sanitizeStr(body?.profileSummary || '', 400);
+  const dislikedProducts = sanitizeStr(body?.dislikedProducts || '', 300);
   const maxResults = typeof body?.maxResults === 'number' ? Math.min(Math.max(body.maxResults, 1), 20) : 20;
 
-  const rawJson = await callClaudeJson(buildPrompt(query, categoryHint, symptomHint, personalized, profileSummary, maxResults));
+  const rawJson = await callClaudeJson(buildPrompt(query, categoryHint, symptomHint, personalized, profileSummary, maxResults, dislikedProducts));
   if (!rawJson) {
     return res.status(502).json({ error: 'claude_failed' });
   }
