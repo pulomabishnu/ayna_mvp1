@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useMemo, useRef, useEffect, useLayoutEffect, useCallback } from 'react';
 import Hero from './components/Hero';
 import WelcomeGate from './components/WelcomeGate';
 import HealthIntakeForm from './components/HealthIntakeForm';
@@ -33,8 +33,45 @@ import { loadReviewsForUser, upsertProductReviews } from './utils/reviewsStore';
 
 const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls'];
 
+const VIEW_TO_PATH = {
+  welcome: '/', hero: '/', quiz: '/quiz', ecosystem: '/ecosystem',
+  discovery: '/discovery', waitlist: '/startups', deeptech: '/deeptech',
+  articles: '/library', screenings: '/screenings', omitted: '/omitted',
+  comparison: '/comparison', recalls: '/recalls',
+  'doctor-prep': '/provider-prep', 'profile-edit': '/profile', tracked: '/tracked',
+};
+const PATH_TO_VIEW = Object.fromEntries(
+  Object.entries(VIEW_TO_PATH).filter(([, p]) => p !== '/').map(([v, p]) => [p, v])
+);
+PATH_TO_VIEW['/'] = 'welcome';
+
+function getInitialView() {
+  const path = window.location.pathname;
+  return PATH_TO_VIEW[path] || 'welcome';
+}
+
 function App() {
-  const [currentView, setCurrentView] = useState('welcome');
+  const [currentView, setCurrentViewRaw] = useState(getInitialView);
+  const setCurrentView = useCallback((view, { replace = false } = {}) => {
+    setCurrentViewRaw(view);
+    const path = VIEW_TO_PATH[view] || '/';
+    if (window.location.pathname !== path) {
+      if (replace) window.history.replaceState({ view }, '', path);
+      else window.history.pushState({ view }, '', path);
+    }
+  }, []);
+  useEffect(() => {
+    window.history.replaceState({ view: currentView }, '', VIEW_TO_PATH[currentView] || '/');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  useEffect(() => {
+    const onPop = (e) => {
+      const view = e.state?.view || PATH_TO_VIEW[window.location.pathname] || 'welcome';
+      setCurrentViewRaw(view);
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
   const [quizResults, setQuizResults] = useState(null);
   const [trackedProducts, setTrackedProducts] = useState({});
   const [joinedWaitlists, setJoinedWaitlists] = useState({});
@@ -114,7 +151,7 @@ function App() {
         setOmittedProducts({});
         setQuizResults(null);
         setAynaReviews({});
-        setCurrentView('welcome');
+        setCurrentView('welcome', { replace: true });
         try {
           // Keep LLM recommendations cache — it's fingerprint-keyed so a
           // different quiz will naturally miss. Clearing it caused a re-fetch
@@ -187,7 +224,7 @@ function App() {
   const PROTECTED_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls', 'doctor-prep', 'profile-edit', 'tracked', 'screenings'];
   useEffect(() => {
     if (!authLoading && !user && PROTECTED_VIEWS.includes(currentView)) {
-      setCurrentView('welcome');
+      setCurrentView('welcome', { replace: true });
       setPendingAction('login');
       setShowAuthModal(true);
     }
