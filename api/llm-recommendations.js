@@ -551,6 +551,130 @@ function tryParseJsonCandidate(raw) {
   return null;
 }
 
+// ─── Concurrency limiter ──────────────────────────────────────────────────────
+async function mapConcurrent(items, fn, limit = 4) {
+  const results = new Array(items.length).fill(null);
+  let nextIdx = 0;
+  async function worker() {
+    while (nextIdx < items.length) {
+      const i = nextIdx++;
+      try { results[i] = await fn(items[i], i); } catch { results[i] = null; }
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, worker));
+  return results;
+}
+
+// ─── Per-concern search context ───────────────────────────────────────────────
+function formatSearchContextForConcern(concern, hits) {
+  if (!hits?.length) return '';
+  const lines = [`\nLIVE SEARCH for "${concern}":`];
+  hits.forEach((h, i) => {
+    lines.push(`  ${i + 1}. ${h.title}`);
+    if (h.snippet) lines.push(`     ${h.snippet}`);
+    if (h.url) lines.push(`     Source: ${h.url}`);
+  });
+  lines.push('Use as discovery signal only — quality bar still applies.');
+  return lines.join('\n');
+}
+
+// ─── Single-concern prompt ────────────────────────────────────────────────────
+function buildPromptForOneConcern(concern, intake = {}, feedback = {}, searchHits = null) {
+  const concernFollowup = intake?.concernFollowups?.[concern];
+  const knowledgeChunks = retrieveKnowledgeForIntake({ ...intake, primaryConcerns: [concern] }, 4);
+  const knowledgeContext = buildKnowledgeContext(knowledgeChunks);
+
+  return `
+You are Ayna's clinical recommendation engine. Reason like a skilled OB/GYN or women's health specialist.
+
+You CAN: make clinical inferences, recommend OTC products and supplements grounded in evidence, recommend telehealth specialists, explain mechanisms.
+You CANNOT: diagnose, prescribe medications, or guarantee outcomes.
+
+PATIENT PROFILE:
+- Age: ${intake?.age || 'unknown'}, Location: ${intake?.location || 'unknown'}, Insurance: ${intake?.insurancePlan || 'not provided'}
+- All concerns: ${selectedConcerns(intake).join(', ') || 'none'}
+- Conditions: ${(Array.isArray(intake?.conditions) ? intake.conditions : []).join(', ') || 'none'}
+- Family history: ${(Array.isArray(intake?.familyHistory) ? intake.familyHistory : []).join(', ') || 'not provided'}
+- Symptom duration: ${intake?.symptomDuration || 'not provided'}, Last OB/GYN: ${intake?.lastObgynVisit || 'not provided'}
+- Medications: ${intake?.currentMedications || 'none'}
+- Cycle: ${intake?.menstrualCycle || 'unknown'}, Flow: ${intake?.flowLevel || 'unknown'}, Pain: ${intake?.painLevel ? `${intake.painLevel}/10` : 'unknown'}
+- Symptoms: ${(Array.isArray(intake?.symptoms) ? intake.symptoms : []).join(', ') || 'none'}
+- TTC: ${intake?.tryingToConceive || 'unknown'}, Birth control: ${intake?.hormonalBirthControl || 'unknown'}${intake?.hormonalBirthControlType ? ` (${intake.hormonalBirthControlType})` : ''}
+- Preferences (hard filters): ${(Array.isArray(intake?.productPreferences) ? intake.productPreferences : []).join(', ') || 'none'}
+- Tried and disliked: ${intake?.dislikedProductsText || 'none'} — reason: ${intake?.dislikedReason || 'none'}
+- Goals: ${(Array.isArray(intake?.goals) ? intake.goals : []).join(', ') || 'none'}
+- Wearable data: ${intake?.wearableSummary?.text || intake?.healthDataText || 'none'}
+- Ecosystem (already has): ${(feedback?.ecosystemProductIds || []).join(', ') || 'none'}
+- Hidden products: ${(feedback?.omittedProductIds || []).join(', ') || 'none'}
+${knowledgeContext ? `\nCLINICAL KNOWLEDGE:\n${knowledgeContext}` : ''}${searchHits ? '\n' + formatSearchContextForConcern(concern, searchHits) : ''}
+
+SCOPE: Never name prescription medications. If a concern requires diagnosis or labs, lead with telehealth. Pain 8+/10: always include telehealth.
+
+QUALITY BAR: Every product must have (a) majority positive reviews from real women, (b) clinical/scientific support for the mechanism, (c) established US-available brand. No fabricated brands.
+
+PERSONALIZATION:
+- Product preferences are HARD FILTERS — if she prefers organic/fragrance-free, every physical product must meet that.
+- Never recommend a brand she listed as disliked.
+- whyItWorks must explain the mechanism AND cite her specific profile detail (condition, pain level, preference). Never just "fits your concern."
+- Recommend specific product names (e.g. "Thinx Hiphugger Period Underwear"), not company names. Exception: telehealth platforms and apps.
+- Never recommend products she has hidden.
+- Never recommend tranexamic acid products.
+
+TASK: Generate recommendations for this ONE concern only: "${concern}"${concernFollowup ? `\nUser context: ${JSON.stringify(concernFollowup)}` : ''}
+
+Generate 2-3 solution tracks (supplement/wellness · physical product · digital/telehealth). Each track: 1 top product + 2 alternatives.
+
+Return ONLY valid JSON — exactly this shape:
+{
+  "recommendations": [
+    {
+      "concern": "${concern}",
+      "tiers": [
+        {
+          "id": "tier-supplement",
+          "name": "Supplement option",
+          "subcategory": "supplement",
+          "matchExplanation": "1 sentence on why this track fits her for this concern",
+          "safetyFlags": [],
+          "product": {
+            "id": "brand-productname-slug",
+            "name": "Exact product name",
+            "brand": "Brand",
+            "category": "category",
+            "type": "physical or digital",
+            "summary": "1-2 sentences",
+            "whyItWorks": "2 sentences: mechanism then her profile fit",
+            "considerations": "1 sentence or empty string",
+            "price": "$XX",
+            "image": "",
+            "tags": ["tag1"],
+            "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" },
+            "clinicianOpinionSource": "",
+            "clinicianAttribution": "",
+            "url": "https://brandhomepage.com"
+          },
+          "alternatives": [
+            {
+              "id": "alt-slug",
+              "name": "Alternative name",
+              "brand": "Brand",
+              "summary": "1 sentence",
+              "whyItWorks": "1 sentence",
+              "price": "$XX",
+              "type": "physical or digital",
+              "image": "",
+              "url": "https://brandhomepage.com",
+              "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" }
+            }
+          ]
+        }
+      ],
+      "notes": []
+    }
+  ]
+}`.trim();
+}
+
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
   if (req.method === 'OPTIONS') {
@@ -583,56 +707,47 @@ export default async function handler(req, res) {
   }
 
   const concerns = selectedConcerns(intake);
-  const [basePrompt, searchResults] = await Promise.all([
-    Promise.resolve(buildPrompt(intake, feedback)),
-    searchProductsForConcerns(concerns, intake),
-  ]);
-  const prompt = searchResults ? basePrompt + formatSearchContext(searchResults) : basePrompt;
+  if (!concerns.length) {
+    return res.status(200).json({ recommendations: [], providerUsed: null, generatedAt: new Date().toISOString() });
+  }
+
+  const searchResults = await searchProductsForConcerns(concerns, intake);
   const order = getProviderOrder();
-  let parsed = null;
-  let providerUsed = '';
-  let lastRaw = '';
-  for (const provider of order) {
-    const raw = await callProvider(provider, prompt);
-    if (!raw) continue;
-    lastRaw = raw;
-    const parsedAttempt = tryParseJsonCandidate(raw);
-    console.log(
-      'AI provider tried:',
-      provider,
-      '| Response length:',
-      String(raw || '').length,
-      '| First 200 chars:',
-      String(raw || '').slice(0, 200),
-      '| Parsed:',
-      !!parsedAttempt
-    );
-    if (parsedAttempt) {
-      parsed = parsedAttempt;
-      providerUsed = provider;
-      break;
-    }
-  }
 
-  if (!lastRaw) {
-    return res.status(503).json({
-      error: 'no_ai_response',
-      message: 'Could not generate recommendations. Check your API key and quota.',
-    });
-  }
+  const perConcernResults = await mapConcurrent(
+    concerns,
+    async (concern) => {
+      const searchHits = searchResults?.[concern] || null;
+      const prompt = buildPromptForOneConcern(concern, intake, feedback, searchHits);
+      for (const provider of order) {
+        const raw = await callProvider(provider, prompt);
+        if (!raw) continue;
+        const parsed = tryParseJsonCandidate(raw);
+        console.log('Concern:', concern, '| Provider:', provider, '| Length:', String(raw || '').length, '| Parsed:', !!parsed);
+        if (parsed) return { parsed, provider };
+      }
+      console.warn('No parseable response for concern:', concern);
+      return null;
+    },
+    4
+  );
 
-  if (!parsed || typeof parsed !== 'object') {
-    console.error('JSON parse error after all providers. Last raw (first 800 chars):', String(lastRaw || '').slice(0, 800));
+  const providerUsed = perConcernResults.find((r) => r?.provider)?.provider || '';
+  const allEntries = perConcernResults
+    .filter(Boolean)
+    .flatMap((r) => (Array.isArray(r.parsed?.recommendations) ? r.parsed.recommendations : []));
+
+  if (!allEntries.length) {
     return res.status(200).json({
       recommendations: [],
       providerUsed: providerUsed || null,
       generatedAt: new Date().toISOString(),
       warning: 'parse_error_fallback',
-      message: 'AI response was malformed; returned fallback recommendations.',
+      message: 'No parseable recommendations returned.',
     });
   }
 
-  const recs = enrichRecommendations(parsed?.recommendations);
+  const recs = enrichRecommendations(allEntries);
 
   const verifiedRecs = await Promise.all(
     recs.map(async (entry) => {
