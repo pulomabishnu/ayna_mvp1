@@ -21,8 +21,10 @@ const KEY_SYMPTOMS = [
 const FLOW_OPTIONS = ['Light', 'Medium', 'Heavy', 'Very heavy'];
 const CYCLE_OPTIONS = [
   { value: 'yes', label: 'Yes' },
-  { value: 'no', label: 'No / Post-menopause' },
-  { value: 'irregular', label: 'Irregular / Perimenopausal' },
+  { value: 'no', label: 'No' },
+  { value: 'irregular', label: 'Irregular' },
+  { value: 'irregular_perimenopause', label: 'Irregular (Perimenopause)' },
+  { value: 'no_menopause', label: 'No (Menopause)' },
 ];
 
 const FAMILY_HISTORY_OPTIONS = [
@@ -248,7 +250,7 @@ export default function HealthIntakeForm({ onComplete }) {
   const [screenId, setScreenId] = useState('basics');
   const [saving, setSaving] = useState(false);
 
-  const hasPeriod = intake.menstrualCycle !== 'no';
+  const hasPeriod = intake.menstrualCycle !== 'no' && intake.menstrualCycle !== 'no_menopause';
 
   const screens = SCREEN_ORDER.filter((s) => {
     if (s === 'period' && !hasPeriod && intake.menstrualCycle !== '') return false;
