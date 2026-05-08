@@ -712,6 +712,7 @@ export default function MyEcosystem({
     const [llmLoading, setLlmLoading] = useState(false);
     const [llmError, setLlmError] = useState('');
     const [llmLoadStartedAt, setLlmLoadStartedAt] = useState(0);
+    const [recommendedPanelOpen, setRecommendedPanelOpen] = useState(false);
     const [resolvedImages, setResolvedImages] = useState({});
     const [healthDataImportOpen, setHealthDataImportOpen] = useState(false);
     const [recommendedSwapByKey, setRecommendedSwapByKey] = useState({});
@@ -1074,42 +1075,52 @@ export default function MyEcosystem({
     }, []);
 
     const recommendedSection = hasCompletedPersonalization && (llmLoading || llmError || recommendedProductsForDisplay.length > 0 || activeTiered.length > 0) ? (
-        <div style={{ maxWidth: '1200px', margin: '0 auto var(--spacing-xl)', padding: '0 0.25rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem', marginBottom: '0.35rem', flexWrap: 'wrap' }}>
-                <h3 style={{ fontSize: '1.35rem', margin: 0, color: 'var(--color-text-main)' }}>
+        <div style={{ marginBottom: 'var(--spacing-xl)' }}>
+            <button
+                type="button"
+                onClick={() => setRecommendedPanelOpen((o) => !o)}
+                style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem', background: 'transparent', border: 'none', cursor: 'pointer', padding: '0.5rem 0', textAlign: 'left' }}
+            >
+                <h3 style={{ fontSize: '1.35rem', margin: 0, color: 'var(--color-text-main)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     Recommended for You
+                    {llmLoading && <span style={{ fontSize: '0.78rem', fontWeight: 400, color: 'var(--color-text-muted)' }}>loading…</span>}
                 </h3>
-                <button
-                    type="button"
-                    className="btn btn-outline"
-                    style={{ fontSize: '0.8rem', padding: '0.35rem 0.7rem' }}
-                    onClick={handleRefreshRecommendations}
-                    disabled={llmLoading || !hasCompletedPersonalization}
-                    title="Re-run personalized recommendations from your latest profile"
-                >
-                    {llmLoading ? 'Refreshing…' : 'Refresh recommendations'}
-                </button>
-            </div>
-            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '1rem' }}>
-                Per concern: multiple solution types (supplement, device/physical, telehealth/digital), each with 3 alternatives.
-            </p>
-            {llmLoading && llmLoadStartedAt > 0 && (
-                <LlmRecommendationsLoadingBlock loadStartedAt={llmLoadStartedAt} compact />
-            )}
-            {llmLoading && !llmLoadStartedAt && (
-                <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.9rem', padding: '1.5rem' }}>
-                    Loading recommendations…
-                </p>
-            )}
-            {llmError && !llmLoading && (
-                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textAlign: 'center' }}>
-                    Could not load recommendations: {llmError}
-                </p>
-            )}
-            {!llmLoading && recommendedProductsForDisplay.length > 0 && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                    {recommendedProductsForDisplay.map((section) => {
-                        const isOpen = recommendedSectionOpen[section.id] !== false;
+                <span style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', flexShrink: 0 }}>{recommendedPanelOpen ? 'Hide ▴' : 'Show ▾'}</span>
+            </button>
+            {recommendedPanelOpen && (
+                <>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                        <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', margin: 0 }}>
+                            Per concern: supplement, device, and telehealth tracks with alternatives.
+                        </p>
+                        <button
+                            type="button"
+                            className="btn btn-outline"
+                            style={{ fontSize: '0.8rem', padding: '0.35rem 0.7rem' }}
+                            onClick={handleRefreshRecommendations}
+                            disabled={llmLoading || !hasCompletedPersonalization}
+                            title="Re-run personalized recommendations from your latest profile"
+                        >
+                            {llmLoading ? 'Refreshing…' : 'Refresh recommendations'}
+                        </button>
+                    </div>
+                    {llmLoading && llmLoadStartedAt > 0 && (
+                        <LlmRecommendationsLoadingBlock loadStartedAt={llmLoadStartedAt} compact />
+                    )}
+                    {llmLoading && !llmLoadStartedAt && (
+                        <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.9rem', padding: '1.5rem' }}>
+                            Loading recommendations…
+                        </p>
+                    )}
+                    {llmError && !llmLoading && (
+                        <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textAlign: 'center' }}>
+                            Could not load recommendations: {llmError}
+                        </p>
+                    )}
+                    {!llmLoading && recommendedProductsForDisplay.length > 0 && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                            {recommendedProductsForDisplay.map((section) => {
+                                const isOpen = recommendedSectionOpen[section.id] !== false;
                         return (
                             <div key={section.id} className="card" style={{ padding: '0.75rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', background: 'var(--color-surface-soft)' }}>
                                 <button
@@ -1180,7 +1191,9 @@ export default function MyEcosystem({
                             </div>
                         );
                     })}
-                </div>
+                        </div>
+                    )}
+                </>
             )}
         </div>
     ) : null;
@@ -1278,6 +1291,7 @@ export default function MyEcosystem({
                     </div>
                 ) : (
                     <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                        {recommendedSection}
                         {viewMode === 'function' ? (
                             <>
                                 {duplicateCount > 0 && (
@@ -1477,8 +1491,6 @@ export default function MyEcosystem({
                         )}
                     </div>
                 )}
-
-                {recommendedSection}
 
                 {ecosystemStartups.length > 0 && (
                     <div style={{ marginBottom: '1.75rem', maxWidth: '1200px', margin: '0 auto 1.75rem' }}>
