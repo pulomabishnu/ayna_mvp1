@@ -348,8 +348,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             intake.productPreferences?.length ? `Preferences: ${intake.productPreferences.join(', ')}` : '',
             intake.goals?.length ? `Goals: ${intake.goals.join(', ')}` : '',
         ].filter(Boolean).join('. ') : '';
-        const dislikedProducts = intake?.dislikedProductsText || '';
-        // Build a set of disliked brand/product name fragments for client-side filtering
+        const dislikedProducts = personalizationFilter ? (intake?.dislikedProductsText || '') : '';
         const dislikedTerms = dislikedProducts.split(/[,\n]+/).map(s => s.trim().toLowerCase()).filter(s => s.length > 1);
         try {
             const { suggestions, querySummary, relatedSearches, error } = await fetchSearchSuggestions({
