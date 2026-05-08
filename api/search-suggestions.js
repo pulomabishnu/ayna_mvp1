@@ -313,7 +313,11 @@ export default async function handler(req, res) {
   }
 
   const list = Array.isArray(parsed?.suggestions) ? parsed.suggestions : [];
-  const suggestions = list.map((s, i) => normalizeSuggestion(s, i)).filter(Boolean).slice(0, 20);
+  const suggestions = list
+    .map((s, i) => normalizeSuggestion(s, i))
+    .filter(Boolean)
+    .filter((s) => !/\bayna\b/i.test(s.brand || '') && !/\bayna\b/i.test(s.name || ''))
+    .slice(0, maxResults);
   const querySummary = normalizeQuerySummary(parsed?.querySummary);
   const relatedSearches = Array.isArray(parsed?.relatedSearches)
     ? parsed.relatedSearches.map((s) => sanitizeStr(s, 80)).filter((s) => s.length > 2).slice(0, 6)

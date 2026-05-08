@@ -2,11 +2,11 @@
  * Calls /api/search-suggestions (Claude on the server). Same-origin on Vercel.
  */
 
-function sessionCacheKey(query, category, symptom) {
-  const q = `${query.trim().toLowerCase()}|${category || ''}|${symptom || ''}`;
+function sessionCacheKey(query, category, symptom, maxResults) {
+  const q = `${query.trim().toLowerCase()}|${category || ''}|${symptom || ''}|${maxResults || 20}`;
   let h = 0;
   for (let i = 0; i < q.length; i += 1) h = (Math.imul(31, h) + q.charCodeAt(i)) | 0;
-  return `ayna-ai-search:${h.toString(16)}`;
+  return `ayna-ai-search-v2:${h.toString(16)}`;
 }
 
 function readSessionCache(key) {
@@ -56,7 +56,7 @@ export async function fetchSearchSuggestions(opts) {
   const profileSummary = typeof opts?.profileSummary === 'string' ? opts.profileSummary : '';
   const maxResults = typeof opts?.maxResults === 'number' ? opts.maxResults : 20;
   // Don't cache personalized results — they're user-specific
-  const cacheKey = personalized ? null : sessionCacheKey(query, category, symptom);
+  const cacheKey = personalized ? null : sessionCacheKey(query, category, symptom, maxResults);
   if (cacheKey) {
     const cached = readSessionCache(cacheKey);
     if (cached) return { suggestions: cached.suggestions, querySummary: cached.querySummary, relatedSearches: cached.relatedSearches || [], fromCache: true };

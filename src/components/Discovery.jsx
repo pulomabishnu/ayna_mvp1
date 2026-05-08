@@ -125,6 +125,13 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [searchQuery, setSearchQuery] = useState(initialSearch || '');
     const [sortBy, setSortBy] = useState('default');
     const [personalizationFilter, setPersonalizationFilter] = useState(hasQuizFrustrations || hasHealthImport);
+    const personalizationInitialized = useRef(false);
+    useEffect(() => {
+        if (!personalizationInitialized.current && (hasQuizFrustrations || hasHealthImport)) {
+            setPersonalizationFilter(true);
+            personalizationInitialized.current = true;
+        }
+    }, [hasQuizFrustrations, hasHealthImport]);
     const [padFlowFilter, setPadFlowFilter] = useState(initialPadFlow || 'all');
     const [padPreferenceFilter, setPadPreferenceFilter] = useState(initialPadPreference || 'all');
     const [padUseCaseFilter, setPadUseCaseFilter] = useState(initialPadUseCase || 'all');
