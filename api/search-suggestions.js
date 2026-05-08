@@ -221,7 +221,7 @@ CLINICAL AUTHORITY RULES:
 - Only reference an organization when confident their guidance genuinely covers the query topic`;
 }
 
-async function callClaudeJson(prompt) {
+async function callClaudeJson(prompt, attempt = 0) {
   const apiKey = getAnthropicApiKey();
   if (!apiKey) return null;
 
@@ -244,7 +244,12 @@ async function callClaudeJson(prompt) {
   });
   if (!res.ok) {
     const errText = await res.text();
-    console.error('search-suggestions Claude', res.status, errText.slice(0, 400));
+    console.error('search-suggestions Claude HTTP', res.status, errText.slice(0, 300));
+    // Retry once on 429 (rate limit) or 529 (overloaded) after a short wait
+    if (attempt === 0 && (res.status === 429 || res.status === 529)) {
+      await new Promise((r) => setTimeout(r, 2000));
+      return callClaudeJson(prompt, 1);
+    }
     return null;
   }
   let data;

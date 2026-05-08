@@ -821,14 +821,13 @@ export default function MyEcosystem({
     useEffect(() => {
         let active = true;
         if (!intakeFingerprint) {
-            clearCachedLlmRecommendations();
+            // Intake is still loading from Supabase — don't clear the cache or it will
+            // wipe valid recommendations before the fingerprint is available.
             setLlmTiered([]);
             setLlmLoading(false);
             setLlmError('');
             setLlmLoadStartedAt(0);
-            return () => {
-                active = false;
-            };
+            return () => { active = false; };
         }
 
         const bypassCache = recommendationRefreshNonce > 0;
