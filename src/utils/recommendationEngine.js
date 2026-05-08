@@ -72,14 +72,23 @@ function buildMatchExplanation(product, intake, concern, tierType) {
   const concernKey = String(concern?.key || '').toLowerCase();
   const dislikedDisplay = asArray(intake?.dislikedProducts).map((x) => String(x || '').trim()).filter(Boolean);
 
-  const avoidedDisliked = dislikedDisplay
-    .filter((d) => !name.includes(d.toLowerCase()))
-    .slice(0, 2);
-  if (avoidedDisliked.length > 0) {
-    if (dislikedReason.trim().length > 0) {
-      lines.push(`You said ${avoidedDisliked.join(' and ')} did not work for you (${dislikedReason.slice(0, 90)}), so this pick avoids that downside.`);
-    } else {
-      lines.push(`You said ${avoidedDisliked.join(' and ')} did not work for you, so this recommendation avoids those products.`);
+  // Only mention avoided products when the recommended product is in the same
+  // physical-product category as what was disliked. Never apply this to
+  // telehealth services, apps, or supplements — a PCOS telehealth service
+  // is not relevant to the user disliking an Always pad.
+  const isPeriodPhysical = tierType === 'physical' && (
+    concernKey.includes('period care') || concernKey.includes('leak') || concernKey.includes('cramp')
+  );
+  if (isPeriodPhysical) {
+    const avoidedDisliked = dislikedDisplay
+      .filter((d) => !name.includes(d.toLowerCase()))
+      .slice(0, 2);
+    if (avoidedDisliked.length > 0) {
+      if (dislikedReason.trim().length > 0) {
+        lines.push(`You said ${avoidedDisliked.join(' and ')} did not work for you (${dislikedReason.slice(0, 90)}), so this pick avoids that downside.`);
+      } else {
+        lines.push(`You said ${avoidedDisliked.join(' and ')} did not work for you, so this recommendation avoids those products.`);
+      }
     }
   }
 

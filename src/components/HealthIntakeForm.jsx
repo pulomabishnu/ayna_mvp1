@@ -21,8 +21,24 @@ const KEY_SYMPTOMS = [
 const FLOW_OPTIONS = ['Light', 'Medium', 'Heavy', 'Very heavy'];
 const CYCLE_OPTIONS = [
   { value: 'yes', label: 'Yes' },
-  { value: 'no', label: 'No' },
-  { value: 'irregular', label: 'Irregular' },
+  { value: 'no', label: 'No / Post-menopause' },
+  { value: 'irregular', label: 'Irregular / Perimenopausal' },
+];
+
+const FAMILY_HISTORY_OPTIONS = [
+  'PCOS', 'Endometriosis', 'Thyroid disorder', 'Uterine fibroids',
+  'Premature ovarian insufficiency', 'BRCA1/BRCA2', 'Osteoporosis', 'None of the above',
+];
+const SYMPTOM_DURATION_OPTIONS = [
+  { value: 'new', label: 'New (< 6 months)' },
+  { value: 'ongoing', label: 'Ongoing (6 mo – 2 yrs)' },
+  { value: 'chronic', label: 'Chronic (2+ years)' },
+];
+const LAST_OBGYN_OPTIONS = [
+  { value: 'within_year', label: 'Within the past year' },
+  { value: '1_3_years', label: '1–3 years ago' },
+  { value: 'over_3_years', label: 'More than 3 years ago' },
+  { value: 'never', label: 'Never' },
 ];
 const TTC_OPTIONS = ['Yes', 'No', 'Not right now'];
 const BC_OPTIONS = ['Yes', 'No'];
@@ -208,8 +224,13 @@ const emptyIntake = {
   flowLevel: '',
   painLevel: '',
   symptoms: [],
+  symptomDuration: '',
   conditions: [],
   conditionOtherText: '',
+  familyHistory: [],
+  currentMedications: '',
+  lastObgynVisit: '',
+  insurancePlan: '',
   tryingToConceive: '',
   hormonalBirthControl: '',
   hormonalBirthControlType: '',
@@ -364,9 +385,9 @@ export default function HealthIntakeForm({ onComplete }) {
         {/* Screen: health */}
         {screenId === 'health' && (
           <div>
-            <ScreenHeader title="Your health history." subtitle="This helps Ayna flag relevant safety info and find the right products and care." />
+            <ScreenHeader title="Your health history." subtitle="The more context you give, the more accurate Ayna's recommendations — like a clinical intake form." />
 
-            <FieldLabel optional>Any diagnosed conditions?</FieldLabel>
+            <FieldLabel optional>Diagnosed conditions</FieldLabel>
             <ChipGrid
               items={DIAGNOSED_CONDITIONS.filter((c) => c !== 'other' && c !== 'none')}
               selected={intake.conditions}
@@ -383,6 +404,18 @@ export default function HealthIntakeForm({ onComplete }) {
               </div>
             )}
 
+            <FieldLabel optional>Family history — any of these in close relatives?</FieldLabel>
+            <ChipGrid items={FAMILY_HISTORY_OPTIONS} selected={intake.familyHistory} onToggle={(v) => toggle('familyHistory', v)} small />
+
+            <FieldLabel optional>How long have your main symptoms been present?</FieldLabel>
+            <SingleSelect options={SYMPTOM_DURATION_OPTIONS} value={intake.symptomDuration} onSelect={(v) => set('symptomDuration', v)} />
+
+            <FieldLabel optional>Current medications or supplements</FieldLabel>
+            <TextInput value={intake.currentMedications} onChange={(v) => set('currentMedications', v)} placeholder="e.g. metformin, levothyroxine, vitamin D, fish oil…" />
+
+            <FieldLabel optional>Last OB/GYN visit</FieldLabel>
+            <SingleSelect options={LAST_OBGYN_OPTIONS} value={intake.lastObgynVisit} onSelect={(v) => set('lastObgynVisit', v)} />
+
             <FieldLabel optional>Are you trying to conceive?</FieldLabel>
             <SingleSelect options={TTC_OPTIONS} value={intake.tryingToConceive} onSelect={(v) => set('tryingToConceive', v)} />
 
@@ -393,6 +426,10 @@ export default function HealthIntakeForm({ onComplete }) {
                 <TextInput value={intake.hormonalBirthControlType} onChange={(v) => set('hormonalBirthControlType', v)} placeholder="e.g. Mirena IUD, combination pill, patch…" />
               </div>
             )}
+
+            <FieldLabel optional>Health insurance plan</FieldLabel>
+            <TextInput value={intake.insurancePlan} onChange={(v) => set('insurancePlan', v)} placeholder="e.g. Aetna PPO, Blue Cross, uninsured…" />
+            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.3rem' }}>Helps Ayna recommend telehealth services that may be covered.</p>
 
             <ContinueButton onClick={goNext}>Continue →</ContinueButton>
           </div>
