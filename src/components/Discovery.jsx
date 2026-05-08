@@ -442,6 +442,30 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 )}
             </div>
 
+            {showDiscoveryIntro && (
+                <div
+                    style={{
+                        maxWidth: '640px',
+                        margin: '0 auto 1.5rem',
+                        padding: '1rem 1.25rem',
+                        borderRadius: 'var(--radius-lg)',
+                        border: '1px solid var(--color-border)',
+                        background: 'linear-gradient(135deg, #FDF4FF 0%, #F5F3FF 100%)',
+                        fontSize: '0.95rem',
+                        lineHeight: 1.55,
+                        color: 'var(--color-text-main)',
+                    }}
+                >
+                    <span style={{ fontSize: '0.7rem', fontWeight: '800', color: '#7E22CE', letterSpacing: '0.06em', textTransform: 'uppercase', display: 'block', marginBottom: '0.5rem' }}>
+                        Your context
+                    </span>
+                    {profileIntro.trim() ? <p style={{ margin: 0 }}>{profileIntro}</p> : null}
+                    {typeof aiQuerySummary === 'string' && aiQuerySummary.trim() && !aiLoading ? (
+                        <p style={{ margin: profileIntro.trim() ? '0.75rem 0 0' : 0 }}>{aiQuerySummary.trim()}</p>
+                    ) : null}
+                </div>
+            )}
+
             {/* Smart Search */}
             <div style={{ maxWidth: '640px', margin: '0 auto 2rem' }}>
             <form
@@ -627,30 +651,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         setShowFindPadModal(false);
                     }}
                 />
-            )}
-
-            {showDiscoveryIntro && (
-                <div
-                    style={{
-                        maxWidth: '720px',
-                        margin: '0 auto 1.25rem',
-                        padding: '1rem 1.25rem',
-                        borderRadius: 'var(--radius-lg)',
-                        border: '1px solid var(--color-border)',
-                        background: 'linear-gradient(135deg, #FDF4FF 0%, #F5F3FF 100%)',
-                        fontSize: '0.95rem',
-                        lineHeight: 1.55,
-                        color: 'var(--color-text-main)',
-                    }}
-                >
-                    <span style={{ fontSize: '0.7rem', fontWeight: '800', color: '#7E22CE', letterSpacing: '0.06em', textTransform: 'uppercase', display: 'block', marginBottom: '0.5rem' }}>
-                        Your context
-                    </span>
-                    {profileIntro.trim() ? <p style={{ margin: 0 }}>{profileIntro}</p> : null}
-                    {typeof aiQuerySummary === 'string' && aiQuerySummary.trim() && !aiLoading ? (
-                        <p style={{ margin: profileIntro.trim() ? '0.75rem 0 0' : 0 }}>{aiQuerySummary.trim()}</p>
-                    ) : null}
-                </div>
             )}
 
             <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
