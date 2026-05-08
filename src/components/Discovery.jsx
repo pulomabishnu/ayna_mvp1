@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { useSpeechToText } from '../hooks/useSpeechToText';
 import SearchMicButton from './SearchMicButton';
 import { ALL_PRODUCTS, CATEGORY_LABELS, SYMPTOM_TO_SUPPLEMENTS } from '../data/products';
@@ -134,6 +134,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [aiQuerySummary, setAiQuerySummary] = useState('');
     const [aiLoading, setAiLoading] = useState(false);
     const [aiError, setAiError] = useState(null);
+    const [searchSubmitted, setSearchSubmitted] = useState(false);
+    const aiAbortRef = useRef(null);
+    const debounceRef = useRef(null);
     const [dsldProducts, setDsldProducts] = useState([]);
     const [dsldLoading, setDsldLoading] = useState(false);
     const [resolvedImages, setResolvedImages] = useState({});
@@ -282,6 +285,12 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
     const gridItems = useMemo(() => {
         const catalog = filtered;
+        const aiNames = new Set(enrichedAiSuggestions.map((p) => (p.name || '').trim().toLowerCase()).filter(Boolean));
+        if (searchSubmitted && enrichedAiSuggestions.length > 0) {
+            // AI results first, catalog deduped below
+            const catalogDeduped = catalog.filter((p) => !aiNames.has((p.name || '').trim().toLowerCase()));
+            return [...enrichedAiSuggestions, ...catalogDeduped];
+        }
         const names = new Set(catalog.map((p) => (p.name || '').trim().toLowerCase()).filter(Boolean));
         const out = [...catalog];
         for (const p of enrichedAiSuggestions) {
@@ -290,7 +299,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             out.push(p);
         }
         return out;
-    }, [filtered, enrichedAiSuggestions]);
+    }, [filtered, enrichedAiSuggestions, searchSubmitted]);
 
     useEffect(() => {
         const visible = gridItems.slice(0, 80);
@@ -318,57 +327,48 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const showDiscoveryIntro =
         hasIntroContent && (gridItems.length > 0 || qTrimForAi.length >= 2);
 
-    React.useEffect(() => {
+    const runAiSearch = useCallback(async (query, category, symptom) => {
+        if (aiAbortRef.current) aiAbortRef.current.abort();
+        const ac = new AbortController();
+        aiAbortRef.current = ac;
+        setAiLoading(true);
+        setAiSuggestions([]);
+        setAiError(null);
+        setAiQuerySummary('');
+        try {
+            const { suggestions, querySummary, error } = await fetchSearchSuggestions({
+                query, category, symptom, signal: ac.signal,
+            });
+            if (ac.signal.aborted) return;
+            setAiLoading(false);
+            setAiSuggestions(Array.isArray(suggestions) ? suggestions : []);
+            setAiQuerySummary(typeof querySummary === 'string' ? querySummary : '');
+            setAiError(error || null);
+        } catch (e) {
+            if (e?.name === 'AbortError') return;
+            setAiLoading(false);
+            setAiError(e?.message || 'Could not load suggestions');
+        }
+    }, []);
+
+    useEffect(() => {
         if (qTrimForAi.length < 2) {
+            clearTimeout(debounceRef.current);
+            if (aiAbortRef.current) { aiAbortRef.current.abort(); aiAbortRef.current = null; }
             setAiSuggestions([]);
             setAiQuerySummary('');
             setAiLoading(false);
             setAiError(null);
+            setSearchSubmitted(false);
             return;
         }
-
-        const ac = new AbortController();
-        const t = setTimeout(() => {
-            setAiLoading(true);
-            setAiError(null);
-            fetchSearchSuggestions({
-                query: qTrimForAi,
-                category: categoryFilter,
-                symptom: symptomFilter,
-                signal: ac.signal,
-            })
-                .then(({ suggestions, querySummary, error }) => {
-                    if (ac.signal.aborted) return;
-                    setAiLoading(false);
-                    setAiSuggestions(Array.isArray(suggestions) ? suggestions : []);
-                    setAiQuerySummary(typeof querySummary === 'string' ? querySummary : '');
-                    setAiError(error || null);
-                })
-                .catch((e) => {
-                    if (e?.name === 'AbortError') return;
-                    setAiLoading(false);
-                    setAiSuggestions([]);
-                    setAiQuerySummary('');
-                    setAiError(e?.message || 'Could not load suggestions');
-                });
+        // Debounced as-you-type fetch (explicit submit bypasses this via handleSmartSearch)
+        clearTimeout(debounceRef.current);
+        debounceRef.current = setTimeout(() => {
+            if (!searchSubmitted) runAiSearch(qTrimForAi, categoryFilter, symptomFilter);
         }, 480);
-
-        return () => {
-            clearTimeout(t);
-            ac.abort();
-        };
-    }, [
-        qTrimForAi,
-        categoryFilter,
-        symptomFilter,
-        typeFilter,
-        padFlowFilter,
-        padPreferenceFilter,
-        padUseCaseFilter,
-        personalizationFilter,
-        omittedProducts,
-        recommendedSet,
-    ]);
+        return () => clearTimeout(debounceRef.current);
+    }, [qTrimForAi, categoryFilter, symptomFilter, searchSubmitted, runAiSearch]);
 
     useEffect(() => {
         const q = searchQuery.trim();
@@ -386,7 +386,13 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
     const handleSmartSearch = (e) => {
         e.preventDefault();
-        const q = searchQuery.toLowerCase();
+        const q = searchQuery.trim();
+        if (!q || q.length < 2) return;
+        const qLower = q.toLowerCase();
+
+        // Cancel any pending debounce — we're going immediate
+        clearTimeout(debounceRef.current);
+        setSearchSubmitted(true);
 
         const categoryNudges = [
             { test: (s) => s.includes('underwear') || s.includes('panty') || s.includes('panties'), cat: 'period-underwear' },
@@ -403,22 +409,24 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             { test: (s) => s.includes('tracker') || s.includes('tracking') || s.includes('wearable'), cat: 'tracker' },
         ];
 
+        let resolvedCategory = categoryFilter;
         for (const { test, cat } of categoryNudges) {
-            if (test(q)) {
-                setCategoryFilter(cat);
-                return;
-            }
+            if (test(qLower)) { setCategoryFilter(cat); resolvedCategory = cat; break; }
         }
 
-        if (q.includes('waitlist') || q.includes('startup') || q.includes('new')) {
+        if (qLower.includes('waitlist') || qLower.includes('startup')) {
             if (setCurrentView) setCurrentView('waitlist');
-        } else if (q.includes('ecosystem') || q.includes('routine')) {
+            return;
+        } else if (qLower.includes('ecosystem') || qLower.includes('routine')) {
             if (setCurrentView) setCurrentView('ecosystem');
-        } else if (q.includes('quiz') || q.includes('assess')) {
+            return;
+        } else if (qLower.includes('quiz') || qLower.includes('assess')) {
             if (setCurrentView) setCurrentView('quiz');
-        } else {
-            setCategoryFilter('all');
+            return;
         }
+
+        // Trigger AI search immediately with resolved category
+        runAiSearch(q, resolvedCategory, symptomFilter);
     };
 
     return (
@@ -655,12 +663,12 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
             <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', margin: 0, textAlign: 'center', maxWidth: '640px', lineHeight: 1.45 }}>
-                    {qTrimForAi.length >= 2 && aiLoading && gridItems.length === 0 ? (
-                        <>Finding matches…</>
-                    ) : aiError && gridItems.length === 0 && qTrimForAi.length >= 2 ? (
-                        <>No results yet. {aiError}</>
+                    {qTrimForAi.length >= 2 && aiLoading ? (
+                        <>Searching for &ldquo;{searchQuery}&rdquo;…</>
+                    ) : aiError && qTrimForAi.length >= 2 ? (
+                        <>Showing {gridItems.length} result{gridItems.length !== 1 ? 's' : ''}. {aiError}</>
                     ) : (
-                        <>Showing {gridItems.length} result{gridItems.length !== 1 ? 's' : ''}</>
+                        <>Showing {gridItems.length} result{gridItems.length !== 1 ? 's' : ''}{searchSubmitted && enrichedAiSuggestions.length > 0 ? ` — ${enrichedAiSuggestions.length} AI-matched` : ''}</>
                     )}
                 </p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -686,7 +694,18 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 </div>
             </div>
 
+            {/* Loading state for explicit search */}
+            {searchSubmitted && aiLoading && (
+                <div style={{ textAlign: 'center', padding: '2.5rem 1rem', color: 'var(--color-text-muted)' }}>
+                    <p style={{ fontSize: '1.05rem', fontWeight: 600, color: 'var(--color-text-main)', marginBottom: '0.4rem' }}>
+                        Finding the best products for &ldquo;{searchQuery}&rdquo;
+                    </p>
+                    <p style={{ fontSize: '0.9rem' }}>Searching our catalog and generating matches…</p>
+                </div>
+            )}
+
             {/* Product Grid */}
+            {(!searchSubmitted || !aiLoading) && (
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', justifyContent: 'center' }}>
                 {gridItems.map((item, idx) => {
                     const isStartup = item.isStartup === true;
@@ -895,6 +914,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     );
                 })}
             </div>
+            )}
             {(dsldLoading || dsldProducts.length > 0) && (
                 <div style={{ marginTop: '2rem' }}>
                     <h3 style={{ fontSize: '1.1rem', marginBottom: '0.25rem', color: 'var(--color-text-main)' }}>
