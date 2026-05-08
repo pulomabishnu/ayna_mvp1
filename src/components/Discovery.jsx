@@ -353,22 +353,14 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
     useEffect(() => {
         if (qTrimForAi.length < 2) {
-            clearTimeout(debounceRef.current);
             if (aiAbortRef.current) { aiAbortRef.current.abort(); aiAbortRef.current = null; }
             setAiSuggestions([]);
             setAiQuerySummary('');
             setAiLoading(false);
             setAiError(null);
             setSearchSubmitted(false);
-            return;
         }
-        // Debounced as-you-type fetch (explicit submit bypasses this via handleSmartSearch)
-        clearTimeout(debounceRef.current);
-        debounceRef.current = setTimeout(() => {
-            if (!searchSubmitted) runAiSearch(qTrimForAi, categoryFilter, symptomFilter);
-        }, 480);
-        return () => clearTimeout(debounceRef.current);
-    }, [qTrimForAi, categoryFilter, symptomFilter, searchSubmitted, runAiSearch]);
+    }, [qTrimForAi]);
 
     useEffect(() => {
         const q = searchQuery.trim();
@@ -668,7 +660,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     ) : aiError && qTrimForAi.length >= 2 ? (
                         <>Showing {gridItems.length} result{gridItems.length !== 1 ? 's' : ''}. {aiError}</>
                     ) : (
-                        <>Showing {gridItems.length} result{gridItems.length !== 1 ? 's' : ''}{searchSubmitted && enrichedAiSuggestions.length > 0 ? ` — ${enrichedAiSuggestions.length} AI-matched` : ''}</>
+                        <>Showing {gridItems.length} result{gridItems.length !== 1 ? 's' : ''}</>
                     )}
                 </p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
