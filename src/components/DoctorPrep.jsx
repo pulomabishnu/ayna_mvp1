@@ -36,9 +36,9 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
             </button>
             <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
                 <div style={{ display: 'inline-block', padding: '0.4rem 1rem', background: 'var(--color-primary-fade)', color: 'var(--color-primary)', borderRadius: 'var(--radius-pill)', fontSize: '0.85rem', fontWeight: '600', marginBottom: '1rem' }}>
-                    Provider Conversation Tool
+                    Appointment Prep Tool
                 </div>
-                <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Provider Visit Prep</h2>
+                <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Appointment Prep</h2>
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem' }}>A summary of your health goals and product history to share with your OB-GYN or Primary Care provider — so you can make the most of your visit.</p>
             </div>
 

@@ -38,7 +38,7 @@ const VIEW_TO_PATH = {
   discovery: '/discovery', waitlist: '/startups', deeptech: '/deeptech',
   articles: '/library', screenings: '/screenings', omitted: '/omitted',
   comparison: '/comparison', recalls: '/recalls',
-  'doctor-prep': '/provider-prep', 'profile-edit': '/profile', tracked: '/tracked',
+  'doctor-prep': '/appointment-prep', 'profile-edit': '/profile', tracked: '/tracked',
 };
 const PATH_TO_VIEW = Object.fromEntries(
   Object.entries(VIEW_TO_PATH).filter(([, p]) => p !== '/').map(([v, p]) => [p, v])
