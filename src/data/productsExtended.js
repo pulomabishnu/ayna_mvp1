@@ -546,4 +546,25 @@ export const EXTENDED_DIGITAL = [
             community: { url: 'https://www.reddit.com/r/AppleWatch/', text: 'Apple Watch Health Community', summary: 'Users share their experiences using wrist temperature for cycle predictions and the convenience of staying within the Apple ecosystem.' }
         }
     },
+    {
+        id: 'd-eight-sleep', name: 'Eight Sleep Pod 4', category: 'sleep', type: 'digital', internal: false, healthFunctions: ['sleep', 'fitness-cycle'], tags: ['sleep', 'energy', 'menopause', 'comfort', 'hormonal'], price: '$2,245+', userRating: 4.5, whereToBuy: ['eightsleep.com'], platform: 'iOS, Android', image: 'https://cdn.shopify.com/s/files/1/0641/9884/8497/files/pod4_ultra_carbon_fiber_hero.jpg?v=1695309791', summary: 'Smart mattress cover that automatically heats and cools each side of the bed throughout the night. Tracks sleep stages, HRV, heart rate, and respiratory rate — and adjusts temperature in real time to improve sleep quality.',
+        safety: {
+            fdaStatus: 'Not FDA-cleared (wellness device)', materials: 'Polyester, spandex blend; water-based cooling system', recalls: 'No recalls.', allergens: 'No known allergens; water system requires occasional maintenance',
+            sideEffects: 'Some users report waking from cooling cycles; not recommended for those with Raynaud\'s.',
+            opinionAlerts: 'High upfront cost ($2,245+) plus $19/month subscription after the first year. Requires a stable Wi-Fi connection.'
+        },
+        privacy: { dataStorage: 'Cloud-based, encrypted', sellsData: '❌ Does not sell personal data', hipaa: 'Not HIPAA', keyPolicy: 'Eight Sleep stores sleep biometrics in the cloud. Data shared with third-party researchers only in anonymized, aggregated form.' },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and product documentation.',
+        doctorOpinion: 'Temperature regulation during sleep is increasingly recognized as important for hormonal health — especially for women experiencing night sweats, perimenopause, or disrupted sleep due to cycle-related changes. Eight Sleep\'s active cooling addresses this directly.',
+        communityReview: 'Broadly positive reviews on Reddit r/EightSleep and r/sleep. Users frequently cite dramatically improved sleep quality and reduced night sweats. Common complaint: expensive upfront cost.',
+        recommendationWhyDetail: 'Eight Sleep is a mattress cover, not a mattress — it fits over your existing bed. A built-in water loop circulates temperature-controlled water throughout the night, automatically adjusting based on your sleep stage and body temperature. Women going through perimenopause or dealing with hormonal sleep disruption often find the active cooling side especially helpful for night sweats.',
+        integrations: ['Apple Health', 'Oura Ring', 'Whoop', 'Google Fit'],
+        badges: ['Sleep Tech', 'Women\'s Health'],
+        verificationLinks: {
+            scientific: { url: 'https://www.eightsleep.com/science', text: 'Eight Sleep Science', summary: 'Eight Sleep publishes internal research on sleep stage detection accuracy and the effect of temperature on deep sleep and REM.' },
+            doctor: { url: 'https://drmattwalker.com/', text: 'Dr. Matthew Walker on Sleep & Temperature', summary: 'Sleep scientist and author of "Why We Sleep" on the critical role of body temperature in sleep quality and hormonal recovery.' },
+            community: { url: 'https://www.reddit.com/r/EightSleep/', text: 'Eight Sleep Community', summary: 'Active community discussing sleep improvements, night sweat relief, and temperature optimization.' }
+        }
+    },
 ];

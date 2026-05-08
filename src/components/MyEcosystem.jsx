@@ -1237,7 +1237,7 @@ export default function MyEcosystem({
                     </div>
                     <div style={{ background: 'var(--color-primary)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '1rem 1.5rem', textAlign: 'center', minWidth: '140px', cursor: 'pointer' }} onClick={onOpenDoctorPrep}>
                         <div style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>👩‍⚕️</div>
-                        <div style={{ fontSize: '0.85rem', color: 'white', fontWeight: '700' }}>Doctor Prep</div>
+                        <div style={{ fontSize: '0.85rem', color: 'white', fontWeight: '700' }}>Provider Prep</div>
                     </div>
                 </div>
 

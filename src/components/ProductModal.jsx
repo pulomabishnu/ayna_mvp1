@@ -1765,7 +1765,7 @@ export default function ProductModal({
                             {renderVerificationLinks(
                                 product.verificationLinks?.scientific,
                                 null,
-                                'Peer-reviewed & clinical sources',
+                                'Research & expert sources',
                                 'science',
                                 product,
                                 { suppressAiSummary: true }

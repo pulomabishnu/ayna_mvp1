@@ -377,7 +377,7 @@ export default function HealthIntakeForm({ onComplete }) {
             <PainScale value={intake.painLevel} onChange={(v) => set('painLevel', v)} />
             <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.35rem' }}>1 = no pain &nbsp;·&nbsp; 10 = debilitating</p>
 
-            <FieldLabel optional>Symptoms you experience (pick all that apply)</FieldLabel>
+            <FieldLabel optional>What you've been experiencing (pick all that apply)</FieldLabel>
             <ChipGrid items={KEY_SYMPTOMS} selected={intake.symptoms} onToggle={(v) => toggle('symptoms', v)} small />
 
             <ContinueButton onClick={goNext}>Continue →</ContinueButton>
@@ -387,7 +387,7 @@ export default function HealthIntakeForm({ onComplete }) {
         {/* Screen: health */}
         {screenId === 'health' && (
           <div>
-            <ScreenHeader title="Your health history." subtitle="The more context you give, the more accurate Ayna's recommendations — like a clinical intake form." />
+            <ScreenHeader title="Your health history." subtitle="The more context you give, the more personalized Ayna's recommendations." />
 
             <FieldLabel optional>Diagnosed conditions</FieldLabel>
             <ChipGrid
@@ -409,7 +409,7 @@ export default function HealthIntakeForm({ onComplete }) {
             <FieldLabel optional>Family history — any of these in close relatives?</FieldLabel>
             <ChipGrid items={FAMILY_HISTORY_OPTIONS} selected={intake.familyHistory} onToggle={(v) => toggle('familyHistory', v)} small />
 
-            <FieldLabel optional>How long have your main symptoms been present?</FieldLabel>
+            <FieldLabel optional>How long have you been dealing with this?</FieldLabel>
             <SingleSelect options={SYMPTOM_DURATION_OPTIONS} value={intake.symptomDuration} onSelect={(v) => set('symptomDuration', v)} />
 
             <FieldLabel optional>Current medications or supplements</FieldLabel>
