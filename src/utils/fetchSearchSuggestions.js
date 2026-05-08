@@ -52,20 +52,20 @@ export async function fetchSearchSuggestions(opts) {
 
   const category = opts?.category && opts.category !== 'all' ? String(opts.category) : '';
   const symptom = opts?.symptom && opts.symptom !== 'all' ? String(opts.symptom) : '';
-  const cacheKey = sessionCacheKey(query, category, symptom);
-  const cached = readSessionCache(cacheKey);
-  if (cached) {
-    return {
-      suggestions: cached.suggestions,
-      querySummary: cached.querySummary,
-      fromCache: true,
-    };
+  const personalized = !!opts?.personalized;
+  const profileSummary = typeof opts?.profileSummary === 'string' ? opts.profileSummary : '';
+  const maxResults = typeof opts?.maxResults === 'number' ? opts.maxResults : 20;
+  // Don't cache personalized results — they're user-specific
+  const cacheKey = personalized ? null : sessionCacheKey(query, category, symptom);
+  if (cacheKey) {
+    const cached = readSessionCache(cacheKey);
+    if (cached) return { suggestions: cached.suggestions, querySummary: cached.querySummary, relatedSearches: cached.relatedSearches || [], fromCache: true };
   }
 
   const res = await fetch('/api/search-suggestions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query, category, symptom }),
+    body: JSON.stringify({ query, category, symptom, personalized, profileSummary, maxResults }),
     signal: opts?.signal,
   });
 
@@ -100,6 +100,7 @@ export async function fetchSearchSuggestions(opts) {
 
   const suggestions = Array.isArray(data.suggestions) ? data.suggestions : [];
   const querySummary = typeof data.querySummary === 'string' ? data.querySummary : '';
-  writeSessionCache(cacheKey, suggestions, querySummary);
-  return { suggestions, querySummary };
+  const relatedSearches = Array.isArray(data.relatedSearches) ? data.relatedSearches : [];
+  if (cacheKey) writeSessionCache(cacheKey, suggestions, querySummary);
+  return { suggestions, querySummary, relatedSearches };
 }

@@ -124,7 +124,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [typeFilter, setTypeFilter] = useState('all');
     const [searchQuery, setSearchQuery] = useState(initialSearch || '');
     const [sortBy, setSortBy] = useState('default');
-    const [personalizationFilter, setPersonalizationFilter] = useState(false);
+    const [personalizationFilter, setPersonalizationFilter] = useState(hasQuizFrustrations || hasHealthImport);
     const [padFlowFilter, setPadFlowFilter] = useState(initialPadFlow || 'all');
     const [padPreferenceFilter, setPadPreferenceFilter] = useState(initialPadPreference || 'all');
     const [padUseCaseFilter, setPadUseCaseFilter] = useState(initialPadUseCase || 'all');
@@ -334,9 +334,19 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         setAiRelatedSearches([]);
         setAiError(null);
         setAiQuerySummary('');
+        const intake = quizResults?.fullHealthIntake || null;
+        const profileSummary = personalizationFilter && intake ? [
+            intake.primaryConcerns?.length ? `Concerns: ${intake.primaryConcerns.slice(0, 5).join(', ')}` : '',
+            intake.conditions?.length ? `Conditions: ${intake.conditions.filter(c => c !== 'none').join(', ')}` : '',
+            intake.productPreferences?.length ? `Preferences: ${intake.productPreferences.join(', ')}` : '',
+            intake.goals?.length ? `Goals: ${intake.goals.join(', ')}` : '',
+        ].filter(Boolean).join('. ') : '';
         try {
             const { suggestions, querySummary, relatedSearches, error } = await fetchSearchSuggestions({
                 query, category, symptom, signal: ac.signal,
+                personalized: personalizationFilter,
+                profileSummary,
+                maxResults: personalizationFilter ? 10 : 20,
             });
             if (ac.signal.aborted) return;
             setAiLoading(false);

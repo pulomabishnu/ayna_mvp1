@@ -153,7 +153,7 @@ function normalizeQuerySummary(s) {
   return t.length >= 20 ? t : '';
 }
 
-function buildPrompt(query, categoryHint, symptomHint) {
+function buildPrompt(query, categoryHint, symptomHint, personalized, profileSummary, maxResults) {
   const cat =
     categoryHint && categoryHint !== 'all'
       ? `User category filter: "${categoryHint}". Prefer products that fit this aisle when relevant.`
@@ -162,12 +162,17 @@ function buildPrompt(query, categoryHint, symptomHint) {
     symptomHint && symptomHint !== 'all'
       ? `User filtered supplements by symptom theme: "${symptomHint}".`
       : '';
+  const profileLine = personalized && profileSummary
+    ? `User health profile: ${profileSummary}. Rank results by relevance to this specific user first.`
+    : '';
+  const countLine = personalized
+    ? `Return the top ${maxResults} most relevant options for this specific user's profile.`
+    : `Return the top ${maxResults} options available in the US market, ranked by relevance, reputation, and availability.`;
   const cats = [...ALLOWED_CATEGORIES].join(', ');
-  return `You are the product-discovery layer for Ayna, a women's health app. Your job is to propose REAL, SHIPPABLE products and apps that best match the user's intent — specific brand names and product lines that a shopper could find at major US retailers or official brand/app stores. Return the top 20 options available in the US market for the search query, ranked by relevance, reputation, and availability.
+  return `You are the product-discovery layer for Ayna, a women's health app. Your job is to propose REAL, SHIPPABLE products and apps that best match the user's intent — specific brand names and product lines that a shopper could find at major US retailers or official brand/app stores. ${countLine}
 
 User search: "${query.replace(/"/g, '\\"')}"
-${cat}
-${sym}
+${cat}${sym ? '\n' + sym : ''}${profileLine ? '\n' + profileLine : ''}
 
 Return ONE JSON object ONLY (no markdown) with up to 20 suggestions in this shape:
 {
@@ -291,8 +296,11 @@ export default async function handler(req, res) {
 
   const categoryHint = typeof body?.category === 'string' ? body.category.trim() : '';
   const symptomHint = typeof body?.symptom === 'string' ? body.symptom.trim() : '';
+  const personalized = !!body?.personalized;
+  const profileSummary = sanitizeStr(body?.profileSummary || '', 400);
+  const maxResults = typeof body?.maxResults === 'number' ? Math.min(Math.max(body.maxResults, 1), 20) : 20;
 
-  const rawJson = await callClaudeJson(buildPrompt(query, categoryHint, symptomHint));
+  const rawJson = await callClaudeJson(buildPrompt(query, categoryHint, symptomHint, personalized, profileSummary, maxResults));
   if (!rawJson) {
     return res.status(502).json({ error: 'claude_failed' });
   }
