@@ -163,13 +163,13 @@ function buildPrompt(query, categoryHint, symptomHint) {
       ? `User filtered supplements by symptom theme: "${symptomHint}".`
       : '';
   const cats = [...ALLOWED_CATEGORIES].join(', ');
-  return `You are the product-discovery layer for Ayna, a women's health app. The catalog search returned no rows; your job is to propose REAL, SHIPPABLE products and apps that best match the user's intent — specific brand names and product lines that a shopper could find at major US retailers or official brand/app stores.
+  return `You are the product-discovery layer for Ayna, a women's health app. Your job is to propose REAL, SHIPPABLE products and apps that best match the user's intent — specific brand names and product lines that a shopper could find at major US retailers or official brand/app stores. Return the top 20 options available in the US market for the search query, ranked by relevance, reputation, and availability.
 
 User search: "${query.replace(/"/g, '\\"')}"
 ${cat}
 ${sym}
 
-Return ONE JSON object ONLY (no markdown) with this shape:
+Return ONE JSON object ONLY (no markdown) with up to 20 suggestions in this shape:
 {
   "querySummary": "2-4 sentences: tie the user's words to the kinds of products below; name categories (e.g. pads, telehealth); where relevant, note that options in this category are consistent with guidance from ACOG, NIH, or FDA — for example 'Options like these are commonly discussed in ACOG guidance on menstrual health' or 'The NIH Office of Dietary Supplements has reviewed evidence for supplements in this category'. Never fabricate specific citation numbers or direct quotes. Always remind users to verify fit with a clinician when medical.",
   "suggestions": [
@@ -301,7 +301,7 @@ export default async function handler(req, res) {
   }
 
   const list = Array.isArray(parsed?.suggestions) ? parsed.suggestions : [];
-  const suggestions = list.map((s, i) => normalizeSuggestion(s, i)).filter(Boolean).slice(0, 10);
+  const suggestions = list.map((s, i) => normalizeSuggestion(s, i)).filter(Boolean).slice(0, 20);
   const querySummary = normalizeQuerySummary(parsed?.querySummary);
 
   return res.status(200).json({
