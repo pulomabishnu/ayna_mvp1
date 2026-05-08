@@ -1107,7 +1107,7 @@ export default function MyEcosystem({
             {!llmLoading && recommendedProductsForDisplay.length > 0 && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                     {recommendedProductsForDisplay.map((section) => {
-                        const isOpen = recommendedSectionOpen[section.id] !== false;
+                        const isOpen = recommendedSectionOpen[section.id] === true;
                         return (
                             <div key={section.id} className="card" style={{ padding: '0.75rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', background: 'var(--color-surface-soft)' }}>
                                 <button
