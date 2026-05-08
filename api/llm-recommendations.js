@@ -278,10 +278,12 @@ Prioritize tracks that are genuinely useful for that specific concern and profil
 
 PRODUCT DISCOVERY RULES:
 - Draw on your FULL knowledge of the women's health product landscape — do not self-limit to the 10-20 most well-known brands
-- Include DTC brands, indie brands, clinical-grade brands, subscription brands, small-batch brands — any brand that genuinely exists and serves this concern
-- If live search results are provided above, you MAY recommend brands found there even if you have limited independent knowledge of them
-- Think like a knowledgeable women's health buyer who knows the full landscape, not just what's on Target shelves
-- Never fabricate a brand name — if you are not confident a brand exists and it is not in the search results, do not include it
+- Include DTC brands, indie brands, clinical-grade brands, subscription brands, small-batch brands — any brand that genuinely exists, serves this concern, AND is currently available for purchase in the US
+- Do NOT recommend brands or products from companies that have not yet launched US products — those are shown separately in the Ayna Startups section
+- For physical products, always recommend a specific named product (e.g. "Thinx Hiphugger Period Underwear"), never just a company name. Exception: telehealth platforms and apps, where the service itself is the product
+- If live search results are provided, use them as discovery signals — apply quality judgment before recommending any brand found there
+- QUALITY BAR — every recommended product must meet all three: (a) majority positive reviews from real women, (b) at least some clinical or scientific support for the mechanism or key ingredient, (c) established brand with no active major safety concerns. Do not recommend an obscure brand that lacks this evidence base
+- Never fabricate a brand name — if you are not confident a brand genuinely exists and is US-available, do not include it
 - If unsure about a specific SKU, use the main product line name (e.g. "Rael Organic Cotton Pads" not a specific SKU)
 - URL must be the brand homepage only — never invent a product page URL. If you know the brand but not the URL, use https://www.google.com/search?q=[brand+name]
 - Leave image as empty string — do not generate image URLs
@@ -430,9 +432,9 @@ function formatSearchContext(searchResults) {
     });
   }
   lines.push('');
-  lines.push('You MAY recommend any brand or product found in these search results even if you have limited training data on them.');
-  lines.push('You MAY ALSO draw on your full training knowledge for brands not in the results.');
-  lines.push('Think like an expert buyer at a specialty women\'s health shop who knows every brand, mainstream AND indie.');
+  lines.push('Use these results to DISCOVER brands and products you may not have in training data — but still apply quality judgment before recommending.');
+  lines.push('Only include a brand from search results if you have enough knowledge to confirm it meets the quality bar: real company, majority positive women\'s reviews, clinical or scientific backing for the mechanism.');
+  lines.push('A brand appearing in search results is a signal to investigate, not an automatic endorsement.');
   return lines.join('\n');
 }
 
@@ -580,7 +582,12 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'missing_intake' });
   }
 
-  const prompt = buildPrompt(intake, feedback);
+  const concerns = selectedConcerns(intake);
+  const [basePrompt, searchResults] = await Promise.all([
+    Promise.resolve(buildPrompt(intake, feedback)),
+    searchProductsForConcerns(concerns, intake),
+  ]);
+  const prompt = searchResults ? basePrompt + formatSearchContext(searchResults) : basePrompt;
   const order = getProviderOrder();
   let parsed = null;
   let providerUsed = '';
