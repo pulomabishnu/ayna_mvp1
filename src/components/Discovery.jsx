@@ -132,6 +132,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [symptomFilter, setSymptomFilter] = useState(initialSymptom || 'all');
     const [aiSuggestions, setAiSuggestions] = useState([]);
     const [aiQuerySummary, setAiQuerySummary] = useState('');
+    const [aiRelatedSearches, setAiRelatedSearches] = useState([]);
     const [aiLoading, setAiLoading] = useState(false);
     const [aiError, setAiError] = useState(null);
     const [searchSubmitted, setSearchSubmitted] = useState(false);
@@ -284,13 +285,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     );
 
     const gridItems = useMemo(() => {
+        // When user explicitly searched, show only AI results — no unrelated catalog items
+        if (searchSubmitted) return enrichedAiSuggestions;
+        // Browsing mode: catalog + any AI suggestions appended
         const catalog = filtered;
-        const aiNames = new Set(enrichedAiSuggestions.map((p) => (p.name || '').trim().toLowerCase()).filter(Boolean));
-        if (searchSubmitted && enrichedAiSuggestions.length > 0) {
-            // AI results first, catalog deduped below
-            const catalogDeduped = catalog.filter((p) => !aiNames.has((p.name || '').trim().toLowerCase()));
-            return [...enrichedAiSuggestions, ...catalogDeduped];
-        }
         const names = new Set(catalog.map((p) => (p.name || '').trim().toLowerCase()).filter(Boolean));
         const out = [...catalog];
         for (const p of enrichedAiSuggestions) {
@@ -333,16 +331,18 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         aiAbortRef.current = ac;
         setAiLoading(true);
         setAiSuggestions([]);
+        setAiRelatedSearches([]);
         setAiError(null);
         setAiQuerySummary('');
         try {
-            const { suggestions, querySummary, error } = await fetchSearchSuggestions({
+            const { suggestions, querySummary, relatedSearches, error } = await fetchSearchSuggestions({
                 query, category, symptom, signal: ac.signal,
             });
             if (ac.signal.aborted) return;
             setAiLoading(false);
             setAiSuggestions(Array.isArray(suggestions) ? suggestions : []);
             setAiQuerySummary(typeof querySummary === 'string' ? querySummary : '');
+            setAiRelatedSearches(Array.isArray(relatedSearches) ? relatedSearches : []);
             setAiError(error || null);
         } catch (e) {
             if (e?.name === 'AbortError') return;
@@ -356,6 +356,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             if (aiAbortRef.current) { aiAbortRef.current.abort(); aiAbortRef.current = null; }
             setAiSuggestions([]);
             setAiQuerySummary('');
+            setAiRelatedSearches([]);
             setAiLoading(false);
             setAiError(null);
             setSearchSubmitted(false);
@@ -907,6 +908,36 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 })}
             </div>
             )}
+
+            {/* Related searches */}
+            {searchSubmitted && !aiLoading && aiRelatedSearches.length > 0 && (
+                <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+                    <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.65rem', fontWeight: 600 }}>
+                        You might also explore
+                    </p>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', justifyContent: 'center' }}>
+                        {aiRelatedSearches.map((term) => (
+                            <button
+                                key={term}
+                                type="button"
+                                onClick={() => { setSearchQuery(term); setSearchSubmitted(true); runAiSearch(term, categoryFilter, symptomFilter); }}
+                                style={{
+                                    padding: '0.4rem 0.9rem',
+                                    borderRadius: 'var(--radius-pill)',
+                                    border: '1px solid var(--color-border)',
+                                    background: 'var(--color-surface-soft)',
+                                    color: 'var(--color-text-main)',
+                                    fontSize: '0.85rem',
+                                    cursor: 'pointer',
+                                }}
+                            >
+                                {term}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
+
             {(dsldLoading || dsldProducts.length > 0) && (
                 <div style={{ marginTop: '2rem' }}>
                     <h3 style={{ fontSize: '1.1rem', marginBottom: '0.25rem', color: 'var(--color-text-main)' }}>

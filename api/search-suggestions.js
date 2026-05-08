@@ -172,6 +172,7 @@ ${sym}
 Return ONE JSON object ONLY (no markdown) with up to 20 suggestions in this shape:
 {
   "querySummary": "2-4 sentences: tie the user's words to the kinds of products below; name categories (e.g. pads, telehealth); where relevant, note that options in this category are consistent with guidance from ACOG, NIH, or FDA — for example 'Options like these are commonly discussed in ACOG guidance on menstrual health' or 'The NIH Office of Dietary Supplements has reviewed evidence for supplements in this category'. Never fabricate specific citation numbers or direct quotes. Always remind users to verify fit with a clinician when medical.",
+  "relatedSearches": ["4-6 short search phrases the user might want to explore next, based on what they searched — e.g. if they searched 'iron supplements', suggest 'period cramp relief', 'PCOS and iron deficiency', 'telehealth for heavy periods', etc. Each phrase should be a natural search query a person would type, not a category label."],
   "suggestions": [
     {
       "brand": "Brand name",
@@ -198,8 +199,11 @@ PRODUCT SELECTION PROCESS:
 ANTI-HALLUCINATION RULES:
 - Only suggest products from brands you are confident exist and sell in the US market
 - Never invent brand names or product lines
+- Never create fictional products, features, or services — even as placeholders
+- NEVER suggest any product whose brand is "Ayna" — Ayna is the app the user is already in, not a product to recommend
 - Never include URLs, domains, or "http" in any field — retailer names as plain text only
 - typicalUserRating: optional number 3.0-5.0 only if you have real signal — omit if unsure
+- If you cannot recall seeing a brand's product sold online at a major retailer or the brand's own website, do not include it — it likely does not exist
 - If the query is not women's health or wellness shopping related, return {"querySummary":"","suggestions":[]}
 
 CLINICAL AUTHORITY RULES:
@@ -303,9 +307,13 @@ export default async function handler(req, res) {
   const list = Array.isArray(parsed?.suggestions) ? parsed.suggestions : [];
   const suggestions = list.map((s, i) => normalizeSuggestion(s, i)).filter(Boolean).slice(0, 20);
   const querySummary = normalizeQuerySummary(parsed?.querySummary);
+  const relatedSearches = Array.isArray(parsed?.relatedSearches)
+    ? parsed.relatedSearches.map((s) => sanitizeStr(s, 80)).filter((s) => s.length > 2).slice(0, 6)
+    : [];
 
   return res.status(200).json({
     querySummary,
+    relatedSearches,
     suggestions,
     generatedAt: new Date().toISOString(),
   });
