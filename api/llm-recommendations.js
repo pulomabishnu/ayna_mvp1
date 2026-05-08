@@ -256,7 +256,7 @@ INGREDIENT & SAFETY SCREENING — use clinical judgment, not a list:
 - For ALL period care products: note if the product is organic/unbleached/fragrance-free when her profile indicates this matters.
 
 TASK:
-You MUST generate a recommendation entry for EVERY concern listed in her primaryConcerns. Do not skip any concern — this is mandatory. If she has 5 concerns, you must return exactly 5 recommendation objects. Do not stop early due to length.
+Generate recommendations for her TOP 5 concerns by clinical priority. If she listed more than 5, choose the 5 that most benefit from OTC or telehealth intervention given her profile. Return exactly 5 recommendation objects (or fewer if she has fewer than 5 concerns). Do not stop early.
 
 For each concern, generate at least 2 solution tracks (aim for 3 when clinically relevant):
 - supplement / wellness
@@ -265,7 +265,7 @@ For each concern, generate at least 2 solution tracks (aim for 3 when clinically
 
 Each solution track must include:
 - one top product
-- exactly 3 alternatives
+- exactly 2 alternatives (not 3 — keep output concise)
 
 For each concern, always consider:
 - PCOS symptoms → Inositol (myo-inositol + d-chiro-inositol), spearmint, magnesium, Allara Health telehealth, Flo app, cycle tracking apps
@@ -324,9 +324,9 @@ Return ONLY a valid JSON object. No markdown, no explanation, just JSON:
             "brand": "Brand name",
             "category": "category",
             "type": "physical or digital",
-            "summary": "2-3 sentences describing what this product is",
-            "whyItWorks": "2-3 sentences explaining why this fits THIS user specifically, referencing her profile details",
-            "considerations": "Ingredient or safety notes relevant to her conditions. Empty string if none.",
+            "summary": "1-2 sentences describing what this product is",
+            "whyItWorks": "2 sentences: mechanism + her profile fit",
+            "considerations": "1 sentence on safety or ingredient notes. Empty string if none.",
             "price": "$XX",
             "image": "",
             "tags": ["tag1", "tag2"],
@@ -450,7 +450,7 @@ async function callOpenAI(prompt) {
     body: JSON.stringify({
       model,
       temperature: 0.2,
-      max_tokens: 8000,
+      max_tokens: 12000,
       response_format: { type: 'json_object' },
       messages: [
         { role: 'system', content: 'Output valid JSON only.' },
