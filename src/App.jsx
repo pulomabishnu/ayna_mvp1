@@ -27,6 +27,7 @@ import { loadHealthIntakeForCurrentUser, saveHealthIntakeForCurrentUser } from '
 import { mapIntakeToLegacyQuizProfile } from './utils/healthIntake';
 import AuthGate from './components/AuthGate';
 import PrivacyPolicy from './components/PrivacyPolicy';
+import TermsOfUse from './components/TermsOfUse';
 import { getSupabaseClient } from './utils/supabaseClient';
 import { loadEcosystemForUser, upsertProductState } from './utils/ecosystemStore';
 import { loadLearningMemoryForUser, saveLearningMemoryForUser } from './utils/learningMemoryStore';
@@ -41,6 +42,7 @@ const VIEW_TO_PATH = {
   comparison: '/comparison', recalls: '/recalls',
   'doctor-prep': '/appointment-prep', 'profile-edit': '/profile', tracked: '/tracked',
   'privacy-policy': '/privacy-policy',
+  'terms-of-use': '/terms-of-use',
 };
 const PATH_TO_VIEW = Object.fromEntries(
   Object.entries(VIEW_TO_PATH).filter(([, p]) => p !== '/').map(([v, p]) => [p, v])
@@ -792,6 +794,9 @@ function App() {
         {currentView === 'privacy-policy' && (
           <PrivacyPolicy onBack={() => window.history.back()} />
         )}
+        {currentView === 'terms-of-use' && (
+          <TermsOfUse onBack={() => window.history.back()} />
+        )}
         {currentView === 'ecosystem' && (
           <MyEcosystem
             myProducts={myProducts}
@@ -964,7 +969,7 @@ function App() {
           WebkitBackdropFilter: 'blur(24px) saturate(1.4)',
           letterSpacing: '0.01em',
         }}>
-          Ayna provides wellness information only — not medical advice. Always consult a qualified healthcare provider for medical decisions. By using Ayna, you agree your data is stored securely and never sold. · <button type="button" onClick={() => setCurrentView('privacy-policy')} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: 'inherit', textDecoration: 'underline', fontSize: 'inherit', fontFamily: 'inherit' }}>Privacy Policy</button>
+          Ayna provides wellness information only — not medical advice. Always consult a qualified healthcare provider for medical decisions. By using Ayna, you agree your data is stored securely and never sold. · <button type="button" onClick={() => setCurrentView('privacy-policy')} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: 'inherit', textDecoration: 'underline', fontSize: 'inherit', fontFamily: 'inherit' }}>Privacy Policy</button> · <button type="button" onClick={() => setCurrentView('terms-of-use')} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: 'inherit', textDecoration: 'underline', fontSize: 'inherit', fontFamily: 'inherit' }}>Terms of Use</button>
         </footer>
       )}
     </div>
