@@ -23,8 +23,10 @@ function getIngredientSafetyFlags(product, conditions = [], sensitivities = [], 
   const hasEndo = normalizedConditions.some((c) => c.toLowerCase() === 'endometriosis');
   const hasKnowledgeForHormoneConditions = !!(KNOWLEDGE_BY_CONDITION.endometriosis || KNOWLEDGE_BY_CONDITION.PCOS);
 
+  const isFragranceFree = /fragrance[\s-]free|unscented|no[\s-]fragrance|scent[\s-]free/i.test(combined);
+
   if (hasEndo) {
-    if (/fragrance|perfume|parfum|scent/.test(combined)) {
+    if (!isFragranceFree && /\bfragrance\b|\bperfume\b|\bparfum\b|\bscent\b/.test(combined)) {
       flags.push('**⚠️ Endometriosis flag:** Contains synthetic fragrance - may act as an endocrine disruptor. Choose fragrance-free alternatives.');
     }
     if (/chlorine|bleach|conventional cotton/.test(combined)) {
@@ -36,7 +38,7 @@ function getIngredientSafetyFlags(product, conditions = [], sensitivities = [], 
   }
 
   if (hasPcos) {
-    if (/fragrance|perfume|parfum|paraben|phthalate/.test(combined)) {
+    if ((!isFragranceFree && /\bfragrance\b|\bperfume\b|\bparfum\b/.test(combined)) || /\bparaben\b|\bphthalate\b/.test(combined)) {
       flags.push('**⚠️ PCOS flag:** Contains potential endocrine disruptors (fragrance/parabens). Minimize EDC exposure with PCOS.');
     }
   }

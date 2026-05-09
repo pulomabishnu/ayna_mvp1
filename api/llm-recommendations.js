@@ -317,7 +317,7 @@ Return ONLY a valid JSON object. No markdown, no explanation, just JSON:
           "name": "Supplement option",
           "subcategory": "supplement",
           "matchExplanation": "1-2 sentences on why this solution type fits this user profile for this concern",
-          "safetyFlags": ["optional warning"],
+          "safetyFlags": ["only include if this specific product actually contains a flagged ingredient — do NOT flag fragrance-free, organic, or clean-label products with fragrance/paraben warnings"],
           "product": {
             "id": "brand-productname-slug",
             "name": "Exact real product name",
@@ -615,7 +615,7 @@ QUALITY BAR: Every product must have (a) majority positive reviews from real wom
 PERSONALIZATION:
 - Product preferences are HARD FILTERS — if she prefers organic/fragrance-free, every physical product must meet that.
 - Never recommend a brand she listed as disliked.
-- whyItWorks must explain the mechanism AND cite her specific profile detail (condition, pain level, preference). Never just "fits your concern."
+- whyItWorks must be in plain everyday language — no medical jargon. Explain: (1) simply how the product works (mechanism in lay terms), (2) why it fits her specific profile (condition, pain level, preference), (3) what makes it the top pick over the alternatives. A user should read this and immediately understand why you chose THIS product for HER over everything else available.
 - Recommend specific product names (e.g. "Thinx Hiphugger Period Underwear"), not company names. Exception: telehealth platforms and apps.
 - Never recommend products she has hidden.
 - Never recommend tranexamic acid products.
@@ -643,7 +643,7 @@ Return ONLY valid JSON — exactly this shape:
             "category": "category",
             "type": "physical or digital",
             "summary": "1-2 sentences",
-            "whyItWorks": "2 sentences: mechanism then her profile fit",
+            "whyItWorks": "2-3 sentences in plain everyday language — no clinical jargon. Explain: (1) simply how this product works and why it helps this concern (as if explaining to a smart friend, not a doctor), (2) why it fits this specific user's profile, (3) what makes it the top pick over the alternatives you'll list. Be specific and informative, not generic.",
             "considerations": "1 sentence or empty string",
             "price": "$XX",
             "image": "",

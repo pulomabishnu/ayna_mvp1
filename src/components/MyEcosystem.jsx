@@ -1137,6 +1137,9 @@ export default function MyEcosystem({
                                                     const swapKey = `${section.id}::${tier.id || tierIdx}`;
                                                     const product = recommendedSwapByKey[swapKey] || tier.product;
                                                     if (!product) return null;
+                                                    // Always rotate within the fixed 4-product pool — never repopulate
+                                                    const tierPool = [tier.product, ...(tier.alternatives || [])].filter(Boolean);
+                                                    const rotatedAlternatives = tierPool.filter(p => p?.id !== product.id).slice(0, 3);
                                                     const llmReason = String(product?.whyItWorks || '').trim();
                                                     const reasonRaw = getRecommendationExplanation(product, quizResults, healthProfile)?.whyItWorks || '';
                                                     const fallbackReason = String(reasonRaw).replace(/^Why it could work:\s*/i, '').trim();
@@ -1157,7 +1160,7 @@ export default function MyEcosystem({
                                                                 seedEntry={{ frustration: section.concern, tag: section.tag }}
                                                                 quizResults={quizResults}
                                                                 healthProfile={healthProfile}
-                                                                precomputedAlternatives={tier.alternatives}
+                                                                precomputedAlternatives={rotatedAlternatives}
                                                                 onSwapSeedProduct={(oldProductId, newProduct) => handleSwapFromRecommendedCard(swapKey, oldProductId, newProduct)}
                                                                 onGoToSearch={onGoToSearch}
                                                                 isInEcosystem={!!myProducts[product.id]}
