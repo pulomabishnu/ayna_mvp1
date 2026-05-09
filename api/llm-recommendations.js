@@ -6,18 +6,59 @@ function anyApiKeyConfigured() {
 }
 
 function selectedConcerns(intake = {}) {
-  const blocked = new Set(['general discomfort']);
-  if (Array.isArray(intake.primaryConcerns) && intake.primaryConcerns.length) {
-    return intake.primaryConcerns
-      .map((x) => String(x || '').trim())
-      .filter(Boolean)
-      .filter((x) => !blocked.has(x.toLowerCase()));
+  const blocked = new Set(['general discomfort', 'other']);
+  const concerns = new Set();
+
+  // 1. Explicitly selected by user
+  const explicit = Array.isArray(intake.primaryConcerns) ? intake.primaryConcerns : (intake.primaryConcern ? [intake.primaryConcern] : []);
+  for (const c of explicit) {
+    const v = String(c || '').trim();
+    if (v && !blocked.has(v.toLowerCase())) concerns.add(v);
   }
-  if (intake.primaryConcern) {
-    const v = String(intake.primaryConcern).trim();
-    if (v && !blocked.has(v.toLowerCase())) return [v];
-  }
-  return [];
+
+  const conditions = (Array.isArray(intake.conditions) ? intake.conditions : []).map(c => String(c).toLowerCase());
+  const symptoms   = (Array.isArray(intake.symptoms)   ? intake.symptoms   : []).map(s => String(s).toLowerCase());
+  const goals      = (Array.isArray(intake.goals)      ? intake.goals      : []).map(g => String(g).toLowerCase());
+  const allText    = [...conditions, ...symptoms, ...goals, String(intake.dislikedProductsText || ''), String(intake.currentMedications || '')].join(' ').toLowerCase();
+  const has = (...terms) => terms.some(t => allText.includes(t));
+  const hasConcern = (substr) => [...concerns].some(c => c.toLowerCase().includes(substr));
+
+  // 2. Derive from conditions
+  if (conditions.some(c => c.includes('pcos')) && !hasConcern('pcos'))
+    concerns.add('PCOS management (supplements, telehealth, apps)');
+  if (conditions.some(c => c.includes('endometriosis')) && !hasConcern('endometriosis'))
+    concerns.add('Endometriosis management (supplements, devices, telehealth)');
+  if (conditions.some(c => c.includes('thyroid') || c.includes('hypothyroid') || c.includes('hyperthyroid')) && !hasConcern('hormone balance'))
+    concerns.add('Hormone balance (supplements, lifestyle)');
+
+  // 3. Derive from symptoms
+  if (symptoms.some(s => s.includes('bloat')) && !hasConcern('bloat'))
+    concerns.add('Hormonal bloating');
+  if (symptoms.some(s => s.includes('cramp')) && !hasConcern('cramp'))
+    concerns.add('Cramp and pain relief (devices, supplements, heat)');
+  if (symptoms.some(s => s.includes('fatigue') || s.includes('energy')) && !hasConcern('sleep'))
+    concerns.add('Sleep and energy');
+  if (symptoms.some(s => s.includes('mood') || s.includes('anxiety') || s.includes('depression')) && !hasConcern('mental'))
+    concerns.add('Mental health and cycle mood support');
+  if (symptoms.some(s => s.includes('acne') || s.includes('hair loss') || s.includes('hair thin')) && !hasConcern('skin'))
+    concerns.add('Skin and hair (hormone-related)');
+  if (symptoms.some(s => s.includes('insomnia') || s.includes('sleep')) && !hasConcern('sleep'))
+    concerns.add('Sleep and energy');
+
+  // 4. Derive from goals / other intake signals
+  if ((intake.tryingToConceive === 'yes' || has('conceive', 'ttc', 'fertility')) && !hasConcern('fertil'))
+    concerns.add('Fertility and conception (supplements, trackers, telehealth)');
+  if (has('uti', 'urinary tract') && !hasConcern('uti'))
+    concerns.add('UTI support');
+  if (has('vaginal', 'ph balance', 'bacterial vaginosis', 'bv', 'yeast') && !hasConcern('vaginal') && !hasConcern('gut'))
+    concerns.add('Gut and vaginal health (probiotics, pH balance)');
+  if ((intake.menstrualCycle === 'irregular' || intake.menstrualCycle === 'irregular_perimenopause') && !hasConcern('hormone') && !hasConcern('pcos'))
+    concerns.add('Hormone balance (supplements, lifestyle)');
+  if ((intake.menstrualCycle === 'no_menopause' || intake.menstrualCycle === 'irregular_perimenopause') && !hasConcern('menopause'))
+    concerns.add('Perimenopause and menopause support');
+
+  const result = [...concerns].filter(c => !blocked.has(c.toLowerCase()));
+  return result.length ? result : [];
 }
 
 function safeHttpsUrl(u) {
