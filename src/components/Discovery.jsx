@@ -373,7 +373,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             setAiLoading(false);
             setAiError(e?.message || 'Could not load suggestions');
         }
-    }, []);
+    }, [personalizationFilter, quizResults]);
 
     useEffect(() => {
         if (qTrimForAi.length < 2) {
