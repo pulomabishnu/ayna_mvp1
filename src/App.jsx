@@ -969,7 +969,11 @@ function App() {
           WebkitBackdropFilter: 'blur(24px) saturate(1.4)',
           letterSpacing: '0.01em',
         }}>
-          Ayna provides wellness information only — not medical advice. Always consult a qualified healthcare provider for medical decisions. By using Ayna, you agree your data is stored securely and never sold. · <button type="button" onClick={() => setCurrentView('privacy-policy')} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: 'inherit', textDecoration: 'underline', fontSize: 'inherit', fontFamily: 'inherit' }}>Privacy Policy</button> · <button type="button" onClick={() => setCurrentView('terms-of-use')} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: 'inherit', textDecoration: 'underline', fontSize: 'inherit', fontFamily: 'inherit' }}>Terms of Use</button>
+          Ayna provides wellness information only — not medical advice. Always consult a qualified healthcare provider for medical decisions. By using Ayna, you agree your data is stored securely and never sold.
+          <br />
+          <button type="button" onClick={() => setCurrentView('privacy-policy')} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: 'inherit', textDecoration: 'underline', fontSize: 'inherit', fontFamily: 'inherit' }}>Privacy Policy</button>
+          {' · '}
+          <button type="button" onClick={() => setCurrentView('terms-of-use')} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: 'inherit', textDecoration: 'underline', fontSize: 'inherit', fontFamily: 'inherit' }}>Terms of Use</button>
         </footer>
       )}
     </div>
