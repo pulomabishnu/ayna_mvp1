@@ -410,7 +410,7 @@ button {
   min-height: 100svh;
   width: 100%;
   box-sizing: border-box;
-  padding: 0 max(0.5rem, env(safe-area-inset-left, 0px)) 5rem max(0.5rem, env(safe-area-inset-right, 0px));
+  padding: 0 max(0.5rem, env(safe-area-inset-left, 0px)) 0 max(0.5rem, env(safe-area-inset-right, 0px));
 }
 
 .welcome-gate__first-stack {
@@ -477,6 +477,7 @@ button {
   animation: welcomePageEnter var(--welcome-second-enter-duration) var(--welcome-second-enter-ease) 0s both;
   /* full-bleed + sticky nav: breathing room the non–full-bleed path used to get from .ayna-landing__content */
   padding-top: clamp(3.25rem, 6vh, 4.5rem);
+  padding-bottom: 4rem;
   box-sizing: border-box;
 }
 
