@@ -26,6 +26,7 @@ import { loadHealthProfile, hasHealthProfileSignals } from './utils/healthDataPr
 import { loadHealthIntakeForCurrentUser, saveHealthIntakeForCurrentUser } from './utils/healthIntakeStore';
 import { mapIntakeToLegacyQuizProfile } from './utils/healthIntake';
 import AuthGate from './components/AuthGate';
+import PrivacyPolicy from './components/PrivacyPolicy';
 import { getSupabaseClient } from './utils/supabaseClient';
 import { loadEcosystemForUser, upsertProductState } from './utils/ecosystemStore';
 import { loadLearningMemoryForUser, saveLearningMemoryForUser } from './utils/learningMemoryStore';
@@ -39,6 +40,7 @@ const VIEW_TO_PATH = {
   articles: '/library', screenings: '/screenings', omitted: '/omitted',
   comparison: '/comparison', recalls: '/recalls',
   'doctor-prep': '/appointment-prep', 'profile-edit': '/profile', tracked: '/tracked',
+  'privacy-policy': '/privacy-policy',
 };
 const PATH_TO_VIEW = Object.fromEntries(
   Object.entries(VIEW_TO_PATH).filter(([, p]) => p !== '/').map(([v, p]) => [p, v])
@@ -787,6 +789,9 @@ function App() {
         {currentView === 'articles' && (
           <Articles initialArticleId={selectedArticleId} onOpenProduct={handleOpenProduct} quizResults={quizResults} healthProfile={healthProfile} />
         )}
+        {currentView === 'privacy-policy' && (
+          <PrivacyPolicy onBack={() => window.history.back()} />
+        )}
         {currentView === 'ecosystem' && (
           <MyEcosystem
             myProducts={myProducts}
@@ -959,7 +964,7 @@ function App() {
           WebkitBackdropFilter: 'blur(24px) saturate(1.4)',
           letterSpacing: '0.01em',
         }}>
-          Ayna provides wellness information only — not medical advice. Always consult a qualified healthcare provider for medical decisions. By using Ayna, you agree your data is stored securely and never sold.
+          Ayna provides wellness information only — not medical advice. Always consult a qualified healthcare provider for medical decisions. By using Ayna, you agree your data is stored securely and never sold. · <button type="button" onClick={() => setCurrentView('privacy-policy')} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: 'inherit', textDecoration: 'underline', fontSize: 'inherit', fontFamily: 'inherit' }}>Privacy Policy</button>
         </footer>
       )}
     </div>
