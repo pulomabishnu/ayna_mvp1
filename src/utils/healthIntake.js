@@ -91,6 +91,7 @@ export const CONCERN_AREAS = [
   'Period care (pads, tampons, cups, discs, underwear)',
   'Cramp and pain relief (devices, supplements, heat)',
   'Hormone balance (supplements, lifestyle)',
+  'Hormonal bloating',
   'PCOS management (supplements, telehealth, apps)',
   'Endometriosis management (supplements, devices, telehealth)',
   'Fertility and conception (supplements, trackers, telehealth)',
