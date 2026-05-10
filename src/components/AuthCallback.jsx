@@ -16,8 +16,6 @@ export default function AuthCallback({ onAuthenticated }) {
     const refreshToken = hashParams.get('refresh_token');
     const errorDesc = hashParams.get('error_description') || searchParams.get('error_description');
 
-    // Debug: show what's in the URL so we can diagnose
-    setDebugInfo(`hash: ${window.location.hash.slice(0, 60)} | search: ${window.location.search.slice(0, 60)}`);
 
     if (errorDesc) {
       setStatus('error');
@@ -95,7 +93,6 @@ export default function AuthCallback({ onAuthenticated }) {
   return (
     <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '0.5rem' }}>
       <p style={{ color: 'var(--color-text-muted, #666)' }}>Signing you in…</p>
-      {debugInfo && <p style={{ fontSize: '0.7rem', color: '#aaa', maxWidth: '500px', textAlign: 'center', padding: '0 1rem' }}>{debugInfo}</p>}
     </div>
   );
 }
