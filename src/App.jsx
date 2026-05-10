@@ -133,15 +133,17 @@ function App() {
   React.useEffect(() => {
     const supabase = getSupabaseClient();
     if (!supabase) { setAuthLoading(false); return; }
-    // /auth/callback is handled by AuthCallback component — skip normal auth setup there
-    if (window.location.pathname === '/auth/callback') {
+    // On the callback page, AuthCallback handles session — skip getSession() here
+    // but still set up onAuthStateChange so sign-out works after redirect
+    const isCallbackPage = window.location.pathname === '/auth/callback';
+    if (!isCallbackPage) {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        setUser(session?.user ?? null);
+        setAuthLoading(false);
+      });
+    } else {
       setAuthLoading(false);
-      return;
     }
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setAuthLoading(false);
-    });
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
       if (!session) {
