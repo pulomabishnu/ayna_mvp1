@@ -29,6 +29,7 @@ import AuthGate from './components/AuthGate';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import TermsOfUse from './components/TermsOfUse';
 import AuthCallback from './components/AuthCallback';
+import EmailConfirmed from './components/EmailConfirmed';
 import { getSupabaseClient } from './utils/supabaseClient';
 import { loadEcosystemForUser, upsertProductState } from './utils/ecosystemStore';
 import { loadLearningMemoryForUser, saveLearningMemoryForUser } from './utils/learningMemoryStore';
@@ -808,15 +809,10 @@ function App() {
           }} />
         )}
         {currentView === 'confirmed' && (
-          <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1.25rem', padding: '2rem', textAlign: 'center', background: 'var(--color-bg, #fff)' }}>
-            <div style={{ width: '3.5rem', height: '3.5rem', borderRadius: '50%', background: 'var(--color-primary, #7C3AED)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 11l5 5L18 6" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            </div>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 700, margin: 0 }}>Email confirmed!</h2>
-            <p style={{ color: 'var(--color-text-muted, #666)', maxWidth: '340px', lineHeight: 1.6, margin: 0 }}>
-              You're all set. Close this tab and return to Ayna to sign in.
-            </p>
-          </div>
+          <EmailConfirmed onAuthenticated={(user) => {
+            setUser(user);
+            setCurrentView('ecosystem');
+          }} />
         )}
         {currentView === 'ecosystem' && (
           <MyEcosystem
