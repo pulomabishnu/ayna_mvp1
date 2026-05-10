@@ -183,7 +183,10 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
         </button>
 
         <p style={styles.fine}>
-          By continuing, you agree that your data is stored securely and never sold.
+          By continuing you agree to our{' '}
+          <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'underline' }}>Privacy Policy</a>
+          {' '}and{' '}
+          <a href="/terms-of-use" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'underline' }}>Terms of Use</a>.
         </p>
 
         {isModal && onSkip && context !== 'login' && (

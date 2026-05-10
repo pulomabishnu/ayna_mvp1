@@ -165,6 +165,27 @@ body {
   padding-left: 0.5rem;
 }
 
+/* Landing page nav — transparent glass over photo, white text */
+.app-nav--landing {
+  background: rgba(0, 0, 0, 0.18) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(1.2) !important;
+  backdrop-filter: blur(20px) saturate(1.2) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06) inset !important;
+}
+.app-nav--landing button,
+.app-nav--landing a,
+.app-nav--landing span {
+  color: rgba(255, 255, 255, 0.92) !important;
+}
+.app-nav--landing .app-nav__research-cluster {
+  border-left-color: rgba(255, 255, 255, 0.18) !important;
+}
+.app-nav--landing .nav-ecosystem__trigger,
+.app-nav--landing .nav-ecosystem__trigger--active {
+  color: rgba(255, 255, 255, 0.92) !important;
+}
+
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .app-nav {
     background: linear-gradient(180deg, #fff 0%, rgba(255, 250, 246, 0.95) 100%);
