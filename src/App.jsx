@@ -28,6 +28,7 @@ import { mapIntakeToLegacyQuizProfile } from './utils/healthIntake';
 import AuthGate from './components/AuthGate';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import TermsOfUse from './components/TermsOfUse';
+import AuthCallback from './components/AuthCallback';
 import { getSupabaseClient } from './utils/supabaseClient';
 import { loadEcosystemForUser, upsertProductState } from './utils/ecosystemStore';
 import { loadLearningMemoryForUser, saveLearningMemoryForUser } from './utils/learningMemoryStore';
@@ -43,6 +44,7 @@ const VIEW_TO_PATH = {
   'doctor-prep': '/appointment-prep', 'profile-edit': '/profile', tracked: '/tracked',
   'privacy-policy': '/privacy-policy',
   'terms-of-use': '/terms-of-use',
+  'auth-callback': '/auth/callback',
 };
 const PATH_TO_VIEW = Object.fromEntries(
   Object.entries(VIEW_TO_PATH).filter(([, p]) => p !== '/').map(([v, p]) => [p, v])
@@ -131,23 +133,9 @@ function App() {
   React.useEffect(() => {
     const supabase = getSupabaseClient();
     if (!supabase) { setAuthLoading(false); return; }
-    // If this is the OAuth popup callback, close as soon as we have a session.
-    // We detect via ?oauth_popup=1 — window.opener is unreliable because the
-    // browser clears it during cross-origin navigation through Google's domain.
-    const isOAuthPopup = new URLSearchParams(window.location.search).get('oauth_popup') === '1';
-    if (isOAuthPopup) {
-      // Check immediately — session may already be established.
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        if (session?.user) { window.close(); return; }
-      });
-      const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-        if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION' || event === 'TOKEN_REFRESHED') && session?.user) {
-          subscription.unsubscribe();
-          window.close();
-        }
-      });
-      // Fallback: close after 8s regardless so the popup never hangs.
-      setTimeout(() => window.close(), 8000);
+    // /auth/callback is handled by AuthCallback component — skip normal auth setup there
+    if (window.location.pathname === '/auth/callback') {
+      setAuthLoading(false);
       return;
     }
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -803,6 +791,12 @@ function App() {
         )}
         {currentView === 'terms-of-use' && (
           <TermsOfUse onBack={() => window.history.back()} />
+        )}
+        {currentView === 'auth-callback' && (
+          <AuthCallback onAuthenticated={(user) => {
+            setUser(user);
+            setCurrentView('ecosystem');
+          }} />
         )}
         {currentView === 'ecosystem' && (
           <MyEcosystem

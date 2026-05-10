@@ -28,7 +28,11 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
     setLoading(true);
     try {
       if (mode === 'signup') {
-        const { error } = await supabase.auth.signUp({ email, password });
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+        });
         if (error) throw error;
         setSuccessMsg('Almost there! A confirmation email is on its way — it will come from Supabase (our auth provider), not from Ayna directly. Check your spam folder if you don\'t see it. Once confirmed, come back here to sign in.');
       } else {
@@ -50,22 +54,15 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
     setError('');
     setGoogleLoading(true);
     try {
-      if (onBeforeOAuthRedirect) onBeforeOAuthRedirect();
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}?oauth_popup=1`,
-          skipBrowserRedirect: true,
+          redirectTo: `${window.location.origin}/auth/callback`,
           queryParams: { prompt: 'select_account' },
         },
       });
       if (error) throw error;
-      if (!data?.url) throw new Error('No redirect URL returned from Supabase.');
-      const popup = window.open(data.url, 'oauth', 'width=520,height=620,left=200,top=100');
-      if (!popup) {
-        setError('Popup blocked — please allow popups for this site and try again.');
-        setGoogleLoading(false);
-      }
+      // Browser will redirect automatically — nothing else needed
     } catch (err) {
       setError(err.message || 'Could not sign in with Google.');
       setGoogleLoading(false);
