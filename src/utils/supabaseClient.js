@@ -7,7 +7,12 @@ export function getSupabaseClient() {
   const url = import.meta.env.VITE_SUPABASE_URL;
   const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
   if (!url || !anonKey) return null;
-  client = createClient(url, anonKey);
+  client = createClient(url, anonKey, {
+    auth: {
+      flowType: 'implicit',   // avoids PKCE verifier storage — Chrome bounce tracking deletes it
+      detectSessionInUrl: true,
+    },
+  });
   return client;
 }
 
