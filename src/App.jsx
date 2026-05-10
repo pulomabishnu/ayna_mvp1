@@ -149,10 +149,13 @@ function App() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
       if (event === 'SIGNED_IN' && session?.user) {
-        // Covers cross-tab email confirmation: existing Ayna tab detects
-        // the new session from localStorage and navigates automatically.
+        // Cross-tab confirmation: navigate existing tab to ecosystem.
+        // Skip if on a legal/callback page — don't redirect away from those.
+        const noRedirectPaths = ['/privacy-policy', '/terms-of-use', '/confirmed', '/auth/callback'];
         setShowAuthModal(false);
-        setCurrentView('ecosystem');
+        if (!noRedirectPaths.includes(window.location.pathname)) {
+          setCurrentView('ecosystem');
+        }
       }
       if (!session) {
         setMyProducts({});
