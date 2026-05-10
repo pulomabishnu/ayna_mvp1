@@ -165,25 +165,27 @@ body {
   padding-left: 0.5rem;
 }
 
-/* Landing page nav — transparent glass over photo, white text */
+/* Glass nav — consistent across all pages, matches landing page aesthetic */
 .app-nav--landing {
-  background: rgba(0, 0, 0, 0.18) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(1.2) !important;
-  backdrop-filter: blur(20px) saturate(1.2) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06) inset !important;
+  background: rgba(15, 10, 30, 0.55) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(1.4) !important;
+  backdrop-filter: blur(24px) saturate(1.4) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10) !important;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset, 0 8px 32px rgba(0, 0, 0, 0.25) !important;
 }
+.app-nav--landing,
 .app-nav--landing button,
 .app-nav--landing a,
 .app-nav--landing span {
-  color: rgba(255, 255, 255, 0.92) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-family: 'Jost', system-ui, sans-serif !important;
 }
 .app-nav--landing .app-nav__research-cluster {
-  border-left-color: rgba(255, 255, 255, 0.18) !important;
+  border-left-color: rgba(255, 255, 255, 0.15) !important;
 }
 .app-nav--landing .nav-ecosystem__trigger,
 .app-nav--landing .nav-ecosystem__trigger--active {
-  color: rgba(255, 255, 255, 0.92) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
 }
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {

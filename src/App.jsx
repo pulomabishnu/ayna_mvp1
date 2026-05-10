@@ -552,7 +552,7 @@ function App() {
           style={{ position: 'relative', zIndex: 1001 }}
         >
         <nav
-          className={`app-nav${isScrolled ? ' app-nav--scrolled' : ''}`}
+          className={`app-nav app-nav--landing${isScrolled ? ' app-nav--scrolled' : ''}`}
           aria-label="Primary"
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
