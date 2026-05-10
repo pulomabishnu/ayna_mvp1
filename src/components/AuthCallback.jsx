@@ -13,6 +13,7 @@ export default function AuthCallback({ onAuthenticated }) {
     const searchParams = new URLSearchParams(window.location.search);
     const accessToken = hashParams.get('access_token');
     const refreshToken = hashParams.get('refresh_token');
+    const type = hashParams.get('type') || searchParams.get('type');
     const errorDesc = hashParams.get('error_description') || searchParams.get('error_description');
 
     if (errorDesc) {
@@ -21,7 +22,13 @@ export default function AuthCallback({ onAuthenticated }) {
       return;
     }
 
-    // Tokens in URL hash (OAuth or email confirmation) — set session directly
+    // Email confirmation — just show the success message
+    if (type === 'signup' || type === 'email_change') {
+      setStatus('confirmed');
+      return;
+    }
+
+    // OAuth — set session and navigate to ecosystem
     if (accessToken && refreshToken) {
       supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken })
         .then(({ data, error }) => {
@@ -29,9 +36,6 @@ export default function AuthCallback({ onAuthenticated }) {
             setStatus('error');
             setErrorMsg(error?.message || 'Could not establish session.');
           } else {
-            // Try to close this tab — works when opened from email clients.
-            // If the browser blocks it, onAuthenticated runs as the fallback.
-            window.close();
             onAuthenticated(data.session.user);
           }
         });
@@ -58,6 +62,18 @@ export default function AuthCallback({ onAuthenticated }) {
       return () => { clearTimeout(t); subscription.unsubscribe(); };
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  if (status === 'confirmed') {
+    return (
+      <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '1rem', padding: '2rem', textAlign: 'center', background: 'var(--color-bg, #fff)' }}>
+        <div style={{ fontSize: '2.5rem' }}>✓</div>
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 700, margin: 0 }}>You're all set!</h2>
+        <p style={{ color: 'var(--color-text-muted, #666)', maxWidth: '360px', lineHeight: 1.6, margin: 0 }}>
+          Your email has been confirmed. You can close this tab and sign in to Ayna.
+        </p>
+      </div>
+    );
+  }
 
   if (status === 'error') {
     return (
