@@ -131,10 +131,14 @@ function App() {
   React.useEffect(() => {
     const supabase = getSupabaseClient();
     if (!supabase) { setAuthLoading(false); return; }
-    // If this is the OAuth popup, wait for SIGNED_IN then close.
+    // If this is the OAuth popup, close as soon as we have a session.
     if (window.opener) {
-      const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+      // Check immediately — session may already be established before listener attaches.
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session?.user) { window.close(); return; }
+      });
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+        if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION' || event === 'TOKEN_REFRESHED') && session?.user) {
           subscription.unsubscribe();
           window.close();
         }
