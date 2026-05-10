@@ -29,7 +29,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
       if (mode === 'signup') {
         const { error } = await supabase.auth.signUp({ email, password });
         if (error) throw error;
-        setSuccessMsg('Check your email to confirm your account, then sign in.');
+        setSuccessMsg('Almost there! A confirmation email is on its way — it will come from Supabase (our auth provider), not from Ayna directly. Check your spam folder if you don\'t see it. Once confirmed, come back here to sign in.');
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
