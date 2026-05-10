@@ -3,45 +3,75 @@ import { getSupabaseClient } from '../utils/supabaseClient';
 
 export default function AuthCallback({ onAuthenticated }) {
   const [status, setStatus] = useState('loading');
+  const [debugInfo, setDebugInfo] = useState('');
 
   useEffect(() => {
     const supabase = getSupabaseClient();
     if (!supabase) { setStatus('error'); return; }
 
-    const hash = new URLSearchParams(window.location.hash.slice(1));
-    const search = new URLSearchParams(window.location.search);
-    const type = hash.get('type') || search.get('type');
+    const hashParams = new URLSearchParams(window.location.hash.slice(1));
+    const searchParams = new URLSearchParams(window.location.search);
+    const type = hashParams.get('type') || searchParams.get('type');
+    const accessToken = hashParams.get('access_token');
+    const refreshToken = hashParams.get('refresh_token');
+    const errorDesc = hashParams.get('error_description') || searchParams.get('error_description');
+
+    // Debug: show what's in the URL so we can diagnose
+    setDebugInfo(`hash: ${window.location.hash.slice(0, 60)} | search: ${window.location.search.slice(0, 60)}`);
+
+    if (errorDesc) {
+      setStatus('error');
+      setDebugInfo(`Error from Supabase: ${errorDesc}`);
+      return;
+    }
 
     const isEmailConfirmation = type === 'signup' || type === 'email_change';
-
     if (isEmailConfirmation) {
       setStatus('confirmed');
       return;
     }
 
-    // OAuth or magic link — wait for Supabase to establish the session then navigate
-    const check = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+    // If tokens are in the URL hash, set the session explicitly
+    if (accessToken && refreshToken) {
+      supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken })
+        .then(({ data, error }) => {
+          if (error || !data.session?.user) {
+            setStatus('error');
+            setDebugInfo(`setSession error: ${error?.message}`);
+          } else {
+            onAuthenticated(data.session.user);
+          }
+        });
+      return;
+    }
+
+    // No tokens in hash — fall back to getSession (handles PKCE code exchange if Supabase did it server-side)
+    supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) { onAuthenticated(session.user); return; }
-    };
-    check();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session?.user) {
+      // Last resort: listen for auth state change
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+        if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION' || event === 'TOKEN_REFRESHED') && session?.user) {
+          subscription.unsubscribe();
+          onAuthenticated(session.user);
+        }
+      });
+
+      // If nothing after 10s, show error
+      const t = setTimeout(() => {
         subscription.unsubscribe();
-        onAuthenticated(session.user);
-      }
-    });
+        setStatus('error');
+      }, 10000);
 
-    return () => subscription.unsubscribe();
-  }, [onAuthenticated]);
+      return () => { clearTimeout(t); subscription.unsubscribe(); };
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (status === 'confirmed') {
     return (
       <div style={{
         minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center',
         flexDirection: 'column', gap: '1rem', padding: '2rem', textAlign: 'center',
-        fontFamily: 'var(--font-body, Arial, sans-serif)',
         background: 'var(--color-bg, #fff)',
       }}>
         <div style={{ fontSize: '2.5rem' }}>✓</div>
@@ -55,15 +85,17 @@ export default function AuthCallback({ onAuthenticated }) {
 
   if (status === 'error') {
     return (
-      <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem', textAlign: 'center' }}>
-        <p style={{ color: '#b42318' }}>Something went wrong. Please return to Ayna and try again.</p>
+      <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '1rem', padding: '2rem', textAlign: 'center' }}>
+        <p style={{ color: '#b42318', fontWeight: 600 }}>Could not complete sign-in.</p>
+        <p style={{ color: '#666', fontSize: '0.85rem', maxWidth: '400px' }}>{debugInfo || 'Please return to Ayna and try again.'}</p>
       </div>
     );
   }
 
   return (
-    <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '0.5rem' }}>
       <p style={{ color: 'var(--color-text-muted, #666)' }}>Signing you in…</p>
+      {debugInfo && <p style={{ fontSize: '0.7rem', color: '#aaa', maxWidth: '500px', textAlign: 'center', padding: '0 1rem' }}>{debugInfo}</p>}
     </div>
   );
 }
