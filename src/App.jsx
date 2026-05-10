@@ -131,9 +131,12 @@ function App() {
   React.useEffect(() => {
     const supabase = getSupabaseClient();
     if (!supabase) { setAuthLoading(false); return; }
-    // If this is the OAuth popup, close as soon as we have a session.
-    if (window.opener) {
-      // Check immediately — session may already be established before listener attaches.
+    // If this is the OAuth popup callback, close as soon as we have a session.
+    // We detect via ?oauth_popup=1 — window.opener is unreliable because the
+    // browser clears it during cross-origin navigation through Google's domain.
+    const isOAuthPopup = new URLSearchParams(window.location.search).get('oauth_popup') === '1';
+    if (isOAuthPopup) {
+      // Check immediately — session may already be established.
       supabase.auth.getSession().then(({ data: { session } }) => {
         if (session?.user) { window.close(); return; }
       });

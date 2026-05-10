@@ -16,6 +16,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const supabase = getSupabaseClient();
   const subtitle = SUBTITLES[context] || SUBTITLES.default;
@@ -53,7 +54,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin,
+          redirectTo: `${window.location.origin}?oauth_popup=1`,
           skipBrowserRedirect: true,
           queryParams: { prompt: 'select_account' },
         },
@@ -135,16 +136,26 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
             style={styles.input}
             autoComplete="email"
           />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={styles.input}
-            autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
-            minLength={mode === 'signup' ? 8 : undefined}
-          />
+          <div style={{ position: 'relative' }}>
+            <input
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              style={{ ...styles.input, width: '100%', boxSizing: 'border-box', paddingRight: '2.5rem' }}
+              autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
+              minLength={mode === 'signup' ? 8 : undefined}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(v => !v)}
+              style={{ position: 'absolute', right: '0.65rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)', fontSize: '1rem', padding: '0.25rem', lineHeight: 1 }}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? '🙈' : '👁️'}
+            </button>
+          </div>
           {error && <p style={styles.error}>{error}</p>}
           {successMsg && <p style={styles.success}>{successMsg}</p>}
           <button type="submit" disabled={loading || !supabase} style={styles.primaryBtn}>
