@@ -34,7 +34,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
           options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
         });
         if (error) throw error;
-        setSuccessMsg('Almost there! A confirmation email is on its way — it will come from Supabase (our auth provider), not from Ayna directly. Check your spam folder if you don\'t see it. Once confirmed, come back here to sign in.');
+        setSuccessMsg('Almost there! A confirmation email is on its way from Ayna (pulomabishnu@gmail.com). Check your spam folder if you don\'t see it. Once confirmed, come back here to sign in.');
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
