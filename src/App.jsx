@@ -146,6 +146,12 @@ function App() {
     }
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
+      if (event === 'SIGNED_IN' && session?.user) {
+        // Covers cross-tab email confirmation: existing Ayna tab detects
+        // the new session from localStorage and navigates automatically.
+        setShowAuthModal(false);
+        setCurrentView('ecosystem');
+      }
       if (!session) {
         setMyProducts({});
         setTrackedProducts({});
