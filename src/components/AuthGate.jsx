@@ -28,12 +28,18 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
     setLoading(true);
     try {
       if (mode === 'signup') {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
         });
         if (error) throw error;
+        // Supabase returns an empty identities array when the email is already registered
+        if (data.user?.identities?.length === 0) {
+          setError('An account with this email already exists. Sign in instead.');
+          setMode('signin');
+          return;
+        }
         setSuccessMsg('Almost there! A confirmation email is on its way from Ayna (pulomabishnu@gmail.com). Check your spam folder if you don\'t see it. Once confirmed, come back here to sign in.');
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
