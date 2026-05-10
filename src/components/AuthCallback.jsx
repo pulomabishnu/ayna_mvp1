@@ -29,6 +29,9 @@ export default function AuthCallback({ onAuthenticated }) {
             setStatus('error');
             setErrorMsg(error?.message || 'Could not establish session.');
           } else {
+            // Try to close this tab — works when opened from email clients.
+            // If the browser blocks it, onAuthenticated runs as the fallback.
+            window.close();
             onAuthenticated(data.session.user);
           }
         });
