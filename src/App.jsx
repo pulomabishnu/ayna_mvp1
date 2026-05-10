@@ -60,7 +60,11 @@ function getInitialView() {
 
 function App() {
   const [currentView, setCurrentViewRaw] = useState(getInitialView);
+  // Ref always mirrors currentView synchronously — safe to read inside Supabase callbacks
+  // that run outside React's render cycle.
+  const currentViewRef = useRef(getInitialView());
   const setCurrentView = useCallback((view, { replace = false } = {}) => {
+    currentViewRef.current = view;
     setCurrentViewRaw(view);
     const path = VIEW_TO_PATH[view] || '/';
     if (window.location.pathname !== path) {
@@ -75,6 +79,7 @@ function App() {
   useEffect(() => {
     const onPop = (e) => {
       const view = e.state?.view || PATH_TO_VIEW[window.location.pathname] || 'welcome';
+      currentViewRef.current = view;
       setCurrentViewRaw(view);
     };
     window.addEventListener('popstate', onPop);
@@ -146,14 +151,12 @@ function App() {
     } else {
       setAuthLoading(false);
     }
+    const STATIC_VIEWS = ['privacy-policy', 'terms-of-use', 'confirmed', 'auth-callback'];
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
       if (event === 'SIGNED_IN' && session?.user) {
-        // Cross-tab confirmation: navigate existing tab to ecosystem.
-        // Skip if on a legal/callback page — don't redirect away from those.
-        const noRedirectPaths = ['/privacy-policy', '/terms-of-use', '/confirmed', '/auth/callback'];
         setShowAuthModal(false);
-        if (!noRedirectPaths.includes(window.location.pathname)) {
+        if (!STATIC_VIEWS.includes(currentViewRef.current)) {
           setCurrentView('ecosystem');
         }
       }
@@ -163,7 +166,9 @@ function App() {
         setOmittedProducts({});
         setQuizResults(null);
         setAynaReviews({});
-        setCurrentView('welcome', { replace: true });
+        if (!STATIC_VIEWS.includes(currentViewRef.current)) {
+          setCurrentView('welcome', { replace: true });
+        }
         try {
           // Keep LLM recommendations cache — it's fingerprint-keyed so a
           // different quiz will naturally miss. Clearing it caused a re-fetch
