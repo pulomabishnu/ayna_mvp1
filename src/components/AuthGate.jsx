@@ -31,7 +31,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+          options: { emailRedirectTo: `${window.location.origin}/confirmed` },
         });
         if (error) throw error;
         // Supabase returns an empty identities array when the email is already registered
