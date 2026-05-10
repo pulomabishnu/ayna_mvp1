@@ -53,6 +53,12 @@ PATH_TO_VIEW['/'] = 'welcome';
 
 function getInitialView() {
   const path = window.location.pathname;
+  // If URL hash has auth tokens (email confirmation or OAuth landing on any page),
+  // treat as auth callback regardless of path
+  const hash = new URLSearchParams(window.location.hash.slice(1));
+  if (hash.get('access_token') || hash.get('type') === 'signup') {
+    return 'auth-callback';
+  }
   return PATH_TO_VIEW[path] || 'welcome';
 }
 
