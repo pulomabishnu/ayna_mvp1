@@ -1,7 +1,19 @@
-// Resolves a real product image for AI-generated products via /api/product-image
-// Results are cached in memory for the session — never breaks the UI
+// Resolves a real product image for products with placeholder images via /api/product-image
+// Results are cached in localStorage so Serper is only called once per product, ever.
 
-const cache = new Map();
+const LS_KEY = 'ayna_product_images_v1';
+const memCache = new Map();
+
+function lsRead() {
+  try { return JSON.parse(localStorage.getItem(LS_KEY) || '{}'); } catch { return {}; }
+}
+function lsWrite(key, url) {
+  try {
+    const obj = lsRead();
+    obj[key] = url;
+    localStorage.setItem(LS_KEY, JSON.stringify(obj));
+  } catch {}
+}
 
 export function isPlaceholderProductImage(imageUrl) {
   const src = String(imageUrl || '').trim();
@@ -12,17 +24,26 @@ export function isPlaceholderProductImage(imageUrl) {
 export async function resolveProductImage(name, brand) {
   if (!name) return '';
   const key = `${brand || ''}|${name}`;
-  if (cache.has(key)) return cache.get(key);
+
+  if (memCache.has(key)) return memCache.get(key);
+
+  const stored = lsRead();
+  if (key in stored) {
+    memCache.set(key, stored[key]);
+    return stored[key];
+  }
+
   try {
     const params = new URLSearchParams({ name, brand: brand || '' });
     const res = await fetch(`/api/product-image?${params}`);
-    if (!res.ok) { cache.set(key, ''); return ''; }
+    if (!res.ok) { memCache.set(key, ''); lsWrite(key, ''); return ''; }
     const data = await res.json();
     const url = data?.imageUrl || '';
-    cache.set(key, url);
+    memCache.set(key, url);
+    lsWrite(key, url);
     return url;
   } catch {
-    cache.set(key, '');
+    memCache.set(key, '');
     return '';
   }
 }

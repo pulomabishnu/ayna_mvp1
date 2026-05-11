@@ -297,7 +297,7 @@ export const EXTENDED_PHYSICAL = [
 export const EXTENDED_DIGITAL = [
     // ─── MORE TRACKERS ──────────────────────────────────
     {
-        id: 'd-natural-cycles', name: 'Natural Cycles', category: 'tracker', type: 'digital', internal: false, healthFunctions: ['cycle-tracking', 'contraception'], tags: ['irregular', 'pcos', 'privacy'], price: '$100/year or $13/month', userRating: 4.6, whereToBuy: ['App Store', 'Google Play'], platform: 'iOS, Android', image: '/startup_placeholder.png', summary: 'The only FDA-cleared birth control app. Uses basal body temperature to identify fertile/infertile days.',
+        id: 'd-natural-cycles', name: 'Natural Cycles', category: 'tracker', type: 'digital', internal: false, healthFunctions: ['cycle-tracking', 'contraception'], tags: ['irregular', 'pcos', 'privacy'], price: '$100/year or $13/month', userRating: 4.6, whereToBuy: ['App Store', 'Google Play'], platform: 'iOS, Android', image: 'https://logo.clearbit.com/naturalcycles.com', summary: 'The only FDA-cleared birth control app. Uses basal body temperature to identify fertile/infertile days.',
         safety: {
             fdaStatus: 'FDA-cleared (De Novo) as contraception', materials: 'N/A', recalls: 'N/A', allergens: 'N/A',
             sideEffects: 'N/A (Software). Risk of pregnancy if the method is not followed perfectly.',
@@ -344,7 +344,7 @@ export const EXTENDED_DIGITAL = [
         }
     },
     {
-        id: 'd-glow', name: 'Glow Period & Ovulation Tracker', category: 'tracker', type: 'digital', internal: false, healthFunctions: ['cycle-tracking'], tags: ['irregular', 'pcos', 'comfort'], price: 'Free (Premium $48/year)', userRating: 4.4, whereToBuy: ['App Store', 'Google Play'], platform: 'iOS, Android', image: '/startup_placeholder.png', summary: 'Period and fertility tracker with community forum. Also offers fertility courses and clinic matching.',
+        id: 'd-glow', name: 'Glow Period & Ovulation Tracker', category: 'tracker', type: 'digital', internal: false, healthFunctions: ['cycle-tracking'], tags: ['irregular', 'pcos', 'comfort'], price: 'Free (Premium $48/year)', userRating: 4.4, whereToBuy: ['App Store', 'Google Play'], platform: 'iOS, Android', image: 'https://logo.clearbit.com/glowing.com', summary: 'Period and fertility tracker with community forum. Also offers fertility courses and clinic matching.',
         safety: {
             fdaStatus: 'Not FDA-cleared', materials: 'N/A', recalls: 'N/A', allergens: 'N/A',
             sideEffects: 'N/A',
@@ -424,7 +424,7 @@ export const EXTENDED_DIGITAL = [
 
     // ─── MORE MENTAL HEALTH ─────────────────────────────
     {
-        id: 'd-betterhelp', name: 'BetterHelp', category: 'mental-health', type: 'digital', internal: false, healthFunctions: ['mental-health'], tags: ['discomfort', 'comfort'], price: '$65-90/week', userRating: 4.3, ratingNote: '2023 FTC settlement for sharing client health data with advertisers. Now under 20-year monitoring. Therapist quality varies.', whereToBuy: ['betterhelp.com'], platform: 'Web, iOS, Android', image: '/startup_placeholder.png', summary: 'Largest online therapy platform. Matched with a licensed therapist. Messaging + video sessions.',
+        id: 'd-betterhelp', name: 'BetterHelp', category: 'mental-health', type: 'digital', internal: false, healthFunctions: ['mental-health'], tags: ['discomfort', 'comfort'], price: '$65-90/week', userRating: 4.3, ratingNote: '2023 FTC settlement for sharing client health data with advertisers. Now under 20-year monitoring. Therapist quality varies.', whereToBuy: ['betterhelp.com'], platform: 'Web, iOS, Android', image: 'https://logo.clearbit.com/betterhelp.com', summary: 'Largest online therapy platform. Matched with a licensed therapist. Messaging + video sessions.',
         safety: {
             fdaStatus: 'Licensed therapy platform', materials: 'N/A', recalls: 'N/A', allergens: 'N/A',
             sideEffects: 'N/A',
@@ -462,7 +462,7 @@ export const EXTENDED_DIGITAL = [
         }
     },
     {
-        id: 'd-calm', name: 'Calm', category: 'mental-health', type: 'digital', internal: false, healthFunctions: ['mental-health'], tags: ['discomfort', 'comfort'], price: '$15/month or $70/year', userRating: 4.5, whereToBuy: ['App Store', 'Google Play'], platform: 'iOS, Android, Web', image: '/startup_placeholder.png', summary: 'Sleep Stories, meditation, music, and masterclasses. Celebrity narrators. Great for sleep issues.',
+        id: 'd-calm', name: 'Calm', category: 'mental-health', type: 'digital', internal: false, healthFunctions: ['mental-health'], tags: ['discomfort', 'comfort'], price: '$15/month or $70/year', userRating: 4.5, whereToBuy: ['App Store', 'Google Play'], platform: 'iOS, Android, Web', image: 'https://logo.clearbit.com/calm.com', summary: 'Sleep Stories, meditation, music, and masterclasses. Celebrity narrators. Great for sleep issues.',
         safety: {
             fdaStatus: 'Not FDA-cleared (wellness)', materials: 'N/A', recalls: 'N/A', allergens: 'N/A',
             sideEffects: 'N/A',
