@@ -1058,6 +1058,8 @@ export default function MyEcosystem({
     const llmBuildFiredRef = useRef(false);
 
     useEffect(() => {
+        // Only fire once we have actual LLM results — not the rule-based fallback
+        if (!llmTiered.length) return;
         if (llmBuildFiredRef.current) return;
         if (!recommendedProductsForDisplay.length || !onBuildEcosystemFromLlm) return;
         const enrichedProducts = recommendedProductsForDisplay
@@ -1076,7 +1078,7 @@ export default function MyEcosystem({
         if (!enrichedProducts.length) return;
         llmBuildFiredRef.current = true;
         onBuildEcosystemFromLlm(enrichedProducts);
-    }, [recommendedProductsForDisplay, onBuildEcosystemFromLlm]);
+    }, [recommendedProductsForDisplay, onBuildEcosystemFromLlm, llmTiered]);
 
     useEffect(() => {
         if (!activeTiered || !activeTiered.length) return;
@@ -1344,6 +1346,12 @@ export default function MyEcosystem({
                                 <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', color: 'var(--color-text-main)' }}>Building your ecosystem…</h3>
                                 <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>Matching products to your health profile. This takes about 10–15 seconds.</p>
                                 <LlmRecommendationsLoadingBlock loadStartedAt={llmLoadStartedAt} compact />
+                            </>
+                        ) : llmError ? (
+                            <>
+                                <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', color: 'var(--color-text-main)' }}>Could not build your ecosystem</h3>
+                                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', marginBottom: '0.5rem' }}>Error: {llmError}</p>
+                                <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem', marginTop: '0.5rem' }} onClick={handleRefreshRecommendations}>Try again</button>
                             </>
                         ) : (
                             <>
