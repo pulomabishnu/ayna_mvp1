@@ -8,9 +8,22 @@ import {
 } from '../data/products';
 import { getInteractions } from '../data/interactions';
 import CareNearYouPanel from './CareNearYouPanel';
+import LlmRecommendationsLoadingBlock from './LlmRecommendationsLoadingBlock';
 import HealthDataImport from './HealthDataImport';
 import { inferTagsFromHealthProfile } from '../utils/healthDataProfile';
 import { RELEASED_STARTUPS } from '../data/startups';
+import { generateTieredRecommendations } from '../utils/recommendationEngine';
+import {
+    fetchLlmRecommendations,
+    loadLearningMemory,
+    saveLearningMemory,
+    fingerprintIntake,
+    loadCachedLlmRecommendations,
+    saveCachedLlmRecommendations,
+    clearCachedLlmRecommendations,
+    loadFetchedLlmFingerprint,
+    saveFetchedLlmFingerprint,
+} from '../utils/fetchLlmRecommendations';
 import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
 import { getPricePerUnitLabel } from '../utils/pricePerUnit';
 import { deriveBrandSearchContext } from '../utils/productBrandContext.js';
@@ -175,20 +188,49 @@ function EcosystemFunctionProductCard({
     );
 }
 
+function toConciseReason(text, fallback) {
+    const raw = String(text || '').replace(/\s+/g, ' ').trim();
+    const fb = String(fallback || '').trim();
+    if (!raw) return fb;
+    const firstSentence = raw.match(/[^.!?]+[.!?]?/);
+    const candidate = (firstSentence ? firstSentence[0] : raw).trim();
+    const maxLen = 135;
+    if (candidate.length <= maxLen) return candidate;
+    return `${candidate.slice(0, maxLen - 1).trim()}…`;
+}
+
+function isBlockedRecommendationProduct(product) {
+    if (!product || typeof product !== 'object') return false;
+    const text = [
+        product.id,
+        product.name,
+        product.brand,
+        product.summary,
+        product.whyItWorks,
+        product.considerations,
+        product.category,
+    ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+    return /tranexamic|tranexemic|\blysteda\b/.test(text);
+}
+
 function EcosystemProductAlternatives({ product, seedEntry, quizResults, healthProfile, onSwap, onGoToSearch, precomputedAlternatives = [] }) {
     const [open, setOpen] = useState(false);
     const rootRef = useRef(null);
-    const isBlocked = (p) => {
-        if (!p || typeof p !== 'object') return false;
-        const text = [p.id, p.name, p.brand, p.summary, p.category].filter(Boolean).join(' ').toLowerCase();
-        return /tranexamic|tranexemic|\blysteda\b/.test(text);
-    };
     const alternatives = useMemo(() => {
         if (Array.isArray(precomputedAlternatives) && precomputedAlternatives.length > 0) {
-            return precomputedAlternatives.filter(Boolean).filter((p) => !isBlocked(p)).slice(0, 3);
+            return precomputedAlternatives
+                .filter(Boolean)
+                .filter((p) => !isBlockedRecommendationProduct(p))
+                .slice(0, 3);
         }
         const generated = seedEntry?.tag != null ? getEcosystemAlternatives(product.id, seedEntry.tag, quizResults || {}, healthProfile, 3) : [];
-        return generated.filter(Boolean).filter((p) => !isBlocked(p)).slice(0, 3);
+        return generated
+            .filter(Boolean)
+            .filter((p) => !isBlockedRecommendationProduct(p))
+            .slice(0, 3);
     }, [precomputedAlternatives, product.id, seedEntry, quizResults, healthProfile]);
     useEffect(() => {
         if (!open) return;
@@ -343,6 +385,234 @@ function EcosystemProductAlternatives({ product, seedEntry, quizResults, healthP
     );
 }
 
+function IntakeRecAltMini({ alt, myProducts, onToggleProduct, onOpenProduct, resolvedImages = {} }) {
+    const imgSrc = resolvedImages[alt.id] || (alt?.image && String(alt.image).trim()) || '';
+    const buyUrl = alt?.url && /^https:\/\//i.test(String(alt.url).trim()) ? String(alt.url).trim() : '';
+    const inEco = !!myProducts[alt.id];
+    return (
+        <div
+            className="card"
+            style={{
+                padding: '0.75rem',
+                border: '1px solid var(--color-border)',
+                borderRadius: 'var(--radius-md)',
+                background: 'var(--color-surface-soft)',
+            }}
+        >
+            <div style={{ display: 'flex', gap: '0.65rem', alignItems: 'flex-start' }}>
+                <div style={{ width: '48px', height: '48px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0, border: '1px solid var(--color-border)' }}>
+                    {imgSrc ? (
+                        <img src={imgSrc} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : (
+                        <div style={{
+                            width: '100%', height: '100%',
+                            background: 'linear-gradient(135deg, var(--color-secondary-fade), #f3e8ff)',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            fontSize: '1.25rem',
+                        }}>🌸</div>
+                    )}
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '0.88rem', fontWeight: '700', color: 'var(--color-text-main)', lineHeight: 1.3 }}>{alt.name}</div>
+                    {alt.brand && <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{alt.brand}</div>}
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem', marginTop: '0.45rem' }}>
+                        <button type="button" className="btn btn-outline" style={{ padding: '0.3rem 0.55rem', fontSize: '0.75rem' }} onClick={() => onToggleProduct(alt)}>
+                            {inEco ? '✓ In ecosystem' : '+ Add to Ecosystem'}
+                        </button>
+                        <button type="button" className="btn btn-primary" style={{ padding: '0.3rem 0.55rem', fontSize: '0.75rem' }} onClick={() => onOpenProduct(alt)}>
+                            Details
+                        </button>
+                        {buyUrl && (
+                            <a href={buyUrl} target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ padding: '0.3rem 0.55rem', fontSize: '0.75rem', textDecoration: 'none' }}>
+                                Buy ↗
+                            </a>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function IntakeRecommendationsProductCard({
+    product,
+    tierSubLabel,
+    quizResults,
+    healthProfile,
+    trackedProducts,
+    myProducts,
+    onToggleProduct,
+    onOpenProduct,
+    showTopPickBadge,
+    compareKey,
+    compareOpen,
+    onToggleCompare,
+    alternatives,
+    altMiniKey,
+    onSelectAltMini,
+    resolvedImages = {},
+}) {
+    const isTracked = !!trackedProducts[product.id];
+    const isInEcosystem = !!myProducts[product.id];
+    const hasIndependentClinician = product?.clinicianOpinionSource === 'independent' && String(product?.clinicianAttribution || '').trim().length > 0;
+    const engine = getRecommendationExplanation(product, quizResults, healthProfile);
+    const useLlmNarrative = product?.whyItWorks != null && String(product.whyItWorks).trim().length > 0;
+    const whyItWorks = useLlmNarrative ? String(product.whyItWorks).trim() : engine.whyItWorks;
+    const considerations = useLlmNarrative ? (String(product.considerations || '').trim() || null) : engine.considerations;
+    const imgSrc = resolvedImages[product.id] || (product?.image && String(product.image).trim()) || '';
+    const buyUrl = product.url && /^https:\/\//i.test(String(product.url).trim()) ? String(product.url).trim() : '';
+    const recallTxt = (product.safety?.recalls || '').trim();
+    const showNoRecallsTag = recallTxt && !recallTxt.includes('⚠️');
+    const showRecallWarning = recallTxt && recallTxt.includes('⚠️');
+    const alts = Array.isArray(alternatives) ? alternatives.slice(0, 3) : [];
+    const compareOn = !!compareOpen[compareKey];
+    const selectedMiniAlt =
+        !compareOn && altMiniKey && altMiniKey.startsWith(`${compareKey}::`)
+            ? alts.find((a) => `${compareKey}::${a.id}` === altMiniKey)
+            : null;
+
+    return (
+        <div className="card hover-lift" style={{
+            padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column',
+            position: 'relative', marginBottom: '0.35rem',
+        }}
+        >
+            <div style={{ height: '96px', width: '100%', overflow: 'hidden', position: 'relative' }}>
+                {imgSrc ? (
+                    <img src={imgSrc} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                    <div style={{
+                        width: '100%', height: '100%',
+                        background: 'linear-gradient(135deg, var(--color-secondary-fade), var(--color-primary-fade, #f3e8ff))',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: '1.5rem',
+                    }}>🌸</div>
+                )}
+                <span style={{
+                    position: 'absolute', top: '0.45rem', left: '0.45rem',
+                    background: product.type === 'physical' ? 'var(--color-surface-contrast)' : 'var(--color-primary)',
+                    color: 'white', padding: '0.15rem 0.45rem', borderRadius: 'var(--radius-pill)',
+                    fontSize: '0.62rem', fontWeight: '600', textTransform: 'uppercase',
+                }}>
+                    {product.type === 'physical' ? 'Physical' : 'Digital'}
+                </span>
+                {isTracked && (
+                    <span style={{
+                        position: 'absolute', top: '0.45rem', right: '0.45rem',
+                        background: 'var(--color-primary)', color: 'white', padding: '0.15rem 0.45rem',
+                        borderRadius: 'var(--radius-pill)', fontSize: '0.62rem', fontWeight: '600',
+                    }}>✓ Tracked</span>
+                )}
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem', alignItems: 'center', padding: '0.35rem 0.55rem', background: 'var(--color-bg)', borderBottom: '1px solid var(--color-border)' }}>
+                {showTopPickBadge && (
+                    <span style={{
+                        background: 'linear-gradient(135deg, #FEF9C3, #FDE68A)', color: '#854D0E',
+                        padding: '0.22rem 0.55rem', borderRadius: 'var(--radius-pill)', fontSize: '0.7rem', fontWeight: '700',
+                        border: '1px solid #FACC15',
+                    }}>⭐ Top pick for you</span>
+                )}
+                {hasIndependentClinician ? (
+                    <span style={{
+                        background: '#DCFCE7', color: '#166534', padding: '0.22rem 0.55rem',
+                        borderRadius: 'var(--radius-pill)', fontSize: '0.7rem', fontWeight: '700',
+                    }}>Independent clinician verified</span>
+                ) : (
+                    <span style={{
+                        background: '#FEF3C7', color: '#92400E', padding: '0.22rem 0.55rem',
+                        borderRadius: 'var(--radius-pill)', fontSize: '0.7rem', fontWeight: '700',
+                    }}>No independent clinician opinion yet</span>
+                )}
+            </div>
+            <div style={{ padding: '0.65rem 0.75rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+                {tierSubLabel && (
+                    <p style={{ fontSize: '0.68rem', fontWeight: '700', color: 'var(--color-text-muted)', margin: '0 0 0.25rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{tierSubLabel}</p>
+                )}
+                <h3 style={{ fontSize: '0.95rem', marginBottom: '0.25rem', lineHeight: 1.25 }}>{product.name}</h3>
+                {product.dsldVerified && (
+                    <span style={{ fontSize: '0.6rem', background: '#DCFCE7', color: '#166534', padding: '0.12rem 0.4rem', borderRadius: 'var(--radius-pill)', fontWeight: '700', display: 'inline-block', marginBottom: '0.35rem' }}>
+                        ✓ NIH Verified Supplement
+                    </span>
+                )}
+                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.78rem', marginBottom: '0.5rem', lineHeight: 1.4 }}>{(product.summary || '').length > 120 ? `${(product.summary || '').slice(0, 117)}…` : (product.summary || '')}</p>
+                {whyItWorks && (
+                    <p style={{ fontSize: '0.75rem', color: 'var(--color-primary-hover)', fontWeight: '500', marginBottom: '0.4rem', lineHeight: 1.35 }}>
+                        {(whyItWorks || '').length > 140 ? `${whyItWorks.slice(0, 137)}…` : whyItWorks}
+                    </p>
+                )}
+                {considerations && (
+                    <p style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', marginBottom: '0.5rem', lineHeight: 1.35, fontStyle: 'italic' }}>
+                        {(considerations || '').length > 120 ? `${considerations.slice(0, 117)}…` : considerations}
+                    </p>
+                )}
+                <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', marginBottom: '0.5rem' }}>
+                    {showNoRecallsTag && (
+                        <span style={{ fontSize: '0.65rem', background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.45rem', borderRadius: 'var(--radius-pill)' }}>✓ No recalls</span>
+                    )}
+                    {showRecallWarning && (
+                        <span style={{ fontSize: '0.65rem', background: '#F8F9FA', color: 'var(--color-text-main)', padding: '0.2rem 0.45rem', borderRadius: 'var(--radius-pill)' }}>⚠️ Safety note</span>
+                    )}
+                    {product.privacy?.sellsData?.includes('❌') && (
+                        <span style={{ fontSize: '0.65rem', background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.45rem', borderRadius: 'var(--radius-pill)' }}>🔒 No data selling</span>
+                    )}
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', marginBottom: '0.45rem', flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: '0.88rem', fontWeight: '600', color: 'var(--color-text-main)' }}>{product.price || '—'}</span>
+                </div>
+                <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', marginTop: 'auto' }}>
+                    <button type="button" className="btn btn-outline" style={{ padding: '0.32rem 0.55rem', fontSize: '0.72rem' }} onClick={() => onToggleProduct(product)}>
+                        {isInEcosystem ? '✓ Added' : '+ Add'}
+                    </button>
+                    <button type="button" className="btn btn-outline" style={{ padding: '0.32rem 0.55rem', fontSize: '0.72rem' }} onClick={() => onToggleCompare(compareKey)}>
+                        {compareOn ? 'Hide compare' : 'Compare'}
+                    </button>
+                    <button type="button" className="btn btn-primary" style={{ padding: '0.32rem 0.55rem', fontSize: '0.72rem' }} onClick={() => onOpenProduct(product)}>
+                        Details
+                    </button>
+                    {buyUrl && (
+                        <a href={buyUrl} target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ padding: '0.32rem 0.55rem', fontSize: '0.72rem', textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>
+                            Buy ↗
+                        </a>
+                    )}
+                </div>
+                {alts.length > 0 && (
+                    <div style={{ marginTop: '0.85rem', paddingTop: '0.85rem', borderTop: '1px solid var(--color-border)' }}>
+                        <div style={{ fontSize: '0.72rem', fontWeight: '700', color: 'var(--color-text-muted)', marginBottom: '0.4rem' }}>3 alternatives</div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+                            {alts.map((alt) => {
+                                const mk = `${compareKey}::${alt.id}`;
+                                const pillOpen = altMiniKey === mk;
+                                return (
+                                    <button
+                                        key={alt.id}
+                                        type="button"
+                                        className="btn btn-outline"
+                                        style={{ padding: '0.25rem 0.65rem', fontSize: '0.78rem', borderRadius: 'var(--radius-pill)' }}
+                                        onClick={() => onSelectAltMini(pillOpen ? '' : mk)}
+                                    >
+                                        {alt.name}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                        {selectedMiniAlt && (
+                            <div style={{ marginTop: '0.55rem' }}>
+                                <IntakeRecAltMini alt={selectedMiniAlt} myProducts={myProducts} onToggleProduct={onToggleProduct} onOpenProduct={onOpenProduct} resolvedImages={resolvedImages} />
+                            </div>
+                        )}
+                        {compareOn && (
+                            <div style={{ marginTop: '0.65rem', display: 'grid', gap: '0.5rem' }}>
+                                {alts.map((alt) => (
+                                    <IntakeRecAltMini key={`cmp-${alt.id}`} alt={alt} myProducts={myProducts} onToggleProduct={onToggleProduct} onOpenProduct={onOpenProduct} resolvedImages={resolvedImages} />
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
 
 /** Estimate monthly cost in USD from a price string. Returns null if unparseable. */
 function estimateMonthlyCost(priceStr, product) {
@@ -431,13 +701,23 @@ export default function MyEcosystem({
     onViewRecommendedArticles,
     onOpenArticle,
     onLlmRecommendationsLoaded,
+    onBuildEcosystemFromLlm,
 }) {
     const [showAddModal, setShowAddModal] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const viewMode = 'function';
-    const [interactionSelection, setInteractionSelection] = useState(new Set());
+    const [interactionSelection, setInteractionSelection] = useState(new Set()); // product ids for interaction check
+    const [ecosystemCompareOpen, setEcosystemCompareOpen] = useState({});
+    const [ecosystemAltMiniKey, setEcosystemAltMiniKey] = useState('');
+    const [llmTiered, setLlmTiered] = useState([]);
+    const [llmLoading, setLlmLoading] = useState(false);
+    const [llmError, setLlmError] = useState('');
+    const [llmLoadStartedAt, setLlmLoadStartedAt] = useState(0);
     const [resolvedImages, setResolvedImages] = useState({});
     const [healthDataImportOpen, setHealthDataImportOpen] = useState(false);
+    const [recommendedSwapByKey, setRecommendedSwapByKey] = useState({});
+    const [recommendedSectionOpen, setRecommendedSectionOpen] = useState({});
+    const [recommendationRefreshNonce, setRecommendationRefreshNonce] = useState(0);
     const hasCompletedPersonalization = useMemo(() => {
         if (!quizResults) return false;
         if (quizResults?.personalizationCompleted === true) return true;
@@ -527,8 +807,251 @@ export default function MyEcosystem({
         });
     };
 
+    const intakeTieredRecommendations = useMemo(() => {
+        if (!hasCompletedPersonalization) return [];
+        const intake = quizResults?.fullHealthIntake || null;
+        if (!intake || Object.keys(intake).length === 0) return [];
+        return generateTieredRecommendations(intake);
+    }, [quizResults, hasCompletedPersonalization]);
+
+    const intakeFingerprint = useMemo(
+        () => (hasCompletedPersonalization ? fingerprintIntake(quizResults?.fullHealthIntake || null) : ''),
+        [quizResults, hasCompletedPersonalization]
+    );
+
     useEffect(() => {
-        const productsNeedingImage = [...myProductList, ...ecosystemStartups]
+        let active = true;
+        if (!intakeFingerprint) {
+            // Intake is still loading from Supabase — don't clear the cache or it will
+            // wipe valid recommendations before the fingerprint is available.
+            setLlmTiered([]);
+            setLlmLoading(false);
+            setLlmError('');
+            setLlmLoadStartedAt(0);
+            return () => { active = false; };
+        }
+
+        const bypassCache = recommendationRefreshNonce > 0;
+        const fetchedFingerprint = loadFetchedLlmFingerprint();
+        const alreadyFetchedForFingerprint = fetchedFingerprint === intakeFingerprint;
+        if (!bypassCache) {
+            const cached = loadCachedLlmRecommendations(intakeFingerprint);
+            if (cached) {
+                setLlmTiered(cached);
+                setLlmLoading(false);
+                setLlmError('');
+                setLlmLoadStartedAt(0);
+                return () => {
+                    active = false;
+                };
+            }
+            if (alreadyFetchedForFingerprint) {
+                setLlmTiered([]);
+                setLlmLoading(false);
+                setLlmError('');
+                setLlmLoadStartedAt(0);
+                return () => {
+                    active = false;
+                };
+            }
+        }
+
+        const intake = quizResults?.fullHealthIntake || null;
+
+        (async () => {
+            setLlmLoadStartedAt(Date.now());
+            setLlmLoading(true);
+            setLlmError('');
+            try {
+                const memory = loadLearningMemory();
+                const data = await fetchLlmRecommendations({
+                    intake,
+                    trackedProducts,
+                    myProducts,
+                    omittedProducts,
+                    learningMemory: memory,
+                });
+                if (!active) return;
+                const recs = Array.isArray(data?.recommendations) ? data.recommendations : [];
+                setLlmTiered(recs);
+                if (recs.length > 0) {
+                    if (hasCompletedPersonalization) onLlmRecommendationsLoaded?.(recs);
+                }
+                if (recs.length > 0) {
+                    saveCachedLlmRecommendations(intakeFingerprint, recs);
+                }
+                saveFetchedLlmFingerprint(intakeFingerprint);
+                const recommendedProductIds = recs.flatMap((entry) =>
+                    (entry?.tiers || []).flatMap((tier) =>
+                        [tier?.product?.id, ...((tier?.alternatives || []).map((a) => a?.id))].filter(Boolean)
+                    )
+                );
+                const nextMemory = {
+                    ...memory,
+                    interactionCount: (memory.interactionCount || 0) + 1,
+                    lastConcerns: Array.isArray(intake?.primaryConcerns) ? intake.primaryConcerns.map((x) => String(x)) : [],
+                    lastSeenAt: new Date().toISOString(),
+                    shownProductIds: Array.from(new Set([...(memory.shownProductIds || []), ...recommendedProductIds])).slice(-300),
+                    selectedConcernHistory: Array.from(new Set([...(memory.selectedConcernHistory || []), ...((intake?.primaryConcerns || []).map((x) => String(x)))])),
+                    trackedHistory: Array.from(new Set([...(memory.trackedHistory || []), ...Object.keys(trackedProducts || {})])).slice(-300),
+                    ecosystemHistory: Array.from(new Set([...(memory.ecosystemHistory || []), ...Object.keys(myProducts || {})])).slice(-300),
+                    omittedHistory: Array.from(new Set([...(memory.omittedHistory || []), ...Object.keys(omittedProducts || {})])).slice(-300),
+                };
+                saveLearningMemory(nextMemory);
+            } catch (e) {
+                if (!active) return;
+                setLlmTiered([]);
+                setLlmError(e?.message || 'Could not load recommendations');
+                saveFetchedLlmFingerprint(intakeFingerprint);
+            } finally {
+                if (active) {
+                    setLlmLoading(false);
+                    setLlmLoadStartedAt(0);
+                }
+            }
+        })();
+
+        return () => {
+            active = false;
+        };
+    }, [intakeFingerprint, hasCompletedPersonalization, recommendationRefreshNonce]);
+
+    const activeTiered = useMemo(
+        () => (llmTiered.length > 0 ? llmTiered : intakeTieredRecommendations),
+        [llmTiered, intakeTieredRecommendations]
+    );
+    const recommendedProductsForDisplay = useMemo(() => {
+        if (!hasCompletedPersonalization) return [];
+        if (!Array.isArray(activeTiered) || activeTiered.length === 0) return [];
+        const blockedConcernLabels = new Set(['general discomfort']);
+
+        const concernPriority = [
+            ...(Array.isArray(quizResults?.frustrations) ? quizResults.frustrations : []),
+            ...(Array.isArray(quizResults?.fullHealthIntake?.primaryConcerns) ? quizResults.fullHealthIntake.primaryConcerns : []),
+        ]
+            .map((x) => String(x || '').trim())
+            .filter(Boolean)
+            .filter((x) => !blockedConcernLabels.has(x.toLowerCase()));
+        const concernRank = new Map(concernPriority.map((c, i) => [c.toLowerCase(), i]));
+
+        const sections = activeTiered
+            .map((entry, idx) => {
+                const concern = String(entry?.concern || concernPriority[idx] || `Concern ${idx + 1}`).trim();
+                if (!concern || blockedConcernLabels.has(concern.toLowerCase())) return null;
+                const tiers = (Array.isArray(entry?.tiers) ? entry.tiers : [])
+                    .map((tier, tierIdx) => {
+                        const tierProduct = tier?.product || null;
+                        if (!tierProduct || isBlockedRecommendationProduct(tierProduct)) return null;
+                        const tierAltPool = Array.isArray(tier?.alternatives) ? tier.alternatives : [];
+                        const tierAlternatives = tierAltPool
+                            .filter(Boolean)
+                            .filter((p) => !isBlockedRecommendationProduct(p))
+                            .filter((p) => p.id !== tierProduct.id)
+                            .slice(0, 3);
+                        const tierLabel = String(tier?.subcategory || tier?.name || '').trim() || `Option ${tierIdx + 1}`;
+                        return {
+                            id: String(tier?.id || `tier-${tierIdx + 1}`),
+                            label: tierLabel,
+                            product: tierProduct,
+                            alternatives: tierAlternatives,
+                            matchExplanation: String(tier?.matchExplanation || '').trim(),
+                        };
+                    })
+                    .filter(Boolean);
+
+                const fallbackTop = isBlockedRecommendationProduct(entry?.topProduct) ? null : (entry?.topProduct || null);
+                const fallbackAlternatives = (Array.isArray(entry?.alternatives) ? entry.alternatives : [])
+                    .filter(Boolean)
+                    .filter((p) => !isBlockedRecommendationProduct(p))
+                    .filter((p) => !fallbackTop || p.id !== fallbackTop.id)
+                    .slice(0, 3);
+                const normalizedTiers = tiers.length > 0
+                    ? tiers
+                    : (fallbackTop
+                        ? [{
+                            id: 'tier-1',
+                            label: 'Top pick',
+                            product: fallbackTop,
+                            alternatives: fallbackAlternatives,
+                            matchExplanation: '',
+                        }]
+                        : []);
+                return {
+                    id: `${concern}-${idx}`,
+                    concern,
+                    tag: null,
+                    topProduct: normalizedTiers[0]?.product || fallbackTop || null,
+                    alternatives: normalizedTiers[0]?.alternatives || fallbackAlternatives,
+                    tiers: normalizedTiers,
+                    notes: Array.isArray(entry?.notes) ? entry.notes : [],
+                };
+            })
+            .filter(Boolean)
+            .filter((section) => section.tiers.length > 0);
+
+        return sections.sort((a, b) => {
+            const ai = concernRank.has(a.concern.toLowerCase()) ? concernRank.get(a.concern.toLowerCase()) : Number.MAX_SAFE_INTEGER;
+            const bi = concernRank.has(b.concern.toLowerCase()) ? concernRank.get(b.concern.toLowerCase()) : Number.MAX_SAFE_INTEGER;
+            return ai - bi;
+        });
+    }, [hasCompletedPersonalization, activeTiered, quizResults]);
+
+    useEffect(() => {
+        setRecommendedSwapByKey({});
+    }, [intakeFingerprint, activeTiered.length]);
+
+    useEffect(() => {
+        if (!recommendedProductsForDisplay.length) {
+            setRecommendedSectionOpen({});
+            return;
+        }
+        setRecommendedSectionOpen((prev) => {
+            const next = {};
+            recommendedProductsForDisplay.forEach((section) => {
+                next[section.id] = Object.prototype.hasOwnProperty.call(prev, section.id) ? prev[section.id] : true;
+            });
+            return next;
+        });
+    }, [recommendedProductsForDisplay]);
+
+    // When LLM results arrive, pipe the top product per concern directly into the ecosystem
+    const llmBuildFiredRef = useRef(false);
+    useEffect(() => {
+        if (llmBuildFiredRef.current) return;
+        if (!recommendedProductsForDisplay.length || !onBuildEcosystemFromLlm) return;
+        const topProducts = recommendedProductsForDisplay
+            .map(section => section.tiers?.[0]?.product)
+            .filter(Boolean);
+        if (!topProducts.length) return;
+        llmBuildFiredRef.current = true;
+        onBuildEcosystemFromLlm(topProducts);
+    }, [recommendedProductsForDisplay, onBuildEcosystemFromLlm]);
+
+    useEffect(() => {
+        if (!activeTiered || !activeTiered.length) return;
+        activeTiered.forEach((entry) => {
+            const product = entry.topProduct || entry.tiers?.[0]?.product;
+            if (!product || !product.llmGenerated || !product.name) return;
+            if (resolvedImages[product.id] !== undefined) return;
+            resolveProductImage(product.name, product.brand).then((url) => {
+                if (url) setResolvedImages((prev) => ({ ...prev, [product.id]: url }));
+            });
+            const alts = entry.alternatives || entry.tiers?.[0]?.alternatives || [];
+            alts.forEach((alt) => {
+                if (!alt || !alt.name || resolvedImages[alt.id] !== undefined) return;
+                resolveProductImage(alt.name, alt.brand).then((url) => {
+                    if (url) setResolvedImages((prev) => ({ ...prev, [alt.id]: url }));
+                });
+            });
+        });
+    }, [activeTiered]);
+
+    useEffect(() => {
+        const recommendedProducts = recommendedProductsForDisplay
+            .flatMap((s) => (Array.isArray(s?.tiers) ? s.tiers : []))
+            .flatMap((tier) => [tier?.product, ...(Array.isArray(tier?.alternatives) ? tier.alternatives : [])])
+            .filter(Boolean);
+        const productsNeedingImage = [...myProductList, ...ecosystemStartups, ...recommendedProducts]
             .filter((p) => p && p.id && p.name)
             .filter((p) => resolvedImages[p.id] === undefined)
             .filter((p) => isPlaceholderProductImage(p.image));
@@ -538,7 +1061,143 @@ export default function MyEcosystem({
                 if (url) setResolvedImages((prev) => ({ ...prev, [p.id]: url }));
             });
         });
-    }, [myProductList, ecosystemStartups, resolvedImages]);
+    }, [myProductList, ecosystemStartups, recommendedProductsForDisplay, resolvedImages]);
+
+
+    const toggleEcosystemCompare = useCallback((k) => {
+        setEcosystemCompareOpen((prev) => ({ ...prev, [k]: !prev[k] }));
+        setEcosystemAltMiniKey('');
+    }, []);
+
+    const selectEcosystemAltMini = useCallback((key) => {
+        setEcosystemAltMiniKey(key);
+        if (key) setEcosystemCompareOpen({});
+    }, []);
+
+    const handleSwapFromRecommendedCard = useCallback((cardKey, oldProductId, newProduct) => {
+        if (!cardKey || !newProduct?.id) return;
+        setRecommendedSwapByKey((prev) => ({ ...prev, [cardKey]: newProduct }));
+    }, []);
+
+    const handleRefreshRecommendations = useCallback(() => {
+        clearCachedLlmRecommendations();
+        setLlmTiered([]);
+        setLlmError('');
+        setRecommendationRefreshNonce((n) => n + 1);
+    }, []);
+
+    const recommendedSection = hasCompletedPersonalization && (llmLoading || llmError || recommendedProductsForDisplay.length > 0 || activeTiered.length > 0) ? (
+        <div style={{ marginBottom: 'var(--spacing-xl)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
+                <h3 style={{ fontSize: '1.35rem', margin: 0, color: 'var(--color-text-main)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    Recommended for You
+                    {llmLoading && <span style={{ fontSize: '0.78rem', fontWeight: 400, color: 'var(--color-text-muted)' }}>loading…</span>}
+                </h3>
+                <button
+                    type="button"
+                    className="btn btn-outline"
+                    style={{ fontSize: '0.8rem', padding: '0.35rem 0.7rem' }}
+                    onClick={handleRefreshRecommendations}
+                    disabled={llmLoading || !hasCompletedPersonalization}
+                    title="Re-run personalized recommendations from your latest profile"
+                >
+                    {llmLoading ? 'Refreshing…' : 'Refresh recommendations'}
+                </button>
+            </div>
+            {llmLoading && llmLoadStartedAt > 0 && (
+                <LlmRecommendationsLoadingBlock loadStartedAt={llmLoadStartedAt} compact />
+            )}
+            {llmLoading && !llmLoadStartedAt && (
+                <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.9rem', padding: '1.5rem' }}>
+                    Loading recommendations…
+                </p>
+            )}
+            {llmError && !llmLoading && (
+                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textAlign: 'center' }}>
+                    Could not load recommendations: {llmError}
+                </p>
+            )}
+            {!llmLoading && recommendedProductsForDisplay.length > 0 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    {recommendedProductsForDisplay.map((section) => {
+                        const isOpen = recommendedSectionOpen[section.id] === true;
+                        return (
+                            <div key={section.id} className="card" style={{ padding: '0.75rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', background: 'var(--color-surface-soft)' }}>
+                                <button
+                                    type="button"
+                                    onClick={() => setRecommendedSectionOpen((prev) => ({ ...prev, [section.id]: !isOpen }))}
+                                    style={{
+                                        width: '100%',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
+                                        background: 'transparent',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        padding: 0,
+                                        textAlign: 'left',
+                                    }}
+                                >
+                                    <span style={{ fontSize: '1rem', fontWeight: '700', color: 'var(--color-text-main)' }}>
+                                        {section.concern}
+                                    </span>
+                                    <span style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>{isOpen ? 'Hide ▴' : 'Show ▾'}</span>
+                                </button>
+                                {isOpen && (
+                                    <div style={{ marginTop: '0.65rem' }}>
+                                        {Array.isArray(section.tiers) && section.tiers.length > 0 ? (
+                                            <div className="ecosystem-product-grid" style={{ alignItems: 'stretch' }}>
+                                                {section.tiers.map((tier, tierIdx) => {
+                                                    const swapKey = `${section.id}::${tier.id || tierIdx}`;
+                                                    const product = recommendedSwapByKey[swapKey] || tier.product;
+                                                    if (!product) return null;
+                                                    // Always rotate within the fixed 4-product pool — never repopulate
+                                                    const tierPool = [tier.product, ...(tier.alternatives || [])].filter(Boolean);
+                                                    const rotatedAlternatives = tierPool.filter(p => p?.id !== product.id).slice(0, 3);
+                                                    const llmReason = String(product?.whyItWorks || '').trim();
+                                                    const reasonRaw = getRecommendationExplanation(product, quizResults, healthProfile)?.whyItWorks || '';
+                                                    const fallbackReason = String(reasonRaw).replace(/^Why it could work:\s*/i, '').trim();
+                                                    const tierReason = toConciseReason(
+                                                        llmReason || String(tier.matchExplanation || '').trim() || fallbackReason,
+                                                        `Matched to your concern: ${section.concern}.`
+                                                    );
+                                                    return (
+                                                        <div key={swapKey} style={{ minWidth: 0 }}>
+                                                            <div style={{ fontSize: '0.78rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.02em', color: 'var(--color-text-muted)', marginBottom: '0.35rem' }}>
+                                                                {tier.label}
+                                                            </div>
+                                                            <EcosystemFunctionProductCard
+                                                                product={{ ...product, image: resolvedImages[product.id] || product.image }}
+                                                                healthFunctionLabel={tier.label}
+                                                                onOpenProduct={onOpenProduct}
+                                                                onToggleProduct={onToggleProduct}
+                                                                seedEntry={{ frustration: section.concern, tag: section.tag }}
+                                                                quizResults={quizResults}
+                                                                healthProfile={healthProfile}
+                                                                precomputedAlternatives={rotatedAlternatives}
+                                                                onSwapSeedProduct={(oldProductId, newProduct) => handleSwapFromRecommendedCard(swapKey, oldProductId, newProduct)}
+                                                                onGoToSearch={onGoToSearch}
+                                                                isInEcosystem={!!myProducts[product.id]}
+                                                                recommendationReason={tierReason}
+                                                            />
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        ) : (
+                                            <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', margin: 0 }}>
+                                                No recommendation tracks available for this concern yet. Try the full search.
+                                            </p>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
+        </div>
+    ) : null;
 
     return (
         <>
@@ -629,7 +1288,7 @@ export default function MyEcosystem({
                 {(myProductList.length === 0 ? (
                     <div style={{ textAlign: 'center', padding: '3rem', background: 'var(--color-surface-soft)', borderRadius: 'var(--radius-lg)', border: '1px dashed var(--color-border)' }}>
                         <h3 style={{ fontSize: '1.25rem', marginBottom: '0.75rem', color: 'var(--color-text-muted)' }}>Your ecosystem is empty.</h3>
-                        <p style={{ color: 'var(--color-text-muted)' }}>Complete the health survey to build your personalized ecosystem, or add products manually below.</p>
+                        <p style={{ color: 'var(--color-text-muted)' }}>Add the products and apps you currently use and we'll organize them for you.</p>
                     </div>
                 ) : (
                     <div style={{ maxWidth: '1200px', margin: '0 auto' }}>

@@ -488,6 +488,15 @@ function App() {
     }
   };
 
+  const handleBuildEcosystemFromLlm = useCallback((products) => {
+    if (!Array.isArray(products) || products.length === 0) return;
+    setMyProducts(prev => {
+      const next = { ...prev };
+      products.forEach(p => { if (p?.id) next[p.id] = p; });
+      return next;
+    });
+  }, []);
+
   const [selectedProductModal, setSelectedProductModal] = useState(null);
 
   const omittedCount = Object.keys(omittedProducts).length;
@@ -850,6 +859,7 @@ function App() {
               setCurrentView('articles');
             }}
             onLlmRecommendationsLoaded={handleLlmRecommendationsLoaded}
+            onBuildEcosystemFromLlm={handleBuildEcosystemFromLlm}
           />
         )}
         {currentView === 'discovery' && (
