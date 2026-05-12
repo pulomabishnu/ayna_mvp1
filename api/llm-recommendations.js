@@ -45,7 +45,7 @@ function selectedConcerns(intake = {}) {
   if (symptoms.some(s => s.includes('insomnia') || s.includes('sleep')) && !hasConcern('sleep'))
     concerns.add('Sleep and energy');
 
-  // 4. Derive from goals / other intake signals
+  // 4. Derive from signals / other intake fields
   if ((intake.tryingToConceive === 'yes' || has('conceive', 'ttc', 'fertility')) && !hasConcern('fertil'))
     concerns.add('Fertility and conception (supplements, trackers, telehealth)');
   if (has('uti', 'urinary tract') && !hasConcern('uti'))
@@ -56,6 +56,26 @@ function selectedConcerns(intake = {}) {
     concerns.add('Hormone balance (supplements, lifestyle)');
   if ((intake.menstrualCycle === 'no_menopause' || intake.menstrualCycle === 'irregular_perimenopause') && !hasConcern('menopause'))
     concerns.add('Perimenopause and menopause support');
+
+  // 5. Direct goal → concern mapping — every selected goal gets its own product track
+  const GOAL_CONCERN = {
+    'track my cycle':                              'Cycle tracking (apps, wearables, devices)',
+    'find safer products':                         'Non-toxic and organic period care',
+    'reduce chemical exposure':                    'Non-toxic and organic period care',
+    'learn what ingredients to avoid for my conditions': 'Ingredient safety for my health conditions',
+    'find a provider or specialist':               'Telehealth and specialist matching',
+    'find mental health support for cycle symptoms': 'Mental health and cycle mood support',
+    'improve my gut or vaginal health':            'Gut and vaginal health (probiotics, pH balance)',
+    'support fertility / ttc':                     'Fertility and conception (supplements, trackers, telehealth)',
+    'manage perimenopause or menopause':           'Perimenopause and menopause support',
+    'build my health routine':                     'Building a holistic women\'s health routine (supplements, tracking, care)',
+    'manage symptoms':                             null, // covered by primaryConcerns + symptom derivation
+    'understand my condition':                     null, // covered by condition-specific tracks
+  };
+  for (const g of goals) {
+    const mapped = GOAL_CONCERN[g.trim()];
+    if (mapped && !hasConcern(mapped.toLowerCase().slice(0, 20))) concerns.add(mapped);
+  }
 
   const result = [...concerns].filter(c => !blocked.has(c.toLowerCase()));
   return result.length ? result : [];
