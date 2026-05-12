@@ -1072,6 +1072,7 @@ export default function MyEcosystem({
                     healthFunctions: product.healthFunctions?.length
                         ? product.healthFunctions
                         : inferHealthFunctionsFromLlm(product, section.concern, tier?.subcategory || ''),
+                    _llmAlternatives: Array.isArray(tier?.alternatives) ? tier.alternatives : [],
                 };
             })
             .filter(Boolean);
@@ -1417,6 +1418,7 @@ export default function MyEcosystem({
                                                                     healthProfile={healthProfile}
                                                                     onSwapSeedProduct={onSwapSeedProduct}
                                                                     onGoToSearch={onGoToSearch}
+                                                                    precomputedAlternatives={p._llmAlternatives || []}
                                                                     isInEcosystem
                                                                 />
                                                             );
