@@ -831,7 +831,8 @@ export default function MyEcosystem({
             return () => { active = false; };
         }
 
-        const bypassCache = recommendationRefreshNonce > 0;
+        // Also bypass cache when ecosystem is empty — user just rebuilt, needs fresh LLM results
+        const bypassCache = recommendationRefreshNonce > 0 || myProductList.length === 0;
         const fetchedFingerprint = loadFetchedLlmFingerprint();
         const alreadyFetchedForFingerprint = fetchedFingerprint === intakeFingerprint;
         if (!bypassCache) {

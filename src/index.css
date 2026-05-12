@@ -1047,7 +1047,7 @@ html {
 
 .nav-ecosystem__trigger {
   font-family: var(--font-body);
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-weight: 500;
   color: var(--color-text-main);
   padding: 0.2rem 0.4rem;
@@ -1180,7 +1180,7 @@ html {
 
 .nav-ecosystem__item {
   font-family: var(--font-body);
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-weight: 500;
   color: var(--color-text-main);
   width: 100%;
