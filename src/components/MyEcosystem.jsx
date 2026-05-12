@@ -1347,7 +1347,10 @@ export default function MyEcosystem({
                     <div style={{ textAlign: 'center', padding: '3rem', background: 'var(--color-surface-soft)', borderRadius: 'var(--radius-lg)', border: '1px dashed var(--color-border)' }}>
                         {llmLoading ? (
                             <>
-                                <LlmRecommendationsLoadingBlock loadStartedAt={llmLoadStartedAt} compact />
+                                {llmLoadStartedAt > 0
+                                    ? <LlmRecommendationsLoadingBlock loadStartedAt={llmLoadStartedAt} compact />
+                                    : <div style={{ padding: '2rem', color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>🌸 Building your ecosystem…</div>
+                                }
                             </>
                         ) : llmError ? (
                             <>

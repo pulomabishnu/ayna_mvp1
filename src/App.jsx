@@ -504,16 +504,15 @@ function App() {
 
   const handleBuildEcosystemFromLlm = useCallback((products) => {
     if (!Array.isArray(products) || products.length === 0) return;
-    setMyProducts(prev => {
-      const next = { ...prev };
-      products.forEach(p => { if (p?.id) next[p.id] = p; });
-      return next;
-    });
+    setMyProducts(products.reduce((acc, p) => { if (p?.id) acc[p.id] = p; return acc; }, {}));
     const supabase = getSupabaseClient();
     if (supabase && user) {
-      Promise.all(
-        products.map(p => upsertProductState(supabase, user.id, p, { inEcosystem: true, isTracked: false, isOmitted: false }))
-      ).catch(console.error);
+      // Clear old ecosystem rows first, then write fresh LLM products
+      clearEcosystemForUser(supabase, user.id)
+        .then(() => Promise.all(
+          products.map(p => upsertProductState(supabase, user.id, p, { inEcosystem: true, isTracked: false, isOmitted: false }))
+        ))
+        .catch(console.error);
     }
   }, [user]);
 
