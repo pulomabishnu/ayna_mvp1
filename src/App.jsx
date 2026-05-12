@@ -34,6 +34,7 @@ import { getSupabaseClient } from './utils/supabaseClient';
 import { loadEcosystemForUser, upsertProductState } from './utils/ecosystemStore';
 import { loadLearningMemoryForUser, saveLearningMemoryForUser } from './utils/learningMemoryStore';
 import { loadReviewsForUser, upsertProductReviews } from './utils/reviewsStore';
+import { clearCachedLlmRecommendations } from './utils/fetchLlmRecommendations';
 
 const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls'];
 
@@ -219,7 +220,7 @@ function App() {
       const { seedMeta } = getEcosystemSeedFromQuiz(pendingQuizResults, healthProfile);
       setEcosystemSeedMeta(seedMeta);
       setMyProducts({});
-      setEcosystemRebuildNonce(n => n + 1);
+      clearCachedLlmRecommendations();
       setCurrentView('ecosystem');
       saveHealthIntakeForCurrentUser(pendingQuizResults).catch(console.error);
       setPendingQuizResults(null);
@@ -366,7 +367,7 @@ function App() {
     const { seedMeta } = getEcosystemSeedFromQuiz(completedResults, healthProfile);
     setEcosystemSeedMeta(seedMeta);
     setMyProducts({});
-    setEcosystemRebuildNonce(n => n + 1);
+    clearCachedLlmRecommendations();
     setCurrentView('ecosystem');
   };
 
@@ -489,8 +490,6 @@ function App() {
       } catch (_) {}
     }
   };
-
-  const [ecosystemRebuildNonce, setEcosystemRebuildNonce] = useState(0);
 
   const handleBuildEcosystemFromLlm = useCallback((products) => {
     if (!Array.isArray(products) || products.length === 0) return;
@@ -864,7 +863,6 @@ function App() {
             }}
             onLlmRecommendationsLoaded={handleLlmRecommendationsLoaded}
             onBuildEcosystemFromLlm={handleBuildEcosystemFromLlm}
-            forceRefreshNonce={ecosystemRebuildNonce}
           />
         )}
         {currentView === 'discovery' && (

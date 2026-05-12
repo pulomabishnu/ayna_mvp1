@@ -702,7 +702,6 @@ export default function MyEcosystem({
     onOpenArticle,
     onLlmRecommendationsLoaded,
     onBuildEcosystemFromLlm,
-    forceRefreshNonce = 0,
 }) {
     const [showAddModal, setShowAddModal] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
@@ -832,7 +831,7 @@ export default function MyEcosystem({
             return () => { active = false; };
         }
 
-        const bypassCache = recommendationRefreshNonce > 0 || forceRefreshNonce > lastConsumedForceNonceRef.current;
+        const bypassCache = recommendationRefreshNonce > 0;
         const fetchedFingerprint = loadFetchedLlmFingerprint();
         const alreadyFetchedForFingerprint = fetchedFingerprint === intakeFingerprint;
         if (!bypassCache) {
@@ -908,7 +907,6 @@ export default function MyEcosystem({
                 if (active) {
                     setLlmLoading(false);
                     setLlmLoadStartedAt(0);
-                    lastConsumedForceNonceRef.current = forceRefreshNonce;
                 }
             }
         })();
@@ -916,7 +914,7 @@ export default function MyEcosystem({
         return () => {
             active = false;
         };
-    }, [intakeFingerprint, hasCompletedPersonalization, recommendationRefreshNonce, forceRefreshNonce]);
+    }, [intakeFingerprint, hasCompletedPersonalization, recommendationRefreshNonce]);
 
     const activeTiered = useMemo(
         () => (llmTiered.length > 0 ? llmTiered : intakeTieredRecommendations),
@@ -1017,9 +1015,7 @@ export default function MyEcosystem({
     }, [recommendedProductsForDisplay]);
 
     // When LLM results arrive, pipe the top product per concern directly into the ecosystem
-    const lastConsumedForceNonceRef = useRef(-1);
     const llmBuildFiredRef = useRef(false);
-    useEffect(() => { llmBuildFiredRef.current = false; }, [forceRefreshNonce]);
 
     useEffect(() => {
         if (llmBuildFiredRef.current) return;
