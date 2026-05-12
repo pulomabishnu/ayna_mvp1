@@ -216,9 +216,9 @@ function App() {
     setShowAuthModal(false);
     if (pendingAction === 'quiz-complete' && pendingQuizResults) {
       setQuizResults(pendingQuizResults);
-      const { seedMeta, mergedProducts } = getEcosystemSeedFromQuiz(pendingQuizResults, healthProfile);
+      const { seedMeta } = getEcosystemSeedFromQuiz(pendingQuizResults, healthProfile);
       setEcosystemSeedMeta(seedMeta);
-      setMyProducts(mergedProducts);
+      setMyProducts({});
       setCurrentView('ecosystem');
       saveHealthIntakeForCurrentUser(pendingQuizResults).catch(console.error);
       setPendingQuizResults(null);
@@ -362,9 +362,9 @@ function App() {
       return;
     }
     setQuizResults(completedResults);
-    const { seedMeta, mergedProducts } = getEcosystemSeedFromQuiz(completedResults, healthProfile);
+    const { seedMeta } = getEcosystemSeedFromQuiz(completedResults, healthProfile);
     setEcosystemSeedMeta(seedMeta);
-    setMyProducts(mergedProducts);
+    setMyProducts({});
     setCurrentView('ecosystem');
   };
 

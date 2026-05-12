@@ -1287,8 +1287,19 @@ export default function MyEcosystem({
 
                 {(myProductList.length === 0 ? (
                     <div style={{ textAlign: 'center', padding: '3rem', background: 'var(--color-surface-soft)', borderRadius: 'var(--radius-lg)', border: '1px dashed var(--color-border)' }}>
-                        <h3 style={{ fontSize: '1.25rem', marginBottom: '0.75rem', color: 'var(--color-text-muted)' }}>Your ecosystem is empty.</h3>
-                        <p style={{ color: 'var(--color-text-muted)' }}>Add the products and apps you currently use and we'll organize them for you.</p>
+                        {llmLoading ? (
+                            <>
+                                <div style={{ fontSize: '1.5rem', marginBottom: '0.75rem' }}>🌱</div>
+                                <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', color: 'var(--color-text-main)' }}>Building your ecosystem…</h3>
+                                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>Matching products to your health profile. This takes about 10–15 seconds.</p>
+                                <LlmRecommendationsLoadingBlock loadStartedAt={llmLoadStartedAt} compact />
+                            </>
+                        ) : (
+                            <>
+                                <h3 style={{ fontSize: '1.25rem', marginBottom: '0.75rem', color: 'var(--color-text-muted)' }}>Your ecosystem is empty.</h3>
+                                <p style={{ color: 'var(--color-text-muted)' }}>Complete the health survey to build your personalized ecosystem, or add products manually.</p>
+                            </>
+                        )}
                     </div>
                 ) : (
                     <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
