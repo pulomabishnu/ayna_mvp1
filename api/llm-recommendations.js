@@ -69,8 +69,8 @@ function selectedConcerns(intake = {}) {
     'support fertility / ttc':                           'Fertility and conception (supplements, trackers, telehealth)',
     'manage perimenopause or menopause':                 'Perimenopause and menopause support',
     'build my health routine':                           'Women\'s health apps and services for building a health routine (cycle tracking, wellness coaching, health platforms)',
-    'manage symptoms':                                   null,
-    'understand my condition':                           null,
+    'manage symptoms':                                   null, // covered by primaryConcerns + symptom derivation
+    'understand my condition':                           null, // covered by condition-specific tracks above
     'find safer products':                               null,
     'reduce chemical exposure':                          null,
   };
