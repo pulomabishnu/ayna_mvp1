@@ -702,6 +702,7 @@ export default function MyEcosystem({
     onOpenArticle,
     onLlmRecommendationsLoaded,
     onBuildEcosystemFromLlm,
+    forceRefreshNonce = 0,
 }) {
     const [showAddModal, setShowAddModal] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
@@ -831,8 +832,7 @@ export default function MyEcosystem({
             return () => { active = false; };
         }
 
-        // Also bypass cache when ecosystem is empty — user just rebuilt, needs fresh LLM results
-        const bypassCache = recommendationRefreshNonce > 0 || myProductList.length === 0;
+        const bypassCache = recommendationRefreshNonce > 0 || forceRefreshNonce > lastConsumedForceNonceRef.current;
         const fetchedFingerprint = loadFetchedLlmFingerprint();
         const alreadyFetchedForFingerprint = fetchedFingerprint === intakeFingerprint;
         if (!bypassCache) {
@@ -908,6 +908,7 @@ export default function MyEcosystem({
                 if (active) {
                     setLlmLoading(false);
                     setLlmLoadStartedAt(0);
+                    lastConsumedForceNonceRef.current = forceRefreshNonce;
                 }
             }
         })();
@@ -915,7 +916,7 @@ export default function MyEcosystem({
         return () => {
             active = false;
         };
-    }, [intakeFingerprint, hasCompletedPersonalization, recommendationRefreshNonce]);
+    }, [intakeFingerprint, hasCompletedPersonalization, recommendationRefreshNonce, forceRefreshNonce]);
 
     const activeTiered = useMemo(
         () => (llmTiered.length > 0 ? llmTiered : intakeTieredRecommendations),
@@ -1016,7 +1017,10 @@ export default function MyEcosystem({
     }, [recommendedProductsForDisplay]);
 
     // When LLM results arrive, pipe the top product per concern directly into the ecosystem
+    const lastConsumedForceNonceRef = useRef(-1);
     const llmBuildFiredRef = useRef(false);
+    useEffect(() => { llmBuildFiredRef.current = false; }, [forceRefreshNonce]);
+
     useEffect(() => {
         if (llmBuildFiredRef.current) return;
         if (!recommendedProductsForDisplay.length || !onBuildEcosystemFromLlm) return;
