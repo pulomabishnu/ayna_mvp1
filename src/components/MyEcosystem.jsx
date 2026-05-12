@@ -614,6 +614,38 @@ function IntakeRecommendationsProductCard({
     );
 }
 
+function inferHealthFunctionsFromLlm(product, concern = '', tierSubcategory = '') {
+    const cat = String(product.category || '').toLowerCase();
+    const sub = String(tierSubcategory || '').toLowerCase();
+    const type = String(product.type || '').toLowerCase();
+    const c = String(concern).toLowerCase();
+
+    if (cat === 'supplement' || cat.includes('supplement') || cat.includes('vitamin') || cat.includes('mineral') || cat.includes('probiotic')) return ['supplement'];
+    if (cat === 'telehealth' || sub.includes('telehealth')) return ['telehealth'];
+    if (type === 'digital' || sub.includes('digital') || sub.includes('app')) {
+        if (c.includes('mental') || c.includes('mood') || c.includes('anxiety') || c.includes('sleep')) return ['mental-health'];
+        return ['cycle-tracking'];
+    }
+    if (cat === 'pad' || cat === 'tampon' || cat === 'cup' || cat === 'disc' || cat === 'liner' || cat === 'period-underwear' || cat.includes('menstrual')) return ['menstrual-collection'];
+    if (cat.includes('cramp') || cat.includes('heat') || cat.includes('tens')) return ['cramp-relief'];
+    if (cat.includes('vaginal') || cat.includes('intimate') || cat.includes('ph') || cat.includes('probiotic')) return ['vaginal-health'];
+    if (cat.includes('uti') || cat.includes('urinary')) return ['uti-prevention'];
+    if (cat.includes('contraception') || cat.includes('birth-control')) return ['contraception'];
+    if (cat.includes('mental') || cat.includes('therapy') || cat.includes('meditation')) return ['mental-health'];
+    if (cat.includes('fitness') || cat.includes('workout')) return ['fitness-cycle'];
+
+    // Concern-based fallback
+    if (c.includes('cramp') || c.includes('pain')) return ['cramp-relief'];
+    if (c.includes('heavy') || c.includes('flow') || c.includes('bleed') || c.includes('period') || c.includes('menstrual')) return ['menstrual-collection'];
+    if (c.includes('uti') || c.includes('urinary')) return ['uti-prevention'];
+    if (c.includes('vaginal') || c.includes('ph') || c.includes('yeast') || c.includes('bv')) return ['vaginal-health'];
+    if (c.includes('mental') || c.includes('mood') || c.includes('anxiety') || c.includes('depression') || c.includes('sleep')) return ['mental-health'];
+    if (c.includes('telehealth') || c.includes('doctor') || c.includes('provider') || c.includes('specialist')) return ['telehealth'];
+    if (c.includes('cycle') || c.includes('irregular') || c.includes('tracking') || c.includes('pcos') || c.includes('hormone')) return ['supplement'];
+
+    return ['supplement'];
+}
+
 /** Estimate monthly cost in USD from a price string. Returns null if unparseable. */
 function estimateMonthlyCost(priceStr, product) {
     if (!priceStr || typeof priceStr !== 'string') return null;
@@ -1020,12 +1052,22 @@ export default function MyEcosystem({
     useEffect(() => {
         if (llmBuildFiredRef.current) return;
         if (!recommendedProductsForDisplay.length || !onBuildEcosystemFromLlm) return;
-        const topProducts = recommendedProductsForDisplay
-            .map(section => section.tiers?.[0]?.product)
+        const enrichedProducts = recommendedProductsForDisplay
+            .map(section => {
+                const tier = section.tiers?.[0];
+                const product = tier?.product;
+                if (!product) return null;
+                return {
+                    ...product,
+                    healthFunctions: product.healthFunctions?.length
+                        ? product.healthFunctions
+                        : inferHealthFunctionsFromLlm(product, section.concern, tier?.subcategory || ''),
+                };
+            })
             .filter(Boolean);
-        if (!topProducts.length) return;
+        if (!enrichedProducts.length) return;
         llmBuildFiredRef.current = true;
-        onBuildEcosystemFromLlm(topProducts);
+        onBuildEcosystemFromLlm(enrichedProducts);
     }, [recommendedProductsForDisplay, onBuildEcosystemFromLlm]);
 
     useEffect(() => {

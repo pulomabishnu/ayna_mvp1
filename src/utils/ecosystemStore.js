@@ -30,6 +30,15 @@ export async function loadEcosystemForUser(supabase, userId) {
   return { myProducts, trackedProducts, omittedProducts };
 }
 
+export async function clearEcosystemForUser(supabase, userId) {
+  const { error } = await supabase
+    .from('user_ecosystems')
+    .update({ in_ecosystem: false })
+    .eq('user_id', userId)
+    .eq('in_ecosystem', true);
+  if (error) throw error;
+}
+
 export async function upsertProductState(supabase, userId, product, { inEcosystem, isTracked, isOmitted }) {
   if (!inEcosystem && !isTracked && !isOmitted) {
     const { error } = await supabase

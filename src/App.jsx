@@ -31,7 +31,7 @@ import TermsOfUse from './components/TermsOfUse';
 import AuthCallback from './components/AuthCallback';
 import EmailConfirmed from './components/EmailConfirmed';
 import { getSupabaseClient } from './utils/supabaseClient';
-import { loadEcosystemForUser, upsertProductState } from './utils/ecosystemStore';
+import { loadEcosystemForUser, upsertProductState, clearEcosystemForUser } from './utils/ecosystemStore';
 import { loadLearningMemoryForUser, saveLearningMemoryForUser } from './utils/learningMemoryStore';
 import { loadReviewsForUser, upsertProductReviews } from './utils/reviewsStore';
 import { clearCachedLlmRecommendations } from './utils/fetchLlmRecommendations';
@@ -221,6 +221,8 @@ function App() {
       setEcosystemSeedMeta(seedMeta);
       setMyProducts({});
       clearCachedLlmRecommendations();
+      const _supabase = getSupabaseClient();
+      if (_supabase && user) clearEcosystemForUser(_supabase, user.id).catch(console.error);
       setCurrentView('ecosystem');
       saveHealthIntakeForCurrentUser(pendingQuizResults).catch(console.error);
       setPendingQuizResults(null);
@@ -368,6 +370,8 @@ function App() {
     setEcosystemSeedMeta(seedMeta);
     setMyProducts({});
     clearCachedLlmRecommendations();
+    const supabase = getSupabaseClient();
+    if (supabase && user) clearEcosystemForUser(supabase, user.id).catch(console.error);
     setCurrentView('ecosystem');
   };
 
@@ -498,7 +502,13 @@ function App() {
       products.forEach(p => { if (p?.id) next[p.id] = p; });
       return next;
     });
-  }, []);
+    const supabase = getSupabaseClient();
+    if (supabase && user) {
+      Promise.all(
+        products.map(p => upsertProductState(supabase, user.id, p, { inEcosystem: true, isTracked: false, isOmitted: false }))
+      ).catch(console.error);
+    }
+  }, [user]);
 
   const [selectedProductModal, setSelectedProductModal] = useState(null);
 
