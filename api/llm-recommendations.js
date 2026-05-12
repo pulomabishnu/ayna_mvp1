@@ -58,19 +58,21 @@ function selectedConcerns(intake = {}) {
     concerns.add('Perimenopause and menopause support');
 
   // 5. Direct goal → concern mapping — every selected goal gets its own product track
+  // "find safer products" and "reduce chemical exposure" are NOT separate tracks —
+  // they are cross-cutting preferences injected into every prompt instead (see buildPromptForOneConcern).
   const GOAL_CONCERN = {
-    'track my cycle':                              'Cycle tracking (apps, wearables, devices)',
-    'find safer products':                         'Non-toxic and organic period care',
-    'reduce chemical exposure':                    'Non-toxic and organic period care',
+    'track my cycle':                                    'Cycle tracking (apps, wearables, devices)',
     'learn what ingredients to avoid for my conditions': 'Ingredient safety for my health conditions',
-    'find a provider or specialist':               'Telehealth and specialist matching',
-    'find mental health support for cycle symptoms': 'Mental health and cycle mood support',
-    'improve my gut or vaginal health':            'Gut and vaginal health (probiotics, pH balance)',
-    'support fertility / ttc':                     'Fertility and conception (supplements, trackers, telehealth)',
-    'manage perimenopause or menopause':           'Perimenopause and menopause support',
-    'build my health routine':                     'Building a holistic women\'s health routine (supplements, tracking, care)',
-    'manage symptoms':                             null, // covered by primaryConcerns + symptom derivation
-    'understand my condition':                     null, // covered by condition-specific tracks
+    'find a provider or specialist':                     'Telehealth and specialist matching',
+    'find mental health support for cycle symptoms':     'Mental health and cycle mood support',
+    'improve my gut or vaginal health':                  'Gut and vaginal health (probiotics, pH balance)',
+    'support fertility / ttc':                           'Fertility and conception (supplements, trackers, telehealth)',
+    'manage perimenopause or menopause':                 'Perimenopause and menopause support',
+    'build my health routine':                           'Women\'s health apps and services for building a health routine (cycle tracking, wellness coaching, health platforms)',
+    'manage symptoms':                                   null,
+    'understand my condition':                           null,
+    'find safer products':                               null,
+    'reduce chemical exposure':                          null,
   };
   for (const g of goals) {
     const mapped = GOAL_CONCERN[g.trim()];
@@ -645,6 +647,12 @@ function buildPromptForOneConcern(concern, intake = {}, feedback = {}, searchHit
   const knowledgeChunks = retrieveKnowledgeForIntake({ ...intake, primaryConcerns: [concern] }, 4);
   const knowledgeContext = buildKnowledgeContext(knowledgeChunks);
 
+  const goals = (Array.isArray(intake?.goals) ? intake.goals : []).map(g => String(g).toLowerCase().trim());
+  const wantsSaferProducts = goals.some(g => g === 'find safer products' || g === 'reduce chemical exposure' || g === 'learn what ingredients to avoid for my conditions');
+  const saferProductsInstruction = wantsSaferProducts
+    ? '\nSAFER PRODUCTS PREFERENCE (applies to ALL recommendations): This user wants to avoid chemical exposure and find safer products. For every physical product recommended, prioritize: certified organic, fragrance-free, unbleached/chlorine-free, BPA-free, clean-label options. Flag any ingredient concerns proactively. This is a hard preference across all tracks.'
+    : '';
+
   return `
 You are Ayna's clinical recommendation engine. Reason like a skilled OB/GYN or women's health specialist.
 
@@ -669,7 +677,7 @@ PATIENT PROFILE:
 - Hidden products: ${(feedback?.omittedProductIds || []).join(', ') || 'none'}
 ${knowledgeContext ? `\nCLINICAL KNOWLEDGE:\n${knowledgeContext}` : ''}${searchHits ? '\n' + formatSearchContextForConcern(concern, searchHits) : ''}
 
-SCOPE: Never name prescription medications. If a concern requires diagnosis or labs, lead with telehealth. Pain 8+/10: always include telehealth.
+SCOPE: Never name prescription medications. If a concern requires diagnosis or labs, lead with telehealth. Pain 8+/10: always include telehealth.${saferProductsInstruction}
 
 QUALITY BAR: Every product must have (a) majority positive reviews from real women, (b) clinical/scientific support for the mechanism, (c) established US-available brand. No fabricated brands.
 
