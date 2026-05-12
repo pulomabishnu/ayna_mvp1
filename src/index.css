@@ -18,8 +18,8 @@
   --color-border: #E1D5CE;
 
   /* Typography — same feel as the public waitlist (clean, editorial weight) */
-  --font-heading: 'DM Sans', system-ui, -apple-system, sans-serif;
-  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Jost', system-ui, -apple-system, sans-serif;
+  --font-body: 'Jost', system-ui, -apple-system, sans-serif;
 
   /* Spacing */
   --spacing-xs: 0.25rem;
@@ -1047,7 +1047,7 @@ html {
 
 .nav-ecosystem__trigger {
   font-family: var(--font-body);
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 500;
   color: var(--color-text-main);
   padding: 0.2rem 0.4rem;
@@ -1180,7 +1180,7 @@ html {
 
 .nav-ecosystem__item {
   font-family: var(--font-body);
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 500;
   color: var(--color-text-main);
   width: 100%;

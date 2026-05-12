@@ -676,16 +676,16 @@ function App() {
 
             {/* Public research tools */}
             <div className="app-nav__research-cluster">
-              <button style={{ fontSize: '0.9rem', fontWeight: (currentView === 'discovery' || currentView === 'hero') ? '700' : '500', color: currentView === 'discovery' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem' }} onClick={() => handleViewDiscovery('')}>
+              <button style={{ fontSize: '1rem', fontWeight: (currentView === 'discovery' || currentView === 'hero') ? '700' : '500', color: currentView === 'discovery' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem' }} onClick={() => handleViewDiscovery('')}>
                 Product Discovery
               </button>
-              <button style={{ fontSize: '0.9rem', fontWeight: '500', color: currentView === 'waitlist' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem' }} onClick={handleViewWaitlist}>
+              <button style={{ fontSize: '1rem', fontWeight: '500', color: currentView === 'waitlist' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem' }} onClick={handleViewWaitlist}>
                 Startups
               </button>
-              <button style={{ fontSize: '0.9rem', fontWeight: '500', color: currentView === 'deeptech' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem' }} onClick={handleViewDeeptech}>
+              <button style={{ fontSize: '1rem', fontWeight: '500', color: currentView === 'deeptech' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem' }} onClick={handleViewDeeptech}>
                 Deeptech
               </button>
-              <button style={{ fontSize: '0.9rem', fontWeight: '500', color: currentView === 'articles' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem' }} onClick={handleViewArticles}>
+              <button style={{ fontSize: '1rem', fontWeight: '500', color: currentView === 'articles' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem' }} onClick={handleViewArticles}>
                 My Health Library
               </button>
             </div>
@@ -695,7 +695,7 @@ function App() {
           <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', flexWrap: 'wrap' }}>
             <button
               style={{
-                fontSize: '0.75rem', fontWeight: '600', padding: '0.25rem 0.5rem',
+                fontSize: '0.9rem', fontWeight: '600', padding: '0.3rem 0.65rem',
                 background: 'var(--color-secondary-fade)', color: 'var(--color-primary)',
                 borderRadius: 'var(--radius-pill)', border: '1px solid var(--color-primary)',
               }}
@@ -708,7 +708,7 @@ function App() {
                 <button
                   onClick={() => setShowAccountMenu(v => !v)}
                   style={{
-                    fontSize: '0.75rem', fontWeight: '600', padding: '0.25rem 0.6rem',
+                    fontSize: '0.9rem', fontWeight: '600', padding: '0.3rem 0.75rem',
                     background: 'var(--color-primary)', color: 'var(--color-text-light)',
                     borderRadius: 'var(--radius-pill)', border: 'none', cursor: 'pointer',
                   }}
@@ -743,7 +743,7 @@ function App() {
               <button
                 onClick={() => { setPendingAction('login'); setShowAuthModal(true); }}
                 style={{
-                  fontSize: '0.75rem', fontWeight: '600', padding: '0.25rem 0.6rem',
+                  fontSize: '0.9rem', fontWeight: '600', padding: '0.3rem 0.75rem',
                   background: 'var(--color-primary)', color: 'var(--color-text-light)',
                   borderRadius: 'var(--radius-pill)', border: 'none', cursor: 'pointer',
                 }}
