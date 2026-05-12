@@ -1342,9 +1342,6 @@ export default function MyEcosystem({
                     <div style={{ textAlign: 'center', padding: '3rem', background: 'var(--color-surface-soft)', borderRadius: 'var(--radius-lg)', border: '1px dashed var(--color-border)' }}>
                         {llmLoading ? (
                             <>
-                                <div style={{ fontSize: '1.5rem', marginBottom: '0.75rem' }}>🌱</div>
-                                <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', color: 'var(--color-text-main)' }}>Building your ecosystem…</h3>
-                                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>Matching products to your health profile. This takes about 10–15 seconds.</p>
                                 <LlmRecommendationsLoadingBlock loadStartedAt={llmLoadStartedAt} compact />
                             </>
                         ) : llmError ? (
