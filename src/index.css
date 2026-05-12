@@ -187,6 +187,22 @@ body {
 .app-nav--landing .nav-ecosystem__trigger--active {
   color: rgba(255, 255, 255, 0.9) !important;
 }
+.app-nav--landing .nav-ecosystem__panel button,
+.app-nav--landing .nav-ecosystem__panel span {
+  color: var(--color-text-main) !important;
+  font-family: var(--font-body) !important;
+}
+.app-nav--landing .nav-account-menu button,
+.app-nav--landing .nav-account-menu span {
+  color: var(--color-text-main) !important;
+  font-family: var(--font-body) !important;
+}
+.app-nav--landing .nav-account-menu button {
+  color: var(--color-primary) !important;
+}
+.app-nav--landing .nav-account-menu span {
+  color: var(--color-text-muted) !important;
+}
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .app-nav {

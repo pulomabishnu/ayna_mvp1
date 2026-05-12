@@ -685,7 +685,7 @@ function App() {
                   Account
                 </button>
                 {showAccountMenu && (
-                  <div style={{
+                  <div className="nav-account-menu" style={{
                     position: 'absolute', right: 0, top: 'calc(100% + 6px)',
                     background: 'var(--color-surface)', border: '1px solid var(--color-border)',
                     borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-md)',
