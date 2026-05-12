@@ -749,7 +749,15 @@ export default function MyEcosystem({
     const [healthDataImportOpen, setHealthDataImportOpen] = useState(false);
     const [recommendedSwapByKey, setRecommendedSwapByKey] = useState({});
     const [recommendedSectionOpen, setRecommendedSectionOpen] = useState({});
-    const [recommendationRefreshNonce, setRecommendationRefreshNonce] = useState(0);
+    const [recommendationRefreshNonce, setRecommendationRefreshNonce] = useState(() => {
+        try {
+            if (typeof window !== 'undefined' && window.localStorage.getItem('ayna_force_llm_refresh') === '1') {
+                window.localStorage.removeItem('ayna_force_llm_refresh');
+                return 1;
+            }
+        } catch (_) {}
+        return 0;
+    });
     const hasCompletedPersonalization = useMemo(() => {
         if (!quizResults) return false;
         if (quizResults?.personalizationCompleted === true) return true;

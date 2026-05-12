@@ -221,6 +221,7 @@ function App() {
       setEcosystemSeedMeta(seedMeta);
       setMyProducts({});
       clearCachedLlmRecommendations();
+      try { window.localStorage.setItem('ayna_force_llm_refresh', '1'); } catch (_) {}
       const _supabase = getSupabaseClient();
       if (_supabase && user) clearEcosystemForUser(_supabase, user.id).catch(console.error);
       setCurrentView('ecosystem');
@@ -370,6 +371,7 @@ function App() {
     setEcosystemSeedMeta(seedMeta);
     setMyProducts({});
     clearCachedLlmRecommendations();
+    try { window.localStorage.setItem('ayna_force_llm_refresh', '1'); } catch (_) {}
     const supabase = getSupabaseClient();
     if (supabase && user) clearEcosystemForUser(supabase, user.id).catch(console.error);
     setCurrentView('ecosystem');
@@ -383,6 +385,11 @@ function App() {
     setQuizResults(updatedResults);
     const { seedMeta } = getEcosystemSeedFromQuiz(updatedResults, healthProfile);
     setEcosystemSeedMeta(seedMeta);
+    setMyProducts({});
+    clearCachedLlmRecommendations();
+    try { window.localStorage.setItem('ayna_force_llm_refresh', '1'); } catch (_) {}
+    const supabase = getSupabaseClient();
+    if (supabase && user) clearEcosystemForUser(supabase, user.id).catch(console.error);
     setCurrentView('ecosystem');
   };
 
