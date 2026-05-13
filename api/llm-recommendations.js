@@ -832,9 +832,16 @@ async function handleRequest(req, res) {
     return res.status(400).json({ error: 'missing_intake' });
   }
 
-  const concerns = selectedConcerns(intake);
+  const allConcerns = selectedConcerns(intake);
+  // Slice to the requested batch if batchIndex + batchSize provided
+  const batchIndex = Number.isInteger(body?.batchIndex) ? body.batchIndex : 0;
+  const batchSize  = Number.isInteger(body?.batchSize)  && body.batchSize > 0 ? body.batchSize : null;
+  const concerns = batchSize !== null
+    ? allConcerns.slice(batchIndex * batchSize, (batchIndex + 1) * batchSize)
+    : allConcerns;
+
   if (!concerns.length) {
-    return res.status(200).json({ recommendations: [], providerUsed: null, generatedAt: new Date().toISOString() });
+    return res.status(200).json({ recommendations: [], concernsTotal: allConcerns.length, providerUsed: null, generatedAt: new Date().toISOString() });
   }
 
   const searchResults = await searchProductsForConcerns(concerns, intake);

@@ -906,16 +906,26 @@ export default function MyEcosystem({
             setLlmError('');
             try {
                 const memory = loadLearningMemory();
-                const data = await fetchLlmRecommendations({
-                    intake,
-                    trackedProducts,
-                    myProducts,
-                    omittedProducts,
-                    learningMemory: memory,
-                });
+                const BATCH_SIZE = 5;
+                const NUM_BATCHES = 4; // 4 × 5 = up to 20 concerns in parallel
+                // Fire all batches simultaneously — total time = slowest batch, not sum
+                const batchResults = await Promise.all(
+                    Array.from({ length: NUM_BATCHES }, (_, i) =>
+                        fetchLlmRecommendations({
+                            intake,
+                            trackedProducts,
+                            myProducts,
+                            omittedProducts,
+                            learningMemory: memory,
+                            batchIndex: i,
+                            batchSize: BATCH_SIZE,
+                        }).then(d => Array.isArray(d?.recommendations) ? d.recommendations : [])
+                          .catch(e => { console.error(`[Ayna LLM] Batch ${i} error:`, e?.message); return []; })
+                    )
+                );
                 if (!active) return;
-                const recs = Array.isArray(data?.recommendations) ? data.recommendations : [];
-                console.log('[Ayna LLM] Result — sections:', recs.length, '| first concern:', recs[0]?.concern, '| tiers in first:', recs[0]?.tiers?.length);
+                const recs = batchResults.flat();
+                console.log('[Ayna LLM] All batches done — total sections:', recs.length);
                 setLlmTiered(recs);
                 if (recs.length > 0) {
                     if (hasCompletedPersonalization) onLlmRecommendationsLoaded?.(recs);

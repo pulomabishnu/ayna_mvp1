@@ -87,9 +87,11 @@ export function buildLlmRecommendationsRequestBody({
   myProducts = {},
   omittedProducts = {},
   learningMemory = null,
+  batchIndex = 0,
+  batchSize = null,
 } = {}) {
   if (!intake || typeof intake !== 'object') return null;
-  return {
+  const body = {
     intake,
     feedback: {
       trackedProductIds: asIdList(trackedProducts),
@@ -98,6 +100,11 @@ export function buildLlmRecommendationsRequestBody({
       learningMemory: learningMemory || {},
     },
   };
+  if (batchSize !== null) {
+    body.batchIndex = batchIndex;
+    body.batchSize = batchSize;
+  }
+  return body;
 }
 
 export function loadLearningMemory() {
