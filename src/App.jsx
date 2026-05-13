@@ -105,6 +105,9 @@ function App() {
   const [ecosystemSeedMeta, setEcosystemSeedMeta] = useState({});
   const [welcomeSubPhase, setWelcomeSubPhase] = useState('intro');
   const [user, setUser] = useState(null);
+  // Set to true once the LLM builds the ecosystem this session — prevents
+  // Supabase token-refresh reloads from overwriting in-memory LLM products.
+  const llmBuiltThisSessionRef = useRef(false);
   const [authLoading, setAuthLoading] = useState(true);
   const [dataLoading, setDataLoading] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -192,7 +195,7 @@ function App() {
       loadLearningMemoryForUser(supabase, user.id).catch(() => null),
       loadHealthIntakeForCurrentUser().catch(() => null),
     ]).then(([ecosystem, reviews, memory, intake]) => {
-      if (ecosystem) {
+      if (ecosystem && !llmBuiltThisSessionRef.current) {
         setMyProducts(ecosystem.myProducts);
         setTrackedProducts(ecosystem.trackedProducts);
         setOmittedProducts(ecosystem.omittedProducts);
@@ -369,6 +372,7 @@ function App() {
     setQuizResults(completedResults);
     const { seedMeta } = getEcosystemSeedFromQuiz(completedResults, healthProfile);
     setEcosystemSeedMeta(seedMeta);
+    llmBuiltThisSessionRef.current = false;
     setMyProducts({});
     clearCachedLlmRecommendations();
     try { window.localStorage.setItem('ayna_force_llm_refresh', '1'); } catch (_) {}
@@ -385,6 +389,7 @@ function App() {
     setQuizResults(updatedResults);
     const { seedMeta } = getEcosystemSeedFromQuiz(updatedResults, healthProfile);
     setEcosystemSeedMeta(seedMeta);
+    llmBuiltThisSessionRef.current = false;
     setMyProducts({});
     clearCachedLlmRecommendations();
     try { window.localStorage.setItem('ayna_force_llm_refresh', '1'); } catch (_) {}
@@ -504,6 +509,7 @@ function App() {
 
   const handleBuildEcosystemFromLlm = useCallback((products) => {
     if (!Array.isArray(products) || products.length === 0) return;
+    llmBuiltThisSessionRef.current = true;
     setMyProducts(products.reduce((acc, p) => { if (p?.id) acc[p.id] = p; return acc; }, {}));
     const supabase = getSupabaseClient();
     if (supabase && user) {

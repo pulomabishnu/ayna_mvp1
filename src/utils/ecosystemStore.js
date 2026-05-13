@@ -31,9 +31,10 @@ export async function loadEcosystemForUser(supabase, userId) {
 }
 
 export async function clearEcosystemForUser(supabase, userId) {
+  // DELETE is more reliably allowed by RLS than UPDATE
   const { error } = await supabase
     .from('user_ecosystems')
-    .update({ in_ecosystem: false })
+    .delete()
     .eq('user_id', userId)
     .eq('in_ecosystem', true);
   if (error) throw error;
