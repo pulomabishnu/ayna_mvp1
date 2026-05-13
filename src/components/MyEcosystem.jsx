@@ -944,7 +944,9 @@ export default function MyEcosystem({
             } catch (e) {
                 if (!active) return;
                 setLlmTiered([]);
-                setLlmError(e?.message || 'Could not load recommendations');
+                const errMsg = typeof e?.message === 'string' ? e.message : (typeof e === 'string' ? e : JSON.stringify(e));
+                console.error('[Ayna LLM] Error:', e);
+                setLlmError(errMsg || 'Could not load recommendations');
                 saveFetchedLlmFingerprint(intakeFingerprint);
             } finally {
                 if (active) {
@@ -1284,7 +1286,7 @@ export default function MyEcosystem({
                 )}
                 {llmError && !llmLoading && (
                     <div style={{ textAlign: 'center', padding: '0.75rem', marginBottom: '1rem', background: '#FEF2F2', borderRadius: 'var(--radius-md)', fontSize: '0.85rem', color: '#991B1B', border: '1px solid #FCA5A5' }}>
-                        Could not build ecosystem: {llmError} — <button type="button" style={{ background: 'none', border: 'none', color: '#991B1B', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline', padding: 0 }} onClick={handleRefreshRecommendations}>Try again</button>
+                        Could not build ecosystem: {typeof llmError === 'string' ? llmError : JSON.stringify(llmError)} — <button type="button" style={{ background: 'none', border: 'none', color: '#991B1B', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline', padding: 0 }} onClick={handleRefreshRecommendations}>Try again</button>
                     </div>
                 )}
 

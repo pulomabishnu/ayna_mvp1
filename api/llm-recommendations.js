@@ -800,6 +800,17 @@ export default async function handler(req, res) {
   }
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
+  // Wrap everything so unhandled throws return a useful error instead of Vercel's opaque 500
+  try {
+    return await handleRequest(req, res);
+  } catch (e) {
+    console.error('[LLM API] Unhandled error:', e?.message, e?.stack?.slice(0, 400));
+    return res.status(500).json({ error: e?.message || String(e), type: 'unhandled_exception' });
+  }
+}
+
+async function handleRequest(req, res) {
+
   if (!anyApiKeyConfigured()) {
     return res.status(503).json({
       error: 'not_configured',
@@ -900,3 +911,4 @@ export default async function handler(req, res) {
     generatedAt: new Date().toISOString(),
   });
 }
+
