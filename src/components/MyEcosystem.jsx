@@ -1392,29 +1392,25 @@ export default function MyEcosystem({
                     <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>+ Add a Product or App</button>
                 </div>
 
-                {(myProductList.length === 0 ? (
-                    <div style={{ textAlign: 'center', padding: '3rem', background: 'var(--color-surface-soft)', borderRadius: 'var(--radius-lg)', border: '1px dashed var(--color-border)' }}>
-                        {llmLoading ? (
-                            <>
-                                {llmLoadStartedAt > 0
-                                    ? <LlmRecommendationsLoadingBlock loadStartedAt={llmLoadStartedAt} compact />
-                                    : <div style={{ padding: '2rem', color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>🌸 Building your ecosystem…</div>
-                                }
-                            </>
-                        ) : llmError ? (
-                            <>
-                                <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', color: 'var(--color-text-main)' }}>Could not build your ecosystem</h3>
-                                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', marginBottom: '0.5rem' }}>Error: {llmError}</p>
-                                <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem', marginTop: '0.5rem' }} onClick={handleRefreshRecommendations}>Try again</button>
-                            </>
-                        ) : (
-                            <>
-                                <h3 style={{ fontSize: '1.25rem', marginBottom: '0.75rem', color: 'var(--color-text-muted)' }}>Your ecosystem is empty.</h3>
-                                <p style={{ color: 'var(--color-text-muted)' }}>Complete the health survey to build your personalized ecosystem, or add products manually.</p>
-                            </>
-                        )}
+                {/* Loading bar persists above the grid until all batches finish */}
+                {llmLoading && (
+                    llmLoadStartedAt > 0
+                        ? <LlmRecommendationsLoadingBlock loadStartedAt={llmLoadStartedAt} compact />
+                        : <div style={{ textAlign: 'center', padding: '1.5rem', color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>🌸 Building your ecosystem…</div>
+                )}
+                {llmError && !llmLoading && (
+                    <div style={{ textAlign: 'center', padding: '1.5rem', background: '#FEF2F2', borderRadius: 'var(--radius-md)', marginBottom: '1rem', border: '1px solid #FCA5A5' }}>
+                        <p style={{ color: '#991B1B', fontSize: '0.85rem', marginBottom: '0.5rem' }}>{typeof llmError === 'string' ? llmError : JSON.stringify(llmError)}</p>
+                        <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem' }} onClick={handleRefreshRecommendations}>Try again</button>
                     </div>
-                ) : (
+                )}
+
+                {(myProductList.length === 0 && !llmLoading ? (
+                    <div style={{ textAlign: 'center', padding: '3rem', background: 'var(--color-surface-soft)', borderRadius: 'var(--radius-lg)', border: '1px dashed var(--color-border)' }}>
+                        <h3 style={{ fontSize: '1.25rem', marginBottom: '0.75rem', color: 'var(--color-text-muted)' }}>Your ecosystem is empty.</h3>
+                        <p style={{ color: 'var(--color-text-muted)' }}>Complete the health survey to build your personalized ecosystem, or add products manually.</p>
+                    </div>
+                ) : myProductList.length > 0 ? (
                     <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
                         {viewMode === 'function' ? (
                             <>
@@ -1544,7 +1540,7 @@ export default function MyEcosystem({
                             </div>
                         )}
                     </div>
-                ))}
+                ) : null)}
 
                 {/* Safety & interactions: compare 2+ products */}
                 {myProductList.length >= 2 && (

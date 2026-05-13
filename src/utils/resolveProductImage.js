@@ -17,7 +17,7 @@ function lsWrite(key, url) {
 
 export function isPlaceholderProductImage(imageUrl) {
   const src = String(imageUrl || '').trim();
-  if (!src) return true;
+  if (!src) return true; // empty string — LLM products always start with ""
   return src === '/ayna_placeholder.png' || src === '/startup_placeholder.png';
 }
 
