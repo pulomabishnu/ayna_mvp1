@@ -1321,12 +1321,6 @@ export default function MyEcosystem({
                     </p>
                 </div>
 
-                {/* LLM status banner — always visible */}
-                {llmLoading && (
-                    <div style={{ textAlign: 'center', padding: '0.75rem', marginBottom: '1rem', background: 'var(--color-secondary-fade)', borderRadius: 'var(--radius-md)', fontSize: '0.9rem', color: 'var(--color-primary)' }}>
-                        🌸 Building your ecosystem from your health profile…
-                    </div>
-                )}
                 {llmError && !llmLoading && (
                     <div style={{ textAlign: 'center', padding: '0.75rem', marginBottom: '1rem', background: '#FEF2F2', borderRadius: 'var(--radius-md)', fontSize: '0.85rem', color: '#991B1B', border: '1px solid #FCA5A5' }}>
                         Could not build ecosystem: {typeof llmError === 'string' ? llmError : JSON.stringify(llmError)} — <button type="button" style={{ background: 'none', border: 'none', color: '#991B1B', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline', padding: 0 }} onClick={handleRefreshRecommendations}>Try again</button>
