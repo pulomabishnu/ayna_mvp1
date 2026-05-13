@@ -908,25 +908,39 @@ export default function MyEcosystem({
                 const memory = loadLearningMemory();
                 const BATCH_SIZE = 5;
                 const NUM_BATCHES = 4; // 4 × 5 = up to 20 concerns in parallel
-                // Fire all batches simultaneously — total time = slowest batch, not sum
-                const batchResults = await Promise.all(
-                    Array.from({ length: NUM_BATCHES }, (_, i) =>
+
+                const accumulated = [];
+                let doneCount = 0;
+                let errorCount = 0;
+
+                // Wait for all batches to settle, populating progressively as each lands
+                await new Promise(resolveAll => {
+                    Array.from({ length: NUM_BATCHES }, (_, i) => {
                         fetchLlmRecommendations({
-                            intake,
-                            trackedProducts,
-                            myProducts,
-                            omittedProducts,
-                            learningMemory: memory,
-                            batchIndex: i,
-                            batchSize: BATCH_SIZE,
-                        }).then(d => Array.isArray(d?.recommendations) ? d.recommendations : [])
-                          .catch(e => { console.error(`[Ayna LLM] Batch ${i} error:`, e?.message); return []; })
-                    )
-                );
+                            intake, trackedProducts, myProducts, omittedProducts,
+                            learningMemory: memory, batchIndex: i, batchSize: BATCH_SIZE,
+                        })
+                        .then(d => {
+                            if (!active) return;
+                            const recs = Array.isArray(d?.recommendations) ? d.recommendations : [];
+                            if (recs.length > 0) {
+                                accumulated.push(...recs);
+                                setLlmTiered([...accumulated]); // populate immediately as each batch arrives
+                            }
+                        })
+                        .catch(e => {
+                            console.error(`[Ayna LLM] Batch ${i} error:`, e?.message);
+                            errorCount++;
+                        })
+                        .finally(() => { if (++doneCount === NUM_BATCHES) resolveAll(); });
+                    });
+                });
+
                 if (!active) return;
-                const recs = batchResults.flat();
-                console.log('[Ayna LLM] All batches done — total sections:', recs.length);
-                setLlmTiered(recs);
+                const recs = accumulated;
+                console.log('[Ayna LLM] All batches done — sections:', recs.length, '| errors:', errorCount);
+                if (recs.length === 0 && errorCount > 0) throw new Error('All recommendation batches failed — please try again.');
+                if (recs.length === 0) return; // nothing to do (no concerns matched)
                 if (recs.length > 0) {
                     if (hasCompletedPersonalization) onLlmRecommendationsLoaded?.(recs);
                 }
