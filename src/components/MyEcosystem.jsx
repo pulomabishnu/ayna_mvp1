@@ -42,6 +42,7 @@ function EcosystemFunctionProductCard({
     precomputedAlternatives = [],
     isInEcosystem = false,
     recommendationReason = '',
+    concernLabel = '',
 }) {
     const [imgError, setImgError] = useState(false);
     const [resolvedCardImage, setResolvedCardImage] = useState('');
@@ -138,6 +139,20 @@ function EcosystemFunctionProductCard({
             </div>
             {perUnitPrice ? (
                 <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)', marginBottom: '0.35rem' }}>{perUnitPrice}</div>
+            ) : null}
+            {concernLabel ? (
+                <div style={{ marginBottom: '0.35rem' }}>
+                    <span style={{
+                        fontSize: '0.68rem', fontWeight: '700',
+                        display: 'inline-block', maxWidth: '100%',
+                        padding: '0.22rem 0.5rem',
+                        borderRadius: 'var(--radius-pill)',
+                        background: 'var(--color-primary)', color: '#fff',
+                    }}>
+                        {/* Strip parenthetical detail like "(supplements, telehealth, apps)" for brevity */}
+                        For: {concernLabel.replace(/\s*\(.*?\)/g, '').trim()}
+                    </span>
+                </div>
             ) : null}
             <div style={{ marginBottom: '0.5rem' }}>
                 <span
@@ -1104,6 +1119,7 @@ export default function MyEcosystem({
                             ? product.healthFunctions
                             : inferHealthFunctionsFromLlm(product, section.concern, tier?.subcategory || ''),
                         _llmAlternatives: Array.isArray(tier?.alternatives) ? tier.alternatives : [],
+                        _llmConcern: section.concern || '',
                     };
                 })
             )
@@ -1466,6 +1482,7 @@ export default function MyEcosystem({
                                                                     onSwapSeedProduct={onSwapSeedProduct}
                                                                     onGoToSearch={onGoToSearch}
                                                                     precomputedAlternatives={p._llmAlternatives || []}
+                                                                    concernLabel={p._llmConcern || ''}
                                                                     isInEcosystem
                                                                 />
                                                             );

@@ -20,8 +20,8 @@ export default function LlmRecommendationsLoadingBlock({ loadStartedAt, compact 
 
     const elapsed = Math.max(0, Date.now() - loadStartedAt);
     const elapsedSec = Math.floor(elapsed / 1000);
-    // Bar fills proportionally to actual elapsed time — no artificial cap
-    const barPct = Math.min(97, (elapsed / LLM_LOAD_UI_ESTIMATE_MS) * 100);
+    // Bar drains from 100% → 0% proportional to elapsed time (countdown feel)
+    const barPct = Math.max(3, 100 - (elapsed / LLM_LOAD_UI_ESTIMATE_MS) * 100);
 
     return (
         <div
