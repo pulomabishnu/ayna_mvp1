@@ -806,7 +806,7 @@ async function handleRequest(req, res) {
       console.warn('No parseable response for concern:', concern);
       return null;
     },
-    6
+    3
   );
 
   const providerUsed = perConcernResults.find((r) => r?.provider)?.provider || '';

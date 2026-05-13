@@ -921,8 +921,8 @@ export default function MyEcosystem({
             setLlmError('');
             try {
                 const memory = loadLearningMemory();
-                const BATCH_SIZE = 5;
-                const NUM_BATCHES = 4; // 4 × 5 = up to 20 concerns in parallel
+                const BATCH_SIZE = 6;
+                const NUM_BATCHES = 2; // 2 × 6 = up to 12 concerns; avoids rate-limiting Claude
 
                 const accumulated = [];
                 let doneCount = 0;
