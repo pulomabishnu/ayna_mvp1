@@ -1,6 +1,6 @@
 const API_PATH = '/api/llm-recommendations';
 /** Prevents the ecosystem page from showing “Loading…” forever if the server never responds. */
-const DEFAULT_FETCH_TIMEOUT_MS = 90_000;
+const DEFAULT_FETCH_TIMEOUT_MS = 150_000;
 const MEMORY_KEY = 'ayna_llm_learning_memory_v1';
 /** Persistent cache so re-login does not re-call the LLM for the same intake. */
 const RECS_CACHE_KEY = 'ayna_llm_recommendations_by_intake_v1';

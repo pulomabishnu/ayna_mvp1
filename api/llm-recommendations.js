@@ -79,7 +79,14 @@ function selectedConcerns(intake = {}) {
     if (mapped && !hasConcern(mapped.toLowerCase().slice(0, 20))) concerns.add(mapped);
   }
 
-  const result = [...concerns].filter(c => !blocked.has(c.toLowerCase()));
+  // Cap at 8 concerns — prioritise primaryConcerns first, then derived/goal-based ones
+  // so the total API time stays well under the timeout.
+  const primaryFirst = Array.isArray(intake.primaryConcerns)
+    ? intake.primaryConcerns.filter(c => concerns.has(c))
+    : [];
+  const goalDerived = [...concerns].filter(c => !primaryFirst.includes(c));
+  const ordered = [...primaryFirst, ...goalDerived];
+  const result = ordered.filter(c => !blocked.has(c.toLowerCase())).slice(0, 8);
   return result.length ? result : [];
 }
 
@@ -855,7 +862,7 @@ async function handleRequest(req, res) {
       console.warn('No parseable response for concern:', concern);
       return null;
     },
-    4
+    6
   );
 
   const providerUsed = perConcernResults.find((r) => r?.provider)?.provider || '';
