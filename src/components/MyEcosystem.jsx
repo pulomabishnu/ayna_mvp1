@@ -898,6 +898,7 @@ export default function MyEcosystem({
         }
 
         const intake = quizResults?.fullHealthIntake || null;
+        console.log('[Ayna LLM] Starting fetch — concerns:', intake?.primaryConcerns?.length ?? 0, '| goals:', intake?.goals?.length ?? 0, '| intake null?', !intake);
 
         (async () => {
             setLlmLoadStartedAt(Date.now());
@@ -914,6 +915,7 @@ export default function MyEcosystem({
                 });
                 if (!active) return;
                 const recs = Array.isArray(data?.recommendations) ? data.recommendations : [];
+                console.log('[Ayna LLM] Result — sections:', recs.length, '| first concern:', recs[0]?.concern, '| tiers in first:', recs[0]?.tiers?.length);
                 setLlmTiered(recs);
                 if (recs.length > 0) {
                     if (hasCompletedPersonalization) onLlmRecommendationsLoaded?.(recs);
@@ -1273,6 +1275,18 @@ export default function MyEcosystem({
                         Track all your health products and apps. Everything here is monitored for safety by default. We'll tell you what each does, if any overlap, and if products may interact.
                     </p>
                 </div>
+
+                {/* LLM status banner — always visible */}
+                {llmLoading && (
+                    <div style={{ textAlign: 'center', padding: '0.75rem', marginBottom: '1rem', background: 'var(--color-secondary-fade)', borderRadius: 'var(--radius-md)', fontSize: '0.9rem', color: 'var(--color-primary)' }}>
+                        🌸 Building your ecosystem from your health profile…
+                    </div>
+                )}
+                {llmError && !llmLoading && (
+                    <div style={{ textAlign: 'center', padding: '0.75rem', marginBottom: '1rem', background: '#FEF2F2', borderRadius: 'var(--radius-md)', fontSize: '0.85rem', color: '#991B1B', border: '1px solid #FCA5A5' }}>
+                        Could not build ecosystem: {llmError} — <button type="button" style={{ background: 'none', border: 'none', color: '#991B1B', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline', padding: 0 }} onClick={handleRefreshRecommendations}>Try again</button>
+                    </div>
+                )}
 
                 {/* SECTION 1 — My Ecosystem */}
                 <h3 style={{ fontSize: '1.35rem', marginBottom: '0.75rem', textAlign: 'center', color: 'var(--color-text-main)' }}>My Ecosystem</h3>
