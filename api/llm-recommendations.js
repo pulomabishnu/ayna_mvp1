@@ -48,7 +48,7 @@ function selectedConcerns(intake = {}) {
   // 4. Derive from signals / other intake fields
   if ((intake.tryingToConceive === 'yes' || has('conceive', 'ttc', 'fertility')) && !hasConcern('fertil'))
     concerns.add('Fertility and conception (supplements, trackers, telehealth)');
-  if (has('uti', 'urinary tract') && !hasConcern('uti'))
+  if ((/\buti(s)?\b/.test(allText) || allText.includes('urinary tract')) && !hasConcern('uti'))
     concerns.add('UTI support');
   if (has('vaginal', 'ph balance', 'bacterial vaginosis', 'bv', 'yeast') && !hasConcern('vaginal') && !hasConcern('gut'))
     concerns.add('Gut and vaginal health (probiotics, pH balance)');
@@ -691,7 +691,7 @@ PERSONALIZATION:
 
 TASK: Generate recommendations for this ONE concern only: "${concern}"${concernFollowup ? `\nUser context: ${JSON.stringify(concernFollowup)}` : ''}
 
-Select the single best product for this concern given her full profile. Include exactly 2 alternatives in case she wants to swap.
+Generate exactly 3 solution tracks for this concern: (1) supplement or wellness product, (2) physical device or period care product, (3) app or telehealth service. If a track isn't clinically relevant for this concern, substitute another meaningful product type. Each track: 1 top product + 2 brief alternatives.
 
 Return ONLY valid JSON — exactly this shape:
 {
@@ -700,31 +700,39 @@ Return ONLY valid JSON — exactly this shape:
       "concern": "${concern}",
       "tiers": [
         {
-          "id": "tier-1",
-          "name": "Top pick",
-          "subcategory": "best overall for this concern",
-          "matchExplanation": "1 sentence on why this is the best pick for her",
+          "id": "tier-supplement",
+          "name": "Supplement or wellness",
+          "subcategory": "supplement",
+          "matchExplanation": "1 sentence",
           "safetyFlags": [],
-          "product": {
-            "id": "brand-productname-slug",
-            "name": "Exact product name",
-            "brand": "Brand",
-            "category": "category",
-            "type": "physical or digital",
-            "summary": "1-2 sentences",
-            "whyItWorks": "2-3 sentences in plain everyday language: (1) how it works, (2) why it fits her profile, (3) what makes it the top pick.",
-            "considerations": "1 sentence or empty string",
-            "price": "$XX",
-            "image": "",
-            "tags": ["tag1"],
-            "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" },
-            "clinicianOpinionSource": "",
-            "clinicianAttribution": "",
-            "url": "https://brandhomepage.com"
-          },
+          "product": { "id": "slug", "name": "Name", "brand": "Brand", "category": "supplement", "type": "physical", "summary": "1-2 sentences", "whyItWorks": "2 sentences: mechanism + personal fit", "considerations": "", "price": "$XX", "image": "", "url": "https://brand.com", "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" }, "clinicianOpinionSource": "", "clinicianAttribution": "" },
           "alternatives": [
-            { "id": "alt1-slug", "name": "Alt 1 name", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "$XX", "type": "physical or digital", "image": "", "url": "https://brandhomepage.com", "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" } },
-            { "id": "alt2-slug", "name": "Alt 2 name", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "$XX", "type": "physical or digital", "image": "", "url": "https://brandhomepage.com", "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" } }
+            { "id": "a1", "name": "Alt 1", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "$XX", "type": "physical", "image": "", "url": "https://brand.com", "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" } },
+            { "id": "a2", "name": "Alt 2", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "$XX", "type": "physical", "image": "", "url": "https://brand.com", "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" } }
+          ]
+        },
+        {
+          "id": "tier-physical",
+          "name": "Physical product or device",
+          "subcategory": "physical product",
+          "matchExplanation": "1 sentence",
+          "safetyFlags": [],
+          "product": { "id": "slug2", "name": "Name", "brand": "Brand", "category": "device", "type": "physical", "summary": "1-2 sentences", "whyItWorks": "2 sentences: mechanism + personal fit", "considerations": "", "price": "$XX", "image": "", "url": "https://brand.com", "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" }, "clinicianOpinionSource": "", "clinicianAttribution": "" },
+          "alternatives": [
+            { "id": "a3", "name": "Alt 3", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "$XX", "type": "physical", "image": "", "url": "https://brand.com", "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" } },
+            { "id": "a4", "name": "Alt 4", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "$XX", "type": "physical", "image": "", "url": "https://brand.com", "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" } }
+          ]
+        },
+        {
+          "id": "tier-digital",
+          "name": "App or telehealth",
+          "subcategory": "telehealth",
+          "matchExplanation": "1 sentence",
+          "safetyFlags": [],
+          "product": { "id": "slug3", "name": "Name", "brand": "Brand", "category": "telehealth", "type": "digital", "summary": "1-2 sentences", "whyItWorks": "2 sentences: mechanism + personal fit", "considerations": "", "price": "Free or $XX/mo", "image": "", "url": "https://brand.com", "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" }, "clinicianOpinionSource": "", "clinicianAttribution": "" },
+          "alternatives": [
+            { "id": "a5", "name": "Alt 5", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "Free or $XX/mo", "type": "digital", "image": "", "url": "https://brand.com", "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" } },
+            { "id": "a6", "name": "Alt 6", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "Free or $XX/mo", "type": "digital", "image": "", "url": "https://brand.com", "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" } }
           ]
         }
       ],
