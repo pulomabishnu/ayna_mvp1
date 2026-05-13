@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
-/** Expected duration for UI progress (actual API time varies). */
-export const LLM_LOAD_UI_ESTIMATE_MS = 34000;
+/** Soft estimate used only to pace the progress bar — bar never stops moving. */
+export const LLM_LOAD_UI_ESTIMATE_MS = 120_000;
 
 /**
  * Loading panel with an estimated countdown and progress bar.
@@ -19,9 +19,9 @@ export default function LlmRecommendationsLoadingBlock({ loadStartedAt, compact 
     if (!loadStartedAt) return null;
 
     const elapsed = Math.max(0, Date.now() - loadStartedAt);
-    const remainingMs = Math.max(0, LLM_LOAD_UI_ESTIMATE_MS - elapsed);
-    const remainingSec = Math.ceil(remainingMs / 1000);
-    const barPct = Math.min(99, (elapsed / LLM_LOAD_UI_ESTIMATE_MS) * 100);
+    const elapsedSec = Math.floor(elapsed / 1000);
+    // Bar fills proportionally to actual elapsed time — no artificial cap
+    const barPct = Math.min(97, (elapsed / LLM_LOAD_UI_ESTIMATE_MS) * 100);
 
     return (
         <div
@@ -41,9 +41,13 @@ export default function LlmRecommendationsLoadingBlock({ loadStartedAt, compact 
                 Ayna is analyzing your health profile.
             </p>
             <p style={{ fontSize: compact ? '0.82rem' : '0.88rem', marginTop: '0.35rem', fontWeight: '600', color: 'var(--color-text-main)' }}>
-                {remainingSec > 0
-                    ? `About ${remainingSec} second${remainingSec === 1 ? '' : 's'} left`
-                    : 'Taking a bit longer than usual — hang tight.'}
+                {elapsedSec < 5
+                    ? 'Analyzing your health profile…'
+                    : elapsedSec < 30
+                    ? `Building recommendations… ${elapsedSec}s`
+                    : elapsedSec < 90
+                    ? `Still working — ${elapsedSec}s elapsed`
+                    : 'Almost done — finalizing your ecosystem…'}
             </p>
             <div
                 role="progressbar"
