@@ -1098,13 +1098,10 @@ export default function MyEcosystem({
         });
     }, [recommendedProductsForDisplay]);
 
-    // When LLM results arrive, pipe the top product per concern directly into the ecosystem
-    const llmBuildFiredRef = useRef(false);
-
+    // When LLM results arrive (each batch), update the ecosystem progressively
     useEffect(() => {
-        // Only fire once we have actual LLM results — not the rule-based fallback
+        // Guard: only fire when we have actual LLM results, not the rule-based fallback
         if (!llmTiered.length) return;
-        if (llmBuildFiredRef.current) return;
         if (!recommendedProductsForDisplay.length || !onBuildEcosystemFromLlm) return;
         // One best product per concern, with alternatives in the dropdown
         const enrichedProducts = recommendedProductsForDisplay
@@ -1128,7 +1125,6 @@ export default function MyEcosystem({
             })
             .filter(Boolean);
         if (!enrichedProducts.length) return;
-        llmBuildFiredRef.current = true;
         onBuildEcosystemFromLlm(enrichedProducts);
     }, [recommendedProductsForDisplay, onBuildEcosystemFromLlm, llmTiered]);
 

@@ -17,8 +17,8 @@ export default function LlmRecommendationsLoadingBlock({ loadStartedAt, compact 
     const elapsed = Math.max(0, Date.now() - loadStartedAt);
     const remainingMs = Math.max(0, LLM_LOAD_UI_ESTIMATE_MS - elapsed);
     const remainingSec = Math.ceil(remainingMs / 1000);
-    // Bar drains right-to-left: starts full, empties as time passes
-    const barPct = Math.max(2, 100 - (elapsed / LLM_LOAD_UI_ESTIMATE_MS) * 100);
+    // Bar fills left→right proportionally to elapsed time
+    const barPct = Math.min(97, (elapsed / LLM_LOAD_UI_ESTIMATE_MS) * 100);
 
     return (
         <div
@@ -52,7 +52,6 @@ export default function LlmRecommendationsLoadingBlock({ loadStartedAt, compact 
                     overflow: 'hidden',
                     maxWidth: '360px',
                     margin: '0.85rem auto 0',
-                    direction: 'rtl',
                 }}
             >
                 <div

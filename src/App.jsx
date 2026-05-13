@@ -511,14 +511,12 @@ function App() {
     if (!Array.isArray(products) || products.length === 0) return;
     llmBuiltThisSessionRef.current = true;
     setMyProducts(products.reduce((acc, p) => { if (p?.id) acc[p.id] = p; return acc; }, {}));
+    // Upsert only — clearEcosystemForUser already ran at rebuild time
     const supabase = getSupabaseClient();
     if (supabase && user) {
-      // Clear old ecosystem rows first, then write fresh LLM products
-      clearEcosystemForUser(supabase, user.id)
-        .then(() => Promise.all(
-          products.map(p => upsertProductState(supabase, user.id, p, { inEcosystem: true, isTracked: false, isOmitted: false }))
-        ))
-        .catch(console.error);
+      Promise.all(
+        products.map(p => upsertProductState(supabase, user.id, p, { inEcosystem: true, isTracked: false, isOmitted: false }))
+      ).catch(console.error);
     }
   }, [user]);
 

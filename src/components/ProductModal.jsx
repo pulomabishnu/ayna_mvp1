@@ -1411,7 +1411,7 @@ export default function ProductModal({
                             <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem' }} onClick={loadAiInsights} disabled={aiLoading}>
                                 {aiLoading ? 'Loading…' : 'Refresh Ayna insights'}
                             </button>
-                            {aiError && <span style={{ color: '#b91c1c', fontSize: '0.85rem' }}>{aiError}</span>}
+                            {aiError && <span style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>Insights unavailable — try again shortly.</span>}
                             {aiInsights?.generatedAt && (
                                 <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
                                     Updated {new Date(aiInsights.generatedAt).toLocaleString()}
