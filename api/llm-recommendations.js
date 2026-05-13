@@ -691,7 +691,7 @@ PERSONALIZATION:
 
 TASK: Generate recommendations for this ONE concern only: "${concern}"${concernFollowup ? `\nUser context: ${JSON.stringify(concernFollowup)}` : ''}
 
-Generate 2-3 solution tracks (supplement/wellness · physical product · digital/telehealth). Each track: 1 top product + 2 alternatives.
+Select the single best product for this concern given her full profile. Include exactly 2 alternatives in case she wants to swap.
 
 Return ONLY valid JSON — exactly this shape:
 {
@@ -700,19 +700,19 @@ Return ONLY valid JSON — exactly this shape:
       "concern": "${concern}",
       "tiers": [
         {
-          "id": "tier-supplement",
-          "name": "Supplement option",
-          "subcategory": "supplement",
-          "matchExplanation": "1 sentence on why this track fits her for this concern",
+          "id": "tier-1",
+          "name": "Top pick",
+          "subcategory": "best overall for this concern",
+          "matchExplanation": "1 sentence on why this is the best pick for her",
           "safetyFlags": [],
           "product": {
             "id": "brand-productname-slug",
             "name": "Exact product name",
             "brand": "Brand",
-            "category": "supplement",
-            "type": "physical",
+            "category": "category",
+            "type": "physical or digital",
             "summary": "1-2 sentences",
-            "whyItWorks": "2-3 sentences in plain everyday language: (1) how this product works for this concern, (2) why it fits her profile, (3) what makes it the top pick.",
+            "whyItWorks": "2-3 sentences in plain everyday language: (1) how it works, (2) why it fits her profile, (3) what makes it the top pick.",
             "considerations": "1 sentence or empty string",
             "price": "$XX",
             "image": "",
@@ -723,64 +723,8 @@ Return ONLY valid JSON — exactly this shape:
             "url": "https://brandhomepage.com"
           },
           "alternatives": [
-            { "id": "alt1-slug", "name": "Alt 1 name", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "$XX", "type": "physical", "image": "", "url": "https://brandhomepage.com", "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" } },
-            { "id": "alt2-slug", "name": "Alt 2 name", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "$XX", "type": "physical", "image": "", "url": "https://brandhomepage.com", "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" } }
-          ]
-        },
-        {
-          "id": "tier-physical",
-          "name": "Physical product option",
-          "subcategory": "physical product",
-          "matchExplanation": "1 sentence on why this track fits her for this concern",
-          "safetyFlags": [],
-          "product": {
-            "id": "brand-productname-slug-2",
-            "name": "Exact product name",
-            "brand": "Brand",
-            "category": "device or product category",
-            "type": "physical",
-            "summary": "1-2 sentences",
-            "whyItWorks": "2-3 sentences in plain everyday language.",
-            "considerations": "1 sentence or empty string",
-            "price": "$XX",
-            "image": "",
-            "tags": ["tag1"],
-            "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" },
-            "clinicianOpinionSource": "",
-            "clinicianAttribution": "",
-            "url": "https://brandhomepage.com"
-          },
-          "alternatives": [
-            { "id": "alt3-slug", "name": "Alt 3 name", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "$XX", "type": "physical", "image": "", "url": "https://brandhomepage.com", "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" } },
-            { "id": "alt4-slug", "name": "Alt 4 name", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "$XX", "type": "physical", "image": "", "url": "https://brandhomepage.com", "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" } }
-          ]
-        },
-        {
-          "id": "tier-digital",
-          "name": "App or telehealth option",
-          "subcategory": "telehealth",
-          "matchExplanation": "1 sentence on why this track fits her for this concern",
-          "safetyFlags": [],
-          "product": {
-            "id": "brand-productname-slug-3",
-            "name": "Exact app or telehealth name",
-            "brand": "Brand",
-            "category": "telehealth",
-            "type": "digital",
-            "summary": "1-2 sentences",
-            "whyItWorks": "2-3 sentences in plain everyday language.",
-            "considerations": "1 sentence or empty string",
-            "price": "$XX/month or free",
-            "image": "",
-            "tags": ["tag1"],
-            "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" },
-            "clinicianOpinionSource": "",
-            "clinicianAttribution": "",
-            "url": "https://brandhomepage.com"
-          },
-          "alternatives": [
-            { "id": "alt5-slug", "name": "Alt 5 name", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "$XX", "type": "digital", "image": "", "url": "https://brandhomepage.com", "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" } },
-            { "id": "alt6-slug", "name": "Alt 6 name", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "$XX", "type": "digital", "image": "", "url": "https://brandhomepage.com", "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" } }
+            { "id": "alt1-slug", "name": "Alt 1 name", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "$XX", "type": "physical or digital", "image": "", "url": "https://brandhomepage.com", "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" } },
+            { "id": "alt2-slug", "name": "Alt 2 name", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "$XX", "type": "physical or digital", "image": "", "url": "https://brandhomepage.com", "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" } }
           ]
         }
       ],

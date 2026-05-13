@@ -1106,23 +1106,26 @@ export default function MyEcosystem({
         if (!llmTiered.length) return;
         if (llmBuildFiredRef.current) return;
         if (!recommendedProductsForDisplay.length || !onBuildEcosystemFromLlm) return;
-        // Take ALL tiers from each concern (supplement + physical + telehealth tracks)
-        // so every concern the user stated gets full coverage, not just one product.
+        // One best product per concern, with alternatives in the dropdown
         const enrichedProducts = recommendedProductsForDisplay
-            .flatMap(section =>
-                (section.tiers || []).map(tier => {
-                    const product = tier?.product;
-                    if (!product) return null;
-                    return {
-                        ...product,
-                        healthFunctions: product.healthFunctions?.length
-                            ? product.healthFunctions
-                            : inferHealthFunctionsFromLlm(product, section.concern, tier?.subcategory || ''),
-                        _llmAlternatives: Array.isArray(tier?.alternatives) ? tier.alternatives : [],
-                        _llmConcern: section.concern || '',
-                    };
-                })
-            )
+            .map(section => {
+                const tier = section.tiers?.[0];
+                const product = tier?.product;
+                if (!product) return null;
+                // Pool all tier products as alternatives for the dropdown
+                const allAlts = (section.tiers || [])
+                    .flatMap(t => [t.product, ...(t.alternatives || [])])
+                    .filter(p => p && p.id !== product.id)
+                    .slice(0, 3);
+                return {
+                    ...product,
+                    healthFunctions: product.healthFunctions?.length
+                        ? product.healthFunctions
+                        : inferHealthFunctionsFromLlm(product, section.concern, tier?.subcategory || ''),
+                    _llmAlternatives: allAlts,
+                    _llmConcern: section.concern || '',
+                };
+            })
             .filter(Boolean);
         if (!enrichedProducts.length) return;
         llmBuildFiredRef.current = true;
