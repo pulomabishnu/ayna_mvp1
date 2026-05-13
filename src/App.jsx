@@ -112,6 +112,8 @@ function App() {
   const [dataLoading, setDataLoading] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [pendingAction, setPendingAction] = useState(null);
+  // Ref mirrors pendingAction so onAuthStateChange (async callback) can read it synchronously
+  const pendingActionRef = useRef(null);
   const [pendingQuizResults, setPendingQuizResults] = useState(null);
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   const accountMenuRef = useRef(null);
@@ -135,7 +137,7 @@ function App() {
       const storedQuiz = sessionStorage.getItem('ayna_pending_quiz_results');
       if (storedQuiz) {
         setPendingQuizResults(JSON.parse(storedQuiz));
-        setPendingAction('quiz-complete');
+        setPendingAction('quiz-complete'); pendingActionRef.current = 'quiz-complete';
         sessionStorage.removeItem('ayna_pending_quiz_results');
       }
     } catch (_) {}
@@ -160,7 +162,10 @@ function App() {
       setUser(session?.user ?? null);
       if (event === 'SIGNED_IN' && session?.user) {
         setShowAuthModal(false);
-        if (!STATIC_VIEWS.includes(currentViewRef.current)) {
+        // If there's a pending quiz/browse action, let the [user,pendingAction] effect
+        // handle navigation AFTER it sets up quizResults, myProducts, and the LLM flags.
+        // Navigating here would mount MyEcosystem too early with stale/null data.
+        if (!STATIC_VIEWS.includes(currentViewRef.current) && !pendingActionRef.current) {
           setCurrentView('ecosystem');
         }
       }
@@ -235,7 +240,7 @@ function App() {
     } else if (pendingAction === 'login') {
       setCurrentView('ecosystem');
     }
-    setPendingAction(null);
+    setPendingAction(null); pendingActionRef.current = null;
   }, [user, pendingAction]);
 
   useEffect(() => {
@@ -251,7 +256,7 @@ function App() {
   useEffect(() => {
     if (!authLoading && !user && PROTECTED_VIEWS.includes(currentView)) {
       setCurrentView('welcome', { replace: true });
-      setPendingAction('login');
+      setPendingAction('login'); pendingActionRef.current = 'login';
       setShowAuthModal(true);
     }
   }, [user, currentView, authLoading]);
@@ -365,7 +370,7 @@ function App() {
     };
     if (!user) {
       setPendingQuizResults(completedResults);
-      setPendingAction('quiz-complete');
+      setPendingAction('quiz-complete'); pendingActionRef.current = 'quiz-complete';
       setShowAuthModal(true);
       return;
     }
@@ -744,7 +749,7 @@ function App() {
               </div>
             ) : (
               <button
-                onClick={() => { setPendingAction('login'); setShowAuthModal(true); }}
+                onClick={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
                 style={{
                   fontSize: '0.9rem', fontWeight: '600', padding: '0.3rem 0.75rem',
                   background: 'var(--color-primary)', color: 'var(--color-text-light)',
@@ -764,7 +769,7 @@ function App() {
             onPersonalizedPath={handleStartQuiz}
             onBrowsePath={() => {
               if (!user) {
-                setPendingAction('browse');
+                setPendingAction('browse'); pendingActionRef.current = 'browse';
                 setShowAuthModal(true);
               } else {
                 handleViewDiscovery('');
@@ -1011,7 +1016,7 @@ function App() {
               } else if (pendingAction === 'browse') {
                 handleViewDiscovery('');
               }
-              setPendingAction(null);
+              setPendingAction(null); pendingActionRef.current = null;
             }}
           />
         )}
