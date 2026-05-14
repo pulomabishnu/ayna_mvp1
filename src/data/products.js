@@ -22,17 +22,32 @@ import { inferTagsFromHealthProfile } from '../utils/healthDataProfile.js';
 
 // Health function categories for ecosystem tracking
 export const HEALTH_FUNCTIONS = {
-    'menstrual-collection': { label: 'Menstrual Collection', icon: '🩸', desc: 'Products that collect or absorb menstrual flow' },
+    // ── Core period care ─────────────────────────────────────────────────────
+    'menstrual-collection': { label: 'Period Care', icon: '🩸', desc: 'Products that collect or absorb menstrual flow' },
     'cycle-tracking': { label: 'Cycle Tracking', icon: '📱', desc: 'Apps or devices that track your menstrual cycle' },
     'cramp-relief': { label: 'Cramp & Pain Relief', icon: '⚡', desc: 'Products that help manage period cramps and pain' },
     'leak-protection': { label: 'Leak Protection', icon: '🛡️', desc: 'Backup products to prevent leaks and staining' },
-    'uti-prevention': { label: 'UTI Prevention & Treatment', icon: '🦠', desc: 'Products for preventing or treating urinary tract infections' },
+    // ── Hormonal & reproductive health ───────────────────────────────────────
+    'pcos-management': { label: 'PCOS Management', icon: '🔬', desc: 'Supplements, apps and telehealth for PCOS' },
+    'endometriosis': { label: 'Endometriosis Support', icon: '🩺', desc: 'Products and services for endometriosis management' },
+    'hormone-balance': { label: 'Hormone Balance', icon: '⚖️', desc: 'Products for hormonal bloating and regulation' },
+    'fertility': { label: 'Fertility & Conception', icon: '🌱', desc: 'Products and services for fertility and TTC' },
+    'perimenopause': { label: 'Perimenopause & Menopause', icon: '🌙', desc: 'Support for perimenopause and menopause symptoms' },
     'contraception': { label: 'Contraception', icon: '💜', desc: 'Birth control and reproductive health' },
-    'vaginal-health': { label: 'Vaginal Health', icon: '🌸', desc: 'Products for pH balance, infections, and intimate health' },
-    'supplement': { label: 'Nutritional Supplements', icon: '💊', desc: 'Vitamins and supplements for women\'s health' },
-    'mental-health': { label: 'Mental Health & Wellness', icon: '🧠', desc: 'Therapy, meditation, and mental wellness tools' },
+    // ── Vaginal & intimate health ─────────────────────────────────────────────
+    'vaginal-health': { label: 'Gut & Vaginal Health', icon: '🌸', desc: 'Probiotics, pH balance and intimate wellness' },
+    'uti-prevention': { label: 'UTI Support', icon: '🦠', desc: 'Products for preventing or treating UTIs' },
+    'sexual-health': { label: 'Sexual Health & Comfort', icon: '💗', desc: 'Lubricants, pelvic floor and intimate comfort' },
+    // ── Whole-body wellness ───────────────────────────────────────────────────
+    'mental-health': { label: 'Mental Health & Mood', icon: '🧠', desc: 'Mental wellness, therapy and mood support' },
+    'sleep-energy': { label: 'Sleep & Energy', icon: '😴', desc: 'Products to improve sleep and energy levels' },
+    'skin-hair': { label: 'Skin & Hair', icon: '✨', desc: 'Products for hormone-related skin and hair concerns' },
     'fitness-cycle': { label: 'Cycle-Synced Fitness', icon: '💪', desc: 'Workouts and nutrition synced to your cycle' },
-    'telehealth': { label: 'Telehealth Access', icon: '🏥', desc: 'Online doctor consultations and prescriptions' },
+    // ── Access & safety ───────────────────────────────────────────────────────
+    'telehealth': { label: 'Telehealth & Providers', icon: '🏥', desc: 'Online doctor consultations and specialist access' },
+    'routine-building': { label: 'Health Routine Apps', icon: '📲', desc: 'Apps and platforms to build your health routine' },
+    // ── Kept for existing database products ──────────────────────────────────
+    'supplement': { label: 'Supplements', icon: '💊', desc: 'Vitamins and supplements for women\'s health' },
 };
 
 export const PHYSICAL_PRODUCTS = [

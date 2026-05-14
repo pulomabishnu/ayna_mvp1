@@ -630,31 +630,44 @@ function IntakeRecommendationsProductCard({
 }
 
 function inferHealthFunctionsFromLlm(product, concern = '', tierSubcategory = '') {
+    // Strip parenthetical detail from concern for cleaner matching
+    const c = String(concern).toLowerCase().replace(/\s*\(.*?\)/g, '').trim();
     const cat = String(product.category || '').toLowerCase();
-    const sub = String(tierSubcategory || '').toLowerCase();
     const type = String(product.type || '').toLowerCase();
-    const c = String(concern).toLowerCase();
+    const sub = String(tierSubcategory || '').toLowerCase();
 
-    if (cat === 'supplement' || cat.includes('supplement') || cat.includes('vitamin') || cat.includes('mineral') || cat.includes('probiotic')) return ['supplement'];
+    // ── Concern is the primary signal — all product types go under the same concern category ──
+    if (c.includes('pcos')) return ['pcos-management'];
+    if (c.includes('endometriosis')) return ['endometriosis'];
+    if (c.includes('hormone balance') || c.includes('hormonal bloating') || c.includes('bloating')) return ['hormone-balance'];
+    if (c.includes('period care') || c.includes('menstrual collection') || c.includes('period care')) return ['menstrual-collection'];
+    if (c.includes('cramp') || c.includes('pain relief')) return ['cramp-relief'];
+    if (c.includes('sleep') || c.includes('energy') || c.includes('fatigue') || c.includes('brain fog')) return ['sleep-energy'];
+    if (c.includes('mental health') || c.includes('mood support') || c.includes('anxiety') || c.includes('depression')) return ['mental-health'];
+    if (c.includes('gut') || c.includes('vaginal health') || c.includes('ph balance') || c.includes('probiotic')) return ['vaginal-health'];
+    if (/\buti\b/.test(c) || c.includes('urinary')) return ['uti-prevention'];
+    if (c.includes('sexual health') || c.includes('pelvic') || c.includes('lubricant') || c.includes('comfort')) return ['sexual-health'];
+    if (c.includes('fertil') || c.includes('ttc') || c.includes('conception')) return ['fertility'];
+    if (c.includes('menopause') || c.includes('perimenopause')) return ['perimenopause'];
+    if (c.includes('skin') || c.includes('hair') || c.includes('acne')) return ['skin-hair'];
+    if (c.includes('cycle tracking') || c.includes('track my cycle') || c.includes('irregular cycle')) return ['cycle-tracking'];
+    if (c.includes('telehealth') || c.includes('provider') || c.includes('specialist matching')) return ['telehealth'];
+    if (c.includes('routine') || c.includes('health routine')) return ['routine-building'];
+    // "Ingredient safety" is a cross-cutting filter, not its own category — fall through to product type
+
+    // ── Fallback to product category / type if concern didn't match ──
     if (cat === 'telehealth' || sub.includes('telehealth')) return ['telehealth'];
-    if (type === 'digital' || sub.includes('digital') || sub.includes('app')) {
-        if (c.includes('mental') || c.includes('mood') || c.includes('anxiety') || c.includes('sleep')) return ['mental-health'];
-        return ['cycle-tracking'];
-    }
-    if (cat === 'pad' || cat === 'tampon' || cat === 'cup' || cat === 'disc' || cat === 'liner' || cat === 'period-underwear' || cat.includes('menstrual')) return ['menstrual-collection'];
+    if (type === 'digital' || sub.includes('app')) return ['cycle-tracking'];
+    if (cat === 'pad' || cat === 'tampon' || cat === 'cup' || cat === 'disc' || cat === 'liner' || cat === 'period-underwear') return ['menstrual-collection'];
     if (cat.includes('cramp') || cat.includes('heat') || cat.includes('tens')) return ['cramp-relief'];
-    if (cat.includes('vaginal') || cat.includes('intimate') || cat.includes('ph') || cat.includes('probiotic')) return ['vaginal-health'];
-    if (cat.includes('uti') || cat.includes('urinary')) return ['uti-prevention'];
-    if (cat.includes('contraception') || cat.includes('birth-control')) return ['contraception'];
+    if (cat.includes('vaginal') || cat.includes('intimate') || cat.includes('ph')) return ['vaginal-health'];
+    if (/\buti\b/.test(cat) || cat.includes('urinary')) return ['uti-prevention'];
+    if (cat.includes('contraception')) return ['contraception'];
     if (cat.includes('mental') || cat.includes('therapy') || cat.includes('meditation')) return ['mental-health'];
     if (cat.includes('fitness') || cat.includes('workout')) return ['fitness-cycle'];
 
-    // Concern-based fallback
-    if (c.includes('cramp') || c.includes('pain')) return ['cramp-relief'];
-    if (c.includes('heavy') || c.includes('flow') || c.includes('bleed') || c.includes('period') || c.includes('menstrual')) return ['menstrual-collection'];
-    if (c.includes('uti') || c.includes('urinary')) return ['uti-prevention'];
-    if (c.includes('vaginal') || c.includes('ph') || c.includes('yeast') || c.includes('bv')) return ['vaginal-health'];
-    if (c.includes('mental') || c.includes('mood') || c.includes('anxiety') || c.includes('depression') || c.includes('sleep')) return ['mental-health'];
+    // ── Last resort — keep supplement only for truly uncategorisable ──
+    return ['supplement'];
     if (c.includes('telehealth') || c.includes('doctor') || c.includes('provider') || c.includes('specialist')) return ['telehealth'];
     if (c.includes('cycle') || c.includes('irregular') || c.includes('tracking') || c.includes('pcos') || c.includes('hormone')) return ['supplement'];
 

@@ -62,7 +62,7 @@ function selectedConcerns(intake = {}) {
   // they are cross-cutting preferences injected into every prompt instead (see buildPromptForOneConcern).
   const GOAL_CONCERN = {
     'track my cycle':                                    'Cycle tracking (apps, wearables, devices)',
-    'learn what ingredients to avoid for my conditions': 'Ingredient safety for my health conditions',
+    'learn what ingredients to avoid for my conditions': null, // cross-cutting preference, not a separate concern
     'find a provider or specialist':                     'Telehealth and specialist matching',
     'find mental health support for cycle symptoms':     'Mental health and cycle mood support',
     'improve my gut or vaginal health':                  'Gut and vaginal health (probiotics, pH balance)',

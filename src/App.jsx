@@ -406,8 +406,17 @@ function App() {
   const handleSwapEcosystemSeedProduct = (oldProductId, newProduct) => {
     setMyProducts((prev) => {
       const next = { ...prev };
+      const oldProduct = prev[oldProductId];
+      // Alternative products from the LLM have no healthFunctions — inherit from the card being replaced
+      // so the swapped-in product stays visible in the same category section.
+      const enriched = {
+        ...newProduct,
+        healthFunctions: newProduct.healthFunctions?.length ? newProduct.healthFunctions : (oldProduct?.healthFunctions || []),
+        _llmConcern: newProduct._llmConcern || oldProduct?._llmConcern || '',
+        _llmAlternatives: newProduct._llmAlternatives || oldProduct?._llmAlternatives || [],
+      };
       delete next[oldProductId];
-      next[newProduct.id] = newProduct;
+      next[enriched.id] = enriched;
       return next;
     });
     setEcosystemSeedMeta((prev) => {
