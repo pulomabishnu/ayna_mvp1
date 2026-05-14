@@ -815,7 +815,7 @@ async function handleRequest(req, res) {
       console.warn('No parseable response for concern:', concern);
       return null;
     },
-    5  // up to 5 concurrent — matches the max batch size so all concerns run in parallel
+    6  // up to 6 concurrent — all concerns run in parallel
   );
 
   const providerUsed = perConcernResults.find((r) => r?.provider)?.provider || '';

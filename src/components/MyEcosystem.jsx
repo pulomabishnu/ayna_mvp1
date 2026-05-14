@@ -939,10 +939,8 @@ export default function MyEcosystem({
             setLlmError('');
             try {
                 const memory = loadLearningMemory();
-                // Single batch of top 5 concerns — keeps LLM cost low and avoids Vercel timeout.
-                // Each concern generates 3 tier products (supplement + physical + telehealth),
-                // so 5 concerns → up to 15 ecosystem cards.
-                const BATCH_SIZE = 5;
+                // Single batch covering all concerns (up to 10). Each generates 3 cards.
+                const BATCH_SIZE = 10;
                 const NUM_BATCHES = 1;
 
                 const accumulated = [];
