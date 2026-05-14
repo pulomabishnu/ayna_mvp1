@@ -60,23 +60,26 @@ function selectedConcerns(intake = {}) {
   // 5. Direct goal → concern mapping — every selected goal gets its own product track
   // "find safer products" and "reduce chemical exposure" are NOT separate tracks —
   // they are cross-cutting preferences injected into every prompt instead (see buildPromptForOneConcern).
+  // Each entry: [concern label, dedup keyword] — skip if hasConcern(keyword) already true
   const GOAL_CONCERN = {
-    'track my cycle':                                    'Cycle tracking (apps, wearables, devices)',
-    'learn what ingredients to avoid for my conditions': null, // cross-cutting preference, not a separate concern
-    'find a provider or specialist':                     'Telehealth and specialist matching',
-    'find mental health support for cycle symptoms':     'Mental health and cycle mood support',
-    'improve my gut or vaginal health':                  'Gut and vaginal health (probiotics, pH balance)',
-    'support fertility / ttc':                           'Fertility and conception (supplements, trackers, telehealth)',
-    'manage perimenopause or menopause':                 'Perimenopause and menopause support',
-    'build my health routine':                           'Women\'s health apps and services for building a health routine (cycle tracking, wellness coaching, health platforms)',
-    'manage symptoms':                                   null, // covered by primaryConcerns + symptom derivation
-    'understand my condition':                           null, // covered by condition-specific tracks above
+    'track my cycle':                                    ['Cycle tracking (apps, wearables, devices)', 'cycle tracking'],
+    'learn what ingredients to avoid for my conditions': null,
+    'find a provider or specialist':                     ['Telehealth and specialist matching', 'telehealth'],
+    'find mental health support for cycle symptoms':     ['Mental health and cycle mood support', 'mental health'],
+    'improve my gut or vaginal health':                  ['Gut and vaginal health (probiotics, pH balance)', 'gut'],
+    'support fertility / ttc':                           ['Fertility and conception (supplements, trackers, telehealth)', 'fertil'],
+    'manage perimenopause or menopause':                 ['Perimenopause and menopause support', 'menopause'],
+    'build my health routine':                           ['Women\'s health apps and services for building a health routine (cycle tracking, wellness coaching, health platforms)', 'routine'],
+    'manage symptoms':                                   null,
+    'understand my condition':                           null,
     'find safer products':                               null,
     'reduce chemical exposure':                          null,
   };
   for (const g of goals) {
-    const mapped = GOAL_CONCERN[g.trim()];
-    if (mapped && !hasConcern(mapped.toLowerCase().slice(0, 20))) concerns.add(mapped);
+    const entry = GOAL_CONCERN[g.trim()];
+    if (!entry) continue;
+    const [concern, dedupKey] = entry;
+    if (!hasConcern(dedupKey)) concerns.add(concern);
   }
 
   const result = [...concerns].filter(c => !blocked.has(c.toLowerCase()));

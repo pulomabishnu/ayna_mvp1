@@ -939,21 +939,16 @@ export default function MyEcosystem({
             setLlmError('');
             try {
                 const memory = loadLearningMemory();
-                // Single batch covering all concerns (up to 10). Each generates 3 cards.
-                const BATCH_SIZE = 10;
-                const NUM_BATCHES = 1;
-
                 const accumulated = [];
-                let doneCount = 0;
                 let errorCount = 0;
 
-                // Single request — resolves when done
+                // Single request — no batchSize so the API processes ALL concerns
                 await new Promise(resolveAll => {
-                    Array.from({ length: NUM_BATCHES }, (_, i) => {
-                        fetchLlmRecommendations({
-                            intake, trackedProducts, myProducts, omittedProducts,
-                            learningMemory: memory, batchIndex: i, batchSize: BATCH_SIZE,
-                        })
+                    fetchLlmRecommendations({
+                        intake, trackedProducts, myProducts, omittedProducts,
+                        learningMemory: memory,
+                        // batchSize omitted → API covers every concern the intake produces
+                    })
                         .then(d => {
                             if (!active) return;
                             const recs = Array.isArray(d?.recommendations) ? d.recommendations : [];
@@ -963,16 +958,15 @@ export default function MyEcosystem({
                             }
                         })
                         .catch(e => {
-                            console.error(`[Ayna LLM] Batch ${i} error:`, e?.message);
+                            console.error('[Ayna LLM] error:', e?.message);
                             errorCount++;
                         })
-                        .finally(() => { if (++doneCount === NUM_BATCHES) resolveAll(); });
-                    });
+                        .finally(() => resolveAll());
                 });
 
                 if (!active) return;
                 const recs = accumulated;
-                console.log('[Ayna LLM] All batches done — sections:', recs.length, '| errors:', errorCount);
+                console.log('[Ayna LLM] Done — sections:', recs.length, '| errors:', errorCount);
                 if (recs.length === 0 && errorCount > 0) throw new Error('All recommendation batches failed — please try again.');
                 if (recs.length === 0) return; // nothing to do (no concerns matched)
                 if (recs.length > 0) {
