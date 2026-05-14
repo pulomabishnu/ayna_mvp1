@@ -1427,7 +1427,7 @@ export default function MyEcosystem({
                         <h3 style={{ fontSize: '1.25rem', marginBottom: '0.75rem', color: 'var(--color-text-muted)' }}>Your ecosystem is empty.</h3>
                         <p style={{ color: 'var(--color-text-muted)' }}>Complete the health survey to build your personalized ecosystem, or add products manually.</p>
                     </div>
-                ) : myProductList.length > 0 ? (
+                ) : myProductList.length > 0 && !llmLoading ? (
                     <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
                         {viewMode === 'function' ? (
                             <>

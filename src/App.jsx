@@ -362,7 +362,7 @@ function App() {
     setCurrentView('hero');
   };
 
-  const handleQuizComplete = (results) => {
+  const handleQuizComplete = async (results) => {
     const completedResults = {
       ...results,
       personalizationCompleted: true,
@@ -382,11 +382,12 @@ function App() {
     clearCachedLlmRecommendations();
     try { window.localStorage.setItem('ayna_force_llm_refresh', '1'); } catch (_) {}
     const supabase = getSupabaseClient();
-    if (supabase && user) clearEcosystemForUser(supabase, user.id).catch(console.error);
+    // Await clear so token-refresh reloads never bring back stale products
+    if (supabase && user) await clearEcosystemForUser(supabase, user.id).catch(console.error);
     setCurrentView('ecosystem');
   };
 
-  const handleHealthProfileEditorSave = (updatedResults) => {
+  const handleHealthProfileEditorSave = async (updatedResults) => {
     if (!updatedResults) {
       setCurrentView('ecosystem');
       return;
@@ -399,7 +400,8 @@ function App() {
     clearCachedLlmRecommendations();
     try { window.localStorage.setItem('ayna_force_llm_refresh', '1'); } catch (_) {}
     const supabase = getSupabaseClient();
-    if (supabase && user) clearEcosystemForUser(supabase, user.id).catch(console.error);
+    // Await clear so token-refresh reloads never bring back stale products
+    if (supabase && user) await clearEcosystemForUser(supabase, user.id).catch(console.error);
     setCurrentView('ecosystem');
   };
 
