@@ -637,41 +637,46 @@ function inferHealthFunctionsFromLlm(product, concern = '', tierSubcategory = ''
     const sub = String(tierSubcategory || '').toLowerCase();
 
     // ── Concern is the primary signal — all product types go under the same concern category ──
-    if (c.includes('pcos')) return ['pcos-management'];
-    if (c.includes('endometriosis')) return ['endometriosis'];
-    if (c.includes('hormone balance') || c.includes('hormonal bloating') || c.includes('bloating')) return ['hormone-balance'];
-    if (c.includes('period care') || c.includes('menstrual collection') || c.includes('period care')) return ['menstrual-collection'];
-    if (c.includes('cramp') || c.includes('pain relief')) return ['cramp-relief'];
-    if (c.includes('sleep') || c.includes('energy') || c.includes('fatigue') || c.includes('brain fog')) return ['sleep-energy'];
-    if (c.includes('mental health') || c.includes('mood support') || c.includes('anxiety') || c.includes('depression')) return ['mental-health'];
-    if (c.includes('gut') || c.includes('vaginal health') || c.includes('ph balance') || c.includes('probiotic')) return ['vaginal-health'];
-    if (/\buti\b/.test(c) || c.includes('urinary')) return ['uti-prevention'];
-    if (c.includes('sexual health') || c.includes('pelvic') || c.includes('lubricant') || c.includes('comfort')) return ['sexual-health'];
-    if (c.includes('fertil') || c.includes('ttc') || c.includes('conception')) return ['fertility'];
-    if (c.includes('menopause') || c.includes('perimenopause')) return ['perimenopause'];
-    if (c.includes('skin') || c.includes('hair') || c.includes('acne')) return ['skin-hair'];
-    if (c.includes('cycle tracking') || c.includes('track my cycle') || c.includes('irregular cycle')) return ['cycle-tracking'];
-    if (c.includes('telehealth') || c.includes('provider') || c.includes('specialist matching')) return ['telehealth'];
-    if (c.includes('routine') || c.includes('health routine')) return ['routine-building'];
+    if (c.includes('pcos') || c.includes('polycystic')) return ['pcos-management'];
+    if (c.includes('endometriosis') || c.includes('endo')) return ['endometriosis'];
+    if (c.includes('hormone balance') || c.includes('hormonal') || c.includes('bloating') || c.includes('thyroid') || c.includes('irregular cycle') || c.includes('irregular period')) return ['hormone-balance'];
+    if (c.includes('period care') || c.includes('menstrual collection') || c.includes('period underwear') || c.includes('pad') || c.includes('tampon') || c.includes('cup') || c.includes('disc')) return ['menstrual-collection'];
+    if (c.includes('cramp') || c.includes('pain relief') || c.includes('dysmenorrhea')) return ['cramp-relief'];
+    if (c.includes('sleep') || c.includes('energy') || c.includes('fatigue') || c.includes('brain fog') || c.includes('insomnia') || c.includes('tired')) return ['sleep-energy'];
+    if (c.includes('mental health') || c.includes('mood') || c.includes('anxiety') || c.includes('depression') || c.includes('stress') || c.includes('emotional')) return ['mental-health'];
+    if (c.includes('gut') || c.includes('vaginal') || c.includes('ph balance') || c.includes('probiotic') || c.includes('microbiome') || c.includes('bacterial') || c.includes('yeast')) return ['vaginal-health'];
+    if (/\buti\b/.test(c) || c.includes('urinary tract') || c.includes('urinary infection')) return ['uti-prevention'];
+    if (/\bsti\b/.test(c) || c.includes('sexually transmitted') || c.includes('sexual health') || c.includes('pelvic floor') || c.includes('lubricant') || c.includes('intimacy') || c.includes('libido') || c.includes('vulva') || c.includes('vaginal dryness')) return ['sexual-health'];
+    if (c.includes('fertil') || c.includes('ttc') || c.includes('conception') || c.includes('trying to conceive') || c.includes('prenatal') || c.includes('ovulation')) return ['fertility'];
+    if (c.includes('menopause') || c.includes('perimenopause') || c.includes('hot flash') || c.includes('night sweat')) return ['perimenopause'];
+    if (c.includes('skin') || c.includes('hair') || c.includes('acne') || c.includes('breakout') || c.includes('hair loss') || c.includes('nail')) return ['skin-hair'];
+    if (c.includes('cycle tracking') || c.includes('track my cycle') || c.includes('tracking') || c.includes('wearable') || c.includes('ovulation test')) return ['cycle-tracking'];
+    if (c.includes('telehealth') || c.includes('provider') || c.includes('specialist') || c.includes('doctor') || c.includes('ob/gyn') || c.includes('obgyn')) return ['telehealth'];
+    if (c.includes('routine') || c.includes('health routine') || c.includes('wellness app') || c.includes('health app') || c.includes('build my health') || c.includes('women\'s health app')) return ['routine-building'];
+    if (c.includes('contracept') || c.includes('birth control') || c.includes('iud') || c.includes('family planning')) return ['contraception'];
+    if (c.includes('fitness') || c.includes('workout') || c.includes('exercise') || c.includes('cycle sync')) return ['fitness-cycle'];
     // "Ingredient safety" is a cross-cutting filter, not its own category — fall through to product type
 
     // ── Fallback to product category / type if concern didn't match ──
-    if (cat === 'telehealth' || sub.includes('telehealth')) return ['telehealth'];
-    if (type === 'digital' || sub.includes('app')) return ['cycle-tracking'];
+    if (cat === 'telehealth' || sub.includes('telehealth') || cat.includes('telehealth')) return ['telehealth'];
+    if (type === 'digital' || sub.includes('app') || cat.includes('app') || cat.includes('platform')) return ['routine-building'];
     if (cat === 'pad' || cat === 'tampon' || cat === 'cup' || cat === 'disc' || cat === 'liner' || cat === 'period-underwear') return ['menstrual-collection'];
-    if (cat.includes('cramp') || cat.includes('heat') || cat.includes('tens')) return ['cramp-relief'];
-    if (cat.includes('vaginal') || cat.includes('intimate') || cat.includes('ph')) return ['vaginal-health'];
+    if (cat.includes('cramp') || cat.includes('heat') || cat.includes('tens') || cat.includes('pain')) return ['cramp-relief'];
+    if (cat.includes('vaginal') || cat.includes('intimate') || cat.includes('ph') || cat.includes('probiotic')) return ['vaginal-health'];
     if (/\buti\b/.test(cat) || cat.includes('urinary')) return ['uti-prevention'];
-    if (cat.includes('contraception')) return ['contraception'];
-    if (cat.includes('mental') || cat.includes('therapy') || cat.includes('meditation')) return ['mental-health'];
-    if (cat.includes('fitness') || cat.includes('workout')) return ['fitness-cycle'];
+    if (/\bsti\b/.test(cat) || cat.includes('sexual') || cat.includes('lubricant')) return ['sexual-health'];
+    if (cat.includes('contraception') || cat.includes('birth control')) return ['contraception'];
+    if (cat.includes('mental') || cat.includes('therapy') || cat.includes('meditation') || cat.includes('anxiety')) return ['mental-health'];
+    if (cat.includes('fitness') || cat.includes('workout') || cat.includes('exercise')) return ['fitness-cycle'];
+    if (cat.includes('skin') || cat.includes('hair') || cat.includes('acne')) return ['skin-hair'];
+    if (cat.includes('sleep') || cat.includes('energy') || cat.includes('fatigue')) return ['sleep-energy'];
+    if (cat.includes('fertility') || cat.includes('prenatal') || cat.includes('ovulation')) return ['fertility'];
+    if (cat.includes('menopause') || cat.includes('peri')) return ['perimenopause'];
+    if (cat.includes('pcos') || cat.includes('hormone')) return ['pcos-management'];
 
-    // ── Last resort — keep supplement only for truly uncategorisable ──
-    return ['supplement'];
-    if (c.includes('telehealth') || c.includes('doctor') || c.includes('provider') || c.includes('specialist')) return ['telehealth'];
-    if (c.includes('cycle') || c.includes('irregular') || c.includes('tracking') || c.includes('pcos') || c.includes('hormone')) return ['supplement'];
-
-    return ['supplement'];
+    // ── True last resort: digital → routine-building, physical → hormone-balance ──
+    // Never map LLM products to 'supplement' — that category is for legacy DB products only
+    return type === 'digital' ? ['routine-building'] : ['hormone-balance'];
 }
 
 /** Estimate monthly cost in USD from a price string. Returns null if unparseable. */
@@ -1129,9 +1134,8 @@ export default function MyEcosystem({
                     .slice(0, 3);
                 return {
                     ...product,
-                    healthFunctions: product.healthFunctions?.length
-                        ? product.healthFunctions
-                        : inferHealthFunctionsFromLlm(product, section.concern, tier?.subcategory || ''),
+                    // Always re-derive from concern — never trust healthFunctions the LLM may have added
+                    healthFunctions: inferHealthFunctionsFromLlm(product, section.concern, tier?.subcategory || ''),
                     _llmAlternatives: allAlts,
                     _llmConcern: section.concern || '',
                 };

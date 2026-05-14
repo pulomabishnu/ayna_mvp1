@@ -146,6 +146,7 @@ function enrichProduct(p, idSuffix = '') {
         ? p.searchTerms.map((x) => String(x)).slice(0, 6)
         : [p.name, p.brand].filter(Boolean),
     whereToBuy: url ? ['Brand site'] : [],
+    healthFunctions: undefined, // always computed client-side from concern; strip any LLM-generated value
     llmGenerated: true,
     intakeGenerated: true,
   };
