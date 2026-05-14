@@ -514,7 +514,7 @@ async function callOpenAI(prompt) {
     body: JSON.stringify({
       model,
       temperature: 0.2,
-      max_tokens: 12000,
+      max_tokens: 4000,
       response_format: { type: 'json_object' },
       messages: [
         { role: 'system', content: 'Output valid JSON only.' },
@@ -539,7 +539,7 @@ async function callAnthropic(prompt) {
     },
     body: JSON.stringify({
       model,
-      max_tokens: 12000,
+      max_tokens: 4000,
       temperature: 0.2,
       system: 'Return a single valid JSON object only. No markdown code fences.',
       messages: [{ role: 'user', content: prompt }],
@@ -815,7 +815,7 @@ async function handleRequest(req, res) {
       console.warn('No parseable response for concern:', concern);
       return null;
     },
-    3
+    5  // up to 5 concurrent — matches the max batch size so all concerns run in parallel
   );
 
   const providerUsed = perConcernResults.find((r) => r?.provider)?.provider || '';

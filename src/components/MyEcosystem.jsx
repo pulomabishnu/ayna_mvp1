@@ -939,14 +939,17 @@ export default function MyEcosystem({
             setLlmError('');
             try {
                 const memory = loadLearningMemory();
-                const BATCH_SIZE = 6;
-                const NUM_BATCHES = 2; // 2 × 6 = up to 12 concerns; avoids rate-limiting Claude
+                // Single batch of top 5 concerns — keeps LLM cost low and avoids Vercel timeout.
+                // Each concern generates 3 tier products (supplement + physical + telehealth),
+                // so 5 concerns → up to 15 ecosystem cards.
+                const BATCH_SIZE = 5;
+                const NUM_BATCHES = 1;
 
                 const accumulated = [];
                 let doneCount = 0;
                 let errorCount = 0;
 
-                // Wait for all batches to settle, populating progressively as each lands
+                // Single request — resolves when done
                 await new Promise(resolveAll => {
                     Array.from({ length: NUM_BATCHES }, (_, i) => {
                         fetchLlmRecommendations({
@@ -958,7 +961,7 @@ export default function MyEcosystem({
                             const recs = Array.isArray(d?.recommendations) ? d.recommendations : [];
                             if (recs.length > 0) {
                                 accumulated.push(...recs);
-                                setLlmTiered([...accumulated]); // populate immediately as each batch arrives
+                                setLlmTiered([...accumulated]);
                             }
                         })
                         .catch(e => {
@@ -1116,30 +1119,26 @@ export default function MyEcosystem({
         });
     }, [recommendedProductsForDisplay]);
 
-    // When LLM results arrive (each batch), update the ecosystem progressively
+    // When LLM results arrive, push ALL tier products into the ecosystem (supplement + physical + telehealth)
     useEffect(() => {
         // Guard: only fire when we have actual LLM results, not the rule-based fallback
         if (!llmTiered.length) return;
         if (!recommendedProductsForDisplay.length || !onBuildEcosystemFromLlm) return;
-        // One best product per concern, with alternatives in the dropdown
+        // Each concern has 3 tiers (supplement, physical, telehealth) — add each as its own ecosystem card
         const enrichedProducts = recommendedProductsForDisplay
-            .map(section => {
-                const tier = section.tiers?.[0];
-                const product = tier?.product;
-                if (!product) return null;
-                // Pool all tier products as alternatives for the dropdown
-                const allAlts = (section.tiers || [])
-                    .flatMap(t => [t.product, ...(t.alternatives || [])])
-                    .filter(p => p && p.id !== product.id)
-                    .slice(0, 3);
-                return {
-                    ...product,
-                    // Always re-derive from concern — never trust healthFunctions the LLM may have added
-                    healthFunctions: inferHealthFunctionsFromLlm(product, section.concern, tier?.subcategory || ''),
-                    _llmAlternatives: allAlts,
-                    _llmConcern: section.concern || '',
-                };
-            })
+            .flatMap(section =>
+                (section.tiers || []).map(tier => {
+                    const product = tier?.product;
+                    if (!product) return null;
+                    return {
+                        ...product,
+                        // Always re-derive from concern — never trust healthFunctions the LLM may have added
+                        healthFunctions: inferHealthFunctionsFromLlm(product, section.concern, tier?.subcategory || ''),
+                        _llmAlternatives: (tier.alternatives || []).filter(p => p && p.id !== product.id).slice(0, 3),
+                        _llmConcern: section.concern || '',
+                    };
+                })
+            )
             .filter(Boolean);
         if (!enrichedProducts.length) return;
         onBuildEcosystemFromLlm(enrichedProducts);
