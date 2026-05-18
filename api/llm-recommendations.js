@@ -517,7 +517,7 @@ async function callOpenAI(prompt) {
     body: JSON.stringify({
       model,
       temperature: 0.2,
-      max_tokens: 8000,
+      max_tokens: 5000,
       response_format: { type: 'json_object' },
       messages: [
         { role: 'system', content: 'Output valid JSON only.' },
@@ -542,7 +542,7 @@ async function callAnthropic(prompt) {
     },
     body: JSON.stringify({
       model,
-      max_tokens: 8000,
+      max_tokens: 5000,
       temperature: 0.2,
       system: 'Return a single valid JSON object only. No markdown code fences.',
       messages: [{ role: 'user', content: prompt }],
@@ -837,7 +837,8 @@ async function handleRequest(req, res) {
       console.warn('No parseable response for concern:', concern);
       return null;
     },
-    3  // max 3 concurrent — prevents Anthropic TPM rate limiting with large prompts
+    1  // sequential (concurrency=1) — Anthropic TPM limit is ~50K/min; parallel calls exhaust
+       // it after ~6 concerns and silently fail the rest. Sequential keeps TPM well under limit.
   );
 
   const providerUsed = perConcernResults.find((r) => r?.provider)?.provider || '';

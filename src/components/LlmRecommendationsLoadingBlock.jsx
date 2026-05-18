@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 /** Soft estimate used only to pace the progress bar. */
-export const LLM_LOAD_UI_ESTIMATE_MS = 120_000;
+export const LLM_LOAD_UI_ESTIMATE_MS = 180_000;
 
 export default function LlmRecommendationsLoadingBlock({ loadStartedAt, compact = false }) {
     const [, setTick] = useState(0);
