@@ -670,12 +670,17 @@ function estimateMonthlyCost(priceStr, product) {
     const perMonthMatch = s.match(/\$(\d+)(?:\.\d+)?\s*\/?\s*month/i);
     if (perMonthMatch) return parseFloat(perMonthMatch[1]);
 
-    // Range: $25–$38 → use average
-    const rangeMatch = s.match(/\$(\d+)\s*[–\-]\s*\$(\d+)/);
+    // Range: "$25–$38" or "$25–38" (LLM often omits second $) → use average
+    const rangeMatch = s.match(/\$(\d+(?:\.\d+)?)\s*[–\-]\s*\$?(\d+(?:\.\d+)?)/);
     if (rangeMatch) {
         const avg = (parseFloat(rangeMatch[1]) + parseFloat(rangeMatch[2])) / 2;
         if (/per pair|underwear|pair/i.test(s)) return avg / 18; // ~18 months life
-        return avg;
+        if (/one.?time|one purchase|reusable|device|wearable|ring|tracker/i.test(s)) return avg / 24;
+        // Supplements and consumables: treat range as monthly price
+        if (/supplement|vitamin|probiotic|powder|capsule|tablet|softgel|tea|extract/i.test(s + ' ' + category)) return avg;
+        // Telehealth: initial visit price is not monthly — skip to avoid inflating estimate
+        if (/initial|visit|consult|appointment/i.test(s)) return null;
+        return avg; // default: treat as monthly consumable
     }
 
     // Single price: $8 or $29
@@ -720,6 +725,13 @@ function estimateMonthlyCost(priceStr, product) {
 
     // "Free" only (no paid tier mentioned)
     if (/^free\s*$/i.test(s.replace(/\(.*\)/g, '').trim())) return 0;
+
+    // Supplements/consumables with single price (e.g. "$28") → treat as monthly
+    if (/supplement|vitamin|probiotic|powder|capsule|tablet|softgel|tea|extract/i.test(s + ' ' + category)) return price;
+    // One-time physical device → amortize over 24 months
+    if (/device|wearable|ring|tracker|one.?time/i.test(s)) return price / 24;
+    // Telehealth single visit price → not monthly
+    if (/initial|visit|consult|appointment/i.test(s)) return null;
 
     return null;
 }
