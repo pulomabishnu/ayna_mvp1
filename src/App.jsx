@@ -90,6 +90,8 @@ function App() {
   const [trackedProducts, setTrackedProducts] = useState({});
   const [joinedWaitlists, setJoinedWaitlists] = useState({});
   const [myProducts, setMyProducts] = useState({});
+  // Stable insertion-order array of product IDs — prevents cards from reordering on swap/add
+  const [ecosystemOrder, setEcosystemOrder] = useState([]);
   const [omittedProducts, setOmittedProducts] = useState({});
   const [compareList, setCompareList] = useState([]);
   const [showCheckin, setShowCheckin] = useState(false);
@@ -205,6 +207,7 @@ function App() {
     ]).then(([ecosystem, reviews, memory, intake]) => {
       if (ecosystem && !llmBuiltThisSessionRef.current) {
         setMyProducts(ecosystem.myProducts);
+        setEcosystemOrder(Object.keys(ecosystem.myProducts));
         setTrackedProducts(ecosystem.trackedProducts);
         setOmittedProducts(ecosystem.omittedProducts);
       }
@@ -427,6 +430,8 @@ function App() {
       next[enriched.id] = enriched;
       return next;
     });
+    // Replace old ID with new ID at the same position so card doesn't jump
+    setEcosystemOrder(prev => prev.map(id => id === oldProductId ? enriched.id : id));
     setEcosystemSeedMeta((prev) => {
       const meta = prev[oldProductId];
       if (!meta) return prev;
@@ -487,7 +492,9 @@ function App() {
       else next[product.id] = product;
       return next;
     });
-    // Upsert outside the updater — side effects must not live inside setMyProducts
+    setEcosystemOrder(prev =>
+      wasIn ? prev.filter(id => id !== product.id) : [...prev, product.id]
+    );
     if (user) {
       upsertProductState(getSupabaseClient(), user.id, product, {
         inEcosystem: !wasIn,
@@ -532,9 +539,9 @@ function App() {
   const handleBuildEcosystemFromLlm = useCallback((products) => {
     if (!Array.isArray(products) || products.length === 0) return;
     llmBuiltThisSessionRef.current = true;
-    // Allow the same product under multiple concerns — the ecosystem Overlap Detection handles flagging.
-    // Deduping by name removed entire categories when LLM reused a supplement (e.g. magnesium) across concerns.
-    setMyProducts(products.filter(p => p?.id).reduce((acc, p) => { acc[p.id] = p; return acc; }, {}));
+    const valid = products.filter(p => p?.id);
+    setMyProducts(valid.reduce((acc, p) => { acc[p.id] = p; return acc; }, {}));
+    setEcosystemOrder(valid.map(p => p.id));
     // Upsert only — clearEcosystemForUser already ran at rebuild time
     const supabase = getSupabaseClient();
     if (supabase && user) {
@@ -883,6 +890,7 @@ function App() {
         {currentView === 'ecosystem' && (
           <MyEcosystem
             myProducts={myProducts}
+            ecosystemOrder={ecosystemOrder}
             onToggleProduct={toggleMyProduct}
             trackedProducts={trackedProducts}
             toggleTrackProduct={toggleTrackProduct}

@@ -740,6 +740,7 @@ function estimateMonthlyCost(priceStr, product) {
 
 export default function MyEcosystem({
     myProducts,
+    ecosystemOrder = [],
     onToggleProduct,
     trackedProducts,
     toggleTrackProduct,
@@ -792,8 +793,9 @@ export default function MyEcosystem({
         return false;
     }, [quizResults]);
 
-    const myProductIds = Object.keys(myProducts);
-    const myProductList = Object.values(myProducts);
+    // Use ecosystemOrder for stable card positions; fall back to insertion order
+    const myProductIds = ecosystemOrder.length ? ecosystemOrder.filter(id => myProducts[id]) : Object.keys(myProducts);
+    const myProductList = myProductIds.map(id => myProducts[id]).filter(Boolean);
     const { functionMap, duplicates } = useMemo(() => detectDuplicates(myProductIds, myProducts), [myProductIds, myProducts]);
     const ecosystemStartups = useMemo(() => {
         const FRUSTRATION_TAG = {
