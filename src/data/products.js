@@ -323,6 +323,82 @@ export const PHYSICAL_PRODUCTS = [
         }
     },
     {
+        id: 'p-nature-made-iron-65mg',
+        name: 'Nature Made Iron 65 mg Tablets',
+        brand: 'Nature Made',
+        category: 'supplement',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['sleep-energy'],
+        tags: ['heavy-flow', 'fatigue', 'cramps', 'pcos'],
+        price: '$10.59 (180 tablets, 180-day supply)',
+        userRating: 4.7,
+        url: 'https://www.naturemade.com/products/iron-tablets',
+        whereToBuy: ['NatureMade.com', 'Amazon'],
+        whereToBuyInStock: { 'Amazon': true },
+        whereToBuyLinks: {
+            'NatureMade.com': 'https://www.naturemade.com/products/iron-tablets',
+            'Amazon': 'https://www.amazon.com/Nature-Made-Ferrous-Sulfate-Tablets/dp/B003PGJLRO',
+        },
+        image: 'https://www.naturemade.com/cdn/shop/files/NM2612PK001234IRON_150ccfront_1500x.png?v=1717195534',
+        summary: '65 mg elemental iron (325 mg ferrous sulfate) per tablet. Supports red blood cell formation and energy. 180-day supply. USP verified, #1 pharmacist recommended vitamin brand.',
+        safety: {
+            fdaStatus: 'USP Verified dietary supplement',
+            materials: 'Ferrous sulfate heptahydrate, cellulose, stearic acid, silicon dioxide. No gluten, no artificial colors or flavors.',
+            recalls: 'No known recalls',
+            allergens: 'Gluten-free. Keep out of reach of children — accidental iron overdose is a leading cause of fatal poisoning in children under 6.',
+            sideEffects: 'May cause constipation, nausea, or dark stools. Take with food to reduce GI side effects. Do not take within 2 hours of antacids.',
+            opinionAlerts: 'Ferrous sulfate has lower absorption than ferrous bisglycinate forms. Take with vitamin C to improve absorption.'
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'Ayna synthesis of NIH ODS and ACOG guidance on iron supplementation.',
+        doctorOpinion: 'Iron supplementation is recommended for women with heavy menstrual bleeding or confirmed iron deficiency anemia. Confirm with bloodwork before supplementing.',
+        communityReview: 'Well-rated for effectiveness and price. Common feedback: take with food and vitamin C, and expect darker stools.',
+        verificationLinks: {
+            scientific: [
+                { url: 'https://ods.od.nih.gov/factsheets/Iron-HealthProfessional/', text: 'NIH ODS — Iron Fact Sheet', summary: 'Comprehensive clinical reference on iron deficiency, supplementation, and safety.' }
+            ]
+        }
+    },
+    {
+        id: 'p-natures-bounty-d3-125mcg',
+        name: "Nature's Bounty Vitamin D3 5000 IU Softgels",
+        brand: "Nature's Bounty",
+        category: 'supplement',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['hormone-balance'],
+        tags: ['pcos', 'irregular', 'safety-concern', 'organic'],
+        price: '$10–15 (150 softgels)',
+        userRating: 4.8,
+        url: 'https://naturesbounty.com/products/vitamin-d3-5000-iu-150-rapid-release-softgels',
+        whereToBuy: ["Nature's Bounty", 'Amazon'],
+        whereToBuyInStock: { 'Amazon': true },
+        whereToBuyLinks: {
+            "Nature's Bounty": 'https://naturesbounty.com/products/vitamin-d3-5000-iu-150-rapid-release-softgels',
+            'Amazon': 'https://www.amazon.com/Natures-Bounty-Supplement-Supports-Softgels/dp/B002Y27LLS',
+        },
+        image: 'https://naturesbounty.com/cdn/shop/products/089377.png',
+        summary: '125 mcg (5000 IU) vitamin D3 cholecalciferol per rapid-release softgel. Supports bone health, immune function, and hormonal balance. Non-GMO, gluten-free, no artificial colors or flavors.',
+        safety: {
+            fdaStatus: 'Dietary supplement',
+            materials: 'Cholecalciferol (D3), soybean oil, gelatin, vegetable glycerin, corn oil. Non-GMO. Free from gluten, wheat, yeast, fish, artificial colors, flavors, and sweeteners.',
+            recalls: 'No known recalls',
+            allergens: 'Contains soy (soybean oil). Gelatin (not vegan).',
+            sideEffects: 'At 5000 IU daily, vitamin D toxicity is unlikely but possible with very long-term high-dose use. Do not take additional high-dose D3 supplements concurrently without monitoring blood levels.',
+            opinionAlerts: 'D3 at 5000 IU is a higher dose — clinicians often recommend confirming deficiency with a 25(OH)D blood test before starting.'
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'Ayna synthesis of Endocrine Society and NIH ODS guidance on vitamin D supplementation.',
+        doctorOpinion: 'Vitamin D deficiency is common in women with PCOS and may affect hormonal regulation. Testing levels before supplementing is recommended to avoid over-supplementation.',
+        communityReview: 'Highly rated. Users report improvements in mood, energy, and cycle regularity. Frequently recommended on PCOS forums.',
+        verificationLinks: {
+            scientific: [
+                { url: 'https://ods.od.nih.gov/factsheets/VitaminD-HealthProfessional/', text: 'NIH ODS — Vitamin D Fact Sheet', summary: 'Clinical reference on vitamin D deficiency, supplementation, and safety thresholds.' }
+            ]
+        }
+    },
+    {
         id: 'p-saalt-cup-steamer',
         name: 'Saalt Cup Steamer',
         brand: 'Saalt',
