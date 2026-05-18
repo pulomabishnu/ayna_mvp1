@@ -333,8 +333,10 @@ export const PHYSICAL_PRODUCTS = [
         tags: ['sustainability', 'safety-concern', 'organic', 'comfort'],
         price: '$29 (one-time purchase)',
         userRating: 4.7,
+        url: 'https://saalt.com/products/saalt-cup-steamer',
         whereToBuy: ['Saalt.com', 'Amazon'],
         whereToBuyInStock: { 'Amazon': true },
+        whereToBuyLinks: { 'Saalt.com': 'https://saalt.com/products/saalt-cup-steamer' },
         image: 'https://saalt.com/cdn/shop/products/Saalt-Cup-Steamer-Lifestyle.jpg',
         summary: 'Portable UV-free steamer designed specifically to sterilize menstrual cups and discs in 3 minutes. Safe for all medical-grade silicone.',
         safety: {
@@ -349,7 +351,6 @@ export const PHYSICAL_PRODUCTS = [
         clinicianAttribution: 'Ayna synthesis of clinical guidance on menstrual cup hygiene.',
         doctorOpinion: 'Steam sterilization is the safest method for menstrual cup cleaning between cycles.',
         communityReview: 'Highly rated by Saalt cup users for convenience and peace of mind between cycles.',
-        whereToBuyUrls: { 'Saalt.com': 'https://saalt.com/products/saalt-cup-steamer' },
         verificationLinks: {
             doctor: [
                 { url: 'https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cup/art-20045868', text: 'Mayo Clinic — Menstrual Cup Care', summary: 'Guidance on proper cleaning and sterilization of menstrual cups.' }
