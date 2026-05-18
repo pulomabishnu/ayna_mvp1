@@ -475,20 +475,21 @@ function App() {
   };
 
   const toggleMyProduct = (product) => {
+    const wasIn = !!myProducts[product.id];
     setMyProducts(prev => {
       const next = { ...prev };
-      const wasIn = !!next[product.id];
       if (wasIn) delete next[product.id];
       else next[product.id] = product;
-      if (user) {
-        upsertProductState(getSupabaseClient(), user.id, product, {
-          inEcosystem: !wasIn,
-          isTracked: !!trackedProducts[product.id],
-          isOmitted: !!omittedProducts[product.id],
-        }).catch(e => console.error('[Ayna] upsert failed:', e));
-      }
       return next;
     });
+    // Upsert outside the updater — side effects must not live inside setMyProducts
+    if (user) {
+      upsertProductState(getSupabaseClient(), user.id, product, {
+        inEcosystem: !wasIn,
+        isTracked: !!trackedProducts[product.id],
+        isOmitted: !!omittedProducts[product.id],
+      }).catch(e => console.error('[Ayna] upsert failed:', e));
+    }
   };
 
   const toggleOmitProduct = (product) => {
