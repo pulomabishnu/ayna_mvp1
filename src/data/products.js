@@ -334,11 +334,12 @@ export const PHYSICAL_PRODUCTS = [
         price: '$39 (one-time purchase)',
         userRating: 4.7,
         url: 'https://saalt.com/products/saalt-steamer',
-        whereToBuy: ['Saalt.com', 'Amazon'],
+        whereToBuy: ['Saalt.com', 'Amazon', 'Google'],
         whereToBuyInStock: { 'Amazon': true },
         whereToBuyLinks: {
             'Saalt.com': 'https://saalt.com/products/saalt-steamer',
             'Amazon': 'https://www.amazon.com/s?k=Saalt+Cup+Steamer',
+            'Google': 'https://www.google.com/search?q=saalt+steamer',
         },
         image: 'https://saalt.com/cdn/shop/files/Saalt-Steamer-PDP-01-Rose-Quartz.jpg?v=1725669379',
         summary: 'Portable UV-free steamer designed specifically to sterilize menstrual cups and discs in 3 minutes. Safe for all medical-grade silicone.',
