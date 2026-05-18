@@ -158,14 +158,18 @@ function App() {
       setAuthLoading(false);
     }
     const STATIC_VIEWS = ['privacy-policy', 'terms-of-use', 'confirmed', 'auth-callback'];
+    // Views where the user wasn't authenticated yet — navigate to ecosystem on sign-in.
+    // All other views (discovery, startups, etc.) should stay put; Supabase fires SIGNED_IN
+    // on token refresh (tab switch) which would otherwise redirect the user mid-browsing.
+    const PRE_AUTH_VIEWS = ['welcome', 'hero', 'quiz'];
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
       if (event === 'SIGNED_IN' && session?.user) {
         setShowAuthModal(false);
-        // If there's a pending quiz/browse action, let the [user,pendingAction] effect
-        // handle navigation AFTER it sets up quizResults, myProducts, and the LLM flags.
-        // Navigating here would mount MyEcosystem too early with stale/null data.
-        if (!STATIC_VIEWS.includes(currentViewRef.current) && !pendingActionRef.current) {
+        // Only navigate to ecosystem when on a pre-auth page (welcome/hero/quiz).
+        // Token refresh on tab switch also fires SIGNED_IN — never redirect mid-browsing.
+        // Pending actions (quiz-complete, browse) are handled by the [user,pendingAction] effect.
+        if (PRE_AUTH_VIEWS.includes(currentViewRef.current) && !pendingActionRef.current) {
           setCurrentView('ecosystem');
         }
       }
