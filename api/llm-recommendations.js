@@ -359,7 +359,14 @@ PERSONALIZATION RULES:
 - Never recommend a specific product or brand she listed as disliked
 - The reason a product is recommended (whyItWorks) must relate ONLY to the concern it addresses — never mention her disliked products from a different category as a reason. For example: do not say a PCOS telehealth service was chosen because she disliked Always pads. That is irrelevant and confusing.
 - Her ingredient/material preferences are HARD FILTERS, not suggestions: if she prefers fragrance-free, every physical product must be fragrance-free. If she prefers organic, period care products must be certified organic. Never recommend a product that violates her stated preferences.
-- If she has insurance listed, only recommend telehealth services that commonly accept that insurance type or are available through employers. If no insurance info is available, note that coverage varies and to verify before booking.
+- INSURANCE & PRICING RULES — always show realistic out-of-pocket cost, not list price:
+  * If insuranceType is employer_ppo or employer_hmo: telehealth visits are often $0–$30 copay. Show "~$0–$30 copay (verify with your plan)" not the full list price.
+  * If insuranceType is medicaid: most telehealth is $0–$3 copay or fully covered. Show "$0 (Medicaid covered)" for in-network telehealth.
+  * If insuranceType is marketplace_aca: coverage varies; show list price with note "may be covered after deductible — verify with your plan."
+  * If insuranceType is uninsured: show full list price and flag any sliding-scale or DTC-priced options.
+  * If fsaHsa is fsa, hsa, or both: supplements, eligible devices, and some period products can be purchased with pre-tax FSA/HSA dollars. Note "FSA/HSA eligible — effective cost ~20–30% lower" on the price for eligible products.
+  * FSA/HSA eligible categories: magnesium and other supplements with a Letter of Medical Necessity, menstrual products, heating pads, pelvic floor devices, ovulation tests. Apps and telehealth are generally NOT FSA/HSA eligible unless specifically noted.
+  * Always recommend telehealth services that commonly accept her insurance type. If unsure of coverage, say "verify coverage with your plan before booking."
 - Never recommend products she has hidden
 - Never recommend tranexamic acid products (including Lysteda)
 - If she has endometriosis: always flag synthetic fragrances, dioxins, chlorine bleaching, BPA
@@ -664,7 +671,9 @@ You CAN: make clinical inferences, recommend OTC products and supplements ground
 You CANNOT: diagnose, prescribe medications, or guarantee outcomes.
 
 PATIENT PROFILE:
-- Age: ${intake?.age || 'unknown'}, Location: ${intake?.location || 'unknown'}, Insurance: ${intake?.insurancePlan || 'not provided'}
+- Age: ${intake?.age || 'unknown'}, Location: ${intake?.location || 'unknown'}
+- Insurance type: ${intake?.insuranceType || 'not provided'}, Provider: ${intake?.insurancePlan || 'not provided'}
+- FSA/HSA: ${intake?.fsaHsa || 'not provided'}
 - All concerns: ${selectedConcerns(intake).join(', ') || 'none'}
 - Conditions: ${(Array.isArray(intake?.conditions) ? intake.conditions : []).join(', ') || 'none'}
 - Family history: ${(Array.isArray(intake?.familyHistory) ? intake.familyHistory : []).join(', ') || 'not provided'}

@@ -1,12 +1,17 @@
 import React, { useMemo, useState } from 'react';
 import {
   CONCERN_AREAS,
+  INSURANCE_TYPES,
+  FSA_HSA_OPTIONS,
   mapIntakeToLegacyQuizProfile,
   validateHealthIntake,
 } from '../utils/healthIntake';
 import { saveHealthIntakeForCurrentUser } from '../utils/healthIntakeStore';
 
 const BASE_INTAKE = {
+  insurancePlan: '',
+  insuranceType: '',
+  fsaHsa: '',
   age: '',
   location: '',
   primaryConcerns: [],
@@ -229,6 +234,24 @@ export default function HealthProfileEditor({ currentProfile, onSave, onCancel }
           <label style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
             <span>Why they did not work</span>
             <textarea rows={2} value={draft.dislikedReason || ''} onChange={(e) => setField('dislikedReason', e.target.value)} />
+          </label>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+            <span>Insurance type</span>
+            <select value={draft.insuranceType || ''} onChange={(e) => setField('insuranceType', e.target.value)} style={{ padding: '0.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: '0.95rem' }}>
+              <option value=''>Select…</option>
+              {INSURANCE_TYPES.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+            </select>
+          </label>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+            <span>Insurance provider name</span>
+            <input type='text' value={draft.insurancePlan || ''} onChange={(e) => setField('insurancePlan', e.target.value)} placeholder='e.g. Aetna, Blue Cross, United' style={{ padding: '0.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: '0.95rem' }} />
+          </label>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+            <span>FSA / HSA account</span>
+            <select value={draft.fsaHsa || ''} onChange={(e) => setField('fsaHsa', e.target.value)} style={{ padding: '0.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: '0.95rem' }}>
+              <option value=''>Select…</option>
+              {FSA_HSA_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+            </select>
           </label>
         </div>
 

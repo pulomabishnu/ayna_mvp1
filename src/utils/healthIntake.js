@@ -72,6 +72,26 @@ export const PREFERRED_PRODUCT_TYPES = [
   'apps',
 ];
 
+export const INSURANCE_TYPES = [
+  { value: 'employer_ppo', label: 'Employer-sponsored PPO' },
+  { value: 'employer_hmo', label: 'Employer-sponsored HMO' },
+  { value: 'marketplace_aca', label: 'Marketplace / ACA plan' },
+  { value: 'medicaid', label: 'Medicaid' },
+  { value: 'medicare', label: 'Medicare' },
+  { value: 'student', label: 'Student health insurance' },
+  { value: 'military', label: 'Military / Tricare' },
+  { value: 'uninsured', label: 'Uninsured / self-pay' },
+  { value: 'other', label: 'Other' },
+];
+
+export const FSA_HSA_OPTIONS = [
+  { value: 'fsa', label: 'FSA (Flexible Spending Account)' },
+  { value: 'hsa', label: 'HSA (Health Savings Account)' },
+  { value: 'both', label: 'Both FSA and HSA' },
+  { value: 'none', label: 'Neither' },
+  { value: 'unsure', label: 'Not sure' },
+];
+
 export const GOALS = [
   'find safer products',
   'manage symptoms',

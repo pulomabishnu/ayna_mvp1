@@ -5,6 +5,8 @@ import {
   DIAGNOSED_CONDITIONS,
   GOALS,
   PRODUCT_PREFERENCES,
+  INSURANCE_TYPES,
+  FSA_HSA_OPTIONS,
   OTHER_CONCERN_OPTION,
   mapIntakeToLegacyQuizProfile,
 } from '../utils/healthIntake';
@@ -233,6 +235,8 @@ const emptyIntake = {
   currentMedications: '',
   lastObgynVisit: '',
   insurancePlan: '',
+  insuranceType: '',
+  fsaHsa: '',
   tryingToConceive: '',
   hormonalBirthControl: '',
   hormonalBirthControlType: '',
@@ -429,9 +433,28 @@ export default function HealthIntakeForm({ onComplete }) {
               </div>
             )}
 
-            <FieldLabel optional>Health insurance plan</FieldLabel>
-            <TextInput value={intake.insurancePlan} onChange={(v) => set('insurancePlan', v)} placeholder="e.g. Aetna PPO, Blue Cross, uninsured…" />
-            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.3rem' }}>Helps Ayna recommend telehealth services that may be covered.</p>
+            <FieldLabel optional>Insurance type</FieldLabel>
+            <select
+              value={intake.insuranceType || ''}
+              onChange={e => set('insuranceType', e.target.value)}
+              style={{ width: '100%', padding: '0.6rem 0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: '0.95rem', background: 'var(--color-surface)', color: 'var(--color-text-main)' }}
+            >
+              <option value=''>Select insurance type…</option>
+              {INSURANCE_TYPES.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+            </select>
+            <TextInput value={intake.insurancePlan} onChange={(v) => set('insurancePlan', v)} placeholder="Insurance provider name (e.g. Aetna, Blue Cross, United)" style={{ marginTop: '0.5rem' }} />
+            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.3rem' }}>Used to show realistic out-of-pocket costs for telehealth recommendations.</p>
+
+            <FieldLabel optional>FSA / HSA account</FieldLabel>
+            <select
+              value={intake.fsaHsa || ''}
+              onChange={e => set('fsaHsa', e.target.value)}
+              style={{ width: '100%', padding: '0.6rem 0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: '0.95rem', background: 'var(--color-surface)', color: 'var(--color-text-main)' }}
+            >
+              <option value=''>Select…</option>
+              {FSA_HSA_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+            </select>
+            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.3rem' }}>FSA/HSA-eligible products show your effective pre-tax price.</p>
 
             <ContinueButton onClick={goNext}>Continue →</ContinueButton>
           </div>
