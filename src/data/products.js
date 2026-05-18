@@ -333,10 +333,13 @@ export const PHYSICAL_PRODUCTS = [
         tags: ['sustainability', 'safety-concern', 'organic', 'comfort'],
         price: '$39 (one-time purchase)',
         userRating: 4.7,
-        url: 'https://saalt.com/products/saalt-steamer',
+        url: 'https://www.google.com/search?q=Saalt+Steamer+menstrual+cup+cleaner',
         whereToBuy: ['Saalt.com', 'Amazon'],
         whereToBuyInStock: { 'Amazon': true },
-        whereToBuyLinks: { 'Saalt.com': 'https://saalt.com/products/saalt-steamer' },
+        whereToBuyLinks: {
+            'Saalt.com': 'https://www.google.com/search?q=Saalt+Steamer+site:saalt.com',
+            'Amazon': 'https://www.amazon.com/Saalt-Steamer-Menstrual-Designed-Automatic/dp/B0CGX2Y8WM',
+        },
         image: 'https://saalt.com/cdn/shop/files/Saalt-Steamer-PDP-01-Rose-Quartz.jpg?v=1725669379',
         summary: 'Portable UV-free steamer designed specifically to sterilize menstrual cups and discs in 3 minutes. Safe for all medical-grade silicone.',
         safety: {
