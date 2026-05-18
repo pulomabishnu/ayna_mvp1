@@ -890,6 +890,7 @@ async function handleRequest(req, res) {
 
   return res.status(200).json({
     recommendations: verifiedRecs,
+    concernsTotal: allConcerns.length,
     providerUsed,
     generatedAt: new Date().toISOString(),
   });

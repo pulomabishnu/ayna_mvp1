@@ -670,8 +670,8 @@ function estimateMonthlyCost(priceStr, product) {
     const perMonthMatch = s.match(/\$(\d+)(?:\.\d+)?\s*\/?\s*month/i);
     if (perMonthMatch) return parseFloat(perMonthMatch[1]);
 
-    // Range: "$25–$38" or "$25–38" (LLM often omits second $) → use average
-    const rangeMatch = s.match(/\$(\d+(?:\.\d+)?)\s*[–\-]\s*\$?(\d+(?:\.\d+)?)/);
+    // Range: "$25–$38", "$25–38", "$25-38", "$25—38" → use average
+    const rangeMatch = s.match(/\$(\d+(?:\.\d+)?)\s*[–—‒\-]+\s*\$?(\d+(?:\.\d+)?)/);
     if (rangeMatch) {
         const avg = (parseFloat(rangeMatch[1]) + parseFloat(rangeMatch[2])) / 2;
         if (/per pair|underwear|pair/i.test(s)) return avg / 18; // ~18 months life
@@ -940,27 +940,26 @@ export default function MyEcosystem({
                 const accumulated = [];
                 let errorCount = 0;
 
-                // Single request — no batchSize so the API processes ALL concerns
-                await new Promise(resolveAll => {
-                    fetchLlmRecommendations({
-                        intake, trackedProducts, myProducts, omittedProducts,
-                        learningMemory: memory,
-                        // batchSize omitted → API covers every concern the intake produces
-                    })
-                        .then(d => {
-                            if (!active) return;
-                            const recs = Array.isArray(d?.recommendations) ? d.recommendations : [];
-                            if (recs.length > 0) {
-                                accumulated.push(...recs);
-                                setLlmTiered([...accumulated]);
-                            }
-                        })
-                        .catch(e => {
-                            console.error('[Ayna LLM] error:', e?.message);
-                            errorCount++;
-                        })
-                        .finally(() => resolveAll());
-                });
+                // One API call per concern — each call is ~10s, well under Vercel's timeout.
+                // Sending all concerns in one call hit the 60s limit after ~6 concerns.
+                let totalConcerns = null;
+                for (let batchIdx = 0; batchIdx < 25; batchIdx++) {
+                    if (!active) return;
+                    try {
+                        const d = await fetchLlmRecommendations({
+                            intake, trackedProducts, myProducts, omittedProducts,
+                            learningMemory: memory, batchIndex: batchIdx, batchSize: 1,
+                        });
+                        if (!active) return;
+                        if (totalConcerns === null && d?.concernsTotal != null) totalConcerns = d.concernsTotal;
+                        const recs = Array.isArray(d?.recommendations) ? d.recommendations : [];
+                        if (recs.length > 0) { accumulated.push(...recs); setLlmTiered([...accumulated]); }
+                    } catch (e) {
+                        console.error(`[Ayna LLM] concern ${batchIdx} error:`, e?.message);
+                        errorCount++;
+                    }
+                    if (totalConcerns !== null && batchIdx >= totalConcerns - 1) break;
+                }
 
                 if (!active) return;
                 const recs = accumulated;
@@ -1416,7 +1415,7 @@ export default function MyEcosystem({
                         <h3 style={{ fontSize: '1.25rem', marginBottom: '0.75rem', color: 'var(--color-text-muted)' }}>Your ecosystem is empty.</h3>
                         <p style={{ color: 'var(--color-text-muted)' }}>Complete the health survey to build your personalized ecosystem, or add products manually.</p>
                     </div>
-                ) : myProductList.length > 0 && !llmLoading ? (
+                ) : myProductList.length > 0 ? (
                     <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
                         {viewMode === 'function' ? (
                             <>
