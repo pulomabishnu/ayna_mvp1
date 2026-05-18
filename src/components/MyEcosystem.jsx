@@ -11,7 +11,7 @@ import CareNearYouPanel from './CareNearYouPanel';
 import LlmRecommendationsLoadingBlock from './LlmRecommendationsLoadingBlock';
 import HealthDataImport from './HealthDataImport';
 import { inferTagsFromHealthProfile } from '../utils/healthDataProfile';
-import { RELEASED_STARTUPS } from '../data/startups';
+import { RELEASED_STARTUPS, UNRELEASED_STARTUPS } from '../data/startups';
 import { generateTieredRecommendations } from '../utils/recommendationEngine';
 import {
     fetchLlmRecommendations,
@@ -795,21 +795,26 @@ export default function MyEcosystem({
 
         const alreadyInEcosystem = new Set(myProductList.map(p => (p.name || '').toLowerCase()));
 
-        const scored = RELEASED_STARTUPS
-            .filter(s => !alreadyInEcosystem.has(s.name.toLowerCase()))
-            .map(s => {
-                let score = 0;
-                (s.tags || []).forEach(t => { if (userTags.has(t)) score += 2; });
-                (s.healthFunctions || []).forEach(fn => {
-                    if (Object.keys(functionMap).includes(fn)) score += 1;
-                });
-                return { ...s, _score: score };
-            })
-            .filter(s => s._score > 0)
-            .sort((a, b) => b._score - a._score)
-            .slice(0, 6);
+        function scoreStartups(list) {
+            return list
+                .filter(s => !alreadyInEcosystem.has(s.name.toLowerCase()))
+                .map(s => {
+                    let score = 0;
+                    (s.tags || []).forEach(t => { if (userTags.has(t)) score += 2; });
+                    (s.healthFunctions || []).forEach(fn => {
+                        if (Object.keys(functionMap).includes(fn)) score += 1;
+                    });
+                    return { ...s, _score: score };
+                })
+                .filter(s => s._score > 0)
+                .sort((a, b) => b._score - a._score)
+                .slice(0, 6);
+        }
 
-        return scored;
+        return {
+            brands: scoreStartups(RELEASED_STARTUPS),   // US-available → "Women's Health Brands"
+            startups: scoreStartups(UNRELEASED_STARTUPS), // not-yet-US → "Startups"
+        };
     }, [myProductList, quizResults, healthProfile, functionMap]);
     const duplicateCount = Object.keys(duplicates).length;
 
@@ -1140,7 +1145,7 @@ export default function MyEcosystem({
             .flatMap((s) => (Array.isArray(s?.tiers) ? s.tiers : []))
             .flatMap((tier) => [tier?.product, ...(Array.isArray(tier?.alternatives) ? tier.alternatives : [])])
             .filter(Boolean);
-        const productsNeedingImage = [...myProductList, ...ecosystemStartups, ...recommendedProducts]
+        const productsNeedingImage = [...myProductList, ...ecosystemStartups.brands, ...ecosystemStartups.startups, ...recommendedProducts]
             .filter((p) => p && p.id && p.name)
             .filter((p) => resolvedImages[p.id] === undefined)
             .filter((p) => isPlaceholderProductImage(p.image));
@@ -1602,14 +1607,49 @@ export default function MyEcosystem({
                     </div>
                 )}
 
-                {ecosystemStartups.length > 0 && (
+                {/* US-available brands — not startups, regular products you can buy now */}
+                {ecosystemStartups.brands.length > 0 && (
                     <div style={{ marginBottom: '1.75rem', maxWidth: '1200px', margin: '0 auto 1.75rem' }}>
                         <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            🚀 Startups relevant to you
+                            🛍️ Women's Health Brands
                         </h3>
-                        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>Curated women's health startups matched to your profile.</p>
+                        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>Brands with products available now, matched to your profile.</p>
                         <div className="ecosystem-product-grid">
-                            {ecosystemStartups.map(startup => (
+                            {ecosystemStartups.brands.map(brand => (
+                                <a key={brand.id} href={brand.url} target="_blank" rel="noopener noreferrer" className="card" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '0.85rem 1rem', cursor: 'pointer', textDecoration: 'none', color: 'inherit', height: '100%' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                        <div style={{ width: '44px', height: '44px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0, background: 'var(--color-surface-soft)' }}>
+                                            <img src={resolvedImages[brand.id] || brand.image} alt={brand.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.style.display = 'none'; }} />
+                                        </div>
+                                        <div style={{ flexGrow: 1, minWidth: 0 }}>
+                                            <h4 style={{ fontSize: '0.95rem', marginBottom: '0.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                                {brand.name}
+                                            </h4>
+                                            <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{brand.tagline}</span>
+                                        </div>
+                                    </div>
+                                    <p style={{ fontSize: '0.8rem', color: 'var(--color-text-main)', margin: 0, lineHeight: '1.35', flex: 1 }}>
+                                        {brand.description}
+                                    </p>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap', marginTop: 'auto' }}>
+                                        <span style={{ fontSize: '0.7rem', fontWeight: '600', color: 'var(--color-primary)', background: 'var(--color-secondary-fade)', padding: '0.15rem 0.4rem', borderRadius: 'var(--radius-pill)' }}>{brand.stage}</span>
+                                        <span style={{ fontSize: '0.7rem', color: 'var(--color-primary)', marginLeft: 'auto' }}>Shop now →</span>
+                                    </div>
+                                </a>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Non-US startups — waitlist / coming soon */}
+                {ecosystemStartups.startups.length > 0 && (
+                    <div style={{ marginBottom: '1.75rem', maxWidth: '1200px', margin: '0 auto 1.75rem' }}>
+                        <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            🚀 Startups coming to the US
+                        </h3>
+                        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>Women's health startups not yet available in the US — worth watching.</p>
+                        <div className="ecosystem-product-grid">
+                            {ecosystemStartups.startups.map(startup => (
                                 <a key={startup.id} href={startup.url} target="_blank" rel="noopener noreferrer" className="card" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '0.85rem 1rem', cursor: 'pointer', textDecoration: 'none', color: 'inherit', height: '100%' }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                                         <div style={{ width: '44px', height: '44px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0, background: 'var(--color-surface-soft)' }}>
@@ -1624,11 +1664,11 @@ export default function MyEcosystem({
                                         </div>
                                     </div>
                                     <p style={{ fontSize: '0.8rem', color: 'var(--color-text-main)', margin: 0, lineHeight: '1.35', flex: 1 }}>
-                                        {startup.description || 'No startup description available yet.'}
+                                        {startup.description}
                                     </p>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap', marginTop: 'auto' }}>
                                         <span style={{ fontSize: '0.7rem', fontWeight: '600', color: 'var(--color-primary)', background: 'var(--color-secondary-fade)', padding: '0.15rem 0.4rem', borderRadius: 'var(--radius-pill)' }}>{startup.stage}</span>
-                                        <span style={{ fontSize: '0.7rem', color: 'var(--color-primary)', marginLeft: 'auto' }}>Visit →</span>
+                                        <span style={{ fontSize: '0.7rem', color: 'var(--color-primary)', marginLeft: 'auto' }}>Learn more →</span>
                                     </div>
                                 </a>
                             ))}

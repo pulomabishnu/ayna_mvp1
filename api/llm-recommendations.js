@@ -826,7 +826,7 @@ async function handleRequest(req, res) {
       console.warn('No parseable response for concern:', concern);
       return null;
     },
-    6  // up to 6 concurrent — all concerns run in parallel
+    3  // max 3 concurrent — prevents Anthropic TPM rate limiting with large prompts
   );
 
   const providerUsed = perConcernResults.find((r) => r?.provider)?.provider || '';

@@ -1613,11 +1613,33 @@ export const STARTUPS = [
     }
 ];
 
-/** Startups with unreleased US products only (for Startups / waitlist page). */
-export const UNRELEASED_STARTUPS = STARTUPS.filter(s => s.productReleased === false);
+/**
+ * Returns true when a startup's product is actually purchasable/accessible by US customers now.
+ * Startups with US-available products are shown as regular brands, not as "Startups".
+ */
+export function isStartupUsAvailable(s) {
+    const stage = String(s.stage || '').toLowerCase();
+    // Must be explicitly available in the US
+    const usSignals = [
+        'in us', 'in all 50', 'in most us', 'in major us', 'us states',
+        'available, established', 'available, growing', 'available, dtc',
+        'shipping in us', 'shipping globally', 'live in all',
+        'insurance-covered', 'nyc', 'clinics in'
+    ];
+    const nonUsSignals = [
+        'waitlist', 'coming soon', 'shipping soon', 'uk', 'eu',
+        'launch planned', 'launch tbd', 'expanding us', 'clinical trials'
+    ];
+    const hasUs = usSignals.some(sig => stage.includes(sig));
+    const hasNonUs = nonUsSignals.some(sig => stage.includes(sig));
+    return hasUs && !hasNonUs;
+}
 
-/** Startups that have released US products (shown as products in Discovery, not as startups). */
-export const RELEASED_STARTUPS = STARTUPS.filter(s => s.productReleased !== false);
+/** Startups NOT yet available in the US — shown in the Startups / waitlist section. */
+export const UNRELEASED_STARTUPS = STARTUPS.filter(s => !isStartupUsAvailable(s));
+
+/** Startups with US-available products — shown as regular brands, not as startups. */
+export const RELEASED_STARTUPS = STARTUPS.filter(s => isStartupUsAvailable(s));
 
 // ─── STARTUP MATCHING ──────────────────────────────────
 export function getPersonalizedStartups(quizAnswers) {
