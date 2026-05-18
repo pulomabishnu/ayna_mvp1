@@ -517,7 +517,7 @@ async function callOpenAI(prompt) {
     body: JSON.stringify({
       model,
       temperature: 0.2,
-      max_tokens: 4000,
+      max_tokens: 8000,
       response_format: { type: 'json_object' },
       messages: [
         { role: 'system', content: 'Output valid JSON only.' },
@@ -542,7 +542,7 @@ async function callAnthropic(prompt) {
     },
     body: JSON.stringify({
       model,
-      max_tokens: 4000,
+      max_tokens: 8000,
       temperature: 0.2,
       system: 'Return a single valid JSON object only. No markdown code fences.',
       messages: [{ role: 'user', content: prompt }],
