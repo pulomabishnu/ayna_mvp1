@@ -902,8 +902,8 @@ export default function MyEcosystem({
             return () => { active = false; };
         }
 
-        // Also bypass when ecosystem is empty + personalized — means it was just cleared intentionally
-        const bypassCache = recommendationRefreshNonce > 0 || (myProductList.length === 0 && hasCompletedPersonalization);
+        // Only bypass cache for explicit user actions: quiz complete, profile update, rebuild button
+        const bypassCache = recommendationRefreshNonce > 0;
         const fetchedFingerprint = loadFetchedLlmFingerprint();
         const alreadyFetchedForFingerprint = fetchedFingerprint === intakeFingerprint;
         if (!bypassCache) {
