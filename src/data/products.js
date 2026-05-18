@@ -322,6 +322,42 @@ export const PHYSICAL_PRODUCTS = [
             ]
         }
     },
+    {
+        id: 'p-saalt-cup-steamer',
+        name: 'Saalt Cup Steamer',
+        category: 'cup-steamer',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['menstrual-collection'],
+        tags: ['sustainability', 'safety-concern', 'organic', 'comfort'],
+        price: '$29 (one-time purchase)',
+        userRating: 4.7,
+        whereToBuy: ['Saalt.com', 'Amazon'],
+        whereToBuyInStock: { 'Amazon': true },
+        image: 'https://saalt.com/cdn/shop/products/Saalt-Cup-Steamer-Lifestyle.jpg',
+        summary: 'Portable UV-free steamer designed specifically to sterilize menstrual cups and discs in 3 minutes. Safe for all medical-grade silicone.',
+        safety: {
+            fdaStatus: 'N/A — accessory for FDA-registered medical devices',
+            materials: 'BPA-free plastic, stainless steel interior chamber',
+            recalls: 'No known recalls',
+            allergens: 'None',
+            sideEffects: 'None; steam sterilization is recommended by OB-GYNs over boiling for silicone cups',
+            opinionAlerts: 'Do not use with cups made from rubber or latex — silicone only.'
+        },
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'Ayna synthesis of clinical guidance on menstrual cup hygiene.',
+        doctorOpinion: 'Steam sterilization is the safest method for menstrual cup cleaning between cycles.',
+        communityReview: 'Highly rated by Saalt cup users for convenience and peace of mind between cycles.',
+        whereToBuyUrls: { 'Saalt.com': 'https://saalt.com/products/saalt-cup-steamer' },
+        verificationLinks: {
+            doctor: [
+                { url: 'https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cup/art-20045868', text: 'Mayo Clinic — Menstrual Cup Care', summary: 'Guidance on proper cleaning and sterilization of menstrual cups.' }
+            ],
+            community: [
+                { platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/search/?q=steamer', text: 'Reddit r/menstrualcups — steamer discussion', summary: 'Community reviews of cup sterilization methods.' }
+            ]
+        }
+    },
     // ─── DISCS ───────────────────────────────────────────
     {
         id: 'p-flex-disc',
