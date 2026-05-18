@@ -632,12 +632,21 @@ function inferHealthFunctionsFromLlm(product, concern = '', tierSubcategory = ''
     if (c.includes('fertil') || c.includes('ttc') || c.includes('conception') || c.includes('trying to conceive') || c.includes('prenatal') || c.includes('ovulation')) return ['fertility'];
     if (c.includes('menopause') || c.includes('perimenopause') || c.includes('hot flash') || c.includes('night sweat')) return ['perimenopause'];
     if (c.includes('skin') || c.includes('hair') || c.includes('acne') || c.includes('breakout') || c.includes('hair loss') || c.includes('nail')) return ['skin-hair'];
-    if (c.includes('cycle tracking') || c.includes('track my cycle') || c.includes('tracking') || c.includes('wearable') || c.includes('ovulation test')) return ['cycle-tracking'];
-    if (c.includes('telehealth') || c.includes('provider') || c.includes('specialist') || c.includes('doctor') || c.includes('ob/gyn') || c.includes('obgyn')) return ['telehealth'];
-    if (c.includes('routine') || c.includes('health routine') || c.includes('wellness app') || c.includes('health app') || c.includes('build my health') || c.includes('women\'s health app')) return ['routine-building'];
+    if (c.includes('cycle tracking') || c.includes('track my cycle') || c.includes('tracking') || c.includes('ovulation test')) return ['cycle-tracking'];
     if (c.includes('contracept') || c.includes('birth control') || c.includes('iud') || c.includes('family planning')) return ['contraception'];
     if (c.includes('fitness') || c.includes('workout') || c.includes('exercise') || c.includes('cycle sync')) return ['fitness-cycle'];
-    // "Ingredient safety" is a cross-cutting filter, not its own category — fall through to product type
+    // For 'telehealth', 'routine', and 'wearable' concerns: only digital products go into those categories.
+    // Supplements and physical devices from these concerns should fall through to product-type categorisation
+    // (e.g. Thorne Inositol from a 'routine' concern → pcos-management via category, not routine-building).
+    const isDigital = type === 'digital' || cat.includes('telehealth') || sub.includes('telehealth') || sub.includes('app');
+    if (c.includes('telehealth') || c.includes('provider') || c.includes('specialist') || c.includes('doctor') || c.includes('ob/gyn') || c.includes('obgyn')) {
+        if (isDigital) return ['telehealth'];
+        // fall through for supplements / physical products
+    }
+    if (c.includes('routine') || c.includes('health routine') || c.includes('wellness app') || c.includes('health app') || c.includes('build my health') || c.includes('women\'s health app') || c.includes('wearable')) {
+        if (isDigital) return ['routine-building'];
+        // fall through for supplements / physical products
+    }
 
     // ── Fallback to product category / type if concern didn't match ──
     if (cat === 'telehealth' || sub.includes('telehealth') || cat.includes('telehealth')) return ['telehealth'];

@@ -1438,6 +1438,7 @@ export const CHECK_IN_CATEGORIES = [
 export function detectDuplicates(productIds, productMap = {}) {
     const functionMap = {};
     const duplicates = {};
+    const seenInCategory = {}; // brand|name → dedup within each health function category
 
     const isDigitalOrTelehealth = (p) => {
         const type = String(p?.type || '').toLowerCase();
@@ -1453,8 +1454,11 @@ export function detectDuplicates(productIds, productMap = {}) {
         if (!p) return;
 
         const fns = p.healthFunctions || [];
+        const nameKey = `${String(p.brand || '').toLowerCase().trim()}|${String(p.name || '').toLowerCase().trim()}`;
         fns.forEach(fn => {
-            if (!functionMap[fn]) functionMap[fn] = [];
+            if (!functionMap[fn]) { functionMap[fn] = []; seenInCategory[fn] = new Set(); }
+            if (seenInCategory[fn].has(nameKey)) return; // skip identical product in same category
+            seenInCategory[fn].add(nameKey);
             functionMap[fn].push(p);
         });
     });
