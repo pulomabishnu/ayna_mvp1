@@ -337,7 +337,7 @@ export const PHYSICAL_PRODUCTS = [
         whereToBuy: ['Saalt.com', 'Amazon'],
         whereToBuyInStock: { 'Amazon': true },
         whereToBuyLinks: { 'Saalt.com': 'https://saalt.com/products/saalt-steamer' },
-        image: 'https://saalt.com/cdn/shop/products/Saalt-Cup-Steamer-Lifestyle.jpg',
+        image: '',
         summary: 'Portable UV-free steamer designed specifically to sterilize menstrual cups and discs in 3 minutes. Safe for all medical-grade silicone.',
         safety: {
             fdaStatus: 'N/A — accessory for FDA-registered medical devices',
