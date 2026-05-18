@@ -140,35 +140,19 @@ function EcosystemFunctionProductCard({
             {perUnitPrice ? (
                 <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)', marginBottom: '0.35rem' }}>{perUnitPrice}</div>
             ) : null}
-            {concernLabel ? (
-                <div style={{ marginBottom: '0.35rem' }}>
-                    <span style={{
-                        fontSize: '0.68rem', fontWeight: '700',
-                        display: 'inline-block', maxWidth: '100%',
-                        padding: '0.22rem 0.5rem',
-                        borderRadius: 'var(--radius-pill)',
-                        background: 'var(--color-primary)', color: '#fff',
-                    }}>
-                        {/* Strip parenthetical detail like "(supplements, telehealth, apps)" for brevity */}
-                        For: {concernLabel.replace(/\s*\(.*?\)/g, '').trim()}
-                    </span>
-                </div>
-            ) : null}
-            <div style={{ marginBottom: '0.5rem' }}>
-                <span
-                    style={{
-                        fontSize: '0.65rem',
-                        fontWeight: '600',
-                        display: 'inline-block',
-                        maxWidth: '100%',
-                        padding: '0.2rem 0.45rem',
-                        borderRadius: 'var(--radius-pill)',
-                        background: 'var(--color-secondary-fade)',
-                        color: 'var(--color-primary-hover)',
-                        border: '1px solid var(--color-border)',
-                    }}
-                >
-                    {healthFunctionLabel}
+            <div style={{ marginBottom: '0.35rem' }}>
+                <span style={{
+                    fontSize: '0.68rem', fontWeight: '700',
+                    display: 'inline-block', maxWidth: '100%',
+                    padding: '0.22rem 0.5rem',
+                    borderRadius: 'var(--radius-pill)',
+                    background: concernLabel ? 'var(--color-primary)' : 'var(--color-secondary-fade)',
+                    color: concernLabel ? '#fff' : 'var(--color-primary-hover)',
+                    border: concernLabel ? 'none' : '1px solid var(--color-border)',
+                }}>
+                    {concernLabel
+                        ? concernLabel.replace(/\s*\(.*?\)/g, '').trim()
+                        : healthFunctionLabel}
                 </span>
             </div>
             <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', marginTop: 'auto' }}>
