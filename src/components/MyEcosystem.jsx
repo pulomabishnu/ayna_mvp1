@@ -87,8 +87,21 @@ function EcosystemFunctionProductCard({
                 border: '1px solid var(--color-border)',
                 background: 'var(--color-surface-soft)',
                 borderRadius: 'var(--radius-md)',
+                overflow: 'visible',
             }}
         >
+            {/* Concern label fixed at top so alternatives section never shifts it */}
+            <div style={{ marginBottom: '0.35rem' }}>
+                <span style={{
+                    fontSize: '0.68rem', fontWeight: '700',
+                    display: 'inline-block', maxWidth: '100%',
+                    padding: '0.22rem 0.5rem',
+                    borderRadius: 'var(--radius-pill)',
+                    background: 'var(--color-primary)', color: '#fff',
+                }}>
+                    {(concernLabel || healthFunctionLabel).replace(/\s*\(.*?\)/g, '').trim()}
+                </span>
+            </div>
             <div
                 style={{
                     width: '100%',
@@ -140,17 +153,6 @@ function EcosystemFunctionProductCard({
             {perUnitPrice ? (
                 <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)', marginBottom: '0.35rem' }}>{perUnitPrice}</div>
             ) : null}
-            <div style={{ marginBottom: '0.35rem' }}>
-                <span style={{
-                    fontSize: '0.68rem', fontWeight: '700',
-                    display: 'inline-block', maxWidth: '100%',
-                    padding: '0.22rem 0.5rem',
-                    borderRadius: 'var(--radius-pill)',
-                    background: 'var(--color-primary)', color: '#fff',
-                }}>
-                    {(concernLabel || healthFunctionLabel).replace(/\s*\(.*?\)/g, '').trim()}
-                </span>
-            </div>
             <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', marginTop: 'auto' }}>
                 <button
                     type="button"

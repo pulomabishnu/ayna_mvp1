@@ -412,13 +412,17 @@ function App() {
     setMyProducts((prev) => {
       const next = { ...prev };
       const oldProduct = prev[oldProductId];
-      // Alternative products from the LLM have no healthFunctions — inherit from the card being replaced
-      // so the swapped-in product stays visible in the same category section.
+      const oldAlts = Array.isArray(oldProduct?._llmAlternatives) ? oldProduct._llmAlternatives : [];
+      // Build the new alternatives list: old main product + remaining alts (minus the one just selected)
+      const newAlts = [
+        oldProduct ? { ...oldProduct, _llmAlternatives: [], _llmConcern: '' } : null,
+        ...oldAlts.filter(a => a?.id !== newProduct.id),
+      ].filter(Boolean).slice(0, 3);
       const enriched = {
         ...newProduct,
         healthFunctions: newProduct.healthFunctions?.length ? newProduct.healthFunctions : (oldProduct?.healthFunctions || []),
         _llmConcern: newProduct._llmConcern || oldProduct?._llmConcern || '',
-        _llmAlternatives: newProduct._llmAlternatives || oldProduct?._llmAlternatives || [],
+        _llmAlternatives: newAlts,
       };
       delete next[oldProductId];
       next[enriched.id] = enriched;
