@@ -540,13 +540,26 @@ function App() {
     if (!Array.isArray(products) || products.length === 0) return;
     llmBuiltThisSessionRef.current = true;
     const valid = products.filter(p => p?.id);
-    setMyProducts(valid.reduce((acc, p) => { acc[p.id] = p; return acc; }, {}));
-    setEcosystemOrder(valid.map(p => p.id));
-    // Upsert only — clearEcosystemForUser already ran at rebuild time
+    const llmIdSet = new Set(valid.map(p => p.id));
+    let manualIds = [];
+    setMyProducts(prev => {
+      // Preserve manually-added products (DB products without llmGenerated flag)
+      // so navigating away and back doesn't wipe things like the Saalt steamer
+      manualIds = Object.keys(prev).filter(id => {
+        const p = prev[id];
+        return p && !p.llmGenerated && !p.intakeGenerated;
+      });
+      const manual = Object.fromEntries(manualIds.map(id => [id, prev[id]]));
+      return { ...valid.reduce((acc, p) => { acc[p.id] = p; return acc; }, {}), ...manual };
+    });
+    setEcosystemOrder(() => [
+      ...valid.map(p => p.id),
+      ...manualIds.filter(id => !llmIdSet.has(id)),
+    ]);
     const supabase = getSupabaseClient();
     if (supabase && user) {
       Promise.all(
-        products.map(p => upsertProductState(supabase, user.id, p, { inEcosystem: true, isTracked: false, isOmitted: false }))
+        valid.map(p => upsertProductState(supabase, user.id, p, { inEcosystem: true, isTracked: false, isOmitted: false }))
       ).catch(console.error);
     }
   }, [user]);
