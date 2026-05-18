@@ -1588,43 +1588,6 @@ export default function ProductModal({
                                     )}
                             </div>
                             )}
-                            {(() => {
-                                const conditions = [
-                                    ...(quizResults?.fullHealthIntake?.conditions || []),
-                                    ...(healthProfile?.conditions || []),
-                                ].filter(Boolean);
-                                const flags = getIngredientSafetyFlags(
-                                    product,
-                                    conditions,
-                                    quizResults?.sensitivities || [],
-                                    quizResults?.productsToAvoid || []
-                                );
-                                if (!flags.length) return null;
-                                return (
-                                    <div style={{ marginTop: '0.75rem' }}>
-                                        <div style={{ fontSize: '0.78rem', fontWeight: '700', color: '#92400E', marginBottom: '0.4rem' }}>
-                                            ⚠️ Ingredient flags for your profile
-                                        </div>
-                                        {flags.map((flag, i) => (
-                                            <div
-                                                key={i}
-                                                style={{
-                                                    padding: '0.5rem 0.75rem',
-                                                    background: '#FFFBEB',
-                                                    border: '1px solid #FDE68A',
-                                                    borderRadius: 'var(--radius-md)',
-                                                    fontSize: '0.78rem',
-                                                    color: '#92400E',
-                                                    marginBottom: '0.35rem',
-                                                    lineHeight: 1.4,
-                                                }}
-                                            >
-                                                {flag.replace(/\*\*/g, '')}
-                                            </div>
-                                        ))}
-                                    </div>
-                                );
-                            })()}
                         </div>
                     )}
 
