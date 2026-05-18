@@ -423,6 +423,7 @@ function App() {
       healthFunctions: newProduct.healthFunctions?.length ? newProduct.healthFunctions : (oldProduct?.healthFunctions || []),
       _llmConcern: newProduct._llmConcern || oldProduct?._llmConcern || '',
       _llmAlternatives: newAlts,
+      _userSwapped: true, // survives cache reloads — never overwritten by handleBuildEcosystemFromLlm
     };
     setMyProducts((prev) => {
       const next = { ...prev };
@@ -547,7 +548,7 @@ function App() {
       // so navigating away and back doesn't wipe things like the Saalt steamer
       manualIds = Object.keys(prev).filter(id => {
         const p = prev[id];
-        return p && !p.llmGenerated && !p.intakeGenerated;
+        return p && (!p.llmGenerated && !p.intakeGenerated) || p?._userSwapped;
       });
       const manual = Object.fromEntries(manualIds.map(id => [id, prev[id]]));
       return { ...valid.reduce((acc, p) => { acc[p.id] = p; return acc; }, {}), ...manual };

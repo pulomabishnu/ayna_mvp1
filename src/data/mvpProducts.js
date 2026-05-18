@@ -208,34 +208,6 @@ export const MVP_PHYSICAL = [
   },
   // ─── ENDOMETRIOSIS ───────────────────────────────────────
   {
-    id: 'p-thermacare-patch',
-    name: 'ThermaCare Heat Wraps (Menstrual)',
-    brand: 'ThermaCare',
-    category: 'cramp-relief',
-    type: 'physical',
-    internal: false,
-    healthFunctions: ['cramp-relief'],
-    tags: ['cramps', 'endometriosis', 'discomfort'],
-    price: '$12 for 4',
-    userRating: 4.6,
-    whereToBuy: ['CVS', 'Target', 'Walmart', 'Amazon'],
-    image: 'https://m.media-amazon.com/images/I/81F-MPFrHtL.jpg',
-    summary: 'Wearable heat wraps that provide up to 8 hours of heat for menstrual and pelvic pain. Drug-free.',
-    safety: { fdaStatus: 'OTC medical device', materials: 'Heat cells, adhesive', recalls: 'No recalls.', allergens: 'Adhesive' },
-    clinicianOpinionSource: 'independent',
-    clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
-    doctorOpinion: 'Heat therapy is a first-line recommendation for dysmenorrhea and pelvic pain.',
-    communityReview: 'Community discussions on Reddit r/Endo note relief for endometriosis flares and sustained heat.',
-    ingredients: 'Iron, charcoal, salt, water (heat cells).',
-    effectiveness: 'Heat is proven to reduce menstrual and pelvic pain.',
-    badges: ['Drug-Free', 'Long-Lasting'],
-    verificationLinks: {
-      doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/dysmenorrhea-painful-periods', text: 'ACOG: Dysmenorrhea', summary: 'Clinical guidance on heat therapy and NSAIDs for period pain.', justification: 'ACOG is the leading OB-GYN professional society.' }] },
-      scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/27000438/', text: 'Cochrane: Heat for dysmenorrhea', summary: 'Review of heat therapy for menstrual pain.', justification: 'PubMed peer-reviewed.' }] },
-      community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/search/?q=heat+wrap&restrict_sr=1', text: 'Reddit r/periods — heat wraps', summary: 'Community discussions on heat for cramps.' }] }
-    }
-  },
-  {
     id: 'p-tranexamic-acid',
     name: 'Tranexamic Acid (Lysteda)',
     brand: 'Lysteda',
