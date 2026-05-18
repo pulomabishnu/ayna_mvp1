@@ -146,13 +146,9 @@ function EcosystemFunctionProductCard({
                     display: 'inline-block', maxWidth: '100%',
                     padding: '0.22rem 0.5rem',
                     borderRadius: 'var(--radius-pill)',
-                    background: concernLabel ? 'var(--color-primary)' : 'var(--color-secondary-fade)',
-                    color: concernLabel ? '#fff' : 'var(--color-primary-hover)',
-                    border: concernLabel ? 'none' : '1px solid var(--color-border)',
+                    background: 'var(--color-primary)', color: '#fff',
                 }}>
-                    {concernLabel
-                        ? concernLabel.replace(/\s*\(.*?\)/g, '').trim()
-                        : healthFunctionLabel}
+                    {(concernLabel || healthFunctionLabel).replace(/\s*\(.*?\)/g, '').trim()}
                 </span>
             </div>
             <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', marginTop: 'auto' }}>
