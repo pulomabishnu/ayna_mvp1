@@ -526,16 +526,9 @@ function App() {
   const handleBuildEcosystemFromLlm = useCallback((products) => {
     if (!Array.isArray(products) || products.length === 0) return;
     llmBuiltThisSessionRef.current = true;
-    // Deduplicate by brand+name so the same service (e.g. Allara Health) doesn't appear twice
-    const seen = new Set();
-    const deduped = products.filter(p => {
-      if (!p?.id) return false;
-      const key = `${String(p.brand || '').toLowerCase().trim()}|${String(p.name || '').toLowerCase().trim()}`;
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
-    setMyProducts(deduped.reduce((acc, p) => { acc[p.id] = p; return acc; }, {}));
+    // Allow the same product under multiple concerns — the ecosystem Overlap Detection handles flagging.
+    // Deduping by name removed entire categories when LLM reused a supplement (e.g. magnesium) across concerns.
+    setMyProducts(products.filter(p => p?.id).reduce((acc, p) => { acc[p.id] = p; return acc; }, {}));
     // Upsert only — clearEcosystemForUser already ran at rebuild time
     const supabase = getSupabaseClient();
     if (supabase && user) {

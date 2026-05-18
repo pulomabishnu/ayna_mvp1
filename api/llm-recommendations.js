@@ -707,9 +707,14 @@ PERSONALIZATION:
 - Never recommend products she has hidden.
 - Never recommend tranexamic acid products.
 
+PRODUCT SPECIFICITY RULES — critical for quality:
+- The physical product tier MUST be a health/wellness product specifically designed for this concern. Do NOT use generic consumer items (water bottles, blankets, heating pads for non-cramp concerns) or period collection products (pads, cups, tampons, period underwear) for any concern other than Period Care.
+- The telehealth/app tier MUST use the platform most relevant to this specific concern. Match the platform to the concern: UTI → Wisp, Nurx, or HealthTap; mental health → Brightside, Headway, or Talkspace; sleep → sleep coaching apps like Sleepio or Rise; skin/hair → Curology or Hims & Hers Derm; gut/vaginal health → Evvy or Wisp; sexual health → Planned Parenthood Direct or HealthySexual; cycle tracking → Natural Cycles, Clue, or Oura; PCOS → Allara Health. Use Allara Health ONLY for PCOS-specific concerns, not as a default for unrelated concerns.
+- Do not recommend generic hydration (water bottles) or lifestyle items as health products. Every product must be a purpose-built health, wellness, or medical product.
+
 TASK: Generate recommendations for this ONE concern only: "${concern}"${concernFollowup ? `\nUser context: ${JSON.stringify(concernFollowup)}` : ''}
 
-Generate exactly 3 solution tracks for this concern: (1) supplement or wellness product, (2) physical device or period care product, (3) app or telehealth service. If a track isn't clinically relevant for this concern, substitute another meaningful product type. Each track: 1 top product + 2 brief alternatives.
+Generate exactly 3 solution tracks for this concern: (1) supplement or wellness product, (2) physical device specifically designed for this concern, (3) app or telehealth service specifically designed for this concern. If a track isn't clinically relevant, substitute another supplement or digital tool rather than using an unrelated product. Each track: 1 top product + 2 brief alternatives.
 
 Return ONLY valid JSON — exactly this shape:
 {
