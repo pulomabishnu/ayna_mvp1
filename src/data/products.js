@@ -352,8 +352,8 @@ export const PHYSICAL_PRODUCTS = [
         },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'Ayna synthesis of NIH ODS and ACOG guidance on iron supplementation.',
-        doctorOpinion: 'Iron supplementation is recommended for women with heavy menstrual bleeding or confirmed iron deficiency anemia. Confirm with bloodwork before supplementing.',
-        communityReview: 'Well-rated for effectiveness and price. Common feedback: take with food and vitamin C, and expect darker stools.',
+        doctorOpinion: 'Iron supplementation should be confirmed with bloodwork before starting — over-supplementation can cause harm. Take with food and vitamin C to improve absorption and reduce GI side effects.',
+        communityReview: 'Well-rated for effectiveness and price. Common feedback: take with food and vitamin C to reduce stomach upset, and expect darker stools.',
         verificationLinks: {
             scientific: [
                 { url: 'https://ods.od.nih.gov/factsheets/Iron-HealthProfessional/', text: 'NIH ODS — Iron Fact Sheet', summary: 'Comprehensive clinical reference on iron deficiency, supplementation, and safety.' }
@@ -390,8 +390,8 @@ export const PHYSICAL_PRODUCTS = [
         },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'Ayna synthesis of Endocrine Society and NIH ODS guidance on vitamin D supplementation.',
-        doctorOpinion: 'Vitamin D deficiency is common in women with PCOS and may affect hormonal regulation. Testing levels before supplementing is recommended to avoid over-supplementation.',
-        communityReview: 'Highly rated. Users report improvements in mood, energy, and cycle regularity. Frequently recommended on PCOS forums.',
+        doctorOpinion: 'Vitamin D deficiency is widespread and often goes undetected. Confirming your level with a 25(OH)D blood test before starting high-dose supplementation is recommended.',
+        communityReview: 'Highly rated. Users report improvements in mood, energy, and general wellbeing. Consistently well-reviewed for quality and value.',
         verificationLinks: {
             scientific: [
                 { url: 'https://ods.od.nih.gov/factsheets/VitaminD-HealthProfessional/', text: 'NIH ODS — Vitamin D Fact Sheet', summary: 'Clinical reference on vitamin D deficiency, supplementation, and safety thresholds.' }
