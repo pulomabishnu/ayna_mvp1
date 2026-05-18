@@ -940,26 +940,32 @@ export default function MyEcosystem({
                 const accumulated = [];
                 let errorCount = 0;
 
-                // One API call per concern — each call is ~10s, well under Vercel's timeout.
-                // Sending all concerns in one call hit the 60s limit after ~6 concerns.
-                let totalConcerns = null;
-                for (let batchIdx = 0; batchIdx < 25; batchIdx++) {
-                    if (!active) return;
-                    try {
-                        const d = await fetchLlmRecommendations({
+                // 2 parallel batches of 9 concerns each.
+                // With concurrency=1 in the API, each concern takes ~28s sequentially.
+                // 9 concerns × 28s = 252s — safely under Vercel's 300s hard timeout.
+                // 2 simultaneous batches = max 2 concurrent Anthropic calls → well under TPM limit.
+                const BATCH_SIZE = 9;
+                const NUM_BATCHES = 2;
+                let doneCount = 0;
+
+                await new Promise(resolveAll => {
+                    Array.from({ length: NUM_BATCHES }, (_, i) => {
+                        fetchLlmRecommendations({
                             intake, trackedProducts, myProducts, omittedProducts,
-                            learningMemory: memory, batchIndex: batchIdx, batchSize: 1,
-                        });
-                        if (!active) return;
-                        if (totalConcerns === null && d?.concernsTotal != null) totalConcerns = d.concernsTotal;
-                        const recs = Array.isArray(d?.recommendations) ? d.recommendations : [];
-                        if (recs.length > 0) { accumulated.push(...recs); setLlmTiered([...accumulated]); }
-                    } catch (e) {
-                        console.error(`[Ayna LLM] concern ${batchIdx} error:`, e?.message);
-                        errorCount++;
-                    }
-                    if (totalConcerns !== null && batchIdx >= totalConcerns - 1) break;
-                }
+                            learningMemory: memory, batchIndex: i, batchSize: BATCH_SIZE,
+                        })
+                        .then(d => {
+                            if (!active) return;
+                            const recs = Array.isArray(d?.recommendations) ? d.recommendations : [];
+                            if (recs.length > 0) { accumulated.push(...recs); setLlmTiered([...accumulated]); }
+                        })
+                        .catch(e => {
+                            console.error(`[Ayna LLM] batch ${i} error:`, e?.message);
+                            errorCount++;
+                        })
+                        .finally(() => { if (++doneCount === NUM_BATCHES) resolveAll(); });
+                    });
+                });
 
                 if (!active) return;
                 const recs = accumulated;
