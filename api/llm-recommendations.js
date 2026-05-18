@@ -352,7 +352,7 @@ PRODUCT DISCOVERY RULES:
 - QUALITY BAR — every recommended product must meet all three: (a) majority positive reviews from real women, (b) at least some clinical or scientific support for the mechanism or key ingredient, (c) established brand with no active major safety concerns. Do not recommend an obscure brand that lacks this evidence base
 - Never fabricate a brand name — if you are not confident a brand genuinely exists and is US-available, do not include it
 - If unsure about a specific SKU, use the main product line name (e.g. "Rael Organic Cotton Pads" not a specific SKU)
-- URL must link to where the user can BUY this specific product: use the direct product page URL if you know it with confidence (e.g. https://www.thorne.com/products/dp/inositol-8-oz). If you are not certain of the exact product page URL, use a Google Shopping search for the exact product: https://www.google.com/search?q=[Brand+Product+Name]+buy — never use just the brand homepage as the URL.
+- URL must be the direct product page where the user can buy this specific product (e.g. https://www.thorne.com/products/dp/inositol-8-oz, not https://www.thorne.com). If you cannot recall the exact product page URL, use the brand's shop or products section (e.g. https://www.thorne.com/products). Never use the brand homepage alone — the URL must get the user as close as possible to buying that specific product.
 - Leave image as empty string — do not generate image URLs
 
 PERSONALIZATION RULES:
@@ -405,7 +405,7 @@ Return ONLY a valid JSON object. No markdown, no explanation, just JSON:
             },
             "clinicianOpinionSource": "",
             "clinicianAttribution": "",
-            "url": "https://brand.com/product-page OR https://www.google.com/search?q=Brand+Product+buy"
+            "url": "https://brand.com/specific-product-page"
           },
           "alternatives": [
             {
@@ -417,7 +417,7 @@ Return ONLY a valid JSON object. No markdown, no explanation, just JSON:
               "price": "$XX",
               "type": "physical or digital",
               "image": "",
-              "url": "https://brand.com/product-page OR https://www.google.com/search?q=Brand+Product+buy",
+              "url": "https://brand.com/specific-product-page",
               "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" }
             }
           ]
