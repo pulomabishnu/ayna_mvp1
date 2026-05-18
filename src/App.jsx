@@ -526,7 +526,16 @@ function App() {
   const handleBuildEcosystemFromLlm = useCallback((products) => {
     if (!Array.isArray(products) || products.length === 0) return;
     llmBuiltThisSessionRef.current = true;
-    setMyProducts(products.reduce((acc, p) => { if (p?.id) acc[p.id] = p; return acc; }, {}));
+    // Deduplicate by brand+name so the same service (e.g. Allara Health) doesn't appear twice
+    const seen = new Set();
+    const deduped = products.filter(p => {
+      if (!p?.id) return false;
+      const key = `${String(p.brand || '').toLowerCase().trim()}|${String(p.name || '').toLowerCase().trim()}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+    setMyProducts(deduped.reduce((acc, p) => { acc[p.id] = p; return acc; }, {}));
     // Upsert only — clearEcosystemForUser already ran at rebuild time
     const supabase = getSupabaseClient();
     if (supabase && user) {

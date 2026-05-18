@@ -3,8 +3,8 @@ const API_PATH = '/api/llm-recommendations';
 const DEFAULT_FETCH_TIMEOUT_MS = 150_000;
 const MEMORY_KEY = 'ayna_llm_learning_memory_v1';
 /** Persistent cache so re-login does not re-call the LLM for the same intake. */
-const RECS_CACHE_KEY = 'ayna_llm_recommendations_by_intake_v1';
-const FETCHED_FINGERPRINT_KEY = 'ayna_llm_recommendations_fetched_fingerprint_v1';
+const RECS_CACHE_KEY = 'ayna_llm_recommendations_by_intake_v2';
+const FETCHED_FINGERPRINT_KEY = 'ayna_llm_recommendations_fetched_fingerprint_v2';
 
 function stableStringify(val) {
   if (val === null || typeof val !== 'object') return JSON.stringify(val);
