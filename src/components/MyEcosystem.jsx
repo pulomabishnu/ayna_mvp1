@@ -807,7 +807,7 @@ export default function MyEcosystem({
 
         const alreadyInEcosystem = new Set(myProductList.map(p => (p.name || '').toLowerCase()));
 
-        function scoreStartups(list) {
+        function scoreList(list) {
             return list
                 .filter(s => !alreadyInEcosystem.has(s.name.toLowerCase()))
                 .map(s => {
@@ -818,14 +818,15 @@ export default function MyEcosystem({
                     });
                     return { ...s, _score: score };
                 })
-                .filter(s => s._score > 0)
                 .sort((a, b) => b._score - a._score)
                 .slice(0, 6);
         }
 
         return {
-            brands: scoreStartups(RELEASED_STARTUPS),   // US-available → "Women's Health Brands"
-            startups: scoreStartups(UNRELEASED_STARTUPS), // not-yet-US → "Startups"
+            // US-available brands: show all (score just determines order), no score gate
+            brands: scoreList(RELEASED_STARTUPS),
+            // Not-yet-US startups: only show if relevant to the user (score > 0)
+            startups: scoreList(UNRELEASED_STARTUPS).filter(s => s._score > 0),
         };
     }, [myProductList, quizResults, healthProfile, functionMap]);
     const duplicateCount = Object.keys(duplicates).length;

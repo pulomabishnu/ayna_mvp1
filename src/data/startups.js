@@ -1619,20 +1619,24 @@ export const STARTUPS = [
  */
 export function isStartupUsAvailable(s) {
     const stage = String(s.stage || '').toLowerCase();
-    // Must be explicitly available in the US
-    const usSignals = [
-        'in us', 'in all 50', 'in most us', 'in major us', 'us states',
-        'available, established', 'available, growing', 'available, dtc',
-        'shipping in us', 'shipping globally', 'live in all',
-        'insurance-covered', 'nyc', 'clinics in'
-    ];
     const nonUsSignals = [
-        'waitlist', 'coming soon', 'shipping soon', 'uk', 'eu',
-        'launch planned', 'launch tbd', 'expanding us', 'clinical trials'
+        'waitlist', 'coming soon', 'shipping soon',
+        'uk available', 'uk,', ' uk ', 'eu available', ' eu ',
+        'launch planned', 'launch tbd', 'expanding us', 'clinical trials',
+        'us waitlist', 'us expansion', 'us launch'
     ];
-    const hasUs = usSignals.some(sig => stage.includes(sig));
-    const hasNonUs = nonUsSignals.some(sig => stage.includes(sig));
-    return hasUs && !hasNonUs;
+    // Exclude anything explicitly not-yet-US first
+    if (nonUsSignals.some(sig => stage.includes(sig))) return false;
+    // Then look for any positive US signal
+    const usSignals = [
+        'in us', 'in all 50', 'us states', 'in most states', 'in many states',
+        'all 50 states', 'available, established', 'available, growing',
+        'available, dtc', 'shipping in us', 'shipping globally', 'live in all',
+        'insurance-covered', 'nyc', 'clinics in', 'accepting patients',
+        'available in us', 'available us', 'available, established',
+        'virtual', // telehealth platforms available virtually across the US
+    ];
+    return usSignals.some(sig => stage.includes(sig));
 }
 
 /** Startups NOT yet available in the US — shown in the Startups / waitlist section. */
