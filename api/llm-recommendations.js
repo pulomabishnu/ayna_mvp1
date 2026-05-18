@@ -690,6 +690,7 @@ ANTI-HALLUCINATION — this is the most important rule:
 - Never invent a brand name, product line, or product SKU. If you are uncertain whether a specific product exists, use the brand's main product line name instead (e.g. "Rael Organic Cotton Pads" not a specific SKU you're unsure about).
 - Do not combine real brand names with invented product lines (e.g. "Nike CyclePad" — Nike doesn't make period products). Every brand+product combination must actually exist.
 - If you cannot find a real, confident brand for a track, choose a different product type you DO know a real brand for. Never fall back to a generic description — every recommended product must be a specific, purchasable item from a real brand.
+- NEVER combine two products or services into one entry using "or", "/", or parenthetical alternatives (e.g. "Ro or Everlywell", "Thermacare (or Bed Buddy)"). Each product field must be ONE specific product from ONE specific brand. If you want to offer alternatives, put them in the "alternatives" array — that is what it is for.
 - Well-known, safe brands for common categories: heat packs (Thermacare, Bed Buddy, Sunbeam), organic pads (Rael, The Honest Company, Cora, L. Organic), period underwear (Thinx, Knix, Saalt, Modibodi), PCOS supplements (Thorne, Pure Encapsulations, Jarrow, Garden of Life), telehealth (Allara Health, Ro, Nurx, Maven Clinic, Midi Health).
 
 PERSONALIZATION:
