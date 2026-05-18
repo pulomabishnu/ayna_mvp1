@@ -146,11 +146,13 @@ function App() {
   React.useEffect(() => {
     const supabase = getSupabaseClient();
     if (!supabase) { setAuthLoading(false); return; }
-    // On the callback page, AuthCallback handles session — skip getSession() here
-    // but still set up onAuthStateChange so sign-out works after redirect
     const isCallbackPage = window.location.pathname === '/auth/callback';
+    // null = initial check not done yet; false = checked and was signed out; User = was signed in
+    // Used to distinguish an explicit login (false → User) from session restoration (User → User).
+    const initialSessionRef = { current: null };
     if (!isCallbackPage) {
       supabase.auth.getSession().then(({ data: { session } }) => {
+        initialSessionRef.current = session?.user ?? false;
         setUser(session?.user ?? null);
         setAuthLoading(false);
       });
@@ -158,18 +160,15 @@ function App() {
       setAuthLoading(false);
     }
     const STATIC_VIEWS = ['privacy-policy', 'terms-of-use', 'confirmed', 'auth-callback'];
-    // Views where the user wasn't authenticated yet — navigate to ecosystem on sign-in.
-    // All other views (discovery, startups, etc.) should stay put; Supabase fires SIGNED_IN
-    // on token refresh (tab switch) which would otherwise redirect the user mid-browsing.
-    const PRE_AUTH_VIEWS = ['welcome', 'hero', 'quiz'];
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
       if (event === 'SIGNED_IN' && session?.user) {
         setShowAuthModal(false);
-        // Only navigate to ecosystem when on a pre-auth page (welcome/hero/quiz).
-        // Token refresh on tab switch also fires SIGNED_IN — never redirect mid-browsing.
-        // Pending actions (quiz-complete, browse) are handled by the [user,pendingAction] effect.
-        if (PRE_AUTH_VIEWS.includes(currentViewRef.current) && !pendingActionRef.current) {
+        // Only navigate when the user was actually signed out before (explicit login).
+        // Session restoration on page load and token refresh on tab switch both fire
+        // SIGNED_IN — those must not redirect the user away from where they are.
+        const wasSignedOut = initialSessionRef.current === false;
+        if (wasSignedOut && !pendingActionRef.current && !STATIC_VIEWS.includes(currentViewRef.current)) {
           setCurrentView('ecosystem');
         }
       }
