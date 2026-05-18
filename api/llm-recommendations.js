@@ -689,7 +689,7 @@ ANTI-HALLUCINATION — this is the most important rule:
 - ONLY recommend brands you are CERTAIN exist and currently sell products in the US market. The test: can you state the brand's real website domain (e.g. thinx.com, pureenapsulations.com)? If you cannot recall the actual domain with confidence, do NOT recommend that brand.
 - Never invent a brand name, product line, or product SKU. If you are uncertain whether a specific product exists, use the brand's main product line name instead (e.g. "Rael Organic Cotton Pads" not a specific SKU you're unsure about).
 - Do not combine real brand names with invented product lines (e.g. "Nike CyclePad" — Nike doesn't make period products). Every brand+product combination must actually exist.
-- If you cannot find a real, confident brand for a track, say so in matchExplanation and recommend a widely available generic alternative (e.g. "any certified organic heat pack available on Amazon") rather than inventing a brand.
+- If you cannot find a real, confident brand for a track, choose a different product type you DO know a real brand for. Never fall back to a generic description — every recommended product must be a specific, purchasable item from a real brand.
 - Well-known, safe brands for common categories: heat packs (Thermacare, Bed Buddy, Sunbeam), organic pads (Rael, The Honest Company, Cora, L. Organic), period underwear (Thinx, Knix, Saalt, Modibodi), PCOS supplements (Thorne, Pure Encapsulations, Jarrow, Garden of Life), telehealth (Allara Health, Ro, Nurx, Maven Clinic, Midi Health).
 
 PERSONALIZATION:
