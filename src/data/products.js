@@ -325,6 +325,7 @@ export const PHYSICAL_PRODUCTS = [
     {
         id: 'p-saalt-cup-steamer',
         name: 'Saalt Cup Steamer',
+        brand: 'Saalt',
         category: 'cup-steamer',
         type: 'physical',
         internal: false,

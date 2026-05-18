@@ -860,10 +860,15 @@ export default function MyEcosystem({
     }, [myProductList]);
 
     const filteredProducts = useMemo(() => {
+        const words = searchTerm.toLowerCase().trim().split(/\s+/).filter(Boolean);
+        if (!words.length) return ALL_PRODUCTS.filter(p => !omittedProducts[p.id]);
+        const haystack = (p) => [
+            p.name, p.brand, p.category,
+            ...(Array.isArray(p.tags) ? p.tags : []),
+            ...(Array.isArray(p.searchTerms) ? p.searchTerms : []),
+        ].filter(Boolean).join(' ').toLowerCase();
         return ALL_PRODUCTS.filter(p =>
-            (p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                p.category.toLowerCase().includes(searchTerm.toLowerCase())) &&
-            !omittedProducts[p.id]
+            !omittedProducts[p.id] && words.every(w => haystack(p).includes(w))
         );
     }, [searchTerm, omittedProducts]);
 
