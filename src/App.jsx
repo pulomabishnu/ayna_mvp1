@@ -409,21 +409,20 @@ function App() {
   };
 
   const handleSwapEcosystemSeedProduct = (oldProductId, newProduct) => {
+    const oldProduct = myProducts[oldProductId];
+    const oldAlts = Array.isArray(oldProduct?._llmAlternatives) ? oldProduct._llmAlternatives : [];
+    const newAlts = [
+      oldProduct ? { ...oldProduct, _llmAlternatives: [], _llmConcern: '' } : null,
+      ...oldAlts.filter(a => a?.id !== newProduct.id),
+    ].filter(Boolean).slice(0, 3);
+    const enriched = {
+      ...newProduct,
+      healthFunctions: newProduct.healthFunctions?.length ? newProduct.healthFunctions : (oldProduct?.healthFunctions || []),
+      _llmConcern: newProduct._llmConcern || oldProduct?._llmConcern || '',
+      _llmAlternatives: newAlts,
+    };
     setMyProducts((prev) => {
       const next = { ...prev };
-      const oldProduct = prev[oldProductId];
-      const oldAlts = Array.isArray(oldProduct?._llmAlternatives) ? oldProduct._llmAlternatives : [];
-      // Build the new alternatives list: old main product + remaining alts (minus the one just selected)
-      const newAlts = [
-        oldProduct ? { ...oldProduct, _llmAlternatives: [], _llmConcern: '' } : null,
-        ...oldAlts.filter(a => a?.id !== newProduct.id),
-      ].filter(Boolean).slice(0, 3);
-      const enriched = {
-        ...newProduct,
-        healthFunctions: newProduct.healthFunctions?.length ? newProduct.healthFunctions : (oldProduct?.healthFunctions || []),
-        _llmConcern: newProduct._llmConcern || oldProduct?._llmConcern || '',
-        _llmAlternatives: newAlts,
-      };
       delete next[oldProductId];
       next[enriched.id] = enriched;
       return next;
@@ -433,9 +432,15 @@ function App() {
       if (!meta) return prev;
       const n = { ...prev };
       delete n[oldProductId];
-      n[newProduct.id] = meta;
+      n[enriched.id] = meta;
       return n;
     });
+    // Persist swap to Supabase
+    if (user) {
+      const supabase = getSupabaseClient();
+      if (oldProduct) upsertProductState(supabase, user.id, oldProduct, { inEcosystem: false, isTracked: false, isOmitted: false }).catch(console.error);
+      upsertProductState(supabase, user.id, enriched, { inEcosystem: true, isTracked: false, isOmitted: false }).catch(console.error);
+    }
   };
 
   const toggleCompare = (product) => {
@@ -449,20 +454,20 @@ function App() {
   };
 
   const toggleTrackProduct = (product) => {
+    const wasTracked = !!trackedProducts[product.id];
     setTrackedProducts(prev => {
       const next = { ...prev };
-      const wasTracked = !!next[product.id];
       if (wasTracked) delete next[product.id];
       else next[product.id] = product;
-      if (user) {
-        upsertProductState(getSupabaseClient(), user.id, product, {
-          inEcosystem: !!myProducts[product.id],
-          isTracked: !wasTracked,
-          isOmitted: !!omittedProducts[product.id],
-        }).catch(e => console.error('[Ayna] upsert failed:', e));
-      }
       return next;
     });
+    if (user) {
+      upsertProductState(getSupabaseClient(), user.id, product, {
+        inEcosystem: !!myProducts[product.id],
+        isTracked: !wasTracked,
+        isOmitted: !!omittedProducts[product.id],
+      }).catch(e => console.error('[Ayna] upsert failed:', e));
+    }
   };
 
   const toggleJoinWaitlist = (startup) => {
@@ -493,31 +498,24 @@ function App() {
   };
 
   const toggleOmitProduct = (product) => {
+    const wasOmitted = !!omittedProducts[product.id];
     setOmittedProducts(prev => {
       const next = { ...prev };
-      if (next[product.id]) {
-        delete next[product.id];
-        if (user) {
-          upsertProductState(getSupabaseClient(), user.id, product, {
-            inEcosystem: !!myProducts[product.id],
-            isTracked: !!trackedProducts[product.id],
-            isOmitted: false,
-          }).catch(e => console.error('[Ayna] upsert failed:', e));
-        }
-      } else {
-        next[product.id] = product;
-        setTrackedProducts(curr => { const n = { ...curr }; delete n[product.id]; return n; });
-        setMyProducts(curr => { const n = { ...curr }; delete n[product.id]; return n; });
-        if (user) {
-          upsertProductState(getSupabaseClient(), user.id, product, {
-            inEcosystem: false,
-            isTracked: false,
-            isOmitted: true,
-          }).catch(e => console.error('[Ayna] upsert failed:', e));
-        }
-      }
+      if (wasOmitted) delete next[product.id];
+      else next[product.id] = product;
       return next;
     });
+    if (!wasOmitted) {
+      setTrackedProducts(curr => { const n = { ...curr }; delete n[product.id]; return n; });
+      setMyProducts(curr => { const n = { ...curr }; delete n[product.id]; return n; });
+    }
+    if (user) {
+      upsertProductState(getSupabaseClient(), user.id, product, {
+        inEcosystem: wasOmitted ? !!myProducts[product.id] : false,
+        isTracked: wasOmitted ? !!trackedProducts[product.id] : false,
+        isOmitted: !wasOmitted,
+      }).catch(e => console.error('[Ayna] upsert failed:', e));
+    }
   };
 
   const handleLlmRecommendationsLoaded = (recommendations) => {
