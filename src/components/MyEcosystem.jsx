@@ -1621,7 +1621,7 @@ export default function MyEcosystem({
                 )}
 
                 {/* US-available brands — not startups, regular products you can buy now */}
-                {ecosystemStartups.brands.length > 0 && (
+                {!llmLoading && ecosystemStartups.brands.length > 0 && (
                     <div style={{ marginBottom: '1.75rem', maxWidth: '1200px', margin: '0 auto 1.75rem' }}>
                         <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                             🛍️ Women's Health Brands
@@ -1655,7 +1655,7 @@ export default function MyEcosystem({
                 )}
 
                 {/* Non-US startups — waitlist / coming soon */}
-                {ecosystemStartups.startups.length > 0 && (
+                {!llmLoading && ecosystemStartups.startups.length > 0 && (
                     <div style={{ marginBottom: '1.75rem', maxWidth: '1200px', margin: '0 auto 1.75rem' }}>
                         <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                             🚀 Startups relevant to you
@@ -1689,14 +1689,18 @@ export default function MyEcosystem({
                     </div>
                 )}
 
-                <h3 style={{ fontSize: '1.35rem', marginBottom: '0.75rem', textAlign: 'center', color: 'var(--color-text-main)', marginTop: 'var(--spacing-xl)' }}>Care Recommended for You</h3>
-                <CareNearYouPanel
-                    quizResults={quizResults}
-                    healthProfile={healthProfile}
-                    userZipCode={userZipCode}
-                    onZipCodeChange={onZipCodeChange}
-                    onOpenProduct={onOpenProduct}
-                />
+                {!llmLoading && (
+                    <>
+                        <h3 style={{ fontSize: '1.35rem', marginBottom: '0.75rem', textAlign: 'center', color: 'var(--color-text-main)', marginTop: 'var(--spacing-xl)' }}>Care Recommended for You</h3>
+                        <CareNearYouPanel
+                            quizResults={quizResults}
+                            healthProfile={healthProfile}
+                            userZipCode={userZipCode}
+                            onZipCodeChange={onZipCodeChange}
+                            onOpenProduct={onOpenProduct}
+                        />
+                    </>
+                )}
 
                 {typeof onBuildEcosystem === 'function' && (
                     <div style={{ display: 'flex', justifyContent: 'center', marginTop: 'var(--spacing-xl)', marginBottom: 'var(--spacing-lg)' }}>
