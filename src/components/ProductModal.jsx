@@ -937,20 +937,20 @@ export default function ProductModal({
         }} onClick={onClose}>
             <div style={{
                 backgroundColor: 'var(--color-surface-soft)', borderRadius: 'var(--radius-lg)',
-                width: '100%', maxWidth: '750px', maxHeight: '90vh', overflowY: 'auto',
+                width: '100%', maxWidth: 'min(750px, 96vw)', maxHeight: '90vh', overflowY: 'auto',
                 boxShadow: 'var(--shadow-lg)', position: 'relative'
             }} onClick={e => e.stopPropagation()}>
 
                 {/* Close */}
                 <button onClick={onClose} style={{
-                    position: 'absolute', top: '1.5rem', right: '1.5rem', width: '36px', height: '36px',
+                    position: 'absolute', top: '1rem', right: '1rem', width: '44px', height: '44px',
                     borderRadius: '50%', backgroundColor: 'var(--color-bg)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', zIndex: 10,
                     border: '1px solid var(--color-border)', cursor: 'pointer', color: 'var(--color-text-main)'
                 }}>✕</button>
 
                 {/* Hero Image Section */}
-                <div style={{ position: 'relative', height: '240px', width: '100%', overflow: 'hidden', background: 'var(--color-secondary-fade, #fdf2f4)' }}>
+                <div style={{ position: 'relative', height: 'clamp(140px, 35vw, 240px)', width: '100%', overflow: 'hidden', background: 'var(--color-secondary-fade, #fdf2f4)' }}>
                     {heroImageSrc && !isPlaceholderProductImage(heroImageSrc) ? (
                         <>
                             <img
@@ -981,7 +981,7 @@ export default function ProductModal({
                 </div>
 
                 {/* Header */}
-                <div style={{ padding: '2.5rem', paddingTop: '1.5rem', borderBottom: '1px solid var(--color-border)' }}>
+                <div style={{ padding: 'clamp(1rem, 5vw, 2.5rem)', paddingTop: '1.5rem', borderBottom: '1px solid var(--color-border)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem' }}>
                         <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                             <span style={{
@@ -1384,7 +1384,7 @@ export default function ProductModal({
                 </div>
 
                 {/* Navigation Tabs */}
-                <div style={{ padding: '0 2.5rem', position: 'sticky', top: 0, background: 'var(--color-surface-soft)', zIndex: 5 }}>
+                <div style={{ padding: '0 clamp(1rem, 5vw, 2.5rem)', position: 'sticky', top: 0, background: 'var(--color-surface-soft)', zIndex: 5 }}>
                     <div style={{ display: 'flex', gap: '0.5rem', borderBottom: '1px solid var(--color-border)', overflowX: 'auto' }}>
                         {tabs.map(tab => (
                             <button
@@ -1405,7 +1405,7 @@ export default function ProductModal({
                             </button>
                         ))}
                     </div>
-                    <div style={{ padding: '0.65rem 2.5rem 0.85rem', borderTop: '1px solid var(--color-border)', background: 'var(--color-surface)' }}>
+                    <div style={{ padding: '0.65rem clamp(1rem, 5vw, 2.5rem) 0.85rem', borderTop: '1px solid var(--color-border)', background: 'var(--color-surface)' }}>
                         <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.75rem' }}>
                             <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem' }} onClick={loadAiInsights} disabled={aiLoading}>
                                 {aiLoading ? 'Loading…' : 'Refresh Ayna insights'}
@@ -1421,7 +1421,7 @@ export default function ProductModal({
                 </div>
 
                 {/* Tab Panel Content */}
-                <div style={{ padding: '2rem 2.5rem 3rem' }}>
+                <div style={{ padding: '2rem clamp(1rem, 5vw, 2.5rem) 3rem' }}>
 
                     {activeTab === 'safety' && (
                         <div className="animate-fade-in">

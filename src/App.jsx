@@ -119,6 +119,7 @@ function App() {
   const [pendingQuizResults, setPendingQuizResults] = useState(null);
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   const accountMenuRef = useRef(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const scrollY = useScrollPosition();
 
   const hasHealthImport = useMemo(() => hasHealthProfileSignals(healthProfile), [healthProfile]);
@@ -644,10 +645,19 @@ function App() {
               Ayna
             </div>
 
+            {/* Hamburger — mobile only */}
+            <button
+              className="mobile-menu-btn"
+              aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+              onClick={() => setMobileMenuOpen(v => !v)}
+            >
+              {mobileMenuOpen ? '✕' : '≡'}
+            </button>
+
             {/* Ecosystem: label + hover menu (Compare, Hidden, Recall) — left of Search */}
             <div
               ref={ecoNavRef}
-              className={`nav-ecosystem ${ecoMenuOpen ? 'nav-ecosystem--open' : ''} ${ecoMenuOpen && touchUi ? 'nav-ecosystem--caret-open' : ''}`}
+              className={`nav-ecosystem desktop-only ${ecoMenuOpen ? 'nav-ecosystem--open' : ''} ${ecoMenuOpen && touchUi ? 'nav-ecosystem--caret-open' : ''}`}
             >
               <div className="nav-ecosystem__row">
                 <button
@@ -723,7 +733,7 @@ function App() {
             </div>
 
             {/* Public research tools */}
-            <div className="app-nav__research-cluster">
+            <div className="app-nav__research-cluster desktop-only">
               <button style={{ fontSize: '1rem', fontWeight: (currentView === 'discovery' || currentView === 'hero') ? '700' : '500', color: currentView === 'discovery' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem' }} onClick={() => handleViewDiscovery('')}>
                 Product Discovery
               </button>
@@ -740,7 +750,7 @@ function App() {
           </div>
 
           {/* Account Actions */}
-          <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', flexWrap: 'wrap' }}>
+          <div className="desktop-only" style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', flexWrap: 'wrap' }}>
             <button
               style={{
                 fontSize: '0.9rem', fontWeight: '600', padding: '0.3rem 0.65rem',
@@ -801,6 +811,25 @@ function App() {
             )}
           </div>
         </nav>
+
+        {/* Mobile drawer */}
+        {mobileMenuOpen && (
+          <div className="mobile-nav-drawer" onClick={() => setMobileMenuOpen(false)}>
+            <button className="mobile-drawer-item" onClick={() => { handleViewEcosystem(); setMobileMenuOpen(false); }}>
+              My Ecosystem {ecosystemCount > 0 && <span className="nav-ecosystem__pill">{ecosystemCount}</span>}
+            </button>
+            <button className="mobile-drawer-item" onClick={() => { handleViewDiscovery(''); setMobileMenuOpen(false); }}>Product Discovery</button>
+            <button className="mobile-drawer-item" onClick={() => { handleViewWaitlist(); setMobileMenuOpen(false); }}>Startups</button>
+            <button className="mobile-drawer-item" onClick={() => { handleViewDeeptech(); setMobileMenuOpen(false); }}>Deeptech</button>
+            <button className="mobile-drawer-item" onClick={() => { handleViewArticles(); setMobileMenuOpen(false); }}>My Health Library</button>
+            <button className="mobile-drawer-item" onClick={() => { setShowCheckin(true); setMobileMenuOpen(false); }}>Check-in</button>
+            {user ? (
+              <button className="mobile-drawer-item" onClick={() => { getSupabaseClient()?.auth.signOut(); setMobileMenuOpen(false); }}>Log out</button>
+            ) : (
+              <button className="mobile-drawer-item" onClick={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); setMobileMenuOpen(false); }}>Log in</button>
+            )}
+          </div>
+        )}
         </div>
         )}
 
