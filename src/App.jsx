@@ -119,6 +119,7 @@ function App() {
   const pendingActionRef = useRef(null);
   const [pendingQuizResults, setPendingQuizResults] = useState(null);
   const [showAccountMenu, setShowAccountMenu] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const accountMenuRef = useRef(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const scrollY = useScrollPosition();
@@ -819,6 +820,16 @@ function App() {
                     >
                       Log out
                     </button>
+                    <button
+                      onClick={() => { setShowDeleteModal(true); setShowAccountMenu(false); }}
+                      style={{
+                        fontSize: '0.78rem', fontWeight: '500', color: 'var(--color-text-muted)',
+                        background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+                        textAlign: 'left',
+                      }}
+                    >
+                      Delete account
+                    </button>
                   </div>
                 )}
               </div>
@@ -849,7 +860,10 @@ function App() {
             <button className="mobile-drawer-item" onClick={() => { handleViewArticles(); setMobileMenuOpen(false); }}>My Health Library</button>
             <button className="mobile-drawer-item" onClick={() => { setShowCheckin(true); setMobileMenuOpen(false); }}>Check-in</button>
             {user ? (
-              <button className="mobile-drawer-item" onClick={() => { getSupabaseClient()?.auth.signOut(); setMobileMenuOpen(false); }}>Log out</button>
+              <>
+                <button className="mobile-drawer-item" onClick={() => { getSupabaseClient()?.auth.signOut(); setMobileMenuOpen(false); }}>Log out</button>
+                <button className="mobile-drawer-item" onClick={() => { setShowDeleteModal(true); setMobileMenuOpen(false); }} style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>Delete account</button>
+              </>
             ) : (
               <button className="mobile-drawer-item" onClick={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); setMobileMenuOpen(false); }}>Log in</button>
             )}
@@ -1091,6 +1105,78 @@ function App() {
             quizResults={quizResults}
             healthProfile={healthProfile}
           />
+        )}
+
+        {showDeleteModal && (
+          <div
+            onClick={() => setShowDeleteModal(false)}
+            style={{
+              position: 'fixed', inset: 0, zIndex: 2000,
+              background: 'rgba(28,25,23,0.55)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              padding: '1.5rem',
+            }}
+          >
+            <div
+              onClick={e => e.stopPropagation()}
+              style={{
+                background: 'var(--color-surface)',
+                borderRadius: 'var(--radius-lg)',
+                boxShadow: 'var(--shadow-lg)',
+                padding: '2rem',
+                maxWidth: '420px',
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '1rem',
+                position: 'relative',
+              }}
+            >
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                aria-label="Close"
+                style={{
+                  position: 'absolute', top: '1rem', right: '1rem',
+                  background: 'none', border: 'none', cursor: 'pointer',
+                  fontSize: '1.4rem', lineHeight: 1, color: 'var(--color-text-muted)',
+                  padding: '0.1rem 0.3rem',
+                }}
+              >×</button>
+              <h2 style={{ fontSize: '1.05rem', fontWeight: '700', color: 'var(--color-text-main)', margin: 0, fontFamily: 'var(--font-heading)' }}>
+                Delete account
+              </h2>
+              <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', lineHeight: 1.6, margin: 0 }}>
+                To request deletion of your entire account and data, email{' '}
+                <a
+                  href="mailto:pulomabishnu@gmail.com?subject=Account%20Deletion%20Request"
+                  style={{ color: 'var(--color-primary)', textDecoration: 'underline', fontWeight: '500' }}
+                >
+                  pulomabishnu@gmail.com
+                </a>
+                {' '}from the email address associated with your account.
+              </p>
+              <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', lineHeight: 1.6, margin: 0 }}>
+                This request will be processed within <strong style={{ color: 'var(--color-text-main)' }}>1 week</strong>.
+              </p>
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                style={{
+                  marginTop: '0.25rem',
+                  padding: '0.65rem',
+                  fontSize: '0.875rem',
+                  fontWeight: '600',
+                  background: 'var(--color-surface-soft)',
+                  color: 'var(--color-text-main)',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: 'var(--radius-sm)',
+                  cursor: 'pointer',
+                  fontFamily: 'var(--font-body)',
+                }}
+              >
+                Close
+              </button>
+            </div>
+          </div>
         )}
 
         {showAuthModal && (
