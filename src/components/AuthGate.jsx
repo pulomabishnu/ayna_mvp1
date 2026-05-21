@@ -8,6 +8,14 @@ const SUBTITLES = {
   default: 'Your personal women\'s health manager',
 };
 
+const CONSENT_ITEMS = [
+  'I understand that the health information I enter into Ayna is self-reported wellness data, not a clinical record.',
+  'I understand my wellness data is processed by an external AI service to generate personalized recommendations and is NEVER sold. Ayna takes rigorous measures to anonymize user data for recommendations and secure storage.',
+  'I understand Ayna provides wellness information only and is not a substitute for medical advice from a qualified healthcare provider.',
+];
+
+const CONSENT_VERSION = 'v1';
+
 export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAuthRedirect, redirectTo }) {
   const [mode, setMode] = useState('signup');
   const [email, setEmail] = useState('');
@@ -17,9 +25,15 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [checked, setChecked] = useState([false, false, false]);
 
   const supabase = getSupabaseClient();
   const subtitle = SUBTITLES[context] || SUBTITLES.default;
+  const allConsented = checked.every(Boolean);
+  const isSignup = mode === 'signup';
+
+  const toggleCheck = (i) =>
+    setChecked(prev => prev.map((v, idx) => (idx === i ? !v : v)));
 
   const handleEmailAuth = async (e) => {
     e.preventDefault();
@@ -27,14 +41,17 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
     setSuccessMsg('');
     setLoading(true);
     try {
-      if (mode === 'signup') {
+      if (isSignup) {
+        const consentAt = new Date().toISOString();
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: `${window.location.origin}/confirmed` },
+          options: {
+            emailRedirectTo: `${window.location.origin}/confirmed`,
+            data: { consent_given_at: consentAt, consent_version: CONSENT_VERSION },
+          },
         });
         if (error) throw error;
-        // Supabase returns an empty identities array when the email is already registered
         if (data.user?.identities?.length === 0) {
           setError('An account with this email already exists. Sign in instead.');
           setMode('signin');
@@ -60,6 +77,16 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
     setError('');
     setGoogleLoading(true);
     try {
+      // Persist consent so AuthCallback can write it to user metadata after redirect
+      if (isSignup) {
+        try {
+          sessionStorage.setItem('ayna_pending_consent', JSON.stringify({
+            consent_given_at: new Date().toISOString(),
+            consent_version: CONSENT_VERSION,
+          }));
+        } catch (_) {}
+      }
+      if (onBeforeOAuthRedirect) onBeforeOAuthRedirect();
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -68,7 +95,6 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
         },
       });
       if (error) throw error;
-      // Browser will redirect automatically — nothing else needed
     } catch (err) {
       setError(err.message || 'Could not sign in with Google.');
       setGoogleLoading(false);
@@ -115,14 +141,14 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
         <div style={styles.toggleRow}>
           <button
             type="button"
-            style={{ ...styles.toggleBtn, ...(mode === 'signup' ? styles.toggleBtnActive : {}) }}
+            style={{ ...styles.toggleBtn, ...(isSignup ? styles.toggleBtnActive : {}) }}
             onClick={() => switchMode('signup')}
           >
             Create account
           </button>
           <button
             type="button"
-            style={{ ...styles.toggleBtn, ...(mode === 'signin' ? styles.toggleBtnActive : {}) }}
+            style={{ ...styles.toggleBtn, ...(!isSignup ? styles.toggleBtnActive : {}) }}
             onClick={() => switchMode('signin')}
           >
             Sign in
@@ -147,8 +173,8 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
               onChange={(e) => setPassword(e.target.value)}
               required
               style={{ ...styles.input, width: '100%', boxSizing: 'border-box', paddingRight: '2.5rem' }}
-              autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
-              minLength={mode === 'signup' ? 8 : undefined}
+              autoComplete={isSignup ? 'new-password' : 'current-password'}
+              minLength={isSignup ? 8 : undefined}
             />
             <button
               type="button"
@@ -159,10 +185,44 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
               {showPassword ? 'Hide' : 'Show'}
             </button>
           </div>
+
+          {isSignup && (
+            <>
+              <div style={styles.consentSection}>
+                {CONSENT_ITEMS.map((text, i) => (
+                  <label key={i} style={styles.consentItem}>
+                    <input
+                      type="checkbox"
+                      checked={checked[i]}
+                      onChange={() => toggleCheck(i)}
+                      style={styles.checkbox}
+                    />
+                    <span style={styles.consentText}>{text}</span>
+                  </label>
+                ))}
+              </div>
+
+              <p style={styles.legalNotice}>
+                By creating an account you agree to Ayna's{' '}
+                <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" style={styles.link}>Privacy Policy</a>
+                {' '}and{' '}
+                <a href="/terms-of-use" target="_blank" rel="noopener noreferrer" style={styles.link}>Terms of Service</a>.
+              </p>
+            </>
+          )}
+
           {error && <p style={styles.error}>{error}</p>}
           {successMsg && <p style={styles.success}>{successMsg}</p>}
-          <button type="submit" disabled={loading || !supabase} style={styles.primaryBtn}>
-            {loading ? 'Please wait…' : mode === 'signup' ? 'Create account' : 'Sign in'}
+
+          <button
+            type="submit"
+            disabled={loading || !supabase || (isSignup && !allConsented)}
+            style={{
+              ...styles.primaryBtn,
+              ...(isSignup && !allConsented ? styles.primaryBtnDisabled : {}),
+            }}
+          >
+            {loading ? 'Please wait…' : isSignup ? 'Create account' : 'Sign in'}
           </button>
         </form>
 
@@ -175,19 +235,24 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
         <button
           type="button"
           onClick={handleGoogle}
-          disabled={googleLoading}
-          style={styles.googleBtn}
+          disabled={googleLoading || (isSignup && !allConsented)}
+          style={{
+            ...styles.googleBtn,
+            ...(isSignup && !allConsented ? styles.googleBtnDisabled : {}),
+          }}
         >
           <GoogleIcon />
           {googleLoading ? 'Redirecting…' : 'Continue with Google'}
         </button>
 
-        <p style={styles.fine}>
-          By continuing you agree to our{' '}
-          <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'underline' }}>Privacy Policy</a>
-          {' '}and{' '}
-          <a href="/terms-of-use" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'underline' }}>Terms of Use</a>.
-        </p>
+        {!isSignup && (
+          <p style={styles.fine}>
+            By continuing you agree to our{' '}
+            <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'underline' }}>Privacy Policy</a>
+            {' '}and{' '}
+            <a href="/terms-of-use" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'underline' }}>Terms of Use</a>.
+          </p>
+        )}
 
         {isModal && onSkip && context !== 'login' && (
           <button type="button" onClick={onSkip} style={styles.skipBtn}>
@@ -293,6 +358,46 @@ const styles = {
     fontFamily: 'var(--font-body)',
     transition: 'border-color var(--transition-fast)',
   },
+  consentSection: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.6rem',
+    padding: '0.85rem',
+    background: 'var(--color-surface-soft)',
+    borderRadius: 'var(--radius-sm)',
+    border: '1px solid var(--color-border)',
+    marginTop: '0.15rem',
+  },
+  consentItem: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: '0.6rem',
+    cursor: 'pointer',
+  },
+  checkbox: {
+    marginTop: '0.15rem',
+    flexShrink: 0,
+    width: '15px',
+    height: '15px',
+    accentColor: 'var(--color-primary)',
+    cursor: 'pointer',
+  },
+  consentText: {
+    fontSize: '0.78rem',
+    color: 'var(--color-text-muted)',
+    lineHeight: 1.45,
+  },
+  legalNotice: {
+    fontSize: '0.72rem',
+    color: 'var(--color-text-muted)',
+    lineHeight: 1.45,
+    margin: '-0.1rem 0 0',
+    textAlign: 'center',
+  },
+  link: {
+    color: 'var(--color-primary)',
+    textDecoration: 'underline',
+  },
   primaryBtn: {
     padding: '0.75rem',
     fontSize: '0.9rem',
@@ -305,6 +410,10 @@ const styles = {
     transition: 'background var(--transition-fast)',
     marginTop: '0.25rem',
     fontFamily: 'var(--font-body)',
+  },
+  primaryBtnDisabled: {
+    opacity: 0.45,
+    cursor: 'not-allowed',
   },
   error: {
     fontSize: '0.8rem',
@@ -349,6 +458,10 @@ const styles = {
     transition: 'background var(--transition-fast)',
     fontFamily: 'var(--font-body)',
     width: '100%',
+  },
+  googleBtnDisabled: {
+    opacity: 0.45,
+    cursor: 'not-allowed',
   },
   fine: {
     fontSize: '0.7rem',

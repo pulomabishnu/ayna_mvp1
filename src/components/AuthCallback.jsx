@@ -28,6 +28,17 @@ export default function AuthCallback({ onAuthenticated }) {
       return;
     }
 
+    // Flush consent stored before OAuth redirect into user metadata (fire-and-forget)
+    function flushPendingConsent() {
+      try {
+        const raw = sessionStorage.getItem('ayna_pending_consent');
+        if (!raw) return;
+        sessionStorage.removeItem('ayna_pending_consent');
+        const consent = JSON.parse(raw);
+        supabase.auth.updateUser({ data: consent }).catch(() => {});
+      } catch (_) {}
+    }
+
     // OAuth — set session and navigate to ecosystem
     if (accessToken && refreshToken) {
       supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken })
@@ -36,6 +47,7 @@ export default function AuthCallback({ onAuthenticated }) {
             setStatus('error');
             setErrorMsg(error?.message || 'Could not establish session.');
           } else {
+            flushPendingConsent();
             onAuthenticated(data.session.user);
           }
         });
@@ -44,11 +56,12 @@ export default function AuthCallback({ onAuthenticated }) {
 
     // Fallback: check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) { onAuthenticated(session.user); return; }
+      if (session?.user) { flushPendingConsent(); onAuthenticated(session.user); return; }
 
       const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
         if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session?.user) {
           subscription.unsubscribe();
+          flushPendingConsent();
           onAuthenticated(session.user);
         }
       });
