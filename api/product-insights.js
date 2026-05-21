@@ -504,7 +504,7 @@ export default async function handler(req, res) {
         generatedAt: new Date().toISOString(),
       });
     } catch (e) {
-      console.error(e);
+      console.error('[product-insights] provider error:', e?.message);
       lastError = e;
     }
   }

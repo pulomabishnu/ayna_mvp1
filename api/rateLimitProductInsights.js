@@ -138,7 +138,7 @@ export async function checkProductInsightsRateLimit(req) {
       }
       return { ok: true, limiter: 'upstash' };
     } catch (e) {
-      console.error('product-insights rate limit (upstash):', e);
+      console.error('product-insights rate limit (upstash):', e?.message);
     }
   }
 

@@ -840,10 +840,10 @@ async function handleRequest(req, res) {
         const raw = await callProvider(provider, prompt);
         if (!raw) continue;
         const parsed = tryParseJsonCandidate(raw);
-        console.log('Concern:', concern, '| Provider:', provider, '| Length:', String(raw || '').length, '| Parsed:', !!parsed);
+        console.log('[llm-recs] concern resolved | idx:', concerns.indexOf(concern) + 1, '/', concerns.length, '| provider:', provider, '| bytes:', String(raw || '').length, '| parsed:', !!parsed);
         if (parsed) return { parsed, provider };
       }
-      console.warn('No parseable response for concern:', concern);
+      console.warn('[llm-recs] no parseable response | concern idx:', concerns.indexOf(concern) + 1, '/', concerns.length);
       return null;
     },
     1  // sequential (concurrency=1) — Anthropic TPM limit is ~50K/min; parallel calls exhaust
