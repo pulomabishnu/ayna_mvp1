@@ -711,22 +711,56 @@ export default function ProductModal({
         </div>
     );
 
-    const handleSendMessage = (e) => {
+    const handleSendMessage = async (e) => {
         e.preventDefault();
-        if (!chatInput.trim()) return;
+        if (!chatInput.trim() || isTyping) return;
 
         const userMsg = chatInput.trim();
         setChatMessages(prev => [...prev, { role: 'user', text: userMsg }]);
         setChatInput('');
         setIsTyping(true);
 
-        setTimeout(() => {
-            setIsTyping(false);
+        try {
+            const res = await fetch('/api/product-chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    question: userMsg,
+                    product: {
+                        name: product.name,
+                        brand: product.brand,
+                        summary: product.summary,
+                        ingredients: product.ingredients,
+                        effectiveness: product.effectiveness,
+                        doctorOpinion: product.doctorOpinion,
+                        communityReview: product.communityReview,
+                        safety: product.safety,
+                        tags: product.tags,
+                        healthFunctions: product.healthFunctions,
+                        category: product.category,
+                    },
+                    aiInsights: aiInsights ? {
+                        clinicalNarrative: aiInsights.clinicalNarrative,
+                        scienceSummary: aiInsights.scienceSummary,
+                        communitySummary: aiInsights.communitySummary,
+                    } : null,
+                    userContext: healthContextKey || '',
+                }),
+                signal: AbortSignal.timeout(30000),
+            });
+            const data = await res.json();
             setChatMessages(prev => [...prev, {
                 role: 'assistant',
-                text: `Based on my analysis of ${product.name}, that's a great question. According to our Tier 1 data and clinician reviews, it is designed to help with ${product.tags?.join(' and ') || 'your health needs'}. Always consult your healthcare provider for personalized medical advice.`
+                text: data.answer || "I wasn't able to answer that right now. Please try again.",
             }]);
-        }, 1500);
+        } catch {
+            setChatMessages(prev => [...prev, {
+                role: 'assistant',
+                text: "Something went wrong. Please try again in a moment.",
+            }]);
+        } finally {
+            setIsTyping(false);
+        }
     };
 
     const renderVerificationLinks = (linksOrSection, aiSummaryOverride, label, type, productRef, options = {}) => {
