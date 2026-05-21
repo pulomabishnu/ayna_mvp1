@@ -2,6 +2,53 @@ import { buildUserHealthContextString } from './userHealthContextForInsights';
 import { deriveBrandSearchContext } from './productBrandContext.js';
 
 const API_PATH = '/api/product-insights';
+const CACHE_PREFIX = 'ayna_insights_v1_';
+const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+
+function simpleHash(str) {
+  let h = 0;
+  const s = String(str || '').slice(0, 300);
+  for (let i = 0; i < s.length; i++) h = (Math.imul(31, h) + s.charCodeAt(i)) | 0;
+  return Math.abs(h).toString(36);
+}
+
+function cacheKey(productId, contextHash) {
+  return `${CACHE_PREFIX}${productId}_${contextHash}`;
+}
+
+export function loadCachedInsights(productId, healthContextKey) {
+  try {
+    const key = cacheKey(productId, simpleHash(healthContextKey));
+    const raw = localStorage.getItem(key);
+    if (!raw) return null;
+    const { data, ts } = JSON.parse(raw);
+    if (Date.now() - ts > CACHE_TTL_MS) { localStorage.removeItem(key); return null; }
+    return data || null;
+  } catch { return null; }
+}
+
+export function saveCachedInsights(productId, healthContextKey, data) {
+  try {
+    const key = cacheKey(productId, simpleHash(healthContextKey));
+    localStorage.setItem(key, JSON.stringify({ data, ts: Date.now() }));
+    // Prune expired entries so localStorage doesn't grow unbounded
+    for (const k of Object.keys(localStorage)) {
+      if (!k.startsWith(CACHE_PREFIX)) continue;
+      try {
+        const { ts } = JSON.parse(localStorage.getItem(k) || '{}');
+        if (!ts || Date.now() - ts > CACHE_TTL_MS) localStorage.removeItem(k);
+      } catch { localStorage.removeItem(k); }
+    }
+  } catch {}
+}
+
+export function clearInsightsCacheForProduct(productId) {
+  try {
+    for (const k of Object.keys(localStorage)) {
+      if (k.startsWith(`${CACHE_PREFIX}${productId}_`)) localStorage.removeItem(k);
+    }
+  } catch {}
+}
 
 export function buildProductInsightPayload(product) {
   if (!product) return null;

@@ -3,7 +3,7 @@ import Disclaimer from './Disclaimer';
 import { getProfileMatchLabelsForProduct, getRecommendationExplanation, getPrescriptionAccessGuidance } from '../data/products';
 import { getHowToUseContent } from '../data/productHowToUse';
 import { getAynaRating } from '../data/aynaReviews';
-import { fetchProductInsights } from '../utils/fetchProductInsights';
+import { fetchProductInsights, loadCachedInsights, saveCachedInsights } from '../utils/fetchProductInsights';
 import { buildUserHealthContextString } from '../utils/userHealthContextForInsights';
 import { buildProfileTailoring, getIngredientSafetyFlags } from '../utils/profileProductTailoring';
 import { fetchFdaRecall } from '../utils/fetchFdaRecall';
@@ -555,11 +555,20 @@ export default function ProductModal({
         setAiInsights(null);
         setAiError(null);
         if (!product?.id) return;
+        // Serve from cache if available — only regenerate when health profile changes
+        const cached = loadCachedInsights(product.id, healthContextKey);
+        if (cached) {
+            setAiInsights(cached);
+            return;
+        }
         let cancelled = false;
         setAiLoading(true);
         fetchProductInsights(product, { quizResults, healthProfile })
             .then((data) => {
-                if (!cancelled) setAiInsights(data);
+                if (!cancelled) {
+                    setAiInsights(data);
+                    saveCachedInsights(product.id, healthContextKey, data);
+                }
             })
             .catch((e) => {
                 if (cancelled) return;
@@ -578,9 +587,7 @@ export default function ProductModal({
             .finally(() => {
                 if (!cancelled) setAiLoading(false);
             });
-        return () => {
-            cancelled = true;
-        };
+        return () => { cancelled = true; };
     }, [product?.id, healthContextKey, product, quizResults, healthProfile]);
 
     if (!product) return null;
@@ -588,12 +595,14 @@ export default function ProductModal({
     const isDigital = product.type === 'digital';
     const isPrescriptionOnly = product.requiresPrescription === true || (product.whereToBuy?.length === 1 && product.whereToBuy[0] === 'Pharmacy with prescription');
 
+    // Refresh bypasses cache — user explicitly asked for fresh insights
     const loadAiInsights = async () => {
         setAiLoading(true);
         setAiError(null);
         try {
             const data = await fetchProductInsights(product, { quizResults, healthProfile });
             setAiInsights(data);
+            saveCachedInsights(product.id, healthContextKey, data);
         } catch (e) {
             if (e?.status === 429) {
                 const sec = e.retryAfterSeconds;
