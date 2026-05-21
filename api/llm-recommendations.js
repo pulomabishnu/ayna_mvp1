@@ -5,6 +5,38 @@ function anyApiKeyConfigured() {
   return !!(process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY);
 }
 
+// ─── Intake PII sanitization ──────────────────────────────────────────────────
+
+function ageRange(age) {
+  const n = parseInt(age, 10);
+  if (!n || isNaN(n)) return 'unknown';
+  if (n < 25) return 'under 25';
+  if (n < 35) return '25-34';
+  if (n < 45) return '35-44';
+  if (n < 55) return '45-54';
+  return '55+';
+}
+
+function zipOnly(location) {
+  if (!location) return 'not provided';
+  const match = String(location).match(/\b(\d{5})(?:-\d{4})?\b/);
+  return match ? match[1] : 'not provided';
+}
+
+// Strip PII fields that must never reach Claude; replace age/location with
+// privacy-safe equivalents. Applied once at the API boundary in handleRequest.
+function sanitizeIntake(raw) {
+  if (!raw || typeof raw !== 'object') return raw || {};
+  // Destructure to explicitly drop identifying fields
+  // eslint-disable-next-line no-unused-vars
+  const { email, name, user_id, userId, fullAddress, address, ...rest } = raw;
+  return {
+    ...rest,
+    age: ageRange(raw.age),
+    location: zipOnly(raw.location),
+  };
+}
+
 function selectedConcerns(intake = {}) {
   const blocked = new Set(['general discomfort', 'other']);
   const concerns = new Set();
@@ -809,12 +841,16 @@ async function handleRequest(req, res) {
     return res.status(400).json({ error: 'invalid_json' });
   }
 
-  const intake = body?.intake || {};
+  const rawIntake = body?.intake || {};
   const feedback = body?.feedback || {};
 
-  if (!intake || typeof intake !== 'object') {
+  if (!rawIntake || typeof rawIntake !== 'object') {
     return res.status(400).json({ error: 'missing_intake' });
   }
+
+  // Strip PII (email, name, user_id) and replace exact age/location with
+  // privacy-safe equivalents before anything is sent to an LLM or search API.
+  const intake = sanitizeIntake(rawIntake);
 
   const allConcerns = selectedConcerns(intake);
   // Slice to the requested batch if batchIndex + batchSize provided
