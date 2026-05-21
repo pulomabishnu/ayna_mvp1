@@ -1158,23 +1158,6 @@ function App() {
               <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', lineHeight: 1.6, margin: 0 }}>
                 This request will be processed within <strong style={{ color: 'var(--color-text-main)' }}>1 week</strong>.
               </p>
-              <button
-                onClick={() => setShowDeleteModal(false)}
-                style={{
-                  marginTop: '0.25rem',
-                  padding: '0.65rem',
-                  fontSize: '0.875rem',
-                  fontWeight: '600',
-                  background: 'var(--color-surface-soft)',
-                  color: 'var(--color-text-main)',
-                  border: '1px solid var(--color-border)',
-                  borderRadius: 'var(--radius-sm)',
-                  cursor: 'pointer',
-                  fontFamily: 'var(--font-body)',
-                }}
-              >
-                Close
-              </button>
             </div>
           </div>
         )}
