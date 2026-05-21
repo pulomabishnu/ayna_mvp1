@@ -1137,6 +1137,10 @@ export default function MyEcosystem({
         // Guard: only fire when we have actual LLM results, not the rule-based fallback
         if (!llmTiered.length) return;
         if (!recommendedProductsForDisplay.length || !onBuildEcosystemFromLlm) return;
+        // Don't overwrite a Supabase-loaded ecosystem on every login — only rebuild when:
+        // 1. Ecosystem is empty (first time ever), or
+        // 2. User explicitly requested a refresh (nonce > 0)
+        if (Object.keys(myProducts).length > 0 && recommendationRefreshNonce === 0) return;
         // Each concern has 3 tiers (supplement, physical, telehealth) — add each as its own ecosystem card
         const enrichedProducts = recommendedProductsForDisplay
             .flatMap(section =>
@@ -1155,7 +1159,7 @@ export default function MyEcosystem({
             .filter(Boolean);
         if (!enrichedProducts.length) return;
         onBuildEcosystemFromLlm(enrichedProducts);
-    }, [recommendedProductsForDisplay, onBuildEcosystemFromLlm, llmTiered]);
+    }, [recommendedProductsForDisplay, onBuildEcosystemFromLlm, llmTiered, myProducts, recommendationRefreshNonce]);
 
     useEffect(() => {
         if (!activeTiered || !activeTiered.length) return;
