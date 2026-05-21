@@ -206,9 +206,25 @@ function App() {
       loadLearningMemoryForUser(supabase, user.id).catch(() => null),
       loadHealthIntakeForCurrentUser().catch(() => null),
     ]).then(([ecosystem, reviews, memory, intake]) => {
-      if (ecosystem && !llmBuiltThisSessionRef.current) {
-        setMyProducts(ecosystem.myProducts);
-        setEcosystemOrder(Object.keys(ecosystem.myProducts));
+      if (ecosystem) {
+        if (!llmBuiltThisSessionRef.current) {
+          setMyProducts(ecosystem.myProducts);
+          setEcosystemOrder(Object.keys(ecosystem.myProducts));
+        } else {
+          // LLM already built this session — merge only manual (non-LLM) products from Supabase
+          setMyProducts(prev => {
+            const manual = Object.fromEntries(
+              Object.entries(ecosystem.myProducts)
+                .filter(([, p]) => !p?.llmGenerated && !p?.intakeGenerated)
+            );
+            return { ...prev, ...manual };
+          });
+          setEcosystemOrder(prev => {
+            const newManualIds = Object.keys(ecosystem.myProducts)
+              .filter(id => !ecosystem.myProducts[id]?.llmGenerated && !ecosystem.myProducts[id]?.intakeGenerated && !prev.includes(id));
+            return [...prev, ...newManualIds];
+          });
+        }
         setTrackedProducts(ecosystem.trackedProducts);
         setOmittedProducts(ecosystem.omittedProducts);
       }

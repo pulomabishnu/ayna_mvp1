@@ -3,7 +3,7 @@ import { deriveBrandSearchContext } from './productBrandContext.js';
 
 const API_PATH = '/api/product-insights';
 const CACHE_PREFIX = 'ayna_insights_v1_';
-const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+const CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 function simpleHash(str) {
   let h = 0;
