@@ -35,6 +35,7 @@ import { loadEcosystemForUser, upsertProductState, clearEcosystemForUser } from 
 import { loadLearningMemoryForUser, saveLearningMemoryForUser } from './utils/learningMemoryStore';
 import { loadReviewsForUser, upsertProductReviews } from './utils/reviewsStore';
 import { clearCachedLlmRecommendations } from './utils/fetchLlmRecommendations';
+import posthog from 'posthog-js';
 
 const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls'];
 
@@ -407,6 +408,10 @@ function App() {
     const supabase = getSupabaseClient();
     // Await clear so token-refresh reloads never bring back stale products
     if (supabase && user) await clearEcosystemForUser(supabase, user.id).catch(console.error);
+    posthog.capture('intake_completed', {
+      concernsCount: Array.isArray(completedResults.primaryConcerns) ? completedResults.primaryConcerns.length : 0,
+      conditionsCount: Array.isArray(completedResults.conditions) ? completedResults.conditions.length : 0,
+    });
     setCurrentView('ecosystem');
   };
 
@@ -513,6 +518,9 @@ function App() {
     setEcosystemOrder(prev =>
       wasIn ? prev.filter(id => id !== product.id) : [...prev, product.id]
     );
+    if (!wasIn) {
+      posthog.capture('product_added', { category: product.category, type: product.type });
+    }
     if (user) {
       upsertProductState(getSupabaseClient(), user.id, product, {
         inEcosystem: !wasIn,
@@ -620,6 +628,7 @@ function App() {
 
   const handleOpenProduct = (product) => {
     const p = product?.llmGenerated ? enrichLlmProductForDiscovery(product) : product;
+    posthog.capture('product_card_opened', { category: p?.category });
     setSelectedProductModal(p);
   };
   const handleCloseProduct = () => setSelectedProductModal(null);

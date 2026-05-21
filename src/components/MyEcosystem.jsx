@@ -27,6 +27,7 @@ import {
 import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
 import { getPricePerUnitLabel } from '../utils/pricePerUnit';
 import { deriveBrandSearchContext } from '../utils/productBrandContext.js';
+import posthog from 'posthog-js';
 
 /** Full card for “By function” ecosystem grid: image (🌸 fallback), brand, summary, price, health function, Details + Remove */
 function EcosystemFunctionProductCard({
@@ -1159,6 +1160,7 @@ export default function MyEcosystem({
             .filter(Boolean);
         if (!enrichedProducts.length) return;
         onBuildEcosystemFromLlm(enrichedProducts);
+        posthog.capture('recommendation_viewed', { concernCount: recommendedProductsForDisplay.length });
     }, [recommendedProductsForDisplay, onBuildEcosystemFromLlm, llmTiered, recommendationRefreshNonce]);
 
     useEffect(() => {

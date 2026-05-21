@@ -13,6 +13,7 @@ import { fetchDsldProducts } from '../utils/fetchDsldProducts';
 import { enrichLlmProductForDiscovery } from '../utils/enrichLlmProductForDiscovery';
 import { buildDiscoveryProfileSummary } from '../utils/discoveryIntroSummary';
 import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
+import posthog from 'posthog-js';
 
 const ALL_CATEGORIES = ['all', 'pad', 'tampon', 'cup', 'disc', 'period-underwear', 'supplement', 'tracker', 'telehealth', 'mental-health', 'fitness', 'diagnostics', 'hormone-monitoring', 'menopause', 'fertility', 'pelvic-health', 'pelvic-floor', 'cramp-relief', 'postpartum', 'pregnancy', 'sex-tech', 'intimate-care', 'contraception'];
 const TYPE_FILTERS = ['all', 'physical', 'digital', 'startup'];
@@ -405,6 +406,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         e.preventDefault();
         const q = searchQuery.trim();
         if (!q || q.length < 2) return;
+        posthog.capture('search_performed', { queryLength: q.length });
         const qLower = q.toLowerCase();
 
         // Cancel any pending debounce — we're going immediate
