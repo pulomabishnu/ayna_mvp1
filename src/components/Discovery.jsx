@@ -124,6 +124,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [categoryFilter, setCategoryFilter] = useState(initialCategory || 'all');
     const [typeFilter, setTypeFilter] = useState('all');
     const [searchQuery, setSearchQuery] = useState(initialSearch || '');
+    const [submittedQuery, setSubmittedQuery] = useState(initialSearch || '');
     const [sortBy, setSortBy] = useState('default');
     const [personalizationFilter, setPersonalizationFilter] = useState(hasQuizFrustrations || hasHealthImport);
     const personalizationInitialized = useRef(false);
@@ -164,6 +165,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     React.useEffect(() => {
         if (initialSearch !== undefined) {
             setSearchQuery(initialSearch);
+            setSubmittedQuery(initialSearch || '');
         }
     }, [initialSearch]);
 
@@ -206,7 +208,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
         let list = applyFilters(combined);
 
-        const qTrim = searchQuery.trim();
+        const qTrim = submittedQuery.trim();
         let scoreById = null;
         if (qTrim) {
             let scored = list
@@ -283,9 +285,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             });
         }
         return list;
-    }, [combined, categoryFilter, typeFilter, omittedProducts, searchQuery, sortBy, personalizationFilter, recommendedSet, aynaReviews, padFlowFilter, padPreferenceFilter, padUseCaseFilter, symptomFilter]);
+    }, [combined, categoryFilter, typeFilter, omittedProducts, submittedQuery, sortBy, personalizationFilter, recommendedSet, aynaReviews, padFlowFilter, padPreferenceFilter, padUseCaseFilter, symptomFilter]);
 
-    const qTrimForAi = searchQuery.trim();
+    const qTrimForAi = submittedQuery.trim();
 
     const enrichedAiSuggestions = useMemo(
         () => (Array.isArray(aiSuggestions) ? aiSuggestions.map((p) => enrichLlmProductForDiscovery(p)) : []),
@@ -389,7 +391,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     }, [qTrimForAi]);
 
     useEffect(() => {
-        const q = searchQuery.trim();
+        const q = submittedQuery.trim();
         if (q.length < 3) { setDsldProducts([]); return; }
         const supplementKeywords = /supplement|vitamin|mineral|probiotic|omega|magnesium|iron|folate|inositol|myo|d3|b12|zinc|calcium|collagen|ashwagandha|vitex|evening primrose|berberine|spearmint|saw palmetto/i;
         if (!supplementKeywords.test(q) && categoryFilter !== 'supplement') { setDsldProducts([]); return; }
@@ -400,7 +402,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             setDsldLoading(false);
         }, 700);
         return () => clearTimeout(t);
-    }, [searchQuery, categoryFilter]);
+    }, [submittedQuery, categoryFilter]);
 
     const handleSmartSearch = (e) => {
         e.preventDefault();
@@ -411,6 +413,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
         // Cancel any pending debounce — we're going immediate
         clearTimeout(debounceRef.current);
+        setSubmittedQuery(q);
         setSearchSubmitted(true);
 
         const categoryNudges = [
@@ -507,7 +510,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 <input
                     type="text"
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onChange={(e) => { setSearchQuery(e.target.value); if (!e.target.value.trim()) setSubmittedQuery(''); }}
                     placeholder="Ask a question, search for a product, or type a health symptom..."
                     style={{
                         flex: '1 1 200px',
@@ -946,7 +949,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                             <button
                                 key={term}
                                 type="button"
-                                onClick={() => { setSearchQuery(term); setSearchSubmitted(true); runAiSearch(term, categoryFilter, symptomFilter); }}
+                                onClick={() => { setSearchQuery(term); setSubmittedQuery(term); setSearchSubmitted(true); runAiSearch(term, categoryFilter, symptomFilter); }}
                                 style={{
                                     padding: '0.4rem 0.9rem',
                                     borderRadius: 'var(--radius-pill)',
