@@ -357,7 +357,7 @@ async function callAnthropic(product, userContextText = '') {
   if (!apiKey) return null;
 
   const payloadBase = {
-    max_tokens: 1200,
+    max_tokens: 2000,
     temperature: 0.25,
     system: ANTHROPIC_SYSTEM,
     messages: [{ role: 'user', content: buildUserPrompt(product, userContextText) }],
