@@ -759,6 +759,7 @@ export default function ProductModal({
                         name: p.name,
                         brand: p.brand,
                         category: p.category,
+                        aynaRecommended: !!(p.llmGenerated || p.intakeGenerated),
                     })) : [],
                 }),
                 signal: AbortSignal.timeout(30000),

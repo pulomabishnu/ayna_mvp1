@@ -12,7 +12,8 @@ function buildEcosystemSummary(ecosystemProducts) {
     .map(p => {
       const brand = p.brand ? ` by ${p.brand}` : '';
       const cat = p.category ? ` (${p.category})` : '';
-      return `- ${p.name || 'Unknown'}${brand}${cat}`;
+      const source = p.aynaRecommended ? ' [Ayna recommended]' : ' [user added]';
+      return `- ${p.name || 'Unknown'}${brand}${cat}${source}`;
     });
   return lines.join('\n');
 }
