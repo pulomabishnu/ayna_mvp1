@@ -466,7 +466,7 @@ export default function ProductModal({
     quizResults = null,
     healthProfile = null,
 }) {
-    const [activeTab, setActiveTab] = useState('safety');
+    const [activeTab, setActiveTab] = useState('chat');
     const [chatMessages, setChatMessages] = useState([{ role: 'assistant', text: `Hi! I'm Ayna. What would you like to know about ${product?.name}?` }]);
     const [chatInput, setChatInput] = useState('');
     const [isTyping, setIsTyping] = useState(false);
@@ -667,12 +667,11 @@ export default function ProductModal({
     const aynaReviewCount = (aynaData.reviews || []).length;
 
     const tabs = [
+        { id: 'chat', label: 'Ask Ayna', icon: '✨' },
         { id: 'safety', label: isDigital ? 'Privacy & Safety' : 'Safety & Ingredients', icon: '🛡️' },
         { id: 'doctor', label: 'Clinician opinions', icon: '👩‍⚕️' },
         { id: 'social', label: 'Community', icon: '💬' },
-        { id: 'science', label: 'Scientific literature', icon: '🔬' },
         { id: 'ayna-reviews', label: 'Ayna Reviews', icon: '⭐', badge: aynaReviewCount > 0 ? aynaReviewCount : null },
-        { id: 'chat', label: 'Ask Ayna', icon: '✨' },
     ];
 
     const aynaInsightBoxStyle = {
