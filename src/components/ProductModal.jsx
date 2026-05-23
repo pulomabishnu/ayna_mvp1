@@ -1145,7 +1145,7 @@ export default function ProductModal({
                             <div>
                                 {userZipCode && (
                                     <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '0.75rem', lineHeight: 1.5 }}>
-                                        In-store and online availability for zip <strong>{userZipCode}</strong> is shown when we have data. We use retailer and zip code data to surface in-stock status when available.
+                                        Your zip code: <strong>{userZipCode}</strong>
                                     </p>
                                 )}
                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', alignItems: 'center' }}>
