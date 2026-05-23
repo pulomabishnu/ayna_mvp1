@@ -1113,10 +1113,26 @@ export default function MyEcosystem({
             .map((entry, idx) => {
                 const concern = String(entry?.concern || concernPriority[idx] || `Concern ${idx + 1}`).trim();
                 if (!concern || blockedConcernLabels.has(concern.toLowerCase())) return null;
+                const concernLower = concern.toLowerCase();
+                const isRoutineConcern = concernLower.includes('routine') || concernLower.includes('apps and services') ||
+                    concernLower.includes('wellness app') || concernLower.includes('health app') ||
+                    concernLower.includes('build my health') || concernLower.includes('wearable') ||
+                    concernLower === 'build my health routine';
+
                 const tiers = (Array.isArray(entry?.tiers) ? entry.tiers : [])
                     .map((tier, tierIdx) => {
                         const tierProduct = tier?.product || null;
                         if (!tierProduct || isBlockedRecommendationProduct(tierProduct)) return null;
+                        // Routine/apps concerns: only show digital products (apps, telehealth, trackers)
+                        if (isRoutineConcern) {
+                            const pType = String(tierProduct.type || '').toLowerCase();
+                            const pCat = String(tierProduct.category || '').toLowerCase();
+                            const sub = String(tier?.subcategory || '').toLowerCase();
+                            const isDigital = pType === 'digital' || pCat.includes('telehealth') ||
+                                pCat.includes('app') || pCat.includes('platform') || pCat.includes('tracker') ||
+                                sub.includes('app') || sub.includes('telehealth') || sub.includes('digital') || sub.includes('tracker');
+                            if (!isDigital) return null;
+                        }
                         const tierAltPool = Array.isArray(tier?.alternatives) ? tier.alternatives : [];
                         const tierAlternatives = tierAltPool
                             .filter(Boolean)
