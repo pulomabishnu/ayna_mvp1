@@ -380,39 +380,44 @@ function buildQuickOverviewBlocks(product, aiInsights, quizResults, healthProfil
   const aiFit = Array.isArray(aiInsights?.quickOverviewFit)
     ? aiInsights.quickOverviewFit.map((x) => concise(x, 180)).filter(Boolean)
     : [];
-  const pros = [];
-  const cons = [];
-  const fit = [];
 
-  // AI-generated flow (2 sections — no "Fit" duplicate)
+  // Profile-specific why + cons (same logic used in rule-based flow)
+  const profileWhy = [];
+  if (whyItWorks && (quizResults?.frustrations?.length || matchLabels.length)) {
+    profileWhy.push(String(whyItWorks).trim());
+  } else if (profileTailoring) {
+    profileWhy.push(String(profileTailoring).trim());
+  } else if (matchLabels.length > 0) {
+    profileWhy.push(`Supports priorities relevant to your profile: ${matchLabels.slice(0, 3).join(', ')}.`);
+  }
+
+  const profileCons = [];
+  if (considerations) profileCons.push(`**Watch-outs:** ${concise(considerations, 220)}`);
+  if (bridgeCare?.shortTerm) profileCons.push(concise(bridgeCare.shortTerm, 220));
+  if (bridgeCare?.escalation) profileCons.push(concise(bridgeCare.escalation, 220));
+  if (recallBad) profileCons.push('**Safety check:** Review recall/alert details in the Safety tab before purchasing.');
+
+  // AI-generated flow: inject profile data at front, then fill with AI bullets
   if (aiPros.length > 0 || aiCons.length > 0 || aiFit.length > 0) {
-    const combinedWhy = [...aiPros, ...(aiFit.length > 0 ? aiFit : [])].slice(0, 3);
+    const aiWhyRest = [...aiPros, ...(aiFit.length > 0 ? aiFit : [])];
+    const combinedWhy = [...profileWhy, ...aiWhyRest].slice(0, 3);
+    const combinedCons = [...profileCons, ...aiCons].slice(0, 3);
     return [
       { id: 'why', title: 'Why this may work for you', bullets: combinedWhy.length > 0 ? combinedWhy : ['**Potential benefit:** Review the detail below to assess fit for your profile.'] },
-      { id: 'cons', title: 'Things to watch for', bullets: (aiCons.length > 0 ? aiCons : ['**Watch-outs:** Review safety details and side effects for your profile before using.']).slice(0, 3) },
+      { id: 'cons', title: 'Things to watch for', bullets: combinedCons.length > 0 ? combinedCons : ['**Watch-outs:** Review safety details and side effects for your profile before using.'] },
     ];
   }
 
-  // Rule-based flow — "Why this may work for you" (full text, not truncated)
-  if (whyItWorks && (quizResults?.frustrations?.length || matchLabels.length)) {
-    pros.push(String(whyItWorks).trim());
-  } else if (profileTailoring) {
-    pros.push(String(profileTailoring).trim());
-  }
-  if (matchLabels.length > 0 && !pros.length) {
-    pros.push(`Supports priorities relevant to your profile: ${matchLabels.slice(0, 3).join(', ')}.`);
-  }
+  // Rule-based flow fallback
+  const pros = [...profileWhy];
+  const cons = [...profileCons];
+
   if (!hasProfile) {
     pros.push('Complete your health profile to get a personalized fit assessment.');
   }
   if (pros.length === 0) {
     pros.push('This product may help some users — compare with alternatives before deciding.');
   }
-
-  if (considerations) cons.push(`**Watch-outs:** ${concise(considerations, 220)}`);
-  if (bridgeCare?.shortTerm) cons.push(concise(bridgeCare.shortTerm, 220));
-  if (bridgeCare?.escalation) cons.push(concise(bridgeCare.escalation, 220));
-  if (recallBad) cons.push('**Safety check:** Review recall/alert details in the Safety tab before purchasing.');
   if (cons.length === 0) {
     cons.push('**Watch-outs:** No major profile-specific cautions flagged, but confirm fit with your clinician if symptoms persist.');
   }
