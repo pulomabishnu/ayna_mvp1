@@ -672,6 +672,7 @@ export default function ProductModal({
         { id: 'doctor', label: 'Clinician opinions', icon: '👩‍⚕️' },
         { id: 'social', label: 'Community', icon: '💬' },
         { id: 'ayna-reviews', label: 'Ayna Reviews', icon: '⭐', badge: aynaReviewCount > 0 ? aynaReviewCount : null },
+        { id: 'science', label: 'Scientific literature', icon: '🔬' },
     ];
 
     const aynaInsightBoxStyle = {
