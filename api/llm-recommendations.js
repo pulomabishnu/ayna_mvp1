@@ -715,6 +715,7 @@ PATIENT PROFILE:
 - Symptoms: ${(Array.isArray(intake?.symptoms) ? intake.symptoms : []).join(', ') || 'none'}
 - TTC: ${intake?.tryingToConceive || 'unknown'}, Birth control: ${intake?.hormonalBirthControl || 'unknown'}${intake?.hormonalBirthControlType ? ` (${intake.hormonalBirthControlType})` : ''}
 - Preferences (hard filters): ${(Array.isArray(intake?.productPreferences) ? intake.productPreferences : []).join(', ') || 'none'}
+- Products currently using: ${(Array.isArray(intake?.currentProducts) ? intake.currentProducts : []).join(', ') || 'none'}
 - Tried and disliked: ${intake?.dislikedProductsText || 'none'} — reason: ${intake?.dislikedReason || 'none'}
 - Goals: ${(Array.isArray(intake?.goals) ? intake.goals : []).join(', ') || 'none'}
 - Wearable data: ${intake?.wearableSummary?.text || intake?.healthDataText || 'none'}
@@ -744,6 +745,7 @@ PERSONALIZATION:
 - Product preferences are HARD FILTERS — if she prefers organic/fragrance-free, every physical product must meet that.
 - Never recommend a brand she listed as disliked.
 - whyItWorks must be in plain everyday language — no medical jargon. Explain: (1) simply how the product works (mechanism in lay terms), (2) why it fits her specific profile (condition, pain level, preference), (3) what makes it the top pick over the alternatives. A user should read this and immediately understand why you chose THIS product for HER over everything else available.
+- CURRENTLY-USED BRAND COMPARISON: If "Products currently using" lists a brand in the same category as your top product recommendation, you MUST include one sentence in whyItWorks explaining what specifically makes your recommended product a better fit than the brand she already uses — whether it is ingredient quality, clinical evidence strength, organic certification, lower cost, better fit for her conditions, or another concrete reason. Be direct: "Compared to [brand she uses], [recommended product] offers [specific advantage] which matters for [her condition/preference]." Also include her currently-used brand as one of the alternatives so she can still choose it.
 - Recommend specific product names (e.g. "Thinx Hiphugger Period Underwear"), not company names. Exception: telehealth platforms and apps.
 - Never recommend products she has hidden.
 - Never recommend tranexamic acid products.
