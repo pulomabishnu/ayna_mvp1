@@ -671,8 +671,8 @@ export default function ProductModal({
         { id: 'safety', label: isDigital ? 'Privacy & Safety' : 'Safety & Ingredients', icon: '🛡️' },
         { id: 'doctor', label: 'Clinician opinions', icon: '👩‍⚕️' },
         { id: 'social', label: 'Community', icon: '💬' },
-        { id: 'ayna-reviews', label: 'Ayna Reviews', icon: '⭐', badge: aynaReviewCount > 0 ? aynaReviewCount : null },
         { id: 'science', label: 'Scientific literature', icon: '🔬' },
+        { id: 'ayna-reviews', label: 'Ayna Reviews', icon: '⭐', badge: aynaReviewCount > 0 ? aynaReviewCount : null },
     ];
 
     const aynaInsightBoxStyle = {
