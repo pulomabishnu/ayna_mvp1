@@ -29,6 +29,62 @@ import { getPricePerUnitLabel } from '../utils/pricePerUnit';
 import { deriveBrandSearchContext } from '../utils/productBrandContext.js';
 import posthog from 'posthog-js';
 
+const CONCERN_LABEL_MAP = {
+  'period care (pads, tampons, cups, discs, underwear)': 'Period Care',
+  'cramp and pain relief (devices, supplements, heat)': 'Cramp & Pain Relief',
+  'hormone balance (supplements, lifestyle)': 'Hormone Balance',
+  'hormonal bloating': 'Hormonal Bloating',
+  'pcos management (supplements, telehealth, apps)': 'PCOS Management',
+  'endometriosis management (supplements, devices, telehealth)': 'Endometriosis Support',
+  'fertility and conception (supplements, trackers, telehealth)': 'Fertility & Conception',
+  'uti support': 'UTI Support',
+  'sti support': 'STI Support',
+  'gut and vaginal health (probiotics, ph balance)': 'Gut & Vaginal Health',
+  'perimenopause and menopause support': 'Perimenopause & Menopause',
+  'sexual health and comfort (lubricants, pelvic floor)': 'Sexual Health & Comfort',
+  'mental health and cycle mood support': 'Mental Health & Cycle Mood',
+  'sleep and energy': 'Sleep & Energy',
+  'skin and hair (hormone-related)': 'Skin & Hair',
+  'telehealth and provider matching': 'Telehealth & Provider Matching',
+  'find safer products': 'Safer Products',
+  'manage symptoms': 'Symptom Management',
+  'track my cycle': 'Cycle Tracking',
+  'understand my condition': 'Understanding My Condition',
+  'find a provider or specialist': 'Provider Matching',
+  'build my health routine': 'Building a Health Routine',
+  'reduce chemical exposure': 'Reducing Chemical Exposure',
+  'support fertility / ttc': 'Fertility Support',
+  'manage perimenopause or menopause': 'Perimenopause & Menopause',
+  'improve my gut or vaginal health': 'Gut & Vaginal Health',
+  'find mental health support for cycle symptoms': 'Mental Health Support',
+  'learn what ingredients to avoid for my conditions': 'Ingredient Safety',
+};
+
+function normalizeConcernLabel(raw) {
+  if (!raw) return raw;
+  const key = String(raw).toLowerCase().trim();
+  if (CONCERN_LABEL_MAP[key]) return CONCERN_LABEL_MAP[key];
+  // Keyword fallback for LLM-embellished variants
+  if (key.includes('routine') || key.includes('build my health') || key.includes('apps and services')) return 'Building a Health Routine';
+  if (key.includes('pcos') || key.includes('polycystic')) return 'PCOS Management';
+  if (key.includes('endometriosis') || key.includes('endo')) return 'Endometriosis Support';
+  if (key.includes('hormone balance') || key.includes('hormonal bloating')) return 'Hormone Balance';
+  if (key.includes('period care') || key.includes('menstrual')) return 'Period Care';
+  if (key.includes('cramp') || key.includes('pain relief')) return 'Cramp & Pain Relief';
+  if (key.includes('fertil') || key.includes('ttc') || key.includes('conception')) return 'Fertility & Conception';
+  if (key.includes('menopause') || key.includes('perimenopause')) return 'Perimenopause & Menopause';
+  if (key.includes('vaginal') || key.includes('gut health') || key.includes('probiotic')) return 'Gut & Vaginal Health';
+  if (key.includes('uti') || key.includes('urinary')) return 'UTI Support';
+  if (key.includes('mental health') || key.includes('mood')) return 'Mental Health & Cycle Mood';
+  if (key.includes('sleep') || key.includes('energy') || key.includes('fatigue')) return 'Sleep & Energy';
+  if (key.includes('skin') || key.includes('hair') || key.includes('acne')) return 'Skin & Hair';
+  if (key.includes('telehealth') || key.includes('provider') || key.includes('specialist')) return 'Telehealth & Provider Matching';
+  if (key.includes('sexual health') || key.includes('pelvic floor') || key.includes('lubricant')) return 'Sexual Health & Comfort';
+  if (key.includes('safer') || key.includes('ingredient') || key.includes('chemical')) return 'Safer Products';
+  if (key.includes('cycle tracking') || key.includes('track my cycle')) return 'Cycle Tracking';
+  return raw;
+}
+
 /** Full card for “By function” ecosystem grid: image (🌸 fallback), brand, summary, price, health function, Details + Remove */
 function EcosystemFunctionProductCard({
     product,
@@ -1275,7 +1331,7 @@ export default function MyEcosystem({
                                     }}
                                 >
                                     <span style={{ fontSize: '1rem', fontWeight: '700', color: 'var(--color-text-main)' }}>
-                                        {section.concern}
+                                        {normalizeConcernLabel(section.concern)}
                                     </span>
                                     <span style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>{isOpen ? 'Hide ▴' : 'Show ▾'}</span>
                                 </button>
