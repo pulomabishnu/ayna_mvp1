@@ -465,6 +465,7 @@ export default function ProductModal({
     onReview,
     quizResults = null,
     healthProfile = null,
+    ecosystemProducts = null,
 }) {
     const [activeTab, setActiveTab] = useState('chat');
     const [chatMessages, setChatMessages] = useState([{ role: 'assistant', text: `Hi! I'm Ayna. What would you like to know about ${product?.name}?` }]);
@@ -754,6 +755,11 @@ export default function ProductModal({
                         communitySummary: aiInsights.communitySummary,
                     } : null,
                     userContext: healthContextKey || '',
+                    ecosystemProducts: Array.isArray(ecosystemProducts) ? ecosystemProducts.map(p => ({
+                        name: p.name,
+                        brand: p.brand,
+                        category: p.category,
+                    })) : [],
                 }),
                 signal: AbortSignal.timeout(30000),
             });

@@ -5,7 +5,19 @@
  */
 /* global process */
 
-function buildPrompt(question, product, aiInsights, userContext) {
+function buildEcosystemSummary(ecosystemProducts) {
+  if (!Array.isArray(ecosystemProducts) || ecosystemProducts.length === 0) return '';
+  const lines = ecosystemProducts
+    .slice(0, 20)
+    .map(p => {
+      const brand = p.brand ? ` by ${p.brand}` : '';
+      const cat = p.category ? ` (${p.category})` : '';
+      return `- ${p.name || 'Unknown'}${brand}${cat}`;
+    });
+  return lines.join('\n');
+}
+
+function buildPrompt(question, product, aiInsights, userContext, ecosystemProducts) {
   const name = product?.name || 'this product';
   const brand = product?.brand || '';
   const summary = product?.summary || '';
@@ -19,16 +31,20 @@ function buildPrompt(question, product, aiInsights, userContext) {
   const scienceCtx = aiInsights?.scienceSummary || '';
   const communityCtx = aiInsights?.communitySummary || '';
 
-  return `You are Ayna, a knowledgeable women's health assistant. Answer the user's specific question about "${name}" using only the product information and research context provided below.
+  const ecoSummary = buildEcosystemSummary(ecosystemProducts);
+
+  return `You are Ayna, a knowledgeable women's health assistant. The user is viewing "${name}" and has asked a question. Answer using the product information, research context, user health profile, and their personal product ecosystem provided below.
 
 RULES:
 - Answer in 2–4 concise sentences directly addressing the question.
-- Be specific to this product — do not speak generically.
+- Be specific — reference the actual product(s) the user asks about by name.
+- If the user asks about a product NOT listed in the product information below, use your general knowledge about that product to answer. Ayna helps users understand any women's health product, not just ones in the explicit context.
+- When comparing products, weigh the user's health profile — her conditions, concerns, and preferences — to give a personally relevant answer.
 - Never diagnose, prescribe, or tell the user what to do medically. For medical decisions, say "consult your healthcare provider."
-- Never fabricate ingredients, studies, or claims not in the context below.
-- If the context doesn't contain enough information to answer, say so honestly.
+- Never fabricate specific ingredient lists or clinical study data you don't know. You may share well-established general knowledge.
+- Do not say you "haven't recommended" a product or that it's "not in your context" — if the user asks about it, engage with it.
 
-PRODUCT INFORMATION:
+PRODUCT IN VIEW:
 - Name: ${name}${brand ? ` by ${brand}` : ''}
 - Summary: ${summary}
 ${ingredients ? `- Ingredients / Materials: ${ingredients}` : ''}
@@ -44,7 +60,8 @@ ${clinicalCtx ? `Clinical: ${clinicalCtx}` : ''}
 ${scienceCtx ? `Scientific: ${scienceCtx}` : ''}
 ${communityCtx ? `Community: ${communityCtx}` : ''}
 
-${userContext ? `USER HEALTH CONTEXT:\n${userContext}\n` : ''}
+${userContext ? `USER HEALTH PROFILE:\n${userContext}\n` : ''}
+${ecoSummary ? `USER'S CURRENT PRODUCT ECOSYSTEM (products she already uses or is considering):\n${ecoSummary}\n` : ''}
 USER QUESTION: ${question}
 
 Answer:`.trim();
@@ -63,9 +80,9 @@ async function callAnthropic(prompt) {
     },
     body: JSON.stringify({
       model,
-      max_tokens: 400,
+      max_tokens: 500,
       temperature: 0.3,
-      system: 'You are Ayna, a knowledgeable and empathetic women\'s health assistant. Answer questions concisely using only the provided context. Never fabricate facts.',
+      system: 'You are Ayna, a knowledgeable and empathetic women\'s health assistant. Answer questions about any women\'s health product using the provided context and your general knowledge.',
       messages: [{ role: 'user', content: prompt }],
     }),
     signal: AbortSignal.timeout(25000),
@@ -118,7 +135,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'invalid_json' });
   }
 
-  const { question, product, aiInsights, userContext } = body || {};
+  const { question, product, aiInsights, userContext, ecosystemProducts } = body || {};
   if (!question || typeof question !== 'string' || !question.trim()) {
     return res.status(400).json({ error: 'question is required' });
   }
@@ -126,7 +143,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'product is required' });
   }
 
-  const prompt = buildPrompt(question.trim().slice(0, 500), product, aiInsights || {}, userContext || '');
+  const prompt = buildPrompt(question.trim().slice(0, 500), product, aiInsights || {}, userContext || '', ecosystemProducts);
 
   const order = (process.env.AI_INSIGHTS_PROVIDER_ORDER || 'anthropic,openai')
     .split(',').map(s => s.trim().toLowerCase()).filter(Boolean);

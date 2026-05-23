@@ -1104,6 +1104,7 @@ function App() {
             onReview={handleReviewProduct}
             quizResults={quizResults}
             healthProfile={healthProfile}
+            ecosystemProducts={Object.values(myProducts)}
           />
         )}
 
