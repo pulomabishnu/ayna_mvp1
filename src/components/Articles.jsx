@@ -15,6 +15,12 @@ const ARTICLE_TOPIC_TAGS = {
   'pcos-basics': ['pcos', 'irregular'],
   'pelvic-floor-dysfunction': ['pelvic-floor', 'pelvic-health'],
   'endometriosis-basics': ['endometriosis', 'cramps'],
+  'bacterial-vaginosis': ['vaginal-health', 'intimate-care'],
+  'pmdd': ['cramps', 'irregular'],
+  'fibroids': ['heavy-flow', 'cramps'],
+  'iron-deficiency-anemia': ['heavy-flow'],
+  'ovarian-cysts': ['cramps', 'pelvic-floor'],
+  'hormonal-birth-control': ['irregular', 'cramps', 'pcos'],
 };
 
 /** Optional: article id → filter fn. Further narrows products to match article heading (e.g. intimate wash = only wash/cleanser products). */
@@ -564,6 +570,126 @@ const ARTICLES = [
       </>
     ),
   },
+  {
+    id: 'bacterial-vaginosis',
+    title: 'Bacterial Vaginosis (BV)',
+    source: 'CDC, ACOG, UpToDate',
+    tags: ['Vaginal health', 'Infections'],
+    teaser: 'What causes BV, how it differs from a yeast infection, treatment options, and why it tends to recur.',
+    body: (
+      <>
+        <p>Bacterial vaginosis (BV) is the most common vaginal condition in people of reproductive age. It occurs when the balance of bacteria in the vagina is disrupted — the protective <em>Lactobacillus</em> bacteria decrease while other bacteria overgrow. BV is not an STI, but having it can increase susceptibility to STIs. Symptoms include a thin, grayish-white discharge with a fishy odor, especially after sex. Many people have no symptoms at all.</p>
+        <p>BV is treated with antibiotics (metronidazole or clindamycin, oral or vaginal). Recurrence is common — up to 50% within a year. Strategies that may help reduce recurrence include using condoms consistently, avoiding douching, and in some cases using boric acid suppositories or probiotic regimens (discuss with your clinician first). If BV keeps coming back, a clinician can assess whether suppressive therapy is appropriate.</p>
+        <p><strong>When to seek care:</strong> Unusual discharge, odor, or irritation — especially if symptoms don't improve with OTC treatments or keep coming back. BV during pregnancy needs treatment to reduce risk of complications.</p>
+        <p><strong>Sources:</strong></p>
+        <ul style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
+          <li><a href="https://www.cdc.gov/std/bv/default.htm" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>CDC – Bacterial vaginosis</a></li>
+          <li><a href="https://www.acog.org/womens-health/faqs/vulvovaginal-health" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Vulvovaginal health</a></li>
+          <li><a href="https://www.uptodate.com/contents/bacterial-vaginosis-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – Bacterial vaginosis (patient education)</a></li>
+        </ul>
+      </>
+    ),
+  },
+  {
+    id: 'pmdd',
+    title: 'PMDD: Premenstrual Dysphoric Disorder',
+    source: 'ACOG, IAPMD, UpToDate',
+    tags: ['Mental health', 'Hormonal health'],
+    teaser: 'How PMDD differs from PMS, what causes it, and evidence-based treatments including SSRIs, hormonal options, and lifestyle support.',
+    body: (
+      <>
+        <p>Premenstrual dysphoric disorder (PMDD) is a severe, cyclical mood disorder linked to hormonal fluctuations in the luteal phase (the week or two before a period). Unlike PMS, PMDD significantly impairs daily functioning — symptoms may include intense mood swings, irritability or anger, depression, anxiety, hopelessness, fatigue, difficulty concentrating, and physical symptoms. Symptoms typically resolve within a few days of menstruation starting.</p>
+        <p>PMDD is a recognized medical condition and is treatable. First-line treatments include SSRIs (e.g., fluoxetine, sertraline), which can be taken daily or only during the luteal phase. Hormonal approaches — such as combined oral contraceptives or GnRH agonists — are also used in some cases. Lifestyle strategies (regular exercise, sleep hygiene, stress management, and dietary changes) can support but usually don't replace medical treatment for moderate-to-severe PMDD. A clinician can help confirm the diagnosis (often using a symptom diary over 2 cycles) and recommend a treatment plan.</p>
+        <p><strong>When to seek care:</strong> If premenstrual mood symptoms are severe enough to affect relationships, work, or daily life — especially if you've ever had thoughts of self-harm. PMDD is underdiagnosed; you deserve support.</p>
+        <p><strong>Sources:</strong></p>
+        <ul style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
+          <li><a href="https://www.acog.org/womens-health/faqs/premenstrual-syndrome" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Premenstrual syndrome (PMS)</a></li>
+          <li><a href="https://iapmd.org/about-pmdd" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>IAPMD – About PMDD</a></li>
+          <li><a href="https://www.uptodate.com/contents/premenstrual-syndrome-and-premenstrual-dysphoric-disorder-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – PMS and PMDD (patient education)</a></li>
+        </ul>
+      </>
+    ),
+  },
+  {
+    id: 'fibroids',
+    title: 'Uterine Fibroids',
+    source: 'ACOG, NIH, UpToDate',
+    tags: ['Chronic conditions', 'Menstrual health'],
+    teaser: 'What fibroids are, why they cause heavy bleeding and pain, and the range of treatment options from watchful waiting to surgery.',
+    body: (
+      <>
+        <p>Uterine fibroids are noncancerous growths in or on the uterus. They are very common — up to 80% of people with a uterus develop fibroids by age 50, though many never cause symptoms. When symptoms occur, they can include heavy or prolonged periods, pelvic pressure or pain, frequent urination, and in some cases difficulty conceiving. Fibroids vary in size, number, and location, all of which affect symptoms and treatment options.</p>
+        <p>Treatment depends on symptom severity, fibroid characteristics, and your reproductive goals. Options range from watchful waiting (for small, asymptomatic fibroids) to medications that temporarily shrink fibroids or reduce bleeding, to minimally invasive procedures (e.g., uterine fibroid embolization, focused ultrasound) and surgery (myomectomy to preserve the uterus, or hysterectomy). If heavy bleeding is causing anemia, iron supplementation and managing blood loss are also important parts of care.</p>
+        <p><strong>When to seek care:</strong> Heavy periods soaking through products, pelvic pain or pressure, unusually large or rapidly changing abdomen, or difficulty conceiving. Fibroids are highly treatable when caught early.</p>
+        <p><strong>Sources:</strong></p>
+        <ul style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
+          <li><a href="https://www.acog.org/womens-health/faqs/uterine-fibroids" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Uterine fibroids</a></li>
+          <li><a href="https://www.nichd.nih.gov/health/topics/uterine" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>NIH/NICHD – Uterine fibroids</a></li>
+          <li><a href="https://www.uptodate.com/contents/uterine-fibroids-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – Uterine fibroids (patient education)</a></li>
+        </ul>
+      </>
+    ),
+  },
+  {
+    id: 'iron-deficiency-anemia',
+    title: 'Iron Deficiency & Anemia from Heavy Periods',
+    source: 'ACOG, NIH, UpToDate',
+    tags: ['Menstrual health', 'Nutrition'],
+    teaser: 'How heavy periods deplete iron, symptoms to watch for, and how to address deficiency through diet, supplements, and treating the root cause.',
+    body: (
+      <>
+        <p>Heavy menstrual bleeding is one of the most common causes of iron deficiency and iron deficiency anemia in people who menstruate. Iron is lost with blood, and if monthly losses consistently exceed dietary intake, iron stores become depleted. Early iron deficiency may cause fatigue, brain fog, difficulty concentrating, and feeling cold — even before anemia develops. Anemia (low red blood cells) adds shortness of breath, dizziness, rapid heart rate, and pale skin to those symptoms.</p>
+        <p>Treatment involves addressing both the iron deficiency and, where possible, reducing the underlying blood loss. Oral iron supplements (ferrous sulfate, ferrous gluconate, or ferric) taken on alternating days or with vitamin C to improve absorption are commonly recommended. IV iron infusion may be used for severe deficiency or poor oral tolerance. Dietary iron from red meat, leafy greens, legumes, and fortified foods can help maintain levels but often isn't enough on its own to correct established deficiency. Treating the cause of heavy bleeding (e.g., fibroids, hormonal imbalance) is equally important.</p>
+        <p><strong>When to seek care:</strong> Persistent fatigue, shortness of breath, or dizziness — particularly if you have heavy periods. A simple blood test can diagnose deficiency before it becomes anemia.</p>
+        <p><strong>Sources:</strong></p>
+        <ul style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
+          <li><a href="https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Heavy menstrual bleeding</a></li>
+          <li><a href="https://www.nhlbi.nih.gov/health/anemia/iron-deficiency-anemia" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>NIH/NHLBI – Iron deficiency anemia</a></li>
+          <li><a href="https://www.uptodate.com/contents/iron-deficiency-anemia-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – Iron deficiency anemia (patient education)</a></li>
+        </ul>
+      </>
+    ),
+  },
+  {
+    id: 'ovarian-cysts',
+    title: 'Ovarian Cysts',
+    source: 'ACOG, Mayo Clinic, UpToDate',
+    tags: ['Reproductive health', 'Pelvic health'],
+    teaser: 'Most ovarian cysts are harmless and resolve on their own — here\'s how to tell when monitoring is enough and when to seek care.',
+    body: (
+      <>
+        <p>Ovarian cysts are fluid-filled sacs that develop on or within an ovary. Most are functional cysts — they form as a normal part of the menstrual cycle (e.g., a follicle that doesn't release an egg, or a corpus luteum that fills with fluid) and resolve on their own within a few cycles without treatment. They're often found incidentally on ultrasound and cause no symptoms.</p>
+        <p>When symptoms occur they can include pelvic aching or fullness, bloating, or pain with sex. A ruptured cyst can cause sudden, sharp pelvic pain. Ovarian torsion (twisting) is a medical emergency with sudden severe pain, nausea, and vomiting. Most simple cysts in premenopausal people are benign and managed with watchful waiting and repeat imaging. Complex cysts, cysts in postmenopausal people, or those causing symptoms may need further evaluation or surgical removal. Cysts associated with PCOS or endometriosis (endometriomas) are managed differently based on the underlying condition.</p>
+        <p><strong>When to seek care:</strong> Sudden severe pelvic pain, pain with fever or vomiting (emergency), persistent or worsening pelvic pain, or any new cyst found after menopause.</p>
+        <p><strong>Sources:</strong></p>
+        <ul style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
+          <li><a href="https://www.acog.org/womens-health/faqs/ovarian-cysts" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Ovarian cysts</a></li>
+          <li><a href="https://www.mayoclinic.org/diseases-conditions/ovarian-cysts/symptoms-causes/syc-20353405" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Mayo Clinic – Ovarian cysts</a></li>
+          <li><a href="https://www.uptodate.com/contents/ovarian-cysts-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – Ovarian cysts (patient education)</a></li>
+        </ul>
+      </>
+    ),
+  },
+  {
+    id: 'hormonal-birth-control',
+    title: 'Hormonal Birth Control: Types, Benefits & Side Effects',
+    source: 'ACOG, Planned Parenthood, UpToDate',
+    tags: ['Contraception', 'Hormonal health'],
+    teaser: 'A plain-language guide to pills, patches, rings, shots, implants, and hormonal IUDs — how they work, what side effects to expect, and how to choose.',
+    body: (
+      <>
+        <p>Hormonal contraceptives work primarily by preventing ovulation, thickening cervical mucus, or thinning the uterine lining. They come in many forms: combined estrogen-progestin methods (pill, patch, ring) and progestin-only methods (mini-pill, shot/Depo-Provera, hormonal IUD, implant). Effectiveness ranges from 91–99%+ with typical or perfect use. All require a prescription or clinical insertion.</p>
+        <p>Beyond contraception, hormonal methods are widely used to manage period pain, heavy bleeding, endometriosis, PCOS, acne, and PMDD. Side effects vary by method and person — common ones include nausea, spotting, mood changes, and breast tenderness, most of which improve within a few months. Serious risks (e.g., blood clots with estrogen-containing methods) are rare but relevant for people who smoke, have certain migraines, or have a history of clotting. There is no single "best" method — the right choice depends on your health history, side effect tolerance, convenience needs, and whether you want a period.</p>
+        <p><strong>When to seek care:</strong> To discuss which method is right for you, if you're experiencing side effects that affect your quality of life, or if you want to switch methods. Don't stop hormonal contraception abruptly without a plan.</p>
+        <p><strong>Sources:</strong></p>
+        <ul style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
+          <li><a href="https://www.acog.org/womens-health/faqs/hormonal-birth-control" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Hormonal birth control</a></li>
+          <li><a href="https://www.plannedparenthood.org/learn/birth-control" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Planned Parenthood – Birth control options</a></li>
+          <li><a href="https://www.uptodate.com/contents/hormonal-methods-of-birth-control-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – Hormonal birth control (patient education)</a></li>
+        </ul>
+      </>
+    ),
+  },
 ];
 
 /** Return articles relevant to quiz answers (for recommendations page). */
@@ -656,27 +782,27 @@ const ARTICLE_CATEGORIES = [
   {
     id: 'menstrual',
     label: '🩸 Menstrual Health',
-    articleIds: ['heavy-bleeding', 'period-pain-when-to-seek-care'],
+    articleIds: ['heavy-bleeding', 'period-pain-when-to-seek-care', 'fibroids', 'iron-deficiency-anemia'],
   },
   {
     id: 'hormonal',
     label: '⚖️ Hormonal Health',
-    articleIds: ['pcos-basics', 'menopause-basics'],
+    articleIds: ['pcos-basics', 'menopause-basics', 'pmdd', 'hormonal-birth-control'],
   },
   {
     id: 'chronic',
     label: '🏥 Chronic Conditions',
-    articleIds: ['pcos-basics', 'endometriosis-basics', 'pelvic-floor-dysfunction'],
+    articleIds: ['pcos-basics', 'endometriosis-basics', 'pelvic-floor-dysfunction', 'fibroids', 'pmdd', 'iron-deficiency-anemia', 'ovarian-cysts'],
   },
   {
     id: 'vaginal-urinary',
     label: '🌸 Vaginal & Urinary Health',
-    articleIds: ['intimate-wash', 'uti-prevention', 'yeast-infection-basics'],
+    articleIds: ['intimate-wash', 'uti-prevention', 'yeast-infection-basics', 'bacterial-vaginosis'],
   },
   {
     id: 'pelvic',
     label: '💪 Pelvic Health',
-    articleIds: ['pelvic-floor-dysfunction', 'endometriosis-basics'],
+    articleIds: ['pelvic-floor-dysfunction', 'endometriosis-basics', 'ovarian-cysts'],
   },
 ];
 
