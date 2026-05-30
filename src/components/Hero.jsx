@@ -76,7 +76,7 @@ export default function Hero({ onStartQuiz, onViewWaitlist: _onViewWaitlist, onV
                 </span>
                 <RotatingWordHeadline layout="stacked" as="div" />
                 <p className="ayna-landing__body welcome-gate__second-lead">
-                  Ayna builds your health ecosystem using evidence-based guidance, community signal, and research — so
+                  Ayna builds your health ecosystem using evidence-based guidance, community signals, and research — so
                   you can find products and care that fit you, from big names and small brands alike.
                 </p>
               </div>

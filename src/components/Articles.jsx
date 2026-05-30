@@ -615,6 +615,66 @@ function getArticlesByProfileRelevance(quizAnswers, healthProfile = null) {
 
 export { ARTICLES };
 
+function renderArticleCard(art, setSelectedId) {
+  return (
+    <button
+      type="button"
+      onClick={() => setSelectedId(art.id)}
+      style={{
+        width: '100%',
+        textAlign: 'left',
+        background: 'var(--color-surface-soft)',
+        border: '1px solid var(--color-border)',
+        borderRadius: 'var(--radius-md)',
+        padding: '1.25rem 1.5rem',
+        marginBottom: '0.75rem',
+        cursor: 'pointer',
+        transition: 'border-color 0.2s, box-shadow 0.2s'
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = 'var(--color-primary)';
+        e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = '';
+        e.currentTarget.style.boxShadow = '';
+      }}
+    >
+      <h3 style={{ fontSize: '1.2rem', marginBottom: '0.4rem', color: 'var(--color-text-main)', fontWeight: '600' }}>{art.title}</h3>
+      <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', lineHeight: 1.5, margin: 0 }}>{art.teaser}</p>
+      <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem', flexWrap: 'wrap' }}>
+        <span style={{ fontSize: '0.75rem', color: 'var(--color-primary)', fontWeight: '600' }}>{art.source}</span>
+        {art.tags.map((t) => (
+          <span key={t} style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>· {t}</span>
+        ))}
+      </div>
+    </button>
+  );
+}
+
+const ARTICLE_CATEGORIES = [
+  {
+    id: 'menstrual',
+    label: '🩸 Menstrual Health',
+    articleIds: ['heavy-bleeding', 'period-pain-when-to-seek-care'],
+  },
+  {
+    id: 'hormonal',
+    label: '⚖️ Hormonal & Metabolic',
+    articleIds: ['pcos-basics', 'menopause-basics'],
+  },
+  {
+    id: 'vaginal-urinary',
+    label: '🌸 Vaginal & Urinary Health',
+    articleIds: ['intimate-wash', 'uti-prevention', 'yeast-infection-basics'],
+  },
+  {
+    id: 'pelvic-structural',
+    label: '💪 Pelvic & Structural Health',
+    articleIds: ['pelvic-floor-dysfunction', 'endometriosis-basics'],
+  },
+];
+
 export default function Articles({ initialArticleId, onOpenProduct, quizResults, healthProfile = null }) {
   const [selectedId, setSelectedId] = useState(null);
   const [filter, setFilter] = useState('all');
@@ -743,44 +803,32 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
           <DiagnosticProductsAndStartups articleId={selected.id} quizResults={quizResults} healthProfile={healthProfile} onOpenProduct={onOpenProduct} />
         </article>
       ) : (
-        <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-          {articlesToShow.map((art) => (
-            <li key={art.id}>
-              <button
-                type="button"
-                onClick={() => setSelectedId(art.id)}
-                style={{
-                  width: '100%',
-                  textAlign: 'left',
-                  background: 'var(--color-surface-soft)',
-                  border: '1px solid var(--color-border)',
-                  borderRadius: 'var(--radius-md)',
-                  padding: '1.25rem 1.5rem',
-                  marginBottom: '0.75rem',
-                  cursor: 'pointer',
-                  transition: 'border-color 0.2s, box-shadow 0.2s'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = 'var(--color-primary)';
-                  e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = '';
-                  e.currentTarget.style.boxShadow = '';
-                }}
-              >
-                <h3 style={{ fontSize: '1.2rem', marginBottom: '0.4rem', color: 'var(--color-text-main)', fontWeight: '600' }}>{art.title}</h3>
-                <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', lineHeight: 1.5, margin: 0 }}>{art.teaser}</p>
-                <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem', flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--color-primary)', fontWeight: '600' }}>{art.source}</span>
-                  {art.tags.map((t) => (
-                    <span key={t} style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>· {t}</span>
-                  ))}
+        <>
+          {filter === 'recommended' ? (
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+              {articlesToShow.map((art) => (
+                <li key={art.id}>{renderArticleCard(art, setSelectedId)}</li>
+              ))}
+            </ul>
+          ) : (
+            ARTICLE_CATEGORIES.map((cat) => {
+              const catArticles = cat.articleIds.map((id) => ARTICLES.find((a) => a.id === id)).filter(Boolean);
+              if (catArticles.length === 0) return null;
+              return (
+                <div key={cat.id} style={{ marginBottom: '2rem' }}>
+                  <h2 style={{ fontSize: '1rem', fontWeight: '700', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.75rem', paddingBottom: '0.4rem', borderBottom: '1px solid var(--color-border)' }}>
+                    {cat.label}
+                  </h2>
+                  <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                    {catArticles.map((art) => (
+                      <li key={art.id}>{renderArticleCard(art, setSelectedId)}</li>
+                    ))}
+                  </ul>
                 </div>
-              </button>
-            </li>
-          ))}
-        </ul>
+              );
+            })
+          )}
+        </>
       )}
     </section>
   );

@@ -15,6 +15,23 @@ import { buildDiscoveryProfileSummary } from '../utils/discoveryIntroSummary';
 import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
 import posthog from 'posthog-js';
 
+const MACRO_GROUPS = [
+    { id: 'all', label: 'All Products', icon: '🔍', categories: [] },
+    { id: 'period-cycle', label: 'Period & Cycle Care', icon: '🩸', categories: ['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'cramp-relief'] },
+    { id: 'hormonal-balance', label: 'Hormonal Balance', icon: '⚖️', categories: ['supplement', 'hormone-monitoring'] },
+    { id: 'gut-vaginal-urinary', label: 'Gut, Vaginal & Urinary', icon: '🌸', categories: ['intimate-care'] },
+    { id: 'fertility', label: 'Fertility & Reproductive Health', icon: '🤰', categories: ['fertility', 'pregnancy', 'postpartum', 'contraception'] },
+    { id: 'menopause', label: 'Menopause & Perimenopause', icon: '🍂', categories: ['menopause'] },
+    { id: 'pelvic-health', label: 'Pelvic Health', icon: '💪', categories: ['pelvic-floor', 'pelvic-health'] },
+    { id: 'sexual-wellness', label: 'Sexual Wellness', icon: '🔥', categories: ['sex-tech', 'intimate-care'] },
+    { id: 'mental-sleep', label: 'Mental Health & Sleep', icon: '🧠', categories: ['mental-health'] },
+    { id: 'fitness', label: 'Fitness & Movement', icon: '💃', categories: ['fitness'] },
+    { id: 'diagnostics-tracking', label: 'Diagnostics & Tracking', icon: '📊', categories: ['tracker', 'diagnostics', 'hormone-monitoring'] },
+    { id: 'supplements', label: 'Supplements', icon: '💊', categories: ['supplement'] },
+    { id: 'telehealth', label: 'Telehealth & Care', icon: '🏥', categories: ['telehealth'] },
+];
+
+// Kept for sub-filter pills within a selected group
 const ALL_CATEGORIES = ['all', 'pad', 'tampon', 'cup', 'disc', 'period-underwear', 'supplement', 'tracker', 'telehealth', 'mental-health', 'fitness', 'diagnostics', 'hormone-monitoring', 'menopause', 'fertility', 'pelvic-health', 'pelvic-floor', 'cramp-relief', 'postpartum', 'pregnancy', 'sex-tech', 'intimate-care', 'contraception'];
 const TYPE_FILTERS = ['all', 'physical', 'digital', 'startup'];
 
@@ -121,8 +138,13 @@ function truncateCardSummary(text, max = 200) {
 }
 
 export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, healthProfile = null }) {
+    const [macroGroup, setMacroGroup] = useState(() => {
+        if (!initialCategory || initialCategory === 'all') return 'all';
+        return MACRO_GROUPS.find(g => g.categories.includes(initialCategory))?.id || 'all';
+    });
     const [categoryFilter, setCategoryFilter] = useState(initialCategory || 'all');
     const [typeFilter, setTypeFilter] = useState('all');
+    const activeMacroGroup = MACRO_GROUPS.find(g => g.id === macroGroup);
     const [searchQuery, setSearchQuery] = useState(initialSearch || '');
     const [submittedQuery, setSubmittedQuery] = useState(initialSearch || '');
     const [sortBy, setSortBy] = useState('default');
@@ -196,6 +218,12 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         const applyFilters = (items, skipCategory = false) => items.filter((item) => {
             if (omittedProducts[item.id]) return false;
             if (personalizationFilter && recommendedSet.size > 0 && !recommendedSet.has(item.id)) return false;
+            // Macro group filter
+            if (!skipCategory && macroGroup !== 'all') {
+                const grp = MACRO_GROUPS.find(g => g.id === macroGroup);
+                if (grp?.categories.length > 0 && !grp.categories.includes(item.category)) return false;
+            }
+            // Sub-category filter within the selected group
             if (!skipCategory && categoryFilter !== 'all' && item.category !== categoryFilter) return false;
             if (typeFilter !== 'all' && item.type !== typeFilter) return false;
             if (!skipCategory && categoryFilter === 'pad' && !padMatchesSubFilters(item, padFlowFilter, padPreferenceFilter, padUseCaseFilter)) return false;
@@ -566,41 +594,69 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             )}
             </div>
 
-            {/* Filters */}
-            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
+            {/* Macro group filter */}
+            <div style={{ marginBottom: '1rem' }}>
+                <p style={{ textAlign: 'center', fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--color-text-muted)', marginBottom: '0.6rem' }}>Browse by health area</p>
+                <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                    {MACRO_GROUPS.map(g => (
+                        <button key={g.id} onClick={() => { setMacroGroup(g.id); setCategoryFilter('all'); }} style={{
+                            padding: '0.45rem 1rem', borderRadius: 'var(--radius-pill)', fontSize: '0.82rem',
+                            fontWeight: '500', border: '1px solid var(--color-border)',
+                            background: macroGroup === g.id ? 'var(--color-primary)' : 'transparent',
+                            color: macroGroup === g.id ? 'white' : 'var(--color-text-main)',
+                            cursor: 'pointer', transition: 'all 0.2s'
+                        }}>
+                            {g.icon} {g.label}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {/* Sub-category pills — only shown when a group with multiple categories is selected */}
+            {macroGroup !== 'all' && activeMacroGroup?.categories.length > 1 && (
+                <div style={{ display: 'flex', gap: '0.4rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
+                    <button onClick={() => setCategoryFilter('all')} style={{
+                        padding: '0.3rem 0.85rem', borderRadius: 'var(--radius-pill)', fontSize: '0.78rem',
+                        fontWeight: '500', border: '1px solid var(--color-border)',
+                        background: categoryFilter === 'all' ? 'var(--color-surface-contrast)' : 'transparent',
+                        color: categoryFilter === 'all' ? 'white' : 'var(--color-text-muted)',
+                        cursor: 'pointer', transition: 'all 0.2s'
+                    }}>All</button>
+                    {activeMacroGroup.categories.map(c => (
+                        <button key={c} onClick={() => setCategoryFilter(c)} style={{
+                            padding: '0.3rem 0.85rem', borderRadius: 'var(--radius-pill)', fontSize: '0.78rem',
+                            fontWeight: '500', border: '1px solid var(--color-border)',
+                            background: categoryFilter === c ? 'var(--color-surface-contrast)' : 'transparent',
+                            color: categoryFilter === c ? 'white' : 'var(--color-text-muted)',
+                            cursor: 'pointer', transition: 'all 0.2s'
+                        }}>
+                            {CATEGORY_LABELS[c] || c}
+                        </button>
+                    ))}
+                </div>
+            )}
+
+            {/* Type + personalization filters — separate from categories */}
+            <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: 'var(--spacing-lg)', paddingTop: '0.5rem', borderTop: '1px solid var(--color-border)' }}>
+                <span style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--color-text-muted)', alignSelf: 'center' }}>Filter by:</span>
                 {recommendedSet.size > 0 && (
                     <button onClick={() => setPersonalizationFilter(!personalizationFilter)} style={{
-                        padding: '0.5rem 1.25rem', borderRadius: 'var(--radius-pill)', fontSize: '0.85rem',
+                        padding: '0.4rem 1rem', borderRadius: 'var(--radius-pill)', fontSize: '0.82rem',
                         fontWeight: '500', border: '1px solid var(--color-border)',
                         background: personalizationFilter ? 'var(--color-primary)' : 'transparent',
                         color: personalizationFilter ? 'white' : 'var(--color-text-main)',
                         cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '0.35rem'
-                    }}>
-                        ✨ For you
-                    </button>
+                    }}>✨ For you</button>
                 )}
                 {TYPE_FILTERS.map(t => (
                     <button key={t} onClick={() => setTypeFilter(t)} style={{
-                        padding: '0.5rem 1.25rem', borderRadius: 'var(--radius-pill)', fontSize: '0.85rem',
+                        padding: '0.4rem 1rem', borderRadius: 'var(--radius-pill)', fontSize: '0.82rem',
                         fontWeight: '500', border: '1px solid var(--color-border)',
-                        background: typeFilter === t ? 'var(--color-primary)' : 'transparent',
+                        background: typeFilter === t ? 'var(--color-surface-contrast)' : 'transparent',
                         color: typeFilter === t ? 'white' : 'var(--color-text-main)',
                         cursor: 'pointer', transition: 'all 0.2s'
                     }}>
-                        {t === 'all' ? 'All Types' : t.charAt(0).toUpperCase() + t.slice(1)}
-                    </button>
-                ))}
-            </div>
-            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: 'var(--spacing-lg)' }}>
-                {ALL_CATEGORIES.map(c => (
-                    <button key={c} onClick={() => setCategoryFilter(c)} style={{
-                        padding: '0.4rem 1rem', borderRadius: 'var(--radius-pill)', fontSize: '0.8rem',
-                        fontWeight: '500', border: '1px solid var(--color-border)',
-                        background: categoryFilter === c ? 'var(--color-surface-contrast)' : 'transparent',
-                        color: categoryFilter === c ? 'white' : 'var(--color-text-muted)',
-                        cursor: 'pointer', transition: 'all 0.2s'
-                    }}>
-                        {c === 'all' ? 'All' : (CATEGORY_LABELS[c] || c)}
+                        {t === 'all' ? 'All types' : t.charAt(0).toUpperCase() + t.slice(1)}
                     </button>
                 ))}
             </div>

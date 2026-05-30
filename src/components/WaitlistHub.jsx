@@ -6,14 +6,13 @@ export default function WaitlistHub({ joinedWaitlists, toggleJoinWaitlist, quizR
     const hasProfile = !!(quizResults?.frustrations?.length);
 
     const [filterCategory, setFilterCategory] = useState('all');
-    const categories = ['all', ...new Set(UNRELEASED_STARTUPS.map(s => s.category))];
+    const [telehealthOnly, setTelehealthOnly] = useState(false);
 
     const categoryLabels = {
         'all': 'All',
         'diagnostics': '🔬 Diagnostics',
         'hormone-monitoring': '🧬 Hormone Monitoring',
         'period-care': '🩸 Period Care',
-        'telehealth': '🏥 Telehealth',
         'menopause': '🌸 Menopause',
         'fertility': '🤰 Fertility',
         'supplements': '💊 Supplements',
@@ -25,7 +24,16 @@ export default function WaitlistHub({ joinedWaitlists, toggleJoinWaitlist, quizR
         'mental-health': '🧠 Mental Health'
     };
 
-    const filtered = filterCategory === 'all' ? startups : startups.filter(s => s.category === filterCategory);
+    // Telehealth is a care-access filter, not a product category
+    const productCategories = ['all', ...new Set(
+        UNRELEASED_STARTUPS.filter(s => s.category !== 'telehealth').map(s => s.category)
+    )];
+
+    const filtered = startups.filter(s => {
+        if (telehealthOnly) return s.category === 'telehealth' || (s.tags || []).includes('telehealth');
+        if (filterCategory === 'all') return true;
+        return s.category === filterCategory;
+    });
 
     return (
         <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
@@ -54,18 +62,32 @@ export default function WaitlistHub({ joinedWaitlists, toggleJoinWaitlist, quizR
             </div>
 
             {/* Category Filters */}
-            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: 'var(--spacing-lg)' }}>
-                {categories.map(c => (
-                    <button key={c} onClick={() => setFilterCategory(c)} style={{
+            <div style={{ marginBottom: 'var(--spacing-lg)' }}>
+                <p style={{ textAlign: 'center', fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>Health focus area</p>
+                <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
+                    {productCategories.map(c => (
+                        <button key={c} onClick={() => { setFilterCategory(c); setTelehealthOnly(false); }} style={{
+                            padding: '0.4rem 1rem', borderRadius: 'var(--radius-pill)', fontSize: '0.8rem',
+                            fontWeight: '500', border: '1px solid var(--color-border)',
+                            background: !telehealthOnly && filterCategory === c ? 'var(--color-primary)' : 'transparent',
+                            color: !telehealthOnly && filterCategory === c ? 'white' : 'var(--color-text-muted)',
+                            cursor: 'pointer', transition: 'all 0.2s'
+                        }}>
+                            {categoryLabels[c] || c}
+                        </button>
+                    ))}
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <button onClick={() => { setTelehealthOnly(!telehealthOnly); setFilterCategory('all'); }} style={{
                         padding: '0.4rem 1rem', borderRadius: 'var(--radius-pill)', fontSize: '0.8rem',
                         fontWeight: '500', border: '1px solid var(--color-border)',
-                        background: filterCategory === c ? 'var(--color-primary)' : 'transparent',
-                        color: filterCategory === c ? 'white' : 'var(--color-text-muted)',
+                        background: telehealthOnly ? 'var(--color-primary)' : 'transparent',
+                        color: telehealthOnly ? 'white' : 'var(--color-text-muted)',
                         cursor: 'pointer', transition: 'all 0.2s'
                     }}>
-                        {categoryLabels[c] || c}
+                        🏥 Telehealth & Virtual Care
                     </button>
-                ))}
+                </div>
             </div>
 
             <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>

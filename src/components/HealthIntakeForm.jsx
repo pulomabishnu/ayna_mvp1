@@ -246,6 +246,7 @@ const emptyIntake = {
   dislikedProductsText: '',
   dislikedReason: '',
   goals: [],
+  goalsOtherText: '',
   healthDataText: '',
 };
 
@@ -362,6 +363,9 @@ export default function HealthIntakeForm({ onComplete }) {
 
             <FieldLabel optional>Goals — what are you hoping Ayna helps you with?</FieldLabel>
             <ChipGrid items={GOALS} selected={intake.goals} onToggle={(v) => toggle('goals', v)} small />
+            <div style={{ marginTop: '0.75rem' }}>
+              <TextInput value={intake.goalsOtherText} onChange={(v) => set('goalsOtherText', v)} placeholder="Anything else you're looking for? (optional)" />
+            </div>
 
             <ContinueButton onClick={goNext} disabled={!intake.primaryConcerns.length || !intake.menstrualCycle}>
               Continue →
