@@ -660,8 +660,13 @@ const ARTICLE_CATEGORIES = [
   },
   {
     id: 'hormonal',
-    label: '⚖️ Hormonal & Metabolic',
+    label: '⚖️ Hormonal Health',
     articleIds: ['pcos-basics', 'menopause-basics'],
+  },
+  {
+    id: 'chronic',
+    label: '🏥 Chronic Conditions',
+    articleIds: ['pcos-basics', 'endometriosis-basics', 'pelvic-floor-dysfunction'],
   },
   {
     id: 'vaginal-urinary',
@@ -669,8 +674,8 @@ const ARTICLE_CATEGORIES = [
     articleIds: ['intimate-wash', 'uti-prevention', 'yeast-infection-basics'],
   },
   {
-    id: 'pelvic-structural',
-    label: '💪 Pelvic & Structural Health',
+    id: 'pelvic',
+    label: '💪 Pelvic Health',
     articleIds: ['pelvic-floor-dysfunction', 'endometriosis-basics'],
   },
 ];
