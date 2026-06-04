@@ -1,5 +1,6 @@
 /* global process */
 import { retrieveKnowledgeForIntake, buildKnowledgeContext } from '../src/utils/ragRetrieval.js';
+import { verifyUser, checkUsage, incrementUsage } from './_usageLimit.js';
 
 function anyApiKeyConfigured() {
   return !!(process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY);
@@ -813,7 +814,7 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     return res.status(204).end();
   }
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -861,6 +862,16 @@ async function handleRequest(req, res) {
   const concerns = batchSize !== null
     ? allConcerns.slice(batchIndex * batchSize, (batchIndex + 1) * batchSize)
     : allConcerns;
+
+  // Auth + ecosystem quota (only gate on first batch to allow multi-batch generation)
+  const { user, error: authError, admin } = await verifyUser(req);
+  if (!user) return res.status(401).json({ error: authError });
+  const isPremium = user.user_metadata?.is_premium === true;
+  if (!isPremium && batchIndex === 0) {
+    const { over, used, limit, period } = await checkUsage(admin, user.id, 'ecosystem');
+    if (over) return res.status(429).json({ error: 'ecosystem_limit_reached', used, limit, action: 'ecosystem' });
+    await incrementUsage(admin, user.id, 'ecosystem', period);
+  }
 
   if (!concerns.length) {
     return res.status(200).json({ recommendations: [], concernsTotal: allConcerns.length, providerUsed: null, generatedAt: new Date().toISOString() });

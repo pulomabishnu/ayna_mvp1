@@ -108,6 +108,7 @@ function App() {
   const [ecosystemSeedMeta, setEcosystemSeedMeta] = useState({});
   const [welcomeSubPhase, setWelcomeSubPhase] = useState('intro');
   const [user, setUser] = useState(null);
+  const [userSession, setUserSession] = useState(null);
   // Set to true once the LLM builds the ecosystem this session — prevents
   // Supabase token-refresh reloads from overwriting in-memory LLM products.
   const llmBuiltThisSessionRef = useRef(false);
@@ -159,6 +160,7 @@ function App() {
       supabase.auth.getSession().then(({ data: { session } }) => {
         initialSessionRef.current = session?.user ?? false;
         setUser(session?.user ?? null);
+        setUserSession(session ?? null);
         setAuthLoading(false);
       });
     } else {
@@ -167,6 +169,7 @@ function App() {
     const STATIC_VIEWS = ['privacy-policy', 'terms-of-use', 'confirmed', 'auth-callback'];
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
+      setUserSession(session ?? null);
       if (event === 'SIGNED_IN' && session?.user) {
         setShowAuthModal(false);
         // Only navigate when the user was actually signed out before (explicit login).
@@ -997,6 +1000,9 @@ function App() {
             }}
             onLlmRecommendationsLoaded={handleLlmRecommendationsLoaded}
             onBuildEcosystemFromLlm={handleBuildEcosystemFromLlm}
+            user={user}
+            userSession={userSession}
+            isPremium={user?.user_metadata?.is_premium === true}
           />
         )}
         {currentView === 'discovery' && (
@@ -1105,6 +1111,8 @@ function App() {
             quizResults={quizResults}
             healthProfile={healthProfile}
             ecosystemProducts={Object.values(myProducts)}
+            user={user}
+            userSession={userSession}
           />
         )}
 

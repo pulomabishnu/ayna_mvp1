@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react';
+import SubscriptionPaywallModal from './SubscriptionPaywallModal';
 import {
     HEALTH_FUNCTIONS,
     ALL_PRODUCTS,
@@ -828,8 +829,12 @@ export default function MyEcosystem({
     onOpenArticle,
     onLlmRecommendationsLoaded,
     onBuildEcosystemFromLlm,
+    user = null,
+    userSession = null,
+    isPremium = false,
 }) {
     const [showAddModal, setShowAddModal] = useState(false);
+    const [showSyncPaywall, setShowSyncPaywall] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const viewMode = 'function';
     const [interactionSelection, setInteractionSelection] = useState(new Set()); // product ids for interaction check
@@ -1023,12 +1028,13 @@ export default function MyEcosystem({
                 const NUM_BATCHES = 2;
                 let doneCount = 0;
 
+                const authToken = userSession?.access_token;
                 await new Promise(resolveAll => {
                     Array.from({ length: NUM_BATCHES }, (_, i) => {
-                        fetchLlmRecommendations({
-                            intake, trackedProducts, myProducts, omittedProducts,
-                            learningMemory: memory, batchIndex: i, batchSize: BATCH_SIZE,
-                        })
+                        fetchLlmRecommendations(
+                            { intake, trackedProducts, myProducts, omittedProducts, learningMemory: memory, batchIndex: i, batchSize: BATCH_SIZE },
+                            { authToken }
+                        )
                         .then(d => {
                             if (!active) return;
                             const recs = Array.isArray(d?.recommendations) ? d.recommendations : [];
@@ -1036,6 +1042,7 @@ export default function MyEcosystem({
                         })
                         .catch(e => {
                             console.error(`[Ayna LLM] batch ${i} error:`, e?.message);
+                            if (e?.status === 429) setLlmError('You\'ve already generated your Ayna ecosystem. Regenerating is a premium feature. Email pulomabishnu@gmail.com to upgrade.');
                             errorCount++;
                         })
                         .finally(() => { if (++doneCount === NUM_BATCHES) resolveAll(); });
@@ -1488,6 +1495,59 @@ export default function MyEcosystem({
                     )}
                 </div>
 
+                {/* Health data sync — premium feature */}
+                {(() => {
+                    const SYNC_SOURCES = [
+                        { id: 'apple-health', label: 'Apple Health', icon: '🍎' },
+                        { id: 'strava', label: 'Strava', icon: '🏃' },
+                        { id: 'garmin', label: 'Garmin', icon: '⌚' },
+                        { id: 'flo', label: 'Flo', icon: '🌸' },
+                        { id: 'whoop', label: 'Whoop', icon: '💪' },
+                        { id: 'oura', label: 'Oura Ring', icon: '💍' },
+                        { id: 'google-fit', label: 'Google Fit', icon: '📊' },
+                    ];
+                    return (
+                        <div style={{ marginBottom: 'var(--spacing-lg)', padding: '1.25rem 1.5rem', background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                                <span style={{ fontSize: '0.8rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--color-text-muted)' }}>
+                                    Sync wearable &amp; app data
+                                </span>
+                                {!isPremium && (
+                                    <span style={{ fontSize: '0.7rem', background: 'var(--color-secondary-fade)', color: 'var(--color-primary)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)', fontWeight: '600' }}>
+                                        Premium
+                                    </span>
+                                )}
+                            </div>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                {SYNC_SOURCES.map(src => (
+                                    <button
+                                        key={src.id}
+                                        type="button"
+                                        onClick={() => !isPremium && setShowSyncPaywall(true)}
+                                        title={isPremium ? `Connect ${src.label}` : `${src.label} — requires Ayna Premium`}
+                                        style={{
+                                            display: 'flex', alignItems: 'center', gap: '0.4rem',
+                                            padding: '0.4rem 0.85rem',
+                                            border: '1px solid var(--color-border)',
+                                            borderRadius: 'var(--radius-pill)',
+                                            background: 'var(--color-surface)',
+                                            fontSize: '0.82rem', fontWeight: '500',
+                                            color: isPremium ? 'var(--color-text-main)' : 'var(--color-text-muted)',
+                                            cursor: isPremium ? 'default' : 'pointer',
+                                            opacity: isPremium ? 0.7 : 1,
+                                        }}
+                                    >
+                                        <span>{src.icon}</span>
+                                        <span>{src.label}</span>
+                                        {!isPremium && <span style={{ fontSize: '0.7rem' }}>🔒</span>}
+                                        {isPremium && <span style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>· coming soon</span>}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    );
+                })()}
+
                 
 
                 <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-lg)', display: 'flex', justifyContent: 'center', gap: '1rem' }}>
@@ -1903,6 +1963,12 @@ export default function MyEcosystem({
                     </div>
                 </div>
             )}
+        {showSyncPaywall && (
+            <SubscriptionPaywallModal
+                onClose={() => setShowSyncPaywall(false)}
+                featureName="wearable and health app syncing"
+            />
+        )}
         </>
     );
 }

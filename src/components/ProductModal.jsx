@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Disclaimer from './Disclaimer';
+import SubscriptionPaywallModal from './SubscriptionPaywallModal';
 import { getProfileMatchLabelsForProduct, getRecommendationExplanation, getPrescriptionAccessGuidance } from '../data/products';
 import { getHowToUseContent } from '../data/productHowToUse';
 import { getAynaRating } from '../data/aynaReviews';
@@ -9,6 +10,7 @@ import { buildProfileTailoring, getIngredientSafetyFlags } from '../utils/profil
 import { fetchFdaRecall } from '../utils/fetchFdaRecall';
 import { fetchPubmedArticles } from '../utils/fetchPubmedArticles';
 import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
+import { getSupabaseClient } from '../utils/supabaseClient';
 
 // Build purchase/search URLs for common retailers (product name encoded). Keys matched by store name.
 const STORE_SEARCH_URLS = {
@@ -471,8 +473,12 @@ export default function ProductModal({
     quizResults = null,
     healthProfile = null,
     ecosystemProducts = null,
+    user = null,
+    userSession = null,
 }) {
+    const FREE_CHAT_LIMIT = 5;
     const [activeTab, setActiveTab] = useState('chat');
+    const [chatUsed, setChatUsed] = useState(null); // null = not yet fetched
     const [chatMessages, setChatMessages] = useState([{ role: 'assistant', text: `Hi! I'm Ayna. What would you like to know about ${product?.name}?` }]);
     const [chatInput, setChatInput] = useState('');
     const [isTyping, setIsTyping] = useState(false);
@@ -488,6 +494,28 @@ export default function ProductModal({
     const [resolvedModalImage, setResolvedModalImage] = useState('');
     const [openBlocks, setOpenBlocks] = useState({});
     const toggleBlock = (id) => setOpenBlocks(prev => ({ ...prev, [id]: !prev[id] }));
+    const [showPaywall, setShowPaywall] = useState(false);
+
+    useEffect(() => {
+        if (!user?.id) { setChatUsed(null); return; }
+        const supabase = getSupabaseClient();
+        if (!supabase) return;
+        const d = new Date();
+        const day = d.getUTCDay();
+        const diff = day === 0 ? -6 : 1 - day;
+        const mon = new Date(d);
+        mon.setUTCDate(d.getUTCDate() + diff);
+        const period = 'week:' + mon.toISOString().split('T')[0];
+        supabase
+            .from('user_ai_usage')
+            .select('count')
+            .eq('user_id', user.id)
+            .eq('period', period)
+            .eq('action', 'chat')
+            .maybeSingle()
+            .then(({ data }) => setChatUsed(data?.count ?? 0));
+    }, [user?.id]);
+
     const healthContextKey = useMemo(
         () => buildUserHealthContextString(quizResults, healthProfile),
         [quizResults, healthProfile]
@@ -569,7 +597,7 @@ export default function ProductModal({
         }
         let cancelled = false;
         setAiLoading(true);
-        fetchProductInsights(product, { quizResults, healthProfile })
+        fetchProductInsights(product, { quizResults, healthProfile, authToken: userSession?.access_token })
             .then((data) => {
                 if (!cancelled) {
                     setAiInsights(data);
@@ -579,13 +607,9 @@ export default function ProductModal({
             .catch((e) => {
                 if (cancelled) return;
                 if (e?.status === 429) {
-                    const sec = e.retryAfterSeconds;
-                    const mins = sec != null && sec >= 60 ? Math.ceil(sec / 60) : null;
-                    setAiError(
-                        mins != null
-                            ? `Too many insight requests. Try again in about ${mins} min.`
-                            : 'Too many insight requests. Please wait a bit and try again.'
-                    );
+                    setAiError('You\'ve viewed AI insights for 5 products this week. Resets Monday.');
+                } else if (e?.status === 401) {
+                    setAiError('Sign in to view AI insights.');
                 } else {
                     setAiError(e?.message || 'Could not load Ayna insights');
                 }
@@ -606,18 +630,14 @@ export default function ProductModal({
         setAiLoading(true);
         setAiError(null);
         try {
-            const data = await fetchProductInsights(product, { quizResults, healthProfile });
+            const data = await fetchProductInsights(product, { quizResults, healthProfile, authToken: userSession?.access_token });
             setAiInsights(data);
             saveCachedInsights(product.id, healthContextKey, data);
         } catch (e) {
             if (e?.status === 429) {
-                const sec = e.retryAfterSeconds;
-                const mins = sec != null && sec >= 60 ? Math.ceil(sec / 60) : null;
-                setAiError(
-                    mins != null
-                        ? `Too many insight requests. Try again in about ${mins} min.`
-                        : 'Too many insight requests. Please wait a bit and try again.'
-                );
+                setAiError('You\'ve viewed AI insights for 5 products this week. Resets Monday.');
+            } else if (e?.status === 401) {
+                setAiError('Sign in to view AI insights.');
             } else {
                 setAiError(e?.message || 'Could not load Ayna insights');
             }
@@ -738,7 +758,10 @@ export default function ProductModal({
         try {
             const res = await fetch('/api/product-chat', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(userSession?.access_token ? { Authorization: `Bearer ${userSession.access_token}` } : {}),
+                },
                 body: JSON.stringify({
                     question: userMsg,
                     product: {
@@ -769,11 +792,27 @@ export default function ProductModal({
                 }),
                 signal: AbortSignal.timeout(30000),
             });
+            if (res.status === 401) {
+                setChatMessages(prev => [...prev, {
+                    role: 'assistant',
+                    text: "Please sign in to use Ask Ayna.",
+                }]);
+                return;
+            }
+            if (res.status === 429) {
+                setChatMessages(prev => [...prev, {
+                    role: 'assistant',
+                    text: `You've used all ${FREE_CHAT_LIMIT} free chats this week. Chats reset every Monday. To get unlimited access, email pulomabishnu@gmail.com with subject "Ayna Premium".`,
+                }]);
+                setChatUsed(FREE_CHAT_LIMIT);
+                return;
+            }
             const data = await res.json();
             setChatMessages(prev => [...prev, {
                 role: 'assistant',
                 text: data.answer || "I wasn't able to answer that right now. Please try again.",
             }]);
+            setChatUsed(prev => Math.min((prev ?? 0) + 1, FREE_CHAT_LIMIT));
         } catch {
             setChatMessages(prev => [...prev, {
                 role: 'assistant',
@@ -984,6 +1023,7 @@ export default function ProductModal({
     };
 
     return (
+        <>
         <div style={{
             position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
             backgroundColor: 'rgba(0, 0, 0, 0.5)', backdropFilter: 'blur(8px)',
@@ -1849,46 +1889,73 @@ export default function ProductModal({
                     {activeTab === 'chat' && (
                         <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', height: '400px' }}>
                             <AynaInsight>Ask Ayna anything about this product. Answers are for education only and are not medical advice; always consult your clinician for personalized care.</AynaInsight>
-                            <div style={{ flexGrow: 1, overflowY: 'auto', padding: '1rem', background: 'var(--color-bg)', borderRadius: 'var(--radius-lg)', marginBottom: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                {chatMessages.map((msg, idx) => (
-                                    <div key={idx} style={{
-                                        alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start',
-                                        background: msg.role === 'user' ? 'var(--color-primary)' : 'white',
-                                        color: msg.role === 'user' ? 'white' : 'var(--color-text-main)',
-                                        padding: '0.75rem 1rem',
-                                        borderRadius: '1rem',
-                                        borderBottomRightRadius: msg.role === 'user' ? 0 : '1rem',
-                                        borderBottomLeftRadius: msg.role === 'assistant' ? 0 : '1rem',
-                                        maxWidth: '80%',
-                                        boxShadow: 'var(--shadow-sm)',
-                                        border: msg.role === 'assistant' ? '1px solid var(--color-border)' : 'none'
-                                    }}>
-                                        <p style={{ margin: 0, fontSize: '0.9rem', lineHeight: '1.4' }}>{msg.text}</p>
+                            {!user ? (
+                                <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem', textAlign: 'center', padding: '2rem' }}>
+                                    <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem' }}>Sign in to ask Ayna — free accounts get 5 AI-powered chats per week.</p>
+                                </div>
+                            ) : (
+                                <>
+                                    <div style={{ flexGrow: 1, overflowY: 'auto', padding: '1rem', background: 'var(--color-bg)', borderRadius: 'var(--radius-lg)', marginBottom: '0.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                        {chatMessages.map((msg, idx) => (
+                                            <div key={idx} style={{
+                                                alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start',
+                                                background: msg.role === 'user' ? 'var(--color-primary)' : 'white',
+                                                color: msg.role === 'user' ? 'white' : 'var(--color-text-main)',
+                                                padding: '0.75rem 1rem',
+                                                borderRadius: '1rem',
+                                                borderBottomRightRadius: msg.role === 'user' ? 0 : '1rem',
+                                                borderBottomLeftRadius: msg.role === 'assistant' ? 0 : '1rem',
+                                                maxWidth: '80%',
+                                                boxShadow: 'var(--shadow-sm)',
+                                                border: msg.role === 'assistant' ? '1px solid var(--color-border)' : 'none'
+                                            }}>
+                                                <p style={{ margin: 0, fontSize: '0.9rem', lineHeight: '1.4' }}>{msg.text}</p>
+                                            </div>
+                                        ))}
+                                        {isTyping && (
+                                            <div style={{ alignSelf: 'flex-start', background: 'white', padding: '0.75rem 1rem', borderRadius: '1rem', borderBottomLeftRadius: 0, border: '1px solid var(--color-border)', color: 'var(--color-text-muted)', fontSize: '0.9rem', fontStyle: 'italic' }}>
+                                                Ayna is thinking...
+                                            </div>
+                                        )}
                                     </div>
-                                ))}
-                                {isTyping && (
-                                    <div style={{ alignSelf: 'flex-start', background: 'white', padding: '0.75rem 1rem', borderRadius: '1rem', borderBottomLeftRadius: 0, border: '1px solid var(--color-border)', color: 'var(--color-text-muted)', fontSize: '0.9rem', fontStyle: 'italic' }}>
-                                        Ayna is thinking...
-                                    </div>
-                                )}
-                            </div>
-                            <form onSubmit={handleSendMessage} style={{ display: 'flex', gap: '0.5rem' }}>
-                                <input
-                                    type="text"
-                                    value={chatInput}
-                                    onChange={(e) => setChatInput(e.target.value)}
-                                    placeholder={`Ask about ${product.name}...`}
-                                    style={{ flexGrow: 1, padding: '0.8rem 1rem', borderRadius: 'var(--radius-pill)', border: '1px solid var(--color-border)', outline: 'none' }}
-                                />
-                                <button type="submit" disabled={isTyping} className="btn btn-primary" style={{ padding: '0 1.5rem', borderRadius: 'var(--radius-pill)' }}>
-                                    Send
-                                </button>
-                            </form>
+                                    {chatUsed !== null && (
+                                        <p style={{ fontSize: '0.75rem', color: chatUsed >= FREE_CHAT_LIMIT ? 'var(--color-text-muted)' : 'var(--color-text-muted)', textAlign: 'right', margin: '0 0 0.4rem' }}>
+                                            {chatUsed >= FREE_CHAT_LIMIT
+                                                ? <>Limit reached · <button type="button" onClick={() => setShowPaywall(true)} style={{ background: 'none', border: 'none', color: 'var(--color-primary)', cursor: 'pointer', fontWeight: '600', fontSize: '0.75rem', padding: 0 }}>Upgrade →</button></>
+                                                : `${FREE_CHAT_LIMIT - chatUsed} / ${FREE_CHAT_LIMIT} free chats remaining this week`
+                                            }
+                                        </p>
+                                    )}
+                                    {chatUsed !== null && chatUsed >= FREE_CHAT_LIMIT ? (
+                                        <div style={{ padding: '0.75rem 1rem', background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)', textAlign: 'center' }}>
+                                            <p style={{ margin: '0 0 0.5rem', fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>Weekly chat limit reached. Resets every Monday.</p>
+                                            <button type="button" onClick={() => setShowPaywall(true)} className="btn btn-primary" style={{ fontSize: '0.85rem', padding: '0.5rem 1.25rem' }}>
+                                                Upgrade for unlimited access
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <form onSubmit={handleSendMessage} style={{ display: 'flex', gap: '0.5rem' }}>
+                                            <input
+                                                type="text"
+                                                value={chatInput}
+                                                onChange={(e) => setChatInput(e.target.value)}
+                                                placeholder={`Ask about ${product.name}...`}
+                                                style={{ flexGrow: 1, padding: '0.8rem 1rem', borderRadius: 'var(--radius-pill)', border: '1px solid var(--color-border)', outline: 'none' }}
+                                            />
+                                            <button type="submit" disabled={isTyping} className="btn btn-primary" style={{ padding: '0 1.5rem', borderRadius: 'var(--radius-pill)' }}>
+                                                Send
+                                            </button>
+                                        </form>
+                                    )}
+                                </>
+                            )}
                         </div>
                     )}
                 </div>
             </div>
         </div>
+        {showPaywall && <SubscriptionPaywallModal onClose={() => setShowPaywall(false)} featureName="unlimited AI chat" />}
+    </>
     );
 }
 

@@ -85,14 +85,17 @@ export function buildProductInsightsRequestBody(product, quizResults, healthProf
  * @param {{ quizResults?: object|null, healthProfile?: object|null }} [options]
  */
 export async function fetchProductInsights(product, options = {}) {
-  const { quizResults, healthProfile } = options;
+  const { quizResults, healthProfile, authToken } = options;
   const body = buildProductInsightsRequestBody(product, quizResults, healthProfile);
   if (!body) {
     throw new Error('Invalid product');
   }
   const res = await fetch(API_PATH, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+    },
     body: JSON.stringify(body),
   });
   let data;

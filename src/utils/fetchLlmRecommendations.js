@@ -137,6 +137,7 @@ export async function fetchLlmRecommendations(options = {}, fetchOpts = {}) {
   if (!body) throw new Error('Missing intake profile');
 
   const timeoutMs = typeof fetchOpts.timeoutMs === 'number' ? fetchOpts.timeoutMs : DEFAULT_FETCH_TIMEOUT_MS;
+  const { authToken } = fetchOpts;
   const controller = new AbortController();
   const tid = setTimeout(() => controller.abort(), timeoutMs);
 
@@ -144,7 +145,10 @@ export async function fetchLlmRecommendations(options = {}, fetchOpts = {}) {
   try {
     res = await fetch(API_PATH, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+      },
       body: JSON.stringify(body),
       signal: controller.signal,
     });

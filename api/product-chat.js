@@ -4,6 +4,7 @@
  * plus core product data as context, so we don't need a full retrieval pass.
  */
 /* global process */
+import { verifyUser, checkUsage, incrementUsage } from './_usageLimit.js';
 
 function buildEcosystemSummary(ecosystemProducts) {
   if (!Array.isArray(ecosystemProducts) || ecosystemProducts.length === 0) return '';
@@ -124,10 +125,21 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     return res.status(204).end();
   }
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+  const { user, error, admin } = await verifyUser(req);
+  if (!user) return res.status(401).json({ error });
+
+  const isPremium = user.user_metadata?.is_premium === true;
+  let chatPeriod;
+  if (!isPremium) {
+    const { over, used, limit, period } = await checkUsage(admin, user.id, 'chat');
+    if (over) return res.status(429).json({ error: 'weekly_limit_reached', used, limit, action: 'chat' });
+    chatPeriod = period;
+  }
 
   let body;
   try {
@@ -166,5 +178,6 @@ export default async function handler(req, res) {
     });
   }
 
+  if (!isPremium) await incrementUsage(admin, user.id, 'chat', chatPeriod);
   return res.status(200).json({ answer });
 }

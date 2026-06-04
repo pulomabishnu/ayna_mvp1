@@ -6,7 +6,7 @@
 
 import { deriveBrandSearchContext } from '../src/utils/productBrandContext.js';
 import { retrieveKnowledgeForProduct, buildKnowledgeContext } from '../src/utils/ragRetrieval.js';
-import { checkProductInsightsRateLimit } from './rateLimitProductInsights.js';
+import { verifyUser, checkUsage, incrementUsage } from './_usageLimit.js';
 
 const MAX_NARRATIVE_LEN = 2200;
 const MAX_EXTRA_SUMMARY_LEN = 800;
@@ -422,23 +422,22 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     return res.status(204).end();
   }
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const rate = await checkProductInsightsRateLimit(req);
-  if (!rate.ok) {
-    const retrySec = rate.retryAfterSec ?? 60;
-    res.setHeader('Retry-After', String(retrySec));
-    return res.status(429).json({
-      error: 'rate_limited',
-      message:
-        'Too many Ayna insight requests from this network. Please wait before trying again.',
-      retryAfterSeconds: retrySec,
-    });
+  const { user, error, admin } = await verifyUser(req);
+  if (!user) return res.status(401).json({ error });
+
+  const isPremium = user.user_metadata?.is_premium === true;
+  let insightsPeriod;
+  if (!isPremium) {
+    const { over, used, limit, period } = await checkUsage(admin, user.id, 'insights');
+    if (over) return res.status(429).json({ error: 'weekly_limit_reached', used, limit, action: 'insights' });
+    insightsPeriod = period;
   }
 
   if (!anyApiKeyConfigured()) {
@@ -489,6 +488,7 @@ export default async function handler(req, res) {
       );
       if (!out) continue;
       const { clinicianLinks, literatureLinks, communityLinks } = buildSafeLinks(out.normalized, product?.category);
+      if (!isPremium) await incrementUsage(admin, user.id, 'insights', insightsPeriod);
       return res.status(200).json({
         clinicalNarrative: out.normalized.clinicalNarrative,
         scienceSummary: out.normalized.scienceSummary || '',
