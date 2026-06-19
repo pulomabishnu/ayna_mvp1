@@ -3,6 +3,7 @@ import Hero from './components/Hero';
 import WelcomeGate from './components/WelcomeGate';
 import HealthIntakeForm from './components/HealthIntakeForm';
 import HealthProfileEditor from './components/HealthProfileEditor';
+import PhoneVerification from './components/PhoneVerification';
 import Recommendations from './components/Recommendations';
 import WaitlistHub from './components/WaitlistHub';
 import TrackedItems from './components/TrackedItems';
@@ -44,7 +45,7 @@ const VIEW_TO_PATH = {
   discovery: '/discovery', waitlist: '/startups', deeptech: '/deeptech',
   articles: '/library', screenings: '/screenings', omitted: '/omitted',
   comparison: '/comparison', recalls: '/recalls',
-  'doctor-prep': '/appointment-prep', 'profile-edit': '/profile', tracked: '/tracked',
+  'doctor-prep': '/appointment-prep', 'profile-edit': '/profile', 'phone-verify': '/text-ayna', tracked: '/tracked',
   'privacy-policy': '/privacy-policy',
   'terms-of-use': '/terms-of-use',
   'auth-callback': '/auth/callback',
@@ -280,7 +281,7 @@ function App() {
     return () => document.removeEventListener('pointerdown', close);
   }, [showAccountMenu]);
 
-  const PROTECTED_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls', 'doctor-prep', 'profile-edit', 'tracked', 'screenings'];
+  const PROTECTED_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls', 'doctor-prep', 'profile-edit', 'phone-verify', 'tracked', 'screenings'];
   useEffect(() => {
     if (!authLoading && !user && PROTECTED_VIEWS.includes(currentView)) {
       setCurrentView('welcome', { replace: true });
@@ -353,6 +354,7 @@ function App() {
 
   const handleStartQuiz = () => setCurrentView('quiz');
   const handleOpenHealthProfileEditor = () => setCurrentView('profile-edit');
+  const handleOpenPhoneVerification = () => setCurrentView('phone-verify');
   const handleViewWaitlist = () => setCurrentView('waitlist');
   const handleViewEcosystem = () => setCurrentView('ecosystem');
   const handleViewDiscovery = (queryOrOptions = '') => {
@@ -900,6 +902,14 @@ function App() {
             currentProfile={quizResults}
             onSave={handleHealthProfileEditorSave}
             onCancel={() => setCurrentView('ecosystem')}
+            onOpenPhoneVerify={handleOpenPhoneVerification}
+          />
+        )}
+        {currentView === 'phone-verify' && (
+          <PhoneVerification
+            userSession={userSession}
+            onVerified={() => setCurrentView('ecosystem')}
+            onCancel={() => setCurrentView('ecosystem')}
           />
         )}
         {currentView === 'recommendations' && (
@@ -985,6 +995,7 @@ function App() {
             onOpenDoctorPrep={() => setCurrentView('doctor-prep')}
             onBuildEcosystem={handleStartQuiz}
             onEditHealthProfile={handleOpenHealthProfileEditor}
+            onOpenPhoneVerify={handleOpenPhoneVerification}
             quizResults={quizResults}
             healthProfile={healthProfile}
             userZipCode={userZipCode}

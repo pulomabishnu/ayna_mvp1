@@ -66,7 +66,7 @@ function buildInitial(profile) {
   };
 }
 
-export default function HealthProfileEditor({ currentProfile, onSave, onCancel }) {
+export default function HealthProfileEditor({ currentProfile, onSave, onCancel, onOpenPhoneVerify }) {
   const [draft, setDraft] = useState(() => buildInitial(currentProfile));
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
@@ -254,6 +254,18 @@ export default function HealthProfileEditor({ currentProfile, onSave, onCancel }
             </select>
           </label>
         </div>
+
+        {onOpenPhoneVerify && (
+          <div style={{ marginTop: '1.25rem', padding: '0.85rem', borderRadius: 'var(--radius-md)', background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)' }}>
+            <div style={{ fontWeight: 600, marginBottom: '0.25rem' }}>Text Ayna</div>
+            <p style={{ margin: '0 0 0.5rem', color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>
+              Verify your phone number to get personalized health texts from Ayna anytime.
+            </p>
+            <button type="button" className="btn btn-outline" onClick={onOpenPhoneVerify}>
+              Set up texting
+            </button>
+          </div>
+        )}
 
         {saveMessage && <p style={{ marginTop: '0.75rem', color: 'var(--color-text-muted)' }}>{saveMessage}</p>}
 

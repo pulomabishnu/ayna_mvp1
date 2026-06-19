@@ -28,7 +28,25 @@ import {
 import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
 import { getPricePerUnitLabel } from '../utils/pricePerUnit';
 import { deriveBrandSearchContext } from '../utils/productBrandContext.js';
+import { getSupabaseClient } from '../utils/supabaseClient';
+import { loadPhoneNumberForUser } from '../utils/phoneNumberStore';
 import posthog from 'posthog-js';
+
+const AYNA_SMS_NUMBER = import.meta.env.VITE_AYNA_SMS_NUMBER || '';
+const SMS_CARD_DISMISS_KEY = 'ayna_sms_card_dismissed_at';
+const SMS_CARD_RESHOWN_KEY = 'ayna_sms_card_last_reshown_at';
+const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+
+function buildAynaVCardDataUri(phoneNumber) {
+  const vcard = [
+    'BEGIN:VCARD',
+    'VERSION:3.0',
+    'FN:Ayna',
+    `TEL;TYPE=CELL:${phoneNumber}`,
+    'END:VCARD',
+  ].join('\n');
+  return `data:text/vcard;charset=utf-8,${encodeURIComponent(vcard)}`;
+}
 
 const CONCERN_LABEL_MAP = {
   'period care (pads, tampons, cups, discs, underwear)': 'Period Care',
@@ -829,6 +847,7 @@ export default function MyEcosystem({
     onOpenArticle,
     onLlmRecommendationsLoaded,
     onBuildEcosystemFromLlm,
+    onOpenPhoneVerify,
     user = null,
     userSession = null,
     isPremium = false,
@@ -857,6 +876,60 @@ export default function MyEcosystem({
         } catch (_) {}
         return 0;
     });
+    const [phoneNumberInfo, setPhoneNumberInfo] = useState(null);
+    const [smsCardCopied, setSmsCardCopied] = useState(false);
+    const [smsCardShown, setSmsCardShown] = useState(() => {
+        try {
+            const dismissedAt = Number(window.localStorage.getItem(SMS_CARD_DISMISS_KEY) || 0);
+            if (!dismissedAt) return true;
+            return Date.now() - dismissedAt >= THIRTY_DAYS_MS;
+        } catch {
+            return true;
+        }
+    });
+
+    useEffect(() => {
+        if (!user?.id) {
+            setPhoneNumberInfo(null);
+            return;
+        }
+        const supabase = getSupabaseClient();
+        if (!supabase) return;
+        let active = true;
+        loadPhoneNumberForUser(supabase, user.id)
+            .then((row) => { if (active) setPhoneNumberInfo(row); })
+            .catch(() => { if (active) setPhoneNumberInfo(null); });
+        return () => { active = false; };
+    }, [user?.id]);
+
+    // No SMS activity in 30+ days: re-show the card even if dismissed, but only once per month.
+    useEffect(() => {
+        if (smsCardShown) return;
+        if (!phoneNumberInfo?.is_verified) return;
+        const lastSmsAt = phoneNumberInfo.last_sms_at ? new Date(phoneNumberInfo.last_sms_at).getTime() : 0;
+        const inactiveLongEnough = !lastSmsAt || Date.now() - lastSmsAt >= THIRTY_DAYS_MS;
+        if (!inactiveLongEnough) return;
+        try {
+            const lastReshownAt = Number(window.localStorage.getItem(SMS_CARD_RESHOWN_KEY) || 0);
+            if (Date.now() - lastReshownAt < THIRTY_DAYS_MS) return;
+            window.localStorage.setItem(SMS_CARD_RESHOWN_KEY, String(Date.now()));
+        } catch { /* ignore storage errors */ }
+        setSmsCardShown(true);
+    }, [smsCardShown, phoneNumberInfo]);
+
+    const handleDismissSmsCard = () => {
+        try { window.localStorage.setItem(SMS_CARD_DISMISS_KEY, String(Date.now())); } catch { /* ignore storage errors */ }
+        setSmsCardShown(false);
+    };
+
+    const handleCopySmsNumber = () => {
+        if (!AYNA_SMS_NUMBER) return;
+        navigator.clipboard?.writeText(AYNA_SMS_NUMBER).then(() => {
+            setSmsCardCopied(true);
+            setTimeout(() => setSmsCardCopied(false), 2000);
+        }).catch(() => {});
+    };
+
     const hasCompletedPersonalization = useMemo(() => {
         if (!quizResults) return false;
         if (quizResults?.personalizationCompleted === true) return true;
@@ -1430,6 +1503,52 @@ export default function MyEcosystem({
                         Track all your health products and apps. Everything here is monitored for safety by default. We'll tell you what each does, if any overlap, and if products may interact.
                     </p>
                 </div>
+
+                {smsCardShown && (
+                    <div style={{
+                        position: 'relative', maxWidth: '700px', margin: '0 auto var(--spacing-lg)',
+                        background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)',
+                        borderRadius: 'var(--radius-md)', padding: '1rem 1.25rem',
+                    }}>
+                        <button
+                            type="button"
+                            onClick={handleDismissSmsCard}
+                            aria-label="Dismiss"
+                            style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem', color: 'var(--color-text-muted)' }}
+                        >
+                            ✕
+                        </button>
+                        {phoneNumberInfo?.is_verified ? (
+                            <>
+                                <p style={{ margin: '0 0 0.4rem', fontWeight: 600 }}>Text Ayna from your phone to get health information easily</p>
+                                {AYNA_SMS_NUMBER && (
+                                    <p style={{ margin: '0 0 0.6rem', fontSize: '1.2rem', fontWeight: 700, color: 'var(--color-primary)' }}>{AYNA_SMS_NUMBER}</p>
+                                )}
+                                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                    {AYNA_SMS_NUMBER && (
+                                        <a
+                                            className="btn btn-outline"
+                                            href={buildAynaVCardDataUri(AYNA_SMS_NUMBER)}
+                                            download="Ayna.vcf"
+                                        >
+                                            Save to Contacts
+                                        </a>
+                                    )}
+                                    <button type="button" className="btn btn-outline" onClick={handleCopySmsNumber}>
+                                        {smsCardCopied ? 'Copied!' : 'Copy number'}
+                                    </button>
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <p style={{ margin: '0 0 0.6rem', fontWeight: 600 }}>Get Ayna by text — verify your number</p>
+                                <button type="button" className="btn btn-primary" onClick={onOpenPhoneVerify}>
+                                    Verify your number
+                                </button>
+                            </>
+                        )}
+                    </div>
+                )}
 
                 {llmError && !llmLoading && (
                     <div style={{ textAlign: 'center', padding: '0.75rem', marginBottom: '1rem', background: '#FEF2F2', borderRadius: 'var(--radius-md)', fontSize: '0.85rem', color: '#991B1B', border: '1px solid #FCA5A5' }}>
