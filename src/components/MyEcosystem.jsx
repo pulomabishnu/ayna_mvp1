@@ -863,6 +863,8 @@ export default function MyEcosystem({
     const [llmLoading, setLlmLoading] = useState(false);
     const [llmError, setLlmError] = useState('');
     const [llmLoadStartedAt, setLlmLoadStartedAt] = useState(0);
+    const llmAbortControllerRef = useRef(null);
+    const llmCancelledRef = useRef(false);
     const [resolvedImages, setResolvedImages] = useState({});
     const [healthDataImportOpen, setHealthDataImportOpen] = useState(false);
     const [recommendedSwapByKey, setRecommendedSwapByKey] = useState({});
@@ -1084,6 +1086,10 @@ export default function MyEcosystem({
         const intake = quizResults?.fullHealthIntake || null;
         console.log('[Ayna LLM] Starting fetch — concerns:', intake?.primaryConcerns?.length ?? 0, '| goals:', intake?.goals?.length ?? 0, '| intake null?', !intake);
 
+        const controller = new AbortController();
+        llmAbortControllerRef.current = controller;
+        llmCancelledRef.current = false;
+
         (async () => {
             setLlmLoadStartedAt(Date.now());
             setLlmLoading(true);
@@ -1106,7 +1112,7 @@ export default function MyEcosystem({
                     Array.from({ length: NUM_BATCHES }, (_, i) => {
                         fetchLlmRecommendations(
                             { intake, trackedProducts, myProducts, omittedProducts, learningMemory: memory, batchIndex: i, batchSize: BATCH_SIZE },
-                            { authToken }
+                            { authToken, signal: controller.signal }
                         )
                         .then(d => {
                             if (!active) return;
@@ -1122,7 +1128,7 @@ export default function MyEcosystem({
                     });
                 });
 
-                if (!active) return;
+                if (!active || llmCancelledRef.current) return;
                 const recs = accumulated;
                 console.log('[Ayna LLM] Done — sections:', recs.length, '| errors:', errorCount);
                 if (recs.length === 0 && errorCount > 0) throw new Error('All recommendation batches failed — please try again.');
@@ -1152,14 +1158,14 @@ export default function MyEcosystem({
                 };
                 saveLearningMemory(nextMemory);
             } catch (e) {
-                if (!active) return;
+                if (!active || llmCancelledRef.current) return;
                 setLlmTiered([]);
                 const errMsg = typeof e?.message === 'string' ? e.message : (typeof e === 'string' ? e : JSON.stringify(e));
                 console.error('[Ayna LLM] Error:', e);
                 setLlmError(errMsg || 'Could not load recommendations');
                 saveFetchedLlmFingerprint(intakeFingerprint);
             } finally {
-                if (active) {
+                if (active && !llmCancelledRef.current) {
                     setLlmLoading(false);
                     setLlmLoadStartedAt(0);
                 }
@@ -1374,6 +1380,16 @@ export default function MyEcosystem({
         setRecommendationRefreshNonce((n) => n + 1);
     }, []);
 
+    const handleCancelRecommendations = useCallback(() => {
+        llmCancelledRef.current = true;
+        llmAbortControllerRef.current?.abort();
+        setLlmLoading(false);
+        setLlmLoadStartedAt(0);
+        setLlmError('');
+        // Mark this fingerprint as already attempted so the effect doesn't immediately re-fetch.
+        if (intakeFingerprint) saveFetchedLlmFingerprint(intakeFingerprint);
+    }, [intakeFingerprint]);
+
     const recommendedSection = hasCompletedPersonalization && (llmLoading || llmError || recommendedProductsForDisplay.length > 0 || activeTiered.length > 0) ? (
         <div style={{ marginBottom: 'var(--spacing-xl)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
@@ -1393,7 +1409,7 @@ export default function MyEcosystem({
                 </button>
             </div>
             {llmLoading && llmLoadStartedAt > 0 && (
-                <LlmRecommendationsLoadingBlock loadStartedAt={llmLoadStartedAt} compact />
+                <LlmRecommendationsLoadingBlock loadStartedAt={llmLoadStartedAt} compact onCancel={handleCancelRecommendations} />
             )}
             {llmLoading && !llmLoadStartedAt && (
                 <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.9rem', padding: '1.5rem' }}>
@@ -1676,7 +1692,7 @@ export default function MyEcosystem({
                 {/* Loading bar persists above the grid until all batches finish */}
                 {llmLoading && (
                     llmLoadStartedAt > 0
-                        ? <LlmRecommendationsLoadingBlock loadStartedAt={llmLoadStartedAt} compact />
+                        ? <LlmRecommendationsLoadingBlock loadStartedAt={llmLoadStartedAt} compact onCancel={handleCancelRecommendations} />
                         : <div style={{ textAlign: 'center', padding: '1.5rem', color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>🌸 Building your ecosystem…</div>
                 )}
                 {llmError && !llmLoading && (

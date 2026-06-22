@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 /** Soft estimate used only to pace the progress bar. */
 export const LLM_LOAD_UI_ESTIMATE_MS = 180_000;
 
-export default function LlmRecommendationsLoadingBlock({ loadStartedAt, compact = false }) {
+export default function LlmRecommendationsLoadingBlock({ loadStartedAt, compact = false, onCancel }) {
     const [, setTick] = useState(0);
 
     useEffect(() => {
@@ -64,6 +64,16 @@ export default function LlmRecommendationsLoadingBlock({ loadStartedAt, compact 
                     }}
                 />
             </div>
+            {onCancel && (
+                <button
+                    type="button"
+                    className="btn btn-outline"
+                    onClick={onCancel}
+                    style={{ marginTop: '0.85rem', fontSize: '0.8rem', padding: '0.35rem 0.7rem' }}
+                >
+                    Cancel
+                </button>
+            )}
         </div>
     );
 }

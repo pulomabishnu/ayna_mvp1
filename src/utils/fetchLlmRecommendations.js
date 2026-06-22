@@ -130,16 +130,23 @@ export function saveLearningMemory(memory) {
 
 /**
  * @param {object} options — passed to build body (intake, feedback maps, etc.)
- * @param {{ timeoutMs?: number }} [fetchOpts]
+ * @param {{ timeoutMs?: number, signal?: AbortSignal }} [fetchOpts] — `signal` lets a caller
+ *   cancel the request directly (e.g. a user-clicked Cancel button), distinct from the
+ *   internal timeout-based abort.
  */
 export async function fetchLlmRecommendations(options = {}, fetchOpts = {}) {
   const body = buildLlmRecommendationsRequestBody(options);
   if (!body) throw new Error('Missing intake profile');
 
   const timeoutMs = typeof fetchOpts.timeoutMs === 'number' ? fetchOpts.timeoutMs : DEFAULT_FETCH_TIMEOUT_MS;
-  const { authToken } = fetchOpts;
+  const { authToken, signal: externalSignal } = fetchOpts;
   const controller = new AbortController();
   const tid = setTimeout(() => controller.abort(), timeoutMs);
+  const onExternalAbort = () => controller.abort();
+  if (externalSignal) {
+    if (externalSignal.aborted) controller.abort();
+    else externalSignal.addEventListener('abort', onExternalAbort);
+  }
 
   let res;
   try {
@@ -154,6 +161,11 @@ export async function fetchLlmRecommendations(options = {}, fetchOpts = {}) {
     });
   } catch (e) {
     if (e?.name === 'AbortError') {
+      if (externalSignal?.aborted) {
+        const err = new Error('Cancelled');
+        err.code = 'cancelled';
+        throw err;
+      }
       const err = new Error('Recommendations request timed out. Check your connection and try “Refresh recommendations”.');
       err.code = 'timeout';
       throw err;
@@ -161,6 +173,7 @@ export async function fetchLlmRecommendations(options = {}, fetchOpts = {}) {
     throw e;
   } finally {
     clearTimeout(tid);
+    if (externalSignal) externalSignal.removeEventListener('abort', onExternalAbort);
   }
 
   let data;
