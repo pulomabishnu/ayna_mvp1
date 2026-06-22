@@ -21,7 +21,6 @@ import {
     fingerprintIntake,
     loadCachedLlmRecommendations,
     saveCachedLlmRecommendations,
-    clearCachedLlmRecommendations,
     loadFetchedLlmFingerprint,
     saveFetchedLlmFingerprint,
 } from '../utils/fetchLlmRecommendations';
@@ -865,6 +864,8 @@ export default function MyEcosystem({
     const [llmLoadStartedAt, setLlmLoadStartedAt] = useState(0);
     const llmAbortControllerRef = useRef(null);
     const llmCancelledRef = useRef(false);
+    // Last known-good complete recommendation set — restored if a rebuild is cancelled mid-flight.
+    const previousLlmTieredRef = useRef([]);
     const [resolvedImages, setResolvedImages] = useState({});
     const [healthDataImportOpen, setHealthDataImportOpen] = useState(false);
     const [recommendedSwapByKey, setRecommendedSwapByKey] = useState({});
@@ -1065,6 +1066,7 @@ export default function MyEcosystem({
             const cached = loadCachedLlmRecommendations(intakeFingerprint);
             if (cached) {
                 setLlmTiered(cached);
+                previousLlmTieredRef.current = cached;
                 setLlmLoading(false);
                 setLlmError('');
                 setLlmLoadStartedAt(0);
@@ -1138,6 +1140,7 @@ export default function MyEcosystem({
                 }
                 if (recs.length > 0) {
                     saveCachedLlmRecommendations(intakeFingerprint, recs);
+                    previousLlmTieredRef.current = recs;
                 }
                 saveFetchedLlmFingerprint(intakeFingerprint);
                 const recommendedProductIds = recs.flatMap((entry) =>
@@ -1374,8 +1377,9 @@ export default function MyEcosystem({
     }, []);
 
     const handleRefreshRecommendations = useCallback(() => {
-        clearCachedLlmRecommendations();
-        setLlmTiered([]);
+        // Deliberately don't clear llmTiered or the cache here — the current
+        // (old) ecosystem stays on screen and in cache until a full new set
+        // successfully replaces it, so a cancelled rebuild has something to fall back to.
         setLlmError('');
         setRecommendationRefreshNonce((n) => n + 1);
     }, []);
@@ -1383,6 +1387,7 @@ export default function MyEcosystem({
     const handleCancelRecommendations = useCallback(() => {
         llmCancelledRef.current = true;
         llmAbortControllerRef.current?.abort();
+        setLlmTiered(previousLlmTieredRef.current);
         setLlmLoading(false);
         setLlmLoadStartedAt(0);
         setLlmError('');
