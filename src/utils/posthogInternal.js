@@ -5,6 +5,12 @@
  * sessions in PostHog so they can be filtered out
  * of analytics without requiring login.
  *
+ * CURRENT INTERNAL USERS:
+ * Puloma — phone:  019f23fa-2ddc-7baf-b219-bf4b5c6dceb4
+ * Puloma — laptop: 019f23fd-c46e-77a1-b38a-6198fa08a799
+ * Eliz   — phone:  019f23f6-e815-77bc-ae5f-ce0421ef345c
+ * Eliz   — laptop: pending
+ *
  * HOW IT WORKS:
  * On every page load, this checks if the current
  * PostHog distinct ID matches any known internal
@@ -15,21 +21,29 @@
  * and test users" is configured to exclude any person
  * where is_internal equals true.
  *
- * HOW TO ADD A NEW INTERNAL USER:
- * 1. Have them visit the live Ayna site once
- * 2. Open browser console and run: posthog.get_distinct_id()
+ * HOW TO ADD ELIZ'S LAPTOP (or any future device):
+ * 1. Visit the live Ayna site on that device
+ * 2. Open browser console and run:
+ *      posthog.get_distinct_id()
  * 3. Copy the returned string
- * 4. Add it to VITE_POSTHOG_INTERNAL_IDS in Vercel
- *    environment variables (comma-separated)
- * 5. Redeploy — they will be tagged automatically
- *    on their next visit, logged in or not
+ * 4. Go to Vercel → ayna_mvp1 → Settings →
+ *    Environment Variables → find VITE_POSTHOG_INTERNAL_IDS
+ *    → edit → append the new ID comma-separated
+ * 5. Also update .env.local and .env.example here
+ *    in this file's comment and in the env files
+ * 6. Redeploy from Vercel Deployments tab
+ * 7. No code changes needed — the env var is the
+ *    single source of truth for all internal IDs
  *
- * HOW TO VERIFY IT IS WORKING:
- * 1. Open browser console on the live site
- * 2. Run: posthog.get_distinct_id()
- * 3. Confirm that ID is in VITE_POSTHOG_INTERNAL_IDS
+ * HOW TO VERIFY A DEVICE IS FILTERED:
+ * 1. Visit the live site on that device
+ * 2. Open browser console
+ * 3. Run: posthog.get_distinct_id()
+ *    — confirm it matches one of the IDs above
  * 4. Run: posthog.get_property('is_internal')
- * 5. Confirm it returns true
+ *    — should return true
+ * 5. In PostHog → People → search that distinct ID
+ *    — is_internal: true should appear in properties
  *
  * PRIVACY NOTE:
  * This file only touches PostHog person properties.

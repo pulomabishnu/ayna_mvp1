@@ -1,13 +1,25 @@
 /**
  * Tests for posthogInternal.js
+ *
+ * Internal users and their known PostHog distinct IDs:
+ * Puloma phone:  019f23fa-2ddc-7baf-b219-bf4b5c6dceb4
+ * Puloma laptop: 019f23fd-c46e-77a1-b38a-6198fa08a799
+ * Eliz phone:    019f23f6-e815-77bc-ae5f-ce0421ef345c
+ * Eliz laptop:   pending
+ *
  * Run: npx vitest run src/utils/posthogInternal.test.js
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { getInternalIds, tagInternalUserIfNeeded } from './posthogInternal';
 
-const TEST_ID = '019e4c67-ec98-7bc8-b638-06063106322d';
-const OTHER_ID = 'some-other-user-not-internal';
+const PULOMA_PHONE  = '019f23fa-2ddc-7baf-b219-bf4b5c6dceb4';
+const PULOMA_LAPTOP = '019f23fd-c46e-77a1-b38a-6198fa08a799';
+const ELIZ_PHONE    = '019f23f6-e815-77bc-ae5f-ce0421ef345c';
+const OTHER_ID      = 'some-random-user-not-internal';
+const ALL_INTERNAL  = `${PULOMA_PHONE},${PULOMA_LAPTOP},${ELIZ_PHONE}`;
+
+// ── getInternalIds ───────────────────────────────────
 
 describe('getInternalIds', () => {
   beforeEach(() => vi.unstubAllEnvs());
@@ -17,34 +29,47 @@ describe('getInternalIds', () => {
     expect(getInternalIds().size).toBe(0);
   });
 
-  it('returns Set with one ID', () => {
-    vi.stubEnv('VITE_POSTHOG_INTERNAL_IDS', TEST_ID);
-    const ids = getInternalIds();
-    expect(ids.size).toBe(1);
-    expect(ids.has(TEST_ID)).toBe(true);
-  });
-
-  it('returns Set with multiple comma-separated IDs', () => {
-    vi.stubEnv('VITE_POSTHOG_INTERNAL_IDS', `${TEST_ID}, abc123, def456`);
+  it('returns Set with all three current internal IDs', () => {
+    vi.stubEnv('VITE_POSTHOG_INTERNAL_IDS', ALL_INTERNAL);
     const ids = getInternalIds();
     expect(ids.size).toBe(3);
-    expect(ids.has('abc123')).toBe(true);
-    expect(ids.has('def456')).toBe(true);
+    expect(ids.has(PULOMA_PHONE)).toBe(true);
+    expect(ids.has(PULOMA_LAPTOP)).toBe(true);
+    expect(ids.has(ELIZ_PHONE)).toBe(true);
   });
 
-  it('trims whitespace from each ID', () => {
-    vi.stubEnv('VITE_POSTHOG_INTERNAL_IDS', `  ${TEST_ID}  ,  abc123  `);
+  it('does not contain a random user ID', () => {
+    vi.stubEnv('VITE_POSTHOG_INTERNAL_IDS', ALL_INTERNAL);
+    expect(getInternalIds().has(OTHER_ID)).toBe(false);
+  });
+
+  it('handles a fourth ID added later (Eliz laptop)', () => {
+    const ELIZ_LAPTOP = 'future-eliz-laptop-id';
+    vi.stubEnv('VITE_POSTHOG_INTERNAL_IDS', `${ALL_INTERNAL},${ELIZ_LAPTOP}`);
     const ids = getInternalIds();
-    expect(ids.has(TEST_ID)).toBe(true);
-    expect(ids.has('abc123')).toBe(true);
-    expect(ids.has(`  ${TEST_ID}  `)).toBe(false);
+    expect(ids.size).toBe(4);
+    expect(ids.has(ELIZ_LAPTOP)).toBe(true);
+  });
+
+  it('trims whitespace from all IDs', () => {
+    vi.stubEnv(
+      'VITE_POSTHOG_INTERNAL_IDS',
+      `  ${PULOMA_PHONE}  ,  ${PULOMA_LAPTOP}  ,  ${ELIZ_PHONE}  `
+    );
+    const ids = getInternalIds();
+    expect(ids.has(PULOMA_PHONE)).toBe(true);
+    expect(ids.has(PULOMA_LAPTOP)).toBe(true);
+    expect(ids.has(ELIZ_PHONE)).toBe(true);
+    expect(ids.has(`  ${PULOMA_PHONE}  `)).toBe(false);
   });
 
   it('filters out empty entries from malformed input', () => {
-    vi.stubEnv('VITE_POSTHOG_INTERNAL_IDS', `${TEST_ID},,abc123,`);
+    vi.stubEnv('VITE_POSTHOG_INTERNAL_IDS', `${PULOMA_PHONE},,${ELIZ_PHONE},`);
     expect(getInternalIds().size).toBe(2);
   });
 });
+
+// ── tagInternalUserIfNeeded ──────────────────────────
 
 describe('tagInternalUserIfNeeded', () => {
   let ph;
@@ -63,50 +88,72 @@ describe('tagInternalUserIfNeeded', () => {
 
   it('returns false when env var is empty', () => {
     vi.stubEnv('VITE_POSTHOG_INTERNAL_IDS', '');
-    ph.get_distinct_id.mockReturnValue(TEST_ID);
+    ph.get_distinct_id.mockReturnValue(PULOMA_PHONE);
     expect(tagInternalUserIfNeeded(ph)).toBe(false);
     expect(ph.people.set).not.toHaveBeenCalled();
   });
 
   it('returns false when current ID is not in internal list', () => {
-    vi.stubEnv('VITE_POSTHOG_INTERNAL_IDS', TEST_ID);
+    vi.stubEnv('VITE_POSTHOG_INTERNAL_IDS', ALL_INTERNAL);
     ph.get_distinct_id.mockReturnValue(OTHER_ID);
     expect(tagInternalUserIfNeeded(ph)).toBe(false);
     expect(ph.people.set).not.toHaveBeenCalled();
   });
 
-  it('returns true and sets is_internal when ID matches', () => {
-    vi.stubEnv('VITE_POSTHOG_INTERNAL_IDS', TEST_ID);
-    ph.get_distinct_id.mockReturnValue(TEST_ID);
+  it('tags Puloma phone as internal', () => {
+    vi.stubEnv('VITE_POSTHOG_INTERNAL_IDS', ALL_INTERNAL);
+    ph.get_distinct_id.mockReturnValue(PULOMA_PHONE);
     expect(tagInternalUserIfNeeded(ph)).toBe(true);
     expect(ph.people.set).toHaveBeenCalledWith({ is_internal: true });
   });
 
-  it('returns true when matching one of multiple internal IDs', () => {
-    vi.stubEnv('VITE_POSTHOG_INTERNAL_IDS', `abc123, ${TEST_ID}, def456`);
-    ph.get_distinct_id.mockReturnValue(TEST_ID);
+  it('tags Puloma laptop as internal', () => {
+    vi.stubEnv('VITE_POSTHOG_INTERNAL_IDS', ALL_INTERNAL);
+    ph.get_distinct_id.mockReturnValue(PULOMA_LAPTOP);
     expect(tagInternalUserIfNeeded(ph)).toBe(true);
     expect(ph.people.set).toHaveBeenCalledWith({ is_internal: true });
+  });
+
+  it('tags Eliz phone as internal', () => {
+    vi.stubEnv('VITE_POSTHOG_INTERNAL_IDS', ALL_INTERNAL);
+    ph.get_distinct_id.mockReturnValue(ELIZ_PHONE);
+    expect(tagInternalUserIfNeeded(ph)).toBe(true);
+    expect(ph.people.set).toHaveBeenCalledWith({ is_internal: true });
+  });
+
+  it('tags a future fourth device (Eliz laptop) when added to env var', () => {
+    const ELIZ_LAPTOP = 'future-eliz-laptop-id';
+    vi.stubEnv('VITE_POSTHOG_INTERNAL_IDS', `${ALL_INTERNAL},${ELIZ_LAPTOP}`);
+    ph.get_distinct_id.mockReturnValue(ELIZ_LAPTOP);
+    expect(tagInternalUserIfNeeded(ph)).toBe(true);
+    expect(ph.people.set).toHaveBeenCalledWith({ is_internal: true });
+  });
+
+  it('does not tag a real user who is not internal', () => {
+    vi.stubEnv('VITE_POSTHOG_INTERNAL_IDS', ALL_INTERNAL);
+    ph.get_distinct_id.mockReturnValue(OTHER_ID);
+    expect(tagInternalUserIfNeeded(ph)).toBe(false);
+    expect(ph.people.set).not.toHaveBeenCalled();
   });
 
   it('does not throw when get_distinct_id throws', () => {
-    vi.stubEnv('VITE_POSTHOG_INTERNAL_IDS', TEST_ID);
+    vi.stubEnv('VITE_POSTHOG_INTERNAL_IDS', ALL_INTERNAL);
     ph.get_distinct_id.mockImplementation(() => { throw new Error('not ready'); });
     expect(() => tagInternalUserIfNeeded(ph)).not.toThrow();
     expect(tagInternalUserIfNeeded(ph)).toBe(false);
   });
 
   it('does not throw when people.set throws', () => {
-    vi.stubEnv('VITE_POSTHOG_INTERNAL_IDS', TEST_ID);
-    ph.get_distinct_id.mockReturnValue(TEST_ID);
+    vi.stubEnv('VITE_POSTHOG_INTERNAL_IDS', ALL_INTERNAL);
+    ph.get_distinct_id.mockReturnValue(PULOMA_PHONE);
     ph.people.set.mockImplementation(() => { throw new Error('network error'); });
     expect(() => tagInternalUserIfNeeded(ph)).not.toThrow();
     expect(tagInternalUserIfNeeded(ph)).toBe(false);
   });
 
-  it('can be called multiple times safely', () => {
-    vi.stubEnv('VITE_POSTHOG_INTERNAL_IDS', TEST_ID);
-    ph.get_distinct_id.mockReturnValue(TEST_ID);
+  it('is safe to call multiple times on the same session', () => {
+    vi.stubEnv('VITE_POSTHOG_INTERNAL_IDS', ALL_INTERNAL);
+    ph.get_distinct_id.mockReturnValue(PULOMA_PHONE);
     tagInternalUserIfNeeded(ph);
     tagInternalUserIfNeeded(ph);
     tagInternalUserIfNeeded(ph);
