@@ -5,18 +5,36 @@ import './index.css'
 import posthog from 'posthog-js'
 import { tagInternalUserIfNeeded } from './utils/posthogInternal'
 
-posthog.init(import.meta.env.VITE_PUBLIC_POSTHOG_KEY, {
-  api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
-  person_profiles: 'identified_only',
-  autocapture: false,
-  capture_pageview: true,
-  mask_all_text: true,
-  disable_session_recording: true,
-  ip: false,
-  loaded: (ph) => {
-    tagInternalUserIfNeeded(ph);
-  },
-})
+const POSTHOG_KEY = import.meta.env.VITE_PUBLIC_POSTHOG_KEY;
+const POSTHOG_HOST = import.meta.env.VITE_PUBLIC_POSTHOG_HOST;
+
+if (!POSTHOG_KEY) {
+  if (import.meta.env.DEV) {
+    console.warn(
+      '[Ayna/PostHog] VITE_PUBLIC_POSTHOG_KEY is not set. ' +
+      'PostHog will not initialize. ' +
+      'Add it to .env.local and Vercel environment variables. ' +
+      'Get the key from: app.posthog.com → Settings → Project API Key'
+    );
+  }
+} else {
+  posthog.init(POSTHOG_KEY, {
+    api_host: POSTHOG_HOST || 'https://us.i.posthog.com',
+    person_profiles: 'identified_only',
+    autocapture: false,
+    capture_pageview: true,
+    mask_all_text: true,
+    disable_session_recording: true,
+    ip: false,
+    loaded: (ph) => {
+      tagInternalUserIfNeeded(ph);
+    },
+  });
+}
+
+if (import.meta.env.DEV && POSTHOG_KEY) {
+  window.__posthog = posthog;
+}
 
 class ErrorBoundary extends React.Component {
   state = { hasError: false, error: null }

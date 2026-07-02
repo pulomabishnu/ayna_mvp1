@@ -107,3 +107,51 @@ export function tagInternalUserIfNeeded(ph) {
     return false;
   }
 }
+
+/**
+ * debugPosthogStatus()
+ *
+ * Run this in the browser console to instantly verify
+ * whether PostHog is initialized and whether the current
+ * session is tagged as internal.
+ *
+ * Usage:
+ *   posthog.get_distinct_id()         — should return your known ID
+ *   posthog.get_property('is_internal') — should return true
+ *
+ * @param {Object} ph - The PostHog instance
+ */
+export function debugPosthogStatus(ph) {
+  if (!ph) {
+    console.error('[Ayna/PostHog] PostHog instance is null or undefined. Not initialized.');
+    return;
+  }
+
+  const distinctId = (() => {
+    try { return ph.get_distinct_id(); }
+    catch (e) { return `ERROR: ${e.message}`; }
+  })();
+
+  const isInternal = (() => {
+    try { return ph.get_property('is_internal'); }
+    catch (e) { return `ERROR: ${e.message}`; }
+  })();
+
+  const internalIds = getInternalIds();
+
+  console.group('[Ayna/PostHog] Status Report');
+  console.log('PostHog initialized:    ✅ yes');
+  console.log('Distinct ID:           ', distinctId);
+  console.log('is_internal property:  ', isInternal === true ? '✅ true (will be filtered from analytics)' : `❌ ${isInternal} (NOT filtered)`);
+  console.log('ID in internal list:   ', internalIds.has(distinctId) ? '✅ yes' : '❌ no — add this ID to VITE_POSTHOG_INTERNAL_IDS');
+  console.log('Internal IDs list:     ', [...internalIds]);
+  console.groupEnd();
+
+  if (!internalIds.has(distinctId)) {
+    console.warn(
+      '[Ayna/PostHog] This distinct ID is NOT in the internal list. ' +
+      'Copy it and add to VITE_POSTHOG_INTERNAL_IDS in Vercel:\n' +
+      distinctId
+    );
+  }
+}

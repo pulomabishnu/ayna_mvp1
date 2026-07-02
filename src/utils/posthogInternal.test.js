@@ -10,8 +10,8 @@
  * Run: npx vitest run src/utils/posthogInternal.test.js
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getInternalIds, tagInternalUserIfNeeded } from './posthogInternal';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { getInternalIds, tagInternalUserIfNeeded, debugPosthogStatus } from './posthogInternal';
 
 const PULOMA_PHONE  = '019f23fa-2ddc-7baf-b219-bf4b5c6dceb4';
 const PULOMA_LAPTOP = '019f23fd-c46e-77a1-b38a-6198fa08a799';
@@ -159,5 +159,74 @@ describe('tagInternalUserIfNeeded', () => {
     tagInternalUserIfNeeded(ph);
     expect(ph.people.set).toHaveBeenCalledTimes(3);
     expect(ph.people.set).toHaveBeenCalledWith({ is_internal: true });
+  });
+});
+
+// ── debugPosthogStatus ───────────────────────────────
+
+describe('debugPosthogStatus', () => {
+  let ph;
+  let consoleSpy;
+
+  beforeEach(() => {
+    vi.unstubAllEnvs();
+    ph = {
+      get_distinct_id: vi.fn(),
+      get_property: vi.fn(),
+      people: { set: vi.fn() },
+    };
+    consoleSpy = {
+      group: vi.spyOn(console, 'group').mockImplementation(() => {}),
+      log: vi.spyOn(console, 'log').mockImplementation(() => {}),
+      groupEnd: vi.spyOn(console, 'groupEnd').mockImplementation(() => {}),
+      error: vi.spyOn(console, 'error').mockImplementation(() => {}),
+      warn: vi.spyOn(console, 'warn').mockImplementation(() => {}),
+    };
+  });
+
+  afterEach(() => {
+    Object.values(consoleSpy).forEach(spy => spy.mockRestore());
+  });
+
+  it('logs error and returns early when posthog is null', () => {
+    debugPosthogStatus(null);
+    expect(consoleSpy.error).toHaveBeenCalledWith(
+      expect.stringContaining('PostHog instance is null')
+    );
+    expect(consoleSpy.group).not.toHaveBeenCalled();
+  });
+
+  it('logs status report when posthog is initialized', () => {
+    vi.stubEnv('VITE_POSTHOG_INTERNAL_IDS', PULOMA_PHONE);
+    ph.get_distinct_id.mockReturnValue(PULOMA_PHONE);
+    ph.get_property.mockReturnValue(true);
+    debugPosthogStatus(ph);
+    expect(consoleSpy.group).toHaveBeenCalledWith('[Ayna/PostHog] Status Report');
+    expect(consoleSpy.groupEnd).toHaveBeenCalled();
+  });
+
+  it('warns when distinct ID is not in internal list', () => {
+    vi.stubEnv('VITE_POSTHOG_INTERNAL_IDS', PULOMA_PHONE);
+    ph.get_distinct_id.mockReturnValue(OTHER_ID);
+    ph.get_property.mockReturnValue(null);
+    debugPosthogStatus(ph);
+    expect(consoleSpy.warn).toHaveBeenCalledWith(
+      expect.stringContaining('NOT in the internal list')
+    );
+  });
+
+  it('does not warn when distinct ID IS in internal list', () => {
+    vi.stubEnv('VITE_POSTHOG_INTERNAL_IDS', PULOMA_PHONE);
+    ph.get_distinct_id.mockReturnValue(PULOMA_PHONE);
+    ph.get_property.mockReturnValue(true);
+    debugPosthogStatus(ph);
+    expect(consoleSpy.warn).not.toHaveBeenCalled();
+  });
+
+  it('handles get_distinct_id throwing gracefully', () => {
+    vi.stubEnv('VITE_POSTHOG_INTERNAL_IDS', PULOMA_PHONE);
+    ph.get_distinct_id.mockImplementation(() => { throw new Error('not ready'); });
+    ph.get_property.mockReturnValue(null);
+    expect(() => debugPosthogStatus(ph)).not.toThrow();
   });
 });
