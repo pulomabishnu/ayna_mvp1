@@ -37,6 +37,7 @@ import { loadLearningMemoryForUser, saveLearningMemoryForUser } from './utils/le
 import { loadReviewsForUser, upsertProductReviews } from './utils/reviewsStore';
 import { clearCachedLlmRecommendations } from './utils/fetchLlmRecommendations';
 import posthog from 'posthog-js';
+import { tagInternalUserIfNeeded } from './utils/posthogInternal';
 
 const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls'];
 
@@ -173,6 +174,7 @@ function App() {
       setUserSession(session ?? null);
       if (event === 'SIGNED_IN' && session?.user) {
         posthog.identify(session.user.id, { email: session.user.email });
+        tagInternalUserIfNeeded(posthog);
         setShowAuthModal(false);
         // Only navigate when the user was actually signed out before (explicit login).
         // Session restoration on page load and token refresh on tab switch both fire
@@ -182,8 +184,10 @@ function App() {
           setCurrentView('ecosystem');
         }
       }
-      if (!session) {
+      if (event === 'SIGNED_OUT') {
         posthog.reset();
+      }
+      if (!session) {
         setMyProducts({});
         setTrackedProducts({});
         setOmittedProducts({});

@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import './index.css'
 import posthog from 'posthog-js'
+import { tagInternalUserIfNeeded } from './utils/posthogInternal'
 
 posthog.init(import.meta.env.VITE_PUBLIC_POSTHOG_KEY, {
   api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
@@ -12,6 +13,9 @@ posthog.init(import.meta.env.VITE_PUBLIC_POSTHOG_KEY, {
   mask_all_text: true,
   disable_session_recording: true,
   ip: false,
+  loaded: (ph) => {
+    tagInternalUserIfNeeded(ph);
+  },
 })
 
 class ErrorBoundary extends React.Component {
