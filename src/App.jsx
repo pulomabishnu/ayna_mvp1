@@ -172,6 +172,7 @@ function App() {
       setUser(session?.user ?? null);
       setUserSession(session ?? null);
       if (event === 'SIGNED_IN' && session?.user) {
+        posthog.identify(session.user.id, { email: session.user.email });
         setShowAuthModal(false);
         // Only navigate when the user was actually signed out before (explicit login).
         // Session restoration on page load and token refresh on tab switch both fire
@@ -182,6 +183,7 @@ function App() {
         }
       }
       if (!session) {
+        posthog.reset();
         setMyProducts({});
         setTrackedProducts({});
         setOmittedProducts({});
