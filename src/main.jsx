@@ -6,20 +6,19 @@ import posthog from 'posthog-js'
 import { tagInternalUserIfNeeded } from './utils/posthogInternal'
 
 const POSTHOG_KEY = import.meta.env.VITE_PUBLIC_POSTHOG_KEY;
-const POSTHOG_HOST = import.meta.env.VITE_PUBLIC_POSTHOG_HOST;
+const POSTHOG_HOST = import.meta.env.VITE_PUBLIC_POSTHOG_HOST
+  || 'https://us.i.posthog.com';
 
 if (!POSTHOG_KEY) {
-  if (import.meta.env.DEV) {
-    console.warn(
-      '[Ayna/PostHog] VITE_PUBLIC_POSTHOG_KEY is not set. ' +
-      'PostHog will not initialize. ' +
-      'Add it to .env.local and Vercel environment variables. ' +
-      'Get the key from: app.posthog.com → Settings → Project API Key'
-    );
-  }
+  console.warn(
+    '[Ayna/PostHog] VITE_PUBLIC_POSTHOG_KEY is not set. ' +
+    'PostHog will not initialize. ' +
+    'Add it to Vercel environment variables. ' +
+    'Get the key from: app.posthog.com → Settings → Project API Key'
+  );
 } else {
   posthog.init(POSTHOG_KEY, {
-    api_host: POSTHOG_HOST || 'https://us.i.posthog.com',
+    api_host: POSTHOG_HOST,
     person_profiles: 'identified_only',
     autocapture: false,
     capture_pageview: true,
@@ -27,13 +26,22 @@ if (!POSTHOG_KEY) {
     disable_session_recording: true,
     ip: false,
     loaded: (ph) => {
+      // Expose on window so Puloma can verify from browser console in any environment:
+      // Run: window.posthog.get_distinct_id()
+      // Run: window.posthog.get_property('is_internal')
+      window.posthog = ph;
+
+      console.info(
+        '[Ayna/PostHog] Initialized successfully. ' +
+        'Distinct ID: ' + ph.get_distinct_id() + '. ' +
+        'To verify internal filtering: ' +
+        'window.posthog.get_property("is_internal") should return true ' +
+        'if this device is in the internal ID list.'
+      );
+
       tagInternalUserIfNeeded(ph);
     },
   });
-}
-
-if (import.meta.env.DEV && POSTHOG_KEY) {
-  window.__posthog = posthog;
 }
 
 class ErrorBoundary extends React.Component {
