@@ -178,8 +178,12 @@ export const KNOWLEDGE_BY_CONCERN = {};
 
 for (const item of CLINICAL_KNOWLEDGE) {
   for (const cond of item.conditions) {
-    if (!KNOWLEDGE_BY_CONDITION[cond]) KNOWLEDGE_BY_CONDITION[cond] = [];
-    KNOWLEDGE_BY_CONDITION[cond].push(item);
+    // Index lowercased: ragRetrieval.js looks up `cond.toLowerCase()`, so
+    // authored-case keys ('PCOS', 'endometriosis') never matched and the
+    // highest-weighted retrieval signal silently never fired.
+    const key = String(cond).toLowerCase();
+    if (!KNOWLEDGE_BY_CONDITION[key]) KNOWLEDGE_BY_CONDITION[key] = [];
+    KNOWLEDGE_BY_CONDITION[key].push(item);
   }
   for (const concern of item.concerns) {
     const key = concern.toLowerCase();

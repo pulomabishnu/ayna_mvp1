@@ -1,6 +1,10 @@
 const API_PATH = '/api/llm-recommendations';
 /** Prevents the ecosystem page from showing “Loading…” forever if the server never responds. */
-const DEFAULT_FETCH_TIMEOUT_MS = 150_000;
+// Must sit ABOVE the server's function ceiling (vercel.json maxDuration = 60s)
+// plus network overhead. The old 150s value was paired with a client that
+// batched work assuming a 252s server budget, so the client aborted ~100s
+// before the server could possibly finish and threw the work away.
+const DEFAULT_FETCH_TIMEOUT_MS = 75_000;
 const MEMORY_KEY = 'ayna_llm_learning_memory_v1';
 /** Persistent cache so re-login does not re-call the LLM for the same intake. */
 const RECS_CACHE_KEY = 'ayna_llm_recommendations_by_intake_v2';
@@ -11,6 +15,21 @@ function stableStringify(val) {
   if (Array.isArray(val)) return '[' + val.map(stableStringify).join(',') + ']';
   const keys = Object.keys(val).sort();
   return '{' + keys.map(k => JSON.stringify(k) + ':' + stableStringify(val[k])).join(',') + '}';
+}
+
+/**
+  * Stable id for one ecosystem build, derived from the intake fingerprint.
+  * The server claims quota against this rather than per request, so every batch
+  * of a build shares one claim and a retry after failure costs nothing.
+  */
+export function buildIdFromFingerprint(fingerprint) {
+  const s = String(fingerprint || '');
+  let h1 = 0x811c9dc5, h2 = 0x01000193;
+  for (let i = 0; i < s.length; i++) {
+    h1 = Math.imul(h1 ^ s.charCodeAt(i), 16777619);
+    h2 = Math.imul(h2 + s.charCodeAt(i), 2246822519);
+  }
+  return `build_${(h1 >>> 0).toString(36)}${(h2 >>> 0).toString(36)}`;
 }
 
 export function fingerprintIntake(intake) {
@@ -36,15 +55,23 @@ export function loadCachedLlmRecommendations(fingerprint) {
   }
 }
 
+/**
+  * @returns {boolean} whether the payload was actually persisted. The caller MUST
+  * check this before recording the fingerprint as fetched: a swallowed
+  * QuotaExceededError plus a recorded fingerprint is the exact combination that
+  * leaves the ecosystem permanently empty with no error.
+  */
 export function saveCachedLlmRecommendations(fingerprint, recommendations) {
-  if (!fingerprint || typeof window === 'undefined') return;
+  if (!fingerprint || typeof window === 'undefined') return false;
   try {
     window.localStorage.setItem(
       RECS_CACHE_KEY,
       JSON.stringify({ fingerprint, recommendations })
     );
-  } catch {
-    // quota or private mode
+    return true;
+  } catch (e) {
+    console.warn('[Ayna] could not cache recommendations (quota or private mode):', e?.name);
+    return false;
   }
 }
 
@@ -89,10 +116,12 @@ export function buildLlmRecommendationsRequestBody({
   learningMemory = null,
   batchIndex = 0,
   batchSize = null,
+  buildId = '',
 } = {}) {
   if (!intake || typeof intake !== 'object') return null;
   const body = {
     intake,
+    buildId,
     feedback: {
       trackedProductIds: asIdList(trackedProducts),
       ecosystemProductIds: asIdList(myProducts),

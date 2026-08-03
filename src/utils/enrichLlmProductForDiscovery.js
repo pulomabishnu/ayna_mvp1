@@ -111,12 +111,38 @@ export function enrichLlmProductForDiscovery(product) {
   const summary = product.summary || '';
   const vl = buildVerificationLinks(product);
 
+  // Defaults for the safety block. Merged PER KEY below rather than used as a
+  // whole-object fallback: enrichProduct() on the server always constructs a
+  // four-key `safety` object, so `product.safety || {...}` was always truthy
+  // and none of these caveats ever reached the UI.
+  const safetyDefaults = {
+    recalls:
+      'No Ayna-tracked recall data for this generated listing. Check the FDA recall database and the manufacturer before purchase.',
+    materials: 'See the manufacturer label and official site for ingredients and materials.',
+    sideEffects:
+      product.safetyNote ||
+      'Consult a clinician if you have conditions, are pregnant or breastfeeding, or take medications.',
+    fdaStatus: 'Varies by product—verify on packaging or FDA resources for your product type.',
+    opinionAlerts:
+      'AI-suggested products can be wrong or outdated. Verify the exact brand name, formulation, and retailer before buying.',
+  };
+  const incomingSafety = (product.safety && typeof product.safety === 'object') ? product.safety : {};
+  const mergedSafety = { ...safetyDefaults };
+  for (const [k, v] of Object.entries(incomingSafety)) {
+    // Treat empty string as absent so a blank model field falls back to the caveat.
+    if (typeof v === 'string' ? v.trim() : v) mergedSafety[k] = v;
+  }
+
   return {
     ...product,
-    clinicianOpinionSource: product.clinicianOpinionSource || 'independent',
+    // MUST NOT default to 'independent'. The recommendation prompt asks the model
+    // to emit `clinicianOpinionSource: ""`, which is falsy — so every AI-generated
+    // product used to inherit 'independent' and render a green
+    // "Independent clinician verified" badge that no clinician ever reviewed.
+    clinicianOpinionSource: product.clinicianOpinionSource || 'ai-generated',
     clinicianAttribution:
       product.clinicianAttribution ||
-      'Ayna general guidance — this listing is not a curated catalog entry. Verify with your clinician.',
+      'Ayna general guidance — this listing is AI-generated, not a curated catalog entry and not clinician-reviewed. Verify with your clinician.',
     doctorOpinion:
       product.doctorOpinion ||
       'This match is generated to help you explore options. It is not a substitute for personalized medical advice—confirm fit with your clinician.',
@@ -126,17 +152,7 @@ export function enrichLlmProductForDiscovery(product) {
       'See the Community tab for discussion links; treat forum content as non-medical context.',
     effectiveness:
       product.effectiveness || truncate(summary, 280) || 'See product summary and independent sources.',
-    safety: product.safety || {
-      recalls:
-        'No Ayna-tracked recall data for this generated listing. Check the FDA recall database and the manufacturer before purchase.',
-      materials: 'See the manufacturer label and official site for ingredients and materials.',
-      sideEffects:
-        product.safetyNote ||
-        'Consult a clinician if you have conditions, are pregnant or breastfeeding, or take medications.',
-      fdaStatus: 'Varies by product—verify on packaging or FDA resources for your product type.',
-      opinionAlerts:
-        'AI-suggested products can be wrong or outdated. Verify the exact brand name, formulation, and retailer before buying.',
-    },
+    safety: mergedSafety,
     verificationLinks: vl,
   };
 }

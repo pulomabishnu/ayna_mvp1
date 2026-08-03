@@ -1,6 +1,18 @@
 import React, { useState } from 'react';
 
-const MOCK_RECALLS = [
+// EDITORIALLY CURATED HIGHLIGHTS — not a recall feed and not a complete list.
+//
+// This page previously presented these two hardcoded rows as the output of
+// continuous multi-source monitoring ("Real-time monitoring", "scans the
+// following sources daily: FDA · CPSC · EPA · Community Watch"). No code for
+// CPSC, EPA or community scanning exists anywhere in the repo, and this
+// component never called the live FDA endpoint at all — so searching for any
+// product outside these two rows printed an affirmative "No alerts found",
+// which is an all-clear the app had not earned.
+//
+// The live, per-product FDA check is /api/fda-recall, surfaced in ProductModal.
+// The copy below now describes only what actually runs.
+const CURATED_SAFETY_NOTES = [
     {
         id: 'recall-2',
         productName: 'Always Pads & Liners (PFAS Concerns)',
@@ -25,7 +37,7 @@ export default function Recalls({ trackedProducts, myProducts = {} }) {
     const ecosystemList = Object.values(myProducts);
     const [searchQuery, setSearchQuery] = useState('');
 
-    const filteredRecalls = MOCK_RECALLS.filter(r =>
+    const filteredRecalls = CURATED_SAFETY_NOTES.filter(r =>
         r.productName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         r.reason.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -34,7 +46,10 @@ export default function Recalls({ trackedProducts, myProducts = {} }) {
         <div className="container animate-fade-in" style={{ padding: 'var(--spacing-lg) var(--spacing-md)' }}>
             <div style={{ marginBottom: '3rem' }}>
                 <h2 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Safety & Recall Center</h2>
-                <p style={{ color: 'var(--color-text-muted)', marginBottom: '1.5rem' }}>Real-time monitoring of FDA alerts and community-reported safety concerns.</p>
+                <p style={{ color: 'var(--color-text-muted)', marginBottom: '1.5rem' }}>
+                    Editorially curated safety notes, plus a live FDA recall check on every product page.
+                    This page is not a complete recall list — always confirm against the FDA database directly.
+                </p>
 
                 <input
                     type="text"
@@ -53,11 +68,25 @@ export default function Recalls({ trackedProducts, myProducts = {} }) {
                 {/* Active Alerts */}
                 <div>
                     <h3 style={{ fontSize: '1.3rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <span style={{ color: '#EF4444' }}>⚠️</span> Active Safety Alerts
+                        <span style={{ color: '#EF4444' }}>⚠️</span> Curated Safety Notes
                     </h3>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                         {filteredRecalls.length === 0 ? (
-                            <p style={{ color: 'var(--color-text-muted)', fontStyle: 'italic' }}>No alerts found for "{searchQuery}".</p>
+                            // Deliberately NOT "No alerts found for X" — this list is a
+                            // handful of curated entries, so absence from it says nothing
+                            // about whether a product has been recalled.
+                            <p style={{ color: 'var(--color-text-muted)', fontStyle: 'italic' }}>
+                                Nothing in Ayna&apos;s curated notes matches &quot;{searchQuery}&quot;. This is not a recall search —
+                                open the product to run a live FDA check, or{' '}
+                                <a
+                                    href="https://www.accessdata.fda.gov/scripts/enforcement/enforce_rpt-Product-Tabs.cfm"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{ color: 'var(--color-primary)', textDecoration: 'underline' }}
+                                >
+                                    search the FDA enforcement database
+                                </a>.
+                            </p>
                         ) : filteredRecalls.map(recall => (
                             <div key={recall.id} style={{
                                 padding: '1.5rem',
@@ -85,7 +114,8 @@ export default function Recalls({ trackedProducts, myProducts = {} }) {
                             Your Monitored Products
                         </h3>
                         <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1rem' }}>
-                            By default, everything in your Ecosystem is monitored for safety recalls and alerts.
+                            Ayna checks the FDA recall database for a product when you open it. There is no
+                            background monitoring and no alerting — open a product to run its check.
                         </p>
 
                         {ecosystemList.length === 0 ? (
@@ -97,7 +127,9 @@ export default function Recalls({ trackedProducts, myProducts = {} }) {
                                         <img src={p.image} alt={p.name} style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '50%' }} />
                                         <div>
                                             <h4 style={{ fontSize: '0.9rem', fontWeight: '600' }}>{p.name}</h4>
-                                            <span style={{ fontSize: '0.7rem', color: '#10B981', fontWeight: '700' }}>🟢 MONITORED</span>
+                                            {/* Was a hardcoded green "MONITORED" badge that reflected
+                                                no check of any kind. */}
+                                            <span style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', fontWeight: '600' }}>Checked on open</span>
                                         </div>
                                     </div>
                                 ))}
@@ -109,16 +141,22 @@ export default function Recalls({ trackedProducts, myProducts = {} }) {
                 {/* Safety Insights */}
                 <div>
                     <div className="card" style={{ background: 'var(--color-surface-soft)', border: 'none' }}>
-                        <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem' }}>🛡️ Safety Shield</h3>
+                        <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem' }}>🛡️ What Ayna actually checks</h3>
                         <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', lineHeight: '1.6', marginBottom: '1.5rem' }}>
-                            Ayna's Safety Shield scans the following sources daily:
+                            When you open a product, Ayna queries OpenFDA live for that specific product:
                         </p>
+                        {/* CPSC, EPA and "Community Watch" were listed here as daily-scanned
+                            sources. None of them exist in the codebase. Only the datasets
+                            actually queried by api/fda-recall.js are listed now. */}
                         <ul style={{ paddingLeft: '1.2rem', fontSize: '0.9rem', color: 'var(--color-text-main)', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                            <li><strong>FDA Enforcement Reports:</strong> Class I, II, and III recalls.</li>
-                            <li><strong>CPSC Alerts:</strong> Consumer Product Safety Commission warnings.</li>
-                            <li><strong>EPA Registers:</strong> Chemical safety and registration status.</li>
-                            <li><strong>Community Watch:</strong> Aggregate sentiment from Reddit, Discord, and Amazon for sudden quality drops.</li>
+                            <li><strong>FDA device recalls &amp; enforcement:</strong> for cups, discs, tampons, pads and devices.</li>
+                            <li><strong>FDA food enforcement:</strong> where dietary supplement recalls are filed.</li>
+                            <li><strong>FDA drug enforcement:</strong> for drug-classified products.</li>
                         </ul>
+                        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', lineHeight: '1.6', marginTop: '1rem' }}>
+                            If the FDA database can&apos;t be reached, Ayna says so rather than showing an all-clear.
+                            Checks run on demand, not on a schedule.
+                        </p>
                     </div>
 
                     <div style={{ marginTop: '2rem', padding: '1.5rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)' }}>

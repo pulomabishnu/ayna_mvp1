@@ -3,6 +3,10 @@
 // 200,000+ verified supplement labels with real ingredient data
 // Docs: https://api.ods.od.nih.gov/dsld/v9/docs
 
+function slugify(s) {
+  return String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'unknown';
+}
+
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -11,7 +15,10 @@ export default async function handler(req, res) {
   const { query, limit = '10' } = req.query;
   if (!query || query.trim().length < 2) return res.status(400).json({ error: 'missing_query' });
 
-  const n = Math.min(parseInt(limit, 10) || 10, 25);
+  // Math.min alone capped the top but not the bottom: ?limit=-500 passed
+  // straight through to NIH as size=-500 and 400'd, which was then masked
+  // as an empty result set.
+  const n = Math.min(Math.max(parseInt(limit, 10) || 10, 1), 25);
   const url = `https://api.ods.od.nih.gov/dsld/v9/label?name=${encodeURIComponent(query.trim())}&status=Y&size=${n}`;
 
   try {
@@ -33,7 +40,10 @@ export default async function handler(req, res) {
       const imageUrl = (s.imageUrl || '').startsWith('https://') ? s.imageUrl : '';
       const dsldId = s.dsldId || hit._id || '';
       return {
-        id: `dsld-${dsldId || Math.random().toString(36).slice(2)}`,
+        // Deterministic: a Math.random() id changed on every render, breaking
+        // React keys and defeating the resolvedImages cache guard (which
+        // re-triggered a paid image lookup per render).
+        id: `dsld-${dsldId || slugify(`${brandName}-${productName}`)}`,
         name: productName || brandName,
         brand: brandName,
         category: 'supplement',
@@ -46,7 +56,12 @@ export default async function handler(req, res) {
         price: 'See retailer',
         tags: ['supplement', 'nih-verified'],
         safety: {
-          recalls: 'No active FDA recalls on file at time of retrieval',
+          // Deliberately empty. This route only queries NIH DSLD — it never
+          // contacts the FDA — so it must not assert anything about recalls.
+          // It previously stamped "No active FDA recalls on file at time of
+          // retrieval" onto every supplement, which reads as the result of a
+          // live check that never happened. The live check is /api/fda-recall.
+          recalls: '',
           materials: ingredients.slice(0, 3).join(', ') || '',
           sideEffects: '',
           opinionAlerts: '',
@@ -60,6 +75,11 @@ export default async function handler(req, res) {
       };
     }).filter((p) => p.name && p.name.length > 2);
 
+    // Pure function of the query against a slowly-changing NIH label database,
+    // so this is an ideal edge-cache candidate. Set on the SUCCESS path only —
+    // the two failure branches above return 200 with an empty product list, and
+    // caching those would pin an upstream blip for a day.
+    res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=604800');
     return res.status(200).json({
       products,
       total: data?.hits?.total?.value || products.length,

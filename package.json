@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "cross-env PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1 vite build",
     "lint": "eslint .",
+    "catalog:export": "node scripts/export-catalog.mjs",
+    "catalog:check": "node scripts/export-catalog.mjs --check",
     "preview": "vite preview"
   },
   "dependencies": {

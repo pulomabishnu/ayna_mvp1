@@ -10,6 +10,14 @@ export default function AuthCallback({ onAuthenticated }) {
     if (!supabase) { setStatus('error'); return; }
 
     const hashParams = new URLSearchParams(window.location.hash.slice(1));
+    // Scrub the fragment immediately. The client uses Supabase's `implicit`
+    // flow, so access AND refresh tokens arrive in window.location.hash — and
+    // they were left there, meaning a long-lived refresh token for a women's
+    // health account sat in browser history, in `document.location`, and
+    // readable by any third-party script on the page.
+    try {
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    } catch (_) { /* non-fatal */ }
     const searchParams = new URLSearchParams(window.location.search);
     const accessToken = hashParams.get('access_token');
     const refreshToken = hashParams.get('refresh_token');
@@ -28,15 +36,39 @@ export default function AuthCallback({ onAuthenticated }) {
       return;
     }
 
-    // Flush consent stored before OAuth redirect into user metadata (fire-and-forget)
-    function flushPendingConsent() {
+    // Flush consent stored before the OAuth redirect into user metadata.
+    // Awaited, retried once, and the stash is cleared ONLY after the write
+    // succeeds — the old order removed it first and swallowed the failure, so a
+    // transient error erased the consent record from both places.
+    async function flushPendingConsent() {
+      let raw = null;
       try {
-        const raw = sessionStorage.getItem('ayna_pending_consent');
-        if (!raw) return;
-        sessionStorage.removeItem('ayna_pending_consent');
-        const consent = JSON.parse(raw);
-        supabase.auth.updateUser({ data: consent }).catch(() => {});
-      } catch (_) {}
+        raw = sessionStorage.getItem('ayna_pending_consent');
+      } catch (_) { return; }
+      if (!raw) return;
+
+      let consent;
+      try {
+        consent = JSON.parse(raw);
+      } catch (_) {
+        try { sessionStorage.removeItem('ayna_pending_consent'); } catch (_) { /* ignore */ }
+        return;
+      }
+
+      for (let attempt = 0; attempt < 2; attempt += 1) {
+        try {
+          const { error } = await supabase.auth.updateUser({ data: consent });
+          if (!error) {
+            try { sessionStorage.removeItem('ayna_pending_consent'); } catch (_) { /* ignore */ }
+            return;
+          }
+          console.error('[Ayna] consent write failed:', error.message);
+        } catch (e) {
+          console.error('[Ayna] consent write threw:', e);
+        }
+      }
+      // Left in sessionStorage deliberately so a later load can retry.
+      console.error('[Ayna] consent not persisted after retries — record retained for retry');
     }
 
     // OAuth — set session and navigate to ecosystem
@@ -47,7 +79,7 @@ export default function AuthCallback({ onAuthenticated }) {
             setStatus('error');
             setErrorMsg(error?.message || 'Could not establish session.');
           } else {
-            flushPendingConsent();
+            void flushPendingConsent();
             onAuthenticated(data.session.user);
           }
         });
@@ -56,12 +88,12 @@ export default function AuthCallback({ onAuthenticated }) {
 
     // Fallback: check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) { flushPendingConsent(); onAuthenticated(session.user); return; }
+      if (session?.user) { void flushPendingConsent(); onAuthenticated(session.user); return; }
 
       const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
         if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session?.user) {
           subscription.unsubscribe();
-          flushPendingConsent();
+          void flushPendingConsent();
           onAuthenticated(session.user);
         }
       });

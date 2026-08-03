@@ -8,6 +8,8 @@
 import twilio from 'twilio';
 import { createClient } from '@supabase/supabase-js';
 import { retrieveKnowledgeForIntake, buildKnowledgeContext } from '../src/utils/ragRetrieval.js';
+import { consumeUsage } from './_usageLimit.js';
+import { rateLimit } from './_rateLimit.js';
 
 const NO_ACCOUNT_REPLY =
   "Hi! I'm Ayna. To get personalized health texts, complete your free health profile at https://ayna.health/quiz. It takes 5 minutes.";
@@ -53,9 +55,14 @@ function sanitizeBannedWords(text) {
   return out;
 }
 
-async function logMessage(admin, userId, direction, body) {
+async function logMessage(admin, userId, direction, body, messageSid = null) {
   try {
-    await admin.from('sms_conversations').insert({ user_id: userId, direction, message_body: body });
+    // supabase-js v2 RESOLVES with {error} rather than throwing, so the
+    // surrounding try/catch alone never fired and failures were invisible.
+    const { error } = await admin
+      .from('sms_conversations')
+      .insert({ user_id: userId, direction, message_body: body, message_sid: messageSid });
+    if (error) throw new Error(error.message);
   } catch (e) {
     console.error('[sms-webhook] log error:', e?.message);
   }
@@ -128,7 +135,7 @@ async function callClaude(systemPrompt, userPrompt) {
       system: systemPrompt,
       messages: [{ role: 'user', content: userPrompt }],
     }),
-    signal: AbortSignal.timeout(25000),
+    signal: AbortSignal.timeout(8000),
   });
   if (!res.ok) return null;
   const data = await res.json();
@@ -143,9 +150,30 @@ export default async function handler(req, res) {
   const proto = req.headers['x-forwarded-proto'] || 'https';
   const url = `${proto}://${req.headers.host}${req.url}`;
 
-  if (authToken) {
+  // FAIL CLOSED. Previously this whole block was skipped when TWILIO_AUTH_TOKEN
+  // was unset or misnamed (very common on preview/staging envs), which accepted
+  // every unsigned request. An attacker could POST From=<victim's number> and
+  // the handler would look her up, load her health_intakes profile, and return
+  // an answer derived from it in the HTTP response body.
+  if (!authToken) {
+    console.error('[sms-webhook] TWILIO_AUTH_TOKEN is not set — refusing to process unverified webhook');
+    return res.status(500).send('Server error');
+  }
+  if (!signature) {
+    console.error('[sms-webhook] missing X-Twilio-Signature');
+    return res.status(403).send('Forbidden');
+  }
+  {
     const params = typeof req.body === 'string' ? Object.fromEntries(new URLSearchParams(req.body)) : req.body || {};
-    const valid = twilio.validateRequest(authToken, signature || '', url, params);
+    let valid = false;
+    try {
+      valid = twilio.validateRequest(authToken, signature, url, params);
+    } catch (e) {
+      // validateRequest calls new URL(url) unguarded — a missing Host header
+      // threw an uncaught TypeError and surfaced as a 500 instead of a 403.
+      console.error('[sms-webhook] signature validation error:', e?.message);
+      return res.status(403).send('Forbidden');
+    }
     if (!valid) {
       console.error('[sms-webhook] invalid Twilio signature');
       return res.status(403).send('Forbidden');
@@ -155,6 +183,7 @@ export default async function handler(req, res) {
   const body = typeof req.body === 'string' ? Object.fromEntries(new URLSearchParams(req.body)) : req.body || {};
   const from = body.From;
   const text = (body.Body || '').trim();
+  const messageSid = typeof body.MessageSid === 'string' ? body.MessageSid : null;
   if (!from || !text) return res.status(400).send('Bad request');
 
   const admin = getAdmin();
@@ -179,37 +208,92 @@ export default async function handler(req, res) {
   const upper = text.toUpperCase();
 
   if (STOP_KEYWORDS.has(upper)) {
-    await admin.from('phone_numbers').update({ sms_opted_out: true, updated_at: new Date().toISOString() }).eq('user_id', userId);
+    const { error: optOutError } = await admin
+      .from('phone_numbers')
+      .update({ sms_opted_out: true, updated_at: new Date().toISOString() })
+      .eq('user_id', userId);
+    if (optOutError) {
+      // Do NOT confirm an unsubscribe that did not happen.
+      console.error('[sms-webhook] OPT-OUT WRITE FAILED for user', userId, optOutError.message);
+      return sendTwiml(res, "Sorry — we couldn't process that just now. Please reply STOP again, or email pulomabishnu@gmail.com.");
+    }
     await logMessage(admin, userId, 'inbound', text);
     await logMessage(admin, userId, 'outbound', "You're unsubscribed from Ayna texts. Reply START to opt back in.");
     return sendTwiml(res, "You're unsubscribed from Ayna texts. Reply START to opt back in.");
   }
 
-  if (START_KEYWORDS.has(upper) && optedOut) {
-    await admin.from('phone_numbers').update({ sms_opted_out: false, updated_at: new Date().toISOString() }).eq('user_id', userId);
+  // Handled unconditionally: previously a user who was NOT opted out and texted
+  // "YES" (a START keyword, and a very common conversational reply) fell through
+  // to the LLM path, spending a Claude call and an outbound SMS to answer a bare
+  // "YES" with no context.
+  if (START_KEYWORDS.has(upper)) {
+    if (!optedOut) {
+      await logMessage(admin, userId, 'inbound', text);
+      return sendTwiml(res, "You're already subscribed. Text me anytime, like 'what helps with PCOS bloating'.");
+    }
+    const { error: optInError } = await admin
+      .from('phone_numbers')
+      .update({ sms_opted_out: false, updated_at: new Date().toISOString() })
+      .eq('user_id', userId);
+    if (optInError) {
+      console.error('[sms-webhook] OPT-IN WRITE FAILED for user', userId, optInError.message);
+      return sendTwiml(res, "Sorry — we couldn't process that just now. Please reply START again.");
+    }
     await logMessage(admin, userId, 'inbound', text);
     await logMessage(admin, userId, 'outbound', "You're back in! Text me anytime, like 'what helps with PCOS bloating'.");
     return sendTwiml(res, "You're back in! Text me anytime, like 'what helps with PCOS bloating'.");
   }
 
-  await logMessage(admin, userId, 'inbound', text);
+  // Unique index on message_sid makes a replayed delivery a no-op insert; if the
+  // row already exists we have handled this exact message before.
+  if (messageSid) {
+    const { data: seen } = await admin
+      .from('sms_conversations')
+      .select('id')
+      .eq('message_sid', messageSid)
+      .maybeSingle();
+    if (seen) {
+      console.warn('[sms-webhook] duplicate delivery for', messageSid, '— ignoring');
+      return res.status(200).send('');
+    }
+  }
+
+  await logMessage(admin, userId, 'inbound', text, messageSid);
 
   if (optedOut) {
     // Respect our own opt-out state even if Twilio's carrier-level STOP somehow didn't catch it.
     return res.status(200).send('');
   }
 
-  await admin.from('phone_numbers').update({ last_sms_at: new Date().toISOString() }).eq('user_id', userId);
+  // These three share only userId and are independent of each other.
+  const [, intakeRes, recentRes] = await Promise.all([
+    admin.from('phone_numbers').update({ last_sms_at: new Date().toISOString() }).eq('user_id', userId),
+    admin.from('health_intakes').select('profile').eq('user_id', userId).maybeSingle(),
+    admin
+      .from('sms_conversations')
+      .select('direction, message_body, created_at')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(10),
+  ]);
+  const profile = intakeRes?.data?.profile || {};
+  const recentMessages = recentRes?.data;
 
-  const { data: intakeRow } = await admin.from('health_intakes').select('profile').eq('user_id', userId).maybeSingle();
-  const profile = intakeRow?.profile || {};
-
-  const { data: recentMessages } = await admin
-    .from('sms_conversations')
-    .select('direction, message_body, created_at')
-    .eq('user_id', userId)
-    .order('created_at', { ascending: false })
-    .limit(10);
+  // Weekly quota + a short-window burst limit. Without these a single verified
+  // user texting in a loop drives unbounded LLM spend and unbounded outbound
+  // SMS cost. Both fail OPEN to a static reply rather than silence, so a
+  // limiter outage never leaves an inbound text unanswered.
+  const burst = await rateLimit(`sms:in:${userId}`, { max: 6, windowSec: 60, failClosed: false });
+  if (!burst.ok) {
+    await logMessage(admin, userId, 'outbound', 'rate limited');
+    return sendTwiml(res, "You're sending messages quickly — give me a minute and text again.");
+  }
+  const { allowed: smsAllowed } = await consumeUsage(admin, userId, 'sms');
+  if (!smsAllowed) {
+    const msg = "You've reached this week's Ayna text limit. It resets Monday — or use the app anytime at https://ayna.health";
+    await logMessage(admin, userId, 'outbound', msg);
+    return sendTwiml(res, msg);
+  }
 
   let knowledgeContext = '';
   try {

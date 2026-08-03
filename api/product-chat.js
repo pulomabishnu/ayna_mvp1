@@ -4,34 +4,61 @@
  * plus core product data as context, so we don't need a full retrieval pass.
  */
 /* global process */
-import { verifyUser, checkUsage, incrementUsage } from './_usageLimit.js';
+import { verifyUser, consumeUsage, refundUsage } from './_usageLimit.js';
+import { isPremiumUser } from './_entitlement.js';
+import { callWithFallback, parseProviderOrder } from './_llm.js';
+
+/**
+ * Every field below arrives in the request body and is interpolated into the
+ * prompt, so each one is length-capped and stripped of newlines/backticks.
+ *
+ * Uncapped, a single `product.summary` could fill the model's context (~$0.20
+ * of input per request, ~100x normal) and — because the quota was only charged
+ * on success — be replayed indefinitely. The newline stripping limits how
+ * easily injected text can pose as a new prompt section.
+ */
+function clamp(v, max) {
+  if (typeof v !== 'string') return '';
+  return v.replace(/[\r\n]+/g, ' ').replace(/`/g, "'").trim().slice(0, max);
+}
 
 function buildEcosystemSummary(ecosystemProducts) {
   if (!Array.isArray(ecosystemProducts) || ecosystemProducts.length === 0) return '';
   const lines = ecosystemProducts
     .slice(0, 20)
+    // Guarded: a body of {"ecosystemProducts":[null]} previously threw a
+    // TypeError outside any try/catch and surfaced as an unhandled 500.
+    .filter(p => p && typeof p === 'object')
     .map(p => {
-      const brand = p.brand ? ` by ${p.brand}` : '';
-      const cat = p.category ? ` (${p.category})` : '';
+      const brand = p.brand ? ` by ${clamp(p.brand, 80)}` : '';
+      const cat = p.category ? ` (${clamp(p.category, 40)})` : '';
       const source = p.aynaRecommended ? ' [Ayna recommended]' : ' [user added]';
-      return `- ${p.name || 'Unknown'}${brand}${cat}${source}`;
+      return `- ${clamp(p.name, 120) || 'Unknown'}${brand}${cat}${source}`;
     });
   return lines.join('\n');
 }
 
 function buildPrompt(question, product, aiInsights, userContext, ecosystemProducts) {
-  const name = product?.name || 'this product';
-  const brand = product?.brand || '';
-  const summary = product?.summary || '';
-  const ingredients = product?.ingredients || product?.safety?.materials || '';
-  const doctorOpinion = product?.doctorOpinion || '';
-  const communityReview = product?.communityReview || '';
-  const safety = product?.safety || {};
-  const effectiveness = product?.effectiveness || '';
+  const name = clamp(product?.name, 120) || 'this product';
+  const brand = clamp(product?.brand, 80);
+  const summary = clamp(product?.summary, 1200);
+  const ingredients = clamp(product?.ingredients || product?.safety?.materials, 800);
+  const doctorOpinion = clamp(product?.doctorOpinion, 800);
+  const communityReview = clamp(product?.communityReview, 800);
+  const rawSafety = (product?.safety && typeof product.safety === 'object') ? product.safety : {};
+  const safety = {
+    fdaStatus: clamp(rawSafety.fdaStatus, 200),
+    sideEffects: clamp(rawSafety.sideEffects, 400),
+    recalls: clamp(rawSafety.recalls, 400),
+  };
+  const effectiveness = clamp(product?.effectiveness, 600);
 
-  const clinicalCtx = aiInsights?.clinicalNarrative || '';
-  const scienceCtx = aiInsights?.scienceSummary || '';
-  const communityCtx = aiInsights?.communitySummary || '';
+  // aiInsights is client-supplied and lands BELOW the RULES block — i.e. in the
+  // stronger position — so an unbounded value here was the cleanest way to
+  // override the medical-safety rules above. Capped hard.
+  const clinicalCtx = clamp(aiInsights?.clinicalNarrative, 1500);
+  const scienceCtx = clamp(aiInsights?.scienceSummary, 1000);
+  const communityCtx = clamp(aiInsights?.communitySummary, 1000);
 
   const ecoSummary = buildEcosystemSummary(ecosystemProducts);
 
@@ -69,61 +96,23 @@ USER QUESTION: ${question}
 Answer:`.trim();
 }
 
-async function callAnthropic(prompt) {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) return null;
-  const model = process.env.ANTHROPIC_MODEL || 'claude-haiku-4-5-20251001';
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'content-type': 'application/json',
-    },
-    body: JSON.stringify({
-      model,
-      max_tokens: 500,
-      temperature: 0.3,
-      system: 'You are Ayna, a knowledgeable and empathetic women\'s health assistant. Answer questions about any women\'s health product using the provided context and your general knowledge.',
-      messages: [{ role: 'user', content: prompt }],
-    }),
-    signal: AbortSignal.timeout(25000),
-  });
-  if (!res.ok) return null;
-  const data = await res.json();
-  return data?.content?.[0]?.text?.trim() || null;
-}
-
-async function callOpenAI(prompt) {
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) return null;
-  const model = process.env.OPENAI_MODEL || 'gpt-4o-mini';
-  const res = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model,
-      max_tokens: 400,
-      temperature: 0.3,
-      messages: [
-        { role: 'system', content: 'You are Ayna, a knowledgeable and empathetic women\'s health assistant. Answer questions concisely using only the provided context. Never fabricate facts.' },
-        { role: 'user', content: prompt },
-      ],
-    }),
-    signal: AbortSignal.timeout(25000),
-  });
-  if (!res.ok) return null;
-  const data = await res.json();
-  return data?.choices?.[0]?.message?.content?.trim() || null;
-}
+// The local callAnthropic/callOpenAI pair that lived here was replaced by
+// _llm.js: both swallowed the provider status (`if (!res.ok) return null`), so a
+// revoked key, a 429 and an overload were indistinguishable from "the model had
+// nothing to say" — and this route turned that into a HTTP 200 apology.
 
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
   if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    // Was '*'. These are same-origin, bearer-authenticated routes: a wildcard
+    // preflight let a hostile origin's request run server-side (spending the
+    // user's quota) before the browser discarded the response.
+    const allowList = (process.env.ALLOWED_ORIGINS || '')
+      .split(',').map((o) => o.trim()).filter(Boolean);
+    if (req.headers.origin && allowList.includes(req.headers.origin)) {
+      res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+      res.setHeader('Vary', 'Origin');
+    }
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     return res.status(204).end();
@@ -133,13 +122,7 @@ export default async function handler(req, res) {
   const { user, error, admin } = await verifyUser(req);
   if (!user) return res.status(401).json({ error });
 
-  const isPremium = user.user_metadata?.is_premium === true;
-  let chatPeriod;
-  if (!isPremium) {
-    const { over, used, limit, period } = await checkUsage(admin, user.id, 'chat');
-    if (over) return res.status(429).json({ error: 'weekly_limit_reached', used, limit, action: 'chat' });
-    chatPeriod = period;
-  }
+  const isPremium = isPremiumUser(user);
 
   let body;
   try {
@@ -156,28 +139,68 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'product is required' });
   }
 
-  const prompt = buildPrompt(question.trim().slice(0, 500), product, aiInsights || {}, userContext || '', ecosystemProducts);
+  // Reserve the slot BEFORE spending money, and refund on failure.
+  //
+  // The old order was check -> call providers -> increment only on success.
+  // Since every input that decides "success" comes from the request body, a
+  // client could force the failure branch (e.g. an aiInsights value telling the
+  // model to reply with a single space, so the trimmed answer is falsy) and get
+  // unlimited *billed* Anthropic + OpenAI calls that never touched the counter.
+  // It was also a check-then-act race: N concurrent requests all read the same
+  // pre-increment value and all passed.
+  let usagePeriod = null;
+  let usageUsed = 0;
+  let usageLimit = null;
+  if (!isPremium) {
+    const { allowed, used, limit, period, degraded } = await consumeUsage(admin, user.id, 'chat');
+    if (!allowed) return res.status(429).json({ error: 'weekly_limit_reached', used, limit, action: 'chat' });
+    usagePeriod = degraded ? null : period;
+    usageUsed = used;
+    usageLimit = limit;
+  }
+  const refund = async () => {
+    if (usagePeriod) await refundUsage(admin, user.id, 'chat', usagePeriod);
+  };
 
-  const order = (process.env.AI_INSIGHTS_PROVIDER_ORDER || 'anthropic,openai')
-    .split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+  const prompt = buildPrompt(
+    question.trim().slice(0, 500),
+    product,
+    aiInsights || {},
+    // Had no cap at all here, unlike product-insights which caps it at 4000.
+    typeof userContext === 'string' ? userContext.slice(0, 4000) : '',
+    ecosystemProducts
+  );
+  const order = parseProviderOrder('AI_INSIGHTS_PROVIDER_ORDER', 'anthropic,openai');
 
   let answer = null;
-  for (const provider of order) {
-    try {
-      if (provider === 'anthropic' || provider === 'claude') answer = await callAnthropic(prompt);
-      else if (provider === 'openai') answer = await callOpenAI(prompt);
-      if (answer) break;
-    } catch (e) {
-      console.error(`[product-chat] ${provider} error:`, e?.message);
-    }
+  try {
+    const out = await callWithFallback(order, {
+      system: "You are Ayna, a knowledgeable and empathetic women's health assistant. Answer questions concisely using only the provided context. Never fabricate facts.",
+      prompt,
+      maxTokens: 1024,
+      timeoutMs: 20_000,
+    });
+    answer = out.text.trim();
+  } catch (e) {
+    console.error('[product-chat] all providers failed:', e?.status || '', e?.message);
   }
 
   if (!answer) {
-    return res.status(200).json({
+    await refund();
+    // 502, not 200. Returning a friendly apology with a success status made
+    // generation failures invisible to the client, to monitoring, and to the
+    // user's own retry logic.
+    return res.status(502).json({
+      error: 'generation_failed',
       answer: "I'm sorry, I wasn't able to answer that right now. Please try again or consult the product details tabs above.",
     });
   }
 
-  if (!isPremium) await incrementUsage(admin, user.id, 'chat', chatPeriod);
-  return res.status(200).json({ answer });
+  // Report the authoritative count back. The client used to query user_ai_usage
+  // directly and swallow the error, so the counter read 0 whenever the read
+  // failed and the user was surprised by a 429.
+  return res.status(200).json({
+    answer,
+    usage: isPremium ? { unlimited: true } : { used: usageUsed, limit: usageLimit },
+  });
 }

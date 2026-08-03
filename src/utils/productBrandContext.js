@@ -57,21 +57,22 @@ export function deriveBrandSearchContext(product) {
     product.emphasizeBrandComparison === true ||
     (typeof product.brand === 'string' && product.brand.trim().length > 0);
 
-  let brandName = '';
-  if (typeof product.brand === 'string' && product.brand.trim()) {
-    brandName = product.brand.trim();
-  } else {
-    const rawName = (product.name || '').trim();
-    const beforeParen = rawName.split(/\(|–|—/)[0].trim();
-    const words = beforeParen.split(/\s+/).filter(Boolean);
-    if (words.length === 0) {
-      brandName = '';
-    } else if (words.length === 1) {
-      brandName = words[0];
-    } else {
-      brandName = `${words[0]} ${words[1]}`.slice(0, 56);
-    }
-  }
+  // Only ever use an EXPLICIT brand.
+  //
+  // This used to fall back to the first two words of the product name whenever
+  // `brand` was absent — which is the common path, since only a handful of
+  // catalog entries set it. "Organic Cotton Tampons" produced the brand
+  // "Organic Cotton", which was then injected into the prompt as
+  // "Brand to surface in searches and narrative: Organic Cotton" and rendered
+  // to users as "Reddit search: Organic Cotton tampons".
+  //
+  // A wrong brand is worse than no brand: it sends the reader to results for a
+  // company that does not exist. With no brand we simply fall back to
+  // category-level searches, which are correct if less specific.
+  const brandName =
+    typeof product.brand === 'string' && product.brand.trim()
+      ? product.brand.trim().slice(0, 56)
+      : '';
 
   const deviceKindLabel = DEVICE_KIND_LABEL[category] || category.replace(/-/g, ' ') || 'this product type';
 

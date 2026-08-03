@@ -23,17 +23,25 @@ function readSessionCache(key) {
     return {
       suggestions: o.suggestions,
       querySummary: typeof o.querySummary === 'string' ? o.querySummary : '',
+      // Was read at the call site but never persisted, so the "related
+      // searches" row silently vanished for 45 minutes on any repeated query.
+      relatedSearches: Array.isArray(o.relatedSearches) ? o.relatedSearches : [],
     };
   } catch {
     return null;
   }
 }
 
-function writeSessionCache(key, suggestions, querySummary) {
+function writeSessionCache(key, suggestions, querySummary, relatedSearches) {
   try {
     sessionStorage.setItem(
       key,
-      JSON.stringify({ ts: Date.now(), suggestions, querySummary: querySummary || '' })
+      JSON.stringify({
+        ts: Date.now(),
+        suggestions,
+        querySummary: querySummary || '',
+        relatedSearches: Array.isArray(relatedSearches) ? relatedSearches : [],
+      })
     );
   } catch {
     /* quota */
@@ -91,17 +99,27 @@ export async function fetchSearchSuggestions(opts) {
   }
 
   if (!res.ok) {
+    // Discovery renders `error` verbatim, so raw server codes used to reach the
+    // user as e.g. "Showing 0 results. claude_failed". Map them to human copy
+    // and keep the raw code on `code` for telemetry.
+    const raw = data?.error || '';
+    const friendly =
+      raw === 'claude_failed' || raw === 'invalid_model_json' || res.status === 502
+        ? 'AI search is having trouble right now — try again in a moment.'
+        : raw === 'query_too_short'
+          ? 'Type a little more to search.'
+          : 'Could not load suggestions.';
     return {
       suggestions: [],
       querySummary: '',
-      error: data?.message || data?.error || 'Could not load suggestions.',
-      code: data?.error || 'request_failed',
+      error: friendly,
+      code: raw || 'request_failed',
     };
   }
 
   const suggestions = Array.isArray(data.suggestions) ? data.suggestions : [];
   const querySummary = typeof data.querySummary === 'string' ? data.querySummary : '';
   const relatedSearches = Array.isArray(data.relatedSearches) ? data.relatedSearches : [];
-  if (cacheKey) writeSessionCache(cacheKey, suggestions, querySummary);
+  if (cacheKey) writeSessionCache(cacheKey, suggestions, querySummary, relatedSearches);
   return { suggestions, querySummary, relatedSearches };
 }

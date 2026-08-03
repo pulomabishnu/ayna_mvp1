@@ -239,7 +239,10 @@ async function callClaudeJson(prompt, attempt = 0) {
     },
     body: JSON.stringify({
       model,
-      max_tokens: 8192,
+      // 8192 was ~10x what 20 short suggestions need, and on an unauthenticated
+      // endpoint that set the per-request abuse cost (~$0.04) an order of
+      // magnitude higher than necessary.
+      max_tokens: 2048,
       temperature: 0.2,
       system:
         "Return a single valid JSON object only. No markdown fences. You must not output URLs or http(s) in any field. Real brand and product names only. Educational women's health context; never diagnose.",
@@ -251,7 +254,9 @@ async function callClaudeJson(prompt, attempt = 0) {
     console.error('search-suggestions Claude HTTP', res.status, errText.slice(0, 300));
     // Retry once on 429 (rate limit) or 529 (overloaded) after a short wait
     if (attempt === 0 && (res.status === 429 || res.status === 529)) {
-      await new Promise((r) => setTimeout(r, 2000));
+      // Shortened: this is billed wall-clock inside the function budget, not
+      // free waiting. Long backoff belongs on the client, not here.
+      await new Promise((r) => setTimeout(r, 600));
       return callClaudeJson(prompt, 1);
     }
     return null;
@@ -269,7 +274,18 @@ async function callClaudeJson(prompt, attempt = 0) {
 
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  // This route is intentionally unauthenticated (anonymous Discovery search)
+  // and it spends Anthropic tokens per call, so it must not be drivable from
+  // arbitrary origins: `Access-Control-Allow-Origin: *` on the POST response
+  // let any third-party page bill Ayna via its own visitors' browsers.
+  // Same-origin requests send no Origin header and are unaffected.
+  const allowList = (process.env.ALLOWED_ORIGINS || '')
+    .split(',').map((o) => o.trim()).filter(Boolean);
+  const origin = req.headers.origin;
+  if (origin && allowList.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+  }
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
@@ -303,8 +319,12 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'query_too_short' });
   }
 
-  const categoryHint = typeof body?.category === 'string' ? body.category.trim() : '';
-  const symptomHint = typeof body?.symptom === 'string' ? body.symptom.trim() : '';
+  // Every other input here is sanitized (query 500 + quote-escaped,
+  // profileSummary 400, dislikedProducts 300); these two got neither a cap nor
+  // quote escaping, and land inside a quoted string in the prompt — on an
+  // endpoint with no auth. Unbounded token sink and the cleanest injection point.
+  const categoryHint = sanitizeStr(body?.category, 64).replace(/"/g, '');
+  const symptomHint = sanitizeStr(body?.symptom, 64).replace(/"/g, '');
   const personalized = !!body?.personalized;
   const profileSummary = sanitizeStr(body?.profileSummary || '', 400);
   const dislikedProducts = sanitizeStr(body?.dislikedProducts || '', 300);
