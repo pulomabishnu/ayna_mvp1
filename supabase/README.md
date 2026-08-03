@@ -12,6 +12,30 @@ database.
 >
 > Run it before applying anywhere, and after any schema change.
 
+## Before applying to a live database: diff it
+
+`create table if not exists` **skips** a table that already exists. Four of these
+tables were created by hand in the dashboard and hold real user data, so a
+migration run can report complete success while a live table still lacks a
+column, a composite key, or an RLS policy the app depends on.
+
+```sh
+# 1. On the live database (READ-ONLY — no writes, no DDL, no row data returned)
+psql "$DB_URL" -At -f supabase/_introspect.sql > live-schema.json
+#    ...or paste supabase/_introspect.sql into the Supabase SQL Editor and copy
+#    the single result cell into live-schema.json
+
+# 2. Locally
+node scripts/diff-schema.mjs live-schema.json
+```
+
+It compares against `supabase/expected-schema.json` — the same introspection
+query run against a clean local apply of every migration — and ranks findings by
+what actually breaks. Exits non-zero on anything BLOCKING.
+
+Regenerate the reference after any schema change:
+`./scripts/test-migrations.sh` then re-run the introspection locally.
+
 ## Validate locally first
 
 ```sh

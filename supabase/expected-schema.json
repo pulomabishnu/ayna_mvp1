@@ -1,0 +1,1264 @@
+{
+    "tables": {
+        "user_reviews": {
+            "grants": [
+                "anon:DELETE",
+                "anon:INSERT",
+                "anon:REFERENCES",
+                "anon:SELECT",
+                "anon:TRIGGER",
+                "anon:TRUNCATE",
+                "anon:UPDATE",
+                "authenticated:DELETE",
+                "authenticated:INSERT",
+                "authenticated:REFERENCES",
+                "authenticated:SELECT",
+                "authenticated:TRIGGER",
+                "authenticated:TRUNCATE",
+                "authenticated:UPDATE",
+                "service_role:DELETE",
+                "service_role:INSERT",
+                "service_role:REFERENCES",
+                "service_role:SELECT",
+                "service_role:TRIGGER",
+                "service_role:TRUNCATE",
+                "service_role:UPDATE"
+            ],
+            "columns": [
+                {
+                    "type": "uuid",
+                    "column": "user_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "product_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "jsonb",
+                    "column": "ratings",
+                    "default": "'[]'::jsonb",
+                    "notnull": true
+                },
+                {
+                    "type": "jsonb",
+                    "column": "reviews",
+                    "default": "'[]'::jsonb",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "created_at",
+                    "default": "now()",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "updated_at",
+                    "default": "now()",
+                    "notnull": true
+                }
+            ],
+            "policies": [
+                {
+                    "name": "user_reviews_delete_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "DELETE"
+                },
+                {
+                    "name": "user_reviews_insert_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "INSERT"
+                },
+                {
+                    "name": "user_reviews_select_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "SELECT"
+                },
+                {
+                    "name": "user_reviews_update_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "UPDATE"
+                }
+            ],
+            "constraints": [
+                {
+                    "name": "user_reviews_pkey",
+                    "type": "primary key",
+                    "definition": "PRIMARY KEY (user_id, product_id)"
+                },
+                {
+                    "name": "user_reviews_user_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                }
+            ],
+            "index_count": 1,
+            "rls_enabled": true
+        },
+        "phone_numbers": {
+            "grants": [
+                "anon:DELETE",
+                "anon:INSERT",
+                "anon:REFERENCES",
+                "anon:SELECT",
+                "anon:TRIGGER",
+                "anon:TRUNCATE",
+                "anon:UPDATE",
+                "authenticated:DELETE",
+                "authenticated:INSERT",
+                "authenticated:REFERENCES",
+                "authenticated:SELECT",
+                "authenticated:TRIGGER",
+                "authenticated:TRUNCATE",
+                "authenticated:UPDATE",
+                "service_role:DELETE",
+                "service_role:INSERT",
+                "service_role:REFERENCES",
+                "service_role:SELECT",
+                "service_role:TRIGGER",
+                "service_role:TRUNCATE",
+                "service_role:UPDATE"
+            ],
+            "columns": [
+                {
+                    "type": "uuid",
+                    "column": "user_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "phone_number",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "boolean",
+                    "column": "is_verified",
+                    "default": "false",
+                    "notnull": true
+                },
+                {
+                    "type": "boolean",
+                    "column": "sms_opted_out",
+                    "default": "false",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "last_sms_at",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "created_at",
+                    "default": "now()",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "updated_at",
+                    "default": "now()",
+                    "notnull": true
+                }
+            ],
+            "policies": [
+                {
+                    "name": "phone_numbers_delete_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "DELETE"
+                },
+                {
+                    "name": "phone_numbers_select_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "SELECT"
+                },
+                {
+                    "name": "phone_numbers_update_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "UPDATE"
+                },
+                {
+                    "name": "phone_numbers_upsert_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "INSERT"
+                }
+            ],
+            "constraints": [
+                {
+                    "name": "phone_numbers_phone_number_key",
+                    "type": "unique",
+                    "definition": "UNIQUE (phone_number)"
+                },
+                {
+                    "name": "phone_numbers_pkey",
+                    "type": "primary key",
+                    "definition": "PRIMARY KEY (user_id)"
+                },
+                {
+                    "name": "phone_numbers_user_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                }
+            ],
+            "index_count": 2,
+            "rls_enabled": true
+        },
+        "user_ai_usage": {
+            "grants": [
+                "anon:DELETE",
+                "anon:INSERT",
+                "anon:REFERENCES",
+                "anon:SELECT",
+                "anon:TRIGGER",
+                "anon:TRUNCATE",
+                "anon:UPDATE",
+                "authenticated:DELETE",
+                "authenticated:INSERT",
+                "authenticated:REFERENCES",
+                "authenticated:SELECT",
+                "authenticated:TRIGGER",
+                "authenticated:TRUNCATE",
+                "authenticated:UPDATE",
+                "service_role:DELETE",
+                "service_role:INSERT",
+                "service_role:REFERENCES",
+                "service_role:SELECT",
+                "service_role:TRIGGER",
+                "service_role:TRUNCATE",
+                "service_role:UPDATE"
+            ],
+            "columns": [
+                {
+                    "type": "uuid",
+                    "column": "user_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "period",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "action",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "integer",
+                    "column": "count",
+                    "default": "0",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "created_at",
+                    "default": "now()",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "updated_at",
+                    "default": "now()",
+                    "notnull": true
+                }
+            ],
+            "policies": [
+                {
+                    "name": "user_ai_usage_select_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "SELECT"
+                }
+            ],
+            "constraints": [
+                {
+                    "name": "user_ai_usage_pkey",
+                    "type": "primary key",
+                    "definition": "PRIMARY KEY (user_id, period, action)"
+                },
+                {
+                    "name": "user_ai_usage_user_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                }
+            ],
+            "index_count": 1,
+            "rls_enabled": true
+        },
+        "health_intakes": {
+            "grants": [
+                "anon:DELETE",
+                "anon:INSERT",
+                "anon:REFERENCES",
+                "anon:SELECT",
+                "anon:TRIGGER",
+                "anon:TRUNCATE",
+                "anon:UPDATE",
+                "authenticated:DELETE",
+                "authenticated:INSERT",
+                "authenticated:REFERENCES",
+                "authenticated:SELECT",
+                "authenticated:TRIGGER",
+                "authenticated:TRUNCATE",
+                "authenticated:UPDATE",
+                "service_role:DELETE",
+                "service_role:INSERT",
+                "service_role:REFERENCES",
+                "service_role:SELECT",
+                "service_role:TRIGGER",
+                "service_role:TRUNCATE",
+                "service_role:UPDATE"
+            ],
+            "columns": [
+                {
+                    "type": "uuid",
+                    "column": "user_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "jsonb",
+                    "column": "profile",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "created_at",
+                    "default": "now()",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "updated_at",
+                    "default": "now()",
+                    "notnull": true
+                }
+            ],
+            "policies": [
+                {
+                    "name": "health_intakes_delete_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "DELETE"
+                },
+                {
+                    "name": "health_intakes_select_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "SELECT"
+                },
+                {
+                    "name": "health_intakes_update_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "UPDATE"
+                },
+                {
+                    "name": "health_intakes_upsert_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "INSERT"
+                }
+            ],
+            "constraints": [
+                {
+                    "name": "health_intakes_pkey",
+                    "type": "primary key",
+                    "definition": "PRIMARY KEY (user_id)"
+                },
+                {
+                    "name": "health_intakes_user_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                }
+            ],
+            "index_count": 1,
+            "rls_enabled": true
+        },
+        "product_catalog": {
+            "grants": [
+                "anon:DELETE",
+                "anon:INSERT",
+                "anon:REFERENCES",
+                "anon:SELECT",
+                "anon:TRIGGER",
+                "anon:TRUNCATE",
+                "anon:UPDATE",
+                "authenticated:DELETE",
+                "authenticated:INSERT",
+                "authenticated:REFERENCES",
+                "authenticated:SELECT",
+                "authenticated:TRIGGER",
+                "authenticated:TRUNCATE",
+                "authenticated:UPDATE",
+                "service_role:DELETE",
+                "service_role:INSERT",
+                "service_role:REFERENCES",
+                "service_role:SELECT",
+                "service_role:TRIGGER",
+                "service_role:TRUNCATE",
+                "service_role:UPDATE"
+            ],
+            "columns": [
+                {
+                    "type": "text",
+                    "column": "id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "name",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "brand",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "text",
+                    "column": "category",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "product_type",
+                    "default": "'physical'::text",
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "summary",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "text",
+                    "column": "price",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "text",
+                    "column": "image",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "text",
+                    "column": "url",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "jsonb",
+                    "column": "tags",
+                    "default": "'[]'::jsonb",
+                    "notnull": true
+                },
+                {
+                    "type": "jsonb",
+                    "column": "health_functions",
+                    "default": "'[]'::jsonb",
+                    "notnull": true
+                },
+                {
+                    "type": "jsonb",
+                    "column": "where_to_buy",
+                    "default": "'[]'::jsonb",
+                    "notnull": true
+                },
+                {
+                    "type": "jsonb",
+                    "column": "where_to_buy_in_stock",
+                    "default": "'{}'::jsonb",
+                    "notnull": true
+                },
+                {
+                    "type": "jsonb",
+                    "column": "safety",
+                    "default": "'{}'::jsonb",
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "doctor_opinion",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "text",
+                    "column": "community_review",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "text",
+                    "column": "effectiveness",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "text",
+                    "column": "clinician_opinion_source",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "text",
+                    "column": "clinician_attribution",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "text",
+                    "column": "source",
+                    "default": "'curated'::text",
+                    "notnull": true
+                },
+                {
+                    "type": "boolean",
+                    "column": "internal",
+                    "default": "false",
+                    "notnull": true
+                },
+                {
+                    "type": "boolean",
+                    "column": "requires_prescription",
+                    "default": "false",
+                    "notnull": true
+                },
+                {
+                    "type": "numeric(2,1)",
+                    "column": "user_rating",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "boolean",
+                    "column": "is_active",
+                    "default": "true",
+                    "notnull": true
+                },
+                {
+                    "type": "jsonb",
+                    "column": "extra",
+                    "default": "'{}'::jsonb",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "created_at",
+                    "default": "now()",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "updated_at",
+                    "default": "now()",
+                    "notnull": true
+                }
+            ],
+            "policies": [
+                {
+                    "name": "product_catalog_read_all",
+                    "roles": [
+                        "anon",
+                        "authenticated"
+                    ],
+                    "command": "SELECT"
+                }
+            ],
+            "constraints": [
+                {
+                    "name": "product_catalog_pkey",
+                    "type": "primary key",
+                    "definition": "PRIMARY KEY (id)"
+                },
+                {
+                    "name": "product_catalog_source_check",
+                    "type": "check",
+                    "definition": "CHECK ((source = ANY (ARRAY['curated'::text, 'imported'::text, 'partner'::text])))"
+                }
+            ],
+            "index_count": 6,
+            "rls_enabled": true
+        },
+        "user_ecosystems": {
+            "grants": [
+                "anon:DELETE",
+                "anon:INSERT",
+                "anon:REFERENCES",
+                "anon:SELECT",
+                "anon:TRIGGER",
+                "anon:TRUNCATE",
+                "anon:UPDATE",
+                "authenticated:DELETE",
+                "authenticated:INSERT",
+                "authenticated:REFERENCES",
+                "authenticated:SELECT",
+                "authenticated:TRIGGER",
+                "authenticated:TRUNCATE",
+                "authenticated:UPDATE",
+                "service_role:DELETE",
+                "service_role:INSERT",
+                "service_role:REFERENCES",
+                "service_role:SELECT",
+                "service_role:TRIGGER",
+                "service_role:TRUNCATE",
+                "service_role:UPDATE"
+            ],
+            "columns": [
+                {
+                    "type": "uuid",
+                    "column": "user_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "product_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "product_name",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "text",
+                    "column": "brand",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "text",
+                    "column": "category",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "text",
+                    "column": "product_type",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "jsonb",
+                    "column": "product_data",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "boolean",
+                    "column": "in_ecosystem",
+                    "default": "false",
+                    "notnull": true
+                },
+                {
+                    "type": "boolean",
+                    "column": "is_tracked",
+                    "default": "false",
+                    "notnull": true
+                },
+                {
+                    "type": "boolean",
+                    "column": "is_omitted",
+                    "default": "false",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "created_at",
+                    "default": "now()",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "updated_at",
+                    "default": "now()",
+                    "notnull": true
+                }
+            ],
+            "policies": [
+                {
+                    "name": "user_ecosystems_delete_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "DELETE"
+                },
+                {
+                    "name": "user_ecosystems_insert_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "INSERT"
+                },
+                {
+                    "name": "user_ecosystems_select_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "SELECT"
+                },
+                {
+                    "name": "user_ecosystems_update_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "UPDATE"
+                }
+            ],
+            "constraints": [
+                {
+                    "name": "user_ecosystems_pkey",
+                    "type": "primary key",
+                    "definition": "PRIMARY KEY (user_id, product_id)"
+                },
+                {
+                    "name": "user_ecosystems_user_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                }
+            ],
+            "index_count": 2,
+            "rls_enabled": true
+        },
+        "sms_conversations": {
+            "grants": [
+                "anon:DELETE",
+                "anon:INSERT",
+                "anon:REFERENCES",
+                "anon:SELECT",
+                "anon:TRIGGER",
+                "anon:TRUNCATE",
+                "anon:UPDATE",
+                "authenticated:DELETE",
+                "authenticated:INSERT",
+                "authenticated:REFERENCES",
+                "authenticated:SELECT",
+                "authenticated:TRIGGER",
+                "authenticated:TRUNCATE",
+                "authenticated:UPDATE",
+                "service_role:DELETE",
+                "service_role:INSERT",
+                "service_role:REFERENCES",
+                "service_role:SELECT",
+                "service_role:TRIGGER",
+                "service_role:TRUNCATE",
+                "service_role:UPDATE"
+            ],
+            "columns": [
+                {
+                    "type": "uuid",
+                    "column": "id",
+                    "default": "gen_random_uuid()",
+                    "notnull": true
+                },
+                {
+                    "type": "uuid",
+                    "column": "user_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "direction",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "message_body",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "message_sid",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "created_at",
+                    "default": "now()",
+                    "notnull": true
+                }
+            ],
+            "policies": [
+                {
+                    "name": "sms_conversations_delete_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "DELETE"
+                },
+                {
+                    "name": "sms_conversations_select_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "SELECT"
+                }
+            ],
+            "constraints": [
+                {
+                    "name": "sms_conversations_direction_check",
+                    "type": "check",
+                    "definition": "CHECK ((direction = ANY (ARRAY['inbound'::text, 'outbound'::text])))"
+                },
+                {
+                    "name": "sms_conversations_pkey",
+                    "type": "primary key",
+                    "definition": "PRIMARY KEY (id)"
+                },
+                {
+                    "name": "sms_conversations_user_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                }
+            ],
+            "index_count": 4,
+            "rls_enabled": true
+        },
+        "user_health_profiles": {
+            "grants": [
+                "anon:DELETE",
+                "anon:INSERT",
+                "anon:REFERENCES",
+                "anon:SELECT",
+                "anon:TRIGGER",
+                "anon:TRUNCATE",
+                "anon:UPDATE",
+                "authenticated:DELETE",
+                "authenticated:INSERT",
+                "authenticated:REFERENCES",
+                "authenticated:SELECT",
+                "authenticated:TRIGGER",
+                "authenticated:TRUNCATE",
+                "authenticated:UPDATE",
+                "service_role:DELETE",
+                "service_role:INSERT",
+                "service_role:REFERENCES",
+                "service_role:SELECT",
+                "service_role:TRIGGER",
+                "service_role:TRUNCATE",
+                "service_role:UPDATE"
+            ],
+            "columns": [
+                {
+                    "type": "uuid",
+                    "column": "user_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "jsonb",
+                    "column": "profile",
+                    "default": "'{}'::jsonb",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "created_at",
+                    "default": "now()",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "updated_at",
+                    "default": "now()",
+                    "notnull": true
+                }
+            ],
+            "policies": [
+                {
+                    "name": "user_health_profiles_delete_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "DELETE"
+                },
+                {
+                    "name": "user_health_profiles_insert_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "INSERT"
+                },
+                {
+                    "name": "user_health_profiles_select_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "SELECT"
+                },
+                {
+                    "name": "user_health_profiles_update_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "UPDATE"
+                }
+            ],
+            "constraints": [
+                {
+                    "name": "user_health_profiles_pkey",
+                    "type": "primary key",
+                    "definition": "PRIMARY KEY (user_id)"
+                },
+                {
+                    "name": "user_health_profiles_user_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                }
+            ],
+            "index_count": 1,
+            "rls_enabled": true
+        },
+        "user_learning_memory": {
+            "grants": [
+                "anon:DELETE",
+                "anon:INSERT",
+                "anon:REFERENCES",
+                "anon:SELECT",
+                "anon:TRIGGER",
+                "anon:TRUNCATE",
+                "anon:UPDATE",
+                "authenticated:DELETE",
+                "authenticated:INSERT",
+                "authenticated:REFERENCES",
+                "authenticated:SELECT",
+                "authenticated:TRIGGER",
+                "authenticated:TRUNCATE",
+                "authenticated:UPDATE",
+                "service_role:DELETE",
+                "service_role:INSERT",
+                "service_role:REFERENCES",
+                "service_role:SELECT",
+                "service_role:TRIGGER",
+                "service_role:TRUNCATE",
+                "service_role:UPDATE"
+            ],
+            "columns": [
+                {
+                    "type": "uuid",
+                    "column": "user_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "jsonb",
+                    "column": "memory",
+                    "default": "'{}'::jsonb",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "created_at",
+                    "default": "now()",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "updated_at",
+                    "default": "now()",
+                    "notnull": true
+                }
+            ],
+            "policies": [
+                {
+                    "name": "user_learning_memory_delete_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "DELETE"
+                },
+                {
+                    "name": "user_learning_memory_insert_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "INSERT"
+                },
+                {
+                    "name": "user_learning_memory_select_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "SELECT"
+                },
+                {
+                    "name": "user_learning_memory_update_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "UPDATE"
+                }
+            ],
+            "constraints": [
+                {
+                    "name": "user_learning_memory_pkey",
+                    "type": "primary key",
+                    "definition": "PRIMARY KEY (user_id)"
+                },
+                {
+                    "name": "user_learning_memory_user_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                }
+            ],
+            "index_count": 1,
+            "rls_enabled": true
+        },
+        "user_ecosystem_builds": {
+            "grants": [
+                "anon:DELETE",
+                "anon:INSERT",
+                "anon:REFERENCES",
+                "anon:SELECT",
+                "anon:TRIGGER",
+                "anon:TRUNCATE",
+                "anon:UPDATE",
+                "authenticated:DELETE",
+                "authenticated:INSERT",
+                "authenticated:REFERENCES",
+                "authenticated:SELECT",
+                "authenticated:TRIGGER",
+                "authenticated:TRUNCATE",
+                "authenticated:UPDATE",
+                "service_role:DELETE",
+                "service_role:INSERT",
+                "service_role:REFERENCES",
+                "service_role:SELECT",
+                "service_role:TRIGGER",
+                "service_role:TRUNCATE",
+                "service_role:UPDATE"
+            ],
+            "columns": [
+                {
+                    "type": "uuid",
+                    "column": "user_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "build_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "created_at",
+                    "default": "now()",
+                    "notnull": true
+                }
+            ],
+            "policies": [
+                {
+                    "name": "user_ecosystem_builds_select_own",
+                    "roles": [
+                        "authenticated"
+                    ],
+                    "command": "SELECT"
+                }
+            ],
+            "constraints": [
+                {
+                    "name": "user_ecosystem_builds_pkey",
+                    "type": "primary key",
+                    "definition": "PRIMARY KEY (user_id, build_id)"
+                },
+                {
+                    "name": "user_ecosystem_builds_user_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                }
+            ],
+            "index_count": 1,
+            "rls_enabled": true
+        },
+        "pending_phone_verifications": {
+            "grants": [
+                "anon:DELETE",
+                "anon:INSERT",
+                "anon:REFERENCES",
+                "anon:SELECT",
+                "anon:TRIGGER",
+                "anon:TRUNCATE",
+                "anon:UPDATE",
+                "authenticated:DELETE",
+                "authenticated:INSERT",
+                "authenticated:REFERENCES",
+                "authenticated:SELECT",
+                "authenticated:TRIGGER",
+                "authenticated:TRUNCATE",
+                "authenticated:UPDATE",
+                "service_role:DELETE",
+                "service_role:INSERT",
+                "service_role:REFERENCES",
+                "service_role:SELECT",
+                "service_role:TRIGGER",
+                "service_role:TRUNCATE",
+                "service_role:UPDATE"
+            ],
+            "columns": [
+                {
+                    "type": "uuid",
+                    "column": "user_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "phone_number",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "code_hash",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "expires_at",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "integer",
+                    "column": "attempts",
+                    "default": "0",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "created_at",
+                    "default": "now()",
+                    "notnull": true
+                }
+            ],
+            "policies": [
+            ],
+            "constraints": [
+                {
+                    "name": "pending_phone_verifications_pkey",
+                    "type": "primary key",
+                    "definition": "PRIMARY KEY (user_id)"
+                },
+                {
+                    "name": "pending_phone_verifications_user_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                }
+            ],
+            "index_count": 2,
+            "rls_enabled": true
+        }
+    },
+    "functions": [
+        {
+            "args": "p_user_id uuid, p_build_id text, p_limit integer",
+            "name": "claim_ecosystem_build",
+            "returns": "TABLE(allowed boolean, used integer)",
+            "security_definer": true
+        },
+        {
+            "args": "p_user_id uuid, p_max_attempts integer",
+            "name": "claim_otp_attempt",
+            "returns": "TABLE(found boolean, locked_out boolean, expired boolean, phone_number text, code_hash text, attempts integer)",
+            "security_definer": true
+        },
+        {
+            "args": "p_user_id uuid, p_period text, p_action text, p_limit integer",
+            "name": "consume_ai_usage",
+            "returns": "TABLE(allowed boolean, used integer)",
+            "security_definer": true
+        },
+        {
+            "args": "p_user_id uuid, p_period text, p_action text",
+            "name": "increment_ai_usage",
+            "returns": "integer",
+            "security_definer": true
+        },
+        {
+            "args": "",
+            "name": "purge_expired_phone_verifications",
+            "returns": "integer",
+            "security_definer": true
+        },
+        {
+            "args": "p_retain_days integer",
+            "name": "purge_old_sms_conversations",
+            "returns": "integer",
+            "security_definer": true
+        },
+        {
+            "args": "p_user_id uuid, p_period text, p_action text",
+            "name": "refund_ai_usage",
+            "returns": "integer",
+            "security_definer": true
+        },
+        {
+            "args": "p_user_id uuid, p_build_id text",
+            "name": "release_ecosystem_build",
+            "returns": "boolean",
+            "security_definer": true
+        },
+        {
+            "args": "",
+            "name": "touch_product_catalog_updated_at",
+            "returns": "trigger",
+            "security_definer": false
+        },
+        {
+            "args": "",
+            "name": "touch_updated_at",
+            "returns": "trigger",
+            "security_definer": false
+        }
+    ],
+    "generated_at": "2026-08-02T21:44:17.949651-07:00"
+}

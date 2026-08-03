@@ -15,49 +15,49 @@ declare
   missing text[] := '{}';
 begin
   if to_regclass('public.user_ecosystems') is null then
-    missing := missing || 'TABLE user_ecosystems — ecosystem cannot be saved or loaded';
+    missing := array_append(missing, 'TABLE user_ecosystems — ecosystem cannot be saved or loaded');
   end if;
   if to_regclass('public.user_reviews') is null then
-    missing := missing || 'TABLE user_reviews — ratings/reviews cannot be saved';
+    missing := array_append(missing, 'TABLE user_reviews — ratings/reviews cannot be saved');
   end if;
   if to_regclass('public.user_learning_memory') is null then
-    missing := missing || 'TABLE user_learning_memory — learning signals cannot be saved';
+    missing := array_append(missing, 'TABLE user_learning_memory — learning signals cannot be saved');
   end if;
   if to_regclass('public.user_ai_usage') is null then
-    missing := missing || 'TABLE user_ai_usage — AI quotas fail OPEN (unmetered spend)';
+    missing := array_append(missing, 'TABLE user_ai_usage — AI quotas fail OPEN (unmetered spend)');
   end if;
   if to_regclass('public.user_ecosystem_builds') is null then
-    missing := missing || 'TABLE user_ecosystem_builds — ecosystem build quota fails OPEN';
+    missing := array_append(missing, 'TABLE user_ecosystem_builds — ecosystem build quota fails OPEN');
   end if;
   if to_regclass('public.pending_phone_verifications') is null then
-    missing := missing || 'TABLE pending_phone_verifications — phone verification 500s';
+    missing := array_append(missing, 'TABLE pending_phone_verifications — phone verification 500s');
   end if;
   if to_regclass('public.health_intakes') is null then
-    missing := missing || 'TABLE health_intakes — intake cannot be saved';
+    missing := array_append(missing, 'TABLE health_intakes — intake cannot be saved');
   end if;
   if to_regclass('public.phone_numbers') is null then
-    missing := missing || 'TABLE phone_numbers — phone verification cannot complete';
+    missing := array_append(missing, 'TABLE phone_numbers — phone verification cannot complete');
   end if;
   if to_regclass('public.sms_conversations') is null then
-    missing := missing || 'TABLE sms_conversations — SMS transcript cannot be written';
+    missing := array_append(missing, 'TABLE sms_conversations — SMS transcript cannot be written');
   end if;
 
   -- Functions the API calls by name. A missing one is not a crash: the app
   -- logs and degrades, which is exactly why this check matters.
   if to_regprocedure('public.consume_ai_usage(uuid,text,text,integer)') is null then
-    missing := missing || 'FUNCTION consume_ai_usage() — chat/insights quotas fail OPEN';
+    missing := array_append(missing, 'FUNCTION consume_ai_usage() — chat/insights quotas fail OPEN');
   end if;
   if to_regprocedure('public.refund_ai_usage(uuid,text,text)') is null then
-    missing := missing || 'FUNCTION refund_ai_usage() — failed generations keep the charge';
+    missing := array_append(missing, 'FUNCTION refund_ai_usage() — failed generations keep the charge');
   end if;
   if to_regprocedure('public.claim_ecosystem_build(uuid,text,integer)') is null then
-    missing := missing || 'FUNCTION claim_ecosystem_build() — build quota fails OPEN';
+    missing := array_append(missing, 'FUNCTION claim_ecosystem_build() — build quota fails OPEN');
   end if;
   if to_regprocedure('public.release_ecosystem_build(uuid,text)') is null then
-    missing := missing || 'FUNCTION release_ecosystem_build() — failed builds burn the lifetime quota';
+    missing := array_append(missing, 'FUNCTION release_ecosystem_build() — failed builds burn the lifetime quota');
   end if;
   if to_regprocedure('public.claim_otp_attempt(uuid,integer)') is null then
-    missing := missing || 'FUNCTION claim_otp_attempt() — /api/phone-verify-confirm returns 500 on EVERY attempt';
+    missing := array_append(missing, 'FUNCTION claim_otp_attempt() — /api/phone-verify-confirm returns 500 on EVERY attempt');
   end if;
 
   -- Composite keys the upserts target. Without them `onConflict:
@@ -69,7 +69,7 @@ begin
          and contype in ('p', 'u')
          and array_length(conkey, 1) = 2
      ) then
-    missing := missing || 'CONSTRAINT user_ecosystems(user_id, product_id) — every upsert raises 42P10';
+    missing := array_append(missing, 'CONSTRAINT user_ecosystems(user_id, product_id) — every upsert raises 42P10');
   end if;
   if to_regclass('public.user_reviews') is not null
      and not exists (
@@ -78,7 +78,7 @@ begin
          and contype in ('p', 'u')
          and array_length(conkey, 1) = 2
      ) then
-    missing := missing || 'CONSTRAINT user_reviews(user_id, product_id) — every upsert raises 42P10';
+    missing := array_append(missing, 'CONSTRAINT user_reviews(user_id, product_id) — every upsert raises 42P10');
   end if;
 
   -- ecosystemStore.clearEcosystemForUser needs UPDATE *and* DELETE. Under RLS a
@@ -88,13 +88,13 @@ begin
       select 1 from pg_policies
       where schemaname = 'public' and tablename = 'user_ecosystems' and cmd in ('UPDATE', 'ALL')
     ) then
-      missing := missing || 'POLICY user_ecosystems UPDATE — clearing the ecosystem silently does nothing';
+      missing := array_append(missing, 'POLICY user_ecosystems UPDATE — clearing the ecosystem silently does nothing');
     end if;
     if not exists (
       select 1 from pg_policies
       where schemaname = 'public' and tablename = 'user_ecosystems' and cmd in ('DELETE', 'ALL')
     ) then
-      missing := missing || 'POLICY user_ecosystems DELETE — removing a product silently does nothing';
+      missing := array_append(missing, 'POLICY user_ecosystems DELETE — removing a product silently does nothing');
     end if;
   end if;
 
@@ -108,7 +108,7 @@ begin
       and cmd in ('SELECT', 'ALL')
       and 'authenticated' = any(roles)
   ) then
-    missing := missing || 'SECURITY: pending_phone_verifications is readable by authenticated users — DROP that policy';
+    missing := array_append(missing, 'SECURITY: pending_phone_verifications is readable by authenticated users — DROP that policy');
   end if;
 
   if array_length(missing, 1) > 0 then

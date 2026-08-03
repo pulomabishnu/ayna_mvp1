@@ -41,6 +41,10 @@ pg_isready -q || { echo "server did not start"; tail -20 "$PGDIR/server.log"; ex
 DB=ayna_migration_test
 createdb "$DB"
 
+# Quiet the expected "... does not exist, skipping" NOTICEs from `drop if exists`
+# on a clean database; real problems are WARNING or ERROR and still surface.
+export PGOPTIONS='-c client_min_messages=warning'
+
 run() { printf '── %-46s' "$1"; psql -v ON_ERROR_STOP=1 -q -d "$DB" -f "$1" >/dev/null; echo "ok"; }
 
 run supabase/_local_bootstrap.sql
@@ -61,13 +65,27 @@ run supabase/seed/product_catalog.sql
 psql -v ON_ERROR_STOP=1 -q -d "$DB" -c \
   "insert into auth.users (id, email) values ('00000000-0000-4000-8000-000000000001','test@example.com') on conflict do nothing;"
 
-echo
-echo "── structural verification"
-psql -v ON_ERROR_STOP=1 -q -d "$DB" -f supabase/_verify.sql 2>&1 | grep -E "NOTICE" | sed 's/^psql.*NOTICE:  /   /'
+# Print the NOTICEs on success, and the actual ERROR on failure. A harness that
+# aborts without saying why is barely better than one that does not abort.
+verify() {
+  local label="$1" file="$2" out rc
+  echo
+  echo "── $label"
+  set +e
+  out="$(PGOPTIONS='-c client_min_messages=notice' psql -v ON_ERROR_STOP=1 -q -d "$DB" -f "$file" 2>&1)"
+  rc=$?
+  set -e
+  if [ $rc -ne 0 ]; then
+    echo "$out" | grep -E "ERROR|FAIL|SECURITY" | sed 's/^psql[^ ]* /   /' | head -10
+    echo
+    echo "❌ $label FAILED"
+    exit 1
+  fi
+  echo "$out" | grep -E "NOTICE" | sed 's/^psql.*NOTICE:  /   /'
+}
 
-echo
-echo "── behavioural verification"
-psql -v ON_ERROR_STOP=1 -q -d "$DB" -f supabase/_behaviour_test.sql 2>&1 | grep -E "NOTICE" | sed 's/^psql.*NOTICE:  /   /'
+verify "structural verification" supabase/_verify.sql
+verify "behavioural verification" supabase/_behaviour_test.sql
 
 echo
 printf '   catalog rows: '
