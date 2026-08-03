@@ -5,6 +5,7 @@
 /* global process */
 
 import { checkProductInsightsRateLimit } from './rateLimitProductInsights.js';
+import { verifyUser } from './_usageLimit.js';
 
 const ALLOWED_CATEGORIES = new Set([
   'pad',
@@ -291,6 +292,20 @@ export default async function handler(req, res) {
 
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+  // This route spends Anthropic tokens and is anonymous by default so that
+  // Discovery works signed-out. That is a deliberate product tradeoff, not an
+  // oversight: an IP-rotating script can still run up the bill.
+  //
+  // Set REQUIRE_AUTH_FOR_SEARCH_SUGGESTIONS=1 to close it. Signed-out search
+  // then returns 401 and the client falls back to catalog-only results — no
+  // code change, no redeploy beyond the env var.
+  if (/^(1|true)$/i.test(process.env.REQUIRE_AUTH_FOR_SEARCH_SUGGESTIONS || '')) {
+    const { user, error: authError } = await verifyUser(req);
+    if (!user) {
+      return res.status(401).json({ error: authError || 'auth_required', suggestions: [] });
+    }
+  }
 
   const rl = await checkProductInsightsRateLimit(req);
   if (!rl.ok) {

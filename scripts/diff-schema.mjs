@@ -19,7 +19,7 @@
  *   WARNING   a real difference worth understanding
  *   INFO      present live but not in the repo (usually fine)
  */
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -41,7 +41,10 @@ const expected = load(resolve(root, 'supabase/expected-schema.json'));
 const live = load(resolve(process.cwd(), livePath));
 
 const findings = [];
-const add = (level, where, msg, why) => findings.push({ level, where, msg, why });
+// `fix` is the SQL that resolves the finding. Emitted as a reviewable script
+// rather than applied — these are writes against a database holding real user
+// data, so a human reads them first.
+const add = (level, where, msg, why, fix = null) => findings.push({ level, where, msg, why, fix });
 
 /** Tables whose absence or drift breaks something specific and nameable. */
 const CONSEQUENCE = {
@@ -63,7 +66,8 @@ for (const [name, exp] of Object.entries(expected.tables)) {
   const got = live.tables[name];
   if (!got) {
     add('BLOCKING', name, 'table MISSING from the live database',
-        CONSEQUENCE[name] || 'the application expects this table');
+        CONSEQUENCE[name] || 'the application expects this table',
+        `-- run supabase/${name}.sql (it will create the table)`);
     continue;
   }
 
@@ -74,7 +78,13 @@ for (const [name, exp] of Object.entries(expected.tables)) {
     const g = gotCols.get(col);
     if (!g) {
       add('BLOCKING', `${name}.${col}`, 'column MISSING live',
-          'every write touching this column errors; `create table if not exists` will NOT add it');
+          'every write touching this column errors; `create table if not exists` will NOT add it',
+          `alter table public.${name} add column if not exists ${col} ${e.type}` +
+          `${e.default ? ` default ${e.default}` : ''}` +
+          // Never add a NOT NULL column to a populated table without a default —
+          // it fails outright. Add it nullable and tighten separately.
+          `${e.notnull && e.default ? ' not null' : ''};` +
+          `${e.notnull && !e.default ? `\n-- then, once backfilled: alter table public.${name} alter column ${col} set not null;` : ''}`);
       continue;
     }
     if (g.type !== e.type) {
@@ -100,28 +110,52 @@ for (const [name, exp] of Object.entries(expected.tables)) {
   }
 
   // Composite keys the upserts target.
-  const keyDef = (c) => (c.definition || '').replace(/\s+/g, ' ');
-  const expKeys = exp.constraints.filter((c) => c.type === 'primary key' || c.type === 'unique').map(keyDef);
-  const gotKeys = got.constraints.filter((c) => c.type === 'primary key' || c.type === 'unique').map(keyDef);
+  //
+  // Compare by COLUMN SET, not by definition string. ON CONFLICT needs a unique
+  // index over those columns — a PRIMARY KEY and a UNIQUE constraint both
+  // provide one, so a live UNIQUE(user_id, product_id) satisfies an expected
+  // PRIMARY KEY(user_id, product_id). Matching on the string reported a
+  // still-broken schema after the fix had already worked.
+  const keyCols = (c) => {
+    const m = /\(([^)]+)\)/.exec(c.definition || '');
+    return m ? m[1].split(',').map((x) => x.trim().replace(/"/g, '')).sort().join(',') : null;
+  };
+  const isKey = (c) => c.type === 'primary key' || c.type === 'unique';
+  const expKeys = exp.constraints.filter(isKey).map(keyCols).filter(Boolean);
+  const gotKeys = new Set(got.constraints.filter(isKey).map(keyCols).filter(Boolean));
   for (const k of expKeys) {
-    if (!gotKeys.includes(k)) {
-      add('BLOCKING', name, `missing key/unique constraint: ${k}`,
-          'upserts using onConflict raise 42P10 — the UI shows success and the data is lost');
+    if (!gotKeys.has(k)) {
+      add('BLOCKING', name, `no unique index over (${k}) — required by ON CONFLICT`,
+          'upserts using onConflict raise 42P10 — the UI shows success and the data is lost',
+          // A surrogate `id` PK is the usual cause (the dashboard table editor
+          // adds one by default). Adding a UNIQUE alongside it is enough for
+          // ON CONFLICT and is far less invasive than replacing the PK.
+          `-- De-duplicate first or the constraint cannot be created:\n` +
+          `--   select ${k}, count(*) from public.${name}\n` +
+          `--    group by ${k.split(',').map((_, i) => i + 1).join(',')} having count(*) > 1;\n` +
+          `alter table public.${name}\n  add constraint ${name}_conflict_key unique (${k});`);
     }
   }
 
   // RLS.
   if (exp.rls_enabled && !got.rls_enabled) {
     add('BLOCKING', name, 'RLS is DISABLED live but enabled in the repo',
-        'every user can read every other user\'s rows');
+        'every user can read every other user\'s rows',
+        `alter table public.${name} enable row level security;`);
   }
 
   const expCmds = new Set(exp.policies.map((p) => p.command));
   const gotCmds = new Set(got.policies.map((p) => p.command));
   for (const cmd of expCmds) {
     if (!gotCmds.has(cmd) && !gotCmds.has('ALL')) {
+      const clause = cmd === 'INSERT'
+        ? 'with check (auth.uid() = user_id)'
+        : cmd === 'UPDATE'
+          ? 'using (auth.uid() = user_id) with check (auth.uid() = user_id)'
+          : 'using (auth.uid() = user_id)';
       add('BLOCKING', name, `no ${cmd} policy live`,
-          `under RLS a missing policy is a SILENT no-op, not an error — ${cmd} requests affect 0 rows`);
+          `under RLS a missing policy is a SILENT no-op, not an error — ${cmd} requests affect 0 rows`,
+          `create policy "${name}_${cmd.toLowerCase()}_own" on public.${name}\n  for ${cmd.toLowerCase()} to authenticated ${clause};`);
     }
   }
   // The one table that must NOT be client-readable.
@@ -130,8 +164,11 @@ for (const [name, exp] of Object.entries(expected.tables)) {
       (p) => (p.command === 'SELECT' || p.command === 'ALL') && (p.roles || []).includes('authenticated')
     );
     if (readable) {
+      const bad = got.policies.filter((p) => (p.command === 'SELECT' || p.command === 'ALL') && (p.roles || []).includes('authenticated'));
       add('BLOCKING', name, 'SECURITY: readable by authenticated users',
-          'account-takeover path — the attacker owns the row created for the victim\'s number and can read code_hash');
+          'account-takeover path — the attacker owns the row created for the victim\'s number and can read code_hash',
+          bad.map((p) => `drop policy "${p.name}" on public.${name};`).join('\n') +
+          `\nrevoke select on public.${name} from authenticated, anon;`);
     }
   }
 }
@@ -158,7 +195,10 @@ for (const f of expected.functions || []) {
   }
   if (g.returns !== f.returns) {
     add('BLOCKING', sig(f), `returns "${g.returns}" live, expected "${f.returns}"`,
-        'the JavaScript destructures specific fields; a shape mismatch degrades the quota to fail-open');
+        'the JavaScript destructures specific fields; a shape mismatch degrades the quota to fail-open',
+        // Postgres refuses to change a return type in place.
+        `drop function if exists public.${f.name}(${f.args.replace(/\w+ (?=\w)/g, '')});\n` +
+        `-- then re-run the migration that defines it`);
   }
   if (f.security_definer && !g.security_definer) {
     add('WARNING', sig(f), 'not SECURITY DEFINER live', 'may lack the privileges to do its work');
@@ -184,5 +224,28 @@ for (const f of findings) {
   console.log(`  ${f.where}\n    ${f.msg}\n    → ${f.why}`);
 }
 
-console.log(`\n${counts.BLOCKING || 0} blocking, ${counts.WARNING || 0} warnings, ${counts.INFO || 0} info\n`);
+console.log(`\n${counts.BLOCKING || 0} blocking, ${counts.WARNING || 0} warnings, ${counts.INFO || 0} info`);
+
+const fixes = findings.filter((f) => f.fix && f.level === 'BLOCKING');
+if (fixes.length) {
+  const script = [
+    '-- GENERATED remediation for live-schema drift.',
+    '-- REVIEW BEFORE RUNNING. These are WRITES against a database holding real',
+    '-- user data. Run inside a transaction and check the row counts.',
+    '--',
+    '-- Take a backup first (Supabase: Database -> Backups), then:',
+    '--   psql "$DB_URL" -1 -v ON_ERROR_STOP=1 -f schema-remediation.sql',
+    '',
+    'begin;',
+    '',
+    ...fixes.flatMap((f) => ['-- ' + f.where + ': ' + f.msg, '-- -> ' + f.why, f.fix, '']),
+    '-- Verify before committing:',
+    "--   \\i supabase/_verify.sql",
+    'commit;',
+  ].join('\n');
+  writeFileSync(resolve(process.cwd(), 'schema-remediation.sql'), script + '\n');
+  console.log(`\n📝 wrote schema-remediation.sql (${fixes.length} statements) — REVIEW before running\n`);
+} else {
+  console.log('');
+}
 process.exit(counts.BLOCKING ? 1 : 0);

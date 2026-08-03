@@ -80,6 +80,17 @@ export async function fetchSearchSuggestions(opts) {
 
   const data = await res.json().catch(() => ({}));
 
+  if (res.status === 401) {
+    // AI search is gated to signed-in users on this deployment. Not an error
+    // state — Discovery still shows catalog results.
+    return {
+      suggestions: [],
+      querySummary: '',
+      error: 'Sign in to search beyond the Ayna catalog.',
+      code: 'auth_required',
+    };
+  }
+
   if (res.status === 429) {
     return {
       suggestions: [],
