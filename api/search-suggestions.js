@@ -4,7 +4,7 @@
  */
 /* global process */
 
-import { checkProductInsightsRateLimit } from './rateLimitProductInsights.js';
+import { checkProductInsightsRateLimit } from './_rateLimitProductInsights.js';
 import { verifyUser } from './_usageLimit.js';
 
 const ALLOWED_CATEGORIES = new Set([

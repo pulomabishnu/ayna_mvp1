@@ -8,7 +8,7 @@ import { deriveBrandSearchContext } from '../src/utils/productBrandContext.js';
 import { retrieveKnowledgeForProduct, buildKnowledgeContext } from '../src/utils/ragRetrieval.js';
 import { verifyUser, consumeUsage, refundUsage } from './_usageLimit.js';
 import { isPremiumUser } from './_entitlement.js';
-import { checkProductInsightsRateLimit } from './rateLimitProductInsights.js';
+import { checkProductInsightsRateLimit } from './_rateLimitProductInsights.js';
 
 const MAX_NARRATIVE_LEN = 2200;
 const MAX_EXTRA_SUMMARY_LEN = 800;
@@ -485,7 +485,7 @@ export default async function handler(req, res) {
   const { user, error, admin } = await verifyUser(req);
   if (!user) return res.status(401).json({ error });
 
-  // rateLimitProductInsights.js is named for THIS route but was only ever
+  // _rateLimitProductInsights.js is named for THIS route but was only ever
   // imported by search-suggestions.js — so the endpoint it was written to
   // protect had no IP rate limit at all.
   const rl = await checkProductInsightsRateLimit(req);

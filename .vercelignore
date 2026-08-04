@@ -1,0 +1,7 @@
+# Vitest test files live in api/ next to the handlers they test, but they
+# have no default export (no HTTP handler) — they were never meant to be
+# routes. Vercel doesn't know that on its own: every non-underscore .js file
+# directly under api/ is treated as its own Serverless Function, so without
+# this, each test file silently counted against the 12-function Hobby-plan
+# cap and eventually pushed a normal-looking merge over the limit.
+api/*.test.js
