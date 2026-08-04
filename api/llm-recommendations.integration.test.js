@@ -230,6 +230,52 @@ describe('POST /api/llm-recommendations — client-controlled fan-out caps', () 
   });
 });
 
+describe('POST /api/llm-recommendations — function budget / deadline guard', () => {
+  it('stops starting new concerns once the budget is nearly spent, returning what finished instead of losing everything', async () => {
+    // Concurrency pinned to 1 so concerns are processed in a deterministic
+    // order and the clock jump lands between two calls, not mid-batch.
+    restoreEnv();
+    restoreEnv = withEnv({
+      SUPABASE_URL: 'https://x.supabase.co',
+      SUPABASE_SERVICE_ROLE_KEY: 'service-key',
+      ANTHROPIC_API_KEY: 'test-key',
+      OPENAI_API_KEY: undefined,
+      AI_RECOMMENDATIONS_PROVIDER_ORDER: 'anthropic',
+      LLM_CONCERN_CONCURRENCY: '1',
+    });
+
+    // wideIntake expands to 9 concerns. budgetExhausted() is only ever read
+    // from `Date.now() - startedAt`, both in this file — nothing else in the
+    // handler reads the clock, so faking it here can't skew quota/auth logic.
+    let now = 1_000_000;
+    const dateSpy = vi.spyOn(Date, 'now').mockImplementation(() => now);
+
+    globalThis.fetch = vi.fn(async () => {
+      // After the 2nd provider call completes, jump the clock past
+      // FUNCTION_BUDGET_MS (50s) - 6s guard band = 44s, so every concern
+      // after this one is skipped instead of started.
+      if (globalThis.fetch.mock.calls.length === 2) now += 45_000;
+      return anthropicOk(recPayload());
+    });
+
+    const handler = await loadHandler();
+    const res = mockRes();
+
+    await handler(mockReq({ body: { intake: wideIntake, buildId: 'b-deadline' } }), res);
+
+    expect(res.statusCode).toBe(200);
+    // Only the concerns started before the clock jump reached the provider —
+    // the rest were skipped, not attempted and failed.
+    expect(globalThis.fetch.mock.calls.length).toBe(2);
+    expect(res.body.requested).toBe(9);
+    expect(res.body.delivered).toBe(2);
+    expect(res.body.partial).toBe(true);
+    expect(res.body.failedConcerns.length).toBe(7);
+
+    dateSpy.mockRestore();
+  });
+});
+
 describe('POST /api/llm-recommendations — request validation', () => {
   it('returns 503 when no provider key is configured, before touching auth', async () => {
     restoreEnv();
