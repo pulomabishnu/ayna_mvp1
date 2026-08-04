@@ -9,6 +9,14 @@ export default function EmailConfirmed({ onAuthenticated }) {
     if (!supabase) { setStatus('manual'); return; }
 
     const hash = new URLSearchParams(window.location.hash.slice(1));
+    // Scrub the fragment immediately. The client uses Supabase's `implicit`
+    // flow, so access AND refresh tokens arrive in window.location.hash — and
+    // they were left there, meaning a long-lived refresh token for a women's
+    // health account sat in browser history, in `document.location`, and
+    // readable by any third-party script on the page.
+    try {
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    } catch (_) { /* non-fatal */ }
     const accessToken = hash.get('access_token');
     const refreshToken = hash.get('refresh_token');
 

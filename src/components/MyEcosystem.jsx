@@ -16,6 +16,7 @@ import { RELEASED_STARTUPS, UNRELEASED_STARTUPS } from '../data/startups';
 import { generateTieredRecommendations } from '../utils/recommendationEngine';
 import {
     fetchLlmRecommendations,
+    buildIdFromFingerprint,
     loadLearningMemory,
     saveLearningMemory,
     fingerprintIntake,
@@ -864,6 +865,11 @@ export default function MyEcosystem({
     const [llmLoadStartedAt, setLlmLoadStartedAt] = useState(0);
     const llmAbortControllerRef = useRef(null);
     const llmCancelledRef = useRef(false);
+    // Distinguish quota-exhausted and expired-session from a generic failure so
+    // the specific message is not clobbered by the catch-all below.
+    const limitReachedRef = useRef(false);
+    const partialConcernsRef = useRef([]);
+    const authFailedRef = useRef(false);
     // Last known-good complete recommendation set — restored if a rebuild is cancelled mid-flight.
     const previousLlmTieredRef = useRef([]);
     const [resolvedImages, setResolvedImages] = useState({});
@@ -872,8 +878,13 @@ export default function MyEcosystem({
     const [recommendedSectionOpen, setRecommendedSectionOpen] = useState({});
     const [recommendationRefreshNonce, setRecommendationRefreshNonce] = useState(() => {
         try {
-            if (typeof window !== 'undefined' && window.localStorage.getItem('ayna_force_llm_refresh') === '1') {
-                window.localStorage.removeItem('ayna_force_llm_refresh');
+            // sessionStorage, not localStorage: the read-then-remove is not atomic
+            // across tabs, and two tabs landing on /ecosystem together is a
+            // designed flow (email confirmation broadcasts auth cross-tab). Both
+            // read '1' and both ran a full ecosystem build against the same
+            // one-per-lifetime quota.
+            if (typeof window !== 'undefined' && window.sessionStorage.getItem('ayna_force_llm_refresh') === '1') {
+                window.sessionStorage.removeItem('ayna_force_llm_refresh');
                 return 1;
             }
         } catch (_) {}
@@ -1075,9 +1086,12 @@ export default function MyEcosystem({
                 };
             }
             if (alreadyFetchedForFingerprint) {
+                // We attempted this intake before but have no cached result —
+                // previously this rendered an empty section with no error, which
+                // is indistinguishable from "you have no recommendations".
                 setLlmTiered([]);
                 setLlmLoading(false);
-                setLlmError('');
+                setLlmError('We couldn\u2019t load your recommendations last time. Tap \u201cRefresh recommendations\u201d to try again.');
                 setLlmLoadStartedAt(0);
                 return () => {
                     active = false;
@@ -1091,6 +1105,9 @@ export default function MyEcosystem({
         const controller = new AbortController();
         llmAbortControllerRef.current = controller;
         llmCancelledRef.current = false;
+        limitReachedRef.current = false;
+        partialConcernsRef.current = [];
+        authFailedRef.current = false;
 
         (async () => {
             setLlmLoadStartedAt(Date.now());
@@ -1101,29 +1118,41 @@ export default function MyEcosystem({
                 const accumulated = [];
                 let errorCount = 0;
 
-                // 2 parallel batches of 9 concerns each.
-                // With concurrency=1 in the API, each concern takes ~28s sequentially.
-                // 9 concerns × 28s = 252s — safely under Vercel's 300s hard timeout.
-                // 2 simultaneous batches = max 2 concurrent Anthropic calls → well under TPM limit.
-                const BATCH_SIZE = 9;
-                const NUM_BATCHES = 2;
+                // Small batches, more of them, run in parallel across separate
+                // serverless invocations. Each invocation now handles 3 concerns
+                // at concurrency 3, so it finishes well inside the 60s function
+                // ceiling instead of needing a 252s budget that never existed.
+                // 4 x 3 covers the server's MAX_CONCERNS cap of 12.
+                const BATCH_SIZE = 3;
+                const NUM_BATCHES = 4;
+                const buildId = buildIdFromFingerprint(intakeFingerprint);
                 let doneCount = 0;
 
                 const authToken = userSession?.access_token;
                 await new Promise(resolveAll => {
                     Array.from({ length: NUM_BATCHES }, (_, i) => {
                         fetchLlmRecommendations(
-                            { intake, trackedProducts, myProducts, omittedProducts, learningMemory: memory, batchIndex: i, batchSize: BATCH_SIZE },
+                            { intake, trackedProducts, myProducts, omittedProducts, learningMemory: memory, batchIndex: i, batchSize: BATCH_SIZE, buildId },
                             { authToken, signal: controller.signal }
                         )
                         .then(d => {
                             if (!active) return;
                             const recs = Array.isArray(d?.recommendations) ? d.recommendations : [];
+                            if (d?.partial && Array.isArray(d.failedConcerns) && d.failedConcerns.length) {
+                                // The server now reports which concerns produced
+                                // nothing. Without this the user just sees fewer
+                                // sections than she asked for, with no signal.
+                                partialConcernsRef.current.push(...d.failedConcerns);
+                            }
                             if (recs.length > 0) { accumulated.push(...recs); setLlmTiered([...accumulated]); }
                         })
                         .catch(e => {
-                            console.error(`[Ayna LLM] batch ${i} error:`, e?.message);
-                            if (e?.status === 429) setLlmError('You\'ve already generated your Ayna ecosystem. Regenerating is a premium feature. Email pulomabishnu@gmail.com to upgrade.');
+                            console.error(`[Ayna LLM] batch ${i} error:`, e?.status || '', e?.message);
+                            if (e?.status === 429) {
+                                limitReachedRef.current = true;
+                            } else if (e?.status === 401) {
+                                authFailedRef.current = true;
+                            }
                             errorCount++;
                         })
                         .finally(() => { if (++doneCount === NUM_BATCHES) resolveAll(); });
@@ -1133,16 +1162,36 @@ export default function MyEcosystem({
                 if (!active || llmCancelledRef.current) return;
                 const recs = accumulated;
                 console.log('[Ayna LLM] Done — sections:', recs.length, '| errors:', errorCount);
-                if (recs.length === 0 && errorCount > 0) throw new Error('All recommendation batches failed — please try again.');
+                if (recs.length === 0 && errorCount > 0) {
+                    // Specific causes must survive: a quota 429 is an upgrade
+                    // prompt and a 401 is a re-auth prompt, not "try again".
+                    if (limitReachedRef.current) {
+                        setLlmError("You've already generated your Ayna ecosystem. Regenerating is a premium feature. Email pulomabishnu@gmail.com to upgrade.");
+                        return;
+                    }
+                    if (authFailedRef.current) {
+                        setLlmError('Your session expired — please sign in again.');
+                        return;
+                    }
+                    throw new Error('All recommendation batches failed — please try again.');
+                }
                 if (recs.length === 0) return; // nothing to do (no concerns matched)
                 if (recs.length > 0) {
                     if (hasCompletedPersonalization) onLlmRecommendationsLoaded?.(recs);
                 }
+                let cached = false;
                 if (recs.length > 0) {
-                    saveCachedLlmRecommendations(intakeFingerprint, recs);
+                    cached = saveCachedLlmRecommendations(intakeFingerprint, recs);
                     previousLlmTieredRef.current = recs;
                 }
-                saveFetchedLlmFingerprint(intakeFingerprint);
+                // Only mark this intake "already fetched" if there is something to
+                // come back to. Recording it after a failed cache write is what
+                // produced a permanently empty ecosystem with no error.
+                if (cached) saveFetchedLlmFingerprint(intakeFingerprint);
+                if (partialConcernsRef.current.length > 0) {
+                    const missed = Array.from(new Set(partialConcernsRef.current)).slice(0, 4).join(', ');
+                    setLlmError(`Some recommendations couldn\u2019t be generated (${missed}). Tap \u201cRefresh recommendations\u201d to retry those.`);
+                }
                 const recommendedProductIds = recs.flatMap((entry) =>
                     (entry?.tiers || []).flatMap((tier) =>
                         [tier?.product?.id, ...((tier?.alternatives || []).map((a) => a?.id))].filter(Boolean)
@@ -1154,7 +1203,9 @@ export default function MyEcosystem({
                     lastConcerns: Array.isArray(intake?.primaryConcerns) ? intake.primaryConcerns.map((x) => String(x)) : [],
                     lastSeenAt: new Date().toISOString(),
                     shownProductIds: Array.from(new Set([...(memory.shownProductIds || []), ...recommendedProductIds])).slice(-300),
-                    selectedConcernHistory: Array.from(new Set([...(memory.selectedConcernHistory || []), ...((intake?.primaryConcerns || []).map((x) => String(x)))])),
+                    // Was the only one of these without a cap; the whole memory
+                    // object is written to user_learning_memory on every build.
+                    selectedConcernHistory: Array.from(new Set([...(memory.selectedConcernHistory || []), ...((intake?.primaryConcerns || []).map((x) => String(x)))])).slice(-100),
                     trackedHistory: Array.from(new Set([...(memory.trackedHistory || []), ...Object.keys(trackedProducts || {})])).slice(-300),
                     ecosystemHistory: Array.from(new Set([...(memory.ecosystemHistory || []), ...Object.keys(myProducts || {})])).slice(-300),
                     omittedHistory: Array.from(new Set([...(memory.omittedHistory || []), ...Object.keys(omittedProducts || {})])).slice(-300),
@@ -1177,6 +1228,9 @@ export default function MyEcosystem({
 
         return () => {
             active = false;
+            // Previously only the flag was flipped, leaving both requests running:
+            // navigating away leaked serverless invocations and their provider spend.
+            controller.abort();
         };
     }, [intakeFingerprint, hasCompletedPersonalization, recommendationRefreshNonce]);
 
@@ -1235,6 +1289,15 @@ export default function MyEcosystem({
                             product: tierProduct,
                             alternatives: tierAlternatives,
                             matchExplanation: String(tier?.matchExplanation || '').trim(),
+                            // The server generates these (ingredient and contraindication
+                            // warnings tailored to endometriosis / PCOS / TTC status) and
+                            // this mapping used to drop the field entirely, so they were
+                            // never rendered on the primary ecosystem surface —
+                            // Recommendations.jsx shows them, but that view renders the
+                            // rule-based engine, not LLM output.
+                            safetyFlags: Array.isArray(tier?.safetyFlags)
+                                ? tier.safetyFlags.map((f) => String(f)).filter(Boolean).slice(0, 5)
+                                : [],
                         };
                     })
                     .filter(Boolean);
@@ -1331,13 +1394,19 @@ export default function MyEcosystem({
             if (!product || !product.llmGenerated || !product.name) return;
             if (resolvedImages[product.id] !== undefined) return;
             resolveProductImage(product.name, product.brand).then((url) => {
-                if (url) setResolvedImages((prev) => ({ ...prev, [product.id]: url }));
+                // Record '' as well: gating on `if (url)` left a no-image product
+                // permanently `undefined`, so it was re-selected and re-resolved on
+                // every run of this effect (resolvedImages is in its own deps).
+                setResolvedImages((prev) => (prev[product.id] !== undefined ? prev : { ...prev, [product.id]: url || '' }));
             });
             const alts = entry.alternatives || entry.tiers?.[0]?.alternatives || [];
             alts.forEach((alt) => {
                 if (!alt || !alt.name || resolvedImages[alt.id] !== undefined) return;
                 resolveProductImage(alt.name, alt.brand).then((url) => {
-                    if (url) setResolvedImages((prev) => ({ ...prev, [alt.id]: url }));
+                    // Record '' as well: gating on `if (url)` left a no-image product
+                    // permanently `undefined`, so it was re-selected and re-resolved on
+                    // every run of this effect (resolvedImages is in its own deps).
+                    setResolvedImages((prev) => (prev[alt.id] !== undefined ? prev : { ...prev, [alt.id]: url || '' }));
                 });
             });
         });
@@ -1355,7 +1424,10 @@ export default function MyEcosystem({
         if (productsNeedingImage.length === 0) return;
         productsNeedingImage.forEach((p) => {
             resolveProductImage(p.name, p.brand || '').then((url) => {
-                if (url) setResolvedImages((prev) => ({ ...prev, [p.id]: url }));
+                // Record '' as well: gating on `if (url)` left a no-image product
+                // permanently `undefined`, so it was re-selected and re-resolved on
+                // every run of this effect (resolvedImages is in its own deps).
+                setResolvedImages((prev) => (prev[p.id] !== undefined ? prev : { ...prev, [p.id]: url || '' }));
             });
         });
     }, [myProductList, ecosystemStartups, recommendedProductsForDisplay, resolvedImages]);
@@ -1390,9 +1462,16 @@ export default function MyEcosystem({
         setLlmTiered(previousLlmTieredRef.current);
         setLlmLoading(false);
         setLlmLoadStartedAt(0);
-        setLlmError('');
-        // Mark this fingerprint as already attempted so the effect doesn't immediately re-fetch.
-        if (intakeFingerprint) saveFetchedLlmFingerprint(intakeFingerprint);
+        // Only record "already attempted" when there is something to fall back
+        // to. Cancelling a FIRST build left previousLlmTiered empty while still
+        // marking the fingerprint fetched, so the next mount showed a blank
+        // ecosystem with no error and no way to retry.
+        if (intakeFingerprint && previousLlmTieredRef.current.length > 0) {
+            saveFetchedLlmFingerprint(intakeFingerprint);
+            setLlmError('');
+        } else {
+            setLlmError('Build cancelled. Tap “Refresh recommendations” to try again.');
+        }
     }, [intakeFingerprint]);
 
     const recommendedSection = hasCompletedPersonalization && (llmLoading || llmError || recommendedProductsForDisplay.length > 0 || activeTiered.length > 0) ? (
@@ -1489,6 +1568,19 @@ export default function MyEcosystem({
                                                                 isInEcosystem={!!myProducts[product.id]}
                                                                 recommendationReason={tierReason}
                                                             />
+                                                            {/* Ingredient / contraindication warnings the model raised for
+                                                                this user's specific profile. Generated server-side and
+                                                                previously discarded before reaching any UI. */}
+                                                            {Array.isArray(tier.safetyFlags) && tier.safetyFlags.length > 0 && (
+                                                                <p style={{
+                                                                    margin: '0.4rem 0 0', fontSize: '0.72rem', lineHeight: 1.45,
+                                                                    color: '#92400E', background: '#FFFBEB',
+                                                                    border: '1px solid #FDE68A', borderRadius: '6px',
+                                                                    padding: '0.4rem 0.55rem',
+                                                                }}>
+                                                                    <strong>Heads up:</strong> {tier.safetyFlags.join(' · ')}
+                                                                </p>
+                                                            )}
                                                         </div>
                                                     );
                                                 })}

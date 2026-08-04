@@ -6,10 +6,22 @@ const CACHE_PREFIX = 'ayna_insights_v2_';
 const CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 function simpleHash(str) {
-  let h = 0;
-  const s = String(str || '').slice(0, 300);
-  for (let i = 0; i < s.length; i++) h = (Math.imul(31, h) + s.charCodeAt(i)) | 0;
-  return Math.abs(h).toString(36);
+  // Hashes the WHOLE string. It previously truncated to 300 chars, but the
+  // health-context string emits the quiz block (frustrations, preferences,
+  // sensitivities) BEFORE conditions, medications and allergies. Any user with
+  // a filled-in quiz therefore produced an identical cache key no matter how
+  // her conditions or medications changed — so she kept seeing insights
+  // personalized to a profile missing, say, a newly added allergy, for the full
+  // 30-day TTL, on a health product.
+  const s = String(str || '');
+  let h1 = 0x811c9dc5;
+  let h2 = 0x01000193;
+  for (let i = 0; i < s.length; i++) {
+    const c = s.charCodeAt(i);
+    h1 = Math.imul(h1 ^ c, 16777619);
+    h2 = Math.imul(h2 + c, 2246822519);
+  }
+  return ((h1 >>> 0).toString(36) + (h2 >>> 0).toString(36));
 }
 
 function cacheKey(productId, contextHash) {
@@ -85,19 +97,49 @@ export function buildProductInsightsRequestBody(product, quizResults, healthProf
  * @param {{ quizResults?: object|null, healthProfile?: object|null }} [options]
  */
 export async function fetchProductInsights(product, options = {}) {
-  const { quizResults, healthProfile, authToken } = options;
+  const { quizResults, healthProfile, authToken, signal, timeoutMs = 45_000 } = options;
   const body = buildProductInsightsRequestBody(product, quizResults, healthProfile);
   if (!body) {
     throw new Error('Invalid product');
   }
-  const res = await fetch(API_PATH, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
-    },
-    body: JSON.stringify(body),
-  });
+
+  // Had neither a timeout nor an AbortSignal, unlike its sibling
+  // fetchLlmRecommendations. A hung provider left the modal's insight panel
+  // spinning until the browser's own ~5-minute network timeout, and closing and
+  // reopening fired a second request against the same 5/week quota.
+  const controller = new AbortController();
+  const tid = setTimeout(() => controller.abort(), timeoutMs);
+  const onExternalAbort = () => controller.abort();
+  if (signal) {
+    if (signal.aborted) controller.abort();
+    else signal.addEventListener('abort', onExternalAbort);
+  }
+
+  let res;
+  try {
+    res = await fetch(API_PATH, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+      },
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    });
+  } catch (e) {
+    if (e?.name === 'AbortError') {
+      const err = new Error(
+        signal?.aborted ? 'Cancelled' : 'That took too long — please try again.'
+      );
+      err.code = signal?.aborted ? 'cancelled' : 'timeout';
+      throw err;
+    }
+    throw e;
+  } finally {
+    clearTimeout(tid);
+    if (signal) signal.removeEventListener('abort', onExternalAbort);
+  }
+
   let data;
   try {
     data = await res.json();

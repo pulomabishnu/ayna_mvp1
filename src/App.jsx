@@ -15,7 +15,7 @@ import Comparison from './components/Comparison';
 import DoctorPrep from './components/DoctorPrep';
 import Recalls from './components/Recalls';
 import { CATEGORY_LABELS, getRecommendations, getEcosystemSeedFromQuiz } from './data/products';
-import { loadAynaReviews, addRating, addReview } from './data/aynaReviews';
+import { loadAynaReviews, hydrateAynaReviews, addRating, addReview } from './data/aynaReviews';
 import AynaDeeptech from './components/AynaDeeptech';
 import Screenings from './components/Screenings';
 import { useScrollPosition } from './hooks/useScrollPosition';
@@ -24,6 +24,7 @@ import { enrichLlmProductForDiscovery } from './utils/enrichLlmProductForDiscove
 import Articles from './components/Articles';
 import ProfileChatbot from './components/ProfileChatbot';
 import { loadHealthProfile, hasHealthProfileSignals } from './utils/healthDataProfile';
+import { loadHealthProfileForCurrentUser, saveHealthProfileForCurrentUser } from './utils/healthProfileStore';
 import { loadHealthIntakeForCurrentUser, saveHealthIntakeForCurrentUser } from './utils/healthIntakeStore';
 import { mapIntakeToLegacyQuizProfile } from './utils/healthIntake';
 import AuthGate from './components/AuthGate';
@@ -32,7 +33,7 @@ import TermsOfUse from './components/TermsOfUse';
 import AuthCallback from './components/AuthCallback';
 import EmailConfirmed from './components/EmailConfirmed';
 import { getSupabaseClient } from './utils/supabaseClient';
-import { loadEcosystemForUser, upsertProductState, clearEcosystemForUser } from './utils/ecosystemStore';
+import { loadEcosystemForUser, upsertProductState, upsertProductsBatch, clearEcosystemForUser } from './utils/ecosystemStore';
 import { loadLearningMemoryForUser, saveLearningMemoryForUser } from './utils/learningMemoryStore';
 import { loadReviewsForUser, upsertProductReviews } from './utils/reviewsStore';
 import { clearCachedLlmRecommendations } from './utils/fetchLlmRecommendations';
@@ -123,6 +124,19 @@ function App() {
   const [pendingQuizResults, setPendingQuizResults] = useState(null);
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [saveError, setSaveError] = useState(null);
+  const reportSaveFailure = useCallback((what, err) => {
+    console.error('[Ayna] save failed:', what, err);
+    setSaveError(`${what}. Your changes may not be saved — check your connection and try again.`);
+  }, []);
+
+  /** Update local state AND persist, so the imported profile survives a device change. */
+  const updateHealthProfile = useCallback((next) => {
+    setHealthProfile(next);
+    saveHealthProfileForCurrentUser(next).catch((e) =>
+      reportSaveFailure('Could not save your health data', e)
+    );
+  }, [reportSaveFailure]);
   const accountMenuRef = useRef(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const scrollY = useScrollPosition();
@@ -159,12 +173,22 @@ function App() {
     // Used to distinguish an explicit login (false → User) from session restoration (User → User).
     const initialSessionRef = { current: null };
     if (!isCallbackPage) {
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        initialSessionRef.current = session?.user ?? false;
-        setUser(session?.user ?? null);
-        setUserSession(session ?? null);
-        setAuthLoading(false);
-      });
+      supabase.auth.getSession()
+        .then(({ data: { session } }) => {
+          initialSessionRef.current = session?.user ?? false;
+          setUser(session?.user ?? null);
+          setUserSession(session ?? null);
+        })
+        .catch((e) => {
+          console.error('[Ayna] getSession failed:', e);
+          initialSessionRef.current = false;
+          setUser(null);
+          setUserSession(null);
+        })
+        // Must run on BOTH paths. Without it a rejected getSession left
+        // authLoading true forever, the PROTECTED_VIEWS redirect never fired,
+        // and the user saw an empty ecosystem with no auth prompt.
+        .finally(() => setAuthLoading(false));
     } else {
       setAuthLoading(false);
     }
@@ -193,6 +217,11 @@ function App() {
         setOmittedProducts({});
         setQuizResults(null);
         setAynaReviews({});
+        // Held only in memory + localStorage and never cleared before, so the
+        // next user on this browser inherited the previous user's imported
+        // conditions and medications — which are then sent to the LLM as
+        // "her" health context by ProductModal and MyEcosystem.
+        setHealthProfile(null);
         if (!STATIC_VIEWS.includes(currentViewRef.current)) {
           setCurrentView('welcome', { replace: true });
         }
@@ -201,6 +230,16 @@ function App() {
           // different quiz will naturally miss. Clearing it caused a re-fetch
           // on every login for the same user.
           localStorage.removeItem('ayna_llm_learning_memory_v1');
+          // Everything below is per-user data that used to survive sign-out:
+          //  - ayna_reviews: addRating/addReview read this global blob, so the
+          //    next user's first rating wrote the PREVIOUS user's ratings and
+          //    free-text reviews into her own user_reviews row.
+          //  - ayna_health_profile_v1: imported conditions/medications (above).
+          //  - ayna_force_llm_refresh: a leftover flag made the next user's
+          //    session spend her one lifetime ecosystem build unprompted.
+          localStorage.removeItem('ayna_reviews');
+          localStorage.removeItem('ayna_health_profile_v1');
+          sessionStorage.removeItem('ayna_force_llm_refresh');
         } catch (_) {}
       }
     });
@@ -211,17 +250,37 @@ function App() {
     if (!user) return;
     const supabase = getSupabaseClient();
     if (!supabase) return;
+    // Capture the id this load belongs to. Without this guard, signing out of
+    // account A and into account B (a shared laptop, or just a slow connection)
+    // lets A's four in-flight queries resolve AFTER B's and write A's health
+    // intake, ecosystem and reviews into B's session. Any subsequent toggle
+    // then persists A's products under B's user_id, making the PHI
+    // cross-contamination permanent in the database.
+    const loadForUserId = user.id;
+    let cancelled = false;
     setDataLoading(true);
     Promise.all([
-      loadEcosystemForUser(supabase, user.id).catch(() => null),
-      loadReviewsForUser(supabase, user.id).catch(() => null),
-      loadLearningMemoryForUser(supabase, user.id).catch(() => null),
+      loadEcosystemForUser(supabase, loadForUserId).catch(() => null),
+      loadReviewsForUser(supabase, loadForUserId).catch(() => null),
+      loadLearningMemoryForUser(supabase, loadForUserId).catch(() => null),
       loadHealthIntakeForCurrentUser().catch(() => null),
-    ]).then(([ecosystem, reviews, memory, intake]) => {
+      // Imported conditions/medications/allergies. Was localStorage-only, so it
+      // vanished on any other device while still being fed to the LLM as health
+      // context — recommendations silently degraded with no signal.
+      loadHealthProfileForCurrentUser().catch(() => null),
+    ]).then(([ecosystem, reviews, memory, intake, healthProfileResult]) => {
+      if (cancelled) return;
       if (ecosystem) {
         if (!llmBuiltThisSessionRef.current) {
-          setMyProducts(ecosystem.myProducts);
-          setEcosystemOrder(Object.keys(ecosystem.myProducts));
+          // Merge, don't replace: anything the user toggled while the load was
+          // in flight is already persisted, and clobbering it here made her
+          // change vanish from the UI a few seconds after she made it.
+          setMyProducts(prev => (Object.keys(prev).length ? { ...ecosystem.myProducts, ...prev } : ecosystem.myProducts));
+          setEcosystemOrder(prev => {
+            const merged = Object.keys(ecosystem.myProducts);
+            const extra = prev.filter(id => !merged.includes(id));
+            return [...merged, ...extra];
+          });
         } else {
           // LLM already built this session — merge only manual (non-LLM) products from Supabase
           setMyProducts(prev => {
@@ -240,14 +299,24 @@ function App() {
         setTrackedProducts(ecosystem.trackedProducts);
         setOmittedProducts(ecosystem.omittedProducts);
       }
-      if (reviews) setAynaReviews(reviews);
+      if (reviews) {
+        // Mirror the server copy into localStorage. addRating/addReview read
+        // from localStorage and the caller upserts the whole object, so without
+        // this a second device would overwrite the server row with a single
+        // rating and wipe every review written elsewhere.
+        setAynaReviews(hydrateAynaReviews(reviews));
+      }
       if (memory) {
         try { localStorage.setItem('ayna_llm_learning_memory_v1', JSON.stringify(memory)); } catch (_) {}
       }
       if (intake?.personalizationCompleted) {
         setQuizResults(mapIntakeToLegacyQuizProfile(intake));
       }
-    }).finally(() => setDataLoading(false));
+      if (healthProfileResult?.profile) setHealthProfile(healthProfileResult.profile);
+    }).finally(() => {
+      if (!cancelled) setDataLoading(false);
+    });
+    return () => { cancelled = true; };
   }, [user?.id]);
 
   React.useEffect(() => {
@@ -264,11 +333,20 @@ function App() {
       setEcosystemSeedMeta(seedMeta);
       setMyProducts({});
       clearCachedLlmRecommendations();
-      try { window.localStorage.setItem('ayna_force_llm_refresh', '1'); } catch (_) {}
+      try { window.sessionStorage.setItem('ayna_force_llm_refresh', '1'); } catch (_) {}
       const _supabase = getSupabaseClient();
-      if (_supabase && user) clearEcosystemForUser(_supabase, user.id).catch(console.error);
+      if (_supabase && user) clearEcosystemForUser(_supabase, user.id).catch(e => reportSaveFailure('Could not reset your ecosystem', e));
       setCurrentView('ecosystem');
-      saveHealthIntakeForCurrentUser(pendingQuizResults).catch(console.error);
+      // Persist the RAW intake, not the legacy wrapper. `pendingQuizResults` is
+      // already the output of mapIntakeToLegacyQuizProfile(), so saving it stored
+      // the wrong shape in health_intakes.profile — and on the next load
+      // mapIntakeToLegacyQuizProfile() ran over an already-mapped object, whose
+      // keys it does not recognise. Conditions, symptoms, flow level and product
+      // preferences all came back EMPTY for every user who signed up after
+      // completing the intake (i.e. the whole OAuth signup path), and the LLM was
+      // then handed a malformed intake on every subsequent build.
+      const rawIntake = pendingQuizResults?.fullHealthIntake || pendingQuizResults;
+      saveHealthIntakeForCurrentUser(rawIntake).catch(e => reportSaveFailure('Could not save your health profile', e));
       setPendingQuizResults(null);
     } else if (pendingAction === 'browse') {
       handleViewDiscovery('');
@@ -416,10 +494,10 @@ function App() {
     llmBuiltThisSessionRef.current = false;
     setMyProducts({});
     clearCachedLlmRecommendations();
-    try { window.localStorage.setItem('ayna_force_llm_refresh', '1'); } catch (_) {}
+    try { window.sessionStorage.setItem('ayna_force_llm_refresh', '1'); } catch (_) {}
     const supabase = getSupabaseClient();
     // Await clear so token-refresh reloads never bring back stale products
-    if (supabase && user) await clearEcosystemForUser(supabase, user.id).catch(console.error);
+    if (supabase && user) await clearEcosystemForUser(supabase, user.id).catch(e => reportSaveFailure('Could not reset your ecosystem', e));
     posthog.capture('intake_completed', {
       concernsCount: Array.isArray(completedResults.primaryConcerns) ? completedResults.primaryConcerns.length : 0,
       conditionsCount: Array.isArray(completedResults.conditions) ? completedResults.conditions.length : 0,
@@ -438,10 +516,10 @@ function App() {
     llmBuiltThisSessionRef.current = false;
     setMyProducts({});
     clearCachedLlmRecommendations();
-    try { window.localStorage.setItem('ayna_force_llm_refresh', '1'); } catch (_) {}
+    try { window.sessionStorage.setItem('ayna_force_llm_refresh', '1'); } catch (_) {}
     const supabase = getSupabaseClient();
     // Await clear so token-refresh reloads never bring back stale products
-    if (supabase && user) await clearEcosystemForUser(supabase, user.id).catch(console.error);
+    if (supabase && user) await clearEcosystemForUser(supabase, user.id).catch(e => reportSaveFailure('Could not reset your ecosystem', e));
     setCurrentView('ecosystem');
   };
 
@@ -478,8 +556,8 @@ function App() {
     // Persist swap to Supabase
     if (user) {
       const supabase = getSupabaseClient();
-      if (oldProduct) upsertProductState(supabase, user.id, oldProduct, { inEcosystem: false, isTracked: false, isOmitted: false }).catch(console.error);
-      upsertProductState(supabase, user.id, enriched, { inEcosystem: true, isTracked: false, isOmitted: false }).catch(console.error);
+      if (oldProduct) upsertProductState(supabase, user.id, oldProduct, { inEcosystem: false, isTracked: false, isOmitted: false }).catch(e => reportSaveFailure('Could not save the swap', e));
+      upsertProductState(supabase, user.id, enriched, { inEcosystem: true, isTracked: false, isOmitted: false }).catch(e => reportSaveFailure('Could not save the swap', e));
     }
   };
 
@@ -506,7 +584,7 @@ function App() {
         inEcosystem: !!myProducts[product.id],
         isTracked: !wasTracked,
         isOmitted: !!omittedProducts[product.id],
-      }).catch(e => console.error('[Ayna] upsert failed:', e));
+      }).catch(e => reportSaveFailure('Could not save that change', e));
     }
   };
 
@@ -538,7 +616,7 @@ function App() {
         inEcosystem: !wasIn,
         isTracked: !!trackedProducts[product.id],
         isOmitted: !!omittedProducts[product.id],
-      }).catch(e => console.error('[Ayna] upsert failed:', e));
+      }).catch(e => reportSaveFailure('Could not save that change', e));
     }
   };
 
@@ -559,7 +637,7 @@ function App() {
         inEcosystem: wasOmitted ? !!myProducts[product.id] : false,
         isTracked: wasOmitted ? !!trackedProducts[product.id] : false,
         isOmitted: !wasOmitted,
-      }).catch(e => console.error('[Ayna] upsert failed:', e));
+      }).catch(e => reportSaveFailure('Could not save that change', e));
     }
   };
 
@@ -596,11 +674,14 @@ function App() {
     ]);
     const supabase = getSupabaseClient();
     if (supabase && user) {
-      Promise.all(
-        valid.map(p => upsertProductState(supabase, user.id, p, { inEcosystem: true, isTracked: false, isOmitted: false }))
-      ).catch(console.error);
+      // One request per 100 products instead of one per product. The old
+      // Promise.all fired up to ~50 individual POSTs, any subset of which could
+      // fail independently; the .catch reported only the first rejection, so a
+      // partially-saved ecosystem looked identical to a fully-saved one.
+      upsertProductsBatch(supabase, user.id, valid, { inEcosystem: true, isTracked: false, isOmitted: false })
+        .catch(e => reportSaveFailure('Could not save your ecosystem', e));
     }
-  }, [user]);
+  }, [user, reportSaveFailure]);
 
   const [selectedProductModal, setSelectedProductModal] = useState(null);
 
@@ -649,7 +730,7 @@ function App() {
     const next = addRating(product.id, rating);
     setAynaReviews(next);
     if (user && next[product.id]) {
-      upsertProductReviews(getSupabaseClient(), user.id, product.id, next[product.id]).catch(console.error);
+      upsertProductReviews(getSupabaseClient(), user.id, product.id, next[product.id]).catch(e => reportSaveFailure('Could not save your review', e));
     }
   };
 
@@ -657,7 +738,7 @@ function App() {
     const next = addReview(product.id, text);
     setAynaReviews(next);
     if (user && next[product.id]) {
-      upsertProductReviews(getSupabaseClient(), user.id, product.id, next[product.id]).catch(console.error);
+      upsertProductReviews(getSupabaseClient(), user.id, product.id, next[product.id]).catch(e => reportSaveFailure('Could not save your review', e));
     }
   };
 
@@ -666,6 +747,28 @@ function App() {
     <div
       className={`app-container${hideWelcomeIntroChrome ? ' app--welcome-intro-immersive' : ''}`.trim()}
     >
+      {/* Persistence failures were previously console-only, so the UI always
+          looked like the success state. A user could curate for 20 minutes on a
+          flaky connection, see a perfect screen, and lose everything on reload. */}
+      {saveError && (
+        <div
+          role="alert"
+          style={{
+            position: 'fixed', top: 0, left: 0, right: 0, zIndex: 3000,
+            background: '#FEF2F2', borderBottom: '1px solid #FECACA',
+            color: '#991B1B', padding: '0.7rem 1rem', fontSize: '0.85rem',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem',
+          }}
+        >
+          <span>{saveError}</span>
+          <button
+            type="button"
+            onClick={() => setSaveError(null)}
+            aria-label="Dismiss"
+            style={{ background: 'none', border: 'none', color: '#991B1B', cursor: 'pointer', fontWeight: 700, fontSize: '1rem', lineHeight: 1 }}
+          >×</button>
+        </div>
+      )}
       <main>
         {/* Navigation — hidden during welcome intro; fades in on first frame of “main” with the landing body */}
         {!hideWelcomeIntroChrome && (
@@ -947,7 +1050,7 @@ function App() {
             onOpenProduct={handleOpenProduct}
             omittedProducts={omittedProducts}
             onViewOmitted={handleViewOmitted}
-            onHealthProfileUpdate={setHealthProfile}
+            onHealthProfileUpdate={updateHealthProfile}
             healthProfile={healthProfile}
           />
         )}
@@ -988,6 +1091,11 @@ function App() {
             setCurrentView('ecosystem');
           }} />
         )}
+        {currentView === 'ecosystem' && dataLoading && Object.keys(myProducts).length === 0 && (
+          <div style={{ padding: '3rem 1.5rem', textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>
+            Loading your ecosystem…
+          </div>
+        )}
         {currentView === 'ecosystem' && (
           <MyEcosystem
             myProducts={myProducts}
@@ -1009,7 +1117,7 @@ function App() {
             ecosystemSeedMeta={ecosystemSeedMeta}
             onSwapSeedProduct={handleSwapEcosystemSeedProduct}
             onGoToSearch={(query) => handleViewDiscovery(query || '')}
-            onHealthProfileUpdate={(next) => setHealthProfile(next)}
+            onHealthProfileUpdate={updateHealthProfile}
             onViewRecommendedArticles={handleViewArticles}
             onOpenArticle={(articleId) => {
               setSelectedArticleId(articleId);
@@ -1019,7 +1127,7 @@ function App() {
             onBuildEcosystemFromLlm={handleBuildEcosystemFromLlm}
             user={user}
             userSession={userSession}
-            isPremium={user?.user_metadata?.is_premium === true}
+            isPremium={user?.app_metadata?.is_premium === true}
           />
         )}
         {currentView === 'discovery' && (

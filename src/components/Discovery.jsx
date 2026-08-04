@@ -344,11 +344,33 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             .filter((item) => resolvedImages[item.id] === undefined)
             .filter((item) => isPlaceholderProductImage(item.image));
         if (missing.length === 0) return;
-        missing.forEach((item) => {
-            resolveProductImage(item.name, item.brand || '').then((url) => {
-                if (url) setResolvedImages((prev) => ({ ...prev, [item.id]: url }));
-            });
-        });
+
+        // Bounded worker pool. This used to fire one request per item with no
+        // cap — up to 80 concurrent serverless invocations against a metered
+        // image API from a single render, because every AI suggestion carries a
+        // placeholder image. The shared cache and in-flight dedup made it cheap,
+        // but the burst was still 80 parallel calls.
+        let cancelled = false;
+        const queue = [...missing];
+        const CONCURRENCY = 5;
+
+        const worker = async () => {
+            while (!cancelled) {
+                const item = queue.shift();
+                if (!item) return;
+                const url = await resolveProductImage(item.name, item.brand || '');
+                if (cancelled) return;
+                // Record '' as well: gating on `if (url)` left a no-image product
+                // permanently `undefined`, so it was re-selected and re-resolved
+                // on every run of this effect (resolvedImages is in its own deps).
+                setResolvedImages((prev) => (prev[item.id] !== undefined ? prev : { ...prev, [item.id]: url || '' }));
+            }
+        };
+
+        Promise.all(Array.from({ length: Math.min(CONCURRENCY, queue.length) }, worker))
+            .catch((e) => console.warn('[Ayna] image resolution failed:', e?.message));
+
+        return () => { cancelled = true; };
     }, [gridItems, resolvedImages]);
 
     const profileIntro = useMemo(

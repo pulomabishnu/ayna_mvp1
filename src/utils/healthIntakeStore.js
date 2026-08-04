@@ -21,9 +21,21 @@ export async function saveHealthIntakeForCurrentUser(profile) {
   if (!supabase) return { saved: false, reason: 'supabase_not_configured' };
   const user = await getSupabaseUser();
   if (!user?.id) return { saved: false, reason: 'no_authenticated_user' };
+
+  // This column must hold the RAW intake. A legacy quiz profile (the output of
+  // mapIntakeToLegacyQuizProfile) is a different shape, and storing one here
+  // silently empties conditions/symptoms/flowLevel on the next read, because
+  // the mapper then runs over an already-mapped object. Unwrap rather than
+  // reject so an existing bad caller self-corrects instead of losing the intake.
+  let toStore = profile;
+  if (profile && typeof profile === 'object' && profile.fullHealthIntake) {
+    console.warn('[healthIntakeStore] received a legacy quiz profile; storing its fullHealthIntake instead');
+    toStore = profile.fullHealthIntake;
+  }
+
   const payload = {
     user_id: user.id,
-    profile,
+    profile: toStore,
     updated_at: new Date().toISOString(),
   };
   const { error } = await supabase.from(TABLE).upsert(payload, { onConflict: 'user_id' });

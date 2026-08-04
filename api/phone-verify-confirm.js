@@ -1,46 +1,32 @@
 /**
  * /api/phone-verify-confirm — Confirm the self-issued OTP (see
- * api/phone-verify-send.js) and persist the verified phone number for the
- * authenticated user.
+ * api/phone-verify-send.js) and persist the verified phone number.
+ *
+ * The pending row is read/written with the SERVICE-ROLE key so `code_hash` is
+ * never exposed to the client (its SELECT policy has been dropped). Ownership
+ * comes from the verified JWT, and every query is scoped to that user id.
  */
 /* global process */
-import crypto from 'crypto';
 import { createClient } from '@supabase/supabase-js';
 import { verifyUser } from './_usageLimit.js';
+import { rateLimit, getClientIp } from './_rateLimit.js';
+import { codeMatches, normalizeE164, maskedTail } from './_otp.js';
 
 const MAX_ATTEMPTS = 5;
 
-// Scoped to the caller's own JWT so Postgres RLS (not this code) enforces
-// "only your own row" — avoids touching the service-role key for writes
-// that are already constrained to the authenticated user.
-function getUserScopedClient(token) {
-  return createClient(process.env.SUPABASE_URL, process.env.VITE_SUPABASE_ANON_KEY, {
-    global: { headers: { Authorization: `Bearer ${token}` } },
-  });
-}
-
-function normalizeE164(raw) {
-  if (typeof raw !== 'string') return null;
-  const trimmed = raw.trim();
-  if (/^\+[1-9]\d{6,14}$/.test(trimmed)) return trimmed;
-  const digits = trimmed.replace(/[^\d]/g, '');
-  if (digits.length === 10) return `+1${digits}`;
-  if (digits.length === 11 && digits.startsWith('1')) return `+${digits}`;
-  return null;
-}
-
-function maskedTail(phoneNumber) {
-  return `***${phoneNumber.slice(-4)}`;
-}
-
-function hashCode(code, userId) {
-  return crypto.createHash('sha256').update(`${userId}:${code}`).digest('hex');
+let _admin = null;
+function getAdmin() {
+  if (_admin) return _admin;
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) return null;
+  _admin = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
+  return _admin;
 }
 
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
   if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     return res.status(204).end();
@@ -50,8 +36,20 @@ export default async function handler(req, res) {
   const { user, error } = await verifyUser(req);
   if (!user) return res.status(401).json({ error });
 
-  const token = (req.headers.authorization || '').replace(/^Bearer\s+/i, '').trim();
-  const userClient = getUserScopedClient(token);
+  // The confirm endpoint previously had NO rate limit at all — the only brake
+  // was an `attempts` column updated via a racy read-modify-write, so N
+  // parallel guesses all read the same value and all wrote n+1. That left the
+  // full 10^6 keyspace open for the code's 10-minute lifetime.
+  const rl = await rateLimit(`otp:confirm:user:${user.id}`, { max: 10, windowSec: 600, failClosed: false });
+  if (!rl.ok) {
+    res.setHeader('Retry-After', String(rl.retryAfterSec || 60));
+    return res.status(429).json({ error: 'too_many_attempts', retryAfterSeconds: rl.retryAfterSec || 60 });
+  }
+  const ipRl = await rateLimit(`otp:confirm:ip:${getClientIp(req)}`, { max: 30, windowSec: 600, failClosed: false });
+  if (!ipRl.ok) {
+    res.setHeader('Retry-After', String(ipRl.retryAfterSec || 60));
+    return res.status(429).json({ error: 'too_many_attempts', retryAfterSeconds: ipRl.retryAfterSec || 60 });
+  }
 
   let body;
   try {
@@ -63,41 +61,42 @@ export default async function handler(req, res) {
   const phoneNumber = normalizeE164(body?.phoneNumber);
   const code = typeof body?.code === 'string' ? body.code.trim() : '';
   if (!phoneNumber) return res.status(400).json({ error: 'invalid_phone_number' });
-  if (!code) return res.status(400).json({ error: 'code_required' });
+  if (!/^\d{6}$/.test(code)) return res.status(400).json({ error: 'code_required' });
 
-  const { data: pending, error: fetchError } = await userClient
-    .from('pending_phone_verifications')
-    .select('phone_number, code_hash, expires_at, attempts')
-    .eq('user_id', user.id)
-    .maybeSingle();
+  const admin = getAdmin();
+  if (!admin) return res.status(500).json({ error: 'server_misconfigured' });
 
-  if (fetchError) {
-    console.error('[phone-verify-confirm] fetch error:', fetchError.message);
+  // Atomic: increments attempts and returns the row in one statement, so
+  // concurrent guesses cannot all observe the same pre-increment value.
+  const { data: claimRows, error: claimError } = await admin.rpc('claim_otp_attempt', {
+    p_user_id: user.id,
+    p_max_attempts: MAX_ATTEMPTS,
+  });
+  if (claimError) {
+    console.error('[phone-verify-confirm] claim_otp_attempt error:', claimError.message);
     return res.status(500).json({ error: 'verify_failed' });
   }
+  const pending = Array.isArray(claimRows) ? claimRows[0] : claimRows;
 
-  if (!pending || pending.phone_number !== phoneNumber) {
+  if (!pending || !pending.found) {
     return res.status(400).json({ error: 'invalid_or_expired_code' });
   }
-
-  if (new Date(pending.expires_at).getTime() < Date.now()) {
-    await userClient.from('pending_phone_verifications').delete().eq('user_id', user.id);
-    return res.status(400).json({ error: 'invalid_or_expired_code' });
-  }
-
-  if (pending.attempts >= MAX_ATTEMPTS) {
+  if (pending.locked_out) {
     return res.status(429).json({ error: 'too_many_attempts' });
   }
-
-  if (hashCode(code, user.id) !== pending.code_hash) {
-    await userClient
-      .from('pending_phone_verifications')
-      .update({ attempts: pending.attempts + 1 })
-      .eq('user_id', user.id);
+  if (pending.expired) {
+    await admin.from('pending_phone_verifications').delete().eq('user_id', user.id);
+    return res.status(400).json({ error: 'invalid_or_expired_code' });
+  }
+  if (pending.phone_number !== phoneNumber) {
     return res.status(400).json({ error: 'invalid_or_expired_code' });
   }
 
-  const { error: upsertError } = await userClient
+  if (!codeMatches(code, user.id, pending.code_hash)) {
+    return res.status(400).json({ error: 'invalid_or_expired_code' });
+  }
+
+  const { error: upsertError } = await admin
     .from('phone_numbers')
     .upsert(
       {
@@ -118,7 +117,13 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'save_failed' });
   }
 
-  await userClient.from('pending_phone_verifications').delete().eq('user_id', user.id);
+  const { error: deleteError } = await admin
+    .from('pending_phone_verifications').delete().eq('user_id', user.id);
+  if (deleteError) {
+    // Not fatal, but a surviving row keeps the (now-used) code replayable
+    // until it expires, so it must not be silent.
+    console.error('[phone-verify-confirm] failed to clear pending row:', deleteError.message);
+  }
 
   console.log(`[phone-verify-confirm] verified for user ${user.id}: ${maskedTail(phoneNumber)}`);
   return res.status(200).json({ ok: true, phoneNumber });

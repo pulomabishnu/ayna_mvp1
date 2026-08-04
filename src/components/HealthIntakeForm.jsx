@@ -254,6 +254,7 @@ export default function HealthIntakeForm({ onComplete }) {
   const [intake, setIntake] = useState(emptyIntake);
   const [screenId, setScreenId] = useState('basics');
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
 
   const hasPeriod = intake.menstrualCycle !== 'no' && intake.menstrualCycle !== 'no_menopause';
 
@@ -300,9 +301,27 @@ export default function HealthIntakeForm({ onComplete }) {
       personalizationCompleted: true,
       personalizationCompletedAt: new Date().toISOString(),
     };
+    // A silent `catch (_) {}` here meant a signed-in user could complete the
+    // entire ~20-question intake, have the upsert fail (expired token, RLS,
+    // network), and be taken straight to her ecosystem as if it had saved —
+    // because the LLM builds from the in-memory copy. On her next visit
+    // quizResults is null and she is asked to retake the whole thing.
+    // saveHealthIntakeForCurrentUser also RETURNS {saved:false} without throwing
+    // when there is no session, which was discarded too.
     try {
-      await saveHealthIntakeForCurrentUser(snapshot);
-    } catch (_) {}
+      const result = await saveHealthIntakeForCurrentUser(snapshot);
+      if (result && result.saved === false && result.reason !== 'no_authenticated_user') {
+        throw new Error(result.reason || 'save_failed');
+      }
+    } catch (e) {
+      console.error('[Ayna] intake save failed:', e);
+      setSaving(false);
+      setSaveError(
+        "We couldn't save your profile just now. Your answers are still here — check your connection and tap Finish again."
+      );
+      return;
+    }
+    setSaveError('');
     setSaving(false);
     onComplete(mapIntakeToLegacyQuizProfile(snapshot));
   };
@@ -516,6 +535,11 @@ export default function HealthIntakeForm({ onComplete }) {
               Your data is stored securely and never shared or sold. It's used only to personalize your ecosystem.
             </p>
 
+            {saveError && (
+              <p role="alert" style={{ color: '#B91C1C', fontSize: '0.85rem', marginBottom: '0.75rem', lineHeight: 1.5 }}>
+                {saveError}
+              </p>
+            )}
             <ContinueButton onClick={goNext} disabled={saving}>
               {saving ? 'Building your ecosystem…' : 'Build my ecosystem →'}
             </ContinueButton>

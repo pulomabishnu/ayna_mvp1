@@ -6,7 +6,9 @@
 
 import { deriveBrandSearchContext } from '../src/utils/productBrandContext.js';
 import { retrieveKnowledgeForProduct, buildKnowledgeContext } from '../src/utils/ragRetrieval.js';
-import { verifyUser, checkUsage, incrementUsage } from './_usageLimit.js';
+import { verifyUser, consumeUsage, refundUsage } from './_usageLimit.js';
+import { isPremiumUser } from './_entitlement.js';
+import { checkProductInsightsRateLimit } from './rateLimitProductInsights.js';
 
 const MAX_NARRATIVE_LEN = 2200;
 const MAX_EXTRA_SUMMARY_LEN = 800;
@@ -24,18 +26,41 @@ function hasUrlLike(s) {
   return /https?:\/\/|www\.\w/i.test(s);
 }
 
-function sanitizePhrase(s, maxLen) {
+/**
+ * Strip URLs OUT of a phrase rather than discarding the whole phrase.
+ *
+ * This used to return '' whenever a URL appeared anywhere in the string, so one
+ * stray "http" in a 2200-character clinical narrative threw away all 2200
+ * characters. If enough fields emptied out, normalizeParsed returned null and
+ * the entire (already billed) generation was discarded — or the user silently
+ * got boilerplate with no indication anything had been dropped.
+ */
+export function sanitizePhrase(s, maxLen) {
   if (typeof s !== 'string') return '';
-  const t = s.trim().replace(/\s+/g, ' ');
-  if (!t || hasUrlLike(t)) return '';
+  let t = s.trim().replace(/\s+/g, ' ');
+  if (!t) return '';
+  if (hasUrlLike(t)) {
+    const before = t;
+    t = t
+      .replace(/https?:\/\/\S+/gi, '')
+      .replace(/\bwww\.\S+/gi, '')
+      .replace(/\s+/g, ' ')
+      .replace(/\s+([,.;:])/g, '$1')
+      .trim();
+    console.warn('[product-insights] stripped a URL from model output:', before.slice(0, 80));
+  }
   return t.slice(0, maxLen);
 }
 
-function uniquePhrases(arr, maxCount, maxLen) {
+export function uniquePhrases(arr, maxCount, maxLen) {
   const seen = new Set();
   const out = [];
   for (const item of Array.isArray(arr) ? arr : []) {
-    const p = sanitizePhrase(String(item), maxLen);
+    // String(item) turned {q: "..."} into the literal "[object Object]", which
+    // is 15 chars so it passed the length guard below and rendered as a live
+    // link: "PubMed search: [object Object]".
+    if (typeof item !== 'string') continue;
+    const p = sanitizePhrase(item, maxLen);
     if (!p || p.length < 3) continue;
     const k = p.toLowerCase();
     if (seen.has(k)) continue;
@@ -376,7 +401,34 @@ async function callAnthropic(product, userContextText = '') {
     if (!res.ok) {
       const errText = await res.text();
       console.error('Anthropic error', model, res.status, errText.slice(0, 400));
+      // Try the next candidate model on 404 (model id gone), and retry once on
+      // a transient failure. Previously any non-404 returned null immediately,
+      // so a rate limit or an overload was indistinguishable from "no output"
+      // and cost a full fallback generation on the other provider.
       if (res.status === 404) continue;
+      if (res.status === 429 || res.status >= 500) {
+        const retryAfter = Number.parseFloat(res.headers.get('retry-after') || '');
+        const waitMs = Number.isFinite(retryAfter) ? Math.min(retryAfter * 1000, 5000) : 1200;
+        console.warn(`[product-insights] anthropic ${res.status}; retrying once in ${waitMs}ms`);
+        await new Promise((r) => setTimeout(r, waitMs));
+        const retry = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'x-api-key': apiKey,
+            'anthropic-version': '2023-06-01',
+            'content-type': 'application/json',
+          },
+          body: JSON.stringify({ ...payloadBase, model }),
+          signal: AbortSignal.timeout(25000),
+        });
+        if (retry.ok) {
+          const retryData = await retry.json();
+          const retryText = retryData?.content?.[0]?.text;
+          if (typeof retryText === 'string' && retryText.trim()) return retryText;
+        } else {
+          console.error('[product-insights] anthropic retry failed', retry.status);
+        }
+      }
       return null;
     }
     const data = await res.json();
@@ -386,13 +438,6 @@ async function callAnthropic(product, userContextText = '') {
   return null;
 }
 
-/** Safe booleans only — helps verify env vars reached this serverless function (no secret values). */
-function providerEnvPresence() {
-  return {
-    ANTHROPIC_API_KEY: !!process.env.ANTHROPIC_API_KEY,
-    OPENAI_API_KEY: !!process.env.OPENAI_API_KEY,
-  };
-}
 
 async function runModel(product, provider, userContextText = '') {
   let raw = null;
@@ -420,7 +465,15 @@ function canUseProvider(p) {
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
   if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    // Was '*'. These are same-origin, bearer-authenticated routes: a wildcard
+    // preflight let a hostile origin's request run server-side (spending the
+    // user's quota) before the browser discarded the response.
+    const allowList = (process.env.ALLOWED_ORIGINS || '')
+      .split(',').map((o) => o.trim()).filter(Boolean);
+    if (req.headers.origin && allowList.includes(req.headers.origin)) {
+      res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+      res.setHeader('Vary', 'Origin');
+    }
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     return res.status(204).end();
@@ -432,13 +485,30 @@ export default async function handler(req, res) {
   const { user, error, admin } = await verifyUser(req);
   if (!user) return res.status(401).json({ error });
 
-  const isPremium = user.user_metadata?.is_premium === true;
-  let insightsPeriod;
-  if (!isPremium) {
-    const { over, used, limit, period } = await checkUsage(admin, user.id, 'insights');
-    if (over) return res.status(429).json({ error: 'weekly_limit_reached', used, limit, action: 'insights' });
-    insightsPeriod = period;
+  // rateLimitProductInsights.js is named for THIS route but was only ever
+  // imported by search-suggestions.js — so the endpoint it was written to
+  // protect had no IP rate limit at all.
+  const rl = await checkProductInsightsRateLimit(req);
+  if (!rl.ok) {
+    res.setHeader('Retry-After', String(rl.retryAfterSec || 60));
+    return res.status(429).json({ error: 'rate_limited', retryAfterSeconds: rl.retryAfterSec || 60 });
   }
+
+  const isPremium = isPremiumUser(user);
+  // Reserve before spending, refund on failure — see the note in product-chat.js.
+  // The old shape (check -> generate -> increment only on success) let a client
+  // force the failure branch with request-body content (e.g. a product.summary
+  // that makes the model break the JSON schema, so normalizeParsed returns null)
+  // and drive unlimited *billed* generations that never touched the counter.
+  let insightsPeriod = null;
+  if (!isPremium) {
+    const { allowed, used, limit, period, degraded } = await consumeUsage(admin, user.id, 'insights');
+    if (!allowed) return res.status(429).json({ error: 'weekly_limit_reached', used, limit, action: 'insights' });
+    insightsPeriod = degraded ? null : period;
+  }
+  const refundInsights = async () => {
+    if (insightsPeriod) await refundUsage(admin, user.id, 'insights', insightsPeriod);
+  };
 
   if (!anyApiKeyConfigured()) {
     console.warn(
@@ -450,7 +520,6 @@ export default async function handler(req, res) {
         'No AI provider key set. Add ANTHROPIC_API_KEY (Claude) or OPENAI_API_KEY in Vercel.',
       hint:
         'In Vercel: Project → Settings → Environment Variables → add ANTHROPIC_API_KEY for Production (and Preview if you test previews). Save, then Deployments → Redeploy — env vars apply at deploy time.',
-      envPresent: providerEnvPresence(),
     });
   }
 
@@ -461,10 +530,28 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Invalid JSON' });
   }
 
-  const product = body?.product;
-  if (!product || typeof product !== 'object') {
+  const rawProduct = body?.product;
+  if (!rawProduct || typeof rawProduct !== 'object') {
     return res.status(400).json({ error: 'Missing product' });
   }
+
+  // Cap every client-supplied field before it reaches the prompt OR the
+  // retriever. Uncapped, this was both a token-cost amplifier (~100x on a
+  // context-filling summary) and a CPU sink: buildUserPrompt calls
+  // retrieveKnowledgeForProduct, whose scoreDocument does an includes() per word
+  // per document across 25 docs — a multi-megabyte summary is ~10^6 words x 25
+  // docs of substring scanning, all billed, before any LLM call happens.
+  const capStr = (v, n) => (typeof v === 'string' ? v.replace(/[\r\n]+/g, ' ').trim().slice(0, n) : '');
+  const product = {
+    ...rawProduct,
+    name: capStr(rawProduct.name, 200),
+    brand: capStr(rawProduct.brand, 100),
+    summary: capStr(rawProduct.summary, 2000),
+    category: capStr(rawProduct.category, 64),
+    type: capStr(rawProduct.type, 32),
+    tags: Array.isArray(rawProduct.tags) ? rawProduct.tags.slice(0, 20).map((t) => capStr(String(t), 50)) : [],
+  };
+  if (!product.name) return res.status(400).json({ error: 'Missing product name' });
 
   const userContextRaw = body?.userContext;
   const userContextText =
@@ -488,7 +575,6 @@ export default async function handler(req, res) {
       );
       if (!out) continue;
       const { clinicianLinks, literatureLinks, communityLinks } = buildSafeLinks(out.normalized, product?.category);
-      if (!isPremium) await incrementUsage(admin, user.id, 'insights', insightsPeriod);
       return res.status(200).json({
         clinicalNarrative: out.normalized.clinicalNarrative,
         scienceSummary: out.normalized.scienceSummary || '',
@@ -509,6 +595,9 @@ export default async function handler(req, res) {
     }
   }
 
+  // Nothing usable — hand the quota slot back rather than charging the user for
+  // a generation she never received.
+  await refundInsights();
   return res.status(502).json({
     error: 'all_providers_failed',
     message: lastError?.message || 'Could not generate insights. Check provider keys and quotas.',

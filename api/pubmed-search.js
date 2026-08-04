@@ -11,7 +11,7 @@ export default async function handler(req, res) {
   const { query, limit = '5' } = req.query;
   if (!query || query.trim().length < 3) return res.status(400).json({ error: 'missing_query' });
 
-  const n = Math.min(parseInt(limit, 10) || 5, 10);
+  const n = Math.min(Math.max(parseInt(limit, 10) || 5, 1), 10);
   const apiKey = process.env.NCBI_API_KEY;
   const keyParam = apiKey ? `&api_key=${encodeURIComponent(apiKey)}` : '';
 
@@ -23,7 +23,9 @@ export default async function handler(req, res) {
     });
     if (!searchRes.ok) return res.status(200).json({ articles: [], source: 'PubMed' });
     const searchData = await searchRes.json();
-    const ids = searchData?.esearchresult?.idlist || [];
+    // Ids come from NCBI, not the user, but validate before interpolating
+    // them into the next URL so the trust boundary is explicit.
+    const ids = (searchData?.esearchresult?.idlist || []).filter((i) => /^\d+$/.test(String(i)));
     if (!ids.length) return res.status(200).json({ articles: [], source: 'PubMed' });
 
     const summaryUrl = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=${ids.join(',')}&retmode=json${keyParam}`;

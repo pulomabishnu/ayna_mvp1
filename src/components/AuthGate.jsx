@@ -77,15 +77,18 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
     setError('');
     setGoogleLoading(true);
     try {
-      // Persist consent so AuthCallback can write it to user metadata after redirect
-      if (isSignup) {
-        try {
-          sessionStorage.setItem('ayna_pending_consent', JSON.stringify({
-            consent_given_at: new Date().toISOString(),
-            consent_version: CONSENT_VERSION,
-          }));
-        } catch (_) {}
-      }
+      // Persist consent so AuthCallback can write it to user metadata after the
+      // redirect. Stored in BOTH modes: Supabase's Google provider
+      // auto-provisions an account for any unseen Google address, so a
+      // first-time visitor who happens to click the "Sign in" toggle used to get
+      // an account created — and reach the health intake — with the consent
+      // checkboxes never shown and no consent record written at all.
+      try {
+        sessionStorage.setItem('ayna_pending_consent', JSON.stringify({
+          consent_given_at: new Date().toISOString(),
+          consent_version: CONSENT_VERSION,
+        }));
+      } catch (_) { /* private mode */ }
       if (onBeforeOAuthRedirect) onBeforeOAuthRedirect();
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
@@ -236,10 +239,10 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
         <button
           type="button"
           onClick={handleGoogle}
-          disabled={googleLoading || (isSignup && !allConsented)}
+          disabled={googleLoading || !allConsented}
           style={{
             ...styles.googleBtn,
-            ...(isSignup && !allConsented ? styles.googleBtnDisabled : {}),
+            ...(!allConsented ? styles.googleBtnDisabled : {}),
           }}
         >
           <GoogleIcon />

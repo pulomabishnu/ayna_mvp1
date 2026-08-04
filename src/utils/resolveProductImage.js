@@ -25,6 +25,10 @@ export async function resolveProductImage(name, brand) {
   if (!name) return '';
   const key = `${brand || ''}|${name}`;
 
+  // memCache holds either a resolved string or an in-flight Promise. Storing
+  // the promise BEFORE awaiting is what dedupes concurrent callers: two effects
+  // resolving the same product in the same tick (MyEcosystem walks the tiers in
+  // two separate effects) both missed the cache and both spent a paid credit.
   if (memCache.has(key)) return memCache.get(key);
 
   const stored = lsRead();
@@ -33,17 +37,30 @@ export async function resolveProductImage(name, brand) {
     return stored[key];
   }
 
-  try {
-    const params = new URLSearchParams({ name, brand: brand || '' });
-    const res = await fetch(`/api/product-image?${params}`);
-    if (!res.ok) { memCache.set(key, ''); lsWrite(key, ''); return ''; }
-    const data = await res.json();
-    const url = data?.imageUrl || '';
-    memCache.set(key, url);
-    lsWrite(key, url);
-    return url;
-  } catch {
-    memCache.set(key, '');
-    return '';
-  }
+  const inFlight = (async () => {
+    try {
+      const params = new URLSearchParams({ name, brand: brand || '' });
+      const res = await fetch(`/api/product-image?${params}`, {
+        signal: AbortSignal.timeout(10000),
+      });
+      if (!res.ok) {
+        // Do NOT persist a transient failure. A 429/5xx was previously written
+        // to localStorage as '' and pinned for good, so a product that briefly
+        // failed never got an image again on that browser.
+        memCache.delete(key);
+        return '';
+      }
+      const data = await res.json();
+      const url = data?.imageUrl || '';
+      memCache.set(key, url);
+      lsWrite(key, url);
+      return url;
+    } catch {
+      memCache.delete(key);
+      return '';
+    }
+  })();
+
+  memCache.set(key, inFlight);
+  return inFlight;
 }

@@ -497,23 +497,17 @@ export default function ProductModal({
     const [showPaywall, setShowPaywall] = useState(false);
 
     useEffect(() => {
-        if (!user?.id) { setChatUsed(null); return; }
-        const supabase = getSupabaseClient();
-        if (!supabase) return;
-        const d = new Date();
-        const day = d.getUTCDay();
-        const diff = day === 0 ? -6 : 1 - day;
-        const mon = new Date(d);
-        mon.setUTCDate(d.getUTCDate() + diff);
-        const period = 'week:' + mon.toISOString().split('T')[0];
-        supabase
-            .from('user_ai_usage')
-            .select('count')
-            .eq('user_id', user.id)
-            .eq('period', period)
-            .eq('action', 'chat')
-            .maybeSingle()
-            .then(({ data }) => setChatUsed(data?.count ?? 0));
+        // The quota is authoritative on the SERVER. This used to query
+        // user_ai_usage straight from the browser and discard the error:
+        //   .then(({ data }) => setChatUsed(data?.count ?? 0))
+        // so an RLS denial or a network blip read as 0 and the counter always
+        // showed full quota — the user only discovered the limit when a request
+        // 429'd. It also duplicated the Monday-UTC week arithmetic from
+        // api/_usageLimit.js, which would inevitably drift from it.
+        //
+        // chatUsed is now derived from what the server reports on each reply,
+        // so there is exactly one source of truth for the period boundary.
+        setChatUsed(0);
     }, [user?.id]);
 
     const healthContextKey = useMemo(
@@ -566,23 +560,32 @@ export default function ProductModal({
 
     useEffect(() => {
         if (!product?.name) return;
+        // Guarded: without this, switching from a slow product to a fast one lets
+        // the first response land last and render product A's recall verdict under
+        // product B's name — in either direction, on a recall panel.
+        let active = true;
         setFdaRecallData(null);
         setFdaRecallLoading(true);
         fetchFdaRecall(product.name, product.brand || '', product.category || '').then((data) => {
+            if (!active) return;
             setFdaRecallData(data);
             setFdaRecallLoading(false);
         });
-    }, [product?.name, product?.brand]);
+        return () => { active = false; };
+    }, [product?.name, product?.brand, product?.category]);
 
     useEffect(() => {
         if (!product?.name) return;
+        let active = true;
         setPubmedArticles([]);
         setPubmedLoading(true);
         const query = `${product.name} ${product.category || ''}`.trim().slice(0, 100);
         fetchPubmedArticles(query, 5).then((articles) => {
+            if (!active) return;
             setPubmedArticles(articles);
             setPubmedLoading(false);
         });
+        return () => { active = false; };
     }, [product?.name, product?.category]);
 
     useEffect(() => {
@@ -596,8 +599,9 @@ export default function ProductModal({
             return;
         }
         let cancelled = false;
+        const controller = new AbortController();
         setAiLoading(true);
-        fetchProductInsights(product, { quizResults, healthProfile, authToken: userSession?.access_token })
+        fetchProductInsights(product, { quizResults, healthProfile, authToken: userSession?.access_token, signal: controller.signal })
             .then((data) => {
                 if (!cancelled) {
                     setAiInsights(data);
@@ -605,9 +609,13 @@ export default function ProductModal({
                 }
             })
             .catch((e) => {
-                if (cancelled) return;
+                if (cancelled || e?.code === 'cancelled') return;
                 if (e?.status === 429) {
                     setAiError('You\'ve viewed AI insights for 5 products this week. Resets Monday.');
+                    // The identical limit opened an upgrade path for chat but was
+                    // a dead end here, even though the paywall modal is already
+                    // mounted in this file.
+                    setShowPaywall(true);
                 } else if (e?.status === 401) {
                     setAiError('Sign in to view AI insights.');
                 } else {
@@ -617,7 +625,7 @@ export default function ProductModal({
             .finally(() => {
                 if (!cancelled) setAiLoading(false);
             });
-        return () => { cancelled = true; };
+        return () => { cancelled = true; controller.abort(); };
     }, [product?.id, healthContextKey, product, quizResults, healthProfile]);
 
     if (!product) return null;
@@ -636,6 +644,7 @@ export default function ProductModal({
         } catch (e) {
             if (e?.status === 429) {
                 setAiError('You\'ve viewed AI insights for 5 products this week. Resets Monday.');
+                setShowPaywall(true);
             } else if (e?.status === 401) {
                 setAiError('Sign in to view AI insights.');
             } else {
@@ -812,7 +821,13 @@ export default function ProductModal({
                 role: 'assistant',
                 text: data.answer || "I wasn't able to answer that right now. Please try again.",
             }]);
-            setChatUsed(prev => Math.min((prev ?? 0) + 1, FREE_CHAT_LIMIT));
+            // Prefer the server's count — it owns the period boundary and the
+            // limit. Fall back to incrementing locally only if it is absent.
+            if (typeof data?.usage?.used === 'number') {
+                setChatUsed(data.usage.used);
+            } else if (!data?.usage?.unlimited) {
+                setChatUsed(prev => Math.min((prev ?? 0) + 1, FREE_CHAT_LIMIT));
+            }
         } catch {
             setChatMessages(prev => [...prev, {
                 role: 'assistant',
@@ -1545,27 +1560,70 @@ export default function ProductModal({
                                                 Checking FDA recall database...
                                             </p>
                                         )}
-                                        {fdaRecallData && !fdaRecallLoading && (
-                                            <div style={{ marginTop: '0.75rem', padding: '0.75rem 1rem', borderRadius: 'var(--radius-md)', background: fdaRecallData.hasRecalls ? '#FEF2F2' : '#F0FDF4', border: `1px solid ${fdaRecallData.hasRecalls ? '#FECACA' : '#BBF7D0'}` }}>
-                                                <div style={{ fontSize: '0.75rem', fontWeight: '700', color: fdaRecallData.hasRecalls ? '#DC2626' : '#166534', marginBottom: '0.35rem' }}>
-                                                    {fdaRecallData.hasRecalls ? '⚠️ FDA Recall Records Found' : '✓ No FDA Recalls Found'}
+                                        {fdaRecallData && !fdaRecallLoading && (() => {
+                                            // Three distinct states. A failed or partial lookup must NEVER render
+                                            // as the green all-clear — we did not check, so we cannot reassure.
+                                            const st = fdaRecallData.status || 'ok';
+                                            const unknown = st === 'failed' || fdaRecallData.hasRecalls === null;
+                                            const partial = st === 'partial';
+                                            const found = fdaRecallData.hasRecalls === true;
+                                            const palette = found
+                                                ? { bg: '#FEF2F2', border: '#FECACA', fg: '#DC2626' }
+                                                : unknown || partial
+                                                    ? { bg: '#FFFBEB', border: '#FDE68A', fg: '#B45309' }
+                                                    : { bg: '#F0FDF4', border: '#BBF7D0', fg: '#166534' };
+                                            const heading = found
+                                                ? '⚠️ FDA Recall Records Found'
+                                                : unknown
+                                                    ? '⚠️ Couldn’t check the FDA database'
+                                                    : partial
+                                                        ? '⚠️ Partial FDA check'
+                                                        : st === 'skipped'
+                                                            ? 'Not an FDA-regulated product'
+                                                            : '✓ No FDA Recalls Found';
+                                            const detail = found
+                                                ? `${fdaRecallData.recalls.length} recall record(s) found in OpenFDA. Review carefully before purchasing.`
+                                                : unknown
+                                                    ? 'We could not reach the FDA recall database, so this product has NOT been checked. Please check the FDA database directly using the link below.'
+                                                    : partial
+                                                        ? 'Some FDA datasets did not respond, so this check is incomplete. Please verify directly using the link below.'
+                                                        : st === 'skipped'
+                                                            ? 'Apps and telehealth services are not covered by FDA product recalls.'
+                                                            : 'No recall records found in OpenFDA at time of check.';
+                                            return (
+                                            <div style={{ marginTop: '0.75rem', padding: '0.75rem 1rem', borderRadius: 'var(--radius-md)', background: palette.bg, border: `1px solid ${palette.border}` }}>
+                                                <div style={{ fontSize: '0.75rem', fontWeight: '700', color: palette.fg, marginBottom: '0.35rem' }}>
+                                                    {heading}
                                                 </div>
                                                 <p style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', margin: 0 }}>
-                                                    {fdaRecallData.hasRecalls
-                                                        ? `${fdaRecallData.recalls.length} recall record(s) found in OpenFDA. Review carefully before purchasing.`
-                                                        : 'No recall records found in OpenFDA at time of check.'}
+                                                    {detail}
                                                 </p>
-                                                {fdaRecallData.hasRecalls && fdaRecallData.recalls.map((r, i) => (
-                                                    <div key={i} style={{ marginTop: '0.5rem', fontSize: '0.76rem', color: '#DC2626', lineHeight: 1.4 }}>
-                                                        <strong>{r.date}</strong> — {r.reason || r.description}
+                                                {found && fdaRecallData.recalls.map((r, i) => (
+                                                    <div key={r.recallNumber || i} style={{ marginTop: '0.5rem', fontSize: '0.76rem', color: '#DC2626', lineHeight: 1.4 }}>
+                                                        <strong>{r.date || 'Date not reported'}</strong>
+                                                        {r.status ? ` · ${r.status}` : ''} — {r.reason || r.description}
                                                     </div>
                                                 ))}
+                                                {fdaRecallData.hasHistoricalRecalls && (
+                                                    <details style={{ marginTop: '0.6rem', fontSize: '0.74rem', color: 'var(--color-text-muted)' }}>
+                                                        <summary style={{ cursor: 'pointer' }}>
+                                                            {fdaRecallData.historicalRecalls.length} closed recall{fdaRecallData.historicalRecalls.length === 1 ? '' : 's'} on file (resolved, older than 2 years)
+                                                        </summary>
+                                                        {fdaRecallData.historicalRecalls.map((r, i) => (
+                                                            <div key={r.recallNumber || i} style={{ marginTop: '0.35rem', lineHeight: 1.4 }}>
+                                                                <strong>{r.date || 'Date not reported'}</strong>
+                                                                {r.status ? ` · ${r.status}` : ''} — {r.reason || r.description}
+                                                            </div>
+                                                        ))}
+                                                    </details>
+                                                )}
                                                 <a href="https://www.accessdata.fda.gov/scripts/enforcement/enforce_rpt-Product-Tabs.cfm" target="_blank" rel="noopener noreferrer"
                                                     style={{ fontSize: '0.72rem', color: 'var(--color-primary)', display: 'inline-block', marginTop: '0.35rem' }}>
                                                     Check full FDA enforcement database →
                                                 </a>
                                             </div>
-                                        )}
+                                            );
+                                        })()}
                                         {hasRecallConcern(product) && (
                                             <div style={{ paddingTop: '0.75rem', borderTop: '1px solid var(--color-border)', fontSize: '0.88rem', lineHeight: 1.55 }}>
                                                 <p style={{ margin: '0 0 0.5rem', fontWeight: '600', color: 'var(--color-text-main)' }}>FDA MedWatch</p>

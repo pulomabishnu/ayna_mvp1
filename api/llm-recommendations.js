@@ -1,6 +1,15 @@
 /* global process */
 import { retrieveKnowledgeForIntake, buildKnowledgeContext } from '../src/utils/ragRetrieval.js';
-import { verifyUser, checkUsage, incrementUsage } from './_usageLimit.js';
+import { verifyUser, claimEcosystemBuild, releaseEcosystemBuild } from './_usageLimit.js';
+import { callWithFallback, parseProviderOrder, tryParseJsonCandidate } from './_llm.js';
+import { isPremiumUser, hasLegacyClientPremiumFlag } from './_entitlement.js';
+
+// Hard ceilings on client-supplied work. Without these, one request with 500
+// primaryConcerns and batchSize 500 issued 500 sequential LLM calls.
+const MAX_CONCERNS = 12;
+const MAX_BATCH_SIZE = 6;
+/** Leave room to serialize and return before the platform kills the function. */
+const FUNCTION_BUDGET_MS = 50_000;
 
 function anyApiKeyConfigured() {
   return !!(process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY);
@@ -42,10 +51,15 @@ function selectedConcerns(intake = {}) {
   const blocked = new Set(['general discomfort', 'other']);
   const concerns = new Set();
 
-  // 1. Explicitly selected by user
-  const explicit = Array.isArray(intake.primaryConcerns) ? intake.primaryConcerns : (intake.primaryConcern ? [intake.primaryConcern] : []);
+  // 1. Explicitly selected by user (plus anything she typed herself —
+  // customConcerns was collected by HealthProfileEditor and then never read,
+  // so user-authored concerns produced no recommendations at all).
+  const explicit = [
+    ...(Array.isArray(intake.primaryConcerns) ? intake.primaryConcerns : (intake.primaryConcern ? [intake.primaryConcern] : [])),
+    ...(Array.isArray(intake.customConcerns) ? intake.customConcerns : []),
+  ];
   for (const c of explicit) {
-    const v = String(c || '').trim();
+    const v = String(c || '').trim().slice(0, 120);
     if (v && !blocked.has(v.toLowerCase())) concerns.add(v);
   }
 
@@ -151,13 +165,19 @@ function isBlockedRecommendationProduct(p) {
   return /tranexamic|tranexemic|\blysteda\b/.test(text);
 }
 
-function enrichProduct(p, idSuffix = '') {
+function enrichProduct(p, idSuffix = '', namespace = '') {
   if (!p || typeof p !== 'object' || !String(p.name || '').trim()) return null;
   if (isBlockedRecommendationProduct(p)) return null;
+  // ALWAYS namespace. The per-concern prompt hands the model literal placeholder
+  // ids ("slug", "slug2", "a1"..."a6") and every concern gets the same template,
+  // so raw model ids collide across concerns. Downstream those ids are object
+  // keys (App.jsx handleBuildEcosystemFromLlm), so a collision silently deletes
+  // an ecosystem card.
+  const ns = namespace ? `${namespace}-` : '';
   const id =
     p.id && String(p.id).trim()
-      ? String(p.id).trim().slice(0, 120)
-      : `gen-${String(p.name)
+      ? `${ns}${String(p.id).trim().slice(0, 80)}${idSuffix}`
+      : `gen-${ns}${String(p.name)
           .toLowerCase()
           .replace(/[^a-z0-9]+/g, '-')
           .replace(/^-|-$/g, '')
@@ -171,7 +191,12 @@ function enrichProduct(p, idSuffix = '') {
     image: typeof p.image === 'string' && p.image.trim() ? p.image.trim() : '',
     tags: Array.isArray(p.tags) ? p.tags.map((x) => String(x)).slice(0, 12) : [],
     safety: {
-      recalls: p.safety?.recalls != null ? String(p.safety.recalls) : '',
+      // Force-blanked. The model has no recall data and cannot verify one; any
+      // string here renders as a safety assertion (a green "✓ No recalls" pill)
+      // about a product that may not even exist. The live check is
+      // /api/fda-recall, which the product modal calls separately.
+      recalls: '',
+      _modelRecallClaimIgnored: p.safety?.recalls != null ? String(p.safety.recalls).slice(0, 120) : '',
       materials: p.safety?.materials != null ? String(p.safety.materials) : '',
       sideEffects: p.safety?.sideEffects != null ? String(p.safety.sideEffects) : '',
       opinionAlerts: p.safety?.opinionAlerts != null ? String(p.safety.opinionAlerts) : '',
@@ -188,16 +213,18 @@ function enrichProduct(p, idSuffix = '') {
   };
 }
 
-function enrichRecommendations(recs) {
+function enrichRecommendations(recs, requestedConcern = '') {
   const list = Array.isArray(recs) ? recs : [];
+  const nsBase = String(requestedConcern || '')
+    .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 32);
   return list
     .map((entry) => {
       const normalizedTiers = (Array.isArray(entry?.tiers) ? entry.tiers : [])
         .map((tier, tierIdx) => {
-          const tierProduct = enrichProduct(tier?.product || tier?.topProduct, `-tier${tierIdx}`);
+          const tierProduct = enrichProduct(tier?.product || tier?.topProduct, `-tier${tierIdx}`, nsBase);
           if (!tierProduct) return null;
           const tierAlternatives = (Array.isArray(tier?.alternatives) ? tier.alternatives : [])
-            .map((alt, altIdx) => enrichProduct(alt, `-tier${tierIdx}-alt${altIdx}`))
+            .map((alt, altIdx) => enrichProduct(alt, `-tier${tierIdx}-alt${altIdx}`, nsBase))
             .filter(Boolean)
             .filter((alt) => alt.id !== tierProduct.id)
             .slice(0, 3);
@@ -215,9 +242,9 @@ function enrichRecommendations(recs) {
         })
         .filter(Boolean);
 
-      const fallbackTop = enrichProduct(entry?.topProduct);
+      const fallbackTop = enrichProduct(entry?.topProduct, '', nsBase);
       const fallbackAlts = (Array.isArray(entry?.alternatives) ? entry.alternatives : [])
-        .map((alt, i) => enrichProduct(alt, `-alt${i}`))
+        .map((alt, i) => enrichProduct(alt, `-alt${i}`, nsBase))
         .filter(Boolean)
         .slice(0, 3);
 
@@ -238,7 +265,7 @@ function enrichRecommendations(recs) {
       if (!topProduct) return null;
       const alternatives = tiers[0]?.alternatives || fallbackAlts;
       return {
-        concern: String(entry?.concern || '').trim() || 'Recommendations',
+        concern: requestedConcern || String(entry?.concern || '').trim() || 'Recommendations',
         topProduct,
         alternatives,
         notes: Array.isArray(entry?.notes) ? entry.notes.slice(0, 5).map((x) => String(x)) : [],
@@ -276,200 +303,6 @@ async function lookupDsldProduct(name) {
   }
 }
 
-function buildPrompt(intake = {}, feedback = {}) {
-  const concerns = selectedConcerns(intake);
-  const concernFollowups = intake?.concernFollowups && typeof intake.concernFollowups === 'object' ? intake.concernFollowups : {};
-  const knowledgeChunks = retrieveKnowledgeForIntake(intake, 8);
-  const knowledgeContext = buildKnowledgeContext(knowledgeChunks);
-
-  return `
-You are Ayna's clinical recommendation engine. Ayna is a women's health platform that operates at the intersection of clinical accuracy and consumer accessibility.
-
-YOUR ROLE:
-You are acting as a knowledgeable women's health clinical advisor. Reason the way a skilled OB/GYN or women's health specialist would during an intake assessment — reading the full clinical picture, identifying the most likely mechanisms, knowing what's within OTC scope and what warrants professional evaluation. Ayna is not a licensed clinician and cannot diagnose or prescribe. But your recommendations must be as accurate, evidence-based, and personalized as a specialist's guidance.
-
-You CAN: make clinical inferences from symptom patterns and history, recommend OTC supplements and products grounded in clinical evidence, recommend appropriate telehealth specialists, explain clinical mechanisms, flag when a symptom pattern warrants professional evaluation before an OTC approach.
-
-You CANNOT: diagnose, prescribe medications, or guarantee outcomes.
-
-CLINICAL INTAKE — treat this like a specialist's first appointment:
-- Age: ${intake?.age || 'unknown'}
-- Location: ${intake?.location || 'unknown'}
-- Insurance: ${intake?.insurancePlan || 'not provided'}
-- Primary concerns: ${concerns.join(', ') || 'none provided'}
-- Additional concerns: ${(Array.isArray(intake?.customConcerns) ? intake.customConcerns : []).join(', ') || 'none'}
-- Diagnosed conditions: ${(Array.isArray(intake?.conditions) ? intake.conditions : []).join(', ') || 'none'}
-- Family history: ${(Array.isArray(intake?.familyHistory) ? intake.familyHistory : []).join(', ') || 'not provided'}
-- Symptom duration: ${intake?.symptomDuration || 'not provided'}
-- Last OB/GYN visit: ${intake?.lastObgynVisit || 'not provided'}
-- Current medications & supplements: ${intake?.currentMedications || 'none listed'}
-- Menstrual cycle status: ${intake?.menstrualCycle || 'unknown'}
-- Flow level: ${intake?.flowLevel || 'unknown'}
-- Pain level: ${intake?.painLevel ? `${intake.painLevel}/10` : 'unknown'}
-- Symptoms: ${(Array.isArray(intake?.symptoms) ? intake.symptoms : []).join(', ') || 'none'}
-- Trying to conceive: ${intake?.tryingToConceive || 'unknown'}
-- Hormonal birth control: ${intake?.hormonalBirthControl || 'unknown'}${intake?.hormonalBirthControlType ? ` (${intake.hormonalBirthControlType})` : ''}
-- Product preferences (hard filters): ${(Array.isArray(intake?.productPreferences) ? intake.productPreferences : []).join(', ') || 'none'}
-- Tried and disliked: ${intake?.dislikedProductsText || 'none'} — reason: ${intake?.dislikedReason || 'none'}
-- Goals: ${(Array.isArray(intake?.goals) ? intake.goals : []).join(', ') || 'none'}
-- Wearable / health app data: ${intake?.wearableSummary?.text || intake?.healthDataText || 'none provided'}
-- Concern-specific details: ${JSON.stringify(concernFollowups)}
-
-CLINICAL REASONING — do this before generating recommendations:
-1. What does the clinical picture suggest? Read the full intake the way a specialist would — symptoms + conditions + family history + duration together, not each in isolation.
-2. What are the most likely underlying mechanisms driving her concerns?
-3. Does she have enough diagnostic information for an OTC approach to be appropriate, or does she need labs/evaluation first? (e.g., PCOS without knowing insulin status, unexplained heavy flow, severe pain — these may warrant telehealth as the primary recommendation)
-4. What OTC interventions have solid clinical evidence for her specific presentation, not just for her condition label?
-5. What drug interactions or contraindications apply given her current medications?
-6. Is there a specialist she should see? Which type?
-
-LEARNING SIGNALS:
-- Products she has saved: ${(feedback?.trackedProductIds || []).join(', ') || 'none'}
-- Products already in her ecosystem: ${(feedback?.ecosystemProductIds || []).join(', ') || 'none'}
-- Products she has hidden: ${(feedback?.omittedProductIds || []).join(', ') || 'none'}
-- Times she has used Ayna: ${feedback?.learningMemory?.interactionCount || 0}
-- Last concerns she viewed: ${(feedback?.learningMemory?.lastConcerns || []).join(', ') || 'none'}
-
-${knowledgeContext ? `${knowledgeContext}\n\n` : ''}PRODUCT SELECTION PROCESS — follow this for every concern:
-1. Read the clinical knowledge base above carefully — it contains ACOG guidance, NIH ODS evidence, and safety information specific to this user's conditions
-2. Identify what the clinical knowledge says about this concern for this specific user's profile
-3. Draw on your full knowledge of ALL brands that make products in that category — large mainstream, small indie, DTC, clinical brands
-4. Rank candidates by: (a) alignment with clinical guidance above, (b) ingredient safety for her specific conditions, (c) relevance to her profile, (d) availability in the US market
-5. Recommend the single best match — grounded in the clinical knowledge provided, not just general AI memory
-
-CLINICAL REASONING FRAMEWORK — apply your medical training, not hardcoded rules:
-
-SCOPE LIMITS — Ayna is a health educator and product platform, not a clinician:
-- Never recommend prescription medications by name. If a condition may warrant prescription treatment, recommend a telehealth service that can evaluate and prescribe. Say: "a telehealth provider who specializes in [condition] can assess whether medication is right for you."
-- OTC supplements, devices, apps, and telehealth services are all within scope.
-
-WHEN TO LEAD WITH TELEHEALTH:
-- When a supplement's appropriateness depends on labs or diagnostics the user hasn't mentioned having (e.g., PCOS without A1c or insulin sensitivity data), lead with the telehealth track. Note what testing would clarify which product approach fits this person. For example: "Inositol is most beneficial for insulin-resistant PCOS — a telehealth provider can run labs to confirm whether this fits you" rather than recommending inositol blindly.
-- When a condition presents with unexplained or severe symptoms, recommend clinical evaluation first.
-- High pain (8+/10): always include telehealth as a primary recommendation — that level of pain warrants clinical evaluation, not just products.
-
-INGREDIENT & SAFETY SCREENING — use clinical judgment, not a list:
-- Apply your full clinical knowledge to screen products for each user's specific conditions. Flag problematic ingredients proactively based on what you know about the condition, not a hardcoded rule.
-- For any condition with known endocrine or ingredient sensitivities, apply that knowledge and explain WHY it matters for this user's specific profile.
-- For fertility/TTC: apply your knowledge of what is contraindicated pre-conception or during pregnancy.
-- For ALL supplements: include the key active ingredients and any relevant evidence level in whyItWorks.
-- For ALL period care products: note if the product is organic/unbleached/fragrance-free when her profile indicates this matters.
-
-TASK:
-Generate recommendations for her TOP 5 concerns by clinical priority. If she listed more than 5, choose the 5 that most benefit from OTC or telehealth intervention given her profile. Return exactly 5 recommendation objects (or fewer if she has fewer than 5 concerns). Do not stop early.
-
-For each concern, generate at least 2 solution tracks (aim for 3 when clinically relevant):
-- supplement / wellness
-- physical device or product
-- digital or telehealth
-
-Each solution track must include:
-- one top product
-- exactly 2 alternatives (not 3 — keep output concise)
-
-For each concern, always consider:
-- PCOS symptoms → Inositol (myo-inositol + d-chiro-inositol), spearmint, magnesium, Allara Health telehealth, Flo app, cycle tracking apps
-- Irregular cycles → cycle tracking apps (Natural Cycles, Clue, Flo), inositol supplements, Oova hormone testing, Allara Health
-- Hormonal bloating → magnesium glycinate, probiotics (women's formula), bloat-specific supplements (Love Wellness, Pink Stork), anti-inflammatory diet support apps
-- Leaks & staining → organic cotton pads/tampons, period underwear (Thinx, Knix), menstrual cups/discs for reliability; if organic/fragrance-free preference noted, prioritize those
-- Fragrance sensitivity → flag any product with fragrance; always recommend fragrance-free alternatives first
-
-Prioritize tracks that are genuinely useful for that specific concern and profile. If a track is not clinically relevant for a specific concern, note why briefly and include 2 tracks minimum.
-
-PRODUCT DISCOVERY RULES:
-- Draw on your FULL knowledge of the women's health product landscape — do not self-limit to the 10-20 most well-known brands
-- Include DTC brands, indie brands, clinical-grade brands, subscription brands, small-batch brands — any brand that genuinely exists, serves this concern, AND is currently available for purchase in the US
-- Do NOT recommend brands or products from companies that have not yet launched US products — those are shown separately in the Ayna Startups section
-- For physical products, always recommend a specific named product (e.g. "Thinx Hiphugger Period Underwear"), never just a company name. Exception: telehealth platforms and apps, where the service itself is the product
-- If live search results are provided, use them as discovery signals — apply quality judgment before recommending any brand found there
-- QUALITY BAR — every recommended product must meet all three: (a) majority positive reviews from real women, (b) at least some clinical or scientific support for the mechanism or key ingredient, (c) established brand with no active major safety concerns. Do not recommend an obscure brand that lacks this evidence base
-- Never fabricate a brand name — if you are not confident a brand genuinely exists and is US-available, do not include it
-- If unsure about a specific SKU, use the main product line name (e.g. "Rael Organic Cotton Pads" not a specific SKU)
-- URL must be the direct product page where the user can buy this specific product (e.g. https://www.thorne.com/products/dp/inositol-8-oz, not https://www.thorne.com). If you cannot recall the exact product page URL, use the brand's shop or products section (e.g. https://www.thorne.com/products). Never use the brand homepage alone — the URL must get the user as close as possible to buying that specific product.
-- Leave image as empty string — do not generate image URLs
-
-PERSONALIZATION RULES:
-- Never recommend a specific product or brand she listed as disliked
-- The reason a product is recommended (whyItWorks) must relate ONLY to the concern it addresses — never mention her disliked products from a different category as a reason. For example: do not say a PCOS telehealth service was chosen because she disliked Always pads. That is irrelevant and confusing.
-- Her ingredient/material preferences are HARD FILTERS, not suggestions: if she prefers fragrance-free, every physical product must be fragrance-free. If she prefers organic, period care products must be certified organic. Never recommend a product that violates her stated preferences.
-- INSURANCE & PRICING RULES — always show realistic out-of-pocket cost, not list price:
-  * If insuranceType is employer_ppo or employer_hmo: telehealth visits are often $0–$30 copay. Show "~$0–$30 copay (verify with your plan)" not the full list price.
-  * If insuranceType is medicaid: most telehealth is $0–$3 copay or fully covered. Show "$0 (Medicaid covered)" for in-network telehealth.
-  * If insuranceType is marketplace_aca: coverage varies; show list price with note "may be covered after deductible — verify with your plan."
-  * If insuranceType is uninsured: show full list price and flag any sliding-scale or DTC-priced options.
-  * If fsaHsa is fsa, hsa, or both: supplements, eligible devices, and some period products can be purchased with pre-tax FSA/HSA dollars. Note "FSA/HSA eligible — effective cost ~20–30% lower" on the price for eligible products.
-  * FSA/HSA eligible categories: magnesium and other supplements with a Letter of Medical Necessity, menstrual products, heating pads, pelvic floor devices, ovulation tests. Apps and telehealth are generally NOT FSA/HSA eligible unless specifically noted.
-  * Always recommend telehealth services that commonly accept her insurance type. If unsure of coverage, say "verify coverage with your plan before booking."
-- Never recommend products she has hidden
-- Never recommend tranexamic acid products (including Lysteda)
-- If she has endometriosis: always flag synthetic fragrances, dioxins, chlorine bleaching, BPA
-- If she has PCOS: prioritize hormone-balancing products; flag endocrine disruptors
-- If she is trying to conceive: flag supplements contraindicated in pregnancy
-- If pain level is 8 or higher: always include a telehealth recommendation
-- Only generate concerns she actually has — match concern labels exactly to what she selected
-- Never say "treats" or "cures" — say "may help with"
-- Every whyItWorks must do TWO things: (1) briefly explain HOW this product works mechanically or clinically for this type of concern (the mechanism), and (2) reference at least one specific detail from her profile (the personal fit). Example: "Pelvic wands apply targeted pressure to myofascial trigger points that cause referred period pain — given your reported 8/10 pain level, muscle tension is likely a significant contributor to your cramps." Keep to 2-3 sentences. Never just say "this fits your X concern" without explaining the mechanism.
-- Never recommend products with active FDA recalls
-- Use learning signals to avoid repeating products she has already seen
-
-Return ONLY a valid JSON object. No markdown, no explanation, just JSON:
-
-{
-  "recommendations": [
-    {
-      "concern": "exact concern label from her primary concerns",
-      "tiers": [
-        {
-          "id": "tier-supplement",
-          "name": "Supplement option",
-          "subcategory": "supplement",
-          "matchExplanation": "1-2 sentences on why this solution type fits this user profile for this concern",
-          "safetyFlags": ["only include if this specific product actually contains a flagged ingredient — do NOT flag fragrance-free, organic, or clean-label products with fragrance/paraben warnings"],
-          "product": {
-            "id": "brand-productname-slug",
-            "name": "Exact real product name",
-            "brand": "Brand name",
-            "category": "category",
-            "type": "physical or digital",
-            "summary": "1-2 sentences describing what this product is",
-            "whyItWorks": "2 sentences: mechanism + her profile fit",
-            "considerations": "1 sentence on safety or ingredient notes. Empty string if none.",
-            "price": "$XX",
-            "image": "",
-            "tags": ["tag1", "tag2"],
-            "safety": {
-              "recalls": "No known recalls",
-              "materials": "",
-              "sideEffects": "",
-              "opinionAlerts": ""
-            },
-            "clinicianOpinionSource": "",
-            "clinicianAttribution": "",
-            "url": "https://brand.com/specific-product-page"
-          },
-          "alternatives": [
-            {
-              "id": "brand-productname-slug-alt1",
-              "name": "Alternative product name",
-              "brand": "Brand",
-              "summary": "1-2 sentence description",
-              "whyItWorks": "1 sentence on why this is a good alternative",
-              "price": "$XX",
-              "type": "physical or digital",
-              "image": "",
-              "url": "https://brand.com/specific-product-page",
-              "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" }
-            }
-          ]
-        }
-      ],
-      "notes": []
-    }
-  ]
-}
-`.trim();
-}
-
 // ─── Live product web search via Serper ──────────────────────────────────────
 
 async function searchProductsForConcerns(concerns, intake) {
@@ -482,12 +315,13 @@ async function searchProductsForConcerns(concerns, intake) {
   const conditions = Array.isArray(intake?.conditions)
     ? intake.conditions.filter((c) => c !== 'none' && c !== 'other').slice(0, 2).join(' ')
     : '';
-  const location = intake?.location ? intake.location : 'US';
 
   const results = {};
 
   await Promise.all(
-    concerns.slice(0, 5).map(async (concern) => {
+    // Was slice(0, 5): concerns past the fifth in a batch silently got no
+    // search grounding, producing a materially different prompt with no signal.
+    concerns.map(async (concern) => {
       const cleanConcern = concern.replace(/\(.*?\)/g, '').trim();
       const query = [
         `best ${cleanConcern} product women`,
@@ -524,140 +358,6 @@ async function searchProductsForConcerns(concerns, intake) {
   return Object.keys(results).length ? results : null;
 }
 
-function formatSearchContext(searchResults) {
-  if (!searchResults) return '';
-  const lines = [
-    '',
-    'LIVE PRODUCT SEARCH RESULTS (real-time — use these to discover products and brands beyond your training data):',
-  ];
-  for (const [concern, hits] of Object.entries(searchResults)) {
-    lines.push(`\n${concern}:`);
-    hits.forEach((h, i) => {
-      lines.push(`  ${i + 1}. ${h.title}`);
-      if (h.snippet) lines.push(`     ${h.snippet}`);
-      if (h.url) lines.push(`     Source: ${h.url}`);
-    });
-  }
-  lines.push('');
-  lines.push('Use these results to DISCOVER brands and products you may not have in training data — but still apply quality judgment before recommending.');
-  lines.push('Only include a brand from search results if you have enough knowledge to confirm it meets the quality bar: real company, majority positive women\'s reviews, clinical or scientific backing for the mechanism.');
-  lines.push('A brand appearing in search results is a signal to investigate, not an automatic endorsement.');
-  return lines.join('\n');
-}
-
-async function callOpenAI(prompt) {
-  if (!process.env.OPENAI_API_KEY) return null;
-  const model = process.env.OPENAI_MODEL || 'gpt-4o-mini';
-  const res = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model,
-      temperature: 0.2,
-      max_tokens: 5000,
-      response_format: { type: 'json_object' },
-      messages: [
-        { role: 'system', content: 'Output valid JSON only.' },
-        { role: 'user', content: prompt },
-      ],
-    }),
-  });
-  if (!res.ok) return null;
-  const data = await res.json();
-  return data?.choices?.[0]?.message?.content || null;
-}
-
-async function callAnthropic(prompt) {
-  if (!process.env.ANTHROPIC_API_KEY) return null;
-  const model = process.env.ANTHROPIC_MODEL || 'claude-haiku-4-5-20251001';
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'x-api-key': process.env.ANTHROPIC_API_KEY,
-      'anthropic-version': '2023-06-01',
-      'content-type': 'application/json',
-    },
-    body: JSON.stringify({
-      model,
-      max_tokens: 5000,
-      temperature: 0.2,
-      system: 'Return a single valid JSON object only. No markdown code fences.',
-      messages: [{ role: 'user', content: prompt }],
-    }),
-  });
-  if (!res.ok) return null;
-  const data = await res.json();
-  return data?.content?.[0]?.text || null;
-}
-
-function getProviderOrder() {
-  return (process.env.AI_RECOMMENDATIONS_PROVIDER_ORDER || 'anthropic,openai')
-    .split(',')
-    .map((x) => x.trim().toLowerCase())
-    .filter(Boolean);
-}
-
-async function callProvider(provider, prompt) {
-  if (provider === 'openai') return callOpenAI(prompt);
-  if (provider === 'anthropic' || provider === 'claude') return callAnthropic(prompt);
-  return null;
-}
-
-function extractBalancedJsonObject(input) {
-  const s = String(input || '');
-  const start = s.indexOf('{');
-  if (start === -1) return '';
-  let depth = 0;
-  let inString = false;
-  let escaping = false;
-  for (let i = start; i < s.length; i += 1) {
-    const ch = s[i];
-    if (inString) {
-      if (escaping) escaping = false;
-      else if (ch === '\\') escaping = true;
-      else if (ch === '"') inString = false;
-      continue;
-    }
-    if (ch === '"') {
-      inString = true;
-      continue;
-    }
-    if (ch === '{') depth += 1;
-    else if (ch === '}') {
-      depth -= 1;
-      if (depth === 0) return s.slice(start, i + 1);
-    }
-  }
-  return '';
-}
-
-function tryParseJsonCandidate(raw) {
-  const text = String(raw || '')
-    .replace(/^\uFEFF/, '')
-    .replace(/```json\s*/gi, '')
-    .replace(/```\s*/gi, '')
-    .trim();
-  if (!text) return null;
-  const balanced = extractBalancedJsonObject(text);
-  const candidates = [text, balanced].filter(Boolean);
-  for (const candidate of candidates) {
-    try {
-      return JSON.parse(candidate);
-    } catch {
-      try {
-        const fixed = candidate.replace(/,\s*([}\]])/g, '$1');
-        return JSON.parse(fixed);
-      } catch {
-        // continue
-      }
-    }
-  }
-  return null;
-}
-
 // ─── Concurrency limiter ──────────────────────────────────────────────────────
 async function mapConcurrent(items, fn, limit = 4) {
   const results = new Array(items.length).fill(null);
@@ -665,7 +365,12 @@ async function mapConcurrent(items, fn, limit = 4) {
   async function worker() {
     while (nextIdx < items.length) {
       const i = nextIdx++;
-      try { results[i] = await fn(items[i], i); } catch { results[i] = null; }
+      try {
+        results[i] = await fn(items[i], i);
+      } catch (e) {
+        console.error('[llm-recs] task failed:', e?.message);
+        results[i] = null;
+      }
     }
   }
   await Promise.all(Array.from({ length: Math.min(limit, items.length) }, worker));
@@ -686,6 +391,16 @@ function formatSearchContextForConcern(concern, hits) {
 }
 
 // ─── Single-concern prompt ────────────────────────────────────────────────────
+/** Client-supplied id lists: bounded and stripped of prompt-control characters. */
+function capIdList(list, max = 40) {
+  if (!Array.isArray(list) || list.length === 0) return 'none';
+  return list
+    .slice(0, max)
+    .map((x) => String(x).replace(/[\r\n`]/g, ' ').trim().slice(0, 80))
+    .filter(Boolean)
+    .join(', ') || 'none';
+}
+
 function buildPromptForOneConcern(concern, intake = {}, feedback = {}, searchHits = null) {
   const concernFollowup = intake?.concernFollowups?.[concern];
   const knowledgeChunks = retrieveKnowledgeForIntake({ ...intake, primaryConcerns: [concern] }, 4);
@@ -720,8 +435,8 @@ PATIENT PROFILE:
 - Tried and disliked: ${intake?.dislikedProductsText || 'none'} — reason: ${intake?.dislikedReason || 'none'}
 - Goals: ${(Array.isArray(intake?.goals) ? intake.goals : []).join(', ') || 'none'}
 - Wearable data: ${intake?.wearableSummary?.text || intake?.healthDataText || 'none'}
-- Ecosystem (already has): ${(feedback?.ecosystemProductIds || []).join(', ') || 'none'}
-- Hidden products: ${(feedback?.omittedProductIds || []).join(', ') || 'none'}
+- Ecosystem (already has): ${capIdList(feedback?.ecosystemProductIds)}
+- Hidden products: ${capIdList(feedback?.omittedProductIds)}
 ${knowledgeContext ? `\nCLINICAL KNOWLEDGE:\n${knowledgeContext}` : ''}${searchHits ? '\n' + formatSearchContextForConcern(concern, searchHits) : ''}
 
 SCOPE: Never name prescription medications. If a concern requires diagnosis or labs, lead with telehealth. Pain 8+/10: always include telehealth.${saferProductsInstruction}
@@ -772,10 +487,10 @@ Return ONLY valid JSON — exactly this shape:
           "subcategory": "supplement",
           "matchExplanation": "1 sentence",
           "safetyFlags": [],
-          "product": { "id": "slug", "name": "Name", "brand": "Brand", "category": "supplement", "type": "physical", "summary": "1-2 sentences", "whyItWorks": "2 sentences: mechanism + personal fit", "considerations": "", "price": "$XX", "image": "", "url": "https://brand.com", "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" }, "clinicianOpinionSource": "", "clinicianAttribution": "" },
+          "product": { "id": "slug", "name": "Name", "brand": "Brand", "category": "supplement", "type": "physical", "summary": "1-2 sentences", "whyItWorks": "2 sentences: mechanism + personal fit", "considerations": "", "price": "$XX", "image": "", "url": "https://brand.com", "safety": { "recalls": "", "materials": "", "sideEffects": "", "opinionAlerts": "" }, "clinicianOpinionSource": "", "clinicianAttribution": "" },
           "alternatives": [
-            { "id": "a1", "name": "Alt 1", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "$XX", "type": "physical", "image": "", "url": "https://brand.com", "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" } },
-            { "id": "a2", "name": "Alt 2", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "$XX", "type": "physical", "image": "", "url": "https://brand.com", "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" } }
+            { "id": "a1", "name": "Alt 1", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "$XX", "type": "physical", "image": "", "url": "https://brand.com", "safety": { "recalls": "", "materials": "", "sideEffects": "", "opinionAlerts": "" } },
+            { "id": "a2", "name": "Alt 2", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "$XX", "type": "physical", "image": "", "url": "https://brand.com", "safety": { "recalls": "", "materials": "", "sideEffects": "", "opinionAlerts": "" } }
           ]
         },
         {
@@ -784,10 +499,10 @@ Return ONLY valid JSON — exactly this shape:
           "subcategory": "physical product",
           "matchExplanation": "1 sentence",
           "safetyFlags": [],
-          "product": { "id": "slug2", "name": "Name", "brand": "Brand", "category": "device", "type": "physical", "summary": "1-2 sentences", "whyItWorks": "2 sentences: mechanism + personal fit", "considerations": "", "price": "$XX", "image": "", "url": "https://brand.com", "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" }, "clinicianOpinionSource": "", "clinicianAttribution": "" },
+          "product": { "id": "slug2", "name": "Name", "brand": "Brand", "category": "device", "type": "physical", "summary": "1-2 sentences", "whyItWorks": "2 sentences: mechanism + personal fit", "considerations": "", "price": "$XX", "image": "", "url": "https://brand.com", "safety": { "recalls": "", "materials": "", "sideEffects": "", "opinionAlerts": "" }, "clinicianOpinionSource": "", "clinicianAttribution": "" },
           "alternatives": [
-            { "id": "a3", "name": "Alt 3", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "$XX", "type": "physical", "image": "", "url": "https://brand.com", "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" } },
-            { "id": "a4", "name": "Alt 4", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "$XX", "type": "physical", "image": "", "url": "https://brand.com", "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" } }
+            { "id": "a3", "name": "Alt 3", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "$XX", "type": "physical", "image": "", "url": "https://brand.com", "safety": { "recalls": "", "materials": "", "sideEffects": "", "opinionAlerts": "" } },
+            { "id": "a4", "name": "Alt 4", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "$XX", "type": "physical", "image": "", "url": "https://brand.com", "safety": { "recalls": "", "materials": "", "sideEffects": "", "opinionAlerts": "" } }
           ]
         },
         {
@@ -796,10 +511,10 @@ Return ONLY valid JSON — exactly this shape:
           "subcategory": "telehealth",
           "matchExplanation": "1 sentence",
           "safetyFlags": [],
-          "product": { "id": "slug3", "name": "Name", "brand": "Brand", "category": "telehealth", "type": "digital", "summary": "1-2 sentences", "whyItWorks": "2 sentences: mechanism + personal fit", "considerations": "", "price": "Free or $XX/mo", "image": "", "url": "https://brand.com", "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" }, "clinicianOpinionSource": "", "clinicianAttribution": "" },
+          "product": { "id": "slug3", "name": "Name", "brand": "Brand", "category": "telehealth", "type": "digital", "summary": "1-2 sentences", "whyItWorks": "2 sentences: mechanism + personal fit", "considerations": "", "price": "Free or $XX/mo", "image": "", "url": "https://brand.com", "safety": { "recalls": "", "materials": "", "sideEffects": "", "opinionAlerts": "" }, "clinicianOpinionSource": "", "clinicianAttribution": "" },
           "alternatives": [
-            { "id": "a5", "name": "Alt 5", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "Free or $XX/mo", "type": "digital", "image": "", "url": "https://brand.com", "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" } },
-            { "id": "a6", "name": "Alt 6", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "Free or $XX/mo", "type": "digital", "image": "", "url": "https://brand.com", "safety": { "recalls": "No known recalls", "materials": "", "sideEffects": "", "opinionAlerts": "" } }
+            { "id": "a5", "name": "Alt 5", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "Free or $XX/mo", "type": "digital", "image": "", "url": "https://brand.com", "safety": { "recalls": "", "materials": "", "sideEffects": "", "opinionAlerts": "" } },
+            { "id": "a6", "name": "Alt 6", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "Free or $XX/mo", "type": "digital", "image": "", "url": "https://brand.com", "safety": { "recalls": "", "materials": "", "sideEffects": "", "opinionAlerts": "" } }
           ]
         }
       ],
@@ -855,22 +570,41 @@ async function handleRequest(req, res) {
   // privacy-safe equivalents before anything is sent to an LLM or search API.
   const intake = sanitizeIntake(rawIntake);
 
-  const allConcerns = selectedConcerns(intake);
-  // Slice to the requested batch if batchIndex + batchSize provided
-  const batchIndex = Number.isInteger(body?.batchIndex) ? body.batchIndex : 0;
-  const batchSize  = Number.isInteger(body?.batchSize)  && body.batchSize > 0 ? body.batchSize : null;
+  // Cap everything the client controls. batchIndex/batchSize were previously
+  // unbounded, so `batchSize: 500` issued 500 sequential LLM calls.
+  const allConcerns = selectedConcerns(intake).slice(0, MAX_CONCERNS);
+  const rawBatchIndex = Number.isInteger(body?.batchIndex) ? body.batchIndex : 0;
+  const batchIndex = Math.max(0, Math.min(rawBatchIndex, 50));
+  const batchSize = Number.isInteger(body?.batchSize) && body.batchSize > 0
+    ? Math.min(body.batchSize, MAX_BATCH_SIZE)
+    : null;
   const concerns = batchSize !== null
     ? allConcerns.slice(batchIndex * batchSize, (batchIndex + 1) * batchSize)
     : allConcerns;
 
-  // Auth + ecosystem quota (only gate on first batch to allow multi-batch generation)
   const { user, error: authError, admin } = await verifyUser(req);
   if (!user) return res.status(401).json({ error: authError });
-  const isPremium = user.user_metadata?.is_premium === true;
-  if (!isPremium && batchIndex === 0) {
-    const { over, used, limit, period } = await checkUsage(admin, user.id, 'ecosystem');
-    if (over) return res.status(429).json({ error: 'ecosystem_limit_reached', used, limit, action: 'ecosystem' });
-    await incrementUsage(admin, user.id, 'ecosystem', period);
+  const isPremium = isPremiumUser(user);
+  if (hasLegacyClientPremiumFlag(user)) {
+    console.warn(`[llm-recs] user ${user.id} has the legacy client-writable is_premium flag; migrate it to app_metadata`);
+  }
+
+  // ── Ecosystem quota ───────────────────────────────────────────────────────
+  // Claimed per BUILD, not per request. A build spans several batch requests,
+  // so the old `batchIndex === 0` gate both (a) let any client skip the quota by
+  // sending batchIndex >= 1 and (b) charged before any work succeeded, which
+  // permanently burned the user's single lifetime build on a timeout. The claim
+  // is idempotent for a given buildId and is released below if nothing usable
+  // came back, so a failed build is retryable.
+  const buildId = String(body?.buildId || '').trim().slice(0, 200);
+  let claimed = false;
+  if (!isPremium) {
+    if (!buildId) return res.status(400).json({ error: 'missing_build_id' });
+    const { allowed, used, limit } = await claimEcosystemBuild(admin, user.id, buildId);
+    if (!allowed) {
+      return res.status(429).json({ error: 'ecosystem_limit_reached', used, limit, action: 'ecosystem' });
+    }
+    claimed = true;
   }
 
   if (!concerns.length) {
@@ -878,77 +612,145 @@ async function handleRequest(req, res) {
   }
 
   const searchResults = await searchProductsForConcerns(concerns, intake);
-  const order = getProviderOrder();
+  const order = parseProviderOrder('AI_RECOMMENDATIONS_PROVIDER_ORDER', 'anthropic,openai');
+
+  // Stop starting new concerns once the function budget is nearly spent, so we
+  // return the concerns we DID complete instead of being killed mid-flight and
+  // losing all of them.
+  const startedAt = Date.now();
+  const deadline = AbortSignal.timeout(FUNCTION_BUDGET_MS);
+  const budgetExhausted = () => Date.now() - startedAt > FUNCTION_BUDGET_MS - 6000;
 
   const perConcernResults = await mapConcurrent(
     concerns,
-    async (concern) => {
+    async (concern, idx) => {
+      if (budgetExhausted()) {
+        console.warn(`[llm-recs] skipping concern ${idx + 1}/${concerns.length} — function budget exhausted`);
+        return null;
+      }
       const searchHits = searchResults?.[concern] || null;
       const prompt = buildPromptForOneConcern(concern, intake, feedback, searchHits);
-      for (const provider of order) {
-        const raw = await callProvider(provider, prompt);
-        if (!raw) continue;
-        const parsed = tryParseJsonCandidate(raw);
-        console.log('[llm-recs] concern resolved | idx:', concerns.indexOf(concern) + 1, '/', concerns.length, '| provider:', provider, '| bytes:', String(raw || '').length, '| parsed:', !!parsed);
-        if (parsed) return { parsed, provider };
+      try {
+        const out = await callWithFallback(order, {
+          system: 'Return a single valid JSON object only. No markdown code fences.',
+          prompt,
+          // The OpenAI fallback must keep response_format: json_object — it is
+          // what forces parseable output from that provider.
+          jsonMode: true,
+          // Raised from 5000: the schema requires 9 product objects per concern,
+          // and truncation silently dropped the whole concern.
+          maxTokens: 8000,
+          timeoutMs: 28_000,
+          signal: deadline,
+        });
+        if (out.truncated) {
+          console.warn(`[llm-recs] concern ${idx + 1} hit max_tokens — output truncated`);
+        }
+        const parsed = tryParseJsonCandidate(out.text);
+        console.log(`[llm-recs] concern ${idx + 1}/${concerns.length} | provider: ${out.provider} | bytes: ${out.text.length} | parsed: ${!!parsed}`);
+        if (parsed) return { parsed, provider: out.provider, concern };
+        return null;
+      } catch (e) {
+        console.error(`[llm-recs] concern ${idx + 1}/${concerns.length} failed:`, e?.status || '', e?.message);
+        return null;
       }
-      console.warn('[llm-recs] no parseable response | concern idx:', concerns.indexOf(concern) + 1, '/', concerns.length);
-      return null;
     },
-    1  // sequential (concurrency=1) — Anthropic TPM limit is ~50K/min; parallel calls exhaust
-       // it after ~6 concerns and silently fail the rest. Sequential keeps TPM well under limit.
+    // Concurrency was pinned to 1 with a note blaming Anthropic's ~50K TPM
+    // limit. Each call is roughly 3K in + up to 8K out, so 3 in flight is ~33K
+    // TPM — comfortably under. The real cause of the tail failures was that
+    // 429s were swallowed as "no result" with no retry; _llm.js now backs off
+    // on Retry-After instead, which is what makes concurrency safe.
+    Math.max(1, Math.min(parseInt(process.env.LLM_CONCERN_CONCURRENCY || '3', 10) || 3, 6))
   );
 
   const providerUsed = perConcernResults.find((r) => r?.provider)?.provider || '';
-  const allEntries = perConcernResults
-    .filter(Boolean)
-    .flatMap((r) => (Array.isArray(r.parsed?.recommendations) ? r.parsed.recommendations : []));
+  const succeeded = perConcernResults.filter(Boolean);
+  const failedConcerns = concerns.filter((c, i) => !perConcernResults[i]);
 
-  if (!allEntries.length) {
-    return res.status(200).json({
+  // Enrich PER CONCERN so each entry is stamped with the concern it was actually
+  // requested for. Previously flatMap discarded that mapping and the code trusted
+  // whatever label the model echoed back — a shortened label broke the client's
+  // exact-match sort and mis-bucketed the section.
+  const recs = succeeded.flatMap((r) => {
+    const entries = Array.isArray(r.parsed?.recommendations) ? r.parsed.recommendations : [];
+    // Keep only the first entry per concern; a model returning two produced
+    // duplicate sections.
+    return enrichRecommendations(entries.slice(0, 1), r.concern);
+  });
+
+  if (!recs.length) {
+    // Nothing usable — hand the build back so the user can retry. Without this
+    // a failed generation permanently consumed their one lifetime build.
+    if (claimed) await releaseEcosystemBuild(admin, user.id, buildId);
+    return res.status(502).json({
       recommendations: [],
       providerUsed: providerUsed || null,
       generatedAt: new Date().toISOString(),
+      error: 'generation_failed',
       warning: 'parse_error_fallback',
-      message: 'No parseable recommendations returned.',
+      requested: concerns.length,
+      delivered: 0,
+      failedConcerns,
+      message: 'No recommendations could be generated. Please try again.',
     });
   }
 
-  const recs = enrichRecommendations(allEntries);
+  // DSLD verification is applied to the TIER products, which is what the UI
+  // actually renders. It previously only rewrote `entry.topProduct` — a separate
+  // object reference that MyEcosystem never reads (it renders `tier.product`) —
+  // so every NIH round trip was pure latency and the verified brand, label URL
+  // and ingredient list were all discarded.
+  const applyDsld = (product, dsld) => ({
+    ...product,
+    brand: dsld.brand || product.brand,
+    image: dsld.imageUrl || product.image || '',
+    url: dsld.labelUrl || product.url,
+    dsldVerified: true,
+    dsldId: dsld.dsldId,
+    summary:
+      dsld.ingredients.length > 0
+        ? `${product.summary} Key ingredients: ${dsld.ingredients.slice(0, 4).join(', ')}.`
+        : product.summary,
+    safety: {
+      ...product.safety,
+      materials: dsld.ingredients.slice(0, 5).join(', ') || product.safety?.materials || '',
+      // NOT a recall clearance — DSLD is a label database. /api/fda-recall is
+      // the only thing allowed to make a recall statement.
+      recalls: '',
+    },
+  });
+
+  const isSupplement = (p) =>
+    p && p.type !== 'digital' && /(supplement|vitamin|mineral|probiotic)/i.test(p.category || '');
 
   const verifiedRecs = await Promise.all(
     recs.map(async (entry) => {
-      const product = entry.topProduct;
-      if (!product || product.type === 'digital') return entry;
-      if (!/(supplement|vitamin|mineral|probiotic)/i.test(product.category || '')) return entry;
-      const dsld = await lookupDsldProduct(product.name);
-      if (!dsld) return entry;
-      return {
-        ...entry,
-        topProduct: {
-          ...product,
-          brand: dsld.brand || product.brand,
-          image: dsld.imageUrl || product.image || '',
-          url: dsld.labelUrl || product.url,
-          dsldVerified: true,
-          dsldId: dsld.dsldId,
-          summary:
-            dsld.ingredients.length > 0
-              ? `${product.summary} Key ingredients: ${dsld.ingredients.slice(0, 4).join(', ')}.`
-              : product.summary,
-          safety: {
-            ...product.safety,
-            materials: dsld.ingredients.slice(0, 5).join(', ') || product.safety?.materials || '',
-            recalls: product.safety?.recalls || 'No active FDA recalls on file',
-          },
-        },
-      };
+      // Verify every supplement tier, not just the first.
+      const tiers = Array.isArray(entry.tiers) ? entry.tiers : [];
+      const newTiers = await Promise.all(
+        tiers.map(async (tier) => {
+          if (!isSupplement(tier?.product)) return tier;
+          const dsld = await lookupDsldProduct(tier.product.name);
+          if (!dsld) return tier;
+          return { ...tier, product: applyDsld(tier.product, dsld) };
+        })
+      );
+      const next = { ...entry, tiers: newTiers };
+      // Keep topProduct in sync with tier 0 for the legacy consumers.
+      if (newTiers[0]?.product) next.topProduct = newTiers[0].product;
+      return next;
     })
   );
 
   return res.status(200).json({
     recommendations: verifiedRecs,
     concernsTotal: allConcerns.length,
+    requested: concerns.length,
+    delivered: recs.length,
+    // Non-empty when some concerns failed. The client renders a partial-result
+    // notice instead of silently showing fewer sections than were asked for.
+    failedConcerns,
+    partial: failedConcerns.length > 0,
     providerUsed,
     generatedAt: new Date().toISOString(),
   });

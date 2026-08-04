@@ -33,6 +33,22 @@ export function loadAynaReviews() {
 }
 
 /**
+ * Replace local storage with the server's copy after a Supabase load.
+ *
+ * addRating/addReview mutate whatever is in localStorage and then the caller
+ * upserts that whole object as the user's row. Without this hydration step, a
+ * second device starts from an EMPTY local blob: the UI shows the 8 reviews
+ * loaded from Supabase, but rating a 9th product writes a single-element array
+ * over the server row and destroys the other 8 — including the free-text
+ * review bodies.
+ */
+export function hydrateAynaReviews(serverReviews) {
+  if (!serverReviews || typeof serverReviews !== 'object') return loadFromStorage();
+  saveToStorage(serverReviews);
+  return serverReviews;
+}
+
+/**
  * Add a rating for a product. Returns the updated full reviews object.
  * @param {string} productId
  * @param {number} rating 1–5
