@@ -22,6 +22,11 @@ vi.mock('@supabase/supabase-js', () => ({
   createClient: () => globalThis.__mockSupabase,
 }));
 
+const fetchOfficialSiteTextMock = vi.fn(async () => null);
+vi.mock('./_officialSiteFetch.js', () => ({
+  fetchOfficialSiteText: (...args) => fetchOfficialSiteTextMock(...args),
+}));
+
 async function loadHandler() {
   vi.resetModules();
   return (await import('./product-chat.js')).default;
@@ -52,6 +57,7 @@ beforeEach(() => {
 afterEach(() => {
   restoreEnv();
   globalThis.fetch = realFetch;
+  fetchOfficialSiteTextMock.mockReset().mockResolvedValue(null);
   vi.restoreAllMocks();
 });
 
@@ -212,5 +218,75 @@ describe('POST /api/product-chat — input handling', () => {
     expect(res.statusCode).toBe(200);
     const prompt = sentBody.messages[0].content;
     expect(prompt).not.toContain('benign\n\nRULES:');
+  });
+});
+
+describe('POST /api/product-chat — official-site grounding', () => {
+  it('fetches the official site when product.url looks like a real http(s) URL', async () => {
+    fetchOfficialSiteTextMock.mockResolvedValue('This cup holds 25mL and is safe for overnight use.');
+    let sentBody = null;
+    globalThis.fetch = vi.fn(async (_url, init) => {
+      sentBody = JSON.parse(init.body);
+      return anthropicOk('An answer.');
+    });
+    const res = mockRes();
+    await (await loadHandler())(mockReq({
+      body: { ...validBody, product: { ...validBody.product, url: 'https://real-brand.example.com/product' } },
+    }), res);
+
+    expect(res.statusCode).toBe(200);
+    expect(fetchOfficialSiteTextMock).toHaveBeenCalledWith('https://real-brand.example.com/product');
+    const prompt = sentBody.messages[0].content;
+    expect(prompt).toContain('This cup holds 25mL and is safe for overnight use.');
+    expect(prompt).toContain('OFFICIAL SITE CONTENT');
+  });
+
+  it('never calls fetchOfficialSiteText when product.url is missing', async () => {
+    globalThis.fetch = vi.fn(async () => anthropicOk('An answer.'));
+    const res = mockRes();
+    await (await loadHandler())(mockReq({ body: validBody }), res);
+
+    expect(res.statusCode).toBe(200);
+    expect(fetchOfficialSiteTextMock).not.toHaveBeenCalled();
+  });
+
+  it('never calls fetchOfficialSiteText when product.url is not a real http(s) string', async () => {
+    globalThis.fetch = vi.fn(async () => anthropicOk('An answer.'));
+    const res = mockRes();
+    await (await loadHandler())(mockReq({
+      body: { ...validBody, product: { ...validBody.product, url: 'javascript:alert(1)' } },
+    }), res);
+
+    expect(res.statusCode).toBe(200);
+    expect(fetchOfficialSiteTextMock).not.toHaveBeenCalled();
+  });
+
+  it('tells the model no verified source exists when the site fetch returns nothing', async () => {
+    fetchOfficialSiteTextMock.mockResolvedValue(null);
+    let sentBody = null;
+    globalThis.fetch = vi.fn(async (_url, init) => {
+      sentBody = JSON.parse(init.body);
+      return anthropicOk('An answer.');
+    });
+    const res = mockRes();
+    await (await loadHandler())(mockReq({
+      body: { ...validBody, product: { ...validBody.product, url: 'https://real-brand.example.com/product' } },
+    }), res);
+
+    const prompt = sentBody.messages[0].content;
+    expect(prompt).toContain('NO OFFICIAL SITE CONTENT AVAILABLE');
+  });
+
+  it('instructs the model not to rely on general knowledge for the in-view product', async () => {
+    let sentBody = null;
+    globalThis.fetch = vi.fn(async (_url, init) => {
+      sentBody = JSON.parse(init.body);
+      return anthropicOk('An answer.');
+    });
+    const res = mockRes();
+    await (await loadHandler())(mockReq({ body: validBody }), res);
+
+    const prompt = sentBody.messages[0].content;
+    expect(prompt).toMatch(/never your own general\/training knowledge/i);
   });
 });
