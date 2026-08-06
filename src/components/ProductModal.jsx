@@ -167,6 +167,7 @@ function productHasScienceSignals(product, aiInsights) {
   if ((product.effectiveness || '').trim().length >= 40) return true;
   if (countHttpsLinksInSection(product.verificationLinks?.scientific) > 0) return true;
   if ((aiInsights?.literatureLinks || []).length > 0) return true;
+  if ((product.verificationLinks?.scientific?.aiSummary || '').trim().length > 0) return true;
   return false;
 }
 
@@ -174,6 +175,7 @@ function productHasCommunitySignals(product, aiInsights) {
   if ((product.communityReview || '').trim().length > 0) return true;
   if ((aiInsights?.communityLinks || []).length > 0) return true;
   if (countHttpsLinksInSection(product.verificationLinks?.community) > 0) return true;
+  if ((product.verificationLinks?.community?.aiSummary || '').trim().length > 0) return true;
   return false;
 }
 
@@ -192,6 +194,23 @@ function scienceEvidenceIsLimited(product) {
 function nonEmptyInsight(s) {
   const t = (s || '').trim();
   return t.length > 0 ? t : null;
+}
+
+/**
+ * True when `candidate` says something not already covered by `existingTexts` —
+ * checked via a shared prefix, same heuristic already used for the community
+ * quote/aiSummary redundancy check below. Used to decide whether a curated
+ * verificationLinks.<type>.aiSummary (deliberately hidden from the Sources
+ * section to avoid repeating it there — see renderVerificationLinks) should
+ * still surface in the insight box instead of being dropped entirely.
+ */
+function addsNewInfo(candidate, existingTexts) {
+  const c = (candidate || '').trim();
+  if (!c) return false;
+  return !existingTexts.some((t) => {
+    const e = (t || '').trim();
+    return e && c.includes(e.slice(0, Math.min(50, e.length)));
+  });
 }
 
 const purpleInsightBoxStyle = {
@@ -281,6 +300,7 @@ function getBridgeToCareGuidance(product) {
 function buildClinicalInsight(product, aiInsights, quizResults, healthProfile, profileTailoring) {
   const narrative = (aiInsights?.clinicalNarrative || '').trim();
   const doctor = (product.doctorOpinion || '').trim();
+  const curatedSummary = (product.verificationLinks?.doctor?.aiSummary || '').trim();
   const matchLabels = getProfileMatchLabelsForProduct(product, quizResults, healthProfile);
   const bridgeCare = getBridgeToCareGuidance(product);
   const bullets = [];
@@ -293,6 +313,9 @@ function buildClinicalInsight(product, aiInsights, quizResults, healthProfile, p
     bullets.push(`**Clinician signal:** ${narrative}`);
   } else if (doctor) {
     bullets.push(`**Clinician signal:** ${doctor}`);
+  }
+  if (curatedSummary && addsNewInfo(curatedSummary, [narrative, doctor])) {
+    bullets.push(`**Additional clinical context:** ${curatedSummary}`);
   }
   if (product.clinicianOpinionSource === 'brand' && (narrative || doctor)) {
     bullets.push('**Validity:** Some citations may be brand-leaning, so treat this as directional and confirm with independent clinical sources.');
@@ -310,7 +333,8 @@ function buildScienceInsight(product, aiInsights, quizResults, healthProfile) {
   const aiLit = (aiInsights?.literatureLinks || []).length;
   const aiSci = (aiInsights?.scienceSummary || '').trim();
   const eff = (product.effectiveness || '').trim();
-  const hasScienceBody = curated > 0 || aiLit > 0 || !!aiSci || !!eff;
+  const curatedSummary = (product.verificationLinks?.scientific?.aiSummary || '').trim();
+  const hasScienceBody = curated > 0 || aiLit > 0 || !!aiSci || !!eff || !!curatedSummary;
   const limited = scienceEvidenceIsLimited(product);
   const matchLabels = getProfileMatchLabelsForProduct(product, quizResults, healthProfile);
   const bullets = [];
@@ -319,6 +343,9 @@ function buildScienceInsight(product, aiInsights, quizResults, healthProfile) {
   }
   if (aiSci) bullets.push(`**Key finding:** ${aiSci}`);
   else if (eff) bullets.push(`**Key finding:** ${eff}`);
+  if (curatedSummary && addsNewInfo(curatedSummary, [aiSci, eff])) {
+    bullets.push(`**Additional context:** ${curatedSummary}`);
+  }
   if (hasScienceBody) {
     bullets.push(
       limited
@@ -344,6 +371,7 @@ function buildSocialInsight(product, aiInsights, quizResults, healthProfile) {
     ai &&
     ai.includes(quotePart.slice(0, Math.min(50, quotePart.length)))
   );
+  const curatedSummary = (product.verificationLinks?.community?.aiSummary || '').trim();
   const matchLabels = getProfileMatchLabelsForProduct(product, quizResults, healthProfile);
   const bullets = [];
   if (matchLabels.length > 0) {
@@ -351,7 +379,10 @@ function buildSocialInsight(product, aiInsights, quizResults, healthProfile) {
   }
   if (ai) bullets.push(`**What people report:** ${ai}`);
   if (quotePart && !quoteRedundant) bullets.push(`**Example report:** ${quotePart}`);
-  if (ai || quotePart) {
+  if (curatedSummary && addsNewInfo(curatedSummary, [ai, quotePart])) {
+    bullets.push(`**Additional context:** ${curatedSummary}`);
+  }
+  if (ai || quotePart || curatedSummary) {
     bullets.push('**Validity:** Community feedback is anecdotal and can be biased by incentives, extremes, and selection effects—treat as supportive context, not proof.');
   }
   return toInsightObject(bullets);

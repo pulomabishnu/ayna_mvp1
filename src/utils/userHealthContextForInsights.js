@@ -28,6 +28,7 @@ export function buildUserHealthContextString(quizResults, healthProfile) {
       currentSupplements,
       contraceptionUse,
       contraceptionPreference,
+      internalComfort,
     } = quizResults;
     if (Array.isArray(frustrations) && frustrations.length) {
       lines.push(
@@ -76,6 +77,19 @@ export function buildUserHealthContextString(quizResults, healthProfile) {
           .slice(0, 8)
           .map((t) => truncateItem(t, 60))
           .join('; ')}`
+      );
+    }
+    // Applies to any internal product (tampons, cups, discs, etc.), not just one
+    // category — a plain "No"/"Open to trying" answer carries very different
+    // guidance than silence, so this is only added when the user actually
+    // answered the quiz question.
+    if (internalComfort === 'No') {
+      lines.push(
+        'Internal-product comfort: Not comfortable with internal products (tampons, cups, discs, etc.). Do not push or default to recommending these; only discuss them if she explicitly asks, and note external alternatives when relevant.'
+      );
+    } else if (internalComfort === 'Open to trying') {
+      lines.push(
+        'Internal-product comfort: Nervous but open to trying internal products (tampons, cups, discs, etc.). When discussing these, be extra concrete and reassuring — address insertion/removal technique, what normal first-time discomfort feels like versus a real problem, sizing, and hygiene/safety — rather than only listing features.'
       );
     }
   }
