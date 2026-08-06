@@ -57,13 +57,6 @@ export async function checkProductInsightsRateLimit(req) {
   const max = parsePositiveInt(process.env.AI_INSIGHTS_RATE_LIMIT_MAX, DEFAULT_MAX);
   const windowSec = parseWindowToSec(process.env.AI_INSIGHTS_RATE_LIMIT_WINDOW || DEFAULT_WINDOW_STR);
 
-  // TEMPORARY: failClosed is false here, not true. UPSTASH_REDIS_REST_URL/
-  // _TOKEN are not actually configured in this project's Vercel env (verified
-  // via `vercel env ls` — no Upstash vars present in Production or Preview),
-  // so failClosed: true took these two routes down in production entirely
-  // (confirmed live: /api/search-suggestions returned 429 to a fresh,
-  // unauthenticated request). Revert to failClosed: true once real Upstash
-  // credentials are added — see the incident note in DEPLOY.md.
-  const result = await rateLimit(`ai-insights:ip:${ip}`, { max, windowSec, failClosed: false });
+  const result = await rateLimit(`ai-insights:ip:${ip}`, { max, windowSec, failClosed: true });
   return { ok: result.ok, retryAfterSec: result.retryAfterSec, limiter: result.limiter };
 }
