@@ -232,7 +232,7 @@ describe('POST /api/search-suggestions — request validation', () => {
     expect(res.body.error).toBe('query_too_short');
   });
 
-  it('clamps maxResults into [1, 20]', async () => {
+  it('clamps maxResults into [1, 25]', async () => {
     globalThis.fetch = vi.fn(async () => claudeOk());
     const handler = await loadHandler();
     const res = mockRes();
@@ -240,7 +240,7 @@ describe('POST /api/search-suggestions — request validation', () => {
     await handler(searchReq({ query: 'cramp relief', maxResults: 500 }), res);
 
     const promptSent = JSON.parse(globalThis.fetch.mock.calls[0][1].body).messages[0].content;
-    expect(promptSent).toContain('top 20 options');
+    expect(promptSent).toContain('top 25 options');
   });
 });
 

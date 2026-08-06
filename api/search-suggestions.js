@@ -179,23 +179,23 @@ function buildPrompt(query, categoryHint, symptomHint, personalized, profileSumm
 User search: "${query.replace(/"/g, '\\"')}"
 ${cat}${sym ? '\n' + sym : ''}${profileLine ? '\n' + profileLine : ''}${dislikedLine ? '\n' + dislikedLine : ''}
 
-Return ONE JSON object ONLY (no markdown) with up to 20 suggestions in this shape:
+Return ONE JSON object ONLY (no markdown) with up to ${maxResults} suggestions in this shape. Keep every field as brief as the guidance below allows — concise output is faster to generate and lets more suggestions fit in the response:
 {
-  "querySummary": "2-4 sentences: tie the user's words to the kinds of products below; name categories (e.g. pads, telehealth); where relevant, note that options in this category are consistent with guidance from ACOG, NIH, or FDA — for example 'Options like these are commonly discussed in ACOG guidance on menstrual health' or 'The NIH Office of Dietary Supplements has reviewed evidence for supplements in this category'. Never fabricate specific citation numbers or direct quotes. Always remind users to verify fit with a clinician when medical.",
-  "relatedSearches": ["4-6 short search phrases the user might want to explore next, based on what they searched — e.g. if they searched 'iron supplements', suggest 'period cramp relief', 'PCOS and iron deficiency', 'telehealth for heavy periods', etc. Each phrase should be a natural search query a person would type, not a category label."],
+  "querySummary": "1-2 sentences: tie the user's words to the kinds of products below; name categories (e.g. pads, telehealth); where genuinely relevant, note briefly that options in this category are consistent with guidance from ACOG, NIH, or FDA. Never fabricate specific citation numbers or direct quotes. Remind users to verify fit with a clinician when medical.",
+  "relatedSearches": ["3-4 short search phrases the user might want to explore next, based on what they searched — e.g. if they searched 'iron supplements', suggest 'period cramp relief', 'PCOS and iron deficiency', 'telehealth for heavy periods', etc. Each phrase should be a natural search query a person would type, not a category label."],
   "suggestions": [
     {
       "brand": "Brand name",
       "name": "Product line or SKU name (include brand in name OR set brand separately)",
       "category": "slug from allowed list",
       "type": "physical" | "digital",
-      "summary": "2-3 sentences: what it is, who it is for, how it helps — neutral, not medical advice",
+      "summary": "1-2 sentences: what it is, who it is for, how it helps — neutral, not medical advice",
       "priceHint": "e.g. ~$12-18 or Subscription ~$15/mo — approximate, no links",
-      "tags": ["up to 6 short tags: heavy-flow", "organic", "app", ...],
+      "tags": ["up to 4 short tags: heavy-flow", "organic", "app", ...],
       "whereToBuy": ["Amazon","Target","CVS","Walmart","Brand website","App Store","Google Play"] — retailer NAMES only, no URLs,
       "typicalUserRating": 4.2,
       "safetyNote": "one short line: e.g. consult clinician for prescriptions, patch tests for topicals",
-      "searchTerms": ["2-4 web search phrases that include brand + product kind for Google"]
+      "searchTerms": ["1-2 web search phrases that include brand + product kind for Google"]
     }
   ]
 }
@@ -357,7 +357,10 @@ export default async function handler(req, res) {
   const personalized = !!body?.personalized;
   const profileSummary = sanitizeStr(body?.profileSummary || '', 400);
   const dislikedProducts = sanitizeStr(body?.dislikedProducts || '', 300);
-  const maxResults = typeof body?.maxResults === 'number' ? Math.min(Math.max(body.maxResults, 1), 20) : 20;
+  // Raised from 20: trimming the per-suggestion schema below (shorter
+  // summaries, fewer tags/search terms) freed up token budget for more
+  // results without increasing typical generation time.
+  const maxResults = typeof body?.maxResults === 'number' ? Math.min(Math.max(body.maxResults, 1), 25) : 25;
 
   const rawJson = await callClaudeJson(buildPrompt(query, categoryHint, symptomHint, personalized, profileSummary, maxResults, dislikedProducts));
   if (!rawJson) {
