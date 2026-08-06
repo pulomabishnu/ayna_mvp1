@@ -801,12 +801,27 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
             {/* Loading state for explicit search */}
             {searchSubmitted && aiLoading && (
-                <div style={{ textAlign: 'center', padding: '2.5rem 1rem', color: 'var(--color-text-muted)' }}>
-                    <p style={{ fontSize: '1.05rem', fontWeight: 600, color: 'var(--color-text-main)', marginBottom: '0.4rem' }}>
-                        Finding the best products for &ldquo;{searchQuery}&rdquo;
-                    </p>
-                    <p style={{ fontSize: '0.9rem' }}>Searching our catalog and generating matches…</p>
-                </div>
+                <>
+                    <div style={{ textAlign: 'center', padding: '1.5rem 1rem 1rem', color: 'var(--color-text-muted)' }}>
+                        <p style={{ fontSize: '1.05rem', fontWeight: 600, color: 'var(--color-text-main)', marginBottom: '0.4rem' }}>
+                            Finding the best products for &ldquo;{searchQuery}&rdquo;
+                        </p>
+                        <p style={{ fontSize: '0.9rem' }}>Searching our catalog and generating matches…</p>
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', justifyContent: 'center' }}>
+                        {Array.from({ length: 8 }, (_, i) => (
+                            <div key={i} className="card" style={{ padding: 0, overflow: 'hidden', width: '252px', border: '1px solid var(--color-border)' }} aria-hidden="true">
+                                <div className="skeleton-shimmer" style={{ height: '118px', width: '100%' }} />
+                                <div style={{ padding: '0.9rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                    <div className="skeleton-shimmer" style={{ height: '0.7rem', width: '40%', borderRadius: '4px' }} />
+                                    <div className="skeleton-shimmer" style={{ height: '1rem', width: '85%', borderRadius: '4px' }} />
+                                    <div className="skeleton-shimmer" style={{ height: '0.8rem', width: '100%', borderRadius: '4px' }} />
+                                    <div className="skeleton-shimmer" style={{ height: '0.8rem', width: '70%', borderRadius: '4px' }} />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </>
             )}
 
             {/* Product Grid */}
@@ -820,6 +835,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     const perUnitPrice = getPricePerUnitLabel(item);
 
                     const cardImageSrc = resolvedImages[item.id] || item.image;
+                    // Distinguishes "still fetching an image" from "resolved, none
+                    // found" — both previously showed the identical AYNA fallback
+                    // block, so a card that was actively loading looked permanently
+                    // image-less rather than in progress.
+                    const imageStillLoading = resolvedImages[item.id] === undefined && isPlaceholderProductImage(item.image);
                     return (
                         <div key={item.id} className="card hover-lift" style={{
                             padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column',
@@ -844,6 +864,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                             <span style={{ fontSize: '0.75rem', color: 'var(--color-primary)', opacity: 0.9 }}>Your women's health assistant</span>
                                         </div>
                                     </>
+                                ) : imageStillLoading ? (
+                                    <div className="skeleton-shimmer" style={{ position: 'absolute', inset: 0 }} aria-hidden="true" />
                                 ) : (
                                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.25rem', padding: '1rem' }}>
                                         <span style={{ fontSize: '1.75rem', fontWeight: '900', color: 'var(--color-primary)', letterSpacing: '0.02em' }}>AYNA</span>
