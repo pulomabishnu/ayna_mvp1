@@ -10,7 +10,7 @@ import { EXTENDED_PHYSICAL_2, EXTENDED_DIGITAL_2 } from './productsExtended2.js'
 import { FILLER_PHYSICAL, FILLER_DIGITAL } from './categoryFillers.js';
 import { MVP_PHYSICAL, MVP_DIGITAL } from './mvpProducts.js';
 import { MENSTRUAL_PHYSICAL } from './menstrualProducts.js';
-import { PARTNER_BRAND_PRODUCTS } from './partnerBrands.js';
+import { BRAND_PRODUCTS } from './brands.js';
 import { inferTagsFromHealthProfile } from '../utils/healthDataProfile.js';
 
 // Tags used for quiz → product matching
@@ -755,7 +755,7 @@ export const ALL_PRODUCTS = [
     ...FILLER_PHYSICAL,
     ...FILLER_DIGITAL,
     ...MENSTRUAL_PHYSICAL,
-    ...PARTNER_BRAND_PRODUCTS
+    ...BRAND_PRODUCTS
 ];
 
 /**

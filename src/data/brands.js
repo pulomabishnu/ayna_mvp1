@@ -1,14 +1,15 @@
 // ============================================================
-// Ayna Product Database — Partner Brands
-// Smaller/newer brand partners, added so their products surface
-// reliably in Discovery search regardless of whether the AI-suggestion
-// fallback recognizes the brand name (see naturalLanguageSearch.js).
+// Ayna Product Database — Brand Catalog Entries
+// Smaller/newer brands, added so their products surface reliably in
+// Discovery search regardless of whether the AI-suggestion fallback
+// recognizes the brand name (see naturalLanguageSearch.js). These are
+// NOT partnership relationships — just catalog entries for real brands.
 // VERIFICATION: every entry below was confirmed against the brand's own
 // live site before being added — see api/_officialSiteFetch.js, which
 // grounds the Ask Ayna chat in these same official-site url fields.
 // ============================================================
 
-export const PARTNER_BRAND_PRODUCTS = [
+export const BRAND_PRODUCTS = [
     {
         id: 'p-winx-uti-test-treat',
         name: 'Winx Health UTI Test + Treat',
@@ -34,7 +35,7 @@ export const PARTNER_BRAND_PRODUCTS = [
         doctorOpinion: 'Winx Health describes its UTI Test + Treat as "OBGYN approved," with Winx Rx able to deliver prescription treatment results in about 4 hours.',
         effectiveness: 'Combines an at-home rapid test with telehealth access to prescription treatment; the underlying test was recognized as a TIME Best Invention.',
         integrations: [],
-        badges: ['Partner Brand'],
+        badges: [],
     },
     {
         id: 'p-neycher-vaginal-moisturizer',
@@ -61,7 +62,7 @@ export const PARTNER_BRAND_PRODUCTS = [
         doctorOpinion: 'Neycher states its formulas are developed with input from "scientists, doctors, and researchers" and are "OB/GYN and real people-approved," per the brand\'s own site.',
         effectiveness: 'Positioned as a non-hormonal alternative to antibiotic, antifungal, or hormone treatments for vaginal dryness and irritation; no independent clinical study of the product was found.',
         integrations: [],
-        badges: ['Partner Brand'],
+        badges: [],
     },
     {
         id: 'p-good-kitty-uti-biome-shield',
@@ -88,7 +89,7 @@ export const PARTNER_BRAND_PRODUCTS = [
         doctorOpinion: 'Good Kitty Co describes UTI Biome Shield as "doctor-formulated" with a "patent-pending," "clinically dosed" combination of D-mannose and soluble PACs, developed with urogynecologist Dr. Sharon Knight.',
         effectiveness: 'Uses UTI-prevention ingredients (D-mannose, cranberry PACs) at stated doses that are individually well-studied; no independent clinical trial of the finished product itself was found.',
         integrations: [],
-        badges: ['Partner Brand'],
+        badges: [],
     },
     {
         id: 'p-oboo-woosh-warming-wand',
@@ -115,6 +116,6 @@ export const PARTNER_BRAND_PRODUCTS = [
         communityReview: 'Named a 2026 Oprah Daily Menopause O-Ward Winner; featured in Wellness Magazine, Oprah Daily, The Pause Life, and Flow Space.',
         effectiveness: 'Positioned to address menopause-related changes in arousal and vaginal dryness; no independent clinical study of the product was found.',
         integrations: [],
-        badges: ['Partner Brand'],
+        badges: [],
     },
 ];
