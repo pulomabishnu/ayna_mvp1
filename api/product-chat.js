@@ -5,7 +5,7 @@
  */
 /* global process */
 import { verifyUser, consumeUsage, refundUsage } from './_usageLimit.js';
-import { isPremiumUser } from './_entitlement.js';
+import { isPremiumUser, hasLegacyClientPremiumFlag } from './_entitlement.js';
 import { callWithFallback, parseProviderOrder } from './_llm.js';
 
 /**
@@ -123,6 +123,9 @@ export default async function handler(req, res) {
   if (!user) return res.status(401).json({ error });
 
   const isPremium = isPremiumUser(user);
+  if (hasLegacyClientPremiumFlag(user)) {
+    console.warn(`[product-chat] user ${user.id} has the legacy client-writable is_premium flag; migrate it to app_metadata`);
+  }
 
   let body;
   try {

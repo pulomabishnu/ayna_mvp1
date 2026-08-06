@@ -7,7 +7,7 @@
 import { deriveBrandSearchContext } from '../src/utils/productBrandContext.js';
 import { retrieveKnowledgeForProduct, buildKnowledgeContext } from '../src/utils/ragRetrieval.js';
 import { verifyUser, consumeUsage, refundUsage } from './_usageLimit.js';
-import { isPremiumUser } from './_entitlement.js';
+import { isPremiumUser, hasLegacyClientPremiumFlag } from './_entitlement.js';
 import { checkProductInsightsRateLimit } from './_rateLimitProductInsights.js';
 
 const MAX_NARRATIVE_LEN = 2200;
@@ -495,20 +495,9 @@ export default async function handler(req, res) {
   }
 
   const isPremium = isPremiumUser(user);
-  // Reserve before spending, refund on failure — see the note in product-chat.js.
-  // The old shape (check -> generate -> increment only on success) let a client
-  // force the failure branch with request-body content (e.g. a product.summary
-  // that makes the model break the JSON schema, so normalizeParsed returns null)
-  // and drive unlimited *billed* generations that never touched the counter.
-  let insightsPeriod = null;
-  if (!isPremium) {
-    const { allowed, used, limit, period, degraded } = await consumeUsage(admin, user.id, 'insights');
-    if (!allowed) return res.status(429).json({ error: 'weekly_limit_reached', used, limit, action: 'insights' });
-    insightsPeriod = degraded ? null : period;
+  if (hasLegacyClientPremiumFlag(user)) {
+    console.warn(`[product-insights] user ${user.id} has the legacy client-writable is_premium flag; migrate it to app_metadata`);
   }
-  const refundInsights = async () => {
-    if (insightsPeriod) await refundUsage(admin, user.id, 'insights', insightsPeriod);
-  };
 
   if (!anyApiKeyConfigured()) {
     console.warn(
@@ -564,6 +553,26 @@ export default async function handler(req, res) {
   if (tryProviders.length === 0) {
     tryProviders = fallback.filter((p) => canUseProvider(p));
   }
+
+  // Reserve before spending, refund on failure — see the note in product-chat.js.
+  // The old shape (check -> generate -> increment only on success) let a client
+  // force the failure branch with request-body content (e.g. a product.summary
+  // that makes the model break the JSON schema, so normalizeParsed returns null)
+  // and drive unlimited *billed* generations that never touched the counter.
+  //
+  // This reservation must come AFTER every synchronous validation above (body
+  // JSON, product/name presence, provider-key configuration) — those can all
+  // fail before any billable call is even attempted, and used to consume a
+  // user's quota anyway with no refund path.
+  let insightsPeriod = null;
+  if (!isPremium) {
+    const { allowed, used, limit, period, degraded } = await consumeUsage(admin, user.id, 'insights');
+    if (!allowed) return res.status(429).json({ error: 'weekly_limit_reached', used, limit, action: 'insights' });
+    insightsPeriod = degraded ? null : period;
+  }
+  const refundInsights = async () => {
+    if (insightsPeriod) await refundUsage(admin, user.id, 'insights', insightsPeriod);
+  };
 
   let lastError = null;
   for (const p of tryProviders) {

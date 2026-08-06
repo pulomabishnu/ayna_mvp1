@@ -137,12 +137,17 @@ describe('POST /api/product-chat — quota accounting', () => {
     });
     const fetchMock = vi.fn();
     globalThis.fetch = fetchMock;
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     const res = mockRes();
     await (await loadHandler())(mockReq({ body: validBody }), res);
 
     expect(res.statusCode).toBe(429);
     expect(fetchMock).not.toHaveBeenCalled();
+    // Logged so a genuinely-paying user granted the old way can be migrated
+    // to app_metadata rather than silently downgraded — see _entitlement.js.
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('legacy client-writable is_premium flag'));
+    warnSpy.mockRestore();
   });
 });
 
