@@ -172,6 +172,13 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [dsldProducts, setDsldProducts] = useState([]);
     const [dsldLoading, setDsldLoading] = useState(false);
     const [resolvedImages, setResolvedImages] = useState({});
+    // Pagination: rendering every matching product as a full DOM card at once
+    // (previously up to the whole ~159+ product catalog, unconditionally) was
+    // the actual render-cost bottleneck — not image loading, which already had
+    // caching/concurrency limits. "Load more" reveals additional batches
+    // instead of mounting everything up front.
+    const PAGE_SIZE = 30;
+    const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
     const recommendedSet = useMemo(() => new Set(recommendedProductIds || []), [recommendedProductIds]);
     const speech = useSpeechToText();
 
@@ -315,6 +322,18 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         return list;
     }, [combined, categoryFilter, typeFilter, omittedProducts, submittedQuery, sortBy, personalizationFilter, recommendedSet, aynaReviews, padFlowFilter, padPreferenceFilter, padUseCaseFilter, symptomFilter]);
 
+    // Back to the first page whenever the underlying result set actually
+    // changes (new filter/search/sort) — not when AI suggestions arrive later
+    // (gridItems depends on those too, but `filtered` deliberately doesn't).
+    // Adjusted during render (React's recommended pattern for "reset state
+    // when a derived value changes"), not in an effect — that would cost an
+    // extra render pass for something that's cheap to just do inline.
+    const [prevFiltered, setPrevFiltered] = useState(filtered);
+    if (filtered !== prevFiltered) {
+        setPrevFiltered(filtered);
+        setVisibleCount(PAGE_SIZE);
+    }
+
     const qTrimForAi = submittedQuery.trim();
 
     const enrichedAiSuggestions = useMemo(
@@ -343,7 +362,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     }, [filtered, enrichedAiSuggestions]);
 
     useEffect(() => {
-        const visible = gridItems.slice(0, 80);
+        // Only resolve images for what's actually rendered (visibleCount),
+        // not a flat 80 — pagination already caps the DOM to what's visible,
+        // so this now naturally scales with it instead of doing extra work
+        // for cards the user hasn't scrolled/paged to yet.
+        const visible = gridItems.slice(0, visibleCount);
         const missing = visible
             .filter((item) => item && item.id && item.name)
             .filter((item) => resolvedImages[item.id] === undefined)
@@ -376,7 +399,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             .catch((e) => console.warn('[Ayna] image resolution failed:', e?.message));
 
         return () => { cancelled = true; };
-    }, [gridItems, resolvedImages]);
+    }, [gridItems, resolvedImages, visibleCount]);
 
     const profileIntro = useMemo(
         () => buildDiscoveryProfileSummary({ quizResults, healthProfile, categoryFilter, searchQuery }),
@@ -771,9 +794,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     {qTrimForAi.length >= 2 && aiLoading ? (
                         <>Searching for &ldquo;{searchQuery}&rdquo;…</>
                     ) : aiError && qTrimForAi.length >= 2 ? (
-                        <>Showing {gridItems.length} result{gridItems.length !== 1 ? 's' : ''}. {aiError}</>
+                        <>Showing {Math.min(visibleCount, gridItems.length)} of {gridItems.length} result{gridItems.length !== 1 ? 's' : ''}. {aiError}</>
                     ) : (
-                        <>Showing {gridItems.length} result{gridItems.length !== 1 ? 's' : ''}</>
+                        <>Showing {Math.min(visibleCount, gridItems.length)} of {gridItems.length} result{gridItems.length !== 1 ? 's' : ''}</>
                     )}
                 </p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -826,8 +849,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
             {/* Product Grid */}
             {(!searchSubmitted || !aiLoading) && (
+            <>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', justifyContent: 'center' }}>
-                {gridItems.map((item, idx) => {
+                {gridItems.slice(0, visibleCount).map((item, idx) => {
                     const isStartup = item.isStartup === true;
                     const releasedStartup = isStartup && item.productReleased === true;
                     const isInEcosystem = !!myProducts[item.id];
@@ -1051,6 +1075,19 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     );
                 })}
             </div>
+            {gridItems.length > visibleCount && (
+                <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+                    <button
+                        type="button"
+                        className="btn btn-outline"
+                        onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+                        style={{ padding: '0.7rem 1.75rem' }}
+                    >
+                        Load more ({gridItems.length - visibleCount} more)
+                    </button>
+                </div>
+            )}
+            </>
             )}
 
             {/* Related searches */}

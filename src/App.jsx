@@ -1,19 +1,26 @@
-import React, { useState, useMemo, useRef, useEffect, useLayoutEffect, useCallback } from 'react';
+import React, { Suspense, useState, useMemo, useRef, useEffect, useLayoutEffect, useCallback } from 'react';
 import Hero from './components/Hero';
 import WelcomeGate from './components/WelcomeGate';
 import HealthIntakeForm from './components/HealthIntakeForm';
 import HealthProfileEditor from './components/HealthProfileEditor';
 import PhoneVerification from './components/PhoneVerification';
 import Recommendations from './components/Recommendations';
-import WaitlistHub from './components/WaitlistHub';
 import TrackedItems from './components/TrackedItems';
-import MyEcosystem from './components/MyEcosystem';
-import Discovery from './components/Discovery';
 import MonthlyCheckin from './components/MonthlyCheckin';
 import OmittedProducts from './components/OmittedProducts';
 import Comparison from './components/Comparison';
 import DoctorPrep from './components/DoctorPrep';
 import Recalls from './components/Recalls';
+// Lazy: each of these pulls in src/data/startups.js (~1700 lines) — deferring
+// them until the user actually navigates there keeps that out of the main
+// bundle. products.js itself is still eager (App.jsx needs getRecommendations/
+// getEcosystemSeedFromQuiz synchronously), so this doesn't fix everything,
+// but it's the safe part of the fix available without a bigger refactor of
+// how this file computes recommendations.
+const WaitlistHub = React.lazy(() => import('./components/WaitlistHub'));
+const MyEcosystem = React.lazy(() => import('./components/MyEcosystem'));
+const Discovery = React.lazy(() => import('./components/Discovery'));
+const Articles = React.lazy(() => import('./components/Articles'));
 import { CATEGORY_LABELS, getRecommendations, getEcosystemSeedFromQuiz } from './data/products';
 import { loadAynaReviews, hydrateAynaReviews, addRating, addReview } from './data/aynaReviews';
 import AynaDeeptech from './components/AynaDeeptech';
@@ -21,7 +28,6 @@ import Screenings from './components/Screenings';
 import { useScrollPosition } from './hooks/useScrollPosition';
 import ProductModal from './components/ProductModal';
 import { enrichLlmProductForDiscovery } from './utils/enrichLlmProductForDiscovery';
-import Articles from './components/Articles';
 import ProfileChatbot from './components/ProfileChatbot';
 import { loadHealthProfile, hasHealthProfileSignals } from './utils/healthDataProfile';
 import { loadHealthProfileForCurrentUser, saveHealthProfileForCurrentUser } from './utils/healthProfileStore';
@@ -61,6 +67,14 @@ PATH_TO_VIEW['/'] = 'welcome';
 function getInitialView() {
   const path = window.location.pathname;
   return PATH_TO_VIEW[path] || 'welcome';
+}
+
+function ViewLoadingFallback() {
+  return (
+    <div style={{ textAlign: 'center', padding: '4rem 1rem', color: 'var(--text-secondary, #666)' }}>
+      Loading…
+    </div>
+  );
 }
 
 function App() {
@@ -1055,14 +1069,16 @@ function App() {
           />
         )}
         {currentView === 'waitlist' && (
-          <WaitlistHub
-            joinedWaitlists={joinedWaitlists}
-            toggleJoinWaitlist={toggleJoinWaitlist}
-            quizResults={quizResults}
-            myProducts={myProducts}
-            onAddToEcosystem={toggleMyProduct}
-            onViewRecalls={handleViewRecalls}
-          />
+          <Suspense fallback={<ViewLoadingFallback />}>
+            <WaitlistHub
+              joinedWaitlists={joinedWaitlists}
+              toggleJoinWaitlist={toggleJoinWaitlist}
+              quizResults={quizResults}
+              myProducts={myProducts}
+              onAddToEcosystem={toggleMyProduct}
+              onViewRecalls={handleViewRecalls}
+            />
+          </Suspense>
         )}
         {currentView === 'deeptech' && (
           <AynaDeeptech
@@ -1071,7 +1087,9 @@ function App() {
           />
         )}
         {currentView === 'articles' && (
-          <Articles initialArticleId={selectedArticleId} onOpenProduct={handleOpenProduct} quizResults={quizResults} healthProfile={healthProfile} />
+          <Suspense fallback={<ViewLoadingFallback />}>
+            <Articles initialArticleId={selectedArticleId} onOpenProduct={handleOpenProduct} quizResults={quizResults} healthProfile={healthProfile} />
+          </Suspense>
         )}
         {currentView === 'privacy-policy' && (
           <PrivacyPolicy onBack={() => window.history.back()} />
@@ -1097,6 +1115,7 @@ function App() {
           </div>
         )}
         {currentView === 'ecosystem' && (
+          <Suspense fallback={<ViewLoadingFallback />}>
           <MyEcosystem
             myProducts={myProducts}
             ecosystemOrder={ecosystemOrder}
@@ -1129,8 +1148,10 @@ function App() {
             userSession={userSession}
             isPremium={user?.app_metadata?.is_premium === true}
           />
+          </Suspense>
         )}
         {currentView === 'discovery' && (
+          <Suspense fallback={<ViewLoadingFallback />}>
           <Discovery
             trackedProducts={trackedProducts}
             toggleTrackProduct={toggleTrackProduct}
@@ -1155,6 +1176,7 @@ function App() {
             quizResults={quizResults}
             healthProfile={healthProfile}
           />
+          </Suspense>
         )}
         {currentView === 'screenings' && (
           <Screenings checkinData={checkinData} onNavigate={setCurrentView} onOpenProduct={handleOpenProduct} />
