@@ -30,6 +30,7 @@ export function buildSearchTextForItem(item, categoryLabels = {}) {
     : '';
   return [
     item.name,
+    item.brand,
     item.summary,
     item.tagline,
     item.doctorOpinion,

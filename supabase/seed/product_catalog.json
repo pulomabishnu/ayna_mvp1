@@ -12501,5 +12501,185 @@
         }
       }
     }
+  },
+  {
+    "id": "p-winx-uti-test-treat",
+    "name": "Winx Health UTI Test + Treat",
+    "brand": "Winx Health",
+    "category": "diagnostics",
+    "product_type": "physical",
+    "summary": "An at-home UTI test paired with Winx Rx, the brand's own telehealth service — check symptoms with a rapid test, then connect to a licensed provider for prescription treatment if needed. Recognized as a TIME Best Invention.",
+    "price": "$15",
+    "image": null,
+    "url": "https://hellowinx.com/",
+    "tags": [
+      "uti",
+      "safety-concern",
+      "privacy"
+    ],
+    "health_functions": [
+      "uti-prevention",
+      "telehealth"
+    ],
+    "where_to_buy": [
+      "Walgreens"
+    ],
+    "where_to_buy_in_stock": {},
+    "safety": {
+      "fdaStatus": "Consumer diagnostic test; any prescription treatment is issued by a licensed telehealth provider, not the test itself.",
+      "materials": "See product packaging for full test component and ingredient list.",
+      "recalls": "No recalls found.",
+      "sideEffects": "None specific to the test itself; any treatment side effects depend on the medication a provider prescribes.",
+      "opinionAlerts": "Winx Health markets this as \"OBGYN approved\" on its own site — verify current claims and availability directly at hellowinx.com."
+    },
+    "doctor_opinion": "Winx Health describes its UTI Test + Treat as \"OBGYN approved,\" with Winx Rx able to deliver prescription treatment results in about 4 hours.",
+    "community_review": null,
+    "effectiveness": "Combines an at-home rapid test with telehealth access to prescription treatment; the underlying test was recognized as a TIME Best Invention.",
+    "clinician_opinion_source": "brand",
+    "clinician_attribution": "Sourced from Winx Health's own site marketing claims, not independent clinical literature.",
+    "source": "curated",
+    "internal": false,
+    "requires_prescription": false,
+    "user_rating": null,
+    "is_active": true,
+    "extra": {
+      "integrations": [],
+      "badges": [
+        "Partner Brand"
+      ]
+    }
+  },
+  {
+    "id": "p-neycher-vaginal-moisturizer",
+    "name": "Neycher Vaginal Moisturizer",
+    "brand": "Neycher",
+    "category": "intimate-care",
+    "product_type": "physical",
+    "summary": "A non-hormonal vaginal moisturizer positioned as a natural alternative for dryness, irritation, and discomfort — part of Neycher's intimate-care line, which also includes suppositories and a vulva balm.",
+    "price": "See retailer",
+    "image": null,
+    "url": "https://www.helloneycher.com/",
+    "tags": [
+      "discomfort",
+      "organic",
+      "comfort"
+    ],
+    "health_functions": [
+      "vaginal-health"
+    ],
+    "where_to_buy": [
+      "Amazon"
+    ],
+    "where_to_buy_in_stock": {},
+    "safety": {
+      "fdaStatus": "Manufactured in FDA-registered facilities per the brand's site; not an FDA-cleared medical device.",
+      "materials": "See product packaging for full ingredient list.",
+      "recalls": "No recalls found.",
+      "sideEffects": "None specific reported; discontinue use and consult a clinician if irritation occurs.",
+      "opinionAlerts": "Brand states products are \"not intended to diagnose, treat, cure, or prevent any disease\" — standard cosmetic/wellness disclaimer language."
+    },
+    "doctor_opinion": "Neycher states its formulas are developed with input from \"scientists, doctors, and researchers\" and are \"OB/GYN and real people-approved,\" per the brand's own site.",
+    "community_review": null,
+    "effectiveness": "Positioned as a non-hormonal alternative to antibiotic, antifungal, or hormone treatments for vaginal dryness and irritation; no independent clinical study of the product was found.",
+    "clinician_opinion_source": "brand",
+    "clinician_attribution": "Sourced from Neycher's own site marketing claims, not independent clinical literature.",
+    "source": "curated",
+    "internal": true,
+    "requires_prescription": false,
+    "user_rating": null,
+    "is_active": true,
+    "extra": {
+      "integrations": [],
+      "badges": [
+        "Partner Brand"
+      ]
+    }
+  },
+  {
+    "id": "p-good-kitty-uti-biome-shield",
+    "name": "Good Kitty UTI Biome Shield",
+    "brand": "Good Kitty Co",
+    "category": "supplement",
+    "product_type": "physical",
+    "summary": "A daily UTI-prevention capsule combining D-mannose, soluble cranberry PACs, vitamin D3, and zinc — designed for people prone to recurrent UTIs who want a preventive daily routine rather than only reactive treatment.",
+    "price": "$99 starter kit (or $84.15/mo subscription)",
+    "image": null,
+    "url": "https://goodkittyco.com/",
+    "tags": [
+      "uti",
+      "safety-concern"
+    ],
+    "health_functions": [
+      "uti-prevention"
+    ],
+    "where_to_buy": [],
+    "where_to_buy_in_stock": {},
+    "safety": {
+      "fdaStatus": "Dietary supplement; not FDA-evaluated for disease treatment (standard supplement disclaimer).",
+      "materials": "38mg soluble PACs (cranberry proanthocyanidins), 500mg D-mannose, vitamin D3, zinc, polyphenols — per the brand's site.",
+      "recalls": "No recalls found.",
+      "sideEffects": "None specific reported; consult a clinician before starting any new supplement, especially if pregnant, breastfeeding, or on medication.",
+      "opinionAlerts": "Brand states these claims have \"not been evaluated by the FDA\" and the product is \"not intended to diagnose, treat, cure, or prevent any disease\" — standard supplement disclaimer."
+    },
+    "doctor_opinion": "Good Kitty Co describes UTI Biome Shield as \"doctor-formulated\" with a \"patent-pending,\" \"clinically dosed\" combination of D-mannose and soluble PACs, developed with urogynecologist Dr. Sharon Knight.",
+    "community_review": null,
+    "effectiveness": "Uses UTI-prevention ingredients (D-mannose, cranberry PACs) at stated doses that are individually well-studied; no independent clinical trial of the finished product itself was found.",
+    "clinician_opinion_source": "brand",
+    "clinician_attribution": "Sourced from Good Kitty Co's own site; co-founded by a physician (Dr. Meghan Blake), with formulation input from urogynecologist Dr. Sharon Knight.",
+    "source": "curated",
+    "internal": false,
+    "requires_prescription": false,
+    "user_rating": null,
+    "is_active": true,
+    "extra": {
+      "integrations": [],
+      "badges": [
+        "Partner Brand"
+      ]
+    }
+  },
+  {
+    "id": "p-oboo-woosh-warming-wand",
+    "name": "Oboo Woosh Warming Wand",
+    "brand": "Oboo",
+    "category": "sex-tech",
+    "product_type": "physical",
+    "summary": "A warming pleasure wand designed for perimenopausal and menopausal women navigating changes in arousal and vaginal dryness — part of Oboo's \"midlife-friendly, body-smart, shame-free\" intimate wellness line, which also includes daily and arousal moisturizers.",
+    "price": "$119",
+    "image": null,
+    "url": "https://oboo.love/",
+    "tags": [
+      "comfort",
+      "privacy"
+    ],
+    "health_functions": [
+      "sexual-health",
+      "perimenopause"
+    ],
+    "where_to_buy": [],
+    "where_to_buy_in_stock": {},
+    "safety": {
+      "fdaStatus": "Personal pleasure device; not a medical device.",
+      "materials": "Body-safe, phthalate-free silicone, per the brand's site.",
+      "recalls": "No recalls found.",
+      "sideEffects": "None specific reported; discontinue use and consult a clinician if irritation occurs.",
+      "opinionAlerts": "No FDA-clearance or clinical-study claims found on the brand site — marketed on materials/design safety and menopause-specific positioning, not clinical evidence."
+    },
+    "doctor_opinion": null,
+    "community_review": "Named a 2026 Oprah Daily Menopause O-Ward Winner; featured in Wellness Magazine, Oprah Daily, The Pause Life, and Flow Space.",
+    "effectiveness": "Positioned to address menopause-related changes in arousal and vaginal dryness; no independent clinical study of the product was found.",
+    "clinician_opinion_source": "brand",
+    "clinician_attribution": "Sourced from Oboo's own site; no independent clinician endorsement verified.",
+    "source": "curated",
+    "internal": false,
+    "requires_prescription": false,
+    "user_rating": null,
+    "is_active": true,
+    "extra": {
+      "integrations": [],
+      "badges": [
+        "Partner Brand"
+      ]
+    }
   }
 ]
