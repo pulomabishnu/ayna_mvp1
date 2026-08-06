@@ -1,4 +1,7 @@
 /* global process */
+import { createClient } from '@supabase/supabase-js';
+import twilio from 'twilio';
+
 // OpenFDA recall lookup — free, no API key required for basic use.
 // Add OPENFDA_API_KEY to Vercel env vars for higher rate limits (free at open.fda.gov).
 // Docs: https://open.fda.gov/apis/
@@ -78,25 +81,21 @@ function cleanTerm(v) {
   return String(firstParam(v) || '').trim().replace(/\s+/g, ' ').slice(0, MAX_TERM_LEN);
 }
 
-export default async function handler(req, res) {
-  res.setHeader('Content-Type', 'application/json');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
-
-  const name = cleanTerm(req.query.name);
-  const brand = cleanTerm(req.query.brand);
-  const category = cleanTerm(req.query.category).toLowerCase();
-
-  if (!name) return res.status(400).json({ error: 'missing_name' });
-
+/**
+ * Core recall lookup for one product. Pulled out of the handler so the
+ * recall-monitoring sweep (below) can check many products without going
+ * through HTTP — same logic, same result shape, no res/req coupling.
+ */
+async function checkRecallsForProduct({ name, brand, category }) {
   if (NON_PHYSICAL_CATEGORIES.has(category)) {
     // Explicitly "not applicable" — distinct from "we checked and found nothing".
-    res.setHeader('Cache-Control', 'public, s-maxage=86400');
-    return res.status(200).json({
-      status: 'skipped', hasRecalls: false, recalls: [],
+    return {
+      status: 'skipped', hasRecalls: false, hasHistoricalRecalls: false,
+      recalls: [], historicalRecalls: [],
       checkedAt: new Date().toISOString(), source: 'OpenFDA',
       skipped: true, skipReason: 'not_an_fda_regulated_product',
-    });
+      cacheControl: 'public, s-maxage=86400',
+    };
   }
 
   const apiKey = process.env.OPENFDA_API_KEY;
@@ -161,15 +160,16 @@ export default async function handler(req, res) {
 
   if (status === 'failed') {
     console.error('[fda-recall] all datasets failed for', name, failed.map((f) => `${f.key}=${f.reason}`).join(','));
-    // Must never be cached — a transient outage would be pinned into the CDN
-    // as a false all-clear.
-    res.setHeader('Cache-Control', 'no-store');
-    return res.status(502).json({
-      status: 'failed', hasRecalls: null, recalls: [],
+    return {
+      // Must never be cached — a transient outage would be pinned into the CDN
+      // as a false all-clear.
+      status: 'failed', hasRecalls: null, hasHistoricalRecalls: null,
+      recalls: [], historicalRecalls: [],
       checkedAt: new Date().toISOString(), source: 'OpenFDA',
       failedDatasets: failed.map((f) => ({ dataset: f.key, reason: f.reason })),
       message: 'Could not reach the FDA recall database.',
-    });
+      cacheControl: 'no-store',
+    };
   }
 
   const recalls = [];
@@ -186,13 +186,10 @@ export default async function handler(req, res) {
     if (recalls.length >= 8) break;
   }
 
-  if (status === 'partial') res.setHeader('Cache-Control', 'no-store');
-  else res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=600');
-
   const activeRecalls = recalls.filter((r) => !r.isHistorical);
   const historicalRecalls = recalls.filter((r) => r.isHistorical);
 
-  return res.status(200).json({
+  return {
     status,
     // Active only. A closed-out recall from a decade ago is context, not an alert.
     hasRecalls: activeRecalls.length > 0,
@@ -203,7 +200,31 @@ export default async function handler(req, res) {
     source: 'OpenFDA',
     datasetsChecked: succeeded.map((s) => s.key),
     failedDatasets: failed.map((f) => ({ dataset: f.key, reason: f.reason })),
-  });
+    cacheControl: status === 'partial'
+      ? 'no-store'
+      : 'public, s-maxage=3600, stale-while-revalidate=600',
+  };
+}
+
+export default async function handler(req, res) {
+  res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+
+  // Cron-triggered sweep mode — see runRecallSweep below. Checked before the
+  // name-based validation since a sweep request carries no `name` param.
+  if (req.query.sweep === '1') return handleSweepRequest(req, res);
+
+  const name = cleanTerm(req.query.name);
+  const brand = cleanTerm(req.query.brand);
+  const category = cleanTerm(req.query.category).toLowerCase();
+
+  if (!name) return res.status(400).json({ error: 'missing_name' });
+
+  const result = await checkRecallsForProduct({ name, brand, category });
+  const { cacheControl, ...body } = result;
+  res.setHeader('Cache-Control', cacheControl);
+  return res.status(result.status === 'failed' ? 502 : 200).json(body);
 }
 
 /** OpenFDA dates are YYYYMMDD strings. */
@@ -323,4 +344,250 @@ export function wordOrPhraseMatches(blob, token) {
   const body = t.split(' ').map(escapeRegex).join('\\s+');
   const re = new RegExp(`(?<![A-Za-z0-9])${body}(?![A-Za-z0-9])`, 'i');
   return re.test(blob);
+}
+
+// ─── Recall-monitoring sweep ────────────────────────────────────────────────
+//
+// Makes the "🔔 Monitor Safety Recalls" button on a product page actually do
+// something. Previously it only flipped `user_ecosystems.is_tracked` — nothing
+// ever read that flag. This is cron-triggered (Vercel Cron, see vercel.json),
+// checks every distinct product any user has flagged as tracked, and texts
+// (via the Twilio integration already used for OTP/SMS elsewhere in this repo)
+// any user newly affected by an ACTIVE recall that wasn't there last check.
+//
+// Safety gates, both required before a single real SMS goes out:
+//   1. CRON_SECRET must be set and match the request's Authorization header —
+//      otherwise sweep mode 401s. Nothing about this endpoint's existence is
+//      revealed to an unauthenticated caller beyond the 401 itself.
+//   2. RECALL_SWEEP_ENABLED must be exactly "1" — otherwise the sweep still
+//      runs (so you can watch the logs and confirm behavior) but makes ZERO
+//      writes: no recall_notifications rows, no product_recall_state updates,
+//      no Twilio calls. This is deliberate — a dry run that persisted state
+//      would let a recall "expire" out of detection before it was ever really
+//      sent, once the real switch is flipped on.
+
+let _admin = null;
+function getAdmin() {
+  if (_admin) return _admin;
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) return null;
+  _admin = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
+  return _admin;
+}
+
+async function mapConcurrent(items, fn, limit = 5) {
+  const results = new Array(items.length).fill(null);
+  let nextIdx = 0;
+  async function worker() {
+    while (nextIdx < items.length) {
+      const i = nextIdx++;
+      try {
+        results[i] = await fn(items[i], i);
+      } catch (e) {
+        console.error('[fda-recall sweep] task failed:', e?.message);
+        results[i] = null;
+      }
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, worker));
+  return results;
+}
+
+/** Stable identity for "the current active recall set" — order-independent, so
+ *  re-fetching the same recalls in a different order never looks like a change. */
+function computeRecallSignature(activeRecalls) {
+  return activeRecalls
+    .map((r) => r.recallNumber || r.description)
+    .filter(Boolean)
+    .sort()
+    .join(',');
+}
+
+function buildRecallSmsBody(productName, reason) {
+  const cleanReason = String(reason || '').replace(/\s+/g, ' ').trim().slice(0, 200);
+  return `⚠️ Ayna Safety Alert: ${productName} has a new FDA safety alert${cleanReason ? `: ${cleanReason}` : '.'} Open the Ayna app for details and alternatives. Reply STOP to opt out.`;
+}
+
+/**
+ * Notify every user tracking `productId` about a newly-detected active
+ * recall. Claim-then-send: the recall_notifications insert (status: 'sent')
+ * happens BEFORE the Twilio call and is what the unique index on
+ * (user_id, product_id, recall_signature) guards — if the insert 23505s,
+ * this exact user/product/recall combination was already handled (by a
+ * previous run, or a concurrent one), so we skip rather than double-text.
+ */
+async function notifyUsersOfRecall(admin, { productId, productName, recallSignature, reason, dryRun }) {
+  const { data: trackers, error } = await admin
+    .from('user_ecosystems')
+    .select('user_id')
+    .eq('product_id', productId)
+    .eq('is_tracked', true);
+
+  if (error) {
+    console.error(`[fda-recall sweep] could not list trackers for ${productId}:`, error.message);
+    return { notified: 0, skipped: 0, failed: 0 };
+  }
+  if (!trackers?.length) return { notified: 0, skipped: 0, failed: 0 };
+
+  let notified = 0, skipped = 0, failed = 0;
+
+  await mapConcurrent(trackers, async ({ user_id }) => {
+    const { data: phoneRow } = await admin
+      .from('phone_numbers')
+      .select('phone_number, is_verified, sms_opted_out')
+      .eq('user_id', user_id)
+      .maybeSingle();
+
+    const hasUsableNumber = phoneRow?.phone_number && phoneRow.is_verified && !phoneRow.sms_opted_out;
+
+    if (dryRun) {
+      // Zero writes in dry run — see the header comment above for why.
+      console.log(
+        hasUsableNumber
+          ? `[fda-recall sweep] DRY RUN — would text user ${user_id} about ${productName}`
+          : `[fda-recall sweep] DRY RUN — would SKIP user ${user_id} (no verified/opted-in number) for ${productName}`
+      );
+      if (hasUsableNumber) notified++; else skipped++;
+      return;
+    }
+
+    if (!hasUsableNumber) {
+      skipped++;
+      await admin.from('recall_notifications').insert({
+        user_id, product_id: productId, product_name: productName,
+        recall_signature: recallSignature, status: 'skipped_no_phone',
+      });
+      return;
+    }
+
+    // Claim first. A 23505 here means this exact (user, product, recall set)
+    // was already sent — by an earlier run or a concurrent one — so stop.
+    const { error: claimError } = await admin.from('recall_notifications').insert({
+      user_id, product_id: productId, product_name: productName,
+      recall_signature: recallSignature, status: 'sent',
+    });
+    if (claimError) {
+      if (claimError.code === '23505') { skipped++; return; }
+      console.error(`[fda-recall sweep] claim failed for user ${user_id}:`, claimError.message);
+      failed++;
+      return;
+    }
+
+    try {
+      const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+      await client.messages.create({
+        to: phoneRow.phone_number,
+        from: process.env.TWILIO_PHONE_NUMBER,
+        body: buildRecallSmsBody(productName, reason),
+      });
+      notified++;
+    } catch (e) {
+      console.error(`[fda-recall sweep] Twilio send failed for user ${user_id}:`, e?.message);
+      await admin.from('recall_notifications')
+        .update({ status: 'failed' })
+        .eq('user_id', user_id).eq('product_id', productId).eq('recall_signature', recallSignature);
+      failed++;
+    }
+  });
+
+  return { notified, skipped, failed };
+}
+
+async function runRecallSweep(admin, { dryRun }) {
+  const { data: rows, error } = await admin
+    .from('user_ecosystems')
+    .select('product_id, product_name, brand, category')
+    .eq('is_tracked', true);
+
+  if (error) throw new Error(`could not list tracked products: ${error.message}`);
+
+  const byProduct = new Map();
+  for (const r of rows || []) {
+    if (!r.product_id || byProduct.has(r.product_id)) continue;
+    byProduct.set(r.product_id, r);
+  }
+  const products = [...byProduct.values()];
+
+  let productsWithNewRecalls = 0;
+  let notified = 0, skipped = 0, failed = 0;
+
+  await mapConcurrent(products, async (p) => {
+    const result = await checkRecallsForProduct({ name: p.product_name || p.product_id, brand: p.brand, category: p.category });
+    if (result.status === 'failed' || result.status === 'skipped') return;
+
+    const signature = computeRecallSignature(result.recalls);
+
+    const { data: stateRow } = await admin
+      .from('product_recall_state')
+      .select('recall_signature')
+      .eq('product_id', p.product_id)
+      .maybeSingle();
+
+    const previousSignature = stateRow?.recall_signature ?? null;
+    const isNewActiveRecall = signature && signature !== previousSignature;
+
+    if (isNewActiveRecall) {
+      productsWithNewRecalls++;
+      const reason = result.recalls[0]?.reason || result.recalls[0]?.description || '';
+      const outcome = await notifyUsersOfRecall(admin, {
+        productId: p.product_id,
+        productName: p.product_name || p.product_id,
+        recallSignature: signature,
+        reason,
+        dryRun,
+      });
+      notified += outcome.notified;
+      skipped += outcome.skipped;
+      failed += outcome.failed;
+    }
+
+    if (!dryRun) {
+      await admin.from('product_recall_state').upsert({
+        product_id: p.product_id,
+        product_name: p.product_name || p.product_id,
+        recall_signature: signature,
+        last_checked_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      }, { onConflict: 'product_id' });
+    }
+  }, 5);
+
+  return {
+    productsChecked: products.length,
+    productsWithNewRecalls,
+    notified, skipped, failed,
+  };
+}
+
+async function handleSweepRequest(req, res) {
+  const cronSecret = process.env.CRON_SECRET;
+  if (!cronSecret) {
+    console.error('[fda-recall sweep] CRON_SECRET is not set; refusing sweep requests entirely.');
+    return res.status(401).json({ error: 'unauthorized' });
+  }
+  const authHeader = req.headers.authorization || '';
+  if (authHeader !== `Bearer ${cronSecret}`) {
+    return res.status(401).json({ error: 'unauthorized' });
+  }
+
+  const admin = getAdmin();
+  if (!admin) {
+    console.error('[fda-recall sweep] Supabase env not configured.');
+    return res.status(503).json({ error: 'not_configured' });
+  }
+
+  const dryRun = process.env.RECALL_SWEEP_ENABLED !== '1';
+  if (dryRun) {
+    console.warn('[fda-recall sweep] RECALL_SWEEP_ENABLED is not "1" — running in dry-run mode, no SMS will send and no state will be written.');
+  }
+
+  try {
+    const summary = await runRecallSweep(admin, { dryRun });
+    res.setHeader('Cache-Control', 'no-store');
+    return res.status(200).json({ mode: 'sweep', dryRun, checkedAt: new Date().toISOString(), ...summary });
+  } catch (e) {
+    console.error('[fda-recall sweep] failed:', e?.message);
+    return res.status(500).json({ error: 'sweep_failed', message: e?.message });
+  }
 }

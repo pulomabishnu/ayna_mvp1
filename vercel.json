@@ -5,6 +5,12 @@
       "maxDuration": 60
     }
   },
+  "crons": [
+    {
+      "path": "/api/fda-recall?sweep=1",
+      "schedule": "0 13 * * *"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",

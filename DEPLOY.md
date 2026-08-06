@@ -93,13 +93,16 @@ new code finds them on first boot:
 | `OTP_PEPPER` | Falls back to the service-role key with a warning. Set a dedicated random value: `openssl rand -hex 32` |
 | `ALLOWED_ORIGINS` | Cross-origin calls to `/api/product-chat`, `/api/product-image`, `/api/product-insights`, and `/api/search-suggestions` are refused. Same-origin is unaffected, so this is only needed if something calls the API from another domain. |
 | `REQUIRE_AUTH_FOR_SEARCH_SUGGESTIONS` | Optional. Set to `1` to require sign-in for AI search. Leave unset to keep anonymous Discovery search — the tradeoff is that an IP-rotating script can spend Anthropic tokens. |
+| `CRON_SECRET` | The recall-monitoring sweep (`/api/fda-recall?sweep=1`, scheduled daily via `vercel.json`) 401s on every invocation — Vercel Cron's own request is rejected along with everyone else's, so the sweep silently never runs. |
+| `RECALL_SWEEP_ENABLED` | Defaults to unset, which is **dry-run mode**: the sweep still checks every tracked product's recall status and logs what it would do, but sends no SMS and writes no state. Set to `1` only once you've confirmed the dry-run logs look right — flipping it on is what makes this send real text messages to real users. |
 
 **Step 4 — apply the schema** (remediation first if the diff produced one):
 ```sh
 psql "$DB_URL" -1 -v ON_ERROR_STOP=1 -f schema-remediation.sql   # only if generated
 for f in health_intakes phone_numbers pending_phone_verifications sms_conversations \
          user_ecosystems user_reviews user_learning_memory user_ai_usage \
-         user_ecosystem_builds user_health_profiles product_catalog; do
+         user_ecosystem_builds user_health_profiles product_catalog \
+         product_recall_state recall_notifications; do
   psql "$DB_URL" -v ON_ERROR_STOP=1 -f "supabase/$f.sql"
 done
 psql "$DB_URL" -v ON_ERROR_STOP=1 -f supabase/seed/product_catalog.sql

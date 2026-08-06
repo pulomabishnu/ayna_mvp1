@@ -53,7 +53,8 @@ run supabase/_local_bootstrap.sql
 for f in \
   health_intakes phone_numbers pending_phone_verifications sms_conversations \
   user_ecosystems user_reviews user_learning_memory user_ai_usage \
-  user_ecosystem_builds user_health_profiles product_catalog
+  user_ecosystem_builds user_health_profiles product_catalog \
+  product_recall_state recall_notifications
 do
   run "supabase/$f.sql"
 done

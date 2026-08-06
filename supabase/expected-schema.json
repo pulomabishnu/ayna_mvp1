@@ -860,6 +860,165 @@
             "index_count": 4,
             "rls_enabled": true
         },
+        "product_recall_state": {
+            "grants": [
+                "anon:DELETE",
+                "anon:INSERT",
+                "anon:REFERENCES",
+                "anon:SELECT",
+                "anon:TRIGGER",
+                "anon:TRUNCATE",
+                "anon:UPDATE",
+                "authenticated:DELETE",
+                "authenticated:INSERT",
+                "authenticated:REFERENCES",
+                "authenticated:SELECT",
+                "authenticated:TRIGGER",
+                "authenticated:TRUNCATE",
+                "authenticated:UPDATE",
+                "service_role:DELETE",
+                "service_role:INSERT",
+                "service_role:REFERENCES",
+                "service_role:SELECT",
+                "service_role:TRIGGER",
+                "service_role:TRUNCATE",
+                "service_role:UPDATE"
+            ],
+            "columns": [
+                {
+                    "type": "text",
+                    "column": "product_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "product_name",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "text",
+                    "column": "recall_signature",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "last_checked_at",
+                    "default": "now()",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "updated_at",
+                    "default": "now()",
+                    "notnull": true
+                }
+            ],
+            "policies": [
+            ],
+            "constraints": [
+                {
+                    "name": "product_recall_state_pkey",
+                    "type": "primary key",
+                    "definition": "PRIMARY KEY (product_id)"
+                }
+            ],
+            "index_count": 1,
+            "rls_enabled": true
+        },
+        "recall_notifications": {
+            "grants": [
+                "anon:DELETE",
+                "anon:INSERT",
+                "anon:REFERENCES",
+                "anon:SELECT",
+                "anon:TRIGGER",
+                "anon:TRUNCATE",
+                "anon:UPDATE",
+                "authenticated:DELETE",
+                "authenticated:INSERT",
+                "authenticated:REFERENCES",
+                "authenticated:SELECT",
+                "authenticated:TRIGGER",
+                "authenticated:TRUNCATE",
+                "authenticated:UPDATE",
+                "service_role:DELETE",
+                "service_role:INSERT",
+                "service_role:REFERENCES",
+                "service_role:SELECT",
+                "service_role:TRIGGER",
+                "service_role:TRUNCATE",
+                "service_role:UPDATE"
+            ],
+            "columns": [
+                {
+                    "type": "uuid",
+                    "column": "id",
+                    "default": "gen_random_uuid()",
+                    "notnull": true
+                },
+                {
+                    "type": "uuid",
+                    "column": "user_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "product_id",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "product_name",
+                    "default": null,
+                    "notnull": false
+                },
+                {
+                    "type": "text",
+                    "column": "recall_signature",
+                    "default": null,
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "channel",
+                    "default": "'sms'::text",
+                    "notnull": true
+                },
+                {
+                    "type": "text",
+                    "column": "status",
+                    "default": "'sent'::text",
+                    "notnull": true
+                },
+                {
+                    "type": "timestamp with time zone",
+                    "column": "sent_at",
+                    "default": "now()",
+                    "notnull": true
+                }
+            ],
+            "policies": [
+            ],
+            "constraints": [
+                {
+                    "name": "recall_notifications_pkey",
+                    "type": "primary key",
+                    "definition": "PRIMARY KEY (id)"
+                },
+                {
+                    "name": "recall_notifications_user_id_fkey",
+                    "type": "foreign key",
+                    "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+                }
+            ],
+            "index_count": 3,
+            "rls_enabled": true
+        },
         "user_health_profiles": {
             "grants": [
                 "anon:DELETE",
@@ -1260,5 +1419,5 @@
             "security_definer": false
         }
     ],
-    "generated_at": "2026-08-02T21:44:17.949651-07:00"
+    "generated_at": "2026-08-06T16:15:44.086936-07:00"
 }

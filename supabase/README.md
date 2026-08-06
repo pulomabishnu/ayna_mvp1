@@ -89,7 +89,9 @@ for f in \
   user_ai_usage.sql \
   user_ecosystem_builds.sql \
   user_health_profiles.sql \
-  product_catalog.sql
+  product_catalog.sql \
+  product_recall_state.sql \
+  recall_notifications.sql
 do
   echo "── $f"
   psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f "supabase/$f"
