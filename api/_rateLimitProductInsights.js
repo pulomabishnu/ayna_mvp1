@@ -57,6 +57,14 @@ export async function checkProductInsightsRateLimit(req) {
   const max = parsePositiveInt(process.env.AI_INSIGHTS_RATE_LIMIT_MAX, DEFAULT_MAX);
   const windowSec = parseWindowToSec(process.env.AI_INSIGHTS_RATE_LIMIT_WINDOW || DEFAULT_WINDOW_STR);
 
-  const result = await rateLimit(`ai-insights:ip:${ip}`, { max, windowSec, failClosed: true });
+  // TEMPORARY: failClosed is false again. Provisioning the real Upstash
+  // credentials in Vercel hit an unresolved inconsistency — Production and
+  // Preview keep reading back empty even after `vercel env add --force`
+  // reports success (Development got a working value; native
+  // KV_REST_API_URL/TOKEN for the same integration read back fine in every
+  // environment, so this is scoped to just these two aliased variables).
+  // Rather than debug that further with production live, reverting to
+  // fail-open until it's sorted out with time to be careful.
+  const result = await rateLimit(`ai-insights:ip:${ip}`, { max, windowSec, failClosed: false });
   return { ok: result.ok, retryAfterSec: result.retryAfterSec, limiter: result.limiter };
 }

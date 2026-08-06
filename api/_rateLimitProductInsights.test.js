@@ -23,21 +23,22 @@ afterEach(() => {
 });
 
 describe('checkProductInsightsRateLimit', () => {
-  it('delegates to the shared durable limiter with failClosed set', async () => {
+  it('delegates to the shared durable limiter', async () => {
     rateLimitMock.mockResolvedValue({ ok: true, limiter: 'upstash' });
     const result = await checkProductInsightsRateLimit({ headers: {} });
     expect(result).toEqual({ ok: true, retryAfterSec: undefined, limiter: 'upstash' });
     expect(rateLimitMock).toHaveBeenCalledWith(
       'ai-insights:ip:203.0.113.5',
-      expect.objectContaining({ max: 15, windowSec: 3600, failClosed: true })
+      expect.objectContaining({ max: 15, windowSec: 3600 })
     );
   });
 
-  it('fails closed when the shared limiter denies (e.g. no durable store configured)', async () => {
-    rateLimitMock.mockResolvedValue({ ok: false, retryAfterSec: 60, limiter: 'none-failclosed' });
+  // TEMPORARY: failClosed is false — see the note in _rateLimitProductInsights.js.
+  it('does NOT fail closed yet — falls back to best-effort memory limiting', async () => {
+    rateLimitMock.mockResolvedValue({ ok: true, limiter: 'memory' });
     const result = await checkProductInsightsRateLimit({ headers: {} });
-    expect(result.ok).toBe(false);
-    expect(result.limiter).toBe('none-failclosed');
+    expect(result.ok).toBe(true);
+    expect(rateLimitMock).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ failClosed: false }));
   });
 
   it('parses AI_INSIGHTS_RATE_LIMIT_MAX and _WINDOW overrides into seconds', async () => {
