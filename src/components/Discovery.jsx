@@ -323,9 +323,14 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     );
 
     const gridItems = useMemo(() => {
-        // When user explicitly searched, show only AI results — no unrelated catalog items
-        if (searchSubmitted) return enrichedAiSuggestions;
-        // Browsing mode: catalog + any AI suggestions appended
+        // Union real catalog matches for the submitted query with AI suggestions,
+        // in both browsing and search modes. This used to show ONLY AI results
+        // once a search was submitted, discarding catalog matches entirely — so
+        // a query the local scorer already matches correctly (e.g. "menstrual
+        // cup" via the cup/menstrual alias in naturalLanguageSearch.js) showed 0
+        // results whenever the AI call failed, rate-limited, or returned empty,
+        // even though the identical query via a category-chip click found the
+        // product instantly through `filtered`.
         const catalog = filtered;
         const names = new Set(catalog.map((p) => (p.name || '').trim().toLowerCase()).filter(Boolean));
         const out = [...catalog];
@@ -335,7 +340,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             out.push(p);
         }
         return out;
-    }, [filtered, enrichedAiSuggestions, searchSubmitted]);
+    }, [filtered, enrichedAiSuggestions]);
 
     useEffect(() => {
         const visible = gridItems.slice(0, 80);
