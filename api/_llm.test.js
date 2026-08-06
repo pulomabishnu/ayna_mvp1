@@ -133,6 +133,32 @@ describe('retry policy', () => {
   });
 });
 
+describe('temperature override', () => {
+  it('defaults to 0.2 when not specified', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(anthropicOk('ok'));
+    globalThis.fetch = fetchMock;
+    await runWithTimers(callAnthropic({ prompt: 'hi' }));
+    const body = JSON.parse(fetchMock.mock.calls[0][1].body);
+    expect(body.temperature).toBe(0.2);
+  });
+
+  it('is forwarded to Anthropic when specified', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(anthropicOk('ok'));
+    globalThis.fetch = fetchMock;
+    await runWithTimers(callAnthropic({ prompt: 'hi', temperature: 0.25 }));
+    const body = JSON.parse(fetchMock.mock.calls[0][1].body);
+    expect(body.temperature).toBe(0.25);
+  });
+
+  it('is forwarded to OpenAI when specified', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(openaiOk('ok'));
+    globalThis.fetch = fetchMock;
+    await runWithTimers(callOpenAI({ prompt: 'hi', temperature: 0.25 }));
+    const body = JSON.parse(fetchMock.mock.calls[0][1].body);
+    expect(body.temperature).toBe(0.25);
+  });
+});
+
 describe('truncation detection', () => {
   it('flags stop_reason=max_tokens so a half-written object is not treated as complete', async () => {
     globalThis.fetch = vi.fn().mockResolvedValue(anthropicOk('{"recommendations":[', 'max_tokens'));

@@ -105,6 +105,7 @@ export async function callAnthropic({
   prompt,
   maxTokens = 4000,
   model,
+  temperature = 0.2,
   timeoutMs = DEFAULT_TIMEOUT_MS,
   maxAttempts = DEFAULT_MAX_ATTEMPTS,
   signal,
@@ -123,7 +124,7 @@ export async function callAnthropic({
       body: JSON.stringify({
         model: model || process.env.ANTHROPIC_MODEL || 'claude-haiku-4-5',
         max_tokens: maxTokens,
-        temperature: 0.2,
+        temperature,
         ...(system ? { system } : {}),
         messages: [{ role: 'user', content: prompt }],
       }),
@@ -145,6 +146,7 @@ export async function callOpenAI({
   prompt,
   maxTokens = 4000,
   model,
+  temperature = 0.2,
   jsonMode = false,
   timeoutMs = DEFAULT_TIMEOUT_MS,
   maxAttempts = DEFAULT_MAX_ATTEMPTS,
@@ -159,7 +161,7 @@ export async function callOpenAI({
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: model || process.env.OPENAI_MODEL || 'gpt-4o-mini',
-        temperature: 0.2,
+        temperature,
         max_tokens: maxTokens,
         ...(jsonMode ? { response_format: { type: 'json_object' } } : {}),
         messages: [
@@ -216,6 +218,7 @@ export async function callGemini({
   prompt,
   maxTokens = 4000,
   model,
+  temperature = 0.2,
   jsonMode = false,
   timeoutMs = DEFAULT_TIMEOUT_MS,
   maxAttempts = DEFAULT_MAX_ATTEMPTS,
@@ -234,7 +237,7 @@ export async function callGemini({
         headers: { Authorization: `Bearer ${creds.apiKey}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model: model || creds.model,
-          temperature: 0.2,
+          temperature,
           max_tokens: maxTokens,
           ...(jsonMode ? { response_format: { type: 'json_object' } } : {}),
           messages: [
@@ -264,7 +267,7 @@ export async function callGemini({
         ...(system ? { systemInstruction: { parts: [{ text: system }] } } : {}),
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
         generationConfig: {
-          temperature: 0.2,
+          temperature,
           maxOutputTokens: maxTokens,
           ...(jsonMode ? { responseMimeType: 'application/json' } : {}),
         },

@@ -1,6 +1,6 @@
 /**
  * Vercel serverless: AI summaries + server-built search links only (no model-supplied URLs).
- * Providers: Anthropic Claude, OpenAI (default order).
+ * Providers: Anthropic Claude, OpenAI, Gemini — in AI_INSIGHTS_PROVIDER_ORDER (default claude,openai).
  */
 /* global process */
 
@@ -9,17 +9,10 @@ import { retrieveKnowledgeForProduct, buildKnowledgeContext } from '../src/utils
 import { verifyUser, consumeUsage, refundUsage } from './_usageLimit.js';
 import { isPremiumUser, hasLegacyClientPremiumFlag } from './_entitlement.js';
 import { checkProductInsightsRateLimit } from './_rateLimitProductInsights.js';
+import { callAnthropic, callOpenAI, callGemini, providerConfigured, parseProviderOrder } from './_llm.js';
 
 const MAX_NARRATIVE_LEN = 2200;
 const MAX_EXTRA_SUMMARY_LEN = 800;
-
-function envList(key, fallback) {
-  const raw = (process.env[key] || fallback || '').trim();
-  return raw
-    .split(',')
-    .map((s) => s.trim().toLowerCase())
-    .filter(Boolean);
-}
 
 function hasUrlLike(s) {
   if (typeof s !== 'string') return false;
@@ -329,137 +322,45 @@ function buildSafeLinks(parsed, productCategory) {
   return { clinicianLinks, literatureLinks, communityLinks };
 }
 
-async function callOpenAI(product, userContextText = '') {
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) return null;
-  const model = process.env.OPENAI_MODEL || 'gpt-4o-mini';
-  const res = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model,
-      temperature: 0.25,
-      response_format: { type: 'json_object' },
-      messages: [
-        {
-          role: 'system',
-          content:
-            'You write careful JSON for a women\'s health education product. Never output URLs or fake citations. Prefer short, generic search phrases when uncertain.',
-        },
-        { role: 'user', content: buildUserPrompt(product, userContextText) },
-      ],
-    }),
-  });
-  if (!res.ok) {
-    console.error('OpenAI error', res.status, (await res.text()).slice(0, 300));
-    return null;
-  }
-  const data = await res.json();
-  const raw = data?.choices?.[0]?.message?.content;
-  return typeof raw === 'string' ? raw : null;
-}
-
-/** Model ids to try; override first with ANTHROPIC_MODEL. */
-function anthropicModelCandidates() {
-  const preferred = (process.env.ANTHROPIC_MODEL || '').trim();
-  const out = [];
-  const add = (m) => {
-    if (m && !out.includes(m)) out.push(m);
-  };
-  add(preferred);
-  add('claude-haiku-4-5-20251001');
-  return out;
-}
-
-const ANTHROPIC_SYSTEM =
+// Shared transport (api/_llm.js) — proper retry/backoff/timeout and status
+// classification instead of the bespoke fetch calls this route used to carry
+// (which duplicated a less-robust, per-provider version of the same thing:
+// no jitter, no distinction between "bad key" and "rate limited", no Gemini).
+const INSIGHTS_SYSTEM_PROMPT =
   "You produce only valid JSON for a women's health education app. Never include URLs, links, domains, or fabricated citations. Use short search phrases only. Output a single JSON object only — no markdown, no code fences, no text before or after the JSON.";
 
-async function callAnthropic(product, userContextText = '') {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) return null;
-
-  const payloadBase = {
-    max_tokens: 2000,
-    temperature: 0.25,
-    system: ANTHROPIC_SYSTEM,
-    messages: [{ role: 'user', content: buildUserPrompt(product, userContextText) }],
-  };
-
-  for (const model of anthropicModelCandidates()) {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({ ...payloadBase, model }),
-    });
-    if (!res.ok) {
-      const errText = await res.text();
-      console.error('Anthropic error', model, res.status, errText.slice(0, 400));
-      // Try the next candidate model on 404 (model id gone), and retry once on
-      // a transient failure. Previously any non-404 returned null immediately,
-      // so a rate limit or an overload was indistinguishable from "no output"
-      // and cost a full fallback generation on the other provider.
-      if (res.status === 404) continue;
-      if (res.status === 429 || res.status >= 500) {
-        const retryAfter = Number.parseFloat(res.headers.get('retry-after') || '');
-        const waitMs = Number.isFinite(retryAfter) ? Math.min(retryAfter * 1000, 5000) : 1200;
-        console.warn(`[product-insights] anthropic ${res.status}; retrying once in ${waitMs}ms`);
-        await new Promise((r) => setTimeout(r, waitMs));
-        const retry = await fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: {
-            'x-api-key': apiKey,
-            'anthropic-version': '2023-06-01',
-            'content-type': 'application/json',
-          },
-          body: JSON.stringify({ ...payloadBase, model }),
-          signal: AbortSignal.timeout(25000),
-        });
-        if (retry.ok) {
-          const retryData = await retry.json();
-          const retryText = retryData?.content?.[0]?.text;
-          if (typeof retryText === 'string' && retryText.trim()) return retryText;
-        } else {
-          console.error('[product-insights] anthropic retry failed', retry.status);
-        }
-      }
-      return null;
-    }
-    const data = await res.json();
-    const text = data?.content?.[0]?.text;
-    if (typeof text === 'string' && text.trim()) return text;
-  }
+async function callProvider(provider, prompt) {
+  const args = { system: INSIGHTS_SYSTEM_PROMPT, prompt, maxTokens: 2000, temperature: 0.25, jsonMode: true };
+  if (provider === 'claude' || provider === 'anthropic') return callAnthropic(args);
+  if (provider === 'openai') return callOpenAI(args);
+  if (provider === 'gemini') return callGemini(args);
   return null;
 }
 
-
+/**
+ * One provider per call, NOT api/_llm.js's callWithFallback — a provider that
+ * responds successfully but with unparseable/schema-violating JSON must still
+ * fall through to the next provider in the handler's loop below, and
+ * callWithFallback only falls through on a hard HTTP/API failure.
+ */
 async function runModel(product, provider, userContextText = '') {
-  let raw = null;
-  let providerUsed = provider === 'anthropic' ? 'claude' : provider;
-  if (provider === 'claude' || provider === 'anthropic') raw = await callAnthropic(product, userContextText);
-  else if (provider === 'openai') raw = await callOpenAI(product, userContextText);
-  if (!raw) return null;
-  const normalized = normalizeParsed(raw);
+  if (!providerConfigured(provider)) return null;
+  let out;
+  try {
+    out = await callProvider(provider, buildUserPrompt(product, userContextText));
+  } catch (e) {
+    console.error(`[product-insights] ${provider} failed:`, e?.status || '', e?.message, e?.body ? `| ${e.body}` : '');
+    return null;
+  }
+  if (!out) return null;
+  const normalized = normalizeParsed(out.text);
   if (!normalized) return null;
   const merged = mergeBrandSearchQueries(product, normalized);
-  return { provider: providerUsed, normalized: merged };
+  return { provider: provider === 'anthropic' ? 'claude' : provider, normalized: merged };
 }
 
 function anyApiKeyConfigured() {
-  return !!(process.env.ANTHROPIC_API_KEY || process.env.OPENAI_API_KEY);
-}
-
-function canUseProvider(p) {
-  const x = p === 'anthropic' ? 'claude' : p;
-  if (x === 'claude') return !!process.env.ANTHROPIC_API_KEY;
-  if (x === 'openai') return !!process.env.OPENAI_API_KEY;
-  return false;
+  return providerConfigured('anthropic') || providerConfigured('openai') || providerConfigured('gemini');
 }
 
 export default async function handler(req, res) {
@@ -546,12 +447,11 @@ export default async function handler(req, res) {
   const userContextText =
     typeof userContextRaw === 'string' ? userContextRaw.trim().slice(0, 4000) : '';
 
-  const order = envList('AI_INSIGHTS_PROVIDER_ORDER', 'claude,openai');
-  const normalizedIds = order.filter((p) => ['claude', 'anthropic', 'openai'].includes(p));
-  const fallback = ['claude', 'openai'];
-  let tryProviders = (normalizedIds.length ? normalizedIds : fallback).filter((p) => canUseProvider(p));
+  const order = parseProviderOrder('AI_INSIGHTS_PROVIDER_ORDER', 'claude,openai');
+  const fallback = ['anthropic', 'openai'];
+  let tryProviders = (order.length ? order : fallback).filter((p) => providerConfigured(p));
   if (tryProviders.length === 0) {
-    tryProviders = fallback.filter((p) => canUseProvider(p));
+    tryProviders = fallback.filter((p) => providerConfigured(p));
   }
 
   // Reserve before spending, refund on failure — see the note in product-chat.js.
