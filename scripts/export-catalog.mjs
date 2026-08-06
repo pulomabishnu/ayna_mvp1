@@ -176,7 +176,7 @@ for (const r of rows) {
 // Losslessness check — a health catalog must not lose fields in transit.
 const lossy = [];
 for (let i = 0; i < products.length; i += 1) {
-  if (stable(fromRow(rows[i])) !== stable(products[i])) lossy.push(products[i].id);
+  if (normalizeForCompare(fromRow(rows[i])) !== normalizeForCompare(products[i])) lossy.push(products[i].id);
 }
 
 console.log(`products: ${products.length}`);
