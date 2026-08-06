@@ -5,6 +5,28 @@ both failures look like unrelated outages.
 
 ---
 
+## Known issue (as of 2026-08-05): AI-insights rate limiter is running fail-open
+
+`api/_rateLimitProductInsights.js` (used by `/api/product-insights` and
+`/api/search-suggestions`) is currently `failClosed: false` — best-effort
+per-isolate memory limiting, not the durable Upstash-backed cap.
+
+This is temporary. A real Upstash Redis database was provisioned via Vercel's
+marketplace, but `UPSTASH_REDIS_REST_URL`/`_TOKEN` ended up unreliable in
+Production and Preview specifically (Development is fine) after being copied
+from the integration's native `KV_REST_API_URL`/`_TOKEN` vars via the Vercel
+CLI — `vercel env add --force` reported success but the values still read back
+empty on a fresh pull, an inconsistency that wasn't resolved via CLI.
+
+**To fix**: in the Vercel dashboard, delete the `UPSTASH_REDIS_REST_URL` and
+`UPSTASH_REDIS_REST_TOKEN` rows for Production and Preview under Project
+Settings → Environment Variables, then re-add them by pasting directly from
+the Upstash integration's own dashboard page (Storage → the connected Upstash
+resource). Once confirmed working in both environments, flip `failClosed` back
+to `true` in `api/_rateLimitProductInsights.js` and redeploy.
+
+---
+
 ## The two ordering hazards
 
 **1. The OTP policy drop must land WITH the new code, never before it.**
@@ -69,7 +91,7 @@ new code finds them on first boot:
 |---|---|
 | `UPSTASH_REDIS_REST_URL` / `_TOKEN` | **Phone verification returns 429 on every send.** SMS rate limiting fails closed by design — an in-process counter cannot limit a serverless function, and the exposure is toll fraud. |
 | `OTP_PEPPER` | Falls back to the service-role key with a warning. Set a dedicated random value: `openssl rand -hex 32` |
-| `ALLOWED_ORIGINS` | Cross-origin calls to `/api/product-image` and `/api/search-suggestions` are refused. Same-origin is unaffected, so this is only needed if something calls the API from another domain. |
+| `ALLOWED_ORIGINS` | Cross-origin calls to `/api/product-chat`, `/api/product-image`, `/api/product-insights`, and `/api/search-suggestions` are refused. Same-origin is unaffected, so this is only needed if something calls the API from another domain. |
 | `REQUIRE_AUTH_FOR_SEARCH_SUGGESTIONS` | Optional. Set to `1` to require sign-in for AI search. Leave unset to keep anonymous Discovery search — the tradeoff is that an IP-rotating script can spend Anthropic tokens. |
 
 **Step 4 — apply the schema** (remediation first if the diff produced one):
