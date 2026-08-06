@@ -1999,6 +1999,32 @@ export default function ProductModal({
                                                 border: msg.role === 'assistant' ? '1px solid var(--color-border)' : 'none'
                                             }}>
                                                 <p style={{ margin: 0, fontSize: '0.9rem', lineHeight: '1.4' }}>{msg.text}</p>
+                                                {msg.role === 'assistant' && idx > 0 && (() => {
+                                                    // Link out to a real, already-verified source (never LLM-generated —
+                                                    // an AI-composed URL in the chat answer itself would be a
+                                                    // fabrication risk, not a fix for one) so a user can always check
+                                                    // any claim against the product's own official page or a retailer.
+                                                    const officialUrl = String(product?.url || '').trim();
+                                                    const hasOfficialUrl = officialUrl.startsWith('http://') || officialUrl.startsWith('https://');
+                                                    const firstShop = Array.isArray(product?.whereToBuy) ? product.whereToBuy[0] : null;
+                                                    const linkUrl = hasOfficialUrl
+                                                        ? officialUrl
+                                                        : firstShop
+                                                            ? (product.whereToBuyLinks?.[firstShop] || getStoreUrl(firstShop, product.name))
+                                                            : null;
+                                                    if (!linkUrl) return null;
+                                                    const linkLabel = hasOfficialUrl ? 'View official product page' : `View on ${firstShop}`;
+                                                    return (
+                                                        <a
+                                                            href={linkUrl}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            style={{ display: 'inline-block', marginTop: '0.5rem', fontSize: '0.78rem', fontWeight: 700, color: 'var(--color-primary)', textDecoration: 'none' }}
+                                                        >
+                                                            {linkLabel} ↗
+                                                        </a>
+                                                    );
+                                                })()}
                                             </div>
                                         ))}
                                         {isTyping && (
