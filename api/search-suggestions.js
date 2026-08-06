@@ -241,14 +241,17 @@ async function callClaudeJson(prompt, attempt = 0) {
     },
     body: JSON.stringify({
       model,
-      // 2048 was previously assumed to be ~10x what 20 short suggestions need,
-      // but the schema below asks for a 2-3 sentence summary, up to 6 tags,
-      // retailers, search terms, and a safety note PER suggestion — 20 of
-      // those alone run ~2,800+ tokens before querySummary/relatedSearches,
-      // so 2048 was truncating responses mid-JSON on every request that
-      // actually needed close to the full 20, which surfaced as a consistent
-      // invalid_model_json (the truncated text simply isn't valid JSON).
-      max_tokens: 4096,
+      // Was reduced to 2048 on the assumption that was "~10x what 20 short
+      // suggestions need." It wasn't: the schema below asks for a 2-3 sentence
+      // summary, up to 6 tags, retailers, search terms, and a safety note PER
+      // suggestion — 20 of those run ~2,800+ tokens before querySummary/
+      // relatedSearches. 2048 truncated mid-JSON on every request needing
+      // close to the full 20 (confirmed live in production — every real
+      // search failed with invalid_model_json). Raising to 4096 still wasn't
+      // enough (many requests still hit max_tokens live). 8192 is the
+      // original value this was reduced from, before the "~10x" assumption
+      // turned out to be wrong for the schema as it exists today.
+      max_tokens: 8192,
       temperature: 0.2,
       system:
         "Return a single valid JSON object only. No markdown fences. You must not output URLs or http(s) in any field. Real brand and product names only. Educational women's health context; never diagnose.",

@@ -318,7 +318,9 @@ describe('POST /api/search-suggestions — Claude call and retry', () => {
     });
     const handler = await loadHandler();
     await handler(searchReq({ query: 'cramp relief' }), mockRes());
-    expect(capturedBody.max_tokens).toBeGreaterThanOrEqual(4096);
+    // 2048 truncated on every real search in production; 4096 (once tried
+    // live) still truncated many. 8192 is the value confirmed to hold up.
+    expect(capturedBody.max_tokens).toBeGreaterThanOrEqual(8192);
   });
 
   it('logs a warning (not a silent failure) when Claude truncates at max_tokens', async () => {
