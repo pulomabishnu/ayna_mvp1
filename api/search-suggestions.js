@@ -6,6 +6,7 @@
 
 import { checkProductInsightsRateLimit } from './_rateLimitProductInsights.js';
 import { verifyUser } from './_usageLimit.js';
+import { tryParseJsonCandidate } from './_llm.js';
 
 const ALLOWED_CATEGORIES = new Set([
   'pad',
@@ -240,10 +241,14 @@ async function callClaudeJson(prompt, attempt = 0) {
     },
     body: JSON.stringify({
       model,
-      // 8192 was ~10x what 20 short suggestions need, and on an unauthenticated
-      // endpoint that set the per-request abuse cost (~$0.04) an order of
-      // magnitude higher than necessary.
-      max_tokens: 2048,
+      // 2048 was previously assumed to be ~10x what 20 short suggestions need,
+      // but the schema below asks for a 2-3 sentence summary, up to 6 tags,
+      // retailers, search terms, and a safety note PER suggestion — 20 of
+      // those alone run ~2,800+ tokens before querySummary/relatedSearches,
+      // so 2048 was truncating responses mid-JSON on every request that
+      // actually needed close to the full 20, which surfaced as a consistent
+      // invalid_model_json (the truncated text simply isn't valid JSON).
+      max_tokens: 4096,
       temperature: 0.2,
       system:
         "Return a single valid JSON object only. No markdown fences. You must not output URLs or http(s) in any field. Real brand and product names only. Educational women's health context; never diagnose.",
@@ -270,6 +275,12 @@ async function callClaudeJson(prompt, attempt = 0) {
   }
   const raw = data?.content?.[0]?.text;
   if (typeof raw !== 'string' || !raw.trim()) return null;
+  if (data?.stop_reason === 'max_tokens') {
+    // Truncated output can't be recovered after the fact — this is here so a
+    // future max_tokens regression shows up as a clear log line instead of a
+    // bare invalid_model_json with no indication of why.
+    console.warn('search-suggestions: Claude hit max_tokens; response is truncated and will likely fail to parse');
+  }
   return stripJsonFence(raw);
 }
 
@@ -350,10 +361,12 @@ export default async function handler(req, res) {
     return res.status(502).json({ error: 'claude_failed' });
   }
 
-  let parsed;
-  try {
-    parsed = JSON.parse(rawJson);
-  } catch {
+  // Tolerant parse (same helper _llm.js's callers use): strips stray code
+  // fences, extracts a balanced JSON object out of surrounding prose, and
+  // drops trailing commas — a naive JSON.parse rejected all of these even
+  // when the model's actual suggestions were intact and usable.
+  const parsed = tryParseJsonCandidate(rawJson);
+  if (!parsed) {
     return res.status(502).json({ error: 'invalid_model_json' });
   }
 

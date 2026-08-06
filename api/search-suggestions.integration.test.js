@@ -305,6 +305,61 @@ describe('POST /api/search-suggestions — Claude call and retry', () => {
     expect(res.statusCode).toBe(502);
     expect(res.body.error).toBe('invalid_model_json');
   });
+
+  // Regression: 20 rich suggestions run ~2,800+ tokens, comfortably exceeding
+  // the old 2048 cap — every request needing close to the full 20 was
+  // truncated mid-JSON and failed to parse, which is exactly what real
+  // Discovery searches hit in production.
+  it('requests enough max_tokens for a full 20-suggestion response', async () => {
+    let capturedBody;
+    globalThis.fetch = vi.fn(async (url, init) => {
+      capturedBody = JSON.parse(init.body);
+      return claudeOk();
+    });
+    const handler = await loadHandler();
+    await handler(searchReq({ query: 'cramp relief' }), mockRes());
+    expect(capturedBody.max_tokens).toBeGreaterThanOrEqual(4096);
+  });
+
+  it('logs a warning (not a silent failure) when Claude truncates at max_tokens', async () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    globalThis.fetch = vi.fn(async () => anthropicOk('{"suggestions": [truncated mid', 'max_tokens'));
+    const handler = await loadHandler();
+    await handler(searchReq({ query: 'cramp relief' }), mockRes());
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('max_tokens'));
+    warnSpy.mockRestore();
+  });
+
+  it('recovers suggestions from a response with a trailing comma, which a naive JSON.parse rejects', async () => {
+    globalThis.fetch = vi.fn(async () => anthropicOk(
+      '{"querySummary":"Heat and warmth options for cramp relief, always confirm with your clinician.","relatedSearches":["cramp relief"],"suggestions":[{"brand":"Acme","name":"Heat Patch","category":"cramp-relief","type":"physical","summary":"A adhesive heat patch that provides several hours of low-level warmth for cramp relief.","priceHint":"$12","whereToBuy":["Amazon"],"tags":["heat"],"searchTerms":["acme heat patch"],},]}'
+    ));
+    const handler = await loadHandler();
+    const res = mockRes();
+    await handler(searchReq({ query: 'cramp relief' }), res);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.suggestions).toHaveLength(1);
+    expect(res.body.suggestions[0].name).toBe('Acme Heat Patch');
+  });
+
+  it('recovers suggestions from a response wrapped in prose, which a naive JSON.parse rejects', async () => {
+    globalThis.fetch = vi.fn(async () => anthropicOk(
+      `Sure, here are some options! ${JSON.stringify({
+        querySummary: 'Heat and warmth options for cramp relief, always confirm with your clinician.',
+        relatedSearches: ['cramp relief'],
+        suggestions: [{
+          brand: 'Acme', name: 'Heat Patch', category: 'cramp-relief', type: 'physical',
+          summary: 'A adhesive heat patch that provides several hours of low-level warmth for cramp relief.',
+          priceHint: '$12', whereToBuy: ['Amazon'], tags: ['heat'], searchTerms: ['acme heat patch'],
+        }],
+      })} Hope that helps!`
+    ));
+    const handler = await loadHandler();
+    const res = mockRes();
+    await handler(searchReq({ query: 'cramp relief' }), res);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.suggestions).toHaveLength(1);
+  });
 });
 
 describe('POST /api/search-suggestions — output sanitization', () => {
