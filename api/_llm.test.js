@@ -3,6 +3,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import {
   callAnthropic,
   callOpenAI,
+  callGemini,
   callWithFallback,
   parseProviderOrder,
   tryParseJsonCandidate,
@@ -28,6 +29,14 @@ function openaiOk(text, finish = 'stop') {
     json: async () => ({ choices: [{ message: { content: text }, finish_reason: finish }] }),
   };
 }
+function geminiOk(text, finishReason = 'STOP') {
+  return {
+    ok: true,
+    status: 200,
+    headers: new Headers(),
+    json: async () => ({ candidates: [{ content: { parts: [{ text }] }, finishReason }] }),
+  };
+}
 function httpError(status, headers = {}) {
   return {
     ok: false,
@@ -47,6 +56,11 @@ afterEach(() => {
   vi.useRealTimers();
   globalThis.fetch = realFetch;
   vi.restoreAllMocks();
+  delete process.env.GEMINI_API_KEY;
+  delete process.env.GOOGLE_AI_API_KEY;
+  delete process.env.GEMINI_AI_GATEWAY_API_KEY;
+  delete process.env.AI_GATEWAY_API_KEY;
+  delete process.env.AI_GATEWAY_BASE_URL;
 });
 
 /** Run a promise to completion while auto-advancing the fake backoff timers. */
@@ -171,14 +185,68 @@ describe('provider fallback', () => {
   });
 });
 
+describe('Gemini', () => {
+  it('calls the direct API when a Gemini key is set', async () => {
+    process.env.GEMINI_API_KEY = 'test-gemini';
+    const fetchMock = vi.fn().mockResolvedValue(geminiOk('hello from gemini'));
+    globalThis.fetch = fetchMock;
+
+    const out = await runWithTimers(callGemini({ prompt: 'hi' }));
+    expect(out.text).toBe('hello from gemini');
+    expect(out.provider).toBe('gemini');
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(String(url)).toContain('generativelanguage.googleapis.com');
+    expect(init.headers['x-goog-api-key']).toBe('test-gemini');
+  });
+
+  it('prefers the AI Gateway when a gateway key is set', async () => {
+    process.env.GEMINI_API_KEY = 'test-gemini';
+    process.env.AI_GATEWAY_API_KEY = 'test-gateway';
+    const fetchMock = vi.fn().mockResolvedValue(openaiOk('hello from gateway'));
+    globalThis.fetch = fetchMock;
+
+    const out = await runWithTimers(callGemini({ prompt: 'hi' }));
+    expect(out.text).toBe('hello from gateway');
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(String(url)).toContain('ai-gateway.vercel.sh');
+    expect(init.headers.Authorization).toBe('Bearer test-gateway');
+  });
+
+  it('flags MAX_TOKENS as truncated', async () => {
+    process.env.GEMINI_API_KEY = 'test-gemini';
+    globalThis.fetch = vi.fn().mockResolvedValue(geminiOk('{"a":', 'MAX_TOKENS'));
+    const out = await runWithTimers(callGemini({ prompt: 'hi' }));
+    expect(out.truncated).toBe(true);
+  });
+
+  it('throws when no Gemini credentials are configured', async () => {
+    await expect(callGemini({ prompt: 'hi' })).rejects.toMatchObject({ provider: 'gemini', retryable: false });
+  });
+
+  it('participates in provider fallback', async () => {
+    process.env.GEMINI_API_KEY = 'test-gemini';
+    delete process.env.ANTHROPIC_API_KEY;
+    delete process.env.OPENAI_API_KEY;
+    globalThis.fetch = vi.fn().mockResolvedValue(geminiOk('gemini answered'));
+
+    const out = await runWithTimers(callWithFallback(['anthropic', 'openai', 'gemini'], { prompt: 'hi' }));
+    expect(out.provider).toBe('gemini');
+    expect(out.text).toBe('gemini answered');
+  });
+});
+
 describe('parseProviderOrder', () => {
   it('normalizes "claude" to anthropic and dedupes', () => {
     process.env.T = 'claude, anthropic ,openai';
     expect(parseProviderOrder('T', '')).toEqual(['anthropic', 'openai']);
   });
   it('drops unknown providers', () => {
-    process.env.T = 'gemini,openai';
+    process.env.T = 'mistral,openai';
     expect(parseProviderOrder('T', '')).toEqual(['openai']);
+  });
+  it('keeps gemini in the order', () => {
+    process.env.T = 'gemini,openai';
+    expect(parseProviderOrder('T', '')).toEqual(['gemini', 'openai']);
   });
   it('falls back when the env var is unset', () => {
     delete process.env.T;

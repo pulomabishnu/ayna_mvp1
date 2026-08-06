@@ -181,10 +181,112 @@ export async function callOpenAI({
   return { text, stopReason, truncated: stopReason === 'length', provider: 'openai' };
 }
 
+function firstEnv(...names) {
+  for (const name of names) {
+    if (process.env[name]) return process.env[name];
+  }
+  return undefined;
+}
+
+/**
+ * Gemini can be reached two ways: directly with a Google AI Studio key, or
+ * through Vercel's AI Gateway (an OpenAI-compatible proxy). The gateway key
+ * takes priority when both are set, since a gateway deployment is usually a
+ * deliberate choice to centralize billing/observability.
+ */
+function geminiCredentials() {
+  const gatewayKey = firstEnv('GEMINI_AI_GATEWAY_API_KEY', 'AI_GATEWAY_API_KEY');
+  if (gatewayKey) {
+    return {
+      mode: 'gateway',
+      apiKey: gatewayKey,
+      baseUrl: (process.env.AI_GATEWAY_BASE_URL || 'https://ai-gateway.vercel.sh/v1').replace(/\/$/, ''),
+      model: process.env.AI_GATEWAY_GEMINI_MODEL || 'google/gemini-2.5-flash',
+    };
+  }
+  const directKey = firstEnv('GEMINI_API_KEY', 'GOOGLE_AI_API_KEY', 'GOOGLE_GENERATIVE_AI_API_KEY', 'GOOGLE_API_KEY');
+  if (directKey) {
+    return { mode: 'direct', apiKey: directKey, model: process.env.GEMINI_MODEL || 'gemini-2.0-flash' };
+  }
+  return null;
+}
+
+export async function callGemini({
+  system,
+  prompt,
+  maxTokens = 4000,
+  model,
+  jsonMode = false,
+  timeoutMs = DEFAULT_TIMEOUT_MS,
+  maxAttempts = DEFAULT_MAX_ATTEMPTS,
+  signal,
+} = {}) {
+  const creds = geminiCredentials();
+  if (!creds) throw new LlmError('no Gemini credentials configured', { provider: 'gemini', retryable: false });
+
+  if (creds.mode === 'gateway') {
+    // The gateway speaks the OpenAI chat-completions shape regardless of the
+    // underlying model, so this mirrors callOpenAI rather than the native API.
+    const res = await requestWithRetry(
+      `${creds.baseUrl}/chat/completions`,
+      {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${creds.apiKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: model || creds.model,
+          temperature: 0.2,
+          max_tokens: maxTokens,
+          ...(jsonMode ? { response_format: { type: 'json_object' } } : {}),
+          messages: [
+            ...(system ? [{ role: 'system', content: system }] : []),
+            { role: 'user', content: prompt },
+          ],
+        }),
+      },
+      { provider: 'gemini', timeoutMs, maxAttempts, signal }
+    );
+    const data = await res.json();
+    const choice = data?.choices?.[0];
+    const text = choice?.message?.content;
+    const stopReason = choice?.finish_reason || '';
+    if (typeof text !== 'string' || !text.trim()) {
+      throw new LlmError('gemini (gateway) returned no text', { provider: 'gemini', status: res.status });
+    }
+    return { text, stopReason, truncated: stopReason === 'length', provider: 'gemini' };
+  }
+
+  const res = await requestWithRetry(
+    `https://generativelanguage.googleapis.com/v1beta/models/${model || creds.model}:generateContent`,
+    {
+      method: 'POST',
+      headers: { 'x-goog-api-key': creds.apiKey, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...(system ? { systemInstruction: { parts: [{ text: system }] } } : {}),
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        generationConfig: {
+          temperature: 0.2,
+          maxOutputTokens: maxTokens,
+          ...(jsonMode ? { responseMimeType: 'application/json' } : {}),
+        },
+      }),
+    },
+    { provider: 'gemini', timeoutMs, maxAttempts, signal }
+  );
+  const data = await res.json();
+  const candidate = data?.candidates?.[0];
+  const text = (candidate?.content?.parts || []).map((p) => p.text || '').join('');
+  const stopReason = candidate?.finishReason || '';
+  if (!text.trim()) {
+    throw new LlmError('gemini returned no text', { provider: 'gemini', status: res.status });
+  }
+  return { text, stopReason, truncated: stopReason === 'MAX_TOKENS', provider: 'gemini' };
+}
+
 export function providerConfigured(name) {
   const n = name === 'claude' ? 'anthropic' : name;
   if (n === 'anthropic') return !!process.env.ANTHROPIC_API_KEY;
   if (n === 'openai') return !!process.env.OPENAI_API_KEY;
+  if (n === 'gemini') return !!geminiCredentials();
   return false;
 }
 
@@ -193,7 +295,7 @@ export function parseProviderOrder(envName, fallback) {
     .split(',')
     .map((s) => s.trim().toLowerCase())
     .map((s) => (s === 'claude' ? 'anthropic' : s))
-    .filter((s) => s === 'anthropic' || s === 'openai')
+    .filter((s) => s === 'anthropic' || s === 'openai' || s === 'gemini')
     .filter((s, i, arr) => arr.indexOf(s) === i);
 }
 
@@ -210,6 +312,7 @@ export async function callWithFallback(order, args = {}) {
     try {
       if (provider === 'anthropic') return await callAnthropic({ ...args, ...(args.anthropic || {}) });
       if (provider === 'openai') return await callOpenAI({ ...args, ...(args.openai || {}) });
+      if (provider === 'gemini') return await callGemini({ ...args, ...(args.gemini || {}) });
     } catch (e) {
       console.error(`[llm] ${provider} failed:`, e?.status || '', e?.message, e?.body ? `| ${e.body}` : '');
       errors.push(e);
