@@ -1610,63 +1610,6 @@ export const STARTUPS = [
         spotsLeft: 410,
         url: '#',
         image: 'https://www.mimiwatercolorprints.com/cdn/shop/products/Ovary-Anatomy-Art-Watercolor-Print-Ob-Gyn-Poster-Fertility-Clinic-Wall-Decor.jpg?v=1644451709&width=2500'
-    },
-    // ─── BRANDS ──────────────────────────────────────────
-    // Real, already-live, already-purchasable brands (not partnerships) —
-    // category 'brand' is deliberately carved out of the isStartupUsAvailable()
-    // split below so these always show here regardless of their real
-    // availability status, instead of being (correctly, but unhelpfully for
-    // this list) classified as "released." Each is also a real product catalog
-    // entry in src/data/brands.js; productReleased: true here drives the
-    // correct "Add to ecosystem" / "Product website" CTA instead of a
-    // misleading "Join Waitlist" one.
-    {
-        id: 's-winx-health',
-        name: 'Winx Health',
-        tagline: 'At-home UTI test + telehealth treatment',
-        description: 'An at-home UTI test paired with Winx Rx, the brand\'s own telehealth service — check symptoms with a rapid test, then connect to a licensed provider for prescription treatment if needed. Recognized as a TIME Best Invention.',
-        tags: ['uti', 'safety-concern', 'privacy'],
-        healthFunctions: ['uti-prevention', 'telehealth'],
-        category: 'brand',
-        stage: 'Available, DTC + Walgreens nationally',
-        productReleased: true,
-        url: 'https://hellowinx.com/'
-    },
-    {
-        id: 's-neycher',
-        name: 'Neycher',
-        tagline: 'Non-hormonal vaginal moisturizers & intimate care',
-        description: 'A holistic vaginal-health brand offering non-hormonal alternatives to antibiotic, antifungal, and hormone treatments for dryness, irritation, and discomfort — moisturizers, suppositories, and a vulva balm.',
-        tags: ['discomfort', 'organic', 'comfort'],
-        healthFunctions: ['vaginal-health'],
-        category: 'brand',
-        stage: 'Available, DTC + Amazon',
-        productReleased: true,
-        url: 'https://www.helloneycher.com/'
-    },
-    {
-        id: 's-good-kitty',
-        name: 'Good Kitty Co',
-        tagline: 'Daily UTI-prevention supplement',
-        description: 'A daily capsule combining D-mannose, soluble cranberry PACs, vitamin D3, and zinc, developed with a urogynecologist — for people prone to recurrent UTIs who want a preventive routine, not just reactive treatment.',
-        tags: ['uti', 'safety-concern'],
-        healthFunctions: ['uti-prevention'],
-        category: 'brand',
-        stage: 'Available, DTC',
-        productReleased: true,
-        url: 'https://goodkittyco.com/'
-    },
-    {
-        id: 's-oboo',
-        name: 'Oboo',
-        tagline: 'Intimate wellness for perimenopause & menopause',
-        description: 'A "midlife-friendly, body-smart, shame-free" intimate wellness line — warming pleasure devices and moisturizers designed for women navigating menopause-related changes in arousal and vaginal dryness.',
-        tags: ['comfort', 'privacy'],
-        healthFunctions: ['sexual-health', 'perimenopause'],
-        category: 'brand',
-        stage: 'Available, DTC',
-        productReleased: true,
-        url: 'https://oboo.love/'
     }
 ];
 
@@ -1696,20 +1639,11 @@ export function isStartupUsAvailable(s) {
     return usSignals.some(sig => stage.includes(sig));
 }
 
-/**
- * Startups NOT yet available in the US, OR brand-catalog entries deliberately
- * kept in this section regardless of availability — shown in the Startups /
- * waitlist section.
- */
-export const UNRELEASED_STARTUPS = STARTUPS.filter(s => s.category === 'brand' || !isStartupUsAvailable(s));
+/** Startups NOT yet available in the US — shown in the Startups / waitlist section. */
+export const UNRELEASED_STARTUPS = STARTUPS.filter(s => !isStartupUsAvailable(s));
 
-/**
- * Startups with US-available products — shown as regular brands, not as startups.
- * The 'brand' category is excluded here even though they're available, since
- * they're already represented directly in the product catalog
- * (src/data/brands.js) — this avoids listing them twice in Discovery.
- */
-export const RELEASED_STARTUPS = STARTUPS.filter(s => s.category !== 'brand' && isStartupUsAvailable(s));
+/** Startups with US-available products — shown as regular brands, not as startups. */
+export const RELEASED_STARTUPS = STARTUPS.filter(s => isStartupUsAvailable(s));
 
 // ─── STARTUP MATCHING ──────────────────────────────────
 export function getPersonalizedStartups(quizAnswers) {

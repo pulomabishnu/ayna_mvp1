@@ -36,6 +36,7 @@ export const BRAND_PRODUCTS = [
         effectiveness: 'Combines an at-home rapid test with telehealth access to prescription treatment; the underlying test was recognized as a TIME Best Invention.',
         integrations: [],
         badges: [],
+        isEmergingBrand: true, // shows a 'Brand' tag on the Discovery card, next to the type badge
     },
     {
         id: 'p-neycher-vaginal-moisturizer',
@@ -63,6 +64,7 @@ export const BRAND_PRODUCTS = [
         effectiveness: 'Positioned as a non-hormonal alternative to antibiotic, antifungal, or hormone treatments for vaginal dryness and irritation; no independent clinical study of the product was found.',
         integrations: [],
         badges: [],
+        isEmergingBrand: true, // shows a 'Brand' tag on the Discovery card, next to the type badge
     },
     {
         id: 'p-good-kitty-uti-biome-shield',
@@ -90,6 +92,7 @@ export const BRAND_PRODUCTS = [
         effectiveness: 'Uses UTI-prevention ingredients (D-mannose, cranberry PACs) at stated doses that are individually well-studied; no independent clinical trial of the finished product itself was found.',
         integrations: [],
         badges: [],
+        isEmergingBrand: true, // shows a 'Brand' tag on the Discovery card, next to the type badge
     },
     {
         id: 'p-oboo-woosh-warming-wand',
@@ -117,5 +120,6 @@ export const BRAND_PRODUCTS = [
         effectiveness: 'Positioned to address menopause-related changes in arousal and vaginal dryness; no independent clinical study of the product was found.',
         integrations: [],
         badges: [],
+        isEmergingBrand: true, // shows a 'Brand' tag on the Discovery card, next to the type badge
     },
 ];

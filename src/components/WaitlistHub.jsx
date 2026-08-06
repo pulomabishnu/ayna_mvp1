@@ -10,7 +10,6 @@ export default function WaitlistHub({ joinedWaitlists, toggleJoinWaitlist, quizR
 
     const categoryLabels = {
         'all': 'All',
-        'brand': '🏷️ Brands',
         'diagnostics': '🔬 Diagnostics',
         'hormone-monitoring': '🧬 Hormone Monitoring',
         'period-care': '🩸 Period Care',

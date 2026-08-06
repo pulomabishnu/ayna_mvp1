@@ -872,14 +872,24 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                         <span style={{ fontSize: '0.75rem', color: 'var(--color-primary)', opacity: 0.9 }}>Your women's health assistant</span>
                                     </div>
                                 )}
-                                <span style={{
-                                    position: 'absolute', top: '0.5rem', left: '0.5rem',
-                                    background: isStartup ? 'var(--color-primary-hover)' : (item.type === 'physical' ? 'var(--color-surface-contrast)' : 'var(--color-primary)'),
-                                    color: 'white', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)',
-                                    fontSize: '0.65rem', fontWeight: '600', textTransform: 'uppercase'
-                                }}>
-                                    {isStartup ? 'Startup' : item.type}
-                                </span>
+                                <div style={{ position: 'absolute', top: '0.5rem', left: '0.5rem', display: 'flex', gap: '0.3rem' }}>
+                                    <span style={{
+                                        background: isStartup ? 'var(--color-primary-hover)' : (item.type === 'physical' ? 'var(--color-surface-contrast)' : 'var(--color-primary)'),
+                                        color: 'white', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)',
+                                        fontSize: '0.65rem', fontWeight: '600', textTransform: 'uppercase'
+                                    }}>
+                                        {isStartup ? 'Startup' : item.type}
+                                    </span>
+                                    {item.isEmergingBrand && (
+                                        <span style={{
+                                            background: 'var(--color-primary)', color: 'white',
+                                            padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)',
+                                            fontSize: '0.65rem', fontWeight: '600', textTransform: 'uppercase'
+                                        }}>
+                                            Brand
+                                        </span>
+                                    )}
+                                </div>
                                 {isInEcosystem && (
                                     <span style={{
                                         position: 'absolute', top: '0.5rem', right: '0.5rem',
