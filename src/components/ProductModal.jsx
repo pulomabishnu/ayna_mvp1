@@ -380,9 +380,6 @@ function buildSocialInsight(product, aiInsights, quizResults, healthProfile) {
   if (curatedSummary && addsNewInfo(curatedSummary, [ai, quotePart])) {
     bullets.push(`**Additional context:** ${curatedSummary}`);
   }
-  if (ai || quotePart || curatedSummary) {
-    bullets.push('**Validity:** Community feedback is anecdotal and can be biased by incentives, extremes, and selection effects—treat as supportive context, not proof.');
-  }
   return toInsightObject(bullets);
 }
 
@@ -1848,6 +1845,9 @@ export default function ProductModal({
                                     <div style={{ fontSize: '0.95rem', color: '#581C87', margin: 0 }}>
                                         {renderInsightBullets(condensed.socialInsight)}
                                     </div>
+                                    <p style={{ fontSize: '0.7rem', color: '#7E22CE', margin: '0.65rem 0 0', fontWeight: '600' }}>
+                                        Community feedback is anecdotal — treat as supportive context, not proof.
+                                    </p>
                                 </div>
                             )}
                             {product.incentivizedReviewSites && product.incentivizedReviewSites.length > 0 && (
