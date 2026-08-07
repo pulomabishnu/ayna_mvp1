@@ -5,7 +5,7 @@ const ANNUAL_PRICE = '$162';
 const ANNUAL_SAVINGS = '3 months free';
 const CONTACT_EMAIL = 'pulomabishnu@gmail.com';
 
-export default function SubscriptionPaywallModal({ onClose, featureName = 'this feature' }) {
+export default function SubscriptionPaywallModal({ onClose, featureName = 'this feature', featureDescription = 'syncing and summarizing health data from wearables and EHRs' }) {
   const monthlyHref = `mailto:${CONTACT_EMAIL}?subject=Ayna%20Early%20Access%20Subscription%20(Monthly)&body=Hi%2C%20I%27d%20like%20to%20subscribe%20to%20Ayna%20Premium%20at%20%2418%2Fmonth.`;
   const annualHref = `mailto:${CONTACT_EMAIL}?subject=Ayna%20Early%20Access%20Subscription%20(Annual)&body=Hi%2C%20I%27d%20like%20to%20subscribe%20to%20Ayna%20Premium%20at%20%24162%2Fyear.`;
 
@@ -62,13 +62,12 @@ export default function SubscriptionPaywallModal({ onClose, featureName = 'this 
             Unlock Ayna Premium
           </h2>
           <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', lineHeight: 1.6 }}>
-            Ayna can only afford to offer {featureName} to paying users — syncing and
-            summarizing health data from wearables and EHRs is costly to build and maintain.
+            Ayna can only afford to offer {featureName} to paying users — {featureDescription} is
+            costly to build and maintain.
           </p>
           <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', lineHeight: 1.6, marginTop: '0.75rem' }}>
-            As an early user, we&apos;re offering a <strong>lifetime discount</strong>. You&apos;ll
-            get daily AI-powered summaries across all your health records and wearable data.
-            This feature is launching soon — <strong>subscribe now to lock in this price forever.</strong>
+            As an early user, we&apos;re offering a <strong>lifetime discount</strong> —{' '}
+            <strong>subscribe now to lock in this price forever.</strong>
           </p>
         </div>
 

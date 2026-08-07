@@ -2067,7 +2067,7 @@ export default function ProductModal({
                 </div>
             </div>
         </div>
-        {showPaywall && <SubscriptionPaywallModal onClose={() => setShowPaywall(false)} featureName="unlimited AI chat" />}
+        {showPaywall && <SubscriptionPaywallModal onClose={() => setShowPaywall(false)} featureName="unlimited AI chat" featureDescription="running unlimited AI chat conversations" />}
     </>
     );
 }
