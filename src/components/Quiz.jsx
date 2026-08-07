@@ -257,7 +257,7 @@ function parseTranscriptToProfile(transcript) {
   else if (text.match(/\b(56|57|58|59|60|61|62|63|64|65)\s*(years?|y\.?o\.?|and)/) || text.includes('60') || text.includes('menopause') || text.includes('postmenopausal')) out.age = '56+';
 
   // Birth control
-  const noBcPhrases = ["don't use", "do not use", "not using", "no birth control", "not on birth control", "not interested", "no contraception", "not taking", "don't take", "no i'm not", "no im not", "nope", " no ", "stopped", "off the pill", "no longer"];
+  const noBcPhrases = ["don't use", "do not use", "not using", "no birth control", "not on birth control", "not interested", "no contraception", "not taking", "don't take", "no i'm not", "no im not", "nope", "stopped", "off the pill", "no longer"];
   const saysNoBc = noBcPhrases.some(phrase => text.includes(phrase)) || /\bno\b.*(birth control|contraception|pill|iud)/.test(text) || /(birth control|contraception).*\bno\b/.test(text);
   if (saysNoBc) {
     out.contraceptionUse = 'No';

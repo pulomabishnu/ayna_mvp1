@@ -25,7 +25,7 @@ function getIngredientSafetyFlags(product, conditions = [], sensitivities = [], 
 
   const isFragranceFree = /fragrance[\s-]free|unscented|no[\s-]fragrance|scent[\s-]free/i.test(combined);
 
-  if (hasEndo) {
+  if (hasEndo && hasKnowledgeForHormoneConditions) {
     if (!isFragranceFree && /\bfragrance\b|\bperfume\b|\bparfum\b|\bscent\b/.test(combined)) {
       flags.push('**⚠️ Endometriosis flag:** Contains synthetic fragrance - may act as an endocrine disruptor. Choose fragrance-free alternatives.');
     }
@@ -37,7 +37,7 @@ function getIngredientSafetyFlags(product, conditions = [], sensitivities = [], 
     }
   }
 
-  if (hasPcos) {
+  if (hasPcos && hasKnowledgeForHormoneConditions) {
     if ((!isFragranceFree && /\bfragrance\b|\bperfume\b|\bparfum\b/.test(combined)) || /\bparaben\b|\bphthalate\b/.test(combined)) {
       flags.push('**⚠️ PCOS flag:** Contains potential endocrine disruptors (fragrance/parabens). Minimize EDC exposure with PCOS.');
     }
@@ -61,8 +61,6 @@ function getIngredientSafetyFlags(product, conditions = [], sensitivities = [], 
   if (normalizedConditions.some((c) => /vaginismus|vulvodynia|interstitial cystitis/i.test(c)) && /glycerin|glycerol/.test(combined)) {
     flags.push('**⚠️ Sensitivity flag:** Contains glycerin - may trigger irritation for vulvodynia or yeast-prone users.');
   }
-
-  if (!hasKnowledgeForHormoneConditions) return flags;
 
   return flags;
 }
