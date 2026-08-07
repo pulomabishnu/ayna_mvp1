@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   CONCERN_AREAS,
   CYCLE_SYMPTOMS,
@@ -11,6 +11,7 @@ import {
   mapIntakeToLegacyQuizProfile,
 } from '../utils/healthIntake';
 import { saveHealthIntakeForCurrentUser } from '../utils/healthIntakeStore';
+import { ALL_PRODUCTS } from '../data/products';
 
 // ─── Condensed symptom list (top clinical signals) ───────────────────────────
 const KEY_SYMPTOMS = [
@@ -164,6 +165,102 @@ function TextInput({ value, onChange, placeholder, type = 'text' }) {
   );
 }
 
+function ProductSearchPicker({ selected = [], onAdd, onRemove, placeholder }) {
+  const [query, setQuery] = useState('');
+
+  const suggestions = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (q.length < 2) return [];
+    return ALL_PRODUCTS
+      .filter((p) => p.name && p.name.toLowerCase().includes(q) && !selected.includes(p.name))
+      .slice(0, 6);
+  }, [query, selected]);
+
+  const addAndClear = (name) => {
+    const trimmed = String(name || '').trim();
+    if (!trimmed) return;
+    onAdd(trimmed);
+    setQuery('');
+  };
+
+  return (
+    <div>
+      {selected.length > 0 && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.6rem' }}>
+          {selected.map((name) => (
+            <span key={name} style={{
+              display: 'inline-flex', alignItems: 'center', gap: '0.35rem',
+              background: 'var(--color-secondary-fade)', color: 'var(--color-primary)',
+              padding: '0.35rem 0.75rem', borderRadius: 'var(--radius-pill)',
+              fontSize: '0.82rem', fontWeight: 700,
+            }}>
+              {name}
+              <button
+                type="button"
+                onClick={() => onRemove(name)}
+                aria-label={`Remove ${name}`}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', fontSize: '0.95rem', lineHeight: 1, padding: 0 }}
+              >
+                ×
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+      <input
+        type="text"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            addAndClear(suggestions[0]?.name || query);
+          }
+        }}
+        placeholder={placeholder}
+        style={{
+          width: '100%', padding: '0.7rem 1rem', fontSize: '0.92rem',
+          border: '1.5px solid var(--color-border)', borderRadius: 'var(--radius-sm)',
+          background: 'var(--color-surface-soft)', color: 'var(--color-text-main)',
+          fontFamily: 'var(--font-body)', outline: 'none',
+        }}
+      />
+      {suggestions.length > 0 && (
+        <div style={{ marginTop: '0.4rem', border: '1.5px solid var(--color-border)', borderRadius: 'var(--radius-sm)', overflow: 'hidden' }}>
+          {suggestions.map((p, idx) => (
+            <button
+              key={p.id}
+              type="button"
+              onClick={() => addAndClear(p.name)}
+              style={{
+                display: 'block', width: '100%', textAlign: 'left', padding: '0.6rem 0.85rem',
+                background: 'var(--color-surface)', border: 'none',
+                borderTop: idx === 0 ? 'none' : '1px solid var(--color-border)',
+                cursor: 'pointer', fontSize: '0.88rem', color: 'var(--color-text-main)', fontFamily: 'var(--font-body)',
+              }}
+            >
+              {p.name}
+            </button>
+          ))}
+        </div>
+      )}
+      {query.trim().length >= 2 && suggestions.length === 0 && (
+        <button
+          type="button"
+          onClick={() => addAndClear(query)}
+          style={{
+            marginTop: '0.4rem', background: 'none', border: 'none', padding: 0,
+            color: 'var(--color-primary)', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer',
+            fontFamily: 'var(--font-body)', textDecoration: 'underline',
+          }}
+        >
+          Add "{query.trim()}" anyway
+        </button>
+      )}
+    </div>
+  );
+}
+
 function TextArea({ value, onChange, placeholder, rows = 4 }) {
   return (
     <textarea
@@ -222,6 +319,7 @@ function SkipLink({ onClick, label = 'Skip this step →' }) {
 const emptyIntake = {
   age: '',
   location: '',
+  zipcode: '',
   primaryConcerns: [],
   customConcernsText: '',
   menstrualCycle: '',
@@ -242,7 +340,7 @@ const emptyIntake = {
   hormonalBirthControlType: '',
   productPreferences: [],
   preferredProductTypes: [],
-  currentProductsText: '',
+  currentProducts: [],
   dislikedProductsText: '',
   dislikedReason: '',
   goals: [],
@@ -293,7 +391,6 @@ export default function HealthIntakeForm({ onComplete }) {
     setSaving(true);
     const snapshot = {
       ...intake,
-      currentProducts: intake.currentProductsText ? intake.currentProductsText.split(',').map((s) => s.trim()).filter(Boolean) : [],
       dislikedProducts: intake.dislikedProductsText ? intake.dislikedProductsText.split(',').map((s) => s.trim()).filter(Boolean) : [],
       customConcerns: intake.customConcernsText ? intake.customConcernsText.split(',').map((s) => s.trim()).filter(Boolean) : [],
       concernFollowups: {},
@@ -353,11 +450,17 @@ export default function HealthIntakeForm({ onComplete }) {
         {/* Screen: basics */}
         {screenId === 'basics' && (
           <div>
-            <ScreenHeader title="Let's build your ecosystem." subtitle="Two quick questions — takes about 20 seconds." />
+            <ScreenHeader title="Let's build your ecosystem." subtitle="A few quick questions — takes about 20 seconds." />
             <FieldLabel>How old are you?</FieldLabel>
             <TextInput type="number" value={intake.age} onChange={(v) => set('age', v)} placeholder="e.g. 28" />
             <FieldLabel optional>Where are you based?</FieldLabel>
             <TextInput value={intake.location} onChange={(v) => set('location', v)} placeholder="e.g. New York, NY" />
+            <FieldLabel optional>ZIP code</FieldLabel>
+            <TextInput
+              value={intake.zipcode}
+              onChange={(v) => set('zipcode', v.replace(/\D/g, '').slice(0, 5))}
+              placeholder="e.g. 10001"
+            />
             <ContinueButton onClick={goNext} disabled={!intake.age.trim()}>Continue →</ContinueButton>
           </div>
         )}
@@ -487,6 +590,17 @@ export default function HealthIntakeForm({ onComplete }) {
         {screenId === 'products' && (
           <div>
             <ScreenHeader title="What matters to you in products?" subtitle="Ayna uses this to filter recommendations and flag ingredient concerns." />
+
+            <FieldLabel optional>What do you currently use?</FieldLabel>
+            <ProductSearchPicker
+              selected={intake.currentProducts}
+              onAdd={(name) => toggle('currentProducts', name)}
+              onRemove={(name) => toggle('currentProducts', name)}
+              placeholder="Search products (e.g. Diva Cup, Always Infinity, Flo app)..."
+            />
+            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.35rem' }}>
+              We'll avoid recommending things you already have.
+            </p>
 
             <FieldLabel optional>Ingredient & material preferences</FieldLabel>
             <ChipGrid items={PRODUCT_PREFERENCES} selected={intake.productPreferences} onToggle={(v) => toggle('productPreferences', v)} small />
