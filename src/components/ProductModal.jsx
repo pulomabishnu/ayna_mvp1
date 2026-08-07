@@ -319,8 +319,6 @@ function buildClinicalInsight(product, aiInsights, quizResults, healthProfile, p
   }
   if (product.clinicianOpinionSource === 'brand' && (narrative || doctor)) {
     bullets.push('**Validity:** Some citations may be brand-leaning, so treat this as directional and confirm with independent clinical sources.');
-  } else if (narrative || doctor) {
-    bullets.push('**Validity:** Use this as educational context; final fit depends on your medical history, meds, and clinician guidance.');
   }
   if (bridgeCare?.shortTerm) bullets.push(bridgeCare.shortTerm);
   if (bridgeCare?.escalation) bullets.push(bridgeCare.escalation);
