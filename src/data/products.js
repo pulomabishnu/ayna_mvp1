@@ -1520,16 +1520,7 @@ export const CHECK_IN_CATEGORIES = [
 // productMap: optional id -> product (for custom ecosystem items not in ALL_PRODUCTS).
 export function detectDuplicates(productIds, productMap = {}) {
     const functionMap = {};
-    const duplicates = {};
     const seenInCategory = {}; // brand|name → dedup within each health function category
-
-    const isDigitalOrTelehealth = (p) => {
-        const type = String(p?.type || '').toLowerCase();
-        const category = String(p?.category || '').toLowerCase();
-        if (type === 'digital') return true;
-        if (category === 'telehealth') return true;
-        return false;
-    };
 
     productIds.forEach(id => {
         let p = ALL_PRODUCTS.find(item => item.id === id);
@@ -1546,12 +1537,5 @@ export function detectDuplicates(productIds, productMap = {}) {
         });
     });
 
-    Object.entries(functionMap).forEach(([fn, products]) => {
-        const overlapCandidates = products.filter(isDigitalOrTelehealth);
-        if (overlapCandidates.length > 1) {
-            duplicates[fn] = overlapCandidates;
-        }
-    });
-
-    return { functionMap, duplicates };
+    return { functionMap };
 }

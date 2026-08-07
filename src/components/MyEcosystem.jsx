@@ -954,7 +954,7 @@ export default function MyEcosystem({
     // Use ecosystemOrder for stable card positions; fall back to insertion order
     const myProductIds = ecosystemOrder.length ? ecosystemOrder.filter(id => myProducts[id]) : Object.keys(myProducts);
     const myProductList = myProductIds.map(id => myProducts[id]).filter(Boolean);
-    const { functionMap, duplicates } = useMemo(() => detectDuplicates(myProductIds, myProducts), [myProductIds, myProducts]);
+    const { functionMap } = useMemo(() => detectDuplicates(myProductIds, myProducts), [myProductIds, myProducts]);
     const ecosystemStartups = useMemo(() => {
         const FRUSTRATION_TAG = {
             'Heavy flow': 'heavy-flow', 'Painful cramps': 'cramps', 'Hormonal bloating': 'bloating',
@@ -991,7 +991,6 @@ export default function MyEcosystem({
             startups: scoreList(UNRELEASED_STARTUPS).filter(s => s._score > 0),
         };
     }, [myProductList, quizResults, healthProfile, functionMap]);
-    const duplicateCount = Object.keys(duplicates).length;
 
     const estimatedMonthlyTotal = useMemo(() => {
         let total = 0;
@@ -1613,7 +1612,7 @@ export default function MyEcosystem({
                     </div>
                     <h2 style={{ fontSize: '2.25rem', marginBottom: '0.75rem' }}>Everything You Use, One Place</h2>
                     <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem' }}>
-                        Track all your health products and apps. Everything here is monitored for safety by default. We'll tell you what each does, if any overlap, and if products may interact.
+                        Track all your health products and apps. Everything here is monitored for safety by default. We'll tell you what each does and if products may interact.
                     </p>
                 </div>
 
@@ -1692,14 +1691,6 @@ export default function MyEcosystem({
                     <div style={{ background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '1rem 1.5rem', textAlign: 'center', minWidth: '140px' }}>
                         <div style={{ fontSize: '2rem', fontWeight: '700', color: 'var(--color-surface-contrast)' }}>{Object.keys(functionMap).length}</div>
                         <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>Health Functions</div>
-                    </div>
-                    <div style={{
-                        background: duplicateCount > 0 ? '#F8F9FA' : 'var(--color-secondary-fade)',
-                        border: `1px solid ${duplicateCount > 0 ? '#D1D5DB' : 'var(--color-border)'}`,
-                        borderRadius: 'var(--radius-md)', padding: '1rem 1.5rem', textAlign: 'center', minWidth: '140px',
-                    }}>
-                        <div style={{ fontSize: '2rem', fontWeight: '700', color: 'var(--color-text-main)' }}>{duplicateCount}</div>
-                        <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>Overlaps Found</div>
                     </div>
                     <div style={{ background: 'var(--color-primary)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '1rem 1.5rem', textAlign: 'center', minWidth: '140px', cursor: 'pointer' }} onClick={onOpenDoctorPrep}>
                         <div style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>👩‍⚕️</div>
@@ -1810,32 +1801,6 @@ export default function MyEcosystem({
                     <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
                         {viewMode === 'function' ? (
                             <>
-                                {duplicateCount > 0 && (
-                                    <div style={{ marginBottom: 'var(--spacing-lg)' }}>
-                                        <h3 style={{ fontSize: '1.15rem', marginBottom: '1rem', color: 'var(--color-text-main)' }}>⚠️ Overlap Detected</h3>
-                                        {Object.entries(duplicates).map(([fn, products]) => (
-                                            <div key={fn} style={{
-                                                background: '#F3F4F6', border: '1px solid #FFE082', borderRadius: 'var(--radius-md)',
-                                                padding: '1.25rem', marginBottom: '0.75rem'
-                                            }}>
-                                                <div style={{ fontWeight: '600', marginBottom: '0.5rem' }}>
-                                                    {HEALTH_FUNCTIONS[fn]?.icon} {HEALTH_FUNCTIONS[fn]?.label}: {products.length} products doing the same thing
-                                                </div>
-                                                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.5rem' }}>
-                                                    {products.map(p => (
-                                                        <span key={p.id} style={{ background: 'white', padding: '0.3rem 0.75rem', borderRadius: 'var(--radius-pill)', fontSize: '0.85rem', fontWeight: '500' }}>
-                                                            {p.name}
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                                <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
-                                                    💡 You might not need all of these — consider consolidating to save money and simplify your routine.
-                                                </p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                                     {Object.entries(functionMap)
                                         .filter(([fn]) => fn !== 'leak-protection')
@@ -1846,7 +1811,6 @@ export default function MyEcosystem({
                                                     <div style={{ marginBottom: '0.65rem' }}>
                                                         <h3 style={{ fontSize: '1rem', marginBottom: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
                                                             <span>{HEALTH_FUNCTIONS[fn]?.icon}</span> {HEALTH_FUNCTIONS[fn]?.label}
-                                                            {duplicates[fn] && <span style={{ fontSize: '0.65rem', background: '#F8F9FA', color: 'var(--color-text-main)', padding: '0.12rem 0.4rem', borderRadius: 'var(--radius-pill)' }}>overlap</span>}
                                                         </h3>
                                                         <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', margin: 0 }}>{HEALTH_FUNCTIONS[fn]?.desc}</p>
                                                     </div>
