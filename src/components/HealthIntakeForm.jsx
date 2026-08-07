@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import {
   CONCERN_AREAS,
   CYCLE_SYMPTOMS,
@@ -314,6 +314,21 @@ function SkipLink({ onClick, label = 'Skip this step →' }) {
   );
 }
 
+/** Resolves a 5-digit US zip to "City, ST" via Photon (free, keyless, CORS-open geocoder) — best-effort only, never blocks the form. */
+async function lookupZipLocation(zip, signal) {
+  try {
+    const res = await fetch(`https://photon.komoot.io/api/?q=${zip}&limit=5&osm_tag=place:postcode`, { signal });
+    if (!res.ok) return null;
+    const data = await res.json();
+    const match = (data.features || []).find((f) => f.properties?.countrycode === 'US');
+    const { city, state } = match?.properties || {};
+    if (!city) return null;
+    return state ? `${city}, ${state}` : city;
+  } catch {
+    return null;
+  }
+}
+
 // ─── Main component ───────────────────────────────────────────────────────────
 
 const emptyIntake = {
@@ -364,6 +379,18 @@ export default function HealthIntakeForm({ onComplete }) {
   const currentIndex = screens.indexOf(screenId);
   const total = screens.length;
   const progressPct = Math.round(((currentIndex + 1) / total) * 100);
+
+  const zipLookupRef = useRef(null);
+  useEffect(() => {
+    if (intake.zipcode.length !== 5) return undefined;
+    const controller = new AbortController();
+    zipLookupRef.current = intake.zipcode;
+    lookupZipLocation(intake.zipcode, controller.signal).then((resolved) => {
+      if (!resolved || zipLookupRef.current !== intake.zipcode) return;
+      setIntake((prev) => (prev.location.trim() ? prev : { ...prev, location: resolved }));
+    });
+    return () => controller.abort();
+  }, [intake.zipcode]);
 
   const set = (field, value) => setIntake((prev) => ({ ...prev, [field]: value }));
   const toggle = (field, value) => setIntake((prev) => {
