@@ -134,7 +134,35 @@ function truncateCardSummary(text, max = 200) {
     if (!text || typeof text !== 'string') return '';
     const t = text.trim();
     if (t.length <= max) return t;
-    return `${t.slice(0, max - 1)}…`;
+    // Prefer stopping at the end of a full sentence within the limit, so the
+    // card teaser reads as one complete thought instead of trailing off
+    // mid-clause — full detail is always one tap away in Details.
+    const truncated = t.slice(0, max);
+    const lastSentenceEnd = Math.max(truncated.lastIndexOf('. '), truncated.lastIndexOf('! '), truncated.lastIndexOf('? '));
+    if (lastSentenceEnd > max * 0.4) {
+        return truncated.slice(0, lastSentenceEnd + 1).trim();
+    }
+    return `${truncated.trimEnd()}…`;
+}
+
+const BENIGN_SIDE_EFFECT_RE = /^(none|n\/a|minimal|rare|breathable material)/i;
+
+/** Lightweight green/orange/red safety read from existing catalog data — not a live recall check (see Safety & Ingredients tab / Monitor Safety Recalls for that). */
+function getSafetySignal(item) {
+    const safety = item.safety;
+    if (!safety) return null;
+    const recalls = String(safety.recalls || '').trim();
+    if (recalls.includes('⚠️')) {
+        return { label: 'Recall / concern', dot: '#DC2626', bg: '#FEE2E2', color: '#991B1B' };
+    }
+    const sideEffects = String(safety.sideEffects || '').trim();
+    if (sideEffects && !BENIGN_SIDE_EFFECT_RE.test(sideEffects)) {
+        return { label: 'Side effects to review', dot: '#D97706', bg: '#FEF3C7', color: '#92400E' };
+    }
+    if (recalls || sideEffects) {
+        return { label: 'No known concerns', dot: '#16A34A', bg: '#DCFCE7', color: '#166534' };
+    }
+    return null;
 }
 
 export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, healthProfile = null }) {
@@ -647,7 +675,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             {/* Macro group filter */}
             <div style={{ marginBottom: '1rem' }}>
                 <p style={{ textAlign: 'center', fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--color-text-muted)', marginBottom: '0.6rem' }}>Browse by health area</p>
-                <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                <div className="discovery-filter-row" style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
                     {MACRO_GROUPS.map(g => (
                         <button key={g.id} onClick={() => { setMacroGroup(g.id); setCategoryFilter('all'); }} style={{
                             padding: '0.45rem 1rem', borderRadius: 'var(--radius-pill)', fontSize: '0.82rem',
@@ -664,7 +692,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
             {/* Sub-category pills — only shown when a group with multiple categories is selected */}
             {macroGroup !== 'all' && activeMacroGroup?.categories.length > 1 && (
-                <div style={{ display: 'flex', gap: '0.4rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
+                <div className="discovery-filter-row" style={{ display: 'flex', gap: '0.4rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
                     <button onClick={() => setCategoryFilter('all')} style={{
                         padding: '0.3rem 0.85rem', borderRadius: 'var(--radius-pill)', fontSize: '0.78rem',
                         fontWeight: '500', border: '1px solid var(--color-border)',
@@ -687,8 +715,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             )}
 
             {/* Type + personalization filters — separate from categories */}
-            <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: 'var(--spacing-lg)', paddingTop: '0.5rem', borderTop: '1px solid var(--color-border)' }}>
-                <span style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--color-text-muted)', alignSelf: 'center' }}>Filter by:</span>
+            <div className="discovery-filter-row" style={{ display: 'flex', gap: '0.6rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: 'var(--spacing-lg)', paddingTop: '0.5rem', borderTop: '1px solid var(--color-border)' }}>
+                <span style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--color-text-muted)', alignSelf: 'center', flexShrink: 0 }}>Filter by:</span>
                 {recommendedSet.size > 0 && (
                     <button onClick={() => setPersonalizationFilter(!personalizationFilter)} style={{
                         padding: '0.4rem 1rem', borderRadius: 'var(--radius-pill)', fontSize: '0.82rem',
@@ -857,6 +885,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     const isInEcosystem = !!myProducts[item.id];
                     const isJoined = isStartup && !releasedStartup && !!joinedWaitlists[item.id];
                     const perUnitPrice = getPricePerUnitLabel(item);
+                    const safetySignal = getSafetySignal(item);
 
                     const cardImageSrc = resolvedImages[item.id] || item.image;
                     // Distinguishes "still fetching an image" from "resolved, none
@@ -947,13 +976,24 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                     {CATEGORY_LABELS[item.category] || (item.category && item.category.charAt(0) + item.category.slice(1)) || 'Startup'}
                                 </span>
                                 <h3 style={{ fontSize: '1.05rem', marginBottom: '0.25rem' }}>{item.name}</h3>
+                                {safetySignal && (
+                                    <span style={{
+                                        display: 'inline-flex', alignItems: 'center', gap: '0.35rem', alignSelf: 'flex-start',
+                                        background: safetySignal.bg, color: safetySignal.color,
+                                        padding: '0.15rem 0.55rem', borderRadius: 'var(--radius-pill)',
+                                        fontSize: '0.68rem', fontWeight: '700', marginBottom: '0.5rem'
+                                    }}>
+                                        <span style={{ width: '0.45rem', height: '0.45rem', borderRadius: '50%', background: safetySignal.dot, flexShrink: 0 }} />
+                                        {safetySignal.label}
+                                    </span>
+                                )}
                                 {item.outOfBusiness && (
                                     <div style={{ marginBottom: '0.75rem', padding: '0.5rem 0.75rem', background: '#374151', color: 'white', borderRadius: 'var(--radius-md)', fontSize: '0.8rem', fontWeight: '700' }}>
                                         No longer sold — company closed. Listing kept for safety info if you have this product.
                                     </div>
                                 )}
-                                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.8rem', flexGrow: 1, marginBottom: '0.75rem', lineHeight: '1.4' }}>
-                                    {truncateCardSummary(item.isStartup ? item.tagline : item.summary, item.llmGenerated ? 200 : 400)}
+                                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.8rem', flexGrow: 1, marginBottom: '0.75rem', lineHeight: '1.45' }}>
+                                    {truncateCardSummary(item.isStartup ? item.tagline : item.summary, item.llmGenerated ? 130 : 160)}
                                 </p>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
                                     <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>

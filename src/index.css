@@ -1258,6 +1258,29 @@ html {
   }
 }
 
+/* Discovery filter pill rows: wrap on desktop, single scrollable row on mobile
+   so the ~13 health-area pills don't stack into a wall of chips on iPhone. */
+@media (max-width: 640px) {
+  .discovery-filter-row {
+    flex-wrap: nowrap !important;
+    justify-content: flex-start !important;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 0.15rem;
+    margin-left: -1rem;
+    margin-right: -1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .discovery-filter-row::-webkit-scrollbar {
+    display: none;
+  }
+  .discovery-filter-row > button {
+    flex-shrink: 0;
+  }
+}
+
 /* ─── Mobile responsiveness ─────────────────────────────────────────────── */
 
 /* Hamburger button — hidden on desktop, shown on mobile */
