@@ -115,6 +115,7 @@ function App() {
   const [showCheckin, setShowCheckin] = useState(false);
   const [checkinData, setCheckinData] = useState(null);
   const [checkinUpdatedProfile, setCheckinUpdatedProfile] = useState(false);
+  const [checkinCompletedAt, setCheckinCompletedAt] = useState(null);
   const [discoverySearch, setDiscoverySearch] = useState('');
   const [discoveryInitial, setDiscoveryInitial] = useState(null); // { initialCategory, initialPadFlow, initialPadPreference, initialPadUseCase }
   const [userZipCode, setUserZipCode] = useState('');
@@ -434,6 +435,20 @@ function App() {
     setUserZipCode(zip);
     try { if (typeof window !== 'undefined') localStorage.setItem('ayna_zip', zip || ''); } catch (_) {}
   };
+
+  React.useEffect(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        const stored = localStorage.getItem('ayna_checkin_completed_at');
+        if (stored) setCheckinCompletedAt(stored);
+      }
+    } catch (_) {}
+  }, []);
+
+  const CHECKIN_INTERVAL_MS = 30 * 24 * 60 * 60 * 1000; // ~monthly
+  // Only nags once someone has done a first check-in — a brand-new user with
+  // nothing in their ecosystem yet has nothing to "check in" about.
+  const checkinDue = !!checkinCompletedAt && (Date.now() - new Date(checkinCompletedAt).getTime() > CHECKIN_INTERVAL_MS);
   const isScrolled = scrollY > 20;
 
   const previousViewRef = useRef(null);
@@ -907,13 +922,22 @@ function App() {
           <div className="desktop-only" style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', flexWrap: 'wrap' }}>
             <button
               style={{
+                position: 'relative',
                 fontSize: '0.9rem', fontWeight: '600', padding: '0.3rem 0.65rem',
                 background: 'var(--color-secondary-fade)', color: 'var(--color-primary)',
                 borderRadius: 'var(--radius-pill)', border: '1px solid var(--color-primary)',
               }}
               onClick={() => setShowCheckin(true)}
+              title={checkinDue ? "It's been a month — a quick check-in helps keep your recommendations current." : undefined}
             >
               Check-in
+              {checkinDue && (
+                <span style={{
+                  position: 'absolute', top: '-3px', right: '-3px',
+                  width: '9px', height: '9px', borderRadius: '50%',
+                  background: '#DC2626', border: '1.5px solid var(--color-bg, white)',
+                }} aria-hidden="true" />
+              )}
             </button>
             {user ? (
               <div ref={accountMenuRef} style={{ position: 'relative' }}>
@@ -986,7 +1010,7 @@ function App() {
             <button className="mobile-drawer-item" onClick={() => { handleViewWaitlist(); setMobileMenuOpen(false); }}>Startups</button>
             <button className="mobile-drawer-item" onClick={() => { handleViewDeeptech(); setMobileMenuOpen(false); }}>Deeptech</button>
             <button className="mobile-drawer-item" onClick={() => { handleViewArticles(); setMobileMenuOpen(false); }}>My Health Library</button>
-            <button className="mobile-drawer-item" onClick={() => { setShowCheckin(true); setMobileMenuOpen(false); }}>Check-in</button>
+            <button className="mobile-drawer-item" onClick={() => { setShowCheckin(true); setMobileMenuOpen(false); }}>Check-in{checkinDue ? ' •' : ''}</button>
             {user ? (
               <>
                 <button className="mobile-drawer-item" onClick={() => { getSupabaseClient()?.auth.signOut(); setMobileMenuOpen(false); }}>Log out</button>
@@ -1212,6 +1236,9 @@ function App() {
           <MonthlyCheckin
             onComplete={(answers) => {
               setCheckinData(answers);
+              const now = new Date().toISOString();
+              setCheckinCompletedAt(now);
+              try { if (typeof window !== 'undefined') localStorage.setItem('ayna_checkin_completed_at', now); } catch (_) {}
             }}
             onClose={() => {
               setShowCheckin(false);
