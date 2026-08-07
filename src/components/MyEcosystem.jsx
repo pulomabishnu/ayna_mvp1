@@ -1676,9 +1676,11 @@ export default function MyEcosystem({
                     marginBottom: 'var(--spacing-lg)',
                 }}>
                     {myProductList.length > 0 && (
-                        <div style={{ background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '1rem 1.5rem', textAlign: 'center', minWidth: '140px' }}>
+                        <div style={{ background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '1rem 1.5rem', textAlign: 'center', minWidth: '140px' }} title={estimatedMonthlyTotal.counted < estimatedMonthlyTotal.totalItems ? 'Some products have pricing we can\'t estimate monthly cost from (e.g. one-time visits) — actual total may be higher.' : undefined}>
                             <div style={{ fontSize: '2rem', fontWeight: '700', color: 'var(--color-primary)' }}>
-                                —
+                                {estimatedMonthlyTotal.counted > 0
+                                    ? `$${estimatedMonthlyTotal.total.toFixed(2)}${estimatedMonthlyTotal.counted < estimatedMonthlyTotal.totalItems ? '+' : ''}`
+                                    : '—'}
                             </div>
                             <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>Est. per month</div>
                         </div>
