@@ -4,7 +4,7 @@ import HealthDataImport from './HealthDataImport';
 import CareNearYouPanel from './CareNearYouPanel';
 import { getCheckinRecommendations, CATEGORY_LABELS } from '../data/products';
 
-export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewWaitlist, userZipCode, onZipCodeChange, checkinData, quizResults, myProducts = {}, onOpenProduct, omittedProducts = {}, onViewOmitted, onHealthProfileUpdate, healthProfile = null }) {
+export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewWaitlist, userZipCode, onZipCodeChange, checkinData, quizResults, myProducts = {}, onOpenProduct, omittedProducts = {}, onViewOmitted, onHealthProfileUpdate, healthProfile = null, onEditHealthProfile }) {
     const trackedList = Object.values(trackedProducts);
     const joinedList = Object.values(joinedWaitlists);
     const totalItems = trackedList.length + joinedList.length;
@@ -93,6 +93,7 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                 userZipCode={userZipCode}
                 onZipCodeChange={onZipCodeChange}
                 onOpenProduct={onOpenProduct}
+                onEditHealthProfile={onEditHealthProfile}
                 compact
             />
 

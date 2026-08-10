@@ -11,6 +11,7 @@ export default function CareNearYouPanel({
   userZipCode = '',
   onZipCodeChange,
   onOpenProduct,
+  onEditHealthProfile,
   compact = false,
 }) {
   const [zipInput, setZipInput] = useState((userZipCode || '').replace(/\D/g, '').slice(0, 5));
@@ -20,6 +21,8 @@ export default function CareNearYouPanel({
   }, [userZipCode]);
 
   const bundle = getCareResourceBundle(quizResults, healthProfile, userZipCode || zipInput);
+  const intake = quizResults?.fullHealthIntake;
+  const insuranceLabel = [intake?.insuranceType, intake?.insurancePlan].filter(Boolean).join(' — ');
 
   const saveZip = () => {
     const z = zipInput.replace(/\D/g, '').slice(0, 5);
@@ -72,6 +75,23 @@ export default function CareNearYouPanel({
             </span>
           )}
         </div>
+      )}
+
+      {(insuranceLabel || onEditHealthProfile) && (
+        <p style={{ fontSize: '0.82rem', color: 'var(--color-text-muted)', marginTop: '-0.5rem', marginBottom: '1.25rem' }}>
+          {insuranceLabel
+            ? <>Insurance on file: <strong>{insuranceLabel}</strong>. Confirm coverage directly with any clinic or telehealth service before booking.</>
+            : 'No insurance on file yet — add it to your health profile so it\'s here when you need it.'}
+          {typeof onEditHealthProfile === 'function' && (
+            <> <button
+              type="button"
+              onClick={onEditHealthProfile}
+              style={{ background: 'none', border: 'none', padding: 0, marginLeft: '0.25rem', color: 'var(--color-primary)', fontWeight: 600, fontSize: 'inherit', cursor: 'pointer', textDecoration: 'underline' }}
+            >
+              {insuranceLabel ? 'Update' : 'Add insurance'}
+            </button></>
+          )}
+        </p>
       )}
 
       <div style={{ display: 'grid', gap: '1.25rem', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))' }}>

@@ -455,6 +455,20 @@ function App() {
     try { if (typeof window !== 'undefined') localStorage.setItem('ayna_zip', zip || ''); } catch (_) {}
   };
 
+  // The zip captured during intake was "capture-only, no downstream wiring"
+  // when that field was added — Care near you has its own separate zip input
+  // (userZipCode, above), so users had to type the same zip twice for it to
+  // show up in local clinic/telehealth links. One-time carry-over, covering
+  // fresh quiz completion, the post-OAuth-signup completion path, a health
+  // profile edit, and a session-restore load — all of them funnel through
+  // `quizResults` eventually. Never overwrites a zip the user already set
+  // directly in Care near you.
+  React.useEffect(() => {
+    const intakeZip = quizResults?.fullHealthIntake?.zipcode;
+    if (intakeZip && !userZipCode) handleZipCodeChange(intakeZip);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [quizResults]);
+
   React.useEffect(() => {
     try {
       if (typeof window !== 'undefined') {
@@ -1109,6 +1123,7 @@ function App() {
             onViewOmitted={handleViewOmitted}
             onHealthProfileUpdate={updateHealthProfile}
             healthProfile={healthProfile}
+            onEditHealthProfile={handleOpenHealthProfileEditor}
           />
         )}
         {currentView === 'waitlist' && (

@@ -2099,6 +2099,7 @@ export default function MyEcosystem({
                             userZipCode={userZipCode}
                             onZipCodeChange={onZipCodeChange}
                             onOpenProduct={onOpenProduct}
+                            onEditHealthProfile={onEditHealthProfile}
                         />
                     </>
                 )}
