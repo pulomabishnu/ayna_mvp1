@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Disclaimer from './Disclaimer';
 import { loadHealthProfile, saveHealthProfile, parseFhirBundleText } from '../utils/healthDataProfile';
+import { summarizeAppleHealthExport } from '../utils/parseAppleHealthExport';
 
 function parseCommaLines(text) {
   return text
@@ -50,25 +51,67 @@ export default function HealthDataImport({ onUpdate }) {
   const [fhirError, setFhirError] = useState('');
   const [savedAt, setSavedAt] = useState(init.savedAt);
 
+  const [appleHealthError, setAppleHealthError] = useState('');
+  const [appleHealthSummary, setAppleHealthSummary] = useState('');
+
+  const handleAppleHealthFile = (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    setAppleHealthError('');
+    setAppleHealthSummary('');
+    if (!/\.xml$/i.test(file.name)) {
+      setAppleHealthError('That doesn’t look like export.xml — unzip the Apple Health export and pick the .xml file inside it.');
+      return;
+    }
+    if (file.size > 150 * 1024 * 1024) {
+      setAppleHealthError('That export is too large to parse in the browser (over 150MB).');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = summarizeAppleHealthExport(String(reader.result || ''));
+      if (result.error === 'not_apple_health_export') {
+        setAppleHealthError('That file doesn’t look like an Apple Health export.xml.');
+        return;
+      }
+      if (result.error === 'file_too_large') {
+        setAppleHealthError('That export is too large to parse in the browser.');
+        return;
+      }
+      if (result.error === 'no_recognized_records' || !result.summaryText) {
+        setAppleHealthError('No steps, sleep, heart rate, or cycle data found in the last 30 days of this export.');
+        return;
+      }
+      setAppleHealth(true);
+      setWearableText(result.summaryText);
+      setAppleHealthSummary(result.summaryText);
+      persist({ appleHealthOverride: true, wearableTextOverride: result.summaryText });
+    };
+    reader.onerror = () => setAppleHealthError('Could not read that file.');
+    reader.readAsText(file, 'UTF-8');
+  };
+
   const persist = (patch = {}) => {
     const existing = loadHealthProfile();
     const mergedFhir = patch.fhirSummary !== undefined ? patch.fhirSummary : (existing?.fhirSummary || { conditions: [], medications: [] });
+    const effectiveWearableText = patch.wearableTextOverride !== undefined ? patch.wearableTextOverride : wearableText;
     const saved = saveHealthProfile({
       conditions: parseCommaLines(conditions),
       medications: parseCommaLines(medications),
       allergies: parseCommaLines(allergies),
       notes,
       intakeSummary: (existing && typeof existing.intakeSummary === 'string') ? existing.intakeSummary : '',
-      wearableSummary: { text: wearableText.trim() },
+      wearableSummary: { text: effectiveWearableText.trim() },
       sources: {
-        appleHealth,
+        appleHealth: patch.appleHealthOverride !== undefined ? patch.appleHealthOverride : appleHealth,
         googleFit,
         fhir: fhirConnected || (mergedFhir.conditions?.length > 0 || mergedFhir.medications?.length > 0),
         manual:
           parseCommaLines(conditions).length > 0 ||
           parseCommaLines(medications).length > 0 ||
           !!notes.trim() ||
-          !!wearableText.trim(),
+          !!effectiveWearableText.trim(),
       },
       fhirSummary: mergedFhir,
     });
@@ -110,14 +153,18 @@ export default function HealthDataImport({ onUpdate }) {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem' }}>
         <div style={{ padding: '1rem', background: 'var(--color-surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
-          <p style={{ fontWeight: '600', marginBottom: '0.5rem' }}>Apple Health</p>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.9rem' }}>
-            <input type="checkbox" checked={appleHealth} onChange={(e) => setAppleHealth(e.target.checked)} />
-            I export summaries from Apple Health (Health app → Profile → Export) and will paste key facts below or attach when Ayna mobile supports files.
-          </label>
-          <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginTop: '0.5rem', marginBottom: 0 }}>
-            On the web we cannot read Apple Health directly; use export + notes, or FHIR if your provider offers it.
+          <p style={{ fontWeight: '600', marginBottom: '0.5rem' }}>🍎 Apple Health</p>
+          <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', lineHeight: 1.5, marginBottom: '0.75rem' }}>
+            Ayna doesn’t have a phone app, so we can’t read Apple Health directly off your device. Instead: open the <strong>Health app → your profile picture (top right) → Export All Health Data</strong>, then unzip the download to find <strong>export.xml</strong> and upload it below. We parse steps, sleep, heart rate, and cycle tracking data locally in your browser — the file is not sent to our servers.
           </p>
+          <label style={{ fontSize: '0.9rem', cursor: 'pointer', display: 'inline-block' }}>
+            <span className="btn btn-outline" style={{ padding: '0.45rem 1rem', fontSize: '0.85rem' }}>Choose export.xml</span>
+            <input type="file" accept=".xml,text/xml,application/xml" onChange={handleAppleHealthFile} style={{ display: 'none' }} />
+          </label>
+          {appleHealthError && <p style={{ color: '#b91c1c', fontSize: '0.85rem', marginTop: '0.5rem' }}>{appleHealthError}</p>}
+          {appleHealthSummary && !appleHealthError && (
+            <p style={{ fontSize: '0.85rem', color: 'var(--color-primary)', marginTop: '0.5rem' }}>Parsed and saved below — {appleHealthSummary}</p>
+          )}
         </div>
         <div style={{ padding: '1rem', background: 'var(--color-surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
           <p style={{ fontWeight: '600', marginBottom: '0.5rem' }}>Google Fit &amp; other apps</p>
