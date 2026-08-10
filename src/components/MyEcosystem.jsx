@@ -855,6 +855,73 @@ function estimateMonthlyCost(priceStr, product) {
     return null;
 }
 
+// Module-level (not component state) so an in-flight ecosystem generation
+// survives MyEcosystem unmounting and remounting — e.g. the component
+// re-rendering somewhere upstream, or any other transient reason the tree
+// gets torn down mid-generation. Previously the generation lived entirely in
+// component state/refs, so a remount aborted the in-flight fetch (killing
+// serverless invocations already billed) and any *new* mount started over
+// from Date.now(), which is what made the loading timer look like it
+// "reset" and made a generation that was seconds from finishing instead
+// surface as a failure. Keyed by intake fingerprint; a record's async work
+// keeps running and notifying subscribers regardless of which (if any)
+// component instance is currently mounted and watching it.
+const activeGenerations = new Map();
+
+function notifyGeneration(rec) {
+    rec.subscribers.forEach((fn) => fn(rec));
+}
+
+/**
+ * Subscribe to (or start) the generation for `fingerprint`. Returns an
+ * unsubscribe function. `onStart` is called synchronously if this caller is
+ * the one that should actually run the generation (no one else already is).
+ */
+function subscribeToGeneration(fingerprint, onUpdate, onStart) {
+    let rec = activeGenerations.get(fingerprint);
+    const isNew = !rec;
+    if (isNew) {
+        rec = { startedAt: 0, controller: null, cancelled: false, tiered: [], loading: false, error: '', subscribers: new Set(), gcTimer: null };
+        activeGenerations.set(fingerprint, rec);
+    } else if (rec.gcTimer) {
+        // A previous mount's cleanup was about to give up on this generation
+        // (no subscribers left) — a new mount just showed up wanting it, so
+        // cancel the pending abandon-and-abort.
+        clearTimeout(rec.gcTimer);
+        rec.gcTimer = null;
+    }
+    rec.subscribers.add(onUpdate);
+    onUpdate(rec);
+    if (isNew) onStart(rec);
+    return () => {
+        rec.subscribers.delete(onUpdate);
+        if (rec.subscribers.size > 0) return;
+        // Grace period, not an immediate abort: covers a remount (unmount then
+        // re-mount of the same fingerprint) without waiting forever on a
+        // generation nobody will ever come back to watch (quiz retaken,
+        // genuine navigation away).
+        rec.gcTimer = setTimeout(() => {
+            if (rec.subscribers.size > 0) return;
+            rec.controller?.abort();
+            rec.cancelled = true;
+            // Only remove the map entry if it's still *this* record — an
+            // explicit refresh (discardGeneration) or a fresh start could have
+            // already replaced it with a newer generation under the same key.
+            if (activeGenerations.get(fingerprint) === rec) activeGenerations.delete(fingerprint);
+        }, 3000);
+    };
+}
+
+/** Abort and discard any existing record so a fresh one can start in its place. */
+function discardGeneration(fingerprint) {
+    const rec = activeGenerations.get(fingerprint);
+    if (!rec) return;
+    if (rec.gcTimer) clearTimeout(rec.gcTimer);
+    rec.controller?.abort();
+    rec.cancelled = true;
+    activeGenerations.delete(fingerprint);
+}
+
 export default function MyEcosystem({
     myProducts,
     ecosystemOrder = [],
@@ -895,13 +962,6 @@ export default function MyEcosystem({
     const [llmLoading, setLlmLoading] = useState(false);
     const [llmError, setLlmError] = useState('');
     const [llmLoadStartedAt, setLlmLoadStartedAt] = useState(0);
-    const llmAbortControllerRef = useRef(null);
-    const llmCancelledRef = useRef(false);
-    // Distinguish quota-exhausted and expired-session from a generic failure so
-    // the specific message is not clobbered by the catch-all below.
-    const limitReachedRef = useRef(false);
-    const partialConcernsRef = useRef([]);
-    const authFailedRef = useRef(false);
     // Last known-good complete recommendation set — restored if a rebuild is cancelled mid-flight.
     const previousLlmTieredRef = useRef([]);
     const [resolvedImages, setResolvedImages] = useState({});
@@ -1089,7 +1149,6 @@ export default function MyEcosystem({
     );
 
     useEffect(() => {
-        let active = true;
         if (!intakeFingerprint) {
             // Intake is still loading from Supabase — don't clear the cache or it will
             // wipe valid recommendations before the fingerprint is available.
@@ -1097,7 +1156,7 @@ export default function MyEcosystem({
             setLlmLoading(false);
             setLlmError('');
             setLlmLoadStartedAt(0);
-            return () => { active = false; };
+            return undefined;
         }
 
         // Only bypass cache for explicit user actions: quiz complete, profile update, rebuild button
@@ -1112,9 +1171,7 @@ export default function MyEcosystem({
                 setLlmLoading(false);
                 setLlmError('');
                 setLlmLoadStartedAt(0);
-                return () => {
-                    active = false;
-                };
+                return undefined;
             }
             if (alreadyFetchedForFingerprint) {
                 // We attempted this intake before but have no cached result —
@@ -1122,147 +1179,169 @@ export default function MyEcosystem({
                 // is indistinguishable from "you have no recommendations".
                 setLlmTiered([]);
                 setLlmLoading(false);
-                setLlmError('We couldn\u2019t load your recommendations last time. Tap \u201cRefresh recommendations\u201d to try again.');
+                setLlmError('We couldn’t load your recommendations last time. Tap “Refresh recommendations” to try again.');
                 setLlmLoadStartedAt(0);
-                return () => {
-                    active = false;
-                };
+                return undefined;
             }
+        } else {
+            // Explicit refresh: any existing record for this fingerprint (in-flight
+            // or otherwise) reflects stale intent — replace it, don't attach to it.
+            discardGeneration(intakeFingerprint);
         }
 
-        const intake = quizResults?.fullHealthIntake || null;
-        console.log('[Ayna LLM] Starting fetch — concerns:', intake?.primaryConcerns?.length ?? 0, '| goals:', intake?.goals?.length ?? 0, '| intake null?', !intake);
-
-        const controller = new AbortController();
-        llmAbortControllerRef.current = controller;
-        llmCancelledRef.current = false;
-        limitReachedRef.current = false;
-        partialConcernsRef.current = [];
-        authFailedRef.current = false;
-
-        (async () => {
-            setLlmLoadStartedAt(Date.now());
-            setLlmLoading(true);
-            setLlmError('');
-            try {
-                const memory = loadLearningMemory();
-                const accumulated = [];
-                let errorCount = 0;
-
-                // Small batches, more of them, run in parallel across separate
-                // serverless invocations. Each invocation now handles 3 concerns
-                // at concurrency 3, so it finishes well inside the 60s function
-                // ceiling instead of needing a 252s budget that never existed.
-                // 4 x 3 covers the server's MAX_CONCERNS cap of 12.
-                const BATCH_SIZE = 3;
-                const NUM_BATCHES = 4;
-                const buildId = buildIdFromFingerprint(intakeFingerprint);
-                let doneCount = 0;
-
-                const authToken = userSession?.access_token;
-                await new Promise(resolveAll => {
-                    Array.from({ length: NUM_BATCHES }, (_, i) => {
-                        fetchLlmRecommendations(
-                            { intake, trackedProducts, myProducts, omittedProducts, learningMemory: memory, batchIndex: i, batchSize: BATCH_SIZE, buildId },
-                            { authToken, signal: controller.signal }
-                        )
-                        .then(d => {
-                            if (!active) return;
-                            const recs = Array.isArray(d?.recommendations) ? d.recommendations : [];
-                            if (d?.partial && Array.isArray(d.failedConcerns) && d.failedConcerns.length) {
-                                // The server now reports which concerns produced
-                                // nothing. Without this the user just sees fewer
-                                // sections than she asked for, with no signal.
-                                partialConcernsRef.current.push(...d.failedConcerns);
-                            }
-                            if (recs.length > 0) { accumulated.push(...recs); setLlmTiered([...accumulated]); }
-                        })
-                        .catch(e => {
-                            console.error(`[Ayna LLM] batch ${i} error:`, e?.status || '', e?.message);
-                            if (e?.status === 429) {
-                                limitReachedRef.current = true;
-                            } else if (e?.status === 401) {
-                                authFailedRef.current = true;
-                            }
-                            errorCount++;
-                        })
-                        .finally(() => { if (++doneCount === NUM_BATCHES) resolveAll(); });
-                    });
-                });
-
-                if (!active || llmCancelledRef.current) return;
-                const recs = accumulated;
-                console.log('[Ayna LLM] Done — sections:', recs.length, '| errors:', errorCount);
-                if (recs.length === 0 && errorCount > 0) {
-                    // Specific causes must survive: a quota 429 is an upgrade
-                    // prompt and a 401 is a re-auth prompt, not "try again".
-                    if (limitReachedRef.current) {
-                        setLlmError("You've already generated your Ayna ecosystem. Regenerating is a premium feature. Email pulomabishnu@gmail.com to upgrade.");
-                        return;
-                    }
-                    if (authFailedRef.current) {
-                        setLlmError('Your session expired — please sign in again.');
-                        return;
-                    }
-                    throw new Error('All recommendation batches failed — please try again.');
-                }
-                if (recs.length === 0) return; // nothing to do (no concerns matched)
-                if (recs.length > 0) {
-                    if (hasCompletedPersonalization) onLlmRecommendationsLoaded?.(recs);
-                }
-                let cached = false;
-                if (recs.length > 0) {
-                    cached = saveCachedLlmRecommendations(intakeFingerprint, recs);
-                    previousLlmTieredRef.current = recs;
-                }
-                // Only mark this intake "already fetched" if there is something to
-                // come back to. Recording it after a failed cache write is what
-                // produced a permanently empty ecosystem with no error.
-                if (cached) saveFetchedLlmFingerprint(intakeFingerprint);
-                if (partialConcernsRef.current.length > 0) {
-                    const missed = Array.from(new Set(partialConcernsRef.current)).slice(0, 4).join(', ');
-                    setLlmError(`Some recommendations couldn\u2019t be generated (${missed}). Tap \u201cRefresh recommendations\u201d to retry those.`);
-                }
-                const recommendedProductIds = recs.flatMap((entry) =>
-                    (entry?.tiers || []).flatMap((tier) =>
-                        [tier?.product?.id, ...((tier?.alternatives || []).map((a) => a?.id))].filter(Boolean)
-                    )
-                );
-                const nextMemory = {
-                    ...memory,
-                    interactionCount: (memory.interactionCount || 0) + 1,
-                    lastConcerns: Array.isArray(intake?.primaryConcerns) ? intake.primaryConcerns.map((x) => String(x)) : [],
-                    lastSeenAt: new Date().toISOString(),
-                    shownProductIds: Array.from(new Set([...(memory.shownProductIds || []), ...recommendedProductIds])).slice(-300),
-                    // Was the only one of these without a cap; the whole memory
-                    // object is written to user_learning_memory on every build.
-                    selectedConcernHistory: Array.from(new Set([...(memory.selectedConcernHistory || []), ...((intake?.primaryConcerns || []).map((x) => String(x)))])).slice(-100),
-                    trackedHistory: Array.from(new Set([...(memory.trackedHistory || []), ...Object.keys(trackedProducts || {})])).slice(-300),
-                    ecosystemHistory: Array.from(new Set([...(memory.ecosystemHistory || []), ...Object.keys(myProducts || {})])).slice(-300),
-                    omittedHistory: Array.from(new Set([...(memory.omittedHistory || []), ...Object.keys(omittedProducts || {})])).slice(-300),
-                };
-                saveLearningMemory(nextMemory);
-            } catch (e) {
-                if (!active || llmCancelledRef.current) return;
-                setLlmTiered([]);
-                const errMsg = typeof e?.message === 'string' ? e.message : (typeof e === 'string' ? e : JSON.stringify(e));
-                console.error('[Ayna LLM] Error:', e);
-                setLlmError(errMsg || 'Could not load recommendations');
-                saveFetchedLlmFingerprint(intakeFingerprint);
-            } finally {
-                if (active && !llmCancelledRef.current) {
-                    setLlmLoading(false);
-                    setLlmLoadStartedAt(0);
-                }
-            }
-        })();
-
-        return () => {
-            active = false;
-            // Previously only the flag was flipped, leaving both requests running:
-            // navigating away leaked serverless invocations and their provider spend.
-            controller.abort();
+        const onUpdate = (rec) => {
+            setLlmTiered(rec.tiered);
+            setLlmLoading(rec.loading);
+            setLlmError(rec.error);
+            setLlmLoadStartedAt(rec.startedAt);
         };
+
+        const unsubscribe = subscribeToGeneration(intakeFingerprint, onUpdate, (rec) => {
+            const intake = quizResults?.fullHealthIntake || null;
+            console.log('[Ayna LLM] Starting fetch — concerns:', intake?.primaryConcerns?.length ?? 0, '| goals:', intake?.goals?.length ?? 0, '| intake null?', !intake);
+
+            rec.controller = new AbortController();
+            rec.startedAt = Date.now();
+            rec.loading = true;
+            rec.error = '';
+            rec.tiered = [];
+            notifyGeneration(rec);
+
+            (async () => {
+                // Per-attempt state — the shared record only needs the fields
+                // consumers read (tiered/loading/error/startedAt); these are
+                // internal to this one generation run.
+                let limitReached = false;
+                let authFailed = false;
+                const partialConcerns = [];
+                try {
+                    const memory = loadLearningMemory();
+                    const accumulated = [];
+                    let errorCount = 0;
+
+                    // Small batches, more of them, run in parallel across separate
+                    // serverless invocations. Each invocation now handles 3 concerns
+                    // at concurrency 3, so it finishes well inside the 60s function
+                    // ceiling instead of needing a 252s budget that never existed.
+                    // 4 x 3 covers the server's MAX_CONCERNS cap of 12.
+                    const BATCH_SIZE = 3;
+                    const NUM_BATCHES = 4;
+                    const buildId = buildIdFromFingerprint(intakeFingerprint);
+                    let doneCount = 0;
+
+                    const authToken = userSession?.access_token;
+                    await new Promise(resolveAll => {
+                        Array.from({ length: NUM_BATCHES }, (_, i) => {
+                            fetchLlmRecommendations(
+                                { intake, trackedProducts, myProducts, omittedProducts, learningMemory: memory, batchIndex: i, batchSize: BATCH_SIZE, buildId },
+                                { authToken, signal: rec.controller.signal }
+                            )
+                            .then(d => {
+                                if (rec.cancelled) return;
+                                const recs = Array.isArray(d?.recommendations) ? d.recommendations : [];
+                                if (d?.partial && Array.isArray(d.failedConcerns) && d.failedConcerns.length) {
+                                    // The server now reports which concerns produced
+                                    // nothing. Without this the user just sees fewer
+                                    // sections than she asked for, with no signal.
+                                    partialConcerns.push(...d.failedConcerns);
+                                }
+                                if (recs.length > 0) {
+                                    accumulated.push(...recs);
+                                    rec.tiered = [...accumulated];
+                                    notifyGeneration(rec);
+                                }
+                            })
+                            .catch(e => {
+                                console.error(`[Ayna LLM] batch ${i} error:`, e?.status || '', e?.message);
+                                if (e?.status === 429) {
+                                    limitReached = true;
+                                } else if (e?.status === 401) {
+                                    authFailed = true;
+                                }
+                                errorCount++;
+                            })
+                            .finally(() => { if (++doneCount === NUM_BATCHES) resolveAll(); });
+                        });
+                    });
+
+                    if (rec.cancelled) return;
+                    const recs = accumulated;
+                    console.log('[Ayna LLM] Done — sections:', recs.length, '| errors:', errorCount);
+                    if (recs.length === 0 && errorCount > 0) {
+                        // Specific causes must survive: a quota 429 is an upgrade
+                        // prompt and a 401 is a re-auth prompt, not "try again".
+                        if (limitReached) {
+                            rec.error = "You've already generated your Ayna ecosystem. Regenerating is a premium feature. Email pulomabishnu@gmail.com to upgrade.";
+                            notifyGeneration(rec);
+                            return;
+                        }
+                        if (authFailed) {
+                            rec.error = 'Your session expired — please sign in again.';
+                            notifyGeneration(rec);
+                            return;
+                        }
+                        throw new Error('All recommendation batches failed — please try again.');
+                    }
+                    if (recs.length === 0) return; // nothing to do (no concerns matched)
+                    if (recs.length > 0) {
+                        if (hasCompletedPersonalization) onLlmRecommendationsLoaded?.(recs);
+                    }
+                    let cachedOk = false;
+                    if (recs.length > 0) {
+                        cachedOk = saveCachedLlmRecommendations(intakeFingerprint, recs);
+                        previousLlmTieredRef.current = recs;
+                    }
+                    // Only mark this intake "already fetched" if there is something to
+                    // come back to. Recording it after a failed cache write is what
+                    // produced a permanently empty ecosystem with no error.
+                    if (cachedOk) saveFetchedLlmFingerprint(intakeFingerprint);
+                    if (partialConcerns.length > 0) {
+                        const missed = Array.from(new Set(partialConcerns)).slice(0, 4).join(', ');
+                        rec.error = `Some recommendations couldn’t be generated (${missed}). Tap “Refresh recommendations” to retry those.`;
+                        notifyGeneration(rec);
+                    }
+                    const recommendedProductIds = recs.flatMap((entry) =>
+                        (entry?.tiers || []).flatMap((tier) =>
+                            [tier?.product?.id, ...((tier?.alternatives || []).map((a) => a?.id))].filter(Boolean)
+                        )
+                    );
+                    const nextMemory = {
+                        ...memory,
+                        interactionCount: (memory.interactionCount || 0) + 1,
+                        lastConcerns: Array.isArray(intake?.primaryConcerns) ? intake.primaryConcerns.map((x) => String(x)) : [],
+                        lastSeenAt: new Date().toISOString(),
+                        shownProductIds: Array.from(new Set([...(memory.shownProductIds || []), ...recommendedProductIds])).slice(-300),
+                        // Was the only one of these without a cap; the whole memory
+                        // object is written to user_learning_memory on every build.
+                        selectedConcernHistory: Array.from(new Set([...(memory.selectedConcernHistory || []), ...((intake?.primaryConcerns || []).map((x) => String(x)))])).slice(-100),
+                        trackedHistory: Array.from(new Set([...(memory.trackedHistory || []), ...Object.keys(trackedProducts || {})])).slice(-300),
+                        ecosystemHistory: Array.from(new Set([...(memory.ecosystemHistory || []), ...Object.keys(myProducts || {})])).slice(-300),
+                        omittedHistory: Array.from(new Set([...(memory.omittedHistory || []), ...Object.keys(omittedProducts || {})])).slice(-300),
+                    };
+                    saveLearningMemory(nextMemory);
+                } catch (e) {
+                    if (rec.cancelled) return;
+                    rec.tiered = [];
+                    const errMsg = typeof e?.message === 'string' ? e.message : (typeof e === 'string' ? e : JSON.stringify(e));
+                    console.error('[Ayna LLM] Error:', e);
+                    rec.error = errMsg || 'Could not load recommendations';
+                    saveFetchedLlmFingerprint(intakeFingerprint);
+                    notifyGeneration(rec);
+                } finally {
+                    if (!rec.cancelled) {
+                        rec.loading = false;
+                        rec.startedAt = 0;
+                        notifyGeneration(rec);
+                    }
+                    // Only remove the map entry if it's still *this* record — a
+                    // cancel/refresh that discarded this generation may have
+                    // already replaced it with a newer one under the same key.
+                    if (activeGenerations.get(intakeFingerprint) === rec) activeGenerations.delete(intakeFingerprint);
+                }
+            })();
+        });
+
+        return unsubscribe;
     }, [intakeFingerprint, hasCompletedPersonalization, recommendationRefreshNonce]);
 
     const activeTiered = useMemo(
@@ -1503,8 +1582,7 @@ export default function MyEcosystem({
     }, []);
 
     const handleCancelRecommendations = useCallback(() => {
-        llmCancelledRef.current = true;
-        llmAbortControllerRef.current?.abort();
+        if (intakeFingerprint) discardGeneration(intakeFingerprint);
         setLlmTiered(previousLlmTieredRef.current);
         setLlmLoading(false);
         setLlmLoadStartedAt(0);
