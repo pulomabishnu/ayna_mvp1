@@ -69,6 +69,23 @@ function getInitialView() {
   return PATH_TO_VIEW[path] || 'welcome';
 }
 
+/**
+ * Discovery's search query/results lived only in React state, so a browser tab
+ * discard/reload (mobile tab-switch memory eviction, desktop "memory saver")
+ * always came back to an empty search even when the URL correctly restored the
+ * Discovery view — the app looked "reset" even though only this one query was
+ * lost. Mirroring it into ?q= makes it survive a reload the same way the view
+ * itself already does via VIEW_TO_PATH.
+ */
+function getInitialDiscoverySearch() {
+  if (getInitialView() !== 'discovery') return '';
+  try {
+    return new URLSearchParams(window.location.search).get('q') || '';
+  } catch {
+    return '';
+  }
+}
+
 function ViewLoadingFallback() {
   return (
     <div style={{ textAlign: 'center', padding: '4rem 1rem', color: 'var(--text-secondary, #666)' }}>
@@ -116,7 +133,7 @@ function App() {
   const [checkinData, setCheckinData] = useState(null);
   const [checkinUpdatedProfile, setCheckinUpdatedProfile] = useState(false);
   const [checkinCompletedAt, setCheckinCompletedAt] = useState(null);
-  const [discoverySearch, setDiscoverySearch] = useState('');
+  const [discoverySearch, setDiscoverySearch] = useState(getInitialDiscoverySearch);
   const [discoveryInitial, setDiscoveryInitial] = useState(null); // { initialCategory, initialPadFlow, initialPadPreference, initialPadUseCase }
   const [userZipCode, setUserZipCode] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
@@ -184,19 +201,14 @@ function App() {
     const supabase = getSupabaseClient();
     if (!supabase) { setAuthLoading(false); return; }
     const isCallbackPage = window.location.pathname === '/auth/callback';
-    // null = initial check not done yet; false = checked and was signed out; User = was signed in
-    // Used to distinguish an explicit login (false → User) from session restoration (User → User).
-    const initialSessionRef = { current: null };
     if (!isCallbackPage) {
       supabase.auth.getSession()
         .then(({ data: { session } }) => {
-          initialSessionRef.current = session?.user ?? false;
           setUser(session?.user ?? null);
           setUserSession(session ?? null);
         })
         .catch((e) => {
           console.error('[Ayna] getSession failed:', e);
-          initialSessionRef.current = false;
           setUser(null);
           setUserSession(null);
         })
@@ -215,13 +227,20 @@ function App() {
         posthog.identify(session.user.id, { email: session.user.email });
         tagInternalUserIfNeeded(posthog);
         setShowAuthModal(false);
-        // Only navigate when the user was actually signed out before (explicit login).
-        // Session restoration on page load and token refresh on tab switch both fire
-        // SIGNED_IN — those must not redirect the user away from where they are.
-        const wasSignedOut = initialSessionRef.current === false;
-        if (wasSignedOut && !pendingActionRef.current && !STATIC_VIEWS.includes(currentViewRef.current)) {
-          setCurrentView('ecosystem');
-        }
+        // Deliberately does NOT navigate here. Every in-app path that opens the
+        // auth modal (nav "Log in", quiz-complete gate, browse gate, the
+        // PROTECTED_VIEWS redirect) sets `pendingAction` first, and the
+        // [user, pendingAction] effect below does the post-login navigation.
+        // The Google OAuth return trip is handled separately by AuthCallback's
+        // onAuthenticated. Supabase also fires SIGNED_IN on session restoration
+        // AND on every tab-focus token check (even when nothing changed) — a
+        // previous version of this handler tried to distinguish "explicit
+        // login" from those via a ref snapshot of the initial session, but that
+        // snapshot could be wrong (e.g. a transient getSession() failure marked
+        // it "signed out" even for an already-signed-in user), which sent
+        // users back to the ecosystem page — losing whatever they were doing —
+        // every time they returned to the tab. Since the two real login paths
+        // already navigate on their own, this handler doesn't need to.
       }
       if (event === 'SIGNED_OUT') {
         posthog.reset();

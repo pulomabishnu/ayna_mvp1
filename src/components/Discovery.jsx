@@ -226,6 +226,21 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         }
     }, [initialSearch]);
 
+    // Mirror the submitted query into ?q= so a tab discard/reload while browsing
+    // Discovery (or coming back to a backgrounded tab that got reloaded) restores
+    // what was searched, not just the page you were on. App.jsx seeds the initial
+    // query from this same param on load; this keeps it current as the user
+    // types further searches that never go back through App.jsx.
+    React.useEffect(() => {
+        const url = new URL(window.location.href);
+        const q = submittedQuery.trim();
+        if (q) url.searchParams.set('q', q);
+        else url.searchParams.delete('q');
+        if (url.search !== window.location.search) {
+            window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}`);
+        }
+    }, [submittedQuery]);
+
     React.useEffect(() => {
         if (initialCategory) setCategoryFilter(initialCategory);
     }, [initialCategory]);
