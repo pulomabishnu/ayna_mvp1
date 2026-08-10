@@ -1418,29 +1418,49 @@ export default function MyEcosystem({
         posthog.capture('recommendation_viewed', { concernCount: recommendedProductsForDisplay.length });
     }, [recommendedProductsForDisplay, onBuildEcosystemFromLlm, llmTiered, recommendationRefreshNonce]);
 
+    // Bounded worker pool — mirrors the fix already applied to Discovery.jsx.
+    // Both effects below used to fire one request per product with no cap: a
+    // freshly-generated ecosystem can carry a top product + up to 3
+    // alternatives across a dozen-plus concerns, all placeholder-imaged, so a
+    // single render could burst 40-50+ concurrent /api/product-image calls.
+    // Some of those got rate-limited or timed out, and a failed lookup is
+    // recorded as "resolved to no image" (never retried this mount) — so
+    // under load, some cards permanently kept the generic placeholder even
+    // though the image existed and a later, unthrottled request would have
+    // found it.
+    const IMAGE_RESOLVE_CONCURRENCY = 5;
+    const resolveImagesBounded = (items, cancelledRef) => {
+        const queue = [...items];
+        const worker = async () => {
+            while (!cancelledRef.cancelled) {
+                const item = queue.shift();
+                if (!item) return;
+                const url = await resolveProductImage(item.name, item.brand || '');
+                if (cancelledRef.cancelled) return;
+                setResolvedImages((prev) => (prev[item.id] !== undefined ? prev : { ...prev, [item.id]: url || '' }));
+            }
+        };
+        Promise.all(Array.from({ length: Math.min(IMAGE_RESOLVE_CONCURRENCY, queue.length) }, worker))
+            .catch((e) => console.warn('[Ayna] image resolution failed:', e?.message));
+    };
+
     useEffect(() => {
         if (!activeTiered || !activeTiered.length) return;
+        const needed = [];
         activeTiered.forEach((entry) => {
             const product = entry.topProduct || entry.tiers?.[0]?.product;
-            if (!product || !product.llmGenerated || !product.name) return;
-            if (resolvedImages[product.id] !== undefined) return;
-            resolveProductImage(product.name, product.brand).then((url) => {
-                // Record '' as well: gating on `if (url)` left a no-image product
-                // permanently `undefined`, so it was re-selected and re-resolved on
-                // every run of this effect (resolvedImages is in its own deps).
-                setResolvedImages((prev) => (prev[product.id] !== undefined ? prev : { ...prev, [product.id]: url || '' }));
-            });
+            if (product && product.llmGenerated && product.name && resolvedImages[product.id] === undefined) {
+                needed.push(product);
+            }
             const alts = entry.alternatives || entry.tiers?.[0]?.alternatives || [];
             alts.forEach((alt) => {
-                if (!alt || !alt.name || resolvedImages[alt.id] !== undefined) return;
-                resolveProductImage(alt.name, alt.brand).then((url) => {
-                    // Record '' as well: gating on `if (url)` left a no-image product
-                    // permanently `undefined`, so it was re-selected and re-resolved on
-                    // every run of this effect (resolvedImages is in its own deps).
-                    setResolvedImages((prev) => (prev[alt.id] !== undefined ? prev : { ...prev, [alt.id]: url || '' }));
-                });
+                if (alt && alt.name && resolvedImages[alt.id] === undefined) needed.push(alt);
             });
         });
+        if (needed.length === 0) return undefined;
+        const cancelledRef = { cancelled: false };
+        resolveImagesBounded(needed, cancelledRef);
+        return () => { cancelledRef.cancelled = true; };
     }, [activeTiered]);
 
     useEffect(() => {
@@ -1452,15 +1472,10 @@ export default function MyEcosystem({
             .filter((p) => p && p.id && p.name)
             .filter((p) => resolvedImages[p.id] === undefined)
             .filter((p) => isPlaceholderProductImage(p.image));
-        if (productsNeedingImage.length === 0) return;
-        productsNeedingImage.forEach((p) => {
-            resolveProductImage(p.name, p.brand || '').then((url) => {
-                // Record '' as well: gating on `if (url)` left a no-image product
-                // permanently `undefined`, so it was re-selected and re-resolved on
-                // every run of this effect (resolvedImages is in its own deps).
-                setResolvedImages((prev) => (prev[p.id] !== undefined ? prev : { ...prev, [p.id]: url || '' }));
-            });
-        });
+        if (productsNeedingImage.length === 0) return undefined;
+        const cancelledRef = { cancelled: false };
+        resolveImagesBounded(productsNeedingImage, cancelledRef);
+        return () => { cancelledRef.cancelled = true; };
     }, [myProductList, ecosystemStartups, recommendedProductsForDisplay, resolvedImages]);
 
 
