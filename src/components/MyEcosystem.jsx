@@ -272,6 +272,39 @@ function toConciseReason(text, fallback) {
     return `${candidate.slice(0, maxLen - 1).trim()}…`;
 }
 
+// Client-side mirror of api/llm-recommendations.js's PRESCRIPTION_DRUG_PATTERN —
+// a defense-in-depth backstop for ecosystems generated before this filter
+// existed (and cached), not just newly-generated ones. Keep these two lists
+// in sync.
+const PRESCRIPTION_DRUG_PATTERN = new RegExp(
+    [
+        '\\bprescription\\b', 'tranexamic', 'tranexemic', '\\blysteda\\b',
+        // Hormonal birth control
+        '\\byaz\\b', 'yasmin', '\\bjunel\\b', 'loestrin', 'ortho\\s*tri-?cyclen', '\\bsprintec\\b',
+        'nuvaring', 'annovera', '\\bxulane\\b', '\\btwirla\\b', 'nexplanon', '\\bmirena\\b',
+        'kyleena', '\\bskyla\\b', 'liletta', 'depo-?provera',
+        // Hormone replacement therapy
+        '\\bpremarin\\b', '\\bestrace\\b', 'prometrium', 'vivelle', 'climara', '\\bduavee\\b',
+        'estring', 'evamist', 'prempro', 'activella', 'bijuva',
+        // PMDD / menopause / mood
+        '\\bprozac\\b', '\\bsarafem\\b', 'fluoxetine', '\\bzoloft\\b', 'sertraline',
+        '\\blexapro\\b', 'escitalopram', '\\bpaxil\\b', 'paroxetine', 'effexor', 'venlafaxine',
+        'wellbutrin', 'bupropion', '\\bbrisdelle\\b', '\\bveozah\\b', 'fezolinetant',
+        // UTI antibiotics
+        '\\bmacrobid\\b', 'nitrofurantoin', '\\bbactrim\\b', '\\bcipro\\b', 'ciprofloxacin',
+        '\\bmonurol\\b', 'fosfomycin',
+        // PCOS / metabolic
+        '\\bmetformin\\b', 'glucophage', 'spironolactone', '\\baldactone\\b',
+        // Endometriosis
+        '\\borilissa\\b', 'elagolix', 'myfembree',
+        // Migraine triptans (sometimes cross-recommended for hormonal headaches)
+        '\\bimitrex\\b', 'sumatriptan',
+        // GLP-1s (sometimes cross-recommended for PCOS/weight goals)
+        '\\bozempic\\b', '\\bwegovy\\b', 'semaglutide', '\\bmounjaro\\b', '\\bzepbound\\b', 'tirzepatide',
+    ].join('|'),
+    'i'
+);
+
 function isBlockedRecommendationProduct(product) {
     if (!product || typeof product !== 'object') return false;
     const text = [
@@ -284,9 +317,8 @@ function isBlockedRecommendationProduct(product) {
         product.category,
     ]
         .filter(Boolean)
-        .join(' ')
-        .toLowerCase();
-    return /tranexamic|tranexemic|\blysteda\b/.test(text);
+        .join(' ');
+    return PRESCRIPTION_DRUG_PATTERN.test(text);
 }
 
 function EcosystemProductAlternatives({ product, seedEntry, quizResults, healthProfile, onSwap, onGoToSearch, precomputedAlternatives = [] }) {

@@ -8,6 +8,36 @@ import { checkProductInsightsRateLimit } from './_rateLimitProductInsights.js';
 import { verifyUser } from './_usageLimit.js';
 import { tryParseJsonCandidate } from './_llm.js';
 
+// Mirrors PRESCRIPTION_DRUG_PATTERN in api/llm-recommendations.js — keep the two in sync.
+const PRESCRIPTION_DRUG_PATTERN = new RegExp(
+  [
+    '\\bprescription\\b', 'tranexamic', 'tranexemic', '\\blysteda\\b',
+    // Hormonal birth control
+    '\\byaz\\b', 'yasmin', '\\bjunel\\b', 'loestrin', 'ortho\\s*tri-?cyclen', '\\bsprintec\\b',
+    'nuvaring', 'annovera', '\\bxulane\\b', '\\btwirla\\b', 'nexplanon', '\\bmirena\\b',
+    'kyleena', '\\bskyla\\b', 'liletta', 'depo-?provera',
+    // Hormone replacement therapy
+    '\\bpremarin\\b', '\\bestrace\\b', 'prometrium', 'vivelle', 'climara', '\\bduavee\\b',
+    'estring', 'evamist', 'prempro', 'activella', 'bijuva',
+    // PMDD / menopause / mood
+    '\\bprozac\\b', '\\bsarafem\\b', 'fluoxetine', '\\bzoloft\\b', 'sertraline',
+    '\\blexapro\\b', 'escitalopram', '\\bpaxil\\b', 'paroxetine', 'effexor', 'venlafaxine',
+    'wellbutrin', 'bupropion', '\\bbrisdelle\\b', '\\bveozah\\b', 'fezolinetant',
+    // UTI antibiotics
+    '\\bmacrobid\\b', 'nitrofurantoin', '\\bbactrim\\b', '\\bcipro\\b', 'ciprofloxacin',
+    '\\bmonurol\\b', 'fosfomycin',
+    // PCOS / metabolic
+    '\\bmetformin\\b', 'glucophage', 'spironolactone', '\\baldactone\\b',
+    // Endometriosis
+    '\\borilissa\\b', 'elagolix', 'myfembree',
+    // Migraine triptans (sometimes cross-recommended for hormonal headaches)
+    '\\bimitrex\\b', 'sumatriptan',
+    // GLP-1s (sometimes cross-recommended for PCOS/weight goals)
+    '\\bozempic\\b', '\\bwegovy\\b', 'semaglutide', '\\bmounjaro\\b', '\\bzepbound\\b', 'tirzepatide',
+  ].join('|'),
+  'i'
+);
+
 const ALLOWED_CATEGORIES = new Set([
   'pad',
   'tampon',
@@ -125,6 +155,13 @@ function normalizeSuggestion(raw, index) {
 
   if (!name || name.length < 3 || !summary || summary.length < 25) return null;
 
+  // The prompt already says never to suggest a prescription drug, but that's
+  // advisory — same gap fixed with a code-level backstop in
+  // api/llm-recommendations.js (PRESCRIPTION_DRUG_PATTERN there). Telehealth
+  // platforms are exempt: their whole purpose is connecting someone to a
+  // prescriber, so their summary legitimately names what they treat/prescribe.
+  if (category !== 'telehealth' && PRESCRIPTION_DRUG_PATTERN.test(`${brandRaw} ${name} ${summary}`)) return null;
+
   const id = `gen-${Date.now().toString(36)}-${index}-${Math.random().toString(36).slice(2, 8)}`;
 
   return {
@@ -216,6 +253,7 @@ ANTI-HALLUCINATION RULES:
 - typicalUserRating: optional number 3.0-5.0 only if you have real signal — omit if unsure
 - If you cannot recall seeing a brand's product sold online at a major retailer or the brand's own website, do not include it — it likely does not exist
 - If the query is not women's health or wellness shopping related, return {"querySummary":"","suggestions":[]}
+- NEVER suggest a prescription medication as a product — this includes hormonal birth control (pills, patches, rings, IUDs, implants), hormone replacement therapy, prescription antidepressants/anxiolytics, prescription antibiotics, and prescription weight-loss drugs (GLP-1s), even if the user's search names the condition it treats. If the query is asking about something that requires a prescription (e.g. "birth control pills", "UTI antibiotics"), suggest telehealth platforms/services that can prescribe it instead of naming the drug itself.
 
 CLINICAL AUTHORITY RULES:
 - In querySummary only, where genuinely applicable, reference ACOG, NIH ODS, FDA, or Cochrane by name to add clinical credibility

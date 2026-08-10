@@ -146,6 +146,44 @@ function safeHttpsUrl(u) {
   }
 }
 
+// "Never name prescription medications" is already a prompt rule (see SCOPE
+// below), but the model doesn't reliably follow it — tranexamic acid/Lysteda
+// kept slipping through despite an explicit prompt line naming it, which is
+// why this backstop exists at all. Rather than add one drug at a time as each
+// one is spotted live, this covers the classes of Rx drug most likely to come
+// up in a women's-health context: hormonal birth control, HRT, PMDD/menopause
+// antidepressants, UTI antibiotics, PCOS/metabolic, endometriosis, migraine
+// triptans, and GLP-1s, by brand and generic name, plus the literal word
+// "prescription" if the model names the requirement itself.
+const PRESCRIPTION_DRUG_PATTERN = new RegExp(
+  [
+    '\\bprescription\\b', 'tranexamic', 'tranexemic', '\\blysteda\\b',
+    // Hormonal birth control
+    '\\byaz\\b', 'yasmin', '\\bjunel\\b', 'loestrin', 'ortho\\s*tri-?cyclen', '\\bsprintec\\b',
+    'nuvaring', 'annovera', '\\bxulane\\b', '\\btwirla\\b', 'nexplanon', '\\bmirena\\b',
+    'kyleena', '\\bskyla\\b', 'liletta', 'depo-?provera',
+    // Hormone replacement therapy
+    '\\bpremarin\\b', '\\bestrace\\b', 'prometrium', 'vivelle', 'climara', '\\bduavee\\b',
+    'estring', 'evamist', 'prempro', 'activella', 'bijuva',
+    // PMDD / menopause / mood
+    '\\bprozac\\b', '\\bsarafem\\b', 'fluoxetine', '\\bzoloft\\b', 'sertraline',
+    '\\blexapro\\b', 'escitalopram', '\\bpaxil\\b', 'paroxetine', 'effexor', 'venlafaxine',
+    'wellbutrin', 'bupropion', '\\bbrisdelle\\b', '\\bveozah\\b', 'fezolinetant',
+    // UTI antibiotics
+    '\\bmacrobid\\b', 'nitrofurantoin', '\\bbactrim\\b', '\\bcipro\\b', 'ciprofloxacin',
+    '\\bmonurol\\b', 'fosfomycin',
+    // PCOS / metabolic
+    '\\bmetformin\\b', 'glucophage', 'spironolactone', '\\baldactone\\b',
+    // Endometriosis
+    '\\borilissa\\b', 'elagolix', 'myfembree',
+    // Migraine triptans (sometimes cross-recommended for hormonal headaches)
+    '\\bimitrex\\b', 'sumatriptan',
+    // GLP-1s (sometimes cross-recommended for PCOS/weight goals)
+    '\\bozempic\\b', '\\bwegovy\\b', 'semaglutide', '\\bmounjaro\\b', '\\bzepbound\\b', 'tirzepatide',
+  ].join('|'),
+  'i'
+);
+
 function isBlockedRecommendationProduct(p) {
   if (!p || typeof p !== 'object') return false;
   const text = [
@@ -160,9 +198,8 @@ function isBlockedRecommendationProduct(p) {
   ]
     .flat()
     .filter(Boolean)
-    .join(' ')
-    .toLowerCase();
-  return /tranexamic|tranexemic|\blysteda\b/.test(text);
+    .join(' ');
+  return PRESCRIPTION_DRUG_PATTERN.test(text);
 }
 
 function enrichProduct(p, idSuffix = '', namespace = '') {
@@ -439,7 +476,7 @@ PATIENT PROFILE:
 - Hidden products: ${capIdList(feedback?.omittedProductIds)}
 ${knowledgeContext ? `\nCLINICAL KNOWLEDGE:\n${knowledgeContext}` : ''}${searchHits ? '\n' + formatSearchContextForConcern(concern, searchHits) : ''}
 
-SCOPE: Never name prescription medications. If a concern requires diagnosis or labs, lead with telehealth. Pain 8+/10: always include telehealth.${saferProductsInstruction}
+SCOPE: Never name a prescription medication as a product recommendation, in any tier or alternative — this includes hormonal birth control (pills, patches, rings, IUDs, implants), hormone replacement therapy, prescription antidepressants/anxiolytics, prescription antibiotics, prescription weight-loss drugs (GLP-1s), and any other drug that legally requires a doctor's prescription in the US, even if it's commonly discussed for this concern. If the best answer to a concern is a prescription drug, say so only inside a telehealth tier's whyItWorks/matchExplanation text (e.g. "a clinician may discuss birth control options") and let the telehealth PRODUCT itself (the platform/service) be the recommendation — never the drug. If a concern requires diagnosis or labs, lead with telehealth. Pain 8+/10: always include telehealth.${saferProductsInstruction}
 
 QUALITY BAR: Every product must have (a) majority positive reviews from real women, (b) clinical/scientific support for the mechanism, (c) established US-available brand. No fabricated brands.
 
