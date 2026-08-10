@@ -386,8 +386,24 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             if (n && names.has(n)) continue;
             out.push(p);
         }
+        // The AI suggestions above are appended in whatever order Claude returned
+        // them — the prompt asks it to rank by relevance, but that's advisory,
+        // not enforced, so the model's first pick is sometimes a weaker/tangential
+        // match while later ones are spot-on. Re-score everything (catalog items
+        // included) against the query with the same deterministic scorer used for
+        // catalog search, and stable-sort by it, so card #1 is always the actual
+        // best match rather than whatever position an LLM happened to put it in.
+        if (qTrimForAi) {
+            const scored = out.map((item, idx) => ({
+                item,
+                idx,
+                score: scoreQueryAgainstProduct(qTrimForAi, buildSearchTextForItem(item, CATEGORY_LABELS)),
+            }));
+            scored.sort((a, b) => (b.score - a.score) || (a.idx - b.idx));
+            return scored.map((x) => x.item);
+        }
         return out;
-    }, [filtered, enrichedAiSuggestions]);
+    }, [filtered, enrichedAiSuggestions, qTrimForAi]);
 
     useEffect(() => {
         // Only resolve images for what's actually rendered (visibleCount),
