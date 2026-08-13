@@ -385,7 +385,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             });
         }
         return list;
-    }, [combined, categoryFilter, typeFilter, omittedProducts, submittedQuery, sortBy, personalizationFilter, recommendedSet, aynaReviews, padFlowFilter, padPreferenceFilter, padUseCaseFilter, symptomFilter, shuffleSeed]);
+    }, [combined, macroGroup, categoryFilter, typeFilter, omittedProducts, submittedQuery, sortBy, personalizationFilter, recommendedSet, aynaReviews, padFlowFilter, padPreferenceFilter, padUseCaseFilter, symptomFilter, shuffleSeed]);
 
     // Back to the first page whenever the underlying result set actually
     // changes (new filter/search/sort) — not when AI suggestions arrive later
