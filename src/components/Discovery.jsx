@@ -178,26 +178,6 @@ function truncateCardSummary(text, max = 200) {
     return `${truncated.trimEnd()}…`;
 }
 
-const BENIGN_SIDE_EFFECT_RE = /^(none|n\/a|minimal|rare|breathable material)/i;
-
-/** Lightweight green/orange/red safety read from existing catalog data — not a live recall check (see Safety & Ingredients tab / Monitor Safety Recalls for that). */
-function getSafetySignal(item) {
-    const safety = item.safety;
-    if (!safety) return null;
-    const recalls = String(safety.recalls || '').trim();
-    if (recalls.includes('⚠️')) {
-        return { label: 'Recall / concern', dot: '#DC2626', bg: '#FEE2E2', color: '#991B1B' };
-    }
-    const sideEffects = String(safety.sideEffects || '').trim();
-    if (sideEffects && !BENIGN_SIDE_EFFECT_RE.test(sideEffects)) {
-        return { label: 'Side effects to review', dot: '#D97706', bg: '#FEF3C7', color: '#92400E' };
-    }
-    if (recalls || sideEffects) {
-        return { label: 'No known concerns', dot: '#16A34A', bg: '#DCFCE7', color: '#166534' };
-    }
-    return null;
-}
-
 export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, healthProfile = null }) {
     const [macroGroup, setMacroGroup] = useState(() => {
         if (!initialCategory || initialCategory === 'all') return 'all';
@@ -958,7 +938,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     const isInEcosystem = !!myProducts[item.id];
                     const isJoined = isStartup && !releasedStartup && !!joinedWaitlists[item.id];
                     const perUnitPrice = getPricePerUnitLabel(item);
-                    const safetySignal = getSafetySignal(item);
 
                     const cardImageSrc = resolvedImages[item.id] || item.image;
                     // Distinguishes "still fetching an image" from "resolved, none
@@ -1049,17 +1028,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                     {CATEGORY_LABELS[item.category] || (item.category && item.category.charAt(0) + item.category.slice(1)) || 'Startup'}
                                 </span>
                                 <h3 style={{ fontSize: '1.05rem', marginBottom: '0.25rem' }}>{item.name}</h3>
-                                {safetySignal && (
-                                    <span style={{
-                                        display: 'inline-flex', alignItems: 'center', gap: '0.35rem', alignSelf: 'flex-start',
-                                        background: safetySignal.bg, color: safetySignal.color,
-                                        padding: '0.15rem 0.55rem', borderRadius: 'var(--radius-pill)',
-                                        fontSize: '0.68rem', fontWeight: '700', marginBottom: '0.5rem'
-                                    }}>
-                                        <span style={{ width: '0.45rem', height: '0.45rem', borderRadius: '50%', background: safetySignal.dot, flexShrink: 0 }} />
-                                        {safetySignal.label}
-                                    </span>
-                                )}
                                 {item.outOfBusiness && (
                                     <div style={{ marginBottom: '0.75rem', padding: '0.5rem 0.75rem', background: '#374151', color: 'white', borderRadius: 'var(--radius-md)', fontSize: '0.8rem', fontWeight: '700' }}>
                                         No longer sold — company closed. Listing kept for safety info if you have this product.
