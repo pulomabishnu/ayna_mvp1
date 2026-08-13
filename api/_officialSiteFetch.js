@@ -50,7 +50,7 @@ function isPrivateIPv6(ip) {
   return false;
 }
 
-async function isSafePublicUrl(urlString) {
+export async function isSafePublicUrl(urlString) {
   let parsed;
   try {
     parsed = new URL(urlString);

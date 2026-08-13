@@ -1,22 +1,28 @@
 /* global process */
-// Returns a product image URL using the Serper.dev Google Image Search API.
-// Required Vercel env var: SERPER_API_KEY (free tier: 2,500 searches/month).
-// If not configured, returns an empty string — the UI falls back to the 🌸
-// placeholder gracefully.
+// Resolves a real product photo for a placeholder-image product, sourced directly
+// from the product's own official page — no third-party search API (previously
+// Serper.dev; retired after its free-tier credits ran out and stayed out).
 //
-// COST: every miss here is one billable Serper credit. This route was
-// previously unauthenticated, wildcard-CORS, unthrottled, uncached and had no
-// fetch timeout — `GET /api/product-image?name=x` billed Ayna's account for any
-// anonymous caller from any origin, and the free tier could be drained in
-// minutes by a trivial loop. Now: per-IP rate limit, a shared Redis cache so
-// the cost is per PRODUCT rather than per product-per-browser, edge caching,
-// input caps, and a request timeout.
+// Two strategies, tried in order against the product's official `url`:
+//   1. Shopify storefronts publicly expose /products.json — fuzzy-match the
+//      product name against it for the real per-SKU photo (see
+//      _shopifyProductMatch.js). Most accurate: an actual catalog entry, not a
+//      page-level social-share image.
+//   2. Fall back to the page's og:image/twitter:image meta tag (_ogImageFetch.js),
+//      rejected if the URL looks like a logo/banner/social-share asset rather
+//      than a product photo (filename heuristic) — a mislabeled brand logo is
+//      worse than no image at all.
+// If neither yields a confident result, returns '' — the UI falls back to the
+// placeholder gracefully. No AI-generated imagery is ever involved.
 
 import { rateLimit, getClientIp } from './_rateLimit.js';
+import { fetchOgImage } from './_ogImageFetch.js';
+import { fetchShopifyProducts, matchProductImage } from './_shopifyProductMatch.js';
 
 const MAX_TERM_LEN = 120;
+const MAX_URL_LEN = 500;
 const CACHE_TTL_SEC = 30 * 24 * 60 * 60; // 30 days — product photos don't move
-const NEGATIVE_TTL_SEC = 24 * 60 * 60;   // don't re-bill misses all month
+const NEGATIVE_TTL_SEC = 24 * 60 * 60;   // don't re-fetch misses all day
 
 let redisPromise = null;
 function getRedis() {
@@ -32,9 +38,9 @@ function getRedis() {
   return redisPromise;
 }
 
-function cleanTerm(v) {
+function cleanTerm(v, maxLen = MAX_TERM_LEN) {
   const raw = Array.isArray(v) ? v[0] : v;
-  return String(raw || '').trim().replace(/\s+/g, ' ').slice(0, MAX_TERM_LEN);
+  return String(raw || '').trim().replace(/\s+/g, ' ').slice(0, maxLen);
 }
 
 function allowedOrigin(req) {
@@ -46,10 +52,10 @@ function allowedOrigin(req) {
   return configured.includes(origin) ? origin : null;
 }
 
+const LOGO_BANNER_HINTS = /logo|social.?share|social.?media|banner|og.?image|seo.?description|share.?image/i;
+
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
-  // Wildcard CORS let any third-party page drive this from its visitors'
-  // browsers. Echo only a configured origin.
   const origin = allowedOrigin(req);
   if (origin) {
     res.setHeader('Access-Control-Allow-Origin', origin);
@@ -60,13 +66,13 @@ export default async function handler(req, res) {
 
   const name = cleanTerm(req.query.name);
   const brand = cleanTerm(req.query.brand);
+  const officialUrl = cleanTerm(req.query.url, MAX_URL_LEN);
   if (!name) return res.status(400).json({ error: 'missing_name' });
+  if (!officialUrl) return res.status(200).json({ imageUrl: '' });
 
-  const cacheKey = `ayna:img:${brand.toLowerCase()}|${name.toLowerCase()}`;
+  const cacheKey = `ayna:img:v2:${brand.toLowerCase()}|${name.toLowerCase()}`;
   const redis = getRedis();
 
-  // Shared cache first — this is what turns the cost from
-  // (users x products) into (products).
   if (redis) {
     try {
       const hit = await (await redis).get(cacheKey);
@@ -85,44 +91,28 @@ export default async function handler(req, res) {
     return res.status(429).json({ imageUrl: '', error: 'rate_limited' });
   }
 
-  const apiKey = process.env.SERPER_API_KEY;
-  if (!apiKey) return res.status(200).json({ imageUrl: '' });
-
-  const query = `${brand} ${name} product`.trim().replace(/\s+/g, ' ');
-
+  let imageUrl = '';
   try {
-    const r = await fetch('https://google.serper.dev/images', {
-      method: 'POST',
-      headers: { 'X-API-KEY': apiKey, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ q: query, num: 3 }),
-      // Was missing entirely: a stalled Serper call held the invocation open
-      // to the function ceiling and was billed for the full wall clock.
-      signal: AbortSignal.timeout(5000),
-    });
-
-    if (!r.ok) {
-      // Quota exhaustion (402/429) is the failure most worth alerting on and
-      // was previously the most silent.
-      console.error('[product-image] serper error', r.status, (await r.text().catch(() => '')).slice(0, 200));
-      return res.status(200).json({ imageUrl: '' });
+    const shopifyProducts = await fetchShopifyProducts(officialUrl);
+    if (shopifyProducts) {
+      imageUrl = matchProductImage(shopifyProducts, name, brand) || '';
     }
-
-    const data = await r.json();
-    const images = Array.isArray(data?.images) ? data.images : [];
-    const imageUrl = images.map((i) => i.imageUrl || i.url || '').find((u) => u.startsWith('https://')) || '';
-
-    if (redis) {
-      try {
-        await (await redis).set(cacheKey, imageUrl, { ex: imageUrl ? CACHE_TTL_SEC : NEGATIVE_TTL_SEC });
-      } catch (e) {
-        console.error('[product-image] cache write failed:', e?.message);
-      }
+    if (!imageUrl) {
+      const og = await fetchOgImage(officialUrl);
+      if (og && !LOGO_BANNER_HINTS.test(og)) imageUrl = og;
     }
-
-    res.setHeader('Cache-Control', 'public, s-maxage=2592000, stale-while-revalidate=86400');
-    return res.status(200).json({ imageUrl });
   } catch (e) {
-    console.error('[product-image] request failed:', e?.message);
-    return res.status(200).json({ imageUrl: '' });
+    console.error('[product-image] resolution failed:', e?.message);
   }
+
+  if (redis) {
+    try {
+      await (await redis).set(cacheKey, imageUrl, { ex: imageUrl ? CACHE_TTL_SEC : NEGATIVE_TTL_SEC });
+    } catch (e) {
+      console.error('[product-image] cache write failed:', e?.message);
+    }
+  }
+
+  res.setHeader('Cache-Control', 'public, s-maxage=2592000, stale-while-revalidate=86400');
+  return res.status(200).json({ imageUrl });
 }

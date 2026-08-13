@@ -2,10 +2,12 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { mockRes } from './_test-helpers.js';
 
-const realFetch = globalThis.fetch;
 const rateLimitMock = vi.fn(async () => ({ ok: true }));
 const redisGet = vi.fn(async () => null);
 const redisSet = vi.fn(async () => 'OK');
+const fetchShopifyProductsMock = vi.fn(async () => null);
+const matchProductImageMock = vi.fn(() => null);
+const fetchOgImageMock = vi.fn(async () => null);
 
 vi.mock('./_rateLimit.js', () => ({
   rateLimit: (...args) => rateLimitMock(...args),
@@ -16,6 +18,13 @@ vi.mock('@upstash/redis', () => ({
     get(...args) { return redisGet(...args); }
     set(...args) { return redisSet(...args); }
   },
+}));
+vi.mock('./_shopifyProductMatch.js', () => ({
+  fetchShopifyProducts: (...args) => fetchShopifyProductsMock(...args),
+  matchProductImage: (...args) => matchProductImageMock(...args),
+}));
+vi.mock('./_ogImageFetch.js', () => ({
+  fetchOgImage: (...args) => fetchOgImageMock(...args),
 }));
 
 async function loadHandler() {
@@ -28,14 +37,15 @@ beforeEach(() => {
   rateLimitMock.mockReset().mockResolvedValue({ ok: true });
   redisGet.mockReset().mockResolvedValue(null);
   redisSet.mockReset().mockResolvedValue('OK');
+  fetchShopifyProductsMock.mockReset().mockResolvedValue(null);
+  matchProductImageMock.mockReset().mockReturnValue(null);
+  fetchOgImageMock.mockReset().mockResolvedValue(null);
   delete process.env.UPSTASH_REDIS_REST_URL;
   delete process.env.UPSTASH_REDIS_REST_TOKEN;
-  delete process.env.SERPER_API_KEY;
   delete process.env.ALLOWED_ORIGINS;
 });
 
 afterEach(() => {
-  globalThis.fetch = realFetch;
   vi.restoreAllMocks();
 });
 
@@ -65,100 +75,86 @@ describe('product-image', () => {
 
   it('echoes the origin only when it is explicitly allowed', async () => {
     process.env.ALLOWED_ORIGINS = 'https://ayna.health';
-    process.env.SERPER_API_KEY = '';
     const handler = await loadHandler();
     const res = mockRes();
     await handler({ method: 'GET', query: { name: 'cup' }, headers: { origin: 'https://ayna.health' } }, res);
     expect(res.headers['access-control-allow-origin']).toBe('https://ayna.health');
   });
 
-  it('returns empty imageUrl without calling Serper when no API key is configured', async () => {
+  it('returns empty imageUrl without resolving anything when no official url is given', async () => {
     const handler = await loadHandler();
-    globalThis.fetch = vi.fn();
     const res = mockRes();
     await handler({ method: 'GET', query: { name: 'DivaCup' }, headers: {} }, res);
     expect(res.statusCode).toBe(200);
     expect(res.body).toEqual({ imageUrl: '' });
-    expect(globalThis.fetch).not.toHaveBeenCalled();
+    expect(fetchShopifyProductsMock).not.toHaveBeenCalled();
+    expect(fetchOgImageMock).not.toHaveBeenCalled();
   });
 
-  it('rate limits before ever calling Serper', async () => {
-    process.env.SERPER_API_KEY = 'test-key';
+  it('rate limits before ever resolving an image', async () => {
     rateLimitMock.mockResolvedValue({ ok: false, retryAfterSec: 42 });
     const handler = await loadHandler();
-    globalThis.fetch = vi.fn();
     const res = mockRes();
-    await handler({ method: 'GET', query: { name: 'DivaCup' }, headers: {} }, res);
+    await handler({ method: 'GET', query: { name: 'DivaCup', url: 'https://diva.example.com' }, headers: {} }, res);
     expect(res.statusCode).toBe(429);
     expect(res.headers['retry-after']).toBe('42');
-    expect(globalThis.fetch).not.toHaveBeenCalled();
+    expect(fetchShopifyProductsMock).not.toHaveBeenCalled();
   });
 
-  it('returns a cached image without touching the rate limiter or Serper', async () => {
+  it('returns a cached image without touching the rate limiter or resolvers', async () => {
     process.env.UPSTASH_REDIS_REST_URL = 'https://redis.example.com';
     process.env.UPSTASH_REDIS_REST_TOKEN = 'token';
-    process.env.SERPER_API_KEY = 'test-key';
     redisGet.mockResolvedValue('https://cached.example.com/cup.jpg');
     const handler = await loadHandler();
-    globalThis.fetch = vi.fn();
     const res = mockRes();
-    await handler({ method: 'GET', query: { name: 'DivaCup' }, headers: {} }, res);
+    await handler({ method: 'GET', query: { name: 'DivaCup', url: 'https://diva.example.com' }, headers: {} }, res);
     expect(res.statusCode).toBe(200);
     expect(res.body).toEqual({ imageUrl: 'https://cached.example.com/cup.jpg', cached: true });
     expect(rateLimitMock).not.toHaveBeenCalled();
-    expect(globalThis.fetch).not.toHaveBeenCalled();
+    expect(fetchShopifyProductsMock).not.toHaveBeenCalled();
   });
 
-  it('fetches from Serper on a cache miss and writes the result back to cache', async () => {
+  it('prefers a Shopify catalog match over og:image, and caches it', async () => {
     process.env.UPSTASH_REDIS_REST_URL = 'https://redis.example.com';
     process.env.UPSTASH_REDIS_REST_TOKEN = 'token';
-    process.env.SERPER_API_KEY = 'test-key';
+    fetchShopifyProductsMock.mockResolvedValue([{ title: 'DivaCup Model 1', image: 'https://cdn.shopify.com/divacup.jpg' }]);
+    matchProductImageMock.mockReturnValue('https://cdn.shopify.com/divacup.jpg');
     const handler = await loadHandler();
-    globalThis.fetch = vi.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({ images: [{ imageUrl: 'https://serper.example.com/img.jpg' }] }),
-      text: async () => '',
-    });
     const res = mockRes();
-    await handler({ method: 'GET', query: { name: 'DivaCup', brand: 'Diva' }, headers: {} }, res);
+    await handler({ method: 'GET', query: { name: 'DivaCup', brand: 'Diva', url: 'https://diva.example.com' }, headers: {} }, res);
     expect(res.statusCode).toBe(200);
-    expect(res.body.imageUrl).toBe('https://serper.example.com/img.jpg');
+    expect(res.body.imageUrl).toBe('https://cdn.shopify.com/divacup.jpg');
+    expect(fetchOgImageMock).not.toHaveBeenCalled();
     expect(redisSet).toHaveBeenCalledWith(
       expect.stringContaining('ayna:img:'),
-      'https://serper.example.com/img.jpg',
+      'https://cdn.shopify.com/divacup.jpg',
       expect.objectContaining({ ex: expect.any(Number) })
     );
   });
 
-  it('rejects a non-https image URL from Serper', async () => {
-    process.env.SERPER_API_KEY = 'test-key';
+  it('falls back to og:image when there is no Shopify match', async () => {
+    fetchShopifyProductsMock.mockResolvedValue(null);
+    fetchOgImageMock.mockResolvedValue('https://diva.example.com/product-photo.jpg');
     const handler = await loadHandler();
-    globalThis.fetch = vi.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({ images: [{ imageUrl: 'http://insecure.example.com/img.jpg' }] }),
-      text: async () => '',
-    });
     const res = mockRes();
-    await handler({ method: 'GET', query: { name: 'DivaCup' }, headers: {} }, res);
-    expect(res.body.imageUrl).toBe('');
+    await handler({ method: 'GET', query: { name: 'DivaCup', url: 'https://diva.example.com' }, headers: {} }, res);
+    expect(res.body.imageUrl).toBe('https://diva.example.com/product-photo.jpg');
   });
 
-  it('returns empty imageUrl (200), not an error, when Serper responds non-2xx', async () => {
-    process.env.SERPER_API_KEY = 'test-key';
+  it('rejects an og:image that looks like a logo or social-share asset', async () => {
+    fetchShopifyProductsMock.mockResolvedValue(null);
+    fetchOgImageMock.mockResolvedValue('https://diva.example.com/brand-logo.png');
     const handler = await loadHandler();
-    globalThis.fetch = vi.fn().mockResolvedValue({ ok: false, status: 402, text: async () => 'quota exceeded' });
     const res = mockRes();
-    await handler({ method: 'GET', query: { name: 'DivaCup' }, headers: {} }, res);
-    expect(res.statusCode).toBe(200);
+    await handler({ method: 'GET', query: { name: 'DivaCup', url: 'https://diva.example.com' }, headers: {} }, res);
     expect(res.body).toEqual({ imageUrl: '' });
   });
 
-  it('returns empty imageUrl (200), not a crash, on a network failure', async () => {
-    process.env.SERPER_API_KEY = 'test-key';
+  it('returns empty imageUrl (200), not a crash, when resolution throws', async () => {
+    fetchShopifyProductsMock.mockRejectedValue(new Error('ECONNRESET'));
     const handler = await loadHandler();
-    globalThis.fetch = vi.fn().mockRejectedValue(new Error('ECONNRESET'));
     const res = mockRes();
-    await handler({ method: 'GET', query: { name: 'DivaCup' }, headers: {} }, res);
+    await handler({ method: 'GET', query: { name: 'DivaCup', url: 'https://diva.example.com' }, headers: {} }, res);
     expect(res.statusCode).toBe(200);
     expect(res.body).toEqual({ imageUrl: '' });
   });

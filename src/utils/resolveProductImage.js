@@ -21,7 +21,7 @@ export function isPlaceholderProductImage(imageUrl) {
   return src === '/ayna_placeholder.png' || src === '/startup_placeholder.png';
 }
 
-export async function resolveProductImage(name, brand) {
+export async function resolveProductImage(name, brand, officialUrl) {
   if (!name) return '';
   const key = `${brand || ''}|${name}`;
 
@@ -39,7 +39,7 @@ export async function resolveProductImage(name, brand) {
 
   const inFlight = (async () => {
     try {
-      const params = new URLSearchParams({ name, brand: brand || '' });
+      const params = new URLSearchParams({ name, brand: brand || '', url: officialUrl || '' });
       const res = await fetch(`/api/product-image?${params}`, {
         signal: AbortSignal.timeout(10000),
       });
