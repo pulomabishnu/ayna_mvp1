@@ -8,11 +8,11 @@
   --color-text-muted: #78716C;
   --color-text-light: #FFFFFF;
 
-  --color-primary: #8B5A5F;
-  --color-primary-hover: #6F484C;
-  --color-secondary: #EDE4E0;
-  --color-secondary-fade: rgba(139, 90, 95, 0.1);
-  --color-primary-fade: rgba(139, 90, 95, 0.1);
+  --color-primary: #FE8715;
+  --color-primary-hover: #D96F0C;
+  --color-secondary: #FDEBD8;
+  --color-secondary-fade: rgba(254, 135, 21, 0.1);
+  --color-primary-fade: rgba(254, 135, 21, 0.1);
   --color-surface: #FFFFFF;
 
   --color-border: #E1D5CE;
@@ -134,7 +134,7 @@ body {
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 1) inset,
     0 8px 32px rgba(28, 25, 23, 0.08),
-    0 1px 0 rgba(139, 90, 95, 0.08);
+    0 1px 0 rgba(254, 135, 21, 0.08);
   transition:
     background 0.3s ease,
     box-shadow 0.3s ease,
@@ -155,7 +155,7 @@ body {
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.9) inset,
     0 12px 40px rgba(28, 25, 23, 0.1),
-    0 1px 0 rgba(139, 90, 95, 0.1);
+    0 1px 0 rgba(254, 135, 21, 0.1);
 }
 
 .app-nav__research-cluster {
@@ -263,12 +263,12 @@ button {
 .btn-primary {
   background-color: var(--color-primary);
   color: #FFFFFF;
-  box-shadow: 0 2px 10px rgba(111, 72, 76, 0.22);
+  box-shadow: 0 2px 10px rgba(217, 111, 12, 0.28);
 }
 
 .btn-primary:hover {
   background-color: var(--color-primary-hover);
-  box-shadow: 0 4px 16px rgba(111, 72, 76, 0.28);
+  box-shadow: 0 4px 16px rgba(217, 111, 12, 0.34);
   transform: translateY(-1px);
 }
 

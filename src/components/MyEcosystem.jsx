@@ -2191,7 +2191,7 @@ export default function MyEcosystem({
                                 padding: '0.75rem 1.75rem',
                                 fontSize: '1rem',
                                 fontWeight: 600,
-                                boxShadow: '0 2px 12px rgba(111, 72, 76, 0.2)',
+                                boxShadow: '0 2px 12px rgba(217, 111, 12, 0.25)',
                             }}
                             onClick={onBuildEcosystem}
                         >
