@@ -66,6 +66,39 @@ function getQualityScore(item, aynaReviews = {}) {
     return (rating * 2) + consensusScore + safetyOk;
 }
 
+// Brand partners get a subtle, randomized nudge toward the top of the default (browsing) sort —
+// see partnerBrandBoost/shuffleJitter below. Matched against brand+name, case-insensitively, with
+// word boundaries so e.g. "oboo" doesn't accidentally match inside an unrelated word.
+const PARTNER_BRAND_PATTERNS = [/\bwinx(?:\s*health)?\b/, /\bneycher\b/, /\boboo\b/, /\blola\b/];
+
+function isPartnerBrandItem(item) {
+    const text = `${item?.brand || ''} ${item?.name || ''}`.toLowerCase();
+    return PARTNER_BRAND_PATTERNS.some((re) => re.test(text));
+}
+
+// Small enough relative to getQualityScore's spread (~0-6) that it nudges partner products toward
+// the top on average without pinning them there every time — shuffleJitter below still lets other
+// high-quality items land above them, keeping the effect subtle rather than a blatant "always #1-4".
+const PARTNER_BRAND_BOOST = 1.1;
+
+// Deterministic per-(item, seed) hash in [0, 1) — same seed always reorders the same way (so a
+// single landing's grid doesn't jitter as filters/sort re-render), but a fresh seed each time the
+// component mounts (see shuffleSeed in Discovery) produces a different order on the next visit.
+function hashToUnitInterval(str) {
+    let h = 2166136261;
+    for (let i = 0; i < str.length; i++) {
+        h ^= str.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+    }
+    return ((h >>> 0) % 100000) / 100000;
+}
+
+const SHUFFLE_JITTER_RANGE = 1.5;
+
+function shuffleJitter(item, seed) {
+    return hashToUnitInterval(`${seed}:${item?.id || ''}`) * SHUFFLE_JITTER_RANGE;
+}
+
 const SORT_OPTIONS = [
     { value: 'default', label: 'Best match (rating, consensus & safety)' },
     { value: 'price-asc', label: 'Price: low to high' },
@@ -176,6 +209,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [searchQuery, setSearchQuery] = useState(initialSearch || '');
     const [submittedQuery, setSubmittedQuery] = useState(initialSearch || '');
     const [sortBy, setSortBy] = useState('default');
+    // Freshly generated on every mount — Discovery unmounts/remounts on each navigation to it,
+    // so this reshuffles the browsing grid's default order every time a user lands on the page,
+    // without reshuffling mid-visit as filters/sort change.
+    const [shuffleSeed] = useState(() => Math.random().toString(36).slice(2));
     const [personalizationFilter, setPersonalizationFilter] = useState(hasQuizFrustrations || hasHealthImport);
     const personalizationInitialized = useRef(false);
     useEffect(() => {
@@ -357,13 +394,18 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             list = [...list].sort((a, b) => {
                 const m = matchTieBreak(a, b);
                 if (m !== 0) return m;
-                const qa = getQualityScore(a, aynaReviews);
-                const qb = getQualityScore(b, aynaReviews);
+                // Pure browsing (no active text-match score) — mix in the partner boost and a
+                // per-visit random jitter so the catalog doesn't render in the exact same order
+                // every time someone lands on the page. Text searches (scoreById set) keep
+                // relying purely on quality score as the tiebreak.
+                const partnerAndJitter = !scoreById;
+                const qa = getQualityScore(a, aynaReviews) + (partnerAndJitter ? (isPartnerBrandItem(a) ? PARTNER_BRAND_BOOST : 0) + shuffleJitter(a, shuffleSeed) : 0);
+                const qb = getQualityScore(b, aynaReviews) + (partnerAndJitter ? (isPartnerBrandItem(b) ? PARTNER_BRAND_BOOST : 0) + shuffleJitter(b, shuffleSeed) : 0);
                 return qb - qa;
             });
         }
         return list;
-    }, [combined, categoryFilter, typeFilter, omittedProducts, submittedQuery, sortBy, personalizationFilter, recommendedSet, aynaReviews, padFlowFilter, padPreferenceFilter, padUseCaseFilter, symptomFilter]);
+    }, [combined, categoryFilter, typeFilter, omittedProducts, submittedQuery, sortBy, personalizationFilter, recommendedSet, aynaReviews, padFlowFilter, padPreferenceFilter, padUseCaseFilter, symptomFilter, shuffleSeed]);
 
     // Back to the first page whenever the underlying result set actually
     // changes (new filter/search/sort) — not when AI suggestions arrive later
