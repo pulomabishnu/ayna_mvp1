@@ -80,6 +80,24 @@ function sanitizeStr(s, maxLen) {
   return t.slice(0, maxLen);
 }
 
+// Unlike sanitizeStr (which rejects anything URL-like, since every other field
+// must be plain text), this field is EXPECTED to be a URL — validated as a
+// well-formed https:// address here; the deep SSRF/reachability check happens
+// downstream at fetch time in _officialSiteFetch.js/_ogImageFetch.js, so a
+// wrong-but-real-looking domain just fails to resolve an image rather than
+// posing a security risk.
+function sanitizeOfficialUrl(s) {
+  if (typeof s !== 'string' || !s.trim()) return '';
+  try {
+    const u = new URL(s.trim());
+    if (u.protocol !== 'https:') return '';
+    if (!u.hostname || !u.hostname.includes('.')) return '';
+    return u.toString().slice(0, 300);
+  } catch {
+    return '';
+  }
+}
+
 function stripJsonFence(raw) {
   let t = String(raw || '').trim();
   if (t.startsWith('```')) {
@@ -152,6 +170,7 @@ function normalizeSuggestion(raw, index) {
   const whereToBuy = sanitizeRetailers(raw?.whereToBuy || raw?.retailers, 6);
   const searchTerms = uniqueStrings(raw?.searchTerms, 6, 100);
   const typical = clampTypicalRating(raw?.typicalUserRating ?? raw?.estimatedRating);
+  const officialUrl = sanitizeOfficialUrl(raw?.officialUrl);
 
   if (!name || name.length < 3 || !summary || summary.length < 25) return null;
 
@@ -184,6 +203,7 @@ function normalizeSuggestion(raw, index) {
     ratingNote: typical != null ? undefined : 'Not in Ayna database — no verified rating',
     badges: uniqueStrings(raw?.badges, 2, 32),
     image: '/ayna_placeholder.png',
+    url: officialUrl || undefined,
   };
 }
 
@@ -230,6 +250,7 @@ Return ONE JSON object ONLY (no markdown) with up to ${maxResults} suggestions i
       "priceHint": "e.g. ~$12-18 or Subscription ~$15/mo — approximate, no links",
       "tags": ["up to 4 short tags: heavy-flow", "organic", "app", ...],
       "whereToBuy": ["Amazon","Target","CVS","Walmart","Brand website","App Store","Google Play"] — retailer NAMES only, no URLs,
+      "officialUrl": "https://brand-official-site.com — ONLY the brand's own official website root domain, and ONLY if you are genuinely confident it's correct. Omit this field entirely if you're not sure — never guess. This is the one exception to the no-URLs rule below, used only to fetch a real product photo.",
       "typicalUserRating": 4.2,
       "safetyNote": "one short line: e.g. consult clinician for prescriptions, patch tests for topicals",
       "searchTerms": ["1-2 web search phrases that include brand + product kind for Google"]
@@ -249,7 +270,8 @@ ANTI-HALLUCINATION RULES:
 - Never invent brand names or product lines
 - Never create fictional products, features, or services — even as placeholders
 - NEVER suggest any product whose brand is "Ayna" — Ayna is the app the user is already in, not a product to recommend
-- Never include URLs, domains, or "http" in any field — retailer names as plain text only
+- Never include URLs, domains, or "http" in any field except officialUrl — retailer names as plain text only everywhere else
+- officialUrl: omit unless you're confident of the brand's actual official site — a wrong guess here is worse than leaving it out
 - typicalUserRating: optional number 3.0-5.0 only if you have real signal — omit if unsure
 - If you cannot recall seeing a brand's product sold online at a major retailer or the brand's own website, do not include it — it likely does not exist
 - If the query is not women's health or wellness shopping related, return {"querySummary":"","suggestions":[]}
