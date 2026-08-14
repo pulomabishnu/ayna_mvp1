@@ -66,17 +66,30 @@ export async function fetchShopifyProducts(domainUrl) {
 /** Best-matching product's image, or null if nothing clears the confidence bar. */
 export function matchProductImage(shopifyProducts, productName, brand) {
   if (!Array.isArray(shopifyProducts) || shopifyProducts.length === 0) return null;
-  const query = `${brand || ''} ${productName || ''}`.trim();
+
+  // Scoring on brand+name together let ANY of the brand's own products win on
+  // brand-name overlap alone — "Pink Stork Bloat Support" matched a "Pink
+  // Stork Sweater" listing at 67% overlap purely from sharing "pink"+"stork",
+  // with zero relation to "bloat"/"support". Strip the brand's own tokens out
+  // of the query first, so the score reflects only the words that actually
+  // distinguish this product from the rest of the brand's catalog.
+  const brandTokens = new Set(normalizeTokens(brand));
+  const distinctiveTokens = normalizeTokens(productName).filter((t) => !brandTokens.has(t));
+  // A product name that's nothing but the brand (e.g. name === brand) has no
+  // distinctive words to match against — safer to report no match than to
+  // fall back to brand-only scoring, which reintroduces the original bug.
+  if (distinctiveTokens.length === 0) return null;
+
   let best = null;
   let bestScore = 0;
   for (const p of shopifyProducts) {
-    const score = tokenOverlapScore(query, p.title);
+    const score = tokenOverlapScore(distinctiveTokens.join(' '), p.title);
     if (score > bestScore) {
       bestScore = score;
       best = p;
     }
   }
-  // Require at least ~40% of the shorter side's significant words to overlap —
+  // Require at least half of the distinctive words to appear in the title —
   // low enough to survive naming variance, high enough to reject unrelated SKUs.
-  return bestScore >= 0.4 ? best.image : null;
+  return bestScore >= 0.5 ? best.image : null;
 }

@@ -99,17 +99,42 @@ export async function fetchOgImage(pageUrl) {
 
   try {
     const result = await fetchWithSafeRedirects(pageUrl);
-    if (!result || !result.res.ok) return null;
+    // A blocked/non-HTML main page still leaves /favicon.ico worth trying —
+    // it's a different path and sometimes isn't behind the same bot-challenge
+    // rule that blocked the page itself.
+    if (!result || !result.res.ok) return await tryDefaultFavicon(pageUrl);
     const contentType = result.res.headers.get('content-type') || '';
-    if (!contentType.includes('text/html')) return null;
+    if (!contentType.includes('text/html')) return await tryDefaultFavicon(pageUrl);
     const html = await result.res.text();
     const raw = extractMetaImage(html) || extractIcon(html);
-    if (!raw) return null;
-    const decoded = decodeHtmlEntities(raw.trim());
-    if (!decoded) return null;
-    const absolute = new URL(decoded, result.finalUrl).toString();
-    if (!absolute.startsWith('https://') && !absolute.startsWith('http://')) return null;
-    return absolute;
+    if (raw) {
+      const decoded = decodeHtmlEntities(raw.trim());
+      if (decoded) {
+        const absolute = new URL(decoded, result.finalUrl).toString();
+        if (absolute.startsWith('https://') || absolute.startsWith('http://')) return absolute;
+      }
+    }
+    // Last resort: the browser-default /favicon.ico convention — some sites
+    // rely on it working without ever declaring a <link rel="icon"> tag at all.
+    return await tryDefaultFavicon(result.finalUrl);
+  } catch {
+    return await tryDefaultFavicon(pageUrl);
+  }
+}
+
+async function tryDefaultFavicon(pageUrl) {
+  try {
+    const origin = new URL(pageUrl).origin;
+    const faviconUrl = `${origin}/favicon.ico`;
+    const res = await fetch(faviconUrl, {
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+      redirect: 'error',
+      headers: BROWSER_HEADERS,
+    });
+    if (!res.ok) return null;
+    const contentType = res.headers.get('content-type') || '';
+    if (!contentType.startsWith('image/')) return null;
+    return faviconUrl;
   } catch {
     return null;
   }
