@@ -44,7 +44,10 @@ export async function fetchShopifyProducts(domainUrl) {
     const res = await fetch(jsonUrl, {
       signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
       redirect: 'error',
-      headers: { 'User-Agent': 'Ayna-Health-App/1.0 (+https://ayna.health)', Accept: 'application/json' },
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+        Accept: 'application/json',
+      },
     });
     if (!res.ok) return null;
     const contentType = res.headers.get('content-type') || '';

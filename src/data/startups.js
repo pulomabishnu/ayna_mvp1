@@ -712,20 +712,6 @@ export const STARTUPS = [
         image: 'https://www.forhers.com/forhims/image/upload/w_440,q_auto:good:sensitive,fl_lossy,c_scale,f_auto,dpr_1.0/Hers-pdp-hair-shampoo-conditioner-5050-01-d-2x'
     },
     {
-        id: 's-tia',
-        name: 'Tia',
-        tagline: 'Primary care built for women',
-        description: 'Women’s health primary care: gynecology, mental health, and wellness in one practice. In-person clinics and virtual care in select cities.',
-        tags: ['irregular', 'pcos', 'discomfort', 'privacy'],
-        healthFunctions: ['telehealth'],
-        category: 'telehealth',
-        stage: 'NYC, LA, Phoenix, virtual',
-        productReleased: true,
-        spotsLeft: 310,
-        url: 'https://www.tia.com',
-        image: 'https://4ubytia.com/cdn/shop/files/PDP-4x5_Tia_Favorites_cooler2.jpg?v=1767644852'
-    },
-    {
         id: 's-cleo',
         name: 'Cleo',
         tagline: 'Family and parenting benefits for employers',
