@@ -980,6 +980,23 @@ export function isPrescriptionRestrictedProduct(p) {
     return false;
 }
 
+/**
+ * True for any prescription-only item, with no exceptions (unlike
+ * isPrescriptionRestrictedProduct, which waives items that carry official
+ * manufacturer access URLs). Ayna doesn't sell or dispense prescriptions —
+ * shopping/recommendation surfaces should never show these as buyable
+ * products, even when a savings/patient link or telehealth care path exists
+ * for them. Search for what they treat (e.g. "hormone replacement therapy")
+ * should surface telehealth providers instead — see findTelehealthAccessForProduct.
+ */
+export function isRxOnlyProduct(p) {
+    if (!p) return false;
+    if (p.category === 'telehealth') return false;
+    if (p.requiresPrescription === true) return true;
+    const wtb = (p.whereToBuy || []).map((x) => String(x).toLowerCase());
+    return wtb.some((s) => s.includes('pharmacy with prescription'));
+}
+
 let _telehealthCatalog = null;
 function getTelehealthCatalog() {
     if (!_telehealthCatalog) {
@@ -1038,12 +1055,10 @@ export function findTelehealthAccessForProduct(p) {
 }
 
 function shouldExcludePrescriptionWithoutCarePath(p) {
-    if (!isPrescriptionRestrictedProduct(p)) return false;
-    if (p.prescriptionPatientUrl || p.prescriptionSavingsUrl) return false;
-    return !findTelehealthAccessForProduct(p);
+    return isRxOnlyProduct(p);
 }
 
-function filterPrescriptionCareGate(products) {
+export function filterPrescriptionCareGate(products) {
     return (products || []).filter((p) => !shouldExcludePrescriptionWithoutCarePath(p));
 }
 

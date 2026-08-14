@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { useSpeechToText } from '../hooks/useSpeechToText';
 import SearchMicButton from './SearchMicButton';
-import { ALL_PRODUCTS, CATEGORY_LABELS, SYMPTOM_TO_SUPPLEMENTS } from '../data/products';
+import { ALL_PRODUCTS, CATEGORY_LABELS, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate } from '../data/products';
 import { buildSearchTextForItem, scoreQueryAgainstProduct } from '../utils/naturalLanguageSearch';
 import { fetchSearchSuggestions } from '../utils/fetchSearchSuggestions';
 import { RELEASED_STARTUPS } from '../data/startups';
@@ -269,7 +269,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     }, [initialPadFlow, initialPadPreference, initialPadUseCase]);
 
     const combined = useMemo(() => {
-        const products = ALL_PRODUCTS.map(p => ({ ...p, isStartup: false }));
+        // Ayna doesn't sell or dispense prescriptions, so prescription-only items
+        // (birth control requiring an Rx, HRT patches/inserts, etc.) never show as
+        // shoppable products here — searching what they treat (e.g. "hormone
+        // replacement therapy") surfaces telehealth providers that prescribe it instead.
+        const products = filterPrescriptionCareGate(ALL_PRODUCTS).map(p => ({ ...p, isStartup: false }));
         // Released startups appear as normal products (no startup badge); unreleased are only on Startups page
         const releasedAsProducts = RELEASED_STARTUPS.map(s => ({
             ...s,
