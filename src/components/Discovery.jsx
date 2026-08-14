@@ -1,6 +1,4 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { useSpeechToText } from '../hooks/useSpeechToText';
-import SearchMicButton from './SearchMicButton';
 import { ALL_PRODUCTS, CATEGORY_LABELS, SYMPTOM_TO_SUPPLEMENTS } from '../data/products';
 import { buildSearchTextForItem, scoreQueryAgainstProduct } from '../utils/naturalLanguageSearch';
 import { fetchSearchSuggestions } from '../utils/fetchSearchSuggestions';
@@ -261,16 +259,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const PAGE_SIZE = 30;
     const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
     const recommendedSet = useMemo(() => new Set(recommendedProductIds || []), [recommendedProductIds]);
-    const speech = useSpeechToText();
-
-    const toggleVoiceSearch = () => {
-        if (speech.isRecording) {
-            const t = speech.stop();
-            if (t) setSearchQuery((prev) => (prev.trim() ? `${prev.trim()} ${t}` : t));
-        } else {
-            speech.start();
-        }
-    };
 
     React.useEffect(() => {
         if (initialSearch !== undefined) {
@@ -649,7 +637,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             </div>
 
             {/* Smart Search */}
-            <div style={{ maxWidth: '640px', margin: '0 auto 2rem' }}>
+            <div style={{ margin: '0 auto 2rem' }}>
             <form
                 onSubmit={handleSmartSearch}
                 style={{
@@ -676,46 +664,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     }}
                     aria-label="Search products and articles"
                 />
-                {speech.supported && (
-                    <SearchMicButton
-                        isRecording={speech.isRecording}
-                        onClick={toggleVoiceSearch}
-                        size="compact"
-                    />
-                )}
-                <button type="submit" style={{
-                    background: 'var(--color-primary)',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: 'var(--radius-pill)',
-                    padding: '0.7rem 1.4rem',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    flexShrink: 0,
-                }}>
-                    Search
-                </button>
             </form>
-            {speech.isRecording && (
-                <p
-                    style={{
-                        marginTop: '0.65rem',
-                        fontSize: '0.85rem',
-                        color: 'var(--color-text-muted)',
-                        lineHeight: 1.45,
-                        paddingLeft: '0.15rem',
-                    }}
-                    aria-live="polite"
-                >
-                    {speech.liveText ? (
-                        <>
-                            <strong style={{ color: 'var(--color-text-main)' }}>Listening:</strong> {speech.liveText}
-                        </>
-                    ) : (
-                        'Listening… describe what you need or ask for product ideas.'
-                    )}
-                </p>
-            )}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', justifyContent: 'center', marginTop: '1rem' }}>
                 {searchSuggestions.map((term) => (
                     <button
