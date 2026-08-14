@@ -742,7 +742,12 @@ export const DIGITAL_PRODUCTS = [
     },
 ];
 
-// Master list combining all sources (MVP categories prioritized with mvpProducts)
+// Master list combining all sources (MVP categories prioritized with mvpProducts).
+// Ayna only does OTC health products and telehealth — prescription-only items
+// (birth control requiring an Rx, HRT patches/inserts, clinician-administered
+// devices like IUDs, etc.) are filtered out here so no surface in the app can
+// ever show one, rather than relying on each consumer to remember to gate them.
+// See isRxOnlyProduct below.
 export const ALL_PRODUCTS = [
     ...PHYSICAL_PRODUCTS,
     ...DIGITAL_PRODUCTS,
@@ -756,7 +761,7 @@ export const ALL_PRODUCTS = [
     ...FILLER_DIGITAL,
     ...MENSTRUAL_PHYSICAL,
     ...BRAND_PRODUCTS
-];
+].filter((p) => !isRxOnlyProduct(p));
 
 /**
  * Map user-listed current products to closest products already in the catalog.
