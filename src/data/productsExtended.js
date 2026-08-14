@@ -297,7 +297,7 @@ export const EXTENDED_PHYSICAL = [
 export const EXTENDED_DIGITAL = [
     // ─── MORE TRACKERS ──────────────────────────────────
     {
-        id: 'd-natural-cycles', name: 'Natural Cycles', category: 'tracker', type: 'digital', internal: false, healthFunctions: ['cycle-tracking', 'contraception'], tags: ['irregular', 'pcos', 'privacy'], price: '$100/year or $13/month', userRating: 4.6, whereToBuy: ['App Store', 'Google Play'], platform: 'iOS, Android', image: 'https://logo.clearbit.com/naturalcycles.com', summary: 'The only FDA-cleared birth control app. Uses basal body temperature to identify fertile/infertile days.',
+        id: 'd-natural-cycles', name: 'Natural Cycles', category: 'tracker', type: 'digital', internal: false, healthFunctions: ['cycle-tracking', 'contraception'], tags: ['irregular', 'pcos', 'privacy'], price: '$100/year or $13/month', userRating: 4.6, whereToBuy: ['App Store', 'Google Play'], platform: 'iOS, Android', image: 'https://www.datocms-assets.com/21281/1762899321-us-not-fertile-new-screen-rachel-hand-holding-phone.png?auto=format&fit=max&w=1200', summary: 'The only FDA-cleared birth control app. Uses basal body temperature to identify fertile/infertile days.',
         safety: {
             fdaStatus: 'FDA-cleared (De Novo) as contraception', materials: 'N/A', recalls: 'N/A', allergens: 'N/A',
             sideEffects: 'N/A (Software). Risk of pregnancy if the method is not followed perfectly.',
@@ -344,7 +344,7 @@ export const EXTENDED_DIGITAL = [
         }
     },
     {
-        id: 'd-glow', name: 'Glow Period & Ovulation Tracker', category: 'tracker', type: 'digital', internal: false, healthFunctions: ['cycle-tracking'], tags: ['irregular', 'pcos', 'comfort'], price: 'Free (Premium $48/year)', userRating: 4.4, whereToBuy: ['App Store', 'Google Play'], platform: 'iOS, Android', image: 'https://logo.clearbit.com/glowing.com', summary: 'Period and fertility tracker with community forum. Also offers fertility courses and clinic matching.',
+        id: 'd-glow', name: 'Glow Period & Ovulation Tracker', category: 'tracker', type: 'digital', internal: false, healthFunctions: ['cycle-tracking'], tags: ['irregular', 'pcos', 'comfort'], price: 'Free (Premium $48/year)', userRating: 4.4, whereToBuy: ['App Store', 'Google Play'], platform: 'iOS, Android', image: 'https://glowing.com/wp-content/uploads/2023/05/cropped-glow-favicon-300x300.png', summary: 'Period and fertility tracker with community forum. Also offers fertility courses and clinic matching.',
         safety: {
             fdaStatus: 'Not FDA-cleared', materials: 'N/A', recalls: 'N/A', allergens: 'N/A',
             sideEffects: 'N/A',
@@ -384,7 +384,7 @@ export const EXTENDED_DIGITAL = [
         }
     },
     {
-        id: 'd-tia', name: 'Tia', category: 'telehealth', type: 'digital', internal: false, healthFunctions: ['telehealth'], tags: ['discomfort', 'irregular', 'privacy'], price: 'Membership $15/month + insurance', userRating: 4.6, whereToBuy: ['asktia.com'], platform: 'Web, iOS', image: 'https://logo.clearbit.com/tia.com', summary: 'Modern women\'s health clinic (virtual + in-person in NYC/LA/SF). Integrative approach combining OB-GYN with acupuncture, nutrition.',
+        id: 'd-tia', name: 'Tia', category: 'telehealth', type: 'digital', internal: false, healthFunctions: ['telehealth'], tags: ['discomfort', 'irregular', 'privacy'], price: 'Membership $15/month + insurance', userRating: 4.6, whereToBuy: ['asktia.com'], platform: 'Web, iOS', image: 'https://cdn.sanity.io/images/8qqycr4y/production/a5a207809f4417e461bb0a87fd4cb4281a1b8bf7-1600x836.webp', summary: 'Modern women\'s health clinic (virtual + in-person in NYC/LA/SF). Integrative approach combining OB-GYN with acupuncture, nutrition.',
         safety: {
             fdaStatus: 'Licensed healthcare provider', materials: 'N/A', recalls: 'N/A', allergens: 'N/A',
             sideEffects: 'Relevant to treatments/prescriptions provided.',
@@ -424,7 +424,7 @@ export const EXTENDED_DIGITAL = [
 
     // ─── MORE MENTAL HEALTH ─────────────────────────────
     {
-        id: 'd-betterhelp', name: 'BetterHelp', category: 'mental-health', type: 'digital', internal: false, healthFunctions: ['mental-health'], tags: ['discomfort', 'comfort'], price: '$65-90/week', userRating: 4.3, ratingNote: '2023 FTC settlement for sharing client health data with advertisers. Now under 20-year monitoring. Therapist quality varies.', whereToBuy: ['betterhelp.com'], platform: 'Web, iOS, Android', image: 'https://logo.clearbit.com/betterhelp.com', summary: 'Largest online therapy platform. Matched with a licensed therapist. Messaging + video sessions.',
+        id: 'd-betterhelp', name: 'BetterHelp', category: 'mental-health', type: 'digital', internal: false, healthFunctions: ['mental-health'], tags: ['discomfort', 'comfort'], price: '$65-90/week', userRating: 4.3, ratingNote: '2023 FTC settlement for sharing client health data with advertisers. Now under 20-year monitoring. Therapist quality varies.', whereToBuy: ['betterhelp.com'], platform: 'Web, iOS, Android', image: 'https://assets.betterhelp.com/brand/betterhelp/betterhelp-fb.png?v=09c3336ab26b', summary: 'Largest online therapy platform. Matched with a licensed therapist. Messaging + video sessions.',
         safety: {
             fdaStatus: 'Licensed therapy platform', materials: 'N/A', recalls: 'N/A', allergens: 'N/A',
             sideEffects: 'N/A',
@@ -462,7 +462,7 @@ export const EXTENDED_DIGITAL = [
         }
     },
     {
-        id: 'd-calm', name: 'Calm', category: 'mental-health', type: 'digital', internal: false, healthFunctions: ['mental-health'], tags: ['discomfort', 'comfort'], price: '$15/month or $70/year', userRating: 4.5, whereToBuy: ['App Store', 'Google Play'], platform: 'iOS, Android, Web', image: 'https://logo.clearbit.com/calm.com', summary: 'Sleep Stories, meditation, music, and masterclasses. Celebrity narrators. Great for sleep issues.',
+        id: 'd-calm', name: 'Calm', category: 'mental-health', type: 'digital', internal: false, healthFunctions: ['mental-health'], tags: ['discomfort', 'comfort'], price: '$15/month or $70/year', userRating: 4.5, whereToBuy: ['App Store', 'Google Play'], platform: 'iOS, Android, Web', image: 'https://www.calm.com/_n/images/social/calm-meta.png', summary: 'Sleep Stories, meditation, music, and masterclasses. Celebrity narrators. Great for sleep issues.',
         safety: {
             fdaStatus: 'Not FDA-cleared (wellness)', materials: 'N/A', recalls: 'N/A', allergens: 'N/A',
             sideEffects: 'N/A',
