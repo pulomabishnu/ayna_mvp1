@@ -281,7 +281,7 @@ export const EXTENDED_PHYSICAL = [
         ingredients: 'Water, coco-glucoside, aloe leaf juice, apple cider vinegar.', effectiveness: 'Effectively cleanses without stripping natural moisture.', badges: ['WOC Owned', 'Plant-Derived']
     },
     {
-        id: 'p-luna-wash', name: 'Luna Intimate Wash', category: 'intimate-care', type: 'physical', internal: false, healthFunctions: ['vaginal-health'], tags: ['organic', 'comfort'], price: '$12 for 6oz', userRating: 4.4, whereToBuy: ['Amazon', 'Target'], image: 'https://m.media-amazon.com/images/I/41-RVVZ5OkL.jpg', summary: 'A soothing, pH-balanced wash designed for sensitive vulvar skin. Gynecologist-tested and free of harsh sulfates.',
+        id: 'p-luna-wash', name: 'Luna Daily Intimate Feminine Wash', brand: 'Luna Daily', category: 'intimate-care', type: 'physical', internal: false, healthFunctions: ['vaginal-health'], tags: ['organic', 'comfort'], price: '$12 for 6oz', userRating: 4.4, whereToBuy: ['Amazon', 'Target'], image: 'https://m.media-amazon.com/images/I/41-RVVZ5OkL.jpg', summary: 'A soothing, pH-balanced wash designed for sensitive vulvar skin. Gynecologist-tested and free of harsh sulfates.',
         safety: {
             fdaStatus: 'Cosmetic', materials: 'Hypoallergenic formulation', recalls: 'No recalls.', allergens: 'Paraben-free, sulfate-free',
             sideEffects: 'None reported.',

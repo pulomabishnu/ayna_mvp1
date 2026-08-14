@@ -5,8 +5,7 @@ import { mockRes } from './_test-helpers.js';
 const rateLimitMock = vi.fn(async () => ({ ok: true }));
 const redisGet = vi.fn(async () => null);
 const redisSet = vi.fn(async () => 'OK');
-const fetchShopifyProductsMock = vi.fn(async () => null);
-const matchProductImageMock = vi.fn(() => null);
+const matchShopifyProductMock = vi.fn(async () => null);
 const fetchOgImageMock = vi.fn(async () => null);
 
 vi.mock('./_rateLimit.js', () => ({
@@ -20,8 +19,7 @@ vi.mock('@upstash/redis', () => ({
   },
 }));
 vi.mock('./_shopifyProductMatch.js', () => ({
-  fetchShopifyProducts: (...args) => fetchShopifyProductsMock(...args),
-  matchProductImage: (...args) => matchProductImageMock(...args),
+  matchShopifyProduct: (...args) => matchShopifyProductMock(...args),
 }));
 vi.mock('./_ogImageFetch.js', () => ({
   fetchOgImage: (...args) => fetchOgImageMock(...args),
@@ -37,8 +35,7 @@ beforeEach(() => {
   rateLimitMock.mockReset().mockResolvedValue({ ok: true });
   redisGet.mockReset().mockResolvedValue(null);
   redisSet.mockReset().mockResolvedValue('OK');
-  fetchShopifyProductsMock.mockReset().mockResolvedValue(null);
-  matchProductImageMock.mockReset().mockReturnValue(null);
+  matchShopifyProductMock.mockReset().mockResolvedValue(null);
   fetchOgImageMock.mockReset().mockResolvedValue(null);
   delete process.env.UPSTASH_REDIS_REST_URL;
   delete process.env.UPSTASH_REDIS_REST_TOKEN;
@@ -87,7 +84,7 @@ describe('product-image', () => {
     await handler({ method: 'GET', query: { name: 'DivaCup' }, headers: {} }, res);
     expect(res.statusCode).toBe(200);
     expect(res.body).toEqual({ imageUrl: '' });
-    expect(fetchShopifyProductsMock).not.toHaveBeenCalled();
+    expect(matchShopifyProductMock).not.toHaveBeenCalled();
     expect(fetchOgImageMock).not.toHaveBeenCalled();
   });
 
@@ -98,7 +95,7 @@ describe('product-image', () => {
     await handler({ method: 'GET', query: { name: 'DivaCup', url: 'https://diva.example.com' }, headers: {} }, res);
     expect(res.statusCode).toBe(429);
     expect(res.headers['retry-after']).toBe('42');
-    expect(fetchShopifyProductsMock).not.toHaveBeenCalled();
+    expect(matchShopifyProductMock).not.toHaveBeenCalled();
   });
 
   it('returns a cached image without touching the rate limiter or resolvers', async () => {
@@ -111,14 +108,13 @@ describe('product-image', () => {
     expect(res.statusCode).toBe(200);
     expect(res.body).toEqual({ imageUrl: 'https://cached.example.com/cup.jpg', cached: true });
     expect(rateLimitMock).not.toHaveBeenCalled();
-    expect(fetchShopifyProductsMock).not.toHaveBeenCalled();
+    expect(matchShopifyProductMock).not.toHaveBeenCalled();
   });
 
   it('prefers a Shopify catalog match over og:image, and caches it', async () => {
     process.env.UPSTASH_REDIS_REST_URL = 'https://redis.example.com';
     process.env.UPSTASH_REDIS_REST_TOKEN = 'token';
-    fetchShopifyProductsMock.mockResolvedValue([{ title: 'DivaCup Model 1', image: 'https://cdn.shopify.com/divacup.jpg' }]);
-    matchProductImageMock.mockReturnValue('https://cdn.shopify.com/divacup.jpg');
+    matchShopifyProductMock.mockResolvedValue('https://cdn.shopify.com/divacup.jpg');
     const handler = await loadHandler();
     const res = mockRes();
     await handler({ method: 'GET', query: { name: 'DivaCup', brand: 'Diva', url: 'https://diva.example.com' }, headers: {} }, res);
@@ -133,7 +129,7 @@ describe('product-image', () => {
   });
 
   it('falls back to og:image when there is no Shopify match', async () => {
-    fetchShopifyProductsMock.mockResolvedValue(null);
+    matchShopifyProductMock.mockResolvedValue(null);
     fetchOgImageMock.mockResolvedValue('https://diva.example.com/product-photo.jpg');
     const handler = await loadHandler();
     const res = mockRes();
@@ -142,7 +138,7 @@ describe('product-image', () => {
   });
 
   it('accepts a logo/banner-looking og:image as a last-resort fallback', async () => {
-    fetchShopifyProductsMock.mockResolvedValue(null);
+    matchShopifyProductMock.mockResolvedValue(null);
     fetchOgImageMock.mockResolvedValue('https://diva.example.com/brand-logo.png');
     const handler = await loadHandler();
     const res = mockRes();
@@ -151,7 +147,7 @@ describe('product-image', () => {
   });
 
   it('returns empty imageUrl (200), not a crash, when resolution throws', async () => {
-    fetchShopifyProductsMock.mockRejectedValue(new Error('ECONNRESET'));
+    matchShopifyProductMock.mockRejectedValue(new Error('ECONNRESET'));
     const handler = await loadHandler();
     const res = mockRes();
     await handler({ method: 'GET', query: { name: 'DivaCup', url: 'https://diva.example.com' }, headers: {} }, res);

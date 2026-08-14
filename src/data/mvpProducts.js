@@ -185,7 +185,7 @@ export const MVP_PHYSICAL = [
   },
   {
     id: 'p-spearmint-pcos',
-    name: 'Spearmint Tea / Capsules',
+    name: 'Traditional Medicinals Organic Spearmint Tea',
     brand: 'Traditional Medicinals',
     category: 'supplement',
     type: 'physical',
@@ -196,8 +196,8 @@ export const MVP_PHYSICAL = [
     userRating: 4.2,
     whereToBuy: ['Amazon', 'Whole Foods', 'iHerb'],
     image: 'https://cdn.shopify.com/s/files/1/0506/7037/0997/files/Spearmint-CAN-FF-eng-P103350-01_2.png?v=1775664934',
-    summary: 'Spearmint may help lower free testosterone in PCOS. Often used as tea or capsules twice daily.',
-    safety: { fdaStatus: 'Dietary supplement / food', materials: 'Spearmint', recalls: 'No recalls.', allergens: 'Mint family', sideEffects: 'Generally safe as tea or capsules. Some people notice mild stomach upset. Spearmint may reduce milk supply — best avoided while breastfeeding or trying to conceive without a clinician\'s guidance.' },
+    summary: 'Spearmint may help lower free testosterone in PCOS. Caffeine-free herbal tea, typically brewed twice daily.',
+    safety: { fdaStatus: 'Dietary supplement / food', materials: 'Spearmint', recalls: 'No recalls.', allergens: 'Mint family', sideEffects: 'Generally safe as a tea. Some people notice mild stomach upset. Spearmint may reduce milk supply — best avoided while breastfeeding or trying to conceive without a clinician\'s guidance.' },
     clinicianOpinionSource: 'independent',
     clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
     doctorOpinion: 'Some studies show spearmint tea can reduce androgens in PCOS. Discuss with your provider.',
@@ -355,7 +355,7 @@ export const MVP_PHYSICAL = [
   },
   {
     id: 'p-pelvic-wand',
-    name: 'Pelvic Wand (Therawand-style)',
+    name: 'Intimate Rose Pelvic Wand',
     brand: 'Intimate Rose',
     category: 'pelvic-floor',
     type: 'physical',
@@ -364,7 +364,7 @@ export const MVP_PHYSICAL = [
     tags: ['pelvic-floor', 'cramps', 'discomfort'],
     price: '$30–50',
     userRating: 4.3,
-    whereToBuy: ['Amazon', 'Intimina.com', 'Pelvic floor PT retailers'],
+    whereToBuy: ['Amazon', 'IntimateRose.com', 'Pelvic floor PT retailers'],
     image: 'https://cdn.shopify.com/s/files/1/0910/9374/files/BendablePelvicWand_Amanda_1500x1500_676edf52-0bd5-4cc3-9472-9226f31cfb2a.jpg?v=1740149967',
     summary: 'Curved wand for self-release of pelvic trigger points. Used with guidance from PT for pelvic pain and tightness.',
     safety: { fdaStatus: 'Wellness device', materials: 'Silicone, plastic', recalls: 'No recalls.', allergens: 'Silicone', sideEffects: 'Mild soreness after use is common, similar to any trigger-point massage. Best used with guidance from a pelvic floor PT at first, to avoid overuse or incorrect technique.' },
@@ -439,7 +439,7 @@ export const MVP_PHYSICAL = [
   // ─── ENERGY / STRENGTH (women's health) ──────────────────
   {
     id: 'p-creatine-womens',
-    name: 'Creatine Monohydrate (Women\'s Health)',
+    name: 'Thorne Creatine',
     brand: 'Thorne',
     category: 'supplement',
     type: 'physical',
@@ -448,7 +448,7 @@ export const MVP_PHYSICAL = [
     tags: ['creatine', 'menopause', 'energy', 'discomfort', 'cost'],
     price: '$15–25 for 300–500g',
     userRating: 4.5,
-    whereToBuy: ['Amazon', 'iHerb', 'NOW Foods', 'Thorne', 'CVS'],
+    whereToBuy: ['Amazon', 'iHerb', 'Thorne.com', 'CVS'],
     image: 'https://www.thorne.com/favicon.ico',
     summary: 'Creatine supports muscle strength, cognitive function, and energy. Evidence-based for perimenopause: helps preserve lean mass, may improve brain fog and sleep when combined with resistance training.',
     safety: { fdaStatus: 'Dietary supplement', materials: 'Creatine monohydrate', recalls: 'No recalls.', allergens: 'Vegan options available', sideEffects: 'Well studied and generally safe. May cause mild water retention or stomach upset when starting — stay well hydrated and consider starting at a lower dose.' },
@@ -464,8 +464,8 @@ export const MVP_PHYSICAL = [
 
 export const MVP_DIGITAL = [
   {
-    id: 'd-nurx-wisp-bc',
-    name: 'Nurx / Wisp Birth Control',
+    id: 'd-nurx-bc',
+    name: 'Nurx',
     brand: 'Nurx',
     category: 'telehealth',
     type: 'digital',
@@ -474,10 +474,10 @@ export const MVP_DIGITAL = [
     tags: ['contraception', 'privacy', 'comfort'],
     price: '$15–20/month',
     userRating: 4.5,
-    whereToBuy: ['Nurx.com', 'Hellowisp.com'],
+    whereToBuy: ['Nurx.com'],
     platform: 'Web, app',
     image: 'https://www.nurx.com/wp-content/themes/nurx-theme-lazyload/favicon/nurx.png',
-    summary: 'Online birth control prescriptions and delivery. Pills, patch, ring. No in-person visit required in many states.',
+    summary: 'Online birth control prescriptions and delivery. Pills, patch, ring. No in-person visit required in many states. Accepts insurance.',
     safety: { fdaStatus: 'Prescription via licensed clinicians', materials: 'N/A', recalls: 'N/A', allergens: 'N/A', sideEffects: 'Nurx itself has no side effects — it\'s a telehealth service. Any birth control method it prescribes carries the standard side effects for that method (e.g. spotting, nausea, mood changes), which your clinician reviews with you before you start.' },
     privacy: { dataStorage: 'US', sellsData: 'Check policy', hipaa: 'HIPAA-compliant for Rx', keyPolicy: 'Prescription service' },
     clinicianOpinionSource: 'independent',
@@ -487,6 +487,31 @@ export const MVP_DIGITAL = [
     effectiveness: 'Same efficacy as pharmacy-filled prescriptions.',
     badges: ['Telehealth', 'Privacy'],
     verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/combined-hormonal-birth-control', text: 'ACOG: Birth control', summary: 'Clinical guidance on contraception and access.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/32324464/', text: 'Telehealth and contraception', summary: 'Evidence on telehealth for prescription access.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/birthcontrol/search/?q=nurx&restrict_sr=1', text: 'Reddit r/birthcontrol — Nurx', summary: 'Community discussions on telehealth birth control.' }] } }
+  },
+  {
+    id: 'd-wisp-bc',
+    name: 'Wisp',
+    brand: 'Wisp',
+    category: 'telehealth',
+    type: 'digital',
+    internal: false,
+    healthFunctions: ['contraception', 'telehealth'],
+    tags: ['contraception', 'privacy', 'comfort'],
+    price: '$15–20/month',
+    userRating: 4.5,
+    whereToBuy: ['Hellowisp.com'],
+    platform: 'Web, app',
+    image: 'https://cms.hellowisp.io/uploads/Meta_Hero_1500x1000_f538e24836.jpg',
+    summary: 'Asynchronous online sexual health care: birth control, emergency contraception, UTI and STI treatment. No appointments, same-day pharmacy pickup or discreet delivery.',
+    safety: { fdaStatus: 'Prescription via licensed clinicians', materials: 'N/A', recalls: 'N/A', allergens: 'N/A', sideEffects: 'Wisp itself has no side effects — it\'s a telehealth service. Any birth control method it prescribes carries the standard side effects for that method (e.g. spotting, nausea, mood changes), which your clinician reviews with you before you start.' },
+    privacy: { dataStorage: 'US', sellsData: 'Check policy', hipaa: 'HIPAA-compliant for Rx', keyPolicy: 'Prescription service' },
+    clinicianOpinionSource: 'independent',
+    clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+    doctorOpinion: 'Telehealth increases access to contraception. Same safety standards as in-person care.',
+    communityReview: 'Community discussions on Reddit r/birthcontrol note fast turnaround and discreet packaging.',
+    effectiveness: 'Same efficacy as pharmacy-filled prescriptions.',
+    badges: ['Telehealth', 'Privacy'],
+    verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/combined-hormonal-birth-control', text: 'ACOG: Birth control', summary: 'Clinical guidance on contraception and access.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/32324464/', text: 'Telehealth and contraception', summary: 'Evidence on telehealth for prescription access.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/birthcontrol/search/?q=wisp&restrict_sr=1', text: 'Reddit r/birthcontrol — Wisp', summary: 'Community discussions on telehealth birth control.' }] } }
   },
   {
     id: 'd-happi-pelvic',
@@ -501,7 +526,7 @@ export const MVP_DIGITAL = [
     userRating: 4.4,
     whereToBuy: ['App Store', 'Google Play'],
     platform: 'iOS, Android',
-        // happiapp.com is a HugeDomains parking listing, not this app's real site —
+    // happiapp.com is a HugeDomains parking listing, not this app's real site —
     // couldn't confirm an official domain to source a real image from.
     image: '/ayna_placeholder.png',
     summary: 'Pelvic floor exercise app with guided Kegels and programs. Often recommended by pelvic PTs.',
@@ -529,7 +554,7 @@ export const MVP_DIGITAL = [
     userRating: 4.4,
     whereToBuy: ['forhers.com'],
     platform: 'Web, iOS, Android',
-        // forhers.com currently returns 403 (bot-challenge) on plain fetch.
+    // forhers.com currently returns 403 (bot-challenge) on plain fetch.
     image: '/ayna_placeholder.png',
     summary: 'Ro\'s brand for women. Telehealth for anxiety, depression, and skin. Prescriptions and products delivered with ongoing support.',
     safety: { fdaStatus: 'Prescription via licensed clinicians', materials: 'N/A', recalls: 'N/A', allergens: 'N/A', sideEffects: 'Hers itself has no side effects — it\'s a telehealth service. Any medication prescribed through it (e.g. for anxiety, depression, or skin) carries the standard side effects for that specific drug, which your clinician reviews with you before you start.' },

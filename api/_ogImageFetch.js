@@ -1,9 +1,9 @@
-import { isSafePublicUrl } from './_officialSiteFetch.js';
+import { isSafePublicUrl } from './_ssrfSafeFetch.js';
 
 /**
  * Pulls a real image straight off a brand's own official page, instead of a
  * third-party image-search API. No paid API, no quota to run out of — reuses
- * the SSRF-safe fetch pattern from _officialSiteFetch.js (private-IP/DNS-
+ * the shared SSRF-safe fetch pattern from _ssrfSafeFetch.js (private-IP/DNS-
  * rebinding checks). Tries, in order: og:image, twitter:image, then the
  * page's own favicon/apple-touch-icon as a final fallback for sites whose
  * meta tags are only injected client-side (not present in the HTML this
@@ -13,15 +13,36 @@ import { isSafePublicUrl } from './_officialSiteFetch.js';
 
 const FETCH_TIMEOUT_MS = 4000;
 
-const OG_IMAGE_RE = /<meta[^>]+(?:property|name)=["']og:image(?::secure_url)?["'][^>]*content=["']([^"']+)["'][^>]*>/i;
-const OG_IMAGE_RE_REV = /<meta[^>]+content=["']([^"']+)["'][^>]*(?:property|name)=["']og:image(?::secure_url)?["'][^>]*>/i;
-const TWITTER_IMAGE_RE = /<meta[^>]+(?:property|name)=["']twitter:image(?::src)?["'][^>]*content=["']([^"']+)["'][^>]*>/i;
-const TWITTER_IMAGE_RE_REV = /<meta[^>]+content=["']([^"']+)["'][^>]*(?:property|name)=["']twitter:image(?::src)?["'][^>]*>/i;
+// Read only up to MAX_HTML_BYTES — og:image/favicon links are always in
+// <head>, no need to buffer an entire large page into memory.
+const MAX_HTML_BYTES = 500_000;
 
-function extractMetaImage(html) {
-  const m = html.match(OG_IMAGE_RE) || html.match(OG_IMAGE_RE_REV)
-    || html.match(TWITTER_IMAGE_RE) || html.match(TWITTER_IMAGE_RE_REV);
-  return m ? m[1] : null;
+// Filenames that indicate a logo/icon/banner rather than an actual product
+// photo — brand pages frequently set these as og:image on non-product pages,
+// and mislabeling a logo as "the product" is worse than showing no photo.
+// Only applied to the og:image/twitter:image extraction — not to the
+// favicon fallback below, which is knowingly using a site icon as a
+// last resort.
+const NON_PRODUCT_IMAGE_PATTERN = /logo|icon|favicon|banner|sprite|placeholder|social[-_]?share|og[-_]?default/i;
+
+function decodeHtmlEntities(s) {
+  return String(s || '')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>');
+}
+
+function extractMetaContent(html, property) {
+  const re = new RegExp(
+    `<meta[^>]+(?:property|name)=["']${property}["'][^>]+content=["']([^"']+)["']`,
+    'i'
+  );
+  const m = html.match(re) || html.match(
+    new RegExp(`<meta[^>]+content=["']([^"']+)["'][^>]+(?:property|name)=["']${property}["']`, 'i')
+  );
+  return m ? decodeHtmlEntities(m[1]) : null;
 }
 
 // Matches any <link rel="..."> whose rel value contains "icon" (covers
@@ -46,13 +67,6 @@ function extractIcon(html) {
   return plainIcon;
 }
 
-function decodeHtmlEntities(s) {
-  return String(s || '')
-    .replace(/&amp;/g, '&')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'");
-}
-
 const MAX_REDIRECT_HOPS = 5;
 
 // A generic bot-labeled UA gets flagged by some WAFs even for a plain page
@@ -64,6 +78,23 @@ const BROWSER_HEADERS = {
   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
   'Accept-Language': 'en-US,en;q=0.9',
 };
+
+/** Reads a Response body as text, capped at MAX_HTML_BYTES so a huge page can't be buffered whole. */
+async function readCappedText(res) {
+  const reader = res.body?.getReader?.();
+  if (!reader) return (await res.text()).slice(0, MAX_HTML_BYTES);
+  let received = 0;
+  let html = '';
+  const decoder = new TextDecoder();
+  while (received < MAX_HTML_BYTES) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    received += value.length;
+    html += decoder.decode(value, { stream: true });
+  }
+  reader.cancel?.().catch(() => {});
+  return html;
+}
 
 /** Multiple safe, re-validated redirect hops — enterprise brand sites commonly
  * chain 2-3 redirects (apex -> www -> locale path, sometimes via a different
@@ -105,10 +136,15 @@ export async function fetchOgImage(pageUrl) {
     if (!result || !result.res.ok) return await tryDefaultFavicon(pageUrl);
     const contentType = result.res.headers.get('content-type') || '';
     if (!contentType.includes('text/html')) return await tryDefaultFavicon(pageUrl);
-    const html = await result.res.text();
-    const raw = extractMetaImage(html) || extractIcon(html);
-    if (raw) {
-      const decoded = decodeHtmlEntities(raw.trim());
+    const html = await readCappedText(result.res);
+    const raw = extractMetaContent(html, 'og:image') || extractMetaContent(html, 'twitter:image');
+    if (raw && raw.startsWith('http') && !NON_PRODUCT_IMAGE_PATTERN.test(raw)) {
+      const absolute = new URL(raw, result.finalUrl).toString();
+      if (absolute.startsWith('https://') || absolute.startsWith('http://')) return absolute;
+    }
+    const icon = extractIcon(html);
+    if (icon) {
+      const decoded = decodeHtmlEntities(icon.trim());
       if (decoded) {
         const absolute = new URL(decoded, result.finalUrl).toString();
         if (absolute.startsWith('https://') || absolute.startsWith('http://')) return absolute;

@@ -1,28 +1,33 @@
 /* global process */
-// Resolves a real product photo for a placeholder-image product, sourced directly
-// from the product's own official page — no third-party search API (previously
-// Serper.dev; retired after its free-tier credits ran out and stayed out).
-//
-// Two strategies, tried in order against the product's official `url`:
+// Returns a product image URL for a given product name/brand/official-page
+// URL. Previously used the Serper.dev Google Image Search API — that key
+// ran out of credits ("Not enough credits" from a direct API test), and
+// every lookup silently returned empty. Replaced with two free, no-quota
+// methods tried in order against the product's official page URL:
 //   1. Shopify storefronts publicly expose /products.json — fuzzy-match the
-//      product name against it for the real per-SKU photo (see
-//      _shopifyProductMatch.js). Most accurate: an actual catalog entry, not a
-//      page-level social-share image.
-//   2. Fall back to the page's og:image/twitter:image meta tag (_ogImageFetch.js).
-//      This is often a brand logo or banner rather than a specific product photo,
-//      but it's still a real, verified image straight from the brand's own site —
-//      preferable to the generic Ayna placeholder when no per-SKU photo exists.
-// If neither yields anything, returns '' — the UI falls back to the placeholder.
-// No AI-generated imagery is ever involved.
+//      product name against it for the real per-SKU photo.
+//   2. Fall back to the page's og:image/twitter:image meta tag, rejecting
+//      anything that looks like a logo/banner/social-share asset by
+//      filename rather than risk mislabeling a brand logo as a product photo.
+// Both reuse the SSRF-safe fetch pattern in ./_ssrfSafeFetch.js.
+//
+// `url` is optional — the hardcoded catalog mostly doesn't have one yet, and
+// without it there's no page to resolve against, so this returns empty
+// (UI falls back to the 🌸 placeholder) rather than guessing.
+//
+// COST/ABUSE: this route is unauthenticated and could otherwise be hit
+// directly by any caller — per-IP rate limit, a shared Redis cache so the
+// cost is per PRODUCT rather than per product-per-browser, edge caching,
+// input caps, and a request timeout on every outbound fetch.
 
 import { rateLimit, getClientIp } from './_rateLimit.js';
+import { matchShopifyProduct } from './_shopifyProductMatch.js';
 import { fetchOgImage } from './_ogImageFetch.js';
-import { fetchShopifyProducts, matchProductImage } from './_shopifyProductMatch.js';
 
 const MAX_TERM_LEN = 120;
 const MAX_URL_LEN = 500;
 const CACHE_TTL_SEC = 30 * 24 * 60 * 60; // 30 days — product photos don't move
-const NEGATIVE_TTL_SEC = 24 * 60 * 60;   // don't re-fetch misses all day
+const NEGATIVE_TTL_SEC = 24 * 60 * 60;   // don't re-fetch known misses all day
 
 let redisPromise = null;
 function getRedis() {
@@ -43,6 +48,19 @@ function cleanTerm(v, maxLen = MAX_TERM_LEN) {
   return String(raw || '').trim().replace(/\s+/g, ' ').slice(0, maxLen);
 }
 
+function cleanUrl(v) {
+  const raw = Array.isArray(v) ? v[0] : v;
+  const s = String(raw || '').trim().slice(0, MAX_URL_LEN);
+  if (!s) return '';
+  try {
+    const parsed = new URL(s);
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return '';
+    return s;
+  } catch {
+    return '';
+  }
+}
+
 function allowedOrigin(req) {
   const configured = (process.env.ALLOWED_ORIGINS || '')
     .split(',').map((o) => o.trim()).filter(Boolean);
@@ -50,6 +68,15 @@ function allowedOrigin(req) {
   if (!origin) return null;
   if (configured.length === 0) return null;
   return configured.includes(origin) ? origin : null;
+}
+
+/** Tries Shopify catalog match first, then og:image — first hit wins. */
+async function resolveImageFromUrl(pageUrl, name, brand) {
+  const shopifyImage = await matchShopifyProduct(pageUrl, name, brand);
+  if (shopifyImage) return shopifyImage;
+  const ogImage = await fetchOgImage(pageUrl);
+  if (ogImage) return ogImage;
+  return '';
 }
 
 export default async function handler(req, res) {
@@ -64,9 +91,8 @@ export default async function handler(req, res) {
 
   const name = cleanTerm(req.query.name);
   const brand = cleanTerm(req.query.brand);
-  const officialUrl = cleanTerm(req.query.url, MAX_URL_LEN);
+  const pageUrl = cleanUrl(req.query.url);
   if (!name) return res.status(400).json({ error: 'missing_name' });
-  if (!officialUrl) return res.status(200).json({ imageUrl: '' });
 
   const cacheKey = `ayna:img:v2:${brand.toLowerCase()}|${name.toLowerCase()}`;
   const redis = getRedis();
@@ -83,6 +109,12 @@ export default async function handler(req, res) {
     }
   }
 
+  if (!pageUrl) {
+    // Nothing to resolve against — don't cache this as a negative result,
+    // since the same product may come back with a url once one is known.
+    return res.status(200).json({ imageUrl: '' });
+  }
+
   const rl = await rateLimit(`img:ip:${getClientIp(req)}`, { max: 60, windowSec: 60, failClosed: false });
   if (!rl.ok) {
     res.setHeader('Retry-After', String(rl.retryAfterSec || 60));
@@ -91,18 +123,7 @@ export default async function handler(req, res) {
 
   let imageUrl = '';
   try {
-    const shopifyProducts = await fetchShopifyProducts(officialUrl);
-    if (shopifyProducts) {
-      imageUrl = matchProductImage(shopifyProducts, name, brand) || '';
-    }
-    if (!imageUrl) {
-      const og = await fetchOgImage(officialUrl);
-      // A real product photo (not logo/banner-looking) is preferred, but a
-      // verified brand logo from the product's own official site is still a
-      // real, verified image — better than the generic placeholder card when
-      // no per-SKU photo can be found (e.g. no Shopify catalog to match against).
-      if (og) imageUrl = og;
-    }
+    imageUrl = await resolveImageFromUrl(pageUrl, name, brand);
   } catch (e) {
     console.error('[product-image] resolution failed:', e?.message);
   }
