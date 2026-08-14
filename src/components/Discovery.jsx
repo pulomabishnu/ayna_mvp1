@@ -491,7 +491,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             while (!cancelled) {
                 const item = queue.shift();
                 if (!item) return;
-                const url = await resolveProductImage(item.name, item.brand || '');
+                const url = await resolveProductImage(item.name, item.brand || '', item.url || '');
                 if (cancelled) return;
                 // Record '' as well: gating on `if (url)` left a no-image product
                 // permanently `undefined`, so it was re-selected and re-resolved

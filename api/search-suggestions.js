@@ -1,12 +1,17 @@
 /**
  * Vercel serverless: when Discovery search has no catalog hits, Claude suggests real branded
- * products (retail names only — no model URLs). Ephemeral JSON, not persisted.
+ * products. Suggestions that aren't already in the hardcoded catalog get
+ * persisted to a shared Redis-backed "discovered products" store (see
+ * persistNewDiscoveries below) so the same product isn't independently
+ * re-discovered — and doesn't need re-generating — the next time any user
+ * searches for it.
  */
 /* global process */
 
 import { checkProductInsightsRateLimit } from './_rateLimitProductInsights.js';
 import { verifyUser } from './_usageLimit.js';
 import { tryParseJsonCandidate } from './_llm.js';
+import { ALL_PRODUCTS } from '../src/data/products.js';
 
 // Mirrors PRESCRIPTION_DRUG_PATTERN in api/llm-recommendations.js — keep the two in sync.
 const PRESCRIPTION_DRUG_PATTERN = new RegExp(
@@ -64,6 +69,83 @@ const ALLOWED_CATEGORIES = new Set([
   'other',
 ]);
 
+const DISCOVERED_PRODUCTS_KEY = 'ayna:discovered-products';
+
+let redisPromise = null;
+function getRedis() {
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) return null;
+  if (!redisPromise) {
+    redisPromise = (async () => {
+      const { Redis } = await import('@upstash/redis');
+      return new Redis({ url, token });
+    })();
+  }
+  return redisPromise;
+}
+
+// Dedup key: normalized product NAME only, not brand+name — brand is
+// deliberately NOT part of the key so multiple distinct products from the
+// same brand (e.g. "Always Radiant" and "Always Infinity") are never treated
+// as duplicates of each other. AI-generated suggestions already fold the
+// brand into `name` when it isn't already present (see buildDisplayName
+// above), so name-only matching still catches true brand+product duplicates.
+function normalizeProductKey(name) {
+  return String(name || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+// Built once per cold start and reused across warm invocations — the catalog
+// is static within a deployment, so there's no reason to re-normalize ~100+
+// product names on every search request.
+let hardcodedNameSet = null;
+function getHardcodedNameSet() {
+  if (!hardcodedNameSet) {
+    hardcodedNameSet = new Set(
+      ALL_PRODUCTS.map((p) => normalizeProductKey(p?.name)).filter(Boolean)
+    );
+  }
+  return hardcodedNameSet;
+}
+
+/**
+ * For each suggestion not already in the hardcoded catalog, checks the
+ * shared Redis "discovered products" hash and persists it if it's genuinely
+ * new — strict per-product dedup (by normalized name), while still allowing
+ * any number of different products from the same brand. Best-effort: a
+ * Redis outage degrades to "nothing persisted this request," never to a
+ * failed search.
+ */
+async function persistNewDiscoveries(suggestions, query) {
+  const redis = getRedis();
+  if (!redis) return;
+  const hardcoded = getHardcodedNameSet();
+  const client = await redis;
+
+  await Promise.all(
+    suggestions.map(async (s) => {
+      const key = normalizeProductKey(s.name);
+      if (!key || hardcoded.has(key)) return;
+      try {
+        const alreadyDiscovered = await client.hexists(DISCOVERED_PRODUCTS_KEY, key);
+        if (alreadyDiscovered) return;
+        await client.hset(DISCOVERED_PRODUCTS_KEY, {
+          [key]: JSON.stringify({
+            name: s.name,
+            brand: s.brand || '',
+            category: s.category,
+            url: s.url || '',
+            firstSeenQuery: query,
+            discoveredAt: Date.now(),
+          }),
+        });
+      } catch (e) {
+        console.error('[search-suggestions] discovery persist failed:', e?.message);
+      }
+    })
+  );
+}
+
 function getAnthropicApiKey() {
   return (process.env.ANTHROPIC_API_KEY || '').trim() || null;
 }
@@ -78,6 +160,27 @@ function sanitizeStr(s, maxLen) {
   let t = s.trim().replace(/\s+/g, ' ');
   if (hasUrlLike(t)) return '';
   return t.slice(0, maxLen);
+}
+
+// The model's product page URL is advisory, not verified — it can be wrong or
+// hallucinated. This only rejects obviously-malformed values; the actual
+// SSRF-safe fetch (with resolved-IP validation) happens downstream in
+// api/product-image.js before anything derived from this URL is ever used.
+function sanitizeOfficialUrl(s) {
+  if (typeof s !== 'string') return '';
+  const t = s.trim().slice(0, 300);
+  if (!t) return '';
+  let parsed;
+  try {
+    parsed = new URL(t);
+  } catch {
+    return '';
+  }
+  if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') return '';
+  if (parsed.username || parsed.password) return '';
+  const host = parsed.hostname.toLowerCase();
+  if (!host || host === 'localhost' || /^\d{1,3}(\.\d{1,3}){3}$/.test(host)) return '';
+  return parsed.toString();
 }
 
 function stripJsonFence(raw) {
@@ -152,6 +255,7 @@ function normalizeSuggestion(raw, index) {
   const whereToBuy = sanitizeRetailers(raw?.whereToBuy || raw?.retailers, 6);
   const searchTerms = uniqueStrings(raw?.searchTerms, 6, 100);
   const typical = clampTypicalRating(raw?.typicalUserRating ?? raw?.estimatedRating);
+  const officialUrl = sanitizeOfficialUrl(raw?.officialUrl);
 
   if (!name || name.length < 3 || !summary || summary.length < 25) return null;
 
@@ -177,6 +281,7 @@ function normalizeSuggestion(raw, index) {
       'Educational information only. Check labels, availability, and pricing with retailers. Ask your clinician before changing care.',
     searchTerms: searchTerms.length ? searchTerms : [name],
     whereToBuy: whereToBuy.length ? whereToBuy : ['Amazon', 'Target', 'Google'],
+    url: officialUrl || undefined,
     tags,
     llmGenerated: true,
     aiEstimatedRating: typical != null,
@@ -232,7 +337,8 @@ Return ONE JSON object ONLY (no markdown) with up to ${maxResults} suggestions i
       "whereToBuy": ["Amazon","Target","CVS","Walmart","Brand website","App Store","Google Play"] — retailer NAMES only, no URLs,
       "typicalUserRating": 4.2,
       "safetyNote": "one short line: e.g. consult clinician for prescriptions, patch tests for topicals",
-      "searchTerms": ["1-2 web search phrases that include brand + product kind for Google"]
+      "searchTerms": ["1-2 web search phrases that include brand + product kind for Google"],
+      "officialUrl": "the exact URL of this product's page on the brand's own official site, ONLY if you are confident of the real, current URL — omit this field entirely rather than guess"
     }
   ]
 }
@@ -249,7 +355,7 @@ ANTI-HALLUCINATION RULES:
 - Never invent brand names or product lines
 - Never create fictional products, features, or services — even as placeholders
 - NEVER suggest any product whose brand is "Ayna" — Ayna is the app the user is already in, not a product to recommend
-- Never include URLs, domains, or "http" in any field — retailer names as plain text only
+- Never include URLs, domains, or "http" in any field except officialUrl — retailer names as plain text only. For officialUrl specifically, only include it if you're confident it's the real current URL; when unsure, omit the field rather than guess
 - typicalUserRating: optional number 3.0-5.0 only if you have real signal — omit if unsure
 - If you cannot recall seeing a brand's product sold online at a major retailer or the brand's own website, do not include it — it likely does not exist
 - If the query is not women's health or wellness shopping related, return {"querySummary":"","suggestions":[]}
@@ -424,6 +530,8 @@ export default async function handler(req, res) {
   const relatedSearches = Array.isArray(parsed?.relatedSearches)
     ? parsed.relatedSearches.map((s) => sanitizeStr(s, 80)).filter((s) => s.length > 2).slice(0, 6)
     : [];
+
+  await persistNewDiscoveries(suggestions, query);
 
   return res.status(200).json({
     querySummary,
