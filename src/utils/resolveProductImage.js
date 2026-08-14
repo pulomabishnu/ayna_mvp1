@@ -1,5 +1,5 @@
 // Resolves a real product image for products with placeholder images via /api/product-image
-// Results are cached in localStorage so Serper is only called once per product, ever.
+// Results are cached in localStorage so the lookup only ever runs once per product.
 
 const LS_KEY = 'ayna_product_images_v1';
 const memCache = new Map();
@@ -21,7 +21,7 @@ export function isPlaceholderProductImage(imageUrl) {
   return src === '/ayna_placeholder.png' || src === '/startup_placeholder.png';
 }
 
-export async function resolveProductImage(name, brand, officialUrl) {
+export async function resolveProductImage(name, brand, url) {
   if (!name) return '';
   const key = `${brand || ''}|${name}`;
 
@@ -39,7 +39,8 @@ export async function resolveProductImage(name, brand, officialUrl) {
 
   const inFlight = (async () => {
     try {
-      const params = new URLSearchParams({ name, brand: brand || '', url: officialUrl || '' });
+      const params = new URLSearchParams({ name, brand: brand || '' });
+      if (url) params.set('url', url);
       const res = await fetch(`/api/product-image?${params}`, {
         signal: AbortSignal.timeout(10000),
       });
@@ -51,10 +52,14 @@ export async function resolveProductImage(name, brand, officialUrl) {
         return '';
       }
       const data = await res.json();
-      const url = data?.imageUrl || '';
-      memCache.set(key, url);
-      lsWrite(key, url);
-      return url;
+      const resolvedUrl = data?.imageUrl || '';
+      memCache.set(key, resolvedUrl);
+      // The server only attempts resolution (and only caches a negative
+      // result itself) when a page `url` was supplied — mirror that here.
+      // Pinning '' from a call that had no url would permanently block a
+      // later call for the same product that does have one.
+      if (resolvedUrl || url) lsWrite(key, resolvedUrl);
+      return resolvedUrl;
     } catch {
       memCache.delete(key);
       return '';
