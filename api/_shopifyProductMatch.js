@@ -18,15 +18,28 @@ function normalize(s) {
     .trim();
 }
 
-/** Token-overlap score: fraction of the query's significant tokens found in the candidate title. */
+/**
+ * Containment score: overlap divided by the SMALLER of the two token sets.
+ * A plain overlap/queryTokens.length ratio misses real matches where the
+ * store's actual title is terser than the AI's more descriptive name (e.g.
+ * query "Saalt Menstrual Cup Regular" vs. catalog title "Saalt Cup" — every
+ * title token is in the query, but only 2 of the query's 4 tokens are in
+ * the title, so a query-length-denominator score never reaches a sane
+ * threshold). Scoring against the smaller set catches that case in either
+ * direction while still requiring one side to be essentially a subset of
+ * the other, not just some shared words.
+ */
 function scoreMatch(queryTokens, titleNorm) {
-  if (queryTokens.length === 0) return 0;
-  const titleTokens = new Set(titleNorm.split(' ').filter(Boolean));
-  let hits = 0;
-  for (const t of queryTokens) {
-    if (titleTokens.has(t)) hits += 1;
+  const titleTokens = titleNorm.split(' ').filter(Boolean);
+  if (queryTokens.length === 0 || titleTokens.length === 0) return { score: 0, overlap: 0 };
+  const titleSet = new Set(titleTokens);
+  const querySet = new Set(queryTokens);
+  let overlap = 0;
+  for (const t of querySet) {
+    if (titleSet.has(t)) overlap += 1;
   }
-  return hits / queryTokens.length;
+  const smaller = Math.min(querySet.size, titleSet.size);
+  return { score: overlap / smaller, overlap };
 }
 
 /**
@@ -64,20 +77,24 @@ export async function matchShopifyProduct(pageUrl, productName) {
 
   let best = null;
   let bestScore = 0;
+  let bestOverlap = 0;
   for (const p of products) {
     const titleNorm = normalize(p?.title);
     if (!titleNorm) continue;
-    const score = scoreMatch(queryTokens, titleNorm);
+    const { score, overlap } = scoreMatch(queryTokens, titleNorm);
     if (score > bestScore) {
       bestScore = score;
+      bestOverlap = overlap;
       best = p;
     }
   }
 
-  // Require most of the product name's tokens to appear in the title —
-  // this is a fuzzy match, not a search engine, so err toward "no image"
-  // over attaching a wrong product's photo.
-  if (!best || bestScore < 0.6) return null;
+  // Require the smaller of {query, title} token set to be (almost) fully
+  // contained in the other, AND at least 2 real tokens in common — a lone
+  // brand-word match (e.g. just "saalt") scoring 1.0 by coincidence isn't
+  // enough to trust. This is a fuzzy match, not a search engine, so err
+  // toward "no image" over attaching a wrong product's photo.
+  if (!best || bestScore < 0.75 || bestOverlap < 2) return null;
 
   const image =
     best.images?.[0]?.src ||
