@@ -631,9 +631,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
             <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-lg)', maxWidth: '700px', margin: '0 auto var(--spacing-lg)' }}>
                 <h2 style={{ fontSize: '2.25rem', marginBottom: '0.5rem' }}>Mirror mirror, on the wall...</h2>
-                <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem' }}>
-                    Type in anything you want, and ayna finds the best matches for you.
-                </p>
             </div>
 
             {/* Smart Search */}
@@ -651,7 +648,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     type="text"
                     value={searchQuery}
                     onChange={(e) => { setSearchQuery(e.target.value); if (!e.target.value.trim()) setSubmittedQuery(''); }}
-                    placeholder="Ask a question, search for a product, or type a health symptom..."
+                    placeholder="Type in any product you're looking for..."
                     style={{
                         flex: '1 1 200px',
                         minWidth: 0,
@@ -690,9 +687,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             {/* Loading state for explicit search */}
             {searchSubmitted && aiLoading && (
                 <>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', justifyContent: 'center' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(252px, 1fr))', gap: '1.5rem' }}>
                         {Array.from({ length: 8 }, (_, i) => (
-                            <div key={i} className="card" style={{ padding: 0, overflow: 'hidden', width: '252px', border: '1px solid var(--color-border)' }} aria-hidden="true">
+                            <div key={i} className="card" style={{ padding: 0, overflow: 'hidden', border: '1px solid var(--color-border)' }} aria-hidden="true">
                                 <div className="skeleton-shimmer" style={{ height: '118px', width: '100%' }} />
                                 <div style={{ padding: '0.9rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                     <div className="skeleton-shimmer" style={{ height: '0.7rem', width: '40%', borderRadius: '4px' }} />
@@ -709,7 +706,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             {/* Product Grid */}
             {(!searchSubmitted || !aiLoading) && (
             <>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', justifyContent: 'center' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(252px, 1fr))', gap: '1.5rem' }}>
                 {gridItems.slice(0, visibleCount).map((item, idx) => {
                     const isStartup = item.isStartup === true;
                     const releasedStartup = isStartup && item.productReleased === true;
@@ -726,7 +723,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     return (
                         <div key={item.id} className="card hover-lift" style={{
                             padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column',
-                            width: '252px', animation: `fadeInUp 0.4s ${Math.min(idx * 0.05, 0.3)}s backwards`,
+                            animation: `fadeInUp 0.4s ${Math.min(idx * 0.05, 0.3)}s backwards`,
                             border: (isInEcosystem || isJoined) ? '2px solid var(--color-primary)' : '1px solid var(--color-border)'
                         }}>
                             <div style={{ height: '118px', width: '100%', overflow: 'hidden', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-secondary-fade, #fdf2f4)' }}>
