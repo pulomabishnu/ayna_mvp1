@@ -978,13 +978,31 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                     </div>
                                 )}
                                 <div style={{ position: 'absolute', top: '0.5rem', left: '0.5rem', display: 'flex', gap: '0.3rem' }}>
-                                    <span style={{
-                                        background: isStartup ? 'var(--color-primary-hover)' : (item.type === 'physical' ? 'var(--color-surface-contrast)' : 'var(--color-primary)'),
-                                        color: 'white', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)',
-                                        fontSize: '0.65rem', fontWeight: '600', textTransform: 'uppercase'
-                                    }}>
-                                        {isStartup ? 'Startup' : item.type}
-                                    </span>
+                                    {isStartup ? (
+                                        <span style={{
+                                            background: 'var(--color-primary-hover)',
+                                            color: 'white', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)',
+                                            fontSize: '0.65rem', fontWeight: '600', textTransform: 'uppercase'
+                                        }}>
+                                            Startup
+                                        </span>
+                                    ) : item.category === 'telehealth' ? (
+                                        <span style={{
+                                            background: 'var(--color-primary)',
+                                            color: 'white', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)',
+                                            fontSize: '0.65rem', fontWeight: '600', textTransform: 'uppercase'
+                                        }}>
+                                            Telehealth
+                                        </span>
+                                    ) : item.type === 'digital' ? (
+                                        <span style={{
+                                            background: 'var(--color-primary)',
+                                            color: 'white', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)',
+                                            fontSize: '0.65rem', fontWeight: '600', textTransform: 'uppercase'
+                                        }}>
+                                            App
+                                        </span>
+                                    ) : null}
                                     {item.isEmergingBrand && (
                                         <span style={{
                                             background: 'var(--color-primary)', color: 'white',
