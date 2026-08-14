@@ -994,7 +994,9 @@ export function isRxOnlyProduct(p) {
     if (p.category === 'telehealth') return false;
     if (p.requiresPrescription === true) return true;
     const wtb = (p.whereToBuy || []).map((x) => String(x).toLowerCase());
-    return wtb.some((s) => s.includes('pharmacy with prescription'));
+    // Covers both pharmacy-dispensed prescriptions and clinician-administered
+    // devices/procedures (e.g. IUD insertion) — neither is something Ayna sells.
+    return wtb.some((s) => s.includes('pharmacy with prescription') || s.includes('clinic insertion') || s.includes('clinic administered'));
 }
 
 let _telehealthCatalog = null;
