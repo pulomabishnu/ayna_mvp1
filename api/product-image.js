@@ -8,12 +8,12 @@
 //      product name against it for the real per-SKU photo (see
 //      _shopifyProductMatch.js). Most accurate: an actual catalog entry, not a
 //      page-level social-share image.
-//   2. Fall back to the page's og:image/twitter:image meta tag (_ogImageFetch.js),
-//      rejected if the URL looks like a logo/banner/social-share asset rather
-//      than a product photo (filename heuristic) — a mislabeled brand logo is
-//      worse than no image at all.
-// If neither yields a confident result, returns '' — the UI falls back to the
-// placeholder gracefully. No AI-generated imagery is ever involved.
+//   2. Fall back to the page's og:image/twitter:image meta tag (_ogImageFetch.js).
+//      This is often a brand logo or banner rather than a specific product photo,
+//      but it's still a real, verified image straight from the brand's own site —
+//      preferable to the generic Ayna placeholder when no per-SKU photo exists.
+// If neither yields anything, returns '' — the UI falls back to the placeholder.
+// No AI-generated imagery is ever involved.
 
 import { rateLimit, getClientIp } from './_rateLimit.js';
 import { fetchOgImage } from './_ogImageFetch.js';
@@ -51,8 +51,6 @@ function allowedOrigin(req) {
   if (configured.length === 0) return null;
   return configured.includes(origin) ? origin : null;
 }
-
-const LOGO_BANNER_HINTS = /logo|social.?share|social.?media|banner|og.?image|seo.?description|share.?image/i;
 
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
@@ -99,7 +97,11 @@ export default async function handler(req, res) {
     }
     if (!imageUrl) {
       const og = await fetchOgImage(officialUrl);
-      if (og && !LOGO_BANNER_HINTS.test(og)) imageUrl = og;
+      // A real product photo (not logo/banner-looking) is preferred, but a
+      // verified brand logo from the product's own official site is still a
+      // real, verified image — better than the generic placeholder card when
+      // no per-SKU photo can be found (e.g. no Shopify catalog to match against).
+      if (og) imageUrl = og;
     }
   } catch (e) {
     console.error('[product-image] resolution failed:', e?.message);

@@ -141,13 +141,13 @@ describe('product-image', () => {
     expect(res.body.imageUrl).toBe('https://diva.example.com/product-photo.jpg');
   });
 
-  it('rejects an og:image that looks like a logo or social-share asset', async () => {
+  it('accepts a logo/banner-looking og:image as a last-resort fallback', async () => {
     fetchShopifyProductsMock.mockResolvedValue(null);
     fetchOgImageMock.mockResolvedValue('https://diva.example.com/brand-logo.png');
     const handler = await loadHandler();
     const res = mockRes();
     await handler({ method: 'GET', query: { name: 'DivaCup', url: 'https://diva.example.com' }, headers: {} }, res);
-    expect(res.body).toEqual({ imageUrl: '' });
+    expect(res.body.imageUrl).toBe('https://diva.example.com/brand-logo.png');
   });
 
   it('returns empty imageUrl (200), not a crash, when resolution throws', async () => {
