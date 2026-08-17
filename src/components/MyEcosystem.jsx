@@ -142,7 +142,7 @@ function EcosystemFunctionProductCard({
             return;
         }
         setTriedResolveFallback(true);
-        resolveProductImage(product.name, product.brand || '').then((url) => {
+        resolveProductImage(product.name, product.brand || '', product.url || '').then((url) => {
             if (url) {
                 setResolvedCardImage(url);
                 setImgError(false);
@@ -1514,7 +1514,7 @@ export default function MyEcosystem({
             while (!cancelledRef.cancelled) {
                 const item = queue.shift();
                 if (!item) return;
-                const url = await resolveProductImage(item.name, item.brand || '');
+                const url = await resolveProductImage(item.name, item.brand || '', item.url || '');
                 if (cancelledRef.cancelled) return;
                 setResolvedImages((prev) => (prev[item.id] !== undefined ? prev : { ...prev, [item.id]: url || '' }));
             }
@@ -1728,17 +1728,7 @@ export default function MyEcosystem({
         <>
             <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
                 <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-xl)', maxWidth: '800px', margin: '0 auto var(--spacing-xl)' }}>
-                    <div style={{
-                        background: 'var(--color-secondary-fade)', color: 'var(--color-primary-hover)',
-                        padding: '0.5rem 1rem', borderRadius: 'var(--radius-pill)', fontSize: '0.875rem',
-                        fontWeight: '600', marginBottom: '1rem', display: 'inline-block'
-                    }}>
-                        Your Health Ecosystem
-                    </div>
-                    <h2 style={{ fontSize: '2.25rem', marginBottom: '0.75rem' }}>Everything You Use, One Place</h2>
-                    <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem' }}>
-                        Track all your health products and apps. Everything here is monitored for safety by default. We'll tell you what each does and if products may interact.
-                    </p>
+                    <h2 style={{ fontSize: '2.25rem' }}>My Cabinet</h2>
                 </div>
 
                 {smsCardShown && (
@@ -2191,7 +2181,7 @@ export default function MyEcosystem({
                                 padding: '0.75rem 1.75rem',
                                 fontSize: '1rem',
                                 fontWeight: 600,
-                                boxShadow: '0 2px 12px rgba(111, 72, 76, 0.2)',
+                                boxShadow: '0 2px 12px rgba(217, 111, 12, 0.25)',
                             }}
                             onClick={onBuildEcosystem}
                         >

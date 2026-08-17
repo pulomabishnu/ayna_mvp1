@@ -8,11 +8,11 @@
   --color-text-muted: #78716C;
   --color-text-light: #FFFFFF;
 
-  --color-primary: #8B5A5F;
-  --color-primary-hover: #6F484C;
-  --color-secondary: #EDE4E0;
-  --color-secondary-fade: rgba(139, 90, 95, 0.1);
-  --color-primary-fade: rgba(139, 90, 95, 0.1);
+  --color-primary: #FFC774;
+  --color-primary-hover: #E8A94F;
+  --color-secondary: #FFEFD6;
+  --color-secondary-fade: rgba(255, 199, 116, 0.18);
+  --color-primary-fade: rgba(255, 199, 116, 0.18);
   --color-surface: #FFFFFF;
 
   --color-border: #E1D5CE;
@@ -134,7 +134,7 @@ body {
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 1) inset,
     0 8px 32px rgba(28, 25, 23, 0.08),
-    0 1px 0 rgba(139, 90, 95, 0.08);
+    0 1px 0 rgba(232, 169, 79, 0.18);
   transition:
     background 0.3s ease,
     box-shadow 0.3s ease,
@@ -155,7 +155,7 @@ body {
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.9) inset,
     0 12px 40px rgba(28, 25, 23, 0.1),
-    0 1px 0 rgba(139, 90, 95, 0.1);
+    0 1px 0 rgba(232, 169, 79, 0.22);
 }
 
 .app-nav__research-cluster {
@@ -262,13 +262,13 @@ button {
 
 .btn-primary {
   background-color: var(--color-primary);
-  color: #FFFFFF;
-  box-shadow: 0 2px 10px rgba(111, 72, 76, 0.22);
+  color: var(--color-text-main);
+  box-shadow: 0 2px 10px rgba(232, 169, 79, 0.3);
 }
 
 .btn-primary:hover {
   background-color: var(--color-primary-hover);
-  box-shadow: 0 4px 16px rgba(111, 72, 76, 0.28);
+  box-shadow: 0 4px 16px rgba(232, 169, 79, 0.36);
   transform: translateY(-1px);
 }
 
@@ -1085,7 +1085,7 @@ html {
 
 .nav-ecosystem__pill {
   background: var(--color-primary);
-  color: white;
+  color: var(--color-text-main);
   padding: 0.05rem 0.3rem;
   border-radius: 1rem;
   font-size: 0.65rem;
@@ -1224,7 +1224,7 @@ html {
 
 .nav-ecosystem__item-pill {
   background: var(--color-primary);
-  color: white;
+  color: var(--color-text-main);
   padding: 0.05rem 0.35rem;
   border-radius: 1rem;
   font-size: 0.65rem;

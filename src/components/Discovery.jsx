@@ -1,19 +1,53 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { useSpeechToText } from '../hooks/useSpeechToText';
-import SearchMicButton from './SearchMicButton';
-import { ALL_PRODUCTS, CATEGORY_LABELS, SYMPTOM_TO_SUPPLEMENTS } from '../data/products';
+import { ALL_PRODUCTS, CATEGORY_LABELS, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate } from '../data/products';
 import { buildSearchTextForItem, scoreQueryAgainstProduct } from '../utils/naturalLanguageSearch';
 import { fetchSearchSuggestions } from '../utils/fetchSearchSuggestions';
 import { RELEASED_STARTUPS } from '../data/startups';
 import { getAynaRating } from '../data/aynaReviews';
 import Disclaimer from './Disclaimer';
-import FindYourPadModal from './FindYourPadModal';
 import { getPricePerUnitLabel } from '../utils/pricePerUnit';
 import { fetchDsldProducts } from '../utils/fetchDsldProducts';
 import { enrichLlmProductForDiscovery } from '../utils/enrichLlmProductForDiscovery';
-import { buildDiscoveryProfileSummary } from '../utils/discoveryIntroSummary';
 import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
 import posthog from 'posthog-js';
+
+const SEARCH_SUGGESTION_POOL = [
+    'most comfortable easy to use menstrual cup',
+    'best supplement for bloating',
+    'organic pads for heavy flow',
+    'period underwear for overnight leaks',
+    'pelvic floor trainer for postpartum recovery',
+    'best magnesium for period cramps',
+    'ovulation tracker that actually works',
+    'menopause hot flash relief',
+    'ashwagandha for hormonal balance',
+    'probiotic for vaginal health',
+    'gentle tampons for sensitive skin',
+    'fertility tracker for trying to conceive',
+    'best prenatal vitamin',
+    'natural remedy for PMS mood swings',
+    'reusable menstrual disc for swimming',
+    'supplement for PCOS symptoms',
+    'best lube for vaginal dryness',
+    'sleep support for perimenopause',
+    'iron supplement for heavy periods',
+    'kegel exerciser for bladder control',
+    'evening primrose oil for breast tenderness',
+    'travel-friendly menstrual cup',
+    'vaginal moisturizer for dryness',
+    'best telehealth for birth control',
+    'postpartum recovery essentials',
+];
+
+function pickRandomSuggestions(count = 5) {
+    const pool = [...SEARCH_SUGGESTION_POOL];
+    const picked = [];
+    while (picked.length < count && pool.length > 0) {
+        const idx = Math.floor(Math.random() * pool.length);
+        picked.push(pool.splice(idx, 1)[0]);
+    }
+    return picked;
+}
 
 const MACRO_GROUPS = [
     { id: 'all', label: 'All Products', icon: '🔍', categories: [] },
@@ -33,7 +67,6 @@ const MACRO_GROUPS = [
 
 // Kept for sub-filter pills within a selected group
 const ALL_CATEGORIES = ['all', 'pad', 'tampon', 'cup', 'disc', 'period-underwear', 'supplement', 'tracker', 'telehealth', 'mental-health', 'fitness', 'diagnostics', 'hormone-monitoring', 'menopause', 'fertility', 'pelvic-health', 'pelvic-floor', 'cramp-relief', 'postpartum', 'pregnancy', 'sex-tech', 'intimate-care', 'contraception'];
-const TYPE_FILTERS = ['all', 'physical', 'digital', 'startup'];
 
 /** Extract a numeric price for sorting (rough proxy: first $ amount, or monthly equivalent when obvious). */
 function getSortPrice(item) {
@@ -64,6 +97,39 @@ function getQualityScore(item, aynaReviews = {}) {
     const rating = item.ratingNote ? 0 : (aynaRating != null ? aynaRating / 5 : baseRating);
     const safetyOk = !(item.safety?.recalls && String(item.safety.recalls).includes('⚠️')) ? 1 : 0;
     return (rating * 2) + consensusScore + safetyOk;
+}
+
+// Brand partners get a subtle, randomized nudge toward the top of the default (browsing) sort —
+// see partnerBrandBoost/shuffleJitter below. Matched against brand+name, case-insensitively, with
+// word boundaries so e.g. "oboo" doesn't accidentally match inside an unrelated word.
+const PARTNER_BRAND_PATTERNS = [/\bwinx(?:\s*health)?\b/, /\bneycher\b/, /\boboo\b/, /\blola\b/];
+
+function isPartnerBrandItem(item) {
+    const text = `${item?.brand || ''} ${item?.name || ''}`.toLowerCase();
+    return PARTNER_BRAND_PATTERNS.some((re) => re.test(text));
+}
+
+// Small enough relative to getQualityScore's spread (~0-6) that it nudges partner products toward
+// the top on average without pinning them there every time — shuffleJitter below still lets other
+// high-quality items land above them, keeping the effect subtle rather than a blatant "always #1-4".
+const PARTNER_BRAND_BOOST = 1.1;
+
+// Deterministic per-(item, seed) hash in [0, 1) — same seed always reorders the same way (so a
+// single landing's grid doesn't jitter as filters/sort re-render), but a fresh seed each time the
+// component mounts (see shuffleSeed in Discovery) produces a different order on the next visit.
+function hashToUnitInterval(str) {
+    let h = 2166136261;
+    for (let i = 0; i < str.length; i++) {
+        h ^= str.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+    }
+    return ((h >>> 0) % 100000) / 100000;
+}
+
+const SHUFFLE_JITTER_RANGE = 1.5;
+
+function shuffleJitter(item, seed) {
+    return hashToUnitInterval(`${seed}:${item?.id || ''}`) * SHUFFLE_JITTER_RANGE;
 }
 
 const SORT_OPTIONS = [
@@ -145,37 +211,23 @@ function truncateCardSummary(text, max = 200) {
     return `${truncated.trimEnd()}…`;
 }
 
-const BENIGN_SIDE_EFFECT_RE = /^(none|n\/a|minimal|rare|breathable material)/i;
-
-/** Lightweight green/orange/red safety read from existing catalog data — not a live recall check (see Safety & Ingredients tab / Monitor Safety Recalls for that). */
-function getSafetySignal(item) {
-    const safety = item.safety;
-    if (!safety) return null;
-    const recalls = String(safety.recalls || '').trim();
-    if (recalls.includes('⚠️')) {
-        return { label: 'Recall / concern', dot: '#DC2626', bg: '#FEE2E2', color: '#991B1B' };
-    }
-    const sideEffects = String(safety.sideEffects || '').trim();
-    if (sideEffects && !BENIGN_SIDE_EFFECT_RE.test(sideEffects)) {
-        return { label: 'Side effects to review', dot: '#D97706', bg: '#FEF3C7', color: '#92400E' };
-    }
-    if (recalls || sideEffects) {
-        return { label: 'No known concerns', dot: '#16A34A', bg: '#DCFCE7', color: '#166534' };
-    }
-    return null;
-}
-
-export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, healthProfile = null }) {
-    const [macroGroup, setMacroGroup] = useState(() => {
+export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null }) {
+    const [macroGroup] = useState(() => {
         if (!initialCategory || initialCategory === 'all') return 'all';
         return MACRO_GROUPS.find(g => g.categories.includes(initialCategory))?.id || 'all';
     });
     const [categoryFilter, setCategoryFilter] = useState(initialCategory || 'all');
-    const [typeFilter, setTypeFilter] = useState('all');
-    const activeMacroGroup = MACRO_GROUPS.find(g => g.id === macroGroup);
+    const [typeFilter] = useState('all');
     const [searchQuery, setSearchQuery] = useState(initialSearch || '');
     const [submittedQuery, setSubmittedQuery] = useState(initialSearch || '');
-    const [sortBy, setSortBy] = useState('default');
+    const [sortBy] = useState('default');
+    // Freshly generated on every mount — Discovery unmounts/remounts on each navigation to it,
+    // so this reshuffles the browsing grid's default order every time a user lands on the page,
+    // without reshuffling mid-visit as filters/sort change.
+    const [shuffleSeed] = useState(() => Math.random().toString(36).slice(2));
+    // Freshly picked on every mount, same reasoning as shuffleSeed above — a new
+    // set of 5 suggestion pills each time the user lands on Discovery.
+    const [searchSuggestions] = useState(() => pickRandomSuggestions(5));
     const [personalizationFilter, setPersonalizationFilter] = useState(hasQuizFrustrations || hasHealthImport);
     const personalizationInitialized = useRef(false);
     useEffect(() => {
@@ -187,13 +239,12 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [padFlowFilter, setPadFlowFilter] = useState(initialPadFlow || 'all');
     const [padPreferenceFilter, setPadPreferenceFilter] = useState(initialPadPreference || 'all');
     const [padUseCaseFilter, setPadUseCaseFilter] = useState(initialPadUseCase || 'all');
-    const [showFindPadModal, setShowFindPadModal] = useState(false);
-    const [symptomFilter, setSymptomFilter] = useState(initialSymptom || 'all');
+    const [symptomFilter] = useState(initialSymptom || 'all');
     const [aiSuggestions, setAiSuggestions] = useState([]);
-    const [aiQuerySummary, setAiQuerySummary] = useState('');
+    const [, setAiQuerySummary] = useState('');
     const [aiRelatedSearches, setAiRelatedSearches] = useState([]);
     const [aiLoading, setAiLoading] = useState(false);
-    const [aiError, setAiError] = useState(null);
+    const [, setAiError] = useState(null);
     const [searchSubmitted, setSearchSubmitted] = useState(false);
     const aiAbortRef = useRef(null);
     const debounceRef = useRef(null);
@@ -208,16 +259,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const PAGE_SIZE = 30;
     const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
     const recommendedSet = useMemo(() => new Set(recommendedProductIds || []), [recommendedProductIds]);
-    const speech = useSpeechToText();
-
-    const toggleVoiceSearch = () => {
-        if (speech.isRecording) {
-            const t = speech.stop();
-            if (t) setSearchQuery((prev) => (prev.trim() ? `${prev.trim()} ${t}` : t));
-        } else {
-            speech.start();
-        }
-    };
 
     React.useEffect(() => {
         if (initialSearch !== undefined) {
@@ -252,7 +293,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     }, [initialPadFlow, initialPadPreference, initialPadUseCase]);
 
     const combined = useMemo(() => {
-        const products = ALL_PRODUCTS.map(p => ({ ...p, isStartup: false }));
+        // Ayna doesn't sell or dispense prescriptions, so prescription-only items
+        // (birth control requiring an Rx, HRT patches/inserts, etc.) never show as
+        // shoppable products here — searching what they treat (e.g. "hormone
+        // replacement therapy") surfaces telehealth providers that prescribe it instead.
+        const products = filterPrescriptionCareGate(ALL_PRODUCTS).map(p => ({ ...p, isStartup: false }));
         // Released startups appear as normal products (no startup badge); unreleased are only on Startups page
         const releasedAsProducts = RELEASED_STARTUPS.map(s => ({
             ...s,
@@ -357,13 +402,18 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             list = [...list].sort((a, b) => {
                 const m = matchTieBreak(a, b);
                 if (m !== 0) return m;
-                const qa = getQualityScore(a, aynaReviews);
-                const qb = getQualityScore(b, aynaReviews);
+                // Pure browsing (no active text-match score) — mix in the partner boost and a
+                // per-visit random jitter so the catalog doesn't render in the exact same order
+                // every time someone lands on the page. Text searches (scoreById set) keep
+                // relying purely on quality score as the tiebreak.
+                const partnerAndJitter = !scoreById;
+                const qa = getQualityScore(a, aynaReviews) + (partnerAndJitter ? (isPartnerBrandItem(a) ? PARTNER_BRAND_BOOST : 0) + shuffleJitter(a, shuffleSeed) : 0);
+                const qb = getQualityScore(b, aynaReviews) + (partnerAndJitter ? (isPartnerBrandItem(b) ? PARTNER_BRAND_BOOST : 0) + shuffleJitter(b, shuffleSeed) : 0);
                 return qb - qa;
             });
         }
         return list;
-    }, [combined, categoryFilter, typeFilter, omittedProducts, submittedQuery, sortBy, personalizationFilter, recommendedSet, aynaReviews, padFlowFilter, padPreferenceFilter, padUseCaseFilter, symptomFilter]);
+    }, [combined, macroGroup, categoryFilter, typeFilter, omittedProducts, submittedQuery, sortBy, personalizationFilter, recommendedSet, aynaReviews, padFlowFilter, padPreferenceFilter, padUseCaseFilter, symptomFilter, shuffleSeed]);
 
     // Back to the first page whenever the underlying result set actually
     // changes (new filter/search/sort) — not when AI suggestions arrive later
@@ -445,7 +495,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             while (!cancelled) {
                 const item = queue.shift();
                 if (!item) return;
-                const url = await resolveProductImage(item.name, item.brand || '');
+                const url = await resolveProductImage(item.name, item.brand || '', item.url || '');
                 if (cancelled) return;
                 // Record '' as well: gating on `if (url)` left a no-image product
                 // permanently `undefined`, so it was re-selected and re-resolved
@@ -459,18 +509,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
         return () => { cancelled = true; };
     }, [gridItems, resolvedImages, visibleCount]);
-
-    const profileIntro = useMemo(
-        () => buildDiscoveryProfileSummary({ quizResults, healthProfile, categoryFilter, searchQuery }),
-        [quizResults, healthProfile, categoryFilter, searchQuery]
-    );
-
-    const hasIntroContent =
-        profileIntro.trim().length > 0 ||
-        (typeof aiQuerySummary === 'string' && aiQuerySummary.trim().length > 0 && !aiLoading);
-
-    const showDiscoveryIntro =
-        hasIntroContent && (gridItems.length > 0 || qTrimForAi.length >= 2);
 
     const runAiSearch = useCallback(async (query, category, symptom) => {
         if (aiAbortRef.current) aiAbortRef.current.abort();
@@ -541,10 +579,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         return () => clearTimeout(t);
     }, [submittedQuery, categoryFilter]);
 
-    const handleSmartSearch = (e) => {
-        e.preventDefault();
-        const q = searchQuery.trim();
+    const runSearch = (rawQuery) => {
+        const q = (rawQuery || '').trim();
         if (!q || q.length < 2) return;
+        setSearchQuery(q);
         posthog.capture('search_performed', { queryLength: q.length });
         const qLower = q.toLowerCase();
 
@@ -588,53 +626,19 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         runAiSearch(q, resolvedCategory, symptomFilter);
     };
 
+    const handleSmartSearch = (e) => {
+        e.preventDefault();
+        runSearch(searchQuery);
+    };
+
     return (
         <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
             <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-lg)', maxWidth: '700px', margin: '0 auto var(--spacing-lg)' }}>
-                <div style={{
-                    background: 'var(--color-secondary-fade)', color: 'var(--color-primary-hover)',
-                    padding: '0.5rem 1rem', borderRadius: 'var(--radius-pill)', fontSize: '0.875rem',
-                    fontWeight: '600', marginBottom: '1rem', display: 'inline-block'
-                }}>
-                    Discovery
-                </div>
-                <h2 style={{ fontSize: '2.25rem', marginBottom: '0.5rem' }}>Browse All Products</h2>
-                <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem' }}>
-                    Explore our curated database of women's health products and digital tools — each reviewed by doctors and real women.
-                </p>
-                {!hasQuizFrustrations && !hasHealthImport && (
-                    <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginTop: '0.75rem', lineHeight: 1.5 }}>
-                        Complete the assessment or import health data under <strong>My Account → Profile</strong> to unlock the <strong>For you</strong> filter and stronger personalization on Search.
-                    </p>
-                )}
+                <h2 style={{ fontSize: '2.25rem', marginBottom: '0.5rem' }}>Mirror mirror, on the wall...</h2>
             </div>
 
-            {showDiscoveryIntro && (
-                <div
-                    style={{
-                        maxWidth: '960px',
-                        margin: '0 auto 1.5rem',
-                        padding: '0.75rem 1.25rem',
-                        borderRadius: 'var(--radius-lg)',
-                        border: '1px solid var(--color-border)',
-                        background: 'linear-gradient(135deg, #FDF4FF 0%, #F5F3FF 100%)',
-                        fontSize: '0.9rem',
-                        lineHeight: 1.5,
-                        color: 'var(--color-text-main)',
-                    }}
-                >
-                    <span style={{ fontSize: '0.7rem', fontWeight: '800', color: '#7E22CE', letterSpacing: '0.06em', textTransform: 'uppercase', display: 'block', marginBottom: '0.5rem' }}>
-                        Your context
-                    </span>
-                    {profileIntro.trim() ? <p style={{ margin: 0 }}>{profileIntro}</p> : null}
-                    {typeof aiQuerySummary === 'string' && aiQuerySummary.trim() && !aiLoading ? (
-                        <p style={{ margin: profileIntro.trim() ? '0.75rem 0 0' : 0 }}>{aiQuerySummary.trim()}</p>
-                    ) : null}
-                </div>
-            )}
-
             {/* Smart Search */}
-            <div style={{ maxWidth: '640px', margin: '0 auto 2rem' }}>
+            <div style={{ margin: '0 auto 2rem' }}>
             <form
                 onSubmit={handleSmartSearch}
                 style={{
@@ -648,7 +652,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     type="text"
                     value={searchQuery}
                     onChange={(e) => { setSearchQuery(e.target.value); if (!e.target.value.trim()) setSubmittedQuery(''); }}
-                    placeholder="Ask a question, search for a product, or type a health symptom..."
+                    placeholder="Type in any product you're looking for..."
                     style={{
                         flex: '1 1 200px',
                         minWidth: 0,
@@ -661,238 +665,35 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     }}
                     aria-label="Search products and articles"
                 />
-                {speech.supported && (
-                    <SearchMicButton
-                        isRecording={speech.isRecording}
-                        onClick={toggleVoiceSearch}
-                        size="compact"
-                    />
-                )}
-                <button type="submit" style={{
-                    background: 'var(--color-primary)',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: 'var(--radius-pill)',
-                    padding: '0.7rem 1.4rem',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    flexShrink: 0,
-                }}>
-                    Search
-                </button>
             </form>
-            {speech.isRecording && (
-                <p
-                    style={{
-                        marginTop: '0.65rem',
-                        fontSize: '0.85rem',
-                        color: 'var(--color-text-muted)',
-                        lineHeight: 1.45,
-                        paddingLeft: '0.15rem',
-                    }}
-                    aria-live="polite"
-                >
-                    {speech.liveText ? (
-                        <>
-                            <strong style={{ color: 'var(--color-text-main)' }}>Listening:</strong> {speech.liveText}
-                        </>
-                    ) : (
-                        'Listening… describe what you need or ask for product ideas.'
-                    )}
-                </p>
-            )}
-            </div>
-
-            {/* Macro group filter */}
-            <div style={{ marginBottom: '1rem' }}>
-                <p style={{ textAlign: 'center', fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--color-text-muted)', marginBottom: '0.6rem' }}>Browse by health area</p>
-                <div className="discovery-filter-row" style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-                    {MACRO_GROUPS.map(g => (
-                        <button key={g.id} onClick={() => { setMacroGroup(g.id); setCategoryFilter('all'); }} style={{
-                            padding: '0.45rem 1rem', borderRadius: 'var(--radius-pill)', fontSize: '0.82rem',
-                            fontWeight: '500', border: '1px solid var(--color-border)',
-                            background: macroGroup === g.id ? 'var(--color-primary)' : 'transparent',
-                            color: macroGroup === g.id ? 'white' : 'var(--color-text-main)',
-                            cursor: 'pointer', transition: 'all 0.2s'
-                        }}>
-                            {g.icon} {g.label}
-                        </button>
-                    ))}
-                </div>
-            </div>
-
-            {/* Sub-category pills — only shown when a group with multiple categories is selected */}
-            {macroGroup !== 'all' && activeMacroGroup?.categories.length > 1 && (
-                <div className="discovery-filter-row" style={{ display: 'flex', gap: '0.4rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
-                    <button onClick={() => setCategoryFilter('all')} style={{
-                        padding: '0.3rem 0.85rem', borderRadius: 'var(--radius-pill)', fontSize: '0.78rem',
-                        fontWeight: '500', border: '1px solid var(--color-border)',
-                        background: categoryFilter === 'all' ? 'var(--color-surface-contrast)' : 'transparent',
-                        color: categoryFilter === 'all' ? 'white' : 'var(--color-text-muted)',
-                        cursor: 'pointer', transition: 'all 0.2s'
-                    }}>All</button>
-                    {activeMacroGroup.categories.map(c => (
-                        <button key={c} onClick={() => setCategoryFilter(c)} style={{
-                            padding: '0.3rem 0.85rem', borderRadius: 'var(--radius-pill)', fontSize: '0.78rem',
-                            fontWeight: '500', border: '1px solid var(--color-border)',
-                            background: categoryFilter === c ? 'var(--color-surface-contrast)' : 'transparent',
-                            color: categoryFilter === c ? 'white' : 'var(--color-text-muted)',
-                            cursor: 'pointer', transition: 'all 0.2s'
-                        }}>
-                            {CATEGORY_LABELS[c] || c}
-                        </button>
-                    ))}
-                </div>
-            )}
-
-            {/* Type + personalization filters — separate from categories */}
-            <div className="discovery-filter-row" style={{ display: 'flex', gap: '0.6rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: 'var(--spacing-lg)', paddingTop: '0.5rem', borderTop: '1px solid var(--color-border)' }}>
-                <span style={{ fontSize: '0.72rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--color-text-muted)', alignSelf: 'center', flexShrink: 0 }}>Filter by:</span>
-                {recommendedSet.size > 0 && (
-                    <button onClick={() => setPersonalizationFilter(!personalizationFilter)} style={{
-                        padding: '0.4rem 1rem', borderRadius: 'var(--radius-pill)', fontSize: '0.82rem',
-                        fontWeight: '500', border: '1px solid var(--color-border)',
-                        background: personalizationFilter ? 'var(--color-primary)' : 'transparent',
-                        color: personalizationFilter ? 'white' : 'var(--color-text-main)',
-                        cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '0.35rem'
-                    }}>✨ For you</button>
-                )}
-                {TYPE_FILTERS.map(t => (
-                    <button key={t} onClick={() => setTypeFilter(t)} style={{
-                        padding: '0.4rem 1rem', borderRadius: 'var(--radius-pill)', fontSize: '0.82rem',
-                        fontWeight: '500', border: '1px solid var(--color-border)',
-                        background: typeFilter === t ? 'var(--color-surface-contrast)' : 'transparent',
-                        color: typeFilter === t ? 'white' : 'var(--color-text-main)',
-                        cursor: 'pointer', transition: 'all 0.2s'
-                    }}>
-                        {t === 'all' ? 'All types' : t.charAt(0).toUpperCase() + t.slice(1)}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', justifyContent: 'center', marginTop: '1rem' }}>
+                {searchSuggestions.map((term) => (
+                    <button
+                        key={term}
+                        type="button"
+                        onClick={() => runSearch(term)}
+                        style={{
+                            padding: '0.5rem 1rem',
+                            borderRadius: 'var(--radius-pill)',
+                            border: '1px solid var(--color-border)',
+                            background: 'var(--color-surface-soft)',
+                            color: 'var(--color-text-main)',
+                            fontSize: '0.85rem',
+                            cursor: 'pointer',
+                        }}
+                    >
+                        {term}
                     </button>
                 ))}
             </div>
-
-            {categoryFilter === 'pad' && (
-                <div style={{ marginBottom: 'var(--spacing-lg)', padding: '1rem', background: 'var(--color-surface-soft)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)' }}>
-                    <p style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>Narrow by pad type</p>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginRight: '0.25rem' }}>Flow:</span>
-                        {PAD_FLOW_OPTIONS.map(o => (
-                            <button key={o.value} onClick={() => setPadFlowFilter(o.value)} style={{
-                                padding: '0.3rem 0.75rem', borderRadius: 'var(--radius-pill)', fontSize: '0.75rem',
-                                fontWeight: '500', border: '1px solid var(--color-border)',
-                                background: padFlowFilter === o.value ? 'var(--color-primary)' : 'transparent',
-                                color: padFlowFilter === o.value ? 'white' : 'var(--color-text-main)',
-                                cursor: 'pointer', transition: 'all 0.2s'
-                            }}>{o.label}</button>
-                        ))}
-                    </div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginRight: '0.25rem' }}>Preference:</span>
-                        {PAD_PREFERENCE_OPTIONS.map(o => (
-                            <button key={o.value} onClick={() => setPadPreferenceFilter(o.value)} style={{
-                                padding: '0.3rem 0.75rem', borderRadius: 'var(--radius-pill)', fontSize: '0.75rem',
-                                fontWeight: '500', border: '1px solid var(--color-border)',
-                                background: padPreferenceFilter === o.value ? 'var(--color-primary)' : 'transparent',
-                                color: padPreferenceFilter === o.value ? 'white' : 'var(--color-text-main)',
-                                cursor: 'pointer', transition: 'all 0.2s'
-                            }}>{o.label}</button>
-                        ))}
-                    </div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginRight: '0.25rem' }}>Use case:</span>
-                        {PAD_USE_CASE_OPTIONS.map(o => (
-                            <button key={o.value} onClick={() => setPadUseCaseFilter(o.value)} style={{
-                                padding: '0.3rem 0.75rem', borderRadius: 'var(--radius-pill)', fontSize: '0.75rem',
-                                fontWeight: '500', border: '1px solid var(--color-border)',
-                                background: padUseCaseFilter === o.value ? 'var(--color-primary)' : 'transparent',
-                                color: padUseCaseFilter === o.value ? 'white' : 'var(--color-text-main)',
-                                cursor: 'pointer', transition: 'all 0.2s'
-                            }}>{o.label}</button>
-                        ))}
-                    </div>
-                </div>
-            )}
-
-            {categoryFilter === 'supplement' && (
-                <div style={{ marginBottom: 'var(--spacing-lg)', padding: '1rem', background: 'var(--color-surface-soft)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)' }}>
-                    <p style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>Browse by symptom</p>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                        <button onClick={() => setSymptomFilter('all')} style={{
-                            padding: '0.3rem 0.75rem', borderRadius: 'var(--radius-pill)', fontSize: '0.75rem',
-                            fontWeight: '500', border: '1px solid var(--color-border)',
-                            background: symptomFilter === 'all' ? 'var(--color-primary)' : 'transparent',
-                            color: symptomFilter === 'all' ? 'white' : 'var(--color-text-main)',
-                            cursor: 'pointer', transition: 'all 0.2s'
-                        }}>All</button>
-                        {Object.keys(SYMPTOM_TO_SUPPLEMENTS).map(symptom => (
-                            <button key={symptom} onClick={() => setSymptomFilter(symptom)} style={{
-                                padding: '0.3rem 0.75rem', borderRadius: 'var(--radius-pill)', fontSize: '0.75rem',
-                                fontWeight: '500', border: '1px solid var(--color-border)',
-                                background: symptomFilter === symptom ? 'var(--color-primary)' : 'transparent',
-                                color: symptomFilter === symptom ? 'white' : 'var(--color-text-main)',
-                                cursor: 'pointer', transition: 'all 0.2s'
-                            }}>{symptom.charAt(0).toUpperCase() + symptom.slice(1)}</button>
-                        ))}
-                    </div>
-                </div>
-            )}
-
-            {showFindPadModal && (
-                <FindYourPadModal
-                    onClose={() => setShowFindPadModal(false)}
-                    onFind={(opts) => {
-                        setPadFlowFilter(opts.initialPadFlow || 'all');
-                        setPadPreferenceFilter(opts.initialPadPreference || 'all');
-                        setPadUseCaseFilter(opts.initialPadUseCase || 'all');
-                        setShowFindPadModal(false);
-                    }}
-                />
-            )}
-
-            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
-                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', margin: 0, textAlign: 'center', maxWidth: '640px', lineHeight: 1.45 }}>
-                    {qTrimForAi.length >= 2 && aiLoading ? (
-                        <>Searching for &ldquo;{searchQuery}&rdquo;…</>
-                    ) : aiError && qTrimForAi.length >= 2 ? (
-                        <>Showing {Math.min(visibleCount, gridItems.length)} of {gridItems.length} result{gridItems.length !== 1 ? 's' : ''}. {aiError}</>
-                    ) : (
-                        <>Showing {Math.min(visibleCount, gridItems.length)} of {gridItems.length} result{gridItems.length !== 1 ? 's' : ''}</>
-                    )}
-                </p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <label htmlFor="discovery-sort" style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', fontWeight: '500' }}>Sort by:</label>
-                    <select
-                        id="discovery-sort"
-                        value={sortBy}
-                        onChange={(e) => setSortBy(e.target.value)}
-                        style={{
-                            padding: '0.4rem 0.75rem',
-                            borderRadius: 'var(--radius-md)',
-                            border: '1px solid var(--color-border)',
-                            fontSize: '0.9rem',
-                            background: 'var(--color-surface-soft)',
-                            color: 'var(--color-text-main)',
-                            cursor: 'pointer'
-                        }}
-                    >
-                        {SORT_OPTIONS.map(opt => (
-                            <option key={opt.value} value={opt.value}>{opt.label}</option>
-                        ))}
-                    </select>
-                </div>
             </div>
 
             {/* Loading state for explicit search */}
             {searchSubmitted && aiLoading && (
                 <>
-                    <div style={{ textAlign: 'center', padding: '1.5rem 1rem 1rem', color: 'var(--color-text-muted)' }}>
-                        <p style={{ fontSize: '1.05rem', fontWeight: 600, color: 'var(--color-text-main)', marginBottom: '0.4rem' }}>
-                            Finding the best products for &ldquo;{searchQuery}&rdquo;
-                        </p>
-                        <p style={{ fontSize: '0.9rem' }}>Searching our catalog and generating matches…</p>
-                    </div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', justifyContent: 'center' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(252px, 1fr))', gap: '1.5rem' }}>
                         {Array.from({ length: 8 }, (_, i) => (
-                            <div key={i} className="card" style={{ padding: 0, overflow: 'hidden', width: '252px', border: '1px solid var(--color-border)' }} aria-hidden="true">
+                            <div key={i} className="card" style={{ padding: 0, overflow: 'hidden', border: '1px solid var(--color-border)' }} aria-hidden="true">
                                 <div className="skeleton-shimmer" style={{ height: '118px', width: '100%' }} />
                                 <div style={{ padding: '0.9rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                     <div className="skeleton-shimmer" style={{ height: '0.7rem', width: '40%', borderRadius: '4px' }} />
@@ -909,14 +710,13 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             {/* Product Grid */}
             {(!searchSubmitted || !aiLoading) && (
             <>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', justifyContent: 'center' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(252px, 1fr))', gap: '1.5rem' }}>
                 {gridItems.slice(0, visibleCount).map((item, idx) => {
                     const isStartup = item.isStartup === true;
                     const releasedStartup = isStartup && item.productReleased === true;
                     const isInEcosystem = !!myProducts[item.id];
                     const isJoined = isStartup && !releasedStartup && !!joinedWaitlists[item.id];
                     const perUnitPrice = getPricePerUnitLabel(item);
-                    const safetySignal = getSafetySignal(item);
 
                     const cardImageSrc = resolvedImages[item.id] || item.image;
                     // Distinguishes "still fetching an image" from "resolved, none
@@ -927,7 +727,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     return (
                         <div key={item.id} className="card hover-lift" style={{
                             padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column',
-                            width: '252px', animation: `fadeInUp 0.4s ${Math.min(idx * 0.05, 0.3)}s backwards`,
+                            animation: `fadeInUp 0.4s ${Math.min(idx * 0.05, 0.3)}s backwards`,
                             border: (isInEcosystem || isJoined) ? '2px solid var(--color-primary)' : '1px solid var(--color-border)'
                         }}>
                             <div style={{ height: '118px', width: '100%', overflow: 'hidden', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-secondary-fade, #fdf2f4)' }}>
@@ -955,13 +755,31 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                     </div>
                                 )}
                                 <div style={{ position: 'absolute', top: '0.5rem', left: '0.5rem', display: 'flex', gap: '0.3rem' }}>
-                                    <span style={{
-                                        background: isStartup ? 'var(--color-primary-hover)' : (item.type === 'physical' ? 'var(--color-surface-contrast)' : 'var(--color-primary)'),
-                                        color: 'white', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)',
-                                        fontSize: '0.65rem', fontWeight: '600', textTransform: 'uppercase'
-                                    }}>
-                                        {isStartup ? 'Startup' : item.type}
-                                    </span>
+                                    {isStartup ? (
+                                        <span style={{
+                                            background: 'var(--color-primary-hover)',
+                                            color: 'white', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)',
+                                            fontSize: '0.65rem', fontWeight: '600', textTransform: 'uppercase'
+                                        }}>
+                                            Startup
+                                        </span>
+                                    ) : item.category === 'telehealth' ? (
+                                        <span style={{
+                                            background: 'var(--color-primary)',
+                                            color: 'white', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)',
+                                            fontSize: '0.65rem', fontWeight: '600', textTransform: 'uppercase'
+                                        }}>
+                                            Telehealth
+                                        </span>
+                                    ) : item.type === 'digital' ? (
+                                        <span style={{
+                                            background: 'var(--color-primary)',
+                                            color: 'white', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)',
+                                            fontSize: '0.65rem', fontWeight: '600', textTransform: 'uppercase'
+                                        }}>
+                                            App
+                                        </span>
+                                    ) : null}
                                     {item.isEmergingBrand && (
                                         <span style={{
                                             background: 'var(--color-primary)', color: 'white',
@@ -1005,17 +823,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                     {CATEGORY_LABELS[item.category] || (item.category && item.category.charAt(0) + item.category.slice(1)) || 'Startup'}
                                 </span>
                                 <h3 style={{ fontSize: '1.05rem', marginBottom: '0.25rem' }}>{item.name}</h3>
-                                {safetySignal && (
-                                    <span style={{
-                                        display: 'inline-flex', alignItems: 'center', gap: '0.35rem', alignSelf: 'flex-start',
-                                        background: safetySignal.bg, color: safetySignal.color,
-                                        padding: '0.15rem 0.55rem', borderRadius: 'var(--radius-pill)',
-                                        fontSize: '0.68rem', fontWeight: '700', marginBottom: '0.5rem'
-                                    }}>
-                                        <span style={{ width: '0.45rem', height: '0.45rem', borderRadius: '50%', background: safetySignal.dot, flexShrink: 0 }} />
-                                        {safetySignal.label}
-                                    </span>
-                                )}
                                 {item.outOfBusiness && (
                                     <div style={{ marginBottom: '0.75rem', padding: '0.5rem 0.75rem', background: '#374151', color: 'white', borderRadius: 'var(--radius-md)', fontSize: '0.8rem', fontWeight: '700' }}>
                                         No longer sold — company closed. Listing kept for safety info if you have this product.
@@ -1162,9 +969,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             {/* Related searches */}
             {searchSubmitted && !aiLoading && aiRelatedSearches.length > 0 && (
                 <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-                    <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.65rem', fontWeight: 600 }}>
-                        You might also explore
-                    </p>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', justifyContent: 'center' }}>
                         {aiRelatedSearches.map((term) => (
                             <button

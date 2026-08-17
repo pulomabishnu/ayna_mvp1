@@ -742,7 +742,12 @@ export const DIGITAL_PRODUCTS = [
     },
 ];
 
-// Master list combining all sources (MVP categories prioritized with mvpProducts)
+// Master list combining all sources (MVP categories prioritized with mvpProducts).
+// Ayna only does OTC health products and telehealth — prescription-only items
+// (birth control requiring an Rx, HRT patches/inserts, clinician-administered
+// devices like IUDs, etc.) are filtered out here so no surface in the app can
+// ever show one, rather than relying on each consumer to remember to gate them.
+// See isRxOnlyProduct below.
 export const ALL_PRODUCTS = [
     ...PHYSICAL_PRODUCTS,
     ...DIGITAL_PRODUCTS,
@@ -756,7 +761,7 @@ export const ALL_PRODUCTS = [
     ...FILLER_DIGITAL,
     ...MENSTRUAL_PHYSICAL,
     ...BRAND_PRODUCTS
-];
+].filter((p) => !isRxOnlyProduct(p));
 
 /**
  * Map user-listed current products to closest products already in the catalog.
@@ -980,6 +985,25 @@ export function isPrescriptionRestrictedProduct(p) {
     return false;
 }
 
+/**
+ * True for any prescription-only item, with no exceptions (unlike
+ * isPrescriptionRestrictedProduct, which waives items that carry official
+ * manufacturer access URLs). Ayna doesn't sell or dispense prescriptions —
+ * shopping/recommendation surfaces should never show these as buyable
+ * products, even when a savings/patient link or telehealth care path exists
+ * for them. Search for what they treat (e.g. "hormone replacement therapy")
+ * should surface telehealth providers instead — see findTelehealthAccessForProduct.
+ */
+export function isRxOnlyProduct(p) {
+    if (!p) return false;
+    if (p.category === 'telehealth') return false;
+    if (p.requiresPrescription === true) return true;
+    const wtb = (p.whereToBuy || []).map((x) => String(x).toLowerCase());
+    // Covers both pharmacy-dispensed prescriptions and clinician-administered
+    // devices/procedures (e.g. IUD insertion) — neither is something Ayna sells.
+    return wtb.some((s) => s.includes('pharmacy with prescription') || s.includes('clinic insertion') || s.includes('clinic administered'));
+}
+
 let _telehealthCatalog = null;
 function getTelehealthCatalog() {
     if (!_telehealthCatalog) {
@@ -1038,12 +1062,10 @@ export function findTelehealthAccessForProduct(p) {
 }
 
 function shouldExcludePrescriptionWithoutCarePath(p) {
-    if (!isPrescriptionRestrictedProduct(p)) return false;
-    if (p.prescriptionPatientUrl || p.prescriptionSavingsUrl) return false;
-    return !findTelehealthAccessForProduct(p);
+    return isRxOnlyProduct(p);
 }
 
-function filterPrescriptionCareGate(products) {
+export function filterPrescriptionCareGate(products) {
     return (products || []).filter((p) => !shouldExcludePrescriptionWithoutCarePath(p));
 }
 

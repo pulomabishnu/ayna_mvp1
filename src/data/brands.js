@@ -22,6 +22,7 @@ export const BRAND_PRODUCTS = [
         price: '$15',
         whereToBuy: ['Walgreens'],
         url: 'https://hellowinx.com/',
+        image: 'https://cdn.shopify.com/s/files/1/0077/8761/0171/files/UTITest_Treat_1.png?v=1771347569',
         summary: 'An at-home UTI test paired with Winx Rx, the brand\'s own telehealth service — check symptoms with a rapid test, then connect to a licensed provider for prescription treatment if needed. Recognized as a TIME Best Invention.',
         safety: {
             fdaStatus: 'Consumer diagnostic test; any prescription treatment is issued by a licensed telehealth provider, not the test itself.',
@@ -78,6 +79,7 @@ export const BRAND_PRODUCTS = [
         price: '$99 starter kit (or $84.15/mo subscription)',
         whereToBuy: [], // direct-to-consumer only; the url field above covers the official site link
         url: 'https://goodkittyco.com/',
+        image: 'https://cdn.prod.website-files.com/66dc11fd6ea52df0b92e5e5c/670589c8dcbf01c1fa271073_Frame%201000001813%20(1).png',
         summary: 'A daily UTI-prevention capsule combining D-mannose, soluble cranberry PACs, vitamin D3, and zinc — designed for people prone to recurrent UTIs who want a preventive daily routine rather than only reactive treatment.',
         safety: {
             fdaStatus: 'Dietary supplement; not FDA-evaluated for disease treatment (standard supplement disclaimer).',
@@ -106,6 +108,7 @@ export const BRAND_PRODUCTS = [
         price: '$119',
         whereToBuy: [], // direct-to-consumer only; the url field above covers the official site link
         url: 'https://oboo.love/',
+        image: 'https://cdn.shopify.com/s/files/1/0620/2726/8149/files/WooshOpt1.webp?v=1776054530',
         summary: 'A warming pleasure wand designed for perimenopausal and menopausal women navigating changes in arousal and vaginal dryness — part of Oboo\'s "midlife-friendly, body-smart, shame-free" intimate wellness line, which also includes daily and arousal moisturizers.',
         safety: {
             fdaStatus: 'Personal pleasure device; not a medical device.',
