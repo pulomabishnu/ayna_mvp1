@@ -866,7 +866,7 @@ function App() {
           aria-label="Primary"
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '1.2rem', fontWeight: '700', color: 'var(--color-primary)', cursor: 'pointer' }} onClick={navigateHome}>
+            <div className="app-nav__logo" style={{ color: 'var(--color-primary)', cursor: 'pointer' }} onClick={navigateHome}>
               Ayna
             </div>
 
@@ -959,16 +959,16 @@ function App() {
 
             {/* Public research tools */}
             <div className="app-nav__research-cluster desktop-only">
-              <button style={{ fontSize: '1rem', fontWeight: (currentView === 'discovery' || currentView === 'hero') ? '700' : '500', color: currentView === 'discovery' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem' }} onClick={() => handleViewDiscovery('')}>
+              <button className={`app-nav__tab ${(currentView === 'discovery' || currentView === 'hero') ? 'app-nav__tab--active' : ''}`} onClick={() => handleViewDiscovery('')}>
                 Product Discovery
               </button>
-              <button style={{ fontSize: '1rem', fontWeight: '500', color: currentView === 'waitlist' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem' }} onClick={handleViewWaitlist}>
-                Startups
+              <button className={`app-nav__tab ${currentView === 'waitlist' ? 'app-nav__tab--active' : ''}`} onClick={handleViewWaitlist}>
+                Brands
               </button>
-              <button style={{ fontSize: '1rem', fontWeight: '500', color: currentView === 'deeptech' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem' }} onClick={handleViewDeeptech}>
-                Deeptech
+              <button className={`app-nav__tab ${currentView === 'deeptech' ? 'app-nav__tab--active' : ''}`} onClick={handleViewDeeptech}>
+                More Info
               </button>
-              <button style={{ fontSize: '1rem', fontWeight: '500', color: currentView === 'articles' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem' }} onClick={handleViewArticles}>
+              <button className={`app-nav__tab ${currentView === 'articles' ? 'app-nav__tab--active' : ''}`} onClick={handleViewArticles}>
                 My Health Library
               </button>
 
@@ -1110,8 +1110,8 @@ function App() {
               My Ecosystem {ecosystemCount > 0 && <span className="nav-ecosystem__pill">{ecosystemCount}</span>}
             </button>
             <button className="mobile-drawer-item" onClick={() => { handleViewDiscovery(''); setMobileMenuOpen(false); }}>Product Discovery</button>
-            <button className="mobile-drawer-item" onClick={() => { handleViewWaitlist(); setMobileMenuOpen(false); }}>Startups</button>
-            <button className="mobile-drawer-item" onClick={() => { handleViewDeeptech(); setMobileMenuOpen(false); }}>Deeptech</button>
+            <button className="mobile-drawer-item" onClick={() => { handleViewWaitlist(); setMobileMenuOpen(false); }}>Brands</button>
+            <button className="mobile-drawer-item" onClick={() => { handleViewDeeptech(); setMobileMenuOpen(false); }}>More Info</button>
             <button className="mobile-drawer-item" onClick={() => { handleViewArticles(); setMobileMenuOpen(false); }}>My Health Library</button>
             <button className="mobile-drawer-item" onClick={() => { handleViewHowWeMakeMoney(); setMobileMenuOpen(false); }}>How We Make Money</button>
             <button className="mobile-drawer-item" onClick={() => { setShowCheckin(true); setMobileMenuOpen(false); }}>Check-in{checkinDue ? ' •' : ''}</button>
