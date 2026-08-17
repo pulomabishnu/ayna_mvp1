@@ -35,6 +35,7 @@ import { loadHealthIntakeForCurrentUser, saveHealthIntakeForCurrentUser } from '
 import { mapIntakeToLegacyQuizProfile } from './utils/healthIntake';
 import AuthGate from './components/AuthGate';
 import PrivacyPolicy from './components/PrivacyPolicy';
+import HowWeMakeMoney from './components/HowWeMakeMoney';
 import TermsOfUse from './components/TermsOfUse';
 import AuthCallback from './components/AuthCallback';
 import EmailConfirmed from './components/EmailConfirmed';
@@ -56,6 +57,7 @@ const VIEW_TO_PATH = {
   'doctor-prep': '/appointment-prep', 'profile-edit': '/profile', 'phone-verify': '/text-ayna', tracked: '/tracked',
   'privacy-policy': '/privacy-policy',
   'terms-of-use': '/terms-of-use',
+  'how-we-make-money': '/how-we-make-money',
   'auth-callback': '/auth/callback',
   'confirmed': '/confirmed',
 };
@@ -1155,6 +1157,9 @@ function App() {
         {currentView === 'terms-of-use' && (
           <TermsOfUse onBack={() => window.history.back()} />
         )}
+        {currentView === 'how-we-make-money' && (
+          <HowWeMakeMoney onBack={() => window.history.back()} />
+        )}
         {currentView === 'auth-callback' && (
           <AuthCallback onAuthenticated={(user) => {
             setUser(user);
@@ -1420,6 +1425,8 @@ function App() {
           <button type="button" onClick={() => setCurrentView('privacy-policy')} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: 'inherit', textDecoration: 'underline', fontSize: 'inherit', fontFamily: 'inherit' }}>Privacy Policy</button>
           {' · '}
           <button type="button" onClick={() => setCurrentView('terms-of-use')} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: 'inherit', textDecoration: 'underline', fontSize: 'inherit', fontFamily: 'inherit' }}>Terms of Use</button>
+          {' · '}
+          <button type="button" onClick={() => setCurrentView('how-we-make-money')} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: 'inherit', textDecoration: 'underline', fontSize: 'inherit', fontFamily: 'inherit' }}>How We Make Money</button>
         </footer>
       )}
     </div>
