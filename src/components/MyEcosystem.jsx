@@ -11,8 +11,6 @@ import { getInteractions } from '../data/interactions';
 import CareNearYouPanel from './CareNearYouPanel';
 import LlmRecommendationsLoadingBlock from './LlmRecommendationsLoadingBlock';
 import HealthDataImport from './HealthDataImport';
-import { inferTagsFromHealthProfile } from '../utils/healthDataProfile';
-import { RELEASED_STARTUPS, UNRELEASED_STARTUPS } from '../data/startups';
 import { generateTieredRecommendations } from '../utils/recommendationEngine';
 import {
     fetchLlmRecommendations,
@@ -1047,43 +1045,6 @@ export default function MyEcosystem({
     const myProductIds = ecosystemOrder.length ? ecosystemOrder.filter(id => myProducts[id]) : Object.keys(myProducts);
     const myProductList = myProductIds.map(id => myProducts[id]).filter(Boolean);
     const { functionMap } = useMemo(() => detectDuplicates(myProductIds, myProducts), [myProductIds, myProducts]);
-    const ecosystemStartups = useMemo(() => {
-        const FRUSTRATION_TAG = {
-            'Heavy flow': 'heavy-flow', 'Painful cramps': 'cramps', 'Hormonal bloating': 'bloating',
-            'Irregular cycles': 'irregular', 'Leaks & staining': 'leaks', 'General discomfort': 'discomfort',
-            'Not sure if products are safe': 'safety-concern', 'Recurrent UTIs': 'uti', 'PCOS symptoms': 'pcos',
-            'Pelvic pain': 'pelvic-floor', 'Menopause symptoms': 'menopause', 'Endometriosis': 'endometriosis',
-            'Fertility / TTC': 'fertility', 'Pregnancy': 'pregnancy', 'Postpartum recovery': 'postpartum',
-        };
-        const userTags = new Set();
-        (quizResults?.frustrations || []).forEach(f => { const t = FRUSTRATION_TAG[f]; if (t) userTags.add(t); });
-        (inferTagsFromHealthProfile(healthProfile) || []).forEach(t => userTags.add(t));
-
-        const alreadyInEcosystem = new Set(myProductList.map(p => (p.name || '').toLowerCase()));
-
-        function scoreList(list) {
-            return list
-                .filter(s => !alreadyInEcosystem.has(s.name.toLowerCase()))
-                .map(s => {
-                    let score = 0;
-                    (s.tags || []).forEach(t => { if (userTags.has(t)) score += 2; });
-                    (s.healthFunctions || []).forEach(fn => {
-                        if (Object.keys(functionMap).includes(fn)) score += 1;
-                    });
-                    return { ...s, _score: score };
-                })
-                .sort((a, b) => b._score - a._score)
-                .slice(0, 6);
-        }
-
-        return {
-            // US-available brands: show all (score just determines order), no score gate
-            brands: scoreList(RELEASED_STARTUPS),
-            // Not-yet-US startups: only show if relevant to the user (score > 0)
-            startups: scoreList(UNRELEASED_STARTUPS).filter(s => s._score > 0),
-        };
-    }, [myProductList, quizResults, healthProfile, functionMap]);
-
     const estimatedMonthlyTotal = useMemo(() => {
         let total = 0;
         let counted = 0;
@@ -1547,7 +1508,7 @@ export default function MyEcosystem({
             .flatMap((s) => (Array.isArray(s?.tiers) ? s.tiers : []))
             .flatMap((tier) => [tier?.product, ...(Array.isArray(tier?.alternatives) ? tier.alternatives : [])])
             .filter(Boolean);
-        const productsNeedingImage = [...myProductList, ...ecosystemStartups.brands, ...ecosystemStartups.startups, ...recommendedProducts]
+        const productsNeedingImage = [...myProductList, ...recommendedProducts]
             .filter((p) => p && p.id && p.name)
             .filter((p) => resolvedImages[p.id] === undefined)
             .filter((p) => isPlaceholderProductImage(p.image));
@@ -1555,7 +1516,7 @@ export default function MyEcosystem({
         const cancelledRef = { cancelled: false };
         resolveImagesBounded(productsNeedingImage, cancelledRef);
         return () => { cancelledRef.cancelled = true; };
-    }, [myProductList, ecosystemStartups, recommendedProductsForDisplay, resolvedImages]);
+    }, [myProductList, recommendedProductsForDisplay, resolvedImages]);
 
 
     const toggleEcosystemCompare = useCallback((k) => {
@@ -2086,75 +2047,6 @@ export default function MyEcosystem({
                                 </button>
                             </div>
                         )}
-                    </div>
-                )}
-
-                {/* US-available brands — not startups, regular products you can buy now */}
-                {!llmLoading && ecosystemStartups.brands.length > 0 && (
-                    <div style={{ marginBottom: '1.75rem', maxWidth: '1200px', margin: '0 auto 1.75rem' }}>
-                        <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            🛍️ Women's Health Brands
-                        </h3>
-                        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>Brands with products available now, matched to your profile.</p>
-                        <div className="ecosystem-product-grid">
-                            {ecosystemStartups.brands.map(brand => (
-                                <a key={brand.id} href={brand.url} target="_blank" rel="noopener noreferrer" className="card" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '0.85rem 1rem', cursor: 'pointer', textDecoration: 'none', color: 'inherit', height: '100%' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                        <div style={{ width: '44px', height: '44px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0, background: 'var(--color-surface-soft)' }}>
-                                            <img src={resolvedImages[brand.id] || brand.image} alt={brand.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.style.display = 'none'; }} />
-                                        </div>
-                                        <div style={{ flexGrow: 1, minWidth: 0 }}>
-                                            <h4 style={{ fontSize: '0.95rem', marginBottom: '0.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                                                {brand.name}
-                                            </h4>
-                                            <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{brand.tagline}</span>
-                                        </div>
-                                    </div>
-                                    <p style={{ fontSize: '0.8rem', color: 'var(--color-text-main)', margin: 0, lineHeight: '1.35', flex: 1 }}>
-                                        {brand.description}
-                                    </p>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap', marginTop: 'auto' }}>
-                                        <span style={{ fontSize: '0.7rem', fontWeight: '600', color: 'var(--color-primary)', background: 'var(--color-secondary-fade)', padding: '0.15rem 0.4rem', borderRadius: 'var(--radius-pill)' }}>{brand.stage}</span>
-                                        <span style={{ fontSize: '0.7rem', color: 'var(--color-primary)', marginLeft: 'auto' }}>Shop now →</span>
-                                    </div>
-                                </a>
-                            ))}
-                        </div>
-                    </div>
-                )}
-
-                {/* Non-US startups — waitlist / coming soon */}
-                {!llmLoading && ecosystemStartups.startups.length > 0 && (
-                    <div style={{ marginBottom: '1.75rem', maxWidth: '1200px', margin: '0 auto 1.75rem' }}>
-                        <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            🚀 Startups relevant to you
-                        </h3>
-                        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>Curated women's health startups matched to your profile.</p>
-                        <div className="ecosystem-product-grid">
-                            {ecosystemStartups.startups.map(startup => (
-                                <a key={startup.id} href={startup.url} target="_blank" rel="noopener noreferrer" className="card" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '0.85rem 1rem', cursor: 'pointer', textDecoration: 'none', color: 'inherit', height: '100%' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                        <div style={{ width: '44px', height: '44px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0, background: 'var(--color-surface-soft)' }}>
-                                            <img src={resolvedImages[startup.id] || startup.image} alt={startup.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.style.display = 'none'; }} />
-                                        </div>
-                                        <div style={{ flexGrow: 1, minWidth: 0 }}>
-                                            <h4 style={{ fontSize: '0.95rem', marginBottom: '0.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                                                {startup.name}
-                                                <span style={{ fontSize: '0.65rem', fontWeight: '600', textTransform: 'uppercase', padding: '0.15rem 0.4rem', borderRadius: 'var(--radius-pill)', background: 'var(--color-primary-hover)', color: 'white' }}>Startup</span>
-                                            </h4>
-                                            <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{startup.tagline}</span>
-                                        </div>
-                                    </div>
-                                    <p style={{ fontSize: '0.8rem', color: 'var(--color-text-main)', margin: 0, lineHeight: '1.35', flex: 1 }}>
-                                        {startup.description}
-                                    </p>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap', marginTop: 'auto' }}>
-                                        <span style={{ fontSize: '0.7rem', fontWeight: '600', color: 'var(--color-primary)', background: 'var(--color-secondary-fade)', padding: '0.15rem 0.4rem', borderRadius: 'var(--radius-pill)' }}>{startup.stage}</span>
-                                        <span style={{ fontSize: '0.7rem', color: 'var(--color-primary)', marginLeft: 'auto' }}>Learn more →</span>
-                                    </div>
-                                </a>
-                            ))}
-                        </div>
                     </div>
                 )}
 
