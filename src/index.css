@@ -188,9 +188,15 @@ body {
   color: rgba(255, 255, 255, 0.9) !important;
 }
 .app-nav--landing .nav-ecosystem__panel button,
-.app-nav--landing .nav-ecosystem__panel span {
+.app-nav--landing .nav-ecosystem__panel span,
+.app-nav--landing .nav-dropdown__panel button,
+.app-nav--landing .nav-dropdown__panel span {
   color: var(--color-text-main) !important;
   font-family: var(--font-body) !important;
+}
+.app-nav--landing .nav-dropdown__trigger,
+.app-nav--landing .nav-dropdown__trigger--active {
+  color: rgba(255, 255, 255, 0.9) !important;
 }
 .app-nav--landing .nav-account-menu button,
 .app-nav--landing .nav-account-menu span {
@@ -1049,19 +1055,22 @@ html {
 }
 
 /* Header: Ecosystem hover dropdown (Compare, Hidden) */
-.nav-ecosystem {
+.nav-ecosystem,
+.nav-dropdown {
   position: relative;
   display: flex;
   align-items: stretch;
 }
 
-.nav-ecosystem__row {
+.nav-ecosystem__row,
+.nav-dropdown__row {
   display: inline-flex;
   align-items: center;
   gap: 0.05rem;
 }
 
-.nav-ecosystem__trigger {
+.nav-ecosystem__trigger,
+.nav-dropdown__trigger {
   font-family: var(--font-body);
   font-size: 1rem;
   font-weight: 500;
@@ -1074,11 +1083,13 @@ html {
   transition: color var(--transition-fast), background var(--transition-fast);
 }
 
-.nav-ecosystem__trigger:hover {
+.nav-ecosystem__trigger:hover,
+.nav-dropdown__trigger:hover {
   color: var(--color-primary);
 }
 
-.nav-ecosystem__trigger--active {
+.nav-ecosystem__trigger--active,
+.nav-dropdown__trigger--active {
   font-weight: 700;
   color: var(--color-primary);
 }
@@ -1092,7 +1103,8 @@ html {
   font-weight: 600;
 }
 
-.nav-ecosystem__hint {
+.nav-ecosystem__hint,
+.nav-dropdown__hint {
   font-size: 0.55rem;
   opacity: 0.38;
   margin-left: 0.05rem;
@@ -1100,17 +1112,20 @@ html {
   transition: opacity var(--transition-fast), transform var(--transition-fast);
 }
 
-.nav-ecosystem:hover .nav-ecosystem__hint {
+.nav-ecosystem:hover .nav-ecosystem__hint,
+.nav-dropdown:hover .nav-dropdown__hint {
   opacity: 0.72;
 }
 
 @media (hover: none) {
-  .nav-ecosystem__hint {
+  .nav-ecosystem__hint,
+  .nav-dropdown__hint {
     display: none;
   }
 }
 
-.nav-ecosystem__caret-btn {
+.nav-ecosystem__caret-btn,
+.nav-dropdown__caret-btn {
   font-family: var(--font-body);
   font-size: 0.65rem;
   line-height: 1;
@@ -1124,18 +1139,22 @@ html {
 }
 
 .nav-ecosystem__caret-btn:hover,
-.nav-ecosystem__caret-btn:focus-visible {
+.nav-ecosystem__caret-btn:focus-visible,
+.nav-dropdown__caret-btn:hover,
+.nav-dropdown__caret-btn:focus-visible {
   color: var(--color-primary);
   background: var(--color-secondary-fade);
   outline: none;
 }
 
-.nav-ecosystem--caret-open .nav-ecosystem__caret-btn {
+.nav-ecosystem--caret-open .nav-ecosystem__caret-btn,
+.nav-dropdown--caret-open .nav-dropdown__caret-btn {
   color: var(--color-primary);
   transform: rotate(180deg);
 }
 
-.nav-ecosystem__panel {
+.nav-ecosystem__panel,
+.nav-dropdown__panel {
   position: absolute;
   top: calc(100% + 0.35rem);
   left: 0;
@@ -1163,7 +1182,9 @@ html {
 
 @media (hover: hover) {
   .nav-ecosystem:hover .nav-ecosystem__panel,
-  .nav-ecosystem:focus-within .nav-ecosystem__panel {
+  .nav-ecosystem:focus-within .nav-ecosystem__panel,
+  .nav-dropdown:hover .nav-dropdown__panel,
+  .nav-dropdown:focus-within .nav-dropdown__panel {
     opacity: 1;
     visibility: visible;
     transform: translateY(0) scale(1);
@@ -1173,7 +1194,9 @@ html {
 
 @media (hover: none) {
   .nav-ecosystem.nav-ecosystem--open .nav-ecosystem__panel,
-  .nav-ecosystem:focus-within .nav-ecosystem__panel {
+  .nav-ecosystem:focus-within .nav-ecosystem__panel,
+  .nav-dropdown.nav-dropdown--open .nav-dropdown__panel,
+  .nav-dropdown:focus-within .nav-dropdown__panel {
     opacity: 1;
     visibility: visible;
     transform: translateY(0) scale(1);
@@ -1182,19 +1205,24 @@ html {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .nav-ecosystem__panel {
+  .nav-ecosystem__panel,
+  .nav-dropdown__panel {
     transition: opacity 0.12s ease, visibility 0.12s;
     transform: none;
   }
 
   .nav-ecosystem:hover .nav-ecosystem__panel,
   .nav-ecosystem:focus-within .nav-ecosystem__panel,
-  .nav-ecosystem.nav-ecosystem--open .nav-ecosystem__panel {
+  .nav-ecosystem.nav-ecosystem--open .nav-ecosystem__panel,
+  .nav-dropdown:hover .nav-dropdown__panel,
+  .nav-dropdown:focus-within .nav-dropdown__panel,
+  .nav-dropdown.nav-dropdown--open .nav-dropdown__panel {
     transform: none;
   }
 }
 
-.nav-ecosystem__item {
+.nav-ecosystem__item,
+.nav-dropdown__item {
   font-family: var(--font-body);
   font-size: 1rem;
   font-weight: 500;
@@ -1210,13 +1238,16 @@ html {
 }
 
 .nav-ecosystem__item:hover,
-.nav-ecosystem__item:focus-visible {
+.nav-ecosystem__item:focus-visible,
+.nav-dropdown__item:hover,
+.nav-dropdown__item:focus-visible {
   background: var(--color-secondary-fade);
   color: var(--color-primary);
   outline: none;
 }
 
-.nav-ecosystem__item--active {
+.nav-ecosystem__item--active,
+.nav-dropdown__item--active {
   font-weight: 700;
   color: var(--color-primary);
   background: var(--color-secondary-fade);

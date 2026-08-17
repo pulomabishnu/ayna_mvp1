@@ -522,6 +522,7 @@ function App() {
     setCurrentView('discovery');
   };
   const handleViewDeeptech = () => setCurrentView('deeptech');
+  const handleViewHowWeMakeMoney = () => setCurrentView('how-we-make-money');
   const handleViewArticles = () => {
     setSelectedArticleId(null);
     setCurrentView('articles');
@@ -753,6 +754,8 @@ function App() {
   const ecosystemCount = Object.keys(myProducts).length;
   const ecoNavRef = useRef(null);
   const [ecoMenuOpen, setEcoMenuOpen] = useState(false);
+  const aboutNavRef = useRef(null);
+  const [aboutMenuOpen, setAboutMenuOpen] = useState(false);
   const [touchUi, setTouchUi] = useState(
     () => typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches
   );
@@ -782,6 +785,24 @@ function App() {
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
   }, [ecoMenuOpen]);
+
+  useEffect(() => {
+    if (!aboutMenuOpen) return;
+    const close = (e) => {
+      if (aboutNavRef.current && !aboutNavRef.current.contains(e.target)) setAboutMenuOpen(false);
+    };
+    document.addEventListener('pointerdown', close);
+    return () => document.removeEventListener('pointerdown', close);
+  }, [aboutMenuOpen]);
+
+  useEffect(() => {
+    if (!aboutMenuOpen) return;
+    const onKey = (e) => {
+      if (e.key === 'Escape') setAboutMenuOpen(false);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [aboutMenuOpen]);
 
   const handleOpenProduct = (product) => {
     const p = product?.llmGenerated ? enrichLlmProductForDiscovery(product) : product;
@@ -950,6 +971,53 @@ function App() {
               <button style={{ fontSize: '1rem', fontWeight: '500', color: currentView === 'articles' ? 'var(--color-primary)' : 'var(--color-text-main)', padding: '0.2rem 0.4rem' }} onClick={handleViewArticles}>
                 My Health Library
               </button>
+
+              <div
+                ref={aboutNavRef}
+                className={`nav-dropdown ${aboutMenuOpen ? 'nav-dropdown--open' : ''} ${aboutMenuOpen && touchUi ? 'nav-dropdown--caret-open' : ''}`}
+              >
+                <div className="nav-dropdown__row">
+                  <button
+                    type="button"
+                    id="nav-about-trigger"
+                    className={`nav-dropdown__trigger ${currentView === 'how-we-make-money' ? 'nav-dropdown__trigger--active' : ''}`}
+                    aria-haspopup="menu"
+                    aria-expanded={touchUi ? aboutMenuOpen : undefined}
+                    aria-controls="nav-about-menu"
+                  >
+                    About Us
+                    {!touchUi && <span className="nav-dropdown__hint" aria-hidden>▾</span>}
+                  </button>
+                  {touchUi && (
+                    <button
+                      type="button"
+                      className="nav-dropdown__caret-btn"
+                      aria-label="Open About Us menu"
+                      aria-expanded={aboutMenuOpen}
+                      aria-controls="nav-about-menu"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setAboutMenuOpen((v) => !v);
+                      }}
+                    >
+                      ▾
+                    </button>
+                  )}
+                </div>
+                <div className="nav-dropdown__panel" role="menu" id="nav-about-menu" aria-labelledby="nav-about-trigger" style={{ minWidth: '13rem' }}>
+                  <button
+                    type="button"
+                    role="menuitem"
+                    className={`nav-dropdown__item ${currentView === 'how-we-make-money' ? 'nav-dropdown__item--active' : ''}`}
+                    onClick={() => {
+                      setAboutMenuOpen(false);
+                      handleViewHowWeMakeMoney();
+                    }}
+                  >
+                    <span>How We Make Money</span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1045,6 +1113,7 @@ function App() {
             <button className="mobile-drawer-item" onClick={() => { handleViewWaitlist(); setMobileMenuOpen(false); }}>Startups</button>
             <button className="mobile-drawer-item" onClick={() => { handleViewDeeptech(); setMobileMenuOpen(false); }}>Deeptech</button>
             <button className="mobile-drawer-item" onClick={() => { handleViewArticles(); setMobileMenuOpen(false); }}>My Health Library</button>
+            <button className="mobile-drawer-item" onClick={() => { handleViewHowWeMakeMoney(); setMobileMenuOpen(false); }}>How We Make Money</button>
             <button className="mobile-drawer-item" onClick={() => { setShowCheckin(true); setMobileMenuOpen(false); }}>Check-in{checkinDue ? ' •' : ''}</button>
             {user ? (
               <>
