@@ -1595,7 +1595,7 @@
     "product_type": "physical",
     "summary": "D-mannose and botanical blend to help flush bacteria and support urinary tract health. Designed for daily prevention.",
     "price": "$25/month",
-    "image": "https://m.media-amazon.com/images/I/61OixMCv9tL.jpg",
+    "image": "https://cdn.shopify.com/s/files/1/0839/0671/files/3_month.jpg?v=1762457618",
     "url": null,
     "tags": [
       "uti",
@@ -1614,7 +1614,8 @@
       "fdaStatus": "Dietary supplement",
       "materials": "D-mannose, hibiscus, etc.",
       "recalls": "No recalls.",
-      "allergens": "Check label"
+      "allergens": "Check label",
+      "sideEffects": "Generally well tolerated. D-mannose may cause mild diarrhea or stomach upset in some people, especially at higher doses. Use caution if you have kidney disease."
     },
     "doctor_opinion": "D-mannose has evidence for UTI prevention in some women. Use alongside adequate hydration and post-coital voiding.",
     "community_review": "Community discussions on Amazon note satisfaction with recurrent UTI prevention when taken daily.",
@@ -1675,7 +1676,7 @@
     "product_type": "physical",
     "summary": "Affordable D-mannose powder/caps for urinary tract support. Often used as a natural alternative for prevention.",
     "price": "$12 for 60 caps",
-    "image": "https://m.media-amazon.com/images/I/71LXsJxpuHL.jpg",
+    "image": "/ayna_placeholder.png",
     "url": null,
     "tags": [
       "uti",
@@ -1695,7 +1696,8 @@
       "fdaStatus": "Dietary supplement",
       "materials": "D-mannose",
       "recalls": "No recalls.",
-      "allergens": "Vegan caps"
+      "allergens": "Vegan caps",
+      "sideEffects": "Generally well tolerated. May cause mild diarrhea or stomach upset, particularly at higher doses. Use caution if you have kidney disease."
     },
     "doctor_opinion": "D-mannose may help prevent bacterial adherence in the bladder. Discuss with your clinician for recurrent UTIs.",
     "community_review": "Community discussions on Reddit r/HealthyHooha note affordability and effectiveness when used after sex.",
@@ -1755,7 +1757,7 @@
     "product_type": "physical",
     "summary": "Over-the-counter urinary pain relief with methenamine. Helps control bacteria and eases discomfort while you seek care.",
     "price": "$10",
-    "image": "https://m.media-amazon.com/images/I/81y2+nkp9TL.jpg",
+    "image": "https://www.cystex.com/wp-content/uploads/2023/03/cystex-opengraph.png",
     "url": null,
     "tags": [
       "uti",
@@ -1774,7 +1776,8 @@
       "fdaStatus": "OTC drug",
       "materials": "Methenamine, sodium salicylate",
       "recalls": "No recalls.",
-      "allergens": "Check label"
+      "allergens": "Check label",
+      "sideEffects": "May cause mild stomach upset, nausea, or rash in some users. Avoid with a sulfa allergy or significant kidney disease — check with a clinician first."
     },
     "doctor_opinion": "Use only as directed while waiting for a clinician visit. Not a substitute for antibiotics when indicated.",
     "community_review": "Community discussions on Amazon note temporary symptom relief while seeking care.",
@@ -1834,7 +1837,7 @@
     "product_type": "physical",
     "summary": "100% organic cotton pads from Cora. Subscription or one-time. B-Corp, plastic-free packaging.",
     "price": "$12 for 18",
-    "image": "https://m.media-amazon.com/images/I/71NXLBg4MfL.jpg",
+    "image": "https://cdn.shopify.com/s/files/1/0940/5060/files/Logo_33a7614e-134f-4af3-9075-b4ac69ca81a0.png?height=628&pad_color=fefaf8&v=1646873247&width=1200",
     "url": null,
     "tags": [
       "organic",
@@ -1855,7 +1858,8 @@
       "fdaStatus": "FDA-registered",
       "materials": "100% organic cotton",
       "recalls": "No recalls.",
-      "allergens": "Hypoallergenic"
+      "allergens": "Hypoallergenic",
+      "sideEffects": "Organic cotton is generally well tolerated with a low rate of skin irritation. Change regularly during heavy flow and discontinue if you notice redness or itching."
     },
     "doctor_opinion": "Organic cotton reduces exposure to dyes and fragrances that can irritate sensitive skin.",
     "community_review": "Community discussions note satisfaction with subscription quality and reduced skin irritation.",
@@ -1916,7 +1920,7 @@
     "product_type": "physical",
     "summary": "100% organic cotton tampons from Cora. Subscription or one-time. B-Corp, plastic-free packaging.",
     "price": "$10 for 18",
-    "image": "https://m.media-amazon.com/images/I/71gx4HCqZdL.jpg",
+    "image": "https://cdn.shopify.com/s/files/1/0940/5060/files/Logo_33a7614e-134f-4af3-9075-b4ac69ca81a0.png?height=628&pad_color=fefaf8&v=1646873247&width=1200",
     "url": null,
     "tags": [
       "organic",
@@ -1937,7 +1941,8 @@
       "fdaStatus": "FDA-registered",
       "materials": "100% organic cotton",
       "recalls": "No recalls.",
-      "allergens": "Hypoallergenic"
+      "allergens": "Hypoallergenic",
+      "sideEffects": "Organic cotton is generally well tolerated. As with any tampon, leaving one in longer than recommended raises the risk of toxic shock syndrome (TSS) — change every 4-8 hours and use the lowest absorbency your flow needs."
     },
     "doctor_opinion": "Organic cotton reduces exposure to dyes and fragrances that can irritate sensitive skin.",
     "community_review": "Community discussions note satisfaction with subscription quality and reduced skin irritation.",
@@ -2004,7 +2009,7 @@
     "product_type": "physical",
     "summary": "40:1 ratio of myo-inositol and D-chiro inositol. Commonly used for PCOS, cycle regularity, and metabolic support.",
     "price": "$25 for 30 servings",
-    "image": "https://m.media-amazon.com/images/I/71L7TZ-gCLL.jpg",
+    "image": "https://cdn.shopify.com/s/files/1/0412/0094/3266/files/Inositol_Front_Panel_V.A_Rev_1_3_25.png?v=1742858533",
     "url": null,
     "tags": [
       "pcos",
@@ -2025,7 +2030,8 @@
       "materials": "Inositols",
       "recalls": "No recalls.",
       "allergens": "Vegan",
-      "opinionAlerts": "Generally positive reception on Reddit r/PCOS for cycle regularity."
+      "opinionAlerts": "Generally positive reception on Reddit r/PCOS for cycle regularity.",
+      "sideEffects": "Generally well tolerated at typical doses. Occasional mild nausea, gas, or headache reported, especially when starting."
     },
     "doctor_opinion": "Inositol supplementation is often recommended in PCOS for insulin sensitivity and cycle regulation.",
     "community_review": "Community discussions on Reddit r/PCOS note cycle regularization after several months of use.",
@@ -2086,13 +2092,13 @@
   },
   {
     "id": "p-spearmint-pcos",
-    "name": "Spearmint Tea / Capsules",
+    "name": "Traditional Medicinals Organic Spearmint Tea",
     "brand": "Traditional Medicinals",
     "category": "supplement",
     "product_type": "physical",
-    "summary": "Spearmint may help lower free testosterone in PCOS. Often used as tea or capsules twice daily.",
+    "summary": "Spearmint may help lower free testosterone in PCOS. Caffeine-free herbal tea, typically brewed twice daily.",
     "price": "$8–15",
-    "image": "https://m.media-amazon.com/images/I/71TibKCYjxL.jpg",
+    "image": "https://cdn.shopify.com/s/files/1/0506/7037/0997/files/Spearmint-CAN-FF-eng-P103350-01_2.png?v=1775664934",
     "url": null,
     "tags": [
       "pcos",
@@ -2111,7 +2117,8 @@
       "fdaStatus": "Dietary supplement / food",
       "materials": "Spearmint",
       "recalls": "No recalls.",
-      "allergens": "Mint family"
+      "allergens": "Mint family",
+      "sideEffects": "Generally safe as a tea. Some people notice mild stomach upset. Spearmint may reduce milk supply — best avoided while breastfeeding or trying to conceive without a clinician's guidance."
     },
     "doctor_opinion": "Some studies show spearmint tea can reduce androgens in PCOS. Discuss with your provider.",
     "community_review": "Community discussions on Reddit r/PCOS note improvement in acne and hair growth with daily use.",
@@ -2164,52 +2171,6 @@
     }
   },
   {
-    "id": "p-tranexamic-acid",
-    "name": "Tranexamic Acid (Lysteda)",
-    "brand": "Lysteda",
-    "category": "supplement",
-    "product_type": "physical",
-    "summary": "Prescription medication that reduces heavy menstrual bleeding by helping blood clot. Non-hormonal.",
-    "price": "Varies with insurance",
-    "image": "https://m.media-amazon.com/images/I/61-qjpBT8oL.jpg",
-    "url": null,
-    "tags": [
-      "heavy-flow",
-      "safety-concern",
-      "non-hormonal"
-    ],
-    "health_functions": [
-      "menstrual-collection"
-    ],
-    "where_to_buy": [
-      "Pharmacy with prescription"
-    ],
-    "where_to_buy_in_stock": {},
-    "safety": {
-      "fdaStatus": "FDA-approved",
-      "materials": "Tranexamic acid",
-      "recalls": "No recalls.",
-      "allergens": "Check Rx"
-    },
-    "doctor_opinion": "First-line option for heavy menstrual bleeding when hormones are not desired. Reduces flow significantly.",
-    "community_review": "Community discussions on Reddit r/TwoXChromosomes note significant reduction in flow and duration.",
-    "effectiveness": "Clinically proven to reduce menstrual blood loss.",
-    "clinician_opinion_source": "independent",
-    "clinician_attribution": "Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.",
-    "source": "curated",
-    "internal": false,
-    "requires_prescription": true,
-    "user_rating": 4.7,
-    "is_active": true,
-    "extra": {
-      "ingredients": "Tranexamic acid.",
-      "badges": [
-        "Prescription",
-        "Heavy Bleeding"
-      ]
-    }
-  },
-  {
     "id": "p-pink-stork-bloat",
     "name": "Pink Stork Bloat Support",
     "brand": "Pink Stork",
@@ -2217,7 +2178,7 @@
     "product_type": "physical",
     "summary": "Herbal blend with fennel, dandelion, and ginger to support digestion and ease cycle-related bloating and water retention.",
     "price": "$22 for 30 capsules",
-    "image": "https://m.media-amazon.com/images/I/71CRb1B4+DL.jpg",
+    "image": "https://pinkstork.com/cdn/shop/files/PINKSTORK_Logo_crop_90482267-d058-40f5-984c-73335bc42249.svg?v=1756906426",
     "url": null,
     "tags": [
       "bloating",
@@ -2238,7 +2199,8 @@
       "fdaStatus": "Dietary supplement",
       "materials": "Fennel, dandelion root, ginger, organic ingredients",
       "recalls": "No recalls.",
-      "allergens": "Vegan, gluten-free"
+      "allergens": "Vegan, gluten-free",
+      "sideEffects": "Generally well tolerated. Fennel and dandelion may interact with blood thinners or diuretics — check with a clinician if you take either. Occasional mild GI upset reported."
     },
     "doctor_opinion": "Herbal digestive supports like fennel and ginger have traditional and some clinical use for bloating and gas. Discuss with your clinician if you have liver conditions or take blood thinners.",
     "community_review": "Community discussions on Amazon and Reddit r/periods note relief from period bloat and digestive comfort with consistent use.",
@@ -2324,7 +2286,7 @@
     "product_type": "physical",
     "summary": "Enzyme and probiotic blend with ginger and dandelion to support digestion and reduce bloating. Take before meals.",
     "price": "$24 for 30 capsules",
-    "image": "https://m.media-amazon.com/images/I/71hPJV9GSZL.jpg",
+    "image": "https://cdn.shopify.com/s/files/1/1288/3849/files/01_LW_PDP_BBB_Silo_d91565b2-159b-4249-8db3-633000ab49bf.jpg?v=1762521813",
     "url": null,
     "tags": [
       "bloating",
@@ -2346,7 +2308,8 @@
       "fdaStatus": "Dietary supplement",
       "materials": "Digestive enzymes, ginger, dandelion, probiotics",
       "recalls": "No recalls.",
-      "allergens": "Vegan, gluten-free"
+      "allergens": "Vegan, gluten-free",
+      "sideEffects": "Generally well tolerated. Some people notice mild gas or bloating in the first few days as the enzymes and probiotics take effect."
     },
     "doctor_opinion": "Digestive enzymes and herbal supports like ginger can help with post-meal bloating. Probiotics may support gut balance; evidence for bloating is mixed.",
     "community_review": "Community discussions on Reddit and Amazon note relief from hormonal and post-meal bloating when taken consistently before eating.",
@@ -2420,7 +2383,7 @@
     "product_type": "physical",
     "summary": "Vaginal weights for progressive Kegel training. Helps strengthen pelvic floor for leakage and comfort.",
     "price": "$25",
-    "image": "https://m.media-amazon.com/images/I/71X+kJ7eCeL.jpg",
+    "image": "https://www.intimina.com/themes/uhura/favicon.ico",
     "url": null,
     "tags": [
       "pelvic-floor",
@@ -2439,7 +2402,8 @@
       "fdaStatus": "Fitness device",
       "materials": "Silicone",
       "recalls": "No recalls.",
-      "allergens": "Silicone"
+      "allergens": "Silicone",
+      "sideEffects": "Medical-grade silicone is generally well tolerated. Mild discomfort during initial use is common; stop and check with a pelvic floor PT if you notice pain."
     },
     "doctor_opinion": "Pelvic floor muscle training is first-line for stress urinary incontinence and pelvic support.",
     "community_review": "Community discussions on Amazon note progressive improvement with consistent use.",
@@ -2494,13 +2458,13 @@
   },
   {
     "id": "p-pelvic-wand",
-    "name": "Pelvic Wand (Therawand-style)",
+    "name": "Intimate Rose Pelvic Wand",
     "brand": "Intimate Rose",
     "category": "pelvic-floor",
     "product_type": "physical",
     "summary": "Curved wand for self-release of pelvic trigger points. Used with guidance from PT for pelvic pain and tightness.",
     "price": "$30–50",
-    "image": "https://m.media-amazon.com/images/I/71v5xINz1dL.jpg",
+    "image": "https://cdn.shopify.com/s/files/1/0910/9374/files/BendablePelvicWand_Amanda_1500x1500_676edf52-0bd5-4cc3-9472-9226f31cfb2a.jpg?v=1740149967",
     "url": null,
     "tags": [
       "pelvic-floor",
@@ -2512,7 +2476,7 @@
     ],
     "where_to_buy": [
       "Amazon",
-      "Intimina.com",
+      "IntimateRose.com",
       "Pelvic floor PT retailers"
     ],
     "where_to_buy_in_stock": {},
@@ -2520,7 +2484,8 @@
       "fdaStatus": "Wellness device",
       "materials": "Silicone, plastic",
       "recalls": "No recalls.",
-      "allergens": "Silicone"
+      "allergens": "Silicone",
+      "sideEffects": "Mild soreness after use is common, similar to any trigger-point massage. Best used with guidance from a pelvic floor PT at first, to avoid overuse or incorrect technique."
     },
     "doctor_opinion": "Internal trigger-point release is a standard part of pelvic PT for pain and dysfunction.",
     "community_review": "Community discussions on Reddit r/Endo note PT recommendations and relief for endo pain.",
@@ -2549,7 +2514,7 @@
     "product_type": "physical",
     "summary": "Non-hormonal supplement with soy isoflavones, rhodiola, and folate for mood and cognitive support during menopause.",
     "price": "$18 for 28 caps",
-    "image": "https://m.media-amazon.com/images/I/71lHnJcl5WL.jpg",
+    "image": "https://cdn.shopify.com/s/files/1/0038/4188/4230/products/estroven-mood-boost-front-view.jpg?v=1699478289",
     "url": null,
     "tags": [
       "menopause",
@@ -2569,7 +2534,8 @@
       "fdaStatus": "Dietary supplement",
       "materials": "Soy isoflavones, rhodiola",
       "recalls": "No recalls.",
-      "allergens": "Soy"
+      "allergens": "Soy",
+      "sideEffects": "Generally well tolerated. Soy isoflavones may cause mild GI upset in some people; those with a history of hormone-sensitive conditions should discuss use with a clinician first."
     },
     "doctor_opinion": "Some women find relief with phytoestrogens; evidence is mixed. Discuss with your clinician.",
     "community_review": "Community discussions on Amazon note improvement in brain fog and mood during perimenopause.",
@@ -2629,7 +2595,7 @@
     "product_type": "physical",
     "summary": "Standardized black cohosh for hot flashes and menopause symptoms. One of the most studied herbal options.",
     "price": "$15 for 40 tablets",
-    "image": "https://m.media-amazon.com/images/I/71yqxj-CRuL.jpg",
+    "image": "https://www.remifemin.com/wp-content/uploads/cropped-Favicon-Remifemin-1-180x180.png",
     "url": null,
     "tags": [
       "menopause",
@@ -2650,7 +2616,8 @@
       "fdaStatus": "Dietary supplement",
       "materials": "Black cohosh",
       "recalls": "No recalls.",
-      "allergens": "Check label"
+      "allergens": "Check label",
+      "sideEffects": "Generally well tolerated short-term. Rare reports of stomach upset or headache. Black cohosh has rare case reports of liver concerns — stop and see a clinician if you notice unusual fatigue, abdominal pain, or jaundice."
     },
     "doctor_opinion": "Black cohosh has the most clinical data among herbal options for vasomotor symptoms.",
     "community_review": "Community discussions on Reddit r/Menopause note reduction in hot flashes within weeks.",
@@ -2704,13 +2671,13 @@
   },
   {
     "id": "p-creatine-womens",
-    "name": "Creatine Monohydrate (Women's Health)",
+    "name": "Thorne Creatine",
     "brand": "Thorne",
     "category": "supplement",
     "product_type": "physical",
     "summary": "Creatine supports muscle strength, cognitive function, and energy. Evidence-based for perimenopause: helps preserve lean mass, may improve brain fog and sleep when combined with resistance training.",
     "price": "$15–25 for 300–500g",
-    "image": "https://m.media-amazon.com/images/I/61v1CrqoikL.jpg",
+    "image": "https://www.thorne.com/favicon.ico",
     "url": null,
     "tags": [
       "creatine",
@@ -2726,8 +2693,7 @@
     "where_to_buy": [
       "Amazon",
       "iHerb",
-      "NOW Foods",
-      "Thorne",
+      "Thorne.com",
       "CVS"
     ],
     "where_to_buy_in_stock": {},
@@ -2735,7 +2701,8 @@
       "fdaStatus": "Dietary supplement",
       "materials": "Creatine monohydrate",
       "recalls": "No recalls.",
-      "allergens": "Vegan options available"
+      "allergens": "Vegan options available",
+      "sideEffects": "Well studied and generally safe. May cause mild water retention or stomach upset when starting — stay well hydrated and consider starting at a lower dose."
     },
     "doctor_opinion": "Creatine is well-studied and safe. For perimenopausal women it can help offset muscle loss and support cognition when used with exercise.",
     "community_review": "Community discussions on Reddit r/Menopause note improvement in energy and brain fog with creatine.",
@@ -2788,14 +2755,14 @@
     }
   },
   {
-    "id": "d-nurx-wisp-bc",
-    "name": "Nurx / Wisp Birth Control",
+    "id": "d-nurx-bc",
+    "name": "Nurx",
     "brand": "Nurx",
     "category": "telehealth",
     "product_type": "digital",
-    "summary": "Online birth control prescriptions and delivery. Pills, patch, ring. No in-person visit required in many states.",
+    "summary": "Online birth control prescriptions and delivery. Pills, patch, ring. No in-person visit required in many states. Accepts insurance.",
     "price": "$15–20/month",
-    "image": "https://logo.clearbit.com/nurx.com",
+    "image": "https://www.nurx.com/wp-content/themes/nurx-theme-lazyload/favicon/nurx.png",
     "url": null,
     "tags": [
       "contraception",
@@ -2807,15 +2774,15 @@
       "telehealth"
     ],
     "where_to_buy": [
-      "Nurx.com",
-      "Hellowisp.com"
+      "Nurx.com"
     ],
     "where_to_buy_in_stock": {},
     "safety": {
       "fdaStatus": "Prescription via licensed clinicians",
       "materials": "N/A",
       "recalls": "N/A",
-      "allergens": "N/A"
+      "allergens": "N/A",
+      "sideEffects": "Nurx itself has no side effects — it's a telehealth service. Any birth control method it prescribes carries the standard side effects for that method (e.g. spotting, nausea, mood changes), which your clinician reviews with you before you start."
     },
     "doctor_opinion": "Telehealth increases access to contraception. Same safety standards as in-person care.",
     "community_review": "Community discussions on Reddit r/birthcontrol note convenience and quick delivery.",
@@ -2874,6 +2841,92 @@
     }
   },
   {
+    "id": "d-wisp-bc",
+    "name": "Wisp",
+    "brand": "Wisp",
+    "category": "telehealth",
+    "product_type": "digital",
+    "summary": "Asynchronous online sexual health care: birth control, emergency contraception, UTI and STI treatment. No appointments, same-day pharmacy pickup or discreet delivery.",
+    "price": "$15–20/month",
+    "image": "https://cms.hellowisp.io/uploads/Meta_Hero_1500x1000_f538e24836.jpg",
+    "url": null,
+    "tags": [
+      "contraception",
+      "privacy",
+      "comfort"
+    ],
+    "health_functions": [
+      "contraception",
+      "telehealth"
+    ],
+    "where_to_buy": [
+      "Hellowisp.com"
+    ],
+    "where_to_buy_in_stock": {},
+    "safety": {
+      "fdaStatus": "Prescription via licensed clinicians",
+      "materials": "N/A",
+      "recalls": "N/A",
+      "allergens": "N/A",
+      "sideEffects": "Wisp itself has no side effects — it's a telehealth service. Any birth control method it prescribes carries the standard side effects for that method (e.g. spotting, nausea, mood changes), which your clinician reviews with you before you start."
+    },
+    "doctor_opinion": "Telehealth increases access to contraception. Same safety standards as in-person care.",
+    "community_review": "Community discussions on Reddit r/birthcontrol note fast turnaround and discreet packaging.",
+    "effectiveness": "Same efficacy as pharmacy-filled prescriptions.",
+    "clinician_opinion_source": "independent",
+    "clinician_attribution": "Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.",
+    "source": "curated",
+    "internal": false,
+    "requires_prescription": false,
+    "user_rating": 4.5,
+    "is_active": true,
+    "extra": {
+      "platform": "Web, app",
+      "privacy": {
+        "dataStorage": "US",
+        "sellsData": "Check policy",
+        "hipaa": "HIPAA-compliant for Rx",
+        "keyPolicy": "Prescription service"
+      },
+      "badges": [
+        "Telehealth",
+        "Privacy"
+      ],
+      "verificationLinks": {
+        "doctor": {
+          "links": [
+            {
+              "url": "https://www.acog.org/womens-health/faqs/combined-hormonal-birth-control",
+              "text": "ACOG: Birth control",
+              "summary": "Clinical guidance on contraception and access.",
+              "justification": "ACOG is the leading OB-GYN society."
+            }
+          ]
+        },
+        "scientific": {
+          "links": [
+            {
+              "url": "https://pubmed.ncbi.nlm.nih.gov/32324464/",
+              "text": "Telehealth and contraception",
+              "summary": "Evidence on telehealth for prescription access.",
+              "justification": "PubMed peer-reviewed."
+            }
+          ]
+        },
+        "community": {
+          "links": [
+            {
+              "platform": "reddit",
+              "url": "https://www.reddit.com/r/birthcontrol/search/?q=wisp&restrict_sr=1",
+              "text": "Reddit r/birthcontrol — Wisp",
+              "summary": "Community discussions on telehealth birth control."
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
     "id": "d-happi-pelvic",
     "name": "Happi Pelvic Floor App",
     "brand": "Happi",
@@ -2881,7 +2934,7 @@
     "product_type": "digital",
     "summary": "Pelvic floor exercise app with guided Kegels and programs. Often recommended by pelvic PTs.",
     "price": "Free trial, then subscription",
-    "image": "https://logo.clearbit.com/happiapp.com",
+    "image": "/ayna_placeholder.png",
     "url": null,
     "tags": [
       "pelvic-floor",
@@ -2900,7 +2953,8 @@
       "fdaStatus": "N/A",
       "materials": "N/A",
       "recalls": "N/A",
-      "allergens": "N/A"
+      "allergens": "N/A",
+      "sideEffects": "No physical side effects — this is a training app, not a device or medication. As with any pelvic floor exercise program, working too hard too fast can cause temporary muscle soreness."
     },
     "doctor_opinion": "App-guided pelvic floor training can improve adherence when used consistently.",
     "community_review": "Community discussions on App Store note simplicity and PT recommendations for home use.",
@@ -2967,7 +3021,7 @@
     "product_type": "digital",
     "summary": "Ro's brand for women. Telehealth for anxiety, depression, and skin. Prescriptions and products delivered with ongoing support.",
     "price": "Subscription + per-visit; varies by treatment",
-    "image": "https://logo.clearbit.com/forhers.com",
+    "image": "/ayna_placeholder.png",
     "url": null,
     "tags": [
       "discomfort",
@@ -2986,7 +3040,8 @@
       "fdaStatus": "Prescription via licensed clinicians",
       "materials": "N/A",
       "recalls": "N/A",
-      "allergens": "N/A"
+      "allergens": "N/A",
+      "sideEffects": "Hers itself has no side effects — it's a telehealth service. Any medication prescribed through it (e.g. for anxiety, depression, or skin) carries the standard side effects for that specific drug, which your clinician reviews with you before you start."
     },
     "doctor_opinion": "Telehealth improves access to mental health and dermatology. Same clinical standards as in-person care.",
     "community_review": "Community discussions on Reddit note convenience and discrete access to medication.",
@@ -3052,7 +3107,7 @@
     "product_type": "digital",
     "summary": "Virtual women's health clinic focused on perimenopause and menopause: visits with clinicians, personalized care plans, and prescription support (e.g. hormone therapy) where appropriate - without needing an in-person visit in many areas.",
     "price": "Membership / per visit; varies by plan and state",
-    "image": "https://logo.clearbit.com/joinmidi.com",
+    "image": "https://images.prismic.io/joinmidi-marketing/Z92tBjxkOkZ2kJPK_3-clinician-1x1.jpg?auto=format%2Ccompress&rect=0%2C44%2C1440%2C756&w=2400&h=1260",
     "url": null,
     "tags": [
       "menopause",
@@ -3072,7 +3127,8 @@
       "fdaStatus": "Prescription via licensed clinicians",
       "materials": "N/A",
       "recalls": "N/A",
-      "allergens": "N/A"
+      "allergens": "N/A",
+      "sideEffects": "Midi itself has no side effects — it's a telehealth service. Any treatment prescribed, including hormone therapy where appropriate, carries the standard side effects for that specific option, which your clinician reviews with you."
     },
     "doctor_opinion": "Virtual access can help women navigate perimenopause and menopause symptoms and discuss hormone therapy with licensed clinicians using the same standards as in-person care.",
     "community_review": "Community discussions on Reddit r/Menopause note convenience of virtual visits and clinician-led plans for midlife symptoms.",
@@ -3138,7 +3194,7 @@
     "product_type": "digital",
     "summary": "Virtual women's health care: 24/7 access to clinicians, midwives, doulas, and therapists. Employer and health-plan covered.",
     "price": "Covered by many employers & health plans; confirm eligibility",
-    "image": "https://logo.clearbit.com/pomelocare.com",
+    "image": "https://cdn.prod.website-files.com/6307b1a9769c5035558bb4a1/6349869007d2bd415f92a64b_opengraph.jpg",
     "url": "https://www.pomelocare.com/",
     "tags": [
       "pregnancy",
@@ -3162,7 +3218,8 @@
       "fdaStatus": "Clinical care via licensed professionals; not an emergency service",
       "materials": "N/A",
       "recalls": "N/A",
-      "allergens": "N/A"
+      "allergens": "N/A",
+      "sideEffects": "Pomelo Care itself has no side effects — it's a virtual care service. Any treatment or medication recommended during a visit carries the standard side effects for that option, reviewed with your care team."
     },
     "doctor_opinion": "Integrated virtual maternity and women's health programs can improve access to education, triage, and follow-up between in-person visits; eligibility and scope depend on your plan.",
     "community_review": "Patients often cite fast responses and coordinated support across pregnancy and postpartum; access is plan-dependent.",
@@ -4060,7 +4117,7 @@
     "product_type": "physical",
     "summary": "The most affordable menstrual cup. Pay-what-you-can model starting at $6. Making cups accessible.",
     "price": "$6 (pay-what-you-can)",
-    "image": "https://thejunecup.com/cdn/shop/articles/Basic_Disc_Kit_2048x2048.png?v=1695048685",
+    "image": "/ayna_placeholder.png",
     "url": null,
     "tags": [
       "cost",
@@ -5447,7 +5504,7 @@
     "product_type": "physical",
     "summary": "Adhesive heat wraps that deliver up to 8 hours of consistent targeted heat. Drug-free. Can be worn under clothing for cramps, pelvic pain, back pain, or any area needing heat relief.",
     "price": "$8–12 for 3–4 wraps",
-    "image": "https://m.media-amazon.com/images/I/81F-MPFrHtL.jpg",
+    "image": "https://www.thermacare.com/wp-content/uploads/2024/02/thermacare-share-2024.png",
     "url": null,
     "tags": [
       "cramps",
@@ -5541,7 +5598,7 @@
     "product_type": "physical",
     "summary": "Smart Kegel trainer with real-time biofeedback via app. Guides you through exercises with visualization.",
     "price": "$199",
-    "image": "https://dfxyyqidohkoi.cloudfront.net/media/filer_public_thumbnails/filer_public/50/25/50252ab4-c016-48d3-8f56-d1aaeeab7605/elvie.png__1280x820_q90_crop_upscale.png",
+    "image": "https://cdn.shopify.com/s/files/1/0685/2322/9340/files/IMD_UK_Trainer_Web_Hero_1200x1200_V2.jpg?v=1767622990",
     "url": null,
     "tags": [
       "leaks",
@@ -5718,8 +5775,8 @@
   },
   {
     "id": "p-luna-wash",
-    "name": "Luna Intimate Wash",
-    "brand": null,
+    "name": "Luna Daily Intimate Feminine Wash",
+    "brand": "Luna Daily",
     "category": "intimate-care",
     "product_type": "physical",
     "summary": "A soothing, pH-balanced wash designed for sensitive vulvar skin. Gynecologist-tested and free of harsh sulfates.",
@@ -5772,7 +5829,7 @@
     "product_type": "digital",
     "summary": "The only FDA-cleared birth control app. Uses basal body temperature to identify fertile/infertile days.",
     "price": "$100/year or $13/month",
-    "image": "https://logo.clearbit.com/naturalcycles.com",
+    "image": "https://www.datocms-assets.com/21281/1762899321-us-not-fertile-new-screen-rachel-hand-holding-phone.png?auto=format&fit=max&w=1200",
     "url": null,
     "tags": [
       "irregular",
@@ -5941,7 +5998,7 @@
     "product_type": "digital",
     "summary": "Period and fertility tracker with community forum. Also offers fertility courses and clinic matching.",
     "price": "Free (Premium $48/year)",
-    "image": "https://logo.clearbit.com/glowing.com",
+    "image": "https://glowing.com/wp-content/uploads/2023/05/cropped-glow-favicon-300x300.png",
     "url": null,
     "tags": [
       "irregular",
@@ -6085,7 +6142,7 @@
     "product_type": "digital",
     "summary": "Modern women's health clinic (virtual + in-person in NYC/LA/SF). Integrative approach combining OB-GYN with acupuncture, nutrition.",
     "price": "Membership $15/month + insurance",
-    "image": "https://logo.clearbit.com/tia.com",
+    "image": "https://cdn.sanity.io/images/8qqycr4y/production/a5a207809f4417e461bb0a87fd4cb4281a1b8bf7-1600x836.webp",
     "url": null,
     "tags": [
       "discomfort",
@@ -6159,7 +6216,7 @@
     "product_type": "digital",
     "summary": "Birth control, UTI treatment, and STI care via app. Income-based pricing. Most trusted name in reproductive health.",
     "price": "$0-15/visit, sliding scale",
-    "image": "https://www.plannedparenthooddirect.org/_next/image?url=https%3A%2F%2Fassets.plannedparenthooddirect.org%2F%2Fsites%2Fdefault%2Ffiles%2F2023-09%2Fbirth-control-640x640-graphic-bg%252Bnoise.png&w=1920&q=100",
+    "image": "/ayna_placeholder.png",
     "url": null,
     "tags": [
       "cost",
@@ -6231,7 +6288,7 @@
     "product_type": "digital",
     "summary": "Largest online therapy platform. Matched with a licensed therapist. Messaging + video sessions.",
     "price": "$65-90/week",
-    "image": "https://logo.clearbit.com/betterhelp.com",
+    "image": "https://assets.betterhelp.com/brand/betterhelp/betterhelp-fb.png?v=09c3336ab26b",
     "url": null,
     "tags": [
       "discomfort",
@@ -6371,7 +6428,7 @@
     "product_type": "digital",
     "summary": "Sleep Stories, meditation, music, and masterclasses. Celebrity narrators. Great for sleep issues.",
     "price": "$15/month or $70/year",
-    "image": "https://logo.clearbit.com/calm.com",
+    "image": "https://www.calm.com/_n/images/social/calm-meta.png",
     "url": null,
     "tags": [
       "discomfort",
@@ -6664,7 +6721,7 @@
     "product_type": "digital",
     "summary": "Smart mattress cover that automatically heats and cools each side of the bed throughout the night. Tracks sleep stages, HRV, heart rate, and respiratory rate — and adjusts temperature in real time to improve sleep quality.",
     "price": "$2,245+",
-    "image": "https://cdn.shopify.com/s/files/1/0641/9884/8497/files/pod4_ultra_carbon_fiber_hero.jpg?v=1695309791",
+    "image": "https://res.cloudinary.com/eightsleep/image/upload/c_fill,w_1200,h_630,f_jpg,q_auto/v1747147611/Homepage_c0dril.png",
     "url": null,
     "tags": [
       "sleep",
@@ -6764,7 +6821,8 @@
       "fdaStatus": "Class I Medical Device",
       "materials": "Various",
       "recalls": "No recalls.",
-      "allergens": "Fragrance-free"
+      "allergens": "Fragrance-free",
+      "sideEffects": "Generally well tolerated; designed for sensitive postpartum skin. Discontinue any component that causes irritation and contact your OB if healing seems abnormal."
     },
     "doctor_opinion": "Comprehensive postpartum kits with witch hazel and cold therapy align with ACOG guidelines for perineal recovery.",
     "community_review": "Community discussions on Reddit r/NewParents note the kit as essential for the first week postpartum.",
@@ -6847,7 +6905,8 @@
       "fdaStatus": "N/A",
       "materials": "Soft quilted liner",
       "recalls": "No recalls.",
-      "allergens": "Latex-free"
+      "allergens": "Latex-free",
+      "sideEffects": "Generally well tolerated. Change pads regularly to reduce the risk of skin irritation or fungal growth from trapped moisture."
     },
     "doctor_opinion": "Disposable nursing pads provide reliable leak protection for lactating patients. Stay-dry liners help prevent skin irritation.",
     "community_review": "Community discussions on Amazon note satisfaction with overnight absorption and thin profile.",
@@ -6922,7 +6981,8 @@
       "fdaStatus": "USP-verified ingredients",
       "materials": "Vegan-certified",
       "recalls": "No recalls.",
-      "allergens": "Gluten-free, soy-free"
+      "allergens": "Gluten-free, soy-free",
+      "sideEffects": "Generally well tolerated. Prenatal vitamins can cause mild nausea or constipation, especially from the iron content — taking with food may help."
     },
     "doctor_opinion": "Traceability and delayed-release capsules are valued in prenatal supplements. Ritual uses third-party verified ingredients.",
     "community_review": "Community discussions on Reddit r/BabyBumps note reduced nausea compared to other prenatals.",
@@ -7030,7 +7090,8 @@
       "fdaStatus": "Registered Class I",
       "materials": "Bamboo-derived viscose",
       "recalls": "No recalls.",
-      "allergens": "Latex-free"
+      "allergens": "Latex-free",
+      "sideEffects": "Generally well tolerated. Wearing a belly band too tight or for too long can cause discomfort or skin irritation — take breaks and loosen it if you notice numbness or tingling."
     },
     "doctor_opinion": "Abdominal support bands can relieve pelvic girdle pain and back pressure during the third trimester.",
     "community_review": "Community discussions on Amazon note ability to work and remain active late in pregnancy.",
@@ -7104,7 +7165,8 @@
       "fdaStatus": "Phthalate-free",
       "materials": "100% Medical-grade silicone",
       "recalls": "No recalls.",
-      "allergens": "Latex-free"
+      "allergens": "Latex-free",
+      "sideEffects": "Medical-grade silicone is generally well tolerated. Clean before and after each use, and discontinue if you notice irritation."
     },
     "doctor_opinion": "Sexual wellness is a key pillar of overall health. Medical-grade silicone products are safe and easy to clean.",
     "community_review": "Community discussions on Sephora note minimalist design and discreet appearance.",
@@ -7209,7 +7271,8 @@
       "fdaStatus": "FDA-cleared",
       "materials": "Silicone with Vitamin E",
       "recalls": "No recalls.",
-      "allergens": "Latex compatible"
+      "allergens": "Latex compatible",
+      "sideEffects": "Generally well tolerated. Silicone-based lubricants are not compatible with silicone toys — patch test first if you have sensitive skin."
     },
     "doctor_opinion": "Silicone-based lubricants are long-lasting with low irritation risk. Fragrance-free and compatible with latex.",
     "community_review": "Community discussions on Reddit r/sex note satisfaction with non-sticky feel and natural finish.",
@@ -7282,7 +7345,8 @@
       "fdaStatus": "Dermatologically tested",
       "materials": "Lactic acid formula",
       "recalls": "No recalls.",
-      "allergens": "Paraben-free"
+      "allergens": "Paraben-free",
+      "sideEffects": "Generally well tolerated for external use as directed. Discontinue if you notice irritation, itching, or unusual discharge, and avoid internal use unless directed by a clinician."
     },
     "doctor_opinion": "Water is usually sufficient for vulvar cleansing. If using a wash, pH 3.5 lactic acid formulas are gentle for external use.",
     "community_review": "Community discussions on Amazon note satisfaction with pH balance and reduced yeast infection risk.",
@@ -7356,7 +7420,8 @@
       "fdaStatus": "Gynecologist tested",
       "materials": "99% naturally derived",
       "recalls": "No recalls.",
-      "allergens": "Fragrance-free"
+      "allergens": "Fragrance-free",
+      "sideEffects": "Generally well tolerated. Discontinue if you notice irritation, itching, or a change in odor or discharge, and see a clinician for persistent symptoms."
     },
     "doctor_opinion": "pH-balanced wipes are suitable for external post-gym hygiene. Keep use external only; avoid internal use.",
     "community_review": "Community discussions on Ulta note convenience for travel and lack of irritation.",
@@ -7372,87 +7437,6 @@
       "ingredients": "Aloe, cucumber, lactic acid.",
       "integrations": [],
       "verificationLinks": {}
-    }
-  },
-  {
-    "id": "p-phexxi",
-    "name": "Phexxi (Non-hormonal gel)",
-    "brand": null,
-    "category": "contraception",
-    "product_type": "physical",
-    "summary": "On-demand, hormone-free contraceptive gel. Prescription only.",
-    "price": "Varies with insurance",
-    "image": "https://birthcontrolpharmacist.com/wp-content/uploads/2020/10/img_3042.jpg?w=826",
-    "url": null,
-    "tags": [
-      "privacy",
-      "discomfort",
-      "non-hormonal"
-    ],
-    "health_functions": [
-      "contraception"
-    ],
-    "where_to_buy": [
-      "Pharmacy with prescription"
-    ],
-    "where_to_buy_in_stock": {},
-    "safety": {
-      "fdaStatus": "FDA-approved (2020)",
-      "materials": "Lactic acid, citric acid, potassium bitartrate",
-      "recalls": "No recalls.",
-      "allergens": "Can cause UTI-like symptoms in some"
-    },
-    "doctor_opinion": "Phexxi is a good option for women who want to avoid systemic hormones and use contraception as-needed. 86% typical use, 93% perfect use.",
-    "community_review": "Community discussions on Reddit r/birthcontrol note hormone-free benefit; some find application messy.",
-    "effectiveness": "86% typical use, 93% perfect use.",
-    "clinician_opinion_source": "independent",
-    "clinician_attribution": "Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.",
-    "source": "curated",
-    "internal": true,
-    "requires_prescription": true,
-    "user_rating": 4.3,
-    "is_active": true,
-    "extra": {
-      "prescriptionPatientUrl": "https://www.phexxi.com/howtogetphexxi",
-      "prescriptionSavingsUrl": "https://www.phexxi.com/savings-program",
-      "ingredients": "Lactic acid, citric acid, potassium bitartrate.",
-      "badges": [
-        "Hormone-Free",
-        "FDA-Approved"
-      ],
-      "integrations": [],
-      "verificationLinks": {
-        "doctor": {
-          "links": [
-            {
-              "url": "https://www.phexxi.com/phexxi-pro",
-              "text": "Phexxi Prescriber Info",
-              "summary": "Mechanism of action: Maintains vaginal pH in the 3.5 to 4.5 range, which is inhospitable to sperm.",
-              "justification": "Manufacturer prescriber information."
-            }
-          ]
-        },
-        "scientific": {
-          "links": [
-            {
-              "url": "https://clinicaltrials.gov/ct2/show/NCT03240172",
-              "text": "AMPOWER Clinical Trial",
-              "summary": "Phase 3 trial results evaluating the contraceptive efficacy and safety of Phexxi.",
-              "justification": "ClinicalTrials.gov is the federal registry."
-            }
-          ]
-        },
-        "community": {
-          "links": [
-            {
-              "platform": "reddit",
-              "url": "https://www.reddit.com/r/birthcontrol/search/?q=phexxi&restrict_sr=1",
-              "text": "Reddit r/birthcontrol — Phexxi",
-              "summary": "Community discussions on Phexxi and hormone-free contraception."
-            }
-          ]
-        }
-      }
     }
   },
   {
@@ -7482,7 +7466,8 @@
       "fdaStatus": "Gynecologist tested",
       "materials": "Coconut oil, niacinamide",
       "recalls": "No recalls.",
-      "allergens": "Fragrance-free"
+      "allergens": "Fragrance-free",
+      "sideEffects": "Generally well tolerated. Discontinue if you notice irritation. Not a substitute for prescription treatment if you have significant vaginal dryness or atrophy — discuss with your clinician."
     },
     "doctor_opinion": "Non-hormonal moisturizers with niacinamide can improve vaginal dryness in GSM. Clinically shown to improve moisture within days.",
     "community_review": "Community discussions note satisfaction with moisture improvement and mess-free application.",
@@ -7536,230 +7521,6 @@
     }
   },
   {
-    "id": "p-menopause-patch",
-    "name": "Estrogen Patch (Generic/Vive-Dot)",
-    "brand": null,
-    "category": "menopause",
-    "product_type": "physical",
-    "summary": "Transdermal hormone replacement therapy for menopause symptoms. Prescribed via Midi or Evernow.",
-    "price": "Varies with insurance",
-    "image": "https://mmassets.universaldrugstore.com/wp-content/uploads/product-image-vivelle-dot-1052x1052.webp",
-    "url": null,
-    "tags": [
-      "discomfort"
-    ],
-    "health_functions": [
-      "telehealth"
-    ],
-    "where_to_buy": [
-      "Pharmacy with prescription"
-    ],
-    "where_to_buy_in_stock": {},
-    "safety": {
-      "fdaStatus": "FDA-approved",
-      "materials": "Estradiol patch",
-      "recalls": "N/A",
-      "allergens": "Adhesive sensitivity"
-    },
-    "doctor_opinion": "Transdermal estrogen is preferred over oral in some patients due to lower stroke and clot risk. NAMS guidelines support HRT for vasomotor symptoms.",
-    "community_review": "Community discussions on Reddit r/Menopause note significant relief from hot flashes within days.",
-    "effectiveness": "Highly effective for vasomotor symptoms.",
-    "clinician_opinion_source": "independent",
-    "clinician_attribution": "Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.",
-    "source": "curated",
-    "internal": false,
-    "requires_prescription": true,
-    "user_rating": 4.6,
-    "is_active": true,
-    "extra": {
-      "ingredients": "Estradiol.",
-      "integrations": [],
-      "verificationLinks": {
-        "doctor": {
-          "links": [
-            {
-              "url": "https://www.menopause.org/for-women/menopause-faqs-management-of-menopause-symptoms",
-              "text": "NAMS: HRT",
-              "summary": "Clinical guidance on transdermal estrogen and HRT.",
-              "justification": "NAMS is the leading menopause society."
-            }
-          ]
-        },
-        "scientific": {
-          "links": [
-            {
-              "url": "https://pubmed.ncbi.nlm.nih.gov/32324464/",
-              "text": "Transdermal estrogen and VMS",
-              "summary": "Evidence on patch vs oral estrogen.",
-              "justification": "PubMed peer-reviewed."
-            }
-          ]
-        },
-        "community": {
-          "links": [
-            {
-              "platform": "reddit",
-              "url": "https://www.reddit.com/r/Menopause/search/?q=patch&restrict_sr=1",
-              "text": "Reddit r/Menopause — patch",
-              "summary": "Community discussions on estrogen patches."
-            }
-          ]
-        }
-      }
-    }
-  },
-  {
-    "id": "p-intrarosa",
-    "name": "Intrarosa (Prasterone) Vaginal Insert",
-    "brand": null,
-    "category": "menopause",
-    "product_type": "physical",
-    "summary": "Daily 6.5mg DHEA (prasterone) vaginal insert, FDA-approved specifically for postmenopausal women with moderate-to-severe painful intercourse due to vaginal atrophy.",
-    "price": "$288–$402/month cash price (as low as ~$35/month with manufacturer copay card for insured patients)",
-    "image": "/ayna_placeholder.png",
-    "url": null,
-    "tags": [
-      "discomfort"
-    ],
-    "health_functions": [
-      "vaginal-health"
-    ],
-    "where_to_buy": [
-      "Pharmacy with prescription"
-    ],
-    "where_to_buy_in_stock": {},
-    "safety": {
-      "fdaStatus": "FDA-approved (2016)",
-      "materials": "Prasterone (DHEA) 6.5mg vaginal insert",
-      "recalls": "No recalls.",
-      "allergens": "N/A",
-      "sideEffects": "Vaginal discharge and abnormal Pap findings have been reported. Converts to active hormones locally with minimal systemic absorption, but — like other vaginal hormone products — carries a class boxed warning inherited from systemic HRT labeling (endometrial cancer, cardiovascular disease, probable dementia) that NAMS considers largely not applicable at these low local doses.",
-      "opinionAlerts": "FDA-approved specifically for postmenopausal vaginal atrophy/painful intercourse — not indicated for hot flashes or other general menopause symptoms."
-    },
-    "doctor_opinion": "One of few FDA-approved non-estrogen local options for postmenopausal vaginal atrophy; effective for dyspareunia with minimal systemic hormone exposure.",
-    "community_review": "Community discussions on Reddit r/Menopause compare prasterone to estrogen-based local options for vaginal dryness.",
-    "effectiveness": "FDA-approved based on clinical trials showing improvement in dyspareunia due to vulvovaginal atrophy.",
-    "clinician_opinion_source": "independent",
-    "clinician_attribution": "Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.",
-    "source": "curated",
-    "internal": false,
-    "requires_prescription": true,
-    "user_rating": 4.3,
-    "is_active": true,
-    "extra": {
-      "ingredients": "Prasterone (DHEA) 6.5mg per insert.",
-      "badges": [
-        "Non-Estrogen Option"
-      ],
-      "verificationLinks": {
-        "doctor": {
-          "links": [
-            {
-              "url": "https://www.accessdata.fda.gov/drugsatfda_docs/label/2016/208470s000lbl.pdf",
-              "text": "FDA label: Intrarosa (prasterone)",
-              "summary": "Official FDA prescribing information and approved indication.",
-              "justification": "FDA drug label is the authoritative source for approved use and safety."
-            }
-          ]
-        },
-        "scientific": {
-          "links": [
-            {
-              "url": "https://www.aafp.org/pubs/afp/issues/2019/0115/p117.html",
-              "text": "AAFP: Prasterone for vaginal atrophy",
-              "summary": "Clinical review of prasterone for postmenopausal vulvovaginal atrophy.",
-              "justification": "American Academy of Family Physicians peer-reviewed clinical summary."
-            }
-          ]
-        },
-        "community": {
-          "links": [
-            {
-              "platform": "reddit",
-              "url": "https://www.reddit.com/r/Menopause/search/?q=intrarosa&restrict_sr=1",
-              "text": "Reddit r/Menopause — Intrarosa",
-              "summary": "Community discussions on prasterone/Intrarosa."
-            }
-          ]
-        }
-      }
-    }
-  },
-  {
-    "id": "p-imvexxy",
-    "name": "Imvexxy (Estradiol Vaginal Inserts)",
-    "brand": null,
-    "category": "menopause",
-    "product_type": "physical",
-    "summary": "Low-dose (4mcg/10mcg) vaginal estradiol insert for moderate-to-severe painful intercourse due to menopause-related vaginal atrophy.",
-    "price": "Starter pack ~$543 (18 inserts); ~$303–$414/year maintenance net cost",
-    "image": "/ayna_placeholder.png",
-    "url": null,
-    "tags": [
-      "discomfort"
-    ],
-    "health_functions": [
-      "vaginal-health"
-    ],
-    "where_to_buy": [
-      "Pharmacy with prescription"
-    ],
-    "where_to_buy_in_stock": {},
-    "safety": {
-      "fdaStatus": "FDA-approved",
-      "materials": "Estradiol 4mcg or 10mcg vaginal insert",
-      "recalls": "No recalls.",
-      "allergens": "N/A",
-      "sideEffects": "Local low-dose estrogen with minimal systemic absorption; still carries the class boxed warning inherited from systemic estrogen labeling (endometrial cancer, cardiovascular disease, probable dementia) that NAMS' 2022 position statement notes is based on systemic-dose data, not these local doses.",
-      "opinionAlerts": "Indication is specifically moderate-to-severe dyspareunia due to menopause — confirm with a clinician whether a lower-dose local option fits your history, especially with prior hormone-sensitive cancer."
-    },
-    "doctor_opinion": "Ultra-low-dose local estradiol is a NAMS-recognized option for genitourinary syndrome of menopause when non-hormonal moisturizers aren't enough.",
-    "community_review": "Community discussions on Reddit r/Menopause compare Imvexxy to other local estrogen formulations (cream, ring, tablet).",
-    "effectiveness": "Clinically shown to reduce dyspareunia and vaginal atrophy symptoms in postmenopausal women.",
-    "clinician_opinion_source": "independent",
-    "clinician_attribution": "Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.",
-    "source": "curated",
-    "internal": false,
-    "requires_prescription": true,
-    "user_rating": 4.2,
-    "is_active": true,
-    "extra": {
-      "ingredients": "Estradiol (4mcg or 10mcg per insert).",
-      "verificationLinks": {
-        "doctor": {
-          "links": [
-            {
-              "url": "https://menopause.org/wp-content/uploads/professional/nams-2022-hormone-therapy-position-statement.pdf",
-              "text": "NAMS 2022 Hormone Therapy Position Statement",
-              "summary": "Position statement on hormone therapy including low-dose vaginal estrogen for GSM.",
-              "justification": "The Menopause Society (NAMS) is the leading US menopause clinical society."
-            }
-          ]
-        },
-        "scientific": {
-          "links": [
-            {
-              "url": "https://www.ncbi.nlm.nih.gov/books/NBK595415/",
-              "text": "NIH/NCBI Bookshelf: Estradiol vaginal insert monograph",
-              "summary": "Drug monograph covering mechanism, dosing, and safety.",
-              "justification": "NIH StatPearls/Bookshelf peer-reviewed monograph."
-            }
-          ]
-        },
-        "community": {
-          "links": [
-            {
-              "platform": "reddit",
-              "url": "https://www.reddit.com/r/Menopause/search/?q=imvexxy&restrict_sr=1",
-              "text": "Reddit r/Menopause — Imvexxy",
-              "summary": "Community discussions on Imvexxy."
-            }
-          ]
-        }
-      }
-    }
-  },
-  {
     "id": "p-citracal-bone-health",
     "name": "Citracal Bone Health+ (Calcium Citrate + D3)",
     "brand": null,
@@ -7767,7 +7528,7 @@
     "product_type": "physical",
     "summary": "OTC calcium citrate + vitamin D3 supplement; calcium/vitamin D adequacy is clinically tied to reducing postmenopausal bone loss.",
     "price": "$15–$25/bottle",
-    "image": "/ayna_placeholder.png",
+    "image": "https://www.citracal.com/sites/g/files/vrxlpx56451/files/favicons/apple-touch-icon.png",
     "url": null,
     "tags": [
       "discomfort"
@@ -7786,6 +7547,7 @@
       "materials": "Calcium citrate, vitamin D3",
       "recalls": "No recalls.",
       "allergens": "Check label for soy/gelatin depending on formulation",
+      "sideEffects": "Generally well tolerated. High-dose calcium supplements can cause constipation or gas; very high total calcium intake (diet plus supplement) has been linked to kidney stones in some people — don't exceed the recommended daily total without medical guidance.",
       "opinionAlerts": "Generic bone-health supplement, not specifically labeled or marketed for menopause. USPSTF review found no significant fracture-prevention benefit at typical OTC doses (400 IU vitamin D / 1,000mg calcium) for postmenopausal women without diagnosed osteoporosis — talk to your doctor about whether higher-dose or prescription bone therapy is right for you."
     },
     "doctor_opinion": "Calcium and vitamin D adequacy support bone health in postmenopausal women, who face accelerated bone loss after estrogen decline.",
@@ -7835,7 +7597,7 @@
     "product_type": "digital",
     "summary": "Community app for women navigating fertility, pregnancy, motherhood, and menopause.",
     "price": "Free",
-    "image": "https://logo.clearbit.com/peanut-app.io",
+    "image": "https://www.peanut-app.io/images/social-share.png?_wwcv=1656",
     "url": null,
     "tags": [
       "comfort"
@@ -7851,7 +7613,8 @@
       "fdaStatus": "N/A",
       "materials": "N/A",
       "recalls": "N/A",
-      "allergens": "N/A"
+      "allergens": "N/A",
+      "sideEffects": "No physical side effects — this is a community and social app."
     },
     "doctor_opinion": "Social support is critical during fertility, pregnancy, motherhood, and menopause. Community apps can reduce isolation.",
     "community_review": "Community discussions on App Store note strong engagement and connection with other women.",
@@ -7934,7 +7697,8 @@
       "fdaStatus": "N/A",
       "materials": "N/A",
       "recalls": "N/A",
-      "allergens": "N/A"
+      "allergens": "N/A",
+      "sideEffects": "No physical side effects — this is a self-guided therapy app, not a medication. It's not a substitute for crisis care; seek immediate help if you're in crisis."
     },
     "doctor_opinion": "Bloom uses evidence-based CBT techniques for daily maintenance. Digital CBT can be effective for mild-to-moderate anxiety.",
     "community_review": "Community discussions on App Store note personal feel of video sessions and high retention.",
@@ -8048,7 +7812,8 @@
       "fdaStatus": "Licensed providers",
       "materials": "N/A",
       "recalls": "N/A",
-      "allergens": "N/A"
+      "allergens": "N/A",
+      "sideEffects": "Visana itself has no side effects — it's a telehealth service. Any treatment or medication recommended carries the standard side effects for that option, reviewed with your care team."
     },
     "doctor_opinion": "Visana addresses the complex multidisciplinary needs of endometriosis patients. Virtual-first care for fibroids and heavy periods.",
     "community_review": "Community discussions on Reddit r/Endo note specialization in endo and insurance acceptance.",
@@ -8132,7 +7897,8 @@
       "fdaStatus": "N/A",
       "materials": "N/A",
       "recalls": "N/A",
-      "allergens": "N/A"
+      "allergens": "N/A",
+      "sideEffects": "No physical side effects — this is a tracking and education app, not a medication or device."
     },
     "doctor_opinion": "Tracking pain patterns is the first step toward diagnosis for chronic pelvic pain and endometriosis.",
     "community_review": "Community discussions on App Store note detailed pain location tracking as a key feature.",
@@ -8214,7 +7980,8 @@
       "fdaStatus": "N/A",
       "materials": "N/A",
       "recalls": "N/A",
-      "allergens": "N/A"
+      "allergens": "N/A",
+      "sideEffects": "No physical side effects — this is a tracking and education app, not a medication or device."
     },
     "doctor_opinion": "Menopause trackers can help identify perimenopause symptoms and connect women in midlife. Real-world data supports research.",
     "community_review": "Community discussions on Reddit r/Menopause note help recognizing perimenopause and connecting with peers.",
@@ -8279,7 +8046,7 @@
     "product_type": "physical",
     "summary": "The only cup that can be folded as thin as a tampon. Great for users with a high cervix.",
     "price": "$30",
-    "image": "/ayna_placeholder.png",
+    "image": "https://www.intimina.com/themes/uhura/favicon.ico",
     "url": null,
     "tags": [
       "heavy-flow",
@@ -8360,7 +8127,7 @@
     "product_type": "physical",
     "summary": "Designed by a nurse and a period expert. Features a double-loop tab for easy removal.",
     "price": "$40",
-    "image": "/ayna_placeholder.png",
+    "image": "https://cdn.shopify.com/s/files/1/0280/3413/8205/files/Hello_Caddy_silicone_storage_travel_case.png?v=1783061433",
     "url": null,
     "tags": [
       "heavy-flow",
@@ -8441,7 +8208,7 @@
     "product_type": "physical",
     "summary": "Flat-fit design with a custom notch for easy removal. Smooth medical-grade silicone.",
     "price": "$33",
-    "image": "/ayna_placeholder.png",
+    "image": "https://cdn.shopify.com/s/files/1/2705/9430/files/Saalt-Disc-PDP-Coastal-Blue-01_01.jpg?v=1775642489",
     "url": null,
     "tags": [
       "heavy-flow",
@@ -8520,7 +8287,7 @@
     "product_type": "physical",
     "summary": "Seamless, ultra-thin leakproof underwear. Feels like regular undies but with protection.",
     "price": "$28",
-    "image": "/ayna_placeholder.png",
+    "image": "https://cdn.shopify.com/s/files/1/0668/8591/0570/files/Kt_StageProof_Leakproof_UltraThin_No-Show_Dance_Underwear_Black_1_2x_06e19858-52bc-46c1-b6ab-5068d8363039.webp?v=1779240155",
     "url": null,
     "tags": [
       "leaks",
@@ -8674,14 +8441,14 @@
   },
   {
     "id": "p-bodily-kit",
-    "name": "Bodily",
-    "brand": null,
+    "name": "Bodily Postpartum Recovery Kit",
+    "brand": "Bodily",
     "category": "postpartum",
     "product_type": "physical",
-    "summary": "Evidence-based pregnancy, postpartum, and breastfeeding essentials. Nursing bras, C-section belly band, All-In Panty, and bundles designed with IBCLCs and OB-GYNs.",
+    "summary": "4-piece postpartum recovery kit: mesh underwear, peri wash bottle, inflatable sitting cushion, and recovery socks. Designed with IBCLCs and OB-GYNs.",
     "price": "From $50",
-    "image": "/ayna_placeholder.png",
-    "url": "https://itsbodily.com/",
+    "image": "http://itsbodily.com/cdn/shop/files/image_17.png?v=1775572770",
+    "url": "https://itsbodily.com/products/postpartum-recovery-kit-save-11",
     "tags": [
       "comfort",
       "postpartum"
@@ -8690,7 +8457,7 @@
       "vaginal-health"
     ],
     "where_to_buy": [
-      "Bodily"
+      "Bodily.com"
     ],
     "where_to_buy_in_stock": {},
     "safety": {
@@ -8711,7 +8478,7 @@
     "is_active": true,
     "extra": {
       "whereToBuyLinks": {
-        "Bodily": "https://itsbodily.com/"
+        "Bodily.com": "https://itsbodily.com/products/postpartum-recovery-kit-save-11"
       },
       "ingredients": "Varies by product.",
       "badges": [
@@ -8760,7 +8527,7 @@
     "product_type": "physical",
     "summary": "Manual silicone pump that uses natural suction to collect let-down. Simple and effective.",
     "price": "$13",
-    "image": "/ayna_placeholder.png",
+    "image": "https://cdn.shopify.com/s/files/1/1101/9058/files/glassbottlkbreastpum.png?v=1778802275",
     "url": null,
     "tags": [
       "comfort",
@@ -8838,7 +8605,7 @@
     "product_type": "physical",
     "summary": "Natural silver nursing cups to heal and protect sore nipples. Antibacterial and soothing.",
     "price": "$60",
-    "image": "/ayna_placeholder.png",
+    "image": "https://cdn.shopify.com/s/files/1/0403/8465/files/37c1b22d59e214d67f59cf957ad479377e3e253f_1.jpg?v=1764866452",
     "url": null,
     "tags": [
       "comfort",
@@ -8916,7 +8683,7 @@
     "product_type": "physical",
     "summary": "Quick-drying botanical oil to soothe dry, itchy skin and reduce the appearance of stretch marks.",
     "price": "$58",
-    "image": "/ayna_placeholder.png",
+    "image": "https://cdn.shopify.com/s/files/1/1991/8975/files/Hatch-49_1.jpg?v=1763657501",
     "url": null,
     "tags": [
       "comfort",
@@ -9072,7 +8839,7 @@
     "product_type": "physical",
     "summary": "Ergonomic support for breastfeeding and bottle feeding. Versatile use for baby propping.",
     "price": "$45",
-    "image": "/ayna_placeholder.png",
+    "image": "https://cdn.shopify.com/s/files/1/0039/7043/3094/files/boppy-nursing-pillow-protective-liner00067022210490-2282656.png?v=1779347293",
     "url": null,
     "tags": [
       "comfort",
@@ -9151,7 +8918,7 @@
     "product_type": "physical",
     "summary": "C-shaped total body pillow to support back, hips, and belly during pregnancy sleep.",
     "price": "$60",
-    "image": "/ayna_placeholder.png",
+    "image": "https://cdn.shopify.com/s/files/1/0730/4943/products/Snoogle-Supreme-CBL-4.webp?v=1673993532",
     "url": null,
     "tags": [
       "comfort",
@@ -9229,7 +8996,7 @@
     "product_type": "physical",
     "summary": "Ergonomically designed for internal and external pleasure. Quiet and powerful.",
     "price": "$115",
-    "image": "/ayna_placeholder.png",
+    "image": "https://cdn.shopify.com/s/files/1/1027/2873/files/arc-1-ice.png?v=1776325628",
     "url": null,
     "tags": [
       "comfort"
@@ -9306,7 +9073,7 @@
     "product_type": "physical",
     "summary": "Sonic massager that uses sound waves for deep clitoral stimulation. Waterproof.",
     "price": "$129",
-    "image": "/ayna_placeholder.png",
+    "image": "https://www.lelo.com/themes/play/images/apple-touch-icon.webp",
     "url": null,
     "tags": [
       "comfort"
@@ -9383,7 +9150,7 @@
     "product_type": "physical",
     "summary": "Flexible, app-controlled vibrator that adapts to any body shape. Multi-award winning design.",
     "price": "$150",
-    "image": "/ayna_placeholder.png",
+    "image": "https://cdn.shopify.com/s/files/1/0082/8879/6719/files/P-Crescendo-2-Bend-Cream-3000x2000_ef8e0576-a31c-415f-9ec3-275583b3e5ff.jpg?v=1762871502",
     "url": null,
     "tags": [
       "comfort"
@@ -9606,13 +9373,13 @@
     }
   },
   {
-    "id": "p-v-spot-serum",
-    "name": "The V-Spot Resurface Serum",
-    "brand": null,
+    "id": "p-sweetspot-buff-brighten",
+    "name": "SweetSpot Labs Buff & Brighten AHA/BHA Body Exfoliating Pads",
+    "brand": "SweetSpot Labs",
     "category": "intimate-care",
     "product_type": "physical",
-    "summary": "Specialized serum to treat ingrown hairs and razor burn in the intimate area. AHA/BHA formula.",
-    "price": "$40",
+    "summary": "AHA/BHA exfoliating pads to treat ingrown hairs and razor burn on the bikini line and body.",
+    "price": "$18",
     "image": "/ayna_placeholder.png",
     "url": null,
     "tags": [
@@ -9622,7 +9389,7 @@
       "vaginal-health"
     ],
     "where_to_buy": [
-      "TheVSpot.com"
+      "SweetSpotLabs.com"
     ],
     "where_to_buy_in_stock": {},
     "safety": {
@@ -9682,315 +9449,6 @@
     }
   },
   {
-    "id": "p-caya-diaphragm",
-    "name": "Caya Contraceptive Diaphragm",
-    "brand": null,
-    "category": "contraception",
-    "product_type": "physical",
-    "summary": "Single-size, hormone-free contraceptive barrier. Reusable for up to 2 years.",
-    "price": "$90",
-    "image": "/ayna_placeholder.png",
-    "url": null,
-    "tags": [
-      "privacy",
-      "non-hormonal"
-    ],
-    "health_functions": [
-      "contraception"
-    ],
-    "where_to_buy": [
-      "Pharmacy with prescription"
-    ],
-    "where_to_buy_in_stock": {},
-    "safety": {
-      "fdaStatus": "FDA-cleared",
-      "materials": "Medical-grade silicone",
-      "recalls": "No recalls.",
-      "allergens": "Latex-free"
-    },
-    "doctor_opinion": "Single-size Caya is a non-hormonal, user-controlled option. 82% typical use, 86% perfect use. Reusable up to 2 years.",
-    "community_review": "Community discussions on Reddit r/birthcontrol note one-size convenience compared to traditional diaphragms.",
-    "effectiveness": "82% typical use, 86% perfect use.",
-    "clinician_opinion_source": "independent",
-    "clinician_attribution": "Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.",
-    "source": "curated",
-    "internal": true,
-    "requires_prescription": true,
-    "user_rating": 4.4,
-    "is_active": true,
-    "extra": {
-      "ingredients": "Medical-grade silicone, nylon.",
-      "badges": [
-        "Hormone-Free",
-        "Sustainable Option"
-      ],
-      "verificationLinks": {
-        "doctor": {
-          "links": [
-            {
-              "url": "https://www.acog.org/womens-health/faqs/barrier-methods-of-birth-control",
-              "text": "ACOG: Barrier methods",
-              "summary": "Clinical guidance on diaphragms and non-hormonal contraception.",
-              "justification": "ACOG is the leading OB-GYN professional society."
-            }
-          ]
-        },
-        "scientific": {
-          "links": [
-            {
-              "url": "https://pubmed.ncbi.nlm.nih.gov/22996160/",
-              "text": "Diaphragm effectiveness",
-              "summary": "Research on barrier method efficacy and acceptability.",
-              "justification": "PubMed peer-reviewed."
-            }
-          ]
-        },
-        "community": {
-          "links": [
-            {
-              "platform": "reddit",
-              "url": "https://www.reddit.com/r/birthcontrol/search/?q=caya+diaphragm&restrict_sr=1",
-              "text": "Reddit r/birthcontrol — Caya",
-              "summary": "Community discussions on Caya diaphragm."
-            }
-          ]
-        }
-      }
-    }
-  },
-  {
-    "id": "p-annovera-ring",
-    "name": "Annovera Vaginal Ring",
-    "brand": null,
-    "category": "contraception",
-    "product_type": "physical",
-    "summary": "A single vaginal ring that provides a full year of protection. Reusable each month.",
-    "price": "Varies with insurance",
-    "image": "/ayna_placeholder.png",
-    "url": null,
-    "tags": [
-      "privacy",
-      "comfort"
-    ],
-    "health_functions": [
-      "contraception"
-    ],
-    "where_to_buy": [
-      "Pharmacy with prescription"
-    ],
-    "where_to_buy_in_stock": {},
-    "safety": {
-      "fdaStatus": "FDA-approved",
-      "materials": "Silicone-based",
-      "recalls": "No recalls.",
-      "allergens": "N/A"
-    },
-    "doctor_opinion": "Annovera provides a full year of protection with one reusable ring. 97% typical use. Convenient for those who prefer not to take daily pills.",
-    "community_review": "Community discussions on Reddit r/birthcontrol note convenience of year-long protection and travel.",
-    "effectiveness": "97% typical use, 99%+ perfect use.",
-    "clinician_opinion_source": "independent",
-    "clinician_attribution": "Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.",
-    "source": "curated",
-    "internal": true,
-    "requires_prescription": true,
-    "user_rating": 4.5,
-    "is_active": true,
-    "extra": {
-      "ingredients": "Segesterone acetate, ethinyl estradiol.",
-      "badges": [
-        "Convenience Award",
-        "Year-Long Protection"
-      ],
-      "verificationLinks": {
-        "doctor": {
-          "links": [
-            {
-              "url": "https://www.acog.org/womens-health/faqs/combined-hormonal-birth-control",
-              "text": "ACOG: Hormonal contraception",
-              "summary": "Clinical guidance on vaginal rings and LARC.",
-              "justification": "ACOG is the leading OB-GYN professional society."
-            }
-          ]
-        },
-        "scientific": {
-          "links": [
-            {
-              "url": "https://pubmed.ncbi.nlm.nih.gov/29949418/",
-              "text": "Annovera contraceptive ring",
-              "summary": "Clinical trial data on segesterone/ethinyl estradiol ring.",
-              "justification": "PubMed peer-reviewed."
-            }
-          ]
-        },
-        "community": {
-          "links": [
-            {
-              "platform": "reddit",
-              "url": "https://www.reddit.com/r/birthcontrol/search/?q=annovera&restrict_sr=1",
-              "text": "Reddit r/birthcontrol — Annovera",
-              "summary": "Community discussions on Annovera ring."
-            }
-          ]
-        }
-      }
-    }
-  },
-  {
-    "id": "p-mirena-iud",
-    "name": "Mirena Hormonal IUD",
-    "brand": null,
-    "category": "contraception",
-    "product_type": "physical",
-    "summary": "Long-acting reversible contraceptive (LARC). Placed by a doctor. Effective for up to 8 years.",
-    "price": "$0-1000 (usually covered)",
-    "image": "/ayna_placeholder.png",
-    "url": null,
-    "tags": [
-      "heavy-flow",
-      "cost"
-    ],
-    "health_functions": [
-      "contraception"
-    ],
-    "where_to_buy": [
-      "Clinic insertion"
-    ],
-    "where_to_buy_in_stock": {},
-    "safety": {
-      "fdaStatus": "FDA-approved",
-      "materials": "Polyethylene, barium sulfate",
-      "recalls": "No recalls.",
-      "allergens": "N/A"
-    },
-    "doctor_opinion": "Mirena is a LARC option for long-term birth control and heavy menstrual bleeding. ACOG recommends LARCs as first-line. 99.9% effective, up to 8 years.",
-    "community_review": "Community discussions on Reddit r/birthcontrol note long-term effectiveness and reduced or absent periods.",
-    "effectiveness": "99.9% effective.",
-    "clinician_opinion_source": "independent",
-    "clinician_attribution": "Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.",
-    "source": "curated",
-    "internal": true,
-    "requires_prescription": false,
-    "user_rating": 4.6,
-    "is_active": true,
-    "extra": {
-      "ingredients": "Levonorgestrel.",
-      "badges": [
-        "ACOG Gold Standard",
-        "Long-Acting"
-      ],
-      "verificationLinks": {
-        "doctor": {
-          "links": [
-            {
-              "url": "https://www.acog.org/womens-health/faqs/long-acting-reversible-contraception",
-              "text": "ACOG: LARC",
-              "summary": "Clinical guidance on IUDs including Mirena.",
-              "justification": "ACOG is the leading OB-GYN professional society."
-            }
-          ]
-        },
-        "scientific": {
-          "links": [
-            {
-              "url": "https://pubmed.ncbi.nlm.nih.gov/22996160/",
-              "text": "IUD effectiveness and safety",
-              "summary": "Cochrane and trial data on hormonal IUDs.",
-              "justification": "PubMed peer-reviewed."
-            }
-          ]
-        },
-        "community": {
-          "links": [
-            {
-              "platform": "reddit",
-              "url": "https://www.reddit.com/r/birthcontrol/search/?q=mirena&restrict_sr=1",
-              "text": "Reddit r/birthcontrol — Mirena",
-              "summary": "Community discussions on Mirena IUD."
-            }
-          ]
-        }
-      }
-    }
-  },
-  {
-    "id": "p-paragard-iud",
-    "name": "Paragard Copper IUD",
-    "brand": null,
-    "category": "contraception",
-    "product_type": "physical",
-    "summary": "The only 100% hormone-free IUD. Uses copper to prevent pregnancy. Effective for up to 10 years.",
-    "price": "$0-1000 (usually covered)",
-    "image": "/ayna_placeholder.png",
-    "url": null,
-    "tags": [
-      "privacy",
-      "heavy-flow",
-      "non-hormonal"
-    ],
-    "health_functions": [
-      "contraception"
-    ],
-    "where_to_buy": [
-      "Clinic insertion"
-    ],
-    "where_to_buy_in_stock": {},
-    "safety": {
-      "fdaStatus": "FDA-approved",
-      "materials": "Polyethylene, Copper",
-      "recalls": "No recalls.",
-      "allergens": "Copper allergy"
-    },
-    "doctor_opinion": "Paragard is the most effective hormone-free method available. Can make periods heavier for the first few months. 99.2% effective, up to 10 years.",
-    "community_review": "Community discussions on Reddit r/birthcontrol note worth the initial heavy periods for decade-long hormone-free protection.",
-    "effectiveness": "99.2% effective.",
-    "clinician_opinion_source": "independent",
-    "clinician_attribution": "Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.",
-    "source": "curated",
-    "internal": true,
-    "requires_prescription": false,
-    "user_rating": 4.5,
-    "is_active": true,
-    "extra": {
-      "ingredients": "Copper wire.",
-      "badges": [
-        "Hormone-Free",
-        "Decade Protection"
-      ],
-      "verificationLinks": {
-        "doctor": {
-          "links": [
-            {
-              "url": "https://www.acog.org/womens-health/faqs/long-acting-reversible-contraception",
-              "text": "ACOG: LARC",
-              "summary": "Clinical guidance on copper IUD and hormone-free options.",
-              "justification": "ACOG is the leading OB-GYN professional society."
-            }
-          ]
-        },
-        "scientific": {
-          "links": [
-            {
-              "url": "https://pubmed.ncbi.nlm.nih.gov/22996160/",
-              "text": "Copper IUD effectiveness",
-              "summary": "Research on copper IUD efficacy and side effects.",
-              "justification": "PubMed peer-reviewed."
-            }
-          ]
-        },
-        "community": {
-          "links": [
-            {
-              "platform": "reddit",
-              "url": "https://www.reddit.com/r/birthcontrol/search/?q=paragard&restrict_sr=1",
-              "text": "Reddit r/birthcontrol — Paragard",
-              "summary": "Community discussions on copper IUD."
-            }
-          ]
-        }
-      }
-    }
-  },
-  {
     "id": "p-gennev-care",
     "name": "Gennev Menopause Care",
     "brand": null,
@@ -9998,7 +9456,7 @@
     "product_type": "physical",
     "summary": "Specialized telehealth for menopause. Includes access to OB-GYNs and health coaches.",
     "price": "$99/consult",
-    "image": "/ayna_placeholder.png",
+    "image": "https://gennev.com/wp-content/uploads/2025/06/favicon.png",
     "url": null,
     "tags": [
       "discomfort"
@@ -10075,7 +9533,7 @@
     "product_type": "physical",
     "summary": "Tool designed specifically for menopausal skin to increase blood flow and collagen.",
     "price": "$115",
-    "image": "/pause-well-fascia-tool.png",
+    "image": "/ayna_placeholder.png",
     "url": null,
     "tags": [
       "comfort"
@@ -10151,7 +9609,7 @@
     "product_type": "physical",
     "summary": "Caffeine-free supplement targeting hot flashes, night sweats, and mood swings.",
     "price": "$40",
-    "image": "/ayna_placeholder.png",
+    "image": "https://cdn.shopify.com/s/files/1/0506/9189/9575/files/MNP-front.jpg?v=1773928360",
     "url": null,
     "tags": [
       "discomfort"
@@ -10228,7 +9686,7 @@
     "product_type": "digital",
     "summary": "24/7 access to menopause experts and personalized treatment plans (HRT/non-hormonal).",
     "price": "$75-125/month",
-    "image": "/ayna_placeholder.png",
+    "image": "https://cdn.prod.website-files.com/62039cc91acccd69bbc3274f/6234821b71fe6f2a89a8ec47_OG-min.webp",
     "url": null,
     "tags": [
       "discomfort",
@@ -10395,7 +9853,7 @@
     "product_type": "physical",
     "summary": "Breathable cover with Stay-Dry technology. Affordable and reliable.",
     "price": "$6 for 24",
-    "image": "/ayna_placeholder.png",
+    "image": "https://cdn.shopify.com/s/files/1/0624/0079/0583/files/1_Hero_a48c1149-5da1-4ffe-a484-ad5690213b56.jpg?v=1774904068",
     "url": null,
     "tags": [
       "leaks",
@@ -10477,7 +9935,7 @@
     "product_type": "physical",
     "summary": "Chlorine-free, fragrance-free pads. Plant-based materials where possible.",
     "price": "$8 for 14",
-    "image": "/ayna_placeholder.png",
+    "image": "https://www.seventhgeneration.com/themes/custom/svg3/favicon.png",
     "url": null,
     "tags": [
       "organic",
@@ -10607,7 +10065,7 @@
     "product_type": "physical",
     "summary": "European brand with BodyFit technology. Soft and absorbent.",
     "price": "$6 for 14",
-    "image": "/ayna_placeholder.png",
+    "image": "https://assets.www.essity.com/libresse/1.157.0-release.5/img/favicons/apple-touch-icon-57x57.png",
     "url": null,
     "tags": [
       "heavy-flow",
@@ -10737,7 +10195,7 @@
     "product_type": "physical",
     "summary": "Extra-long organic cotton overnight pads. B-Corp, plastic-free packaging.",
     "price": "$12 for 8",
-    "image": "/ayna_placeholder.png",
+    "image": "https://cdn.shopify.com/s/files/1/0940/5060/files/Logo_33a7614e-134f-4af3-9075-b4ac69ca81a0.png?height=628&pad_color=fefaf8&v=1646873247&width=1200",
     "url": null,
     "tags": [
       "heavy-flow",
@@ -10901,7 +10359,7 @@
     "product_type": "physical",
     "summary": "Thin liners for light days, spotting, or backup. Dri-Weave technology.",
     "price": "$6 for 42",
-    "image": "/ayna_placeholder.png",
+    "image": "https://images.ctfassets.net/o5hnyn1x0ewo/25qEBHyVBxNqa10PmPrBiP/777b65da9d366aab68b7aaa6b3326754/favicon.png",
     "url": null,
     "tags": [
       "leaks",
@@ -11305,7 +10763,7 @@
     "product_type": "physical",
     "summary": "Flexible braid design with LeakGuard. Smooth plastic applicator.",
     "price": "$9 for 18",
-    "image": "/ayna_placeholder.png",
+    "image": "https://images.ctfassets.net/xqcbjukrkf0k/if063utku3bo_1yhx0ohbOtZaEKVWM3f8tn/fe10c1263ad2cacbcde0ec66003f3525/tampax-logo.png",
     "url": null,
     "tags": [
       "heavy-flow",
@@ -11386,7 +10844,7 @@
     "product_type": "physical",
     "summary": "100% organic cotton tampons. Chlorine-free, cardboard applicator.",
     "price": "$8 for 18",
-    "image": "/ayna_placeholder.png",
+    "image": "https://www.seventhgeneration.com/themes/custom/svg3/favicon.png",
     "url": null,
     "tags": [
       "organic",
@@ -11548,7 +11006,7 @@
     "product_type": "physical",
     "summary": "Beginner-friendly cup. Available in Original (firmer) and Sensitive (softer). 50,000+ 5-star reviews.",
     "price": "$25 (reusable 10 years)",
-    "image": "/ayna_placeholder.png",
+    "image": "https://cdn.shopify.com/s/files/1/1274/0057/files/Lena_Cup_Blue_Cotton_Bag.png?v=1777479161",
     "url": null,
     "tags": [
       "heavy-flow",
@@ -11628,7 +11086,7 @@
     "product_type": "physical",
     "summary": "Buy one, give one. For every cup sold, one is donated to someone without access to period products.",
     "price": "$28 (reusable)",
-    "image": "/ayna_placeholder.png",
+    "image": "https://cdn.shopify.com/s/files/1/0147/2724/9974/files/Ruby_Cup_menstrual_cup_duo_bundle.png?v=1765449371",
     "url": null,
     "tags": [
       "sustainability",
@@ -11707,7 +11165,7 @@
     "product_type": "physical",
     "summary": "Soft medical-grade silicone. Four sizes including Mini for teens and first-time users.",
     "price": "$28 (reusable)",
-    "image": "/ayna_placeholder.png",
+    "image": "http://allmatters.com/cdn/shop/files/AllMatters_54_02_84104b40-8478-4db2-adc7-9044fc418f04.jpg?v=1753083478",
     "url": null,
     "tags": [
       "sustainability",
@@ -11865,7 +11323,7 @@
     "product_type": "physical",
     "summary": "Pull-tab release breaks suction before removal. Easier removal than traditional cups.",
     "price": "$30 (reusable)",
-    "image": "/ayna_placeholder.png",
+    "image": "https://cdn.shopify.com/s/files/1/1097/9960/files/flex-period-cup-with-packaging-and-review.png?v=1763752341",
     "url": null,
     "tags": [
       "heavy-flow",
@@ -12071,7 +11529,7 @@
     "product_type": "physical",
     "summary": "Disposable menstrual disc. Same concept as Flex disc, single-use. 12-hour wear.",
     "price": "$13 for 14",
-    "image": "/ayna_placeholder.png",
+    "image": "https://cdn.shopify.com/s/files/1/0597/6313/0435/files/220428_Softdisc_Amazon_0_c54ca2dd-0766-4028-aca2-790812e606cf.jpg?v=1727390547",
     "url": null,
     "tags": [
       "heavy-flow",
@@ -12118,7 +11576,7 @@
     "product_type": "physical",
     "summary": "Designed by Kim Rosas of Period Nirvana. Two sizes, notch for removal.",
     "price": "$42 (reusable)",
-    "image": "/ayna_placeholder.png",
+    "image": "https://www.periodnirvana.com/wp-content/uploads/2021/03/plaincupquiz.jpg",
     "url": null,
     "tags": [
       "heavy-flow",
@@ -12197,7 +11655,7 @@
     "product_type": "physical",
     "summary": "Modular period wear. Absorbent inserts can be swapped. PFAS-free, inclusive sizing.",
     "price": "$24–$36 per pair",
-    "image": "/ayna_placeholder.png",
+    "image": "http://periodaisle.com/cdn/shop/files/S25_PA_Cheeky_Merlot_M02_31558_Cheeky_Merlot_33347_ad13f801-02fa-4756-a17d-1ba3518c930c.jpg?v=1767893880",
     "url": null,
     "tags": [
       "leaks",
@@ -12246,7 +11704,7 @@
     "product_type": "physical",
     "summary": "Affordable period underwear. Multiple absorbency levels. Teen-friendly styles.",
     "price": "$12–$18 per pair",
-    "image": "/ayna_placeholder.png",
+    "image": "https://cdn.shopify.com/s/files/1/0306/8837/8939/files/Pouch_Hand_Transparent.png?v=1785180628",
     "url": null,
     "tags": [
       "leaks",
@@ -12408,7 +11866,7 @@
     "product_type": "physical",
     "summary": "Inclusive, gender-neutral period underwear. Multiple styles and sizes.",
     "price": "$28–$34 per pair",
-    "image": "/ayna_placeholder.png",
+    "image": "http://tomboyx.com/cdn/shop/files/TomboyX_Logo_Black_86d06453-ccbd-441d-a163-1901e8d4c03f.png?v=1706301500",
     "url": null,
     "tags": [
       "leaks",
@@ -12488,7 +11946,7 @@
     "product_type": "physical",
     "summary": "Fashion-forward period underwear. Lace and athletic styles. PFAS-free.",
     "price": "$32–$38 per pair",
-    "image": "/ayna_placeholder.png",
+    "image": "https://cdn.shopify.com/s/files/1/0152/4745/files/social_share_banner_1200x628_d66f9918-1081-413d-9ff1-5949fcf5e96a.jpg?v=1600804223",
     "url": null,
     "tags": [
       "leaks",
@@ -12729,7 +12187,7 @@
     "product_type": "physical",
     "summary": "An at-home UTI test paired with Winx Rx, the brand's own telehealth service — check symptoms with a rapid test, then connect to a licensed provider for prescription treatment if needed. Recognized as a TIME Best Invention.",
     "price": "$15",
-    "image": null,
+    "image": "https://cdn.shopify.com/s/files/1/0077/8761/0171/files/UTITest_Treat_1.png?v=1771347569",
     "url": "https://hellowinx.com/",
     "tags": [
       "uti",
@@ -12820,7 +12278,7 @@
     "product_type": "physical",
     "summary": "A daily UTI-prevention capsule combining D-mannose, soluble cranberry PACs, vitamin D3, and zinc — designed for people prone to recurrent UTIs who want a preventive daily routine rather than only reactive treatment.",
     "price": "$99 starter kit (or $84.15/mo subscription)",
-    "image": null,
+    "image": "https://cdn.prod.website-files.com/66dc11fd6ea52df0b92e5e5c/670589c8dcbf01c1fa271073_Frame%201000001813%20(1).png",
     "url": "https://goodkittyco.com/",
     "tags": [
       "uti",
@@ -12862,7 +12320,7 @@
     "product_type": "physical",
     "summary": "A warming pleasure wand designed for perimenopausal and menopausal women navigating changes in arousal and vaginal dryness — part of Oboo's \"midlife-friendly, body-smart, shame-free\" intimate wellness line, which also includes daily and arousal moisturizers.",
     "price": "$119",
-    "image": null,
+    "image": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/WooshOpt1.webp?v=1776054530",
     "url": "https://oboo.love/",
     "tags": [
       "comfort",

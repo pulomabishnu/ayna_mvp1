@@ -99,20 +99,15 @@ function getQualityScore(item, aynaReviews = {}) {
     return (rating * 2) + consensusScore + safetyOk;
 }
 
-// Brand partners get a subtle, randomized nudge toward the top of the default (browsing) sort —
-// see partnerBrandBoost/shuffleJitter below. Matched against brand+name, case-insensitively, with
-// word boundaries so e.g. "oboo" doesn't accidentally match inside an unrelated word.
+// Brand partners are pinned to the top of the default (browsing) sort — see isPartnerBrandItem's
+// use in the sort below. Matched against brand+name, case-insensitively, with word boundaries so
+// e.g. "oboo" doesn't accidentally match inside an unrelated word.
 const PARTNER_BRAND_PATTERNS = [/\bwinx(?:\s*health)?\b/, /\bneycher\b/, /\boboo\b/, /\blola\b/];
 
 function isPartnerBrandItem(item) {
     const text = `${item?.brand || ''} ${item?.name || ''}`.toLowerCase();
     return PARTNER_BRAND_PATTERNS.some((re) => re.test(text));
 }
-
-// Small enough relative to getQualityScore's spread (~0-6) that it nudges partner products toward
-// the top on average without pinning them there every time — shuffleJitter below still lets other
-// high-quality items land above them, keeping the effect subtle rather than a blatant "always #1-4".
-const PARTNER_BRAND_BOOST = 1.1;
 
 // Deterministic per-(item, seed) hash in [0, 1) — same seed always reorders the same way (so a
 // single landing's grid doesn't jitter as filters/sort re-render), but a fresh seed each time the
@@ -402,13 +397,18 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             list = [...list].sort((a, b) => {
                 const m = matchTieBreak(a, b);
                 if (m !== 0) return m;
-                // Pure browsing (no active text-match score) — mix in the partner boost and a
-                // per-visit random jitter so the catalog doesn't render in the exact same order
-                // every time someone lands on the page. Text searches (scoreById set) keep
-                // relying purely on quality score as the tiebreak.
+                // Pure browsing (no active text-match score) — partner-brand items are pinned
+                // ahead of everything else, then a per-visit random jitter keeps the catalog from
+                // rendering in the exact same order every time someone lands on the page. Text
+                // searches (scoreById set) keep relying purely on quality score as the tiebreak.
                 const partnerAndJitter = !scoreById;
-                const qa = getQualityScore(a, aynaReviews) + (partnerAndJitter ? (isPartnerBrandItem(a) ? PARTNER_BRAND_BOOST : 0) + shuffleJitter(a, shuffleSeed) : 0);
-                const qb = getQualityScore(b, aynaReviews) + (partnerAndJitter ? (isPartnerBrandItem(b) ? PARTNER_BRAND_BOOST : 0) + shuffleJitter(b, shuffleSeed) : 0);
+                if (partnerAndJitter) {
+                    const pa = isPartnerBrandItem(a) ? 1 : 0;
+                    const pb = isPartnerBrandItem(b) ? 1 : 0;
+                    if (pa !== pb) return pb - pa;
+                }
+                const qa = getQualityScore(a, aynaReviews) + (partnerAndJitter ? shuffleJitter(a, shuffleSeed) : 0);
+                const qb = getQualityScore(b, aynaReviews) + (partnerAndJitter ? shuffleJitter(b, shuffleSeed) : 0);
                 return qb - qa;
             });
         }

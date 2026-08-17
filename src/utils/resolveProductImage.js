@@ -18,7 +18,13 @@ function lsWrite(key, url) {
 export function isPlaceholderProductImage(imageUrl) {
   const src = String(imageUrl || '').trim();
   if (!src) return true; // empty string — LLM products always start with ""
-  return src === '/ayna_placeholder.png' || src === '/startup_placeholder.png';
+  if (src === '/ayna_placeholder.png' || src === '/startup_placeholder.png') return true;
+  // logo.clearbit.com is an unreliable free logo API used by some catalog entries
+  // (Pomelo Care, Nurx, Happi, Hers, Midi, etc.) — treat it as a placeholder too so
+  // those products get queued for a real photo via /api/product-image instead of
+  // being left on a logo that may 404 and fall back to a generic brand block.
+  if (/^https?:\/\/logo\.clearbit\.com\//i.test(src)) return true;
+  return false;
 }
 
 export async function resolveProductImage(name, brand, url) {
