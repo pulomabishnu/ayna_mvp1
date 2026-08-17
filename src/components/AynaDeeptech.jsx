@@ -7,7 +7,6 @@ const deeptechProjects = [
         type: 'Material Science Innovation',
         focus: 'Menstrual Collection',
         description: 'A revolutionary cotton top sheet pad that leverages advanced micro-absorption technology. Designed to be remarkably thin—almost unnoticeable—while maintaining ultra-high absorbency for heavy flow days.',
-        status: 'In Development',
         tags: ['Ultra-thin', 'High Absorbency', '100% Cotton Top']
     },
     {
@@ -16,7 +15,6 @@ const deeptechProjects = [
         type: 'Biomaterial Innovation',
         focus: 'Menstrual Hygiene',
         description: 'The world\'s first menstrual pad actively engineered to prevent menstrual odor at the molecular level without the use of harsh chemical fragrances or masking agents. Utilizes proprietary bio-neutralizing mesh.',
-        status: 'Prototypes Active',
         tags: ['Fragrance-Free', 'Odor Neutralizing', 'Bio-Mesh']
     },
     {
@@ -25,7 +23,6 @@ const deeptechProjects = [
         type: 'Wearable Patch',
         focus: 'Menopause & Cycle Tracking',
         description: 'A discreet, skin-safe biometric patch that continuously monitors basal body temperature. Integrates directly with Ayna to predict ovulation with 99% accuracy and detect early signs of menopause hot flashes.',
-        status: 'Clinical Trials',
         tags: ['Wearable', 'Basal Body Temp', 'Continuous Monitoring']
     }
 ];
@@ -51,9 +48,21 @@ export default function AynaDeeptech({ joinedWaitlists, toggleJoinWaitlist }) {
                 <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', marginBottom: '1rem', color: 'var(--color-surface-contrast)' }}>
                     Ayna Deeptech
                 </h1>
-                <p style={{ fontSize: '1.2rem', color: 'var(--color-text-muted)', maxWidth: '600px', margin: '0 auto' }}>
+                <p style={{ fontSize: '1.2rem', color: 'var(--color-text-muted)', maxWidth: '600px', margin: '0 auto', marginBottom: '1.5rem' }}>
                     We're not just recommending the best products on the market—we're actively building the future of women's health. Join the waitlists for our upcoming internal research and development projects.
                 </p>
+                <button
+                    onClick={() => toggleJoinWaitlist({ id: 'dt-general', name: 'Ayna Deeptech Updates' })}
+                    style={{
+                        padding: '0.75rem 1.75rem', borderRadius: 'var(--radius-pill)', fontWeight: '600', fontSize: '0.95rem',
+                        cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
+                        background: joinedWaitlists['dt-general'] ? '#F8FAFC' : 'var(--color-primary)',
+                        color: joinedWaitlists['dt-general'] ? 'var(--color-text-main)' : '#FFFFFF',
+                        border: joinedWaitlists['dt-general'] ? '1px solid var(--color-border)' : '1px solid transparent',
+                    }}
+                >
+                    {joinedWaitlists['dt-general'] ? '✓ On the Deeptech waitlist' : 'Join the Deeptech waitlist'}
+                </button>
             </div>
 
             <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'center' }}>
@@ -78,12 +87,7 @@ export default function AynaDeeptech({ joinedWaitlists, toggleJoinWaitlist }) {
                     return (
                         <div key={project.id} className={`card hover-lift stagger-${(index % 4) + 1}`} style={{ display: 'flex', flexDirection: 'column' }}>
                             <div style={{ marginBottom: '1rem' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-                                    <h3 style={{ fontSize: '1.25rem', color: 'var(--color-surface-contrast)' }}>{project.name}</h3>
-                                    <span style={{ fontSize: '0.7rem', background: '#F8FAFC', color: 'var(--color-text-muted)', padding: '0.2rem 0.5rem', borderRadius: '4px', border: '1px solid var(--color-border)', fontWeight: '600' }}>
-                                        {project.status}
-                                    </span>
-                                </div>
+                                <h3 style={{ fontSize: '1.25rem', color: 'var(--color-surface-contrast)', marginBottom: '0.5rem' }}>{project.name}</h3>
                                 <div style={{ fontSize: '0.8rem', color: 'var(--color-primary)', fontWeight: '500', marginBottom: '0.75rem' }}>
                                     {project.type} • {project.focus}
                                 </div>
