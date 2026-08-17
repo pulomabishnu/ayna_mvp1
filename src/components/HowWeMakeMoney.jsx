@@ -29,14 +29,14 @@ export default function HowWeMakeMoney({ onBack }) {
             <button
                 type="button"
                 onClick={onBack}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-primary-hover)', fontSize: '0.9rem', marginBottom: '1.5rem', padding: 0, display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#92400E', fontSize: '0.9rem', marginBottom: '1.5rem', padding: 0, display: 'flex', alignItems: 'center', gap: '0.35rem' }}
             >
                 ← Back
             </button>
 
             <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-xl)' }}>
                 <span style={{
-                    fontSize: '0.85rem', fontWeight: '600', color: 'var(--color-primary-hover)',
+                    fontSize: '0.85rem', fontWeight: '600', color: '#92400E',
                     background: 'var(--color-secondary-fade)', padding: '0.3rem 0.8rem',
                     borderRadius: 'var(--radius-pill)', display: 'inline-block', marginBottom: '1rem'
                 }}>
@@ -54,7 +54,7 @@ export default function HowWeMakeMoney({ onBack }) {
                 {SECTIONS.map((section) => (
                     <div key={section.eyebrow}>
                         <h2 style={{
-                            fontSize: '0.78rem', fontWeight: '700', color: 'var(--color-primary-hover)',
+                            fontSize: '0.78rem', fontWeight: '700', color: '#92400E',
                             textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.75rem',
                         }}>
                             {section.eyebrow}
@@ -76,7 +76,7 @@ export default function HowWeMakeMoney({ onBack }) {
                 background: 'var(--color-secondary-fade)', border: '1px solid var(--color-primary)',
             }}>
                 <h2 style={{
-                    fontSize: '0.78rem', fontWeight: '700', color: 'var(--color-primary-hover)',
+                    fontSize: '0.78rem', fontWeight: '700', color: '#92400E',
                     textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.75rem',
                 }}>
                     The bottom line
