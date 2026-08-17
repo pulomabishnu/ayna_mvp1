@@ -1099,15 +1099,13 @@ export default function ProductModal({
                                     e.target.nextElementSibling.style.display = 'flex';
                                 }}
                             />
-                            <div style={{ display: 'none', width: '100%', height: '100%', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                                <span style={{ fontSize: '2.5rem', fontWeight: '900', color: 'var(--color-primary)', letterSpacing: '0.02em' }}>AYNA</span>
-                                <span style={{ fontSize: '0.9rem', color: 'var(--color-primary)', opacity: 0.9 }}>Your women's health assistant</span>
+                            <div style={{ display: 'none', width: '100%', height: '100%', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '1rem', textAlign: 'center' }}>
+                                <span style={{ fontSize: '1.8rem', fontWeight: '900', color: 'var(--color-text-muted)', letterSpacing: '0.02em' }}>{product.brand || product.name}</span>
                             </div>
                         </>
                     ) : (
-                        <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                            <span style={{ fontSize: '2.5rem', fontWeight: '900', color: 'var(--color-primary)', letterSpacing: '0.02em' }}>AYNA</span>
-                            <span style={{ fontSize: '0.9rem', color: 'var(--color-primary)', opacity: 0.9 }}>Your women's health assistant</span>
+                        <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '1rem', textAlign: 'center' }}>
+                            <span style={{ fontSize: '1.8rem', fontWeight: '900', color: 'var(--color-text-muted)', letterSpacing: '0.02em' }}>{product.brand || product.name}</span>
                         </div>
                     )}
                     <div style={{

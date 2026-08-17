@@ -943,17 +943,15 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                                 e.target.nextElementSibling.style.display = 'flex';
                                             }}
                                         />
-                                        <div style={{ display: 'none', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.25rem', padding: '1rem' }}>
-                                            <span style={{ fontSize: '1.75rem', fontWeight: '900', color: 'var(--color-primary)', letterSpacing: '0.02em' }}>AYNA</span>
-                                            <span style={{ fontSize: '0.75rem', color: 'var(--color-primary)', opacity: 0.9 }}>Your women's health assistant</span>
+                                        <div style={{ display: 'none', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.25rem', padding: '1rem', textAlign: 'center' }}>
+                                            <span style={{ fontSize: '1.4rem', fontWeight: '900', color: 'var(--color-text-muted)', letterSpacing: '0.02em' }}>{item.brand || item.name}</span>
                                         </div>
                                     </>
                                 ) : imageStillLoading ? (
                                     <div className="skeleton-shimmer" style={{ position: 'absolute', inset: 0 }} aria-hidden="true" />
                                 ) : (
-                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.25rem', padding: '1rem' }}>
-                                        <span style={{ fontSize: '1.75rem', fontWeight: '900', color: 'var(--color-primary)', letterSpacing: '0.02em' }}>AYNA</span>
-                                        <span style={{ fontSize: '0.75rem', color: 'var(--color-primary)', opacity: 0.9 }}>Your women's health assistant</span>
+                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.25rem', padding: '1rem', textAlign: 'center' }}>
+                                        <span style={{ fontSize: '1.4rem', fontWeight: '900', color: 'var(--color-text-muted)', letterSpacing: '0.02em' }}>{item.brand || item.name}</span>
                                     </div>
                                 )}
                                 <div style={{ position: 'absolute', top: '0.5rem', left: '0.5rem', display: 'flex', gap: '0.3rem' }}>
