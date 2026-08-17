@@ -91,10 +91,19 @@ function getQualityScore(item, aynaReviews = {}) {
     const clinical = hasLinks(v.doctor);
     const social = hasLinks(v.community);
     const scientific = hasLinks(v.scientific);
-    const consensusScore = clinical + social + scientific;
+    // A brand-new/smaller-company product with zero citations usually means Ayna's content team
+    // hasn't researched it yet, not that it failed review — scoring that the same as 0/3 buried
+    // these products at the very bottom of the default sort on every visit, regardless of actual
+    // merit. Treat "not yet researched" as a neutral middle value rather than a penalty.
+    const hasAnyConsensus = clinical || social || scientific;
+    const consensusScore = hasAnyConsensus ? (clinical + social + scientific) : 1.5;
     const aynaRating = getAynaRating(item, aynaReviews[item.id]);
+    const hasRating = !item.ratingNote && (aynaRating != null || item.userRating != null);
     const baseRating = item.ratingNote ? 0 : (item.userRating != null ? Number(item.userRating) / 5 : 0);
-    const rating = item.ratingNote ? 0 : (aynaRating != null ? aynaRating / 5 : baseRating);
+    const ratedValue = item.ratingNote ? 0 : (aynaRating != null ? aynaRating / 5 : baseRating);
+    // Same idea for rating: no rating yet isn't evidence of a bad product, just an unrated one —
+    // default to a neutral 0.7 (out of 1) instead of 0.
+    const rating = hasRating ? ratedValue : 0.7;
     const safetyOk = !(item.safety?.recalls && String(item.safety.recalls).includes('⚠️')) ? 1 : 0;
     return (rating * 2) + consensusScore + safetyOk;
 }
@@ -123,8 +132,18 @@ function hashToUnitInterval(str) {
 
 const SHUFFLE_JITTER_RANGE = 1.5;
 
-function shuffleJitter(item, seed) {
-    return hashToUnitInterval(`${seed}:${item?.id || ''}`) * SHUFFLE_JITTER_RANGE;
+// getQualityScore's neutral cold-start defaults (above) close most of the gap for unrated/
+// uncited products, but ~119 of 154 catalog products still cluster in a narrow band near the
+// max score (curated content checks nearly every box for most of the catalog), so a cold-start
+// product's ~3.9 is still a couple points below that cluster's floor. The standard ±1.5 jitter
+// can't close that on its own — give cold-start items a wider band so they get a real (if
+// occasional) shot at page-1 visibility instead of a guaranteed spot near the very bottom.
+const COLD_START_QUALITY_THRESHOLD = 4.5;
+const COLD_START_JITTER_RANGE = 3;
+
+function shuffleJitter(item, seed, baseScore = 0) {
+    const range = baseScore < COLD_START_QUALITY_THRESHOLD ? COLD_START_JITTER_RANGE : SHUFFLE_JITTER_RANGE;
+    return hashToUnitInterval(`${seed}:${item?.id || ''}`) * range;
 }
 
 const SORT_OPTIONS = [
@@ -407,8 +426,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     const pb = isPartnerBrandItem(b) ? 1 : 0;
                     if (pa !== pb) return pb - pa;
                 }
-                const qa = getQualityScore(a, aynaReviews) + (partnerAndJitter ? shuffleJitter(a, shuffleSeed) : 0);
-                const qb = getQualityScore(b, aynaReviews) + (partnerAndJitter ? shuffleJitter(b, shuffleSeed) : 0);
+                const baseA = getQualityScore(a, aynaReviews);
+                const baseB = getQualityScore(b, aynaReviews);
+                const qa = baseA + (partnerAndJitter ? shuffleJitter(a, shuffleSeed, baseA) : 0);
+                const qb = baseB + (partnerAndJitter ? shuffleJitter(b, shuffleSeed, baseB) : 0);
                 return qb - qa;
             });
         }

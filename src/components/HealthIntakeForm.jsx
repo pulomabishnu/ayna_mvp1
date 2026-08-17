@@ -165,14 +165,35 @@ function TextInput({ value, onChange, placeholder, type = 'text' }) {
   );
 }
 
+// Popular default suggestions shown before the user types anything, so the
+// picker isn't a blank box on a screen whose whole job is "search for a
+// product" — sorted by userRating, the same quality signal Discovery uses.
+const DEFAULT_PRODUCT_SUGGESTIONS = ALL_PRODUCTS
+  .filter((p) => p.name && p.userRating != null)
+  .sort((a, b) => b.userRating - a.userRating)
+  .slice(0, 12);
+
+const normalizeForMatch = (s) => String(s || '').toLowerCase().replace(/\s+/g, '');
+
 function ProductSearchPicker({ selected = [], onAdd, onRemove, placeholder }) {
   const [query, setQuery] = useState('');
 
   const suggestions = useMemo(() => {
     const q = query.trim().toLowerCase();
+    if (!q) {
+      return DEFAULT_PRODUCT_SUGGESTIONS.filter((p) => !selected.includes(p.name)).slice(0, 6);
+    }
     if (q.length < 2) return [];
+    // Whitespace-insensitive on top of substring match — "Diva Cup" should find
+    // "DivaCup", "always infinity" should find "Always Infinity", etc. Product
+    // names in the catalog aren't consistently spaced/cased with how people type.
+    const qNorm = normalizeForMatch(q);
     return ALL_PRODUCTS
-      .filter((p) => p.name && p.name.toLowerCase().includes(q) && !selected.includes(p.name))
+      .filter((p) => {
+        if (!p.name || selected.includes(p.name)) return false;
+        const name = p.name.toLowerCase();
+        return name.includes(q) || normalizeForMatch(name).includes(qNorm);
+      })
       .slice(0, 6);
   }, [query, selected]);
 
@@ -623,7 +644,7 @@ export default function HealthIntakeForm({ onComplete }) {
               selected={intake.currentProducts}
               onAdd={(name) => toggle('currentProducts', name)}
               onRemove={(name) => toggle('currentProducts', name)}
-              placeholder="Search products (e.g. Diva Cup, Always Infinity, Flo app)..."
+              placeholder="Search products (e.g. Diva Cup, Always Infinity, Natural Cycles)..."
             />
             <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.35rem' }}>
               We'll avoid recommending things you already have.
