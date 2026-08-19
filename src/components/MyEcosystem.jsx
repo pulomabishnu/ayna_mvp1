@@ -864,7 +864,25 @@ function estimateMonthlyCost(priceStr, product) {
 // surface as a failure. Keyed by intake fingerprint; a record's async work
 // keeps running and notifying subscribers regardless of which (if any)
 // component instance is currently mounted and watching it.
-const activeGenerations = new Map();
+export const activeGenerations = new Map();
+
+// How long an in-flight generation is kept alive after its last subscriber
+// unmounts, before being aborted as abandoned. Generation itself is 4 batches
+// of up to 3 concerns each, run concurrently, each within a 60s serverless
+// ceiling — so total wall time is roughly one batch's worst case, well under
+// 60s in practice. This used to be 3000ms, which only covered an instant
+// remount (e.g. a re-render tearing the tree down and back up in the same
+// tick). Any real "leave the page" — switching to Discovery, checking
+// another tab, glancing away for half a minute — blew past 3s, so the
+// in-flight (already-billed) generation got aborted and deleted, and
+// returning to MyEcosystem started a brand new one from Date.now(), which is
+// what read as "the timer keeps resetting when you leave the page." 5 minutes
+// comfortably covers realistic in-app navigation while it's running, without
+// leaking forever — a generation that finishes (success or failure) removes
+// its own record immediately via the `finally` block below regardless of
+// this timer, and a genuinely abandoned tab (closed, session ended) takes
+// its whole JS heap — this Map included — with it anyway.
+export const GENERATION_ABANDON_GRACE_MS = 5 * 60 * 1000;
 
 function notifyGeneration(rec) {
     rec.subscribers.forEach((fn) => fn(rec));
@@ -875,7 +893,7 @@ function notifyGeneration(rec) {
  * unsubscribe function. `onStart` is called synchronously if this caller is
  * the one that should actually run the generation (no one else already is).
  */
-function subscribeToGeneration(fingerprint, onUpdate, onStart) {
+export function subscribeToGeneration(fingerprint, onUpdate, onStart) {
     let rec = activeGenerations.get(fingerprint);
     const isNew = !rec;
     if (isNew) {
@@ -894,10 +912,10 @@ function subscribeToGeneration(fingerprint, onUpdate, onStart) {
     return () => {
         rec.subscribers.delete(onUpdate);
         if (rec.subscribers.size > 0) return;
-        // Grace period, not an immediate abort: covers a remount (unmount then
-        // re-mount of the same fingerprint) without waiting forever on a
-        // generation nobody will ever come back to watch (quiz retaken,
-        // genuine navigation away).
+        // Grace period, not an immediate abort: covers a remount AND genuine
+        // in-app navigation away and back, without waiting forever on a
+        // generation nobody will ever come back to watch (quiz retaken, tab
+        // closed for good).
         rec.gcTimer = setTimeout(() => {
             if (rec.subscribers.size > 0) return;
             rec.controller?.abort();
@@ -906,12 +924,12 @@ function subscribeToGeneration(fingerprint, onUpdate, onStart) {
             // explicit refresh (discardGeneration) or a fresh start could have
             // already replaced it with a newer generation under the same key.
             if (activeGenerations.get(fingerprint) === rec) activeGenerations.delete(fingerprint);
-        }, 3000);
+        }, GENERATION_ABANDON_GRACE_MS);
     };
 }
 
 /** Abort and discard any existing record so a fresh one can start in its place. */
-function discardGeneration(fingerprint) {
+export function discardGeneration(fingerprint) {
     const rec = activeGenerations.get(fingerprint);
     if (!rec) return;
     if (rec.gcTimer) clearTimeout(rec.gcTimer);
