@@ -354,20 +354,20 @@ export default function Recommendations({
                 }}>
                     Your personalized ecosystem
                 </div>
-                <h2 style={{ fontSize: '2.25rem', marginBottom: '0.75rem' }}>Products curated for you</h2>
+                <h2 style={{ fontSize: '2.25rem', marginBottom: '0.75rem' }}>Products picked for you</h2>
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem' }}>
                     {results?.frustrations?.length > 0
-                        ? <>Ranking uses your quiz focus areas (<strong>{results.frustrations.join(', ')}</strong>), anything you’ve told us in chat, imported records (FHIR or manual), and wearable summaries from My Account.</>
-                        : 'Ranking combines your quiz, chat updates, imported health records, and wearable notes when you add them under My Account.'
+                        ? <>We picked these using your quiz answers (<strong>{results.frustrations.join(', ')}</strong>), your chat messages, any medical records you've uploaded, and wearable data from My Account.</>
+                        : "We picked these using your quiz answers, chat messages, uploaded medical records, and wearable data — once you add them under My Account."
                     }
                 </p>
                 {inferTagsFromHealthProfile(healthProfile).length > 0 && (
                     <p style={{ color: 'var(--color-primary)', fontSize: '0.95rem', marginTop: '0.75rem', lineHeight: 1.5 }}>
-                        Your imported profile (conditions, medications, EHR summary, or wearable text) is informing these picks — not a diagnosis, but extra signal for what might fit.
+                        We're also using your uploaded health info — conditions, medications, medical records, or wearable data — to help pick these. This isn't a diagnosis, just extra information to help find a better fit.
                     </p>
                 )}
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginTop: '0.5rem' }}>
-                    🔒 We never sell your data. Workflow cards use the vetted in-app catalog; tiered picks above are Ayna-curated from your profile — use clinical judgment.
+                    🔒 We never sell your data. The "For [concern]" picks below come from our reviewed catalog. The picks above come from your own health profile — always double check with a doctor before you decide.
                 </p>
                 <p style={{ color: 'var(--color-primary)', fontSize: '0.9rem', marginTop: '0.5rem', fontWeight: '500' }}>
                     Forgot something? Use the 💬 chat button to speak or type more — we’ll refresh your ecosystem.
@@ -393,22 +393,22 @@ export default function Recommendations({
 
             {results?.fullHealthIntake && Object.keys(results.fullHealthIntake).length > 0 && !llmLoading && llmError && (
                 <div style={{ maxWidth: '720px', margin: '0 auto var(--spacing-xl)', textAlign: 'center', padding: '2rem', color: '#b42318', background: '#fef3f2', borderRadius: 'var(--radius-lg)', border: '1px solid #fecdca' }}>
-                    <p style={{ fontWeight: '600', marginBottom: '0.5rem' }}>Could not load AI recommendations</p>
+                    <p style={{ fontWeight: '600', marginBottom: '0.5rem' }}>We couldn't load your picks</p>
                     <p style={{ fontSize: '0.9rem' }}>{llmError}</p>
                 </div>
             )}
 
             {results?.fullHealthIntake && Object.keys(results.fullHealthIntake).length > 0 && !llmLoading && !llmError && tiered.length === 0 && (
                 <div style={{ maxWidth: '720px', margin: '0 auto var(--spacing-xl)', textAlign: 'center', padding: '2rem', color: 'var(--color-text-muted)' }}>
-                    <p style={{ fontSize: '0.95rem' }}>No tiered recommendations were returned. Try refreshing or updating your intake in chat.</p>
+                    <p style={{ fontSize: '0.95rem' }}>We couldn't find picks for you. Try refreshing the page, or tell us more in chat.</p>
                 </div>
             )}
 
             {!llmLoading && !llmError && tiered.length > 0 && (
                 <div style={{ maxWidth: '980px', margin: '0 auto var(--spacing-xl)', display: 'grid', gap: '1rem' }}>
-                    <h3 style={{ fontSize: '1.35rem', marginBottom: '0.4rem' }}>Tiered recommendations</h3>
+                    <h3 style={{ fontSize: '1.35rem', marginBottom: '0.4rem' }}>Picks for you</h3>
                     <p style={{ margin: '0 0 0.45rem', fontSize: '0.82rem', color: 'var(--color-text-muted)', lineHeight: 1.45 }}>
-                        These picks are generated from your intake and learning signals (separate from the fixed in-app catalog). Always confirm fit, safety, and availability with a clinician and the brand.
+                        These picks come from what you told us and what Ayna has learned so far — not from our regular product list. Always check with a doctor and the brand before you buy.
                     </p>
                     {tiered.map((entry) => (
                         <div key={entry.concern} className="card" style={{ padding: '1rem' }}>
@@ -462,7 +462,7 @@ export default function Recommendations({
                                                 </button>
                                                 {openSubcategory && (
                                                     <div style={{ marginTop: '0.6rem' }}>
-                                                        <div style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', fontWeight: '700' }}>Primary recommendation</div>
+                                                        <div style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', fontWeight: '700' }}>Top pick</div>
                                                         <button
                                                             type="button"
                                                             style={{ marginTop: '0.25rem', background: 'none', border: 'none', padding: 0, color: 'var(--color-primary)', fontWeight: '700', cursor: 'pointer' }}
@@ -472,7 +472,7 @@ export default function Recommendations({
                                                         </button>
                                                         <p style={{ fontSize: '0.82rem', marginTop: '0.3rem', color: 'var(--color-text-muted)', lineHeight: 1.5 }}>
                                                             <strong>Match:</strong>{' '}
-                                                            {tier.matchExplanation || tier.product?.whyItWorks || 'Personalized from your health intake.'}
+                                                            {tier.matchExplanation || tier.product?.whyItWorks || 'Picked based on what you told us about your health.'}
                                                         </p>
                                                         {tier.safetyFlags?.length > 0 && (
                                                             <p style={{ fontSize: '0.82rem', marginTop: '0.25rem', color: '#b42318' }}>
@@ -482,7 +482,7 @@ export default function Recommendations({
                                                         {Array.isArray(tier.alternatives) && tier.alternatives.length > 0 && (
                                                             <div style={{ marginTop: '0.45rem' }}>
                                                                 <p style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', margin: '0 0 0.3rem' }}>
-                                                                    3 alternatives
+                                                                    {tier.alternatives.length === 1 ? 'Other option' : 'Other options'}
                                                                 </p>
                                                                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem' }}>
                                                                     {tier.alternatives.map((alt) => (
@@ -574,7 +574,7 @@ export default function Recommendations({
                         For {wf.frustrationLabel}
                     </h3>
                     <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', marginBottom: '1rem', lineHeight: 1.5 }}>
-                        Recommendations follow a typical care path: prevent, test at home, treat or manage, and get care when needed.
+                        These picks follow a simple path: prevent it, test at home, treat or manage it, and get care if you need it.
                     </p>
                     {wf.steps.map((step) => {
                         const sectionKey = `wf-${wf.frustration}-${step.stepId}`;
@@ -647,7 +647,7 @@ export default function Recommendations({
                                 {profile.quote}
                             </p>
                             <p style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', marginTop: '0.35rem', fontWeight: '600' }}>
-                                — Community experience; not brand-affiliated
+                                — From the community, not a paid brand partnership
                             </p>
                         </div>
                     ))}
