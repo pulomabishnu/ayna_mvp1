@@ -37,6 +37,10 @@ export const GLOSSARY = {
   'UTI': 'Urinary tract infection — a bladder or urinary infection. Common signs are burning when you pee and needing to pee often.',
   'STI': 'Sexually transmitted infection — an infection passed through sexual contact.',
   'OB/GYN': "A doctor who cares for women's reproductive health and pregnancy.",
+  'PCP': 'Primary care provider — your main doctor for everyday health, checkups, and referrals to specialists.',
+  'STI screening': 'A test for sexually transmitted infections — infections passed through sexual contact.',
+  'Pap smear': "A quick test where a doctor swabs the cervix to check for cell changes that could lead to cervical cancer.",
+  'OB-GYN': "A doctor who cares for women's reproductive health and pregnancy.",
   'HRT': 'Hormone replacement therapy — medicine that replaces hormones your body makes less of, often used for menopause symptoms.',
   'IUD': 'Intrauterine device — a small birth control device placed inside the uterus.',
   'BMI': "Body mass index — a number based on your height and weight, sometimes used as a rough health screening tool.",
@@ -59,6 +63,9 @@ export const GLOSSARY = {
   'FDA': 'U.S. Food and Drug Administration — the government agency that approves and monitors medicines and medical products.',
   'CDC': 'Centers for Disease Control and Prevention — the U.S. government agency that tracks disease and gives public health guidance.',
   'NIH': 'National Institutes of Health — the main U.S. government agency for medical research.',
+  'MedWatch': "The FDA's own system for reporting a serious problem with a drug, device, or other medical product.",
+  'MedlinePlus': "A free, government-run health information site (from the National Library of Medicine) written for patients, not doctors.",
+  'PubMed': 'A free, government-run search tool for medical research studies.',
 };
 
 /** Case-insensitive fallback lookup, in case a caller's on-screen text doesn't exactly match a key's casing. */

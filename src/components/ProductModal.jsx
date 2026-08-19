@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Disclaimer from './Disclaimer';
 import SubscriptionPaywallModal from './SubscriptionPaywallModal';
+import GlossaryTerm from './GlossaryTerm';
 import { getProfileMatchLabelsForProduct, getRecommendationExplanation, getPrescriptionAccessGuidance } from '../data/products';
 import { getHowToUseContent } from '../data/productHowToUse';
 import { getAynaRating } from '../data/aynaReviews';
@@ -732,7 +733,7 @@ export default function ProductModal({
         { id: 'safety', label: isDigital ? 'Privacy & Safety' : 'Safety & Ingredients', icon: '🛡️' },
         { id: 'doctor', label: 'Clinician opinions', icon: '👩‍⚕️' },
         { id: 'social', label: 'Community', icon: '💬' },
-        { id: 'science', label: 'Scientific literature', icon: '🔬' },
+        { id: 'science', label: 'Research', icon: '🔬' },
         { id: 'ayna-reviews', label: 'Ayna Reviews', icon: '⭐', badge: aynaReviewCount > 0 ? aynaReviewCount : null },
     ];
 
@@ -759,7 +760,7 @@ export default function ProductModal({
                 This product is prescription-only. You can’t buy it directly online or in-store without a prescription. Here’s how to get it:
             </p>
             <ol style={{ fontSize: '0.9rem', color: 'var(--color-text-main)', lineHeight: 1.7, paddingLeft: '1.25rem', marginBottom: '1rem' }}>
-                <li><strong>Talk to a clinician.</strong> Schedule a visit with your OB-GYN, primary care provider, or use a telehealth service. Discuss whether this product is right for you.</li>
+                <li><strong>Talk to a doctor.</strong> Schedule a visit with your <GlossaryTerm term="OB-GYN" />, your regular doctor, or a <GlossaryTerm term="telehealth" /> service (a video or phone visit). Ask if this product is right for you.</li>
                 <li><strong>Get a prescription.</strong> If they prescribe it, they’ll send the prescription to your preferred pharmacy (or you can use the manufacturer’s telehealth/portal if the product offers one).</li>
                 <li><strong>Fill and pick up.</strong> Pick it up at a local pharmacy or have it mailed to you (mail-order/specialty pharmacy, depending on the product).</li>
             </ol>
@@ -1569,11 +1570,11 @@ export default function ProductModal({
                                     No safety data available yet for this product.
                                 </p>
                             )}
-                            <h4 style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', margin: '0 0 0.65rem' }}>Sources &amp; summarized detail</h4>
+                            <h4 style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', margin: '0 0 0.65rem' }}>Sources and details</h4>
                             {productHasMeaningfulSafety(product) && (
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                                     <div style={{ background: 'var(--color-bg)', padding: '1rem', borderRadius: 'var(--radius-md)' }}>
-                                        <h4 style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>FDA Regulatory Status</h4>
+                                        <h4 style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem' }}><GlossaryTerm term="FDA" /> status</h4>
                                         <p>{product.safety?.fdaStatus || 'N/A'}</p>
                                     </div>
                                     <div style={{ background: 'var(--color-bg)', padding: '1rem', borderRadius: 'var(--radius-md)' }}>
@@ -1654,9 +1655,9 @@ export default function ProductModal({
                                         })()}
                                         {hasRecallConcern(product) && (
                                             <div style={{ paddingTop: '0.75rem', borderTop: '1px solid var(--color-border)', fontSize: '0.88rem', lineHeight: 1.55 }}>
-                                                <p style={{ margin: '0 0 0.5rem', fontWeight: '600', color: 'var(--color-text-main)' }}>FDA MedWatch</p>
+                                                <p style={{ margin: '0 0 0.5rem', fontWeight: '600', color: 'var(--color-text-main)' }}><GlossaryTerm term="MedWatch" /></p>
                                                 <p style={{ margin: '0 0 0.5rem', color: 'var(--color-text-muted)' }}>
-                                                    Serious problems with drugs, devices, or other products can be reported to the FDA through MedWatch.
+                                                    If a drug, device, or other product caused you a serious problem, you can report it to the <GlossaryTerm term="FDA" /> through <GlossaryTerm term="MedWatch" />.
                                                 </p>
                                                 <a href={MEDWATCH_URL} target="_blank" rel="noopener noreferrer" style={{ fontWeight: '600', color: 'var(--color-primary)' }}>
                                                     Report or learn more at FDA MedWatch ↗
@@ -1669,7 +1670,7 @@ export default function ProductModal({
                                         <p style={{ fontSize: '0.9rem' }}>{product.safety?.sideEffects || 'In rare cases, consult with a healthcare professional before use. Side effects for this product are typically minimal but vary by individual.'}</p>
                                     </div>
                                     <div style={{ gridColumn: 'span 2', background: 'var(--color-bg)', padding: '1rem', borderRadius: 'var(--radius-md)', borderLeft: '4px solid #EF4444' }}>
-                                        <h4 style={{ fontSize: '0.8rem', color: '#991B1B', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Community Consensus & Watch-outs</h4>
+                                        <h4 style={{ fontSize: '0.8rem', color: '#991B1B', textTransform: 'uppercase', marginBottom: '0.5rem' }}>What people are saying &amp; things to watch for</h4>
                                         <p style={{ fontSize: '0.9rem' }}>{product.safety?.opinionAlerts || 'Generally positive reception. Ayna monitors community forums for emerging concerns about reliability or quality changes.'}</p>
                                     </div>
                                     {isDigital && product.privacy && (
@@ -1762,7 +1763,7 @@ export default function ProductModal({
                                 </div>
                             )}
                             <h4 style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', margin: '1.25rem 0 0.5rem' }}>Sources</h4>
-                            {renderAiReferenceCards(aiInsights?.clinicianLinks, 'MedlinePlus search shortcuts (government patient education)', true)}
+                            {renderAiReferenceCards(aiInsights?.clinicianLinks, <><GlossaryTerm term="MedlinePlus" /> search shortcuts (a health site written for patients, run by the government)</>, true)}
                             {renderVerificationLinks(
                                 product.verificationLinks?.doctor,
                                 null,
@@ -1776,10 +1777,10 @@ export default function ProductModal({
 
                     {activeTab === 'science' && (
                         <div className="animate-fade-in">
-                            <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Scientific literature</h3>
+                            <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Research</h3>
                             {!condensed?.scienceInsight && !productHasScienceSignals(product, aiInsights) && (
                                 <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', marginBottom: '1rem', lineHeight: 1.55 }}>
-                                    No peer-reviewed literature indexed yet for this product.
+                                    No research studies found yet for this product.
                                 </p>
                             )}
                             {condensed?.scienceInsight && (
@@ -1797,13 +1798,13 @@ export default function ProductModal({
                             )}
                             {pubmedLoading && (
                                 <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', fontStyle: 'italic', marginBottom: '1rem' }}>
-                                    Fetching PubMed literature...
+                                    Looking up research studies…
                                 </p>
                             )}
                             {pubmedArticles.length > 0 && (
                                 <div style={{ marginBottom: '1.5rem' }}>
                                     <h4 style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--color-text-main)', marginBottom: '0.75rem' }}>
-                                        Related PubMed Articles
+                                        Related research (from <GlossaryTerm term="PubMed" />)
                                     </h4>
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
                                         {pubmedArticles.map((article) => (
@@ -1821,7 +1822,7 @@ export default function ProductModal({
                                 </div>
                             )}
                             <h4 style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', color: 'var(--color-text-muted)', margin: '1.25rem 0 0.5rem' }}>Sources</h4>
-                            {renderAiReferenceCards(aiInsights?.literatureLinks, 'PubMed search shortcuts', true)}
+                            {renderAiReferenceCards(aiInsights?.literatureLinks, <><GlossaryTerm term="PubMed" /> search shortcuts</>, true)}
                             {renderVerificationLinks(
                                 product.verificationLinks?.scientific,
                                 null,
@@ -1835,7 +1836,7 @@ export default function ProductModal({
 
                     {activeTab === 'social' && (
                         <div className="animate-fade-in">
-                            <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Community Experience & Social Proof</h3>
+                            <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Community experience</h3>
                             {!condensed?.socialInsight && !productHasCommunitySignals(product, aiInsights) && (
                                 <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', marginBottom: '1rem', lineHeight: 1.55 }}>
                                     No community reviews yet.
@@ -1864,7 +1865,7 @@ export default function ProductModal({
                                         color: '#9A3412',
                                     }}
                                 >
-                                    <strong>Platforms flagged as potentially incentivized:</strong>{' '}
+                                    <strong>These sites may pay for reviews:</strong>{' '}
                                     {product.incentivizedReviewSites.map((s, i) => (
                                         <span key={i}>
                                             {i > 0 && '; '}
