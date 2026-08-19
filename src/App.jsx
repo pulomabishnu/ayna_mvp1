@@ -966,7 +966,7 @@ function App() {
                 Brands
               </button>
               <button className={`app-nav__tab ${currentView === 'deeptech' ? 'app-nav__tab--active' : ''}`} onClick={handleViewDeeptech}>
-                More Info
+                Deeptech
               </button>
               <button className={`app-nav__tab ${currentView === 'articles' ? 'app-nav__tab--active' : ''}`} onClick={handleViewArticles}>
                 My Health Library
@@ -1111,7 +1111,7 @@ function App() {
             </button>
             <button className="mobile-drawer-item" onClick={() => { handleViewDiscovery(''); setMobileMenuOpen(false); }}>Product Discovery</button>
             <button className="mobile-drawer-item" onClick={() => { handleViewWaitlist(); setMobileMenuOpen(false); }}>Brands</button>
-            <button className="mobile-drawer-item" onClick={() => { handleViewDeeptech(); setMobileMenuOpen(false); }}>More Info</button>
+            <button className="mobile-drawer-item" onClick={() => { handleViewDeeptech(); setMobileMenuOpen(false); }}>Deeptech</button>
             <button className="mobile-drawer-item" onClick={() => { handleViewArticles(); setMobileMenuOpen(false); }}>My Health Library</button>
             <button className="mobile-drawer-item" onClick={() => { handleViewHowWeMakeMoney(); setMobileMenuOpen(false); }}>How We Make Money</button>
             <button className="mobile-drawer-item" onClick={() => { setShowCheckin(true); setMobileMenuOpen(false); }}>Check-in{checkinDue ? ' •' : ''}</button>
