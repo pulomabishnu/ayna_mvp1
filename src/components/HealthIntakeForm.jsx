@@ -12,6 +12,8 @@ import {
 } from '../utils/healthIntake';
 import { saveHealthIntakeForCurrentUser } from '../utils/healthIntakeStore';
 import { ALL_PRODUCTS } from '../data/products';
+import { findGlossaryTermInText } from '../data/glossary';
+import GlossaryTerm from './GlossaryTerm';
 
 // ─── Condensed symptom list (top clinical signals) ───────────────────────────
 const KEY_SYMPTOMS = [
@@ -35,9 +37,9 @@ const FAMILY_HISTORY_OPTIONS = [
   'Premature ovarian insufficiency', 'BRCA1/BRCA2', 'Osteoporosis', 'None of the above',
 ];
 const SYMPTOM_DURATION_OPTIONS = [
-  { value: 'new', label: 'New (< 6 months)' },
-  { value: 'ongoing', label: 'Ongoing (6 mo – 2 yrs)' },
-  { value: 'chronic', label: 'Chronic (2+ years)' },
+  { value: 'new', label: 'New — less than 6 months' },
+  { value: 'ongoing', label: 'Going on for 6 months to 2 years' },
+  { value: 'chronic', label: 'Long-term — 2 years or more' },
 ];
 const LAST_OBGYN_OPTIONS = [
   { value: 'within_year', label: 'Within the past year' },
@@ -72,18 +74,19 @@ function FieldLabel({ children, optional }) {
   );
 }
 
-function Chip({ label, selected, onClick, small }) {
+function Chip({ label, selected, onClick, small, title }) {
   return (
     <button
       type="button"
       onClick={onClick}
+      title={title || undefined}
       style={{
         padding: small ? '0.35rem 0.8rem' : '0.45rem 1rem',
         borderRadius: 'var(--radius-pill)',
         border: selected ? '2px solid var(--color-primary)' : '1.5px solid var(--color-border)',
         background: selected ? 'var(--color-secondary-fade)' : 'var(--color-surface)',
         color: selected ? 'var(--color-primary)' : 'var(--color-text-main)',
-        cursor: 'pointer',
+        cursor: title ? 'help' : 'pointer',
         fontSize: small ? '0.8rem' : '0.86rem',
         fontWeight: selected ? 700 : 400,
         fontFamily: 'var(--font-body)',
@@ -93,15 +96,27 @@ function Chip({ label, selected, onClick, small }) {
       }}
     >
       {label}
+      {title && <span aria-hidden="true" style={{ fontSize: '0.72em', opacity: 0.6, marginLeft: '0.3em' }}>ⓘ</span>}
     </button>
   );
 }
 
-function ChipGrid({ items, selected = [], onToggle, small }) {
+// `glossary` looks each item's plain-language explanation up (via findGlossaryTermInText, so it
+// still matches e.g. "PCOS management (...)" containing "PCOS") and shows it as a native hover/
+// long-press tooltip — without renaming the option value itself, since several of these strings
+// (PCOS, endometriosis, UTI support, ...) are matched elsewhere in the app as literal keys.
+function ChipGrid({ items, selected = [], onToggle, small, glossary = false }) {
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
       {items.map((item) => (
-        <Chip key={item} label={item} selected={selected.includes(item)} onClick={() => onToggle(item)} small={small} />
+        <Chip
+          key={item}
+          label={item}
+          selected={selected.includes(item)}
+          onClick={() => onToggle(item)}
+          small={small}
+          title={glossary ? findGlossaryTermInText(item) : undefined}
+        />
       ))}
     </div>
   );
@@ -516,11 +531,12 @@ export default function HealthIntakeForm({ onComplete }) {
         {/* Screen: concerns */}
         {screenId === 'concerns' && (
           <div>
-            <ScreenHeader title="What do you most want support with?" subtitle="Pick everything that applies — this shapes every recommendation Ayna makes for you." />
+            <ScreenHeader title="What do you want help with?" subtitle="Pick as many as you want. We'll use this to pick what to show you." />
             <ChipGrid
               items={CONCERN_AREAS.filter((c) => c !== OTHER_CONCERN_OPTION)}
               selected={intake.primaryConcerns}
               onToggle={(v) => toggle('primaryConcerns', v)}
+              glossary
             />
             {intake.primaryConcerns.includes(OTHER_CONCERN_OPTION) && (
               <div style={{ marginTop: '0.75rem' }}>
@@ -551,9 +567,9 @@ export default function HealthIntakeForm({ onComplete }) {
             <FieldLabel>How heavy is your flow?</FieldLabel>
             <SingleSelect options={FLOW_OPTIONS} value={intake.flowLevel} onSelect={(v) => set('flowLevel', v)} />
 
-            <FieldLabel>Period pain level</FieldLabel>
+            <FieldLabel>How bad is your period pain?</FieldLabel>
             <PainScale value={intake.painLevel} onChange={(v) => set('painLevel', v)} />
-            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.35rem' }}>1 = no pain &nbsp;·&nbsp; 10 = debilitating</p>
+            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.35rem' }}>1 = no pain &nbsp;·&nbsp; 10 = so bad I can't function</p>
 
             <FieldLabel optional>What you've been experiencing (pick all that apply)</FieldLabel>
             <ChipGrid items={KEY_SYMPTOMS} selected={intake.symptoms} onToggle={(v) => toggle('symptoms', v)} small />
@@ -565,14 +581,15 @@ export default function HealthIntakeForm({ onComplete }) {
         {/* Screen: health */}
         {screenId === 'health' && (
           <div>
-            <ScreenHeader title="Your health history." subtitle="The more context you give, the more personalized Ayna's recommendations." />
+            <ScreenHeader title="Your health history." subtitle="The more you tell us, the better we can help you." />
 
-            <FieldLabel optional>Diagnosed conditions</FieldLabel>
+            <FieldLabel optional>Have you been told you have any of these? (Tap the ⓘ on a word to see what it means.)</FieldLabel>
             <ChipGrid
               items={DIAGNOSED_CONDITIONS.filter((c) => c !== 'other' && c !== 'none')}
               selected={intake.conditions}
               onToggle={(v) => toggle('conditions', v)}
               small
+              glossary
             />
             <div style={{ marginTop: '0.5rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
               <Chip label="None" selected={intake.conditions.includes('none')} onClick={() => set('conditions', ['none'])} small />
@@ -584,8 +601,8 @@ export default function HealthIntakeForm({ onComplete }) {
               </div>
             )}
 
-            <FieldLabel optional>Family history — any of these in close relatives?</FieldLabel>
-            <ChipGrid items={FAMILY_HISTORY_OPTIONS} selected={intake.familyHistory} onToggle={(v) => toggle('familyHistory', v)} small />
+            <FieldLabel optional>Has anyone in your close family (mom, sister, grandmother) had any of these?</FieldLabel>
+            <ChipGrid items={FAMILY_HISTORY_OPTIONS} selected={intake.familyHistory} onToggle={(v) => toggle('familyHistory', v)} small glossary />
 
             <FieldLabel optional>How long have you been dealing with this?</FieldLabel>
             <SingleSelect options={SYMPTOM_DURATION_OPTIONS} value={intake.symptomDuration} onSelect={(v) => set('symptomDuration', v)} />
@@ -593,7 +610,7 @@ export default function HealthIntakeForm({ onComplete }) {
             <FieldLabel optional>Current medications or supplements</FieldLabel>
             <TextInput value={intake.currentMedications} onChange={(v) => set('currentMedications', v)} placeholder="e.g. metformin, levothyroxine, vitamin D, fish oil…" />
 
-            <FieldLabel optional>Last OB/GYN visit</FieldLabel>
+            <FieldLabel optional>When did you last see a <GlossaryTerm term="OB/GYN" /> (women's doctor)?</FieldLabel>
             <SingleSelect options={LAST_OBGYN_OPTIONS} value={intake.lastObgynVisit} onSelect={(v) => set('lastObgynVisit', v)} />
 
             <FieldLabel optional>Are you trying to conceive?</FieldLabel>
@@ -616,10 +633,10 @@ export default function HealthIntakeForm({ onComplete }) {
               <option value=''>Select insurance type…</option>
               {INSURANCE_TYPES.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
             </select>
-            <TextInput value={intake.insurancePlan} onChange={(v) => set('insurancePlan', v)} placeholder="Insurance provider name (e.g. Aetna, Blue Cross, United)" style={{ marginTop: '0.5rem' }} />
-            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.3rem' }}>Used to show realistic out-of-pocket costs for telehealth recommendations.</p>
+            <TextInput value={intake.insurancePlan} onChange={(v) => set('insurancePlan', v)} placeholder="Insurance company name (e.g. Aetna, Blue Cross, United)" style={{ marginTop: '0.5rem' }} />
+            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.3rem' }}>This helps us show you the real price for online doctor visits.</p>
 
-            <FieldLabel optional>FSA / HSA account</FieldLabel>
+            <FieldLabel optional><GlossaryTerm term="FSA" /> or <GlossaryTerm term="HSA" /> account</FieldLabel>
             <select
               value={intake.fsaHsa || ''}
               onChange={e => set('fsaHsa', e.target.value)}
@@ -628,7 +645,7 @@ export default function HealthIntakeForm({ onComplete }) {
               <option value=''>Select…</option>
               {FSA_HSA_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
             </select>
-            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.3rem' }}>FSA/HSA-eligible products show your effective pre-tax price.</p>
+            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.3rem' }}>If you have one of these accounts, we'll show the lower price you'd pay.</p>
 
             <ContinueButton onClick={goNext}>Continue →</ContinueButton>
           </div>
@@ -637,7 +654,7 @@ export default function HealthIntakeForm({ onComplete }) {
         {/* Screen: products */}
         {screenId === 'products' && (
           <div>
-            <ScreenHeader title="What matters to you in products?" subtitle="Ayna uses this to filter recommendations and flag ingredient concerns." />
+            <ScreenHeader title="What matters to you in products?" subtitle="This helps us find safe products and warn you about ingredients to avoid." />
 
             <FieldLabel optional>What do you currently use?</FieldLabel>
             <ProductSearchPicker
@@ -675,26 +692,26 @@ export default function HealthIntakeForm({ onComplete }) {
         {screenId === 'healthdata' && (
           <div>
             <ScreenHeader
-              title="Got health app data?"
-              subtitle="Optional — but it helps Claude give you dramatically better recommendations."
+              title="Do you use a health app or watch?"
+              subtitle="This step is optional. It helps Claude give you much better recommendations."
             />
 
             <div style={{ padding: '1rem 1.25rem', background: 'var(--color-secondary-fade)', borderRadius: 'var(--radius-md)', marginBottom: '1.25rem', borderLeft: '3px solid var(--color-primary)' }}>
               <p style={{ fontSize: '0.85rem', color: 'var(--color-text-main)', lineHeight: 1.6, margin: 0 }}>
-                Paste any summary from <strong>Apple Health, Oura, Whoop, Fitbit, Clue, Flo, PCOS Diary</strong>, or any wearable.
-                Or just describe in plain English: <em>"My Oura shows I average 5h 40m sleep, resting HR 68, HRV 22. Clue shows 35-day cycles."</em>
+                If you use <strong>Apple Health, Oura, Whoop, Fitbit, Clue, Flo, PCOS Diary</strong>, or any other health app or watch, paste a summary below.
+                You can also just describe it in your own words: <em>"My watch shows I sleep about 5 hours 40 minutes a night. My period app shows my cycle is 35 days."</em>
               </p>
             </div>
 
             <TextArea
               value={intake.healthDataText}
               onChange={(v) => set('healthDataText', v)}
-              placeholder="Paste your health data or describe it here… (lab results, cycle app summaries, wearable stats, anything relevant)"
+              placeholder="Paste your health data here, or describe it in your own words… (test results, period app summaries, watch stats, anything that helps)"
               rows={5}
             />
 
             <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.5rem', lineHeight: 1.4 }}>
-              Your data is stored securely and never shared or sold. It's used only to personalize your ecosystem.
+              We keep this private and never sell it. We only use it to build your ecosystem.
             </p>
 
             {saveError && (

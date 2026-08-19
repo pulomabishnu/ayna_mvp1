@@ -73,14 +73,14 @@ export const PREFERRED_PRODUCT_TYPES = [
 ];
 
 export const INSURANCE_TYPES = [
-  { value: 'employer_ppo', label: 'Employer-sponsored PPO' },
-  { value: 'employer_hmo', label: 'Employer-sponsored HMO' },
-  { value: 'marketplace_aca', label: 'Marketplace / ACA plan' },
-  { value: 'medicaid', label: 'Medicaid' },
-  { value: 'medicare', label: 'Medicare' },
+  { value: 'employer_ppo', label: 'Insurance from my job (PPO — can see any doctor)' },
+  { value: 'employer_hmo', label: 'Insurance from my job (HMO — pick a main doctor first)' },
+  { value: 'marketplace_aca', label: 'Insurance I bought myself (ACA / healthcare.gov plan)' },
+  { value: 'medicaid', label: 'Medicaid (free or low-cost insurance)' },
+  { value: 'medicare', label: 'Medicare (insurance for people 65+)' },
   { value: 'student', label: 'Student health insurance' },
-  { value: 'military', label: 'Military / Tricare' },
-  { value: 'uninsured', label: 'Uninsured / self-pay' },
+  { value: 'military', label: 'Military insurance (Tricare)' },
+  { value: 'uninsured', label: "I don't have insurance / I pay myself" },
   { value: 'other', label: 'Other' },
 ];
 
