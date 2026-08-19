@@ -1,7 +1,7 @@
 import { ALL_PRODUCTS } from '../data/products';
 
 const CONCERN_CONFIG = [
-  { key: 'Period care (pads, tampons, cups, discs, underwear)', tags: ['heavy-flow', 'leaks'], categories: ['pad', 'tampon', 'cup', 'disc', 'underwear'] },
+  { key: 'Period care (pads, tampons, cups, discs, underwear)', tags: ['heavy-flow', 'leaks'], categories: ['pad', 'tampon', 'cup', 'disc', 'period-underwear'] },
   { key: 'Cramp and pain relief (devices, supplements, heat)', tags: ['cramps', 'pelvic-floor'], categories: ['supplement', 'device', 'app'] },
   { key: 'Hormone balance (supplements, lifestyle)', tags: ['pcos', 'irregular', 'bloating'], categories: ['supplement', 'app'] },
   { key: 'PCOS management (supplements, telehealth, apps)', tags: ['pcos'], categories: ['supplement', 'app', 'telehealth'] },

@@ -916,10 +916,12 @@ function groupByCategory(products) {
         if (!map[cat]) map[cat] = [];
         map[cat].push(p);
     });
-    const order = ['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'supplement', 'tracker', 'telehealth', 'mental-health', 'menopause', 'intimate-care', 'cramp-relief', 'pelvic-floor', 'other'];
-    const ordered = order.filter(c => map[c]).map(c => ({ category: c, label: CATEGORY_LABELS[c] || c, products: map[c] }));
-    const rest = Object.keys(map).filter(c => !order.includes(c));
-    return [...ordered, ...rest.map(c => ({ category: c, label: CATEGORY_LABELS[c] || c, products: map[c] }))];
+    // Sections are ordered by how many of *this user's* matched products actually landed in each
+    // category (most first, alphabetical tiebreak) — not a hand-typed category list. A fixed list
+    // would mean some categories always render ahead of others regardless of fit for the user.
+    return Object.keys(map)
+        .sort((a, b) => map[b].length - map[a].length || a.localeCompare(b))
+        .map(c => ({ category: c, label: CATEGORY_LABELS[c] || c, products: map[c] }));
 }
 
 // ─── RECOMMENDATION LOGIC ───────────────────────────────
