@@ -10,6 +10,7 @@ import { fetchDsldProducts } from '../utils/fetchDsldProducts';
 import { enrichLlmProductForDiscovery } from '../utils/enrichLlmProductForDiscovery';
 import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
 import posthog from 'posthog-js';
+import GlossaryTerm from './GlossaryTerm';
 
 const SEARCH_SUGGESTION_POOL = [
     'most comfortable easy to use menstrual cup',
@@ -900,7 +901,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                 <h3 style={{ fontSize: '1.05rem', marginBottom: '0.25rem' }}>{item.name}</h3>
                                 {item.outOfBusiness && (
                                     <div style={{ marginBottom: '0.75rem', padding: '0.5rem 0.75rem', background: '#374151', color: 'white', borderRadius: 'var(--radius-md)', fontSize: '0.8rem', fontWeight: '700' }}>
-                                        No longer sold — company closed. Listing kept for safety info if you have this product.
+                                        This company has closed. We kept this page so you can still check safety info if you already own the product.
                                     </div>
                                 )}
                                 <p style={{ color: 'var(--color-text-muted)', fontSize: '0.8rem', flexGrow: 1, marginBottom: '0.75rem', lineHeight: '1.45' }}>
@@ -921,7 +922,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                             return (
                                                 <span
                                                     style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}
-                                                    title="Approximate typical user rating (AI) — not verified by Ayna"
+                                                    title="Estimated by AI — Ayna has not checked this one"
                                                 >
                                                     ★ {Number(item.userRating).toFixed(1)}
                                                 </span>
@@ -935,8 +936,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                         const displayRating = getAynaRating(item, aynaReviews[item.id]) ?? item.userRating;
                                         const hasRating = displayRating != null;
                                         const tooltip = aynaReviews[item.id]?.ratings?.length
-                                            ? 'Ayna rating (includes community ratings)'
-                                            : hasRating ? 'Based on user reviews, clinical opinions, and scientific literature' : null;
+                                            ? "Ayna's rating (includes ratings from other users)"
+                                            : hasRating ? 'Based on user reviews, doctor opinions, and research' : null;
                                         if (hasRating) {
                                             return (
                                                 <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }} title={tooltip}>★ {Number(displayRating).toFixed(1)}</span>
@@ -1070,13 +1071,13 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             {(dsldLoading || dsldProducts.length > 0) && (
                 <div style={{ marginTop: '2rem' }}>
                     <h3 style={{ fontSize: '1.1rem', marginBottom: '0.25rem', color: 'var(--color-text-main)' }}>
-                        Verified Supplements from NIH
+                        Verified Supplements from the <GlossaryTerm term="NIH" />
                     </h3>
                     <p style={{ fontSize: '0.82rem', color: 'var(--color-text-muted)', marginBottom: '1.25rem' }}>
-                        Products with label data verified by the NIH Dietary Supplement Label Database.
+                        These supplement labels were checked against the government's official database.
                     </p>
                     {dsldLoading && (
-                        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Checking NIH database...</p>
+                        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Checking the government database…</p>
                     )}
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '1.25rem' }}>
                         {dsldProducts.map((product) => (
