@@ -6,7 +6,7 @@ const deeptechProjects = [
         name: 'Project CloudPad',
         type: 'Material Science Innovation',
         focus: 'Menstrual Collection',
-        description: 'A revolutionary cotton top sheet pad that leverages advanced micro-absorption technology. Designed to be remarkably thin—almost unnoticeable—while maintaining ultra-high absorbency for heavy flow days.',
+        description: 'A new cotton-top pad with better absorption technology. It\'s super thin — you\'ll barely notice it\'s there — but still holds a lot on heavy flow days.',
         tags: ['Ultra-thin', 'High Absorbency', '100% Cotton Top']
     },
     {
@@ -14,7 +14,7 @@ const deeptechProjects = [
         name: 'Project OdorZero',
         type: 'Biomaterial Innovation',
         focus: 'Menstrual Hygiene',
-        description: 'The world\'s first menstrual pad actively engineered to prevent menstrual odor at the molecular level without the use of harsh chemical fragrances or masking agents. Utilizes proprietary bio-neutralizing mesh.',
+        description: 'The first period pad built to stop odor at the source, without harsh added fragrance. It uses a special mesh that neutralizes odor naturally.',
         tags: ['Fragrance-Free', 'Odor Neutralizing', 'Bio-Mesh']
     },
     {
@@ -22,7 +22,7 @@ const deeptechProjects = [
         name: 'Project Flare',
         type: 'Wearable Patch',
         focus: 'Menopause & Cycle Tracking',
-        description: 'A discreet, skin-safe biometric patch that continuously monitors basal body temperature. Integrates directly with Ayna to predict ovulation with 99% accuracy and detect early signs of menopause hot flashes.',
+        description: 'A small, skin-safe patch that tracks your body temperature all day. It connects with Ayna to predict ovulation with 99% accuracy and catch early signs of menopause hot flashes.',
         tags: ['Wearable', 'Basal Body Temp', 'Continuous Monitoring']
     }
 ];
@@ -49,7 +49,7 @@ export default function AynaDeeptech({ joinedWaitlists, toggleJoinWaitlist }) {
                     Ayna Deeptech
                 </h1>
                 <p style={{ fontSize: '1.2rem', color: 'var(--color-text-muted)', maxWidth: '600px', margin: '0 auto', marginBottom: '1.5rem' }}>
-                    We're not just recommending the best products on the market—we're actively building the future of women's health. Join the waitlists for our upcoming internal research and development projects.
+                    We don't just recommend the best products out there — we're building new ones too. Join the waitlist for the research projects below.
                 </p>
                 <button
                     onClick={() => toggleJoinWaitlist({ id: 'dt-general', name: 'Ayna Deeptech Updates' })}
@@ -68,7 +68,7 @@ export default function AynaDeeptech({ joinedWaitlists, toggleJoinWaitlist }) {
             <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'center' }}>
                 <input
                     type="text"
-                    placeholder="Search R&D projects..."
+                    placeholder="Search research projects..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     style={{

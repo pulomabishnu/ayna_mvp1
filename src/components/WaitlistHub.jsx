@@ -55,8 +55,8 @@ export default function WaitlistHub({ joinedWaitlists, toggleJoinWaitlist, quizR
                 </h2>
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '1.15rem', lineHeight: '1.7' }}>
                     {hasProfile
-                        ? 'These startups are solving problems that match your health profile. Join their waitlists to get early access.'
-                        : 'Get early access to women\'s health startups building the future of care. Take our quiz for personalized matches.'
+                        ? 'These startups are solving problems like yours. Join their waitlists to get early access.'
+                        : 'Get early access to new women\'s health startups. Take our quiz to see picks made for you.'
                     }
                 </p>
             </div>

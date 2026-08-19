@@ -4,21 +4,21 @@ const SECTIONS = [
     {
         eyebrow: 'How a recommendation actually gets made',
         paragraphs: [
-            'We earn a commission if you buy something from a brand we are partnered with, BUT our recommendation for you is never for sale. Our recommendation engine that decides what products to recommend you has no idea which brand pays us or not. Clinical logic, safety checks, and personalization are the only things that influence your recommendation.',
-            'Only after you get your recommendations, do we check internally if we have a brand partnership with any of the products we recommended. If we do, and you do decide to buy something, we make a commission. If we don’t have a partnership with any of the brands we recommended you, then we don’t make commission. That’s fine with us, as long as it means you can make a product decision with confidence.',
+            'We earn money when you buy from a brand we partner with. But we never sell our recommendations. The system that picks your recommendations does not know which brands pay us. Only medical guidance, safety checks, and what is right for you decide what we recommend.',
+            'We only check for brand partnerships after you already have your recommendations. If we are partnered with a brand you buy from, we earn money. If we are not, we do not. Either way is fine with us — what matters is that you can trust your choice.',
         ],
     },
     {
         eyebrow: 'What partnership means (and doesn’t mean)',
         paragraphs: [
-            'Our brand partners are displayed higher on the discovery page (but not the recommendation engine). Some of the brands we recommend, we also partner with more directly, on things like discount codes, co-marketing, or early product access. Those partnerships fund the work we do and get you better deals.',
-            'They do not buy placement in your specific recommendation. They will be surfaced higher, however, on the discovery page, which is a page where you can freely browse anything, not just your recommendations. If a brand isn’t right for you, it doesn’t matter what deal we have with them — they will not be recommended to you.',
+            'Our partner brands show up higher on the Discover page — but not in your personal recommendations. With some brands, we also work together on things like discount codes or early access to new products. These partnerships help pay for Ayna and get you better deals.',
+            'Brands cannot pay to be in your personal recommendations. They can only show up higher on the Discover page, where you browse everything, not just your picks. If a brand is not right for you, we will not recommend it — no matter what deal we have with them.',
         ],
     },
     {
         eyebrow: 'No exclusivity, ever',
         paragraphs: [
-            'We don’t do exclusivity. We will never sign an agreement that locks a category to one brand. All brands compete for every recommendation for you based on the quality of their product, not on who’s paying us the most. This is also just good business for us: it’s what keeps our advice worth trusting.',
+            'We never lock out other brands. We will never sign a deal that says only one brand can be recommended in a category. Every brand competes on how good their product is — not on who pays us the most. This is also what keeps our advice worth trusting.',
         ],
     },
 ];
@@ -46,7 +46,7 @@ export default function HowWeMakeMoney({ onBack }) {
                     How We Make Money
                 </h1>
                 <p style={{ fontSize: '1.15rem', color: 'var(--color-text-main)', maxWidth: '600px', margin: '0 auto', lineHeight: 1.65, fontWeight: 500 }}>
-                    We think you deserve to know how a health platform gets paid, especially one that's telling you what to do about your own body. So here it is, plainly.
+                    You deserve to know how we make money — especially since we help with choices about your own body. Here it is, plainly.
                 </p>
             </div>
 
@@ -82,7 +82,7 @@ export default function HowWeMakeMoney({ onBack }) {
                     The bottom line
                 </h2>
                 <p style={{ fontSize: '1.05rem', color: 'var(--color-surface-contrast)', lineHeight: 1.75, fontWeight: 500, margin: 0 }}>
-                    We make money when you find the right product. We do not make money by pointing you toward the wrong one. If those two things were ever in conflict, that would be the day to stop trusting us, and we intend to never let that day come.
+                    We make money when you find the right product — not by pointing you to the wrong one. If that ever changed, that would be the day to stop trusting us. We plan to never let that day come.
                 </p>
             </div>
         </section>

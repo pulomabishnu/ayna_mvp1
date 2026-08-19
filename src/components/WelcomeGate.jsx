@@ -140,8 +140,8 @@ export default function WelcomeGate({ onPersonalizedPath, onBrowsePath, onWelcom
                 </span>
                 <RotatingWordHeadline layout="stacked" as="div" />
                 <p className="ayna-landing__body welcome-gate__second-lead">
-                  Ayna builds your health ecosystem using clinical guidance, community signals, and evidence — so
-                  you can find products and care that fit you, from big names and small brands alike.
+                  Ayna helps you find health products and care that fit you — backed by real research, doctor input,
+                  and other women's experiences. Big brands and small brands, all in one place.
                 </p>
               </div>
             </ScrollReveal>
@@ -172,7 +172,7 @@ export default function WelcomeGate({ onPersonalizedPath, onBrowsePath, onWelcom
                   }}
                   onClick={onBrowsePath}
                 >
-                  No thanks, I would rather browse myself
+                  No thanks, I'll look around myself
                 </button>
               </div>
             </ScrollReveal>

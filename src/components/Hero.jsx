@@ -76,8 +76,8 @@ export default function Hero({ onStartQuiz, onViewWaitlist: _onViewWaitlist, onV
                 </span>
                 <RotatingWordHeadline layout="stacked" as="div" />
                 <p className="ayna-landing__body welcome-gate__second-lead">
-                  Ayna builds your health ecosystem using evidence-based guidance, community signals, and research — so
-                  you can find products and care that fit you, from big names and small brands alike.
+                  Ayna helps you find health products and care that fit you — backed by real research, doctor input,
+                  and other women's experiences. Big brands and small brands, all in one place.
                 </p>
               </div>
             </ScrollReveal>
@@ -242,8 +242,8 @@ export default function Hero({ onStartQuiz, onViewWaitlist: _onViewWaitlist, onV
                 Want personalized recommendations without the work? ✨
               </h3>
               <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem' }}>
-                Build your health profile for tailored recommendations, your product ecosystem, and safety-aware
-                discovery.
+                Answer a few questions about your health, and Ayna will find products picked just for you —
+                and flag anything that isn't safe for you.
               </p>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
@@ -264,7 +264,7 @@ export default function Hero({ onStartQuiz, onViewWaitlist: _onViewWaitlist, onV
                   lineHeight: '1.2',
                 }}
               >
-                *Complete your health profile to unlock a personalized plan
+                *Answer a few questions to get your own plan
               </span>
             </div>
           </div>
@@ -291,7 +291,7 @@ export default function Hero({ onStartQuiz, onViewWaitlist: _onViewWaitlist, onV
                 fontWeight: '700',
               }}
             >
-              Nobody makes the everyday simple — introducing Ayna.
+              Meet Ayna — health made simple.
             </h3>
             <p
               style={{
@@ -300,12 +300,10 @@ export default function Hero({ onStartQuiz, onViewWaitlist: _onViewWaitlist, onV
                 fontSize: '1.05rem',
               }}
             >
-              Whether you want a new period pad, a clinician for menopause solutions, or a digital health
-              tracker, we&apos;re here to help you. Online platforms and in-person doctor&apos;s appointments
-              give you specialized care for specific issues — then leave you on your own for the rest of your
-              health as a woman: which products to use, how to decide, where to look. Ayna fills that gap.
-              We’re not replacing your clinician; we’re making the day-to-day management of women’s health
-              actually simple.{' '}
+              Need a period pad? A doctor for menopause symptoms? A health tracker? We can help. Apps and
+              doctor visits are great for one problem at a time — but after that, you're on your own to figure
+              out what products to use and where to look. Ayna fills that gap. We don't replace your doctor.
+              We make the everyday parts of your health easier.{' '}
             </p>
           </div>
         </ScrollReveal>
@@ -326,11 +324,10 @@ export default function Hero({ onStartQuiz, onViewWaitlist: _onViewWaitlist, onV
           >
             <h3 style={{ fontSize: '1.5rem', marginBottom: '1.5rem' }}>Why We Built Ayna</h3>
             <p style={{ color: 'var(--color-text-muted)', lineHeight: '2', fontSize: '1.1rem' }}>
-              We experienced the same frustrations you have — hours Googling products, being dismissed by
-              doctors, cultural taboos, and not knowing which apps are safe with our data. We built Ayna
-              because <strong>every woman deserves a trusted guide</strong> for her health ecosystem, not
-              another hour on Reddit. We&apos;re passionate about making women&apos;s health accessible,
-              transparent, and personalized — without the noise.
+              We've felt the same frustrations you have — hours spent searching online, doctors who don't
+              listen, and not knowing if an app is keeping your data safe. Every woman deserves a guide she can
+              trust for her health, not another hour scrolling for answers. That's why we built Ayna: to make
+              women's health simple, honest, and made just for you.
             </p>
           </div>
         </ScrollReveal>
