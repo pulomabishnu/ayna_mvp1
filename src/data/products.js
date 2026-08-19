@@ -237,6 +237,8 @@ export const PHYSICAL_PRODUCTS = [
         price: '$10 for 18',
         userRating: 4.5,
         whereToBuy: ['Amazon', 'LOLA.com'],
+        url: 'https://mylola.com/',
+        faqUrl: 'https://help.mylola.com/',
         image: 'https://mylola.com/cdn/shop/files/four-lola-plastic-applicator-tampon-boxes.img.jpg?v=1753220344&width=1946',
         summary: '100% organic cotton with compact BPA-free applicator. Customizable subscription box.',
         safety: {

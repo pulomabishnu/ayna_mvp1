@@ -22,6 +22,7 @@ export const BRAND_PRODUCTS = [
         price: '$15',
         whereToBuy: ['Walgreens'],
         url: 'https://hellowinx.com/',
+        faqUrl: 'https://hellowinx.com/pages/faq',
         image: 'https://cdn.shopify.com/s/files/1/0077/8761/0171/files/UTITest_Treat_1.png?v=1771347569',
         summary: 'An at-home UTI test paired with Winx Rx, the brand\'s own telehealth service — check symptoms with a rapid test, then connect to a licensed provider for prescription treatment if needed. Recognized as a TIME Best Invention.',
         safety: {
@@ -51,6 +52,7 @@ export const BRAND_PRODUCTS = [
         price: 'See retailer',
         whereToBuy: ['Amazon'],
         url: 'https://www.helloneycher.com/',
+        faqUrl: 'https://www.helloneycher.com/faq',
         summary: 'A non-hormonal vaginal moisturizer positioned as a natural alternative for dryness, irritation, and discomfort — part of Neycher\'s intimate-care line, which also includes suppositories and a vulva balm.',
         safety: {
             fdaStatus: 'Manufactured in FDA-registered facilities per the brand\'s site; not an FDA-cleared medical device.',

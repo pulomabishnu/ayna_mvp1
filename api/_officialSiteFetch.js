@@ -8,6 +8,9 @@ import { safeFetch } from './_ssrfSafeFetch.js';
  * real liability risk for a health app. No paid API involved: this is a
  * plain HTTP fetch, not a search API call.
  *
+ * Also used for a product's brand FAQ page (product.faqUrl) — same function,
+ * same trust model, just a different field/section in the prompt.
+ *
  * SECURITY: `url` here is CLIENT-SUPPLIED — product-chat.js takes the whole
  * product object from the request body, not a server-side catalog lookup —
  * so this is a genuine SSRF surface, guarded by the shared safeFetch() check

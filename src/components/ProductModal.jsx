@@ -811,6 +811,10 @@ export default function ProductModal({
                         tags: product.tags,
                         healthFunctions: product.healthFunctions,
                         category: product.category,
+                        // Server fetches these itself (SSRF-guarded, see api/_officialSiteFetch.js) —
+                        // only the URLs travel over the wire, never page content from the client.
+                        url: product.url,
+                        faqUrl: product.faqUrl,
                     },
                     aiInsights: aiInsights ? {
                         clinicalNarrative: aiInsights.clinicalNarrative,
