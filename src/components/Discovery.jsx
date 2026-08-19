@@ -348,21 +348,24 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         const qTrim = submittedQuery.trim();
         let scoreById = null;
         if (qTrim) {
-            let scored = list
-                .map((item) => ({
-                    item,
-                    matchScore: scoreQueryAgainstProduct(qTrim, buildSearchTextForItem(item, CATEGORY_LABELS)),
-                }))
-                .filter((x) => x.matchScore > 0);
+            const scoreItem = (item) => ({
+                item,
+                matchScore: scoreQueryAgainstProduct(qTrim, buildSearchTextForItem(item, CATEGORY_LABELS)),
+            });
+            let scored = list.map(scoreItem).filter((x) => x.matchScore > 0);
 
-            if (scored.length === 0 && categoryFilter !== 'all') {
+            if (categoryFilter !== 'all') {
+                const bestScopedScore = scored.reduce((max, x) => Math.max(max, x.matchScore), 0);
                 const broadList = applyFilters(combined, true);
-                scored = broadList
-                    .map((item) => ({
-                        item,
-                        matchScore: scoreQueryAgainstProduct(qTrim, buildSearchTextForItem(item, CATEGORY_LABELS)),
-                    }))
-                    .filter((x) => x.matchScore > 0);
+                const broadScored = broadList.map(scoreItem).filter((x) => x.matchScore > 0);
+                const bestBroadScore = broadScored.reduce((max, x) => Math.max(max, x.matchScore), 0);
+                // Widen past the active category tab whenever nothing in it matched, or something
+                // outside it matches meaningfully better — e.g. searching "heating pad for cramps"
+                // while browsing the Pads tab should surface the actual heating pad, not just period
+                // pads that happen to share the word "pad" with the query.
+                if (scored.length === 0 || bestBroadScore > bestScopedScore) {
+                    scored = broadScored;
+                }
             }
 
             list = scored.map((x) => x.item);
