@@ -53,6 +53,7 @@ export const BRAND_PRODUCTS = [
         whereToBuy: ['helloneycher.com', 'Amazon'],
         url: 'https://www.helloneycher.com/product/vaginal-moisturizer',
         faqUrl: 'https://www.helloneycher.com/faq',
+        image: 'https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/686eb5fcdbbd35b6fc957602_Frame%201000011567.jpg',
         summary: 'A non-hormonal vaginal moisturizer positioned as a natural alternative for dryness, irritation, and discomfort — part of Neycher\'s intimate-care line.',
         safety: {
             fdaStatus: 'Manufactured in FDA-registered facilities per the brand\'s site; not an FDA-cleared medical device.',
@@ -82,6 +83,7 @@ export const BRAND_PRODUCTS = [
         whereToBuy: ['helloneycher.com'],
         url: 'https://www.helloneycher.com/product/odor-be-gone',
         faqUrl: 'https://www.helloneycher.com/faq',
+        image: 'https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/6a0b3e76d248803f468a5c1e_Frame%201000011416%20(1).webp',
         summary: 'Boric acid vaginal suppositories (10 per box) aimed at odor and pH balance. Brand directs use once every 2–3 days outside your period, and not for more than 30 consecutive days.',
         ingredients: 'Boric acid (300mg), sodium hyaluronate (20mg), lactic acid, tea tree leaf oil, vitamin E (tocopheryl acetate), 18β-glycyrrhetinic acid, chlorhexidine digluconate.',
         safety: {
@@ -112,6 +114,7 @@ export const BRAND_PRODUCTS = [
         whereToBuy: ['helloneycher.com'],
         url: 'https://www.helloneycher.com/product/hydrobloom-moisturizing-gel',
         faqUrl: 'https://www.helloneycher.com/faq',
+        image: 'https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/69b007753e5c0c33308cc349_hand.webp',
         summary: 'A hormone-free vaginal moisturizing gel with hyaluronic acid and botanical extracts. Brand directs use for 7–10 consecutive days outside your period, and not for more than 30 consecutive days.',
         ingredients: 'Hyaluronic acid (20mg), lactic acid, vitamins A and E, plus aloe vera, chamomile, and calendula botanical extracts.',
         safety: {
@@ -142,6 +145,7 @@ export const BRAND_PRODUCTS = [
         whereToBuy: ['helloneycher.com'],
         url: 'https://www.helloneycher.com/product/botanical-vulva-balm',
         faqUrl: 'https://www.helloneycher.com/faq',
+        image: 'https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/686ecba35751d51959233c9e_botanical%20vulva%20balm.jpg',
         summary: 'An external, hormone-free balm for vulvar skin, made with 11 botanicals. Applied topically to the outer intimate area — not inserted.',
         ingredients: '11 botanicals including grape seed oil, beeswax, lavender, jojoba seed oil, shea butter, rosehip seed oil, meadowfoam seed oil, calendula flower extract, olive oil, tea tree leaf oil, and chamomile.',
         safety: {
