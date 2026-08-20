@@ -1,4 +1,5 @@
 import React from 'react';
+import GlossaryTerm from './GlossaryTerm';
 
 export default function DoctorPrep({ checkinData = null, myProducts = {}, quizResults = {}, chatHistory = [], onBack }) {
     const ecosystemStats = Object.values(myProducts || {}).length;
@@ -38,8 +39,8 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
                 <div style={{ display: 'inline-block', padding: '0.4rem 1rem', background: 'var(--color-primary-fade)', color: 'var(--color-primary)', borderRadius: 'var(--radius-pill)', fontSize: '0.85rem', fontWeight: '600', marginBottom: '1rem' }}>
                     Appointment Prep Tool
                 </div>
-                <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Appointment Prep</h2>
-                <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem' }}>A summary of your health goals and product history to share with your OB-GYN or Primary Care provider — so you can make the most of your visit.</p>
+                <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Get Ready for Your Appointment</h2>
+                <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem' }}>A short summary of your health goals and products to bring to your <GlossaryTerm term="OB/GYN">OB-GYN</GlossaryTerm> or primary care doctor — so your visit goes smoothly.</p>
             </div>
 
             <div className="card" style={{ padding: '3rem', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-md)' }}>
@@ -65,7 +66,7 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
                         <h4 style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: '1rem', letterSpacing: '0.05em' }}>Check-in &amp; notes</h4>
                         <p style={{ fontSize: '0.95rem', lineHeight: '1.6' }}>
                             {checkinSummary || (
-                                <>Complete a monthly check-in from your Profile to add short focus areas (e.g. flow, cramps, sleep) for your next visit.</>
+                                <>Do a monthly check-in from your Profile to add quick notes — like flow, cramps, or sleep — for your next visit.</>
                             )}
                         </p>
                     </div>
@@ -79,14 +80,14 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
                                 <li key={p.id} style={{ background: 'white', border: '1px solid var(--color-border)', padding: '0.75rem 1rem', borderRadius: 'var(--radius-sm)' }}>
                                     <strong style={{ fontSize: '0.95rem', display: 'block', marginBottom: '0.35rem' }}>{p.name}</strong>
                                     <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
-                                        <strong style={{ color: 'var(--color-text-main)' }}>Active / main ingredients:</strong>{' '}
-                                        {p.ingredients || p.tagline || '— See product label or brand for full ingredient list.'}
+                                        <strong style={{ color: 'var(--color-text-main)' }}>Main ingredients:</strong>{' '}
+                                        {p.ingredients || p.tagline || '— Check the product label or brand website for the full ingredient list.'}
                                     </span>
                                 </li>
                             ))}
                         </ul>
                         <p style={{ marginTop: '1rem', fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
-                            *Providing this list helps your doctor identify potential irritants or supplement interactions.
+                            *Sharing this list helps your doctor spot things that might cause irritation or not mix well with other products you take.
                         </p>
                     </div>
                 </div>
@@ -96,11 +97,11 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', background: 'var(--color-surface-soft)', padding: '1rem', borderRadius: 'var(--radius-sm)' }}>
                             <span style={{ fontSize: '1.2rem' }}>🙋‍♀️</span>
-                            <p style={{ fontSize: '0.95rem' }}>"I've shared my concerns with Ayna: <strong>{goal}</strong>. Is this a fit for my care plan?"</p>
+                            <p style={{ fontSize: '0.95rem' }}>"I told Ayna my main concern is <strong>{goal}</strong>. Does this fit my care plan?"</p>
                         </div>
                         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', background: 'var(--color-surface-soft)', padding: '1rem', borderRadius: 'var(--radius-sm)' }}>
                             <span style={{ fontSize: '1.2rem' }}>💊</span>
-                            <p style={{ fontSize: '0.95rem' }}><em>I am currently using <strong>{Object.values(myProducts)[0]?.name || 'these products'}</strong>. Do you see any concerns with my current health goals?</em></p>
+                            <p style={{ fontSize: '0.95rem' }}><em>I'm currently using <strong>{Object.values(myProducts)[0]?.name || 'these products'}</strong>. Do you see any concerns with this, given my health goals?</em></p>
                         </div>
                         {userChatMessages.length > 0 && (
                             <>
@@ -111,7 +112,7 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
                                         <div>
                                             <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.35rem' }}>You told Ayna:</p>
                                             <blockquote style={{ margin: '0 0 0.5rem', paddingLeft: '0.75rem', borderLeft: '3px solid var(--color-primary)', fontSize: '0.9rem', color: 'var(--color-text-main)' }}>{text.length > 120 ? text.slice(0, 120) + '…' : text}</blockquote>
-                                            <p style={{ fontSize: '0.95rem', fontWeight: '500' }}>Consider asking your provider: I shared this with my health app — can we discuss whether it affects my care or anything I should follow up on?</p>
+                                            <p style={{ fontSize: '0.95rem', fontWeight: '500' }}>You could ask your provider: "I shared this with my health app — can we talk about whether it affects my care, or anything I should follow up on?"</p>
                                         </div>
                                     </div>
                                 ))}
@@ -122,7 +123,7 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
             </div>
 
             <div style={{ marginTop: '2rem', textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>
-                <p>⚠️ Ayna is an informational tool, not a medical device. Always verify clinical data with your licensed provider.</p>
+                <p>⚠️ Ayna gives information only — it is not a medical device. Always check health facts with your doctor or nurse.</p>
             </div>
         </div>
     );

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { findGlossaryTermInText } from '../data/glossary';
 
 // EDITORIALLY CURATED HIGHLIGHTS — not a recall feed and not a complete list.
 //

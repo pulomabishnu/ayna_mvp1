@@ -1573,7 +1573,7 @@ export default function MyEcosystem({
             saveFetchedLlmFingerprint(intakeFingerprint);
             setLlmError('');
         } else {
-            setLlmError('Build cancelled. Tap “Refresh recommendations” to try again.');
+            setLlmError('We stopped building your recommendations. Tap “Refresh recommendations” to try again.');
         }
     }, [intakeFingerprint]);
 
@@ -1590,7 +1590,7 @@ export default function MyEcosystem({
                     style={{ fontSize: '0.8rem', padding: '0.35rem 0.7rem' }}
                     onClick={handleRefreshRecommendations}
                     disabled={llmLoading || !hasCompletedPersonalization}
-                    title="Re-run personalized recommendations from your latest profile"
+                    title="Get new picks based on your latest answers"
                 >
                     {llmLoading ? 'Refreshing…' : 'Refresh recommendations'}
                 </button>
@@ -1605,7 +1605,7 @@ export default function MyEcosystem({
             )}
             {llmError && !llmLoading && (
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textAlign: 'center' }}>
-                    Could not load recommendations: {llmError}
+                    We couldn't load your recommendations: {llmError}
                 </p>
             )}
             {!llmLoading && recommendedProductsForDisplay.length > 0 && (
@@ -1690,7 +1690,7 @@ export default function MyEcosystem({
                                             </div>
                                         ) : (
                                             <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', margin: 0 }}>
-                                                No recommendation tracks available for this concern yet. Try the full search.
+                                                Nothing here yet for this concern. Try searching instead.
                                             </p>
                                         )}
                                     </div>
@@ -1726,7 +1726,7 @@ export default function MyEcosystem({
                         </button>
                         {phoneNumberInfo?.is_verified ? (
                             <>
-                                <p style={{ margin: '0 0 0.4rem', fontWeight: 600 }}>Text Ayna from your phone to get health information easily</p>
+                                <p style={{ margin: '0 0 0.4rem', fontWeight: 600 }}>Text Ayna to get quick health answers</p>
                                 {AYNA_SMS_NUMBER && (
                                     <p style={{ margin: '0 0 0.6rem', fontSize: '1.2rem', fontWeight: 700, color: 'var(--color-primary)' }}>{AYNA_SMS_NUMBER}</p>
                                 )}
@@ -1758,7 +1758,7 @@ export default function MyEcosystem({
 
                 {llmError && !llmLoading && (
                     <div style={{ textAlign: 'center', padding: '0.75rem', marginBottom: '1rem', background: '#FEF2F2', borderRadius: 'var(--radius-md)', fontSize: '0.85rem', color: '#991B1B', border: '1px solid #FCA5A5' }}>
-                        Could not build ecosystem: {typeof llmError === 'string' ? llmError : JSON.stringify(llmError)} — <button type="button" style={{ background: 'none', border: 'none', color: '#991B1B', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline', padding: 0 }} onClick={handleRefreshRecommendations}>Try again</button>
+                        We couldn't build your ecosystem: {typeof llmError === 'string' ? llmError : JSON.stringify(llmError)} — <button type="button" style={{ background: 'none', border: 'none', color: '#991B1B', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline', padding: 0 }} onClick={handleRefreshRecommendations}>Try again</button>
                     </div>
                 )}
 
@@ -1769,13 +1769,13 @@ export default function MyEcosystem({
                     marginBottom: 'var(--spacing-lg)',
                 }}>
                     {myProductList.length > 0 && (
-                        <div style={{ background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '1rem 1.5rem', textAlign: 'center', minWidth: '140px' }} title={estimatedMonthlyTotal.counted < estimatedMonthlyTotal.totalItems ? 'Some products have pricing we can\'t estimate monthly cost from (e.g. one-time visits) — actual total may be higher.' : undefined}>
+                        <div style={{ background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '1rem 1.5rem', textAlign: 'center', minWidth: '140px' }} title={estimatedMonthlyTotal.counted < estimatedMonthlyTotal.totalItems ? 'Some products don\'t show a clear monthly cost (like one-time visits), so your real total may be higher.' : undefined}>
                             <div style={{ fontSize: '2rem', fontWeight: '700', color: 'var(--color-primary)' }}>
                                 {estimatedMonthlyTotal.counted > 0
                                     ? `$${estimatedMonthlyTotal.total.toFixed(2)}${estimatedMonthlyTotal.counted < estimatedMonthlyTotal.totalItems ? '+' : ''}`
                                     : '—'}
                             </div>
-                            <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>Est. per month</div>
+                            <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>Estimated per month</div>
                         </div>
                     )}
                     <div style={{ background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '1rem 1.5rem', textAlign: 'center', minWidth: '140px' }}>
@@ -1889,7 +1889,7 @@ export default function MyEcosystem({
                 {(myProductList.length === 0 && !llmLoading ? (
                     <div style={{ textAlign: 'center', padding: '3rem', background: 'var(--color-surface-soft)', borderRadius: 'var(--radius-lg)', border: '1px dashed var(--color-border)' }}>
                         <h3 style={{ fontSize: '1.25rem', marginBottom: '0.75rem', color: 'var(--color-text-muted)' }}>Your ecosystem is empty.</h3>
-                        <p style={{ color: 'var(--color-text-muted)' }}>Complete the health survey to build your personalized ecosystem, or add products manually.</p>
+                        <p style={{ color: 'var(--color-text-muted)' }}>Answer a few health questions to build your ecosystem, or add products yourself.</p>
                     </div>
                 ) : myProductList.length > 0 ? (
                     <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
@@ -2003,7 +2003,7 @@ export default function MyEcosystem({
                             🛡️ Safety & interactions
                         </h3>
                         <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1rem' }}>
-                            Select 2 or more products to check if they may interact or if they're safe to use together.
+                            Pick 2 or more products to see if they're safe to use together.
                         </p>
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
                             {myProductList.map(p => {
@@ -2033,7 +2033,7 @@ export default function MyEcosystem({
                                 <h4 style={{ fontSize: '1rem', marginBottom: '0.75rem' }}>Comparing: {interactionProductList.map(p => p.name).join(', ')}</h4>
                                 {interactionResults.length === 0 ? (
                                     <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem' }}>
-                                        No known safety interactions found between these. This doesn't replace medical advice — discuss with your provider if unsure.
+                                        We didn't find any known safety issues between these. This isn't medical advice — ask your doctor if you're not sure.
                                     </p>
                                 ) : (
                                     <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>

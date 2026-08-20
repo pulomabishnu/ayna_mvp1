@@ -1,4 +1,5 @@
 import React from 'react';
+import GlossaryTerm from './GlossaryTerm';
 
 export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LABELS, myProducts = {}, onBrowseProducts, onAddToCompare }) {
     const ecosystemList = Object.values(myProducts || {});
@@ -39,7 +40,7 @@ export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LA
                         <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>🔍</div>
                         <h3 style={{ fontSize: '1.15rem', marginBottom: '0.5rem' }}>Browse products</h3>
                         <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>
-                            Search discovery and add products to compare from the full catalog.
+                            Search Discovery and add products from the full catalog.
                         </p>
                     </button>
 
@@ -93,12 +94,12 @@ export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LA
     const categories = [
         { key: 'category', label: 'Category' },
         { key: 'price', label: 'Price' },
-        { key: 'effectiveness', label: hasPads ? 'Absorbency / Flow' : 'Clinical Effectiveness' },
-        { key: 'safety.fdaStatus', label: 'FDA Status' },
-        { key: 'safety.materials', label: 'Materials/Ingredients' },
-        { key: 'safety.recalls', label: hasPads ? 'Recalls / PFAS' : 'Recalls' },
-        { key: 'doctorOpinion', label: 'Clinical opinions' },
-        { key: 'badges', label: 'Appeal Badges' },
+        { key: 'effectiveness', label: hasPads ? 'Absorbency / Flow' : 'How Well It Works' },
+        { key: 'safety.fdaStatus', label: <GlossaryTerm term="FDA">FDA Status</GlossaryTerm> },
+        { key: 'safety.materials', label: 'Materials & Ingredients' },
+        { key: 'safety.recalls', label: hasPads ? <>Recalls / <GlossaryTerm term="PFAS">PFAS</GlossaryTerm></> : 'Recalls' },
+        { key: 'doctorOpinion', label: "Doctor's Opinion" },
+        { key: 'badges', label: 'Badges' },
     ];
 
     const getVal = (obj, path) => {
@@ -121,7 +122,7 @@ export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LA
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', marginBottom: '1rem' }}>
                 <div>
                     <h2 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Product Comparison</h2>
-                    <p style={{ color: 'var(--color-text-muted)' }}>Analyze differences in safety, efficacy, and value.</p>
+                    <p style={{ color: 'var(--color-text-muted)' }}>See how they differ on safety, how well they work, and value.</p>
                 </div>
                 <button className="btn-outline" onClick={onClear} style={{ color: 'var(--color-text-muted)' }}>Clear All</button>
             </div>
@@ -192,10 +193,10 @@ export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LA
             </div>
 
             <div style={{ marginTop: '3rem', padding: '2rem', background: 'var(--color-secondary-fade)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-primary-fade)' }}>
-                <h3 style={{ fontSize: '1.1rem', color: 'var(--color-primary)', marginBottom: '1rem' }}>⚖️ Ayna's Comparison Insight</h3>
+                <h3 style={{ fontSize: '1.1rem', color: 'var(--color-primary)', marginBottom: '1rem' }}>⚖️ Ayna's Tip</h3>
                 <p style={{ fontSize: '1rem', lineHeight: '1.7', color: 'var(--color-text-main)' }}>
-                    When choosing between products, prioritize <strong>Materials Transparency</strong> and <strong>Clinical opinions</strong>.
-                    Price often reflects marketing budget more than ingredient quality. Check for "B-Corp" or "Sustainable" badges for higher ethical standards.
+                    When choosing between products, look closely at <strong>Materials & Ingredients</strong> and the <strong>Doctor's Opinion</strong>.
+                    A higher price often means more marketing, not better ingredients. Look for "B-Corp" or "Sustainable" badges — they can mean higher ethical standards.
                 </p>
             </div>
         </div>

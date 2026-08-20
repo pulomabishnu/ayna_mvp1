@@ -41,7 +41,7 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                 </div>
                 <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Your Dashboard</h2>
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '1.25rem' }}>
-                    Build your ecosystem: products, imported health and wearable data, and care options — all in one place.
+                    Everything in one place: your products, health and wearable data, and care options.
                 </p>
                 {/* Hidden products — prominent so users can find it */}
                 {onViewOmitted && (
@@ -58,7 +58,7 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
             <div style={{ maxWidth: '800px', margin: '0 auto 3rem' }}>
                 <h3 style={{ fontSize: '1.25rem', marginBottom: '0.75rem' }}>Profile</h3>
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem', marginBottom: '1rem' }}>
-                    Add your zip code to see nearby store availability when viewing products (in-store and online stock is shown when we have data).
+                    Add your zip code to see if nearby stores have these products in stock (in-store and online, when we have that data).
                 </p>
                 <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
                     <input
@@ -104,7 +104,7 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                         <span>📋</span> Recommendations from your check-in
                     </h3>
                     <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem', marginBottom: '1rem' }}>
-                        These match your latest check-in and, when you use them, your Period or Menopause Tracker. If you're not sure you completed a check-in, you can always see your latest recommendations here. Each product links to the same catalog on Search.
+                        These match your latest check-in and tracker data. Not sure if you did a check-in? You can always see your latest recommendations here. Each product links to the same listing in Search.
                     </p>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                         {checkinRecs.map(({ product, reason }) => {
@@ -190,7 +190,7 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                                 <span style={{ background: 'var(--color-secondary-fade)', color: 'var(--color-primary-hover)', padding: '0.1rem 0.6rem', borderRadius: 'var(--radius-pill)', fontSize: '0.75rem', fontWeight: '600' }}>{trackedList.length}</span>
                             </h3>
                             <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '1.25rem' }}>
-                                You'll receive immediate notifications if these products have safety issues or recalls.
+                                We'll notify you right away if these products have safety issues or get recalled.
                             </p>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                                 {trackedList.map((product, idx) => (

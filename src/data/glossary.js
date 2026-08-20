@@ -63,6 +63,7 @@ export const GLOSSARY = {
   'FDA': 'U.S. Food and Drug Administration — the government agency that approves and monitors medicines and medical products.',
   'CDC': 'Centers for Disease Control and Prevention — the U.S. government agency that tracks disease and gives public health guidance.',
   'NIH': 'National Institutes of Health — the main U.S. government agency for medical research.',
+  'PFAS': '"Forever chemicals" — human-made chemicals that don\'t break down easily and can build up in the body over time.',
   'MedWatch': "The FDA's own system for reporting a serious problem with a drug, device, or other medical product.",
   'MedlinePlus': "A free, government-run health information site (from the National Library of Medicine) written for patients, not doctors.",
   'PubMed': 'A free, government-run search tool for medical research studies.',

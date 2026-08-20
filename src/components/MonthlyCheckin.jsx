@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { findGlossaryTermInText } from '../data/glossary';
 
 // Map check-in focus options → quiz frustrations (for getRecommendations)
 const FOCUS_TO_FRUSTRATION = {
@@ -41,7 +42,7 @@ const STEP_MAIN = {
 const STEP_FOCUS = {
   id: 'focusAreas',
   question: 'What should we focus on this month?',
-  subtitle: 'Select all that apply — we’ll update your recommendations',
+  subtitle: 'Pick everything that fits — we’ll update your recommendations',
   type: 'multi',
   options: [
     'Heavier flow',
@@ -160,16 +161,16 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
     const satisfaction = answers.howIsRoutine;
     const focusAreas = answers.focusAreas || [];
     const tips = [];
-    if (focusAreas.includes('More cramps')) tips.push('Consider magnesium glycinate — shown to reduce cramps.');
-    if (focusAreas.includes('Heavier flow')) tips.push('Iron-rich foods or a supplement can help if you’re losing more blood.');
+    if (focusAreas.includes('More cramps')) tips.push('Magnesium glycinate may help — it can reduce cramps.');
+    if (focusAreas.includes('Heavier flow')) tips.push('Iron-rich foods or a supplement can help if you’re losing more blood than usual.');
     if (focusAreas.includes('UTIs')) tips.push('Wisp and Planned Parenthood Direct offer same-day UTI treatment.');
-    if (focusAreas.includes('Mood or sleep')) tips.push('Cycle-aware tracking can help; we’ve refreshed your recommendations.');
+    if (focusAreas.includes('Mood or sleep')) tips.push('Tracking your cycle can help. We’ve updated your recommendations.');
     if (focusAreas.includes('Different period product') || focusAreas.includes('Different supplement') || focusAreas.includes('Different app')) {
       tips.push('Your product recommendations have been updated — check your list.');
     }
     const title = satisfaction === 'Great — no changes' ? '🎉 You’re all set' : '📋 Updated for you';
     const message = satisfaction === 'Great — no changes'
-      ? 'We’ll keep monitoring for recalls and new products that match your profile.'
+      ? 'We’ll keep watching for recalls and new products that fit you.'
       : 'We’ve updated your profile and recommendations based on this check-in.';
 
     return (
@@ -186,7 +187,7 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
           <p style={{ color: 'var(--color-text-muted)', marginBottom: '1rem' }}>{message}</p>
           {tips.length > 0 && (
             <ul style={{ paddingLeft: '1.25rem', marginBottom: '1.5rem', fontSize: '0.95rem', lineHeight: 1.6 }}>
-              {tips.map((t, i) => <li key={i}>{t}</li>)}
+              {tips.map((t, i) => <li key={i} title={findGlossaryTermInText(t) || undefined}>{t}</li>)}
             </ul>
           )}
           <button type="button" className="btn btn-primary" onClick={onClose} style={{ width: '100%' }}>Done</button>
@@ -307,7 +308,7 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
               </select>
             </div>
             <div>
-              <label style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', display: 'block', marginBottom: '0.35rem' }}>Last STI screening?</label>
+              <label style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', display: 'block', marginBottom: '0.35rem' }} title={findGlossaryTermInText('STI screening')}>Last STI screening?</label>
               <select
                 value={screeningValues.lastSTI}
                 onChange={e => setScreeningValues(s => ({ ...s, lastSTI: e.target.value }))}
@@ -321,7 +322,7 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
               </select>
             </div>
             <div>
-              <label style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', display: 'block', marginBottom: '0.35rem' }}>Last Pap smear?</label>
+              <label style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', display: 'block', marginBottom: '0.35rem' }} title={findGlossaryTermInText('Pap smear')}>Last Pap smear?</label>
               <select
                 value={screeningValues.lastPap}
                 onChange={e => setScreeningValues(s => ({ ...s, lastPap: e.target.value }))}
