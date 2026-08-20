@@ -405,7 +405,7 @@
     "summary": "100% organic cotton with compact BPA-free applicator. Customizable subscription box.",
     "price": "$10 for 18",
     "image": "https://mylola.com/cdn/shop/files/four-lola-plastic-applicator-tampon-boxes.img.jpg?v=1753220344&width=1946",
-    "url": null,
+    "url": "https://mylola.com/",
     "tags": [
       "heavy-flow",
       "organic",
@@ -439,6 +439,7 @@
     "user_rating": 4.5,
     "is_active": true,
     "extra": {
+      "faqUrl": "https://help.mylola.com/",
       "ingredients": "100% organic cotton core and string, BPA-free plastic applicator.",
       "badges": [
         "Female-Owned",
@@ -3286,7 +3287,7 @@
     "summary": "100% organic cotton pads with a breathable back sheet. Customizable subscription.",
     "price": "$9 for 14",
     "image": "https://m.media-amazon.com/images/I/71j3reiHuBL.jpg",
-    "url": null,
+    "url": "https://mylola.com/",
     "tags": [
       "heavy-flow",
       "organic",
@@ -3320,6 +3321,7 @@
     "user_rating": 4.5,
     "is_active": true,
     "extra": {
+      "faqUrl": "https://help.mylola.com/",
       "communityReviewSourceUrl": "https://www.reddit.com/r/periods/search/?q=LOLA",
       "communityReviewSourceLabel": "Reddit r/periods",
       "ingredients": "100% organic cotton, wood pulp core, adhesive.",
@@ -12220,6 +12222,7 @@
     "user_rating": null,
     "is_active": true,
     "extra": {
+      "faqUrl": "https://hellowinx.com/pages/faq",
       "integrations": [],
       "badges": [],
       "isEmergingBrand": true
@@ -12231,10 +12234,10 @@
     "brand": "Neycher",
     "category": "intimate-care",
     "product_type": "physical",
-    "summary": "A non-hormonal vaginal moisturizer positioned as a natural alternative for dryness, irritation, and discomfort — part of Neycher's intimate-care line, which also includes suppositories and a vulva balm.",
-    "price": "See retailer",
+    "summary": "A non-hormonal vaginal moisturizer positioned as a natural alternative for dryness, irritation, and discomfort — part of Neycher's intimate-care line.",
+    "price": "$32.91",
     "image": null,
-    "url": "https://www.helloneycher.com/",
+    "url": "https://www.helloneycher.com/product/vaginal-moisturizer",
     "tags": [
       "discomfort",
       "organic",
@@ -12244,6 +12247,7 @@
       "vaginal-health"
     ],
     "where_to_buy": [
+      "helloneycher.com",
       "Amazon"
     ],
     "where_to_buy_in_stock": {},
@@ -12265,6 +12269,199 @@
     "user_rating": null,
     "is_active": true,
     "extra": {
+      "faqUrl": "https://www.helloneycher.com/faq",
+      "integrations": [],
+      "badges": [],
+      "isEmergingBrand": true
+    }
+  },
+  {
+    "id": "p-neycher-odor-be-gone",
+    "name": "Neycher Odor Be Gone",
+    "brand": "Neycher",
+    "category": "intimate-care",
+    "product_type": "physical",
+    "summary": "Boric acid vaginal suppositories (10 per box) aimed at odor and pH balance. Brand directs use once every 2–3 days outside your period, and not for more than 30 consecutive days.",
+    "price": "$29.97 (10 suppositories)",
+    "image": null,
+    "url": "https://www.helloneycher.com/product/odor-be-gone",
+    "tags": [
+      "discomfort",
+      "comfort",
+      "non-hormonal"
+    ],
+    "health_functions": [
+      "vaginal-health"
+    ],
+    "where_to_buy": [
+      "helloneycher.com"
+    ],
+    "where_to_buy_in_stock": {},
+    "safety": {
+      "fdaStatus": "Manufactured in FDA-registered facilities per the brand's site; not an FDA-cleared medical device.",
+      "materials": "Boric acid suppository — see packaging for the full ingredient list.",
+      "recalls": "No recalls found.",
+      "sideEffects": "Boric acid suppositories are for vaginal use only and are toxic if swallowed — keep away from children. Not for use during pregnancy. Discontinue and consult a clinician if irritation occurs.",
+      "opinionAlerts": "Brand directs no more than 30 consecutive days of use. Brand states products are \"not intended to diagnose, treat, cure, or prevent any disease\" — standard cosmetic/wellness disclaimer language."
+    },
+    "doctor_opinion": "Neycher states this formula \"helps decrease your pH, preventing the formation of bacteria and yeast overgrowth,\" per the brand's own site. Boric acid is a recognized option for recurrent vaginal complaints, but talk to a clinician before starting it.",
+    "community_review": null,
+    "effectiveness": "Brand cites its own consumer study in which 94% of users reported reduced vaginal itching; no independent clinical study of the product was found.",
+    "clinician_opinion_source": "brand",
+    "clinician_attribution": "Sourced from Neycher's own site marketing claims, not independent clinical literature.",
+    "source": "curated",
+    "internal": true,
+    "requires_prescription": false,
+    "user_rating": null,
+    "is_active": true,
+    "extra": {
+      "faqUrl": "https://www.helloneycher.com/faq",
+      "ingredients": "Boric acid (300mg), sodium hyaluronate (20mg), lactic acid, tea tree leaf oil, vitamin E (tocopheryl acetate), 18β-glycyrrhetinic acid, chlorhexidine digluconate.",
+      "integrations": [],
+      "badges": [],
+      "isEmergingBrand": true
+    }
+  },
+  {
+    "id": "p-neycher-hydrobloom-gel",
+    "name": "Neycher HydroBloom Moisturizing Gel",
+    "brand": "Neycher",
+    "category": "intimate-care",
+    "product_type": "physical",
+    "summary": "A hormone-free vaginal moisturizing gel with hyaluronic acid and botanical extracts. Brand directs use for 7–10 consecutive days outside your period, and not for more than 30 consecutive days.",
+    "price": "$25.97",
+    "image": null,
+    "url": "https://www.helloneycher.com/product/hydrobloom-moisturizing-gel",
+    "tags": [
+      "discomfort",
+      "comfort",
+      "organic",
+      "non-hormonal"
+    ],
+    "health_functions": [
+      "vaginal-health"
+    ],
+    "where_to_buy": [
+      "helloneycher.com"
+    ],
+    "where_to_buy_in_stock": {},
+    "safety": {
+      "fdaStatus": "Manufactured in FDA-registered facilities per the brand's site; not an FDA-cleared medical device.",
+      "materials": "See product packaging for the full ingredient list.",
+      "recalls": "No recalls found.",
+      "sideEffects": "None specific reported; discontinue use and consult a clinician if irritation occurs.",
+      "opinionAlerts": "Brand directs no more than 30 consecutive days of use. Brand states products are \"not intended to diagnose, treat, cure, or prevent any disease\" — standard cosmetic/wellness disclaimer language."
+    },
+    "doctor_opinion": "Neycher states the formula \"creates a protective hydrating layer that supports long-lasting moisture and comfort,\" per the brand's own site. Hyaluronic-acid vaginal moisturizers are a common non-hormonal approach to dryness.",
+    "community_review": null,
+    "effectiveness": "Brand cites its own clinical trial in which 94% of users reported improvement in vaginal dryness; no independent clinical study of the product was found.",
+    "clinician_opinion_source": "brand",
+    "clinician_attribution": "Sourced from Neycher's own site marketing claims, not independent clinical literature.",
+    "source": "curated",
+    "internal": true,
+    "requires_prescription": false,
+    "user_rating": null,
+    "is_active": true,
+    "extra": {
+      "faqUrl": "https://www.helloneycher.com/faq",
+      "ingredients": "Hyaluronic acid (20mg), lactic acid, vitamins A and E, plus aloe vera, chamomile, and calendula botanical extracts.",
+      "integrations": [],
+      "badges": [],
+      "isEmergingBrand": true
+    }
+  },
+  {
+    "id": "p-neycher-botanical-vulva-balm",
+    "name": "Neycher Botanical Vulva Balm",
+    "brand": "Neycher",
+    "category": "intimate-care",
+    "product_type": "physical",
+    "summary": "An external, hormone-free balm for vulvar skin, made with 11 botanicals. Applied topically to the outer intimate area — not inserted.",
+    "price": "$23.45",
+    "image": null,
+    "url": "https://www.helloneycher.com/product/botanical-vulva-balm",
+    "tags": [
+      "discomfort",
+      "comfort",
+      "organic",
+      "non-hormonal"
+    ],
+    "health_functions": [
+      "vaginal-health"
+    ],
+    "where_to_buy": [
+      "helloneycher.com"
+    ],
+    "where_to_buy_in_stock": {},
+    "safety": {
+      "fdaStatus": "Cosmetic/topical product; not an FDA-cleared medical device.",
+      "materials": "Contains beeswax (not vegan) and botanical oils including tea tree and lavender — patch-test first if you have plant or fragrance sensitivities.",
+      "recalls": "No recalls found.",
+      "sideEffects": "None specific reported; discontinue use and consult a clinician if irritation occurs.",
+      "opinionAlerts": "Brand states products are \"not intended to diagnose, treat, cure, or prevent any disease\" — standard cosmetic/wellness disclaimer language."
+    },
+    "doctor_opinion": "Neycher describes this as a \"hormone-free moisturizer [that] is gynecologist-tested to hydrate, condition, and replenish the delicate vulvar skin,\" per the brand's own site.",
+    "community_review": null,
+    "effectiveness": "Brand cites its own consumer trial in which 92% reported reduced dryness and 96% reported decreased burning or stinging within four weeks; no independent clinical study of the product was found.",
+    "clinician_opinion_source": "brand",
+    "clinician_attribution": "Sourced from Neycher's own site marketing claims, not independent clinical literature.",
+    "source": "curated",
+    "internal": false,
+    "requires_prescription": false,
+    "user_rating": null,
+    "is_active": true,
+    "extra": {
+      "faqUrl": "https://www.helloneycher.com/faq",
+      "ingredients": "11 botanicals including grape seed oil, beeswax, lavender, jojoba seed oil, shea butter, rosehip seed oil, meadowfoam seed oil, calendula flower extract, olive oil, tea tree leaf oil, and chamomile.",
+      "integrations": [],
+      "badges": [],
+      "isEmergingBrand": true
+    }
+  },
+  {
+    "id": "p-neycher-goodbye-dryness-bundle",
+    "name": "Neycher Goodbye, Dryness Bundle",
+    "brand": "Neycher",
+    "category": "intimate-care",
+    "product_type": "physical",
+    "summary": "Bundle pairing the Vaginal Moisturizer with the HydroBloom Moisturizing Gel, sold together at a discount versus buying each on its own.",
+    "price": "$49.97 (bundle; $61.97 separately)",
+    "image": null,
+    "url": "https://www.helloneycher.com/product/goodbye-dryness-bundle",
+    "tags": [
+      "discomfort",
+      "comfort",
+      "organic",
+      "non-hormonal",
+      "cost"
+    ],
+    "health_functions": [
+      "vaginal-health"
+    ],
+    "where_to_buy": [
+      "helloneycher.com"
+    ],
+    "where_to_buy_in_stock": {},
+    "safety": {
+      "fdaStatus": "Manufactured in FDA-registered facilities per the brand's site; not an FDA-cleared medical device.",
+      "materials": "See product packaging for the full ingredient list.",
+      "recalls": "No recalls found.",
+      "sideEffects": "None specific reported; discontinue use and consult a clinician if irritation occurs.",
+      "opinionAlerts": "Contains an internally used product. Brand states products are \"not intended to diagnose, treat, cure, or prevent any disease\" — standard cosmetic/wellness disclaimer language."
+    },
+    "doctor_opinion": "Neycher positions this as an \"inside-outside\" pairing, per the brand's own site. See the individual products for their respective claims.",
+    "community_review": null,
+    "effectiveness": "Bundle of two products; see the individual entries for the brand's cited results. No independent clinical study of the bundle was found.",
+    "clinician_opinion_source": "brand",
+    "clinician_attribution": "Sourced from Neycher's own site marketing claims, not independent clinical literature.",
+    "source": "curated",
+    "internal": true,
+    "requires_prescription": false,
+    "user_rating": null,
+    "is_active": true,
+    "extra": {
+      "faqUrl": "https://www.helloneycher.com/faq",
+      "ingredients": "See the individual Vaginal Moisturizer and HydroBloom Moisturizing Gel entries for full ingredient lists.",
       "integrations": [],
       "badges": [],
       "isEmergingBrand": true
