@@ -17,9 +17,19 @@
 
   --color-border: #E1D5CE;
 
+  /* Brand gradient (hero) + accent trio, from the Aug 2026 mockup pass */
+  --color-navy: #242A52;
+  --color-plum: #4E3866;
+  --color-terracotta: #A2603C;
+  --color-amber: #F0A84B;
+  --color-amber-deep: #C0761F;
+  --hero-gradient: linear-gradient(135deg, var(--color-navy) 0%, var(--color-plum) 55%, var(--color-terracotta) 100%);
+
   /* Typography — same feel as the public waitlist (clean, editorial weight) */
   --font-heading: 'DM Sans', system-ui, -apple-system, sans-serif;
   --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Playfair Display', 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --font-label: 'DM Mono', ui-monospace, 'SF Mono', monospace;
 
   /* Spacing */
   --spacing-xs: 0.25rem;
@@ -193,7 +203,7 @@ body {
 /* Wordmark: dial back the marketing-page wide tracking (0.48em is too wide
    at nav scale) but keep the same serif so it still reads as the same brand mark. */
 .app-nav__logo {
-  font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif !important;
+  font-family: var(--font-serif) !important;
   font-style: italic;
   font-weight: 600;
   font-size: 1.55rem;
@@ -443,29 +453,31 @@ button {
 }
 
 .ayna-landing__bg {
-  position: fixed;
+  /* Was position:fixed (viewport-pinned) — that painted above non-positioned
+     siblings like .hero-continuation once scrolled past, per CSS stacking
+     order (positioned descendants of an isolated context paint after
+     non-positioned siblings, regardless of DOM order). Absolute confines it
+     to this section's own box instead. */
+  position: absolute;
   inset: 0;
   z-index: 0;
-  background: #ffd0c0;
+  background: var(--hero-gradient);
 }
 
 .ayna-landing__photo {
-  position: fixed;
+  position: absolute;
   inset: 0;
   z-index: 1;
-  background-color: #f5f0e6;
-  background-image: url('/landing-bg.png');
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
+  /* Flat brand gradient replaces the photo layer (Aug 2026 mockup pass) */
+  background: var(--hero-gradient);
 }
 
 .ayna-landing__overlay {
-  position: fixed;
+  position: absolute;
   inset: 0;
   z-index: 2;
   pointer-events: none;
-  background: rgba(20, 12, 5, 0.26);
+  background: none;
 }
 
 .ayna-landing__content {
@@ -544,7 +556,7 @@ button {
 
 .welcome-gate__typewriter-h1 {
   text-align: center;
-  font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  font-family: var(--font-serif);
   color: #fff;
   text-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
   font-size: clamp(2.2rem, 7vw, 3.6rem);
@@ -672,18 +684,18 @@ button {
   }
 }
 
-/* Waitlist: .sub-wordmark — Jost, all-caps, wide (screenshot) */
+/* Eyebrow label — DM Mono small-caps, matches the mockup's "WOMEN'S HEALTH, PERSONALIZED" treatment */
 .ayna-landing .ayna-eyebrow {
-  font-family: 'Jost', system-ui, -apple-system, sans-serif;
-  font-size: clamp(0.5rem, 0.5vw + 0.45rem, 0.7rem);
-  font-weight: 300;
-  letter-spacing: 0.22em;
+  font-family: var(--font-label);
+  font-size: clamp(0.65rem, 0.3vw + 0.6rem, 0.78rem);
+  font-weight: 500;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.94);
+  color: var(--color-amber);
   line-height: 1.45;
   margin-top: 0.75rem;
   margin-bottom: 0.6rem;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+  text-shadow: none;
 }
 
 .ayna-landing .welcome-gate__second-text-stack .ayna-eyebrow {
@@ -692,26 +704,24 @@ button {
 }
 
 .ayna-landing .ayna-rotating-headline {
-  /* Waitlist: .headline */
-  font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
-  font-weight: 400;
-  font-size: clamp(2.1rem, 4.5vw, 3rem);
-  line-height: 1.05;
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: clamp(2.3rem, 4.8vw, 3.4rem);
+  line-height: 1.08;
   text-align: center;
   color: #fff;
-  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
-  max-width: 640px;
+  text-shadow: none;
+  max-width: 680px;
   margin-left: auto;
   margin-right: auto;
   letter-spacing: 0;
 }
 
 .ayna-landing .ayna-rotating-word {
-  /* Waitlist: .headline em + accent */
-  color: #c8841a;
+  color: var(--color-amber);
   font-style: italic;
-  font-weight: 400;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  font-weight: 500;
+  text-shadow: none;
 }
 
 /* Welcome (and any landing): four fixed, centered lines — text / text / rotating word / text */
@@ -744,10 +754,10 @@ button {
 .ayna-landing h1,
 .ayna-landing h2,
 .ayna-landing h3 {
-  font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  font-family: var(--font-serif);
   color: #fff;
-  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
-  font-weight: 400;
+  text-shadow: none;
+  font-weight: 500;
   font-size: clamp(1.4rem, 3.2vw, 2.25rem);
   line-height: 1.12;
   max-width: 900px;
@@ -765,14 +775,14 @@ button {
 /* Waitlist wordmark: AYNA, wide Cormorant, gold (ayna_waitlist / screenshot) */
 .ayna-landing .ayna-landing-ayna-wordmark {
   display: inline-block;
-  font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
-  font-weight: 300;
-  font-style: normal;
-  letter-spacing: 0.48em;
-  text-indent: 0.2em;
-  color: #c8841a;
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-style: italic;
+  letter-spacing: 0.16em;
+  text-indent: 0.1em;
+  color: var(--color-amber);
   margin-left: 0.1em;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+  text-shadow: none;
 }
 
 /* Hero landing: first line with wordmark, matches welcome docked scale */
@@ -797,30 +807,27 @@ button {
 
 .ayna-landing p,
 .ayna-landing__body {
-  /* Waitlist: .subheadline */
-  font-weight: 300;
+  font-weight: 400;
   font-size: 0.95rem;
   line-height: 1.8;
   text-align: center;
   color: rgba(255, 255, 255, 0.88);
-  text-shadow: 0 2px 10px rgba(20, 0, 40, 0.65), 0 1px 3px rgba(0, 0, 0, 0.4);
+  text-shadow: none;
 }
 
 .ayna-landing-glass {
   /* Waitlist: .form-card */
   width: 100%;
   max-width: 500px;
-  background: rgba(255, 255, 255, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: 20px;
   padding: 2.2rem 2.2rem 2rem;
-  backdrop-filter: blur(40px) saturate(1.1);
-  -webkit-backdrop-filter: blur(40px) saturate(1.1);
+  backdrop-filter: blur(24px) saturate(1.1);
+  -webkit-backdrop-filter: blur(24px) saturate(1.1);
   box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.15) inset,
-    0 2px 0 rgba(255, 255, 255, 0.35) inset,
-    0 32px 80px rgba(180, 20, 80, 0.18),
-    0 8px 24px rgba(0, 0, 0, 0.08);
+    0 0 0 1px rgba(255, 255, 255, 0.4) inset,
+    0 24px 60px rgba(20, 12, 40, 0.22);
   position: relative;
   z-index: 10;
   overflow: visible;
@@ -832,12 +839,13 @@ button {
 }
 
 .ayna-landing .ayna-landing-glass.ayna-landing-search {
-  /* Search row: form-card shell, tighter padding (waitlist is column form) */
+  /* Search row: solid pill, matches the mockup's flat white search bar */
   max-width: 800px;
   width: 100%;
   margin-left: auto;
   margin-right: auto;
-  padding: 0.6rem 0.75rem 0.6rem 1.1rem;
+  padding: 0.5rem 0.5rem 0.5rem 1.35rem;
+  border-radius: var(--radius-pill);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -887,61 +895,79 @@ button {
 .ayna-landing .ayna-landing-search input {
   flex: 1 1 8rem;
   min-width: 0;
-  font-family: 'Jost', system-ui, sans-serif;
-  font-size: 0.9rem;
-  font-weight: 300;
-  /* Waitlist: input */
-  background: rgba(255, 255, 255, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  border-radius: 9px;
-  color: #fff;
-  padding: 0.72rem 0.9rem;
-  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 400;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  color: var(--color-text-main);
+  padding: 0.72rem 0.4rem;
+  transition: none;
 }
 
 .ayna-landing .ayna-landing-search input:focus {
   outline: none;
-  border-color: rgba(255, 255, 255, 0.7);
-  background: rgba(255, 255, 255, 0.3);
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.15);
+  box-shadow: none;
 }
 
 .ayna-landing .ayna-landing-search input::placeholder {
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--color-text-muted);
 }
 
 .ayna-landing .ayna-landing-mic {
-  border-color: rgba(255, 255, 255, 0.35) !important;
-  background: rgba(255, 255, 255, 0.22) !important;
-  color: #fff !important;
-  border-radius: 9px !important;
+  border-color: var(--color-border) !important;
+  background: transparent !important;
+  color: var(--color-text-muted) !important;
+  border-radius: var(--radius-pill) !important;
 }
 
 .ayna-landing .ayna-landing-mic[aria-pressed="true"] {
-  border-color: rgba(255, 255, 255, 0.7) !important;
-  background: rgba(255, 255, 255, 0.3) !important;
-  color: #c8841a !important;
+  border-color: var(--color-amber) !important;
+  background: var(--color-secondary-fade) !important;
+  color: var(--color-amber-deep) !important;
 }
 
 .ayna-landing .btn-primary {
-  font-family: 'Jost', system-ui, sans-serif;
-  color: #fff;
-  background: rgba(10, 5, 2, 0.72);
+  font-family: var(--font-body);
+  color: var(--color-navy);
+  background: linear-gradient(135deg, var(--color-amber) 0%, var(--color-amber-deep) 100%);
   border: none;
-  border-radius: 9px;
-  font-weight: 500;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
-  transition: background 0.2s, transform 0.15s, box-shadow 0.2s, color 0.2s, font-weight 0.2s;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  box-shadow: 0 4px 20px rgba(192, 118, 31, 0.35);
+  transition: transform 0.15s, box-shadow 0.2s;
   text-transform: none;
   letter-spacing: 0.02em;
   font-size: 0.95rem;
 }
 
 .ayna-landing .btn-primary:hover {
-  background: rgba(255, 255, 255, 0.92);
-  color: #2a1808;
-  font-weight: 600;
   transform: scale(1.02);
+  box-shadow: 0 6px 26px rgba(192, 118, 31, 0.42);
+}
+
+/* Navy pill button — used on the light sections below the hero (e.g. "Build your ecosystem") */
+.btn-navy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.75rem;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 1rem;
+  color: #fff;
+  background: var(--color-navy);
+  border: none;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.btn-navy:hover {
+  background: var(--color-plum);
+  transform: translateY(-1px);
 }
 
 .ayna-landing .btn-outline {
@@ -978,31 +1004,26 @@ button {
 }
 
 .ayna-landing-tag {
-  /* Waitlist: .concern-opt */
   display: inline-flex;
   align-items: center;
-  background: transparent !important;
-  border: none !important;
-  padding: 0.5rem 0.8rem !important;
-  color: rgba(255, 255, 255, 0.85) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.28) !important;
+  padding: 0.5rem 1rem !important;
+  color: rgba(255, 255, 255, 0.92) !important;
   font-size: 0.85rem !important;
-  font-weight: 300 !important;
-  font-family: 'Jost', var(--font-body) !important;
-  border-radius: 9px !important;
-  transition: background 0.15s;
+  font-weight: 500 !important;
+  font-family: var(--font-body) !important;
+  border-radius: var(--radius-pill) !important;
+  transition: background 0.15s, border-color 0.15s;
 }
 
 .ayna-landing-tag:hover {
-  background: rgba(255, 255, 255, 0.08) !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
   color: #fff !important;
 }
 
 @media (max-width: 480px) {
-  .ayna-landing__overlay {
-    /* Waitlist mobile */
-    background: rgba(20, 12, 5, 0.44);
-  }
-
   .ayna-landing__content {
     padding: 4rem 1.25rem 5rem;
   }

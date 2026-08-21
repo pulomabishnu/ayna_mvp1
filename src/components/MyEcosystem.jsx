@@ -3,6 +3,7 @@ import SubscriptionPaywallModal from './SubscriptionPaywallModal';
 import {
     HEALTH_FUNCTIONS,
     ALL_PRODUCTS,
+    CATEGORY_LABELS,
     detectDuplicates,
     getEcosystemAlternatives,
     getRecommendationExplanation,
@@ -1062,6 +1063,22 @@ export default function MyEcosystem({
     // Use ecosystemOrder for stable card positions; fall back to insertion order
     const myProductIds = ecosystemOrder.length ? ecosystemOrder.filter(id => myProducts[id]) : Object.keys(myProducts);
     const myProductList = myProductIds.map(id => myProducts[id]).filter(Boolean);
+    // Areas of care: myProductList grouped by category, for the circular summary at the top of the page.
+    const careAreas = useMemo(() => {
+        const byCategory = new Map();
+        myProductList.forEach((p) => {
+            const key = p.category || 'other';
+            if (!byCategory.has(key)) byCategory.set(key, []);
+            byCategory.get(key).push(p);
+        });
+        return Array.from(byCategory.entries())
+            .map(([category, items]) => ({
+                category,
+                label: CATEGORY_LABELS[category] || (category.charAt(0).toUpperCase() + category.slice(1)),
+                count: items.length,
+            }))
+            .sort((a, b) => b.count - a.count);
+    }, [myProductList]);
     const { functionMap } = useMemo(() => detectDuplicates(myProductIds, myProducts), [myProductIds, myProducts]);
     const estimatedMonthlyTotal = useMemo(() => {
         let total = 0;
@@ -1706,8 +1723,45 @@ export default function MyEcosystem({
     return (
         <>
             <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
+                {careAreas.length > 0 && (
+                    <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-xl)' }}>
+                        <p style={{
+                            fontFamily: 'var(--font-label)', fontSize: '0.7rem', fontWeight: 500,
+                            letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--color-amber-deep)',
+                            marginBottom: '1.25rem',
+                        }}>
+                            Your ecosystem
+                        </p>
+                        <div style={{
+                            display: 'flex', flexWrap: 'wrap', justifyContent: 'center',
+                            gap: '1.5rem 1.25rem', maxWidth: '640px', margin: '0 auto',
+                        }}>
+                            {careAreas.map((area) => (
+                                <div key={area.category} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', width: '104px' }}>
+                                    <div style={{
+                                        width: '92px', height: '92px', borderRadius: '50%',
+                                        background: 'var(--hero-gradient)', color: '#fff',
+                                        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                                        boxShadow: 'var(--shadow-md)',
+                                    }}>
+                                        <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.6rem', fontWeight: 600, lineHeight: 1 }}>{area.count}</span>
+                                        <span style={{ fontSize: '0.65rem', opacity: 0.85 }}>{area.count === 1 ? 'pick' : 'picks'}</span>
+                                    </div>
+                                    <span style={{
+                                        fontFamily: 'var(--font-label)', fontSize: '0.62rem', fontWeight: 500,
+                                        letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--color-text-muted)',
+                                        textAlign: 'center', lineHeight: 1.3,
+                                    }}>
+                                        {area.label}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
                 <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-xl)', maxWidth: '800px', margin: '0 auto var(--spacing-xl)' }}>
-                    <h2 style={{ fontSize: '2.25rem' }}>My Cabinet</h2>
+                    <h2 style={{ fontFamily: 'var(--font-serif)', fontWeight: 500, fontSize: '2.25rem' }}>My Cabinet</h2>
                 </div>
 
                 {smsCardShown && (

@@ -36,6 +36,7 @@ import { mapIntakeToLegacyQuizProfile } from './utils/healthIntake';
 import AuthGate from './components/AuthGate';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import HowWeMakeMoney from './components/HowWeMakeMoney';
+import HowItWorks from './components/HowItWorks';
 import TermsOfUse from './components/TermsOfUse';
 import AuthCallback from './components/AuthCallback';
 import EmailConfirmed from './components/EmailConfirmed';
@@ -523,6 +524,7 @@ function App() {
   };
   const handleViewDeeptech = () => setCurrentView('deeptech');
   const handleViewHowWeMakeMoney = () => setCurrentView('how-we-make-money');
+  const handleViewHowItWorks = () => setCurrentView('how-it-works');
   const handleViewArticles = () => {
     setSelectedArticleId(null);
     setCurrentView('articles');
@@ -980,7 +982,7 @@ function App() {
                   <button
                     type="button"
                     id="nav-about-trigger"
-                    className={`nav-dropdown__trigger ${currentView === 'how-we-make-money' ? 'nav-dropdown__trigger--active' : ''}`}
+                    className={`nav-dropdown__trigger ${(currentView === 'how-we-make-money' || currentView === 'how-it-works') ? 'nav-dropdown__trigger--active' : ''}`}
                     aria-haspopup="menu"
                     aria-expanded={touchUi ? aboutMenuOpen : undefined}
                     aria-controls="nav-about-menu"
@@ -1005,6 +1007,17 @@ function App() {
                   )}
                 </div>
                 <div className="nav-dropdown__panel" role="menu" id="nav-about-menu" aria-labelledby="nav-about-trigger" style={{ minWidth: '13rem' }}>
+                  <button
+                    type="button"
+                    role="menuitem"
+                    className={`nav-dropdown__item ${currentView === 'how-it-works' ? 'nav-dropdown__item--active' : ''}`}
+                    onClick={() => {
+                      setAboutMenuOpen(false);
+                      handleViewHowItWorks();
+                    }}
+                  >
+                    <span>How It Works</span>
+                  </button>
                   <button
                     type="button"
                     role="menuitem"
@@ -1113,6 +1126,7 @@ function App() {
             <button className="mobile-drawer-item" onClick={() => { handleViewWaitlist(); setMobileMenuOpen(false); }}>Brands</button>
             <button className="mobile-drawer-item" onClick={() => { handleViewDeeptech(); setMobileMenuOpen(false); }}>Deeptech</button>
             <button className="mobile-drawer-item" onClick={() => { handleViewArticles(); setMobileMenuOpen(false); }}>My Health Library</button>
+            <button className="mobile-drawer-item" onClick={() => { handleViewHowItWorks(); setMobileMenuOpen(false); }}>How It Works</button>
             <button className="mobile-drawer-item" onClick={() => { handleViewHowWeMakeMoney(); setMobileMenuOpen(false); }}>How We Make Money</button>
             <button className="mobile-drawer-item" onClick={() => { setShowCheckin(true); setMobileMenuOpen(false); }}>Check-in{checkinDue ? ' •' : ''}</button>
             {user ? (
@@ -1143,7 +1157,15 @@ function App() {
           />
         )}
         {currentView === 'hero' && (
-          <Hero onStartQuiz={handleStartQuiz} onViewWaitlist={handleViewWaitlist} onViewDiscovery={handleViewDiscovery} />
+          <Hero
+            onStartQuiz={handleStartQuiz}
+            onViewWaitlist={handleViewWaitlist}
+            onViewDiscovery={handleViewDiscovery}
+            user={user}
+            myProducts={myProducts}
+            ecosystemCount={ecosystemCount}
+            onViewEcosystem={handleViewEcosystem}
+          />
         )}
         {currentView === 'quiz' && (
           <HealthIntakeForm onComplete={handleQuizComplete} />
@@ -1228,6 +1250,9 @@ function App() {
         )}
         {currentView === 'how-we-make-money' && (
           <HowWeMakeMoney onBack={() => window.history.back()} />
+        )}
+        {currentView === 'how-it-works' && (
+          <HowItWorks onBack={() => window.history.back()} />
         )}
         {currentView === 'auth-callback' && (
           <AuthCallback onAuthenticated={(user) => {

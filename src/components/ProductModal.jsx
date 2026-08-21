@@ -1172,7 +1172,7 @@ export default function ProductModal({
                         </div>
                     </div>
 
-                    <h2 style={{ fontSize: '2rem', marginBottom: '0.75rem', color: 'var(--color-text-main)', letterSpacing: '-0.02em' }}>{product.name}</h2>
+                    <h2 style={{ fontFamily: 'var(--font-serif)', fontWeight: 500, fontSize: '2.1rem', marginBottom: '0.75rem', color: 'var(--color-text-main)', letterSpacing: '0' }}>{product.name}</h2>
                     {product.outOfBusiness && (
                         <div style={{ marginBottom: '1rem', padding: '0.75rem 1rem', background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', fontSize: '0.9rem', color: 'var(--color-text-main)' }}>
                             <strong>No longer sold.</strong> This brand is out of business. We keep this page so you can still view safety and care information if you have the product.
@@ -1213,7 +1213,7 @@ export default function ProductModal({
                                 {isInEcosystem ? '✓ In My Ecosystem' : '+ Add to My Ecosystem'}
                             </button>
                         )}
-                        {(product.price || product.stage) && <span style={{ fontSize: '1.1rem', fontWeight: '600', color: 'var(--color-text-main)' }}>{product.price || product.stage}</span>}
+                        {(product.price || product.stage) && <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.4rem', fontWeight: 600, color: 'var(--color-text-main)' }}>{product.price || product.stage}</span>}
                         {!product.ratingNote && (getAynaRating(product, aynaReviews?.[product.id]) ?? product.userRating) != null && (
                             <span style={{ fontSize: '1rem', color: 'var(--color-text-muted)' }} title="Based on user reviews, clinical opinions, and scientific literature">
                                 ★ {(getAynaRating(product, aynaReviews?.[product.id]) ?? product.userRating).toFixed(1)}

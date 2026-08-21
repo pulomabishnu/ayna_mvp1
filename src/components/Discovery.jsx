@@ -710,7 +710,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     return (
         <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
             <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-lg)', maxWidth: '700px', margin: '0 auto var(--spacing-lg)' }}>
-                <h2 style={{ fontSize: '2.25rem', marginBottom: '0.5rem' }}>Mirror mirror, on the wall...</h2>
+                <h2 style={{ fontFamily: 'var(--font-serif)', fontWeight: 500, fontSize: '2.25rem', marginBottom: '0.5rem' }}>Mirror mirror, on the wall...</h2>
             </div>
 
             {/* Smart Search */}
@@ -895,10 +895,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                 )}
                             </div>
                             <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-                                <span style={{ color: 'var(--color-primary)', fontSize: '0.7rem', fontWeight: '600', marginBottom: '0.25rem' }}>
+                                <span style={{ color: 'var(--color-amber-deep)', fontFamily: 'var(--font-label)', fontSize: '0.65rem', fontWeight: '500', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '0.35rem' }}>
                                     {CATEGORY_LABELS[item.category] || (item.category && item.category.charAt(0) + item.category.slice(1)) || 'Startup'}
                                 </span>
-                                <h3 style={{ fontSize: '1.05rem', marginBottom: '0.25rem' }}>{item.name}</h3>
+                                <h3 style={{ fontFamily: 'var(--font-serif)', fontWeight: 500, fontSize: '1.1rem', marginBottom: '0.25rem' }}>{item.name}</h3>
                                 {item.outOfBusiness && (
                                     <div style={{ marginBottom: '0.75rem', padding: '0.5rem 0.75rem', background: '#374151', color: 'white', borderRadius: 'var(--radius-md)', fontSize: '0.8rem', fontWeight: '700' }}>
                                         This company has closed. We kept this page so you can still check safety info if you already own the product.

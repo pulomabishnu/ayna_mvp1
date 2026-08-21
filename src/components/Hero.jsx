@@ -1,16 +1,123 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useScrollPosition } from '../hooks/useScrollPosition';
 import { useSpeechToText } from '../hooks/useSpeechToText';
 import ScrollReveal from './ScrollReveal';
 import SearchMicButton from './SearchMicButton';
 import RotatingWordHeadline from './RotatingWordHeadline';
 import WaitlistLandingLayout from './WaitlistLandingLayout';
+import { CATEGORY_LABELS } from '../data/products';
+
+function displayNameFromEmail(email) {
+  if (!email) return '';
+  const local = email.split('@')[0] || '';
+  const first = local.split(/[.+_-]/)[0] || local;
+  return first.charAt(0).toUpperCase() + first.slice(1);
+}
+
+// Returning-user hero: shown instead of the search-first hero once someone has
+// an account and at least one product already in their ecosystem.
+function WelcomeBackHero({ user, myProducts, ecosystemCount, onStartQuiz, onViewEcosystem, onViewDiscovery }) {
+  const name = displayNameFromEmail(user?.email) || 'there';
+  const areaStatus = useMemo(() => {
+    const byCategory = new Map();
+    Object.values(myProducts || {}).forEach((p) => {
+      const key = p.category || 'other';
+      byCategory.set(key, (byCategory.get(key) || 0) + 1);
+    });
+    return Array.from(byCategory.entries())
+      .map(([category, count]) => ({
+        category,
+        label: CATEGORY_LABELS[category] || (category.charAt(0).toUpperCase() + category.slice(1)),
+        count,
+      }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 4);
+  }, [myProducts]);
+
+  return (
+    <WaitlistLandingLayout>
+      <section className="ayna-landing-section" style={{ minHeight: 'min(70vh, 640px)', alignItems: 'stretch' }}>
+        <div style={{
+          display: 'flex', flexWrap: 'wrap', gap: '2.5rem', alignItems: 'center',
+          justifyContent: 'space-between', width: '100%', maxWidth: '1100px', margin: '0 auto', textAlign: 'left',
+        }}>
+          <div style={{ flex: '1 1 400px' }}>
+            <span className="ayna-eyebrow" style={{ display: 'block' }}>Welcome back, {name}</span>
+            <h1 className="ayna-rotating-headline" style={{ textAlign: 'left', margin: '0.5rem 0 1rem', maxWidth: '520px' }}>
+              Your ecosystem is <span className="ayna-rotating-word" style={{ display: 'inline' }}>{ecosystemCount}</span> product{ecosystemCount === 1 ? '' : 's'} strong.
+            </h1>
+            <p className="ayna-landing__body" style={{ textAlign: 'left', margin: '0 0 1.75rem', maxWidth: '480px' }}>
+              Come back anytime to rebuild it, or keep browsing for what's next.
+            </p>
+            <div style={{ display: 'flex', gap: '0.85rem', flexWrap: 'wrap' }}>
+              <button type="button" className="btn btn-primary" onClick={onStartQuiz}>
+                Rebuild my ecosystem
+              </button>
+              <button
+                type="button"
+                onClick={() => onViewDiscovery('')}
+                style={{
+                  padding: '0.875rem 1.75rem', borderRadius: 'var(--radius-pill)', fontWeight: 500,
+                  border: '1px solid rgba(255,255,255,0.4)', background: 'rgba(255,255,255,0.08)', color: '#fff',
+                }}
+              >
+                Browse products
+              </button>
+            </div>
+          </div>
+
+          {areaStatus.length > 0 && (
+            <div style={{
+              flex: '1 1 320px', maxWidth: '380px', background: 'rgba(255,255,255,0.08)',
+              border: '1px solid rgba(255,255,255,0.18)', borderRadius: 'var(--radius-lg)', padding: '1.5rem',
+              backdropFilter: 'blur(12px)', cursor: 'pointer',
+            }}
+            onClick={onViewEcosystem}
+            >
+              <span style={{
+                fontFamily: 'var(--font-label)', fontSize: '0.65rem', fontWeight: 500, letterSpacing: '0.1em',
+                textTransform: 'uppercase', color: 'rgba(255,255,255,0.65)',
+              }}>
+                Your ecosystem
+              </span>
+              <div style={{ marginTop: '0.75rem' }}>
+                {areaStatus.map((a, i) => (
+                  <div key={a.category} style={{
+                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                    padding: '0.6rem 0', borderTop: i === 0 ? 'none' : '1px solid rgba(255,255,255,0.12)',
+                    color: '#fff', fontSize: '0.92rem',
+                  }}>
+                    <span>{a.label}</span>
+                    <span style={{ color: 'var(--color-amber)', fontWeight: 600 }}>{a.count} {a.count === 1 ? 'pick' : 'picks'}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+    </WaitlistLandingLayout>
+  );
+}
 
 // Landing page: no photo carousel, no rotating images — text, search, and CTA only.
-export default function Hero({ onStartQuiz, onViewWaitlist: _onViewWaitlist, onViewDiscovery }) {
+export default function Hero({ onStartQuiz, onViewWaitlist: _onViewWaitlist, onViewDiscovery, user, myProducts, ecosystemCount = 0, onViewEcosystem }) {
   const scrollY = useScrollPosition();
   const [searchValue, setSearchValue] = useState('');
   const speech = useSpeechToText();
+
+  if (user && ecosystemCount > 0) {
+    return (
+      <WelcomeBackHero
+        user={user}
+        myProducts={myProducts}
+        ecosystemCount={ecosystemCount}
+        onStartQuiz={onStartQuiz}
+        onViewEcosystem={onViewEcosystem}
+        onViewDiscovery={onViewDiscovery}
+      />
+    );
+  }
 
   const toggleVoiceSearch = () => {
     if (speech.isRecording) {
@@ -215,7 +322,7 @@ export default function Hero({ onStartQuiz, onViewWaitlist: _onViewWaitlist, onV
         <ScrollReveal className="stagger-4">
           <div
             style={{
-              background: 'linear-gradient(145deg, #FAF5F0 0%, #F0E8E1 100%)',
+              background: 'var(--color-surface-soft)',
               padding: '2.5rem',
               borderRadius: 'var(--radius-xl)',
               maxWidth: '800px',
@@ -234,46 +341,34 @@ export default function Hero({ onStartQuiz, onViewWaitlist: _onViewWaitlist, onV
             <div style={{ flex: '1 1 400px' }}>
               <h3
                 style={{
-                  fontSize: '1.4rem',
+                  fontFamily: 'var(--font-serif)',
+                  fontWeight: 500,
+                  fontSize: '1.6rem',
                   marginBottom: '0.5rem',
                   color: 'var(--color-surface-contrast)',
                 }}
               >
-                Want personalized recommendations without the work? ✨
+                Tell us about your body once.
               </h3>
               <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem' }}>
-                Answer a few questions about your health, and Ayna will find products picked just for you —
-                and flag anything that isn't safe for you.
+                Six questions, and your shop rebuilds around you.
               </p>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
-              <button
-                type="button"
-                className="btn btn-primary"
-                style={{ padding: '0.8rem 2rem', fontSize: '1rem', whiteSpace: 'nowrap' }}
-                onClick={onStartQuiz}
-              >
-                Start Your Health Profile
-              </button>
-              <span
-                style={{
-                  fontSize: '0.75rem',
-                  color: 'var(--color-text-muted)',
-                  textAlign: 'center',
-                  maxWidth: '200px',
-                  lineHeight: '1.2',
-                }}
-              >
-                *Answer a few questions to get your own plan
-              </span>
-            </div>
+            <button
+              type="button"
+              className="btn-navy"
+              style={{ padding: '0.85rem 2rem', fontSize: '1rem', whiteSpace: 'nowrap' }}
+              onClick={onStartQuiz}
+            >
+              Build your ecosystem
+            </button>
           </div>
         </ScrollReveal>
 
         <ScrollReveal>
           <div
             style={{
-              background: 'linear-gradient(145deg, #FAF5F0 0%, #F0E8E1 100%)',
+              background: 'var(--color-surface-soft)',
               border: '1px solid var(--color-border)',
               borderRadius: 'var(--radius-xl)',
               boxShadow: 'var(--shadow-sm)',
@@ -311,7 +406,7 @@ export default function Hero({ onStartQuiz, onViewWaitlist: _onViewWaitlist, onV
         <ScrollReveal>
           <div
             style={{
-              background: 'linear-gradient(145deg, #FAF5F0 0%, #F0E8E1 100%)',
+              background: 'var(--color-surface-soft)',
               border: '1px solid var(--color-border)',
               borderRadius: 'var(--radius-xl)',
               boxShadow: 'var(--shadow-sm)',
@@ -322,7 +417,7 @@ export default function Hero({ onStartQuiz, onViewWaitlist: _onViewWaitlist, onV
               opacity: Math.min(scrollY / 1000 + 0.5, 1),
             }}
           >
-            <h3 style={{ fontSize: '1.5rem', marginBottom: '1.5rem' }}>Why We Built Ayna</h3>
+            <h3 style={{ fontFamily: 'var(--font-serif)', fontWeight: 500, fontSize: '1.6rem', marginBottom: '1.5rem' }}>Why We Built Ayna</h3>
             <p style={{ color: 'var(--color-text-muted)', lineHeight: '2', fontSize: '1.1rem' }}>
               We've felt the same frustrations you have — hours spent searching online, doctors who don't
               listen, and not knowing if an app is keeping your data safe. Every woman deserves a guide she can
