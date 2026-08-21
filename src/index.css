@@ -219,9 +219,9 @@ body {
    elsewhere on the site (About Us dropdown pill, primary-color borders). */
 .app-nav__tab {
   position: relative;
-  font-size: 0.95rem;
-  font-weight: 500;
-  letter-spacing: 0.01em;
+  font-size: 0.875rem;
+  font-weight: 400;
+  letter-spacing: normal;
   padding: 0.45rem 0.55rem;
   color: var(--color-text-main);
   transition: color var(--transition-fast);
@@ -264,7 +264,7 @@ body {
 .app-nav--landing .nav-dropdown__trigger,
 .app-nav--landing .nav-dropdown__trigger--active {
   color: rgba(255, 246, 235, 0.92) !important;
-  letter-spacing: 0.01em;
+  letter-spacing: normal;
 }
 .app-nav--landing .nav-ecosystem__trigger:hover,
 .app-nav--landing .nav-dropdown__trigger:hover {
@@ -1165,9 +1165,9 @@ html {
 
 .nav-ecosystem__trigger,
 .nav-dropdown__trigger {
-  font-family: var(--font-body);
-  font-size: 1rem;
-  font-weight: 500;
+  font-family: var(--font-heading);
+  font-size: 0.875rem;
+  font-weight: 400;
   color: var(--color-text-main);
   padding: 0.2rem 0.4rem;
   border-radius: var(--radius-sm);
