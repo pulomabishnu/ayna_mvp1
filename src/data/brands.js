@@ -176,8 +176,15 @@ export const BRAND_PRODUCTS = [
         whereToBuy: ['helloneycher.com'],
         url: 'https://www.helloneycher.com/product/goodbye-dryness-bundle',
         faqUrl: 'https://www.helloneycher.com/faq',
-        summary: 'Bundle pairing the Vaginal Moisturizer with the HydroBloom Moisturizing Gel, sold together at a discount versus buying each on its own.',
-        ingredients: 'See the individual Vaginal Moisturizer and HydroBloom Moisturizing Gel entries for full ingredient lists.',
+        // Neycher's own site is inconsistent about what's in this bundle: the product
+        // page text names the Vaginal Moisturizer + HydroBloom Gel, while their official
+        // bundle photo (used below, taken from their shop listing) shows the Vaginal
+        // Moisturizer + Botanical Everyday Balm. Summary deliberately doesn't name the
+        // contents so it can't contradict the image. Confirm with Neycher before
+        // asserting either pairing.
+        image: 'https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/68650ca0d383b3c169e56331_6.webp',
+        summary: 'Neycher\'s dryness bundle — two of their intimate-care products sold together at a discount versus buying them separately. Check the product page for the current pairing.',
+        ingredients: 'See the individual Neycher product entries for full ingredient lists.',
         safety: {
             fdaStatus: 'Manufactured in FDA-registered facilities per the brand\'s site; not an FDA-cleared medical device.',
             materials: 'See product packaging for the full ingredient list.',
