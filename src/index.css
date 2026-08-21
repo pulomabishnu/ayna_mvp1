@@ -175,22 +175,20 @@ body {
   padding-left: 0.5rem;
 }
 
-/* Glass nav — consistent across all pages, matches landing page aesthetic.
-   Warm espresso glass (not flat) + a hairline gold edge, echoing the
-   terracotta/gold wordmark treatment used on the marketing pages. */
+/* Nav sits directly on the gradient hero (mockup 1a) — same gradient as the hero
+   itself, no separate glass panel, so the top bar reads as part of the hero,
+   not a bar sitting on top of it. */
 .app-nav--landing {
-  padding: 0.7rem 1.25rem !important;
-  background:
-    linear-gradient(180deg, rgba(48, 28, 18, 0.82) 0%, rgba(36, 20, 13, 0.86) 100%) !important;
-  -webkit-backdrop-filter: blur(28px) saturate(1.5) !important;
-  backdrop-filter: blur(28px) saturate(1.5) !important;
-  border-bottom: 1px solid rgba(255, 199, 116, 0.22) !important;
-  box-shadow:
-    0 1px 0 rgba(255, 210, 150, 0.12) inset,
-    0 10px 36px rgba(24, 13, 6, 0.32) !important;
+  padding: 0.9rem 1.25rem !important;
+  background: var(--hero-gradient) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
 }
 .app-nav--landing.app-nav--scrolled {
-  padding: 0.5rem 1.25rem !important;
+  padding: 0.6rem 1.25rem !important;
+  box-shadow: 0 4px 20px rgba(20, 12, 40, 0.25) !important;
 }
 .app-nav--landing,
 .app-nav--landing button,
