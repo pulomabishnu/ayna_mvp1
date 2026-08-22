@@ -11,6 +11,7 @@ import { enrichLlmProductForDiscovery } from '../utils/enrichLlmProductForDiscov
 import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
 import posthog from 'posthog-js';
 import GlossaryTerm from './GlossaryTerm';
+import { isPartnerBrandItem } from '../utils/partnerBrands';
 
 const SEARCH_SUGGESTION_POOL = [
     'most comfortable easy to use menstrual cup',
@@ -123,16 +124,6 @@ function getQualityScore(item, aynaReviews = {}) {
     const rating = hasRating ? ratedValue : 0.7;
     const safetyOk = !(item.safety?.recalls && String(item.safety.recalls).includes('⚠️')) ? 1 : 0;
     return (rating * 2) + consensusScore + safetyOk;
-}
-
-// Brand partners are pinned to the top of the default (browsing) sort — see isPartnerBrandItem's
-// use in the sort below. Matched against brand+name, case-insensitively, with word boundaries so
-// e.g. "oboo" doesn't accidentally match inside an unrelated word.
-const PARTNER_BRAND_PATTERNS = [/\bwinx(?:\s*health)?\b/, /\bneycher\b/, /\boboo\b/, /\blola\b/];
-
-function isPartnerBrandItem(item) {
-    const text = `${item?.brand || ''} ${item?.name || ''}`.toLowerCase();
-    return PARTNER_BRAND_PATTERNS.some((re) => re.test(text));
 }
 
 // Deterministic per-(item, seed) hash in [0, 1) — same seed always reorders the same way (so a
@@ -459,6 +450,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             });
         } else {
             const partnerAndJitter = !scoreById;
+            // Partner-brand pinning only applies while the user is browsing unpersonalized —
+            // once Personalized is on, this is effectively the recommendation engine, and per
+            // the How We Make Money policy partner brands are surfaced higher on Discovery but
+            // never in the recommendation engine.
+            const partnerPinEnabled = partnerAndJitter && !personalizationFilter;
             list = [...list].sort((a, b) => {
                 const m = matchTieBreak(a, b);
                 if (m !== 0) return m;
@@ -466,7 +462,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 // ahead of everything else, then a per-visit random jitter keeps the catalog from
                 // rendering in the exact same order every time someone lands on the page. Text
                 // searches (scoreById set) keep relying purely on quality score as the tiebreak.
-                if (partnerAndJitter) {
+                if (partnerPinEnabled) {
                     const pa = isPartnerBrandItem(a) ? 1 : 0;
                     const pb = isPartnerBrandItem(b) ? 1 : 0;
                     if (pa !== pb) return pb - pa;
