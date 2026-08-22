@@ -26,9 +26,6 @@ const PARTNERS = [
   },
 ];
 
-/** Partners in conversation but not yet announced. Shown as a count, not names. */
-const PARTNERS_IN_PROGRESS = 7;
-
 function eyebrowFor(product) {
   return String(CATEGORY_LABELS[product.category] || product.category || '')
     .replace(/^[^\w]+\s*/, '')
@@ -128,7 +125,7 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToE
           );
         })}
 
-        <p className="brands__more">{PARTNERS_IN_PROGRESS} more and counting, coming soon.</p>
+        <p className="brands__more">Coming soon 👀</p>
       </div>
     </section>
   );
