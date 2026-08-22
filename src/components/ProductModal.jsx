@@ -17,6 +17,7 @@ import { fetchFdaRecall } from '../utils/fetchFdaRecall';
 import { fetchPubmedArticles } from '../utils/fetchPubmedArticles';
 import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
 import { getSupabaseClient } from '../utils/supabaseClient';
+import { isPartnerBrandItem } from '../utils/partnerBrands';
 
 // Build purchase/search URLs for common retailers (product name encoded). Keys matched by store name.
 const STORE_SEARCH_URLS = {
@@ -1208,6 +1209,9 @@ export default function ProductModal({
                                 >
                                     {isInEcosystem ? '✓ In ecosystem — watching for recalls' : 'Add to ecosystem'}
                                 </button>
+                            )}
+                            {isPartnerBrandItem(product) && (
+                                <span className="pdp-head__badge">🤝 Ayna Partner</span>
                             )}
                             {product.badges && product.badges.map(badge => (
                                 <span key={badge} className="pdp-head__badge">✨ {badge}</span>
