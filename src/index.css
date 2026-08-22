@@ -3825,3 +3825,129 @@ textarea {
   font-family: var(--font-body);
   color: var(--color-text-main);
 }
+
+/* Global ecosystem-generation status — src/components/EcosystemGenerationBar.jsx.
+   Not position:fixed itself: App.jsx renders it inside the same fixed, stacking
+   top wrapper as the save-error banner, so the two never overlap if both are
+   showing at once. */
+.eco-gen-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.55rem 1rem;
+  background: #242A52;
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.eco-gen-bar__spinner {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  animation: eco-gen-spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes eco-gen-spin {
+  to { transform: rotate(360deg); }
+}
+
+.eco-gen-bar__dismiss {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0.1rem 0.3rem;
+}
+
+.eco-gen-bar__dismiss:hover {
+  color: #fff;
+}
+
+/* The "ready" toast — a one-off notification, so it floats independently
+   (top-right, below the nav) rather than living in the persistent top
+   stacking wrapper the bar and save-error banner share. */
+.eco-gen-popup {
+  position: fixed;
+  top: 4.5rem;
+  right: 1rem;
+  z-index: 3100;
+  max-width: 320px;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg, 14px);
+  box-shadow: var(--shadow-lg, 0 14px 40px rgba(26, 23, 20, 0.12));
+  padding: 1rem 1.1rem;
+  animation: eco-gen-popup-in 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes eco-gen-popup-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.eco-gen-popup__body {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  margin-bottom: 0.75rem;
+}
+
+.eco-gen-popup__icon {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.eco-gen-popup__title {
+  margin: 0 0 0.15rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  font-size: 0.95rem;
+}
+
+.eco-gen-popup__subtitle {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+}
+
+.eco-gen-popup__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.eco-gen-popup__actions .btn-primary {
+  flex: 1;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.82rem;
+}
+
+.eco-gen-popup__close {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 0.2rem 0.4rem;
+}
+
+.eco-gen-popup__close:hover {
+  color: var(--color-text-main);
+}
+
+@media (max-width: 640px) {
+  .eco-gen-popup {
+    left: 0.75rem;
+    right: 0.75rem;
+    max-width: none;
+  }
+}
