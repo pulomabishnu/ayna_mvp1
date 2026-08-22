@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import { ALL_PRODUCTS, CATEGORY_LABELS, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate } from '../data/products';
 import { loadProductCatalog } from '../utils/productCatalog';
 import { buildSearchTextForItem, scoreQueryAgainstProduct } from '../utils/naturalLanguageSearch';
+import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { fetchSearchSuggestions } from '../utils/fetchSearchSuggestions';
 import { RELEASED_STARTUPS } from '../data/startups';
 import { getAynaRating } from '../data/aynaReviews';
@@ -860,7 +861,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                         src={cardImageSrc}
                                         alt=""
                                         loading="lazy"
-                                        onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                                        onError={(e) => handleImageErrorWithRetry(e, () => { e.currentTarget.style.display = 'none'; })}
                                     />
                                 ) : imageStillLoading ? (
                                     <div className="skeleton-shimmer" style={{ position: 'absolute', inset: 0 }} aria-hidden="true" />
@@ -963,7 +964,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                             <div key={product.id} className="card hover-lift" style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                                 <div style={{ height: '120px', width: '100%', overflow: 'hidden', position: 'relative' }}>
                                     {product.image ? (
-                                        <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                                        <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => handleImageErrorWithRetry(e, () => { e.currentTarget.style.display = 'none'; })} />
                                     ) : (
                                         <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, var(--color-secondary-fade), #f3e8ff)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem' }}>💊</div>
                                     )}

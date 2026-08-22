@@ -1,6 +1,7 @@
 import React from 'react';
 import { BRAND_PRODUCTS } from '../data/brands';
 import { CATEGORY_LABELS } from '../data/products';
+import { handleImageErrorWithRetry } from '../utils/imageRetry';
 
 /**
  * Brands — the partnership page.
@@ -97,7 +98,7 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToE
                             src={product.image}
                             alt=""
                             loading="lazy"
-                            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                            onError={(e) => handleImageErrorWithRetry(e, () => { e.currentTarget.style.display = 'none'; })}
                           />
                         ) : (
                           <span className="discovery-card__initial" aria-hidden="true">
