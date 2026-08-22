@@ -1481,3 +1481,105 @@ html {
     padding: 0.35rem 0.4rem;
   }
 }
+/* ============================================================
+   Aug 2026 desktop mockup — shared page frame
+   The mockup boards are 1180px-wide cards with 56px side padding, so every
+   surface ported from them centres on that width and keeps the 56px gutter.
+   ============================================================ */
+
+:root {
+  --mockup-page-width: 1180px;
+  --mockup-gutter: 56px;
+  --mockup-cream: #FBF8F4;
+  --mockup-cream-deep: #FAF7F2;
+  --mockup-ink: #171429;
+  --mockup-ink-soft: #6f6880;
+  --mockup-ink-label: #4a4356;
+  --mockup-hero-gradient: linear-gradient(125deg, #242A52 0%, #33305F 32%, #4E3866 58%, #7A4A55 82%, #A2603C 100%);
+  --mockup-hero-gradient-returning: linear-gradient(125deg, #242A52 0%, #33305F 34%, #4E3866 62%, #8A5049 100%);
+}
+
+.mockup-page {
+  width: 100%;
+  max-width: var(--mockup-page-width);
+  margin: 0 auto;
+  padding-left: var(--mockup-gutter);
+  padding-right: var(--mockup-gutter);
+}
+
+@media (max-width: 720px) {
+  :root {
+    --mockup-gutter: 22px;
+  }
+}
+
+/* ---- Site footer (repeats on every mockup board) ---- */
+
+.site-footer {
+  background: var(--mockup-cream);
+  border-top: 1px solid rgba(23, 20, 41, 0.08);
+  padding: 56px 0 34px;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  color: var(--mockup-ink);
+}
+
+.site-footer__columns {
+  width: 100%;
+  max-width: var(--mockup-page-width);
+  margin: 0 auto;
+  padding: 0 var(--mockup-gutter);
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 40px;
+}
+
+.site-footer__columns a:hover,
+.site-footer__columns button:hover {
+  color: #B4732A;
+}
+
+.site-footer__baseline {
+  width: 100%;
+  max-width: var(--mockup-page-width);
+  margin: 56px auto 0;
+  padding: 0 var(--mockup-gutter);
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  font-size: 13.5px;
+  color: var(--mockup-ink-soft);
+}
+
+.site-footer__legal {
+  width: 100%;
+  max-width: var(--mockup-page-width);
+  margin: 18px auto 0;
+  padding: 16px var(--mockup-gutter) 0;
+  border-top: 1px solid rgba(23, 20, 41, 0.06);
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: rgba(111, 104, 128, 0.85);
+}
+
+.site-footer__legal button:hover {
+  color: #B4732A;
+}
+
+@media (max-width: 860px) {
+  .site-footer__columns {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+}
+
+@media (max-width: 520px) {
+  .site-footer__columns {
+    grid-template-columns: 1fr;
+  }
+
+  .site-footer__baseline {
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 36px;
+  }
+}

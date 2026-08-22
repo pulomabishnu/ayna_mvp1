@@ -1,6 +1,7 @@
 import React, { Suspense, useState, useMemo, useRef, useEffect, useLayoutEffect, useCallback } from 'react';
 import Hero from './components/Hero';
 import WelcomeGate from './components/WelcomeGate';
+import SiteFooter from './components/SiteFooter';
 import HealthIntakeForm from './components/HealthIntakeForm';
 import HealthProfileEditor from './components/HealthProfileEditor';
 import PhoneVerification from './components/PhoneVerification';
@@ -1502,26 +1503,15 @@ function App() {
         )}
       </main>
       {!hideWelcomeIntroChrome && (
-        <footer style={{
-          padding: '0.85rem 1.5rem',
-          textAlign: 'center',
-          fontSize: '0.7rem',
-          color: 'var(--color-text-muted)',
-          lineHeight: 1.5,
-          borderTop: '1px solid rgba(255, 255, 255, 0.55)',
-          background: 'linear-gradient(180deg, rgba(255,255,255,0.72) 0%, rgba(255,252,249,0.82) 100%)',
-          backdropFilter: 'blur(24px) saturate(1.4)',
-          WebkitBackdropFilter: 'blur(24px) saturate(1.4)',
-          letterSpacing: '0.01em',
-        }}>
-          Ayna provides wellness information only — not medical advice. Always consult a qualified healthcare provider for medical decisions. By using Ayna, you agree your data is stored securely and never sold.
-          <br />
-          <button type="button" onClick={() => setCurrentView('privacy-policy')} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: 'inherit', textDecoration: 'underline', fontSize: 'inherit', fontFamily: 'inherit' }}>Privacy Policy</button>
-          {' · '}
-          <button type="button" onClick={() => setCurrentView('terms-of-use')} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: 'inherit', textDecoration: 'underline', fontSize: 'inherit', fontFamily: 'inherit' }}>Terms of Use</button>
-          {' · '}
-          <button type="button" onClick={() => setCurrentView('how-we-make-money')} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: 'inherit', textDecoration: 'underline', fontSize: 'inherit', fontFamily: 'inherit' }}>How We Make Money</button>
-        </footer>
+        <SiteFooter
+          onViewHowItWorks={handleViewHowItWorks}
+          onViewDiscovery={handleViewDiscovery}
+          onViewDeeptech={handleViewDeeptech}
+          onViewWaitlist={handleViewWaitlist}
+          onViewPrivacyPolicy={() => setCurrentView('privacy-policy')}
+          onViewTermsOfUse={() => setCurrentView('terms-of-use')}
+          onViewHowWeMakeMoney={handleViewHowWeMakeMoney}
+        />
       )}
     </div>
   );
