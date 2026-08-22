@@ -1247,21 +1247,26 @@ html {
   transform: rotate(180deg);
 }
 
+/*
+ * The visible "gap" between the trigger and the menu below it used to be a
+ * real gap in this element's own position (top: calc(100% + 0.35rem)) — but
+ * that gap sits OUTSIDE this element's box, so it's not part of what :hover
+ * on the ancestor (.nav-dropdown / .nav-ecosystem) considers "still hovering
+ * the dropdown". Moving the mouse straight down from the trigger toward the
+ * menu crossed that dead zone and closed the menu before the cursor ever
+ * reached it. Fixed by sitting this element flush against the trigger
+ * (top: 100%, no gap) and reserving the old gap as padding-top instead —
+ * padding IS part of the hoverable box, so the hit-area is now continuous.
+ * The actual visible card (background/border/shadow/blur) moved to
+ * .nav-ecosystem__panel-inner / .nav-dropdown__panel-inner below, offset
+ * downward by that same padding, so it looks identical to before.
+ */
 .nav-ecosystem__panel,
 .nav-dropdown__panel {
   position: absolute;
-  top: calc(100% + 0.35rem);
+  top: 100%;
   left: 0;
-  min-width: 10.5rem;
-  padding: 0.35rem 0;
-  margin: 0;
-  list-style: none;
-  background: rgba(255, 255, 255, 0.78);
-  -webkit-backdrop-filter: blur(20px) saturate(1.15);
-  backdrop-filter: blur(20px) saturate(1.15);
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  border-radius: var(--radius-md);
-  box-shadow: 0 8px 32px rgba(28, 25, 23, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+  padding-top: 0.35rem;
   z-index: 1002;
   opacity: 0;
   visibility: hidden;
@@ -1272,6 +1277,20 @@ html {
     opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1),
     transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
     visibility 0.22s;
+}
+
+.nav-ecosystem__panel-inner,
+.nav-dropdown__panel-inner {
+  min-width: 10.5rem;
+  padding: 0.35rem 0;
+  margin: 0;
+  list-style: none;
+  background: rgba(255, 255, 255, 0.78);
+  -webkit-backdrop-filter: blur(20px) saturate(1.15);
+  backdrop-filter: blur(20px) saturate(1.15);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 32px rgba(28, 25, 23, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.2) inset;
 }
 
 @media (hover: hover) {

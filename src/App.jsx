@@ -996,31 +996,33 @@ function App() {
                   About Us
                 </button>
               </div>
-              <div className="nav-dropdown__panel" role="menu" id="nav-about-menu" aria-labelledby="nav-about-trigger" style={{ minWidth: '13rem' }}>
-                <button
-                  type="button"
-                  role="menuitem"
-                  className={`nav-dropdown__item ${currentView === 'how-it-works' ? 'nav-dropdown__item--active' : ''}`}
-                  onClick={() => { setAboutMenuOpen(false); handleViewHowItWorks(); }}
-                >
-                  <span>How It Works</span>
-                </button>
-                <button
-                  type="button"
-                  role="menuitem"
-                  className={`nav-dropdown__item ${currentView === 'how-we-make-money' ? 'nav-dropdown__item--active' : ''}`}
-                  onClick={() => { setAboutMenuOpen(false); handleViewHowWeMakeMoney(); }}
-                >
-                  <span>How We Make Money</span>
-                </button>
-                <button
-                  type="button"
-                  role="menuitem"
-                  className={`nav-dropdown__item ${currentView === 'deeptech' ? 'nav-dropdown__item--active' : ''}`}
-                  onClick={() => { setAboutMenuOpen(false); handleViewDeeptech(); }}
-                >
-                  <span>Deeptech</span>
-                </button>
+              <div className="nav-dropdown__panel" role="menu" id="nav-about-menu" aria-labelledby="nav-about-trigger">
+                <div className="nav-dropdown__panel-inner" style={{ minWidth: '13rem' }}>
+                  <button
+                    type="button"
+                    role="menuitem"
+                    className={`nav-dropdown__item ${currentView === 'how-it-works' ? 'nav-dropdown__item--active' : ''}`}
+                    onClick={() => { setAboutMenuOpen(false); handleViewHowItWorks(); }}
+                  >
+                    <span>How It Works</span>
+                  </button>
+                  <button
+                    type="button"
+                    role="menuitem"
+                    className={`nav-dropdown__item ${currentView === 'how-we-make-money' ? 'nav-dropdown__item--active' : ''}`}
+                    onClick={() => { setAboutMenuOpen(false); handleViewHowWeMakeMoney(); }}
+                  >
+                    <span>How We Make Money</span>
+                  </button>
+                  <button
+                    type="button"
+                    role="menuitem"
+                    className={`nav-dropdown__item ${currentView === 'deeptech' ? 'nav-dropdown__item--active' : ''}`}
+                    onClick={() => { setAboutMenuOpen(false); handleViewDeeptech(); }}
+                  >
+                    <span>Deeptech</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -1048,43 +1050,45 @@ function App() {
                 )}
               </button>
               <div className="nav-ecosystem__panel" role="menu" id="nav-ecosystem-menu" aria-labelledby="nav-ecosystem-trigger">
-                <button
-                  type="button"
-                  role="menuitem"
-                  className={`nav-ecosystem__item ${currentView === 'ecosystem' ? 'nav-ecosystem__item--active' : ''}`}
-                  onClick={() => { setEcoMenuOpen(false); handleViewEcosystem(); }}
-                >
-                  <span>My Ecosystem</span>
-                  {ecosystemCount > 0 && <span className="nav-ecosystem__item-pill">{ecosystemCount}</span>}
-                </button>
-                <button
-                  type="button"
-                  role="menuitem"
-                  className={`nav-ecosystem__item ${currentView === 'comparison' ? 'nav-ecosystem__item--active' : ''}`}
-                  onClick={() => { setEcoMenuOpen(false); handleViewComparison(); }}
-                >
-                  <span>Compare</span>
-                  {compareList.length > 0 && (
-                    <span className="nav-ecosystem__item-pill">{compareList.length}</span>
-                  )}
-                </button>
-                <button
-                  type="button"
-                  role="menuitem"
-                  className={`nav-ecosystem__item ${currentView === 'omitted' ? 'nav-ecosystem__item--active' : ''}`}
-                  onClick={() => { setEcoMenuOpen(false); handleViewOmitted(); }}
-                >
-                  <span>Hidden</span>
-                  {omittedCount > 0 && <span className="nav-ecosystem__item-pill">{omittedCount}</span>}
-                </button>
-                <button
-                  type="button"
-                  role="menuitem"
-                  className={`nav-ecosystem__item ${currentView === 'recalls' ? 'nav-ecosystem__item--active' : ''}`}
-                  onClick={() => { setEcoMenuOpen(false); handleViewRecalls(); }}
-                >
-                  <span>Recall</span>
-                </button>
+                <div className="nav-ecosystem__panel-inner">
+                  <button
+                    type="button"
+                    role="menuitem"
+                    className={`nav-ecosystem__item ${currentView === 'ecosystem' ? 'nav-ecosystem__item--active' : ''}`}
+                    onClick={() => { setEcoMenuOpen(false); handleViewEcosystem(); }}
+                  >
+                    <span>My Ecosystem</span>
+                    {ecosystemCount > 0 && <span className="nav-ecosystem__item-pill">{ecosystemCount}</span>}
+                  </button>
+                  <button
+                    type="button"
+                    role="menuitem"
+                    className={`nav-ecosystem__item ${currentView === 'comparison' ? 'nav-ecosystem__item--active' : ''}`}
+                    onClick={() => { setEcoMenuOpen(false); handleViewComparison(); }}
+                  >
+                    <span>Compare</span>
+                    {compareList.length > 0 && (
+                      <span className="nav-ecosystem__item-pill">{compareList.length}</span>
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    role="menuitem"
+                    className={`nav-ecosystem__item ${currentView === 'omitted' ? 'nav-ecosystem__item--active' : ''}`}
+                    onClick={() => { setEcoMenuOpen(false); handleViewOmitted(); }}
+                  >
+                    <span>Hidden</span>
+                    {omittedCount > 0 && <span className="nav-ecosystem__item-pill">{omittedCount}</span>}
+                  </button>
+                  <button
+                    type="button"
+                    role="menuitem"
+                    className={`nav-ecosystem__item ${currentView === 'recalls' ? 'nav-ecosystem__item--active' : ''}`}
+                    onClick={() => { setEcoMenuOpen(false); handleViewRecalls(); }}
+                  >
+                    <span>Recall</span>
+                  </button>
+                </div>
               </div>
             </div>
 
