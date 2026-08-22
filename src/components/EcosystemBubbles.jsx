@@ -23,7 +23,7 @@ const AREAS = [
   { key: 'cycle', label: 'Cycle care', categories: ['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'cramp-relief'] },
   { key: 'pelvic-floor', label: 'Pelvic floor', categories: ['pelvic-floor', 'pelvic-health'] },
   { key: 'postpartum', label: 'Postpartum', categories: ['postpartum', 'pregnancy'] },
-  { key: 'intimate', label: 'Intimate care', categories: ['intimate-care', 'sex-tech'] },
+  { key: 'intimate', label: 'Intimate care', categories: ['intimate-care', 'sex-tech', 'incontinence'] },
   { key: 'supplements', label: 'Supplements', categories: ['supplement', 'hormone-monitoring'] },
   { key: 'sleep', label: 'Sleep', categories: ['mental-health'] },
   { key: 'care', label: 'Clinicians', categories: ['telehealth'] },
