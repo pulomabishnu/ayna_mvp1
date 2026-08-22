@@ -42,6 +42,7 @@ import AuthCallback from './components/AuthCallback';
 import EmailConfirmed from './components/EmailConfirmed';
 import { getSupabaseClient } from './utils/supabaseClient';
 import { loadEcosystemForUser, upsertProductState, upsertProductsBatch, clearEcosystemForUser } from './utils/ecosystemStore';
+import { loadSavedProducts, persistSavedProducts, clearSavedProducts, loadSavedForUser, setSavedForUser } from './utils/savedProductsStore';
 import { loadLearningMemoryForUser, saveLearningMemoryForUser } from './utils/learningMemoryStore';
 import { loadReviewsForUser, upsertProductReviews } from './utils/reviewsStore';
 import { clearCachedLlmRecommendations } from './utils/fetchLlmRecommendations';
@@ -155,6 +156,7 @@ function App() {
   const [selectedArticleId, setSelectedArticleId] = useState(null);
   const [aynaReviews, setAynaReviews] = useState({});
   const [healthProfile, setHealthProfile] = useState(() => loadHealthProfile());
+  const [savedProducts, setSavedProducts] = useState(() => loadSavedProducts());
   const [ecosystemSeedMeta, setEcosystemSeedMeta] = useState({});
   const [user, setUser] = useState(null);
   const [userSession, setUserSession] = useState(null);
@@ -281,6 +283,8 @@ function App() {
         // conditions and medications — which are then sent to the LLM as
         // "her" health context by ProductModal and MyEcosystem.
         setHealthProfile(null);
+        setSavedProducts({});
+        clearSavedProducts();
         if (!STATIC_VIEWS.includes(currentViewRef.current)) {
           setCurrentView('welcome', { replace: true });
         }
@@ -327,8 +331,20 @@ function App() {
       // vanished on any other device while still being fed to the LLM as health
       // context — recommendations silently degraded with no signal.
       loadHealthProfileForCurrentUser().catch(() => null),
-    ]).then(([ecosystem, reviews, memory, intake, healthProfileResult]) => {
+      // null when the is_saved column isn't on the live table yet — the local
+      // list stands in until the migration is applied.
+      loadSavedForUser(supabase, loadForUserId).catch(() => null),
+    ]).then(([ecosystem, reviews, memory, intake, healthProfileResult, saved]) => {
       if (cancelled) return;
+      if (saved) {
+        // Merge rather than replace: anything saved while signed out on this
+        // device should survive signing in.
+        setSavedProducts((prev) => {
+          const merged = { ...prev, ...saved };
+          persistSavedProducts(merged);
+          return merged;
+        });
+      }
       if (ecosystem) {
         if (!llmBuiltThisSessionRef.current) {
           // Merge, don't replace: anything the user toggled while the load was
@@ -697,15 +713,43 @@ function App() {
     setEcosystemOrder(prev =>
       wasIn ? prev.filter(id => id !== product.id) : [...prev, product.id]
     );
+
+    // Anything in your ecosystem is watched for recalls by default — that is
+    // the promise the product page makes on the Add to ecosystem button, so it
+    // has to be true without a second click. Removing from the ecosystem also
+    // stops the monitoring, since nothing else asked for it.
+    const nextTracked = !wasIn;
+    setTrackedProducts(prev => {
+      const next = { ...prev };
+      if (nextTracked) next[product.id] = product;
+      else delete next[product.id];
+      return next;
+    });
+
     if (!wasIn) {
       posthog.capture('product_added', { category: product.category, type: product.type });
     }
     if (user) {
       upsertProductState(getSupabaseClient(), user.id, product, {
         inEcosystem: !wasIn,
-        isTracked: !!trackedProducts[product.id],
+        isTracked: nextTracked,
         isOmitted: !!omittedProducts[product.id],
       }).catch(e => reportSaveFailure('Could not save that change', e));
+    }
+  };
+
+  /** Save for later — the wishlist shown at the bottom of My Ecosystem. */
+  const toggleSavedProduct = (product) => {
+    const wasSaved = !!savedProducts[product.id];
+    const next = { ...savedProducts };
+    if (wasSaved) delete next[product.id];
+    else next[product.id] = product;
+    setSavedProducts(next);
+    persistSavedProducts(next);
+    if (!wasSaved) posthog.capture('product_saved_for_later', { category: product.category });
+    if (user) {
+      setSavedForUser(getSupabaseClient(), user.id, product, !wasSaved)
+        .catch(e => reportSaveFailure('Could not save that change', e));
     }
   };
 
@@ -1385,6 +1429,8 @@ function App() {
             isInCompare={compareList.some(p => p.id === selectedProductModal.id)}
             onAddToEcosystem={toggleMyProduct}
             isInEcosystem={!!myProducts[selectedProductModal.id]}
+            onToggleSaved={toggleSavedProduct}
+            isSaved={!!savedProducts[selectedProductModal.id]}
             userZipCode={userZipCode || undefined}
             aynaReviews={aynaReviews}
             onRate={handleRateProduct}

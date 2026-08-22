@@ -70,8 +70,10 @@ export async function clearEcosystemForUser(supabase, userId) {
     .eq('user_id', userId)
     .eq('in_ecosystem', false)
     .eq('is_tracked', false)
-    .eq('is_omitted', false);
-  if (deleteError) throw new Error(describeError(deleteError, 'clearEcosystem cleanup'));
+    .eq('is_omitted', false)
+    .eq('is_saved', false);
+  // Same as above: tolerate a database without the is_saved column yet.
+  if (deleteError && deleteError.code !== '42703') throw new Error(describeError(deleteError, 'clearEcosystem cleanup'));
 
   return { cleared: count ?? null };
 }
@@ -95,12 +97,29 @@ function toRow(userId, product, { inEcosystem, isTracked, isOmitted }) {
 export async function upsertProductState(supabase, userId, product, flags) {
   const { inEcosystem, isTracked, isOmitted } = flags;
   if (!inEcosystem && !isTracked && !isOmitted) {
+    // Clear the three flags this function owns, then drop the row only if
+    // nothing else is holding it. A plain DELETE here would also erase
+    // is_saved, silently emptying the user's Save for later list whenever she
+    // removed the same product from her ecosystem.
+    const { error: updateError } = await supabase
+      .from('user_ecosystems')
+      .update({ in_ecosystem: false, is_tracked: false, is_omitted: false, updated_at: new Date().toISOString() })
+      .eq('user_id', userId)
+      .eq('product_id', product.id);
+    if (updateError) throw new Error(describeError(updateError, 'removeProduct'));
+
     const { error } = await supabase
       .from('user_ecosystems')
       .delete()
       .eq('user_id', userId)
-      .eq('product_id', product.id);
-    if (error) throw new Error(describeError(error, 'removeProduct'));
+      .eq('product_id', product.id)
+      .eq('in_ecosystem', false)
+      .eq('is_tracked', false)
+      .eq('is_omitted', false)
+      .eq('is_saved', false);
+    // A database that hasn't had the is_saved column added yet rejects the
+    // filter; the flags are already cleared, so leaving the row is harmless.
+    if (error && error.code !== '42703') throw new Error(describeError(error, 'removeProduct cleanup'));
     return;
   }
 

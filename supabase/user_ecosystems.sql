@@ -18,6 +18,9 @@ create table if not exists public.user_ecosystems (
   in_ecosystem boolean not null default false,
   is_tracked boolean not null default false,
   is_omitted boolean not null default false,
+  -- "Save for later" wishlist. Read/written by src/utils/savedProductsStore.js,
+  -- which falls back to localStorage-only while this column is absent.
+  is_saved boolean not null default false,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   -- Composite PK is what `upsert(..., { onConflict: 'user_id,product_id' })`
@@ -25,6 +28,11 @@ create table if not exists public.user_ecosystems (
   -- upsert would insert a duplicate row instead of updating.
   primary key (user_id, product_id)
 );
+
+-- The table predates version control, so `create table if not exists` above is
+-- a no-op against the live database and would skip a newly added column.
+alter table public.user_ecosystems
+  add column if not exists is_saved boolean not null default false;
 
 create index if not exists user_ecosystems_user_id_idx
 on public.user_ecosystems (user_id);

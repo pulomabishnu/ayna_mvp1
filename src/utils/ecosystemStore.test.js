@@ -123,11 +123,27 @@ describe('upsertProductsBatch', () => {
 });
 
 describe('upsertProductState', () => {
-  it('deletes the row when no flag is set', async () => {
+  it('clears the flags, then deletes the row only if nothing else holds it', async () => {
     const sb = makeSupabase();
     await upsertProductState(sb, 'u', { id: 'p1' }, { inEcosystem: false, isTracked: false, isOmitted: false });
-    expect(sb.calls[0].op).toBe('delete');
+
+    // A plain DELETE would also wipe is_saved, emptying the user's Save for
+    // later list whenever she removed the same product from her ecosystem.
+    expect(sb.calls[0].op).toBe('update');
+    expect(sb.calls[0].payload).toMatchObject({ in_ecosystem: false, is_tracked: false, is_omitted: false });
     expect(sb.calls[0].filters).toMatchObject({ user_id: 'u', product_id: 'p1' });
+
+    expect(sb.calls[1].op).toBe('delete');
+    expect(sb.calls[1].filters).toMatchObject({
+      user_id: 'u', product_id: 'p1', in_ecosystem: false, is_tracked: false, is_omitted: false, is_saved: false,
+    });
+  });
+
+  it('tolerates a database without the is_saved column on the cleanup delete', async () => {
+    const sb = makeSupabase({ failOn: 'delete', failCode: '42703' });
+    await expect(
+      upsertProductState(sb, 'u', { id: 'p1' }, { inEcosystem: false, isTracked: false, isOmitted: false }),
+    ).resolves.toBeUndefined();
   });
 
   it('upserts when any flag is set', async () => {

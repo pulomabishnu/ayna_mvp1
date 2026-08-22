@@ -2,9 +2,14 @@ import React, { useState, useEffect, useMemo } from 'react';
 import Disclaimer from './Disclaimer';
 import SubscriptionPaywallModal from './SubscriptionPaywallModal';
 import GlossaryTerm from './GlossaryTerm';
+import ProductEvidenceRail from './ProductEvidenceRail';
 import { getProfileMatchLabelsForProduct, getRecommendationExplanation, getPrescriptionAccessGuidance, CATEGORY_LABELS } from '../data/products';
 import { getHowToUseContent } from '../data/productHowToUse';
 import { getAynaRating } from '../data/aynaReviews';
+import posthog from 'posthog-js';
+
+/** Remembers whether this browser prefers the tabs (1f) or evidence rail (1g) layout. */
+const PRODUCT_VIEW_KEY = 'ayna_product_detail_view_v1';
 import { fetchProductInsights, loadCachedInsights, saveCachedInsights } from '../utils/fetchProductInsights';
 import { buildUserHealthContextString } from '../utils/userHealthContextForInsights';
 import { buildProfileTailoring, getIngredientSafetyFlags } from '../utils/profileProductTailoring';
@@ -493,6 +498,8 @@ export default function ProductModal({
     isInCompare,
     onAddToEcosystem,
     isInEcosystem,
+    onToggleSaved,
+    isSaved = false,
     userZipCode,
     aynaReviews = null,
     onRate,
@@ -505,6 +512,35 @@ export default function ProductModal({
 }) {
     const FREE_CHAT_LIMIT = 5;
     const [activeTab, setActiveTab] = useState('chat');
+
+    // The mockup draws the product page two ways — 1f, tabs with the Ayna
+    // summary, and 1g, an evidence rail beside the specs. Both are built, and
+    // this toggle switches between them so MVP users can tell us which one they
+    // prefer. The choice is remembered per browser and reported to PostHog.
+    const [detailView, setDetailView] = useState(() => {
+        try {
+            const stored = localStorage.getItem(PRODUCT_VIEW_KEY);
+            return stored === 'rail' || stored === 'tabs' ? stored : 'tabs';
+        } catch {
+            return 'tabs';
+        }
+    });
+    const chooseDetailView = (next) => {
+        setDetailView(next);
+        try { localStorage.setItem(PRODUCT_VIEW_KEY, next); } catch { /* private mode */ }
+        posthog.capture('product_detail_view_changed', { view: next, productId: product?.id });
+    };
+
+    /** Where "Buy now" goes: the brand's own page first, then the first retailer. */
+    const buyUrl = useMemo(() => {
+        const direct = String(product?.url || '').trim();
+        if (direct && direct !== '#' && /^https?:\/\//i.test(direct)) return direct;
+        const shop = (product?.whereToBuy || [])[0];
+        if (!shop) return null;
+        const mapped = product?.whereToBuyLinks?.[shop];
+        if (typeof mapped === 'string' && /^https?:\/\//i.test(mapped)) return mapped;
+        return getStoreUrl(shop, product?.name);
+    }, [product]);
     // Board 1f puts a match pill next to the price. Uses the real profile match
     // labels rather than a made-up percentage.
     const headMatchLabel = useMemo(
@@ -1135,25 +1171,44 @@ export default function ProductModal({
                         </div>
 
                         <div className="pdp-head__actions">
-                            {onAddToEcosystem && (
+                            {buyUrl ? (
+                                <a
+                                    className="pdp-btn pdp-btn--navy"
+                                    href={buyUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={() => posthog.capture('product_buy_now_clicked', { productId: product.id, category: product.category })}
+                                >
+                                    Buy now
+                                </a>
+                            ) : (
+                                <span className="pdp-btn pdp-btn--navy pdp-btn--disabled" aria-disabled="true">
+                                    No online seller listed
+                                </span>
+                            )}
+                            {onToggleSaved && (
                                 <button
                                     type="button"
-                                    className={`pdp-btn ${isInEcosystem ? 'pdp-btn--outline' : 'pdp-btn--navy'}`}
-                                    onClick={() => onAddToEcosystem(product)}
+                                    className={`pdp-btn ${isSaved ? 'pdp-btn--outline-on' : 'pdp-btn--outline'}`}
+                                    aria-pressed={isSaved}
+                                    onClick={() => onToggleSaved(product)}
                                 >
-                                    {isInEcosystem ? '✓ In ecosystem' : 'Add to ecosystem'}
+                                    {isSaved ? '✓ Saved for later' : 'Save for later'}
                                 </button>
                             )}
-                            <button
-                                type="button"
-                                className={`pdp-btn ${isTracked ? 'pdp-btn--outline-on' : 'pdp-btn--outline'}`}
-                                onClick={() => onTrack(product)}
-                            >
-                                {isTracked ? '✓ Watching recalls' : 'Watch recalls'}
-                            </button>
                         </div>
 
                         <div className="pdp-head__meta">
+                            {onAddToEcosystem && (
+                                <button
+                                    type="button"
+                                    className={`pdp-head__link ${isInEcosystem ? 'pdp-head__link--on' : ''}`}
+                                    onClick={() => onAddToEcosystem(product)}
+                                    title="Products in your ecosystem are watched for recalls automatically"
+                                >
+                                    {isInEcosystem ? '✓ In ecosystem — watching for recalls' : 'Add to ecosystem'}
+                                </button>
+                            )}
                             {product.badges && product.badges.map(badge => (
                                 <span key={badge} className="pdp-head__badge">✨ {badge}</span>
                             ))}
@@ -1496,6 +1551,38 @@ export default function ProductModal({
                     <Disclaimer compact style={{ marginTop: '1rem' }} />
                 </div>
 
+                {/* Which of the mockup's two product layouts to show (1f / 1g). */}
+                <div className="pdp-viewswitch">
+                    <span className="pdp-viewswitch__label">View</span>
+                    <div className="pdp-viewswitch__group" role="group" aria-label="Product detail layout">
+                        <button
+                            type="button"
+                            className={detailView === 'tabs' ? 'is-active' : undefined}
+                            aria-pressed={detailView === 'tabs'}
+                            onClick={() => chooseDetailView('tabs')}
+                        >
+                            Summary &amp; tabs
+                        </button>
+                        <button
+                            type="button"
+                            className={detailView === 'rail' ? 'is-active' : undefined}
+                            aria-pressed={detailView === 'rail'}
+                            onClick={() => chooseDetailView('rail')}
+                        >
+                            Evidence rail
+                        </button>
+                    </div>
+                </div>
+
+                {detailView === 'rail' && (
+                    <ProductEvidenceRail
+                        product={product}
+                        matchLabels={getProfileMatchLabelsForProduct(product, quizResults, healthProfile)}
+                        aynaReviewCount={aynaReviewCount}
+                    />
+                )}
+
+                {detailView === 'tabs' && (<>
                 {/* Navigation Tabs */}
                 <div style={{ padding: '0 clamp(1rem, 5vw, 2.5rem)', position: 'sticky', top: 0, background: 'var(--color-surface-soft)', zIndex: 5 }}>
                     <div style={{ display: 'flex', gap: '0.5rem', borderBottom: '1px solid var(--color-border)', overflowX: 'auto' }}>
@@ -2042,6 +2129,7 @@ export default function ProductModal({
                         </div>
                     )}
                 </div>
+                </>)}
             </div>
         </div>
         {showPaywall && <SubscriptionPaywallModal onClose={() => setShowPaywall(false)} featureName="unlimited AI chat" featureDescription="running unlimited AI chat conversations" />}
