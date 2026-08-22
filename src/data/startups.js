@@ -9,7 +9,7 @@ export const STARTUPS = [
     {
         id: 's-qvin',
         name: 'Qvin',
-        tagline: 'Period blood diagnostics — lab tests from your pad',
+        tagline: 'Period blood diagnostics. Lab tests from your pad',
         description: 'FDA-cleared pad that analyzes your menstrual blood for health markers like A1C (diabetes screening) without a blood draw. Just wear the pad, mail it in, get results.',
         tags: ['heavy-flow', 'irregular', 'pcos', 'safety-concern', 'organic'],
         healthFunctions: ['cycle-tracking'],
@@ -51,7 +51,7 @@ export const STARTUPS = [
     {
         id: 's-allara',
         name: 'Allara',
-        tagline: 'Comprehensive PCOS care — virtual clinic',
+        tagline: 'Comprehensive PCOS care. Virtual clinic',
         description: 'Telehealth-first PCOS clinic with OB-GYNs, endocrinologists, dietitians, and mental health therapists. Complete care plans instead of "just take birth control."',
         tags: ['pcos', 'irregular', 'heavy-flow'],
         healthFunctions: ['telehealth'],
@@ -65,7 +65,7 @@ export const STARTUPS = [
     {
         id: 's-evernow',
         name: 'Evernow',
-        tagline: 'Menopause treatment — personalized HRT delivered',
+        tagline: 'Menopause treatment. Personalized HRT delivered',
         description: 'Board-certified menopause specialists prescribe personalized hormone replacement therapy with ongoing support. Prescription meds delivered to your door.',
         tags: ['discomfort', 'menopause', 'sustainability'],
         healthFunctions: ['telehealth'],
@@ -79,7 +79,7 @@ export const STARTUPS = [
     {
         id: 's-midi',
         name: 'Midi Health',
-        tagline: 'Midlife women\'s health — perimenopause to post-menopause',
+        tagline: 'Midlife women\'s health. Perimenopause to post-menopause',
         description: 'Virtual clinic specializing in the 20+ symptoms of perimenopause and menopause. Clinicians trained specifically in midlife hormonal care.',
         tags: ['discomfort', 'irregular', 'menopause', 'heavy-flow'],
         healthFunctions: ['telehealth'],
@@ -108,7 +108,7 @@ export const STARTUPS = [
         id: 's-oova',
         name: 'Oova',
         tagline: 'Personalized fertility tracking from urine',
-        description: 'At-home urine test that measures your actual hormone levels (LH + progesterone) — not population averages. Built for women with irregular cycles, PCOS, and thyroid conditions.',
+        description: 'At-home urine test that measures your actual hormone levels (LH + progesterone). Not population averages. Built for women with irregular cycles, PCOS, and thyroid conditions.',
         tags: ['irregular', 'pcos', 'fertility'],
         healthFunctions: ['cycle-tracking'],
         category: 'fertility',
@@ -122,7 +122,7 @@ export const STARTUPS = [
         id: 's-delune',
         name: 'De Lune',
         tagline: 'Science-backed supplements for period pain',
-        description: 'Cramp Aid formula with magnesium, zinc, B vitamins, and dong quai — clinically studied ingredients for menstrual pain. Founded by a woman who suffered debilitating cramps.',
+        description: 'Cramp Aid formula with magnesium, zinc, B vitamins, and dong quai. Clinically studied ingredients for menstrual pain. Founded by a woman who suffered debilitating cramps.',
         tags: ['cramps', 'discomfort', 'organic'],
         healthFunctions: ['cramp-relief', 'supplement'],
         category: 'supplements',
@@ -134,7 +134,7 @@ export const STARTUPS = [
     {
         id: 's-wile',
         name: 'Wile',
-        tagline: 'Perimenopause supplements — the years before menopause',
+        tagline: 'Perimenopause supplements. The years before menopause',
         description: 'Plant-based supplements designed for women in their late 30s–50s navigating perimenopause. Addresses stress, sleep, hot flashes, and mood shifts.',
         tags: ['discomfort', 'menopause', 'organic'],
         healthFunctions: ['supplement'],
@@ -203,7 +203,7 @@ export const STARTUPS = [
     {
         id: 's-wisp',
         name: 'Wisp',
-        tagline: 'UTI treatment & birth control — same-day delivery',
+        tagline: 'UTI treatment & birth control. Same-day delivery',
         description: 'Get UTI antibiotics or birth control prescribed online and delivered to your door. Same-day or next-day options in many areas. No in-person visit needed.',
         tags: ['uti', 'contraception', 'privacy', 'comfort'],
         healthFunctions: ['uti-prevention', 'telehealth', 'contraception'],

@@ -16,7 +16,7 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
     const routineNote = checkinData?.howIsRoutine;
     const checkinSummary = focusAreas.length > 0
         ? `Recent focus: ${focusAreas.join(', ')}.`
-        : (routineNote && routineNote !== 'Great — no changes'
+        : (routineNote && routineNote !== 'Great. No changes'
             ? `Routine check-in: ${routineNote}.`
             : null);
 
@@ -40,7 +40,7 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
                     Appointment Prep Tool
                 </div>
                 <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Get Ready for Your Appointment</h2>
-                <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem' }}>A short summary of your health goals and products to bring to your <GlossaryTerm term="OB/GYN">OB-GYN</GlossaryTerm> or primary care doctor — so your visit goes smoothly.</p>
+                <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem' }}>A short summary of your health goals and products to bring to your <GlossaryTerm term="OB/GYN">OB-GYN</GlossaryTerm> or primary care doctor. So your visit goes smoothly.</p>
             </div>
 
             <div className="card" style={{ padding: '3rem', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-md)' }}>
@@ -66,7 +66,7 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
                         <h4 style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: '1rem', letterSpacing: '0.05em' }}>Check-in &amp; notes</h4>
                         <p style={{ fontSize: '0.95rem', lineHeight: '1.6' }}>
                             {checkinSummary || (
-                                <>Do a monthly check-in from your Profile to add quick notes — like flow, cramps, or sleep — for your next visit.</>
+                                <>Do a monthly check-in from your Profile to add quick notes. Like flow, cramps, or sleep. For your next visit.</>
                             )}
                         </p>
                     </div>
@@ -81,7 +81,7 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
                                     <strong style={{ fontSize: '0.95rem', display: 'block', marginBottom: '0.35rem' }}>{p.name}</strong>
                                     <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
                                         <strong style={{ color: 'var(--color-text-main)' }}>Main ingredients:</strong>{' '}
-                                        {p.ingredients || p.tagline || '— Check the product label or brand website for the full ingredient list.'}
+                                        {p.ingredients || p.tagline || '. Check the product label or brand website for the full ingredient list.'}
                                     </span>
                                 </li>
                             ))}
@@ -112,7 +112,7 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
                                         <div>
                                             <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.35rem' }}>You told Ayna:</p>
                                             <blockquote style={{ margin: '0 0 0.5rem', paddingLeft: '0.75rem', borderLeft: '3px solid var(--color-primary)', fontSize: '0.9rem', color: 'var(--color-text-main)' }}>{text.length > 120 ? text.slice(0, 120) + '…' : text}</blockquote>
-                                            <p style={{ fontSize: '0.95rem', fontWeight: '500' }}>You could ask your provider: "I shared this with my health app — can we talk about whether it affects my care, or anything I should follow up on?"</p>
+                                            <p style={{ fontSize: '0.95rem', fontWeight: '500' }}>You could ask your provider: "I shared this with my health app. Can we talk about whether it affects my care, or anything I should follow up on?"</p>
                                         </div>
                                     </div>
                                 ))}
@@ -123,7 +123,7 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
             </div>
 
             <div style={{ marginTop: '2rem', textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>
-                <p>⚠️ Ayna gives information only — it is not a medical device. Always check health facts with your doctor or nurse.</p>
+                <p>⚠️ Ayna gives information only. It is not a medical device. Always check health facts with your doctor or nurse.</p>
             </div>
         </div>
     );

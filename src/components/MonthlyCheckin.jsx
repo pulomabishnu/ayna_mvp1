@@ -32,7 +32,7 @@ const STEP_MAIN = {
   question: "How's your current routine working?",
   type: 'single',
   options: [
-    'Great — no changes',
+    'Great. No changes',
     'Okay, could be better',
     'New symptoms or frustrations',
     'I want to switch some products',
@@ -42,7 +42,7 @@ const STEP_MAIN = {
 const STEP_FOCUS = {
   id: 'focusAreas',
   question: 'What should we focus on this month?',
-  subtitle: 'Pick everything that fits — we’ll update your recommendations',
+  subtitle: 'Pick everything that fits. We’ll update your recommendations',
   type: 'multi',
   options: [
     'Heavier flow',
@@ -73,7 +73,7 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
   const [screeningValues, setScreeningValues] = useState({ sexuallyActive: '', lastSTI: '', lastPap: '' });
   const [isComplete, setIsComplete] = useState(false);
 
-  const showFocusStep = answers.howIsRoutine && answers.howIsRoutine !== 'Great — no changes';
+  const showFocusStep = answers.howIsRoutine && answers.howIsRoutine !== 'Great. No changes';
   const focusIncludesScreening = multiSelections.has('Remind me about Pap / STI screenings');
   const steps = [
     STEP_MAIN,
@@ -115,7 +115,7 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
 
   const handleSingleNext = () => {
     const next = { ...answers, [step.id]: answers[step.id] };
-    if (step.id === 'howIsRoutine' && next.howIsRoutine === 'Great — no changes') {
+    if (step.id === 'howIsRoutine' && next.howIsRoutine === 'Great. No changes') {
       finish({ ...next, focusAreas: [] });
       return;
     }
@@ -161,15 +161,15 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
     const satisfaction = answers.howIsRoutine;
     const focusAreas = answers.focusAreas || [];
     const tips = [];
-    if (focusAreas.includes('More cramps')) tips.push('Magnesium glycinate may help — it can reduce cramps.');
+    if (focusAreas.includes('More cramps')) tips.push('Magnesium glycinate may help. It can reduce cramps.');
     if (focusAreas.includes('Heavier flow')) tips.push('Iron-rich foods or a supplement can help if you’re losing more blood than usual.');
     if (focusAreas.includes('UTIs')) tips.push('Wisp and Planned Parenthood Direct offer same-day UTI treatment.');
     if (focusAreas.includes('Mood or sleep')) tips.push('Tracking your cycle can help. We’ve updated your recommendations.');
     if (focusAreas.includes('Different period product') || focusAreas.includes('Different supplement') || focusAreas.includes('Different app')) {
-      tips.push('Your product recommendations have been updated — check your list.');
+      tips.push('Your product recommendations have been updated. Check your list.');
     }
-    const title = satisfaction === 'Great — no changes' ? '🎉 You’re all set' : '📋 Updated for you';
-    const message = satisfaction === 'Great — no changes'
+    const title = satisfaction === 'Great. No changes' ? '🎉 You’re all set' : '📋 Updated for you';
+    const message = satisfaction === 'Great. No changes'
       ? 'We’ll keep watching for recalls and new products that fit you.'
       : 'We’ve updated your profile and recommendations based on this check-in.';
 

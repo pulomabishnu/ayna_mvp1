@@ -37,9 +37,9 @@ const FAMILY_HISTORY_OPTIONS = [
   'Premature ovarian insufficiency', 'BRCA1/BRCA2', 'Osteoporosis', 'None of the above',
 ];
 const SYMPTOM_DURATION_OPTIONS = [
-  { value: 'new', label: 'New — less than 6 months' },
+  { value: 'new', label: 'New: less than 6 months' },
   { value: 'ongoing', label: 'Going on for 6 months to 2 years' },
-  { value: 'chronic', label: 'Long-term — 2 years or more' },
+  { value: 'chronic', label: 'Long-term: 2 years or more' },
 ];
 const LAST_OBGYN_OPTIONS = [
   { value: 'within_year', label: 'Within the past year' },
@@ -477,7 +477,7 @@ export default function HealthIntakeForm({ onComplete }) {
       console.error('[Ayna] intake save failed:', e);
       setSaving(false);
       setSaveError(
-        "We couldn't save your profile just now. Your answers are still here — check your connection and tap Finish again."
+        "We couldn't save your profile just now. Your answers are still here. Check your connection and tap Finish again."
       );
       return;
     }
@@ -513,7 +513,7 @@ export default function HealthIntakeForm({ onComplete }) {
         {/* Screen: basics */}
         {screenId === 'basics' && (
           <div>
-            <ScreenHeader title="Let's build your ecosystem." subtitle="A few quick questions — takes about 20 seconds." />
+            <ScreenHeader title="Let's build your ecosystem." subtitle="A few quick questions. Takes about 20 seconds." />
             <FieldLabel>How old are you?</FieldLabel>
             <TextInput type="number" value={intake.age} onChange={(v) => set('age', v)} placeholder="e.g. 28" />
             <FieldLabel optional>Where are you based?</FieldLabel>
@@ -547,7 +547,7 @@ export default function HealthIntakeForm({ onComplete }) {
             <FieldLabel>Do you have a menstrual cycle?</FieldLabel>
             <SingleSelect options={CYCLE_OPTIONS} value={intake.menstrualCycle} onSelect={(v) => set('menstrualCycle', v)} />
 
-            <FieldLabel optional>Goals — what are you hoping Ayna helps you with?</FieldLabel>
+            <FieldLabel optional>Goals. What are you hoping Ayna helps you with?</FieldLabel>
             <ChipGrid items={GOALS} selected={intake.goals} onToggle={(v) => toggle('goals', v)} small />
             <div style={{ marginTop: '0.75rem' }}>
               <TextInput value={intake.goalsOtherText} onChange={(v) => set('goalsOtherText', v)} placeholder="Anything else you're looking for? (optional)" />
@@ -562,7 +562,7 @@ export default function HealthIntakeForm({ onComplete }) {
         {/* Screen: period */}
         {screenId === 'period' && (
           <div>
-            <ScreenHeader title="Tell us about your period." subtitle="All on one screen — about 30 seconds." />
+            <ScreenHeader title="Tell us about your period." subtitle="All on one screen. About 30 seconds." />
 
             <FieldLabel>How heavy is your flow?</FieldLabel>
             <SingleSelect options={FLOW_OPTIONS} value={intake.flowLevel} onSelect={(v) => set('flowLevel', v)} />
@@ -722,7 +722,7 @@ export default function HealthIntakeForm({ onComplete }) {
             <ContinueButton onClick={goNext} disabled={saving}>
               {saving ? 'Building your ecosystem…' : 'Build my ecosystem →'}
             </ContinueButton>
-            <SkipLink onClick={goNext} label={saving ? '' : 'Skip — build my ecosystem without health data →'} />
+            <SkipLink onClick={goNext} label={saving ? '' : 'Skip. Build my ecosystem without health data →'} />
           </div>
         )}
 

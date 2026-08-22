@@ -484,7 +484,7 @@ export const MENSTRUAL_PHYSICAL = [
         safety: { fdaStatus: 'FDA-registered', materials: 'Medical-grade silicone', recalls: 'No recalls.', allergens: 'Latex-free' },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
-        doctorOpinion: 'The pull-tab addresses the #1 complaint about cups — difficult removal.',
+        doctorOpinion: 'The pull-tab addresses the #1 complaint about cups. Difficult removal.',
         communityReview: 'Community discussions on Reddit r/menstrualcups note similar experiences.',
         ingredients: 'Medical-grade silicone.',
         effectiveness: 'Break-the-seal technology for easy removal.',

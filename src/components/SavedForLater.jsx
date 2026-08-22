@@ -39,7 +39,7 @@ export default function SavedForLater({
 
       {items.length === 0 ? (
         <p className="eco-saved__empty">
-          Tap <strong>Save for later</strong> on any product and it lands here — a shortlist you can
+          Tap <strong>Save for later</strong> on any product and it lands here. A shortlist you can
           come back to without adding it to your ecosystem.{' '}
           <button
             type="button"
@@ -59,7 +59,7 @@ export default function SavedForLater({
                   className="discovery-card__tile"
                   role="button"
                   tabIndex={0}
-                  aria-label={`${product.name} — open details`}
+                  aria-label={`${product.name}. Open details`}
                   style={{ cursor: 'pointer' }}
                   onClick={() => onOpenProduct?.(product)}
                   onKeyDown={(e) => {

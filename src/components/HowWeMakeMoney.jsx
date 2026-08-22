@@ -6,14 +6,14 @@ const SECTIONS = [
         paragraphs: [
             'We earn a commission if you buy something from a brand we are partnered with, BUT our recommendation for you is never for sale. Our recommendation engine that decides what products to recommend you has no idea which brand pays us or not. Clinical logic, safety checks, and personalization are the only things that influence your recommendation.',
             'Only after you get your recommendations, do we check internally if we have a brand partnership with any of the products we recommended. If we do, and you do decide to buy something, we make a commission. If we don’t have a partnership with any of the brands we recommended you, then we don’t make commission. That’s fine with us, as long as it means you can make a product decision with confidence.',
-            'This commission never comes out of your pocket — the price you pay is the same whether or not we’re partnered with the brand. And when brands pay us different commission rates, that difference has no bearing on your recommendation. A product with a lower payout to us can still outrank one with a higher payout, and we regularly recommend brands we have no financial relationship with at all, as long as they’re the best fit for you.',
+            'This commission never comes out of your pocket. The price you pay is the same whether or not we’re partnered with the brand. And when brands pay us different commission rates, that difference has no bearing on your recommendation. A product with a lower payout to us can still outrank one with a higher payout, and we regularly recommend brands we have no financial relationship with at all, as long as they’re the best fit for you.',
         ],
     },
     {
         eyebrow: 'What partnership means (and doesn’t mean)',
         paragraphs: [
             'Our brand partners are displayed higher on the discovery page (but not the recommendation engine). Some of the brands we recommend, we also partner with more directly, on things like discount codes, co-marketing, or early product access. Those partnerships fund the work we do and get you better deals.',
-            'They do not buy placement in your specific recommendation. They will be surfaced higher, however, on the discovery page, which is a page where you can freely browse anything, not just your recommendations. If a brand isn’t right for you, it doesn’t matter what deal we have with them — they will not be recommended to you. We label these placements clearly, so you’ll always see a “Sponsored” or “Partner” tag on any brand shown higher for this reason on the discovery page.',
+            'They do not buy placement in your specific recommendation. They will be surfaced higher, however, on the discovery page, which is a page where you can freely browse anything, not just your recommendations. If a brand isn’t right for you, it doesn’t matter what deal we have with them. They will not be recommended to you. We label these placements clearly, so you’ll always see a “Sponsored” or “Partner” tag on any brand shown higher for this reason on the discovery page.',
         ],
     },
     {

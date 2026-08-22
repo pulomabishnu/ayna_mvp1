@@ -61,7 +61,7 @@ export default function HealthDataImport({ onUpdate }) {
     setAppleHealthError('');
     setAppleHealthSummary('');
     if (!/\.xml$/i.test(file.name)) {
-      setAppleHealthError('That doesn’t look like export.xml — unzip the Apple Health export and pick the .xml file inside it.');
+      setAppleHealthError('That doesn’t look like export.xml. Unzip the Apple Health export and pick the .xml file inside it.');
       return;
     }
     if (file.size > 150 * 1024 * 1024) {
@@ -155,7 +155,7 @@ export default function HealthDataImport({ onUpdate }) {
         <div style={{ padding: '1rem', background: 'var(--color-surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
           <p style={{ fontWeight: '600', marginBottom: '0.5rem' }}>🍎 Apple Health</p>
           <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', lineHeight: 1.5, marginBottom: '0.75rem' }}>
-            Ayna doesn’t have a phone app, so we can’t read Apple Health directly off your device. Instead: open the <strong>Health app → your profile picture (top right) → Export All Health Data</strong>, then unzip the download to find <strong>export.xml</strong> and upload it below. We parse steps, sleep, heart rate, and cycle tracking data locally in your browser — the file is not sent to our servers.
+            Ayna doesn’t have a phone app, so we can’t read Apple Health directly off your device. Instead: open the <strong>Health app → your profile picture (top right) → Export All Health Data</strong>, then unzip the download to find <strong>export.xml</strong> and upload it below. We parse steps, sleep, heart rate, and cycle tracking data locally in your browser. The file is not sent to our servers.
           </p>
           <label style={{ fontSize: '0.9rem', cursor: 'pointer', display: 'inline-block' }}>
             <span className="btn btn-outline" style={{ padding: '0.45rem 1rem', fontSize: '0.85rem' }}>Choose export.xml</span>
@@ -163,20 +163,20 @@ export default function HealthDataImport({ onUpdate }) {
           </label>
           {appleHealthError && <p style={{ color: '#b91c1c', fontSize: '0.85rem', marginTop: '0.5rem' }}>{appleHealthError}</p>}
           {appleHealthSummary && !appleHealthError && (
-            <p style={{ fontSize: '0.85rem', color: 'var(--color-primary)', marginTop: '0.5rem' }}>Parsed and saved below — {appleHealthSummary}</p>
+            <p style={{ fontSize: '0.85rem', color: 'var(--color-primary)', marginTop: '0.5rem' }}>Parsed and saved below. {appleHealthSummary}</p>
           )}
         </div>
         <div style={{ padding: '1rem', background: 'var(--color-surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
           <p style={{ fontWeight: '600', marginBottom: '0.5rem' }}>Google Fit &amp; other apps</p>
           <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.9rem' }}>
             <input type="checkbox" checked={googleFit} onChange={(e) => setGoogleFit(e.target.checked)} />
-            I use Google Fit, Apple Watch, Oura, or similar — I’ll paste a short summary below (sleep, steps, cycle estimates).
+            I use Google Fit, Apple Watch, Oura, or similar. I’ll paste a short summary below (sleep, steps, cycle estimates).
           </label>
         </div>
         <div style={{ padding: '1rem', background: 'var(--color-surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
           <p style={{ fontWeight: '600', marginBottom: '0.5rem' }}>Electronic health record (FHIR)</p>
           <p style={{ fontSize: '0.88rem', color: 'var(--color-text-muted)', lineHeight: 1.5, marginBottom: '0.75rem' }}>
-            Many Epic / MyChart portals offer a <strong>Download my data</strong> export as a FHIR JSON bundle. Upload it here — we parse conditions and medication statements locally in your browser; the file is not sent to our servers.
+            Many Epic / MyChart portals offer a <strong>Download my data</strong> export as a FHIR JSON bundle. Upload it here. We parse conditions and medication statements locally in your browser; the file is not sent to our servers.
           </p>
           <label style={{ fontSize: '0.9rem', cursor: 'pointer', display: 'inline-block' }}>
             <span className="btn btn-outline" style={{ padding: '0.45rem 1rem', fontSize: '0.85rem' }}>Choose FHIR JSON file</span>
@@ -184,7 +184,7 @@ export default function HealthDataImport({ onUpdate }) {
           </label>
           {fhirError && <p style={{ color: '#b91c1c', fontSize: '0.85rem', marginTop: '0.5rem' }}>{fhirError}</p>}
           {fhirConnected && !fhirError && (
-            <p style={{ fontSize: '0.85rem', color: 'var(--color-primary)', marginTop: '0.5rem' }}>FHIR summary saved — used only to improve ranking on top of your quiz.</p>
+            <p style={{ fontSize: '0.85rem', color: 'var(--color-primary)', marginTop: '0.5rem' }}>FHIR summary saved. Used only to improve ranking on top of your quiz.</p>
           )}
         </div>
       </div>
@@ -227,7 +227,7 @@ export default function HealthDataImport({ onUpdate }) {
 
       <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.35rem', fontSize: '0.9rem' }}>Wearable &amp; activity summary (optional)</label>
       <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.5rem', lineHeight: 1.5 }}>
-        Paste averages or trends from Apple Health, Google Fit, Oura, Garmin, etc. (e.g. sleep 6.5h/night, 7k steps, resting HR 62). Used with your quiz and chat to tune recommendations — stays in this browser.
+        Paste averages or trends from Apple Health, Google Fit, Oura, Garmin, etc. (e.g. sleep 6.5h/night, 7k steps, resting HR 62). Used with your quiz and chat to tune recommendations. Stays in this browser.
       </p>
       <textarea
         value={wearableText}

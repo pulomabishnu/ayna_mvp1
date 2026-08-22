@@ -63,7 +63,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
           // Telling her to go check her inbox here would be actively wrong:
           // she's already signed in, which App.jsx's onAuthStateChange handler
           // is about to act on.
-          setSuccessMsg('You\'re all set — signing you in...');
+          setSuccessMsg('You\'re all set. Signing you in...');
         } else {
           setSuccessMsg('Almost there! A confirmation email is on its way from Ayna (pulomabishnu@gmail.com). Check your spam folder if you don\'t see it. Once confirmed, come back here to sign in.');
         }

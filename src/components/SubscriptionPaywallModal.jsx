@@ -62,11 +62,11 @@ export default function SubscriptionPaywallModal({ onClose, featureName = 'this 
             Unlock Ayna Premium
           </h2>
           <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', lineHeight: 1.6 }}>
-            Ayna can only afford to offer {featureName} to paying users — {featureDescription} is
+            Ayna can only afford to offer {featureName} to paying users. {featureDescription} is
             costly to build and maintain.
           </p>
           <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', lineHeight: 1.6, marginTop: '0.75rem' }}>
-            As an early user, we&apos;re offering a <strong>lifetime discount</strong> —{' '}
+            As an early user, we&apos;re offering a <strong>lifetime discount</strong>. {' '}
             <strong>subscribe now to lock in this price forever.</strong>
           </p>
         </div>
@@ -118,7 +118,7 @@ export default function SubscriptionPaywallModal({ onClose, featureName = 'this 
         </div>
 
         <p style={{ textAlign: 'center', fontSize: '0.8rem', color: 'var(--color-text-muted)', lineHeight: 1.5 }}>
-          Click a plan to get in touch. Feature is currently in development — your early-user
+          Click a plan to get in touch. Feature is currently in development. Your early-user
           price is locked in forever once you subscribe.
         </p>
       </div>

@@ -111,7 +111,7 @@ export default function Screenings({ checkinData, onNavigate }) {
         recommendations.push({
             type: 'Talk to Your OB-GYN or PCP',
             urgency: 'medium',
-            message: `Based on your recent check-in symptoms — ${severeSymptoms.join(', ')} — it's a good idea to talk to a doctor. Catching unusual symptoms early helps.`,
+            message: `Based on your recent check-in symptoms. ${severeSymptoms.join(', ')}. It's a good idea to talk to a doctor. Catching unusual symptoms early helps.`,
             action: 'Book a visit with your primary care provider',
             links: [TELEHEALTH_SERVICES[1], ...GUIDELINE_LINKS.general]
         });

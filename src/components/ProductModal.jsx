@@ -367,8 +367,8 @@ function buildSocialInsight(product, aiInsights, quizResults, healthProfile) {
   const ai = (aiInsights?.communitySummary || '').trim();
   const raw = product.communityReview || '';
   const quotePart = raw
-    ? raw.indexOf(' — ') >= 0
-      ? raw.slice(0, raw.indexOf(' — ')).trim()
+    ? raw.indexOf('. ') >= 0
+      ? raw.slice(0, raw.indexOf('. ')).trim()
       : raw.trim()
     : '';
   const quoteRedundant = !!(
@@ -451,7 +451,7 @@ function buildQuickOverviewBlocks(product, aiInsights, quizResults, healthProfil
     pros.push('Complete your health profile to get a personalized fit assessment.');
   }
   if (pros.length === 0) {
-    pros.push('This product may help some users — compare with alternatives before deciding.');
+    pros.push('This product may help some users. Compare with alternatives before deciding.');
   }
   if (cons.length === 0) {
     cons.push('**Watch-outs:** No major profile-specific cautions flagged, but confirm fit with your clinician if symptoms persist.');
@@ -737,7 +737,7 @@ export default function ProductModal({
                                 <a href={link.url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: '600' }}>
                                     {link.text}
                                 </a>
-                                {link.summary ? <span style={{ color: 'var(--color-text-muted)' }}> — {link.summary}</span> : null}
+                                {link.summary ? <span style={{ color: 'var(--color-text-muted)' }}>. {link.summary}</span> : null}
                             </li>
                         ))}
                     </ul>
@@ -926,7 +926,7 @@ export default function ProductModal({
 
         return (
             <div style={{ marginTop: '1.5rem' }}>
-                {/* AI Summary Section (purple box — not shown for Doctor tab) */}
+                {/* AI Summary Section (purple box. Not shown for Doctor tab) */}
                 {showAiSummary && (
                     <div style={{
                         padding: '1.5rem',
@@ -1000,7 +1000,7 @@ export default function ProductModal({
                                             Reputable Source
                                         </span>
                                         <span style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', italic: 'true' }}>
-                                            — {link.justification || 'Verified medical review or public record.'}
+                                            {link.justification || 'Verified medical review or public record.'}
                                         </span>
                                     </div>
                                 </div>
@@ -1133,7 +1133,7 @@ export default function ProductModal({
                     border: '1px solid var(--color-border)', cursor: 'pointer', color: 'var(--color-text-main)'
                 }}>✕</button>
 
-                {/* Product head — mockup board 1f: square product tile beside the
+                {/* Product head. Mockup board 1f: square product tile beside the
                     eyebrow / name / price / actions column. */}
                 <div className="pdp-head">
                     <div className="pdp-head__tile">
@@ -1207,7 +1207,7 @@ export default function ProductModal({
                                     onClick={() => onAddToEcosystem(product)}
                                     title="Products in your ecosystem are watched for recalls automatically"
                                 >
-                                    {isInEcosystem ? '✓ In ecosystem — watching for recalls' : 'Add to ecosystem'}
+                                    {isInEcosystem ? '✓ In ecosystem. Watching for recalls' : 'Add to ecosystem'}
                                 </button>
                             )}
                             {isPartnerBrandItem(product) && (
@@ -1254,7 +1254,7 @@ export default function ProductModal({
                         </div>
                     )}
 
-                    {/* Where to buy + product website — visible under the action buttons */}
+                    {/* Where to buy + product website. Visible under the action buttons */}
                     <div style={{ marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px solid var(--color-border)' }}>
                         <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.75rem', fontWeight: '600' }}>
                             {isPrescriptionOnly ? 'How to get it' : 'Where to buy'}
@@ -1481,7 +1481,7 @@ export default function ProductModal({
                                 Prescription or clinical access
                             </p>
                             <p style={{ fontSize: '0.88rem', color: 'var(--color-text-main)', lineHeight: 1.55, margin: '0 0 0.75rem' }}>
-                                Many items like this require a prescription or clinician visit. Ayna only points you to licensed paths—not medical advice.
+                                Many items like this require a prescription or clinician visit. Ayna only points you to licensed paths. Not medical advice.
                             </p>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                 {prescriptionAccess.patientUrl && (
@@ -1531,7 +1531,7 @@ export default function ProductModal({
                                             <div style={{ flex: 1, minWidth: 0 }}>
                                                 <p style={{ margin: 0, fontSize: '0.85rem', fontWeight: '600', color: 'var(--color-text-main)' }}>{tp.name}</p>
                                                 <p style={{ margin: '0.15rem 0 0', fontSize: '0.8rem', color: 'var(--color-text-muted)', lineHeight: 1.4 }}>
-                                                    Virtual care that may prescribe or coordinate access in your situation—confirm coverage and state rules.
+                                                    Virtual care that may prescribe or coordinate access in your situation. Confirm coverage and state rules.
                                                 </p>
                                             </div>
                                             {href !== '#' && (
@@ -1614,7 +1614,7 @@ export default function ProductModal({
                             <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem' }} onClick={loadAiInsights} disabled={aiLoading}>
                                 {aiLoading ? 'Loading…' : 'Refresh Ayna insights'}
                             </button>
-                            {aiError && <span style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>Insights unavailable — try again shortly.</span>}
+                            {aiError && <span style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>Insights unavailable. Try again shortly.</span>}
                             {aiInsights?.generatedAt && (
                                 <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
                                     Updated {new Date(aiInsights.generatedAt).toLocaleString()}
@@ -1695,7 +1695,7 @@ export default function ProductModal({
                                                 {found && fdaRecallData.recalls.map((r, i) => (
                                                     <div key={r.recallNumber || i} style={{ marginTop: '0.5rem', fontSize: '0.76rem', color: '#DC2626', lineHeight: 1.4 }}>
                                                         <strong>{r.date || 'Date not reported'}</strong>
-                                                        {r.status ? ` · ${r.status}` : ''} — {r.reason || r.description}
+                                                        {r.status ? ` · ${r.status}` : ''}. {r.reason || r.description}
                                                     </div>
                                                 ))}
                                                 {fdaRecallData.hasHistoricalRecalls && (
@@ -1706,7 +1706,7 @@ export default function ProductModal({
                                                         {fdaRecallData.historicalRecalls.map((r, i) => (
                                                             <div key={r.recallNumber || i} style={{ marginTop: '0.35rem', lineHeight: 1.4 }}>
                                                                 <strong>{r.date || 'Date not reported'}</strong>
-                                                                {r.status ? ` · ${r.status}` : ''} — {r.reason || r.description}
+                                                                {r.status ? ` · ${r.status}` : ''}. {r.reason || r.description}
                                                             </div>
                                                         ))}
                                                     </details>
@@ -1769,7 +1769,7 @@ export default function ProductModal({
                                                 {renderInsightBullets(condensed.clinicalInsight)}
                                             </div>
                                             <p style={{ fontSize: '0.7rem', color: '#7E22CE', margin: '0.65rem 0 0', fontWeight: '600' }}>
-                                                For learning only — not a substitute for your clinician.
+                                                For learning only. Not a substitute for your clinician.
                                             </p>
                                         </div>
                                     )}
@@ -1777,7 +1777,7 @@ export default function ProductModal({
                             )}
                             {!condensed?.clinicalInsight && (
                                 <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', margin: '0 0 1rem', lineHeight: 1.5 }}>
-                                    For learning only—not a substitute for your clinician.
+                                    For learning only. Not a substitute for your clinician.
                                 </p>
                             )}
                             {(product.clinicianOpinionSource === 'independent') && String(product.clinicianAttribution || '').trim().length > 0 && (
@@ -1914,7 +1914,7 @@ export default function ProductModal({
                                         {renderInsightBullets(condensed.socialInsight)}
                                     </div>
                                     <p style={{ fontSize: '0.7rem', color: '#7E22CE', margin: '0.65rem 0 0', fontWeight: '600' }}>
-                                        Community feedback is anecdotal — treat as supportive context, not proof.
+                                        Community feedback is anecdotal. Treat as supportive context, not proof.
                                     </p>
                                 </div>
                             )}
@@ -2046,7 +2046,7 @@ export default function ProductModal({
                             <AynaInsight>Ask Ayna anything about this product. Answers are for education only and are not medical advice; always consult your clinician for personalized care.</AynaInsight>
                             {!user ? (
                                 <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem', textAlign: 'center', padding: '2rem' }}>
-                                    <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem' }}>Sign in to ask Ayna — free accounts get 5 AI-powered chats per week.</p>
+                                    <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem' }}>Sign in to ask Ayna. Free accounts get 5 AI-powered chats per week.</p>
                                 </div>
                             ) : (
                                 <>

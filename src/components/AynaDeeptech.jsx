@@ -6,7 +6,7 @@ const deeptechProjects = [
         name: 'Project CloudPad',
         type: 'Material Science Innovation',
         focus: 'Menstrual Collection',
-        description: 'A new cotton-top pad with better absorption technology. It\'s super thin — you\'ll barely notice it\'s there — but still holds a lot on heavy flow days.',
+        description: 'A new cotton-top pad with better absorption technology. It\'s super thin. You\'ll barely notice it\'s there. But still holds a lot on heavy flow days.',
         tags: ['Ultra-thin', 'High Absorbency', '100% Cotton Top']
     },
     {
@@ -49,7 +49,7 @@ export default function AynaDeeptech({ joinedWaitlists, toggleJoinWaitlist }) {
                     Ayna Deeptech
                 </h1>
                 <p style={{ fontSize: '1.2rem', color: 'var(--color-text-muted)', maxWidth: '600px', margin: '0 auto', marginBottom: '1.5rem' }}>
-                    We don't just recommend the best products out there — we're building new ones too. Join the waitlist for the research projects below.
+                    We don't just recommend the best products out there. We're building new ones too. Join the waitlist for the research projects below.
                 </p>
                 <button
                     onClick={() => toggleJoinWaitlist({ id: 'dt-general', name: 'Ayna Deeptech Updates' })}

@@ -22,7 +22,7 @@ const PARTNERS = [
     logo: '/brands/neycher.png',
     url: 'https://www.helloneycher.com/',
     blurb:
-      'Hormone-free intimate care — moisturizers, balms and suppositories made for vaginal dryness, irritation and odour.',
+      'Hormone-free intimate care. Moisturizers, balms and suppositories made for vaginal dryness, irritation and odour.',
   },
 ];
 
@@ -54,7 +54,7 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToE
         <div className="brands__kicker">Our partners</div>
         <h1 className="brands__title">Brands we work with.</h1>
         <p className="brands__lede">
-          Partnerships, not paid placement. A brand being here doesn&apos;t move it up your shop —
+          Partnerships, not paid placement. A brand being here doesn&apos;t move it up your shop. 
           matching is the same for every product Ayna carries.
         </p>
       </div>
@@ -83,7 +83,7 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToE
                         className="discovery-card__tile"
                         role="button"
                         tabIndex={0}
-                        aria-label={`${product.name} — open details`}
+                        aria-label={`${product.name}. Open details`}
                         style={{ cursor: 'pointer' }}
                         onClick={() => onOpenProduct?.(product)}
                         onKeyDown={(e) => {

@@ -140,7 +140,7 @@ export default function WelcomeGate({ onPersonalizedPath, onBrowsePath, onWelcom
                 </span>
                 <RotatingWordHeadline layout="stacked" as="div" />
                 <p className="ayna-landing__body welcome-gate__second-lead">
-                  Ayna helps you find health products and care that fit you — backed by real research, doctor input,
+                  Ayna helps you find health products and care that fit you. Backed by real research, doctor input,
                   and other women's experiences. Big brands and small brands, all in one place.
                 </p>
               </div>

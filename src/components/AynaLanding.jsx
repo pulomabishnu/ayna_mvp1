@@ -292,7 +292,7 @@ function WelcomeBack({ user, myProducts, ecosystemCount, onStartQuiz, onViewDisc
               maxWidth: '420px',
               margin: 0,
             }}>
-              Pick up where you left off — rebuild it around a change, or keep browsing for what's next.
+              Pick up where you left off. Rebuild it around a change, or keep browsing for what's next.
             </p>
             <div style={{ display: 'flex', gap: '13px', marginTop: '6px', flexWrap: 'wrap' }}>
               <button type="button" className="ayna-landing-btn ayna-landing-btn--amber" onClick={onStartQuiz}>
@@ -412,7 +412,7 @@ function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasPro
             Care that&apos;s <span style={{ fontStyle: 'italic', color: '#F0A84B' }}>matched</span> to your body.
           </h1>
           <p className="ayna-landing-sub">
-            Real research, doctor input, and other women&apos;s experiences — in one place.
+            Real research, doctor input, and other women&apos;s experiences. In one place.
           </p>
 
           <form className="ayna-landing-searchbar" onSubmit={submitSearch}>

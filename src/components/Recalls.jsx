@@ -49,7 +49,7 @@ export default function Recalls({ trackedProducts, myProducts = {} }) {
                 <h2 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Safety & Recall Center</h2>
                 <p style={{ color: 'var(--color-text-muted)', marginBottom: '1.5rem' }}>
                     Editorially curated safety notes, plus a live FDA recall check on every product page.
-                    This page is not a complete recall list — always confirm against the FDA database directly.
+                    This page is not a complete recall list. Always confirm against the FDA database directly.
                 </p>
 
                 <input
@@ -77,7 +77,7 @@ export default function Recalls({ trackedProducts, myProducts = {} }) {
                             // handful of curated entries, so absence from it says nothing
                             // about whether a product has been recalled.
                             <p style={{ color: 'var(--color-text-muted)', fontStyle: 'italic' }}>
-                                Nothing in Ayna&apos;s curated notes matches &quot;{searchQuery}&quot;. This is not a recall search —
+                                Nothing in Ayna&apos;s curated notes matches &quot;{searchQuery}&quot;. This is not a recall search. 
                                 open the product to run a live FDA check, or{' '}
                                 <a
                                     href="https://www.accessdata.fda.gov/scripts/enforcement/enforce_rpt-Product-Tabs.cfm"
@@ -116,7 +116,7 @@ export default function Recalls({ trackedProducts, myProducts = {} }) {
                         </h3>
                         <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1rem' }}>
                             Ayna checks the FDA recall database for a product when you open it. There is no
-                            background monitoring and no alerting — open a product to run its check.
+                            background monitoring and no alerting. Open a product to run its check.
                         </p>
 
                         {ecosystemList.length === 0 ? (

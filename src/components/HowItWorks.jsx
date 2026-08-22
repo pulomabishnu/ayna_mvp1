@@ -74,7 +74,7 @@ export default function HowItWorks({ onBack, onViewSources }) {
                 <p className="hiw-lede__body">
                     Generic wellness content doesn&apos;t account for your cycle, your history, or what&apos;s already
                     worked for you. Ayna builds a living health profile, then matches it against the open market
-                    and published research — in that order.
+                    and published research. In that order.
                 </p>
             </section>
 

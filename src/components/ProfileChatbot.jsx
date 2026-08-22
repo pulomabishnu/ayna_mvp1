@@ -92,7 +92,7 @@ function parseMessageIntoProfile(message, currentProfile) {
   return hasChanges ? { profile, added } : null;
 }
 
-const DEFAULT_WELCOME = [{ role: 'assistant', text: "Hi! I'm Ayna. Speak or type your health needs — for example, 'I have endometriosis' or 'I'm sensitive to fragrance.' We combine this chat with your quiz, imported records, and wearable summary to personalize your ecosystem and recommendations." }];
+const DEFAULT_WELCOME = [{ role: 'assistant', text: "Hi! I'm Ayna. Speak or type your health needs. For example, 'I have endometriosis' or 'I'm sensitive to fragrance.' We combine this chat with your quiz, imported records, and wearable summary to personalize your ecosystem and recommendations." }];
 
 export default function ProfileChatbot({ profile, onProfileUpdate, chatHistory = [], onChatHistoryUpdate, disabled, onNavigateToDiscovery }) {
   const [open, setOpen] = useState(false);
@@ -175,7 +175,7 @@ export default function ProfileChatbot({ profile, onProfileUpdate, chatHistory =
       onNavigateToDiscovery(opts);
       assistantText = "I've opened Discovery filtered to supplements for you. Browse by symptom to find options.";
     } else {
-      assistantText = "Thanks for sharing. I didn't spot specific concerns or preferences to add — try phrases like 'I have heavy flow' or 'I prefer organic products.' You can also retake the quiz to change your answers.";
+      assistantText = "Thanks for sharing. I didn't spot specific concerns or preferences to add. Try phrases like 'I have heavy flow' or 'I prefer organic products.' You can also retake the quiz to change your answers.";
     }
     const assistantMsg = { role: 'assistant', text: assistantText };
     const newMessages = [...messages, userMsg, assistantMsg];
