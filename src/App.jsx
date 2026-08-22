@@ -233,7 +233,18 @@ function App() {
     } else {
       setAuthLoading(false);
     }
-    const STATIC_VIEWS = ['privacy-policy', 'terms-of-use', 'confirmed', 'auth-callback'];
+    // Views a signed-out visitor is allowed to stay on. Anything outside this
+    // list gets sent back to the landing when the session clears, which is
+    // right for the private pages but was wrong for the public ones: with
+    // Supabase configured, onAuthStateChange fires with no session on every
+    // cold load, so opening /discovery or /how-it-works signed out bounced
+    // straight back to the landing and those pages were unreachable by URL in
+    // production. (PROTECTED_VIEWS below is what actually guards private ones.)
+    const STATIC_VIEWS = [
+      'privacy-policy', 'terms-of-use', 'confirmed', 'auth-callback',
+      'welcome', 'hero', 'quiz', 'discovery', 'waitlist', 'articles',
+      'deeptech', 'how-it-works', 'how-we-make-money',
+    ];
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
       setUserSession(session ?? null);
