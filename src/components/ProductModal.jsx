@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import Disclaimer from './Disclaimer';
 import SubscriptionPaywallModal from './SubscriptionPaywallModal';
 import GlossaryTerm from './GlossaryTerm';
-import { getProfileMatchLabelsForProduct, getRecommendationExplanation, getPrescriptionAccessGuidance } from '../data/products';
+import { getProfileMatchLabelsForProduct, getRecommendationExplanation, getPrescriptionAccessGuidance, CATEGORY_LABELS } from '../data/products';
 import { getHowToUseContent } from '../data/productHowToUse';
 import { getAynaRating } from '../data/aynaReviews';
 import { fetchProductInsights, loadCachedInsights, saveCachedInsights } from '../utils/fetchProductInsights';
@@ -505,6 +505,12 @@ export default function ProductModal({
 }) {
     const FREE_CHAT_LIMIT = 5;
     const [activeTab, setActiveTab] = useState('chat');
+    // Board 1f puts a match pill next to the price. Uses the real profile match
+    // labels rather than a made-up percentage.
+    const headMatchLabel = useMemo(
+        () => getProfileMatchLabelsForProduct(product, quizResults, healthProfile)[0] || null,
+        [product, quizResults, healthProfile],
+    );
     const [chatUsed, setChatUsed] = useState(null); // null = not yet fetched
     const [chatMessages, setChatMessages] = useState([{ role: 'assistant', text: `Hi! I'm Ayna. What would you like to know about ${product?.name}?` }]);
     const [chatInput, setChatInput] = useState('');
@@ -1078,7 +1084,7 @@ export default function ProductModal({
         }} onClick={onClose}>
             <div style={{
                 backgroundColor: 'var(--color-surface-soft)', borderRadius: 'var(--radius-lg)',
-                width: '100%', maxWidth: 'min(750px, 96vw)', maxHeight: '90vh', overflowY: 'auto',
+                width: '100%', maxWidth: 'min(1040px, 96vw)', maxHeight: '90vh', overflowY: 'auto',
                 boxShadow: 'var(--shadow-lg)', position: 'relative'
             }} onClick={e => e.stopPropagation()}>
 
@@ -1090,136 +1096,104 @@ export default function ProductModal({
                     border: '1px solid var(--color-border)', cursor: 'pointer', color: 'var(--color-text-main)'
                 }}>✕</button>
 
-                {/* Hero Image Section */}
-                <div style={{ position: 'relative', height: 'clamp(140px, 35vw, 240px)', width: '100%', overflow: 'hidden', background: 'var(--color-secondary-fade, #fdf2f4)' }}>
-                    {heroImageSrc && !isPlaceholderProductImage(heroImageSrc) ? (
-                        <>
+                {/* Product head — mockup board 1f: square product tile beside the
+                    eyebrow / name / price / actions column. */}
+                <div className="pdp-head">
+                    <div className="pdp-head__tile">
+                        {heroImageSrc && !isPlaceholderProductImage(heroImageSrc) ? (
                             <img
                                 src={heroImageSrc}
                                 alt={product.name}
-                                style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }}
-                                onError={(e) => {
-                                    e.target.onerror = null;
-                                    e.target.style.display = 'none';
-                                    e.target.nextElementSibling.style.display = 'flex';
-                                }}
+                                onError={(e) => { e.currentTarget.style.display = 'none'; }}
                             />
-                            <div style={{ display: 'none', width: '100%', height: '100%', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '1rem', textAlign: 'center' }}>
-                                <span style={{ fontSize: '1.8rem', fontWeight: '900', color: 'var(--color-text-muted)', letterSpacing: '0.02em' }}>{product.brand || product.name}</span>
-                            </div>
-                        </>
-                    ) : (
-                        <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '1rem', textAlign: 'center' }}>
-                            <span style={{ fontSize: '1.8rem', fontWeight: '900', color: 'var(--color-text-muted)', letterSpacing: '0.02em' }}>{product.brand || product.name}</span>
-                        </div>
-                    )}
-                    <div style={{
-                        position: 'absolute', bottom: 0, left: 0, right: 0,
-                        height: '60px', background: 'linear-gradient(to top, var(--color-surface-soft), transparent)'
-                    }}></div>
-                </div>
-
-                {/* Header */}
-                <div style={{ padding: 'clamp(1rem, 5vw, 2.5rem)', paddingTop: '1.5rem', borderBottom: '1px solid var(--color-border)' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem' }}>
-                        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                            <span style={{
-                                background: 'var(--color-primary-fade)', color: 'var(--color-primary)',
-                                padding: '0.25rem 0.75rem', borderRadius: 'var(--radius-pill)',
-                                fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em'
-                            }}>
-                                {product.category}
+                        ) : (
+                            <span className="pdp-head__initial" aria-hidden="true">
+                                {String(product.brand || product.name || '?').trim().charAt(0).toUpperCase()}
                             </span>
-                            {product.badges && product.badges.map(badge => (
-                                <span key={badge} style={{
-                                    background: '#F0FDF4', color: '#166534', border: '1px solid #BBF7D0',
-                                    padding: '0.25rem 0.75rem', borderRadius: 'var(--radius-pill)',
-                                    fontSize: '0.7rem', fontWeight: '700'
-                                }}>
-                                    ✨ {badge}
-                                </span>
-                            ))}
-                            {product.integrations && (Array.isArray(product.integrations) ? product.integrations : [product.integrations]).map(int => (
-                                <span key={int} style={{ background: 'var(--color-secondary)', color: 'var(--color-text-main)', padding: '0.25rem 0.75rem', borderRadius: 'var(--radius-pill)', fontSize: '0.7rem', fontWeight: '700' }}>
-                                    🔗 {int}
-                                </span>
-                            ))}
+                        )}
+                    </div>
+
+                    <div className="pdp-head__detail">
+                        <div className="pdp-head__eyebrow">
+                            {[String(CATEGORY_LABELS[product.category] || product.category || '').replace(/^[^\w]+\s*/, ''), product.brand]
+                                .filter(Boolean)
+                                .join(' · ')
+                                .toUpperCase()}
                         </div>
-                        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                            {onToggleCompare && (
+
+                        <h2 className="pdp-head__name">{product.name}</h2>
+
+                        <div className="pdp-head__pricerow">
+                            {(product.price || product.stage) && (
+                                <span className="pdp-head__price">{product.price || product.stage}</span>
+                            )}
+                            {isInEcosystem ? (
+                                <span className="pdp-head__match">In your ecosystem</span>
+                            ) : headMatchLabel ? (
+                                <span className="pdp-head__match">Matches your {headMatchLabel}</span>
+                            ) : null}
+                        </div>
+
+                        <div className="pdp-head__actions">
+                            {onAddToEcosystem && (
                                 <button
-                                    onClick={() => onToggleCompare(product)}
-                                    style={{
-                                        background: isInCompare ? 'var(--color-primary-fade)' : 'transparent',
-                                        border: `1px solid ${isInCompare ? 'var(--color-primary)' : 'var(--color-border)'}`,
-                                        color: isInCompare ? 'var(--color-primary)' : 'var(--color-text-muted)',
-                                        padding: '0.3rem 0.75rem',
-                                        borderRadius: 'var(--radius-pill)',
-                                        fontSize: '0.75rem',
-                                        fontWeight: '600',
-                                        cursor: 'pointer'
-                                    }}
+                                    type="button"
+                                    className={`pdp-btn ${isInEcosystem ? 'pdp-btn--outline' : 'pdp-btn--navy'}`}
+                                    onClick={() => onAddToEcosystem(product)}
                                 >
-                                    {isInCompare ? '✓ In Comparison' : '+ Add to Compare'}
+                                    {isInEcosystem ? '✓ In ecosystem' : 'Add to ecosystem'}
                                 </button>
                             )}
                             <button
-                                onClick={() => onOmit(product)}
-                                style={{ background: 'transparent', border: 'none', color: 'var(--color-text-muted)', fontSize: '0.75rem', cursor: 'pointer', textDecoration: 'underline' }}
+                                type="button"
+                                className={`pdp-btn ${isTracked ? 'pdp-btn--outline-on' : 'pdp-btn--outline'}`}
+                                onClick={() => onTrack(product)}
                             >
-                                {isOmitted ? 'Restore' : "Omit"}
+                                {isTracked ? '✓ Watching recalls' : 'Watch recalls'}
                             </button>
                         </div>
-                    </div>
 
-                    <h2 style={{ fontFamily: 'var(--font-serif)', fontWeight: 500, fontSize: '2.1rem', marginBottom: '0.75rem', color: 'var(--color-text-main)', letterSpacing: '0' }}>{product.name}</h2>
-                    {product.outOfBusiness && (
-                        <div style={{ marginBottom: '1rem', padding: '0.75rem 1rem', background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', fontSize: '0.9rem', color: 'var(--color-text-main)' }}>
-                            <strong>No longer sold.</strong> This brand is out of business. We keep this page so you can still view safety and care information if you have the product.
+                        <div className="pdp-head__meta">
+                            {product.badges && product.badges.map(badge => (
+                                <span key={badge} className="pdp-head__badge">✨ {badge}</span>
+                            ))}
+                            {product.integrations && (Array.isArray(product.integrations) ? product.integrations : [product.integrations]).map(int => (
+                                <span key={int} className="pdp-head__badge">🔗 {int}</span>
+                            ))}
+                            {onToggleCompare && (
+                                <button type="button" className="pdp-head__link" onClick={() => onToggleCompare(product)}>
+                                    {isInCompare ? '✓ In comparison' : '+ Add to compare'}
+                                </button>
+                            )}
+                            <button type="button" className="pdp-head__link" onClick={() => onOmit(product)}>
+                                {isOmitted ? 'Restore' : 'Omit'}
+                            </button>
                         </div>
-                    )}
-                    <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem', lineHeight: '1.6', maxWidth: '600px' }}>{product.summary || product.description || product.tagline}</p>
 
+                        {product.outOfBusiness && (
+                            <div className="pdp-head__flag">
+                                <strong>No longer sold.</strong> This brand is out of business. We keep this page so
+                                you can still view safety and care information if you have the product.
+                            </div>
+                        )}
+
+                        <p className="pdp-head__summary">{product.summary || product.description || product.tagline}</p>
+                    </div>
+                </div>
+
+                {/* Header */}
+                <div style={{ padding: '0 clamp(1rem, 5vw, 2.5rem) clamp(1rem, 3vw, 1.75rem)', borderBottom: '1px solid var(--color-border)' }}>
                     {product.ratingNote && (
                         <div style={{ marginTop: '1rem', padding: '0.75rem 1rem', background: '#FFF7ED', border: '1px solid #FFEDD5', borderRadius: 'var(--radius-md)', fontSize: '0.9rem', color: '#9A3412' }}>
                             <strong>Rating note:</strong> {product.ratingNote}
                         </div>
                     )}
 
-                    <div style={{ marginTop: '2rem', display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center' }}>
-                        <button
-                            className={`btn ${isTracked ? 'btn-outline' : 'btn-primary'}`}
-                            onClick={() => onTrack(product)}
-                            style={{
-                                padding: '0.75rem 1.5rem',
-                                backgroundColor: isTracked ? 'transparent' : 'var(--color-primary)',
-                                color: isTracked ? 'var(--color-primary)' : 'white',
-                                borderColor: 'var(--color-primary)',
-                            }}
-                        >
-                            {isTracked ? '✓ Tracking Safety Alerts' : '🔔 Monitor Safety Recalls'}
-                        </button>
-                        {onAddToEcosystem && (
-                            <button
-                                className={`btn ${isInEcosystem ? 'btn-outline' : 'btn-primary'}`}
-                                onClick={() => onAddToEcosystem(product)}
-                                style={{
-                                    padding: '0.75rem 1.5rem',
-                                    backgroundColor: isInEcosystem ? 'transparent' : 'var(--color-primary)',
-                                    color: isInEcosystem ? 'var(--color-primary)' : 'white',
-                                    borderColor: 'var(--color-primary)',
-                                }}
-                            >
-                                {isInEcosystem ? '✓ In My Ecosystem' : '+ Add to My Ecosystem'}
-                            </button>
-                        )}
-                        {(product.price || product.stage) && <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.4rem', fontWeight: 600, color: 'var(--color-text-main)' }}>{product.price || product.stage}</span>}
-                        {!product.ratingNote && (getAynaRating(product, aynaReviews?.[product.id]) ?? product.userRating) != null && (
-                            <span style={{ fontSize: '1rem', color: 'var(--color-text-muted)' }} title="Based on user reviews, clinical opinions, and scientific literature">
-                                ★ {(getAynaRating(product, aynaReviews?.[product.id]) ?? product.userRating).toFixed(1)}
-                            </span>
-                        )}
-                    </div>
+                    {(getAynaRating(product, aynaReviews?.[product.id]) ?? product.userRating) != null && !product.ratingNote && (
+                        <div style={{ marginTop: '1rem', fontSize: '0.95rem', color: 'var(--color-text-muted)' }} title="Based on user reviews, clinical opinions, and scientific literature">
+                            ★ {(getAynaRating(product, aynaReviews?.[product.id]) ?? product.userRating).toFixed(1)}
+                        </div>
+                    )}
 
                     {/* Where to buy + product website — visible under the action buttons */}
                     <div style={{ marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px solid var(--color-border)' }}>
