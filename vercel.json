@@ -9,6 +9,10 @@
     {
       "path": "/api/fda-recall?sweep=1",
       "schedule": "0 13 * * *"
+    },
+    {
+      "path": "/api/discover-products",
+      "schedule": "0 6 * * *"
     }
   ],
   "headers": [

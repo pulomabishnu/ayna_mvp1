@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { ALL_PRODUCTS, CATEGORY_LABELS, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate } from '../data/products';
+import { loadProductCatalog } from '../utils/productCatalog';
 import { buildSearchTextForItem, scoreQueryAgainstProduct } from '../utils/naturalLanguageSearch';
 import { fetchSearchSuggestions } from '../utils/fetchSearchSuggestions';
 import { RELEASED_STARTUPS } from '../data/startups';
@@ -307,6 +308,24 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
     const recommendedSet = useMemo(() => new Set(recommendedProductIds || []), [recommendedProductIds]);
 
+    // AI-discovered products (api/discover-products.js), human-approved only —
+    // /api/products already filters to is_active=true, and a discovered row is
+    // never is_active until scripts/review-discovered-products.mjs approves it
+    // (see supabase/product_catalog_discovery.sql). This is additive on top of
+    // the bundled catalog, not a replacement for it: loadProductCatalog() falls
+    // back to the bundled copy on any failure, so filtering to source==='discovered'
+    // here means a fallback response (source:'bundled') just contributes nothing,
+    // never duplicates the bundled products it already contains.
+    const [discoveredProducts, setDiscoveredProducts] = useState([]);
+    React.useEffect(() => {
+        let cancelled = false;
+        loadProductCatalog().then(({ products, source }) => {
+            if (cancelled || source === 'bundled') return;
+            setDiscoveredProducts(products.filter((p) => p.source === 'discovered'));
+        }).catch(() => {});
+        return () => { cancelled = true; };
+    }, []);
+
     React.useEffect(() => {
         if (initialSearch !== undefined) {
             setSearchQuery(initialSearch);
@@ -353,8 +372,12 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             summary: s.description || s.tagline,
             price: s.stage || ''
         }));
-        return [...products, ...releasedAsProducts];
-    }, []);
+        // discoveredProducts are already the client-ready shape /api/products
+        // returns (toClientProduct in api/products.js), so no mapping needed —
+        // just stamp isStartup like the other two sources for consistent shape.
+        const discovered = filterPrescriptionCareGate(discoveredProducts).map(p => ({ ...p, isStartup: false }));
+        return [...products, ...releasedAsProducts, ...discovered];
+    }, [discoveredProducts]);
 
     const filtered = useMemo(() => {
         const applyFilters = (items, skipCategory = false) => items.filter((item) => {
@@ -891,7 +914,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
                         style={{ padding: '0.7rem 1.75rem' }}
                     >
-                        Load more ({gridItems.length - visibleCount} more)
+                        Load more
                     </button>
                 </div>
             )}

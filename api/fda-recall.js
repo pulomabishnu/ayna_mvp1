@@ -86,7 +86,7 @@ function cleanTerm(v) {
  * recall-monitoring sweep (below) can check many products without going
  * through HTTP — same logic, same result shape, no res/req coupling.
  */
-async function checkRecallsForProduct({ name, brand, category }) {
+export async function checkRecallsForProduct({ name, brand, category }) {
   if (NON_PHYSICAL_CATEGORIES.has(category)) {
     // Explicitly "not applicable" — distinct from "we checked and found nothing".
     return {
