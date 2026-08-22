@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
+import { handleImageErrorWithRetry } from '../utils/imageRetry';
 
 /**
  * Landing page — a direct port of boards 1a and 1c of the Aug 2026 desktop
@@ -119,7 +120,7 @@ function ProductTile({ product, aspectRatio = 1, radius = 10, badge, showHeart }
           src={src}
           alt=""
           loading="lazy"
-          onError={() => setBroken(true)}
+          onError={(e) => handleImageErrorWithRetry(e, () => setBroken(true))}
           style={{
             position: 'absolute',
             inset: 0,

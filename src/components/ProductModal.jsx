@@ -18,6 +18,7 @@ import { fetchPubmedArticles } from '../utils/fetchPubmedArticles';
 import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { isPartnerBrandItem } from '../utils/partnerBrands';
+import { handleImageErrorWithRetry } from '../utils/imageRetry';
 
 // Build purchase/search URLs for common retailers (product name encoded). Keys matched by store name.
 const STORE_SEARCH_URLS = {
@@ -1144,7 +1145,7 @@ export default function ProductModal({
                             <img
                                 src={heroImageSrc}
                                 alt={product.name}
-                                onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                                onError={(e) => handleImageErrorWithRetry(e, () => { e.currentTarget.style.display = 'none'; })}
                             />
                         ) : (
                             <span className="pdp-head__initial" aria-hidden="true">

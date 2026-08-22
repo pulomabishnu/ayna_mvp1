@@ -1,5 +1,6 @@
 import React from 'react';
 import { CATEGORY_LABELS } from '../data/products';
+import { handleImageErrorWithRetry } from '../utils/imageRetry';
 
 /**
  * "Saved for later" — the shelf at the bottom of My Ecosystem holding whatever
@@ -73,7 +74,7 @@ export default function SavedForLater({
                       src={product.image}
                       alt=""
                       loading="lazy"
-                      onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                      onError={(e) => handleImageErrorWithRetry(e, () => { e.currentTarget.style.display = 'none'; })}
                     />
                   ) : (
                     <span className="discovery-card__initial" aria-hidden="true">
