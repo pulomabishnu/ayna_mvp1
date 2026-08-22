@@ -1,6 +1,8 @@
 import React, { Suspense, useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import AynaLanding from './components/AynaLanding';
 import SiteFooter from './components/SiteFooter';
+import EcosystemBubbles from './components/EcosystemBubbles';
+import SavedForLater from './components/SavedForLater';
 import HealthIntakeForm from './components/HealthIntakeForm';
 import HealthProfileEditor from './components/HealthProfileEditor';
 import PhoneVerification from './components/PhoneVerification';
@@ -1290,6 +1292,16 @@ function App() {
           </div>
         )}
         {currentView === 'ecosystem' && (
+          <EcosystemBubbles
+            myProducts={myProducts}
+            quizResults={quizResults}
+            healthProfile={healthProfile}
+            user={user}
+            onOpenProduct={handleOpenProduct}
+            onExploreArea={(area) => handleViewDiscovery({ query: '', initialCategory: area.categories?.[0] })}
+          />
+        )}
+        {currentView === 'ecosystem' && (
           <Suspense fallback={<ViewLoadingFallback />}>
           <MyEcosystem
             myProducts={myProducts}
@@ -1324,6 +1336,16 @@ function App() {
             isPremium={user?.app_metadata?.is_premium === true}
           />
           </Suspense>
+        )}
+        {currentView === 'ecosystem' && (
+          <SavedForLater
+            savedProducts={savedProducts}
+            onOpenProduct={handleOpenProduct}
+            onToggleSaved={toggleSavedProduct}
+            onAddToEcosystem={toggleMyProduct}
+            myProducts={myProducts}
+            onBrowse={() => handleViewDiscovery('')}
+          />
         )}
         {currentView === 'discovery' && (
           <Suspense fallback={<ViewLoadingFallback />}>
