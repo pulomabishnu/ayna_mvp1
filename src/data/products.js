@@ -959,9 +959,18 @@ function productMatchesAvoidTrigger(product, trigger) {
 }
 
 /** Rank catalog when only imported health signals exist (no quiz frustrations). */
+/**
+ * Splits (not concatenates) so callers can tell a real tag match from the
+ * fallback tail. `getRecommendationMatchesAndRest`'s no-quiz/health-only
+ * branch used to call a version of this that concatenated matches+rest into
+ * one array and labeled the whole thing "matches" — meaning a health-import
+ * user's "recommended" set was silently the entire catalog, and any
+ * membership filter built from it (Discovery's Personalized toggle,
+ * Articles' profile-matched products) was a near no-op.
+ */
 function rankProductsByHealthTags(healthTags) {
     const userTags = healthTags instanceof Set ? healthTags : new Set(healthTags || []);
-    if (userTags.size === 0) return ALL_PRODUCTS;
+    if (userTags.size === 0) return { matches: ALL_PRODUCTS, rest: [] };
     const scored = ALL_PRODUCTS.map((p) => {
         let score = 0;
         (p.tags || []).forEach((t) => {
@@ -975,7 +984,7 @@ function rankProductsByHealthTags(healthTags) {
     });
     const matches = scored.filter((s) => s.score > 0).sort((a, b) => b.score - a.score).map((s) => s.product);
     const rest = scored.filter((s) => s.score === 0).map((s) => s.product);
-    return [...matches, ...rest];
+    return { matches, rest };
 }
 
 /** True when the catalog item typically requires a clinician/Rx and is not itself a care-access product. */
@@ -1099,8 +1108,8 @@ export function getRecommendationMatchesAndRest(quizAnswers, healthProfile = nul
             const all = filterPrescriptionCareGate(ALL_PRODUCTS);
             return { matches: all, others: [] };
         }
-        const ranked = filterPrescriptionCareGate(rankProductsByHealthTags(healthTags));
-        return { matches: ranked, others: [] };
+        const { matches, rest } = rankProductsByHealthTags(healthTags);
+        return { matches: filterPrescriptionCareGate(matches), others: filterPrescriptionCareGate(rest) };
     }
 
     const FRUSTRATION_MAP = {
@@ -1213,6 +1222,22 @@ export function getRecommendationsByFrustration(quizAnswers, healthProfile = nul
 export function getRecommendations(quizAnswers, healthProfile = null) {
     const { matches, others } = getRecommendationMatchesAndRest(quizAnswers, healthProfile);
     return [...matches, ...others];
+}
+
+/**
+ * The IDs a "Personalized" filter should actually restrict to: real,
+ * positively-scored matches only — NOT `getRecommendations()`'s output, which
+ * appends every zero-score "other" product as a fallback tail so
+ * ecosystem-building always has candidates to show. Filtering by membership
+ * in that full list is close to a no-op (nearly every product qualifies),
+ * which is exactly why toggling Personalized on Discovery barely changed the
+ * grid for a user who'd completed the quiz. Callers that want a hard,
+ * meaningfully-personalized subset (Discovery's Personalized toggle,
+ * Articles' profile-matched products) should use this instead.
+ */
+export function getPersonalizedProductIds(quizAnswers, healthProfile = null) {
+    const { matches } = getRecommendationMatchesAndRest(quizAnswers, healthProfile);
+    return matches.map((p) => p.id);
 }
 
 /**

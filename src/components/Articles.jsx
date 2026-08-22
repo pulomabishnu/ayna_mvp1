@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import Disclaimer from './Disclaimer';
-import { ALL_PRODUCTS, getRecommendations } from '../data/products';
+import { ALL_PRODUCTS, getPersonalizedProductIds } from '../data/products';
 import { inferTagsFromHealthProfile } from '../utils/healthDataProfile';
 import { RELEASED_STARTUPS } from '../data/startups';
 
@@ -116,9 +116,8 @@ function getArticleAndProfileRelevantItems(articleId, quizResults, healthProfile
     (quizResults?.frustrations?.length > 0) ||
     inferTagsFromHealthProfile(healthProfile).length > 0;
   if (hasProfileSignal) {
-    const recs = getRecommendations(quizResults || {}, healthProfile);
-    const recIds = new Set(recs.map((p) => p.id));
-    products = products.filter((p) => recIds.has(p.id));
+    const recIds = new Set(getPersonalizedProductIds(quizResults || {}, healthProfile));
+    if (recIds.size > 0) products = products.filter((p) => recIds.has(p.id));
     const userTagSet = new Set([
       ...(quizResults?.frustrations || []).map((f) => FRUSTRATION_TO_TAG[f]).filter(Boolean),
       ...inferTagsFromHealthProfile(healthProfile),
