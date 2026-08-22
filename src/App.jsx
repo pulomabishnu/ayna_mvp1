@@ -520,11 +520,6 @@ function App() {
   const checkinDue = !!checkinCompletedAt && (Date.now() - new Date(checkinCompletedAt).getTime() > CHECKIN_INTERVAL_MS);
   const isScrolled = scrollY > 20;
   const navOnGradient = GRADIENT_NAV_VIEWS.includes(currentView);
-  // The gradient nav shares one painted canvas with the hero below it, so it
-  // has to know WHICH board's hero that is: 1a, 1c (returning) or 1j (About).
-  const navGradientVariant = currentView === 'how-it-works'
-    ? ' app-nav--about'
-    : (user && ecosystemCount > 0) ? ' app-nav--returning' : '';
   const accountInitials = accountMonogram(user?.email);
 
 
@@ -781,6 +776,15 @@ function App() {
 
   const omittedCount = Object.keys(omittedProducts).length;
   const ecosystemCount = Object.keys(myProducts).length;
+
+  // The gradient nav shares one painted canvas with the hero below it, so it
+  // has to know WHICH board's hero that is: 1a, 1c (returning) or 1j (About).
+  // Declared here, below ecosystemCount, and not up with the other nav flags —
+  // reading ecosystemCount before its `const` is a temporal dead zone error,
+  // and && short-circuiting hid it from every signed-out check.
+  const navGradientVariant = currentView === 'how-it-works'
+    ? ' app-nav--about'
+    : (user && ecosystemCount > 0) ? ' app-nav--returning' : '';
   const ecoNavRef = useRef(null);
   const [ecoMenuOpen, setEcoMenuOpen] = useState(false);
   const aboutNavRef = useRef(null);
