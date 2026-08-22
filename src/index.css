@@ -3715,3 +3715,94 @@ html {
   .brand-partner { padding: 22px; }
   .brand-partner__head { flex-direction: column; gap: 16px; }
 }
+
+/* ============================================================
+   Mockup design system, applied to every page that wasn't rebuilt
+   board-by-board (Library, Deeptech, How We Make Money, Compare, Hidden,
+   Recalls, Tracked, the quiz, the ecosystem's lower half, the modals).
+
+   These override the older token values rather than editing them in place, so
+   the diff shows exactly what the mockup changed. The rebuilt surfaces set
+   their own type and colour explicitly and are unaffected.
+   ============================================================ */
+
+:root {
+  /* Inter was the body face; the mockup is DM Sans throughout. */
+  --font-body: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --color-bg: #FAF6F1;
+  --color-surface-soft: #FFFFFF;
+  --color-text-main: #1A1714;
+  --color-text-muted: #8c8078;
+  --color-border: rgba(26, 23, 20, 0.12);
+  --radius-lg: 14px;
+  --radius-xl: 14px;
+  --shadow-sm: 0 1px 3px rgba(26, 23, 20, 0.06);
+  --shadow-md: 0 6px 20px rgba(26, 23, 20, 0.09);
+  --shadow-lg: 0 14px 40px rgba(26, 23, 20, 0.12);
+}
+
+/* Headings are Playfair at book weight, as on every board — not DM Sans 600. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--color-text-main);
+}
+
+.card {
+  background: #fff;
+  border: none;
+  border-radius: 14px;
+  box-shadow: 0 1px 3px rgba(26, 23, 20, 0.06);
+}
+
+/* The boards use a navy pill for the primary action on cream. Amber is the
+   hero gradient's accent and stays there. */
+.btn-primary {
+  background-color: #242A52;
+  color: #fff;
+  box-shadow: none;
+}
+
+.btn-primary:hover {
+  background-color: #1b2043;
+}
+
+.btn-outline {
+  border: 1px solid #242A52;
+  color: #1A1714;
+}
+
+.btn-outline:hover {
+  background: rgba(36, 42, 82, 0.06);
+}
+
+.btn,
+.btn-navy {
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+/* Small uppercase labels are DM Mono on the boards. */
+.ayna-eyebrow {
+  font-family: 'DM Mono', ui-monospace, monospace;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="search"],
+input[type="tel"],
+input[type="number"],
+select,
+textarea {
+  font-family: var(--font-body);
+  color: var(--color-text-main);
+}

@@ -315,7 +315,7 @@ const styles = {
     padding: '0.1rem 0.3rem',
   },
   logo: {
-    fontFamily: 'var(--font-heading)',
+    fontFamily: 'var(--font-serif)',
     fontSize: '1.9rem',
     fontWeight: '700',
     color: 'var(--color-primary)',

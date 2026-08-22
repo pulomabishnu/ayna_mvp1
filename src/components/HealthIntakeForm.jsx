@@ -57,7 +57,7 @@ const SCREEN_ORDER = ['basics', 'concerns', 'period', 'health', 'products', 'hea
 function ScreenHeader({ title, subtitle }) {
   return (
     <div style={{ marginBottom: '1.5rem' }}>
-      <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.45rem', fontWeight: 700, color: 'var(--color-text-main)', marginBottom: '0.35rem', lineHeight: 1.25 }}>
+      <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.85rem', fontWeight: 400, color: 'var(--color-text-main)', marginBottom: '0.35rem', lineHeight: 1.2 }}>
         {title}
       </h2>
       {subtitle && <p style={{ fontSize: '0.88rem', color: 'var(--color-text-muted)', lineHeight: 1.5 }}>{subtitle}</p>}
