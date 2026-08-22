@@ -23,7 +23,7 @@ const BrandPartners = React.lazy(() => import('./components/BrandPartners'));
 const MyEcosystem = React.lazy(() => import('./components/MyEcosystem'));
 const Discovery = React.lazy(() => import('./components/Discovery'));
 const Articles = React.lazy(() => import('./components/Articles'));
-import { CATEGORY_LABELS, getRecommendations, getEcosystemSeedFromQuiz } from './data/products';
+import { CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz } from './data/products';
 import { loadAynaReviews, hydrateAynaReviews, addRating, addReview } from './data/aynaReviews';
 import AynaDeeptech from './components/AynaDeeptech';
 import Screenings from './components/Screenings';
@@ -484,7 +484,7 @@ function App() {
 
   const recommendedProductIds = useMemo(() => {
     if (!hasCompletedPersonalization) return [];
-    return getRecommendations(quizResults || null, healthProfile).map(p => p.id);
+    return getPersonalizedProductIds(quizResults || null, healthProfile);
   }, [quizResults, healthProfile, hasCompletedPersonalization]);
 
   // Categories this person actually matches on, in match order — the landing
