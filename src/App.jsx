@@ -19,7 +19,7 @@ import Recalls from './components/Recalls';
 // getEcosystemSeedFromQuiz synchronously), so this doesn't fix everything,
 // but it's the safe part of the fix available without a bigger refactor of
 // how this file computes recommendations.
-const WaitlistHub = React.lazy(() => import('./components/WaitlistHub'));
+const BrandPartners = React.lazy(() => import('./components/BrandPartners'));
 const MyEcosystem = React.lazy(() => import('./components/MyEcosystem'));
 const Discovery = React.lazy(() => import('./components/Discovery'));
 const Articles = React.lazy(() => import('./components/Articles'));
@@ -1241,13 +1241,10 @@ function App() {
         )}
         {currentView === 'waitlist' && (
           <Suspense fallback={<ViewLoadingFallback />}>
-            <WaitlistHub
-              joinedWaitlists={joinedWaitlists}
-              toggleJoinWaitlist={toggleJoinWaitlist}
-              quizResults={quizResults}
+            <BrandPartners
+              onOpenProduct={handleOpenProduct}
               myProducts={myProducts}
               onAddToEcosystem={toggleMyProduct}
-              onViewRecalls={handleViewRecalls}
             />
           </Suspense>
         )}
