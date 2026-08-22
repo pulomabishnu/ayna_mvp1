@@ -312,7 +312,7 @@ function enrichRecommendations(recs, requestedConcern = '') {
     .filter(Boolean);
 }
 
-async function lookupDsldProduct(name) {
+export async function lookupDsldProduct(name) {
   if (!name || name.length < 3) return null;
   try {
     const url = `https://api.ods.od.nih.gov/dsld/v9/label?name=${encodeURIComponent(name)}&status=Y&size=1`;
