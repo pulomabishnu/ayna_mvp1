@@ -365,12 +365,15 @@ function buildScienceInsight(product, aiInsights, quizResults, healthProfile) {
 /** Community insight: bullet format with relevance + opinion validity. */
 function buildSocialInsight(product, aiInsights, quizResults, healthProfile) {
   const ai = (aiInsights?.communitySummary || '').trim();
+  // Data no longer contains em-dash-delimited "quote — aside" pairs (all
+  // communityReview strings were rewritten as plain sentences), so there's
+  // no meaningful sub-string to extract anymore — use the whole thing.
+  // Truncating at the first period would cut off most reviews after their
+  // opening clause and silently drop the specific, useful detail that
+  // usually comes after it (e.g. "Well-rated for effectiveness and price.
+  // Common feedback: take with food..." would show only the first sentence).
   const raw = product.communityReview || '';
-  const quotePart = raw
-    ? raw.indexOf('. ') >= 0
-      ? raw.slice(0, raw.indexOf('. ')).trim()
-      : raw.trim()
-    : '';
+  const quotePart = raw.trim();
   const quoteRedundant = !!(
     quotePart &&
     ai &&

@@ -788,8 +788,10 @@ function estimateMonthlyCost(priceStr, product) {
     const perMonthMatch = s.match(/\$(\d+)(?:\.\d+)?\s*\/?\s*month/i);
     if (perMonthMatch) return parseFloat(perMonthMatch[1]);
 
-    // Range: "$25–$38", "$25–38", "$25-38", "$25—38" → use average
-    const rangeMatch = s.match(/\$(\d+(?:\.\d+)?)\s*[–. ‒\-]+\s*\$?(\d+(?:\.\d+)?)/);
+    // Range: "$25–$38", "$25–38", "$25-38" → use average. Only real
+    // range-separator characters here — a literal '.' or ' ' would false-match
+    // any two dollar amounts sitting near each other in the string.
+    const rangeMatch = s.match(/\$(\d+(?:\.\d+)?)\s*[–‒\-]+\s*\$?(\d+(?:\.\d+)?)/);
     if (rangeMatch) {
         const avg = (parseFloat(rangeMatch[1]) + parseFloat(rangeMatch[2])) / 2;
         if (/per pair|underwear|pair/i.test(s)) return avg / 18; // ~18 months life
