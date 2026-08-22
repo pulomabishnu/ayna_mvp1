@@ -24,6 +24,8 @@ const MyEcosystem = React.lazy(() => import('./components/MyEcosystem'));
 const Discovery = React.lazy(() => import('./components/Discovery'));
 const Articles = React.lazy(() => import('./components/Articles'));
 import { CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz } from './data/products';
+import EcosystemGenerationBar from './components/EcosystemGenerationBar';
+import { fingerprintIntake } from './utils/fetchLlmRecommendations';
 import { loadAynaReviews, hydrateAynaReviews, addRating, addReview } from './data/aynaReviews';
 import AynaDeeptech from './components/AynaDeeptech';
 import Screenings from './components/Screenings';
@@ -198,6 +200,13 @@ function App() {
     if (quizResults?.fullHealthIntake?.personalizationCompleted === true) return true;
     return false;
   }, [quizResults]);
+  // Same fingerprint MyEcosystem computes for its own generation effect —
+  // this is what lets EcosystemGenerationBar find and observe (never start)
+  // the same activeGenerations record from anywhere in the app.
+  const ecosystemIntakeFingerprint = useMemo(
+    () => (hasCompletedPersonalization ? fingerprintIntake(quizResults?.fullHealthIntake || null) : ''),
+    [quizResults, hasCompletedPersonalization]
+  );
 
   React.useEffect(() => {
     setAynaReviews(loadAynaReviews());
@@ -909,28 +918,34 @@ function App() {
 
   return (
     <div className="app-container">
-      {/* Persistence failures were previously console-only, so the UI always
-          looked like the success state. A user could curate for 20 minutes on a
-          flaky connection, see a perfect screen, and lose everything on reload. */}
-      {saveError && (
-        <div
-          role="alert"
-          style={{
-            position: 'fixed', top: 0, left: 0, right: 0, zIndex: 3000,
-            background: '#FEF2F2', borderBottom: '1px solid #FECACA',
-            color: '#991B1B', padding: '0.7rem 1rem', fontSize: '0.85rem',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem',
-          }}
-        >
-          <span>{saveError}</span>
-          <button
-            type="button"
-            onClick={() => setSaveError(null)}
-            aria-label="Dismiss"
-            style={{ background: 'none', border: 'none', color: '#991B1B', cursor: 'pointer', fontWeight: 700, fontSize: '1rem', lineHeight: 1 }}
-          >×</button>
-        </div>
-      )}
+      {/* Shared fixed stacking wrapper for top-of-viewport status rows, so the
+          save-error banner and the ecosystem-generation bar stack instead of
+          overlapping if both are showing at once — neither sets its own
+          position:fixed any more. */}
+      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 3000 }}>
+        {/* Persistence failures were previously console-only, so the UI always
+            looked like the success state. A user could curate for 20 minutes on a
+            flaky connection, see a perfect screen, and lose everything on reload. */}
+        {saveError && (
+          <div
+            role="alert"
+            style={{
+              background: '#FEF2F2', borderBottom: '1px solid #FECACA',
+              color: '#991B1B', padding: '0.7rem 1rem', fontSize: '0.85rem',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem',
+            }}
+          >
+            <span>{saveError}</span>
+            <button
+              type="button"
+              onClick={() => setSaveError(null)}
+              aria-label="Dismiss"
+              style={{ background: 'none', border: 'none', color: '#991B1B', cursor: 'pointer', fontWeight: 700, fontSize: '1rem', lineHeight: 1 }}
+            >×</button>
+          </div>
+        )}
+        <EcosystemGenerationBar intakeFingerprint={ecosystemIntakeFingerprint} onViewEcosystem={handleViewEcosystem} />
+      </div>
       <main>
         <div style={{ position: 'relative', zIndex: 1001 }}>
         <nav
