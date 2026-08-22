@@ -1583,3 +1583,628 @@ html {
     margin-top: 36px;
   }
 }
+
+/* ---- Landing (mockup boards 1a + 1c) ---- */
+
+.mockup-landing {
+  background: var(--mockup-cream-deep);
+  font-family: 'DM Sans', system-ui, sans-serif;
+  color: var(--mockup-ink);
+}
+
+.ayna-landing-hero {
+  background: var(--mockup-hero-gradient);
+  color: #F4F0FA;
+  padding: 78px 0 86px;
+}
+
+.ayna-landing-hero-col {
+  width: 100%;
+  max-width: calc(760px + var(--mockup-gutter) * 2);
+  margin: 0 auto;
+  padding: 0 var(--mockup-gutter);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+}
+
+.ayna-landing-eyebrow {
+  font: 500 11.5px/1 'DM Mono', ui-monospace, monospace;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+  color: #F0C070;
+}
+
+.ayna-landing-headline {
+  font: 400 62px/1.06 'Playfair Display', serif;
+  letter-spacing: -0.02em;
+  color: #F4F0FA;
+  margin: 0;
+}
+
+.ayna-landing-sub {
+  font-size: 16.5px;
+  line-height: 1.55;
+  color: rgba(244, 240, 250, 0.8);
+  max-width: 470px;
+  margin: 0;
+}
+
+.ayna-landing-searchbar {
+  display: flex;
+  align-items: center;
+  background: var(--mockup-cream);
+  border-radius: 999px;
+  padding: 8px 8px 8px 26px;
+  width: 520px;
+  max-width: 100%;
+  margin-top: 16px;
+  box-shadow: 0 14px 40px rgba(20, 16, 40, 0.28);
+}
+
+.ayna-landing-searchbar input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 15px;
+  color: var(--mockup-ink);
+}
+
+.ayna-landing-searchbar input::placeholder {
+  color: #8b8496;
+}
+
+.ayna-landing-searchbar button {
+  flex: none;
+  background: linear-gradient(100deg, #F0A84B, #E5C15C);
+  color: #2A2140;
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 14.5px;
+  padding: 14px 30px;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.ayna-landing-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 11px;
+  margin-top: 6px;
+}
+
+.ayna-landing-chips button {
+  border: 1px solid rgba(244, 240, 250, 0.26);
+  background: rgba(255, 255, 255, 0.07);
+  color: #F4F0FA;
+  font-family: inherit;
+  font-size: 13px;
+  padding: 11px 19px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.ayna-landing-chips button:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+/* Band: "Tell us about your body once." */
+
+.ayna-landing-band {
+  background: var(--mockup-cream);
+  border-bottom: 1px solid rgba(23, 20, 41, 0.07);
+}
+
+.ayna-landing-band__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  padding-top: 42px;
+  padding-bottom: 34px;
+}
+
+.ayna-landing-band__copy {
+  font: 400 30px/1.15 'Playfair Display', serif;
+  max-width: 430px;
+  color: var(--mockup-ink);
+}
+
+.ayna-landing-band__copy span {
+  display: block;
+  margin-top: 10px;
+  color: var(--mockup-ink-soft);
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Buttons */
+
+.ayna-landing-btn {
+  font-family: inherit;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.ayna-landing-btn--navy {
+  background: #242A52;
+  color: #fff;
+  font-size: 15px;
+  padding: 17px 34px;
+  border: none;
+}
+
+.ayna-landing-btn--amber {
+  background: #F0A84B;
+  color: #242A52;
+  font-weight: 500;
+  font-size: 15px;
+  padding: 16px 30px;
+  border: none;
+}
+
+.ayna-landing-btn--ghost {
+  background: none;
+  color: #F4F0FA;
+  font-size: 15px;
+  padding: 15px 28px;
+  border: 1px solid rgba(244, 240, 250, 0.4);
+}
+
+/* Shop */
+
+.ayna-landing-shop {
+  background: var(--mockup-cream-deep);
+  padding: 44px 0 56px;
+}
+
+.ayna-landing-shop-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 26px;
+}
+
+.ayna-landing-shop-title {
+  font: 400 32px/1 'Playfair Display', serif;
+  color: var(--mockup-ink);
+}
+
+.ayna-landing-shop-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.ayna-landing-filters {
+  display: flex;
+  gap: 8px;
+}
+
+.ayna-landing-filters button {
+  font-family: inherit;
+  font-size: 12.5px;
+  color: var(--mockup-ink);
+  background: none;
+  border: 1px solid rgba(23, 20, 41, 0.16);
+  padding: 9px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.ayna-landing-filters button.is-active {
+  background: #242A52;
+  border-color: #242A52;
+  color: #fff;
+}
+
+.ayna-landing-shop-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 26px 22px;
+}
+
+.ayna-landing-shop-card {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.ayna-landing-shop-card .ayna-landing-tile {
+  transition: transform var(--transition-fast);
+}
+
+.ayna-landing-shop-card:hover .ayna-landing-tile {
+  transform: translateY(-3px);
+}
+
+/* 1c — returning user */
+
+.ayna-landing-hero--returning {
+  background: var(--mockup-hero-gradient-returning);
+  padding: 52px 0 54px;
+}
+
+.ayna-landing-welcomeback {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 52px;
+  align-items: center;
+}
+
+.ayna-landing-headline--returning {
+  font-size: 54px;
+  line-height: 1.05;
+  text-align: left;
+}
+
+.ayna-landing-ecocard {
+  width: 100%;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(244, 240, 250, 0.16);
+  border-radius: 14px;
+  padding: 24px;
+  color: #F4F0FA;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.ayna-landing-shop--returning {
+  background: var(--mockup-cream);
+  padding: 42px 0 56px;
+}
+
+.ayna-landing-shop-title--returning {
+  font-size: 30px;
+}
+
+.ayna-landing-shop-grid--returning {
+  gap: 22px;
+}
+
+@media (max-width: 980px) {
+  .ayna-landing-headline {
+    font-size: 44px;
+  }
+
+  .ayna-landing-headline--returning {
+    font-size: 40px;
+  }
+
+  .ayna-landing-welcomeback {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .ayna-landing-shop-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ayna-landing-band__inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+  }
+}
+
+@media (max-width: 560px) {
+  .ayna-landing-hero {
+    padding: 48px 0 56px;
+  }
+
+  .ayna-landing-headline {
+    font-size: 34px;
+  }
+
+  .ayna-landing-band__copy {
+    font-size: 24px;
+  }
+
+  .ayna-landing-shop-title {
+    font-size: 26px;
+  }
+}
+
+/* ---- Nav (mockup boards 1a/1c on the hero gradient, 1e–1k on cream) ----
+   The gradient nav and the landing hero paint ONE gradient between them: both
+   use the same image sized to the board's full hero height (655px on 1a,
+   482px on 1c) and the hero offsets it by the 84px nav row, so there is no
+   seam where the two elements meet. */
+
+.app-nav {
+  flex-wrap: nowrap;
+  gap: 24px;
+  padding: 24px calc(max(var(--mockup-gutter), (100% - var(--mockup-page-width)) / 2 + var(--mockup-gutter)));
+}
+
+.app-nav__brand,
+.app-nav__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 36px;
+}
+
+.app-nav__links {
+  display: flex;
+  align-items: center;
+  gap: 38px;
+}
+
+.app-nav__logo {
+  font-family: 'Playfair Display', serif !important;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 27px;
+  line-height: 1;
+  letter-spacing: normal;
+  cursor: pointer;
+}
+
+.app-nav__tab {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: normal;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.app-nav__tab::after {
+  left: 0;
+  right: 0;
+  bottom: -6px;
+}
+
+.app-nav__tab--active {
+  font-weight: 500;
+}
+
+/* Right-hand circles */
+
+.app-nav__circle {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  line-height: 1;
+  background: none;
+  border: 1px solid rgba(244, 240, 250, 0.35);
+  cursor: pointer;
+  padding: 0;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.app-nav__circle:hover,
+.app-nav__circle--active {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.app-nav__circle--account {
+  font-family: 'DM Mono', ui-monospace, monospace;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.app-nav__circle--avatar {
+  background: #F0A84B;
+  border-color: #F0A84B;
+}
+
+.app-nav__circle-pill {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: #F0A84B;
+  color: #242A52;
+  font-family: 'DM Mono', ui-monospace, monospace;
+  font-size: 9px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-nav__circle-dot {
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #DC2626;
+}
+
+.app-nav__account {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.nav-account-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  min-width: 200px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.9rem 1.1rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.nav-account-menu button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.nav-account-menu button.nav-account-menu__muted {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+/* The ecosystem panel hangs off a right-hand icon, so it opens right-aligned. */
+.app-nav__actions .nav-ecosystem__panel {
+  left: auto;
+  right: 0;
+}
+
+/* --- Gradient nav (landing) --- */
+
+.app-nav--landing {
+  padding: 24px calc(max(var(--mockup-gutter), (100% - var(--mockup-page-width)) / 2 + var(--mockup-gutter))) !important;
+  background: var(--mockup-hero-gradient) !important;
+  background-size: 100% 655px !important;
+  background-position: 0 0 !important;
+  background-repeat: no-repeat !important;
+}
+
+.app-nav--landing.app-nav--scrolled {
+  padding: 24px calc(max(var(--mockup-gutter), (100% - var(--mockup-page-width)) / 2 + var(--mockup-gutter))) !important;
+  box-shadow: 0 4px 20px rgba(20, 12, 40, 0.25) !important;
+}
+
+.app-nav--landing .app-nav__logo {
+  color: #F0A84B !important;
+}
+
+.app-nav--landing .app-nav__tab {
+  color: #F4F0FA !important;
+}
+
+.app-nav--landing .app-nav__tab:hover,
+.app-nav--landing .app-nav__tab--active {
+  color: #F0A84B !important;
+}
+
+.app-nav--landing .app-nav__circle {
+  color: #F4F0FA !important;
+}
+
+.app-nav--landing .app-nav__circle--avatar {
+  color: #242A52 !important;
+}
+
+/* --- Cream nav (every non-landing board) --- */
+
+.app-nav--cream {
+  padding: 20px calc(max(var(--mockup-gutter), (100% - var(--mockup-page-width)) / 2 + var(--mockup-gutter)));
+  background: #FAF6F1;
+  border-bottom: 1px solid rgba(26, 23, 20, 0.07);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+
+.app-nav--cream.app-nav--scrolled {
+  padding: 20px calc(max(var(--mockup-gutter), (100% - var(--mockup-page-width)) / 2 + var(--mockup-gutter)));
+  box-shadow: 0 6px 24px rgba(26, 23, 20, 0.06);
+}
+
+.app-nav--cream .app-nav__brand,
+.app-nav--cream .app-nav__actions {
+  min-height: 34px;
+}
+
+.app-nav--cream .app-nav__logo {
+  font-size: 24px;
+  color: #1A1714;
+}
+
+.app-nav--cream .app-nav__links {
+  gap: 32px;
+}
+
+.app-nav--cream .app-nav__tab {
+  font-size: 13.5px;
+  color: #4a423b;
+}
+
+.app-nav--cream .app-nav__tab:hover,
+.app-nav--cream .app-nav__tab--active {
+  color: #B4732A;
+}
+
+.app-nav--cream .app-nav__circle {
+  width: 32px;
+  height: 32px;
+  border-color: rgba(26, 23, 20, 0.15);
+  color: #4a423b;
+}
+
+.app-nav--cream .app-nav__circle:hover,
+.app-nav--cream .app-nav__circle--active {
+  background: rgba(26, 23, 20, 0.05);
+}
+
+.app-nav--cream .app-nav__circle--avatar {
+  background: #C3B6D8;
+  border-color: #C3B6D8;
+  color: #2A2140;
+}
+
+/* Landing hero picks the gradient up where the nav left off. */
+.ayna-landing-hero {
+  background: var(--mockup-hero-gradient);
+  background-size: 100% 655px;
+  background-position: 0 -84px;
+  background-repeat: no-repeat;
+  min-height: 571px;
+}
+
+.ayna-landing-hero--returning {
+  background: var(--mockup-hero-gradient-returning);
+  background-size: 100% 482px;
+  background-position: 0 -84px;
+  background-repeat: no-repeat;
+  min-height: 398px;
+}
+
+@media (max-width: 900px) {
+  .app-nav__links {
+    display: none;
+  }
+}

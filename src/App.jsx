@@ -1,6 +1,5 @@
-import React, { Suspense, useState, useMemo, useRef, useEffect, useLayoutEffect, useCallback } from 'react';
-import Hero from './components/Hero';
-import WelcomeGate from './components/WelcomeGate';
+import React, { Suspense, useState, useMemo, useRef, useEffect, useCallback } from 'react';
+import AynaLanding from './components/AynaLanding';
 import SiteFooter from './components/SiteFooter';
 import HealthIntakeForm from './components/HealthIntakeForm';
 import HealthProfileEditor from './components/HealthProfileEditor';
@@ -50,6 +49,17 @@ import posthog from 'posthog-js';
 import { tagInternalUserIfNeeded } from './utils/posthogInternal';
 
 const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls'];
+const ABOUT_NAV_VIEWS = ['how-it-works', 'how-we-make-money', 'deeptech'];
+/** Landing boards (1a/1c) run the nav on the hero gradient; every other board is on cream. */
+const GRADIENT_NAV_VIEWS = ['welcome', 'hero'];
+
+/** "AO"-style monogram for the account circle, matching the mockup's avatar. */
+function accountMonogram(email) {
+  const local = String(email || '').split('@')[0] || '';
+  const parts = local.split(/[.+_-]/).filter(Boolean);
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+  return (local.slice(0, 2) || '?').toUpperCase();
+}
 
 const VIEW_TO_PATH = {
   welcome: '/', hero: '/', quiz: '/quiz', ecosystem: '/ecosystem',
@@ -145,7 +155,6 @@ function App() {
   const [aynaReviews, setAynaReviews] = useState({});
   const [healthProfile, setHealthProfile] = useState(() => loadHealthProfile());
   const [ecosystemSeedMeta, setEcosystemSeedMeta] = useState({});
-  const [welcomeSubPhase, setWelcomeSubPhase] = useState('intro');
   const [user, setUser] = useState(null);
   const [userSession, setUserSession] = useState(null);
   // Set to true once the LLM builds the ecosystem this session — prevents
@@ -448,6 +457,17 @@ function App() {
     return getRecommendations(quizResults || null, healthProfile).map(p => p.id);
   }, [quizResults, healthProfile, hasCompletedPersonalization]);
 
+  // Categories this person actually matches on, in match order — the landing
+  // Shop's Personalize toggle sorts by these.
+  const landingProfileCategories = useMemo(() => {
+    if (!hasCompletedPersonalization) return [];
+    const seen = [];
+    getRecommendations(quizResults || null, healthProfile).forEach((p) => {
+      if (p.category && !seen.includes(p.category)) seen.push(p.category);
+    });
+    return seen;
+  }, [quizResults, healthProfile, hasCompletedPersonalization]);
+
   React.useEffect(() => {
     try {
       if (typeof window !== 'undefined' && localStorage.getItem('ayna_zip')) setUserZipCode(localStorage.getItem('ayna_zip') || '');
@@ -487,20 +507,9 @@ function App() {
   // nothing in their ecosystem yet has nothing to "check in" about.
   const checkinDue = !!checkinCompletedAt && (Date.now() - new Date(checkinCompletedAt).getTime() > CHECKIN_INTERVAL_MS);
   const isScrolled = scrollY > 20;
+  const navOnGradient = GRADIENT_NAV_VIEWS.includes(currentView);
+  const accountInitials = accountMonogram(user?.email);
 
-  const previousViewRef = useRef(null);
-  // When *entering* the welcome view from elsewhere, show the full intro (nav hidden) again.
-  useLayoutEffect(() => {
-    const was = previousViewRef.current;
-    if (currentView === 'welcome' && was != null && was !== 'welcome') {
-      setWelcomeSubPhase('intro');
-    }
-    previousViewRef.current = currentView;
-  }, [currentView]);
-
-  const hideWelcomeIntroChrome = currentView === 'welcome' && welcomeSubPhase === 'intro';
-  /** Second welcome screen: fade top chrome in with the page (not an instant pop). */
-  const welcomeMainChromeEntrance = currentView === 'welcome' && welcomeSubPhase === 'main';
 
   const handleStartQuiz = () => setCurrentView('quiz');
   const handleOpenHealthProfileEditor = () => setCurrentView('profile-edit');
@@ -832,9 +841,7 @@ function App() {
 
 
   return (
-    <div
-      className={`app-container${hideWelcomeIntroChrome ? ' app--welcome-intro-immersive' : ''}`.trim()}
-    >
+    <div className="app-container">
       {/* Persistence failures were previously console-only, so the UI always
           looked like the success state. A user could curate for 20 minutes on a
           flaky connection, see a perfect screen, and lose everything on reload. */}
@@ -858,19 +865,20 @@ function App() {
         </div>
       )}
       <main>
-        {/* Navigation — hidden during welcome intro; fades in on first frame of “main” with the landing body */}
-        {!hideWelcomeIntroChrome && (
-        <div
-          className={welcomeMainChromeEntrance ? 'app-welcome-chrome-entrance' : undefined}
-          style={{ position: 'relative', zIndex: 1001 }}
-        >
+        <div style={{ position: 'relative', zIndex: 1001 }}>
         <nav
-          className={`app-nav app-nav--landing${isScrolled ? ' app-nav--scrolled' : ''}`}
+          className={`app-nav ${navOnGradient ? 'app-nav--landing' : 'app-nav--cream'}${isScrolled ? ' app-nav--scrolled' : ''}`}
           aria-label="Primary"
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <div className="app-nav__logo" style={{ color: 'var(--color-primary)', cursor: 'pointer' }} onClick={navigateHome}>
-              Ayna
+          <div className="app-nav__brand">
+            <div
+              className="app-nav__logo"
+              role="button"
+              tabIndex={0}
+              onClick={navigateHome}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigateHome(); } }}
+            >
+              ayna
             </div>
 
             {/* Hamburger — mobile only */}
@@ -881,53 +889,112 @@ function App() {
             >
               {mobileMenuOpen ? '✕' : '≡'}
             </button>
+          </div>
 
-            {/* Ecosystem: label + hover menu (Compare, Hidden, Recall) — left of Search */}
-            <div
-              ref={ecoNavRef}
-              className={`nav-ecosystem desktop-only ${ecoMenuOpen ? 'nav-ecosystem--open' : ''} ${ecoMenuOpen && touchUi ? 'nav-ecosystem--caret-open' : ''}`}
+          {/* Mockup nav: Discover · Brands · My Health Library · About Us */}
+          <div className="app-nav__links desktop-only">
+            <button
+              className={`app-nav__tab ${(currentView === 'discovery' || currentView === 'hero') ? 'app-nav__tab--active' : ''}`}
+              onClick={() => handleViewDiscovery('')}
             >
-              <div className="nav-ecosystem__row">
+              Discover
+            </button>
+            <button
+              className={`app-nav__tab ${currentView === 'waitlist' ? 'app-nav__tab--active' : ''}`}
+              onClick={handleViewWaitlist}
+            >
+              Brands
+            </button>
+            <button
+              className={`app-nav__tab ${currentView === 'articles' ? 'app-nav__tab--active' : ''}`}
+              onClick={handleViewArticles}
+            >
+              My Health Library
+            </button>
+
+            <div
+              ref={aboutNavRef}
+              className={`nav-dropdown ${aboutMenuOpen ? 'nav-dropdown--open' : ''} ${aboutMenuOpen && touchUi ? 'nav-dropdown--caret-open' : ''}`}
+            >
+              <div className="nav-dropdown__row">
                 <button
                   type="button"
-                  id="nav-ecosystem-trigger"
-                  className={`nav-ecosystem__trigger ${ECOSYSTEM_NAV_VIEWS.includes(currentView) ? 'nav-ecosystem__trigger--active' : ''}`}
-                  onClick={() => handleViewEcosystem()}
+                  id="nav-about-trigger"
+                  className={`app-nav__tab nav-dropdown__trigger ${ABOUT_NAV_VIEWS.includes(currentView) ? 'app-nav__tab--active nav-dropdown__trigger--active' : ''}`}
                   aria-haspopup="menu"
-                  aria-expanded={touchUi ? ecoMenuOpen : undefined}
-                  aria-controls="nav-ecosystem-menu"
+                  aria-expanded={touchUi ? aboutMenuOpen : undefined}
+                  aria-controls="nav-about-menu"
+                  onClick={() => { if (touchUi) setAboutMenuOpen(v => !v); }}
                 >
-                  My Ecosystem
-                  {ecosystemCount > 0 && (
-                    <span className="nav-ecosystem__pill">{ecosystemCount}</span>
-                  )}
-                  {!touchUi && <span className="nav-ecosystem__hint" aria-hidden>▾</span>}
+                  About Us
                 </button>
-                {touchUi && (
-                  <button
-                    type="button"
-                    className="nav-ecosystem__caret-btn"
-                    aria-label="Open Ecosystem menu (Compare, Hidden, Recall)"
-                    aria-expanded={ecoMenuOpen}
-                    aria-controls="nav-ecosystem-menu"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setEcoMenuOpen((v) => !v);
-                    }}
-                  >
-                    ▾
-                  </button>
-                )}
               </div>
+              <div className="nav-dropdown__panel" role="menu" id="nav-about-menu" aria-labelledby="nav-about-trigger" style={{ minWidth: '13rem' }}>
+                <button
+                  type="button"
+                  role="menuitem"
+                  className={`nav-dropdown__item ${currentView === 'how-it-works' ? 'nav-dropdown__item--active' : ''}`}
+                  onClick={() => { setAboutMenuOpen(false); handleViewHowItWorks(); }}
+                >
+                  <span>How It Works</span>
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  className={`nav-dropdown__item ${currentView === 'how-we-make-money' ? 'nav-dropdown__item--active' : ''}`}
+                  onClick={() => { setAboutMenuOpen(false); handleViewHowWeMakeMoney(); }}
+                >
+                  <span>How We Make Money</span>
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  className={`nav-dropdown__item ${currentView === 'deeptech' ? 'nav-dropdown__item--active' : ''}`}
+                  onClick={() => { setAboutMenuOpen(false); handleViewDeeptech(); }}
+                >
+                  <span>Deeptech</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Mockup nav right side: two circles — saved/ecosystem, then account. */}
+          <div className="app-nav__actions desktop-only">
+            <div
+              ref={ecoNavRef}
+              className={`nav-ecosystem ${ecoMenuOpen ? 'nav-ecosystem--open' : ''}`}
+            >
+              <button
+                type="button"
+                id="nav-ecosystem-trigger"
+                className={`app-nav__circle ${ECOSYSTEM_NAV_VIEWS.includes(currentView) ? 'app-nav__circle--active' : ''}`}
+                onClick={() => handleViewEcosystem()}
+                aria-haspopup="menu"
+                aria-expanded={touchUi ? ecoMenuOpen : undefined}
+                aria-controls="nav-ecosystem-menu"
+                aria-label={ecosystemCount > 0 ? `My Ecosystem (${ecosystemCount} products)` : 'My Ecosystem'}
+                title="My Ecosystem"
+              >
+                <span aria-hidden>♡</span>
+                {ecosystemCount > 0 && (
+                  <span className="app-nav__circle-pill">{ecosystemCount}</span>
+                )}
+              </button>
               <div className="nav-ecosystem__panel" role="menu" id="nav-ecosystem-menu" aria-labelledby="nav-ecosystem-trigger">
                 <button
                   type="button"
                   role="menuitem"
+                  className={`nav-ecosystem__item ${currentView === 'ecosystem' ? 'nav-ecosystem__item--active' : ''}`}
+                  onClick={() => { setEcoMenuOpen(false); handleViewEcosystem(); }}
+                >
+                  <span>My Ecosystem</span>
+                  {ecosystemCount > 0 && <span className="nav-ecosystem__item-pill">{ecosystemCount}</span>}
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
                   className={`nav-ecosystem__item ${currentView === 'comparison' ? 'nav-ecosystem__item--active' : ''}`}
-                  onClick={() => {
-                    setEcoMenuOpen(false);
-                    handleViewComparison();
-                  }}
+                  onClick={() => { setEcoMenuOpen(false); handleViewComparison(); }}
                 >
                   <span>Compare</span>
                   {compareList.length > 0 && (
@@ -938,10 +1005,7 @@ function App() {
                   type="button"
                   role="menuitem"
                   className={`nav-ecosystem__item ${currentView === 'omitted' ? 'nav-ecosystem__item--active' : ''}`}
-                  onClick={() => {
-                    setEcoMenuOpen(false);
-                    handleViewOmitted();
-                  }}
+                  onClick={() => { setEcoMenuOpen(false); handleViewOmitted(); }}
                 >
                   <span>Hidden</span>
                   {omittedCount > 0 && <span className="nav-ecosystem__item-pill">{omittedCount}</span>}
@@ -950,170 +1014,71 @@ function App() {
                   type="button"
                   role="menuitem"
                   className={`nav-ecosystem__item ${currentView === 'recalls' ? 'nav-ecosystem__item--active' : ''}`}
-                  onClick={() => {
-                    setEcoMenuOpen(false);
-                    handleViewRecalls();
-                  }}
+                  onClick={() => { setEcoMenuOpen(false); handleViewRecalls(); }}
                 >
                   <span>Recall</span>
                 </button>
               </div>
             </div>
 
-            {/* Public research tools */}
-            <div className="app-nav__research-cluster desktop-only">
-              <button className={`app-nav__tab ${(currentView === 'discovery' || currentView === 'hero') ? 'app-nav__tab--active' : ''}`} onClick={() => handleViewDiscovery('')}>
-                Product Discovery
-              </button>
-              <button className={`app-nav__tab ${currentView === 'waitlist' ? 'app-nav__tab--active' : ''}`} onClick={handleViewWaitlist}>
-                Brands
-              </button>
-              <button className={`app-nav__tab ${currentView === 'deeptech' ? 'app-nav__tab--active' : ''}`} onClick={handleViewDeeptech}>
-                Deeptech
-              </button>
-              <button className={`app-nav__tab ${currentView === 'articles' ? 'app-nav__tab--active' : ''}`} onClick={handleViewArticles}>
-                My Health Library
-              </button>
-
-              <div
-                ref={aboutNavRef}
-                className={`nav-dropdown ${aboutMenuOpen ? 'nav-dropdown--open' : ''} ${aboutMenuOpen && touchUi ? 'nav-dropdown--caret-open' : ''}`}
+            <div ref={accountMenuRef} className="app-nav__account">
+              <button
+                type="button"
+                className={`app-nav__circle app-nav__circle--account ${user ? 'app-nav__circle--avatar' : ''}`}
+                onClick={() => setShowAccountMenu(v => !v)}
+                aria-haspopup="menu"
+                aria-expanded={showAccountMenu}
+                aria-label="Account"
+                title={user ? user.email : 'Account'}
               >
-                <div className="nav-dropdown__row">
-                  <button
-                    type="button"
-                    id="nav-about-trigger"
-                    className={`nav-dropdown__trigger ${(currentView === 'how-we-make-money' || currentView === 'how-it-works') ? 'nav-dropdown__trigger--active' : ''}`}
-                    aria-haspopup="menu"
-                    aria-expanded={touchUi ? aboutMenuOpen : undefined}
-                    aria-controls="nav-about-menu"
-                  >
-                    About Us
-                    {!touchUi && <span className="nav-dropdown__hint" aria-hidden>▾</span>}
-                  </button>
-                  {touchUi && (
-                    <button
-                      type="button"
-                      className="nav-dropdown__caret-btn"
-                      aria-label="Open About Us menu"
-                      aria-expanded={aboutMenuOpen}
-                      aria-controls="nav-about-menu"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setAboutMenuOpen((v) => !v);
-                      }}
-                    >
-                      ▾
-                    </button>
-                  )}
-                </div>
-                <div className="nav-dropdown__panel" role="menu" id="nav-about-menu" aria-labelledby="nav-about-trigger" style={{ minWidth: '13rem' }}>
-                  <button
-                    type="button"
-                    role="menuitem"
-                    className={`nav-dropdown__item ${currentView === 'how-it-works' ? 'nav-dropdown__item--active' : ''}`}
-                    onClick={() => {
-                      setAboutMenuOpen(false);
-                      handleViewHowItWorks();
-                    }}
-                  >
-                    <span>How It Works</span>
-                  </button>
-                  <button
-                    type="button"
-                    role="menuitem"
-                    className={`nav-dropdown__item ${currentView === 'how-we-make-money' ? 'nav-dropdown__item--active' : ''}`}
-                    onClick={() => {
-                      setAboutMenuOpen(false);
-                      handleViewHowWeMakeMoney();
-                    }}
-                  >
-                    <span>How We Make Money</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Account Actions */}
-          <div className="desktop-only" style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', flexWrap: 'wrap' }}>
-            <button
-              style={{
-                position: 'relative',
-                fontSize: '0.9rem', fontWeight: '600', padding: '0.3rem 0.65rem',
-                background: 'var(--color-secondary-fade)', color: 'var(--color-primary)',
-                borderRadius: 'var(--radius-pill)', border: '1px solid var(--color-primary)',
-              }}
-              onClick={() => setShowCheckin(true)}
-              title={checkinDue ? "It's been a month — a quick check-in helps keep your recommendations current." : undefined}
-            >
-              Check-in
-              {checkinDue && (
-                <span style={{
-                  position: 'absolute', top: '-3px', right: '-3px',
-                  width: '9px', height: '9px', borderRadius: '50%',
-                  background: '#DC2626', border: '1.5px solid var(--color-bg, white)',
-                }} aria-hidden="true" />
-              )}
-            </button>
-            {user ? (
-              <div ref={accountMenuRef} style={{ position: 'relative' }}>
-                <button
-                  onClick={() => setShowAccountMenu(v => !v)}
-                  style={{
-                    fontSize: '0.9rem', fontWeight: '600', padding: '0.3rem 0.75rem',
-                    background: 'var(--color-primary)', color: 'var(--color-text-light)',
-                    borderRadius: 'var(--radius-pill)', border: 'none', cursor: 'pointer',
-                  }}
-                >
-                  Account
-                </button>
-                {showAccountMenu && (
-                  <div className="nav-account-menu" style={{
-                    position: 'absolute', right: 0, top: 'calc(100% + 6px)',
-                    background: 'var(--color-surface)', border: '1px solid var(--color-border)',
-                    borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-md)',
-                    padding: '0.9rem 1.1rem', minWidth: '200px', zIndex: 9999,
-                    display: 'flex', flexDirection: 'column', gap: '0.6rem',
-                  }}>
+                {user ? accountInitials : <span aria-hidden>◔</span>}
+                {checkinDue && <span className="app-nav__circle-dot" aria-hidden />}
+              </button>
+              {showAccountMenu && (
+                <div className="nav-account-menu">
+                  {user && (
                     <span style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', wordBreak: 'break-all', lineHeight: 1.4 }}>
                       {user.email}
                     </span>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => { setShowAccountMenu(false); setShowCheckin(true); }}
+                    title={checkinDue ? "It's been a month — a quick check-in helps keep your recommendations current." : undefined}
+                  >
+                    Check-in{checkinDue ? ' •' : ''}
+                  </button>
+                  {user ? (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => { getSupabaseClient()?.auth.signOut(); setShowAccountMenu(false); }}
+                      >
+                        Log out
+                      </button>
+                      <button
+                        type="button"
+                        className="nav-account-menu__muted"
+                        onClick={() => { setShowDeleteModal(true); setShowAccountMenu(false); }}
+                      >
+                        Delete account
+                      </button>
+                    </>
+                  ) : (
                     <button
-                      onClick={() => { getSupabaseClient()?.auth.signOut(); setShowAccountMenu(false); }}
-                      style={{
-                        fontSize: '0.8rem', fontWeight: '600', color: 'var(--color-primary)',
-                        background: 'none', border: 'none', cursor: 'pointer', padding: 0,
-                        textAlign: 'left',
+                      type="button"
+                      onClick={() => {
+                        setShowAccountMenu(false);
+                        setPendingAction('login'); pendingActionRef.current = 'login';
+                        setShowAuthModal(true);
                       }}
                     >
-                      Log out
+                      Log in
                     </button>
-                    <button
-                      onClick={() => { setShowDeleteModal(true); setShowAccountMenu(false); }}
-                      style={{
-                        fontSize: '0.78rem', fontWeight: '500', color: 'var(--color-text-muted)',
-                        background: 'none', border: 'none', cursor: 'pointer', padding: 0,
-                        textAlign: 'left',
-                      }}
-                    >
-                      Delete account
-                    </button>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <button
-                onClick={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
-                style={{
-                  fontSize: '0.9rem', fontWeight: '600', padding: '0.3rem 0.75rem',
-                  background: 'var(--color-primary)', color: 'var(--color-text-light)',
-                  borderRadius: 'var(--radius-pill)', border: 'none', cursor: 'pointer',
-                }}
-              >
-                Log in
-              </button>
-            )}
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </nav>
 
@@ -1123,7 +1088,7 @@ function App() {
             <button className="mobile-drawer-item" onClick={() => { handleViewEcosystem(); setMobileMenuOpen(false); }}>
               My Ecosystem {ecosystemCount > 0 && <span className="nav-ecosystem__pill">{ecosystemCount}</span>}
             </button>
-            <button className="mobile-drawer-item" onClick={() => { handleViewDiscovery(''); setMobileMenuOpen(false); }}>Product Discovery</button>
+            <button className="mobile-drawer-item" onClick={() => { handleViewDiscovery(''); setMobileMenuOpen(false); }}>Discover</button>
             <button className="mobile-drawer-item" onClick={() => { handleViewWaitlist(); setMobileMenuOpen(false); }}>Brands</button>
             <button className="mobile-drawer-item" onClick={() => { handleViewDeeptech(); setMobileMenuOpen(false); }}>Deeptech</button>
             <button className="mobile-drawer-item" onClick={() => { handleViewArticles(); setMobileMenuOpen(false); }}>My Health Library</button>
@@ -1141,31 +1106,18 @@ function App() {
           </div>
         )}
         </div>
-        )}
 
-        {currentView === 'welcome' && (
-          <WelcomeGate
-            onPersonalizedPath={handleStartQuiz}
-            onBrowsePath={() => {
-              if (!user) {
-                setPendingAction('browse'); pendingActionRef.current = 'browse';
-                setShowAuthModal(true);
-              } else {
-                handleViewDiscovery('');
-              }
-            }}
-            onWelcomePhaseChange={setWelcomeSubPhase}
-          />
-        )}
-        {currentView === 'hero' && (
-          <Hero
+        {(currentView === 'welcome' || currentView === 'hero') && (
+          <AynaLanding
             onStartQuiz={handleStartQuiz}
-            onViewWaitlist={handleViewWaitlist}
             onViewDiscovery={handleViewDiscovery}
+            onOpenProduct={handleOpenProduct}
+            onViewEcosystem={handleViewEcosystem}
             user={user}
             myProducts={myProducts}
             ecosystemCount={ecosystemCount}
-            onViewEcosystem={handleViewEcosystem}
+            hasProfile={!!quizResults}
+            profileCategories={landingProfileCategories}
           />
         )}
         {currentView === 'quiz' && (
@@ -1502,17 +1454,15 @@ function App() {
           />
         )}
       </main>
-      {!hideWelcomeIntroChrome && (
-        <SiteFooter
+      <SiteFooter
           onViewHowItWorks={handleViewHowItWorks}
           onViewDiscovery={handleViewDiscovery}
           onViewDeeptech={handleViewDeeptech}
           onViewWaitlist={handleViewWaitlist}
           onViewPrivacyPolicy={() => setCurrentView('privacy-policy')}
           onViewTermsOfUse={() => setCurrentView('terms-of-use')}
-          onViewHowWeMakeMoney={handleViewHowWeMakeMoney}
-        />
-      )}
+        onViewHowWeMakeMoney={handleViewHowWeMakeMoney}
+      />
     </div>
   );
 }
