@@ -57,7 +57,7 @@ const MACRO_GROUPS = [
     { id: 'all', label: 'All Products', icon: '🔍', categories: [] },
     { id: 'period-cycle', label: 'Period & Cycle Care', icon: '🩸', categories: ['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'cramp-relief'] },
     { id: 'hormonal-balance', label: 'Hormonal Balance', icon: '⚖️', categories: ['supplement', 'hormone-monitoring'] },
-    { id: 'gut-vaginal-urinary', label: 'Gut, Vaginal & Urinary', icon: '🌸', categories: ['intimate-care'] },
+    { id: 'gut-vaginal-urinary', label: 'Gut, Vaginal & Urinary', icon: '🌸', categories: ['intimate-care', 'incontinence'] },
     { id: 'fertility', label: 'Fertility & Reproductive Health', icon: '🤰', categories: ['fertility', 'pregnancy', 'postpartum', 'contraception'] },
     { id: 'menopause', label: 'Menopause & Perimenopause', icon: '🍂', categories: ['menopause'] },
     { id: 'pelvic-health', label: 'Pelvic Health', icon: '💪', categories: ['pelvic-floor', 'pelvic-health'] },

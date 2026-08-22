@@ -11,6 +11,7 @@ import { FILLER_PHYSICAL, FILLER_DIGITAL } from './categoryFillers.js';
 import { MVP_PHYSICAL, MVP_DIGITAL } from './mvpProducts.js';
 import { MENSTRUAL_PHYSICAL } from './menstrualProducts.js';
 import { BRAND_PRODUCTS } from './brands.js';
+import { INCONTINENCE_PHYSICAL } from './incontinenceProducts.js';
 import { inferTagsFromHealthProfile } from '../utils/healthDataProfile.js';
 
 // Tags used for quiz → product matching
@@ -762,7 +763,8 @@ export const ALL_PRODUCTS = [
     ...FILLER_PHYSICAL,
     ...FILLER_DIGITAL,
     ...MENSTRUAL_PHYSICAL,
-    ...BRAND_PRODUCTS
+    ...BRAND_PRODUCTS,
+    ...INCONTINENCE_PHYSICAL
 ].filter((p) => !isRxOnlyProduct(p));
 
 /**
@@ -816,6 +818,7 @@ export const CATEGORY_LABELS = {
     'pelvic-health': '💪 Pelvic Health',
     'cramp-relief': '⚡ Cramp Relief',
     'intimate-care': '🌸 Intimate Care',
+    'incontinence': '💧 Bladder Leak Protection',
     'menopause': '🍂 Menopause Support',
     'sex-tech': '🔥 Sexual Wellness',
     'postpartum': '🤱 Postpartum Recovery',
