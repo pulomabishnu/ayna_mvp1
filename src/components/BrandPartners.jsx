@@ -54,8 +54,8 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToE
         <div className="brands__kicker">Our partners</div>
         <h1 className="brands__title">Brands we work with.</h1>
         <p className="brands__lede">
-          Partnerships, not paid placement. A brand being here doesn&apos;t move it up your shop. 
-          matching is the same for every product Ayna carries.
+          Partnerships, not paid placement. A brand being here doesn&apos;t move it up your shop.
+          Matching is the same for every product Ayna carries.
         </p>
       </div>
 
