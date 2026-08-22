@@ -51,7 +51,7 @@ import { tagInternalUserIfNeeded } from './utils/posthogInternal';
 const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls'];
 const ABOUT_NAV_VIEWS = ['how-it-works', 'how-we-make-money', 'deeptech'];
 /** Landing boards (1a/1c) run the nav on the hero gradient; every other board is on cream. */
-const GRADIENT_NAV_VIEWS = ['welcome', 'hero'];
+const GRADIENT_NAV_VIEWS = ['welcome', 'hero', 'how-it-works'];
 
 /** "AO"-style monogram for the account circle, matching the mockup's avatar. */
 function accountMonogram(email) {
@@ -70,6 +70,7 @@ const VIEW_TO_PATH = {
   'privacy-policy': '/privacy-policy',
   'terms-of-use': '/terms-of-use',
   'how-we-make-money': '/how-we-make-money',
+  'how-it-works': '/how-it-works',
   'auth-callback': '/auth/callback',
   'confirmed': '/confirmed',
 };
@@ -508,6 +509,11 @@ function App() {
   const checkinDue = !!checkinCompletedAt && (Date.now() - new Date(checkinCompletedAt).getTime() > CHECKIN_INTERVAL_MS);
   const isScrolled = scrollY > 20;
   const navOnGradient = GRADIENT_NAV_VIEWS.includes(currentView);
+  // The gradient nav shares one painted canvas with the hero below it, so it
+  // has to know WHICH board's hero that is: 1a, 1c (returning) or 1j (About).
+  const navGradientVariant = currentView === 'how-it-works'
+    ? ' app-nav--about'
+    : (user && ecosystemCount > 0) ? ' app-nav--returning' : '';
   const accountInitials = accountMonogram(user?.email);
 
 
@@ -867,7 +873,7 @@ function App() {
       <main>
         <div style={{ position: 'relative', zIndex: 1001 }}>
         <nav
-          className={`app-nav ${navOnGradient ? 'app-nav--landing' : 'app-nav--cream'}${isScrolled ? ' app-nav--scrolled' : ''}`}
+          className={`app-nav ${navOnGradient ? `app-nav--landing${navGradientVariant}` : 'app-nav--cream'}${isScrolled ? ' app-nav--scrolled' : ''}`}
           aria-label="Primary"
         >
           <div className="app-nav__brand">
@@ -1205,7 +1211,7 @@ function App() {
           <HowWeMakeMoney onBack={() => window.history.back()} />
         )}
         {currentView === 'how-it-works' && (
-          <HowItWorks onBack={() => window.history.back()} />
+          <HowItWorks onBack={() => window.history.back()} onViewSources={handleViewArticles} />
         )}
         {currentView === 'auth-callback' && (
           <AuthCallback onAuthenticated={(user) => {
