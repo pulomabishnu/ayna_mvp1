@@ -66,6 +66,14 @@ const MACRO_GROUPS = [
     { id: 'telehealth', label: 'Telehealth & Care', icon: '🏥', categories: ['telehealth'] },
 ];
 
+/** Board 1h's four filter pills, mapped onto the existing macro-group / category filters. */
+const SHOP_FILTERS = [
+    { key: 'all', label: 'All', group: 'all', category: 'all' },
+    { key: 'cycle', label: 'Cycle', group: 'period-cycle', category: 'all' },
+    { key: 'postpartum', label: 'Postpartum', group: 'all', category: 'postpartum' },
+    { key: 'pelvic-floor', label: 'Pelvic floor', group: 'pelvic-health', category: 'all' },
+];
+
 // Kept for sub-filter pills within a selected group
 const ALL_CATEGORIES = ['all', 'pad', 'tampon', 'cup', 'disc', 'period-underwear', 'supplement', 'tracker', 'telehealth', 'mental-health', 'fitness', 'diagnostics', 'hormone-monitoring', 'menopause', 'fertility', 'pelvic-health', 'pelvic-floor', 'cramp-relief', 'postpartum', 'pregnancy', 'sex-tech', 'intimate-care', 'contraception'];
 
@@ -259,23 +267,8 @@ function padMatchesSubFilters(item, padFlow, padPreference, padUseCase) {
     return true;
 }
 
-function truncateCardSummary(text, max = 200) {
-    if (!text || typeof text !== 'string') return '';
-    const t = text.trim();
-    if (t.length <= max) return t;
-    // Prefer stopping at the end of a full sentence within the limit, so the
-    // card teaser reads as one complete thought instead of trailing off
-    // mid-clause — full detail is always one tap away in Details.
-    const truncated = t.slice(0, max);
-    const lastSentenceEnd = Math.max(truncated.lastIndexOf('. '), truncated.lastIndexOf('! '), truncated.lastIndexOf('? '));
-    if (lastSentenceEnd > max * 0.4) {
-        return truncated.slice(0, lastSentenceEnd + 1).trim();
-    }
-    return `${truncated.trimEnd()}…`;
-}
-
 export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null }) {
-    const [macroGroup] = useState(() => {
+    const [macroGroup, setMacroGroup] = useState(() => {
         if (!initialCategory || initialCategory === 'all') return 'all';
         return MACRO_GROUPS.find(g => g.categories.includes(initialCategory))?.id || 'all';
     });
@@ -503,6 +496,16 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         setVisibleCount(PAGE_SIZE);
     }
 
+    // Which of board 1h's pills is lit. A filter that arrived from a search or a
+    // landing chip may not correspond to any pill, in which case none is lit.
+    const activeShopFilter = useMemo(() => {
+        if (categoryFilter === 'postpartum') return 'postpartum';
+        if (macroGroup === 'period-cycle') return 'cycle';
+        if (macroGroup === 'pelvic-health' || categoryFilter === 'pelvic-floor') return 'pelvic-floor';
+        if (macroGroup === 'all' && categoryFilter === 'all') return 'all';
+        return null;
+    }, [macroGroup, categoryFilter]);
+
     const qTrimForAi = submittedQuery.trim();
 
     const enrichedAiSuggestions = useMemo(
@@ -708,62 +711,64 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     };
 
     return (
-        <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
-            <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-lg)', maxWidth: '700px', margin: '0 auto var(--spacing-lg)' }}>
-                <h2 style={{ fontFamily: 'var(--font-serif)', fontWeight: 500, fontSize: '2.25rem', marginBottom: '0.5rem' }}>Mirror mirror, on the wall...</h2>
-            </div>
-
-            {/* Smart Search */}
-            <div style={{ margin: '0 auto 2rem' }}>
-            <form
-                onSubmit={handleSmartSearch}
-                style={{
-                    display: 'flex',
-                    gap: '0.5rem',
-                    alignItems: 'center',
-                    flexWrap: 'wrap',
-                }}
-            >
-                <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => { setSearchQuery(e.target.value); if (!e.target.value.trim()) setSubmittedQuery(''); }}
-                    placeholder="Type in any product you're looking for..."
-                    style={{
-                        flex: '1 1 200px',
-                        minWidth: 0,
-                        padding: '1rem 1.25rem',
-                        fontSize: '1rem',
-                        borderRadius: 'var(--radius-pill)',
-                        border: '1px solid var(--color-border)',
-                        boxShadow: 'var(--shadow-sm)',
-                        outline: 'none'
-                    }}
-                    aria-label="Search products and articles"
-                />
-            </form>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', justifyContent: 'center', marginTop: '1rem' }}>
-                {searchSuggestions.map((term) => (
+        <section className="discovery-shop animate-fade-in-up">
+            {/* Board 1h header: Shop, the result count, filter pills, personalization toggle */}
+            <div className="mockup-page discovery-shop__head">
+                <div>
+                    <div className="discovery-shop__title">Shop</div>
+                    <div className="discovery-shop__count">
+                        {gridItems.length} product{gridItems.length === 1 ? '' : 's'}
+                        {personalizationFilter && (hasQuizFrustrations || hasHealthImport) ? ', matched to your health profile' : ''}
+                    </div>
+                </div>
+                <div className="discovery-shop__controls">
+                    <div className="discovery-shop__filters">
+                        {SHOP_FILTERS.map((f) => (
+                            <button
+                                key={f.key}
+                                type="button"
+                                className={activeShopFilter === f.key ? 'is-active' : undefined}
+                                onClick={() => { setMacroGroup(f.group); setCategoryFilter(f.category); }}
+                            >
+                                {f.label}
+                            </button>
+                        ))}
+                    </div>
                     <button
-                        key={term}
                         type="button"
-                        onClick={() => runSearch(term)}
-                        style={{
-                            padding: '0.5rem 1rem',
-                            borderRadius: 'var(--radius-pill)',
-                            border: '1px solid var(--color-border)',
-                            background: 'var(--color-surface-soft)',
-                            color: 'var(--color-text-main)',
-                            fontSize: '0.85rem',
-                            cursor: 'pointer',
-                        }}
+                        className="discovery-shop__personalize"
+                        role="switch"
+                        aria-checked={personalizationFilter}
+                        onClick={() => setPersonalizationFilter((v) => !v)}
                     >
-                        {term}
+                        Personalized
+                        <span className={`discovery-shop__switch ${personalizationFilter ? 'is-on' : ''}`}>
+                            <span />
+                        </span>
                     </button>
-                ))}
-            </div>
+                </div>
             </div>
 
+            <div className="mockup-page discovery-shop__search">
+                <form onSubmit={handleSmartSearch}>
+                    <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => { setSearchQuery(e.target.value); if (!e.target.value.trim()) setSubmittedQuery(''); }}
+                        placeholder="What are you looking for?"
+                        aria-label="Search products and articles"
+                    />
+                </form>
+                <div className="discovery-shop__suggestions">
+                    {searchSuggestions.map((term) => (
+                        <button key={term} type="button" onClick={() => runSearch(term)}>
+                            {term}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+          <div className="mockup-page">
             {/* Loading state for explicit search */}
             {searchSubmitted && aiLoading && (
                 <>
@@ -786,7 +791,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             {/* Product Grid */}
             {(!searchSubmitted || !aiLoading) && (
             <>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(252px, 1fr))', gap: '1.5rem' }}>
+            <div className="discovery-grid">
                 {gridItems.slice(0, visibleCount).map((item, idx) => {
                     const isStartup = item.isStartup === true;
                     const releasedStartup = isStartup && item.productReleased === true;
@@ -800,229 +805,84 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     // block, so a card that was actively loading looked permanently
                     // image-less rather than in progress.
                     const imageStillLoading = resolvedImages[item.id] === undefined && isPlaceholderProductImage(item.image);
+
+                    // Board 1h puts one small badge in the tile's top-left corner.
+                    const badge = recommendedSet?.has(item.id) ? 'MATCH'
+                        : isStartup ? 'STARTUP'
+                        : item.category === 'telehealth' ? 'TELEHEALTH'
+                        : item.type === 'digital' ? 'APP'
+                        : item.isEmergingBrand ? 'BRAND'
+                        : null;
+
+                    const eyebrow = String(CATEGORY_LABELS[item.category] || item.category || 'Startup')
+                        .replace(/^[^\w]+\s*/, '')
+                        .toUpperCase();
+
+                    const displayRating = getAynaRating(item, aynaReviews[item.id]) ?? item.userRating;
+
                     return (
-                        <div key={item.id} className="card hover-lift" style={{
-                            padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column',
-                            animation: `fadeInUp 0.4s ${Math.min(idx * 0.05, 0.3)}s backwards`,
-                            border: (isInEcosystem || isJoined) ? '2px solid var(--color-primary)' : '1px solid var(--color-border)'
-                        }}>
-                            <div style={{ height: '118px', width: '100%', overflow: 'hidden', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-secondary-fade, #fdf2f4)' }}>
+                        <div
+                            key={item.id}
+                            className="discovery-card"
+                            role="button"
+                            tabIndex={0}
+                            aria-label={`${item.name} — open details`}
+                            onClick={() => onOpenProduct(item)}
+                            onKeyDown={(e) => {
+                                if (e.key !== 'Enter' && e.key !== ' ') return;
+                                e.preventDefault();
+                                onOpenProduct(item);
+                            }}
+                            style={{ animation: `fadeInUp 0.4s ${Math.min(idx * 0.05, 0.3)}s backwards` }}
+                        >
+                            <div className="discovery-card__tile">
                                 {cardImageSrc && !isPlaceholderProductImage(cardImageSrc) ? (
-                                    <>
-                                        <img
-                                            src={cardImageSrc}
-                                            alt={item.name}
-                                            style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }}
-                                            onError={(e) => {
-                                                e.target.onerror = null;
-                                                e.target.style.display = 'none';
-                                                e.target.nextElementSibling.style.display = 'flex';
-                                            }}
-                                        />
-                                        <div style={{ display: 'none', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.25rem', padding: '1rem', textAlign: 'center' }}>
-                                            <span style={{ fontSize: '1.4rem', fontWeight: '900', color: 'var(--color-text-muted)', letterSpacing: '0.02em' }}>{item.brand || item.name}</span>
-                                        </div>
-                                    </>
+                                    <img
+                                        src={cardImageSrc}
+                                        alt=""
+                                        loading="lazy"
+                                        onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                                    />
                                 ) : imageStillLoading ? (
                                     <div className="skeleton-shimmer" style={{ position: 'absolute', inset: 0 }} aria-hidden="true" />
                                 ) : (
-                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.25rem', padding: '1rem', textAlign: 'center' }}>
-                                        <span style={{ fontSize: '1.4rem', fontWeight: '900', color: 'var(--color-text-muted)', letterSpacing: '0.02em' }}>{item.brand || item.name}</span>
-                                    </div>
-                                )}
-                                <div style={{ position: 'absolute', top: '0.5rem', left: '0.5rem', display: 'flex', gap: '0.3rem' }}>
-                                    {isStartup ? (
-                                        <span style={{
-                                            background: 'var(--color-primary-hover)',
-                                            color: 'white', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)',
-                                            fontSize: '0.65rem', fontWeight: '600', textTransform: 'uppercase'
-                                        }}>
-                                            Startup
-                                        </span>
-                                    ) : item.category === 'telehealth' ? (
-                                        <span style={{
-                                            background: 'var(--color-primary)',
-                                            color: 'white', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)',
-                                            fontSize: '0.65rem', fontWeight: '600', textTransform: 'uppercase'
-                                        }}>
-                                            Telehealth
-                                        </span>
-                                    ) : item.type === 'digital' ? (
-                                        <span style={{
-                                            background: 'var(--color-primary)',
-                                            color: 'white', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)',
-                                            fontSize: '0.65rem', fontWeight: '600', textTransform: 'uppercase'
-                                        }}>
-                                            App
-                                        </span>
-                                    ) : null}
-                                    {item.isEmergingBrand && (
-                                        <span style={{
-                                            background: 'var(--color-primary)', color: 'white',
-                                            padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)',
-                                            fontSize: '0.65rem', fontWeight: '600', textTransform: 'uppercase'
-                                        }}>
-                                            Brand
-                                        </span>
-                                    )}
-                                </div>
-                                {isInEcosystem && (
-                                    <span style={{
-                                        position: 'absolute', top: '0.5rem', right: '0.5rem',
-                                        background: '#10B981', color: 'white', padding: '0.2rem 0.5rem',
-                                        borderRadius: 'var(--radius-pill)', fontSize: '0.65rem', fontWeight: '600'
-                                    }}>
-                                        In ecosystem
+                                    <span className="discovery-card__initial" aria-hidden="true">
+                                        {String(item.brand || item.name || '?').trim().charAt(0).toUpperCase()}
                                     </span>
                                 )}
-                                {isJoined && (
-                                    <span style={{
-                                        position: 'absolute', top: '0.5rem', right: '0.5rem',
-                                        background: 'var(--color-primary)', color: 'white', padding: '0.2rem 0.5rem',
-                                        borderRadius: 'var(--radius-pill)', fontSize: '0.65rem', fontWeight: '600'
-                                    }}>
-                                        On Waitlist
-                                    </span>
-                                )}
-                                {item.outOfBusiness && (
-                                    <span style={{
-                                        position: 'absolute', bottom: '0.5rem', left: '0.5rem',
-                                        background: '#374151', color: 'white', padding: '0.3rem 0.6rem',
-                                        borderRadius: 'var(--radius-pill)', fontSize: '0.7rem', fontWeight: '700'
-                                    }}>
-                                        No longer sold
-                                    </span>
-                                )}
+                                {badge && <span className="discovery-card__badge">{badge}</span>}
+                                <button
+                                    type="button"
+                                    className={`discovery-card__heart ${isInEcosystem ? 'is-on' : ''}`}
+                                    aria-pressed={isInEcosystem}
+                                    aria-label={isInEcosystem ? `Remove ${item.name} from your ecosystem` : `Add ${item.name} to your ecosystem`}
+                                    onClick={(e) => { e.stopPropagation(); onToggleProduct(item); }}
+                                >
+                                    {isInEcosystem ? '♥' : '♡'}
+                                </button>
                             </div>
-                            <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-                                <span style={{ color: 'var(--color-amber-deep)', fontFamily: 'var(--font-label)', fontSize: '0.65rem', fontWeight: '500', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '0.35rem' }}>
-                                    {CATEGORY_LABELS[item.category] || (item.category && item.category.charAt(0) + item.category.slice(1)) || 'Startup'}
-                                </span>
-                                <h3 style={{ fontFamily: 'var(--font-serif)', fontWeight: 500, fontSize: '1.1rem', marginBottom: '0.25rem' }}>{item.name}</h3>
-                                {item.outOfBusiness && (
-                                    <div style={{ marginBottom: '0.75rem', padding: '0.5rem 0.75rem', background: '#374151', color: 'white', borderRadius: 'var(--radius-md)', fontSize: '0.8rem', fontWeight: '700' }}>
-                                        This company has closed. We kept this page so you can still check safety info if you already own the product.
-                                    </div>
-                                )}
-                                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.8rem', flexGrow: 1, marginBottom: '0.75rem', lineHeight: '1.45' }}>
-                                    {truncateCardSummary(item.isStartup ? item.tagline : item.summary, item.llmGenerated ? 130 : 160)}
-                                </p>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
-                                    <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>
-                                        {item.isStartup ? item.stage : item.price}
-                                        {!item.isStartup && perUnitPrice ? (
-                                            <span style={{ display: 'block', fontSize: '0.72rem', fontWeight: '500', color: 'var(--color-text-muted)' }}>
-                                                {perUnitPrice}
-                                            </span>
-                                        ) : null}
-                                    </span>
-                                    {(() => {
-                                        const note = item.ratingNote;
-                                        if (item.aiEstimatedRating && item.userRating != null) {
-                                            return (
-                                                <span
-                                                    style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}
-                                                    title="Estimated by AI — Ayna has not checked this one"
-                                                >
-                                                    ★ {Number(item.userRating).toFixed(1)}
-                                                </span>
-                                            );
-                                        }
-                                        if (note) {
-                                            return (
-                                                <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', fontStyle: 'italic' }} title={note}>—</span>
-                                            );
-                                        }
-                                        const displayRating = getAynaRating(item, aynaReviews[item.id]) ?? item.userRating;
-                                        const hasRating = displayRating != null;
-                                        const tooltip = aynaReviews[item.id]?.ratings?.length
-                                            ? "Ayna's rating (includes ratings from other users)"
-                                            : hasRating ? 'Based on user reviews, doctor opinions, and research' : null;
-                                        if (hasRating) {
-                                            return (
-                                                <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }} title={tooltip}>★ {Number(displayRating).toFixed(1)}</span>
-                                            );
-                                        }
-                                        return null;
-                                    })()}
-                                    <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
-                                        {item.isStartup ? (
-                                            releasedStartup ? (
-                                                <>
-                                                    <button
-                                                        className={`btn ${isInEcosystem ? 'btn-outline' : 'btn-primary'}`}
-                                                        style={{
-                                                            padding: '0.35rem 0.7rem',
-                                                            fontSize: '0.75rem',
-                                                        }}
-                                                        onClick={() => onToggleProduct(item)}
-                                                    >
-                                                        {isInEcosystem ? '✓' : 'Add to ecosystem'}
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        className="btn btn-outline"
-                                                        style={{ padding: '0.35rem 0.7rem', fontSize: '0.75rem' }}
-                                                        onClick={() => setCurrentView?.('recalls')}
-                                                    >
-                                                        Monitor recalls
-                                                    </button>
-                                                    {(item.url || (item.whereToBuy && item.whereToBuy.length > 0)) && (
-                                                        <div style={{ width: '100%', marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid var(--color-border)' }}>
-                                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem', alignItems: 'center', fontSize: '0.75rem' }}>
-                                                                {item.url && item.url !== '#' && (item.url.startsWith('http://') || item.url.startsWith('https://')) && (
-                                                                    <a href={item.url.startsWith('http') ? item.url : `https://${item.url}`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: '600', textDecoration: 'none' }}>
-                                                                        Website ↗
-                                                                    </a>
-                                                                )}
-                                                                {(item.whereToBuy || []).map(shop => {
-                                                                    const getStoreUrl = (s, q) => {
-                                                                        if (!s || typeof s !== 'string') return 'https://www.google.com/search?q=women+health+products';
-                                                                        const norm = s.trim().toLowerCase().replace(/\s+/g, '');
-                                                                        if (/^[a-z0-9][a-z0-9.-]*\.(com|io|co|life|health|org|net)$/i.test(norm)) return norm.startsWith('http') ? norm : `https://${norm}`;
-                                                                        if (norm.includes('amazon')) return `https://www.amazon.com/s?k=${encodeURIComponent(q || '')}`;
-                                                                        if (norm.includes('target')) return `https://www.target.com/s?searchTerm=${encodeURIComponent(q || '')}`;
-                                                                        if (norm.includes('walmart')) return `https://www.walmart.com/search?q=${encodeURIComponent(q || '')}`;
-                                                                        if (norm.includes('cvs')) return `https://www.cvs.com/shop/search?searchTerm=${encodeURIComponent(q || '')}`;
-                                                                        if (norm.includes('iherb')) return `https://www.iherb.com/search?kw=${encodeURIComponent(q || '')}`;
-                                                                        return `https://www.google.com/search?q=${encodeURIComponent((q || '') + ' ' + (s || ''))}`;
-                                                                    };
-                                                                    const url = item.whereToBuyLinks?.[shop] || getStoreUrl(shop, item.name);
-                                                                    return (
-                                                                        <a key={shop} href={typeof url === 'string' && url.startsWith('http') ? url : getStoreUrl(shop, item.name)} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'none' }}>
-                                                                            {shop} ↗
-                                                                        </a>
-                                                                    );
-                                                                })}
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                </>
-                                            ) : (
-                                                <button
-                                                    className={`btn ${isJoined ? 'btn-outline' : 'btn-primary'}`}
-                                                    style={{
-                                                        padding: '0.35rem 0.7rem',
-                                                        fontSize: '0.75rem',
-                                                    }}
-                                                    onClick={() => toggleJoinWaitlist(item)}
-                                                >
-                                                    {isJoined ? 'Leave' : 'Join'}
-                                                </button>
-                                            )
-                                        ) : (
-                                            <>
-                                                <button className="btn btn-outline" style={{ padding: '0.35rem 0.7rem', fontSize: '0.75rem' }} onClick={() => onToggleProduct(item)}>
-                                                    {isInEcosystem ? '✓' : '+'}
-                                                </button>
-                                                <button className="btn btn-primary" style={{ padding: '0.35rem 0.7rem', fontSize: '0.75rem' }} onClick={() => onOpenProduct(item)}>
-                                                    Details
-                                                </button>
-                                            </>
-                                        )}
-                                    </div>
-                                </div>
+
+                            <div className="discovery-card__eyebrow">{eyebrow}</div>
+                            <div className="discovery-card__name">{item.name}</div>
+                            <div className="discovery-card__price">
+                                {isStartup ? item.stage : item.price}
+                                {!isStartup && perUnitPrice ? ` · ${perUnitPrice}` : ''}
+                                {displayRating != null ? ` · ★ ${Number(displayRating).toFixed(1)}` : ''}
                             </div>
+
+                            {item.outOfBusiness && (
+                                <div className="discovery-card__flag">No longer sold — kept so you can still check safety info</div>
+                            )}
+
+                            {isStartup && !releasedStartup && (
+                                <button
+                                    type="button"
+                                    className="discovery-card__join"
+                                    onClick={(e) => { e.stopPropagation(); toggleJoinWaitlist(item); }}
+                                >
+                                    {isJoined ? 'On the waitlist' : 'Join waitlist'}
+                                </button>
+                            )}
                         </div>
                     );
                 })}
@@ -1117,6 +977,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     </div>
                 </div>
             )}
+          </div>
             <Disclaimer compact style={{ marginTop: '2rem', textAlign: 'center' }} />
         </section>
     );
