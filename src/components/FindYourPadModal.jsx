@@ -79,7 +79,7 @@ export default function FindYourPadModal({ onClose, onFind }) {
                                         fontSize: '0.95rem',
                                     }}
                                 >
-                                    <strong>{o.label}</strong> — {o.desc}
+                                    <strong>{o.label}</strong>. {o.desc}
                                 </button>
                             ))}
                         </div>
@@ -105,7 +105,7 @@ export default function FindYourPadModal({ onClose, onFind }) {
                                         fontSize: '0.95rem',
                                     }}
                                 >
-                                    <strong>{o.label}</strong> — {o.desc}
+                                    <strong>{o.label}</strong>. {o.desc}
                                 </button>
                             ))}
                         </div>
@@ -132,7 +132,7 @@ export default function FindYourPadModal({ onClose, onFind }) {
                                         fontSize: '0.95rem',
                                     }}
                                 >
-                                    <strong>{o.label}</strong> — {o.desc}
+                                    <strong>{o.label}</strong>. {o.desc}
                                 </button>
                             ))}
                         </div>

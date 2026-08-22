@@ -77,7 +77,7 @@ export default function SiteFooter({
             color: '#6f6880',
             marginTop: '16px',
           }}>
-            Personalized women's health discovery — matched to your body, your goals, your data.
+            Personalized women's health discovery. Matched to your body, your goals, your data.
           </div>
         </div>
 
@@ -117,7 +117,7 @@ export default function SiteFooter({
       </div>
 
       <div className="site-footer__legal">
-        Ayna provides wellness information only — not medical advice. Always consult a qualified
+        Ayna provides wellness information only. Not medical advice. Always consult a qualified
         healthcare provider for medical decisions. By using Ayna, you agree your data is stored
         securely and never sold.
         {' '}

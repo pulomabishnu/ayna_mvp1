@@ -37,7 +37,7 @@ export default function LlmRecommendationsLoadingBlock({ loadStartedAt, compact 
             <p style={{ fontSize: compact ? '0.82rem' : '0.88rem', marginTop: '0.5rem', fontWeight: '600', color: 'var(--color-text-main)' }}>
                 {remainingSec > 0
                     ? `About ${remainingSec}s remaining`
-                    : 'Almost done — finalizing your ecosystem…'}
+                    : 'Almost done. Finalizing your ecosystem…'}
             </p>
             <div
                 role="progressbar"

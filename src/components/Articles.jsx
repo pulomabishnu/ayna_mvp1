@@ -223,10 +223,10 @@ function TelehealthSuggestions({ articleId, onOpenProduct }) {
           </p>
           <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
             <li style={{ marginBottom: '0.35rem' }}>
-              <a href="https://www.plannedparenthood.org/health-center" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Planned Parenthood — enter zip to find locations</a>
+              <a href="https://www.plannedparenthood.org/health-center" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Planned Parenthood. Enter zip to find locations</a>
             </li>
             <li>
-              <a href="https://findahealthcenter.hrsa.gov/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>HRSA — Federally qualified health centers by zip</a>
+              <a href="https://findahealthcenter.hrsa.gov/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>HRSA: Federally qualified health centers by zip</a>
             </li>
           </ul>
         </div>
@@ -241,7 +241,7 @@ function TelehealthSuggestions({ articleId, onOpenProduct }) {
             Relevant telehealth options for this topic. {onOpenProduct ? 'Click a name to open the product card.' : ''}
           </p>
           <p style={{ color: 'var(--color-text-muted)', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
-            <a href="https://www.plannedparenthood.org/get-care" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Planned Parenthood — get care (telehealth & in-person)</a>
+            <a href="https://www.plannedparenthood.org/get-care" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Planned Parenthood. Get care (telehealth & in-person)</a>
           </p>
           {platforms.length === 0 ? (
             <p style={{ color: 'var(--color-text-muted)', margin: 0, fontSize: '0.9rem' }}>No other telehealth platforms match this topic. See Find clinics near you above for more options.</p>
@@ -273,7 +273,7 @@ function TelehealthSuggestions({ articleId, onOpenProduct }) {
                     ) : (
                       <strong>{t.name}</strong>
                     )}
-                    {displayPrice && <span style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}> — {displayPrice}</span>}
+                    {displayPrice && <span style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>. {displayPrice}</span>}
                     {displaySummary && <span style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', display: 'block', marginTop: '0.15rem' }}>{displaySummary}</span>}
                   </li>
                 );
@@ -366,7 +366,7 @@ function DiagnosticProductsAndStartups({ articleId, quizResults, healthProfile, 
                       Startup
                     </span>
                   )}
-                  {price && <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>— {price}</span>}
+                  {price && <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>. {price}</span>}
                 </div>
                 {summary && (
                   <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', margin: 0, lineHeight: 1.4 }}>
@@ -397,7 +397,7 @@ const ARTICLES = [
     body: (
       <>
         <p>The vagina is self-cleaning and maintains its own pH and bacterial balance. Douching is not recommended by major medical organizations and can increase the risk of bacterial vaginosis, yeast infection, and pelvic inflammatory disease. For the vulva (the external skin), warm water alone is often sufficient for daily hygiene.</p>
-        <p>If you choose to use a cleanser—for example after exercise or for personal preference—clinicians advise selecting one that is fragrance-free, pH-balanced (around 3.5–4.5 for the vulvar area), and labeled for external use only. Avoid anything that goes inside the vagina, as well as scented soaps, body washes with strong surfactants, and vaginal deodorants or sprays.</p>
+        <p>If you choose to use a cleanser. For example after exercise or for personal preference. Clinicians advise selecting one that is fragrance-free, pH-balanced (around 3.5–4.5 for the vulvar area), and labeled for external use only. Avoid anything that goes inside the vagina, as well as scented soaps, body washes with strong surfactants, and vaginal deodorants or sprays.</p>
         <p><strong>Key guidelines (from UpToDate, ACOG, and CDC):</strong></p>
         <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
           <li>Avoid douching, scented soaps, and vaginal deodorants.</li>
@@ -460,7 +460,7 @@ const ARTICLES = [
     teaser: 'Evidence-backed ways to reduce UTI risk and when to see a clinician for recurrent infections.',
     body: (
       <>
-        <p>Recurrent urinary tract infections (UTIs) are common, especially in women. Evidence-supported prevention strategies include drinking adequate fluids, urinating after intercourse, and—when recommended by a clinician—prophylactic low-dose antibiotics or topical estrogen for postmenopausal people (to support vaginal and urethral tissue). Cranberry products are sometimes used; evidence on effectiveness is mixed, and they are not a substitute for medical evaluation if you have frequent UTIs.</p>
+        <p>Recurrent urinary tract infections (UTIs) are common, especially in women. Evidence-supported prevention strategies include drinking adequate fluids, urinating after intercourse, and. When recommended by a clinician. Prophylactic low-dose antibiotics or topical estrogen for postmenopausal people (to support vaginal and urethral tissue). Cranberry products are sometimes used; evidence on effectiveness is mixed, and they are not a substitute for medical evaluation if you have frequent UTIs.</p>
         <p>If you have recurrent UTIs (e.g., several per year), it’s important to see a clinician. They can rule out structural or other causes and tailor a prevention or treatment plan, which might include behavioral changes, short-course antibiotics, or post-coital prophylaxis. Self-treating repeatedly without evaluation can mask other conditions or lead to resistance.</p>
         <p><strong>Sources:</strong></p>
         <ul style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
@@ -479,7 +479,7 @@ const ARTICLES = [
     teaser: 'What causes yeast infections, how to recognize them, when to treat at home vs. see a clinician, and how to prevent recurrence.',
     body: (
       <>
-        <p>Vulvovaginal candidiasis (yeast infection) is common and is usually caused by the fungus <em>Candida albicans</em>. Symptoms often include itching, burning, redness, and a thick white discharge. Many people can recognize recurring yeast infections and use an over-the-counter antifungal (e.g., clotrimazole, miconazole) with success, but it’s important not to self-diagnose if you’re unsure—other conditions (like bacterial vaginosis or sexually transmitted infections) can look similar and need different treatment.</p>
+        <p>Vulvovaginal candidiasis (yeast infection) is common and is usually caused by the fungus <em>Candida albicans</em>. Symptoms often include itching, burning, redness, and a thick white discharge. Many people can recognize recurring yeast infections and use an over-the-counter antifungal (e.g., clotrimazole, miconazole) with success, but it’s important not to self-diagnose if you’re unsure. Other conditions (like bacterial vaginosis or sexually transmitted infections) can look similar and need different treatment.</p>
         <p>See a clinician if this is your first time with these symptoms, if OTC treatment hasn’t helped after a few days, if you have severe symptoms, or if infections keep coming back. Recurrent yeast infections may need a longer course of treatment or maintenance therapy. Avoiding unnecessary antibiotics, wearing breathable underwear, and limiting douches and scented products can help reduce the risk of recurrence.</p>
         <p><strong>Sources:</strong></p>
         <ul style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
@@ -498,7 +498,7 @@ const ARTICLES = [
     teaser: 'Normal cramps vs. signs that something else may be going on, and what treatments and workups clinicians may suggest.',
     body: (
       <>
-        <p>Mild to moderate menstrual cramps are common and often improve with over-the-counter pain relievers (e.g., ibuprofen, naproxen), heat, and exercise. For some people, period pain is severe enough to affect daily life—this is sometimes called dysmenorrhea and can be primary (no underlying condition) or secondary (due to conditions such as endometriosis, fibroids, or adenomyosis).</p>
+        <p>Mild to moderate menstrual cramps are common and often improve with over-the-counter pain relievers (e.g., ibuprofen, naproxen), heat, and exercise. For some people, period pain is severe enough to affect daily life. This is sometimes called dysmenorrhea and can be primary (no underlying condition) or secondary (due to conditions such as endometriosis, fibroids, or adenomyosis).</p>
         <p>It’s worth seeing a clinician if your cramps are severe, suddenly worse than usual, or don’t respond to OTC options; if you have heavy bleeding, pain between periods, or pain with sex; or if you’re missing school or work regularly because of period symptoms. A clinician can help rule out other causes and suggest treatments such as hormonal birth control, prescription pain relievers, or further evaluation (e.g., ultrasound) if needed.</p>
         <p><strong>Sources:</strong></p>
         <ul style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
@@ -514,11 +514,11 @@ const ARTICLES = [
     title: 'PCOS: What It Is and How It\'s Managed',
     source: 'ACOG, Endocrine Society, UpToDate',
     tags: ['Hormones', 'Reproductive health'],
-    teaser: 'Polycystic ovary syndrome explained — diagnosis, symptoms, and evidence-based treatment options including lifestyle and medication.',
+    teaser: 'Polycystic ovary syndrome explained. Diagnosis, symptoms, and evidence-based treatment options including lifestyle and medication.',
     body: (
       <>
         <p>Polycystic ovary syndrome (PCOS) is a common hormonal condition that affects how the ovaries work. Diagnosis is based on criteria that may include irregular or absent periods, high androgen levels (e.g., excess hair growth, acne), and/or polycystic-appearing ovaries on ultrasound. Not everyone has all features; a clinician makes the diagnosis and rules out other conditions (e.g., thyroid, prolactin).</p>
-        <p>Management focuses on your goals and symptoms: cycle regulation (often with birth control or metformin), improving insulin sensitivity (lifestyle, metformin, inositol in some cases), and treating acne or excess hair. Lifestyle changes—balanced diet, regular exercise, and weight management when relevant—are first-line and can improve both metabolic and reproductive outcomes. If you're trying to conceive, ovulation induction or other fertility treatments may be recommended.</p>
+        <p>Management focuses on your goals and symptoms: cycle regulation (often with birth control or metformin), improving insulin sensitivity (lifestyle, metformin, inositol in some cases), and treating acne or excess hair. Lifestyle changes. Balanced diet, regular exercise, and weight management when relevant. Are first-line and can improve both metabolic and reproductive outcomes. If you're trying to conceive, ovulation induction or other fertility treatments may be recommended.</p>
         <p><strong>When to seek care:</strong> Irregular periods, unexplained weight changes, severe acne or excess hair, or difficulty conceiving. Early diagnosis and treatment can reduce long-term risks (e.g., diabetes, cardiovascular).</p>
         <p><strong>Sources:</strong></p>
         <ul style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
@@ -538,7 +538,7 @@ const ARTICLES = [
     body: (
       <>
         <p>The pelvic floor is a group of muscles and tissues that support the bladder, uterus, vagina, and rectum. Dysfunction can mean these muscles are too tight (holding tension, pain with sex or insertion, constipation), too weak (leaking with cough or exercise, pelvic pressure), or uncoordinated. Causes can include childbirth, surgery, chronic straining, or prolonged sitting.</p>
-        <p>Pelvic floor physical therapy (PFPT) is the mainstay of treatment: a specially trained PT evaluates and treats with internal and external techniques, exercises, and lifestyle guidance. At-home tools—such as dilators, pelvic wands, or biofeedback devices—are often used as part of a prescribed plan. It's important not to self-treat with devices if you have pain or unexplained symptoms; a clinician or pelvic PT can tailor a safe plan.</p>
+        <p>Pelvic floor physical therapy (PFPT) is the mainstay of treatment: a specially trained PT evaluates and treats with internal and external techniques, exercises, and lifestyle guidance. At-home tools. Such as dilators, pelvic wands, or biofeedback devices. Are often used as part of a prescribed plan. It's important not to self-treat with devices if you have pain or unexplained symptoms; a clinician or pelvic PT can tailor a safe plan.</p>
         <p><strong>When to seek care:</strong> Leaking urine or stool, pain with sex or tampon use, persistent pelvic pain, pressure or bulging, or difficulty emptying. Early evaluation can prevent worsening and improve quality of life.</p>
         <p><strong>Sources:</strong></p>
         <ul style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
@@ -554,7 +554,7 @@ const ARTICLES = [
     title: 'Endometriosis: Symptoms, Diagnosis, and Care',
     source: 'ACOG, EndoFound, UpToDate',
     tags: ['Chronic pain', 'Reproductive health'],
-    teaser: 'What endometriosis is, how it\'s diagnosed, and treatment options — from pain management to surgery and fertility support.',
+    teaser: 'What endometriosis is, how it\'s diagnosed, and treatment options. From pain management to surgery and fertility support.',
     body: (
       <>
         <p>Endometriosis is a condition where tissue similar to the uterine lining grows outside the uterus (e.g., on the ovaries, pelvic lining, bowel). It can cause painful periods, chronic pelvic pain, pain with sex, and sometimes bowel or bladder symptoms. In some people it also affects fertility. Diagnosis can be suspected by history and exam; imaging (ultrasound, sometimes MRI) or laparoscopy may be used to confirm.</p>
@@ -577,9 +577,9 @@ const ARTICLES = [
     teaser: 'What causes BV, how it differs from a yeast infection, treatment options, and why it tends to recur.',
     body: (
       <>
-        <p>Bacterial vaginosis (BV) is the most common vaginal condition in people of reproductive age. It occurs when the balance of bacteria in the vagina is disrupted — the protective <em>Lactobacillus</em> bacteria decrease while other bacteria overgrow. BV is not an STI, but having it can increase susceptibility to STIs. Symptoms include a thin, grayish-white discharge with a fishy odor, especially after sex. Many people have no symptoms at all.</p>
-        <p>BV is treated with antibiotics (metronidazole or clindamycin, oral or vaginal). Recurrence is common — up to 50% within a year. Strategies that may help reduce recurrence include using condoms consistently, avoiding douching, and in some cases using boric acid suppositories or probiotic regimens (discuss with your clinician first). If BV keeps coming back, a clinician can assess whether suppressive therapy is appropriate.</p>
-        <p><strong>When to seek care:</strong> Unusual discharge, odor, or irritation — especially if symptoms don't improve with OTC treatments or keep coming back. BV during pregnancy needs treatment to reduce risk of complications.</p>
+        <p>Bacterial vaginosis (BV) is the most common vaginal condition in people of reproductive age. It occurs when the balance of bacteria in the vagina is disrupted. The protective <em>Lactobacillus</em> bacteria decrease while other bacteria overgrow. BV is not an STI, but having it can increase susceptibility to STIs. Symptoms include a thin, grayish-white discharge with a fishy odor, especially after sex. Many people have no symptoms at all.</p>
+        <p>BV is treated with antibiotics (metronidazole or clindamycin, oral or vaginal). Recurrence is common. Up to 50% within a year. Strategies that may help reduce recurrence include using condoms consistently, avoiding douching, and in some cases using boric acid suppositories or probiotic regimens (discuss with your clinician first). If BV keeps coming back, a clinician can assess whether suppressive therapy is appropriate.</p>
+        <p><strong>When to seek care:</strong> Unusual discharge, odor, or irritation. Especially if symptoms don't improve with OTC treatments or keep coming back. BV during pregnancy needs treatment to reduce risk of complications.</p>
         <p><strong>Sources:</strong></p>
         <ul style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
           <li><a href="https://www.cdc.gov/std/bv/default.htm" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>CDC – Bacterial vaginosis</a></li>
@@ -597,9 +597,9 @@ const ARTICLES = [
     teaser: 'How PMDD differs from PMS, what causes it, and evidence-based treatments including SSRIs, hormonal options, and lifestyle support.',
     body: (
       <>
-        <p>Premenstrual dysphoric disorder (PMDD) is a severe, cyclical mood disorder linked to hormonal fluctuations in the luteal phase (the week or two before a period). Unlike PMS, PMDD significantly impairs daily functioning — symptoms may include intense mood swings, irritability or anger, depression, anxiety, hopelessness, fatigue, difficulty concentrating, and physical symptoms. Symptoms typically resolve within a few days of menstruation starting.</p>
-        <p>PMDD is a recognized medical condition and is treatable. First-line treatments include SSRIs (e.g., fluoxetine, sertraline), which can be taken daily or only during the luteal phase. Hormonal approaches — such as combined oral contraceptives or GnRH agonists — are also used in some cases. Lifestyle strategies (regular exercise, sleep hygiene, stress management, and dietary changes) can support but usually don't replace medical treatment for moderate-to-severe PMDD. A clinician can help confirm the diagnosis (often using a symptom diary over 2 cycles) and recommend a treatment plan.</p>
-        <p><strong>When to seek care:</strong> If premenstrual mood symptoms are severe enough to affect relationships, work, or daily life — especially if you've ever had thoughts of self-harm. PMDD is underdiagnosed; you deserve support.</p>
+        <p>Premenstrual dysphoric disorder (PMDD) is a severe, cyclical mood disorder linked to hormonal fluctuations in the luteal phase (the week or two before a period). Unlike PMS, PMDD significantly impairs daily functioning. Symptoms may include intense mood swings, irritability or anger, depression, anxiety, hopelessness, fatigue, difficulty concentrating, and physical symptoms. Symptoms typically resolve within a few days of menstruation starting.</p>
+        <p>PMDD is a recognized medical condition and is treatable. First-line treatments include SSRIs (e.g., fluoxetine, sertraline), which can be taken daily or only during the luteal phase. Hormonal approaches. Such as combined oral contraceptives or GnRH agonists. Are also used in some cases. Lifestyle strategies (regular exercise, sleep hygiene, stress management, and dietary changes) can support but usually don't replace medical treatment for moderate-to-severe PMDD. A clinician can help confirm the diagnosis (often using a symptom diary over 2 cycles) and recommend a treatment plan.</p>
+        <p><strong>When to seek care:</strong> If premenstrual mood symptoms are severe enough to affect relationships, work, or daily life. Especially if you've ever had thoughts of self-harm. PMDD is underdiagnosed; you deserve support.</p>
         <p><strong>Sources:</strong></p>
         <ul style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
           <li><a href="https://www.acog.org/womens-health/faqs/premenstrual-syndrome" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Premenstrual syndrome (PMS)</a></li>
@@ -617,7 +617,7 @@ const ARTICLES = [
     teaser: 'What fibroids are, why they cause heavy bleeding and pain, and the range of treatment options from watchful waiting to surgery.',
     body: (
       <>
-        <p>Uterine fibroids are noncancerous growths in or on the uterus. They are very common — up to 80% of people with a uterus develop fibroids by age 50, though many never cause symptoms. When symptoms occur, they can include heavy or prolonged periods, pelvic pressure or pain, frequent urination, and in some cases difficulty conceiving. Fibroids vary in size, number, and location, all of which affect symptoms and treatment options.</p>
+        <p>Uterine fibroids are noncancerous growths in or on the uterus. They are very common. Up to 80% of people with a uterus develop fibroids by age 50, though many never cause symptoms. When symptoms occur, they can include heavy or prolonged periods, pelvic pressure or pain, frequent urination, and in some cases difficulty conceiving. Fibroids vary in size, number, and location, all of which affect symptoms and treatment options.</p>
         <p>Treatment depends on symptom severity, fibroid characteristics, and your reproductive goals. Options range from watchful waiting (for small, asymptomatic fibroids) to medications that temporarily shrink fibroids or reduce bleeding, to minimally invasive procedures (e.g., uterine fibroid embolization, focused ultrasound) and surgery (myomectomy to preserve the uterus, or hysterectomy). If heavy bleeding is causing anemia, iron supplementation and managing blood loss are also important parts of care.</p>
         <p><strong>When to seek care:</strong> Heavy periods soaking through products, pelvic pain or pressure, unusually large or rapidly changing abdomen, or difficulty conceiving. Fibroids are highly treatable when caught early.</p>
         <p><strong>Sources:</strong></p>
@@ -637,9 +637,9 @@ const ARTICLES = [
     teaser: 'How heavy periods deplete iron, symptoms to watch for, and how to address deficiency through diet, supplements, and treating the root cause.',
     body: (
       <>
-        <p>Heavy menstrual bleeding is one of the most common causes of iron deficiency and iron deficiency anemia in people who menstruate. Iron is lost with blood, and if monthly losses consistently exceed dietary intake, iron stores become depleted. Early iron deficiency may cause fatigue, brain fog, difficulty concentrating, and feeling cold — even before anemia develops. Anemia (low red blood cells) adds shortness of breath, dizziness, rapid heart rate, and pale skin to those symptoms.</p>
+        <p>Heavy menstrual bleeding is one of the most common causes of iron deficiency and iron deficiency anemia in people who menstruate. Iron is lost with blood, and if monthly losses consistently exceed dietary intake, iron stores become depleted. Early iron deficiency may cause fatigue, brain fog, difficulty concentrating, and feeling cold. Even before anemia develops. Anemia (low red blood cells) adds shortness of breath, dizziness, rapid heart rate, and pale skin to those symptoms.</p>
         <p>Treatment involves addressing both the iron deficiency and, where possible, reducing the underlying blood loss. Oral iron supplements (ferrous sulfate, ferrous gluconate, or ferric) taken on alternating days or with vitamin C to improve absorption are commonly recommended. IV iron infusion may be used for severe deficiency or poor oral tolerance. Dietary iron from red meat, leafy greens, legumes, and fortified foods can help maintain levels but often isn't enough on its own to correct established deficiency. Treating the cause of heavy bleeding (e.g., fibroids, hormonal imbalance) is equally important.</p>
-        <p><strong>When to seek care:</strong> Persistent fatigue, shortness of breath, or dizziness — particularly if you have heavy periods. A simple blood test can diagnose deficiency before it becomes anemia.</p>
+        <p><strong>When to seek care:</strong> Persistent fatigue, shortness of breath, or dizziness. Particularly if you have heavy periods. A simple blood test can diagnose deficiency before it becomes anemia.</p>
         <p><strong>Sources:</strong></p>
         <ul style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
           <li><a href="https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Heavy menstrual bleeding</a></li>
@@ -654,10 +654,10 @@ const ARTICLES = [
     title: 'Ovarian Cysts',
     source: 'ACOG, Mayo Clinic, UpToDate',
     tags: ['Reproductive health', 'Pelvic health'],
-    teaser: 'Most ovarian cysts are harmless and resolve on their own — here\'s how to tell when monitoring is enough and when to seek care.',
+    teaser: 'Most ovarian cysts are harmless and resolve on their own. Here\'s how to tell when monitoring is enough and when to seek care.',
     body: (
       <>
-        <p>Ovarian cysts are fluid-filled sacs that develop on or within an ovary. Most are functional cysts — they form as a normal part of the menstrual cycle (e.g., a follicle that doesn't release an egg, or a corpus luteum that fills with fluid) and resolve on their own within a few cycles without treatment. They're often found incidentally on ultrasound and cause no symptoms.</p>
+        <p>Ovarian cysts are fluid-filled sacs that develop on or within an ovary. Most are functional cysts. They form as a normal part of the menstrual cycle (e.g., a follicle that doesn't release an egg, or a corpus luteum that fills with fluid) and resolve on their own within a few cycles without treatment. They're often found incidentally on ultrasound and cause no symptoms.</p>
         <p>When symptoms occur they can include pelvic aching or fullness, bloating, or pain with sex. A ruptured cyst can cause sudden, sharp pelvic pain. Ovarian torsion (twisting) is a medical emergency with sudden severe pain, nausea, and vomiting. Most simple cysts in premenopausal people are benign and managed with watchful waiting and repeat imaging. Complex cysts, cysts in postmenopausal people, or those causing symptoms may need further evaluation or surgical removal. Cysts associated with PCOS or endometriosis (endometriomas) are managed differently based on the underlying condition.</p>
         <p><strong>When to seek care:</strong> Sudden severe pelvic pain, pain with fever or vomiting (emergency), persistent or worsening pelvic pain, or any new cyst found after menopause.</p>
         <p><strong>Sources:</strong></p>
@@ -674,11 +674,11 @@ const ARTICLES = [
     title: 'Hormonal Birth Control: Types, Benefits & Side Effects',
     source: 'ACOG, Planned Parenthood, UpToDate',
     tags: ['Contraception', 'Hormonal health'],
-    teaser: 'A plain-language guide to pills, patches, rings, shots, implants, and hormonal IUDs — how they work, what side effects to expect, and how to choose.',
+    teaser: 'A plain-language guide to pills, patches, rings, shots, implants, and hormonal IUDs. How they work, what side effects to expect, and how to choose.',
     body: (
       <>
         <p>Hormonal contraceptives work primarily by preventing ovulation, thickening cervical mucus, or thinning the uterine lining. They come in many forms: combined estrogen-progestin methods (pill, patch, ring) and progestin-only methods (mini-pill, shot/Depo-Provera, hormonal IUD, implant). Effectiveness ranges from 91–99%+ with typical or perfect use. All require a prescription or clinical insertion.</p>
-        <p>Beyond contraception, hormonal methods are widely used to manage period pain, heavy bleeding, endometriosis, PCOS, acne, and PMDD. Side effects vary by method and person — common ones include nausea, spotting, mood changes, and breast tenderness, most of which improve within a few months. Serious risks (e.g., blood clots with estrogen-containing methods) are rare but relevant for people who smoke, have certain migraines, or have a history of clotting. There is no single "best" method — the right choice depends on your health history, side effect tolerance, convenience needs, and whether you want a period.</p>
+        <p>Beyond contraception, hormonal methods are widely used to manage period pain, heavy bleeding, endometriosis, PCOS, acne, and PMDD. Side effects vary by method and person. Common ones include nausea, spotting, mood changes, and breast tenderness, most of which improve within a few months. Serious risks (e.g., blood clots with estrogen-containing methods) are rare but relevant for people who smoke, have certain migraines, or have a history of clotting. There is no single "best" method. The right choice depends on your health history, side effect tolerance, convenience needs, and whether you want a period.</p>
         <p><strong>When to seek care:</strong> To discuss which method is right for you, if you're experiencing side effects that affect your quality of life, or if you want to switch methods. Don't stop hormonal contraception abruptly without a plan.</p>
         <p><strong>Sources:</strong></p>
         <ul style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>

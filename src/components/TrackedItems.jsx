@@ -43,13 +43,13 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '1.25rem' }}>
                     Everything in one place: your products, health and wearable data, and care options.
                 </p>
-                {/* Hidden products — prominent so users can find it */}
+                {/* Hidden products. Prominent so users can find it */}
                 {onViewOmitted && (
                     <div style={{ marginTop: '1.5rem' }}>
                         <button type="button" className="btn btn-outline" style={{ padding: '0.6rem 1.25rem', fontSize: '1rem', fontWeight: '600' }} onClick={onViewOmitted}>
                             🙈 View hidden products {Object.keys(omittedProducts).length > 0 && `(${Object.keys(omittedProducts).length})`}
                         </button>
-                        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginTop: '0.5rem' }}>Products you hid from recommendations — view or restore them anytime.</p>
+                        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginTop: '0.5rem' }}>Products you hid from recommendations. View or restore them anytime.</p>
                     </div>
                 )}
             </div>
@@ -97,7 +97,7 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                 compact
             />
 
-            {/* Recommendations from your check-in — always visible under account when check-in was done */}
+            {/* Recommendations from your check-in. Always visible under account when check-in was done */}
             {checkinRecs.length > 0 && (
                 <div style={{ maxWidth: '800px', margin: '0 auto 3rem' }}>
                     <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -156,7 +156,7 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                 </div>
             )}
 
-            {/* Hidden (omitted) products — also linked from header above */}
+            {/* Hidden (omitted) products. Also linked from header above */}
             <div style={{ maxWidth: '800px', margin: '0 auto 3rem' }}>
                 <h3 style={{ fontSize: '1.25rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <span>🙈</span> Hidden products

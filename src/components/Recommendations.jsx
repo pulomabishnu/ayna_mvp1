@@ -358,19 +358,19 @@ export default function Recommendations({
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem' }}>
                     {results?.frustrations?.length > 0
                         ? <>We picked these using your quiz answers (<strong>{results.frustrations.join(', ')}</strong>), your chat messages, any medical records you've uploaded, and wearable data from My Account.</>
-                        : "We picked these using your quiz answers, chat messages, uploaded medical records, and wearable data — once you add them under My Account."
+                        : "We picked these using your quiz answers, chat messages, uploaded medical records, and wearable data. Once you add them under My Account."
                     }
                 </p>
                 {inferTagsFromHealthProfile(healthProfile).length > 0 && (
                     <p style={{ color: 'var(--color-primary)', fontSize: '0.95rem', marginTop: '0.75rem', lineHeight: 1.5 }}>
-                        We're also using your uploaded health info — conditions, medications, medical records, or wearable data — to help pick these. This isn't a diagnosis, just extra information to help find a better fit.
+                        We're also using your uploaded health info. Conditions, medications, medical records, or wearable data. To help pick these. This isn't a diagnosis, just extra information to help find a better fit.
                     </p>
                 )}
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginTop: '0.5rem' }}>
-                    🔒 We never sell your data. The "For [concern]" picks below come from our reviewed catalog. The picks above come from your own health profile — always double check with a doctor before you decide.
+                    🔒 We never sell your data. The "For [concern]" picks below come from our reviewed catalog. The picks above come from your own health profile. Always double check with a doctor before you decide.
                 </p>
                 <p style={{ color: 'var(--color-primary)', fontSize: '0.9rem', marginTop: '0.5rem', fontWeight: '500' }}>
-                    Forgot something? Use the 💬 chat button to speak or type more — we’ll refresh your ecosystem.
+                    Forgot something? Use the 💬 chat button to speak or type more. We’ll refresh your ecosystem.
                 </p>
                 <div style={{ marginTop: '1.25rem' }}>
                     <button type="button" className="btn btn-outline" onClick={onRetake}>
@@ -408,7 +408,7 @@ export default function Recommendations({
                 <div style={{ maxWidth: '980px', margin: '0 auto var(--spacing-xl)', display: 'grid', gap: '1rem' }}>
                     <h3 style={{ fontSize: '1.35rem', marginBottom: '0.4rem' }}>Picks for you</h3>
                     <p style={{ margin: '0 0 0.45rem', fontSize: '0.82rem', color: 'var(--color-text-muted)', lineHeight: 1.45 }}>
-                        These picks come from what you told us and what Ayna has learned so far — not from our regular product list. Always check with a doctor and the brand before you buy.
+                        These picks come from what you told us and what Ayna has learned so far. Not from our regular product list. Always check with a doctor and the brand before you buy.
                     </p>
                     {tiered.map((entry) => (
                         <div key={entry.concern} className="card" style={{ padding: '1rem' }}>
@@ -647,7 +647,7 @@ export default function Recommendations({
                                 {profile.quote}
                             </p>
                             <p style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', marginTop: '0.35rem', fontWeight: '600' }}>
-                                — From the community, not a paid brand partnership
+                                From the community, not a paid brand partnership
                             </p>
                         </div>
                     ))}
@@ -693,7 +693,7 @@ export default function Recommendations({
               </div>
             )}
 
-            {/* Recommendations by category — collapsible sections */}
+            {/* Recommendations by category. Collapsible sections */}
             {displayedSections.length > 0 && (
                 <div style={{ maxWidth: '900px', margin: '0 auto' }}>
                     <h3 style={{ fontSize: '1.35rem', marginBottom: '1rem', color: 'var(--color-text-main)' }}>

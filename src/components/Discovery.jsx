@@ -822,7 +822,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                             className="discovery-card"
                             role="button"
                             tabIndex={0}
-                            aria-label={`${item.name} — open details`}
+                            aria-label={`${item.name}. Open details`}
                             onClick={() => onOpenProduct(item)}
                             onKeyDown={(e) => {
                                 if (e.key !== 'Enter' && e.key !== ' ') return;
@@ -867,7 +867,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                             </div>
 
                             {item.outOfBusiness && (
-                                <div className="discovery-card__flag">No longer sold — kept so you can still check safety info</div>
+                                <div className="discovery-card__flag">No longer sold. Kept so you can still check safety info</div>
                             )}
 
                             {isStartup && !releasedStartup && (

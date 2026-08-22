@@ -183,7 +183,7 @@ export default function Hero({ onStartQuiz, onViewWaitlist: _onViewWaitlist, onV
                 </span>
                 <RotatingWordHeadline layout="stacked" as="div" />
                 <p className="ayna-landing__body welcome-gate__second-lead">
-                  Ayna helps you find health products and care that fit you — backed by real research, doctor input,
+                  Ayna helps you find health products and care that fit you. Backed by real research, doctor input,
                   and other women's experiences. Big brands and small brands, all in one place.
                 </p>
               </div>
@@ -386,7 +386,7 @@ export default function Hero({ onStartQuiz, onViewWaitlist: _onViewWaitlist, onV
                 fontWeight: '700',
               }}
             >
-              Meet Ayna — health made simple.
+              Meet Ayna. Health made simple.
             </h3>
             <p
               style={{
@@ -396,7 +396,7 @@ export default function Hero({ onStartQuiz, onViewWaitlist: _onViewWaitlist, onV
               }}
             >
               Need a period pad? A doctor for menopause symptoms? A health tracker? We can help. Apps and
-              doctor visits are great for one problem at a time — but after that, you're on your own to figure
+              doctor visits are great for one problem at a time. But after that, you're on your own to figure
               out what products to use and where to look. Ayna fills that gap. We don't replace your doctor.
               We make the everyday parts of your health easier.{' '}
             </p>
@@ -419,7 +419,7 @@ export default function Hero({ onStartQuiz, onViewWaitlist: _onViewWaitlist, onV
           >
             <h3 style={{ fontFamily: 'var(--font-serif)', fontWeight: 500, fontSize: '1.6rem', marginBottom: '1.5rem' }}>Why We Built Ayna</h3>
             <p style={{ color: 'var(--color-text-muted)', lineHeight: '2', fontSize: '1.1rem' }}>
-              We've felt the same frustrations you have — hours spent searching online, doctors who don't
+              We've felt the same frustrations you have. Hours spent searching online, doctors who don't
               listen, and not knowing if an app is keeping your data safe. Every woman deserves a guide she can
               trust for her health, not another hour scrolling for answers. That's why we built Ayna: to make
               women's health simple, honest, and made just for you.

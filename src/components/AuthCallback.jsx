@@ -68,7 +68,7 @@ export default function AuthCallback({ onAuthenticated }) {
         }
       }
       // Left in sessionStorage deliberately so a later load can retry.
-      console.error('[Ayna] consent not persisted after retries — record retained for retry');
+      console.error('[Ayna] consent not persisted after retries. Record retained for retry');
     }
 
     // OAuth — set session and navigate to ecosystem

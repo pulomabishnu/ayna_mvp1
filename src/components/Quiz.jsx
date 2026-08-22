@@ -12,7 +12,7 @@ const REST_STEPS = [
   {
     id: 'frustrations',
     question: "What are your main health concerns or goals?",
-    subtitle: "Select all that apply — this drives your recommendations",
+    subtitle: "Select all that apply. This drives your recommendations",
     type: 'multi',
     options: [
       'Heavy flow',
@@ -35,7 +35,7 @@ const REST_STEPS = [
   {
     id: 'preference',
     question: "What matters most to you in a product?",
-    subtitle: "Select all that apply — we'll prioritize products that match",
+    subtitle: "Select all that apply. We'll prioritize products that match",
     type: 'multi',
     options: [
       'Organic/Natural only',
@@ -55,7 +55,7 @@ const REST_STEPS = [
   {
     id: 'currentUse',
     question: "What do you use today?",
-    subtitle: "Select all that apply — we'll avoid duplicating what you already have",
+    subtitle: "Select all that apply. We'll avoid duplicating what you already have",
     type: 'multi',
     options: [
       'Pads',
@@ -105,7 +105,7 @@ const REST_STEPS = [
   {
     id: 'healthGoals',
     question: "Any other health goals we didn't cover today?",
-    subtitle: "Type anything — fertility, fitness, sleep, stress, skin, nutrition, etc. We'll factor it into your recommendations.",
+    subtitle: "Type anything. Fertility, fitness, sleep, stress, skin, nutrition, etc. We'll factor it into your recommendations.",
     type: 'text',
     placeholder: "e.g. I want to improve my sleep, manage stress better, and learn more about hormone health..."
   },
@@ -601,7 +601,7 @@ export default function Quiz({ onComplete }) {
         <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)', maxWidth: '960px' }}>
           <h2 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', textAlign: 'center' }}>Your transcript & health profile</h2>
           <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', marginBottom: '1.5rem', fontSize: '0.95rem' }}>
-            Edit the transcript (type or speak to add more) — the profile updates as you change it. Confirm when it looks right.
+            Edit the transcript (type or speak to add more). The profile updates as you change it. Confirm when it looks right.
           </p>
           <div className="quiz-confirm-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', alignItems: 'stretch', marginBottom: '1.5rem' }}>
             <div style={{ display: 'flex', flexDirection: 'column', minHeight: '280px' }}>
@@ -840,7 +840,7 @@ export default function Quiz({ onComplete }) {
               style={{ fontSize: '1.05rem', padding: '0.75rem 1.5rem' }}
               onClick={handleTextSubmit}
             >
-              {textValue.trim() ? 'Continue →' : 'Nothing else — continue →'}
+              {textValue.trim() ? 'Continue →' : 'Nothing else. Continue →'}
             </button>
           </div>
         )}
@@ -870,7 +870,7 @@ export default function Quiz({ onComplete }) {
               style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', textDecoration: 'underline' }}
               onClick={() => onComplete({ ...answers, email: '' })}
             >
-              Skip — open ecosystem without saving
+              Skip. Open ecosystem without saving
             </button>
           </div>
         )}

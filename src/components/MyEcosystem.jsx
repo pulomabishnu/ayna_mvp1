@@ -124,7 +124,7 @@ function EcosystemFunctionProductCard({
     const [triedResolveFallback, setTriedResolveFallback] = useState(false);
     const perUnitPrice = getPricePerUnitLabel(product);
     const { brandName } = deriveBrandSearchContext(product);
-    const brandDisplay = brandName || '—';
+    const brandDisplay = brandName || 'N/A';
     const rawSummary = (product.summary || '').trim();
     const summaryShort = rawSummary.length > 110 ? `${rawSummary.slice(0, 107)}…` : rawSummary;
     const displayImage = resolvedCardImage || product.image || '';
@@ -223,7 +223,7 @@ function EcosystemFunctionProductCard({
                 </p>
             ) : null}
             <div style={{ fontSize: '0.82rem', fontWeight: '600', color: 'var(--color-primary)', marginBottom: perUnitPrice ? '0.1rem' : '0.35rem' }}>
-                {product.price || product.stage || '—'}
+                {product.price || product.stage || 'N/A'}
             </div>
             {perUnitPrice ? (
                 <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)', marginBottom: '0.35rem' }}>{perUnitPrice}</div>
@@ -661,7 +661,7 @@ function IntakeRecommendationsProductCard({
                     )}
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', marginBottom: '0.45rem', flexWrap: 'wrap' }}>
-                    <span style={{ fontSize: '0.88rem', fontWeight: '600', color: 'var(--color-text-main)' }}>{product.price || '—'}</span>
+                    <span style={{ fontSize: '0.88rem', fontWeight: '600', color: 'var(--color-text-main)' }}>{product.price || 'N/A'}</span>
                 </div>
                 <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', marginTop: 'auto' }}>
                     <button type="button" className="btn btn-outline" style={{ padding: '0.32rem 0.55rem', fontSize: '0.72rem' }} onClick={() => onToggleProduct(product)}>
@@ -788,8 +788,10 @@ function estimateMonthlyCost(priceStr, product) {
     const perMonthMatch = s.match(/\$(\d+)(?:\.\d+)?\s*\/?\s*month/i);
     if (perMonthMatch) return parseFloat(perMonthMatch[1]);
 
-    // Range: "$25–$38", "$25–38", "$25-38", "$25—38" → use average
-    const rangeMatch = s.match(/\$(\d+(?:\.\d+)?)\s*[–—‒\-]+\s*\$?(\d+(?:\.\d+)?)/);
+    // Range: "$25–$38", "$25–38", "$25-38" → use average. Only real
+    // range-separator characters here — a literal '.' or ' ' would false-match
+    // any two dollar amounts sitting near each other in the string.
+    const rangeMatch = s.match(/\$(\d+(?:\.\d+)?)\s*[–‒\-]+\s*\$?(\d+(?:\.\d+)?)/);
     if (rangeMatch) {
         const avg = (parseFloat(rangeMatch[1]) + parseFloat(rangeMatch[2])) / 2;
         if (/per pair|underwear|pair/i.test(s)) return avg / 18; // ~18 months life
@@ -1194,7 +1196,7 @@ export default function MyEcosystem({
 
         const unsubscribe = subscribeToGeneration(intakeFingerprint, onUpdate, (rec) => {
             const intake = quizResults?.fullHealthIntake || null;
-            console.log('[Ayna LLM] Starting fetch — concerns:', intake?.primaryConcerns?.length ?? 0, '| goals:', intake?.goals?.length ?? 0, '| intake null?', !intake);
+            console.log('[Ayna LLM] Starting fetch. Concerns:', intake?.primaryConcerns?.length ?? 0, '| goals:', intake?.goals?.length ?? 0, '| intake null?', !intake);
 
             rec.controller = new AbortController();
             rec.startedAt = Date.now();
@@ -1262,7 +1264,7 @@ export default function MyEcosystem({
 
                     if (rec.cancelled) return;
                     const recs = accumulated;
-                    console.log('[Ayna LLM] Done — sections:', recs.length, '| errors:', errorCount);
+                    console.log('[Ayna LLM] Done. Sections:', recs.length, '| errors:', errorCount);
                     if (recs.length === 0 && errorCount > 0) {
                         // Specific causes must survive: a quota 429 is an upgrade
                         // prompt and a 401 is a re-auth prompt, not "try again".
@@ -1272,11 +1274,11 @@ export default function MyEcosystem({
                             return;
                         }
                         if (authFailed) {
-                            rec.error = 'Your session expired — please sign in again.';
+                            rec.error = 'Your session expired. Please sign in again.';
                             notifyGeneration(rec);
                             return;
                         }
-                        throw new Error('All recommendation batches failed — please try again.');
+                        throw new Error('All recommendation batches failed. Please try again.');
                     }
                     if (recs.length === 0) return; // nothing to do (no concerns matched)
                     if (recs.length > 0) {
@@ -1801,7 +1803,7 @@ export default function MyEcosystem({
                             </>
                         ) : (
                             <>
-                                <p style={{ margin: '0 0 0.6rem', fontWeight: 600 }}>Get Ayna by text — verify your number</p>
+                                <p style={{ margin: '0 0 0.6rem', fontWeight: 600 }}>Get Ayna by text. Verify your number</p>
                                 <button type="button" className="btn btn-primary" onClick={onOpenPhoneVerify}>
                                     Verify your number
                                 </button>
@@ -1812,11 +1814,11 @@ export default function MyEcosystem({
 
                 {llmError && !llmLoading && (
                     <div style={{ textAlign: 'center', padding: '0.75rem', marginBottom: '1rem', background: '#FEF2F2', borderRadius: 'var(--radius-md)', fontSize: '0.85rem', color: '#991B1B', border: '1px solid #FCA5A5' }}>
-                        We couldn't build your ecosystem: {typeof llmError === 'string' ? llmError : JSON.stringify(llmError)} — <button type="button" style={{ background: 'none', border: 'none', color: '#991B1B', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline', padding: 0 }} onClick={handleRefreshRecommendations}>Try again</button>
+                        We couldn't build your ecosystem: {typeof llmError === 'string' ? llmError : JSON.stringify(llmError)}. <button type="button" style={{ background: 'none', border: 'none', color: '#991B1B', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline', padding: 0 }} onClick={handleRefreshRecommendations}>Try again</button>
                     </div>
                 )}
 
-                {/* SECTION 1 — My Ecosystem */}
+                {/* SECTION 1. My Ecosystem */}
                 <h3 style={{ fontSize: '1.35rem', marginBottom: '0.75rem', textAlign: 'center', color: 'var(--color-text-main)' }}>My Ecosystem</h3>
                 <div style={{
                     display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap',
@@ -1827,7 +1829,7 @@ export default function MyEcosystem({
                             <div style={{ fontSize: '2rem', fontWeight: '700', color: 'var(--color-primary)' }}>
                                 {estimatedMonthlyTotal.counted > 0
                                     ? `$${estimatedMonthlyTotal.total.toFixed(2)}${estimatedMonthlyTotal.counted < estimatedMonthlyTotal.totalItems ? '+' : ''}`
-                                    : '—'}
+                                    : 'N/A'}
                             </div>
                             <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>Estimated per month</div>
                         </div>
@@ -1868,7 +1870,7 @@ export default function MyEcosystem({
                     )}
                 </div>
 
-                {/* Health data sync — premium feature */}
+                {/* Health data sync. Premium feature */}
                 {(() => {
                     const SYNC_SOURCES = [
                         { id: 'apple-health', label: 'Apple Health', icon: '🍎' },
@@ -1897,7 +1899,7 @@ export default function MyEcosystem({
                                         key={src.id}
                                         type="button"
                                         onClick={() => !isPremium && setShowSyncPaywall(true)}
-                                        title={isPremium ? `Connect ${src.label}` : `${src.label} — requires Ayna Premium`}
+                                        title={isPremium ? `Connect ${src.label}` : `${src.label}. Requires Ayna Premium`}
                                         style={{
                                             display: 'flex', alignItems: 'center', gap: '0.4rem',
                                             padding: '0.4rem 0.85rem',
@@ -2087,7 +2089,7 @@ export default function MyEcosystem({
                                 <h4 style={{ fontSize: '1rem', marginBottom: '0.75rem' }}>Comparing: {interactionProductList.map(p => p.name).join(', ')}</h4>
                                 {interactionResults.length === 0 ? (
                                     <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem' }}>
-                                        We didn't find any known safety issues between these. This isn't medical advice — ask your doctor if you're not sure.
+                                        We didn't find any known safety issues between these. This isn't medical advice. Ask your doctor if you're not sure.
                                     </p>
                                 ) : (
                                     <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>

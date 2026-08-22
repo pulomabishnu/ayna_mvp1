@@ -31,7 +31,7 @@ function GeneralWaitlistBanner({ joinedWaitlists, toggleJoinWaitlist }) {
             </p>
 
             {isJoined ? (
-                <p style={{ color: '#fff', fontWeight: 600, fontSize: '1.05rem' }}>You&apos;re on the list — we&apos;ll be in touch. ✓</p>
+                <p style={{ color: '#fff', fontWeight: 600, fontSize: '1.05rem' }}>You&apos;re on the list. We&apos;ll be in touch. ✓</p>
             ) : (
                 <form onSubmit={handleSubmit} style={{ maxWidth: '440px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                     <input
