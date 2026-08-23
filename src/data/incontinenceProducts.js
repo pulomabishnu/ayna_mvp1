@@ -21,7 +21,7 @@ export const INCONTINENCE_PHYSICAL = [
         price: '$45.87 for 144 (4 Drop / Moderate Absorbency, Long)',
         userRating: 4.5,
         whereToBuy: ['Amazon', 'Target', 'Walmart', 'CVS'],
-        image: '/ayna_placeholder.png',
+        image: 'https://target.scene7.com/is/image/Target/GUEST_64344ed6-a572-4af5-863a-8a83b7c09bc1',
         summary: 'Ultra-thin pad for women with moderate urinary incontinence (stress or urge bladder leaks, a common perimenopause and postpartum symptom), not menstrual flow. Absorbs and locks away urine rather than menstrual blood, with its own fit and odor-control design.',
         safety: {
             fdaStatus: 'Absorbent hygiene product; not an FDA-cleared medical device (same regulatory class as menstrual pads).',
@@ -53,7 +53,7 @@ export const INCONTINENCE_PHYSICAL = [
         price: '$12.33 for 96 (Size 2, Very Light Absorbency, Long)',
         userRating: 4.5,
         whereToBuy: ['Walmart', 'Amazon', 'Target', 'Kroger', 'H-E-B'],
-        image: '/ayna_placeholder.png',
+        image: 'https://target.scene7.com/is/image/Target/GUEST_7e6e8ee3-b160-4a67-a42c-bc572977875a',
         summary: 'A thin liner for women with very light urinary incontinence, the closest thing in mainstream retail to a "panty liner for bladder leaks" search. Distinct from a menstrual panty liner in absorbent design and odor control for urine.',
         safety: {
             fdaStatus: 'Absorbent hygiene product; not an FDA-cleared medical device.',
