@@ -398,7 +398,7 @@ export default function ProductModal({
         </button>
       )}
       {isPartnerBrandItem(product) && (
-        <span className="pdp-head__badge" title="Ayna has a partnership with this brand — it does not affect your recommendation.">
+        <span className="pdp-head__badge" title="Ayna has a partnership with this brand. It does not affect your recommendation.">
           🤝 Ayna Partner
         </span>
       )}
