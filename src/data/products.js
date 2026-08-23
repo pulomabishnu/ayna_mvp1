@@ -296,8 +296,8 @@ export const PHYSICAL_PRODUCTS = [
             materials: '100% medical-grade silicone, no BPA, latex, dyes, or chemicals',
             recalls: 'No recalls.',
             allergens: 'Latex-free, hypoallergenic',
-            sideEffects: 'Possible cramping from suction, difficulty with insertion/removal, urinary urgency if sized incorrectly.',
-            opinionAlerts: 'Steep learning curve. Users often report a 2-3 cycle adjustment period before mastering the product.'
+            sideEffects: 'Possible cramping from suction, difficulty with insertion/removal, urinary urgency if sized incorrectly. Like tampons, menstrual cups carry a rare but medically documented risk of toxic shock syndrome (TSS) — a small number of published case reports exist — so follow labeled wear-time and cleaning instructions.',
+            opinionAlerts: 'Steep learning curve. Users often report a 2-3 cycle adjustment period before mastering the product, and difficulty removing the cup (due to suction) is a recurring complaint that occasionally sends first-time users to urgent care.'
         },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'Dr. Jen Gunter, OB-GYN. Source: ELLE Canada.',
