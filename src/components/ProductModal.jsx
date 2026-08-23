@@ -555,10 +555,15 @@ export default function ProductModal({
   }, [product]);
 
   const communitySnippets = useMemo(() => {
+    // The Community tab is where someone reads the full thing, not a
+    // preview card — a synthesized communityReview is one short paragraph
+    // to begin with, so it shouldn't be cut off at all. Real user-submitted
+    // reviews (aynaData.reviews) get a much more generous cap than before
+    // (220 chars was cutting off ordinary-length reviews mid-sentence).
     if ((aynaData.reviews || []).length > 0) {
-      return aynaData.reviews.slice(0, 2).map((r) => truncate(r.text, 220)).filter(Boolean);
+      return aynaData.reviews.slice(0, 2).map((r) => truncate(r.text, 2000)).filter(Boolean);
     }
-    if (product?.communityReview) return [truncate(product.communityReview, 220)];
+    if (product?.communityReview) return [product.communityReview];
     return [];
   }, [aynaData, product]);
 

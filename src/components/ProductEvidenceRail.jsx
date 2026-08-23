@@ -70,7 +70,7 @@ export default function ProductEvidenceRail({ product, matchLabels = [], matchPe
         <div className="pdp-rail__label">Clinician opinion</div>
         {clinicianNote ? (
           <>
-            <div className="pdp-rail__body pdp-rail__body--dark">{firstSentence(clinicianNote)}</div>
+            <div className="pdp-rail__body pdp-rail__body--dark">{clinicianNote}</div>
             {product.clinicianAttribution && (
               <div className="pdp-rail__attr">{product.clinicianAttribution}</div>
             )}
