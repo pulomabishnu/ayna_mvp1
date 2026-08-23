@@ -16,7 +16,7 @@ import { peekGeneration, subscribeIfActive } from '../utils/ecosystemGenerationS
  * tick below re-checks peekGeneration and only ever attaches to whatever it
  * finds; it never asks the store to make something exist.
  */
-export default function EcosystemGenerationBar({ intakeFingerprint, onViewEcosystem }) {
+export default function EcosystemGenerationBar({ intakeFingerprint, onViewEcosystem, hasEcosystem = false }) {
   const [rec, setRec] = useState(null); // { loading, startedAt, error } snapshot, or null when nothing active
   // The actual Date.now() reading lives in state (updated by the ticking
   // effect below) rather than being read directly during render — a render
@@ -114,7 +114,7 @@ export default function EcosystemGenerationBar({ intakeFingerprint, onViewEcosys
 
   return (
     <>
-      {rec.loading && !rec.hasResults && !dismissed && (
+      {rec.loading && !rec.hasResults && !hasEcosystem && !dismissed && (
         <div className="eco-gen-bar" role="status" aria-live="polite">
           <span className="eco-gen-bar__spinner" aria-hidden="true" />
           <span>Building your ecosystem&hellip; {mm}:{ss}</span>

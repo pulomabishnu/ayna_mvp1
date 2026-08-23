@@ -517,9 +517,17 @@ function App() {
     setShowAuthModal(false);
     if (pendingAction === 'quiz-complete' && pendingQuizResults) {
       setQuizResults(pendingQuizResults);
-      const { seedMeta } = getEcosystemSeedFromQuiz(pendingQuizResults, healthProfile);
+      const { seedMeta, mergedProducts } = getEcosystemSeedFromQuiz(pendingQuizResults, healthProfile);
       setEcosystemSeedMeta(seedMeta);
-      setMyProducts({});
+      const instantProducts = Object.keys(mergedProducts || {}).length
+        ? mergedProducts
+        : Object.fromEntries(
+            getRecommendations(pendingQuizResults, healthProfile)
+              .slice(0, 6)
+              .map((product) => [product.id, product])
+          );
+      setMyProducts(instantProducts);
+      setEcosystemOrder(Object.keys(instantProducts));
       clearCachedLlmRecommendations();
       try { window.sessionStorage.setItem('ayna_force_llm_refresh', '1'); } catch (_) {}
       const _supabase = getSupabaseClient();
@@ -714,10 +722,18 @@ function App() {
       return;
     }
     setQuizResults(completedResults);
-    const { seedMeta } = getEcosystemSeedFromQuiz(completedResults, healthProfile);
+    const { seedMeta, mergedProducts } = getEcosystemSeedFromQuiz(completedResults, healthProfile);
     setEcosystemSeedMeta(seedMeta);
+    const instantProducts = Object.keys(mergedProducts || {}).length
+      ? mergedProducts
+      : Object.fromEntries(
+          getRecommendations(completedResults, healthProfile)
+            .slice(0, 6)
+            .map((product) => [product.id, product])
+        );
+    setMyProducts(instantProducts);
+    setEcosystemOrder(Object.keys(instantProducts));
     llmBuiltThisSessionRef.current = false;
-    setMyProducts({});
     clearCachedLlmRecommendations();
     try { window.sessionStorage.setItem('ayna_force_llm_refresh', '1'); } catch (_) {}
     const supabase = getSupabaseClient();
@@ -736,10 +752,18 @@ function App() {
       return;
     }
     setQuizResults(updatedResults);
-    const { seedMeta } = getEcosystemSeedFromQuiz(updatedResults, healthProfile);
+    const { seedMeta, mergedProducts } = getEcosystemSeedFromQuiz(updatedResults, healthProfile);
     setEcosystemSeedMeta(seedMeta);
+    const instantProducts = Object.keys(mergedProducts || {}).length
+      ? mergedProducts
+      : Object.fromEntries(
+          getRecommendations(updatedResults, healthProfile)
+            .slice(0, 6)
+            .map((product) => [product.id, product])
+        );
+    setMyProducts(instantProducts);
+    setEcosystemOrder(Object.keys(instantProducts));
     llmBuiltThisSessionRef.current = false;
-    setMyProducts({});
     clearCachedLlmRecommendations();
     try { window.sessionStorage.setItem('ayna_force_llm_refresh', '1'); } catch (_) {}
     const supabase = getSupabaseClient();
@@ -1037,7 +1061,7 @@ function App() {
             >×</button>
           </div>
         )}
-        <EcosystemGenerationBar intakeFingerprint={ecosystemIntakeFingerprint} onViewEcosystem={handleViewEcosystem} />
+        <EcosystemGenerationBar intakeFingerprint={ecosystemIntakeFingerprint} onViewEcosystem={handleViewEcosystem} hasEcosystem={ecosystemCount > 0} />
       </div>
       <main>
         <div style={{ position: 'relative', zIndex: 1001 }}>

@@ -2046,7 +2046,7 @@ export default function MyEcosystem({
                 </div>
 
                 {/* Only block when there is genuinely no usable ecosystem yet. */}
-                {llmLoading && llmTiered.length === 0 && (
+                {llmLoading && llmTiered.length === 0 && myProductList.length === 0 && (
                     llmLoadStartedAt > 0
                         ? <LlmRecommendationsLoadingBlock loadStartedAt={llmLoadStartedAt} compact onCancel={handleCancelRecommendations} />
                         : <div style={{ textAlign: 'center', padding: '1.5rem', color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>Building your ecosystem…</div>
