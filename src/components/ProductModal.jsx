@@ -3,6 +3,8 @@ import ProductEvidenceRail from './ProductEvidenceRail';
 import { getProfileMatchLabelsForProduct, getProfileMatchPercentForProduct, CATEGORY_LABELS } from '../data/products';
 import { getAynaRating } from '../data/aynaReviews';
 import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
+import { isPartnerBrandItem } from '../utils/partnerBrands';
+import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import posthog from 'posthog-js';
 
 /** Remembers whether this browser prefers the tabs (1f) or evidence rail (1g) layout. */
@@ -395,6 +397,11 @@ export default function ProductModal({
           {ecosystemBtnLabel}
         </button>
       )}
+      {isPartnerBrandItem(product) && (
+        <span className="pdp-head__badge" title="Ayna has a partnership with this brand — it does not affect your recommendation.">
+          🤝 Ayna Partner
+        </span>
+      )}
     </div>
   );
 
@@ -404,7 +411,7 @@ export default function ProductModal({
         <img
           src={heroImageSrc}
           alt={product.name}
-          onError={(e) => { e.currentTarget.style.display = 'none'; }}
+          onError={(e) => handleImageErrorWithRetry(e, () => { e.currentTarget.style.display = 'none'; })}
         />
       ) : (
         <span className="pdp-head__initial" aria-hidden="true">
@@ -442,7 +449,7 @@ export default function ProductModal({
                   src={related.image}
                   alt=""
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                  onError={(e) => handleImageErrorWithRetry(e, () => { e.currentTarget.style.display = 'none'; })}
                 />
               ) : (
                 String(related.brand || related.name || '?').trim().charAt(0).toUpperCase()

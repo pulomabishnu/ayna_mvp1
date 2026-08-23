@@ -3,6 +3,7 @@ import { ALL_PRODUCTS, CATEGORY_LABELS, SYMPTOM_TO_SUPPLEMENTS, filterPrescripti
 import { loadProductCatalog } from '../utils/productCatalog';
 import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../utils/naturalLanguageSearch';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
+import { isPartnerBrandItem } from '../utils/partnerBrands';
 import { fetchSearchSuggestions } from '../utils/fetchSearchSuggestions';
 import { RELEASED_STARTUPS } from '../data/startups';
 import { getAynaRating } from '../data/aynaReviews';
@@ -25,7 +26,7 @@ const MACRO_GROUPS = [
     { id: 'pregnancy', label: 'Pregnancy', categories: ['pregnancy'], keywords: ['pregnancy', 'prenatal'] },
     { id: 'postpartum', label: 'Postpartum', categories: ['postpartum'], keywords: ['postpartum', 'lactation', 'breastfeeding', 'perineal'] },
     { id: 'breast', label: 'Breast Care', categories: ['breast-care', 'lactation'], keywords: ['breast', 'breastfeeding', 'nipple', 'pump', 'lactation'] },
-    { id: 'pelvic', label: 'Pelvic', categories: ['pelvic-floor', 'pelvic-health'], keywords: ['pelvic', 'kegel', 'bladder'] },
+    { id: 'pelvic', label: 'Pelvic', categories: ['pelvic-floor', 'pelvic-health', 'incontinence'], keywords: ['pelvic', 'kegel', 'bladder', 'incontinence', 'bladder leak'] },
     { id: 'menopause', label: 'Menopause', categories: ['menopause'], keywords: ['menopause', 'perimenopause', 'hot flash'] },
     { id: 'hormones', label: 'Hormones', categories: ['supplement', 'hormone-monitoring'], keywords: ['pms', 'pcos', 'cycle', 'hormone'] },
     { id: 'skin', label: 'Skin', categories: ['skin', 'skincare', 'body-care'], keywords: ['skin', 'cleanser', 'moisturizer', 'spf', 'acne', 'hyperpigmentation'] },
@@ -598,6 +599,15 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     const ra = recommendedRank.has(a.id) ? recommendedRank.get(a.id) : Number.MAX_SAFE_INTEGER;
                     const rb = recommendedRank.has(b.id) ? recommendedRank.get(b.id) : Number.MAX_SAFE_INTEGER;
                     if (ra !== rb) return ra - rb;
+                }
+                // Brand partners are pinned to the top of the default browsing sort
+                // (but not when personalized results are on — a partnership doesn't
+                // buy placement in a real recommendation, only visibility on the
+                // page you browse freely, per How We Make Money).
+                if (browsingWithoutTextQuery && !(personalizationFilter && recommendedSet.size > 0)) {
+                    const pa = isPartnerBrandItem(a) ? 1 : 0;
+                    const pb = isPartnerBrandItem(b) ? 1 : 0;
+                    if (pa !== pb) return pb - pa;
                 }
                 const baseA = getQualityScore(a, aynaReviews);
                 const baseB = getQualityScore(b, aynaReviews);
