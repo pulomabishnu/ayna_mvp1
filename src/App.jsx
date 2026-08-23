@@ -1480,6 +1480,7 @@ function App() {
             hasHealthImport={hasHealthImport}
             quizResults={quizResults}
             healthProfile={healthProfile}
+            user={user}
           />
           </Suspense>
         )}

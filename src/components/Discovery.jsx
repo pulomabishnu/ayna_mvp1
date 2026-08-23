@@ -363,7 +363,7 @@ function buildAiProfileContext(personalizationFilter, quizResults) {
     return { profileSummary, dislikedProducts, dislikedTerms };
 }
 
-export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, savedProducts = {}, onToggleSaved }) {
+export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, savedProducts = {}, onToggleSaved, user = null }) {
     const [macroGroup, setMacroGroup] = useState(() => {
         if (!initialCategory || initialCategory === 'all') return 'all';
         return MACRO_GROUPS.find(g => g.categories.includes(initialCategory))?.id || 'all';
@@ -377,7 +377,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     // so this reshuffles the browsing grid's default order every time a user lands on the page,
     // without reshuffling mid-visit as filters/sort change.
     const [shuffleSeed] = useState(() => Math.random().toString(36).slice(2));
-    const [personalizationFilter, setPersonalizationFilter] = useState(Boolean(recommendedProductIds?.length) || hasQuizFrustrations || hasHealthImport);
+    // Personalization requires an actual account (quiz results / health import /
+    // real recommendations all live behind login) -- never on for a logged-out
+    // visitor, regardless of any of those other signals somehow being truthy.
+    const [personalizationFilter, setPersonalizationFilter] = useState(Boolean(user) && (Boolean(recommendedProductIds?.length) || hasQuizFrustrations || hasHealthImport));
     const [showFilters, setShowFilters] = useState(false);
     const [priceFilter, setPriceFilter] = useState('all');
     const [ratingFilter, setRatingFilter] = useState('all');
@@ -389,7 +392,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
     const personalizationInitialized = useRef(false);
     useEffect(() => {
-        if (!personalizationInitialized.current && (recommendedProductIds?.length || hasQuizFrustrations || hasHealthImport)) {
+        if (!personalizationInitialized.current && user && (recommendedProductIds?.length || hasQuizFrustrations || hasHealthImport)) {
             setPersonalizationFilter(true);
             personalizationInitialized.current = true;
         }
@@ -1095,10 +1098,12 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     <button type="button" className="ayna-browse__filter-button" onClick={() => setShowFilters((v) => !v)} aria-expanded={showFilters}>
                         Filters
                     </button>
-                    <label className="ayna-browse__personalized-toggle">
-                        <input type="checkbox" checked={personalizationFilter} onChange={(e) => setPersonalizationFilter(e.target.checked)} />
-                        <span>Personalized</span>
-                    </label>
+                    {user && (
+                        <label className="ayna-browse__personalized-toggle">
+                            <input type="checkbox" checked={personalizationFilter} onChange={(e) => setPersonalizationFilter(e.target.checked)} />
+                            <span>Personalized</span>
+                        </label>
+                    )}
                 </div>
                 <label className="ayna-browse__sort">
                     <span>Sort</span>
