@@ -867,12 +867,18 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         const baseQueryText = buildBrowseAiQueryText(categoryFilter, macroGroup);
         if (!baseQueryText) return;
         // fetchSearchSuggestions session-caches by (query, category, symptom,
-        // maxResults) — round 2 with an identical query would just replay round
-        // 1's cached response verbatim (every item would then get deduped away,
-        // silently wasting the round). Vary the query text on later rounds so
-        // each round both busts the cache and nudges Claude toward genuinely
-        // additional options rather than repeating itself.
-        const queryText = roundIndexAtCallTime > 0 ? `${baseQueryText} (more options beyond the usual picks)` : baseQueryText;
+        // maxResults) — an identical query on a later round would just replay
+        // an earlier round's cached response verbatim (every item then gets
+        // deduped away, silently wasting the round). Confirmed live: with only
+        // a single "later round" variant text, rounds 3+ all sent the exact
+        // same string as round 2 and fired back-to-back in under a second
+        // (cache hits resolve near-instantly) instead of ever reaching the
+        // network for genuinely new suggestions. Each round now gets a
+        // distinct batch number in the query so every round busts the cache
+        // and nudges Claude toward options it hasn't already named.
+        const queryText = roundIndexAtCallTime > 0
+            ? `${baseQueryText} (batch ${roundIndexAtCallTime + 1} of several — suggest different specific products than earlier batches, avoid repeating brand names already covered)`
+            : baseQueryText;
         if (browseAiAbortRef.current) browseAiAbortRef.current.abort();
         const ac = new AbortController();
         browseAiAbortRef.current = ac;
@@ -896,7 +902,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             // new context, so just bail here.
             if (browseAiContextKeyRef.current !== contextKeyAtCallTime) return;
             setBrowseAiLoading(false);
-            setBrowseAiRounds((r) => r + 1);
+            let freshCount = 0;
             setBrowseAiSuggestions((prev) => {
                 // Dedup against catalog matches, whatever's already accumulated
                 // for this browse context, and the search-flow's AI suggestions —
@@ -914,8 +920,14 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     if (n) existingNames.add(n);
                     return true;
                 });
+                freshCount = fresh.length;
                 return [...prev, ...fresh];
             });
+            // A round that adds nothing new (Claude repeated itself, or this
+            // category is genuinely tapped out) is a real signal to stop
+            // rather than burn through the remaining round budget on more
+            // no-op calls — jump straight to the cap instead of r + 1.
+            setBrowseAiRounds((r) => (freshCount > 0 ? r + 1 : MAX_BROWSE_AI_ROUNDS));
         } catch (e) {
             if (e?.name === 'AbortError') return;
             setBrowseAiLoading(false);
