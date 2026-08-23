@@ -55,6 +55,22 @@ function itemMatchesMacroGroup(item, groupId) {
     return group.keywords.some((keyword) => text.includes(keyword));
 }
 
+/** Natural-language phrase for the browse-AI extension's `query` param — prefers the
+ * more specific active scope (a chosen sub-category) over the broader macro group, and
+ * returns '' when browsing is fully unscoped (both 'all'), which the caller treats as
+ * "not eligible to auto-generate" (a single LLM call needs a specific product type to
+ * stay safe/bounded, per the anti-fabrication rules in api/search-suggestions.js). */
+function buildBrowseAiQueryText(categoryFilter, macroGroup) {
+    if (categoryFilter && categoryFilter !== 'all') {
+        return CATEGORY_LABELS[categoryFilter] || categoryFilter.replace(/-/g, ' ');
+    }
+    const group = MACRO_GROUPS.find((g) => g.id === macroGroup);
+    if (group && group.id !== 'all') {
+        return `${group.label} products`;
+    }
+    return '';
+}
+
 function getExplicitEligibility(item) {
     // Never infer reimbursement eligibility from product names, image URLs, or copy.
     // Only structured fields supplied by the catalog are authoritative enough to filter on.
@@ -329,6 +345,24 @@ function truncateCardSummary(text, max = 200) {
     return `${truncated.trimEnd()}…`;
 }
 
+/** Shared profile/dislikes context builder for the AI search-suggestion calls —
+ * used by both the typed-search flow (runAiSearch) and the browse-mode AI
+ * extension (runBrowseAiRound) so the two can't drift on what "personalized"
+ * means. Pure extraction of what runAiSearch already computed inline; the
+ * returned values are unchanged from before this was factored out. */
+function buildAiProfileContext(personalizationFilter, quizResults) {
+    const intake = quizResults?.fullHealthIntake || null;
+    const profileSummary = personalizationFilter && intake ? [
+        intake.primaryConcerns?.length ? `Concerns: ${intake.primaryConcerns.slice(0, 5).join(', ')}` : '',
+        intake.conditions?.length ? `Conditions: ${intake.conditions.filter(c => c !== 'none').join(', ')}` : '',
+        intake.productPreferences?.length ? `Preferences: ${intake.productPreferences.join(', ')}` : '',
+        intake.goals?.length ? `Goals: ${intake.goals.join(', ')}` : '',
+    ].filter(Boolean).join('. ') : '';
+    const dislikedProducts = personalizationFilter ? (intake?.dislikedProductsText || '') : '';
+    const dislikedTerms = dislikedProducts.split(/[,\n]+/).map(s => s.trim().toLowerCase()).filter(s => s.length > 1);
+    return { profileSummary, dislikedProducts, dislikedTerms };
+}
+
 export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, savedProducts = {}, onToggleSaved }) {
     const [macroGroup, setMacroGroup] = useState(() => {
         if (!initialCategory || initialCategory === 'all') return 'all';
@@ -372,6 +406,16 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [searchSubmitted, setSearchSubmitted] = useState(false);
     const aiAbortRef = useRef(null);
     const debounceRef = useRef(null);
+    // Browse-mode AI extension (no-query browsing): fully separate from the
+    // aiSuggestions/runAiSearch state above so the typed-search flow can't be
+    // entangled by it. browseAiSuggestions accumulates across "Load more"
+    // rounds (unlike aiSuggestions, which is replaced wholesale per search);
+    // browseAiRounds bounds how many generation rounds a single browse
+    // context gets (see MAX_BROWSE_AI_ROUNDS below).
+    const [browseAiSuggestions, setBrowseAiSuggestions] = useState([]);
+    const [browseAiRounds, setBrowseAiRounds] = useState(0);
+    const [browseAiLoading, setBrowseAiLoading] = useState(false);
+    const browseAiAbortRef = useRef(null);
     const [dsldProducts, setDsldProducts] = useState([]);
     const [dsldLoading, setDsldLoading] = useState(false);
     const [resolvedImages, setResolvedImages] = useState({});
@@ -381,6 +425,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     // caching/concurrency limits. "Load more" reveals additional batches
     // instead of mounting everything up front.
     const PAGE_SIZE = 30;
+    // Bounds how many browse-AI generation rounds a single browse context
+    // (macro group + category + personalization) can trigger — caps cost/
+    // latency for an open-ended browse session instead of calling the API
+    // every time "Load more" would otherwise vanish.
+    const MAX_BROWSE_AI_ROUNDS = 2;
     const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
     const recommendedSet = useMemo(() => new Set(recommendedProductIds || []), [recommendedProductIds]);
     const recommendedRank = useMemo(() => new Map((recommendedProductIds || []).map((id, index) => [id, index])), [recommendedProductIds]);
@@ -641,6 +690,33 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         [aiSuggestions]
     );
 
+    // Stable key for the active browse scope — used to know when the browse-AI
+    // accumulator below belongs to a *different* context (user picked a new
+    // macro group/category/personalization) and needs to reset rather than
+    // keep accumulating onto a stale scope.
+    const browseAiContextKey = useMemo(
+        () => `${macroGroup}|${categoryFilter}|${personalizationFilter ? '1' : '0'}`,
+        [macroGroup, categoryFilter, personalizationFilter]
+    );
+    const browseAiContextKeyRef = useRef(browseAiContextKey);
+
+    useEffect(() => {
+        if (browseAiContextKeyRef.current === browseAiContextKey) return;
+        browseAiContextKeyRef.current = browseAiContextKey;
+        if (browseAiAbortRef.current) { browseAiAbortRef.current.abort(); browseAiAbortRef.current = null; }
+        setBrowseAiSuggestions([]);
+        setBrowseAiRounds(0);
+        setBrowseAiLoading(false);
+    }, [browseAiContextKey]);
+
+    // Abort any in-flight browse-AI request on unmount.
+    useEffect(() => () => { if (browseAiAbortRef.current) browseAiAbortRef.current.abort(); }, []);
+
+    const enrichedBrowseAiSuggestions = useMemo(
+        () => (Array.isArray(browseAiSuggestions) ? browseAiSuggestions.map((p) => enrichLlmProductForDiscovery(p)) : []),
+        [browseAiSuggestions]
+    );
+
     const gridItems = useMemo(() => {
         // Union real catalog matches for the submitted query with AI suggestions,
         // in both browsing and search modes. This used to show ONLY AI results
@@ -657,6 +733,20 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             const n = (p.name || '').trim().toLowerCase();
             if (n && names.has(n)) continue;
             out.push(p);
+        }
+        // Browse-mode AI suggestions (accumulated across "Load more" rounds while
+        // no text query is active) are appended the same way, deduped against the
+        // catalog AND anything already added above. Gated to !qTrimForAi so a
+        // stale accumulator from a prior no-query browse session can never leak
+        // into an active search's results — the search flow stays untouched.
+        if (!qTrimForAi && enrichedBrowseAiSuggestions.length > 0) {
+            const outNames = new Set(out.map((p) => (p.name || '').trim().toLowerCase()).filter(Boolean));
+            for (const p of enrichedBrowseAiSuggestions) {
+                const n = (p.name || '').trim().toLowerCase();
+                if (n && outNames.has(n)) continue;
+                outNames.add(n);
+                out.push(p);
+            }
         }
         // The AI suggestions above are appended in whatever order Claude returned
         // them — the prompt asks it to rank by relevance, but that's advisory,
@@ -675,7 +765,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             return scored.map((x) => x.item);
         }
         return out;
-    }, [filtered, enrichedAiSuggestions, qTrimForAi]);
+    }, [filtered, enrichedAiSuggestions, enrichedBrowseAiSuggestions, qTrimForAi]);
 
     useEffect(() => {
         // Only resolve images for what's actually rendered (visibleCount),
@@ -726,15 +816,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         setAiRelatedSearches([]);
         setAiError(null);
         setAiQuerySummary('');
-        const intake = quizResults?.fullHealthIntake || null;
-        const profileSummary = personalizationFilter && intake ? [
-            intake.primaryConcerns?.length ? `Concerns: ${intake.primaryConcerns.slice(0, 5).join(', ')}` : '',
-            intake.conditions?.length ? `Conditions: ${intake.conditions.filter(c => c !== 'none').join(', ')}` : '',
-            intake.productPreferences?.length ? `Preferences: ${intake.productPreferences.join(', ')}` : '',
-            intake.goals?.length ? `Goals: ${intake.goals.join(', ')}` : '',
-        ].filter(Boolean).join('. ') : '';
-        const dislikedProducts = personalizationFilter ? (intake?.dislikedProductsText || '') : '';
-        const dislikedTerms = dislikedProducts.split(/[,\n]+/).map(s => s.trim().toLowerCase()).filter(s => s.length > 1);
+        const { profileSummary, dislikedProducts, dislikedTerms } = buildAiProfileContext(personalizationFilter, quizResults);
         try {
             const { suggestions, querySummary, relatedSearches, error } = await fetchSearchSuggestions({
                 query, category, symptom, signal: ac.signal,
@@ -768,6 +850,89 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             setAiError(e?.message || 'Could not load suggestions');
         }
     }, [personalizationFilter, quizResults]);
+
+    // Browse-mode AI extension: generates one more round of AI-suggested products
+    // for the currently-selected browse scope (macro group / category), reusing
+    // the exact same fetchSearchSuggestions utility and anti-fabrication API the
+    // typed-search flow uses — just with a synthesized query text instead of
+    // user-typed text, and results accumulated (not replaced) across rounds.
+    const runBrowseAiRound = useCallback(async (contextKeyAtCallTime, roundIndexAtCallTime) => {
+        const baseQueryText = buildBrowseAiQueryText(categoryFilter, macroGroup);
+        if (!baseQueryText) return;
+        // fetchSearchSuggestions session-caches by (query, category, symptom,
+        // maxResults) — round 2 with an identical query would just replay round
+        // 1's cached response verbatim (every item would then get deduped away,
+        // silently wasting the round). Vary the query text on later rounds so
+        // each round both busts the cache and nudges Claude toward genuinely
+        // additional options rather than repeating itself.
+        const queryText = roundIndexAtCallTime > 0 ? `${baseQueryText} (more options beyond the usual picks)` : baseQueryText;
+        if (browseAiAbortRef.current) browseAiAbortRef.current.abort();
+        const ac = new AbortController();
+        browseAiAbortRef.current = ac;
+        setBrowseAiLoading(true);
+        const { profileSummary, dislikedProducts, dislikedTerms } = buildAiProfileContext(personalizationFilter, quizResults);
+        try {
+            const { suggestions } = await fetchSearchSuggestions({
+                query: queryText,
+                category: categoryFilter !== 'all' ? categoryFilter : undefined,
+                signal: ac.signal,
+                personalized: personalizationFilter,
+                profileSummary,
+                dislikedProducts,
+                maxResults: personalizationFilter ? 6 : 8,
+            });
+            if (ac.signal.aborted) return;
+            // The context may have changed (user switched category/group) while
+            // this request was in flight — discard stale results instead of
+            // leaking them into a different scope's accumulator. The reset
+            // effect above already cleared browseAiSuggestions/Rounds for the
+            // new context, so just bail here.
+            if (browseAiContextKeyRef.current !== contextKeyAtCallTime) return;
+            setBrowseAiLoading(false);
+            setBrowseAiRounds((r) => r + 1);
+            setBrowseAiSuggestions((prev) => {
+                // Dedup against catalog matches, whatever's already accumulated
+                // for this browse context, and the search-flow's AI suggestions —
+                // mirrors the dedup gridItems already does above.
+                const existingNames = new Set([
+                    ...filtered.map((p) => (p.name || '').trim().toLowerCase()),
+                    ...prev.map((p) => (p.name || '').trim().toLowerCase()),
+                    ...enrichedAiSuggestions.map((p) => (p.name || '').trim().toLowerCase()),
+                ].filter(Boolean));
+                const fresh = (Array.isArray(suggestions) ? suggestions : []).filter((s) => {
+                    const nameAndBrand = `${s.name || ''} ${s.brand || ''}`.toLowerCase();
+                    if (dislikedTerms.some((term) => nameAndBrand.includes(term))) return false;
+                    const n = (s.name || '').trim().toLowerCase();
+                    if (n && existingNames.has(n)) return false;
+                    if (n) existingNames.add(n);
+                    return true;
+                });
+                return [...prev, ...fresh];
+            });
+        } catch (e) {
+            if (e?.name === 'AbortError') return;
+            setBrowseAiLoading(false);
+            // Count a failed round against the cap too, so a persistent server
+            // error can't cause the trigger effect below to retry indefinitely —
+            // the round budget is about bounding calls, not just successes.
+            if (browseAiContextKeyRef.current === contextKeyAtCallTime) setBrowseAiRounds((r) => r + 1);
+        }
+    }, [categoryFilter, macroGroup, personalizationFilter, quizResults, filtered, enrichedAiSuggestions]);
+
+    // Fires the next browse-AI round exactly when "Load more" would otherwise
+    // vanish with nothing left to show: no submitted text query (the search
+    // flow owns that case), a specific scope actually selected (never for the
+    // fully-unscoped "All" view — too unbounded for one LLM call), under the
+    // round cap, not already loading, and visibleCount has caught up to
+    // everything currently available (catalog + AI so far).
+    useEffect(() => {
+        if (qTrimForAi) return;
+        if (macroGroup === 'all' && categoryFilter === 'all') return;
+        if (browseAiRounds >= MAX_BROWSE_AI_ROUNDS) return;
+        if (browseAiLoading) return;
+        if (gridItems.length > visibleCount) return;
+        runBrowseAiRound(browseAiContextKey, browseAiRounds);
+    }, [qTrimForAi, macroGroup, categoryFilter, browseAiRounds, browseAiLoading, gridItems.length, visibleCount, browseAiContextKey, runBrowseAiRound]);
 
     useEffect(() => {
         if (qTrimForAi.length < 2) {
@@ -1112,7 +1277,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     <button type="button" onClick={clearBrowseFilters}>Clear filters</button>
                 </div>
             )}
-            {gridItems.length > visibleCount && (
+            {gridItems.length > visibleCount ? (
                 <div style={{ textAlign: 'center', marginTop: '2rem' }}>
                     <button
                         type="button"
@@ -1123,7 +1288,22 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         Load more
                     </button>
                 </div>
-            )}
+            ) : browseAiLoading ? (
+                // A browse-AI round is fetching more results for this scope in the
+                // background — show a disabled, clearly-labeled state instead of
+                // "Load more" just disappearing (which would look broken) or being
+                // clickable and double-firing a request.
+                <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+                    <button
+                        type="button"
+                        className="btn btn-outline"
+                        disabled
+                        style={{ padding: '0.7rem 1.75rem', opacity: 0.7, cursor: 'default' }}
+                    >
+                        Finding more…
+                    </button>
+                </div>
+            ) : null}
             </>
             )}
 
