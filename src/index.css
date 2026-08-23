@@ -3160,6 +3160,25 @@ html {
 
 /* ---- Product detail: layout switch + evidence rail (mockup board 1g) ---- */
 
+.pdp-back {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 1.25rem clamp(1rem, 5vw, 56px) 0;
+  margin: 0;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-navy);
+}
+
+.pdp-back:hover {
+  opacity: 0.72;
+}
+
 .pdp-viewswitch {
   display: flex;
   align-items: center;

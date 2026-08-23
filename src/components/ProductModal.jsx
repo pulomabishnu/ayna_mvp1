@@ -401,6 +401,10 @@ export default function ProductModal({
   // app already uses — clicking one here is real in-app navigation, not a
   // nested modal.
   onOpenProduct = null,
+  // Optional: renders a visible in-page "Back" control. Product pages are
+  // real routes (/product/:id) reachable via direct/shared links, so unlike
+  // a nested modal there's no other on-screen way back to Discovery.
+  onBack = null,
 }) {
   // The mockup draws the product page two ways — 1f, tabs with the Ayna
   // summary, and 1g, an evidence rail beside the specs. Both are built, and
@@ -746,6 +750,12 @@ export default function ProductModal({
         width: '100%', maxWidth: 'min(1180px, 100%)', margin: '0 auto',
         boxShadow: 'var(--shadow-lg)', position: 'relative'
       }}>
+
+        {onBack && (
+          <button type="button" className="pdp-back" onClick={onBack}>
+            ← Back
+          </button>
+        )}
 
         {/* Which of the mockup's two product layouts to show (1f / 1g). */}
         <div className="pdp-viewswitch" style={{ paddingTop: '1.5rem' }}>
