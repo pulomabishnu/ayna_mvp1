@@ -741,7 +741,16 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 personalized: personalizationFilter,
                 profileSummary,
                 dislikedProducts,
-                maxResults: personalizationFilter ? 10 : 20,
+                // Claude generates roughly linearly with requested count — each
+                // suggestion carries a full schema (summary, tags, retailers,
+                // search terms, safety note), so asking for 20 of them is what
+                // made every search feel slow (multi-second generation before
+                // anything new could render). Catalog matches (in `filtered`)
+                // already render instantly regardless of this call, so cutting
+                // the AI request down trades "more invented suggestions" for
+                // "results show up fast" — the better trade for a live per-
+                // keystroke search.
+                maxResults: personalizationFilter ? 6 : 8,
             });
             if (ac.signal.aborted) return;
             setAiLoading(false);
