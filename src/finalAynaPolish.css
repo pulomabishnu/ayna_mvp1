@@ -29,7 +29,7 @@
 .ayna-browse__grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:2rem 1.25rem; }
 .ayna-browse-card { min-width:0; cursor:pointer; outline:none; }
 .ayna-browse-card:focus-visible { box-shadow:0 0 0 3px rgba(78,56,102,.18); border-radius:12px; }
-.ayna-browse-card .ayna-discover-card__tile img { width:100%; height:100%; position:absolute; inset:0; object-fit:cover; }
+.ayna-browse-card .ayna-discover-card__tile img { width:100%; height:100%; position:absolute; inset:0; object-fit:contain; padding:14px; box-sizing:border-box; }
 .ayna-browse-card__match,.ayna-browse-card__ecosystem { position:absolute; top:.65rem; left:.65rem; z-index:2; border-radius:var(--radius-pill); padding:.32rem .55rem; background:rgba(255,255,255,.93); font-family:var(--font-label); font-size:.61rem; letter-spacing:.05em; color:var(--color-amber-deep); }
 .ayna-browse-card__ecosystem { top:auto; bottom:.65rem; color:#2f6b4f; }
 .ayna-browse-card__wishlist { position:absolute; top:.6rem; right:.6rem; z-index:3; width:34px; height:34px; border:1px solid rgba(26,23,20,.12); border-radius:50%; background:rgba(255,255,255,.93); display:grid; place-items:center; cursor:pointer; }
@@ -47,7 +47,7 @@
 .ayna-ecosystem-wishlist__grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1rem; }
 .ayna-ecosystem-wishlist__card { cursor:pointer; min-width:0; }
 .ayna-ecosystem-wishlist__image { position:relative; aspect-ratio:1; overflow:hidden; border-radius:10px; background:linear-gradient(160deg,#F3EADC,#EFE3D2); display:grid; place-items:center; }
-.ayna-ecosystem-wishlist__image img { width:100%; height:100%; object-fit:cover; }
+.ayna-ecosystem-wishlist__image img { width:100%; height:100%; object-fit:contain; padding:.75rem; box-sizing:border-box; }
 .ayna-ecosystem-wishlist__image>span { font-family:var(--font-serif); font-size:2.4rem; color:rgba(176,122,58,.55); }
 .ayna-ecosystem-wishlist__image button { position:absolute; right:.5rem; bottom:.5rem; border:0; border-radius:var(--radius-pill); background:rgba(255,255,255,.94); color:var(--color-text-muted); padding:.32rem .55rem; font-size:.68rem; cursor:pointer; }
 .ayna-ecosystem-wishlist__card>div:last-child>span { display:block; margin-top:.6rem; font-family:var(--font-label); font-size:.6rem; letter-spacing:.08em; text-transform:uppercase; color:var(--color-amber-deep); }

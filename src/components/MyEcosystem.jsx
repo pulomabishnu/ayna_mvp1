@@ -207,7 +207,7 @@ function EcosystemFunctionProductCard({
                     <img
                         src={displayImage}
                         alt=""
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '8px', boxSizing: 'border-box' }}
                         onError={handleImageError}
                     />
                 )}
@@ -599,9 +599,9 @@ function IntakeRecommendationsProductCard({
             position: 'relative', marginBottom: '0.35rem',
         }}
         >
-            <div style={{ height: '96px', width: '100%', overflow: 'hidden', position: 'relative' }}>
+            <div style={{ height: '96px', width: '100%', overflow: 'hidden', position: 'relative', background: 'linear-gradient(160deg, #F3EADC, #EFE3D2)' }}>
                 {imgSrc ? (
-                    <img src={imgSrc} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={imgSrc} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '8px', boxSizing: 'border-box' }} />
                 ) : (
                     <div style={{
                         width: '100%', height: '100%',

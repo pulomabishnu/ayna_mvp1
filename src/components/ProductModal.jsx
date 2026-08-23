@@ -684,7 +684,7 @@ export default function ProductModal({
             src={heroImageSrc}
             alt={product.name}
             onError={(e) => handleImageErrorWithRetry(e, () => { e.currentTarget.style.display = 'none'; })}
-            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+            style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
           />
         </button>
       ) : (
@@ -722,7 +722,7 @@ export default function ProductModal({
                 <img
                   src={related.image}
                   alt=""
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '8px', boxSizing: 'border-box' }}
                   onError={(e) => handleImageErrorWithRetry(e, () => { e.currentTarget.style.display = 'none'; })}
                 />
               ) : (

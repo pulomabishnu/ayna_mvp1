@@ -223,9 +223,9 @@ export default function Recommendations({
                     title="Don't recommend this again"
                 >✕</button>
 
-                <div style={{ height: '140px', width: '100%', overflow: 'hidden', position: 'relative' }}>
+                <div style={{ height: '140px', width: '100%', overflow: 'hidden', position: 'relative', background: 'linear-gradient(135deg, var(--color-secondary-fade), var(--color-primary-fade, #f3e8ff))' }}>
                     {imgSrc ? (
-                        <img src={imgSrc} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <img src={imgSrc} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '10px', boxSizing: 'border-box' }} />
                     ) : (
                         <div style={{
                             width: '100%', height: '100%',

@@ -198,6 +198,23 @@ export function scoreQueryAgainstProduct(query, haystackLower, identityHaystackL
     return 0;
   }
 
+  // A 2-term query only needs ONE term to hit to clear minH (compound nouns
+  // like "vitamin c" and OR-style pairs like "pads thongs" both use this same
+  // 1-of-2 threshold). For a compound noun, that lets a product through on a
+  // single incidental prose mention of one word ("Uberlube" mentioning
+  // "Vitamin E" once in its ingredients list matches "vitamin c" — real
+  // report: this scored the same as an actual vitamin C product). Reject that
+  // unless the match is backed by SOME identity-field signal (the product's
+  // name/brand/category/tags really is about one of these terms, not just a
+  // passing prose mention) or by genuine full coverage (both terms present
+  // somewhere, even in prose — a much stronger signal than either alone).
+  // A single-term query is unaffected: minH already requires hits >= 1 ==
+  // terms.length there, so `hits < terms.length` can never be true for it —
+  // this only ever narrows the 2-term, 1-of-2 case described above.
+  if (terms.length <= 2 && identityHits === 0 && hits < terms.length) {
+    return 0;
+  }
+
   let score = hits;
   // A term matching in an identity field means the product IS about that
   // term, not just mentioning it somewhere in a paragraph — weight it well
