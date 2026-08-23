@@ -43,16 +43,37 @@ import posthog from 'posthog-js';
 // the moment they're added (toggleMyProduct in App.jsx), not a live ID
 // reference — so a product added before a later catalog image fix keeps
 // showing the OLD image forever, even though the current catalog entry for
-// that same id has since been corrected. Reported live: "Rael Organic
-// Cotton Pads" has a valid real image in the catalog right now, but showed
-// as a letter avatar in My Ecosystem while the exact same product's page
-// (a fresh lookup, not the stored snapshot) rendered it correctly. Prefer
-// the current catalog's image when this id is still a real catalog product;
-// only fall back to the stored snapshot for LLM-generated/custom items that
-// were never in the static catalog to begin with.
+// that same id has since been corrected.
+//
+// A first pass at this (id-only lookup) still didn't fix the reported case:
+// "Rael Organic Cotton Pads" from a "Rebuild ecosystem" (LLM recommendation)
+// run still showed a letter avatar. Root cause, found after re-checking:
+// api/llm-recommendations.js's enrichProduct() ALWAYS mints a fresh
+// `gen-<namespace>-<slug>-<random>` id for every recommended product,
+// with zero reconciliation against the static catalog by name — so even a
+// recommendation for the literal same real-world product the catalog
+// already has (same name, same brand) gets an id that can never match
+// getProductById(). And when the model doesn't confidently know a real
+// image URL, enrichProduct defaults image to '' rather than guess (correct,
+// anti-fabrication behavior) — so these items arrive with no image and an
+// id the catalog has never seen.
+//
+// Fixed by also trying an exact normalized-name match against the catalog
+// as a fallback when id lookup misses. A name collision risk exists in
+// theory, but the catalog is curated (162 products, no near-duplicate
+// names), and the failure mode of a wrong match is "shows a different real
+// product's photo" — never as bad as inventing a price or safety claim, and
+// strictly better than a guaranteed-wrong letter avatar for a product whose
+// real photo we already have on file two lines away in the same codebase.
+const CATALOG_BY_NORMALIZED_NAME = new Map(
+  ALL_PRODUCTS.map((p) => [String(p.name || '').trim().toLowerCase(), p]).filter(([name]) => name)
+);
+
 function resolveEcosystemImage(product) {
-  const catalogMatch = product?.id ? getProductById(product.id) : null;
-  if (catalogMatch && !isPlaceholderProductImage(catalogMatch.image)) return catalogMatch.image;
+  const byId = product?.id ? getProductById(product.id) : null;
+  if (byId && !isPlaceholderProductImage(byId.image)) return byId.image;
+  const byName = CATALOG_BY_NORMALIZED_NAME.get(String(product?.name || '').trim().toLowerCase());
+  if (byName && !isPlaceholderProductImage(byName.image)) return byName.image;
   return product?.image;
 }
 
