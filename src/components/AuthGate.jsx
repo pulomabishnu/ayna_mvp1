@@ -191,48 +191,6 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
 
         <form onSubmit={handleEmailAuth} style={styles.form}>
           {isSignup && (
-            <input
-              type="text"
-              placeholder="First name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              required
-              style={styles.input}
-              autoComplete="given-name"
-              maxLength={50}
-            />
-          )}
-          <input
-            type="email"
-            placeholder="Email address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={styles.input}
-            autoComplete="email"
-          />
-          <div style={{ position: 'relative' }}>
-            <input
-              type={showPassword ? 'text' : 'password'}
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              style={{ ...styles.input, width: '100%', boxSizing: 'border-box', paddingRight: '2.5rem' }}
-              autoComplete={isSignup ? 'new-password' : 'current-password'}
-              minLength={isSignup ? 8 : undefined}
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(v => !v)}
-              style={{ position: 'absolute', right: '0.65rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)', fontSize: '1rem', padding: '0.25rem', lineHeight: 1 }}
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
-            >
-              {showPassword ? 'Hide' : 'Show'}
-            </button>
-          </div>
-
-          {isSignup && (
             <>
               <div style={styles.consentSection}>
                 {CONSENT_ITEMS.map((text, i) => (
@@ -256,6 +214,56 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
               </p>
             </>
           )}
+
+          {isSignup && (
+            <input
+              type="text"
+              placeholder="First name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              required
+              disabled={!allConsented}
+              style={{ ...styles.input, ...(!allConsented ? styles.inputDisabled : {}) }}
+              autoComplete="given-name"
+              maxLength={50}
+            />
+          )}
+          <input
+            type="email"
+            placeholder="Email address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            disabled={isSignup && !allConsented}
+            style={{ ...styles.input, ...(isSignup && !allConsented ? styles.inputDisabled : {}) }}
+            autoComplete="email"
+          />
+          <div style={{ position: 'relative' }}>
+            <input
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              disabled={isSignup && !allConsented}
+              style={{
+                ...styles.input,
+                ...(isSignup && !allConsented ? styles.inputDisabled : {}),
+                width: '100%', boxSizing: 'border-box', paddingRight: '2.5rem',
+              }}
+              autoComplete={isSignup ? 'new-password' : 'current-password'}
+              minLength={isSignup ? 8 : undefined}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(v => !v)}
+              disabled={isSignup && !allConsented}
+              style={{ position: 'absolute', right: '0.65rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: (isSignup && !allConsented) ? 'not-allowed' : 'pointer', color: 'var(--color-text-muted)', fontSize: '1rem', padding: '0.25rem', lineHeight: 1, opacity: (isSignup && !allConsented) ? 0.45 : 1 }}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? 'Hide' : 'Show'}
+            </button>
+          </div>
 
           {error && <p style={styles.error}>{error}</p>}
           {successMsg && <p style={styles.success}>{successMsg}</p>}
@@ -414,6 +422,10 @@ const styles = {
     outline: 'none',
     fontFamily: 'var(--font-body)',
     transition: 'border-color var(--transition-fast)',
+  },
+  inputDisabled: {
+    opacity: 0.45,
+    cursor: 'not-allowed',
   },
   consentSection: {
     display: 'flex',

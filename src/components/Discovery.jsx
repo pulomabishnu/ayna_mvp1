@@ -660,7 +660,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 // (but not when personalized results are on — a partnership doesn't
                 // buy placement in a real recommendation, only visibility on the
                 // page you browse freely, per How We Make Money).
-                if (browsingWithoutTextQuery && !(personalizationFilter && recommendedSet.size > 0)) {
+                if (browsingWithoutTextQuery && !personalizationFilter) {
                     const pa = isPartnerBrandItem(a) ? 1 : 0;
                     const pb = isPartnerBrandItem(b) ? 1 : 0;
                     if (pa !== pb) return pb - pa;
@@ -671,7 +671,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 const qb = baseB + (browsingWithoutTextQuery ? shuffleJitter(b, shuffleSeed, baseB) : 0);
                 return qb - qa;
             });
-            if (browsingWithoutTextQuery && !(personalizationFilter && recommendedSet.size > 0)) {
+            if (browsingWithoutTextQuery && !personalizationFilter) {
                 list = applyColdStartFloor(list, PAGE_SIZE);
             }
         }
