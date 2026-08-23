@@ -74,7 +74,6 @@ export default function HowItWorks({ onBack, onViewSources }) {
             <h2>Ayna is not a doctor, and never pretends to be.</h2>
             <p>
               Summaries are AI-written from cited sources and clinician input.
-              Anything needing a diagnosis, we point you to a specialist.
             </p>
           </div>
 

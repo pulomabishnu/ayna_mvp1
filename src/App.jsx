@@ -27,7 +27,6 @@ const Discovery = React.lazy(() => import('./components/Discovery'));
 const Articles = React.lazy(() => import('./components/Articles'));
 import { CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById } from './data/products';
 import { loadAynaReviews, hydrateAynaReviews, addRating, addReview } from './data/aynaReviews';
-import AynaDeeptech from './components/AynaDeeptech';
 import Screenings from './components/Screenings';
 import { useScrollPosition } from './hooks/useScrollPosition';
 import ProductModal from './components/ProductModal';
@@ -91,7 +90,7 @@ function clearPendingEcosystemReset(userId) {
 
 const VIEW_TO_PATH = {
   welcome: '/', hero: '/', quiz: '/quiz', ecosystem: '/ecosystem',
-  discovery: '/discovery', waitlist: '/startups', deeptech: '/deeptech',
+  discovery: '/discovery', waitlist: '/startups',
   articles: '/library', screenings: '/screenings', omitted: '/omitted',
   comparison: '/comparison', recalls: '/recalls',
   'doctor-prep': '/appointment-prep', 'profile-edit': '/profile', 'phone-verify': '/text-ayna', tracked: '/tracked',
@@ -349,7 +348,7 @@ function App() {
     const STATIC_VIEWS = [
       'privacy-policy', 'terms-of-use', 'confirmed', 'auth-callback',
       'welcome', 'hero', 'quiz', 'discovery', 'waitlist', 'articles',
-      'deeptech', 'how-it-works', 'how-we-make-money',
+      'how-it-works', 'how-we-make-money',
     ];
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       setUser(session?.user ?? null);
@@ -723,7 +722,6 @@ function App() {
     }
     setCurrentView('discovery');
   };
-  const handleViewDeeptech = () => setCurrentView('deeptech');
   const handleViewHowWeMakeMoney = () => setCurrentView('how-we-make-money');
   const handleViewHowItWorks = () => setCurrentView('how-it-works');
   const handleViewAbout = () => setCurrentView('about');
@@ -1330,12 +1328,6 @@ function App() {
             />
           </Suspense>
         )}
-        {currentView === 'deeptech' && (
-          <AynaDeeptech
-            joinedWaitlists={joinedWaitlists}
-            toggleJoinWaitlist={toggleJoinWaitlist}
-          />
-        )}
         {currentView === 'articles' && (
           <Suspense fallback={<ViewLoadingFallback />}>
             <Articles initialArticleId={selectedArticleId} onOpenProduct={handleOpenProduct} quizResults={quizResults} healthProfile={healthProfile} />
@@ -1685,7 +1677,6 @@ function App() {
           onViewHowItWorks={handleViewHowItWorks}
           onViewAbout={handleViewAbout}
           onViewDiscovery={handleViewDiscovery}
-          onViewDeeptech={handleViewDeeptech}
           onViewWaitlist={handleViewWaitlist}
           onViewArticles={handleViewArticles}
           onViewPrivacyPolicy={() => setCurrentView('privacy-policy')}

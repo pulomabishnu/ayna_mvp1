@@ -56,7 +56,6 @@ export default function SiteFooter({
   onViewHowItWorks,
   onViewAbout,
   onViewDiscovery,
-  onViewDeeptech,
   onViewWaitlist,
   onViewArticles,
   onViewPrivacyPolicy,
@@ -86,7 +85,6 @@ export default function SiteFooter({
         <FooterColumn title="Explore">
           <button type="button" style={LINK_STYLE} onClick={onViewHowItWorks}>How It Works</button>
           <button type="button" style={LINK_STYLE} onClick={() => onViewDiscovery?.('')}>Browse</button>
-          <button type="button" style={LINK_STYLE} onClick={onViewDeeptech}>Why Ayna</button>
           <button type="button" style={LINK_STYLE} onClick={onViewArticles}>My Health Library</button>
         </FooterColumn>
 
