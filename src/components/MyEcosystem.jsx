@@ -7,6 +7,7 @@ import {
     detectDuplicates,
     getEcosystemAlternatives,
     getRecommendationExplanation,
+    getProductById,
 } from '../data/products';
 import { getInteractions } from '../data/interactions';
 import CareNearYouPanel from './CareNearYouPanel';
@@ -37,6 +38,23 @@ import {
 } from '../utils/ecosystemGenerationStore';
 import { loadPhoneNumberForUser } from '../utils/phoneNumberStore';
 import posthog from 'posthog-js';
+
+// Ecosystem products are stored as a full snapshot of the product object at
+// the moment they're added (toggleMyProduct in App.jsx), not a live ID
+// reference — so a product added before a later catalog image fix keeps
+// showing the OLD image forever, even though the current catalog entry for
+// that same id has since been corrected. Reported live: "Rael Organic
+// Cotton Pads" has a valid real image in the catalog right now, but showed
+// as a letter avatar in My Ecosystem while the exact same product's page
+// (a fresh lookup, not the stored snapshot) rendered it correctly. Prefer
+// the current catalog's image when this id is still a real catalog product;
+// only fall back to the stored snapshot for LLM-generated/custom items that
+// were never in the static catalog to begin with.
+function resolveEcosystemImage(product) {
+  const catalogMatch = product?.id ? getProductById(product.id) : null;
+  if (catalogMatch && !isPlaceholderProductImage(catalogMatch.image)) return catalogMatch.image;
+  return product?.image;
+}
 
 const AYNA_SMS_NUMBER = import.meta.env.VITE_AYNA_SMS_NUMBER || '';
 const SMS_CARD_DISMISS_KEY = 'ayna_sms_card_dismissed_at';
@@ -134,7 +152,7 @@ function EcosystemFunctionProductCard({
     const brandDisplay = brandName || 'N/A';
     const rawSummary = (product.summary || '').trim();
     const summaryShort = rawSummary.length > 110 ? `${rawSummary.slice(0, 107)}…` : rawSummary;
-    const displayImage = safeProductImageSrc(resolvedCardImage) || safeProductImageSrc(product.image) || '';
+    const displayImage = safeProductImageSrc(resolvedCardImage) || safeProductImageSrc(resolveEcosystemImage(product)) || '';
 
     useEffect(() => {
         setImgError(false);
@@ -1811,7 +1829,7 @@ export default function MyEcosystem({
                                         {myProductList.slice(0, 6).map((product) => (
                                             <button type="button" key={product.id} className="eco-overview-product" onClick={() => onOpenProduct?.(product)}>
                                                 <span className="eco-overview-product__image">
-                                                    {safeProductImageSrc(product.image) ? <img src={safeProductImageSrc(product.image)} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.display = 'none'; }} /> : <b>{String(product.brand || product.name || '?').charAt(0).toUpperCase()}</b>}
+                                                    {safeProductImageSrc(resolveEcosystemImage(product)) ? <img src={safeProductImageSrc(resolveEcosystemImage(product))} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.display = 'none'; }} /> : <b>{String(product.brand || product.name || '?').charAt(0).toUpperCase()}</b>}
                                                 </span>
                                                 <span className="eco-overview-product__meta">{CATEGORY_LABELS[product.category] || product.category || 'Product'}</span>
                                                 <strong>{product.name}</strong>
@@ -1865,7 +1883,7 @@ export default function MyEcosystem({
                                                     <div key={product.id} className="eco-details-clean__row">
                                                         <button type="button" className="eco-details-clean__product" onClick={() => onOpenProduct?.(product)}>
                                                             <span className="eco-details-clean__thumb">
-                                                                {safeProductImageSrc(product.image) ? <img src={safeProductImageSrc(product.image)} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.display = 'none'; }} /> : <b>{String(product.brand || product.name || '?').charAt(0).toUpperCase()}</b>}
+                                                                {safeProductImageSrc(resolveEcosystemImage(product)) ? <img src={safeProductImageSrc(resolveEcosystemImage(product))} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.display = 'none'; }} /> : <b>{String(product.brand || product.name || '?').charAt(0).toUpperCase()}</b>}
                                                             </span>
                                                             <span>
                                                                 <strong>{product.name}</strong>
@@ -2184,8 +2202,8 @@ export default function MyEcosystem({
                                                             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpenProduct(product); } }}
                                                         >
                                                             <div style={{ width: '48px', height: '48px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0 }}>
-                                                                {safeProductImageSrc(product.image) ? (
-                                                                    <img src={safeProductImageSrc(product.image)} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                                {safeProductImageSrc(resolveEcosystemImage(product)) ? (
+                                                                    <img src={safeProductImageSrc(resolveEcosystemImage(product))} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                                                 ) : (
                                                                     <div style={{ width: '100%', height: '100%', background: 'var(--color-secondary-fade)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', fontFamily: 'var(--font-serif)' }}>
                                                                         {String(product.brand || product.name || '?').trim().charAt(0).toUpperCase()}
@@ -2371,8 +2389,8 @@ export default function MyEcosystem({
                                         onClick={() => onToggleProduct(product)}
                                     >
                                         <div style={{ width: '40px', height: '40px', borderRadius: 'var(--radius-sm)', overflow: 'hidden', flexShrink: 0 }}>
-                                            {safeProductImageSrc(product.image) ? (
-                                                <img src={safeProductImageSrc(product.image)} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            {safeProductImageSrc(resolveEcosystemImage(product)) ? (
+                                                <img src={safeProductImageSrc(resolveEcosystemImage(product))} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                             ) : (
                                                 <div style={{ width: '100%', height: '100%', background: 'var(--color-secondary-fade)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem', fontFamily: 'var(--font-serif)' }}>
                                                     {String(product.brand || product.name || '?').trim().charAt(0).toUpperCase()}
