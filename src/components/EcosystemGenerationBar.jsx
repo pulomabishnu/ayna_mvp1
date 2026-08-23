@@ -70,7 +70,7 @@ export default function EcosystemGenerationBar({ intakeFingerprint, onViewEcosys
       wasLoadingRef.current = false;
 
       unsubscribeRef.current = subscribeIfActive(intakeFingerprint, (r) => {
-        setRec({ loading: r.loading, startedAt: r.startedAt, error: r.error });
+        setRec({ loading: r.loading, startedAt: r.startedAt, error: r.error, hasResults: Array.isArray(r.tiered) && r.tiered.length > 0 });
       });
     };
 
@@ -100,7 +100,7 @@ export default function EcosystemGenerationBar({ intakeFingerprint, onViewEcosys
   // Detect the loading:true -> false transition to fire the one-shot "ready" popup.
   useEffect(() => {
     if (!rec) { wasLoadingRef.current = false; return; }
-    if (wasLoadingRef.current && !rec.loading && !rec.error) {
+    if (wasLoadingRef.current && !rec.loading && !rec.error && !rec.hasResults) {
       setReadyPopup(true);
     }
     wasLoadingRef.current = rec.loading;
@@ -114,7 +114,7 @@ export default function EcosystemGenerationBar({ intakeFingerprint, onViewEcosys
 
   return (
     <>
-      {rec.loading && !dismissed && (
+      {rec.loading && !rec.hasResults && !dismissed && (
         <div className="eco-gen-bar" role="status" aria-live="polite">
           <span className="eco-gen-bar__spinner" aria-hidden="true" />
           <span>Building your ecosystem&hellip; {mm}:{ss}</span>

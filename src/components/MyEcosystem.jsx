@@ -1139,6 +1139,14 @@ export default function MyEcosystem({
             rec.tiered = [];
             notifyGeneration(rec);
 
+            // Local-first: give the user a usable ecosystem immediately.
+            // The LLM batches below still run and can refine these matches later.
+            const instantLocal = generateTieredRecommendations(intake);
+            if (Array.isArray(instantLocal) && instantLocal.length > 0) {
+                rec.tiered = instantLocal;
+                notifyGeneration(rec);
+            }
+
             (async () => {
                 // Per-attempt state — the shared record only needs the fields
                 // consumers read (tiered/loading/error/startedAt); these are
@@ -1179,8 +1187,6 @@ export default function MyEcosystem({
                                 }
                                 if (recs.length > 0) {
                                     accumulated.push(...recs);
-                                    rec.tiered = [...accumulated];
-                                    notifyGeneration(rec);
                                 }
                             })
                             .catch(e => {
@@ -1199,6 +1205,14 @@ export default function MyEcosystem({
                     if (rec.cancelled) return;
                     const recs = accumulated;
                     console.log('[Ayna LLM] Done. Sections:', recs.length, '| errors:', errorCount);
+
+                    // Swap in the completed AI result only after all batches finish.
+                    // Until then, keep the instant local ecosystem stable.
+                    if (recs.length > 0) {
+                        rec.tiered = recs;
+                        notifyGeneration(rec);
+                    }
+
                     if (recs.length === 0 && errorCount > 0) {
                         // Preserve intentional auth/quota behavior, but do not make
                         // the core ecosystem depend on the LLM endpoint being up.
@@ -2031,8 +2045,8 @@ export default function MyEcosystem({
                     <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>+ Add a Product or App</button>
                 </div>
 
-                {/* Loading bar persists above the grid until all batches finish */}
-                {llmLoading && (
+                {/* Only block when there is genuinely no usable ecosystem yet. */}
+                {llmLoading && llmTiered.length === 0 && (
                     llmLoadStartedAt > 0
                         ? <LlmRecommendationsLoadingBlock loadStartedAt={llmLoadStartedAt} compact onCancel={handleCancelRecommendations} />
                         : <div style={{ textAlign: 'center', padding: '1.5rem', color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>Building your ecosystem…</div>
