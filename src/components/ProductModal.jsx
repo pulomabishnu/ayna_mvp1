@@ -372,6 +372,18 @@ function getBuyUrl(product) {
     if (typeof mapped === 'string' && /^https?:\/\//i.test(mapped.trim())) return mapped.trim();
   }
 
+  // Confirmed live: 147 of 162 catalog products have none of the fields
+  // above set (most just carry plain retailer NAMES in whereToBuy — including
+  // brand domains like "Cora.life"/"Thorne.com" stored as unformatted text,
+  // not real URLs) — so "Buy Now" rendered as a permanently disabled button
+  // for the overwhelming majority of the catalog. getRetailerLinks() (see
+  // retailerLinks.js) already solves this exact problem for the "Compare at"
+  // row and Specs tab — a real retailer's own product page when known, else a
+  // real deterministic site-search link — but was never wired into the
+  // primary Buy Now CTA. Use its first result as the last-resort fallback.
+  const retailerFallback = getRetailerLinks(product)[0]?.url;
+  if (retailerFallback) return retailerFallback;
+
   if (product?.whereToBuyLinks && typeof product.whereToBuyLinks === 'object') {
     for (const mapped of Object.values(product.whereToBuyLinks)) {
       if (typeof mapped === 'string' && /^https?:\/\//i.test(mapped.trim())) return mapped.trim();
