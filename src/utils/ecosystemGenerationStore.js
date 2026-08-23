@@ -54,7 +54,7 @@ export function subscribeToGeneration(fingerprint, onUpdate, onStart) {
   let rec = activeGenerations.get(fingerprint);
   const isNew = !rec;
   if (isNew) {
-    rec = { startedAt: 0, controller: null, cancelled: false, tiered: [], loading: false, error: '', subscribers: new Set(), gcTimer: null };
+    rec = { startedAt: 0, controller: null, cancelled: false, tiered: [], loading: false, error: '', partialConcerns: [], subscribers: new Set(), gcTimer: null };
     activeGenerations.set(fingerprint, rec);
   } else if (rec.gcTimer) {
     // A previous mount's cleanup was about to give up on this generation
