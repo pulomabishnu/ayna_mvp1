@@ -1233,8 +1233,16 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             <>
             <div className="ayna-browse__grid">
                 {gridItems.slice(0, visibleCount).map((item, idx) => {
-                    const cardImageSrc = resolvedImages[item.id] || item.image;
-                    const imageStillLoading = resolvedImages[item.id] === undefined && isPlaceholderProductImage(item.image);
+                    // A defined (even empty-string) resolvedImages[item.id] came back
+                    // from the server's type-aware /api/product-image resolution —
+                    // trust it as-is below rather than re-running it through
+                    // isPlaceholderProductImage, which doesn't know the product is
+                    // 'digital' and would reject a legitimate app/telehealth logo.
+                    // Only the unresolved (undefined) raw catalog fallback still needs
+                    // that heuristic, since it was never server-vetted.
+                    const resolvedItemImage = resolvedImages[item.id];
+                    const cardImageSrc = resolvedItemImage !== undefined ? resolvedItemImage : item.image;
+                    const imageStillLoading = resolvedItemImage === undefined && isPlaceholderProductImage(item.image);
                     const tileLetter = (item.brand || item.name || '?').trim().charAt(0).toUpperCase();
                     const matchPercent = getExplicitMatchPercent(item);
                     const eligibility = getExplicitEligibility(item);
@@ -1259,7 +1267,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                 }}
                             >
                                 <div className="ayna-discover-card__tile">
-                                    {cardImageSrc && !isPlaceholderProductImage(cardImageSrc) ? (
+                                    {cardImageSrc && (resolvedItemImage !== undefined || !isPlaceholderProductImage(cardImageSrc)) ? (
                                         <>
                                             <img
                                                 src={cardImageSrc}

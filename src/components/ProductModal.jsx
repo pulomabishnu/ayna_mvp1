@@ -690,7 +690,13 @@ export default function ProductModal({
 
   const galleryTile = (
     <div className="pdp-head__tile">
-      {heroImageSrc && !isPlaceholderProductImage(heroImageSrc) ? (
+      {/* resolvedModalImage, when set, came back from the server's
+          type-aware /api/product-image — trust it as-is instead of
+          re-running it through isPlaceholderProductImage, which doesn't
+          know the product is 'digital' and would reject a legitimate
+          app/telehealth logo again. Only the raw catalog fallback still
+          needs that heuristic. */}
+      {heroImageSrc && (resolvedModalImage || !isPlaceholderProductImage(heroImageSrc)) ? (
         <button
           type="button"
           onClick={() => setLightboxOpen(true)}

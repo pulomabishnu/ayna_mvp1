@@ -109,7 +109,13 @@ function EcosystemTileImage({ product, alt = '', imgStyle, imgClassName, letterN
     return () => { active = false; };
   }, [initial, product?.id, product?.name, product?.brand, product?.url]);
 
-  const finalSrc = safeProductImageSrc(resolved) || safeProductImageSrc(initial);
+  // `resolved` came back from the server's /api/product-image, which already
+  // applied the type-aware (allowBrandLogo) check — re-running it through
+  // isPlaceholderProductImage here would reject a legitimate app/telehealth
+  // logo again, since that heuristic has no idea the product is 'digital'.
+  // Real bug: Brightside's real resolved image (.../social-share-banner.png)
+  // was silently thrown away by this exact re-filter.
+  const finalSrc = resolved || safeProductImageSrc(initial);
   if (finalSrc) {
     return (
       <img
@@ -221,7 +227,17 @@ function EcosystemFunctionProductCard({
     const brandDisplay = brandName || 'N/A';
     const rawSummary = (product.summary || '').trim();
     const summaryShort = rawSummary.length > 110 ? `${rawSummary.slice(0, 107)}…` : rawSummary;
-    const displayImage = safeProductImageSrc(resolvedCardImage) || safeProductImageSrc(resolveEcosystemImage(product)) || '';
+    // resolvedCardImage came back from the server's type-aware
+    // /api/product-image resolution — trust it as-is rather than re-running
+    // it through isPlaceholderProductImage, which doesn't know the product
+    // is 'digital' and would reject a legitimate app/telehealth logo again.
+    // Same reasoning for the resolveEcosystemImage(product) fallback below:
+    // its own product.image can itself already be a server-resolved value
+    // merged in by the caller (recommendedSwapByKey/tier.product rendering
+    // above), and resolveEcosystemImage() already gates its own catalog
+    // lookups internally — wrapping the result in safeProductImageSrc again
+    // re-applies the type-blind heuristic to that already-vetted value.
+    const displayImage = resolvedCardImage || resolveEcosystemImage(product) || '';
 
     useEffect(() => {
         setImgError(false);
