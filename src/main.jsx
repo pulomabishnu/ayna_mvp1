@@ -44,15 +44,56 @@ if (!POSTHOG_KEY) {
   });
 }
 
+// Vite's lazy-loaded chunks are hashed per deploy. A tab left open across a
+// new deploy (we ship many in a session) still has the OLD hash cached in its
+// React.lazy() closures, so the next click into Discovery/MyEcosystem/
+// Articles 404s on a chunk that no longer exists on the CDN — surfacing as
+// "Failed to fetch dynamically imported module" in this boundary. That's not
+// a real app error, it's a stale asset manifest: reload once, automatically,
+// rather than dead-ending on a scary error screen the user has to notice and
+// click through. The sessionStorage flag caps it at one silent retry per
+// session so a genuinely broken deploy still surfaces the real error instead
+// of reload-looping forever.
+const CHUNK_RELOAD_KEY = 'ayna_chunk_reload_attempted';
+function isChunkLoadError(error) {
+  const msg = String(error?.message || error || '');
+  return /Failed to fetch dynamically imported module|error loading dynamically imported module|Importing a module script failed/i.test(msg);
+}
+
 class ErrorBoundary extends React.Component {
-  state = { hasError: false, error: null }
+  state = { hasError: false, error: null, recovering: false }
   static getDerivedStateFromError(error) {
     return { hasError: true, error }
   }
+  componentDidMount() {
+    // A clean mount means this reload (if any) actually fixed things — clear
+    // the one-shot flag so a LATER, unrelated chunk error in the same tab
+    // session (e.g. another deploy landing while it's still open) still gets
+    // its own automatic retry instead of going straight to the error screen.
+    try { sessionStorage.removeItem(CHUNK_RELOAD_KEY); } catch (_) { /* private mode */ }
+  }
   componentDidCatch(error, info) {
     console.error('App error:', error, info)
+    if (isChunkLoadError(error)) {
+      let alreadyTried = false;
+      try { alreadyTried = sessionStorage.getItem(CHUNK_RELOAD_KEY) === '1'; } catch (_) { /* private mode */ }
+      if (!alreadyTried) {
+        try { sessionStorage.setItem(CHUNK_RELOAD_KEY, '1'); } catch (_) { /* private mode */ }
+        this.setState({ recovering: true });
+        window.location.reload();
+      } else {
+        try { sessionStorage.removeItem(CHUNK_RELOAD_KEY); } catch (_) { /* private mode */ }
+      }
+    }
   }
   render() {
+    if (this.state.recovering) {
+      return (
+        <div style={{ padding: '2rem', fontFamily: 'sans-serif', maxWidth: '600px', margin: '2rem auto', color: '#666' }}>
+          Updating…
+        </div>
+      )
+    }
     if (this.state.hasError) {
       return (
         <div style={{ padding: '2rem', fontFamily: 'sans-serif', maxWidth: '600px', margin: '2rem auto' }}>
