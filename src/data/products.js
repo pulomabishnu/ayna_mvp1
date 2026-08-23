@@ -74,12 +74,12 @@ export const PHYSICAL_PRODUCTS = [
             recalls: '⚠️ 2024 social media concerns about chemical residues. Always has not been subject to FDA recall but independent testing found trace PFAS in some pad brands.',
             allergens: 'Fragrance in scented versions; fragrance-free version available',
             sideEffects: 'Possible contact dermatitis or irritation, especially with scented versions. Rash or itching from synthetic materials.',
-            opinionAlerts: 'Common complaints include the "plastic feel" and environmental concerns regarding non-biodegradability.'
+            opinionAlerts: 'Common complaints include the "plastic feel" and environmental concerns regarding non-biodegradability. A 2024 independent lab test (commissioned by Mamavation/EHN) found PFAS ("forever chemical") indicators in some Always pad lines, which drove a wave of social media discussion and pushed a visible share of users toward organic-cotton alternatives — Always disputes that its products pose a health risk, and no regulatory recall has followed, but the concern is real and widely discussed, not fringe.'
         },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'FlexFoam absorption is reliable for heavy flow; unscented versions minimize irritation risk for sensitive users.',
-        communityReview: 'Community discussions on Reddit r/periods note strong performance for heavy flow and overnight use, with appreciation for the thin profile.',
+        communityReview: 'Community discussions on Reddit r/periods are split: strong praise for absorption and the thin profile during heavy flow, alongside a distinct and growing thread of PFAS/chemical-residue concern that picked up in 2024 and made a real share of users switch to organic-cotton brands or say they no longer feel fully comfortable using it.',
         ingredients: 'Polyethylene, polypropylene, wood pulp, adhesive. Fragrance-free version omits parfum.',
         effectiveness: 'Highly effective for heavy flow. FlexFoam absorbs 10x its weight while staying thin.',
         integrations: [],
