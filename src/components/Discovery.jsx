@@ -11,7 +11,7 @@ import Disclaimer from './Disclaimer';
 import { getPricePerUnitLabel } from '../utils/pricePerUnit';
 import { fetchDsldProducts } from '../utils/fetchDsldProducts';
 import { enrichLlmProductForDiscovery } from '../utils/enrichLlmProductForDiscovery';
-import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
+import { resolveProductImage, isPlaceholderProductImage, safeProductImageSrc } from '../utils/resolveProductImage';
 import posthog from 'posthog-js';
 import GlossaryTerm from './GlossaryTerm';
 import { productHref, isPlainLeftClick } from '../utils/productRoute';
@@ -1168,8 +1168,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         {dsldProducts.map((product) => (
                             <div key={product.id} className="card hover-lift" style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                                 <div style={{ height: '120px', width: '100%', overflow: 'hidden', position: 'relative' }}>
-                                    {product.image ? (
-                                        <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => handleImageErrorWithRetry(e, () => { e.currentTarget.style.display = 'none'; })} />
+                                    {safeProductImageSrc(product.image) ? (
+                                        <img src={safeProductImageSrc(product.image)} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => handleImageErrorWithRetry(e, () => { e.currentTarget.style.display = 'none'; })} />
                                     ) : (
                                         <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, var(--color-secondary-fade), #f3e8ff)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem' }}>NIH</div>
                                     )}

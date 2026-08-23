@@ -5,6 +5,7 @@ import { inferTagsFromHealthProfile } from '../utils/healthDataProfile';
 import CareNearYouPanel from './CareNearYouPanel';
 import LlmRecommendationsLoadingBlock from './LlmRecommendationsLoadingBlock';
 import { getPricePerUnitLabel } from '../utils/pricePerUnit';
+import { safeProductImageSrc } from '../utils/resolveProductImage';
 import {
     fetchLlmRecommendations,
     loadLearningMemory,
@@ -204,7 +205,7 @@ export default function Recommendations({
             ? (String(product.considerations || '').trim() || null)
             : engine.considerations;
         const hideClinicianCallout = product.llmGenerated === true || product.intakeGenerated === true;
-        const imgSrc = product.image && String(product.image).trim();
+        const imgSrc = safeProductImageSrc(product.image);
         const buyUrl = product.url && /^https:\/\//i.test(String(product.url).trim()) ? String(product.url).trim() : '';
         return (
             <div key={product.id} className="card hover-lift" style={{

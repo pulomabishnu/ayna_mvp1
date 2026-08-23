@@ -1,4 +1,5 @@
 import React from 'react';
+import { safeProductImageSrc } from '../utils/resolveProductImage';
 
 export default function OmittedProducts({ omittedProducts, toggleOmitProduct }) {
     const omittedList = Object.values(omittedProducts);
@@ -18,7 +19,13 @@ export default function OmittedProducts({ omittedProducts, toggleOmitProduct }) 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem', maxWidth: '1000px', margin: '0 auto' }}>
                     {omittedList.map((product) => (
                         <div key={product.id} className="card" style={{ padding: '1rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                            <img src={product.image} alt={product.name} style={{ width: '60px', height: '60px', borderRadius: 'var(--radius-md)', objectFit: 'cover' }} />
+                            {safeProductImageSrc(product.image) ? (
+                                <img src={safeProductImageSrc(product.image)} alt={product.name} style={{ width: '60px', height: '60px', borderRadius: 'var(--radius-md)', objectFit: 'cover' }} />
+                            ) : (
+                                <div style={{ width: '60px', height: '60px', borderRadius: 'var(--radius-md)', flexShrink: 0, background: 'var(--color-secondary-fade)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem', fontFamily: 'var(--font-serif)' }}>
+                                    {String(product.brand || product.name || '?').trim().charAt(0).toUpperCase()}
+                                </div>
+                            )}
                             <div style={{ flexGrow: 1 }}>
                                 <h3 style={{ fontSize: '1rem', marginBottom: '0.15rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>{product.name}{product.outOfBusiness && <span style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-surface-soft)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No longer sold</span>}</h3>
                                 <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{product.category}</p>

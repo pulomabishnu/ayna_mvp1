@@ -24,7 +24,7 @@ import {
     loadFetchedLlmFingerprint,
     saveFetchedLlmFingerprint,
 } from '../utils/fetchLlmRecommendations';
-import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
+import { resolveProductImage, isPlaceholderProductImage, safeProductImageSrc } from '../utils/resolveProductImage';
 import { getPricePerUnitLabel } from '../utils/pricePerUnit';
 import { deriveBrandSearchContext } from '../utils/productBrandContext.js';
 import { getSupabaseClient } from '../utils/supabaseClient';
@@ -134,7 +134,7 @@ function EcosystemFunctionProductCard({
     const brandDisplay = brandName || 'N/A';
     const rawSummary = (product.summary || '').trim();
     const summaryShort = rawSummary.length > 110 ? `${rawSummary.slice(0, 107)}…` : rawSummary;
-    const displayImage = resolvedCardImage || product.image || '';
+    const displayImage = safeProductImageSrc(resolvedCardImage) || safeProductImageSrc(product.image) || '';
 
     useEffect(() => {
         setImgError(false);
@@ -461,7 +461,13 @@ function EcosystemProductAlternatives({ product, seedEntry, quizResults, healthP
                                         background: 'var(--color-bg)',
                                     }}
                                 >
-                                    <img src={a.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    {safeProductImageSrc(a.image) ? (
+                                        <img src={safeProductImageSrc(a.image)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    ) : (
+                                        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontFamily: 'var(--font-serif)', color: 'var(--color-text-muted)' }}>
+                                            {String(a.brand || a.name || '?').trim().charAt(0).toUpperCase()}
+                                        </div>
+                                    )}
                                 </div>
                                 <span style={{ fontSize: '0.85rem', fontWeight: '500', color: 'var(--color-text-main)', lineHeight: 1.35 }}>
                                     {a.name}
@@ -1805,7 +1811,7 @@ export default function MyEcosystem({
                                         {myProductList.slice(0, 6).map((product) => (
                                             <button type="button" key={product.id} className="eco-overview-product" onClick={() => onOpenProduct?.(product)}>
                                                 <span className="eco-overview-product__image">
-                                                    {product.image ? <img src={product.image} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.display = 'none'; }} /> : <b>{String(product.brand || product.name || '?').charAt(0).toUpperCase()}</b>}
+                                                    {safeProductImageSrc(product.image) ? <img src={safeProductImageSrc(product.image)} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.display = 'none'; }} /> : <b>{String(product.brand || product.name || '?').charAt(0).toUpperCase()}</b>}
                                                 </span>
                                                 <span className="eco-overview-product__meta">{CATEGORY_LABELS[product.category] || product.category || 'Product'}</span>
                                                 <strong>{product.name}</strong>
@@ -1859,7 +1865,7 @@ export default function MyEcosystem({
                                                     <div key={product.id} className="eco-details-clean__row">
                                                         <button type="button" className="eco-details-clean__product" onClick={() => onOpenProduct?.(product)}>
                                                             <span className="eco-details-clean__thumb">
-                                                                {product.image ? <img src={product.image} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.display = 'none'; }} /> : <b>{String(product.brand || product.name || '?').charAt(0).toUpperCase()}</b>}
+                                                                {safeProductImageSrc(product.image) ? <img src={safeProductImageSrc(product.image)} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.display = 'none'; }} /> : <b>{String(product.brand || product.name || '?').charAt(0).toUpperCase()}</b>}
                                                             </span>
                                                             <span>
                                                                 <strong>{product.name}</strong>
@@ -2178,7 +2184,13 @@ export default function MyEcosystem({
                                                             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpenProduct(product); } }}
                                                         >
                                                             <div style={{ width: '48px', height: '48px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0 }}>
-                                                                <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                                {safeProductImageSrc(product.image) ? (
+                                                                    <img src={safeProductImageSrc(product.image)} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                                ) : (
+                                                                    <div style={{ width: '100%', height: '100%', background: 'var(--color-secondary-fade)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', fontFamily: 'var(--font-serif)' }}>
+                                                                        {String(product.brand || product.name || '?').trim().charAt(0).toUpperCase()}
+                                                                    </div>
+                                                                )}
                                                             </div>
                                                             <div style={{ flexGrow: 1, minWidth: 0 }}>
                                                                 <h4 style={{ fontSize: '0.95rem', marginBottom: '0.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>{product.name}{product.outOfBusiness && <span style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-surface-soft)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No longer sold</span>}</h4>
@@ -2359,7 +2371,13 @@ export default function MyEcosystem({
                                         onClick={() => onToggleProduct(product)}
                                     >
                                         <div style={{ width: '40px', height: '40px', borderRadius: 'var(--radius-sm)', overflow: 'hidden', flexShrink: 0 }}>
-                                            <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            {safeProductImageSrc(product.image) ? (
+                                                <img src={safeProductImageSrc(product.image)} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            ) : (
+                                                <div style={{ width: '100%', height: '100%', background: 'var(--color-secondary-fade)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem', fontFamily: 'var(--font-serif)' }}>
+                                                    {String(product.brand || product.name || '?').trim().charAt(0).toUpperCase()}
+                                                </div>
+                                            )}
                                         </div>
                                         <div style={{ flexGrow: 1, minWidth: 0 }}>
                                             <div style={{ fontSize: '0.9rem', fontWeight: '500', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>{product.name}{product.outOfBusiness && <span style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-surface-soft)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No longer sold</span>}</div>

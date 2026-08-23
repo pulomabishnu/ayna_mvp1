@@ -3,6 +3,17 @@ import Disclaimer from './Disclaimer';
 import HealthDataImport from './HealthDataImport';
 import CareNearYouPanel from './CareNearYouPanel';
 import { getCheckinRecommendations, CATEGORY_LABELS } from '../data/products';
+import { safeProductImageSrc } from '../utils/resolveProductImage';
+
+function ImgOrInitial({ item, size }) {
+    const src = safeProductImageSrc(item?.image);
+    if (src) return <img src={src} alt={item?.name || ''} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />;
+    return (
+        <div style={{ width: '100%', height: '100%', background: 'var(--color-secondary-fade)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: `${Math.round(size * 0.4)}px`, fontFamily: 'var(--font-serif)' }}>
+            {String(item?.brand || item?.name || '?').trim().charAt(0).toUpperCase()}
+        </div>
+    );
+}
 
 export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewWaitlist, userZipCode, onZipCodeChange, checkinData, quizResults, myProducts = {}, onOpenProduct, omittedProducts = {}, onViewOmitted, onHealthProfileUpdate, healthProfile = null, onEditHealthProfile }) {
     const trackedList = Object.values(trackedProducts);
@@ -131,7 +142,7 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                                     onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--color-border)', e.currentTarget.style.background = 'var(--color-surface-soft)')}
                                 >
                                     <div style={{ width: '56px', height: '56px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0 }}>
-                                        <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                        <ImgOrInitial item={product} size={56} />
                                     </div>
                                     <div style={{ flexGrow: 1, minWidth: 0 }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.25rem' }}>
@@ -196,7 +207,7 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                                 {trackedList.map((product, idx) => (
                                     <div key={product.id} className={`card stagger-${idx + 1}`} style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', animation: 'fadeInUp 0.6s backwards' }}>
                                         <div style={{ width: '72px', height: '72px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0 }}>
-                                            <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            <ImgOrInitial item={product} size={72} />
                                         </div>
                                         <div style={{ flexGrow: 1 }}>
                                             <span style={{ color: 'var(--color-primary)', fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase' }}>Active Tracking</span>
@@ -232,7 +243,7 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                                 {joinedList.map((startup, idx) => (
                                     <div key={startup.id} className={`card stagger-${idx + 1}`} style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', animation: 'fadeInUp 0.6s backwards', borderLeft: '3px solid var(--color-primary)' }}>
                                         <div style={{ width: '72px', height: '72px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0 }}>
-                                            <img src={startup.image} alt={startup.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            <ImgOrInitial item={startup} size={72} />
                                         </div>
                                         <div style={{ flexGrow: 1 }}>
                                             <span style={{ color: 'var(--color-primary)', fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase' }}>Early Access</span>

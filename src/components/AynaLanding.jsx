@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
+import { safeProductImageSrc } from '../utils/resolveProductImage';
 
 /**
  * Landing page — a direct port of boards 1a and 1c of the Aug 2026 desktop
@@ -176,7 +177,7 @@ function productById(id) {
 /** Cream tile with the product photo, falling back to the mockup's initial-on-cream block. */
 function ProductTile({ product, aspectRatio = 1, radius = 10, badge, showHeart }) {
   const [broken, setBroken] = useState(false);
-  const src = broken ? '' : (product.image || '');
+  const src = broken ? '' : safeProductImageSrc(product.image);
   const initial = String(product.name || '?').trim().charAt(0).toUpperCase();
 
   return (

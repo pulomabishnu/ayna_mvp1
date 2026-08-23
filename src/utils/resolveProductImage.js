@@ -27,6 +27,21 @@ export function isPlaceholderProductImage(imageUrl) {
   return false;
 }
 
+/**
+ * A raw `product.image` field is only ever safe to render directly if it
+ * ISN'T a placeholder — a bare `product.image ? <img src={product.image}> :
+ * fallback` truthiness check (found repeated across ~10 components) treats
+ * `/ayna_placeholder.png` (a real, non-empty file path) as "has a real
+ * photo," rendering that literal branded marketing image — visible "AYNA —
+ * Truth in Women's Health" text — on a product card as if it were the
+ * actual product. Use this everywhere a component decides whether to render
+ * `product.image` vs. an initial-letter/blank fallback, instead of a bare
+ * truthiness check on the raw field.
+ */
+export function safeProductImageSrc(imageUrl) {
+  return isPlaceholderProductImage(imageUrl) ? '' : String(imageUrl || '');
+}
+
 export async function resolveProductImage(name, brand, url) {
   if (!name) return '';
   const key = `${brand || ''}|${name}`;
