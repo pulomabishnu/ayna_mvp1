@@ -109,11 +109,11 @@ export const MVP_PHYSICAL = [
     whereToBuy: ['Cora.life', 'Target', 'Amazon'],
     image: 'https://cdn.shopify.com/s/files/1/0940/5060/files/Logo_33a7614e-134f-4af3-9075-b4ac69ca81a0.png?height=628&pad_color=fefaf8&v=1646873247&width=1200',
     summary: '100% organic cotton pads from Cora. Subscription or one-time. B-Corp, plastic-free packaging.',
-    safety: { fdaStatus: 'FDA-registered', materials: '100% organic cotton', recalls: 'No recalls.', allergens: 'Hypoallergenic', sideEffects: 'Organic cotton is generally well tolerated with a low rate of skin irritation. Change regularly during heavy flow and discontinue if you notice redness or itching.' },
+    safety: { fdaStatus: 'FDA-registered', materials: '100% organic cotton', recalls: 'No formal recalls. Note: a 2024 independent lab investigation (Mamavation, using an EPA-certified lab) found organic fluorine — an indicator of PFAS "forever chemicals" — at roughly 30 ppm in a Cora organic-cotton liner product, despite the brand\'s organic marketing. The same investigation found PFAS indicators in about half of tested pad/liner brands, including several other organic ones, while some organic brands tested clean.', allergens: 'Hypoallergenic', sideEffects: 'Organic cotton is generally well tolerated with a low rate of skin irritation. Change regularly during heavy flow and discontinue if you notice redness or itching.', opinionAlerts: 'Since the 2024 PFAS lab testing news, some shoppers have expressed concern about organic-marketed pads generally, including Cora, and a subset have shifted toward brands that tested clean.' },
     clinicianOpinionSource: 'independent',
     clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
     doctorOpinion: 'Organic cotton reduces exposure to dyes and fragrances that can irritate sensitive skin.',
-    communityReview: 'Community discussions note satisfaction with subscription quality and reduced skin irritation.',
+    communityReview: 'Community discussions on Reddit r/periods generally reflect satisfaction with subscription quality and reduced skin irritation, but some users have raised concerns after 2024 independent lab testing (Mamavation) found PFAS indicators in a Cora organic-cotton liner product, prompting a shift among some shoppers toward brands that tested clean.',
     ingredients: 'Organic cotton.',
     effectiveness: 'Reliable absorption; sustainable choice.',
     badges: ['Organic', 'B-Corp', 'Sustainable'],
@@ -122,6 +122,7 @@ export const MVP_PHYSICAL = [
       scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product safety', summary: 'Research on absorbent materials and skin contact.', justification: 'PubMed peer-reviewed.' }] },
       community: { links: [
         { platform: 'reddit', url: 'https://www.reddit.com/r/periods/search/?q=organic+pad&restrict_sr=1', text: 'Reddit r/periods: organic pads', summary: 'Community discussions on organic menstrual products.' },
+        { platform: 'other', url: 'https://www.mamavation.com/beauty/pfas-forever-chemicals-sanitary-pads-incontinence-pads.html', text: 'Mamavation: PFAS testing in pads & liners', summary: 'Independent EPA-certified lab testing of sanitary pads and liners for organic fluorine (PFAS indicator), including a Cora liner product.' },
       ] }
     }
   },
@@ -478,12 +479,12 @@ export const MVP_DIGITAL = [
     platform: 'Web, app',
     image: 'https://www.nurx.com/wp-content/themes/nurx-theme-lazyload/favicon/nurx.png',
     summary: 'Online birth control prescriptions and delivery. Pills, patch, ring. No in-person visit required in many states. Accepts insurance.',
-    safety: { fdaStatus: 'Prescription via licensed clinicians', materials: 'N/A', recalls: 'N/A', allergens: 'N/A', sideEffects: 'Nurx itself has no side effects. It\'s a telehealth service. Any birth control method it prescribes carries the standard side effects for that method (e.g. spotting, nausea, mood changes), which your clinician reviews with you before you start.' },
+    safety: { fdaStatus: 'Prescription via licensed clinicians', materials: 'N/A', recalls: 'N/A', allergens: 'N/A', sideEffects: 'Nurx itself has no side effects. It\'s a telehealth service. Any birth control method it prescribes carries the standard side effects for that method (e.g. spotting, nausea, mood changes), which your clinician reviews with you before you start.', opinionAlerts: 'Nurx rates notably lower on independent review platforms (Trustpilot ~3.4/5, BBB customer reviews ~2/5) than the 4.8/5 shown on its own site, with recurring complaints about shipping delays, cancellation difficulty, and insurance billing.' },
     privacy: { dataStorage: 'US', sellsData: 'Check policy', hipaa: 'HIPAA-compliant for Rx', keyPolicy: 'Prescription service' },
     clinicianOpinionSource: 'independent',
     clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
     doctorOpinion: 'Telehealth increases access to contraception. Same safety standards as in-person care.',
-    communityReview: 'Community discussions on Reddit r/birthcontrol note convenience and quick delivery.',
+    communityReview: 'Community sentiment is mixed. Many Reddit r/birthcontrol users value the convenience of prescription delivery, but independent review platforms show a real gap versus the company\'s own ratings, with recurring complaints about shipping delays, insurance billing, and cancellation difficulty. A 2019 New York Times report also found Nurx had reshipped previously returned, unopened birth control pills to new customers, a practice the company says it ended in 2018.',
     effectiveness: 'Same efficacy as pharmacy-filled prescriptions.',
     badges: ['Telehealth', 'Privacy'],
     verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/combined-hormonal-birth-control', text: 'ACOG: Birth control', summary: 'Clinical guidance on contraception and access.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/32324464/', text: 'Telehealth and contraception', summary: 'Evidence on telehealth for prescription access.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/birthcontrol/search/?q=nurx&restrict_sr=1', text: 'Reddit r/birthcontrol: Nurx', summary: 'Community discussions on telehealth birth control.' }] } }
