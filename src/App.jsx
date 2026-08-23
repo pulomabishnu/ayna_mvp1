@@ -1315,7 +1315,10 @@ function App() {
           <HowWeMakeMoney onBack={() => window.history.back()} />
         )}
         {currentView === 'how-it-works' && (
-          <HowItWorks onBack={() => window.history.back()} />
+          <HowItWorks
+            onBack={() => window.history.back()}
+            onViewSources={handleViewArticles}
+          />
         )}
         {currentView === 'about' && (
           <About onBack={() => window.history.back()} onViewSources={handleViewArticles} />
@@ -1508,6 +1511,7 @@ function App() {
         {quizResults && (
           <ProfileChatbot
             profile={quizResults}
+            user={user}
             onProfileUpdate={setQuizResults}
             chatHistory={chatHistory}
             onChatHistoryUpdate={setChatHistory}

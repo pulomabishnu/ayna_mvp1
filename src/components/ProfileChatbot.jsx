@@ -92,11 +92,32 @@ function parseMessageIntoProfile(message, currentProfile) {
   return hasChanges ? { profile, added } : null;
 }
 
-const DEFAULT_WELCOME = [{ role: 'assistant', text: "Hi! I'm Ayna. Speak or type your health needs. For example, 'I have endometriosis' or 'I'm sensitive to fragrance.' We combine this chat with your quiz, imported records, and wearable summary to personalize your ecosystem and recommendations." }];
+function getFirstName(user) {
+  const meta = user?.user_metadata || {};
+  const raw = [
+    meta.first_name,
+    meta.given_name,
+    meta.name,
+    meta.full_name,
+  ].find((value) => typeof value === 'string' && value.trim());
 
-export default function ProfileChatbot({ profile, onProfileUpdate, chatHistory = [], onChatHistoryUpdate, disabled, onNavigateToDiscovery }) {
+  return raw ? raw.trim().split(/\\s+/)[0] : '';
+}
+
+function buildWelcome(firstName) {
+  const greeting = firstName ? `Hey, ${firstName}.` : 'Hey.';
+  return [{
+    role: 'assistant',
+    text: `${greeting} I'm Ayna. Tell me what you're looking for, what isn't working for you, or what you want to avoid. I can use that context to personalize your profile and help you browse.`,
+  }];
+}
+
+export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHistory = [], onChatHistoryUpdate, disabled, onNavigateToDiscovery }) {
+  const firstName = getFirstName(user);
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState(chatHistory?.length > 0 ? chatHistory : DEFAULT_WELCOME);
+  const [messages, setMessages] = useState(
+    chatHistory?.length > 0 ? chatHistory : buildWelcome(firstName)
+  );
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const bottomRef = useRef(null);
@@ -188,96 +209,72 @@ export default function ProfileChatbot({ profile, onProfileUpdate, chatHistory =
     <>
       <button
         type="button"
-        aria-label="Open profile chatbot"
+        className="ayna-ask-launcher"
+        aria-label="Ask Ayna"
+        aria-expanded={open}
         onClick={() => setOpen(!open)}
         disabled={disabled}
-        style={{
-          position: 'fixed',
-          bottom: '1.5rem',
-          right: '1.5rem',
-          width: '56px',
-          height: '56px',
-          borderRadius: '50%',
-          background: 'var(--color-primary)',
-          color: 'white',
-          border: 'none',
-          boxShadow: 'var(--shadow-lg)',
-          cursor: disabled ? 'not-allowed' : 'pointer',
-          zIndex: 999,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '1.5rem',
-          opacity: disabled ? 0.6 : 1,
-        }}
       >
+        <span className="ayna-ask-orb" aria-hidden="true" />
+        <span className="ayna-ask-launcher__label">Ask Ayna</span>
       </button>
 
       {open && (
-        <div
-          style={{
-            position: 'fixed',
-            bottom: '5rem',
-            right: '1.5rem',
-            width: 'min(380px, calc(100vw - 2rem))',
-            maxHeight: '420px',
-            background: 'var(--color-surface-soft)',
-            borderRadius: 'var(--radius-lg)',
-            boxShadow: 'var(--shadow-lg)',
-            border: '1px solid var(--color-border)',
-            zIndex: 1000,
-            display: 'flex',
-            flexDirection: 'column',
-            overflow: 'hidden',
-          }}
-        >
-          <div style={{ padding: '1rem 1.25rem', borderBottom: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontWeight: 700, color: 'var(--color-text-main)' }}>Tell Ayna more</span>
-            <button type="button" aria-label="Close" onClick={() => setOpen(false)} style={{ background: 'none', border: 'none', fontSize: '1.25rem', cursor: 'pointer', color: 'var(--color-text-muted)' }}>×</button>
-          </div>
-          <div style={{ flex: 1, overflowY: 'auto', padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+        <section className="ayna-ask-panel" aria-label="Ask Ayna">
+          <header className="ayna-ask-panel__header">
+            <div className="ayna-ask-panel__identity">
+              <span className="ayna-ask-orb ayna-ask-orb--small" aria-hidden="true" />
+
+              <div>
+                <div className="ayna-ask-panel__eyebrow">ASK AYNA</div>
+                <h3>{firstName ? `Hey, ${firstName}.` : 'Hey.'}</h3>
+                <p>What can I help you figure out?</p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              className="ayna-ask-panel__close"
+              aria-label="Close Ask Ayna"
+              onClick={() => setOpen(false)}
+            >
+              ×
+            </button>
+          </header>
+
+          <div className="ayna-ask-panel__messages">
             {messages.map((m, i) => (
               <div
                 key={i}
-                style={{
-                  alignSelf: m.role === 'user' ? 'flex-end' : 'flex-start',
-                  maxWidth: '90%',
-                  padding: '0.75rem 1rem',
-                  borderRadius: '1rem',
-                  background: m.role === 'user' ? 'var(--color-primary)' : 'var(--color-bg)',
-                  color: m.role === 'user' ? 'white' : 'var(--color-text-main)',
-                  fontSize: '0.9rem',
-                  lineHeight: 1.4,
-                }}
+                className={`ayna-ask-message ${
+                  m.role === 'user'
+                    ? 'ayna-ask-message--user'
+                    : 'ayna-ask-message--ayna'
+                }`}
               >
                 {m.text}
               </div>
             ))}
+
             {sending && (
-              <div style={{ alignSelf: 'flex-start', padding: '0.5rem 0.75rem', background: 'var(--color-bg)', borderRadius: '0.75rem', fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
-                Updating…
+              <div className="ayna-ask-message ayna-ask-message--ayna ayna-ask-message--typing">
+                Thinking…
               </div>
             )}
+
             <div ref={bottomRef} />
           </div>
-          <form onSubmit={handleSend} style={{ padding: '0.75rem', borderTop: '1px solid var(--color-border)' }}>
-            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+
+          <form className="ayna-ask-panel__composer" onSubmit={handleSend}>
+            <div className="ayna-ask-panel__inputrow">
               <input
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="e.g. I have endometriosis, I prefer organic…"
+                placeholder="Ask Ayna anything…"
                 disabled={disabled || sending || speech.isRecording}
-                style={{
-                  flex: 1,
-                  minWidth: 0,
-                  padding: '0.75rem 1rem',
-                  borderRadius: 'var(--radius-pill)',
-                  border: '1px solid var(--color-border)',
-                  outline: 'none',
-                  fontSize: '0.95rem',
-                }}
               />
+
               {speech.supported && (
                 <SearchMicButton
                   size="compact"
@@ -286,14 +283,24 @@ export default function ProfileChatbot({ profile, onProfileUpdate, chatHistory =
                   onClick={toggleVoice}
                 />
               )}
+
+              <button
+                type="submit"
+                className="ayna-ask-send"
+                aria-label="Send"
+                disabled={!input.trim() || disabled || sending}
+              >
+                ↑
+              </button>
             </div>
+
             {speech.isRecording && (
-              <p style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', margin: '0.35rem 0 0', lineHeight: 1.4 }}>
-                Listening… {speech.liveText ? <span style={{ color: 'var(--color-text-main)' }}>{speech.liveText}</span> : '(speak now)'}
+              <p className="ayna-ask-panel__listening">
+                Listening… {speech.liveText || 'speak now'}
               </p>
             )}
           </form>
-        </div>
+        </section>
       )}
     </>
   );

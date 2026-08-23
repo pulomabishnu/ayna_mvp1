@@ -1,41 +1,88 @@
 import React from 'react';
 
-const STEPS = [
-  { n: '01', title: 'You tell us', body: 'Stage of life, goals, sensitivities, city.', detail: 'Your profile' },
-  { n: '02', title: 'We scan', body: 'Relevant products across the open market.', detail: 'Broad search' },
-  { n: '03', title: 'Evidence check', body: 'Research, guidance, clinician input.', detail: 'Quality gate' },
-  { n: '04', title: 'Your ecosystem', body: 'The strongest fits, with clear reasons.', detail: 'Your matches' },
-];
+export default function HowItWorks({ onBack, onViewSources }) {
+  const openSources = () => {
+    if (onViewSources) onViewSources();
+    else if (onBack) onBack();
+  };
 
-export default function HowItWorks({ onBack }) {
   return (
-    <div className="hiw-simple animate-fade-in-up">
-      <section className="mockup-page hiw-simple__intro">
-        {onBack && <button type="button" className="hiw-back hiw-back--light" onClick={onBack}>Back</button>}
-        <div className="hiw-kicker">How it works</div>
-        <h1 className="hiw-simple__title">No mystery box.</h1>
-        <p className="hiw-simple__sub">Your profile. The market. The evidence. Your matches.</p>
-      </section>
+    <div className="hiw-mockup">
+      <div className="hiw-mockup__inner">
+        <div className="hiw-mockup__kicker">HOW IT WORKS</div>
 
-      <section className="mockup-page hiw-simple__steps" aria-label="How Ayna works">
-        {STEPS.map((step) => (
-          <article className="hiw-simple__step" key={step.n}>
-            <div className="hiw-simple__n">STEP {step.n}</div>
-            <h2>{step.title}</h2>
-            <p>{step.body}</p>
-            <div className={`hiw-simple__visual hiw-simple__visual--${step.n}`} aria-hidden="true">
-              <span>{step.detail}</span>
+        <h1 className="hiw-mockup__title">No mystery box.</h1>
+
+        <p className="hiw-mockup__intro">
+          Ayna filters the open market against your profile, then against published research.
+          <br className="hiw-desktop-break" />
+          Anything that fails a step never reaches your shop.
+        </p>
+
+        <div className="hiw-mockup__steps">
+          <article className="hiw-mockup__step">
+            <div className="hiw-mockup__stepno">STEP 01</div>
+            <h2>You tell us</h2>
+            <p>Stage of life, goals, sensitivities, city.</p>
+
+            <div className="hiw-mockup__profile-card">
+              Postpartum · 8 weeks · sensitive skin · NYC
             </div>
           </article>
-        ))}
-      </section>
 
-      <section className="mockup-page hiw-simple__cta">
-        <div>
-          <div className="hiw-kicker">Personalized from the start</div>
-          <h2>Nothing paid gets a better match.</h2>
+          <article className="hiw-mockup__step">
+            <div className="hiw-mockup__stepno">STEP 02</div>
+            <h2>We scan the market</h2>
+            <p>Everything pulled in, then cut down.</p>
+
+            <div className="hiw-mockup__metric">
+              <span>Pulled in</span>
+              <strong>3,140</strong>
+            </div>
+
+            <div className="hiw-mockup__metric">
+              <span>Relevant to you</span>
+              <strong>212</strong>
+            </div>
+          </article>
+
+          <article className="hiw-mockup__step">
+            <div className="hiw-mockup__stepno">STEP 03</div>
+            <h2>Evidence check</h2>
+            <p>Checked against published guidance.</p>
+
+            <div className="hiw-mockup__evidence">NIH research</div>
+            <div className="hiw-mockup__evidence">ACOG guidance</div>
+            <div className="hiw-mockup__evidence">CDC data</div>
+            <div className="hiw-mockup__dropped">Fails → dropped</div>
+          </article>
+
+          <article className="hiw-mockup__step">
+            <div className="hiw-mockup__stepno">STEP 04</div>
+            <h2>Your ecosystem</h2>
+            <p>What's left is ranked, with the reason attached.</p>
+
+            <div className="hiw-mockup__ecosystem-card">
+              <strong>14</strong>
+              <span>products, each with its match reason</span>
+            </div>
+          </article>
         </div>
-      </section>
+
+        <div className="hiw-mockup__disclaimer">
+          <div>
+            <h2>Ayna is not a doctor, and never pretends to be.</h2>
+            <p>
+              Summaries are AI-written from cited sources and clinician input.
+              Anything needing a diagnosis, we point you to a specialist.
+            </p>
+          </div>
+
+          <button type="button" onClick={openSources}>
+            Read our sources
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
