@@ -4,11 +4,13 @@ import { isSafePublicUrl } from './_ssrfSafeFetch.js';
  * Pulls a real image straight off a brand's own official page, instead of a
  * third-party image-search API. No paid API, no quota to run out of — reuses
  * the shared SSRF-safe fetch pattern from _ssrfSafeFetch.js (private-IP/DNS-
- * rebinding checks). Tries, in order: og:image, twitter:image, then the
- * page's own favicon/apple-touch-icon as a final fallback for sites whose
- * meta tags are only injected client-side (not present in the HTML this
- * fetcher reads) — a real site icon is still better than the generic
- * placeholder when nothing else can be found.
+ * rebinding checks). Tries, in order: og:image, then twitter:image. Does NOT
+ * fall back to the page's favicon/apple-touch-icon — a live QA pass this
+ * session found a site's favicon.ico being rendered full-size on a product
+ * card as if it were the product photo (intimina.com). A tiny site icon
+ * blown up to card size reads as a broken/wrong image, not "better than
+ * nothing" — the initial-letter avatar fallback the UI already has for a
+ * missing image is more honest than a mislabeled icon.
  */
 
 const FETCH_TIMEOUT_MS = 4000;
@@ -43,28 +45,6 @@ function extractMetaContent(html, property) {
     new RegExp(`<meta[^>]+content=["']([^"']+)["'][^>]+(?:property|name)=["']${property}["']`, 'i')
   );
   return m ? decodeHtmlEntities(m[1]) : null;
-}
-
-// Matches any <link rel="..."> whose rel value contains "icon" (covers
-// "icon", "shortcut icon", "apple-touch-icon", "icon preload", etc., in
-// either attribute order) — the final fallback when a page has no
-// og:image/twitter:image at all (common on JS-hydrated SPAs whose meta tags
-// aren't present in the server-rendered HTML this fetcher reads).
-const LINK_TAG_RE = /<link\b[^>]*>/gi;
-
-/** Prefers apple-touch-icon (typically larger/higher-res) over a plain favicon. */
-function extractIcon(html) {
-  const tags = html.match(LINK_TAG_RE) || [];
-  let plainIcon = null;
-  for (const tag of tags) {
-    const relMatch = tag.match(/rel=["']([^"']*)["']/i);
-    if (!relMatch || !/icon/i.test(relMatch[1])) continue;
-    const hrefMatch = tag.match(/href=["']([^"']+)["']/i);
-    if (!hrefMatch) continue;
-    if (/apple-touch-icon/i.test(relMatch[1])) return hrefMatch[1];
-    if (!plainIcon) plainIcon = hrefMatch[1];
-  }
-  return plainIcon;
 }
 
 const MAX_REDIRECT_HOPS = 5;
@@ -130,47 +110,16 @@ export async function fetchOgImage(pageUrl) {
 
   try {
     const result = await fetchWithSafeRedirects(pageUrl);
-    // A blocked/non-HTML main page still leaves /favicon.ico worth trying —
-    // it's a different path and sometimes isn't behind the same bot-challenge
-    // rule that blocked the page itself.
-    if (!result || !result.res.ok) return await tryDefaultFavicon(pageUrl);
+    if (!result || !result.res.ok) return null;
     const contentType = result.res.headers.get('content-type') || '';
-    if (!contentType.includes('text/html')) return await tryDefaultFavicon(pageUrl);
+    if (!contentType.includes('text/html')) return null;
     const html = await readCappedText(result.res);
     const raw = extractMetaContent(html, 'og:image') || extractMetaContent(html, 'twitter:image');
     if (raw && raw.startsWith('http') && !NON_PRODUCT_IMAGE_PATTERN.test(raw)) {
       const absolute = new URL(raw, result.finalUrl).toString();
       if (absolute.startsWith('https://') || absolute.startsWith('http://')) return absolute;
     }
-    const icon = extractIcon(html);
-    if (icon) {
-      const decoded = decodeHtmlEntities(icon.trim());
-      if (decoded) {
-        const absolute = new URL(decoded, result.finalUrl).toString();
-        if (absolute.startsWith('https://') || absolute.startsWith('http://')) return absolute;
-      }
-    }
-    // Last resort: the browser-default /favicon.ico convention — some sites
-    // rely on it working without ever declaring a <link rel="icon"> tag at all.
-    return await tryDefaultFavicon(result.finalUrl);
-  } catch {
-    return await tryDefaultFavicon(pageUrl);
-  }
-}
-
-async function tryDefaultFavicon(pageUrl) {
-  try {
-    const origin = new URL(pageUrl).origin;
-    const faviconUrl = `${origin}/favicon.ico`;
-    const res = await fetch(faviconUrl, {
-      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-      redirect: 'error',
-      headers: BROWSER_HEADERS,
-    });
-    if (!res.ok) return null;
-    const contentType = res.headers.get('content-type') || '';
-    if (!contentType.startsWith('image/')) return null;
-    return faviconUrl;
+    return null;
   } catch {
     return null;
   }
