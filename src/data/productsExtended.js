@@ -530,7 +530,7 @@ export const EXTENDED_DIGITAL = [
         }
     },
     {
-        id: 'd-apple-health', name: 'Apple Health (Cycle Tracking)', category: 'tracker', type: 'digital', internal: false, healthFunctions: ['cycle-tracking'], tags: ['privacy', 'cost', 'comfort'], price: 'Free (built into iPhone)', userRating: 4.7, whereToBuy: ['Pre-installed on iPhone'], platform: 'iOS only', image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/60/e8/ae/60e8ae47-8a07-ad37-3371-d515af4b4a43/cycle.tracking-0-0-1x_U007ewatch-0-1-P3-85-220.png/1200x630wa.png', summary: 'Built-in period and fertility tracking on iPhone and Apple Watch. Strongest privacy protections. Data stays on device.',
+        id: 'd-apple-health', name: 'Apple Health (Cycle Tracking)', category: 'tracker', type: 'digital', internal: false, healthFunctions: ['cycle-tracking'], tags: ['privacy', 'cost', 'comfort'], price: 'Free (built into iPhone)', userRating: 4.7, whereToBuy: ['Pre-installed on iPhone'], url: 'https://apps.apple.com/us/app/apple-health/id1242545199', platform: 'iOS only', image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/60/e8/ae/60e8ae47-8a07-ad37-3371-d515af4b4a43/cycle.tracking-0-0-1x_U007ewatch-0-1-P3-85-220.png/1200x630wa.png', summary: 'Built-in period and fertility tracking on iPhone and Apple Watch. Strongest privacy protections. Data stays on device.',
         safety: {
             fdaStatus: 'Not FDA-cleared', materials: 'N/A', recalls: 'N/A', allergens: 'N/A',
             sideEffects: 'N/A',
