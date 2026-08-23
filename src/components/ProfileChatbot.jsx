@@ -161,11 +161,40 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
     utterance.pitch = 1.02;
 
     const voices = window.speechSynthesis.getVoices();
-    const voice = voices.find((v) =>
-      String(v.lang || '').toLowerCase().startsWith('en')
-    );
+
+    // Prefer warmer, more natural voices when the device has them.
+    const preferredNames = [
+      'Ava',
+      'Samantha',
+      'Allison',
+      'Serena',
+      'Zoe',
+      'Google US English',
+      'Microsoft Jenny Online',
+      'Microsoft Aria Online',
+    ];
+
+    const voice =
+      preferredNames
+        .map((name) =>
+          voices.find((v) =>
+            String(v.name || '').toLowerCase().includes(name.toLowerCase())
+          )
+        )
+        .find(Boolean) ||
+      voices.find((v) =>
+        String(v.lang || '').toLowerCase().startsWith('en-us')
+      ) ||
+      voices.find((v) =>
+        String(v.lang || '').toLowerCase().startsWith('en')
+      );
 
     if (voice) utterance.voice = voice;
+
+    // Warm + conversational. Slight lift without sounding cartoonish.
+    utterance.rate = 1.01;
+    utterance.pitch = 1.08;
+    utterance.volume = 0.96;
 
     utterance.onstart = () => setSpeaking(true);
     utterance.onend = () => setSpeaking(false);
