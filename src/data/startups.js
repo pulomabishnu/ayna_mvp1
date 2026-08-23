@@ -212,7 +212,12 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 500,
         url: 'https://hellowisp.com',
-        image: 'https://clpmag.com/wp-content/uploads/2024/01/Qvin-Q-Pad.jpeg'
+        // Was a mismatched third-party trade-press photo of a DIFFERENT
+        // startup's product (Qvin's Q-Pad, from clpmag.com) — verified
+        // replacement is Wisp's own hero image, fetched live from
+        // hellowisp.com and confirmed to return a real image (200,
+        // image/jpeg) before use.
+        image: 'https://cms.hellowisp.io/uploads/Desk_Hero_3200x1200x_e4eae71989.jpg'
     },
     {
         id: 's-wildai',
@@ -467,7 +472,12 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 480,
         url: 'https://www.nurx.com',
-        image: 'https://nurx-www.imgix.net/wp-content/uploads/2024/09/09064825/WHL-RegrowRX-group-Product-Image-Desktop-1000x1000-1.png?w=320&auto=format,compress&fit=crop&h=320'
+        // Was a single unrelated SKU from Nurx's own catalog (a hair-regrowth
+        // product bottle, RegrowRX — reads like a lipstick tube in a small
+        // card, not representative of the birth-control service this entry
+        // is about). Verified replacement is Nurx's own homepage hero image,
+        // fetched live and confirmed to return a real image (200, image/png).
+        image: 'https://nurx-www.imgix.net/wp-content/uploads/2024/12/31130006/HeroStaticHomepage-Desktop-1920x640-1.png'
     },
     {
         id: 's-pandia',
@@ -494,8 +504,19 @@ export const STARTUPS = [
         stage: 'Available in US',
         productReleased: true,
         spotsLeft: 440,
-        url: 'https://www.favor.com',
-        image: 'https://thumbs.dreamstime.com/b/party-favor-12361808.jpg'
+        // url was also wrong — favor.com is an unrelated company. The real
+        // site, heyfavor.com, now 301-redirects to nurx.com (checked live) —
+        // strong signal Favor/The Pill Club has been folded into Nurx and no
+        // longer operates as a distinct brand. Flagging for a content
+        // decision (merge into the Nurx entry above, or remove this one)
+        // rather than deciding that here.
+        url: 'https://heyfavor.com',
+        // Was a stock photo of a literal party favor (confetti/horn) —
+        // matched on the word "favor", nothing to do with this brand. No
+        // reliable current image exists for the standalone brand (site
+        // redirects away, no live app store listing found), so left empty
+        // rather than guess; the app's placeholder fallback handles this.
+        image: ''
     },
     {
         id: 's-stix',
