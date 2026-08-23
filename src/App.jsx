@@ -335,7 +335,7 @@ function App() {
       'welcome', 'hero', 'quiz', 'discovery', 'waitlist', 'articles',
       'deeptech', 'how-it-works', 'how-we-make-money',
     ];
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       setUser(session?.user ?? null);
       setUserSession(session ?? null);
       if (event === 'SIGNED_IN' && session?.user) {
@@ -361,6 +361,26 @@ function App() {
         posthog.reset();
       }
       if (!session) {
+        // supabase-js is known to emit a spurious SIGNED_OUT (session: null)
+        // on a transient background token-refresh failure — a brief network
+        // blip, not a real sign-out. This block wipes EVERY piece of local
+        // state (ecosystem, quiz results, reviews, health profile, saved
+        // products) and sends the user back to 'welcome', forcing a full
+        // intake redo — exactly what an MVP tester reported happening to her
+        // for no apparent reason while she was still genuinely signed in.
+        // Debounce: wait briefly and re-check the ACTUAL current session
+        // before treating this as a real sign-out, so a transient blip that
+        // resolves on its own never touches any local data.
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        try {
+          const { data } = await supabase.auth.getSession();
+          if (data?.session) return; // recovered — was transient, wipe nothing
+        } catch (_) {
+          // getSession() itself failing doesn't prove there's no session —
+          // fall through to the wipe rather than loop forever on an
+          // unrelated network error, same as every other best-effort check
+          // in this handler.
+        }
         setMyProducts({});
         setTrackedProducts({});
         setOmittedProducts({});
