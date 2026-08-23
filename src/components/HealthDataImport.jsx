@@ -153,7 +153,7 @@ export default function HealthDataImport({ onUpdate }) {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem' }}>
         <div style={{ padding: '1rem', background: 'var(--color-surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
-          <p style={{ fontWeight: '600', marginBottom: '0.5rem' }}>🍎 Apple Health</p>
+          <p style={{ fontWeight: '600', marginBottom: '0.5rem' }}>Apple Health</p>
           <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', lineHeight: 1.5, marginBottom: '0.75rem' }}>
             Ayna doesn’t have a phone app, so we can’t read Apple Health directly off your device. Instead: open the <strong>Health app → your profile picture (top right) → Export All Health Data</strong>, then unzip the download to find <strong>export.xml</strong> and upload it below. We parse steps, sleep, heart rate, and cycle tracking data locally in your browser. The file is not sent to our servers.
           </p>

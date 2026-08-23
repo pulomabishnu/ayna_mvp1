@@ -27,39 +27,39 @@ function getIngredientSafetyFlags(product, conditions = [], sensitivities = [], 
 
   if (hasEndo && hasKnowledgeForHormoneConditions) {
     if (!isFragranceFree && /\bfragrance\b|\bperfume\b|\bparfum\b|\bscent\b/.test(combined)) {
-      flags.push('**⚠️ Endometriosis flag:** Contains synthetic fragrance - may act as an endocrine disruptor. Choose fragrance-free alternatives.');
+      flags.push('**Endometriosis flag:** Contains synthetic fragrance - may act as an endocrine disruptor. Choose fragrance-free alternatives.');
     }
     if (/chlorine|bleach|conventional cotton/.test(combined)) {
-      flags.push('**⚠️ Endometriosis flag:** May contain dioxin residues from chlorine bleaching. Consider organic alternatives.');
+      flags.push('**Endometriosis flag:** May contain dioxin residues from chlorine bleaching. Consider organic alternatives.');
     }
     if (/bpa|bisphenol/.test(combined)) {
-      flags.push('**⚠️ Endometriosis flag:** Contains BPA - an endocrine disruptor. Choose BPA-free options.');
+      flags.push('**Endometriosis flag:** Contains BPA - an endocrine disruptor. Choose BPA-free options.');
     }
   }
 
   if (hasPcos && hasKnowledgeForHormoneConditions) {
     if ((!isFragranceFree && /\bfragrance\b|\bperfume\b|\bparfum\b/.test(combined)) || /\bparaben\b|\bphthalate\b/.test(combined)) {
-      flags.push('**⚠️ PCOS flag:** Contains potential endocrine disruptors (fragrance/parabens). Minimize EDC exposure with PCOS.');
+      flags.push('**PCOS flag:** Contains potential endocrine disruptors (fragrance/parabens). Minimize EDC exposure with PCOS.');
     }
   }
 
   if (product.type !== 'digital' && /vitamin a|retinol|retinyl/i.test(combined)) {
-    flags.push('**⚠️ TTC/Pregnancy flag:** High-dose vitamin A (retinol) is teratogenic. Consult your clinician if trying to conceive.');
+    flags.push('**TTC/Pregnancy flag:** High-dose vitamin A (retinol) is teratogenic. Consult your clinician if trying to conceive.');
   }
 
   if ((sensitivities || []).includes('Latex allergy') && /latex|natural rubber|\brubber\b/.test(combined)) {
-    flags.push('**⚠️ Allergy flag:** You noted latex allergy - this product may contain latex or rubber. Check label carefully.');
+    flags.push('**Allergy flag:** You noted latex allergy - this product may contain latex or rubber. Check label carefully.');
   }
 
   if (
     ((sensitivities || []).includes('Fragrance sensitivity') || (productsToAvoid || []).some((x) => /fragrance|scent|perfume/i.test(String(x)))) &&
     /fragrance|perfume|parfum|scent/.test(combined)
   ) {
-    flags.push('**⚠️ Sensitivity flag:** You avoid fragrance - confirm this product is fragrance-free before purchasing.');
+    flags.push('**Sensitivity flag:** You avoid fragrance - confirm this product is fragrance-free before purchasing.');
   }
 
   if (normalizedConditions.some((c) => /vaginismus|vulvodynia|interstitial cystitis/i.test(c)) && /glycerin|glycerol/.test(combined)) {
-    flags.push('**⚠️ Sensitivity flag:** Contains glycerin - may trigger irritation for vulvodynia or yeast-prone users.');
+    flags.push('**Sensitivity flag:** Contains glycerin - may trigger irritation for vulvodynia or yeast-prone users.');
   }
 
   return flags;

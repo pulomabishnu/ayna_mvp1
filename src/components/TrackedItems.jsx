@@ -47,7 +47,7 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                 {onViewOmitted && (
                     <div style={{ marginTop: '1.5rem' }}>
                         <button type="button" className="btn btn-outline" style={{ padding: '0.6rem 1.25rem', fontSize: '1rem', fontWeight: '600' }} onClick={onViewOmitted}>
-                            🙈 View hidden products {Object.keys(omittedProducts).length > 0 && `(${Object.keys(omittedProducts).length})`}
+                            View hidden products {Object.keys(omittedProducts).length > 0 && `(${Object.keys(omittedProducts).length})`}
                         </button>
                         <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginTop: '0.5rem' }}>Products you hid from recommendations. View or restore them anytime.</p>
                     </div>
@@ -101,7 +101,7 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
             {checkinRecs.length > 0 && (
                 <div style={{ maxWidth: '800px', margin: '0 auto 3rem' }}>
                     <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <span>📋</span> Recommendations from your check-in
+                        Recommendations from your check-in
                     </h3>
                     <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem', marginBottom: '1rem' }}>
                         These match your latest check-in and tracker data. Not sure if you did a check-in? You can always see your latest recommendations here. Each product links to the same listing in Search.
@@ -159,7 +159,7 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
             {/* Hidden (omitted) products. Also linked from header above */}
             <div style={{ maxWidth: '800px', margin: '0 auto 3rem' }}>
                 <h3 style={{ fontSize: '1.25rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <span>🙈</span> Hidden products
+                    Hidden products
                     {Object.keys(omittedProducts).length > 0 && (
                         <span style={{ background: 'var(--color-secondary-fade)', color: 'var(--color-primary-hover)', padding: '0.1rem 0.6rem', borderRadius: 'var(--radius-pill)', fontSize: '0.75rem', fontWeight: '600' }}>{Object.keys(omittedProducts).length}</span>
                     )}
@@ -186,7 +186,7 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                     {trackedList.length > 0 && (
                         <div>
                             <h3 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                <span>🔔</span> Safety Recall Monitoring
+                                Safety Recall Monitoring
                                 <span style={{ background: 'var(--color-secondary-fade)', color: 'var(--color-primary-hover)', padding: '0.1rem 0.6rem', borderRadius: 'var(--radius-pill)', fontSize: '0.75rem', fontWeight: '600' }}>{trackedList.length}</span>
                             </h3>
                             <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '1.25rem' }}>
@@ -222,7 +222,7 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                     {joinedList.length > 0 && (
                         <div>
                             <h3 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                <span>🚀</span> Waitlists Joined
+                                Waitlists Joined
                                 <span style={{ background: 'var(--color-secondary-fade)', color: 'var(--color-primary-hover)', padding: '0.1rem 0.6rem', borderRadius: 'var(--radius-pill)', fontSize: '0.75rem', fontWeight: '600' }}>{joinedList.length}</span>
                             </h3>
                             <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '1.25rem' }}>

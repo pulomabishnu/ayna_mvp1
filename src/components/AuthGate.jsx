@@ -18,6 +18,7 @@ const CONSENT_VERSION = 'v1';
 
 export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAuthRedirect, redirectTo }) {
   const [mode, setMode] = useState('signup');
+  const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -43,12 +44,18 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
     try {
       if (isSignup) {
         const consentAt = new Date().toISOString();
+        const cleanFirstName = firstName.trim();
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
             emailRedirectTo: `${window.location.origin}/confirmed`,
-            data: { consent_given_at: consentAt, consent_version: CONSENT_VERSION },
+            data: {
+              first_name: cleanFirstName,
+              full_name: cleanFirstName,
+              consent_given_at: consentAt,
+              consent_version: CONSENT_VERSION,
+            },
           },
         });
         if (error) throw error;
@@ -151,6 +158,20 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
         <div style={styles.logo}>Ayna</div>
         <p style={styles.tagline}>{subtitle}</p>
 
+        {!supabase && (
+          // Without this, a missing/blank .env.local silently disabled the
+          // email/password submit button with zero feedback — clicking it
+          // did nothing, no error, no console output, nothing to search for.
+          // The Google button already surfaced this same problem via its own
+          // error state; email/password had no equivalent, so it looked
+          // exactly like a hang rather than a config gap.
+          <p style={styles.configWarning}>
+            Sign-in isn't configured on this device: VITE_SUPABASE_URL and
+            VITE_SUPABASE_ANON_KEY are missing or empty in .env.local. Add them
+            and restart the dev server.
+          </p>
+        )}
+
         <div style={styles.toggleRow}>
           <button
             type="button"
@@ -169,6 +190,18 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
         </div>
 
         <form onSubmit={handleEmailAuth} style={styles.form}>
+          {isSignup && (
+            <input
+              type="text"
+              placeholder="First name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              required
+              style={styles.input}
+              autoComplete="given-name"
+              maxLength={50}
+            />
+          )}
           <input
             type="email"
             placeholder="Email address"
@@ -328,6 +361,16 @@ const styles = {
     textAlign: 'center',
     margin: '-0.25rem 0 0.25rem',
     lineHeight: 1.45,
+  },
+  configWarning: {
+    fontSize: '0.78rem',
+    color: '#92400E',
+    background: '#FEF3C7',
+    border: '1px solid #FDE68A',
+    borderRadius: 'var(--radius-sm)',
+    padding: '0.6rem 0.75rem',
+    lineHeight: 1.45,
+    margin: 0,
   },
   toggleRow: {
     display: 'flex',

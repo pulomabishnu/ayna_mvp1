@@ -1,20 +1,22 @@
 import React from 'react';
 import { CATEGORY_LABELS } from '../data/products';
-import { handleImageErrorWithRetry } from '../utils/imageRetry';
-
-/**
- * "Saved for later" — the shelf at the bottom of My Ecosystem holding whatever
- * the Save for later button on a product page put there.
- *
- * Cards are the same cream-tile card Discovery uses (mockup board 1h): tile,
- * category eyebrow, name, price. Clicking one opens the same product modal, so
- * a product looks identical wherever it's opened from.
- */
+import { productHref, isPlainLeftClick } from '../utils/productRoute';
 
 function eyebrowFor(product) {
-  return String(CATEGORY_LABELS[product.category] || product.category || '')
+  return String(CATEGORY_LABELS[product.category] || product.category || 'Product')
     .replace(/^[^\w]+\s*/, '')
     .toUpperCase();
+}
+
+function HeartIcon({ filled = false }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="wishlist-heart-icon">
+      <path
+        d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"
+        fill={filled ? 'currentColor' : 'none'}
+      />
+    </svg>
+  );
 }
 
 export default function SavedForLater({
@@ -28,84 +30,64 @@ export default function SavedForLater({
   const items = Object.values(savedProducts || {});
 
   return (
-    <section className="eco-saved mockup-page">
+    <section id="ayna-wishlist" className="eco-saved mockup-page wishlist-section">
       <div className="eco-saved__head">
-        <div className="eco-saved__title">Saved for later</div>
-        <div className="eco-saved__count">
-          {items.length > 0
-            ? `${items.length} item${items.length === 1 ? '' : 's'}`
-            : 'Nothing saved yet'}
-        </div>
+        <div className="eco-saved__title">Wishlist</div>
+        {items.length > 0 && (
+          <div className="eco-saved__count">{items.length} saved</div>
+        )}
       </div>
 
       {items.length === 0 ? (
-        <p className="eco-saved__empty">
-          Tap <strong>Save for later</strong> on any product and it lands here. A shortlist you can
-          come back to without adding it to your ecosystem.{' '}
-          <button
-            type="button"
-            onClick={onBrowse}
-            style={{ background: 'none', border: 'none', padding: 0, font: 'inherit', color: '#B4732A', cursor: 'pointer', textDecoration: 'underline' }}
-          >
-            Browse products
-          </button>
-        </p>
+        <div className="wishlist-empty">
+          <p>Nothing saved yet.</p>
+          <button type="button" onClick={onBrowse}>Browse products</button>
+        </div>
       ) : (
-        <div className="eco-saved__grid">
+        <div className="eco-saved__grid wishlist-grid">
           {items.map((product) => {
             const inEcosystem = !!myProducts[product.id];
             return (
-              <div key={product.id} className="discovery-card" style={{ cursor: 'default' }}>
-                <div
-                  className="discovery-card__tile"
-                  role="button"
-                  tabIndex={0}
-                  aria-label={`${product.name}. Open details`}
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => onOpenProduct?.(product)}
-                  onKeyDown={(e) => {
-                    if (e.key !== 'Enter' && e.key !== ' ') return;
+              <article key={product.id} className="wishlist-card">
+                <a
+                  className="wishlist-card__link"
+                  href={productHref(product.id)}
+                  onClick={(e) => {
+                    if (!isPlainLeftClick(e)) return;
                     e.preventDefault();
                     onOpenProduct?.(product);
                   }}
                 >
-                  {product.image ? (
-                    <img
-                      src={product.image}
-                      alt=""
-                      loading="lazy"
-                      onError={(e) => handleImageErrorWithRetry(e, () => { e.currentTarget.style.display = 'none'; })}
-                    />
-                  ) : (
-                    <span className="discovery-card__initial" aria-hidden="true">
-                      {String(product.brand || product.name || '?').trim().charAt(0).toUpperCase()}
-                    </span>
-                  )}
-                  <button
-                    type="button"
-                    className="discovery-card__heart is-on"
-                    aria-label={`Remove ${product.name} from Saved for later`}
-                    onClick={(e) => { e.stopPropagation(); onToggleSaved?.(product); }}
-                    style={{ marginLeft: 'auto' }}
-                  >
-                    ♥
-                  </button>
-                </div>
-
-                <div className="discovery-card__eyebrow">{eyebrowFor(product)}</div>
-                <div className="discovery-card__name">{product.name}</div>
-                <div className="discovery-card__price">{product.price}</div>
+                  <div className="wishlist-card__tile">
+                    {product.image ? (
+                      <img src={product.image} alt={product.name} loading="lazy" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                    ) : (
+                      <span aria-hidden="true">{String(product.brand || product.name || '?').trim().charAt(0).toUpperCase()}</span>
+                    )}
+                  </div>
+                  <div className="wishlist-card__eyebrow">{eyebrowFor(product)}</div>
+                  <h3>{product.name}</h3>
+                  <div className="wishlist-card__price">{product.price || ''}</div>
+                </a>
 
                 <button
                   type="button"
-                  className="discovery-card__join"
-                  onClick={() => onAddToEcosystem?.(product)}
-                  disabled={inEcosystem}
-                  style={inEcosystem ? { opacity: 0.55, cursor: 'default' } : undefined}
+                  className="wishlist-card__heart is-saved"
+                  aria-label={`Remove ${product.name} from wishlist`}
+                  onClick={() => onToggleSaved?.(product)}
                 >
-                  {inEcosystem ? '✓ In ecosystem' : 'Add to ecosystem'}
+                  <HeartIcon filled />
                 </button>
-              </div>
+
+                <button
+                  type="button"
+                  className="wishlist-card__ecosystem"
+                  onClick={() => !inEcosystem && onAddToEcosystem?.(product)}
+                  disabled={inEcosystem}
+                >
+                  {inEcosystem ? 'In ecosystem' : 'Add to ecosystem'}
+                </button>
+              </article>
             );
           })}
         </div>

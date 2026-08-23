@@ -230,9 +230,9 @@ export default function Recommendations({
                             width: '100%', height: '100%',
                             background: 'linear-gradient(135deg, var(--color-secondary-fade), var(--color-primary-fade, #f3e8ff))',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            fontSize: '2rem',
-                        }}>
-                            🌸
+                            fontSize: '2rem', fontWeight: '600', color: 'var(--color-text-muted)',
+                        }} aria-hidden="true">
+                            {String(product.name || '?').trim().charAt(0).toUpperCase()}
                         </div>
                     )}
                     <span style={{
@@ -301,10 +301,10 @@ export default function Recommendations({
                             <span style={{ fontSize: '0.75rem', background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>✓ No recalls</span>
                         )}
                         {product.safety?.recalls && product.safety.recalls.includes('⚠️') && (
-                            <span style={{ fontSize: '0.75rem', background: '#F8F9FA', color: 'var(--color-text-main)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>⚠️ Safety note</span>
+                            <span style={{ fontSize: '0.75rem', background: '#F8F9FA', color: 'var(--color-text-main)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>Safety note</span>
                         )}
                         {product.privacy?.sellsData?.includes('❌') && (
-                            <span style={{ fontSize: '0.75rem', background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>🔒 No data selling</span>
+                            <span style={{ fontSize: '0.75rem', background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No data selling</span>
                         )}
                     </div>
 
@@ -367,10 +367,10 @@ export default function Recommendations({
                     </p>
                 )}
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginTop: '0.5rem' }}>
-                    🔒 We never sell your data. The "For [concern]" picks below come from our reviewed catalog. The picks above come from your own health profile. Always double check with a doctor before you decide.
+                    We never sell your data. The "For [concern]" picks below come from our reviewed catalog. The picks above come from your own health profile — always double check with a doctor before you decide.
                 </p>
                 <p style={{ color: 'var(--color-primary)', fontSize: '0.9rem', marginTop: '0.5rem', fontWeight: '500' }}>
-                    Forgot something? Use the 💬 chat button to speak or type more. We’ll refresh your ecosystem.
+                    Forgot something? Use the chat button to speak or type more — we’ll refresh your ecosystem.
                 </p>
                 <div style={{ marginTop: '1.25rem' }}>
                     <button type="button" className="btn btn-outline" onClick={onRetake}>
@@ -620,7 +620,7 @@ export default function Recommendations({
             {matchedProfiles.length > 0 && (
                 <div style={{ maxWidth: '800px', margin: '0 auto var(--spacing-xl)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     <h3 style={{ fontSize: '1.15rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        👥 Women with similar profiles also use
+                        Women with similar profiles also use
                     </h3>
                     {matchedProfiles.map(profile => (
                         <div key={profile.tag} style={{
@@ -658,7 +658,7 @@ export default function Recommendations({
             {onViewArticle && recommendedArticles.length > 0 && (
               <div style={{ maxWidth: '800px', margin: '0 auto var(--spacing-xl)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <h3 style={{ fontSize: '1.35rem', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  📖 Recommended articles
+                  Recommended articles
                 </h3>
                 <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1rem' }}>
                   Health reads that match your focus areas.

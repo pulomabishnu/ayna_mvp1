@@ -53,7 +53,7 @@ export default function HowWeMakeMoney({ onBack }) {
                     background: 'var(--color-secondary-fade)', padding: '0.3rem 0.8rem',
                     borderRadius: 'var(--radius-pill)', display: 'inline-block', marginBottom: '1rem'
                 }}>
-                    💛 Transparency
+                    Transparency
                 </span>
                 <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', marginBottom: '1.25rem', color: 'var(--color-surface-contrast)' }}>
                     How We Make Money

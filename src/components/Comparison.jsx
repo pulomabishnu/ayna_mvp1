@@ -8,7 +8,6 @@ export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LA
         return (
             <div className="container animate-fade-in" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
                 <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-                    <div style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>⚖️</div>
                     <h2 style={{ fontSize: '2rem', marginBottom: '0.75rem' }}>Comparison Tool</h2>
                     <p style={{ color: 'var(--color-text-muted)', maxWidth: '520px', margin: '0 auto' }}>
                         Compare up to 3 products side-by-side: safety, ingredients, and expert opinions.
@@ -37,7 +36,6 @@ export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LA
                             e.currentTarget.style.background = 'var(--color-surface-soft)';
                         }}
                     >
-                        <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>🔍</div>
                         <h3 style={{ fontSize: '1.15rem', marginBottom: '0.5rem' }}>Browse products</h3>
                         <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>
                             Search Discovery and add products from the full catalog.
@@ -53,7 +51,6 @@ export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LA
                             textAlign: 'center'
                         }}
                     >
-                        <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>🌿</div>
                         <h3 style={{ fontSize: '1.15rem', marginBottom: '0.5rem' }}>Compare from your ecosystem</h3>
                         <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1.25rem' }}>
                             {ecosystemList.length > 0
@@ -193,7 +190,7 @@ export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LA
             </div>
 
             <div style={{ marginTop: '3rem', padding: '2rem', background: 'var(--color-secondary-fade)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-primary-fade)' }}>
-                <h3 style={{ fontSize: '1.1rem', color: 'var(--color-primary)', marginBottom: '1rem' }}>⚖️ Ayna's Tip</h3>
+                <h3 style={{ fontSize: '1.1rem', color: 'var(--color-primary)', marginBottom: '1rem' }}>Ayna's Tip</h3>
                 <p style={{ fontSize: '1rem', lineHeight: '1.7', color: 'var(--color-text-main)' }}>
                     When choosing between products, look closely at <strong>Materials & Ingredients</strong> and the <strong>Doctor's Opinion</strong>.
                     A higher price often means more marketing, not better ingredients. Look for "B-Corp" or "Sustainable" badges. They can mean higher ethical standards.

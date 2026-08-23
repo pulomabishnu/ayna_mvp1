@@ -7,17 +7,16 @@ import RotatingWordHeadline from './RotatingWordHeadline';
 import WaitlistLandingLayout from './WaitlistLandingLayout';
 import { CATEGORY_LABELS } from '../data/products';
 
-function displayNameFromEmail(email) {
-  if (!email) return '';
-  const local = email.split('@')[0] || '';
-  const first = local.split(/[.+_-]/)[0] || local;
-  return first.charAt(0).toUpperCase() + first.slice(1);
+function displayNameFromUser(user) {
+  const meta = user?.user_metadata || {};
+  const raw = meta.first_name || meta.firstName || meta.given_name || meta.full_name || meta.name || '';
+  return String(raw).trim().split(/\s+/).filter(Boolean)[0] || '';
 }
 
 // Returning-user hero: shown instead of the search-first hero once someone has
 // an account and at least one product already in their ecosystem.
 function WelcomeBackHero({ user, myProducts, ecosystemCount, onStartQuiz, onViewEcosystem, onViewDiscovery }) {
-  const name = displayNameFromEmail(user?.email) || 'there';
+  const name = displayNameFromUser(user) || 'there';
   const areaStatus = useMemo(() => {
     const byCategory = new Map();
     Object.values(myProducts || {}).forEach((p) => {

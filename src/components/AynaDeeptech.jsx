@@ -43,7 +43,7 @@ export default function AynaDeeptech({ joinedWaitlists, toggleJoinWaitlist }) {
                     background: 'var(--color-secondary-fade)', padding: '0.3rem 0.8rem',
                     borderRadius: 'var(--radius-pill)', display: 'inline-block', marginBottom: '1rem'
                 }}>
-                    🔬 Inside The Lab
+                    Inside The Lab
                 </span>
                 <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', marginBottom: '1rem', color: 'var(--color-surface-contrast)' }}>
                     Ayna Deeptech

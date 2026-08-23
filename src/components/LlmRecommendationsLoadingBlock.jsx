@@ -30,7 +30,6 @@ export default function LlmRecommendationsLoadingBlock({ loadStartedAt, compact 
                 margin: compact ? undefined : '0 auto var(--spacing-xl)',
             }}
         >
-            <div style={{ fontSize: '2rem', marginBottom: compact ? '0.75rem' : '1rem' }}>🌸</div>
             <p style={{ fontWeight: '600', color: 'var(--color-text-main)', fontSize: compact ? '1rem' : '1.1rem' }}>
                 Building your personalized ecosystem...
             </p>

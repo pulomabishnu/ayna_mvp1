@@ -25,31 +25,31 @@ import { inferTagsFromHealthProfile } from '../utils/healthDataProfile.js';
 // Health function categories for ecosystem tracking
 export const HEALTH_FUNCTIONS = {
     // ── Core period care ─────────────────────────────────────────────────────
-    'menstrual-collection': { label: 'Period Care', icon: '🩸', desc: 'Products that collect or absorb menstrual flow' },
-    'cycle-tracking': { label: 'Cycle Tracking', icon: '📱', desc: 'Apps or devices that track your menstrual cycle' },
-    'cramp-relief': { label: 'Cramp & Pain Relief', icon: '⚡', desc: 'Products that help manage period cramps and pain' },
-    'leak-protection': { label: 'Leak Protection', icon: '🛡️', desc: 'Backup products to prevent leaks and staining' },
+    'menstrual-collection': { label: 'Period Care', desc: 'Products that collect or absorb menstrual flow' },
+    'cycle-tracking': { label: 'Cycle Tracking', desc: 'Apps or devices that track your menstrual cycle' },
+    'cramp-relief': { label: 'Cramp & Pain Relief', desc: 'Products that help manage period cramps and pain' },
+    'leak-protection': { label: 'Leak Protection', desc: 'Backup products to prevent leaks and staining' },
     // ── Hormonal & reproductive health ───────────────────────────────────────
-    'pcos-management': { label: 'PCOS Management', icon: '🔬', desc: 'Supplements, apps and telehealth for PCOS' },
-    'endometriosis': { label: 'Endometriosis Support', icon: '🩺', desc: 'Products and services for endometriosis management' },
-    'hormone-balance': { label: 'Hormone Balance', icon: '⚖️', desc: 'Products for hormonal bloating and regulation' },
-    'fertility': { label: 'Fertility & Conception', icon: '🌱', desc: 'Products and services for fertility and TTC' },
-    'perimenopause': { label: 'Perimenopause & Menopause', icon: '🌙', desc: 'Support for perimenopause and menopause symptoms' },
-    'contraception': { label: 'Contraception', icon: '💜', desc: 'Birth control and reproductive health' },
+    'pcos-management': { label: 'PCOS Management', desc: 'Supplements, apps and telehealth for PCOS' },
+    'endometriosis': { label: 'Endometriosis Support', desc: 'Products and services for endometriosis management' },
+    'hormone-balance': { label: 'Hormone Balance', desc: 'Products for hormonal bloating and regulation' },
+    'fertility': { label: 'Fertility & Conception', desc: 'Products and services for fertility and TTC' },
+    'perimenopause': { label: 'Perimenopause & Menopause', desc: 'Support for perimenopause and menopause symptoms' },
+    'contraception': { label: 'Contraception', desc: 'Birth control and reproductive health' },
     // ── Vaginal & intimate health ─────────────────────────────────────────────
-    'vaginal-health': { label: 'Gut & Vaginal Health', icon: '🌸', desc: 'Probiotics, pH balance and intimate wellness' },
-    'uti-prevention': { label: 'UTI Support', icon: '🦠', desc: 'Products for preventing or treating UTIs' },
-    'sexual-health': { label: 'Sexual Health & Comfort', icon: '💗', desc: 'Lubricants, pelvic floor and intimate comfort' },
+    'vaginal-health': { label: 'Gut & Vaginal Health', desc: 'Probiotics, pH balance and intimate wellness' },
+    'uti-prevention': { label: 'UTI Support', desc: 'Products for preventing or treating UTIs' },
+    'sexual-health': { label: 'Sexual Health & Comfort', desc: 'Lubricants, pelvic floor and intimate comfort' },
     // ── Whole-body wellness ───────────────────────────────────────────────────
-    'mental-health': { label: 'Mental Health & Mood', icon: '🧠', desc: 'Mental wellness, therapy and mood support' },
-    'sleep-energy': { label: 'Sleep & Energy', icon: '😴', desc: 'Products to improve sleep and energy levels' },
-    'skin-hair': { label: 'Skin & Hair', icon: '✨', desc: 'Products for hormone-related skin and hair concerns' },
-    'fitness-cycle': { label: 'Cycle-Synced Fitness', icon: '💪', desc: 'Workouts and nutrition synced to your cycle' },
+    'mental-health': { label: 'Mental Health & Mood', desc: 'Mental wellness, therapy and mood support' },
+    'sleep-energy': { label: 'Sleep & Energy', desc: 'Products to improve sleep and energy levels' },
+    'skin-hair': { label: 'Skin & Hair', desc: 'Products for hormone-related skin and hair concerns' },
+    'fitness-cycle': { label: 'Cycle-Synced Fitness', desc: 'Workouts and nutrition synced to your cycle' },
     // ── Access & safety ───────────────────────────────────────────────────────
-    'telehealth': { label: 'Telehealth & Providers', icon: '🏥', desc: 'Online doctor consultations and specialist access' },
-    'routine-building': { label: 'Health Routine Apps', icon: '📲', desc: 'Apps and platforms to build your health routine' },
+    'telehealth': { label: 'Telehealth & Providers', desc: 'Online doctor consultations and specialist access' },
+    'routine-building': { label: 'Health Routine Apps', desc: 'Apps and platforms to build your health routine' },
     // ── Kept for existing database products ──────────────────────────────────
-    'supplement': { label: 'Supplements', icon: '💊', desc: 'Vitamins and supplements for women\'s health' },
+    'supplement': { label: 'Supplements', desc: 'Vitamins and supplements for women\'s health' },
 };
 
 export const PHYSICAL_PRODUCTS = [
@@ -768,6 +768,19 @@ export const ALL_PRODUCTS = [
 ].filter((p) => !isRxOnlyProduct(p));
 
 /**
+ * Look up a catalog product by id. Returns null for ids that don't exist in
+ * the static catalog — callers also need to check the user's own ecosystem/
+ * saved/tracked state for LLM-generated or custom products, which never
+ * live here.
+ * @param {string} id
+ * @returns {object | null}
+ */
+export function getProductById(id) {
+    if (!id) return null;
+    return ALL_PRODUCTS.find((p) => p.id === id) || null;
+}
+
+/**
  * Map user-listed current products to closest products already in the catalog.
  * Avoids creating custom cards so ecosystem always uses existing product entries.
  * @param {{ currentProductBrands?: string[], currentMedications?: string[], currentSupplements?: string[] }} quizResults
@@ -801,33 +814,32 @@ export function createCustomEcosystemProducts(quizResults) {
 
 // Helper to look up category labels (MVP categories included)
 export const CATEGORY_LABELS = {
-    'pad': '🧼 Pads',
-    'tampon': '🩸 Tampons',
-    'cup': '🏆 Menstrual Cups',
-    'disc': '📀 Menstrual Discs',
-    'period-underwear': '🩲 Period Underwear',
-    'period-care': '🩸 Period Care',
-    'supplement': '💊 Supplements',
-    'supplements': '💊 Supplements',
-    'tracker': '📱 Trackers & Wearables',
-    'telehealth': '🏥 Virtual Care',
-    'mental-health': '🧠 Mental Wellness',
-    'fitness': '🏃‍♀️ Fitness',
-    'fitness-cycle': '💪 Cycle Fitness',
-    'pelvic-floor': '🧘 Pelvic Floor',
-    'pelvic-health': '💪 Pelvic Health',
-    'cramp-relief': '⚡ Cramp Relief',
-    'intimate-care': '🌸 Intimate Care',
-    'incontinence': '💧 Bladder Leak Protection',
-    'menopause': '🍂 Menopause Support',
-    'sex-tech': '🔥 Sexual Wellness',
-    'postpartum': '🤱 Postpartum Recovery',
-    'pregnancy': '🤰 Pregnancy Support',
-    'fertility': '🤰 Fertility',
-    'diagnostics': '🔬 Diagnostics',
-    'hormone-monitoring': '🧬 Hormone Monitoring',
-    'custom-brand': '🏷️ Your brands',
-    'medication': '💊 Medications'
+    'pad': 'Pads',
+    'tampon': 'Tampons',
+    'cup': 'Menstrual Cups',
+    'disc': 'Menstrual Discs',
+    'period-underwear': 'Period Underwear',
+    'period-care': 'Period Care',
+    'supplement': 'Supplements',
+    'supplements': 'Supplements',
+    'tracker': 'Trackers & Wearables',
+    'telehealth': 'Virtual Care',
+    'mental-health': 'Mental Wellness',
+    'fitness': 'Fitness',
+    'fitness-cycle': 'Cycle Fitness',
+    'pelvic-floor': 'Pelvic Floor',
+    'pelvic-health': 'Pelvic Health',
+    'cramp-relief': 'Cramp Relief',
+    'intimate-care': 'Intimate Care',
+    'menopause': 'Menopause Support',
+    'sex-tech': 'Sexual Wellness',
+    'postpartum': 'Postpartum Recovery',
+    'pregnancy': 'Pregnancy Support',
+    'fertility': 'Fertility',
+    'diagnostics': 'Diagnostics',
+    'hormone-monitoring': 'Hormone Monitoring',
+    'custom-brand': 'Your brands',
+    'medication': 'Medications'
 };
 
 // ─── CLINICAL WORKFLOW (e.g. Recurrent UTIs: prevent → test → treat → get care) ───
@@ -1304,10 +1316,10 @@ const TAG_TO_READABLE = {
  * Readable labels for product tags that overlap the user’s quiz + imported health profile.
  * Empty when there is no tag match — use this to show a positive for-you line only when appropriate.
  */
-export function getProfileMatchLabelsForProduct(product, quizAnswers, healthProfile = null) {
+function getProfileMatchStatsForProduct(product, quizAnswers, healthProfile = null) {
     const healthOnlyTags = inferTagsFromHealthProfile(healthProfile);
     if ((!quizAnswers || !quizAnswers.frustrations?.length) && healthOnlyTags.length === 0) {
-        return [];
+        return { labels: [], percent: null, matches: 0, signals: 0 };
     }
     const FRUSTRATION_MAP = {
         'Heavy flow': 'heavy-flow', 'Painful cramps': 'cramps', 'Hormonal bloating': 'bloating', 'Irregular cycles': 'irregular',
@@ -1340,7 +1352,28 @@ export function getProfileMatchLabelsForProduct(product, quizAnswers, healthProf
             return pri(a) - pri(b);
         });
     }
-    return matches.slice(0, 4).map(m => TAG_TO_READABLE[m] || m.replace(/-/g, ' '));
+    const percent = userTags.size > 0 && matches.length > 0
+        ? Math.round((matches.length / userTags.size) * 100)
+        : null;
+    return {
+        labels: matches.slice(0, 4).map(m => TAG_TO_READABLE[m] || m.replace(/-/g, ' ')),
+        percent,
+        matches: matches.length,
+        signals: userTags.size,
+    };
+}
+
+export function getProfileMatchLabelsForProduct(product, quizAnswers, healthProfile = null) {
+    return getProfileMatchStatsForProduct(product, quizAnswers, healthProfile).labels;
+}
+
+/**
+ * Profile-overlap percentage used only for signed-in personalization UI.
+ * It is a literal tag-overlap ratio (matched profile signals / comparable
+ * profile signals), not a clinical score and not an invented marketing number.
+ */
+export function getProfileMatchPercentForProduct(product, quizAnswers, healthProfile = null) {
+    return getProfileMatchStatsForProduct(product, quizAnswers, healthProfile).percent;
 }
 
 /**
@@ -1563,11 +1596,11 @@ export const SYMPTOM_TO_SUPPLEMENTS = {
 
 // Filter options for checking in
 export const CHECK_IN_CATEGORIES = [
-    { id: 'menstrual', label: 'Menstrual Cycle', icon: '🩸' },
-    { id: 'vaginal', label: 'Vaginal Health', icon: '🌸' },
-    { id: 'fertility', label: 'Fertility & TTC', icon: '🥚' },
-    { id: 'urinary', label: 'Urinary Health', icon: '🦠' },
-    { id: 'wellness', label: 'General Wellness', icon: '✨' },
+    { id: 'menstrual', label: 'Menstrual Cycle', icon: '' },
+    { id: 'vaginal', label: 'Vaginal Health', icon: '' },
+    { id: 'fertility', label: 'Fertility & TTC', icon: '' },
+    { id: 'urinary', label: 'Urinary Health', icon: '' },
+    { id: 'wellness', label: 'General Wellness', icon: '' },
 ];
 // Helper to detect functionality overlaps in a set of products.
 // Overlap warnings apply only to digital apps and telehealth services (not physical goods).

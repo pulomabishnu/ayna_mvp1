@@ -1,119 +1,102 @@
 import React from 'react';
 
 /**
- * The second product layout — mockup board 1g, "Product detail — evidence rail
- * instead of tabs". Specs down the middle, and a rail of three cards on the
- * right: why you're seeing this, the clinician opinion, and the evidence.
+ * The right-hand rail on the evidence layout (mockup board 1g): three small
+ * stacked cards — why you're seeing this, clinician opinion, evidence.
  *
- * Board 1g shows a big "98%" in the match card and invented counts in the
- * evidence card. Neither exists in our data, so this builds both rows out of
- * fields the product actually carries and drops any row it has nothing for,
- * rather than printing a number we made up.
+ * Board 1g shows a big invented "98%" match number and made-up source counts
+ * (NIH, ACOG, CDC). Neither exists in our data, so every row here is built
+ * from fields the product actually carries — verificationLinks counts, the
+ * real clinician sentence, real Ayna review counts — and dropped entirely
+ * when there's nothing real to show, rather than printing a number we made up.
  */
 
-function humanizeTag(tag) {
-  return String(tag || '')
-    .replace(/[-_]/g, ' ')
-    .replace(/\b\w/g, (c) => c.toUpperCase());
-}
-
-/** First sentence, so a long safety blob doesn't blow out the spec row. */
-function firstSentence(text, max = 120) {
+/** First sentence, so a long safety blob doesn't blow out a card — cut on a word boundary, never mid-word. */
+function firstSentence(text, max = 140) {
   const t = String(text || '').trim();
   if (!t) return '';
   const cut = t.split(/(?<=[.!?])\s/)[0] || t;
-  return cut.length > max ? `${cut.slice(0, max).trimEnd()}…` : cut;
+  if (cut.length <= max) return cut;
+  const truncated = cut.slice(0, max);
+  const lastSpace = truncated.lastIndexOf(' ');
+  return `${(lastSpace > max * 0.6 ? truncated.slice(0, lastSpace) : truncated).trimEnd()}…`;
 }
 
-function SpecRow({ label, value, last }) {
-  if (!value) return null;
+export default function ProductEvidenceRail({ product, matchLabels = [], matchPercent = null, aynaReviewCount = 0 }) {
+  const clinicianNote = product.doctorOpinion || product.clinicianOpinion || null;
+
+  const scientificCount = product.verificationLinks?.scientific?.links?.length || 0;
+  const clinicalCount = product.verificationLinks?.doctor?.links?.length || 0;
+  const communityLinkCount = product.verificationLinks?.community?.links?.length || 0;
+
+  const evidenceRows = [
+    scientificCount > 0 ? { label: 'Scientific', value: `${scientificCount} source${scientificCount === 1 ? '' : 's'}` } : null,
+    clinicalCount > 0 ? { label: 'Clinical', value: `${clinicalCount} reference${clinicalCount === 1 ? '' : 's'}` } : null,
+    communityLinkCount > 0 ? { label: 'Community', value: `${communityLinkCount} link${communityLinkCount === 1 ? '' : 's'}` } : null,
+    aynaReviewCount > 0 ? { label: 'Ayna reviews', value: `${aynaReviewCount}` } : null,
+    product.safety?.fdaStatus ? { label: 'FDA', value: firstSentence(product.safety.fdaStatus, 56) } : null,
+  ].filter(Boolean);
+
   return (
-    <div className={`pdp-rail__spec${last ? ' pdp-rail__spec--last' : ''}`}>
-      <span>{label}</span>
-      <span>{value}</span>
+    <div className="pdp-rail__cards">
+      <div className="pdp-rail__card pdp-rail__card--why">
+        <div className="pdp-rail__label">Why you&apos;re seeing this</div>
+        {Number.isFinite(matchPercent) ? (
+          <div className="pdp-rail__match-wrap">
+            <div
+              className="pdp-rail__match-ring"
+              style={{ '--match-pct': `${Math.max(0, Math.min(100, matchPercent))}%` }}
+              aria-label={`${matchPercent}% profile match`}
+            >
+              <span>{matchPercent}%</span>
+              <small>match</small>
+            </div>
+            <div className="pdp-rail__body">
+              {matchLabels.length > 0
+                ? matchLabels.slice(0, 3).join(' · ')
+                : 'Based on your ecosystem.'}
+            </div>
+          </div>
+        ) : (
+          <div className="pdp-rail__body">
+            {matchLabels.length > 0
+              ? matchLabels.slice(0, 3).join(' · ')
+              : 'Build your ecosystem to see your match.'}
+          </div>
+        )}
+      </div>
+
+      <div className="pdp-rail__card">
+        <div className="pdp-rail__label">Clinician opinion</div>
+        {clinicianNote ? (
+          <>
+            <div className="pdp-rail__body pdp-rail__body--dark">{firstSentence(clinicianNote)}</div>
+            {product.clinicianAttribution && (
+              <div className="pdp-rail__attr">{product.clinicianAttribution}</div>
+            )}
+          </>
+        ) : (
+          <div className="pdp-rail__body pdp-rail__body--dark">
+            No clinician note yet.
+          </div>
+        )}
+      </div>
+
+      <div className="pdp-rail__card">
+        <div className="pdp-rail__label">Evidence</div>
+        {evidenceRows.length > 0 ? (
+          <div className="pdp-rail__evidence">
+            {evidenceRows.map((row) => (
+              <div key={row.label}>
+                <span>{row.label}</span>
+                <span>{row.value}</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="pdp-rail__body pdp-rail__body--dark">No evidence yet.</div>
+        )}
+      </div>
     </div>
   );
-}
-
-export default function ProductEvidenceRail({ product, matchLabels = [], aynaReviewCount = 0 }) {
-    const bestFor = (product.healthFunctions || []).concat(product.tags || [])
-        .slice(0, 3)
-        .map(humanizeTag)
-        .join(', ');
-
-    // "Skip if" is board 1g's label for a reason not to buy, so it maps to side
-    // effects. The allergens field describes what a product is FREE of as often
-    // as what's in it, so it gets its own neutral row instead.
-    const skipIf = firstSentence(product.safety?.sideEffects);
-    const allergens = firstSentence(product.safety?.allergens);
-    const materials = firstSentence(product.safety?.materials);
-
-    const clinicianNote = product.doctorOpinion || product.clinicianOpinion || null;
-
-    const evidenceRows = [
-        product.safety?.fdaStatus ? { label: 'FDA', value: product.safety.fdaStatus } : null,
-        Array.isArray(product.verificationLinks) && product.verificationLinks.length
-            ? { label: 'Verification', value: `${product.verificationLinks.length} source${product.verificationLinks.length === 1 ? '' : 's'}` }
-            : null,
-        product.effectiveness ? { label: 'Effectiveness', value: firstSentence(product.effectiveness, 60) } : null,
-        product.communityReview ? { label: 'Community', value: 'Reported experience' } : null,
-        aynaReviewCount > 0 ? { label: 'Ayna reviews', value: `${aynaReviewCount}` } : null,
-    ].filter(Boolean);
-
-    return (
-        <div className="pdp-rail">
-            <div className="pdp-rail__specs">
-                <SpecRow label="Best for" value={bestFor} />
-                <SpecRow label="Materials" value={materials} />
-                <SpecRow label="Allergens" value={allergens} />
-                <SpecRow label="Skip if" value={skipIf} last />
-                {!bestFor && !materials && !allergens && !skipIf && (
-                    <p className="pdp-rail__empty">No spec data recorded for this product yet.</p>
-                )}
-            </div>
-
-            <div className="pdp-rail__cards">
-                <div className="pdp-rail__card pdp-rail__card--why">
-                    <div className="pdp-rail__label">Why you&apos;re seeing this</div>
-                    <div className="pdp-rail__body">
-                        {matchLabels.length > 0
-                            ? `Matched on ${matchLabels.slice(0, 3).join(', ')}.`
-                            : 'Shown because it fits this category. Build your health profile and Ayna will match it to you directly.'}
-                    </div>
-                </div>
-
-                <div className="pdp-rail__card">
-                    <div className="pdp-rail__label">Clinician opinion</div>
-                    {clinicianNote ? (
-                        <>
-                            <div className="pdp-rail__body pdp-rail__body--dark">{clinicianNote}</div>
-                            {product.clinicianAttribution && (
-                                <div className="pdp-rail__attr">{product.clinicianAttribution}</div>
-                            )}
-                        </>
-                    ) : (
-                        <div className="pdp-rail__body pdp-rail__body--dark">
-                            No clinician review on file for this product yet.
-                        </div>
-                    )}
-                </div>
-
-                <div className="pdp-rail__card">
-                    <div className="pdp-rail__label">Evidence</div>
-                    {evidenceRows.length > 0 ? (
-                        <div className="pdp-rail__evidence">
-                            {evidenceRows.map((row) => (
-                                <div key={row.label}>
-                                    <span>{row.label}</span>
-                                    <span>{row.value}</span>
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="pdp-rail__body pdp-rail__body--dark">Nothing recorded yet.</div>
-                    )}
-                </div>
-            </div>
-        </div>
-    );
 }

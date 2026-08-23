@@ -49,7 +49,7 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
                         <h1 style={{ fontSize: '1.8rem', fontWeight: '800', marginBottom: '0.25rem', color: 'var(--color-primary)' }}>Ayna Health Summary</h1>
                         <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>Generated on {new Date().toLocaleDateString()}</p>
                     </div>
-                    <button className="btn btn-outline" onClick={() => window.print()}>🖨️ Print Summary</button>
+                    <button className="btn btn-outline" onClick={() => window.print()}>Print Summary</button>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginBottom: '3rem' }}>
@@ -95,12 +95,10 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
                 <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '2rem' }}>
                     <h4 style={{ fontSize: '1rem', fontWeight: '700', marginBottom: '1rem' }}>Suggested Questions for Your Provider</h4>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', background: 'var(--color-surface-soft)', padding: '1rem', borderRadius: 'var(--radius-sm)' }}>
-                            <span style={{ fontSize: '1.2rem' }}>🙋‍♀️</span>
+                        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', background: 'var(--color-surface-soft)', padding: '1rem', borderRadius: 'var(--radius-sm)', borderLeft: '4px solid var(--color-primary)' }}>
                             <p style={{ fontSize: '0.95rem' }}>"I told Ayna my main concern is <strong>{goal}</strong>. Does this fit my care plan?"</p>
                         </div>
-                        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', background: 'var(--color-surface-soft)', padding: '1rem', borderRadius: 'var(--radius-sm)' }}>
-                            <span style={{ fontSize: '1.2rem' }}>💊</span>
+                        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', background: 'var(--color-surface-soft)', padding: '1rem', borderRadius: 'var(--radius-sm)', borderLeft: '4px solid var(--color-primary)' }}>
                             <p style={{ fontSize: '0.95rem' }}><em>I'm currently using <strong>{Object.values(myProducts)[0]?.name || 'these products'}</strong>. Do you see any concerns with this, given my health goals?</em></p>
                         </div>
                         {userChatMessages.length > 0 && (
@@ -108,7 +106,6 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
                                 <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginTop: '0.5rem', marginBottom: '0.25rem', letterSpacing: '0.05em' }}>Based on what you shared with Ayna</p>
                                 {userChatMessages.slice(0, 5).map((text, i) => (
                                     <div key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', background: 'var(--color-primary-fade)', padding: '1rem', borderRadius: 'var(--radius-sm)', borderLeft: '4px solid var(--color-primary)' }}>
-                                        <span style={{ fontSize: '1.2rem' }}>💬</span>
                                         <div>
                                             <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.35rem' }}>You told Ayna:</p>
                                             <blockquote style={{ margin: '0 0 0.5rem', paddingLeft: '0.75rem', borderLeft: '3px solid var(--color-primary)', fontSize: '0.9rem', color: 'var(--color-text-main)' }}>{text.length > 120 ? text.slice(0, 120) + '…' : text}</blockquote>
@@ -123,7 +120,7 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
             </div>
 
             <div style={{ marginTop: '2rem', textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>
-                <p>⚠️ Ayna gives information only. It is not a medical device. Always check health facts with your doctor or nurse.</p>
+                <p>Ayna gives information only — it is not a medical device. Always check health facts with your doctor or nurse.</p>
             </div>
         </div>
     );

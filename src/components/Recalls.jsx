@@ -69,7 +69,7 @@ export default function Recalls({ trackedProducts, myProducts = {} }) {
                 {/* Active Alerts */}
                 <div>
                     <h3 style={{ fontSize: '1.3rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <span style={{ color: '#EF4444' }}>⚠️</span> Curated Safety Notes
+                        Curated Safety Notes
                     </h3>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                         {filteredRecalls.length === 0 ? (
@@ -142,7 +142,7 @@ export default function Recalls({ trackedProducts, myProducts = {} }) {
                 {/* Safety Insights */}
                 <div>
                     <div className="card" style={{ background: 'var(--color-surface-soft)', border: 'none' }}>
-                        <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem' }}>🛡️ What Ayna actually checks</h3>
+                        <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem' }}>What Ayna actually checks</h3>
                         <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', lineHeight: '1.6', marginBottom: '1.5rem' }}>
                             When you open a product, Ayna queries OpenFDA live for that specific product:
                         </p>

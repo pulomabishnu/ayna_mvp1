@@ -523,7 +523,7 @@ export default function Quiz({ onComplete }) {
             style={{ padding: '1.25rem 1.5rem', fontSize: '1.1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
             onClick={() => { setCompletionMode('voice'); setVoicePhase('prompt'); }}
           >
-            <span>🎤</span> Autocreate profile using voice
+            Autocreate profile using voice
           </button>
         </div>
       </section>
@@ -548,7 +548,7 @@ export default function Quiz({ onComplete }) {
           </ul>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
             <button type="button" className="btn btn-primary" style={{ padding: '1rem 2rem', fontSize: '1.1rem' }} onClick={handleVoiceStart}>
-              🎤 Start speaking
+              Start speaking
             </button>
             <button type="button" style={{ color: 'var(--color-text-muted)', textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer' }} onClick={() => setCompletionMode(null)}>
               ← Back to options
@@ -630,7 +630,7 @@ export default function Quiz({ onComplete }) {
                 style={{ marginTop: '0.75rem', alignSelf: 'flex-start' }}
                 onClick={() => { setVoicePhase('recording'); handleVoiceStart(true); }}
               >
-                🎤 Speak to add more
+                Speak to add more
               </button>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', minHeight: '280px' }}>

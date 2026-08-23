@@ -32,10 +32,15 @@ const AREAS = [
 /** How many satellites to draw at most, so the ring stays legible. */
 const MAX_SATELLITES = 6;
 
-function displayNameFromEmail(email) {
-  const local = String(email || '').split('@')[0] || '';
-  const first = local.split(/[.+_-]/)[0] || local;
-  return first ? first.charAt(0).toUpperCase() + first.slice(1) : '';
+function displayNameFromUser(user, healthProfile, quizResults) {
+  const meta = user?.user_metadata || {};
+  const intake = quizResults?.fullHealthIntake || {};
+  const raw =
+    meta.first_name || meta.firstName || meta.given_name || meta.full_name || meta.name ||
+    healthProfile?.firstName || healthProfile?.first_name || healthProfile?.name ||
+    intake?.firstName || intake?.first_name || intake?.name || '';
+  const first = String(raw).trim().split(/\s+/).filter(Boolean)[0] || '';
+  return first;
 }
 
 /** Evenly spaces satellites around the ring, starting at 12 o'clock. */
@@ -94,7 +99,7 @@ export default function EcosystemBubbles({
     : [];
   const matchLine = matchLabels.length ? `Matched on ${matchLabels.slice(0, 3).join(', ')}.` : '';
 
-  const name = displayNameFromEmail(user?.email) || 'You';
+  const name = displayNameFromUser(user, healthProfile, quizResults) || 'You';
   const centreTags = useMemo(() => {
     const tags = [];
     if (quizResults?.lifeStage) tags.push(String(quizResults.lifeStage));

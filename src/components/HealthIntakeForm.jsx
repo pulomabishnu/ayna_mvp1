@@ -470,15 +470,19 @@ export default function HealthIntakeForm({ onComplete }) {
     // when there is no session, which was discarded too.
     try {
       const result = await saveHealthIntakeForCurrentUser(snapshot);
-      if (result && result.saved === false && result.reason !== 'no_authenticated_user') {
+      // Local persistence is enough to continue building the ecosystem. The
+      // server sync can repair itself later; only block Finish if neither copy
+      // could be written at all.
+      if (result && result.saved === false && result.localSaved !== true && result.reason !== 'no_authenticated_user') {
         throw new Error(result.reason || 'save_failed');
+      }
+      if (result && result.saved === false && result.localSaved === true) {
+        console.warn('[Ayna] profile saved locally; server sync will retry later:', result.reason);
       }
     } catch (e) {
       console.error('[Ayna] intake save failed:', e);
       setSaving(false);
-      setSaveError(
-        "We couldn't save your profile just now. Your answers are still here. Check your connection and tap Finish again."
-      );
+      setSaveError("Couldn't save yet. Try Finish again.");
       return;
     }
     setSaveError('');

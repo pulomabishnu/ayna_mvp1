@@ -54,9 +54,11 @@ function FooterColumn({ title, children }) {
 
 export default function SiteFooter({
   onViewHowItWorks,
+  onViewAbout,
   onViewDiscovery,
   onViewDeeptech,
   onViewWaitlist,
+  onViewArticles,
   onViewPrivacyPolicy,
   onViewTermsOfUse,
   onViewHowWeMakeMoney,
@@ -83,25 +85,15 @@ export default function SiteFooter({
 
         <FooterColumn title="Explore">
           <button type="button" style={LINK_STYLE} onClick={onViewHowItWorks}>How It Works</button>
-          <button type="button" style={LINK_STYLE} onClick={() => onViewDiscovery?.('')}>Discover</button>
+          <button type="button" style={LINK_STYLE} onClick={() => onViewDiscovery?.('')}>Browse</button>
           <button type="button" style={LINK_STYLE} onClick={onViewDeeptech}>Why Ayna</button>
           <button type="button" style={LINK_STYLE} onClick={onViewWaitlist}>Launch Week</button>
+          <button type="button" style={LINK_STYLE} onClick={onViewArticles}>My Health Library</button>
         </FooterColumn>
 
         <FooterColumn title="Company">
-          <button type="button" style={LINK_STYLE} onClick={onViewHowItWorks}>About</button>
-          <a
-            style={LINK_STYLE}
-            href="mailto:hello@ayna.com?subject=Brand%20partnership"
-          >
-            Brand Partnerships
-          </a>
-          <a
-            style={LINK_STYLE}
-            href="mailto:hello@ayna.com?subject=Careers"
-          >
-            Careers
-          </a>
+          <button type="button" style={LINK_STYLE} onClick={onViewAbout}>About</button>
+          <button type="button" style={LINK_STYLE} onClick={onViewWaitlist}>Brand Partnerships</button>
         </FooterColumn>
 
         <FooterColumn title="Get in touch">

@@ -110,7 +110,7 @@ function normalizeConcernLabel(raw) {
   return raw;
 }
 
-/** Full card for “By function” ecosystem grid: image (🌸 fallback), brand, summary, price, health function, Details + Remove */
+/** Full card for “By function” ecosystem grid: image (letter-tile fallback), brand, summary, price, health function, Details + Remove */
 function EcosystemFunctionProductCard({
     product,
     healthFunctionLabel,
@@ -200,7 +200,9 @@ function EcosystemFunctionProductCard({
                 }}
             >
                 {imgError || !displayImage ? (
-                    <span style={{ fontSize: '2rem', lineHeight: 1 }} aria-hidden>🌸</span>
+                    <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 500, fontSize: '2rem', lineHeight: 1, color: 'rgba(176, 122, 58, 0.55)' }} aria-hidden>
+                        {(product.brand || product.name || '?').trim().charAt(0).toUpperCase()}
+                    </span>
                 ) : (
                     <img
                         src={displayImage}
@@ -517,10 +519,13 @@ function IntakeRecAltMini({ alt, myProducts, onToggleProduct, onOpenProduct, res
                     ) : (
                         <div style={{
                             width: '100%', height: '100%',
-                            background: 'linear-gradient(135deg, var(--color-secondary-fade), #f3e8ff)',
+                            background: 'linear-gradient(160deg, #F3EADC, #EFE3D2)',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            fontSize: '1.25rem',
-                        }}>🌸</div>
+                        }}>
+                            <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 500, fontSize: '1.25rem', color: 'rgba(176, 122, 58, 0.55)' }} aria-hidden>
+                                {(alt.brand || alt.name || '?').trim().charAt(0).toUpperCase()}
+                            </span>
+                        </div>
                     )}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
@@ -594,10 +599,13 @@ function IntakeRecommendationsProductCard({
                 ) : (
                     <div style={{
                         width: '100%', height: '100%',
-                        background: 'linear-gradient(135deg, var(--color-secondary-fade), var(--color-primary-fade, #f3e8ff))',
+                        background: 'linear-gradient(160deg, #F3EADC, #EFE3D2)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: '1.5rem',
-                    }}>🌸</div>
+                    }}>
+                        <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 500, fontSize: '1.5rem', color: 'rgba(176, 122, 58, 0.55)' }} aria-hidden>
+                            {(product.brand || product.name || '?').trim().charAt(0).toUpperCase()}
+                        </span>
+                    </div>
                 )}
                 <span style={{
                     position: 'absolute', top: '0.45rem', left: '0.45rem',
@@ -621,7 +629,7 @@ function IntakeRecommendationsProductCard({
                         background: 'linear-gradient(135deg, #FEF9C3, #FDE68A)', color: '#854D0E',
                         padding: '0.22rem 0.55rem', borderRadius: 'var(--radius-pill)', fontSize: '0.7rem', fontWeight: '700',
                         border: '1px solid #FACC15',
-                    }}>⭐ Top pick for you</span>
+                    }}>Top pick for you</span>
                 )}
                 {hasIndependentClinician ? (
                     <span style={{
@@ -661,10 +669,10 @@ function IntakeRecommendationsProductCard({
                         <span style={{ fontSize: '0.65rem', background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.45rem', borderRadius: 'var(--radius-pill)' }}>✓ No recalls</span>
                     )}
                     {showRecallWarning && (
-                        <span style={{ fontSize: '0.65rem', background: '#F8F9FA', color: 'var(--color-text-main)', padding: '0.2rem 0.45rem', borderRadius: 'var(--radius-pill)' }}>⚠️ Safety note</span>
+                        <span style={{ fontSize: '0.65rem', background: '#FEF3C7', color: '#92400E', padding: '0.2rem 0.45rem', borderRadius: 'var(--radius-pill)' }}>Safety note</span>
                     )}
                     {product.privacy?.sellsData?.includes('❌') && (
-                        <span style={{ fontSize: '0.65rem', background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.45rem', borderRadius: 'var(--radius-pill)' }}>🔒 No data selling</span>
+                        <span style={{ fontSize: '0.65rem', background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.45rem', borderRadius: 'var(--radius-pill)' }}>No data selling</span>
                     )}
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', marginBottom: '0.45rem', flexWrap: 'wrap' }}>
@@ -898,6 +906,8 @@ export default function MyEcosystem({
     isPremium = false,
 }) {
     const [showAddModal, setShowAddModal] = useState(false);
+    const [ecosystemPageMode, setEcosystemPageMode] = useState('overview');
+    const [showAdvancedDetails, setShowAdvancedDetails] = useState(false);
     const [showSyncPaywall, setShowSyncPaywall] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const viewMode = 'function';
@@ -1099,14 +1109,11 @@ export default function MyEcosystem({
                 return undefined;
             }
             if (alreadyFetchedForFingerprint) {
-                // We attempted this intake before but have no cached result —
-                // previously this rendered an empty section with no error, which
-                // is indistinguishable from "you have no recommendations".
-                setLlmTiered([]);
-                setLlmLoading(false);
-                setLlmError('We couldn’t load your recommendations last time. Tap “Refresh recommendations” to try again.');
-                setLlmLoadStartedAt(0);
-                return undefined;
+                // A prior failed generation used to poison this intake forever:
+                // the fingerprint was recorded even when no recommendations were
+                // cached, so a reload would refuse to try again. If there is no
+                // cached payload, retry normally instead of trapping the user.
+                console.warn('[Ayna] previous recommendation attempt has no cache; retrying');
             }
         } else {
             // Explicit refresh: any existing record for this fingerprint (in-flight
@@ -1193,8 +1200,10 @@ export default function MyEcosystem({
                     const recs = accumulated;
                     console.log('[Ayna LLM] Done. Sections:', recs.length, '| errors:', errorCount);
                     if (recs.length === 0 && errorCount > 0) {
-                        // Specific causes must survive: a quota 429 is an upgrade
-                        // prompt and a 401 is a re-auth prompt, not "try again".
+                        // Preserve intentional auth/quota behavior, but do not make
+                        // the core ecosystem depend on the LLM endpoint being up.
+                        // The app already has a vetted local recommendation engine;
+                        // use it as an immediate fallback for network/5xx/404/timeouts.
                         if (limitReached) {
                             rec.error = "You've already generated your Ayna ecosystem. Regenerating is a premium feature. Email pulomabishnu@gmail.com to upgrade.";
                             notifyGeneration(rec);
@@ -1205,7 +1214,20 @@ export default function MyEcosystem({
                             notifyGeneration(rec);
                             return;
                         }
-                        throw new Error('All recommendation batches failed. Please try again.');
+
+                        const fallbackRecs = generateTieredRecommendations(intake);
+                        if (Array.isArray(fallbackRecs) && fallbackRecs.length > 0) {
+                            console.warn('[Ayna LLM] all remote batches failed; using local recommendation fallback');
+                            rec.tiered = fallbackRecs;
+                            rec.error = '';
+                            notifyGeneration(rec);
+                            if (hasCompletedPersonalization) onLlmRecommendationsLoaded?.(fallbackRecs);
+                            const fallbackCached = saveCachedLlmRecommendations(intakeFingerprint, fallbackRecs);
+                            if (fallbackCached) saveFetchedLlmFingerprint(intakeFingerprint);
+                            return;
+                        }
+
+                        throw new Error('We couldn’t build recommendations right now. Please try again.');
                     }
                     if (recs.length === 0) return; // nothing to do (no concerns matched)
                     if (recs.length > 0) {
@@ -1250,7 +1272,8 @@ export default function MyEcosystem({
                     const errMsg = typeof e?.message === 'string' ? e.message : (typeof e === 'string' ? e : JSON.stringify(e));
                     console.error('[Ayna LLM] Error:', e);
                     rec.error = errMsg || 'Could not load recommendations';
-                    saveFetchedLlmFingerprint(intakeFingerprint);
+                    // Never mark a failed request as fetched. Doing so prevents the
+                    // same intake from retrying on reload even though no cache exists.
                     notifyGeneration(rec);
                 } finally {
                     if (!rec.cancelled) {
@@ -1652,6 +1675,160 @@ export default function MyEcosystem({
     return (
         <>
             <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
+                <div className="eco-overview-shell">
+                    <div className="eco-overview-head">
+                        <div>
+                            <p className="eco-overview-eyebrow">Your ecosystem</p>
+                            <h1>This is your ecosystem.</h1>
+                            <p>{myProductList.length ? `${myProductList.length} product${myProductList.length === 1 ? '' : 's'} across ${careAreas.length} care area${careAreas.length === 1 ? '' : 's'}.` : 'Start with a few picks. Ayna will organize them here.'}</p>
+                        </div>
+                        <div className="eco-overview-switch" role="group" aria-label="Ecosystem view">
+                            <button type="button" className={ecosystemPageMode === 'overview' ? 'is-active' : ''} onClick={() => setEcosystemPageMode('overview')}>Overview</button>
+                            <button type="button" className={ecosystemPageMode === 'details' ? 'is-active' : ''} onClick={() => setEcosystemPageMode('details')}>Details</button>
+                        </div>
+                    </div>
+
+                    {ecosystemPageMode === 'overview' && llmLoading && (
+                        <div className="eco-overview-status">Building your matches…</div>
+                    )}
+                    {ecosystemPageMode === 'overview' && llmError && !llmLoading && (
+                        <div className="eco-overview-status eco-overview-status--error">
+                            Couldn&apos;t refresh. <button type="button" onClick={handleRefreshRecommendations}>Try again</button>
+                        </div>
+                    )}
+
+                    {ecosystemPageMode === 'overview' && (
+                        <>
+                            <div className="eco-overview-grid">
+                                <div className="eco-overview-scorecard">
+                                    <div className="eco-overview-ring">
+                                        <div>
+                                            <strong>{myProductList.length}</strong>
+                                            <span>products</span>
+                                        </div>
+                                    </div>
+                                    <div className="eco-overview-mini-stats">
+                                        <div><strong>{careAreas.length}</strong><span>care areas</span></div>
+                                        <div><strong>{estimatedMonthlyTotal.counted > 0 ? `$${estimatedMonthlyTotal.total.toFixed(0)}` : '—'}</strong><span>est. / month</span></div>
+                                    </div>
+                                </div>
+
+                                <div className="eco-overview-areas">
+                                    <div className="eco-overview-section-label">Coverage</div>
+                                    {careAreas.length > 0 ? careAreas.slice(0, 6).map((area) => {
+                                        const maxCount = Math.max(1, ...careAreas.map((item) => item.count));
+                                        const width = Math.max(16, Math.round((area.count / maxCount) * 100));
+                                        return (
+                                            <div key={area.category} className="eco-overview-area-row">
+                                                <span>{area.label}</span>
+                                                <div><i style={{ width: `${width}%` }} /></div>
+                                                <strong>{area.count}</strong>
+                                            </div>
+                                        );
+                                    }) : (
+                                        <button type="button" className="eco-overview-empty" onClick={onBuildEcosystem}>Build your ecosystem</button>
+                                    )}
+                                </div>
+                            </div>
+
+                            {myProductList.length > 0 && (
+                                <div className="eco-overview-products">
+                                    <div className="eco-overview-products-head">
+                                        <div>
+                                            <div className="eco-overview-section-label">Current</div>
+                                            <h2>Your products</h2>
+                                        </div>
+                                        <button type="button" onClick={() => setEcosystemPageMode('details')}>See details</button>
+                                    </div>
+                                    <div className="eco-overview-products-grid">
+                                        {myProductList.slice(0, 6).map((product) => (
+                                            <button type="button" key={product.id} className="eco-overview-product" onClick={() => onOpenProduct?.(product)}>
+                                                <span className="eco-overview-product__image">
+                                                    {product.image ? <img src={product.image} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.display = 'none'; }} /> : <b>{String(product.brand || product.name || '?').charAt(0).toUpperCase()}</b>}
+                                                </span>
+                                                <span className="eco-overview-product__meta">{CATEGORY_LABELS[product.category] || product.category || 'Product'}</span>
+                                                <strong>{product.name}</strong>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            <div className="eco-overview-actions">
+                                {typeof onBuildEcosystem === 'function' && <button type="button" className="btn btn-primary" onClick={onBuildEcosystem}>{myProductList.length ? 'Rebuild ecosystem' : 'Build ecosystem'}</button>}
+                                {typeof onEditHealthProfile === 'function' && <button type="button" className="btn btn-outline" onClick={onEditHealthProfile}>Update profile</button>}
+                                <button type="button" className="btn btn-outline" onClick={() => setEcosystemPageMode('details')}>More details</button>
+                            </div>
+                        </>
+                    )}
+                </div>
+
+                {ecosystemPageMode === 'details' && (
+                    <div className="eco-details-clean">
+                        <div className="eco-details-clean__intro">
+                            <div>
+                                <p className="eco-overview-section-label">Current</p>
+                                <h2>Your products</h2>
+                                <p>Everything you use, grouped by care area.</p>
+                            </div>
+                            <div className="eco-details-clean__intro-actions">
+                                {typeof onBuildEcosystem === 'function' && (
+                                    <button type="button" className="btn btn-primary" onClick={onBuildEcosystem}>Rebuild</button>
+                                )}
+                                {typeof onGoToSearch === 'function' && (
+                                    <button type="button" className="btn btn-outline" onClick={() => onGoToSearch('')}>Browse</button>
+                                )}
+                            </div>
+                        </div>
+
+                        {careAreas.length > 0 ? (
+                            <div className="eco-details-clean__groups">
+                                {careAreas.map((area) => {
+                                    const products = myProductList.filter((product) => (product.category || 'other') === area.category);
+                                    return (
+                                        <section key={area.category} className="eco-details-clean__group">
+                                            <div className="eco-details-clean__group-head">
+                                                <div>
+                                                    <span>{area.label}</span>
+                                                    <strong>{products.length}</strong>
+                                                </div>
+                                            </div>
+                                            <div className="eco-details-clean__rows">
+                                                {products.map((product) => (
+                                                    <div key={product.id} className="eco-details-clean__row">
+                                                        <button type="button" className="eco-details-clean__product" onClick={() => onOpenProduct?.(product)}>
+                                                            <span className="eco-details-clean__thumb">
+                                                                {product.image ? <img src={product.image} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.display = 'none'; }} /> : <b>{String(product.brand || product.name || '?').charAt(0).toUpperCase()}</b>}
+                                                            </span>
+                                                            <span>
+                                                                <strong>{product.name}</strong>
+                                                                <small>{product.brand || CATEGORY_LABELS[product.category] || 'Product'}{product.price ? ` · ${product.price}` : ''}</small>
+                                                            </span>
+                                                        </button>
+                                                        <div className="eco-details-clean__row-actions">
+                                                            <button type="button" onClick={() => onOpenProduct?.(product)}>View</button>
+                                                            <button type="button" onClick={() => onToggleProduct?.(product)}>Remove</button>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </section>
+                                    );
+                                })}
+                            </div>
+                        ) : (
+                            <button type="button" className="eco-overview-empty" onClick={onBuildEcosystem}>Build your ecosystem</button>
+                        )}
+
+                        <div className="eco-details-clean__footer">
+                            {typeof onEditHealthProfile === 'function' && <button type="button" onClick={onEditHealthProfile}>Update profile</button>}
+                            {typeof onOpenDoctorPrep === 'function' && <button type="button" onClick={onOpenDoctorPrep}>Doctor prep</button>}
+                            <button type="button" onClick={() => setShowAdvancedDetails((value) => !value)}>{showAdvancedDetails ? 'Hide more tools' : 'More tools'}</button>
+                        </div>
+                    </div>
+                )}
+
+                <div className={ecosystemPageMode === 'details' && showAdvancedDetails ? 'eco-legacy-details' : 'eco-legacy-details eco-legacy-details--hidden'}>
                 {careAreas.length > 0 && (
                     <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-xl)' }}>
                         <p style={{
@@ -1770,7 +1947,6 @@ export default function MyEcosystem({
                         <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>Health Functions</div>
                     </div>
                     <div style={{ background: 'var(--color-primary)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '1rem 1.5rem', textAlign: 'center', minWidth: '140px', cursor: 'pointer' }} onClick={onOpenDoctorPrep}>
-                        <div style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>👩‍⚕️</div>
                         <div style={{ fontSize: '0.85rem', color: 'white', fontWeight: '700' }}>Appointment Prep</div>
                     </div>
                 </div>
@@ -1783,7 +1959,7 @@ export default function MyEcosystem({
                         style={{ fontSize: '0.85rem' }}
                         onClick={() => setHealthDataImportOpen(true)}
                     >
-                        📋 Import Health Data
+                        Import Health Data
                     </button>
                     {typeof onBuildEcosystem === 'function' && (
                         <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem' }} onClick={onBuildEcosystem}>
@@ -1800,13 +1976,13 @@ export default function MyEcosystem({
                 {/* Health data sync. Premium feature */}
                 {(() => {
                     const SYNC_SOURCES = [
-                        { id: 'apple-health', label: 'Apple Health', icon: '🍎' },
-                        { id: 'strava', label: 'Strava', icon: '🏃' },
-                        { id: 'garmin', label: 'Garmin', icon: '⌚' },
-                        { id: 'flo', label: 'Flo', icon: '🌸' },
-                        { id: 'whoop', label: 'Whoop', icon: '💪' },
-                        { id: 'oura', label: 'Oura Ring', icon: '💍' },
-                        { id: 'google-fit', label: 'Google Fit', icon: '📊' },
+                        { id: 'apple-health', label: 'Apple Health' },
+                        { id: 'strava', label: 'Strava' },
+                        { id: 'garmin', label: 'Garmin' },
+                        { id: 'flo', label: 'Flo' },
+                        { id: 'whoop', label: 'Whoop' },
+                        { id: 'oura', label: 'Oura Ring' },
+                        { id: 'google-fit', label: 'Google Fit' },
                     ];
                     return (
                         <div style={{ marginBottom: 'var(--spacing-lg)', padding: '1.25rem 1.5rem', background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)' }}>
@@ -1839,9 +2015,8 @@ export default function MyEcosystem({
                                             opacity: isPremium ? 0.7 : 1,
                                         }}
                                     >
-                                        <span>{src.icon}</span>
                                         <span>{src.label}</span>
-                                        {!isPremium && <span style={{ fontSize: '0.7rem' }}>🔒</span>}
+                                        {!isPremium && <span style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>· Premium</span>}
                                         {isPremium && <span style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>· coming soon</span>}
                                     </button>
                                 ))}
@@ -1860,7 +2035,7 @@ export default function MyEcosystem({
                 {llmLoading && (
                     llmLoadStartedAt > 0
                         ? <LlmRecommendationsLoadingBlock loadStartedAt={llmLoadStartedAt} compact onCancel={handleCancelRecommendations} />
-                        : <div style={{ textAlign: 'center', padding: '1.5rem', color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>🌸 Building your ecosystem…</div>
+                        : <div style={{ textAlign: 'center', padding: '1.5rem', color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>Building your ecosystem…</div>
                 )}
                 {llmError && !llmLoading && (
                     <div style={{ textAlign: 'center', padding: '1.5rem', background: '#FEF2F2', borderRadius: 'var(--radius-md)', marginBottom: '1rem', border: '1px solid #FCA5A5' }}>
@@ -1886,8 +2061,8 @@ export default function MyEcosystem({
                                             return (
                                                 <section key={fn}>
                                                     <div style={{ marginBottom: '0.65rem' }}>
-                                                        <h3 style={{ fontSize: '1rem', marginBottom: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                                                            <span>{HEALTH_FUNCTIONS[fn]?.icon}</span> {HEALTH_FUNCTIONS[fn]?.label}
+                                                        <h3 style={{ fontSize: '1rem', marginBottom: '0.2rem' }}>
+                                                            {HEALTH_FUNCTIONS[fn]?.label}
                                                         </h3>
                                                         <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', margin: 0 }}>{HEALTH_FUNCTIONS[fn]?.desc}</p>
                                                     </div>
@@ -1927,7 +2102,7 @@ export default function MyEcosystem({
                                     return (
                                     <div key={int}>
                                         <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: int === 'No Integration' ? 'var(--color-text-muted)' : 'var(--color-text-main)' }}>
-                                            {int === 'No Integration' ? '📦 Standalone Products' : `✨ Syncs with ${int}`}
+                                            {int === 'No Integration' ? 'Standalone Products' : `Syncs with ${int}`}
                                         </h3>
                                         <div className="ecosystem-product-grid">
                                             {rest.map((product) => {
@@ -1982,8 +2157,8 @@ export default function MyEcosystem({
                 {/* Safety & interactions: compare 2+ products */}
                 {myProductList.length >= 2 && (
                     <div style={{ marginBottom: 'var(--spacing-xl)', maxWidth: '800px', margin: '0 auto var(--spacing-xl)' }}>
-                        <h3 style={{ fontSize: '1.15rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            🛡️ Safety & interactions
+                        <h3 style={{ fontSize: '1.15rem', marginBottom: '0.75rem' }}>
+                            Safety & interactions
                         </h3>
                         <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1rem' }}>
                             Pick 2 or more products to see if they're safe to use together.
@@ -2030,7 +2205,6 @@ export default function MyEcosystem({
                                                 fontSize: '0.9rem'
                                             }}>
                                                 <span style={{ fontWeight: '600', color: r.severity === 'high' ? '#B91C1C' : 'var(--color-text-main)' }}>
-                                                    {r.severity === 'high' ? '⚠️ ' : r.severity === 'medium' ? '⚡ ' : 'ℹ️ '}
                                                     {r.productNames.join(' + ')}
                                                 </span>
                                                 <p style={{ margin: '0.35rem 0 0', color: 'var(--color-text-main)' }}>{r.message}</p>
@@ -2082,6 +2256,7 @@ export default function MyEcosystem({
                         </button>
                     </div>
                 )}
+                </div>
             </section>
 
             {showAddModal && (

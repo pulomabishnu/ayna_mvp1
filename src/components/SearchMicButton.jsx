@@ -35,7 +35,7 @@ export default function SearchMicButton({
         transition: 'background 0.2s, border-color 0.2s',
       }}
     >
-      {isRecording ? '⏹' : '🎤'}
+      {isRecording ? '⏹' : ''}
     </button>
   );
 }

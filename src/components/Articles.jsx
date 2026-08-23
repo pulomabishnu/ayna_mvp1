@@ -780,27 +780,27 @@ function renderArticleCard(art, setSelectedId) {
 const ARTICLE_CATEGORIES = [
   {
     id: 'menstrual',
-    label: '🩸 Menstrual Health',
+    label: 'Menstrual Health',
     articleIds: ['heavy-bleeding', 'period-pain-when-to-seek-care', 'fibroids', 'iron-deficiency-anemia'],
   },
   {
     id: 'hormonal',
-    label: '⚖️ Hormonal Health',
+    label: 'Hormonal Health',
     articleIds: ['pcos-basics', 'menopause-basics', 'pmdd', 'hormonal-birth-control'],
   },
   {
     id: 'chronic',
-    label: '🏥 Chronic Conditions',
+    label: 'Chronic Conditions',
     articleIds: ['pcos-basics', 'endometriosis-basics', 'pelvic-floor-dysfunction', 'fibroids', 'pmdd', 'iron-deficiency-anemia', 'ovarian-cysts'],
   },
   {
     id: 'vaginal-urinary',
-    label: '🌸 Vaginal & Urinary Health',
+    label: 'Vaginal & Urinary Health',
     articleIds: ['intimate-wash', 'uti-prevention', 'yeast-infection-basics', 'bacterial-vaginosis'],
   },
   {
     id: 'pelvic',
-    label: '💪 Pelvic Health',
+    label: 'Pelvic Health',
     articleIds: ['pelvic-floor-dysfunction', 'endometriosis-basics', 'ovarian-cysts'],
   },
 ];

@@ -211,7 +211,6 @@ export default function ProfileChatbot({ profile, onProfileUpdate, chatHistory =
           opacity: disabled ? 0.6 : 1,
         }}
       >
-        💬
       </button>
 
       {open && (

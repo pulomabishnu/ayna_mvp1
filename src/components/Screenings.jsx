@@ -41,7 +41,7 @@ export default function Screenings({ checkinData, onNavigate }) {
                     background: 'var(--color-secondary-fade)', padding: '0.3rem 0.8rem',
                     borderRadius: 'var(--radius-pill)', display: 'inline-block', marginBottom: '1rem'
                 }}>
-                    🩺 Health Maintenance
+                    Health Maintenance
                 </span>
                 <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem', color: 'var(--color-surface-contrast)' }}>Recommended Screenings</h2>
                 <div className="card" style={{ maxWidth: '600px', margin: '2rem auto', padding: '3rem 2rem' }}>
@@ -125,7 +125,7 @@ export default function Screenings({ checkinData, onNavigate }) {
                     background: 'var(--color-secondary-fade)', padding: '0.3rem 0.8rem',
                     borderRadius: 'var(--radius-pill)', display: 'inline-block', marginBottom: '1rem'
                 }}>
-                    🩺 Health Maintenance
+                    Health Maintenance
                 </span>
                 <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', marginBottom: '1rem', color: 'var(--color-surface-contrast)' }}>
                     Recommended Screenings
@@ -172,11 +172,10 @@ export default function Screenings({ checkinData, onNavigate }) {
                                 <p style={{ fontSize: '1.1rem', color: 'var(--color-text-main)', lineHeight: '1.6' }}>{rec.message}</p>
 
                                 <div style={{
-                                    background: '#F9FAF3', border: '1px solid #E5E7EB',
+                                    background: '#F9FAF3', border: '1px solid #E5E7EB', borderLeft: '3px solid var(--color-primary)',
                                     padding: '1rem', borderRadius: 'var(--radius-md)',
                                     display: 'flex', alignItems: 'center', gap: '0.75rem'
                                 }}>
-                                    <span style={{ fontSize: '1.2rem' }}>👩‍⚕️</span>
                                     <span style={{ fontSize: '0.95rem', fontWeight: '600', color: 'var(--color-text-main)' }} title={findGlossaryTermInText(rec.action) || undefined}>
                                         {rec.action}
                                     </span>
@@ -202,7 +201,7 @@ export default function Screenings({ checkinData, onNavigate }) {
                                         background: 'var(--color-secondary-fade)', borderRadius: 'var(--radius-md)',
                                         border: '1px solid var(--color-primary)'
                                     }}>
-                                        <p style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--color-primary)', marginBottom: '0.4rem' }}>🛒 TRY THIS AT-HOME TOOL</p>
+                                        <p style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--color-primary)', marginBottom: '0.4rem' }}>TRY THIS AT-HOME TOOL</p>
                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                             <div>
                                                 <div style={{ fontWeight: '700', fontSize: '1rem' }}>{rec.suggestedProduct.name}</div>
