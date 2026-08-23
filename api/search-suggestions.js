@@ -252,7 +252,10 @@ function normalizeSuggestion(raw, index) {
   if (!ALLOWED_CATEGORIES.has(category)) category = 'other';
   const type = String(raw?.type || 'physical').toLowerCase() === 'digital' ? 'digital' : 'physical';
   const tags = uniqueStrings(raw?.tags, 8, 48);
-  const whereToBuy = sanitizeRetailers(raw?.whereToBuy || raw?.retailers, 6);
+  // Capped at 3 to match ProductModal.jsx, which only ever renders
+  // whereToBuy.slice(0, 3) — asking the model for more than the UI shows
+  // wastes output tokens (and thus latency) for no visible benefit.
+  const whereToBuy = sanitizeRetailers(raw?.whereToBuy || raw?.retailers, 3);
   const searchTerms = uniqueStrings(raw?.searchTerms, 6, 100);
   const typical = clampTypicalRating(raw?.typicalUserRating ?? raw?.estimatedRating);
   const officialUrl = sanitizeOfficialUrl(raw?.officialUrl);
@@ -316,26 +319,26 @@ function buildPrompt(query, categoryHint, symptomHint, personalized, profileSumm
     ? `Return the top ${maxResults} most relevant options for this specific user's profile.`
     : `Return the top ${maxResults} options available in the US market, ranked by relevance, reputation, and availability.`;
   const cats = [...ALLOWED_CATEGORIES].join(', ');
-  return `You are the product-discovery layer for Ayna, a women's health app. Your job is to propose REAL, SHIPPABLE products and apps that best match the user's intent — specific brand names and product lines that a shopper could find at major US retailers or official brand/app stores. ${countLine}
+  return `You are the product-discovery layer for Ayna, a women's health app. Propose REAL, SHIPPABLE products/apps — specific brand names and product lines a shopper could find at major US retailers or official brand/app stores. The search query defines the product TYPE to return (e.g. "iron supplements" → only iron supplements, never trackers/apps/period care, no matter what the profile says); the user profile below, if given, may only re-rank WITHIN that type — never switch category. ${countLine}
 
 User search: "${query.replace(/"/g, '\\"')}"
 ${cat}${sym ? '\n' + sym : ''}${profileLine ? '\n' + profileLine : ''}${dislikedLine ? '\n' + dislikedLine : ''}
 
 Return ONE JSON object ONLY (no markdown) with up to ${maxResults} suggestions in this shape. Keep every field as brief as the guidance below allows — concise output is faster to generate and lets more suggestions fit in the response:
 {
-  "querySummary": "1-2 sentences: tie the user's words to the kinds of products below; name categories (e.g. pads, telehealth); where genuinely relevant, note briefly that options in this category are consistent with guidance from ACOG, NIH, or FDA. Never fabricate specific citation numbers or direct quotes. Remind users to verify fit with a clinician when medical.",
-  "relatedSearches": ["3-4 short search phrases the user might want to explore next, based on what they searched — e.g. if they searched 'iron supplements', suggest 'period cramp relief', 'PCOS and iron deficiency', 'telehealth for heavy periods', etc. Each phrase should be a natural search query a person would type, not a category label."],
+  "querySummary": "1-2 sentences: tie the user's words to the kinds of products below; name categories (e.g. pads, telehealth). Where genuinely applicable, briefly cite ACOG (menstrual/PCOS/endo/menopause/fertility/contraception/UTI/pelvic floor), NIH ODS (supplements), FDA (device/product safety), or Cochrane (evidence quality) by name for credibility — only when confident their guidance actually covers this topic, and never fabricate a specific guideline number, PMID, or direct quote. Remind users to verify fit with a clinician when medical.",
+  "relatedSearches": ["3-4 short natural search phrases the user might try next based on this search — real queries a person would type, not category labels"],
   "suggestions": [
     {
       "brand": "Brand name",
       "name": "Product line or SKU name (include brand in name OR set brand separately)",
-      "category": "slug from allowed list",
+      "category": "one slug from: ${cats}",
       "type": "physical" | "digital",
       "summary": "1-2 sentences: what it is, who it is for, how it helps — neutral, not medical advice",
-      "priceHint": "A hedged price RANGE only, e.g. ~$12-18 or Subscription ~$15/mo. Do NOT state a single exact price as if it's confirmed, and do NOT attach a specific pack/count size (e.g. '14-16 pads', 'box of 20') unless you are confident that exact configuration is genuinely sold by this brand — a wrong invented count is worse than no count. If unsure of quantity, describe price alone (e.g. '~$15-20 per pack') rather than inventing a plausible-sounding number.",
+      "priceHint": "A hedged price RANGE only, e.g. ~$12-18 or Subscription ~$15/mo — never a single exact price. Attach a pack/count size (e.g. '14-16 pads') only if you're confident that's genuinely this brand's real configuration — a wrong invented count is worse than none; if unsure of quantity, give price alone.",
       "tags": ["up to 4 short tags: heavy-flow", "organic", "app", ...],
-      "whereToBuy": ["Amazon","Target","CVS","Walmart","Brand website","App Store","Google Play"] — retailer NAMES only, no URLs,
-      "officialUrl": "the exact URL of THIS SPECIFIC PRODUCT'S page on the brand's own official site — e.g. https://brand.com/products/this-exact-product, NOT the brand's homepage or root domain. This is used to fetch a real photo of the product, so a homepage/root-domain URL is useless here even if it's correct — only include it if you're confident of the actual product page URL. Omit this field entirely rather than guess or fall back to the homepage. This is the one exception to the no-URLs rule below.",
+      "whereToBuy": ["up to 3 retailer NAMES only, no URLs — e.g. Amazon, Target, Brand website, App Store"],
+      "officialUrl": "THIS SPECIFIC PRODUCT's own page on the brand's official site (e.g. https://brand.com/products/this-exact-product) — NOT the homepage/root domain, which is useless for fetching a product photo. Only include it if you're confident of the real product-page URL; omit entirely rather than guess or fall back to the homepage. The one exception to the no-URLs rule below.",
       "typicalUserRating": 4.2,
       "safetyNote": "one short line: e.g. consult clinician for prescriptions, patch tests for topicals",
       "searchTerms": ["1-2 web search phrases that include brand + product kind for Google"]
@@ -343,33 +346,15 @@ Return ONE JSON object ONLY (no markdown) with up to ${maxResults} suggestions i
   ]
 }
 
-PRODUCT SELECTION PROCESS:
-1. Identify what the user is actually looking for based on their search query — the query defines what TYPE of product to return
-2. Every suggestion must be a product of the type described in the search query. If the user searches "iron supplements", return only iron supplements — not cycle trackers, apps, period care products, or anything else, no matter what their health profile says
-3. User profile context (concerns, conditions) should only influence WHICH products within that category are most relevant — it must never cause you to recommend a different category entirely
-4. Draw on your full knowledge of ALL brands that make relevant products — mainstream, indie, DTC, clinical, international brands available in the US market
-5. Rank by: (a) direct relevance to the search query, (b) clinical reputation and safety record, (c) availability, (d) community reputation
-
-ANTI-HALLUCINATION RULES:
-- Only suggest products from brands you are confident exist and sell in the US market
-- Never invent brand names or product lines
-- Never create fictional products, features, or services — even as placeholders
-- NEVER suggest any product whose brand is "Ayna" — Ayna is the app the user is already in, not a product to recommend
-- Never include URLs, domains, or "http" in any field except officialUrl — retailer names as plain text only. For officialUrl specifically, only include it if you're confident it's the real current URL; when unsure, omit the field rather than guess
-- typicalUserRating: optional number 3.0-5.0 only if you have real signal — omit if unsure
-- If you cannot recall seeing a brand's product sold online at a major retailer or the brand's own website, do not include it — it likely does not exist
-- Same rule applies to pack sizes and counts as to brand names: only state a specific count/pack size (e.g. "14 pads", "60 capsules") if you are confident that exact configuration is genuinely sold by this brand+product. A precise-sounding but invented count (e.g. inventing "14-16 pads" for a brand that actually sells 30-count boxes) is a fabrication just like an invented brand name — it just looks more trustworthy because it's a specific number. When unsure of the real pack size, give price as a range with no count attached rather than guessing one.
-- If the query is not women's health or wellness shopping related, return {"querySummary":"","suggestions":[]}
-- NEVER suggest a prescription medication as a product — this includes hormonal birth control (pills, patches, rings, IUDs, implants), hormone replacement therapy, prescription antidepressants/anxiolytics, prescription antibiotics, and prescription weight-loss drugs (GLP-1s), even if the user's search names the condition it treats. If the query is asking about something that requires a prescription (e.g. "birth control pills", "UTI antibiotics"), suggest telehealth platforms/services that can prescribe it instead of naming the drug itself.
-
-CLINICAL AUTHORITY RULES:
-- In querySummary only, where genuinely applicable, reference ACOG, NIH ODS, FDA, or Cochrane by name to add clinical credibility
-- Reference ACOG for: menstrual health, PCOS, endometriosis, menopause, fertility, contraception, UTIs, pelvic floor
-- Reference NIH ODS for: any supplement category
-- Reference FDA for: device safety, period care product regulatory standing
-- Reference Cochrane for: evidence quality on supplements or devices
-- Never fabricate specific guideline numbers, bulletin numbers, PMIDs, or direct quotes
-- Only reference an organization when confident their guidance genuinely covers the query topic`;
+RULES (apply to every suggestion):
+- Draw on your full knowledge of relevant brands — mainstream, indie, DTC, clinical, international — sold in the US. Rank by: relevance to the query, clinical reputation/safety record, availability, community reputation.
+- Only suggest brands/products you are confident genuinely exist and sell in the US market. Never invent a brand name, product line, feature, or service — even as a placeholder. If you can't recall seeing it sold online at a major retailer or the brand's own site, leave it out — it likely doesn't exist.
+- Same standard applies to pack sizes/counts as to brand names: state a specific count (e.g. "60 capsules") only if you're confident that's the real configuration for this brand+product — an invented-but-plausible count is a fabrication just like an invented brand, and it's more deceptive because it looks precise. When unsure, give a price range with no count attached.
+- NEVER suggest any product whose brand is "Ayna" — that's the app the user is already in, not a product to recommend
+- Never include URLs, domains, or "http" in any field except officialUrl (retailer names as plain text only); for officialUrl, only include it if you're confident it's the real current URL, else omit rather than guess
+- typicalUserRating: optional 3.0-5.0 only with real signal — omit if unsure
+- If the query is not women's health/wellness shopping related, return {"querySummary":"","suggestions":[]}
+- NEVER suggest a prescription medication as a product — this includes hormonal birth control (pills, patches, rings, IUDs, implants), hormone replacement therapy, prescription antidepressants/anxiolytics, prescription antibiotics, and prescription weight-loss drugs (GLP-1s), even if the search names the condition it treats. For a query about something that requires a prescription (e.g. "birth control pills", "UTI antibiotics"), suggest telehealth platforms/services that can prescribe it instead of naming the drug itself.`;
 }
 
 async function callClaudeJson(prompt, attempt = 0) {
