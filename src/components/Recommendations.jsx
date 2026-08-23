@@ -367,10 +367,10 @@ export default function Recommendations({
                     </p>
                 )}
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginTop: '0.5rem' }}>
-                    We never sell your data. The "For [concern]" picks below come from our reviewed catalog. The picks above come from your own health profile — always double check with a doctor before you decide.
+                    We never sell your data. The "For [concern]" picks below come from our reviewed catalog. The picks above come from your own health profile, so always double check with a doctor before you decide.
                 </p>
                 <p style={{ color: 'var(--color-primary)', fontSize: '0.9rem', marginTop: '0.5rem', fontWeight: '500' }}>
-                    Forgot something? Use the chat button to speak or type more — we’ll refresh your ecosystem.
+                    Forgot something? Use the chat button to speak or type more. We’ll refresh your ecosystem.
                 </p>
                 <div style={{ marginTop: '1.25rem' }}>
                     <button type="button" className="btn btn-outline" onClick={onRetake}>
