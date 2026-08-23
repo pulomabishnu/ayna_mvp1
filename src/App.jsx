@@ -4,6 +4,7 @@ import SiteFooter from './components/SiteFooter';
 import EcosystemBubbles from './components/EcosystemBubbles';
 import EcosystemShelf from './components/EcosystemShelf';
 import SavedForLater from './components/SavedForLater';
+import EcosystemGenerationBar from './components/EcosystemGenerationBar';
 import HealthIntakeForm from './components/HealthIntakeForm';
 import HealthProfileEditor from './components/HealthProfileEditor';
 import PhoneVerification from './components/PhoneVerification';
@@ -50,7 +51,7 @@ import { loadEcosystemForUser, upsertProductState, upsertProductsBatch, clearEco
 import { loadSavedProducts, persistSavedProducts, clearSavedProducts, loadSavedForUser, setSavedForUser } from './utils/savedProductsStore';
 import { loadLearningMemoryForUser, saveLearningMemoryForUser } from './utils/learningMemoryStore';
 import { loadReviewsForUser, upsertProductReviews } from './utils/reviewsStore';
-import { clearCachedLlmRecommendations } from './utils/fetchLlmRecommendations';
+import { clearCachedLlmRecommendations, fingerprintIntake } from './utils/fetchLlmRecommendations';
 import posthog from 'posthog-js';
 import { tagInternalUserIfNeeded } from './utils/posthogInternal';
 import { productHref, parseProductIdFromPath } from './utils/productRoute';
