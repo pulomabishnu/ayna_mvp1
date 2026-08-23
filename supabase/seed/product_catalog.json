@@ -34,14 +34,14 @@
     "safety": {
       "fdaStatus": "FDA-registered medical device",
       "materials": "FlexFoam (polyethylene/polypropylene blend), fragrance-free options available",
-      "recalls": "⚠️ 2024 social media concerns about chemical residues — Always has not been subject to FDA recall but independent testing found trace PFAS in some pad brands.",
+      "recalls": "⚠️ 2024 social media concerns about chemical residues. Always has not been subject to FDA recall but independent testing found trace PFAS in some pad brands.",
       "allergens": "Fragrance in scented versions; fragrance-free version available",
       "sideEffects": "Possible contact dermatitis or irritation, especially with scented versions. Rash or itching from synthetic materials.",
       "opinionAlerts": "Common complaints include the \"plastic feel\" and environmental concerns regarding non-biodegradability."
     },
     "doctor_opinion": "FlexFoam absorption is reliable for heavy flow; unscented versions minimize irritation risk for sensitive users.",
     "community_review": "Community discussions on Reddit r/periods note strong performance for heavy flow and overnight use, with appreciation for the thin profile.",
-    "effectiveness": "Highly effective for heavy flow — FlexFoam absorbs 10x its weight while staying thin.",
+    "effectiveness": "Highly effective for heavy flow. FlexFoam absorbs 10x its weight while staying thin.",
     "clinician_opinion_source": "independent",
     "clinician_attribution": "Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.",
     "source": "curated",
@@ -103,25 +103,25 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/periods/search/?q=always+infinity&restrict_sr=1",
-              "text": "Reddit r/periods — Always Infinity search",
+              "text": "Reddit r/periods: Always Infinity search",
               "summary": "Posts and comments specifically about Always Infinity pads."
             },
             {
               "platform": "tiktok",
               "url": "https://www.tiktok.com/search?q=Always+Infinity+pad",
-              "text": "TikTok — Always Infinity",
+              "text": "TikTok: Always Infinity",
               "summary": "Viral wear tests and reviews showing performance during heavy flow and workouts."
             },
             {
               "platform": "tiktok",
               "url": "https://www.tiktok.com/search?q=heavy+period+pad+review",
-              "text": "TikTok — heavy period pad reviews",
+              "text": "TikTok: Heavy period pad reviews",
               "summary": "Short-form reviews comparing absorbency and comfort."
             },
             {
               "platform": "youtube",
               "url": "https://www.youtube.com/results?search_query=always+infinity+pad+review",
-              "text": "YouTube — Always Infinity reviews",
+              "text": "YouTube: Always Infinity reviews",
               "summary": "Longer reviews and comparisons with other pads."
             },
             {
@@ -133,7 +133,7 @@
             {
               "platform": "facebook",
               "url": "https://www.facebook.com/search/posts?q=always%20infinity%20pad",
-              "text": "Facebook — Always Infinity posts",
+              "text": "Facebook: Always Infinity posts",
               "summary": "Public posts and group discussions about the product."
             }
           ]
@@ -241,25 +241,25 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/WomensHealth/search/?q=rael+pads&restrict_sr=1",
-              "text": "Reddit r/WomensHealth — Rael search",
+              "text": "Reddit r/WomensHealth: Rael search",
               "summary": "Posts and comments about Rael organic pads."
             },
             {
               "platform": "tiktok",
               "url": "https://www.tiktok.com/search?q=rael%20organic%20pads",
-              "text": "TikTok — Rael organic pads",
+              "text": "TikTok: Rael organic pads",
               "summary": "Short-form reviews on comfort and sustainability."
             },
             {
               "platform": "tiktok",
               "url": "https://www.tiktok.com/search?q=organic%20period%20pads",
-              "text": "TikTok — organic period pads",
+              "text": "TikTok: Organic period pads",
               "summary": "Comparisons and recommendations for organic options."
             },
             {
               "platform": "youtube",
               "url": "https://www.youtube.com/results?search_query=rael+pads+review",
-              "text": "YouTube — Rael pads reviews",
+              "text": "YouTube: Rael pads reviews",
               "summary": "In-depth reviews of Rael organic cotton pads."
             },
             {
@@ -271,7 +271,7 @@
             {
               "platform": "facebook",
               "url": "https://www.facebook.com/search/posts?q=rael%20pads",
-              "text": "Facebook — Rael pads",
+              "text": "Facebook: Rael pads",
               "summary": "Group and public post discussions."
             }
           ]
@@ -309,7 +309,7 @@
       "fdaStatus": "FDA-registered",
       "materials": "Plant-derived top sheet, herb-infused (lavender, mint, aloe)",
       "recalls": "No recalls.",
-      "allergens": "Contains herbal extracts — check if sensitive to lavender or mint",
+      "allergens": "Contains herbal extracts. Check if sensitive to lavender or mint",
       "sideEffects": "Intense \"cooling\" or \"tingling\" sensation from mint can be uncomfortable or cause burning for users with sensitive skin.",
       "opinionAlerts": "High rate of split opinions: half the users love the cooling effect for cramps, the other half find it too intense or irritating."
     },
@@ -364,19 +364,19 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/periods/search/?q=honey+pot+pads&restrict_sr=1",
-              "text": "Reddit r/periods — Honey Pot",
+              "text": "Reddit r/periods: Honey Pot",
               "summary": "Threads on the cooling sensation and cramp relief; mixed experiences."
             },
             {
               "platform": "tiktok",
               "url": "https://www.tiktok.com/search?q=honey%20pot%20pads",
-              "text": "TikTok — Honey Pot pads",
+              "text": "TikTok: Honey Pot pads",
               "summary": "Short-form reviews on the herbal cooling effect and wear tests."
             },
             {
               "platform": "youtube",
               "url": "https://www.youtube.com/results?search_query=honey+pot+herbal+pads+review",
-              "text": "YouTube — Honey Pot reviews",
+              "text": "YouTube: Honey Pot reviews",
               "summary": "Longer reviews discussing sensation and effectiveness."
             },
             {
@@ -388,7 +388,7 @@
             {
               "platform": "facebook",
               "url": "https://www.facebook.com/search/posts?q=honey%20pot%20pads",
-              "text": "Facebook — Honey Pot pads",
+              "text": "Facebook: Honey Pot pads",
               "summary": "Public and group discussions about the product."
             }
           ]
@@ -481,19 +481,19 @@
           {
             "platform": "reddit",
             "url": "https://www.reddit.com/r/periods/search/?q=LOLA+tampons&restrict_sr=1",
-            "text": "Reddit r/periods — LOLA search",
+            "text": "Reddit r/periods: LOLA search",
             "summary": "Posts about LOLA subscription and organic tampons."
           },
           {
             "platform": "tiktok",
             "url": "https://www.tiktok.com/search?q=LOLA%20tampons",
-            "text": "TikTok — LOLA tampons",
+            "text": "TikTok: LOLA tampons",
             "summary": "Real-world testing and subscription unboxing."
           },
           {
             "platform": "youtube",
             "url": "https://www.youtube.com/results?search_query=LOLA+organic+tampons+review",
-            "text": "YouTube — LOLA tampons reviews",
+            "text": "YouTube: LOLA tampons reviews",
             "summary": "Reviews of LOLA organic tampons and subscription."
           },
           {
@@ -505,7 +505,7 @@
           {
             "platform": "facebook",
             "url": "https://www.facebook.com/search/posts?q=LOLA%20tampons",
-            "text": "Facebook — LOLA tampons",
+            "text": "Facebook: LOLA tampons",
             "summary": "Group and public discussions."
           },
           {
@@ -551,9 +551,9 @@
       "sideEffects": "Possible cramping from suction, difficulty with insertion/removal, urinary urgency if sized incorrectly.",
       "opinionAlerts": "Steep learning curve. Users often report a 2-3 cycle adjustment period before mastering the product."
     },
-    "doctor_opinion": "\"You can't say that menstrual cups are medically better than tampons, but they're a great, valid choice for many women.\" — Dr. Jen Gunter, OB-GYN",
+    "doctor_opinion": "\"You can't say that menstrual cups are medically better than tampons, but they're a great, valid choice for many women.\". Dr. Jen Gunter, OB-GYN",
     "community_review": "Community discussions on Reddit r/menstrualcups note life-changing experiences and strong performance on heavy days.",
-    "effectiveness": "Holds 25mL (regular) to 37mL (large) — significantly more than tampons. Up to 12-hour wear.",
+    "effectiveness": "Holds 25mL (regular) to 37mL (large). Significantly more than tampons. Up to 12-hour wear.",
     "clinician_opinion_source": "independent",
     "clinician_attribution": "Dr. Jen Gunter, OB-GYN. Source: ELLE Canada.",
     "source": "curated",
@@ -603,19 +603,19 @@
           {
             "platform": "reddit",
             "url": "https://www.reddit.com/r/menstrualcups/search/?q=saalt&restrict_sr=1",
-            "text": "Reddit r/menstrualcups — Saalt search",
+            "text": "Reddit r/menstrualcups: Saalt search",
             "summary": "Posts and tips specific to Saalt cup."
           },
           {
             "platform": "tiktok",
             "url": "https://www.tiktok.com/search?q=saalt%20menstrual%20cup",
-            "text": "TikTok — Saalt cup",
+            "text": "TikTok: Saalt cup",
             "summary": "Instructional videos and beginner tips."
           },
           {
             "platform": "youtube",
             "url": "https://www.youtube.com/results?search_query=saalt+menstrual+cup+review",
-            "text": "YouTube — Saalt cup reviews",
+            "text": "YouTube: Saalt cup reviews",
             "summary": "In-depth reviews and how-to guides."
           },
           {
@@ -627,7 +627,7 @@
           {
             "platform": "facebook",
             "url": "https://www.facebook.com/search/posts?q=saalt%20menstrual%20cup",
-            "text": "Facebook — Saalt cup",
+            "text": "Facebook: Saalt cup",
             "summary": "Community discussions and tips."
           },
           {
@@ -670,11 +670,11 @@
       "fdaStatus": "USP Verified dietary supplement",
       "materials": "Ferrous sulfate heptahydrate, cellulose, stearic acid, silicon dioxide. No gluten, no artificial colors or flavors.",
       "recalls": "No known recalls",
-      "allergens": "Gluten-free. Keep out of reach of children — accidental iron overdose is a leading cause of fatal poisoning in children under 6.",
+      "allergens": "Gluten-free. Keep out of reach of children. Accidental iron overdose is a leading cause of fatal poisoning in children under 6.",
       "sideEffects": "May cause constipation, nausea, or dark stools. Take with food to reduce GI side effects. Do not take within 2 hours of antacids.",
       "opinionAlerts": "Ferrous sulfate has lower absorption than ferrous bisglycinate forms. Take with vitamin C to improve absorption."
     },
-    "doctor_opinion": "Iron supplementation should be confirmed with bloodwork before starting — over-supplementation can cause harm. Take with food and vitamin C to improve absorption and reduce GI side effects.",
+    "doctor_opinion": "Iron supplementation should be confirmed with bloodwork before starting. Over-supplementation can cause harm. Take with food and vitamin C to improve absorption and reduce GI side effects.",
     "community_review": "Well-rated for effectiveness and price. Common feedback: take with food and vitamin C to reduce stomach upset, and expect darker stools.",
     "effectiveness": null,
     "clinician_opinion_source": "independent",
@@ -693,7 +693,7 @@
         "scientific": [
           {
             "url": "https://ods.od.nih.gov/factsheets/Iron-HealthProfessional/",
-            "text": "NIH ODS — Iron Fact Sheet",
+            "text": "NIH ODS: Iron Fact Sheet",
             "summary": "Comprehensive clinical reference on iron deficiency, supplementation, and safety."
           }
         ]
@@ -732,7 +732,7 @@
       "recalls": "No known recalls",
       "allergens": "Contains soy (soybean oil). Gelatin (not vegan).",
       "sideEffects": "At 5000 IU daily, vitamin D toxicity is unlikely but possible with very long-term high-dose use. Do not take additional high-dose D3 supplements concurrently without monitoring blood levels.",
-      "opinionAlerts": "D3 at 5000 IU is a higher dose — clinicians often recommend confirming deficiency with a 25(OH)D blood test before starting."
+      "opinionAlerts": "D3 at 5000 IU is a higher dose. Clinicians often recommend confirming deficiency with a 25(OH)D blood test before starting."
     },
     "doctor_opinion": "Vitamin D deficiency is widespread and often goes undetected. Confirming your level with a 25(OH)D blood test before starting high-dose supplementation is recommended.",
     "community_review": "Highly rated. Users report improvements in mood, energy, and general wellbeing. Consistently well-reviewed for quality and value.",
@@ -753,7 +753,7 @@
         "scientific": [
           {
             "url": "https://ods.od.nih.gov/factsheets/VitaminD-HealthProfessional/",
-            "text": "NIH ODS — Vitamin D Fact Sheet",
+            "text": "NIH ODS: Vitamin D Fact Sheet",
             "summary": "Clinical reference on vitamin D deficiency, supplementation, and safety thresholds."
           }
         ]
@@ -788,12 +788,12 @@
       "Amazon": true
     },
     "safety": {
-      "fdaStatus": "N/A — accessory for FDA-registered medical devices",
+      "fdaStatus": "N/A. Accessory for FDA-registered medical devices",
       "materials": "BPA-free plastic, stainless steel interior chamber",
       "recalls": "No known recalls",
       "allergens": "None",
       "sideEffects": "None; steam sterilization is recommended by OB-GYNs over boiling for silicone cups",
-      "opinionAlerts": "Do not use with cups made from rubber or latex — silicone only."
+      "opinionAlerts": "Do not use with cups made from rubber or latex. Silicone only."
     },
     "doctor_opinion": "Steam sterilization is the safest method for menstrual cup cleaning between cycles.",
     "community_review": "Highly rated by Saalt cup users for convenience and peace of mind between cycles.",
@@ -815,7 +815,7 @@
         "doctor": [
           {
             "url": "https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cup/art-20045868",
-            "text": "Mayo Clinic — Menstrual Cup Care",
+            "text": "Mayo Clinic: Menstrual Cup Care",
             "summary": "Guidance on proper cleaning and sterilization of menstrual cups."
           }
         ],
@@ -823,7 +823,7 @@
           {
             "platform": "reddit",
             "url": "https://www.reddit.com/r/menstrualcups/search/?q=steamer",
-            "text": "Reddit r/menstrualcups — steamer discussion",
+            "text": "Reddit r/menstrualcups: steamer discussion",
             "summary": "Community reviews of cup sterilization methods."
           }
         ]
@@ -913,19 +913,19 @@
           {
             "platform": "reddit",
             "url": "https://www.reddit.com/r/menstrualcups/search/?q=flex+disc&restrict_sr=1",
-            "text": "Reddit r/menstrualcups — Flex disc",
+            "text": "Reddit r/menstrualcups: Flex disc",
             "summary": "Threads on Flex disc and period intimacy."
           },
           {
             "platform": "tiktok",
             "url": "https://www.tiktok.com/search?q=flex%20disc%20review",
-            "text": "TikTok — Flex disc",
+            "text": "TikTok: Flex disc",
             "summary": "Short-form reviews and mess-free period experiences."
           },
           {
             "platform": "youtube",
             "url": "https://www.youtube.com/results?search_query=flex+disc+review",
-            "text": "YouTube — Flex disc reviews",
+            "text": "YouTube: Flex disc reviews",
             "summary": "Reviews and how-to for menstrual discs."
           },
           {
@@ -937,7 +937,7 @@
           {
             "platform": "facebook",
             "url": "https://www.facebook.com/search/posts?q=flex%20period%20disc",
-            "text": "Facebook — Flex disc",
+            "text": "Facebook: Flex disc",
             "summary": "Group and public post discussions."
           },
           {
@@ -1035,19 +1035,19 @@
           {
             "platform": "reddit",
             "url": "https://www.reddit.com/r/WomensHealth/search/?q=thinx&restrict_sr=1",
-            "text": "Reddit r/WomensHealth — Thinx",
+            "text": "Reddit r/WomensHealth: Thinx",
             "summary": "Posts on Thinx and the PFAS-free line."
           },
           {
             "platform": "tiktok",
             "url": "https://www.tiktok.com/search?q=thinx%20period%20underwear",
-            "text": "TikTok — Thinx",
+            "text": "TikTok: Thinx",
             "summary": "Style try-ons and absorbency tests."
           },
           {
             "platform": "youtube",
             "url": "https://www.youtube.com/results?search_query=thinx+period+underwear+review",
-            "text": "YouTube — Thinx reviews",
+            "text": "YouTube: Thinx reviews",
             "summary": "Reviews and comparisons of Thinx styles."
           },
           {
@@ -1059,7 +1059,7 @@
           {
             "platform": "facebook",
             "url": "https://www.facebook.com/search/posts?q=thinx%20period%20underwear",
-            "text": "Facebook — Thinx",
+            "text": "Facebook: Thinx",
             "summary": "Community discussions and recommendations."
           },
           {
@@ -1114,7 +1114,7 @@
       "sideEffects": "Mild digestive issues, loose stools (if dose too high), loss of appetite, occasional nausea.",
       "opinionAlerts": "Magnesium glycinate is the \"gold standard\" for comfort, but users find Thorne/NatureMade capsules quite large."
     },
-    "doctor_opinion": "\"Magnesium glycinate is one of the most evidence-backed supplements for menstrual cramps. The glycinate form is gentle on the stomach and well-absorbed.\" — Dr. Jolene Brighten, NMD",
+    "doctor_opinion": "\"Magnesium glycinate is one of the most evidence-backed supplements for menstrual cramps. The glycinate form is gentle on the stomach and well-absorbed.\". Dr. Jolene Brighten, NMD",
     "community_review": "Community discussions on Reddit r/Supplements note significant cramp relief and improved sleep with magnesium glycinate.",
     "effectiveness": "Clinical studies show 200-400mg magnesium daily reduces menstrual pain by 30-50%. Also improves sleep quality.",
     "clinician_opinion_source": "mixed",
@@ -1153,25 +1153,25 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/Supplements/search/?q=magnesium%20cramps&restrict_sr=1",
-              "text": "Reddit r/Supplements — magnesium cramps",
+              "text": "Reddit r/Supplements: magnesium cramps",
               "summary": "Posts on magnesium for period cramps and sleep."
             },
             {
               "platform": "tiktok",
               "url": "https://www.tiktok.com/search?q=magnesium%20period%20cramps",
-              "text": "TikTok — magnesium for cramps",
+              "text": "TikTok: Magnesium for cramps",
               "summary": "Short-form tips on magnesium and period pain."
             },
             {
               "platform": "youtube",
               "url": "https://www.youtube.com/results?search_query=magnesium+glycinate+cramps",
-              "text": "YouTube — magnesium glycinate",
+              "text": "YouTube: Magnesium glycinate",
               "summary": "Explainer videos and supplement reviews."
             },
             {
               "platform": "facebook",
               "url": "https://www.facebook.com/search/posts?q=magnesium%20period%20cramps",
-              "text": "Facebook — magnesium cramps",
+              "text": "Facebook: Magnesium cramps",
               "summary": "Group discussions on supplements for cramps."
             }
           ]
@@ -1212,7 +1212,7 @@
       "sideEffects": "Generally well-tolerated. Rare reports of mild nausea, stomach upset, or diarrhea. May interact with blood thinners like warfarin.",
       "opinionAlerts": "Main complaint is the high price point compared to standard CoQ10 supplements. Some users find the large softgels difficult to swallow."
     },
-    "doctor_opinion": "\"Ubiquinol is frequently recommended for women over 35 to support mitochondrial health and egg quality. Thorne's NSF certification ensures purity and potency.\" — Dr. Jolene Brighten, NMD",
+    "doctor_opinion": "\"Ubiquinol is frequently recommended for women over 35 to support mitochondrial health and egg quality. Thorne's NSF certification ensures purity and potency.\". Dr. Jolene Brighten, NMD",
     "community_review": "Community discussions on Reddit r/TTC35 note clinician recommendations and satisfaction with quality; NSF certification valued.",
     "effectiveness": "Studies show Ubiquinol improves oocyte quality and mitochondrial function, potentially improving fertility outcomes.",
     "clinician_opinion_source": "independent",
@@ -1251,25 +1251,25 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/TryingForABaby/search/?q=ubiquinol&restrict_sr=1",
-              "text": "Reddit r/TryingForABaby — ubiquinol",
+              "text": "Reddit r/TryingForABaby: ubiquinol",
               "summary": "Posts on Ubiquinol/CoQ10 for fertility."
             },
             {
               "platform": "tiktok",
               "url": "https://www.tiktok.com/search?q=ubiquinol%20fertility",
-              "text": "TikTok — ubiquinol fertility",
+              "text": "TikTok: Ubiquinol fertility",
               "summary": "Short-form content on fertility supplements."
             },
             {
               "platform": "youtube",
               "url": "https://www.youtube.com/results?search_query=ubiquinol+fertility+review",
-              "text": "YouTube — ubiquinol fertility",
+              "text": "YouTube: Ubiquinol fertility",
               "summary": "Reviews and explainers on CoQ10 for TTC."
             },
             {
               "platform": "facebook",
               "url": "https://www.facebook.com/search/posts?q=ubiquinol%20fertility",
-              "text": "Facebook — ubiquinol fertility",
+              "text": "Facebook: Ubiquinol fertility",
               "summary": "Group discussions on fertility supplements."
             }
           ]
@@ -1321,7 +1321,7 @@
     "extra": {
       "platform": "iOS, Android",
       "privacy": {
-        "dataStorage": "EU servers (Germany) — GDPR-compliant",
+        "dataStorage": "EU servers (Germany). GDPR-compliant",
         "sellsData": "❌ Explicitly does NOT sell data",
         "hipaa": "Not HIPAA (EU-based, uses GDPR which is stricter)",
         "keyPolicy": "Published transparency report. Will not comply with US law enforcement requests for cycle data."
@@ -1368,19 +1368,19 @@
           {
             "platform": "reddit",
             "url": "https://www.reddit.com/r/WomensHealth/search/?q=clue+app&restrict_sr=1",
-            "text": "Reddit r/WomensHealth — Clue",
+            "text": "Reddit r/WomensHealth: Clue",
             "summary": "User discussions on Clue privacy and UI."
           },
           {
             "platform": "tiktok",
             "url": "https://www.tiktok.com/search?q=clue%20period%20tracker",
-            "text": "TikTok — Clue tracker",
+            "text": "TikTok: Clue tracker",
             "summary": "Short-form reviews and privacy-focused period app content."
           },
           {
             "platform": "youtube",
             "url": "https://www.youtube.com/results?search_query=clue+period+tracker+review",
-            "text": "YouTube — Clue app reviews",
+            "text": "YouTube: Clue app reviews",
             "summary": "Reviews and comparisons of period trackers including Clue."
           },
           {
@@ -1392,7 +1392,7 @@
           {
             "platform": "facebook",
             "url": "https://www.facebook.com/search/posts?q=clue%20period%20tracker",
-            "text": "Facebook — Clue tracker",
+            "text": "Facebook: Clue tracker",
             "summary": "Group and public discussions on period apps."
           },
           {
@@ -1483,19 +1483,19 @@
           {
             "platform": "reddit",
             "url": "https://www.reddit.com/r/periods/search/?q=stardust+tracker&restrict_sr=1",
-            "text": "Reddit r/periods — Stardust",
+            "text": "Reddit r/periods: Stardust",
             "summary": "User feedback on Stardust lunar sync and UI."
           },
           {
             "platform": "tiktok",
             "url": "https://www.tiktok.com/search?q=stardust%20period%20tracker",
-            "text": "TikTok — Stardust tracker",
+            "text": "TikTok: Stardust tracker",
             "summary": "Educational content on privacy and cycle tracking."
           },
           {
             "platform": "youtube",
             "url": "https://www.youtube.com/results?search_query=stardust+period+tracker+review",
-            "text": "YouTube — Stardust app reviews",
+            "text": "YouTube: Stardust app reviews",
             "summary": "Reviews of privacy-first period trackers."
           },
           {
@@ -1507,7 +1507,7 @@
           {
             "platform": "facebook",
             "url": "https://www.facebook.com/search/posts?q=stardust%20period%20tracker",
-            "text": "Facebook — Stardust tracker",
+            "text": "Facebook: Stardust tracker",
             "summary": "Community discussions on privacy-focused apps."
           }
         ]
@@ -1544,7 +1544,7 @@
       "sideEffects": "N/A",
       "opinionAlerts": "Use alongside clinician care for diagnosis and treatment."
     },
-    "doctor_opinion": "Tracking perimenopause symptoms helps clinicians identify patterns and tailor treatment. Apps like Balance complement—not replace—clinical care.",
+    "doctor_opinion": "Tracking perimenopause symptoms helps clinicians identify patterns and tailor treatment. Apps like Balance complement. Not replace. Clinical care.",
     "community_review": "Community discussions on Reddit r/Menopause note focus on perimenopause and value of symptom logging for clinician visits.",
     "effectiveness": null,
     "clinician_opinion_source": "independent",
@@ -1661,7 +1661,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/HealthyHooha/search/?q=d-mannose&restrict_sr=1",
-              "text": "Reddit r/HealthyHooha — D-mannose",
+              "text": "Reddit r/HealthyHooha: D-mannose",
               "summary": "Community discussions on D-mannose for UTI prevention."
             }
           ]
@@ -1778,7 +1778,7 @@
       "materials": "Methenamine, sodium salicylate",
       "recalls": "No recalls.",
       "allergens": "Check label",
-      "sideEffects": "May cause mild stomach upset, nausea, or rash in some users. Avoid with a sulfa allergy or significant kidney disease — check with a clinician first."
+      "sideEffects": "May cause mild stomach upset, nausea, or rash in some users. Avoid with a sulfa allergy or significant kidney disease. Check with a clinician first."
     },
     "doctor_opinion": "Use only as directed while waiting for a clinician visit. Not a substitute for antibiotics when indicated.",
     "community_review": "Community discussions on Amazon note temporary symptom relief while seeking care.",
@@ -1822,7 +1822,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/HealthyHooha/search/?q=cystex&restrict_sr=1",
-              "text": "Reddit r/HealthyHooha — Cystex",
+              "text": "Reddit r/HealthyHooha: Cystex",
               "summary": "Community discussions on OTC UTI symptom relief."
             }
           ]
@@ -1905,7 +1905,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/periods/search/?q=organic+pad&restrict_sr=1",
-              "text": "Reddit r/periods — organic pads",
+              "text": "Reddit r/periods: organic pads",
               "summary": "Community discussions on organic menstrual products."
             }
           ]
@@ -1943,7 +1943,7 @@
       "materials": "100% organic cotton",
       "recalls": "No recalls.",
       "allergens": "Hypoallergenic",
-      "sideEffects": "Organic cotton is generally well tolerated. As with any tampon, leaving one in longer than recommended raises the risk of toxic shock syndrome (TSS) — change every 4-8 hours and use the lowest absorbency your flow needs."
+      "sideEffects": "Organic cotton is generally well tolerated. As with any tampon, leaving one in longer than recommended raises the risk of toxic shock syndrome (TSS). Change every 4-8 hours and use the lowest absorbency your flow needs."
     },
     "doctor_opinion": "Organic cotton reduces exposure to dyes and fragrances that can irritate sensitive skin.",
     "community_review": "Community discussions note satisfaction with subscription quality and reduced skin irritation.",
@@ -1988,7 +1988,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/periods/search/?q=organic+tampon&restrict_sr=1",
-              "text": "Reddit r/periods — organic tampons",
+              "text": "Reddit r/periods: organic tampons",
               "summary": "Community discussions on organic menstrual products."
             },
             {
@@ -2083,7 +2083,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/PCOS/search/?q=inositol&restrict_sr=1",
-              "text": "Reddit r/PCOS — inositol",
+              "text": "Reddit r/PCOS: inositol",
               "summary": "Community discussions on inositol for PCOS."
             }
           ]
@@ -2119,7 +2119,7 @@
       "materials": "Spearmint",
       "recalls": "No recalls.",
       "allergens": "Mint family",
-      "sideEffects": "Generally safe as a tea. Some people notice mild stomach upset. Spearmint may reduce milk supply — best avoided while breastfeeding or trying to conceive without a clinician's guidance."
+      "sideEffects": "Generally safe as a tea. Some people notice mild stomach upset. Spearmint may reduce milk supply. Best avoided while breastfeeding or trying to conceive without a clinician's guidance."
     },
     "doctor_opinion": "Some studies show spearmint tea can reduce androgens in PCOS. Discuss with your provider.",
     "community_review": "Community discussions on Reddit r/PCOS note improvement in acne and hair growth with daily use.",
@@ -2163,7 +2163,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/PCOS/search/?q=spearmint&restrict_sr=1",
-              "text": "Reddit r/PCOS — spearmint",
+              "text": "Reddit r/PCOS: spearmint",
               "summary": "Community discussions on spearmint for PCOS."
             }
           ]
@@ -2201,7 +2201,7 @@
       "materials": "Fennel, dandelion root, ginger, organic ingredients",
       "recalls": "No recalls.",
       "allergens": "Vegan, gluten-free",
-      "sideEffects": "Generally well tolerated. Fennel and dandelion may interact with blood thinners or diuretics — check with a clinician if you take either. Occasional mild GI upset reported."
+      "sideEffects": "Generally well tolerated. Fennel and dandelion may interact with blood thinners or diuretics. Check with a clinician if you take either. Occasional mild GI upset reported."
     },
     "doctor_opinion": "Herbal digestive supports like fennel and ginger have traditional and some clinical use for bloating and gas. Discuss with your clinician if you have liver conditions or take blood thinners.",
     "community_review": "Community discussions on Amazon and Reddit r/periods note relief from period bloat and digestive comfort with consistent use.",
@@ -2259,19 +2259,19 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/periods/search/?q=bloat+supplement&restrict_sr=1",
-              "text": "Reddit r/periods — bloating",
+              "text": "Reddit r/periods: bloating",
               "summary": "Community discussions on period bloat and supplements."
             },
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/WomensHealth/search/?q=bloating&restrict_sr=1",
-              "text": "Reddit r/WomensHealth — bloating",
+              "text": "Reddit r/WomensHealth: bloating",
               "summary": "Women share experiences with hormonal and digestive bloating."
             },
             {
               "platform": "tiktok",
               "url": "https://www.tiktok.com/search?q=period%20bloat%20remedies",
-              "text": "TikTok — period bloat remedies",
+              "text": "TikTok: Period bloat remedies",
               "summary": "Short-form tips on cycle-related bloating and products."
             }
           ]
@@ -2368,7 +2368,7 @@
             {
               "platform": "tiktok",
               "url": "https://www.tiktok.com/search?q=love+wellness+bye+bye+bloat",
-              "text": "TikTok — Bye Bye Bloat",
+              "text": "TikTok: Bye Bye Bloat",
               "summary": "User reviews and tips on Love Wellness bloating products."
             }
           ]
@@ -2422,7 +2422,7 @@
         "Pelvic Health",
         "Reusable"
       ],
-      "recommendationWhyDetail": "Kegel trainers like Luna Beads use progressive vaginal weights to strengthen the pelvic floor muscles — the same muscles targeted by Kegel exercises your OB-GYN or PT might recommend for leakage, prolapse prevention, or pelvic discomfort. They work by adding gentle resistance you contract against, building strength over weeks of daily use. They're different from Kegel apps or biofeedback devices — no technology, just weighted silicone balls that give your muscles something to work against.",
+      "recommendationWhyDetail": "Kegel trainers like Luna Beads use progressive vaginal weights to strengthen the pelvic floor muscles. The same muscles targeted by Kegel exercises your OB-GYN or PT might recommend for leakage, prolapse prevention, or pelvic discomfort. They work by adding gentle resistance you contract against, building strength over weeks of daily use. They're different from Kegel apps or biofeedback devices. No technology, just weighted silicone balls that give your muscles something to work against.",
       "verificationLinks": {
         "doctor": {
           "links": [
@@ -2449,7 +2449,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/Incontinence/search/?q=kegel&restrict_sr=1",
-              "text": "Reddit — Kegel devices",
+              "text": "Reddit: Kegel devices",
               "summary": "Community discussions on pelvic floor trainers."
             }
           ]
@@ -2504,7 +2504,7 @@
         "PT Recommended",
         "Pelvic Pain"
       ],
-      "recommendationWhyDetail": "Curved pelvic wands are used for directed pressure and myofascial release on tight pelvic floor muscles and trigger points—something many people only learn about in pelvic floor physical therapy. They’re not a substitute for heating pads or OTC cramp meds; they address muscle tension and referred pelvic pain that can overlap with period pain, endometriosis, postpartum recovery, or pain with sex. Technique matters (angle, pressure, breathing), so a pelvic PT who teaches you how to use one safely is ideal before treating this like general self-massage."
+      "recommendationWhyDetail": "Curved pelvic wands are used for directed pressure and myofascial release on tight pelvic floor muscles and trigger points. Something many people only learn about in pelvic floor physical therapy. They’re not a substitute for heating pads or OTC cramp meds; they address muscle tension and referred pelvic pain that can overlap with period pain, endometriosis, postpartum recovery, or pain with sex. Technique matters (angle, pressure, breathing), so a pelvic PT who teaches you how to use one safely is ideal before treating this like general self-massage."
     }
   },
   {
@@ -2580,7 +2580,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/Menopause/search/?q=estroven&restrict_sr=1",
-              "text": "Reddit r/Menopause — Estroven",
+              "text": "Reddit r/Menopause: Estroven",
               "summary": "Community discussions on Estroven and menopause supplements."
             }
           ]
@@ -2618,7 +2618,7 @@
       "materials": "Black cohosh",
       "recalls": "No recalls.",
       "allergens": "Check label",
-      "sideEffects": "Generally well tolerated short-term. Rare reports of stomach upset or headache. Black cohosh has rare case reports of liver concerns — stop and see a clinician if you notice unusual fatigue, abdominal pain, or jaundice."
+      "sideEffects": "Generally well tolerated short-term. Rare reports of stomach upset or headache. Black cohosh has rare case reports of liver concerns. Stop and see a clinician if you notice unusual fatigue, abdominal pain, or jaundice."
     },
     "doctor_opinion": "Black cohosh has the most clinical data among herbal options for vasomotor symptoms.",
     "community_review": "Community discussions on Reddit r/Menopause note reduction in hot flashes within weeks.",
@@ -2662,7 +2662,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/Menopause/search/?q=black+cohosh&restrict_sr=1",
-              "text": "Reddit r/Menopause — black cohosh",
+              "text": "Reddit r/Menopause: black cohosh",
               "summary": "Community discussions on Remifemin and hot flashes."
             }
           ]
@@ -2703,7 +2703,7 @@
       "materials": "Creatine monohydrate",
       "recalls": "No recalls.",
       "allergens": "Vegan options available",
-      "sideEffects": "Well studied and generally safe. May cause mild water retention or stomach upset when starting — stay well hydrated and consider starting at a lower dose."
+      "sideEffects": "Well studied and generally safe. May cause mild water retention or stomach upset when starting. Stay well hydrated and consider starting at a lower dose."
     },
     "doctor_opinion": "Creatine is well-studied and safe. For perimenopausal women it can help offset muscle loss and support cognition when used with exercise.",
     "community_review": "Community discussions on Reddit r/Menopause note improvement in energy and brain fog with creatine.",
@@ -2747,7 +2747,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/Menopause/search/?q=creatine&restrict_sr=1",
-              "text": "Reddit r/Menopause — creatine",
+              "text": "Reddit r/Menopause: creatine",
               "summary": "Community discussions on creatine for perimenopause."
             }
           ]
@@ -2783,7 +2783,7 @@
       "materials": "N/A",
       "recalls": "N/A",
       "allergens": "N/A",
-      "sideEffects": "Nurx itself has no side effects — it's a telehealth service. Any birth control method it prescribes carries the standard side effects for that method (e.g. spotting, nausea, mood changes), which your clinician reviews with you before you start."
+      "sideEffects": "Nurx itself has no side effects. It's a telehealth service. Any birth control method it prescribes carries the standard side effects for that method (e.g. spotting, nausea, mood changes), which your clinician reviews with you before you start."
     },
     "doctor_opinion": "Telehealth increases access to contraception. Same safety standards as in-person care.",
     "community_review": "Community discussions on Reddit r/birthcontrol note convenience and quick delivery.",
@@ -2833,7 +2833,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/birthcontrol/search/?q=nurx&restrict_sr=1",
-              "text": "Reddit r/birthcontrol — Nurx",
+              "text": "Reddit r/birthcontrol: Nurx",
               "summary": "Community discussions on telehealth birth control."
             }
           ]
@@ -2869,7 +2869,7 @@
       "materials": "N/A",
       "recalls": "N/A",
       "allergens": "N/A",
-      "sideEffects": "Wisp itself has no side effects — it's a telehealth service. Any birth control method it prescribes carries the standard side effects for that method (e.g. spotting, nausea, mood changes), which your clinician reviews with you before you start."
+      "sideEffects": "Wisp itself has no side effects. It's a telehealth service. Any birth control method it prescribes carries the standard side effects for that method (e.g. spotting, nausea, mood changes), which your clinician reviews with you before you start."
     },
     "doctor_opinion": "Telehealth increases access to contraception. Same safety standards as in-person care.",
     "community_review": "Community discussions on Reddit r/birthcontrol note fast turnaround and discreet packaging.",
@@ -2919,7 +2919,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/birthcontrol/search/?q=wisp&restrict_sr=1",
-              "text": "Reddit r/birthcontrol — Wisp",
+              "text": "Reddit r/birthcontrol: Wisp",
               "summary": "Community discussions on telehealth birth control."
             }
           ]
@@ -2955,7 +2955,7 @@
       "materials": "N/A",
       "recalls": "N/A",
       "allergens": "N/A",
-      "sideEffects": "No physical side effects — this is a training app, not a device or medication. As with any pelvic floor exercise program, working too hard too fast can cause temporary muscle soreness."
+      "sideEffects": "No physical side effects. This is a training app, not a device or medication. As with any pelvic floor exercise program, working too hard too fast can cause temporary muscle soreness."
     },
     "doctor_opinion": "App-guided pelvic floor training can improve adherence when used consistently.",
     "community_review": "Community discussions on App Store note simplicity and PT recommendations for home use.",
@@ -2979,7 +2979,7 @@
         "Pelvic Health",
         "PT Recommended"
       ],
-      "recommendationWhyDetail": "Happi guides you through pelvic floor exercises the way a physical therapist would — with timing, breathing cues, and progressive difficulty. The pelvic floor is a hammock of muscles you can't see or feel easily, which makes Kegels notoriously easy to do wrong (many people inadvertently bear down instead of lifting). An app with structured programs and reminders dramatically improves consistency, which is what makes pelvic floor training effective over time.",
+      "recommendationWhyDetail": "Happi guides you through pelvic floor exercises the way a physical therapist would. With timing, breathing cues, and progressive difficulty. The pelvic floor is a hammock of muscles you can't see or feel easily, which makes Kegels notoriously easy to do wrong (many people inadvertently bear down instead of lifting). An app with structured programs and reminders dramatically improves consistency, which is what makes pelvic floor training effective over time.",
       "verificationLinks": {
         "doctor": {
           "links": [
@@ -3042,7 +3042,7 @@
       "materials": "N/A",
       "recalls": "N/A",
       "allergens": "N/A",
-      "sideEffects": "Hers itself has no side effects — it's a telehealth service. Any medication prescribed through it (e.g. for anxiety, depression, or skin) carries the standard side effects for that specific drug, which your clinician reviews with you before you start."
+      "sideEffects": "Hers itself has no side effects. It's a telehealth service. Any medication prescribed through it (e.g. for anxiety, depression, or skin) carries the standard side effects for that specific drug, which your clinician reviews with you before you start."
     },
     "doctor_opinion": "Telehealth improves access to mental health and dermatology. Same clinical standards as in-person care.",
     "community_review": "Community discussions on Reddit note convenience and discrete access to medication.",
@@ -3106,7 +3106,7 @@
     "brand": "Midi Health",
     "category": "telehealth",
     "product_type": "digital",
-    "summary": "Virtual women's health clinic focused on perimenopause and menopause: visits with clinicians, personalized care plans, and prescription support (e.g. hormone therapy) where appropriate - without needing an in-person visit in many areas.",
+    "summary": "Virtual women's health clinic focused on perimenopause and menopause: visits with clinicians, personalized care plans, and prescription support (e.g. hormone therapy) where appropriate, without needing an in-person visit in many areas.",
     "price": "Membership / per visit; varies by plan and state",
     "image": "https://images.prismic.io/joinmidi-marketing/Z92tBjxkOkZ2kJPK_3-clinician-1x1.jpg?auto=format%2Ccompress&rect=0%2C44%2C1440%2C756&w=2400&h=1260",
     "url": null,
@@ -3129,7 +3129,7 @@
       "materials": "N/A",
       "recalls": "N/A",
       "allergens": "N/A",
-      "sideEffects": "Midi itself has no side effects — it's a telehealth service. Any treatment prescribed, including hormone therapy where appropriate, carries the standard side effects for that specific option, which your clinician reviews with you."
+      "sideEffects": "Midi itself has no side effects. It's a telehealth service. Any treatment prescribed, including hormone therapy where appropriate, carries the standard side effects for that specific option, which your clinician reviews with you."
     },
     "doctor_opinion": "Virtual access can help women navigate perimenopause and menopause symptoms and discuss hormone therapy with licensed clinicians using the same standards as in-person care.",
     "community_review": "Community discussions on Reddit r/Menopause note convenience of virtual visits and clinician-led plans for midlife symptoms.",
@@ -3179,7 +3179,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/Menopause/search/?q=telehealth&restrict_sr=1",
-              "text": "Reddit r/Menopause — telehealth",
+              "text": "Reddit r/Menopause: telehealth",
               "summary": "Community discussions on virtual menopause care."
             }
           ]
@@ -3220,7 +3220,7 @@
       "materials": "N/A",
       "recalls": "N/A",
       "allergens": "N/A",
-      "sideEffects": "Pomelo Care itself has no side effects — it's a virtual care service. Any treatment or medication recommended during a visit carries the standard side effects for that option, reviewed with your care team."
+      "sideEffects": "Pomelo Care itself has no side effects. It's a virtual care service. Any treatment or medication recommended during a visit carries the standard side effects for that option, reviewed with your care team."
     },
     "doctor_opinion": "Integrated virtual maternity and women's health programs can improve access to education, triage, and follow-up between in-person visits; eligibility and scope depend on your plan.",
     "community_review": "Patients often cite fast responses and coordinated support across pregnancy and postpartum; access is plan-dependent.",
@@ -3270,7 +3270,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/BabyBumps/search/?q=telehealth&restrict_sr=1",
-              "text": "Reddit r/BabyBumps — telehealth",
+              "text": "Reddit r/BabyBumps: telehealth",
               "summary": "Community discussions on virtual pregnancy and postpartum support."
             }
           ]
@@ -3960,7 +3960,7 @@
       "sideEffects": "Possible bladder pressure or cramping if the cup is too firm or sized incorrectly.",
       "opinionAlerts": "The DivaCup is notoriously firmer than some new competitors, which some users find causes \"suction pain\" or difficulty during removal."
     },
-    "doctor_opinion": "\"You can't say that menstrual cups are medically better than tampons, but they're a great, valid choice for many women.\" — Dr. Jen Gunter, OB-GYN",
+    "doctor_opinion": "\"You can't say that menstrual cups are medically better than tampons, but they're a great, valid choice for many women.\". Dr. Jen Gunter, OB-GYN",
     "community_review": "Community discussions on Reddit r/menstrualcups note DivaCup as a reliable first cup with wide availability.",
     "effectiveness": "Holds 30mL. Up to 12-hour wear. 3 sizes for different life stages.",
     "clinician_opinion_source": "independent",
@@ -4228,7 +4228,7 @@
     },
     "doctor_opinion": "Discs avoid suction and may suit those who find cups uncomfortable; one-size options work for many.",
     "community_review": "Community discussions on Reddit r/menstrualcups note comfort without suction-related cramping.",
-    "effectiveness": "Holds 70mL — more than most cups. Up to 12-hour wear.",
+    "effectiveness": "Holds 70mL. More than most cups. Up to 12-hour wear.",
     "clinician_opinion_source": "independent",
     "clinician_attribution": "Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.",
     "source": "curated",
@@ -4237,7 +4237,7 @@
     "user_rating": 4.5,
     "is_active": true,
     "extra": {
-      "recommendationWhyDetail": "Menstrual discs sit differently from cups — they tuck behind the pubic bone and collect flow at the cervix rather than forming a suction seal lower in the vagina. This means no suction sensation during removal, which many people find more comfortable. Discs like Nixit can also be worn during penetrative sex, which cups cannot. One-size-fits-most works for most anatomies, but if you have a very high or low cervix you may need to experiment with positioning.",
+      "recommendationWhyDetail": "Menstrual discs sit differently from cups. They tuck behind the pubic bone and collect flow at the cervix rather than forming a suction seal lower in the vagina. This means no suction sensation during removal, which many people find more comfortable. Discs like Nixit can also be worn during penetrative sex, which cups cannot. One-size-fits-most works for most anatomies, but if you have a very high or low cervix you may need to experiment with positioning.",
       "communityReviewSourceUrl": "https://www.reddit.com/r/menstrualcups/",
       "communityReviewSourceLabel": "Reddit r/menstrualcups",
       "ingredients": "Ultra-soft medical-grade silicone.",
@@ -4317,7 +4317,7 @@
     "user_rating": 4.5,
     "is_active": true,
     "extra": {
-      "recommendationWhyDetail": "Menstrual discs sit behind the pubic bone rather than lower in the vaginal canal like cups, which eliminates the suction removal sensation that many cup users dislike. The Cora disc adds an ergonomic grip tab — a design detail that solves the single most common complaint about discs (messy or difficult removal). If you've tried and returned a cup, discs are worth exploring as a genuinely different experience.",
+      "recommendationWhyDetail": "Menstrual discs sit behind the pubic bone rather than lower in the vaginal canal like cups, which eliminates the suction removal sensation that many cup users dislike. The Cora disc adds an ergonomic grip tab. A design detail that solves the single most common complaint about discs (messy or difficult removal). If you've tried and returned a cup, discs are worth exploring as a genuinely different experience.",
       "communityReviewSourceUrl": "https://www.reddit.com/r/menstrualcups/",
       "communityReviewSourceLabel": "Reddit r/menstrualcups",
       "ingredients": "Medical-grade silicone.",
@@ -4663,7 +4663,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/PCOS/search/?q=evening+primrose&restrict_sr=1",
-              "text": "Reddit r/PCOS — Evening Primrose",
+              "text": "Reddit r/PCOS: Evening Primrose",
               "summary": "Community discussions on EPO for PCOS and PMS."
             }
           ]
@@ -4744,7 +4744,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/PCOS/search/?q=vitex+chasteberry&restrict_sr=1",
-              "text": "Reddit r/PCOS — Vitex",
+              "text": "Reddit r/PCOS: Vitex",
               "summary": "Community discussions on Vitex for cycles and PMS."
             }
           ]
@@ -5091,7 +5091,7 @@
       "fdaStatus": "Supplement",
       "materials": "Boric acid 600mg",
       "recalls": "No recalls.",
-      "allergens": "N/A — NOT for oral use, NOT for pregnancy",
+      "allergens": "N/A. NOT for oral use, NOT for pregnancy",
       "sideEffects": "Vaginal discharge (as the capsule dissolves), mild watery leakage, or \"stinging\" in rare cases. EXTREMELY TOXIC if swallowed.",
       "opinionAlerts": "Life-saving for many with chronic BV; the main \"opinion alert\" is the safety warning about toxicity if taken orally."
     },
@@ -5219,7 +5219,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/HealthyHooha/search/?q=azo+test&restrict_sr=1",
-              "text": "Reddit r/HealthyHooha — AZO test",
+              "text": "Reddit r/HealthyHooha: AZO test",
               "summary": "Community discussions on at-home UTI test strips."
             }
           ]
@@ -5297,7 +5297,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/HealthyHooha/search/?q=moisturizer&restrict_sr=1",
-              "text": "Reddit r/HealthyHooha — moisturizer",
+              "text": "Reddit r/HealthyHooha: moisturizer",
               "summary": "Community discussions on vaginal moisturizers."
             }
           ]
@@ -5336,7 +5336,7 @@
       "recalls": "No recalls.",
       "allergens": "Gluten-free",
       "sideEffects": "Some users report mild stomach upset or acne flare-ups.",
-      "opinionAlerts": "User experiences vary widely—some report benefit, others report no effect or call it a sugar pill."
+      "opinionAlerts": "User experiences vary widely. Some report benefit, others report no effect or call it a sugar pill."
     },
     "doctor_opinion": "Chasteberry has the most evidence; B6 and Dong Quai have weaker support. Individual response varies. See Scientific Literature tab for evidence details.",
     "community_review": "Community discussions on Amazon note varied experiences with bloating relief; some report benefit, others report no effect.",
@@ -5370,7 +5370,7 @@
           ]
         },
         "scientific": {
-          "aiSummary": "Chasteberry meta-analyses show positive effects but with high heterogeneity and publication bias—effect sizes may be overstated. Vitamin B6: Cochrane concluded poor-quality studies suggest benefit; evidence is weak. Dong Quai: no PMS trials. Lemon balm: one small RCT. Overall, insufficient high-quality evidence to confidently support this specific product blend.",
+          "aiSummary": "Chasteberry meta-analyses show positive effects but with high heterogeneity and publication bias. Effect sizes may be overstated. Vitamin B6: Cochrane concluded poor-quality studies suggest benefit; evidence is weak. Dong Quai: no PMS trials. Lemon balm: one small RCT. Overall, insufficient high-quality evidence to confidently support this specific product blend.",
           "links": [
             {
               "url": "https://pubmed.ncbi.nlm.nih.gov/28237870/",
@@ -5398,13 +5398,13 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/periods/search/?q=flo+gummies&restrict_sr=1",
-              "text": "Reddit r/periods — Flo",
+              "text": "Reddit r/periods: Flo",
               "summary": "Community discussions on Flo gummies and PMS supplements."
             },
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/PMDD/search/?q=chasteberry&restrict_sr=1",
-              "text": "Reddit r/PMDD — Chasteberry",
+              "text": "Reddit r/PMDD: Chasteberry",
               "summary": "Discussions on chasteberry and PMS/PMDD symptom relief."
             }
           ]
@@ -5484,13 +5484,13 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/WomensHealth/search/?q=flatter+me+bloating&restrict_sr=1",
-              "text": "Reddit r/WomensHealth — Flatter Me",
+              "text": "Reddit r/WomensHealth: Flatter Me",
               "summary": "Community discussions on HUM Flatter Me and hormonal bloating."
             },
             {
               "platform": "tiktok",
               "url": "https://www.tiktok.com/search?q=hum%20flatter%20me",
-              "text": "TikTok — HUM Flatter Me",
+              "text": "TikTok: HUM Flatter Me",
               "summary": "User reviews and de-bloating tips."
             }
           ]
@@ -5596,7 +5596,7 @@
     "id": "p-elvie-trainer",
     "name": "Elvie Pelvic Floor Trainer",
     "brand": null,
-    "category": "supplement",
+    "category": "pelvic-floor",
     "product_type": "physical",
     "summary": "Smart Kegel trainer with real-time biofeedback via app. Guides you through exercises with visualization.",
     "price": "$199",
@@ -5966,7 +5966,7 @@
       "platform": "iOS, Android",
       "privacy": {
         "dataStorage": "US servers",
-        "sellsData": "⚠️ Primarily B2B model — employer-sponsored. Review privacy policy carefully. Individual data is anonymized for employers.",
+        "sellsData": "⚠️ Primarily B2B model. Employer-sponsored. Review privacy policy carefully. Individual data is anonymized for employers.",
         "hipaa": "De-identified data shared with employers",
         "keyPolicy": "Funded by employer benefits programs. Individual health data is not shared with employers in identifiable form."
       },
@@ -6531,7 +6531,7 @@
       "sideEffects": "N/A (Diagnostic). Potential for user error in strip dipping.",
       "opinionAlerts": "High cost of replenishment strips is a frequent community complaint."
     },
-    "doctor_opinion": "Inito measures PdG which confirms ovulation actually occurred — most trackers only predict it. FDA-cleared for home hormone monitoring.",
+    "doctor_opinion": "Inito measures PdG which confirms ovulation actually occurred. Most trackers only predict it. FDA-cleared for home hormone monitoring.",
     "community_review": "Community discussions on Reddit r/TryingForABaby note value in confirming ovulation when OPKs alone were misleading.",
     "effectiveness": "Unique 4-hormone measurement confirms ovulation. FDA-cleared.",
     "clinician_opinion_source": "independent",
@@ -6651,7 +6651,7 @@
     "brand": null,
     "category": "tracker",
     "product_type": "digital",
-    "summary": "Built-in period and fertility tracking on iPhone and Apple Watch. Strongest privacy protections — data stays on device.",
+    "summary": "Built-in period and fertility tracking on iPhone and Apple Watch. Strongest privacy protections. Data stays on device.",
     "price": "Free (built into iPhone)",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/60/e8/ae/60e8ae47-8a07-ad37-3371-d515af4b4a43/cycle.tracking-0-0-1x_U007ewatch-0-1-P3-85-220.png/1200x630wa.png",
     "url": null,
@@ -6721,7 +6721,7 @@
     "brand": null,
     "category": "sleep",
     "product_type": "digital",
-    "summary": "Smart mattress cover that automatically heats and cools each side of the bed throughout the night. Tracks sleep stages, HRV, heart rate, and respiratory rate — and adjusts temperature in real time to improve sleep quality.",
+    "summary": "Smart mattress cover that automatically heats and cools each side of the bed throughout the night. Tracks sleep stages, HRV, heart rate, and respiratory rate. And adjusts temperature in real time to improve sleep quality.",
     "price": "$2,245+",
     "image": "https://res.cloudinary.com/eightsleep/image/upload/c_fill,w_1200,h_630,f_jpg,q_auto/v1747147611/Homepage_c0dril.png",
     "url": null,
@@ -6748,7 +6748,7 @@
       "sideEffects": "Some users report waking from cooling cycles; not recommended for those with Raynaud's.",
       "opinionAlerts": "High upfront cost ($2,245+) plus $19/month subscription after the first year. Requires a stable Wi-Fi connection."
     },
-    "doctor_opinion": "Temperature regulation during sleep is increasingly recognized as important for hormonal health — especially for women experiencing night sweats, perimenopause, or disrupted sleep due to cycle-related changes. Eight Sleep's active cooling addresses this directly.",
+    "doctor_opinion": "Temperature regulation during sleep is increasingly recognized as important for hormonal health. Especially for women experiencing night sweats, perimenopause, or disrupted sleep due to cycle-related changes. Eight Sleep's active cooling addresses this directly.",
     "community_review": "Broadly positive reviews on Reddit r/EightSleep and r/sleep. Users frequently cite dramatically improved sleep quality and reduced night sweats. Common complaint: expensive upfront cost.",
     "effectiveness": null,
     "clinician_opinion_source": "independent",
@@ -6766,7 +6766,7 @@
         "hipaa": "Not HIPAA",
         "keyPolicy": "Eight Sleep stores sleep biometrics in the cloud. Data shared with third-party researchers only in anonymized, aggregated form."
       },
-      "recommendationWhyDetail": "Eight Sleep is a mattress cover, not a mattress — it fits over your existing bed. A built-in water loop circulates temperature-controlled water throughout the night, automatically adjusting based on your sleep stage and body temperature. Women going through perimenopause or dealing with hormonal sleep disruption often find the active cooling side especially helpful for night sweats.",
+      "recommendationWhyDetail": "Eight Sleep is a mattress cover, not a mattress. It fits over your existing bed. A built-in water loop circulates temperature-controlled water throughout the night, automatically adjusting based on your sleep stage and body temperature. Women going through perimenopause or dealing with hormonal sleep disruption often find the active cooling side especially helpful for night sweats.",
       "integrations": [
         "Apple Health",
         "Oura Ring",
@@ -6984,7 +6984,7 @@
       "materials": "Vegan-certified",
       "recalls": "No recalls.",
       "allergens": "Gluten-free, soy-free",
-      "sideEffects": "Generally well tolerated. Prenatal vitamins can cause mild nausea or constipation, especially from the iron content — taking with food may help."
+      "sideEffects": "Generally well tolerated. Prenatal vitamins can cause mild nausea or constipation, especially from the iron content. Taking with food may help."
     },
     "doctor_opinion": "Traceability and delayed-release capsules are valued in prenatal supplements. Ritual uses third-party verified ingredients.",
     "community_review": "Community discussions on Reddit r/BabyBumps note reduced nausea compared to other prenatals.",
@@ -7035,19 +7035,19 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/BabyBumps/search/?q=ritual+prenatal&restrict_sr=1",
-              "text": "Reddit r/BabyBumps — Ritual",
+              "text": "Reddit r/BabyBumps: Ritual",
               "summary": "Posts on Ritual prenatal and morning sickness."
             },
             {
               "platform": "tiktok",
               "url": "https://www.tiktok.com/search?q=ritual%20prenatal%20review",
-              "text": "TikTok — Ritual prenatal",
+              "text": "TikTok: Ritual prenatal",
               "summary": "Short-form reviews and prenatal journey content."
             },
             {
               "platform": "youtube",
               "url": "https://www.youtube.com/results?search_query=ritual+prenatal+vitamin+review",
-              "text": "YouTube — Ritual prenatal reviews",
+              "text": "YouTube: Ritual prenatal reviews",
               "summary": "In-depth reviews of Ritual prenatal."
             },
             {
@@ -7059,7 +7059,7 @@
             {
               "platform": "facebook",
               "url": "https://www.facebook.com/search/posts?q=ritual%20prenatal",
-              "text": "Facebook — Ritual prenatal",
+              "text": "Facebook: Ritual prenatal",
               "summary": "Group and public discussions."
             }
           ]
@@ -7093,7 +7093,7 @@
       "materials": "Bamboo-derived viscose",
       "recalls": "No recalls.",
       "allergens": "Latex-free",
-      "sideEffects": "Generally well tolerated. Wearing a belly band too tight or for too long can cause discomfort or skin irritation — take breaks and loosen it if you notice numbness or tingling."
+      "sideEffects": "Generally well tolerated. Wearing a belly band too tight or for too long can cause discomfort or skin irritation. Take breaks and loosen it if you notice numbness or tingling."
     },
     "doctor_opinion": "Abdominal support bands can relieve pelvic girdle pain and back pressure during the third trimester.",
     "community_review": "Community discussions on Amazon note ability to work and remain active late in pregnancy.",
@@ -7214,19 +7214,19 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/Healthyhooha/search/?q=maude&restrict_sr=1",
-              "text": "Reddit — Maude",
+              "text": "Reddit: Maude",
               "summary": "Discussions on intimate wellness products."
             },
             {
               "platform": "tiktok",
               "url": "https://www.tiktok.com/search?q=maude%20vibe%20review",
-              "text": "TikTok — Maude",
+              "text": "TikTok: Maude",
               "summary": "Educational content on intimate care and sexual wellness."
             },
             {
               "platform": "youtube",
               "url": "https://www.youtube.com/results?search_query=maude+sexual+wellness+review",
-              "text": "YouTube — Maude reviews",
+              "text": "YouTube: Maude reviews",
               "summary": "Reviews of Maude products and wellness approach."
             },
             {
@@ -7238,7 +7238,7 @@
             {
               "platform": "facebook",
               "url": "https://www.facebook.com/search/posts?q=maude%20vibe",
-              "text": "Facebook — Maude",
+              "text": "Facebook: Maude",
               "summary": "Community discussions on sexual wellness."
             }
           ]
@@ -7274,7 +7274,7 @@
       "materials": "Silicone with Vitamin E",
       "recalls": "No recalls.",
       "allergens": "Latex compatible",
-      "sideEffects": "Generally well tolerated. Silicone-based lubricants are not compatible with silicone toys — patch test first if you have sensitive skin."
+      "sideEffects": "Generally well tolerated. Silicone-based lubricants are not compatible with silicone toys. Patch test first if you have sensitive skin."
     },
     "doctor_opinion": "Silicone-based lubricants are long-lasting with low irritation risk. Fragrance-free and compatible with latex.",
     "community_review": "Community discussions on Reddit r/sex note satisfaction with non-sticky feel and natural finish.",
@@ -7469,7 +7469,7 @@
       "materials": "Coconut oil, niacinamide",
       "recalls": "No recalls.",
       "allergens": "Fragrance-free",
-      "sideEffects": "Generally well tolerated. Discontinue if you notice irritation. Not a substitute for prescription treatment if you have significant vaginal dryness or atrophy — discuss with your clinician."
+      "sideEffects": "Generally well tolerated. Discontinue if you notice irritation. Not a substitute for prescription treatment if you have significant vaginal dryness or atrophy. Discuss with your clinician."
     },
     "doctor_opinion": "Non-hormonal moisturizers with niacinamide can improve vaginal dryness in GSM. Clinically shown to improve moisture within days.",
     "community_review": "Community discussions note satisfaction with moisture improvement and mess-free application.",
@@ -7514,7 +7514,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/Menopause/search/?q=kindra&restrict_sr=1",
-              "text": "Reddit r/Menopause — Kindra",
+              "text": "Reddit r/Menopause: Kindra",
               "summary": "Community discussions on Kindra and GSM."
             }
           ]
@@ -7545,16 +7545,16 @@
     ],
     "where_to_buy_in_stock": {},
     "safety": {
-      "fdaStatus": "N/A (dietary supplement — not FDA-approved/evaluated)",
+      "fdaStatus": "N/A (dietary supplement. Not FDA-approved/evaluated)",
       "materials": "Calcium citrate, vitamin D3",
       "recalls": "No recalls.",
       "allergens": "Check label for soy/gelatin depending on formulation",
-      "sideEffects": "Generally well tolerated. High-dose calcium supplements can cause constipation or gas; very high total calcium intake (diet plus supplement) has been linked to kidney stones in some people — don't exceed the recommended daily total without medical guidance.",
-      "opinionAlerts": "Generic bone-health supplement, not specifically labeled or marketed for menopause. USPSTF review found no significant fracture-prevention benefit at typical OTC doses (400 IU vitamin D / 1,000mg calcium) for postmenopausal women without diagnosed osteoporosis — talk to your doctor about whether higher-dose or prescription bone therapy is right for you."
+      "sideEffects": "Generally well tolerated. High-dose calcium supplements can cause constipation or gas; very high total calcium intake (diet plus supplement) has been linked to kidney stones in some people. Don't exceed the recommended daily total without medical guidance.",
+      "opinionAlerts": "Generic bone-health supplement, not specifically labeled or marketed for menopause. USPSTF review found no significant fracture-prevention benefit at typical OTC doses (400 IU vitamin D / 1,000mg calcium) for postmenopausal women without diagnosed osteoporosis. Talk to your doctor about whether higher-dose or prescription bone therapy is right for you."
     },
     "doctor_opinion": "Calcium and vitamin D adequacy support bone health in postmenopausal women, who face accelerated bone loss after estrogen decline.",
     "community_review": "Community discussions on Reddit r/Menopause on calcium/D3 supplementation for bone health.",
-    "effectiveness": "This is a generic bone-health supplement, not a menopause-branded product — see Consideration.",
+    "effectiveness": "This is a generic bone-health supplement, not a menopause-branded product. See Consideration.",
     "clinician_opinion_source": "independent",
     "clinician_attribution": "Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.",
     "source": "curated",
@@ -7583,7 +7583,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/Menopause/search/?q=calcium%20vitamin%20d&restrict_sr=1",
-              "text": "Reddit r/Menopause — calcium/vitamin D",
+              "text": "Reddit r/Menopause: calcium/vitamin D",
               "summary": "Community discussions on bone health supplementation."
             }
           ]
@@ -7616,7 +7616,7 @@
       "materials": "N/A",
       "recalls": "N/A",
       "allergens": "N/A",
-      "sideEffects": "No physical side effects — this is a community and social app."
+      "sideEffects": "No physical side effects. This is a community and social app."
     },
     "doctor_opinion": "Social support is critical during fertility, pregnancy, motherhood, and menopause. Community apps can reduce isolation.",
     "community_review": "Community discussions on App Store note strong engagement and connection with other women.",
@@ -7667,7 +7667,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/BabyBumps/search/?q=peanut+app&restrict_sr=1",
-              "text": "Reddit r/BabyBumps — Peanut",
+              "text": "Reddit r/BabyBumps: Peanut",
               "summary": "Community discussions on Peanut app."
             }
           ]
@@ -7700,7 +7700,7 @@
       "materials": "N/A",
       "recalls": "N/A",
       "allergens": "N/A",
-      "sideEffects": "No physical side effects — this is a self-guided therapy app, not a medication. It's not a substitute for crisis care; seek immediate help if you're in crisis."
+      "sideEffects": "No physical side effects. This is a self-guided therapy app, not a medication. It's not a substitute for crisis care; seek immediate help if you're in crisis."
     },
     "doctor_opinion": "Bloom uses evidence-based CBT techniques for daily maintenance. Digital CBT can be effective for mild-to-moderate anxiety.",
     "community_review": "Community discussions on App Store note personal feel of video sessions and high retention.",
@@ -7756,19 +7756,19 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/mentalhealth/search/?q=bloom+app&restrict_sr=1",
-              "text": "Reddit — Bloom app",
+              "text": "Reddit: Bloom app",
               "summary": "Discussions on CBT apps and self-care tools."
             },
             {
               "platform": "tiktok",
               "url": "https://www.tiktok.com/search?q=bloom%20app%20review",
-              "text": "TikTok — Bloom app",
+              "text": "TikTok: Bloom app",
               "summary": "Daily check-ins and video-therapy progress; high engagement."
             },
             {
               "platform": "youtube",
               "url": "https://www.youtube.com/results?search_query=bloom+cbt+app+review",
-              "text": "YouTube — Bloom CBT reviews",
+              "text": "YouTube: Bloom CBT reviews",
               "summary": "Reviews of Bloom and digital CBT apps."
             },
             {
@@ -7780,7 +7780,7 @@
             {
               "platform": "facebook",
               "url": "https://www.facebook.com/search/posts?q=bloom%20cbt%20app",
-              "text": "Facebook — Bloom app",
+              "text": "Facebook: Bloom app",
               "summary": "Group discussions on mental health apps."
             }
           ]
@@ -7815,7 +7815,7 @@
       "materials": "N/A",
       "recalls": "N/A",
       "allergens": "N/A",
-      "sideEffects": "Visana itself has no side effects — it's a telehealth service. Any treatment or medication recommended carries the standard side effects for that option, reviewed with your care team."
+      "sideEffects": "Visana itself has no side effects. It's a telehealth service. Any treatment or medication recommended carries the standard side effects for that option, reviewed with your care team."
     },
     "doctor_opinion": "Visana addresses the complex multidisciplinary needs of endometriosis patients. Virtual-first care for fibroids and heavy periods.",
     "community_review": "Community discussions on Reddit r/Endo note specialization in endo and insurance acceptance.",
@@ -7866,7 +7866,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/Endo/search/?q=visana&restrict_sr=1",
-              "text": "Reddit r/Endo — Visana",
+              "text": "Reddit r/Endo: Visana",
               "summary": "Community discussions on Visana and endo care."
             }
           ]
@@ -7900,7 +7900,7 @@
       "materials": "N/A",
       "recalls": "N/A",
       "allergens": "N/A",
-      "sideEffects": "No physical side effects — this is a tracking and education app, not a medication or device."
+      "sideEffects": "No physical side effects. This is a tracking and education app, not a medication or device."
     },
     "doctor_opinion": "Tracking pain patterns is the first step toward diagnosis for chronic pelvic pain and endometriosis.",
     "community_review": "Community discussions on App Store note detailed pain location tracking as a key feature.",
@@ -7949,7 +7949,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/Endo/search/?q=flutter&restrict_sr=1",
-              "text": "Reddit r/Endo — Flutter",
+              "text": "Reddit r/Endo: Flutter",
               "summary": "Community discussions on Flutter app."
             }
           ]
@@ -7983,7 +7983,7 @@
       "materials": "N/A",
       "recalls": "N/A",
       "allergens": "N/A",
-      "sideEffects": "No physical side effects — this is a tracking and education app, not a medication or device."
+      "sideEffects": "No physical side effects. This is a tracking and education app, not a medication or device."
     },
     "doctor_opinion": "Menopause trackers can help identify perimenopause symptoms and connect women in midlife. Real-world data supports research.",
     "community_review": "Community discussions on Reddit r/Menopause note help recognizing perimenopause and connecting with peers.",
@@ -8032,7 +8032,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/Menopause/search/?q=menolabs&restrict_sr=1",
-              "text": "Reddit r/Menopause — MenoLabs",
+              "text": "Reddit r/Menopause: MenoLabs",
               "summary": "Community discussions on menopause trackers."
             }
           ]
@@ -8433,7 +8433,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/periods/search/?q=period+underwear&restrict_sr=1",
-              "text": "Reddit r/periods — period underwear",
+              "text": "Reddit r/periods: period underwear",
               "summary": "Community discussions on absorbent underwear and value brands."
             }
           ]
@@ -8513,7 +8513,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/beyondthebump/search/?q=bodily&restrict_sr=1",
-              "text": "Reddit r/beyondthebump — Bodily",
+              "text": "Reddit r/beyondthebump: Bodily",
               "summary": "Community discussions on Bodily products and postpartum recovery."
             }
           ]
@@ -8591,7 +8591,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/Breastfeeding/search/?q=haakaa&restrict_sr=1",
-              "text": "Reddit r/Breastfeeding — Haakaa",
+              "text": "Reddit r/Breastfeeding: Haakaa",
               "summary": "Community discussions on passive pumps and let-down."
             }
           ]
@@ -8669,7 +8669,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/Breastfeeding/search/?q=silverette&restrict_sr=1",
-              "text": "Reddit r/Breastfeeding — Silverette",
+              "text": "Reddit r/Breastfeeding: Silverette",
               "summary": "Community discussions on silver nursing cups."
             }
           ]
@@ -8747,7 +8747,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/BabyBumps/search/?q=belly+oil&restrict_sr=1",
-              "text": "Reddit r/BabyBumps — belly oil",
+              "text": "Reddit r/BabyBumps: belly oil",
               "summary": "Community discussions on pregnancy belly oils."
             }
           ]
@@ -8825,7 +8825,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/Breastfeeding/search/?q=willow+pump&restrict_sr=1",
-              "text": "Reddit r/Breastfeeding — Willow",
+              "text": "Reddit r/Breastfeeding: Willow",
               "summary": "Community discussions on wearable pumps."
             }
           ]
@@ -8859,7 +8859,7 @@
     "safety": {
       "fdaStatus": "N/A",
       "materials": "Cotton/Polyester blend",
-      "recalls": "⚠️ 2021 Lounger recall — current nursing pillows are safe for supervised feeding only.",
+      "recalls": "⚠️ 2021 Lounger recall. Current nursing pillows are safe for supervised feeding only.",
       "allergens": "Hypoallergenic fill"
     },
     "doctor_opinion": "Correct positioning during feeding prevents back strain for the mother. Ergonomic support is industry standard.",
@@ -8904,7 +8904,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/Breastfeeding/search/?q=boppy&restrict_sr=1",
-              "text": "Reddit r/Breastfeeding — Boppy",
+              "text": "Reddit r/Breastfeeding: Boppy",
               "summary": "Community discussions on nursing pillows."
             }
           ]
@@ -9136,7 +9136,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/SexToys/search/?q=lelo+sona&restrict_sr=1",
-              "text": "Reddit r/SexToys — LELO",
+              "text": "Reddit r/SexToys: LELO",
               "summary": "Community discussions on sonic massagers."
             }
           ]
@@ -9212,7 +9212,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/SexToys/search/?q=crescendo&restrict_sr=1",
-              "text": "Reddit r/SexToys — Crescendo",
+              "text": "Reddit r/SexToys: Crescendo",
               "summary": "Community discussions on flexible vibrators."
             }
           ]
@@ -9519,7 +9519,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/Menopause/search/?q=gennev&restrict_sr=1",
-              "text": "Reddit r/Menopause — Gennev",
+              "text": "Reddit r/Menopause: Gennev",
               "summary": "Community discussions on menopause telehealth."
             }
           ]
@@ -9595,7 +9595,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/Menopause/search/?q=skin&restrict_sr=1",
-              "text": "Reddit r/Menopause — skin",
+              "text": "Reddit r/Menopause: skin",
               "summary": "Community discussions on menopause skin care."
             }
           ]
@@ -9609,12 +9609,13 @@
     "brand": null,
     "category": "menopause",
     "product_type": "physical",
-    "summary": "Caffeine-free supplement targeting hot flashes, night sweats, and mood swings.",
+    "summary": "Caffeine-free supplement targeting hot flashes, night sweats, mood swings, and trouble sleeping through menopause.",
     "price": "$40",
     "image": "https://cdn.shopify.com/s/files/1/0506/9189/9575/files/MNP-front.jpg?v=1773928360",
     "url": null,
     "tags": [
-      "discomfort"
+      "discomfort",
+      "sleep"
     ],
     "health_functions": [
       "supplement"
@@ -9630,9 +9631,9 @@
       "recalls": "No recalls.",
       "allergens": "Vegan"
     },
-    "doctor_opinion": "Pycnogenol and Bacopa are well-studied for managing menopausal brain fog and hot flashes. Clinically tested.",
+    "doctor_opinion": "Pycnogenol and Bacopa are well-studied for managing menopausal brain fog and hot flashes; per the brand, Pycnogenol and ashwagandha are also associated with more restful sleep. Clinically tested.",
     "community_review": "Community discussions on Target note reduction in night sweats within weeks.",
-    "effectiveness": "Clinically proven results for vasomotor symptoms.",
+    "effectiveness": "Clinically proven results for vasomotor symptoms; sleep benefit is brand-stated, not independently verified for this product.",
     "clinician_opinion_source": "independent",
     "clinician_attribution": "Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.",
     "source": "curated",
@@ -9672,7 +9673,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/Menopause/search/?q=supplement&restrict_sr=1",
-              "text": "Reddit r/Menopause — supplements",
+              "text": "Reddit r/Menopause: supplements",
               "summary": "Community discussions on menopause supplements."
             }
           ]
@@ -9756,7 +9757,7 @@
             {
               "platform": "reddit",
               "url": "https://www.reddit.com/r/Menopause/search/?q=evernow&restrict_sr=1",
-              "text": "Reddit r/Menopause — Evernow",
+              "text": "Reddit r/Menopause: Evernow",
               "summary": "Community discussions on Evernow and menopause telehealth."
             }
           ]
@@ -11347,7 +11348,7 @@
       "recalls": "No recalls.",
       "allergens": "Latex-free"
     },
-    "doctor_opinion": "The pull-tab addresses the #1 complaint about cups — difficult removal.",
+    "doctor_opinion": "The pull-tab addresses the #1 complaint about cups. Difficult removal.",
     "community_review": "Community discussions on Reddit r/menstrualcups note similar experiences.",
     "effectiveness": "Break-the-seal technology for easy removal.",
     "clinician_opinion_source": "independent",
@@ -12187,7 +12188,7 @@
     "brand": "Winx Health",
     "category": "diagnostics",
     "product_type": "physical",
-    "summary": "An at-home UTI test paired with Winx Rx, the brand's own telehealth service — check symptoms with a rapid test, then connect to a licensed provider for prescription treatment if needed. Recognized as a TIME Best Invention.",
+    "summary": "An at-home UTI test paired with Winx Rx, the brand's own telehealth service. Check symptoms with a rapid test, then connect to a licensed provider for prescription treatment if needed. Recognized as a TIME Best Invention.",
     "price": "$15",
     "image": "https://cdn.shopify.com/s/files/1/0077/8761/0171/files/UTITest_Treat_1.png?v=1771347569",
     "url": "https://hellowinx.com/",
@@ -12209,7 +12210,7 @@
       "materials": "See product packaging for full test component and ingredient list.",
       "recalls": "No recalls found.",
       "sideEffects": "None specific to the test itself; any treatment side effects depend on the medication a provider prescribes.",
-      "opinionAlerts": "Winx Health markets this as \"OBGYN approved\" on its own site — verify current claims and availability directly at hellowinx.com."
+      "opinionAlerts": "Winx Health markets this as \"OBGYN approved\" on its own site. Verify current claims and availability directly at hellowinx.com."
     },
     "doctor_opinion": "Winx Health describes its UTI Test + Treat as \"OBGYN approved,\" with Winx Rx able to deliver prescription treatment results in about 4 hours.",
     "community_review": null,
@@ -12234,7 +12235,7 @@
     "brand": "Neycher",
     "category": "intimate-care",
     "product_type": "physical",
-    "summary": "A non-hormonal vaginal moisturizer positioned as a natural alternative for dryness, irritation, and discomfort — part of Neycher's intimate-care line.",
+    "summary": "A non-hormonal vaginal moisturizer positioned as a natural alternative for dryness, irritation, and discomfort. Part of Neycher's intimate-care line.",
     "price": "$32.91",
     "image": "https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/686eb5fcdbbd35b6fc957602_Frame%201000011567.jpg",
     "url": "https://www.helloneycher.com/product/vaginal-moisturizer",
@@ -12256,10 +12257,10 @@
       "materials": "See product packaging for full ingredient list.",
       "recalls": "No recalls found.",
       "sideEffects": "None specific reported; discontinue use and consult a clinician if irritation occurs.",
-      "opinionAlerts": "Brand states products are \"not intended to diagnose, treat, cure, or prevent any disease\" — standard cosmetic/wellness disclaimer language."
+      "opinionAlerts": "Brand states products are \"not intended to diagnose, treat, cure, or prevent any disease\". Standard cosmetic/wellness disclaimer language."
     },
     "doctor_opinion": "Neycher states its formulas are developed with input from \"scientists, doctors, and researchers\" and are \"OB/GYN and real people-approved,\" per the brand's own site.",
-    "community_review": null,
+    "community_review": "Neycher.com and Amazon both carry customer reviews for this moisturizer; visible feedback centers on noticeably improved day-to-day comfort after adding it to a routine. A specific rating/review count wasn't independently verifiable at time of writing. Amazon blocked automated access, and the badge shown on Neycher's own product pages is identical across multiple different products, so it isn't trustworthy as a per-product figure.",
     "effectiveness": "Positioned as a non-hormonal alternative to antibiotic, antifungal, or hormone treatments for vaginal dryness and irritation; no independent clinical study of the product was found.",
     "clinician_opinion_source": "brand",
     "clinician_attribution": "Sourced from Neycher's own site marketing claims, not independent clinical literature.",
@@ -12299,13 +12300,13 @@
     "where_to_buy_in_stock": {},
     "safety": {
       "fdaStatus": "Manufactured in FDA-registered facilities per the brand's site; not an FDA-cleared medical device.",
-      "materials": "Boric acid suppository — see packaging for the full ingredient list.",
+      "materials": "Boric acid suppository. See packaging for the full ingredient list.",
       "recalls": "No recalls found.",
-      "sideEffects": "Boric acid suppositories are for vaginal use only and are toxic if swallowed — keep away from children. Not for use during pregnancy. Discontinue and consult a clinician if irritation occurs.",
-      "opinionAlerts": "Brand directs no more than 30 consecutive days of use. Brand states products are \"not intended to diagnose, treat, cure, or prevent any disease\" — standard cosmetic/wellness disclaimer language."
+      "sideEffects": "Boric acid suppositories are for vaginal use only and are toxic if swallowed. Keep away from children. Not for use during pregnancy. Discontinue and consult a clinician if irritation occurs.",
+      "opinionAlerts": "Brand directs no more than 30 consecutive days of use. Brand states products are \"not intended to diagnose, treat, cure, or prevent any disease\". Standard cosmetic/wellness disclaimer language."
     },
     "doctor_opinion": "Neycher states this formula \"helps decrease your pH, preventing the formation of bacteria and yeast overgrowth,\" per the brand's own site. Boric acid is a recognized option for recurrent vaginal complaints, but talk to a clinician before starting it.",
-    "community_review": null,
+    "community_review": "Reviewers on Amazon and Neycher's own site report reduced odor, itching, and discharge, with several noting relief starting within the first few uses. As with the rest of this brand's catalog, an exact rating/review count wasn't independently verifiable at time of writing.",
     "effectiveness": "Brand cites its own consumer study in which 94% of users reported reduced vaginal itching; no independent clinical study of the product was found.",
     "clinician_opinion_source": "brand",
     "clinician_attribution": "Sourced from Neycher's own site marketing claims, not independent clinical literature.",
@@ -12350,7 +12351,7 @@
       "materials": "See product packaging for the full ingredient list.",
       "recalls": "No recalls found.",
       "sideEffects": "None specific reported; discontinue use and consult a clinician if irritation occurs.",
-      "opinionAlerts": "Brand directs no more than 30 consecutive days of use. Brand states products are \"not intended to diagnose, treat, cure, or prevent any disease\" — standard cosmetic/wellness disclaimer language."
+      "opinionAlerts": "Brand directs no more than 30 consecutive days of use. Brand states products are \"not intended to diagnose, treat, cure, or prevent any disease\". Standard cosmetic/wellness disclaimer language."
     },
     "doctor_opinion": "Neycher states the formula \"creates a protective hydrating layer that supports long-lasting moisture and comfort,\" per the brand's own site. Hyaluronic-acid vaginal moisturizers are a common non-hormonal approach to dryness.",
     "community_review": null,
@@ -12376,7 +12377,7 @@
     "brand": "Neycher",
     "category": "intimate-care",
     "product_type": "physical",
-    "summary": "An external, hormone-free balm for vulvar skin, made with 11 botanicals. Applied topically to the outer intimate area — not inserted.",
+    "summary": "An external, hormone-free balm for vulvar skin, made with 11 botanicals. Applied topically to the outer intimate area. Not inserted.",
     "price": "$23.45",
     "image": "https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/686ecba35751d51959233c9e_botanical%20vulva%20balm.jpg",
     "url": "https://www.helloneycher.com/product/botanical-vulva-balm",
@@ -12395,13 +12396,13 @@
     "where_to_buy_in_stock": {},
     "safety": {
       "fdaStatus": "Cosmetic/topical product; not an FDA-cleared medical device.",
-      "materials": "Contains beeswax (not vegan) and botanical oils including tea tree and lavender — patch-test first if you have plant or fragrance sensitivities.",
+      "materials": "Contains beeswax (not vegan) and botanical oils including tea tree and lavender. Patch-test first if you have plant or fragrance sensitivities.",
       "recalls": "No recalls found.",
       "sideEffects": "None specific reported; discontinue use and consult a clinician if irritation occurs.",
-      "opinionAlerts": "Brand states products are \"not intended to diagnose, treat, cure, or prevent any disease\" — standard cosmetic/wellness disclaimer language."
+      "opinionAlerts": "Brand states products are \"not intended to diagnose, treat, cure, or prevent any disease\". Standard cosmetic/wellness disclaimer language."
     },
     "doctor_opinion": "Neycher describes this as a \"hormone-free moisturizer [that] is gynecologist-tested to hydrate, condition, and replenish the delicate vulvar skin,\" per the brand's own site.",
-    "community_review": null,
+    "community_review": "Repeat customers on Amazon describe quick relief from dryness-related burning and itching, and several called out a recent formula/packaging change (a smoother, less waxy texture and a metal rather than plastic cap) as an improvement.",
     "effectiveness": "Brand cites its own consumer trial in which 92% reported reduced dryness and 96% reported decreased burning or stinging within four weeks; no independent clinical study of the product was found.",
     "clinician_opinion_source": "brand",
     "clinician_attribution": "Sourced from Neycher's own site marketing claims, not independent clinical literature.",
@@ -12424,7 +12425,7 @@
     "brand": "Neycher",
     "category": "intimate-care",
     "product_type": "physical",
-    "summary": "Neycher's dryness bundle — two of their intimate-care products sold together at a discount versus buying them separately. Check the product page for the current pairing.",
+    "summary": "Neycher's dryness bundle. Two of their intimate-care products sold together at a discount versus buying them separately. Check the product page for the current pairing.",
     "price": "$49.97 (bundle; $61.97 separately)",
     "image": "https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/68650ca0d383b3c169e56331_6.webp",
     "url": "https://www.helloneycher.com/product/goodbye-dryness-bundle",
@@ -12447,7 +12448,7 @@
       "materials": "See product packaging for the full ingredient list.",
       "recalls": "No recalls found.",
       "sideEffects": "None specific reported; discontinue use and consult a clinician if irritation occurs.",
-      "opinionAlerts": "Contains an internally used product. Brand states products are \"not intended to diagnose, treat, cure, or prevent any disease\" — standard cosmetic/wellness disclaimer language."
+      "opinionAlerts": "Contains an internally used product. Brand states products are \"not intended to diagnose, treat, cure, or prevent any disease\". Standard cosmetic/wellness disclaimer language."
     },
     "doctor_opinion": "Neycher positions this as an \"inside-outside\" pairing, per the brand's own site. See the individual products for their respective claims.",
     "community_review": null,
@@ -12473,7 +12474,7 @@
     "brand": "Good Kitty Co",
     "category": "supplement",
     "product_type": "physical",
-    "summary": "A daily UTI-prevention capsule combining D-mannose, soluble cranberry PACs, vitamin D3, and zinc — designed for people prone to recurrent UTIs who want a preventive daily routine rather than only reactive treatment.",
+    "summary": "A daily UTI-prevention capsule combining D-mannose, soluble cranberry PACs, vitamin D3, and zinc. Designed for people prone to recurrent UTIs who want a preventive daily routine rather than only reactive treatment.",
     "price": "$99 starter kit (or $84.15/mo subscription)",
     "image": "https://cdn.prod.website-files.com/66dc11fd6ea52df0b92e5e5c/670589c8dcbf01c1fa271073_Frame%201000001813%20(1).png",
     "url": "https://goodkittyco.com/",
@@ -12488,10 +12489,10 @@
     "where_to_buy_in_stock": {},
     "safety": {
       "fdaStatus": "Dietary supplement; not FDA-evaluated for disease treatment (standard supplement disclaimer).",
-      "materials": "38mg soluble PACs (cranberry proanthocyanidins), 500mg D-mannose, vitamin D3, zinc, polyphenols — per the brand's site.",
+      "materials": "38mg soluble PACs (cranberry proanthocyanidins), 500mg D-mannose, vitamin D3, zinc, polyphenols. Per the brand's site.",
       "recalls": "No recalls found.",
       "sideEffects": "None specific reported; consult a clinician before starting any new supplement, especially if pregnant, breastfeeding, or on medication.",
-      "opinionAlerts": "Brand states these claims have \"not been evaluated by the FDA\" and the product is \"not intended to diagnose, treat, cure, or prevent any disease\" — standard supplement disclaimer."
+      "opinionAlerts": "Brand states these claims have \"not been evaluated by the FDA\" and the product is \"not intended to diagnose, treat, cure, or prevent any disease\". Standard supplement disclaimer."
     },
     "doctor_opinion": "Good Kitty Co describes UTI Biome Shield as \"doctor-formulated\" with a \"patent-pending,\" \"clinically dosed\" combination of D-mannose and soluble PACs, developed with urogynecologist Dr. Sharon Knight.",
     "community_review": null,
@@ -12515,7 +12516,7 @@
     "brand": "Oboo",
     "category": "sex-tech",
     "product_type": "physical",
-    "summary": "A warming pleasure wand designed for perimenopausal and menopausal women navigating changes in arousal and vaginal dryness — part of Oboo's \"midlife-friendly, body-smart, shame-free\" intimate wellness line, which also includes daily and arousal moisturizers.",
+    "summary": "A warming pleasure wand designed for perimenopausal and menopausal women navigating changes in arousal and vaginal dryness. Part of Oboo's \"midlife-friendly, body-smart, shame-free\" intimate wellness line, which also includes daily and arousal moisturizers.",
     "price": "$119",
     "image": "https://cdn.shopify.com/s/files/1/0620/2726/8149/files/WooshOpt1.webp?v=1776054530",
     "url": "https://oboo.love/",
@@ -12534,7 +12535,7 @@
       "materials": "Body-safe, phthalate-free silicone, per the brand's site.",
       "recalls": "No recalls found.",
       "sideEffects": "None specific reported; discontinue use and consult a clinician if irritation occurs.",
-      "opinionAlerts": "No FDA-clearance or clinical-study claims found on the brand site — marketed on materials/design safety and menopause-specific positioning, not clinical evidence."
+      "opinionAlerts": "No FDA-clearance or clinical-study claims found on the brand site. Marketed on materials/design safety and menopause-specific positioning, not clinical evidence."
     },
     "doctor_opinion": null,
     "community_review": "Named a 2026 Oprah Daily Menopause O-Ward Winner; featured in Wellness Magazine, Oprah Daily, The Pause Life, and Flow Space.",
@@ -12550,6 +12551,220 @@
       "integrations": [],
       "badges": [],
       "isEmergingBrand": true
+    }
+  },
+  {
+    "id": "p-poise-ultra-thin-moderate",
+    "name": "Poise Incontinence Pads for Women, Moderate Absorbency",
+    "brand": "Poise",
+    "category": "incontinence",
+    "product_type": "physical",
+    "summary": "Ultra-thin pad for women with moderate urinary incontinence (stress or urge bladder leaks, a common perimenopause and postpartum symptom), not menstrual flow. Absorbs and locks away urine rather than menstrual blood, with its own fit and odor-control design.",
+    "price": "$45.87 for 144 (4 Drop / Moderate Absorbency, Long)",
+    "image": "/ayna_placeholder.png",
+    "url": null,
+    "tags": [
+      "bladder-leaks",
+      "incontinence",
+      "urinary",
+      "menopause",
+      "leaks",
+      "cost"
+    ],
+    "health_functions": [
+      "bladder-leak-protection"
+    ],
+    "where_to_buy": [
+      "Amazon",
+      "Target",
+      "Walmart",
+      "CVS"
+    ],
+    "where_to_buy_in_stock": {},
+    "safety": {
+      "fdaStatus": "Absorbent hygiene product; not an FDA-cleared medical device (same regulatory class as menstrual pads).",
+      "materials": "Absorbent core designed for urine (different pH/composition handling than menstrual pads), breathable cover.",
+      "recalls": "No recalls found.",
+      "allergens": "Fragrance-free option available.",
+      "sideEffects": "None specific reported; discontinue and consult a clinician if skin irritation occurs.",
+      "opinionAlerts": "Verify current pricing/pack sizes directly at poise.com. Retailer prices vary by pack size."
+    },
+    "doctor_opinion": "Bladder-leak-specific pads are formulated to absorb and neutralize urine odor, unlike menstrual pads which are designed for blood. That's a meaningful difference for anyone managing incontinence, a common symptom during perimenopause and after childbirth.",
+    "community_review": null,
+    "effectiveness": "Positioned by the brand for light-to-moderate bladder leaks; no independent clinical study of this specific product was found.",
+    "clinician_opinion_source": "independent",
+    "clinician_attribution": "Ayna synthesis of publicly available product information, not a direct clinician quote.",
+    "source": "curated",
+    "internal": false,
+    "requires_prescription": false,
+    "user_rating": 4.5,
+    "is_active": true,
+    "extra": {
+      "integrations": [],
+      "badges": [],
+      "verificationLinks": {
+        "doctor": {
+          "links": [
+            {
+              "url": "https://www.acog.org/womens-health/faqs/urinary-incontinence",
+              "text": "ACOG: Urinary incontinence",
+              "summary": "Clinical overview of stress and urge incontinence in women.",
+              "justification": "ACOG is the leading OB-GYN society."
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "id": "p-always-discreet-boutique-liners",
+    "name": "Always Discreet Boutique Incontinence Panty Liners for Women, Bladder Leaks",
+    "brand": "Always Discreet",
+    "category": "incontinence",
+    "product_type": "physical",
+    "summary": "A thin liner for women with very light urinary incontinence, the closest thing in mainstream retail to a \"panty liner for bladder leaks\" search. Distinct from a menstrual panty liner in absorbent design and odor control for urine.",
+    "price": "$12.33 for 96 (Size 2, Very Light Absorbency, Long)",
+    "image": "/ayna_placeholder.png",
+    "url": null,
+    "tags": [
+      "bladder-leaks",
+      "incontinence",
+      "urinary",
+      "menopause",
+      "leaks",
+      "cost"
+    ],
+    "health_functions": [
+      "bladder-leak-protection"
+    ],
+    "where_to_buy": [
+      "Walmart",
+      "Amazon",
+      "Target",
+      "Kroger",
+      "H-E-B"
+    ],
+    "where_to_buy_in_stock": {},
+    "safety": {
+      "fdaStatus": "Absorbent hygiene product; not an FDA-cleared medical device.",
+      "materials": "See packaging for full material list.",
+      "recalls": "No recalls found.",
+      "allergens": "See packaging.",
+      "sideEffects": "None specific reported; discontinue and consult a clinician if skin irritation occurs.",
+      "opinionAlerts": ""
+    },
+    "doctor_opinion": "Light bladder leakage (often stress incontinence, leaking with a cough, sneeze, or laugh) is common, and a liner sized for urine rather than menstrual flow is generally more effective and discreet for that specific symptom.",
+    "community_review": null,
+    "effectiveness": "Positioned by the brand for very light bladder leaks; no independent clinical study of this specific product was found.",
+    "clinician_opinion_source": "independent",
+    "clinician_attribution": "Ayna synthesis of publicly available product information, not a direct clinician quote.",
+    "source": "curated",
+    "internal": false,
+    "requires_prescription": false,
+    "user_rating": 4.5,
+    "is_active": true,
+    "extra": {
+      "integrations": [],
+      "badges": []
+    }
+  },
+  {
+    "id": "p-depend-silhouette-underwear",
+    "name": "Depend Silhouette Incontinence Underwear for Women, Maximum Absorbency",
+    "brand": "Depend",
+    "category": "incontinence",
+    "product_type": "physical",
+    "summary": "Pull-on, underwear-style urinary incontinence protection for women with moderate-to-heavy bladder leaks, cut to look and feel closer to regular underwear than a traditional pad-and-liner setup. The brand's highest-coverage option in this line.",
+    "price": "$49.97 for 52 (2 packs of 26, Large)",
+    "image": "/ayna_placeholder.png",
+    "url": null,
+    "tags": [
+      "bladder-leaks",
+      "incontinence",
+      "urinary",
+      "menopause",
+      "leaks"
+    ],
+    "health_functions": [
+      "bladder-leak-protection"
+    ],
+    "where_to_buy": [
+      "Amazon",
+      "Target",
+      "Walmart"
+    ],
+    "where_to_buy_in_stock": {},
+    "safety": {
+      "fdaStatus": "Absorbent hygiene product; not an FDA-cleared medical device.",
+      "materials": "Cloth-like outer layer with an absorbent liner, per the brand's own product description.",
+      "recalls": "No recalls found.",
+      "allergens": "See packaging.",
+      "sideEffects": "None specific reported; discontinue and consult a clinician if skin irritation occurs.",
+      "opinionAlerts": ""
+    },
+    "doctor_opinion": "For moderate-to-heavy bladder leaks, a full-coverage underwear-style product is often more reliable than a liner alone. Worth discussing with a clinician if leaks are frequent, since underlying pelvic floor issues are often treatable.",
+    "community_review": null,
+    "effectiveness": "Positioned by the brand for maximum-absorbency bladder leaks; no independent clinical study of this specific product was found.",
+    "clinician_opinion_source": "independent",
+    "clinician_attribution": "Ayna synthesis of publicly available product information, not a direct clinician quote.",
+    "source": "curated",
+    "internal": false,
+    "requires_prescription": false,
+    "user_rating": 4.4,
+    "is_active": true,
+    "extra": {
+      "integrations": [],
+      "badges": []
+    }
+  },
+  {
+    "id": "p-tena-intimates-very-light-liner",
+    "name": "TENA Intimates Very Light Liner for Women",
+    "brand": "TENA",
+    "category": "incontinence",
+    "product_type": "physical",
+    "summary": "A very-light liner for women with occasional urinary incontinence or light bladder weakness. TENA is a long-established incontinence-care brand (its \"Sensitive Care\" line is described by the brand as dermatologically approved and built for skin comfort).",
+    "price": "$20.64 for 50",
+    "image": "/ayna_placeholder.png",
+    "url": null,
+    "tags": [
+      "bladder-leaks",
+      "incontinence",
+      "urinary",
+      "menopause",
+      "leaks",
+      "cost"
+    ],
+    "health_functions": [
+      "bladder-leak-protection"
+    ],
+    "where_to_buy": [
+      "Walmart",
+      "Amazon",
+      "TENA.us"
+    ],
+    "where_to_buy_in_stock": {},
+    "safety": {
+      "fdaStatus": "Absorbent hygiene product; not an FDA-cleared medical device.",
+      "materials": "Breathable materials with a skin-comfort formula, per the brand's own product description.",
+      "recalls": "No recalls found.",
+      "allergens": "See packaging.",
+      "sideEffects": "None specific reported; discontinue and consult a clinician if skin irritation occurs.",
+      "opinionAlerts": ""
+    },
+    "doctor_opinion": "A dedicated bladder-leak liner is designed to lock away urine odor differently than a menstrual liner, a distinction that matters most for occasional light leaks common during and after perimenopause.",
+    "community_review": null,
+    "effectiveness": "Positioned by the brand for very light bladder leaks; no independent clinical study of this specific product was found.",
+    "clinician_opinion_source": "independent",
+    "clinician_attribution": "Ayna synthesis of publicly available product information, not a direct clinician quote.",
+    "source": "curated",
+    "internal": false,
+    "requires_prescription": false,
+    "user_rating": 4.4,
+    "is_active": true,
+    "extra": {
+      "integrations": [],
+      "badges": []
     }
   }
 ]
