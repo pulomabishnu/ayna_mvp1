@@ -1095,12 +1095,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     <button type="button" className="ayna-browse__filter-button" onClick={() => setShowFilters((v) => !v)} aria-expanded={showFilters}>
                         Filters
                     </button>
-                    {recommendedSet.size > 0 && (
-                        <label className="ayna-browse__personalized-toggle">
-                            <input type="checkbox" checked={personalizationFilter} onChange={(e) => setPersonalizationFilter(e.target.checked)} />
-                            <span>Personalized</span>
-                        </label>
-                    )}
+                    <label className="ayna-browse__personalized-toggle">
+                        <input type="checkbox" checked={personalizationFilter} onChange={(e) => setPersonalizationFilter(e.target.checked)} />
+                        <span>Personalized</span>
+                    </label>
                 </div>
                 <label className="ayna-browse__sort">
                     <span>Sort</span>
