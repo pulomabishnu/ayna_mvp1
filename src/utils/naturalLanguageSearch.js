@@ -71,7 +71,15 @@ export function buildIdentityTextForItem(item, categoryLabels = {}) {
 }
 
 function wordMatchesInHaystack(word, haystack) {
-  if (!word || word.length < 2) return false;
+  if (!word) return false;
+  // A single character (vitamin C/D/E/B/K, the "3" in "omega 3") can't use a
+  // plain substring check — haystack.includes('c') matches almost any product
+  // (it's inside "cup", "cream", "clinician"...), which would make the term
+  // meaningless as a distinguishing signal. Require it to appear as its own
+  // token instead.
+  if (word.length === 1) {
+    return new RegExp(`(^|[^a-z0-9])${word}([^a-z0-9]|$)`, 'i').test(haystack);
+  }
   if (haystack.includes(word)) return true;
   if (word.endsWith('s') && word.length > 3 && haystack.includes(word.slice(0, -1))) return true;
   if (!word.endsWith('s') && haystack.includes(`${word}s`)) return true;
@@ -130,7 +138,15 @@ function termMatchesWithVariants(term, haystack) {
  */
 function meaningfulTerms(query) {
   const q = query.toLowerCase().trim().replace(/[^\w\s'-]/g, ' ');
-  return q.split(/\s+/).map((w) => w.replace(/^'+|'+$/g, '')).filter((w) => w.length > 1 && !STOP.has(w));
+  // Single-character tokens used to be dropped outright (w.length > 1), which
+  // silently collapsed "vitamin c" into a bare "vitamin" search — the "c" was
+  // never tokenized at all, so C/D/E/B/K-specific vitamin queries (and things
+  // like "omega 3") couldn't distinguish themselves from the generic term.
+  // Now kept, since wordMatchesInHaystack requires a real word-boundary match
+  // for single characters rather than a substring check — "a"/"i" (the only
+  // single letters that are themselves common noise words) are still caught
+  // by STOP below.
+  return q.split(/\s+/).map((w) => w.replace(/^'+|'+$/g, '')).filter((w) => w.length > 0 && !STOP.has(w));
 }
 
 /**
