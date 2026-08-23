@@ -77,6 +77,54 @@ function resolveEcosystemImage(product) {
   return product?.image;
 }
 
+// Even with the catalog id/name fallback above, a product that's genuinely
+// new (an LLM recommendation for something not anywhere in the static
+// catalog — e.g. "Thorne Iron Bisglycinate", "Brightside Mental Health")
+// has no catalog entry to borrow an image from at all. Discovery.jsx and
+// ProductModal.jsx both already solve this the same way: attempt a live
+// /api/product-image lookup (Shopify match / og:image / DSLD) whenever the
+// image is still a placeholder after the synchronous checks. The ecosystem
+// tile grids never did this — this is that same resolution attempt, reused
+// here so a product's real photo shows up in My Ecosystem exactly as
+// reliably as it already does on the product's own page.
+function EcosystemTileImage({ product, alt = '', imgStyle, imgClassName, letterNode }) {
+  const initial = resolveEcosystemImage(product);
+  const [resolved, setResolved] = useState('');
+  const attemptedRef = useRef(null);
+
+  useEffect(() => {
+    setResolved('');
+    attemptedRef.current = null;
+  }, [product?.id, product?.name]);
+
+  useEffect(() => {
+    if (!product?.name) return;
+    if (!isPlaceholderProductImage(initial)) return;
+    if (attemptedRef.current === product.id) return;
+    attemptedRef.current = product.id;
+    let active = true;
+    resolveProductImage(product.name, product.brand || '', product.url || '').then((url) => {
+      if (active && url) setResolved(url);
+    });
+    return () => { active = false; };
+  }, [initial, product?.id, product?.name, product?.brand, product?.url]);
+
+  const finalSrc = safeProductImageSrc(resolved) || safeProductImageSrc(initial);
+  if (finalSrc) {
+    return (
+      <img
+        src={finalSrc}
+        alt={alt}
+        loading="lazy"
+        className={imgClassName}
+        style={imgStyle}
+        onError={(e) => { e.currentTarget.style.display = 'none'; }}
+      />
+    );
+  }
+  return letterNode;
+}
+
 const AYNA_SMS_NUMBER = import.meta.env.VITE_AYNA_SMS_NUMBER || '';
 const SMS_CARD_DISMISS_KEY = 'ayna_sms_card_dismissed_at';
 const SMS_CARD_RESHOWN_KEY = 'ayna_sms_card_last_reshown_at';
@@ -1850,7 +1898,7 @@ export default function MyEcosystem({
                                         {myProductList.slice(0, 6).map((product) => (
                                             <button type="button" key={product.id} className="eco-overview-product" onClick={() => onOpenProduct?.(product)}>
                                                 <span className="eco-overview-product__image">
-                                                    {safeProductImageSrc(resolveEcosystemImage(product)) ? <img src={safeProductImageSrc(resolveEcosystemImage(product))} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.display = 'none'; }} /> : <b>{String(product.brand || product.name || '?').charAt(0).toUpperCase()}</b>}
+                                                    <EcosystemTileImage product={product} letterNode={<b>{String(product.brand || product.name || '?').charAt(0).toUpperCase()}</b>} />
                                                 </span>
                                                 <span className="eco-overview-product__meta">{CATEGORY_LABELS[product.category] || product.category || 'Product'}</span>
                                                 <strong>{product.name}</strong>
@@ -1904,7 +1952,7 @@ export default function MyEcosystem({
                                                     <div key={product.id} className="eco-details-clean__row">
                                                         <button type="button" className="eco-details-clean__product" onClick={() => onOpenProduct?.(product)}>
                                                             <span className="eco-details-clean__thumb">
-                                                                {safeProductImageSrc(resolveEcosystemImage(product)) ? <img src={safeProductImageSrc(resolveEcosystemImage(product))} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.display = 'none'; }} /> : <b>{String(product.brand || product.name || '?').charAt(0).toUpperCase()}</b>}
+                                                                <EcosystemTileImage product={product} letterNode={<b>{String(product.brand || product.name || '?').charAt(0).toUpperCase()}</b>} />
                                                             </span>
                                                             <span>
                                                                 <strong>{product.name}</strong>
@@ -2223,13 +2271,16 @@ export default function MyEcosystem({
                                                             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpenProduct(product); } }}
                                                         >
                                                             <div style={{ width: '48px', height: '48px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0 }}>
-                                                                {safeProductImageSrc(resolveEcosystemImage(product)) ? (
-                                                                    <img src={safeProductImageSrc(resolveEcosystemImage(product))} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                                                ) : (
-                                                                    <div style={{ width: '100%', height: '100%', background: 'var(--color-secondary-fade)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', fontFamily: 'var(--font-serif)' }}>
-                                                                        {String(product.brand || product.name || '?').trim().charAt(0).toUpperCase()}
-                                                                    </div>
-                                                                )}
+                                                                <EcosystemTileImage
+                                                                    product={product}
+                                                                    alt={product.name}
+                                                                    imgStyle={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                                                    letterNode={(
+                                                                        <div style={{ width: '100%', height: '100%', background: 'var(--color-secondary-fade)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', fontFamily: 'var(--font-serif)' }}>
+                                                                            {String(product.brand || product.name || '?').trim().charAt(0).toUpperCase()}
+                                                                        </div>
+                                                                    )}
+                                                                />
                                                             </div>
                                                             <div style={{ flexGrow: 1, minWidth: 0 }}>
                                                                 <h4 style={{ fontSize: '0.95rem', marginBottom: '0.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>{product.name}{product.outOfBusiness && <span style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-surface-soft)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No longer sold</span>}</h4>
@@ -2410,13 +2461,16 @@ export default function MyEcosystem({
                                         onClick={() => onToggleProduct(product)}
                                     >
                                         <div style={{ width: '40px', height: '40px', borderRadius: 'var(--radius-sm)', overflow: 'hidden', flexShrink: 0 }}>
-                                            {safeProductImageSrc(resolveEcosystemImage(product)) ? (
-                                                <img src={safeProductImageSrc(resolveEcosystemImage(product))} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                            ) : (
-                                                <div style={{ width: '100%', height: '100%', background: 'var(--color-secondary-fade)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem', fontFamily: 'var(--font-serif)' }}>
-                                                    {String(product.brand || product.name || '?').trim().charAt(0).toUpperCase()}
-                                                </div>
-                                            )}
+                                            <EcosystemTileImage
+                                                product={product}
+                                                alt={product.name}
+                                                imgStyle={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                                letterNode={(
+                                                    <div style={{ width: '100%', height: '100%', background: 'var(--color-secondary-fade)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem', fontFamily: 'var(--font-serif)' }}>
+                                                        {String(product.brand || product.name || '?').trim().charAt(0).toUpperCase()}
+                                                    </div>
+                                                )}
+                                            />
                                         </div>
                                         <div style={{ flexGrow: 1, minWidth: 0 }}>
                                             <div style={{ fontSize: '0.9rem', fontWeight: '500', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>{product.name}{product.outOfBusiness && <span style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-surface-soft)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No longer sold</span>}</div>
