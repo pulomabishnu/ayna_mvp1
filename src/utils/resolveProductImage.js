@@ -24,6 +24,12 @@ export function isPlaceholderProductImage(imageUrl) {
   // those products get queued for a real photo via /api/product-image instead of
   // being left on a logo that may 404 and fall back to a generic brand block.
   if (/^https?:\/\/logo\.clearbit\.com\//i.test(src)) return true;
+  // A handful of catalog entries had a site favicon hardcoded as `image`
+  // directly (e.g. intimina.com/.../favicon.ico on the Intimina Kegel
+  // Exerciser) — the exact "tiny icon rendered as product photo" bug found
+  // in QA, just baked into the data instead of coming from the dynamic
+  // resolver's now-removed favicon fallback (see api/_ogImageFetch.js).
+  if (/favicon\.ico(\?|$)/i.test(src)) return true;
   return false;
 }
 

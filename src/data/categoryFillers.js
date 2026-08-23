@@ -7,7 +7,7 @@ export const FILLER_PHYSICAL = [
     // ─── CUPS (Need 1 more to reach 5) ───────────────────
     {
         id: 'p-intimina-lily', name: 'Intimina Lily Cup', category: 'cup', type: 'physical', internal: true, healthFunctions: ['menstrual-collection'], tags: ['heavy-flow', 'comfort', 'sustainability'], price: '$30', userRating: 4.5, whereToBuy: ['Amazon', 'Intimina.com'],
-        image: 'https://www.intimina.com/themes/uhura/favicon.ico',
+        image: '',
         summary: 'The only cup that can be folded as thin as a tampon. Great for users with a high cervix.', safety: { fdaStatus: 'FDA-registered', materials: 'Medical-grade silicone', recalls: 'No recalls.', allergens: 'Latex-free' }, clinicianOpinionSource: 'independent', clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.', doctorOpinion: 'The unique collapsible fold of the Lily Cup suits users with a high cervix or those intimidated by standard cup width.', communityReview: 'Community discussions on Reddit r/menstrualcups note suitability for high cervix and comfortable reach.', ingredients: 'Medical-grade silicone.', effectiveness: 'High capacity, unique collapsible design.', badges: ['Unique Design', 'High Cervix Friendly'],
         verificationLinks: {
             doctor: {
