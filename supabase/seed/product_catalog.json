@@ -37,10 +37,10 @@
       "recalls": "⚠️ 2024 social media concerns about chemical residues. Always has not been subject to FDA recall but independent testing found trace PFAS in some pad brands.",
       "allergens": "Fragrance in scented versions; fragrance-free version available",
       "sideEffects": "Possible contact dermatitis or irritation, especially with scented versions. Rash or itching from synthetic materials.",
-      "opinionAlerts": "Common complaints include the \"plastic feel\" and environmental concerns regarding non-biodegradability."
+      "opinionAlerts": "Common complaints include the \"plastic feel\" and environmental concerns regarding non-biodegradability. A 2024 independent lab test (commissioned by Mamavation/EHN) found PFAS (\"forever chemical\") indicators in some Always pad lines, which drove a wave of social media discussion and pushed a visible share of users toward organic-cotton alternatives — Always disputes that its products pose a health risk, and no regulatory recall has followed, but the concern is real and widely discussed, not fringe."
     },
     "doctor_opinion": "FlexFoam absorption is reliable for heavy flow; unscented versions minimize irritation risk for sensitive users.",
-    "community_review": "Community discussions on Reddit r/periods note strong performance for heavy flow and overnight use, with appreciation for the thin profile.",
+    "community_review": "Community discussions on Reddit r/periods are split: strong praise for absorption and the thin profile during heavy flow, alongside a distinct and growing thread of PFAS/chemical-residue concern that picked up in 2024 and made a real share of users switch to organic-cotton brands or say they no longer feel fully comfortable using it.",
     "effectiveness": "Highly effective for heavy flow. FlexFoam absorbs 10x its weight while staying thin.",
     "clinician_opinion_source": "independent",
     "clinician_attribution": "Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.",
@@ -548,8 +548,8 @@
       "materials": "100% medical-grade silicone, no BPA, latex, dyes, or chemicals",
       "recalls": "No recalls.",
       "allergens": "Latex-free, hypoallergenic",
-      "sideEffects": "Possible cramping from suction, difficulty with insertion/removal, urinary urgency if sized incorrectly.",
-      "opinionAlerts": "Steep learning curve. Users often report a 2-3 cycle adjustment period before mastering the product."
+      "sideEffects": "Possible cramping from suction, difficulty with insertion/removal, urinary urgency if sized incorrectly. Like tampons, menstrual cups carry a rare but medically documented risk of toxic shock syndrome (TSS) — a small number of published case reports exist — so follow labeled wear-time and cleaning instructions.",
+      "opinionAlerts": "Steep learning curve. Users often report a 2-3 cycle adjustment period before mastering the product, and difficulty removing the cup (due to suction) is a recurring complaint that occasionally sends first-time users to urgent care."
     },
     "doctor_opinion": "\"You can't say that menstrual cups are medically better than tampons, but they're a great, valid choice for many women.\". Dr. Jen Gunter, OB-GYN",
     "community_review": "Community discussions on Reddit r/menstrualcups note life-changing experiences and strong performance on heavy days.",
@@ -1858,12 +1858,13 @@
     "safety": {
       "fdaStatus": "FDA-registered",
       "materials": "100% organic cotton",
-      "recalls": "No recalls.",
+      "recalls": "No formal recalls. Note: a 2024 independent lab investigation (Mamavation, using an EPA-certified lab) found organic fluorine — an indicator of PFAS \"forever chemicals\" — at roughly 30 ppm in a Cora organic-cotton liner product, despite the brand's organic marketing. The same investigation found PFAS indicators in about half of tested pad/liner brands, including several other organic ones, while some organic brands tested clean.",
       "allergens": "Hypoallergenic",
-      "sideEffects": "Organic cotton is generally well tolerated with a low rate of skin irritation. Change regularly during heavy flow and discontinue if you notice redness or itching."
+      "sideEffects": "Organic cotton is generally well tolerated with a low rate of skin irritation. Change regularly during heavy flow and discontinue if you notice redness or itching.",
+      "opinionAlerts": "Since the 2024 PFAS lab testing news, some shoppers have expressed concern about organic-marketed pads generally, including Cora, and a subset have shifted toward brands that tested clean."
     },
     "doctor_opinion": "Organic cotton reduces exposure to dyes and fragrances that can irritate sensitive skin.",
-    "community_review": "Community discussions note satisfaction with subscription quality and reduced skin irritation.",
+    "community_review": "Community discussions on Reddit r/periods generally reflect satisfaction with subscription quality and reduced skin irritation, but some users have raised concerns after 2024 independent lab testing (Mamavation) found PFAS indicators in a Cora organic-cotton liner product, prompting a shift among some shoppers toward brands that tested clean.",
     "effectiveness": "Reliable absorption; sustainable choice.",
     "clinician_opinion_source": "independent",
     "clinician_attribution": "Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.",
@@ -1907,6 +1908,12 @@
               "url": "https://www.reddit.com/r/periods/search/?q=organic+pad&restrict_sr=1",
               "text": "Reddit r/periods: organic pads",
               "summary": "Community discussions on organic menstrual products."
+            },
+            {
+              "platform": "other",
+              "url": "https://www.mamavation.com/beauty/pfas-forever-chemicals-sanitary-pads-incontinence-pads.html",
+              "text": "Mamavation: PFAS testing in pads & liners",
+              "summary": "Independent EPA-certified lab testing of sanitary pads and liners for organic fluorine (PFAS indicator), including a Cora liner product."
             }
           ]
         }
@@ -2783,10 +2790,11 @@
       "materials": "N/A",
       "recalls": "N/A",
       "allergens": "N/A",
-      "sideEffects": "Nurx itself has no side effects. It's a telehealth service. Any birth control method it prescribes carries the standard side effects for that method (e.g. spotting, nausea, mood changes), which your clinician reviews with you before you start."
+      "sideEffects": "Nurx itself has no side effects. It's a telehealth service. Any birth control method it prescribes carries the standard side effects for that method (e.g. spotting, nausea, mood changes), which your clinician reviews with you before you start.",
+      "opinionAlerts": "Nurx rates notably lower on independent review platforms (Trustpilot ~3.4/5, BBB customer reviews ~2/5) than the 4.8/5 shown on its own site, with recurring complaints about shipping delays, cancellation difficulty, and insurance billing."
     },
     "doctor_opinion": "Telehealth increases access to contraception. Same safety standards as in-person care.",
-    "community_review": "Community discussions on Reddit r/birthcontrol note convenience and quick delivery.",
+    "community_review": "Community sentiment is mixed. Many Reddit r/birthcontrol users value the convenience of prescription delivery, but independent review platforms show a real gap versus the company's own ratings, with recurring complaints about shipping delays, insurance billing, and cancellation difficulty. A 2019 New York Times report also found Nurx had reshipped previously returned, unopened birth control pills to new customers, a practice the company says it ended in 2018.",
     "effectiveness": "Same efficacy as pharmacy-filled prescriptions.",
     "clinician_opinion_source": "independent",
     "clinician_attribution": "Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.",
@@ -4702,7 +4710,7 @@
       "materials": "Organic Vitex agnus-castus extract",
       "recalls": "No recalls.",
       "allergens": "Vegan, gluten-free",
-      "sideEffects": "Nausea, weight gain, or hormonal breakouts in rare cases. May interact with birth control pills.",
+      "sideEffects": "Nausea, weight gain, or hormonal breakouts in rare cases. May interact with birth control pills, dopamine-related medications, and hormone-sensitive conditions; not recommended during pregnancy or breastfeeding.",
       "opinionAlerts": "Common \"vitex crash\" concerns if stopped abruptly; users recommend tapering off. Very polarizing: works wonders for some and causes flare-ups for others."
     },
     "doctor_opinion": "Vitex has the most evidence of any herb for PMS and cycle regulation; full effect typically takes 3-6 months.",
@@ -5754,7 +5762,7 @@
       "recalls": "No recalls.",
       "allergens": "Fragrance-free options available",
       "sideEffects": "Mild irritation for highly sensitive individuals.",
-      "opinionAlerts": "Some users express concerns about whether any soap is necessary for intimate areas."
+      "opinionAlerts": "Some users question whether any wash product is necessary for intimate areas; a 2023 class-action lawsuit (McAuley v. Honey Pot) made this argument formally, alleging feminine washes are unsuitable for vulvar use since the medical consensus favors water alone — the suit was dismissed for insufficient evidence the products were harmful."
     },
     "doctor_opinion": "The vagina is self-cleaning; the vulva can be washed with a mild, pH-balanced cleanser if desired. Avoid aggressive scrubbing or douching.",
     "community_review": "Community discussions on Reddit r/HealthyHooha note gentleness and that it does not disrupt pH like standard body wash.",
@@ -5854,10 +5862,10 @@
       "recalls": "N/A",
       "allergens": "N/A",
       "sideEffects": "N/A (Software). Risk of pregnancy if the method is not followed perfectly.",
-      "opinionAlerts": "Requires high user discipline (taking temp immediately upon waking); some find the strict routine stressful."
+      "opinionAlerts": "Requires high user discipline (taking temp immediately upon waking); some find the strict routine stressful. In 2018, a Stockholm hospital reported 37 unintended pregnancies among users seeking abortions, and the UK Advertising Standards Authority ruled that marketing describing the app as \"highly accurate\" was misleading. Natural Cycles maintains the numbers were consistent with its disclosed 93% typical-use effectiveness rate."
     },
     "doctor_opinion": "Natural Cycles is the only app FDA-cleared as contraception. Requires daily temperature measurement. 93% typical-use effectiveness.",
-    "community_review": "Community discussions on Reddit r/birthcontrol note steep learning curve but effectiveness when used correctly.",
+    "community_review": "Community discussions on Reddit r/birthcontrol note a steep learning curve but real effectiveness when used consistently; some users and clinicians remain wary since 2018 press coverage of unintended pregnancies among app users, even though it is still the only FDA-cleared contraceptive app.",
     "effectiveness": null,
     "clinician_opinion_source": "independent",
     "clinician_attribution": "Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.",
@@ -6600,11 +6608,11 @@
       "materials": "Titanium, non-allergenic",
       "recalls": "No recalls.",
       "allergens": "Non-nickel, hypoallergenic coating",
-      "sideEffects": "Potential skin irritation from moisture trapped under the ring.",
-      "opinionAlerts": "Requiring a subscription on top of a $300 hardware purchase is a major point of contention."
+      "sideEffects": "Potential skin irritation from moisture trapped under the ring. In December 2025, some users reported rings overheating, with images circulating of scorched or partially melted devices; Oura characterized the incidents as extremely rare and said it found no evidence of a broader safety issue.",
+      "opinionAlerts": "Requiring a subscription on top of a $300 hardware purchase is a major point of contention. A 2025 biometric data-sharing partnership with defense-analytics firm Palantir also drew significant community backlash, with some users saying publicly they stopped wearing the ring over privacy concerns."
     },
     "doctor_opinion": "Wearable temperature tracking via Oura can identify cycle phases and complement period tracking apps. Integrates with Natural Cycles.",
-    "community_review": "Community discussions on Reddit r/ouraring note accurate period prediction from temperature data and Natural Cycles integration.",
+    "community_review": "Community discussions on Reddit r/ouraring note accurate period prediction from temperature data and Natural Cycles integration, alongside real 2025 frustration over the added subscription cost, the Palantir data-sharing partnership, and isolated reports of ring overheating.",
     "effectiveness": null,
     "clinician_opinion_source": "independent",
     "clinician_attribution": "Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.",
@@ -6655,7 +6663,7 @@
     "summary": "Built-in period and fertility tracking on iPhone and Apple Watch. Strongest privacy protections. Data stays on device.",
     "price": "Free (built into iPhone)",
     "image": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/60/e8/ae/60e8ae47-8a07-ad37-3371-d515af4b4a43/cycle.tracking-0-0-1x_U007ewatch-0-1-P3-85-220.png/1200x630wa.png",
-    "url": null,
+    "url": "https://apps.apple.com/us/app/apple-health/id1242545199",
     "tags": [
       "privacy",
       "cost",
@@ -6747,10 +6755,10 @@
       "recalls": "No recalls.",
       "allergens": "No known allergens; water system requires occasional maintenance",
       "sideEffects": "Some users report waking from cooling cycles; not recommended for those with Raynaud's.",
-      "opinionAlerts": "High upfront cost ($2,245+) plus $19/month subscription after the first year. Requires a stable Wi-Fi connection."
+      "opinionAlerts": "High upfront cost ($2,245+) plus $19/month subscription after the first year. Requires a stable Wi-Fi connection and ongoing cloud connectivity to function — in October 2025 an AWS outage knocked out cloud-dependent Pods for some users, leaving beds unable to heat or cool properly overnight. Eight Sleep's founder publicly apologized and said an offline mode was coming, though it had not shipped as of this review."
     },
     "doctor_opinion": "Temperature regulation during sleep is increasingly recognized as important for hormonal health. Especially for women experiencing night sweats, perimenopause, or disrupted sleep due to cycle-related changes. Eight Sleep's active cooling addresses this directly.",
-    "community_review": "Broadly positive reviews on Reddit r/EightSleep and r/sleep. Users frequently cite dramatically improved sleep quality and reduced night sweats. Common complaint: expensive upfront cost.",
+    "community_review": "Broadly positive reviews on Reddit r/EightSleep and r/sleep. Users frequently cite dramatically improved sleep quality and reduced night sweats. Common complaints: expensive upfront cost, and real frustration after an October 2025 AWS-linked outage disrupted overnight temperature control for some users.",
     "effectiveness": null,
     "clinician_opinion_source": "independent",
     "clinician_attribution": "Ayna synthesis of peer-reviewed literature and product documentation.",
@@ -10170,10 +10178,11 @@
       "fdaStatus": "FDA-registered",
       "materials": "100% organic cotton",
       "recalls": "No recalls.",
-      "allergens": "Hypoallergenic"
+      "allergens": "Hypoallergenic",
+      "opinionAlerts": "A 2022 independent lab investigation (Mamavation, EPA-certified lab) found organic-fluorine (PFAS \"forever chemical\") indicators in a Rael liner product (Organic Cotton Cover Panty Liners, 15 ppm) — a different SKU than this overnight pad, but it has made some PFAS-conscious users more cautious about the Rael brand generally despite its organic-cotton marketing."
     },
     "doctor_opinion": "Organic overnight option for heavy sleepers.",
-    "community_review": "Community discussions note satisfaction with overnight leak protection.",
+    "community_review": "Community discussions note general satisfaction with overnight leak protection, though a 2022 independent PFAS lab test on a different Rael liner product (not this overnight pad) has added some brand-level caution among users who prioritize PFAS-free products.",
     "effectiveness": "Extended coverage for overnight protection.",
     "clinician_opinion_source": "independent",
     "clinician_attribution": "Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.",
@@ -10221,10 +10230,11 @@
       "fdaStatus": "FDA-registered",
       "materials": "100% organic cotton",
       "recalls": "No recalls.",
-      "allergens": "Hypoallergenic"
+      "allergens": "Hypoallergenic",
+      "opinionAlerts": "A 2022 independent lab investigation (Mamavation, EPA-certified lab) found organic-fluorine (PFAS \"forever chemical\") indicators in a Cora liner product (Got-You-Covered Liner, 30 ppm) — the highest reading among liners in that test. This overnight pad SKU specifically was not part of that testing, but the finding has made some PFAS-conscious users more cautious about the Cora brand generally."
     },
     "doctor_opinion": "Sustainable overnight option with clean ingredients.",
-    "community_review": "Community discussions note heavy flow overnight? these have you covered.",
+    "community_review": "Community discussions are largely positive on overnight coverage and sustainability, though a 2022 independent PFAS lab test on a different Cora liner product (not this overnight pad) has added some brand-level caution among users who prioritize PFAS-free products.",
     "effectiveness": "Maximum overnight absorbency.",
     "clinician_opinion_source": "independent",
     "clinician_attribution": "Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.",
@@ -10303,10 +10313,11 @@
       "fdaStatus": "FDA-registered",
       "materials": "Soft cover",
       "recalls": "No recalls.",
-      "allergens": "Fragrance-free available"
+      "allergens": "Fragrance-free available",
+      "opinionAlerts": "A 2022 independent lab investigation (Mamavation, EPA-certified lab) found organic-fluorine (PFAS \"forever chemical\") indicators in Carefree Acti-Fresh Unscented Daily Liners (17 ppm). Carefree has not confirmed a reformulation or recall tied to that finding, and no regulatory recall has followed."
     },
     "doctor_opinion": "Suitable for light discharge or backup with tampons/cups.",
-    "community_review": "Community discussions note stock up on these. so cheap and useful.",
+    "community_review": "Community discussions are mostly about price and convenience, but also include a real thread of concern since a 2022 independent lab test found PFAS indicators in this exact liner, which has led some users to switch to organic-cotton alternatives.",
     "effectiveness": "Light protection for everyday use.",
     "clinician_opinion_source": "independent",
     "clinician_attribution": "Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.",
@@ -10384,10 +10395,11 @@
       "fdaStatus": "FDA-registered",
       "materials": "Dri-Weave cover",
       "recalls": "No recalls.",
-      "allergens": "Fragrance-free options"
+      "allergens": "Fragrance-free options",
+      "opinionAlerts": "A 2022 independent lab investigation (Mamavation, EPA-certified lab) found organic-fluorine (PFAS \"forever chemical\") indicators in several Always liner products (e.g., No Feel Protection Thin Liners at 21 ppm, Anti-Bunch Xtra Protection Liners at 15 ppm) — echoing similar PFAS concerns raised about Always pads. Always disputes any health risk and no regulatory recall has followed."
     },
     "doctor_opinion": "Reliable backup option.",
-    "community_review": "Community discussions note use these on light days or with my cup.",
+    "community_review": "Community discussions are split: many like these for light days or cup backup, but a documented 2022 independent PFAS lab test on several Always liner lines has made a visible share of users wary and more likely to check for PFAS-free alternatives.",
     "effectiveness": "Light, comfortable backup.",
     "clinician_opinion_source": "independent",
     "clinician_attribution": "Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.",
@@ -10464,10 +10476,11 @@
       "fdaStatus": "FDA-registered",
       "materials": "100% organic cotton",
       "recalls": "No recalls.",
-      "allergens": "Hypoallergenic"
+      "allergens": "Hypoallergenic",
+      "opinionAlerts": "A 2022 independent lab investigation (Mamavation, EPA-certified lab) found organic-fluorine (PFAS \"forever chemical\") indicators in this exact product, Rael Organic Cotton Cover Panty Liners (15 ppm) — a result that surprised some shoppers given the brand's \"100% organic cotton\" positioning. Rael has not issued a public recall tied to that test."
     },
     "doctor_opinion": "Clean option for daily or light-day use.",
-    "community_review": "Community discussions note gentleness for sensitive skin.",
+    "community_review": "Community discussions include genuine appreciation for softness and sensitive-skin comfort, alongside a real thread of concern after a 2022 independent lab test found PFAS indicators in this exact liner despite its organic-cotton marketing.",
     "effectiveness": "Light organic protection.",
     "clinician_opinion_source": "independent",
     "clinician_attribution": "Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.",
@@ -10545,10 +10558,11 @@
       "fdaStatus": "FDA-registered",
       "materials": "Cotton, plastic applicator",
       "recalls": "No recalls.",
-      "allergens": "Fragrance-free"
+      "allergens": "Fragrance-free",
+      "opinionAlerts": "A 2022 independent lab investigation (Mamavation, EPA-certified lab) found organic-fluorine (PFAS \"forever chemical\") indicators in Playtex SPORT Regular & Super tampons (19 ppm). Separately, a peer-reviewed 2024 UC Berkeley study (Environment International, Shearston et al.) found measurable heavy metals, including lead and arsenic, across tampons broadly — no brand names were disclosed and no single category (organic or non-organic) was consistently cleaner — which drove wide social media discussion about tampon safety generally."
     },
     "doctor_opinion": "Popular choice for athletes and active lifestyles.",
-    "community_review": "Community discussions note the only tampon i trust at the gym.",
+    "community_review": "Community discussions on Reddit r/periods are largely positive about staying in place during workouts, but real, documented safety concerns exist too: a 2022 independent lab test found PFAS indicators in this exact product, and a 2024 university study found trace heavy metals across tampons as a category — both have made some users more cautious, though neither triggered an FDA recall.",
     "effectiveness": "Designed to stay in place during activity.",
     "clinician_opinion_source": "independent",
     "clinician_attribution": "Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.",
@@ -10788,10 +10802,11 @@
       "fdaStatus": "FDA-registered",
       "materials": "Cotton, plastic applicator",
       "recalls": "No recalls.",
-      "allergens": "Fragrance-free"
+      "allergens": "Fragrance-free",
+      "opinionAlerts": "2022 independent lab testing (Mamavation) found mixed PFAS results across the Tampax lineup — e.g. positive for organic-fluorine in Cardboard Applicator Unscented Tampons (23 ppm), non-detect in Pearl Leakguard and 100% Organic Cotton Core; this exact Radiant line was not part of that testing round. Separately, a peer-reviewed 2024 UC Berkeley study (Environment International) found measurable heavy metals, including lead and arsenic, across tampons broadly regardless of brand, which drove significant social media discussion about tampon safety."
     },
     "doctor_opinion": "Trusted brand with strong absorption.",
-    "community_review": "Community discussions note radiant is my go-to. never had a leak.",
+    "community_review": "Community discussions are largely positive about absorption and leak protection, but Tampax as a brand has also been part of real, documented safety conversations in recent years: mixed 2022 independent PFAS testing across different Tampax lines, and a 2024 university study finding trace heavy metals across tampons broadly — this exact Radiant line was not specifically named in either study.",
     "effectiveness": "LeakGuard protection, flexible fit.",
     "clinician_opinion_source": "independent",
     "clinician_attribution": "Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.",
@@ -10868,10 +10883,11 @@
       "fdaStatus": "FDA-registered",
       "materials": "Organic cotton",
       "recalls": "No recalls.",
-      "allergens": "Hypoallergenic"
+      "allergens": "Hypoallergenic",
+      "opinionAlerts": "Tested clean (non-detect) for PFAS in 2022 independent lab testing (Mamavation). Separately, a peer-reviewed 2024 UC Berkeley study (Environment International) found that organic-cotton tampons as a category had higher arsenic levels than non-organic tampons, on average (even though lead was generally lower) — a nuance worth knowing given this product's organic positioning, and part of the broader 2024 social-media discussion about tampon safety."
     },
     "doctor_opinion": "Organic option with eco-friendly applicator.",
-    "community_review": "Community discussions note switched for the organic cotton. works great.",
+    "community_review": "Community discussions note satisfaction with switching to organic cotton; independent testing found this line clean of PFAS, though a 2024 university study on heavy metals in tampons found organic-cotton tampons as a category had higher arsenic than non-organic ones — a nuance some organic-focused users have started factoring in.",
     "effectiveness": "Reliable organic option.",
     "clinician_opinion_source": "independent",
     "clinician_attribution": "Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.",
@@ -10949,10 +10965,11 @@
       "fdaStatus": "FDA-registered",
       "materials": "Organic cotton",
       "recalls": "No recalls.",
-      "allergens": "Hypoallergenic"
+      "allergens": "Hypoallergenic",
+      "opinionAlerts": "Rael was not among the brands included in available independent PFAS lab-testing panels for tampons. Separately, a peer-reviewed 2024 UC Berkeley study (Environment International) found that organic-cotton tampons as a category had higher arsenic levels than non-organic tampons, on average — a nuance relevant to any 100% organic cotton tampon, including this one, and part of the broader 2024 discussion about tampon safety."
     },
     "doctor_opinion": "Full ingredient transparency. Good for sensitive users.",
-    "community_review": "Community discussions note organic materials and effectiveness for heavy flow.",
+    "community_review": "Community discussions note appreciation for organic materials and effectiveness for heavy flow; worth knowing alongside that a 2024 university study on heavy metals in tampons found organic-cotton tampons as a category had higher arsenic levels than non-organic ones — a nuance some organic-focused users now ask about.",
     "effectiveness": "Organic with strong absorption.",
     "clinician_opinion_source": "independent",
     "clinician_attribution": "Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.",
@@ -12050,10 +12067,11 @@
       "fdaStatus": "N/A",
       "materials": "PFAS-free",
       "recalls": "No recalls.",
-      "allergens": "Hypoallergenic"
+      "allergens": "Hypoallergenic",
+      "opinionAlerts": "Despite PFAS-free marketing, a 2021–2022 independent lab investigation (Mamavation, EPA-certified lab) found notable PFAS/organic-fluorine levels in Proof Hipster underwear (234 ppm) — one of the higher readings among period underwear brands tested in that investigation. Proof has not publicly confirmed a reformulation tied to that finding, and this has driven real skepticism among PFAS-conscious users comparing brands."
     },
     "doctor_opinion": "Dual use for periods and light bladder leaks.",
-    "community_review": "Community discussions note versatility for period and postpartum use.",
+    "community_review": "Community discussions are largely positive about the dual period/bladder-leak use case, but PFAS-conscious users should know a 2021–2022 independent lab test found notable PFAS levels in Proof Hipster underwear despite the brand's PFAS-free marketing — a real, documented gap between labeling and lab results that some users specifically flag when comparing period underwear brands.",
     "effectiveness": "Period and bladder leak protection.",
     "clinician_opinion_source": "independent",
     "clinician_attribution": "Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.",
