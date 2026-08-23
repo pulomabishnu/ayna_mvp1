@@ -907,6 +907,12 @@ export default function MyEcosystem({
     const [llmTiered, setLlmTiered] = useState([]);
     const [llmLoading, setLlmLoading] = useState(false);
     const [llmError, setLlmError] = useState('');
+    // Distinct from llmError: some concerns didn't generate but others DID —
+    // the ecosystem is functionally built, just missing a couple of sections.
+    // Kept separate so this never renders under the "We couldn't build your
+    // ecosystem" framing, which used to fire for this case too (see rec.error
+    // vs rec.partialConcerns below).
+    const [llmPartialConcerns, setLlmPartialConcerns] = useState([]);
     const [llmLoadStartedAt, setLlmLoadStartedAt] = useState(0);
     // Last known-good complete recommendation set — restored if a rebuild is cancelled mid-flight.
     const previousLlmTieredRef = useRef([]);
@@ -1080,6 +1086,7 @@ export default function MyEcosystem({
             setLlmTiered([]);
             setLlmLoading(false);
             setLlmError('');
+            setLlmPartialConcerns([]);
             setLlmLoadStartedAt(0);
             return undefined;
         }
@@ -1095,6 +1102,7 @@ export default function MyEcosystem({
                 previousLlmTieredRef.current = cached;
                 setLlmLoading(false);
                 setLlmError('');
+                setLlmPartialConcerns([]);
                 setLlmLoadStartedAt(0);
                 return undefined;
             }
@@ -1105,6 +1113,7 @@ export default function MyEcosystem({
                 setLlmTiered([]);
                 setLlmLoading(false);
                 setLlmError('We couldn’t load your recommendations last time. Tap “Refresh recommendations” to try again.');
+                setLlmPartialConcerns([]);
                 setLlmLoadStartedAt(0);
                 return undefined;
             }
@@ -1118,6 +1127,7 @@ export default function MyEcosystem({
             setLlmTiered(rec.tiered);
             setLlmLoading(rec.loading);
             setLlmError(rec.error);
+            setLlmPartialConcerns(rec.partialConcerns || []);
             setLlmLoadStartedAt(rec.startedAt);
         };
 
@@ -1129,6 +1139,7 @@ export default function MyEcosystem({
             rec.startedAt = Date.now();
             rec.loading = true;
             rec.error = '';
+            rec.partialConcerns = [];
             rec.tiered = [];
             notifyGeneration(rec);
 
@@ -1169,6 +1180,16 @@ export default function MyEcosystem({
                                     // nothing. Without this the user just sees fewer
                                     // sections than she asked for, with no signal.
                                     partialConcerns.push(...d.failedConcerns);
+                                    // Reason travels with the response so this is
+                                    // diagnosable from the browser console alone — a
+                                    // live 2026-08-22 incident (2 concerns failed
+                                    // ~20s in) was undiagnosable after the fact
+                                    // because nothing captured *why*, and by the
+                                    // time anyone checked, Vercel's log retention
+                                    // no longer had it.
+                                    if (Array.isArray(d.failedConcernReasons) && d.failedConcernReasons.length) {
+                                        console.warn('[Ayna LLM] Concern failures this batch:', d.failedConcernReasons);
+                                    }
                                 }
                                 if (recs.length > 0) {
                                     accumulated.push(...recs);
@@ -1221,8 +1242,15 @@ export default function MyEcosystem({
                     // produced a permanently empty ecosystem with no error.
                     if (cachedOk) saveFetchedLlmFingerprint(intakeFingerprint);
                     if (partialConcerns.length > 0) {
-                        const missed = Array.from(new Set(partialConcerns)).slice(0, 4).join(', ');
-                        rec.error = `Some recommendations couldn’t be generated (${missed}). Tap “Refresh recommendations” to retry those.`;
+                        // NOT rec.error — this branch only runs when recs.length > 0
+                        // (the recs.length === 0 case above already returned), so the
+                        // ecosystem DID build, just missing a couple of sections. Every
+                        // rec.error reader in this file renders an alarming "We
+                        // couldn't build your ecosystem" banner, which used to fire
+                        // here too and told a user who got 10/12 sections that the
+                        // whole build failed. Keep this as its own field so it can get
+                        // its own, accurate, non-alarming treatment.
+                        rec.partialConcerns = Array.from(new Set(partialConcerns)).slice(0, 4);
                         notifyGeneration(rec);
                     }
                     const recommendedProductIds = recs.flatMap((entry) =>
@@ -1515,6 +1543,7 @@ export default function MyEcosystem({
         // to. Cancelling a FIRST build left previousLlmTiered empty while still
         // marking the fingerprint fetched, so the next mount showed a blank
         // ecosystem with no error and no way to retry.
+        setLlmPartialConcerns([]);
         if (intakeFingerprint && previousLlmTieredRef.current.length > 0) {
             saveFetchedLlmFingerprint(intakeFingerprint);
             setLlmError('');
@@ -1523,7 +1552,7 @@ export default function MyEcosystem({
         }
     }, [intakeFingerprint]);
 
-    const recommendedSection = hasCompletedPersonalization && (llmLoading || llmError || recommendedProductsForDisplay.length > 0 || activeTiered.length > 0) ? (
+    const recommendedSection = hasCompletedPersonalization && (llmLoading || llmError || llmPartialConcerns.length > 0 || recommendedProductsForDisplay.length > 0 || activeTiered.length > 0) ? (
         <div style={{ marginBottom: 'var(--spacing-xl)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
                 <h3 style={{ fontSize: '1.35rem', margin: 0, color: 'var(--color-text-main)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -1552,6 +1581,22 @@ export default function MyEcosystem({
             {llmError && !llmLoading && (
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textAlign: 'center' }}>
                     We couldn't load your recommendations: {llmError}
+                </p>
+            )}
+            {/* Partial success, not a failure — most of the ecosystem DID build.
+                Deliberately neutral styling (not the red "couldn't build" banner
+                elsewhere in this file), since a couple of missing sections isn't
+                the same as the whole build failing. */}
+            {llmPartialConcerns.length > 0 && !llmError && !llmLoading && (
+                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textAlign: 'center', margin: '0 0 0.75rem' }}>
+                    Couldn't generate picks for {llmPartialConcerns.join(', ')} this time.{' '}
+                    <button
+                        type="button"
+                        onClick={handleRefreshRecommendations}
+                        style={{ background: 'none', border: 'none', color: 'var(--color-primary)', fontWeight: 600, cursor: 'pointer', textDecoration: 'underline', padding: 0, font: 'inherit' }}
+                    >
+                        Refresh to try again
+                    </button>
                 </p>
             )}
             {!llmLoading && recommendedProductsForDisplay.length > 0 && (

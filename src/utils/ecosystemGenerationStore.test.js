@@ -185,3 +185,58 @@ describe('peekGeneration / subscribeIfActive (passive observation)', () => {
     expect(activeGenerations.has('fp')).toBe(false);
   });
 });
+
+// Regression coverage for a live 2026-08-22 bug: a PARTIAL success (most
+// concerns generated, a couple didn't) was rendered as if the whole build
+// failed — MyEcosystem.jsx overloaded rec.error for both "nothing generated"
+// and "a couple of concerns didn't generate", and every consumer of
+// rec.error (including this store's own EcosystemGenerationBar "ready"
+// popup gate, and three separate banners in MyEcosystem.jsx) treated any
+// non-empty rec.error as a hard failure. The fix keeps them as two distinct
+// fields on the record; this locks in that they stay distinct and that a
+// fresh record has both in their empty state.
+describe('partialConcerns is distinct from error on a generation record', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    activeGenerations.clear();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('a freshly-created record starts with both error and partialConcerns empty', () => {
+    subscribeToGeneration('fp-fresh', vi.fn(), () => {});
+    const rec = activeGenerations.get('fp-fresh');
+    expect(rec.error).toBe('');
+    expect(rec.partialConcerns).toEqual([]);
+  });
+
+  it('setting partialConcerns does not implicitly set error — a caller reading only rec.error would see no failure', () => {
+    subscribeToGeneration('fp-partial', vi.fn(), () => {});
+    const rec = activeGenerations.get('fp-partial');
+
+    // What MyEcosystem.jsx's generation effect does on a partial success:
+    // some concerns failed, but recs.length > 0, so it's NOT a hard failure.
+    rec.partialConcerns = ['Hormone balance', 'Gut and vaginal health'];
+    notifyGeneration(rec);
+
+    expect(rec.error).toBe('');
+    expect(rec.partialConcerns.length).toBe(2);
+    // This is exactly the signal EcosystemGenerationBar's "ready" popup gate
+    // reads (`!rec.error`) — a partial success must still read as "ready",
+    // not silently suppress the popup the way it would if this code had
+    // reused rec.error for both cases.
+  });
+
+  it('a hard failure (nothing generated) sets error and leaves partialConcerns empty', () => {
+    subscribeToGeneration('fp-hard-fail', vi.fn(), () => {});
+    const rec = activeGenerations.get('fp-hard-fail');
+
+    rec.error = 'All recommendation batches failed. Please try again.';
+    notifyGeneration(rec);
+
+    expect(rec.error).not.toBe('');
+    expect(rec.partialConcerns).toEqual([]);
+  });
+});
