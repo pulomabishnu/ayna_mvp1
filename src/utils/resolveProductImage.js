@@ -33,7 +33,19 @@ export function isPlaceholderProductImage(imageUrl) {
   // Exerciser) — the exact "tiny icon rendered as product photo" bug found
   // in QA, just baked into the data instead of coming from the dynamic
   // resolver's now-removed favicon fallback (see api/_ogImageFetch.js).
-  if (/favicon\.ico(\?|$)/i.test(src)) return true;
+  // Was .ico-only, and required "favicon" to be directly followed by a file
+  // extension — missed real hardcoded cases like ".../favicon-300x300.png"
+  // (Glow) and ".../favicon/nurx.png" (Nurx), where "favicon" is a filename
+  // stem or directory segment, not immediately pre-extension. A plain
+  // substring match catches all of these; nothing legitimate has "favicon"
+  // anywhere in a real product-photo URL. Also catches apple-touch-icon
+  // files (Libresse, Citracal, LELO), the other common site-icon convention.
+  if (/favicon/i.test(src) || /apple-touch-icon/i.test(src)) return true;
+  // Same bug, different asset type: a couple of entries had a generic
+  // social-media link-preview banner hardcoded as `image` (Peanut, Dear
+  // Kate) — a 1200x628 "here's what this looks like when shared on
+  // Facebook" graphic, not a photo of the actual product.
+  if (/social[-_]?share/i.test(src)) return true;
   return false;
 }
 
