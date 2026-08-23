@@ -231,7 +231,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 260,
         url: 'https://www.wild.ai',
-        image: 'https://img.freepik.com/premium-photo/wild-boar-white-background_407474-27719.jpg'
+        image: ''
     },
     // ─── Fertility & pregnancy ─────────────────────────────
     {
@@ -583,7 +583,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 420,
         url: 'https://thehoneypot.co',
-        image: 'https://media.istockphoto.com/id/155308208/photo/honey.jpg?s=612x612&w=0&k=20&c=okAEZAiMoOgIS9OA1OI1HABa58Zh6Z5p0hXuWWXIHUg='
+        image: ''
     },
     {
         id: 's-lovewellness',
@@ -669,7 +669,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 440,
         url: 'https://itsbodily.com',
-        image: 'https://img.freepik.com/premium-photo/skincare-products-isolated-white-background_621955-41975.jpg'
+        image: ''
     },
     {
         id: 's-oula',
@@ -711,7 +711,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 370,
         url: 'https://poppyseedhealth.com',
-        image: 'https://media.istockphoto.com/id/1298603314/photo/poppy-seeds-spilled-on-white-background-overhead-view.jpg?s=612x612&w=0&k=20&c=nLEuuNyUOLBXum9yDn3lVdQGlagRD4Xf93tO9FdFjjw='
+        image: ''
     },
     {
         id: 's-milkstork',
@@ -754,7 +754,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 220,
         url: 'https://www.cleo.com',
-        image: 'https://www.shutterstock.com/image-photo/sukabumi-indonesia-october-24-2024-600nw-2534791327.jpg'
+        image: ''
     },
     // ─── Diagnostics & biotech ─────────────────────────────
     {
@@ -869,7 +869,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 290,
         url: 'https://www.naturalcycles.com',
-        image: 'https://www.shutterstock.com/image-photo/dry-pine-cone-small-twig-260nw-2753122653.jpg'
+        image: ''
     },
     {
         id: 's-clue',
@@ -883,7 +883,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 340,
         url: 'https://helloclue.com',
-        image: 'https://www.shutterstock.com/image-photo/photo-color-clue-on-white-260nw-29426464.jpg'
+        image: ''
     },
     {
         id: 's-ovia',
@@ -1206,7 +1206,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 350,
         url: '#',
-        image: 'https://www.shutterstock.com/image-vector/pregnant-woman-heartbeat-pulse-icon-260nw-2609954083.jpg'
+        image: ''
     },
     {
         id: 's-milk-match',
@@ -1234,7 +1234,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 480,
         url: '#',
-        image: 'https://img.freepik.com/premium-photo/bicycle-different-modern-sport-equipment-white-background_1339860-202.jpg'
+        image: ''
     },
     {
         id: 's-mood-cycle',
@@ -1248,7 +1248,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 440,
         url: '#',
-        image: 'https://www.shutterstock.com/image-vector/mood-scale-vector-icon-isolated-260nw-1632696847.jpg'
+        image: ''
     },
     {
         id: 's-birth-control-scan',
@@ -1262,7 +1262,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 530,
         url: '#',
-        image: 'https://www.shutterstock.com/image-illustration/birth-control-pills-combined-oral-600nw-2621761217.jpg'
+        image: ''
     },
     {
         id: 's-pelvic-mapper',
@@ -1276,7 +1276,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 370,
         url: '#',
-        image: 'https://www.shutterstock.com/image-illustration/anatomical-illustration-human-pelvis-bone-260nw-2737090097.jpg'
+        image: ''
     },
     {
         id: 's-organic-pad-lab',
@@ -1346,7 +1346,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 390,
         url: '#',
-        image: 'https://img.freepik.com/premium-photo/cryopreservation-genetic-material-ovum-ice-cube-white-background_144356-57323.jpg?semt=ais_hybrid&w=740&q=80'
+        image: ''
     },
     {
         id: 's-postpartum-ring',
@@ -1402,7 +1402,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 520,
         url: '#',
-        image: 'https://c8.alamy.com/comp/2F17A8N/pantry-food-for-crisis-period-different-size-and-shape-jars-with-grains-for-staying-home-during-covid-19-time-white-background-2F17A8N.jpg'
+        image: ''
     },
     {
         id: 's-sleep-meno',
@@ -1430,7 +1430,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 380,
         url: '#',
-        image: 'https://img.freepik.com/premium-photo/white-bone-with-white-background_668290-347.jpg?w=360'
+        image: ''
     },
     {
         id: 's-intimate-wellness-kit',
@@ -1500,7 +1500,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 500,
         url: '#',
-        image: 'https://www.shutterstock.com/image-photo/many-vitamin-capsules-isolated-on-600nw-2434184559.jpg'
+        image: ''
     },
     {
         id: 's-endo-care',
@@ -1584,7 +1584,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 550,
         url: '#',
-        image: 'https://www.shutterstock.com/image-photo/recycle-crumpled-paper-pad-on-260nw-446990380.jpg'
+        image: ''
     },
     {
         id: 's-womb-space',
@@ -1598,7 +1598,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 370,
         url: '#',
-        image: 'https://img.freepik.com/premium-photo/baby-womb-pregnancy-white-background_407474-26844.jpg'
+        image: ''
     },
     {
         id: 's-vulva-screen',
@@ -1612,7 +1612,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 340,
         url: '#',
-        image: 'https://www.shutterstock.com/image-photo/vaginal-blue-kegel-smart-trainer-260nw-2663671895.jpg'
+        image: ''
     },
     {
         id: 's-ovary-print',
