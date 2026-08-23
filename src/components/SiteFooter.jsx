@@ -95,8 +95,8 @@ export default function SiteFooter({
 
         <FooterColumn title="Get in touch">
           <a style={LINK_STYLE} href="mailto:hello@ayna.com">hello@ayna.com</a>
-          <a style={LINK_STYLE} href="https://linktr.ee/aynahealth" target="_blank" rel="noreferrer">Instagram</a>
-          <a style={LINK_STYLE} href="https://linktr.ee/aynahealth" target="_blank" rel="noreferrer">TikTok</a>
+          <a style={LINK_STYLE} href="https://www.instagram.com/ayna.health/" target="_blank" rel="noreferrer">Instagram</a>
+          <a style={LINK_STYLE} href="https://www.tiktok.com/@aynahealth" target="_blank" rel="noreferrer">TikTok</a>
         </FooterColumn>
       </div>
 
