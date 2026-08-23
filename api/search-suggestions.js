@@ -289,7 +289,6 @@ function normalizeSuggestion(raw, index) {
     ratingNote: typical != null ? undefined : 'Not in Ayna database — no verified rating',
     badges: uniqueStrings(raw?.badges, 2, 32),
     image: '/ayna_placeholder.png',
-    url: officialUrl || undefined,
   };
 }
 
@@ -333,14 +332,13 @@ Return ONE JSON object ONLY (no markdown) with up to ${maxResults} suggestions i
       "category": "slug from allowed list",
       "type": "physical" | "digital",
       "summary": "1-2 sentences: what it is, who it is for, how it helps — neutral, not medical advice",
-      "priceHint": "e.g. ~$12-18 or Subscription ~$15/mo — approximate, no links",
+      "priceHint": "A hedged price RANGE only, e.g. ~$12-18 or Subscription ~$15/mo. Do NOT state a single exact price as if it's confirmed, and do NOT attach a specific pack/count size (e.g. '14-16 pads', 'box of 20') unless you are confident that exact configuration is genuinely sold by this brand — a wrong invented count is worse than no count. If unsure of quantity, describe price alone (e.g. '~$15-20 per pack') rather than inventing a plausible-sounding number.",
       "tags": ["up to 4 short tags: heavy-flow", "organic", "app", ...],
       "whereToBuy": ["Amazon","Target","CVS","Walmart","Brand website","App Store","Google Play"] — retailer NAMES only, no URLs,
-      "officialUrl": "https://brand-official-site.com — ONLY the brand's own official website root domain, and ONLY if you are genuinely confident it's correct. Omit this field entirely if you're not sure — never guess. This is the one exception to the no-URLs rule below, used only to fetch a real product photo.",
+      "officialUrl": "the exact URL of THIS SPECIFIC PRODUCT'S page on the brand's own official site — e.g. https://brand.com/products/this-exact-product, NOT the brand's homepage or root domain. This is used to fetch a real photo of the product, so a homepage/root-domain URL is useless here even if it's correct — only include it if you're confident of the actual product page URL. Omit this field entirely rather than guess or fall back to the homepage. This is the one exception to the no-URLs rule below.",
       "typicalUserRating": 4.2,
       "safetyNote": "one short line: e.g. consult clinician for prescriptions, patch tests for topicals",
-      "searchTerms": ["1-2 web search phrases that include brand + product kind for Google"],
-      "officialUrl": "the exact URL of this product's page on the brand's own official site, ONLY if you are confident of the real, current URL — omit this field entirely rather than guess"
+      "searchTerms": ["1-2 web search phrases that include brand + product kind for Google"]
     }
   ]
 }
@@ -360,6 +358,7 @@ ANTI-HALLUCINATION RULES:
 - Never include URLs, domains, or "http" in any field except officialUrl — retailer names as plain text only. For officialUrl specifically, only include it if you're confident it's the real current URL; when unsure, omit the field rather than guess
 - typicalUserRating: optional number 3.0-5.0 only if you have real signal — omit if unsure
 - If you cannot recall seeing a brand's product sold online at a major retailer or the brand's own website, do not include it — it likely does not exist
+- Same rule applies to pack sizes and counts as to brand names: only state a specific count/pack size (e.g. "14 pads", "60 capsules") if you are confident that exact configuration is genuinely sold by this brand+product. A precise-sounding but invented count (e.g. inventing "14-16 pads" for a brand that actually sells 30-count boxes) is a fabrication just like an invented brand name — it just looks more trustworthy because it's a specific number. When unsure of the real pack size, give price as a range with no count attached rather than guessing one.
 - If the query is not women's health or wellness shopping related, return {"querySummary":"","suggestions":[]}
 - NEVER suggest a prescription medication as a product — this includes hormonal birth control (pills, patches, rings, IUDs, implants), hormone replacement therapy, prescription antidepressants/anxiolytics, prescription antibiotics, and prescription weight-loss drugs (GLP-1s), even if the user's search names the condition it treats. If the query is asking about something that requires a prescription (e.g. "birth control pills", "UTI antibiotics"), suggest telehealth platforms/services that can prescribe it instead of naming the drug itself.
 

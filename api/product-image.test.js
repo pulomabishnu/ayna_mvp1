@@ -7,6 +7,7 @@ const redisGet = vi.fn(async () => null);
 const redisSet = vi.fn(async () => 'OK');
 const matchShopifyProductMock = vi.fn(async () => null);
 const fetchOgImageMock = vi.fn(async () => null);
+const lookupDsldProductMock = vi.fn(async () => null);
 
 vi.mock('./_rateLimit.js', () => ({
   rateLimit: (...args) => rateLimitMock(...args),
@@ -24,6 +25,13 @@ vi.mock('./_shopifyProductMatch.js', () => ({
 vi.mock('./_ogImageFetch.js', () => ({
   fetchOgImage: (...args) => fetchOgImageMock(...args),
 }));
+// product-image.js dynamically imports this (not a static top-level import,
+// so the whole heavy llm-recommendations.js module stays out of this
+// lightweight, high-traffic endpoint's cold start) — vi.mock still
+// intercepts a dynamic import() of the same path.
+vi.mock('./llm-recommendations.js', () => ({
+  lookupDsldProduct: (...args) => lookupDsldProductMock(...args),
+}));
 
 async function loadHandler() {
   vi.resetModules();
@@ -37,6 +45,7 @@ beforeEach(() => {
   redisSet.mockReset().mockResolvedValue('OK');
   matchShopifyProductMock.mockReset().mockResolvedValue(null);
   fetchOgImageMock.mockReset().mockResolvedValue(null);
+  lookupDsldProductMock.mockReset().mockResolvedValue(null);
   delete process.env.UPSTASH_REDIS_REST_URL;
   delete process.env.UPSTASH_REDIS_REST_TOKEN;
   delete process.env.ALLOWED_ORIGINS;
@@ -78,7 +87,7 @@ describe('product-image', () => {
     expect(res.headers['access-control-allow-origin']).toBe('https://ayna.health');
   });
 
-  it('returns empty imageUrl without resolving anything when no official url is given', async () => {
+  it('skips the URL-based resolvers but still tries DSLD when no official url is given', async () => {
     const handler = await loadHandler();
     const res = mockRes();
     await handler({ method: 'GET', query: { name: 'DivaCup' }, headers: {} }, res);
@@ -86,6 +95,53 @@ describe('product-image', () => {
     expect(res.body).toEqual({ imageUrl: '' });
     expect(matchShopifyProductMock).not.toHaveBeenCalled();
     expect(fetchOgImageMock).not.toHaveBeenCalled();
+    expect(lookupDsldProductMock).toHaveBeenCalledWith('DivaCup');
+  });
+
+  it('resolves via the DSLD fallback when the URL-based methods find nothing (or there is no url) — the "vitamin c" case', async () => {
+    // This is the actual reported bug: most AI-suggested supplements either
+    // have no officialUrl at all, or one that doesn't resolve (a brand
+    // homepage, not a product page) — DSLD is a URL-independent, name-based
+    // fallback that catches exactly this case for supplements.
+    lookupDsldProductMock.mockResolvedValue({ imageUrl: 'https://dsld.od.nih.gov/label-images/12345.jpg' });
+    const handler = await loadHandler();
+    const res = mockRes();
+    await handler({ method: 'GET', query: { name: 'Thorne Vitamin C-1000', brand: 'Thorne' }, headers: {} }, res);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.imageUrl).toBe('https://dsld.od.nih.gov/label-images/12345.jpg');
+  });
+
+  it('tries DSLD only after the URL-based methods fail, and does not call it when Shopify already found something', async () => {
+    matchShopifyProductMock.mockResolvedValue('https://cdn.shopify.com/found.jpg');
+    const handler = await loadHandler();
+    const res = mockRes();
+    await handler({ method: 'GET', query: { name: 'DivaCup', url: 'https://diva.example.com' }, headers: {} }, res);
+    expect(res.body.imageUrl).toBe('https://cdn.shopify.com/found.jpg');
+    expect(lookupDsldProductMock).not.toHaveBeenCalled();
+  });
+
+  it('does not cache a negative result when no url was given, even if DSLD also found nothing', async () => {
+    process.env.UPSTASH_REDIS_REST_URL = 'https://redis.example.com';
+    process.env.UPSTASH_REDIS_REST_TOKEN = 'token';
+    const handler = await loadHandler();
+    const res = mockRes();
+    await handler({ method: 'GET', query: { name: 'DivaCup' }, headers: {} }, res);
+    expect(res.body).toEqual({ imageUrl: '' });
+    expect(redisSet).not.toHaveBeenCalled();
+  });
+
+  it('caches a negative result when a url WAS given but nothing (including DSLD) resolved', async () => {
+    process.env.UPSTASH_REDIS_REST_URL = 'https://redis.example.com';
+    process.env.UPSTASH_REDIS_REST_TOKEN = 'token';
+    const handler = await loadHandler();
+    const res = mockRes();
+    await handler({ method: 'GET', query: { name: 'DivaCup', url: 'https://diva.example.com' }, headers: {} }, res);
+    expect(res.body).toEqual({ imageUrl: '' });
+    expect(redisSet).toHaveBeenCalledWith(
+      expect.stringContaining('ayna:img:'),
+      '',
+      expect.objectContaining({ ex: expect.any(Number) })
+    );
   });
 
   it('rate limits before ever resolving an image', async () => {
