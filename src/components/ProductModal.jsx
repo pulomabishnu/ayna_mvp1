@@ -6,6 +6,7 @@ import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolve
 import { isPartnerBrandItem } from '../utils/partnerBrands';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { getSupabaseClient } from '../utils/supabaseClient';
+import { getRetailerLinks } from '../utils/retailerLinks';
 import posthog from 'posthog-js';
 
 /** Remembers whether this browser prefers the tabs (1f) or evidence rail (1g) layout. */
@@ -458,6 +459,10 @@ export default function ProductModal({
   const matchPercent = explicitMatchPercent ?? (hasEcosystemContext ? profileMatchPercent : null);
   const headMatchLabel = matchLabels[0] || null;
   const buyUrl = useMemo(() => getBuyUrl(product), [product]);
+  // Never a specific price/availability claim — just real, deterministic
+  // site-search links per retailer name (src/utils/retailerLinks.js), so a
+  // user can actually compare instead of reading unclickable retailer text.
+  const retailerLinks = useMemo(() => getRetailerLinks(product), [product]);
 
   const aynaData = useMemo(
     () => (aynaReviews && product ? (aynaReviews[product.id] || { ratings: [], reviews: [] }) : { ratings: [], reviews: [] }),
@@ -545,15 +550,41 @@ export default function ProductModal({
     if (!product) return [];
     const categoryLabel = String(CATEGORY_LABELS[product.category] || product.category || '').replace(/^[^\w]+\s*/, '');
     const materials = firstSentence(product.safety?.materials, 160);
-    const whereToBuy = Array.isArray(product.whereToBuy) ? product.whereToBuy.slice(0, 3).join(', ') : '';
+    // Real clickable retailer links (never a per-retailer price claim) when
+    // we have any; otherwise fall back to the old unclickable name list so a
+    // product with no linkable retailers still shows something.
+    const whereToBuyValue = retailerLinks.length > 0 ? (
+      <span className="pdp-rail__spec-links">
+        {retailerLinks.slice(0, 4).map((r, i) => (
+          <React.Fragment key={r.name}>
+            {i > 0 && ', '}
+            <a
+              className="pdp-rail__spec-link"
+              href={r.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => posthog.capture('product_retailer_link_clicked', {
+                productId: product.id,
+                retailer: r.name,
+                verified: r.verified,
+                destination: r.url,
+                source: 'specs_tab',
+              })}
+            >
+              {r.name}
+            </a>
+          </React.Fragment>
+        ))}
+      </span>
+    ) : (Array.isArray(product.whereToBuy) ? product.whereToBuy.slice(0, 3).join(', ') : '');
     return [
       product.brand ? { label: 'Brand', value: product.brand } : null,
       categoryLabel ? { label: 'Category', value: categoryLabel } : null,
       product.price ? { label: 'Price', value: product.price } : null,
       materials ? { label: 'Materials', value: materials } : null,
-      whereToBuy ? { label: 'Where to buy', value: whereToBuy } : null,
+      whereToBuyValue ? { label: 'Where to buy', value: whereToBuyValue } : null,
     ].filter(Boolean);
-  }, [product]);
+  }, [product, retailerLinks]);
 
   const factRows = useMemo(() => (product ? buildFactRows(product) : []), [product]);
 
@@ -595,6 +626,29 @@ export default function ProductModal({
           </button>
         )}
       </div>
+      {retailerLinks.length > 0 && (
+        <div className="pdp-retailers">
+          <span className="pdp-retailers__label">Compare at</span>
+          {retailerLinks.map((r) => (
+            <a
+              key={r.name}
+              className="pdp-retailers__link"
+              href={r.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => posthog.capture('product_retailer_link_clicked', {
+                productId: product.id,
+                retailer: r.name,
+                verified: r.verified,
+                destination: r.url,
+                source: 'actions_row',
+              })}
+            >
+              {r.name}
+            </a>
+          ))}
+        </div>
+      )}
       {onAddToEcosystem && (
         <button
           type="button"
