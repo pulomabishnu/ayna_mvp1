@@ -426,10 +426,17 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     // instead of mounting everything up front.
     const PAGE_SIZE = 30;
     // Bounds how many browse-AI generation rounds a single browse context
-    // (macro group + category + personalization) can trigger — caps cost/
-    // latency for an open-ended browse session instead of calling the API
-    // every time "Load more" would otherwise vanish.
-    const MAX_BROWSE_AI_ROUNDS = 2;
+    // (macro group + category + personalization) can trigger. Raised from 2
+    // to 10 per explicit direction: browsing a category should feel
+    // effectively endless (there are real products in every category well
+    // beyond what the static catalog holds), not stop after one extra
+    // batch. Still bounded, not literally infinite — a genuinely
+    // open-ended browse session (someone holding "Load more") shouldn't be
+    // able to run unlimited paid LLM calls, but 10 rounds x ~8 items is
+    // ~80 additional real products per category before it stops offering
+    // more, which is the point where the model would likely be repeating
+    // itself anyway.
+    const MAX_BROWSE_AI_ROUNDS = 10;
     const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
     const recommendedSet = useMemo(() => new Set(recommendedProductIds || []), [recommendedProductIds]);
     const recommendedRank = useMemo(() => new Map((recommendedProductIds || []).map((id, index) => [id, index])), [recommendedProductIds]);
@@ -1037,7 +1044,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 <div>
                     <p className="ayna-browse__eyebrow">{personalizationFilter && recommendedSet.size > 0 ? 'For you' : 'Browse'}</p>
                     <h2>Shop</h2>
-                    <span>{gridItems.length} products</span>
                 </div>
             </div>
 
