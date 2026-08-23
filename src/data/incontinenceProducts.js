@@ -82,7 +82,7 @@ export const INCONTINENCE_PHYSICAL = [
         price: '$49.97 for 52 (2 packs of 26, Large)',
         userRating: 4.4,
         whereToBuy: ['Amazon', 'Target', 'Walmart'],
-        image: '/ayna_placeholder.png',
+        image: 'https://target.scene7.com/is/image/Target/GUEST_e9213c42-1912-4667-aecc-fe66a250fd69?wid=800&hei=800&fmt=pjpeg',
         summary: 'Pull-on, underwear-style urinary incontinence protection for women with moderate-to-heavy bladder leaks, cut to look and feel closer to regular underwear than a traditional pad-and-liner setup. The brand\'s highest-coverage option in this line.',
         safety: {
             fdaStatus: 'Absorbent hygiene product; not an FDA-cleared medical device.',
@@ -111,7 +111,7 @@ export const INCONTINENCE_PHYSICAL = [
         price: '$20.64 for 50',
         userRating: 4.4,
         whereToBuy: ['Walmart', 'Amazon', 'TENA.us'],
-        image: '/ayna_placeholder.png',
+        image: 'https://tena-images.essity.com/images-c5/138/498138/optimized-AzurePNG2K/tena-sen-car-ex-cov-very-light-liner-4x50-beauty-no-counts-3000x3000px.png?w=800&h=944&imPolicy=dynamic',
         summary: 'A very-light liner for women with occasional urinary incontinence or light bladder weakness. TENA is a long-established incontinence-care brand (its "Sensitive Care" line is described by the brand as dermatologically approved and built for skin comfort).',
         safety: {
             fdaStatus: 'Absorbent hygiene product; not an FDA-cleared medical device.',
