@@ -720,14 +720,6 @@ function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasPro
             ))}
           </div>
 
-          <div className="ayna-landing-hero-actions">
-            <button type="button" className="ayna-landing-btn ayna-landing-btn--amber" onClick={onStartQuiz}>
-              Build your ecosystem
-            </button>
-            <button type="button" className="ayna-landing-btn ayna-landing-btn--browse" onClick={() => onViewDiscovery?.('')}>
-              Browse
-            </button>
-          </div>
         </div>
       </section>
 

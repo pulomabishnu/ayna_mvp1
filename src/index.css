@@ -1614,7 +1614,7 @@ html {
 .ayna-landing-hero {
   background: var(--mockup-hero-gradient);
   color: #F4F0FA;
-  padding: 78px 0 86px;
+  padding: 78px 0 56px;
 }
 
 .ayna-landing-hero-col {
@@ -2208,10 +2208,10 @@ html {
 /* Landing hero picks the gradient up where the nav left off. */
 .ayna-landing-hero {
   background: var(--mockup-hero-gradient);
-  background-size: 100% 655px;
+  background-size: 100% 580px;
   background-position: 0 -84px;
   background-repeat: no-repeat;
-  min-height: 571px;
+  min-height: 496px;
 }
 
 .ayna-landing-hero--returning {
