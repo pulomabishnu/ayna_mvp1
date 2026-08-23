@@ -245,8 +245,18 @@ export const STARTUPS = [
         stage: 'Available, DTC',
         productReleased: true,
         spotsLeft: 400,
+        // natalist.com now 302-redirects to everlywell.com — same pattern as
+        // the Favor/Nurx entry fixed earlier today (brand acquired, catalog
+        // entry gone stale). Flagging for a content decision rather than
+        // guessing: merge into an Everlywell entry, or confirm Natalist still
+        // operates as its own storefront under Everly Health and find its
+        // real current URL.
         url: 'https://natalist.com',
-        image: 'https://img.freepik.com/premium-photo/wild-boar-white-background_407474-27719.jpg'
+        // Was a completely unrelated wild boar stock photo (img.freepik.com)
+        // — cleared rather than guessing a replacement; falls back to the
+        // clean initial-letter placeholder until a real, verified photo is
+        // sourced.
+        image: ''
     },
     {
         id: 's-kindbody',
