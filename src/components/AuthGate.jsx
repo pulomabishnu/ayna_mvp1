@@ -281,10 +281,10 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
         <button
           type="button"
           onClick={handleGoogle}
-          disabled={googleLoading || !allConsented}
+          disabled={googleLoading || (isSignup && !allConsented)}
           style={{
             ...styles.googleBtn,
-            ...(!allConsented ? styles.googleBtnDisabled : {}),
+            ...(isSignup && !allConsented ? styles.googleBtnDisabled : {}),
           }}
         >
           <GoogleIcon />
