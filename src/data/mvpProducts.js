@@ -49,8 +49,7 @@ export const MVP_PHYSICAL = [
     price: '$12 for 60 caps',
     userRating: 4.4,
     whereToBuy: ['iHerb', 'Amazon', 'Walmart'],
-            // nowfoods.com blocks plain HTTP fetches (bot-challenge) — couldn't source a real image.
-        image: '/ayna_placeholder.png',
+        image: 'https://target.scene7.com/is/image/Target/GUEST_127d7700-f673-4c0d-8564-e47ca95076b3?wid=800&hei=800&qlt=80&fmt=pjpeg',
     summary: 'Affordable D-mannose powder/caps for urinary tract support. Often used as a natural alternative for prevention.',
     safety: { fdaStatus: 'Dietary supplement', materials: 'D-mannose', recalls: 'No recalls.', allergens: 'Vegan caps', sideEffects: 'Generally well tolerated. May cause mild diarrhea or stomach upset, particularly at higher doses. Use caution if you have kidney disease.' },
     clinicianOpinionSource: 'independent',
@@ -337,7 +336,8 @@ export const MVP_PHYSICAL = [
     price: '$25',
     userRating: 4.4,
     whereToBuy: ['Amazon', 'Intimina.com'],
-    image: '',
+    // Intimina rebranded "Luna Beads" to "Laselle" (same weighted-ball Kegel exerciser); image is from the current Laselle product page.
+    image: 'https://assets.intimina.com/files/static/product-images/2022-04/550x550_Laselle_EN.jpg?VersionId=_8_GLEGmnwIH1maYhAsvLEeLm4Usw1Em',
     summary: 'Vaginal weights for progressive Kegel training. Helps strengthen pelvic floor for leakage and comfort.',
     safety: { fdaStatus: 'Fitness device', materials: 'Silicone', recalls: 'No recalls.', allergens: 'Silicone', sideEffects: 'Medical-grade silicone is generally well tolerated. Mild discomfort during initial use is common; stop and check with a pelvic floor PT if you notice pain.' },
     clinicianOpinionSource: 'independent',
@@ -450,7 +450,7 @@ export const MVP_PHYSICAL = [
     price: '$25–40 for 300–500g',
     userRating: 4.5,
     whereToBuy: ['Amazon', 'iHerb', 'Thorne.com', 'CVS'],
-    image: '',
+    image: 'https://d1vo8zfysxy97v.cloudfront.net/media/product/sf903__ve8382489c6ce9fb7f28cdddef00e6f1ece146591.png',
     summary: 'Creatine supports muscle strength, cognitive function, and energy. Evidence-based for perimenopause: helps preserve lean mass, may improve brain fog and sleep when combined with resistance training.',
     safety: { fdaStatus: 'Dietary supplement', materials: 'Creatine monohydrate', recalls: 'No recalls.', allergens: 'Vegan options available', sideEffects: 'Well studied and generally safe. May cause mild water retention or stomach upset when starting. Stay well hydrated and consider starting at a lower dose.' },
     clinicianOpinionSource: 'independent',
@@ -555,8 +555,7 @@ export const MVP_DIGITAL = [
     userRating: 4.4,
     whereToBuy: ['forhers.com'],
     platform: 'Web, iOS, Android',
-    // forhers.com currently returns 403 (bot-challenge) on plain fetch.
-    image: '/ayna_placeholder.png',
+    image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/dd/b6/45/ddb645c3-4a99-9bcc-8603-9d47b9d4d912/HersIcon-0-0-1x_U007emarketing-0-6-0-85-220.png/512x512bb.jpg',
     summary: 'Ro\'s brand for women. Telehealth for anxiety, depression, and skin. Prescriptions and products delivered with ongoing support.',
     safety: { fdaStatus: 'Prescription via licensed clinicians', materials: 'N/A', recalls: 'N/A', allergens: 'N/A', sideEffects: 'Hers itself has no side effects. It\'s a telehealth service. Any medication prescribed through it (e.g. for anxiety, depression, or skin) carries the standard side effects for that specific drug, which your clinician reviews with you before you start.' },
     privacy: { dataStorage: 'US', sellsData: 'Check policy', hipaa: 'HIPAA-compliant for Rx', keyPolicy: 'Telehealth and prescription service' },

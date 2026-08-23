@@ -404,8 +404,8 @@ export const EXTENDED_DIGITAL = [
         }
     },
     {
-        id: 'd-ppd', name: 'Planned Parenthood Direct', category: 'telehealth', type: 'digital', internal: false, healthFunctions: ['telehealth', 'contraception', 'uti-prevention'], tags: ['cost', 'comfort', 'privacy', 'uti'], price: '$0-15/visit, sliding scale', userRating: 4.7, whereToBuy: ['ppd.plannedparenthood.org', 'App Store'], platform: 'Web, iOS',         // ppd.plannedparenthood.org doesn't resolve. Couldn't confirm the real domain for this app.
-        image: '/ayna_placeholder.png', summary: 'Birth control, UTI treatment, and STI care via app. Income-based pricing. Most trusted name in reproductive health.',
+        id: 'd-ppd', name: 'Planned Parenthood Direct', category: 'telehealth', type: 'digital', internal: false, healthFunctions: ['telehealth', 'contraception', 'uti-prevention'], tags: ['cost', 'comfort', 'privacy', 'uti'], price: '$0-15/visit, sliding scale', userRating: 4.7, whereToBuy: ['ppd.plannedparenthood.org', 'App Store'], platform: 'Web, iOS',
+        image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/0b/ca/49/0bca4992-624a-eb8d-e3dc-d8251c29cf82/AppIcon-1x_U007emarketing-0-6-0-85-220-0.png/512x512bb.jpg', summary: 'Birth control, UTI treatment, and STI care via app. Income-based pricing. Most trusted name in reproductive health.',
         safety: {
             fdaStatus: 'Licensed healthcare provider', materials: 'N/A', recalls: 'N/A', allergens: 'N/A',
             sideEffects: 'Medication-specific.',
