@@ -1,11 +1,11 @@
 // Resolves a real product image for products with placeholder images via /api/product-image
 // Results are cached in localStorage so the lookup only ever runs once per product.
 
-// Bumped v3 -> v4 alongside the server-side cache key: an app/telehealth
-// product (Brightside, Clue) resolved to '' under the old logo-rejects-all
-// logic would otherwise keep serving that empty result from localStorage
-// indefinitely, independent of the server-side allowBrandLogo fix.
-const LS_KEY = 'ayna_product_images_v4';
+// Bumped v4 -> v5 alongside the server-side cache key: Clue's real logo
+// (hosted on Contentful's ctfassets.net CDN) was wrongly rejected by a CDN
+// allowlist that had the wrong Contentful domain — fixed server-side, but
+// the earlier '' result would otherwise keep serving from localStorage.
+const LS_KEY = 'ayna_product_images_v5';
 const memCache = new Map();
 
 function lsRead() {

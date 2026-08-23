@@ -24,6 +24,19 @@ describe('isRelatedImageHost', () => {
     expect(isRelatedImageHost('https://cdn.shopify.com/s/files/1/photo.jpg', 'https://www.brand.com/product')).toBe(true);
   });
 
+  it('accepts a Contentful-hosted image (real domain is ctfassets.net, not contentful.com)', () => {
+    // Real production case: helloclue.com's actual og:image is served from
+    // images.ctfassets.net (Contentful's asset CDN) — an early version of
+    // this allowlist had 'contentful.com' (Contentful's marketing site)
+    // instead, which wrongly rejected Clue's own legitimate brand image.
+    expect(
+      isRelatedImageHost(
+        'https://images.ctfassets.net/juauvlea4rbf/abc123/open_graph.png',
+        'https://helloclue.com/'
+      )
+    ).toBe(true);
+  });
+
   it('rejects an image hosted on a totally unrelated third-party domain', () => {
     // Real production bug: helloclue.com's own og:image meta tag resolved
     // to an asset hosted on zurb.com, a design agency with no connection

@@ -63,7 +63,12 @@ const KNOWN_IMAGE_CDN_SUFFIXES = [
   'cloudfront.net', 'akamaized.net', 'fastly.net', 'imgix.net',
   'cloudinary.com', 'wp.com', 'squarespace.com', 'squarespace-cdn.com',
   'amazonaws.com', 'googleusercontent.com', 'bigcommerce.com',
-  'contentful.com', 'sanity.io', 'prismic.io',
+  // 'contentful.com' is Contentful's own marketing domain — the CDN that
+  // actually serves a Contentful-hosted site's images is 'ctfassets.net'.
+  // Caught live: helloclue.com's real og:image is served from
+  // images.ctfassets.net, which the wrong domain name rejected as
+  // "unrelated third party" even though it's Clue's own legitimate asset.
+  'contentful.com', 'ctfassets.net', 'sanity.io', 'prismic.io',
 ];
 
 function baseDomain(hostname) {

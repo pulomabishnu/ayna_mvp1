@@ -130,14 +130,11 @@ export default async function handler(req, res) {
   const allowBrandLogo = type === 'digital';
   if (!name) return res.status(400).json({ error: 'missing_name' });
 
-  // Bumped v4 -> v5: apps/telehealth services (Brightside, Clue) were
-  // rejected down to no image at all by the same logo/SVG check meant for
-  // physical products — a brand logo IS the real "photo" for something with
-  // no physical form. allowBrandLogo (from `type`) now lets those through
-  // while keeping the strict rejection for everything physical. `type` is
-  // part of the key so a product resolved once under the wrong type can't
-  // pin the wrong outcome for a later, correctly-tagged call.
-  const cacheKey = `ayna:img:v5:${type}:${brand.toLowerCase()}|${name.toLowerCase()}`;
+  // Bumped v5 -> v6: KNOWN_IMAGE_CDN_SUFFIXES had 'contentful.com' instead
+  // of Contentful's actual asset domain 'ctfassets.net', so Clue's real
+  // og:image (served from images.ctfassets.net) was wrongly rejected as an
+  // unrelated third party and pinned as a negative result under v5.
+  const cacheKey = `ayna:img:v6:${type}:${brand.toLowerCase()}|${name.toLowerCase()}`;
   const redis = getRedis();
 
   if (redis) {
