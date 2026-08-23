@@ -520,14 +520,17 @@ export default function HealthIntakeForm({ onComplete }) {
             <ScreenHeader title="Let's build your ecosystem." subtitle="A few quick questions. Takes about 20 seconds." />
             <FieldLabel>How old are you?</FieldLabel>
             <TextInput type="number" value={intake.age} onChange={(v) => set('age', v)} placeholder="e.g. 28" />
-            <FieldLabel optional>Where are you based?</FieldLabel>
-            <TextInput value={intake.location} onChange={(v) => set('location', v)} placeholder="e.g. New York, NY" />
             <FieldLabel optional>ZIP code</FieldLabel>
             <TextInput
               value={intake.zipcode}
               onChange={(v) => set('zipcode', v.replace(/\D/g, '').slice(0, 5))}
               placeholder="e.g. 10001"
             />
+            {intake.location.trim() && (
+              <p style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', marginTop: '0.3rem' }}>
+                {intake.location}
+              </p>
+            )}
             <ContinueButton onClick={goNext} disabled={!intake.age.trim()}>Continue →</ContinueButton>
           </div>
         )}
