@@ -4954,3 +4954,94 @@ textarea {
 
 /* ===== END AYNA HOW-IT-WORKS + ASK AYNA 2026 ===== */
 
+
+
+/* ===== ASK AYNA TALK MODE ===== */
+
+.ayna-ask-mode {
+  width: fit-content;
+  margin: 0.75rem auto 0;
+  padding: 3px;
+  display: flex;
+  background: #F1EBE5;
+  border-radius: 999px;
+}
+
+.ayna-ask-mode button {
+  min-width: 88px;
+  padding: 0.48rem 1rem;
+  border-radius: 999px;
+  color: #7A6F69;
+  font-size: 0.78rem;
+  font-weight: 650;
+}
+
+.ayna-ask-mode button.is-active {
+  background: #FFF;
+  color: #242A52;
+  box-shadow: 0 2px 10px rgba(36,42,82,0.09);
+}
+
+.ayna-ask-mode button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.ayna-voice-state {
+  margin: 0.7rem 1rem 0;
+  padding: 0.8rem 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1px solid rgba(36,42,82,0.08);
+  border-radius: 17px;
+  background: #F8F3ED;
+}
+
+.ayna-voice-state__orb {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  border-radius: 58% 42% 60% 40% / 42% 57% 43% 58%;
+  background:
+    radial-gradient(circle at 72% 20%, #F0A84B 0%, transparent 33%),
+    radial-gradient(circle at 25% 78%, #A2603C 0%, transparent 35%),
+    linear-gradient(135deg, #242A52, #5A3C73 58%, #B56848);
+}
+
+.ayna-voice-state.is-listening .ayna-voice-state__orb {
+  animation: aynaVoicePulse 0.9s ease-in-out infinite alternate;
+}
+
+.ayna-voice-state.is-speaking .ayna-voice-state__orb {
+  animation: aynaVoiceTalk 0.55s ease-in-out infinite alternate;
+}
+
+.ayna-voice-state strong {
+  display: block;
+  color: #242A52;
+  font-size: 0.82rem;
+}
+
+.ayna-voice-state span:not(.ayna-voice-state__orb) {
+  display: block;
+  margin-top: 0.1rem;
+  color: #81756E;
+  font-size: 0.7rem;
+}
+
+@keyframes aynaVoicePulse {
+  from { transform: scale(0.92); }
+  to { transform: scale(1.08); }
+}
+
+@keyframes aynaVoiceTalk {
+  from { transform: scaleX(0.92) scaleY(1.07) rotate(-2deg); }
+  to { transform: scaleX(1.08) scaleY(0.93) rotate(2deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ayna-voice-state__orb {
+    animation: none !important;
+  }
+}

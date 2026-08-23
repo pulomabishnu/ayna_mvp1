@@ -87,7 +87,6 @@ export default function SiteFooter({
           <button type="button" style={LINK_STYLE} onClick={onViewHowItWorks}>How It Works</button>
           <button type="button" style={LINK_STYLE} onClick={() => onViewDiscovery?.('')}>Browse</button>
           <button type="button" style={LINK_STYLE} onClick={onViewDeeptech}>Why Ayna</button>
-          <button type="button" style={LINK_STYLE} onClick={onViewWaitlist}>Launch Week</button>
           <button type="button" style={LINK_STYLE} onClick={onViewArticles}>My Health Library</button>
         </FooterColumn>
 
