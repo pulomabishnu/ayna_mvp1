@@ -198,21 +198,38 @@ export function scoreQueryAgainstProduct(query, haystackLower, identityHaystackL
     return 0;
   }
 
-  // A 2-term query only needs ONE term to hit to clear minH (compound nouns
-  // like "vitamin c" and OR-style pairs like "pads thongs" both use this same
-  // 1-of-2 threshold). For a compound noun, that lets a product through on a
-  // single incidental prose mention of one word ("Uberlube" mentioning
-  // "Vitamin E" once in its ingredients list matches "vitamin c" — real
-  // report: this scored the same as an actual vitamin C product). Reject that
-  // unless the match is backed by SOME identity-field signal (the product's
-  // name/brand/category/tags really is about one of these terms, not just a
-  // passing prose mention) or by genuine full coverage (both terms present
-  // somewhere, even in prose — a much stronger signal than either alone).
-  // A single-term query is unaffected: minH already requires hits >= 1 ==
-  // terms.length there, so `hits < terms.length` can never be true for it —
-  // this only ever narrows the 2-term, 1-of-2 case described above.
-  if (terms.length <= 2 && identityHits === 0 && hits < terms.length) {
-    return 0;
+  // Short queries (1-2 terms) are the highest-risk case for a weak, purely
+  // incidental prose mention passing as a real "match": a 1-word query only
+  // needs that one word to appear ANYWHERE in the flattened haystack
+  // (name/summary/doctorOpinion/ingredients/safety text/etc. all mashed
+  // together), and a 2-word query only needs ONE of the two ("vitamin c" and
+  // "pads thongs" both use this same 1-of-2 threshold). Confirmed against the
+  // real catalog: "vitamins" matched a lubricant, a UTI product, and a
+  // maternity pillow (all mentioning "vitamin" once, in passing); "stress"
+  // matched a Kegel exerciser and a breast pump; "iron" matched a heating
+  // pad — none of these are what the product actually IS, they just contain
+  // the word somewhere in several paragraphs of copy. Reject a match like
+  // that unless it's backed by SOME identity-field signal (the product's own
+  // name/brand/category/tags/healthFunctions really is about this term, not
+  // just a passing prose mention) or, for 2-term queries, by genuine full
+  // coverage (both terms present somewhere, even in prose — a much stronger
+  // signal than either alone). Longer natural-language queries (3+ terms)
+  // are deliberately left alone: minHitsForMatch already requires multiple
+  // independent term hits there, a much weaker coincidence risk, and this
+  // file's whole design intent is that a long spoken sentence can still
+  // match on partial prose coverage without also needing a tag/category hit.
+  // Only enforced when a caller actually supplied identity text — without it
+  // there's no way to tell "genuinely no identity signal" apart from "this
+  // caller doesn't distinguish identity from prose at all" (a few tests, and
+  // any future caller, intentionally use the simpler 2-arg form and get the
+  // older, more permissive behavior).
+  if (identityHaystackLower) {
+    if (terms.length === 1 && identityHits === 0) {
+      return 0;
+    }
+    if (terms.length === 2 && identityHits === 0 && hits < terms.length) {
+      return 0;
+    }
   }
 
   let score = hits;
