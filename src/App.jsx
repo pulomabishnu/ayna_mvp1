@@ -153,6 +153,14 @@ function App() {
   // Ref always mirrors currentView synchronously — safe to read inside Supabase callbacks
   // that run outside React's render cycle.
   const currentViewRef = useRef(getInitialView());
+  // Counts real in-app pushState navigations (not the initial replaceState
+  // on mount, and not replace-style navigations). Used to tell "the user
+  // clicked around inside the app to get here" apart from "this tab's only
+  // entry is a direct/shared link" — window.history.length can't do this
+  // reliably, since a freshly opened tab already carries its own blank
+  // entry before the app even loads, making history.length > 1 true even
+  // with zero in-app navigation.
+  const inAppPushCountRef = useRef(0);
   const pathForView = useCallback((view, id) => {
     if (view === 'product') return id ? productHref(id) : '/';
     return VIEW_TO_PATH[view] || '/';
@@ -164,7 +172,7 @@ function App() {
     const path = pathForView(view, null);
     if (window.location.pathname !== path) {
       if (replace) window.history.replaceState({ view }, '', path);
-      else window.history.pushState({ view }, '', path);
+      else { window.history.pushState({ view }, '', path); inAppPushCountRef.current += 1; }
     }
   }, [pathForView]);
   /** Navigate to a specific product's dedicated page — a real URL, not modal state. */
@@ -176,8 +184,16 @@ function App() {
     const path = productHref(id);
     if (window.location.pathname !== path) {
       if (replace) window.history.replaceState({ view: 'product', productId: id }, '', path);
-      else window.history.pushState({ view: 'product', productId: id }, '', path);
+      else { window.history.pushState({ view: 'product', productId: id }, '', path); inAppPushCountRef.current += 1; }
     }
+  }, []);
+  /** Back control for the product page: real in-app back if we got here by
+   * clicking around inside the app, otherwise (direct/shared link, no prior
+   * in-app history) a safe landing on Discovery instead of leaving the tab. */
+  const handleBackFromProduct = useCallback(() => {
+    if (inAppPushCountRef.current > 0) window.history.back();
+    else handleViewDiscovery('');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
     const path = pathForView(currentView, productRouteId);
@@ -1570,6 +1586,7 @@ function App() {
               user={user}
               userSession={userSession}
               onOpenProduct={handleOpenProduct}
+              onBack={handleBackFromProduct}
             />
           ) : productStillResolving ? (
             <ViewLoadingFallback />
