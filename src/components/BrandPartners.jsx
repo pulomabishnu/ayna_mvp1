@@ -126,7 +126,7 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToE
           );
         })}
 
-        <p className="brands__more">Coming soon 👀</p>
+        <p className="brands__more">Coming soon</p>
       </div>
     </section>
   );

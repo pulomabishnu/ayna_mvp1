@@ -120,16 +120,87 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
   );
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
+  const [mode, setMode] = useState('chat');
+  const [speaking, setSpeaking] = useState(false);
   const bottomRef = useRef(null);
+  const formRef = useRef(null);
+  const autoSubmitVoiceRef = useRef(false);
+  const lastSpokenRef = useRef('');
   const speech = useSpeechToText();
+
+  const canTalk =
+    speech.supported &&
+    typeof window !== 'undefined' &&
+    'speechSynthesis' in window;
 
   const toggleVoice = () => {
     if (speech.isRecording) {
       const t = speech.stop();
-      if (t) setInput((prev) => (prev.trim() ? `${prev.trim()} ${t}` : t));
+
+      if (t) {
+        const next = input.trim() ? `${input.trim()} ${t}` : t;
+        if (mode === 'talk') autoSubmitVoiceRef.current = true;
+        setInput(next);
+      }
     } else {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        setSpeaking(false);
+      }
       speech.start();
     }
+  };
+
+  const speakReply = (text) => {
+    if (mode !== 'talk' || !canTalk || !text) return;
+
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.96;
+    utterance.pitch = 1.02;
+
+    const voices = window.speechSynthesis.getVoices();
+
+    // Prefer warmer, more natural voices when the device has them.
+    const preferredNames = [
+      'Ava',
+      'Samantha',
+      'Allison',
+      'Serena',
+      'Zoe',
+      'Google US English',
+      'Microsoft Jenny Online',
+      'Microsoft Aria Online',
+    ];
+
+    const voice =
+      preferredNames
+        .map((name) =>
+          voices.find((v) =>
+            String(v.name || '').toLowerCase().includes(name.toLowerCase())
+          )
+        )
+        .find(Boolean) ||
+      voices.find((v) =>
+        String(v.lang || '').toLowerCase().startsWith('en-us')
+      ) ||
+      voices.find((v) =>
+        String(v.lang || '').toLowerCase().startsWith('en')
+      );
+
+    if (voice) utterance.voice = voice;
+
+    // Warm + conversational. Slight lift without sounding cartoonish.
+    utterance.rate = 1.01;
+    utterance.pitch = 1.08;
+    utterance.volume = 0.96;
+
+    utterance.onstart = () => setSpeaking(true);
+    utterance.onend = () => setSpeaking(false);
+    utterance.onerror = () => setSpeaking(false);
+
+    window.speechSynthesis.speak(utterance);
   };
 
   useEffect(() => {
@@ -139,6 +210,46 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  useEffect(() => {
+    if (
+      mode === 'talk' &&
+      autoSubmitVoiceRef.current &&
+      input.trim()
+    ) {
+      autoSubmitVoiceRef.current = false;
+      formRef.current?.requestSubmit();
+    }
+  }, [input, mode]);
+
+  useEffect(() => {
+    if (!open || mode !== 'talk' || !canTalk) return;
+
+    const latest = messages[messages.length - 1];
+
+    if (
+      !latest ||
+      latest.role !== 'assistant' ||
+      !latest.text ||
+      lastSpokenRef.current === latest.text
+    ) return;
+
+    lastSpokenRef.current = latest.text;
+    speakReply(latest.text);
+  }, [messages, open, mode, canTalk]);
+
+  useEffect(() => {
+    if (mode === 'talk' && open) return;
+
+    if (
+      typeof window !== 'undefined' &&
+      'speechSynthesis' in window
+    ) {
+      window.speechSynthesis.cancel();
+    }
+
+    setSpeaking(false);
+  }, [mode, open]);
 
   const handleSend = (e) => {
     e.preventDefault();
@@ -242,6 +353,55 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
             </button>
           </header>
 
+          <div className="ayna-ask-mode">
+            <button
+              type="button"
+              className={mode === 'chat' ? 'is-active' : ''}
+              onClick={() => setMode('chat')}
+            >
+              Chat
+            </button>
+
+            <button
+              type="button"
+              className={mode === 'talk' ? 'is-active' : ''}
+              onClick={() => setMode('talk')}
+              disabled={!canTalk}
+            >
+              Talk
+            </button>
+          </div>
+
+          {mode === 'talk' && (
+            <div className={`ayna-voice-state${
+              speech.isRecording
+                ? ' is-listening'
+                : speaking
+                  ? ' is-speaking'
+                  : ''
+            }`}>
+              <span className="ayna-voice-state__orb" aria-hidden="true" />
+
+              <div>
+                <strong>
+                  {speech.isRecording
+                    ? 'Listening…'
+                    : speaking
+                      ? 'Ayna is speaking…'
+                      : 'Talk to Ayna'}
+                </strong>
+
+                <span>
+                  {speech.isRecording
+                    ? 'Tap the mic again when you are done.'
+                    : speaking
+                      ? 'Tap the mic anytime to speak again.'
+                      : 'Tap the mic and speak naturally.'}
+                </span>
+              </div>
+            </div>
+          )}
+
           <div className="ayna-ask-panel__messages">
             {messages.map((m, i) => (
               <div
@@ -265,13 +425,15 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
             <div ref={bottomRef} />
           </div>
 
-          <form className="ayna-ask-panel__composer" onSubmit={handleSend}>
+          <form ref={formRef} className="ayna-ask-panel__composer" onSubmit={handleSend}>
             <div className="ayna-ask-panel__inputrow">
               <input
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask Ayna anything…"
+                placeholder={mode === 'talk'
+                  ? 'Or type while in Talk mode…'
+                  : 'Ask Ayna anything…'}
                 disabled={disabled || sending || speech.isRecording}
               />
 
