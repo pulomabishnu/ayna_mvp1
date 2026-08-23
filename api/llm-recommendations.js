@@ -315,25 +315,41 @@ function enrichRecommendations(recs, requestedConcern = '') {
 export async function lookupDsldProduct(name) {
   if (!name || name.length < 3) return null;
   try {
-    const url = `https://api.ods.od.nih.gov/dsld/v9/label?name=${encodeURIComponent(name)}&status=Y&size=1`;
+    // WAS `/dsld/v9/label?name=...` — that path returns the API's own HTML
+    // docs page (not JSON) for any request; it silently failed every single
+    // call and nobody noticed because the try/catch swallowed it and every
+    // caller just treated "no DSLD data" as a normal, expected miss. Found by
+    // testing the real API live: `/v9/search-filter?q=...` is the endpoint
+    // that actually returns real hits, confirmed against a genuine product.
+    const url = `https://api.ods.od.nih.gov/dsld/v9/search-filter?q=${encodeURIComponent(name)}&size=1`;
     const r = await fetch(url, {
       headers: { Accept: 'application/json', 'User-Agent': 'Ayna-Health-App/1.0' },
       signal: AbortSignal.timeout(4000),
     });
     if (!r.ok) return null;
     const data = await r.json();
-    const hit = data?.hits?.hits?.[0]?._source;
-    if (!hit) return null;
-    const ingredients = Array.isArray(hit.dietaryIngredients)
-      ? hit.dietaryIngredients.map((i) => i.ingredientName || i.name).filter(Boolean).slice(0, 8)
+    // Flat `hits: [...]`, not the ES-style nested `hits.hits` the old code
+    // assumed — also confirmed live, not guessed.
+    const top = Array.isArray(data?.hits) ? data.hits[0] : null;
+    const hit = top?._source;
+    const dsldId = top?._id ? String(top._id) : '';
+    if (!hit || !dsldId) return null;
+    // Real field names from the actual response: allIngredients (not
+    // dietaryIngredients), each with `name` (not `ingredientName`).
+    const ingredients = Array.isArray(hit.allIngredients)
+      ? hit.allIngredients.map((i) => i.name).filter(Boolean).slice(0, 8)
       : [];
+    // The label JSON has no image field at all — the real photo lives at a
+    // predictable S3 thumbnail path keyed by the same id, confirmed by
+    // loading a real label page in a browser and reading its actual <img>
+    // src rather than guessing a URL shape.
     return {
       verified: true,
-      brand: hit.brandName || hit.manufacturerName || '',
+      brand: hit.brandName || '',
       ingredients,
-      dsldId: hit.dsldId || '',
-      imageUrl: (hit.imageUrl || '').startsWith('https://') ? hit.imageUrl : '',
-      labelUrl: hit.dsldId ? `https://dsld.od.nih.gov/product-label/${hit.dsldId}` : '',
+      dsldId,
+      imageUrl: `https://api.ods.od.nih.gov/dsld/s3/pdf/thumbnails/${dsldId}.jpg`,
+      labelUrl: `https://dsld.od.nih.gov/label/${dsldId}`,
     };
   } catch {
     return null;
