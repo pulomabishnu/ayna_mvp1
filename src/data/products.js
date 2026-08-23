@@ -453,7 +453,7 @@ export const PHYSICAL_PRODUCTS = [
         internal: true,
         healthFunctions: ['menstrual-collection'],
         tags: ['heavy-flow', 'leaks', 'comfort'],
-        price: '$14 for 12 (disposable) / $40 reusable',
+        price: '$16 for 12 (disposable) / $35 reusable',
         userRating: 4.5,
         whereToBuy: ['Target', 'CVS', 'Amazon'],
         image: 'https://flexfits.com/cdn/shop/files/reusable-period-disc-with-packaging-and-review.png?v=1763753790',
