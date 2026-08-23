@@ -4119,7 +4119,7 @@
     "product_type": "physical",
     "summary": "The most affordable menstrual cup. Pay-what-you-can model starting at $6. Making cups accessible.",
     "price": "$6 (pay-what-you-can)",
-    "image": "/ayna_placeholder.png",
+    "image": "",
     "url": null,
     "tags": [
       "cost",
@@ -4128,7 +4128,9 @@
     "health_functions": [
       "menstrual-collection"
     ],
-    "where_to_buy": [],
+    "where_to_buy": [
+      "Amazon"
+    ],
     "where_to_buy_in_stock": {},
     "safety": {
       "fdaStatus": "FDA-registered",
@@ -4136,7 +4138,7 @@
       "recalls": "No recalls.",
       "allergens": "BPA-free, latex-free",
       "sideEffects": "Risk of leakage if the seal isn't perfect. Insertion discomfort during initial use.",
-      "opinionAlerts": "Revolutionary pricing made it accessible; the company has since closed. If you have a June Cup, it remains safe to use (medical-grade silicone); consider DivaCup, Lunette, or Saalt as alternatives when you need a replacement."
+      "opinionAlerts": "Revolutionary pricing made it accessible; the brand no longer sells directly, but June Cup remains available on Amazon. Medical-grade silicone remains safe to use."
     },
     "doctor_opinion": "Accessibility in menstrual care matters; low-cost medical-grade silicone cups can reduce barriers.",
     "community_review": "Community discussions on Reddit r/menstrualcups note June Cup's affordability and comparable performance.",
@@ -4149,7 +4151,6 @@
     "user_rating": 4.5,
     "is_active": true,
     "extra": {
-      "outOfBusiness": true,
       "communityReviewSourceUrl": "https://www.reddit.com/r/menstrualcups/",
       "communityReviewSourceLabel": "Reddit r/menstrualcups",
       "ingredients": "Medical-grade silicone.",
