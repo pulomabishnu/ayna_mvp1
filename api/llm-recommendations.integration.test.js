@@ -271,8 +271,54 @@ describe('POST /api/llm-recommendations — function budget / deadline guard', (
     expect(res.body.delivered).toBe(2);
     expect(res.body.partial).toBe(true);
     expect(res.body.failedConcerns.length).toBe(7);
+    // Reason travels with each failed concern so a future incident is
+    // diagnosable from the response alone (see api/llm-recommendations.js's
+    // mapConcurrent comment — this was previously an undiagnosable-after-
+    // the-fact live bug).
+    expect(res.body.failedConcernReasons.length).toBe(7);
+    expect(res.body.failedConcernReasons.every((f) => f.reason === 'function_budget_exhausted')).toBe(true);
+    expect(res.body.failedConcernReasons.every((f) => typeof f.concern === 'string' && f.concern.length > 0)).toBe(true);
 
     dateSpy.mockRestore();
+  });
+
+  it('reports a real provider failure reason, not just the concern name, and does not misclassify it as a success', async () => {
+    restoreEnv();
+    restoreEnv = withEnv({
+      SUPABASE_URL: 'https://x.supabase.co',
+      SUPABASE_SERVICE_ROLE_KEY: 'service-key',
+      ANTHROPIC_API_KEY: 'test-key',
+      OPENAI_API_KEY: undefined,
+      AI_RECOMMENDATIONS_PROVIDER_ORDER: 'anthropic',
+      LLM_CONCERN_CONCURRENCY: '2',
+    });
+
+    // First concern's every retry attempt gets a non-retryable 401 (fails
+    // fast, no fallback provider configured); the rest succeed. This is the
+    // shape a real "no OpenAI key configured, Anthropic single point of
+    // failure" incident takes — a subset of concerns fail while the rest
+    // deliver, which is exactly the case the misleading "We couldn't build
+    // your ecosystem" banner (fixed in MyEcosystem.jsx) used to mishandle.
+    let callCount = 0;
+    globalThis.fetch = vi.fn(async () => {
+      callCount += 1;
+      if (callCount === 1) {
+        return { ok: false, status: 401, headers: { get: () => null }, text: async () => 'invalid api key' };
+      }
+      return anthropicOk(recPayload());
+    });
+
+    const handler = await loadHandler();
+    const res = mockRes();
+    await handler(mockReq({ body: { intake: wideIntake, buildId: 'b-provider-fail' } }), res);
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.partial).toBe(true);
+    expect(res.body.failedConcerns.length).toBe(1);
+    expect(res.body.failedConcernReasons.length).toBe(1);
+    expect(res.body.failedConcernReasons[0].reason).toBe('anthropic_401');
+    // The other 8 concerns actually succeeded — must not appear as failed.
+    expect(res.body.delivered).toBe(8);
   });
 });
 

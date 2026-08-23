@@ -405,8 +405,13 @@ async function mapConcurrent(items, fn, limit = 4) {
       try {
         results[i] = await fn(items[i], i);
       } catch (e) {
+        // Backstop only — fn (the per-concern callback below) already has its
+        // own try/catch, so this only fires on a genuine bug in that callback
+        // itself. Still returns the same {failed, concern, reason} shape as a
+        // normal per-concern failure so it isn't silently dropped from
+        // failedConcerns downstream.
         console.error('[llm-recs] task failed:', e?.message);
-        results[i] = null;
+        results[i] = { failed: true, concern: items[i], reason: e?.message || 'unexpected_error' };
       }
     }
   }
@@ -663,7 +668,7 @@ async function handleRequest(req, res) {
     async (concern, idx) => {
       if (budgetExhausted()) {
         console.warn(`[llm-recs] skipping concern ${idx + 1}/${concerns.length} — function budget exhausted`);
-        return null;
+        return { failed: true, concern, reason: 'function_budget_exhausted' };
       }
       const searchHits = searchResults?.[concern] || null;
       const prompt = buildPromptForOneConcern(concern, intake, feedback, searchHits);
@@ -686,23 +691,53 @@ async function handleRequest(req, res) {
         const parsed = tryParseJsonCandidate(out.text);
         console.log(`[llm-recs] concern ${idx + 1}/${concerns.length} | provider: ${out.provider} | bytes: ${out.text.length} | parsed: ${!!parsed}`);
         if (parsed) return { parsed, provider: out.provider, concern };
-        return null;
+        return { failed: true, concern, reason: 'unparseable_response' };
       } catch (e) {
-        console.error(`[llm-recs] concern ${idx + 1}/${concerns.length} failed:`, e?.status || '', e?.message);
-        return null;
+        // Carry the actual reason back to the client instead of just the
+        // concern's name — a live incident (2026-08-22: "Hormone balance" and
+        // "Gut and vaginal health" failed after ~20s) turned out to be
+        // undiagnosable after the fact because nothing but this server
+        // console.error captured *why*, and Vercel's CLI log retention didn't
+        // have it by the time anyone went looking. Now the reason travels
+        // with the response so it shows up in the browser console too.
+        console.error(`[llm-recs] concern ${idx + 1}/${concerns.length} failed:`, e?.provider || '', e?.status || '', e?.message);
+        return { failed: true, concern, reason: e?.status ? `${e.provider || 'llm'}_${e.status}` : (e?.message || 'unknown_error') };
       }
     },
-    // Concurrency was pinned to 1 with a note blaming Anthropic's ~50K TPM
-    // limit. Each call is roughly 3K in + up to 8K out, so 3 in flight is ~33K
-    // TPM — comfortably under. The real cause of the tail failures was that
-    // 429s were swallowed as "no result" with no retry; _llm.js now backs off
-    // on Retry-After instead, which is what makes concurrency safe.
-    Math.max(1, Math.min(parseInt(process.env.LLM_CONCERN_CONCURRENCY || '3', 10) || 3, 6))
+    // Each of the client's NUM_BATCHES=4 invocations (src/components/MyEcosystem.jsx)
+    // fires as a SEPARATE, genuinely-parallel HTTP request — Vercel doesn't
+    // serialize them, and they share one Anthropic account's rate limit.
+    // A prior comment here sized this concurrency (3) against ONE invocation's
+    // own token usage (~33K TPM) and called that "comfortably under" a ~50K TPM
+    // ceiling — true in isolation, but wrong for the actual traffic pattern:
+    // all 4 invocations can fire their first calls within the same second, so
+    // real peak load is up to 4x that estimate (~132K TPM), not ~33K. That
+    // mismatch is the most likely cause of the "some concerns failed" partial-
+    // failure pattern users hit around the ~20s mark (a burst of concurrent
+    // 429s that retry+backoff can absorb SOME but not all of within the 28s
+    // per-call timeout). Lowered to 2: peak combined load drops to ~4x22K =
+    // ~88K TPM — still not a hard guarantee (there's no cross-invocation
+    // coordination without a real distributed limiter, which is a bigger
+    // change), but a meaningfully smaller blast radius for the same reason a
+    // single invocation's own concurrency was capped in the first place.
+    // Separately — and this matters more than the exact number here — the
+    // OpenAI fallback this code path assumes exists is NOT actually
+    // configured (OPENAI_API_KEY is unset in this project's Vercel env as of
+    // 2026-08-22), so Anthropic is a single point of failure regardless of
+    // this concurrency setting; see AI_RECOMMENDATIONS_PROVIDER_ORDER.
+    Math.max(1, Math.min(parseInt(process.env.LLM_CONCERN_CONCURRENCY || '2', 10) || 2, 6))
   );
 
   const providerUsed = perConcernResults.find((r) => r?.provider)?.provider || '';
-  const succeeded = perConcernResults.filter(Boolean);
-  const failedConcerns = concerns.filter((c, i) => !perConcernResults[i]);
+  // Every concern now returns a truthy object (success OR failure — see above,
+  // failures carry a reason instead of being null) so `.filter(Boolean)` alone
+  // would wrongly count failures as successes. Discriminate on the shape.
+  const succeeded = perConcernResults.filter((r) => r && !r.failed);
+  const failed = perConcernResults.filter((r) => r?.failed);
+  const failedConcerns = failed.map((r) => r.concern);
+  // Reason travels to the client so a future incident is diagnosable from the
+  // browser console / API response alone, without needing server log access.
+  const failedConcernReasons = failed.map((r) => ({ concern: r.concern, reason: r.reason }));
 
   // Enrich PER CONCERN so each entry is stamped with the concern it was actually
   // requested for. Previously flatMap discarded that mapping and the code trusted
@@ -728,6 +763,7 @@ async function handleRequest(req, res) {
       requested: concerns.length,
       delivered: 0,
       failedConcerns,
+      failedConcernReasons,
       message: 'No recommendations could be generated. Please try again.',
     });
   }
@@ -787,6 +823,12 @@ async function handleRequest(req, res) {
     // Non-empty when some concerns failed. The client renders a partial-result
     // notice instead of silently showing fewer sections than were asked for.
     failedConcerns,
+    // Same list, but with WHY each one failed (provider+status, or a reason
+    // code like 'unparseable_response'/'function_budget_exhausted') — so a
+    // future incident is diagnosable from this response / the browser
+    // console alone, without needing server log access (which wasn't
+    // available when this exact bug was first reported).
+    failedConcernReasons,
     partial: failedConcerns.length > 0,
     providerUsed,
     generatedAt: new Date().toISOString(),
