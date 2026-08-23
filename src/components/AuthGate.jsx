@@ -5,6 +5,7 @@ const SUBTITLES = {
   quiz: 'Create an account to save your health profile and keep your ecosystem across sessions.',
   browse: 'Create an account to save your discoveries and track products over time.',
   login: 'Welcome back. Sign in to access your health ecosystem.',
+  personalize: 'Personalized results are matched to your health profile — sign in or create an account to turn this on.',
   default: 'Your personal women\'s health manager',
 };
 

@@ -596,6 +596,14 @@ function App() {
     return () => document.removeEventListener('pointerdown', close);
   }, [showAccountMenu]);
 
+  // Discovery's "Personalized" toggle is visible to everyone, but clicking it
+  // while logged out opens the same AuthGate modal used everywhere else in
+  // the app, instead of silently doing nothing or being invisible.
+  const handleRequirePersonalizeAuth = useCallback(() => {
+    setPendingAction('personalize'); pendingActionRef.current = 'personalize';
+    setShowAuthModal(true);
+  }, []);
+
   const PROTECTED_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls', 'doctor-prep', 'profile-edit', 'phone-verify', 'tracked', 'screenings'];
   useEffect(() => {
     if (!authLoading && !user && PROTECTED_VIEWS.includes(currentView)) {
@@ -1481,6 +1489,7 @@ function App() {
             quizResults={quizResults}
             healthProfile={healthProfile}
             user={user}
+            onRequirePersonalizeAuth={handleRequirePersonalizeAuth}
           />
           </Suspense>
         )}
@@ -1654,7 +1663,7 @@ function App() {
         {showAuthModal && (
           <AuthGate
             isModal
-            context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : pendingAction === 'login' ? 'login' : undefined}
+            context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : pendingAction === 'personalize' ? 'personalize' : pendingAction === 'login' ? 'login' : undefined}
             onBeforeOAuthRedirect={pendingAction === 'quiz-complete' && pendingQuizResults ? () => {
               try { sessionStorage.setItem('ayna_pending_quiz_results', JSON.stringify(pendingQuizResults)); } catch (_) {}
             } : undefined}

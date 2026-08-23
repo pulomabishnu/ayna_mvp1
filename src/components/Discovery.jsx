@@ -363,7 +363,7 @@ function buildAiProfileContext(personalizationFilter, quizResults) {
     return { profileSummary, dislikedProducts, dislikedTerms };
 }
 
-export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, savedProducts = {}, onToggleSaved, user = null }) {
+export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, savedProducts = {}, onToggleSaved, user = null, onRequirePersonalizeAuth = null }) {
     const [macroGroup, setMacroGroup] = useState(() => {
         if (!initialCategory || initialCategory === 'all') return 'all';
         return MACRO_GROUPS.find(g => g.categories.includes(initialCategory))?.id || 'all';
@@ -1098,12 +1098,24 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     <button type="button" className="ayna-browse__filter-button" onClick={() => setShowFilters((v) => !v)} aria-expanded={showFilters}>
                         Filters
                     </button>
-                    {user && (
-                        <label className="ayna-browse__personalized-toggle">
-                            <input type="checkbox" checked={personalizationFilter} onChange={(e) => setPersonalizationFilter(e.target.checked)} />
-                            <span>Personalized</span>
-                        </label>
-                    )}
+                    <label className="ayna-browse__personalized-toggle">
+                        <input
+                            type="checkbox"
+                            checked={personalizationFilter}
+                            onChange={(e) => {
+                                if (!user) {
+                                    // Checkbox visually can't move without a real change event,
+                                    // but there's nothing to personalize without an account —
+                                    // send them to sign in/up instead of silently flipping state
+                                    // that has no effect (or, worse, none they can see why).
+                                    onRequirePersonalizeAuth?.();
+                                    return;
+                                }
+                                setPersonalizationFilter(e.target.checked);
+                            }}
+                        />
+                        <span>Personalized</span>
+                    </label>
                 </div>
                 <label className="ayna-browse__sort">
                     <span>Sort</span>
