@@ -46,6 +46,30 @@ export function buildSearchTextForItem(item, categoryLabels = {}) {
   ].filter(Boolean).join(' ').toLowerCase();
 }
 
+/**
+ * Identity-only subset of buildSearchTextForItem: name/brand/category/tags/
+ * healthFunctions/badges, deliberately excluding prose fields (summary,
+ * doctorOpinion, communityReview, ingredients, effectiveness, safety text).
+ *
+ * WHY THIS EXISTS: a query like "vitamins" used to score a pregnancy skin oil
+ * (whose doctorOpinion happens to mention "Vitamin E" in passing) identically
+ * to an actual "Ritual Prenatal Vitamin" product — buildSearchTextForItem's
+ * flattened haystack can't tell an incidental prose mention from a product's
+ * actual identity. scoreQueryAgainstProduct uses this second, narrower
+ * haystack to weight identity-field matches above prose-only ones.
+ */
+export function buildIdentityTextForItem(item, categoryLabels = {}) {
+  return [
+    item.name,
+    item.brand,
+    (item.tags || []).join(' '),
+    item.category,
+    categoryLabels[item.category],
+    (item.badges || []).join(' '),
+    (item.healthFunctions || []).join(' '),
+  ].filter(Boolean).join(' ').toLowerCase();
+}
+
 function wordMatchesInHaystack(word, haystack) {
   if (!word || word.length < 2) return false;
   if (haystack.includes(word)) return true;
@@ -123,8 +147,17 @@ function minHitsForMatch(termCount) {
 
 /**
  * Score how well `query` matches product text. Higher is better.
+ *
+ * `identityHaystackLower` (optional, from buildIdentityTextForItem) lets a
+ * term that hits in name/brand/category/tags/healthFunctions score above one
+ * that only hits somewhere in prose (doctorOpinion, ingredients, etc). Without
+ * it, hit-counting alone can't distinguish a product that genuinely IS what
+ * the query asked for from one that just mentions the word in passing —
+ * omitting this argument preserves the exact old (pre-identity-weighting)
+ * scoring behavior, so existing callers/tests that only pass the full
+ * haystack are unaffected.
  */
-export function scoreQueryAgainstProduct(query, haystackLower) {
+export function scoreQueryAgainstProduct(query, haystackLower, identityHaystackLower = '') {
   const raw = query.toLowerCase().trim();
   if (!raw) return 0;
 
@@ -134,8 +167,10 @@ export function scoreQueryAgainstProduct(query, haystackLower) {
   }
 
   let hits = 0;
+  let identityHits = 0;
   for (const term of terms) {
     if (termMatchesWithVariants(term, haystackLower)) hits += 1;
+    if (identityHaystackLower && termMatchesWithVariants(term, identityHaystackLower)) identityHits += 1;
   }
 
   const minH = minHitsForMatch(terms.length);
@@ -148,6 +183,12 @@ export function scoreQueryAgainstProduct(query, haystackLower) {
   }
 
   let score = hits;
+  // A term matching in an identity field means the product IS about that
+  // term, not just mentioning it somewhere in a paragraph — weight it well
+  // above a plain prose hit (which is worth 1 point via `hits` above).
+  const IDENTITY_BONUS_PER_TERM = 2.5;
+  score += identityHits * IDENTITY_BONUS_PER_TERM;
+
   const collapsed = raw.replace(/\s+/g, ' ');
   if (collapsed.length >= 10 && haystackLower.includes(collapsed)) score += terms.length;
 

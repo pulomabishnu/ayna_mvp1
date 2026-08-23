@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { ALL_PRODUCTS, CATEGORY_LABELS, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate } from '../data/products';
 import { loadProductCatalog } from '../utils/productCatalog';
-import { buildSearchTextForItem, scoreQueryAgainstProduct } from '../utils/naturalLanguageSearch';
+import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../utils/naturalLanguageSearch';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { fetchSearchSuggestions } from '../utils/fetchSearchSuggestions';
 import { RELEASED_STARTUPS } from '../data/startups';
@@ -522,7 +522,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         if (qTrim) {
             const scoreItem = (item) => ({
                 item,
-                matchScore: scoreQueryAgainstProduct(qTrim, buildSearchTextForItem(item, CATEGORY_LABELS)),
+                matchScore: scoreQueryAgainstProduct(qTrim, buildSearchTextForItem(item, CATEGORY_LABELS), buildIdentityTextForItem(item, CATEGORY_LABELS)),
             });
             let scored = list.map(scoreItem).filter((x) => x.matchScore > 0);
 
@@ -659,7 +659,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             const scored = out.map((item, idx) => ({
                 item,
                 idx,
-                score: scoreQueryAgainstProduct(qTrimForAi, buildSearchTextForItem(item, CATEGORY_LABELS)),
+                score: scoreQueryAgainstProduct(qTrimForAi, buildSearchTextForItem(item, CATEGORY_LABELS), buildIdentityTextForItem(item, CATEGORY_LABELS)),
             }));
             scored.sort((a, b) => (b.score - a.score) || (a.idx - b.idx));
             return scored.map((x) => x.item);
