@@ -37,6 +37,73 @@ function looksLikeTinyAsset(url) {
   return matches.some((m) => Number(m[1]) <= 64);
 }
 
+// Product photography is essentially never vector art — SVGs found on a
+// brand's page are wordmarks/icons/illustrations. Caught in production:
+// Pure Encapsulations' Shopify catalog resolved every product's image to
+// /cdn/shop/files/pure-encapsulations.svg (the store theme's own logo file,
+// not a per-SKU photo), which the filename-keyword check alone missed
+// because "pure-encapsulations" doesn't contain any of the flagged words.
+export function isVectorAssetUrl(url) {
+  try {
+    return /\.svg(\?|$)/i.test(new URL(url).pathname);
+  } catch {
+    return /\.svg(\?|$)/i.test(String(url || ''));
+  }
+}
+
+/**
+ * A real product photo is always served from the brand's own domain or a
+ * CDN actually fronting it — never a totally unrelated third party. Caught
+ * in production: helloclue.com's own og:image meta tag resolved to an image
+ * hosted entirely on zurb.com (a design agency with no connection to Clue —
+ * almost certainly a stale template default nobody updated on their site).
+ */
+const KNOWN_IMAGE_CDN_SUFFIXES = [
+  'shopify.com', 'shopifycdn.com', 'myshopify.com',
+  'cloudfront.net', 'akamaized.net', 'fastly.net', 'imgix.net',
+  'cloudinary.com', 'wp.com', 'squarespace.com', 'squarespace-cdn.com',
+  'amazonaws.com', 'googleusercontent.com', 'bigcommerce.com',
+  'contentful.com', 'sanity.io', 'prismic.io',
+];
+
+function baseDomain(hostname) {
+  const parts = String(hostname || '').toLowerCase().split('.').filter(Boolean);
+  if (parts.length <= 2) return parts.join('.');
+  const secondLast = parts[parts.length - 2];
+  const shortSecondLevelLabels = new Set(['co', 'com', 'org', 'net', 'gov', 'ac', 'edu']);
+  if (parts[parts.length - 1].length === 2 && shortSecondLevelLabels.has(secondLast)) {
+    return parts.slice(-3).join('.'); // e.g. "brand.co.uk"
+  }
+  return parts.slice(-2).join('.');
+}
+
+export function isRelatedImageHost(imageUrl, pageUrl) {
+  try {
+    const imageHost = new URL(imageUrl).hostname.toLowerCase();
+    const pageHost = new URL(pageUrl).hostname.toLowerCase();
+    if (baseDomain(imageHost) === baseDomain(pageHost)) return true;
+    return KNOWN_IMAGE_CDN_SUFFIXES.some((suffix) => imageHost === suffix || imageHost.endsWith(`.${suffix}`));
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Central "does this look like an actual product photo" gate, applied
+ * regardless of which resolver produced the URL. matchShopifyProduct trusts
+ * whatever image field the matched catalog entry has with no filename check
+ * of its own, so this is the only thing standing between a Shopify store's
+ * own logo/banner asset and a product card.
+ */
+export function isLikelyNonProductImageUrl(url) {
+  const s = String(url || '').trim();
+  if (!s) return false;
+  if (NON_PRODUCT_IMAGE_PATTERN.test(s)) return true;
+  if (looksLikeTinyAsset(s)) return true;
+  if (isVectorAssetUrl(s)) return true;
+  return false;
+}
+
 function decodeHtmlEntities(s) {
   return String(s || '')
     .replace(/&amp;/g, '&')
@@ -125,9 +192,14 @@ export async function fetchOgImage(pageUrl) {
     if (!contentType.includes('text/html')) return null;
     const html = await readCappedText(result.res);
     const raw = extractMetaContent(html, 'og:image') || extractMetaContent(html, 'twitter:image');
-    if (raw && raw.startsWith('http') && !NON_PRODUCT_IMAGE_PATTERN.test(raw) && !looksLikeTinyAsset(raw)) {
+    if (raw && raw.startsWith('http') && !isLikelyNonProductImageUrl(raw)) {
       const absolute = new URL(raw, result.finalUrl).toString();
-      if (absolute.startsWith('https://') || absolute.startsWith('http://')) return absolute;
+      if (
+        (absolute.startsWith('https://') || absolute.startsWith('http://')) &&
+        isRelatedImageHost(absolute, result.finalUrl)
+      ) {
+        return absolute;
+      }
     }
     return null;
   } catch {

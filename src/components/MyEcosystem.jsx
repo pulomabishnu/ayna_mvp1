@@ -1628,11 +1628,20 @@ export default function MyEcosystem({
     }, [activeTiered]);
 
     useEffect(() => {
+        // myProductList is deliberately excluded here — EcosystemTileImage
+        // (used everywhere "Your products" tiles render) now resolves those
+        // images itself on demand. Keeping this effect's own fetch for the
+        // same items too meant every ecosystem product ran two independent
+        // resolveProductImage() calls per mount; resolveProductImage()'s
+        // shared memCache/localStorage dedupes the network cost, but it's
+        // still redundant work. recommendedProducts still needs this path —
+        // it feeds IntakeRecommendationsProductCard/IntakeRecAltMini, which
+        // don't use EcosystemTileImage.
         const recommendedProducts = recommendedProductsForDisplay
             .flatMap((s) => (Array.isArray(s?.tiers) ? s.tiers : []))
             .flatMap((tier) => [tier?.product, ...(Array.isArray(tier?.alternatives) ? tier.alternatives : [])])
             .filter(Boolean);
-        const productsNeedingImage = [...myProductList, ...recommendedProducts]
+        const productsNeedingImage = recommendedProducts
             .filter((p) => p && p.id && p.name)
             .filter((p) => resolvedImages[p.id] === undefined)
             .filter((p) => isPlaceholderProductImage(p.image));
@@ -1640,7 +1649,7 @@ export default function MyEcosystem({
         const cancelledRef = { cancelled: false };
         resolveImagesBounded(productsNeedingImage, cancelledRef);
         return () => { cancelledRef.cancelled = true; };
-    }, [myProductList, recommendedProductsForDisplay, resolvedImages]);
+    }, [recommendedProductsForDisplay, resolvedImages]);
 
 
     const toggleEcosystemCompare = useCallback((k) => {

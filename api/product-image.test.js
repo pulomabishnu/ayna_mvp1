@@ -22,9 +22,13 @@ vi.mock('@upstash/redis', () => ({
 vi.mock('./_shopifyProductMatch.js', () => ({
   matchShopifyProduct: (...args) => matchShopifyProductMock(...args),
 }));
-vi.mock('./_ogImageFetch.js', () => ({
-  fetchOgImage: (...args) => fetchOgImageMock(...args),
-}));
+vi.mock('./_ogImageFetch.js', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    fetchOgImage: (...args) => fetchOgImageMock(...args),
+  };
+});
 // product-image.js dynamically imports this (not a static top-level import,
 // so the whole heavy llm-recommendations.js module stays out of this
 // lightweight, high-traffic endpoint's cold start) — vi.mock still
@@ -193,13 +197,39 @@ describe('product-image', () => {
     expect(res.body.imageUrl).toBe('https://diva.example.com/product-photo.jpg');
   });
 
-  it('accepts a logo/banner-looking og:image as a last-resort fallback', async () => {
+  it('rejects a logo/banner-looking og:image instead of accepting it as a last resort', async () => {
     matchShopifyProductMock.mockResolvedValue(null);
     fetchOgImageMock.mockResolvedValue('https://diva.example.com/brand-logo.png');
     const handler = await loadHandler();
     const res = mockRes();
     await handler({ method: 'GET', query: { name: 'DivaCup', url: 'https://diva.example.com' }, headers: {} }, res);
-    expect(res.body.imageUrl).toBe('https://diva.example.com/brand-logo.png');
+    expect(res.body.imageUrl).toBe('');
+  });
+
+  // Real production bug: Pure Encapsulations' own Shopify catalog resolved
+  // every product's image to /cdn/shop/files/pure-encapsulations.svg (the
+  // store theme's logo file, not a per-SKU photo) — matchShopifyProduct has
+  // no filename check of its own, so a rejected match must still fall
+  // through to DSLD rather than giving up on the product entirely.
+  it('falls through to DSLD when the Shopify-matched image is the brand logo, not a product photo', async () => {
+    matchShopifyProductMock.mockResolvedValue('https://www.pureencapsulations.com/cdn/shop/files/pure-encapsulations.svg');
+    lookupDsldProductMock.mockResolvedValue({ imageUrl: 'https://api.ods.od.nih.gov/dsld/s3/pdf/thumbnails/12345.jpg' });
+    const handler = await loadHandler();
+    const res = mockRes();
+    await handler({
+      method: 'GET',
+      query: { name: 'Pure Encapsulations Calcium Citrate', brand: 'Pure Encapsulations', url: 'https://www.pureencapsulations.com/' },
+      headers: {},
+    }, res);
+    expect(res.body.imageUrl).toBe('https://api.ods.od.nih.gov/dsld/s3/pdf/thumbnails/12345.jpg');
+  });
+
+  it('rejects an SVG image from any resolver, even with no bad keyword in the filename', async () => {
+    matchShopifyProductMock.mockResolvedValue('https://cdn.shopify.com/s/files/brand.svg');
+    const handler = await loadHandler();
+    const res = mockRes();
+    await handler({ method: 'GET', query: { name: 'DivaCup', url: 'https://diva.example.com' }, headers: {} }, res);
+    expect(res.body.imageUrl).toBe('');
   });
 
   it('returns empty imageUrl (200), not a crash, when resolution throws', async () => {

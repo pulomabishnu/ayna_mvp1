@@ -1,11 +1,11 @@
 // Resolves a real product image for products with placeholder images via /api/product-image
 // Results are cached in localStorage so the lookup only ever runs once per product.
 
-// Bumped v1 -> v2 alongside the server-side cache key: a browser that
-// already resolved a wrong image (DSLD mismatch, header/favicon leak, both
-// fixed the same day) would otherwise keep serving it from localStorage
-// indefinitely, independent of the server-side fix.
-const LS_KEY = 'ayna_product_images_v2';
+// Bumped v2 -> v3 alongside the server-side cache key: a browser that
+// already resolved a wrong image (brand-logo SVG, cross-domain og:image,
+// both fixed the same day) would otherwise keep serving it from
+// localStorage indefinitely, independent of the server-side fix.
+const LS_KEY = 'ayna_product_images_v3';
 const memCache = new Map();
 
 function lsRead() {

@@ -22,7 +22,7 @@
 
 import { rateLimit, getClientIp } from './_rateLimit.js';
 import { matchShopifyProduct } from './_shopifyProductMatch.js';
-import { fetchOgImage } from './_ogImageFetch.js';
+import { fetchOgImage, isLikelyNonProductImageUrl } from './_ogImageFetch.js';
 
 const MAX_TERM_LEN = 120;
 const MAX_URL_LEN = 500;
@@ -118,13 +118,15 @@ export default async function handler(req, res) {
   const pageUrl = cleanUrl(req.query.url);
   if (!name) return res.status(400).json({ error: 'missing_name' });
 
-  // Bumped v2 -> v3: the DSLD fallback previously had no relevance check at
-  // all and the og:image reject-pattern missed "header"/tiny-dimension
-  // assets, so any product resolved before today's fix could have a wrong
-  // image (a supplement label, a site header graphic) cached for up to 30
-  // days (CACHE_TTL_SEC below). Bumping the key version invalidates all of
-  // that at once instead of waiting out the TTL or hand-purging entries.
-  const cacheKey = `ayna:img:v3:${brand.toLowerCase()}|${name.toLowerCase()}`;
+  // Bumped v3 -> v4: matchShopifyProduct had no filename check at all
+  // (Pure Encapsulations resolved to their own theme logo .svg) and
+  // fetchOgImage had no cross-domain check (Clue's og:image resolved to an
+  // unrelated agency's asset on zurb.com) — both now caught by
+  // isLikelyNonProductImageUrl/isRelatedImageHost, but anything resolved
+  // before this fix could have a wrong image cached for up to 30 days
+  // (CACHE_TTL_SEC below). Bumping the key version invalidates all of that
+  // at once instead of waiting out the TTL or hand-purging entries.
+  const cacheKey = `ayna:img:v4:${brand.toLowerCase()}|${name.toLowerCase()}`;
   const redis = getRedis();
 
   if (redis) {
@@ -147,8 +149,21 @@ export default async function handler(req, res) {
 
   let imageUrl = '';
   try {
-    if (pageUrl) imageUrl = await resolveImageFromUrl(pageUrl, name, brand);
-    if (!imageUrl) imageUrl = await resolveImageFromDsld(name);
+    // isLikelyNonProductImageUrl is the final authority regardless of
+    // source — matchShopifyProduct trusts whatever image field the matched
+    // catalog entry has with no filename check of its own (a real
+    // production case: Pure Encapsulations' Shopify catalog resolved to
+    // their own theme logo SVG, not a per-SKU photo). Rejecting BEFORE the
+    // "still empty?" check, rather than after, means a rejected logo still
+    // falls through to try DSLD instead of giving up.
+    if (pageUrl) {
+      imageUrl = await resolveImageFromUrl(pageUrl, name, brand);
+      if (isLikelyNonProductImageUrl(imageUrl)) imageUrl = '';
+    }
+    if (!imageUrl) {
+      imageUrl = await resolveImageFromDsld(name);
+      if (isLikelyNonProductImageUrl(imageUrl)) imageUrl = '';
+    }
   } catch (e) {
     console.error('[product-image] resolution failed:', e?.message);
   }
