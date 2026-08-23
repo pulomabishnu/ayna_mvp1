@@ -5,6 +5,7 @@ import { getAynaRating } from '../data/aynaReviews';
 import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
 import { isPartnerBrandItem } from '../utils/partnerBrands';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
+import { getSupabaseClient } from '../utils/supabaseClient';
 import posthog from 'posthog-js';
 
 /** Remembers whether this browser prefers the tabs (1f) or evidence rail (1g) layout. */
@@ -14,8 +15,214 @@ const AYNA_TABS = [
   { id: 'summary', label: 'Ayna summary' },
   { id: 'clinician', label: 'Clinician opinion' },
   { id: 'community', label: 'Community' },
+  { id: 'ask', label: 'Ask Ayna' },
   { id: 'specs', label: 'Specs' },
 ];
+
+/**
+ * Product Q&A — for a user who doesn't know what a product actually IS (a
+ * real MVP report: a first-time viewer saw a "pelvic wand" and the static
+ * summary didn't explain what it does or how it's used). api/product-chat.js
+ * already existed, fully built and tested (auth, quota, prompt-injection
+ * guards, official-site grounding) but had zero frontend callers anywhere in
+ * the app — this is that first caller, not a new chat system.
+ */
+function AskAynaProductTab({ product, aiContext, quizResults, ecosystemProducts }) {
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState('');
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState('');
+  const [session, setSession] = useState(undefined); // undefined = still checking
+
+  useEffect(() => {
+    let cancelled = false;
+    const supabase = getSupabaseClient();
+    // getSupabaseClient() returns null when Supabase env vars aren't
+    // configured (local dev without .env.local, or a misconfigured
+    // deploy) — every other call site in this app treats that as "not
+    // signed in" rather than crashing, so match that here.
+    if (!supabase) {
+      setSession(null);
+      return undefined;
+    }
+    supabase.auth.getSession().then(({ data }) => {
+      if (!cancelled) setSession(data?.session || null);
+    }).catch(() => { if (!cancelled) setSession(null); });
+    return () => { cancelled = true; };
+  }, []);
+
+  const suggestions = [
+    `What is ${product?.name ? 'this' : 'it'} and how is it used?`,
+    'Who is this good for?',
+    'Any safety concerns I should know about?',
+  ];
+
+  const ask = async (question) => {
+    const q = String(question || '').trim();
+    if (!q || sending) return;
+    setError('');
+    setInput('');
+    const nextMessages = [...messages, { role: 'user', text: q }];
+    setMessages(nextMessages);
+    setSending(true);
+    try {
+      const token = session?.access_token;
+      if (!token) throw Object.assign(new Error('not_signed_in'), { code: 'not_signed_in' });
+      const res = await fetch('/api/product-chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          question: q,
+          product,
+          aiInsights: aiContext || {},
+          userContext: quizResults?.fullHealthIntake ? JSON.stringify(quizResults.fullHealthIntake).slice(0, 4000) : '',
+          ecosystemProducts: Array.isArray(ecosystemProducts) ? ecosystemProducts.slice(0, 20) : [],
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 401) throw Object.assign(new Error('not_signed_in'), { code: 'not_signed_in' });
+      if (res.status === 429) throw Object.assign(new Error('weekly_limit_reached'), { code: 'weekly_limit_reached' });
+      if (!res.ok || !data?.answer) throw new Error(data?.error || 'Could not get an answer right now.');
+      setMessages((prev) => [...prev, { role: 'assistant', text: data.answer }]);
+    } catch (e) {
+      if (e?.code === 'not_signed_in') {
+        setError('Sign in to ask Ayna about this product — free accounts get a few AI chats per week.');
+      } else if (e?.code === 'weekly_limit_reached') {
+        setError("You've used your free chats for this week. They reset weekly, or upgrade for unlimited.");
+      } else {
+        setError(e?.message || 'Something went wrong. Try again in a moment.');
+      }
+      setMessages(nextMessages); // keep her question visible even though it failed
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <div className="pdp-summary-card" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+      {messages.length === 0 && (
+        <>
+          <p className="pdp-summary-card__body" style={{ marginTop: 0 }}>
+            New to this kind of product, or not sure what it's actually for? Ask Ayna anything about it.
+          </p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+            {suggestions.map((s) => (
+              <button
+                key={s}
+                type="button"
+                className="pdp-head__badge"
+                style={{ cursor: 'pointer', border: 'none' }}
+                onClick={() => ask(s)}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+      {messages.length > 0 && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', maxHeight: '320px', overflowY: 'auto' }}>
+          {messages.map((m, i) => (
+            <div
+              key={i}
+              style={{
+                alignSelf: m.role === 'user' ? 'flex-end' : 'flex-start',
+                maxWidth: '85%',
+                background: m.role === 'user' ? 'var(--color-primary)' : 'var(--color-secondary-fade)',
+                color: m.role === 'user' ? '#fff' : 'inherit',
+                borderRadius: '12px',
+                padding: '0.55rem 0.8rem',
+                fontSize: '0.9rem',
+                lineHeight: 1.5,
+                whiteSpace: 'pre-wrap',
+              }}
+            >
+              {m.text}
+            </div>
+          ))}
+          {sending && (
+            <div style={{ alignSelf: 'flex-start', fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
+              Ayna is thinking…
+            </div>
+          )}
+        </div>
+      )}
+      {error && (
+        <p style={{ color: 'var(--color-danger, #b3261e)', fontSize: '0.85rem', margin: 0 }}>{error}</p>
+      )}
+      <form
+        onSubmit={(e) => { e.preventDefault(); ask(input); }}
+        style={{ display: 'flex', gap: '0.5rem' }}
+      >
+        <input
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder={session === undefined ? 'Loading…' : 'Ask about this product…'}
+          disabled={sending || session === undefined}
+          style={{
+            flex: 1, padding: '0.6rem 0.85rem', borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--color-border)', fontSize: '0.9rem', background: 'var(--color-surface)',
+          }}
+        />
+        <button type="submit" className="pdp-btn pdp-btn--navy" disabled={sending || !input.trim() || session === undefined}>
+          Ask
+        </button>
+      </form>
+      <p className="pdp-summary-card__foot" style={{ margin: 0 }}>
+        Ayna's answers are educational, not medical advice.
+      </p>
+    </div>
+  );
+}
+
+/** Full-size photo view — click to enlarge, click backdrop/X/Escape to close. */
+function ImageLightbox({ src, alt, onClose }) {
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={alt || 'Product photo'}
+      onClick={onClose}
+      style={{
+        position: 'fixed', inset: 0, zIndex: 4000,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        background: 'rgba(20, 16, 12, 0.82)',
+        backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
+        padding: '2rem', cursor: 'zoom-out',
+      }}
+    >
+      <button
+        type="button"
+        onClick={onClose}
+        aria-label="Close"
+        style={{
+          position: 'absolute', top: '1.25rem', right: '1.5rem',
+          background: 'rgba(255,255,255,0.12)', border: 'none', color: '#fff',
+          width: '2.25rem', height: '2.25rem', borderRadius: '50%',
+          fontSize: '1.25rem', lineHeight: 1, cursor: 'pointer',
+        }}
+      >
+        ×
+      </button>
+      <img
+        src={src}
+        alt={alt || ''}
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          maxWidth: '90vw', maxHeight: '88vh', objectFit: 'contain',
+          borderRadius: 'var(--radius-lg)', boxShadow: '0 20px 60px rgba(0,0,0,0.5)', cursor: 'default',
+        }}
+      />
+    </div>
+  );
+}
 
 function truncate(s, max) {
   if (!s || typeof s !== 'string') return '';
@@ -211,6 +418,7 @@ export default function ProductModal({
     try { localStorage.setItem(PRODUCT_VIEW_KEY, next); } catch { /* private mode */ }
     posthog.capture('product_detail_view_changed', { view: next, productId: product?.id });
   };
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   const [activeTab, setActiveTab] = useState('summary');
   const [reviewInput, setReviewInput] = useState('');
@@ -408,11 +616,19 @@ export default function ProductModal({
   const galleryTile = (
     <div className="pdp-head__tile">
       {heroImageSrc && !isPlaceholderProductImage(heroImageSrc) ? (
-        <img
-          src={heroImageSrc}
-          alt={product.name}
-          onError={(e) => handleImageErrorWithRetry(e, () => { e.currentTarget.style.display = 'none'; })}
-        />
+        <button
+          type="button"
+          onClick={() => setLightboxOpen(true)}
+          aria-label={`View larger photo of ${product.name}`}
+          style={{ all: 'unset', display: 'block', width: '100%', height: '100%', cursor: 'zoom-in' }}
+        >
+          <img
+            src={heroImageSrc}
+            alt={product.name}
+            onError={(e) => handleImageErrorWithRetry(e, () => { e.currentTarget.style.display = 'none'; })}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+          />
+        </button>
       ) : (
         <span className="pdp-head__initial" aria-hidden="true">
           {String(product.brand || product.name || '?').trim().charAt(0).toUpperCase()}
@@ -649,6 +865,15 @@ export default function ProductModal({
                   </div>
                 )}
 
+                {activeTab === 'ask' && (
+                  <AskAynaProductTab
+                    product={product}
+                    aiContext={{}}
+                    quizResults={quizResults}
+                    ecosystemProducts={ecosystemProducts}
+                  />
+                )}
+
                 {activeTab === 'specs' && (
                   <div className="pdp-summary-card">
                     {specRows.length > 0 ? (
@@ -721,6 +946,10 @@ export default function ProductModal({
           </div>
         )}
       </div>
+
+      {lightboxOpen && heroImageSrc && (
+        <ImageLightbox src={heroImageSrc} alt={product.name} onClose={() => setLightboxOpen(false)} />
+      )}
     </div>
   );
 }
