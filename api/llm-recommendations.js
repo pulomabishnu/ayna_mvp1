@@ -312,6 +312,37 @@ function enrichRecommendations(recs, requestedConcern = '') {
     .filter(Boolean);
 }
 
+// DSLD's free-text search returns its best-effort top hit even when nothing
+// in the database is actually a good match — it's search, not verification.
+// Blindly trusting hit #1 (the original implementation) matched "Always
+// Infinity" (a menstrual pad) to "Rhino Infinity 10K" (an unrelated men's
+// supplement) purely because both contain the word "infinity", and that
+// wrong supplement's label photo then rendered as the pad's product image —
+// confirmed live in production. Score each candidate against the query the
+// same way _shopifyProductMatch.js does (token containment, not a plain
+// substring/ES-score check) and reject anything that isn't a genuine match.
+function normalizeDsldTokens(s) {
+  return String(s || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim()
+    .split(' ')
+    .filter((t) => t.length > 2);
+}
+
+function dsldMatchScore(queryTokens, candidateName) {
+  const candTokens = normalizeDsldTokens(candidateName);
+  if (queryTokens.length === 0 || candTokens.length === 0) return { score: 0, overlap: 0 };
+  const candSet = new Set(candTokens);
+  const querySet = new Set(queryTokens);
+  let overlap = 0;
+  for (const t of querySet) {
+    if (candSet.has(t)) overlap += 1;
+  }
+  const smaller = Math.min(querySet.size, candSet.size);
+  return { score: overlap / smaller, overlap };
+}
+
 export async function lookupDsldProduct(name) {
   if (!name || name.length < 3) return null;
   try {
@@ -321,7 +352,7 @@ export async function lookupDsldProduct(name) {
     // caller just treated "no DSLD data" as a normal, expected miss. Found by
     // testing the real API live: `/v9/search-filter?q=...` is the endpoint
     // that actually returns real hits, confirmed against a genuine product.
-    const url = `https://api.ods.od.nih.gov/dsld/v9/search-filter?q=${encodeURIComponent(name)}&size=1`;
+    const url = `https://api.ods.od.nih.gov/dsld/v9/search-filter?q=${encodeURIComponent(name)}&size=5`;
     const r = await fetch(url, {
       headers: { Accept: 'application/json', 'User-Agent': 'Ayna-Health-App/1.0' },
       signal: AbortSignal.timeout(4000),
@@ -330,7 +361,30 @@ export async function lookupDsldProduct(name) {
     const data = await r.json();
     // Flat `hits: [...]`, not the ES-style nested `hits.hits` the old code
     // assumed — also confirmed live, not guessed.
-    const top = Array.isArray(data?.hits) ? data.hits[0] : null;
+    const candidates = Array.isArray(data?.hits) ? data.hits : [];
+    if (candidates.length === 0) return null;
+
+    const queryTokens = normalizeDsldTokens(name);
+    let top = null;
+    let bestScore = 0;
+    let bestOverlap = 0;
+    for (const c of candidates) {
+      const src = c?._source;
+      if (!src) continue;
+      const candidateName = `${src.brandName || ''} ${src.fullName || ''}`.trim();
+      const { score, overlap } = dsldMatchScore(queryTokens, candidateName);
+      if (score > bestScore) {
+        bestScore = score;
+        bestOverlap = overlap;
+        top = c;
+      }
+    }
+    // Same bar as the Shopify matcher: the smaller token set must be almost
+    // fully contained in the other, and at least 2 real tokens in common —
+    // this is a fuzzy match against a database that will always return
+    // SOMETHING, not a search engine, so err toward no image over a wrong one.
+    if (!top || bestScore < 0.75 || bestOverlap < 2) return null;
+
     const hit = top?._source;
     const dsldId = top?._id ? String(top._id) : '';
     if (!hit || !dsldId) return null;

@@ -62,10 +62,12 @@ describe('lookupDsldProduct', () => {
   it('reads ingredient names from allIngredients[].name, not the old dietaryIngredients[].ingredientName', async () => {
     // A response shaped like the OLD (wrong) assumption should yield no
     // ingredients now — proves the fix actually reads the real field.
+    // Candidate name matches the query so the relevance check (below) doesn't
+    // reject it before we even get to the ingredient-field assertion.
     fetch.mockResolvedValue({
       ok: true,
       json: async () => ({
-        hits: [{ _id: '1', _source: { brandName: 'X', dietaryIngredients: [{ ingredientName: 'Should not be read' }] } }],
+        hits: [{ _id: '1', _source: { brandName: 'Some', fullName: 'Some Product', dietaryIngredients: [{ ingredientName: 'Should not be read' }] } }],
       }),
     });
     const result = await lookupDsldProduct('Some Product');
@@ -88,5 +90,44 @@ describe('lookupDsldProduct', () => {
     fetch.mockRejectedValue(new Error('ECONNRESET'));
     const result = await lookupDsldProduct('Thorne Vitamin C');
     expect(result).toBeNull();
+  });
+
+  // Regression test for a real bug caught live in production: DSLD's
+  // free-text search always returns its best-effort top hit, even when
+  // nothing in the database is a real match. "Always Infinity" (a menstrual
+  // pad, not a supplement) matched "Rhino Infinity 10K" (an unrelated men's
+  // supplement) purely because both names contain the word "infinity" — the
+  // old code trusted hit #1 unconditionally, so that wrong supplement's
+  // label photo rendered as the pad's product image. Confirmed against the
+  // real DSLD API response shape before fixing.
+  it('rejects a weak word-overlap match instead of trusting the DSLD API\'s top hit blindly', async () => {
+    fetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        hits: [
+          {
+            _id: '296180',
+            _score: 62.07,
+            _source: { brandName: 'Rhino Infinity', fullName: 'Infinity 10K', allIngredients: [] },
+          },
+        ],
+      }),
+    });
+    const result = await lookupDsldProduct('Always Infinity');
+    expect(result).toBeNull();
+  });
+
+  it('still accepts a genuine match among multiple candidates, picking the best-scoring one', async () => {
+    fetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        hits: [
+          { _id: '1', _score: 50, _source: { brandName: 'Rhino Infinity', fullName: 'Infinity 10K', allIngredients: [] } },
+          { _id: '2', _score: 40, _source: { brandName: 'Thorne', fullName: 'Vitamin C with Flavonoids', allIngredients: [{ name: 'Vitamin C' }] } },
+        ],
+      }),
+    });
+    const result = await lookupDsldProduct('Thorne Vitamin C with Flavonoids');
+    expect(result?.dsldId).toBe('2');
   });
 });

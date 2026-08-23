@@ -22,10 +22,20 @@ const MAX_HTML_BYTES = 500_000;
 // Filenames that indicate a logo/icon/banner rather than an actual product
 // photo — brand pages frequently set these as og:image on non-product pages,
 // and mislabeling a logo as "the product" is worse than showing no photo.
-// Only applied to the og:image/twitter:image extraction — not to the
-// favicon fallback below, which is knowingly using a site icon as a
-// last resort.
-const NON_PRODUCT_IMAGE_PATTERN = /logo|icon|favicon|banner|sprite|placeholder|social[-_]?share|og[-_]?default/i;
+// "header" added after a live production case: Saalt's og:image resolved to
+// a small decorative "Fancy-Monogram-header_03.png" asset, which the UI then
+// rendered full-size as if it were a photo of the product.
+const NON_PRODUCT_IMAGE_PATTERN = /logo|icon|favicon|banner|header|sprite|placeholder|social[-_]?share|og[-_]?default/i;
+
+// Some CDNs bake an explicit tiny size into the URL's own query string (e.g.
+// Shopify's `?width=32&height=32` image-resizing params) — a strong signal
+// the asset is an icon/thumbnail regardless of filename. Same production
+// case as above: the Saalt monogram header carried `height=32&width=32`.
+const TINY_DIMENSION_PATTERN = /[?&](?:width|height|w|h)=(\d{1,2})\b/i;
+function looksLikeTinyAsset(url) {
+  const matches = [...String(url || '').matchAll(new RegExp(TINY_DIMENSION_PATTERN, 'gi'))];
+  return matches.some((m) => Number(m[1]) <= 64);
+}
 
 function decodeHtmlEntities(s) {
   return String(s || '')
@@ -115,7 +125,7 @@ export async function fetchOgImage(pageUrl) {
     if (!contentType.includes('text/html')) return null;
     const html = await readCappedText(result.res);
     const raw = extractMetaContent(html, 'og:image') || extractMetaContent(html, 'twitter:image');
-    if (raw && raw.startsWith('http') && !NON_PRODUCT_IMAGE_PATTERN.test(raw)) {
+    if (raw && raw.startsWith('http') && !NON_PRODUCT_IMAGE_PATTERN.test(raw) && !looksLikeTinyAsset(raw)) {
       const absolute = new URL(raw, result.finalUrl).toString();
       if (absolute.startsWith('https://') || absolute.startsWith('http://')) return absolute;
     }

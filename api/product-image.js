@@ -118,7 +118,13 @@ export default async function handler(req, res) {
   const pageUrl = cleanUrl(req.query.url);
   if (!name) return res.status(400).json({ error: 'missing_name' });
 
-  const cacheKey = `ayna:img:v2:${brand.toLowerCase()}|${name.toLowerCase()}`;
+  // Bumped v2 -> v3: the DSLD fallback previously had no relevance check at
+  // all and the og:image reject-pattern missed "header"/tiny-dimension
+  // assets, so any product resolved before today's fix could have a wrong
+  // image (a supplement label, a site header graphic) cached for up to 30
+  // days (CACHE_TTL_SEC below). Bumping the key version invalidates all of
+  // that at once instead of waiting out the TTL or hand-purging entries.
+  const cacheKey = `ayna:img:v3:${brand.toLowerCase()}|${name.toLowerCase()}`;
   const redis = getRedis();
 
   if (redis) {
