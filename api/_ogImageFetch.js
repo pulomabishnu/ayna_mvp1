@@ -88,18 +88,32 @@ export function isRelatedImageHost(imageUrl, pageUrl) {
   }
 }
 
+// Even for a logo-allowed product (an app, a telehealth service — see
+// allowBrandLogo below), a bare site favicon/apple-touch-icon is still
+// wrong: it's a 16-32px browser-tab icon, not a real app icon/wordmark, and
+// looks broken blown up to card size regardless of category.
+const ALWAYS_REJECT_PATTERN = /favicon|apple-touch-icon/i;
+
 /**
  * Central "does this look like an actual product photo" gate, applied
  * regardless of which resolver produced the URL. matchShopifyProduct trusts
  * whatever image field the matched catalog entry has with no filename check
  * of its own, so this is the only thing standing between a Shopify store's
  * own logo/banner asset and a product card.
+ *
+ * @param {boolean} [allowBrandLogo] - true for products with no physical
+ *   form (apps, telehealth/virtual-care services) — a brand logo/icon IS
+ *   the real "photo" there, unlike a supplement or device where a logo
+ *   standing in for the product is a real bug (Pure Encapsulations'
+ *   Shopify catalog resolving to its theme logo instead of a bottle photo).
  */
-export function isLikelyNonProductImageUrl(url) {
+export function isLikelyNonProductImageUrl(url, allowBrandLogo = false) {
   const s = String(url || '').trim();
   if (!s) return false;
-  if (NON_PRODUCT_IMAGE_PATTERN.test(s)) return true;
   if (looksLikeTinyAsset(s)) return true;
+  if (ALWAYS_REJECT_PATTERN.test(s)) return true;
+  if (allowBrandLogo) return false;
+  if (NON_PRODUCT_IMAGE_PATTERN.test(s)) return true;
   if (isVectorAssetUrl(s)) return true;
   return false;
 }
@@ -180,8 +194,12 @@ async function fetchWithSafeRedirects(url) {
   return null; // too many hops
 }
 
-/** @returns {Promise<string|null>} absolute image URL, or null if unfetchable/unsafe/none found. */
-export async function fetchOgImage(pageUrl) {
+/**
+ * @param {string} pageUrl
+ * @param {boolean} [allowBrandLogo] - see isLikelyNonProductImageUrl
+ * @returns {Promise<string|null>} absolute image URL, or null if unfetchable/unsafe/none found.
+ */
+export async function fetchOgImage(pageUrl, allowBrandLogo = false) {
   if (typeof pageUrl !== 'string' || !pageUrl.trim()) return null;
   if (!(await isSafePublicUrl(pageUrl))) return null;
 
@@ -192,7 +210,7 @@ export async function fetchOgImage(pageUrl) {
     if (!contentType.includes('text/html')) return null;
     const html = await readCappedText(result.res);
     const raw = extractMetaContent(html, 'og:image') || extractMetaContent(html, 'twitter:image');
-    if (raw && raw.startsWith('http') && !isLikelyNonProductImageUrl(raw)) {
+    if (raw && raw.startsWith('http') && !isLikelyNonProductImageUrl(raw, allowBrandLogo)) {
       const absolute = new URL(raw, result.finalUrl).toString();
       if (
         (absolute.startsWith('https://') || absolute.startsWith('http://')) &&

@@ -58,4 +58,23 @@ describe('isLikelyNonProductImageUrl', () => {
     expect(isLikelyNonProductImageUrl('')).toBe(false);
     expect(isLikelyNonProductImageUrl(undefined)).toBe(false);
   });
+
+  describe('allowBrandLogo (apps/telehealth — no physical form)', () => {
+    it('accepts a keyword-flagged logo/banner filename', () => {
+      expect(isLikelyNonProductImageUrl('https://x.com/brand-logo.png', true)).toBe(false);
+    });
+
+    it('accepts an SVG — a real app icon/wordmark is often vector art', () => {
+      expect(isLikelyNonProductImageUrl('https://x.com/brand.svg', true)).toBe(false);
+    });
+
+    it('still rejects a bare favicon — too small/generic even as a logo', () => {
+      expect(isLikelyNonProductImageUrl('https://x.com/favicon.ico', true)).toBe(true);
+      expect(isLikelyNonProductImageUrl('https://x.com/apple-touch-icon.png', true)).toBe(true);
+    });
+
+    it('still rejects an explicit tiny-dimension asset', () => {
+      expect(isLikelyNonProductImageUrl('https://x.com/icon.png?width=32&height=32', true)).toBe(true);
+    });
+  });
 });

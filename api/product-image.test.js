@@ -232,6 +232,51 @@ describe('product-image', () => {
     expect(res.body.imageUrl).toBe('');
   });
 
+  // Real production bug: Brightside (a telehealth mental-health service)
+  // and Clue (a tracking app) have no physical form to photograph at all —
+  // rejecting their brand logo the same way as a supplement/device left
+  // them with no image whatsoever. type=digital (set by
+  // llm-recommendations.js's enrichProduct for exactly these products) is
+  // the signal that a logo IS the correct "photo" here.
+  it('accepts a brand-logo og:image for a digital (app/telehealth) product', async () => {
+    matchShopifyProductMock.mockResolvedValue(null);
+    fetchOgImageMock.mockResolvedValue('https://helloclue.com/brand-logo.png');
+    const handler = await loadHandler();
+    const res = mockRes();
+    await handler({
+      method: 'GET',
+      query: { name: 'Clue Cycle Tracking App', brand: 'Clue', url: 'https://helloclue.com/', type: 'digital' },
+      headers: {},
+    }, res);
+    expect(res.body.imageUrl).toBe('https://helloclue.com/brand-logo.png');
+    expect(fetchOgImageMock).toHaveBeenCalledWith('https://helloclue.com/', true);
+  });
+
+  it('still rejects a bare favicon for a digital product — too small/generic even as a logo', async () => {
+    matchShopifyProductMock.mockResolvedValue(null);
+    fetchOgImageMock.mockResolvedValue('https://helloclue.com/favicon.ico');
+    const handler = await loadHandler();
+    const res = mockRes();
+    await handler({
+      method: 'GET',
+      query: { name: 'Clue Cycle Tracking App', brand: 'Clue', url: 'https://helloclue.com/', type: 'digital' },
+      headers: {},
+    }, res);
+    expect(res.body.imageUrl).toBe('');
+  });
+
+  it('still rejects an SVG brand logo for a physical product (type absent/physical)', async () => {
+    matchShopifyProductMock.mockResolvedValue('https://www.pureencapsulations.com/cdn/shop/files/pure-encapsulations.svg');
+    const handler = await loadHandler();
+    const res = mockRes();
+    await handler({
+      method: 'GET',
+      query: { name: 'Pure Encapsulations Calcium Citrate', brand: 'Pure Encapsulations', url: 'https://www.pureencapsulations.com/' },
+      headers: {},
+    }, res);
+    expect(res.body.imageUrl).toBe('');
+  });
+
   it('returns empty imageUrl (200), not a crash, when resolution throws', async () => {
     matchShopifyProductMock.mockRejectedValue(new Error('ECONNRESET'));
     const handler = await loadHandler();

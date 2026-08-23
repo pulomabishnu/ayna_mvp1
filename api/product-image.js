@@ -71,13 +71,23 @@ function allowedOrigin(req) {
 }
 
 /** Tries Shopify catalog match first, then og:image — first hit wins. */
-async function resolveImageFromUrl(pageUrl, name, brand) {
+async function resolveImageFromUrl(pageUrl, name, brand, allowBrandLogo) {
   const shopifyImage = await matchShopifyProduct(pageUrl, name, brand);
   if (shopifyImage) return shopifyImage;
-  const ogImage = await fetchOgImage(pageUrl);
+  const ogImage = await fetchOgImage(pageUrl, allowBrandLogo);
   if (ogImage) return ogImage;
   return '';
 }
+
+// llm-recommendations.js's enrichProduct() always sets `type` to exactly
+// 'digital' or 'physical' (defaulting to 'physical') — a cleaner, more
+// reliable signal for "does this even have a physical form to photograph"
+// than guessing off `category` (an open-ended string with dozens of
+// values). Apps/telehealth services (Brightside, Clue) are 'digital': a
+// brand logo/icon genuinely IS the product's real "photo" there. Everything
+// 'physical' keeps the strict logo/SVG rejection — a logo standing in for
+// an actual product photo is a real bug there (Pure Encapsulations'
+// Shopify catalog resolving to its theme logo instead of a bottle photo).
 
 /**
  * Third, URL-independent fallback: NIH's Dietary Supplement Label Database.
@@ -116,17 +126,18 @@ export default async function handler(req, res) {
   const name = cleanTerm(req.query.name);
   const brand = cleanTerm(req.query.brand);
   const pageUrl = cleanUrl(req.query.url);
+  const type = cleanTerm(req.query.type, 20).toLowerCase() === 'digital' ? 'digital' : 'physical';
+  const allowBrandLogo = type === 'digital';
   if (!name) return res.status(400).json({ error: 'missing_name' });
 
-  // Bumped v3 -> v4: matchShopifyProduct had no filename check at all
-  // (Pure Encapsulations resolved to their own theme logo .svg) and
-  // fetchOgImage had no cross-domain check (Clue's og:image resolved to an
-  // unrelated agency's asset on zurb.com) — both now caught by
-  // isLikelyNonProductImageUrl/isRelatedImageHost, but anything resolved
-  // before this fix could have a wrong image cached for up to 30 days
-  // (CACHE_TTL_SEC below). Bumping the key version invalidates all of that
-  // at once instead of waiting out the TTL or hand-purging entries.
-  const cacheKey = `ayna:img:v4:${brand.toLowerCase()}|${name.toLowerCase()}`;
+  // Bumped v4 -> v5: apps/telehealth services (Brightside, Clue) were
+  // rejected down to no image at all by the same logo/SVG check meant for
+  // physical products — a brand logo IS the real "photo" for something with
+  // no physical form. allowBrandLogo (from `type`) now lets those through
+  // while keeping the strict rejection for everything physical. `type` is
+  // part of the key so a product resolved once under the wrong type can't
+  // pin the wrong outcome for a later, correctly-tagged call.
+  const cacheKey = `ayna:img:v5:${type}:${brand.toLowerCase()}|${name.toLowerCase()}`;
   const redis = getRedis();
 
   if (redis) {
@@ -157,8 +168,8 @@ export default async function handler(req, res) {
     // "still empty?" check, rather than after, means a rejected logo still
     // falls through to try DSLD instead of giving up.
     if (pageUrl) {
-      imageUrl = await resolveImageFromUrl(pageUrl, name, brand);
-      if (isLikelyNonProductImageUrl(imageUrl)) imageUrl = '';
+      imageUrl = await resolveImageFromUrl(pageUrl, name, brand, allowBrandLogo);
+      if (isLikelyNonProductImageUrl(imageUrl, allowBrandLogo)) imageUrl = '';
     }
     if (!imageUrl) {
       imageUrl = await resolveImageFromDsld(name);

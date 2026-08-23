@@ -453,7 +453,7 @@ export default function ProductModal({
     let active = true;
     if (!product?.name) return () => { active = false; };
     if (!isPlaceholderProductImage(product.image)) return () => { active = false; };
-    resolveProductImage(product.name, product.brand || '').then((url) => {
+    resolveProductImage(product.name, product.brand || '', '', product.type || '').then((url) => {
       if (!active || !url) return;
       setResolvedModalImage(url);
     });
@@ -500,7 +500,7 @@ export default function ProductModal({
 
   const eyebrow = useMemo(() => {
     if (!product) return '';
-    const categoryLabel = String(CATEGORY_LABELS[product.category] || product.category || '').replace(/^[^\w]+\s*/, '');
+    const categoryLabel = String(CATEGORY_LABELS[product.category] || product.type || '').replace(/^[^\w]+\s*/, '');
     return [categoryLabel, product.brand].filter(Boolean).join(' · ').toUpperCase();
   }, [product]);
 
@@ -569,7 +569,7 @@ export default function ProductModal({
 
   const specRows = useMemo(() => {
     if (!product) return [];
-    const categoryLabel = String(CATEGORY_LABELS[product.category] || product.category || '').replace(/^[^\w]+\s*/, '');
+    const categoryLabel = String(CATEGORY_LABELS[product.category] || product.type || '').replace(/^[^\w]+\s*/, '');
     const materials = firstSentence(product.safety?.materials, 160);
     // Real clickable retailer links (never a per-retailer price claim) when
     // we have any; otherwise fall back to the old unclickable name list so a

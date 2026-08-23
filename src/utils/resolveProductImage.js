@@ -1,11 +1,11 @@
 // Resolves a real product image for products with placeholder images via /api/product-image
 // Results are cached in localStorage so the lookup only ever runs once per product.
 
-// Bumped v2 -> v3 alongside the server-side cache key: a browser that
-// already resolved a wrong image (brand-logo SVG, cross-domain og:image,
-// both fixed the same day) would otherwise keep serving it from
-// localStorage indefinitely, independent of the server-side fix.
-const LS_KEY = 'ayna_product_images_v3';
+// Bumped v3 -> v4 alongside the server-side cache key: an app/telehealth
+// product (Brightside, Clue) resolved to '' under the old logo-rejects-all
+// logic would otherwise keep serving that empty result from localStorage
+// indefinitely, independent of the server-side allowBrandLogo fix.
+const LS_KEY = 'ayna_product_images_v4';
 const memCache = new Map();
 
 function lsRead() {
@@ -64,7 +64,7 @@ export function safeProductImageSrc(imageUrl) {
   return isPlaceholderProductImage(imageUrl) ? '' : String(imageUrl || '');
 }
 
-export async function resolveProductImage(name, brand, url) {
+export async function resolveProductImage(name, brand, url, type) {
   if (!name) return '';
   const key = `${brand || ''}|${name}`;
 
@@ -84,6 +84,7 @@ export async function resolveProductImage(name, brand, url) {
     try {
       const params = new URLSearchParams({ name, brand: brand || '' });
       if (url) params.set('url', url);
+      if (type) params.set('type', type);
       const res = await fetch(`/api/product-image?${params}`, {
         signal: AbortSignal.timeout(10000),
       });

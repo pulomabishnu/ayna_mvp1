@@ -103,7 +103,7 @@ function EcosystemTileImage({ product, alt = '', imgStyle, imgClassName, letterN
     if (attemptedRef.current === product.id) return;
     attemptedRef.current = product.id;
     let active = true;
-    resolveProductImage(product.name, product.brand || '', product.url || '').then((url) => {
+    resolveProductImage(product.name, product.brand || '', product.url || '', product.type || '').then((url) => {
       if (active && url) setResolved(url);
     });
     return () => { active = false; };
@@ -235,7 +235,7 @@ function EcosystemFunctionProductCard({
             return;
         }
         setTriedResolveFallback(true);
-        resolveProductImage(product.name, product.brand || '', product.url || '').then((url) => {
+        resolveProductImage(product.name, product.brand || '', product.url || '', product.type || '').then((url) => {
             if (url) {
                 setResolvedCardImage(url);
                 setImgError(false);
@@ -829,7 +829,7 @@ function IntakeRecommendationsProductCard({
 function inferHealthFunctionsFromLlm(product, concern = '', tierSubcategory = '') {
     // Strip parenthetical detail from concern for cleaner matching
     const c = String(concern).toLowerCase().replace(/\s*\(.*?\)/g, '').trim();
-    const cat = String(product.category || '').toLowerCase();
+    const cat = String(product.type || '').toLowerCase();
     const type = String(product.type || '').toLowerCase();
     const sub = String(tierSubcategory || '').toLowerCase();
 
@@ -1599,7 +1599,7 @@ export default function MyEcosystem({
             while (!cancelledRef.cancelled) {
                 const item = queue.shift();
                 if (!item) return;
-                const url = await resolveProductImage(item.name, item.brand || '', item.url || '');
+                const url = await resolveProductImage(item.name, item.brand || '', item.url || '', item.type || '');
                 if (cancelledRef.cancelled) return;
                 setResolvedImages((prev) => (prev[item.id] !== undefined ? prev : { ...prev, [item.id]: url || '' }));
             }
