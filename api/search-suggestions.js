@@ -396,6 +396,13 @@ async function callClaudeJson(prompt, attempt = 0) {
       // enough (many requests still hit max_tokens live). 8192 is the
       // original value this was reduced from, before the "~10x" assumption
       // turned out to be wrong for the schema as it exists today.
+      //
+      // Tempting to shrink this now that Discovery.jsx requests far fewer
+      // suggestions per search (8/6, down from 20/10) — resist that without
+      // a live-verified measurement first. This exact reasoning ("fewer
+      // items requested, so a smaller ceiling should have headroom") is what
+      // failed at 4096 for 20 items; a regression test below pins 8192 as
+      // the only value actually confirmed safe.
       max_tokens: 8192,
       temperature: 0.2,
       system:
