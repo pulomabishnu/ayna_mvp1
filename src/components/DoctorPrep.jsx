@@ -120,7 +120,7 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
             </div>
 
             <div style={{ marginTop: '2rem', textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>
-                <p>Ayna gives information only — it is not a medical device. Always check health facts with your doctor or nurse.</p>
+                <p>Ayna gives information only. It is not a medical device. Always check health facts with your doctor or nurse.</p>
             </div>
         </div>
     );

@@ -1770,7 +1770,7 @@ export default function MyEcosystem({
                                     </div>
                                     <div className="eco-overview-mini-stats">
                                         <div><strong>{careAreas.length}</strong><span>care areas</span></div>
-                                        <div><strong>{estimatedMonthlyTotal.counted > 0 ? `$${estimatedMonthlyTotal.total.toFixed(0)}` : '—'}</strong><span>est. / month</span></div>
+                                        <div><strong>{estimatedMonthlyTotal.counted > 0 ? `$${estimatedMonthlyTotal.total.toFixed(0)}` : 'N/A'}</strong><span>est. / month</span></div>
                                     </div>
                                 </div>
 
