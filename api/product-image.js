@@ -131,11 +131,14 @@ export default async function handler(req, res) {
   const allowBrandLogo = type === 'digital';
   if (!name) return res.status(400).json({ error: 'missing_name' });
 
-  // Bumped v7 -> v8: added Serper.dev image search as a final resolver
-  // tier, tried whenever Shopify/og:image/DSLD all fail — a product
-  // previously cached '' under v7 (because its brand site blocks bots, or
-  // it has no catalog url at all) can now resolve to a real photo.
-  const cacheKey = `ayna:img:v8:${type}:${brand.toLowerCase()}|${name.toLowerCase()}`;
+  // Bumped v8 -> v9: the FIRST live Serper deploy had no relevance check on
+  // its results at all — confirmed live that "Happi Pelvic Floor App"
+  // resolved to "Happy Pelvis Pelvic Floor Therapy," an unrelated clinic.
+  // Fixed with a brand-gate + title-overlap check, but that first version
+  // was live in production for several minutes with a real Serper key
+  // active, so any product resolved during that window could be cached
+  // wrong under v8.
+  const cacheKey = `ayna:img:v9:${type}:${brand.toLowerCase()}|${name.toLowerCase()}`;
   const redis = getRedis();
 
   if (redis) {

@@ -1,11 +1,11 @@
 // Resolves a real product image for products with placeholder images via /api/product-image
 // Results are cached in localStorage so the lookup only ever runs once per product.
 
-// Bumped v6 -> v7 alongside the server-side cache key: added Serper.dev
-// image search as a final resolver tier — a product a browser cached as ''
-// under v6 (brand site blocked bots, or no catalog url at all) can now
-// resolve to a real photo.
-const LS_KEY = 'ayna_product_images_v7';
+// Bumped v7 -> v8 alongside the server-side cache key: the first live
+// Serper deploy had no relevance check on results — confirmed a real wrong
+// match in production (an unrelated clinic for a pelvic-floor app query)
+// before the brand-gate/title-overlap fix landed.
+const LS_KEY = 'ayna_product_images_v8';
 const memCache = new Map();
 
 function lsRead() {

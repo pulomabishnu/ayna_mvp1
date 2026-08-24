@@ -43,6 +43,64 @@ async function dailyBudgetOk() {
 // product photography from a retailer or brand site is not.
 const MIN_DIMENSION_PX = 200;
 
+// Google Image Search always returns its best-effort top hits, even when
+// nothing in the index is a real match — the exact same failure mode fixed
+// for DSLD earlier (see lookupDsldProduct in llm-recommendations.js: "Always
+// Infinity" matched "Rhino Infinity 10K" on the shared word "infinity").
+// Caught live here too: querying "Happi Pelvic Floor App" (a catalog entry
+// that turned out not to be independently confirmable as a real, distinct
+// product at all) returned "Happy Pelvis Pelvic Floor Therapy" (an
+// unrelated clinic) and "Happy Floor: Pelvic Exercises" (a different real
+// app) as its top image results.
+//
+// A first pass at scoring the whole query ("<brand> <name>") against the
+// title as one undifferentiated word bag was NOT enough: "Happy Floor..."
+// shares "pelvic"/"floor"/"app" with the query — 3 of 4 tokens — purely
+// because those are generic category words any pelvic-floor-app
+// description would contain, clearing the same 0.75 threshold proven safe
+// for Shopify/DSLD even with ZERO actual brand-name match ("happi" vs
+// "happy" never overlap as tokens). Category-word overlap can outweigh a
+// completely wrong brand when the query itself is mostly generic words.
+//
+// Fixed by gating on the brand separately and first: when a brand is
+// given, it must actually appear in the title before category-word
+// overlap counts for anything at all. The brand name is the one token
+// that's actually specific to THIS product; everything else in a query
+// like "Pelvic Floor App" is category vocabulary shared by every
+// competitor's listing too.
+// Crude singularization (strip a lone trailing "s", never "ss") — real
+// listings routinely phrase the same product as singular/plural
+// differently ("Crystal Wand" vs "Crystal Pleasure Wands"). Without this,
+// a genuinely correct match (chakrubs.com's own listing for exactly this
+// product) scored 2/3 — below threshold — purely because "wand" and
+// "wands" didn't match as exact strings, a false NEGATIVE on top of the
+// false-POSITIVE risk this scoring already guards against.
+function singularize(t) {
+  return t.length > 3 && t.endsWith('s') && !t.endsWith('ss') ? t.slice(0, -1) : t;
+}
+
+function normalizeTokens(s) {
+  return String(s || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim()
+    .split(' ')
+    .filter((t) => t.length > 2)
+    .map(singularize);
+}
+
+function titleMatchScore(queryTokens, titleTokens) {
+  if (queryTokens.length === 0 || titleTokens.length === 0) return { score: 0, overlap: 0 };
+  const titleSet = new Set(titleTokens);
+  const querySet = new Set(queryTokens);
+  let overlap = 0;
+  for (const t of querySet) {
+    if (titleSet.has(t)) overlap += 1;
+  }
+  const smaller = Math.min(querySet.size, titleSet.size);
+  return { score: overlap / smaller, overlap };
+}
+
 /**
  * @param {string} name
  * @param {string} [brand]
@@ -59,6 +117,9 @@ export async function lookupSerperImage(name, brand) {
     return null;
   }
 
+  const brandTokens = normalizeTokens(brand);
+  const nameTokens = normalizeTokens(name);
+
   try {
     const res = await fetch('https://google.serper.dev/images', {
       method: 'POST',
@@ -73,6 +134,9 @@ export async function lookupSerperImage(name, brand) {
     const data = await res.json();
     const images = Array.isArray(data?.images) ? data.images : [];
 
+    let best = null;
+    let bestScore = 0;
+    let bestOverlap = 0;
     for (const img of images) {
       const url = img?.imageUrl;
       if (typeof url !== 'string' || !url.startsWith('http')) continue;
@@ -81,9 +145,31 @@ export async function lookupSerperImage(name, brand) {
       const h = Number(img.imageHeight) || 0;
       if (w && w < MIN_DIMENSION_PX) continue;
       if (h && h < MIN_DIMENSION_PX) continue;
-      return url;
+
+      const titleTokens = normalizeTokens(img?.title);
+      const titleSet = new Set(titleTokens);
+
+      // The brand gate: when a brand is given, it must actually appear in
+      // the title before this candidate is even scored — see the comment
+      // above titleMatchScore for why (category-word overlap alone can
+      // outweigh a completely wrong brand).
+      if (brandTokens.length > 0 && !brandTokens.some((t) => titleSet.has(t))) continue;
+
+      const { score, overlap } = titleMatchScore(nameTokens, titleTokens);
+      if (score > bestScore) {
+        bestScore = score;
+        bestOverlap = overlap;
+        best = url;
+      }
     }
-    return null;
+
+    // Same threshold already proven for Shopify catalog matching and DSLD —
+    // the smaller of {query, title} token set must be (almost) fully
+    // contained in the other, with at least 2 real tokens in common. When
+    // there's no brand to gate on (nameTokens alone must clear this), err
+    // toward no image over a wrong one.
+    if (!best || bestScore < 0.75 || bestOverlap < 2) return null;
+    return best;
   } catch (e) {
     console.warn('[serperImageSearch] lookup failed:', e?.message);
     return null;
