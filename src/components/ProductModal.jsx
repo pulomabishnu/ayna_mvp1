@@ -16,7 +16,7 @@ const PRODUCT_VIEW_KEY = 'ayna_product_detail_view_v1';
 const AYNA_TABS = [
   { id: 'summary', label: 'Ayna summary' },
   { id: 'clinician', label: 'Clinician opinion' },
-  { id: 'community', label: 'Community' },
+  { id: 'community', label: 'Social Media' },
   { id: 'ask', label: 'Ask Ayna' },
   { id: 'specs', label: 'Specs' },
 ];

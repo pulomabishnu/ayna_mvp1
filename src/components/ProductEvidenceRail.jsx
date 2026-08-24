@@ -32,7 +32,7 @@ export default function ProductEvidenceRail({ product, matchLabels = [], matchPe
   const evidenceRows = [
     scientificCount > 0 ? { label: 'Scientific', value: `${scientificCount} source${scientificCount === 1 ? '' : 's'}` } : null,
     clinicalCount > 0 ? { label: 'Clinical', value: `${clinicalCount} reference${clinicalCount === 1 ? '' : 's'}` } : null,
-    communityLinkCount > 0 ? { label: 'Community', value: `${communityLinkCount} link${communityLinkCount === 1 ? '' : 's'}` } : null,
+    communityLinkCount > 0 ? { label: 'Social Media', value: `${communityLinkCount} link${communityLinkCount === 1 ? '' : 's'}` } : null,
     aynaReviewCount > 0 ? { label: 'Ayna reviews', value: `${aynaReviewCount}` } : null,
     product.safety?.fdaStatus ? { label: 'FDA', value: firstSentence(product.safety.fdaStatus, 56) } : null,
   ].filter(Boolean);
