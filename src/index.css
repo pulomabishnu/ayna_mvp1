@@ -3032,6 +3032,7 @@ html {
   display: flex;
   flex-direction: column;
   gap: 18px;
+  min-width: 0;
 }
 
 .pdp-head__eyebrow {
@@ -3260,6 +3261,7 @@ html {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  min-width: 0;
 }
 
 .pdp-evidence-head__desc {
@@ -3745,6 +3747,12 @@ footer a[href*="career" i],
   color: #1A1714;
 }
 
+.eco-bubbles__canvas-wrap {
+  width: 560px;
+  height: 520px;
+  overflow: hidden;
+}
+
 .eco-bubbles__canvas {
   position: relative;
   flex: none;
@@ -3847,6 +3855,7 @@ footer a[href*="career" i],
   flex-direction: column;
   gap: 22px;
   padding-top: 16px;
+  min-width: 0;
 }
 
 .eco-bubbles__title {
@@ -4145,10 +4154,16 @@ footer a[href*="career" i],
     justify-items: center;
   }
 
+  .eco-bubbles__canvas-wrap {
+    width: 459px;
+    height: 427px;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
   .eco-bubbles__canvas {
     transform: scale(0.82);
-    transform-origin: top center;
-    margin-bottom: -90px;
+    transform-origin: top left;
   }
 
   .eco-bubbles__side {
@@ -4161,9 +4176,14 @@ footer a[href*="career" i],
 }
 
 @media (max-width: 560px) {
+  .eco-bubbles__canvas-wrap {
+    width: 336px;
+    height: 312px;
+    max-width: 100%;
+  }
+
   .eco-bubbles__canvas {
     transform: scale(0.6);
-    margin-bottom: -200px;
   }
 
   .eco-bubbles__title {

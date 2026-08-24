@@ -109,6 +109,14 @@ export default function EcosystemBubbles({
 
   return (
     <section className="eco-bubbles mockup-page">
+      {/* .eco-bubbles__canvas is a fixed 560x520 (CANVAS/CANVAS_H) so every
+          bubble's JS-computed left/top stays correct — it's visually shrunk
+          on narrower screens with transform:scale, which is paint-only and
+          does NOT reduce the box's layout footprint. Without this wrapper
+          reserving the real (post-scale) space via CSS, the still-560px-wide
+          canvas overflowed its grid track on mobile (found live: 598px of
+          content in a 390px viewport). */}
+      <div className="eco-bubbles__canvas-wrap">
       <div className="eco-bubbles__canvas" style={{ width: CANVAS, height: CANVAS_H }}>
         <div className="eco-bubbles__ring" />
 
@@ -136,6 +144,7 @@ export default function EcosystemBubbles({
             </button>
           );
         })}
+      </div>
       </div>
 
       <div className="eco-bubbles__side">
