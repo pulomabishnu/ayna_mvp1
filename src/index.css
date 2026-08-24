@@ -1811,6 +1811,7 @@ html {
   align-items: center;
   flex-wrap: wrap;
   gap: 24px;
+  min-width: 0;
 }
 
 .ayna-landing-filters {
@@ -4150,7 +4151,14 @@ footer a[href*="career" i],
 
 @media (max-width: 1040px) {
   .eco-bubbles {
-    grid-template-columns: 1fr;
+    /* minmax(0, 1fr), not bare 1fr — a bare 1fr track's minimum size still
+       considers its content's intrinsic/explicit width (the canvas wrap's
+       own `width` below), so it doesn't actually cap the track and content
+       silently overflowed anyway (confirmed live: computed
+       gridTemplateColumns stayed at the wrap's fixed width even though the
+       container itself was narrower). minmax(0, 1fr) explicitly overrides
+       that default "auto" minimum. */
+    grid-template-columns: minmax(0, 1fr);
     justify-items: center;
   }
 
@@ -4158,6 +4166,7 @@ footer a[href*="career" i],
     width: 459px;
     height: 427px;
     max-width: 100%;
+    min-width: 0;
     margin: 0 auto;
   }
 
@@ -4180,6 +4189,7 @@ footer a[href*="career" i],
     width: 336px;
     height: 312px;
     max-width: 100%;
+    min-width: 0;
   }
 
   .eco-bubbles__canvas {
@@ -4196,6 +4206,25 @@ footer a[href*="career" i],
 
   .eco-shelf__row {
     grid-template-columns: 1fr;
+  }
+}
+
+/* iPhone SE and similarly narrow phones (~320-340px): even the 560px
+   breakpoint's 336px-wide canvas wrap doesn't fit — found live (598px of
+   overflow at 320px). One more discrete scale step, same pattern as the
+   two above (the canvas's internal bubble positions are computed in JS
+   against a fixed 560x520, so this can't be made fluid without also
+   changing seatPosition() — see EcosystemBubbles.jsx). */
+@media (max-width: 340px) {
+  .eco-bubbles__canvas-wrap {
+    width: 280px;
+    height: 260px;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .eco-bubbles__canvas {
+    transform: scale(0.5);
   }
 }
 
@@ -4431,6 +4460,7 @@ textarea {
 
 .ayna-landing-filters {
   max-width: min(100%, 780px);
+  min-width: 0;
   overflow-x: auto;
   scrollbar-width: none;
   padding-bottom: 2px;
