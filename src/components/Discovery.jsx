@@ -520,9 +520,27 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     // browseAiRounds bounds how many generation rounds a single browse
     // context gets (see MAX_BROWSE_AI_ROUNDS below).
     const [browseAiSuggestions, setBrowseAiSuggestions] = useState([]);
+    // Mirrors browseAiSuggestions synchronously, kept in lockstep everywhere the state is
+    // set (reset effect below, and inside runBrowseAiRound). Needed because computing "how
+    // many of this round's suggestions are actually new" requires reading the array as it
+    // stands *right now* — doing that inside a setBrowseAiSuggestions(prev => ...) functional
+    // updater instead (mutating an outer `freshCount` variable as a side effect of the
+    // updater) is impure, and React is explicitly allowed to invoke an updater function more
+    // than once for a single call (e.g. to compute eager state) — confirmed live: doing it
+    // that way made a round's *correctly-computed* fresh-item count silently read back as 0
+    // after the setState call returned, on a round that had in fact added 4 genuinely new
+    // products, which falsely tripped the "this looks like a dry/exhausted round" logic
+    // below and cut a typed search's "Load more" continuation short after only 2 rounds.
+    // Reading/writing this ref instead of `prev` sidesteps the double-invoke pitfall entirely.
+    const browseAiSuggestionsRef = useRef([]);
     const [browseAiRounds, setBrowseAiRounds] = useState(0);
     const [browseAiLoading, setBrowseAiLoading] = useState(false);
     const browseAiAbortRef = useRef(null);
+    // Synchronous guard against two overlapping runBrowseAiRound calls processing the same
+    // round concurrently (the trigger effect firing again before the in-flight call's state
+    // updates have committed) — browseAiLoading is a state value and only reflects reality a
+    // render cycle later, which isn't fast enough to close this window.
+    const browseAiInFlightRef = useRef(false);
     // How many CONSECUTIVE rounds in a row added zero genuinely new products.
     // One dry round isn't strong evidence a category is exhausted — the model
     // can repeat itself on a single batch and still have real, distinct
@@ -841,11 +859,13 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         if (browseAiContextKeyRef.current === browseAiContextKey) return;
         browseAiContextKeyRef.current = browseAiContextKey;
         if (browseAiAbortRef.current) { browseAiAbortRef.current.abort(); browseAiAbortRef.current = null; }
+        browseAiSuggestionsRef.current = [];
         setBrowseAiSuggestions([]);
         setBrowseAiRounds(0);
         setBrowseAiLoading(false);
         dryRoundStreakRef.current = 0;
         setBrowseAiErrorCode(null);
+        browseAiInFlightRef.current = false;
     }, [browseAiContextKey]);
 
     // Abort any in-flight browse-AI request on unmount.
@@ -1014,6 +1034,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         // colliding with runAiSearch's own initial fetch.
         const resolved = resolveBrowseAiRoundQuery(qTrimForAi, categoryFilter, macroGroup, roundIndexAtCallTime);
         if (!resolved) return;
+        // Belt-and-suspenders against the trigger effect firing again before this round's
+        // state updates have committed (browseAiLoading is a state value, so it only reflects
+        // reality a render cycle later) — see browseAiInFlightRef's declaration above.
+        if (browseAiInFlightRef.current) return;
+        browseAiInFlightRef.current = true;
         const { queryText, isTypedSearchContinuation } = resolved;
         if (browseAiAbortRef.current) browseAiAbortRef.current.abort();
         const ac = new AbortController();
@@ -1052,27 +1077,32 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 return;
             }
             setBrowseAiErrorCode(null);
-            let freshCount = 0;
-            setBrowseAiSuggestions((prev) => {
-                // Dedup against catalog matches, whatever's already accumulated
-                // for this browse context, and the search-flow's AI suggestions —
-                // mirrors the dedup gridItems already does above.
-                const existingNames = new Set([
-                    ...filtered.map((p) => (p.name || '').trim().toLowerCase()),
-                    ...prev.map((p) => (p.name || '').trim().toLowerCase()),
-                    ...enrichedAiSuggestions.map((p) => (p.name || '').trim().toLowerCase()),
-                ].filter(Boolean));
-                const fresh = (Array.isArray(suggestions) ? suggestions : []).filter((s) => {
-                    const nameAndBrand = `${s.name || ''} ${s.brand || ''}`.toLowerCase();
-                    if (dislikedTerms.some((term) => nameAndBrand.includes(term))) return false;
-                    const n = (s.name || '').trim().toLowerCase();
-                    if (n && existingNames.has(n)) return false;
-                    if (n) existingNames.add(n);
-                    return true;
-                });
-                freshCount = fresh.length;
-                return [...prev, ...fresh];
+            // Dedup against catalog matches, whatever's already accumulated for this browse
+            // context (read from the ref, not React state — see browseAiSuggestionsRef's
+            // declaration above for why: computing this inside a setBrowseAiSuggestions(prev
+            // => ...) functional updater is impure, since it also assigns to an outer
+            // freshCount variable as a side effect, and React is allowed to invoke an
+            // updater more than once for a single call — which silently corrupted freshCount
+            // on rounds that had, in fact, added genuinely new products), and the
+            // search-flow's AI suggestions — mirrors the dedup gridItems already does above.
+            const existingNames = new Set([
+                ...filtered.map((p) => (p.name || '').trim().toLowerCase()),
+                ...browseAiSuggestionsRef.current.map((p) => (p.name || '').trim().toLowerCase()),
+                ...enrichedAiSuggestions.map((p) => (p.name || '').trim().toLowerCase()),
+            ].filter(Boolean));
+            const fresh = (Array.isArray(suggestions) ? suggestions : []).filter((s) => {
+                const nameAndBrand = `${s.name || ''} ${s.brand || ''}`.toLowerCase();
+                if (dislikedTerms.some((term) => nameAndBrand.includes(term))) return false;
+                const n = (s.name || '').trim().toLowerCase();
+                if (n && existingNames.has(n)) return false;
+                if (n) existingNames.add(n);
+                return true;
             });
+            const freshCount = fresh.length;
+            if (freshCount > 0) {
+                browseAiSuggestionsRef.current = [...browseAiSuggestionsRef.current, ...fresh];
+                setBrowseAiSuggestions(browseAiSuggestionsRef.current);
+            }
             // A DRY round (adds nothing new) isn't trusted on its own — the
             // model can duplicate one batch and still have real, distinct
             // products on the next (confirmed live, see dryRoundStreakRef
@@ -1099,6 +1129,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 setBrowseAiErrorCode('request_failed');
                 setBrowseAiRounds((r) => r + 1);
             }
+        } finally {
+            browseAiInFlightRef.current = false;
         }
     }, [categoryFilter, macroGroup, personalizationFilter, quizResults, filtered, enrichedAiSuggestions, qTrimForAi, symptomFilter]);
 
