@@ -28,7 +28,15 @@ const MACRO_GROUPS = [
     { id: 'breast', label: 'Breast Care', categories: ['breast-care', 'lactation'], keywords: ['breast', 'breastfeeding', 'nipple', 'pump', 'lactation'] },
     { id: 'pelvic', label: 'Pelvic', categories: ['pelvic-floor', 'pelvic-health', 'incontinence'], keywords: ['pelvic', 'kegel', 'bladder', 'incontinence', 'bladder leak'] },
     { id: 'menopause', label: 'Menopause', categories: ['menopause'], keywords: ['menopause', 'perimenopause', 'hot flash'] },
-    { id: 'hormones', label: 'Hormones', categories: ['supplement', 'hormone-monitoring'], keywords: ['pms', 'pcos', 'cycle', 'hormone'] },
+    // 'supplement' is a product-TYPE category shared by dozens of unrelated items (iron for
+    // anemia, plain vitamin D, omega-3 for cramps, etc.) — it used to be listed here directly,
+    // which meant EVERY supplement in the catalog satisfied the Hormones chip regardless of what
+    // it actually treats. Matching is now scoped to the real concern taxonomy instead: the
+    // 'hormone-monitoring' category, the 'hormone-balance' healthFunction (checked exactly via
+    // healthFunctions below, not folded into the general keyword text blob — a substring scan
+    // would otherwise let something like the unrelated 'fitness-cycle' healthFunction slug
+    // falsely satisfy the 'cycle' keyword), and the keywords below.
+    { id: 'hormones', label: 'Hormones', categories: ['hormone-monitoring'], healthFunctions: ['hormone-balance'], keywords: ['pms', 'pcos', 'cycle', 'hormone', 'hormonal'] },
     { id: 'skin', label: 'Skin', categories: ['skin', 'skincare', 'body-care'], keywords: ['skin', 'cleanser', 'moisturizer', 'spf', 'acne', 'hyperpigmentation'] },
     { id: 'hair', label: 'Hair', categories: ['hair', 'haircare'], keywords: ['hair', 'scalp', 'shampoo', 'conditioner', 'thinning'] },
     { id: 'gut', label: 'Gut', categories: ['gut-health'], keywords: ['gut', 'bloating', 'fiber', 'probiotic'] },
@@ -37,13 +45,23 @@ const MACRO_GROUPS = [
     { id: 'tests-devices', label: 'Tests + Devices', categories: ['tracker', 'diagnostics', 'hormone-monitoring'], keywords: ['test', 'tracker', 'wearable', 'monitor'] },
 ];
 
+// Some product copy legitimately advertises the ABSENCE of a property — e.g. Neycher's
+// intimate-care line describing itself as "hormone-free" / "non-hormonal" — rather than the
+// presence of it. A naive substring match on a concern keyword like "hormone" can't tell "this
+// product is about hormones" apart from "this product explicitly contains none," so it was
+// mis-filing hormone-free vulva balm/moisturizing gel under the Hormones chip. Strip these
+// negated phrases out before keyword matching so a chip only surfaces products that are
+// actually about the concern, not ones that merely deny it.
+const NEGATED_CONCERN_PHRASES = [/non-?\s?hormonal/g, /hormone-?\s?free/g];
+
 function productSearchText(item) {
-    return [
+    const raw = [
         item?.category, item?.name, item?.brand, item?.summary, item?.description, item?.tagline,
         ...(Array.isArray(item?.badges) ? item.badges : []),
         ...(Array.isArray(item?.tags) ? item.tags : []),
         item?.eligibility, item?.sustainability, item?.lifeStage,
     ].filter(Boolean).join(' ').toLowerCase();
+    return NEGATED_CONCERN_PHRASES.reduce((t, re) => t.replace(re, ' '), raw);
 }
 
 function itemMatchesMacroGroup(item, groupId) {
@@ -51,9 +69,18 @@ function itemMatchesMacroGroup(item, groupId) {
     const group = MACRO_GROUPS.find((g) => g.id === groupId);
     if (!group) return true;
     if (group.categories.includes(item?.category)) return true;
+    // Structured concern tags (e.g. 'hormone-balance') are checked as an exact membership test,
+    // not folded into the free-text keyword scan below — that keeps a slug like the unrelated
+    // 'fitness-cycle' healthFunction from accidentally satisfying a keyword such as 'cycle'.
+    if (Array.isArray(group.healthFunctions) && Array.isArray(item?.healthFunctions) &&
+        item.healthFunctions.some((hf) => group.healthFunctions.includes(hf))) return true;
     const text = productSearchText(item);
     return group.keywords.some((keyword) => text.includes(keyword));
 }
+
+// Exported for unit testing of the category-chip filtering logic (see
+// Discovery.macroGroupFilter.test.js) — not used by any other component.
+export { MACRO_GROUPS, productSearchText, itemMatchesMacroGroup };
 
 /** Natural-language phrase for the browse-AI extension's `query` param — prefers the
  * more specific active scope (a chosen sub-category) over the broader macro group, and
