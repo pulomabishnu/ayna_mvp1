@@ -130,11 +130,13 @@ export default async function handler(req, res) {
   const allowBrandLogo = type === 'digital';
   if (!name) return res.status(400).json({ error: 'missing_name' });
 
-  // Bumped v5 -> v6: KNOWN_IMAGE_CDN_SUFFIXES had 'contentful.com' instead
-  // of Contentful's actual asset domain 'ctfassets.net', so Clue's real
-  // og:image (served from images.ctfassets.net) was wrongly rejected as an
-  // unrelated third party and pinned as a negative result under v5.
-  const cacheKey = `ayna:img:v6:${type}:${brand.toLowerCase()}|${name.toLowerCase()}`;
+  // Bumped v6 -> v7: NON_PRODUCT_IMAGE_PATTERN switched from raw substring
+  // matching to letter-adjacency lookaround (a live audit of the static
+  // catalog — see src/data/catalogImages.test.js — found "hero" flagging
+  // genuine studio product photos, e.g. Elvie's own "..._Web_Hero_..."
+  // filename), and "hero" was dropped from the pattern entirely. A product
+  // resolved (or wrongly rejected) under v6 could now resolve differently.
+  const cacheKey = `ayna:img:v7:${type}:${brand.toLowerCase()}|${name.toLowerCase()}`;
   const redis = getRedis();
 
   if (redis) {

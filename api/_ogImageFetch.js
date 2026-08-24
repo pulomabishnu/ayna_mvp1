@@ -23,9 +23,23 @@ const MAX_HTML_BYTES = 500_000;
 // photo — brand pages frequently set these as og:image on non-product pages,
 // and mislabeling a logo as "the product" is worse than showing no photo.
 // "header" added after a live production case: Saalt's og:image resolved to
-// a small decorative "Fancy-Monogram-header_03.png" asset, which the UI then
-// rendered full-size as if it were a photo of the product.
-const NON_PRODUCT_IMAGE_PATTERN = /logo|icon|favicon|banner|header|sprite|placeholder|social[-_]?share|og[-_]?default/i;
+// a small decorative "Fancy-Monogram-header_03.png" asset.
+//
+// Uses letter-adjacency lookaround, NOT \b — see the matching comment on
+// src/utils/resolveProductImage.js's copy of this pattern (that file is the
+// one that actually gates hardcoded catalog data, which is where this was
+// audited against real cases). Shopify's filename convention is
+// underscore-separated ("Logo_33a7614e...") and \b treats `_` as a word
+// character, so \blogo\b would silently miss the exact real case this
+// exists for; digits/underscores/punctuation still count as a boundary,
+// only an adjacent letter blocks the match.
+//
+// Deliberately does NOT include "hero" — tried and reverted after it
+// flagged two genuine studio product photos in the catalog sweep (Elvie
+// Pelvic Floor Trainer, Stayfree) that just happen to use "hero
+// shot"/"hero image," standard product-photography terminology, in their
+// own filenames.
+const NON_PRODUCT_IMAGE_PATTERN = /(?<![a-z])(?:logo|icon|badge|favicon|banner|header|sprite|placeholder|social[-_]?share|og[-_]?default)(?![a-z])/i;
 
 // Some CDNs bake an explicit tiny size into the URL's own query string (e.g.
 // Shopify's `?width=32&height=32` image-resizing params) — a strong signal

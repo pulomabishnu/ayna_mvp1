@@ -106,7 +106,11 @@ export const MVP_PHYSICAL = [
     price: '$10 for 32',
     userRating: 4.5,
     whereToBuy: ['Cora.life', 'Target', 'Amazon'],
-    image: 'https://cdn.shopify.com/s/files/1/0940/5060/files/Logo_33a7614e-134f-4af3-9075-b4ac69ca81a0.png?height=628&pad_color=fefaf8&v=1646873247&width=1200',
+    // Was a hardcoded brand-logo image (Cora's own theme logo, not a
+    // per-SKU photo) — caught by the catalog-wide image sweep. Empty so
+    // the UI's live /api/product-image resolution (or letter avatar)
+    // takes over instead of rendering the wrong image.
+    image: '',
     summary: '100% organic cotton pads from Cora. Subscription or one-time. B-Corp, plastic-free packaging.',
     safety: { fdaStatus: 'FDA-registered', materials: '100% organic cotton', recalls: 'No formal recalls. Note: a 2024 independent lab investigation (Mamavation, using an EPA-certified lab) found organic fluorine — an indicator of PFAS "forever chemicals" — at roughly 30 ppm in a Cora organic-cotton liner product, despite the brand\'s organic marketing. The same investigation found PFAS indicators in about half of tested pad/liner brands, including several other organic ones, while some organic brands tested clean.', allergens: 'Hypoallergenic', sideEffects: 'Organic cotton is generally well tolerated with a low rate of skin irritation. Change regularly during heavy flow and discontinue if you notice redness or itching.', opinionAlerts: 'Since the 2024 PFAS lab testing news, some shoppers have expressed concern about organic-marketed pads generally, including Cora, and a subset have shifted toward brands that tested clean.' },
     clinicianOpinionSource: 'independent',
@@ -137,7 +141,11 @@ export const MVP_PHYSICAL = [
     price: '$11 for 32',
     userRating: 4.5,
     whereToBuy: ['Cora.life', 'Target', 'Amazon'],
-    image: 'https://cdn.shopify.com/s/files/1/0940/5060/files/Logo_33a7614e-134f-4af3-9075-b4ac69ca81a0.png?height=628&pad_color=fefaf8&v=1646873247&width=1200',
+    // Was a hardcoded brand-logo image (Cora's own theme logo, not a
+    // per-SKU photo) — caught by the catalog-wide image sweep. Empty so
+    // the UI's live /api/product-image resolution (or letter avatar)
+    // takes over instead of rendering the wrong image.
+    image: '',
     summary: '100% organic cotton tampons from Cora. Subscription or one-time. B-Corp, plastic-free packaging.',
     safety: { fdaStatus: 'FDA-registered', materials: '100% organic cotton', recalls: 'No recalls.', allergens: 'Hypoallergenic', sideEffects: 'Organic cotton is generally well tolerated. As with any tampon, leaving one in longer than recommended raises the risk of toxic shock syndrome (TSS). Change every 4-8 hours and use the lowest absorbency your flow needs.' },
     clinicianOpinionSource: 'independent',
@@ -245,7 +253,9 @@ export const MVP_PHYSICAL = [
     price: '$22 for 30 capsules',
     userRating: 4.3,
     whereToBuy: ['Amazon', 'PinkStork.com', 'Target'],
-    image: 'https://pinkstork.com/cdn/shop/files/PINKSTORK_Logo_crop_90482267-d058-40f5-984c-73335bc42249.svg?v=1756906426',
+    // Was a hardcoded SVG brand-logo image (Pink Stork's own wordmark, not
+    // a bottle photo) — caught by the catalog-wide image sweep.
+    image: '',
     summary: 'Herbal blend with fennel, dandelion, and ginger to support digestion and ease cycle-related bloating and water retention.',
     safety: { fdaStatus: 'Dietary supplement', materials: 'Fennel, dandelion root, ginger, organic ingredients', recalls: 'No recalls.', allergens: 'Vegan, gluten-free', sideEffects: 'Generally well tolerated. Fennel and dandelion may interact with blood thinners or diuretics. Check with a clinician if you take either. Occasional mild GI upset reported.' },
     clinicianOpinionSource: 'independent',
@@ -528,8 +538,11 @@ export const MVP_DIGITAL = [
     whereToBuy: ['App Store', 'Google Play'],
     platform: 'iOS, Android',
     // happiapp.com is a HugeDomains parking listing, not this app's real site —
-    // couldn't confirm an official domain to source a real image from.
-    image: '/ayna_placeholder.png',
+    // couldn't confirm an official domain to source a real image from. Empty,
+    // not the literal /ayna_placeholder.png path — that file is Ayna's own
+    // marketing image, hardcoding it here would render OUR branding as if it
+    // were a photo of Happi's app. Empty correctly falls back to a letter avatar.
+    image: '',
     summary: 'Pelvic floor exercise app with guided Kegels and programs. Often recommended by pelvic PTs.',
     safety: { fdaStatus: 'N/A', materials: 'N/A', recalls: 'N/A', allergens: 'N/A', sideEffects: 'No physical side effects. This is a training app, not a device or medication. As with any pelvic floor exercise program, working too hard too fast can cause temporary muscle soreness.' },
     privacy: { dataStorage: 'Check app', sellsData: 'Check policy', hipaa: 'N/A', keyPolicy: 'Health data' },

@@ -94,9 +94,9 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToE
                           onOpenProduct?.(product);
                         }}
                       >
-                        {safeProductImageSrc(product.image) ? (
+                        {safeProductImageSrc(product.image, product.type === 'digital') ? (
                           <img
-                            src={safeProductImageSrc(product.image)}
+                            src={safeProductImageSrc(product.image, product.type === 'digital')}
                             alt=""
                             loading="lazy"
                             onError={(e) => handleImageErrorWithRetry(e, () => { e.currentTarget.style.display = 'none'; })}

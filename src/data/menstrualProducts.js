@@ -16,7 +16,7 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$7 for 24',
         userRating: 4.4,
         whereToBuy: ['CVS', 'Target', 'Walmart', 'Amazon'],
-        image: '/ayna_placeholder.png',
+        image: '', // caught by catalog-wide sweep — was the literal Ayna placeholder image, not a real photo
         summary: 'LeakGuard protection with 3D capture core. Widely available mainstream pad.',
         safety: { fdaStatus: 'FDA-registered', materials: 'Absorbent core, wings', recalls: 'No recalls.', allergens: 'Fragrance-free options' },
         clinicianOpinionSource: 'independent',
@@ -85,7 +85,7 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$8 for 18',
         userRating: 4.4,
         whereToBuy: ['CVS', 'Target', 'Walmart', 'Amazon'],
-        image: '/ayna_placeholder.png',
+        image: '', // caught by catalog-wide sweep — was the literal Ayna placeholder image, not a real photo
         summary: 'Flexible pad with Xpress-DRI core. Designed for active lifestyles.',
         safety: { fdaStatus: 'FDA-registered', materials: 'Absorbent core', recalls: 'No recalls.', allergens: 'Fragrance-free' },
         clinicianOpinionSource: 'independent',
@@ -152,7 +152,7 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$10 for 20',
         userRating: 4.5,
         whereToBuy: ['Cora.life', 'Target', 'Amazon'],
-        image: 'https://cdn.shopify.com/s/files/1/0940/5060/files/Logo_33a7614e-134f-4af3-9075-b4ac69ca81a0.png?height=628&pad_color=fefaf8&v=1646873247&width=1200',
+        image: '', // caught by catalog-wide sweep — was Cora's own theme logo, not a per-SKU photo
         summary: 'Extra-long organic cotton overnight pads. B-Corp, plastic-free packaging.',
         safety: { fdaStatus: 'FDA-registered', materials: '100% organic cotton', recalls: 'No recalls.', allergens: 'Hypoallergenic', opinionAlerts: 'A 2022 independent lab investigation (Mamavation, EPA-certified lab) found organic-fluorine (PFAS "forever chemical") indicators in a Cora liner product (Got-You-Covered Liner, 30 ppm) — the highest reading among liners in that test. This overnight pad SKU specifically was not part of that testing, but the finding has made some PFAS-conscious users more cautious about the Cora brand generally.' },
         clinicianOpinionSource: 'independent',
@@ -316,7 +316,7 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$9 for 18',
         userRating: 4.5,
         whereToBuy: ['CVS', 'Target', 'Walmart', 'Amazon'],
-        image: 'https://images.ctfassets.net/xqcbjukrkf0k/if063utku3bo_1yhx0ohbOtZaEKVWM3f8tn/fe10c1263ad2cacbcde0ec66003f3525/tampax-logo.png',
+        image: '', // caught by catalog-wide sweep — was Tampax's own logo, not a product photo
         summary: 'Flexible braid design with LeakGuard. Smooth plastic applicator.',
         safety: { fdaStatus: 'FDA-registered', materials: 'Cotton, plastic applicator', recalls: 'No recalls.', allergens: 'Fragrance-free', opinionAlerts: '2022 independent lab testing (Mamavation) found mixed PFAS results across the Tampax lineup — e.g. positive for organic-fluorine in Cardboard Applicator Unscented Tampons (23 ppm), non-detect in Pearl Leakguard and 100% Organic Cotton Core; this exact Radiant line was not part of that testing round. Separately, a peer-reviewed 2024 UC Berkeley study (Environment International) found measurable heavy metals, including lead and arsenic, across tampons broadly regardless of brand, which drove significant social media discussion about tampon safety.' },
         clinicianOpinionSource: 'independent',
@@ -664,7 +664,7 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$28–$34 per pair',
         userRating: 4.5,
         whereToBuy: ['TomboyX.com', 'Target'],
-        image: 'http://tomboyx.com/cdn/shop/files/TomboyX_Logo_Black_86d06453-ccbd-441d-a163-1901e8d4c03f.png?v=1706301500',
+        image: '', // caught by catalog-wide sweep — was TomboyX's own logo, not a product photo
         summary: 'Inclusive, gender-neutral period underwear. Multiple styles and sizes.',
         safety: { fdaStatus: 'N/A', materials: 'Oeko-Tex certified', recalls: 'No recalls.', allergens: 'Hypoallergenic' },
         clinicianOpinionSource: 'independent',

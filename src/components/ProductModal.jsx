@@ -453,7 +453,7 @@ export default function ProductModal({
     // initial '' for the new product without an extra setState in the effect.
     let active = true;
     if (!product?.name) return () => { active = false; };
-    if (!isPlaceholderProductImage(product.image)) return () => { active = false; };
+    if (!isPlaceholderProductImage(product.image, product.type === 'digital')) return () => { active = false; };
     resolveProductImage(product.name, product.brand || '', '', product.type || '').then((url) => {
       if (!active || !url) return;
       setResolvedModalImage(url);
@@ -697,7 +697,7 @@ export default function ProductModal({
           know the product is 'digital' and would reject a legitimate
           app/telehealth logo again. Only the raw catalog fallback still
           needs that heuristic. */}
-      {heroImageSrc && (resolvedModalImage || !isPlaceholderProductImage(heroImageSrc)) ? (
+      {heroImageSrc && (resolvedModalImage || !isPlaceholderProductImage(heroImageSrc, product.type === 'digital')) ? (
         <button
           type="button"
           onClick={() => setLightboxOpen(true)}

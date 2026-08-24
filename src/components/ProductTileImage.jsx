@@ -26,10 +26,11 @@ const CATALOG_BY_NORMALIZED_NAME = new Map(
  * Falls back to the product's own (possibly placeholder) image.
  */
 export function resolveCatalogProductImage(product) {
+  const allowBrandLogo = product?.type === 'digital';
   const byId = product?.id ? getProductById(product.id) : null;
-  if (byId && !isPlaceholderProductImage(byId.image)) return byId.image;
+  if (byId && !isPlaceholderProductImage(byId.image, byId.type === 'digital' || allowBrandLogo)) return byId.image;
   const byName = CATALOG_BY_NORMALIZED_NAME.get(String(product?.name || '').trim().toLowerCase());
-  if (byName && !isPlaceholderProductImage(byName.image)) return byName.image;
+  if (byName && !isPlaceholderProductImage(byName.image, byName.type === 'digital' || allowBrandLogo)) return byName.image;
   return product?.image;
 }
 
@@ -42,6 +43,7 @@ export function resolveCatalogProductImage(product) {
  * avatar) while no real image is available.
  */
 export default function ProductTileImage({ product, alt = '', imgStyle, imgClassName, letterNode }) {
+  const allowBrandLogo = product?.type === 'digital';
   const initial = resolveCatalogProductImage(product);
   const [resolved, setResolved] = useState('');
   const attemptedRef = useRef(null);
@@ -53,7 +55,7 @@ export default function ProductTileImage({ product, alt = '', imgStyle, imgClass
 
   useEffect(() => {
     if (!product?.name) return;
-    if (!isPlaceholderProductImage(initial)) return;
+    if (!isPlaceholderProductImage(initial, allowBrandLogo)) return;
     if (attemptedRef.current === product.id) return;
     attemptedRef.current = product.id;
     let active = true;
@@ -67,7 +69,7 @@ export default function ProductTileImage({ product, alt = '', imgStyle, imgClass
   // applied the type-aware (allowBrandLogo) check — re-running it through
   // isPlaceholderProductImage here would reject a legitimate app/telehealth
   // logo again, since that heuristic has no idea the product is 'digital'.
-  const finalSrc = resolved || safeProductImageSrc(initial);
+  const finalSrc = resolved || safeProductImageSrc(initial, allowBrandLogo);
   if (finalSrc) {
     return (
       <img

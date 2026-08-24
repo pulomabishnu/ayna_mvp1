@@ -481,8 +481,8 @@ function EcosystemProductAlternatives({ product, seedEntry, quizResults, healthP
                                         background: 'var(--color-bg)',
                                     }}
                                 >
-                                    {safeProductImageSrc(a.image) ? (
-                                        <img src={safeProductImageSrc(a.image)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    {safeProductImageSrc(a.image, a.type === 'digital') ? (
+                                        <img src={safeProductImageSrc(a.image, a.type === 'digital')} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                     ) : (
                                         <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontFamily: 'var(--font-serif)', color: 'var(--color-text-muted)' }}>
                                             {String(a.brand || a.name || '?').trim().charAt(0).toUpperCase()}
@@ -1577,7 +1577,7 @@ export default function MyEcosystem({
         const productsNeedingImage = recommendedProducts
             .filter((p) => p && p.id && p.name)
             .filter((p) => resolvedImages[p.id] === undefined)
-            .filter((p) => isPlaceholderProductImage(p.image));
+            .filter((p) => isPlaceholderProductImage(p.image, p.type === 'digital'));
         if (productsNeedingImage.length === 0) return undefined;
         const cancelledRef = { cancelled: false };
         resolveImagesBounded(productsNeedingImage, cancelledRef);

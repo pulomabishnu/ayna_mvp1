@@ -1,11 +1,12 @@
 // Resolves a real product image for products with placeholder images via /api/product-image
 // Results are cached in localStorage so the lookup only ever runs once per product.
 
-// Bumped v4 -> v5 alongside the server-side cache key: Clue's real logo
-// (hosted on Contentful's ctfassets.net CDN) was wrongly rejected by a CDN
-// allowlist that had the wrong Contentful domain — fixed server-side, but
-// the earlier '' result would otherwise keep serving from localStorage.
-const LS_KEY = 'ayna_product_images_v5';
+// Bumped v5 -> v6 alongside the server-side cache key: the "hero" keyword
+// (which flagged genuine studio product photos, e.g. Elvie's own
+// "..._Web_Hero_..." filename) was removed and the match logic switched to
+// letter-adjacency lookaround — a browser that cached a wrong rejection
+// under v5 would otherwise keep serving it indefinitely.
+const LS_KEY = 'ayna_product_images_v6';
 const memCache = new Map();
 
 function lsRead() {
@@ -19,7 +20,57 @@ function lsWrite(key, url) {
   } catch {}
 }
 
-export function isPlaceholderProductImage(imageUrl) {
+// Keywords indicating a logo/icon/banner rather than an actual product
+// photo. Mirrors api/_ogImageFetch.js's NON_PRODUCT_IMAGE_PATTERN (the
+// server-side gate applied to every LIVE resolution) — this client-side
+// copy is what's actually missing for hardcoded catalog data: a value baked
+// directly into src/data/*.js never goes through the server at all, so
+// only THIS function stands between a catalog entry's own bad `image`
+// field and the screen. Two real production cases slipped through for
+// weeks because this list was narrower than the server's: Cora Organic
+// Pads/Tampons (src/data/mvpProducts.js) had a literal
+// "Logo_33a7614e...png" as their hardcoded image, and Pink Stork Bloat
+// Support had "PINKSTORK_Logo_crop....svg" — this file's "logo" keyword
+// check and (still below) SVG check now catch both categorically instead
+// of needing another one-by-one data sweep every time a new brand's
+// hardcoded entry has this same bug.
+//
+// Uses letter-adjacency lookaround, NOT \b — Shopify's own filename
+// convention is underscore-separated ("Logo_33a7614e...", "TomboyX_Logo_
+// Black...") and \b treats `_` as a word character, so a plain \blogo\b
+// would silently fail to match the exact real-world case this exists for.
+// Digits/underscores/punctuation on either side still count as a boundary;
+// only an adjacent LETTER blocks the match — which is also what's needed
+// to avoid a false hit inside an unrelated word (see below).
+//
+// "hero" was tried and removed: running this same audit against the full
+// catalog flagged two genuine studio product photos (Elvie Pelvic Floor
+// Trainer's "..._Web_Hero_1200x1200...", Stayfree's "1_Hero_...") — "hero
+// shot"/"hero image" is standard product-photography terminology, not a
+// marketing-banner signal, so it produced false positives with no
+// corresponding real catch once the one case it existed for (Wisp's
+// digital/telehealth Meta_Hero image) is already exempted by allowBrandLogo.
+const NON_PRODUCT_IMAGE_PATTERN = /(?<![a-z])(?:logo|icon|badge|banner|header|sprite|placeholder|social[-_]?share|og[-_]?default)(?![a-z])/i;
+
+function isVectorAssetUrl(src) {
+  try {
+    return /\.svg(\?|$)/i.test(new URL(src).pathname);
+  } catch {
+    return /\.svg(\?|$)/i.test(src);
+  }
+}
+
+/**
+ * @param {string} imageUrl
+ * @param {boolean} [allowBrandLogo] - true for products with no physical
+ *   form (type === 'digital': apps, telehealth/virtual-care services) —
+ *   a brand logo/icon/marketing image genuinely IS the product's real
+ *   "photo" there (Wisp, Hers, Midi, Pomelo Care all correctly hardcode a
+ *   brand image in the catalog). Everything else keeps the strict
+ *   rejection: a logo standing in for an actual product photo is a real
+ *   bug (Cora, Pink Stork).
+ */
+export function isPlaceholderProductImage(imageUrl, allowBrandLogo = false) {
   const src = String(imageUrl || '').trim();
   if (!src) return true; // empty string — LLM products always start with ""
   if (src === '/ayna_placeholder.png' || src === '/startup_placeholder.png') return true;
@@ -40,12 +91,12 @@ export function isPlaceholderProductImage(imageUrl) {
   // substring match catches all of these; nothing legitimate has "favicon"
   // anywhere in a real product-photo URL. Also catches apple-touch-icon
   // files (Libresse, Citracal, LELO), the other common site-icon convention.
+  // Checked unconditionally (even when allowBrandLogo) — a bare favicon is
+  // too small/generic to pass as a real app icon regardless of product type.
   if (/favicon/i.test(src) || /apple-touch-icon/i.test(src)) return true;
-  // Same bug, different asset type: a couple of entries had a generic
-  // social-media link-preview banner hardcoded as `image` (Peanut, Dear
-  // Kate) — a 1200x628 "here's what this looks like when shared on
-  // Facebook" graphic, not a photo of the actual product.
-  if (/social[-_]?share/i.test(src)) return true;
+  if (allowBrandLogo) return false;
+  if (NON_PRODUCT_IMAGE_PATTERN.test(src)) return true;
+  if (isVectorAssetUrl(src)) return true;
   return false;
 }
 
@@ -60,8 +111,8 @@ export function isPlaceholderProductImage(imageUrl) {
  * `product.image` vs. an initial-letter/blank fallback, instead of a bare
  * truthiness check on the raw field.
  */
-export function safeProductImageSrc(imageUrl) {
-  return isPlaceholderProductImage(imageUrl) ? '' : String(imageUrl || '');
+export function safeProductImageSrc(imageUrl, allowBrandLogo = false) {
+  return isPlaceholderProductImage(imageUrl, allowBrandLogo) ? '' : String(imageUrl || '');
 }
 
 export async function resolveProductImage(name, brand, url, type) {

@@ -786,7 +786,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         const missing = visible
             .filter((item) => item && item.id && item.name)
             .filter((item) => resolvedImages[item.id] === undefined)
-            .filter((item) => isPlaceholderProductImage(item.image));
+            .filter((item) => isPlaceholderProductImage(item.image, item.type === 'digital'));
         if (missing.length === 0) return;
 
         // Bounded worker pool. This used to fire one request per item with no
@@ -1242,7 +1242,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     // that heuristic, since it was never server-vetted.
                     const resolvedItemImage = resolvedImages[item.id];
                     const cardImageSrc = resolvedItemImage !== undefined ? resolvedItemImage : item.image;
-                    const imageStillLoading = resolvedItemImage === undefined && isPlaceholderProductImage(item.image);
+                    const imageStillLoading = resolvedItemImage === undefined && isPlaceholderProductImage(item.image, item.type === 'digital');
                     const tileLetter = (item.brand || item.name || '?').trim().charAt(0).toUpperCase();
                     const matchPercent = getExplicitMatchPercent(item);
                     const eligibility = getExplicitEligibility(item);
@@ -1267,7 +1267,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                 }}
                             >
                                 <div className="ayna-discover-card__tile">
-                                    {cardImageSrc && (resolvedItemImage !== undefined || !isPlaceholderProductImage(cardImageSrc)) ? (
+                                    {cardImageSrc && (resolvedItemImage !== undefined || !isPlaceholderProductImage(cardImageSrc, item.type === 'digital')) ? (
                                         <>
                                             <img
                                                 src={cardImageSrc}
