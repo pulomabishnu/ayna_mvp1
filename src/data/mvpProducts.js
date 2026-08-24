@@ -597,7 +597,7 @@ export const MVP_DIGITAL = [
     tags: ['menopause', 'comfort', 'privacy', 'hormone-monitoring'],
     price: 'Membership / per visit; varies by plan and state',
     userRating: 4.5,
-    whereToBuy: ['midihealth.com'],
+    whereToBuy: ['joinmidi.com'], // midihealth.com no longer resolves; joinmidi.com is the brand's real current domain (confirmed via its own image CDN host, joinmidi-marketing.prismic.io, and page title)
     platform: 'Web, iOS, Android',
     image: 'https://images.prismic.io/joinmidi-marketing/Z92tBjxkOkZ2kJPK_3-clinician-1x1.jpg?auto=format%2Ccompress&rect=0%2C44%2C1440%2C756&w=2400&h=1260',
     summary: 'Virtual women\'s health clinic focused on perimenopause and menopause: visits with clinicians, personalized care plans, and prescription support (e.g. hormone therapy) where appropriate, without needing an in-person visit in many areas.',

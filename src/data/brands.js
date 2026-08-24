@@ -145,7 +145,9 @@ export const BRAND_PRODUCTS = [
         tags: ['discomfort', 'comfort', 'organic', 'non-hormonal'],
         price: '$23.45',
         whereToBuy: ['helloneycher.com'],
-        url: 'https://www.helloneycher.com/product/botanical-vulva-balm',
+        // url previously pointed to /product/botanical-vulva-balm, which 404s
+        // (2026-08-24) — removed rather than left dead; falls back to the
+        // brand homepage via whereToBuy above.
         faqUrl: 'https://www.helloneycher.com/faq',
         image: 'https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/686ecba35751d51959233c9e_botanical%20vulva%20balm.jpg',
         summary: 'An external, hormone-free balm for vulvar skin, made with 11 botanicals. Applied topically to the outer intimate area. Not inserted.',

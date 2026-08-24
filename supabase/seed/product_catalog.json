@@ -2819,7 +2819,7 @@
       "telehealth"
     ],
     "where_to_buy": [
-      "midihealth.com"
+      "joinmidi.com"
     ],
     "where_to_buy_in_stock": {},
     "safety": {
@@ -6558,7 +6558,6 @@
       "mental-health"
     ],
     "where_to_buy": [
-      "Maude.com",
       "Sephora"
     ],
     "where_to_buy_in_stock": {},
@@ -8634,9 +8633,7 @@
     "health_functions": [
       "comfort"
     ],
-    "where_to_buy": [
-      "PauseWellAging.com"
-    ],
+    "where_to_buy": [],
     "where_to_buy_in_stock": {},
     "safety": {
       "fdaStatus": "Dermatologist tested",
@@ -11229,7 +11226,7 @@
     "summary": "An external, hormone-free balm for vulvar skin, made with 11 botanicals. Applied topically to the outer intimate area. Not inserted.",
     "price": "$23.45",
     "image": "https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/686ecba35751d51959233c9e_botanical%20vulva%20balm.jpg",
-    "url": "https://www.helloneycher.com/product/botanical-vulva-balm",
+    "url": null,
     "tags": [
       "discomfort",
       "comfort",

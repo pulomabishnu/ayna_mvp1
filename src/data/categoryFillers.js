@@ -181,7 +181,11 @@ export const FILLER_PHYSICAL = [
         verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/Menopause/search/?q=gennev&restrict_sr=1', text: 'Reddit r/Menopause: Gennev', summary: 'Community discussions on menopause telehealth.' }] } }
     },
     {
-        id: 'p-pause-serum', name: 'Pause Well-Aging Fascia Stimulating Tool', category: 'menopause', type: 'physical', internal: false, healthFunctions: ['comfort'], tags: ['comfort'], price: '$115', userRating: 4.4, whereToBuy: ['PauseWellAging.com'],
+        id: 'p-pause-serum', name: 'Pause Well-Aging Fascia Stimulating Tool', category: 'menopause', type: 'physical', internal: false, healthFunctions: ['comfort'], tags: ['comfort'], price: '$115', userRating: 4.4, // PauseWellAging.com's domain has expired and now redirects to an unrelated
+// (gambling) site (found 2026-08-24) — removed entirely rather than left as
+// the only whereToBuy entry, so Buy Now correctly shows no link instead of
+// one this dangerous.
+whereToBuy: [],
         // pausewellaging.com now redirects to an unrelated/hijacked domain; Wayback Machine shows the site 404ing from mid-2024 onward.
         // Not findable on Amazon, Target, Ulta, or Sephora either. Couldn't source a real, currently-live image.
         // Empty, not the literal /ayna_placeholder.png path — that file is Ayna's own marketing image.

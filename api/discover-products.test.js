@@ -69,6 +69,16 @@ function makeMockAdmin({ existingByCategory = [], alreadyReviewed = [] } = {}) {
   };
 }
 
+/** Mocks a live fetch() Response for verifyUrlIsLive's liveness check — needs
+ * `.ok` and `.url` (the post-redirect location), not just `.json()` like the
+ * Anthropic/FDA mocks. */
+function liveUrl(finalUrl) {
+  return { ok: true, status: 200, url: finalUrl, json: async () => ({}) };
+}
+function deadUrl() {
+  return { ok: false, status: 404, url: '', json: async () => ({}) };
+}
+
 function fdaNoRecall() {
   return { ok: false, status: 404, json: async () => ({ error: { code: 'NOT_FOUND' } }) };
 }
@@ -145,12 +155,13 @@ describe('GET /api/discover-products — access control', () => {
 });
 
 describe('GET /api/discover-products — happy path', () => {
-  it('auto-approves a candidate with both a clean recall check AND a real source URL', async () => {
+  it('auto-approves a candidate with a clean recall check AND a real, live source URL', async () => {
     globalThis.__mockAdmin = makeMockAdmin();
     globalThis.fetch = vi.fn(async (url) => {
       const u = String(url);
       if (u.includes('anthropic')) return anthropicOk(validLlmResponse);
       if (u.includes('api.fda.gov')) return fdaNoRecall();
+      if (u === 'https://testbrand.com/pad') return liveUrl('https://testbrand.com/pad');
       throw new Error(`unexpected fetch to ${u}`);
     });
 
@@ -169,6 +180,48 @@ describe('GET /api/discover-products — happy path', () => {
     expect(row.discovery_meta.autoApproved).toBe(true);
     expect(row.name).toBe('Test Pad Pro');
     expect(row.brand).toBe('TestBrand');
+  });
+
+  it('leaves a candidate pending when its source URL string exists but does not actually resolve', async () => {
+    globalThis.__mockAdmin = makeMockAdmin();
+    globalThis.fetch = vi.fn(async (url) => {
+      const u = String(url);
+      if (u.includes('anthropic')) return anthropicOk(validLlmResponse);
+      if (u.includes('api.fda.gov')) return fdaNoRecall();
+      if (u === 'https://testbrand.com/pad') return deadUrl();
+      throw new Error(`unexpected fetch to ${u}`);
+    });
+
+    const res = mockRes();
+    await (await loadHandler())(req({ query: { category: 'pad' } }), res);
+
+    expect(res.body.inserted).toBe(1);
+    expect(res.body.autoApproved).toBe(0);
+    const row = globalThis.__mockAdmin.inserted[0];
+    expect(row.review_status).toBe('pending');
+    expect(row.is_active).toBe(false);
+    expect(row.discovery_meta.autoApproved).toBeUndefined();
+  });
+
+  it('leaves a candidate pending when its source URL redirects to a different domain entirely', async () => {
+    // The exact failure mode found live: an expired brand domain silently
+    // parked/resold, still returning 200, just for someone else's page.
+    globalThis.__mockAdmin = makeMockAdmin();
+    globalThis.fetch = vi.fn(async (url) => {
+      const u = String(url);
+      if (u.includes('anthropic')) return anthropicOk(validLlmResponse);
+      if (u.includes('api.fda.gov')) return fdaNoRecall();
+      if (u === 'https://testbrand.com/pad') return liveUrl('https://totally-unrelated-domain.example/');
+      throw new Error(`unexpected fetch to ${u}`);
+    });
+
+    const res = mockRes();
+    await (await loadHandler())(req({ query: { category: 'pad' } }), res);
+
+    expect(res.body.autoApproved).toBe(0);
+    const row = globalThis.__mockAdmin.inserted[0];
+    expect(row.review_status).toBe('pending');
+    expect(row.is_active).toBe(false);
   });
 
   it('leaves a candidate pending and inactive when the model gave no source URL, even with a clean recall check', async () => {

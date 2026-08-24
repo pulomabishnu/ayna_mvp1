@@ -289,10 +289,16 @@ export function toRow(candidate, { category, searchHits, provider }) {
  *      AND found nothing active. 'partial' means some dataset failed to
  *      respond — it could be hiding a real recall, so it does not qualify no
  *      matter how confident the rest of the candidate looks.
- *   2. The model named a real, verifiable https source URL. No URL means the
- *      model wasn't confident enough to point at where this is actually
- *      sold — that's exactly the kind of shakier candidate a human should
- *      still look at.
+ *   2. The model named a real, verifiable https source URL — AND that URL
+ *      was actually verified (see verifyUrlIsLive, called at the site that
+ *      awaits isAutoApprovable's result). This function only checks the
+ *      string exists; url liveness was found live (2026-08-24, full Buy Now
+ *      audit) to NOT be checked anywhere despite this docstring's original
+ *      claim — every one of the 14 auto-approved discovered products found
+ *      with a dead Buy Now link had passed this gate purely because `!!url`
+ *      was true, including two whose domains had expired and now redirect
+ *      to an unrelated site (one to a gambling site) while still returning
+ *      a 200. A truthy string was never evidence the URL actually works.
  *
  * This is deliberately narrow, not a general "looks fine, ship it" filter —
  * see the SAFETY CONTRACT note at the top of this file for why.
@@ -300,6 +306,36 @@ export function toRow(candidate, { category, searchHits, provider }) {
 export function isAutoApprovable(row) {
   const recall = row.discovery_meta?.recallCheck;
   return recall?.status === 'ok' && recall?.hasRecalls === false && !!row.url;
+}
+
+/**
+ * Live-checks a candidate's source URL — the second half of the
+ * auto-approval bar isAutoApprovable() only checks the string-existence
+ * half of. Requires a real 2xx AND that the final (post-redirect) hostname
+ * still plausibly belongs to the same site, not a different domain
+ * entirely — an expired domain silently parked or resold still returns a
+ * 200, just for someone else's page (a domain-broker parking page, or in
+ * one case found live, a gambling site), so status code alone isn't enough.
+ * A subdomain change (brand.com -> shop.brand.com) is allowed; a different
+ * registrable domain is not.
+ */
+async function verifyUrlIsLive(url) {
+  try {
+    const original = new URL(url);
+    const res = await fetch(url, {
+      method: 'GET',
+      redirect: 'follow',
+      signal: AbortSignal.timeout(8000),
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15',
+      },
+    });
+    if (!res.ok) return false;
+    const rootOf = (hostname) => hostname.replace(/^www\./, '').split('.').slice(-2).join('.');
+    return rootOf(new URL(res.url).hostname) === rootOf(original.hostname);
+  } catch {
+    return false;
+  }
 }
 
 function autoApprove(row) {
@@ -415,9 +451,18 @@ export default async function handler(req, res) {
 
     // Auto-approval only ever applies to brand-new rows, never to
     // toUpdateMetaOnly — a human's prior verdict on an id is never touched.
-    const toInsert = rows
-      .filter((r) => !alreadyReviewed.has(r.id))
-      .map((r) => (isAutoApprovable(r) ? autoApprove(r) : r));
+    // verifyUrlIsLive is a real network call, so only pay for it on rows that
+    // already cleared the (free, synchronous) rest of isAutoApprovable — a
+    // row failing on the recall check shouldn't also wait on a fetch whose
+    // result can't change the outcome.
+    const newRows = rows.filter((r) => !alreadyReviewed.has(r.id));
+    const toInsert = await Promise.all(
+      newRows.map(async (r) => {
+        if (!isAutoApprovable(r)) return r;
+        const urlIsLive = await verifyUrlIsLive(r.url);
+        return urlIsLive ? autoApprove(r) : r;
+      })
+    );
     const toUpdateMetaOnly = rows.filter((r) => alreadyReviewed.has(r.id));
 
     let inserted = 0;
