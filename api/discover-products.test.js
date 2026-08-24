@@ -1,13 +1,14 @@
 /**
  * Tests for the background product-discovery pipeline (cron-triggered,
  * api/discover-products.js). The whole point of this endpoint is that
- * nothing it finds reaches a real user without a human approving it first —
- * these tests exist to catch a regression in that specific guarantee, not
- * just "does it run".
+ * nothing it finds reaches a real user without EITHER a human approving it
+ * first OR the candidate clearing the narrow isAutoApprovable() gate (clean,
+ * fully-answered recall check + real https source URL) — these tests exist
+ * to catch a regression in that specific guarantee, not just "does it run".
  */
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { mockRes, mockReq, withEnv, anthropicOk } from './_test-helpers.js';
-import { slugify, normalizeKey, buildExclusionSet, toRow, dayOfYear, pickCategory, slotOfDay, RUN_HOURS_UTC, CATEGORIES } from './discover-products.js';
+import { slugify, normalizeKey, buildExclusionSet, toRow, isAutoApprovable, dayOfYear, pickCategory, slotOfDay, RUN_HOURS_UTC, CATEGORIES } from './discover-products.js';
 
 const realFetch = globalThis.fetch;
 let restoreEnv;
@@ -75,9 +76,14 @@ function fdaActiveRecall() {
   return {
     ok: true, status: 200,
     json: async () => ({
+      // product_description deliberately contains the candidate's own
+      // name/brand ("Test Pad Pro" / "TestBrand") — recallRecordMatchesProduct
+      // (api/fda-recall.js) discards any FDA record that doesn't textually
+      // match the product, so a mock record with unrelated text would silently
+      // never match and this fixture would test nothing.
       results: [{
         recall_number: 'R-999', status: 'Ongoing', event_date_initiated: '20260101',
-        reason_for_recall: 'Contamination', product_description: 'Discovered Test Product',
+        reason_for_recall: 'Contamination', product_description: 'TestBrand Test Pad Pro',
       }],
     }),
   };
@@ -139,7 +145,7 @@ describe('GET /api/discover-products — access control', () => {
 });
 
 describe('GET /api/discover-products — happy path', () => {
-  it('inserts a discovered candidate as pending and inactive, never live', async () => {
+  it('auto-approves a candidate with both a clean recall check AND a real source URL', async () => {
     globalThis.__mockAdmin = makeMockAdmin();
     globalThis.fetch = vi.fn(async (url) => {
       const u = String(url);
@@ -153,14 +159,39 @@ describe('GET /api/discover-products — happy path', () => {
 
     expect(res.statusCode).toBe(200);
     expect(res.body.inserted).toBe(1);
+    expect(res.body.autoApproved).toBe(1);
     expect(globalThis.__mockAdmin.inserted).toHaveLength(1);
 
     const row = globalThis.__mockAdmin.inserted[0];
     expect(row.source).toBe('discovered');
-    expect(row.review_status).toBe('pending');
-    expect(row.is_active).toBe(false); // the one thing this endpoint must never get wrong
+    expect(row.review_status).toBe('approved');
+    expect(row.is_active).toBe(true);
+    expect(row.discovery_meta.autoApproved).toBe(true);
     expect(row.name).toBe('Test Pad Pro');
     expect(row.brand).toBe('TestBrand');
+  });
+
+  it('leaves a candidate pending and inactive when the model gave no source URL, even with a clean recall check', async () => {
+    globalThis.__mockAdmin = makeMockAdmin();
+    const noUrlResponse = JSON.stringify({
+      products: [{ name: 'Test Pad Pro', brand: 'TestBrand', category: 'pad', type: 'physical', summary: 'A test pad.', price: '$10', url: '', isSupplement: false }],
+    });
+    globalThis.fetch = vi.fn(async (url) => {
+      const u = String(url);
+      if (u.includes('anthropic')) return anthropicOk(noUrlResponse);
+      if (u.includes('api.fda.gov')) return fdaNoRecall();
+      throw new Error(`unexpected fetch to ${u}`);
+    });
+
+    const res = mockRes();
+    await (await loadHandler())(req({ query: { category: 'pad' } }), res);
+
+    expect(res.body.inserted).toBe(1);
+    expect(res.body.autoApproved).toBe(0);
+    const row = globalThis.__mockAdmin.inserted[0];
+    expect(row.review_status).toBe('pending');
+    expect(row.is_active).toBe(false); // the one thing this endpoint must never get wrong absent both signals
+    expect(row.discovery_meta.autoApproved).toBeUndefined();
   });
 
   it('still inserts (pending, inactive) when a recall is found — flags it for the reviewer instead of silently dropping or auto-approving', async () => {
@@ -286,6 +317,25 @@ describe('pure helpers', () => {
   it('toRow drops a non-https url rather than trusting it', () => {
     const row = toRow({ name: 'X', brand: 'Y', category: 'pad', url: 'javascript:alert(1)' }, { category: 'pad', searchHits: [], provider: 'anthropic' });
     expect(row.url).toBeNull();
+  });
+
+  describe('isAutoApprovable', () => {
+    const base = { url: 'https://brand.com/product' };
+    it('true only when the recall check fully answered "ok" AND found nothing, AND a url exists', () => {
+      expect(isAutoApprovable({ ...base, discovery_meta: { recallCheck: { status: 'ok', hasRecalls: false } } })).toBe(true);
+    });
+    it('false when the recall check found an active recall, even if otherwise "ok"', () => {
+      expect(isAutoApprovable({ ...base, discovery_meta: { recallCheck: { status: 'ok', hasRecalls: true } } })).toBe(false);
+    });
+    it('false when the recall check was only "partial" — a failed dataset could be hiding a real recall', () => {
+      expect(isAutoApprovable({ ...base, discovery_meta: { recallCheck: { status: 'partial', hasRecalls: false } } })).toBe(false);
+    });
+    it('false when there is no url, even with a clean recall check', () => {
+      expect(isAutoApprovable({ url: null, discovery_meta: { recallCheck: { status: 'ok', hasRecalls: false } } })).toBe(false);
+    });
+    it('false when there is no recallCheck at all', () => {
+      expect(isAutoApprovable({ ...base, discovery_meta: {} })).toBe(false);
+    });
   });
 
   it('pickCategory honours an explicit ?category= override', () => {

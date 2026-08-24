@@ -13,13 +13,20 @@
  * SAFETY CONTRACT — read before changing anything in this file.
  *
  * Every row this endpoint writes goes in as source='discovered',
- * is_active=false, review_status='pending'. NOTHING it finds is ever visible
- * to a real user until a human runs scripts/review-discovered-products.mjs
- * and explicitly approves it (which flips is_active=true). This is enforced
- * twice — here, and again in supabase/product_catalog_discovery.sql's RLS
- * policy — because the site's own How We Make Money page promises every
- * product passes the same clinical/safety review, partner or not. An AI
- * search result is a candidate, not a review.
+ * is_active=false, review_status='pending', UNLESS it clears the narrow
+ * auto-approval gate in isAutoApprovable() (a fully-answered, clean FDA
+ * recall check AND a real https source URL the model was confident enough to
+ * name) — see that function for exactly what "narrow" means. Everything else
+ * stays pending until a human runs scripts/review-discovered-products.mjs and
+ * explicitly approves it (which flips is_active=true). The is_active=false
+ * default (and the auto-approval gate's conditions) are enforced twice —
+ * here, and again in supabase/product_catalog_discovery.sql's RLS policy —
+ * because the site's own How We Make Money page promises every product
+ * passes the same clinical/safety review, partner or not. An AI search
+ * result is a candidate, not a review — auto-approval is a policy decision
+ * (Aditi, 2026-08-23) to let the two strongest confidence signals already
+ * collected stand in for a human on the clearest cases, not a loosening of
+ * that promise for anything the pipeline is less than fully sure about.
  *
  * Cron-triggered only, same CRON_SECRET Bearer-auth pattern as
  * api/fda-recall.js's sweep mode — see that file's header comment for why the
@@ -273,6 +280,41 @@ export function toRow(candidate, { category, searchHits, provider }) {
   };
 }
 
+/**
+ * A candidate auto-approves ONLY when BOTH of the strongest confidence
+ * signals already collected for it are clean — everything else stays
+ * pending, exactly as before this gate existed:
+ *
+ *   1. The FDA recall check fully answered (status === 'ok', not 'partial')
+ *      AND found nothing active. 'partial' means some dataset failed to
+ *      respond — it could be hiding a real recall, so it does not qualify no
+ *      matter how confident the rest of the candidate looks.
+ *   2. The model named a real, verifiable https source URL. No URL means the
+ *      model wasn't confident enough to point at where this is actually
+ *      sold — that's exactly the kind of shakier candidate a human should
+ *      still look at.
+ *
+ * This is deliberately narrow, not a general "looks fine, ship it" filter —
+ * see the SAFETY CONTRACT note at the top of this file for why.
+ */
+export function isAutoApprovable(row) {
+  const recall = row.discovery_meta?.recallCheck;
+  return recall?.status === 'ok' && recall?.hasRecalls === false && !!row.url;
+}
+
+function autoApprove(row) {
+  return {
+    ...row,
+    review_status: 'approved',
+    is_active: true,
+    discovery_meta: {
+      ...row.discovery_meta,
+      autoApproved: true,
+      autoApprovedAt: new Date().toISOString(),
+    },
+  };
+}
+
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
   if (req.method !== 'GET' && req.method !== 'POST') {
@@ -371,7 +413,11 @@ export default async function handler(req, res) {
       .in('id', rows.map((r) => r.id));
     const alreadyReviewed = new Map((existingReviewed || []).map((r) => [r.id, r.review_status]));
 
-    const toInsert = rows.filter((r) => !alreadyReviewed.has(r.id));
+    // Auto-approval only ever applies to brand-new rows, never to
+    // toUpdateMetaOnly — a human's prior verdict on an id is never touched.
+    const toInsert = rows
+      .filter((r) => !alreadyReviewed.has(r.id))
+      .map((r) => (isAutoApprovable(r) ? autoApprove(r) : r));
     const toUpdateMetaOnly = rows.filter((r) => alreadyReviewed.has(r.id));
 
     let inserted = 0;
@@ -394,6 +440,7 @@ export default async function handler(req, res) {
       found: rawCandidates.length,
       afterDedup: fresh.length,
       inserted,
+      autoApproved: toInsert.filter((r) => r.discovery_meta?.autoApproved).length,
       metaRefreshed: toUpdateMetaOnly.length,
       insertedIds: toInsert.map((r) => r.id),
     });
