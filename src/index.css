@@ -2221,10 +2221,18 @@ html {
 }
 
 .ayna-landing-hero--returning {
+  /* Was background-size:100% 482px / position:0 -84px — a fixed-pixel crop
+     of the gradient calibrated for a ~398-482px-tall hero. Once the
+     two-column .ayna-landing-welcomeback grid stacks to one column (at
+     narrow widths / high zoom) the section grows well past 482px tall, the
+     gradient ran out partway down, and the page's plain background showed
+     through mid-hero — right behind the semi-transparent ecosystem card,
+     which is exactly the "cut off" look reported live. A CSS gradient (not
+     a raster image) has no fixed natural size, so it fills the element
+     completely with no size/position override at all — same as this
+     selector's OTHER declaration elsewhere in this file, which never had
+     this bug. */
   background: var(--mockup-hero-gradient-returning);
-  background-size: 100% 482px;
-  background-position: 0 -84px;
-  background-repeat: no-repeat;
   min-height: 398px;
 }
 
