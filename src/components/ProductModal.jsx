@@ -379,17 +379,35 @@ function getRealMatchPercent(product) {
   return null;
 }
 
+/** True for a real URL with something after the domain — not just a bare homepage. */
+function hasRealPath(url) {
+  try {
+    const u = new URL(url);
+    return u.pathname.replace(/\/+$/, '').length > 0 || u.search.length > 0;
+  } catch {
+    return false;
+  }
+}
+
 function getBuyUrl(product) {
-  const directCandidates = [
-    product?.affiliateUrl,
-    product?.buyUrl,
-    product?.productUrl,
-    product?.url,
-  ];
-  for (const candidate of directCandidates) {
+  // Explicit purchase-intent fields — always trusted outright, homepage or not.
+  const explicitCandidates = [product?.affiliateUrl, product?.buyUrl, product?.productUrl];
+  for (const candidate of explicitCandidates) {
     const url = String(candidate || '').trim();
     if (/^https?:\/\//i.test(url)) return url;
   }
+
+  // `product.url` with a real path is almost certainly the actual product
+  // page. When it's just a bare domain root, a specific retailer search
+  // below (e.g. Amazon for the exact product name) gets you closer to the
+  // product than the brand's own homepage does — so a homepage-only url
+  // is demoted below those, not used immediately. Found live: LOLA's pads/
+  // tampons had real Amazon whereToBuy entries, but Buy Now sent people to
+  // lola.com's homepage instead, since url. always won regardless of
+  // specificity.
+  const rawUrl = String(product?.url || '').trim();
+  const isDirectUrl = /^https?:\/\//i.test(rawUrl);
+  if (isDirectUrl && hasRealPath(rawUrl)) return rawUrl;
 
   const shops = Array.isArray(product?.whereToBuy) ? product.whereToBuy : [];
   for (const shop of shops) {
@@ -397,17 +415,20 @@ function getBuyUrl(product) {
     if (typeof mapped === 'string' && /^https?:\/\//i.test(mapped.trim())) return mapped.trim();
   }
 
-  // Confirmed live: 147 of 162 catalog products have none of the fields
-  // above set (most just carry plain retailer NAMES in whereToBuy — including
-  // brand domains like "Cora.life"/"Thorne.com" stored as unformatted text,
-  // not real URLs) — so "Buy Now" rendered as a permanently disabled button
-  // for the overwhelming majority of the catalog. getRetailerLinks() (see
-  // retailerLinks.js) already solves this exact problem for the "Compare at"
-  // row and Specs tab — a real retailer's own product page when known, else a
-  // real deterministic site-search link — but was never wired into the
-  // primary Buy Now CTA. Use its first result as the last-resort fallback.
-  const retailerFallback = getRetailerLinks(product)[0]?.url;
-  if (retailerFallback) return retailerFallback;
+  // getRetailerLinks() (see retailerLinks.js) already solves the "most
+  // catalog entries have no direct buy URL" problem for the "Compare at" row
+  // and Specs tab — a real retailer's own product page when known, else a
+  // real deterministic site-search link. `specific` links (a known retailer's
+  // own site-search, scoped to this product's name) are preferred here over
+  // a bare homepage; non-specific ones (a bare domain, or the generic Google
+  // Shopping catch-all) are only used as a last resort below.
+  const retailerLinks = getRetailerLinks(product);
+  const specificRetailer = retailerLinks.find((r) => r.specific)?.url;
+  if (specificRetailer) return specificRetailer;
+
+  if (isDirectUrl) return rawUrl;
+
+  if (retailerLinks[0]?.url) return retailerLinks[0].url;
 
   if (product?.whereToBuyLinks && typeof product.whereToBuyLinks === 'object') {
     for (const mapped of Object.values(product.whereToBuyLinks)) {

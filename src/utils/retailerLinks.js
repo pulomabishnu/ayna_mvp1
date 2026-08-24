@@ -40,6 +40,7 @@ const RETAILER_SEARCH_BUILDERS = {
 // generated link — better to show as plain text than a misleading one.
 const SKIP_PHRASES = new Set([
   'brand website',
+  'brand site',
   'clinic insertion',
   'pharmacy with prescription',
   'pre-installed on iphone',
@@ -61,8 +62,14 @@ export function buildRetailerQuery(product) {
 }
 
 /**
- * Resolve a single retailer name to a real URL, or null if it shouldn't be
- * linked at all (a descriptive phrase, or no product name to search for).
+ * Resolve a single retailer name to a URL, or null if it shouldn't be linked
+ * at all (a descriptive phrase, or no product name to search for).
+ *
+ * `specific` distinguishes a link that's actually scoped to THIS product
+ * (a known retailer's own site-search, or an explicit whereToBuyLinks URL)
+ * from one that isn't (a bare brand/retailer homepage, or the generic Google
+ * Shopping catch-all) — callers preferring "get me to the actual product"
+ * over "get me to the general site" use this to rank results.
  */
 export function getRetailerLink(retailerName, product) {
   const name = String(retailerName || '').trim();
@@ -71,20 +78,20 @@ export function getRetailerLink(retailerName, product) {
   if (SKIP_PHRASES.has(lower)) return null;
 
   if (isLikelyDomain(name)) {
-    return `https://${name.replace(/^https?:\/\//i, '')}`;
+    return { url: `https://${name.replace(/^https?:\/\//i, '')}`, specific: false };
   }
 
   const query = buildRetailerQuery(product);
   if (!query) return null;
 
   const builder = RETAILER_SEARCH_BUILDERS[lower];
-  if (builder) return builder(encode(query));
+  if (builder) return { url: builder(encode(query)), specific: true };
 
   // Unrecognized retailer name (e.g. "Whole Foods", "Sephora", "Kroger") —
   // no confident URL pattern, so fall back to a Google Shopping search that
   // includes the retailer's name, rather than guess at that site's own
   // search URL and risk a broken link.
-  return `https://www.google.com/search?tbm=shop&q=${encode(`${name} ${query}`)}`;
+  return { url: `https://www.google.com/search?tbm=shop&q=${encode(`${name} ${query}`)}`, specific: false };
 }
 
 /**
@@ -93,7 +100,11 @@ export function getRetailerLink(retailerName, product) {
  * exists and is a genuine http(s) URL) over a generated search link.
  * Never includes a price or any per-retailer claim — name + link only.
  *
- * @returns {{ name: string, url: string, verified: boolean }[]}
+ * `specific` (see getRetailerLink) is true for an explicit whereToBuyLinks
+ * URL or a known retailer's own site-search; false for a bare domain
+ * fallback or the generic Google Shopping catch-all.
+ *
+ * @returns {{ name: string, url: string, verified: boolean, specific: boolean }[]}
  */
 export function getRetailerLinks(product) {
   const shops = Array.isArray(product?.whereToBuy) ? product.whereToBuy : [];
@@ -111,11 +122,11 @@ export function getRetailerLinks(product) {
     const explicit = explicitLinks[shop];
     const explicitUrl =
       typeof explicit === 'string' && /^https?:\/\//i.test(explicit.trim()) ? explicit.trim() : null;
-    const url = explicitUrl || getRetailerLink(name, product);
-    if (!url) continue;
+    const resolved = explicitUrl ? { url: explicitUrl, specific: true } : getRetailerLink(name, product);
+    if (!resolved) continue;
 
     seen.add(key);
-    out.push({ name, url, verified: Boolean(explicitUrl) });
+    out.push({ name, url: resolved.url, verified: Boolean(explicitUrl), specific: resolved.specific });
   }
   return out;
 }
