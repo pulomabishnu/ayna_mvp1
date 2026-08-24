@@ -18,8 +18,14 @@
 .ayna-browse__categories button.is-active { background:var(--color-navy); border-color:var(--color-navy); color:#fff; }
 .ayna-browse__toolbar { display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:.85rem 0 1.2rem; border-top:1px solid rgba(26,23,20,.07); }
 .ayna-browse__toolbar-left { display:flex; align-items:center; gap:.7rem; }
-.ayna-browse__personalized-toggle { display:inline-flex; align-items:center; gap:.45rem; font-size:.78rem; color:var(--color-text-muted); cursor:pointer; }
-.ayna-browse__personalized-toggle input { accent-color:var(--color-navy); }
+.ayna-browse__personalized-toggle { display:inline-flex; align-items:center; gap:.6rem; font-size:.85rem; color:var(--color-text-muted); cursor:pointer; }
+.ayna-browse__personalized-switch { position:relative; display:inline-block; width:46px; height:25px; flex-shrink:0; }
+.ayna-browse__personalized-switch input { position:absolute; inset:0; width:100%; height:100%; margin:0; opacity:0; cursor:pointer; z-index:1; }
+.ayna-browse__personalized-track { position:absolute; inset:0; background:var(--color-border); border-radius:999px; transition:background-color .18s ease; }
+.ayna-browse__personalized-track::after { content:''; position:absolute; top:3px; left:3px; width:19px; height:19px; border-radius:50%; background:#fff; box-shadow:0 1px 2px rgba(26,23,20,.25); transition:transform .18s ease, background-color .18s ease; }
+.ayna-browse__personalized-switch input:checked + .ayna-browse__personalized-track { background:var(--color-navy); }
+.ayna-browse__personalized-switch input:checked + .ayna-browse__personalized-track::after { transform:translateX(21px); background:var(--color-primary); }
+.ayna-browse__personalized-switch input:focus-visible + .ayna-browse__personalized-track { outline:2px solid var(--color-navy); outline-offset:2px; }
 .ayna-browse__sort { display:flex; align-items:center; gap:.5rem; font-size:.75rem; color:var(--color-text-muted); }
 .ayna-browse__sort select,.ayna-browse__filters select { border:1px solid var(--color-border); background:#fff; color:var(--color-text-main); border-radius:9px; padding:.5rem .65rem; font:inherit; }
 .ayna-browse__filters { display:grid; grid-template-columns:repeat(6,minmax(120px,1fr)); gap:.75rem; padding:1rem; margin-bottom:1.4rem; border:1px solid rgba(26,23,20,.08); border-radius:14px; background:rgba(255,255,255,.58); }

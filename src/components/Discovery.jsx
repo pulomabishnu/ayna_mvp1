@@ -1311,22 +1311,25 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         Filters
                     </button>
                     <label className="ayna-browse__personalized-toggle">
-                        <input
-                            type="checkbox"
-                            checked={personalizationFilter}
-                            onChange={(e) => {
-                                if (!user) {
-                                    // Checkbox visually can't move without a real change event,
-                                    // but there's nothing to personalize without an account —
-                                    // send them to sign in/up instead of silently flipping state
-                                    // that has no effect (or, worse, none they can see why).
-                                    onRequirePersonalizeAuth?.();
-                                    return;
-                                }
-                                setPersonalizationFilter(e.target.checked);
-                            }}
-                        />
                         <span>Personalized</span>
+                        <span className="ayna-browse__personalized-switch">
+                            <input
+                                type="checkbox"
+                                checked={personalizationFilter}
+                                onChange={(e) => {
+                                    if (!user) {
+                                        // Checkbox visually can't move without a real change event,
+                                        // but there's nothing to personalize without an account —
+                                        // send them to sign in/up instead of silently flipping state
+                                        // that has no effect (or, worse, none they can see why).
+                                        onRequirePersonalizeAuth?.();
+                                        return;
+                                    }
+                                    setPersonalizationFilter(e.target.checked);
+                                }}
+                            />
+                            <span className="ayna-browse__personalized-track" aria-hidden="true" />
+                        </span>
                     </label>
                 </div>
                 <label className="ayna-browse__sort">
