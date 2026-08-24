@@ -68,6 +68,20 @@ const MIN_DIMENSION_PX = 200;
 // that's actually specific to THIS product; everything else in a query
 // like "Pelvic Floor App" is category vocabulary shared by every
 // competitor's listing too.
+//
+// Once the brand IS confirmed, name-token overlap is used only to RANK
+// between brand-confirmed candidates, not as a second hard gate — caught
+// live: "Kegel8 Pelvic Floor Exerciser" (the catalog's own generic
+// description) has real, brand-confirmed image results (Kegel8's actual
+// products: "Ultra 20 V2 Electronic Pelvic Toner", "Tight & Tone
+// Electronic Pelvic Toner"), but every one of them scored below the 0.75
+// threshold because the catalog's generic description doesn't share
+// enough words with Kegel8's actual commercial product names. Requiring
+// near-full name overlap on top of an already-confirmed brand match was
+// double-guarding against the same risk (wrong result) the brand gate
+// alone already closes — and rejected real, correct results as a result.
+// With no brand to check at all, the original strict threshold is still
+// the only signal available and stays in place.
 // Crude singularization (strip a lone trailing "s", never "ss") — real
 // listings routinely phrase the same product as singular/plural
 // differently ("Crystal Wand" vs "Crystal Pleasure Wands"). Without this,
@@ -134,9 +148,20 @@ export async function lookupSerperImage(name, brand) {
     const data = await res.json();
     const images = Array.isArray(data?.images) ? data.images : [];
 
-    let best = null;
-    let bestScore = 0;
-    let bestOverlap = 0;
+    // Two independent tracks: brand-confirmed candidates are ranked purely
+    // by name-overlap (no minimum required — the brand match is already
+    // the safety gate), and any candidate that never had a brand to check
+    // against falls back to the original strict threshold. A candidate
+    // with a brand to check that DOESN'T match it is dropped entirely —
+    // never falls through to the strict track — since trusting name-
+    // overlap alone once we know a brand mismatch exists is exactly the
+    // Happi failure mode.
+    let brandGatedBest = null;
+    let brandGatedScore = -1;
+    let noBrandBest = null;
+    let noBrandScore = 0;
+    let noBrandOverlap = 0;
+
     for (const img of images) {
       const url = img?.imageUrl;
       if (typeof url !== 'string' || !url.startsWith('http')) continue;
@@ -148,28 +173,30 @@ export async function lookupSerperImage(name, brand) {
 
       const titleTokens = normalizeTokens(img?.title);
       const titleSet = new Set(titleTokens);
-
-      // The brand gate: when a brand is given, it must actually appear in
-      // the title before this candidate is even scored — see the comment
-      // above titleMatchScore for why (category-word overlap alone can
-      // outweigh a completely wrong brand).
-      if (brandTokens.length > 0 && !brandTokens.some((t) => titleSet.has(t))) continue;
-
       const { score, overlap } = titleMatchScore(nameTokens, titleTokens);
-      if (score > bestScore) {
-        bestScore = score;
-        bestOverlap = overlap;
-        best = url;
+
+      if (brandTokens.length > 0) {
+        if (!brandTokens.some((t) => titleSet.has(t))) continue; // wrong brand — drop, never falls back
+        if (score > brandGatedScore) {
+          brandGatedScore = score;
+          brandGatedBest = url;
+        }
+        continue;
+      }
+
+      if (score > noBrandScore) {
+        noBrandScore = score;
+        noBrandOverlap = overlap;
+        noBrandBest = url;
       }
     }
 
+    if (brandGatedBest) return brandGatedBest;
     // Same threshold already proven for Shopify catalog matching and DSLD —
-    // the smaller of {query, title} token set must be (almost) fully
-    // contained in the other, with at least 2 real tokens in common. When
-    // there's no brand to gate on (nameTokens alone must clear this), err
-    // toward no image over a wrong one.
-    if (!best || bestScore < 0.75 || bestOverlap < 2) return null;
-    return best;
+    // only reached when there was no brand at all to gate on, so this is
+    // the sole signal available; err toward no image over a wrong one.
+    if (noBrandBest && noBrandScore >= 0.75 && noBrandOverlap >= 2) return noBrandBest;
+    return null;
   } catch (e) {
     console.warn('[serperImageSearch] lookup failed:', e?.message);
     return null;

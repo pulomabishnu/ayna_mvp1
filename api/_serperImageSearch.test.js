@@ -128,6 +128,48 @@ describe('lookupSerperImage', () => {
     expect(result).toBe('https://chakrubs.com/cdn/shop/files/P4A8441.jpg');
   });
 
+  // Real production case: "Kegel8 Pelvic Floor Exerciser" (the catalog's
+  // own generic description) has real, brand-confirmed Kegel8 image
+  // results, but every one of them named a specific real Kegel8 product
+  // ("Ultra 20 V2 Electronic Pelvic Toner") that shares few words with the
+  // catalog's generic name — scoring well below the 0.75 threshold despite
+  // being a genuinely correct, brand-confirmed match. The brand gate alone
+  // is the safety mechanism here; name overlap should only rank between
+  // brand-confirmed candidates, not additionally gate them.
+  it('accepts a brand-confirmed match even when the catalog name barely overlaps the real product name', async () => {
+    process.env.SERPER_API_KEY = 'test-key';
+    fetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        images: [
+          { imageUrl: 'https://a.com/weights.jpg', imageWidth: 1000, imageHeight: 1000, title: 'Kegel Weights Exercise Set-Kegel8' },
+          { imageUrl: 'https://b.com/ultra20.jpg', imageWidth: 1000, imageHeight: 1000, title: 'Kegel8 Ultra 20 V2 Electronic Pelvic Toner - Kegel8' },
+        ],
+      }),
+    });
+    const { lookupSerperImage } = await loadModule();
+    const result = await lookupSerperImage('Kegel8 Pelvic Floor Exerciser', 'Kegel8');
+    // Picks the higher-overlap brand-confirmed candidate (Ultra 20, which
+    // shares "pelvic" too), not just the first one Google returned.
+    expect(result).toBe('https://b.com/ultra20.jpg');
+  });
+
+  it('still rejects every candidate when a given brand matches none of them, even if name-overlap alone would have passed', async () => {
+    process.env.SERPER_API_KEY = 'test-key';
+    fetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        images: [{ imageUrl: 'https://unrelated.com/photo.jpg', imageWidth: 1000, imageHeight: 1000, title: 'Kegel8 Pelvic Floor Exerciser Deluxe Edition' }],
+      }),
+    });
+    const { lookupSerperImage } = await loadModule();
+    // Brand "TotallyDifferentBrand" never appears in the title, even
+    // though the title would otherwise score a near-perfect name-overlap
+    // match — the brand gate must still win.
+    const result = await lookupSerperImage('Kegel8 Pelvic Floor Exerciser', 'TotallyDifferentBrand');
+    expect(result).toBeNull();
+  });
+
   it('returns null when the daily budget is exhausted, without ever fetching', async () => {
     process.env.SERPER_API_KEY = 'test-key';
     rateLimitMock.mockResolvedValue({ ok: false, retryAfterSec: 3600 });
