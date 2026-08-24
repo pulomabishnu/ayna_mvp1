@@ -1997,7 +1997,7 @@ html {
   letter-spacing: 0.02em;
   margin-left: 5px;
   opacity: 0.6;
-  vertical-align: top;
+  vertical-align: bottom;
 }
 
 .app-nav__tab {
