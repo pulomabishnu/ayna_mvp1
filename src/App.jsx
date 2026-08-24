@@ -1115,6 +1115,7 @@ function App() {
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigateHome(); } }}
             >
               ayna
+              <span className="app-nav__beta-badge">beta</span>
             </div>
 
             {/* Hamburger — mobile only */}

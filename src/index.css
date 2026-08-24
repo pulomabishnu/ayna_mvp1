@@ -1986,6 +1986,20 @@ html {
   cursor: pointer;
 }
 
+/* Small "beta" tag beside the wordmark — em-sized off .app-nav__logo's own
+   font-size so it scales automatically between the landing (27px) and
+   cream (24px) nav variants below, rather than needing its own breakpoints. */
+.app-nav__beta-badge {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 0.62em;
+  letter-spacing: 0.02em;
+  margin-left: 5px;
+  opacity: 0.6;
+  vertical-align: top;
+}
+
 .app-nav__tab {
   font-family: 'DM Sans', system-ui, sans-serif;
   font-size: 14px;
@@ -2136,6 +2150,11 @@ html {
   color: #F0A84B !important;
 }
 
+.app-nav--landing .app-nav__beta-badge {
+  font-family: var(--font-serif) !important;
+  color: rgba(255, 246, 235, 0.6) !important;
+}
+
 .app-nav--landing .app-nav__tab {
   color: #F4F0FA !important;
 }
@@ -2177,6 +2196,10 @@ html {
 .app-nav--cream .app-nav__logo {
   font-size: 24px;
   color: #1A1714;
+}
+
+.app-nav--cream .app-nav__beta-badge {
+  color: rgba(26, 23, 20, 0.5);
 }
 
 .app-nav--cream .app-nav__links {
