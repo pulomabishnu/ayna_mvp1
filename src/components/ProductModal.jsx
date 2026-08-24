@@ -233,6 +233,30 @@ function truncate(s, max) {
   return `${t.slice(0, max - 1)}…`;
 }
 
+/**
+ * Surfaces a real, already-on-file safety/opinion concern (e.g. the Always
+ * Pads PFAS controversy) regardless of which tab is active. safety.recalls
+ * and safety.opinionAlerts were both being written into the catalog with
+ * real, accurate detail, but neither was ever rendered anywhere in this
+ * file — the default "Ayna summary" a user sees first is built only from
+ * product.summary + product.effectiveness, both purely positive/performance
+ * fields, so a product could read as unqualified positive even when the
+ * SAME entry already had a well-documented concern on file just one tab
+ * away (or, for opinionAlerts, nowhere at all — grep confirms zero
+ * components read that field anywhere in the app before this).
+ *
+ * '⚠️' is the existing convention for "this is a real flagged concern," not
+ * a new one — the same check Discovery.jsx's safety scoring and
+ * Recommendations.jsx's "Safety note" badge already use. A product with no
+ * flag returns null, so this only ever adds visibility to what the catalog
+ * already documented, never invents a concern that isn't on file.
+ */
+export function getSafetyAlertText(product) {
+  const recalls = product?.safety?.recalls;
+  if (!recalls || !String(recalls).includes('⚠️')) return null;
+  return product?.safety?.opinionAlerts || recalls;
+}
+
 /** First sentence only, so a long safety/materials blob stays a spec row, not a paragraph — cut on a word boundary. */
 function firstSentence(text, max = 140) {
   const t = String(text || '').trim();
@@ -520,6 +544,8 @@ export default function ProductModal({
     }
     return out.slice(0, 2);
   }, [product]);
+
+  const safetyAlert = useMemo(() => getSafetyAlertText(product), [product]);
 
   const sourceCounts = useMemo(() => {
     const doctor = product?.verificationLinks?.doctor?.links?.length || 0;
@@ -820,6 +846,13 @@ export default function ProductModal({
                 ) : null}
               </div>
 
+              {safetyAlert && (
+                <div className="pdp-safety-alert">
+                  <strong>⚠️ Safety note</strong>
+                  <p>{safetyAlert}</p>
+                </div>
+              )}
+
               {actionButtons}
 
               {/* Small tabs, matching mockup 1f — dark underline on the active
@@ -1004,6 +1037,12 @@ export default function ProductModal({
               )}
               {summarySentences[0] && (
                 <p className="pdp-evidence-head__desc">{summarySentences[0]}</p>
+              )}
+              {safetyAlert && (
+                <div className="pdp-safety-alert">
+                  <strong>⚠️ Safety note</strong>
+                  <p>{safetyAlert}</p>
+                </div>
               )}
               {actionButtons}
               {factRows.length > 0 && (

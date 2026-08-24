@@ -3115,6 +3115,27 @@ html {
   border-radius: 999px;
 }
 
+.pdp-safety-alert {
+  margin: 0.75rem 0;
+  padding: 0.85rem 1rem;
+  background: #FEF2F2;
+  border: 1px solid #FEE2E2;
+  border-left: 4px solid #DC2626;
+  border-radius: var(--radius-sm);
+}
+.pdp-safety-alert strong {
+  display: block;
+  font-size: 0.8rem;
+  color: #991B1B;
+  margin-bottom: 0.3rem;
+}
+.pdp-safety-alert p {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--color-text-main);
+}
+
 .pdp-head__link {
   background: none;
   border: none;
