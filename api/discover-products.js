@@ -31,14 +31,15 @@ import { callWithFallback, parseProviderOrder, tryParseJsonCandidate } from './_
 import { checkRecallsForProduct } from './fda-recall.js';
 import { lookupDsldProduct } from './llm-recommendations.js';
 
-// One category discovered per run, rotated deterministically by day-of-year —
-// not every category every night. A nightly full sweep would mean N
-// categories x (1 search + 1 LLM call + up to 8 recall lookups + DSLD
-// lookups) every single day, most of it re-discovering the same handful of
-// real brands in a slow-moving market. Rotating means the whole list gets a
-// pass roughly every CATEGORIES.length days, which matches how often a
-// genuinely new women's-health product actually launches — this is a
-// deliberately conservative cost/quality tradeoff, not a technical limit.
+// One category discovered per run, rotated deterministically across
+// RUN_HOURS_UTC.length runs/day — not every category every run. A full sweep
+// every run would mean N categories x (1 search + 1 LLM call + up to 8 recall
+// lookups + DSLD lookups) every single invocation, most of it re-discovering
+// the same handful of real brands in a slow-moving market. Rotating means the
+// whole list gets a pass roughly every CATEGORIES.length / RUN_HOURS_UTC.length
+// days — this is a deliberately conservative cost/quality tradeoff, not a
+// technical limit, and the slot count is the throughput knob: more slots/day
+// means faster catalog growth at proportionally higher LLM/search cost.
 export const CATEGORIES = [
   { category: 'pad', label: 'menstrual pads' },
   { category: 'tampon', label: 'tampons' },
@@ -57,8 +58,13 @@ export const CATEGORIES = [
   { category: 'mental-health', label: 'cycle-related mental health support' },
 ];
 
-const MAX_CANDIDATES_PER_RUN = 8;
+const MAX_CANDIDATES_PER_RUN = 12;
 const FUNCTION_BUDGET_MS = 45_000;
+
+// Matches the discover-products cron schedule in vercel.json. Keep both in
+// sync when changing cadence: this array is what makes each same-day run
+// land on a different category instead of re-running the same one.
+export const RUN_HOURS_UTC = [6, 14, 22];
 
 let _admin = null;
 function getAdmin() {
@@ -76,11 +82,25 @@ export function dayOfYear(d = new Date()) {
   return Math.floor(diff / 86_400_000);
 }
 
-export function pickCategory(req) {
+/**
+ * Which of today's RUN_HOURS_UTC slots this run is. Matches on the exact
+ * scheduled hour (cron always fires on the hour); a manual/off-schedule
+ * invocation falls back to the nearest slot by even division of the day, so
+ * it still deterministically lands somewhere sane instead of throwing.
+ */
+export function slotOfDay(d = new Date()) {
+  const h = d.getUTCHours();
+  const exact = RUN_HOURS_UTC.indexOf(h);
+  if (exact >= 0) return exact;
+  return Math.floor(h / (24 / RUN_HOURS_UTC.length)) % RUN_HOURS_UTC.length;
+}
+
+export function pickCategory(req, now = new Date()) {
   const requested = String(req.query?.category || '').trim().toLowerCase();
   const match = CATEGORIES.find((c) => c.category === requested);
   if (match) return match;
-  return CATEGORIES[dayOfYear() % CATEGORIES.length];
+  const slot = dayOfYear(now) * RUN_HOURS_UTC.length + slotOfDay(now);
+  return CATEGORIES[slot % CATEGORIES.length];
 }
 
 export function slugify(s) {

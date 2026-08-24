@@ -7,7 +7,7 @@
  */
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { mockRes, mockReq, withEnv, anthropicOk } from './_test-helpers.js';
-import { slugify, normalizeKey, buildExclusionSet, toRow, dayOfYear, pickCategory, CATEGORIES } from './discover-products.js';
+import { slugify, normalizeKey, buildExclusionSet, toRow, dayOfYear, pickCategory, slotOfDay, RUN_HOURS_UTC, CATEGORIES } from './discover-products.js';
 
 const realFetch = globalThis.fetch;
 let restoreEnv;
@@ -301,5 +301,35 @@ describe('pure helpers', () => {
   it('dayOfYear is deterministic for a given date', () => {
     expect(dayOfYear(new Date(Date.UTC(2026, 0, 1)))).toBe(1);
     expect(dayOfYear(new Date(Date.UTC(2026, 0, 31)))).toBe(31);
+  });
+
+  it('slotOfDay matches each scheduled cron hour to a distinct slot', () => {
+    expect(RUN_HOURS_UTC.map((h) => slotOfDay(new Date(Date.UTC(2026, 0, 1, h))))).toEqual([0, 1, 2]);
+  });
+
+  it('slotOfDay falls back to a sane bucket for an off-schedule hour', () => {
+    expect(slotOfDay(new Date(Date.UTC(2026, 0, 1, 3)))).toBeGreaterThanOrEqual(0);
+    expect(slotOfDay(new Date(Date.UTC(2026, 0, 1, 3)))).toBeLessThan(RUN_HOURS_UTC.length);
+  });
+
+  it("pickCategory gives each of a day's 3 scheduled runs a different category", () => {
+    const picks = RUN_HOURS_UTC.map((h) => pickCategory({ query: {} }, new Date(Date.UTC(2026, 5, 15, h))).category);
+    expect(new Set(picks).size).toBe(RUN_HOURS_UTC.length);
+  });
+
+  it('pickCategory advances to new categories on the next day rather than repeating the same 3', () => {
+    const day1 = RUN_HOURS_UTC.map((h) => pickCategory({ query: {} }, new Date(Date.UTC(2026, 5, 15, h))).category);
+    const day2 = RUN_HOURS_UTC.map((h) => pickCategory({ query: {} }, new Date(Date.UTC(2026, 5, 16, h))).category);
+    expect(day2).not.toEqual(day1);
+  });
+
+  it('a full 15-category rotation completes within 5 days at 3 runs/day', () => {
+    const seen = new Set();
+    for (let day = 0; day < 5; day++) {
+      for (const h of RUN_HOURS_UTC) {
+        seen.add(pickCategory({ query: {} }, new Date(Date.UTC(2026, 5, 15 + day, h))).category);
+      }
+    }
+    expect(seen.size).toBe(CATEGORIES.length);
   });
 });
