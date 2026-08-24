@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import ProductEvidenceRail from './ProductEvidenceRail';
-import ProductTileImage from './ProductTileImage';
+import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import { getProfileMatchLabelsForProduct, getProfileMatchPercentForProduct, CATEGORY_LABELS } from '../data/products';
 import { getAynaRating } from '../data/aynaReviews';
 import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
@@ -712,9 +712,7 @@ export default function ProductModal({
           />
         </button>
       ) : (
-        <span className="pdp-head__initial" aria-hidden="true">
-          {String(product.brand || product.name || '?').trim().charAt(0).toUpperCase()}
-        </span>
+        <ProductImageFallback />
       )}
     </div>
   );
@@ -745,7 +743,7 @@ export default function ProductModal({
               <ProductTileImage
                 product={related}
                 imgStyle={{ width: '100%', height: '100%', objectFit: 'contain', padding: '8px', boxSizing: 'border-box' }}
-                letterNode={String(related.brand || related.name || '?').trim().charAt(0).toUpperCase()}
+                letterNode={<ProductImageFallback compact />}
               />
             </span>
             <span style={{ fontFamily: 'var(--font-serif)', fontSize: '0.95rem', lineHeight: 1.3, marginTop: '0.6rem', color: 'var(--color-text-main)' }}>

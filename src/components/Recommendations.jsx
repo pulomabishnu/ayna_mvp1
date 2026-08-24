@@ -5,7 +5,7 @@ import { inferTagsFromHealthProfile } from '../utils/healthDataProfile';
 import CareNearYouPanel from './CareNearYouPanel';
 import LlmRecommendationsLoadingBlock from './LlmRecommendationsLoadingBlock';
 import { getPricePerUnitLabel } from '../utils/pricePerUnit';
-import ProductTileImage from './ProductTileImage';
+import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import {
     fetchLlmRecommendations,
     loadLearningMemory,
@@ -227,16 +227,7 @@ export default function Recommendations({
                         product={product}
                         alt={product.name}
                         imgStyle={{ width: '100%', height: '100%', objectFit: 'contain', padding: '10px', boxSizing: 'border-box' }}
-                        letterNode={(
-                            <div style={{
-                                width: '100%', height: '100%',
-                                background: 'linear-gradient(135deg, var(--color-secondary-fade), var(--color-primary-fade, #f3e8ff))',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                fontSize: '2rem', fontWeight: '600', color: 'var(--color-text-muted)',
-                            }} aria-hidden="true">
-                                {String(product.name || '?').trim().charAt(0).toUpperCase()}
-                            </div>
-                        )}
+                        letterNode={<ProductImageFallback />}
                     />
                     <span style={{
                         position: 'absolute', top: '0.75rem', left: '0.75rem',

@@ -8,7 +8,7 @@ import {
     getEcosystemAlternatives,
     getRecommendationExplanation,
 } from '../data/products';
-import ProductTileImage, { resolveCatalogProductImage } from './ProductTileImage';
+import ProductTileImage, { resolveCatalogProductImage, ProductImageFallback } from './ProductTileImage';
 import { getInteractions } from '../data/interactions';
 import CareNearYouPanel from './CareNearYouPanel';
 import LlmRecommendationsLoadingBlock from './LlmRecommendationsLoadingBlock';
@@ -220,9 +220,7 @@ function EcosystemFunctionProductCard({
                 }}
             >
                 {imgError || !displayImage ? (
-                    <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 500, fontSize: '2rem', lineHeight: 1, color: 'rgba(176, 122, 58, 0.55)' }} aria-hidden>
-                        {(product.brand || product.name || '?').trim().charAt(0).toUpperCase()}
-                    </span>
+                    <ProductImageFallback />
                 ) : (
                     <img
                         src={displayImage}
@@ -484,9 +482,7 @@ function EcosystemProductAlternatives({ product, seedEntry, quizResults, healthP
                                     {safeProductImageSrc(a.image, a.type === 'digital') ? (
                                         <img src={safeProductImageSrc(a.image, a.type === 'digital')} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                     ) : (
-                                        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontFamily: 'var(--font-serif)', color: 'var(--color-text-muted)' }}>
-                                            {String(a.brand || a.name || '?').trim().charAt(0).toUpperCase()}
-                                        </div>
+                                        <ProductImageFallback compact />
                                     )}
                                 </div>
                                 <span style={{ fontSize: '0.85rem', fontWeight: '500', color: 'var(--color-text-main)', lineHeight: 1.35 }}>
@@ -543,15 +539,7 @@ function IntakeRecAltMini({ alt, myProducts, onToggleProduct, onOpenProduct, res
                     {imgSrc ? (
                         <img src={imgSrc} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : (
-                        <div style={{
-                            width: '100%', height: '100%',
-                            background: 'linear-gradient(160deg, #F3EADC, #EFE3D2)',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        }}>
-                            <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 500, fontSize: '1.25rem', color: 'rgba(176, 122, 58, 0.55)' }} aria-hidden>
-                                {(alt.brand || alt.name || '?').trim().charAt(0).toUpperCase()}
-                            </span>
-                        </div>
+                        <ProductImageFallback compact />
                     )}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
@@ -623,15 +611,7 @@ function IntakeRecommendationsProductCard({
                 {imgSrc ? (
                     <img src={imgSrc} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '8px', boxSizing: 'border-box' }} />
                 ) : (
-                    <div style={{
-                        width: '100%', height: '100%',
-                        background: 'linear-gradient(160deg, #F3EADC, #EFE3D2)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    }}>
-                        <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 500, fontSize: '1.5rem', color: 'rgba(176, 122, 58, 0.55)' }} aria-hidden>
-                            {(product.brand || product.name || '?').trim().charAt(0).toUpperCase()}
-                        </span>
-                    </div>
+                    <ProductImageFallback />
                 )}
                 <span style={{
                     position: 'absolute', top: '0.45rem', left: '0.45rem',
@@ -1840,7 +1820,7 @@ export default function MyEcosystem({
                                         {myProductList.slice(0, 6).map((product) => (
                                             <button type="button" key={product.id} className="eco-overview-product" onClick={() => onOpenProduct?.(product)}>
                                                 <span className="eco-overview-product__image">
-                                                    <ProductTileImage product={product} letterNode={<b>{String(product.brand || product.name || '?').charAt(0).toUpperCase()}</b>} />
+                                                    <ProductTileImage product={product} letterNode={<ProductImageFallback />} />
                                                 </span>
                                                 <span className="eco-overview-product__meta">{CATEGORY_LABELS[product.category] || product.category || 'Product'}</span>
                                                 <strong>{product.name}</strong>
@@ -1894,7 +1874,7 @@ export default function MyEcosystem({
                                                     <div key={product.id} className="eco-details-clean__row">
                                                         <button type="button" className="eco-details-clean__product" onClick={() => onOpenProduct?.(product)}>
                                                             <span className="eco-details-clean__thumb">
-                                                                <ProductTileImage product={product} letterNode={<b>{String(product.brand || product.name || '?').charAt(0).toUpperCase()}</b>} />
+                                                                <ProductTileImage product={product} letterNode={<ProductImageFallback compact />} />
                                                             </span>
                                                             <span>
                                                                 <strong>{product.name}</strong>
@@ -2217,11 +2197,7 @@ export default function MyEcosystem({
                                                                     product={product}
                                                                     alt={product.name}
                                                                     imgStyle={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                                                    letterNode={(
-                                                                        <div style={{ width: '100%', height: '100%', background: 'var(--color-secondary-fade)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', fontFamily: 'var(--font-serif)' }}>
-                                                                            {String(product.brand || product.name || '?').trim().charAt(0).toUpperCase()}
-                                                                        </div>
-                                                                    )}
+                                                                    letterNode={<ProductImageFallback compact />}
                                                                 />
                                                             </div>
                                                             <div style={{ flexGrow: 1, minWidth: 0 }}>
@@ -2407,11 +2383,7 @@ export default function MyEcosystem({
                                                 product={product}
                                                 alt={product.name}
                                                 imgStyle={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                                letterNode={(
-                                                    <div style={{ width: '100%', height: '100%', background: 'var(--color-secondary-fade)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem', fontFamily: 'var(--font-serif)' }}>
-                                                        {String(product.brand || product.name || '?').trim().charAt(0).toUpperCase()}
-                                                    </div>
-                                                )}
+                                                letterNode={<ProductImageFallback compact />}
                                             />
                                         </div>
                                         <div style={{ flexGrow: 1, minWidth: 0 }}>

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
-import ProductTileImage from './ProductTileImage';
+import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 
 /**
  * Landing page — a direct port of boards 1a and 1c of the Aug 2026 desktop
@@ -175,8 +175,6 @@ function productById(id) {
 
 /** Cream tile with the product photo, falling back to the mockup's initial-on-cream block. */
 function ProductTile({ product, aspectRatio = 1, radius = 10, badge, showHeart }) {
-  const initial = String(product.name || '?').trim().charAt(0).toUpperCase();
-
   return (
     <div
       className="ayna-landing-tile"
@@ -203,22 +201,7 @@ function ProductTile({ product, aspectRatio = 1, radius = 10, badge, showHeart }
           objectFit: 'contain',
           padding: '14px',
         }}
-        letterNode={(
-          <span
-            aria-hidden
-            style={{
-              position: 'absolute',
-              inset: 0,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              font: "400 40px 'Playfair Display', serif",
-              color: '#D9A96B',
-            }}
-          >
-            {initial}
-          </span>
-        )}
+        letterNode={<ProductImageFallback style={{ position: 'absolute', inset: 0 }} />}
       />
 
       {badge && (

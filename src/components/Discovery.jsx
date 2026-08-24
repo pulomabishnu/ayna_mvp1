@@ -12,6 +12,7 @@ import { getPricePerUnitLabel } from '../utils/pricePerUnit';
 import { fetchDsldProducts } from '../utils/fetchDsldProducts';
 import { enrichLlmProductForDiscovery } from '../utils/enrichLlmProductForDiscovery';
 import { resolveProductImage, isPlaceholderProductImage, safeProductImageSrc } from '../utils/resolveProductImage';
+import { ProductImageFallback } from './ProductTileImage';
 import posthog from 'posthog-js';
 import GlossaryTerm from './GlossaryTerm';
 import { productHref, isPlainLeftClick } from '../utils/productRoute';
@@ -1361,7 +1362,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     const resolvedItemImage = resolvedImages[item.id];
                     const cardImageSrc = resolvedItemImage !== undefined ? resolvedItemImage : item.image;
                     const imageStillLoading = resolvedItemImage === undefined && isPlaceholderProductImage(item.image, item.type === 'digital');
-                    const tileLetter = (item.brand || item.name || '?').trim().charAt(0).toUpperCase();
                     const matchPercent = getExplicitMatchPercent(item);
                     const eligibility = getExplicitEligibility(item);
                     const eligibilityLabel = eligibility.fsa && eligibility.hsa ? 'FSA/HSA' : eligibility.fsa ? 'FSA' : eligibility.hsa ? 'HSA' : '';
@@ -1397,12 +1397,14 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                                     if (fallback) fallback.style.display = 'flex';
                                                 }}
                                             />
-                                            <span className="ayna-discover-card__letter" style={{ display: 'none' }}>{tileLetter}</span>
+                                            <span className="ayna-discover-card__letter" style={{ display: 'none', position: 'absolute', inset: 0 }}>
+                                                <ProductImageFallback />
+                                            </span>
                                         </>
                                     ) : imageStillLoading ? (
                                         <div className="skeleton-shimmer" style={{ position: 'absolute', inset: 0 }} aria-hidden="true" />
                                     ) : (
-                                        <span className="ayna-discover-card__letter">{tileLetter}</span>
+                                        <ProductImageFallback />
                                     )}
                                     {matchPercent != null && <span className="ayna-browse-card__match">{matchPercent}% Match</span>}
                                     {isInEcosystem && <span className="ayna-browse-card__ecosystem">In ecosystem</span>}
@@ -1510,7 +1512,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                     {safeProductImageSrc(product.image) ? (
                                         <img src={safeProductImageSrc(product.image)} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '10px', boxSizing: 'border-box' }} onError={(e) => handleImageErrorWithRetry(e, () => { e.currentTarget.style.display = 'none'; })} />
                                     ) : (
-                                        <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, var(--color-secondary-fade), #f3e8ff)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem' }}>NIH</div>
+                                        <ProductImageFallback />
                                     )}
                                     <span style={{ position: 'absolute', top: '0.5rem', left: '0.5rem', background: '#DCFCE7', color: '#166534', padding: '0.2rem 0.55rem', borderRadius: 'var(--radius-pill)', fontSize: '0.68rem', fontWeight: '700' }}>
                                         NIH verified

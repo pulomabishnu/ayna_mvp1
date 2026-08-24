@@ -3,6 +3,53 @@ import { ALL_PRODUCTS, getProductById } from '../data/products';
 import { resolveProductImage, isPlaceholderProductImage, safeProductImageSrc } from '../utils/resolveProductImage';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
 
+function ImageOffIcon({ size }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+      <path d="M3.5 3.5l17 17M4 20l4.2-4.2M20 15V6.5A2.5 2.5 0 0 0 17.5 4H9.2M4 8.5v10A2.5 2.5 0 0 0 6.5 21H16" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="8.5" cy="8.5" r="1.4" />
+    </svg>
+  );
+}
+
+/**
+ * The honest "we couldn't find a real photo" state — replaces the old bare
+ * initial-letter avatar every call site used to hand-roll, which read as
+ * unstyled/broken rather than a deliberate "not found" message. `compact`
+ * drops the text label for tiles too small to fit it (~56px and under);
+ * the icon + title/aria-label tooltip still communicate the same thing
+ * there. Always sized to fill its container — callers control the
+ * container's own dimensions the same way they did for the old letterNode.
+ */
+export function ProductImageFallback({ compact = false, style, className }) {
+  return (
+    <div
+      role="img"
+      aria-label="Product image not found"
+      title="Product image not found"
+      className={className}
+      style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '0.35rem',
+        color: 'var(--color-text-muted)',
+        background: 'var(--color-secondary-fade)',
+        fontFamily: 'var(--font-body)',
+        textAlign: 'center',
+        padding: compact ? '0.2rem' : '0.5rem',
+        ...style,
+      }}
+    >
+      <ImageOffIcon size={compact ? 16 : 22} />
+      {!compact && <span style={{ fontSize: '0.68rem', lineHeight: 1.25 }}>Product image<br />not found</span>}
+    </div>
+  );
+}
+
 // Shared by every place that renders a user-collected product snapshot
 // (ecosystem, wishlist, tracked, compared, omitted, recommendations) —
 // these are frozen copies of a product object taken at add/save/recommend

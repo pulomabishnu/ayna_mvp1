@@ -3,7 +3,7 @@ import Disclaimer from './Disclaimer';
 import HealthDataImport from './HealthDataImport';
 import CareNearYouPanel from './CareNearYouPanel';
 import { getCheckinRecommendations, CATEGORY_LABELS } from '../data/products';
-import ProductTileImage from './ProductTileImage';
+import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 
 function ImgOrInitial({ item, size }) {
     return (
@@ -11,11 +11,7 @@ function ImgOrInitial({ item, size }) {
             product={item}
             alt={item?.name || ''}
             imgStyle={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            letterNode={(
-                <div style={{ width: '100%', height: '100%', background: 'var(--color-secondary-fade)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: `${Math.round(size * 0.4)}px`, fontFamily: 'var(--font-serif)' }}>
-                    {String(item?.brand || item?.name || '?').trim().charAt(0).toUpperCase()}
-                </div>
-            )}
+            letterNode={<ProductImageFallback compact={size < 60} />}
         />
     );
 }

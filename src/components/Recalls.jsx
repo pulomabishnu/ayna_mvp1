@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { findGlossaryTermInText } from '../data/glossary';
-import ProductTileImage from './ProductTileImage';
+import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 
 // EDITORIALLY CURATED HIGHLIGHTS — not a recall feed and not a complete list.
 //
@@ -131,8 +131,8 @@ export default function Recalls({ trackedProducts, myProducts = {} }) {
                                             alt={p.name}
                                             imgStyle={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '50%' }}
                                             letterNode={(
-                                                <div style={{ width: '40px', height: '40px', borderRadius: '50%', flexShrink: 0, background: 'var(--color-secondary-fade)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontFamily: 'var(--font-serif)' }}>
-                                                    {String(p.brand || p.name || '?').trim().charAt(0).toUpperCase()}
+                                                <div style={{ width: '40px', height: '40px', borderRadius: '50%', flexShrink: 0, overflow: 'hidden' }}>
+                                                    <ProductImageFallback compact />
                                                 </div>
                                             )}
                                         />

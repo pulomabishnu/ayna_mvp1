@@ -1,7 +1,7 @@
 import React from 'react';
 import { CATEGORY_LABELS } from '../data/products';
 import { productHref, isPlainLeftClick } from '../utils/productRoute';
-import ProductTileImage from './ProductTileImage';
+import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 
 function eyebrowFor(product) {
   return String(CATEGORY_LABELS[product.category] || product.category || 'Product')
@@ -63,7 +63,7 @@ export default function SavedForLater({
                     <ProductTileImage
                       product={product}
                       alt={product.name}
-                      letterNode={<span aria-hidden="true">{String(product.brand || product.name || '?').trim().charAt(0).toUpperCase()}</span>}
+                      letterNode={<ProductImageFallback />}
                     />
                   </div>
                   <div className="wishlist-card__eyebrow">{eyebrowFor(product)}</div>

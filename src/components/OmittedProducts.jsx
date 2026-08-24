@@ -1,5 +1,5 @@
 import React from 'react';
-import ProductTileImage from './ProductTileImage';
+import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 
 export default function OmittedProducts({ omittedProducts, toggleOmitProduct }) {
     const omittedList = Object.values(omittedProducts);
@@ -24,8 +24,8 @@ export default function OmittedProducts({ omittedProducts, toggleOmitProduct }) 
                                 alt={product.name}
                                 imgStyle={{ width: '60px', height: '60px', borderRadius: 'var(--radius-md)', objectFit: 'cover' }}
                                 letterNode={(
-                                    <div style={{ width: '60px', height: '60px', borderRadius: 'var(--radius-md)', flexShrink: 0, background: 'var(--color-secondary-fade)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem', fontFamily: 'var(--font-serif)' }}>
-                                        {String(product.brand || product.name || '?').trim().charAt(0).toUpperCase()}
+                                    <div style={{ width: '60px', height: '60px', borderRadius: 'var(--radius-md)', flexShrink: 0, overflow: 'hidden' }}>
+                                        <ProductImageFallback compact />
                                     </div>
                                 )}
                             />

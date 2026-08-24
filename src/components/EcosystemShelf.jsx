@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { ECOSYSTEM_AREAS } from './EcosystemBubbles';
-import ProductTileImage from './ProductTileImage';
+import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 
 /**
  * "Four shelves, built for you." — mockup board 1e, the alternate/organized
@@ -12,11 +12,10 @@ import ProductTileImage from './ProductTileImage';
 const MAX_TILES = 4;
 
 function CareTile({ product, onOpenProduct }) {
-  const letter = (product.brand || product.name || '?').trim().charAt(0).toUpperCase();
   return (
     <button type="button" className="eco-shelf__tile" onClick={() => onOpenProduct?.(product)}>
       <span className="eco-shelf__tile-swatch" aria-hidden>
-        <ProductTileImage product={product} letterNode={<span className="eco-shelf__tile-letter">{letter}</span>} />
+        <ProductTileImage product={product} letterNode={<ProductImageFallback compact />} />
       </span>
       <span className="eco-shelf__tile-name">{product.name}</span>
     </button>

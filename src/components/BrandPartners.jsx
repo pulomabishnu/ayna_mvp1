@@ -3,6 +3,7 @@ import { BRAND_PRODUCTS } from '../data/brands';
 import { CATEGORY_LABELS } from '../data/products';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { safeProductImageSrc } from '../utils/resolveProductImage';
+import { ProductImageFallback } from './ProductTileImage';
 
 /**
  * Brands — the partnership page.
@@ -102,9 +103,7 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToE
                             onError={(e) => handleImageErrorWithRetry(e, () => { e.currentTarget.style.display = 'none'; })}
                           />
                         ) : (
-                          <span className="discovery-card__initial" aria-hidden="true">
-                            {String(product.name || '?').trim().charAt(0).toUpperCase()}
-                          </span>
+                          <ProductImageFallback />
                         )}
                       </div>
                       <div className="discovery-card__eyebrow">{eyebrowFor(product)}</div>

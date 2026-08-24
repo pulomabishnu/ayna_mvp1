@@ -1,6 +1,6 @@
 import React from 'react';
 import GlossaryTerm from './GlossaryTerm';
-import ProductTileImage from './ProductTileImage';
+import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 
 export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LABELS, myProducts = {}, onBrowseProducts, onAddToCompare }) {
     const ecosystemList = Object.values(myProducts || {});
@@ -167,8 +167,8 @@ export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LA
                             alt={p.name}
                             imgStyle={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: 'var(--radius-md)', marginBottom: '1rem' }}
                             letterNode={(
-                                <div style={{ width: '80px', height: '80px', borderRadius: 'var(--radius-md)', marginBottom: '1rem', margin: '0 auto 1rem', background: 'var(--color-secondary-fade)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', fontFamily: 'var(--font-serif)' }}>
-                                    {String(p.brand || p.name || '?').trim().charAt(0).toUpperCase()}
+                                <div style={{ width: '80px', height: '80px', borderRadius: 'var(--radius-md)', marginBottom: '1rem', margin: '0 auto 1rem', overflow: 'hidden' }}>
+                                    <ProductImageFallback />
                                 </div>
                             )}
                         />
