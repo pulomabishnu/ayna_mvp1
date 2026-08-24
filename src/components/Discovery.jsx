@@ -19,7 +19,12 @@ import { productHref, isPlainLeftClick } from '../utils/productRoute';
 const MACRO_GROUPS = [
     { id: 'all', label: 'All', categories: [], keywords: [] },
     { id: 'period', label: 'Period', categories: ['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'cramp-relief'], keywords: ['period', 'menstrual'] },
-    { id: 'intimate', label: 'Intimate Care', categories: ['intimate-care'], keywords: ['vaginal', 'vulva', 'intimate', 'ph', 'moisturizer'] },
+    // 'ph' used to be a bare keyword here and matched any product whose copy happened to
+    // contain the substring "ph" — e.g. Nature Made Iron ("#1 pharmacist recommended"), Wisp
+    // ("pharmacy pickup"), and Apple Health ("built into iPhone") all satisfied it despite
+    // having nothing to do with intimate care. Scoped to the actual phrasing real vaginal-pH
+    // products use (see e.g. p-honeypot-wash, p-good-clean-love, p-v-wash) instead.
+    { id: 'intimate', label: 'Intimate Care', categories: ['intimate-care'], keywords: ['vaginal', 'vulva', 'intimate', 'moisturizer', 'ph balance', 'ph-balanced', 'ph balanced', 'ph level', 'ph support'] },
     { id: 'sexual', label: 'Sexual Wellness', categories: ['sex-tech'], keywords: ['lubricant', 'lube', 'condom', 'sexual wellness', 'intimacy'] },
     { id: 'birth-control', label: 'Birth Control', categories: ['contraception'], keywords: ['contraception', 'contraceptive', 'emergency contraception', 'barrier'] },
     { id: 'fertility', label: 'Fertility', categories: ['fertility'], keywords: ['fertility', 'ovulation', 'conceive', 'conception'] },
@@ -37,12 +42,33 @@ const MACRO_GROUPS = [
     // would otherwise let something like the unrelated 'fitness-cycle' healthFunction slug
     // falsely satisfy the 'cycle' keyword), and the keywords below.
     { id: 'hormones', label: 'Hormones', categories: ['hormone-monitoring'], healthFunctions: ['hormone-balance'], keywords: ['pms', 'pcos', 'cycle', 'hormone', 'hormonal'] },
-    { id: 'skin', label: 'Skin', categories: ['skin', 'skincare', 'body-care'], keywords: ['skin', 'cleanser', 'moisturizer', 'spf', 'acne', 'hyperpigmentation'] },
-    { id: 'hair', label: 'Hair', categories: ['hair', 'haircare'], keywords: ['hair', 'scalp', 'shampoo', 'conditioner', 'thinning'] },
+    // Bare 'skin'/'moisturizer' catch vulvar/vulva-balm copy ("vulvar skin", "arousal
+    // moisturizers") and an incontinence liner's "skin comfort formula" claim — all real
+    // catalog phrasing, just not about the facial/body skincare this chip means. Those
+    // product types are excluded from the keyword scan below (see excludeCategories in
+    // itemMatchesMacroGroup) rather than trying to enumerate every mismatched phrase.
+    { id: 'skin', label: 'Skin', categories: ['skin', 'skincare', 'body-care'], keywords: ['skin', 'cleanser', 'moisturizer', 'spf', 'acne', 'hyperpigmentation'], excludeCategories: ['intimate-care', 'sex-tech', 'incontinence'] },
+    // Same class of bug as Skin above: 'thinning' and 'hair' were catching "vaginal dryness
+    // and thinning" (a menopause GSM symptom, not hair thinning) and "ingrown hairs...on the
+    // bikini line" (intimate-area exfoliation, not hair care). excludeCategories keeps those
+    // out of the keyword scan. Note: with these excluded, this chip currently has zero
+    // legitimate matches in the catalog — there are no real shampoo/scalp/hair-loss products
+    // in src/data/*.js (confirmed by grep), so the chip won't appear in the UI (availableMacroGroups
+    // hides chips with no matches) until real hair-care products are added. Not fabricating
+    // placeholder products to fill it — flagging as a genuine catalog content gap instead.
+    { id: 'hair', label: 'Hair', categories: ['hair', 'haircare'], keywords: ['hair', 'scalp', 'shampoo', 'conditioner', 'thinning'], excludeCategories: ['intimate-care', 'menopause'] },
     { id: 'gut', label: 'Gut', categories: ['gut-health'], keywords: ['gut', 'bloating', 'fiber', 'probiotic'] },
+    // 'stress' alone matched incontinence products' clinical term "stress incontinence"/
+    // "stress or urge bladder leaks" (a bladder-control classification, unrelated to mental
+    // stress) — stripped via NEGATED_CONCERN_PHRASES below rather than dropping the keyword,
+    // since "stress" genuinely belongs here for its real (psychological) sense.
     { id: 'sleep-stress', label: 'Sleep + Stress', categories: ['mental-health'], keywords: ['sleep', 'stress', 'relaxation'] },
     { id: 'pain-recovery', label: 'Pain + Recovery', categories: ['pain-relief', 'cramp-relief', 'recovery'], keywords: ['pain', 'cramp', 'heat therapy', 'recovery', 'muscle'] },
-    { id: 'tests-devices', label: 'Tests + Devices', categories: ['tracker', 'diagnostics', 'hormone-monitoring'], keywords: ['test', 'tracker', 'wearable', 'monitor'] },
+    // 'test' used to be a bare keyword and matched "clinically tested" (Honey Pot wash),
+    // "gynecologist-tested" (Luna wash), and even "testosterone" (spearmint PCOS tea) — none
+    // of which are diagnostic tests/devices. Scoped to the phrasing real test products use
+    // (p-azo-test's "test strips", p-winx-uti-test-treat's "rapid test").
+    { id: 'tests-devices', label: 'Tests + Devices', categories: ['tracker', 'diagnostics', 'hormone-monitoring'], keywords: ['test strip', 'test kit', 'rapid test', 'diagnostic test', 'lab test', 'tracker', 'wearable', 'monitor'] },
 ];
 
 // Some product copy legitimately advertises the ABSENCE of a property — e.g. Neycher's
@@ -52,7 +78,26 @@ const MACRO_GROUPS = [
 // mis-filing hormone-free vulva balm/moisturizing gel under the Hormones chip. Strip these
 // negated phrases out before keyword matching so a chip only surfaces products that are
 // actually about the concern, not ones that merely deny it.
-const NEGATED_CONCERN_PHRASES = [/non-?\s?hormonal/g, /hormone-?\s?free/g];
+//
+// Broadened beyond pure negation to the same underlying problem in a different shape: a
+// keyword's word/phrase appearing in copy for an unrelated reason.
+//   - "outside your period" (Neycher: usage timing, not a period product), "not menstrual
+//     flow", "distinct from a menstrual panty liner", and "rather than menstrual blood"
+//     (incontinence pads explicitly contrasting themselves with period products) were all
+//     satisfying the Period chip's 'period'/'menstrual' keywords despite each one denying
+//     the very thing the keyword is meant to detect.
+//   - "stress incontinence" / "stress or urge bladder leaks" / "stress and urge incontinence"
+//     are a clinical bladder-control term, not the Sleep + Stress chip's intended
+//     (psychological) sense of "stress" — was surfacing incontinence pads under that chip.
+const NEGATED_CONCERN_PHRASES = [
+    /non-?\s?hormonal/g,
+    /hormone-?\s?free/g,
+    /outside your period/g,
+    /not\s+(?:for\s+)?menstrual/g,
+    /distinct from a\s+menstrual/g,
+    /rather than menstrual/g,
+    /stress\s+(?:(?:or|and)\s+urge\s+)?(?:bladder\s+)?(?:incontinence|leaks?)/g,
+];
 
 function productSearchText(item) {
     const raw = [
@@ -74,13 +119,20 @@ function itemMatchesMacroGroup(item, groupId) {
     // 'fitness-cycle' healthFunction from accidentally satisfying a keyword such as 'cycle'.
     if (Array.isArray(group.healthFunctions) && Array.isArray(item?.healthFunctions) &&
         item.healthFunctions.some((hf) => group.healthFunctions.includes(hf))) return true;
+    // Some chips' keywords are inherently ambiguous outside their own product domain (e.g.
+    // "skin"/"moisturizer" legitimately describe vulvar-care copy; "thinning" legitimately
+    // describes vaginal-tissue thinning) — excludeCategories lets a chip opt specific
+    // product-type categories out of the free-text keyword scan below (they can still match
+    // via an explicit categories/healthFunctions hit above) so e.g. a vulva balm doesn't
+    // surface under "Skin" just because its copy happens to say "skin."
+    if (Array.isArray(group.excludeCategories) && group.excludeCategories.includes(item?.category)) return false;
     const text = productSearchText(item);
     return group.keywords.some((keyword) => text.includes(keyword));
 }
 
 // Exported for unit testing of the category-chip filtering logic (see
 // Discovery.macroGroupFilter.test.js) — not used by any other component.
-export { MACRO_GROUPS, productSearchText, itemMatchesMacroGroup };
+export { MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, resolveBrowseAiRoundQuery };
 
 /** Natural-language phrase for the browse-AI extension's `query` param — prefers the
  * more specific active scope (a chosen sub-category) over the broader macro group, and
@@ -96,6 +148,30 @@ function buildBrowseAiQueryText(categoryFilter, macroGroup) {
         return `${group.label} products`;
     }
     return '';
+}
+
+/** Resolves what a single browse-AI round (runBrowseAiRound) should actually send, unifying
+ * two callers: (1) browse mode, no typed query — uses the synthesized category/macro-group
+ * label text; (2) typed-search "Load more" continuation — uses the user's own submitted text
+ * verbatim, per qTrimForAi, rather than a synthesized label. Also decides the "batch N" cache-
+ * busting suffix (see the fetchSearchSuggestions caching note at the runBrowseAiRound call
+ * site). For a typed search, roundIndexAtCallTime starts at 0 (a fresh browseAiRounds
+ * accumulator per query) but the initial one-shot fetch (runAiSearch) already consumed "batch
+ * 1" with the plain query text before any round-based continuation runs — so this round is
+ * really the SECOND batch overall; effectiveRoundIndex accounts for that with a +1 so the
+ * very first continuation round doesn't resend the identical query runAiSearch just used
+ * (which would just hit fetchSearchSuggestions' cache and return already-seen duplicates).
+ * Returns null when there's no query text to send at all (unscoped browse). Exported for unit
+ * testing — see Discovery.macroGroupFilter.test.js. */
+function resolveBrowseAiRoundQuery(qTrimForAi, categoryFilter, macroGroup, roundIndexAtCallTime) {
+    const isTypedSearchContinuation = Boolean(qTrimForAi);
+    const baseQueryText = isTypedSearchContinuation ? qTrimForAi : buildBrowseAiQueryText(categoryFilter, macroGroup);
+    if (!baseQueryText) return null;
+    const effectiveRoundIndex = isTypedSearchContinuation ? roundIndexAtCallTime + 1 : roundIndexAtCallTime;
+    const queryText = effectiveRoundIndex > 0
+        ? `${baseQueryText} (batch ${effectiveRoundIndex + 1} of several — suggest different specific products than earlier batches, avoid repeating brand names already covered)`
+        : baseQueryText;
+    return { queryText, isTypedSearchContinuation };
 }
 
 function getExplicitEligibility(item) {
@@ -727,13 +803,15 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         [aiSuggestions]
     );
 
-    // Stable key for the active browse scope — used to know when the browse-AI
-    // accumulator below belongs to a *different* context (user picked a new
-    // macro group/category/personalization) and needs to reset rather than
-    // keep accumulating onto a stale scope.
+    // Stable key for the active browse/search scope — used to know when the browse-AI
+    // accumulator below belongs to a *different* context (user picked a new macro
+    // group/category/personalization, or typed a new search) and needs to reset rather
+    // than keep accumulating onto a stale scope. Includes qTrimForAi so submitting a new
+    // typed query resets the "Load more" round accumulator instead of continuing to
+    // append results for whatever was previously searched.
     const browseAiContextKey = useMemo(
-        () => `${macroGroup}|${categoryFilter}|${personalizationFilter ? '1' : '0'}`,
-        [macroGroup, categoryFilter, personalizationFilter]
+        () => `${macroGroup}|${categoryFilter}|${personalizationFilter ? '1' : '0'}|${qTrimForAi}`,
+        [macroGroup, categoryFilter, personalizationFilter, qTrimForAi]
     );
     const browseAiContextKeyRef = useRef(browseAiContextKey);
 
@@ -771,12 +849,14 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             if (n && names.has(n)) continue;
             out.push(p);
         }
-        // Browse-mode AI suggestions (accumulated across "Load more" rounds while
-        // no text query is active) are appended the same way, deduped against the
-        // catalog AND anything already added above. Gated to !qTrimForAi so a
-        // stale accumulator from a prior no-query browse session can never leak
-        // into an active search's results — the search flow stays untouched.
-        if (!qTrimForAi && enrichedBrowseAiSuggestions.length > 0) {
+        // Round-accumulated AI suggestions (from "Load more" — browse-mode rounds when no
+        // text query is active, or typed-search continuation rounds once the initial
+        // one-shot search above has already run) are appended the same way, deduped
+        // against the catalog AND anything already added above. browseAiContextKey (which
+        // now includes qTrimForAi) already guarantees this accumulator gets reset to []
+        // whenever the query/scope changes, so there's no risk of a stale query's rounds
+        // leaking into a new one — no need to also gate this merge on !qTrimForAi.
+        if (enrichedBrowseAiSuggestions.length > 0) {
             const outNames = new Set(out.map((p) => (p.name || '').trim().toLowerCase()).filter(Boolean));
             for (const p of enrichedBrowseAiSuggestions) {
                 const n = (p.name || '').trim().toLowerCase();
@@ -888,27 +968,29 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         }
     }, [personalizationFilter, quizResults]);
 
-    // Browse-mode AI extension: generates one more round of AI-suggested products
-    // for the currently-selected browse scope (macro group / category), reusing
-    // the exact same fetchSearchSuggestions utility and anti-fabrication API the
-    // typed-search flow uses — just with a synthesized query text instead of
-    // user-typed text, and results accumulated (not replaced) across rounds.
+    // AI-round extension used for BOTH "Load more" cases: (1) browse-mode, generating
+    // more AI-suggested products for the currently-selected macro group / category with
+    // no text query active, and (2) typed-search continuation, generating more results
+    // for the query the user already submitted once results and gridItems.length there
+    // (or an appended-since-visited "Load more") caught up with what runAiSearch's
+    // initial one-shot fetch (round 0) returned. Both share the exact same
+    // fetchSearchSuggestions utility, anti-fabrication API, round-batching, and dedup
+    // logic — only the query text source differs (typed text verbatim vs. a synthesized
+    // category-label phrase), which is why they were unified into one function instead of
+    // typed search getting its own separate, weaker one-shot-only mechanism.
     const runBrowseAiRound = useCallback(async (contextKeyAtCallTime, roundIndexAtCallTime) => {
-        const baseQueryText = buildBrowseAiQueryText(categoryFilter, macroGroup);
-        if (!baseQueryText) return;
-        // fetchSearchSuggestions session-caches by (query, category, symptom,
-        // maxResults) — an identical query on a later round would just replay
-        // an earlier round's cached response verbatim (every item then gets
-        // deduped away, silently wasting the round). Confirmed live: with only
-        // a single "later round" variant text, rounds 3+ all sent the exact
-        // same string as round 2 and fired back-to-back in under a second
-        // (cache hits resolve near-instantly) instead of ever reaching the
-        // network for genuinely new suggestions. Each round now gets a
-        // distinct batch number in the query so every round busts the cache
-        // and nudges Claude toward options it hasn't already named.
-        const queryText = roundIndexAtCallTime > 0
-            ? `${baseQueryText} (batch ${roundIndexAtCallTime + 1} of several — suggest different specific products than earlier batches, avoid repeating brand names already covered)`
-            : baseQueryText;
+        // fetchSearchSuggestions session-caches by (query, category, symptom, maxResults) —
+        // an identical query on a later round would just replay an earlier round's cached
+        // response verbatim (every item then gets deduped away, silently wasting the round).
+        // Confirmed live: with only a single "later round" variant text, rounds 3+ all sent
+        // the exact same string as round 2 and fired back-to-back in under a second (cache
+        // hits resolve near-instantly) instead of ever reaching the network for genuinely new
+        // suggestions. See resolveBrowseAiRoundQuery for how each round gets a distinct
+        // "batch N" cache-busting suffix, and how typed-search continuation rounds avoid
+        // colliding with runAiSearch's own initial fetch.
+        const resolved = resolveBrowseAiRoundQuery(qTrimForAi, categoryFilter, macroGroup, roundIndexAtCallTime);
+        if (!resolved) return;
+        const { queryText, isTypedSearchContinuation } = resolved;
         if (browseAiAbortRef.current) browseAiAbortRef.current.abort();
         const ac = new AbortController();
         browseAiAbortRef.current = ac;
@@ -918,6 +1000,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             const { suggestions } = await fetchSearchSuggestions({
                 query: queryText,
                 category: categoryFilter !== 'all' ? categoryFilter : undefined,
+                symptom: isTypedSearchContinuation ? symptomFilter : undefined,
                 signal: ac.signal,
                 personalized: personalizationFilter,
                 profileSummary,
@@ -966,22 +1049,30 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             // the round budget is about bounding calls, not just successes.
             if (browseAiContextKeyRef.current === contextKeyAtCallTime) setBrowseAiRounds((r) => r + 1);
         }
-    }, [categoryFilter, macroGroup, personalizationFilter, quizResults, filtered, enrichedAiSuggestions]);
+    }, [categoryFilter, macroGroup, personalizationFilter, quizResults, filtered, enrichedAiSuggestions, qTrimForAi, symptomFilter]);
 
-    // Fires the next browse-AI round exactly when "Load more" would otherwise
-    // vanish with nothing left to show: no submitted text query (the search
-    // flow owns that case), a specific scope actually selected (never for the
-    // fully-unscoped "All" view — too unbounded for one LLM call), under the
-    // round cap, not already loading, and visibleCount has caught up to
-    // everything currently available (catalog + AI so far).
+    // Fires the next AI round exactly when "Load more" would otherwise vanish with
+    // nothing left to show, in either mode:
+    //   - Browse mode (no typed query): a specific scope actually selected (never for the
+    //     fully-unscoped "All" view — too unbounded for one LLM call).
+    //   - Typed-search continuation: gated on the initial one-shot fetch (runAiSearch)
+    //     having actually finished (searchSubmitted && !aiLoading) — otherwise this would
+    //     double-fire a first AI round in parallel with runSearch's own initial call for
+    //     the same query. A typed query is specific enough on its own that the "All"
+    //     scope restriction below doesn't apply to it.
+    // Both share: under the round cap, not already loading, and visibleCount has caught up
+    // to everything currently available (catalog + AI so far).
     useEffect(() => {
-        if (qTrimForAi) return;
-        if (macroGroup === 'all' && categoryFilter === 'all') return;
+        if (qTrimForAi) {
+            if (!searchSubmitted || aiLoading) return;
+        } else if (macroGroup === 'all' && categoryFilter === 'all') {
+            return;
+        }
         if (browseAiRounds >= MAX_BROWSE_AI_ROUNDS) return;
         if (browseAiLoading) return;
         if (gridItems.length > visibleCount) return;
         runBrowseAiRound(browseAiContextKey, browseAiRounds);
-    }, [qTrimForAi, macroGroup, categoryFilter, browseAiRounds, browseAiLoading, gridItems.length, visibleCount, browseAiContextKey, runBrowseAiRound]);
+    }, [qTrimForAi, searchSubmitted, aiLoading, macroGroup, categoryFilter, browseAiRounds, browseAiLoading, gridItems.length, visibleCount, browseAiContextKey, runBrowseAiRound]);
 
     useEffect(() => {
         if (qTrimForAi.length < 2) {
