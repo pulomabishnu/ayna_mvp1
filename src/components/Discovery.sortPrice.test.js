@@ -37,6 +37,13 @@ describe('getSortPrice', () => {
     expect(getSortPrice({ price: '$16 for 12 (disposable) / $35 reusable' })).toBe(16);
   });
 
+  it('a comma thousands separator is part of the number, not truncated at the comma', () => {
+    // Live bug found post-fix: "$2,245+" (IVF-cost-range item) parsed as $2 and
+    // sorted right after the free items, before every genuinely-cheap product.
+    expect(getSortPrice({ price: '$2,245+' })).toBe(2245);
+    expect(getSortPrice({ price: '$1,299' })).toBe(1299);
+  });
+
   it('a price with no dollar figure and no "Free" falls back to item.stage, then null', () => {
     expect(getSortPrice({ price: 'Available, DTC' })).toBeNull();
     expect(getSortPrice({ stage: 'Available, growing' })).toBeNull();

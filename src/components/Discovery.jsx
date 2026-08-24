@@ -270,8 +270,11 @@ function getSortPrice(item) {
     const s = (item.price || item.stage || '').toString().trim();
     if (!s) return null;
     if (/^free\b/i.test(s)) return 0;
-    const amounts = [...s.matchAll(/\$(\d+(?:\.\d+)?)/g)];
-    return amounts.length > 0 ? parseFloat(amounts[0][1]) : null;
+    // Comma thousands separators ("$2,245+") must be part of the digit match,
+    // not just the leading "$2" — stripped after matching, not before, so a
+    // stray comma elsewhere in the string can't merge two unrelated numbers.
+    const amounts = [...s.matchAll(/\$(\d{1,3}(?:,\d{3})*(?:\.\d+)?)/g)];
+    return amounts.length > 0 ? parseFloat(amounts[0][1].replace(/,/g, '')) : null;
 }
 
 /** Score for default sort: top rated + positive clinical/social/scientific consensus + safety first. */
