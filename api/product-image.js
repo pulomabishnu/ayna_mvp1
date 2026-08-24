@@ -23,6 +23,7 @@
 import { rateLimit, getClientIp } from './_rateLimit.js';
 import { matchShopifyProduct } from './_shopifyProductMatch.js';
 import { fetchOgImage, isLikelyNonProductImageUrl } from './_ogImageFetch.js';
+import { lookupSerperImage } from './_serperImageSearch.js';
 
 const MAX_TERM_LEN = 120;
 const MAX_URL_LEN = 500;
@@ -130,13 +131,11 @@ export default async function handler(req, res) {
   const allowBrandLogo = type === 'digital';
   if (!name) return res.status(400).json({ error: 'missing_name' });
 
-  // Bumped v6 -> v7: NON_PRODUCT_IMAGE_PATTERN switched from raw substring
-  // matching to letter-adjacency lookaround (a live audit of the static
-  // catalog — see src/data/catalogImages.test.js — found "hero" flagging
-  // genuine studio product photos, e.g. Elvie's own "..._Web_Hero_..."
-  // filename), and "hero" was dropped from the pattern entirely. A product
-  // resolved (or wrongly rejected) under v6 could now resolve differently.
-  const cacheKey = `ayna:img:v7:${type}:${brand.toLowerCase()}|${name.toLowerCase()}`;
+  // Bumped v7 -> v8: added Serper.dev image search as a final resolver
+  // tier, tried whenever Shopify/og:image/DSLD all fail — a product
+  // previously cached '' under v7 (because its brand site blocks bots, or
+  // it has no catalog url at all) can now resolve to a real photo.
+  const cacheKey = `ayna:img:v8:${type}:${brand.toLowerCase()}|${name.toLowerCase()}`;
   const redis = getRedis();
 
   if (redis) {
@@ -174,16 +173,26 @@ export default async function handler(req, res) {
       imageUrl = await resolveImageFromDsld(name);
       if (isLikelyNonProductImageUrl(imageUrl)) imageUrl = '';
     }
+    // True last resort — a real image-search index, unlike every resolver
+    // above, doesn't depend on the brand's own site being reachable or
+    // scrapable (a large share of real brands actively block bots) and
+    // works for a product with no catalog `url` at all, including one an
+    // AI search just generated on the fly. No-ops (returns null
+    // immediately) when SERPER_API_KEY isn't configured.
+    if (!imageUrl) {
+      imageUrl = (await lookupSerperImage(name, brand)) || '';
+    }
   } catch (e) {
     console.error('[product-image] resolution failed:', e?.message);
   }
 
   if (redis) {
-    // Only pin a negative result when a page URL was actually tried and the
-    // DSLD fallback also came up empty — a product with no URL yet (or one
-    // that isn't in DSLD, e.g. a device rather than a supplement) may still
-    // resolve later via a different path, so don't cache that as permanent.
-    const shouldCacheNegative = pageUrl != null && pageUrl !== '';
+    // Only pin a negative result once every resolver that COULD have found
+    // something has actually been tried — a page URL (Shopify/og:image), or
+    // Serper configured (works with no URL at all). Otherwise a product
+    // with no URL yet and no Serper key might still resolve later via a
+    // different path, so don't cache that as permanent.
+    const shouldCacheNegative = (pageUrl != null && pageUrl !== '') || Boolean(process.env.SERPER_API_KEY);
     try {
       if (imageUrl || shouldCacheNegative) {
         await (await redis).set(cacheKey, imageUrl, { ex: imageUrl ? CACHE_TTL_SEC : NEGATIVE_TTL_SEC });

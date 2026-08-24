@@ -107,7 +107,10 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$6 for 14',
         userRating: 4.3,
         whereToBuy: ['Walmart', 'Amazon'],
-        image: '',
+        url: 'https://www.bodyform.co.uk/our-products/pads/ultra/',
+        // Real packaging photo from bodyform.co.uk's own product page
+        // (Ultimate 12 Ultra Regular+), verified before using.
+        image: 'https://libresse-images.essity.com/images-c5/497/702497/optimized-AzureJPG615CropUp/bodyform-phoenix-v3-ultimate-ultra-regular-plus-promo-x12-towels-7322542533789.jpg?w=295&h=295&imPolicy=dynamic',
         summary: 'European brand with BodyFit technology. Soft and absorbent.',
         safety: { fdaStatus: 'FDA-registered', materials: 'Soft cover', recalls: 'No recalls.', allergens: 'Fragrance-free' },
         clinicianOpinionSource: 'independent',
@@ -694,7 +697,11 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$32–$38 per pair',
         userRating: 4.5,
         whereToBuy: ['DearKate.com', 'Amazon'],
-        image: '',
+        url: 'https://dearkate.com/',
+        // "Ada Brief Full" style, verified real from dearkate.com's live
+        // Shopify catalog (catalog didn't specify a style; picked one
+        // representative real product rather than leave this blank).
+        image: 'https://cdn.shopify.com/s/files/1/0152/4745/products/DSC01403.jpg?v=1578089113',
         summary: 'Fashion-forward period underwear. Lace and athletic styles. PFAS-free.',
         safety: { fdaStatus: 'N/A', materials: 'PFAS-free', recalls: 'No recalls.', allergens: 'Hypoallergenic' },
         clinicianOpinionSource: 'independent',

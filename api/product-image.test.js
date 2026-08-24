@@ -8,6 +8,7 @@ const redisSet = vi.fn(async () => 'OK');
 const matchShopifyProductMock = vi.fn(async () => null);
 const fetchOgImageMock = vi.fn(async () => null);
 const lookupDsldProductMock = vi.fn(async () => null);
+const lookupSerperImageMock = vi.fn(async () => null);
 
 vi.mock('./_rateLimit.js', () => ({
   rateLimit: (...args) => rateLimitMock(...args),
@@ -36,6 +37,9 @@ vi.mock('./_ogImageFetch.js', async (importOriginal) => {
 vi.mock('./llm-recommendations.js', () => ({
   lookupDsldProduct: (...args) => lookupDsldProductMock(...args),
 }));
+vi.mock('./_serperImageSearch.js', () => ({
+  lookupSerperImage: (...args) => lookupSerperImageMock(...args),
+}));
 
 async function loadHandler() {
   vi.resetModules();
@@ -50,9 +54,11 @@ beforeEach(() => {
   matchShopifyProductMock.mockReset().mockResolvedValue(null);
   fetchOgImageMock.mockReset().mockResolvedValue(null);
   lookupDsldProductMock.mockReset().mockResolvedValue(null);
+  lookupSerperImageMock.mockReset().mockResolvedValue(null);
   delete process.env.UPSTASH_REDIS_REST_URL;
   delete process.env.UPSTASH_REDIS_REST_TOKEN;
   delete process.env.ALLOWED_ORIGINS;
+  delete process.env.SERPER_API_KEY;
 });
 
 afterEach(() => {
@@ -284,5 +290,56 @@ describe('product-image', () => {
     await handler({ method: 'GET', query: { name: 'DivaCup', url: 'https://diva.example.com' }, headers: {} }, res);
     expect(res.statusCode).toBe(200);
     expect(res.body).toEqual({ imageUrl: '' });
+  });
+
+  describe('Serper image search (last resort)', () => {
+    it('is tried only after Shopify, og:image, and DSLD all fail', async () => {
+      lookupSerperImageMock.mockResolvedValue('https://retailer.example.com/real-product-photo.jpg');
+      const handler = await loadHandler();
+      const res = mockRes();
+      await handler({ method: 'GET', query: { name: 'Tampax Radiant Tampons', brand: 'Tampax', url: 'https://tampax.com/' }, headers: {} }, res);
+      expect(res.body.imageUrl).toBe('https://retailer.example.com/real-product-photo.jpg');
+      expect(matchShopifyProductMock).toHaveBeenCalled();
+      expect(fetchOgImageMock).toHaveBeenCalled();
+      expect(lookupDsldProductMock).toHaveBeenCalled();
+      expect(lookupSerperImageMock).toHaveBeenCalledWith('Tampax Radiant Tampons', 'Tampax');
+    });
+
+    it('resolves a product with NO catalog url at all — the actual AI-search-result case', async () => {
+      // No url in the query at all: Shopify/og:image are never attempted
+      // (nothing to fetch), DSLD finds nothing (not a supplement), Serper
+      // is the only resolver that can work here since it needs just a name.
+      lookupSerperImageMock.mockResolvedValue('https://retailer.example.com/we-vibe-chorus.jpg');
+      const handler = await loadHandler();
+      const res = mockRes();
+      await handler({ method: 'GET', query: { name: 'We-Vibe Chorus', brand: 'We-Vibe' }, headers: {} }, res);
+      expect(res.body.imageUrl).toBe('https://retailer.example.com/we-vibe-chorus.jpg');
+      expect(matchShopifyProductMock).not.toHaveBeenCalled();
+      expect(fetchOgImageMock).not.toHaveBeenCalled();
+    });
+
+    it('is not called when an earlier resolver already found a real image', async () => {
+      matchShopifyProductMock.mockResolvedValue('https://cdn.shopify.com/divacup.jpg');
+      const handler = await loadHandler();
+      const res = mockRes();
+      await handler({ method: 'GET', query: { name: 'DivaCup', url: 'https://diva.example.com' }, headers: {} }, res);
+      expect(res.body.imageUrl).toBe('https://cdn.shopify.com/divacup.jpg');
+      expect(lookupSerperImageMock).not.toHaveBeenCalled();
+    });
+
+    it('caches a negative result once Serper (with no url needed) has also been tried', async () => {
+      process.env.UPSTASH_REDIS_REST_URL = 'https://redis.example.com';
+      process.env.UPSTASH_REDIS_REST_TOKEN = 'token';
+      process.env.SERPER_API_KEY = 'test-key'; // negative caching requires Serper to actually be configured
+      const handler = await loadHandler();
+      const res = mockRes();
+      await handler({ method: 'GET', query: { name: 'Nonexistent Product Xyz' }, headers: {} }, res);
+      expect(res.body).toEqual({ imageUrl: '' });
+      expect(redisSet).toHaveBeenCalledWith(
+        expect.stringContaining('ayna:img:'),
+        '',
+        expect.objectContaining({ ex: expect.any(Number) })
+      );
+    });
   });
 });

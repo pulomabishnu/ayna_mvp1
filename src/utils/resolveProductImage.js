@@ -1,12 +1,11 @@
 // Resolves a real product image for products with placeholder images via /api/product-image
 // Results are cached in localStorage so the lookup only ever runs once per product.
 
-// Bumped v5 -> v6 alongside the server-side cache key: the "hero" keyword
-// (which flagged genuine studio product photos, e.g. Elvie's own
-// "..._Web_Hero_..." filename) was removed and the match logic switched to
-// letter-adjacency lookaround — a browser that cached a wrong rejection
-// under v5 would otherwise keep serving it indefinitely.
-const LS_KEY = 'ayna_product_images_v6';
+// Bumped v6 -> v7 alongside the server-side cache key: added Serper.dev
+// image search as a final resolver tier — a product a browser cached as ''
+// under v6 (brand site blocked bots, or no catalog url at all) can now
+// resolve to a real photo.
+const LS_KEY = 'ayna_product_images_v7';
 const memCache = new Map();
 
 function lsRead() {

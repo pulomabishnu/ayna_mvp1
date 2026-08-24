@@ -491,7 +491,11 @@ export const MVP_DIGITAL = [
     userRating: 4.5,
     whereToBuy: ['Nurx.com'],
     platform: 'Web, app',
-    image: '',
+    url: 'https://www.nurx.com/',
+    // App Store icon — confirmed via Apple's iTunes Search API (real, brand-
+    // name-matched result: "Nurx: Birth Control Delivered" by Thirty Madison,
+    // Inc., the real company behind Nurx). Verified the icon loads before using.
+    image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/4b/c9/d9/4bc9d930-40a1-9566-2ec1-83a23ae06789/AppIcon-0-0-1x_U007ephone-0-1-85-220.png/512x512bb.jpg',
     summary: 'Online birth control prescriptions and delivery. Pills, patch, ring. No in-person visit required in many states. Accepts insurance.',
     safety: { fdaStatus: 'Prescription via licensed clinicians', materials: 'N/A', recalls: 'N/A', allergens: 'N/A', sideEffects: 'Nurx itself has no side effects. It\'s a telehealth service. Any birth control method it prescribes carries the standard side effects for that method (e.g. spotting, nausea, mood changes), which your clinician reviews with you before you start.', opinionAlerts: 'Nurx rates notably lower on independent review platforms (Trustpilot ~3.4/5, BBB customer reviews ~2/5) than the 4.8/5 shown on its own site, with recurring complaints about shipping delays, cancellation difficulty, and insurance billing.' },
     privacy: { dataStorage: 'US', sellsData: 'Check policy', hipaa: 'HIPAA-compliant for Rx', keyPolicy: 'Prescription service' },

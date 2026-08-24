@@ -345,7 +345,7 @@ export const EXTENDED_DIGITAL = [
         }
     },
     {
-        id: 'd-glow', name: 'Glow Period & Ovulation Tracker', category: 'tracker', type: 'digital', internal: false, healthFunctions: ['cycle-tracking'], tags: ['irregular', 'pcos', 'comfort'], price: 'Free (Premium $60/year)', userRating: 4.4, whereToBuy: ['App Store', 'Google Play'], platform: 'iOS, Android', image: '', summary: 'Period and fertility tracker with community forum. Also offers fertility courses and clinic matching.',
+        id: 'd-glow', name: 'Glow Period & Ovulation Tracker', category: 'tracker', type: 'digital', internal: false, healthFunctions: ['cycle-tracking'], tags: ['irregular', 'pcos', 'comfort'], price: 'Free (Premium $60/year)', userRating: 4.4, whereToBuy: ['App Store', 'Google Play'], platform: 'iOS, Android', url: 'https://glowing.com/', /* App Store icon — confirmed via iTunes Search API: "Glow Ovulation & Period App" by Glow, Inc., the real company. Verified the icon loads before using. */ image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/5e/77/d4/5e77d423-a88d-55cc-cf31-0fe103756967/GlowAppIcon-0-0-1x_U007epad-0-1-0-85-220.png/512x512bb.jpg', summary: 'Period and fertility tracker with community forum. Also offers fertility courses and clinic matching.',
         safety: {
             fdaStatus: 'Not FDA-cleared', materials: 'N/A', recalls: 'N/A', allergens: 'N/A',
             sideEffects: 'N/A',
