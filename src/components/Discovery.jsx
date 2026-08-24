@@ -523,6 +523,15 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [browseAiRounds, setBrowseAiRounds] = useState(0);
     const [browseAiLoading, setBrowseAiLoading] = useState(false);
     const browseAiAbortRef = useRef(null);
+    // How many CONSECUTIVE rounds in a row added zero genuinely new products.
+    // One dry round isn't strong evidence a category is exhausted — the model
+    // can repeat itself on a single batch and still have real, distinct
+    // products left to suggest on the next one (confirmed live: a typed
+    // search for "Kegel trainer" stopped dead after round 3 of a possible
+    // 10, on one unlucky duplicate batch, while later rounds for the same
+    // query independently found more real products). Only give up after two
+    // in a row.
+    const dryRoundStreakRef = useRef(0);
     const [dsldProducts, setDsldProducts] = useState([]);
     const [dsldLoading, setDsldLoading] = useState(false);
     const [resolvedImages, setResolvedImages] = useState({});
@@ -823,6 +832,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         setBrowseAiSuggestions([]);
         setBrowseAiRounds(0);
         setBrowseAiLoading(false);
+        dryRoundStreakRef.current = 0;
     }, [browseAiContextKey]);
 
     // Abort any in-flight browse-AI request on unmount.
@@ -1037,11 +1047,20 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 freshCount = fresh.length;
                 return [...prev, ...fresh];
             });
-            // A round that adds nothing new (Claude repeated itself, or this
-            // category is genuinely tapped out) is a real signal to stop
-            // rather than burn through the remaining round budget on more
-            // no-op calls — jump straight to the cap instead of r + 1.
-            setBrowseAiRounds((r) => (freshCount > 0 ? r + 1 : MAX_BROWSE_AI_ROUNDS));
+            // A DRY round (adds nothing new) isn't trusted on its own — the
+            // model can duplicate one batch and still have real, distinct
+            // products on the next (confirmed live, see dryRoundStreakRef
+            // above). Only two dry rounds IN A ROW is treated as "this
+            // category is genuinely tapped out" and jumps straight to the
+            // cap instead of burning through the rest of the budget on more
+            // no-op calls; a single dry round just costs one retry.
+            if (freshCount > 0) {
+                dryRoundStreakRef.current = 0;
+                setBrowseAiRounds((r) => r + 1);
+            } else {
+                dryRoundStreakRef.current += 1;
+                setBrowseAiRounds((r) => (dryRoundStreakRef.current >= 2 ? MAX_BROWSE_AI_ROUNDS : r + 1));
+            }
         } catch (e) {
             if (e?.name === 'AbortError') return;
             setBrowseAiLoading(false);
@@ -1464,6 +1483,15 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         Finding more…
                     </button>
                 </div>
+            ) : (qTrimForAi || !(macroGroup === 'all' && categoryFilter === 'all')) && browseAiRounds >= MAX_BROWSE_AI_ROUNDS ? (
+                // The round budget is used up (either genuinely exhausted, or
+                // two duplicate-heavy rounds in a row — see dryRoundStreakRef)
+                // — say so explicitly rather than the button just vanishing
+                // with no explanation, which reads as broken/stuck rather
+                // than "we looked and this is everything we found."
+                <p style={{ textAlign: 'center', marginTop: '2rem', color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>
+                    That's everything we could find{qTrimForAi ? ` for "${qTrimForAi}"` : ''}.
+                </p>
             ) : null}
             </>
             )}
