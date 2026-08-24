@@ -152,7 +152,10 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$10 for 20',
         userRating: 4.5,
         whereToBuy: ['Cora.life', 'Target', 'Amazon'],
-        image: '', // caught by catalog-wide sweep — was Cora's own theme logo, not a per-SKU photo
+        url: 'https://cora.life/',
+        // Cora rebranded to "The Peace-of-Mind Maxi Overnight Pad" — hardcoding
+        // their verified current photo. Confirmed live before using.
+        image: 'https://cdn.shopify.com/s/files/1/0940/5060/files/Cora_Dynamic_Image_POM_Maxi_Overnight_1000X1000_1c7cdd2e-9eab-43c1-a8dc-52b28f7052c2.png?v=1787166033',
         summary: 'Extra-long organic cotton overnight pads. B-Corp, plastic-free packaging.',
         safety: { fdaStatus: 'FDA-registered', materials: '100% organic cotton', recalls: 'No recalls.', allergens: 'Hypoallergenic', opinionAlerts: 'A 2022 independent lab investigation (Mamavation, EPA-certified lab) found organic-fluorine (PFAS "forever chemical") indicators in a Cora liner product (Got-You-Covered Liner, 30 ppm) — the highest reading among liners in that test. This overnight pad SKU specifically was not part of that testing, but the finding has made some PFAS-conscious users more cautious about the Cora brand generally.' },
         clinicianOpinionSource: 'independent',
@@ -664,7 +667,11 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$28–$34 per pair',
         userRating: 4.5,
         whereToBuy: ['TomboyX.com', 'Target'],
-        image: '', // caught by catalog-wide sweep — was TomboyX's own logo, not a product photo
+        url: 'https://tomboyx.com/',
+        // TomboyX's line is now branded "First Line Period" underwear —
+        // hardcoding their verified current photo (Bikini style, Plum).
+        // Confirmed live at tomboyx.com/products.json before using.
+        image: 'https://cdn.shopify.com/s/files/1/0204/2302/files/Plum_FL_Period_Bikini_1.jpg?v=1782399837',
         summary: 'Inclusive, gender-neutral period underwear. Multiple styles and sizes.',
         safety: { fdaStatus: 'N/A', materials: 'Oeko-Tex certified', recalls: 'No recalls.', allergens: 'Hypoallergenic' },
         clinicianOpinionSource: 'independent',

@@ -106,11 +106,13 @@ export const MVP_PHYSICAL = [
     price: '$10 for 32',
     userRating: 4.5,
     whereToBuy: ['Cora.life', 'Target', 'Amazon'],
-    // Was a hardcoded brand-logo image (Cora's own theme logo, not a
-    // per-SKU photo) — caught by the catalog-wide image sweep. Empty so
-    // the UI's live /api/product-image resolution (or letter avatar)
-    // takes over instead of rendering the wrong image.
-    image: '',
+    url: 'https://cora.life/',
+    // Cora rebranded away from "Organic Pads" naming (their live catalog
+    // now calls this "The Peace-of-Mind Pad") — the live resolver's fuzzy
+    // name match can't bridge that gap, so hardcoding their verified
+    // current photo directly rather than leaving this on a letter avatar.
+    // Confirmed live at cora.life/products.json before using.
+    image: 'https://cdn.shopify.com/s/files/1/0940/5060/files/Cora_Dynamic_Image_POM_Pads_Regular_1000X1000_9e847653-7318-46fb-9fdf-a714e0931031.png?v=1787080092',
     summary: '100% organic cotton pads from Cora. Subscription or one-time. B-Corp, plastic-free packaging.',
     safety: { fdaStatus: 'FDA-registered', materials: '100% organic cotton', recalls: 'No formal recalls. Note: a 2024 independent lab investigation (Mamavation, using an EPA-certified lab) found organic fluorine — an indicator of PFAS "forever chemicals" — at roughly 30 ppm in a Cora organic-cotton liner product, despite the brand\'s organic marketing. The same investigation found PFAS indicators in about half of tested pad/liner brands, including several other organic ones, while some organic brands tested clean.', allergens: 'Hypoallergenic', sideEffects: 'Organic cotton is generally well tolerated with a low rate of skin irritation. Change regularly during heavy flow and discontinue if you notice redness or itching.', opinionAlerts: 'Since the 2024 PFAS lab testing news, some shoppers have expressed concern about organic-marketed pads generally, including Cora, and a subset have shifted toward brands that tested clean.' },
     clinicianOpinionSource: 'independent',
@@ -141,11 +143,13 @@ export const MVP_PHYSICAL = [
     price: '$11 for 32',
     userRating: 4.5,
     whereToBuy: ['Cora.life', 'Target', 'Amazon'],
-    // Was a hardcoded brand-logo image (Cora's own theme logo, not a
-    // per-SKU photo) — caught by the catalog-wide image sweep. Empty so
-    // the UI's live /api/product-image resolution (or letter avatar)
-    // takes over instead of rendering the wrong image.
-    image: '',
+    url: 'https://cora.life/',
+    // Cora rebranded away from "Organic Tampons" naming (live catalog now
+    // splits this into "The Comfort Fit Tampon" [applicator] and "The
+    // Applicator-Free Tampon") — hardcoding the applicator version's
+    // verified current photo, since applicator is the more common default
+    // for a generic "tampons" listing. Confirmed live before using.
+    image: 'https://cdn.shopify.com/s/files/1/0940/5060/files/Cora_Dynamic_Image_Applicator_Tampons_V3_1000X1000_7f00668b-f217-4371-b8a1-1c3b4ab16741.png?v=1787190945',
     summary: '100% organic cotton tampons from Cora. Subscription or one-time. B-Corp, plastic-free packaging.',
     safety: { fdaStatus: 'FDA-registered', materials: '100% organic cotton', recalls: 'No recalls.', allergens: 'Hypoallergenic', sideEffects: 'Organic cotton is generally well tolerated. As with any tampon, leaving one in longer than recommended raises the risk of toxic shock syndrome (TSS). Change every 4-8 hours and use the lowest absorbency your flow needs.' },
     clinicianOpinionSource: 'independent',
