@@ -45,6 +45,8 @@
 .ayna-browse-card__eligibility { font-family:var(--font-label); font-size:.58rem; letter-spacing:.06em; color:var(--color-text-muted); border:1px solid var(--color-border); border-radius:var(--radius-pill); padding:.2rem .4rem; }
 .ayna-browse__empty { text-align:center; padding:4rem 1rem; color:var(--color-text-muted); }
 .ayna-browse__empty button { border:none; background:none; color:var(--color-amber-deep); text-decoration:underline; cursor:pointer; }
+.ayna-browse__empty-hint { font-size:.8rem; margin-top:.75rem; }
+.ayna-browse__empty-hint button { font-size:.8rem; }
 .ayna-ecosystem-wishlist { max-width:1100px; margin:0 auto var(--spacing-xl); padding-top:.5rem; }
 .ayna-ecosystem-wishlist__header { display:flex; align-items:end; justify-content:space-between; margin-bottom:1rem; }
 .ayna-ecosystem-wishlist__header p { margin:0 0 .25rem; font-family:var(--font-label); font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; color:var(--color-amber-deep); }

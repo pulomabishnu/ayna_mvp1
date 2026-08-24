@@ -204,6 +204,21 @@ function App() {
       currentViewRef.current = view;
       setCurrentViewRaw(view);
       setProductRouteId(pathProductId);
+      // Discovery unmounts/remounts on every navigation away and back (it's
+      // conditionally rendered on currentView), so its own search state is
+      // lost each time — landing back on a product's "Back" button always
+      // showed the blank default search, not what was actually searched.
+      // Discovery already mirrors its submittedQuery into ?q= via
+      // replaceState as the user searches, so that history entry's URL still
+      // has it; this just needs to be re-read on the way back in, the same
+      // way getInitialDiscoverySearch reads it on the very first page load.
+      if (view === 'discovery') {
+        try {
+          setDiscoverySearch(new URLSearchParams(window.location.search).get('q') || '');
+        } catch {
+          setDiscoverySearch('');
+        }
+      }
     };
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);

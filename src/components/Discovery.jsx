@@ -1532,6 +1532,14 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 <div className="ayna-browse__empty">
                     <p>No matches.</p>
                     <button type="button" onClick={clearBrowseFilters}>Clear filters</button>
+                    {personalizationFilter && (
+                        <p className="ayna-browse__empty-hint">
+                            Still nothing?{' '}
+                            <button type="button" onClick={() => setPersonalizationFilter(false)}>
+                                Try turning the personalized toggle off
+                            </button>
+                        </p>
+                    )}
                 </div>
             )}
             {gridItems.length > visibleCount ? (
