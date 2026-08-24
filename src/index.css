@@ -2213,10 +2213,14 @@ html {
 
 /* Landing hero picks the gradient up where the nav left off. */
 .ayna-landing-hero {
+  /* Same bug as .ayna-landing-hero--returning below, this is the OTHER
+     variant of it: real iPhone Safari screenshot showed the filter-pill
+     row wrapping to a second line on a narrow real device, pushing the
+     hero past the fixed 580px background-size, and the plain page
+     background cut through mid-hero right across the pills. Same fix —
+     a linear-gradient has no fixed natural size, so it fills the element
+     completely with no size/position override at all. */
   background: var(--mockup-hero-gradient);
-  background-size: 100% 580px;
-  background-position: 0 -84px;
-  background-repeat: no-repeat;
   min-height: 496px;
 }
 
@@ -2530,10 +2534,12 @@ html {
 }
 
 .hiw-hero {
+  /* Same bug as .ayna-landing-hero / .ayna-landing-hero--returning: a fixed
+     background-size/position crop that runs out and exposes the plain page
+     background once real content (heading + subtext, shared by both
+     How It Works and About, which both use this class) wraps past the
+     assumed 342px height. No fixed size/position needed for a gradient. */
   background: linear-gradient(125deg, #242A52 0%, #33305F 34%, #4E3866 64%, #A2603C 100%);
-  background-size: 100% 342px;
-  background-position: 0 -84px;
-  background-repeat: no-repeat;
   color: #F4F0FA;
   padding: 58px 0 64px;
   min-height: 258px;
