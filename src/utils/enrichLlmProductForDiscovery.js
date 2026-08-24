@@ -13,8 +13,6 @@ function truncate(s, max) {
 
 function buildVerificationLinks(product) {
   const name = (product.name || 'product').trim();
-  const brand = (product.brand || '').trim();
-  const q = encodeURIComponent(`${name} ${brand}`.trim());
   const pubmed = `https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(name)}`;
   const medline = 'https://medlineplus.gov/';
   const ods = 'https://ods.od.nih.gov/';
@@ -31,12 +29,6 @@ function buildVerificationLinks(product) {
           text: 'MedlinePlus (NIH)',
           summary: 'Trusted patient-oriented health information.',
           justification: 'U.S. National Library of Medicine',
-        },
-        {
-          url: `https://www.google.com/search?q=${q}+site%3Aacog.org+OR+site%3Amayoclinic.org+OR+site%3Ahealthline.com`,
-          text: 'Web search: clinical guidance & reviews',
-          summary: 'Find clinician-trusted sources discussing this type of product.',
-          justification: 'Discovery link — verify sources independently',
         },
         {
           url: acog,

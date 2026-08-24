@@ -560,14 +560,21 @@ export default function ProductModal({
       ...(product.verificationLinks?.doctor?.links || []),
       ...(product.verificationLinks?.scientific?.links || []),
     ];
-    const labels = [];
+    const chips = [];
+    const seenLabels = new Set();
     for (const link of allLinks) {
-      const label = hostLabel(link.url || link.href);
-      if (label && !labels.includes(label)) labels.push(label);
-      if (labels.length >= 2) break;
+      const url = link.url || link.href;
+      const label = hostLabel(url);
+      if (label && !seenLabels.has(label)) {
+        seenLabels.add(label);
+        chips.push({ label, url });
+      }
+      if (chips.length >= 2) break;
     }
-    if (aynaReviewCount > 0) labels.push(`${aynaReviewCount} community report${aynaReviewCount === 1 ? '' : 's'}`);
-    return labels.slice(0, 3);
+    if (aynaReviewCount > 0) {
+      chips.push({ label: `${aynaReviewCount} community report${aynaReviewCount === 1 ? '' : 's'}`, url: null });
+    }
+    return chips.slice(0, 3);
   }, [product, aynaReviewCount]);
 
   const communityTags = useMemo(() => {
@@ -889,7 +896,19 @@ export default function ProductModal({
                     {sourceChips.length > 0 && (
                       <div className="pdp-summary-card__chips">
                         {sourceChips.map((chip) => (
-                          <span key={chip} className="pdp-head__badge">{chip}</span>
+                          chip.url ? (
+                            <a
+                              key={chip.label}
+                              className="pdp-head__badge"
+                              href={chip.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {chip.label}
+                            </a>
+                          ) : (
+                            <span key={chip.label} className="pdp-head__badge">{chip.label}</span>
+                          )
                         ))}
                       </div>
                     )}

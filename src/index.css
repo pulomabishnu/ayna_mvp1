@@ -3131,6 +3131,18 @@ html {
   border-radius: 999px;
 }
 
+a.pdp-head__badge {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+a.pdp-head__badge:hover,
+a.pdp-head__badge:focus-visible {
+  background: #EDE4D3;
+  text-decoration: underline;
+}
+
 .pdp-safety-alert {
   margin: 0.75rem 0;
   padding: 0.85rem 1rem;
