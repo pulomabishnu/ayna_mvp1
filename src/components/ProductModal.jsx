@@ -579,13 +579,17 @@ export default function ProductModal({
 
   const communityTags = useMemo(() => {
     const links = product?.verificationLinks?.community?.links || [];
-    const labels = [];
+    const tags = [];
+    const seenLabels = new Set();
     for (const link of links) {
       const label = PLATFORM_LABELS[link.platform] || null;
-      if (label && !labels.includes(label)) labels.push(label);
-      if (labels.length >= 3) break;
+      if (label && !seenLabels.has(label)) {
+        seenLabels.add(label);
+        tags.push({ label, url: link.url || link.href || null });
+      }
+      if (tags.length >= 3) break;
     }
-    return labels;
+    return tags;
   }, [product]);
 
   const communitySnippets = useMemo(() => {
@@ -949,7 +953,19 @@ export default function ProductModal({
                     {communityTags.length > 0 && (
                       <div className="pdp-summary-card__chips">
                         {communityTags.map((tag) => (
-                          <span key={tag} className="pdp-head__badge">{tag}</span>
+                          tag.url ? (
+                            <a
+                              key={tag.label}
+                              className="pdp-head__badge"
+                              href={tag.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {tag.label}
+                            </a>
+                          ) : (
+                            <span key={tag.label} className="pdp-head__badge">{tag.label}</span>
+                          )
                         ))}
                       </div>
                     )}
