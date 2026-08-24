@@ -131,14 +131,13 @@ export default async function handler(req, res) {
   const allowBrandLogo = type === 'digital';
   if (!name) return res.status(400).json({ error: 'missing_name' });
 
-  // Bumped v8 -> v9: the FIRST live Serper deploy had no relevance check on
-  // its results at all — confirmed live that "Happi Pelvic Floor App"
-  // resolved to "Happy Pelvis Pelvic Floor Therapy," an unrelated clinic.
-  // Fixed with a brand-gate + title-overlap check, but that first version
-  // was live in production for several minutes with a real Serper key
-  // active, so any product resolved during that window could be cached
-  // wrong under v8.
-  const cacheKey = `ayna:img:v9:${type}:${brand.toLowerCase()}|${name.toLowerCase()}`;
+  // Bumped v9 -> v10: the v9 brand-gate required name-overlap on TOP of a
+  // confirmed brand match, which rejected real, brand-confirmed results
+  // whenever the catalog's own generic product description didn't share
+  // enough words with the brand's actual commercial product name (e.g.
+  // "Kegel8 Pelvic Floor Exerciser" vs the real "Kegel8 Ultra 20 V2
+  // Electronic Pelvic Toner") — confirmed live, cached negative under v9.
+  const cacheKey = `ayna:img:v10:${type}:${brand.toLowerCase()}|${name.toLowerCase()}`;
   const redis = getRedis();
 
   if (redis) {
