@@ -26,7 +26,7 @@ export const MENSTRUAL_PHYSICAL = [
         ingredients: 'Absorbent polymer, non-woven fabric.',
         effectiveness: 'Strong leak protection, widely available.',
         badges: ['Mainstream', 'High Availability'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product research', summary: 'Research on absorbent materials and safety.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
     },
     {
         id: 'p-stayfree-ultra',
@@ -49,7 +49,7 @@ export const MENSTRUAL_PHYSICAL = [
         ingredients: 'Absorbent core, breathable cover.',
         effectiveness: 'Good absorption at low cost.',
         badges: ['Budget Friendly', 'Widely Available'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product research', summary: 'Research on absorbent materials and safety.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
     },
     {
         id: 'p-seventh-gen-pad',
@@ -72,7 +72,7 @@ export const MENSTRUAL_PHYSICAL = [
         ingredients: 'Chlorine-free pulp, plant-derived materials.',
         effectiveness: 'Reliable absorption with cleaner profile.',
         badges: ['Sustainable', 'Chlorine-Free'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product research', summary: 'Research on absorbent materials and safety.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
     },
     {
         id: 'p-u-kotex-pad',
@@ -120,7 +120,7 @@ export const MENSTRUAL_PHYSICAL = [
         ingredients: 'Absorbent core, soft cover.',
         effectiveness: 'Good absorption with comfort focus.',
         badges: ['Comfort Focus', 'European Brand'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product research', summary: 'Research on absorbent materials and safety.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
     },
     {
         id: 'p-rael-overnight',
@@ -168,7 +168,7 @@ export const MENSTRUAL_PHYSICAL = [
         ingredients: 'Organic cotton.',
         effectiveness: 'Maximum overnight absorbency.',
         badges: ['Organic', 'B-Corp', 'Sustainable'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product research', summary: 'Research on absorbent materials and safety.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
     },
 
     // ─── PANTY LINERS ─────────────────────────────────────
@@ -193,7 +193,7 @@ export const MENSTRUAL_PHYSICAL = [
         ingredients: 'Absorbent core, adhesive.',
         effectiveness: 'Light protection for everyday use.',
         badges: ['Budget Friendly', 'Everyday Use'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product research', summary: 'Research on absorbent materials and safety.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
     },
     {
         id: 'p-always-liners',
@@ -216,7 +216,7 @@ export const MENSTRUAL_PHYSICAL = [
         ingredients: 'Absorbent core, breathable cover.',
         effectiveness: 'Light, comfortable backup.',
         badges: ['Mainstream', 'Widely Available'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product research', summary: 'Research on absorbent materials and safety.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
     },
     {
         id: 'p-rael-liners',
@@ -238,7 +238,7 @@ export const MENSTRUAL_PHYSICAL = [
         ingredients: 'Organic cotton.',
         effectiveness: 'Light organic protection.',
         badges: ['Organic', 'Sustainable', 'WOC Owned'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product research', summary: 'Research on absorbent materials and safety.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
     },
 
     // ─── TAMPONS (Additional) ────────────────────────────
@@ -263,7 +263,7 @@ export const MENSTRUAL_PHYSICAL = [
         ingredients: 'Cotton, rayon, plastic applicator.',
         effectiveness: 'Designed to stay in place during activity.',
         badges: ['Active Lifestyle', 'Sport Design'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product research', summary: 'Research on absorbent materials and safety.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
     },
     {
         id: 'p-kotex-tampon',
@@ -286,7 +286,7 @@ export const MENSTRUAL_PHYSICAL = [
         ingredients: 'Cotton, plastic applicator.',
         effectiveness: 'Compact, easy insertion.',
         badges: ['Compact', 'Discreet'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product research', summary: 'Research on absorbent materials and safety.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
     },
     {
         id: 'p-ob-tampon',
@@ -309,7 +309,7 @@ export const MENSTRUAL_PHYSICAL = [
         ingredients: 'Cotton, compact design.',
         effectiveness: 'No applicator waste, compact packaging.',
         badges: ['Applicator-Free', 'Sustainable', 'Compact'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product research', summary: 'Research on absorbent materials and safety.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
     },
     {
         id: 'p-tampax-radiant',
@@ -332,7 +332,7 @@ export const MENSTRUAL_PHYSICAL = [
         ingredients: 'Cotton, flexible braid design.',
         effectiveness: 'LeakGuard protection, flexible fit.',
         badges: ['Mainstream Favorite', 'LeakGuard'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product research', summary: 'Research on absorbent materials and safety.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
     },
     {
         id: 'p-seventh-gen-tampon',
@@ -355,7 +355,7 @@ export const MENSTRUAL_PHYSICAL = [
         ingredients: 'Organic cotton, cardboard applicator.',
         effectiveness: 'Reliable organic option.',
         badges: ['Organic', 'Sustainable', 'Chlorine-Free'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product research', summary: 'Research on absorbent materials and safety.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
     },
     {
         id: 'p-rael-tampon',
@@ -378,7 +378,7 @@ export const MENSTRUAL_PHYSICAL = [
         ingredients: 'Organic cotton, BPA-free applicator.',
         effectiveness: 'Organic with strong absorption.',
         badges: ['Organic', 'WOC Owned', 'Sustainable'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product research', summary: 'Research on absorbent materials and safety.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
     },
 
     // ─── MENSTRUAL CUPS (Additional) ──────────────────────
@@ -403,7 +403,7 @@ export const MENSTRUAL_PHYSICAL = [
         ingredients: 'Medical-grade silicone.',
         effectiveness: 'Two firmness options for different preferences.',
         badges: ['Beginner Friendly', 'Award Winning'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cup/art-20045868', text: 'Mayo Clinic: Menstrual cup', summary: 'Clinical guidance on cup use and safety.', justification: 'Mayo Clinic is a leading clinical resource.' }] }, scientific: { links: [{ url: 'https://www.thelancet.com/journals/lanpub/article/PIIS2468-2667(19)30110-3/fulltext', text: 'Lancet: Menstrual cup', summary: 'Meta-analysis of cup safety and effectiveness.', justification: 'Lancet peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Community discussions on menstrual cups.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cup/art-20045868', text: 'Mayo Clinic: Menstrual cup', summary: 'Clinical guidance on cup use and safety.', justification: 'Mayo Clinic is a leading clinical resource.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Community discussions on menstrual cups.' }] } }
     },
     {
         id: 'p-ruby-cup',
@@ -426,7 +426,7 @@ export const MENSTRUAL_PHYSICAL = [
         ingredients: 'Medical-grade silicone.',
         effectiveness: 'Standard cup performance with social mission.',
         badges: ['Social Impact', 'Buy One Give One', 'Sustainable'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cup/art-20045868', text: 'Mayo Clinic: Menstrual cup', summary: 'Clinical guidance on cup use and safety.', justification: 'Mayo Clinic is a leading clinical resource.' }] }, scientific: { links: [{ url: 'https://www.thelancet.com/journals/lanpub/article/PIIS2468-2667(19)30110-3/fulltext', text: 'Lancet: Menstrual cup', summary: 'Meta-analysis of cup safety and effectiveness.', justification: 'Lancet peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Community discussions on menstrual cups.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cup/art-20045868', text: 'Mayo Clinic: Menstrual cup', summary: 'Clinical guidance on cup use and safety.', justification: 'Mayo Clinic is a leading clinical resource.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Community discussions on menstrual cups.' }] } }
     },
     {
         id: 'p-organicup',
@@ -449,7 +449,7 @@ export const MENSTRUAL_PHYSICAL = [
         ingredients: 'Medical-grade silicone.',
         effectiveness: 'Four sizes for different anatomies.',
         badges: ['Teen Friendly', 'Multiple Sizes', 'Sustainable'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cup/art-20045868', text: 'Mayo Clinic: Menstrual cup', summary: 'Clinical guidance on cup use and safety.', justification: 'Mayo Clinic is a leading clinical resource.' }] }, scientific: { links: [{ url: 'https://www.thelancet.com/journals/lanpub/article/PIIS2468-2667(19)30110-3/fulltext', text: 'Lancet: Menstrual cup', summary: 'Meta-analysis of cup safety and effectiveness.', justification: 'Lancet peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Community discussions on menstrual cups.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cup/art-20045868', text: 'Mayo Clinic: Menstrual cup', summary: 'Clinical guidance on cup use and safety.', justification: 'Mayo Clinic is a leading clinical resource.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Community discussions on menstrual cups.' }] } }
     },
     {
         id: 'p-femmycycle',
@@ -472,7 +472,7 @@ export const MENSTRUAL_PHYSICAL = [
         ingredients: 'Medical-grade silicone.',
         effectiveness: 'Unique ring design, high capacity.',
         badges: ['Unique Design', 'Easy Removal'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cup/art-20045868', text: 'Mayo Clinic: Menstrual cup', summary: 'Clinical guidance on cup use and safety.', justification: 'Mayo Clinic is a leading clinical resource.' }] }, scientific: { links: [{ url: 'https://www.thelancet.com/journals/lanpub/article/PIIS2468-2667(19)30110-3/fulltext', text: 'Lancet: Menstrual cup', summary: 'Meta-analysis of cup safety and effectiveness.', justification: 'Lancet peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Community discussions on menstrual cups.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cup/art-20045868', text: 'Mayo Clinic: Menstrual cup', summary: 'Clinical guidance on cup use and safety.', justification: 'Mayo Clinic is a leading clinical resource.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Community discussions on menstrual cups.' }] } }
     },
     {
         id: 'p-flex-cup',
@@ -519,7 +519,7 @@ export const MENSTRUAL_PHYSICAL = [
         ingredients: 'Medical-grade silicone.',
         effectiveness: 'Reusable, intimacy-friendly.',
         badges: ['Intimacy Friendly', 'Reusable'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.healthline.com/health/womens-health/menstrual-disc', text: 'Healthline: Menstrual disc', summary: 'Clinical guide on discs vs cups.', justification: 'Healthline is medically reviewed.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual disc research', summary: 'Research on internal menstrual products.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Community discussions on discs.' }] } }
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Community discussions on discs.' }] } }
     },
     {
         id: 'p-lumma-disc',
@@ -542,7 +542,7 @@ export const MENSTRUAL_PHYSICAL = [
         ingredients: 'Medical-grade silicone.',
         effectiveness: 'Three sizes, optional removal string.',
         badges: ['Multiple Sizes', 'Easy Removal'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.healthline.com/health/womens-health/menstrual-disc', text: 'Healthline: Menstrual disc', summary: 'Clinical guide on discs vs cups.', justification: 'Healthline is medically reviewed.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual disc research', summary: 'Research on internal menstrual products.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Community discussions on discs.' }] } }
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Community discussions on discs.' }] } }
     },
     {
         id: 'p-softdisc',
@@ -587,7 +587,7 @@ export const MENSTRUAL_PHYSICAL = [
         ingredients: 'Medical-grade silicone.',
         effectiveness: 'Expert-designed, two sizes.',
         badges: ['Expert Designed', 'Period Educator'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.healthline.com/health/womens-health/menstrual-disc', text: 'Healthline: Menstrual disc', summary: 'Clinical guide on discs vs cups.', justification: 'Healthline is medically reviewed.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual disc research', summary: 'Research on internal menstrual products.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Community discussions on discs.' }] } }
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Community discussions on discs.' }] } }
     },
 
     // ─── PERIOD UNDERWEAR (Additional) ─────────────────────
@@ -634,7 +634,7 @@ export const MENSTRUAL_PHYSICAL = [
         ingredients: 'Cotton, absorbent layer.',
         effectiveness: 'Budget-friendly absorbency.',
         badges: ['Budget Friendly', 'Teen Friendly', 'PFAS-Free'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Period underwear research', summary: 'Research on reusable textiles and PFAS.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on period underwear.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on period underwear.' }] } }
     },
     {
         id: 'p-wuka-underwear',
@@ -657,7 +657,7 @@ export const MENSTRUAL_PHYSICAL = [
         ingredients: 'Organic cotton, PFAS-free technology.',
         effectiveness: 'Sport and heavy-flow options.',
         badges: ['Sport Styles', 'Carbon Neutral', 'PFAS-Free'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Period underwear research', summary: 'Research on reusable textiles and PFAS.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on period underwear.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on period underwear.' }] } }
     },
     {
         id: 'p-tomboyx-period',
@@ -684,7 +684,7 @@ export const MENSTRUAL_PHYSICAL = [
         ingredients: 'Cotton, absorbent gusset.',
         effectiveness: 'Inclusive sizing and styles.',
         badges: ['Inclusive', 'Gender Neutral', 'LGBTQ+ Owned'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Period underwear research', summary: 'Research on reusable textiles and PFAS.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on period underwear.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on period underwear.' }] } }
     },
     {
         id: 'p-dear-kate-underwear',
@@ -711,7 +711,7 @@ export const MENSTRUAL_PHYSICAL = [
         ingredients: 'Cotton, lace, PFAS-free absorbent.',
         effectiveness: 'Fashion-forward with protection.',
         badges: ['Fashion Forward', 'PFAS-Free', 'Female Founded'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Period underwear research', summary: 'Research on reusable textiles and PFAS.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on period underwear.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on period underwear.' }] } }
     },
     {
         id: 'p-proof-period',
@@ -734,7 +734,7 @@ export const MENSTRUAL_PHYSICAL = [
         ingredients: 'Cotton, PFAS-free absorbent.',
         effectiveness: 'Period and bladder leak protection.',
         badges: ['Dual Use', 'PFAS-Free'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Period underwear research', summary: 'Research on reusable textiles and PFAS.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on period underwear.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on period underwear.' }] } }
     },
     {
         id: 'p-hanes-period',
@@ -757,6 +757,6 @@ export const MENSTRUAL_PHYSICAL = [
         ingredients: 'Cotton, absorbent layer.',
         effectiveness: 'Budget-friendly light to moderate protection.',
         badges: ['Budget Friendly', 'Trusted Brand'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Period underwear research', summary: 'Research on reusable textiles and PFAS.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on period underwear.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on period underwear.' }] } }
     },
 ];

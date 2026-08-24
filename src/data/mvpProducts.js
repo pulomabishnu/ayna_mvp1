@@ -33,7 +33,7 @@ export const MVP_PHYSICAL = [
     badges: ['UTI Focus', 'Evidence-Based'],
     verificationLinks: {
       doctor: { links: [{ url: 'https://www.mayoclinic.org/diseases-conditions/urinary-tract-infection/symptoms-causes/syc-20353453', text: 'Mayo Clinic: UTI', summary: 'Clinical overview of UTI prevention and management.', justification: 'Mayo Clinic is a leading clinical resource.' }] },
-      scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/23974689/', text: 'D-mannose and UTI prevention', summary: 'Research on D-mannose for recurrent UTI prevention.', justification: 'PubMed peer-reviewed.' }] },
+      scientific: { links: [] },
       community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/HealthyHooha/search/?q=d-mannose&restrict_sr=1', text: 'Reddit r/HealthyHooha: D-mannose', summary: 'Community discussions on D-mannose for UTI prevention.' }] }
     }
   },
@@ -61,7 +61,7 @@ export const MVP_PHYSICAL = [
     badges: ['Budget Friendly', 'Simple Formula'],
     verificationLinks: {
       doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/urinary-tract-infections', text: 'ACOG: Urinary Tract Infections', summary: 'Clinical guidance on UTI prevention and treatment.', justification: 'ACOG is the leading OB-GYN professional society.' }] },
-      scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/23974689/', text: 'D-mannose and UTI', summary: 'Research on D-mannose for bacterial adherence and UTI.', justification: 'PubMed peer-reviewed.' }] },
+      scientific: { links: [] },
       community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/HealthyHooha/search/?q=uti&restrict_sr=1', text: 'Reddit r/HealthyHooha', summary: 'Community discussions on UTI prevention and D-mannose.' }] }
     }
   },
@@ -89,7 +89,7 @@ export const MVP_PHYSICAL = [
     badges: ['OTC', 'Symptom Relief'],
     verificationLinks: {
       doctor: { links: [{ url: 'https://www.mayoclinic.org/diseases-conditions/urinary-tract-infection/diagnosis-treatment/drc-20353459', text: 'Mayo Clinic: UTI treatment', summary: 'Clinical guidance on when to seek care and OTC options.', justification: 'Mayo Clinic is a leading clinical resource.' }] },
-      scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/12605637/', text: 'Methenamine for urinary symptoms', summary: 'Evidence on methenamine for urinary tract.', justification: 'PubMed peer-reviewed.' }] },
+      scientific: { links: [] },
       community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/HealthyHooha/search/?q=cystex&restrict_sr=1', text: 'Reddit r/HealthyHooha: Cystex', summary: 'Community discussions on OTC UTI symptom relief.' }] }
     }
   },
@@ -124,7 +124,7 @@ export const MVP_PHYSICAL = [
     badges: ['Organic', 'B-Corp', 'Sustainable'],
     verificationLinks: {
       doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care and product choices.', justification: 'ACOG is the leading OB-GYN professional society.' }] },
-      scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product safety', summary: 'Research on absorbent materials and skin contact.', justification: 'PubMed peer-reviewed.' }] },
+      scientific: { links: [] },
       community: { links: [
         { platform: 'reddit', url: 'https://www.reddit.com/r/periods/search/?q=organic+pad&restrict_sr=1', text: 'Reddit r/periods: organic pads', summary: 'Community discussions on organic menstrual products.' },
         { platform: 'other', url: 'https://www.mamavation.com/beauty/pfas-forever-chemicals-sanitary-pads-incontinence-pads.html', text: 'Mamavation: PFAS testing in pads & liners', summary: 'Independent EPA-certified lab testing of sanitary pads and liners for organic fluorine (PFAS indicator), including a Cora liner product.' },
@@ -161,7 +161,7 @@ export const MVP_PHYSICAL = [
     badges: ['Organic', 'B-Corp', 'Sustainable'],
     verificationLinks: {
       doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care and product choices.', justification: 'ACOG is the leading OB-GYN professional society.' }] },
-      scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product safety', summary: 'Research on absorbent materials and skin contact.', justification: 'PubMed peer-reviewed.' }] },
+      scientific: { links: [] },
       community: { links: [
         { platform: 'reddit', url: 'https://www.reddit.com/r/periods/search/?q=organic+tampon&restrict_sr=1', text: 'Reddit r/periods: organic tampons', summary: 'Community discussions on organic menstrual products.' },
         { platform: 'wirecutter', url: 'https://www.nytimes.com/wirecutter/reviews/best-tampons/', text: 'Wirecutter: Best Tampons', summary: 'NYT Wirecutter independent tampon testing and recommendations.' },
@@ -193,7 +193,7 @@ export const MVP_PHYSICAL = [
     ingredients: 'Myo-inositol, D-chiro inositol.',
     effectiveness: 'Evidence supports use in PCOS for metabolic and cycle benefits.',
     badges: ['PCOS Focus', 'Research Backed'],
-    verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/polycystic-ovary-syndrome', text: 'ACOG: PCOS', summary: 'Clinical guidance on PCOS and inositol supplementation.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/26983764/', text: 'Inositol and PCOS', summary: 'Review of myo-inositol and D-chiro inositol in PCOS.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/PCOS/search/?q=inositol&restrict_sr=1', text: 'Reddit r/PCOS: inositol', summary: 'Community discussions on inositol for PCOS.' }] } }
+    verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/PCOS/search/?q=inositol&restrict_sr=1', text: 'Reddit r/PCOS: inositol', summary: 'Community discussions on inositol for PCOS.' }] } }
   },
   {
     id: 'p-spearmint-pcos',
@@ -217,7 +217,7 @@ export const MVP_PHYSICAL = [
     ingredients: 'Spearmint leaf.',
     effectiveness: 'Small studies support anti-androgen effects in PCOS.',
     badges: ['Natural', 'PCOS Support'],
-    verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/polycystic-ovary-syndrome', text: 'ACOG: PCOS', summary: 'Clinical guidance on PCOS and complementary approaches.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/19585478/', text: 'Spearmint and androgens', summary: 'Study on spearmint tea and testosterone in PCOS.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/PCOS/search/?q=spearmint&restrict_sr=1', text: 'Reddit r/PCOS: spearmint', summary: 'Community discussions on spearmint for PCOS.' }] } }
+    verificationLinks: { doctor: { links: [] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/19585478/', text: 'Spearmint and androgens', summary: 'Study on spearmint tea and testosterone in PCOS.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/PCOS/search/?q=spearmint&restrict_sr=1', text: 'Reddit r/PCOS: spearmint', summary: 'Community discussions on spearmint for PCOS.' }] } }
   },
   // ─── ENDOMETRIOSIS ───────────────────────────────────────
   {
@@ -280,8 +280,7 @@ export const MVP_PHYSICAL = [
       },
       scientific: {
         links: [
-          { url: 'https://pubmed.ncbi.nlm.nih.gov/25051278/', text: 'Fennel for functional dyspepsia', summary: 'RCT of fennel for functional gastrointestinal symptoms.', justification: 'PubMed peer-reviewed.' },
-          { url: 'https://pubmed.ncbi.nlm.nih.gov/19585478/', text: 'Ginger for GI motility', summary: 'Research on ginger and gastric emptying; relevance to bloating.', justification: 'PubMed peer-reviewed.' }
+          
         ]
       },
       community: {
@@ -320,13 +319,12 @@ export const MVP_PHYSICAL = [
     verificationLinks: {
       doctor: {
         links: [
-          { url: 'https://www.hopkinsmedicine.org/health/wellness-and-prevention/bloating-causes-and-prevention-tips', text: 'Johns Hopkins: Bloating', summary: 'Clinical overview of bloating causes and management, including diet and supplements.', justification: 'Johns Hopkins is a leading medical institution.' }
+          
         ]
       },
       scientific: {
         links: [
-          { url: 'https://pubmed.ncbi.nlm.nih.gov/23612738/', text: 'Digestive enzymes and functional GI symptoms', summary: 'Review of enzyme supplementation for digestive discomfort.', justification: 'PubMed peer-reviewed.' },
-          { url: 'https://pubmed.ncbi.nlm.nih.gov/19585478/', text: 'Ginger and gastric function', summary: 'Research on ginger for gastric emptying and GI symptoms.', justification: 'PubMed peer-reviewed.' }
+          
         ]
       },
       community: {
@@ -363,8 +361,8 @@ export const MVP_PHYSICAL = [
     badges: ['Pelvic Health', 'Reusable'],
     recommendationWhyDetail: 'Kegel trainers like Luna Beads use progressive vaginal weights to strengthen the pelvic floor muscles. The same muscles targeted by Kegel exercises your OB-GYN or PT might recommend for leakage, prolapse prevention, or pelvic discomfort. They work by adding gentle resistance you contract against, building strength over weeks of daily use. They\'re different from Kegel apps or biofeedback devices. No technology, just weighted silicone balls that give your muscles something to work against.',
     verificationLinks: {
-      doctor: { links: [{ url: 'https://www.health.harvard.edu/womens-health/step-by-step-guide-to-kegel-exercises', text: 'Harvard Health: Kegel exercises', summary: 'Clinical guide to pelvic floor muscle training.', justification: 'Harvard Health is a trusted medical resource.' }] },
-      scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/22453472/', text: 'Pelvic floor muscle training', summary: 'Evidence on Kegel exercises for incontinence.', justification: 'PubMed peer-reviewed.' }] },
+      doctor: { links: [] },
+      scientific: { links: [] },
       community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/Incontinence/search/?q=kegel&restrict_sr=1', text: 'Reddit: Kegel devices', summary: 'Community discussions on pelvic floor trainers.' }] }
     }
   },
@@ -418,8 +416,8 @@ export const MVP_PHYSICAL = [
     effectiveness: 'Popular OTC option; individual response varies.',
     badges: ['Menopause Support', 'Non-Hormonal'],
     verificationLinks: {
-      doctor: { links: [{ url: 'https://www.menopause.org/for-women/menopause-faqs-management-of-menopause-symptoms', text: 'NAMS: Menopause symptoms', summary: 'Clinical guidance on non-hormonal options for menopause.', justification: 'NAMS is the leading menopause society.' }] },
-      scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/16897664/', text: 'Phytoestrogens and menopause', summary: 'Review of soy isoflavones for vasomotor symptoms.', justification: 'PubMed peer-reviewed.' }] },
+      doctor: { links: [] },
+      scientific: { links: [] },
       community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/Menopause/search/?q=estroven&restrict_sr=1', text: 'Reddit r/Menopause: Estroven', summary: 'Community discussions on Estroven and menopause supplements.' }] }
     }
   },
@@ -447,7 +445,7 @@ export const MVP_PHYSICAL = [
     badges: ['Herbal', 'Menopause'],
     verificationLinks: {
       doctor: { links: [{ url: 'https://www.nccih.nih.gov/health/black-cohosh', text: 'NIH: Black cohosh', summary: 'NIH overview of black cohosh for menopause symptoms.', justification: 'NIH NCCIH is the federal authority on complementary health.' }] },
-      scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/16897664/', text: 'Black cohosh for hot flashes', summary: 'Review of black cohosh and vasomotor symptoms.', justification: 'PubMed peer-reviewed.' }] },
+      scientific: { links: [] },
       community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/Menopause/search/?q=black+cohosh&restrict_sr=1', text: 'Reddit r/Menopause: black cohosh', summary: 'Community discussions on Remifemin and hot flashes.' }] }
     }
   },
@@ -473,7 +471,7 @@ export const MVP_PHYSICAL = [
     ingredients: 'Creatine monohydrate (typically 3–5 g daily).',
     effectiveness: 'Strong evidence for strength and lean mass; growing evidence for cognitive and sleep benefits in menopausal women.',
     badges: ['Evidence-Based', 'Perimenopause Support'],
-    verificationLinks: { doctor: { links: [{ url: 'https://www.menopause.org/for-women/menopause-faqs-management-of-menopause-symptoms', text: 'NAMS: Menopause and exercise', summary: 'Clinical guidance on strength and supplements in perimenopause.', justification: 'NAMS is the leading menopause society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/16897664/', text: 'Creatine and women', summary: 'Research on creatine for muscle and cognition in women.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/Menopause/search/?q=creatine&restrict_sr=1', text: 'Reddit r/Menopause: creatine', summary: 'Community discussions on creatine for perimenopause.' }] } }
+    verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/Menopause/search/?q=creatine&restrict_sr=1', text: 'Reddit r/Menopause: creatine', summary: 'Community discussions on creatine for perimenopause.' }] } }
   }
 ];
 
@@ -505,7 +503,7 @@ export const MVP_DIGITAL = [
     communityReview: 'Community sentiment is mixed. Many Reddit r/birthcontrol users value the convenience of prescription delivery, but independent review platforms show a real gap versus the company\'s own ratings, with recurring complaints about shipping delays, insurance billing, and cancellation difficulty. A 2019 New York Times report also found Nurx had reshipped previously returned, unopened birth control pills to new customers, a practice the company says it ended in 2018.',
     effectiveness: 'Same efficacy as pharmacy-filled prescriptions.',
     badges: ['Telehealth', 'Privacy'],
-    verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/combined-hormonal-birth-control', text: 'ACOG: Birth control', summary: 'Clinical guidance on contraception and access.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/32324464/', text: 'Telehealth and contraception', summary: 'Evidence on telehealth for prescription access.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/birthcontrol/search/?q=nurx&restrict_sr=1', text: 'Reddit r/birthcontrol: Nurx', summary: 'Community discussions on telehealth birth control.' }] } }
+    verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/birthcontrol/search/?q=nurx&restrict_sr=1', text: 'Reddit r/birthcontrol: Nurx', summary: 'Community discussions on telehealth birth control.' }] } }
   },
   {
     id: 'd-wisp-bc',
@@ -530,7 +528,7 @@ export const MVP_DIGITAL = [
     communityReview: 'Community discussions on Reddit r/birthcontrol note fast turnaround and discreet packaging.',
     effectiveness: 'Same efficacy as pharmacy-filled prescriptions.',
     badges: ['Telehealth', 'Privacy'],
-    verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/combined-hormonal-birth-control', text: 'ACOG: Birth control', summary: 'Clinical guidance on contraception and access.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/32324464/', text: 'Telehealth and contraception', summary: 'Evidence on telehealth for prescription access.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/birthcontrol/search/?q=wisp&restrict_sr=1', text: 'Reddit r/birthcontrol: Wisp', summary: 'Community discussions on telehealth birth control.' }] } }
+    verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/birthcontrol/search/?q=wisp&restrict_sr=1', text: 'Reddit r/birthcontrol: Wisp', summary: 'Community discussions on telehealth birth control.' }] } }
   },
   {
     id: 'd-happi-pelvic',
@@ -561,7 +559,7 @@ export const MVP_DIGITAL = [
     effectiveness: 'Structured programs for pelvic floor strength.',
     badges: ['Pelvic Health', 'PT Recommended'],
     recommendationWhyDetail: 'Happi guides you through pelvic floor exercises the way a physical therapist would. With timing, breathing cues, and progressive difficulty. The pelvic floor is a hammock of muscles you can\'t see or feel easily, which makes Kegels notoriously easy to do wrong (many people inadvertently bear down instead of lifting). An app with structured programs and reminders dramatically improves consistency, which is what makes pelvic floor training effective over time.',
-    verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/pelvic-floor-disorders', text: 'ACOG: Pelvic floor', summary: 'Clinical guidance on pelvic floor exercises and apps.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/26989760/', text: 'Pelvic floor training', summary: 'Evidence on Kegels and app-guided programs.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/PelvicFloor/search/?q=app&restrict_sr=1', text: 'Reddit r/PelvicFloor', summary: 'Community discussions on pelvic floor apps.' }] } }
+    verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/PelvicFloor/search/?q=app&restrict_sr=1', text: 'Reddit r/PelvicFloor', summary: 'Community discussions on pelvic floor apps.' }] } }
   },
   {
     id: 'd-hers',
@@ -586,7 +584,7 @@ export const MVP_DIGITAL = [
     communityReview: 'Community discussions on Reddit note convenience and discrete access to medication.',
     effectiveness: 'Licensed clinicians; prescriptions same as in-person.',
     badges: ['Telehealth', 'Mental Health'],
-    verificationLinks: { doctor: { links: [{ url: 'https://www.apa.org/ptsd/guide', text: 'APA: Mental health treatment', summary: 'Clinical guidance on telehealth and mental health access.', justification: 'APA is the leading psychology association.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/32324464/', text: 'Telehealth and mental health', summary: 'Evidence on virtual care for anxiety and depression.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/mentalhealth/search/?q=hers&restrict_sr=1', text: 'Reddit r/mentalhealth', summary: 'Community discussions on Hers and telehealth.' }] } }
+    verificationLinks: { doctor: { links: [{ url: 'https://www.apa.org/ptsd/guide', text: 'APA: Mental health treatment', summary: 'Clinical guidance on telehealth and mental health access.', justification: 'APA is the leading psychology association.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/mentalhealth/search/?q=hers&restrict_sr=1', text: 'Reddit r/mentalhealth', summary: 'Community discussions on Hers and telehealth.' }] } }
   },
   {
     id: 'd-midi-health',
@@ -612,8 +610,8 @@ export const MVP_DIGITAL = [
     effectiveness: 'Licensed clinicians; prescriptions and follow-up same framework as in-person menopause care when clinically indicated.',
     badges: ['Telehealth', 'Menopause'],
     verificationLinks: {
-      doctor: { links: [{ url: 'https://www.menopause.org/for-women/menopause-faqs-management-of-menopause-symptoms', text: 'NAMS: Managing menopause symptoms', summary: 'Clinical guidance on menopause care and treatment options.', justification: 'NAMS is the leading menopause society.' }] },
-      scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/32324464/', text: 'Telehealth in women\'s health', summary: 'Evidence on virtual care access for chronic and specialty needs.', justification: 'PubMed peer-reviewed.' }] },
+      doctor: { links: [] },
+      scientific: { links: [] },
       community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/Menopause/search/?q=telehealth&restrict_sr=1', text: 'Reddit r/Menopause: telehealth', summary: 'Community discussions on virtual menopause care.' }] }
     }
   },

@@ -95,8 +95,7 @@ export const PHYSICAL_PRODUCTS = [
             scientific: {
                 aiSummary: "Independent and regulatory oversight confirms that FlexFoam technology meets FDA safety standards for medical devices. Recent independent research highlights the effectiveness of polyethylene blends in moisture-wicking, though sustainability remains a scientific trade-off.",
                 links: [
-                    { url: 'https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-how-use-them-safely', text: 'FDA: Tampon & Menstrual Product Safety', summary: 'The FDA regulates pads and tampons as medical devices and monitors safety.', justification: 'The FDA is the federal authority for medical device safety in the US.' },
-                    { url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Study on Pad Absorption', summary: 'Research comparing absorbent materials to traditional wood-pulp based methods.', justification: 'PubMed is the premier database for peer-reviewed biomedical research.' }
+                    { url: 'https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-how-use-them-safely', text: 'FDA: Tampon & Menstrual Product Safety', summary: 'The FDA regulates pads and tampons as medical devices and monitors safety.', justification: 'The FDA is the federal authority for medical device safety in the US.' }
                 ]
             },
             community: {
@@ -146,15 +145,13 @@ export const PHYSICAL_PRODUCTS = [
             doctor: {
                 aiSummary: "The medical consensus on Rael is highly favorable for patients with sensitive skin. OB-GYNs specifically endorse the 'chlorine-free' and 'organic' components as being protective against vulvar dermatitis. Clinicians note that while the absorption is high, it may not match synthetic 'ultra-absorbent' pads for heavy athletes.",
                 links: [
-                    { url: 'https://www.healthline.com/health/womens-health/organic-pads', text: 'OB-GYN Review of Organic Pads', summary: 'Doctors note that organic cotton reduces the risk of contact dermatitis and irritation.', justification: 'Healthline is a medically-vetted health information platform with rigorous editorial standards.' },
-                    { url: 'https://www.hopkinsmedicine.org/health/wellness-and-prevention/feminine-hygiene-products', text: 'Johns Hopkins: Hygiene Safety', summary: 'Expert review of materials used in modern organic menstrual care.', justification: 'Johns Hopkins Medicine is a world-class academic medical center providing authoritative health research.' }
+                    
                 ]
             },
             scientific: {
                 aiSummary: "Scientific literature supports the claim that organic cotton pads, like Rael, reduce the presence of endocrine disruptors. Independent testing shows zero levels of PFAS and chlorine residues, confirming the brand's commitment to material safety.",
                 links: [
-                    { url: 'https://www.consumerreports.org/health/menstrual-products/should-you-switch-to-organic-tampons-and-pads-a2599295540/', text: 'Consumer Reports: Organic Period Care', summary: 'Investigation into material safety and chemical testing of organic brands.', justification: 'Consumer Reports is an independent non-profit that uses rigorous laboratory testing for product safety.' },
-                    { url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Environmental Impact of Menstrual Products', summary: 'Comparative study on the biodegradability of organic cotton vs. synthetic pads.', justification: 'PubMed is a globally respected repository for peer-reviewed medical and scientific literature.' }
+                    
                 ]
             },
             community: {
@@ -205,13 +202,13 @@ export const PHYSICAL_PRODUCTS = [
             doctor: {
                 aiSummary: "Ayna has investigated clinical perspectives on Honey Pot's 'herbal-infused' pads. While medical professionals generally support the use of plant-based materials, some dermatologists warn that direct contact with essential oils like mint and lavender can cause vulvar contact dermatitis in sensitive individuals. No specific clinical studies on Honey Pot's formula were found.",
                 links: [
-                    { url: 'https://www.everydayhealth.com/pms/herbal-remedies-for-pms.aspx', text: 'Herbal Comfort in Period Care', summary: 'OB-GYNs suggest cooling herbs like mint and lavender for period pain.', justification: 'Everyday Health is a top-tier health news portal with articles reviewed by a medical advisory board.' }
+                    
                 ]
             },
             scientific: {
                 aiSummary: "Scientific inquiry into herbal cooling for period pain is limited. While peppermint oil has documented topical analgesic effects, its long-term application in the vulvar region via menstrual products has not been rigorously studied for safety or effectiveness compared to standard analgesic methods.",
                 links: [
-                    { url: 'https://pubmed.ncbi.nlm.nih.gov/22081622/', text: 'Study on Topical Analgesics', summary: 'Research on the efficacy of peppermint-based cooling for pain relief.', justification: 'PubMed is the primary source for global biomedical research and clinical trial data.' }
+                    
                 ]
             },
             community: {
@@ -258,15 +255,13 @@ export const PHYSICAL_PRODUCTS = [
         effectiveness: 'Highly absorbent for heavy days. Compact applicator is great for on-the-go.',
         badges: ['Female-Owned', 'B-Corp', 'Sustainable'],
         verificationLinks: {
-            doctor: [
-                { url: 'https://www.healthline.com/health/womens-health/organic-pads', text: 'Healthline: Organic Period Care', summary: 'Medical professionals highlight the reduced risk of irritation when using organic cotton.' },
-                { url: 'https://www.hopkinsmedicine.org/health/wellness-and-prevention/feminine-hygiene-products', text: 'Johns Hopkins: Feminine Hygiene & Safety', summary: 'Clinical advice on tampon and menstrual product materials and health.' }
-            ],
-            scientific: [
-                { url: 'https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-how-use-them-safely', text: 'FDA: Tampon Safety', summary: 'Federal safety standards for tampon absorption and materials.' },
-                { url: 'https://www.healthline.com/health/womens-health/organic-tampons', text: 'Healthline: Best Organic Tampons', summary: 'Material analysis and safety for organic tampon brands.' }
-            ],
-            community: [
+            doctor: { links: [
+                
+            ] },
+            scientific: { links: [
+                { url: 'https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-how-use-them-safely', text: 'FDA: Tampon Safety', summary: 'Federal safety standards for tampon absorption and materials.' }
+            ] },
+            community: { links: [
                 { platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Discussions on organic tampons and subscriptions.' },
                 { platform: 'reddit', url: 'https://www.reddit.com/r/periods/search/?q=LOLA+tampons&restrict_sr=1', text: 'Reddit r/periods: LOLA search', summary: 'Posts about LOLA subscription and organic tampons.' },
                 { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=LOLA%20tampons', text: 'TikTok: LOLA tampons', summary: 'Real-world testing and subscription unboxing.' },
@@ -274,7 +269,7 @@ export const PHYSICAL_PRODUCTS = [
                 { platform: 'instagram', url: 'https://www.instagram.com/mylola/', text: 'LOLA on Instagram', summary: 'Brand reels and community posts.' },
                 { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=LOLA%20tampons', text: 'Facebook: LOLA tampons', summary: 'Group and public discussions.' },
                 { platform: 'wirecutter', url: 'https://www.nytimes.com/wirecutter/reviews/best-tampons/', text: 'Wirecutter: Best Tampons', summary: 'NYT Wirecutter independent tampon testing and recommendations.' },
-            ]
+            ] }
         }
     },
     // ─── CUPS ────────────────────────────────────────────
@@ -307,15 +302,13 @@ export const PHYSICAL_PRODUCTS = [
         effectiveness: 'Holds 25mL (regular) to 37mL (large). Significantly more than tampons. Up to 12-hour wear.',
         badges: ['Female-Owned', 'B-Corp', 'Sustainable'],
         verificationLinks: {
-            doctor: [
-                { url: 'https://saalt.com/pages/our-story', text: 'Saalt Medical Advisory', summary: 'Saalt works with OB-GYNs to ensure their silicone is body-safe.' },
+            doctor: { links: [
                 { url: 'https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cup/art-20045868', text: 'Mayo Clinic: Using a Menstrual Cup', summary: 'Comprehensive guide to the safe use and cleaning of cups.' }
-            ],
-            scientific: [
-                { url: 'https://www.thelancet.com/journals/lanpub/article/PIIS2468-2667(19)30110-3/fulltext', text: 'Lancet Study on Menstrual Cups', summary: 'The most extensive meta-analysis of menstrual cup safety and effectiveness published to date.' },
-                { url: 'https://pubmed.ncbi.nlm.nih.gov/22453472/', text: 'Clinical Safety of Cups', summary: 'Research confirming clinical safety of medical-grade silicone cups.' }
-            ],
-            community: [
+            ] },
+            scientific: { links: [
+                
+            ] },
+            community: { links: [
                 { platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Cup comparisons and Saalt recommendations.' },
                 { platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/search/?q=saalt&restrict_sr=1', text: 'Reddit r/menstrualcups: Saalt search', summary: 'Posts and tips specific to Saalt cup.' },
                 { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=saalt%20menstrual%20cup', text: 'TikTok: Saalt cup', summary: 'Instructional videos and beginner tips.' },
@@ -323,7 +316,7 @@ export const PHYSICAL_PRODUCTS = [
                 { platform: 'instagram', url: 'https://www.instagram.com/saalt_co/', text: 'Saalt on Instagram', summary: 'Brand reels and cup education.' },
                 { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=saalt%20menstrual%20cup', text: 'Facebook: Saalt cup', summary: 'Community discussions and tips.' },
                 { platform: 'wirecutter', url: 'https://www.nytimes.com/wirecutter/reviews/best-menstrual-cup/', text: 'Wirecutter: Best Menstrual Cups & Discs', summary: 'NYT Wirecutter testing of 50+ menstrual cups and discs. Saalt Disc is a top pick.' },
-            ]
+            ] }
         }
     },
     {
@@ -359,9 +352,9 @@ export const PHYSICAL_PRODUCTS = [
         doctorOpinion: 'Iron supplementation should be confirmed with bloodwork before starting. Over-supplementation can cause harm. Take with food and vitamin C to improve absorption and reduce GI side effects.',
         communityReview: 'Well-rated for effectiveness and price. Common feedback: take with food and vitamin C to reduce stomach upset, and expect darker stools.',
         verificationLinks: {
-            scientific: [
-                { url: 'https://ods.od.nih.gov/factsheets/Iron-HealthProfessional/', text: 'NIH ODS: Iron Fact Sheet', summary: 'Comprehensive clinical reference on iron deficiency, supplementation, and safety.' }
-            ]
+            scientific: { links: [
+                
+            ] }
         }
     },
     {
@@ -397,9 +390,9 @@ export const PHYSICAL_PRODUCTS = [
         doctorOpinion: 'Vitamin D deficiency is widespread and often goes undetected. Confirming your level with a 25(OH)D blood test before starting high-dose supplementation is recommended.',
         communityReview: 'Highly rated. Users report improvements in mood, energy, and general wellbeing. Consistently well-reviewed for quality and value.',
         verificationLinks: {
-            scientific: [
-                { url: 'https://ods.od.nih.gov/factsheets/VitaminD-HealthProfessional/', text: 'NIH ODS: Vitamin D Fact Sheet', summary: 'Clinical reference on vitamin D deficiency, supplementation, and safety thresholds.' }
-            ]
+            scientific: { links: [
+                
+            ] }
         }
     },
     {
@@ -436,12 +429,12 @@ export const PHYSICAL_PRODUCTS = [
         doctorOpinion: 'Steam sterilization is the safest method for menstrual cup cleaning between cycles.',
         communityReview: 'Highly rated by Saalt cup users for convenience and peace of mind between cycles.',
         verificationLinks: {
-            doctor: [
+            doctor: { links: [
                 { url: 'https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cup/art-20045868', text: 'Mayo Clinic: Menstrual Cup Care', summary: 'Guidance on proper cleaning and sterilization of menstrual cups.' }
-            ],
-            community: [
+            ] },
+            community: { links: [
                 { platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/search/?q=steamer', text: 'Reddit r/menstrualcups: steamer discussion', summary: 'Community reviews of cup sterilization methods.' }
-            ]
+            ] }
         }
     },
     // ─── DISCS ───────────────────────────────────────────
@@ -474,15 +467,13 @@ export const PHYSICAL_PRODUCTS = [
         effectiveness: 'Holds up to 6 tampons worth. Unique positioning means fewer cramps for some users.',
         badges: ['Intimacy Friendly', 'High Capacity'],
         verificationLinks: {
-            doctor: [
-                { url: 'https://flexfits.com/pages/how-it-works', text: 'Flex: How Discs Work', summary: 'Explanation of disc position and 12-hour wear.' },
-                { url: 'https://www.healthline.com/health/womens-health/menstrual-disc', text: 'Healthline: Menstrual Discs', summary: 'Doctor-reviewed guide on how to use discs vs cups.' }
-            ],
-            scientific: [
-                { url: 'https://www.hopkinsmedicine.org/health/wellness-and-prevention/feminine-hygiene-products', text: 'Johns Hopkins: Feminine Hygiene', summary: 'Clinical context on internal collection devices and safety.' },
-                { url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Vaginal Health and Internal Devices', summary: 'Study on the safety of materials used in menstrual discs.' }
-            ],
-            community: [
+            doctor: { links: [
+                
+            ] },
+            scientific: { links: [
+                
+            ] },
+            community: { links: [
                 { platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Disc vs cup comparisons and Flex experiences.' },
                 { platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/search/?q=flex+disc&restrict_sr=1', text: 'Reddit r/menstrualcups: Flex disc', summary: 'Threads on Flex disc and period intimacy.' },
                 { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=flex%20disc%20review', text: 'TikTok: Flex disc', summary: 'Short-form reviews and mess-free period experiences.' },
@@ -490,7 +481,7 @@ export const PHYSICAL_PRODUCTS = [
                 { platform: 'instagram', url: 'https://www.instagram.com/flexfits/', text: 'Flex on Instagram', summary: 'Brand reels and disc education.' },
                 { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=flex%20period%20disc', text: 'Facebook: Flex disc', summary: 'Group and public post discussions.' },
                 { platform: 'wirecutter', url: 'https://www.nytimes.com/wirecutter/reviews/best-menstrual-cup/', text: 'Wirecutter: Best Menstrual Cups & Discs', summary: 'NYT Wirecutter testing of 50+ menstrual cups and discs. Flex Reusable Disc recommended for heavier flows.' },
-            ]
+            ] }
         }
     },
     // ─── PERIOD UNDERWEAR ────────────────────────────────
@@ -523,15 +514,13 @@ export const PHYSICAL_PRODUCTS = [
         effectiveness: 'Absorbs 2–5 regular tampons worth depending on style. Best as backup or for light days.',
         badges: ['Sustainable', 'B-Corp'],
         verificationLinks: {
-            doctor: [
-                { url: 'https://www.health.harvard.edu/blog/pfas-in-period-underwear-what-you-need-to-know-202302142890', text: 'Harvard Health: PFAS in Period Underwear', summary: 'Doctors discuss safety of period underwear following the settlement.' },
+            doctor: { links: [
                 { url: 'https://www.nytimes.com/wirecutter/reviews/best-period-underwear/', text: 'Wirecutter: Period Underwear', summary: 'Independent review and material safety analysis of period underwear.' }
-            ],
-            scientific: [
-                { url: 'https://www.sgs.com/en/consumer-goods-retail/softlines-and-accessories', text: 'SGS Textile & Softlines Testing', summary: 'Independent lab testing for textiles and product safety.' },
-                { url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Environmental Lifecycle of Textiles', summary: 'Study on the environmental benefit of reusable period underwear vs disposables.' }
-            ],
-            community: [
+            ] },
+            scientific: { links: [
+                { url: 'https://www.sgs.com/en/consumer-goods-retail/softlines-and-accessories', text: 'SGS Textile & Softlines Testing', summary: 'Independent lab testing for textiles and product safety.' }
+            ] },
+            community: { links: [
                 { platform: 'reddit', url: 'https://www.reddit.com/r/WomensHealth/', text: 'Reddit r/WomensHealth', summary: 'Period underwear and PFAS-free discussions.' },
                 { platform: 'reddit', url: 'https://www.reddit.com/r/WomensHealth/search/?q=thinx&restrict_sr=1', text: 'Reddit r/WomensHealth: Thinx', summary: 'Posts on Thinx and the PFAS-free line.' },
                 { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=thinx%20period%20underwear', text: 'TikTok: Thinx', summary: 'Style try-ons and absorbency tests.' },
@@ -540,7 +529,7 @@ export const PHYSICAL_PRODUCTS = [
                 { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=thinx%20period%20underwear', text: 'Facebook: Thinx', summary: 'Community discussions and recommendations.' },
                 { platform: 'wirecutter', url: 'https://www.nytimes.com/wirecutter/reviews/best-period-underwear/', text: 'Wirecutter: Best Period Underwear', summary: 'NYT Wirecutter independent testing of 50+ styles across 25 brands, including PFAS analysis.' },
                 { platform: 'instyle', url: 'https://www.instyle.com/fashion/clothing/the-best-period-underwear', text: 'InStyle: Best Period Underwear', summary: 'InStyle tested and reviewed period underwear picks including Thinx.' },
-            ]
+            ] }
         }
     },
     // ─── SUPPLEMENTS ─────────────────────────────────────
@@ -572,8 +561,6 @@ export const PHYSICAL_PRODUCTS = [
         effectiveness: 'Clinical studies show 200-400mg magnesium daily reduces menstrual pain by 30-50%. Also improves sleep quality.',
         badges: ['Clinically Validated', 'USP Verified'],
         verificationLinks: {
-            doctor: { url: 'https://drbrighten.com/magnesium-for-period-cramps/', text: 'Dr. Jolene Brighten on Magnesium', summary: 'A detailed look by a leading expert in women\'s health on why magnesium is the "miracle mineral" for period pain.' },
-            scientific: { url: 'https://pubmed.ncbi.nlm.nih.gov/27000438/', text: 'Cochrane: Supplements for Dysmenorrhea', summary: 'A high-level review of clinical trials indicating that magnesium is more effective than placebo for menstrual pain relief.' },
             community: {
                 aiSummary: "Reddit and health forums report strong anecdotal support for magnesium glycinate for cramps, sleep, and anxiety. Nature Made is frequently recommended for USP verification.",
                 links: [
@@ -615,8 +602,6 @@ export const PHYSICAL_PRODUCTS = [
         effectiveness: 'Studies show Ubiquinol improves oocyte quality and mitochondrial function, potentially improving fertility outcomes.',
         badges: ['Clinically Validated', 'High Bioavailability'],
         verificationLinks: {
-            doctor: { url: 'https://drbrighten.com/coq10-for-fertility/', text: 'Dr. Jolene Brighten on CoQ10', summary: 'Expert explanation of how CoQ10/Ubiquinol supports egg health and hormone balance.' },
-            scientific: { url: 'https://pubmed.ncbi.nlm.nih.gov/29587888/', text: 'Coenzyme Q10 and oocyte quality', summary: 'A review of clinical findings showing that CoQ10 supplementation can improve ovarian response and oocyte quality in older women.' },
             community: {
                 aiSummary: "Fertility and TTC communities frequently recommend Ubiquinol (CoQ10) for egg quality. Nature Made is a commonly cited brand for quality and availability.",
                 links: [
@@ -656,15 +641,13 @@ export const DIGITAL_PRODUCTS = [
         integrations: ['Apple Health'],
         badges: ['Privacy Focused', 'Research Backed'],
         verificationLinks: {
-            doctor: [
-                { url: 'https://helloclue.com/articles/cycle-a-z/what-is-clue', text: 'Clue Scientific Advisory Board', summary: 'Clue is developed with an in-house team of scientists and clinicians from Stanford and Oxford.' },
+            doctor: { links: [
                 { url: 'https://www.acog.org/search#q=period%20tracking%20apps', text: 'ACOG: Digital Health', summary: 'Clinical perspective on the role of period trackers in patient care.' }
-            ],
-            scientific: [
-                { url: 'https://www.nature.com/articles/s41746-019-0118-z', text: 'Nature: Research Study', summary: 'Peer-reviewed study using Clue data to understand menstrual cycle variability.' },
-                { url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Digital Health Validation', summary: 'Research on the accuracy of period prediction algorithms.' }
-            ],
-            community: [
+            ] },
+            scientific: { links: [
+                
+            ] },
+            community: { links: [
                 { platform: 'reddit', url: 'https://www.reddit.com/r/WomensHealth/', text: 'Reddit r/WomensHealth', summary: 'Discussions on period trackers and app privacy.' },
                 { platform: 'reddit', url: 'https://www.reddit.com/r/WomensHealth/search/?q=clue+app&restrict_sr=1', text: 'Reddit r/WomensHealth: Clue', summary: 'User discussions on Clue privacy and UI.' },
                 { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=clue%20period%20tracker', text: 'TikTok: Clue tracker', summary: 'Short-form reviews and privacy-focused period app content.' },
@@ -672,7 +655,7 @@ export const DIGITAL_PRODUCTS = [
                 { platform: 'instagram', url: 'https://www.instagram.com/clueapp/', text: 'Clue on Instagram', summary: 'Educational content and community; 1M+ followers.' },
                 { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=clue%20period%20tracker', text: 'Facebook: Clue tracker', summary: 'Group and public discussions on period apps.' },
                 { platform: 'wirecutter', url: 'https://www.nytimes.com/wirecutter/reviews/the-best-fitness-trackers/', text: 'Wirecutter: Best Fitness Trackers', summary: 'NYT Wirecutter testing of 52+ fitness trackers for accuracy and comfort.' },
-            ]
+            ] }
         }
     },
     {
@@ -698,18 +681,17 @@ export const DIGITAL_PRODUCTS = [
         integrations: ['Apple Health'],
         badges: ['Female-Owned', 'Top Privacy'],
         verificationLinks: {
-            doctor: [
-                { url: 'https://stardust.app/privacy', text: 'Stardust Privacy Policy', summary: 'Detailed breakdown of their end-to-end encryption model.' },
-                { url: 'https://www.wired.com/story/period-tracking-apps-privacy/', text: 'Wired: Period App Privacy', summary: 'Analysis of Stardust\'s security in the context of reproductive health privacy.' }
-            ],
-            community: [
+            doctor: { links: [
+                { url: 'https://stardust.app/privacy', text: 'Stardust Privacy Policy', summary: 'Detailed breakdown of their end-to-end encryption model.' }
+            ] },
+            community: { links: [
                 { platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Discussions on period trackers and privacy.' },
                 { platform: 'reddit', url: 'https://www.reddit.com/r/periods/search/?q=stardust+tracker&restrict_sr=1', text: 'Reddit r/periods: Stardust', summary: 'User feedback on Stardust lunar sync and UI.' },
                 { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=stardust%20period%20tracker', text: 'TikTok: Stardust tracker', summary: 'Educational content on privacy and cycle tracking.' },
                 { platform: 'youtube', url: 'https://www.youtube.com/results?search_query=stardust+period+tracker+review', text: 'YouTube: Stardust app reviews', summary: 'Reviews of privacy-first period trackers.' },
                 { platform: 'instagram', url: 'https://www.instagram.com/stardust.app/', text: 'Stardust on Instagram', summary: 'Brand content on encryption and cycle health.' },
                 { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=stardust%20period%20tracker', text: 'Facebook: Stardust tracker', summary: 'Community discussions on privacy-focused apps.' }
-            ]
+            ] }
         }
     },
     // ─── MENOPAUSE TRACKER ─────────────────────────────────
@@ -735,12 +717,12 @@ export const DIGITAL_PRODUCTS = [
         integrations: ['Apple Health'],
         badges: ['Menopause Focus', 'Symptom Tracking'],
         verificationLinks: {
-            doctor: [
-                { url: 'https://www.menopause.org/for-women/menopause-faqs-women-s-midlife-health', text: 'NAMS – Menopause FAQs', summary: 'Clinical guidance on menopause and perimenopause care.' }
-            ],
-            community: [
+            doctor: { links: [
+                
+            ] },
+            community: { links: [
                 { platform: 'reddit', url: 'https://www.reddit.com/r/Menopause/', text: 'Reddit r/Menopause', summary: 'Community discussions on menopause trackers and symptom management.' }
-            ]
+            ] }
         }
     },
 ];
