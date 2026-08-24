@@ -133,7 +133,7 @@ function itemMatchesMacroGroup(item, groupId) {
 
 // Exported for unit testing of the category-chip filtering logic (see
 // Discovery.macroGroupFilter.test.js) — not used by any other component.
-export { MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, resolveBrowseAiRoundQuery };
+export { MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, resolveBrowseAiRoundQuery, getSortPrice };
 
 /** Natural-language phrase for the browse-AI extension's `query` param — prefers the
  * more specific active scope (a chosen sub-category) over the broader macro group, and
@@ -255,15 +255,23 @@ function matchesLifeStage(item, filter) {
 const ALL_CATEGORIES = ['all', 'pad', 'tampon', 'cup', 'disc', 'period-underwear', 'supplement', 'tracker', 'telehealth', 'mental-health', 'fitness', 'diagnostics', 'hormone-monitoring', 'menopause', 'fertility', 'pelvic-health', 'pelvic-floor', 'cramp-relief', 'postpartum', 'pregnancy', 'sex-tech', 'intimate-care', 'contraception'];
 
 /** Extract a numeric price for sorting (rough proxy: first $ amount, or monthly equivalent when obvious). */
+/**
+ * The old version searched for a "$N/month" pattern ANYWHERE in the price
+ * string and preferred it over everything else whenever one existed — so
+ * "Oura Ring Gen 3 $299 + $6/month" sorted as $6, and "Natural Cycles $100/
+ * year or $13/month" sorted as $13, both landing next to actually-cheap
+ * items regardless of Low-to-High/High-to-Low. That's what scattered the
+ * sort. Price copy in this catalog always leads with its primary/base price,
+ * so the fix is simpler: use the FIRST dollar figure in the string, full
+ * stop, with "Free" (an optional paid tier mentioned afterward doesn't
+ * change that the base product is free) checked first as $0.
+ */
 function getSortPrice(item) {
     const s = (item.price || item.stage || '').toString().trim();
-    const perMonth = s.match(/\$(\d+)(?:\.\d+)?\s*\/?\s*month/i);
-    if (perMonth) return parseFloat(perMonth[1]);
-    const range = s.match(/\$(\d+)\s*[–\-]\s*\$(\d+)/);
-    if (range) return (parseFloat(range[1]) + parseFloat(range[2])) / 2;
-    const single = s.match(/\$(\d+)(?:\.\d+)?/);
-    if (single) return parseFloat(single[1]);
-    return null;
+    if (!s) return null;
+    if (/^free\b/i.test(s)) return 0;
+    const amounts = [...s.matchAll(/\$(\d+(?:\.\d+)?)/g)];
+    return amounts.length > 0 ? parseFloat(amounts[0][1]) : null;
 }
 
 /** Score for default sort: top rated + positive clinical/social/scientific consensus + safety first. */
