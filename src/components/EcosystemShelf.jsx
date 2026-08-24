@@ -22,7 +22,7 @@ function CareTile({ product, onOpenProduct }) {
   );
 }
 
-export default function EcosystemShelf({ myProducts = {}, onOpenProduct, onExploreArea }) {
+export default function EcosystemShelf({ myProducts = {}, onOpenProduct, onExploreArea, hideTitle = false }) {
   const { filled, gaps } = useMemo(() => {
     const products = Object.values(myProducts || {});
     const byArea = new Map();
@@ -51,7 +51,7 @@ export default function EcosystemShelf({ myProducts = {}, onOpenProduct, onExplo
 
   return (
     <section className="eco-shelf mockup-page">
-      <h2 className="eco-shelf__title">Your shelves.</h2>
+      {!hideTitle && <h2 className="eco-shelf__title">Your shelves.</h2>}
       <p className="eco-shelf__lede">
         Each row is an area of care. Swap anything, or leave a shelf empty and we'll keep watching for a match.
       </p>

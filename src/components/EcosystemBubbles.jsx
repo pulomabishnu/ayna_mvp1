@@ -156,13 +156,6 @@ export default function EcosystemBubbles({
               {selectedProduct.name}
             </button>
             {matchLine && <div className="eco-bubbles__card-body">{matchLine}</div>}
-            {selected.products.length > 1 && (
-              <div className="eco-bubbles__card-more">
-                {selected.products.slice(1).map((p) => (
-                  <button key={p.id} type="button" onClick={() => onOpenProduct?.(p)}>{p.name}</button>
-                ))}
-              </div>
-            )}
             <div className="eco-bubbles__card-actions">
               <button type="button" onClick={() => onExploreArea?.(selected)}>Swap</button>
               <button type="button" onClick={() => onOpenProduct?.(selectedProduct)}>Why this?</button>

@@ -3900,28 +3900,6 @@ footer a[href*="career" i],
   margin-top: 8px;
 }
 
-.eco-bubbles__card-more {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.eco-bubbles__card-more button {
-  font-family: inherit;
-  font-size: 12px;
-  color: #5b524a;
-  background: #F6F1E9;
-  border: none;
-  padding: 7px 12px;
-  border-radius: 999px;
-  cursor: pointer;
-}
-
-.eco-bubbles__card-more button:hover {
-  color: #B4732A;
-}
-
 .eco-bubbles__card-actions {
   display: flex;
   gap: 10px;

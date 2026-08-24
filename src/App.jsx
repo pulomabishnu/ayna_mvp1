@@ -1,8 +1,6 @@
 import React, { Suspense, useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import AynaLanding from './components/AynaLanding';
 import SiteFooter from './components/SiteFooter';
-import EcosystemBubbles from './components/EcosystemBubbles';
-import EcosystemShelf from './components/EcosystemShelf';
 import SavedForLater from './components/SavedForLater';
 import EcosystemGenerationBar from './components/EcosystemGenerationBar';
 import HealthIntakeForm from './components/HealthIntakeForm';
@@ -1027,9 +1025,6 @@ function App() {
   const navGradientVariant = currentView === 'about'
     ? ' app-nav--about'
     : (user && ecosystemCount > 0) ? ' app-nav--returning' : '';
-  /** 1d (circular) vs 1e (shelf) -- two views of the same ecosystem, not two destinations. */
-  const [ecosystemVisualView, setEcosystemVisualView] = useState('orbit');
-
   const handleOpenProduct = (product) => {
     if (!product?.id) return;
     const p = product?.llmGenerated ? enrichLlmProductForDiscovery(product) : product;
@@ -1376,45 +1371,12 @@ function App() {
             Loading your ecosystem…
           </div>
         )}
-        {currentView === 'ecosystem' && (
-          <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '28px' }}>
-            <div className="eco-view-toggle" role="group" aria-label="Ecosystem view">
-              <button
-                type="button"
-                className={ecosystemVisualView === 'orbit' ? 'is-active' : undefined}
-                aria-pressed={ecosystemVisualView === 'orbit'}
-                onClick={() => setEcosystemVisualView('orbit')}
-              >
-                Ecosystem
-              </button>
-              <button
-                type="button"
-                className={ecosystemVisualView === 'shelf' ? 'is-active' : undefined}
-                aria-pressed={ecosystemVisualView === 'shelf'}
-                onClick={() => setEcosystemVisualView('shelf')}
-              >
-                Shelves
-              </button>
-            </div>
-          </div>
-        )}
-        {currentView === 'ecosystem' && ecosystemVisualView === 'orbit' && (
-          <EcosystemBubbles
-            myProducts={myProducts}
-            quizResults={quizResults}
-            healthProfile={healthProfile}
-            user={user}
-            onOpenProduct={handleOpenProduct}
-            onExploreArea={(area) => handleViewDiscovery({ query: '', initialCategory: area.categories?.[0] })}
-          />
-        )}
-        {currentView === 'ecosystem' && ecosystemVisualView === 'shelf' && (
-          <EcosystemShelf
-            myProducts={myProducts}
-            onOpenProduct={handleOpenProduct}
-            onExploreArea={(area) => handleViewDiscovery({ query: '', initialCategory: area.categories?.[0] })}
-          />
-        )}
+        {/* The bubble hero + shelves used to render here as two alternate
+            App.jsx-level views (an "Ecosystem / Shelves" toggle) ABOVE
+            MyEcosystem's own internal overview — two separate "your
+            ecosystem" headers stacked on the same page. MyEcosystem now
+            renders both combined (board 2a), so this toggle is gone rather
+            than becoming a third, redundant copy. */}
         {currentView === 'ecosystem' && (
           <Suspense fallback={<ViewLoadingFallback />}>
           <MyEcosystem
