@@ -3,15 +3,20 @@ import Disclaimer from './Disclaimer';
 import HealthDataImport from './HealthDataImport';
 import CareNearYouPanel from './CareNearYouPanel';
 import { getCheckinRecommendations, CATEGORY_LABELS } from '../data/products';
-import { safeProductImageSrc } from '../utils/resolveProductImage';
+import ProductTileImage from './ProductTileImage';
 
 function ImgOrInitial({ item, size }) {
-    const src = safeProductImageSrc(item?.image);
-    if (src) return <img src={src} alt={item?.name || ''} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />;
     return (
-        <div style={{ width: '100%', height: '100%', background: 'var(--color-secondary-fade)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: `${Math.round(size * 0.4)}px`, fontFamily: 'var(--font-serif)' }}>
-            {String(item?.brand || item?.name || '?').trim().charAt(0).toUpperCase()}
-        </div>
+        <ProductTileImage
+            product={item}
+            alt={item?.name || ''}
+            imgStyle={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            letterNode={(
+                <div style={{ width: '100%', height: '100%', background: 'var(--color-secondary-fade)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: `${Math.round(size * 0.4)}px`, fontFamily: 'var(--font-serif)' }}>
+                    {String(item?.brand || item?.name || '?').trim().charAt(0).toUpperCase()}
+                </div>
+            )}
+        />
     );
 }
 

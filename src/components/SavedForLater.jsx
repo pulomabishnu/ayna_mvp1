@@ -1,8 +1,7 @@
 import React from 'react';
 import { CATEGORY_LABELS } from '../data/products';
 import { productHref, isPlainLeftClick } from '../utils/productRoute';
-import { handleImageErrorWithRetry } from '../utils/imageRetry';
-import { safeProductImageSrc } from '../utils/resolveProductImage';
+import ProductTileImage from './ProductTileImage';
 
 function eyebrowFor(product) {
   return String(CATEGORY_LABELS[product.category] || product.category || 'Product')
@@ -61,11 +60,11 @@ export default function SavedForLater({
                   }}
                 >
                   <div className="wishlist-card__tile">
-                    {safeProductImageSrc(product.image) ? (
-                      <img src={safeProductImageSrc(product.image)} alt={product.name} loading="lazy" onError={(e) => handleImageErrorWithRetry(e, () => { e.currentTarget.style.display = 'none'; })} />
-                    ) : (
-                      <span aria-hidden="true">{String(product.brand || product.name || '?').trim().charAt(0).toUpperCase()}</span>
-                    )}
+                    <ProductTileImage
+                      product={product}
+                      alt={product.name}
+                      letterNode={<span aria-hidden="true">{String(product.brand || product.name || '?').trim().charAt(0).toUpperCase()}</span>}
+                    />
                   </div>
                   <div className="wishlist-card__eyebrow">{eyebrowFor(product)}</div>
                   <h3>{product.name}</h3>

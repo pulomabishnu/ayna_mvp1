@@ -7,8 +7,8 @@ import {
     detectDuplicates,
     getEcosystemAlternatives,
     getRecommendationExplanation,
-    getProductById,
 } from '../data/products';
+import ProductTileImage, { resolveCatalogProductImage } from './ProductTileImage';
 import { getInteractions } from '../data/interactions';
 import CareNearYouPanel from './CareNearYouPanel';
 import LlmRecommendationsLoadingBlock from './LlmRecommendationsLoadingBlock';
@@ -41,95 +41,12 @@ import posthog from 'posthog-js';
 
 // Ecosystem products are stored as a full snapshot of the product object at
 // the moment they're added (toggleMyProduct in App.jsx), not a live ID
-// reference — so a product added before a later catalog image fix keeps
-// showing the OLD image forever, even though the current catalog entry for
-// that same id has since been corrected.
-//
-// A first pass at this (id-only lookup) still didn't fix the reported case:
-// "Rael Organic Cotton Pads" from a "Rebuild ecosystem" (LLM recommendation)
-// run still showed a letter avatar. Root cause, found after re-checking:
-// api/llm-recommendations.js's enrichProduct() ALWAYS mints a fresh
-// `gen-<namespace>-<slug>-<random>` id for every recommended product,
-// with zero reconciliation against the static catalog by name — so even a
-// recommendation for the literal same real-world product the catalog
-// already has (same name, same brand) gets an id that can never match
-// getProductById(). And when the model doesn't confidently know a real
-// image URL, enrichProduct defaults image to '' rather than guess (correct,
-// anti-fabrication behavior) — so these items arrive with no image and an
-// id the catalog has never seen.
-//
-// Fixed by also trying an exact normalized-name match against the catalog
-// as a fallback when id lookup misses. A name collision risk exists in
-// theory, but the catalog is curated (162 products, no near-duplicate
-// names), and the failure mode of a wrong match is "shows a different real
-// product's photo" — never as bad as inventing a price or safety claim, and
-// strictly better than a guaranteed-wrong letter avatar for a product whose
-// real photo we already have on file two lines away in the same codebase.
-const CATALOG_BY_NORMALIZED_NAME = new Map(
-  ALL_PRODUCTS.map((p) => [String(p.name || '').trim().toLowerCase(), p]).filter(([name]) => name)
-);
-
-function resolveEcosystemImage(product) {
-  const byId = product?.id ? getProductById(product.id) : null;
-  if (byId && !isPlaceholderProductImage(byId.image)) return byId.image;
-  const byName = CATALOG_BY_NORMALIZED_NAME.get(String(product?.name || '').trim().toLowerCase());
-  if (byName && !isPlaceholderProductImage(byName.image)) return byName.image;
-  return product?.image;
-}
-
-// Even with the catalog id/name fallback above, a product that's genuinely
-// new (an LLM recommendation for something not anywhere in the static
-// catalog — e.g. "Thorne Iron Bisglycinate", "Brightside Mental Health")
-// has no catalog entry to borrow an image from at all. Discovery.jsx and
-// ProductModal.jsx both already solve this the same way: attempt a live
-// /api/product-image lookup (Shopify match / og:image / DSLD) whenever the
-// image is still a placeholder after the synchronous checks. The ecosystem
-// tile grids never did this — this is that same resolution attempt, reused
-// here so a product's real photo shows up in My Ecosystem exactly as
-// reliably as it already does on the product's own page.
-function EcosystemTileImage({ product, alt = '', imgStyle, imgClassName, letterNode }) {
-  const initial = resolveEcosystemImage(product);
-  const [resolved, setResolved] = useState('');
-  const attemptedRef = useRef(null);
-
-  useEffect(() => {
-    setResolved('');
-    attemptedRef.current = null;
-  }, [product?.id, product?.name]);
-
-  useEffect(() => {
-    if (!product?.name) return;
-    if (!isPlaceholderProductImage(initial)) return;
-    if (attemptedRef.current === product.id) return;
-    attemptedRef.current = product.id;
-    let active = true;
-    resolveProductImage(product.name, product.brand || '', product.url || '', product.type || '').then((url) => {
-      if (active && url) setResolved(url);
-    });
-    return () => { active = false; };
-  }, [initial, product?.id, product?.name, product?.brand, product?.url]);
-
-  // `resolved` came back from the server's /api/product-image, which already
-  // applied the type-aware (allowBrandLogo) check — re-running it through
-  // isPlaceholderProductImage here would reject a legitimate app/telehealth
-  // logo again, since that heuristic has no idea the product is 'digital'.
-  // Real bug: Brightside's real resolved image (.../social-share-banner.png)
-  // was silently thrown away by this exact re-filter.
-  const finalSrc = resolved || safeProductImageSrc(initial);
-  if (finalSrc) {
-    return (
-      <img
-        src={finalSrc}
-        alt={alt}
-        loading="lazy"
-        className={imgClassName}
-        style={imgStyle}
-        onError={(e) => { e.currentTarget.style.display = 'none'; }}
-      />
-    );
-  }
-  return letterNode;
-}
+// reference — see ProductTileImage.jsx (shared with SavedForLater.jsx,
+// EcosystemShelf.jsx, TrackedItems.jsx, Comparison.jsx, Recalls.jsx,
+// OmittedProducts.jsx, AynaLanding.jsx, Recommendations.jsx — every place
+// that renders one of these snapshots) for the full history of why a
+// synchronous catalog lookup alone isn't enough and a live resolution
+// fallback is needed too.
 
 const AYNA_SMS_NUMBER = import.meta.env.VITE_AYNA_SMS_NUMBER || '';
 const SMS_CARD_DISMISS_KEY = 'ayna_sms_card_dismissed_at';
@@ -231,13 +148,13 @@ function EcosystemFunctionProductCard({
     // /api/product-image resolution — trust it as-is rather than re-running
     // it through isPlaceholderProductImage, which doesn't know the product
     // is 'digital' and would reject a legitimate app/telehealth logo again.
-    // Same reasoning for the resolveEcosystemImage(product) fallback below:
+    // Same reasoning for the resolveCatalogProductImage(product) fallback below:
     // its own product.image can itself already be a server-resolved value
     // merged in by the caller (recommendedSwapByKey/tier.product rendering
-    // above), and resolveEcosystemImage() already gates its own catalog
+    // above), and resolveCatalogProductImage() already gates its own catalog
     // lookups internally — wrapping the result in safeProductImageSrc again
     // re-applies the type-blind heuristic to that already-vetted value.
-    const displayImage = resolvedCardImage || resolveEcosystemImage(product) || '';
+    const displayImage = resolvedCardImage || resolveCatalogProductImage(product) || '';
 
     useEffect(() => {
         setImgError(false);
@@ -1644,7 +1561,7 @@ export default function MyEcosystem({
     }, [activeTiered]);
 
     useEffect(() => {
-        // myProductList is deliberately excluded here — EcosystemTileImage
+        // myProductList is deliberately excluded here — ProductTileImage
         // (used everywhere "Your products" tiles render) now resolves those
         // images itself on demand. Keeping this effect's own fetch for the
         // same items too meant every ecosystem product ran two independent
@@ -1652,7 +1569,7 @@ export default function MyEcosystem({
         // shared memCache/localStorage dedupes the network cost, but it's
         // still redundant work. recommendedProducts still needs this path —
         // it feeds IntakeRecommendationsProductCard/IntakeRecAltMini, which
-        // don't use EcosystemTileImage.
+        // don't use ProductTileImage.
         const recommendedProducts = recommendedProductsForDisplay
             .flatMap((s) => (Array.isArray(s?.tiers) ? s.tiers : []))
             .flatMap((tier) => [tier?.product, ...(Array.isArray(tier?.alternatives) ? tier.alternatives : [])])
@@ -1923,7 +1840,7 @@ export default function MyEcosystem({
                                         {myProductList.slice(0, 6).map((product) => (
                                             <button type="button" key={product.id} className="eco-overview-product" onClick={() => onOpenProduct?.(product)}>
                                                 <span className="eco-overview-product__image">
-                                                    <EcosystemTileImage product={product} letterNode={<b>{String(product.brand || product.name || '?').charAt(0).toUpperCase()}</b>} />
+                                                    <ProductTileImage product={product} letterNode={<b>{String(product.brand || product.name || '?').charAt(0).toUpperCase()}</b>} />
                                                 </span>
                                                 <span className="eco-overview-product__meta">{CATEGORY_LABELS[product.category] || product.category || 'Product'}</span>
                                                 <strong>{product.name}</strong>
@@ -1977,7 +1894,7 @@ export default function MyEcosystem({
                                                     <div key={product.id} className="eco-details-clean__row">
                                                         <button type="button" className="eco-details-clean__product" onClick={() => onOpenProduct?.(product)}>
                                                             <span className="eco-details-clean__thumb">
-                                                                <EcosystemTileImage product={product} letterNode={<b>{String(product.brand || product.name || '?').charAt(0).toUpperCase()}</b>} />
+                                                                <ProductTileImage product={product} letterNode={<b>{String(product.brand || product.name || '?').charAt(0).toUpperCase()}</b>} />
                                                             </span>
                                                             <span>
                                                                 <strong>{product.name}</strong>
@@ -2296,7 +2213,7 @@ export default function MyEcosystem({
                                                             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpenProduct(product); } }}
                                                         >
                                                             <div style={{ width: '48px', height: '48px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0 }}>
-                                                                <EcosystemTileImage
+                                                                <ProductTileImage
                                                                     product={product}
                                                                     alt={product.name}
                                                                     imgStyle={{ width: '100%', height: '100%', objectFit: 'cover' }}
@@ -2486,7 +2403,7 @@ export default function MyEcosystem({
                                         onClick={() => onToggleProduct(product)}
                                     >
                                         <div style={{ width: '40px', height: '40px', borderRadius: 'var(--radius-sm)', overflow: 'hidden', flexShrink: 0 }}>
-                                            <EcosystemTileImage
+                                            <ProductTileImage
                                                 product={product}
                                                 alt={product.name}
                                                 imgStyle={{ width: '100%', height: '100%', objectFit: 'cover' }}

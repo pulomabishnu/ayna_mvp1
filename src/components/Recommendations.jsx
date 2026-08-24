@@ -5,7 +5,7 @@ import { inferTagsFromHealthProfile } from '../utils/healthDataProfile';
 import CareNearYouPanel from './CareNearYouPanel';
 import LlmRecommendationsLoadingBlock from './LlmRecommendationsLoadingBlock';
 import { getPricePerUnitLabel } from '../utils/pricePerUnit';
-import { safeProductImageSrc } from '../utils/resolveProductImage';
+import ProductTileImage from './ProductTileImage';
 import {
     fetchLlmRecommendations,
     loadLearningMemory,
@@ -205,7 +205,6 @@ export default function Recommendations({
             ? (String(product.considerations || '').trim() || null)
             : engine.considerations;
         const hideClinicianCallout = product.llmGenerated === true || product.intakeGenerated === true;
-        const imgSrc = safeProductImageSrc(product.image);
         const buyUrl = product.url && /^https:\/\//i.test(String(product.url).trim()) ? String(product.url).trim() : '';
         return (
             <div key={product.id} className="card hover-lift" style={{
@@ -224,18 +223,21 @@ export default function Recommendations({
                 >✕</button>
 
                 <div style={{ height: '140px', width: '100%', overflow: 'hidden', position: 'relative', background: 'linear-gradient(135deg, var(--color-secondary-fade), var(--color-primary-fade, #f3e8ff))' }}>
-                    {imgSrc ? (
-                        <img src={imgSrc} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '10px', boxSizing: 'border-box' }} />
-                    ) : (
-                        <div style={{
-                            width: '100%', height: '100%',
-                            background: 'linear-gradient(135deg, var(--color-secondary-fade), var(--color-primary-fade, #f3e8ff))',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            fontSize: '2rem', fontWeight: '600', color: 'var(--color-text-muted)',
-                        }} aria-hidden="true">
-                            {String(product.name || '?').trim().charAt(0).toUpperCase()}
-                        </div>
-                    )}
+                    <ProductTileImage
+                        product={product}
+                        alt={product.name}
+                        imgStyle={{ width: '100%', height: '100%', objectFit: 'contain', padding: '10px', boxSizing: 'border-box' }}
+                        letterNode={(
+                            <div style={{
+                                width: '100%', height: '100%',
+                                background: 'linear-gradient(135deg, var(--color-secondary-fade), var(--color-primary-fade, #f3e8ff))',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                fontSize: '2rem', fontWeight: '600', color: 'var(--color-text-muted)',
+                            }} aria-hidden="true">
+                                {String(product.name || '?').trim().charAt(0).toUpperCase()}
+                            </div>
+                        )}
+                    />
                     <span style={{
                         position: 'absolute', top: '0.75rem', left: '0.75rem',
                         background: product.type === 'physical' ? 'var(--color-surface-contrast)' : 'var(--color-primary)',

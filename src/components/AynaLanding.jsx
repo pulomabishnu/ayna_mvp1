@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
-import { handleImageErrorWithRetry } from '../utils/imageRetry';
-import { safeProductImageSrc } from '../utils/resolveProductImage';
+import ProductTileImage from './ProductTileImage';
 
 /**
  * Landing page — a direct port of boards 1a and 1c of the Aug 2026 desktop
@@ -176,8 +175,6 @@ function productById(id) {
 
 /** Cream tile with the product photo, falling back to the mockup's initial-on-cream block. */
 function ProductTile({ product, aspectRatio = 1, radius = 10, badge, showHeart }) {
-  const [broken, setBroken] = useState(false);
-  const src = broken ? '' : safeProductImageSrc(product.image);
   const initial = String(product.name || '?').trim().charAt(0).toUpperCase();
 
   return (
@@ -195,37 +192,34 @@ function ProductTile({ product, aspectRatio = 1, radius = 10, badge, showHeart }
         overflow: 'hidden',
       }}
     >
-      {src ? (
-        <img
-          src={src}
-          alt=""
-          loading="lazy"
-          onError={(e) => handleImageErrorWithRetry(e, () => setBroken(true))}
-          style={{
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'contain',
-            padding: '14px',
-          }}
-        />
-      ) : (
-        <span
-          aria-hidden
-          style={{
-            position: 'absolute',
-            inset: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            font: "400 40px 'Playfair Display', serif",
-            color: '#D9A96B',
-          }}
-        >
-          {initial}
-        </span>
-      )}
+      <ProductTileImage
+        product={product}
+        alt=""
+        imgStyle={{
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: 'contain',
+          padding: '14px',
+        }}
+        letterNode={(
+          <span
+            aria-hidden
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              font: "400 40px 'Playfair Display', serif",
+              color: '#D9A96B',
+            }}
+          >
+            {initial}
+          </span>
+        )}
+      />
 
       {badge && (
         <span style={{

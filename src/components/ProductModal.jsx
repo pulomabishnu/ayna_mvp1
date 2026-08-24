@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import ProductEvidenceRail from './ProductEvidenceRail';
+import ProductTileImage from './ProductTileImage';
 import { getProfileMatchLabelsForProduct, getProfileMatchPercentForProduct, CATEGORY_LABELS } from '../data/products';
 import { getAynaRating } from '../data/aynaReviews';
 import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
@@ -741,16 +742,11 @@ export default function ProductModal({
               fontFamily: 'var(--font-serif)', fontWeight: 400, fontSize: '2rem', color: '#D9A96B',
               overflow: 'hidden',
             }} aria-hidden="true">
-              {related.image && !isPlaceholderProductImage(related.image) ? (
-                <img
-                  src={related.image}
-                  alt=""
-                  style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '8px', boxSizing: 'border-box' }}
-                  onError={(e) => handleImageErrorWithRetry(e, () => { e.currentTarget.style.display = 'none'; })}
-                />
-              ) : (
-                String(related.brand || related.name || '?').trim().charAt(0).toUpperCase()
-              )}
+              <ProductTileImage
+                product={related}
+                imgStyle={{ width: '100%', height: '100%', objectFit: 'contain', padding: '8px', boxSizing: 'border-box' }}
+                letterNode={String(related.brand || related.name || '?').trim().charAt(0).toUpperCase()}
+              />
             </span>
             <span style={{ fontFamily: 'var(--font-serif)', fontSize: '0.95rem', lineHeight: 1.3, marginTop: '0.6rem', color: 'var(--color-text-main)' }}>
               {related.name}

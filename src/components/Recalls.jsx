@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { findGlossaryTermInText } from '../data/glossary';
-import { safeProductImageSrc } from '../utils/resolveProductImage';
+import ProductTileImage from './ProductTileImage';
 
 // EDITORIALLY CURATED HIGHLIGHTS — not a recall feed and not a complete list.
 //
@@ -126,13 +126,16 @@ export default function Recalls({ trackedProducts, myProducts = {} }) {
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                                 {ecosystemList.map(p => (
                                     <div key={p.id} style={{ display: 'flex', gap: '1rem', alignItems: 'center', padding: '1rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', background: 'var(--color-surface)' }}>
-                                        {safeProductImageSrc(p.image) ? (
-                                            <img src={safeProductImageSrc(p.image)} alt={p.name} style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '50%' }} />
-                                        ) : (
-                                            <div style={{ width: '40px', height: '40px', borderRadius: '50%', flexShrink: 0, background: 'var(--color-secondary-fade)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontFamily: 'var(--font-serif)' }}>
-                                                {String(p.brand || p.name || '?').trim().charAt(0).toUpperCase()}
-                                            </div>
-                                        )}
+                                        <ProductTileImage
+                                            product={p}
+                                            alt={p.name}
+                                            imgStyle={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '50%' }}
+                                            letterNode={(
+                                                <div style={{ width: '40px', height: '40px', borderRadius: '50%', flexShrink: 0, background: 'var(--color-secondary-fade)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontFamily: 'var(--font-serif)' }}>
+                                                    {String(p.brand || p.name || '?').trim().charAt(0).toUpperCase()}
+                                                </div>
+                                            )}
+                                        />
                                         <div>
                                             <h4 style={{ fontSize: '0.9rem', fontWeight: '600' }}>{p.name}</h4>
                                             {/* Was a hardcoded green "MONITORED" badge that reflected
