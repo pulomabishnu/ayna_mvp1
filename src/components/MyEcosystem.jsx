@@ -1904,6 +1904,36 @@ export default function MyEcosystem({
                     </div>
                 )}
 
+                {/* Was previously nested inside eco-legacy-details below, which is
+                    display:none unless a user clicks the Details tab AND a "More
+                    tools" toggle — effectively hidden by default. Care resources
+                    and telehealth links don't depend on any LLM-generated data
+                    (see CareNearYouPanel), so there's no reason this should be
+                    gated behind "advanced"/legacy tooling — it's a first-class
+                    feature and now always visible regardless of tab. */}
+                {!llmLoading && (
+                    <>
+                        <p style={{
+                            fontFamily: 'var(--font-label)', fontSize: '0.7rem', fontWeight: 500,
+                            letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--color-amber-deep)',
+                            textAlign: 'center', marginBottom: '0.5rem',
+                        }}>
+                            Care &amp; support
+                        </p>
+                        <h2 style={{ fontFamily: 'var(--font-serif)', fontWeight: 500, fontSize: '1.9rem', textAlign: 'center', marginBottom: '1.25rem' }}>
+                            Care Recommended for You
+                        </h2>
+                        <CareNearYouPanel
+                            quizResults={quizResults}
+                            healthProfile={healthProfile}
+                            userZipCode={userZipCode}
+                            onZipCodeChange={onZipCodeChange}
+                            onOpenProduct={onOpenProduct}
+                            onEditHealthProfile={onEditHealthProfile}
+                        />
+                    </>
+                )}
+
                 <div className={ecosystemPageMode === 'details' && showAdvancedDetails ? 'eco-legacy-details' : 'eco-legacy-details eco-legacy-details--hidden'}>
                 {careAreas.length > 0 && (
                     <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-xl)' }}>
@@ -2304,20 +2334,6 @@ export default function MyEcosystem({
                             </div>
                         )}
                     </div>
-                )}
-
-                {!llmLoading && (
-                    <>
-                        <h3 style={{ fontSize: '1.35rem', marginBottom: '0.75rem', textAlign: 'center', color: 'var(--color-text-main)', marginTop: 'var(--spacing-xl)' }}>Care Recommended for You</h3>
-                        <CareNearYouPanel
-                            quizResults={quizResults}
-                            healthProfile={healthProfile}
-                            userZipCode={userZipCode}
-                            onZipCodeChange={onZipCodeChange}
-                            onOpenProduct={onOpenProduct}
-                            onEditHealthProfile={onEditHealthProfile}
-                        />
-                    </>
                 )}
 
                 {typeof onBuildEcosystem === 'function' && (
