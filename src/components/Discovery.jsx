@@ -532,6 +532,18 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     // query independently found more real products). Only give up after two
     // in a row.
     const dryRoundStreakRef = useRef(0);
+    // Set when a round's fetchSearchSuggestions call itself failed (rate
+    // limit, auth required, server error) rather than genuinely succeeding
+    // with zero new suggestions — fetchSearchSuggestions never throws on
+    // these, it resolves with `suggestions: []` and an `error`/`code`
+    // field (see src/utils/fetchSearchSuggestions.js), which is otherwise
+    // indistinguishable from "the AI legitimately found nothing new" and
+    // was wrongly counted toward dryRoundStreakRef — confirmed live: after
+    // this session's own heavy testing tripped the 15-req/hour rate limit,
+    // two back-to-back 429s got treated as proof a category was exhausted
+    // and showed "that's everything we could find" for a query that had
+    // never actually been checked.
+    const [browseAiErrorCode, setBrowseAiErrorCode] = useState(null);
     const [dsldProducts, setDsldProducts] = useState([]);
     const [dsldLoading, setDsldLoading] = useState(false);
     const [resolvedImages, setResolvedImages] = useState({});
@@ -833,6 +845,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         setBrowseAiRounds(0);
         setBrowseAiLoading(false);
         dryRoundStreakRef.current = 0;
+        setBrowseAiErrorCode(null);
     }, [browseAiContextKey]);
 
     // Abort any in-flight browse-AI request on unmount.
@@ -1008,7 +1021,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         setBrowseAiLoading(true);
         const { profileSummary, dislikedProducts, dislikedTerms } = buildAiProfileContext(personalizationFilter, quizResults);
         try {
-            const { suggestions } = await fetchSearchSuggestions({
+            const { suggestions, code: fetchErrorCode } = await fetchSearchSuggestions({
                 query: queryText,
                 category: categoryFilter !== 'all' ? categoryFilter : undefined,
                 symptom: isTypedSearchContinuation ? symptomFilter : undefined,
@@ -1026,6 +1039,19 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             // new context, so just bail here.
             if (browseAiContextKeyRef.current !== contextKeyAtCallTime) return;
             setBrowseAiLoading(false);
+            // A rate limit / auth / server error resolves here (see
+            // fetchSearchSuggestions) rather than throwing — the request
+            // itself never got a real answer, so this must NOT count as
+            // evidence the category is exhausted. Bound retries the same
+            // way an actual thrown error does (below) but keep the error
+            // code so the render can say "couldn't check" instead of
+            // falsely claiming "that's everything."
+            if (fetchErrorCode) {
+                setBrowseAiErrorCode(fetchErrorCode);
+                setBrowseAiRounds((r) => r + 1);
+                return;
+            }
+            setBrowseAiErrorCode(null);
             let freshCount = 0;
             setBrowseAiSuggestions((prev) => {
                 // Dedup against catalog matches, whatever's already accumulated
@@ -1066,8 +1092,13 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             setBrowseAiLoading(false);
             // Count a failed round against the cap too, so a persistent server
             // error can't cause the trigger effect below to retry indefinitely —
-            // the round budget is about bounding calls, not just successes.
-            if (browseAiContextKeyRef.current === contextKeyAtCallTime) setBrowseAiRounds((r) => r + 1);
+            // the round budget is about bounding calls, not just successes. Same
+            // reasoning as the fetchErrorCode branch above: a thrown exception
+            // isn't evidence of "nothing left," so don't touch dryRoundStreakRef.
+            if (browseAiContextKeyRef.current === contextKeyAtCallTime) {
+                setBrowseAiErrorCode('request_failed');
+                setBrowseAiRounds((r) => r + 1);
+            }
         }
     }, [categoryFilter, macroGroup, personalizationFilter, quizResults, filtered, enrichedAiSuggestions, qTrimForAi, symptomFilter]);
 
@@ -1484,13 +1515,20 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     </button>
                 </div>
             ) : (qTrimForAi || !(macroGroup === 'all' && categoryFilter === 'all')) && browseAiRounds >= MAX_BROWSE_AI_ROUNDS ? (
-                // The round budget is used up (either genuinely exhausted, or
-                // two duplicate-heavy rounds in a row — see dryRoundStreakRef)
-                // — say so explicitly rather than the button just vanishing
-                // with no explanation, which reads as broken/stuck rather
-                // than "we looked and this is everything we found."
+                // The round budget is used up — say so explicitly rather than
+                // the button just vanishing with no explanation, which reads
+                // as broken/stuck. Two different reasons land here, and they
+                // need different, honest copy: genuinely ran out of new
+                // suggestions (or two duplicate-heavy rounds in a row — see
+                // dryRoundStreakRef) vs. the fetch itself kept failing/rate-
+                // limiting (browseAiErrorCode) — the latter is NOT "we
+                // checked and this is everything," it's "we couldn't check."
                 <p style={{ textAlign: 'center', marginTop: '2rem', color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>
-                    That's everything we could find{qTrimForAi ? ` for "${qTrimForAi}"` : ''}.
+                    {browseAiErrorCode === 'rate_limited'
+                        ? "Couldn't check for more right now — too many searches recently. Try again in a bit."
+                        : browseAiErrorCode
+                            ? "Couldn't check for more products right now."
+                            : `That's everything we could find${qTrimForAi ? ` for "${qTrimForAi}"` : ''}.`}
                 </p>
             ) : null}
             </>
