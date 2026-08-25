@@ -824,6 +824,69 @@ export const CATEGORY_LABELS = {
     'medication': 'Medications'
 };
 
+// The site's one taxonomy of user-facing care areas, each rolling up one or more
+// raw catalog `category` values. Originally lived only in Discovery.jsx (as its
+// category-filter chips); moved here so it can also be the single source of
+// truth for EcosystemBubbles' area grouping — it used to keep its own smaller,
+// separately-hand-maintained category list that had drifted out of sync
+// (missing birth-control, breast care, menopause, skin, hair, gut, pain-relief,
+// tests-devices...), so any product in one of those categories silently landed
+// in a generic "Other" bubble instead of a properly named one (found live,
+// Aditi 2026-08-24: a sleep product added to an ecosystem should get its own
+// "Sleep" bubble, not fall into "Other").
+export const MACRO_GROUPS = [
+    { id: 'all', label: 'All', categories: [], keywords: [] },
+    { id: 'period', label: 'Period', categories: ['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'cramp-relief', 'cup-steamer'], keywords: ['period', 'menstrual'] },
+    // 'ph' used to be a bare keyword here and matched any product whose copy happened to
+    // contain the substring "ph" — e.g. Nature Made Iron ("#1 pharmacist recommended"), Wisp
+    // ("pharmacy pickup"), and Apple Health ("built into iPhone") all satisfied it despite
+    // having nothing to do with intimate care. Scoped to the actual phrasing real vaginal-pH
+    // products use (see e.g. p-honeypot-wash, p-good-clean-love, p-v-wash) instead.
+    { id: 'intimate', label: 'Intimate Care', categories: ['intimate-care'], keywords: ['vaginal', 'vulva', 'intimate', 'moisturizer', 'ph balance', 'ph-balanced', 'ph balanced', 'ph level', 'ph support'] },
+    { id: 'sexual', label: 'Sexual Wellness', categories: ['sex-tech'], keywords: ['lubricant', 'lube', 'condom', 'sexual wellness', 'intimacy'] },
+    { id: 'birth-control', label: 'Birth Control', categories: ['contraception'], keywords: ['contraception', 'contraceptive', 'emergency contraception', 'barrier'] },
+    { id: 'fertility', label: 'Fertility', categories: ['fertility'], keywords: ['fertility', 'ovulation', 'conceive', 'conception'] },
+    { id: 'pregnancy', label: 'Pregnancy', categories: ['pregnancy'], keywords: ['pregnancy', 'prenatal'] },
+    { id: 'postpartum', label: 'Postpartum', categories: ['postpartum'], keywords: ['postpartum', 'lactation', 'breastfeeding', 'perineal'] },
+    { id: 'breast', label: 'Breast Care', categories: ['breast-care', 'lactation'], keywords: ['breast', 'breastfeeding', 'nipple', 'pump', 'lactation'] },
+    { id: 'pelvic', label: 'Pelvic', categories: ['pelvic-floor', 'pelvic-health', 'incontinence'], keywords: ['pelvic', 'kegel', 'bladder', 'incontinence', 'bladder leak'] },
+    { id: 'menopause', label: 'Menopause', categories: ['menopause'], keywords: ['menopause', 'perimenopause', 'hot flash'] },
+    // 'supplement' is a product-TYPE category shared by dozens of unrelated items (iron for
+    // anemia, plain vitamin D, omega-3 for cramps, etc.) — it used to be listed here directly,
+    // which meant EVERY supplement in the catalog satisfied the Hormones chip regardless of what
+    // it actually treats. Matching is now scoped to the real concern taxonomy instead: the
+    // 'hormone-monitoring' category, the 'hormone-balance' healthFunction (checked exactly via
+    // healthFunctions below, not folded into the general keyword text blob — a substring scan
+    // would otherwise let something like the unrelated 'fitness-cycle' healthFunction slug
+    // falsely satisfy the 'cycle' keyword), and the keywords below.
+    { id: 'hormones', label: 'Hormones', categories: ['hormone-monitoring'], healthFunctions: ['hormone-balance'], keywords: ['pms', 'pcos', 'cycle', 'hormone', 'hormonal'] },
+    // Bare 'skin'/'moisturizer' catch vulvar/vulva-balm copy ("vulvar skin", "arousal
+    // moisturizers") and an incontinence liner's "skin comfort formula" claim — all real
+    // catalog phrasing, just not about the facial/body skincare this chip means. Those
+    // product types are excluded from the keyword scan below (see excludeCategories in
+    // itemMatchesMacroGroup) rather than trying to enumerate every mismatched phrase.
+    { id: 'skin', label: 'Skin', categories: ['skin', 'skincare', 'body-care'], keywords: ['skin', 'cleanser', 'moisturizer', 'spf', 'acne', 'hyperpigmentation'], excludeCategories: ['intimate-care', 'sex-tech', 'incontinence'] },
+    // Same class of bug as Skin above: 'thinning' and 'hair' were catching "vaginal dryness
+    // and thinning" (a menopause GSM symptom, not hair thinning) and "ingrown hairs...on the
+    // bikini line" (intimate-area exfoliation, not hair care). excludeCategories keeps those
+    // out of the keyword scan.
+    { id: 'hair', label: 'Hair', categories: ['hair', 'haircare'], keywords: ['hair', 'scalp', 'shampoo', 'conditioner', 'thinning'], excludeCategories: ['intimate-care', 'menopause'] },
+    { id: 'gut', label: 'Gut', categories: ['gut-health'], keywords: ['gut', 'bloating', 'fiber', 'probiotic'] },
+    // 'stress' alone matched incontinence products' clinical term "stress incontinence"/
+    // "stress or urge bladder leaks" (a bladder-control classification, unrelated to mental
+    // stress) — stripped via NEGATED_CONCERN_PHRASES in Discovery.jsx rather than dropping the
+    // keyword, since "stress" genuinely belongs here for its real (psychological) sense.
+    // 'sleep' is a real distinct category value in the live catalog (e.g. Eight Sleep Pod)
+    // alongside 'mental-health' — both belong under this chip.
+    { id: 'sleep-stress', label: 'Sleep + Stress', categories: ['mental-health', 'sleep'], keywords: ['sleep', 'stress', 'relaxation'] },
+    { id: 'pain-recovery', label: 'Pain + Recovery', categories: ['pain-relief', 'cramp-relief', 'recovery'], keywords: ['pain', 'cramp', 'heat therapy', 'recovery', 'muscle'] },
+    // 'test' used to be a bare keyword and matched "clinically tested" (Honey Pot wash),
+    // "gynecologist-tested" (Luna wash), and even "testosterone" (spearmint PCOS tea) — none
+    // of which are diagnostic tests/devices. Scoped to the phrasing real test products use
+    // (p-azo-test's "test strips", p-winx-uti-test-treat's "rapid test").
+    { id: 'tests-devices', label: 'Tests + Devices', categories: ['tracker', 'diagnostics', 'hormone-monitoring'], keywords: ['test strip', 'test kit', 'rapid test', 'diagnostic test', 'lab test', 'tracker', 'wearable', 'monitor'] },
+];
+
 // ─── CLINICAL WORKFLOW (e.g. Recurrent UTIs: prevent → test → treat → get care) ───
 export const CLINICAL_WORKFLOW_STEPS = {
     uti: [

@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { CATEGORY_LABELS, getProfileMatchLabelsForProduct } from '../data/products';
+import { CATEGORY_LABELS, MACRO_GROUPS, getProfileMatchLabelsForProduct } from '../data/products';
 
 /**
  * "This is your ecosystem." — mockup board 1d, the circular layout.
@@ -18,15 +18,28 @@ const CENTRE = { x: 280, y: 260 };
 const ORBIT = 178;
 const BUBBLE = 128;
 
-/** Care areas, and the catalog categories that roll up into each. */
+/**
+ * Care areas, and the catalog categories that roll up into each — derived from
+ * MACRO_GROUPS (../data/products), the same taxonomy Discovery's category
+ * chips use, rather than a separately hand-maintained list. That list used to
+ * live only here and had drifted out of sync with the real category set
+ * (missing birth control, breast care, menopause, skin, hair, gut, pain
+ * relief, tests + devices...), so a product in any of those categories
+ * silently fell into a generic "Other" bubble instead of a properly named one
+ * (found live, Aditi 2026-08-24: a sleep product added to an ecosystem should
+ * get its own "Sleep" bubble, not "Other"). 'telehealth' isn't one of
+ * MACRO_GROUPS' chips (Discovery doesn't filter by it) but still deserves its
+ * own area here, so it's added back explicitly.
+ */
 const AREAS = [
-  { key: 'cycle', label: 'Cycle care', categories: ['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'cramp-relief'] },
-  { key: 'pelvic-floor', label: 'Pelvic floor', categories: ['pelvic-floor', 'pelvic-health'] },
-  { key: 'postpartum', label: 'Postpartum', categories: ['postpartum', 'pregnancy'] },
-  { key: 'intimate', label: 'Intimate care', categories: ['intimate-care', 'sex-tech', 'incontinence'] },
-  { key: 'supplements', label: 'Supplements', categories: ['supplement', 'hormone-monitoring'] },
-  { key: 'sleep', label: 'Sleep', categories: ['mental-health'] },
+  ...MACRO_GROUPS.filter((g) => g.id !== 'all').map((g) => ({ key: g.id, label: g.label, categories: g.categories })),
   { key: 'care', label: 'Clinicians', categories: ['telehealth'] },
+  // MACRO_GROUPS deliberately excludes the bare 'supplement' category from every
+  // area (see its own comment: one flat "Supplements" chip would be useless for
+  // FILTERING ~40 unrelated supplements down by what they treat). That reasoning
+  // is specific to Discovery's filter chips — here, someone just wants to see
+  // "the supplements in my ecosystem" as one group, so it's added back only here.
+  { key: 'supplements', label: 'Supplements', categories: ['supplement'] },
 ];
 
 /** How many satellites to draw at most, so the ring stays legible. */
