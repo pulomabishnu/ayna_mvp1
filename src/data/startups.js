@@ -504,31 +504,6 @@ export const STARTUPS = [
         image: 'https://www.pandiahealth.com/wp-content/uploads/2024/07/Mask-group.png'
     },
     {
-        id: 's-favor',
-        name: 'Favor',
-        tagline: 'Birth control and emergency contraception delivery',
-        description: 'Formerly The Pill Club. Birth control and EC prescribed online and shipped. Insurance accepted. Focus on access and discretion.',
-        tags: ['contraception', 'privacy', 'comfort'],
-        healthFunctions: ['telehealth', 'contraception'],
-        category: 'telehealth',
-        stage: 'Available in US',
-        productReleased: true,
-        spotsLeft: 440,
-        // url was also wrong — favor.com is an unrelated company. The real
-        // site, heyfavor.com, now 301-redirects to nurx.com (checked live) —
-        // strong signal Favor/The Pill Club has been folded into Nurx and no
-        // longer operates as a distinct brand. Flagging for a content
-        // decision (merge into the Nurx entry above, or remove this one)
-        // rather than deciding that here.
-        url: 'https://heyfavor.com',
-        // Was a stock photo of a literal party favor (confetti/horn) —
-        // matched on the word "favor", nothing to do with this brand. No
-        // reliable current image exists for the standalone brand (site
-        // redirects away, no live app store listing found), so left empty
-        // rather than guess; the app's placeholder fallback handles this.
-        image: ''
-    },
-    {
         id: 's-evofem',
         name: 'Evofem (Phexxi)',
         tagline: 'Non-hormonal birth control gel',
