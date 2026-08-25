@@ -396,7 +396,7 @@ RULES (apply to every suggestion):
  * instead of failing the whole request.
  */
 async function callSuggestionsModel(prompt) {
-  const order = parseProviderOrder('AI_DISCOVERY_PROVIDER_ORDER', 'anthropic,openai');
+  const order = parseProviderOrder('AI_DISCOVERY_PROVIDER_ORDER', 'anthropic,openai,gemini');
   try {
     const out = await callWithFallback(order, {
       system:
@@ -478,7 +478,7 @@ export default async function handler(req, res) {
     });
   }
 
-  const providerOrder = parseProviderOrder('AI_DISCOVERY_PROVIDER_ORDER', 'anthropic,openai');
+  const providerOrder = parseProviderOrder('AI_DISCOVERY_PROVIDER_ORDER', 'anthropic,openai,gemini');
   if (!providerOrder.some(providerConfigured)) {
     return res.status(503).json({
       error: 'no_ai_provider',

@@ -126,7 +126,7 @@ Reply only with the text message itself — no preamble, no signature.`;
  * callWithFallback every other AI route uses.
  */
 async function callSmsModel(systemPrompt, userPrompt) {
-  const order = parseProviderOrder('AI_SMS_PROVIDER_ORDER', 'anthropic,openai');
+  const order = parseProviderOrder('AI_SMS_PROVIDER_ORDER', 'anthropic,openai,gemini');
   try {
     const out = await callWithFallback(order, {
       system: systemPrompt,

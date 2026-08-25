@@ -393,7 +393,7 @@ export default async function handler(req, res) {
     const { names: excludeNames, keys: excludeKeys } = buildExclusionSet(category, dbRows || []);
     const searchHits = await searchForCategory(label);
     const prompt = buildDiscoveryPrompt({ category, label, searchHits, excludeNames });
-    const order = parseProviderOrder('AI_DISCOVERY_PROVIDER_ORDER', 'anthropic,openai');
+    const order = parseProviderOrder('AI_DISCOVERY_PROVIDER_ORDER', 'anthropic,openai,gemini');
 
     const out = await callWithFallback(order, {
       system: 'Return a single valid JSON object only. No markdown code fences.',

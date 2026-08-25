@@ -202,7 +202,7 @@ export default async function handler(req, res) {
     officialSiteText,
     brandFaqText
   );
-  const order = parseProviderOrder('AI_INSIGHTS_PROVIDER_ORDER', 'anthropic,openai');
+  const order = parseProviderOrder('AI_INSIGHTS_PROVIDER_ORDER', 'anthropic,openai,gemini');
 
   let answer = null;
   try {

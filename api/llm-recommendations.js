@@ -724,7 +724,7 @@ async function handleRequest(req, res) {
   }
 
   const searchResults = await searchProductsForConcerns(concerns, intake);
-  const order = parseProviderOrder('AI_RECOMMENDATIONS_PROVIDER_ORDER', 'anthropic,openai');
+  const order = parseProviderOrder('AI_RECOMMENDATIONS_PROVIDER_ORDER', 'anthropic,openai,gemini');
 
   // Stop starting new concerns once the function budget is nearly spent, so we
   // return the concerns we DID complete instead of being killed mid-flight and

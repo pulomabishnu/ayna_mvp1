@@ -116,7 +116,7 @@ export default async function handler(req, res) {
     profileSummary: typeof profileSummary === 'string' ? profileSummary.slice(0, 2000) : '',
     historyText,
   });
-  const order = parseProviderOrder('AI_INSIGHTS_PROVIDER_ORDER', 'anthropic,openai');
+  const order = parseProviderOrder('AI_INSIGHTS_PROVIDER_ORDER', 'anthropic,openai,gemini');
 
   let parsed = null;
   try {
