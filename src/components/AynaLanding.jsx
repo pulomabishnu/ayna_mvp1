@@ -124,6 +124,37 @@ function explicitRating(product) {
   return Number.isFinite(value) ? value : null;
 }
 
+function hasClinicianSupport(product) {
+  const doctor = product?.verificationLinks?.doctor;
+  const links = Array.isArray(doctor) ? doctor : Array.isArray(doctor?.links) ? doctor.links : [];
+  return Boolean(product?.doctorOpinion || product?.clinicianOpinion || product?.clinicianReview || links.length > 0);
+}
+
+function hasCommunitySupport(product) {
+  const rating = explicitRating(product);
+  const community = product?.verificationLinks?.community;
+  const communityLinks = Array.isArray(community) ? community : Array.isArray(community?.links) ? community.links : [];
+  return (Number.isFinite(rating) && rating >= 4) || Boolean(product?.communityReview) || communityLinks.length > 0;
+}
+
+function productTypeOptions() {
+  const set = new Set();
+  ALL_PRODUCTS.forEach((product) => { if (product?.category) set.add(product.category); });
+  return Array.from(set).sort();
+}
+
+/** Mirrors Discovery's "Ayna" match-quality filter, minus the quiz-derived
+ * best-match ranking that only Discovery has access to — here "Best Match"
+ * just means "already recommended to you," and "In My Ecosystem" is only
+ * meaningful (and only passed) for the returning-user shop. */
+function matchesAyna(product, filter, { ownedIds, recommendedIds } = {}) {
+  if (!filter || filter === 'all') return true;
+  if (filter === 'best-match') return Boolean(recommendedIds?.has(product?.id));
+  if (filter === 'clinician') return hasClinicianSupport(product);
+  if (filter === 'community') return hasCommunitySupport(product);
+  if (filter === 'ecosystem') return Boolean(ownedIds?.has(product?.id));
+  return true;
+}
 
 /**
  * Turn a free-text query into the discovery view's filter options, so the hero
@@ -309,6 +340,8 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
   const [sustainabilityFilter, setSustainabilityFilter] = useState('all');
   const [lifeStageFilter, setLifeStageFilter] = useState('all');
   const [ratingFilter, setRatingFilter] = useState('all');
+  const [productTypeFilter, setProductTypeFilter] = useState('all');
+  const [aynaFilter, setAynaFilter] = useState('all');
 
   const areas = useMemo(() => {
     const byCategory = new Map();
@@ -334,8 +367,13 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
     [],
   );
 
+  const availableProductTypes = useMemo(() => productTypeOptions(), []);
+
   const shownProducts = useMemo(() => {
     let list = ALL_PRODUCTS.filter((product) => product?.id && product?.name && matchesShopFilter(product, filter));
+
+    if (productTypeFilter !== 'all') list = list.filter((product) => product.category === productTypeFilter);
+    if (aynaFilter !== 'all') list = list.filter((product) => matchesAyna(product, aynaFilter, { ownedIds, recommendedIds }));
 
     if (priceFilter !== 'all') {
       list = list.filter((product) => {
@@ -377,10 +415,12 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
     }
 
     return list.slice(0, 8);
-  }, [filter, priceFilter, eligibilityFilter, preferenceFilter, sustainabilityFilter, lifeStageFilter, ratingFilter, personalize, ownedIds, recommendedIds, areas]);
+  }, [filter, priceFilter, eligibilityFilter, preferenceFilter, sustainabilityFilter, lifeStageFilter, ratingFilter, productTypeFilter, aynaFilter, personalize, ownedIds, recommendedIds, areas]);
 
   const clearShopFilters = () => {
     setFilter('all');
+    setProductTypeFilter('all');
+    setAynaFilter('all');
     setPriceFilter('all');
     setEligibilityFilter('all');
     setPreferenceFilter('all');
@@ -500,6 +540,15 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
           {showShopFilters && (
             <div className="ayna-landing-filter-panel">
               <label>
+                <span>Product type</span>
+                <select value={productTypeFilter} onChange={(e) => setProductTypeFilter(e.target.value)}>
+                  <option value="all">All</option>
+                  {availableProductTypes.map((category) => (
+                    <option key={category} value={category}>{CATEGORY_LABELS[category] || category.replace(/-/g, ' ')}</option>
+                  ))}
+                </select>
+              </label>
+              <label>
                 <span>Price</span>
                 <select value={priceFilter} onChange={(e) => setPriceFilter(e.target.value)}>
                   <option value="all">Any</option>
@@ -507,6 +556,16 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
                   <option value="25-50">$25-$50</option>
                   <option value="50-100">$50-$100</option>
                   <option value="100-plus">$100+</option>
+                </select>
+              </label>
+              <label>
+                <span>Ayna</span>
+                <select value={aynaFilter} onChange={(e) => setAynaFilter(e.target.value)}>
+                  <option value="all">Any</option>
+                  <option value="best-match">Best Match</option>
+                  <option value="clinician">Clinician Backed</option>
+                  <option value="community">Community Favorite</option>
+                  <option value="ecosystem">In My Ecosystem</option>
                 </select>
               </label>
               <label>
@@ -608,6 +667,8 @@ function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasPro
   const [sustainabilityFilter, setSustainabilityFilter] = useState('all');
   const [lifeStageFilter, setLifeStageFilter] = useState('all');
   const [ratingFilter, setRatingFilter] = useState('all');
+  const [productTypeFilter, setProductTypeFilter] = useState('all');
+  const [aynaFilter, setAynaFilter] = useState('all');
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -628,8 +689,15 @@ function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasPro
     [lineup],
   );
 
+  const availableProductTypes = useMemo(
+    () => Array.from(new Set(lineup.map(({ product }) => product.category).filter(Boolean))).sort(),
+    [lineup],
+  );
+
   const shown = useMemo(() => {
     let list = lineup.filter(({ product }) => matchesShopFilter(product, filter));
+    if (productTypeFilter !== 'all') list = list.filter(({ product }) => product.category === productTypeFilter);
+    if (aynaFilter !== 'all') list = list.filter(({ product }) => matchesAyna(product, aynaFilter));
     if (priceFilter !== 'all') {
       list = list.filter(({ product }) => {
         const price = priceNumber(product);
@@ -659,7 +727,7 @@ function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasPro
       );
     }
     return list;
-  }, [lineup, filter, personalize, profileCategories, priceFilter, eligibilityFilter, preferenceFilter, sustainabilityFilter, lifeStageFilter, ratingFilter]);
+  }, [lineup, filter, personalize, profileCategories, priceFilter, eligibilityFilter, preferenceFilter, sustainabilityFilter, lifeStageFilter, ratingFilter, productTypeFilter, aynaFilter]);
 
   const submitSearch = (e) => {
     if (e && typeof e.preventDefault === 'function') e.preventDefault();
@@ -754,6 +822,15 @@ function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasPro
           {showShopFilters && (
             <div className="ayna-landing-filter-panel">
               <label>
+                <span>Product type</span>
+                <select value={productTypeFilter} onChange={(e) => setProductTypeFilter(e.target.value)}>
+                  <option value="all">All</option>
+                  {availableProductTypes.map((category) => (
+                    <option key={category} value={category}>{CATEGORY_LABELS[category] || category.replace(/-/g, ' ')}</option>
+                  ))}
+                </select>
+              </label>
+              <label>
                 <span>Price</span>
                 <select value={priceFilter} onChange={(e) => setPriceFilter(e.target.value)}>
                   <option value="all">Any</option>
@@ -761,6 +838,14 @@ function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasPro
                   <option value="25-50">$25-$50</option>
                   <option value="50-100">$50-$100</option>
                   <option value="100-plus">$100+</option>
+                </select>
+              </label>
+              <label>
+                <span>Ayna</span>
+                <select value={aynaFilter} onChange={(e) => setAynaFilter(e.target.value)}>
+                  <option value="all">Any</option>
+                  <option value="clinician">Clinician Backed</option>
+                  <option value="community">Community Favorite</option>
                 </select>
               </label>
               <label>
@@ -814,7 +899,7 @@ function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasPro
               </label>
               <button
                 type="button"
-                onClick={() => { setPriceFilter('all'); setEligibilityFilter('all'); setPreferenceFilter('all'); setSustainabilityFilter('all'); setLifeStageFilter('all'); setRatingFilter('all'); setFilter('all'); }}
+                onClick={() => { setPriceFilter('all'); setEligibilityFilter('all'); setPreferenceFilter('all'); setSustainabilityFilter('all'); setLifeStageFilter('all'); setRatingFilter('all'); setFilter('all'); setProductTypeFilter('all'); setAynaFilter('all'); }}
               >
                 Clear
               </button>
