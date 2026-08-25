@@ -1209,16 +1209,28 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     type="search"
                     value={searchQuery}
                     onChange={(e) => {
-                        setSearchQuery(e.target.value);
+                        const value = e.target.value;
+                        setSearchQuery(value);
                         // Clearing the box (the native × or backspacing to empty) used to
                         // leave the Product Type filter exactly as the search had left it —
                         // often a category the search itself auto-selected via the nudge
                         // logic in runSearch, with no text left to explain why results were
                         // still scoped to it. Clearing the text now clears that filter too.
-                        if (!e.target.value.trim()) {
+                        if (!value.trim()) {
                             setSubmittedQuery('');
                             setCategoryFilter('all');
+                            clearTimeout(debounceRef.current);
+                            return;
                         }
+                        // Typing used to do nothing at all until Enter was pressed — no
+                        // live feedback, felt broken (found live, 2026-08-24 bug bash).
+                        // Debounced instead of firing on every keystroke: this triggers
+                        // a real LLM call once local catalog matches run out, so an
+                        // immediate per-character fire would be both wasteful and noisy.
+                        clearTimeout(debounceRef.current);
+                        debounceRef.current = setTimeout(() => {
+                            if (value.trim().length >= 2) runSearch(value);
+                        }, 600);
                     }}
                     placeholder="Search products"
                     aria-label="Search products"
@@ -1365,9 +1377,15 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 </div>
             )}
 
-            {/* Loading state for explicit search */}
+            {/* Loading state for explicit search — a bare skeleton grid with no
+                explanation for several seconds read as stuck/broken (found live,
+                2026-08-24 bug bash), since a query with no catalog matches has to
+                wait on a real LLM search, not an instant lookup. */}
             {searchSubmitted && aiLoading && (
                 <>
+                    <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', margin: '0 0 1rem' }}>
+                        Searching live for real products that match &ldquo;{submittedQuery}&rdquo;…
+                    </p>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(252px, 1fr))', gap: '1.5rem' }}>
                         {Array.from({ length: 8 }, (_, i) => (
                             <div key={i} className="card" style={{ padding: 0, overflow: 'hidden', border: '1px solid var(--color-border)' }} aria-hidden="true">
