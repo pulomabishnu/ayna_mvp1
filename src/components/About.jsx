@@ -21,6 +21,51 @@ const DIFFERENCES = [
   'Sponsored placement never changes match',
 ];
 
+const ADVISORS = [
+  { name: 'Dr. David Orbach', title: 'BME, MD, Startup Advisor', photo: '/advisors/david-orbach.png' },
+  { name: 'Gwyn Blanton', title: 'Former Director of Ethics & Compliance, Deloitte', photo: '/advisors/gwyn-blanton.png' },
+  { name: 'Albert Charles', title: 'Co-Founder, Gorges Ventures', photo: '/advisors/albert-charles.png' },
+  { name: 'Erika Demonsant', title: 'Healthcare Consultant, Huron', photo: '/advisors/erika-demonsant.png' },
+  { name: 'Pamela Nasr', title: 'Product Lead, Benchling', photo: '/advisors/pamela-nasr.png' },
+  { name: 'Nishtha Kaushik', title: 'Advisor', linkedin: 'https://www.linkedin.com/in/nkaushik29/' },
+  { name: 'Navneet Kaur', title: 'Advisor', linkedin: 'https://www.linkedin.com/in/navneet-kaur-80109b227' },
+];
+
+/** Not yet a confirmed advisor — keep separate from ADVISORS rather than
+ * implying a relationship that isn't official yet (same standard as brand
+ * partnerships elsewhere in the app). */
+const ADVISOR_IN_DISCUSSION = {
+  name: 'Dr. Denise Howard',
+  title: 'Chief of OBGYN, NY-Presbyterian Brooklyn Methodist',
+  photo: '/advisors/denise-howard.png',
+};
+
+function initials(name) {
+  return name
+    .replace(/^Dr\.\s*/i, '')
+    .split(' ')
+    .filter(Boolean)
+    .map((w) => w[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
+}
+
+function AdvisorPhoto({ advisor }) {
+  const [failed, setFailed] = React.useState(false);
+  if (advisor.photo && !failed) {
+    return (
+      <img
+        className="about-advisor__photo"
+        src={advisor.photo}
+        alt={advisor.name}
+        onError={() => setFailed(true)}
+      />
+    );
+  }
+  return <div className="about-advisor__initials">{initials(advisor.name)}</div>;
+}
+
 export default function About({ onBack, onViewSources }) {
   return (
     <div className="hiw animate-fade-in-up">
@@ -88,6 +133,32 @@ export default function About({ onBack, onViewSources }) {
         <h3 className="hiw-h">Discovery with context.</h3>
         <div className="about-difference-grid">
           {DIFFERENCES.map((item) => <div key={item}>{item}</div>)}
+        </div>
+      </section>
+
+      <section className="mockup-page hiw-block">
+        <div className="hiw-kicker">Our advisors</div>
+        <h3 className="hiw-h">Guided by real expertise.</h3>
+        <div className="about-advisor-grid">
+          {ADVISORS.map((advisor) => (
+            <div key={advisor.name} className="about-advisor">
+              <AdvisorPhoto advisor={advisor} />
+              <div className="about-advisor__name">{advisor.name}</div>
+              <div className="about-advisor__title">{advisor.title}</div>
+              {advisor.linkedin && (
+                <a className="about-advisor__link" href={advisor.linkedin} target="_blank" rel="noopener noreferrer">
+                  LinkedIn ↗
+                </a>
+              )}
+            </div>
+          ))}
+        </div>
+        <div className="about-advisor-note">
+          <AdvisorPhoto advisor={ADVISOR_IN_DISCUSSION} />
+          <div>
+            <strong>{ADVISOR_IN_DISCUSSION.name}</strong> — {ADVISOR_IN_DISCUSSION.title}
+            <div className="about-advisor-note__label">In conversation with Ayna, not yet a confirmed advisor</div>
+          </div>
         </div>
       </section>
 
