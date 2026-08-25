@@ -1,19 +1,73 @@
 import React, { useMemo, useState } from 'react';
-import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, getProfileMatchLabelsForProduct } from '../data/products';
+import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, getProfileMatchLabelsForProduct } from '../data/products';
 
 // A product added to the ecosystem is stored as a frozen JSON snapshot
 // (user_ecosystems.product_data, see src/utils/ecosystemStore.js) taken at
-// the moment it was added — not re-fetched from the catalog on load. An
-// older snapshot can predate a category being assigned at all, or predate a
-// later reclassification, so its own `category` field can't always be
-// trusted even once the area taxonomy itself is complete. Falls back to the
-// CURRENT static catalog's category for the same product id (found live,
-// Aditi 2026-08-24: Rael Organic Cotton Pads' stored snapshot didn't resolve
-// to any area even though the live catalog has always had it as
-// category: 'pad').
+// the moment it was added — not re-fetched from the catalog on load. Its own
+// `category` field can't always be trusted even once the area taxonomy
+// itself is complete:
+//   1. An older snapshot can predate a category being assigned at all, or
+//      predate a later reclassification (found live, Aditi 2026-08-24: Rael
+//      Organic Cotton Pads' stored snapshot didn't resolve to any area even
+//      though the live catalog has always had it as category: 'pad').
+//   2. A product that was never in the catalog at all — an AI-generated
+//      recommendation from api/llm-recommendations.js — has a `category`
+//      the LLM wrote as FREEFORM text (see enrichProduct there), not
+//      constrained to this site's real taxonomy at all, so it can be
+//      anything ("device", "wellness", ...) or missing entirely (found
+//      live: "Lumie Bodyclock Starter 30," a real product with full content,
+//      whose category matched nothing here or anywhere in the catalog).
 const CURRENT_CATEGORY_BY_ID = new Map(ALL_PRODUCTS.map((p) => [p.id, p.category]));
-function resolveCategory(product) {
-  return CURRENT_CATEGORY_BY_ID.get(product?.id) || product?.category;
+
+// A single bare word, shared with an unrelated everyday meaning, is weak
+// evidence on its own for which of several possible areas a product belongs
+// to — 'cycle' is Discovery's own documented repeat offender (see its
+// comments on the Hormones/Period chips: it satisfies a "sleep-wake cycle,"
+// a "fitness-cycle" healthFunction slug, etc., none of them the menstrual
+// cycle it's meant to catch). Discovery can afford to let a weak keyword
+// hit through — a false-positive filter chip is low stakes. Bucketing a
+// product into exactly ONE ecosystem area is higher stakes: a weak,
+// ambiguous match winning by pure array order over a correct, specific one
+// misfiles the product outright (found live, Aditi 2026-08-24: "Lumie
+// Bodyclock Starter 30," a sunrise wake-up light whose summary mentions a
+// "sleep-wake cycle," matched Hormones via bare 'cycle' before ever
+// reaching Sleep + Stress's correct, specific 'sleep' match).
+const WEAK_FALLBACK_KEYWORDS = new Set(['cycle']);
+
+function scoreGroupMatch(product, group) {
+  // Same guard Discovery's keyword scan uses: some categories are opted out
+  // of a chip's free-text scan entirely (e.g. an intimate-care product
+  // saying "skin" shouldn't match Skin) — see MACRO_GROUPS' own comments.
+  if (Array.isArray(group.excludeCategories) && group.excludeCategories.includes(product?.category)) return 0;
+  let score = 0;
+  if (Array.isArray(group.healthFunctions) && Array.isArray(product?.healthFunctions) &&
+      product.healthFunctions.some((hf) => group.healthFunctions.includes(hf))) score += 50;
+  const text = productSearchText(product);
+  const matched = (group.keywords || []).filter((k) => text.includes(k));
+  score += matched.reduce((sum, k) => sum + (WEAK_FALLBACK_KEYWORDS.has(k) ? 1 : k.length), 0);
+  return score;
+}
+
+function resolveArea(product, areas) {
+  const category = CURRENT_CATEGORY_BY_ID.get(product?.id) || product?.category;
+  if (category) {
+    const area = areas.find((a) => a.categories.includes(category));
+    if (area) return area;
+  }
+  // Last resort: the same name/summary/tags keyword inference Discovery's
+  // category chips use, for a product with no usable category anywhere —
+  // scored by match strength instead of "first group in array order wins,"
+  // so a specific match beats a merely-coincidental one regardless of which
+  // area happens to be listed first. Only tried against MACRO_GROUPS-sourced
+  // areas (they alone carry `keywords`) — 'care'/'supplements' are
+  // EcosystemBubbles-only additions with no keyword list, and category
+  // membership (already checked above) is the right bar for those two
+  // either way.
+  const best = MACRO_GROUPS
+    .filter((g) => g.id !== 'all' && Array.isArray(g.keywords))
+    .map((g) => ({ id: g.id, score: scoreGroupMatch(product, g) }))
+    .reduce((max, cur) => (cur.score > (max?.score || 0) ? cur : max), null);
+  return best ? areas.find((a) => a.key === best.id) : null;
 }
 
 /**
@@ -94,7 +148,7 @@ export default function EcosystemBubbles({
     const products = Object.values(myProducts || {});
     const byArea = new Map();
     products.forEach((p) => {
-      const area = AREAS.find((a) => a.categories.includes(resolveCategory(p)));
+      const area = resolveArea(p, AREAS);
       const key = area ? area.key : 'other';
       if (!byArea.has(key)) byArea.set(key, []);
       byArea.get(key).push(p);
@@ -219,4 +273,4 @@ export default function EcosystemBubbles({
   );
 }
 
-export { AREAS as ECOSYSTEM_AREAS, CATEGORY_LABELS, resolveCategory as resolveEcosystemProductCategory };
+export { AREAS as ECOSYSTEM_AREAS, CATEGORY_LABELS, resolveArea as resolveEcosystemProductArea };

@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate } from '../data/products';
+import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate } from '../data/products';
 import { loadProductCatalog } from '../utils/productCatalog';
 import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../utils/naturalLanguageSearch';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
@@ -17,72 +17,14 @@ import posthog from 'posthog-js';
 import GlossaryTerm from './GlossaryTerm';
 import { productHref, isPlainLeftClick } from '../utils/productRoute';
 
-// MACRO_GROUPS itself now lives in ../data/products (see the comment there) so
-// EcosystemBubbles can reuse the exact same taxonomy for its area bubbles
-// without a cross-page-chunk import of this whole Discovery module.
-
-// Some product copy legitimately advertises the ABSENCE of a property — e.g. Neycher's
-// intimate-care line describing itself as "hormone-free" / "non-hormonal" — rather than the
-// presence of it. A naive substring match on a concern keyword like "hormone" can't tell "this
-// product is about hormones" apart from "this product explicitly contains none," so it was
-// mis-filing hormone-free vulva balm/moisturizing gel under the Hormones chip. Strip these
-// negated phrases out before keyword matching so a chip only surfaces products that are
-// actually about the concern, not ones that merely deny it.
-//
-// Broadened beyond pure negation to the same underlying problem in a different shape: a
-// keyword's word/phrase appearing in copy for an unrelated reason.
-//   - "outside your period" (Neycher: usage timing, not a period product), "not menstrual
-//     flow", "distinct from a menstrual panty liner", and "rather than menstrual blood"
-//     (incontinence pads explicitly contrasting themselves with period products) were all
-//     satisfying the Period chip's 'period'/'menstrual' keywords despite each one denying
-//     the very thing the keyword is meant to detect.
-//   - "stress incontinence" / "stress or urge bladder leaks" / "stress and urge incontinence"
-//     are a clinical bladder-control term, not the Sleep + Stress chip's intended
-//     (psychological) sense of "stress" — was surfacing incontinence pads under that chip.
-const NEGATED_CONCERN_PHRASES = [
-    /non-?\s?hormonal/g,
-    /hormone-?\s?free/g,
-    /outside your period/g,
-    /not\s+(?:for\s+)?menstrual/g,
-    /distinct from a\s+menstrual/g,
-    /rather than menstrual/g,
-    /stress\s+(?:(?:or|and)\s+urge\s+)?(?:bladder\s+)?(?:incontinence|leaks?)/g,
-];
-
-function productSearchText(item) {
-    const raw = [
-        item?.category, item?.name, item?.brand, item?.summary, item?.description, item?.tagline,
-        ...(Array.isArray(item?.badges) ? item.badges : []),
-        ...(Array.isArray(item?.tags) ? item.tags : []),
-        item?.eligibility, item?.sustainability, item?.lifeStage,
-    ].filter(Boolean).join(' ').toLowerCase();
-    return NEGATED_CONCERN_PHRASES.reduce((t, re) => t.replace(re, ' '), raw);
-}
-
-function itemMatchesMacroGroup(item, groupId) {
-    if (!groupId || groupId === 'all') return true;
-    const group = MACRO_GROUPS.find((g) => g.id === groupId);
-    if (!group) return true;
-    if (group.categories.includes(item?.category)) return true;
-    // Structured concern tags (e.g. 'hormone-balance') are checked as an exact membership test,
-    // not folded into the free-text keyword scan below — that keeps a slug like the unrelated
-    // 'fitness-cycle' healthFunction from accidentally satisfying a keyword such as 'cycle'.
-    if (Array.isArray(group.healthFunctions) && Array.isArray(item?.healthFunctions) &&
-        item.healthFunctions.some((hf) => group.healthFunctions.includes(hf))) return true;
-    // Some chips' keywords are inherently ambiguous outside their own product domain (e.g.
-    // "skin"/"moisturizer" legitimately describe vulvar-care copy; "thinning" legitimately
-    // describes vaginal-tissue thinning) — excludeCategories lets a chip opt specific
-    // product-type categories out of the free-text keyword scan below (they can still match
-    // via an explicit categories/healthFunctions hit above) so e.g. a vulva balm doesn't
-    // surface under "Skin" just because its copy happens to say "skin."
-    if (Array.isArray(group.excludeCategories) && group.excludeCategories.includes(item?.category)) return false;
-    const text = productSearchText(item);
-    return group.keywords.some((keyword) => text.includes(keyword));
-}
+// MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, and
+// NEGATED_CONCERN_PHRASES all now live in ../data/products (see the comments
+// there) so EcosystemBubbles can reuse the exact same taxonomy and keyword
+// matching for its area bubbles, without a cross-page-chunk import of this
+// whole Discovery module.
 
 // Re-exported for unit testing of the category-chip filtering logic (see
-// Discovery.macroGroupFilter.test.js), which imports MACRO_GROUPS from here —
-// MACRO_GROUPS itself is defined in ../data/products now.
+// Discovery.macroGroupFilter.test.js), which imports these from here.
 export { MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, resolveBrowseAiRoundQuery, getSortPrice };
 
 /** Natural-language phrase for the browse-AI extension's `query` param — prefers the

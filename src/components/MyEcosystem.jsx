@@ -8,7 +8,7 @@ import {
 import ProductTileImage, { resolveCatalogProductImage, ProductImageFallback } from './ProductTileImage';
 import { getInteractions } from '../data/interactions';
 import CareNearYouPanel from './CareNearYouPanel';
-import EcosystemBubbles, { ECOSYSTEM_AREAS, resolveEcosystemProductCategory } from './EcosystemBubbles';
+import EcosystemBubbles, { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
 import EcosystemShelf from './EcosystemShelf';
 import LlmRecommendationsLoadingBlock from './LlmRecommendationsLoadingBlock';
 import HealthDataImport from './HealthDataImport';
@@ -1034,7 +1034,7 @@ export default function MyEcosystem({
     const shelfAreaBreakdown = useMemo(() => {
         const byArea = new Map();
         myProductList.forEach((p) => {
-            const area = ECOSYSTEM_AREAS.find((a) => a.categories.includes(resolveEcosystemProductCategory(p)));
+            const area = resolveEcosystemProductArea(p, ECOSYSTEM_AREAS);
             const key = area ? area.key : 'other';
             if (!byArea.has(key)) byArea.set(key, []);
             byArea.get(key).push(p);

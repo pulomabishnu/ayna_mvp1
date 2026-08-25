@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { ECOSYSTEM_AREAS, resolveEcosystemProductCategory } from './EcosystemBubbles';
+import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 
 /**
@@ -27,7 +27,7 @@ export default function EcosystemShelf({ myProducts = {}, onOpenProduct, onExplo
     const products = Object.values(myProducts || {});
     const byArea = new Map();
     products.forEach((p) => {
-      const area = ECOSYSTEM_AREAS.find((a) => a.categories.includes(resolveEcosystemProductCategory(p)));
+      const area = resolveEcosystemProductArea(p, ECOSYSTEM_AREAS);
       const key = area ? area.key : 'other';
       if (!byArea.has(key)) byArea.set(key, []);
       byArea.get(key).push(p);
