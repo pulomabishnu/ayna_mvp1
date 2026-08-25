@@ -301,6 +301,25 @@ function App() {
   // Ref mirrors pendingAction so onAuthStateChange (async callback) can read it synchronously
   const pendingActionRef = useRef(null);
   const [pendingQuizResults, setPendingQuizResults] = useState(null);
+  // Requested 2026-08-24 meeting: "sign-in required to build an ecosystem,
+  // accompanied by a popup warning to prevent loss of unsaved progress." The
+  // sign-in requirement already existed (handleQuizComplete gates on `user`
+  // below) — what didn't exist was the warning: pendingQuizResults lives only
+  // in React state until she signs in, so closing the tab, hitting back, or
+  // navigating away while the AuthGate modal is up silently threw away a
+  // just-completed quiz with no warning at all. beforeunload is the only
+  // browser mechanism that can actually intercept a tab close/refresh — an
+  // in-app modal can't.
+  useEffect(() => {
+    if (!pendingQuizResults) return undefined;
+    const handler = (e) => {
+      e.preventDefault();
+      e.returnValue = '';
+      return '';
+    };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [pendingQuizResults]);
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   useEscapeToClose(showDeleteModal, () => setShowDeleteModal(false));

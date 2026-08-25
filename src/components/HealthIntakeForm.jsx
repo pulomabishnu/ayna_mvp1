@@ -412,6 +412,20 @@ export default function HealthIntakeForm({ onComplete }) {
   const total = screens.length;
   const progressPct = Math.round(((currentIndex + 1) / total) * 100);
 
+  // Warn before losing quiz progress on tab close/refresh once she's past
+  // the first screen — mirrors the same beforeunload guard App.jsx uses for
+  // the post-completion, pre-sign-in window (see that file's comment).
+  useEffect(() => {
+    if (currentIndex <= 0) return undefined;
+    const handler = (e) => {
+      e.preventDefault();
+      e.returnValue = '';
+      return '';
+    };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [currentIndex]);
+
   const zipLookupRef = useRef(null);
   useEffect(() => {
     if (intake.zipcode.length !== 5) return undefined;
