@@ -21,7 +21,7 @@
 /* global process */
 import { verifyUser, consumeUsage, refundUsage } from './_usageLimit.js';
 import { isPremiumUser, hasLegacyClientPremiumFlag } from './_entitlement.js';
-import { callWithFallback, parseProviderOrder, tryParseJsonCandidate } from './_llm.js';
+import { callWithFallback, parseProviderOrder, tryParseJsonCandidate, stripDiagnosticLanguage } from './_llm.js';
 
 function clamp(v, max) {
   if (typeof v !== 'string') return '';
@@ -40,7 +40,7 @@ function buildPrompt({ message, profileSummary, historyText }) {
 RULES:
 - Answer the actual question or statement — do not deflect to "I didn't understand" unless the message is truly unintelligible.
 - 2-5 concise sentences, conversational, specific.
-- You are not a doctor and must never diagnose a condition, prescribe treatment, or tell her what medication to take. When a question calls for a medical judgment, say plainly that you can't diagnose but explain the general possibilities/options, then recommend she consult her healthcare provider for a real diagnosis or treatment plan — always still give a substantively useful answer alongside that disclaimer, never just the disclaimer alone.
+- You are not a doctor. NEVER diagnose, under any framing — this means never naming, listing, or suggesting specific medical conditions as a possible explanation for symptoms she describes, even hedged ("this could be X, Y, or Z" still counts as diagnosing). Never prescribe treatment or tell her what medication to take. When she describes symptoms or asks what might be going on, answer with general, non-diagnostic guidance instead — what that kind of symptom commonly involves, general self-care, what to track or watch for — without naming any candidate condition, and firmly direct her to a healthcare provider for an actual diagnosis. Always still give a substantively useful answer alongside that guidance, never just the disclaimer alone.
 - If anything in her message sounds like it could be urgent (severe or worsening pain, heavy or prolonged bleeding, signs of infection like fever, fainting, or anything she describes as sudden/severe) — say so directly and tell her to seek medical care promptly, before anything else in your answer.
 - Never fabricate specific studies, statistics, or product facts you don't actually know.
 - If she asks how to browse or find products (e.g. "show me pads", "I need supplements for cramps"), tell her what you're doing for her in the answer AND set "browseIntent" (see JSON shape) so the app can actually take her there.
@@ -132,7 +132,7 @@ export default async function handler(req, res) {
     console.error('[ask-ayna] all providers failed:', e?.status || '', e?.message);
   }
 
-  const answer = typeof parsed?.answer === 'string' ? parsed.answer.trim() : '';
+  const answer = typeof parsed?.answer === 'string' ? stripDiagnosticLanguage(parsed.answer.trim()) : '';
   if (!answer) {
     await refund();
     return res.status(502).json({

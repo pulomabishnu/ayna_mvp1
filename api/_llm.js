@@ -380,3 +380,24 @@ export function tryParseJsonCandidate(raw) {
   }
   return null;
 }
+
+/**
+ * Last-line-of-defense for the "never diagnose" rule in chat-style prompts
+ * (ask-ayna.js, product-chat.js): a prompt instruction alone is a request,
+ * not a guarantee, so this catches the model literally using diagnostic
+ * language even after being told not to. It cannot catch every way a model
+ * could still name a condition without the word itself — the prompt rule is
+ * the real defense — this is only the net under it.
+ */
+const DIAGNOSTIC_LANGUAGE_PATTERNS = [
+  [/\bdiagnos(e[sd]?|is|ing|able)\b/gi, "can't say for certain"],
+];
+
+export function stripDiagnosticLanguage(text) {
+  if (typeof text !== 'string') return text;
+  let out = text;
+  for (const [pattern, replacement] of DIAGNOSTIC_LANGUAGE_PATTERNS) {
+    out = out.replace(pattern, replacement);
+  }
+  return out;
+}

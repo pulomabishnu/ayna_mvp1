@@ -166,4 +166,15 @@ describe('POST /api/ask-ayna', () => {
 
     expect(res.body.browseIntent).toEqual({ category: 'pad' });
   });
+
+  it('strips diagnostic language even if the model slips, as a last-line safety net behind the prompt rule', async () => {
+    globalThis.fetch = vi.fn(async () => anthropicOk(jsonReply({
+      answer: 'Based on what you described, I would diagnose this as likely PCOS.',
+    })));
+    const res = mockRes();
+    await (await loadHandler())(mockReq({ body: { message: 'my periods are irregular and I have acne, what could this be?' } }), res);
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.answer).not.toMatch(/\bdiagnos/i);
+  });
 });
