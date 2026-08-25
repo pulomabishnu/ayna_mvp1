@@ -107,6 +107,21 @@ export const GOALS = [
   'learn what ingredients to avoid for my conditions',
 ];
 
+// Shared between the quiz (HealthIntakeForm.jsx) and the profile editor
+// (HealthProfileEditor.jsx) — the editor used to re-implement these two
+// fields as free-text inputs holding the literal word "Yes"/"yes" instead
+// of a real select, easy to enter garbage into and easy to misread (found
+// live, 2026-08-24 bug bash). One shared vocabulary now, not two that can
+// drift apart.
+export const CYCLE_OPTIONS = [
+  { value: 'yes', label: 'Yes' },
+  { value: 'no', label: 'No' },
+  { value: 'irregular', label: 'Irregular' },
+  { value: 'irregular_perimenopause', label: 'Irregular (Perimenopause)' },
+  { value: 'no_menopause', label: 'No (Menopause)' },
+];
+export const TTC_OPTIONS = ['Yes', 'No', 'Not right now'];
+
 export const CONCERN_AREAS = [
   'Period care (pads, tampons, cups, discs, underwear)',
   'Cramp and pain relief (devices, supplements, heat)',

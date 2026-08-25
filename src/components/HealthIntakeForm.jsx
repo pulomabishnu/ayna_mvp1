@@ -8,6 +8,8 @@ import {
   INSURANCE_TYPES,
   FSA_HSA_OPTIONS,
   OTHER_CONCERN_OPTION,
+  CYCLE_OPTIONS,
+  TTC_OPTIONS,
   mapIntakeToLegacyQuizProfile,
 } from '../utils/healthIntake';
 import { saveHealthIntakeForCurrentUser } from '../utils/healthIntakeStore';
@@ -24,13 +26,8 @@ const KEY_SYMPTOMS = [
 ];
 
 const FLOW_OPTIONS = ['Light', 'Medium', 'Heavy', 'Very heavy'];
-const CYCLE_OPTIONS = [
-  { value: 'yes', label: 'Yes' },
-  { value: 'no', label: 'No' },
-  { value: 'irregular', label: 'Irregular' },
-  { value: 'irregular_perimenopause', label: 'Irregular (Perimenopause)' },
-  { value: 'no_menopause', label: 'No (Menopause)' },
-];
+// CYCLE_OPTIONS/TTC_OPTIONS now live in ../utils/healthIntake, shared with
+// the profile editor.
 
 const FAMILY_HISTORY_OPTIONS = [
   'PCOS', 'Endometriosis', 'Thyroid disorder', 'Uterine fibroids',
@@ -47,7 +44,6 @@ const LAST_OBGYN_OPTIONS = [
   { value: 'over_3_years', label: 'More than 3 years ago' },
   { value: 'never', label: 'Never' },
 ];
-const TTC_OPTIONS = ['Yes', 'No', 'Not right now'];
 const BC_OPTIONS = ['Yes', 'No'];
 
 const SCREEN_ORDER = ['basics', 'concerns', 'period', 'health', 'products', 'healthdata'];
