@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { findGlossaryTermInText } from '../data/glossary';
+import { useEscapeToClose } from '../utils/useEscapeToClose';
 
 // Map check-in focus options → quiz frustrations (for getRecommendations)
 const FOCUS_TO_FRUSTRATION = {
@@ -67,6 +68,7 @@ const STEP_SCREENING = {
 };
 
 export default function MonthlyCheckin({ onComplete, onClose, currentProfile, onProfileUpdate }) {
+  useEscapeToClose(true, onClose);
   const [stepIndex, setStepIndex] = useState(0);
   const [answers, setAnswers] = useState({});
   const [multiSelections, setMultiSelections] = useState(new Set());

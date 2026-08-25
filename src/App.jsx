@@ -100,6 +100,19 @@ const VIEW_TO_PATH = {
   'auth-callback': '/auth/callback',
   'confirmed': '/confirmed',
 };
+// Friendly document.title per view — 'welcome'/'hero' and any view not
+// listed here fall back to the site's base title (see the title effect).
+const VIEW_TITLES = {
+  quiz: 'Health Quiz', ecosystem: 'My Ecosystem', discovery: 'Browse',
+  waitlist: 'Startups', articles: 'Health Library', screenings: 'Screenings',
+  omitted: 'Omitted Products', comparison: 'Compare Products', recalls: 'Recalls',
+  'doctor-prep': 'Appointment Prep', 'profile-edit': 'Edit Profile',
+  'phone-verify': 'Verify Phone', tracked: 'Tracked Products',
+  'privacy-policy': 'Privacy Policy', 'terms-of-use': 'Terms of Use',
+  'how-we-make-money': 'How We Make Money', 'how-it-works': 'How It Works',
+  about: 'About',
+};
+
 const PATH_TO_VIEW = Object.fromEntries(
   Object.entries(VIEW_TO_PATH).filter(([, p]) => p !== '/').map(([v, p]) => [p, v])
 );
@@ -1067,6 +1080,22 @@ function App() {
     return raw.llmGenerated ? enrichLlmProductForDiscovery(raw) : raw;
   }, [productRouteId, lastClickedProduct, myProducts, savedProducts, trackedProducts, omittedProducts]);
   const productStillResolving = !resolvedProduct && (authLoading || dataLoading);
+
+  // Every route showed the identical generic <title> from index.html — no
+  // way to tell tabs apart, bookmark a specific page, or get a useful link
+  // preview when sharing (found live, 2026-08-24 bug bash). One page,
+  // dynamic title per route/product instead.
+  useEffect(() => {
+    const base = "Ayna | Personalized Women's Health Product Recommendations";
+    if (currentView === 'product') {
+      document.title = resolvedProduct?.name
+        ? `${resolvedProduct.name} | Ayna`
+        : (productStillResolving ? 'Loading… | Ayna' : base);
+      return;
+    }
+    const label = VIEW_TITLES[currentView];
+    document.title = label ? `${label} | Ayna` : base;
+  }, [currentView, resolvedProduct, productStillResolving]);
 
   const handleRateProduct = (product, rating) => {
     const next = addRating(product.id, rating);

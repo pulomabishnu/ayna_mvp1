@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { getSupabaseClient } from '../utils/supabaseClient';
+import { useEscapeToClose } from '../utils/useEscapeToClose';
 
 const SUBTITLES = {
   quiz: 'Create an account to save your health profile and keep your ecosystem across sessions.',
@@ -18,6 +19,7 @@ const CONSENT_ITEMS = [
 const CONSENT_VERSION = 'v1';
 
 export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAuthRedirect, redirectTo }) {
+  useEscapeToClose(isModal, onSkip);
   const [mode, setMode] = useState('signup');
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');

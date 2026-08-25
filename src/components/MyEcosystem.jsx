@@ -13,6 +13,7 @@ import EcosystemShelf from './EcosystemShelf';
 import LlmRecommendationsLoadingBlock from './LlmRecommendationsLoadingBlock';
 import HealthDataImport from './HealthDataImport';
 import { generateTieredRecommendations } from '../utils/recommendationEngine';
+import { useEscapeToClose } from '../utils/useEscapeToClose';
 import {
     fetchLlmRecommendations,
     buildIdFromFingerprint,
@@ -925,6 +926,7 @@ export default function MyEcosystem({
     isPremium = false,
 }) {
     const [showAddModal, setShowAddModal] = useState(false);
+    useEscapeToClose(showAddModal, () => setShowAddModal(false));
     const [showMoreTools, setShowMoreTools] = useState(false);
     const careNearYouDetailsRef = useRef(null);
     const [showSyncPaywall, setShowSyncPaywall] = useState(false);
