@@ -616,11 +616,30 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         return () => { cancelled = true; };
     }, []);
 
+    // Arriving here with a query already set — the landing hero search box,
+    // a shared/bookmarked ?q= link, a related-search chip elsewhere in the
+    // app — used to only pre-fill the search box's text. It never actually
+    // submitted, so searchSubmitted stayed false and the whole AI-fallback
+    // engine below (runAiSearch / runBrowseAiRound) never fired: a query with
+    // zero catalog matches (confirmed live: "hair") landed on a bare "No
+    // matches" with none of the AI-suggested-product machinery this file
+    // already builds ever running. runSearch() is exactly what pressing
+    // Enter in this page's own search box does — routing the initial query
+    // through it (instead of just setting the two pieces of text state)
+    // makes a preset query behave identically to a manually typed-and-submitted
+    // one, category nudges and all.
     React.useEffect(() => {
-        if (initialSearch !== undefined) {
+        if (initialSearch === undefined) return;
+        if (initialSearch && initialSearch.trim().length >= 2) {
+            // runSearch is a plain (non-memoized) function defined later in this
+            // component — intentionally NOT a dependency here, since its identity
+            // changes every render and would re-fire this effect in a loop.
+            runSearch(initialSearch);
+        } else {
             setSearchQuery(initialSearch);
             setSubmittedQuery(initialSearch || '');
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [initialSearch]);
 
     // Mirror the submitted query into ?q= so a tab discard/reload while browsing
