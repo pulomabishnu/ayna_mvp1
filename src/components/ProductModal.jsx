@@ -10,7 +10,7 @@ import { getSupabaseClient } from '../utils/supabaseClient';
 import { renderMarkdownLite } from '../utils/renderMarkdownLite';
 import MatchGauge from './MatchGauge';
 import { getRetailerLinks } from '../utils/retailerLinks';
-import { getVerificationLinks, toSourceChips } from '../utils/verificationLinks';
+import { getVerificationLinks, toSourceChips, hostLabel } from '../utils/verificationLinks';
 import posthog from 'posthog-js';
 
 /** Remembers whether this browser prefers the tabs (1f) or evidence rail (1g) layout. */
@@ -19,9 +19,9 @@ const PRODUCT_VIEW_KEY = 'ayna_product_detail_view_v1';
 const AYNA_TABS = [
   { id: 'summary', label: 'Ayna summary' },
   { id: 'clinician', label: 'Clinician opinion' },
+  { id: 'scientific', label: 'Scientific literature' },
   { id: 'community', label: 'Social Media' },
   { id: 'ask', label: 'Ask Ayna' },
-  { id: 'specs', label: 'Specs' },
 ];
 
 /**
@@ -587,19 +587,45 @@ export default function ProductModal({
     ...getVerificationLinks(product, 'scientific'),
   ]), [product]);
 
-  const communityTags = useMemo(() => {
-    const links = getVerificationLinks(product, 'community');
-    const tags = [];
-    const seenLabels = new Set();
-    for (const link of links) {
-      const label = PLATFORM_LABELS[link.platform] || null;
-      if (label && !seenLabels.has(label)) {
-        seenLabels.add(label);
-        tags.push({ label, url: link.url || link.href || null });
+  // Dedicated "Scientific literature" tab: every doctor + scientific citation
+  // in full (not the small link-chip form used elsewhere), each with its own
+  // summary/text so a reader can see what a source actually says before
+  // clicking through. Flagged live 2026-08-25 — "ALL PRODUCTS MUST HAVE
+  // SOURCES AND REVIEWS."
+  const scientificLiteratureEntries = useMemo(() => {
+    const seenUrls = new Set();
+    const entries = [];
+    for (const [key, kind] of [['scientific', 'Scientific'], ['doctor', 'Clinical']]) {
+      for (const link of getVerificationLinks(product, key)) {
+        const url = link?.url || link?.href;
+        if (!url || seenUrls.has(url)) continue;
+        const label = hostLabel(url);
+        if (!label) continue;
+        seenUrls.add(url);
+        entries.push({ url, label, kind, text: link.text || null, summary: link.summary || null });
       }
-      if (tags.length >= 3) break;
     }
-    return tags;
+    return entries;
+  }, [product]);
+
+  // Every social-media "review" now carries its own link, right next to the
+  // review text it belongs to — the old version showed a synthesized
+  // paragraph with 3 generic platform badges underneath, disconnected from
+  // any specific claim. Flagged live 2026-08-25: "the social media page must
+  // have reviews with links." Falls back to the synthesized summary only
+  // when there's no real per-source citation to show instead.
+  const communityCitationEntries = useMemo(() => {
+    const seenUrls = new Set();
+    const entries = [];
+    for (const link of getVerificationLinks(product, 'community')) {
+      const url = link?.url || link?.href;
+      if (!url || seenUrls.has(url)) continue;
+      const label = PLATFORM_LABELS[link.platform] || hostLabel(url);
+      if (!label) continue;
+      seenUrls.add(url);
+      entries.push({ url, label, text: link.text || null, summary: link.summary || null });
+    }
+    return entries;
   }, [product]);
 
   const communitySnippets = useMemo(() => {
@@ -614,46 +640,6 @@ export default function ProductModal({
     if (product?.communityReview) return [product.communityReview];
     return [];
   }, [aynaData, product]);
-
-  const specRows = useMemo(() => {
-    if (!product) return [];
-    const categoryLabel = String(CATEGORY_LABELS[product.category] || product.type || '').replace(/^[^\w]+\s*/, '');
-    const materials = firstSentence(product.safety?.materials, 160);
-    // Real clickable retailer links (never a per-retailer price claim) when
-    // we have any; otherwise fall back to the old unclickable name list so a
-    // product with no linkable retailers still shows something.
-    const whereToBuyValue = retailerLinks.length > 0 ? (
-      <span className="pdp-rail__spec-links">
-        {retailerLinks.slice(0, 4).map((r, i) => (
-          <React.Fragment key={r.name}>
-            {i > 0 && ', '}
-            <a
-              className="pdp-rail__spec-link"
-              href={r.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => posthog.capture('product_retailer_link_clicked', {
-                productId: product.id,
-                retailer: r.name,
-                verified: r.verified,
-                destination: r.url,
-                source: 'specs_tab',
-              })}
-            >
-              {r.name}
-            </a>
-          </React.Fragment>
-        ))}
-      </span>
-    ) : (Array.isArray(product.whereToBuy) ? product.whereToBuy.slice(0, 3).join(', ') : '');
-    return [
-      product.brand ? { label: 'Brand', value: product.brand } : null,
-      categoryLabel ? { label: 'Category', value: categoryLabel } : null,
-      product.price ? { label: 'Price', value: product.price } : null,
-      materials ? { label: 'Materials', value: materials } : null,
-      whereToBuyValue ? { label: 'Where to buy', value: whereToBuyValue } : null,
-    ].filter(Boolean);
-  }, [product, retailerLinks]);
 
   const factRows = useMemo(() => (product ? buildFactRows(product) : []), [product]);
 
@@ -925,6 +911,20 @@ export default function ProductModal({
                       </div>
                     )}
                     <div className="pdp-summary-card__foot">Research + review summary. Not medical advice.</div>
+                    {(onToggleCompare || onOmit) && (
+                      <div className="pdp-specs__utility">
+                        {onToggleCompare && (
+                          <button type="button" className="pdp-head__link" onClick={() => onToggleCompare(product)}>
+                            {isInCompare ? 'In comparison' : 'Add to compare'}
+                          </button>
+                        )}
+                        {onOmit && (
+                          <button type="button" className="pdp-head__link" onClick={() => onOmit(product)}>
+                            {isOmitted ? 'Restore' : 'Omit'}
+                          </button>
+                        )}
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -967,32 +967,31 @@ export default function ProductModal({
                         {aynaReviewCount > 0 && <span>{aynaReviewCount} review{aynaReviewCount === 1 ? '' : 's'}</span>}
                       </div>
                     )}
-                    {communitySnippets.length > 0 ? (
+                    {communityCitationEntries.length > 0 ? (
+                      <div className="pdp-scientific__list">
+                        {communityCitationEntries.map((entry) => (
+                          <a
+                            key={entry.url}
+                            className="pdp-scientific__entry"
+                            href={entry.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <div className="pdp-scientific__entry-head">
+                              <span className="pdp-scientific__entry-source">{entry.label}</span>
+                            </div>
+                            {entry.text && <p className="pdp-scientific__entry-text">{entry.text}</p>}
+                            {entry.summary && <p className="pdp-scientific__entry-summary">{entry.summary}</p>}
+                          </a>
+                        ))}
+                      </div>
+                    ) : communitySnippets.length > 0 ? (
                       communitySnippets.map((snippet, i) => (
                         <p key={i} className="pdp-community__snippet">{snippet}</p>
                       ))
                     ) : aynaRating == null && aynaReviewCount === 0 ? (
                       <p className="pdp-summary-card__empty">No community notes yet.</p>
                     ) : null}
-                    {communityTags.length > 0 && (
-                      <div className="pdp-summary-card__chips">
-                        {communityTags.map((tag) => (
-                          tag.url ? (
-                            <a
-                              key={tag.label}
-                              className="pdp-head__badge"
-                              href={tag.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              {tag.label}
-                            </a>
-                          ) : (
-                            <span key={tag.label} className="pdp-head__badge">{tag.label}</span>
-                          )
-                        ))}
-                      </div>
-                    )}
                     {isInEcosystem && onRate && (
                       <>
                         <div className="pdp-community__rate">
@@ -1047,33 +1046,29 @@ export default function ProductModal({
                   />
                 )}
 
-                {activeTab === 'specs' && (
+                {activeTab === 'scientific' && (
                   <div className="pdp-summary-card">
-                    {specRows.length > 0 ? (
-                      <div className="pdp-rail__specs" style={{ borderTop: 'none', paddingTop: 0 }}>
-                        {specRows.map((row, i) => (
-                          <div key={row.label} className={`pdp-rail__spec${i === specRows.length - 1 ? ' pdp-rail__spec--last' : ''}`}>
-                            <span>{row.label}</span>
-                            <span>{row.value}</span>
-                          </div>
+                    {scientificLiteratureEntries.length > 0 ? (
+                      <div className="pdp-scientific__list">
+                        {scientificLiteratureEntries.map((entry) => (
+                          <a
+                            key={entry.url}
+                            className="pdp-scientific__entry"
+                            href={entry.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <div className="pdp-scientific__entry-head">
+                              <span className="pdp-scientific__entry-kind">{entry.kind}</span>
+                              <span className="pdp-scientific__entry-source">{entry.label}</span>
+                            </div>
+                            {entry.text && <p className="pdp-scientific__entry-text">{entry.text}</p>}
+                            {entry.summary && <p className="pdp-scientific__entry-summary">{entry.summary}</p>}
+                          </a>
                         ))}
                       </div>
                     ) : (
-                      <p className="pdp-summary-card__empty">No specs yet.</p>
-                    )}
-                    {(onToggleCompare || onOmit) && (
-                      <div className="pdp-specs__utility">
-                        {onToggleCompare && (
-                          <button type="button" className="pdp-head__link" onClick={() => onToggleCompare(product)}>
-                            {isInCompare ? 'In comparison' : 'Add to compare'}
-                          </button>
-                        )}
-                        {onOmit && (
-                          <button type="button" className="pdp-head__link" onClick={() => onOmit(product)}>
-                            {isOmitted ? 'Restore' : 'Omit'}
-                          </button>
-                        )}
-                      </div>
+                      <p className="pdp-summary-card__empty">No scientific literature yet.</p>
                     )}
                   </div>
                 )}

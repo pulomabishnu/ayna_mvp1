@@ -151,6 +151,24 @@ function getInitialDiscoverySearch() {
   }
 }
 
+/**
+ * Same problem as getInitialDiscoverySearch, one level up: the homepage's
+ * "Shop" category pill (All/Period/Intimate Care/...) was pure local state
+ * in AynaLanding, with no URL round-trip — clicking a product from a
+ * filtered Shop view and hitting Back always landed on "All", the filter
+ * silently lost. Flagged live 2026-08-25: "when we go back from the product
+ * page, it must go back to the previous query."
+ */
+function getInitialHomeCategory() {
+  const view = getInitialView();
+  if (view !== 'welcome' && view !== 'hero') return null;
+  try {
+    return new URLSearchParams(window.location.search).get('category') || null;
+  } catch {
+    return null;
+  }
+}
+
 function ViewLoadingFallback() {
   return (
     <div style={{ textAlign: 'center', padding: '4rem 1rem', color: 'var(--text-secondary, #666)' }}>
@@ -256,6 +274,14 @@ function App() {
           setDiscoverySearch('');
         }
       }
+      // Same fix, for the homepage Shop category pill — see getInitialHomeCategory.
+      if (view === 'welcome' || view === 'hero') {
+        try {
+          setHomeCategory(new URLSearchParams(window.location.search).get('category') || null);
+        } catch {
+          setHomeCategory(null);
+        }
+      }
     };
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
@@ -281,6 +307,7 @@ function App() {
   const [checkinUpdatedProfile, setCheckinUpdatedProfile] = useState(false);
   const [checkinCompletedAt, setCheckinCompletedAt] = useState(null);
   const [discoverySearch, setDiscoverySearch] = useState(getInitialDiscoverySearch);
+  const [homeCategory, setHomeCategory] = useState(getInitialHomeCategory);
   const [discoveryInitial, setDiscoveryInitial] = useState(null); // { initialCategory, initialPadFlow, initialPadPreference, initialPadUseCase }
   const [userZipCode, setUserZipCode] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
@@ -1358,6 +1385,7 @@ function App() {
             hasProfile={!!quizResults}
             profileCategories={landingProfileCategories}
             recommendedProductIds={recommendedProductIds}
+            initialCategory={homeCategory}
           />
         )}
         {currentView === 'quiz' && (

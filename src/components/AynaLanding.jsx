@@ -328,9 +328,26 @@ function Toggle({ on, offTrack = '#DCD5CB', onTrack = '#242A52', onKnob = '#F0A8
 /* 1c — returning user                                                 */
 /* ------------------------------------------------------------------ */
 
-function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds = [], onStartQuiz, onViewDiscovery, onViewEcosystem, onOpenProduct }) {
+function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds = [], onStartQuiz, onViewDiscovery, onViewEcosystem, onOpenProduct, initialCategory = null }) {
   const name = displayNameFromUser(user) || 'there';
-  const [filter, setFilter] = useState('all');
+  const [filter, setFilter] = useState(initialCategory || 'all');
+  // A shop category pick was pure local state with no URL round-trip —
+  // clicking into a product from a filtered Shop view and hitting Back
+  // always landed on "All". Mirrors Discovery's ?q= pattern: read the
+  // initial value from App.jsx (which reads the URL), and keep the URL in
+  // sync as the filter changes so a real browser Back restores it.
+  // Flagged live 2026-08-25.
+  useEffect(() => {
+    if (initialCategory) setFilter(initialCategory);
+  }, [initialCategory]);
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (filter && filter !== 'all') url.searchParams.set('category', filter);
+    else url.searchParams.delete('category');
+    if (url.search !== window.location.search) {
+      window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}`);
+    }
+  }, [filter]);
   const [personalize, setPersonalize] = useState(true);
   const [showShopFilters, setShowShopFilters] = useState(false);
   const [priceFilter, setPriceFilter] = useState('all');
@@ -654,9 +671,21 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
 /* 1a — first visit                                                    */
 /* ------------------------------------------------------------------ */
 
-function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasProfile, profileCategories }) {
+function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasProfile, profileCategories, initialCategory = null }) {
   const [query, setQuery] = useState('');
-  const [filter, setFilter] = useState('all');
+  const [filter, setFilter] = useState(initialCategory || 'all');
+  // See the matching effect in WelcomeBack for why — same fix, same pattern.
+  useEffect(() => {
+    if (initialCategory) setFilter(initialCategory);
+  }, [initialCategory]);
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (filter && filter !== 'all') url.searchParams.set('category', filter);
+    else url.searchParams.delete('category');
+    if (url.search !== window.location.search) {
+      window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}`);
+    }
+  }, [filter]);
   const [personalize, setPersonalize] = useState(false);
   const [chipSetIndex, setChipSetIndex] = useState(0);
   const [showShopFilters, setShowShopFilters] = useState(false);
@@ -923,6 +952,7 @@ export default function AynaLanding({
   hasProfile = false,
   profileCategories,
   recommendedProductIds = [],
+  initialCategory = null,
 }) {
   if (user) {
     return (
@@ -935,6 +965,7 @@ export default function AynaLanding({
         onViewDiscovery={onViewDiscovery}
         onViewEcosystem={onViewEcosystem}
         onOpenProduct={onOpenProduct}
+        initialCategory={initialCategory}
       />
     );
   }
@@ -946,6 +977,7 @@ export default function AynaLanding({
       onOpenProduct={onOpenProduct}
       hasProfile={hasProfile}
       profileCategories={profileCategories}
+      initialCategory={initialCategory}
     />
   );
 }

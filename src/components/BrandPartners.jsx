@@ -16,14 +16,23 @@ import { ProductImageFallback } from './ProductTileImage';
  * entries are catalog entries and "NOT partnership relationships", so the
  * partner list is its own thing below.
  *
- * Emptied 2026-08-24: Neycher (the one prior entry) was still in discussion,
- * no contract signed — showing it here implied an official partnership that
- * doesn't exist yet. The page now renders a "coming soon" state whenever
- * PARTNERS is empty. Add an entry back once a partnership is actually
- * contracted, not before.
+ * Emptied 2026-08-24 (no contract signed yet), refilled 2026-08-25: Neycher
+ * signed a real, official partnership — confirmed by Aditi. No logo file has
+ * been dropped at public/brands/neycher.png yet, so BrandMark below falls
+ * back to a text wordmark until one is added; that's an existing, working
+ * fallback, not a bug.
  */
 
-const PARTNERS = [];
+const PARTNERS = [
+  {
+    brand: 'Neycher',
+    /** Drop a file at public/brands/neycher.png and it replaces the wordmark. */
+    logo: '/brands/neycher.png',
+    url: 'https://www.helloneycher.com/',
+    blurb:
+      'Hormone-free intimate care. Moisturizers, balms and suppositories made for vaginal dryness, irritation and odour.',
+  },
+];
 
 function eyebrowFor(product) {
   return String(CATEGORY_LABELS[product.category] || product.category || '')
