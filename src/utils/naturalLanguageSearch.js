@@ -104,6 +104,15 @@ const TERM_ALIASES = {
   baby: ['postpartum', 'newborn', 'infant'],
   uti: ['urinary', 'bladder', 'infection'],
   pcos: ['polycystic', 'ovarian'],
+  /** Live bug: "sti" returned nothing even though Wisp/Planned Parenthood
+   * Direct genuinely offer STI care — their summaries said "STI" but their
+   * tags/healthFunctions (the identity fields) didn't, so the single-term
+   * identity-hit gate below rejected the match as a passing prose mention.
+   * The real fix is tagging those products (see supabase/seed) — this alias
+   * is defense-in-depth so "std" also finds a product tagged only "sti"
+   * and vice versa, without needing every spelling duplicated in every tag. */
+  sti: ['std', 'stds', 'stis', 'sexually-transmitted', 'sexual-health'],
+  std: ['sti', 'stds', 'stis', 'sexually-transmitted', 'sexual-health'],
   cramps: ['cramp', 'dysmenorrhea', 'painful'],
   cramp: ['cramps', 'dysmenorrhea'],
   heating: ['heat', 'heated', 'thermal', 'warming', 'warm'],

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildSearchTextForItem, scoreQueryAgainstProduct } from './naturalLanguageSearch';
+import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from './naturalLanguageSearch';
 
 describe('buildSearchTextForItem — brand searchability', () => {
   // A product whose brand name is NOT embedded in `name` used to be
@@ -57,5 +57,49 @@ describe('scoreQueryAgainstProduct — word-boundary matching', () => {
     const item = { name: 'Vitamin C Serum', summary: 'Brightening serum with vitamin c.' };
     const haystack = buildSearchTextForItem(item);
     expect(scoreQueryAgainstProduct('c', haystack)).toBeGreaterThan(0);
+  });
+});
+
+describe('scoreQueryAgainstProduct — "sti" / "std" search (2026-08-25 live bug)', () => {
+  // Live bug: searching "sti" returned nothing, even though Wisp and Planned
+  // Parenthood Direct genuinely offer STI care — "STI" appeared only in their
+  // prose summary, not in any identity field (name/tags/healthFunctions), so
+  // the single-term identity-hit gate rejected it as a passing mention. The
+  // real fix is tagging those products (see supabase/seed); this test locks
+  // in that once a product is properly tagged, "sti" AND "std" both find it.
+  it('does not match "sti" against a product that only mentions it in prose', () => {
+    const item = {
+      name: 'Wisp',
+      summary: 'Asynchronous online sexual health care: birth control, emergency contraception, UTI and STI treatment.',
+      tags: ['contraception', 'privacy', 'comfort'],
+      healthFunctions: ['contraception', 'telehealth'],
+    };
+    const haystack = buildSearchTextForItem(item);
+    const identity = buildIdentityTextForItem(item);
+    expect(scoreQueryAgainstProduct('sti', haystack, identity)).toBe(0);
+  });
+
+  it('matches "sti" once the product is tagged for it (the real fix)', () => {
+    const item = {
+      name: 'Wisp',
+      summary: 'Asynchronous online sexual health care: birth control, emergency contraception, UTI and STI treatment.',
+      tags: ['contraception', 'privacy', 'comfort', 'sti'],
+      healthFunctions: ['contraception', 'telehealth', 'sti-treatment'],
+    };
+    const haystack = buildSearchTextForItem(item);
+    const identity = buildIdentityTextForItem(item);
+    expect(scoreQueryAgainstProduct('sti', haystack, identity)).toBeGreaterThan(0);
+  });
+
+  it('"std" also finds a product tagged only "sti", via the alias', () => {
+    const item = {
+      name: 'Wisp',
+      summary: 'Online sexual health care.',
+      tags: ['contraception', 'sti'],
+      healthFunctions: ['telehealth'],
+    };
+    const haystack = buildSearchTextForItem(item);
+    const identity = buildIdentityTextForItem(item);
+    expect(scoreQueryAgainstProduct('std', haystack, identity)).toBeGreaterThan(0);
   });
 });
