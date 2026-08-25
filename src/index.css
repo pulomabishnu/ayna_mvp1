@@ -3113,6 +3113,13 @@ html {
   border-radius: 999px;
 }
 
+.pdp-head__match--gauge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 12px 4px 4px;
+}
+
 .pdp-head__actions {
   display: flex;
   flex-wrap: wrap;

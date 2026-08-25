@@ -8,6 +8,7 @@ import { isPartnerBrandItem } from '../utils/partnerBrands';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { renderMarkdownLite } from '../utils/renderMarkdownLite';
+import MatchGauge from './MatchGauge';
 import { getRetailerLinks } from '../utils/retailerLinks';
 import posthog from 'posthog-js';
 
@@ -900,7 +901,10 @@ export default function ProductModal({
                   <span className="pdp-head__price">{product.price || product.stage}</span>
                 )}
                 {matchPercent != null ? (
-                  <span className="pdp-head__match">{matchPercent}% match</span>
+                  <span className="pdp-head__match pdp-head__match--gauge">
+                    <MatchGauge percent={matchPercent} size={28} theme="light" />
+                    match
+                  </span>
                 ) : isInEcosystem ? (
                   <span className="pdp-head__match">In your ecosystem</span>
                 ) : headMatchLabel ? (

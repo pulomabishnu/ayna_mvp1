@@ -46,6 +46,10 @@
 .ayna-browse-card:focus-visible { box-shadow:0 0 0 3px rgba(78,56,102,.18); border-radius:12px; }
 .ayna-browse-card .ayna-discover-card__tile img { width:100%; height:100%; position:absolute; inset:0; object-fit:contain; padding:14px; box-sizing:border-box; }
 .ayna-browse-card__match,.ayna-browse-card__ecosystem { position:absolute; top:.65rem; left:.65rem; z-index:2; border-radius:var(--radius-pill); padding:.32rem .55rem; background:rgba(255,255,255,.93); font-family:var(--font-label); font-size:.61rem; letter-spacing:.05em; color:var(--color-amber-deep); }
+/* Wraps a MatchGauge (a circle already carries its own white "hole" and
+   shadow) instead of text — the pill padding/background above would just
+   add a mismatched square-ish halo around a circle. */
+.ayna-browse-card__match { padding:0; background:none; border-radius:50%; line-height:0; }
 .ayna-browse-card__ecosystem { top:auto; bottom:.65rem; color:#2f6b4f; }
 .ayna-browse-card__wishlist { position:absolute; top:.6rem; right:.6rem; z-index:3; width:34px; height:34px; border:1px solid rgba(26,23,20,.12); border-radius:50%; background:rgba(255,255,255,.93); display:grid; place-items:center; cursor:pointer; }
 .ayna-browse-card__wishlist svg { width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:1.7; }
@@ -203,6 +207,34 @@
   .pdp-rail__match-wrap { grid-template-columns:74px 1fr; }
   .pdp-rail__match-ring { width:72px; height:72px; }
   .pdp-evidence-head { gap:22px; }
+}
+
+/* Shared MatchGauge.jsx — see that file for why this replaced flat text
+   badges on the Summary tab and Browse cards. */
+.ayna-match-gauge {
+  --gauge-size: 44px;
+  width: var(--gauge-size);
+  height: var(--gauge-size);
+  border-radius: 50%;
+  background: conic-gradient(var(--gauge-ring) var(--gauge-pct), var(--gauge-track) 0);
+  display: grid;
+  place-items: center;
+  position: relative;
+  flex-shrink: 0;
+}
+.ayna-match-gauge::after {
+  content: "";
+  position: absolute;
+  inset: calc(var(--gauge-size) * 0.12);
+  border-radius: 50%;
+  background: var(--gauge-hole);
+  box-shadow: 0 1px 2px rgba(20, 16, 12, 0.08);
+}
+.ayna-match-gauge span {
+  position: relative;
+  z-index: 1;
+  font: 600 var(--gauge-font)/1 'DM Sans', system-ui, sans-serif;
+  color: var(--gauge-text);
 }
 
 /* My Ecosystem — board 2a ("Ecosystem page, restructured"): one persistent

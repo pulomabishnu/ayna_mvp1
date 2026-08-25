@@ -13,6 +13,7 @@ import { fetchDsldProducts } from '../utils/fetchDsldProducts';
 import { enrichLlmProductForDiscovery } from '../utils/enrichLlmProductForDiscovery';
 import { resolveProductImage, isPlaceholderProductImage, safeProductImageSrc } from '../utils/resolveProductImage';
 import { ProductImageFallback } from './ProductTileImage';
+import MatchGauge from './MatchGauge';
 import posthog from 'posthog-js';
 import GlossaryTerm from './GlossaryTerm';
 import { productHref, isPlainLeftClick } from '../utils/productRoute';
@@ -1461,7 +1462,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                     ) : (
                                         <ProductImageFallback />
                                     )}
-                                    {matchPercent != null && <span className="ayna-browse-card__match">{matchPercent}% Match</span>}
+                                    {matchPercent != null && (
+                                        <span className="ayna-browse-card__match">
+                                            <MatchGauge percent={matchPercent} size={24} theme="light" label="match" />
+                                        </span>
+                                    )}
                                     {isInEcosystem && <span className="ayna-browse-card__ecosystem">In ecosystem</span>}
                                 </div>
                                 <div className="ayna-discover-card__body">
