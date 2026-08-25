@@ -10,7 +10,7 @@
 
 import { checkProductInsightsRateLimit } from './_rateLimitProductInsights.js';
 import { verifyUser } from './_usageLimit.js';
-import { tryParseJsonCandidate } from './_llm.js';
+import { tryParseJsonCandidate, callWithFallback, parseProviderOrder, providerConfigured } from './_llm.js';
 import { ALL_PRODUCTS } from '../src/data/products.js';
 
 // Mirrors PRESCRIPTION_DRUG_PATTERN in api/llm-recommendations.js — keep the two in sync.
@@ -146,10 +146,6 @@ async function persistNewDiscoveries(suggestions, query) {
   );
 }
 
-function getAnthropicApiKey() {
-  return (process.env.ANTHROPIC_API_KEY || '').trim() || null;
-}
-
 function hasUrlLike(s) {
   if (typeof s !== 'string') return false;
   return /https?:\/\/|www\.\w/i.test(s);
@@ -225,16 +221,6 @@ function formatSearchHitsForPrompt(hits) {
   if (!hits || !hits.length) return '';
   const lines = hits.map((h, i) => `${i + 1}. ${h.title} — ${h.snippet}${h.url ? ` (${h.url})` : ''}`);
   return `\n\nLIVE WEB SEARCH RESULTS for this exact query (real, current — use these to confirm a specific product actually exists, especially for a smaller or newer brand you would not otherwise be fully confident naming from memory alone). Only report what these results actually show — a brand or product name that doesn't appear here and that you're not independently confident about is still not something to include:\n${lines.join('\n')}`;
-}
-
-function stripJsonFence(raw) {
-  let t = String(raw || '').trim();
-  if (t.startsWith('```')) {
-    t = t.replace(/^```(?:json)?\s*/i, '');
-    const last = t.lastIndexOf('```');
-    if (last >= 0) t = t.slice(0, last);
-  }
-  return t.trim();
 }
 
 function clampTypicalRating(n) {
@@ -401,20 +387,21 @@ RULES (apply to every suggestion):
 - NEVER suggest a prescription medication as a product — this includes hormonal birth control (pills, patches, rings, IUDs, implants), hormone replacement therapy, prescription antidepressants/anxiolytics, prescription antibiotics, and prescription weight-loss drugs (GLP-1s), even if the search names the condition it treats. For a query about something that requires a prescription (e.g. "birth control pills", "UTI antibiotics"), suggest telehealth platforms/services that can prescribe it instead of naming the drug itself.`;
 }
 
-async function callClaudeJson(prompt, attempt = 0) {
-  const apiKey = getAnthropicApiKey();
-  if (!apiKey) return null;
-
-  const model = process.env.ANTHROPIC_MODEL || 'claude-haiku-4-5-20251001';
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'content-type': 'application/json',
-    },
-    body: JSON.stringify({
-      model,
+/**
+ * Was Anthropic-only via a hand-rolled fetch — a single provider's outage
+ * (e.g. the account running out of credits, found live 2026-08-25) took down
+ * every search on the site with no fallback. Now goes through the same
+ * multi-provider callWithFallback every other AI route uses: a non-retryable
+ * failure on the first configured provider falls through to the next one
+ * instead of failing the whole request.
+ */
+async function callSuggestionsModel(prompt) {
+  const order = parseProviderOrder('AI_DISCOVERY_PROVIDER_ORDER', 'anthropic,openai');
+  try {
+    const out = await callWithFallback(order, {
+      system:
+        "Return a single valid JSON object only. No markdown fences. You must not output URLs or http(s) in any field. Real brand and product names only. Educational women's health context; never diagnose.",
+      prompt,
       // Was reduced to 2048 on the assumption that was "~10x what 20 short
       // suggestions need." It wasn't: the schema below asks for a 2-3 sentence
       // summary, up to 6 tags, retailers, search terms, and a safety note PER
@@ -432,40 +419,21 @@ async function callClaudeJson(prompt, attempt = 0) {
       // items requested, so a smaller ceiling should have headroom") is what
       // failed at 4096 for 20 items; a regression test below pins 8192 as
       // the only value actually confirmed safe.
-      max_tokens: 8192,
+      maxTokens: 8192,
       temperature: 0.2,
-      system:
-        "Return a single valid JSON object only. No markdown fences. You must not output URLs or http(s) in any field. Real brand and product names only. Educational women's health context; never diagnose.",
-      messages: [{ role: 'user', content: prompt }],
-    }),
-  });
-  if (!res.ok) {
-    const errText = await res.text();
-    console.error('search-suggestions Claude HTTP', res.status, errText.slice(0, 300));
-    // Retry once on 429 (rate limit) or 529 (overloaded) after a short wait
-    if (attempt === 0 && (res.status === 429 || res.status === 529)) {
-      // Shortened: this is billed wall-clock inside the function budget, not
-      // free waiting. Long backoff belongs on the client, not here.
-      await new Promise((r) => setTimeout(r, 600));
-      return callClaudeJson(prompt, 1);
+      jsonMode: true,
+    });
+    if (out.truncated) {
+      // Truncated output can't be recovered after the fact — this is here so a
+      // future max_tokens regression shows up as a clear log line instead of a
+      // bare invalid_model_json with no indication of why.
+      console.warn(`search-suggestions: ${out.provider} hit max_tokens; response is truncated and will likely fail to parse`);
     }
+    return out.text;
+  } catch (e) {
+    console.error('search-suggestions: all providers failed:', e?.status || '', e?.message);
     return null;
   }
-  let data;
-  try {
-    data = await res.json();
-  } catch {
-    return null;
-  }
-  const raw = data?.content?.[0]?.text;
-  if (typeof raw !== 'string' || !raw.trim()) return null;
-  if (data?.stop_reason === 'max_tokens') {
-    // Truncated output can't be recovered after the fact — this is here so a
-    // future max_tokens regression shows up as a clear log line instead of a
-    // bare invalid_model_json with no indication of why.
-    console.warn('search-suggestions: Claude hit max_tokens; response is truncated and will likely fail to parse');
-  }
-  return stripJsonFence(raw);
 }
 
 export default async function handler(req, res) {
@@ -510,10 +478,11 @@ export default async function handler(req, res) {
     });
   }
 
-  if (!getAnthropicApiKey()) {
+  const providerOrder = parseProviderOrder('AI_DISCOVERY_PROVIDER_ORDER', 'anthropic,openai');
+  if (!providerOrder.some(providerConfigured)) {
     return res.status(503).json({
-      error: 'no_anthropic_key',
-      message: 'Set ANTHROPIC_API_KEY in project environment variables.',
+      error: 'no_ai_provider',
+      message: 'Set ANTHROPIC_API_KEY or OPENAI_API_KEY in project environment variables.',
     });
   }
 
@@ -550,7 +519,7 @@ export default async function handler(req, res) {
   // a failed search.
   const searchHits = await searchWebForQuery(query);
 
-  const rawJson = await callClaudeJson(buildPrompt(query, categoryHint, symptomHint, personalized, profileSummary, maxResults, dislikedProducts, searchHits));
+  const rawJson = await callSuggestionsModel(buildPrompt(query, categoryHint, symptomHint, personalized, profileSummary, maxResults, dislikedProducts, searchHits));
   if (!rawJson) {
     return res.status(502).json({ error: 'claude_failed' });
   }

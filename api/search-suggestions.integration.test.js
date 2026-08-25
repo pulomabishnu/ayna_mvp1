@@ -23,7 +23,7 @@
  * the real handler.
  */
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { mockRes, mockReq, mockSupabase, withEnv, anthropicOk } from './_test-helpers.js';
+import { mockRes, mockReq, mockSupabase, withEnv, anthropicOk, openaiOk } from './_test-helpers.js';
 
 const realFetch = globalThis.fetch;
 let restoreEnv;
@@ -357,7 +357,10 @@ describe('POST /api/search-suggestions — Claude call and retry', () => {
     expect(calls).toBe(2);
   });
 
-  it('does not retry a second time — one retry only', async () => {
+  it('gives up after 3 attempts against a provider that keeps 429ing', async () => {
+    // Retry budget now lives in the shared _llm.js transport (3 attempts per
+    // provider, same as every other AI route) instead of this file's own
+    // hand-rolled single retry.
     globalThis.fetch = vi.fn(async () => ({
       ok: false, status: 429, headers: new Headers(), text: async () => 'still limited',
     }));
@@ -368,7 +371,40 @@ describe('POST /api/search-suggestions — Claude call and retry', () => {
 
     expect(res.statusCode).toBe(502);
     expect(res.body.error).toBe('claude_failed');
-    expect(globalThis.fetch).toHaveBeenCalledTimes(2);
+    expect(globalThis.fetch).toHaveBeenCalledTimes(3);
+  });
+
+  // The actual point of the 2026-08-25 migration off a hand-rolled,
+  // Anthropic-only fetch: when the account is out of credits (or any other
+  // non-retryable Anthropic failure), OpenAI — if configured — picks up the
+  // request instead of every search on the site going dark.
+  it('falls back to OpenAI when Anthropic fails outright (e.g. no credits)', async () => {
+    restoreEnv();
+    restoreEnv = withEnv({
+      ANTHROPIC_API_KEY: 'test-key',
+      OPENAI_API_KEY: 'test-openai-key',
+      REQUIRE_AUTH_FOR_SEARCH_SUGGESTIONS: undefined,
+      ALLOWED_ORIGINS: 'https://ayna.health',
+      SUPABASE_URL: 'https://x.supabase.co',
+      SUPABASE_SERVICE_ROLE_KEY: 'service-key',
+      SERPER_API_KEY: undefined,
+    });
+    // Reuse claudeOk()'s well-formed suggestion payload for the OpenAI
+    // response too — same JSON body, just wrapped in OpenAI's response shape.
+    const payload = await claudeOk().text();
+    globalThis.fetch = vi.fn(async (url) => {
+      if (String(url).includes('anthropic.com')) {
+        return { ok: false, status: 400, headers: new Headers(), text: async () => 'credit balance too low' };
+      }
+      return openaiOk(payload);
+    });
+
+    const handler = await loadHandler();
+    const res = mockRes();
+    await handler(searchReq({ query: 'cramp relief' }), res);
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.suggestions?.length).toBeGreaterThan(0);
   });
 
   it('502s with invalid_model_json when Claude returns unparseable JSON', async () => {

@@ -118,6 +118,19 @@ export function anthropicOk(text, stopReason = 'end_turn') {
   };
 }
 
+/** OpenAI-shaped success response for a mocked fetch — for testing the actual
+ * cross-provider fallback (Anthropic fails, OpenAI picks it up), not just the
+ * Anthropic-only path most callers exercise. */
+export function openaiOk(text, finishReason = 'stop') {
+  return {
+    ok: true,
+    status: 200,
+    headers: new Headers(),
+    json: async () => ({ choices: [{ message: { content: text }, finish_reason: finishReason }] }),
+    text: async () => text,
+  };
+}
+
 export function httpError(status, headers = {}) {
   return {
     ok: false,
