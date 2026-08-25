@@ -6,10 +6,25 @@
  * of analytics without requiring login.
  *
  * CURRENT INTERNAL USERS:
- * Puloma — phone:  019f23fa-2ddc-7baf-b219-bf4b5c6dceb4
- * Puloma — laptop: 019f23fd-c46e-77a1-b38a-6198fa08a799
- * Eliz   — phone:  019f23f6-e815-77bc-ae5f-ce0421ef345c
- * Eliz   — laptop: pending
+ * Puloma — phone:              019f23fa-2ddc-7baf-b219-bf4b5c6dceb4
+ * Puloma — laptop:             019f23fd-c46e-77a1-b38a-6198fa08a799
+ * Eliz   — phone:              019f23f6-e815-77bc-ae5f-ce0421ef345c
+ * Eliz   — laptop:             pending
+ * Aditi (thakur.aditi0504@gmail.com), identified — Supabase auth.users.id:
+ *                               78b66458-eb0e-4445-8e1a-8150c7db35aa
+ * lalaloops99@gmail.com, identified — Supabase auth.users.id:
+ *                               46adced4-68e8-4a60-97ee-1fad4aa32135
+ *
+ * Anonymous pre-login distinct IDs added 2026-08-25 — real internal testing
+ * traffic (Aditi's/team's own pre-login browsing) that showed up heavily in
+ * the PostHog event list under a raw anonymous UUID instead of an email,
+ * skewing usage metrics. These are NOT stable: PostHog mints a fresh
+ * anonymous ID whenever local storage is cleared or a new browser/device is
+ * used, so this list will need new entries again whenever that happens —
+ * it isn't a one-time fix the way an identified user's ID is.
+ * 01a02d2f-4488-7fbf-acb3-67ccc38e8065
+ * 01a02cb9-5061-7cb3-b910-67425fe5e71e
+ * 01a0302d-a7ef-7e73-8a85-d8f4dc85f736
  *
  * HOW IT WORKS:
  * On every page load, this checks if the current
