@@ -3984,6 +3984,11 @@ footer a[href*="career" i],
   border-color: #242A52;
 }
 
+.eco-bubbles__card-remove:hover {
+  border-color: #B3261E !important;
+  color: #B3261E;
+}
+
 /* One row per product when an area has more than one pick — was previously
    collapsed to a single products[0], silently hiding the rest. */
 .eco-bubbles__card-product + .eco-bubbles__card-product {

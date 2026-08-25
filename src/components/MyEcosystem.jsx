@@ -1766,6 +1766,7 @@ export default function MyEcosystem({
                     user={user}
                     onOpenProduct={onOpenProduct}
                     onExploreArea={(area) => onGoToSearch?.('')}
+                    onToggleProduct={onToggleProduct}
                 />
 
                 {llmError && !llmLoading && (

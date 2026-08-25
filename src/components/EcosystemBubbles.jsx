@@ -141,6 +141,7 @@ export default function EcosystemBubbles({
   user = null,
   onOpenProduct,
   onExploreArea,
+  onToggleProduct,
 }) {
   const [selectedKey, setSelectedKey] = useState(null);
 
@@ -255,6 +256,15 @@ export default function EcosystemBubbles({
                   <div className="eco-bubbles__card-actions">
                     <button type="button" onClick={() => onExploreArea?.(selected)}>Swap</button>
                     <button type="button" onClick={() => onOpenProduct?.(product)}>Why this?</button>
+                    {onToggleProduct && (
+                      <button
+                        type="button"
+                        className="eco-bubbles__card-remove"
+                        onClick={() => onToggleProduct(product)}
+                      >
+                        Remove
+                      </button>
+                    )}
                   </div>
                 </div>
               );
