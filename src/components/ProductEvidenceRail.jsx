@@ -1,4 +1,5 @@
 import React from 'react';
+import { getVerificationLinks } from '../utils/verificationLinks';
 
 /**
  * The right-hand rail on the evidence layout (mockup board 1g): three small
@@ -25,9 +26,9 @@ function firstSentence(text, max = 140) {
 export default function ProductEvidenceRail({ product, matchLabels = [], matchPercent = null, aynaReviewCount = 0 }) {
   const clinicianNote = product.doctorOpinion || product.clinicianOpinion || null;
 
-  const scientificCount = product.verificationLinks?.scientific?.links?.length || 0;
-  const clinicalCount = product.verificationLinks?.doctor?.links?.length || 0;
-  const communityLinkCount = product.verificationLinks?.community?.links?.length || 0;
+  const scientificCount = getVerificationLinks(product, 'scientific').length;
+  const clinicalCount = getVerificationLinks(product, 'doctor').length;
+  const communityLinkCount = getVerificationLinks(product, 'community').length;
 
   const evidenceRows = [
     scientificCount > 0 ? { label: 'Scientific', value: `${scientificCount} source${scientificCount === 1 ? '' : 's'}` } : null,

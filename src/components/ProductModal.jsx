@@ -10,6 +10,7 @@ import { getSupabaseClient } from '../utils/supabaseClient';
 import { renderMarkdownLite } from '../utils/renderMarkdownLite';
 import MatchGauge from './MatchGauge';
 import { getRetailerLinks } from '../utils/retailerLinks';
+import { getVerificationLinks } from '../utils/verificationLinks';
 import posthog from 'posthog-js';
 
 /** Remembers whether this browser prefers the tabs (1f) or evidence rail (1g) layout. */
@@ -600,17 +601,17 @@ export default function ProductModal({
   const safetyAlert = useMemo(() => getSafetyAlertText(product), [product]);
 
   const sourceCounts = useMemo(() => {
-    const doctor = product?.verificationLinks?.doctor?.links?.length || 0;
-    const scientific = product?.verificationLinks?.scientific?.links?.length || 0;
-    const community = product?.verificationLinks?.community?.links?.length || 0;
+    const doctor = getVerificationLinks(product, 'doctor').length;
+    const scientific = getVerificationLinks(product, 'scientific').length;
+    const community = getVerificationLinks(product, 'community').length;
     return { doctor, scientific, community, total: doctor + scientific + community };
   }, [product]);
 
   const sourceChips = useMemo(() => {
     if (!product) return [];
     const allLinks = [
-      ...(product.verificationLinks?.doctor?.links || []),
-      ...(product.verificationLinks?.scientific?.links || []),
+      ...getVerificationLinks(product, 'doctor'),
+      ...getVerificationLinks(product, 'scientific'),
     ];
     const chips = [];
     const seenLabels = new Set();
@@ -630,7 +631,7 @@ export default function ProductModal({
   }, [product, aynaReviewCount]);
 
   const communityTags = useMemo(() => {
-    const links = product?.verificationLinks?.community?.links || [];
+    const links = getVerificationLinks(product, 'community');
     const tags = [];
     const seenLabels = new Set();
     for (const link of links) {

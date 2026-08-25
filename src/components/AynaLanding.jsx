@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
+import { getVerificationLinks } from '../utils/verificationLinks';
 
 /**
  * Landing page — a direct port of boards 1a and 1c of the Aug 2026 desktop
@@ -125,15 +126,13 @@ function explicitRating(product) {
 }
 
 function hasClinicianSupport(product) {
-  const doctor = product?.verificationLinks?.doctor;
-  const links = Array.isArray(doctor) ? doctor : Array.isArray(doctor?.links) ? doctor.links : [];
+  const links = getVerificationLinks(product, 'doctor');
   return Boolean(product?.doctorOpinion || product?.clinicianOpinion || product?.clinicianReview || links.length > 0);
 }
 
 function hasCommunitySupport(product) {
   const rating = explicitRating(product);
-  const community = product?.verificationLinks?.community;
-  const communityLinks = Array.isArray(community) ? community : Array.isArray(community?.links) ? community.links : [];
+  const communityLinks = getVerificationLinks(product, 'community');
   return (Number.isFinite(rating) && rating >= 4) || Boolean(product?.communityReview) || communityLinks.length > 0;
 }
 

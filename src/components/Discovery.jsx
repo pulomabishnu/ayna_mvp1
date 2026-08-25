@@ -5,6 +5,7 @@ import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProd
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { isPartnerBrandItem } from '../utils/partnerBrands';
 import { fetchSearchSuggestions } from '../utils/fetchSearchSuggestions';
+import { getVerificationLinks } from '../utils/verificationLinks';
 import { RELEASED_STARTUPS } from '../data/startups';
 import { getAynaRating } from '../data/aynaReviews';
 import Disclaimer from './Disclaimer';
@@ -92,16 +93,14 @@ function matchesPreference(item, filter) {
 }
 
 function hasClinicianSupport(item) {
-    const doctor = item?.verificationLinks?.doctor;
-    const links = Array.isArray(doctor) ? doctor : Array.isArray(doctor?.links) ? doctor.links : [];
+    const links = getVerificationLinks(item, 'doctor');
     return Boolean(item?.doctorOpinion || item?.clinicianOpinion || item?.clinicianReview || links.length > 0);
 }
 
 function hasCommunitySupport(item, reviewBucket) {
     const rating = item?.ratingNote ? null : (getAynaRating(item, reviewBucket) ?? (item?.userRating != null ? Number(item.userRating) : null));
     const reviewCount = Array.isArray(reviewBucket?.reviews) ? reviewBucket.reviews.length : 0;
-    const community = item?.verificationLinks?.community;
-    const communityLinks = Array.isArray(community) ? community : Array.isArray(community?.links) ? community.links : [];
+    const communityLinks = getVerificationLinks(item, 'community');
     return (Number.isFinite(rating) && rating >= 4) || reviewCount > 0 || Boolean(item?.communityReview) || communityLinks.length > 0;
 }
 
