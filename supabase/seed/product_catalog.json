@@ -8618,66 +8618,6 @@
     }
   },
   {
-    "id": "p-pause-serum",
-    "name": "Pause Well-Aging Fascia Stimulating Tool",
-    "brand": null,
-    "category": "menopause",
-    "product_type": "physical",
-    "summary": "Tool designed specifically for menopausal skin to increase blood flow and collagen.",
-    "price": "$115",
-    "image": "",
-    "url": null,
-    "tags": [
-      "comfort"
-    ],
-    "health_functions": [
-      "comfort"
-    ],
-    "where_to_buy": [],
-    "where_to_buy_in_stock": {},
-    "safety": {
-      "fdaStatus": "Dermatologist tested",
-      "materials": "Stainless steel",
-      "recalls": "No recalls.",
-      "allergens": "N/A"
-    },
-    "doctor_opinion": "Fascia stimulation may improve skin elasticity during the rapid collagen loss of menopause. Dermatologist tested.",
-    "community_review": "Community discussions note improvement in jawline and skin texture as a self-care ritual.",
-    "effectiveness": "Improved skin texture and tone.",
-    "clinician_opinion_source": "independent",
-    "clinician_attribution": "Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.",
-    "source": "curated",
-    "internal": false,
-    "requires_prescription": false,
-    "user_rating": 4.4,
-    "is_active": true,
-    "extra": {
-      "ingredients": "Stainless steel.",
-      "badges": [
-        "Innovation Award",
-        "Derm Approved"
-      ],
-      "verificationLinks": {
-        "doctor": {
-          "links": []
-        },
-        "scientific": {
-          "links": []
-        },
-        "community": {
-          "links": [
-            {
-              "platform": "reddit",
-              "url": "https://www.reddit.com/r/Menopause/search/?q=skin&restrict_sr=1",
-              "text": "Reddit r/Menopause: skin",
-              "summary": "Community discussions on menopause skin care."
-            }
-          ]
-        }
-      }
-    }
-  },
-  {
     "id": "p-womaness-me",
     "name": "Womaness Me.No.Pause. Supplement",
     "brand": null,
