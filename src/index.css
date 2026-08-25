@@ -3186,13 +3186,38 @@ a.pdp-head__badge:focus-visible {
   display: block;
   font-size: 0.8rem;
   color: #991B1B;
-  margin-bottom: 0.3rem;
 }
 .pdp-safety-alert p {
-  margin: 0;
+  margin: 0.3rem 0 0;
   font-size: 0.88rem;
   line-height: 1.5;
   color: var(--color-text-main);
+}
+/* Collapsed by default (see SafetyAlert in ProductModal.jsx) — a long
+   safety paragraph used to push Buy Now/Wishlist below the fold. */
+.pdp-safety-alert__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+.pdp-safety-alert__chevron {
+  font-size: 0.75rem;
+  color: #991B1B;
+  flex-shrink: 0;
+  margin-left: 0.5rem;
+}
+.pdp-safety-alert__preview {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .pdp-head__link {

@@ -81,7 +81,7 @@ export const PHYSICAL_PRODUCTS = [
         doctorOpinion: 'FlexFoam absorption is reliable for heavy flow; unscented versions minimize irritation risk for sensitive users.',
         communityReview: 'Community discussions on Reddit r/periods are split: strong praise for absorption and the thin profile during heavy flow, alongside a distinct and growing thread of PFAS/chemical-residue concern that picked up in 2024 and made a real share of users switch to organic-cotton brands or say they no longer feel fully comfortable using it.',
         ingredients: 'Polyethylene, polypropylene, wood pulp, adhesive. Fragrance-free version omits parfum.',
-        effectiveness: 'Highly effective for heavy flow. FlexFoam absorbs 10x its weight while staying thin.',
+        effectiveness: 'Highly effective for heavy flow — users consistently report fewer leaks than with standard mainstream pads at a comparable price point.',
         integrations: [],
         badges: ['Mainstream Favorite', 'High Absorbency'],
         verificationLinks: {

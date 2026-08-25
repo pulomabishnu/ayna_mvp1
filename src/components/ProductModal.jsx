@@ -179,6 +179,35 @@ function AskAynaProductTab({ product, aiContext, quizResults, ecosystemProducts 
 }
 
 /** Full-size photo view — click to enlarge, click backdrop/X/Escape to close. */
+// A dense, un-collapsible safety paragraph (e.g. Always Infinity FlexFoam's
+// ~75-word PFAS note) could push Buy Now/Wishlist below the fold on a normal
+// screen — a first-time visitor scrolled straight into a wall of red-flagged
+// text before ever seeing the purchase buttons (found live, 2026-08-24 bug
+// bash). Collapsed to one line by default; the warning icon/label always
+// stays visible (this is exactly the content that shouldn't be missable),
+// only the full paragraph is hidden until tapped.
+function SafetyAlert({ text }) {
+  const [expanded, setExpanded] = useState(false);
+  return (
+    <div className="pdp-safety-alert">
+      <button
+        type="button"
+        className="pdp-safety-alert__toggle"
+        onClick={() => setExpanded((v) => !v)}
+        aria-expanded={expanded}
+      >
+        <strong>⚠️ Safety note</strong>
+        <span className="pdp-safety-alert__chevron" aria-hidden="true">{expanded ? '▴' : '▾'}</span>
+      </button>
+      {expanded ? (
+        <p>{text}</p>
+      ) : (
+        <p className="pdp-safety-alert__preview">{text}</p>
+      )}
+    </div>
+  );
+}
+
 function ImageLightbox({ src, alt, onClose }) {
   useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
@@ -878,12 +907,7 @@ export default function ProductModal({
                 ) : null}
               </div>
 
-              {safetyAlert && (
-                <div className="pdp-safety-alert">
-                  <strong>⚠️ Safety note</strong>
-                  <p>{safetyAlert}</p>
-                </div>
-              )}
+              {safetyAlert && <SafetyAlert text={safetyAlert} />}
 
               {actionButtons}
 
@@ -1094,12 +1118,7 @@ export default function ProductModal({
               {summarySentences[0] && (
                 <p className="pdp-evidence-head__desc">{summarySentences[0]}</p>
               )}
-              {safetyAlert && (
-                <div className="pdp-safety-alert">
-                  <strong>⚠️ Safety note</strong>
-                  <p>{safetyAlert}</p>
-                </div>
-              )}
+              {safetyAlert && <SafetyAlert text={safetyAlert} />}
               {actionButtons}
               {factRows.length > 0 && (
                 <div className="pdp-rail__specs">
