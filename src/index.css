@@ -1446,12 +1446,18 @@ html {
 /* Mobile drawer — hidden on desktop */
 .mobile-nav-drawer { display: none; }
 
-@media (max-width: 768px) {
-  /* Show hamburger, hide desktop nav sections */
+/* Nav-specific rules split out to their own 900px breakpoint — MUST match
+   .app-nav__links' own hide breakpoint below (also 900px). These used to be
+   two different numbers (768px here, 900px there), leaving a ~130px dead
+   zone (a common laptop-with-sidebar/split-screen width) where the desktop
+   links were already hidden but the hamburger hadn't appeared yet — no way
+   to navigate from the header at all (found live, 2026-08-24 bug bash).
+   Split out (instead of just widening the whole old block) so the unrelated
+   .btn/.container touch-target rules below keep their original 768px. */
+@media (max-width: 900px) {
   .mobile-menu-btn { display: flex; }
   .desktop-only    { display: none !important; }
 
-  /* Mobile nav drawer */
   .mobile-nav-drawer {
     display: flex;
     flex-direction: column;
@@ -1484,7 +1490,9 @@ html {
   .mobile-drawer-item:active {
     background: var(--color-secondary-fade);
   }
+}
 
+@media (max-width: 768px) {
   /* All buttons meet 44px touch target */
   .btn { min-height: 44px; }
 
@@ -2051,9 +2059,15 @@ html {
   font-weight: 500;
 }
 
+/* One consistent avatar color everywhere, not gold on the dark hero header
+   and lavender everywhere else (found live, 2026-08-24 bug bash) — as a
+   personal-identity marker, it should look the same regardless of which
+   page you're on. Gold is the established brand accent already used here on
+   the hero; the cream-header override that swapped it for lavender is gone. */
 .app-nav__circle--avatar {
   background: #F0A84B;
   border-color: #F0A84B;
+  color: #242A52;
 }
 
 .app-nav__circle-pill {
@@ -2226,12 +2240,6 @@ html {
 .app-nav--cream .app-nav__circle:hover,
 .app-nav--cream .app-nav__circle--active {
   background: rgba(26, 23, 20, 0.05);
-}
-
-.app-nav--cream .app-nav__circle--avatar {
-  background: #C3B6D8;
-  border-color: #C3B6D8;
-  color: #2A2140;
 }
 
 /* Landing hero picks the gradient up where the nav left off. */

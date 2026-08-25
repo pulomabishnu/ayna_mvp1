@@ -7,9 +7,13 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
         ? quizResults.frustrations.join(', ')
         : (quizResults?.frustration || 'General Wellness');
     const age = quizResults?.age || 'N/A';
-    const sensitivities = Array.isArray(quizResults?.sensitivities) && quizResults.sensitivities.length > 0
-        ? quizResults.sensitivities.join(', ')
-        : (quizResults?.sensitivities || 'None reported');
+    // An empty array is truthy in JS, so `quizResults.sensitivities || 'None reported'`
+    // never fired when it was `[]` — the line rendered "Sensitivities:" with nothing
+    // after it instead of falling back (found live, 2026-08-24 bug bash).
+    const sensitivitiesList = Array.isArray(quizResults?.sensitivities)
+        ? quizResults.sensitivities
+        : (quizResults?.sensitivities ? [quizResults.sensitivities] : []);
+    const sensitivities = sensitivitiesList.length > 0 ? sensitivitiesList.join(', ') : 'None reported';
     const prefs = Array.isArray(quizResults?.preference) ? quizResults.preference.join(', ') : (quizResults?.preference || '');
 
     const focusAreas = checkinData?.focusAreas || [];
@@ -81,7 +85,7 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
                                     <strong style={{ fontSize: '0.95rem', display: 'block', marginBottom: '0.35rem' }}>{p.name}</strong>
                                     <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
                                         <strong style={{ color: 'var(--color-text-main)' }}>Main ingredients:</strong>{' '}
-                                        {p.ingredients || p.tagline || '. Check the product label or brand website for the full ingredient list.'}
+                                        {p.ingredients || p.tagline || 'Not listed — check the product label or brand website for the full ingredient list.'}
                                     </span>
                                 </li>
                             ))}
@@ -95,11 +99,15 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
                 <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '2rem' }}>
                     <h4 style={{ fontSize: '1rem', fontWeight: '700', marginBottom: '1rem' }}>Suggested Questions for Your Provider</h4>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        {/* Pure questions, not a re-quote of the Health Summary card above —
+                            the provider already sees the goal and product list there, so
+                            repeating them here word-for-word was pure redundancy, not new
+                            information (found live, 2026-08-24 bug bash). */}
                         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', background: 'var(--color-surface-soft)', padding: '1rem', borderRadius: 'var(--radius-sm)', borderLeft: '4px solid var(--color-primary)' }}>
-                            <p style={{ fontSize: '0.95rem' }}>"I told Ayna my main concern is <strong>{goal}</strong>. Does this fit my care plan?"</p>
+                            <p style={{ fontSize: '0.95rem' }}>"Does my current care plan address my main concern well, or should we consider other options?"</p>
                         </div>
                         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', background: 'var(--color-surface-soft)', padding: '1rem', borderRadius: 'var(--radius-sm)', borderLeft: '4px solid var(--color-primary)' }}>
-                            <p style={{ fontSize: '0.95rem' }}><em>I'm currently using <strong>{Object.values(myProducts)[0]?.name || 'these products'}</strong>. Do you see any concerns with this, given my health goals?</em></p>
+                            <p style={{ fontSize: '0.95rem' }}>"Do you see any concerns with the products I'm currently using, given my health goals?"</p>
                         </div>
                         {userChatMessages.length > 0 && (
                             <>
