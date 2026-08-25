@@ -1,5 +1,20 @@
 import React, { useMemo, useState } from 'react';
-import { CATEGORY_LABELS, MACRO_GROUPS, getProfileMatchLabelsForProduct } from '../data/products';
+import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, getProfileMatchLabelsForProduct } from '../data/products';
+
+// A product added to the ecosystem is stored as a frozen JSON snapshot
+// (user_ecosystems.product_data, see src/utils/ecosystemStore.js) taken at
+// the moment it was added — not re-fetched from the catalog on load. An
+// older snapshot can predate a category being assigned at all, or predate a
+// later reclassification, so its own `category` field can't always be
+// trusted even once the area taxonomy itself is complete. Falls back to the
+// CURRENT static catalog's category for the same product id (found live,
+// Aditi 2026-08-24: Rael Organic Cotton Pads' stored snapshot didn't resolve
+// to any area even though the live catalog has always had it as
+// category: 'pad').
+const CURRENT_CATEGORY_BY_ID = new Map(ALL_PRODUCTS.map((p) => [p.id, p.category]));
+function resolveCategory(product) {
+  return CURRENT_CATEGORY_BY_ID.get(product?.id) || product?.category;
+}
 
 /**
  * "This is your ecosystem." — mockup board 1d, the circular layout.
@@ -79,7 +94,7 @@ export default function EcosystemBubbles({
     const products = Object.values(myProducts || {});
     const byArea = new Map();
     products.forEach((p) => {
-      const area = AREAS.find((a) => a.categories.includes(p.category));
+      const area = AREAS.find((a) => a.categories.includes(resolveCategory(p)));
       const key = area ? area.key : 'other';
       if (!byArea.has(key)) byArea.set(key, []);
       byArea.get(key).push(p);
@@ -204,4 +219,4 @@ export default function EcosystemBubbles({
   );
 }
 
-export { AREAS as ECOSYSTEM_AREAS, CATEGORY_LABELS };
+export { AREAS as ECOSYSTEM_AREAS, CATEGORY_LABELS, resolveCategory as resolveEcosystemProductCategory };
