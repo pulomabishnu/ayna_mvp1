@@ -1,5 +1,5 @@
 import React from 'react';
-import { getVerificationLinks } from '../utils/verificationLinks';
+import { getVerificationLinks, toSourceChips } from '../utils/verificationLinks';
 
 /**
  * The right-hand rail on the evidence layout (mockup board 1g): three small
@@ -25,15 +25,28 @@ function firstSentence(text, max = 140) {
 
 export default function ProductEvidenceRail({ product, matchLabels = [], matchPercent = null, aynaReviewCount = 0 }) {
   const clinicianNote = product.doctorOpinion || product.clinicianOpinion || null;
+  // Backs the clinician-opinion claim with an actual link to check it against
+  // — a stated claim with no source a reader can click isn't evidence, it's
+  // just a bigger claim. Flagged live 2026-08-25.
+  const clinicianSourceChips = toSourceChips([
+    ...getVerificationLinks(product, 'doctor'),
+    ...getVerificationLinks(product, 'scientific'),
+  ]);
 
-  const scientificCount = getVerificationLinks(product, 'scientific').length;
-  const clinicalCount = getVerificationLinks(product, 'doctor').length;
-  const communityLinkCount = getVerificationLinks(product, 'community').length;
+  const scientificChips = toSourceChips(getVerificationLinks(product, 'scientific'));
+  const clinicalChips = toSourceChips(getVerificationLinks(product, 'doctor'));
+  const communityChips = toSourceChips(getVerificationLinks(product, 'community'));
 
   const evidenceRows = [
-    scientificCount > 0 ? { label: 'Scientific', value: `${scientificCount} source${scientificCount === 1 ? '' : 's'}` } : null,
-    clinicalCount > 0 ? { label: 'Clinical', value: `${clinicalCount} reference${clinicalCount === 1 ? '' : 's'}` } : null,
-    communityLinkCount > 0 ? { label: 'Social Media', value: `${communityLinkCount} link${communityLinkCount === 1 ? '' : 's'}` } : null,
+    scientificChips.length > 0
+      ? { label: 'Scientific', value: `${scientificChips.length} source${scientificChips.length === 1 ? '' : 's'}`, chips: scientificChips }
+      : null,
+    clinicalChips.length > 0
+      ? { label: 'Clinical', value: `${clinicalChips.length} reference${clinicalChips.length === 1 ? '' : 's'}`, chips: clinicalChips }
+      : null,
+    communityChips.length > 0
+      ? { label: 'Social Media', value: `${communityChips.length} link${communityChips.length === 1 ? '' : 's'}`, chips: communityChips }
+      : null,
     aynaReviewCount > 0 ? { label: 'Ayna reviews', value: `${aynaReviewCount}` } : null,
     product.safety?.fdaStatus ? { label: 'FDA', value: firstSentence(product.safety.fdaStatus, 56) } : null,
   ].filter(Boolean);
@@ -75,6 +88,22 @@ export default function ProductEvidenceRail({ product, matchLabels = [], matchPe
             {product.clinicianAttribution && (
               <div className="pdp-rail__attr">{product.clinicianAttribution}</div>
             )}
+            {clinicianSourceChips.length > 0 && (
+              <div className="pdp-summary-card__chips">
+                {clinicianSourceChips.map((chip) => (
+                  <a
+                    key={chip.url}
+                    className="pdp-head__badge"
+                    href={chip.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={chip.text || chip.url}
+                  >
+                    {chip.label}
+                  </a>
+                ))}
+              </div>
+            )}
           </>
         ) : (
           <div className="pdp-rail__body pdp-rail__body--dark">
@@ -90,7 +119,18 @@ export default function ProductEvidenceRail({ product, matchLabels = [], matchPe
             {evidenceRows.map((row) => (
               <div key={row.label}>
                 <span>{row.label}</span>
-                <span>{row.value}</span>
+                {row.chips?.length > 0 ? (
+                  <a
+                    href={row.chips[0].url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={row.chips.map((c) => c.label).join(', ')}
+                  >
+                    {row.value}
+                  </a>
+                ) : (
+                  <span>{row.value}</span>
+                )}
               </div>
             ))}
           </div>

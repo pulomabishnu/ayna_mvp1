@@ -3464,9 +3464,21 @@ a.pdp-head__badge:focus-visible {
   gap: 16px;
 }
 
+.pdp-rail__evidence > div > a:last-child,
 .pdp-rail__evidence > div > span:last-child {
   color: #8c8078;
   text-align: right;
+}
+
+.pdp-rail__evidence > div > a:last-child {
+  text-decoration: underline;
+  text-decoration-color: #d8cdbf;
+  text-underline-offset: 2px;
+}
+
+.pdp-rail__evidence > div > a:last-child:hover,
+.pdp-rail__evidence > div > a:last-child:focus-visible {
+  color: #3f3831;
 }
 
 .pdp-btn--disabled {

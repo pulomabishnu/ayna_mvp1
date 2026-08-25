@@ -10,7 +10,7 @@ import { getSupabaseClient } from '../utils/supabaseClient';
 import { renderMarkdownLite } from '../utils/renderMarkdownLite';
 import MatchGauge from './MatchGauge';
 import { getRetailerLinks } from '../utils/retailerLinks';
-import { getVerificationLinks } from '../utils/verificationLinks';
+import { getVerificationLinks, toSourceChips } from '../utils/verificationLinks';
 import posthog from 'posthog-js';
 
 /** Remembers whether this browser prefers the tabs (1f) or evidence rail (1g) layout. */
@@ -300,57 +300,6 @@ function firstSentence(text, max = 140) {
   return `${(lastSpace > max * 0.6 ? truncated.slice(0, lastSpace) : truncated).trimEnd()}…`;
 }
 
-// A short, real name for a source URL's host — used for the small chips on the
-// Ayna summary card. Falls back to a title-cased guess from the domain itself
-// rather than a generic "Source" label, but never invents an institution name
-// that isn't actually the linked domain.
-const FRIENDLY_HOSTS = {
-  'acog.org': 'ACOG',
-  'www.acog.org': 'ACOG',
-  'mayoclinic.org': 'Mayo Clinic',
-  'www.mayoclinic.org': 'Mayo Clinic',
-  'fda.gov': 'FDA',
-  'www.fda.gov': 'FDA',
-  'pubmed.ncbi.nlm.nih.gov': 'PubMed',
-  'ncbi.nlm.nih.gov': 'NIH',
-  'www.ncbi.nlm.nih.gov': 'NIH',
-  'nih.gov': 'NIH',
-  'www.nih.gov': 'NIH',
-  'cdc.gov': 'CDC',
-  'www.cdc.gov': 'CDC',
-  'medlineplus.gov': 'MedlinePlus',
-  'reddit.com': 'Reddit',
-  'www.reddit.com': 'Reddit',
-  'tiktok.com': 'TikTok',
-  'www.tiktok.com': 'TikTok',
-  'youtube.com': 'YouTube',
-  'youtu.be': 'YouTube',
-  'instagram.com': 'Instagram',
-  'www.instagram.com': 'Instagram',
-  'facebook.com': 'Facebook',
-  'nytimes.com': 'NYT Wirecutter',
-  'thewirecutter.com': 'NYT Wirecutter',
-  'instyle.com': 'InStyle',
-  'hopkinsmedicine.org': 'Johns Hopkins Medicine',
-  'www.hopkinsmedicine.org': 'Johns Hopkins Medicine',
-  'healthline.com': 'Healthline',
-  'www.healthline.com': 'Healthline',
-  'webmd.com': 'WebMD',
-  'www.webmd.com': 'WebMD',
-};
-
-function hostLabel(url) {
-  try {
-    const host = new URL(url).hostname.replace(/^www\./, '');
-    if (FRIENDLY_HOSTS[host]) return FRIENDLY_HOSTS[host];
-    const parts = host.split('.');
-    const base = parts.length >= 2 ? parts[parts.length - 2] : host;
-    return base.charAt(0).toUpperCase() + base.slice(1);
-  } catch {
-    return null;
-  }
-}
-
 function humanizeTag(tag) {
   return String(tag || '')
     .replace(/[-_]/g, ' ')
@@ -615,13 +564,10 @@ export default function ProductModal({
     ];
     const chips = [];
     const seenLabels = new Set();
-    for (const link of allLinks) {
-      const url = link.url || link.href;
-      const label = hostLabel(url);
-      if (label && !seenLabels.has(label)) {
-        seenLabels.add(label);
-        chips.push({ label, url });
-      }
+    for (const chip of toSourceChips(allLinks)) {
+      if (seenLabels.has(chip.label)) continue;
+      seenLabels.add(chip.label);
+      chips.push(chip);
       if (chips.length >= 2) break;
     }
     if (aynaReviewCount > 0) {
@@ -629,6 +575,17 @@ export default function ProductModal({
     }
     return chips.slice(0, 3);
   }, [product, aynaReviewCount]);
+
+  // The clinician-opinion tab states a claim ("hormonal birth control can
+  // deplete B vitamins…") with no link a reader can check — the actual
+  // citations only ever showed up as generic chips on a different tab
+  // (Ayna summary), disconnected from the claim they support. Flagged live
+  // 2026-08-25: "if we're stating stuff we need to have links to sources."
+  // Doctor + scientific links both back clinical claims, so both show here.
+  const clinicianSourceLinks = useMemo(() => toSourceChips([
+    ...getVerificationLinks(product, 'doctor'),
+    ...getVerificationLinks(product, 'scientific'),
+  ]), [product]);
 
   const communityTags = useMemo(() => {
     const links = getVerificationLinks(product, 'community');
@@ -978,6 +935,22 @@ export default function ProductModal({
                         <p className="pdp-summary-card__body" style={{ marginTop: 0 }}>{product.doctorOpinion}</p>
                         {product.clinicianAttribution && (
                           <div className="pdp-summary-card__foot">{product.clinicianAttribution}</div>
+                        )}
+                        {clinicianSourceLinks.length > 0 && (
+                          <div className="pdp-summary-card__chips">
+                            {clinicianSourceLinks.map((chip) => (
+                              <a
+                                key={chip.url}
+                                className="pdp-head__badge"
+                                href={chip.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title={chip.text || chip.url}
+                              >
+                                {chip.label}
+                              </a>
+                            ))}
+                          </div>
                         )}
                       </>
                     ) : (
