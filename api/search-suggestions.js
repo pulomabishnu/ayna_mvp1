@@ -183,6 +183,50 @@ function sanitizeOfficialUrl(s) {
   return parsed.toString();
 }
 
+// ─── Live web search grounding ────────────────────────────────────────────
+//
+// Without this, a suggestion's existence rests entirely on the model's own
+// training-data recall — "only suggest brands you're confident exist" below.
+// That's the right anti-hallucination default, but it means a real, smaller,
+// or newer brand the model just doesn't happen to recall confidently (found
+// live: "Oboo", "Femigist" — both real, both returned zero suggestions,
+// zero catalog matches) looks identical to a query for something that
+// doesn't exist at all. Same technique api/llm-recommendations.js already
+// uses for category-level discovery (searchProductsForConcerns), applied
+// here to the exact typed query instead: real search results let the model
+// confirm a specific product's existence instead of relying on recall alone,
+// without loosening the actual fabrication rules — it still may only report
+// what these results actually show.
+async function searchWebForQuery(query) {
+  const serperKey = process.env.SERPER_API_KEY;
+  if (!serperKey) return null;
+  try {
+    const r = await fetch('https://google.serper.dev/search', {
+      method: 'POST',
+      headers: { 'X-API-KEY': serperKey, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ q: `${query} buy`, num: 8, gl: 'us' }),
+      signal: AbortSignal.timeout(5000),
+    });
+    if (!r.ok) return null;
+    const data = await r.json();
+    const hits = (data?.organic || [])
+      .filter((h) => h.title && h.snippet)
+      .slice(0, 6)
+      .map((h) => ({ title: h.title, snippet: h.snippet.slice(0, 200), url: h.link || '' }));
+    return hits.length ? hits : null;
+  } catch {
+    // Search failure is non-fatal — the prompt just falls back to
+    // recall-only, i.e. today's behavior.
+    return null;
+  }
+}
+
+function formatSearchHitsForPrompt(hits) {
+  if (!hits || !hits.length) return '';
+  const lines = hits.map((h, i) => `${i + 1}. ${h.title} — ${h.snippet}${h.url ? ` (${h.url})` : ''}`);
+  return `\n\nLIVE WEB SEARCH RESULTS for this exact query (real, current — use these to confirm a specific product actually exists, especially for a smaller or newer brand you would not otherwise be fully confident naming from memory alone). Only report what these results actually show — a brand or product name that doesn't appear here and that you're not independently confident about is still not something to include:\n${lines.join('\n')}`;
+}
+
 function stripJsonFence(raw) {
   let t = String(raw || '').trim();
   if (t.startsWith('```')) {
@@ -300,7 +344,7 @@ function normalizeQuerySummary(s) {
   return t.length >= 20 ? t : '';
 }
 
-function buildPrompt(query, categoryHint, symptomHint, personalized, profileSummary, maxResults, dislikedProducts) {
+function buildPrompt(query, categoryHint, symptomHint, personalized, profileSummary, maxResults, dislikedProducts, searchHits) {
   const cat =
     categoryHint && categoryHint !== 'all'
       ? `User category filter: "${categoryHint}". Prefer products that fit this aisle when relevant.`
@@ -322,7 +366,7 @@ function buildPrompt(query, categoryHint, symptomHint, personalized, profileSumm
   return `You are the product-discovery layer for Ayna, a women's health app. Propose REAL, SHIPPABLE products/apps — specific brand names and product lines a shopper could find at major US retailers or official brand/app stores. The search query defines the product TYPE to return (e.g. "iron supplements" → only iron supplements, never trackers/apps/period care, no matter what the profile says); the user profile below, if given, may only re-rank WITHIN that type — never switch category. ${countLine}
 
 User search: "${query.replace(/"/g, '\\"')}"
-${cat}${sym ? '\n' + sym : ''}${profileLine ? '\n' + profileLine : ''}${dislikedLine ? '\n' + dislikedLine : ''}
+${cat}${sym ? '\n' + sym : ''}${profileLine ? '\n' + profileLine : ''}${dislikedLine ? '\n' + dislikedLine : ''}${formatSearchHitsForPrompt(searchHits)}
 
 Return ONE JSON object ONLY (no markdown) with up to ${maxResults} suggestions in this shape. Keep every field as brief as the guidance below allows — concise output is faster to generate and lets more suggestions fit in the response:
 {
@@ -338,7 +382,7 @@ Return ONE JSON object ONLY (no markdown) with up to ${maxResults} suggestions i
       "priceHint": "A hedged price RANGE only, e.g. ~$12-18 or Subscription ~$15/mo — never a single exact price. Attach a pack/count size (e.g. '14-16 pads') only if you're confident that's genuinely this brand's real configuration — a wrong invented count is worse than none; if unsure of quantity, give price alone.",
       "tags": ["up to 4 short tags: heavy-flow", "organic", "app", ...],
       "whereToBuy": ["up to 3 retailer NAMES only, no URLs — e.g. Amazon, Target, Brand website, App Store"],
-      "officialUrl": "THIS SPECIFIC PRODUCT's own page on the brand's official site (e.g. https://brand.com/products/this-exact-product) — NOT the homepage/root domain, which is useless for fetching a product photo. Only include it if you're confident of the real product-page URL; omit entirely rather than guess or fall back to the homepage. The one exception to the no-URLs rule below.",
+      "officialUrl": "THIS SPECIFIC PRODUCT's own page on the brand's official site (e.g. https://brand.com/products/this-exact-product) — NOT the homepage/root domain, which is useless for fetching a product photo. If one of the live web search results above is clearly this exact product's own page, use that URL. Otherwise only include it if you're independently confident of the real product-page URL; omit entirely rather than guess or fall back to the homepage. The one exception to the no-URLs rule below.",
       "typicalUserRating": 4.2,
       "safetyNote": "one short line: e.g. consult clinician for prescriptions, patch tests for topicals",
       "searchTerms": ["1-2 web search phrases that include brand + product kind for Google"]
@@ -348,7 +392,7 @@ Return ONE JSON object ONLY (no markdown) with up to ${maxResults} suggestions i
 
 RULES (apply to every suggestion):
 - Draw on your full knowledge of relevant brands — mainstream, indie, DTC, clinical, international — sold in the US. Rank by: relevance to the query, clinical reputation/safety record, availability, community reputation.
-- Only suggest brands/products you are confident genuinely exist and sell in the US market. Never invent a brand name, product line, feature, or service — even as a placeholder. If you can't recall seeing it sold online at a major retailer or the brand's own site, leave it out — it likely doesn't exist.
+- Only suggest brands/products you are confident genuinely exist and sell in the US market. Never invent a brand name, product line, feature, or service — even as a placeholder. Confidence can come from either your own knowledge OR the live web search results above (a smaller/newer real brand you wouldn't otherwise recall confidently is fine to include if those results clearly confirm it) — but never extrapolate a name, price, or count beyond what the search results actually show, and if neither source supports it, leave it out — it likely doesn't exist.
 - Same standard applies to pack sizes/counts as to brand names: state a specific count (e.g. "60 capsules") only if you're confident that's the real configuration for this brand+product — an invented-but-plausible count is a fabrication just like an invented brand, and it's more deceptive because it looks precise. When unsure, give a price range with no count attached.
 - NEVER suggest any product whose brand is "Ayna" — that's the app the user is already in, not a product to recommend
 - Never include URLs, domains, or "http" in any field except officialUrl (retailer names as plain text only); for officialUrl, only include it if you're confident it's the real current URL, else omit rather than guess
@@ -499,7 +543,14 @@ export default async function handler(req, res) {
   // results without increasing typical generation time.
   const maxResults = typeof body?.maxResults === 'number' ? Math.min(Math.max(body.maxResults, 1), 25) : 25;
 
-  const rawJson = await callClaudeJson(buildPrompt(query, categoryHint, symptomHint, personalized, profileSummary, maxResults, dislikedProducts));
+  // Grounds the exact typed query in a real, current web search before
+  // asking the model to generate — see searchWebForQuery's own comment for
+  // why. A missing/failing search key degrades to today's recall-only
+  // behavior (formatSearchHitsForPrompt returns '' for null hits), never to
+  // a failed search.
+  const searchHits = await searchWebForQuery(query);
+
+  const rawJson = await callClaudeJson(buildPrompt(query, categoryHint, symptomHint, personalized, profileSummary, maxResults, dislikedProducts, searchHits));
   if (!rawJson) {
     return res.status(502).json({ error: 'claude_failed' });
   }
