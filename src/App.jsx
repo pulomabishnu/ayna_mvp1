@@ -1587,6 +1587,7 @@ function App() {
             onChatHistoryUpdate={setChatHistory}
             disabled={!quizResults}
             onNavigateToDiscovery={handleViewDiscovery}
+            onViewRecommendations={() => setCurrentView('recommendations')}
           />
         )}
 

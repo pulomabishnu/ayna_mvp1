@@ -7,6 +7,7 @@ import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolve
 import { isPartnerBrandItem } from '../utils/partnerBrands';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { getSupabaseClient } from '../utils/supabaseClient';
+import { renderMarkdownLite } from '../utils/renderMarkdownLite';
 import { getRetailerLinks } from '../utils/retailerLinks';
 import posthog from 'posthog-js';
 
@@ -139,7 +140,7 @@ function AskAynaProductTab({ product, aiContext, quizResults, ecosystemProducts 
                 whiteSpace: 'pre-wrap',
               }}
             >
-              {m.text}
+              {m.role === 'assistant' ? renderMarkdownLite(m.text) : m.text}
             </div>
           ))}
           {sending && (

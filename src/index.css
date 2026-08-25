@@ -5051,6 +5051,43 @@ textarea {
   color: #8C817B;
 }
 
+/* A profile-update confirmation — distinct from a plain reply bubble on
+   either side, since this is the app telling her what changed, not Ayna
+   speaking (see the "show chat changes clearly" fix, 2026-08-24). */
+.ayna-ask-message--system {
+  align-self: center;
+  max-width: 96%;
+  background: var(--color-secondary-fade, rgba(255, 199, 116, 0.18));
+  color: #4A3F2E;
+  border-radius: 12px;
+  font-size: 0.82rem;
+  padding: 0.6rem 0.8rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+.ayna-ask-message--system button {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #242A52;
+  background: #fff;
+  border: 1px solid rgba(36, 42, 82, 0.25);
+  border-radius: 999px;
+  padding: 0.28rem 0.7rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.ayna-ask-message--system button:hover {
+  border-color: #242A52;
+}
+
+.ayna-ask-panel__error {
+  margin: 0 0.8rem 0.5rem;
+  font-size: 0.8rem;
+  color: #B3261E;
+}
+
 .ayna-ask-panel__composer {
   padding: 0.8rem;
   background: #FFF;
