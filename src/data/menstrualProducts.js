@@ -106,8 +106,18 @@ export const MENSTRUAL_PHYSICAL = [
         tags: ['heavy-flow', 'leaks', 'comfort'],
         price: '$6 for 14',
         userRating: 4.3,
-        whereToBuy: ['Walmart', 'Amazon'],
-        url: 'https://www.bodyform.co.uk/our-products/pads/ultra/',
+        // Bodyform is Essity's UK-branded feminine-care line, but it genuinely
+        // is sold to US customers too — real listings with real reviews
+        // confirmed live on amazon.com (2026-08-24 bug bash follow-up; the
+        // original report assumed it wasn't sold in the US at all, which
+        // turned out to be wrong). Walmart search results existed for it too,
+        // but the Walmart page itself couldn't be confirmed live (bot-walled
+        // every check), so it's dropped from whereToBuy rather than kept on
+        // an unverified claim. Pointing at a real Amazon search instead of
+        // one specific SKU page, since the exact product name/pack size
+        // wasn't confirmable for a single listing.
+        whereToBuy: ['Amazon'],
+        url: 'https://www.amazon.com/Womens-Health-Care-Products-Bodyform/s?rh=n%3A386373011%2Cp_4%3ABodyform',
         // Real packaging photo from bodyform.co.uk's own product page
         // (Ultimate 12 Ultra Regular+), verified before using.
         image: 'https://libresse-images.essity.com/images-c5/497/702497/optimized-AzureJPG615CropUp/bodyform-phoenix-v3-ultimate-ultra-regular-plus-promo-x12-towels-7322542533789.jpg?w=295&h=295&imPolicy=dynamic',
