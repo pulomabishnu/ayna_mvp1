@@ -495,7 +495,13 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$30 (reusable)',
         userRating: 4.5,
         whereToBuy: ['Target', 'Amazon', 'FlexFits.com'],
-        image: 'https://cdn.shopify.com/s/files/1/1097/9960/files/flex-period-cup-with-packaging-and-review.png?v=1763752341',
+        // Was the brand's own primary marketing image, which is itself a
+        // customer-review screenshot composite (5-star rating graphic,
+        // testimonial, reviewer name) — real, but reads as a forgotten
+        // placeholder next to properly photographed competitors (found live,
+        // 2026-08-24 bug bash). Swapped for a clean lifestyle photo, the
+        // SECOND image in FlexFits' own product feed, verified live.
+        image: 'https://cdn.shopify.com/s/files/1/1097/9960/files/menstrual-cup-with-ring-stem-held-in-hand.png?v=1763752341',
         summary: 'Pull-tab release breaks suction before removal. Easier removal than traditional cups.',
         safety: { fdaStatus: 'FDA-registered', materials: 'Medical-grade silicone', recalls: 'No recalls.', allergens: 'Latex-free' },
         clinicianOpinionSource: 'independent',

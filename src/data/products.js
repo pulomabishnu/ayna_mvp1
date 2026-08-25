@@ -449,7 +449,14 @@ export const PHYSICAL_PRODUCTS = [
         price: '$16 for 12 (disposable) / $35 reusable',
         userRating: 4.5,
         whereToBuy: ['Target', 'CVS', 'Amazon'],
-        image: 'https://flexfits.com/cdn/shop/files/reusable-period-disc-with-packaging-and-review.png?v=1763753790',
+        // Was the brand's own primary marketing image, which is itself a
+        // customer-review screenshot composite (5-star rating graphic,
+        // testimonial, reviewer name) — real, but reads as a forgotten
+        // placeholder next to properly photographed competitors (found live,
+        // 2026-08-24 bug bash). Swapped for a clean lifestyle photo, the
+        // second image in FlexFits' own product feed for the disposable
+        // Flex Disc (this listing's primary/first-priced variant), verified live.
+        image: 'https://cdn.shopify.com/s/files/1/1097/9960/files/person-holding-menstrual-disc-closeup.jpg?v=1763748081',
         summary: 'Sits in the vaginal fornix (not the canal). Can be worn during intimacy. 12-hour wear.',
         safety: {
             fdaStatus: 'FDA-registered',
