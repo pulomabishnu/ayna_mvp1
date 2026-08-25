@@ -23,7 +23,7 @@
  *
  * Usage:
  *   set -a; source .env.local; set +a
- *   node scripts/enrich-product-content.mjs [--limit N] [--start-after ID]
+ *   node scripts/enrich-product-content.mjs [--limit N] [--start-after ID] [--ids id1,id2,...]
  *
  * Requires SERPER_API_KEY and (ANTHROPIC_API_KEY or OPENAI_API_KEY) in env.
  * Progress is checkpointed to .enrich-progress.json (repo-root, gitignored)
@@ -39,10 +39,14 @@ const PROGRESS_PATH = '.enrich-progress.json';
 const CONCURRENCY = 4;
 
 function parseArgs(argv) {
-  const out = { limit: Infinity, startAfter: null };
+  const out = { limit: Infinity, startAfter: null, ids: null };
   for (let i = 0; i < argv.length; i += 1) {
     if (argv[i] === '--limit') out.limit = Number(argv[++i]) || Infinity;
     if (argv[i] === '--start-after') out.startAfter = argv[++i];
+    // Retarget the run at specific product ids only — for retrying the
+    // handful that failed mid-run (e.g. a billing lapse) without re-paying
+    // for everything already done. Takes precedence over --start-after/--limit.
+    if (argv[i] === '--ids') out.ids = new Set(argv[++i].split(',').map((s) => s.trim()).filter(Boolean));
   }
   return out;
 }
@@ -68,9 +72,26 @@ async function serperSearch(query) {
   }
 }
 
+/** Best-effort platform tag from the hit's own URL — lets the model (and a
+ * human skimming this prompt) know which results are actually Reddit vs.
+ * TikTok vs. neither, instead of guessing from the search query alone. */
+function platformOf(url) {
+  try {
+    const host = new URL(url).hostname.replace(/^www\./, '');
+    if (host === 'reddit.com' || host.endsWith('.reddit.com')) return 'Reddit';
+    if (host === 'tiktok.com' || host.endsWith('.tiktok.com')) return 'TikTok';
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 function formatHits(label, hits) {
   if (!hits.length) return `${label}: (no results found — treat as genuinely no public coverage, do not invent any)`;
-  return `${label}:\n${hits.map((h, i) => `${i + 1}. ${h.title} — ${h.snippet} (${h.url})`).join('\n')}`;
+  return `${label}:\n${hits.map((h, i) => {
+    const platform = platformOf(h.url);
+    return `${i + 1}. ${platform ? `[${platform}] ` : ''}${h.title} — ${h.snippet} (${h.url})`;
+  }).join('\n')}`;
 }
 
 function sqlString(s) {
@@ -116,10 +137,16 @@ WRITE THREE DISTINCT FIELDS, each in a different voice:
    instead of just using this, a real safety consideration, etc). Do NOT just restate
    the summary.
 
-2. communityReview — synthesized REAL sentiment from the community search results:
+2. communityReview — synthesized REAL sentiment from the community search results,
+   ATTRIBUTED TO ITS ACTUAL PLATFORM: each hit above is tagged [Reddit], [TikTok], or
+   untagged (some other site) — say specifically where a theme came from ("Users on
+   Reddit note that...", "On TikTok, several reviewers highlight...") rather than a
+   vague "some users say." If both Reddit and TikTok have real coverage, mention both
+   by name. If only one does, name that one and don't imply the other exists. Cover
    recurring positive themes AND recurring complaints, in the voice of "here's what
-   real people say," not a product description. If results are thin, say so honestly
-   instead of padding.
+   real people say," not a product description. If results are thin or untagged
+   (neither platform identifiable), say so honestly instead of padding or guessing
+   a platform.
 
 3. effectiveness — an honest evidence-based read: is there a real study of this exact
    product (only if actually shown in results)? If not, what does the honest
@@ -132,20 +159,32 @@ Return ONLY valid JSON, exactly this shape:
   "communityReview": "...",
   "effectiveness": "...",
   "citations": [
-    { "type": "scientific" or "community", "platform": "reddit" (only for community, else omit), "url": "...", "text": "short label", "summary": "one sentence" }
+    { "type": "scientific" or "community", "platform": "reddit" or "tiktok" (only for community, else omit), "url": "...", "text": "short label", "summary": "one sentence, specific to what THIS source actually said — not a restatement of communityReview" }
   ]
 }
-"citations" should only include URLs that actually appeared in the search results above — up to 2 total, only the most relevant. Omit entirely (empty array) if none of the results are worth citing.
+"citations" should only include URLs that actually appeared in the search results above — up to 2 total, only the most relevant. When both a real Reddit result and a real TikTok result are relevant, prefer citing one of each over two from the same platform. Omit entirely (empty array) if none of the results are worth citing.
 `.trim();
 }
 
 async function enrichOne(product, order) {
-  const communityQuery = `${product.brand || ''} ${product.name} reviews reddit`.trim();
+  const redditQuery = `${product.brand || ''} ${product.name} review reddit`.trim();
+  const tiktokQuery = `${product.brand || ''} ${product.name} review tiktok`.trim();
   const clinicalQuery = `${product.name} ${product.category || ''} clinical evidence safety women's health`.trim();
-  const [communityHits, clinicalHits] = await Promise.all([
-    serperSearch(communityQuery),
+  const [redditHits, tiktokHits, clinicalHits] = await Promise.all([
+    serperSearch(redditQuery),
+    serperSearch(tiktokQuery),
     serperSearch(clinicalQuery),
   ]);
+  // Dedup by URL — the reddit- and tiktok-flavored queries can both surface
+  // the same off-platform result (e.g. a roundup article), and platformOf()
+  // already tags each hit from its own URL, so query intent doesn't matter
+  // once merged.
+  const seen = new Set();
+  const communityHits = [...redditHits, ...tiktokHits].filter((h) => {
+    if (!h.url || seen.has(h.url)) return false;
+    seen.add(h.url);
+    return true;
+  });
 
   const prompt = buildPrompt(product, communityHits, clinicalHits);
   const out = await callWithFallback(order, {
@@ -188,7 +227,7 @@ function toSqlUpdate(product, result) {
 }
 
 async function main() {
-  const { limit, startAfter } = parseArgs(process.argv.slice(2));
+  const { limit, startAfter, ids } = parseArgs(process.argv.slice(2));
 
   if (!process.env.SERPER_API_KEY) {
     console.error('SERPER_API_KEY not set. set -a; source .env.local; set +a');
@@ -204,11 +243,15 @@ async function main() {
   console.log(`Fetched ${products.length} live products.`);
 
   let queue = products;
-  if (startAfter) {
-    const idx = queue.findIndex((p) => p.id === startAfter);
-    if (idx >= 0) queue = queue.slice(idx + 1);
+  if (ids) {
+    queue = queue.filter((p) => ids.has(p.id));
+  } else {
+    if (startAfter) {
+      const idx = queue.findIndex((p) => p.id === startAfter);
+      if (idx >= 0) queue = queue.slice(idx + 1);
+    }
+    queue = queue.slice(0, limit);
   }
-  queue = queue.slice(0, limit);
   console.log(`Processing ${queue.length} products (concurrency ${CONCURRENCY}).`);
 
   const order = parseProviderOrder('AI_DISCOVERY_PROVIDER_ORDER', 'anthropic,openai');
