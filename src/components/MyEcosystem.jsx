@@ -6,12 +6,10 @@ import {
     getRecommendationExplanation,
 } from '../data/products';
 import ProductTileImage, { resolveCatalogProductImage, ProductImageFallback } from './ProductTileImage';
-import { getInteractions } from '../data/interactions';
 import CareNearYouPanel from './CareNearYouPanel';
 import EcosystemBubbles, { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
 import EcosystemShelf from './EcosystemShelf';
 import LlmRecommendationsLoadingBlock from './LlmRecommendationsLoadingBlock';
-import HealthDataImport from './HealthDataImport';
 import { generateTieredRecommendations } from '../utils/recommendationEngine';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
 import {
@@ -948,7 +946,6 @@ export default function MyEcosystem({
     const careNearYouDetailsRef = useRef(null);
     const [showSyncPaywall, setShowSyncPaywall] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
-    const [interactionSelection, setInteractionSelection] = useState(new Set()); // product ids for interaction check
     const [ecosystemCompareOpen, setEcosystemCompareOpen] = useState({});
     const [ecosystemAltMiniKey, setEcosystemAltMiniKey] = useState('');
     const [llmTiered, setLlmTiered] = useState([]);
@@ -964,7 +961,6 @@ export default function MyEcosystem({
     // Last known-good complete recommendation set — restored if a rebuild is cancelled mid-flight.
     const previousLlmTieredRef = useRef([]);
     const [resolvedImages, setResolvedImages] = useState({});
-    const [healthDataImportOpen, setHealthDataImportOpen] = useState(false);
     const [recommendedSwapByKey, setRecommendedSwapByKey] = useState({});
     const [recommendedSectionOpen, setRecommendedSectionOpen] = useState({});
     const [recommendationRefreshNonce, setRecommendationRefreshNonce] = useState(() => {
@@ -1091,19 +1087,6 @@ export default function MyEcosystem({
             !omittedProducts[p.id] && words.every(w => haystack(p).includes(w))
         );
     }, [searchTerm, omittedProducts]);
-
-    const interactionProductList = useMemo(() => {
-        return myProductList.filter(p => interactionSelection.has(p.id));
-    }, [myProductList, interactionSelection]);
-    const interactionResults = useMemo(() => getInteractions(interactionProductList), [interactionProductList]);
-    const toggleInteractionSelect = (product) => {
-        setInteractionSelection(prev => {
-            const next = new Set(prev);
-            if (next.has(product.id)) next.delete(product.id);
-            else next.add(product.id);
-            return next;
-        });
-    };
 
     const intakeTieredRecommendations = useMemo(() => {
         if (!hasCompletedPersonalization) return [];
@@ -1881,7 +1864,7 @@ export default function MyEcosystem({
                             onExploreArea={(area) => onGoToSearch?.(exploreAreaOptions(area))}
                         />
                         <div style={{ textAlign: 'center', margin: '1rem 0 2rem' }}>
-                            <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem' }} onClick={() => setShowAddModal(true)}>+ Add a Product or App</button>
+                            <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem' }} onClick={() => setShowAddModal(true)}>+ Add something you already use</button>
                         </div>
 
                         <h2 className="eco2-main__details-title">Details</h2>
@@ -1953,8 +1936,8 @@ export default function MyEcosystem({
                                             </button>
                                         ))}
                                     </div>
-                                    <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem' }} onClick={() => setHealthDataImportOpen(true)}>
-                                        Import Health Data
+                                    <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem', opacity: 0.6, cursor: 'default' }} disabled>
+                                        Coming soon
                                     </button>
                                 </div>
                             </details>
@@ -1993,70 +1976,6 @@ export default function MyEcosystem({
                                 </div>
                             </details>
 
-                            {myProductList.length >= 2 && (
-                                <details className="eco2-details__item">
-                                    <summary>
-                                        <span>Safety &amp; interactions</span>
-                                        <span className="eco2-details__hint">Pick 2+ products to check for known issues</span>
-                                    </summary>
-                                    <div className="eco2-details__body">
-                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
-                                            {myProductList.map((p) => {
-                                                const selected = interactionSelection.has(p.id);
-                                                return (
-                                                    <button
-                                                        key={p.id}
-                                                        type="button"
-                                                        onClick={() => toggleInteractionSelect(p)}
-                                                        style={{
-                                                            padding: '0.4rem 0.75rem',
-                                                            borderRadius: 'var(--radius-pill)',
-                                                            border: `2px solid ${selected ? 'var(--color-primary)' : 'var(--color-border)'}`,
-                                                            background: selected ? 'var(--color-secondary-fade)' : 'var(--color-surface-soft)',
-                                                            fontSize: '0.85rem',
-                                                            cursor: 'pointer',
-                                                            fontWeight: selected ? '600' : '500',
-                                                        }}
-                                                    >
-                                                        {selected ? '✓ ' : ''}{p.name}
-                                                    </button>
-                                                );
-                                            })}
-                                        </div>
-                                        {interactionProductList.length >= 2 && (
-                                            <div style={{ background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '1.25rem' }}>
-                                                <h4 style={{ fontSize: '1rem', marginBottom: '0.75rem' }}>Comparing: {interactionProductList.map((p) => p.name).join(', ')}</h4>
-                                                {interactionResults.length === 0 ? (
-                                                    <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem' }}>
-                                                        We didn&apos;t find any known safety issues between these. This isn&apos;t medical advice. Ask your doctor if you&apos;re not sure.
-                                                    </p>
-                                                ) : (
-                                                    <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                                                        {interactionResults.map((r, i) => (
-                                                            <li key={i} style={{
-                                                                marginBottom: '0.75rem',
-                                                                padding: '0.75rem',
-                                                                background: r.severity === 'high' ? '#FEF2F2' : r.severity === 'medium' ? '#FFFBEB' : 'white',
-                                                                borderLeft: `4px solid ${r.severity === 'high' ? '#DC2626' : r.severity === 'medium' ? '#F59E0B' : '#6B7280'}`,
-                                                                borderRadius: 'var(--radius-sm)',
-                                                                fontSize: '0.9rem',
-                                                            }}>
-                                                                <span style={{ fontWeight: '600', color: r.severity === 'high' ? '#B91C1C' : 'var(--color-text-main)' }}>
-                                                                    {r.productNames.join(' + ')}
-                                                                </span>
-                                                                <p style={{ margin: '0.35rem 0 0', color: 'var(--color-text-main)' }}>{r.message}</p>
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-                                                )}
-                                                <button type="button" className="btn btn-outline" style={{ marginTop: '0.75rem', fontSize: '0.85rem' }} onClick={() => setInteractionSelection(new Set())}>
-                                                    Clear selection
-                                                </button>
-                                            </div>
-                                        )}
-                                    </div>
-                                </details>
-                            )}
                         </div>
                     </main>
                 </div>
@@ -2148,37 +2067,6 @@ export default function MyEcosystem({
                                 );
                             })}
                         </div>
-                    </div>
-                </div>
-            )}
-            {healthDataImportOpen && (
-                <div
-                    style={{
-                        position: 'fixed', inset: 0, zIndex: 2000,
-                        background: 'rgba(0,0,0,0.45)',
-                        display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
-                        overflowY: 'auto', padding: '2rem 1rem',
-                    }}
-                    onClick={(e) => { if (e.target === e.currentTarget) setHealthDataImportOpen(false); }}
-                >
-                    <div style={{ position: 'relative', width: '100%', maxWidth: '860px' }}>
-                        <button
-                            type="button"
-                            onClick={() => setHealthDataImportOpen(false)}
-                            aria-label="Close"
-                            style={{
-                                position: 'absolute', top: '0.75rem', right: '0.75rem', zIndex: 1,
-                                background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)',
-                                borderRadius: '50%', width: '36px', height: '36px',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                fontSize: '1.1rem', cursor: 'pointer', color: 'var(--color-text-main)',
-                            }}
-                        >
-                            ✕
-                        </button>
-                        <HealthDataImport onUpdate={(saved) => {
-                            onHealthProfileUpdate?.(saved);
-                        }} />
                     </div>
                 </div>
             )}
