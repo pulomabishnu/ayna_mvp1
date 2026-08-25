@@ -27,6 +27,7 @@ import { CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcos
 import { loadAynaReviews, hydrateAynaReviews, addRating, addReview } from './data/aynaReviews';
 import Screenings from './components/Screenings';
 import { useScrollPosition } from './hooks/useScrollPosition';
+import { useEscapeToClose } from './utils/useEscapeToClose';
 import ProductModal from './components/ProductModal';
 import { enrichLlmProductForDiscovery } from './utils/enrichLlmProductForDiscovery';
 import ProfileChatbot from './components/ProfileChatbot';
@@ -302,6 +303,7 @@ function App() {
   const [pendingQuizResults, setPendingQuizResults] = useState(null);
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  useEscapeToClose(showDeleteModal, () => setShowDeleteModal(false));
   const [saveError, setSaveError] = useState(null);
   const reportSaveFailure = useCallback((what, err) => {
     console.error('[Ayna] save failed:', what, err);
@@ -1681,10 +1683,10 @@ function App() {
               <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', lineHeight: 1.6, margin: 0 }}>
                 To request deletion of your entire account and data, email{' '}
                 <a
-                  href="mailto:pulomabishnu@gmail.com?subject=Account%20Deletion%20Request"
+                  href="mailto:hello@ayna.com?subject=Account%20Deletion%20Request"
                   style={{ color: 'var(--color-primary)', textDecoration: 'underline', fontWeight: '500' }}
                 >
-                  pulomabishnu@gmail.com
+                  hello@ayna.com
                 </a>
                 {' '}from the email address associated with your account.
               </p>
