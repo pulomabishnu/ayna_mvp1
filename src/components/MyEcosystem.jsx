@@ -67,6 +67,23 @@ const SYNC_SOURCES = [
   { id: 'google-fit', label: 'Google Fit' },
 ];
 
+// Clicking "Swap" on a product, or an area bubble, used to always land on
+// unfiltered Browse — the specific area clicked was received then discarded
+// (found live, 2026-08-24 bug bash: "Sleep" showed tampons and supplements,
+// nothing sleep-related). An area with more than one underlying catalog
+// category (e.g. "Period" covers pads/tampons/cups/discs/...) maps to
+// Discovery's broader initialMacroGroup, so every category in it stays
+// visible; a single-category area (Clinicians -> telehealth, Supplements ->
+// supplement — EcosystemBubbles' own additions, not real MACRO_GROUPS
+// entries) maps to the narrower initialCategory instead, since there's only
+// one real thing to show either way.
+function exploreAreaOptions(area) {
+  const categories = Array.isArray(area?.categories) ? area.categories : [];
+  if (categories.length > 1) return { initialMacroGroup: area.key };
+  if (categories.length === 1) return { initialCategory: categories[0] };
+  return '';
+}
+
 function buildAynaVCardDataUri(phoneNumber) {
   const vcard = [
     'BEGIN:VCARD',
@@ -1767,7 +1784,7 @@ export default function MyEcosystem({
                     healthProfile={healthProfile}
                     user={user}
                     onOpenProduct={onOpenProduct}
-                    onExploreArea={(area) => onGoToSearch?.('')}
+                    onExploreArea={(area) => onGoToSearch?.(exploreAreaOptions(area))}
                     onToggleProduct={onToggleProduct}
                 />
 
@@ -1824,7 +1841,7 @@ export default function MyEcosystem({
                                                 <span className="eco2-dot eco2-dot--empty" />
                                                 {shelfAreaBreakdown.gap.label}
                                                 {typeof onGoToSearch === 'function' && (
-                                                    <button type="button" onClick={() => onGoToSearch('')}>Add</button>
+                                                    <button type="button" onClick={() => onGoToSearch(exploreAreaOptions(shelfAreaBreakdown.gap))}>Add</button>
                                                 )}
                                             </li>
                                         )}
@@ -1861,7 +1878,7 @@ export default function MyEcosystem({
                             hideTitle
                             myProducts={myProducts}
                             onOpenProduct={onOpenProduct}
-                            onExploreArea={(area) => onGoToSearch?.('')}
+                            onExploreArea={(area) => onGoToSearch?.(exploreAreaOptions(area))}
                         />
                         <div style={{ textAlign: 'center', margin: '1rem 0 2rem' }}>
                             <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem' }} onClick={() => setShowAddModal(true)}>+ Add a Product or App</button>

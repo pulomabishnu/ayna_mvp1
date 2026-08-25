@@ -770,6 +770,7 @@ function App() {
       setDiscoverySearch(queryOrOptions.query || '');
       setDiscoveryInitial({
         initialCategory: queryOrOptions.initialCategory || null,
+        initialMacroGroup: queryOrOptions.initialMacroGroup || null,
         initialPadFlow: queryOrOptions.initialPadFlow || null,
         initialPadPreference: queryOrOptions.initialPadPreference || null,
         initialPadUseCase: queryOrOptions.initialPadUseCase || null,
@@ -1468,7 +1469,7 @@ function App() {
             onZipCodeChange={handleZipCodeChange}
             ecosystemSeedMeta={ecosystemSeedMeta}
             onSwapSeedProduct={handleSwapEcosystemSeedProduct}
-            onGoToSearch={(query) => handleViewDiscovery(query || '')}
+            onGoToSearch={(queryOrOptions) => handleViewDiscovery(queryOrOptions || '')}
             onHealthProfileUpdate={updateHealthProfile}
             onViewRecommendedArticles={handleViewArticles}
             onOpenArticle={(articleId) => {
@@ -1504,6 +1505,7 @@ function App() {
             toggleJoinWaitlist={toggleJoinWaitlist}
             omittedProducts={omittedProducts}
             initialCategory={discoveryInitial?.initialCategory}
+            initialMacroGroup={discoveryInitial?.initialMacroGroup}
             initialPadFlow={discoveryInitial?.initialPadFlow}
             initialPadPreference={discoveryInitial?.initialPadPreference}
             initialPadUseCase={discoveryInitial?.initialPadUseCase}

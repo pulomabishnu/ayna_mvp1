@@ -379,8 +379,13 @@ function buildAiProfileContext(personalizationFilter, quizResults) {
     return { profileSummary, dislikedProducts, dislikedTerms };
 }
 
-export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, savedProducts = {}, onToggleSaved, user = null, onRequirePersonalizeAuth = null }) {
+export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialMacroGroup, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, savedProducts = {}, onToggleSaved, user = null, onRequirePersonalizeAuth = null }) {
     const [macroGroup, setMacroGroup] = useState(() => {
+        // initialMacroGroup (a whole care area, e.g. from "Swap" in the
+        // ecosystem view) sets ONLY the broader group, leaving every
+        // category within it visible — narrower than initialCategory,
+        // which also pins categoryFilter down to that one specific type.
+        if (initialMacroGroup && initialMacroGroup !== 'all') return initialMacroGroup;
         if (!initialCategory || initialCategory === 'all') return 'all';
         return MACRO_GROUPS.find(g => g.categories.includes(initialCategory))?.id || 'all';
     });
