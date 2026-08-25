@@ -16,6 +16,13 @@ const CONCERN_CONFIG = [
   { key: 'PCOS management (supplements, telehealth, apps)', tags: ['pcos'], categories: ['supplement', 'telehealth', 'tracker'] },
   { key: 'Endometriosis management (supplements, devices, telehealth)', tags: ['endometriosis', 'cramps'], categories: ['supplement', 'telehealth', 'cramp-relief'] },
   { key: 'Fertility and conception (supplements, trackers, telehealth)', tags: ['fertility'], categories: ['supplement', 'tracker', 'telehealth'] },
+  // Real feedback from a beta tester (Theresa Mahon, 2026-08-25): "Fertility
+  // and conception isn't comprehensive enough" — the catalog already carries
+  // 13 'pregnancy' and 5 'postpartum' category products (maternity support,
+  // nursing cups, etc.) with no concern checkbox that could ever surface
+  // them, since neither category was referenced by any existing entry here.
+  { key: 'Pregnancy support (prenatal vitamins, trackers, comfort)', tags: ['pregnancy', 'prenatal'], categories: ['pregnancy'] },
+  { key: 'Postpartum recovery (nursing, healing, comfort)', tags: ['postpartum', 'nursing', 'recovery'], categories: ['postpartum'] },
   { key: 'UTI support', tags: ['uti'], categories: ['supplement', 'telehealth', 'diagnostics'] },
   { key: 'STI support', tags: ['sti', 'std', 'sexual-health'], categories: ['telehealth', 'diagnostics'] },
   { key: 'Gut and vaginal health (probiotics, pH balance)', tags: ['vaginal-health', 'probiotic', 'ph-balance'], categories: ['supplement', 'intimate-care'] },

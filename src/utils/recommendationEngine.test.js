@@ -43,6 +43,26 @@ describe('generateTieredRecommendations — every CONCERN_AREAS checkbox produce
     expect(hasAnyTier).toBe(true);
   });
 
+  // Real beta feedback (Theresa Mahon, 2026-08-25): "Fertility and
+  // conception isn't comprehensive enough" — added as their own checkboxes.
+  // Unlike the others above, this only asserts the concern entry itself
+  // isn't silently dropped, not that it matches a product: the live
+  // Supabase catalog already carries 13 'pregnancy' + 5 'postpartum'
+  // products, but this module's local static preview catalog
+  // (src/data/products.js) doesn't mirror them — same known gap already
+  // documented for 'Skin and hair' above. The LLM-backed final generation
+  // (api/llm-recommendations.js) isn't limited to this static catalog.
+  it('"Pregnancy support" and "Postpartum recovery" are real concern entries, not silently dropped', () => {
+    for (const concern of [
+      'Pregnancy support (prenatal vitamins, trackers, comfort)',
+      'Postpartum recovery (nursing, healing, comfort)',
+    ]) {
+      const result = generateTieredRecommendations({ primaryConcerns: [concern] });
+      expect(result.length).toBeGreaterThan(0);
+      expect(result[0].concern).toBe(concern);
+    }
+  });
+
   it('does not silently truncate when more than 5 concerns are selected', () => {
     const manyConcerns = [
       'Period care (pads, tampons, cups, discs, underwear)',

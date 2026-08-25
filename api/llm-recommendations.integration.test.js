@@ -43,9 +43,9 @@ const wideIntake = {
 };
 
 /**
- * Expands to 20 concerns, i.e. genuinely past MAX_CONCERNS (18, raised from
- * 12 — the "What do you want help with?" quiz alone has 16 checkbox
- * options, so 12 was silently truncating real user selections; see
+ * Expands to 22 concerns, i.e. genuinely past MAX_CONCERNS (20, raised from
+ * 18 on 2026-08-25 when the quiz grew from 16 to 18 checkbox options, itself
+ * raised from 12 — the quiz explicitly lets a user pick more than that; see
  * MAX_CONCERNS's own comment in llm-recommendations.js).
  * wideIntake is NOT sufficient to test the cap — at 9 concerns an uncapped
  * handler produces the same call count as a capped one, so the assertion
@@ -57,7 +57,7 @@ const hugeIntake = {
   conditions: ['PCOS', 'Endometriosis', 'perimenopause'],
   symptoms: ['bloating', 'cramps', 'insomnia', 'mood', 'acne', 'fatigue', 'UTI', 'gut'],
   goals: ['fertility', 'gut health', 'menopause', 'UTI', 'hormone balance', 'sleep', 'skin', 'energy', 'mental health'],
-  customConcerns: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'],
+  customConcerns: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M'],
 };
 
 /** One well-formed concern payload, shaped as the prompt schema requires. */
@@ -214,11 +214,11 @@ describe('POST /api/llm-recommendations — client-controlled fan-out caps', () 
     const handler = await loadHandler();
     const res = mockRes();
 
-    // hugeIntake expands to 20 concerns; exactly 18 may reach the provider.
+    // hugeIntake expands to 22 concerns; exactly 20 may reach the provider.
     await handler(mockReq({ body: { intake: hugeIntake, buildId: 'b-7' } }), res);
 
     expect(res.statusCode).toBe(200);
-    expect(globalThis.fetch.mock.calls.length).toBe(18);
+    expect(globalThis.fetch.mock.calls.length).toBe(20);
   });
 
   it('clamps a negative batchIndex instead of slicing backwards', async () => {
