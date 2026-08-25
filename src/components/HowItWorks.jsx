@@ -1,4 +1,5 @@
 import React from 'react';
+import HowItWorksFunnel from './HowItWorksFunnel';
 
 export default function HowItWorks({ onBack, onViewSources }) {
   const openSources = () => {
@@ -67,6 +68,11 @@ export default function HowItWorks({ onBack, onViewSources }) {
               <span>products, each with its match reason</span>
             </div>
           </article>
+        </div>
+
+        <div className="hiw-mockup__funnel-section">
+          <h2>The narrowing down, in one picture</h2>
+          <HowItWorksFunnel />
         </div>
 
         <div className="hiw-mockup__disclaimer">
