@@ -6,7 +6,17 @@ import { isPremiumUser, hasLegacyClientPremiumFlag } from './_entitlement.js';
 
 // Hard ceilings on client-supplied work. Without these, one request with 500
 // primaryConcerns and batchSize 500 issued 500 sequential LLM calls.
-const MAX_CONCERNS = 12;
+//
+// 12 was silently dropping real selections: the "What do you want help
+// with?" quiz (CONCERN_AREAS in src/utils/healthIntake.js) has 16 checkbox
+// options on its own, before any conditions/symptoms/goals-derived concerns
+// are added on top in selectedConcerns() below — a user who picked more than
+// 12 checkboxes (not an edge case; the quiz explicitly says "Pick as many as
+// you want") had the excess truncated with no error, no UI signal, nothing
+// (found live 2026-08-25). Raised to comfortably cover all 16 real options
+// plus some derived headroom, while still bounding a client that bypasses
+// the UI and sends an arbitrarily long primaryConcerns array directly.
+const MAX_CONCERNS = 18;
 const MAX_BATCH_SIZE = 6;
 /** Leave room to serialize and return before the platform kills the function. */
 const FUNCTION_BUDGET_MS = 50_000;

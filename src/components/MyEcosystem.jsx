@@ -1187,9 +1187,13 @@ export default function MyEcosystem({
                     // serverless invocations. Each invocation now handles 3 concerns
                     // at concurrency 3, so it finishes well inside the 60s function
                     // ceiling instead of needing a 252s budget that never existed.
-                    // 4 x 3 covers the server's MAX_CONCERNS cap of 12.
+                    // 6 x 3 covers the server's MAX_CONCERNS cap of 18 (raised from
+                    // 12/4 batches — the quiz alone has 16 checkbox options, so 12
+                    // was silently dropping real selections; keeping BATCH_SIZE at 3
+                    // rather than raising it preserves the per-invocation timing this
+                    // was already tuned for, just runs more invocations in parallel).
                     const BATCH_SIZE = 3;
-                    const NUM_BATCHES = 4;
+                    const NUM_BATCHES = 6;
                     const buildId = buildIdFromFingerprint(intakeFingerprint);
                     let doneCount = 0;
 

@@ -1,21 +1,34 @@
 import { ALL_PRODUCTS } from '../data/products';
 
+// `categories` used to be dead data — nothing ever read it, only `tags` did,
+// and several entries used category names ('app', 'device') that don't
+// exist anywhere in the real taxonomy (src/data/products.js's
+// CATEGORY_LABELS), so those concerns could only ever match via a `tags`
+// coincidence. Now used as a second, OR'd matching path below (see
+// generateTieredRecommendations) — category is a controlled, always-present
+// field, unlike free-text tags, so it's the more reliable signal. Rewritten
+// against the real current category taxonomy (2026-08-25).
 const CONCERN_CONFIG = [
   { key: 'Period care (pads, tampons, cups, discs, underwear)', tags: ['heavy-flow', 'leaks'], categories: ['pad', 'tampon', 'cup', 'disc', 'period-underwear'] },
-  { key: 'Cramp and pain relief (devices, supplements, heat)', tags: ['cramps', 'pelvic-floor'], categories: ['supplement', 'device', 'app'] },
-  { key: 'Hormone balance (supplements, lifestyle)', tags: ['pcos', 'irregular', 'bloating'], categories: ['supplement', 'app'] },
-  { key: 'PCOS management (supplements, telehealth, apps)', tags: ['pcos'], categories: ['supplement', 'app', 'telehealth'] },
-  { key: 'Endometriosis management (supplements, devices, telehealth)', tags: ['endometriosis', 'cramps'], categories: ['supplement', 'device', 'telehealth'] },
-  { key: 'Fertility and conception (supplements, trackers, telehealth)', tags: ['fertility'], categories: ['supplement', 'app', 'telehealth'] },
-  { key: 'UTI support', tags: ['uti'], categories: ['supplement', 'telehealth', 'app'] },
-  { key: 'STI support', tags: ['uti', 'pelvic-floor'], categories: ['telehealth', 'app'] },
-  { key: 'Gut and vaginal health (probiotics, pH balance)', tags: ['uti'], categories: ['supplement'] },
-  { key: 'Perimenopause and menopause support', tags: ['menopause'], categories: ['supplement', 'app', 'telehealth'] },
-  { key: 'Sexual health and comfort (lubricants, pelvic floor)', tags: ['pelvic-floor'], categories: ['device', 'supplement'] },
-  { key: 'Mental health and cycle mood support', tags: ['comfort'], categories: ['app', 'supplement'] },
-  { key: 'Sleep and energy', tags: ['comfort'], categories: ['supplement', 'app'] },
-  { key: 'Skin and hair (hormone-related)', tags: ['pcos', 'bloating'], categories: ['supplement'] },
-  { key: 'Telehealth and provider matching', tags: ['uti', 'pcos', 'endometriosis', 'fertility', 'menopause'], categories: ['telehealth', 'app'] },
+  { key: 'Cramp and pain relief (devices, supplements, heat)', tags: ['cramps'], categories: ['cramp-relief', 'supplement'] },
+  { key: 'Hormone balance (supplements, lifestyle)', tags: ['pcos', 'irregular', 'bloating'], categories: ['supplement'] },
+  { key: 'Hormonal bloating', tags: ['bloating', 'bloat'], categories: ['supplement'] },
+  { key: 'PCOS management (supplements, telehealth, apps)', tags: ['pcos'], categories: ['supplement', 'telehealth', 'tracker'] },
+  { key: 'Endometriosis management (supplements, devices, telehealth)', tags: ['endometriosis', 'cramps'], categories: ['supplement', 'telehealth', 'cramp-relief'] },
+  { key: 'Fertility and conception (supplements, trackers, telehealth)', tags: ['fertility'], categories: ['supplement', 'tracker', 'telehealth'] },
+  { key: 'UTI support', tags: ['uti'], categories: ['supplement', 'telehealth', 'diagnostics'] },
+  { key: 'STI support', tags: ['sti', 'std', 'sexual-health'], categories: ['telehealth', 'diagnostics'] },
+  { key: 'Gut and vaginal health (probiotics, pH balance)', tags: ['vaginal-health', 'probiotic', 'ph-balance'], categories: ['supplement', 'intimate-care'] },
+  { key: 'Perimenopause and menopause support', tags: ['menopause'], categories: ['menopause', 'supplement', 'telehealth'] },
+  { key: 'Sexual health and comfort (lubricants, pelvic floor)', tags: ['pelvic-floor'], categories: ['sex-tech', 'intimate-care', 'pelvic-floor'] },
+  { key: 'Mental health and cycle mood support', tags: ['mood', 'anxiety'], categories: ['mental-health'] },
+  { key: 'Sleep and energy', tags: ['sleep', 'energy'], categories: ['sleep', 'supplement'] },
+  // No live product currently carries category 'skin'/'skincare'/'hair'/'haircare' — a real
+  // catalog gap, not a mapping bug. Left correct so this activates the moment one exists; the
+  // LLM-backed final generation (api/llm-recommendations.js) isn't limited to this static
+  // catalog and can still surface a real product via live search grounding in the meantime.
+  { key: 'Skin and hair (hormone-related)', tags: ['skin', 'hair'], categories: ['skin', 'skincare', 'hair', 'haircare'] },
+  { key: 'Telehealth and provider matching', tags: [], categories: ['telehealth'] },
 ];
 
 const ENDOMETRIOSIS_FLAGS = ['synthetic fragrance', 'dioxins', 'chlorine bleaching', 'bpa'];
@@ -353,12 +366,20 @@ export function generateTieredRecommendations(intake = {}) {
     .filter(({ concern }) => selected.includes(concern.key))
     .sort((a, b) => b.score - a.score)
     .map(({ concern }) => concern);
-  const scopedConcerns = concerns.slice(0, 5);
+  // This only bounds an instant, purely local preview shown while the real
+  // per-concern LLM generation runs and then fully replaces it (see
+  // MyEcosystem.jsx) — capping it below what a user can actually select
+  // made the preview drop care areas that the final ecosystem still
+  // included seconds later, reading as a bug rather than a loading state.
+  // 20 comfortably covers every CONCERN_AREAS checkbox (16) plus derived
+  // concerns; it's a sanity ceiling, not a real limit in practice.
+  const scopedConcerns = concerns.slice(0, 20);
 
   return scopedConcerns.map((concern) => {
     const concernPool = ALL_PRODUCTS.filter((p) => {
       const tags = p.tags || [];
-      return concern.tags.some((tag) => tags.includes(tag));
+      const category = p.category || '';
+      return concern.tags.some((tag) => tags.includes(tag)) || concern.categories.includes(category);
     });
 
     const chosen = new Set();
