@@ -10,6 +10,7 @@ import { createClient } from '@supabase/supabase-js';
 import { retrieveKnowledgeForIntake, buildKnowledgeContext } from '../src/utils/ragRetrieval.js';
 import { consumeUsage } from './_usageLimit.js';
 import { rateLimit } from './_rateLimit.js';
+import { callWithFallback, parseProviderOrder } from './_llm.js';
 
 const NO_ACCOUNT_REPLY =
   "Hi! I'm Ayna. To get personalized health texts, complete your free health profile at https://ayna.health/quiz. It takes 5 minutes.";
@@ -117,29 +118,28 @@ LENGTH:
 
 Reply only with the text message itself — no preamble, no signature.`;
 
-async function callClaude(systemPrompt, userPrompt) {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) return null;
-  const model = process.env.ANTHROPIC_MODEL || 'claude-haiku-4-5-20251001';
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'content-type': 'application/json',
-    },
-    body: JSON.stringify({
-      model,
-      max_tokens: 250,
-      temperature: 0.3,
+/**
+ * Was Anthropic-only via a hand-rolled fetch — a single provider's outage
+ * (e.g. the account running out of credits, found live 2026-08-25 alongside
+ * the same gap in api/search-suggestions.js) left every texted question
+ * unanswerable with no fallback. Now goes through the same multi-provider
+ * callWithFallback every other AI route uses.
+ */
+async function callSmsModel(systemPrompt, userPrompt) {
+  const order = parseProviderOrder('AI_SMS_PROVIDER_ORDER', 'anthropic,openai');
+  try {
+    const out = await callWithFallback(order, {
       system: systemPrompt,
-      messages: [{ role: 'user', content: userPrompt }],
-    }),
-    signal: AbortSignal.timeout(8000),
-  });
-  if (!res.ok) return null;
-  const data = await res.json();
-  return data?.content?.[0]?.text?.trim() || null;
+      prompt: userPrompt,
+      maxTokens: 250,
+      temperature: 0.3,
+      timeoutMs: 8000,
+    });
+    return out.text.trim() || null;
+  } catch (e) {
+    console.error('[sms-webhook] model call failed:', e?.status || '', e?.message);
+    return null;
+  }
 }
 
 export default async function handler(req, res) {
@@ -307,7 +307,7 @@ export default async function handler(req, res) {
 
   let reply;
   try {
-    reply = await callClaude(SMS_SYSTEM_PROMPT, userPrompt);
+    reply = await callSmsModel(SMS_SYSTEM_PROMPT, userPrompt);
   } catch (e) {
     console.error('[sms-webhook] Claude error:', e?.message);
   }
