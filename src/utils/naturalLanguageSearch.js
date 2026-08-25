@@ -70,19 +70,24 @@ export function buildIdentityTextForItem(item, categoryLabels = {}) {
   ].filter(Boolean).join(' ').toLowerCase();
 }
 
+/** True when `w` appears in `haystack` as its own word, not as a run inside a longer one. */
+function boundaryMatch(w, haystack) {
+  const escaped = w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(`(^|[^a-z0-9])${escaped}([^a-z0-9]|$)`, 'i').test(haystack);
+}
+
 function wordMatchesInHaystack(word, haystack) {
   if (!word) return false;
-  // A single character (vitamin C/D/E/B/K, the "3" in "omega 3") can't use a
-  // plain substring check — haystack.includes('c') matches almost any product
-  // (it's inside "cup", "cream", "clinician"...), which would make the term
-  // meaningless as a distinguishing signal. Require it to appear as its own
-  // token instead.
-  if (word.length === 1) {
-    return new RegExp(`(^|[^a-z0-9])${word}([^a-z0-9]|$)`, 'i').test(haystack);
-  }
-  if (haystack.includes(word)) return true;
-  if (word.endsWith('s') && word.length > 3 && haystack.includes(word.slice(0, -1))) return true;
-  if (!word.endsWith('s') && haystack.includes(`${word}s`)) return true;
+  // Every word length used to go through this word-boundary check ONLY for
+  // single characters — the comment here explained exactly why ("c" inside
+  // "cup"/"cream") but the same failure mode exists for any word length: a
+  // plain haystack.includes(word) matches "hair" inside "chair" ("Emsella
+  // Chair Treatment" topping a search for "hair", found live) exactly the
+  // same way "c" matched inside "cup". word-boundary matching is required
+  // at every length, not just one.
+  if (boundaryMatch(word, haystack)) return true;
+  if (word.endsWith('s') && word.length > 3 && boundaryMatch(word.slice(0, -1), haystack)) return true;
+  if (!word.endsWith('s') && boundaryMatch(`${word}s`, haystack)) return true;
   return false;
 }
 
