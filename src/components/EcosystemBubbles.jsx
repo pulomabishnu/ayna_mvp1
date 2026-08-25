@@ -81,23 +81,20 @@ export default function EcosystemBubbles({
       filled.push({ key: 'other', label: 'Other', products: byArea.get('other'), gap: false });
     }
 
-    const gaps = AREAS
-      .filter((a) => !byArea.has(a.key))
-      .slice(0, Math.max(0, MAX_SATELLITES - filled.length))
-      .map((a) => ({ ...a, products: [], gap: true }));
+    const filledCapped = filled.slice(0, MAX_SATELLITES);
+    // One "Add More" seat, not one dashed seat per empty area (was AREAS not
+    // yet covered, up to MAX_SATELLITES - filled.length of them, each
+    // pre-suggesting a specific category to fill — Aditi/team decided this
+    // should instead be a single affordance to Browse and pick anything,
+    // not the app pre-choosing which gaps look most fillable). Only shown
+    // when there's an actual empty seat in the ring to put it in.
+    const addMoreSeat = { key: '__add-more__', label: 'Add More', products: [], gap: true };
+    const seats = filledCapped.length < MAX_SATELLITES ? [...filledCapped, addMoreSeat] : filledCapped;
 
-    return { seats: [...filled, ...gaps].slice(0, MAX_SATELLITES), covered: filled.length };
+    return { seats, covered: filled.length };
   }, [myProducts]);
 
   const selected = seats.find((s) => s.key === selectedKey) || seats.find((s) => !s.gap) || null;
-  const selectedProduct = selected && !selected.gap ? selected.products[0] : null;
-
-  // Cheap enough to just compute; wrapping it in useMemo keyed on a value that
-  // is itself derived each render buys nothing.
-  const matchLabels = selectedProduct
-    ? getProfileMatchLabelsForProduct(selectedProduct, quizResults, healthProfile)
-    : [];
-  const matchLine = matchLabels.length ? `Matched on ${matchLabels.slice(0, 3).join(', ')}.` : '';
 
   const name = displayNameFromUser(user, healthProfile, quizResults) || 'You';
   const centreTags = useMemo(() => {
@@ -137,9 +134,9 @@ export default function EcosystemBubbles({
               onClick={() => (seat.gap ? onExploreArea?.(seat) : setSelectedKey(seat.key))}
               aria-pressed={!seat.gap && isSelected}
             >
-              <span className="eco-bubble__label">{seat.label}</span>
+              <span className="eco-bubble__label">{seat.gap ? '' : seat.label}</span>
               <span className="eco-bubble__count">
-                {seat.gap ? 'Add +' : `${seat.products.length} pick${seat.products.length === 1 ? '' : 's'}`}
+                {seat.gap ? seat.label : `${seat.products.length} pick${seat.products.length === 1 ? '' : 's'}`}
               </span>
             </button>
           );
@@ -150,25 +147,36 @@ export default function EcosystemBubbles({
       <div className="eco-bubbles__side">
         <h2 className="eco-bubbles__title">This is your ecosystem.</h2>
         <p className="eco-bubbles__lede">
-          Each circle is an area of care. Tap one to see what&apos;s in it and why. Dashed circles are
-          gaps we can fill.
+          Each circle is an area of care. Tap one to see what&apos;s in it and why. The dashed
+          circle adds more.
         </p>
 
-        {selected && !selected.gap && selectedProduct ? (
+        {selected && !selected.gap && selected.products.length > 0 ? (
           <div className="eco-bubbles__card">
             <div className="eco-bubbles__card-label">{selected.label} · Selected</div>
-            <button
-              type="button"
-              className="eco-bubbles__card-name"
-              onClick={() => onOpenProduct?.(selectedProduct)}
-            >
-              {selectedProduct.name}
-            </button>
-            {matchLine && <div className="eco-bubbles__card-body">{matchLine}</div>}
-            <div className="eco-bubbles__card-actions">
-              <button type="button" onClick={() => onExploreArea?.(selected)}>Swap</button>
-              <button type="button" onClick={() => onOpenProduct?.(selectedProduct)}>Why this?</button>
-            </div>
+            {selected.products.map((product) => {
+              // Every product this area covers gets its own row — this card
+              // used to show only products[0], so a "2 picks" area silently
+              // hid its second product with no way to see or act on it here.
+              const labels = getProfileMatchLabelsForProduct(product, quizResults, healthProfile);
+              const line = labels.length ? `Matched on ${labels.slice(0, 3).join(', ')}.` : '';
+              return (
+                <div key={product.id} className="eco-bubbles__card-product">
+                  <button
+                    type="button"
+                    className="eco-bubbles__card-name"
+                    onClick={() => onOpenProduct?.(product)}
+                  >
+                    {product.name}
+                  </button>
+                  {line && <div className="eco-bubbles__card-body">{line}</div>}
+                  <div className="eco-bubbles__card-actions">
+                    <button type="button" onClick={() => onExploreArea?.(selected)}>Swap</button>
+                    <button type="button" onClick={() => onOpenProduct?.(product)}>Why this?</button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         ) : (
           <div className="eco-bubbles__card">

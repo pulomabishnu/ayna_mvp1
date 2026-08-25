@@ -3980,6 +3980,14 @@ footer a[href*="career" i],
   border-color: #242A52;
 }
 
+/* One row per product when an area has more than one pick — was previously
+   collapsed to a single products[0], silently hiding the rest. */
+.eco-bubbles__card-product + .eco-bubbles__card-product {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(26, 23, 20, 0.08);
+}
+
 /* Saved for later shelf */
 
 .eco-saved {
