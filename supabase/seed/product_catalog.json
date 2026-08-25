@@ -10977,7 +10977,7 @@
     "summary": "An at-home UTI test paired with Winx Rx, the brand's own telehealth service. Check symptoms with a rapid test, then connect to a licensed provider for prescription treatment if needed. Recognized as a TIME Best Invention.",
     "price": "$15",
     "image": "https://cdn.shopify.com/s/files/1/0077/8761/0171/files/UTITest_Treat_1.png?v=1771347569",
-    "url": "https://hellowinx.com/",
+    "url": "https://hellowinx.com/products/uti-tests",
     "tags": [
       "uti",
       "safety-concern",
@@ -11010,6 +11010,213 @@
     "is_active": true,
     "extra": {
       "faqUrl": "https://hellowinx.com/pages/faq",
+      "integrations": [],
+      "badges": [],
+      "isEmergingBrand": true
+    }
+  },
+  {
+    "id": "p-winx-vaginal-health-test-treat",
+    "name": "Winx Health Vaginal Health Test + Treat",
+    "brand": "Winx Health",
+    "category": "diagnostics",
+    "product_type": "physical",
+    "summary": "An at-home vaginal pH test to help tell a yeast infection, BV, or something else apart, with same-day prescription treatment available via Winx's own telehealth service if needed.",
+    "price": "$15",
+    "image": "https://cdn.shopify.com/s/files/1/0077/8761/0171/files/Vaginal_Health_Test_Treat_Graphic.png?v=1771347513",
+    "url": "https://hellowinx.com/products/vaginal-ph-test-for-yeast-infections",
+    "tags": [
+      "privacy",
+      "safety-concern"
+    ],
+    "health_functions": [
+      "vaginal-health",
+      "telehealth"
+    ],
+    "where_to_buy": [],
+    "where_to_buy_in_stock": {},
+    "safety": {
+      "fdaStatus": "Consumer diagnostic test; any prescription treatment is issued by a licensed telehealth provider, not the test itself.",
+      "materials": "See product packaging for full test component list.",
+      "recalls": "No recalls found.",
+      "sideEffects": "None specific to the test itself; any treatment side effects depend on the medication a provider prescribes.",
+      "opinionAlerts": "Marketed by Winx Health as its own product; verify current claims and availability directly at hellowinx.com."
+    },
+    "doctor_opinion": "Winx Health positions this as a way to tell yeast infection, BV, or other causes apart at home before deciding whether treatment is needed.",
+    "community_review": null,
+    "effectiveness": "Combines an at-home pH test with telehealth access to prescription treatment when appropriate; no independent clinical study of the product was found.",
+    "clinician_opinion_source": "brand",
+    "clinician_attribution": "Sourced from Winx Health's own site marketing claims, not independent clinical literature.",
+    "source": "curated",
+    "internal": false,
+    "requires_prescription": false,
+    "user_rating": null,
+    "is_active": true,
+    "extra": {
+      "integrations": [],
+      "badges": [],
+      "isEmergingBrand": true
+    }
+  },
+  {
+    "id": "p-winx-pregnancy-tests",
+    "name": "Winx Health Early Pregnancy Tests",
+    "brand": "Winx Health",
+    "category": "diagnostics",
+    "product_type": "physical",
+    "summary": "Early pregnancy tests from Winx Health (formerly Stix), the brand states are over 99% accurate, with discreet packaging and delivery.",
+    "price": "$13",
+    "image": "https://cdn.shopify.com/s/files/1/0077/8761/0171/files/Early_Pregnancy_Tests.png?v=1775185073",
+    "url": "https://hellowinx.com/products/pregnancy-tests",
+    "tags": [
+      "privacy"
+    ],
+    "health_functions": [
+      "fertility"
+    ],
+    "where_to_buy": [],
+    "where_to_buy_in_stock": {},
+    "safety": {
+      "fdaStatus": "Over-the-counter home pregnancy test.",
+      "materials": "See product packaging.",
+      "recalls": "No recalls found.",
+      "sideEffects": "None.",
+      "opinionAlerts": "Accuracy claim (\"over 99% accurate\") is the brand's own; not independently verified here."
+    },
+    "doctor_opinion": "A standard at-home pregnancy test; Winx Health emphasizes discreet packaging and privacy.",
+    "community_review": null,
+    "effectiveness": "Positioned as an accurate, private at-home pregnancy test; no independent clinical study of the product was found.",
+    "clinician_opinion_source": "brand",
+    "clinician_attribution": "Sourced from Winx Health's own site marketing claims, not independent clinical literature.",
+    "source": "curated",
+    "internal": false,
+    "requires_prescription": false,
+    "user_rating": null,
+    "is_active": true,
+    "extra": {
+      "integrations": [],
+      "badges": [],
+      "isEmergingBrand": true
+    }
+  },
+  {
+    "id": "p-winx-uti-pain-relief",
+    "name": "Winx Health UTI Fast-Acting Pain Relief",
+    "brand": "Winx Health",
+    "category": "supplement",
+    "product_type": "physical",
+    "summary": "An over-the-counter supplement from Winx Health marketed for fast-acting relief of UTI-related discomfort.",
+    "price": "$10.50",
+    "image": "https://cdn.shopify.com/s/files/1/0077/8761/0171/files/01WinxUTIPainReliefHero.png?v=1771347535",
+    "url": "https://hellowinx.com/products/uti-fast-acting-pain-relief",
+    "tags": [
+      "uti"
+    ],
+    "health_functions": [
+      "uti-prevention"
+    ],
+    "where_to_buy": [],
+    "where_to_buy_in_stock": {},
+    "safety": {
+      "fdaStatus": "Dietary supplement; not evaluated by the FDA.",
+      "materials": "See product packaging for full ingredient list.",
+      "recalls": "No recalls found.",
+      "sideEffects": "Consult a clinician before use if pregnant, nursing, or taking medications; UTI pain relief products can mask symptoms of a worsening infection.",
+      "opinionAlerts": "No clinical-study claims found on the brand site."
+    },
+    "doctor_opinion": "Positioned by the brand for short-term relief of UTI discomfort, not as a substitute for diagnosis or treatment.",
+    "community_review": null,
+    "effectiveness": "Positioned as fast-acting symptom relief; no independent clinical study of the product was found.",
+    "clinician_opinion_source": "brand",
+    "clinician_attribution": "Sourced from Winx Health's own site marketing claims, not independent clinical literature.",
+    "source": "curated",
+    "internal": false,
+    "requires_prescription": false,
+    "user_rating": null,
+    "is_active": true,
+    "extra": {
+      "integrations": [],
+      "badges": [],
+      "isEmergingBrand": true
+    }
+  },
+  {
+    "id": "p-winx-vaginal-probiotic",
+    "name": "Winx Health Vaginal Health Probiotic",
+    "brand": "Winx Health",
+    "category": "supplement",
+    "product_type": "physical",
+    "summary": "A daily probiotic supplement the brand describes as supporting vaginal health with \"good bacteria\" that can help crowd out bacteria and yeast linked to BV and yeast infections.",
+    "price": "$28",
+    "image": "https://cdn.shopify.com/s/files/1/0077/8761/0171/files/01_Winx_probiotic_Hero.png?v=1771347498",
+    "url": "https://hellowinx.com/products/vaginal-health-probiotic",
+    "tags": [
+      "comfort"
+    ],
+    "health_functions": [
+      "vaginal-health"
+    ],
+    "where_to_buy": [],
+    "where_to_buy_in_stock": {},
+    "safety": {
+      "fdaStatus": "Dietary supplement; not evaluated by the FDA.",
+      "materials": "See product packaging for full ingredient list.",
+      "recalls": "No recalls found.",
+      "sideEffects": "Consult a clinician before use if pregnant, nursing, or taking medications.",
+      "opinionAlerts": "No clinical-study claims found on the brand site."
+    },
+    "doctor_opinion": "Positioned as daily maintenance support for vaginal flora balance, not a treatment for an active infection.",
+    "community_review": null,
+    "effectiveness": "Positioned as a daily preventive supplement; no independent clinical study of the product was found.",
+    "clinician_opinion_source": "brand",
+    "clinician_attribution": "Sourced from Winx Health's own site marketing claims, not independent clinical literature.",
+    "source": "curated",
+    "internal": false,
+    "requires_prescription": false,
+    "user_rating": null,
+    "is_active": true,
+    "extra": {
+      "integrations": [],
+      "badges": [],
+      "isEmergingBrand": true
+    }
+  },
+  {
+    "id": "p-winx-uti-daily-defense",
+    "name": "Winx Health Urinary Daily Defense",
+    "brand": "Winx Health",
+    "category": "supplement",
+    "product_type": "physical",
+    "summary": "A daily supplement the brand states was designed with urologists, using science-backed natural ingredients intended to help protect against UTIs before they start.",
+    "price": "$28",
+    "image": "https://cdn.shopify.com/s/files/1/0077/8761/0171/files/01WinxDailyDefenseHero.png?v=1771339808",
+    "url": "https://hellowinx.com/products/uti-daily-protection-supplement",
+    "tags": [
+      "uti"
+    ],
+    "health_functions": [
+      "uti-prevention"
+    ],
+    "where_to_buy": [],
+    "where_to_buy_in_stock": {},
+    "safety": {
+      "fdaStatus": "Dietary supplement; not evaluated by the FDA.",
+      "materials": "See product packaging for full ingredient list.",
+      "recalls": "No recalls found.",
+      "sideEffects": "Consult a clinician before use if pregnant, nursing, or taking medications.",
+      "opinionAlerts": "The \"designed with urologists\" claim is the brand's own; not independently verified here."
+    },
+    "doctor_opinion": "Positioned as a daily preventive supplement for recurrent UTI risk, not a treatment for an active infection.",
+    "community_review": null,
+    "effectiveness": "Positioned as a daily preventive supplement; no independent clinical study of the product was found.",
+    "clinician_opinion_source": "brand",
+    "clinician_attribution": "Sourced from Winx Health's own site marketing claims, not independent clinical literature.",
+    "source": "curated",
+    "internal": false,
+    "requires_prescription": false,
+    "user_rating": null,
+    "is_active": true,
+    "extra": {
       "integrations": [],
       "badges": [],
       "isEmergingBrand": true
