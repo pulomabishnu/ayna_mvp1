@@ -4906,6 +4906,22 @@ textarea {
   font-weight: 650;
   font-size: 0.92rem;
   white-space: nowrap;
+  max-width: 200px;
+  opacity: 1;
+  overflow: hidden;
+  transition: max-width 0.22s ease, opacity 0.15s ease, margin 0.22s ease;
+}
+
+/* Shrinks to just the orb once scrolled (see ProfileChatbot.jsx) — smaller
+   footprint for most of a session instead of a permanent full-width pill
+   that can sit over page content in the bottom-right corner. */
+.ayna-ask-launcher.is-compact {
+  padding: 0.5rem;
+}
+.ayna-ask-launcher.is-compact .ayna-ask-launcher__label {
+  max-width: 0;
+  opacity: 0;
+  margin: 0;
 }
 
 .ayna-ask-orb {

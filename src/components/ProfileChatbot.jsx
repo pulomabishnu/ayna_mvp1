@@ -154,6 +154,19 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
     window.speechSynthesis.speak(utterance);
   };
 
+  // A fixed-position launcher this size inevitably risks sitting over
+  // something in the bottom-right corner on some page somewhere — found
+  // live, 2026-08-24 bug bash, partially covering product-card corners and
+  // (before an unrelated layout fix) a Wishlist button. Shrinking to an
+  // icon-only state once the page is scrolled keeps its footprint small
+  // for most of a session instead of a permanent full-width pill.
+  const [compact, setCompact] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setCompact(window.scrollY > 200);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   useEffect(() => {
     let cancelled = false;
     const supabase = getSupabaseClient();
@@ -285,7 +298,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
     <>
       <button
         type="button"
-        className="ayna-ask-launcher"
+        className={`ayna-ask-launcher${compact && !open ? ' is-compact' : ''}`}
         aria-label="Ask Ayna"
         aria-expanded={open}
         onClick={() => setOpen(!open)}
