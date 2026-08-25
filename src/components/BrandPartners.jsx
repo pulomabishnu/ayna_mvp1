@@ -14,20 +14,16 @@ import { ProductImageFallback } from './ProductTileImage';
  *
  * Only confirmed partners belong here. src/data/brands.js is explicit that its
  * entries are catalog entries and "NOT partnership relationships", so the
- * partner list is its own thing below and names exactly one brand — Neycher,
- * the one that's moving forward. Everything else stays a catalog entry.
+ * partner list is its own thing below.
+ *
+ * Emptied 2026-08-24: Neycher (the one prior entry) was still in discussion,
+ * no contract signed — showing it here implied an official partnership that
+ * doesn't exist yet. The page now renders a "coming soon" state whenever
+ * PARTNERS is empty. Add an entry back once a partnership is actually
+ * contracted, not before.
  */
 
-const PARTNERS = [
-  {
-    brand: 'Neycher',
-    /** Drop a file at public/brands/neycher.png and it replaces the wordmark. */
-    logo: '/brands/neycher.png',
-    url: 'https://www.helloneycher.com/',
-    blurb:
-      'Hormone-free intimate care. Moisturizers, balms and suppositories made for vaginal dryness, irritation and odour.',
-  },
-];
+const PARTNERS = [];
 
 function eyebrowFor(product) {
   return String(CATEGORY_LABELS[product.category] || product.category || '')
@@ -54,11 +50,14 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToE
   return (
     <section className="brands">
       <div className="mockup-page brands__head">
-        <div className="brands__kicker">Our partners</div>
-        <h1 className="brands__title">Brands we work with.</h1>
+        <div className="brands__kicker">Partnerships</div>
+        <h1 className="brands__title">
+          {PARTNERS.length > 0 ? 'Brands we work with.' : 'Brand partnerships are coming soon.'}
+        </h1>
         <p className="brands__lede">
-          Partnerships, not paid placement. A brand being here doesn&apos;t move it up your shop.
-          Matching is the same for every product Ayna carries.
+          {PARTNERS.length > 0
+            ? "Partnerships, not paid placement. A brand being here doesn't move it up your shop. Matching is the same for every product Ayna carries."
+            : "We're in conversations with a few brands, but nothing's signed yet — so there's nothing to show here. When a partnership becomes official, it still won't move a brand up your shop or your recommendations. Matching stays the same for every product Ayna carries, partner or not."}
         </p>
       </div>
 
@@ -126,7 +125,7 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToE
           );
         })}
 
-        <p className="brands__more">Coming soon</p>
+        {PARTNERS.length > 0 && <p className="brands__more">More coming soon</p>}
       </div>
     </section>
   );
