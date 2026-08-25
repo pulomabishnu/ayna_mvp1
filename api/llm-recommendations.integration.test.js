@@ -398,3 +398,25 @@ describe('POST /api/llm-recommendations — PII never reaches the provider', () 
     expect(allPrompts).not.toContain('123 Main St');
   });
 });
+
+describe('POST /api/llm-recommendations — FSA/HSA prioritization', () => {
+  // Live gap (2026-08-24 meeting): FSA/HSA was passed to the prompt as inert
+  // context with no instruction to act on it — Puloma explicitly asked for
+  // eligible products to be prioritized. Pins that the rule text is actually
+  // there now, not just the raw field.
+  it('instructs the model to prioritize FSA/HSA-eligible products when the user has one', async () => {
+    let sentBody = null;
+    globalThis.fetch = vi.fn(async (_url, init) => {
+      sentBody = JSON.parse(init.body);
+      return anthropicOk(recPayload());
+    });
+    const handler = await loadHandler();
+    const res = mockRes();
+
+    await handler(mockReq({ body: { intake: { ...wideIntake, fsaHsa: 'hsa' }, buildId: 'b-fsa' } }), res);
+
+    const prompt = sentBody.messages[0].content;
+    expect(prompt).toContain('FSA/HSA: hsa');
+    expect(prompt).toMatch(/prioritize FSA\/HSA-eligible products/i);
+  });
+});

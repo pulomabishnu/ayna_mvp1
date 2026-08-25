@@ -222,7 +222,18 @@ function matchesTierType(product, tierType) {
   return false;
 }
 
-function scoreProduct(product, intake, concern) {
+// Same field-name fallback pattern as Discovery.jsx's eligibility filter —
+// the catalog has both camelCase and snake_case rows depending on when a
+// product was added.
+function fsaHsaEligibility(product) {
+  const combined = product?.fsaHsaEligible === true || product?.fsa_hsa_eligible === true;
+  return {
+    fsa: combined || product?.fsaEligible === true || product?.fsa_eligible === true,
+    hsa: combined || product?.hsaEligible === true || product?.hsa_eligible === true,
+  };
+}
+
+export function scoreProduct(product, intake, concern) {
   const tags = new Set(product?.tags || []);
   let score = 0;
   concern.tags.forEach((tag) => {
@@ -239,6 +250,23 @@ function scoreProduct(product, intake, concern) {
     if ((intake.preferredProductTypes || []).some((p) => rawType.includes(String(p).replace('menstrual ', '').slice(0, 5)))) {
       score += 2;
     }
+  }
+  // Confirmed live 2026-08-24: FSA/HSA status was passed to the LLM prompt as
+  // inert context with no instruction to act on it, and this local engine had
+  // no FSA/HSA logic at all — a user who told us she has an FSA/HSA never
+  // actually got eligible products prioritized despite Puloma explicitly
+  // asking for exactly that. +7 sits deliberately just above the PCOS/
+  // endometriosis condition-match boost (+6): a real, stated financial
+  // constraint should outweigh a soft preference, but not override a genuine
+  // clinical-concern match entirely.
+  const fsaHsa = intake?.fsaHsa;
+  if (fsaHsa) {
+    const eligibility = fsaHsaEligibility(product);
+    const matches = fsaHsa === 'both' ? (eligibility.fsa || eligibility.hsa)
+      : fsaHsa === 'fsa' ? eligibility.fsa
+      : fsaHsa === 'hsa' ? eligibility.hsa
+      : false;
+    if (matches) score += 7;
   }
   return score;
 }
