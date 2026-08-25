@@ -529,20 +529,6 @@ export const STARTUPS = [
         image: ''
     },
     {
-        id: 's-stix',
-        name: 'Stix',
-        tagline: 'Pregnancy tests and condoms, no awkward store run',
-        description: 'DTC brand for pregnancy tests, ovulation tests, and condoms. Clear packaging, transparent pricing, and discreet delivery.',
-        tags: ['fertility', 'contraception', 'privacy'],
-        healthFunctions: ['cycle-tracking', 'contraception'],
-        category: 'fertility',
-        stage: 'Available, DTC',
-        productReleased: true,
-        spotsLeft: 500,
-        url: 'https://getstix.com',
-        image: 'https://cdn.shopify.com/s/files/1/0120/2752/7227/files/Pink_Ave_Lustre_Blush_Beauty_Stix_d7cd17c3-769c-487d-8c01-2e4847259aec.png?v=1761070580'
-    },
-    {
         id: 's-evofem',
         name: 'Evofem (Phexxi)',
         tagline: 'Non-hormonal birth control gel',
