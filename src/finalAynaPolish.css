@@ -211,8 +211,12 @@
 .pdp-rail__match-ring small { position:relative; z-index:1; grid-column:1; grid-row:1; }
 .pdp-rail__match-ring span { align-self:center; margin-top:-9px; font:400 24px/1 'Playfair Display',serif; color:#F0A84B; }
 .pdp-rail__match-ring small { align-self:center; margin-top:28px; font:500 8px/1 'DM Mono',monospace; letter-spacing:.09em; text-transform:uppercase; color:rgba(246,239,230,.68); }
-.pdp-evidence-head { grid-template-columns:minmax(220px,380px) minmax(280px,1fr) minmax(270px,310px); gap:32px; }
-.pdp-evidence-head__info { gap:14px; }
+/* grid-template-columns/gap for .pdp-evidence-head and .pdp-evidence-head__info
+   used to be redefined here too, competing with index.css's versions of the
+   same selectors — whichever file's build order won determined the real
+   layout, invisibly. That let index.css's unguarded middle-column `1fr` (no
+   minimum) win in production and crush that column at some widths. Fixed at
+   the source in index.css instead of duplicating it here again. */
 .pdp-evidence-head .pdp-rail__cards { position:sticky; top:112px; }
 
 @media (max-width:980px) {

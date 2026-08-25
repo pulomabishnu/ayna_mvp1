@@ -3339,7 +3339,12 @@ a.pdp-head__badge:focus-visible {
    actual layout rather than approximating it by stacking two 2-column rows. */
 .pdp-evidence-head {
   display: grid;
-  grid-template-columns: minmax(220px, 400px) 1fr minmax(240px, 290px);
+  /* Middle (info: price/description/buttons) column was a bare `1fr`, no
+     floor — at some in-between widths (~981-1050px, above the 980px
+     single-column breakpoint below) the outer two columns' own minmax
+     maximums ate nearly all the space, crushing this one to ~22px and
+     reading as overlapping/jumbled content. Flagged live 2026-08-25. */
+  grid-template-columns: minmax(220px, 400px) minmax(280px, 1fr) minmax(240px, 290px);
   gap: 38px;
   align-items: start;
   padding: 44px clamp(1rem, 5vw, 56px) 52px;
