@@ -110,7 +110,7 @@ const VIEW_TITLES = {
   'phone-verify': 'Verify Phone', tracked: 'Tracked Products',
   'privacy-policy': 'Privacy Policy', 'terms-of-use': 'Terms of Use',
   'how-we-make-money': 'How We Make Money', 'how-it-works': 'How It Works',
-  about: 'About',
+  about: 'About', 'not-found': 'Page Not Found',
 };
 
 const PATH_TO_VIEW = Object.fromEntries(
@@ -121,7 +121,12 @@ PATH_TO_VIEW['/'] = 'welcome';
 function getInitialView() {
   const path = window.location.pathname;
   if (parseProductIdFromPath(path)) return 'product';
-  return PATH_TO_VIEW[path] || 'welcome';
+  // An unrecognized path used to silently resolve to 'welcome' — a typo'd
+  // or stale-bookmarked URL landed on the homepage with zero indication
+  // anything was wrong (found live, 2026-08-24 bug bash). The root path
+  // itself is explicitly mapped in PATH_TO_VIEW, so this only ever affects
+  // a genuinely unknown path, never '/'.
+  return PATH_TO_VIEW[path] || 'not-found';
 }
 
 function getInitialProductId() {
@@ -149,6 +154,24 @@ function ViewLoadingFallback() {
   return (
     <div style={{ textAlign: 'center', padding: '4rem 1rem', color: 'var(--text-secondary, #666)' }}>
       Loading…
+    </div>
+  );
+}
+
+/**
+ * Shared "nothing here" state — a bad product link already showed a proper,
+ * on-brand empty state (centered serif heading, muted subtext, single navy
+ * CTA), but a bad top-level URL (a typo, a stale bookmark) instead silently
+ * redirected to the homepage with zero indication anything was wrong (found
+ * live, 2026-08-24 bug bash). Same component now backs both, instead of a
+ * one-off block duplicated just for products.
+ */
+function NotFoundState({ title, subtitle, ctaLabel, onCta }) {
+  return (
+    <div className="mockup-page" style={{ textAlign: 'center', padding: '5rem 1.5rem' }}>
+      <p style={{ fontFamily: 'var(--font-serif)', fontSize: '1.6rem', margin: '0 0 0.5rem' }}>{title}</p>
+      <p style={{ color: 'var(--color-text-muted)', margin: '0 0 1.75rem' }}>{subtitle}</p>
+      <button type="button" className="btn btn-navy" onClick={onCta}>{ctaLabel}</button>
     </div>
   );
 }
@@ -213,7 +236,7 @@ function App() {
   useEffect(() => {
     const onPop = (e) => {
       const pathProductId = parseProductIdFromPath(window.location.pathname);
-      const view = pathProductId ? 'product' : (e.state?.view || PATH_TO_VIEW[window.location.pathname] || 'welcome');
+      const view = pathProductId ? 'product' : (e.state?.view || PATH_TO_VIEW[window.location.pathname] || 'not-found');
       currentViewRef.current = view;
       setCurrentViewRaw(view);
       setProductRouteId(pathProductId);
@@ -1600,16 +1623,21 @@ function App() {
           ) : productStillResolving ? (
             <ViewLoadingFallback />
           ) : (
-            <div className="mockup-page" style={{ textAlign: 'center', padding: '5rem 1.5rem' }}>
-              <p style={{ fontFamily: 'var(--font-serif)', fontSize: '1.6rem', margin: '0 0 0.5rem' }}>Product not found</p>
-              <p style={{ color: 'var(--color-text-muted)', margin: '0 0 1.75rem' }}>
-                This product may have been removed, or the link may be incorrect.
-              </p>
-              <button type="button" className="btn btn-navy" onClick={() => handleViewDiscovery('')}>
-                Browse products
-              </button>
-            </div>
+            <NotFoundState
+              title="Product not found"
+              subtitle="This product may have been removed, or the link may be incorrect."
+              ctaLabel="Browse products"
+              onCta={() => handleViewDiscovery('')}
+            />
           )
+        )}
+        {currentView === 'not-found' && (
+          <NotFoundState
+            title="Page not found"
+            subtitle="That link may be broken, or the page may have moved."
+            ctaLabel="Go to homepage"
+            onCta={() => setCurrentView('welcome')}
+          />
         )}
 
         {showDeleteModal && (
