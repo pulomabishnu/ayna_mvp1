@@ -244,6 +244,10 @@ async function enrichCandidate(candidate, category) {
 export function toRow(candidate, { category, searchHits, provider }) {
   const id = `disc-${slugify(candidate.brand)}-${slugify(candidate.name)}`.slice(0, 120);
   const safeUrl = /^https:\/\//i.test(candidate.url || '') ? candidate.url : null;
+  // candidate.image: the LLM-generation path never has one (candidate.image
+  // is always undefined there, so this is unchanged for it); the Shopify-feed
+  // import path (api/discover-brand-catalog.js) has a real product photo.
+  const safeImage = /^https:\/\//i.test(candidate.image || '') ? candidate.image : null;
   return {
     id,
     name: String(candidate.name || '').slice(0, 200),
@@ -252,7 +256,7 @@ export function toRow(candidate, { category, searchHits, provider }) {
     product_type: candidate.type === 'digital' ? 'digital' : 'physical',
     summary: String(candidate.summary || '').slice(0, 500),
     price: String(candidate.price || '').slice(0, 100) || null,
-    image: null,
+    image: safeImage,
     url: safeUrl,
     tags: [],
     health_functions: [],
@@ -319,7 +323,7 @@ export function isAutoApprovable(row) {
  * A subdomain change (brand.com -> shop.brand.com) is allowed; a different
  * registrable domain is not.
  */
-async function verifyUrlIsLive(url) {
+export async function verifyUrlIsLive(url) {
   try {
     const original = new URL(url);
     const res = await fetch(url, {
