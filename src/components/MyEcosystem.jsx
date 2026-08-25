@@ -1961,7 +1961,7 @@ export default function MyEcosystem({
 
                             <details className="eco2-details__item" ref={careNearYouDetailsRef}>
                                 <summary>
-                                    <span>Premium care near you</span>
+                                    <span>Care near you</span>
                                     <span className="eco2-details__hint">Find a clinician, HRSA/Planned Parenthood links, and matching telehealth</span>
                                 </summary>
                                 <div className="eco2-details__body">
