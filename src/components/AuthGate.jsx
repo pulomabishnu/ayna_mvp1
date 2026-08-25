@@ -30,6 +30,17 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
   const [successMsg, setSuccessMsg] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [checked, setChecked] = useState([false, false, false]);
+  // Two real signups reported never getting a confirmation email
+  // (2026-08-25) — Supabase's built-in email sender has a very low rate
+  // limit and no delivery guarantee, so a signup silently succeeding with
+  // no email actually arriving is a known, real failure mode, not a fluke.
+  // Can't fix the underlying sender from this codebase (Supabase Dashboard
+  // → Authentication → Email/SMTP settings, outside this repo), but a
+  // resend option means a stuck user isn't just left staring at "check your
+  // inbox" forever.
+  const [needsConfirmation, setNeedsConfirmation] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [resendMsg, setResendMsg] = useState('');
 
   const supabase = getSupabaseClient();
   const subtitle = SUBTITLES[context] || SUBTITLES.default;
@@ -43,6 +54,8 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
     e.preventDefault();
     setError('');
     setSuccessMsg('');
+    setResendMsg('');
+    setNeedsConfirmation(false);
     setLoading(true);
     try {
       if (isSignup) {
@@ -76,15 +89,44 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
           setSuccessMsg('You\'re all set. Signing you in...');
         } else {
           setSuccessMsg('Almost there! A confirmation email is on its way from Ayna (pulomabishnu@gmail.com). Check your spam folder if you don\'t see it. Once confirmed, come back here to sign in.');
+          setNeedsConfirmation(true);
         }
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
+        if (error) {
+          // Real, known failure mode (found live 2026-08-25): a user whose
+          // confirmation email never arrived tries to sign in anyway and
+          // hits this exact, stable Supabase error string. Surface a resend
+          // option right here instead of a dead-end error.
+          if (/email not confirmed/i.test(error.message || '')) {
+            setNeedsConfirmation(true);
+          }
+          throw error;
+        }
       }
     } catch (err) {
       setError(err.message || 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResend = async () => {
+    if (!email) return;
+    setResending(true);
+    setResendMsg('');
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email,
+        options: { emailRedirectTo: `${window.location.origin}/confirmed` },
+      });
+      if (error) throw error;
+      setResendMsg('Sent! Check your inbox (and spam folder) again in a minute.');
+    } catch (err) {
+      setResendMsg(err.message || 'Could not resend right now — try again in a moment.');
+    } finally {
+      setResending(false);
     }
   };
 
@@ -270,6 +312,20 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
 
           {error && <p style={styles.error}>{error}</p>}
           {successMsg && <p style={styles.success}>{successMsg}</p>}
+          {needsConfirmation && (
+            <p style={{ ...styles.error, color: 'var(--color-text-muted)' }}>
+              Didn&apos;t get it?{' '}
+              <button
+                type="button"
+                onClick={handleResend}
+                disabled={resending}
+                style={{ ...styles.link, background: 'none', border: 'none', padding: 0, font: 'inherit', cursor: resending ? 'not-allowed' : 'pointer' }}
+              >
+                {resending ? 'Sending…' : 'Resend confirmation email'}
+              </button>
+              {resendMsg && <><br />{resendMsg}</>}
+            </p>
+          )}
 
           <button
             type="submit"
