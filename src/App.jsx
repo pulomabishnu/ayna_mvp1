@@ -1574,6 +1574,30 @@ function App() {
             onProfileUpdate={(updated) => {
               setQuizResults(updated);
               setCheckinUpdatedProfile(true);
+              // Previously this only ever updated in-memory state — a real
+              // check-in change (e.g. adding "Painful cramps") showed the
+              // right confirmation, then silently vanished on reload,
+              // because nothing was ever sent to the backend (found live,
+              // 2026-08-24 bug bash). `frustrations` on the legacy profile
+              // shape is DERIVED (mapIntakeToLegacyQuizProfile computes it
+              // from the raw intake's own fields, e.g. `symptoms`), so it
+              // can't be persisted by writing it back directly — instead,
+              // append whatever's newly added to customConcerns, the same
+              // free-text path the quiz itself uses (inferFrustrationsFrom-
+              // FreeTextConcerns), so it re-derives the same frustration on
+              // every future load, not just this session. Every value
+              // MonthlyCheckin's FOCUS_TO_FRUSTRATION can actually produce
+              // ("Heavy flow," "Painful cramps," "Hormonal bloating,"
+              // "Irregular cycles," "Recurrent UTIs") already contains the
+              // keyword that inference looks for in its own label text.
+              const rawIntake = updated?.fullHealthIntake || {};
+              const priorConcerns = Array.isArray(rawIntake.customConcerns) ? rawIntake.customConcerns : [];
+              const priorFrustrations = quizResults?.frustrations || [];
+              const newlyAdded = (updated.frustrations || []).filter((f) => !priorFrustrations.includes(f));
+              if (newlyAdded.length) {
+                const nextIntake = { ...rawIntake, customConcerns: [...priorConcerns, ...newlyAdded] };
+                saveHealthIntakeForCurrentUser(nextIntake).catch((e) => reportSaveFailure('Could not save your check-in', e));
+              }
             }}
           />
         )}
