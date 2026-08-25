@@ -192,7 +192,7 @@ function ProductTile({ product, aspectRatio = 1, radius = 10, badge, showHeart }
     >
       <ProductTileImage
         product={product}
-        alt=""
+        alt={product?.name || ''}
         imgStyle={{
           position: 'absolute',
           inset: 0,
