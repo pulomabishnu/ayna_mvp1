@@ -12,7 +12,16 @@
 .ayna-browse__search { width:100%; margin-bottom:1rem; }
 .ayna-browse__search input { width:100%; border:1px solid var(--color-border); border-radius:var(--radius-pill); padding:.9rem 1.15rem; background:#fff; color:var(--color-text-main); font:inherit; outline:none; }
 .ayna-browse__search input:focus { border-color:rgba(78,56,102,.45); box-shadow:0 0 0 3px rgba(78,56,102,.07); }
-.ayna-browse__categories { display:flex; gap:.5rem; overflow-x:auto; padding:.15rem 0 .8rem; scrollbar-width:none; }
+/* Hiding the scrollbar (below) removed the only visible cue that this row
+   scrolls at all — the last couple category chips were easy to miss with no
+   hint more existed off-screen (found live, 2026-08-24 bug bash). A fade at
+   both edges signals "there's more this way" without needing JS to track
+   scroll position. */
+.ayna-browse__categories {
+  display:flex; gap:.5rem; overflow-x:auto; padding:.15rem 0 .8rem; scrollbar-width:none;
+  -webkit-mask-image: linear-gradient(to right, transparent, black 20px, black calc(100% - 28px), transparent);
+  mask-image: linear-gradient(to right, transparent, black 20px, black calc(100% - 28px), transparent);
+}
 .ayna-browse__categories::-webkit-scrollbar { display:none; }
 .ayna-browse__categories button,.ayna-browse__filter-button { flex:0 0 auto; border:1px solid var(--color-border); border-radius:var(--radius-pill); background:transparent; color:var(--color-text-muted); padding:.52rem .85rem; font-size:.78rem; cursor:pointer; }
 .ayna-browse__categories button.is-active { background:var(--color-navy); border-color:var(--color-navy); color:#fff; }

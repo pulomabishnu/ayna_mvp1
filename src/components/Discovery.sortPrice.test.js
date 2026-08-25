@@ -53,4 +53,18 @@ describe('getSortPrice', () => {
     expect(getSortPrice({})).toBeNull();
     expect(getSortPrice({ price: '' })).toBeNull();
   });
+
+  // Regression: "Price: Low to High" ranked "Free trial, then subscription" and
+  // "Free through insurance" above genuinely cheap products — technically not
+  // wrong per the literal word "Free", but misleading in a price sort since
+  // neither is actually $0 to most users the way a truly free app/tier is.
+  it('a conditional "Free ... trial/insurance/subscription" does NOT sort as $0', () => {
+    expect(getSortPrice({ price: 'Free trial, then subscription' })).toBeNull();
+    expect(getSortPrice({ price: 'Free through insurance' })).toBeNull();
+  });
+
+  it('a genuinely free item (no trial/insurance qualifier) still sorts as $0', () => {
+    expect(getSortPrice({ price: 'Free' })).toBe(0);
+    expect(getSortPrice({ price: 'Free (Clue Plus $10/month)' })).toBe(0);
+  });
 });

@@ -158,10 +158,19 @@ const ALL_CATEGORIES = ['all', 'pad', 'tampon', 'cup', 'disc', 'period-underwear
  * stop, with "Free" (an optional paid tier mentioned afterward doesn't
  * change that the base product is free) checked first as $0.
  */
+// "Free" only means $0 to sort by when nothing that follows walks it back —
+// "Free trial, then subscription" and "Free through insurance" both matched
+// bare /^free\b/ and sorted as $0 above genuinely cheap products (found live,
+// 2026-08-24 bug bash: technically not wrong per the literal word, but reads
+// as misleading in a price sort since neither is actually free to most
+// users). These fall through to the real-dollar-amount search below instead,
+// and to null (sorts last, not first) when no amount is present either.
+const CONDITIONAL_FREE_PATTERN = /^free\b.*(trial|then|after|insurance|subscription|starts? at|converts?)/i;
+
 function getSortPrice(item) {
     const s = (item.price || item.stage || '').toString().trim();
     if (!s) return null;
-    if (/^free\b/i.test(s)) return 0;
+    if (/^free\b/i.test(s) && !CONDITIONAL_FREE_PATTERN.test(s)) return 0;
     // Comma thousands separators ("$2,245+") must be part of the digit match,
     // not just the leading "$2" — stripped after matching, not before, so a
     // stray comma elsewhere in the string can't merge two unrelated numbers.
@@ -1157,6 +1166,12 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         runSearch(searchQuery);
     };
 
+    // "Clear" resets the FILTERS — Personalized is a standing preference the
+    // user turned on deliberately, not a filter value like price/rating/life
+    // stage, and turning it off as a side effect of clicking something
+    // labeled just "Clear" was a surprising, undocumented behavior (found
+    // live, 2026-08-24 bug bash). Personalized has its own explicit toggle
+    // right next to this button for anyone who actually wants it off.
     const clearBrowseFilters = () => {
         setMacroGroup('all');
         setCategoryFilter('all');
@@ -1167,7 +1182,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         setLifeStageFilter('all');
         setAynaFilter('all');
         setPreferenceFilter('all');
-        setPersonalizationFilter(false);
         setSortBy('default');
         setSearchQuery('');
         setSubmittedQuery('');
@@ -1189,7 +1203,18 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 <input
                     type="search"
                     value={searchQuery}
-                    onChange={(e) => { setSearchQuery(e.target.value); if (!e.target.value.trim()) setSubmittedQuery(''); }}
+                    onChange={(e) => {
+                        setSearchQuery(e.target.value);
+                        // Clearing the box (the native × or backspacing to empty) used to
+                        // leave the Product Type filter exactly as the search had left it —
+                        // often a category the search itself auto-selected via the nudge
+                        // logic in runSearch, with no text left to explain why results were
+                        // still scoped to it. Clearing the text now clears that filter too.
+                        if (!e.target.value.trim()) {
+                            setSubmittedQuery('');
+                            setCategoryFilter('all');
+                        }
+                    }}
                     placeholder="Search products"
                     aria-label="Search products"
                 />

@@ -821,7 +821,26 @@ export const CATEGORY_LABELS = {
     'diagnostics': 'Diagnostics',
     'hormone-monitoring': 'Hormone Monitoring',
     'custom-brand': 'Your brands',
-    'medication': 'Medications'
+    'medication': 'Medications',
+    // Real catalog category values that had no label here at all, so the
+    // Product Type filter dropdown fell back to raw lowercase text for them
+    // (found live, 2026-08-24 bug bash: "cup steamer", "incontinence",
+    // "sleep" sitting inconsistently alongside Title Case labels elsewhere
+    // in the same list).
+    'cup-steamer': 'Cup Steamer',
+    'incontinence': 'Incontinence',
+    'sleep': 'Sleep',
+    'contraception': 'Birth Control',
+    'breast-care': 'Breast Care',
+    'lactation': 'Lactation',
+    'skin': 'Skin',
+    'skincare': 'Skin',
+    'body-care': 'Skin',
+    'hair': 'Hair',
+    'haircare': 'Hair',
+    'gut-health': 'Gut',
+    'pain-relief': 'Pain + Recovery',
+    'recovery': 'Pain + Recovery',
 };
 
 // The site's one taxonomy of user-facing care areas, each rolling up one or more
