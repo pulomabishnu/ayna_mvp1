@@ -41,6 +41,18 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
   const [needsConfirmation, setNeedsConfirmation] = useState(false);
   const [resending, setResending] = useState(false);
   const [resendMsg, setResendMsg] = useState('');
+  // Signup via native Supabase phone-OTP auth instead of email/password —
+  // requested 2026-08-25 as an alternative for anyone whose confirmation
+  // email never arrives (see the resend feature above). Fully independent
+  // of email confirmation: a verified phone creates/signs in the account
+  // directly, no email step involved at all. Requires Twilio to actually be
+  // configured as Supabase's SMS provider (Authentication → Phone in the
+  // Supabase Dashboard) — this code can't set that up, only use it once set.
+  const [authMethod, setAuthMethod] = useState('email');
+  const [phoneStep, setPhoneStep] = useState('number');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [phoneCode, setPhoneCode] = useState('');
+  const [phoneSending, setPhoneSending] = useState(false);
 
   const supabase = getSupabaseClient();
   const subtitle = SUBTITLES[context] || SUBTITLES.default;
@@ -130,6 +142,70 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
     }
   };
 
+  // Same US-default E.164 normalization as the server's normalizeE164
+  // (api/_otp.js) — kept independent since that one's server-only, but
+  // matching it means a number that works for one phone feature works for
+  // this one too, no surprise "invalid number" for something the rest of
+  // the app already accepts.
+  const normalizePhoneE164 = (raw) => {
+    const trimmed = String(raw || '').trim();
+    if (/^\+[1-9]\d{6,14}$/.test(trimmed)) return trimmed;
+    const digits = trimmed.replace(/[^\d]/g, '');
+    if (digits.length === 10) return `+1${digits}`;
+    if (digits.length === 11 && digits.startsWith('1')) return `+${digits}`;
+    return null;
+  };
+
+  const handleSendPhoneOtp = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    try {
+      const e164 = normalizePhoneE164(phoneNumber);
+      if (!e164) throw new Error('Please enter a valid 10-digit phone number.');
+      const consentAt = new Date().toISOString();
+      const cleanFirstName = firstName.trim();
+      const { error } = await supabase.auth.signInWithOtp({
+        phone: e164,
+        options: {
+          data: {
+            first_name: cleanFirstName,
+            full_name: cleanFirstName,
+            consent_given_at: consentAt,
+            consent_version: CONSENT_VERSION,
+          },
+        },
+      });
+      if (error) throw error;
+      setPhoneNumber(e164);
+      setPhoneStep('code');
+    } catch (err) {
+      setError(err.message || 'Could not send a code right now. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyPhoneOtp = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.verifyOtp({
+        phone: phoneNumber,
+        token: phoneCode.trim(),
+        type: 'sms',
+      });
+      if (error) throw error;
+      // Session now exists — App.jsx's onAuthStateChange SIGNED_IN handler
+      // takes it from here, same as any other sign-in path.
+    } catch (err) {
+      setError(err.message || 'That code is wrong or expired. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleGoogle = async () => {
     if (!supabase) {
       setError('Supabase is not configured. Check environment variables.');
@@ -169,6 +245,16 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
     setMode(next);
     setError('');
     setSuccessMsg('');
+    setAuthMethod('email');
+    setPhoneStep('number');
+  };
+
+  const switchAuthMethod = (next) => {
+    setAuthMethod(next);
+    setError('');
+    setSuccessMsg('');
+    setNeedsConfirmation(false);
+    setPhoneStep('number');
   };
 
   const overlayStyle = isModal ? {
@@ -234,7 +320,14 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
           </button>
         </div>
 
-        <form onSubmit={handleEmailAuth} style={styles.form}>
+        <form
+          onSubmit={
+            isSignup && authMethod === 'phone'
+              ? (phoneStep === 'number' ? handleSendPhoneOtp : handleVerifyPhoneOtp)
+              : handleEmailAuth
+          }
+          style={styles.form}
+        >
           {isSignup && (
             <>
               <div style={styles.consentSection}>
@@ -257,9 +350,80 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
                 {' '}and{' '}
                 <a href="/terms-of-use" target="_blank" rel="noopener noreferrer" style={styles.link}>Terms of Service</a>.
               </p>
+
+              {authMethod === 'email' ? (
+                <button
+                  type="button"
+                  onClick={() => switchAuthMethod('phone')}
+                  style={{ ...styles.link, background: 'none', border: 'none', padding: 0, font: 'inherit', cursor: 'pointer', textAlign: 'left' }}
+                >
+                  Use my phone number instead
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => switchAuthMethod('email')}
+                  style={{ ...styles.link, background: 'none', border: 'none', padding: 0, font: 'inherit', cursor: 'pointer', textAlign: 'left' }}
+                >
+                  Use email instead
+                </button>
+              )}
             </>
           )}
 
+          {isSignup && authMethod === 'phone' && (
+            <input
+              type="text"
+              placeholder="First name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              required
+              disabled={!allConsented || phoneStep === 'code'}
+              style={{ ...styles.input, ...((!allConsented || phoneStep === 'code') ? styles.inputDisabled : {}) }}
+              autoComplete="given-name"
+              maxLength={50}
+            />
+          )}
+
+          {isSignup && authMethod === 'phone' ? (
+            phoneStep === 'number' ? (
+              <input
+                type="tel"
+                placeholder="Phone number"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                required
+                disabled={!allConsented}
+                style={{ ...styles.input, ...(!allConsented ? styles.inputDisabled : {}) }}
+                autoComplete="tel"
+              />
+            ) : (
+              <>
+                <p style={{ ...styles.success, color: 'var(--color-text-muted)' }}>
+                  We texted a code to {phoneNumber}.
+                </p>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  placeholder="6-digit code"
+                  value={phoneCode}
+                  onChange={(e) => setPhoneCode(e.target.value)}
+                  required
+                  style={styles.input}
+                  autoComplete="one-time-code"
+                  maxLength={6}
+                />
+                <button
+                  type="button"
+                  onClick={() => { setPhoneStep('number'); setPhoneCode(''); setError(''); }}
+                  style={{ ...styles.link, background: 'none', border: 'none', padding: 0, font: 'inherit', cursor: 'pointer', textAlign: 'left' }}
+                >
+                  Change number
+                </button>
+              </>
+            )
+          ) : (
+            <>
           {isSignup && (
             <input
               type="text"
@@ -309,10 +473,12 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
               {showPassword ? 'Hide' : 'Show'}
             </button>
           </div>
+            </>
+          )}
 
           {error && <p style={styles.error}>{error}</p>}
           {successMsg && <p style={styles.success}>{successMsg}</p>}
-          {needsConfirmation && (
+          {needsConfirmation && authMethod === 'email' && (
             <p style={{ ...styles.error, color: 'var(--color-text-muted)' }}>
               Didn&apos;t get it?{' '}
               <button
@@ -335,7 +501,11 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
               ...(isSignup && !allConsented ? styles.primaryBtnDisabled : {}),
             }}
           >
-            {loading ? 'Please wait…' : isSignup ? 'Create account' : 'Sign in'}
+            {loading
+              ? 'Please wait…'
+              : isSignup && authMethod === 'phone'
+                ? (phoneStep === 'number' ? 'Send code' : 'Verify')
+                : isSignup ? 'Create account' : 'Sign in'}
           </button>
         </form>
 
