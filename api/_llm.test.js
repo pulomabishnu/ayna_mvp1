@@ -195,7 +195,10 @@ describe('provider fallback', () => {
     globalThis.fetch = vi.fn().mockResolvedValue(httpError(401));
     await expect(
       runWithTimers(callWithFallback(['anthropic', 'openai'], { prompt: 'hi' }))
-    ).rejects.toMatchObject({ name: 'LlmError' });
+    ).rejects.toMatchObject({
+      name: 'LlmError',
+      message: expect.stringContaining('anthropic=401'),
+    });
   });
 
   it('skips providers with no configured key rather than failing', async () => {

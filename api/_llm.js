@@ -317,15 +317,46 @@ export async function callWithFallback(order, args = {}) {
       if (provider === 'openai') return await callOpenAI({ ...args, ...(args.openai || {}) });
       if (provider === 'gemini') return await callGemini({ ...args, ...(args.gemini || {}) });
     } catch (e) {
-      console.error(`[llm] ${provider} failed:`, e?.status || '', e?.message, e?.body ? `| ${e.body}` : '');
-      errors.push(e);
+      // Some abort paths create an LlmError before the provider name is
+      // attached. Preserve the provider being attempted so production logs
+      // never collapse into the unhelpful "undefined=err".
+      const normalized = e instanceof LlmError
+        ? e
+        : new LlmError(e?.message || String(e), {
+            provider,
+            status: e?.status || 0,
+            retryable: Boolean(e?.retryable),
+            body: e?.body || '',
+          });
+
+      if (!normalized.provider) normalized.provider = provider;
+
+      console.error(
+        `[llm] ${provider} failed:`,
+        normalized.status || '',
+        normalized.message,
+        normalized.body ? `| ${normalized.body}` : ''
+      );
+
+      errors.push(normalized);
+
       if (args.signal?.aborted) break;
     }
   }
+
   const first = errors[0];
+
   throw new LlmError(
-    errors.length ? `all providers failed: ${errors.map((e) => `${e.provider}=${e.status || 'err'}`).join(', ')}` : 'no provider configured',
-    { provider: first?.provider || 'none', status: first?.status || 0, body: first?.body || '' }
+    errors.length
+      ? `all providers failed: ${errors
+          .map((e) => `${e.provider || 'unknown'}=${e.status || 'err'}`)
+          .join(', ')}`
+      : 'no provider configured',
+    {
+      provider: first?.provider || 'none',
+      status: first?.status || 0,
+      body: first?.body || '',
+    }
   );
 }
 

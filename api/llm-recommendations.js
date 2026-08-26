@@ -1,7 +1,7 @@
 /* global process */
 import { retrieveKnowledgeForIntake, buildKnowledgeContext } from '../src/utils/ragRetrieval.js';
 import { verifyUser, claimEcosystemBuild, releaseEcosystemBuild } from './_usageLimit.js';
-import { callWithFallback, parseProviderOrder, tryParseJsonCandidate } from './_llm.js';
+import { callWithFallback, parseProviderOrder, tryParseJsonCandidate, providerConfigured } from './_llm.js';
 import { isPremiumUser, hasLegacyClientPremiumFlag } from './_entitlement.js';
 
 // Hard ceilings on client-supplied work. Without these, one request with 500
@@ -24,7 +24,9 @@ const MAX_BATCH_SIZE = 6;
 const FUNCTION_BUDGET_MS = 50_000;
 
 function anyApiKeyConfigured() {
-  return !!(process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY);
+  return ['anthropic', 'openai', 'gemini'].some((provider) =>
+    providerConfigured(provider)
+  );
 }
 
 // ─── Intake PII sanitization ──────────────────────────────────────────────────
