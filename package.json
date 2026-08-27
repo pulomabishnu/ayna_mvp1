@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "catalog:export": "node scripts/export-catalog.mjs",
     "catalog:check": "node scripts/export-catalog.mjs --check",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "buyurls:update": "node scripts/update-product-buy-urls.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.103.1",

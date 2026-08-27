@@ -227,6 +227,7 @@ export const PHYSICAL_PRODUCTS = [
     {
         id: 'p-lola-tampon',
         name: 'LOLA Organic Tampons',
+        productUrl: 'https://mylola.com/products/applicator-tampons',
         category: 'tampon',
         type: 'physical',
         internal: true,

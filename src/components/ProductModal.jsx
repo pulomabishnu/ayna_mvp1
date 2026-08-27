@@ -9,7 +9,7 @@ import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { renderMarkdownLite } from '../utils/renderMarkdownLite';
 import MatchGauge from './MatchGauge';
-import { getRetailerLinks } from '../utils/retailerLinks';
+import { PRODUCT_BUY_URLS } from '../data/productBuyUrls';
 import { getVerificationLinks, toSourceChips, hostLabel } from '../utils/verificationLinks';
 import posthog from 'posthog-js';
 
@@ -370,52 +370,67 @@ function hasRealPath(url) {
   }
 }
 
+function isSearchResultsUrl(url) {
+  try {
+    const u = new URL(url);
+    const path = u.pathname.toLowerCase().replace(/\/+$/, '');
+
+    // Search/category-result routes, including Amazon /s pages.
+    if (/(^|\/)(s|search)(\/|$)/.test(path)) return true;
+
+    if (
+      u.searchParams.has('k') ||
+      u.searchParams.has('searchTerm') ||
+      u.searchParams.has('Ntt') ||
+      u.searchParams.get('tbm') === 'shop'
+    ) return true;
+
+    return false;
+  } catch {
+    return true;
+  }
+}
+
+function isExactBuyUrl(value) {
+  const url = String(value || '').trim();
+
+  return (
+    /^https?:\/\//i.test(url) &&
+    hasRealPath(url) &&
+    !isSearchResultsUrl(url)
+  );
+}
+
 function getBuyUrl(product) {
-  // Explicit purchase-intent fields — always trusted outright, homepage or not.
-  const explicitCandidates = [product?.affiliateUrl, product?.buyUrl, product?.productUrl];
-  for (const candidate of explicitCandidates) {
-    const url = String(candidate || '').trim();
-    if (/^https?:\/\//i.test(url)) return url;
+  // 1. Affiliate product URL wins when Ayna has one.
+  if (isExactBuyUrl(product?.affiliateUrl)) {
+    return String(product.affiliateUrl).trim();
   }
 
-  // `product.url` with a real path is almost certainly the actual product
-  // page. When it's just a bare domain root, a specific retailer search
-  // below (e.g. Amazon for the exact product name) gets you closer to the
-  // product than the brand's own homepage does — so a homepage-only url
-  // is demoted below those, not used immediately. Found live: LOLA's pads/
-  // tampons had real Amazon whereToBuy entries, but Buy Now sent people to
-  // lola.com's homepage instead, since url. always won regardless of
-  // specificity.
-  const rawUrl = String(product?.url || '').trim();
-  const isDirectUrl = /^https?:\/\//i.test(rawUrl);
-  if (isDirectUrl && hasRealPath(rawUrl)) return rawUrl;
-
-  const shops = Array.isArray(product?.whereToBuy) ? product.whereToBuy : [];
-  for (const shop of shops) {
-    const mapped = product?.whereToBuyLinks?.[shop];
-    if (typeof mapped === 'string' && /^https?:\/\//i.test(mapped.trim())) return mapped.trim();
+  // 2. Ayna's centrally verified exact destination.
+  const verifiedCatalogUrl = PRODUCT_BUY_URLS[product?.id];
+  if (isExactBuyUrl(verifiedCatalogUrl)) {
+    return verifiedCatalogUrl;
   }
 
-  // getRetailerLinks() (see retailerLinks.js) already solves the "most
-  // catalog entries have no direct buy URL" problem for the "Compare at" row
-  // and Specs tab — a real retailer's own product page when known, else a
-  // real deterministic site-search link. `specific` links (a known retailer's
-  // own site-search, scoped to this product's name) are preferred here over
-  // a bare homepage; non-specific ones (a bare domain, or the generic Google
-  // Shopping catch-all) are only used as a last resort below.
-  const retailerLinks = getRetailerLinks(product);
-  const specificRetailer = retailerLinks.find((r) => r.specific)?.url;
-  if (specificRetailer) return specificRetailer;
+  // 3. Explicit exact product URLs.
+  for (const candidate of [product?.productUrl, product?.buyUrl]) {
+    if (isExactBuyUrl(candidate)) return String(candidate).trim();
+  }
 
-  if (isDirectUrl) return rawUrl;
+  // 3. Existing catalog URL, but ONLY when it is a real product/service page.
+  // Bare homepages and search-result pages are rejected.
+  if (isExactBuyUrl(product?.url)) {
+    return String(product.url).trim();
+  }
 
-  if (retailerLinks[0]?.url) return retailerLinks[0].url;
-
+  // 4. Explicit retailer product URL only.
   if (product?.whereToBuyLinks && typeof product.whereToBuyLinks === 'object') {
-    for (const mapped of Object.values(product.whereToBuyLinks)) {
-      if (typeof mapped === 'string' && /^https?:\/\//i.test(mapped.trim())) return mapped.trim();
+    for (const value of Object.values(product.whereToBuyLinks)) {
+      if (isExactBuyUrl(value)) return String(value).trim();
     }
   }
+
   return null;
 }
 
@@ -502,10 +517,6 @@ export default function ProductModal({
   const matchPercent = explicitMatchPercent ?? (hasEcosystemContext ? profileMatchPercent : null);
   const headMatchLabel = matchLabels[0] || null;
   const buyUrl = useMemo(() => getBuyUrl(product), [product]);
-  // Never a specific price/availability claim — just real, deterministic
-  // site-search links per retailer name (src/utils/retailerLinks.js), so a
-  // user can actually compare instead of reading unclickable retailer text.
-  const retailerLinks = useMemo(() => getRetailerLinks(product), [product]);
 
   const aynaData = useMemo(
     () => (aynaReviews && product ? (aynaReviews[product.id] || { ratings: [], reviews: [] }) : { ratings: [], reviews: [] }),
@@ -681,29 +692,6 @@ export default function ProductModal({
           </button>
         )}
       </div>
-      {retailerLinks.length > 0 && (
-        <div className="pdp-retailers">
-          <span className="pdp-retailers__label">Compare at</span>
-          {retailerLinks.map((r) => (
-            <a
-              key={r.name}
-              className="pdp-retailers__link"
-              href={r.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => posthog.capture('product_retailer_link_clicked', {
-                productId: product.id,
-                retailer: r.name,
-                verified: r.verified,
-                destination: r.url,
-                source: 'actions_row',
-              })}
-            >
-              {r.name}
-            </a>
-          ))}
-        </div>
-      )}
       {onAddToEcosystem && (
         <button
           type="button"
