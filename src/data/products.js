@@ -715,7 +715,7 @@ export const DIGITAL_PRODUCTS = [
         userRating: 4.5,
         whereToBuy: ['App Store', 'Google Play'],
         platform: 'iOS, Android',
-        image: 'https://target.scene7.com/is/image/Target/GUEST_cb89dfb0-209a-4fd5-bf81-1e392f636b23',
+        image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/04/8e/69/048e6912-3f1e-ece4-ab0f-40d22c4b4eb2/AppIcon-0-0-1x_U007ephone-0-1-85-220.png/512x512bb.jpg',
         summary: 'Dedicated menopause and perimenopause tracker. Log symptoms (hot flashes, sleep, mood), track patterns, and get insights. Built for midlife health.',
         safety: { fdaStatus: 'N/A (wellness app)', materials: 'N/A', recalls: 'N/A', allergens: 'N/A', sideEffects: 'N/A', opinionAlerts: 'Use alongside clinician care for diagnosis and treatment.' },
         privacy: { dataStorage: 'US servers', sellsData: '❌ Does not sell personal health data', hipaa: 'N/A', keyPolicy: 'Check app privacy policy for data sharing with researchers or partners.' },
