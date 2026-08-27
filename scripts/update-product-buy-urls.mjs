@@ -3,7 +3,7 @@ import { ALL_PRODUCTS } from '../src/data/products.js';
 import { PRODUCT_BUY_URLS } from '../src/data/productBuyUrls.js';
 
 const API_KEY = process.env.GEMINI_API_KEY;
-const MODEL = process.env.GEMINI_MODEL || 'gemini-3.6-flash';
+const MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
 
 const limitArg = process.argv.find((x) => x.startsWith('--limit='));
 const LIMIT = limitArg ? Math.max(1, Number(limitArg.split('=')[1]) || 20) : 20;
