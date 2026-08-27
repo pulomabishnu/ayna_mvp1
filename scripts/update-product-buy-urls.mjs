@@ -35,15 +35,20 @@ function isMarketplace(value) {
   return MARKETPLACES.some((domain) => h === domain || h.endsWith(`.${domain}`));
 }
 
-function isExactUrl(value) {
+function allowsHomepage(product) {
+  return product?.type === 'digital' || String(product?.id || '').startsWith('d-');
+}
+
+function isExactUrl(value, allowHomepage = false) {
   if (!value) return false;
 
   try {
     const u = new URL(String(value).trim());
     const path = u.pathname.toLowerCase().replace(/\/+$/, '');
 
-    // A specific product/service page needs something after the domain.
-    if (!path) return false;
+    // Physical products need a specific page. Digital apps/services may use
+    // their official homepage when that is the best cross-platform destination.
+    if (!path && !allowHomepage) return false;
 
     // Never use search-result pages.
     if (/(^|\/)(s|search)(\/|$)/.test(path)) return false;
@@ -71,7 +76,7 @@ function existingDestination(product) {
     ...Object.values(product.whereToBuyLinks || {}),
   ];
 
-  return values.find(isExactUrl) || null;
+  return values.find((value) => isExactUrl(value, allowsHomepage(product))) || null;
 }
 
 function cleanJson(text) {
@@ -151,7 +156,10 @@ async function searchWeb(product) {
   const data = await response.json();
 
   return (data?.results || [])
-    .filter((result) => result?.url && isExactUrl(result.url))
+    .filter(
+      (result) =>
+        result?.url && isExactUrl(result.url, allowsHomepage(product))
+    )
     .map((result) => ({
       title: String(result.title || '').trim(),
       url: String(result.url || '').trim(),
@@ -160,11 +168,11 @@ async function searchWeb(product) {
     }));
 }
 
-async function verifyResolvedUrl(value) {
+async function verifyResolvedUrl(value, allowHomepage = false) {
   try {
     const url = String(value || '').trim();
 
-    if (!isExactUrl(url) || isMarketplace(url)) {
+    if (!isExactUrl(url, allowHomepage) || isMarketplace(url)) {
       return { ok: false, reason: 'URL is not an exact official product page' };
     }
 
@@ -187,7 +195,7 @@ async function verifyResolvedUrl(value) {
       response.status === 403 ||
       response.status === 429;
 
-    if (!isExactUrl(finalUrl) || isMarketplace(finalUrl)) {
+    if (!isExactUrl(finalUrl, allowHomepage) || isMarketplace(finalUrl)) {
       return {
         ok: false,
         reason: 'Product page redirected to a homepage, search page, or retailer',
@@ -265,7 +273,7 @@ Choose the exact current OFFICIAL company product or service page for this exact
 STRICT RULES:
 1. You may ONLY return a URL appearing in the candidate list above.
 2. Prefer the official brand/company website.
-3. It must be the specific product/service page, not a generic homepage.
+3. For physical products, it must be the specific product page, not a generic homepage. For digital apps/services, the official company/app homepage is allowed when it is the best cross-platform destination.
 4. Do not choose a search-results page.
 5. Do not choose Amazon, Walmart, Target, CVS, Walgreens, iHerb, Sephora, Ulta, Best Buy, or another marketplace.
 6. Make sure it is the SAME product, not a similar product from the same company.
@@ -350,7 +358,10 @@ Return ONLY JSON:
   const url = String(result.url || '').trim();
   const confidence = Number(result.confidence || 0);
 
-  if (result.status !== 'FOUND' || !isExactUrl(url)) {
+  if (
+    result.status !== 'FOUND' ||
+    !isExactUrl(url, allowsHomepage(product))
+  ) {
     return {
       approved: false,
       url,
@@ -389,7 +400,10 @@ Return ONLY JSON:
   }
 
   // Finally make sure the real webpage actually opens.
-  const verified = await verifyResolvedUrl(matchedCandidate.url);
+  const verified = await verifyResolvedUrl(
+    matchedCandidate.url,
+    allowsHomepage(product)
+  );
 
   if (!verified.ok) {
     return {
