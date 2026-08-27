@@ -517,6 +517,10 @@ export default function ProductModal({
   const matchPercent = explicitMatchPercent ?? (hasEcosystemContext ? profileMatchPercent : null);
   const headMatchLabel = matchLabels[0] || null;
   const buyUrl = useMemo(() => getBuyUrl(product), [product]);
+  const usesAffiliateLink = Boolean(
+    isExactBuyUrl(product?.affiliateUrl) &&
+    buyUrl === String(product.affiliateUrl).trim()
+  );
 
   const aynaData = useMemo(
     () => (aynaReviews && product ? (aynaReviews[product.id] || { ratings: [], reviews: [] }) : { ratings: [], reviews: [] }),
@@ -692,6 +696,19 @@ export default function ProductModal({
           </button>
         )}
       </div>
+      {usesAffiliateLink && (
+        <span
+          style={{
+            fontSize: '0.68rem',
+            color: 'var(--color-text-muted)',
+            lineHeight: 1,
+            marginTop: '-0.15rem',
+          }}
+          title="Ayna may earn a commission if you purchase through this link."
+        >
+          Affiliate link
+        </span>
+      )}
       {onAddToEcosystem && (
         <button
           type="button"
