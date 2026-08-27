@@ -29,13 +29,6 @@ function hostname(value) {
   }
 }
 
-function sameDomain(a, b) {
-  const x = hostname(a);
-  const y = hostname(b);
-  if (!x || !y) return false;
-  return x === y || x.endsWith(`.${y}`) || y.endsWith(`.${x}`);
-}
-
 function isMarketplace(value) {
   const h = hostname(value);
   return MARKETPLACES.some((domain) => h === domain || h.endsWith(`.${domain}`));
@@ -98,27 +91,68 @@ function cleanJson(text) {
 }
 
 function extractResponse(data) {
-  let text = data?.output_text || '';
-  const citations = [];
+  const candidate = data?.candidates?.[0];
 
-  for (const step of data?.steps || []) {
-    if (step?.type !== 'model_output') continue;
+  const text = (candidate?.content?.parts || [])
+    .map((part) => part?.text || '')
+    .join('');
 
-    for (const block of step?.content || []) {
-      if (block?.type === 'text' && !text) text += block.text || '';
+  const grounding = candidate?.groundingMetadata || {};
 
-      for (const annotation of block?.annotations || []) {
-        if (annotation?.type === 'url_citation' && annotation?.url) {
-          citations.push({
-            url: annotation.url,
-            title: annotation.title || '',
-          });
-        }
-      }
-    }
-  }
+  const citations = (grounding?.groundingChunks || [])
+    .map((chunk) => ({
+      url: chunk?.web?.uri || '',
+      title: chunk?.web?.title || '',
+    }))
+    .filter((citation) => citation.url || citation.title);
 
   return { text, citations };
+}
+
+async function verifyResolvedUrl(value) {
+  try {
+    const url = String(value || '').trim();
+
+    if (!isExactUrl(url) || isMarketplace(url)) {
+      return { ok: false, reason: 'URL is not an exact official product page' };
+    }
+
+    const response = await fetch(url, {
+      method: 'GET',
+      redirect: 'follow',
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (compatible; AynaProductVerifier/1.0; +https://www.aynahealth.co)',
+      },
+    });
+
+    const finalUrl = response.url || url;
+
+    try {
+      await response.body?.cancel();
+    } catch {}
+
+    if (!response.ok) {
+      return {
+        ok: false,
+        reason: `Product page returned HTTP ${response.status}`,
+      };
+    }
+
+    if (!isExactUrl(finalUrl) || isMarketplace(finalUrl)) {
+      return {
+        ok: false,
+        reason: 'Product page redirected to a homepage, search page, or retailer',
+      };
+    }
+
+    return { ok: true, url: finalUrl };
+  } catch (error) {
+    return {
+      ok: false,
+      reason: `Could not verify product page: ${error.message}`,
+    };
+  }
 }
 
 async function research(product) {
@@ -159,7 +193,7 @@ Return ONLY JSON:
 `.trim();
 
   const response = await fetch(
-    'https://generativelanguage.googleapis.com/v1beta/interactions',
+    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(MODEL)}:generateContent`,
     {
       method: 'POST',
       headers: {
@@ -167,15 +201,26 @@ Return ONLY JSON:
         'x-goog-api-key': API_KEY,
       },
       body: JSON.stringify({
-        model: MODEL,
-        input: prompt,
-        tools: [{ type: 'google_search' }],
+        contents: [
+          {
+            role: 'user',
+            parts: [{ text: prompt }],
+          },
+        ],
+        tools: [
+          {
+            google_search: {},
+          },
+        ],
       }),
     }
   );
 
   if (!response.ok) {
-    throw new Error(`Gemini HTTP ${response.status}`);
+    const errorBody = await response.text();
+    throw new Error(
+      `Gemini HTTP ${response.status}: ${errorBody.slice(0, 300)}`
+    );
   }
 
   const data = await response.json();
@@ -215,20 +260,29 @@ Return ONLY JSON:
     };
   }
 
-  // Require Google Search grounding from the same domain.
-  const grounded = citations.some((citation) => sameDomain(citation.url, url));
-
-  if (!grounded) {
+  // Require evidence that Google Search was actually used.
+  if (citations.length === 0) {
     return {
       approved: false,
       url,
-      reason: 'Returned URL was not grounded by a citation from the same domain',
+      reason: 'Gemini returned no Google Search grounding',
+    };
+  }
+
+  // Make sure the URL actually resolves before Ayna saves it.
+  const verified = await verifyResolvedUrl(url);
+
+  if (!verified.ok) {
+    return {
+      approved: false,
+      url,
+      reason: verified.reason,
     };
   }
 
   return {
     approved: true,
-    url,
+    url: verified.url,
     confidence,
     reason: result.reason || 'Verified',
   };
@@ -268,6 +322,7 @@ console.log(`Researching this run: ${batch.length}`);
 
 const approved = {};
 let reviewCount = 0;
+let apiFailures = 0;
 
 for (const [index, product] of batch.entries()) {
   process.stdout.write(
@@ -286,15 +341,21 @@ for (const [index, product] of batch.entries()) {
     }
   } catch (error) {
     reviewCount += 1;
+    apiFailures += 1;
     console.log(`ERROR → ${error.message}`);
   }
 
   // Keep requests spaced out.
-  await new Promise((resolve) => setTimeout(resolve, 400));
+  await new Promise((resolve) => setTimeout(resolve, 4000));
 }
 
 console.log(`\nVerified this run: ${Object.keys(approved).length}`);
 console.log(`Needs review: ${reviewCount}`);
+
+if (batch.length > 0 && apiFailures === batch.length) {
+  console.error('Every Gemini request failed. Refusing to report this run as successful.');
+  process.exit(1);
+}
 
 if (DRY_RUN) {
   console.log('Dry run: productBuyUrls.js was not changed.');

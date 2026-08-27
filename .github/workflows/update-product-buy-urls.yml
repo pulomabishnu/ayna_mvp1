@@ -51,7 +51,7 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             LIMIT="${{ inputs.limit }}"
           else
-            LIMIT="5"
+            LIMIT="20"
           fi
 
           npm run buyurls:update -- --limit="$LIMIT"
