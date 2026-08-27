@@ -5,6 +5,10 @@
  * Affiliate URLs still override these destinations.
  */
 export const PRODUCT_BUY_URLS = {
+  "p-organyc-pad": "https://organyc-online.com/product-types/pads-and-liners/",
+  "p-veeda-pad": "https://www.veedausa.com/collections/pads",
+  "p-l-pad": "https://www.thisisl.com/l-pads-regular/",
+  "p-natracare-tampon": "https://www.natracare.com/products/tampons/",
   "d-balance-menopause": "https://balance-app.com/",
   "d-clue": "https://helloclue.com/",
   "d-hers": "https://www.forhers.com/birth-control",
