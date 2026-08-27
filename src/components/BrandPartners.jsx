@@ -32,6 +32,13 @@ const PARTNERS = [
     blurb:
       'Hormone-free intimate care. Moisturizers, balms and suppositories made for vaginal dryness, irritation and odour.',
   },
+  {
+    brand: 'Connect Pelvic Floor Fitness',
+    logo: '',
+    url: 'https://goto.connectpelvicfloorfitness.com/YVk7WO',
+    blurb:
+      'DPT-led pelvic floor fitness with guided workouts designed to build strength, reduce symptoms and support whole-body movement.',
+  },
 ];
 
 function eyebrowFor(product) {
