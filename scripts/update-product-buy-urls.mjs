@@ -3,7 +3,8 @@ import { ALL_PRODUCTS } from '../src/data/products.js';
 import { PRODUCT_BUY_URLS } from '../src/data/productBuyUrls.js';
 
 const API_KEY = process.env.GEMINI_API_KEY;
-const MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+const TAVILY_API_KEY = process.env.TAVILY_API_KEY;
+const MODEL = process.env.GEMINI_MODEL || 'gemini-3.6-flash';
 
 const limitArg = process.argv.find((x) => x.startsWith('--limit='));
 const LIMIT = limitArg ? Math.max(1, Number(limitArg.split('=')[1]) || 20) : 20;
@@ -93,20 +94,66 @@ function cleanJson(text) {
 function extractResponse(data) {
   const candidate = data?.candidates?.[0];
 
-  const text = (candidate?.content?.parts || [])
+  return (candidate?.content?.parts || [])
     .map((part) => part?.text || '')
     .join('');
+}
 
-  const grounding = candidate?.groundingMetadata || {};
+function canonicalUrl(value) {
+  try {
+    const u = new URL(String(value || '').trim());
+    u.hash = '';
 
-  const citations = (grounding?.groundingChunks || [])
-    .map((chunk) => ({
-      url: chunk?.web?.uri || '',
-      title: chunk?.web?.title || '',
-    }))
-    .filter((citation) => citation.url || citation.title);
+    if (u.pathname !== '/') {
+      u.pathname = u.pathname.replace(/\/+$/, '');
+    }
 
-  return { text, citations };
+    return u.toString();
+  } catch {
+    return '';
+  }
+}
+
+async function searchWeb(product) {
+  const brand = product.brand ? ` ${product.brand}` : '';
+  const query = `"${product.name}"${brand} official product`;
+
+  const response = await fetch('https://api.tavily.com/search', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${TAVILY_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query,
+      search_depth: 'basic',
+      topic: 'general',
+      max_results: 8,
+      include_answer: false,
+      include_raw_content: false,
+      include_images: false,
+      safe_search: true,
+      exclude_domains: MARKETPLACES,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    throw new Error(
+      `Tavily HTTP ${response.status}: ${errorBody.slice(0, 300)}`
+    );
+  }
+
+  const data = await response.json();
+
+  return (data?.results || [])
+    .filter((result) => result?.url && isExactUrl(result.url))
+    .map((result) => ({
+      title: String(result.title || '').trim(),
+      url: String(result.url || '').trim(),
+      content: String(result.content || '').trim().slice(0, 700),
+      score: Number(result.score || 0),
+    }));
 }
 
 async function verifyResolvedUrl(value) {
@@ -156,8 +203,26 @@ async function verifyResolvedUrl(value) {
 }
 
 async function research(product) {
+  const candidates = await searchWeb(product);
+
+  if (candidates.length === 0) {
+    return {
+      approved: false,
+      reason: 'Tavily returned no exact-looking candidate pages',
+    };
+  }
+
+  const candidateBlock = candidates
+    .map(
+      (candidate, index) =>
+        `${index + 1}. ${candidate.title}
+URL: ${candidate.url}
+SEARCH EXCERPT: ${candidate.content}`
+    )
+    .join('\n\n');
+
   const prompt = `
-You are researching the correct Buy Now destination for a women's-health marketplace called Ayna.
+You are verifying the correct Buy Now destination for a women's-health marketplace called Ayna.
 
 CATALOG ITEM
 ID: ${product.id}
@@ -165,28 +230,30 @@ Name: ${product.name}
 Brand: ${product.brand || 'Not explicitly stored'}
 Type: ${product.type || 'unknown'}
 Category: ${product.category || 'unknown'}
-Currently listed retailers: ${(product.whereToBuy || []).join(', ') || 'none'}
 
-Use Google Search.
+A separate web-search system returned the candidate pages below.
 
-Find the exact current OFFICIAL company product or service page for this exact catalog item.
+CANDIDATES
+${candidateBlock}
 
-Rules:
-1. Prefer the official brand/company website.
-2. The URL must lead to the specific product/service, not the company's generic homepage.
-3. Do not invent a URL based on a site's URL pattern.
-4. Do not return Google Shopping or search-results pages.
-5. Do not return Amazon, Walmart, Target, CVS, iHerb, Sephora, Ulta, or another retailer if an official brand page exists.
-6. For an app, prefer the official app's dedicated webpage. An exact Apple App Store or Google Play listing is acceptable if there is no dedicated official page.
-7. If the Ayna item describes a product FAMILY rather than one SKU, a dedicated official product-family page is acceptable.
-8. If the exact official page cannot be verified, return NEEDS_REVIEW.
-9. Verify that the page is for the same product, not merely a similar product from the same company.
+Choose the exact current OFFICIAL company product or service page for this exact Ayna catalog item.
+
+STRICT RULES:
+1. You may ONLY return a URL appearing in the candidate list above.
+2. Prefer the official brand/company website.
+3. It must be the specific product/service page, not a generic homepage.
+4. Do not choose a search-results page.
+5. Do not choose Amazon, Walmart, Target, CVS, Walgreens, iHerb, Sephora, Ulta, Best Buy, or another marketplace.
+6. Make sure it is the SAME product, not a similar product from the same company.
+7. A dedicated product-family page is acceptable only when the Ayna catalog item itself represents a product family.
+8. For an app/service, choose its official dedicated service page.
+9. If none of the candidates can be verified as the exact official destination, return NEEDS_REVIEW.
+10. Do not invent or modify a URL.
 
 Return ONLY JSON:
 {
   "status": "FOUND" or "NEEDS_REVIEW",
-  "url": "https://..." or null,
-  "brand": "official brand name",
+  "url": "exact candidate URL" or null,
   "confidence": 0.0 to 1.0,
   "reason": "short explanation"
 }
@@ -207,11 +274,9 @@ Return ONLY JSON:
             parts: [{ text: prompt }],
           },
         ],
-        tools: [
-          {
-            google_search: {},
-          },
-        ],
+        generationConfig: {
+          temperature: 0.1,
+        },
       }),
     }
   );
@@ -224,11 +289,14 @@ Return ONLY JSON:
   }
 
   const data = await response.json();
-  const { text, citations } = extractResponse(data);
+  const text = extractResponse(data);
   const result = cleanJson(text);
 
   if (!result) {
-    return { approved: false, reason: 'Gemini did not return valid JSON' };
+    return {
+      approved: false,
+      reason: 'Gemini did not return valid JSON',
+    };
   }
 
   const url = String(result.url || '').trim();
@@ -242,16 +310,14 @@ Return ONLY JSON:
     };
   }
 
-  // Retailers should be manually reviewed rather than silently auto-added.
   if (isMarketplace(url)) {
     return {
       approved: false,
       url,
-      reason: 'Retailer URL requires manual review',
+      reason: 'Marketplace URL rejected',
     };
   }
 
-  // High-confidence only.
   if (confidence < 0.9) {
     return {
       approved: false,
@@ -260,17 +326,22 @@ Return ONLY JSON:
     };
   }
 
-  // Require evidence that Google Search was actually used.
-  if (citations.length === 0) {
+  // Gemini is not allowed to invent a destination.
+  // The returned URL must match one Tavily actually found.
+  const matchedCandidate = candidates.find(
+    (candidate) => canonicalUrl(candidate.url) === canonicalUrl(url)
+  );
+
+  if (!matchedCandidate) {
     return {
       approved: false,
       url,
-      reason: 'Gemini returned no Google Search grounding',
+      reason: 'Gemini returned a URL that was not in the Tavily results',
     };
   }
 
-  // Make sure the URL actually resolves before Ayna saves it.
-  const verified = await verifyResolvedUrl(url);
+  // Finally make sure the real webpage actually opens.
+  const verified = await verifyResolvedUrl(matchedCandidate.url);
 
   if (!verified.ok) {
     return {
@@ -307,8 +378,10 @@ ${body}
 `;
 }
 
-if (!API_KEY) {
-  console.error('GEMINI_API_KEY is not available. No URLs were changed.');
+if (!API_KEY || !TAVILY_API_KEY) {
+  console.error(
+    'GEMINI_API_KEY and TAVILY_API_KEY are required. No URLs were changed.'
+  );
   process.exit(1);
 }
 
