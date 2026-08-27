@@ -270,7 +270,7 @@ STRICT RULES:
 5. Do not choose Amazon, Walmart, Target, CVS, Walgreens, iHerb, Sephora, Ulta, Best Buy, or another marketplace.
 6. Make sure it is the SAME product, not a similar product from the same company.
 7. A dedicated product-family page is acceptable only when the Ayna catalog item itself represents a product family.
-8. For an app/service, choose its official dedicated service page.
+8. For an app/service, choose its official website or dedicated app/service landing page. Prefer that over Apple App Store or Google Play so users can choose their device.
 9. If none of the candidates can be verified as the exact official destination, return NEEDS_REVIEW.
 10. Do not invent or modify a URL.
 

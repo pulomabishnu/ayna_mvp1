@@ -5,13 +5,13 @@
  * Affiliate URLs still override these destinations.
  */
 export const PRODUCT_BUY_URLS = {
-  "d-balance-menopause": "https://apps.apple.com/us/app/balance-menopause-hormones/id1503345959",
-  "d-clue": "https://apps.apple.com/us/app/clue-period-cycle-tracker/id657189652",
+  "d-balance-menopause": "https://balance-app.com/",
+  "d-clue": "https://helloclue.com/",
   "d-hers": "https://www.forhers.com/birth-control",
   "d-midi-health": "https://www.joinmidi.com/menopause",
   "d-nurx-bc": "https://www.nurx.com/birthcontrol/",
   "d-pomelo-care": "https://www.pomelocare.com/getstarted",
-  "d-stardust": "https://apps.apple.com/us/app/stardust-period-tracker/id1495829322",
+  "d-stardust": "https://www.stardust.app/",
   "d-wisp-bc": "https://hellowisp.com/shop/reproductive-health/birth-control?tab=all",
   "p-always-infinity": "https://www.always.com/en-us/shop-products/menstrual-pads/infinity-pads-with-flexfoam",
   "p-cora-organic-pads": "https://cora.com/products/period-pads",
