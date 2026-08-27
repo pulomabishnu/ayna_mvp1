@@ -27,7 +27,39 @@ export default async function handler(req, res) {
       signal: AbortSignal.timeout(5000),
     });
     if (!r.ok) return res.status(200).json({ products: [], source: 'NIH DSLD', error: `DSLD ${r.status}` });
-    const data = await r.json();
+    // NIH occasionally responds with an HTML error/interstitial page even
+    // though this endpoint normally returns JSON. Calling r.json() directly
+    // on that response throws "Unexpected token '<'". Treat an upstream
+    // non-JSON response as a temporary empty result instead of a server error.
+    const contentType = r.headers?.get?.('content-type') || '';
+
+    if (contentType && !contentType.toLowerCase().includes('json')) {
+      const preview = await r.text().catch(() => '');
+      console.warn(
+        '[dsld] upstream returned non-JSON:',
+        r.status,
+        contentType,
+        preview.slice(0, 120).replace(/\\s+/g, ' ')
+      );
+      return res.status(200).json({
+        products: [],
+        source: 'NIH DSLD',
+        error: 'DSLD non_json_response',
+      });
+    }
+
+    let data;
+    try {
+      data = await r.json();
+    } catch (parseError) {
+      console.warn('[dsld] invalid JSON response:', parseError?.message || parseError);
+      return res.status(200).json({
+        products: [],
+        source: 'NIH DSLD',
+        error: 'DSLD invalid_json_response',
+      });
+    }
+
     const hits = Array.isArray(data?.hits?.hits) ? data.hits.hits : [];
 
     const products = hits.map((hit) => {

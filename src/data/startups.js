@@ -9,7 +9,7 @@ export const STARTUPS = [
     {
         id: 's-qvin',
         name: 'Qvin',
-        tagline: 'Period blood diagnostics — lab tests from your pad',
+        tagline: 'Period blood diagnostics. Lab tests from your pad',
         description: 'FDA-cleared pad that analyzes your menstrual blood for health markers like A1C (diabetes screening) without a blood draw. Just wear the pad, mail it in, get results.',
         tags: ['heavy-flow', 'irregular', 'pcos', 'safety-concern', 'organic'],
         healthFunctions: ['cycle-tracking'],
@@ -51,7 +51,7 @@ export const STARTUPS = [
     {
         id: 's-allara',
         name: 'Allara',
-        tagline: 'Comprehensive PCOS care — virtual clinic',
+        tagline: 'Comprehensive PCOS care. Virtual clinic',
         description: 'Telehealth-first PCOS clinic with OB-GYNs, endocrinologists, dietitians, and mental health therapists. Complete care plans instead of "just take birth control."',
         tags: ['pcos', 'irregular', 'heavy-flow'],
         healthFunctions: ['telehealth'],
@@ -65,7 +65,7 @@ export const STARTUPS = [
     {
         id: 's-evernow',
         name: 'Evernow',
-        tagline: 'Menopause treatment — personalized HRT delivered',
+        tagline: 'Menopause treatment. Personalized HRT delivered',
         description: 'Board-certified menopause specialists prescribe personalized hormone replacement therapy with ongoing support. Prescription meds delivered to your door.',
         tags: ['discomfort', 'menopause', 'sustainability'],
         healthFunctions: ['telehealth'],
@@ -79,7 +79,7 @@ export const STARTUPS = [
     {
         id: 's-midi',
         name: 'Midi Health',
-        tagline: 'Midlife women\'s health — perimenopause to post-menopause',
+        tagline: 'Midlife women\'s health. Perimenopause to post-menopause',
         description: 'Virtual clinic specializing in the 20+ symptoms of perimenopause and menopause. Clinicians trained specifically in midlife hormonal care.',
         tags: ['discomfort', 'irregular', 'menopause', 'heavy-flow'],
         healthFunctions: ['telehealth'],
@@ -108,7 +108,7 @@ export const STARTUPS = [
         id: 's-oova',
         name: 'Oova',
         tagline: 'Personalized fertility tracking from urine',
-        description: 'At-home urine test that measures your actual hormone levels (LH + progesterone) — not population averages. Built for women with irregular cycles, PCOS, and thyroid conditions.',
+        description: 'At-home urine test that measures your actual hormone levels (LH + progesterone). Not population averages. Built for women with irregular cycles, PCOS, and thyroid conditions.',
         tags: ['irregular', 'pcos', 'fertility'],
         healthFunctions: ['cycle-tracking'],
         category: 'fertility',
@@ -122,10 +122,10 @@ export const STARTUPS = [
         id: 's-delune',
         name: 'De Lune',
         tagline: 'Science-backed supplements for period pain',
-        description: 'Cramp Aid formula with magnesium, zinc, B vitamins, and dong quai — clinically studied ingredients for menstrual pain. Founded by a woman who suffered debilitating cramps.',
+        description: 'Cramp Aid formula with magnesium, zinc, B vitamins, and dong quai. Clinically studied ingredients for menstrual pain. Founded by a woman who suffered debilitating cramps.',
         tags: ['cramps', 'discomfort', 'organic'],
         healthFunctions: ['cramp-relief', 'supplement'],
-        category: 'supplements',
+        category: 'supplement',
         stage: 'Available, growing',
         spotsLeft: 410,
         url: 'https://www.delune.co',
@@ -134,7 +134,7 @@ export const STARTUPS = [
     {
         id: 's-wile',
         name: 'Wile',
-        tagline: 'Perimenopause supplements — the years before menopause',
+        tagline: 'Perimenopause supplements. The years before menopause',
         description: 'Plant-based supplements designed for women in their late 30s–50s navigating perimenopause. Addresses stress, sleep, hot flashes, and mood shifts.',
         tags: ['discomfort', 'menopause', 'organic'],
         healthFunctions: ['supplement'],
@@ -203,7 +203,7 @@ export const STARTUPS = [
     {
         id: 's-wisp',
         name: 'Wisp',
-        tagline: 'UTI treatment & birth control — same-day delivery',
+        tagline: 'UTI treatment & birth control. Same-day delivery',
         description: 'Get UTI antibiotics or birth control prescribed online and delivered to your door. Same-day or next-day options in many areas. No in-person visit needed.',
         tags: ['uti', 'contraception', 'privacy', 'comfort'],
         healthFunctions: ['uti-prevention', 'telehealth', 'contraception'],
@@ -212,7 +212,12 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 500,
         url: 'https://hellowisp.com',
-        image: 'https://clpmag.com/wp-content/uploads/2024/01/Qvin-Q-Pad.jpeg'
+        // Was a mismatched third-party trade-press photo of a DIFFERENT
+        // startup's product (Qvin's Q-Pad, from clpmag.com) — verified
+        // replacement is Wisp's own hero image, fetched live from
+        // hellowisp.com and confirmed to return a real image (200,
+        // image/jpeg) before use.
+        image: 'https://cms.hellowisp.io/uploads/Desk_Hero_3200x1200x_e4eae71989.jpg'
     },
     {
         id: 's-wildai',
@@ -226,7 +231,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 260,
         url: 'https://www.wild.ai',
-        image: 'https://img.freepik.com/premium-photo/wild-boar-white-background_407474-27719.jpg'
+        image: ''
     },
     // ─── Fertility & pregnancy ─────────────────────────────
     {
@@ -240,8 +245,18 @@ export const STARTUPS = [
         stage: 'Available, DTC',
         productReleased: true,
         spotsLeft: 400,
+        // natalist.com now 302-redirects to everlywell.com — same pattern as
+        // the Favor/Nurx entry fixed earlier today (brand acquired, catalog
+        // entry gone stale). Flagging for a content decision rather than
+        // guessing: merge into an Everlywell entry, or confirm Natalist still
+        // operates as its own storefront under Everly Health and find its
+        // real current URL.
         url: 'https://natalist.com',
-        image: 'https://img.freepik.com/premium-photo/wild-boar-white-background_407474-27719.jpg'
+        // Was a completely unrelated wild boar stock photo (img.freepik.com)
+        // — cleared rather than guessing a replacement; falls back to the
+        // clean initial-letter placeholder until a real, verified photo is
+        // sourced.
+        image: ''
     },
     {
         id: 's-kindbody',
@@ -467,7 +482,12 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 480,
         url: 'https://www.nurx.com',
-        image: 'https://nurx-www.imgix.net/wp-content/uploads/2024/09/09064825/WHL-RegrowRX-group-Product-Image-Desktop-1000x1000-1.png?w=320&auto=format,compress&fit=crop&h=320'
+        // Was a single unrelated SKU from Nurx's own catalog (a hair-regrowth
+        // product bottle, RegrowRX — reads like a lipstick tube in a small
+        // card, not representative of the birth-control service this entry
+        // is about). Verified replacement is Nurx's own homepage hero image,
+        // fetched live and confirmed to return a real image (200, image/png).
+        image: 'https://nurx-www.imgix.net/wp-content/uploads/2024/12/31130006/HeroStaticHomepage-Desktop-1920x640-1.png'
     },
     {
         id: 's-pandia',
@@ -482,34 +502,6 @@ export const STARTUPS = [
         spotsLeft: 390,
         url: 'https://www.pandiahealth.com',
         image: 'https://www.pandiahealth.com/wp-content/uploads/2024/07/Mask-group.png'
-    },
-    {
-        id: 's-favor',
-        name: 'Favor',
-        tagline: 'Birth control and emergency contraception delivery',
-        description: 'Formerly The Pill Club. Birth control and EC prescribed online and shipped. Insurance accepted. Focus on access and discretion.',
-        tags: ['contraception', 'privacy', 'comfort'],
-        healthFunctions: ['telehealth', 'contraception'],
-        category: 'telehealth',
-        stage: 'Available in US',
-        productReleased: true,
-        spotsLeft: 440,
-        url: 'https://www.favor.com',
-        image: 'https://thumbs.dreamstime.com/b/party-favor-12361808.jpg'
-    },
-    {
-        id: 's-stix',
-        name: 'Stix',
-        tagline: 'Pregnancy tests and condoms, no awkward store run',
-        description: 'DTC brand for pregnancy tests, ovulation tests, and condoms. Clear packaging, transparent pricing, and discreet delivery.',
-        tags: ['fertility', 'contraception', 'privacy'],
-        healthFunctions: ['cycle-tracking', 'contraception'],
-        category: 'fertility',
-        stage: 'Available, DTC',
-        productReleased: true,
-        spotsLeft: 500,
-        url: 'https://getstix.com',
-        image: 'https://cdn.shopify.com/s/files/1/0120/2752/7227/files/Pink_Ave_Lustre_Blush_Beauty_Stix_d7cd17c3-769c-487d-8c01-2e4847259aec.png?v=1761070580'
     },
     {
         id: 's-evofem',
@@ -552,7 +544,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 420,
         url: 'https://thehoneypot.co',
-        image: 'https://media.istockphoto.com/id/155308208/photo/honey.jpg?s=612x612&w=0&k=20&c=okAEZAiMoOgIS9OA1OI1HABa58Zh6Z5p0hXuWWXIHUg='
+        image: ''
     },
     {
         id: 's-lovewellness',
@@ -638,7 +630,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 440,
         url: 'https://itsbodily.com',
-        image: 'https://img.freepik.com/premium-photo/skincare-products-isolated-white-background_621955-41975.jpg'
+        image: ''
     },
     {
         id: 's-oula',
@@ -680,7 +672,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 370,
         url: 'https://poppyseedhealth.com',
-        image: 'https://media.istockphoto.com/id/1298603314/photo/poppy-seeds-spilled-on-white-background-overhead-view.jpg?s=612x612&w=0&k=20&c=nLEuuNyUOLBXum9yDn3lVdQGlagRD4Xf93tO9FdFjjw='
+        image: ''
     },
     {
         id: 's-milkstork',
@@ -723,7 +715,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 220,
         url: 'https://www.cleo.com',
-        image: 'https://www.shutterstock.com/image-photo/sukabumi-indonesia-october-24-2024-600nw-2534791327.jpg'
+        image: ''
     },
     // ─── Diagnostics & biotech ─────────────────────────────
     {
@@ -790,7 +782,7 @@ export const STARTUPS = [
         description: 'Fertility and prenatal vitamins developed with dietitians and reproductive endocrinologists. Evidence-based doses and forms.',
         tags: ['fertility', 'organic', 'pcos'],
         healthFunctions: ['supplement'],
-        category: 'supplements',
+        category: 'supplement',
         stage: 'Available, DTC',
         productReleased: true,
         spotsLeft: 380,
@@ -804,7 +796,7 @@ export const STARTUPS = [
         description: 'Prenatal and women’s health supplements created by OB-GYNs. Stage-specific prenatal packs and targeted formulas.',
         tags: ['fertility', 'organic', 'menopause'],
         healthFunctions: ['supplement'],
-        category: 'supplements',
+        category: 'supplement',
         stage: 'Available, DTC',
         productReleased: true,
         spotsLeft: 410,
@@ -818,7 +810,7 @@ export const STARTUPS = [
         description: 'Prenatal vitamins, collagen, and supplements for pregnancy and postpartum. Developed with RDs and clinicians; subscription options.',
         tags: ['fertility', 'organic', 'postpartum'],
         healthFunctions: ['supplement'],
-        category: 'supplements',
+        category: 'supplement',
         stage: 'Available, DTC',
         productReleased: true,
         spotsLeft: 360,
@@ -838,7 +830,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 290,
         url: 'https://www.naturalcycles.com',
-        image: 'https://www.shutterstock.com/image-photo/dry-pine-cone-small-twig-260nw-2753122653.jpg'
+        image: ''
     },
     {
         id: 's-clue',
@@ -852,7 +844,7 @@ export const STARTUPS = [
         productReleased: true,
         spotsLeft: 340,
         url: 'https://helloclue.com',
-        image: 'https://www.shutterstock.com/image-photo/photo-color-clue-on-white-260nw-29426464.jpg'
+        image: ''
     },
     {
         id: 's-ovia',
@@ -1072,7 +1064,7 @@ export const STARTUPS = [
         description: 'At-home testing plus tailored supplement packs for each trimester and postpartum. Dietitian and OB-GYN designed. US waitlist.',
         tags: ['fertility', 'organic', 'postpartum'],
         healthFunctions: ['supplement'],
-        category: 'supplements',
+        category: 'supplement',
         stage: 'Launch 2026, waitlist',
         productReleased: false,
         spotsLeft: 450,
@@ -1175,7 +1167,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 350,
         url: '#',
-        image: 'https://www.shutterstock.com/image-vector/pregnant-woman-heartbeat-pulse-icon-260nw-2609954083.jpg'
+        image: ''
     },
     {
         id: 's-milk-match',
@@ -1203,7 +1195,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 480,
         url: '#',
-        image: 'https://img.freepik.com/premium-photo/bicycle-different-modern-sport-equipment-white-background_1339860-202.jpg'
+        image: ''
     },
     {
         id: 's-mood-cycle',
@@ -1217,7 +1209,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 440,
         url: '#',
-        image: 'https://www.shutterstock.com/image-vector/mood-scale-vector-icon-isolated-260nw-1632696847.jpg'
+        image: ''
     },
     {
         id: 's-birth-control-scan',
@@ -1231,7 +1223,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 530,
         url: '#',
-        image: 'https://www.shutterstock.com/image-illustration/birth-control-pills-combined-oral-600nw-2621761217.jpg'
+        image: ''
     },
     {
         id: 's-pelvic-mapper',
@@ -1245,7 +1237,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 370,
         url: '#',
-        image: 'https://www.shutterstock.com/image-illustration/anatomical-illustration-human-pelvis-bone-260nw-2737090097.jpg'
+        image: ''
     },
     {
         id: 's-organic-pad-lab',
@@ -1315,7 +1307,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 390,
         url: '#',
-        image: 'https://img.freepik.com/premium-photo/cryopreservation-genetic-material-ovum-ice-cube-white-background_144356-57323.jpg?semt=ais_hybrid&w=740&q=80'
+        image: ''
     },
     {
         id: 's-postpartum-ring',
@@ -1371,7 +1363,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 520,
         url: '#',
-        image: 'https://c8.alamy.com/comp/2F17A8N/pantry-food-for-crisis-period-different-size-and-shape-jars-with-grains-for-staying-home-during-covid-19-time-white-background-2F17A8N.jpg'
+        image: ''
     },
     {
         id: 's-sleep-meno',
@@ -1399,7 +1391,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 380,
         url: '#',
-        image: 'https://img.freepik.com/premium-photo/white-bone-with-white-background_668290-347.jpg?w=360'
+        image: ''
     },
     {
         id: 's-intimate-wellness-kit',
@@ -1464,12 +1456,12 @@ export const STARTUPS = [
         description: 'Supplements that change by menstrual phase: energy, calm, and cramp support. Subscription with cycle tracking. Launch 2026.',
         tags: ['cramps', 'irregular', 'organic'],
         healthFunctions: ['supplement', 'cycle-tracking'],
-        category: 'supplements',
+        category: 'supplement',
         stage: 'Launch 2026, waitlist',
         productReleased: false,
         spotsLeft: 500,
         url: '#',
-        image: 'https://www.shutterstock.com/image-photo/many-vitamin-capsules-isolated-on-600nw-2434184559.jpg'
+        image: ''
     },
     {
         id: 's-endo-care',
@@ -1553,7 +1545,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 550,
         url: '#',
-        image: 'https://www.shutterstock.com/image-photo/recycle-crumpled-paper-pad-on-260nw-446990380.jpg'
+        image: ''
     },
     {
         id: 's-womb-space',
@@ -1567,7 +1559,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 370,
         url: '#',
-        image: 'https://img.freepik.com/premium-photo/baby-womb-pregnancy-white-background_407474-26844.jpg'
+        image: ''
     },
     {
         id: 's-vulva-screen',
@@ -1581,7 +1573,7 @@ export const STARTUPS = [
         productReleased: false,
         spotsLeft: 340,
         url: '#',
-        image: 'https://www.shutterstock.com/image-photo/vaginal-blue-kegel-smart-trainer-260nw-2663671895.jpg'
+        image: ''
     },
     {
         id: 's-ovary-print',

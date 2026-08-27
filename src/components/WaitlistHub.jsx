@@ -1,6 +1,86 @@
 import React, { useState, useMemo } from 'react';
 import { UNRELEASED_STARTUPS, getPersonalizedStartups } from '../data/startups';
 
+const FOCUS_OPTIONS = ['Cycle', 'Postpartum', 'Fertility', 'Perimenopause'];
+
+function GeneralWaitlistBanner({ joinedWaitlists, toggleJoinWaitlist }) {
+    const [email, setEmail] = useState('');
+    const [city, setCity] = useState('');
+    const [focus, setFocus] = useState(null);
+    const isJoined = !!joinedWaitlists['ayna-general-waitlist'];
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (isJoined) return;
+        toggleJoinWaitlist({
+            id: 'ayna-general-waitlist',
+            name: 'Ayna Early Access',
+            email: email.trim() || undefined,
+            city: city.trim() || undefined,
+            focus: focus || undefined,
+        });
+    };
+
+    return (
+        <section style={{ background: 'var(--hero-gradient)', padding: '3.5rem 1.5rem', textAlign: 'center', marginBottom: 'var(--spacing-xl)', borderRadius: 'var(--radius-xl)' }}>
+            <h1 style={{ fontFamily: 'var(--font-serif)', fontWeight: 500, color: '#fff', fontSize: 'clamp(1.9rem, 4vw, 2.6rem)', marginBottom: '0.5rem' }}>
+                Join the waitlist.
+            </h1>
+            <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '1rem', marginBottom: '1.75rem' }}>
+                We&apos;ll email you once, when your city opens.
+            </p>
+
+            {isJoined ? (
+                <p style={{ color: '#fff', fontWeight: 600, fontSize: '1.05rem' }}>You&apos;re on the list. We&apos;ll be in touch. ✓</p>
+            ) : (
+                <form onSubmit={handleSubmit} style={{ maxWidth: '440px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    <input
+                        type="email"
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Email address"
+                        style={{
+                            padding: '0.85rem 1.1rem', borderRadius: 'var(--radius-pill)', border: '1px solid rgba(255,255,255,0.35)',
+                            background: 'rgba(255,255,255,0.94)', color: 'var(--color-text-main)', fontSize: '0.95rem', outline: 'none',
+                        }}
+                    />
+                    <input
+                        type="text"
+                        value={city}
+                        onChange={(e) => setCity(e.target.value)}
+                        placeholder="City"
+                        style={{
+                            padding: '0.85rem 1.1rem', borderRadius: 'var(--radius-pill)', border: '1px solid rgba(255,255,255,0.35)',
+                            background: 'rgba(255,255,255,0.94)', color: 'var(--color-text-main)', fontSize: '0.95rem', outline: 'none',
+                        }}
+                    />
+                    <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', flexWrap: 'wrap', margin: '0.25rem 0 0.5rem' }}>
+                        {FOCUS_OPTIONS.map((f) => (
+                            <button
+                                key={f}
+                                type="button"
+                                onClick={() => setFocus(focus === f ? null : f)}
+                                style={{
+                                    padding: '0.4rem 0.9rem', borderRadius: 'var(--radius-pill)', fontSize: '0.8rem', cursor: 'pointer',
+                                    border: '1px solid rgba(255,255,255,0.3)',
+                                    background: focus === f ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.1)',
+                                    color: focus === f ? 'var(--color-navy)' : 'rgba(255,255,255,0.9)',
+                                }}
+                            >
+                                {f}
+                            </button>
+                        ))}
+                    </div>
+                    <button type="submit" className="btn-navy" style={{ width: '100%' }}>
+                        Get early access
+                    </button>
+                </form>
+            )}
+        </section>
+    );
+}
+
 export default function WaitlistHub({ joinedWaitlists, toggleJoinWaitlist, quizResults, myProducts = {}, onAddToEcosystem, onViewRecalls }) {
     const startups = useMemo(() => getPersonalizedStartups(quizResults), [quizResults]);
     const hasProfile = !!(quizResults?.frustrations?.length);
@@ -37,6 +117,8 @@ export default function WaitlistHub({ joinedWaitlists, toggleJoinWaitlist, quizR
 
     return (
         <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
+            <GeneralWaitlistBanner joinedWaitlists={joinedWaitlists} toggleJoinWaitlist={toggleJoinWaitlist} />
+
             <div style={{ textAlign: 'center', maxWidth: '700px', margin: '0 auto var(--spacing-lg)' }}>
                 <div style={{
                     background: 'var(--color-secondary-fade)',
@@ -50,13 +132,13 @@ export default function WaitlistHub({ joinedWaitlists, toggleJoinWaitlist, quizR
                 }}>
                     {hasProfile ? '✨ Personalized for Your Profile' : 'Ayna Early Access'}
                 </div>
-                <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
+                <h2 style={{ fontFamily: 'var(--font-serif)', fontWeight: 500, fontSize: '2.5rem', marginBottom: '1rem' }}>
                     {hasProfile ? 'Startups Matched to You' : 'Tomorrow\'s Wellness, Today'}
                 </h2>
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '1.15rem', lineHeight: '1.7' }}>
                     {hasProfile
-                        ? 'These startups are solving problems that match your health profile. Join their waitlists to get early access.'
-                        : 'Get early access to women\'s health startups building the future of care. Take our quiz for personalized matches.'
+                        ? 'These startups are solving problems like yours. Join their waitlists to get early access.'
+                        : 'Get early access to new women\'s health startups. Take our quiz to see picks made for you.'
                     }
                 </p>
             </div>

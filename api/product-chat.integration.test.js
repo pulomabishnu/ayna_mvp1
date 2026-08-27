@@ -290,3 +290,14 @@ describe('POST /api/product-chat — official-site grounding', () => {
     expect(prompt).toMatch(/never your own general\/training knowledge/i);
   });
 });
+
+describe('POST /api/product-chat — never-diagnose safety net', () => {
+  it('strips diagnostic language even if the model slips, as a last-line safety net behind the prompt rule', async () => {
+    globalThis.fetch = vi.fn(async () => anthropicOk('Based on that, I would diagnose this as likely a yeast infection.'));
+    const res = mockRes();
+    await (await loadHandler())(mockReq({ body: validBody }), res);
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.answer).not.toMatch(/\bdiagnos/i);
+  });
+});

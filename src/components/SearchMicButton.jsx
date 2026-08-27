@@ -17,7 +17,7 @@ export default function SearchMicButton({
       onClick={onClick}
       disabled={disabled}
       aria-pressed={isRecording}
-      aria-label={isRecording ? 'Stop speaking and add text to search' : 'Speak your search — describe what you need'}
+      aria-label={isRecording ? 'Stop speaking and add text to search' : 'Speak your search. Describe what you need'}
       title={isRecording ? 'Stop' : 'Speak'}
       style={{
         flexShrink: 0,
@@ -35,7 +35,7 @@ export default function SearchMicButton({
         transition: 'background 0.2s, border-color 0.2s',
       }}
     >
-      {isRecording ? '⏹' : '🎤'}
+      {isRecording ? '⏹' : ''}
     </button>
   );
 }

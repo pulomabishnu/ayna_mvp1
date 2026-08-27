@@ -1,0 +1,309 @@
+/* Final Ayna polish: intentionally minimal, visual, and responsive. */
+.ayna-hero-match-line { font-family: var(--font-serif); font-weight: 400; font-size: clamp(2.9rem,4.7vw,4.15rem); line-height: 1.04; letter-spacing: -.025em; margin: 0; white-space: nowrap; }
+.ayna-hero-match-line em { font-weight: 400; color: #F0A84B; }
+.ayna-hero-primary-cta { display:flex; justify-content:center; align-items:center; gap:.75rem; flex-wrap:wrap; margin-top:1.15rem; }
+.ayna-hero-primary-cta .btn { min-width:12rem; }
+.ayna-hero-browse-link { min-width:8.5rem; border:1px solid rgba(255,255,255,.35); border-radius:var(--radius-pill); background:rgba(255,255,255,.08); color:#fff; padding:.8rem 1.35rem; font:600 .9rem var(--font-heading); cursor:pointer; }
+.ayna-browse { max-width: 1240px; }
+.ayna-browse__heading { display:flex; justify-content:space-between; align-items:end; margin-bottom:1.4rem; }
+.ayna-browse__eyebrow { margin:0 0 .45rem; font-family:var(--font-label); font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--color-amber-deep); }
+.ayna-browse__heading h2 { margin:0; font-family:var(--font-serif); font-size:clamp(2.3rem,4vw,3.4rem); line-height:1; font-weight:400; }
+.ayna-browse__heading span { display:inline-block; margin-top:.5rem; font-size:.8rem; color:var(--color-text-muted); }
+.ayna-browse__search { width:100%; margin-bottom:1rem; }
+.ayna-browse__search input { width:100%; border:1px solid var(--color-border); border-radius:var(--radius-pill); padding:.9rem 1.15rem; background:#fff; color:var(--color-text-main); font:inherit; outline:none; }
+.ayna-browse__search input:focus { border-color:rgba(78,56,102,.45); box-shadow:0 0 0 3px rgba(78,56,102,.07); }
+/* Hiding the scrollbar (below) removed the only visible cue that this row
+   scrolls at all — the last couple category chips were easy to miss with no
+   hint more existed off-screen (found live, 2026-08-24 bug bash). A fade at
+   both edges signals "there's more this way" without needing JS to track
+   scroll position. */
+.ayna-browse__categories {
+  display:flex; gap:.5rem; overflow-x:auto; padding:.15rem 0 .8rem; scrollbar-width:none;
+  -webkit-mask-image: linear-gradient(to right, transparent, black 20px, black calc(100% - 28px), transparent);
+  mask-image: linear-gradient(to right, transparent, black 20px, black calc(100% - 28px), transparent);
+}
+.ayna-browse__categories::-webkit-scrollbar { display:none; }
+.ayna-browse__categories button,.ayna-browse__filter-button { flex:0 0 auto; border:1px solid var(--color-border); border-radius:var(--radius-pill); background:transparent; color:var(--color-text-muted); padding:.52rem .85rem; font-size:.78rem; cursor:pointer; }
+.ayna-browse__categories button.is-active { background:var(--color-navy); border-color:var(--color-navy); color:#fff; }
+.ayna-browse__toolbar { display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:.85rem 0 1.2rem; border-top:1px solid rgba(26,23,20,.07); }
+.ayna-browse__toolbar-left { display:flex; align-items:center; gap:.7rem; }
+.ayna-browse__personalized-toggle { display:inline-flex; align-items:center; gap:.6rem; font-size:.85rem; color:var(--color-text-muted); cursor:pointer; }
+.ayna-browse__personalized-switch { position:relative; display:inline-block; width:46px; height:25px; flex-shrink:0; }
+.ayna-browse__personalized-switch input { position:absolute; inset:0; width:100%; height:100%; margin:0; opacity:0; cursor:pointer; z-index:1; }
+.ayna-browse__personalized-track { position:absolute; inset:0; background:var(--color-border); border-radius:999px; transition:background-color .18s ease; }
+.ayna-browse__personalized-track::after { content:''; position:absolute; top:3px; left:3px; width:19px; height:19px; border-radius:50%; background:#fff; box-shadow:0 1px 2px rgba(26,23,20,.25); transition:transform .18s ease, background-color .18s ease; }
+.ayna-browse__personalized-switch input:checked + .ayna-browse__personalized-track { background:var(--color-navy); }
+.ayna-browse__personalized-switch input:checked + .ayna-browse__personalized-track::after { transform:translateX(21px); background:var(--color-primary); }
+.ayna-browse__personalized-switch input:focus-visible + .ayna-browse__personalized-track { outline:2px solid var(--color-navy); outline-offset:2px; }
+.ayna-browse__sort { display:flex; align-items:center; gap:.5rem; font-size:.75rem; color:var(--color-text-muted); }
+.ayna-browse__sort select,.ayna-browse__filters select { border:1px solid var(--color-border); background:#fff; color:var(--color-text-main); border-radius:9px; padding:.5rem .65rem; font:inherit; }
+.ayna-browse__filters { display:grid; grid-template-columns:repeat(6,minmax(120px,1fr)); gap:.75rem; padding:1rem; margin-bottom:1.4rem; border:1px solid rgba(26,23,20,.08); border-radius:14px; background:rgba(255,255,255,.58); }
+.ayna-browse__filters label { display:flex; flex-direction:column; gap:.38rem; }
+.ayna-browse__filters label>span { font-family:var(--font-label); font-size:.61rem; letter-spacing:.09em; text-transform:uppercase; color:var(--color-text-muted); }
+.ayna-browse__clear { align-self:end; justify-self:start; border:none; background:none; padding:.5rem 0; color:var(--color-text-muted); text-decoration:underline; cursor:pointer; }
+.ayna-browse__grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:2rem 1.25rem; }
+.ayna-browse-card { min-width:0; cursor:pointer; outline:none; }
+.ayna-browse-card:focus-visible { box-shadow:0 0 0 3px rgba(78,56,102,.18); border-radius:12px; }
+.ayna-browse-card .ayna-discover-card__tile img { width:100%; height:100%; position:absolute; inset:0; object-fit:contain; padding:14px; box-sizing:border-box; }
+.ayna-browse-card__match,.ayna-browse-card__ecosystem { position:absolute; top:.65rem; left:.65rem; z-index:2; border-radius:var(--radius-pill); padding:.32rem .55rem; background:rgba(255,255,255,.93); font-family:var(--font-label); font-size:.61rem; letter-spacing:.05em; color:var(--color-amber-deep); }
+/* Wraps a MatchGauge (a circle already carries its own white "hole" and
+   shadow) instead of text — the pill padding/background above would just
+   add a mismatched square-ish halo around a circle. */
+.ayna-browse-card__match { padding:0; background:none; border-radius:50%; line-height:0; }
+.ayna-browse-card__ecosystem { top:auto; bottom:.65rem; color:#2f6b4f; }
+.ayna-browse-card__wishlist { position:absolute; top:.6rem; right:.6rem; z-index:3; width:34px; height:34px; border:1px solid rgba(26,23,20,.12); border-radius:50%; background:rgba(255,255,255,.93); display:grid; place-items:center; cursor:pointer; }
+.ayna-browse-card__wishlist svg { width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:1.7; }
+.ayna-browse-card__wishlist.is-saved svg { fill:currentColor; }
+.ayna-browse-card__labels { display:flex; align-items:center; justify-content:space-between; gap:.5rem; }
+.ayna-browse-card__eligibility { font-family:var(--font-label); font-size:.58rem; letter-spacing:.06em; color:var(--color-text-muted); border:1px solid var(--color-border); border-radius:var(--radius-pill); padding:.2rem .4rem; }
+.ayna-browse__empty { text-align:center; padding:4rem 1rem; color:var(--color-text-muted); }
+.ayna-browse__empty button { border:none; background:none; color:var(--color-amber-deep); text-decoration:underline; cursor:pointer; }
+.ayna-browse__empty-hint { font-size:.8rem; margin-top:.75rem; }
+.ayna-browse__empty-hint button { font-size:.8rem; }
+.ayna-ecosystem-wishlist { max-width:1100px; margin:0 auto var(--spacing-xl); padding-top:.5rem; }
+.ayna-ecosystem-wishlist__header { display:flex; align-items:end; justify-content:space-between; margin-bottom:1rem; }
+.ayna-ecosystem-wishlist__header p { margin:0 0 .25rem; font-family:var(--font-label); font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; color:var(--color-amber-deep); }
+.ayna-ecosystem-wishlist__header h2 { margin:0; font-family:var(--font-serif); font-size:2rem; font-weight:400; }
+.ayna-ecosystem-wishlist__header>span { color:var(--color-text-muted); font-size:.82rem; }
+.ayna-ecosystem-wishlist__grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1rem; }
+.ayna-ecosystem-wishlist__card { cursor:pointer; min-width:0; }
+.ayna-ecosystem-wishlist__image { position:relative; aspect-ratio:1; overflow:hidden; border-radius:10px; background:linear-gradient(160deg,#F3EADC,#EFE3D2); display:grid; place-items:center; }
+.ayna-ecosystem-wishlist__image img { width:100%; height:100%; object-fit:contain; padding:.75rem; box-sizing:border-box; }
+.ayna-ecosystem-wishlist__image>span { font-family:var(--font-serif); font-size:2.4rem; color:rgba(176,122,58,.55); }
+.ayna-ecosystem-wishlist__image button { position:absolute; right:.5rem; bottom:.5rem; border:0; border-radius:var(--radius-pill); background:rgba(255,255,255,.94); color:var(--color-text-muted); padding:.32rem .55rem; font-size:.68rem; cursor:pointer; }
+.ayna-ecosystem-wishlist__card>div:last-child>span { display:block; margin-top:.6rem; font-family:var(--font-label); font-size:.6rem; letter-spacing:.08em; text-transform:uppercase; color:var(--color-amber-deep); }
+.ayna-ecosystem-wishlist__card h3 { margin:.25rem 0 0; font-family:var(--font-serif); font-size:1rem; font-weight:400; }
+.ayna-ecosystem-wishlist__card p { margin:.15rem 0 0; font-size:.82rem; }
+.ayna-ecosystem-wishlist__empty { width:100%; border:1px dashed var(--color-border); border-radius:12px; background:transparent; padding:1.4rem; color:var(--color-text-muted); cursor:pointer; }
+.ayna-ecosystem-wishlist__empty span { color:var(--color-amber-deep); text-decoration:underline; }
+@media (max-width:1000px) { .ayna-browse__filters{grid-template-columns:repeat(3,minmax(130px,1fr))}.ayna-browse__grid,.ayna-ecosystem-wishlist__grid{grid-template-columns:repeat(3,minmax(0,1fr))}.ayna-hero-match-line{white-space:normal} }
+@media (max-width:720px) { .ayna-browse__toolbar{align-items:flex-start;flex-direction:column}.ayna-browse__sort{width:100%;justify-content:space-between}.ayna-browse__filters{grid-template-columns:repeat(2,minmax(0,1fr))}.ayna-browse__grid,.ayna-ecosystem-wishlist__grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:1.4rem .8rem}.ayna-hero-match-line{font-size:clamp(2.25rem,11vw,3.2rem)} }
+@media (max-width:430px) { .ayna-browse__filters{grid-template-columns:1fr} }
+
+/* Home: keep the mockup headline composed on desktop and the ecosystem CTA visible. */
+.mockup-landing:not(.mockup-landing--returning) .ayna-landing-headline {
+  max-width: none;
+  white-space: nowrap;
+  font-size: clamp(2.8rem, 5vw, 3.9rem);
+}
+.ayna-landing-hero-actions { display:flex; justify-content:center; align-items:center; gap:.75rem; margin-top:.25rem; flex-wrap:wrap; }
+.ayna-landing-ecocard__empty { font-family:var(--font-serif); font-size:1.35rem; color:#F0A84B; padding:1.2rem 0 .25rem; }
+.ayna-landing-heart { position:relative; margin-left:auto; width:18px; height:18px; color:#B49A78; }
+.ayna-landing-heart svg { width:100%; height:100%; fill:none; stroke:currentColor; stroke-width:1.6; }
+.mobile-menu-btn svg { width:21px; height:21px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; }
+.app-nav__account-icon { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.5; }
+
+/* Browse cards: image-first, with the wishlist button kept outside the link. */
+.ayna-browse-card { position:relative; background:transparent; border:0; box-shadow:none; }
+.ayna-browse-card__link { display:block; color:inherit; text-decoration:none; }
+.ayna-browse-card .ayna-discover-card__tile { position:relative; aspect-ratio:1/1.05; min-height:0; overflow:hidden; border-radius:10px; background:linear-gradient(160deg,#F3EADC,#EFE3D2); }
+.ayna-browse-card .ayna-discover-card__body { padding:.72rem .05rem 0; }
+.ayna-browse-card .ayna-discover-card__name { margin:.32rem 0 .15rem; font-family:var(--font-serif); font-weight:400; font-size:1.02rem; line-height:1.28; }
+.ayna-browse-card .ayna-discover-card__price { font-size:.79rem; color:var(--color-text-muted); }
+.ayna-browse-card .ayna-discover-card__category { font-family:var(--font-label); font-size:.6rem; letter-spacing:.09em; text-transform:uppercase; color:var(--color-amber-deep); }
+.ayna-browse-card__sponsored { font-family:var(--font-label); font-size:.55rem; letter-spacing:.07em; text-transform:uppercase; color:var(--color-text-muted); }
+
+/* Wishlist lives inside My Ecosystem and uses the same restrained product language. */
+.wishlist-section { padding-top:2.4rem; padding-bottom:4rem; }
+.wishlist-section .eco-saved__title { font-family:var(--font-serif); font-size:2rem; font-weight:400; }
+.wishlist-empty { border:1px dashed var(--color-border); border-radius:12px; padding:1.3rem; color:var(--color-text-muted); }
+.wishlist-empty p { margin:0 0 .55rem; }
+.wishlist-empty button { border:0; background:none; padding:0; color:var(--color-amber-deep); text-decoration:underline; cursor:pointer; }
+.wishlist-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1.3rem; }
+.wishlist-card { position:relative; min-width:0; }
+.wishlist-card__link { display:block; color:inherit; text-decoration:none; }
+.wishlist-card__tile { aspect-ratio:1; position:relative; overflow:hidden; border-radius:10px; background:linear-gradient(160deg,#F3EADC,#EFE3D2); display:grid; place-items:center; }
+.wishlist-card__tile img { width:100%; height:100%; object-fit:contain; padding:.75rem; }
+.wishlist-card__tile>span { font-family:var(--font-serif); font-size:2.4rem; color:rgba(176,122,58,.55); }
+.wishlist-card__eyebrow { margin-top:.7rem; font-family:var(--font-label); font-size:.58rem; letter-spacing:.09em; text-transform:uppercase; color:var(--color-amber-deep); }
+.wishlist-card h3 { margin:.28rem 0 .16rem; font:400 1rem/1.25 var(--font-serif); }
+.wishlist-card__price { font-size:.78rem; color:var(--color-text-muted); }
+.wishlist-card__heart { position:absolute; top:.55rem; right:.55rem; width:34px; height:34px; border:1px solid rgba(26,23,20,.12); border-radius:50%; background:rgba(255,255,255,.94); color:var(--color-navy); display:grid; place-items:center; cursor:pointer; }
+.wishlist-heart-icon { width:17px; height:17px; stroke:currentColor; stroke-width:1.6; }
+.wishlist-card__ecosystem { margin-top:.7rem; border:0; background:none; padding:0; font-size:.72rem; color:var(--color-text-muted); text-decoration:underline; cursor:pointer; }
+.wishlist-card__ecosystem:disabled { text-decoration:none; cursor:default; opacity:.65; }
+
+/* 1k: the simple four-step How It Works page. */
+.hiw-simple { background:#FAF6F1; min-height:70vh; color:#1A1714; }
+.hiw-simple__intro { padding-top:4.5rem; padding-bottom:2rem; max-width:760px; margin-left:auto; margin-right:auto; }
+.hiw-back--light { color:#5b524a; }
+.hiw-simple__title { margin:1rem 0 0; font:400 clamp(2.7rem,5vw,4rem)/1.05 var(--font-serif); letter-spacing:-.025em; }
+.hiw-simple__sub { margin:1rem 0 0; max-width:520px; color:#5b524a; font-size:1rem; line-height:1.55; }
+.hiw-simple__steps { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; padding-top:1.5rem; padding-bottom:4.5rem; }
+.hiw-simple__step { padding:0 1.35rem; min-width:0; border-left:1px solid rgba(26,23,20,.1); }
+.hiw-simple__step:first-child { border-left:0; padding-left:0; }
+.hiw-simple__step:last-child { padding-right:0; }
+.hiw-simple__n { font:500 .62rem var(--font-label); letter-spacing:.11em; color:#B4732A; }
+.hiw-simple__step h2 { margin:.5rem 0 .55rem; font:400 1.35rem/1.2 var(--font-serif); }
+.hiw-simple__step p { margin:0; min-height:3.1rem; color:#5b524a; font-size:.83rem; line-height:1.5; }
+.hiw-simple__visual { margin-top:1rem; min-height:76px; border-radius:10px; background:#fff; border:1px solid rgba(26,23,20,.07); display:flex; align-items:center; justify-content:center; padding:1rem; color:#4a423b; font-size:.78rem; }
+.hiw-simple__visual--02 { background:linear-gradient(135deg,#fff,#F3EADC); }
+.hiw-simple__visual--03 { border-style:dashed; }
+.hiw-simple__visual--04 { background:#242A52; color:#F4F0FA; }
+.hiw-simple__cta { border-top:1px solid rgba(26,23,20,.08); padding-top:2.4rem; padding-bottom:3.5rem; }
+.hiw-simple__cta h2 { margin:.55rem 0 0; font:400 1.8rem var(--font-serif); }
+
+@media (max-width:1000px) {
+  .mockup-landing:not(.mockup-landing--returning) .ayna-landing-headline { white-space:normal; max-width:760px; }
+  .hiw-simple__steps { grid-template-columns:repeat(2,minmax(0,1fr)); gap:2rem 0; }
+  .hiw-simple__step:nth-child(3) { border-left:0; padding-left:0; }
+  .wishlist-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+}
+@media (max-width:720px) {
+  .wishlist-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.2rem .8rem; }
+  .hiw-simple__intro { padding-top:3rem; }
+  .hiw-simple__steps { grid-template-columns:1fr; gap:1.6rem; }
+  .hiw-simple__step,.hiw-simple__step:first-child,.hiw-simple__step:nth-child(3),.hiw-simple__step:last-child { border-left:0; padding:0; }
+  .hiw-simple__step p { min-height:0; }
+}
+
+/* 1j About: retain the editorial mockup composition without invented metrics. */
+.hiw-funnel__row--concept { grid-template-columns:150px 1fr; }
+.about-source-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.65rem; margin-top:1.2rem; }
+.about-source-grid span,.about-factor-list div,.about-difference-grid div { border:1px solid rgba(26,23,20,.08); border-radius:10px; background:#FBF8F4; padding:.8rem .9rem; font-size:.82rem; color:#4a423b; }
+.about-factor-list { display:grid; gap:.55rem; margin-top:1.1rem; }
+.about-difference-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:.75rem; }
+@media (max-width:720px) { .about-difference-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.about-source-grid{grid-template-columns:1fr}.hiw-funnel__row--concept{grid-template-columns:110px 1fr} }
+
+/* 1k About: advisor grid */
+.about-advisor-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1.9rem 1.2rem; margin-top:1.4rem; }
+.about-advisor { display:flex; flex-direction:column; align-items:center; text-align:center; gap:.4rem; }
+.about-advisor__photo,.about-advisor__initials { width:84px; height:84px; border-radius:50%; flex:none; }
+.about-advisor__photo { object-fit:cover; background:linear-gradient(160deg,#F3EADC,#EFE3D2); }
+.about-advisor__initials { display:flex; align-items:center; justify-content:center; background:linear-gradient(160deg,#F3EADC,#EFE3D2); font:400 24px/1 'Playfair Display',serif; color:#B4732A; }
+.about-advisor__name { font:500 14.5px/1.3 'Playfair Display',serif; color:#1A1714; }
+.about-advisor__title { font-size:11.5px; line-height:1.4; color:#6f6880; max-width:150px; }
+.about-advisor__link { font:500 10.5px/1 'DM Mono',ui-monospace,monospace; letter-spacing:.05em; color:#B4732A; text-decoration:none; }
+.about-advisor__link:hover { text-decoration:underline; }
+.about-advisor-note { display:flex; align-items:center; gap:.9rem; margin-top:1.9rem; padding-top:1.5rem; border-top:1px solid rgba(26,23,20,.08); font-size:13px; color:#4a423b; }
+.about-advisor-note .about-advisor__photo,.about-advisor-note .about-advisor__initials { width:46px; height:46px; font-size:15px; }
+.about-advisor-note__label { font-size:11.5px; color:#8c8078; margin-top:.15rem; }
+@media (max-width:720px) { .about-advisor-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+
+/* --- Aug 22 usability pass: rotating hero suggestions, wishlist utility, compact ecosystem --- */
+@keyframes aynaChipRefresh {
+  from { opacity:0; transform:translateY(5px); }
+  to { opacity:1; transform:translateY(0); }
+}
+.ayna-landing-chips--rotating { animation:aynaChipRefresh .42s ease both; }
+
+.app-nav__circle--wishlist { position:relative; }
+.app-nav__wishlist-icon { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.6; }
+.app-nav__wishlist-count {
+  position:absolute; top:-5px; right:-5px; min-width:17px; height:17px; padding:0 4px;
+  border-radius:999px; display:grid; place-items:center; background:#F0A84B; color:#242A52;
+  font:600 9px/1 'DM Sans',sans-serif; border:2px solid #FBF8F4;
+}
+.app-nav--landing .app-nav__wishlist-count { border-color:#33305F; }
+
+/* 1g: cleaner evidence rail with a visual profile-overlap ring. */
+.pdp-rail__match-wrap { display:grid; grid-template-columns:88px 1fr; gap:14px; align-items:center; margin-top:10px; }
+.pdp-rail__match-ring {
+  --match-pct:0%; width:84px; height:84px; border-radius:50%;
+  background:conic-gradient(#F0A84B var(--match-pct), rgba(255,255,255,.14) 0);
+  display:grid; place-items:center; position:relative;
+}
+.pdp-rail__match-ring::after {
+  content:""; position:absolute; inset:7px; border-radius:50%;
+  background:linear-gradient(145deg,#2E315D,#52386E);
+}
+.pdp-rail__match-ring span,
+.pdp-rail__match-ring small { position:relative; z-index:1; grid-column:1; grid-row:1; }
+.pdp-rail__match-ring span { align-self:center; margin-top:-9px; font:400 24px/1 'Playfair Display',serif; color:#F0A84B; }
+.pdp-rail__match-ring small { align-self:center; margin-top:28px; font:500 8px/1 'DM Mono',monospace; letter-spacing:.09em; text-transform:uppercase; color:rgba(246,239,230,.68); }
+/* grid-template-columns/gap for .pdp-evidence-head and .pdp-evidence-head__info
+   used to be redefined here too, competing with index.css's versions of the
+   same selectors — whichever file's build order won determined the real
+   layout, invisibly. That let index.css's unguarded middle-column `1fr` (no
+   minimum) win in production and crush that column at some widths. Fixed at
+   the source in index.css instead of duplicating it here again. */
+.pdp-evidence-head .pdp-rail__cards { position:sticky; top:112px; }
+
+@media (max-width:980px) {
+  .pdp-evidence-head .pdp-rail__cards { position:static; }
+}
+@media (max-width:720px) {
+  .pdp-rail__match-wrap { grid-template-columns:74px 1fr; }
+  .pdp-rail__match-ring { width:72px; height:72px; }
+  .pdp-evidence-head { gap:22px; }
+}
+
+/* Shared MatchGauge.jsx — see that file for why this replaced flat text
+   badges on the Summary tab and Browse cards. */
+.ayna-match-gauge {
+  --gauge-size: 44px;
+  width: var(--gauge-size);
+  height: var(--gauge-size);
+  border-radius: 50%;
+  background: conic-gradient(var(--gauge-ring) var(--gauge-pct), var(--gauge-track) 0);
+  display: grid;
+  place-items: center;
+  position: relative;
+  flex-shrink: 0;
+}
+.ayna-match-gauge::after {
+  content: "";
+  position: absolute;
+  inset: calc(var(--gauge-size) * 0.12);
+  border-radius: 50%;
+  background: var(--gauge-hole);
+  box-shadow: 0 1px 2px rgba(20, 16, 12, 0.08);
+}
+.ayna-match-gauge span {
+  position: relative;
+  z-index: 1;
+  font: 600 var(--gauge-font)/1 'DM Sans', system-ui, sans-serif;
+  color: var(--gauge-text);
+}
+
+/* My Ecosystem — board 2a ("Ecosystem page, restructured"): one persistent
+   left summary, one scrolling content column. Replaces eco-overview-shell /
+   eco-details-clean, which stacked two separate "your ecosystem" headers on
+   the same page (an Overview/Details tab switcher above an already-visible
+   bubble hero) — the exact "repeat header" complaint this redesign fixes. */
+.eco2-body { display:grid; grid-template-columns:280px 1fr; gap:2rem; align-items:start; max-width:1100px; margin:2rem auto 0; }
+.eco2-sidebar { position:sticky; top:88px; display:flex; flex-direction:column; gap:1rem; min-width:0; }
+.eco2-main { min-width:0; }
+.eco2-sidebar__card { background:#fff; border:1px solid rgba(26,23,20,.08); border-radius:16px; padding:1.35rem 1.45rem; box-shadow:0 8px 30px rgba(38,31,27,.04); }
+.eco2-sidebar__eyebrow { margin:0 0 .5rem; font:500 10px/1 'DM Mono',monospace; letter-spacing:.14em; text-transform:uppercase; color:#B4732A; }
+.eco2-sidebar__count { margin:0; font:400 1.9rem/1.05 'Playfair Display',serif; }
+.eco2-sidebar__sub { margin:.4rem 0 0; font-size:.8rem; color:var(--color-text-muted); }
+.eco2-sidebar__loading { margin:0; font-size:.85rem; color:var(--color-text-muted); }
+.eco2-sidebar__bar { display:flex; height:7px; border-radius:999px; overflow:hidden; background:#EEE7DE; margin-top:1.1rem; }
+.eco2-sidebar__bar i { display:block; height:100%; }
+.eco2-sidebar__legend { list-style:none; margin:.85rem 0 0; padding:0; display:flex; flex-direction:column; gap:.5rem; }
+.eco2-sidebar__legend li { display:flex; align-items:center; gap:.5rem; font-size:.8rem; color:var(--color-text-main); }
+.eco2-sidebar__legend strong { margin-left:auto; font-weight:600; color:var(--color-text-muted); }
+.eco2-sidebar__legend--gap { color:var(--color-text-muted); }
+.eco2-sidebar__legend--gap button { margin-left:auto; border:0; background:none; color:#B4732A; font:600 .75rem 'DM Sans',sans-serif; cursor:pointer; padding:0; text-decoration:underline; }
+.eco2-dot { width:9px; height:9px; border-radius:50%; flex:none; }
+.eco2-dot--empty { border:1.5px dashed rgba(26,23,20,.3); }
+.eco2-tool-row { display:flex; align-items:center; justify-content:space-between; width:100%; border:0; background:none; padding:.55rem 0; font:500 .88rem 'DM Sans',sans-serif; color:var(--color-text-main); cursor:pointer; border-top:1px solid rgba(26,23,20,.06); text-align:left; }
+.eco2-tool-row:first-of-type { border-top:0; }
+.eco2-tool-row span { color:var(--color-text-muted); }
+.eco2-tool-row__hint { font-size:.72rem; }
+
+.eco2-main__head { display:flex; align-items:baseline; justify-content:space-between; gap:1rem; margin-bottom:.25rem; }
+.eco2-main__head h2 { margin:0; font:400 clamp(1.9rem,3vw,2.4rem)/1.05 'Playfair Display',serif; }
+.eco2-main__fill-gaps { border:0; background:none; color:#B4732A; font:600 .82rem 'DM Sans',sans-serif; cursor:pointer; padding:0; }
+.eco2-main__details-title { margin:0 0 .75rem; font:400 1.6rem/1.05 'Playfair Display',serif; }
+
+.eco2-details { display:flex; flex-direction:column; gap:.6rem; }
+.eco2-details__sms { position:relative; background:var(--color-surface-soft); border:1px solid var(--color-border); border-radius:14px; padding:1rem 1.25rem; }
+.eco2-details__item { background:#fff; border:1px solid rgba(26,23,20,.08); border-radius:14px; padding:0; overflow:hidden; }
+.eco2-details__item summary { position:relative; display:flex; flex-direction:column; gap:.2rem; padding:1rem 2.5rem 1rem 1.25rem; cursor:pointer; list-style:none; font:600 .95rem 'DM Sans',sans-serif; color:var(--color-text-main); }
+.eco2-details__item summary::-webkit-details-marker { display:none; }
+.eco2-details__item summary::after { content:'⌄'; position:absolute; top:1rem; right:1.25rem; color:var(--color-text-muted); }
+.eco2-details__item[open] summary::after { content:'⌃'; }
+.eco2-details__hint { font-size:.78rem; font-weight:400; color:var(--color-text-muted); }
+.eco2-details__body { padding:0 1.25rem 1.15rem; }
+
+.eco2-sheet-overlay { position:fixed; inset:0; z-index:2000; background:rgba(0,0,0,.45); display:flex; align-items:center; justify-content:center; padding:1.5rem; }
+.eco2-sheet { position:relative; width:100%; max-width:420px; background:var(--color-surface-soft); border-radius:16px; padding:1.75rem; }
+.eco2-sheet__close { position:absolute; top:1rem; right:1rem; border:0; background:none; cursor:pointer; font-size:1rem; color:var(--color-text-muted); }
+.eco2-sheet__title { margin:.25rem 0 1.1rem; font:400 1.5rem/1.1 'Playfair Display',serif; }
+
+@media (max-width:900px) {
+  .eco2-body { grid-template-columns:1fr; }
+  .eco2-sidebar { position:static; }
+}

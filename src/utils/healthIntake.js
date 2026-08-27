@@ -73,14 +73,14 @@ export const PREFERRED_PRODUCT_TYPES = [
 ];
 
 export const INSURANCE_TYPES = [
-  { value: 'employer_ppo', label: 'Employer-sponsored PPO' },
-  { value: 'employer_hmo', label: 'Employer-sponsored HMO' },
-  { value: 'marketplace_aca', label: 'Marketplace / ACA plan' },
-  { value: 'medicaid', label: 'Medicaid' },
-  { value: 'medicare', label: 'Medicare' },
+  { value: 'employer_ppo', label: 'Insurance from my job (PPO — can see any doctor)' },
+  { value: 'employer_hmo', label: 'Insurance from my job (HMO — pick a main doctor first)' },
+  { value: 'marketplace_aca', label: 'Insurance I bought myself (ACA / healthcare.gov plan)' },
+  { value: 'medicaid', label: 'Medicaid (free or low-cost insurance)' },
+  { value: 'medicare', label: 'Medicare (insurance for people 65+)' },
   { value: 'student', label: 'Student health insurance' },
-  { value: 'military', label: 'Military / Tricare' },
-  { value: 'uninsured', label: 'Uninsured / self-pay' },
+  { value: 'military', label: 'Military insurance (Tricare)' },
+  { value: 'uninsured', label: "I don't have insurance / I pay myself" },
   { value: 'other', label: 'Other' },
 ];
 
@@ -107,6 +107,21 @@ export const GOALS = [
   'learn what ingredients to avoid for my conditions',
 ];
 
+// Shared between the quiz (HealthIntakeForm.jsx) and the profile editor
+// (HealthProfileEditor.jsx) — the editor used to re-implement these two
+// fields as free-text inputs holding the literal word "Yes"/"yes" instead
+// of a real select, easy to enter garbage into and easy to misread (found
+// live, 2026-08-24 bug bash). One shared vocabulary now, not two that can
+// drift apart.
+export const CYCLE_OPTIONS = [
+  { value: 'yes', label: 'Yes' },
+  { value: 'no', label: 'No' },
+  { value: 'irregular', label: 'Irregular' },
+  { value: 'irregular_perimenopause', label: 'Irregular (Perimenopause)' },
+  { value: 'no_menopause', label: 'No (Menopause)' },
+];
+export const TTC_OPTIONS = ['Yes', 'No', 'Not right now'];
+
 export const CONCERN_AREAS = [
   'Period care (pads, tampons, cups, discs, underwear)',
   'Cramp and pain relief (devices, supplements, heat)',
@@ -115,6 +130,8 @@ export const CONCERN_AREAS = [
   'PCOS management (supplements, telehealth, apps)',
   'Endometriosis management (supplements, devices, telehealth)',
   'Fertility and conception (supplements, trackers, telehealth)',
+  'Pregnancy support (prenatal vitamins, trackers, comfort)',
+  'Postpartum recovery (nursing, healing, comfort)',
   'UTI support',
   'STI support',
   'Gut and vaginal health (probiotics, pH balance)',
@@ -135,6 +152,8 @@ const PRIMARY_CONCERN_TO_FRUSTRATION = {
   'PCOS management (supplements, telehealth, apps)': 'PCOS symptoms',
   'Endometriosis management (supplements, devices, telehealth)': 'Endometriosis',
   'Fertility and conception (supplements, trackers, telehealth)': 'Fertility / TTC',
+  'Pregnancy support (prenatal vitamins, trackers, comfort)': 'General discomfort',
+  'Postpartum recovery (nursing, healing, comfort)': 'General discomfort',
   'UTI support': 'Recurrent UTIs',
   'STI support': 'General discomfort',
   'Gut and vaginal health (probiotics, pH balance)': 'Recurrent UTIs',

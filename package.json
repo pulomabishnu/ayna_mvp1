@@ -9,12 +9,13 @@
     "lint": "eslint .",
     "catalog:export": "node scripts/export-catalog.mjs",
     "catalog:check": "node scripts/export-catalog.mjs --check",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "buyurls:update": "node scripts/update-product-buy-urls.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.103.1",
     "@upstash/redis": "^1.37.0",
-    "posthog-js": "^1.375.0",
+        "posthog-js": "^1.421.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "twilio": "^5.4.0"

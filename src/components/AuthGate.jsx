@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { getSupabaseClient } from '../utils/supabaseClient';
+import { useEscapeToClose } from '../utils/useEscapeToClose';
 
 const SUBTITLES = {
   quiz: 'Create an account to save your health profile and keep your ecosystem across sessions.',
   browse: 'Create an account to save your discoveries and track products over time.',
   login: 'Welcome back. Sign in to access your health ecosystem.',
+  personalize: 'Personalized results are matched to your health profile — sign in or create an account to turn this on.',
   default: 'Your personal women\'s health manager',
 };
 
@@ -17,7 +19,9 @@ const CONSENT_ITEMS = [
 const CONSENT_VERSION = 'v1';
 
 export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAuthRedirect, redirectTo }) {
+  useEscapeToClose(isModal, onSkip);
   const [mode, setMode] = useState('signup');
+  const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -26,6 +30,29 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
   const [successMsg, setSuccessMsg] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [checked, setChecked] = useState([false, false, false]);
+  // Two real signups reported never getting a confirmation email
+  // (2026-08-25) — Supabase's built-in email sender has a very low rate
+  // limit and no delivery guarantee, so a signup silently succeeding with
+  // no email actually arriving is a known, real failure mode, not a fluke.
+  // Can't fix the underlying sender from this codebase (Supabase Dashboard
+  // → Authentication → Email/SMTP settings, outside this repo), but a
+  // resend option means a stuck user isn't just left staring at "check your
+  // inbox" forever.
+  const [needsConfirmation, setNeedsConfirmation] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [resendMsg, setResendMsg] = useState('');
+  // Signup via native Supabase phone-OTP auth instead of email/password —
+  // requested 2026-08-25 as an alternative for anyone whose confirmation
+  // email never arrives (see the resend feature above). Fully independent
+  // of email confirmation: a verified phone creates/signs in the account
+  // directly, no email step involved at all. Requires Twilio to actually be
+  // configured as Supabase's SMS provider (Authentication → Phone in the
+  // Supabase Dashboard) — this code can't set that up, only use it once set.
+  const [authMethod, setAuthMethod] = useState('email');
+  const [phoneStep, setPhoneStep] = useState('number');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [phoneCode, setPhoneCode] = useState('');
+  const [phoneSending, setPhoneSending] = useState(false);
 
   const supabase = getSupabaseClient();
   const subtitle = SUBTITLES[context] || SUBTITLES.default;
@@ -39,16 +66,24 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
     e.preventDefault();
     setError('');
     setSuccessMsg('');
+    setResendMsg('');
+    setNeedsConfirmation(false);
     setLoading(true);
     try {
       if (isSignup) {
         const consentAt = new Date().toISOString();
+        const cleanFirstName = firstName.trim();
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
             emailRedirectTo: `${window.location.origin}/confirmed`,
-            data: { consent_given_at: consentAt, consent_version: CONSENT_VERSION },
+            data: {
+              first_name: cleanFirstName,
+              full_name: cleanFirstName,
+              consent_given_at: consentAt,
+              consent_version: CONSENT_VERSION,
+            },
           },
         });
         if (error) throw error;
@@ -63,16 +98,109 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
           // Telling her to go check her inbox here would be actively wrong:
           // she's already signed in, which App.jsx's onAuthStateChange handler
           // is about to act on.
-          setSuccessMsg('You\'re all set — signing you in...');
+          setSuccessMsg('You\'re all set. Signing you in...');
         } else {
           setSuccessMsg('Almost there! A confirmation email is on its way from Ayna (pulomabishnu@gmail.com). Check your spam folder if you don\'t see it. Once confirmed, come back here to sign in.');
+          setNeedsConfirmation(true);
         }
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
+        if (error) {
+          // Real, known failure mode (found live 2026-08-25): a user whose
+          // confirmation email never arrived tries to sign in anyway and
+          // hits this exact, stable Supabase error string. Surface a resend
+          // option right here instead of a dead-end error.
+          if (/email not confirmed/i.test(error.message || '')) {
+            setNeedsConfirmation(true);
+          }
+          throw error;
+        }
       }
     } catch (err) {
       setError(err.message || 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResend = async () => {
+    if (!email) return;
+    setResending(true);
+    setResendMsg('');
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email,
+        options: { emailRedirectTo: `${window.location.origin}/confirmed` },
+      });
+      if (error) throw error;
+      setResendMsg('Sent! Check your inbox (and spam folder) again in a minute.');
+    } catch (err) {
+      setResendMsg(err.message || 'Could not resend right now — try again in a moment.');
+    } finally {
+      setResending(false);
+    }
+  };
+
+  // Same US-default E.164 normalization as the server's normalizeE164
+  // (api/_otp.js) — kept independent since that one's server-only, but
+  // matching it means a number that works for one phone feature works for
+  // this one too, no surprise "invalid number" for something the rest of
+  // the app already accepts.
+  const normalizePhoneE164 = (raw) => {
+    const trimmed = String(raw || '').trim();
+    if (/^\+[1-9]\d{6,14}$/.test(trimmed)) return trimmed;
+    const digits = trimmed.replace(/[^\d]/g, '');
+    if (digits.length === 10) return `+1${digits}`;
+    if (digits.length === 11 && digits.startsWith('1')) return `+${digits}`;
+    return null;
+  };
+
+  const handleSendPhoneOtp = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    try {
+      const e164 = normalizePhoneE164(phoneNumber);
+      if (!e164) throw new Error('Please enter a valid 10-digit phone number.');
+      const consentAt = new Date().toISOString();
+      const cleanFirstName = firstName.trim();
+      const { error } = await supabase.auth.signInWithOtp({
+        phone: e164,
+        options: {
+          data: {
+            first_name: cleanFirstName,
+            full_name: cleanFirstName,
+            consent_given_at: consentAt,
+            consent_version: CONSENT_VERSION,
+          },
+        },
+      });
+      if (error) throw error;
+      setPhoneNumber(e164);
+      setPhoneStep('code');
+    } catch (err) {
+      setError(err.message || 'Could not send a code right now. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyPhoneOtp = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.verifyOtp({
+        phone: phoneNumber,
+        token: phoneCode.trim(),
+        type: 'sms',
+      });
+      if (error) throw error;
+      // Session now exists — App.jsx's onAuthStateChange SIGNED_IN handler
+      // takes it from here, same as any other sign-in path.
+    } catch (err) {
+      setError(err.message || 'That code is wrong or expired. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -117,6 +245,16 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
     setMode(next);
     setError('');
     setSuccessMsg('');
+    setAuthMethod('email');
+    setPhoneStep('number');
+  };
+
+  const switchAuthMethod = (next) => {
+    setAuthMethod(next);
+    setError('');
+    setSuccessMsg('');
+    setNeedsConfirmation(false);
+    setPhoneStep('number');
   };
 
   const overlayStyle = isModal ? {
@@ -151,6 +289,20 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
         <div style={styles.logo}>Ayna</div>
         <p style={styles.tagline}>{subtitle}</p>
 
+        {!supabase && (
+          // Without this, a missing/blank .env.local silently disabled the
+          // email/password submit button with zero feedback — clicking it
+          // did nothing, no error, no console output, nothing to search for.
+          // The Google button already surfaced this same problem via its own
+          // error state; email/password had no equivalent, so it looked
+          // exactly like a hang rather than a config gap.
+          <p style={styles.configWarning}>
+            Sign-in isn't configured on this device: VITE_SUPABASE_URL and
+            VITE_SUPABASE_ANON_KEY are missing or empty in .env.local. Add them
+            and restart the dev server.
+          </p>
+        )}
+
         <div style={styles.toggleRow}>
           <button
             type="button"
@@ -168,37 +320,14 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
           </button>
         </div>
 
-        <form onSubmit={handleEmailAuth} style={styles.form}>
-          <input
-            type="email"
-            placeholder="Email address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={styles.input}
-            autoComplete="email"
-          />
-          <div style={{ position: 'relative' }}>
-            <input
-              type={showPassword ? 'text' : 'password'}
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              style={{ ...styles.input, width: '100%', boxSizing: 'border-box', paddingRight: '2.5rem' }}
-              autoComplete={isSignup ? 'new-password' : 'current-password'}
-              minLength={isSignup ? 8 : undefined}
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(v => !v)}
-              style={{ position: 'absolute', right: '0.65rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)', fontSize: '1rem', padding: '0.25rem', lineHeight: 1 }}
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
-            >
-              {showPassword ? 'Hide' : 'Show'}
-            </button>
-          </div>
-
+        <form
+          onSubmit={
+            isSignup && authMethod === 'phone'
+              ? (phoneStep === 'number' ? handleSendPhoneOtp : handleVerifyPhoneOtp)
+              : handleEmailAuth
+          }
+          style={styles.form}
+        >
           {isSignup && (
             <>
               <div style={styles.consentSection}>
@@ -221,11 +350,148 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
                 {' '}and{' '}
                 <a href="/terms-of-use" target="_blank" rel="noopener noreferrer" style={styles.link}>Terms of Service</a>.
               </p>
+
+              {authMethod === 'email' ? (
+                <button
+                  type="button"
+                  onClick={() => switchAuthMethod('phone')}
+                  style={{ ...styles.link, background: 'none', border: 'none', padding: 0, font: 'inherit', cursor: 'pointer', textAlign: 'left' }}
+                >
+                  Use my phone number instead
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => switchAuthMethod('email')}
+                  style={{ ...styles.link, background: 'none', border: 'none', padding: 0, font: 'inherit', cursor: 'pointer', textAlign: 'left' }}
+                >
+                  Use email instead
+                </button>
+              )}
+            </>
+          )}
+
+          {isSignup && authMethod === 'phone' && (
+            <input
+              type="text"
+              placeholder="First name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              required
+              disabled={!allConsented || phoneStep === 'code'}
+              style={{ ...styles.input, ...((!allConsented || phoneStep === 'code') ? styles.inputDisabled : {}) }}
+              autoComplete="given-name"
+              maxLength={50}
+            />
+          )}
+
+          {isSignup && authMethod === 'phone' ? (
+            phoneStep === 'number' ? (
+              <input
+                type="tel"
+                placeholder="Phone number"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                required
+                disabled={!allConsented}
+                style={{ ...styles.input, ...(!allConsented ? styles.inputDisabled : {}) }}
+                autoComplete="tel"
+              />
+            ) : (
+              <>
+                <p style={{ ...styles.success, color: 'var(--color-text-muted)' }}>
+                  We texted a code to {phoneNumber}.
+                </p>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  placeholder="6-digit code"
+                  value={phoneCode}
+                  onChange={(e) => setPhoneCode(e.target.value)}
+                  required
+                  style={styles.input}
+                  autoComplete="one-time-code"
+                  maxLength={6}
+                />
+                <button
+                  type="button"
+                  onClick={() => { setPhoneStep('number'); setPhoneCode(''); setError(''); }}
+                  style={{ ...styles.link, background: 'none', border: 'none', padding: 0, font: 'inherit', cursor: 'pointer', textAlign: 'left' }}
+                >
+                  Change number
+                </button>
+              </>
+            )
+          ) : (
+            <>
+          {isSignup && (
+            <input
+              type="text"
+              placeholder="First name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              required
+              disabled={!allConsented}
+              style={{ ...styles.input, ...(!allConsented ? styles.inputDisabled : {}) }}
+              autoComplete="given-name"
+              maxLength={50}
+            />
+          )}
+          <input
+            type="email"
+            placeholder="Email address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            disabled={isSignup && !allConsented}
+            style={{ ...styles.input, ...(isSignup && !allConsented ? styles.inputDisabled : {}) }}
+            autoComplete="email"
+          />
+          <div style={{ position: 'relative' }}>
+            <input
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              disabled={isSignup && !allConsented}
+              style={{
+                ...styles.input,
+                ...(isSignup && !allConsented ? styles.inputDisabled : {}),
+                width: '100%', boxSizing: 'border-box', paddingRight: '2.5rem',
+              }}
+              autoComplete={isSignup ? 'new-password' : 'current-password'}
+              minLength={isSignup ? 8 : undefined}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(v => !v)}
+              disabled={isSignup && !allConsented}
+              style={{ position: 'absolute', right: '0.65rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: (isSignup && !allConsented) ? 'not-allowed' : 'pointer', color: 'var(--color-text-muted)', fontSize: '1rem', padding: '0.25rem', lineHeight: 1, opacity: (isSignup && !allConsented) ? 0.45 : 1 }}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? 'Hide' : 'Show'}
+            </button>
+          </div>
             </>
           )}
 
           {error && <p style={styles.error}>{error}</p>}
           {successMsg && <p style={styles.success}>{successMsg}</p>}
+          {needsConfirmation && authMethod === 'email' && (
+            <p style={{ ...styles.error, color: 'var(--color-text-muted)' }}>
+              Didn&apos;t get it?{' '}
+              <button
+                type="button"
+                onClick={handleResend}
+                disabled={resending}
+                style={{ ...styles.link, background: 'none', border: 'none', padding: 0, font: 'inherit', cursor: resending ? 'not-allowed' : 'pointer' }}
+              >
+                {resending ? 'Sending…' : 'Resend confirmation email'}
+              </button>
+              {resendMsg && <><br />{resendMsg}</>}
+            </p>
+          )}
 
           <button
             type="submit"
@@ -235,7 +501,11 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
               ...(isSignup && !allConsented ? styles.primaryBtnDisabled : {}),
             }}
           >
-            {loading ? 'Please wait…' : isSignup ? 'Create account' : 'Sign in'}
+            {loading
+              ? 'Please wait…'
+              : isSignup && authMethod === 'phone'
+                ? (phoneStep === 'number' ? 'Send code' : 'Verify')
+                : isSignup ? 'Create account' : 'Sign in'}
           </button>
         </form>
 
@@ -248,10 +518,10 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
         <button
           type="button"
           onClick={handleGoogle}
-          disabled={googleLoading || !allConsented}
+          disabled={googleLoading || (isSignup && !allConsented)}
           style={{
             ...styles.googleBtn,
-            ...(!allConsented ? styles.googleBtnDisabled : {}),
+            ...(isSignup && !allConsented ? styles.googleBtnDisabled : {}),
           }}
         >
           <GoogleIcon />
@@ -315,7 +585,7 @@ const styles = {
     padding: '0.1rem 0.3rem',
   },
   logo: {
-    fontFamily: 'var(--font-heading)',
+    fontFamily: 'var(--font-serif)',
     fontSize: '1.9rem',
     fontWeight: '700',
     color: 'var(--color-primary)',
@@ -328,6 +598,16 @@ const styles = {
     textAlign: 'center',
     margin: '-0.25rem 0 0.25rem',
     lineHeight: 1.45,
+  },
+  configWarning: {
+    fontSize: '0.78rem',
+    color: '#92400E',
+    background: '#FEF3C7',
+    border: '1px solid #FDE68A',
+    borderRadius: 'var(--radius-sm)',
+    padding: '0.6rem 0.75rem',
+    lineHeight: 1.45,
+    margin: 0,
   },
   toggleRow: {
     display: 'flex',
@@ -371,6 +651,10 @@ const styles = {
     outline: 'none',
     fontFamily: 'var(--font-body)',
     transition: 'border-color var(--transition-fast)',
+  },
+  inputDisabled: {
+    opacity: 0.45,
+    cursor: 'not-allowed',
   },
   consentSection: {
     display: 'flex',

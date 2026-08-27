@@ -9,6 +9,18 @@
     {
       "path": "/api/fda-recall?sweep=1",
       "schedule": "0 13 * * *"
+    },
+    {
+      "path": "/api/discover-products",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/discover-products",
+      "schedule": "0 14 * * *"
+    },
+    {
+      "path": "/api/discover-products",
+      "schedule": "0 22 * * *"
     }
   ],
   "headers": [
@@ -31,6 +43,8 @@
     }
   ],
   "rewrites": [
+        { "source": "/ingest/static/:path(.*)", "destination": "https://us-assets.i.posthog.com/static/:path" },
+        { "source": "/ingest/:path(.*)", "destination": "https://us.i.posthog.com/:path" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

@@ -1,0 +1,75 @@
+name: Update product Buy Now URLs
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: Number of missing products to research
+        required: false
+        default: "5"
+
+  push:
+    branches:
+      - main
+    paths:
+      - "src/data/products.js"
+      - "src/data/productsExtended.js"
+      - "src/data/productsExtended2.js"
+      - "src/data/categoryFillers.js"
+      - "src/data/mvpProducts.js"
+      - "src/data/menstrualProducts.js"
+      - "src/data/brands.js"
+      - "src/data/incontinenceProducts.js"
+
+permissions:
+  contents: write
+
+jobs:
+  update-buy-urls:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Ayna
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Research missing Buy Now URLs
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+          GEMINI_MODEL: gemini-3.6-flash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            LIMIT="${{ inputs.limit }}"
+          else
+            LIMIT="20"
+          fi
+
+          npm run buyurls:update -- --limit="$LIMIT"
+
+      - name: Make sure Ayna still builds
+        run: npm run build
+
+      - name: Save verified URLs
+        run: |
+          if git diff --quiet -- src/data/productBuyUrls.js; then
+            echo "No new verified URLs."
+            exit 0
+          fi
+
+          git config user.name "ayna-buy-url-bot"
+          git config user.email "actions@users.noreply.github.com"
+
+          git add src/data/productBuyUrls.js
+          git commit -m "update verified product buy urls"
+          git push origin main

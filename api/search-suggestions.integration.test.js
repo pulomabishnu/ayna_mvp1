@@ -23,7 +23,7 @@
  * the real handler.
  */
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { mockRes, mockReq, mockSupabase, withEnv, anthropicOk } from './_test-helpers.js';
+import { mockRes, mockReq, mockSupabase, withEnv, anthropicOk, openaiOk } from './_test-helpers.js';
 
 const realFetch = globalThis.fetch;
 let restoreEnv;
@@ -80,6 +80,11 @@ beforeEach(() => {
     ALLOWED_ORIGINS: 'https://ayna.health',
     SUPABASE_URL: 'https://x.supabase.co',
     SUPABASE_SERVICE_ROLE_KEY: 'service-key',
+    // Explicitly unset (not just "happens to be unset") so every other test
+    // in this file — most of which mock fetch with one blanket handler for
+    // any URL — stays deterministic regardless of the ambient shell/CI env.
+    // Tests for the search-grounding feature itself set this explicitly.
+    SERPER_API_KEY: undefined,
   });
   rateLimitMock.mockReset().mockResolvedValue({ ok: true, limiter: 'test' });
   globalThis.__mockSupabase = mockSupabase();
@@ -262,6 +267,77 @@ describe('POST /api/search-suggestions — prompt injection guards', () => {
   });
 });
 
+describe('POST /api/search-suggestions — live web search grounding', () => {
+  it('includes real Serper results in the prompt sent to Claude when SERPER_API_KEY is set', async () => {
+    restoreEnv();
+    restoreEnv = withEnv({
+      ANTHROPIC_API_KEY: 'test-key', ALLOWED_ORIGINS: 'https://ayna.health',
+      SUPABASE_URL: 'https://x.supabase.co', SUPABASE_SERVICE_ROLE_KEY: 'service-key',
+      SERPER_API_KEY: 'serper-test-key',
+    });
+    globalThis.fetch = vi.fn(async (url) => {
+      const u = String(url);
+      if (u.includes('google.serper.dev')) {
+        return {
+          ok: true, status: 200, headers: new Headers(),
+          json: async () => ({
+            organic: [
+              { title: 'Femigist Balancing Brew — Femigist', snippet: 'Herbal tea for hormonal support, made in the USA.', link: 'https://femigist.com/products/balancing-brew' },
+            ],
+          }),
+        };
+      }
+      return claudeOk();
+    });
+    const handler = await loadHandler();
+    const res = mockRes();
+
+    await handler(searchReq({ query: 'femigist' }), res);
+
+    expect(res.statusCode).toBe(200);
+    const claudeCall = globalThis.fetch.mock.calls.find((c) => !String(c[0]).includes('serper'));
+    const promptSent = JSON.parse(claudeCall[1].body).messages[0].content;
+    expect(promptSent).toContain('LIVE WEB SEARCH RESULTS');
+    expect(promptSent).toContain('Femigist Balancing Brew');
+    expect(promptSent).toContain('https://femigist.com/products/balancing-brew');
+  });
+
+  it('omits the search-grounding section entirely when SERPER_API_KEY is not set', async () => {
+    globalThis.fetch = vi.fn(async () => claudeOk());
+    const handler = await loadHandler();
+    const res = mockRes();
+
+    await handler(searchReq({ query: 'femigist' }), res);
+
+    expect(globalThis.fetch).toHaveBeenCalledTimes(1); // no Serper call attempted at all
+    const promptSent = JSON.parse(globalThis.fetch.mock.calls[0][1].body).messages[0].content;
+    expect(promptSent).not.toContain('LIVE WEB SEARCH RESULTS');
+  });
+
+  it('degrades to recall-only (no grounding, no failure) when the Serper call itself fails', async () => {
+    restoreEnv();
+    restoreEnv = withEnv({
+      ANTHROPIC_API_KEY: 'test-key', ALLOWED_ORIGINS: 'https://ayna.health',
+      SUPABASE_URL: 'https://x.supabase.co', SUPABASE_SERVICE_ROLE_KEY: 'service-key',
+      SERPER_API_KEY: 'serper-test-key',
+    });
+    globalThis.fetch = vi.fn(async (url) => {
+      const u = String(url);
+      if (u.includes('google.serper.dev')) throw new Error('network down');
+      return claudeOk();
+    });
+    const handler = await loadHandler();
+    const res = mockRes();
+
+    await handler(searchReq({ query: 'femigist' }), res);
+
+    expect(res.statusCode).toBe(200);
+    const claudeCall = globalThis.fetch.mock.calls.find((c) => !String(c[0]).includes('serper'));
+    const promptSent = JSON.parse(claudeCall[1].body).messages[0].content;
+    expect(promptSent).not.toContain('LIVE WEB SEARCH RESULTS');
+  });
+});
+
 describe('POST /api/search-suggestions — Claude call and retry', () => {
   it('retries once on a 429 from Claude, then succeeds', async () => {
     let calls = 0;
@@ -281,7 +357,10 @@ describe('POST /api/search-suggestions — Claude call and retry', () => {
     expect(calls).toBe(2);
   });
 
-  it('does not retry a second time — one retry only', async () => {
+  it('gives up after 3 attempts against a provider that keeps 429ing', async () => {
+    // Retry budget now lives in the shared _llm.js transport (3 attempts per
+    // provider, same as every other AI route) instead of this file's own
+    // hand-rolled single retry.
     globalThis.fetch = vi.fn(async () => ({
       ok: false, status: 429, headers: new Headers(), text: async () => 'still limited',
     }));
@@ -292,7 +371,40 @@ describe('POST /api/search-suggestions — Claude call and retry', () => {
 
     expect(res.statusCode).toBe(502);
     expect(res.body.error).toBe('claude_failed');
-    expect(globalThis.fetch).toHaveBeenCalledTimes(2);
+    expect(globalThis.fetch).toHaveBeenCalledTimes(3);
+  });
+
+  // The actual point of the 2026-08-25 migration off a hand-rolled,
+  // Anthropic-only fetch: when the account is out of credits (or any other
+  // non-retryable Anthropic failure), OpenAI — if configured — picks up the
+  // request instead of every search on the site going dark.
+  it('falls back to OpenAI when Anthropic fails outright (e.g. no credits)', async () => {
+    restoreEnv();
+    restoreEnv = withEnv({
+      ANTHROPIC_API_KEY: 'test-key',
+      OPENAI_API_KEY: 'test-openai-key',
+      REQUIRE_AUTH_FOR_SEARCH_SUGGESTIONS: undefined,
+      ALLOWED_ORIGINS: 'https://ayna.health',
+      SUPABASE_URL: 'https://x.supabase.co',
+      SUPABASE_SERVICE_ROLE_KEY: 'service-key',
+      SERPER_API_KEY: undefined,
+    });
+    // Reuse claudeOk()'s well-formed suggestion payload for the OpenAI
+    // response too — same JSON body, just wrapped in OpenAI's response shape.
+    const payload = await claudeOk().text();
+    globalThis.fetch = vi.fn(async (url) => {
+      if (String(url).includes('anthropic.com')) {
+        return { ok: false, status: 400, headers: new Headers(), text: async () => 'credit balance too low' };
+      }
+      return openaiOk(payload);
+    });
+
+    const handler = await loadHandler();
+    const res = mockRes();
+    await handler(searchReq({ query: 'cramp relief' }), res);
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.suggestions?.length).toBeGreaterThan(0);
   });
 
   it('502s with invalid_model_json when Claude returns unparseable JSON', async () => {

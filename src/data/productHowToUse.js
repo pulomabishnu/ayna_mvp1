@@ -68,7 +68,7 @@ export function getHowToUseContent(product) {
 
   if (brandUrl && !tutorialLinks.some((l) => l.url === brandUrl)) {
     tutorialLinks.unshift({
-      label: `${name.split(/[(\[]/)[0].trim()} — official site`,
+      label: `${name.split(/[(\[]/)[0].trim()}. Official site`,
       url: brandUrl,
       hint: 'Brand instructions, FAQs, and support.',
     });
@@ -149,11 +149,11 @@ function buildFromBrandParagraphs(product) {
   if (product.safety?.materials) parts.push(`Materials: ${product.safety.materials}`);
   if (product.stage && product.type === 'digital') parts.push(`Platform / stage: ${product.stage}`);
   if (product.platform) parts.push(`Available on: ${product.platform}`);
-  return parts.length ? parts : [`${product.name || 'This product'} — see brand and regulatory details in the Safety tab.`];
+  return parts.length ? parts : [`${product.name || 'This product'}. See brand and regulatory details in the Safety tab.`];
 }
 
 function defaultAggregated(name, cat) {
-  return `Below is practical guidance commonly shared for ${cat.replace(/-/g, ' ')} products like ${name}. It is educational only—not a substitute for the official instructions or your clinician.`;
+  return `Below is practical guidance commonly shared for ${cat.replace(/-/g, ' ')} products like ${name}. It is educational only. Not a substitute for the official instructions or your clinician.`;
 }
 
 const CUP_STEPS = (product) => [
@@ -168,7 +168,7 @@ const CUP_STEPS = (product) => [
 const DISC_STEPS = (product) => [
   'Wash hands. Pinch the disc and insert toward the back of the vaginal canal (often sits below the cervix).',
   'Tuck the front rim up behind the pubic bone if your disc design uses that for retention.',
-  'Some discs allow mess-free removal with a finger hook—follow brand diagrams.',
+  'Some discs allow mess-free removal with a finger hook. Follow brand diagrams.',
   'Remove, empty, rinse, and reinsert per label; replace disposable discs after one use.',
 ];
 
@@ -187,15 +187,15 @@ const CATEGORY_HOW_TO = {
   cup: {
     steps: () => CUP_STEPS(),
     aggregatedIntro: (name) =>
-      `Menstrual cups create a seal to collect flow. Guidance below reflects common teaching from manufacturers and health organizations; ${name} may have size-specific steps—use the brand’s PDF or video first.`,
+      `Menstrual cups create a seal to collect flow. Guidance below reflects common teaching from manufacturers and health organizations; ${name} may have size-specific steps. Use the brand’s PDF or video first.`,
     extraTutorialLinks: (product, brandUrl) => [
       {
-        label: 'FDA — menstrual tampons and pads (device basics)',
+        label: 'FDA: menstrual tampons and pads (device basics)',
         url: 'https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-how-use-them-safely',
         hint: 'Federal consumer guidance on safe use of internal devices.',
       },
       {
-        label: 'Mayo Clinic — menstrual cup overview',
+        label: 'Mayo Clinic: Menstrual cup overview',
         url: 'https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cup/art-20045868',
         hint: 'General insertion, care, and when to see a clinician.',
       },
@@ -211,7 +211,7 @@ const CATEGORY_HOW_TO = {
       `Discs sit differently than cups and may use auto-dumping or pubic-bone retention depending on design. Follow ${name}’s diagrams; the steps below are typical patterns from public instructions.`,
     extraTutorialLinks: (product) => [
       {
-        label: 'Mayo Clinic — menstrual disc vs cup',
+        label: 'Mayo Clinic: Menstrual disc vs cup',
         url: 'https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cup/art-20045868',
         hint: 'Overview of internal collection options.',
       },
@@ -233,7 +233,7 @@ const CATEGORY_HOW_TO = {
       `Tampons are worn inside the vagina. Use the lowest absorbency you need and change on the schedule printed on the box to reduce TSS risk.`,
     extraTutorialLinks: () => [
       {
-        label: 'FDA — tampon safety facts',
+        label: 'FDA: tampon safety facts',
         url: 'https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-how-use-them-safely',
         hint: '',
       },
@@ -248,7 +248,7 @@ const CATEGORY_HOW_TO = {
       'Replace when elasticity or absorbency declines.',
     ],
     aggregatedIntro: (name) =>
-      `${name} relies on built-in layers. Care instructions vary by brand—always follow the sewn-in label.`,
+      `${name} relies on built-in layers. Care instructions vary by brand. Always follow the sewn-in label.`,
     extraTutorialLinks: () => [],
     extraVideoLinks: (product) => [{ label: `YouTube search: ${product.name} care`, url: ytSearch(`${product.name} period underwear wash care`) }],
   },
@@ -263,7 +263,7 @@ const CATEGORY_HOW_TO = {
       'Dietary supplements are not FDA-approved like drugs; quality varies by brand. Use verified products and professional guidance for dosing.',
     extraTutorialLinks: () => [
       {
-        label: 'FDA — dietary supplements basics',
+        label: 'FDA: dietary supplements basics',
         url: 'https://www.fda.gov/food/dietary-supplements',
         hint: '',
       },
@@ -283,7 +283,7 @@ const CATEGORY_HOW_TO = {
       'A licensed clinician reviews your history; visits may be video, phone, or message-based.',
       'If prescribed, medication may go to a pharmacy you choose or mail-order.',
       'Follow-up and lab orders depend on your state and the service’s scope of practice.',
-      'Emergency symptoms need urgent in-person or ER care—not telehealth alone.',
+      'Emergency symptoms need urgent in-person or ER care. Not telehealth alone.',
     ],
     aggregatedIntro: (name) =>
       `${name} and similar services vary by state, insurance, and specialty. The bullets below are typical; confirm on the official site before you sign up.`,
@@ -319,7 +319,7 @@ const CATEGORY_HOW_TO = {
       'Sign up through web or app; verify email and complete intake forms.',
       'Match with a therapist or coach per the service model; some offer crisis resources only.',
       'Attend sessions from a private space; test audio/video beforehand.',
-      'If you have urgent safety concerns, use local emergency or crisis lines—not delayed chat.',
+      'If you have urgent safety concerns, use local emergency or crisis lines. Not delayed chat.',
     ],
     aggregatedIntro: () =>
       'Digital mental health services vary (therapy vs coaching vs self-guided). Confirm licensure and scope for your needs.',
@@ -341,7 +341,7 @@ const CATEGORY_HOW_TO = {
     steps: () => [
       'Clean the device per instructions; use water-based lubricant if the brand allows.',
       'Start with the lowest intensity or shortest session recommended.',
-      'Stop if you feel sharp pain, bleeding, or dizziness—contact a pelvic PT or clinician.',
+      'Stop if you feel sharp pain, bleeding, or dizziness. Contact a pelvic PT or clinician.',
     ],
     aggregatedIntro: () =>
       'Pelvic devices are often used with professional guidance; ask your OB-GYN or pelvic floor PT for a plan.',
@@ -355,7 +355,7 @@ const CATEGORY_HOW_TO = {
       'Discontinue if rash, burns, or worsening pain occurs.',
     ],
     aggregatedIntro: () =>
-      'Cramp relief may combine heat, OTC meds, or devices—follow label limits and ask a clinician if pain is severe or new.',
+      'Cramp relief may combine heat, OTC meds, or devices. Follow label limits and ask a clinician if pain is severe or new.',
     extraTutorialLinks: () => [],
     extraVideoLinks: (product) => [{ label: `YouTube search: ${product.name} how to use`, url: ytSearch(`${product.name} how to use`) }],
   },
@@ -394,7 +394,7 @@ const CATEGORY_HOW_TO = {
   postpartum: {
     steps: () => [
       'Use recovery products as directed for bleeding, nursing, or scar care.',
-      'Watch for fever, heavy bleeding, or pain—seek urgent care if red-flag symptoms occur.',
+      'Watch for fever, heavy bleeding, or pain. Seek urgent care if red-flag symptoms occur.',
     ],
     aggregatedIntro: () =>
       'Postpartum healing varies; follow your discharge instructions and pediatric/OB advice.',
@@ -433,12 +433,12 @@ const HOW_TO_BY_PRODUCT_ID = {
       'These steps align with common DivaCup teaching and public health summaries. Always follow the insert included with your cup and DivaCup’s official sizing chart.',
     tutorialLinks: [
       {
-        label: 'DivaCup — how to use (official)',
+        label: 'DivaCup: How to use (official)',
         url: 'https://divacup.com/pages/how-to-use',
         hint: 'Brand diagrams and care.',
       },
       {
-        label: 'DivaCup — cleaning & care',
+        label: 'DivaCup: Cleaning & care',
         url: 'https://divacup.com/pages/care-cleaning',
         hint: 'Between-cycle cleaning and storage.',
       },

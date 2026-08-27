@@ -22,7 +22,7 @@ export default function CareNearYouPanel({
 
   const bundle = getCareResourceBundle(quizResults, healthProfile, userZipCode || zipInput);
   const intake = quizResults?.fullHealthIntake;
-  const insuranceLabel = [intake?.insuranceType, intake?.insurancePlan].filter(Boolean).join(' — ');
+  const insuranceLabel = [intake?.insuranceType, intake?.insurancePlan].filter(Boolean).join(', ');
 
   const saveZip = () => {
     const z = zipInput.replace(/\D/g, '').slice(0, 5);
@@ -81,7 +81,7 @@ export default function CareNearYouPanel({
         <p style={{ fontSize: '0.82rem', color: 'var(--color-text-muted)', marginTop: '-0.5rem', marginBottom: '1.25rem' }}>
           {insuranceLabel
             ? <>Insurance on file: <strong>{insuranceLabel}</strong>. Confirm coverage directly with any clinic or telehealth service before booking.</>
-            : 'No insurance on file yet — add it to your health profile so it\'s here when you need it.'}
+            : 'No insurance on file yet. Add it to your health profile so it\'s here when you need it.'}
           {typeof onEditHealthProfile === 'function' && (
             <> <button
               type="button"

@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { findGlossaryTermInText } from '../data/glossary';
+import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 
 // EDITORIALLY CURATED HIGHLIGHTS — not a recall feed and not a complete list.
 //
@@ -48,7 +50,7 @@ export default function Recalls({ trackedProducts, myProducts = {} }) {
                 <h2 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Safety & Recall Center</h2>
                 <p style={{ color: 'var(--color-text-muted)', marginBottom: '1.5rem' }}>
                     Editorially curated safety notes, plus a live FDA recall check on every product page.
-                    This page is not a complete recall list — always confirm against the FDA database directly.
+                    This page is not a complete recall list. Always confirm against the FDA database directly.
                 </p>
 
                 <input
@@ -68,7 +70,7 @@ export default function Recalls({ trackedProducts, myProducts = {} }) {
                 {/* Active Alerts */}
                 <div>
                     <h3 style={{ fontSize: '1.3rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <span style={{ color: '#EF4444' }}>⚠️</span> Curated Safety Notes
+                        Curated Safety Notes
                     </h3>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                         {filteredRecalls.length === 0 ? (
@@ -76,7 +78,7 @@ export default function Recalls({ trackedProducts, myProducts = {} }) {
                             // handful of curated entries, so absence from it says nothing
                             // about whether a product has been recalled.
                             <p style={{ color: 'var(--color-text-muted)', fontStyle: 'italic' }}>
-                                Nothing in Ayna&apos;s curated notes matches &quot;{searchQuery}&quot;. This is not a recall search —
+                                Nothing in Ayna&apos;s curated notes matches &quot;{searchQuery}&quot;. This is not a recall search. 
                                 open the product to run a live FDA check, or{' '}
                                 <a
                                     href="https://www.accessdata.fda.gov/scripts/enforcement/enforce_rpt-Product-Tabs.cfm"
@@ -115,7 +117,7 @@ export default function Recalls({ trackedProducts, myProducts = {} }) {
                         </h3>
                         <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1rem' }}>
                             Ayna checks the FDA recall database for a product when you open it. There is no
-                            background monitoring and no alerting — open a product to run its check.
+                            background monitoring and no alerting. Open a product to run its check.
                         </p>
 
                         {ecosystemList.length === 0 ? (
@@ -124,7 +126,16 @@ export default function Recalls({ trackedProducts, myProducts = {} }) {
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                                 {ecosystemList.map(p => (
                                     <div key={p.id} style={{ display: 'flex', gap: '1rem', alignItems: 'center', padding: '1rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', background: 'var(--color-surface)' }}>
-                                        <img src={p.image} alt={p.name} style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '50%' }} />
+                                        <ProductTileImage
+                                            product={p}
+                                            alt={p.name}
+                                            imgStyle={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '50%' }}
+                                            letterNode={(
+                                                <div style={{ width: '40px', height: '40px', borderRadius: '50%', flexShrink: 0, overflow: 'hidden' }}>
+                                                    <ProductImageFallback compact />
+                                                </div>
+                                            )}
+                                        />
                                         <div>
                                             <h4 style={{ fontSize: '0.9rem', fontWeight: '600' }}>{p.name}</h4>
                                             {/* Was a hardcoded green "MONITORED" badge that reflected
@@ -141,7 +152,7 @@ export default function Recalls({ trackedProducts, myProducts = {} }) {
                 {/* Safety Insights */}
                 <div>
                     <div className="card" style={{ background: 'var(--color-surface-soft)', border: 'none' }}>
-                        <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem' }}>🛡️ What Ayna actually checks</h3>
+                        <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem' }}>What Ayna actually checks</h3>
                         <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', lineHeight: '1.6', marginBottom: '1.5rem' }}>
                             When you open a product, Ayna queries OpenFDA live for that specific product:
                         </p>

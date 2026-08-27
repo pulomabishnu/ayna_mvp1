@@ -22,7 +22,7 @@
  * between is the real handler.
  */
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { mockRes, mockReq, mockSupabase, withEnv, anthropicOk } from './_test-helpers.js';
+import { mockRes, mockReq, mockSupabase, withEnv, anthropicOk, openaiOk } from './_test-helpers.js';
 
 const realFetch = globalThis.fetch;
 let restoreEnv;
@@ -364,6 +364,34 @@ describe('POST /api/sms-webhook — generating a reply', () => {
     expect(globalThis.fetch).toHaveBeenCalledTimes(1);
     expect(res.body).not.toMatch(/\bdiagnose\b/i);
     expect(res.body).toContain('may help with');
+  });
+
+  // The actual point of the 2026-08-25 migration off a hand-rolled,
+  // Anthropic-only fetch: when the account is out of credits (or any other
+  // non-retryable Anthropic failure), OpenAI — if configured — answers the
+  // text instead of every inbound message going unanswered.
+  it('falls back to OpenAI when Anthropic fails outright (e.g. no credits)', async () => {
+    restoreEnv();
+    restoreEnv = withEnv({
+      ANTHROPIC_API_KEY: 'test-key',
+      OPENAI_API_KEY: 'test-openai-key',
+      TWILIO_AUTH_TOKEN: 'test-twilio-token',
+      SUPABASE_URL: 'https://x.supabase.co',
+      SUPABASE_SERVICE_ROLE_KEY: 'service-key',
+    });
+    globalThis.fetch = vi.fn(async (url) => {
+      if (String(url).includes('anthropic.com')) {
+        return { ok: false, status: 400, headers: new Headers(), text: async () => 'credit balance too low' };
+      }
+      return openaiOk('Try a heating pad for cramps.');
+    });
+    const handler = await loadHandler();
+    const res = mockRes();
+
+    await handler(webhookReq(inboundBody()), res);
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toContain('heating pad');
   });
 
   it('falls back to a static apology when Claude returns nothing usable', async () => {

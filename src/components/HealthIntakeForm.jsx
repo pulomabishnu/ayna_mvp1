@@ -8,10 +8,14 @@ import {
   INSURANCE_TYPES,
   FSA_HSA_OPTIONS,
   OTHER_CONCERN_OPTION,
+  CYCLE_OPTIONS,
+  TTC_OPTIONS,
   mapIntakeToLegacyQuizProfile,
 } from '../utils/healthIntake';
 import { saveHealthIntakeForCurrentUser } from '../utils/healthIntakeStore';
 import { ALL_PRODUCTS } from '../data/products';
+import { findGlossaryTermInText } from '../data/glossary';
+import GlossaryTerm from './GlossaryTerm';
 
 // ─── Condensed symptom list (top clinical signals) ───────────────────────────
 const KEY_SYMPTOMS = [
@@ -22,22 +26,17 @@ const KEY_SYMPTOMS = [
 ];
 
 const FLOW_OPTIONS = ['Light', 'Medium', 'Heavy', 'Very heavy'];
-const CYCLE_OPTIONS = [
-  { value: 'yes', label: 'Yes' },
-  { value: 'no', label: 'No' },
-  { value: 'irregular', label: 'Irregular' },
-  { value: 'irregular_perimenopause', label: 'Irregular (Perimenopause)' },
-  { value: 'no_menopause', label: 'No (Menopause)' },
-];
+// CYCLE_OPTIONS/TTC_OPTIONS now live in ../utils/healthIntake, shared with
+// the profile editor.
 
 const FAMILY_HISTORY_OPTIONS = [
   'PCOS', 'Endometriosis', 'Thyroid disorder', 'Uterine fibroids',
   'Premature ovarian insufficiency', 'BRCA1/BRCA2', 'Osteoporosis', 'None of the above',
 ];
 const SYMPTOM_DURATION_OPTIONS = [
-  { value: 'new', label: 'New (< 6 months)' },
-  { value: 'ongoing', label: 'Ongoing (6 mo – 2 yrs)' },
-  { value: 'chronic', label: 'Chronic (2+ years)' },
+  { value: 'new', label: 'New: less than 6 months' },
+  { value: 'ongoing', label: 'Going on for 6 months to 2 years' },
+  { value: 'chronic', label: 'Long-term: 2 years or more' },
 ];
 const LAST_OBGYN_OPTIONS = [
   { value: 'within_year', label: 'Within the past year' },
@@ -45,7 +44,6 @@ const LAST_OBGYN_OPTIONS = [
   { value: 'over_3_years', label: 'More than 3 years ago' },
   { value: 'never', label: 'Never' },
 ];
-const TTC_OPTIONS = ['Yes', 'No', 'Not right now'];
 const BC_OPTIONS = ['Yes', 'No'];
 
 const SCREEN_ORDER = ['basics', 'concerns', 'period', 'health', 'products', 'healthdata'];
@@ -55,7 +53,7 @@ const SCREEN_ORDER = ['basics', 'concerns', 'period', 'health', 'products', 'hea
 function ScreenHeader({ title, subtitle }) {
   return (
     <div style={{ marginBottom: '1.5rem' }}>
-      <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.45rem', fontWeight: 700, color: 'var(--color-text-main)', marginBottom: '0.35rem', lineHeight: 1.25 }}>
+      <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.85rem', fontWeight: 400, color: 'var(--color-text-main)', marginBottom: '0.35rem', lineHeight: 1.2 }}>
         {title}
       </h2>
       {subtitle && <p style={{ fontSize: '0.88rem', color: 'var(--color-text-muted)', lineHeight: 1.5 }}>{subtitle}</p>}
@@ -72,18 +70,19 @@ function FieldLabel({ children, optional }) {
   );
 }
 
-function Chip({ label, selected, onClick, small }) {
+function Chip({ label, selected, onClick, small, title }) {
   return (
     <button
       type="button"
       onClick={onClick}
+      title={title || undefined}
       style={{
         padding: small ? '0.35rem 0.8rem' : '0.45rem 1rem',
         borderRadius: 'var(--radius-pill)',
         border: selected ? '2px solid var(--color-primary)' : '1.5px solid var(--color-border)',
         background: selected ? 'var(--color-secondary-fade)' : 'var(--color-surface)',
         color: selected ? 'var(--color-primary)' : 'var(--color-text-main)',
-        cursor: 'pointer',
+        cursor: title ? 'help' : 'pointer',
         fontSize: small ? '0.8rem' : '0.86rem',
         fontWeight: selected ? 700 : 400,
         fontFamily: 'var(--font-body)',
@@ -93,15 +92,27 @@ function Chip({ label, selected, onClick, small }) {
       }}
     >
       {label}
+      {title && <span aria-hidden="true" style={{ fontSize: '0.72em', opacity: 0.6, marginLeft: '0.3em' }}>ⓘ</span>}
     </button>
   );
 }
 
-function ChipGrid({ items, selected = [], onToggle, small }) {
+// `glossary` looks each item's plain-language explanation up (via findGlossaryTermInText, so it
+// still matches e.g. "PCOS management (...)" containing "PCOS") and shows it as a native hover/
+// long-press tooltip — without renaming the option value itself, since several of these strings
+// (PCOS, endometriosis, UTI support, ...) are matched elsewhere in the app as literal keys.
+function ChipGrid({ items, selected = [], onToggle, small, glossary = false }) {
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
       {items.map((item) => (
-        <Chip key={item} label={item} selected={selected.includes(item)} onClick={() => onToggle(item)} small={small} />
+        <Chip
+          key={item}
+          label={item}
+          selected={selected.includes(item)}
+          onClick={() => onToggle(item)}
+          small={small}
+          title={glossary ? findGlossaryTermInText(item) : undefined}
+        />
       ))}
     </div>
   );
@@ -165,14 +176,35 @@ function TextInput({ value, onChange, placeholder, type = 'text' }) {
   );
 }
 
+// Popular default suggestions shown before the user types anything, so the
+// picker isn't a blank box on a screen whose whole job is "search for a
+// product" — sorted by userRating, the same quality signal Discovery uses.
+const DEFAULT_PRODUCT_SUGGESTIONS = ALL_PRODUCTS
+  .filter((p) => p.name && p.userRating != null)
+  .sort((a, b) => b.userRating - a.userRating)
+  .slice(0, 12);
+
+const normalizeForMatch = (s) => String(s || '').toLowerCase().replace(/\s+/g, '');
+
 function ProductSearchPicker({ selected = [], onAdd, onRemove, placeholder }) {
   const [query, setQuery] = useState('');
 
   const suggestions = useMemo(() => {
     const q = query.trim().toLowerCase();
+    if (!q) {
+      return DEFAULT_PRODUCT_SUGGESTIONS.filter((p) => !selected.includes(p.name)).slice(0, 6);
+    }
     if (q.length < 2) return [];
+    // Whitespace-insensitive on top of substring match — "Diva Cup" should find
+    // "DivaCup", "always infinity" should find "Always Infinity", etc. Product
+    // names in the catalog aren't consistently spaced/cased with how people type.
+    const qNorm = normalizeForMatch(q);
     return ALL_PRODUCTS
-      .filter((p) => p.name && p.name.toLowerCase().includes(q) && !selected.includes(p.name))
+      .filter((p) => {
+        if (!p.name || selected.includes(p.name)) return false;
+        const name = p.name.toLowerCase();
+        return name.includes(q) || normalizeForMatch(name).includes(qNorm);
+      })
       .slice(0, 6);
   }, [query, selected]);
 
@@ -380,6 +412,20 @@ export default function HealthIntakeForm({ onComplete }) {
   const total = screens.length;
   const progressPct = Math.round(((currentIndex + 1) / total) * 100);
 
+  // Warn before losing quiz progress on tab close/refresh once she's past
+  // the first screen — mirrors the same beforeunload guard App.jsx uses for
+  // the post-completion, pre-sign-in window (see that file's comment).
+  useEffect(() => {
+    if (currentIndex <= 0) return undefined;
+    const handler = (e) => {
+      e.preventDefault();
+      e.returnValue = '';
+      return '';
+    };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [currentIndex]);
+
   const zipLookupRef = useRef(null);
   useEffect(() => {
     if (intake.zipcode.length !== 5) return undefined;
@@ -434,15 +480,19 @@ export default function HealthIntakeForm({ onComplete }) {
     // when there is no session, which was discarded too.
     try {
       const result = await saveHealthIntakeForCurrentUser(snapshot);
-      if (result && result.saved === false && result.reason !== 'no_authenticated_user') {
+      // Local persistence is enough to continue building the ecosystem. The
+      // server sync can repair itself later; only block Finish if neither copy
+      // could be written at all.
+      if (result && result.saved === false && result.localSaved !== true && result.reason !== 'no_authenticated_user') {
         throw new Error(result.reason || 'save_failed');
+      }
+      if (result && result.saved === false && result.localSaved === true) {
+        console.warn('[Ayna] profile saved locally; server sync will retry later:', result.reason);
       }
     } catch (e) {
       console.error('[Ayna] intake save failed:', e);
       setSaving(false);
-      setSaveError(
-        "We couldn't save your profile just now. Your answers are still here — check your connection and tap Finish again."
-      );
+      setSaveError("Couldn't save yet. Try Finish again.");
       return;
     }
     setSaveError('');
@@ -477,17 +527,20 @@ export default function HealthIntakeForm({ onComplete }) {
         {/* Screen: basics */}
         {screenId === 'basics' && (
           <div>
-            <ScreenHeader title="Let's build your ecosystem." subtitle="A few quick questions — takes about 20 seconds." />
+            <ScreenHeader title="Let's build your ecosystem." subtitle="A few quick questions. Takes about 20 seconds." />
             <FieldLabel>How old are you?</FieldLabel>
             <TextInput type="number" value={intake.age} onChange={(v) => set('age', v)} placeholder="e.g. 28" />
-            <FieldLabel optional>Where are you based?</FieldLabel>
-            <TextInput value={intake.location} onChange={(v) => set('location', v)} placeholder="e.g. New York, NY" />
             <FieldLabel optional>ZIP code</FieldLabel>
             <TextInput
               value={intake.zipcode}
               onChange={(v) => set('zipcode', v.replace(/\D/g, '').slice(0, 5))}
               placeholder="e.g. 10001"
             />
+            {intake.location.trim() && (
+              <p style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', marginTop: '0.3rem' }}>
+                {intake.location}
+              </p>
+            )}
             <ContinueButton onClick={goNext} disabled={!intake.age.trim()}>Continue →</ContinueButton>
           </div>
         )}
@@ -495,11 +548,12 @@ export default function HealthIntakeForm({ onComplete }) {
         {/* Screen: concerns */}
         {screenId === 'concerns' && (
           <div>
-            <ScreenHeader title="What do you most want support with?" subtitle="Pick everything that applies — this shapes every recommendation Ayna makes for you." />
+            <ScreenHeader title="What do you want help with?" subtitle="Pick as many as you want. We'll use this to pick what to show you." />
             <ChipGrid
               items={CONCERN_AREAS.filter((c) => c !== OTHER_CONCERN_OPTION)}
               selected={intake.primaryConcerns}
               onToggle={(v) => toggle('primaryConcerns', v)}
+              glossary
             />
             {intake.primaryConcerns.includes(OTHER_CONCERN_OPTION) && (
               <div style={{ marginTop: '0.75rem' }}>
@@ -510,7 +564,7 @@ export default function HealthIntakeForm({ onComplete }) {
             <FieldLabel>Do you have a menstrual cycle?</FieldLabel>
             <SingleSelect options={CYCLE_OPTIONS} value={intake.menstrualCycle} onSelect={(v) => set('menstrualCycle', v)} />
 
-            <FieldLabel optional>Goals — what are you hoping Ayna helps you with?</FieldLabel>
+            <FieldLabel optional>Goals. What are you hoping Ayna helps you with?</FieldLabel>
             <ChipGrid items={GOALS} selected={intake.goals} onToggle={(v) => toggle('goals', v)} small />
             <div style={{ marginTop: '0.75rem' }}>
               <TextInput value={intake.goalsOtherText} onChange={(v) => set('goalsOtherText', v)} placeholder="Anything else you're looking for? (optional)" />
@@ -525,14 +579,14 @@ export default function HealthIntakeForm({ onComplete }) {
         {/* Screen: period */}
         {screenId === 'period' && (
           <div>
-            <ScreenHeader title="Tell us about your period." subtitle="All on one screen — about 30 seconds." />
+            <ScreenHeader title="Tell us about your period." subtitle="All on one screen. About 30 seconds." />
 
             <FieldLabel>How heavy is your flow?</FieldLabel>
             <SingleSelect options={FLOW_OPTIONS} value={intake.flowLevel} onSelect={(v) => set('flowLevel', v)} />
 
-            <FieldLabel>Period pain level</FieldLabel>
+            <FieldLabel>How bad is your period pain?</FieldLabel>
             <PainScale value={intake.painLevel} onChange={(v) => set('painLevel', v)} />
-            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.35rem' }}>1 = no pain &nbsp;·&nbsp; 10 = debilitating</p>
+            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.35rem' }}>1 = no pain &nbsp;·&nbsp; 10 = so bad I can't function</p>
 
             <FieldLabel optional>What you've been experiencing (pick all that apply)</FieldLabel>
             <ChipGrid items={KEY_SYMPTOMS} selected={intake.symptoms} onToggle={(v) => toggle('symptoms', v)} small />
@@ -544,14 +598,15 @@ export default function HealthIntakeForm({ onComplete }) {
         {/* Screen: health */}
         {screenId === 'health' && (
           <div>
-            <ScreenHeader title="Your health history." subtitle="The more context you give, the more personalized Ayna's recommendations." />
+            <ScreenHeader title="Your health history." subtitle="The more you tell us, the better we can help you." />
 
-            <FieldLabel optional>Diagnosed conditions</FieldLabel>
+            <FieldLabel optional>Have you been told you have any of these? (Tap the ⓘ on a word to see what it means.)</FieldLabel>
             <ChipGrid
               items={DIAGNOSED_CONDITIONS.filter((c) => c !== 'other' && c !== 'none')}
               selected={intake.conditions}
               onToggle={(v) => toggle('conditions', v)}
               small
+              glossary
             />
             <div style={{ marginTop: '0.5rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
               <Chip label="None" selected={intake.conditions.includes('none')} onClick={() => set('conditions', ['none'])} small />
@@ -563,8 +618,8 @@ export default function HealthIntakeForm({ onComplete }) {
               </div>
             )}
 
-            <FieldLabel optional>Family history — any of these in close relatives?</FieldLabel>
-            <ChipGrid items={FAMILY_HISTORY_OPTIONS} selected={intake.familyHistory} onToggle={(v) => toggle('familyHistory', v)} small />
+            <FieldLabel optional>Has anyone in your close family (mom, sister, grandmother) had any of these?</FieldLabel>
+            <ChipGrid items={FAMILY_HISTORY_OPTIONS} selected={intake.familyHistory} onToggle={(v) => toggle('familyHistory', v)} small glossary />
 
             <FieldLabel optional>How long have you been dealing with this?</FieldLabel>
             <SingleSelect options={SYMPTOM_DURATION_OPTIONS} value={intake.symptomDuration} onSelect={(v) => set('symptomDuration', v)} />
@@ -572,7 +627,7 @@ export default function HealthIntakeForm({ onComplete }) {
             <FieldLabel optional>Current medications or supplements</FieldLabel>
             <TextInput value={intake.currentMedications} onChange={(v) => set('currentMedications', v)} placeholder="e.g. metformin, levothyroxine, vitamin D, fish oil…" />
 
-            <FieldLabel optional>Last OB/GYN visit</FieldLabel>
+            <FieldLabel optional>When did you last see a <GlossaryTerm term="OB/GYN" /> (women's doctor)?</FieldLabel>
             <SingleSelect options={LAST_OBGYN_OPTIONS} value={intake.lastObgynVisit} onSelect={(v) => set('lastObgynVisit', v)} />
 
             <FieldLabel optional>Are you trying to conceive?</FieldLabel>
@@ -595,10 +650,10 @@ export default function HealthIntakeForm({ onComplete }) {
               <option value=''>Select insurance type…</option>
               {INSURANCE_TYPES.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
             </select>
-            <TextInput value={intake.insurancePlan} onChange={(v) => set('insurancePlan', v)} placeholder="Insurance provider name (e.g. Aetna, Blue Cross, United)" style={{ marginTop: '0.5rem' }} />
-            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.3rem' }}>Used to show realistic out-of-pocket costs for telehealth recommendations.</p>
+            <TextInput value={intake.insurancePlan} onChange={(v) => set('insurancePlan', v)} placeholder="Insurance company name (e.g. Aetna, Blue Cross, United)" style={{ marginTop: '0.5rem' }} />
+            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.3rem' }}>This helps us show you the real price for online doctor visits.</p>
 
-            <FieldLabel optional>FSA / HSA account</FieldLabel>
+            <FieldLabel optional><GlossaryTerm term="FSA" /> or <GlossaryTerm term="HSA" /> account</FieldLabel>
             <select
               value={intake.fsaHsa || ''}
               onChange={e => set('fsaHsa', e.target.value)}
@@ -607,7 +662,7 @@ export default function HealthIntakeForm({ onComplete }) {
               <option value=''>Select…</option>
               {FSA_HSA_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
             </select>
-            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.3rem' }}>FSA/HSA-eligible products show your effective pre-tax price.</p>
+            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.3rem' }}>If you have one of these accounts, we'll show the lower price you'd pay.</p>
 
             <ContinueButton onClick={goNext}>Continue →</ContinueButton>
           </div>
@@ -616,14 +671,14 @@ export default function HealthIntakeForm({ onComplete }) {
         {/* Screen: products */}
         {screenId === 'products' && (
           <div>
-            <ScreenHeader title="What matters to you in products?" subtitle="Ayna uses this to filter recommendations and flag ingredient concerns." />
+            <ScreenHeader title="What matters to you in products?" subtitle="This helps us find safe products and warn you about ingredients to avoid." />
 
             <FieldLabel optional>What do you currently use?</FieldLabel>
             <ProductSearchPicker
               selected={intake.currentProducts}
               onAdd={(name) => toggle('currentProducts', name)}
               onRemove={(name) => toggle('currentProducts', name)}
-              placeholder="Search products (e.g. Diva Cup, Always Infinity, Flo app)..."
+              placeholder="Search products (e.g. Diva Cup, Always Infinity, Natural Cycles)..."
             />
             <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.35rem' }}>
               We'll avoid recommending things you already have.
@@ -654,26 +709,26 @@ export default function HealthIntakeForm({ onComplete }) {
         {screenId === 'healthdata' && (
           <div>
             <ScreenHeader
-              title="Got health app data?"
-              subtitle="Optional — but it helps Claude give you dramatically better recommendations."
+              title="Do you use a health app or watch?"
+              subtitle="This step is optional. It helps Claude give you much better recommendations."
             />
 
             <div style={{ padding: '1rem 1.25rem', background: 'var(--color-secondary-fade)', borderRadius: 'var(--radius-md)', marginBottom: '1.25rem', borderLeft: '3px solid var(--color-primary)' }}>
               <p style={{ fontSize: '0.85rem', color: 'var(--color-text-main)', lineHeight: 1.6, margin: 0 }}>
-                Paste any summary from <strong>Apple Health, Oura, Whoop, Fitbit, Clue, Flo, PCOS Diary</strong>, or any wearable.
-                Or just describe in plain English: <em>"My Oura shows I average 5h 40m sleep, resting HR 68, HRV 22. Clue shows 35-day cycles."</em>
+                If you use <strong>Apple Health, Oura, Whoop, Fitbit, Clue, Flo, PCOS Diary</strong>, or any other health app or watch, paste a summary below.
+                You can also just describe it in your own words: <em>"My watch shows I sleep about 5 hours 40 minutes a night. My period app shows my cycle is 35 days."</em>
               </p>
             </div>
 
             <TextArea
               value={intake.healthDataText}
               onChange={(v) => set('healthDataText', v)}
-              placeholder="Paste your health data or describe it here… (lab results, cycle app summaries, wearable stats, anything relevant)"
+              placeholder="Paste your health data here, or describe it in your own words… (test results, period app summaries, watch stats, anything that helps)"
               rows={5}
             />
 
             <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.5rem', lineHeight: 1.4 }}>
-              Your data is stored securely and never shared or sold. It's used only to personalize your ecosystem.
+              We keep this private and never sell it. We only use it to build your ecosystem.
             </p>
 
             {saveError && (
@@ -684,7 +739,7 @@ export default function HealthIntakeForm({ onComplete }) {
             <ContinueButton onClick={goNext} disabled={saving}>
               {saving ? 'Building your ecosystem…' : 'Build my ecosystem →'}
             </ContinueButton>
-            <SkipLink onClick={goNext} label={saving ? '' : 'Skip — build my ecosystem without health data →'} />
+            <SkipLink onClick={goNext} label={saving ? '' : 'Skip. Build my ecosystem without health data →'} />
           </div>
         )}
 

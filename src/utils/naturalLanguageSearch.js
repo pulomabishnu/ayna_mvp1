@@ -46,11 +46,48 @@ export function buildSearchTextForItem(item, categoryLabels = {}) {
   ].filter(Boolean).join(' ').toLowerCase();
 }
 
+/**
+ * Identity-only subset of buildSearchTextForItem: name/brand/category/tags/
+ * healthFunctions/badges, deliberately excluding prose fields (summary,
+ * doctorOpinion, communityReview, ingredients, effectiveness, safety text).
+ *
+ * WHY THIS EXISTS: a query like "vitamins" used to score a pregnancy skin oil
+ * (whose doctorOpinion happens to mention "Vitamin E" in passing) identically
+ * to an actual "Ritual Prenatal Vitamin" product — buildSearchTextForItem's
+ * flattened haystack can't tell an incidental prose mention from a product's
+ * actual identity. scoreQueryAgainstProduct uses this second, narrower
+ * haystack to weight identity-field matches above prose-only ones.
+ */
+export function buildIdentityTextForItem(item, categoryLabels = {}) {
+  return [
+    item.name,
+    item.brand,
+    (item.tags || []).join(' '),
+    item.category,
+    categoryLabels[item.category],
+    (item.badges || []).join(' '),
+    (item.healthFunctions || []).join(' '),
+  ].filter(Boolean).join(' ').toLowerCase();
+}
+
+/** True when `w` appears in `haystack` as its own word, not as a run inside a longer one. */
+function boundaryMatch(w, haystack) {
+  const escaped = w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(`(^|[^a-z0-9])${escaped}([^a-z0-9]|$)`, 'i').test(haystack);
+}
+
 function wordMatchesInHaystack(word, haystack) {
-  if (!word || word.length < 2) return false;
-  if (haystack.includes(word)) return true;
-  if (word.endsWith('s') && word.length > 3 && haystack.includes(word.slice(0, -1))) return true;
-  if (!word.endsWith('s') && haystack.includes(`${word}s`)) return true;
+  if (!word) return false;
+  // Every word length used to go through this word-boundary check ONLY for
+  // single characters — the comment here explained exactly why ("c" inside
+  // "cup"/"cream") but the same failure mode exists for any word length: a
+  // plain haystack.includes(word) matches "hair" inside "chair" ("Emsella
+  // Chair Treatment" topping a search for "hair", found live) exactly the
+  // same way "c" matched inside "cup". word-boundary matching is required
+  // at every length, not just one.
+  if (boundaryMatch(word, haystack)) return true;
+  if (word.endsWith('s') && word.length > 3 && boundaryMatch(word.slice(0, -1), haystack)) return true;
+  if (!word.endsWith('s') && boundaryMatch(`${word}s`, haystack)) return true;
   return false;
 }
 
@@ -67,8 +104,20 @@ const TERM_ALIASES = {
   baby: ['postpartum', 'newborn', 'infant'],
   uti: ['urinary', 'bladder', 'infection'],
   pcos: ['polycystic', 'ovarian'],
+  /** Live bug: "sti" returned nothing even though Wisp/Planned Parenthood
+   * Direct genuinely offer STI care — their summaries said "STI" but their
+   * tags/healthFunctions (the identity fields) didn't, so the single-term
+   * identity-hit gate below rejected the match as a passing prose mention.
+   * The real fix is tagging those products (see supabase/seed) — this alias
+   * is defense-in-depth so "std" also finds a product tagged only "sti"
+   * and vice versa, without needing every spelling duplicated in every tag. */
+  sti: ['std', 'stds', 'stis', 'sexually-transmitted', 'sexual-health'],
+  std: ['sti', 'stds', 'stis', 'sexually-transmitted', 'sexual-health'],
   cramps: ['cramp', 'dysmenorrhea', 'painful'],
   cramp: ['cramps', 'dysmenorrhea'],
+  heating: ['heat', 'heated', 'thermal', 'warming', 'warm'],
+  heat: ['heating', 'heated', 'thermal', 'warming'],
+  warming: ['heat', 'heating', 'thermal', 'warm'],
   organic: ['cotton', 'natural', 'chemical-free'],
   menopause: ['perimenopause', 'hot', 'flash', 'vasomotor'],
   hormone: ['hormonal', 'estrogen', 'progesterone'],
@@ -103,7 +152,15 @@ function termMatchesWithVariants(term, haystack) {
  */
 function meaningfulTerms(query) {
   const q = query.toLowerCase().trim().replace(/[^\w\s'-]/g, ' ');
-  return q.split(/\s+/).map((w) => w.replace(/^'+|'+$/g, '')).filter((w) => w.length > 1 && !STOP.has(w));
+  // Single-character tokens used to be dropped outright (w.length > 1), which
+  // silently collapsed "vitamin c" into a bare "vitamin" search — the "c" was
+  // never tokenized at all, so C/D/E/B/K-specific vitamin queries (and things
+  // like "omega 3") couldn't distinguish themselves from the generic term.
+  // Now kept, since wordMatchesInHaystack requires a real word-boundary match
+  // for single characters rather than a substring check — "a"/"i" (the only
+  // single letters that are themselves common noise words) are still caught
+  // by STOP below.
+  return q.split(/\s+/).map((w) => w.replace(/^'+|'+$/g, '')).filter((w) => w.length > 0 && !STOP.has(w));
 }
 
 /**
@@ -120,8 +177,17 @@ function minHitsForMatch(termCount) {
 
 /**
  * Score how well `query` matches product text. Higher is better.
+ *
+ * `identityHaystackLower` (optional, from buildIdentityTextForItem) lets a
+ * term that hits in name/brand/category/tags/healthFunctions score above one
+ * that only hits somewhere in prose (doctorOpinion, ingredients, etc). Without
+ * it, hit-counting alone can't distinguish a product that genuinely IS what
+ * the query asked for from one that just mentions the word in passing —
+ * omitting this argument preserves the exact old (pre-identity-weighting)
+ * scoring behavior, so existing callers/tests that only pass the full
+ * haystack are unaffected.
  */
-export function scoreQueryAgainstProduct(query, haystackLower) {
+export function scoreQueryAgainstProduct(query, haystackLower, identityHaystackLower = '') {
   const raw = query.toLowerCase().trim();
   if (!raw) return 0;
 
@@ -131,8 +197,10 @@ export function scoreQueryAgainstProduct(query, haystackLower) {
   }
 
   let hits = 0;
+  let identityHits = 0;
   for (const term of terms) {
     if (termMatchesWithVariants(term, haystackLower)) hits += 1;
+    if (identityHaystackLower && termMatchesWithVariants(term, identityHaystackLower)) identityHits += 1;
   }
 
   const minH = minHitsForMatch(terms.length);
@@ -144,7 +212,47 @@ export function scoreQueryAgainstProduct(query, haystackLower) {
     return 0;
   }
 
+  // Short queries (1-2 terms) are the highest-risk case for a weak, purely
+  // incidental prose mention passing as a real "match": a 1-word query only
+  // needs that one word to appear ANYWHERE in the flattened haystack
+  // (name/summary/doctorOpinion/ingredients/safety text/etc. all mashed
+  // together), and a 2-word query only needs ONE of the two ("vitamin c" and
+  // "pads thongs" both use this same 1-of-2 threshold). Confirmed against the
+  // real catalog: "vitamins" matched a lubricant, a UTI product, and a
+  // maternity pillow (all mentioning "vitamin" once, in passing); "stress"
+  // matched a Kegel exerciser and a breast pump; "iron" matched a heating
+  // pad — none of these are what the product actually IS, they just contain
+  // the word somewhere in several paragraphs of copy. Reject a match like
+  // that unless it's backed by SOME identity-field signal (the product's own
+  // name/brand/category/tags/healthFunctions really is about this term, not
+  // just a passing prose mention) or, for 2-term queries, by genuine full
+  // coverage (both terms present somewhere, even in prose — a much stronger
+  // signal than either alone). Longer natural-language queries (3+ terms)
+  // are deliberately left alone: minHitsForMatch already requires multiple
+  // independent term hits there, a much weaker coincidence risk, and this
+  // file's whole design intent is that a long spoken sentence can still
+  // match on partial prose coverage without also needing a tag/category hit.
+  // Only enforced when a caller actually supplied identity text — without it
+  // there's no way to tell "genuinely no identity signal" apart from "this
+  // caller doesn't distinguish identity from prose at all" (a few tests, and
+  // any future caller, intentionally use the simpler 2-arg form and get the
+  // older, more permissive behavior).
+  if (identityHaystackLower) {
+    if (terms.length === 1 && identityHits === 0) {
+      return 0;
+    }
+    if (terms.length === 2 && identityHits === 0 && hits < terms.length) {
+      return 0;
+    }
+  }
+
   let score = hits;
+  // A term matching in an identity field means the product IS about that
+  // term, not just mentioning it somewhere in a paragraph — weight it well
+  // above a plain prose hit (which is worth 1 point via `hits` above).
+  const IDENTITY_BONUS_PER_TERM = 2.5;
+  score += identityHits * IDENTITY_BONUS_PER_TERM;
+
   const collapsed = raw.replace(/\s+/g, ' ');
   if (collapsed.length >= 10 && haystackLower.includes(collapsed)) score += terms.length;
 

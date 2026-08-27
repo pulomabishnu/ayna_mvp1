@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import {
   loadEcosystemForUser,
   clearEcosystemForUser,
@@ -76,9 +76,20 @@ describe('clearEcosystemForUser — must not destroy tracked/omitted state', () 
     });
   });
 
-  it('surfaces an RLS denial instead of silently reporting success', async () => {
+  it('falls back to the durable shadow instead of losing the change on an RLS denial', async () => {
+    // The table write is deliberately not thrown on failure any more (see
+    // ecosystemStore.js's SHADOW_VERSION comment): user_ecosystems has
+    // historically drifted from the app's schema/RLS in production, and a
+    // thrown error here used to mean an ecosystem edit that "succeeded" in
+    // the UI was silently never saved anywhere. Now an RLS denial (or any
+    // table failure) resolves honestly as unsynced-to-the-table rather than
+    // rejecting, while the localStorage/user_metadata shadow still captures
+    // the change so it isn't lost.
     const sb = makeSupabase({ failOn: 'update', failCode: '42501' });
-    await expect(clearEcosystemForUser(sb, 'user-1')).rejects.toThrow(/RLS/i);
+    const result = await clearEcosystemForUser(sb, 'user-1');
+    expect(result.cleared).toBeNull();
+    expect(result.synced).toBe(false);
+    expect(result.fallback).toBe(true);
   });
 });
 
@@ -107,11 +118,18 @@ describe('upsertProductsBatch', () => {
     expect(sb.calls[0].options).toMatchObject({ onConflict: 'user_id,product_id' });
   });
 
-  it('names the missing unique constraint (42P10) explicitly', async () => {
+  it('names the missing unique constraint (42P10) explicitly, but falls back instead of rejecting', async () => {
+    // Same durable-fallback contract as clearEcosystemForUser above: the
+    // table failure no longer rejects (a batch save that "succeeded" in the
+    // UI must not silently vanish), but the specific, actionable diagnostic
+    // still reaches the console so the root cause stays debuggable.
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
     const sb = makeSupabase({ failOn: 'upsert', failCode: '42P10' });
-    await expect(
-      upsertProductsBatch(sb, 'user-1', [{ id: 'p1', name: 'P' }], { inEcosystem: true })
-    ).rejects.toThrow(/unique constraint/i);
+    const result = await upsertProductsBatch(sb, 'user-1', [{ id: 'p1', name: 'P' }], { inEcosystem: true });
+    expect(result.synced).toBe(false);
+    expect(result.fallback).toBe(true);
+    expect(warnSpy.mock.calls.flat().join(' ')).toMatch(/unique constraint/i);
+    warnSpy.mockRestore();
   });
 
   it('skips products with no id and no-ops on an empty list', async () => {
@@ -123,11 +141,31 @@ describe('upsertProductsBatch', () => {
 });
 
 describe('upsertProductState', () => {
-  it('deletes the row when no flag is set', async () => {
+  it('clears the flags, then deletes the row only if nothing else holds it', async () => {
     const sb = makeSupabase();
     await upsertProductState(sb, 'u', { id: 'p1' }, { inEcosystem: false, isTracked: false, isOmitted: false });
-    expect(sb.calls[0].op).toBe('delete');
+
+    // A plain DELETE would also wipe is_saved, emptying the user's Save for
+    // later list whenever she removed the same product from her ecosystem.
+    expect(sb.calls[0].op).toBe('update');
+    expect(sb.calls[0].payload).toMatchObject({ in_ecosystem: false, is_tracked: false, is_omitted: false });
     expect(sb.calls[0].filters).toMatchObject({ user_id: 'u', product_id: 'p1' });
+
+    expect(sb.calls[1].op).toBe('delete');
+    expect(sb.calls[1].filters).toMatchObject({
+      user_id: 'u', product_id: 'p1', in_ecosystem: false, is_tracked: false, is_omitted: false, is_saved: false,
+    });
+  });
+
+  it('tolerates a database without the is_saved column on the cleanup delete', async () => {
+    const sb = makeSupabase({ failOn: 'delete', failCode: '42703' });
+    // 42703 on this specific cleanup delete is explicitly tolerated as a
+    // genuine success (the flags are already cleared; see upsertProductState's
+    // own comment on this), so this resolves synced:true — unlike the RLS/
+    // constraint failures above, this isn't a fallback case.
+    await expect(
+      upsertProductState(sb, 'u', { id: 'p1' }, { inEcosystem: false, isTracked: false, isOmitted: false }),
+    ).resolves.toEqual({ synced: true });
   });
 
   it('upserts when any flag is set', async () => {

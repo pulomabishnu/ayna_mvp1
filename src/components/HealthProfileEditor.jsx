@@ -3,6 +3,8 @@ import {
   CONCERN_AREAS,
   INSURANCE_TYPES,
   FSA_HSA_OPTIONS,
+  CYCLE_OPTIONS,
+  TTC_OPTIONS,
   mapIntakeToLegacyQuizProfile,
   validateHealthIntake,
 } from '../utils/healthIntake';
@@ -155,19 +157,38 @@ export default function HealthProfileEditor({ currentProfile, onSave, onCancel, 
           </label>
           <label style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
             <span>Menstrual cycle</span>
-            <input value={draft.menstrualCycle || ''} onChange={(e) => setField('menstrualCycle', e.target.value)} />
+            {/* Was a free-text input holding the raw stored value ("yes",
+                "irregular", ...) — easy to enter something that doesn't match
+                any real option and easy to misread (found live, 2026-08-24
+                bug bash). Same CYCLE_OPTIONS the quiz itself uses. */}
+            <select value={draft.menstrualCycle || ''} onChange={(e) => setField('menstrualCycle', e.target.value)}>
+              <option value="">Not answered</option>
+              {CYCLE_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
           </label>
           <label style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
             <span>Flow level</span>
-            <input value={draft.flowLevel || ''} onChange={(e) => setField('flowLevel', e.target.value)} />
+            <select value={draft.flowLevel || ''} onChange={(e) => setField('flowLevel', e.target.value)}>
+              <option value="">Not answered</option>
+              {['Light', 'Medium', 'Heavy', 'Very heavy'].map((opt) => (
+                <option key={opt} value={opt}>{opt}</option>
+              ))}
+            </select>
           </label>
           <label style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
             <span>Pain level (1-10)</span>
-            <input value={draft.painLevel || ''} onChange={(e) => setField('painLevel', e.target.value)} />
+            <input type="number" min="1" max="10" value={draft.painLevel || ''} onChange={(e) => setField('painLevel', e.target.value)} />
           </label>
           <label style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
             <span>Trying to conceive</span>
-            <input value={draft.tryingToConceive || ''} onChange={(e) => setField('tryingToConceive', e.target.value)} />
+            <select value={draft.tryingToConceive || ''} onChange={(e) => setField('tryingToConceive', e.target.value)}>
+              <option value="">Not answered</option>
+              {TTC_OPTIONS.map((opt) => (
+                <option key={opt} value={opt}>{opt}</option>
+              ))}
+            </select>
           </label>
         </div>
 

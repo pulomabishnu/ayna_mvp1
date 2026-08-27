@@ -1,4 +1,5 @@
 import React from 'react';
+import { useEscapeToClose } from '../utils/useEscapeToClose';
 
 const MONTHLY_PRICE = '$18';
 const ANNUAL_PRICE = '$162';
@@ -6,6 +7,7 @@ const ANNUAL_SAVINGS = '3 months free';
 const CONTACT_EMAIL = 'pulomabishnu@gmail.com';
 
 export default function SubscriptionPaywallModal({ onClose, featureName = 'this feature', featureDescription = 'syncing and summarizing health data from wearables and EHRs' }) {
+  useEscapeToClose(true, onClose);
   const monthlyHref = `mailto:${CONTACT_EMAIL}?subject=Ayna%20Early%20Access%20Subscription%20(Monthly)&body=Hi%2C%20I%27d%20like%20to%20subscribe%20to%20Ayna%20Premium%20at%20%2418%2Fmonth.`;
   const annualHref = `mailto:${CONTACT_EMAIL}?subject=Ayna%20Early%20Access%20Subscription%20(Annual)&body=Hi%2C%20I%27d%20like%20to%20subscribe%20to%20Ayna%20Premium%20at%20%24162%2Fyear.`;
 
@@ -62,11 +64,11 @@ export default function SubscriptionPaywallModal({ onClose, featureName = 'this 
             Unlock Ayna Premium
           </h2>
           <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', lineHeight: 1.6 }}>
-            Ayna can only afford to offer {featureName} to paying users — {featureDescription} is
+            Ayna can only afford to offer {featureName} to paying users. {featureDescription} is
             costly to build and maintain.
           </p>
           <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', lineHeight: 1.6, marginTop: '0.75rem' }}>
-            As an early user, we&apos;re offering a <strong>lifetime discount</strong> —{' '}
+            As an early user, we&apos;re offering a <strong>lifetime discount</strong>. {' '}
             <strong>subscribe now to lock in this price forever.</strong>
           </p>
         </div>
@@ -118,8 +120,8 @@ export default function SubscriptionPaywallModal({ onClose, featureName = 'this 
         </div>
 
         <p style={{ textAlign: 'center', fontSize: '0.8rem', color: 'var(--color-text-muted)', lineHeight: 1.5 }}>
-          Click a plan to get in touch. Feature is currently in development — your early-user
-          price is locked in forever once you subscribe.
+          Click a plan to email us and get started. Feature is currently in development. Your
+          early-user price is locked in forever once you subscribe.
         </p>
       </div>
     </div>

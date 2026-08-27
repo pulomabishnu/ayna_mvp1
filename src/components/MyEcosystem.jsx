@@ -1,19 +1,17 @@
 import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react';
 import SubscriptionPaywallModal from './SubscriptionPaywallModal';
 import {
-    HEALTH_FUNCTIONS,
     ALL_PRODUCTS,
-    detectDuplicates,
     getEcosystemAlternatives,
     getRecommendationExplanation,
 } from '../data/products';
-import { getInteractions } from '../data/interactions';
+import ProductTileImage, { resolveCatalogProductImage, ProductImageFallback } from './ProductTileImage';
 import CareNearYouPanel from './CareNearYouPanel';
+import EcosystemBubbles, { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
+import EcosystemShelf from './EcosystemShelf';
 import LlmRecommendationsLoadingBlock from './LlmRecommendationsLoadingBlock';
-import HealthDataImport from './HealthDataImport';
-import { inferTagsFromHealthProfile } from '../utils/healthDataProfile';
-import { RELEASED_STARTUPS, UNRELEASED_STARTUPS } from '../data/startups';
 import { generateTieredRecommendations } from '../utils/recommendationEngine';
+import { useEscapeToClose } from '../utils/useEscapeToClose';
 import {
     fetchLlmRecommendations,
     buildIdFromFingerprint,
@@ -25,17 +23,64 @@ import {
     loadFetchedLlmFingerprint,
     saveFetchedLlmFingerprint,
 } from '../utils/fetchLlmRecommendations';
-import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
+import { resolveProductImage, isPlaceholderProductImage, safeProductImageSrc } from '../utils/resolveProductImage';
 import { getPricePerUnitLabel } from '../utils/pricePerUnit';
 import { deriveBrandSearchContext } from '../utils/productBrandContext.js';
 import { getSupabaseClient } from '../utils/supabaseClient';
+import {
+    subscribeToGeneration,
+    notifyGeneration,
+    discardGeneration,
+    activeGenerations,
+    GENERATION_ABANDON_GRACE_MS,
+} from '../utils/ecosystemGenerationStore';
 import { loadPhoneNumberForUser } from '../utils/phoneNumberStore';
 import posthog from 'posthog-js';
+
+// Ecosystem products are stored as a full snapshot of the product object at
+// the moment they're added (toggleMyProduct in App.jsx), not a live ID
+// reference — see ProductTileImage.jsx (shared with SavedForLater.jsx,
+// EcosystemShelf.jsx, TrackedItems.jsx, Comparison.jsx, Recalls.jsx,
+// OmittedProducts.jsx, AynaLanding.jsx, Recommendations.jsx — every place
+// that renders one of these snapshots) for the full history of why a
+// synchronous catalog lookup alone isn't enough and a live resolution
+// fallback is needed too.
 
 const AYNA_SMS_NUMBER = import.meta.env.VITE_AYNA_SMS_NUMBER || '';
 const SMS_CARD_DISMISS_KEY = 'ayna_sms_card_dismissed_at';
 const SMS_CARD_RESHOWN_KEY = 'ayna_sms_card_last_reshown_at';
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+
+// Sidebar area-breakdown bar/legend colors, in the order shelfAreaBreakdown
+// sorts by count (largest first) — real design tokens (index.css), not new colors.
+const SHELF_AREA_COLORS = ['var(--color-navy)', 'var(--color-plum)', 'var(--color-terracotta)', 'var(--color-amber)', 'var(--color-amber-deep)'];
+
+const SYNC_SOURCES = [
+  { id: 'apple-health', label: 'Apple Health' },
+  { id: 'strava', label: 'Strava' },
+  { id: 'garmin', label: 'Garmin' },
+  { id: 'flo', label: 'Flo' },
+  { id: 'whoop', label: 'Whoop' },
+  { id: 'oura', label: 'Oura Ring' },
+  { id: 'google-fit', label: 'Google Fit' },
+];
+
+// Clicking "Swap" on a product, or an area bubble, used to always land on
+// unfiltered Browse — the specific area clicked was received then discarded
+// (found live, 2026-08-24 bug bash: "Sleep" showed tampons and supplements,
+// nothing sleep-related). An area with more than one underlying catalog
+// category (e.g. "Period" covers pads/tampons/cups/discs/...) maps to
+// Discovery's broader initialMacroGroup, so every category in it stays
+// visible; a single-category area (Clinicians -> telehealth, Supplements ->
+// supplement — EcosystemBubbles' own additions, not real MACRO_GROUPS
+// entries) maps to the narrower initialCategory instead, since there's only
+// one real thing to show either way.
+function exploreAreaOptions(area) {
+  const categories = Array.isArray(area?.categories) ? area.categories : [];
+  if (categories.length > 1) return { initialMacroGroup: area.key };
+  if (categories.length === 1) return { initialCategory: categories[0] };
+  return '';
+}
 
 function buildAynaVCardDataUri(phoneNumber) {
   const vcard = [
@@ -104,7 +149,7 @@ function normalizeConcernLabel(raw) {
   return raw;
 }
 
-/** Full card for “By function” ecosystem grid: image (🌸 fallback), brand, summary, price, health function, Details + Remove */
+/** Full card for “By function” ecosystem grid: image (letter-tile fallback), brand, summary, price, health function, Details + Remove */
 function EcosystemFunctionProductCard({
     product,
     healthFunctionLabel,
@@ -125,10 +170,20 @@ function EcosystemFunctionProductCard({
     const [triedResolveFallback, setTriedResolveFallback] = useState(false);
     const perUnitPrice = getPricePerUnitLabel(product);
     const { brandName } = deriveBrandSearchContext(product);
-    const brandDisplay = brandName || '—';
+    const brandDisplay = brandName || 'N/A';
     const rawSummary = (product.summary || '').trim();
     const summaryShort = rawSummary.length > 110 ? `${rawSummary.slice(0, 107)}…` : rawSummary;
-    const displayImage = resolvedCardImage || product.image || '';
+    // resolvedCardImage came back from the server's type-aware
+    // /api/product-image resolution — trust it as-is rather than re-running
+    // it through isPlaceholderProductImage, which doesn't know the product
+    // is 'digital' and would reject a legitimate app/telehealth logo again.
+    // Same reasoning for the resolveCatalogProductImage(product) fallback below:
+    // its own product.image can itself already be a server-resolved value
+    // merged in by the caller (recommendedSwapByKey/tier.product rendering
+    // above), and resolveCatalogProductImage() already gates its own catalog
+    // lookups internally — wrapping the result in safeProductImageSrc again
+    // re-applies the type-blind heuristic to that already-vetted value.
+    const displayImage = resolvedCardImage || resolveCatalogProductImage(product) || '';
 
     useEffect(() => {
         setImgError(false);
@@ -142,7 +197,7 @@ function EcosystemFunctionProductCard({
             return;
         }
         setTriedResolveFallback(true);
-        resolveProductImage(product.name, product.brand || '', product.url || '').then((url) => {
+        resolveProductImage(product.name, product.brand || '', product.url || '', product.type || '').then((url) => {
             if (url) {
                 setResolvedCardImage(url);
                 setImgError(false);
@@ -194,12 +249,12 @@ function EcosystemFunctionProductCard({
                 }}
             >
                 {imgError || !displayImage ? (
-                    <span style={{ fontSize: '2rem', lineHeight: 1 }} aria-hidden>🌸</span>
+                    <ProductImageFallback />
                 ) : (
                     <img
                         src={displayImage}
                         alt=""
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '8px', boxSizing: 'border-box' }}
                         onError={handleImageError}
                     />
                 )}
@@ -224,7 +279,7 @@ function EcosystemFunctionProductCard({
                 </p>
             ) : null}
             <div style={{ fontSize: '0.82rem', fontWeight: '600', color: 'var(--color-primary)', marginBottom: perUnitPrice ? '0.1rem' : '0.35rem' }}>
-                {product.price || product.stage || '—'}
+                {product.price || product.stage || 'N/A'}
             </div>
             {perUnitPrice ? (
                 <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)', marginBottom: '0.35rem' }}>{perUnitPrice}</div>
@@ -453,7 +508,11 @@ function EcosystemProductAlternatives({ product, seedEntry, quizResults, healthP
                                         background: 'var(--color-bg)',
                                     }}
                                 >
-                                    <img src={a.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    {safeProductImageSrc(a.image, a.type === 'digital') ? (
+                                        <img src={safeProductImageSrc(a.image, a.type === 'digital')} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    ) : (
+                                        <ProductImageFallback compact />
+                                    )}
                                 </div>
                                 <span style={{ fontSize: '0.85rem', fontWeight: '500', color: 'var(--color-text-main)', lineHeight: 1.35 }}>
                                     {a.name}
@@ -509,12 +568,7 @@ function IntakeRecAltMini({ alt, myProducts, onToggleProduct, onOpenProduct, res
                     {imgSrc ? (
                         <img src={imgSrc} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : (
-                        <div style={{
-                            width: '100%', height: '100%',
-                            background: 'linear-gradient(135deg, var(--color-secondary-fade), #f3e8ff)',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            fontSize: '1.25rem',
-                        }}>🌸</div>
+                        <ProductImageFallback compact />
                     )}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
@@ -582,16 +636,11 @@ function IntakeRecommendationsProductCard({
             position: 'relative', marginBottom: '0.35rem',
         }}
         >
-            <div style={{ height: '96px', width: '100%', overflow: 'hidden', position: 'relative' }}>
+            <div style={{ height: '96px', width: '100%', overflow: 'hidden', position: 'relative', background: 'linear-gradient(160deg, #F3EADC, #EFE3D2)' }}>
                 {imgSrc ? (
-                    <img src={imgSrc} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={imgSrc} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '8px', boxSizing: 'border-box' }} />
                 ) : (
-                    <div style={{
-                        width: '100%', height: '100%',
-                        background: 'linear-gradient(135deg, var(--color-secondary-fade), var(--color-primary-fade, #f3e8ff))',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: '1.5rem',
-                    }}>🌸</div>
+                    <ProductImageFallback />
                 )}
                 <span style={{
                     position: 'absolute', top: '0.45rem', left: '0.45rem',
@@ -615,7 +664,7 @@ function IntakeRecommendationsProductCard({
                         background: 'linear-gradient(135deg, #FEF9C3, #FDE68A)', color: '#854D0E',
                         padding: '0.22rem 0.55rem', borderRadius: 'var(--radius-pill)', fontSize: '0.7rem', fontWeight: '700',
                         border: '1px solid #FACC15',
-                    }}>⭐ Top pick for you</span>
+                    }}>Top pick for you</span>
                 )}
                 {hasIndependentClinician ? (
                     <span style={{
@@ -655,14 +704,14 @@ function IntakeRecommendationsProductCard({
                         <span style={{ fontSize: '0.65rem', background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.45rem', borderRadius: 'var(--radius-pill)' }}>✓ No recalls</span>
                     )}
                     {showRecallWarning && (
-                        <span style={{ fontSize: '0.65rem', background: '#F8F9FA', color: 'var(--color-text-main)', padding: '0.2rem 0.45rem', borderRadius: 'var(--radius-pill)' }}>⚠️ Safety note</span>
+                        <span style={{ fontSize: '0.65rem', background: '#FEF3C7', color: '#92400E', padding: '0.2rem 0.45rem', borderRadius: 'var(--radius-pill)' }}>Safety note</span>
                     )}
                     {product.privacy?.sellsData?.includes('❌') && (
-                        <span style={{ fontSize: '0.65rem', background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.45rem', borderRadius: 'var(--radius-pill)' }}>🔒 No data selling</span>
+                        <span style={{ fontSize: '0.65rem', background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.45rem', borderRadius: 'var(--radius-pill)' }}>No data selling</span>
                     )}
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', marginBottom: '0.45rem', flexWrap: 'wrap' }}>
-                    <span style={{ fontSize: '0.88rem', fontWeight: '600', color: 'var(--color-text-main)' }}>{product.price || '—'}</span>
+                    <span style={{ fontSize: '0.88rem', fontWeight: '600', color: 'var(--color-text-main)' }}>{product.price || 'N/A'}</span>
                 </div>
                 <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', marginTop: 'auto' }}>
                     <button type="button" className="btn btn-outline" style={{ padding: '0.32rem 0.55rem', fontSize: '0.72rem' }} onClick={() => onToggleProduct(product)}>
@@ -722,7 +771,7 @@ function IntakeRecommendationsProductCard({
 function inferHealthFunctionsFromLlm(product, concern = '', tierSubcategory = '') {
     // Strip parenthetical detail from concern for cleaner matching
     const c = String(concern).toLowerCase().replace(/\s*\(.*?\)/g, '').trim();
-    const cat = String(product.category || '').toLowerCase();
+    const cat = String(product.type || '').toLowerCase();
     const type = String(product.type || '').toLowerCase();
     const sub = String(tierSubcategory || '').toLowerCase();
 
@@ -789,8 +838,10 @@ function estimateMonthlyCost(priceStr, product) {
     const perMonthMatch = s.match(/\$(\d+)(?:\.\d+)?\s*\/?\s*month/i);
     if (perMonthMatch) return parseFloat(perMonthMatch[1]);
 
-    // Range: "$25–$38", "$25–38", "$25-38", "$25—38" → use average
-    const rangeMatch = s.match(/\$(\d+(?:\.\d+)?)\s*[–—‒\-]+\s*\$?(\d+(?:\.\d+)?)/);
+    // Range: "$25–$38", "$25–38", "$25-38" → use average. Only real
+    // range-separator characters here — a literal '.' or ' ' would false-match
+    // any two dollar amounts sitting near each other in the string.
+    const rangeMatch = s.match(/\$(\d+(?:\.\d+)?)\s*[–‒\-]+\s*\$?(\d+(?:\.\d+)?)/);
     if (rangeMatch) {
         const avg = (parseFloat(rangeMatch[1]) + parseFloat(rangeMatch[2])) / 2;
         if (/per pair|underwear|pair/i.test(s)) return avg / 18; // ~18 months life
@@ -855,72 +906,10 @@ function estimateMonthlyCost(priceStr, product) {
     return null;
 }
 
-// Module-level (not component state) so an in-flight ecosystem generation
-// survives MyEcosystem unmounting and remounting — e.g. the component
-// re-rendering somewhere upstream, or any other transient reason the tree
-// gets torn down mid-generation. Previously the generation lived entirely in
-// component state/refs, so a remount aborted the in-flight fetch (killing
-// serverless invocations already billed) and any *new* mount started over
-// from Date.now(), which is what made the loading timer look like it
-// "reset" and made a generation that was seconds from finishing instead
-// surface as a failure. Keyed by intake fingerprint; a record's async work
-// keeps running and notifying subscribers regardless of which (if any)
-// component instance is currently mounted and watching it.
-const activeGenerations = new Map();
-
-function notifyGeneration(rec) {
-    rec.subscribers.forEach((fn) => fn(rec));
-}
-
-/**
- * Subscribe to (or start) the generation for `fingerprint`. Returns an
- * unsubscribe function. `onStart` is called synchronously if this caller is
- * the one that should actually run the generation (no one else already is).
- */
-function subscribeToGeneration(fingerprint, onUpdate, onStart) {
-    let rec = activeGenerations.get(fingerprint);
-    const isNew = !rec;
-    if (isNew) {
-        rec = { startedAt: 0, controller: null, cancelled: false, tiered: [], loading: false, error: '', subscribers: new Set(), gcTimer: null };
-        activeGenerations.set(fingerprint, rec);
-    } else if (rec.gcTimer) {
-        // A previous mount's cleanup was about to give up on this generation
-        // (no subscribers left) — a new mount just showed up wanting it, so
-        // cancel the pending abandon-and-abort.
-        clearTimeout(rec.gcTimer);
-        rec.gcTimer = null;
-    }
-    rec.subscribers.add(onUpdate);
-    onUpdate(rec);
-    if (isNew) onStart(rec);
-    return () => {
-        rec.subscribers.delete(onUpdate);
-        if (rec.subscribers.size > 0) return;
-        // Grace period, not an immediate abort: covers a remount (unmount then
-        // re-mount of the same fingerprint) without waiting forever on a
-        // generation nobody will ever come back to watch (quiz retaken,
-        // genuine navigation away).
-        rec.gcTimer = setTimeout(() => {
-            if (rec.subscribers.size > 0) return;
-            rec.controller?.abort();
-            rec.cancelled = true;
-            // Only remove the map entry if it's still *this* record — an
-            // explicit refresh (discardGeneration) or a fresh start could have
-            // already replaced it with a newer generation under the same key.
-            if (activeGenerations.get(fingerprint) === rec) activeGenerations.delete(fingerprint);
-        }, 3000);
-    };
-}
-
-/** Abort and discard any existing record so a fresh one can start in its place. */
-function discardGeneration(fingerprint) {
-    const rec = activeGenerations.get(fingerprint);
-    if (!rec) return;
-    if (rec.gcTimer) clearTimeout(rec.gcTimer);
-    rec.controller?.abort();
-    rec.cancelled = true;
-    activeGenerations.delete(fingerprint);
-}
+// activeGenerations / subscribeToGeneration / notifyGeneration / discardGeneration /
+// GENERATION_ABANDON_GRACE_MS moved to ../utils/ecosystemGenerationStore (imported
+// above) so the global EcosystemGenerationBar (App.jsx) can observe an in-flight
+// generation from any page, not just while MyEcosystem itself is mounted.
 
 export default function MyEcosystem({
     myProducts,
@@ -952,20 +941,26 @@ export default function MyEcosystem({
     isPremium = false,
 }) {
     const [showAddModal, setShowAddModal] = useState(false);
+    useEscapeToClose(showAddModal, () => setShowAddModal(false));
+    const [showMoreTools, setShowMoreTools] = useState(false);
+    const careNearYouDetailsRef = useRef(null);
     const [showSyncPaywall, setShowSyncPaywall] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
-    const viewMode = 'function';
-    const [interactionSelection, setInteractionSelection] = useState(new Set()); // product ids for interaction check
     const [ecosystemCompareOpen, setEcosystemCompareOpen] = useState({});
     const [ecosystemAltMiniKey, setEcosystemAltMiniKey] = useState('');
     const [llmTiered, setLlmTiered] = useState([]);
     const [llmLoading, setLlmLoading] = useState(false);
     const [llmError, setLlmError] = useState('');
+    // Distinct from llmError: some concerns didn't generate but others DID —
+    // the ecosystem is functionally built, just missing a couple of sections.
+    // Kept separate so this never renders under the "We couldn't build your
+    // ecosystem" framing, which used to fire for this case too (see rec.error
+    // vs rec.partialConcerns below).
+    const [llmPartialConcerns, setLlmPartialConcerns] = useState([]);
     const [llmLoadStartedAt, setLlmLoadStartedAt] = useState(0);
     // Last known-good complete recommendation set — restored if a rebuild is cancelled mid-flight.
     const previousLlmTieredRef = useRef([]);
     const [resolvedImages, setResolvedImages] = useState({});
-    const [healthDataImportOpen, setHealthDataImportOpen] = useState(false);
     const [recommendedSwapByKey, setRecommendedSwapByKey] = useState({});
     const [recommendedSectionOpen, setRecommendedSectionOpen] = useState({});
     const [recommendationRefreshNonce, setRecommendationRefreshNonce] = useState(() => {
@@ -1046,44 +1041,27 @@ export default function MyEcosystem({
     // Use ecosystemOrder for stable card positions; fall back to insertion order
     const myProductIds = ecosystemOrder.length ? ecosystemOrder.filter(id => myProducts[id]) : Object.keys(myProducts);
     const myProductList = myProductIds.map(id => myProducts[id]).filter(Boolean);
-    const { functionMap } = useMemo(() => detectDuplicates(myProductIds, myProducts), [myProductIds, myProducts]);
-    const ecosystemStartups = useMemo(() => {
-        const FRUSTRATION_TAG = {
-            'Heavy flow': 'heavy-flow', 'Painful cramps': 'cramps', 'Hormonal bloating': 'bloating',
-            'Irregular cycles': 'irregular', 'Leaks & staining': 'leaks', 'General discomfort': 'discomfort',
-            'Not sure if products are safe': 'safety-concern', 'Recurrent UTIs': 'uti', 'PCOS symptoms': 'pcos',
-            'Pelvic pain': 'pelvic-floor', 'Menopause symptoms': 'menopause', 'Endometriosis': 'endometriosis',
-            'Fertility / TTC': 'fertility', 'Pregnancy': 'pregnancy', 'Postpartum recovery': 'postpartum',
-        };
-        const userTags = new Set();
-        (quizResults?.frustrations || []).forEach(f => { const t = FRUSTRATION_TAG[f]; if (t) userTags.add(t); });
-        (inferTagsFromHealthProfile(healthProfile) || []).forEach(t => userTags.add(t));
-
-        const alreadyInEcosystem = new Set(myProductList.map(p => (p.name || '').toLowerCase()));
-
-        function scoreList(list) {
-            return list
-                .filter(s => !alreadyInEcosystem.has(s.name.toLowerCase()))
-                .map(s => {
-                    let score = 0;
-                    (s.tags || []).forEach(t => { if (userTags.has(t)) score += 2; });
-                    (s.healthFunctions || []).forEach(fn => {
-                        if (Object.keys(functionMap).includes(fn)) score += 1;
-                    });
-                    return { ...s, _score: score };
-                })
-                .sort((a, b) => b._score - a._score)
-                .slice(0, 6);
-        }
-
-        return {
-            // US-available brands: show all (score just determines order), no score gate
-            brands: scoreList(RELEASED_STARTUPS),
-            // Not-yet-US startups: only show if relevant to the user (score > 0)
-            startups: scoreList(UNRELEASED_STARTUPS).filter(s => s._score > 0),
-        };
-    }, [myProductList, quizResults, healthProfile, functionMap]);
-
+    // Broader "shelf" areas (Cycle care, Pelvic floor, Clinicians, ...) — the
+    // same grouping EcosystemBubbles/EcosystemShelf use, matching the mockup's
+    // sidebar row labels. Groups by care AREA, not raw catalog category (e.g.
+    // 'pad', 'tampon' would otherwise be separate rows) — too fine-grained
+    // for a sidebar summary.
+    const shelfAreaBreakdown = useMemo(() => {
+        const byArea = new Map();
+        myProductList.forEach((p) => {
+            const area = resolveEcosystemProductArea(p, ECOSYSTEM_AREAS);
+            const key = area ? area.key : 'other';
+            if (!byArea.has(key)) byArea.set(key, []);
+            byArea.get(key).push(p);
+        });
+        const filled = ECOSYSTEM_AREAS
+            .filter((a) => byArea.has(a.key))
+            .map((a) => ({ ...a, count: byArea.get(a.key).length }))
+            .sort((a, b) => b.count - a.count);
+        const gap = ECOSYSTEM_AREAS.find((a) => !byArea.has(a.key)) || null;
+        const clinicianCount = byArea.get('care')?.length || 0;
+        return { filled, gap, clinicianCount };
+    }, [myProductList]);
     const estimatedMonthlyTotal = useMemo(() => {
         let total = 0;
         let counted = 0;
@@ -1097,19 +1075,6 @@ export default function MyEcosystem({
         });
         return { total: Math.round(total * 100) / 100, counted, totalItems: myProductList.length };
     }, [myProductList]);
-
-    const integrationMap = useMemo(() => {
-        const map = {};
-        myProductList.forEach(p => {
-            const integrations = Array.isArray(p.integrations) ? p.integrations : (p.integrations ? [p.integrations] : ['No Integration']);
-            integrations.forEach(int => {
-                if (!map[int]) map[int] = [];
-                map[int].push(p);
-            });
-        });
-        return map;
-    }, [myProductList]);
-
     const filteredProducts = useMemo(() => {
         const words = searchTerm.toLowerCase().trim().split(/\s+/).filter(Boolean);
         if (!words.length) return ALL_PRODUCTS.filter(p => !omittedProducts[p.id]);
@@ -1122,19 +1087,6 @@ export default function MyEcosystem({
             !omittedProducts[p.id] && words.every(w => haystack(p).includes(w))
         );
     }, [searchTerm, omittedProducts]);
-
-    const interactionProductList = useMemo(() => {
-        return myProductList.filter(p => interactionSelection.has(p.id));
-    }, [myProductList, interactionSelection]);
-    const interactionResults = useMemo(() => getInteractions(interactionProductList), [interactionProductList]);
-    const toggleInteractionSelect = (product) => {
-        setInteractionSelection(prev => {
-            const next = new Set(prev);
-            if (next.has(product.id)) next.delete(product.id);
-            else next.add(product.id);
-            return next;
-        });
-    };
 
     const intakeTieredRecommendations = useMemo(() => {
         if (!hasCompletedPersonalization) return [];
@@ -1155,6 +1107,7 @@ export default function MyEcosystem({
             setLlmTiered([]);
             setLlmLoading(false);
             setLlmError('');
+            setLlmPartialConcerns([]);
             setLlmLoadStartedAt(0);
             return undefined;
         }
@@ -1170,18 +1123,19 @@ export default function MyEcosystem({
                 previousLlmTieredRef.current = cached;
                 setLlmLoading(false);
                 setLlmError('');
+                setLlmPartialConcerns([]);
                 setLlmLoadStartedAt(0);
                 return undefined;
             }
             if (alreadyFetchedForFingerprint) {
-                // We attempted this intake before but have no cached result —
-                // previously this rendered an empty section with no error, which
-                // is indistinguishable from "you have no recommendations".
-                setLlmTiered([]);
-                setLlmLoading(false);
-                setLlmError('We couldn’t load your recommendations last time. Tap “Refresh recommendations” to try again.');
-                setLlmLoadStartedAt(0);
-                return undefined;
+                // A prior failed generation used to poison this intake forever:
+                // the fingerprint was recorded even when no recommendations were
+                // cached, so a reload would refuse to try again. If there is no
+                // cached payload, retry normally instead of trapping the user —
+                // the instant local ecosystem below already gives her something
+                // useful while this retry runs, so there's no need to interrupt
+                // her with an error just because a past attempt didn't cache.
+                console.warn('[Ayna] previous recommendation attempt has no cache; retrying');
             }
         } else {
             // Explicit refresh: any existing record for this fingerprint (in-flight
@@ -1193,19 +1147,29 @@ export default function MyEcosystem({
             setLlmTiered(rec.tiered);
             setLlmLoading(rec.loading);
             setLlmError(rec.error);
+            setLlmPartialConcerns(rec.partialConcerns || []);
             setLlmLoadStartedAt(rec.startedAt);
         };
 
         const unsubscribe = subscribeToGeneration(intakeFingerprint, onUpdate, (rec) => {
             const intake = quizResults?.fullHealthIntake || null;
-            console.log('[Ayna LLM] Starting fetch — concerns:', intake?.primaryConcerns?.length ?? 0, '| goals:', intake?.goals?.length ?? 0, '| intake null?', !intake);
+            console.log('[Ayna LLM] Starting fetch. Concerns:', intake?.primaryConcerns?.length ?? 0, '| goals:', intake?.goals?.length ?? 0, '| intake null?', !intake);
 
             rec.controller = new AbortController();
             rec.startedAt = Date.now();
             rec.loading = true;
             rec.error = '';
+            rec.partialConcerns = [];
             rec.tiered = [];
             notifyGeneration(rec);
+
+            // Local-first: give the user a usable ecosystem immediately.
+            // The LLM batches below still run and can refine these matches later.
+            const instantLocal = generateTieredRecommendations(intake);
+            if (Array.isArray(instantLocal) && instantLocal.length > 0) {
+                rec.tiered = instantLocal;
+                notifyGeneration(rec);
+            }
 
             (async () => {
                 // Per-attempt state — the shared record only needs the fields
@@ -1223,9 +1187,15 @@ export default function MyEcosystem({
                     // serverless invocations. Each invocation now handles 3 concerns
                     // at concurrency 3, so it finishes well inside the 60s function
                     // ceiling instead of needing a 252s budget that never existed.
-                    // 4 x 3 covers the server's MAX_CONCERNS cap of 12.
+                    // 7 x 3 covers the server's MAX_CONCERNS cap of 20 (raised from
+                    // 6 x 3 / cap 18 on 2026-08-25, when the quiz grew from 16 to 18
+                    // checkbox options — same silent-truncation risk as the original
+                    // 12/4 bug if this isn't kept in lockstep with the server cap;
+                    // keeping BATCH_SIZE at 3 rather than raising it preserves the
+                    // per-invocation timing this was already tuned for, just runs one
+                    // more invocation in parallel).
                     const BATCH_SIZE = 3;
-                    const NUM_BATCHES = 4;
+                    const NUM_BATCHES = 7;
                     const buildId = buildIdFromFingerprint(intakeFingerprint);
                     let doneCount = 0;
 
@@ -1244,11 +1214,19 @@ export default function MyEcosystem({
                                     // nothing. Without this the user just sees fewer
                                     // sections than she asked for, with no signal.
                                     partialConcerns.push(...d.failedConcerns);
+                                    // Reason travels with the response so this is
+                                    // diagnosable from the browser console alone — a
+                                    // live 2026-08-22 incident (2 concerns failed
+                                    // ~20s in) was undiagnosable after the fact
+                                    // because nothing captured *why*, and by the
+                                    // time anyone checked, Vercel's log retention
+                                    // no longer had it.
+                                    if (Array.isArray(d.failedConcernReasons) && d.failedConcernReasons.length) {
+                                        console.warn('[Ayna LLM] Concern failures this batch:', d.failedConcernReasons);
+                                    }
                                 }
                                 if (recs.length > 0) {
                                     accumulated.push(...recs);
-                                    rec.tiered = [...accumulated];
-                                    notifyGeneration(rec);
                                 }
                             })
                             .catch(e => {
@@ -1266,21 +1244,44 @@ export default function MyEcosystem({
 
                     if (rec.cancelled) return;
                     const recs = accumulated;
-                    console.log('[Ayna LLM] Done — sections:', recs.length, '| errors:', errorCount);
+                    console.log('[Ayna LLM] Done. Sections:', recs.length, '| errors:', errorCount);
+
+                    // Swap in the completed AI result only after all batches finish.
+                    // Until then, keep the instant local ecosystem stable.
+                    if (recs.length > 0) {
+                        rec.tiered = recs;
+                        notifyGeneration(rec);
+                    }
+
                     if (recs.length === 0 && errorCount > 0) {
-                        // Specific causes must survive: a quota 429 is an upgrade
-                        // prompt and a 401 is a re-auth prompt, not "try again".
+                        // Preserve intentional auth/quota behavior, but do not make
+                        // the core ecosystem depend on the LLM endpoint being up.
+                        // The app already has a vetted local recommendation engine;
+                        // use it as an immediate fallback for network/5xx/404/timeouts.
                         if (limitReached) {
                             rec.error = "You've already generated your Ayna ecosystem. Regenerating is a premium feature. Email pulomabishnu@gmail.com to upgrade.";
                             notifyGeneration(rec);
                             return;
                         }
                         if (authFailed) {
-                            rec.error = 'Your session expired — please sign in again.';
+                            rec.error = 'Your session expired. Please sign in again.';
                             notifyGeneration(rec);
                             return;
                         }
-                        throw new Error('All recommendation batches failed — please try again.');
+
+                        const fallbackRecs = generateTieredRecommendations(intake);
+                        if (Array.isArray(fallbackRecs) && fallbackRecs.length > 0) {
+                            console.warn('[Ayna LLM] all remote batches failed; using local recommendation fallback');
+                            rec.tiered = fallbackRecs;
+                            rec.error = '';
+                            notifyGeneration(rec);
+                            if (hasCompletedPersonalization) onLlmRecommendationsLoaded?.(fallbackRecs);
+                            const fallbackCached = saveCachedLlmRecommendations(intakeFingerprint, fallbackRecs);
+                            if (fallbackCached) saveFetchedLlmFingerprint(intakeFingerprint);
+                            return;
+                        }
+
+                        throw new Error('We couldn’t build recommendations right now. Please try again.');
                     }
                     if (recs.length === 0) return; // nothing to do (no concerns matched)
                     if (recs.length > 0) {
@@ -1296,8 +1297,15 @@ export default function MyEcosystem({
                     // produced a permanently empty ecosystem with no error.
                     if (cachedOk) saveFetchedLlmFingerprint(intakeFingerprint);
                     if (partialConcerns.length > 0) {
-                        const missed = Array.from(new Set(partialConcerns)).slice(0, 4).join(', ');
-                        rec.error = `Some recommendations couldn’t be generated (${missed}). Tap “Refresh recommendations” to retry those.`;
+                        // NOT rec.error — this branch only runs when recs.length > 0
+                        // (the recs.length === 0 case above already returned), so the
+                        // ecosystem DID build, just missing a couple of sections. Every
+                        // rec.error reader in this file renders an alarming "We
+                        // couldn't build your ecosystem" banner, which used to fire
+                        // here too and told a user who got 10/12 sections that the
+                        // whole build failed. Keep this as its own field so it can get
+                        // its own, accurate, non-alarming treatment.
+                        rec.partialConcerns = Array.from(new Set(partialConcerns)).slice(0, 4);
                         notifyGeneration(rec);
                     }
                     const recommendedProductIds = recs.flatMap((entry) =>
@@ -1325,7 +1333,8 @@ export default function MyEcosystem({
                     const errMsg = typeof e?.message === 'string' ? e.message : (typeof e === 'string' ? e : JSON.stringify(e));
                     console.error('[Ayna LLM] Error:', e);
                     rec.error = errMsg || 'Could not load recommendations';
-                    saveFetchedLlmFingerprint(intakeFingerprint);
+                    // Never mark a failed request as fetched. Doing so prevents the
+                    // same intake from retrying on reload even though no cache exists.
                     notifyGeneration(rec);
                 } finally {
                     if (!rec.cancelled) {
@@ -1514,7 +1523,7 @@ export default function MyEcosystem({
             while (!cancelledRef.cancelled) {
                 const item = queue.shift();
                 if (!item) return;
-                const url = await resolveProductImage(item.name, item.brand || '', item.url || '');
+                const url = await resolveProductImage(item.name, item.brand || '', item.url || '', item.type || '');
                 if (cancelledRef.cancelled) return;
                 setResolvedImages((prev) => (prev[item.id] !== undefined ? prev : { ...prev, [item.id]: url || '' }));
             }
@@ -1543,19 +1552,28 @@ export default function MyEcosystem({
     }, [activeTiered]);
 
     useEffect(() => {
+        // myProductList is deliberately excluded here — ProductTileImage
+        // (used everywhere "Your products" tiles render) now resolves those
+        // images itself on demand. Keeping this effect's own fetch for the
+        // same items too meant every ecosystem product ran two independent
+        // resolveProductImage() calls per mount; resolveProductImage()'s
+        // shared memCache/localStorage dedupes the network cost, but it's
+        // still redundant work. recommendedProducts still needs this path —
+        // it feeds IntakeRecommendationsProductCard/IntakeRecAltMini, which
+        // don't use ProductTileImage.
         const recommendedProducts = recommendedProductsForDisplay
             .flatMap((s) => (Array.isArray(s?.tiers) ? s.tiers : []))
             .flatMap((tier) => [tier?.product, ...(Array.isArray(tier?.alternatives) ? tier.alternatives : [])])
             .filter(Boolean);
-        const productsNeedingImage = [...myProductList, ...ecosystemStartups.brands, ...ecosystemStartups.startups, ...recommendedProducts]
+        const productsNeedingImage = recommendedProducts
             .filter((p) => p && p.id && p.name)
             .filter((p) => resolvedImages[p.id] === undefined)
-            .filter((p) => isPlaceholderProductImage(p.image));
+            .filter((p) => isPlaceholderProductImage(p.image, p.type === 'digital'));
         if (productsNeedingImage.length === 0) return undefined;
         const cancelledRef = { cancelled: false };
         resolveImagesBounded(productsNeedingImage, cancelledRef);
         return () => { cancelledRef.cancelled = true; };
-    }, [myProductList, ecosystemStartups, recommendedProductsForDisplay, resolvedImages]);
+    }, [recommendedProductsForDisplay, resolvedImages]);
 
 
     const toggleEcosystemCompare = useCallback((k) => {
@@ -1590,15 +1608,16 @@ export default function MyEcosystem({
         // to. Cancelling a FIRST build left previousLlmTiered empty while still
         // marking the fingerprint fetched, so the next mount showed a blank
         // ecosystem with no error and no way to retry.
+        setLlmPartialConcerns([]);
         if (intakeFingerprint && previousLlmTieredRef.current.length > 0) {
             saveFetchedLlmFingerprint(intakeFingerprint);
             setLlmError('');
         } else {
-            setLlmError('Build cancelled. Tap “Refresh recommendations” to try again.');
+            setLlmError('We stopped building your recommendations. Tap “Refresh recommendations” to try again.');
         }
     }, [intakeFingerprint]);
 
-    const recommendedSection = hasCompletedPersonalization && (llmLoading || llmError || recommendedProductsForDisplay.length > 0 || activeTiered.length > 0) ? (
+    const recommendedSection = hasCompletedPersonalization && (llmLoading || llmError || llmPartialConcerns.length > 0 || recommendedProductsForDisplay.length > 0 || activeTiered.length > 0) ? (
         <div style={{ marginBottom: 'var(--spacing-xl)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
                 <h3 style={{ fontSize: '1.35rem', margin: 0, color: 'var(--color-text-main)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -1611,7 +1630,7 @@ export default function MyEcosystem({
                     style={{ fontSize: '0.8rem', padding: '0.35rem 0.7rem' }}
                     onClick={handleRefreshRecommendations}
                     disabled={llmLoading || !hasCompletedPersonalization}
-                    title="Re-run personalized recommendations from your latest profile"
+                    title="Get new picks based on your latest answers"
                 >
                     {llmLoading ? 'Refreshing…' : 'Refresh recommendations'}
                 </button>
@@ -1626,7 +1645,23 @@ export default function MyEcosystem({
             )}
             {llmError && !llmLoading && (
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textAlign: 'center' }}>
-                    Could not load recommendations: {llmError}
+                    We couldn't load your recommendations: {llmError}
+                </p>
+            )}
+            {/* Partial success, not a failure — most of the ecosystem DID build.
+                Deliberately neutral styling (not the red "couldn't build" banner
+                elsewhere in this file), since a couple of missing sections isn't
+                the same as the whole build failing. */}
+            {llmPartialConcerns.length > 0 && !llmError && !llmLoading && (
+                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textAlign: 'center', margin: '0 0 0.75rem' }}>
+                    Couldn't generate picks for {llmPartialConcerns.join(', ')} this time.{' '}
+                    <button
+                        type="button"
+                        onClick={handleRefreshRecommendations}
+                        style={{ background: 'none', border: 'none', color: 'var(--color-primary)', fontWeight: 600, cursor: 'pointer', textDecoration: 'underline', padding: 0, font: 'inherit' }}
+                    >
+                        Refresh to try again
+                    </button>
                 </p>
             )}
             {!llmLoading && recommendedProductsForDisplay.length > 0 && (
@@ -1711,7 +1746,7 @@ export default function MyEcosystem({
                                             </div>
                                         ) : (
                                             <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', margin: 0 }}>
-                                                No recommendation tracks available for this concern yet. Try the full search.
+                                                Nothing here yet for this concern. Try searching instead.
                                             </p>
                                         )}
                                     </div>
@@ -1727,468 +1762,258 @@ export default function MyEcosystem({
     return (
         <>
             <section className="container animate-fade-in-up" style={{ padding: 'var(--spacing-xl) var(--spacing-md)' }}>
-                <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-xl)', maxWidth: '800px', margin: '0 auto var(--spacing-xl)' }}>
-                    <h2 style={{ fontSize: '2.25rem' }}>My Cabinet</h2>
-                </div>
+                {/* Board 2a ("Ecosystem page, restructured") from the Aug 2026
+                    mockup pass: one persistent left summary, one scrolling
+                    content column, nothing competing for the top of the page —
+                    replaces the old Overview/Details tab switcher, which
+                    duplicated "your ecosystem" as two separate stacked headers. */}
+                <EcosystemBubbles
+                    myProducts={myProducts}
+                    quizResults={quizResults}
+                    healthProfile={healthProfile}
+                    user={user}
+                    onOpenProduct={onOpenProduct}
+                    onExploreArea={(area) => onGoToSearch?.(exploreAreaOptions(area))}
+                    onToggleProduct={onToggleProduct}
+                />
 
-                {smsCardShown && (
-                    <div style={{
-                        position: 'relative', maxWidth: '700px', margin: '0 auto var(--spacing-lg)',
-                        background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)',
-                        borderRadius: 'var(--radius-md)', padding: '1rem 1.25rem',
-                    }}>
-                        <button
-                            type="button"
-                            onClick={handleDismissSmsCard}
-                            aria-label="Dismiss"
-                            style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem', color: 'var(--color-text-muted)' }}
-                        >
-                            ✕
-                        </button>
-                        {phoneNumberInfo?.is_verified ? (
-                            <>
-                                <p style={{ margin: '0 0 0.4rem', fontWeight: 600 }}>Text Ayna from your phone to get health information easily</p>
-                                {AYNA_SMS_NUMBER && (
-                                    <p style={{ margin: '0 0 0.6rem', fontSize: '1.2rem', fontWeight: 700, color: 'var(--color-primary)' }}>{AYNA_SMS_NUMBER}</p>
-                                )}
-                                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                                    {AYNA_SMS_NUMBER && (
-                                        <a
-                                            className="btn btn-outline"
-                                            href={buildAynaVCardDataUri(AYNA_SMS_NUMBER)}
-                                            download="Ayna.vcf"
-                                        >
-                                            Save to Contacts
-                                        </a>
+                {llmError && !llmLoading && (
+                    <div style={{ textAlign: 'center', padding: '0.75rem', margin: '0 auto 1.5rem', maxWidth: '900px', background: '#FEF2F2', borderRadius: 'var(--radius-md)', fontSize: '0.85rem', color: '#991B1B', border: '1px solid #FCA5A5' }}>
+                        Couldn&apos;t refresh your matches. <button type="button" style={{ background: 'none', border: 'none', color: '#991B1B', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline', padding: 0 }} onClick={handleRefreshRecommendations}>Try again</button>
+                    </div>
+                )}
+
+                <div className="eco2-body">
+                    <aside className="eco2-sidebar">
+                        <div className="eco2-sidebar__card">
+                            <p className="eco2-sidebar__eyebrow">Your ecosystem</p>
+                            {llmLoading ? (
+                                <p className="eco2-sidebar__loading">Building your matches…</p>
+                            ) : (
+                                <>
+                                    <h2 className="eco2-sidebar__count">
+                                        {myProductList.length} product{myProductList.length === 1 ? '' : 's'}
+                                    </h2>
+                                    {(shelfAreaBreakdown.clinicianCount > 0 || estimatedMonthlyTotal.counted > 0) && (
+                                        <p className="eco2-sidebar__sub">
+                                            {[
+                                                shelfAreaBreakdown.clinicianCount > 0 ? `${shelfAreaBreakdown.clinicianCount} clinician${shelfAreaBreakdown.clinicianCount === 1 ? '' : 's'}` : null,
+                                                estimatedMonthlyTotal.counted > 0 ? `~$${estimatedMonthlyTotal.total.toFixed(0)}${estimatedMonthlyTotal.counted < estimatedMonthlyTotal.totalItems ? '+' : ''}/mo` : null,
+                                            ].filter(Boolean).join(' · ')}
+                                        </p>
                                     )}
-                                    <button type="button" className="btn btn-outline" onClick={handleCopySmsNumber}>
-                                        {smsCardCopied ? 'Copied!' : 'Copy number'}
-                                    </button>
-                                </div>
-                            </>
-                        ) : (
-                            <>
-                                <p style={{ margin: '0 0 0.6rem', fontWeight: 600 }}>Get Ayna by text — verify your number</p>
-                                <button type="button" className="btn btn-primary" onClick={onOpenPhoneVerify}>
-                                    Verify your number
-                                </button>
-                            </>
-                        )}
-                    </div>
-                )}
-
-                {llmError && !llmLoading && (
-                    <div style={{ textAlign: 'center', padding: '0.75rem', marginBottom: '1rem', background: '#FEF2F2', borderRadius: 'var(--radius-md)', fontSize: '0.85rem', color: '#991B1B', border: '1px solid #FCA5A5' }}>
-                        Could not build ecosystem: {typeof llmError === 'string' ? llmError : JSON.stringify(llmError)} — <button type="button" style={{ background: 'none', border: 'none', color: '#991B1B', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline', padding: 0 }} onClick={handleRefreshRecommendations}>Try again</button>
-                    </div>
-                )}
-
-                {/* SECTION 1 — My Ecosystem */}
-                <h3 style={{ fontSize: '1.35rem', marginBottom: '0.75rem', textAlign: 'center', color: 'var(--color-text-main)' }}>My Ecosystem</h3>
-                <div style={{
-                    display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap',
-                    marginBottom: 'var(--spacing-lg)',
-                }}>
-                    {myProductList.length > 0 && (
-                        <div style={{ background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '1rem 1.5rem', textAlign: 'center', minWidth: '140px' }} title={estimatedMonthlyTotal.counted < estimatedMonthlyTotal.totalItems ? 'Some products have pricing we can\'t estimate monthly cost from (e.g. one-time visits) — actual total may be higher.' : undefined}>
-                            <div style={{ fontSize: '2rem', fontWeight: '700', color: 'var(--color-primary)' }}>
-                                {estimatedMonthlyTotal.counted > 0
-                                    ? `$${estimatedMonthlyTotal.total.toFixed(2)}${estimatedMonthlyTotal.counted < estimatedMonthlyTotal.totalItems ? '+' : ''}`
-                                    : '—'}
-                            </div>
-                            <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>Est. per month</div>
-                        </div>
-                    )}
-                    <div style={{ background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '1rem 1.5rem', textAlign: 'center', minWidth: '140px' }}>
-                        <div style={{ fontSize: '2rem', fontWeight: '700', color: 'var(--color-primary)' }}>{myProductList.length}</div>
-                        <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>Products Tracked</div>
-                    </div>
-                    <div style={{ background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '1rem 1.5rem', textAlign: 'center', minWidth: '140px' }}>
-                        <div style={{ fontSize: '2rem', fontWeight: '700', color: 'var(--color-surface-contrast)' }}>{Object.keys(functionMap).length}</div>
-                        <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>Health Functions</div>
-                    </div>
-                    <div style={{ background: 'var(--color-primary)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '1rem 1.5rem', textAlign: 'center', minWidth: '140px', cursor: 'pointer' }} onClick={onOpenDoctorPrep}>
-                        <div style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>👩‍⚕️</div>
-                        <div style={{ fontSize: '0.85rem', color: 'white', fontWeight: '700' }}>Appointment Prep</div>
-                    </div>
-                </div>
-
-                {/* Action bar: Import Health Data + Retake Quiz */}
-                <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: 'var(--spacing-lg)' }}>
-                    <button
-                        type="button"
-                        className="btn btn-outline"
-                        style={{ fontSize: '0.85rem' }}
-                        onClick={() => setHealthDataImportOpen(true)}
-                    >
-                        📋 Import Health Data
-                    </button>
-                    {typeof onBuildEcosystem === 'function' && (
-                        <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem' }} onClick={onBuildEcosystem}>
-                            Retake Quiz
-                        </button>
-                    )}
-                    {typeof onEditHealthProfile === 'function' && (
-                        <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem' }} onClick={onEditHealthProfile}>
-                            Update Health Profile
-                        </button>
-                    )}
-                </div>
-
-                {/* Health data sync — premium feature */}
-                {(() => {
-                    const SYNC_SOURCES = [
-                        { id: 'apple-health', label: 'Apple Health', icon: '🍎' },
-                        { id: 'strava', label: 'Strava', icon: '🏃' },
-                        { id: 'garmin', label: 'Garmin', icon: '⌚' },
-                        { id: 'flo', label: 'Flo', icon: '🌸' },
-                        { id: 'whoop', label: 'Whoop', icon: '💪' },
-                        { id: 'oura', label: 'Oura Ring', icon: '💍' },
-                        { id: 'google-fit', label: 'Google Fit', icon: '📊' },
-                    ];
-                    return (
-                        <div style={{ marginBottom: 'var(--spacing-lg)', padding: '1.25rem 1.5rem', background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
-                                <span style={{ fontSize: '0.8rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--color-text-muted)' }}>
-                                    Sync wearable &amp; app data
-                                </span>
-                                {!isPremium && (
-                                    <span style={{ fontSize: '0.7rem', background: 'var(--color-secondary-fade)', color: 'var(--color-primary)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)', fontWeight: '600' }}>
-                                        Premium
-                                    </span>
-                                )}
-                            </div>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                                {SYNC_SOURCES.map(src => (
-                                    <button
-                                        key={src.id}
-                                        type="button"
-                                        onClick={() => !isPremium && setShowSyncPaywall(true)}
-                                        title={isPremium ? `Connect ${src.label}` : `${src.label} — requires Ayna Premium`}
-                                        style={{
-                                            display: 'flex', alignItems: 'center', gap: '0.4rem',
-                                            padding: '0.4rem 0.85rem',
-                                            border: '1px solid var(--color-border)',
-                                            borderRadius: 'var(--radius-pill)',
-                                            background: 'var(--color-surface)',
-                                            fontSize: '0.82rem', fontWeight: '500',
-                                            color: isPremium ? 'var(--color-text-main)' : 'var(--color-text-muted)',
-                                            cursor: isPremium ? 'default' : 'pointer',
-                                            opacity: isPremium ? 0.7 : 1,
-                                        }}
-                                    >
-                                        <span>{src.icon}</span>
-                                        <span>{src.label}</span>
-                                        {!isPremium && <span style={{ fontSize: '0.7rem' }}>🔒</span>}
-                                        {isPremium && <span style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>· coming soon</span>}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    );
-                })()}
-
-                
-
-                <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-lg)', display: 'flex', justifyContent: 'center', gap: '1rem' }}>
-                    <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>+ Add a Product or App</button>
-                </div>
-
-                {/* Loading bar persists above the grid until all batches finish */}
-                {llmLoading && (
-                    llmLoadStartedAt > 0
-                        ? <LlmRecommendationsLoadingBlock loadStartedAt={llmLoadStartedAt} compact onCancel={handleCancelRecommendations} />
-                        : <div style={{ textAlign: 'center', padding: '1.5rem', color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>🌸 Building your ecosystem…</div>
-                )}
-                {llmError && !llmLoading && (
-                    <div style={{ textAlign: 'center', padding: '1.5rem', background: '#FEF2F2', borderRadius: 'var(--radius-md)', marginBottom: '1rem', border: '1px solid #FCA5A5' }}>
-                        <p style={{ color: '#991B1B', fontSize: '0.85rem', marginBottom: '0.5rem' }}>{typeof llmError === 'string' ? llmError : JSON.stringify(llmError)}</p>
-                        <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem' }} onClick={handleRefreshRecommendations}>Try again</button>
-                    </div>
-                )}
-
-                {(myProductList.length === 0 && !llmLoading ? (
-                    <div style={{ textAlign: 'center', padding: '3rem', background: 'var(--color-surface-soft)', borderRadius: 'var(--radius-lg)', border: '1px dashed var(--color-border)' }}>
-                        <h3 style={{ fontSize: '1.25rem', marginBottom: '0.75rem', color: 'var(--color-text-muted)' }}>Your ecosystem is empty.</h3>
-                        <p style={{ color: 'var(--color-text-muted)' }}>Complete the health survey to build your personalized ecosystem, or add products manually.</p>
-                    </div>
-                ) : myProductList.length > 0 ? (
-                    <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-                        {viewMode === 'function' ? (
-                            <>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                    {Object.entries(functionMap)
-                                        .filter(([fn]) => fn !== 'leak-protection')
-                                        .map(([fn, products]) => {
-                                            if (products.length === 0) return null;
-                                            return (
-                                                <section key={fn}>
-                                                    <div style={{ marginBottom: '0.65rem' }}>
-                                                        <h3 style={{ fontSize: '1rem', marginBottom: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                                                            <span>{HEALTH_FUNCTIONS[fn]?.icon}</span> {HEALTH_FUNCTIONS[fn]?.label}
-                                                        </h3>
-                                                        <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', margin: 0 }}>{HEALTH_FUNCTIONS[fn]?.desc}</p>
-                                                    </div>
-                                                    <div className="ecosystem-product-grid">
-                                                        {products.map((product) => {
-                                                            const seedEntry = ecosystemSeedMeta[product.id];
-                                                            const p = resolvedImages[product.id] ? { ...product, image: resolvedImages[product.id] } : product;
-                                                            return (
-                                                                <EcosystemFunctionProductCard
-                                                                    key={product.id}
-                                                                    product={p}
-                                                                    healthFunctionLabel={HEALTH_FUNCTIONS[fn]?.label || fn}
-                                                                    onOpenProduct={onOpenProduct}
-                                                                    onToggleProduct={onToggleProduct}
-                                                                    seedEntry={seedEntry}
-                                                                    quizResults={quizResults}
-                                                                    healthProfile={healthProfile}
-                                                                    onSwapSeedProduct={onSwapSeedProduct}
-                                                                    onGoToSearch={onGoToSearch}
-                                                                    precomputedAlternatives={p._llmAlternatives || []}
-                                                                    concernLabel={p._llmConcern || ''}
-                                                                    isInEcosystem
-                                                                />
-                                                            );
-                                                        })}
-                                                    </div>
-                                                </section>
-                                            );
-                                        })}
-                                </div>
-                            </>
-                        ) : (
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                                {Object.entries(integrationMap).map(([int, products]) => {
-                                    const rest = products;
-                                    if (rest.length === 0) return null;
-                                    return (
-                                    <div key={int}>
-                                        <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: int === 'No Integration' ? 'var(--color-text-muted)' : 'var(--color-text-main)' }}>
-                                            {int === 'No Integration' ? '📦 Standalone Products' : `✨ Syncs with ${int}`}
-                                        </h3>
-                                        <div className="ecosystem-product-grid">
-                                            {rest.map((product) => {
-                                                const seedEntry = ecosystemSeedMeta[product.id];
-                                                return (
-                                                    <div key={product.id} className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', padding: '0.75rem 1rem', minHeight: '110px' }}>
-                                                        <div
-                                                            role="button"
-                                                            tabIndex={0}
-                                                            style={{ display: 'flex', alignItems: 'center', gap: '1rem', cursor: 'pointer' }}
-                                                            onClick={() => onOpenProduct(product)}
-                                                            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpenProduct(product); } }}
-                                                        >
-                                                            <div style={{ width: '48px', height: '48px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0 }}>
-                                                                <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                                            </div>
-                                                            <div style={{ flexGrow: 1, minWidth: 0 }}>
-                                                                <h4 style={{ fontSize: '0.95rem', marginBottom: '0.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>{product.name}{product.outOfBusiness && <span style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-surface-soft)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No longer sold</span>}</h4>
-                                                                <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{product.stage || product.category}</span>
-                                                            </div>
-                                                            <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', flexShrink: 0 }}>
-                                                                {product.isStartup && (
-                                                                    <span style={{ fontSize: '0.65rem', background: 'var(--color-primary-hover)', color: 'white', padding: '0.15rem 0.4rem', borderRadius: 'var(--radius-pill)', fontWeight: '600' }}>Startup</span>
-                                                                )}
-                                                                {Array.isArray(product.integrations) ? product.integrations.map((i) => (
-                                                                    <span key={i} style={{ fontSize: '0.65rem', background: 'var(--color-secondary)', color: 'var(--color-text-main)', padding: '0.15rem 0.4rem', borderRadius: 'var(--radius-pill)', fontWeight: '600' }}>{i}</span>
-                                                                )) : product.integrations && (
-                                                                    <span style={{ fontSize: '0.65rem', background: 'var(--color-secondary)', color: 'var(--color-text-main)', padding: '0.15rem 0.4rem', borderRadius: 'var(--radius-pill)', fontWeight: '600' }}>{product.integrations}</span>
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                        <EcosystemProductAlternatives
-                                                            product={product}
-                                                            seedEntry={seedEntry}
-                                                            quizResults={quizResults}
-                                                            healthProfile={healthProfile}
-                                                            onSwap={onSwapSeedProduct}
-                                                            onGoToSearch={onGoToSearch}
-                                                        />
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
+                                </>
+                            )}
+                            {shelfAreaBreakdown.filled.length > 0 && (
+                                <>
+                                    <div className="eco2-sidebar__bar">
+                                        {shelfAreaBreakdown.filled.map((area, i) => (
+                                            <i
+                                                key={area.key}
+                                                style={{
+                                                    width: `${(area.count / myProductList.length) * 100}%`,
+                                                    background: SHELF_AREA_COLORS[i % SHELF_AREA_COLORS.length],
+                                                }}
+                                            />
+                                        ))}
                                     </div>
-                                    );
-                                })}
-                            </div>
-                        )}
-                    </div>
-                ) : null)}
-
-                {/* Safety & interactions: compare 2+ products */}
-                {myProductList.length >= 2 && (
-                    <div style={{ marginBottom: 'var(--spacing-xl)', maxWidth: '800px', margin: '0 auto var(--spacing-xl)' }}>
-                        <h3 style={{ fontSize: '1.15rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            🛡️ Safety & interactions
-                        </h3>
-                        <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1rem' }}>
-                            Select 2 or more products to check if they may interact or if they're safe to use together.
-                        </p>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
-                            {myProductList.map(p => {
-                                const selected = interactionSelection.has(p.id);
-                                return (
-                                    <button
-                                        key={p.id}
-                                        type="button"
-                                        onClick={() => toggleInteractionSelect(p)}
-                                        style={{
-                                            padding: '0.4rem 0.75rem',
-                                            borderRadius: 'var(--radius-pill)',
-                                            border: `2px solid ${selected ? 'var(--color-primary)' : 'var(--color-border)'}`,
-                                            background: selected ? 'var(--color-secondary-fade)' : 'var(--color-surface-soft)',
-                                            fontSize: '0.85rem',
-                                            cursor: 'pointer',
-                                            fontWeight: selected ? '600' : '500'
-                                        }}
-                                    >
-                                        {selected ? '✓ ' : ''}{p.name}
-                                    </button>
-                                );
-                            })}
-                        </div>
-                        {interactionProductList.length >= 2 && (
-                            <div style={{ background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '1.25rem' }}>
-                                <h4 style={{ fontSize: '1rem', marginBottom: '0.75rem' }}>Comparing: {interactionProductList.map(p => p.name).join(', ')}</h4>
-                                {interactionResults.length === 0 ? (
-                                    <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem' }}>
-                                        No known safety interactions found between these. This doesn't replace medical advice — discuss with your provider if unsure.
-                                    </p>
-                                ) : (
-                                    <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                                        {interactionResults.map((r, i) => (
-                                            <li key={i} style={{
-                                                marginBottom: '0.75rem',
-                                                padding: '0.75rem',
-                                                background: r.severity === 'high' ? '#FEF2F2' : r.severity === 'medium' ? '#FFFBEB' : 'white',
-                                                borderLeft: `4px solid ${r.severity === 'high' ? '#DC2626' : r.severity === 'medium' ? '#F59E0B' : '#6B7280'}`,
-                                                borderRadius: 'var(--radius-sm)',
-                                                fontSize: '0.9rem'
-                                            }}>
-                                                <span style={{ fontWeight: '600', color: r.severity === 'high' ? '#B91C1C' : 'var(--color-text-main)' }}>
-                                                    {r.severity === 'high' ? '⚠️ ' : r.severity === 'medium' ? '⚡ ' : 'ℹ️ '}
-                                                    {r.productNames.join(' + ')}
-                                                </span>
-                                                <p style={{ margin: '0.35rem 0 0', color: 'var(--color-text-main)' }}>{r.message}</p>
+                                    <ul className="eco2-sidebar__legend">
+                                        {shelfAreaBreakdown.filled.map((area, i) => (
+                                            <li key={area.key}>
+                                                <span className="eco2-dot" style={{ background: SHELF_AREA_COLORS[i % SHELF_AREA_COLORS.length] }} />
+                                                {area.label}
+                                                <strong>{area.count}</strong>
                                             </li>
                                         ))}
+                                        {shelfAreaBreakdown.gap && (
+                                            <li className="eco2-sidebar__legend--gap">
+                                                <span className="eco2-dot eco2-dot--empty" />
+                                                {shelfAreaBreakdown.gap.label}
+                                                {typeof onGoToSearch === 'function' && (
+                                                    <button type="button" onClick={() => onGoToSearch(exploreAreaOptions(shelfAreaBreakdown.gap))}>Add</button>
+                                                )}
+                                            </li>
+                                        )}
                                     </ul>
-                                )}
-                                <button
-                                    type="button"
-                                    className="btn btn-outline"
-                                    style={{ marginTop: '0.75rem', fontSize: '0.85rem' }}
-                                    onClick={() => setInteractionSelection(new Set())}
-                                >
-                                    Clear selection
+                                </>
+                            )}
+                            {typeof onBuildEcosystem === 'function' && (
+                                <button type="button" className="btn btn-primary" style={{ width: '100%', marginTop: '0.75rem' }} onClick={onBuildEcosystem}>
+                                    {myProductList.length ? 'Rebuild' : 'Build ecosystem'}
                                 </button>
-                            </div>
-                        )}
-                    </div>
-                )}
-
-                {/* US-available brands — not startups, regular products you can buy now */}
-                {!llmLoading && ecosystemStartups.brands.length > 0 && (
-                    <div style={{ marginBottom: '1.75rem', maxWidth: '1200px', margin: '0 auto 1.75rem' }}>
-                        <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            🛍️ Women's Health Brands
-                        </h3>
-                        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>Brands with products available now, matched to your profile.</p>
-                        <div className="ecosystem-product-grid">
-                            {ecosystemStartups.brands.map(brand => (
-                                <a key={brand.id} href={brand.url} target="_blank" rel="noopener noreferrer" className="card" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '0.85rem 1rem', cursor: 'pointer', textDecoration: 'none', color: 'inherit', height: '100%' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                        <div style={{ width: '44px', height: '44px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0, background: 'var(--color-surface-soft)' }}>
-                                            <img src={resolvedImages[brand.id] || brand.image} alt={brand.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.style.display = 'none'; }} />
-                                        </div>
-                                        <div style={{ flexGrow: 1, minWidth: 0 }}>
-                                            <h4 style={{ fontSize: '0.95rem', marginBottom: '0.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                                                {brand.name}
-                                            </h4>
-                                            <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{brand.tagline}</span>
-                                        </div>
-                                    </div>
-                                    <p style={{ fontSize: '0.8rem', color: 'var(--color-text-main)', margin: 0, lineHeight: '1.35', flex: 1 }}>
-                                        {brand.description}
-                                    </p>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap', marginTop: 'auto' }}>
-                                        <span style={{ fontSize: '0.7rem', fontWeight: '600', color: 'var(--color-primary)', background: 'var(--color-secondary-fade)', padding: '0.15rem 0.4rem', borderRadius: 'var(--radius-pill)' }}>{brand.stage}</span>
-                                        <span style={{ fontSize: '0.7rem', color: 'var(--color-primary)', marginLeft: 'auto' }}>Shop now →</span>
-                                    </div>
-                                </a>
-                            ))}
+                            )}
                         </div>
-                    </div>
-                )}
 
-                {/* Non-US startups — waitlist / coming soon */}
-                {!llmLoading && ecosystemStartups.startups.length > 0 && (
-                    <div style={{ marginBottom: '1.75rem', maxWidth: '1200px', margin: '0 auto 1.75rem' }}>
-                        <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            🚀 Startups relevant to you
-                        </h3>
-                        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.75rem' }}>Curated women's health startups matched to your profile.</p>
-                        <div className="ecosystem-product-grid">
-                            {ecosystemStartups.startups.map(startup => (
-                                <a key={startup.id} href={startup.url} target="_blank" rel="noopener noreferrer" className="card" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '0.85rem 1rem', cursor: 'pointer', textDecoration: 'none', color: 'inherit', height: '100%' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                        <div style={{ width: '44px', height: '44px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0, background: 'var(--color-surface-soft)' }}>
-                                            <img src={resolvedImages[startup.id] || startup.image} alt={startup.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.style.display = 'none'; }} />
-                                        </div>
-                                        <div style={{ flexGrow: 1, minWidth: 0 }}>
-                                            <h4 style={{ fontSize: '0.95rem', marginBottom: '0.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                                                {startup.name}
-                                                <span style={{ fontSize: '0.65rem', fontWeight: '600', textTransform: 'uppercase', padding: '0.15rem 0.4rem', borderRadius: 'var(--radius-pill)', background: 'var(--color-primary-hover)', color: 'white' }}>Startup</span>
-                                            </h4>
-                                            <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{startup.tagline}</span>
-                                        </div>
-                                    </div>
-                                    <p style={{ fontSize: '0.8rem', color: 'var(--color-text-main)', margin: 0, lineHeight: '1.35', flex: 1 }}>
-                                        {startup.description}
-                                    </p>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap', marginTop: 'auto' }}>
-                                        <span style={{ fontSize: '0.7rem', fontWeight: '600', color: 'var(--color-primary)', background: 'var(--color-secondary-fade)', padding: '0.15rem 0.4rem', borderRadius: 'var(--radius-pill)' }}>{startup.stage}</span>
-                                        <span style={{ fontSize: '0.7rem', color: 'var(--color-primary)', marginLeft: 'auto' }}>Learn more →</span>
-                                    </div>
-                                </a>
-                            ))}
+                        <div className="eco2-sidebar__card">
+                            <p className="eco2-sidebar__eyebrow">Tools</p>
+                            {typeof onEditHealthProfile === 'function' && (
+                                <button type="button" className="eco2-tool-row" onClick={onEditHealthProfile}>Update profile<span>›</span></button>
+                            )}
+                            {typeof onOpenDoctorPrep === 'function' && (
+                                <button type="button" className="eco2-tool-row" onClick={onOpenDoctorPrep}>Doctor prep<span>›</span></button>
+                            )}
+                            <button type="button" className="eco2-tool-row" onClick={() => setShowMoreTools(true)}>More tools<span>›</span></button>
                         </div>
-                    </div>
-                )}
+                    </aside>
 
-                {!llmLoading && (
-                    <>
-                        <h3 style={{ fontSize: '1.35rem', marginBottom: '0.75rem', textAlign: 'center', color: 'var(--color-text-main)', marginTop: 'var(--spacing-xl)' }}>Care Recommended for You</h3>
-                        <CareNearYouPanel
-                            quizResults={quizResults}
-                            healthProfile={healthProfile}
-                            userZipCode={userZipCode}
-                            onZipCodeChange={onZipCodeChange}
+                    <main className="eco2-main">
+                        <div className="eco2-main__head">
+                            <h2>Your shelves</h2>
+                            {typeof onGoToSearch === 'function' && (
+                                <button type="button" className="eco2-main__fill-gaps" onClick={() => onGoToSearch('')}>Fill the gaps →</button>
+                            )}
+                        </div>
+                        <EcosystemShelf
+                            hideTitle
+                            myProducts={myProducts}
                             onOpenProduct={onOpenProduct}
-                            onEditHealthProfile={onEditHealthProfile}
+                            onExploreArea={(area) => onGoToSearch?.(exploreAreaOptions(area))}
                         />
-                    </>
-                )}
+                        <div style={{ textAlign: 'center', margin: '1rem 0 2rem' }}>
+                            <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem' }} onClick={() => setShowAddModal(true)}>+ Add something you already use</button>
+                        </div>
 
-                {typeof onBuildEcosystem === 'function' && (
-                    <div style={{ display: 'flex', justifyContent: 'center', marginTop: 'var(--spacing-xl)', marginBottom: 'var(--spacing-lg)' }}>
-                        <button
-                            type="button"
-                            className="btn btn-primary"
-                            style={{
-                                padding: '0.75rem 1.75rem',
-                                fontSize: '1rem',
-                                fontWeight: 600,
-                                boxShadow: '0 2px 12px rgba(217, 111, 12, 0.25)',
-                            }}
-                            onClick={onBuildEcosystem}
-                        >
-                            Rebuild my whole ecosystem
-                        </button>
+                        <h2 className="eco2-main__details-title">Details</h2>
+                        <div className="eco2-details">
+                            {smsCardShown && (
+                                <div className="eco2-details__sms">
+                                    <button
+                                        type="button"
+                                        onClick={handleDismissSmsCard}
+                                        aria-label="Dismiss"
+                                        style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem', color: 'var(--color-text-muted)' }}
+                                    >
+                                        ✕
+                                    </button>
+                                    {phoneNumberInfo?.is_verified ? (
+                                        <>
+                                            <p style={{ margin: '0 0 0.4rem', fontWeight: 600 }}>Text Ayna to get quick health answers</p>
+                                            {AYNA_SMS_NUMBER && (
+                                                <p style={{ margin: '0 0 0.6rem', fontSize: '1.2rem', fontWeight: 700, color: 'var(--color-primary)' }}>{AYNA_SMS_NUMBER}</p>
+                                            )}
+                                            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                                {AYNA_SMS_NUMBER && (
+                                                    <a className="btn btn-outline" href={buildAynaVCardDataUri(AYNA_SMS_NUMBER)} download="Ayna.vcf">
+                                                        Save to Contacts
+                                                    </a>
+                                                )}
+                                                <button type="button" className="btn btn-outline" onClick={handleCopySmsNumber}>
+                                                    {smsCardCopied ? 'Copied!' : 'Copy number'}
+                                                </button>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <p style={{ margin: '0 0 0.6rem', fontWeight: 600 }}>Get Ayna by text. Verify your number</p>
+                                            <button type="button" className="btn btn-primary" onClick={onOpenPhoneVerify}>Verify your number</button>
+                                        </>
+                                    )}
+                                </div>
+                            )}
+
+                            <details className="eco2-details__item" open>
+                                <summary>
+                                    <span>Sync wearable &amp; app data</span>
+                                    <span className="eco2-details__hint">Sharpens your matches. Nothing is shared.</span>
+                                </summary>
+                                <div className="eco2-details__body">
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.85rem' }}>
+                                        {SYNC_SOURCES.map((src) => (
+                                            <button
+                                                key={src.id}
+                                                type="button"
+                                                onClick={() => !isPremium && setShowSyncPaywall(true)}
+                                                title={isPremium ? `Connect ${src.label}` : `${src.label}. Requires Ayna Premium`}
+                                                style={{
+                                                    display: 'flex', alignItems: 'center', gap: '0.4rem',
+                                                    padding: '0.4rem 0.85rem',
+                                                    border: '1px solid var(--color-border)',
+                                                    borderRadius: 'var(--radius-pill)',
+                                                    background: 'var(--color-surface)',
+                                                    fontSize: '0.82rem', fontWeight: '500',
+                                                    color: isPremium ? 'var(--color-text-main)' : 'var(--color-text-muted)',
+                                                    cursor: isPremium ? 'default' : 'pointer',
+                                                    opacity: isPremium ? 0.7 : 1,
+                                                }}
+                                            >
+                                                <span>{src.label}</span>
+                                                {!isPremium && <span style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>· Premium</span>}
+                                                {isPremium && <span style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>· coming soon</span>}
+                                            </button>
+                                        ))}
+                                    </div>
+                                    <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem', opacity: 0.6, cursor: 'default' }} disabled>
+                                        Coming soon
+                                    </button>
+                                </div>
+                            </details>
+
+                            <details className="eco2-details__item" ref={careNearYouDetailsRef}>
+                                <summary>
+                                    <span>Care near you</span>
+                                    <span className="eco2-details__hint">Find a clinician, HRSA/Planned Parenthood links, and matching telehealth</span>
+                                </summary>
+                                <div className="eco2-details__body">
+                                    <CareNearYouPanel
+                                        compact
+                                        quizResults={quizResults}
+                                        healthProfile={healthProfile}
+                                        userZipCode={userZipCode}
+                                        onZipCodeChange={onZipCodeChange}
+                                        onOpenProduct={onOpenProduct}
+                                        onEditHealthProfile={onEditHealthProfile}
+                                    />
+                                </div>
+                            </details>
+
+                            <details className="eco2-details__item">
+                                <summary>
+                                    <span>Why these matches</span>
+                                    <span className="eco2-details__hint">Sources and scoring behind your shelves</span>
+                                </summary>
+                                <div className="eco2-details__body">
+                                    <p style={{ fontSize: '0.88rem', lineHeight: 1.6, color: 'var(--color-text-main)' }}>
+                                        Ayna scores products against your intake answers — stage, goals, sensitivities,
+                                        and life stage — plus published clinical, community, and safety sources per
+                                        product. When the catalog has no strong fit for a concern, Ayna searches for and
+                                        adds a real, currently-sold product rather than leaving the shelf empty. Update
+                                        your profile any time and your shelves recompute against the new answers.
+                                    </p>
+                                </div>
+                            </details>
+
+                        </div>
+                    </main>
+                </div>
+
+                {showMoreTools && (
+                    <div className="eco2-sheet-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowMoreTools(false); }}>
+                        <div className="eco2-sheet">
+                            <button type="button" className="eco2-sheet__close" onClick={() => setShowMoreTools(false)} aria-label="Close">✕</button>
+                            <p className="eco2-sidebar__eyebrow">More tools</p>
+                            <h2 className="eco2-sheet__title">One thing you can do.</h2>
+                            <button
+                                type="button"
+                                className="eco2-tool-row"
+                                onClick={() => {
+                                    setShowMoreTools(false);
+                                    const el = careNearYouDetailsRef.current;
+                                    if (el) {
+                                        el.open = true;
+                                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                    }
+                                }}
+                            >
+                                Find a clinician
+                                <span className="eco2-tool-row__hint">In-network, near you</span>
+                            </button>
+                            {/* Log a symptom, check an ingredient, and export my data aren't
+                                real features yet anywhere in this app — deliberately not
+                                shown here rather than shipped as dead buttons. */}
+                        </div>
                     </div>
                 )}
+
             </section>
 
             {showAddModal && (
@@ -2230,7 +2055,12 @@ export default function MyEcosystem({
                                         onClick={() => onToggleProduct(product)}
                                     >
                                         <div style={{ width: '40px', height: '40px', borderRadius: 'var(--radius-sm)', overflow: 'hidden', flexShrink: 0 }}>
-                                            <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            <ProductTileImage
+                                                product={product}
+                                                alt={product.name}
+                                                imgStyle={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                                letterNode={<ProductImageFallback compact />}
+                                            />
                                         </div>
                                         <div style={{ flexGrow: 1, minWidth: 0 }}>
                                             <div style={{ fontSize: '0.9rem', fontWeight: '500', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>{product.name}{product.outOfBusiness && <span style={{ fontSize: '0.65rem', fontWeight: '600', color: 'var(--color-text-muted)', background: 'var(--color-surface-soft)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No longer sold</span>}</div>
@@ -2243,37 +2073,6 @@ export default function MyEcosystem({
                                 );
                             })}
                         </div>
-                    </div>
-                </div>
-            )}
-            {healthDataImportOpen && (
-                <div
-                    style={{
-                        position: 'fixed', inset: 0, zIndex: 2000,
-                        background: 'rgba(0,0,0,0.45)',
-                        display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
-                        overflowY: 'auto', padding: '2rem 1rem',
-                    }}
-                    onClick={(e) => { if (e.target === e.currentTarget) setHealthDataImportOpen(false); }}
-                >
-                    <div style={{ position: 'relative', width: '100%', maxWidth: '860px' }}>
-                        <button
-                            type="button"
-                            onClick={() => setHealthDataImportOpen(false)}
-                            aria-label="Close"
-                            style={{
-                                position: 'absolute', top: '0.75rem', right: '0.75rem', zIndex: 1,
-                                background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)',
-                                borderRadius: '50%', width: '36px', height: '36px',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                fontSize: '1.1rem', cursor: 'pointer', color: 'var(--color-text-main)',
-                            }}
-                        >
-                            ✕
-                        </button>
-                        <HealthDataImport onUpdate={(saved) => {
-                            onHealthProfileUpdate?.(saved);
-                        }} />
                     </div>
                 </div>
             )}

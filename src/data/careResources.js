@@ -82,17 +82,17 @@ export function getCareResourceBundle(quizResults, healthProfile, zipCode) {
   const clinicLinks = [
     {
       href: hrssaZip,
-      label: 'HRSA — Find a health center',
+      label: 'HRSA: Find a health center',
       hint: zip ? `Federally qualified health centers near ${zip}.` : 'Search by address or zip for sliding-scale and low-cost care.',
     },
     {
       href: 'https://www.plannedparenthood.org/health-center',
-      label: 'Planned Parenthood — health centers',
+      label: 'Planned Parenthood: Health centers',
       hint: 'Enter your zip on their site for nearby locations.',
     },
     {
       href: 'https://www.plannedparenthood.org/get-care',
-      label: 'Planned Parenthood — get care (telehealth & in-person)',
+      label: 'Planned Parenthood: Get care (telehealth & in-person)',
       hint: 'Reproductive and sexual health visits online or in person.',
     },
   ];
@@ -100,7 +100,7 @@ export function getCareResourceBundle(quizResults, healthProfile, zipCode) {
   const telehealthLinks = [
     {
       href: 'https://www.hhs.gov/ocr/privacy/hipaa/understanding/consumers/index.html',
-      label: 'HHS — Understanding HIPAA (telehealth privacy)',
+      label: 'HHS: Understanding HIPAA (telehealth privacy)',
       hint: 'How health information may be used in virtual visits.',
     },
     {
@@ -113,14 +113,14 @@ export function getCareResourceBundle(quizResults, healthProfile, zipCode) {
   if (tags.has('uti') || frustrations.some((f) => f.includes('UTI'))) {
     telehealthLinks.unshift({
       href: 'https://medlineplus.gov/urinarytractinfections.html',
-      label: 'MedlinePlus — Urinary tract infections',
+      label: 'MedlinePlus: Urinary tract infections',
       hint: 'When to seek care for recurrent or complicated UTIs.',
     });
   }
   if (tags.has('menopause') || frustrations.some((f) => f.includes('Menopause'))) {
     telehealthLinks.unshift({
       href: 'https://www.nia.nih.gov/health/menopause',
-      label: 'NIH — Menopause overview',
+      label: 'NIH: Menopause overview',
       hint: 'Symptoms and discussion points for a clinician.',
     });
   }

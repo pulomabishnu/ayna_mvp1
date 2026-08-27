@@ -3,6 +3,18 @@ import Disclaimer from './Disclaimer';
 import HealthDataImport from './HealthDataImport';
 import CareNearYouPanel from './CareNearYouPanel';
 import { getCheckinRecommendations, CATEGORY_LABELS } from '../data/products';
+import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
+
+function ImgOrInitial({ item, size }) {
+    return (
+        <ProductTileImage
+            product={item}
+            alt={item?.name || ''}
+            imgStyle={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            letterNode={<ProductImageFallback compact={size < 60} />}
+        />
+    );
+}
 
 export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewWaitlist, userZipCode, onZipCodeChange, checkinData, quizResults, myProducts = {}, onOpenProduct, omittedProducts = {}, onViewOmitted, onHealthProfileUpdate, healthProfile = null, onEditHealthProfile }) {
     const trackedList = Object.values(trackedProducts);
@@ -41,15 +53,15 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                 </div>
                 <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Your Dashboard</h2>
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '1.25rem' }}>
-                    Build your ecosystem: products, imported health and wearable data, and care options — all in one place.
+                    Everything in one place: your products, health and wearable data, and care options.
                 </p>
-                {/* Hidden products — prominent so users can find it */}
+                {/* Hidden products. Prominent so users can find it */}
                 {onViewOmitted && (
                     <div style={{ marginTop: '1.5rem' }}>
                         <button type="button" className="btn btn-outline" style={{ padding: '0.6rem 1.25rem', fontSize: '1rem', fontWeight: '600' }} onClick={onViewOmitted}>
-                            🙈 View hidden products {Object.keys(omittedProducts).length > 0 && `(${Object.keys(omittedProducts).length})`}
+                            View hidden products {Object.keys(omittedProducts).length > 0 && `(${Object.keys(omittedProducts).length})`}
                         </button>
-                        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginTop: '0.5rem' }}>Products you hid from recommendations — view or restore them anytime.</p>
+                        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginTop: '0.5rem' }}>Products you hid from recommendations. View or restore them anytime.</p>
                     </div>
                 )}
             </div>
@@ -58,7 +70,7 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
             <div style={{ maxWidth: '800px', margin: '0 auto 3rem' }}>
                 <h3 style={{ fontSize: '1.25rem', marginBottom: '0.75rem' }}>Profile</h3>
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem', marginBottom: '1rem' }}>
-                    Add your zip code to see nearby store availability when viewing products (in-store and online stock is shown when we have data).
+                    Add your zip code to see if nearby stores have these products in stock (in-store and online, when we have that data).
                 </p>
                 <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
                     <input
@@ -97,14 +109,14 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                 compact
             />
 
-            {/* Recommendations from your check-in — always visible under account when check-in was done */}
+            {/* Recommendations from your check-in. Always visible under account when check-in was done */}
             {checkinRecs.length > 0 && (
                 <div style={{ maxWidth: '800px', margin: '0 auto 3rem' }}>
                     <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <span>📋</span> Recommendations from your check-in
+                        Recommendations from your check-in
                     </h3>
                     <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem', marginBottom: '1rem' }}>
-                        These match your latest check-in and, when you use them, your Period or Menopause Tracker. If you're not sure you completed a check-in, you can always see your latest recommendations here. Each product links to the same catalog on Search.
+                        These match your latest check-in and tracker data. Not sure if you did a check-in? You can always see your latest recommendations here. Each product links to the same listing in Search.
                     </p>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                         {checkinRecs.map(({ product, reason }) => {
@@ -131,7 +143,7 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                                     onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--color-border)', e.currentTarget.style.background = 'var(--color-surface-soft)')}
                                 >
                                     <div style={{ width: '56px', height: '56px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0 }}>
-                                        <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                        <ImgOrInitial item={product} size={56} />
                                     </div>
                                     <div style={{ flexGrow: 1, minWidth: 0 }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.25rem' }}>
@@ -156,10 +168,10 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                 </div>
             )}
 
-            {/* Hidden (omitted) products — also linked from header above */}
+            {/* Hidden (omitted) products. Also linked from header above */}
             <div style={{ maxWidth: '800px', margin: '0 auto 3rem' }}>
                 <h3 style={{ fontSize: '1.25rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <span>🙈</span> Hidden products
+                    Hidden products
                     {Object.keys(omittedProducts).length > 0 && (
                         <span style={{ background: 'var(--color-secondary-fade)', color: 'var(--color-primary-hover)', padding: '0.1rem 0.6rem', borderRadius: 'var(--radius-pill)', fontSize: '0.75rem', fontWeight: '600' }}>{Object.keys(omittedProducts).length}</span>
                     )}
@@ -186,17 +198,17 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                     {trackedList.length > 0 && (
                         <div>
                             <h3 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                <span>🔔</span> Safety Recall Monitoring
+                                Safety Recall Monitoring
                                 <span style={{ background: 'var(--color-secondary-fade)', color: 'var(--color-primary-hover)', padding: '0.1rem 0.6rem', borderRadius: 'var(--radius-pill)', fontSize: '0.75rem', fontWeight: '600' }}>{trackedList.length}</span>
                             </h3>
                             <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '1.25rem' }}>
-                                You'll receive immediate notifications if these products have safety issues or recalls.
+                                We'll notify you right away if these products have safety issues or get recalled.
                             </p>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                                 {trackedList.map((product, idx) => (
                                     <div key={product.id} className={`card stagger-${idx + 1}`} style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', animation: 'fadeInUp 0.6s backwards' }}>
                                         <div style={{ width: '72px', height: '72px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0 }}>
-                                            <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            <ImgOrInitial item={product} size={72} />
                                         </div>
                                         <div style={{ flexGrow: 1 }}>
                                             <span style={{ color: 'var(--color-primary)', fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase' }}>Active Tracking</span>
@@ -222,7 +234,7 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                     {joinedList.length > 0 && (
                         <div>
                             <h3 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                <span>🚀</span> Waitlists Joined
+                                Waitlists Joined
                                 <span style={{ background: 'var(--color-secondary-fade)', color: 'var(--color-primary-hover)', padding: '0.1rem 0.6rem', borderRadius: 'var(--radius-pill)', fontSize: '0.75rem', fontWeight: '600' }}>{joinedList.length}</span>
                             </h3>
                             <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '1.25rem' }}>
@@ -232,7 +244,7 @@ export default function TrackedItems({ trackedProducts, joinedWaitlists, onViewW
                                 {joinedList.map((startup, idx) => (
                                     <div key={startup.id} className={`card stagger-${idx + 1}`} style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', animation: 'fadeInUp 0.6s backwards', borderLeft: '3px solid var(--color-primary)' }}>
                                         <div style={{ width: '72px', height: '72px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0 }}>
-                                            <img src={startup.image} alt={startup.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            <ImgOrInitial item={startup} size={72} />
                                         </div>
                                         <div style={{ flexGrow: 1 }}>
                                             <span style={{ color: 'var(--color-primary)', fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase' }}>Early Access</span>

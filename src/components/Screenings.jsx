@@ -1,4 +1,5 @@
 import React from 'react';
+import { findGlossaryTermInText } from '../data/glossary';
 
 // Common helpful digital services for screenings
 const TELEHEALTH_SERVICES = [
@@ -40,13 +41,13 @@ export default function Screenings({ checkinData, onNavigate }) {
                     background: 'var(--color-secondary-fade)', padding: '0.3rem 0.8rem',
                     borderRadius: 'var(--radius-pill)', display: 'inline-block', marginBottom: '1rem'
                 }}>
-                    🩺 Health Maintenance
+                    Health Maintenance
                 </span>
                 <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem', color: 'var(--color-surface-contrast)' }}>Recommended Screenings</h2>
                 <div className="card" style={{ maxWidth: '600px', margin: '2rem auto', padding: '3rem 2rem' }}>
-                    <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>No Check-in Data Found</h3>
+                    <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>No Check-In Yet</h3>
                     <p style={{ color: 'var(--color-text-muted)', fontSize: '1rem', lineHeight: '1.6' }}>
-                        Please complete your <strong>Monthly Check-in</strong> to receive personalized screening and doctor visit recommendations based on your symptoms and history.
+                        Do your <strong>Monthly Check-in</strong> to get screening and doctor visit tips based on your symptoms and history.
                     </p>
                 </div>
             </section>
@@ -87,9 +88,9 @@ export default function Screenings({ checkinData, onNavigate }) {
             type: 'Pap Smear / Cervical Screening',
             urgency: 'high',
             message: 'Due now. Clinical guidelines recommend a Pap smear every 3 years for women ages 21-65.',
-            action: 'Visit your OB-GYN for an in-person exam',
+            action: 'Visit your OB-GYN in person for an exam',
             linkType: 'discovery',
-            linkText: 'Find OB-GYN friendly apps'
+            linkText: 'Find OB-GYN-friendly apps'
         });
     }
 
@@ -98,8 +99,8 @@ export default function Screenings({ checkinData, onNavigate }) {
         recommendations.push({
             type: 'Immediate UTI Care',
             urgency: 'high',
-            message: 'A UTI can worsen quickly. We recommend seeing a doctor today or using a telehealth service for immediate antibiotics.',
-            action: 'Visit Urgent Care or use Wisp/PP Direct',
+            message: 'A UTI can get worse fast. See a doctor today, or use a telehealth service to get antibiotics right away.',
+            action: 'Visit Urgent Care, or use Wisp or Planned Parenthood Direct',
             links: [TELEHEALTH_SERVICES[2], TELEHEALTH_SERVICES[0], ...GUIDELINE_LINKS.uti],
             suggestedProduct: { name: 'AZO UTI Test Strips', desc: 'Confirm markers before your visit.' }
         });
@@ -108,9 +109,9 @@ export default function Screenings({ checkinData, onNavigate }) {
     const severeSymptoms = symptoms.filter(s => ['Increased cramps', 'Irregular timing', 'Skin irritation'].includes(s));
     if (severeSymptoms.length > 0 && !symptoms.includes('UTI')) {
         recommendations.push({
-            type: 'Clinical Consultation (OBGYN or PCP)',
+            type: 'Talk to Your OB-GYN or PCP',
             urgency: 'medium',
-            message: `Recommended based on your recent check-in symptoms: ${severeSymptoms.join(', ')}. Monitoring abnormal symptoms with a provider helps catch issues early.`,
+            message: `Based on your recent check-in symptoms. ${severeSymptoms.join(', ')}. It's a good idea to talk to a doctor. Catching unusual symptoms early helps.`,
             action: 'Book a visit with your primary care provider',
             links: [TELEHEALTH_SERVICES[1], ...GUIDELINE_LINKS.general]
         });
@@ -124,13 +125,13 @@ export default function Screenings({ checkinData, onNavigate }) {
                     background: 'var(--color-secondary-fade)', padding: '0.3rem 0.8rem',
                     borderRadius: 'var(--radius-pill)', display: 'inline-block', marginBottom: '1rem'
                 }}>
-                    🩺 Health Maintenance
+                    Health Maintenance
                 </span>
                 <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', marginBottom: '1rem', color: 'var(--color-surface-contrast)' }}>
                     Recommended Screenings
                 </h1>
                 <p style={{ fontSize: '1.2rem', color: 'var(--color-text-muted)', maxWidth: '600px', margin: '0 auto' }}>
-                    Your personalized preventive care timeline based on your health data and recent check-ins.
+                    Care reminders made just for you, based on your health data and recent check-ins.
                 </p>
             </div>
 
@@ -138,7 +139,7 @@ export default function Screenings({ checkinData, onNavigate }) {
                 {recommendations.length === 0 ? (
                     <div className="card" style={{ textAlign: 'center', padding: '3rem' }}>
                         <h3 style={{ fontSize: '1.25rem', color: 'var(--color-text-main)', marginBottom: '0.5rem' }}>You're all up to date!</h3>
-                        <p style={{ color: 'var(--color-text-muted)' }}>We have no active screening recommendations at this time based on your reported check-in.</p>
+                        <p style={{ color: 'var(--color-text-muted)' }}>You have no screening reminders right now, based on your last check-in.</p>
                         <button className="btn btn-outline" style={{ marginTop: '1.5rem' }} onClick={() => onNavigate('discovery')}>
                             Browse General Wellness
                         </button>
@@ -158,7 +159,7 @@ export default function Screenings({ checkinData, onNavigate }) {
                                 padding: '2rem'
                             }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-                                    <h3 style={{ fontSize: '1.4rem', color: 'var(--color-surface-contrast)' }}>{rec.type}</h3>
+                                    <h3 style={{ fontSize: '1.4rem', color: 'var(--color-surface-contrast)' }} title={findGlossaryTermInText(rec.type) || undefined}>{rec.type}</h3>
                                     <span style={{
                                         fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em',
                                         background: badgeBg, color: badgeColor,
@@ -171,19 +172,18 @@ export default function Screenings({ checkinData, onNavigate }) {
                                 <p style={{ fontSize: '1.1rem', color: 'var(--color-text-main)', lineHeight: '1.6' }}>{rec.message}</p>
 
                                 <div style={{
-                                    background: '#F9FAF3', border: '1px solid #E5E7EB',
+                                    background: '#F9FAF3', border: '1px solid #E5E7EB', borderLeft: '3px solid var(--color-primary)',
                                     padding: '1rem', borderRadius: 'var(--radius-md)',
                                     display: 'flex', alignItems: 'center', gap: '0.75rem'
                                 }}>
-                                    <span style={{ fontSize: '1.2rem' }}>👩‍⚕️</span>
-                                    <span style={{ fontSize: '0.95rem', fontWeight: '600', color: 'var(--color-text-main)' }}>
+                                    <span style={{ fontSize: '0.95rem', fontWeight: '600', color: 'var(--color-text-main)' }} title={findGlossaryTermInText(rec.action) || undefined}>
                                         {rec.action}
                                     </span>
                                 </div>
 
                                 {rec.links && rec.links.length >= 3 && (
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                                        <p style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>Sources & care options (3+):</p>
+                                        <p style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>More info & care options:</p>
                                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
                                             {rec.links.map(link => (
                                                 <a key={link.name} href={link.url} target="_blank" rel="noopener noreferrer"
@@ -201,7 +201,7 @@ export default function Screenings({ checkinData, onNavigate }) {
                                         background: 'var(--color-secondary-fade)', borderRadius: 'var(--radius-md)',
                                         border: '1px solid var(--color-primary)'
                                     }}>
-                                        <p style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--color-primary)', marginBottom: '0.4rem' }}>🛒 AT-HOME TOOL SUGGESTED</p>
+                                        <p style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--color-primary)', marginBottom: '0.4rem' }}>TRY THIS AT-HOME TOOL</p>
                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                             <div>
                                                 <div style={{ fontWeight: '700', fontSize: '1rem' }}>{rec.suggestedProduct.name}</div>
@@ -227,7 +227,7 @@ export default function Screenings({ checkinData, onNavigate }) {
 
             <div style={{ marginTop: '4rem', textAlign: 'center', padding: '2rem', background: '#F4F5F7', borderRadius: 'var(--radius-lg)' }}>
                 <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', maxWidth: '600px', margin: '0 auto' }}>
-                    <strong>Disclaimer:</strong> Ayna does not provide medical diagnosis. Please consult a healthcare professional for all medical concerns.
+                    <strong>Disclaimer:</strong> Ayna does not diagnose medical conditions. Always talk to a doctor or nurse about any health concern.
                 </p>
             </div>
         </section>
