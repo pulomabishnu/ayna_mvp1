@@ -5,6 +5,13 @@
  * Affiliate URLs still override these destinations.
  */
 export const PRODUCT_BUY_URLS = {
+  "p-diva-cup": "https://shopdiva.com/collections/diva-cup-series",
+  "p-lunette-cup": "https://www.lunette.com/products/menstrual-cup",
+  "p-nixit": "https://nixit.com/products/nixit-menstrual-disc",
+  "p-cora-disc": "https://cora.life/products/cora-menstrual-disc",
+  "p-modibodi": "https://us.modibodi.com/collections/womens-period-underwear",
+  "p-rubylove": "https://www.rubylove.com/collections/period-underwear",
+  "p-probiotics-women": "https://www.gardenoflife.com/dr-formulated-probiotics-once-daily-womens-shelf-stable-vegetarian-capsules",
   "p-organyc-pad": "https://organyc-online.com/product-types/pads-and-liners/",
   "p-veeda-pad": "https://www.veedausa.com/collections/pads",
   "p-l-pad": "https://www.thisisl.com/l-pads-regular/",
