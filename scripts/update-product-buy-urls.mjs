@@ -99,6 +99,10 @@ function extractResponse(data) {
     .join('');
 }
 
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 function canonicalUrl(value) {
   try {
     const u = new URL(String(value || '').trim());
@@ -179,17 +183,37 @@ async function verifyResolvedUrl(value) {
       await response.body?.cancel();
     } catch {}
 
-    if (!response.ok) {
+    const botBlocked =
+      response.status === 403 ||
+      response.status === 429;
+
+    if (!isExactUrl(finalUrl) || isMarketplace(finalUrl)) {
+      return {
+        ok: false,
+        reason: 'Product page redirected to a homepage, search page, or retailer',
+      };
+    }
+
+    if (!response.ok && !botBlocked) {
       return {
         ok: false,
         reason: `Product page returned HTTP ${response.status}`,
       };
     }
 
-    if (!isExactUrl(finalUrl) || isMarketplace(finalUrl)) {
+    if (botBlocked) {
+      if (hostname(finalUrl) !== hostname(url)) {
+        return {
+          ok: false,
+          reason: `Blocked page redirected to a different website`,
+        };
+      }
+
       return {
-        ok: false,
-        reason: 'Product page redirected to a homepage, search page, or retailer',
+        ok: true,
+        url: finalUrl,
+        softVerified: true,
+        status: response.status,
       };
     }
 
@@ -259,33 +283,57 @@ Return ONLY JSON:
 }
 `.trim();
 
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(MODEL)}:generateContent`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-goog-api-key': API_KEY,
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            role: 'user',
-            parts: [{ text: prompt }],
-          },
-        ],
-        generationConfig: {
-          temperature: 0.1,
-        },
-      }),
-    }
-  );
+  let response;
+  let lastErrorBody = '';
 
-  if (!response.ok) {
-    const errorBody = await response.text();
-    throw new Error(
-      `Gemini HTTP ${response.status}: ${errorBody.slice(0, 300)}`
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(MODEL)}:generateContent`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-goog-api-key': API_KEY,
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              role: 'user',
+              parts: [{ text: prompt }],
+            },
+          ],
+          generationConfig: {
+            temperature: 0.1,
+          },
+        }),
+      }
     );
+
+    if (response.ok) break;
+
+    lastErrorBody = await response.text();
+
+    if (response.status === 503 && attempt < 3) {
+      const waitMs = attempt * 10000;
+      console.log(
+        `Gemini busy; retrying in ${waitMs / 1000}s (attempt ${attempt + 1}/3)`
+      );
+      await sleep(waitMs);
+      continue;
+    }
+
+    if (response.status === 429 && attempt < 2) {
+      console.log('Gemini rate limit hit; waiting 30s and retrying once');
+      await sleep(30000);
+      continue;
+    }
+
+    const error = new Error(
+      `Gemini HTTP ${response.status}: ${lastErrorBody.slice(0, 300)}`
+    );
+
+    error.status = response.status;
+    throw error;
   }
 
   const data = await response.json();
@@ -416,10 +464,17 @@ for (const [index, product] of batch.entries()) {
     reviewCount += 1;
     apiFailures += 1;
     console.log(`ERROR → ${error.message}`);
+
+    if (error.status === 429) {
+      console.log(
+        'Gemini quota is still unavailable. Stopping this batch early so Tavily searches are not wasted.'
+      );
+      break;
+    }
   }
 
   // Keep requests spaced out.
-  await new Promise((resolve) => setTimeout(resolve, 4000));
+  await sleep(4000);
 }
 
 console.log(`\nVerified this run: ${Object.keys(approved).length}`);
