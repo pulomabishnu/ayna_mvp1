@@ -5,9 +5,19 @@
  * Affiliate URLs still override these destinations.
  */
 export const PRODUCT_BUY_URLS = {
+  "d-balance-menopause": "https://apps.apple.com/us/app/balance-menopause-hormones/id1503345959",
+  "d-clue": "https://apps.apple.com/us/app/clue-period-cycle-tracker/id657189652",
+  "d-hers": "https://www.forhers.com/birth-control",
+  "d-midi-health": "https://www.joinmidi.com/menopause",
   "d-nurx-bc": "https://www.nurx.com/birthcontrol/",
+  "d-pomelo-care": "https://www.pomelocare.com/getstarted",
+  "d-stardust": "https://apps.apple.com/us/app/stardust-period-tracker/id1495829322",
+  "d-wisp-bc": "https://hellowisp.com/shop/reproductive-health/birth-control?tab=all",
   "p-always-infinity": "https://www.always.com/en-us/shop-products/menstrual-pads/infinity-pads-with-flexfoam",
   "p-cora-organic-pads": "https://cora.com/products/period-pads",
+  "p-cora-organic-tampons": "https://cora.com/products/applicator-tampons",
+  "p-creatine-womens": "https://www.thorne.com/products/dp/creatine",
+  "p-d-mannose-now": "https://www.nowfoods.com/products/supplements/d-mannose-urinary-support-500-mg-veg-capsules",
   "p-estroven-mood": "https://estroven.com/products/menopause-relief-mood-memory-boost",
   "p-flex-disc": "https://flexfits.com/products/flex-disc",
   "p-honeypot-pad": "https://thehoneypot.co/products/regular-herbal-pads-with-wings",
@@ -16,6 +26,7 @@ export const PRODUCT_BUY_URLS = {
   "p-magnesium-glycinate": "https://www.naturemade.com/products/high-absorption-magnesium-glycinate-200-mg-capsules",
   "p-pelvic-wand": "https://www.intimaterose.com/products/pelvic-wand",
   "p-rael-organic-pad": "https://www.getrael.com/products/regular-organic-cotton-pads",
+  "p-remifemin": "https://www.remifemin.com/remifemin/",
   "p-saalt-cup": "https://saalt.com/products/saalt-cup",
   "p-spearmint-pcos": "https://www.traditionalmedicinals.com/products/spearmint-tea",
   "p-thinx": "https://www.thinx.com/collections/period-shop-all",
