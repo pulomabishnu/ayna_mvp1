@@ -120,4 +120,45 @@ export const PRODUCT_BUY_URLS = {
   "p-tampax-radiant": "https://tampax.com/en-us/all-products/radiant/",
   "p-carefree-liners": "https://carefreeliners.com/collections/carefree-liners",
   "p-organicup": "https://allmatters.com/en-us/products/menstrual-cup",
+  "p-fish-oil": "https://www.nordic.com/products/omega-woman/",
+  "p-kotex-tampon": "https://www.kotex.com/en-us/products/collections/click",
+  "p-sweetspot-buff-brighten": "https://shop.sweetspotlabs.com/products/buff-brighten-body-exfoliating-pads",
+  "p-tena-intimates-very-light-liner": "https://www.tena.us/women/products/incontinence-liners-for-women/tena-sensitive-care-extra-coverage-very-light-liner",
+};
+
+/**
+ * Catalog items intentionally without a Buy Now destination.
+ *
+ * These are outdated, discontinued, unavailable, renamed, or do not
+ * currently have an exact verified purchase destination.
+ *
+ * Missing URLs for these items are intentional. Do not substitute
+ * generic brand homepages, search pages, or similar products.
+ */
+export const PRODUCT_BUY_DISABLED = {
+  "p-uqora-control": "Outdated Uqora product name; no exact current page.",
+  "p-pink-stork-bloat": "Old Pink Stork Bloat Support product no longer has an exact current page.",
+  "p-intimina-kegel": "Luna Beads entry does not match Intimina's current pelvic floor products.",
+  "d-happi-pelvic": "Exact Happi Pelvic Floor app could not be verified.",
+  "p-tampax-pure": "Tampax Pure Cotton is referenced by the brand but no exact current purchase page was verified.",
+  "p-organyc-tampon": "No exact current Organyc Cotton Tampons purchase page verified.",
+  "p-june-cup": "June Cup storefront/product availability could not be reliably verified.",
+  "p-evening-primrose": "Stored NOW Foods variant does not match the current directly sold variant.",
+  "p-good-clean-love": "Bio-Match Moisturizer entry is outdated and does not match a current exact product.",
+  "p-luna-wash": "Old Luna Daily intimate wash entry has been replaced by newer Everywhere Wash products.",
+  "d-oura": "Oura Ring Gen3 is no longer available for purchase from Oura.",
+  "d-eight-sleep": "Pod 4 is a previous generation and the current catalog has moved to newer hardware.",
+  "p-v-wash": "No exact verified official V-Wash Plus purchase page.",
+  "p-sweet-spot-wipes": "Current SweetSpot Labs wipes are sold out.",
+  "d-flutter": "Exact legitimate Flutter chronic pain service could not be verified.",
+  "d-menolabs": "MenoLife app/service no longer has a reliable current official destination.",
+  "p-snoogle-pillow": "Direct Snoogle catalog listing is currently sold out.",
+  "p-queen-v-pop": "Exact current Queen V Pop It suppository page could not be verified.",
+  "p-kotex-security": "Security Ultra Thin is an outdated Kotex product-line entry.",
+  "p-seventh-gen-pad": "No exact current Seventh Generation pad purchase page verified.",
+  "p-u-kotex-pad": "Clean Wear naming is outdated and does not exactly match the current Kotex line.",
+  "p-seventh-gen-tampon": "No exact current Seventh Generation Organic Tampons purchase page verified.",
+  "p-ziggy-disc": "Catalog entry is for the original Ziggy; the current product is Ziggy Cup 2.",
+  "p-period-nirvana-disc": "No standalone Period Nirvana-branded disc matching this catalog entry exists.",
+  "p-proof-period": "Proof stopped fulfilling new website orders in January 2026.",
 };
