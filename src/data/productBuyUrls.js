@@ -119,4 +119,5 @@ export const PRODUCT_BUY_URLS = {
   "p-boppy-pillow": "https://www.boppy.com/products/nursing-pillow",
   "p-tampax-radiant": "https://tampax.com/en-us/all-products/radiant/",
   "p-carefree-liners": "https://carefreeliners.com/collections/carefree-liners",
+  "p-organicup": "https://allmatters.com/en-us/products/menstrual-cup",
 };
