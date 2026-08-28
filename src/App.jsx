@@ -249,6 +249,11 @@ function App() {
     else handleViewDiscovery('');
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handleBackFromStandalonePage = useCallback(() => {
+    if (inAppPushCountRef.current > 0) window.history.back();
+    else setCurrentView('welcome', { replace: true });
+  }, [setCurrentView]);
   useEffect(() => {
     const path = pathForView(currentView, productRouteId);
     window.history.replaceState({ view: currentView, productId: productRouteId }, '', path);
@@ -1458,25 +1463,25 @@ function App() {
           </Suspense>
         )}
         {currentView === 'privacy-policy' && (
-          <PrivacyPolicy onBack={() => window.history.back()} />
+          <PrivacyPolicy onBack={handleBackFromStandalonePage} />
         )}
         {currentView === 'terms-of-use' && (
-          <TermsOfUse onBack={() => window.history.back()} />
+          <TermsOfUse onBack={handleBackFromStandalonePage} />
         )}
         {currentView === 'how-we-make-money' && (
-          <HowWeMakeMoney onBack={() => window.history.back()} />
+          <HowWeMakeMoney onBack={handleBackFromStandalonePage} />
         )}
         {currentView === 'how-it-works' && (
           <HowItWorks
-            onBack={() => window.history.back()}
+            onBack={handleBackFromStandalonePage}
             onViewSources={handleViewArticles}
           />
         )}
         {currentView === 'about' && (
-          <About onBack={() => window.history.back()} onViewSources={handleViewArticles} />
+          <About onBack={handleBackFromStandalonePage} onViewSources={handleViewArticles} />
         )}
         {currentView === 'contact' && (
-          <Contact onBack={() => window.history.back()} />
+          <Contact onBack={handleBackFromStandalonePage} />
         )}
         {currentView === 'auth-callback' && (
           <AuthCallback onAuthenticated={(user) => {
