@@ -100,7 +100,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
           // is about to act on.
           setSuccessMsg('You\'re all set. Signing you in...');
         } else {
-          setSuccessMsg('Almost there! A confirmation email is on its way from Ayna (pulomabishnu@gmail.com). Check your spam folder if you don\'t see it. Once confirmed, come back here to sign in.');
+          setSuccessMsg('Almost there! A confirmation email is on its way from Ayna (puloma@aynahealth.co). Check your spam folder if you don\'t see it. Once confirmed, come back here to sign in.');
           setNeedsConfirmation(true);
         }
       } else {
