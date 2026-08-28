@@ -99,6 +99,7 @@ export default function Contact({ onBack }) {
         </button>
 
         <div
+          className="contact-page__grid"
           style={{
             display: 'grid',
             gridTemplateColumns: 'minmax(0, 0.9fr) minmax(0, 1.1fr)',
@@ -182,7 +183,7 @@ export default function Contact({ onBack }) {
               </label>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="contact-page__name-email" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div>
                 <label htmlFor="contact-name" style={LABEL_STYLE}>Name</label>
                 <input
@@ -308,6 +309,11 @@ export default function Contact({ onBack }) {
 
       <style>{`
         @media (max-width: 760px) {
+          .contact-page__grid,
+          .contact-page__name-email {
+            grid-template-columns: 1fr !important;
+          }
+
           .mockup-page form {
             min-width: 0;
           }
