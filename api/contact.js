@@ -109,7 +109,7 @@ export default async function handler(req, res) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: process.env.CONTACT_FROM_EMAIL || 'Ayna Contact <contact@aynahealth.co>',
+      from: process.env.CONTACT_FROM_EMAIL || 'Ayna <puloma@aynahealth.co>',
       to: ['puloma@aynahealth.co'],
       bcc: ['eliz@aynahealth.co', 'ameera@aynahealth.co'],
       reply_to: email,
