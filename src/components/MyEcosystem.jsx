@@ -86,7 +86,7 @@ function buildAynaVCardDataUri(phoneNumber) {
   const vcard = [
     'BEGIN:VCARD',
     'VERSION:3.0',
-    'FN:Ayna',
+    'FN:ayna',
     `TEL;TYPE=CELL:${phoneNumber}`,
     'END:VCARD',
   ].join('\n');
@@ -1259,7 +1259,7 @@ export default function MyEcosystem({
                         // The app already has a vetted local recommendation engine;
                         // use it as an immediate fallback for network/5xx/404/timeouts.
                         if (limitReached) {
-                            rec.error = "You've already generated your Ayna ecosystem. Regenerating is a premium feature. Email pulomabishnu@gmail.com to upgrade.";
+                            rec.error = "You've already generated your ayna ecosystem. Regenerating is a premium feature. Email puloma@aynahealth.co to upgrade.";
                             notifyGeneration(rec);
                             return;
                         }
@@ -1887,13 +1887,13 @@ export default function MyEcosystem({
                                     </button>
                                     {phoneNumberInfo?.is_verified ? (
                                         <>
-                                            <p style={{ margin: '0 0 0.4rem', fontWeight: 600 }}>Text Ayna to get quick health answers</p>
+                                            <p style={{ margin: '0 0 0.4rem', fontWeight: 600 }}>Text ayna to get quick health answers</p>
                                             {AYNA_SMS_NUMBER && (
                                                 <p style={{ margin: '0 0 0.6rem', fontSize: '1.2rem', fontWeight: 700, color: 'var(--color-primary)' }}>{AYNA_SMS_NUMBER}</p>
                                             )}
                                             <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                                                 {AYNA_SMS_NUMBER && (
-                                                    <a className="btn btn-outline" href={buildAynaVCardDataUri(AYNA_SMS_NUMBER)} download="Ayna.vcf">
+                                                    <a className="btn btn-outline" href={buildAynaVCardDataUri(AYNA_SMS_NUMBER)} download="ayna.vcf">
                                                         Save to Contacts
                                                     </a>
                                                 )}
@@ -1904,7 +1904,7 @@ export default function MyEcosystem({
                                         </>
                                     ) : (
                                         <>
-                                            <p style={{ margin: '0 0 0.6rem', fontWeight: 600 }}>Get Ayna by text. Verify your number</p>
+                                            <p style={{ margin: '0 0 0.6rem', fontWeight: 600 }}>Get ayna by text. Verify your number</p>
                                             <button type="button" className="btn btn-primary" onClick={onOpenPhoneVerify}>Verify your number</button>
                                         </>
                                     )}
@@ -1923,7 +1923,7 @@ export default function MyEcosystem({
                                                 key={src.id}
                                                 type="button"
                                                 onClick={() => !isPremium && setShowSyncPaywall(true)}
-                                                title={isPremium ? `Connect ${src.label}` : `${src.label}. Requires Ayna Premium`}
+                                                title={isPremium ? `Connect ${src.label}` : `${src.label}. Requires ayna Premium`}
                                                 style={{
                                                     display: 'flex', alignItems: 'center', gap: '0.4rem',
                                                     padding: '0.4rem 0.85rem',
@@ -1973,9 +1973,9 @@ export default function MyEcosystem({
                                 </summary>
                                 <div className="eco2-details__body">
                                     <p style={{ fontSize: '0.88rem', lineHeight: 1.6, color: 'var(--color-text-main)' }}>
-                                        Ayna scores products against your intake answers — stage, goals, sensitivities,
+                                        ayna scores products against your intake answers — stage, goals, sensitivities,
                                         and life stage — plus published clinical, community, and safety sources per
-                                        product. When the catalog has no strong fit for a concern, Ayna searches for and
+                                        product. When the catalog has no strong fit for a concern, ayna searches for and
                                         adds a real, currently-sold product rather than leaving the shelf empty. Update
                                         your profile any time and your shelves recompute against the new answers.
                                     </p>

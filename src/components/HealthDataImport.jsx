@@ -155,7 +155,7 @@ export default function HealthDataImport({ onUpdate }) {
         <div style={{ padding: '1rem', background: 'var(--color-surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
           <p style={{ fontWeight: '600', marginBottom: '0.5rem' }}>Apple Health</p>
           <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', lineHeight: 1.5, marginBottom: '0.75rem' }}>
-            Ayna doesn’t have a phone app, so we can’t read Apple Health directly off your device. Instead: open the <strong>Health app → your profile picture (top right) → Export All Health Data</strong>, then unzip the download to find <strong>export.xml</strong> and upload it below. We parse steps, sleep, heart rate, and cycle tracking data locally in your browser. The file is not sent to our servers.
+            ayna doesn’t have a phone app, so we can’t read Apple Health directly off your device. Instead: open the <strong>Health app → your profile picture (top right) → Export All Health Data</strong>, then unzip the download to find <strong>export.xml</strong> and upload it below. We parse steps, sleep, heart rate, and cycle tracking data locally in your browser. The file is not sent to our servers.
           </p>
           <label style={{ fontSize: '0.9rem', cursor: 'pointer', display: 'inline-block' }}>
             <span className="btn btn-outline" style={{ padding: '0.45rem 1rem', fontSize: '0.85rem' }}>Choose export.xml</span>
@@ -222,7 +222,7 @@ export default function HealthDataImport({ onUpdate }) {
         onChange={(e) => setNotes(e.target.value)}
         rows={3}
         style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', marginBottom: '1rem', fontSize: '0.9rem' }}
-        placeholder="Anything else Ayna should weigh when ranking products for you."
+        placeholder="Anything else ayna should weigh when ranking products for you."
       />
 
       <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.35rem', fontSize: '0.9rem' }}>Wearable &amp; activity summary (optional)</label>

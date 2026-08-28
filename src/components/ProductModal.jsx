@@ -17,7 +17,7 @@ import posthog from 'posthog-js';
 const PRODUCT_VIEW_KEY = 'ayna_product_detail_view_v1';
 
 const AYNA_TABS = [
-  { id: 'summary', label: 'Ayna summary' },
+  { id: 'summary', label: 'ayna summary' },
   { id: 'clinician', label: 'Clinician opinion' },
   { id: 'scientific', label: 'Scientific literature' },
   { id: 'community', label: 'Social Media' },
@@ -270,7 +270,7 @@ function truncate(s, max) {
  * Pads PFAS controversy) regardless of which tab is active. safety.recalls
  * and safety.opinionAlerts were both being written into the catalog with
  * real, accurate detail, but neither was ever rendered anywhere in this
- * file — the default "Ayna summary" a user sees first is built only from
+ * file — the default "ayna summary" a user sees first is built only from
  * product.summary + product.effectiveness, both purely positive/performance
  * fields, so a product could read as unqualified positive even when the
  * SAME entry already had a well-documented concern on file just one tab
@@ -546,7 +546,7 @@ export default function ProductModal({
     return [categoryLabel, product.brand].filter(Boolean).join(' · ').toUpperCase();
   }, [product]);
 
-  // Ayna summary card: the catalog's own short, single-sentence fields —
+  // ayna summary card: the catalog's own short, single-sentence fields —
   // never a live AI call, so there's no loading state, quota, or paywall to
   // show, and nothing here is longer than what's actually on file.
   const summarySentences = useMemo(() => {
@@ -594,7 +594,7 @@ export default function ProductModal({
   // The clinician-opinion tab states a claim ("hormonal birth control can
   // deplete B vitamins…") with no link a reader can check — the actual
   // citations only ever showed up as generic chips on a different tab
-  // (Ayna summary), disconnected from the claim they support. Flagged live
+  // (ayna summary), disconnected from the claim they support. Flagged live
   // 2026-08-25: "if we're stating stuff we need to have links to sources."
   // Doctor + scientific links both back clinical claims, so both show here.
   const clinicianSourceLinks = useMemo(() => toSourceChips([
@@ -707,8 +707,8 @@ export default function ProductModal({
         </button>
       )}
       {isPartnerBrandItem(product) && (
-        <span className="pdp-head__badge" title="Ayna has a partnership with this brand. It does not affect your recommendation.">
-          Ayna Partner
+        <span className="pdp-head__badge" title="ayna has a partnership with this brand. It does not affect your recommendation.">
+          ayna Partner
         </span>
       )}
     </div>
@@ -718,7 +718,7 @@ export default function ProductModal({
     <div className="pdp-head__tile" style={{ position: 'relative' }}>
       {usesAffiliateLink && (
         <span
-          title="Ayna may earn a commission if you purchase through this link."
+          title="ayna may earn a commission if you purchase through this link."
           style={{
             position: 'absolute',
             top: '0.55rem',
@@ -894,7 +894,7 @@ export default function ProductModal({
                     {sourceCounts.total > 0 && (
                       <div className="pdp-summary-card__meta">
                         <span className="pdp-summary-card__dot" />
-                        AYNA SUMMARY · {sourceCounts.total} SOURCE{sourceCounts.total === 1 ? '' : 'S'}
+                        ayna SUMMARY · {sourceCounts.total} SOURCE{sourceCounts.total === 1 ? '' : 'S'}
                       </div>
                     )}
                     {summarySentences.length > 0 ? (

@@ -11,9 +11,9 @@ const SUBTITLES = {
 };
 
 const CONSENT_ITEMS = [
-  'I understand that the health information I enter into Ayna is self-reported wellness data, not a clinical record.',
-  'I understand my wellness data is processed by an external AI service to generate personalized recommendations and is NEVER sold. Ayna takes rigorous measures to anonymize user data for recommendations and secure storage.',
-  'I understand Ayna provides wellness information only and is not a substitute for medical advice from a qualified healthcare provider.',
+  'I understand that the health information I enter into ayna is self-reported wellness data, not a clinical record.',
+  'I understand my wellness data is processed by an external AI service to generate personalized recommendations and is NEVER sold. ayna takes rigorous measures to anonymize user data for recommendations and secure storage.',
+  'I understand ayna provides wellness information only and is not a substitute for medical advice from a qualified healthcare provider.',
 ];
 
 const CONSENT_VERSION = 'v1';
@@ -105,7 +105,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
           // is about to act on.
           setSuccessMsg('You\'re all set. Signing you in...');
         } else {
-          setSuccessMsg('Almost there! A confirmation email is on its way from Ayna (puloma@aynahealth.co). Check your spam folder if you don\'t see it. Once confirmed, come back here to sign in.');
+          setSuccessMsg('Almost there! A confirmation email is on its way from ayna (puloma@aynahealth.co). Check your spam folder if you don\'t see it. Once confirmed, come back here to sign in.');
           setNeedsConfirmation(true);
         }
       } else {
@@ -295,7 +295,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
           <button type="button" onClick={onSkip} style={styles.closeBtn} aria-label="Skip for now">×</button>
         )}
 
-        <div style={styles.logo}>Ayna</div>
+        <div style={styles.logo}>ayna</div>
         <p style={styles.tagline}>{subtitle}</p>
 
         {!supabase && (
@@ -341,12 +341,12 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
               onClick={(e) => e.stopPropagation()}
               style={{ width: '100%', maxWidth: '420px', background: '#fff', borderRadius: '20px', padding: '2rem', boxShadow: '0 18px 50px rgba(28, 25, 23, 0.18)', textAlign: 'center' }}
             >
-              <div style={{ color: '#f97316', fontWeight: 700, fontSize: '0.85rem', letterSpacing: '0.04em', marginBottom: '0.75rem' }}>AYNA</div>
+              <div style={{ color: '#f97316', fontWeight: 700, fontSize: '0.85rem', letterSpacing: '0.04em', marginBottom: '0.75rem' }}>ayna</div>
               <h2 id="phone-coming-soon-title" style={{ margin: '0 0 0.75rem', fontSize: '1.4rem', color: '#1c1917' }}>
                 Phone sign-up is coming soon
               </h2>
               <p style={{ margin: '0 0 1.5rem', color: '#57534e', lineHeight: 1.6 }}>
-                We’re still putting the finishing touches on phone verification. For now, please create your Ayna account with email or Google.
+                We’re still putting the finishing touches on phone verification. For now, please create your ayna account with email or Google.
               </p>
               <button
                 type="button"
@@ -384,7 +384,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
               </div>
 
               <p style={styles.legalNotice}>
-                By creating an account you agree to Ayna's{' '}
+                By creating an account you agree to ayna's{' '}
                 <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" style={styles.link}>Privacy Policy</a>
                 {' '}and{' '}
                 <a href="/terms-of-use" target="_blank" rel="noopener noreferrer" style={styles.link}>Terms of Service</a>.

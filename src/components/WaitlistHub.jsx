@@ -14,7 +14,7 @@ function GeneralWaitlistBanner({ joinedWaitlists, toggleJoinWaitlist }) {
         if (isJoined) return;
         toggleJoinWaitlist({
             id: 'ayna-general-waitlist',
-            name: 'Ayna Early Access',
+            name: 'ayna Early Access',
             email: email.trim() || undefined,
             city: city.trim() || undefined,
             focus: focus || undefined,
@@ -130,7 +130,7 @@ export default function WaitlistHub({ joinedWaitlists, toggleJoinWaitlist, quizR
                     marginBottom: '1rem',
                     display: 'inline-block'
                 }}>
-                    {hasProfile ? '✨ Personalized for Your Profile' : 'Ayna Early Access'}
+                    {hasProfile ? '✨ Personalized for Your Profile' : 'ayna Early Access'}
                 </div>
                 <h2 style={{ fontFamily: 'var(--font-serif)', fontWeight: 500, fontSize: '2.5rem', marginBottom: '1rem' }}>
                     {hasProfile ? 'Startups Matched to You' : 'Tomorrow\'s Wellness, Today'}

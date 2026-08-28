@@ -103,13 +103,13 @@ export default function SiteFooter({
       </div>
 
       <div className="site-footer__baseline">
-        <span>© Ayna 2026</span>
+        <span>© ayna 2026</span>
         <span>Made for women, by women.</span>
       </div>
 
       <div className="site-footer__legal">
-        Ayna provides wellness information only. Not medical advice. Always consult a qualified
-        healthcare provider for medical decisions. By using Ayna, you agree your data is stored
+        ayna provides wellness information only. Not medical advice. Always consult a qualified
+        healthcare provider for medical decisions. By using ayna, you agree your data is stored
         securely and never sold.
         {' '}
         <button type="button" style={{ ...LINK_STYLE, textDecoration: 'underline' }} onClick={onViewPrivacyPolicy}>Privacy Policy</button>

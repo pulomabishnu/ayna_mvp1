@@ -4,11 +4,11 @@ import RotatingWordHeadline from './RotatingWordHeadline';
 import WaitlistLandingLayout from './WaitlistLandingLayout';
 
 const WELCOME_PREFIX = 'Welcome to ';
-const AYNA_WORD = 'AYNA';
+const AYNA_WORD = 'ayna';
 const INTRO_TEXT = `${WELCOME_PREFIX}${AYNA_WORD}`;
 const AYNA_START_INDEX = WELCOME_PREFIX.length;
 const LETTER_MS = 88;
-/** After "Welcome to AYNA" + subline are shown, time before the second landing page. */
+/** After "Welcome to ayna" + subline are shown, time before the second landing page. */
 const PAUSE_BEFORE_SECOND_PAGE_MS = 1200;
 
 /**
@@ -92,7 +92,7 @@ export default function WelcomeGate({ onPersonalizedPath, onBrowsePath, onWelcom
                     {ch === ' ' ? '\u00A0' : ch}
                   </span>
                 ))}
-                <span className="ayna-landing-ayna-wordmark" aria-label="Ayna">
+                <span className="ayna-landing-ayna-wordmark" aria-label="ayna">
                   {AYNA_WORD.split('').map((ch, j) => {
                     const i = AYNA_START_INDEX + j;
                     return (
@@ -131,7 +131,7 @@ export default function WelcomeGate({ onPersonalizedPath, onBrowsePath, onWelcom
               }}
             >
               <span className="ayna-landing-welcome-lead">Welcome to </span>
-              <span className="ayna-landing-ayna-wordmark" aria-label="Ayna">AYNA</span>
+              <span className="ayna-landing-ayna-wordmark" aria-label="ayna">ayna</span>
             </h1>
             <ScrollReveal className="stagger-1">
               <div className="welcome-gate__second-text-stack">
@@ -140,7 +140,7 @@ export default function WelcomeGate({ onPersonalizedPath, onBrowsePath, onWelcom
                 </span>
                 <RotatingWordHeadline layout="stacked" as="div" />
                 <p className="ayna-landing__body welcome-gate__second-lead">
-                  Ayna helps you find health products and care that fit you. Backed by real research, doctor input,
+                  ayna helps you find health products and care that fit you. Backed by real research, doctor input,
                   and other women's experiences. Big brands and small brands, all in one place.
                 </p>
               </div>

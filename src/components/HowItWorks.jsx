@@ -15,7 +15,7 @@ export default function HowItWorks({ onBack, onViewSources }) {
         <h1 className="hiw-mockup__title">No mystery box.</h1>
 
         <p className="hiw-mockup__intro">
-          Ayna filters the open market against your profile, then against published research.
+          ayna filters the open market against your profile, then against published research.
           <br className="hiw-desktop-break" />
           Anything that fails a step never reaches your shop.
         </p>
@@ -77,7 +77,7 @@ export default function HowItWorks({ onBack, onViewSources }) {
 
         <div className="hiw-mockup__disclaimer">
           <div>
-            <h2>Ayna is not a doctor, and never pretends to be.</h2>
+            <h2>ayna is not a doctor, and never pretends to be.</h2>
             <p>
               Summaries are AI-written from cited sources and clinician input.
             </p>

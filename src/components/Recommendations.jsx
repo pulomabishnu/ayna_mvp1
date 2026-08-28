@@ -402,7 +402,7 @@ export default function Recommendations({
                 <div style={{ maxWidth: '980px', margin: '0 auto var(--spacing-xl)', display: 'grid', gap: '1rem' }}>
                     <h3 style={{ fontSize: '1.35rem', marginBottom: '0.4rem' }}>Picks for you</h3>
                     <p style={{ margin: '0 0 0.45rem', fontSize: '0.82rem', color: 'var(--color-text-muted)', lineHeight: 1.45 }}>
-                        These picks come from what you told us and what Ayna has learned so far. Not from our regular product list. Always check with a doctor and the brand before you buy.
+                        These picks come from what you told us and what ayna has learned so far. Not from our regular product list. Always check with a doctor and the brand before you buy.
                     </p>
                     {tiered.map((entry) => (
                         <div key={entry.concern} className="card" style={{ padding: '1rem' }}>

@@ -31,7 +31,7 @@ const SECTIONS = [
     {
         eyebrow: 'Something feel off? Tell us.',
         paragraphs: [
-            'If you’re ever concerned about a specific product or a recommendation you received, you can report it directly to us at hello@ayna.com. We review every report.',
+            'If you’re ever concerned about a specific product or a recommendation you received, you can report it directly to us at puloma@aynahealth.co. We review every report.',
         ],
     },
 ];

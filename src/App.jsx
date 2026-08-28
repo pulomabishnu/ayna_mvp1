@@ -1166,15 +1166,15 @@ function App() {
   // preview when sharing (found live, 2026-08-24 bug bash). One page,
   // dynamic title per route/product instead.
   useEffect(() => {
-    const base = "Ayna | Personalized Women's Health Product Recommendations";
+    const base = "ayna | Personalized Women's Health Product Recommendations";
     if (currentView === 'product') {
       document.title = resolvedProduct?.name
-        ? `${resolvedProduct.name} | Ayna`
-        : (productStillResolving ? 'Loading… | Ayna' : base);
+        ? `${resolvedProduct.name} | ayna`
+        : (productStillResolving ? 'Loading… | ayna' : base);
       return;
     }
     const label = VIEW_TITLES[currentView];
-    document.title = label ? `${label} | Ayna` : base;
+    document.title = label ? `${label} | ayna` : base;
   }, [currentView, resolvedProduct, productStillResolving]);
 
   const handleRateProduct = (product, rating) => {
@@ -1768,10 +1768,10 @@ function App() {
               <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', lineHeight: 1.6, margin: 0 }}>
                 To request deletion of your entire account and data, email{' '}
                 <a
-                  href="mailto:hello@ayna.com?subject=Account%20Deletion%20Request"
+                  href="mailto:puloma@aynahealth.co?subject=Account%20Deletion%20Request"
                   style={{ color: 'var(--color-primary)', textDecoration: 'underline', fontWeight: '500' }}
                 >
-                  hello@ayna.com
+                  puloma@aynahealth.co
                 </a>
                 {' '}from the email address associated with your account.
               </p>

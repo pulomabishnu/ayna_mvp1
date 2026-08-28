@@ -200,7 +200,7 @@ export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LA
             </div>
 
             <div style={{ marginTop: '3rem', padding: '2rem', background: 'var(--color-secondary-fade)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-primary-fade)' }}>
-                <h3 style={{ fontSize: '1.1rem', color: 'var(--color-primary)', marginBottom: '1rem' }}>Ayna's Tip</h3>
+                <h3 style={{ fontSize: '1.1rem', color: 'var(--color-primary)', marginBottom: '1rem' }}>ayna's Tip</h3>
                 <p style={{ fontSize: '1rem', lineHeight: '1.7', color: 'var(--color-text-main)' }}>
                     When choosing between products, look closely at <strong>Materials & Ingredients</strong> and the <strong>Doctor's Opinion</strong>.
                     A higher price often means more marketing, not better ingredients. Look for "B-Corp" or "Sustainable" badges. They can mean higher ethical standards.

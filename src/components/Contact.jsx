@@ -141,7 +141,7 @@ export default function Contact({ onBack }) {
                 maxWidth: '430px',
               }}
             >
-              Send us a note and we’ll make sure it reaches the right person on the Ayna team.
+              Send us a note and we’ll make sure it reaches the right person on the ayna team.
             </p>
 
             <div
@@ -156,7 +156,7 @@ export default function Contact({ onBack }) {
               }}
             >
               For brand collaborations, choose <strong style={{ color: '#4a4356' }}>Partnerships</strong>.
-              For questions about using Ayna, choose <strong style={{ color: '#4a4356' }}>Help & Support</strong>.
+              For questions about using ayna, choose <strong style={{ color: '#4a4356' }}>Help & Support</strong>.
             </div>
           </section>
 
@@ -270,7 +270,7 @@ export default function Contact({ onBack }) {
                   fontSize: '14px',
                 }}
               >
-                Thanks. Your message has been sent to the Ayna team.
+                Thanks. Your message has been sent to the ayna team.
               </div>
             )}
 
