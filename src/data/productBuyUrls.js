@@ -117,4 +117,6 @@ export const PRODUCT_BUY_URLS = {
   "p-thinx": "https://www.thinx.com/collections/period-shop-all",
   "p-ubiquinol-thorne": "https://www.thorne.com/products/dp/ubiquinol",
   "p-boppy-pillow": "https://www.boppy.com/products/nursing-pillow",
+  "p-tampax-radiant": "https://tampax.com/en-us/all-products/radiant/",
+  "p-carefree-liners": "https://carefreeliners.com/collections/carefree-liners",
 };
