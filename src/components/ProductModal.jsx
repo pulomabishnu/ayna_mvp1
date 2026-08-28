@@ -696,19 +696,6 @@ export default function ProductModal({
           </button>
         )}
       </div>
-      {usesAffiliateLink && (
-        <span
-          style={{
-            fontSize: '0.68rem',
-            color: 'var(--color-text-muted)',
-            lineHeight: 1,
-            marginTop: '-0.15rem',
-          }}
-          title="Ayna may earn a commission if you purchase through this link."
-        >
-          Affiliate link
-        </span>
-      )}
       {onAddToEcosystem && (
         <button
           type="button"
@@ -721,14 +708,33 @@ export default function ProductModal({
       )}
       {isPartnerBrandItem(product) && (
         <span className="pdp-head__badge" title="Ayna has a partnership with this brand. It does not affect your recommendation.">
-          🤝 Ayna Partner
+          Ayna Partner
         </span>
       )}
     </div>
   );
 
   const galleryTile = (
-    <div className="pdp-head__tile">
+    <div className="pdp-head__tile" style={{ position: 'relative' }}>
+      {usesAffiliateLink && (
+        <span
+          title="Ayna may earn a commission if you purchase through this link."
+          style={{
+            position: 'absolute',
+            top: '0.55rem',
+            right: '0.55rem',
+            zIndex: 2,
+            fontSize: '0.62rem',
+            lineHeight: 1,
+            color: 'var(--color-text-muted)',
+            background: 'rgba(255,255,255,0.88)',
+            padding: '0.3rem 0.4rem',
+            borderRadius: '999px',
+          }}
+        >
+          Affiliate link
+        </span>
+      )}
       {/* resolvedModalImage, when set, came back from the server's
           type-aware /api/product-image — trust it as-is instead of
           re-running it through isPlaceholderProductImage, which doesn't
