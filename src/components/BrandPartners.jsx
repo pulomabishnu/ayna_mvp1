@@ -72,8 +72,8 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToE
         </h1>
         <p className="brands__lede">
           {PARTNERS.length > 0
-            ? "Partnerships, not paid placement. A brand being here doesn't move it up your shop. Matching is the same for every product Ayna carries."
-            : "Something exciting is brewing — check back soon. Whenever a partnership becomes official, it still won't move a brand up your shop or your recommendations. Matching stays the same for every product Ayna carries, partner or not."}
+            ? "Partner brands may receive added visibility in Browse, but partnerships never affect personalized matching or recommendations."
+            : "Something exciting is brewing — check back soon. Partner brands may receive added visibility in Browse, but partnerships never affect personalized matching or recommendations."}
         </p>
       </div>
 
