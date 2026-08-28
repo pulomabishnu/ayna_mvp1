@@ -40,6 +40,7 @@ import PrivacyPolicy from './components/PrivacyPolicy';
 import HowWeMakeMoney from './components/HowWeMakeMoney';
 import HowItWorks from './components/HowItWorks';
 import About from './components/About';
+import Contact from './components/Contact';
 import './finalAynaPolish.css';
 import TermsOfUse from './components/TermsOfUse';
 import AuthCallback from './components/AuthCallback';
@@ -98,6 +99,7 @@ const VIEW_TO_PATH = {
   'how-we-make-money': '/how-we-make-money',
   'how-it-works': '/how-it-works',
   about: '/about',
+  contact: '/contact',
   'auth-callback': '/auth/callback',
   'confirmed': '/confirmed',
 };
@@ -111,7 +113,7 @@ const VIEW_TITLES = {
   'phone-verify': 'Verify Phone', tracked: 'Tracked Products',
   'privacy-policy': 'Privacy Policy', 'terms-of-use': 'Terms of Use',
   'how-we-make-money': 'How We Make Money', 'how-it-works': 'How It Works',
-  about: 'About', 'not-found': 'Page Not Found',
+  about: 'About', contact: 'Contact', 'not-found': 'Page Not Found',
 };
 
 const PATH_TO_VIEW = Object.fromEntries(
@@ -831,6 +833,7 @@ function App() {
   const handleViewHowWeMakeMoney = () => setCurrentView('how-we-make-money');
   const handleViewHowItWorks = () => setCurrentView('how-it-works');
   const handleViewAbout = () => setCurrentView('about');
+  const handleViewContact = () => setCurrentView('contact');
   const handleViewArticles = () => {
     setSelectedArticleId(null);
     setCurrentView('articles');
@@ -1472,6 +1475,9 @@ function App() {
         {currentView === 'about' && (
           <About onBack={() => window.history.back()} onViewSources={handleViewArticles} />
         )}
+        {currentView === 'contact' && (
+          <Contact onBack={() => window.history.back()} />
+        )}
         {currentView === 'auth-callback' && (
           <AuthCallback onAuthenticated={(user) => {
             setUser(user);
@@ -1797,6 +1803,7 @@ function App() {
       <SiteFooter
           onViewHowItWorks={handleViewHowItWorks}
           onViewAbout={handleViewAbout}
+          onViewContact={handleViewContact}
           onViewDiscovery={handleViewDiscovery}
           onViewWaitlist={handleViewWaitlist}
           onViewArticles={handleViewArticles}
