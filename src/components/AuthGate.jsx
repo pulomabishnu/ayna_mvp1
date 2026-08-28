@@ -49,6 +49,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
   // configured as Supabase's SMS provider (Authentication → Phone in the
   // Supabase Dashboard) — this code can't set that up, only use it once set.
   const [authMethod, setAuthMethod] = useState('email');
+  const [showPhoneNotice, setShowPhoneNotice] = useState(false);
   const [phoneStep, setPhoneStep] = useState('number');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [phoneCode, setPhoneCode] = useState('');
@@ -64,6 +65,10 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
 
   const handleEmailAuth = async (e) => {
     e.preventDefault();
+    if (isSignup && !allConsented) {
+      setError("Please agree to the three statements above before creating your account.");
+      return;
+    }
     setError('');
     setSuccessMsg('');
     setResendMsg('');
@@ -207,6 +212,10 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
   };
 
   const handleGoogle = async () => {
+    if (isSignup && !allConsented) {
+      setError("Please agree to the three statements above before continuing.");
+      return;
+    }
     if (!supabase) {
       setError('Supabase is not configured. Check environment variables.');
       return;
@@ -320,6 +329,36 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
           </button>
         </div>
 
+        {showPhoneNotice && (
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="phone-coming-soon-title"
+            onClick={() => setShowPhoneNotice(false)}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(28, 25, 23, 0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.25rem', zIndex: 1200 }}
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              style={{ width: '100%', maxWidth: '420px', background: '#fff', borderRadius: '20px', padding: '2rem', boxShadow: '0 18px 50px rgba(28, 25, 23, 0.18)', textAlign: 'center' }}
+            >
+              <div style={{ color: '#f97316', fontWeight: 700, fontSize: '0.85rem', letterSpacing: '0.04em', marginBottom: '0.75rem' }}>AYNA</div>
+              <h2 id="phone-coming-soon-title" style={{ margin: '0 0 0.75rem', fontSize: '1.4rem', color: '#1c1917' }}>
+                Phone sign-up is coming soon
+              </h2>
+              <p style={{ margin: '0 0 1.5rem', color: '#57534e', lineHeight: 1.6 }}>
+                We’re still putting the finishing touches on phone verification. For now, please create your Ayna account with email or Google.
+              </p>
+              <button
+                type="button"
+                onClick={() => setShowPhoneNotice(false)}
+                style={{ width: '100%', border: 'none', borderRadius: '12px', padding: '0.9rem 1rem', background: '#f97316', color: '#fff', fontWeight: 700, fontSize: '1rem', cursor: 'pointer' }}
+              >
+                Continue with email
+              </button>
+            </div>
+          </div>
+        )}
+
         <form
           onSubmit={
             isSignup && authMethod === 'phone'
@@ -354,7 +393,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
               {authMethod === 'email' ? (
                 <button
                   type="button"
-                  onClick={() => switchAuthMethod('phone')}
+                  onClick={() => setShowPhoneNotice(true)}
                   style={{ ...styles.link, background: 'none', border: 'none', padding: 0, font: 'inherit', cursor: 'pointer', textAlign: 'left' }}
                 >
                   Use my phone number instead
@@ -431,8 +470,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               required
-              disabled={!allConsented}
-              style={{ ...styles.input, ...(!allConsented ? styles.inputDisabled : {}) }}
+              style={styles.input}
               autoComplete="given-name"
               maxLength={50}
             />
@@ -443,8 +481,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            disabled={isSignup && !allConsented}
-            style={{ ...styles.input, ...(isSignup && !allConsented ? styles.inputDisabled : {}) }}
+            style={styles.input}
             autoComplete="email"
           />
           <div style={{ position: 'relative' }}>
@@ -454,10 +491,8 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              disabled={isSignup && !allConsented}
               style={{
                 ...styles.input,
-                ...(isSignup && !allConsented ? styles.inputDisabled : {}),
                 width: '100%', boxSizing: 'border-box', paddingRight: '2.5rem',
               }}
               autoComplete={isSignup ? 'new-password' : 'current-password'}
@@ -466,8 +501,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
             <button
               type="button"
               onClick={() => setShowPassword(v => !v)}
-              disabled={isSignup && !allConsented}
-              style={{ position: 'absolute', right: '0.65rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: (isSignup && !allConsented) ? 'not-allowed' : 'pointer', color: 'var(--color-text-muted)', fontSize: '1rem', padding: '0.25rem', lineHeight: 1, opacity: (isSignup && !allConsented) ? 0.45 : 1 }}
+              style={{ position: 'absolute', right: '0.65rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)', fontSize: '1rem', padding: '0.25rem', lineHeight: 1 }}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? 'Hide' : 'Show'}
@@ -495,10 +529,9 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
 
           <button
             type="submit"
-            disabled={loading || !supabase || (isSignup && !allConsented)}
+            disabled={loading || !supabase}
             style={{
               ...styles.primaryBtn,
-              ...(isSignup && !allConsented ? styles.primaryBtnDisabled : {}),
             }}
           >
             {loading
@@ -518,10 +551,9 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
         <button
           type="button"
           onClick={handleGoogle}
-          disabled={googleLoading || (isSignup && !allConsented)}
+          disabled={googleLoading}
           style={{
             ...styles.googleBtn,
-            ...(isSignup && !allConsented ? styles.googleBtnDisabled : {}),
           }}
         >
           <GoogleIcon />
