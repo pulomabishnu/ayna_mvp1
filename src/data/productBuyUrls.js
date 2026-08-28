@@ -116,4 +116,5 @@ export const PRODUCT_BUY_URLS = {
   "p-spearmint-pcos": "https://www.traditionalmedicinals.com/products/spearmint-tea",
   "p-thinx": "https://www.thinx.com/collections/period-shop-all",
   "p-ubiquinol-thorne": "https://www.thorne.com/products/dp/ubiquinol",
+  "p-boppy-pillow": "https://www.boppy.com/products/nursing-pillow",
 };
