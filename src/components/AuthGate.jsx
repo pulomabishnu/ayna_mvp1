@@ -82,7 +82,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/confirmed`,
+            emailRedirectTo: 'https://www.aynahealth.co/confirmed',
             data: {
               first_name: cleanFirstName,
               full_name: cleanFirstName,
@@ -136,7 +136,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
       const { error } = await supabase.auth.resend({
         type: 'signup',
         email,
-        options: { emailRedirectTo: `${window.location.origin}/confirmed` },
+        options: { emailRedirectTo: 'https://www.aynahealth.co/confirmed' },
       });
       if (error) throw error;
       setResendMsg('Sent! Check your inbox (and spam folder) again in a minute.');
@@ -239,7 +239,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: 'https://www.aynahealth.co/auth/callback',
           queryParams: { prompt: 'select_account' },
         },
       });
