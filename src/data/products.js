@@ -77,7 +77,7 @@ export const PHYSICAL_PRODUCTS = [
             opinionAlerts: 'Common complaints include the "plastic feel" and environmental concerns regarding non-biodegradability. A 2024 independent lab test (commissioned by Mamavation/EHN) found PFAS ("forever chemical") indicators in some Always pad lines, which drove a wave of social media discussion and pushed a visible share of users toward organic-cotton alternatives — Always disputes that its products pose a health risk, and no regulatory recall has followed, but the concern is real and widely discussed, not fringe.'
         },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'FlexFoam absorption is reliable for heavy flow; unscented versions minimize irritation risk for sensitive users.',
         communityReview: 'Community discussions on Reddit r/periods are split: strong praise for absorption and the thin profile during heavy flow, alongside a distinct and growing thread of PFAS/chemical-residue concern that picked up in 2024 and made a real share of users switch to organic-cotton brands or say they no longer feel fully comfortable using it.',
         ingredients: 'Polyethylene, polypropylene, wood pulp, adhesive. Fragrance-free version omits parfum.',
@@ -134,7 +134,7 @@ export const PHYSICAL_PRODUCTS = [
             opinionAlerts: 'Main complaint is higher price compared to conventional pads. Some users find them less absorbent for extremely heavy flow.'
         },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Organic cotton pads reduce exposure to bleaching byproducts and synthetic fragrances; beneficial for sensitive skin.',
         communityReview: 'Community discussions on Reddit r/WomensHealth note satisfaction with absorption and ingredient transparency.',
         ingredients: '100% certified organic cotton top sheet, wood pulp core, bio-PE back sheet, natural adhesive.',
@@ -191,7 +191,7 @@ export const PHYSICAL_PRODUCTS = [
             opinionAlerts: 'High rate of split opinions: half the users love the cooling effect for cramps, the other half find it too intense or irritating.'
         },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Cooling herbs like peppermint may provide topical relief; some dermatologists warn essential oils can cause vulvar contact dermatitis in sensitive individuals.',
         communityReview: 'Community discussions note strong cooling effect for cramps; experiences are polarized.',
         ingredients: 'Plant-derived fiber, lavender oil, peppermint oil, aloe extract, wood pulp core.',
@@ -200,7 +200,7 @@ export const PHYSICAL_PRODUCTS = [
         badges: ['WOC Owned', 'Herbal Comfort', 'Sustainable'],
         verificationLinks: {
             doctor: {
-                aiSummary: "Ayna has investigated clinical perspectives on Honey Pot's 'herbal-infused' pads. While medical professionals generally support the use of plant-based materials, some dermatologists warn that direct contact with essential oils like mint and lavender can cause vulvar contact dermatitis in sensitive individuals. No specific clinical studies on Honey Pot's formula were found.",
+                aiSummary: "ayna has investigated clinical perspectives on Honey Pot's 'herbal-infused' pads. While medical professionals generally support the use of plant-based materials, some dermatologists warn that direct contact with essential oils like mint and lavender can cause vulvar contact dermatitis in sensitive individuals. No specific clinical studies on Honey Pot's formula were found.",
                 links: [
                     
                 ]
@@ -249,7 +249,7 @@ export const PHYSICAL_PRODUCTS = [
             opinionAlerts: 'Compact applicator can occasionally collapse during use if not fully extended properly.'
         },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Ingredient transparency and organic cotton reduce irritation risk; OB-GYNs often recommend organic options for sensitive patients.',
         communityReview: 'Community discussions on Reddit r/periods note satisfaction with organic tampons and subscription convenience.',
         ingredients: '100% organic cotton core and string, BPA-free plastic applicator.',
@@ -349,7 +349,7 @@ export const PHYSICAL_PRODUCTS = [
             opinionAlerts: 'Ferrous sulfate has lower absorption than ferrous bisglycinate forms. Take with vitamin C to improve absorption.'
         },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of NIH ODS and ACOG guidance on iron supplementation.',
+        clinicianAttribution: 'ayna synthesis of NIH ODS and ACOG guidance on iron supplementation.',
         doctorOpinion: 'Iron supplementation should be confirmed with bloodwork before starting. Over-supplementation can cause harm. Take with food and vitamin C to improve absorption and reduce GI side effects.',
         communityReview: 'Well-rated for effectiveness and price. Common feedback: take with food and vitamin C to reduce stomach upset, and expect darker stools.',
         verificationLinks: {
@@ -387,7 +387,7 @@ export const PHYSICAL_PRODUCTS = [
             opinionAlerts: 'D3 at 5000 IU is a higher dose. Clinicians often recommend confirming deficiency with a 25(OH)D blood test before starting.'
         },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of Endocrine Society and NIH ODS guidance on vitamin D supplementation.',
+        clinicianAttribution: 'ayna synthesis of Endocrine Society and NIH ODS guidance on vitamin D supplementation.',
         doctorOpinion: 'Vitamin D deficiency is widespread and often goes undetected. Confirming your level with a 25(OH)D blood test before starting high-dose supplementation is recommended.',
         communityReview: 'Highly rated. Users report improvements in mood, energy, and general wellbeing. Consistently well-reviewed for quality and value.',
         verificationLinks: {
@@ -426,7 +426,7 @@ export const PHYSICAL_PRODUCTS = [
             opinionAlerts: 'Do not use with cups made from rubber or latex. Silicone only.'
         },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of clinical guidance on menstrual cup hygiene.',
+        clinicianAttribution: 'ayna synthesis of clinical guidance on menstrual cup hygiene.',
         doctorOpinion: 'Steam sterilization is the safest method for menstrual cup cleaning between cycles.',
         communityReview: 'Highly rated by Saalt cup users for convenience and peace of mind between cycles.',
         verificationLinks: {
@@ -468,7 +468,7 @@ export const PHYSICAL_PRODUCTS = [
             opinionAlerts: 'Some find the disposable version too wasteful/expensive for every-cycle use.'
         },
         clinicianOpinionSource: 'mixed',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Discs are positioned differently than cups and can suit those who find cups uncomfortable; 12-hour wear is convenient.',
         communityReview: 'Community discussions on Reddit r/periods note mess-free intimacy and reliable leak protection during heavy days.',
         ingredients: 'Medical-grade polymer body, hypoallergenic adhesive rim.',
@@ -515,7 +515,7 @@ export const PHYSICAL_PRODUCTS = [
             opinionAlerts: 'Legacy "PFAS scare" still drives some user hesitation. Complicated laundry routine compared to disposables.'
         },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Period underwear is a safe backup option; PFAS-free formulations address prior safety concerns.',
         communityReview: 'Community discussions on Reddit r/WomensHealth note PFAS-free line and satisfaction using as backup with cups.',
         ingredients: 'Organic cotton gusset, moisture-wicking layer, absorbent core, leak-proof barrier. PFAS-free.',
@@ -683,7 +683,7 @@ export const DIGITAL_PRODUCTS = [
         safety: { fdaStatus: 'N/A (Software)', materials: 'N/A', recalls: 'N/A', allergens: 'N/A', sideEffects: 'N/A', opinionAlerts: 'Lunar sync features are highly aesthetic but some users find them less "scientific" than Clue.' },
         privacy: { dataStorage: 'End-to-end encrypted', sellsData: '❌ No', hipaa: 'No', keyPolicy: 'Uses dual-key encryption so even Stardust can\'t see your data.' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'End-to-end encryption and privacy-first design are increasingly important for reproductive health data post-Roe.',
         communityReview: 'Community discussions on Reddit r/periods note strong privacy features and UI design.',
         integrations: ['Apple Health'],

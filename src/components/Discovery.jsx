@@ -1322,7 +1322,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         </select>
                     </label>
                     <label>
-                        <span>Ayna</span>
+                        <span>ayna</span>
                         <select value={aynaFilter} onChange={(e) => setAynaFilter(e.target.value)}>
                             <option value="all">Any</option>
                             <option value="best-match">Best Match</option>
