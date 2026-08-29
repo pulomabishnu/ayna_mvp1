@@ -39,6 +39,13 @@ const PARTNERS = [
     blurb:
       'DPT-led pelvic floor fitness with guided workouts designed to build strength, reduce symptoms and support whole-body movement.',
   },
+  {
+    brand: 'Elitone',
+    logo: '',
+    url: 'https://elitone.com/?af=aynahealth',
+    blurb:
+      'FDA-cleared wearable pelvic floor therapy designed for at-home strengthening and bladder leak support without insertion.',
+  },
 ];
 
 function eyebrowFor(product) {

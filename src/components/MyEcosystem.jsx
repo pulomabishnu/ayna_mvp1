@@ -86,7 +86,7 @@ function buildAynaVCardDataUri(phoneNumber) {
   const vcard = [
     'BEGIN:VCARD',
     'VERSION:3.0',
-    'FN:ayna',
+    'FN:Ayna',
     `TEL;TYPE=CELL:${phoneNumber}`,
     'END:VCARD',
   ].join('\n');
@@ -1887,13 +1887,13 @@ export default function MyEcosystem({
                                     </button>
                                     {phoneNumberInfo?.is_verified ? (
                                         <>
-                                            <p style={{ margin: '0 0 0.4rem', fontWeight: 600 }}>Text ayna to get quick health answers</p>
+                                            <p style={{ margin: '0 0 0.4rem', fontWeight: 600 }}>Text Ayna to get quick health answers</p>
                                             {AYNA_SMS_NUMBER && (
                                                 <p style={{ margin: '0 0 0.6rem', fontSize: '1.2rem', fontWeight: 700, color: 'var(--color-primary)' }}>{AYNA_SMS_NUMBER}</p>
                                             )}
                                             <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                                                 {AYNA_SMS_NUMBER && (
-                                                    <a className="btn btn-outline" href={buildAynaVCardDataUri(AYNA_SMS_NUMBER)} download="ayna.vcf">
+                                                    <a className="btn btn-outline" href={buildAynaVCardDataUri(AYNA_SMS_NUMBER)} download="Ayna.vcf">
                                                         Save to Contacts
                                                     </a>
                                                 )}
@@ -1904,7 +1904,7 @@ export default function MyEcosystem({
                                         </>
                                     ) : (
                                         <>
-                                            <p style={{ margin: '0 0 0.6rem', fontWeight: 600 }}>Get ayna by text. Verify your number</p>
+                                            <p style={{ margin: '0 0 0.6rem', fontWeight: 600 }}>Get Ayna by text. Verify your number</p>
                                             <button type="button" className="btn btn-primary" onClick={onOpenPhoneVerify}>Verify your number</button>
                                         </>
                                     )}
