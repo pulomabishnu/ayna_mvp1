@@ -8,7 +8,7 @@
  * are still just in discussion, not re-added. Add a brand here only once its partnership is
  * actually contracted, not before.
  */
-export const PARTNER_BRAND_PATTERNS = [/\bneycher\b/, /\bconnect pelvic floor fitness\b/, /\belitone\b/];
+export const PARTNER_BRAND_PATTERNS = [/\bneycher\b/, /\bconnect pelvic floor fitness\b/, /\belitone\b/, /\bproov\b/];
 
 export function isPartnerBrandItem(item) {
   const text = `${item?.brand || ''} ${item?.name || ''}`.toLowerCase();

@@ -1440,6 +1440,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                 }}
                             >
                                 <div className="ayna-discover-card__tile">
+                                    {isPartnerBrandItem(item) && (
+                                        <span className="ayna-browse-card__affiliate">Affiliate link</span>
+                                    )}
                                     {cardImageSrc && (resolvedItemImage !== undefined || !isPlaceholderProductImage(cardImageSrc, item.type === 'digital')) ? (
                                         <>
                                             <img

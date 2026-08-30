@@ -27,28 +27,28 @@ const PARTNERS = [
   {
     brand: 'Neycher',
     /** Drop a file at public/brands/neycher.png and it replaces the wordmark. */
-    logo: '/brands/neycher.png',
+    logo: 'https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/686eb5fcdbbd35b6fc957602_Frame%201000011567.jpg',
     url: 'https://www.helloneycher.com/',
     blurb:
       'Hormone-free intimate care. Moisturizers, balms and suppositories made for vaginal dryness, irritation and odour.',
   },
   {
     brand: 'Connect Pelvic Floor Fitness',
-    logo: '',
+    logo: 'https://connectpelvicfloorfitness.com/wp-content/uploads/2026/05/social-share-homepage.jpg',
     url: 'https://goto.connectpelvicfloorfitness.com/YVk7WO',
     blurb:
       'DPT-led pelvic floor fitness with guided workouts designed to build strength, reduce symptoms and support whole-body movement.',
   },
   {
     brand: 'Elitone',
-    logo: '',
+    logo: 'https://thebreastfeedingshop.com/wp-content/uploads/2024/08/Elitone-Pelvic-Floor-Exerciser-1-scaled.webp',
     url: 'https://elitone.com/?af=aynahealth',
     blurb:
       'FDA-cleared wearable pelvic floor therapy designed for at-home strengthening and bladder leak support without insertion.',
   },
   {
     brand: 'Proov',
-    logo: '',
+    logo: 'https://proovtest.com/cdn/shop/products/1_ProHero.jpg?v=1669147223&width=3840',
     url: 'https://proovtest.com/?irclickid=092RZoWR3xyZWgGydJzTuXX9UkrxvuV9I08LVk0&sharedid=&irpid=7622078&utm_source=7622078&utm_medium=affiliate&irgwc=1&afsrc=1&tw_source=impact&tw_campaign=7622078',
     blurb:
       'At-home fertility testing designed to help track hormones and confirm ovulation.',
