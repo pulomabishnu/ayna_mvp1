@@ -44,6 +44,7 @@ import Contact from './components/Contact';
 import './finalAynaPolish.css';
 import TermsOfUse from './components/TermsOfUse';
 import AuthCallback from './components/AuthCallback';
+import AuthConfirm from './components/AuthConfirm';
 import EmailConfirmed from './components/EmailConfirmed';
 import { getSupabaseClient } from './utils/supabaseClient';
 import { loadEcosystemForUser, upsertProductState, upsertProductsBatch, clearEcosystemForUser } from './utils/ecosystemStore';
@@ -101,6 +102,7 @@ const VIEW_TO_PATH = {
   about: '/about',
   contact: '/contact',
   'auth-callback': '/auth/callback',
+  'auth-confirm': '/auth/confirm',
   'confirmed': '/confirmed',
 };
 // Friendly document.title per view — 'welcome'/'hero' and any view not
@@ -450,7 +452,7 @@ function App() {
     // straight back to the landing and those pages were unreachable by URL in
     // production. (PROTECTED_VIEWS below is what actually guards private ones.)
     const STATIC_VIEWS = [
-      'privacy-policy', 'terms-of-use', 'confirmed', 'auth-callback',
+      'privacy-policy', 'terms-of-use', 'confirmed', 'auth-callback', 'auth-confirm',
       'welcome', 'hero', 'quiz', 'discovery', 'waitlist', 'articles',
       'how-it-works', 'how-we-make-money',
     ];
@@ -1487,6 +1489,12 @@ function App() {
           <AuthCallback onAuthenticated={(user) => {
             setUser(user);
             setCurrentView('welcome');
+          }} />
+        )}
+        {currentView === 'auth-confirm' && (
+          <AuthConfirm onAuthenticated={(user) => {
+            setUser(user);
+            setCurrentView('confirmed');
           }} />
         )}
         {currentView === 'confirmed' && (

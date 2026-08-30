@@ -241,7 +241,7 @@ export const MVP_PHYSICAL = [
     doctorOpinion: 'First-line option for heavy menstrual bleeding when hormones are not desired. Reduces flow significantly.',
     communityReview: 'Community discussions on Reddit r/TwoXChromosomes note significant reduction in flow and duration.',
     ingredients: 'Tranexamic acid.',
-    effectiveness: 'Clinically proven to reduce menstrual blood loss.',
+    effectiveness: 'Tranexamic acid is FDA-approved for heavy menstrual bleeding and has been shown in clinical studies to reduce menstrual blood loss.',
     badges: ['Prescription', 'Heavy Bleeding']
   },
   // ─── HORMONAL BLOATING ─────────────────────────────────────

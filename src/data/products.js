@@ -555,19 +555,19 @@ export const PHYSICAL_PRODUCTS = [
         image: 'https://www.naturemade.com/cdn/shop/files/NM2576PK001667MAGNESIUM_5A007225ccfront_1500x.png?v=1718994664',
         summary: 'Magnesium glycinate for cramp relief, better sleep, and mood support. USP verified.',
         safety: {
-            fdaStatus: 'USP Verified (gold standard for supplements)',
+            fdaStatus: 'USP Verified',
             materials: 'Magnesium glycinate chelate',
             recalls: 'No recalls. USP verified = third-party tested for purity and potency.',
             allergens: 'Gluten-free, no artificial colors or preservatives',
             sideEffects: 'Mild digestive issues, loose stools (if dose too high), loss of appetite, occasional nausea.',
-            opinionAlerts: 'Magnesium glycinate is the "gold standard" for comfort, but users find Thorne/NatureMade capsules quite large.'
+            opinionAlerts: 'Magnesium glycinate is often chosen for its tolerability, but users find Thorne/NatureMade capsules quite large.'
         },
         clinicianOpinionSource: 'mixed',
-        doctorOpinion: '"Magnesium glycinate is one of the most evidence-backed supplements for menstrual cramps. The glycinate form is gentle on the stomach and well-absorbed.". Dr. Jolene Brighten, NMD',
+        doctorOpinion: 'Magnesium has been studied for menstrual cramps, though evidence and individual response vary. Magnesium glycinate is generally well tolerated.',
         communityReview: 'Community discussions on Reddit r/Supplements note significant cramp relief and improved sleep with magnesium glycinate.',
         ingredients: 'Magnesium glycinate 200mg, cellulose capsule, magnesium stearate.',
         effectiveness: 'Clinical studies show 200-400mg magnesium daily reduces menstrual pain by 30-50%. Also improves sleep quality.',
-        badges: ['Clinically Validated', 'USP Verified'],
+        badges: ['Evidence Reviewed', 'USP Verified'],
         verificationLinks: {
             community: {
                 aiSummary: "Reddit and health forums report strong anecdotal support for magnesium glycinate for cramps, sleep, and anxiety. Nature Made is frequently recommended for USP verification.",
@@ -608,7 +608,7 @@ export const PHYSICAL_PRODUCTS = [
         communityReview: 'Community discussions on Reddit r/TTC35 note clinician recommendations and satisfaction with quality; NSF certification valued.',
         ingredients: 'Ubiquinol 100mg, Olive Oil, Gelatin, Glycerin, Water, Lycopene.',
         effectiveness: 'Studies show Ubiquinol improves oocyte quality and mitochondrial function, potentially improving fertility outcomes.',
-        badges: ['Clinically Validated', 'High Bioavailability'],
+        badges: ['Evidence Reviewed', 'High Bioavailability'],
         verificationLinks: {
             community: {
                 aiSummary: "Fertility and TTC communities frequently recommend Ubiquinol (CoQ10) for egg quality. Nature Made is a commonly cited brand for quality and availability.",
