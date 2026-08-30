@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate } from '../data/products';
+import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct } from '../data/products';
 import { loadProductCatalog } from '../utils/productCatalog';
 import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../utils/naturalLanguageSearch';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
@@ -379,7 +379,7 @@ function buildAiProfileContext(personalizationFilter, quizResults) {
     return { profileSummary, dislikedProducts, dislikedTerms };
 }
 
-export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialMacroGroup, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, savedProducts = {}, onToggleSaved, user = null, onRequirePersonalizeAuth = null }) {
+export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialMacroGroup, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, healthProfile = null, savedProducts = {}, onToggleSaved, user = null, onRequirePersonalizeAuth = null }) {
     const [macroGroup, setMacroGroup] = useState(() => {
         // initialMacroGroup (a whole care area, e.g. from "Swap" in the
         // ecosystem view) sets ONLY the broader group, leaving every
@@ -643,7 +643,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             if (eligibilityFilter === 'hsa' && !eligibility.hsa) return false;
             if (eligibilityFilter === 'fsa-hsa' && !(eligibility.fsa || eligibility.hsa)) return false;
 
-            if (aynaFilter === 'best-match' && !(getExplicitMatchPercent(item) != null || recommendedSet.has(item.id))) return false;
+            if (aynaFilter === 'best-match' && !(getProfileMatchPercentForProduct(item, quizResults, healthProfile) >= 50)) return false;
             if (aynaFilter === 'clinician' && !hasClinicianSupport(item)) return false;
             if (aynaFilter === 'community' && !hasCommunitySupport(item, aynaReviews[item.id])) return false;
             if (aynaFilter === 'ecosystem' && !myProducts?.[item.id]) return false;
@@ -1417,7 +1417,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     const resolvedItemImage = resolvedImages[item.id];
                     const cardImageSrc = resolvedItemImage !== undefined ? resolvedItemImage : item.image;
                     const imageStillLoading = resolvedItemImage === undefined && isPlaceholderProductImage(item.image, item.type === 'digital');
-                    const matchPercent = getExplicitMatchPercent(item);
+                    const profileMatchPercent = getProfileMatchPercentForProduct(item, quizResults, healthProfile);
+                    const matchPercent = (hasQuizFrustrations || hasHealthImport)
+                        ? profileMatchPercent
+                        : getExplicitMatchPercent(item);
                     const eligibility = getExplicitEligibility(item);
                     const eligibilityLabel = eligibility.fsa && eligibility.hsa ? 'FSA/HSA' : eligibility.fsa ? 'FSA' : eligibility.hsa ? 'HSA' : '';
                     const isWishlisted = !!savedProducts[item.id];

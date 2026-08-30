@@ -514,7 +514,7 @@ export default function ProductModal({
     [product, quizResults, healthProfile]
   );
   const hasEcosystemContext = isInEcosystem || (Array.isArray(ecosystemProducts) && ecosystemProducts.length > 0);
-  const matchPercent = explicitMatchPercent ?? (hasEcosystemContext ? profileMatchPercent : null);
+  const matchPercent = profileMatchPercent ?? explicitMatchPercent;
   const headMatchLabel = matchLabels[0] || null;
   const buyUrl = useMemo(() => getBuyUrl(product), [product]);
   const usesAffiliateLink = Boolean(

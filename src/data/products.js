@@ -1483,7 +1483,7 @@ function getProfileMatchStatsForProduct(product, quizAnswers, healthProfile = nu
             return pri(a) - pri(b);
         });
     }
-    const percent = userTags.size > 0 && matches.length > 0
+    const percent = userTags.size > 0
         ? Math.round((matches.length / userTags.size) * 100)
         : null;
     return {
