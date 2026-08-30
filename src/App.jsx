@@ -410,15 +410,24 @@ function App() {
     setAynaReviews(loadAynaReviews());
   }, []);
 
-  // Restore quiz results saved before a Google OAuth redirect.
+  // Restore the action that was in progress before a Google OAuth redirect.
+  // Quiz results are stored separately because they contain the unsaved intake.
   React.useEffect(() => {
     try {
       const storedQuiz = sessionStorage.getItem('ayna_pending_quiz_results');
+      const storedAction = sessionStorage.getItem('ayna_pending_auth_action');
+
       if (storedQuiz) {
         setPendingQuizResults(JSON.parse(storedQuiz));
-        setPendingAction('quiz-complete'); pendingActionRef.current = 'quiz-complete';
+        setPendingAction('quiz-complete');
+        pendingActionRef.current = 'quiz-complete';
         sessionStorage.removeItem('ayna_pending_quiz_results');
+      } else if (storedAction) {
+        setPendingAction(storedAction);
+        pendingActionRef.current = storedAction;
       }
+
+      sessionStorage.removeItem('ayna_pending_auth_action');
     } catch (_) {}
   }, []);
 
@@ -685,10 +694,10 @@ function App() {
       const rawIntake = pendingQuizResults?.fullHealthIntake || pendingQuizResults;
       saveHealthIntakeForCurrentUser(rawIntake).catch(e => reportSaveFailure('Could not save your health profile', e));
       setPendingQuizResults(null);
-    } else if (pendingAction === 'browse') {
+    } else if (pendingAction === 'browse' || pendingAction === 'personalize') {
       handleViewDiscovery('');
     } else if (pendingAction === 'login') {
-      setCurrentView('welcome');
+      setCurrentView('ecosystem');
     }
     setPendingAction(null); pendingActionRef.current = null;
   }, [user, pendingAction]);
@@ -1487,8 +1496,9 @@ function App() {
         )}
         {currentView === 'auth-callback' && (
           <AuthCallback onAuthenticated={(user) => {
+            // Navigation is handled by the restored pendingAction effect so
+            // Google OAuth follows the same post-login path as email/password.
             setUser(user);
-            setCurrentView('welcome');
           }} />
         )}
         {currentView === 'auth-confirm' && (
@@ -1794,9 +1804,14 @@ function App() {
           <AuthGate
             isModal
             context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : pendingAction === 'personalize' ? 'personalize' : pendingAction === 'login' ? 'login' : undefined}
-            onBeforeOAuthRedirect={pendingAction === 'quiz-complete' && pendingQuizResults ? () => {
-              try { sessionStorage.setItem('ayna_pending_quiz_results', JSON.stringify(pendingQuizResults)); } catch (_) {}
-            } : undefined}
+            onBeforeOAuthRedirect={() => {
+              try {
+                if (pendingAction) sessionStorage.setItem('ayna_pending_auth_action', pendingAction);
+                if (pendingAction === 'quiz-complete' && pendingQuizResults) {
+                  sessionStorage.setItem('ayna_pending_quiz_results', JSON.stringify(pendingQuizResults));
+                }
+              } catch (_) {}
+            }}
             onSkip={() => {
               setShowAuthModal(false);
               if (pendingAction === 'quiz-complete' && pendingQuizResults) {
