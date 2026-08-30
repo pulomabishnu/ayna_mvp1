@@ -46,6 +46,14 @@ const PARTNERS = [
     blurb:
       'FDA-cleared wearable pelvic floor therapy designed for at-home strengthening and bladder leak support without insertion.',
   },
+  {
+    brand: 'Proov',
+    logo: '',
+    url: 'https://proovtest.com/?irclickid=092RZoWR3xyZWgGydJzTuXX9UkrxvuV9I08LVk0&sharedid=&irpid=7622078&utm_source=7622078&utm_medium=affiliate&irgwc=1&afsrc=1&tw_source=impact&tw_campaign=7622078',
+    blurb:
+      'At-home fertility testing designed to help track hormones and confirm ovulation.',
+  },
+
 ];
 
 function eyebrowFor(product) {
@@ -94,6 +102,7 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToE
                 <div>
                   <div className="brand-partner__name">{partner.brand}</div>
                   <p className="brand-partner__blurb">{partner.blurb}</p>
+                  <div className="brand-partner__affiliate-label">Affiliate link</div>
                   <a className="brand-partner__link" href={partner.url} target="_blank" rel="noopener noreferrer">
                     Visit {partner.brand} ↗
                   </a>
