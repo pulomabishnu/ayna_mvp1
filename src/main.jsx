@@ -29,7 +29,7 @@ if (!POSTHOG_KEY) {
     // links (session recordings, the toolbar) still resolve correctly
     // instead of trying to open a URL under our own /ingest path.
     ui_host: 'https://us.posthog.com',
-    person_profiles: 'identified_only',
+    person_profiles: 'always',
     autocapture: false,
     capture_pageview: true,
     mask_all_text: true,
