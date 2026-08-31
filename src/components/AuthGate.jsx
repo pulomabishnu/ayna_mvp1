@@ -29,6 +29,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showConsentDetails, setShowConsentDetails] = useState(false);
   const [checked, setChecked] = useState([false, false, false]);
   // Two real signups reported never getting a confirmation email
   // (2026-08-25) — Supabase's built-in email sender has a very low rate
@@ -270,13 +271,13 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
     position: 'fixed',
     inset: 0,
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'center',
     overflowY: 'auto',
     background: 'linear-gradient(135deg, rgba(36, 42, 82, 0.94) 0%, rgba(78, 56, 102, 0.94) 58%, rgba(162, 96, 60, 0.88) 100%)',
     backdropFilter: 'blur(5px)',
     zIndex: 1000,
-    padding: '1rem',
+    padding: '7.5rem 1rem 1.5rem',
   } : {
     minHeight: '100dvh',
     display: 'flex',
@@ -371,17 +372,31 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
           {isSignup && (
             <>
               <div style={styles.consentSection}>
-                {CONSENT_ITEMS.map((text, i) => (
-                  <label key={i} style={styles.consentItem}>
-                    <input
-                      type="checkbox"
-                      checked={checked[i]}
-                      onChange={() => toggleCheck(i)}
-                      style={styles.checkbox}
-                    />
-                    <span style={styles.consentText}>{text}</span>
-                  </label>
-                ))}
+                <button
+                  type="button"
+                  onClick={() => setShowConsentDetails(v => !v)}
+                  style={styles.consentToggle}
+                  aria-expanded={showConsentDetails}
+                >
+                  <span>How we handle your data</span>
+                  <span style={{ transform: showConsentDetails ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s ease' }}>⌄</span>
+                </button>
+
+                {showConsentDetails && (
+                  <div style={styles.consentDetails}>
+                    {CONSENT_ITEMS.map((text, i) => (
+                      <label key={i} style={styles.consentItem}>
+                        <input
+                          type="checkbox"
+                          checked={checked[i]}
+                          onChange={() => toggleCheck(i)}
+                          style={styles.checkbox}
+                        />
+                        <span style={styles.consentText}>{text}</span>
+                      </label>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <p style={styles.legalNotice}>
@@ -615,7 +630,7 @@ const styles = {
     width: '36px',
     height: '36px',
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'center',
     background: 'rgba(255,255,255,0.7)',
     border: '1px solid #E7E0D4',
@@ -711,6 +726,28 @@ const styles = {
     border: '1px solid #E7E0D4',
     marginTop: '0.15rem',
   },
+  consentToggle: {
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    background: 'none',
+    border: 'none',
+    padding: '0.15rem 0',
+    color: '#281B3D',
+    fontSize: '0.8rem',
+    fontWeight: '600',
+    cursor: 'pointer',
+    fontFamily: 'var(--font-body)',
+  },
+
+  consentDetails: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.55rem',
+    marginTop: '0.65rem',
+  },
+
   consentItem: {
     display: 'flex',
     alignItems: 'flex-start',
@@ -788,7 +825,7 @@ const styles = {
   },
   googleBtn: {
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'center',
     gap: '0.65rem',
     padding: '0.7rem',
