@@ -631,7 +631,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const filtered = useMemo(() => {
         const applyFilters = (items, skipCategory = false) => items.filter((item) => {
             if (omittedProducts[item.id]) return false;
-            if (personalizationFilter && !personalizedSet.has(item.id)) return false;
+            // An explicit FSA/HSA filter should search the full eligible catalog,
+            // not only the user's personalized subset.
+            if (personalizationFilter && eligibilityFilter === 'all' && !personalizedSet.has(item.id)) return false;
             // When an FSA/HSA eligibility filter is active, show eligible products
             // across Browse instead of letting the current category chip hide them.
             const hasEligibilityFilter = eligibilityFilter !== 'all';
