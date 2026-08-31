@@ -9,6 +9,7 @@ const KEYWORD_TAGS = [
   { re: /postpartum|breastfeeding|lactation/i, tags: ['postpartum'] },
   { re: /pregnant|pregnancy|prenatal/i, tags: ['pregnancy'] },
   { re: /\buti\b|urinary tract|cystitis/i, tags: ['uti'] },
+  { re: /urinary incontinence|stress incontinence|urge incontinence|bladder leaks?|urine leaks?|leak(?:ing)? urine|loss of bladder control|bladder control/i, tags: ['bladder-leaks'] },
   { re: /fibroid|menorrhagia|heavy menstrual|heavy period/i, tags: ['heavy-flow'] },
   { re: /pelvic pain|dyspareunia/i, tags: ['pelvic-floor', 'discomfort'] },
   { re: /anxiety|depression|insomnia/i, tags: ['comfort', 'mental-health'] },

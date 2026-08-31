@@ -1244,86 +1244,294 @@ export function getPrescriptionAccessGuidance(product) {
     return { patientUrl: null, savingsUrl: null, telehealthProduct: tele };
 }
 
-/** Ranked lists (tag matches first) with prescription-only items removed unless a care path exists. */
-export function getRecommendationMatchesAndRest(quizAnswers, healthProfile = null) {
-    const healthTagList = inferTagsFromHealthProfile(healthProfile);
-    const healthTags = new Set(healthTagList);
+const FRUSTRATION_MAP = {
+    'Heavy flow': 'heavy-flow',
+    'Painful cramps': 'cramps',
+    'Hormonal bloating': 'bloating',
+    'Irregular cycles': 'irregular',
+    'Leaks & staining': 'leaks',
+    'General discomfort': 'discomfort',
+    'Not sure if products are safe': 'safety-concern',
+    'Recurrent UTIs': 'uti',
+    'PCOS symptoms': 'pcos',
+    'Pelvic pain': 'pelvic-floor',
+    'Menopause symptoms': 'menopause',
+    'Endometriosis': 'endometriosis',
+    'Fertility / TTC': 'fertility',
+    'Pregnancy': 'pregnancy',
+    'Postpartum recovery': 'postpartum',
+};
 
-    if (!quizAnswers || !quizAnswers.frustrations) {
-        if (healthTags.size === 0) {
-            const all = filterPrescriptionCareGate(ALL_PRODUCTS);
-            return { matches: all, others: [] };
-        }
-        const { matches, rest } = rankProductsByHealthTags(healthTags);
-        return { matches: filterPrescriptionCareGate(matches), others: filterPrescriptionCareGate(rest) };
+const PREFERENCE_TAGS = {
+    'Organic/Natural only': 'organic',
+    'Non-hormonal / hormone-free': 'non-hormonal',
+    'Lower cost': 'cost',
+    'Comfort/Convenience': 'comfort',
+    'Privacy & data security': 'privacy',
+    'Sustainability/Zero-waste': 'sustainability',
+};
+
+const GOAL_RULES = [
+    { re: /\bfertilit|trying to conceive|\bttc\b|ovulat/i, tags: ['fertility'] },
+    { re: /\bsleep|insomnia|rest\b/i, tags: ['sleep', 'comfort'] },
+    { re: /\bstress|anxiety|mental health|mood\b/i, tags: ['mental-health', 'comfort'] },
+    { re: /\bfitness|exercise|workout|activity\b/i, tags: ['fitness-cycle'] },
+    { re: /\bskin|acne\b/i, tags: ['skin'] },
+    { re: /\bhair|hair loss|thinning\b/i, tags: ['hair'] },
+    { re: /\bhormone|hormonal\b/i, tags: ['hormonal'] },
+    { re: /\bmenopause|perimenopause|hot flash/i, tags: ['menopause'] },
+    { re: /\bpelvic floor|pelvic pain\b/i, tags: ['pelvic-floor'] },
+    { re: /\bbladder leak|urinary incontinence|loss of bladder control\b/i, tags: ['bladder-leaks'] },
+    { re: /\bpcos\b/i, tags: ['pcos'] },
+    { re: /\bendometriosis\b/i, tags: ['endometriosis'] },
+    { re: /\bperiod|menstrual|cycle\b/i, tags: ['cycle-tracking'] },
+];
+
+const AGE_CONTEXT = {
+    'Under 25': [],
+    '25-34': ['fertility', 'cycle-tracking'],
+    '35-44': ['fertility', 'cycle-tracking'],
+    '45-50': ['menopause', 'cycle-tracking'],
+    '51-55': ['menopause'],
+    '56+': ['menopause'],
+};
+
+const BLADDER_TAGS = new Set(['bladder-leaks', 'incontinence', 'urinary']);
+const MENSTRUAL_LEAK_TAG = 'leaks';
+
+function normalizeProfileSignals(quizAnswers, healthProfile) {
+    const directTags = new Set();
+    const inferredTags = new Set();
+    const preferenceTags = new Set();
+
+    (quizAnswers?.frustrations || []).forEach((f) => {
+        const tag = FRUSTRATION_MAP[f];
+        if (tag) directTags.add(tag);
+        if (f === 'Endometriosis') directTags.add('cramps');
+    });
+
+    inferTagsFromHealthProfile(healthProfile).forEach((t) => directTags.add(t));
+
+    const prefs = Array.isArray(quizAnswers?.preference)
+        ? quizAnswers.preference
+        : (quizAnswers?.preference ? [quizAnswers.preference] : []);
+    prefs.forEach((pref) => {
+        const tag = PREFERENCE_TAGS[pref];
+        if (tag) preferenceTags.add(tag);
+    });
+
+    const goals = String(quizAnswers?.healthGoals || '').trim();
+    if (goals) {
+        GOAL_RULES.forEach(({ re, tags }) => {
+            if (re.test(goals)) tags.forEach((t) => inferredTags.add(t));
+        });
     }
 
-    const FRUSTRATION_MAP = {
-        'Heavy flow': 'heavy-flow',
-        'Painful cramps': 'cramps',
-        'Hormonal bloating': 'bloating',
-        'Irregular cycles': 'irregular',
-        'Leaks & staining': 'leaks',
-        'General discomfort': 'discomfort',
-        'Recurrent UTIs': 'uti',
-        'PCOS symptoms': 'pcos',
-        'Pelvic pain': 'pelvic-floor',
-        'Menopause symptoms': 'menopause',
-        'Endometriosis': 'endometriosis',
-        'Fertility / TTC': 'fertility',
-        'Pregnancy': 'pregnancy',
-        'Postpartum recovery': 'postpartum',
+    (AGE_CONTEXT[quizAnswers?.age] || []).forEach((t) => inferredTags.add(t));
+
+    return { directTags, inferredTags, preferenceTags, prefs };
+}
+
+function productHasSignal(product, tag) {
+    const tags = new Set(product?.tags || []);
+    const funcs = new Set(product?.healthFunctions || []);
+
+    if (tags.has(tag) || funcs.has(tag)) return true;
+
+    if (tag === 'sleep' && (funcs.has('sleep-energy') || product?.category === 'sleep')) return true;
+    if (tag === 'fitness-cycle' && funcs.has('fitness-cycle')) return true;
+    if (tag === 'cycle-tracking' && funcs.has('cycle-tracking')) return true;
+    if (tag === 'menopause' && (funcs.has('perimenopause') || product?.category === 'menopause')) return true;
+    if (tag === 'fertility' && funcs.has('fertility')) return true;
+    if (tag === 'pelvic-floor' && (funcs.has('sexual-health') || product?.category === 'pelvic-floor' || product?.category === 'pelvic-health')) return true;
+    if (tag === 'mental-health' && product?.category === 'mental-health') return true;
+    if (tag === 'bladder-leaks' && ([...tags].some((t) => BLADDER_TAGS.has(t)) || funcs.has('bladder-leak-protection'))) return true;
+
+    return false;
+}
+
+function getUserAvoidSet(quizAnswers) {
+    const out = new Set();
+    [...(quizAnswers?.sensitivities || []), ...(quizAnswers?.productsToAvoid || [])].forEach((label) => {
+        const key = SENSITIVITY_AVOID_TO_TRIGGER[label];
+        if (key) out.add(key);
+    });
+    return out;
+}
+
+function isProductEligibleForProfile(product, quizAnswers) {
+    if (!product) return false;
+
+    if ((quizAnswers?.contraceptionUse === 'No' || quizAnswers?.contraceptionUse === 'Prefer not to say')
+        && product.healthFunctions?.includes('contraception')) {
+        return false;
+    }
+
+    if (quizAnswers?.internalComfort === 'No' && product.internal === true) return false;
+
+    const avoidSet = getUserAvoidSet(quizAnswers);
+    if ([...avoidSet].some((trigger) => productMatchesAvoidTrigger(product, trigger))) return false;
+
+    return true;
+}
+
+function noveltyAdjustment(product, quizAnswers) {
+    const current = new Set(quizAnswers?.currentUse || []);
+    if (current.size === 0 || current.has('None')) return 0;
+
+    const c = product?.category;
+    const funcs = new Set(product?.healthFunctions || []);
+    let adjustment = 0;
+
+    if (current.has('Pads') && c === 'pad') adjustment -= 4;
+    if (current.has('Tampons') && c === 'tampon') adjustment -= 4;
+    if (current.has('Menstrual cup') && c === 'cup') adjustment -= 4;
+    if (current.has('Menstrual disc') && c === 'disc') adjustment -= 4;
+    if (current.has('Period underwear') && c === 'period-underwear') adjustment -= 4;
+    if (current.has('Supplements') && c === 'supplement') adjustment -= 2;
+    if (current.has('Telehealth (Wisp, Nurx, etc.)') && c === 'telehealth') adjustment -= 3;
+    if (current.has('Flo / Clue / Stardust') && funcs.has('cycle-tracking')) adjustment -= 3;
+    if (current.has('Apple Health / Garmin / Fitbit') && (c === 'tracker' || funcs.has('fitness-cycle'))) adjustment -= 2;
+
+    return adjustment;
+}
+
+function getProductRelevanceStats(product, quizAnswers, healthProfile = null) {
+    const { directTags, inferredTags, preferenceTags, prefs } = normalizeProfileSignals(quizAnswers, healthProfile);
+
+    const hasPersonalizationSignals =
+        directTags.size > 0 ||
+        inferredTags.size > 0 ||
+        preferenceTags.size > 0 ||
+        Boolean(quizAnswers?.age) ||
+        Boolean(String(quizAnswers?.healthGoals || '').trim());
+
+    if (!hasPersonalizationSignals) {
+        return { percent: null, score: 0, labels: [], reasons: [], eligible: true };
+    }
+
+    if (!isProductEligibleForProfile(product, quizAnswers)) {
+        return { percent: 0, score: 0, labels: [], reasons: [], eligible: false };
+    }
+
+    let points = 0;
+    const reasons = [];
+    const labels = [];
+    const seenReasons = new Set();
+
+    const add = (value, label, reason) => {
+        points += value;
+        if (label && !labels.includes(label)) labels.push(label);
+        if (reason && !seenReasons.has(reason)) {
+            seenReasons.add(reason);
+            reasons.push(reason);
+        }
     };
 
-    const userTags = new Set();
-    quizAnswers.frustrations.forEach((f) => {
-        const tag = FRUSTRATION_MAP[f];
-        if (tag) userTags.add(tag);
-    });
-    healthTagList.forEach((t) => userTags.add(t));
+    directTags.forEach((tag) => {
+        if (!productHasSignal(product, tag)) return;
 
-    const prefs = Array.isArray(quizAnswers.preference) ? quizAnswers.preference : (quizAnswers.preference ? [quizAnswers.preference] : []);
-    prefs.forEach((pref) => {
-        if (pref === 'Organic/Natural only') userTags.add('organic');
-        if (pref === 'Non-hormonal / hormone-free') userTags.add('non-hormonal');
-        if (pref === 'Lower cost') userTags.add('cost');
-        if (pref === 'Comfort/Convenience') userTags.add('comfort');
-        if (pref === 'Privacy & data security') userTags.add('privacy');
-        if (pref === 'Sustainability/Zero-waste') userTags.add('sustainability');
+        if (tag === MENSTRUAL_LEAK_TAG && [...(product.tags || [])].some((t) => BLADDER_TAGS.has(t))) {
+            return;
+        }
+
+        let weight = 34;
+        if (tag === 'discomfort' || tag === 'comfort') weight = 18;
+        if (tag === 'safety-concern') weight = 12;
+        if (tag === 'pelvic-floor') weight = 30;
+
+        add(weight, TAG_TO_READABLE[tag] || tag.replace(/-/g, ' '), 'Direct profile match');
     });
 
-    const skipContraception = quizAnswers.contraceptionUse === 'No' || quizAnswers.contraceptionUse === 'Prefer not to say';
-    const skipInternal = quizAnswers.internalComfort === 'No';
+    inferredTags.forEach((tag) => {
+        if (!productHasSignal(product, tag)) return;
 
-    const userAvoidSet = new Set();
-    [...(quizAnswers.sensitivities || []), ...(quizAnswers.productsToAvoid || [])].forEach((label) => {
-        const key = SENSITIVITY_AVOID_TO_TRIGGER[label];
-        if (key) userAvoidSet.add(key);
-    });
-    userAvoidSet.delete(null);
+        let weight = 11;
+        if (tag === 'menopause') weight = 15;
+        if (tag === 'fertility') weight = quizAnswers?.age === '35-44' ? 14 : 11;
+        if (tag === 'bladder-leaks') weight = 14;
+        if (tag === 'sleep' || tag === 'mental-health') weight = 12;
 
-    const scored = ALL_PRODUCTS.filter((p) => {
-        if (skipContraception && p.healthFunctions && p.healthFunctions.includes('contraception')) return false;
-        if (skipInternal && p.internal === true) return false;
-        if (userAvoidSet.size > 0 && [...userAvoidSet].some((trigger) => productMatchesAvoidTrigger(p, trigger))) return false;
-        return true;
-    }).map((p) => {
-        let score = 0;
-        (p.tags || []).forEach((t) => {
-            if (userTags.has(t)) score += 2;
-        });
-        prefs.forEach((pref) => {
-            if (pref === 'Sustainability/Zero-waste' && p.badges?.includes('Sustainable')) score += 3;
-            if (pref === 'Organic/Natural only' && p.tags?.includes('organic')) score += 3;
-            if (pref === 'Non-hormonal / hormone-free' && p.tags?.includes('non-hormonal')) score += 3;
-        });
-        return { product: p, score };
+        add(weight, TAG_TO_READABLE[tag] || tag.replace(/-/g, ' '), 'Relevant to your goals or life stage');
     });
 
-    const matches = filterPrescriptionCareGate(
-        scored.filter((s) => s.score > 0).sort((a, b) => b.score - a.score).map((s) => s.product)
+    preferenceTags.forEach((tag) => {
+        if (!productHasSignal(product, tag) && !(tag === 'sustainability' && product.badges?.includes('Sustainable'))) return;
+
+        let weight = 7;
+        if (tag === 'organic' || tag === 'non-hormonal') weight = 9;
+        add(weight, TAG_TO_READABLE[tag] || tag.replace(/-/g, ' '), 'Matches your preferences');
+    });
+
+    if (quizAnswers?.contraceptionUse === 'Yes' && product.healthFunctions?.includes('contraception')) {
+        add(16, 'contraception', 'Matches your birth control interest');
+    }
+
+    const contraceptionPrefs = new Set(quizAnswers?.contraceptionPreference || []);
+    const productText = `${product?.name || ''} ${product?.summary || ''} ${product?.description || ''} ${(product?.tags || []).join(' ')}`.toLowerCase();
+    for (const pref of contraceptionPrefs) {
+        if (pref === 'None' || pref === 'Not sure') continue;
+        if (productText.includes(pref.toLowerCase())) {
+            add(8, pref.toLowerCase(), 'Matches your preferred method');
+            break;
+        }
+    }
+
+    if (prefs.includes('Sustainability/Zero-waste') && product.badges?.includes('Sustainable')) {
+        points += 3;
+    }
+
+    points += noveltyAdjustment(product, quizAnswers);
+
+    // A saturating transformation keeps scores nuanced while preventing multiple
+    // synonymous tags from mechanically pushing a product to 100%.
+    const raw = Math.max(0, points);
+    const percent = raw === 0 ? 0 : Math.min(98, Math.round(100 * (1 - Math.exp(-raw / 52))));
+
+    return {
+        percent,
+        score: raw,
+        labels: labels.slice(0, 4),
+        reasons: reasons.slice(0, 4),
+        eligible: true,
+    };
+}
+
+export function getProductRelevanceScore(product, quizAnswers, healthProfile = null) {
+    return getProductRelevanceStats(product, quizAnswers, healthProfile).percent;
+}
+
+/** Ranked lists using the same relevance score shown in personalization UI. */
+export function getRecommendationMatchesAndRest(quizAnswers, healthProfile = null) {
+    const hasAnyProfileSignal =
+        Boolean(quizAnswers?.age) ||
+        Boolean(quizAnswers?.frustrations?.length) ||
+        Boolean(quizAnswers?.preference?.length) ||
+        Boolean(String(quizAnswers?.healthGoals || '').trim()) ||
+        inferTagsFromHealthProfile(healthProfile).length > 0;
+
+    const eligible = filterPrescriptionCareGate(
+        ALL_PRODUCTS.filter((p) => isProductEligibleForProfile(p, quizAnswers))
     );
-    const others = filterPrescriptionCareGate(scored.filter((s) => s.score === 0).map((s) => s.product));
+
+    if (!hasAnyProfileSignal) {
+        return { matches: [], others: eligible };
+    }
+
+    const scored = eligible.map((product) => ({
+        product,
+        stats: getProductRelevanceStats(product, quizAnswers, healthProfile),
+    }));
+
+    const matches = scored
+        .filter(({ stats }) => stats.percent > 0)
+        .sort((a, b) => b.stats.percent - a.stats.percent || b.stats.score - a.stats.score)
+        .map(({ product }) => product);
+
+    const others = scored
+        .filter(({ stats }) => stats.percent === 0)
+        .map(({ product }) => product);
+
     return { matches, others };
 }
 
@@ -1448,49 +1656,12 @@ const TAG_TO_READABLE = {
  * Empty when there is no tag match — use this to show a positive for-you line only when appropriate.
  */
 function getProfileMatchStatsForProduct(product, quizAnswers, healthProfile = null) {
-    const healthOnlyTags = inferTagsFromHealthProfile(healthProfile);
-    if ((!quizAnswers || !quizAnswers.frustrations?.length) && healthOnlyTags.length === 0) {
-        return { labels: [], percent: null, matches: 0, signals: 0 };
-    }
-    const FRUSTRATION_MAP = {
-        'Heavy flow': 'heavy-flow', 'Painful cramps': 'cramps', 'Hormonal bloating': 'bloating', 'Irregular cycles': 'irregular',
-        'Leaks & staining': 'leaks', 'General discomfort': 'discomfort', 'Not sure if products are safe': 'safety-concern',
-        'Recurrent UTIs': 'uti', 'PCOS symptoms': 'pcos', 'Pelvic pain': 'pelvic-floor',
-        'Menopause symptoms': 'menopause', 'Endometriosis': 'endometriosis', 'Fertility / TTC': 'fertility',
-        'Pregnancy': 'pregnancy', 'Postpartum recovery': 'postpartum'
-    };
-    const userTags = new Set();
-    (quizAnswers?.frustrations || []).forEach(f => {
-        const t = FRUSTRATION_MAP[f];
-        if (t) userTags.add(t);
-        if (f === 'Endometriosis') userTags.add('cramps');
-    });
-    healthOnlyTags.forEach((t) => userTags.add(t));
-    const prefs = Array.isArray(quizAnswers?.preference) ? quizAnswers.preference : (quizAnswers?.preference ? [quizAnswers.preference] : []);
-    prefs.forEach(p => {
-        if (p === 'Organic/Natural only') userTags.add('organic');
-        if (p === 'Non-hormonal / hormone-free') userTags.add('non-hormonal');
-        if (p === 'Lower cost') userTags.add('cost');
-        if (p === 'Comfort/Convenience') userTags.add('comfort');
-        if (p === 'Privacy & data security') userTags.add('privacy');
-        if (p === 'Sustainability/Zero-waste') userTags.add('sustainability');
-    });
-    const productTags = new Set(product.tags || []);
-    let matches = [...userTags].filter(t => productTags.has(t));
-    if (product.tags?.includes('pelvic-floor')) {
-        matches.sort((a, b) => {
-            const pri = (t) => (t === 'pelvic-floor' ? 0 : t === 'discomfort' ? 1 : t === 'endometriosis' ? 2 : t === 'cramps' ? 5 : 3);
-            return pri(a) - pri(b);
-        });
-    }
-    const percent = userTags.size > 0
-        ? Math.round((matches.length / userTags.size) * 100)
-        : null;
+    const stats = getProductRelevanceStats(product, quizAnswers, healthProfile);
     return {
-        labels: matches.slice(0, 4).map(m => TAG_TO_READABLE[m] || m.replace(/-/g, ' ')),
-        percent,
-        matches: matches.length,
-        signals: userTags.size,
+        labels: stats.labels,
+        percent: stats.percent,
+        matches: stats.labels.length,
+        signals: stats.percent == null ? 0 : 1,
     };
 }
 
@@ -1499,9 +1670,8 @@ export function getProfileMatchLabelsForProduct(product, quizAnswers, healthProf
 }
 
 /**
- * Profile-overlap percentage used only for signed-in personalization UI.
- * It is a literal tag-overlap ratio (matched profile signals / comparable
- * profile signals), not a clinical score and not an invented marketing number.
+ * Personalized product relevance score used across recommendation ranking
+ * and signed-in UI. This is a relevance score, not a diagnosis or probability.
  */
 export function getProfileMatchPercentForProduct(product, quizAnswers, healthProfile = null) {
     return getProfileMatchStatsForProduct(product, quizAnswers, healthProfile).percent;

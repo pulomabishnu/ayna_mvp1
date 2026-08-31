@@ -594,7 +594,7 @@ export const STARTUPS = [
         name: 'Elitone',
         tagline: 'Wearable pelvic floor therapy',
         description: 'FDA-cleared wearable device for at-home pelvic floor strengthening. No insertion; used externally to improve bladder control and strength.',
-        tags: ['leaks', 'pelvic-floor', 'discomfort'],
+        tags: ['bladder-leaks', 'incontinence', 'urinary', 'pelvic-floor', 'discomfort'],
         healthFunctions: ['vaginal-health'],
         category: 'pelvic-health',
         stage: 'Available in US',

@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct } from '../data/products';
+import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore } from '../data/products';
 import { loadProductCatalog } from '../utils/productCatalog';
 import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../utils/naturalLanguageSearch';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
@@ -501,7 +501,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     // itself anyway.
     const MAX_BROWSE_AI_ROUNDS = 10;
     const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-    const recommendedSet = useMemo(() => new Set(recommendedProductIds || []), [recommendedProductIds]);
     const recommendedRank = useMemo(() => new Map((recommendedProductIds || []).map((id, index) => [id, index])), [recommendedProductIds]);
 
     // AI-discovered products (api/discover-products.js), human-approved only —
@@ -594,6 +593,24 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         return [...products, ...releasedAsProducts, ...discovered];
     }, [discoveredProducts]);
 
+    const combinedRelevance = useMemo(() => {
+        const map = new Map();
+        combined.forEach((item) => {
+            map.set(item.id, getProductRelevanceScore(item, quizResults, healthProfile));
+        });
+        return map;
+    }, [combined, quizResults, healthProfile]);
+
+    const personalizedSet = useMemo(() => {
+        const set = new Set();
+        combinedRelevance.forEach((score, id) => {
+            if (score != null && score > 0) set.add(id);
+        });
+        return set;
+    }, [combinedRelevance]);
+
+    const recommendedSet = personalizedSet;
+
     const availableMacroGroups = useMemo(
         () => MACRO_GROUPS.filter((group) => group.id === 'all' || combined.some((item) => itemMatchesMacroGroup(item, group.id))),
         [combined]
@@ -613,7 +630,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const filtered = useMemo(() => {
         const applyFilters = (items, skipCategory = false) => items.filter((item) => {
             if (omittedProducts[item.id]) return false;
-            if (personalizationFilter && recommendedSet.size > 0 && !recommendedSet.has(item.id)) return false;
+            if (personalizationFilter && !personalizedSet.has(item.id)) return false;
             // Major Browse category chips. Match explicit categories first and
             // fall back to real catalog wording so newer Skin/Hair/etc. products
             // can participate without changing the data schema.
