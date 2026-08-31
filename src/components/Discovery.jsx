@@ -70,9 +70,10 @@ function resolveBrowseAiRoundQuery(qTrimForAi, categoryFilter, macroGroup, round
 }
 
 function getExplicitEligibility(item) {
-    // Never infer reimbursement eligibility from product names, image URLs, or copy.
-    // Only structured fields supplied by the catalog are authoritative enough to filter on.
-    const combined = item?.fsaHsaEligible === true || item?.fsa_hsa_eligible === true;
+    // Menstrual care products are qualified medical expenses for FSA/HSA use.
+    // Use structured catalog categories only; never infer from names, images, or marketing copy.
+    const menstrualCareEligible = ['pad', 'tampon', 'cup', 'disc'].includes(item?.category);
+    const combined = menstrualCareEligible || item?.fsaHsaEligible === true || item?.fsa_hsa_eligible === true;
     const fsa = combined || item?.fsaEligible === true || item?.fsa_eligible === true;
     const hsa = combined || item?.hsaEligible === true || item?.hsa_eligible === true;
     return { fsa, hsa };
