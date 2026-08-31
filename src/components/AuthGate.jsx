@@ -11,16 +11,16 @@ const SUBTITLES = {
 };
 
 const CONSENT_ITEMS = [
-  'I understand that the health information I enter into ayna is self-reported wellness data, not a clinical record.',
-  'I understand my wellness data is processed by an external AI service to generate personalized recommendations and is NEVER sold. ayna takes rigorous measures to anonymize user data for recommendations and secure storage.',
-  'I understand ayna provides wellness information only and is not a substitute for medical advice from a qualified healthcare provider.',
+  'The health information I share with ayna is self-reported wellness information, not a clinical record.',
+  'My wellness data may be processed by an external AI service to personalize recommendations. ayna takes measures to anonymize and secure this information and never sells it.',
+  'ayna provides wellness information, not medical advice or a substitute for care from a qualified healthcare provider.',
 ];
 
 const CONSENT_VERSION = 'v1';
 
 export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAuthRedirect, redirectTo }) {
   useEscapeToClose(isModal, onSkip);
-  const [mode, setMode] = useState('signup');
+  const [mode, setMode] = useState('signin');
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -270,12 +270,12 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
     position: 'fixed',
     inset: 0,
     display: 'flex',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     justifyContent: 'center',
     overflowY: 'auto',
-    background: 'rgba(28, 25, 23, 0.55)',
+    background: 'rgba(28, 25, 23, 0.58)',
     zIndex: 1000,
-    padding: '1.25rem',
+    padding: '1rem',
   } : {
     minHeight: '100dvh',
     display: 'flex',
@@ -596,29 +596,38 @@ const styles = {
     background: 'var(--color-surface)',
     borderRadius: 'var(--radius-lg)',
     boxShadow: 'var(--shadow-lg)',
-    padding: '2rem 2rem',
-    margin: '1.25rem auto',
+    padding: '1.5rem 1.6rem 1.4rem',
+    margin: 'auto',
     width: '100%',
-    maxWidth: '520px',
+    maxWidth: '440px',
+    maxHeight: 'calc(100dvh - 2rem)',
+    overflowY: 'auto',
     display: 'flex',
     flexDirection: 'column',
-    gap: '1rem',
+    gap: '0.75rem',
   },
   closeBtn: {
     position: 'absolute',
-    top: '1rem',
-    right: '1rem',
-    background: 'none',
-    border: 'none',
-    fontSize: '1.4rem',
-    color: 'var(--color-text-muted)',
+    top: '0.75rem',
+    right: '0.75rem',
+    width: '36px',
+    height: '36px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: 'var(--color-surface-soft)',
+    border: '1px solid var(--color-border)',
+    borderRadius: '50%',
+    fontSize: '1.35rem',
+    color: 'var(--color-text-main)',
     cursor: 'pointer',
     lineHeight: 1,
-    padding: '0.1rem 0.3rem',
+    padding: 0,
+    zIndex: 2,
   },
   logo: {
     fontFamily: 'var(--font-serif)',
-    fontSize: '1.9rem',
+    fontSize: '1.75rem',
     fontWeight: '700',
     color: 'var(--color-primary)',
     textAlign: 'center',
@@ -628,8 +637,8 @@ const styles = {
     fontSize: '0.875rem',
     color: 'var(--color-text-muted)',
     textAlign: 'center',
-    margin: '-0.25rem 0 0.25rem',
-    lineHeight: 1.45,
+    margin: '-0.2rem 1.5rem 0.15rem',
+    lineHeight: 1.4,
   },
   configWarning: {
     fontSize: '0.78rem',
@@ -650,7 +659,7 @@ const styles = {
   },
   toggleBtn: {
     flex: 1,
-    padding: '0.45rem 0',
+    padding: '0.55rem 0',
     fontSize: '0.85rem',
     fontWeight: '500',
     border: 'none',
@@ -670,11 +679,11 @@ const styles = {
   form: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '0.75rem',
+    gap: '0.65rem',
   },
   input: {
     width: '100%',
-    padding: '0.7rem 1rem',
+    padding: '0.78rem 0.9rem',
     fontSize: '0.9rem',
     border: '1px solid var(--color-border)',
     borderRadius: 'var(--radius-sm)',
@@ -691,8 +700,8 @@ const styles = {
   consentSection: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '0.6rem',
-    padding: '0.85rem',
+    gap: '0.5rem',
+    padding: '0.75rem 0.8rem',
     background: 'var(--color-surface-soft)',
     borderRadius: 'var(--radius-sm)',
     border: '1px solid var(--color-border)',
@@ -713,9 +722,9 @@ const styles = {
     cursor: 'pointer',
   },
   consentText: {
-    fontSize: '0.78rem',
+    fontSize: '0.74rem',
     color: 'var(--color-text-muted)',
-    lineHeight: 1.45,
+    lineHeight: 1.4,
   },
   legalNotice: {
     fontSize: '0.72rem',
@@ -729,7 +738,7 @@ const styles = {
     textDecoration: 'underline',
   },
   primaryBtn: {
-    padding: '0.75rem',
+    padding: '0.82rem',
     fontSize: '0.9rem',
     fontWeight: '600',
     background: 'var(--color-primary)',

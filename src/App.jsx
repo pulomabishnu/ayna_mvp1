@@ -827,6 +827,13 @@ function App() {
   const handleViewWaitlist = () => setCurrentView('waitlist');
   const handleViewEcosystem = () => setCurrentView('ecosystem');
   const handleViewWishlist = () => {
+    if (!user) {
+      setPendingAction('login');
+      pendingActionRef.current = 'login';
+      setShowAuthModal(true);
+      return;
+    }
+
     setCurrentView('ecosystem');
     window.setTimeout(() => {
       document.getElementById('ayna-wishlist')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
