@@ -258,7 +258,10 @@ function App() {
   }, [setCurrentView]);
   useEffect(() => {
     const path = pathForView(currentView, productRouteId);
-    window.history.replaceState({ view: currentView, productId: productRouteId }, '', path);
+    const initialUrl = currentView === 'auth-callback'
+      ? `${path}${window.location.search}${window.location.hash}`
+      : path;
+    window.history.replaceState({ view: currentView, productId: productRouteId }, '', initialUrl);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
