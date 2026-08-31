@@ -634,15 +634,12 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             // An explicit FSA/HSA filter should search the full eligible catalog,
             // not only the user's personalized subset.
             if (personalizationFilter && eligibilityFilter === 'all' && !personalizedSet.has(item.id)) return false;
-            // When an FSA/HSA eligibility filter is active, show eligible products
-            // across Browse instead of letting the current category chip hide them.
-            const hasEligibilityFilter = eligibilityFilter !== 'all';
             // Major Browse category chips. Match explicit categories first and
             // fall back to real catalog wording so newer Skin/Hair/etc. products
             // can participate without changing the data schema.
-            if (!skipCategory && !hasEligibilityFilter && !itemMatchesMacroGroup(item, macroGroup)) return false;
+            if (!skipCategory && !itemMatchesMacroGroup(item, macroGroup)) return false;
             // Sub-category filter within the selected group
-            if (!skipCategory && !hasEligibilityFilter && categoryFilter !== 'all' && item.category !== categoryFilter) return false;
+            if (!skipCategory && categoryFilter !== 'all' && item.category !== categoryFilter) return false;
             if (typeFilter !== 'all' && item.type !== typeFilter) return false;
             if (!skipCategory && categoryFilter === 'pad' && !padMatchesSubFilters(item, padFlowFilter, padPreferenceFilter, padUseCaseFilter)) return false;
             if (!skipCategory && categoryFilter === 'supplement' && symptomFilter !== 'all') {
