@@ -307,3 +307,21 @@
   .eco2-body { grid-template-columns:1fr; }
   .eco2-sidebar { position:static; }
 }
+
+/* Browse cards: keep personalized match unobtrusive until the product image is hovered. */
+.ayna-browse-card__match {
+  top: auto;
+  left: auto;
+  right: .65rem;
+  bottom: .65rem;
+  opacity: 0;
+  transform: scale(.94);
+  pointer-events: none;
+  transition: opacity .18s ease, transform .18s ease;
+}
+
+.ayna-discover-card__tile:hover .ayna-browse-card__match,
+.ayna-discover-card__tile:focus-within .ayna-browse-card__match {
+  opacity: 1;
+  transform: scale(1);
+}
