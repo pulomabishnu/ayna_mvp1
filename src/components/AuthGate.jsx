@@ -239,7 +239,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: 'https://www.aynahealth.co/auth/callback',
+          redirectTo: `${window.location.origin}/auth/callback`,
           queryParams: { prompt: 'select_account' },
         },
       });
