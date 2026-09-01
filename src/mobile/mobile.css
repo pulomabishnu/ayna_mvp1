@@ -1,0 +1,64 @@
+/* Design tokens extracted from design-reference/ayna-mobile-template.html.
+   Scoped under .ayna-mobile so nothing here can affect the existing website. */
+
+.ayna-mobile {
+  --ayna-bg: #F3EFE9;
+  --ayna-bg-alt: #FAF6F1;
+  --ayna-surface: #FFFCF9;
+  --ayna-surface-alt: #FFF9F2;
+  --ayna-border: #E1D5CE;
+  --ayna-text: #292524;
+  --ayna-text-muted: #78716C;
+  --ayna-text-faint: #A8A29E;
+  --ayna-accent: #FFC774;
+  --ayna-accent-dark: #E8A94F;
+  --ayna-brown: #A2603C;
+  --ayna-navy: #242A52;
+  --ayna-purple: #4E3866;
+  --ayna-peach: #FFEFD6;
+  --ayna-gradient-hero: linear-gradient(165deg, #2A1F4E 0%, #4E3866 42%, #8A4A3C 74%, #D97A2B 100%);
+  --ayna-gradient-panel: linear-gradient(168deg, #242A52 0%, #4E3866 52%, #A2603C 100%);
+
+  font-family: Inter, system-ui, sans-serif;
+  color: var(--ayna-text);
+  background: var(--ayna-bg);
+}
+
+.ayna-mobile a { color: var(--ayna-brown); text-decoration: none; }
+.ayna-mobile a:hover { color: #8A4F30; }
+
+.ayna-mobile .font-serif { font-family: 'Playfair Display', serif; }
+.ayna-mobile .font-sans { font-family: 'DM Sans', sans-serif; }
+.ayna-mobile .font-mono { font-family: 'DM Mono', monospace; }
+
+@keyframes ay-hero { from { opacity: 0; transform: scale(.93) translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes ay-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes ay-pulse { 0% { transform: scale(.75); opacity: .55; } 100% { transform: scale(2.1); opacity: 0; } }
+@keyframes ay-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+@keyframes ay-spin { to { transform: rotate(360deg); } }
+@keyframes ay-orbit { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+@keyframes ay-counter { from { transform: rotate(0); } to { transform: rotate(-360deg); } }
+@keyframes ay-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.04); } }
+@keyframes ay-swap { 0% { opacity: 0; transform: translateY(8px); } 14% { opacity: 1; transform: none; } 86% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-8px); } }
+@keyframes ay-swap2 { 0% { opacity: 0; transform: translateY(8px); } 14% { opacity: 1; transform: none; } 86% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-8px); } }
+@keyframes ay-page { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes ay-bob { 0%, 100% { transform: translateY(4px); } 50% { transform: translateY(-4px); } }
+@keyframes ay-drift { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(14px,-18px) scale(1.09); } }
+
+.ayna-mobile input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(26,23,20,.1);
+}
+.ayna-mobile input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #1A1714;
+  border: 3px solid #FFEFD6;
+  cursor: pointer;
+  margin-top: -8px;
+}
