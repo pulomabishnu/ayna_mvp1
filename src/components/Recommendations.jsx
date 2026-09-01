@@ -326,7 +326,7 @@ export default function Recommendations({
                                     Buy ↗
                                 </a>
                             )}
-                            <button className="btn btn-primary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }} onClick={() => onOpenProduct(product)}>
+                            <button className="btn btn-primary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }} onClick={() => onOpenProduct(product, { source: 'recommendation' })}>
                                 Details
                             </button>
                         </div>
@@ -460,7 +460,7 @@ export default function Recommendations({
                                                         <button
                                                             type="button"
                                                             style={{ marginTop: '0.25rem', background: 'none', border: 'none', padding: 0, color: 'var(--color-primary)', fontWeight: '700', cursor: 'pointer' }}
-                                                            onClick={() => onOpenProduct(tier.product)}
+                                                            onClick={() => onOpenProduct(tier.product, { source: 'recommendation' })}
                                                         >
                                                             {tier.product.name}
                                                         </button>
@@ -485,7 +485,7 @@ export default function Recommendations({
                                                                             type="button"
                                                                             className="btn btn-outline"
                                                                             style={{ padding: '0.25rem 0.55rem', fontSize: '0.75rem' }}
-                                                                            onClick={() => onOpenProduct(alt)}
+                                                                            onClick={() => onOpenProduct(alt, { source: 'recommendation' })}
                                                                         >
                                                                             {alt.name}
                                                                         </button>
@@ -631,7 +631,7 @@ export default function Recommendations({
                                             background: 'white', border: '1px solid var(--color-border)',
                                             padding: '0.35rem 0.75rem', borderRadius: 'var(--radius-pill)',
                                             fontSize: '0.8rem', fontWeight: '500', cursor: 'pointer'
-                                        }} onClick={() => onOpenProduct(product)}>
+                                        }} onClick={() => onOpenProduct(product, { source: 'recommendation' })}>
                                             {product.name}
                                         </span>
                                     );

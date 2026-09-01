@@ -1123,7 +1123,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         const q = (rawQuery || '').trim();
         if (!q || q.length < 2) return;
         setSearchQuery(q);
-        posthog.capture('search_performed', { queryLength: q.length });
+        posthog.capture('search_performed', { query: q, queryLength: q.length });
         const qLower = q.toLowerCase();
 
         // Cancel any pending debounce — we're going immediate
@@ -1436,7 +1436,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                 onClick={(e) => {
                                     if (!isPlainLeftClick(e)) return;
                                     e.preventDefault();
-                                    onOpenProduct?.(item);
+                                    onOpenProduct?.(item, searchSubmitted
+                                        ? { source: 'search_results', searchQuery: submittedQuery, position: idx }
+                                        : { source: 'browse', position: idx });
                                 }}
                             >
                                 <div className="ayna-discover-card__tile">
@@ -1589,7 +1591,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Checking the government database…</p>
                     )}
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '1.25rem' }}>
-                        {dsldProducts.map((product) => (
+                        {dsldProducts.map((product, dsldIdx) => (
                             <div key={product.id} className="card hover-lift" style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                                 <div style={{ height: '120px', width: '100%', overflow: 'hidden', position: 'relative', background: 'linear-gradient(160deg, #F3EADC, #EFE3D2)' }}>
                                     {safeProductImageSrc(product.image) ? (
@@ -1616,7 +1618,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                             {myProducts?.[product.id] ? 'Added' : 'Add'}
                                         </button>
                                         <button className="btn btn-primary" style={{ padding: '0.35rem 0.7rem', fontSize: '0.78rem', flex: 1 }}
-                                            onClick={() => onOpenProduct && onOpenProduct(product)}>
+                                            onClick={() => onOpenProduct && onOpenProduct(product, { source: 'search_results', searchQuery: submittedQuery, position: dsldIdx })}>
                                             Details
                                         </button>
                                     </div>

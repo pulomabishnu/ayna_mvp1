@@ -1014,7 +1014,13 @@ function App() {
     });
 
     if (!wasIn) {
-      posthog.capture('product_added', { category: product.category, type: product.type });
+      const origin = lastOpenOrigin?.productId === product.id ? lastOpenOrigin : null;
+      posthog.capture('product_added', {
+        category: product.category,
+        type: product.type,
+        source: origin?.source,
+        searchQuery: origin?.searchQuery,
+      });
     }
     if (user) {
       upsertProductState(getSupabaseClient(), user.id, product, {
@@ -1113,6 +1119,11 @@ function App() {
   // link, browser back/forward) won't have this and falls back to
   // `resolvedProduct` below, which looks the id up from real state instead.
   const [lastClickedProduct, setLastClickedProduct] = useState(null);
+  // Tracks whether the currently open product was reached from a search
+  // result, so downstream events (buy now, add to ecosystem) can carry the
+  // same searchQuery and let us trace search -> click -> purchase in
+  // PostHog. Cleared whenever a product is opened from anywhere else.
+  const [lastOpenOrigin, setLastOpenOrigin] = useState(null);
 
   const omittedCount = Object.keys(omittedProducts).length;
   const ecosystemCount = Object.keys(myProducts).length;
@@ -1125,10 +1136,18 @@ function App() {
   const navGradientVariant = currentView === 'about'
     ? ' app-nav--about'
     : (user && ecosystemCount > 0) ? ' app-nav--returning' : '';
-  const handleOpenProduct = (product) => {
+  const handleOpenProduct = (product, meta = {}) => {
     if (!product?.id) return;
     const p = product?.llmGenerated ? enrichLlmProductForDiscovery(product) : product;
-    posthog.capture('product_card_opened', { category: p?.category });
+    const source = meta.source || 'browse';
+    posthog.capture('product_card_opened', {
+      productId: p?.id,
+      category: p?.category,
+      source,
+      searchQuery: source === 'search_results' ? meta.searchQuery : undefined,
+      position: meta.position,
+    });
+    setLastOpenOrigin(source === 'search_results' ? { productId: p.id, source, searchQuery: meta.searchQuery } : null);
     setLastClickedProduct(p);
     navigateToProduct(p.id);
   };
@@ -1695,6 +1714,7 @@ function App() {
               userSession={userSession}
               onOpenProduct={handleOpenProduct}
               onBack={handleBackFromProduct}
+              searchOrigin={lastOpenOrigin?.productId === resolvedProduct.id ? lastOpenOrigin : null}
             />
           ) : productStillResolving ? (
             <ViewLoadingFallback />

@@ -578,7 +578,7 @@ function IntakeRecAltMini({ alt, myProducts, onToggleProduct, onOpenProduct, res
                         <button type="button" className="btn btn-outline" style={{ padding: '0.3rem 0.55rem', fontSize: '0.75rem' }} onClick={() => onToggleProduct(alt)}>
                             {inEco ? '✓ In ecosystem' : '+ Add to Ecosystem'}
                         </button>
-                        <button type="button" className="btn btn-primary" style={{ padding: '0.3rem 0.55rem', fontSize: '0.75rem' }} onClick={() => onOpenProduct(alt)}>
+                        <button type="button" className="btn btn-primary" style={{ padding: '0.3rem 0.55rem', fontSize: '0.75rem' }} onClick={() => onOpenProduct(alt, { source: 'recommendation' })}>
                             Details
                         </button>
                         {buyUrl && (
@@ -720,7 +720,7 @@ function IntakeRecommendationsProductCard({
                     <button type="button" className="btn btn-outline" style={{ padding: '0.32rem 0.55rem', fontSize: '0.72rem' }} onClick={() => onToggleCompare(compareKey)}>
                         {compareOn ? 'Hide compare' : 'Compare'}
                     </button>
-                    <button type="button" className="btn btn-primary" style={{ padding: '0.32rem 0.55rem', fontSize: '0.72rem' }} onClick={() => onOpenProduct(product)}>
+                    <button type="button" className="btn btn-primary" style={{ padding: '0.32rem 0.55rem', fontSize: '0.72rem' }} onClick={() => onOpenProduct(product, { source: 'recommendation' })}>
                         Details
                     </button>
                     {buyUrl && (

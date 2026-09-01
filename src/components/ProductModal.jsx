@@ -455,6 +455,10 @@ export default function ProductModal({
   // app already uses — clicking one here is real in-app navigation, not a
   // nested modal.
   onOpenProduct = null,
+  // Set only when this product page was reached by clicking a search
+  // result — lets buy-now carry the same searchQuery so PostHog can trace
+  // search -> click -> purchase.
+  searchOrigin = null,
   // Optional: renders a visible in-page "Back" control. Product pages are
   // real routes (/product/:id) reachable via direct/shared links, so unlike
   // a nested modal there's no other on-screen way back to Discovery.
@@ -672,6 +676,8 @@ export default function ProductModal({
               productId: product.id,
               category: product.category,
               destination: buyUrl,
+              source: searchOrigin?.source,
+              searchQuery: searchOrigin?.searchQuery,
             })}
           >
             Buy Now
