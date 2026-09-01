@@ -47,7 +47,7 @@ export default function ProductEvidenceRail({ product, matchLabels = [], matchPe
     communityChips.length > 0
       ? { label: 'Social Media', value: `${communityChips.length} link${communityChips.length === 1 ? '' : 's'}`, chips: communityChips }
       : null,
-    aynaReviewCount > 0 ? { label: 'Ayna reviews', value: `${aynaReviewCount}` } : null,
+    aynaReviewCount > 0 ? { label: 'ayna reviews', value: `${aynaReviewCount}` } : null,
     product.safety?.fdaStatus ? { label: 'FDA', value: firstSentence(product.safety.fdaStatus, 56) } : null,
   ].filter(Boolean);
 

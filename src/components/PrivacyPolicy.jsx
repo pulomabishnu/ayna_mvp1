@@ -2,30 +2,108 @@ import React from 'react';
 
 const PRIVACY_HTML = `
 <style>
-  .privacy-policy-body [data-custom-class='body'], .privacy-policy-body [data-custom-class='body'] * { background: transparent !important; }
-  .privacy-policy-body [data-custom-class='title'], .privacy-policy-body [data-custom-class='title'] * { font-family: Arial !important; font-size: 26px !important; color: #000000 !important; }
-  .privacy-policy-body [data-custom-class='subtitle'], .privacy-policy-body [data-custom-class='subtitle'] * { font-family: Arial !important; color: #595959 !important; font-size: 14px !important; }
-  .privacy-policy-body [data-custom-class='heading_1'], .privacy-policy-body [data-custom-class='heading_1'] * { font-family: Arial !important; font-size: 19px !important; color: #000000 !important; }
-  .privacy-policy-body [data-custom-class='heading_2'], .privacy-policy-body [data-custom-class='heading_2'] * { font-family: Arial !important; font-size: 17px !important; color: #000000 !important; }
-  .privacy-policy-body [data-custom-class='body_text'], .privacy-policy-body [data-custom-class='body_text'] * { color: #595959 !important; font-size: 14px !important; font-family: Arial !important; }
-  .privacy-policy-body [data-custom-class='link'], .privacy-policy-body [data-custom-class='link'] * { color: #3030F1 !important; font-size: 14px !important; font-family: Arial !important; word-break: break-word !important; }
-  .privacy-policy-body ul { list-style-type: square; }
-  .privacy-policy-body ul > li > ul { list-style-type: circle; }
-  .privacy-policy-body ul > li > ul > li > ul { list-style-type: square; }
-  .privacy-policy-body ol li { font-family: Arial; }
-  .privacy-policy-body table { border-collapse: collapse; width: 100%; }
-  .privacy-policy-body h1, .privacy-policy-body h2, .privacy-policy-body h3 { margin: 0; }
+  .privacy-policy-body {
+    color: var(--color-text-main);
+    font-family: var(--font-body);
+    background: var(--color-surface-soft);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: clamp(1.5rem, 4vw, 2.75rem);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .privacy-policy-body [data-custom-class='body'],
+  .privacy-policy-body [data-custom-class='body'] * {
+    background: transparent !important;
+  }
+
+  .privacy-policy-body [data-custom-class='title'],
+  .privacy-policy-body [data-custom-class='title'] * {
+    font-family: var(--font-heading) !important;
+    font-size: clamp(2rem, 5vw, 2.6rem) !important;
+    line-height: 1.1 !important;
+    color: var(--color-text-main) !important;
+    letter-spacing: -0.04em;
+  }
+
+  .privacy-policy-body [data-custom-class='subtitle'],
+  .privacy-policy-body [data-custom-class='subtitle'] * {
+    font-family: var(--font-body) !important;
+    color: var(--color-text-muted) !important;
+    font-size: 0.9rem !important;
+  }
+
+  .privacy-policy-body [data-custom-class='heading_1'],
+  .privacy-policy-body [data-custom-class='heading_1'] * {
+    font-family: var(--font-heading) !important;
+    font-size: 1.25rem !important;
+    line-height: 1.35 !important;
+    color: var(--color-text-main) !important;
+    letter-spacing: -0.015em;
+  }
+
+  .privacy-policy-body [data-custom-class='heading_2'],
+  .privacy-policy-body [data-custom-class='heading_2'] * {
+    font-family: var(--font-heading) !important;
+    font-size: 1.05rem !important;
+    line-height: 1.4 !important;
+    color: var(--color-text-main) !important;
+  }
+
+  .privacy-policy-body [data-custom-class='body_text'],
+  .privacy-policy-body [data-custom-class='body_text'] * {
+    color: var(--color-text-muted) !important;
+    font-size: 0.95rem !important;
+    line-height: 1.75 !important;
+    font-family: var(--font-body) !important;
+  }
+
+  .privacy-policy-body [data-custom-class='link'],
+  .privacy-policy-body [data-custom-class='link'] * {
+    color: var(--color-amber-deep) !important;
+    font-size: inherit !important;
+    font-family: inherit !important;
+    word-break: break-word !important;
+    text-decoration-color: var(--color-primary);
+    text-underline-offset: 3px;
+  }
+
+  .privacy-policy-body ul {
+    padding-left: 1.4rem;
+  }
+
+  .privacy-policy-body li {
+    margin: 0.45rem 0;
+  }
+
+  .privacy-policy-body table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  .privacy-policy-body h1,
+  .privacy-policy-body h2,
+  .privacy-policy-body h3 {
+    margin: 0;
+  }
+
+  @media (max-width: 640px) {
+    .privacy-policy-body {
+      border-radius: var(--radius-md);
+      padding: 1.2rem;
+    }
+  }
 </style>
 <div data-custom-class="body">
 <div><strong><span style="font-size: 26px;"><span data-custom-class="title"><h1>PRIVACY POLICY</h1></span></span></strong></div>
 <div><span style="color: rgb(127, 127, 127);"><strong><span style="font-size: 15px;"><span data-custom-class="subtitle">Last updated May 04, 2026</span></span></strong></span></div>
 <div><br></div>
-<div style="line-height: 1.5;"><span style="color: rgb(89, 89, 89); font-size: 15px;"><span data-custom-class="body_text">This Privacy Notice for <strong>Ayna</strong> ("we," "us," or "our"), describes how and why we might access, collect, store, use, and/or share ("process") your personal information when you use our services ("Services"), including when you:</span></span></div>
+<div style="line-height: 1.5;"><span style="color: rgb(89, 89, 89); font-size: 15px;"><span data-custom-class="body_text">This Privacy Notice for <strong>ayna</strong> ("we," "us," or "our"), describes how and why we might access, collect, store, use, and/or share ("process") your personal information when you use our services ("Services"), including when you:</span></span></div>
 <ul>
-  <li data-custom-class="body_text" style="line-height: 1.5;"><span style="font-size: 15px; color: rgb(89, 89, 89);">Visit our website at <a target="_blank" data-custom-class="link" href="https://aynamvp1.vercel.app/">https://aynamvp1.vercel.app/</a> or any website of ours that links to this Privacy Notice</span></li>
+  <li data-custom-class="body_text" style="line-height: 1.5;"><span style="font-size: 15px; color: rgb(89, 89, 89);">Visit our website at <a target="_blank" data-custom-class="link" href="https://www.aynahealth.co/">https://www.aynahealth.co/</a> or any website of ours that links to this Privacy Notice</span></li>
   <li data-custom-class="body_text" style="line-height: 1.5;"><span style="font-size: 15px; color: rgb(89, 89, 89);">Engage with us in other related ways, including any marketing or events</span></li>
 </ul>
-<div style="line-height: 1.5;"><span style="font-size: 15px;"><span style="color: rgb(127, 127, 127);"><span data-custom-class="body_text"><strong>Questions or concerns?</strong> Reading this Privacy Notice will help you understand your privacy rights and choices. We are responsible for making decisions about how your personal information is processed. If you do not agree with our policies and practices, please do not use our Services. If you still have any questions or concerns, please contact us at <a target="_blank" data-custom-class="link" href="mailto:pulomabishnu@gmail.com">pulomabishnu@gmail.com</a>.</span></span></span></div>
+<div style="line-height: 1.5;"><span style="font-size: 15px;"><span style="color: rgb(127, 127, 127);"><span data-custom-class="body_text"><strong>Questions or concerns?</strong> Reading this Privacy Notice will help you understand your privacy rights and choices. We are responsible for making decisions about how your personal information is processed. If you do not agree with our policies and practices, please do not use our Services. If you still have any questions or concerns, please contact us at <a target="_blank" data-custom-class="link" href="mailto:puloma@aynahealth.co">puloma@aynahealth.co</a>.</span></span></span></div>
 <div style="line-height: 1.5;"><br></div>
 <div style="line-height: 1.5;"><strong><span style="font-size: 15px;"><span data-custom-class="heading_1"><h2>SUMMARY OF KEY POINTS</h2></span></span></strong></div>
 <div style="line-height: 1.5;"><span style="font-size: 15px;"><span data-custom-class="body_text"><strong><em>This summary provides key points from our Privacy Notice. Use the table of contents below to find the section you are looking for.</em></strong></span></span></div>
@@ -44,7 +122,7 @@ const PRIVACY_HTML = `
 <div style="line-height: 1.5;"><br></div>
 <div style="line-height: 1.5;"><span style="font-size: 15px;"><span data-custom-class="body_text"><strong>What are your rights?</strong> Depending on where you are located geographically, the applicable privacy law may mean you have certain rights regarding your personal information.</span></span></div>
 <div style="line-height: 1.5;"><br></div>
-<div style="line-height: 1.5;"><span style="font-size: 15px;"><span data-custom-class="body_text"><strong>How do you exercise your rights?</strong> The easiest way to exercise your rights is by contacting us at <a target="_blank" data-custom-class="link" href="mailto:pulomabishnu@gmail.com">pulomabishnu@gmail.com</a>. We will consider and act upon any request in accordance with applicable data protection laws.</span></span></div>
+<div style="line-height: 1.5;"><span style="font-size: 15px;"><span data-custom-class="body_text"><strong>How do you exercise your rights?</strong> The easiest way to exercise your rights is by contacting us at <a target="_blank" data-custom-class="link" href="mailto:puloma@aynahealth.co">puloma@aynahealth.co</a>. We will consider and act upon any request in accordance with applicable data protection laws.</span></span></div>
 <div style="line-height: 1.5;"><br></div>
 <div id="toc" style="line-height: 1.5;"><strong><span data-custom-class="heading_1"><h2>TABLE OF CONTENTS</h2></span></strong></div>
 <div style="line-height: 1.5;"><span style="font-size: 15px;"><a data-custom-class="link" href="#infocollect"><span style="color: rgb(0, 58, 250);">1. WHAT INFORMATION DO WE COLLECT?</span></a></span></div>
@@ -168,7 +246,7 @@ const PRIVACY_HTML = `
 <div id="infominors" style="line-height: 1.5;"><strong><span data-custom-class="heading_1"><h2>9. DO WE COLLECT INFORMATION FROM MINORS?</h2></span></strong>
 <span style="font-size: 15px; color: rgb(89, 89, 89);"><span data-custom-class="body_text"><strong><em>In Short:</em></strong><em> We do not knowingly collect data from or market to children under 18 years of age.</em></span></span></div>
 <div style="line-height: 1.5;"><br></div>
-<div style="line-height: 1.5;"><span style="font-size: 15px; color: rgb(89, 89, 89);"><span data-custom-class="body_text">We do not knowingly collect, solicit data from, or market to children under 18 years of age, nor do we knowingly sell such personal information. By using the Services, you represent that you are at least 18 or that you are the parent or guardian of such a minor and consent to such minor dependent's use of the Services. If we learn that personal information from users less than 18 years of age has been collected, we will deactivate the account and take reasonable measures to promptly delete such data from our records. If you become aware of any data we may have collected from children under age 18, please contact us at <a target="_blank" data-custom-class="link" href="mailto:pulomabishnu@gmail.com">pulomabishnu@gmail.com</a>.</span></span></div>
+<div style="line-height: 1.5;"><span style="font-size: 15px; color: rgb(89, 89, 89);"><span data-custom-class="body_text">We do not knowingly collect, solicit data from, or market to children under 18 years of age, nor do we knowingly sell such personal information. By using the Services, you represent that you are at least 18 or that you are the parent or guardian of such a minor and consent to such minor dependent's use of the Services. If we learn that personal information from users less than 18 years of age has been collected, we will deactivate the account and take reasonable measures to promptly delete such data from our records. If you become aware of any data we may have collected from children under age 18, please contact us at <a target="_blank" data-custom-class="link" href="mailto:puloma@aynahealth.co">puloma@aynahealth.co</a>.</span></span></div>
 <div style="line-height: 1.5;"><br></div>
 
 <div id="privacyrights" style="line-height: 1.5;"><strong><span data-custom-class="heading_1"><h2>10. WHAT ARE YOUR PRIVACY RIGHTS?</h2></span></strong>
@@ -184,7 +262,7 @@ const PRIVACY_HTML = `
 <div style="line-height: 1.5;"><br></div>
 <div style="line-height: 1.5;"><span style="font-size: 15px;"><span data-custom-class="body_text">Upon your request to terminate your account, we will deactivate or delete your account and information from our active databases. However, we may retain some information in our files to prevent fraud, troubleshoot problems, assist with any investigations, enforce our legal terms and/or comply with applicable legal requirements.</span></span></div>
 <div style="line-height: 1.5;"><br></div>
-<div style="line-height: 1.5;"><span data-custom-class="body_text"><span style="font-size: 15px;">If you have questions or comments about your privacy rights, you may email us at <a target="_blank" data-custom-class="link" href="mailto:pulomabishnu@gmail.com">pulomabishnu@gmail.com</a>.</span></span></div>
+<div style="line-height: 1.5;"><span data-custom-class="body_text"><span style="font-size: 15px;">If you have questions or comments about your privacy rights, you may email us at <a target="_blank" data-custom-class="link" href="mailto:puloma@aynahealth.co">puloma@aynahealth.co</a>.</span></span></div>
 <div style="line-height: 1.5;"><br></div>
 
 <div id="DNT" style="line-height: 1.5;"><strong><span data-custom-class="heading_1"><h2>11. CONTROLS FOR DO-NOT-TRACK FEATURES</h2></span></strong>
@@ -207,11 +285,11 @@ const PRIVACY_HTML = `
   <li data-custom-class="body_text" style="line-height: 1.5;"><span style="font-size: 15px;"><strong>Right to opt out</strong> of the processing of your personal data if it is used for targeted advertising, the sale of personal data, or profiling</span></li>
 </ul>
 <div style="line-height: 1.5;"><br></div>
-<div style="line-height: 1.5;"><span style="font-size: 15px;"><strong><span data-custom-class="heading_2"><h3>How to Exercise Your Rights</h3></span></strong><span style="color: rgb(89, 89, 89);"><span data-custom-class="body_text">To exercise these rights, you can contact us by emailing us at <a target="_blank" data-custom-class="link" href="mailto:pulomabishnu@gmail.com">pulomabishnu@gmail.com</a>, or by referring to the contact details at the bottom of this document.</span></span></span></div>
+<div style="line-height: 1.5;"><span style="font-size: 15px;"><strong><span data-custom-class="heading_2"><h3>How to Exercise Your Rights</h3></span></strong><span style="color: rgb(89, 89, 89);"><span data-custom-class="body_text">To exercise these rights, you can contact us by emailing us at <a target="_blank" data-custom-class="link" href="mailto:puloma@aynahealth.co">puloma@aynahealth.co</a>, or by referring to the contact details at the bottom of this document.</span></span></span></div>
 <div style="line-height: 1.5;"><br></div>
 <div style="line-height: 1.5;"><span style="font-size: 15px;"><strong><span data-custom-class="heading_2"><h3>Request Verification</h3></span></strong><span data-custom-class="body_text">Upon receiving your request, we will need to verify your identity to determine you are the same person about whom we have the information in our system. We will only use personal information provided in your request to verify your identity or authority to make the request.</span></span></div>
 <div style="line-height: 1.5;"><br></div>
-<div style="line-height: 1.5;"><span style="font-size: 15px;"><strong><span data-custom-class="heading_2"><h3>Appeals</h3></span></strong><span data-custom-class="body_text">Under certain US state data protection laws, if we decline to take action regarding your request, you may appeal our decision by emailing us at <a target="_blank" data-custom-class="link" href="mailto:pulomabishnu@gmail.com">pulomabishnu@gmail.com</a>. We will inform you in writing of any action taken or not taken in response to the appeal, including a written explanation of the reasons for the decisions. If your appeal is denied, you may submit a complaint to your state attorney general.</span></span></div>
+<div style="line-height: 1.5;"><span style="font-size: 15px;"><strong><span data-custom-class="heading_2"><h3>Appeals</h3></span></strong><span data-custom-class="body_text">Under certain US state data protection laws, if we decline to take action regarding your request, you may appeal our decision by emailing us at <a target="_blank" data-custom-class="link" href="mailto:puloma@aynahealth.co">puloma@aynahealth.co</a>. We will inform you in writing of any action taken or not taken in response to the appeal, including a written explanation of the reasons for the decisions. If your appeal is denied, you may submit a complaint to your state attorney general.</span></span></div>
 <div style="line-height: 1.5;"><br></div>
 <div style="line-height: 1.5;"><span style="font-size: 15px;"><strong><span data-custom-class="heading_2"><h3>California "Shine The Light" Law</h3></span></strong><span data-custom-class="body_text">California Civil Code Section 1798.83, also known as the "Shine The Light" law, permits our users who are California residents to request and obtain from us, once a year and free of charge, information about categories of personal information (if any) we disclosed to third parties for direct marketing purposes and the names and addresses of all third parties with which we shared personal information in the immediately preceding calendar year. If you are a California resident and would like to make such a request, please submit your request in writing to us by using the contact details provided in the section <a data-custom-class="link" href="#contact" style="color: rgb(0, 58, 250);">HOW CAN YOU CONTACT US ABOUT THIS NOTICE?</a></span></span></div>
 <div style="line-height: 1.5;"><br></div>
@@ -223,13 +301,13 @@ const PRIVACY_HTML = `
 <div style="line-height: 1.5;"><br></div>
 
 <div id="contact" style="line-height: 1.5;"><strong><span data-custom-class="heading_1"><h2>14. HOW CAN YOU CONTACT US ABOUT THIS NOTICE?</h2></span></strong>
-<span style="font-size: 15px; color: rgb(89, 89, 89);"><span data-custom-class="body_text">If you have questions or comments about this notice, you may contact our Data Protection Officer (DPO) by email at <a target="_blank" data-custom-class="link" href="mailto:pulomabishnu@gmail.com">pulomabishnu@gmail.com</a>, by phone at 9786540921, or contact us by post at:</span></span></div>
+<span style="font-size: 15px; color: rgb(89, 89, 89);"><span data-custom-class="body_text">If you have questions or comments about this notice, you may contact us by email at <a target="_blank" data-custom-class="link" href="mailto:puloma@aynahealth.co">puloma@aynahealth.co</a>.</span></span></div>
 <div style="line-height: 1.5;"><br></div>
-<div style="line-height: 1.5;"><span style="font-size: 15px; color: rgb(89, 89, 89);"><span data-custom-class="body_text">Ayna<br>Data Protection Officer<br>252 Beacon Street<br>Andover, MA 01810<br>United States</span></span></div>
+<div style="line-height: 1.5;"><span style="font-size: 15px; color: rgb(89, 89, 89);"><span data-custom-class="body_text">ayna<br>puloma@aynahealth.co</span></span></div>
 <div style="line-height: 1.5;"><br></div>
 
 <div id="request" style="line-height: 1.5;"><strong><span data-custom-class="heading_1"><h2>15. HOW CAN YOU REVIEW, UPDATE, OR DELETE THE DATA WE COLLECT FROM YOU?</h2></span></strong>
-<span style="font-size: 15px; color: rgb(89, 89, 89);"><span data-custom-class="body_text">You have the right to request access to the personal information we collect from you, details about how we have processed it, correct inaccuracies, or delete your personal information. You may also have the right to withdraw your consent to our processing of your personal information. These rights may be limited in some circumstances by applicable law. To request to review, update, or delete your personal information, please visit: <a target="_blank" data-custom-class="link" href="mailto:pulomabishnu@gmail.com">pulomabishnu@gmail.com</a>.</span></span></div>
+<span style="font-size: 15px; color: rgb(89, 89, 89);"><span data-custom-class="body_text">You have the right to request access to the personal information we collect from you, details about how we have processed it, correct inaccuracies, or delete your personal information. You may also have the right to withdraw your consent to our processing of your personal information. These rights may be limited in some circumstances by applicable law. To request to review, update, or delete your personal information, please email us at <a target="_blank" data-custom-class="link" href="mailto:puloma@aynahealth.co">puloma@aynahealth.co</a>.</span></span></div>
 </div>
 `;
 
@@ -239,7 +317,7 @@ export default function PrivacyPolicy({ onBack }) {
       <button
         type="button"
         onClick={onBack}
-        style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-primary)', fontSize: '0.9rem', marginBottom: '1.5rem', padding: 0, display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+        style={{ background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-pill)', cursor: 'pointer', color: 'var(--color-text-main)', fontFamily: 'var(--font-body)', fontSize: '0.9rem', fontWeight: 600, marginBottom: '1.25rem', padding: '0.65rem 0.95rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem', boxShadow: 'var(--shadow-sm)' }}
       >
         ← Back
       </button>

@@ -78,7 +78,7 @@ export default function Recalls({ trackedProducts, myProducts = {} }) {
                             // handful of curated entries, so absence from it says nothing
                             // about whether a product has been recalled.
                             <p style={{ color: 'var(--color-text-muted)', fontStyle: 'italic' }}>
-                                Nothing in Ayna&apos;s curated notes matches &quot;{searchQuery}&quot;. This is not a recall search. 
+                                Nothing in ayna&apos;s curated notes matches &quot;{searchQuery}&quot;. This is not a recall search.
                                 open the product to run a live FDA check, or{' '}
                                 <a
                                     href="https://www.accessdata.fda.gov/scripts/enforcement/enforce_rpt-Product-Tabs.cfm"
@@ -116,7 +116,7 @@ export default function Recalls({ trackedProducts, myProducts = {} }) {
                             Your Monitored Products
                         </h3>
                         <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1rem' }}>
-                            Ayna checks the FDA recall database for a product when you open it. There is no
+                            ayna checks the FDA recall database for a product when you open it. There is no
                             background monitoring and no alerting. Open a product to run its check.
                         </p>
 
@@ -152,9 +152,9 @@ export default function Recalls({ trackedProducts, myProducts = {} }) {
                 {/* Safety Insights */}
                 <div>
                     <div className="card" style={{ background: 'var(--color-surface-soft)', border: 'none' }}>
-                        <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem' }}>What Ayna actually checks</h3>
+                        <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem' }}>What ayna actually checks</h3>
                         <p style={{ fontSize: '0.95rem', color: 'var(--color-text-muted)', lineHeight: '1.6', marginBottom: '1.5rem' }}>
-                            When you open a product, Ayna queries OpenFDA live for that specific product:
+                            When you open a product, ayna queries OpenFDA live for that specific product:
                         </p>
                         {/* CPSC, EPA and "Community Watch" were listed here as daily-scanned
                             sources. None of them exist in the codebase. Only the datasets
@@ -165,7 +165,7 @@ export default function Recalls({ trackedProducts, myProducts = {} }) {
                             <li><strong>FDA drug enforcement:</strong> for drug-classified products.</li>
                         </ul>
                         <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', lineHeight: '1.6', marginTop: '1rem' }}>
-                            If the FDA database can&apos;t be reached, Ayna says so rather than showing an all-clear.
+                            If the FDA database can&apos;t be reached, ayna says so rather than showing an all-clear.
                             Checks run on demand, not on a schedule.
                         </p>
                     </div>

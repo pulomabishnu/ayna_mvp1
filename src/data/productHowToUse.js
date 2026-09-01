@@ -104,7 +104,7 @@ export function getHowToUseContent(product) {
 }
 
 const DISCLAIMER =
-  'Instructions combine Ayna’s product data with widely published guidance. Always follow the manufacturer’s label and your clinician’s advice. Links open third-party sites Ayna does not control.';
+  'Instructions combine ayna’s product data with widely published guidance. Always follow the manufacturer’s label and your clinician’s advice. Links open third-party sites ayna does not control.';
 
 function emptyContent() {
   return {

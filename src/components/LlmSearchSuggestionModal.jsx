@@ -108,7 +108,7 @@ export default function LlmSearchSuggestionModal({ product, onClose }) {
                 border: '1px solid #E9D5FF',
               }}
             >
-              Ayna preview · not in database
+              ayna preview · not in database
             </span>
           )}
           <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '0.35rem' }}>

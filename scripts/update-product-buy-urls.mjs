@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises';
 import { ALL_PRODUCTS } from '../src/data/products.js';
-import { PRODUCT_BUY_URLS } from '../src/data/productBuyUrls.js';
+import { PRODUCT_BUY_URLS, PRODUCT_BUY_DISABLED } from '../src/data/productBuyUrls.js';
 
 const API_KEY = process.env.GEMINI_API_KEY;
 const TAVILY_API_KEY = process.env.TAVILY_API_KEY;
@@ -423,9 +423,19 @@ Return ONLY JSON:
 
 function renderFile(map) {
   const entries = Object.entries(map).sort(([a], [b]) => a.localeCompare(b));
+  const disabledEntries = Object.entries(PRODUCT_BUY_DISABLED).sort(
+    ([a], [b]) => a.localeCompare(b)
+  );
 
   const body = entries
     .map(([id, url]) => `  ${JSON.stringify(id)}: ${JSON.stringify(url)},`)
+    .join('\n');
+
+  const disabledBody = disabledEntries
+    .map(
+      ([id, reason]) =>
+        `  ${JSON.stringify(id)}: ${JSON.stringify(reason)},`
+    )
     .join('\n');
 
   return `/**
@@ -437,6 +447,16 @@ function renderFile(map) {
 export const PRODUCT_BUY_URLS = {
 ${body}
 };
+
+/**
+ * Catalog items intentionally without a Buy Now destination.
+ *
+ * These are outdated, discontinued, unavailable, renamed, or do not
+ * currently have an exact verified purchase destination.
+ */
+export const PRODUCT_BUY_DISABLED = {
+${disabledBody}
+};
 `;
 }
 
@@ -447,7 +467,11 @@ if (!API_KEY || !TAVILY_API_KEY) {
   process.exit(1);
 }
 
-const missing = ALL_PRODUCTS.filter((product) => !existingDestination(product));
+const missing = ALL_PRODUCTS.filter(
+  (product) =>
+    !existingDestination(product) &&
+    !PRODUCT_BUY_DISABLED[product.id]
+);
 const batch = missing.slice(0, LIMIT);
 
 console.log(`Catalog products: ${ALL_PRODUCTS.length}`);

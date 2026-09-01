@@ -343,7 +343,7 @@ export function buildQuizIntakeSummaryText(quizResults) {
   }
 
   const goals = Array.isArray(intake.goals) ? intake.goals.filter((g) => g && g !== 'None') : [];
-  if (goals.length) push(`Goals for using Ayna: ${goals.join('; ')}.`);
+  if (goals.length) push(`Goals for using ayna: ${goals.join('; ')}.`);
 
   return lines.join('\n');
 }

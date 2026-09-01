@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate } from '../data/products';
+import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore } from '../data/products';
 import { loadProductCatalog } from '../utils/productCatalog';
 import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../utils/naturalLanguageSearch';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
@@ -70,9 +70,10 @@ function resolveBrowseAiRoundQuery(qTrimForAi, categoryFilter, macroGroup, round
 }
 
 function getExplicitEligibility(item) {
-    // Never infer reimbursement eligibility from product names, image URLs, or copy.
-    // Only structured fields supplied by the catalog are authoritative enough to filter on.
-    const combined = item?.fsaHsaEligible === true || item?.fsa_hsa_eligible === true;
+    // Menstrual care products are qualified medical expenses for FSA/HSA use.
+    // Use structured catalog categories only; never infer from names, images, or marketing copy.
+    const menstrualCareEligible = ['pad', 'tampon', 'cup', 'disc'].includes(item?.category);
+    const combined = menstrualCareEligible || item?.fsaHsaEligible === true || item?.fsa_hsa_eligible === true;
     const fsa = combined || item?.fsaEligible === true || item?.fsa_eligible === true;
     const hsa = combined || item?.hsaEligible === true || item?.hsa_eligible === true;
     return { fsa, hsa };
@@ -379,7 +380,7 @@ function buildAiProfileContext(personalizationFilter, quizResults) {
     return { profileSummary, dislikedProducts, dislikedTerms };
 }
 
-export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialMacroGroup, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, savedProducts = {}, onToggleSaved, user = null, onRequirePersonalizeAuth = null }) {
+export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialMacroGroup, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, healthProfile = null, savedProducts = {}, onToggleSaved, user = null, onRequirePersonalizeAuth = null }) {
     const [macroGroup, setMacroGroup] = useState(() => {
         // initialMacroGroup (a whole care area, e.g. from "Swap" in the
         // ecosystem view) sets ONLY the broader group, leaving every
@@ -501,7 +502,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     // itself anyway.
     const MAX_BROWSE_AI_ROUNDS = 10;
     const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-    const recommendedSet = useMemo(() => new Set(recommendedProductIds || []), [recommendedProductIds]);
     const recommendedRank = useMemo(() => new Map((recommendedProductIds || []).map((id, index) => [id, index])), [recommendedProductIds]);
 
     // AI-discovered products (api/discover-products.js), human-approved only —
@@ -594,6 +594,24 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         return [...products, ...releasedAsProducts, ...discovered];
     }, [discoveredProducts]);
 
+    const combinedRelevance = useMemo(() => {
+        const map = new Map();
+        combined.forEach((item) => {
+            map.set(item.id, getProductRelevanceScore(item, quizResults, healthProfile));
+        });
+        return map;
+    }, [combined, quizResults, healthProfile]);
+
+    const personalizedSet = useMemo(() => {
+        const set = new Set();
+        combinedRelevance.forEach((score, id) => {
+            if (score != null && score > 0) set.add(id);
+        });
+        return set;
+    }, [combinedRelevance]);
+
+    const recommendedSet = personalizedSet;
+
     const availableMacroGroups = useMemo(
         () => MACRO_GROUPS.filter((group) => group.id === 'all' || combined.some((item) => itemMatchesMacroGroup(item, group.id))),
         [combined]
@@ -613,7 +631,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const filtered = useMemo(() => {
         const applyFilters = (items, skipCategory = false) => items.filter((item) => {
             if (omittedProducts[item.id]) return false;
-            if (personalizationFilter && recommendedSet.size > 0 && !recommendedSet.has(item.id)) return false;
+            // An explicit FSA/HSA filter should search the full eligible catalog,
+            // not only the user's personalized subset.
+            if (personalizationFilter && eligibilityFilter === 'all' && !personalizedSet.has(item.id)) return false;
             // Major Browse category chips. Match explicit categories first and
             // fall back to real catalog wording so newer Skin/Hair/etc. products
             // can participate without changing the data schema.
@@ -643,7 +663,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             if (eligibilityFilter === 'hsa' && !eligibility.hsa) return false;
             if (eligibilityFilter === 'fsa-hsa' && !(eligibility.fsa || eligibility.hsa)) return false;
 
-            if (aynaFilter === 'best-match' && !(getExplicitMatchPercent(item) != null || recommendedSet.has(item.id))) return false;
+            if (aynaFilter === 'best-match' && !(getProfileMatchPercentForProduct(item, quizResults, healthProfile) >= 50)) return false;
             if (aynaFilter === 'clinician' && !hasClinicianSupport(item)) return false;
             if (aynaFilter === 'community' && !hasCommunitySupport(item, aynaReviews[item.id])) return false;
             if (aynaFilter === 'ecosystem' && !myProducts?.[item.id]) return false;
@@ -1322,7 +1342,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         </select>
                     </label>
                     <label>
-                        <span>Ayna</span>
+                        <span>ayna</span>
                         <select value={aynaFilter} onChange={(e) => setAynaFilter(e.target.value)}>
                             <option value="all">Any</option>
                             <option value="best-match">Best Match</option>
@@ -1417,7 +1437,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     const resolvedItemImage = resolvedImages[item.id];
                     const cardImageSrc = resolvedItemImage !== undefined ? resolvedItemImage : item.image;
                     const imageStillLoading = resolvedItemImage === undefined && isPlaceholderProductImage(item.image, item.type === 'digital');
-                    const matchPercent = getExplicitMatchPercent(item);
+                    const profileMatchPercent = getProfileMatchPercentForProduct(item, quizResults, healthProfile);
+                    const matchPercent = (hasQuizFrustrations || hasHealthImport)
+                        ? profileMatchPercent
+                        : getExplicitMatchPercent(item);
                     const eligibility = getExplicitEligibility(item);
                     const eligibilityLabel = eligibility.fsa && eligibility.hsa ? 'FSA/HSA' : eligibility.fsa ? 'FSA' : eligibility.hsa ? 'HSA' : '';
                     const isWishlisted = !!savedProducts[item.id];
@@ -1442,6 +1465,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                 }}
                             >
                                 <div className="ayna-discover-card__tile">
+                                    {isPartnerBrandItem(item) && (
+                                        <span className="ayna-browse-card__affiliate">Affiliate link</span>
+                                    )}
                                     {cardImageSrc && (resolvedItemImage !== undefined || !isPlaceholderProductImage(cardImageSrc, item.type === 'digital')) ? (
                                         <>
                                             <img

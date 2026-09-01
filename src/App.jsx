@@ -40,9 +40,11 @@ import PrivacyPolicy from './components/PrivacyPolicy';
 import HowWeMakeMoney from './components/HowWeMakeMoney';
 import HowItWorks from './components/HowItWorks';
 import About from './components/About';
+import Contact from './components/Contact';
 import './finalAynaPolish.css';
 import TermsOfUse from './components/TermsOfUse';
 import AuthCallback from './components/AuthCallback';
+import AuthConfirm from './components/AuthConfirm';
 import EmailConfirmed from './components/EmailConfirmed';
 import { getSupabaseClient } from './utils/supabaseClient';
 import { loadEcosystemForUser, upsertProductState, upsertProductsBatch, clearEcosystemForUser } from './utils/ecosystemStore';
@@ -98,7 +100,9 @@ const VIEW_TO_PATH = {
   'how-we-make-money': '/how-we-make-money',
   'how-it-works': '/how-it-works',
   about: '/about',
+  contact: '/contact',
   'auth-callback': '/auth/callback',
+  'auth-confirm': '/auth/confirm',
   'confirmed': '/confirmed',
 };
 // Friendly document.title per view — 'welcome'/'hero' and any view not
@@ -111,7 +115,7 @@ const VIEW_TITLES = {
   'phone-verify': 'Verify Phone', tracked: 'Tracked Products',
   'privacy-policy': 'Privacy Policy', 'terms-of-use': 'Terms of Use',
   'how-we-make-money': 'How We Make Money', 'how-it-works': 'How It Works',
-  about: 'About', 'not-found': 'Page Not Found',
+  about: 'About', contact: 'Contact', 'not-found': 'Page Not Found',
 };
 
 const PATH_TO_VIEW = Object.fromEntries(
@@ -247,9 +251,17 @@ function App() {
     else handleViewDiscovery('');
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handleBackFromStandalonePage = useCallback(() => {
+    if (inAppPushCountRef.current > 0) window.history.back();
+    else setCurrentView('welcome', { replace: true });
+  }, [setCurrentView]);
   useEffect(() => {
     const path = pathForView(currentView, productRouteId);
-    window.history.replaceState({ view: currentView, productId: productRouteId }, '', path);
+    const initialUrl = currentView === 'auth-callback'
+      ? `${path}${window.location.search}${window.location.hash}`
+      : path;
+    window.history.replaceState({ view: currentView, productId: productRouteId }, '', initialUrl);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
@@ -401,15 +413,24 @@ function App() {
     setAynaReviews(loadAynaReviews());
   }, []);
 
-  // Restore quiz results saved before a Google OAuth redirect.
+  // Restore the action that was in progress before a Google OAuth redirect.
+  // Quiz results are stored separately because they contain the unsaved intake.
   React.useEffect(() => {
     try {
       const storedQuiz = sessionStorage.getItem('ayna_pending_quiz_results');
+      const storedAction = sessionStorage.getItem('ayna_pending_auth_action');
+
       if (storedQuiz) {
         setPendingQuizResults(JSON.parse(storedQuiz));
-        setPendingAction('quiz-complete'); pendingActionRef.current = 'quiz-complete';
+        setPendingAction('quiz-complete');
+        pendingActionRef.current = 'quiz-complete';
         sessionStorage.removeItem('ayna_pending_quiz_results');
+      } else if (storedAction) {
+        setPendingAction(storedAction);
+        pendingActionRef.current = storedAction;
       }
+
+      sessionStorage.removeItem('ayna_pending_auth_action');
     } catch (_) {}
   }, []);
 
@@ -443,7 +464,7 @@ function App() {
     // straight back to the landing and those pages were unreachable by URL in
     // production. (PROTECTED_VIEWS below is what actually guards private ones.)
     const STATIC_VIEWS = [
-      'privacy-policy', 'terms-of-use', 'confirmed', 'auth-callback',
+      'privacy-policy', 'terms-of-use', 'confirmed', 'auth-callback', 'auth-confirm',
       'welcome', 'hero', 'quiz', 'discovery', 'waitlist', 'articles',
       'how-it-works', 'how-we-make-money',
     ];
@@ -676,10 +697,10 @@ function App() {
       const rawIntake = pendingQuizResults?.fullHealthIntake || pendingQuizResults;
       saveHealthIntakeForCurrentUser(rawIntake).catch(e => reportSaveFailure('Could not save your health profile', e));
       setPendingQuizResults(null);
-    } else if (pendingAction === 'browse') {
+    } else if (pendingAction === 'browse' || pendingAction === 'personalize') {
       handleViewDiscovery('');
     } else if (pendingAction === 'login') {
-      setCurrentView('welcome');
+      setCurrentView('ecosystem');
     }
     setPendingAction(null); pendingActionRef.current = null;
   }, [user, pendingAction]);
@@ -806,6 +827,13 @@ function App() {
   const handleViewWaitlist = () => setCurrentView('waitlist');
   const handleViewEcosystem = () => setCurrentView('ecosystem');
   const handleViewWishlist = () => {
+    if (!user) {
+      setPendingAction('login');
+      pendingActionRef.current = 'login';
+      setShowAuthModal(true);
+      return;
+    }
+
     setCurrentView('ecosystem');
     window.setTimeout(() => {
       document.getElementById('ayna-wishlist')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -831,6 +859,7 @@ function App() {
   const handleViewHowWeMakeMoney = () => setCurrentView('how-we-make-money');
   const handleViewHowItWorks = () => setCurrentView('how-it-works');
   const handleViewAbout = () => setCurrentView('about');
+  const handleViewContact = () => setCurrentView('contact');
   const handleViewArticles = () => {
     setSelectedArticleId(null);
     setCurrentView('articles');
@@ -1177,15 +1206,15 @@ function App() {
   // preview when sharing (found live, 2026-08-24 bug bash). One page,
   // dynamic title per route/product instead.
   useEffect(() => {
-    const base = "Ayna | Personalized Women's Health Product Recommendations";
+    const base = "ayna | Personalized Women's Health Product Recommendations";
     if (currentView === 'product') {
       document.title = resolvedProduct?.name
-        ? `${resolvedProduct.name} | Ayna`
-        : (productStillResolving ? 'Loading… | Ayna' : base);
+        ? `${resolvedProduct.name} | ayna`
+        : (productStillResolving ? 'Loading… | ayna' : base);
       return;
     }
     const label = VIEW_TITLES[currentView];
-    document.title = label ? `${label} | Ayna` : base;
+    document.title = label ? `${label} | ayna` : base;
   }, [currentView, resolvedProduct, productStillResolving]);
 
   const handleRateProduct = (product, rating) => {
@@ -1474,27 +1503,37 @@ function App() {
           </Suspense>
         )}
         {currentView === 'privacy-policy' && (
-          <PrivacyPolicy onBack={() => window.history.back()} />
+          <PrivacyPolicy onBack={handleBackFromStandalonePage} />
         )}
         {currentView === 'terms-of-use' && (
-          <TermsOfUse onBack={() => window.history.back()} />
+          <TermsOfUse onBack={handleBackFromStandalonePage} />
         )}
         {currentView === 'how-we-make-money' && (
-          <HowWeMakeMoney onBack={() => window.history.back()} />
+          <HowWeMakeMoney onBack={handleBackFromStandalonePage} />
         )}
         {currentView === 'how-it-works' && (
           <HowItWorks
-            onBack={() => window.history.back()}
+            onBack={handleBackFromStandalonePage}
             onViewSources={handleViewArticles}
           />
         )}
         {currentView === 'about' && (
-          <About onBack={() => window.history.back()} onViewSources={handleViewArticles} />
+          <About onBack={handleBackFromStandalonePage} onViewSources={handleViewArticles} />
+        )}
+        {currentView === 'contact' && (
+          <Contact onBack={handleBackFromStandalonePage} />
         )}
         {currentView === 'auth-callback' && (
           <AuthCallback onAuthenticated={(user) => {
+            // Navigation is handled by the restored pendingAction effect so
+            // Google OAuth follows the same post-login path as email/password.
             setUser(user);
-            setCurrentView('welcome');
+          }} />
+        )}
+        {currentView === 'auth-confirm' && (
+          <AuthConfirm onAuthenticated={(user) => {
+            setUser(user);
+            setCurrentView('confirmed');
           }} />
         )}
         {currentView === 'confirmed' && (
@@ -1777,10 +1816,10 @@ function App() {
               <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', lineHeight: 1.6, margin: 0 }}>
                 To request deletion of your entire account and data, email{' '}
                 <a
-                  href="mailto:hello@ayna.com?subject=Account%20Deletion%20Request"
+                  href="mailto:puloma@aynahealth.co?subject=Account%20Deletion%20Request"
                   style={{ color: 'var(--color-primary)', textDecoration: 'underline', fontWeight: '500' }}
                 >
-                  hello@ayna.com
+                  puloma@aynahealth.co
                 </a>
                 {' '}from the email address associated with your account.
               </p>
@@ -1795,9 +1834,14 @@ function App() {
           <AuthGate
             isModal
             context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : pendingAction === 'personalize' ? 'personalize' : pendingAction === 'login' ? 'login' : undefined}
-            onBeforeOAuthRedirect={pendingAction === 'quiz-complete' && pendingQuizResults ? () => {
-              try { sessionStorage.setItem('ayna_pending_quiz_results', JSON.stringify(pendingQuizResults)); } catch (_) {}
-            } : undefined}
+            onBeforeOAuthRedirect={() => {
+              try {
+                if (pendingAction) sessionStorage.setItem('ayna_pending_auth_action', pendingAction);
+                if (pendingAction === 'quiz-complete' && pendingQuizResults) {
+                  sessionStorage.setItem('ayna_pending_quiz_results', JSON.stringify(pendingQuizResults));
+                }
+              } catch (_) {}
+            }}
             onSkip={() => {
               setShowAuthModal(false);
               if (pendingAction === 'quiz-complete' && pendingQuizResults) {
@@ -1817,6 +1861,7 @@ function App() {
       <SiteFooter
           onViewHowItWorks={handleViewHowItWorks}
           onViewAbout={handleViewAbout}
+          onViewContact={handleViewContact}
           onViewDiscovery={handleViewDiscovery}
           onViewWaitlist={handleViewWaitlist}
           onViewArticles={handleViewArticles}

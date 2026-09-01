@@ -101,7 +101,7 @@ export default function AuthCallback({ onAuthenticated }) {
       const t = setTimeout(() => {
         subscription.unsubscribe();
         setStatus('error');
-        setErrorMsg('Sign-in timed out. Please return to Ayna and try again.');
+        setErrorMsg('Sign-in timed out. Please return to ayna and try again.');
       }, 10000);
 
       return () => { clearTimeout(t); subscription.unsubscribe(); };
@@ -114,7 +114,7 @@ export default function AuthCallback({ onAuthenticated }) {
         <div style={{ fontSize: '2.5rem' }}>✓</div>
         <h2 style={{ fontSize: '1.5rem', fontWeight: 700, margin: 0 }}>You're all set!</h2>
         <p style={{ color: 'var(--color-text-muted, #666)', maxWidth: '360px', lineHeight: 1.6, margin: 0 }}>
-          Your email has been confirmed. You can close this tab and sign in to Ayna.
+          Your email has been confirmed. You can close this tab and sign in to ayna.
         </p>
       </div>
     );
@@ -124,7 +124,7 @@ export default function AuthCallback({ onAuthenticated }) {
     return (
       <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '1rem', padding: '2rem', textAlign: 'center' }}>
         <p style={{ color: '#b42318', fontWeight: 600 }}>Could not complete sign-in.</p>
-        <p style={{ color: '#666', fontSize: '0.85rem', maxWidth: '400px' }}>{errorMsg || 'Please return to Ayna and try again.'}</p>
+        <p style={{ color: '#666', fontSize: '0.85rem', maxWidth: '400px' }}>{errorMsg || 'Please return to ayna and try again.'}</p>
       </div>
     );
   }

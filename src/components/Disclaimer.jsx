@@ -7,7 +7,7 @@ export const BASELINE_SOURCES = '';
  * Standard medical disclaimer. Use wherever we show products, advice, or health info.
  */
 export default function Disclaimer({ compact = false, style = {}, showSources = false, onPrivacyPolicy }) {
-  const text = "This information is for educational purposes only and is not medical advice. Always consult your clinician or healthcare provider for diagnosis, treatment, and personalized medical advice. Ayna cannot and does not provide medical instructions or replace professional care.";
+  const text = "This information is for educational purposes only and is not medical advice. Always consult your clinician or healthcare provider for diagnosis, treatment, and personalized medical advice. ayna cannot and does not provide medical instructions or replace professional care.";
   const privacyLink = onPrivacyPolicy ? (
     <span> · <button type="button" onClick={onPrivacyPolicy} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: 'var(--color-primary)', fontSize: 'inherit', textDecoration: 'underline' }}>Privacy Policy</button></span>
   ) : null;

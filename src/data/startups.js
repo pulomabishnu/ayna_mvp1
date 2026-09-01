@@ -325,7 +325,7 @@ export const STARTUPS = [
         stage: 'Available in US',
         productReleased: true,
         spotsLeft: 290,
-        url: 'https://proovtest.com',
+        url: 'https://proovtest.com/?irclickid=092RZoWR3xyZWgGydJzTuXX9UkrxvuV9I08LVk0&sharedid=&irpid=7622078&utm_source=7622078&utm_medium=affiliate&irgwc=1&afsrc=1&tw_source=impact&tw_campaign=7622078',
         image: 'https://proovtest.com/cdn/shop/products/1_ProHero.jpg?v=1669147223&width=3840'
     },
     {
@@ -594,13 +594,13 @@ export const STARTUPS = [
         name: 'Elitone',
         tagline: 'Wearable pelvic floor therapy',
         description: 'FDA-cleared wearable device for at-home pelvic floor strengthening. No insertion; used externally to improve bladder control and strength.',
-        tags: ['leaks', 'pelvic-floor', 'discomfort'],
+        tags: ['bladder-leaks', 'incontinence', 'urinary', 'pelvic-floor', 'discomfort'],
         healthFunctions: ['vaginal-health'],
         category: 'pelvic-health',
         stage: 'Available in US',
         productReleased: true,
         spotsLeft: 410,
-        url: 'https://elitone.com',
+        url: 'https://elitone.com/?af=aynahealth',
         image: 'https://thebreastfeedingshop.com/wp-content/uploads/2024/08/Elitone-Pelvic-Floor-Exerciser-1-scaled.webp'
     },
     {

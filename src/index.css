@@ -5465,3 +5465,29 @@ textarea {
     animation: none !important;
   }
 }
+
+
+.brand-partner__affiliate-label {
+  margin-top: 10px;
+  margin-bottom: 2px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #8c8078;
+}
+
+.ayna-browse-card__affiliate {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(26, 23, 20, 0.10);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+  color: #5b524a;
+}

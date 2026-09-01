@@ -524,7 +524,7 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
       <section className="ayna-landing-shop ayna-landing-shop--returning">
         <div className="mockup-page">
           <div className="ayna-landing-shop-head">
-            <div className="ayna-landing-shop-title ayna-landing-shop-title--returning">Trending on Ayna</div>
+            <div className="ayna-landing-shop-title ayna-landing-shop-title--returning">Trending on ayna</div>
             <div className="ayna-landing-shop-controls">
               <div className="ayna-landing-filters">
                 {availableShopFilters.map((item) => (
@@ -575,7 +575,7 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
                 </select>
               </label>
               <label>
-                <span>Ayna</span>
+                <span>ayna</span>
                 <select value={aynaFilter} onChange={(e) => setAynaFilter(e.target.value)}>
                   <option value="all">Any</option>
                   <option value="best-match">Best Match</option>
@@ -811,7 +811,7 @@ function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasPro
       <section className="ayna-landing-shop">
         <div className="mockup-page">
           <div className="ayna-landing-shop-head">
-            <div className="ayna-landing-shop-title">Trending on Ayna</div>
+            <div className="ayna-landing-shop-title">Trending on ayna</div>
             <div className="ayna-landing-shop-controls">
               <div className="ayna-landing-filters">
                 {availableShopFilters.map((f) => (
@@ -869,7 +869,7 @@ function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasPro
                 </select>
               </label>
               <label>
-                <span>Ayna</span>
+                <span>ayna</span>
                 <select value={aynaFilter} onChange={(e) => setAynaFilter(e.target.value)}>
                   <option value="all">Any</option>
                   <option value="clinician">Clinician Backed</option>

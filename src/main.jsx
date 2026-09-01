@@ -5,6 +5,19 @@ import './index.css'
 import posthog from 'posthog-js'
 import { tagInternalUserIfNeeded } from './utils/posthogInternal'
 
+
+// Keep the public Vercel alias from becoming a second app origin.
+// Auth, local storage, and session storage should all live on the canonical site.
+// Unique Vercel preview deployment URLs are intentionally left untouched.
+if (window.location.hostname === 'aynamvp1.vercel.app') {
+  window.location.replace(
+    'https://www.aynahealth.co' +
+    window.location.pathname +
+    window.location.search +
+    window.location.hash
+  );
+}
+
 const POSTHOG_KEY = import.meta.env.VITE_PUBLIC_POSTHOG_KEY;
 // Default to the first-party /ingest proxy (see vercel.json rewrites) rather
 // than PostHog's own domain directly — ad blockers (uBlock, Brave, Safari's

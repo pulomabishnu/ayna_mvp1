@@ -227,7 +227,7 @@ export default function Screenings({ checkinData, onNavigate }) {
 
             <div style={{ marginTop: '4rem', textAlign: 'center', padding: '2rem', background: '#F4F5F7', borderRadius: 'var(--radius-lg)' }}>
                 <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', maxWidth: '600px', margin: '0 auto' }}>
-                    <strong>Disclaimer:</strong> Ayna does not diagnose medical conditions. Always talk to a doctor or nurse about any health concern.
+                    <strong>Disclaimer:</strong> ayna does not diagnose medical conditions. Always talk to a doctor or nurse about any health concern.
                 </p>
             </div>
         </section>

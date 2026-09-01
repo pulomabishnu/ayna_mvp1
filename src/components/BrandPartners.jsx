@@ -27,11 +27,33 @@ const PARTNERS = [
   {
     brand: 'Neycher',
     /** Drop a file at public/brands/neycher.png and it replaces the wordmark. */
-    logo: '/brands/neycher.png',
+    logo: 'https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/686eb5fcdbbd35b6fc957602_Frame%201000011567.jpg',
     url: 'https://www.helloneycher.com/',
     blurb:
       'Hormone-free intimate care. Moisturizers, balms and suppositories made for vaginal dryness, irritation and odour.',
   },
+  {
+    brand: 'Connect Pelvic Floor Fitness',
+    logo: 'https://connectpelvicfloorfitness.com/wp-content/uploads/2026/05/social-share-homepage.jpg',
+    url: 'https://goto.connectpelvicfloorfitness.com/YVk7WO',
+    blurb:
+      'DPT-led pelvic floor fitness with guided workouts designed to build strength, reduce symptoms and support whole-body movement.',
+  },
+  {
+    brand: 'Elitone',
+    logo: 'https://thebreastfeedingshop.com/wp-content/uploads/2024/08/Elitone-Pelvic-Floor-Exerciser-1-scaled.webp',
+    url: 'https://elitone.com/?af=aynahealth',
+    blurb:
+      'FDA-cleared wearable pelvic floor therapy designed for at-home strengthening and bladder leak support without insertion.',
+  },
+  {
+    brand: 'Proov',
+    logo: 'https://proovtest.com/cdn/shop/products/1_ProHero.jpg?v=1669147223&width=3840',
+    url: 'https://proovtest.com/?irclickid=092RZoWR3xyZWgGydJzTuXX9UkrxvuV9I08LVk0&sharedid=&irpid=7622078&utm_source=7622078&utm_medium=affiliate&irgwc=1&afsrc=1&tw_source=impact&tw_campaign=7622078',
+    blurb:
+      'At-home fertility testing designed to help track hormones and confirm ovulation.',
+  },
+
 ];
 
 function eyebrowFor(product) {
@@ -65,8 +87,8 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToE
         </h1>
         <p className="brands__lede">
           {PARTNERS.length > 0
-            ? "Partnerships, not paid placement. A brand being here doesn't move it up your shop. Matching is the same for every product Ayna carries."
-            : "Something exciting is brewing — check back soon. Whenever a partnership becomes official, it still won't move a brand up your shop or your recommendations. Matching stays the same for every product Ayna carries, partner or not."}
+            ? "Partner brands may receive added visibility in Browse, but partnerships never affect personalized matching or recommendations."
+            : "Something exciting is brewing — check back soon. Partner brands may receive added visibility in Browse, but partnerships never affect personalized matching or recommendations."}
         </p>
       </div>
 
@@ -80,6 +102,7 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToE
                 <div>
                   <div className="brand-partner__name">{partner.brand}</div>
                   <p className="brand-partner__blurb">{partner.blurb}</p>
+                  <div className="brand-partner__affiliate-label">Affiliate link</div>
                   <a className="brand-partner__link" href={partner.url} target="_blank" rel="noopener noreferrer">
                     Visit {partner.brand} ↗
                   </a>

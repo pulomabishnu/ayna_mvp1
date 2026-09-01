@@ -31,7 +31,7 @@ const SECTIONS = [
     {
         eyebrow: 'Something feel off? Tell us.',
         paragraphs: [
-            'If you’re ever concerned about a specific product or a recommendation you received, you can report it directly to us at hello@ayna.com. We review every report.',
+            'If you’re ever concerned about a specific product or a recommendation you received, you can report it directly to us at puloma@aynahealth.co. We review every report.',
         ],
     },
 ];
@@ -98,7 +98,7 @@ export default function HowWeMakeMoney({ onBack }) {
                     We make money when you find the right product. We do not make money by pointing you toward the wrong one. If those two things were ever in conflict, that would be the day to stop trusting us, and we intend to never let that day come.
                 </p>
                 <p style={{ fontSize: '1.05rem', color: 'var(--color-surface-contrast)', lineHeight: 1.75, fontWeight: 500, margin: '0.75rem 0 0' }}>
-                    Brand partnerships help support Ayna, but they never decide what we recommend to you.
+                    Brand partnerships help support ayna, but they never decide what we recommend to you.
                 </p>
             </div>
         </section>

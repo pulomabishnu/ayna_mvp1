@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { ALL_PRODUCTS, getRecommendations, getPersonalizedProductIds } from './products';
+import { ALL_PRODUCTS, getRecommendations, getPersonalizedProductIds, getProductRelevanceScore } from './products';
+import { STARTUPS } from './startups';
 
 describe('getPersonalizedProductIds', () => {
     it('restricts to real tag matches, unlike getRecommendations()\'s full fallback list', () => {
@@ -33,3 +34,94 @@ describe('getPersonalizedProductIds', () => {
         expect(ids.length).toBe(0);
     });
 });
+
+describe('personalized relevance scoring', () => {
+    const elitone = STARTUPS.find((p) => p.id === 's-elitone');
+    const oura = ALL_PRODUCTS.find((p) => p.id === 'd-oura');
+
+    it('does not treat menstrual leaks and staining as urinary leakage', () => {
+        expect(elitone).toBeTruthy();
+
+        const score = getProductRelevanceScore(
+            elitone,
+            { frustrations: ['Leaks & staining'] },
+            null
+        );
+
+        expect(score).toBe(0);
+    });
+
+    it('raises Elitone relevance for an imported urinary-incontinence signal', () => {
+        expect(elitone).toBeTruthy();
+
+        const score = getProductRelevanceScore(
+            elitone,
+            { frustrations: [] },
+            {
+                conditions: ['Urinary incontinence'],
+                medications: [],
+                allergies: [],
+                notes: 'Bladder leaks',
+                intakeSummary: '',
+                fhirSummary: { conditions: [], medications: [] },
+                wearableSummary: '',
+            }
+        );
+
+        expect(score).toBeGreaterThan(0);
+    });
+
+    it('does not treat a UTI as urinary incontinence', () => {
+        expect(elitone).toBeTruthy();
+
+        const score = getProductRelevanceScore(
+            elitone,
+            { frustrations: ['Recurrent UTIs'] },
+            null
+        );
+
+        expect(score).toBe(0);
+    });
+
+    it('can give a modest contextual score from age and life stage without pretending it is a direct need', () => {
+        expect(oura).toBeTruthy();
+
+        const score = getProductRelevanceScore(
+            oura,
+            { age: '35-44', frustrations: [] },
+            null
+        );
+
+        expect(score).toBeGreaterThan(0);
+        expect(score).toBeLessThan(50);
+        expect([0, 50, 100]).not.toContain(score);
+    });
+
+    it('returns no personalized percentage when there are no personalization signals', () => {
+        expect(oura).toBeTruthy();
+        expect(getProductRelevanceScore(oura, {}, null)).toBeNull();
+    });
+
+    it('does not let partnership or affiliate metadata change relevance', () => {
+        const base = {
+            id: 'test-product',
+            name: 'Test Product',
+            tags: ['cramps'],
+            healthFunctions: ['cramp-relief'],
+            category: 'cramp-relief',
+        };
+
+        const partnered = {
+            ...base,
+            partner: true,
+            affiliateUrl: 'affiliate-test',
+            affiliateCommission: 99,
+        };
+
+        const quiz = { frustrations: ['Painful cramps'] };
+
+        expect(getProductRelevanceScore(partnered, quiz, null))
+            .toBe(getProductRelevanceScore(base, quiz, null));
+    });
+});
+

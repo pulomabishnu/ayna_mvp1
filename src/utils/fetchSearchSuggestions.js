@@ -86,7 +86,7 @@ export async function fetchSearchSuggestions(opts) {
     return {
       suggestions: [],
       querySummary: '',
-      error: 'Sign in to search beyond the Ayna catalog.',
+      error: 'Sign in to search beyond the ayna catalog.',
       code: 'auth_required',
     };
   }

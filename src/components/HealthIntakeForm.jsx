@@ -564,7 +564,7 @@ export default function HealthIntakeForm({ onComplete }) {
             <FieldLabel>Do you have a menstrual cycle?</FieldLabel>
             <SingleSelect options={CYCLE_OPTIONS} value={intake.menstrualCycle} onSelect={(v) => set('menstrualCycle', v)} />
 
-            <FieldLabel optional>Goals. What are you hoping Ayna helps you with?</FieldLabel>
+            <FieldLabel optional>Goals. What are you hoping ayna helps you with?</FieldLabel>
             <ChipGrid items={GOALS} selected={intake.goals} onToggle={(v) => toggle('goals', v)} small />
             <div style={{ marginTop: '0.75rem' }}>
               <TextInput value={intake.goalsOtherText} onChange={(v) => set('goalsOtherText', v)} placeholder="Anything else you're looking for? (optional)" />
