@@ -12,6 +12,19 @@ export function isAge50OrBelow(ageValue) {
   return ageValue && AGE_50_OR_BELOW.has(ageValue);
 }
 
+// Maps a continuous age (from the design's slider widget, 13-90) onto one of
+// the real AGE_OPTIONS buckets — lets the mobile UI keep the design's slider
+// while still producing an answer the real buildSteps()/recommendation logic
+// understands.
+export function bucketAge(numericAge) {
+  if (numericAge < 25) return 'Under 25';
+  if (numericAge <= 34) return '25-34';
+  if (numericAge <= 44) return '35-44';
+  if (numericAge <= 50) return '45-50';
+  if (numericAge <= 55) return '51-55';
+  return '56+';
+}
+
 const REST_STEPS = [
   {
     id: 'frustrations',
@@ -142,3 +155,24 @@ export function buildSteps(answers) {
   }
   return [ageStep, ...contraceptionSteps, ...REST_STEPS];
 }
+
+// NOT part of the real quiz — the real app has no "goals" icon-grid step and
+// no zip code field at all (its equivalent content is the free-text
+// 'healthGoals' step above). Included as a purely decorative extra step
+// per explicit request, kept out of buildSteps()/the real answers shape so
+// it can never be mistaken for something the real recommendation logic
+// reads. IntakeScreen inserts this locally after the age step.
+export const DECORATIVE_GOALS_STEP = {
+  id: '_decorativeGoals',
+  question: 'What brings you here?',
+  subtitle: 'Pick as many as you like.',
+  type: 'goals',
+  options: [
+    { key: 'cycle', label: 'Cycle comfort', tint: 'rgba(162,96,60,.1)', stroke: '#A2603C', path: 'M12.5 3.8v4M20.7 12h-4.2M13 12a8.2 8.2 0 1 1-8.2 8.2 8.2 8.2 0 0 1 8.2-8.2Z' },
+    { key: 'energy', label: 'Steady energy', tint: '#FFF3DD', stroke: '#C0761F', path: 'M13 2 4 14h6l-1 8 9-12h-6l1-8Z' },
+    { key: 'sleep', label: 'Sleep', tint: 'rgba(78,56,102,.09)', stroke: '#4E3866', path: 'M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z' },
+    { key: 'calm', label: 'Calm & mood', tint: 'rgba(162,96,60,.1)', stroke: '#A2603C', path: 'M5 19c8-1 13-6 14-14-8 1-13 6-14 14Z M5 19c2-4 5-7 9-9' },
+    { key: 'digestion', label: 'Digestion', tint: 'rgba(192,118,31,.12)', stroke: '#C0761F', path: 'M12 3c4 5 7 8.5 7 12a7 7 0 1 1-14 0c0-3.5 3-7 7-12Z' },
+    { key: 'skin', label: 'Skin & hair', tint: 'rgba(36,42,82,.09)', stroke: '#242A52', path: 'M12 3 5 6v6c0 5 3 8 7 9 4-1 7-4 7-9V6l-7-3Z M9 12l2 2 4-4' },
+  ],
+};
