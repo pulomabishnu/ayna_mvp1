@@ -31,6 +31,16 @@ export default function MobileApp() {
   const [screen, setScreen] = useState('landing');
   const Screen = SCREENS[screen] || LandingScreen;
 
+  // Placeholder navigation wiring — enough to click through screens during
+  // scaffolding. Real product data / auth-aware routing gets wired in later.
+  const nav = {
+    onStartQuiz: () => setScreen('quiz'),
+    onBrowse: () => setScreen('browse'),
+    onOpenSaved: () => setScreen('saved'),
+    onGoEco: () => setScreen('eco'),
+    onGoLanding: () => setScreen('landing'),
+  };
+
   return (
     <div className="ayna-mobile">
       {/* Temporary dev-only screen switcher for smoke testing — not final navigation */}
@@ -41,7 +51,7 @@ export default function MobileApp() {
           </button>
         ))}
       </div>
-      <Screen />
+      <Screen {...nav} products={[]} />
     </div>
   );
 }
