@@ -1,4 +1,4 @@
-function GradientBanner({ onClick }) {
+function GradientBanner({ onClick, title = 'Build your ecosystem', buttonLabel = 'Start' }) {
   return (
     <div
       onClick={onClick}
@@ -17,7 +17,7 @@ function GradientBanner({ onClick }) {
       <div style={{ position: 'absolute', right: -38, top: -38, width: 150, height: 150, borderRadius: 99, border: '1px solid rgba(255,255,255,.16)' }} />
       <div style={{ position: 'absolute', right: -8, top: 16, width: 92, height: 92, borderRadius: 99, border: '1px solid rgba(255,255,255,.12)' }} />
       <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 26, lineHeight: 1.2, margin: '10px 0 6px', maxWidth: 230 }}>
-        Build your ecosystem
+        {title}
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 16 }}>
         <div
@@ -32,7 +32,7 @@ function GradientBanner({ onClick }) {
             animation: 'ay-bob 2.5s ease-in-out infinite',
           }}
         >
-          Start
+          {buttonLabel}
         </div>
       </div>
     </div>
@@ -109,8 +109,8 @@ function StickyPill({ onClick }) {
   );
 }
 
-export default function CtaBanner({ variant = 'gradient', onClick }) {
+export default function CtaBanner({ variant = 'gradient', onClick, title, buttonLabel }) {
   if (variant === 'inline') return <InlineRow onClick={onClick} />;
   if (variant === 'pill') return <StickyPill onClick={onClick} />;
-  return <GradientBanner onClick={onClick} />;
+  return <GradientBanner onClick={onClick} title={title} buttonLabel={buttonLabel} />;
 }
