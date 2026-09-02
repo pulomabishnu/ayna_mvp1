@@ -12,6 +12,7 @@ import { MVP_PHYSICAL, MVP_DIGITAL } from './mvpProducts.js';
 import { MENSTRUAL_PHYSICAL } from './menstrualProducts.js';
 import { BRAND_PRODUCTS } from './brands.js';
 import { INCONTINENCE_PHYSICAL } from './incontinenceProducts.js';
+import { applyCatalogEvidence } from './catalogEvidence.js';
 import { inferTagsFromHealthProfile } from '../utils/healthDataProfile.js';
 
 // Tags used for quiz → product matching
@@ -777,7 +778,9 @@ export const ALL_PRODUCTS = [
     ...MENSTRUAL_PHYSICAL,
     ...BRAND_PRODUCTS,
     ...INCONTINENCE_PHYSICAL
-].filter((p) => !isRxOnlyProduct(p));
+]
+    .map(applyCatalogEvidence)
+    .filter((p) => !isRxOnlyProduct(p));
 
 /**
  * Look up a catalog product by id. Returns null for ids that don't exist in
