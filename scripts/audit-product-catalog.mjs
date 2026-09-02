@@ -21,6 +21,7 @@ function linksFor(value) {
   if (!value) return [];
   if (Array.isArray(value)) return value;
   if (Array.isArray(value.links)) return value.links;
+  if (typeof value === 'object' && value.url) return [value];
   return [];
 }
 

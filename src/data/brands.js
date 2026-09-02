@@ -253,10 +253,20 @@ export const BRAND_PRODUCTS = [
             sideEffects: 'None specific reported; discontinue use and consult a clinician if irritation occurs.',
             opinionAlerts: 'No FDA-clearance or clinical-study claims found on the brand site. Marketed on materials/design safety and menopause-specific positioning, not clinical evidence.',
         },
-        clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'Sourced from Oboo\'s own site; no independent clinician endorsement verified.',
+        clinicianOpinionSource: 'independent',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        doctorOpinion: 'Menopause-related changes can include vaginal dryness, discomfort, and changes in sexual response. Sexual aids may be used as part of sexual wellness, but this device should not be presented as a treatment for genitourinary syndrome of menopause or other medical conditions.',
         communityReview: 'Named a 2026 Oprah Daily Menopause O-Ward Winner; featured in Wellness Magazine, Oprah Daily, The Pause Life, and Flow Space.',
-        effectiveness: 'Positioned to address menopause-related changes in arousal and vaginal dryness; no independent clinical study of the product was found.',
+        effectiveness: 'Vibrator use has limited category-level evidence related to sexual function and genitourinary health. No independent clinical study of the Oboo Woosh itself was identified here.',
+        verificationLinks: {
+            doctor: { links: [
+                { url: 'https://www.acog.org/womens-health/faqs/vulvovaginal-health', text: 'ACOG: Vulvovaginal Health', summary: 'ACOG describes menopause-related vaginal dryness and genitourinary changes and discusses evidence-based options for symptom management.' },
+                { url: 'https://www.acog.org/womens-health/faqs/your-sexual-health', text: 'ACOG: Your Sexual Health', summary: 'ACOG includes sex toys among options people may try for sexual stimulation while distinguishing sexual wellness from medical treatment.' }
+            ] },
+            scientific: { links: [
+                { url: 'https://pubmed.ncbi.nlm.nih.gov/38668760/', text: 'Vibrator Use and Women\'s Pelvic Health: Prospective Pilot Study', summary: 'A small prospective pilot found associations between regular vibrator use and improvements in several sexual and genitourinary outcomes. This is category-level evidence and does not validate the Oboo Woosh specifically.', justification: 'Peer-reviewed PubMed-indexed prospective pilot study; limited category-level evidence.' }
+            ] }
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true, // shows a 'Brand' tag on the Discovery card, next to the type badge
