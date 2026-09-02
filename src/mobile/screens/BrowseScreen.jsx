@@ -37,9 +37,15 @@ export default function BrowseScreen({
   onStartQuiz,
 }) {
   const [mode, setMode] = useState('products');
-  const [category, setCategory] = useState('All');
+  const [category, setCategory] = useState('all');
 
-  const filtered = category === 'All' ? products : products.filter((p) => p.category === category);
+  // Real macro-group matching (category + keyword scanning, via the site's
+  // existing itemMatchesMacroGroup in Discovery.jsx) is intentionally NOT
+  // reimplemented here — deferred until real product data is wired into
+  // this screen, at which point it should be reused rather than duplicated.
+  // Until then, every chip shows the full list; only the active/highlighted
+  // state is real.
+  const filtered = products;
 
   return (
     <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0 40px', animation: 'ay-page .25s ease-out' }}>
