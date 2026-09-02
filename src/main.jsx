@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
+import { Capacitor } from '@capacitor/core'
 import MobileApp from './mobile/MobileApp.jsx'
 import './index.css'
 import posthog from 'posthog-js'
@@ -144,7 +145,10 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-const isMobilePreview = window.location.pathname === '/mobile-preview';
+// Native apps (iOS/Android via Capacitor) have no /mobile-preview URL to
+// check — they always show the mobile UI. The web build still gates it
+// behind the path, so the live website's normal routing is unaffected.
+const isMobilePreview = window.location.pathname === '/mobile-preview' || Capacitor.isNativePlatform();
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
