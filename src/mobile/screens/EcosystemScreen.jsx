@@ -3,6 +3,7 @@ import MobileHeader from '../components/MobileHeader.jsx';
 import EcosystemOrbit from '../components/EcosystemOrbit.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import ArticleCard from '../components/ArticleCard.jsx';
+import CtaBanner from '../components/CtaBanner.jsx';
 
 export default function EcosystemScreen({
   myProducts = [],
@@ -15,6 +16,7 @@ export default function EcosystemScreen({
   onOpenSaved,
   onBrowse,
   onRetake,
+  onUpdateHealth,
 }) {
   const [selectedKey, setSelectedKey] = useState(null);
   const [selectedSeat, setSelectedSeat] = useState(null);
@@ -78,6 +80,10 @@ export default function EcosystemScreen({
       )}
 
       <div style={{ padding: '20px 20px 0' }}>
+        <CtaBanner title="Update Ayna on your health" buttonLabel="Monthly check-in" onClick={onUpdateHealth} />
+      </div>
+
+      <div style={{ padding: '4px 20px 0' }}>
         <div
           onClick={onRetake}
           style={{
