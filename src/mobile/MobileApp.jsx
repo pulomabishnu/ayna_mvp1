@@ -71,9 +71,34 @@ const SAMPLE_SAVED_PRODUCTS = {
   'sample-pad': { id: 'sample-pad', name: 'Sample Comfort Pad', category: 'pad', price: '$8 for 18' },
 };
 
+// Shaped like the real ARTICLES array in src/components/Articles.jsx —
+// body is raw JSX, dev-only fixture, not imported from the real content.
+const SAMPLE_ARTICLES = [
+  {
+    id: 'sample-article',
+    title: 'Sample Article Title',
+    source: 'Sample Source',
+    tags: ['Sample tag'],
+    teaser: 'Dev-preview sample only — not real article content.',
+    body: (
+      <>
+        <p>This is a sample paragraph standing in for real article body JSX during preview.</p>
+        <p>
+          A second paragraph with a{' '}
+          <a href="https://example.com" target="_blank" rel="noopener noreferrer">
+            sample link
+          </a>{' '}
+          to confirm link color matches the site's --color-primary token.
+        </p>
+      </>
+    ),
+  },
+];
+
 export default function MobileApp() {
   const [screen, setScreen] = useState('landing');
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedArticle, setSelectedArticle] = useState(null);
 
   const Screen = SCREENS[screen] || LandingScreen;
 
@@ -88,6 +113,10 @@ export default function MobileApp() {
     onOpenProduct: (p) => {
       setSelectedProduct(p);
       setScreen('product');
+    },
+    onOpenArticle: (a) => {
+      setSelectedArticle(a);
+      setScreen('article');
     },
     onBack: () => setScreen('browse'),
   };
@@ -105,7 +134,9 @@ export default function MobileApp() {
       <Screen
         {...nav}
         products={SAMPLE_PRODUCTS}
+        articles={SAMPLE_ARTICLES}
         product={selectedProduct || SAMPLE_PRODUCTS[0]}
+        article={selectedArticle || SAMPLE_ARTICLES[0]}
         savedProducts={SAMPLE_SAVED_PRODUCTS}
       />
     </div>
