@@ -65,6 +65,12 @@ const SAMPLE_PRODUCTS = [
   },
 ];
 
+// Shaped like savedProductsStore.js's compactProduct() map (keyed by id),
+// dev-only fixture — not the real store.
+const SAMPLE_SAVED_PRODUCTS = {
+  'sample-pad': { id: 'sample-pad', name: 'Sample Comfort Pad', category: 'pad', price: '$8 for 18' },
+};
+
 export default function MobileApp() {
   const [screen, setScreen] = useState('landing');
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -96,7 +102,12 @@ export default function MobileApp() {
           </button>
         ))}
       </div>
-      <Screen {...nav} products={SAMPLE_PRODUCTS} product={selectedProduct || SAMPLE_PRODUCTS[0]} />
+      <Screen
+        {...nav}
+        products={SAMPLE_PRODUCTS}
+        product={selectedProduct || SAMPLE_PRODUCTS[0]}
+        savedProducts={SAMPLE_SAVED_PRODUCTS}
+      />
     </div>
   );
 }
