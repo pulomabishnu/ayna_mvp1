@@ -4,6 +4,11 @@
 // isAge50OrBelow) — copied verbatim since these aren't exported from that
 // file and are static config + a small conditional, not complex matching
 // logic. Keep in sync with Quiz.jsx if the real questions change.
+//
+// One deliberate mobile-only difference: the real quiz's last step asks for
+// email ("Save your profile"). Mobile has a dedicated Signin screen right
+// after Reveal that asks for name + email, so that step is dropped here —
+// asking twice in the same flow is redundant, not a data mismatch.
 
 export const AGE_OPTIONS = ['Under 25', '25-34', '35-44', '45-50', '51-55', '56+'];
 const AGE_50_OR_BELOW = new Set(['Under 25', '25-34', '35-44', '45-50']);
@@ -113,12 +118,6 @@ const REST_STEPS = [
     subtitle: "Type anything. Fertility, fitness, sleep, stress, skin, nutrition, etc. We'll factor it into your recommendations.",
     type: 'text',
     placeholder: 'e.g. I want to improve my sleep, manage stress better, and learn more about hormone health...',
-  },
-  {
-    id: 'email',
-    question: 'Save your profile (optional)',
-    subtitle: 'Enter email to save recommendations, or skip to see results now.',
-    type: 'email',
   },
 ];
 
