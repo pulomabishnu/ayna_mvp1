@@ -19,6 +19,12 @@
   --ayna-gradient-hero: linear-gradient(165deg, #2A1F4E 0%, #4E3866 42%, #8A4A3C 74%, #D97A2B 100%);
   --ayna-gradient-panel: linear-gradient(168deg, #242A52 0%, #4E3866 52%, #A2603C 100%);
 
+  /* Copied from the real site's src/index.css so real content (e.g. article
+     bodies from src/components/Articles.jsx, which style their own links
+     inline with var(--color-primary)) renders with the correct color when
+     reused inside the mobile app, instead of falling back to default blue. */
+  --color-primary: #FFC774;
+
   font-family: Inter, system-ui, sans-serif;
   color: var(--ayna-text);
   background: var(--ayna-bg);
