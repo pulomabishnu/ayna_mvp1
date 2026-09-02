@@ -370,14 +370,25 @@ export const MVP_PHYSICAL = [
     safety: { fdaStatus: 'Wellness device', materials: 'Silicone, plastic', recalls: 'No recalls.', allergens: 'Silicone', sideEffects: 'Mild soreness after use is common, similar to any trigger-point massage. Best used with guidance from a pelvic floor PT at first, to avoid overuse or incorrect technique.' },
     clinicianOpinionSource: 'independent',
     clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
-    doctorOpinion: 'Internal trigger-point release is a standard part of pelvic PT for pain and dysfunction.',
-    communityReview: 'Community discussions on Reddit r/Endo note PT recommendations and relief for endo pain.',
+    doctorOpinion: 'Pelvic floor physical therapy can address myofascial contributors to chronic pelvic pain. Internal self-treatment tools may be used as part of a supervised plan for selected patients.',
+    communityReview: 'Community discussions include anecdotal reports of pelvic-wand use alongside pelvic floor physical therapy; individual experiences vary.',
     ingredients: 'Silicone.',
-    effectiveness: 'Effective when used as part of a pelvic PT plan.',
-    badges: ['PT Recommended', 'Pelvic Pain'],
+    effectiveness: 'Evidence for internal trigger-point wand use is limited and comes from supervised, multimodal pelvic-pain protocols; it does not establish this specific product as effective for all users.',
+    badges: ['Pelvic Floor Tool', 'Pelvic Pain'],
     /** Richer than tag-only “why” so the modal doesn’t repeat “cramps” without explaining the tool */
     recommendationWhyDetail:
       'Curved pelvic wands are used for directed pressure and myofascial release on tight pelvic floor muscles and trigger points. Something many people only learn about in pelvic floor physical therapy. They’re not a substitute for heating pads or OTC cramp meds; they address muscle tension and referred pelvic pain that can overlap with period pain, endometriosis, postpartum recovery, or pain with sex. Technique matters (angle, pressure, breathing), so a pelvic PT who teaches you how to use one safely is ideal before treating this like general self-massage.',
+    verificationLinks: {
+      doctor: { links: [
+        { url: 'https://www.acog.org/womens-health/faqs/chronic-pelvic-pain', text: 'ACOG: Chronic Pelvic Pain', summary: 'ACOG describes pelvic floor physical therapy as an option that can address myofascial aspects of chronic pelvic pain.', justification: 'Current guidance from the American College of Obstetricians and Gynecologists.' }
+      ] },
+      scientific: { links: [
+        { url: 'https://pubmed.ncbi.nlm.nih.gov/21613956/', text: 'Internal Pelvic Trigger-Point Wand Pilot Study', summary: 'An open-label pilot evaluated supervised internal trigger-point wand use in chronic pelvic pain. Most participants were men, and the study does not validate the Intimate Rose product specifically.', justification: 'Peer-reviewed PubMed-indexed study; useful as limited category-level evidence.' }
+      ] },
+      community: { links: [
+        { platform: 'reddit', url: 'https://www.reddit.com/r/Endo/search/?q=pelvic+wand&restrict_sr=1', text: 'Reddit r/Endo: pelvic wand discussions', summary: 'Anecdotal community experiences with pelvic wands and pelvic floor therapy; not clinical evidence.' }
+      ] }
+    },
   },
   // ─── PERIMENOPAUSE / MENOPAUSE ────────────────────────────
   {
