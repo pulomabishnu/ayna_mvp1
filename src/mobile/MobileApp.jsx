@@ -118,6 +118,11 @@ export default function MobileApp() {
   const [screen, setScreen] = useState('landing');
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedArticle, setSelectedArticle] = useState(null);
+  // Dev-only stand-in for "does this person have an account / completed
+  // ecosystem yet" — real auth-aware state gets wired in later. Starts
+  // false so My Ecosystem prompts the intake first, matching a signed-out
+  // or not-yet-onboarded user.
+  const [hasEcosystem, setHasEcosystem] = useState(false);
 
   const Screen = SCREENS[screen] || LandingScreen;
 
@@ -127,7 +132,7 @@ export default function MobileApp() {
     onStartQuiz: () => setScreen('quiz'),
     onBrowse: () => setScreen('browse'),
     onOpenSaved: () => setScreen('saved'),
-    onGoEco: () => setScreen('eco'),
+    onGoEco: () => setScreen(hasEcosystem ? 'eco' : 'ecointro'),
     onGoLanding: () => setScreen('landing'),
     onOpenProduct: (p) => {
       setSelectedProduct(p);
@@ -139,6 +144,17 @@ export default function MobileApp() {
     },
     onBack: () => setScreen('browse'),
     onRetake: () => setScreen('quiz'),
+    onComplete: () => setScreen('building'),
+    onFinish: () => setScreen('reveal'),
+    onContinue: () => setScreen('signin'),
+    onCreateAccount: () => {
+      setHasEcosystem(true);
+      setScreen('eco');
+    },
+    onContinueWithApple: () => {
+      setHasEcosystem(true);
+      setScreen('eco');
+    },
   };
 
   return (
@@ -162,6 +178,15 @@ export default function MobileApp() {
         name="Maya"
         tags="3 areas covered"
         relatedReads={SAMPLE_ARTICLES}
+        topAreas={['Period', 'Hormones', 'Sleep']}
+        productCount={SAMPLE_PRODUCTS.length}
+        readCount={SAMPLE_ARTICLES.length}
+        goalCount={3}
+        stats={[
+          { label: 'Products', value: SAMPLE_PRODUCTS.length },
+          { label: 'Reads', value: SAMPLE_ARTICLES.length },
+          { label: 'Pillars', value: 3 },
+        ]}
       />
     </div>
   );
