@@ -1,32 +1,39 @@
-function Section({ title, children }) {
+import { useState } from 'react';
+import { CATEGORY_LABELS } from '../../data/products.js';
+import { getBuyUrl } from '../data/buyUrl.js';
+
+function SpecRow({ label, value }) {
   return (
-    <div style={{ background: '#FFFCF9', border: '1px solid #E1D5CE', borderRadius: 18, padding: 14, marginBottom: 12 }}>
-      <div
-        style={{
-          fontFamily: "'DM Mono',monospace",
-          fontSize: 9.5,
-          letterSpacing: 1,
-          textTransform: 'uppercase',
-          color: '#78716C',
-        }}
-      >
-        {title}
-      </div>
-      <div style={{ fontSize: 13, lineHeight: 1.5, marginTop: 7 }}>{children}</div>
+    <div style={{ display: 'flex', gap: 16, padding: '15px 0', borderBottom: '1px solid #E1D5CE' }}>
+      <div style={{ fontSize: 13.5, color: '#A8A29E', flex: 'none', width: 82 }}>{label}</div>
+      <div style={{ flex: 1, fontSize: 13.5, lineHeight: 1.5, color: '#292524', textAlign: 'right' }}>{value}</div>
     </div>
   );
 }
 
-function SafetyRow({ label, value }) {
+function EvidenceRow({ label, value }) {
   return (
-    <div style={{ padding: '9px 0', borderTop: '1px solid #F3EFE9' }}>
-      <div style={{ fontSize: 11.5, color: '#78716C', marginBottom: 3, fontWeight: 500 }}>{label}</div>
-      <div style={{ fontSize: 13, lineHeight: 1.5 }}>{value}</div>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, padding: '12px 0', borderTop: '1px solid #F3EFE9' }}>
+      <div style={{ fontSize: 13.5, color: '#292524' }}>{label}</div>
+      <div style={{ fontSize: 13.5, color: '#57534E', textDecoration: 'underline', textDecorationColor: '#D8CBC2' }}>{value}</div>
     </div>
   );
 }
 
-export default function ProductDetailScreen({ product, onBack, isSaved = false, onToggleSaved, whyMatched }) {
+const VERIFICATION_LABELS = { doctor: 'Clinical guidance', scientific: 'Scientific', community: 'Community' };
+
+export default function ProductDetailScreen({
+  product,
+  onBack,
+  isSaved = false,
+  onToggleSaved,
+  isInEcosystem = false,
+  onAddToEcosystem,
+  whyMatched,
+  reads = [],
+}) {
+  const [activeTab, setActiveTab] = useState('summary');
+
   if (!product) {
     return (
       <div style={{ padding: 40, textAlign: 'center', color: '#78716C', fontSize: 13.5 }}>
@@ -39,153 +46,270 @@ export default function ProductDetailScreen({ product, onBack, isSaved = false, 
     name,
     category,
     price,
-    userRating,
     image,
     summary,
     ingredients,
     effectiveness,
     doctorOpinion,
-    communityReview,
+    clinicianAttribution,
     safety = {},
     badges = [],
     whereToBuy = [],
+    verificationLinks = {},
   } = product;
 
-  const hasSafety =
-    safety.fdaStatus || safety.materials || safety.allergens || safety.sideEffects || safety.recalls || safety.opinionAlerts;
+  const categoryLabel = CATEGORY_LABELS[category] || (category ? category.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) : '');
+  const buyUrl = getBuyUrl(product);
+  const safetyNote = safety.sideEffects || safety.allergens || safety.recalls || safety.opinionAlerts || null;
+
+  const specRows = [
+    summary && { label: 'Summary', value: summary },
+    effectiveness && { label: 'Effectiveness', value: effectiveness },
+    safetyNote && { label: 'Safety note', value: safetyNote },
+    !buyUrl && whereToBuy.length > 0 && { label: 'Where to buy', value: whereToBuy.join(' · ') },
+  ].filter(Boolean);
+
+  const evidenceRows = [
+    ...Object.entries(verificationLinks).map(([key, entry]) => {
+      const count = Array.isArray(entry?.links) ? entry.links.length : 0;
+      if (!count) return null;
+      return { label: VERIFICATION_LABELS[key] || key, value: `${count} source${count === 1 ? '' : 's'}` };
+    }),
+    safety.fdaStatus && { label: 'Regulatory', value: safety.fdaStatus },
+  ].filter(Boolean);
 
   return (
-    <div style={{ flex: 1, overflowY: 'auto', background: '#F3EFE9', animation: 'ay-page .25s ease-out' }}>
-      <div
-        style={{
-          position: 'relative',
-          height: 280,
-          background: image
-            ? `center/cover no-repeat url(${image}), linear-gradient(150deg,#F3EFE9,#E1D5CE)`
-            : 'linear-gradient(150deg,#F3EFE9,#E1D5CE)',
-        }}
-      >
-        <div
-          onClick={onBack}
-          style={{
-            position: 'absolute',
-            top: 58,
-            left: 18,
-            width: 36,
-            height: 36,
-            borderRadius: 99,
-            background: 'rgba(255,252,249,.92)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            boxShadow: '0 2px 8px rgba(41,37,36,.12)',
-            zIndex: 3,
-          }}
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#292524" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
+    <div style={{ flex: 1, overflowY: 'auto', background: '#FFFCF9', color: '#292524', animation: 'ay-page .25s ease-out' }}>
+      <div style={{ padding: '24px 20px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div onClick={onBack} style={{ display: 'flex', alignItems: 'center', gap: 7, cursor: 'pointer' }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#242A52" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
             <path d="M19 12H5M11 18l-6-6 6-6" />
           </svg>
+          <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: 14, color: '#242A52' }}>Back</span>
+        </div>
+        <div style={{ display: 'flex', gap: 6 }}>
+          {['summary', 'evidence'].map((tab) => (
+            <div
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              style={{
+                padding: '9px 17px',
+                borderRadius: 99,
+                background: activeTab === tab ? '#242A52' : '#FFFCF9',
+                color: activeTab === tab ? '#FFFCF9' : '#57534E',
+                border: '1.5px solid ' + (activeTab === tab ? '#242A52' : '#E1D5CE'),
+                fontFamily: "'DM Sans',sans-serif",
+                fontWeight: 500,
+                fontSize: 13,
+                cursor: 'pointer',
+                textTransform: 'capitalize',
+              }}
+            >
+              {tab}
+            </div>
+          ))}
         </div>
       </div>
 
-      <div style={{ background: '#F3EFE9', borderRadius: '28px 28px 0 0', marginTop: -26, position: 'relative', padding: '22px 20px 40px' }}>
-        {category && (
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: 1.2, textTransform: 'uppercase', color: '#A2603C' }}>
-            {category}
+      <div style={{ margin: '14px 20px 0', borderRadius: 24, padding: 24, background: 'linear-gradient(150deg,#FFEFD6,#F6DCC0)' }}>
+        <div
+          style={{
+            width: '100%',
+            aspectRatio: '1 / 1',
+            background: '#FFFFFF',
+            borderRadius: 14,
+            boxShadow: '0 10px 26px -16px rgba(41,37,36,.35)',
+            overflow: 'hidden',
+            backgroundImage: image ? `url(${image})` : undefined,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        />
+      </div>
+
+      <div style={{ padding: '22px 22px 34px' }}>
+        {categoryLabel && (
+          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.4px', textTransform: 'uppercase', color: '#C0761F' }}>
+            {categoryLabel}
           </div>
         )}
-        <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 26, lineHeight: 1.2, margin: '7px 0 6px' }}>
-          {name}
-        </div>
-        {summary && <div style={{ fontSize: 14, color: '#78716C', lineHeight: 1.5 }}>{summary}</div>}
+        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 33, lineHeight: 1.12, margin: '9px 0 10px', color: '#242A52' }}>{name}</div>
+        {price && <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 26, color: '#242A52', marginBottom: 12 }}>{price}</div>}
+        {summary && <div style={{ fontSize: 14.5, lineHeight: 1.55, color: '#57534E' }}>{summary}</div>}
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '14px 0 16px' }}>
-          {price && <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 20 }}>{price}</div>}
-          {userRating != null && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="#FFC774">
-                <path d="M12 3l2.7 5.8 6.3.8-4.6 4.4 1.2 6.2L12 17.3 6.4 20.2l1.2-6.2L3 9.6l6.3-.8L12 3Z" />
-              </svg>
-              <div style={{ fontSize: 12.5, color: '#57534E' }}>{userRating}</div>
+        <div style={{ display: 'flex', gap: 10, margin: '20px 0 16px' }}>
+          {buyUrl ? (
+            <a
+              href={buyUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                flex: 1,
+                background: '#242A52',
+                color: '#FFFCF9',
+                textAlign: 'center',
+                padding: 15,
+                borderRadius: 99,
+                fontFamily: "'DM Sans',sans-serif",
+                fontWeight: 600,
+                fontSize: 14.5,
+                boxShadow: '0 14px 26px -14px rgba(36,42,82,.7)',
+                textDecoration: 'none',
+              }}
+            >
+              Buy Now
+            </a>
+          ) : (
+            <div
+              style={{
+                flex: 1,
+                background: '#E1D5CE',
+                color: '#78716C',
+                textAlign: 'center',
+                padding: 15,
+                borderRadius: 99,
+                fontFamily: "'DM Sans',sans-serif",
+                fontWeight: 600,
+                fontSize: 14.5,
+              }}
+            >
+              {whereToBuy.length > 0 ? whereToBuy[0] : 'No link yet'}
             </div>
           )}
+          <div
+            onClick={onToggleSaved}
+            style={{
+              flex: 1,
+              textAlign: 'center',
+              padding: 15,
+              borderRadius: 99,
+              cursor: 'pointer',
+              fontFamily: "'DM Sans',sans-serif",
+              fontWeight: 600,
+              fontSize: 14.5,
+              background: isSaved ? '#FFEFD6' : 'transparent',
+              color: '#242A52',
+              border: '1.5px solid ' + (isSaved ? '#E8A94F' : '#242A52'),
+            }}
+          >
+            {isSaved ? 'Saved' : 'Wishlist'}
+          </div>
         </div>
 
-        {badges.length > 0 && (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 18 }}>
-            {badges.map((b) => (
-              <div
-                key={b}
-                style={{
-                  fontFamily: "'DM Mono',monospace",
-                  fontSize: 9.5,
-                  letterSpacing: 0.6,
-                  textTransform: 'uppercase',
-                  color: '#8a5a1e',
-                  background: '#FFEFD6',
-                  padding: '5px 10px',
-                  borderRadius: 99,
-                }}
-              >
-                {b}
-              </div>
-            ))}
-          </div>
-        )}
-
-        {whyMatched && (
-          <div style={{ borderRadius: 18, padding: '15px 16px', background: 'linear-gradient(135deg,#242A52,#4E3866)', color: '#FFFCF9', marginBottom: 18 }}>
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: 1.2, textTransform: 'uppercase', opacity: 0.65 }}>
-              Why this is in your ecosystem
-            </div>
-            <div style={{ fontSize: 13.5, lineHeight: 1.55, marginTop: 8 }}>{whyMatched}</div>
-          </div>
-        )}
-
-        {ingredients && <Section title="Ingredients">{ingredients}</Section>}
-        {effectiveness && <Section title="Effectiveness">{effectiveness}</Section>}
-
-        {hasSafety && (
-          <div style={{ background: '#FFFFFF', border: '1px solid #E1D5CE', borderRadius: 20, padding: 16, marginBottom: 12 }}>
-            <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 14, marginBottom: 12 }}>Safety</div>
-            {safety.fdaStatus && <SafetyRow label="FDA status" value={safety.fdaStatus} />}
-            {safety.materials && <SafetyRow label="Materials" value={safety.materials} />}
-            {safety.allergens && <SafetyRow label="Allergens" value={safety.allergens} />}
-            {safety.sideEffects && <SafetyRow label="Side effects" value={safety.sideEffects} />}
-            {safety.recalls && <SafetyRow label="Recalls" value={safety.recalls} />}
-            {safety.opinionAlerts && <SafetyRow label="Things to know" value={safety.opinionAlerts} />}
-          </div>
-        )}
-
-        {doctorOpinion && <Section title="Doctor's take">{doctorOpinion}</Section>}
-        {communityReview && <Section title="Community says">{communityReview}</Section>}
-        {whereToBuy.length > 0 && <Section title="Where to buy">{whereToBuy.join(' · ')}</Section>}
-      </div>
-
-      <div style={{ padding: '12px 20px 30px', background: '#FFFCF9', borderTop: '1px solid #E1D5CE', display: 'flex', gap: 10, alignItems: 'center' }}>
         <div
-          onClick={onToggleSaved}
+          onClick={onAddToEcosystem}
           style={{
-            width: 46,
-            height: 46,
-            borderRadius: 99,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            display: 'inline-block',
+            fontFamily: "'DM Sans',sans-serif",
+            fontWeight: 700,
+            fontSize: 15,
+            color: '#242A52',
+            borderBottom: '2px solid #242A52',
+            paddingBottom: 2,
+            marginBottom: 22,
             cursor: 'pointer',
-            flexShrink: 0,
-            border: '1px solid ' + (isSaved ? '#E8A94F' : '#E1D5CE'),
-            background: isSaved ? '#FFEFD6' : '#FFFFFF',
           }}
         >
-          <svg width="19" height="19" viewBox="0 0 24 24" fill={isSaved ? '#E8A94F' : 'none'} stroke="#A2603C" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 20s-7-4.5-7-9.4A4.1 4.1 0 0 1 12 7.6a4.1 4.1 0 0 1 7 3c0 4.9-7 9.4-7 9.4Z" />
-          </svg>
+          {isInEcosystem ? 'Added to ecosystem ✓' : 'Add to ecosystem'}
         </div>
-        <div style={{ flex: 1, fontSize: 12, color: '#78716C', lineHeight: 1.4 }}>
-          {isSaved ? 'Saved to your list.' : 'Tap the heart to save this product.'}
-        </div>
+
+        {activeTab === 'summary' ? (
+          <>
+            {specRows.length > 0 && (
+              <div style={{ borderTop: '1px solid #E1D5CE' }}>
+                {specRows.map((row) => (
+                  <SpecRow key={row.label} label={row.label} value={row.value} />
+                ))}
+              </div>
+            )}
+
+            {ingredients && (
+              <div style={{ background: '#FFFFFF', border: '1px solid #E1D5CE', borderRadius: 20, padding: 16, marginTop: 20 }}>
+                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.2px', textTransform: 'uppercase', color: '#A8A29E', marginBottom: 4 }}>
+                  Inside
+                </div>
+                <div style={{ fontSize: 13.5, lineHeight: 1.6, paddingTop: 8 }}>{ingredients}</div>
+              </div>
+            )}
+          </>
+        ) : (
+          <>
+            {whyMatched && (
+              <div
+                style={{
+                  borderRadius: 20,
+                  padding: '17px 18px',
+                  background: 'linear-gradient(120deg,#242A52,#4E3866 70%,#5D3F73)',
+                  color: '#FFFCF9',
+                  marginBottom: 12,
+                }}
+              >
+                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.3px', textTransform: 'uppercase', opacity: 0.62 }}>
+                  Why you're seeing this
+                </div>
+                <div style={{ fontSize: 14.5, lineHeight: 1.5, marginTop: 9 }}>{whyMatched}</div>
+              </div>
+            )}
+
+            {doctorOpinion && (
+              <div style={{ background: '#FFFFFF', border: '1px solid #E1D5CE', borderRadius: 20, padding: '17px 18px', marginBottom: 12 }}>
+                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.3px', textTransform: 'uppercase', color: '#A8A29E' }}>
+                  Clinician opinion
+                </div>
+                <div style={{ fontSize: 14, lineHeight: 1.6, marginTop: 9, color: '#292524' }}>{doctorOpinion}</div>
+                {clinicianAttribution && (
+                  <div style={{ fontSize: 12, lineHeight: 1.5, color: '#A8A29E', marginTop: 11 }}>{clinicianAttribution}</div>
+                )}
+                {badges.length > 0 && (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 13 }}>
+                    {badges.map((b) => (
+                      <div key={b} style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 12, fontWeight: 500, padding: '7px 13px', borderRadius: 99, background: '#F3EFE9', color: '#57534E' }}>
+                        {b}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {evidenceRows.length > 0 && (
+              <div style={{ background: '#FFFFFF', border: '1px solid #E1D5CE', borderRadius: 20, padding: '17px 18px' }}>
+                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.3px', textTransform: 'uppercase', color: '#A8A29E', marginBottom: 4 }}>
+                  Evidence
+                </div>
+                {evidenceRows.map((row) => (
+                  <EvidenceRow key={row.label} label={row.label} value={row.value} />
+                ))}
+              </div>
+            )}
+          </>
+        )}
+
+        {reads.length > 0 && (
+          <>
+            <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 14, margin: '22px 0 10px' }}>Reads</div>
+            {reads.map((r) => (
+              <div
+                key={r.id || r.title}
+                onClick={r.onClick}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12,
+                  background: '#FFFFFF',
+                  border: '1px solid #E1D5CE',
+                  borderRadius: 16,
+                  padding: '13px 15px',
+                  marginBottom: 8,
+                  cursor: r.onClick ? 'pointer' : 'default',
+                }}
+              >
+                <div style={{ flex: 1, fontSize: 13.5, lineHeight: 1.4, fontWeight: 500 }}>{r.title}</div>
+                {r.mins && <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, color: '#A8A29E', whiteSpace: 'nowrap' }}>{r.mins}</div>}
+              </div>
+            ))}
+          </>
+        )}
       </div>
     </div>
   );
