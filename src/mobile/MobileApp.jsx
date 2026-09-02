@@ -46,6 +46,7 @@ const SAMPLE_PRODUCTS = [
     safety: { fdaStatus: 'FDA-registered medical device (sample)' },
     badges: ['Sample Badge'],
     whereToBuy: ['Target', 'Amazon'],
+    areaKey: 'period',
   },
   {
     id: 'sample-supplement',
@@ -62,6 +63,24 @@ const SAMPLE_PRODUCTS = [
     safety: { sideEffects: 'Sample side-effect note for preview purposes.' },
     badges: [],
     whereToBuy: ['Amazon'],
+    areaKey: 'hormones',
+  },
+  {
+    id: 'sample-sleep',
+    name: 'Sample Night Support',
+    category: 'sleep',
+    price: '$24',
+    userRating: 4.4,
+    image: '',
+    summary: 'Dev-preview sample only — not real catalog data.',
+    ingredients: 'L-theanine, glycine.',
+    effectiveness: 'Sample effectiveness text for preview purposes.',
+    doctorOpinion: 'Sample clinician note for preview purposes.',
+    communityReview: 'Sample community note for preview purposes.',
+    safety: {},
+    badges: [],
+    whereToBuy: ['Amazon'],
+    areaKey: 'sleep-stress',
   },
 ];
 
@@ -119,6 +138,7 @@ export default function MobileApp() {
       setScreen('article');
     },
     onBack: () => setScreen('browse'),
+    onRetake: () => setScreen('quiz'),
   };
 
   return (
@@ -138,6 +158,10 @@ export default function MobileApp() {
         product={selectedProduct || SAMPLE_PRODUCTS[0]}
         article={selectedArticle || SAMPLE_ARTICLES[0]}
         savedProducts={SAMPLE_SAVED_PRODUCTS}
+        myProducts={SAMPLE_PRODUCTS}
+        name="Maya"
+        tags="3 areas covered"
+        relatedReads={SAMPLE_ARTICLES}
       />
     </div>
   );
