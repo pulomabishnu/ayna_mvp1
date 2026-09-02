@@ -439,6 +439,9 @@ export const PHYSICAL_PRODUCTS = [
             doctor: [
                 { url: 'https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cup/art-20045868', text: 'Mayo Clinic: Menstrual Cup Care', summary: 'Guidance on proper cleaning and sterilization of menstrual cups.' }
             ],
+            scientific: [
+                { url: 'https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use', text: 'FDA: Menstrual Product Options, Facts, and Safe Use', summary: 'FDA guidance recommends following menstrual-product instructions and appropriate hygiene. This is category-level guidance and does not establish steamers as superior to other manufacturer-recommended cleaning methods.' }
+            ],
             community: [
                 { platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/search/?q=steamer', text: 'Reddit r/menstrualcups: steamer discussion', summary: 'Community reviews of cup sterilization methods.' }
             ]
@@ -702,6 +705,9 @@ export const DIGITAL_PRODUCTS = [
                 { url: 'https://stardust.app/privacy', text: 'Stardust Privacy Policy', summary: 'Detailed breakdown of their end-to-end encryption model.' },
                 { url: 'https://www.wired.com/story/period-tracking-apps-privacy/', text: 'Wired: Period App Privacy', summary: 'Analysis of Stardust\'s security in the context of reproductive health privacy.' }
             ],
+            scientific: [
+                { url: 'https://pubmed.ncbi.nlm.nih.gov/37697855/', text: 'Menstrual Cycle Tracking Apps: Medical and Data Privacy Scoring', summary: 'A peer-reviewed evaluation found substantial variation in medical quality and privacy practices across menstrual-tracking apps. This is category-level evidence and is not a clinical validation of Stardust.' }
+            ],
             community: [
                 { platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Discussions on period trackers and privacy.' },
                 { platform: 'reddit', url: 'https://www.reddit.com/r/periods/search/?q=stardust+tracker&restrict_sr=1', text: 'Reddit r/periods: Stardust', summary: 'User feedback on Stardust lunar sync and UI.' },
@@ -737,6 +743,10 @@ export const DIGITAL_PRODUCTS = [
         verificationLinks: {
             doctor: [
                 { url: 'https://www.menopause.org/for-women/menopause-faqs-women-s-midlife-health', text: 'NAMS – Menopause FAQs', summary: 'Clinical guidance on menopause and perimenopause care.' }
+            ],
+            scientific: [
+                { url: 'https://pubmed.ncbi.nlm.nih.gov/24569618/', text: 'Hot Flash Symptom Diary Reliability', summary: 'Research supports structured symptom diaries for measuring menopausal hot-flash frequency and severity. This evidence supports symptom tracking generally and is not specific to Balance.' },
+                { url: 'https://pubmed.ncbi.nlm.nih.gov/40526898/', text: 'Digital Menopause Intervention Randomized Trial', summary: 'A randomized trial found potential benefits from a menopause-focused digital intervention. The study evaluated a different app and does not establish effectiveness of Balance itself.' }
             ],
             community: [
                 { platform: 'reddit', url: 'https://www.reddit.com/r/Menopause/', text: 'Reddit r/Menopause', summary: 'Community discussions on menopause trackers and symptom management.' }
