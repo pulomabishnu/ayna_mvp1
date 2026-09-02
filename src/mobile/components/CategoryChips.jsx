@@ -1,26 +1,14 @@
-const DEFAULT_CATEGORIES = [
-  { key: 'All', label: 'All', color: '#A2603C' },
-  { key: 'Cycle', label: 'Cycle', color: '#C0761F' },
-  { key: 'Fertility', label: 'Fertility', color: '#4E3866' },
-  { key: 'Menopause', label: 'Menopause', color: '#A2603C' },
-  { key: 'PCOS', label: 'PCOS', color: '#3F7A6A' },
-  { key: 'Intimate', label: 'Intimate', color: '#B0537A' },
-  { key: 'Postpartum', label: 'Postpartum', color: '#8A6A3C' },
-  { key: 'Sleep', label: 'Sleep', color: '#242A52' },
-  { key: 'Gut', label: 'Gut', color: '#5C7A4A' },
-  { key: 'Bone', label: 'Bone', color: '#78716C' },
-  { key: 'Skin', label: 'Skin', color: '#C98A4B' },
-];
+import { CATEGORY_GROUPS } from '../data/categoryGroups.js';
 
-export default function CategoryChips({ categories = DEFAULT_CATEGORIES, active = 'All', onSelect }) {
+export default function CategoryChips({ categories = CATEGORY_GROUPS, active = 'all', onSelect }) {
   return (
     <div style={{ display: 'flex', gap: 8, overflowX: 'auto', padding: '0 20px 16px', scrollbarWidth: 'none' }}>
       {categories.map((c) => {
-        const isActive = active === c.key;
+        const isActive = active === c.id;
         return (
           <div
-            key={c.key}
-            onClick={() => onSelect && onSelect(c.key)}
+            key={c.id}
+            onClick={() => onSelect && onSelect(c.id)}
             style={{
               display: 'flex',
               alignItems: 'center',
