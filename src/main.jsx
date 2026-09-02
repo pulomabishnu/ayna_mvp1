@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
+import MobileApp from './mobile/MobileApp.jsx'
 import './index.css'
 import posthog from 'posthog-js'
 import { tagInternalUserIfNeeded } from './utils/posthogInternal'
@@ -143,10 +144,12 @@ class ErrorBoundary extends React.Component {
   }
 }
 
+const isMobilePreview = window.location.pathname === '/mobile-preview';
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ErrorBoundary>
-      <App />
+      {isMobilePreview ? <MobileApp /> : <App />}
     </ErrorBoundary>
   </React.StrictMode>,
 )
