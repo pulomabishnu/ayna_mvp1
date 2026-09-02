@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import './mobile.css';
+import { ALL_PRODUCTS } from '../data/products.js';
+import { useSavedProducts } from './hooks/useSavedProducts.js';
 
 import LandingScreen from './screens/LandingScreen.jsx';
 import BrowseScreen from './screens/BrowseScreen.jsx';
@@ -27,9 +29,9 @@ const SCREENS = {
   saved: SavedScreen,
 };
 
-// Dev-only fixtures for visually smoke-testing the preview — shaped like
-// real src/data/products.js entries, NOT imported from the real catalog
-// (no live data wiring yet). Remove once real product data is wired in.
+// Dev-only fixtures, still used where real data isn't wired in yet
+// (Ecosystem/Articles — separate steps). Browse/Product Detail use the real
+// catalog, Saved uses the real localStorage store.
 const SAMPLE_PRODUCTS = [
   {
     id: 'sample-pad',
@@ -84,12 +86,6 @@ const SAMPLE_PRODUCTS = [
   },
 ];
 
-// Shaped like savedProductsStore.js's compactProduct() map (keyed by id),
-// dev-only fixture — not the real store.
-const SAMPLE_SAVED_PRODUCTS = {
-  'sample-pad': { id: 'sample-pad', name: 'Sample Comfort Pad', category: 'pad', price: '$8 for 18' },
-};
-
 // Shaped like the real ARTICLES array in src/components/Articles.jsx —
 // body is raw JSX, dev-only fixture, not imported from the real content.
 const SAMPLE_ARTICLES = [
@@ -118,6 +114,7 @@ export default function MobileApp() {
   const [screen, setScreen] = useState('landing');
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedArticle, setSelectedArticle] = useState(null);
+  const { savedMap, isSaved, toggleSaved } = useSavedProducts();
   // Dev-only stand-in for "does this person have an account / completed
   // ecosystem yet" — real auth-aware state gets wired in later. Starts
   // false so My Ecosystem prompts the intake first, matching a signed-out
@@ -125,9 +122,11 @@ export default function MobileApp() {
   const [hasEcosystem, setHasEcosystem] = useState(false);
 
   const Screen = SCREENS[screen] || LandingScreen;
+  const currentProduct = selectedProduct || ALL_PRODUCTS[0];
 
   // Placeholder navigation wiring — enough to click through screens during
-  // scaffolding. Real product data / auth-aware routing gets wired in later.
+  // scaffolding. Real recommendation/area-matching logic and auth get
+  // wired in later.
   const nav = {
     onStartQuiz: () => setScreen('quiz'),
     onBrowse: () => setScreen('browse'),
@@ -155,6 +154,8 @@ export default function MobileApp() {
       setHasEcosystem(true);
       setScreen('eco');
     },
+    isSaved: isSaved(currentProduct?.id),
+    onToggleSaved: () => toggleSaved(currentProduct),
   };
 
   return (
@@ -169,11 +170,11 @@ export default function MobileApp() {
       </div>
       <Screen
         {...nav}
-        products={SAMPLE_PRODUCTS}
+        products={ALL_PRODUCTS}
         articles={SAMPLE_ARTICLES}
-        product={selectedProduct || SAMPLE_PRODUCTS[0]}
+        product={currentProduct}
         article={selectedArticle || SAMPLE_ARTICLES[0]}
-        savedProducts={SAMPLE_SAVED_PRODUCTS}
+        savedProducts={savedMap}
         myProducts={SAMPLE_PRODUCTS}
         name="Maya"
         tags="3 areas covered"
