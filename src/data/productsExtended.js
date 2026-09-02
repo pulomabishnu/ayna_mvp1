@@ -304,7 +304,7 @@ export const EXTENDED_DIGITAL = [
             sideEffects: 'N/A (Software). Risk of pregnancy if the method is not followed perfectly.',
             opinionAlerts: 'Requires high user discipline (taking temp immediately upon waking); some find the strict routine stressful.'
         },
-        privacy: { dataStorage: 'EU (Sweden) servers, GDPR-compliant', sellsData: '❌ Does not sell data', hipaa: 'GDPR-compliant', keyPolicy: 'CE-marked medical device in EU. Data processed in Sweden.' },
+        privacy: { dataStorage: 'EU (Sweden) servers, GDPR-compliant', sellsData: ' Does not sell data', hipaa: 'GDPR-compliant', keyPolicy: 'CE-marked medical device in EU. Data processed in Sweden.' },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Natural Cycles is the only app FDA-cleared as contraception. Requires daily temperature measurement. 93% typical-use effectiveness.',
@@ -332,7 +332,7 @@ export const EXTENDED_DIGITAL = [
             sideEffects: 'N/A',
             opinionAlerts: 'Employer-sponsored model raises privacy concerns for some users regarding their sensitive health data.'
         },
-        privacy: { dataStorage: 'US servers', sellsData: '⚠️ Primarily B2B model. Employer-sponsored. Review privacy policy carefully. Individual data is anonymized for employers.', hipaa: 'De-identified data shared with employers', keyPolicy: 'Funded by employer benefits programs. Individual health data is not shared with employers in identifiable form.' },
+        privacy: { dataStorage: 'US servers', sellsData: ' Primarily B2B model. Employer-sponsored. Review privacy policy carefully. Individual data is anonymized for employers.', hipaa: 'De-identified data shared with employers', keyPolicy: 'Funded by employer benefits programs. Individual health data is not shared with employers in identifiable form.' },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Ovia is comprehensive and covers fertility through pregnancy. Be aware of the employer data-sharing model and review privacy settings.',
@@ -351,7 +351,7 @@ export const EXTENDED_DIGITAL = [
             sideEffects: 'N/A',
             opinionAlerts: 'Aggressive marketing for premium services and partner-linking features can be overwhelming.'
         },
-        privacy: { dataStorage: 'US servers', sellsData: '⚠️ Privacy policy unclear on third-party sharing', hipaa: 'Not HIPAA-compliant', keyPolicy: 'Review privacy settings carefully. Has in-app community features.' },
+        privacy: { dataStorage: 'US servers', sellsData: ' Privacy policy unclear on third-party sharing', hipaa: 'Not HIPAA-compliant', keyPolicy: 'Review privacy settings carefully. Has in-app community features.' },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Glow has useful community features; users should verify medical advice from forums with their doctor.',
@@ -372,7 +372,7 @@ export const EXTENDED_DIGITAL = [
             sideEffects: 'Specific to medications prescribed during visits.',
             opinionAlerts: 'Some users find the app-only interface restrictive compared to traditional clinics.'
         },
-        privacy: { dataStorage: 'HIPAA-compliant', sellsData: '❌ Does not sell data', hipaa: '✅ Fully HIPAA-compliant', keyPolicy: 'Enterprise-grade security. SOC 2 certified.' },
+        privacy: { dataStorage: 'HIPAA-compliant', sellsData: ' Does not sell data', hipaa: ' Fully HIPAA-compliant', keyPolicy: 'Enterprise-grade security. SOC 2 certified.' },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Maven provides a comprehensive care model with specialists across women\'s health. Often employer-covered telehealth.',
@@ -391,7 +391,7 @@ export const EXTENDED_DIGITAL = [
             sideEffects: 'Relevant to treatments/prescriptions provided.',
             opinionAlerts: 'Subscription-based model ("Tia Membership") can be confusing to patients with standard insurance.'
         },
-        privacy: { dataStorage: 'HIPAA-compliant', sellsData: '❌ Does not sell data', hipaa: '✅ Fully HIPAA-compliant', keyPolicy: 'Medical practice with full legal protections.' },
+        privacy: { dataStorage: 'HIPAA-compliant', sellsData: ' Does not sell data', hipaa: ' Fully HIPAA-compliant', keyPolicy: 'Medical practice with full legal protections.' },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Tia offers an integrative, patient-centered model combining OB-GYN care with acupuncture and nutrition. Hybrid virtual and in-person in select cities.',
@@ -411,7 +411,7 @@ export const EXTENDED_DIGITAL = [
             sideEffects: 'Medication-specific.',
             opinionAlerts: 'High volume of patients can lead to slower response times on peak days.'
         },
-        privacy: { dataStorage: 'HIPAA-compliant', sellsData: '❌ Does not sell data', hipaa: '✅ Fully HIPAA-compliant', keyPolicy: 'Strong legal protections for patient data. Will not comply with requests for reproductive health data.' },
+        privacy: { dataStorage: 'HIPAA-compliant', sellsData: ' Does not sell data', hipaa: ' Fully HIPAA-compliant', keyPolicy: 'Strong legal protections for patient data. Will not comply with requests for reproductive health data.' },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Planned Parenthood Direct provides affordable reproductive healthcare including birth control and UTI treatment. Income-based pricing. Strong privacy protections.',
@@ -432,7 +432,7 @@ export const EXTENDED_DIGITAL = [
             sideEffects: 'N/A',
             opinionAlerts: 'FTC data privacy settlement is a major community watch-out; some find therapist matching hit-or-miss.'
         },
-        privacy: { dataStorage: 'US servers', sellsData: '⚠️ 2023 FTC settlement for sharing clients\' health data with advertisers including Facebook/Snapchat. Now under FTC order.', hipaa: '⚠️ Now under FTC privacy compliance order until 2043', keyPolicy: 'Required to get explicit consent before sharing data. Under 20-year FTC monitoring.' },
+        privacy: { dataStorage: 'US servers', sellsData: ' 2023 FTC settlement for sharing clients\' health data with advertisers including Facebook/Snapchat. Now under FTC order.', hipaa: ' Now under FTC privacy compliance order until 2043', keyPolicy: 'Required to get explicit consent before sharing data. Under 20-year FTC monitoring.' },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'BetterHelp provides access to licensed therapists. Patients should be aware of the 2023 FTC data-sharing settlement and review privacy settings.',
@@ -451,7 +451,7 @@ export const EXTENDED_DIGITAL = [
             sideEffects: 'N/A',
             opinionAlerts: 'Some find the content repetitive; the "corporate" feel of the app can be a turn-off for some.'
         },
-        privacy: { dataStorage: 'Standard encryption', sellsData: '❌ Does not sell personal data', hipaa: 'Not HIPAA (wellness app)', keyPolicy: 'Standard privacy policy. Does not collect health-specific data.' },
+        privacy: { dataStorage: 'Standard encryption', sellsData: ' Does not sell personal data', hipaa: 'Not HIPAA (wellness app)', keyPolicy: 'Standard privacy policy. Does not collect health-specific data.' },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Headspace has peer-reviewed research showing reduced stress and improved focus. A good complement to therapy.',
@@ -470,7 +470,7 @@ export const EXTENDED_DIGITAL = [
             sideEffects: 'N/A',
             opinionAlerts: 'Subscription price point is high for some; user interface can feel cluttered with celebrity cameos.'
         },
-        privacy: { dataStorage: 'Standard encryption', sellsData: '❌ Does not sell personal data', hipaa: 'Not HIPAA (wellness app)', keyPolicy: 'Standard privacy policy.' },
+        privacy: { dataStorage: 'Standard encryption', sellsData: ' Does not sell personal data', hipaa: 'Not HIPAA (wellness app)', keyPolicy: 'Standard privacy policy.' },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Calm\'s Sleep Stories and meditation content can help with insomnia or anxiety-driven sleep issues. Clinical studies show improved sleep quality.',
@@ -496,7 +496,7 @@ export const EXTENDED_DIGITAL = [
             sideEffects: 'N/A (Diagnostic). Potential for user error in strip dipping.',
             opinionAlerts: 'High cost of replenishment strips is a frequent community complaint.'
         },
-        privacy: { dataStorage: 'Standard encryption', sellsData: '❌ Does not sell data', hipaa: 'Not HIPAA', keyPolicy: 'Health data stored on device and cloud.' },
+        privacy: { dataStorage: 'Standard encryption', sellsData: ' Does not sell data', hipaa: 'Not HIPAA', keyPolicy: 'Health data stored on device and cloud.' },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Inito measures PdG which confirms ovulation actually occurred. Most trackers only predict it. FDA-cleared for home hormone monitoring.',
@@ -517,7 +517,7 @@ export const EXTENDED_DIGITAL = [
             sideEffects: 'Potential skin irritation from moisture trapped under the ring.',
             opinionAlerts: 'Requiring a subscription on top of a $300 hardware purchase is a major point of contention.'
         },
-        privacy: { dataStorage: 'Encrypted cloud + on-device', sellsData: '❌ Does not sell personal data', hipaa: 'Not HIPAA', keyPolicy: 'Oura stores biometric data encrypted. Does not share individual data with third parties.' },
+        privacy: { dataStorage: 'Encrypted cloud + on-device', sellsData: ' Does not sell personal data', hipaa: 'Not HIPAA', keyPolicy: 'Oura stores biometric data encrypted. Does not share individual data with third parties.' },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Wearable temperature tracking via Oura can identify cycle phases and complement period tracking apps. Integrates with Natural Cycles.',
@@ -536,7 +536,7 @@ export const EXTENDED_DIGITAL = [
             sideEffects: 'N/A',
             opinionAlerts: 'Highly praised for privacy, but some find the interface "clinical" and less intuitive than dedicated period apps.'
         },
-        privacy: { dataStorage: 'On-device by default, E2E encrypted if iCloud enabled', sellsData: '❌ Apple cannot read your health data', hipaa: 'Exceeds HIPAA for consumer apps', keyPolicy: 'End-to-end encrypted. Apple has repeatedly fought government requests for user data. Data never leaves your device unless you explicitly share it.' },
+        privacy: { dataStorage: 'On-device by default, E2E encrypted if iCloud enabled', sellsData: ' Apple cannot read your health data', hipaa: 'Exceeds HIPAA for consumer apps', keyPolicy: 'End-to-end encrypted. Apple has repeatedly fought government requests for user data. Data never leaves your device unless you explicitly share it.' },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Apple Health offers the strongest consumer privacy for cycle data. Data stays on device with end-to-end encryption. Ideal if privacy is the top concern.',
@@ -555,7 +555,7 @@ export const EXTENDED_DIGITAL = [
             sideEffects: 'Some users report waking from cooling cycles; not recommended for those with Raynaud\'s.',
             opinionAlerts: 'High upfront cost ($2,245+) plus $19/month subscription after the first year. Requires a stable Wi-Fi connection.'
         },
-        privacy: { dataStorage: 'Cloud-based, encrypted', sellsData: '❌ Does not sell personal data', hipaa: 'Not HIPAA', keyPolicy: 'Eight Sleep stores sleep biometrics in the cloud. Data shared with third-party researchers only in anonymized, aggregated form.' },
+        privacy: { dataStorage: 'Cloud-based, encrypted', sellsData: ' Does not sell personal data', hipaa: 'Not HIPAA', keyPolicy: 'Eight Sleep stores sleep biometrics in the cloud. Data shared with third-party researchers only in anonymized, aggregated form.' },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and product documentation.',
         doctorOpinion: 'Temperature regulation during sleep is increasingly recognized as important for hormonal health. Especially for women experiencing night sweats, perimenopause, or disrupted sleep due to cycle-related changes. Eight Sleep\'s active cooling addresses this directly.',

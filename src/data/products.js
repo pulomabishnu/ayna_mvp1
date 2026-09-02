@@ -71,7 +71,7 @@ export const PHYSICAL_PRODUCTS = [
         safety: {
             fdaStatus: 'FDA-registered medical device',
             materials: 'FlexFoam (polyethylene/polypropylene blend), fragrance-free options available',
-            recalls: '⚠️ 2024 social media concerns about chemical residues. Always has not been subject to FDA recall but independent testing found trace PFAS in some pad brands.',
+            recalls: ' 2024 social media concerns about chemical residues. Always has not been subject to FDA recall but independent testing found trace PFAS in some pad brands.',
             allergens: 'Fragrance in scented versions; fragrance-free version available',
             sideEffects: 'Possible contact dermatitis or irritation, especially with scented versions. Rash or itching from synthetic materials.',
             opinionAlerts: 'Common complaints include the "plastic feel" and environmental concerns regarding non-biodegradability.'
@@ -422,18 +422,18 @@ export const PHYSICAL_PRODUCTS = [
             'Google': 'https://www.google.com/search?q=saalt+steamer',
         },
         image: 'https://saalt.com/cdn/shop/files/Saalt-Steamer-PDP-01-Rose-Quartz.jpg?v=1725669379',
-        summary: 'Portable UV-free steamer designed specifically to sterilize menstrual cups and discs in 3 minutes. Safe for all medical-grade silicone.',
+        summary: 'Portable steamer designed for menstrual cup and disc cleaning between uses. Follow the product manufacturer’s cleaning instructions for your specific cup or disc.',
         safety: {
             fdaStatus: 'N/A. Accessory for FDA-registered medical devices',
             materials: 'BPA-free plastic, stainless steel interior chamber',
             recalls: 'No known recalls',
             allergens: 'None',
-            sideEffects: 'None; steam sterilization is recommended by OB-GYNs over boiling for silicone cups',
+            sideEffects: 'Hot steam can cause burns if handled improperly. Cleaning method should follow the menstrual product manufacturer’s instructions.',
             opinionAlerts: 'Do not use with cups made from rubber or latex. Silicone only.'
         },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'Ayna synthesis of clinical guidance on menstrual cup hygiene.',
-        doctorOpinion: 'Steam sterilization is the safest method for menstrual cup cleaning between cycles.',
+        doctorOpinion: 'Menstrual cups and discs should be cleaned according to manufacturer instructions. Evidence does not establish steamers as medically superior to other recommended cleaning methods.',
         communityReview: 'Highly rated by Saalt cup users for convenience and peace of mind between cycles.',
         verificationLinks: {
             doctor: [
@@ -510,7 +510,7 @@ export const PHYSICAL_PRODUCTS = [
         safety: {
             fdaStatus: 'Not FDA-regulated (classified as apparel)',
             materials: 'Organic cotton, OEKO-TEX certified fabrics',
-            recalls: '⚠️ 2022: Thinx settled a $5M class-action lawsuit over PFAS in older products. Current line is PFAS-free.',
+            recalls: ' 2022: Thinx settled a $5M class-action lawsuit over PFAS in older products. Current line is PFAS-free.',
             allergens: 'Hypoallergenic in current PFAS-free line',
             sideEffects: 'Possibility of infection if not washed correctly or changed frequently enough.',
             opinionAlerts: 'Legacy "PFAS scare" still drives some user hesitation. Complicated laundry routine compared to disposables.'
@@ -648,7 +648,7 @@ export const DIGITAL_PRODUCTS = [
         image: 'https://images.ctfassets.net/juauvlea4rbf/23G4fZ83x3DYLiCj6rNH7o/9e791f0a130e8c69a19d0857e232a540/Group_2297__1_.png?w=1172&h=990&q=50&fm=png',
         summary: 'EU-based tracker with industry-leading privacy. Accurate predictions, no ads on free tier.',
         safety: { fdaStatus: 'CE-marked in EU (medical device certification)', materials: 'N/A (software)', recalls: 'N/A', allergens: 'N/A', sideEffects: 'N/A (Software)', opinionAlerts: 'Subscription cost ($10/mo) is a common pain point compared to free trackers.' },
-        privacy: { dataStorage: 'EU servers (Germany). GDPR-compliant', sellsData: '❌ Explicitly does NOT sell data', hipaa: 'Not HIPAA (EU-based, uses GDPR which is stricter)', keyPolicy: 'Published transparency report. Will not comply with US law enforcement requests for cycle data.' },
+        privacy: { dataStorage: 'EU servers (Germany). GDPR-compliant', sellsData: ' Explicitly does NOT sell data', hipaa: 'Not HIPAA (EU-based, uses GDPR which is stricter)', keyPolicy: 'Published transparency report. Will not comply with US law enforcement requests for cycle data.' },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Dr. Anna Druet, Clue Research Lead. Brand-affiliated.',
         doctorOpinion: 'Clue partners with universities for menstrual health research; brand emphasizes evidence-based design.',
@@ -688,12 +688,12 @@ export const DIGITAL_PRODUCTS = [
         whereToBuy: ['App Store', 'Google Play'],
         platform: 'iOS, Android',
         image: 'https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/61/f9/de/61f9deb9-a4f6-de49-96c6-84eb25541edb/Placeholder.mill/1200x630wa.jpg',
-        summary: 'Privacy-first tracker with end-to-end encryption. Syncs with lunar cycles.',
+        summary: 'Period and cycle-tracking app with privacy-focused features and optional lunar-cycle features. Privacy practices should be reviewed against the app’s current policy.',
         safety: { fdaStatus: 'N/A (Software)', materials: 'N/A', recalls: 'N/A', allergens: 'N/A', sideEffects: 'N/A', opinionAlerts: 'Lunar sync features are highly aesthetic but some users find them less "scientific" than Clue.' },
-        privacy: { dataStorage: 'End-to-end encrypted', sellsData: '❌ No', hipaa: 'No', keyPolicy: 'Uses dual-key encryption so even Stardust can\'t see your data.' },
+        privacy: { dataStorage: 'See current Stardust privacy policy', sellsData: 'See current Stardust privacy policy', hipaa: 'Not presented here as a HIPAA-covered service', keyPolicy: 'Review Stardust’s current privacy and security documentation for encryption and data-access practices.' },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
-        doctorOpinion: 'End-to-end encryption and privacy-first design are increasingly important for reproductive health data post-Roe.',
+        doctorOpinion: 'Privacy and data-security practices are important considerations when choosing a reproductive-health tracking app. Users should review the app’s current privacy policy and controls.',
         communityReview: 'Community discussions on Reddit r/periods note strong privacy features and UI design.',
         integrations: ['Apple Health'],
         badges: ['Female-Owned', 'Top Privacy'],
@@ -728,9 +728,9 @@ export const DIGITAL_PRODUCTS = [
         image: 'https://target.scene7.com/is/image/Target/GUEST_cb89dfb0-209a-4fd5-bf81-1e392f636b23',
         summary: 'Dedicated menopause and perimenopause tracker. Log symptoms (hot flashes, sleep, mood), track patterns, and get insights. Built for midlife health.',
         safety: { fdaStatus: 'N/A (wellness app)', materials: 'N/A', recalls: 'N/A', allergens: 'N/A', sideEffects: 'N/A', opinionAlerts: 'Use alongside clinician care for diagnosis and treatment.' },
-        privacy: { dataStorage: 'US servers', sellsData: '❌ Does not sell personal health data', hipaa: 'N/A', keyPolicy: 'Check app privacy policy for data sharing with researchers or partners.' },
+        privacy: { dataStorage: 'See current Balance privacy policy', sellsData: 'See current Balance privacy policy', hipaa: 'N/A', keyPolicy: 'Review the current privacy policy for storage, sharing, research, and partner practices.' },
         clinicianOpinionSource: 'independent',
-        doctorOpinion: 'Tracking perimenopause symptoms helps clinicians identify patterns and tailor treatment. Apps like Balance complement. Not replace. Clinical care.',
+        doctorOpinion: 'Symptom tracking can help people organize patterns and prepare for clinician conversations, but a wellness app does not diagnose menopause or replace clinical evaluation.',
         communityReview: 'Community discussions on Reddit r/Menopause note focus on perimenopause and value of symptom logging for clinician visits.',
         integrations: ['Apple Health'],
         badges: ['Menopause Focus', 'Symptom Tracking'],
@@ -1431,7 +1431,11 @@ export function getRecommendationExplanation(product, quizAnswers, healthProfile
     }
 
     let considerations = null;
-    if (product.safety?.recalls && product.safety.recalls.includes('⚠️')) {
+    if (
+        product.safety?.recalls &&
+        typeof product.safety.recalls === 'string' &&
+        !/^(no( known)? recalls?\.?|n\/a)$/i.test(product.safety.recalls.trim())
+    ) {
         considerations = 'Consideration: Check the Safety tab for current recalls or concerns.';
     } else if (product.safety?.allergens && typeof product.safety.allergens === 'string' && product.safety.allergens.toLowerCase().includes('fragrance')) {
         considerations = 'Consideration: Scented options exist; choose fragrance-free if you have sensitivity.';
