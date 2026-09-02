@@ -53,6 +53,7 @@
 @keyframes ay-page { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 @keyframes ay-bob { 0%, 100% { transform: translateY(4px); } 50% { transform: translateY(-4px); } }
 @keyframes ay-drift { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(14px,-18px) scale(1.09); } }
+@keyframes ay-skeleton { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
 
 .ayna-mobile input[type="range"] {
   -webkit-appearance: none;
