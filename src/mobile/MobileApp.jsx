@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import './mobile.css';
-import { ALL_PRODUCTS } from '../data/products.js';
+import { ALL_PRODUCTS, getPersonalizedProductIds, getProductById } from '../data/products.js';
+import { ARTICLES } from '../components/Articles.jsx';
+import { ECOSYSTEM_AREAS as REAL_ECOSYSTEM_AREAS, resolveEcosystemProductArea } from '../components/EcosystemBubbles.jsx';
 import { useSavedProducts } from './hooks/useSavedProducts.js';
+import { ECOSYSTEM_AREAS as AREA_LABELS } from './data/ecosystemAreas.js';
 
 import LandingScreen from './screens/LandingScreen.jsx';
 import BrowseScreen from './screens/BrowseScreen.jsx';
@@ -29,104 +32,44 @@ const SCREENS = {
   saved: SavedScreen,
 };
 
-// Dev-only fixtures, still used where real data isn't wired in yet
-// (Ecosystem/Articles — separate steps). Browse/Product Detail use the real
-// catalog, Saved uses the real localStorage store.
-const SAMPLE_PRODUCTS = [
-  {
-    id: 'sample-pad',
-    name: 'Sample Comfort Pad',
-    category: 'pad',
-    price: '$8 for 18',
-    userRating: 4.5,
-    image: '',
-    summary: 'Dev-preview sample only — not real catalog data.',
-    ingredients: 'Cotton, polyethylene film, adhesive.',
-    effectiveness: 'Sample effectiveness text for preview purposes.',
-    doctorOpinion: 'Sample clinician note for preview purposes.',
-    communityReview: 'Sample community note for preview purposes.',
-    safety: { fdaStatus: 'FDA-registered medical device (sample)' },
-    badges: ['Sample Badge'],
-    whereToBuy: ['Target', 'Amazon'],
-    areaKey: 'period',
-  },
-  {
-    id: 'sample-supplement',
-    name: 'Sample Cycle Support',
-    category: 'supplement',
-    price: '$28',
-    userRating: 4.6,
-    image: '',
-    summary: 'Dev-preview sample only — not real catalog data.',
-    ingredients: 'Magnesium glycinate, vitamin B6.',
-    effectiveness: 'Sample effectiveness text for preview purposes.',
-    doctorOpinion: 'Sample clinician note for preview purposes.',
-    communityReview: 'Sample community note for preview purposes.',
-    safety: { sideEffects: 'Sample side-effect note for preview purposes.' },
-    badges: [],
-    whereToBuy: ['Amazon'],
-    areaKey: 'hormones',
-  },
-  {
-    id: 'sample-sleep',
-    name: 'Sample Night Support',
-    category: 'sleep',
-    price: '$24',
-    userRating: 4.4,
-    image: '',
-    summary: 'Dev-preview sample only — not real catalog data.',
-    ingredients: 'L-theanine, glycine.',
-    effectiveness: 'Sample effectiveness text for preview purposes.',
-    doctorOpinion: 'Sample clinician note for preview purposes.',
-    communityReview: 'Sample community note for preview purposes.',
-    safety: {},
-    badges: [],
-    whereToBuy: ['Amazon'],
-    areaKey: 'sleep-stress',
-  },
-];
-
-// Shaped like the real ARTICLES array in src/components/Articles.jsx —
-// body is raw JSX, dev-only fixture, not imported from the real content.
-const SAMPLE_ARTICLES = [
-  {
-    id: 'sample-article',
-    title: 'Sample Article Title',
-    source: 'Sample Source',
-    tags: ['Sample tag'],
-    teaser: 'Dev-preview sample only — not real article content.',
-    body: (
-      <>
-        <p>This is a sample paragraph standing in for real article body JSX during preview.</p>
-        <p>
-          A second paragraph with a{' '}
-          <a href="https://example.com" target="_blank" rel="noopener noreferrer">
-            sample link
-          </a>{' '}
-          to confirm link color matches the site's --color-primary token.
-        </p>
-      </>
-    ),
-  },
-];
+// Real business logic: getPersonalizedProductIds returns every real,
+// positively-scored catalog match for the quiz answers (not
+// getRecommendations()'s padded fallback list, and not limited to one pick
+// per frustration like getEcosystemSeedFromQuiz) — richer, so the orbit can
+// naturally populate more than a handful of areas when the answers
+// genuinely match more products. resolveEcosystemProductArea is the real
+// product -> pillar-area matcher (keyword + category scanning) that
+// EcosystemOrbit's contract has always deferred to rather than
+// reimplementing. Both reused here, not duplicated.
+function seedEcosystemFromAnswers(quizAnswers) {
+  const ids = getPersonalizedProductIds(quizAnswers, null);
+  const products = ids.map((id) => getProductById(id)).filter(Boolean);
+  return products.map((p) => {
+    const area = resolveEcosystemProductArea(p, REAL_ECOSYSTEM_AREAS);
+    return { ...p, areaKey: area ? area.key : null };
+  });
+}
 
 export default function MobileApp() {
   const [screen, setScreen] = useState('landing');
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedArticle, setSelectedArticle] = useState(null);
   const { savedMap, isSaved, toggleSaved } = useSavedProducts();
-  // Dev-only stand-in for "does this person have an account / completed
-  // ecosystem yet" — real auth-aware state gets wired in later. Starts
-  // false so My Ecosystem prompts the intake first, matching a signed-out
-  // or not-yet-onboarded user.
   const [hasEcosystem, setHasEcosystem] = useState(false);
+  const [myProducts, setMyProducts] = useState([]);
+  const [lastQuizAnswers, setLastQuizAnswers] = useState(null);
+  const [userName, setUserName] = useState('You');
 
   const Screen = SCREENS[screen] || LandingScreen;
   const currentProduct = selectedProduct || ALL_PRODUCTS[0];
+  const currentArticle = selectedArticle || ARTICLES[0];
 
-  // Placeholder navigation wiring — enough to click through screens during
-  // scaffolding. Real recommendation/area-matching logic and auth get
-  // wired in later.
+  const topAreaLabels = [...new Set(myProducts.map((p) => p.areaKey).filter(Boolean))]
+    .map((key) => AREA_LABELS.find((a) => a.key === key)?.label)
+    .filter(Boolean)
+    .slice(0, 3);
+  const goalCount = lastQuizAnswers?.frustrations?.length || 0;
+
   const nav = {
     onStartQuiz: () => setScreen('quiz'),
     onBrowse: () => setScreen('browse'),
@@ -143,19 +86,27 @@ export default function MobileApp() {
     },
     onBack: () => setScreen('browse'),
     onRetake: () => setScreen('quiz'),
-    onComplete: () => setScreen('building'),
+    onUpdateHealth: () => setScreen('quiz'),
+    onComplete: (quizAnswers) => {
+      setMyProducts(seedEcosystemFromAnswers(quizAnswers));
+      setLastQuizAnswers(quizAnswers);
+      setScreen('building');
+    },
     onFinish: () => setScreen('reveal'),
     onContinue: () => setScreen('signin'),
-    onCreateAccount: () => {
+    onCreateAccount: ({ name } = {}) => {
+      if (name) setUserName(name);
       setHasEcosystem(true);
       setScreen('eco');
     },
-    onContinueWithApple: () => {
+    onContinueWithApple: ({ name } = {}) => {
+      if (name) setUserName(name);
       setHasEcosystem(true);
       setScreen('eco');
     },
     isSaved: isSaved(currentProduct?.id),
     onToggleSaved: () => toggleSaved(currentProduct),
+    hasEcosystem,
   };
 
   return (
@@ -171,22 +122,23 @@ export default function MobileApp() {
       <Screen
         {...nav}
         products={ALL_PRODUCTS}
-        articles={SAMPLE_ARTICLES}
+        articles={ARTICLES}
         product={currentProduct}
-        article={selectedArticle || SAMPLE_ARTICLES[0]}
+        article={currentArticle}
         savedProducts={savedMap}
-        myProducts={SAMPLE_PRODUCTS}
-        name="Maya"
-        tags="3 areas covered"
-        relatedReads={SAMPLE_ARTICLES}
-        topAreas={['Period', 'Hormones', 'Sleep']}
-        productCount={SAMPLE_PRODUCTS.length}
-        readCount={SAMPLE_ARTICLES.length}
-        goalCount={3}
+        myProducts={myProducts}
+        quizAnswers={lastQuizAnswers}
+        name={userName}
+        tags={topAreaLabels.length ? `${topAreaLabels.length} area${topAreaLabels.length === 1 ? '' : 's'} covered` : ''}
+        relatedReads={ARTICLES.slice(0, 3)}
+        topAreas={topAreaLabels.length ? topAreaLabels : ['Period', 'Hormones', 'Sleep']}
+        productCount={myProducts.length}
+        readCount={ARTICLES.length}
+        goalCount={goalCount}
         stats={[
-          { label: 'Products', value: SAMPLE_PRODUCTS.length },
-          { label: 'Reads', value: SAMPLE_ARTICLES.length },
-          { label: 'Pillars', value: 3 },
+          { label: 'Products', value: myProducts.length },
+          { label: 'Reads', value: ARTICLES.length },
+          { label: 'Pillars', value: topAreaLabels.length },
         ]}
       />
     </div>
