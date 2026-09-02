@@ -4,6 +4,7 @@ import SearchBar from '../components/SearchBar.jsx';
 import CategoryChips from '../components/CategoryChips.jsx';
 import CtaBanner from '../components/CtaBanner.jsx';
 import ProductCard from '../components/ProductCard.jsx';
+import ArticleCard from '../components/ArticleCard.jsx';
 
 function ModeTab({ label, active, onClick }) {
   return (
@@ -27,11 +28,13 @@ function ModeTab({ label, active, onClick }) {
 
 export default function BrowseScreen({
   products = [],
+  articles = [],
   ctaVariant = 'gradient',
   headerInitial = 'A',
   searchValue,
   onSearchChange,
   onOpenProduct,
+  onOpenArticle,
   onOpenSaved,
   onGoEco,
   onStartQuiz,
@@ -90,8 +93,16 @@ export default function BrowseScreen({
           </div>
         </>
       ) : (
-        <div style={{ padding: '40px 20px', textAlign: 'center', color: '#78716C', fontSize: 13.5 }}>
-          Reads coming soon.
+        <div style={{ padding: '0 20px' }}>
+          {articles.length === 0 ? (
+            <div style={{ padding: '40px 0', textAlign: 'center', color: '#78716C', fontSize: 13.5 }}>
+              No reads yet.
+            </div>
+          ) : (
+            articles.map((a) => (
+              <ArticleCard key={a.id} article={a} onClick={() => onOpenArticle && onOpenArticle(a)} />
+            ))
+          )}
         </div>
       )}
     </div>
