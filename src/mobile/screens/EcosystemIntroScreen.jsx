@@ -1,6 +1,6 @@
 import MobileHeader from '../components/MobileHeader.jsx';
 
-export default function EcosystemIntroScreen({ onStartQuiz, onOpenSaved, onGoBrowse, headerInitial = 'A' }) {
+export default function EcosystemIntroScreen({ onStartQuiz, onOpenSaved, onBrowse, headerInitial = 'A' }) {
   return (
     <div
       style={{
@@ -14,7 +14,7 @@ export default function EcosystemIntroScreen({ onStartQuiz, onOpenSaved, onGoBro
         animation: 'ay-page .25s ease-out',
       }}
     >
-      <MobileHeader variant="dark" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoBrowse={onGoBrowse} />
+      <MobileHeader variant="dark" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoBrowse={onBrowse} />
 
       <div
         style={{
