@@ -7,9 +7,13 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
         ? quizResults.frustrations.join(', ')
         : (quizResults?.frustration || 'General Wellness');
     const age = quizResults?.age || 'N/A';
-    const sensitivities = Array.isArray(quizResults?.sensitivities) && quizResults.sensitivities.length > 0
-        ? quizResults.sensitivities.join(', ')
-        : (quizResults?.sensitivities || 'None reported');
+    // An empty array is truthy in JS, so `quizResults.sensitivities || 'None reported'`
+    // never fired when it was `[]` — the line rendered "Sensitivities:" with nothing
+    // after it instead of falling back (found live, 2026-08-24 bug bash).
+    const sensitivitiesList = Array.isArray(quizResults?.sensitivities)
+        ? quizResults.sensitivities
+        : (quizResults?.sensitivities ? [quizResults.sensitivities] : []);
+    const sensitivities = sensitivitiesList.length > 0 ? sensitivitiesList.join(', ') : 'None reported';
     const prefs = Array.isArray(quizResults?.preference) ? quizResults.preference.join(', ') : (quizResults?.preference || '');
 
     const focusAreas = checkinData?.focusAreas || [];
@@ -46,7 +50,7 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
             <div className="card" style={{ padding: '3rem', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-md)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '2.5rem', borderBottom: '2px solid var(--color-bg)', pb: '1.5rem' }}>
                     <div>
-                        <h1 style={{ fontSize: '1.8rem', fontWeight: '800', marginBottom: '0.25rem', color: 'var(--color-primary)' }}>Ayna Health Summary</h1>
+                        <h1 style={{ fontSize: '1.8rem', fontWeight: '800', marginBottom: '0.25rem', color: 'var(--color-primary)' }}>ayna Health Summary</h1>
                         <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>Generated on {new Date().toLocaleDateString()}</p>
                     </div>
                     <button className="btn btn-outline" onClick={() => window.print()}>Print Summary</button>
@@ -81,7 +85,7 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
                                     <strong style={{ fontSize: '0.95rem', display: 'block', marginBottom: '0.35rem' }}>{p.name}</strong>
                                     <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
                                         <strong style={{ color: 'var(--color-text-main)' }}>Main ingredients:</strong>{' '}
-                                        {p.ingredients || p.tagline || '. Check the product label or brand website for the full ingredient list.'}
+                                        {p.ingredients || p.tagline || 'Not listed — check the product label or brand website for the full ingredient list.'}
                                     </span>
                                 </li>
                             ))}
@@ -95,19 +99,23 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
                 <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '2rem' }}>
                     <h4 style={{ fontSize: '1rem', fontWeight: '700', marginBottom: '1rem' }}>Suggested Questions for Your Provider</h4>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        {/* Pure questions, not a re-quote of the Health Summary card above —
+                            the provider already sees the goal and product list there, so
+                            repeating them here word-for-word was pure redundancy, not new
+                            information (found live, 2026-08-24 bug bash). */}
                         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', background: 'var(--color-surface-soft)', padding: '1rem', borderRadius: 'var(--radius-sm)', borderLeft: '4px solid var(--color-primary)' }}>
-                            <p style={{ fontSize: '0.95rem' }}>"I told Ayna my main concern is <strong>{goal}</strong>. Does this fit my care plan?"</p>
+                            <p style={{ fontSize: '0.95rem' }}>"Does my current care plan address my main concern well, or should we consider other options?"</p>
                         </div>
                         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', background: 'var(--color-surface-soft)', padding: '1rem', borderRadius: 'var(--radius-sm)', borderLeft: '4px solid var(--color-primary)' }}>
-                            <p style={{ fontSize: '0.95rem' }}><em>I'm currently using <strong>{Object.values(myProducts)[0]?.name || 'these products'}</strong>. Do you see any concerns with this, given my health goals?</em></p>
+                            <p style={{ fontSize: '0.95rem' }}>"Do you see any concerns with the products I'm currently using, given my health goals?"</p>
                         </div>
                         {userChatMessages.length > 0 && (
                             <>
-                                <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginTop: '0.5rem', marginBottom: '0.25rem', letterSpacing: '0.05em' }}>Based on what you shared with Ayna</p>
+                                <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', marginTop: '0.5rem', marginBottom: '0.25rem', letterSpacing: '0.05em' }}>Based on what you shared with ayna</p>
                                 {userChatMessages.slice(0, 5).map((text, i) => (
                                     <div key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', background: 'var(--color-primary-fade)', padding: '1rem', borderRadius: 'var(--radius-sm)', borderLeft: '4px solid var(--color-primary)' }}>
                                         <div>
-                                            <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.35rem' }}>You told Ayna:</p>
+                                            <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.35rem' }}>You told ayna:</p>
                                             <blockquote style={{ margin: '0 0 0.5rem', paddingLeft: '0.75rem', borderLeft: '3px solid var(--color-primary)', fontSize: '0.9rem', color: 'var(--color-text-main)' }}>{text.length > 120 ? text.slice(0, 120) + '…' : text}</blockquote>
                                             <p style={{ fontSize: '0.95rem', fontWeight: '500' }}>You could ask your provider: "I shared this with my health app. Can we talk about whether it affects my care, or anything I should follow up on?"</p>
                                         </div>
@@ -120,7 +128,7 @@ export default function DoctorPrep({ checkinData = null, myProducts = {}, quizRe
             </div>
 
             <div style={{ marginTop: '2rem', textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>
-                <p>Ayna gives information only — it is not a medical device. Always check health facts with your doctor or nurse.</p>
+                <p>ayna gives information only. It is not a medical device. Always check health facts with your doctor or nurse.</p>
             </div>
         </div>
     );

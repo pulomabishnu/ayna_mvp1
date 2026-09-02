@@ -1,18 +1,32 @@
 /* global process */
 import { retrieveKnowledgeForIntake, buildKnowledgeContext } from '../src/utils/ragRetrieval.js';
 import { verifyUser, claimEcosystemBuild, releaseEcosystemBuild } from './_usageLimit.js';
-import { callWithFallback, parseProviderOrder, tryParseJsonCandidate } from './_llm.js';
+import { callWithFallback, parseProviderOrder, tryParseJsonCandidate, providerConfigured } from './_llm.js';
 import { isPremiumUser, hasLegacyClientPremiumFlag } from './_entitlement.js';
 
 // Hard ceilings on client-supplied work. Without these, one request with 500
 // primaryConcerns and batchSize 500 issued 500 sequential LLM calls.
-const MAX_CONCERNS = 12;
+//
+// 12 was silently dropping real selections: the "What do you want help
+// with?" quiz (CONCERN_AREAS in src/utils/healthIntake.js) has 18 checkbox
+// options on its own (16 raised to 18 on 2026-08-25, adding Pregnancy
+// support and Postpartum recovery per real beta feedback), before any
+// conditions/symptoms/goals-derived concerns are added on top in
+// selectedConcerns() below — a user who picked more than 12 checkboxes (not
+// an edge case; the quiz explicitly says "Pick as many as you want") had the
+// excess truncated with no error, no UI signal, nothing (found live
+// 2026-08-25). Raised to comfortably cover all 18 real options plus some
+// derived headroom, while still bounding a client that bypasses the UI and
+// sends an arbitrarily long primaryConcerns array directly.
+const MAX_CONCERNS = 20;
 const MAX_BATCH_SIZE = 6;
 /** Leave room to serialize and return before the platform kills the function. */
 const FUNCTION_BUDGET_MS = 50_000;
 
 function anyApiKeyConfigured() {
-  return !!(process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY);
+  return ['anthropic', 'openai', 'gemini'].some((provider) =>
+    providerConfigured(provider)
+  );
 }
 
 // ─── Intake PII sanitization ──────────────────────────────────────────────────
@@ -312,28 +326,98 @@ function enrichRecommendations(recs, requestedConcern = '') {
     .filter(Boolean);
 }
 
+// DSLD's free-text search returns its best-effort top hit even when nothing
+// in the database is actually a good match — it's search, not verification.
+// Blindly trusting hit #1 (the original implementation) matched "Always
+// Infinity" (a menstrual pad) to "Rhino Infinity 10K" (an unrelated men's
+// supplement) purely because both contain the word "infinity", and that
+// wrong supplement's label photo then rendered as the pad's product image —
+// confirmed live in production. Score each candidate against the query the
+// same way _shopifyProductMatch.js does (token containment, not a plain
+// substring/ES-score check) and reject anything that isn't a genuine match.
+function normalizeDsldTokens(s) {
+  return String(s || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim()
+    .split(' ')
+    .filter((t) => t.length > 2);
+}
+
+function dsldMatchScore(queryTokens, candidateName) {
+  const candTokens = normalizeDsldTokens(candidateName);
+  if (queryTokens.length === 0 || candTokens.length === 0) return { score: 0, overlap: 0 };
+  const candSet = new Set(candTokens);
+  const querySet = new Set(queryTokens);
+  let overlap = 0;
+  for (const t of querySet) {
+    if (candSet.has(t)) overlap += 1;
+  }
+  const smaller = Math.min(querySet.size, candSet.size);
+  return { score: overlap / smaller, overlap };
+}
+
 export async function lookupDsldProduct(name) {
   if (!name || name.length < 3) return null;
   try {
-    const url = `https://api.ods.od.nih.gov/dsld/v9/label?name=${encodeURIComponent(name)}&status=Y&size=1`;
+    // WAS `/dsld/v9/label?name=...` — that path returns the API's own HTML
+    // docs page (not JSON) for any request; it silently failed every single
+    // call and nobody noticed because the try/catch swallowed it and every
+    // caller just treated "no DSLD data" as a normal, expected miss. Found by
+    // testing the real API live: `/v9/search-filter?q=...` is the endpoint
+    // that actually returns real hits, confirmed against a genuine product.
+    const url = `https://api.ods.od.nih.gov/dsld/v9/search-filter?q=${encodeURIComponent(name)}&size=5`;
     const r = await fetch(url, {
       headers: { Accept: 'application/json', 'User-Agent': 'Ayna-Health-App/1.0' },
       signal: AbortSignal.timeout(4000),
     });
     if (!r.ok) return null;
     const data = await r.json();
-    const hit = data?.hits?.hits?.[0]?._source;
-    if (!hit) return null;
-    const ingredients = Array.isArray(hit.dietaryIngredients)
-      ? hit.dietaryIngredients.map((i) => i.ingredientName || i.name).filter(Boolean).slice(0, 8)
+    // Flat `hits: [...]`, not the ES-style nested `hits.hits` the old code
+    // assumed — also confirmed live, not guessed.
+    const candidates = Array.isArray(data?.hits) ? data.hits : [];
+    if (candidates.length === 0) return null;
+
+    const queryTokens = normalizeDsldTokens(name);
+    let top = null;
+    let bestScore = 0;
+    let bestOverlap = 0;
+    for (const c of candidates) {
+      const src = c?._source;
+      if (!src) continue;
+      const candidateName = `${src.brandName || ''} ${src.fullName || ''}`.trim();
+      const { score, overlap } = dsldMatchScore(queryTokens, candidateName);
+      if (score > bestScore) {
+        bestScore = score;
+        bestOverlap = overlap;
+        top = c;
+      }
+    }
+    // Same bar as the Shopify matcher: the smaller token set must be almost
+    // fully contained in the other, and at least 2 real tokens in common —
+    // this is a fuzzy match against a database that will always return
+    // SOMETHING, not a search engine, so err toward no image over a wrong one.
+    if (!top || bestScore < 0.75 || bestOverlap < 2) return null;
+
+    const hit = top?._source;
+    const dsldId = top?._id ? String(top._id) : '';
+    if (!hit || !dsldId) return null;
+    // Real field names from the actual response: allIngredients (not
+    // dietaryIngredients), each with `name` (not `ingredientName`).
+    const ingredients = Array.isArray(hit.allIngredients)
+      ? hit.allIngredients.map((i) => i.name).filter(Boolean).slice(0, 8)
       : [];
+    // The label JSON has no image field at all — the real photo lives at a
+    // predictable S3 thumbnail path keyed by the same id, confirmed by
+    // loading a real label page in a browser and reading its actual <img>
+    // src rather than guessing a URL shape.
     return {
       verified: true,
-      brand: hit.brandName || hit.manufacturerName || '',
+      brand: hit.brandName || '',
       ingredients,
-      dsldId: hit.dsldId || '',
-      imageUrl: (hit.imageUrl || '').startsWith('https://') ? hit.imageUrl : '',
-      labelUrl: hit.dsldId ? `https://dsld.od.nih.gov/product-label/${hit.dsldId}` : '',
+      dsldId,
+      imageUrl: `https://api.ods.od.nih.gov/dsld/s3/pdf/thumbnails/${dsldId}.jpg`,
+      labelUrl: `https://dsld.od.nih.gov/label/${dsldId}`,
     };
   } catch {
     return null;
@@ -405,8 +489,13 @@ async function mapConcurrent(items, fn, limit = 4) {
       try {
         results[i] = await fn(items[i], i);
       } catch (e) {
+        // Backstop only — fn (the per-concern callback below) already has its
+        // own try/catch, so this only fires on a genuine bug in that callback
+        // itself. Still returns the same {failed, concern, reason} shape as a
+        // normal per-concern failure so it isn't silently dropped from
+        // failedConcerns downstream.
         console.error('[llm-recs] task failed:', e?.message);
-        results[i] = null;
+        results[i] = { failed: true, concern: items[i], reason: e?.message || 'unexpected_error' };
       }
     }
   }
@@ -496,6 +585,7 @@ ANTI-HALLUCINATION — this is the most important rule:
 
 PERSONALIZATION:
 - Product preferences are HARD FILTERS — if she prefers organic/fragrance-free, every physical product must meet that.
+- FSA/HSA prioritization: if "FSA/HSA" in the profile above is not "not provided", prioritize FSA/HSA-eligible products (physical products/supplements sold as FSA/HSA-eligible in the US) when choosing between otherwise-comparable candidates for a track, and say so briefly in whyItWorks when it's a real factor in the pick. This is a real stated financial constraint, not a soft preference — weight it accordingly — but don't force a clearly worse product into the top spot just because it's eligible when a genuinely better-fit option isn't.
 - Never recommend a brand she listed as disliked.
 - whyItWorks must be in plain everyday language — no medical jargon. Explain: (1) simply how the product works (mechanism in lay terms), (2) why it fits her specific profile (condition, pain level, preference), (3) what makes it the top pick over the alternatives. A user should read this and immediately understand why you chose THIS product for HER over everything else available.
 - CURRENTLY-USED BRAND COMPARISON: If "Products currently using" lists a brand in the same category as your top product recommendation, you MUST include one sentence in whyItWorks explaining what specifically makes your recommended product a better fit than the brand she already uses — whether it is ingredient quality, clinical evidence strength, organic certification, lower cost, better fit for her conditions, or another concrete reason. Be direct: "Compared to [brand she uses], [recommended product] offers [specific advantage] which matters for [her condition/preference]." Also include her currently-used brand as one of the alternatives so she can still choose it.
@@ -649,7 +739,7 @@ async function handleRequest(req, res) {
   }
 
   const searchResults = await searchProductsForConcerns(concerns, intake);
-  const order = parseProviderOrder('AI_RECOMMENDATIONS_PROVIDER_ORDER', 'anthropic,openai');
+  const order = parseProviderOrder('AI_RECOMMENDATIONS_PROVIDER_ORDER', 'anthropic,openai,gemini');
 
   // Stop starting new concerns once the function budget is nearly spent, so we
   // return the concerns we DID complete instead of being killed mid-flight and
@@ -663,7 +753,7 @@ async function handleRequest(req, res) {
     async (concern, idx) => {
       if (budgetExhausted()) {
         console.warn(`[llm-recs] skipping concern ${idx + 1}/${concerns.length} — function budget exhausted`);
-        return null;
+        return { failed: true, concern, reason: 'function_budget_exhausted' };
       }
       const searchHits = searchResults?.[concern] || null;
       const prompt = buildPromptForOneConcern(concern, intake, feedback, searchHits);
@@ -686,23 +776,53 @@ async function handleRequest(req, res) {
         const parsed = tryParseJsonCandidate(out.text);
         console.log(`[llm-recs] concern ${idx + 1}/${concerns.length} | provider: ${out.provider} | bytes: ${out.text.length} | parsed: ${!!parsed}`);
         if (parsed) return { parsed, provider: out.provider, concern };
-        return null;
+        return { failed: true, concern, reason: 'unparseable_response' };
       } catch (e) {
-        console.error(`[llm-recs] concern ${idx + 1}/${concerns.length} failed:`, e?.status || '', e?.message);
-        return null;
+        // Carry the actual reason back to the client instead of just the
+        // concern's name — a live incident (2026-08-22: "Hormone balance" and
+        // "Gut and vaginal health" failed after ~20s) turned out to be
+        // undiagnosable after the fact because nothing but this server
+        // console.error captured *why*, and Vercel's CLI log retention didn't
+        // have it by the time anyone went looking. Now the reason travels
+        // with the response so it shows up in the browser console too.
+        console.error(`[llm-recs] concern ${idx + 1}/${concerns.length} failed:`, e?.provider || '', e?.status || '', e?.message);
+        return { failed: true, concern, reason: e?.status ? `${e.provider || 'llm'}_${e.status}` : (e?.message || 'unknown_error') };
       }
     },
-    // Concurrency was pinned to 1 with a note blaming Anthropic's ~50K TPM
-    // limit. Each call is roughly 3K in + up to 8K out, so 3 in flight is ~33K
-    // TPM — comfortably under. The real cause of the tail failures was that
-    // 429s were swallowed as "no result" with no retry; _llm.js now backs off
-    // on Retry-After instead, which is what makes concurrency safe.
-    Math.max(1, Math.min(parseInt(process.env.LLM_CONCERN_CONCURRENCY || '3', 10) || 3, 6))
+    // Each of the client's NUM_BATCHES=4 invocations (src/components/MyEcosystem.jsx)
+    // fires as a SEPARATE, genuinely-parallel HTTP request — Vercel doesn't
+    // serialize them, and they share one Anthropic account's rate limit.
+    // A prior comment here sized this concurrency (3) against ONE invocation's
+    // own token usage (~33K TPM) and called that "comfortably under" a ~50K TPM
+    // ceiling — true in isolation, but wrong for the actual traffic pattern:
+    // all 4 invocations can fire their first calls within the same second, so
+    // real peak load is up to 4x that estimate (~132K TPM), not ~33K. That
+    // mismatch is the most likely cause of the "some concerns failed" partial-
+    // failure pattern users hit around the ~20s mark (a burst of concurrent
+    // 429s that retry+backoff can absorb SOME but not all of within the 28s
+    // per-call timeout). Lowered to 2: peak combined load drops to ~4x22K =
+    // ~88K TPM — still not a hard guarantee (there's no cross-invocation
+    // coordination without a real distributed limiter, which is a bigger
+    // change), but a meaningfully smaller blast radius for the same reason a
+    // single invocation's own concurrency was capped in the first place.
+    // Separately — and this matters more than the exact number here — the
+    // OpenAI fallback this code path assumes exists is NOT actually
+    // configured (OPENAI_API_KEY is unset in this project's Vercel env as of
+    // 2026-08-22), so Anthropic is a single point of failure regardless of
+    // this concurrency setting; see AI_RECOMMENDATIONS_PROVIDER_ORDER.
+    Math.max(1, Math.min(parseInt(process.env.LLM_CONCERN_CONCURRENCY || '2', 10) || 2, 6))
   );
 
   const providerUsed = perConcernResults.find((r) => r?.provider)?.provider || '';
-  const succeeded = perConcernResults.filter(Boolean);
-  const failedConcerns = concerns.filter((c, i) => !perConcernResults[i]);
+  // Every concern now returns a truthy object (success OR failure — see above,
+  // failures carry a reason instead of being null) so `.filter(Boolean)` alone
+  // would wrongly count failures as successes. Discriminate on the shape.
+  const succeeded = perConcernResults.filter((r) => r && !r.failed);
+  const failed = perConcernResults.filter((r) => r?.failed);
+  const failedConcerns = failed.map((r) => r.concern);
+  // Reason travels to the client so a future incident is diagnosable from the
+  // browser console / API response alone, without needing server log access.
+  const failedConcernReasons = failed.map((r) => ({ concern: r.concern, reason: r.reason }));
 
   // Enrich PER CONCERN so each entry is stamped with the concern it was actually
   // requested for. Previously flatMap discarded that mapping and the code trusted
@@ -728,6 +848,7 @@ async function handleRequest(req, res) {
       requested: concerns.length,
       delivered: 0,
       failedConcerns,
+      failedConcernReasons,
       message: 'No recommendations could be generated. Please try again.',
     });
   }
@@ -787,6 +908,12 @@ async function handleRequest(req, res) {
     // Non-empty when some concerns failed. The client renders a partial-result
     // notice instead of silently showing fewer sections than were asked for.
     failedConcerns,
+    // Same list, but with WHY each one failed (provider+status, or a reason
+    // code like 'unparseable_response'/'function_budget_exhausted') — so a
+    // future incident is diagnosable from this response / the browser
+    // console alone, without needing server log access (which wasn't
+    // available when this exact bug was first reported).
+    failedConcernReasons,
     partial: failedConcerns.length > 0,
     providerUsed,
     generatedAt: new Date().toISOString(),

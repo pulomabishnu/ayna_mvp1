@@ -75,14 +75,14 @@ export const PHYSICAL_PRODUCTS = [
             recalls: ' 2024 social media concerns about chemical residues. Always has not been subject to FDA recall but independent testing found trace PFAS in some pad brands.',
             allergens: 'Fragrance in scented versions; fragrance-free version available',
             sideEffects: 'Possible contact dermatitis or irritation, especially with scented versions. Rash or itching from synthetic materials.',
-            opinionAlerts: 'Common complaints include the "plastic feel" and environmental concerns regarding non-biodegradability.'
+            opinionAlerts: 'Common complaints include the "plastic feel" and environmental concerns regarding non-biodegradability. A 2024 independent lab test (commissioned by Mamavation/EHN) found PFAS ("forever chemical") indicators in some Always pad lines, which drove a wave of social media discussion and pushed a visible share of users toward organic-cotton alternatives — Always disputes that its products pose a health risk, and no regulatory recall has followed, but the concern is real and widely discussed, not fringe.'
         },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'FlexFoam absorption is reliable for heavy flow; unscented versions minimize irritation risk for sensitive users.',
-        communityReview: 'Community discussions on Reddit r/periods note strong performance for heavy flow and overnight use, with appreciation for the thin profile.',
+        communityReview: 'Community discussions on Reddit r/periods are split: strong praise for absorption and the thin profile during heavy flow, alongside a distinct and growing thread of PFAS/chemical-residue concern that picked up in 2024 and made a real share of users switch to organic-cotton brands or say they no longer feel fully comfortable using it.',
         ingredients: 'Polyethylene, polypropylene, wood pulp, adhesive. Fragrance-free version omits parfum.',
-        effectiveness: 'Highly effective for heavy flow. FlexFoam absorbs 10x its weight while staying thin.',
+        effectiveness: 'Highly effective for heavy flow — users consistently report fewer leaks than with standard mainstream pads at a comparable price point.',
         integrations: [],
         badges: ['Mainstream Favorite', 'High Absorbency'],
         verificationLinks: {
@@ -96,8 +96,7 @@ export const PHYSICAL_PRODUCTS = [
             scientific: {
                 aiSummary: "Independent and regulatory oversight confirms that FlexFoam technology meets FDA safety standards for medical devices. Recent independent research highlights the effectiveness of polyethylene blends in moisture-wicking, though sustainability remains a scientific trade-off.",
                 links: [
-                    { url: 'https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-how-use-them-safely', text: 'FDA: Tampon & Menstrual Product Safety', summary: 'The FDA regulates pads and tampons as medical devices and monitors safety.', justification: 'The FDA is the federal authority for medical device safety in the US.' },
-                    { url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Study on Pad Absorption', summary: 'Research comparing absorbent materials to traditional wood-pulp based methods.', justification: 'PubMed is the premier database for peer-reviewed biomedical research.' }
+                    { url: 'https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-how-use-them-safely', text: 'FDA: Tampon & Menstrual Product Safety', summary: 'The FDA regulates pads and tampons as medical devices and monitors safety.', justification: 'The FDA is the federal authority for medical device safety in the US.' }
                 ]
             },
             community: {
@@ -136,7 +135,7 @@ export const PHYSICAL_PRODUCTS = [
             opinionAlerts: 'Main complaint is higher price compared to conventional pads. Some users find them less absorbent for extremely heavy flow.'
         },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Organic cotton pads reduce exposure to bleaching byproducts and synthetic fragrances; beneficial for sensitive skin.',
         communityReview: 'Community discussions on Reddit r/WomensHealth note satisfaction with absorption and ingredient transparency.',
         ingredients: '100% certified organic cotton top sheet, wood pulp core, bio-PE back sheet, natural adhesive.',
@@ -147,15 +146,13 @@ export const PHYSICAL_PRODUCTS = [
             doctor: {
                 aiSummary: "The medical consensus on Rael is highly favorable for patients with sensitive skin. OB-GYNs specifically endorse the 'chlorine-free' and 'organic' components as being protective against vulvar dermatitis. Clinicians note that while the absorption is high, it may not match synthetic 'ultra-absorbent' pads for heavy athletes.",
                 links: [
-                    { url: 'https://www.healthline.com/health/womens-health/organic-pads', text: 'OB-GYN Review of Organic Pads', summary: 'Doctors note that organic cotton reduces the risk of contact dermatitis and irritation.', justification: 'Healthline is a medically-vetted health information platform with rigorous editorial standards.' },
-                    { url: 'https://www.hopkinsmedicine.org/health/wellness-and-prevention/feminine-hygiene-products', text: 'Johns Hopkins: Hygiene Safety', summary: 'Expert review of materials used in modern organic menstrual care.', justification: 'Johns Hopkins Medicine is a world-class academic medical center providing authoritative health research.' }
+                    
                 ]
             },
             scientific: {
                 aiSummary: "Scientific literature supports the claim that organic cotton pads, like Rael, reduce the presence of endocrine disruptors. Independent testing shows zero levels of PFAS and chlorine residues, confirming the brand's commitment to material safety.",
                 links: [
-                    { url: 'https://www.consumerreports.org/health/menstrual-products/should-you-switch-to-organic-tampons-and-pads-a2599295540/', text: 'Consumer Reports: Organic Period Care', summary: 'Investigation into material safety and chemical testing of organic brands.', justification: 'Consumer Reports is an independent non-profit that uses rigorous laboratory testing for product safety.' },
-                    { url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Environmental Impact of Menstrual Products', summary: 'Comparative study on the biodegradability of organic cotton vs. synthetic pads.', justification: 'PubMed is a globally respected repository for peer-reviewed medical and scientific literature.' }
+                    
                 ]
             },
             community: {
@@ -195,7 +192,7 @@ export const PHYSICAL_PRODUCTS = [
             opinionAlerts: 'High rate of split opinions: half the users love the cooling effect for cramps, the other half find it too intense or irritating.'
         },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Cooling herbs like peppermint may provide topical relief; some dermatologists warn essential oils can cause vulvar contact dermatitis in sensitive individuals.',
         communityReview: 'Community discussions note strong cooling effect for cramps; experiences are polarized.',
         ingredients: 'Plant-derived fiber, lavender oil, peppermint oil, aloe extract, wood pulp core.',
@@ -204,15 +201,15 @@ export const PHYSICAL_PRODUCTS = [
         badges: ['WOC Owned', 'Herbal Comfort', 'Sustainable'],
         verificationLinks: {
             doctor: {
-                aiSummary: "Ayna has investigated clinical perspectives on Honey Pot's 'herbal-infused' pads. While medical professionals generally support the use of plant-based materials, some dermatologists warn that direct contact with essential oils like mint and lavender can cause vulvar contact dermatitis in sensitive individuals. No specific clinical studies on Honey Pot's formula were found.",
+                aiSummary: "ayna has investigated clinical perspectives on Honey Pot's 'herbal-infused' pads. While medical professionals generally support the use of plant-based materials, some dermatologists warn that direct contact with essential oils like mint and lavender can cause vulvar contact dermatitis in sensitive individuals. No specific clinical studies on Honey Pot's formula were found.",
                 links: [
-                    { url: 'https://www.everydayhealth.com/pms/herbal-remedies-for-pms.aspx', text: 'Herbal Comfort in Period Care', summary: 'OB-GYNs suggest cooling herbs like mint and lavender for period pain.', justification: 'Everyday Health is a top-tier health news portal with articles reviewed by a medical advisory board.' }
+                    
                 ]
             },
             scientific: {
                 aiSummary: "Scientific inquiry into herbal cooling for period pain is limited. While peppermint oil has documented topical analgesic effects, its long-term application in the vulvar region via menstrual products has not been rigorously studied for safety or effectiveness compared to standard analgesic methods.",
                 links: [
-                    { url: 'https://pubmed.ncbi.nlm.nih.gov/22081622/', text: 'Study on Topical Analgesics', summary: 'Research on the efficacy of peppermint-based cooling for pain relief.', justification: 'PubMed is the primary source for global biomedical research and clinical trial data.' }
+                    
                 ]
             },
             community: {
@@ -231,6 +228,7 @@ export const PHYSICAL_PRODUCTS = [
     {
         id: 'p-lola-tampon',
         name: 'LOLA Organic Tampons',
+        productUrl: 'https://mylola.com/products/applicator-tampons',
         category: 'tampon',
         type: 'physical',
         internal: true,
@@ -252,22 +250,20 @@ export const PHYSICAL_PRODUCTS = [
             opinionAlerts: 'Compact applicator can occasionally collapse during use if not fully extended properly.'
         },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Ingredient transparency and organic cotton reduce irritation risk; OB-GYNs often recommend organic options for sensitive patients.',
         communityReview: 'Community discussions on Reddit r/periods note satisfaction with organic tampons and subscription convenience.',
         ingredients: '100% organic cotton core and string, BPA-free plastic applicator.',
         effectiveness: 'Highly absorbent for heavy days. Compact applicator is great for on-the-go.',
         badges: ['Female-Owned', 'B-Corp', 'Sustainable'],
         verificationLinks: {
-            doctor: [
-                { url: 'https://www.healthline.com/health/womens-health/organic-pads', text: 'Healthline: Organic Period Care', summary: 'Medical professionals highlight the reduced risk of irritation when using organic cotton.' },
-                { url: 'https://www.hopkinsmedicine.org/health/wellness-and-prevention/feminine-hygiene-products', text: 'Johns Hopkins: Feminine Hygiene & Safety', summary: 'Clinical advice on tampon and menstrual product materials and health.' }
-            ],
-            scientific: [
-                { url: 'https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-how-use-them-safely', text: 'FDA: Tampon Safety', summary: 'Federal safety standards for tampon absorption and materials.' },
-                { url: 'https://www.healthline.com/health/womens-health/organic-tampons', text: 'Healthline: Best Organic Tampons', summary: 'Material analysis and safety for organic tampon brands.' }
-            ],
-            community: [
+            doctor: { links: [
+                
+            ] },
+            scientific: { links: [
+                { url: 'https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-how-use-them-safely', text: 'FDA: Tampon Safety', summary: 'Federal safety standards for tampon absorption and materials.' }
+            ] },
+            community: { links: [
                 { platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Discussions on organic tampons and subscriptions.' },
                 { platform: 'reddit', url: 'https://www.reddit.com/r/periods/search/?q=LOLA+tampons&restrict_sr=1', text: 'Reddit r/periods: LOLA search', summary: 'Posts about LOLA subscription and organic tampons.' },
                 { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=LOLA%20tampons', text: 'TikTok: LOLA tampons', summary: 'Real-world testing and subscription unboxing.' },
@@ -275,7 +271,7 @@ export const PHYSICAL_PRODUCTS = [
                 { platform: 'instagram', url: 'https://www.instagram.com/mylola/', text: 'LOLA on Instagram', summary: 'Brand reels and community posts.' },
                 { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=LOLA%20tampons', text: 'Facebook: LOLA tampons', summary: 'Group and public discussions.' },
                 { platform: 'wirecutter', url: 'https://www.nytimes.com/wirecutter/reviews/best-tampons/', text: 'Wirecutter: Best Tampons', summary: 'NYT Wirecutter independent tampon testing and recommendations.' },
-            ]
+            ] }
         }
     },
     // ─── CUPS ────────────────────────────────────────────
@@ -297,8 +293,8 @@ export const PHYSICAL_PRODUCTS = [
             materials: '100% medical-grade silicone, no BPA, latex, dyes, or chemicals',
             recalls: 'No recalls.',
             allergens: 'Latex-free, hypoallergenic',
-            sideEffects: 'Possible cramping from suction, difficulty with insertion/removal, urinary urgency if sized incorrectly.',
-            opinionAlerts: 'Steep learning curve. Users often report a 2-3 cycle adjustment period before mastering the product.'
+            sideEffects: 'Possible cramping from suction, difficulty with insertion/removal, urinary urgency if sized incorrectly. Like tampons, menstrual cups carry a rare but medically documented risk of toxic shock syndrome (TSS) — a small number of published case reports exist — so follow labeled wear-time and cleaning instructions.',
+            opinionAlerts: 'Steep learning curve. Users often report a 2-3 cycle adjustment period before mastering the product, and difficulty removing the cup (due to suction) is a recurring complaint that occasionally sends first-time users to urgent care.'
         },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
@@ -308,15 +304,13 @@ export const PHYSICAL_PRODUCTS = [
         effectiveness: 'Holds 25mL (regular) to 37mL (large). Significantly more than tampons. Up to 12-hour wear.',
         badges: ['Female-Owned', 'B-Corp', 'Sustainable'],
         verificationLinks: {
-            doctor: [
-                { url: 'https://saalt.com/pages/our-story', text: 'Saalt Medical Advisory', summary: 'Saalt works with OB-GYNs to ensure their silicone is body-safe.' },
+            doctor: { links: [
                 { url: 'https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cup/art-20045868', text: 'Mayo Clinic: Using a Menstrual Cup', summary: 'Comprehensive guide to the safe use and cleaning of cups.' }
-            ],
-            scientific: [
-                { url: 'https://www.thelancet.com/journals/lanpub/article/PIIS2468-2667(19)30110-3/fulltext', text: 'Lancet Study on Menstrual Cups', summary: 'The most extensive meta-analysis of menstrual cup safety and effectiveness published to date.' },
-                { url: 'https://pubmed.ncbi.nlm.nih.gov/22453472/', text: 'Clinical Safety of Cups', summary: 'Research confirming clinical safety of medical-grade silicone cups.' }
-            ],
-            community: [
+            ] },
+            scientific: { links: [
+                
+            ] },
+            community: { links: [
                 { platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Cup comparisons and Saalt recommendations.' },
                 { platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/search/?q=saalt&restrict_sr=1', text: 'Reddit r/menstrualcups: Saalt search', summary: 'Posts and tips specific to Saalt cup.' },
                 { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=saalt%20menstrual%20cup', text: 'TikTok: Saalt cup', summary: 'Instructional videos and beginner tips.' },
@@ -324,7 +318,7 @@ export const PHYSICAL_PRODUCTS = [
                 { platform: 'instagram', url: 'https://www.instagram.com/saalt_co/', text: 'Saalt on Instagram', summary: 'Brand reels and cup education.' },
                 { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=saalt%20menstrual%20cup', text: 'Facebook: Saalt cup', summary: 'Community discussions and tips.' },
                 { platform: 'wirecutter', url: 'https://www.nytimes.com/wirecutter/reviews/best-menstrual-cup/', text: 'Wirecutter: Best Menstrual Cups & Discs', summary: 'NYT Wirecutter testing of 50+ menstrual cups and discs. Saalt Disc is a top pick.' },
-            ]
+            ] }
         }
     },
     {
@@ -356,13 +350,13 @@ export const PHYSICAL_PRODUCTS = [
             opinionAlerts: 'Ferrous sulfate has lower absorption than ferrous bisglycinate forms. Take with vitamin C to improve absorption.'
         },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of NIH ODS and ACOG guidance on iron supplementation.',
+        clinicianAttribution: 'ayna synthesis of NIH ODS and ACOG guidance on iron supplementation.',
         doctorOpinion: 'Iron supplementation should be confirmed with bloodwork before starting. Over-supplementation can cause harm. Take with food and vitamin C to improve absorption and reduce GI side effects.',
         communityReview: 'Well-rated for effectiveness and price. Common feedback: take with food and vitamin C to reduce stomach upset, and expect darker stools.',
         verificationLinks: {
-            scientific: [
-                { url: 'https://ods.od.nih.gov/factsheets/Iron-HealthProfessional/', text: 'NIH ODS: Iron Fact Sheet', summary: 'Comprehensive clinical reference on iron deficiency, supplementation, and safety.' }
-            ]
+            scientific: { links: [
+                
+            ] }
         }
     },
     {
@@ -394,13 +388,13 @@ export const PHYSICAL_PRODUCTS = [
             opinionAlerts: 'D3 at 5000 IU is a higher dose. Clinicians often recommend confirming deficiency with a 25(OH)D blood test before starting.'
         },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of Endocrine Society and NIH ODS guidance on vitamin D supplementation.',
+        clinicianAttribution: 'ayna synthesis of Endocrine Society and NIH ODS guidance on vitamin D supplementation.',
         doctorOpinion: 'Vitamin D deficiency is widespread and often goes undetected. Confirming your level with a 25(OH)D blood test before starting high-dose supplementation is recommended.',
         communityReview: 'Highly rated. Users report improvements in mood, energy, and general wellbeing. Consistently well-reviewed for quality and value.',
         verificationLinks: {
-            scientific: [
-                { url: 'https://ods.od.nih.gov/factsheets/VitaminD-HealthProfessional/', text: 'NIH ODS: Vitamin D Fact Sheet', summary: 'Clinical reference on vitamin D deficiency, supplementation, and safety thresholds.' }
-            ]
+            scientific: { links: [
+                
+            ] }
         }
     },
     {
@@ -433,19 +427,19 @@ export const PHYSICAL_PRODUCTS = [
             opinionAlerts: 'Do not use with cups made from rubber or latex. Silicone only.'
         },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of clinical guidance on menstrual cup hygiene.',
+        clinicianAttribution: 'ayna synthesis of clinical guidance on menstrual cup hygiene.',
         doctorOpinion: 'Menstrual cups and discs should be cleaned according to manufacturer instructions. Evidence does not establish steamers as medically superior to other recommended cleaning methods.',
         communityReview: 'Highly rated by Saalt cup users for convenience and peace of mind between cycles.',
         verificationLinks: {
-            doctor: [
+            doctor: { links: [
                 { url: 'https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cup/art-20045868', text: 'Mayo Clinic: Menstrual Cup Care', summary: 'Guidance on proper cleaning and sterilization of menstrual cups.' }
-            ],
-            scientific: [
+            ] },
+            scientific: { links: [
                 { url: 'https://www.fda.gov/medical-devices/products-and-medical-procedures/menstrual-product-options-facts-and-safe-use', text: 'FDA: Menstrual Product Options, Facts, and Safe Use', summary: 'FDA guidance recommends following menstrual-product instructions and appropriate hygiene. This is category-level guidance and does not establish steamers as superior to other manufacturer-recommended cleaning methods.' }
-            ],
-            community: [
+            ] },
+            community: { links: [
                 { platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/search/?q=steamer', text: 'Reddit r/menstrualcups: steamer discussion', summary: 'Community reviews of cup sterilization methods.' }
-            ]
+            ] }
         }
     },
     // ─── DISCS ───────────────────────────────────────────
@@ -457,10 +451,17 @@ export const PHYSICAL_PRODUCTS = [
         internal: true,
         healthFunctions: ['menstrual-collection'],
         tags: ['heavy-flow', 'leaks', 'comfort'],
-        price: '$14 for 12 (disposable) / $40 reusable',
+        price: '$16 for 12 (disposable) / $35 reusable',
         userRating: 4.5,
         whereToBuy: ['Target', 'CVS', 'Amazon'],
-        image: 'https://flexfits.com/cdn/shop/files/reusable-period-disc-with-packaging-and-review.png?v=1763753790',
+        // Was the brand's own primary marketing image, which is itself a
+        // customer-review screenshot composite (5-star rating graphic,
+        // testimonial, reviewer name) — real, but reads as a forgotten
+        // placeholder next to properly photographed competitors (found live,
+        // 2026-08-24 bug bash). Swapped for a clean lifestyle photo, the
+        // second image in FlexFits' own product feed for the disposable
+        // Flex Disc (this listing's primary/first-priced variant), verified live.
+        image: 'https://cdn.shopify.com/s/files/1/1097/9960/files/person-holding-menstrual-disc-closeup.jpg?v=1763748081',
         summary: 'Sits in the vaginal fornix (not the canal). Can be worn during intimacy. 12-hour wear.',
         safety: {
             fdaStatus: 'FDA-registered',
@@ -471,22 +472,20 @@ export const PHYSICAL_PRODUCTS = [
             opinionAlerts: 'Some find the disposable version too wasteful/expensive for every-cycle use.'
         },
         clinicianOpinionSource: 'mixed',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Discs are positioned differently than cups and can suit those who find cups uncomfortable; 12-hour wear is convenient.',
         communityReview: 'Community discussions on Reddit r/periods note mess-free intimacy and reliable leak protection during heavy days.',
         ingredients: 'Medical-grade polymer body, hypoallergenic adhesive rim.',
         effectiveness: 'Holds up to 6 tampons worth. Unique positioning means fewer cramps for some users.',
         badges: ['Intimacy Friendly', 'High Capacity'],
         verificationLinks: {
-            doctor: [
-                { url: 'https://flexfits.com/pages/how-it-works', text: 'Flex: How Discs Work', summary: 'Explanation of disc position and 12-hour wear.' },
-                { url: 'https://www.healthline.com/health/womens-health/menstrual-disc', text: 'Healthline: Menstrual Discs', summary: 'Doctor-reviewed guide on how to use discs vs cups.' }
-            ],
-            scientific: [
-                { url: 'https://www.hopkinsmedicine.org/health/wellness-and-prevention/feminine-hygiene-products', text: 'Johns Hopkins: Feminine Hygiene', summary: 'Clinical context on internal collection devices and safety.' },
-                { url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Vaginal Health and Internal Devices', summary: 'Study on the safety of materials used in menstrual discs.' }
-            ],
-            community: [
+            doctor: { links: [
+                
+            ] },
+            scientific: { links: [
+                
+            ] },
+            community: { links: [
                 { platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Disc vs cup comparisons and Flex experiences.' },
                 { platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/search/?q=flex+disc&restrict_sr=1', text: 'Reddit r/menstrualcups: Flex disc', summary: 'Threads on Flex disc and period intimacy.' },
                 { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=flex%20disc%20review', text: 'TikTok: Flex disc', summary: 'Short-form reviews and mess-free period experiences.' },
@@ -494,7 +493,7 @@ export const PHYSICAL_PRODUCTS = [
                 { platform: 'instagram', url: 'https://www.instagram.com/flexfits/', text: 'Flex on Instagram', summary: 'Brand reels and disc education.' },
                 { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=flex%20period%20disc', text: 'Facebook: Flex disc', summary: 'Group and public post discussions.' },
                 { platform: 'wirecutter', url: 'https://www.nytimes.com/wirecutter/reviews/best-menstrual-cup/', text: 'Wirecutter: Best Menstrual Cups & Discs', summary: 'NYT Wirecutter testing of 50+ menstrual cups and discs. Flex Reusable Disc recommended for heavier flows.' },
-            ]
+            ] }
         }
     },
     // ─── PERIOD UNDERWEAR ────────────────────────────────
@@ -520,22 +519,20 @@ export const PHYSICAL_PRODUCTS = [
             opinionAlerts: 'Legacy "PFAS scare" still drives some user hesitation. Complicated laundry routine compared to disposables.'
         },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Period underwear is a safe backup option; PFAS-free formulations address prior safety concerns.',
         communityReview: 'Community discussions on Reddit r/WomensHealth note PFAS-free line and satisfaction using as backup with cups.',
         ingredients: 'Organic cotton gusset, moisture-wicking layer, absorbent core, leak-proof barrier. PFAS-free.',
         effectiveness: 'Absorbs 2–5 regular tampons worth depending on style. Best as backup or for light days.',
         badges: ['Sustainable', 'B-Corp'],
         verificationLinks: {
-            doctor: [
-                { url: 'https://www.health.harvard.edu/blog/pfas-in-period-underwear-what-you-need-to-know-202302142890', text: 'Harvard Health: PFAS in Period Underwear', summary: 'Doctors discuss safety of period underwear following the settlement.' },
+            doctor: { links: [
                 { url: 'https://www.nytimes.com/wirecutter/reviews/best-period-underwear/', text: 'Wirecutter: Period Underwear', summary: 'Independent review and material safety analysis of period underwear.' }
-            ],
-            scientific: [
-                { url: 'https://www.sgs.com/en/consumer-goods-retail/softlines-and-accessories', text: 'SGS Textile & Softlines Testing', summary: 'Independent lab testing for textiles and product safety.' },
-                { url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Environmental Lifecycle of Textiles', summary: 'Study on the environmental benefit of reusable period underwear vs disposables.' }
-            ],
-            community: [
+            ] },
+            scientific: { links: [
+                { url: 'https://www.sgs.com/en/consumer-goods-retail/softlines-and-accessories', text: 'SGS Textile & Softlines Testing', summary: 'Independent lab testing for textiles and product safety.' }
+            ] },
+            community: { links: [
                 { platform: 'reddit', url: 'https://www.reddit.com/r/WomensHealth/', text: 'Reddit r/WomensHealth', summary: 'Period underwear and PFAS-free discussions.' },
                 { platform: 'reddit', url: 'https://www.reddit.com/r/WomensHealth/search/?q=thinx&restrict_sr=1', text: 'Reddit r/WomensHealth: Thinx', summary: 'Posts on Thinx and the PFAS-free line.' },
                 { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=thinx%20period%20underwear', text: 'TikTok: Thinx', summary: 'Style try-ons and absorbency tests.' },
@@ -544,7 +541,7 @@ export const PHYSICAL_PRODUCTS = [
                 { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=thinx%20period%20underwear', text: 'Facebook: Thinx', summary: 'Community discussions and recommendations.' },
                 { platform: 'wirecutter', url: 'https://www.nytimes.com/wirecutter/reviews/best-period-underwear/', text: 'Wirecutter: Best Period Underwear', summary: 'NYT Wirecutter independent testing of 50+ styles across 25 brands, including PFAS analysis.' },
                 { platform: 'instyle', url: 'https://www.instyle.com/fashion/clothing/the-best-period-underwear', text: 'InStyle: Best Period Underwear', summary: 'InStyle tested and reviewed period underwear picks including Thinx.' },
-            ]
+            ] }
         }
     },
     // ─── SUPPLEMENTS ─────────────────────────────────────
@@ -562,12 +559,12 @@ export const PHYSICAL_PRODUCTS = [
         image: 'https://www.naturemade.com/cdn/shop/files/NM2576PK001667MAGNESIUM_5A007225ccfront_1500x.png?v=1718994664',
         summary: 'Magnesium glycinate for cramp relief, better sleep, and mood support. USP verified.',
         safety: {
-            fdaStatus: 'USP Verified (gold standard for supplements)',
+            fdaStatus: 'USP Verified',
             materials: 'Magnesium glycinate chelate',
             recalls: 'No recalls. USP verified = third-party tested for purity and potency.',
             allergens: 'Gluten-free, no artificial colors or preservatives',
             sideEffects: 'Mild digestive issues, loose stools (if dose too high), loss of appetite, occasional nausea.',
-            opinionAlerts: 'Magnesium glycinate is the "gold standard" for comfort, but users find Thorne/NatureMade capsules quite large.'
+            opinionAlerts: 'Magnesium glycinate is often chosen for its tolerability, but users find Thorne/NatureMade capsules quite large.'
         },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
@@ -575,10 +572,8 @@ export const PHYSICAL_PRODUCTS = [
         communityReview: 'Community discussions on Reddit r/Supplements note significant cramp relief and improved sleep with magnesium glycinate.',
         ingredients: 'Magnesium glycinate 200mg, cellulose capsule, magnesium stearate.',
         effectiveness: 'Clinical studies show 200-400mg magnesium daily reduces menstrual pain by 30-50%. Also improves sleep quality.',
-        badges: ['Clinically Validated', 'USP Verified'],
+        badges: ['Evidence Reviewed', 'USP Verified'],
         verificationLinks: {
-            doctor: { url: 'https://drbrighten.com/magnesium-for-period-cramps/', text: 'Dr. Jolene Brighten on Magnesium', summary: 'A detailed look by a leading expert in women\'s health on why magnesium is the "miracle mineral" for period pain.' },
-            scientific: { url: 'https://pubmed.ncbi.nlm.nih.gov/27000438/', text: 'Cochrane: Supplements for Dysmenorrhea', summary: 'A high-level review of clinical trials indicating that magnesium is more effective than placebo for menstrual pain relief.' },
             community: {
                 aiSummary: "Reddit and health forums report strong anecdotal support for magnesium glycinate for cramps, sleep, and anxiety. Nature Made is frequently recommended for USP verification.",
                 links: [
@@ -618,10 +613,8 @@ export const PHYSICAL_PRODUCTS = [
         communityReview: 'Community discussions on Reddit r/TTC35 note clinician recommendations and satisfaction with quality; NSF certification valued.',
         ingredients: 'Ubiquinol 100mg, Olive Oil, Gelatin, Glycerin, Water, Lycopene.',
         effectiveness: 'CoQ10 and ubiquinol have been studied for mitochondrial and reproductive-health outcomes. The evidence cited should not be interpreted as proof that this specific product improves fertility outcomes.',
-        badges: ['Clinically Validated', 'High Bioavailability'],
+        badges: ['Evidence Reviewed', 'High Bioavailability'],
         verificationLinks: {
-            doctor: { url: 'https://drbrighten.com/coq10-for-fertility/', text: 'Dr. Jolene Brighten on CoQ10', summary: 'Expert explanation of how CoQ10/Ubiquinol supports egg health and hormone balance.' },
-            scientific: { url: 'https://pubmed.ncbi.nlm.nih.gov/29587888/', text: 'Coenzyme Q10 and oocyte quality', summary: 'A review of clinical findings showing that CoQ10 supplementation can improve ovarian response and oocyte quality in older women.' },
             community: {
                 aiSummary: "Fertility and TTC communities frequently recommend Ubiquinol (CoQ10) for egg quality. Nature Made is a commonly cited brand for quality and availability.",
                 links: [
@@ -661,15 +654,13 @@ export const DIGITAL_PRODUCTS = [
         integrations: ['Apple Health'],
         badges: ['Privacy Focused', 'Research Backed'],
         verificationLinks: {
-            doctor: [
-                { url: 'https://helloclue.com/articles/cycle-a-z/what-is-clue', text: 'Clue Scientific Advisory Board', summary: 'Clue is developed with an in-house team of scientists and clinicians from Stanford and Oxford.' },
+            doctor: { links: [
                 { url: 'https://www.acog.org/search#q=period%20tracking%20apps', text: 'ACOG: Digital Health', summary: 'Clinical perspective on the role of period trackers in patient care.' }
-            ],
-            scientific: [
-                { url: 'https://www.nature.com/articles/s41746-019-0118-z', text: 'Nature: Research Study', summary: 'Peer-reviewed study using Clue data to understand menstrual cycle variability.' },
-                { url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Digital Health Validation', summary: 'Research on the accuracy of period prediction algorithms.' }
-            ],
-            community: [
+            ] },
+            scientific: { links: [
+                
+            ] },
+            community: { links: [
                 { platform: 'reddit', url: 'https://www.reddit.com/r/WomensHealth/', text: 'Reddit r/WomensHealth', summary: 'Discussions on period trackers and app privacy.' },
                 { platform: 'reddit', url: 'https://www.reddit.com/r/WomensHealth/search/?q=clue+app&restrict_sr=1', text: 'Reddit r/WomensHealth: Clue', summary: 'User discussions on Clue privacy and UI.' },
                 { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=clue%20period%20tracker', text: 'TikTok: Clue tracker', summary: 'Short-form reviews and privacy-focused period app content.' },
@@ -677,7 +668,7 @@ export const DIGITAL_PRODUCTS = [
                 { platform: 'instagram', url: 'https://www.instagram.com/clueapp/', text: 'Clue on Instagram', summary: 'Educational content and community; 1M+ followers.' },
                 { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=clue%20period%20tracker', text: 'Facebook: Clue tracker', summary: 'Group and public discussions on period apps.' },
                 { platform: 'wirecutter', url: 'https://www.nytimes.com/wirecutter/reviews/the-best-fitness-trackers/', text: 'Wirecutter: Best Fitness Trackers', summary: 'NYT Wirecutter testing of 52+ fitness trackers for accuracy and comfort.' },
-            ]
+            ] }
         }
     },
     {
@@ -697,27 +688,27 @@ export const DIGITAL_PRODUCTS = [
         safety: { fdaStatus: 'N/A (Software)', materials: 'N/A', recalls: 'N/A', allergens: 'N/A', sideEffects: 'N/A', opinionAlerts: 'Lunar sync features are highly aesthetic but some users find them less "scientific" than Clue.' },
         privacy: { dataStorage: 'See current Stardust privacy policy', sellsData: 'See current Stardust privacy policy', hipaa: 'Not presented here as a HIPAA-covered service', keyPolicy: 'Review Stardust’s current privacy and security documentation for encryption and data-access practices.' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Privacy and data-security practices are important considerations when choosing a reproductive-health tracking app. Users should review the app’s current privacy policy and controls.',
         communityReview: 'Community discussions on Reddit r/periods note strong privacy features and UI design.',
         integrations: ['Apple Health'],
         badges: ['Female-Owned', 'Top Privacy'],
         verificationLinks: {
-            doctor: [
+            doctor: { links: [
                 { url: 'https://stardust.app/privacy', text: 'Stardust Privacy Policy', summary: 'Detailed breakdown of their end-to-end encryption model.' },
-                { url: 'https://www.wired.com/story/period-tracking-apps-privacy/', text: 'Wired: Period App Privacy', summary: 'Analysis of Stardust\'s security in the context of reproductive health privacy.' }
-            ],
-            scientific: [
+                { url: 'https://www.wired.com/story/period-tracking-apps-privacy/', text: 'Wired: Period App Privacy', summary: 'Analysis of Stardust security in the context of reproductive health privacy.' }
+            ] },
+            scientific: { links: [
                 { url: 'https://pubmed.ncbi.nlm.nih.gov/37697855/', text: 'Menstrual Cycle Tracking Apps: Medical and Data Privacy Scoring', summary: 'A peer-reviewed evaluation found substantial variation in medical quality and privacy practices across menstrual-tracking apps. This is category-level evidence and is not a clinical validation of Stardust.' }
-            ],
-            community: [
+            ] },
+            community: { links: [
                 { platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Discussions on period trackers and privacy.' },
                 { platform: 'reddit', url: 'https://www.reddit.com/r/periods/search/?q=stardust+tracker&restrict_sr=1', text: 'Reddit r/periods: Stardust', summary: 'User feedback on Stardust lunar sync and UI.' },
                 { platform: 'tiktok', url: 'https://www.tiktok.com/search?q=stardust%20period%20tracker', text: 'TikTok: Stardust tracker', summary: 'Educational content on privacy and cycle tracking.' },
                 { platform: 'youtube', url: 'https://www.youtube.com/results?search_query=stardust+period+tracker+review', text: 'YouTube: Stardust app reviews', summary: 'Reviews of privacy-first period trackers.' },
                 { platform: 'instagram', url: 'https://www.instagram.com/stardust.app/', text: 'Stardust on Instagram', summary: 'Brand content on encryption and cycle health.' },
                 { platform: 'facebook', url: 'https://www.facebook.com/search/posts?q=stardust%20period%20tracker', text: 'Facebook: Stardust tracker', summary: 'Community discussions on privacy-focused apps.' }
-            ]
+            ] }
         }
     },
     // ─── MENOPAUSE TRACKER ─────────────────────────────────
@@ -733,7 +724,7 @@ export const DIGITAL_PRODUCTS = [
         userRating: 4.5,
         whereToBuy: ['App Store', 'Google Play'],
         platform: 'iOS, Android',
-        image: 'https://target.scene7.com/is/image/Target/GUEST_cb89dfb0-209a-4fd5-bf81-1e392f636b23',
+        image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/04/8e/69/048e6912-3f1e-ece4-ab0f-40d22c4b4eb2/AppIcon-0-0-1x_U007ephone-0-1-85-220.png/512x512bb.jpg',
         summary: 'Dedicated menopause and perimenopause tracker. Log symptoms (hot flashes, sleep, mood), track patterns, and get insights. Built for midlife health.',
         safety: { fdaStatus: 'N/A (wellness app)', materials: 'N/A', recalls: 'N/A', allergens: 'N/A', sideEffects: 'N/A', opinionAlerts: 'Use alongside clinician care for diagnosis and treatment.' },
         privacy: { dataStorage: 'See current Balance privacy policy', sellsData: 'See current Balance privacy policy', hipaa: 'N/A', keyPolicy: 'Review the current privacy policy for storage, sharing, research, and partner practices.' },
@@ -744,16 +735,16 @@ export const DIGITAL_PRODUCTS = [
         integrations: ['Apple Health'],
         badges: ['Menopause Focus', 'Symptom Tracking'],
         verificationLinks: {
-            doctor: [
+            doctor: { links: [
                 { url: 'https://www.menopause.org/for-women/menopause-faqs-women-s-midlife-health', text: 'NAMS – Menopause FAQs', summary: 'Clinical guidance on menopause and perimenopause care.' }
-            ],
-            scientific: [
+            ] },
+            scientific: { links: [
                 { url: 'https://pubmed.ncbi.nlm.nih.gov/24569618/', text: 'Hot Flash Symptom Diary Reliability', summary: 'Research supports structured symptom diaries for measuring menopausal hot-flash frequency and severity. This evidence supports symptom tracking generally and is not specific to Balance.' },
                 { url: 'https://pubmed.ncbi.nlm.nih.gov/40526898/', text: 'Digital Menopause Intervention Randomized Trial', summary: 'A randomized trial found potential benefits from a menopause-focused digital intervention. The study evaluated a different app and does not establish effectiveness of Balance itself.' }
-            ],
-            community: [
+            ] },
+            community: { links: [
                 { platform: 'reddit', url: 'https://www.reddit.com/r/Menopause/', text: 'Reddit r/Menopause', summary: 'Community discussions on menopause trackers and symptom management.' }
-            ]
+            ] }
         }
     },
 ];
@@ -854,8 +845,149 @@ export const CATEGORY_LABELS = {
     'diagnostics': 'Diagnostics',
     'hormone-monitoring': 'Hormone Monitoring',
     'custom-brand': 'Your brands',
-    'medication': 'Medications'
+    'medication': 'Medications',
+    // Real catalog category values that had no label here at all, so the
+    // Product Type filter dropdown fell back to raw lowercase text for them
+    // (found live, 2026-08-24 bug bash: "cup steamer", "incontinence",
+    // "sleep" sitting inconsistently alongside Title Case labels elsewhere
+    // in the same list).
+    'cup-steamer': 'Cup Steamer',
+    'incontinence': 'Incontinence',
+    'sleep': 'Sleep',
+    'contraception': 'Birth Control',
+    'breast-care': 'Breast Care',
+    'lactation': 'Lactation',
+    'skin': 'Skin',
+    'skincare': 'Skin',
+    'body-care': 'Skin',
+    'hair': 'Hair',
+    'haircare': 'Hair',
+    'gut-health': 'Gut',
+    'pain-relief': 'Pain + Recovery',
+    'recovery': 'Pain + Recovery',
 };
+
+// The site's one taxonomy of user-facing care areas, each rolling up one or more
+// raw catalog `category` values. Originally lived only in Discovery.jsx (as its
+// category-filter chips); moved here so it can also be the single source of
+// truth for EcosystemBubbles' area grouping — it used to keep its own smaller,
+// separately-hand-maintained category list that had drifted out of sync
+// (missing birth-control, breast care, menopause, skin, hair, gut, pain-relief,
+// tests-devices...), so any product in one of those categories silently landed
+// in a generic "Other" bubble instead of a properly named one (found live,
+// Aditi 2026-08-24: a sleep product added to an ecosystem should get its own
+// "Sleep" bubble, not fall into "Other").
+export const MACRO_GROUPS = [
+    { id: 'all', label: 'All', categories: [], keywords: [] },
+    { id: 'period', label: 'Period', categories: ['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'cramp-relief', 'cup-steamer'], keywords: ['period', 'menstrual'] },
+    // 'ph' used to be a bare keyword here and matched any product whose copy happened to
+    // contain the substring "ph" — e.g. Nature Made Iron ("#1 pharmacist recommended"), Wisp
+    // ("pharmacy pickup"), and Apple Health ("built into iPhone") all satisfied it despite
+    // having nothing to do with intimate care. Scoped to the actual phrasing real vaginal-pH
+    // products use (see e.g. p-honeypot-wash, p-good-clean-love, p-v-wash) instead.
+    { id: 'intimate', label: 'Intimate Care', categories: ['intimate-care'], keywords: ['vaginal', 'vulva', 'intimate', 'moisturizer', 'ph balance', 'ph-balanced', 'ph balanced', 'ph level', 'ph support'] },
+    { id: 'sexual', label: 'Sexual Wellness', categories: ['sex-tech'], keywords: ['lubricant', 'lube', 'condom', 'sexual wellness', 'intimacy'] },
+    { id: 'birth-control', label: 'Birth Control', categories: ['contraception'], keywords: ['contraception', 'contraceptive', 'emergency contraception', 'barrier'] },
+    { id: 'fertility', label: 'Fertility', categories: ['fertility'], keywords: ['fertility', 'ovulation', 'conceive', 'conception'] },
+    { id: 'pregnancy', label: 'Pregnancy', categories: ['pregnancy'], keywords: ['pregnancy', 'prenatal'] },
+    { id: 'postpartum', label: 'Postpartum', categories: ['postpartum'], keywords: ['postpartum', 'lactation', 'breastfeeding', 'perineal'] },
+    { id: 'breast', label: 'Breast Care', categories: ['breast-care', 'lactation'], keywords: ['breast', 'breastfeeding', 'nipple', 'pump', 'lactation'] },
+    { id: 'pelvic', label: 'Pelvic', categories: ['pelvic-floor', 'pelvic-health', 'incontinence'], keywords: ['pelvic', 'kegel', 'bladder', 'incontinence', 'bladder leak'] },
+    { id: 'menopause', label: 'Menopause', categories: ['menopause'], keywords: ['menopause', 'perimenopause', 'hot flash'] },
+    // 'supplement' is a product-TYPE category shared by dozens of unrelated items (iron for
+    // anemia, plain vitamin D, omega-3 for cramps, etc.) — it used to be listed here directly,
+    // which meant EVERY supplement in the catalog satisfied the Hormones chip regardless of what
+    // it actually treats. Matching is now scoped to the real concern taxonomy instead: the
+    // 'hormone-monitoring' category, the 'hormone-balance' healthFunction (checked exactly via
+    // healthFunctions below, not folded into the general keyword text blob — a substring scan
+    // would otherwise let something like the unrelated 'fitness-cycle' healthFunction slug
+    // falsely satisfy the 'cycle' keyword), and the keywords below.
+    { id: 'hormones', label: 'Hormones', categories: ['hormone-monitoring'], healthFunctions: ['hormone-balance'], keywords: ['pms', 'pcos', 'cycle', 'hormone', 'hormonal'] },
+    // Bare 'skin'/'moisturizer' catch vulvar/vulva-balm copy ("vulvar skin", "arousal
+    // moisturizers") and an incontinence liner's "skin comfort formula" claim — all real
+    // catalog phrasing, just not about the facial/body skincare this chip means. Those
+    // product types are excluded from the keyword scan below (see excludeCategories in
+    // itemMatchesMacroGroup) rather than trying to enumerate every mismatched phrase.
+    { id: 'skin', label: 'Skin', categories: ['skin', 'skincare', 'body-care'], keywords: ['skin', 'cleanser', 'moisturizer', 'spf', 'acne', 'hyperpigmentation'], excludeCategories: ['intimate-care', 'sex-tech', 'incontinence'] },
+    // Same class of bug as Skin above: 'thinning' and 'hair' were catching "vaginal dryness
+    // and thinning" (a menopause GSM symptom, not hair thinning) and "ingrown hairs...on the
+    // bikini line" (intimate-area exfoliation, not hair care). excludeCategories keeps those
+    // out of the keyword scan.
+    { id: 'hair', label: 'Hair', categories: ['hair', 'haircare'], keywords: ['hair', 'scalp', 'shampoo', 'conditioner', 'thinning'], excludeCategories: ['intimate-care', 'menopause'] },
+    { id: 'gut', label: 'Gut', categories: ['gut-health'], keywords: ['gut', 'bloating', 'fiber', 'probiotic'] },
+    // 'stress' alone matched incontinence products' clinical term "stress incontinence"/
+    // "stress or urge bladder leaks" (a bladder-control classification, unrelated to mental
+    // stress) — stripped via NEGATED_CONCERN_PHRASES in Discovery.jsx rather than dropping the
+    // keyword, since "stress" genuinely belongs here for its real (psychological) sense.
+    // 'sleep' is a real distinct category value in the live catalog (e.g. Eight Sleep Pod)
+    // alongside 'mental-health' — both belong under this chip.
+    { id: 'sleep-stress', label: 'Sleep + Stress', categories: ['mental-health', 'sleep'], keywords: ['sleep', 'stress', 'relaxation'] },
+    { id: 'pain-recovery', label: 'Pain + Recovery', categories: ['pain-relief', 'cramp-relief', 'recovery'], keywords: ['pain', 'cramp', 'heat therapy', 'recovery', 'muscle'] },
+    // 'test' used to be a bare keyword and matched "clinically tested" (Honey Pot wash),
+    // "gynecologist-tested" (Luna wash), and even "testosterone" (spearmint PCOS tea) — none
+    // of which are diagnostic tests/devices. Scoped to the phrasing real test products use
+    // (p-azo-test's "test strips", p-winx-uti-test-treat's "rapid test").
+    { id: 'tests-devices', label: 'Tests + Devices', categories: ['tracker', 'diagnostics', 'hormone-monitoring'], keywords: ['test strip', 'test kit', 'rapid test', 'diagnostic test', 'lab test', 'tracker', 'wearable', 'monitor'] },
+];
+
+// Some product copy legitimately advertises the ABSENCE of a property — e.g. Neycher's
+// intimate-care line describing itself as "hormone-free" / "non-hormonal" — rather than the
+// presence of it. A naive substring match on a concern keyword like "hormone" can't tell "this
+// product is about hormones" apart from "this product explicitly contains none," so it was
+// mis-filing hormone-free vulva balm/moisturizing gel under the Hormones chip. Strip these
+// negated phrases out before keyword matching so a chip only surfaces products that are
+// actually about the concern, not ones that merely deny it.
+//
+// Broadened beyond pure negation to the same underlying problem in a different shape: a
+// keyword's word/phrase appearing in copy for an unrelated reason.
+//   - "outside your period" (Neycher: usage timing, not a period product), "not menstrual
+//     flow", "distinct from a menstrual panty liner", and "rather than menstrual blood"
+//     (incontinence pads explicitly contrasting themselves with period products) were all
+//     satisfying the Period chip's 'period'/'menstrual' keywords despite each one denying
+//     the very thing the keyword is meant to detect.
+//   - "stress incontinence" / "stress or urge bladder leaks" / "stress and urge incontinence"
+//     are a clinical bladder-control term, not the Sleep + Stress chip's intended
+//     (psychological) sense of "stress" — was surfacing incontinence pads under that chip.
+const NEGATED_CONCERN_PHRASES = [
+    /non-?\s?hormonal/g,
+    /hormone-?\s?free/g,
+    /outside your period/g,
+    /not\s+(?:for\s+)?menstrual/g,
+    /distinct from a\s+menstrual/g,
+    /rather than menstrual/g,
+    /stress\s+(?:(?:or|and)\s+urge\s+)?(?:bladder\s+)?(?:incontinence|leaks?)/g,
+];
+
+export function productSearchText(item) {
+    const raw = [
+        item?.category, item?.name, item?.brand, item?.summary, item?.description, item?.tagline,
+        ...(Array.isArray(item?.badges) ? item.badges : []),
+        ...(Array.isArray(item?.tags) ? item.tags : []),
+        item?.eligibility, item?.sustainability, item?.lifeStage,
+    ].filter(Boolean).join(' ').toLowerCase();
+    return NEGATED_CONCERN_PHRASES.reduce((t, re) => t.replace(re, ' '), raw);
+}
+
+export function itemMatchesMacroGroup(item, groupId) {
+    if (!groupId || groupId === 'all') return true;
+    const group = MACRO_GROUPS.find((g) => g.id === groupId);
+    if (!group) return true;
+    if (group.categories.includes(item?.category)) return true;
+    // Structured concern tags (e.g. 'hormone-balance') are checked as an exact membership test,
+    // not folded into the free-text keyword scan below — that keeps a slug like the unrelated
+    // 'fitness-cycle' healthFunction from accidentally satisfying a keyword such as 'cycle'.
+    if (Array.isArray(group.healthFunctions) && Array.isArray(item?.healthFunctions) &&
+        item.healthFunctions.some((hf) => group.healthFunctions.includes(hf))) return true;
+    // Some chips' keywords are inherently ambiguous outside their own product domain (e.g.
+    // "skin"/"moisturizer" legitimately describe vulvar-care copy; "thinning" legitimately
+    // describes vaginal-tissue thinning) — excludeCategories lets a chip opt specific
+    // product-type categories out of the free-text keyword scan below (they can still match
+    // via an explicit categories/healthFunctions hit above) so e.g. a vulva balm doesn't
+    // surface under "Skin" just because its copy happens to say "skin."
+    if (Array.isArray(group.excludeCategories) && group.excludeCategories.includes(item?.category)) return false;
+    const text = productSearchText(item);
+    return group.keywords.some((keyword) => text.includes(keyword));
+}
 
 // ─── CLINICAL WORKFLOW (e.g. Recurrent UTIs: prevent → test → treat → get care) ───
 export const CLINICAL_WORKFLOW_STEPS = {
@@ -1128,86 +1260,294 @@ export function getPrescriptionAccessGuidance(product) {
     return { patientUrl: null, savingsUrl: null, telehealthProduct: tele };
 }
 
-/** Ranked lists (tag matches first) with prescription-only items removed unless a care path exists. */
-export function getRecommendationMatchesAndRest(quizAnswers, healthProfile = null) {
-    const healthTagList = inferTagsFromHealthProfile(healthProfile);
-    const healthTags = new Set(healthTagList);
+const FRUSTRATION_MAP = {
+    'Heavy flow': 'heavy-flow',
+    'Painful cramps': 'cramps',
+    'Hormonal bloating': 'bloating',
+    'Irregular cycles': 'irregular',
+    'Leaks & staining': 'leaks',
+    'General discomfort': 'discomfort',
+    'Not sure if products are safe': 'safety-concern',
+    'Recurrent UTIs': 'uti',
+    'PCOS symptoms': 'pcos',
+    'Pelvic pain': 'pelvic-floor',
+    'Menopause symptoms': 'menopause',
+    'Endometriosis': 'endometriosis',
+    'Fertility / TTC': 'fertility',
+    'Pregnancy': 'pregnancy',
+    'Postpartum recovery': 'postpartum',
+};
 
-    if (!quizAnswers || !quizAnswers.frustrations) {
-        if (healthTags.size === 0) {
-            const all = filterPrescriptionCareGate(ALL_PRODUCTS);
-            return { matches: all, others: [] };
-        }
-        const { matches, rest } = rankProductsByHealthTags(healthTags);
-        return { matches: filterPrescriptionCareGate(matches), others: filterPrescriptionCareGate(rest) };
+const PREFERENCE_TAGS = {
+    'Organic/Natural only': 'organic',
+    'Non-hormonal / hormone-free': 'non-hormonal',
+    'Lower cost': 'cost',
+    'Comfort/Convenience': 'comfort',
+    'Privacy & data security': 'privacy',
+    'Sustainability/Zero-waste': 'sustainability',
+};
+
+const GOAL_RULES = [
+    { re: /\bfertilit|trying to conceive|\bttc\b|ovulat/i, tags: ['fertility'] },
+    { re: /\bsleep|insomnia|rest\b/i, tags: ['sleep', 'comfort'] },
+    { re: /\bstress|anxiety|mental health|mood\b/i, tags: ['mental-health', 'comfort'] },
+    { re: /\bfitness|exercise|workout|activity\b/i, tags: ['fitness-cycle'] },
+    { re: /\bskin|acne\b/i, tags: ['skin'] },
+    { re: /\bhair|hair loss|thinning\b/i, tags: ['hair'] },
+    { re: /\bhormone|hormonal\b/i, tags: ['hormonal'] },
+    { re: /\bmenopause|perimenopause|hot flash/i, tags: ['menopause'] },
+    { re: /\bpelvic floor|pelvic pain\b/i, tags: ['pelvic-floor'] },
+    { re: /\bbladder leak|urinary incontinence|loss of bladder control\b/i, tags: ['bladder-leaks'] },
+    { re: /\bpcos\b/i, tags: ['pcos'] },
+    { re: /\bendometriosis\b/i, tags: ['endometriosis'] },
+    { re: /\bperiod|menstrual|cycle\b/i, tags: ['cycle-tracking'] },
+];
+
+const AGE_CONTEXT = {
+    'Under 25': [],
+    '25-34': ['fertility', 'cycle-tracking'],
+    '35-44': ['fertility', 'cycle-tracking'],
+    '45-50': ['menopause', 'cycle-tracking'],
+    '51-55': ['menopause'],
+    '56+': ['menopause'],
+};
+
+const BLADDER_TAGS = new Set(['bladder-leaks', 'incontinence', 'urinary']);
+const MENSTRUAL_LEAK_TAG = 'leaks';
+
+function normalizeProfileSignals(quizAnswers, healthProfile) {
+    const directTags = new Set();
+    const inferredTags = new Set();
+    const preferenceTags = new Set();
+
+    (quizAnswers?.frustrations || []).forEach((f) => {
+        const tag = FRUSTRATION_MAP[f];
+        if (tag) directTags.add(tag);
+        if (f === 'Endometriosis') directTags.add('cramps');
+    });
+
+    inferTagsFromHealthProfile(healthProfile).forEach((t) => directTags.add(t));
+
+    const prefs = Array.isArray(quizAnswers?.preference)
+        ? quizAnswers.preference
+        : (quizAnswers?.preference ? [quizAnswers.preference] : []);
+    prefs.forEach((pref) => {
+        const tag = PREFERENCE_TAGS[pref];
+        if (tag) preferenceTags.add(tag);
+    });
+
+    const goals = String(quizAnswers?.healthGoals || '').trim();
+    if (goals) {
+        GOAL_RULES.forEach(({ re, tags }) => {
+            if (re.test(goals)) tags.forEach((t) => inferredTags.add(t));
+        });
     }
 
-    const FRUSTRATION_MAP = {
-        'Heavy flow': 'heavy-flow',
-        'Painful cramps': 'cramps',
-        'Hormonal bloating': 'bloating',
-        'Irregular cycles': 'irregular',
-        'Leaks & staining': 'leaks',
-        'General discomfort': 'discomfort',
-        'Recurrent UTIs': 'uti',
-        'PCOS symptoms': 'pcos',
-        'Pelvic pain': 'pelvic-floor',
-        'Menopause symptoms': 'menopause',
-        'Endometriosis': 'endometriosis',
-        'Fertility / TTC': 'fertility',
-        'Pregnancy': 'pregnancy',
-        'Postpartum recovery': 'postpartum',
+    (AGE_CONTEXT[quizAnswers?.age] || []).forEach((t) => inferredTags.add(t));
+
+    return { directTags, inferredTags, preferenceTags, prefs };
+}
+
+function productHasSignal(product, tag) {
+    const tags = new Set(product?.tags || []);
+    const funcs = new Set(product?.healthFunctions || []);
+
+    if (tags.has(tag) || funcs.has(tag)) return true;
+
+    if (tag === 'sleep' && (funcs.has('sleep-energy') || product?.category === 'sleep')) return true;
+    if (tag === 'fitness-cycle' && funcs.has('fitness-cycle')) return true;
+    if (tag === 'cycle-tracking' && funcs.has('cycle-tracking')) return true;
+    if (tag === 'menopause' && (funcs.has('perimenopause') || product?.category === 'menopause')) return true;
+    if (tag === 'fertility' && funcs.has('fertility')) return true;
+    if (tag === 'pelvic-floor' && (funcs.has('sexual-health') || product?.category === 'pelvic-floor' || product?.category === 'pelvic-health')) return true;
+    if (tag === 'mental-health' && product?.category === 'mental-health') return true;
+    if (tag === 'bladder-leaks' && ([...tags].some((t) => BLADDER_TAGS.has(t)) || funcs.has('bladder-leak-protection'))) return true;
+
+    return false;
+}
+
+function getUserAvoidSet(quizAnswers) {
+    const out = new Set();
+    [...(quizAnswers?.sensitivities || []), ...(quizAnswers?.productsToAvoid || [])].forEach((label) => {
+        const key = SENSITIVITY_AVOID_TO_TRIGGER[label];
+        if (key) out.add(key);
+    });
+    return out;
+}
+
+function isProductEligibleForProfile(product, quizAnswers) {
+    if (!product) return false;
+
+    if ((quizAnswers?.contraceptionUse === 'No' || quizAnswers?.contraceptionUse === 'Prefer not to say')
+        && product.healthFunctions?.includes('contraception')) {
+        return false;
+    }
+
+    if (quizAnswers?.internalComfort === 'No' && product.internal === true) return false;
+
+    const avoidSet = getUserAvoidSet(quizAnswers);
+    if ([...avoidSet].some((trigger) => productMatchesAvoidTrigger(product, trigger))) return false;
+
+    return true;
+}
+
+function noveltyAdjustment(product, quizAnswers) {
+    const current = new Set(quizAnswers?.currentUse || []);
+    if (current.size === 0 || current.has('None')) return 0;
+
+    const c = product?.category;
+    const funcs = new Set(product?.healthFunctions || []);
+    let adjustment = 0;
+
+    if (current.has('Pads') && c === 'pad') adjustment -= 4;
+    if (current.has('Tampons') && c === 'tampon') adjustment -= 4;
+    if (current.has('Menstrual cup') && c === 'cup') adjustment -= 4;
+    if (current.has('Menstrual disc') && c === 'disc') adjustment -= 4;
+    if (current.has('Period underwear') && c === 'period-underwear') adjustment -= 4;
+    if (current.has('Supplements') && c === 'supplement') adjustment -= 2;
+    if (current.has('Telehealth (Wisp, Nurx, etc.)') && c === 'telehealth') adjustment -= 3;
+    if (current.has('Flo / Clue / Stardust') && funcs.has('cycle-tracking')) adjustment -= 3;
+    if (current.has('Apple Health / Garmin / Fitbit') && (c === 'tracker' || funcs.has('fitness-cycle'))) adjustment -= 2;
+
+    return adjustment;
+}
+
+function getProductRelevanceStats(product, quizAnswers, healthProfile = null) {
+    const { directTags, inferredTags, preferenceTags, prefs } = normalizeProfileSignals(quizAnswers, healthProfile);
+
+    const hasPersonalizationSignals =
+        directTags.size > 0 ||
+        inferredTags.size > 0 ||
+        preferenceTags.size > 0 ||
+        Boolean(quizAnswers?.age) ||
+        Boolean(String(quizAnswers?.healthGoals || '').trim());
+
+    if (!hasPersonalizationSignals) {
+        return { percent: null, score: 0, labels: [], reasons: [], eligible: true };
+    }
+
+    if (!isProductEligibleForProfile(product, quizAnswers)) {
+        return { percent: 0, score: 0, labels: [], reasons: [], eligible: false };
+    }
+
+    let points = 0;
+    const reasons = [];
+    const labels = [];
+    const seenReasons = new Set();
+
+    const add = (value, label, reason) => {
+        points += value;
+        if (label && !labels.includes(label)) labels.push(label);
+        if (reason && !seenReasons.has(reason)) {
+            seenReasons.add(reason);
+            reasons.push(reason);
+        }
     };
 
-    const userTags = new Set();
-    quizAnswers.frustrations.forEach((f) => {
-        const tag = FRUSTRATION_MAP[f];
-        if (tag) userTags.add(tag);
-    });
-    healthTagList.forEach((t) => userTags.add(t));
+    directTags.forEach((tag) => {
+        if (!productHasSignal(product, tag)) return;
 
-    const prefs = Array.isArray(quizAnswers.preference) ? quizAnswers.preference : (quizAnswers.preference ? [quizAnswers.preference] : []);
-    prefs.forEach((pref) => {
-        if (pref === 'Organic/Natural only') userTags.add('organic');
-        if (pref === 'Non-hormonal / hormone-free') userTags.add('non-hormonal');
-        if (pref === 'Lower cost') userTags.add('cost');
-        if (pref === 'Comfort/Convenience') userTags.add('comfort');
-        if (pref === 'Privacy & data security') userTags.add('privacy');
-        if (pref === 'Sustainability/Zero-waste') userTags.add('sustainability');
+        if (tag === MENSTRUAL_LEAK_TAG && [...(product.tags || [])].some((t) => BLADDER_TAGS.has(t))) {
+            return;
+        }
+
+        let weight = 34;
+        if (tag === 'discomfort' || tag === 'comfort') weight = 18;
+        if (tag === 'safety-concern') weight = 12;
+        if (tag === 'pelvic-floor') weight = 30;
+
+        add(weight, TAG_TO_READABLE[tag] || tag.replace(/-/g, ' '), 'Direct profile match');
     });
 
-    const skipContraception = quizAnswers.contraceptionUse === 'No' || quizAnswers.contraceptionUse === 'Prefer not to say';
-    const skipInternal = quizAnswers.internalComfort === 'No';
+    inferredTags.forEach((tag) => {
+        if (!productHasSignal(product, tag)) return;
 
-    const userAvoidSet = new Set();
-    [...(quizAnswers.sensitivities || []), ...(quizAnswers.productsToAvoid || [])].forEach((label) => {
-        const key = SENSITIVITY_AVOID_TO_TRIGGER[label];
-        if (key) userAvoidSet.add(key);
-    });
-    userAvoidSet.delete(null);
+        let weight = 11;
+        if (tag === 'menopause') weight = 15;
+        if (tag === 'fertility') weight = quizAnswers?.age === '35-44' ? 14 : 11;
+        if (tag === 'bladder-leaks') weight = 14;
+        if (tag === 'sleep' || tag === 'mental-health') weight = 12;
 
-    const scored = ALL_PRODUCTS.filter((p) => {
-        if (skipContraception && p.healthFunctions && p.healthFunctions.includes('contraception')) return false;
-        if (skipInternal && p.internal === true) return false;
-        if (userAvoidSet.size > 0 && [...userAvoidSet].some((trigger) => productMatchesAvoidTrigger(p, trigger))) return false;
-        return true;
-    }).map((p) => {
-        let score = 0;
-        (p.tags || []).forEach((t) => {
-            if (userTags.has(t)) score += 2;
-        });
-        prefs.forEach((pref) => {
-            if (pref === 'Sustainability/Zero-waste' && p.badges?.includes('Sustainable')) score += 3;
-            if (pref === 'Organic/Natural only' && p.tags?.includes('organic')) score += 3;
-            if (pref === 'Non-hormonal / hormone-free' && p.tags?.includes('non-hormonal')) score += 3;
-        });
-        return { product: p, score };
+        add(weight, TAG_TO_READABLE[tag] || tag.replace(/-/g, ' '), 'Relevant to your goals or life stage');
     });
 
-    const matches = filterPrescriptionCareGate(
-        scored.filter((s) => s.score > 0).sort((a, b) => b.score - a.score).map((s) => s.product)
+    preferenceTags.forEach((tag) => {
+        if (!productHasSignal(product, tag) && !(tag === 'sustainability' && product.badges?.includes('Sustainable'))) return;
+
+        let weight = 7;
+        if (tag === 'organic' || tag === 'non-hormonal') weight = 9;
+        add(weight, TAG_TO_READABLE[tag] || tag.replace(/-/g, ' '), 'Matches your preferences');
+    });
+
+    if (quizAnswers?.contraceptionUse === 'Yes' && product.healthFunctions?.includes('contraception')) {
+        add(16, 'contraception', 'Matches your birth control interest');
+    }
+
+    const contraceptionPrefs = new Set(quizAnswers?.contraceptionPreference || []);
+    const productText = `${product?.name || ''} ${product?.summary || ''} ${product?.description || ''} ${(product?.tags || []).join(' ')}`.toLowerCase();
+    for (const pref of contraceptionPrefs) {
+        if (pref === 'None' || pref === 'Not sure') continue;
+        if (productText.includes(pref.toLowerCase())) {
+            add(8, pref.toLowerCase(), 'Matches your preferred method');
+            break;
+        }
+    }
+
+    if (prefs.includes('Sustainability/Zero-waste') && product.badges?.includes('Sustainable')) {
+        points += 3;
+    }
+
+    points += noveltyAdjustment(product, quizAnswers);
+
+    // A saturating transformation keeps scores nuanced while preventing multiple
+    // synonymous tags from mechanically pushing a product to 100%.
+    const raw = Math.max(0, points);
+    const percent = raw === 0 ? 0 : Math.min(98, Math.round(100 * (1 - Math.exp(-raw / 52))));
+
+    return {
+        percent,
+        score: raw,
+        labels: labels.slice(0, 4),
+        reasons: reasons.slice(0, 4),
+        eligible: true,
+    };
+}
+
+export function getProductRelevanceScore(product, quizAnswers, healthProfile = null) {
+    return getProductRelevanceStats(product, quizAnswers, healthProfile).percent;
+}
+
+/** Ranked lists using the same relevance score shown in personalization UI. */
+export function getRecommendationMatchesAndRest(quizAnswers, healthProfile = null) {
+    const hasAnyProfileSignal =
+        Boolean(quizAnswers?.age) ||
+        Boolean(quizAnswers?.frustrations?.length) ||
+        Boolean(quizAnswers?.preference?.length) ||
+        Boolean(String(quizAnswers?.healthGoals || '').trim()) ||
+        inferTagsFromHealthProfile(healthProfile).length > 0;
+
+    const eligible = filterPrescriptionCareGate(
+        ALL_PRODUCTS.filter((p) => isProductEligibleForProfile(p, quizAnswers))
     );
-    const others = filterPrescriptionCareGate(scored.filter((s) => s.score === 0).map((s) => s.product));
+
+    if (!hasAnyProfileSignal) {
+        return { matches: [], others: eligible };
+    }
+
+    const scored = eligible.map((product) => ({
+        product,
+        stats: getProductRelevanceStats(product, quizAnswers, healthProfile),
+    }));
+
+    const matches = scored
+        .filter(({ stats }) => stats.percent > 0)
+        .sort((a, b) => b.stats.percent - a.stats.percent || b.stats.score - a.stats.score)
+        .map(({ product }) => product);
+
+    const others = scored
+        .filter(({ stats }) => stats.percent === 0)
+        .map(({ product }) => product);
+
     return { matches, others };
 }
 
@@ -1332,49 +1672,12 @@ const TAG_TO_READABLE = {
  * Empty when there is no tag match — use this to show a positive for-you line only when appropriate.
  */
 function getProfileMatchStatsForProduct(product, quizAnswers, healthProfile = null) {
-    const healthOnlyTags = inferTagsFromHealthProfile(healthProfile);
-    if ((!quizAnswers || !quizAnswers.frustrations?.length) && healthOnlyTags.length === 0) {
-        return { labels: [], percent: null, matches: 0, signals: 0 };
-    }
-    const FRUSTRATION_MAP = {
-        'Heavy flow': 'heavy-flow', 'Painful cramps': 'cramps', 'Hormonal bloating': 'bloating', 'Irregular cycles': 'irregular',
-        'Leaks & staining': 'leaks', 'General discomfort': 'discomfort', 'Not sure if products are safe': 'safety-concern',
-        'Recurrent UTIs': 'uti', 'PCOS symptoms': 'pcos', 'Pelvic pain': 'pelvic-floor',
-        'Menopause symptoms': 'menopause', 'Endometriosis': 'endometriosis', 'Fertility / TTC': 'fertility',
-        'Pregnancy': 'pregnancy', 'Postpartum recovery': 'postpartum'
-    };
-    const userTags = new Set();
-    (quizAnswers?.frustrations || []).forEach(f => {
-        const t = FRUSTRATION_MAP[f];
-        if (t) userTags.add(t);
-        if (f === 'Endometriosis') userTags.add('cramps');
-    });
-    healthOnlyTags.forEach((t) => userTags.add(t));
-    const prefs = Array.isArray(quizAnswers?.preference) ? quizAnswers.preference : (quizAnswers?.preference ? [quizAnswers.preference] : []);
-    prefs.forEach(p => {
-        if (p === 'Organic/Natural only') userTags.add('organic');
-        if (p === 'Non-hormonal / hormone-free') userTags.add('non-hormonal');
-        if (p === 'Lower cost') userTags.add('cost');
-        if (p === 'Comfort/Convenience') userTags.add('comfort');
-        if (p === 'Privacy & data security') userTags.add('privacy');
-        if (p === 'Sustainability/Zero-waste') userTags.add('sustainability');
-    });
-    const productTags = new Set(product.tags || []);
-    let matches = [...userTags].filter(t => productTags.has(t));
-    if (product.tags?.includes('pelvic-floor')) {
-        matches.sort((a, b) => {
-            const pri = (t) => (t === 'pelvic-floor' ? 0 : t === 'discomfort' ? 1 : t === 'endometriosis' ? 2 : t === 'cramps' ? 5 : 3);
-            return pri(a) - pri(b);
-        });
-    }
-    const percent = userTags.size > 0 && matches.length > 0
-        ? Math.round((matches.length / userTags.size) * 100)
-        : null;
+    const stats = getProductRelevanceStats(product, quizAnswers, healthProfile);
     return {
-        labels: matches.slice(0, 4).map(m => TAG_TO_READABLE[m] || m.replace(/-/g, ' ')),
-        percent,
-        matches: matches.length,
-        signals: userTags.size,
+        labels: stats.labels,
+        percent: stats.percent,
+        matches: stats.labels.length,
+        signals: stats.percent == null ? 0 : 1,
     };
 }
 
@@ -1383,9 +1686,8 @@ export function getProfileMatchLabelsForProduct(product, quizAnswers, healthProf
 }
 
 /**
- * Profile-overlap percentage used only for signed-in personalization UI.
- * It is a literal tag-overlap ratio (matched profile signals / comparable
- * profile signals), not a clinical score and not an invented marketing number.
+ * Personalized product relevance score used across recommendation ranking
+ * and signed-in UI. This is a relevance score, not a diagnosis or probability.
  */
 export function getProfileMatchPercentForProduct(product, quizAnswers, healthProfile = null) {
     return getProfileMatchStatsForProduct(product, quizAnswers, healthProfile).percent;

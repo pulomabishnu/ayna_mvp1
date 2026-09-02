@@ -1,4 +1,5 @@
 import React from 'react';
+import HowItWorksFunnel from './HowItWorksFunnel';
 
 export default function HowItWorks({ onBack, onViewSources }) {
   const openSources = () => {
@@ -14,7 +15,7 @@ export default function HowItWorks({ onBack, onViewSources }) {
         <h1 className="hiw-mockup__title">No mystery box.</h1>
 
         <p className="hiw-mockup__intro">
-          Ayna filters the open market against your profile, then against published research.
+          ayna filters the open market against your profile, then against published research.
           <br className="hiw-desktop-break" />
           Anything that fails a step never reaches your shop.
         </p>
@@ -69,12 +70,16 @@ export default function HowItWorks({ onBack, onViewSources }) {
           </article>
         </div>
 
+        <div className="hiw-mockup__funnel-section">
+          <h2>The narrowing down, in one picture</h2>
+          <HowItWorksFunnel />
+        </div>
+
         <div className="hiw-mockup__disclaimer">
           <div>
-            <h2>Ayna is not a doctor, and never pretends to be.</h2>
+            <h2>ayna is not a doctor, and never pretends to be.</h2>
             <p>
               Summaries are AI-written from cited sources and clinician input.
-              Anything needing a diagnosis, we point you to a specialist.
             </p>
           </div>
 

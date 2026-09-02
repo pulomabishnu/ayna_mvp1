@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { findGlossaryTermInText } from '../data/glossary';
+import { useEscapeToClose } from '../utils/useEscapeToClose';
 
 // Map check-in focus options → quiz frustrations (for getRecommendations)
 const FOCUS_TO_FRUSTRATION = {
@@ -67,6 +68,7 @@ const STEP_SCREENING = {
 };
 
 export default function MonthlyCheckin({ onComplete, onClose, currentProfile, onProfileUpdate }) {
+  useEscapeToClose(true, onClose);
   const [stepIndex, setStepIndex] = useState(0);
   const [answers, setAnswers] = useState({});
   const [multiSelections, setMultiSelections] = useState(new Set());
@@ -168,8 +170,8 @@ export default function MonthlyCheckin({ onComplete, onClose, currentProfile, on
     if (focusAreas.includes('Different period product') || focusAreas.includes('Different supplement') || focusAreas.includes('Different app')) {
       tips.push('Your product recommendations have been updated. Check your list.');
     }
-    const title = satisfaction === 'Great — no changes' ? 'You’re all set' : 'Updated for you';
-    const message = satisfaction === 'Great — no changes'
+    const title = satisfaction === 'Great. No changes' ? 'You’re all set' : 'Updated for you';
+    const message = satisfaction === 'Great. No changes'
       ? 'We’ll keep watching for recalls and new products that fit you.'
       : 'We’ve updated your profile and recommendations based on this check-in.';
 

@@ -74,7 +74,7 @@ export function getCareResourceBundle(quizResults, healthProfile, zipCode) {
 
   const intro =
     lines.length > 0
-      ? `Based on your profile and wellness goals, here are resources that may be relevant for you. ${lines.join(' ')} Ayna does not endorse specific clinics; verify insurance, scope of practice, and credentials.`
+      ? `Based on your profile and wellness goals, here are resources that may be relevant for you. ${lines.join(' ')} ayna does not endorse specific clinics; verify insurance, scope of practice, and credentials.`
       : 'Complete the quiz and share your wellness goals in chat, then save a zip code so local clinic finders can start near you.';
 
   const hrssaZip = zip ? `https://findahealthcenter.hrsa.gov/?zip=${encodeURIComponent(zip)}` : 'https://findahealthcenter.hrsa.gov/';

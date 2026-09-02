@@ -13,13 +13,20 @@
  * SAFETY CONTRACT — read before changing anything in this file.
  *
  * Every row this endpoint writes goes in as source='discovered',
- * is_active=false, review_status='pending'. NOTHING it finds is ever visible
- * to a real user until a human runs scripts/review-discovered-products.mjs
- * and explicitly approves it (which flips is_active=true). This is enforced
- * twice — here, and again in supabase/product_catalog_discovery.sql's RLS
- * policy — because the site's own How We Make Money page promises every
- * product passes the same clinical/safety review, partner or not. An AI
- * search result is a candidate, not a review.
+ * is_active=false, review_status='pending', UNLESS it clears the narrow
+ * auto-approval gate in isAutoApprovable() (a fully-answered, clean FDA
+ * recall check AND a real https source URL the model was confident enough to
+ * name) — see that function for exactly what "narrow" means. Everything else
+ * stays pending until a human runs scripts/review-discovered-products.mjs and
+ * explicitly approves it (which flips is_active=true). The is_active=false
+ * default (and the auto-approval gate's conditions) are enforced twice —
+ * here, and again in supabase/product_catalog_discovery.sql's RLS policy —
+ * because the site's own How We Make Money page promises every product
+ * passes the same clinical/safety review, partner or not. An AI search
+ * result is a candidate, not a review — auto-approval is a policy decision
+ * (Aditi, 2026-08-23) to let the two strongest confidence signals already
+ * collected stand in for a human on the clearest cases, not a loosening of
+ * that promise for anything the pipeline is less than fully sure about.
  *
  * Cron-triggered only, same CRON_SECRET Bearer-auth pattern as
  * api/fda-recall.js's sweep mode — see that file's header comment for why the
@@ -31,14 +38,15 @@ import { callWithFallback, parseProviderOrder, tryParseJsonCandidate } from './_
 import { checkRecallsForProduct } from './fda-recall.js';
 import { lookupDsldProduct } from './llm-recommendations.js';
 
-// One category discovered per run, rotated deterministically by day-of-year —
-// not every category every night. A nightly full sweep would mean N
-// categories x (1 search + 1 LLM call + up to 8 recall lookups + DSLD
-// lookups) every single day, most of it re-discovering the same handful of
-// real brands in a slow-moving market. Rotating means the whole list gets a
-// pass roughly every CATEGORIES.length days, which matches how often a
-// genuinely new women's-health product actually launches — this is a
-// deliberately conservative cost/quality tradeoff, not a technical limit.
+// One category discovered per run, rotated deterministically across
+// RUN_HOURS_UTC.length runs/day — not every category every run. A full sweep
+// every run would mean N categories x (1 search + 1 LLM call + up to 8 recall
+// lookups + DSLD lookups) every single invocation, most of it re-discovering
+// the same handful of real brands in a slow-moving market. Rotating means the
+// whole list gets a pass roughly every CATEGORIES.length / RUN_HOURS_UTC.length
+// days — this is a deliberately conservative cost/quality tradeoff, not a
+// technical limit, and the slot count is the throughput knob: more slots/day
+// means faster catalog growth at proportionally higher LLM/search cost.
 export const CATEGORIES = [
   { category: 'pad', label: 'menstrual pads' },
   { category: 'tampon', label: 'tampons' },
@@ -57,8 +65,13 @@ export const CATEGORIES = [
   { category: 'mental-health', label: 'cycle-related mental health support' },
 ];
 
-const MAX_CANDIDATES_PER_RUN = 8;
+const MAX_CANDIDATES_PER_RUN = 12;
 const FUNCTION_BUDGET_MS = 45_000;
+
+// Matches the discover-products cron schedule in vercel.json. Keep both in
+// sync when changing cadence: this array is what makes each same-day run
+// land on a different category instead of re-running the same one.
+export const RUN_HOURS_UTC = [6, 14, 22];
 
 let _admin = null;
 function getAdmin() {
@@ -76,11 +89,25 @@ export function dayOfYear(d = new Date()) {
   return Math.floor(diff / 86_400_000);
 }
 
-export function pickCategory(req) {
+/**
+ * Which of today's RUN_HOURS_UTC slots this run is. Matches on the exact
+ * scheduled hour (cron always fires on the hour); a manual/off-schedule
+ * invocation falls back to the nearest slot by even division of the day, so
+ * it still deterministically lands somewhere sane instead of throwing.
+ */
+export function slotOfDay(d = new Date()) {
+  const h = d.getUTCHours();
+  const exact = RUN_HOURS_UTC.indexOf(h);
+  if (exact >= 0) return exact;
+  return Math.floor(h / (24 / RUN_HOURS_UTC.length)) % RUN_HOURS_UTC.length;
+}
+
+export function pickCategory(req, now = new Date()) {
   const requested = String(req.query?.category || '').trim().toLowerCase();
   const match = CATEGORIES.find((c) => c.category === requested);
   if (match) return match;
-  return CATEGORIES[dayOfYear() % CATEGORIES.length];
+  const slot = dayOfYear(now) * RUN_HOURS_UTC.length + slotOfDay(now);
+  return CATEGORIES[slot % CATEGORIES.length];
 }
 
 export function slugify(s) {
@@ -217,6 +244,10 @@ async function enrichCandidate(candidate, category) {
 export function toRow(candidate, { category, searchHits, provider }) {
   const id = `disc-${slugify(candidate.brand)}-${slugify(candidate.name)}`.slice(0, 120);
   const safeUrl = /^https:\/\//i.test(candidate.url || '') ? candidate.url : null;
+  // candidate.image: the LLM-generation path never has one (candidate.image
+  // is always undefined there, so this is unchanged for it); the Shopify-feed
+  // import path (api/discover-brand-catalog.js) has a real product photo.
+  const safeImage = /^https:\/\//i.test(candidate.image || '') ? candidate.image : null;
   return {
     id,
     name: String(candidate.name || '').slice(0, 200),
@@ -225,7 +256,7 @@ export function toRow(candidate, { category, searchHits, provider }) {
     product_type: candidate.type === 'digital' ? 'digital' : 'physical',
     summary: String(candidate.summary || '').slice(0, 500),
     price: String(candidate.price || '').slice(0, 100) || null,
-    image: null,
+    image: safeImage,
     url: safeUrl,
     tags: [],
     health_functions: [],
@@ -249,6 +280,77 @@ export function toRow(candidate, { category, searchHits, provider }) {
       provider,
       recallCheck: candidate._recallCheck || null,
       searchHits: searchHits.slice(0, 3),
+    },
+  };
+}
+
+/**
+ * A candidate auto-approves ONLY when BOTH of the strongest confidence
+ * signals already collected for it are clean — everything else stays
+ * pending, exactly as before this gate existed:
+ *
+ *   1. The FDA recall check fully answered (status === 'ok', not 'partial')
+ *      AND found nothing active. 'partial' means some dataset failed to
+ *      respond — it could be hiding a real recall, so it does not qualify no
+ *      matter how confident the rest of the candidate looks.
+ *   2. The model named a real, verifiable https source URL — AND that URL
+ *      was actually verified (see verifyUrlIsLive, called at the site that
+ *      awaits isAutoApprovable's result). This function only checks the
+ *      string exists; url liveness was found live (2026-08-24, full Buy Now
+ *      audit) to NOT be checked anywhere despite this docstring's original
+ *      claim — every one of the 14 auto-approved discovered products found
+ *      with a dead Buy Now link had passed this gate purely because `!!url`
+ *      was true, including two whose domains had expired and now redirect
+ *      to an unrelated site (one to a gambling site) while still returning
+ *      a 200. A truthy string was never evidence the URL actually works.
+ *
+ * This is deliberately narrow, not a general "looks fine, ship it" filter —
+ * see the SAFETY CONTRACT note at the top of this file for why.
+ */
+export function isAutoApprovable(row) {
+  const recall = row.discovery_meta?.recallCheck;
+  return recall?.status === 'ok' && recall?.hasRecalls === false && !!row.url;
+}
+
+/**
+ * Live-checks a candidate's source URL — the second half of the
+ * auto-approval bar isAutoApprovable() only checks the string-existence
+ * half of. Requires a real 2xx AND that the final (post-redirect) hostname
+ * still plausibly belongs to the same site, not a different domain
+ * entirely — an expired domain silently parked or resold still returns a
+ * 200, just for someone else's page (a domain-broker parking page, or in
+ * one case found live, a gambling site), so status code alone isn't enough.
+ * A subdomain change (brand.com -> shop.brand.com) is allowed; a different
+ * registrable domain is not.
+ */
+export async function verifyUrlIsLive(url) {
+  try {
+    const original = new URL(url);
+    const res = await fetch(url, {
+      method: 'GET',
+      redirect: 'follow',
+      signal: AbortSignal.timeout(8000),
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15',
+      },
+    });
+    if (!res.ok) return false;
+    const rootOf = (hostname) => hostname.replace(/^www\./, '').split('.').slice(-2).join('.');
+    return rootOf(new URL(res.url).hostname) === rootOf(original.hostname);
+  } catch {
+    return false;
+  }
+}
+
+function autoApprove(row) {
+  return {
+    ...row,
+    review_status: 'approved',
+    is_active: true,
+    discovery_meta: {
+      ...row.discovery_meta,
+      autoApproved: true,
+      autoApprovedAt: new Date().toISOString(),
     },
   };
 }
@@ -291,7 +393,7 @@ export default async function handler(req, res) {
     const { names: excludeNames, keys: excludeKeys } = buildExclusionSet(category, dbRows || []);
     const searchHits = await searchForCategory(label);
     const prompt = buildDiscoveryPrompt({ category, label, searchHits, excludeNames });
-    const order = parseProviderOrder('AI_DISCOVERY_PROVIDER_ORDER', 'anthropic,openai');
+    const order = parseProviderOrder('AI_DISCOVERY_PROVIDER_ORDER', 'anthropic,openai,gemini');
 
     const out = await callWithFallback(order, {
       system: 'Return a single valid JSON object only. No markdown code fences.',
@@ -351,7 +453,20 @@ export default async function handler(req, res) {
       .in('id', rows.map((r) => r.id));
     const alreadyReviewed = new Map((existingReviewed || []).map((r) => [r.id, r.review_status]));
 
-    const toInsert = rows.filter((r) => !alreadyReviewed.has(r.id));
+    // Auto-approval only ever applies to brand-new rows, never to
+    // toUpdateMetaOnly — a human's prior verdict on an id is never touched.
+    // verifyUrlIsLive is a real network call, so only pay for it on rows that
+    // already cleared the (free, synchronous) rest of isAutoApprovable — a
+    // row failing on the recall check shouldn't also wait on a fetch whose
+    // result can't change the outcome.
+    const newRows = rows.filter((r) => !alreadyReviewed.has(r.id));
+    const toInsert = await Promise.all(
+      newRows.map(async (r) => {
+        if (!isAutoApprovable(r)) return r;
+        const urlIsLive = await verifyUrlIsLive(r.url);
+        return urlIsLive ? autoApprove(r) : r;
+      })
+    );
     const toUpdateMetaOnly = rows.filter((r) => alreadyReviewed.has(r.id));
 
     let inserted = 0;
@@ -374,6 +489,7 @@ export default async function handler(req, res) {
       found: rawCandidates.length,
       afterDedup: fresh.length,
       inserted,
+      autoApproved: toInsert.filter((r) => r.discovery_meta?.autoApproved).length,
       metaRefreshed: toUpdateMetaOnly.length,
       insertedIds: toInsert.map((r) => r.id),
     });

@@ -11,7 +11,7 @@ export function getSupabaseClient() {
     client = createClient(url, anonKey, {
       auth: {
         flowType: 'implicit',   // avoids PKCE verifier storage — Chrome bounce tracking deletes it
-        detectSessionInUrl: true,
+        detectSessionInUrl: false, // AuthCallback.jsx handles implicit OAuth tokens explicitly
       },
     });
   } catch (e) {

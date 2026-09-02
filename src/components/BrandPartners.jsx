@@ -2,6 +2,8 @@ import React from 'react';
 import { BRAND_PRODUCTS } from '../data/brands';
 import { CATEGORY_LABELS } from '../data/products';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
+import { safeProductImageSrc } from '../utils/resolveProductImage';
+import { ProductImageFallback } from './ProductTileImage';
 
 /**
  * Brands — the partnership page.
@@ -12,19 +14,46 @@ import { handleImageErrorWithRetry } from '../utils/imageRetry';
  *
  * Only confirmed partners belong here. src/data/brands.js is explicit that its
  * entries are catalog entries and "NOT partnership relationships", so the
- * partner list is its own thing below and names exactly one brand — Neycher,
- * the one that's moving forward. Everything else stays a catalog entry.
+ * partner list is its own thing below.
+ *
+ * Emptied 2026-08-24 (no contract signed yet), refilled 2026-08-25: Neycher
+ * signed a real, official partnership — confirmed by Aditi. No logo file has
+ * been dropped at public/brands/neycher.png yet, so BrandMark below falls
+ * back to a text wordmark until one is added; that's an existing, working
+ * fallback, not a bug.
  */
 
 const PARTNERS = [
   {
     brand: 'Neycher',
     /** Drop a file at public/brands/neycher.png and it replaces the wordmark. */
-    logo: '/brands/neycher.png',
+    logo: 'https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/686eb5fcdbbd35b6fc957602_Frame%201000011567.jpg',
     url: 'https://www.helloneycher.com/',
     blurb:
       'Hormone-free intimate care. Moisturizers, balms and suppositories made for vaginal dryness, irritation and odour.',
   },
+  {
+    brand: 'Connect Pelvic Floor Fitness',
+    logo: 'https://connectpelvicfloorfitness.com/wp-content/uploads/2026/05/social-share-homepage.jpg',
+    url: 'https://goto.connectpelvicfloorfitness.com/YVk7WO',
+    blurb:
+      'DPT-led pelvic floor fitness with guided workouts designed to build strength, reduce symptoms and support whole-body movement.',
+  },
+  {
+    brand: 'Elitone',
+    logo: 'https://thebreastfeedingshop.com/wp-content/uploads/2024/08/Elitone-Pelvic-Floor-Exerciser-1-scaled.webp',
+    url: 'https://elitone.com/?af=aynahealth',
+    blurb:
+      'FDA-cleared wearable pelvic floor therapy designed for at-home strengthening and bladder leak support without insertion.',
+  },
+  {
+    brand: 'Proov',
+    logo: 'https://proovtest.com/cdn/shop/products/1_ProHero.jpg?v=1669147223&width=3840',
+    url: 'https://proovtest.com/?irclickid=092RZoWR3xyZWgGydJzTuXX9UkrxvuV9I08LVk0&sharedid=&irpid=7622078&utm_source=7622078&utm_medium=affiliate&irgwc=1&afsrc=1&tw_source=impact&tw_campaign=7622078',
+    blurb:
+      'At-home fertility testing designed to help track hormones and confirm ovulation.',
+  },
+
 ];
 
 function eyebrowFor(product) {
@@ -52,11 +81,14 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToE
   return (
     <section className="brands">
       <div className="mockup-page brands__head">
-        <div className="brands__kicker">Our partners</div>
-        <h1 className="brands__title">Brands we work with.</h1>
+        <div className="brands__kicker">Partnerships</div>
+        <h1 className="brands__title">
+          {PARTNERS.length > 0 ? 'Brands we work with.' : 'Brand partnerships are coming soon.'}
+        </h1>
         <p className="brands__lede">
-          Partnerships, not paid placement. A brand being here doesn&apos;t move it up your shop.
-          Matching is the same for every product Ayna carries.
+          {PARTNERS.length > 0
+            ? "Partner brands may receive added visibility in Browse, but partnerships never affect personalized matching or recommendations."
+            : "Something exciting is brewing — check back soon. Partner brands may receive added visibility in Browse, but partnerships never affect personalized matching or recommendations."}
         </p>
       </div>
 
@@ -70,6 +102,7 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToE
                 <div>
                   <div className="brand-partner__name">{partner.brand}</div>
                   <p className="brand-partner__blurb">{partner.blurb}</p>
+                  <div className="brand-partner__affiliate-label">Affiliate link</div>
                   <a className="brand-partner__link" href={partner.url} target="_blank" rel="noopener noreferrer">
                     Visit {partner.brand} ↗
                   </a>
@@ -93,17 +126,15 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToE
                           onOpenProduct?.(product);
                         }}
                       >
-                        {product.image ? (
+                        {safeProductImageSrc(product.image, product.type === 'digital') ? (
                           <img
-                            src={product.image}
+                            src={safeProductImageSrc(product.image, product.type === 'digital')}
                             alt=""
                             loading="lazy"
                             onError={(e) => handleImageErrorWithRetry(e, () => { e.currentTarget.style.display = 'none'; })}
                           />
                         ) : (
-                          <span className="discovery-card__initial" aria-hidden="true">
-                            {String(product.name || '?').trim().charAt(0).toUpperCase()}
-                          </span>
+                          <ProductImageFallback />
                         )}
                       </div>
                       <div className="discovery-card__eyebrow">{eyebrowFor(product)}</div>
@@ -126,7 +157,7 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToE
           );
         })}
 
-        <p className="brands__more">Coming soon</p>
+        {PARTNERS.length > 0 && <p className="brands__more">More coming soon</p>}
       </div>
     </section>
   );

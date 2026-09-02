@@ -1,8 +1,6 @@
 import React, { Suspense, useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import AynaLanding from './components/AynaLanding';
 import SiteFooter from './components/SiteFooter';
-import EcosystemBubbles from './components/EcosystemBubbles';
-import EcosystemShelf from './components/EcosystemShelf';
 import SavedForLater from './components/SavedForLater';
 import EcosystemGenerationBar from './components/EcosystemGenerationBar';
 import HealthIntakeForm from './components/HealthIntakeForm';
@@ -27,9 +25,9 @@ const Discovery = React.lazy(() => import('./components/Discovery'));
 const Articles = React.lazy(() => import('./components/Articles'));
 import { CATEGORY_LABELS, getRecommendations, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById } from './data/products';
 import { loadAynaReviews, hydrateAynaReviews, addRating, addReview } from './data/aynaReviews';
-import AynaDeeptech from './components/AynaDeeptech';
 import Screenings from './components/Screenings';
 import { useScrollPosition } from './hooks/useScrollPosition';
+import { useEscapeToClose } from './utils/useEscapeToClose';
 import ProductModal from './components/ProductModal';
 import { enrichLlmProductForDiscovery } from './utils/enrichLlmProductForDiscovery';
 import ProfileChatbot from './components/ProfileChatbot';
@@ -42,9 +40,11 @@ import PrivacyPolicy from './components/PrivacyPolicy';
 import HowWeMakeMoney from './components/HowWeMakeMoney';
 import HowItWorks from './components/HowItWorks';
 import About from './components/About';
+import Contact from './components/Contact';
 import './finalAynaPolish.css';
 import TermsOfUse from './components/TermsOfUse';
 import AuthCallback from './components/AuthCallback';
+import AuthConfirm from './components/AuthConfirm';
 import EmailConfirmed from './components/EmailConfirmed';
 import { getSupabaseClient } from './utils/supabaseClient';
 import { loadEcosystemForUser, upsertProductState, upsertProductsBatch, clearEcosystemForUser } from './utils/ecosystemStore';
@@ -91,7 +91,7 @@ function clearPendingEcosystemReset(userId) {
 
 const VIEW_TO_PATH = {
   welcome: '/', hero: '/', quiz: '/quiz', ecosystem: '/ecosystem',
-  discovery: '/discovery', waitlist: '/startups', deeptech: '/deeptech',
+  discovery: '/discovery', waitlist: '/startups',
   articles: '/library', screenings: '/screenings', omitted: '/omitted',
   comparison: '/comparison', recalls: '/recalls',
   'doctor-prep': '/appointment-prep', 'profile-edit': '/profile', 'phone-verify': '/text-ayna', tracked: '/tracked',
@@ -100,9 +100,24 @@ const VIEW_TO_PATH = {
   'how-we-make-money': '/how-we-make-money',
   'how-it-works': '/how-it-works',
   about: '/about',
+  contact: '/contact',
   'auth-callback': '/auth/callback',
+  'auth-confirm': '/auth/confirm',
   'confirmed': '/confirmed',
 };
+// Friendly document.title per view — 'welcome'/'hero' and any view not
+// listed here fall back to the site's base title (see the title effect).
+const VIEW_TITLES = {
+  quiz: 'Health Quiz', ecosystem: 'My Ecosystem', discovery: 'Browse',
+  waitlist: 'Startups', articles: 'Health Library', screenings: 'Screenings',
+  omitted: 'Omitted Products', comparison: 'Compare Products', recalls: 'Recalls',
+  'doctor-prep': 'Appointment Prep', 'profile-edit': 'Edit Profile',
+  'phone-verify': 'Verify Phone', tracked: 'Tracked Products',
+  'privacy-policy': 'Privacy Policy', 'terms-of-use': 'Terms of Use',
+  'how-we-make-money': 'How We Make Money', 'how-it-works': 'How It Works',
+  about: 'About', contact: 'Contact', 'not-found': 'Page Not Found',
+};
+
 const PATH_TO_VIEW = Object.fromEntries(
   Object.entries(VIEW_TO_PATH).filter(([, p]) => p !== '/').map(([v, p]) => [p, v])
 );
@@ -111,7 +126,12 @@ PATH_TO_VIEW['/'] = 'welcome';
 function getInitialView() {
   const path = window.location.pathname;
   if (parseProductIdFromPath(path)) return 'product';
-  return PATH_TO_VIEW[path] || 'welcome';
+  // An unrecognized path used to silently resolve to 'welcome' — a typo'd
+  // or stale-bookmarked URL landed on the homepage with zero indication
+  // anything was wrong (found live, 2026-08-24 bug bash). The root path
+  // itself is explicitly mapped in PATH_TO_VIEW, so this only ever affects
+  // a genuinely unknown path, never '/'.
+  return PATH_TO_VIEW[path] || 'not-found';
 }
 
 function getInitialProductId() {
@@ -135,10 +155,46 @@ function getInitialDiscoverySearch() {
   }
 }
 
+/**
+ * Same problem as getInitialDiscoverySearch, one level up: the homepage's
+ * "Shop" category pill (All/Period/Intimate Care/...) was pure local state
+ * in AynaLanding, with no URL round-trip — clicking a product from a
+ * filtered Shop view and hitting Back always landed on "All", the filter
+ * silently lost. Flagged live 2026-08-25: "when we go back from the product
+ * page, it must go back to the previous query."
+ */
+function getInitialHomeCategory() {
+  const view = getInitialView();
+  if (view !== 'welcome' && view !== 'hero') return null;
+  try {
+    return new URLSearchParams(window.location.search).get('category') || null;
+  } catch {
+    return null;
+  }
+}
+
 function ViewLoadingFallback() {
   return (
     <div style={{ textAlign: 'center', padding: '4rem 1rem', color: 'var(--text-secondary, #666)' }}>
       Loading…
+    </div>
+  );
+}
+
+/**
+ * Shared "nothing here" state — a bad product link already showed a proper,
+ * on-brand empty state (centered serif heading, muted subtext, single navy
+ * CTA), but a bad top-level URL (a typo, a stale bookmark) instead silently
+ * redirected to the homepage with zero indication anything was wrong (found
+ * live, 2026-08-24 bug bash). Same component now backs both, instead of a
+ * one-off block duplicated just for products.
+ */
+function NotFoundState({ title, subtitle, ctaLabel, onCta }) {
+  return (
+    <div className="mockup-page" style={{ textAlign: 'center', padding: '5rem 1.5rem' }}>
+      <p style={{ fontFamily: 'var(--font-serif)', fontSize: '1.6rem', margin: '0 0 0.5rem' }}>{title}</p>
+      <p style={{ color: 'var(--color-text-muted)', margin: '0 0 1.75rem' }}>{subtitle}</p>
+      <button type="button" className="btn btn-navy" onClick={onCta}>{ctaLabel}</button>
     </div>
   );
 }
@@ -153,6 +209,14 @@ function App() {
   // Ref always mirrors currentView synchronously — safe to read inside Supabase callbacks
   // that run outside React's render cycle.
   const currentViewRef = useRef(getInitialView());
+  // Counts real in-app pushState navigations (not the initial replaceState
+  // on mount, and not replace-style navigations). Used to tell "the user
+  // clicked around inside the app to get here" apart from "this tab's only
+  // entry is a direct/shared link" — window.history.length can't do this
+  // reliably, since a freshly opened tab already carries its own blank
+  // entry before the app even loads, making history.length > 1 true even
+  // with zero in-app navigation.
+  const inAppPushCountRef = useRef(0);
   const pathForView = useCallback((view, id) => {
     if (view === 'product') return id ? productHref(id) : '/';
     return VIEW_TO_PATH[view] || '/';
@@ -164,7 +228,7 @@ function App() {
     const path = pathForView(view, null);
     if (window.location.pathname !== path) {
       if (replace) window.history.replaceState({ view }, '', path);
-      else window.history.pushState({ view }, '', path);
+      else { window.history.pushState({ view }, '', path); inAppPushCountRef.current += 1; }
     }
   }, [pathForView]);
   /** Navigate to a specific product's dedicated page — a real URL, not modal state. */
@@ -176,21 +240,60 @@ function App() {
     const path = productHref(id);
     if (window.location.pathname !== path) {
       if (replace) window.history.replaceState({ view: 'product', productId: id }, '', path);
-      else window.history.pushState({ view: 'product', productId: id }, '', path);
+      else { window.history.pushState({ view: 'product', productId: id }, '', path); inAppPushCountRef.current += 1; }
     }
   }, []);
+  /** Back control for the product page: real in-app back if we got here by
+   * clicking around inside the app, otherwise (direct/shared link, no prior
+   * in-app history) a safe landing on Discovery instead of leaving the tab. */
+  const handleBackFromProduct = useCallback(() => {
+    if (inAppPushCountRef.current > 0) window.history.back();
+    else handleViewDiscovery('');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleBackFromStandalonePage = useCallback(() => {
+    if (inAppPushCountRef.current > 0) window.history.back();
+    else setCurrentView('welcome', { replace: true });
+  }, [setCurrentView]);
   useEffect(() => {
     const path = pathForView(currentView, productRouteId);
-    window.history.replaceState({ view: currentView, productId: productRouteId }, '', path);
+    const initialUrl = currentView === 'auth-callback'
+      ? `${path}${window.location.search}${window.location.hash}`
+      : path;
+    window.history.replaceState({ view: currentView, productId: productRouteId }, '', initialUrl);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
     const onPop = (e) => {
       const pathProductId = parseProductIdFromPath(window.location.pathname);
-      const view = pathProductId ? 'product' : (e.state?.view || PATH_TO_VIEW[window.location.pathname] || 'welcome');
+      const view = pathProductId ? 'product' : (e.state?.view || PATH_TO_VIEW[window.location.pathname] || 'not-found');
       currentViewRef.current = view;
       setCurrentViewRaw(view);
       setProductRouteId(pathProductId);
+      // Discovery unmounts/remounts on every navigation away and back (it's
+      // conditionally rendered on currentView), so its own search state is
+      // lost each time — landing back on a product's "Back" button always
+      // showed the blank default search, not what was actually searched.
+      // Discovery already mirrors its submittedQuery into ?q= via
+      // replaceState as the user searches, so that history entry's URL still
+      // has it; this just needs to be re-read on the way back in, the same
+      // way getInitialDiscoverySearch reads it on the very first page load.
+      if (view === 'discovery') {
+        try {
+          setDiscoverySearch(new URLSearchParams(window.location.search).get('q') || '');
+        } catch {
+          setDiscoverySearch('');
+        }
+      }
+      // Same fix, for the homepage Shop category pill — see getInitialHomeCategory.
+      if (view === 'welcome' || view === 'hero') {
+        try {
+          setHomeCategory(new URLSearchParams(window.location.search).get('category') || null);
+        } catch {
+          setHomeCategory(null);
+        }
+      }
     };
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
@@ -216,6 +319,7 @@ function App() {
   const [checkinUpdatedProfile, setCheckinUpdatedProfile] = useState(false);
   const [checkinCompletedAt, setCheckinCompletedAt] = useState(null);
   const [discoverySearch, setDiscoverySearch] = useState(getInitialDiscoverySearch);
+  const [homeCategory, setHomeCategory] = useState(getInitialHomeCategory);
   const [discoveryInitial, setDiscoveryInitial] = useState(null); // { initialCategory, initialPadFlow, initialPadPreference, initialPadUseCase }
   const [userZipCode, setUserZipCode] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
@@ -236,8 +340,28 @@ function App() {
   // Ref mirrors pendingAction so onAuthStateChange (async callback) can read it synchronously
   const pendingActionRef = useRef(null);
   const [pendingQuizResults, setPendingQuizResults] = useState(null);
+  // Requested 2026-08-24 meeting: "sign-in required to build an ecosystem,
+  // accompanied by a popup warning to prevent loss of unsaved progress." The
+  // sign-in requirement already existed (handleQuizComplete gates on `user`
+  // below) — what didn't exist was the warning: pendingQuizResults lives only
+  // in React state until she signs in, so closing the tab, hitting back, or
+  // navigating away while the AuthGate modal is up silently threw away a
+  // just-completed quiz with no warning at all. beforeunload is the only
+  // browser mechanism that can actually intercept a tab close/refresh — an
+  // in-app modal can't.
+  useEffect(() => {
+    if (!pendingQuizResults) return undefined;
+    const handler = (e) => {
+      e.preventDefault();
+      e.returnValue = '';
+      return '';
+    };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [pendingQuizResults]);
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  useEscapeToClose(showDeleteModal, () => setShowDeleteModal(false));
   const [saveError, setSaveError] = useState(null);
   const reportSaveFailure = useCallback((what, err) => {
     console.error('[Ayna] save failed:', what, err);
@@ -289,15 +413,24 @@ function App() {
     setAynaReviews(loadAynaReviews());
   }, []);
 
-  // Restore quiz results saved before a Google OAuth redirect.
+  // Restore the action that was in progress before a Google OAuth redirect.
+  // Quiz results are stored separately because they contain the unsaved intake.
   React.useEffect(() => {
     try {
       const storedQuiz = sessionStorage.getItem('ayna_pending_quiz_results');
+      const storedAction = sessionStorage.getItem('ayna_pending_auth_action');
+
       if (storedQuiz) {
         setPendingQuizResults(JSON.parse(storedQuiz));
-        setPendingAction('quiz-complete'); pendingActionRef.current = 'quiz-complete';
+        setPendingAction('quiz-complete');
+        pendingActionRef.current = 'quiz-complete';
         sessionStorage.removeItem('ayna_pending_quiz_results');
+      } else if (storedAction) {
+        setPendingAction(storedAction);
+        pendingActionRef.current = storedAction;
       }
+
+      sessionStorage.removeItem('ayna_pending_auth_action');
     } catch (_) {}
   }, []);
 
@@ -331,11 +464,11 @@ function App() {
     // straight back to the landing and those pages were unreachable by URL in
     // production. (PROTECTED_VIEWS below is what actually guards private ones.)
     const STATIC_VIEWS = [
-      'privacy-policy', 'terms-of-use', 'confirmed', 'auth-callback',
+      'privacy-policy', 'terms-of-use', 'confirmed', 'auth-callback', 'auth-confirm',
       'welcome', 'hero', 'quiz', 'discovery', 'waitlist', 'articles',
-      'deeptech', 'how-it-works', 'how-we-make-money',
+      'how-it-works', 'how-we-make-money',
     ];
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       setUser(session?.user ?? null);
       setUserSession(session ?? null);
       if (event === 'SIGNED_IN' && session?.user) {
@@ -361,6 +494,26 @@ function App() {
         posthog.reset();
       }
       if (!session) {
+        // supabase-js is known to emit a spurious SIGNED_OUT (session: null)
+        // on a transient background token-refresh failure — a brief network
+        // blip, not a real sign-out. This block wipes EVERY piece of local
+        // state (ecosystem, quiz results, reviews, health profile, saved
+        // products) and sends the user back to 'welcome', forcing a full
+        // intake redo — exactly what an MVP tester reported happening to her
+        // for no apparent reason while she was still genuinely signed in.
+        // Debounce: wait briefly and re-check the ACTUAL current session
+        // before treating this as a real sign-out, so a transient blip that
+        // resolves on its own never touches any local data.
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        try {
+          const { data } = await supabase.auth.getSession();
+          if (data?.session) return; // recovered — was transient, wipe nothing
+        } catch (_) {
+          // getSession() itself failing doesn't prove there's no session —
+          // fall through to the wipe rather than loop forever on an
+          // unrelated network error, same as every other best-effort check
+          // in this handler.
+        }
         setMyProducts({});
         setTrackedProducts({});
         setOmittedProducts({});
@@ -544,10 +697,10 @@ function App() {
       const rawIntake = pendingQuizResults?.fullHealthIntake || pendingQuizResults;
       saveHealthIntakeForCurrentUser(rawIntake).catch(e => reportSaveFailure('Could not save your health profile', e));
       setPendingQuizResults(null);
-    } else if (pendingAction === 'browse') {
+    } else if (pendingAction === 'browse' || pendingAction === 'personalize') {
       handleViewDiscovery('');
     } else if (pendingAction === 'login') {
-      setCurrentView('welcome');
+      setCurrentView('ecosystem');
     }
     setPendingAction(null); pendingActionRef.current = null;
   }, [user, pendingAction]);
@@ -560,6 +713,14 @@ function App() {
     document.addEventListener('pointerdown', close);
     return () => document.removeEventListener('pointerdown', close);
   }, [showAccountMenu]);
+
+  // Discovery's "Personalized" toggle is visible to everyone, but clicking it
+  // while logged out opens the same AuthGate modal used everywhere else in
+  // the app, instead of silently doing nothing or being invisible.
+  const handleRequirePersonalizeAuth = useCallback(() => {
+    setPendingAction('personalize'); pendingActionRef.current = 'personalize';
+    setShowAuthModal(true);
+  }, []);
 
   const PROTECTED_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls', 'doctor-prep', 'profile-edit', 'phone-verify', 'tracked', 'screenings'];
   useEffect(() => {
@@ -666,6 +827,13 @@ function App() {
   const handleViewWaitlist = () => setCurrentView('waitlist');
   const handleViewEcosystem = () => setCurrentView('ecosystem');
   const handleViewWishlist = () => {
+    if (!user) {
+      setPendingAction('login');
+      pendingActionRef.current = 'login';
+      setShowAuthModal(true);
+      return;
+    }
+
     setCurrentView('ecosystem');
     window.setTimeout(() => {
       document.getElementById('ayna-wishlist')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -676,6 +844,7 @@ function App() {
       setDiscoverySearch(queryOrOptions.query || '');
       setDiscoveryInitial({
         initialCategory: queryOrOptions.initialCategory || null,
+        initialMacroGroup: queryOrOptions.initialMacroGroup || null,
         initialPadFlow: queryOrOptions.initialPadFlow || null,
         initialPadPreference: queryOrOptions.initialPadPreference || null,
         initialPadUseCase: queryOrOptions.initialPadUseCase || null,
@@ -687,10 +856,10 @@ function App() {
     }
     setCurrentView('discovery');
   };
-  const handleViewDeeptech = () => setCurrentView('deeptech');
   const handleViewHowWeMakeMoney = () => setCurrentView('how-we-make-money');
   const handleViewHowItWorks = () => setCurrentView('how-it-works');
   const handleViewAbout = () => setCurrentView('about');
+  const handleViewContact = () => setCurrentView('contact');
   const handleViewArticles = () => {
     setSelectedArticleId(null);
     setCurrentView('articles');
@@ -874,7 +1043,13 @@ function App() {
     });
 
     if (!wasIn) {
-      posthog.capture('product_added', { category: product.category, type: product.type });
+      const origin = lastOpenOrigin?.productId === product.id ? lastOpenOrigin : null;
+      posthog.capture('product_added', {
+        category: product.category,
+        type: product.type,
+        source: origin?.source,
+        searchQuery: origin?.searchQuery,
+      });
     }
     if (user) {
       upsertProductState(getSupabaseClient(), user.id, product, {
@@ -973,6 +1148,11 @@ function App() {
   // link, browser back/forward) won't have this and falls back to
   // `resolvedProduct` below, which looks the id up from real state instead.
   const [lastClickedProduct, setLastClickedProduct] = useState(null);
+  // Tracks whether the currently open product was reached from a search
+  // result, so downstream events (buy now, add to ecosystem) can carry the
+  // same searchQuery and let us trace search -> click -> purchase in
+  // PostHog. Cleared whenever a product is opened from anywhere else.
+  const [lastOpenOrigin, setLastOpenOrigin] = useState(null);
 
   const omittedCount = Object.keys(omittedProducts).length;
   const ecosystemCount = Object.keys(myProducts).length;
@@ -985,13 +1165,18 @@ function App() {
   const navGradientVariant = currentView === 'about'
     ? ' app-nav--about'
     : (user && ecosystemCount > 0) ? ' app-nav--returning' : '';
-  /** 1d (circular) vs 1e (shelf) -- two views of the same ecosystem, not two destinations. */
-  const [ecosystemVisualView, setEcosystemVisualView] = useState('orbit');
-
-  const handleOpenProduct = (product) => {
+  const handleOpenProduct = (product, meta = {}) => {
     if (!product?.id) return;
     const p = product?.llmGenerated ? enrichLlmProductForDiscovery(product) : product;
-    posthog.capture('product_card_opened', { category: p?.category });
+    const source = meta.source || 'browse';
+    posthog.capture('product_card_opened', {
+      productId: p?.id,
+      category: p?.category,
+      source,
+      searchQuery: source === 'search_results' ? meta.searchQuery : undefined,
+      position: meta.position,
+    });
+    setLastOpenOrigin(source === 'search_results' ? { productId: p.id, source, searchQuery: meta.searchQuery } : null);
     setLastClickedProduct(p);
     navigateToProduct(p.id);
   };
@@ -1015,6 +1200,22 @@ function App() {
     return raw.llmGenerated ? enrichLlmProductForDiscovery(raw) : raw;
   }, [productRouteId, lastClickedProduct, myProducts, savedProducts, trackedProducts, omittedProducts]);
   const productStillResolving = !resolvedProduct && (authLoading || dataLoading);
+
+  // Every route showed the identical generic <title> from index.html — no
+  // way to tell tabs apart, bookmark a specific page, or get a useful link
+  // preview when sharing (found live, 2026-08-24 bug bash). One page,
+  // dynamic title per route/product instead.
+  useEffect(() => {
+    const base = "ayna | Personalized Women's Health Product Recommendations";
+    if (currentView === 'product') {
+      document.title = resolvedProduct?.name
+        ? `${resolvedProduct.name} | ayna`
+        : (productStillResolving ? 'Loading… | ayna' : base);
+      return;
+    }
+    const label = VIEW_TITLES[currentView];
+    document.title = label ? `${label} | ayna` : base;
+  }, [currentView, resolvedProduct, productStillResolving]);
 
   const handleRateProduct = (product, rating) => {
     const next = addRating(product.id, rating);
@@ -1078,6 +1279,7 @@ function App() {
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigateHome(); } }}
             >
               ayna
+              <span className="app-nav__beta-badge">beta</span>
             </div>
 
             {/* Hamburger — mobile only */}
@@ -1231,6 +1433,7 @@ function App() {
             hasProfile={!!quizResults}
             profileCategories={landingProfileCategories}
             recommendedProductIds={recommendedProductIds}
+            initialCategory={homeCategory}
           />
         )}
         {currentView === 'quiz' && (
@@ -1294,39 +1497,43 @@ function App() {
             />
           </Suspense>
         )}
-        {currentView === 'deeptech' && (
-          <AynaDeeptech
-            joinedWaitlists={joinedWaitlists}
-            toggleJoinWaitlist={toggleJoinWaitlist}
-          />
-        )}
         {currentView === 'articles' && (
           <Suspense fallback={<ViewLoadingFallback />}>
             <Articles initialArticleId={selectedArticleId} onOpenProduct={handleOpenProduct} quizResults={quizResults} healthProfile={healthProfile} />
           </Suspense>
         )}
         {currentView === 'privacy-policy' && (
-          <PrivacyPolicy onBack={() => window.history.back()} />
+          <PrivacyPolicy onBack={handleBackFromStandalonePage} />
         )}
         {currentView === 'terms-of-use' && (
-          <TermsOfUse onBack={() => window.history.back()} />
+          <TermsOfUse onBack={handleBackFromStandalonePage} />
         )}
         {currentView === 'how-we-make-money' && (
-          <HowWeMakeMoney onBack={() => window.history.back()} />
+          <HowWeMakeMoney onBack={handleBackFromStandalonePage} />
         )}
         {currentView === 'how-it-works' && (
           <HowItWorks
-            onBack={() => window.history.back()}
+            onBack={handleBackFromStandalonePage}
             onViewSources={handleViewArticles}
           />
         )}
         {currentView === 'about' && (
-          <About onBack={() => window.history.back()} onViewSources={handleViewArticles} />
+          <About onBack={handleBackFromStandalonePage} onViewSources={handleViewArticles} />
+        )}
+        {currentView === 'contact' && (
+          <Contact onBack={handleBackFromStandalonePage} />
         )}
         {currentView === 'auth-callback' && (
           <AuthCallback onAuthenticated={(user) => {
+            // Navigation is handled by the restored pendingAction effect so
+            // Google OAuth follows the same post-login path as email/password.
             setUser(user);
-            setCurrentView('welcome');
+          }} />
+        )}
+        {currentView === 'auth-confirm' && (
+          <AuthConfirm onAuthenticated={(user) => {
+            setUser(user);
+            setCurrentView('confirmed');
           }} />
         )}
         {currentView === 'confirmed' && (
@@ -1340,45 +1547,12 @@ function App() {
             Loading your ecosystem…
           </div>
         )}
-        {currentView === 'ecosystem' && (
-          <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '28px' }}>
-            <div className="eco-view-toggle" role="group" aria-label="Ecosystem view">
-              <button
-                type="button"
-                className={ecosystemVisualView === 'orbit' ? 'is-active' : undefined}
-                aria-pressed={ecosystemVisualView === 'orbit'}
-                onClick={() => setEcosystemVisualView('orbit')}
-              >
-                Ecosystem
-              </button>
-              <button
-                type="button"
-                className={ecosystemVisualView === 'shelf' ? 'is-active' : undefined}
-                aria-pressed={ecosystemVisualView === 'shelf'}
-                onClick={() => setEcosystemVisualView('shelf')}
-              >
-                Shelves
-              </button>
-            </div>
-          </div>
-        )}
-        {currentView === 'ecosystem' && ecosystemVisualView === 'orbit' && (
-          <EcosystemBubbles
-            myProducts={myProducts}
-            quizResults={quizResults}
-            healthProfile={healthProfile}
-            user={user}
-            onOpenProduct={handleOpenProduct}
-            onExploreArea={(area) => handleViewDiscovery({ query: '', initialCategory: area.categories?.[0] })}
-          />
-        )}
-        {currentView === 'ecosystem' && ecosystemVisualView === 'shelf' && (
-          <EcosystemShelf
-            myProducts={myProducts}
-            onOpenProduct={handleOpenProduct}
-            onExploreArea={(area) => handleViewDiscovery({ query: '', initialCategory: area.categories?.[0] })}
-          />
-        )}
+        {/* The bubble hero + shelves used to render here as two alternate
+            App.jsx-level views (an "Ecosystem / Shelves" toggle) ABOVE
+            MyEcosystem's own internal overview — two separate "your
+            ecosystem" headers stacked on the same page. MyEcosystem now
+            renders both combined (board 2a), so this toggle is gone rather
+            than becoming a third, redundant copy. */}
         {currentView === 'ecosystem' && (
           <Suspense fallback={<ViewLoadingFallback />}>
           <MyEcosystem
@@ -1400,7 +1574,7 @@ function App() {
             onZipCodeChange={handleZipCodeChange}
             ecosystemSeedMeta={ecosystemSeedMeta}
             onSwapSeedProduct={handleSwapEcosystemSeedProduct}
-            onGoToSearch={(query) => handleViewDiscovery(query || '')}
+            onGoToSearch={(queryOrOptions) => handleViewDiscovery(queryOrOptions || '')}
             onHealthProfileUpdate={updateHealthProfile}
             onViewRecommendedArticles={handleViewArticles}
             onOpenArticle={(articleId) => {
@@ -1436,6 +1610,7 @@ function App() {
             toggleJoinWaitlist={toggleJoinWaitlist}
             omittedProducts={omittedProducts}
             initialCategory={discoveryInitial?.initialCategory}
+            initialMacroGroup={discoveryInitial?.initialMacroGroup}
             initialPadFlow={discoveryInitial?.initialPadFlow}
             initialPadPreference={discoveryInitial?.initialPadPreference}
             initialPadUseCase={discoveryInitial?.initialPadUseCase}
@@ -1452,6 +1627,8 @@ function App() {
             hasHealthImport={hasHealthImport}
             quizResults={quizResults}
             healthProfile={healthProfile}
+            user={user}
+            onRequirePersonalizeAuth={handleRequirePersonalizeAuth}
           />
           </Suspense>
         )}
@@ -1504,6 +1681,30 @@ function App() {
             onProfileUpdate={(updated) => {
               setQuizResults(updated);
               setCheckinUpdatedProfile(true);
+              // Previously this only ever updated in-memory state — a real
+              // check-in change (e.g. adding "Painful cramps") showed the
+              // right confirmation, then silently vanished on reload,
+              // because nothing was ever sent to the backend (found live,
+              // 2026-08-24 bug bash). `frustrations` on the legacy profile
+              // shape is DERIVED (mapIntakeToLegacyQuizProfile computes it
+              // from the raw intake's own fields, e.g. `symptoms`), so it
+              // can't be persisted by writing it back directly — instead,
+              // append whatever's newly added to customConcerns, the same
+              // free-text path the quiz itself uses (inferFrustrationsFrom-
+              // FreeTextConcerns), so it re-derives the same frustration on
+              // every future load, not just this session. Every value
+              // MonthlyCheckin's FOCUS_TO_FRUSTRATION can actually produce
+              // ("Heavy flow," "Painful cramps," "Hormonal bloating,"
+              // "Irregular cycles," "Recurrent UTIs") already contains the
+              // keyword that inference looks for in its own label text.
+              const rawIntake = updated?.fullHealthIntake || {};
+              const priorConcerns = Array.isArray(rawIntake.customConcerns) ? rawIntake.customConcerns : [];
+              const priorFrustrations = quizResults?.frustrations || [];
+              const newlyAdded = (updated.frustrations || []).filter((f) => !priorFrustrations.includes(f));
+              if (newlyAdded.length) {
+                const nextIntake = { ...rawIntake, customConcerns: [...priorConcerns, ...newlyAdded] };
+                saveHealthIntakeForCurrentUser(nextIntake).catch((e) => reportSaveFailure('Could not save your check-in', e));
+              }
             }}
           />
         )}
@@ -1517,6 +1718,7 @@ function App() {
             onChatHistoryUpdate={setChatHistory}
             disabled={!quizResults}
             onNavigateToDiscovery={handleViewDiscovery}
+            onViewRecommendations={() => setCurrentView('recommendations')}
           />
         )}
 
@@ -1550,20 +1752,27 @@ function App() {
               user={user}
               userSession={userSession}
               onOpenProduct={handleOpenProduct}
+              onBack={handleBackFromProduct}
+              searchOrigin={lastOpenOrigin?.productId === resolvedProduct.id ? lastOpenOrigin : null}
             />
           ) : productStillResolving ? (
             <ViewLoadingFallback />
           ) : (
-            <div className="mockup-page" style={{ textAlign: 'center', padding: '5rem 1.5rem' }}>
-              <p style={{ fontFamily: 'var(--font-serif)', fontSize: '1.6rem', margin: '0 0 0.5rem' }}>Product not found</p>
-              <p style={{ color: 'var(--color-text-muted)', margin: '0 0 1.75rem' }}>
-                This product may have been removed, or the link may be incorrect.
-              </p>
-              <button type="button" className="btn btn-navy" onClick={() => handleViewDiscovery('')}>
-                Browse products
-              </button>
-            </div>
+            <NotFoundState
+              title="Product not found"
+              subtitle="This product may have been removed, or the link may be incorrect."
+              ctaLabel="Browse products"
+              onCta={() => handleViewDiscovery('')}
+            />
           )
+        )}
+        {currentView === 'not-found' && (
+          <NotFoundState
+            title="Page not found"
+            subtitle="That link may be broken, or the page may have moved."
+            ctaLabel="Go to homepage"
+            onCta={() => setCurrentView('welcome')}
+          />
         )}
 
         {showDeleteModal && (
@@ -1607,10 +1816,10 @@ function App() {
               <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', lineHeight: 1.6, margin: 0 }}>
                 To request deletion of your entire account and data, email{' '}
                 <a
-                  href="mailto:pulomabishnu@gmail.com?subject=Account%20Deletion%20Request"
+                  href="mailto:puloma@aynahealth.co?subject=Account%20Deletion%20Request"
                   style={{ color: 'var(--color-primary)', textDecoration: 'underline', fontWeight: '500' }}
                 >
-                  pulomabishnu@gmail.com
+                  puloma@aynahealth.co
                 </a>
                 {' '}from the email address associated with your account.
               </p>
@@ -1624,10 +1833,15 @@ function App() {
         {showAuthModal && (
           <AuthGate
             isModal
-            context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : pendingAction === 'login' ? 'login' : undefined}
-            onBeforeOAuthRedirect={pendingAction === 'quiz-complete' && pendingQuizResults ? () => {
-              try { sessionStorage.setItem('ayna_pending_quiz_results', JSON.stringify(pendingQuizResults)); } catch (_) {}
-            } : undefined}
+            context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : pendingAction === 'personalize' ? 'personalize' : pendingAction === 'login' ? 'login' : undefined}
+            onBeforeOAuthRedirect={() => {
+              try {
+                if (pendingAction) sessionStorage.setItem('ayna_pending_auth_action', pendingAction);
+                if (pendingAction === 'quiz-complete' && pendingQuizResults) {
+                  sessionStorage.setItem('ayna_pending_quiz_results', JSON.stringify(pendingQuizResults));
+                }
+              } catch (_) {}
+            }}
             onSkip={() => {
               setShowAuthModal(false);
               if (pendingAction === 'quiz-complete' && pendingQuizResults) {
@@ -1647,8 +1861,8 @@ function App() {
       <SiteFooter
           onViewHowItWorks={handleViewHowItWorks}
           onViewAbout={handleViewAbout}
+          onViewContact={handleViewContact}
           onViewDiscovery={handleViewDiscovery}
-          onViewDeeptech={handleViewDeeptech}
           onViewWaitlist={handleViewWaitlist}
           onViewArticles={handleViewArticles}
           onViewPrivacyPolicy={() => setCurrentView('privacy-policy')}

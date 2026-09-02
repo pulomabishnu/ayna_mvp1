@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useEscapeToClose } from '../utils/useEscapeToClose';
 
 const FLOW_OPTIONS = [
     { value: 'heavy', label: 'Heavy', desc: 'I need maximum absorbency' },
@@ -16,6 +17,7 @@ const OVERNIGHT_OPTIONS = [
 ];
 
 export default function FindYourPadModal({ onClose, onFind }) {
+    useEscapeToClose(true, onClose);
     const [step, setStep] = useState(1);
     const [flow, setFlow] = useState(null);
     const [preference, setPreference] = useState(null);

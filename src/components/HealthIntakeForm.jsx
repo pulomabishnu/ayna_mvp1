@@ -8,6 +8,8 @@ import {
   INSURANCE_TYPES,
   FSA_HSA_OPTIONS,
   OTHER_CONCERN_OPTION,
+  CYCLE_OPTIONS,
+  TTC_OPTIONS,
   mapIntakeToLegacyQuizProfile,
 } from '../utils/healthIntake';
 import { saveHealthIntakeForCurrentUser } from '../utils/healthIntakeStore';
@@ -24,13 +26,8 @@ const KEY_SYMPTOMS = [
 ];
 
 const FLOW_OPTIONS = ['Light', 'Medium', 'Heavy', 'Very heavy'];
-const CYCLE_OPTIONS = [
-  { value: 'yes', label: 'Yes' },
-  { value: 'no', label: 'No' },
-  { value: 'irregular', label: 'Irregular' },
-  { value: 'irregular_perimenopause', label: 'Irregular (Perimenopause)' },
-  { value: 'no_menopause', label: 'No (Menopause)' },
-];
+// CYCLE_OPTIONS/TTC_OPTIONS now live in ../utils/healthIntake, shared with
+// the profile editor.
 
 const FAMILY_HISTORY_OPTIONS = [
   'PCOS', 'Endometriosis', 'Thyroid disorder', 'Uterine fibroids',
@@ -47,7 +44,6 @@ const LAST_OBGYN_OPTIONS = [
   { value: 'over_3_years', label: 'More than 3 years ago' },
   { value: 'never', label: 'Never' },
 ];
-const TTC_OPTIONS = ['Yes', 'No', 'Not right now'];
 const BC_OPTIONS = ['Yes', 'No'];
 
 const SCREEN_ORDER = ['basics', 'concerns', 'period', 'health', 'products', 'healthdata'];
@@ -415,6 +411,20 @@ export default function HealthIntakeForm({ onComplete }) {
   const total = screens.length;
   const progressPct = Math.round(((currentIndex + 1) / total) * 100);
 
+  // Warn before losing quiz progress on tab close/refresh once she's past
+  // the first screen — mirrors the same beforeunload guard App.jsx uses for
+  // the post-completion, pre-sign-in window (see that file's comment).
+  useEffect(() => {
+    if (currentIndex <= 0) return undefined;
+    const handler = (e) => {
+      e.preventDefault();
+      e.returnValue = '';
+      return '';
+    };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [currentIndex]);
+
   const zipLookupRef = useRef(null);
   useEffect(() => {
     if (intake.zipcode.length !== 5) return undefined;
@@ -519,14 +529,17 @@ export default function HealthIntakeForm({ onComplete }) {
             <ScreenHeader title="Let's build your ecosystem." subtitle="A few quick questions. Takes about 20 seconds." />
             <FieldLabel>How old are you?</FieldLabel>
             <TextInput type="number" value={intake.age} onChange={(v) => set('age', v)} placeholder="e.g. 28" />
-            <FieldLabel optional>Where are you based?</FieldLabel>
-            <TextInput value={intake.location} onChange={(v) => set('location', v)} placeholder="e.g. New York, NY" />
             <FieldLabel optional>ZIP code</FieldLabel>
             <TextInput
               value={intake.zipcode}
               onChange={(v) => set('zipcode', v.replace(/\D/g, '').slice(0, 5))}
               placeholder="e.g. 10001"
             />
+            {intake.location.trim() && (
+              <p style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', marginTop: '0.3rem' }}>
+                {intake.location}
+              </p>
+            )}
             <ContinueButton onClick={goNext} disabled={!intake.age.trim()}>Continue →</ContinueButton>
           </div>
         )}
@@ -550,7 +563,7 @@ export default function HealthIntakeForm({ onComplete }) {
             <FieldLabel>Do you have a menstrual cycle?</FieldLabel>
             <SingleSelect options={CYCLE_OPTIONS} value={intake.menstrualCycle} onSelect={(v) => set('menstrualCycle', v)} />
 
-            <FieldLabel optional>Goals. What are you hoping Ayna helps you with?</FieldLabel>
+            <FieldLabel optional>Goals. What are you hoping ayna helps you with?</FieldLabel>
             <ChipGrid items={GOALS} selected={intake.goals} onToggle={(v) => toggle('goals', v)} small />
             <div style={{ marginTop: '0.75rem' }}>
               <TextInput value={intake.goalsOtherText} onChange={(v) => set('goalsOtherText', v)} placeholder="Anything else you're looking for? (optional)" />

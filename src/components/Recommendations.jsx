@@ -5,6 +5,7 @@ import { inferTagsFromHealthProfile } from '../utils/healthDataProfile';
 import CareNearYouPanel from './CareNearYouPanel';
 import LlmRecommendationsLoadingBlock from './LlmRecommendationsLoadingBlock';
 import { getPricePerUnitLabel } from '../utils/pricePerUnit';
+import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import {
     fetchLlmRecommendations,
     loadLearningMemory,
@@ -204,7 +205,6 @@ export default function Recommendations({
             ? (String(product.considerations || '').trim() || null)
             : engine.considerations;
         const hideClinicianCallout = product.llmGenerated === true || product.intakeGenerated === true;
-        const imgSrc = product.image && String(product.image).trim();
         const buyUrl = product.url && /^https:\/\//i.test(String(product.url).trim()) ? String(product.url).trim() : '';
         return (
             <div key={product.id} className="card hover-lift" style={{
@@ -220,21 +220,15 @@ export default function Recommendations({
                         display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-text-muted)'
                     }}
                     title="Don't recommend this again"
-                >✕</button>
+                >X</button>
 
-                <div style={{ height: '140px', width: '100%', overflow: 'hidden', position: 'relative' }}>
-                    {imgSrc ? (
-                        <img src={imgSrc} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    ) : (
-                        <div style={{
-                            width: '100%', height: '100%',
-                            background: 'linear-gradient(135deg, var(--color-secondary-fade), var(--color-primary-fade, #f3e8ff))',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            fontSize: '2rem', fontWeight: '600', color: 'var(--color-text-muted)',
-                        }} aria-hidden="true">
-                            {String(product.name || '?').trim().charAt(0).toUpperCase()}
-                        </div>
-                    )}
+                <div style={{ height: '140px', width: '100%', overflow: 'hidden', position: 'relative', background: 'linear-gradient(135deg, var(--color-secondary-fade), var(--color-primary-fade, #f3e8ff))' }}>
+                    <ProductTileImage
+                        product={product}
+                        alt={product.name}
+                        imgStyle={{ width: '100%', height: '100%', objectFit: 'contain', padding: '10px', boxSizing: 'border-box' }}
+                        letterNode={<ProductImageFallback />}
+                    />
                     <span style={{
                         position: 'absolute', top: '0.75rem', left: '0.75rem',
                         background: product.type === 'physical' ? 'var(--color-surface-contrast)' : 'var(--color-primary)',
@@ -249,7 +243,7 @@ export default function Recommendations({
                             background: 'var(--color-primary)', color: 'white', padding: '0.25rem 0.6rem',
                             borderRadius: 'var(--radius-pill)', fontSize: '0.7rem', fontWeight: '600'
                         }}>
-                            ✓ Tracked
+                            Tracked
                         </span>
                     )}
                     {product.outOfBusiness && (
@@ -297,13 +291,13 @@ export default function Recommendations({
                     )}
 
                     <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
-                        {product.safety?.recalls && !product.safety.recalls.includes('⚠️') && (
-                            <span style={{ fontSize: '0.75rem', background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>✓ No recalls</span>
+                        {product.safety?.recalls && !product.safety.recalls.includes('\u26A0\uFE0F') && (
+                            <span style={{ fontSize: '0.75rem', background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No recall alert</span>
                         )}
-                        {product.safety?.recalls && product.safety.recalls.includes('⚠️') && (
+                        {product.safety?.recalls && product.safety.recalls.includes('\u26A0\uFE0F') && (
                             <span style={{ fontSize: '0.75rem', background: '#F8F9FA', color: 'var(--color-text-main)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>Safety note</span>
                         )}
-                        {product.privacy?.sellsData?.includes('❌') && (
+                        {product.privacy?.sellsData?.includes('\u274C') && (
                             <span style={{ fontSize: '0.75rem', background: 'var(--color-secondary-fade)', color: 'var(--color-text-main)', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-pill)' }}>No data selling</span>
                         )}
                     </div>
@@ -319,7 +313,7 @@ export default function Recommendations({
                         </span>
                         <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                             <button className="btn btn-outline" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }} onClick={() => toggleMyProduct(product)}>
-                                {isInEcosystem ? '✓ Added' : '+ Add'}
+                                {isInEcosystem ? 'Added' : '+ Add'}
                             </button>
                             {buyUrl && (
                                 <a
@@ -332,7 +326,7 @@ export default function Recommendations({
                                     Buy ↗
                                 </a>
                             )}
-                            <button className="btn btn-primary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }} onClick={() => onOpenProduct(product)}>
+                            <button className="btn btn-primary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }} onClick={() => onOpenProduct(product, { source: 'recommendation' })}>
                                 Details
                             </button>
                         </div>
@@ -367,10 +361,10 @@ export default function Recommendations({
                     </p>
                 )}
                 <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginTop: '0.5rem' }}>
-                    We never sell your data. The "For [concern]" picks below come from our reviewed catalog. The picks above come from your own health profile — always double check with a doctor before you decide.
+                    We never sell your data. The "For [concern]" picks below come from our reviewed catalog. The picks above come from your own health profile, so always double check with a doctor before you decide.
                 </p>
                 <p style={{ color: 'var(--color-primary)', fontSize: '0.9rem', marginTop: '0.5rem', fontWeight: '500' }}>
-                    Forgot something? Use the chat button to speak or type more — we’ll refresh your ecosystem.
+                    Forgot something? Use the chat button to speak or type more. We’ll refresh your ecosystem.
                 </p>
                 <div style={{ marginTop: '1.25rem' }}>
                     <button type="button" className="btn btn-outline" onClick={onRetake}>
@@ -408,7 +402,7 @@ export default function Recommendations({
                 <div style={{ maxWidth: '980px', margin: '0 auto var(--spacing-xl)', display: 'grid', gap: '1rem' }}>
                     <h3 style={{ fontSize: '1.35rem', marginBottom: '0.4rem' }}>Picks for you</h3>
                     <p style={{ margin: '0 0 0.45rem', fontSize: '0.82rem', color: 'var(--color-text-muted)', lineHeight: 1.45 }}>
-                        These picks come from what you told us and what Ayna has learned so far. Not from our regular product list. Always check with a doctor and the brand before you buy.
+                        These picks come from what you told us and what ayna has learned so far. Not from our regular product list. Always check with a doctor and the brand before you buy.
                     </p>
                     {tiered.map((entry) => (
                         <div key={entry.concern} className="card" style={{ padding: '1rem' }}>
@@ -466,7 +460,7 @@ export default function Recommendations({
                                                         <button
                                                             type="button"
                                                             style={{ marginTop: '0.25rem', background: 'none', border: 'none', padding: 0, color: 'var(--color-primary)', fontWeight: '700', cursor: 'pointer' }}
-                                                            onClick={() => onOpenProduct(tier.product)}
+                                                            onClick={() => onOpenProduct(tier.product, { source: 'recommendation' })}
                                                         >
                                                             {tier.product.name}
                                                         </button>
@@ -491,7 +485,7 @@ export default function Recommendations({
                                                                             type="button"
                                                                             className="btn btn-outline"
                                                                             style={{ padding: '0.25rem 0.55rem', fontSize: '0.75rem' }}
-                                                                            onClick={() => onOpenProduct(alt)}
+                                                                            onClick={() => onOpenProduct(alt, { source: 'recommendation' })}
                                                                         >
                                                                             {alt.name}
                                                                         </button>
@@ -637,7 +631,7 @@ export default function Recommendations({
                                             background: 'white', border: '1px solid var(--color-border)',
                                             padding: '0.35rem 0.75rem', borderRadius: 'var(--radius-pill)',
                                             fontSize: '0.8rem', fontWeight: '500', cursor: 'pointer'
-                                        }} onClick={() => onOpenProduct(product)}>
+                                        }} onClick={() => onOpenProduct(product, { source: 'recommendation' })}>
                                             {product.name}
                                         </span>
                                     );

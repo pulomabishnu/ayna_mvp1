@@ -1,3 +1,4 @@
+import { RESTORED_SCIENTIFIC_EVIDENCE } from './restoredScientificEvidence.js';
 // Central, reusable evidence for catalog products.
 //
 // IMPORTANT:
@@ -129,6 +130,118 @@ export const CATALOG_EVIDENCE = {
       }
     ]
   }
+,
+  vaginalPhTesting: {
+    scientific: [
+      {
+        url: 'https://www.cdc.gov/std/treatment-guidelines/bv.htm',
+        text: 'CDC: Bacterial Vaginosis Diagnostic Considerations',
+        summary: 'CDC guidance includes vaginal pH above 4.5 as one component of the Amsel criteria for bacterial vaginosis. pH alone does not diagnose BV or distinguish every cause of vaginal symptoms.',
+        justification: 'CDC clinical guidance; diagnostic-category evidence, not validation of a specific home test.'
+      },
+      {
+        url: 'https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm',
+        text: 'CDC: Vulvovaginal Candidiasis Diagnostic Considerations',
+        summary: 'CDC guidance notes that vulvovaginal candidiasis is generally associated with vaginal pH below 4.5 and requires appropriate clinical or laboratory evaluation. This does not validate a specific home pH test.',
+        justification: 'CDC clinical guidance; diagnostic-category evidence.'
+      }
+    ]
+  },
+
+  homePregnancyTests: {
+    scientific: [
+      {
+        url: 'https://www.fda.gov/medical-devices/home-use-tests/pregnancy',
+        text: 'FDA: Home Pregnancy Tests',
+        summary: 'FDA guidance explains that home pregnancy tests detect urinary hCG and that accuracy depends on timing, instructions, and interpretation. This supports the test category but does not independently verify Winx accuracy claims.',
+        justification: 'FDA home-use diagnostic guidance; category-level evidence.'
+      }
+    ]
+  },
+
+  phenazopyridineUrinaryPain: {
+    scientific: [
+      {
+        url: 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=faf6b5c0-6ff5-482c-9ad5-a7bef92afd56&type=pdf',
+        text: 'DailyMed: Stix Maximum Strength Urinary Pain Relief Drug Facts',
+        summary: 'The FDA-label repository identifies the Stix urinary pain-relief product as an OTC phenazopyridine hydrochloride drug for urinary pain symptoms. Symptom relief does not treat the underlying infection.',
+        justification: 'Official DailyMed drug-label record for the product under its prior Stix branding.'
+      }
+    ]
+  },
+
+  vaginalProbiotics: {
+    scientific: [
+      {
+        url: 'https://pubmed.ncbi.nlm.nih.gov/31299136/',
+        text: 'Lactobacilli Vaginal Probiotics: Systematic Review',
+        summary: 'A systematic review found promising but heterogeneous and generally low-quality evidence for Lactobacillus probiotic approaches in vaginal dysbiosis. Findings do not validate a specific oral or vaginal probiotic product.',
+        justification: 'Peer-reviewed systematic review; category-level evidence with important limitations.'
+      },
+      {
+        url: 'https://www.cdc.gov/std/treatment-guidelines/bv.htm',
+        text: 'CDC: Bacterial Vaginosis Treatment Guidelines',
+        summary: 'CDC notes that available probiotic studies do not support probiotic products as replacement or adjunctive therapy for bacterial vaginosis. This is important contrary clinical guidance.',
+        justification: 'CDC clinical guidance; contrary category-level evidence.'
+      }
+    ]
+  },
+
+  sexualWellnessVibration: {
+    scientific: [
+      {
+        url: 'https://pubmed.ncbi.nlm.nih.gov/38668760/',
+        text: 'Vibrator Use and Women\'s Pelvic Health: Prospective Pilot Study',
+        summary: 'A small prospective pilot associated regular vibrator use with improvements in several sexual and genitourinary outcomes. The study is limited and does not validate any specific Oboo device.',
+        justification: 'Peer-reviewed prospective pilot study; limited category-level evidence.'
+      }
+    ]
+  },
+
+  analSexualSafety: {
+    scientific: [
+      {
+        url: 'https://pubmed.ncbi.nlm.nih.gov/37842551/',
+        text: 'Anogenital Injury After Consensual Intercourse: Systematic Review',
+        summary: 'A systematic review documents that anogenital injury can occur after consensual sexual activity. This is safety-context evidence only and does not establish benefit or clinical efficacy for an anal training kit.',
+        justification: 'Peer-reviewed systematic review; adjacent safety evidence.'
+      }
+    ]
+  },
+
+  herbalSexualFunction: {
+    scientific: [
+      {
+        url: 'https://pubmed.ncbi.nlm.nih.gov/31881322/',
+        text: 'Herbal Supplements Marketed as Female Aphrodisiacs: Evidence Review',
+        summary: 'A review found little to no clinical evidence supporting many plant ingredients marketed for female libido disorders and highlighted major problems with botanical consistency. This does not validate the Oboo tincture.',
+        justification: 'Peer-reviewed review; category-level evidence emphasizing uncertainty.'
+      }
+    ]
+  },
+
+  vasomotorCooling: {
+    scientific: [
+      {
+        url: 'https://pubmed.ncbi.nlm.nih.gov/37252752/',
+        text: '2023 Menopause Society Nonhormone Therapy Position Statement',
+        summary: 'The Menopause Society evidence review does not recommend cooling techniques as proven treatment for vasomotor symptoms because efficacy evidence is insufficient. A cooling spray may feel temporarily cooling, but this source does not establish clinical hot-flash treatment efficacy.',
+        justification: 'Evidence-based professional-society position statement; contrary category-level evidence.'
+      }
+    ]
+  },
+
+  pelvicFloorMuscleTraining: {
+    scientific: [
+      {
+        url: 'https://pubmed.ncbi.nlm.nih.gov/30704907/',
+        text: 'Pelvic Floor Muscle Training for Urinary Incontinence: Cochrane Review',
+        summary: 'A Cochrane systematic review supports pelvic floor muscle training for women with stress, urgency, or mixed urinary incontinence. Evidence supports PFMT generally and does not validate the Connect program specifically.',
+        justification: 'Peer-reviewed Cochrane systematic review; intervention-level evidence.'
+      }
+    ]
+  }
+
 };
 
 export const PRODUCT_EVIDENCE_KEYS = {
@@ -154,6 +267,29 @@ export const PRODUCT_EVIDENCE_KEYS = {
   'p-always-discreet-boutique-liners': ['incontinenceAbsorbentProducts'],
   'p-depend-silhouette-underwear': ['incontinenceAbsorbentProducts'],
   'p-tena-intimates-very-light-liner': ['incontinenceAbsorbentProducts']
+,
+  'p-winx-vaginal-health-test-treat': ['vaginalPhTesting'],
+  'p-winx-pregnancy-tests': ['homePregnancyTests'],
+  'p-winx-uti-pain-relief': ['phenazopyridineUrinaryPain'],
+  'p-winx-vaginal-probiotic': ['vaginalProbiotics'],
+  'p-winx-uti-daily-defense': ['recurrentUtiSupplements'],
+
+  'p-oboo-nook': ['sexualWellnessVibration'],
+  'p-oboo-smooch': ['sexualWellnessVibration'],
+  'p-oboo-woo': ['sexualWellnessVibration'],
+  'p-oboo-shoop': ['sexualWellnessVibration'],
+  'p-oboo-moon': ['analSexualSafety'],
+  'p-oboo-oooh': ['sexualWellnessVibration'],
+  'p-oboo-groove': ['sexualWellnessVibration'],
+  'p-oboo-boom': ['sexualWellnessVibration'],
+  'p-oboo-smooth-daily': ['vulvarExternalCare'],
+  'p-oboo-smooth-arousal': ['vulvarExternalCare'],
+  'p-oboo-loob-daily': ['vaginalMoisturizers'],
+  'p-oboo-loob-arousal': ['vaginalMoisturizers'],
+  'p-oboo-mood-drops': ['herbalSexualFunction'],
+  'p-oboo-cool-spray': ['vasomotorCooling'],
+  'd-connect-pelvic-floor-fitness': ['pelvicFloorMuscleTraining']
+
 };
 
 export const PRIVACY_REVIEW_REQUIRED_IDS = new Set([
@@ -275,6 +411,39 @@ function applyCommunitySourceGuardrail(product) {
   };
 }
 
+
+const CLINICIAN_SYNTHESIS_BY_ID = {
+  'p-oboo-nook': 'Limited category-level research suggests vibrator use may support sexual function and some pelvic-health outcomes, but the evidence is small and does not validate this specific device.',
+  'p-oboo-smooch': 'Limited category-level research suggests vibrator use may support sexual function and some pelvic-health outcomes, but the evidence is small and does not validate this specific device.',
+  'p-oboo-woo': 'Limited category-level research suggests vibrator use may support sexual function and some pelvic-health outcomes, but the evidence is small and does not validate this specific device.',
+  'p-oboo-shoop': 'Limited category-level research suggests vibrator use may support sexual function and some pelvic-health outcomes, but the evidence is small and does not validate this specific device.',
+  'p-oboo-moon': 'Evidence does not establish this kit as a treatment. Anal insertion can cause tissue injury, so gradual use, adequate lubrication, and stopping with pain or bleeding are important safety considerations.',
+  'p-oboo-oooh': 'Limited category-level research suggests vibrator use may support sexual function and some pelvic-health outcomes, but the evidence is small and does not validate this specific device.',
+  'p-oboo-groove': 'Limited category-level research suggests vibrator use may support sexual function and some pelvic-health outcomes, but the evidence is small and does not validate this specific device.',
+  'p-oboo-boom': 'Limited category-level research suggests vibrator use may support sexual function and some pelvic-health outcomes, but the evidence is small and does not validate this specific device.',
+  'p-oboo-smooth-daily': 'Vulvar skin can be sensitive to cosmetic ingredients. Product-specific benefit has not been established, and use should be stopped if irritation develops.',
+  'p-oboo-smooth-arousal': 'Vulvar skin can be sensitive to cosmetic ingredients. Product-specific benefit has not been established, and use should be stopped if irritation develops.',
+  'p-oboo-loob-daily': 'Vaginal moisturizers and lubricants are recognized options for dryness and painful sex, but the evidence is category-level and does not validate this specific formula.',
+  'p-oboo-loob-arousal': 'Vaginal moisturizers and lubricants are recognized options for dryness and painful sex, but the evidence is category-level and does not validate this specific formula.',
+  'p-oboo-mood-drops': 'Evidence for herbal products marketed for female libido is inconsistent and often ingredient-specific. This tincture has not been independently clinically validated.',
+  'p-oboo-cool-spray': 'Cooling may feel temporarily soothing, but evidence-based menopause guidance does not support cooling techniques as a proven treatment for vasomotor symptoms.',
+  'd-connect-pelvic-floor-fitness': 'Pelvic floor muscle training is evidence-based for some forms of urinary incontinence. Evidence for PFMT generally does not establish outcomes for this specific digital program.'
+};
+
+function applyClinicianSynthesisGuardrail(product) {
+  if (!product || product.doctorOpinion) return product;
+
+  const synthesis = CLINICIAN_SYNTHESIS_BY_ID[product.id];
+  if (!synthesis) return product;
+
+  return {
+    ...product,
+    clinicianOpinionSource: 'ayna-synthesis',
+    clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+    doctorOpinion: synthesis
+  };
+}
+
 function existingScientificLinks(product) {
   const scientific = product?.verificationLinks?.scientific;
   if (!scientific) return [];
@@ -287,10 +456,25 @@ function existingScientificLinks(product) {
 export function applyCatalogEvidence(product) {
   if (!product) return product;
 
-  const guardedProduct = applyRatingSourceGuardrail(applyCommunitySourceGuardrail(applyEvidenceScopeGuardrail(applyRecallReviewGuardrail(applyPrivacyReviewGuardrail(product)))));
+  const guardedProduct = applyRatingSourceGuardrail(applyCommunitySourceGuardrail(applyEvidenceScopeGuardrail(applyRecallReviewGuardrail(applyPrivacyReviewGuardrail(applyClinicianSynthesisGuardrail(product))))));
 
   // Never overwrite hand-curated/product-specific scientific evidence.
   if (existingScientificLinks(guardedProduct).length) return guardedProduct;
+
+  // Restore scientific sources that existed on this branch before the main merge
+  // when main left the corresponding verification-links array empty.
+  const restoredLinks = RESTORED_SCIENTIFIC_EVIDENCE[guardedProduct.id] || [];
+  if (restoredLinks.length) {
+    return {
+      ...guardedProduct,
+      verificationLinks: {
+        ...(guardedProduct.verificationLinks || {}),
+        scientific: {
+          links: restoredLinks.map(addConservativeEvidenceScope)
+        }
+      }
+    };
+  }
 
   const keys = PRODUCT_EVIDENCE_KEYS[guardedProduct.id] || [];
   if (!keys.length) return guardedProduct;

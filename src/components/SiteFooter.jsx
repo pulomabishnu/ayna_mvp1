@@ -55,8 +55,8 @@ function FooterColumn({ title, children }) {
 export default function SiteFooter({
   onViewHowItWorks,
   onViewAbout,
+  onViewContact,
   onViewDiscovery,
-  onViewDeeptech,
   onViewWaitlist,
   onViewArticles,
   onViewPrivacyPolicy,
@@ -86,7 +86,6 @@ export default function SiteFooter({
         <FooterColumn title="Explore">
           <button type="button" style={LINK_STYLE} onClick={onViewHowItWorks}>How It Works</button>
           <button type="button" style={LINK_STYLE} onClick={() => onViewDiscovery?.('')}>Browse</button>
-          <button type="button" style={LINK_STYLE} onClick={onViewDeeptech}>Why Ayna</button>
           <button type="button" style={LINK_STYLE} onClick={onViewArticles}>My Health Library</button>
         </FooterColumn>
 
@@ -96,20 +95,21 @@ export default function SiteFooter({
         </FooterColumn>
 
         <FooterColumn title="Get in touch">
-          <a style={LINK_STYLE} href="mailto:hello@ayna.com">hello@ayna.com</a>
-          <a style={LINK_STYLE} href="https://linktr.ee/aynahealth" target="_blank" rel="noreferrer">Instagram</a>
-          <a style={LINK_STYLE} href="https://linktr.ee/aynahealth" target="_blank" rel="noreferrer">TikTok</a>
+          <button type="button" style={LINK_STYLE} onClick={onViewContact}>Contact</button>
+          <a style={LINK_STYLE} href="https://form.typeform.com/to/Jt7rx3BS?typeform-source=aynahealth.substack.com" target="_blank" rel="noreferrer">Give us Feedback</a>
+          <a style={LINK_STYLE} href="https://www.instagram.com/ayna.health/" target="_blank" rel="noreferrer">Instagram</a>
+          <a style={LINK_STYLE} href="https://www.tiktok.com/@aynahealth" target="_blank" rel="noreferrer">TikTok</a>
         </FooterColumn>
       </div>
 
       <div className="site-footer__baseline">
-        <span>© Ayna 2026</span>
+        <span>© ayna 2026</span>
         <span>Made for women, by women.</span>
       </div>
 
       <div className="site-footer__legal">
-        Ayna provides wellness information only. Not medical advice. Always consult a qualified
-        healthcare provider for medical decisions. By using Ayna, you agree your data is stored
+        ayna provides wellness information only. Not medical advice. Always consult a qualified
+        healthcare provider for medical decisions. By using ayna, you agree your data is stored
         securely and never sold.
         {' '}
         <button type="button" style={{ ...LINK_STYLE, textDecoration: 'underline' }} onClick={onViewPrivacyPolicy}>Privacy Policy</button>

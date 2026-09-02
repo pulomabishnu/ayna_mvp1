@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
-import { handleImageErrorWithRetry } from '../utils/imageRetry';
+import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
+import { getVerificationLinks } from '../utils/verificationLinks';
 
 /**
  * Landing page — a direct port of boards 1a and 1c of the Aug 2026 desktop
@@ -124,6 +125,35 @@ function explicitRating(product) {
   return Number.isFinite(value) ? value : null;
 }
 
+function hasClinicianSupport(product) {
+  const links = getVerificationLinks(product, 'doctor');
+  return Boolean(product?.doctorOpinion || product?.clinicianOpinion || product?.clinicianReview || links.length > 0);
+}
+
+function hasCommunitySupport(product) {
+  const rating = explicitRating(product);
+  const communityLinks = getVerificationLinks(product, 'community');
+  return (Number.isFinite(rating) && rating >= 4) || Boolean(product?.communityReview) || communityLinks.length > 0;
+}
+
+function productTypeOptions() {
+  const set = new Set();
+  ALL_PRODUCTS.forEach((product) => { if (product?.category) set.add(product.category); });
+  return Array.from(set).sort();
+}
+
+/** Mirrors Discovery's "Ayna" match-quality filter, minus the quiz-derived
+ * best-match ranking that only Discovery has access to — here "Best Match"
+ * just means "already recommended to you," and "In My Ecosystem" is only
+ * meaningful (and only passed) for the returning-user shop. */
+function matchesAyna(product, filter, { ownedIds, recommendedIds } = {}) {
+  if (!filter || filter === 'all') return true;
+  if (filter === 'best-match') return Boolean(recommendedIds?.has(product?.id));
+  if (filter === 'clinician') return hasClinicianSupport(product);
+  if (filter === 'community') return hasCommunitySupport(product);
+  if (filter === 'ecosystem') return Boolean(ownedIds?.has(product?.id));
+  return true;
+}
 
 /**
  * Turn a free-text query into the discovery view's filter options, so the hero
@@ -175,10 +205,6 @@ function productById(id) {
 
 /** Cream tile with the product photo, falling back to the mockup's initial-on-cream block. */
 function ProductTile({ product, aspectRatio = 1, radius = 10, badge, showHeart }) {
-  const [broken, setBroken] = useState(false);
-  const src = broken ? '' : (product.image || '');
-  const initial = String(product.name || '?').trim().charAt(0).toUpperCase();
-
   return (
     <div
       className="ayna-landing-tile"
@@ -194,37 +220,19 @@ function ProductTile({ product, aspectRatio = 1, radius = 10, badge, showHeart }
         overflow: 'hidden',
       }}
     >
-      {src ? (
-        <img
-          src={src}
-          alt=""
-          loading="lazy"
-          onError={(e) => handleImageErrorWithRetry(e, () => setBroken(true))}
-          style={{
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'contain',
-            padding: '14px',
-          }}
-        />
-      ) : (
-        <span
-          aria-hidden
-          style={{
-            position: 'absolute',
-            inset: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            font: "400 40px 'Playfair Display', serif",
-            color: '#D9A96B',
-          }}
-        >
-          {initial}
-        </span>
-      )}
+      <ProductTileImage
+        product={product}
+        alt={product?.name || ''}
+        imgStyle={{
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: 'contain',
+          padding: '14px',
+        }}
+        letterNode={<ProductImageFallback style={{ position: 'absolute', inset: 0 }} />}
+      />
 
       {badge && (
         <span style={{
@@ -320,9 +328,26 @@ function Toggle({ on, offTrack = '#DCD5CB', onTrack = '#242A52', onKnob = '#F0A8
 /* 1c — returning user                                                 */
 /* ------------------------------------------------------------------ */
 
-function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds = [], onStartQuiz, onViewDiscovery, onViewEcosystem, onOpenProduct }) {
+function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds = [], onStartQuiz, onViewDiscovery, onViewEcosystem, onOpenProduct, initialCategory = null }) {
   const name = displayNameFromUser(user) || 'there';
-  const [filter, setFilter] = useState('all');
+  const [filter, setFilter] = useState(initialCategory || 'all');
+  // A shop category pick was pure local state with no URL round-trip —
+  // clicking into a product from a filtered Shop view and hitting Back
+  // always landed on "All". Mirrors Discovery's ?q= pattern: read the
+  // initial value from App.jsx (which reads the URL), and keep the URL in
+  // sync as the filter changes so a real browser Back restores it.
+  // Flagged live 2026-08-25.
+  useEffect(() => {
+    if (initialCategory) setFilter(initialCategory);
+  }, [initialCategory]);
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (filter && filter !== 'all') url.searchParams.set('category', filter);
+    else url.searchParams.delete('category');
+    if (url.search !== window.location.search) {
+      window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}`);
+    }
+  }, [filter]);
   const [personalize, setPersonalize] = useState(true);
   const [showShopFilters, setShowShopFilters] = useState(false);
   const [priceFilter, setPriceFilter] = useState('all');
@@ -331,6 +356,8 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
   const [sustainabilityFilter, setSustainabilityFilter] = useState('all');
   const [lifeStageFilter, setLifeStageFilter] = useState('all');
   const [ratingFilter, setRatingFilter] = useState('all');
+  const [productTypeFilter, setProductTypeFilter] = useState('all');
+  const [aynaFilter, setAynaFilter] = useState('all');
 
   const areas = useMemo(() => {
     const byCategory = new Map();
@@ -356,8 +383,13 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
     [],
   );
 
+  const availableProductTypes = useMemo(() => productTypeOptions(), []);
+
   const shownProducts = useMemo(() => {
     let list = ALL_PRODUCTS.filter((product) => product?.id && product?.name && matchesShopFilter(product, filter));
+
+    if (productTypeFilter !== 'all') list = list.filter((product) => product.category === productTypeFilter);
+    if (aynaFilter !== 'all') list = list.filter((product) => matchesAyna(product, aynaFilter, { ownedIds, recommendedIds }));
 
     if (priceFilter !== 'all') {
       list = list.filter((product) => {
@@ -399,10 +431,12 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
     }
 
     return list.slice(0, 8);
-  }, [filter, priceFilter, eligibilityFilter, preferenceFilter, sustainabilityFilter, lifeStageFilter, ratingFilter, personalize, ownedIds, recommendedIds, areas]);
+  }, [filter, priceFilter, eligibilityFilter, preferenceFilter, sustainabilityFilter, lifeStageFilter, ratingFilter, productTypeFilter, aynaFilter, personalize, ownedIds, recommendedIds, areas]);
 
   const clearShopFilters = () => {
     setFilter('all');
+    setProductTypeFilter('all');
+    setAynaFilter('all');
     setPriceFilter('all');
     setEligibilityFilter('all');
     setPreferenceFilter('all');
@@ -490,7 +524,7 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
       <section className="ayna-landing-shop ayna-landing-shop--returning">
         <div className="mockup-page">
           <div className="ayna-landing-shop-head">
-            <div className="ayna-landing-shop-title ayna-landing-shop-title--returning">Shop</div>
+            <div className="ayna-landing-shop-title ayna-landing-shop-title--returning">Trending on ayna</div>
             <div className="ayna-landing-shop-controls">
               <div className="ayna-landing-filters">
                 {availableShopFilters.map((item) => (
@@ -522,6 +556,15 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
           {showShopFilters && (
             <div className="ayna-landing-filter-panel">
               <label>
+                <span>Product type</span>
+                <select value={productTypeFilter} onChange={(e) => setProductTypeFilter(e.target.value)}>
+                  <option value="all">All</option>
+                  {availableProductTypes.map((category) => (
+                    <option key={category} value={category}>{CATEGORY_LABELS[category] || category.replace(/-/g, ' ')}</option>
+                  ))}
+                </select>
+              </label>
+              <label>
                 <span>Price</span>
                 <select value={priceFilter} onChange={(e) => setPriceFilter(e.target.value)}>
                   <option value="all">Any</option>
@@ -529,6 +572,16 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
                   <option value="25-50">$25-$50</option>
                   <option value="50-100">$50-$100</option>
                   <option value="100-plus">$100+</option>
+                </select>
+              </label>
+              <label>
+                <span>ayna</span>
+                <select value={aynaFilter} onChange={(e) => setAynaFilter(e.target.value)}>
+                  <option value="all">Any</option>
+                  <option value="best-match">Best Match</option>
+                  <option value="clinician">Clinician Backed</option>
+                  <option value="community">Community Favorite</option>
+                  <option value="ecosystem">In My Ecosystem</option>
                 </select>
               </label>
               <label>
@@ -618,9 +671,21 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
 /* 1a — first visit                                                    */
 /* ------------------------------------------------------------------ */
 
-function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasProfile, profileCategories }) {
+function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasProfile, profileCategories, initialCategory = null }) {
   const [query, setQuery] = useState('');
-  const [filter, setFilter] = useState('all');
+  const [filter, setFilter] = useState(initialCategory || 'all');
+  // See the matching effect in WelcomeBack for why — same fix, same pattern.
+  useEffect(() => {
+    if (initialCategory) setFilter(initialCategory);
+  }, [initialCategory]);
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (filter && filter !== 'all') url.searchParams.set('category', filter);
+    else url.searchParams.delete('category');
+    if (url.search !== window.location.search) {
+      window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}`);
+    }
+  }, [filter]);
   const [personalize, setPersonalize] = useState(false);
   const [chipSetIndex, setChipSetIndex] = useState(0);
   const [showShopFilters, setShowShopFilters] = useState(false);
@@ -630,6 +695,8 @@ function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasPro
   const [sustainabilityFilter, setSustainabilityFilter] = useState('all');
   const [lifeStageFilter, setLifeStageFilter] = useState('all');
   const [ratingFilter, setRatingFilter] = useState('all');
+  const [productTypeFilter, setProductTypeFilter] = useState('all');
+  const [aynaFilter, setAynaFilter] = useState('all');
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -650,8 +717,15 @@ function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasPro
     [lineup],
   );
 
+  const availableProductTypes = useMemo(
+    () => Array.from(new Set(lineup.map(({ product }) => product.category).filter(Boolean))).sort(),
+    [lineup],
+  );
+
   const shown = useMemo(() => {
     let list = lineup.filter(({ product }) => matchesShopFilter(product, filter));
+    if (productTypeFilter !== 'all') list = list.filter(({ product }) => product.category === productTypeFilter);
+    if (aynaFilter !== 'all') list = list.filter(({ product }) => matchesAyna(product, aynaFilter));
     if (priceFilter !== 'all') {
       list = list.filter(({ product }) => {
         const price = priceNumber(product);
@@ -681,7 +755,7 @@ function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasPro
       );
     }
     return list;
-  }, [lineup, filter, personalize, profileCategories, priceFilter, eligibilityFilter, preferenceFilter, sustainabilityFilter, lifeStageFilter, ratingFilter]);
+  }, [lineup, filter, personalize, profileCategories, priceFilter, eligibilityFilter, preferenceFilter, sustainabilityFilter, lifeStageFilter, ratingFilter, productTypeFilter, aynaFilter]);
 
   const submitSearch = (e) => {
     if (e && typeof e.preventDefault === 'function') e.preventDefault();
@@ -719,14 +793,6 @@ function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasPro
             ))}
           </div>
 
-          <div className="ayna-landing-hero-actions">
-            <button type="button" className="ayna-landing-btn ayna-landing-btn--amber" onClick={onStartQuiz}>
-              Build your ecosystem
-            </button>
-            <button type="button" className="ayna-landing-btn ayna-landing-btn--browse" onClick={() => onViewDiscovery?.('')}>
-              Browse
-            </button>
-          </div>
         </div>
       </section>
 
@@ -745,7 +811,7 @@ function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasPro
       <section className="ayna-landing-shop">
         <div className="mockup-page">
           <div className="ayna-landing-shop-head">
-            <div className="ayna-landing-shop-title">Shop</div>
+            <div className="ayna-landing-shop-title">Trending on ayna</div>
             <div className="ayna-landing-shop-controls">
               <div className="ayna-landing-filters">
                 {availableShopFilters.map((f) => (
@@ -784,6 +850,15 @@ function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasPro
           {showShopFilters && (
             <div className="ayna-landing-filter-panel">
               <label>
+                <span>Product type</span>
+                <select value={productTypeFilter} onChange={(e) => setProductTypeFilter(e.target.value)}>
+                  <option value="all">All</option>
+                  {availableProductTypes.map((category) => (
+                    <option key={category} value={category}>{CATEGORY_LABELS[category] || category.replace(/-/g, ' ')}</option>
+                  ))}
+                </select>
+              </label>
+              <label>
                 <span>Price</span>
                 <select value={priceFilter} onChange={(e) => setPriceFilter(e.target.value)}>
                   <option value="all">Any</option>
@@ -791,6 +866,14 @@ function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasPro
                   <option value="25-50">$25-$50</option>
                   <option value="50-100">$50-$100</option>
                   <option value="100-plus">$100+</option>
+                </select>
+              </label>
+              <label>
+                <span>ayna</span>
+                <select value={aynaFilter} onChange={(e) => setAynaFilter(e.target.value)}>
+                  <option value="all">Any</option>
+                  <option value="clinician">Clinician Backed</option>
+                  <option value="community">Community Favorite</option>
                 </select>
               </label>
               <label>
@@ -844,7 +927,7 @@ function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasPro
               </label>
               <button
                 type="button"
-                onClick={() => { setPriceFilter('all'); setEligibilityFilter('all'); setPreferenceFilter('all'); setSustainabilityFilter('all'); setLifeStageFilter('all'); setRatingFilter('all'); setFilter('all'); }}
+                onClick={() => { setPriceFilter('all'); setEligibilityFilter('all'); setPreferenceFilter('all'); setSustainabilityFilter('all'); setLifeStageFilter('all'); setRatingFilter('all'); setFilter('all'); setProductTypeFilter('all'); setAynaFilter('all'); }}
               >
                 Clear
               </button>
@@ -869,6 +952,7 @@ export default function AynaLanding({
   hasProfile = false,
   profileCategories,
   recommendedProductIds = [],
+  initialCategory = null,
 }) {
   if (user) {
     return (
@@ -881,6 +965,7 @@ export default function AynaLanding({
         onViewDiscovery={onViewDiscovery}
         onViewEcosystem={onViewEcosystem}
         onOpenProduct={onOpenProduct}
+        initialCategory={initialCategory}
       />
     );
   }
@@ -892,6 +977,7 @@ export default function AynaLanding({
       onOpenProduct={onOpenProduct}
       hasProfile={hasProfile}
       profileCategories={profileCategories}
+      initialCategory={initialCategory}
     />
   );
 }

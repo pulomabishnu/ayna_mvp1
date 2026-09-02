@@ -1,63 +1,79 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { ALL_PRODUCTS, CATEGORY_LABELS, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate } from '../data/products';
+import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore } from '../data/products';
 import { loadProductCatalog } from '../utils/productCatalog';
-import { buildSearchTextForItem, scoreQueryAgainstProduct } from '../utils/naturalLanguageSearch';
+import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../utils/naturalLanguageSearch';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
+import { isPartnerBrandItem } from '../utils/partnerBrands';
 import { fetchSearchSuggestions } from '../utils/fetchSearchSuggestions';
+import { getVerificationLinks } from '../utils/verificationLinks';
 import { RELEASED_STARTUPS } from '../data/startups';
 import { getAynaRating } from '../data/aynaReviews';
 import Disclaimer from './Disclaimer';
 import { getPricePerUnitLabel } from '../utils/pricePerUnit';
 import { fetchDsldProducts } from '../utils/fetchDsldProducts';
 import { enrichLlmProductForDiscovery } from '../utils/enrichLlmProductForDiscovery';
-import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
+import { resolveProductImage, isPlaceholderProductImage, safeProductImageSrc } from '../utils/resolveProductImage';
+import { ProductImageFallback } from './ProductTileImage';
+import MatchGauge from './MatchGauge';
 import posthog from 'posthog-js';
 import GlossaryTerm from './GlossaryTerm';
 import { productHref, isPlainLeftClick } from '../utils/productRoute';
 
-const MACRO_GROUPS = [
-    { id: 'all', label: 'All', categories: [], keywords: [] },
-    { id: 'period', label: 'Period', categories: ['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'cramp-relief'], keywords: ['period', 'menstrual'] },
-    { id: 'intimate', label: 'Intimate Care', categories: ['intimate-care'], keywords: ['vaginal', 'vulva', 'intimate', 'ph', 'moisturizer'] },
-    { id: 'sexual', label: 'Sexual Wellness', categories: ['sex-tech'], keywords: ['lubricant', 'lube', 'condom', 'sexual wellness', 'intimacy'] },
-    { id: 'birth-control', label: 'Birth Control', categories: ['contraception'], keywords: ['contraception', 'contraceptive', 'emergency contraception', 'barrier'] },
-    { id: 'fertility', label: 'Fertility', categories: ['fertility'], keywords: ['fertility', 'ovulation', 'conceive', 'conception'] },
-    { id: 'pregnancy', label: 'Pregnancy', categories: ['pregnancy'], keywords: ['pregnancy', 'prenatal'] },
-    { id: 'postpartum', label: 'Postpartum', categories: ['postpartum'], keywords: ['postpartum', 'lactation', 'breastfeeding', 'perineal'] },
-    { id: 'breast', label: 'Breast Care', categories: ['breast-care', 'lactation'], keywords: ['breast', 'breastfeeding', 'nipple', 'pump', 'lactation'] },
-    { id: 'pelvic', label: 'Pelvic', categories: ['pelvic-floor', 'pelvic-health'], keywords: ['pelvic', 'kegel', 'bladder'] },
-    { id: 'menopause', label: 'Menopause', categories: ['menopause'], keywords: ['menopause', 'perimenopause', 'hot flash'] },
-    { id: 'hormones', label: 'Hormones', categories: ['supplement', 'hormone-monitoring'], keywords: ['pms', 'pcos', 'cycle', 'hormone'] },
-    { id: 'skin', label: 'Skin', categories: ['skin', 'skincare', 'body-care'], keywords: ['skin', 'cleanser', 'moisturizer', 'spf', 'acne', 'hyperpigmentation'] },
-    { id: 'hair', label: 'Hair', categories: ['hair', 'haircare'], keywords: ['hair', 'scalp', 'shampoo', 'conditioner', 'thinning'] },
-    { id: 'gut', label: 'Gut', categories: ['gut-health'], keywords: ['gut', 'bloating', 'fiber', 'probiotic'] },
-    { id: 'sleep-stress', label: 'Sleep + Stress', categories: ['mental-health'], keywords: ['sleep', 'stress', 'relaxation'] },
-    { id: 'pain-recovery', label: 'Pain + Recovery', categories: ['pain-relief', 'cramp-relief', 'recovery'], keywords: ['pain', 'cramp', 'heat therapy', 'recovery', 'muscle'] },
-    { id: 'tests-devices', label: 'Tests + Devices', categories: ['tracker', 'diagnostics', 'hormone-monitoring'], keywords: ['test', 'tracker', 'wearable', 'monitor'] },
-];
+// MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, and
+// NEGATED_CONCERN_PHRASES all now live in ../data/products (see the comments
+// there) so EcosystemBubbles can reuse the exact same taxonomy and keyword
+// matching for its area bubbles, without a cross-page-chunk import of this
+// whole Discovery module.
 
-function productSearchText(item) {
-    return [
-        item?.category, item?.name, item?.brand, item?.summary, item?.description, item?.tagline,
-        ...(Array.isArray(item?.badges) ? item.badges : []),
-        ...(Array.isArray(item?.tags) ? item.tags : []),
-        item?.eligibility, item?.sustainability, item?.lifeStage,
-    ].filter(Boolean).join(' ').toLowerCase();
+// Re-exported for unit testing of the category-chip filtering logic (see
+// Discovery.macroGroupFilter.test.js), which imports these from here.
+export { MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, resolveBrowseAiRoundQuery, getSortPrice };
+
+/** Natural-language phrase for the browse-AI extension's `query` param — prefers the
+ * more specific active scope (a chosen sub-category) over the broader macro group, and
+ * returns '' when browsing is fully unscoped (both 'all'), which the caller treats as
+ * "not eligible to auto-generate" (a single LLM call needs a specific product type to
+ * stay safe/bounded, per the anti-fabrication rules in api/search-suggestions.js). */
+function buildBrowseAiQueryText(categoryFilter, macroGroup) {
+    if (categoryFilter && categoryFilter !== 'all') {
+        return CATEGORY_LABELS[categoryFilter] || categoryFilter.replace(/-/g, ' ');
+    }
+    const group = MACRO_GROUPS.find((g) => g.id === macroGroup);
+    if (group && group.id !== 'all') {
+        return `${group.label} products`;
+    }
+    return '';
 }
 
-function itemMatchesMacroGroup(item, groupId) {
-    if (!groupId || groupId === 'all') return true;
-    const group = MACRO_GROUPS.find((g) => g.id === groupId);
-    if (!group) return true;
-    if (group.categories.includes(item?.category)) return true;
-    const text = productSearchText(item);
-    return group.keywords.some((keyword) => text.includes(keyword));
+/** Resolves what a single browse-AI round (runBrowseAiRound) should actually send, unifying
+ * two callers: (1) browse mode, no typed query — uses the synthesized category/macro-group
+ * label text; (2) typed-search "Load more" continuation — uses the user's own submitted text
+ * verbatim, per qTrimForAi, rather than a synthesized label. Also decides the "batch N" cache-
+ * busting suffix (see the fetchSearchSuggestions caching note at the runBrowseAiRound call
+ * site). For a typed search, roundIndexAtCallTime starts at 0 (a fresh browseAiRounds
+ * accumulator per query) but the initial one-shot fetch (runAiSearch) already consumed "batch
+ * 1" with the plain query text before any round-based continuation runs — so this round is
+ * really the SECOND batch overall; effectiveRoundIndex accounts for that with a +1 so the
+ * very first continuation round doesn't resend the identical query runAiSearch just used
+ * (which would just hit fetchSearchSuggestions' cache and return already-seen duplicates).
+ * Returns null when there's no query text to send at all (unscoped browse). Exported for unit
+ * testing — see Discovery.macroGroupFilter.test.js. */
+function resolveBrowseAiRoundQuery(qTrimForAi, categoryFilter, macroGroup, roundIndexAtCallTime) {
+    const isTypedSearchContinuation = Boolean(qTrimForAi);
+    const baseQueryText = isTypedSearchContinuation ? qTrimForAi : buildBrowseAiQueryText(categoryFilter, macroGroup);
+    if (!baseQueryText) return null;
+    const effectiveRoundIndex = isTypedSearchContinuation ? roundIndexAtCallTime + 1 : roundIndexAtCallTime;
+    const queryText = effectiveRoundIndex > 0
+        ? `${baseQueryText} (batch ${effectiveRoundIndex + 1} of several — suggest different specific products than earlier batches, avoid repeating brand names already covered)`
+        : baseQueryText;
+    return { queryText, isTypedSearchContinuation };
 }
 
 function getExplicitEligibility(item) {
-    // Never infer reimbursement eligibility from product names, image URLs, or copy.
-    // Only structured fields supplied by the catalog are authoritative enough to filter on.
-    const combined = item?.fsaHsaEligible === true || item?.fsa_hsa_eligible === true;
+    // Menstrual care products are qualified medical expenses for FSA/HSA use.
+    // Use structured catalog categories only; never infer from names, images, or marketing copy.
+    const menstrualCareEligible = ['pad', 'tampon', 'cup', 'disc'].includes(item?.category);
+    const combined = menstrualCareEligible || item?.fsaHsaEligible === true || item?.fsa_hsa_eligible === true;
     const fsa = combined || item?.fsaEligible === true || item?.fsa_eligible === true;
     const hsa = combined || item?.hsaEligible === true || item?.hsa_eligible === true;
     return { fsa, hsa };
@@ -78,16 +94,14 @@ function matchesPreference(item, filter) {
 }
 
 function hasClinicianSupport(item) {
-    const doctor = item?.verificationLinks?.doctor;
-    const links = Array.isArray(doctor) ? doctor : Array.isArray(doctor?.links) ? doctor.links : [];
+    const links = getVerificationLinks(item, 'doctor');
     return Boolean(item?.doctorOpinion || item?.clinicianOpinion || item?.clinicianReview || links.length > 0);
 }
 
 function hasCommunitySupport(item, reviewBucket) {
     const rating = item?.ratingNote ? null : (getAynaRating(item, reviewBucket) ?? (item?.userRating != null ? Number(item.userRating) : null));
     const reviewCount = Array.isArray(reviewBucket?.reviews) ? reviewBucket.reviews.length : 0;
-    const community = item?.verificationLinks?.community;
-    const communityLinks = Array.isArray(community) ? community : Array.isArray(community?.links) ? community.links : [];
+    const communityLinks = getVerificationLinks(item, 'community');
     return (Number.isFinite(rating) && rating >= 4) || reviewCount > 0 || Boolean(item?.communityReview) || communityLinks.length > 0;
 }
 
@@ -134,15 +148,35 @@ function matchesLifeStage(item, filter) {
 const ALL_CATEGORIES = ['all', 'pad', 'tampon', 'cup', 'disc', 'period-underwear', 'supplement', 'tracker', 'telehealth', 'mental-health', 'fitness', 'diagnostics', 'hormone-monitoring', 'menopause', 'fertility', 'pelvic-health', 'pelvic-floor', 'cramp-relief', 'postpartum', 'pregnancy', 'sex-tech', 'intimate-care', 'contraception'];
 
 /** Extract a numeric price for sorting (rough proxy: first $ amount, or monthly equivalent when obvious). */
+/**
+ * The old version searched for a "$N/month" pattern ANYWHERE in the price
+ * string and preferred it over everything else whenever one existed — so
+ * "Oura Ring Gen 3 $299 + $6/month" sorted as $6, and "Natural Cycles $100/
+ * year or $13/month" sorted as $13, both landing next to actually-cheap
+ * items regardless of Low-to-High/High-to-Low. That's what scattered the
+ * sort. Price copy in this catalog always leads with its primary/base price,
+ * so the fix is simpler: use the FIRST dollar figure in the string, full
+ * stop, with "Free" (an optional paid tier mentioned afterward doesn't
+ * change that the base product is free) checked first as $0.
+ */
+// "Free" only means $0 to sort by when nothing that follows walks it back —
+// "Free trial, then subscription" and "Free through insurance" both matched
+// bare /^free\b/ and sorted as $0 above genuinely cheap products (found live,
+// 2026-08-24 bug bash: technically not wrong per the literal word, but reads
+// as misleading in a price sort since neither is actually free to most
+// users). These fall through to the real-dollar-amount search below instead,
+// and to null (sorts last, not first) when no amount is present either.
+const CONDITIONAL_FREE_PATTERN = /^free\b.*(trial|then|after|insurance|subscription|starts? at|converts?)/i;
+
 function getSortPrice(item) {
     const s = (item.price || item.stage || '').toString().trim();
-    const perMonth = s.match(/\$(\d+)(?:\.\d+)?\s*\/?\s*month/i);
-    if (perMonth) return parseFloat(perMonth[1]);
-    const range = s.match(/\$(\d+)\s*[–\-]\s*\$(\d+)/);
-    if (range) return (parseFloat(range[1]) + parseFloat(range[2])) / 2;
-    const single = s.match(/\$(\d+)(?:\.\d+)?/);
-    if (single) return parseFloat(single[1]);
-    return null;
+    if (!s) return null;
+    if (/^free\b/i.test(s) && !CONDITIONAL_FREE_PATTERN.test(s)) return 0;
+    // Comma thousands separators ("$2,245+") must be part of the digit match,
+    // not just the leading "$2" — stripped after matching, not before, so a
+    // stray comma elsewhere in the string can't merge two unrelated numbers.
+    const amounts = [...s.matchAll(/\$(\d{1,3}(?:,\d{3})*(?:\.\d+)?)/g)];
+    return amounts.length > 0 ? parseFloat(amounts[0][1].replace(/,/g, '')) : null;
 }
 
 /** Score for default sort: top rated + positive clinical/social/scientific consensus + safety first. */
@@ -177,7 +211,7 @@ function getQualityScore(item, aynaReviews = {}) {
     // Same idea for rating: no rating yet isn't evidence of a bad product, just an unrated one —
     // default to a neutral 0.7 (out of 1) instead of 0.
     const rating = hasRating ? ratedValue : 0.7;
-    const safetyOk = !(item.safety?.recalls && String(item.safety.recalls).includes('⚠️')) ? 1 : 0;
+    const safetyOk = !(item.safety?.recalls && String(item.safety.recalls).includes('\u26A0\uFE0F')) ? 1 : 0;
     return (rating * 2) + consensusScore + safetyOk;
 }
 
@@ -328,8 +362,31 @@ function truncateCardSummary(text, max = 200) {
     return `${truncated.trimEnd()}…`;
 }
 
-export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, savedProducts = {}, onToggleSaved }) {
+/** Shared profile/dislikes context builder for the AI search-suggestion calls —
+ * used by both the typed-search flow (runAiSearch) and the browse-mode AI
+ * extension (runBrowseAiRound) so the two can't drift on what "personalized"
+ * means. Pure extraction of what runAiSearch already computed inline; the
+ * returned values are unchanged from before this was factored out. */
+function buildAiProfileContext(personalizationFilter, quizResults) {
+    const intake = quizResults?.fullHealthIntake || null;
+    const profileSummary = personalizationFilter && intake ? [
+        intake.primaryConcerns?.length ? `Concerns: ${intake.primaryConcerns.slice(0, 5).join(', ')}` : '',
+        intake.conditions?.length ? `Conditions: ${intake.conditions.filter(c => c !== 'none').join(', ')}` : '',
+        intake.productPreferences?.length ? `Preferences: ${intake.productPreferences.join(', ')}` : '',
+        intake.goals?.length ? `Goals: ${intake.goals.join(', ')}` : '',
+    ].filter(Boolean).join('. ') : '';
+    const dislikedProducts = personalizationFilter ? (intake?.dislikedProductsText || '') : '';
+    const dislikedTerms = dislikedProducts.split(/[,\n]+/).map(s => s.trim().toLowerCase()).filter(s => s.length > 1);
+    return { profileSummary, dislikedProducts, dislikedTerms };
+}
+
+export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialMacroGroup, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, healthProfile = null, savedProducts = {}, onToggleSaved, user = null, onRequirePersonalizeAuth = null }) {
     const [macroGroup, setMacroGroup] = useState(() => {
+        // initialMacroGroup (a whole care area, e.g. from "Swap" in the
+        // ecosystem view) sets ONLY the broader group, leaving every
+        // category within it visible — narrower than initialCategory,
+        // which also pins categoryFilter down to that one specific type.
+        if (initialMacroGroup && initialMacroGroup !== 'all') return initialMacroGroup;
         if (!initialCategory || initialCategory === 'all') return 'all';
         return MACRO_GROUPS.find(g => g.categories.includes(initialCategory))?.id || 'all';
     });
@@ -342,7 +399,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     // so this reshuffles the browsing grid's default order every time a user lands on the page,
     // without reshuffling mid-visit as filters/sort change.
     const [shuffleSeed] = useState(() => Math.random().toString(36).slice(2));
-    const [personalizationFilter, setPersonalizationFilter] = useState(Boolean(recommendedProductIds?.length) || hasQuizFrustrations || hasHealthImport);
+    // Personalization requires an actual account (quiz results / health import /
+    // real recommendations all live behind login) -- never on for a logged-out
+    // visitor, regardless of any of those other signals somehow being truthy.
+    const [personalizationFilter, setPersonalizationFilter] = useState(Boolean(user) && (Boolean(recommendedProductIds?.length) || hasQuizFrustrations || hasHealthImport));
     const [showFilters, setShowFilters] = useState(false);
     const [priceFilter, setPriceFilter] = useState('all');
     const [ratingFilter, setRatingFilter] = useState('all');
@@ -354,7 +414,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
     const personalizationInitialized = useRef(false);
     useEffect(() => {
-        if (!personalizationInitialized.current && (recommendedProductIds?.length || hasQuizFrustrations || hasHealthImport)) {
+        if (!personalizationInitialized.current && user && (recommendedProductIds?.length || hasQuizFrustrations || hasHealthImport)) {
             setPersonalizationFilter(true);
             personalizationInitialized.current = true;
         }
@@ -371,6 +431,55 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [searchSubmitted, setSearchSubmitted] = useState(false);
     const aiAbortRef = useRef(null);
     const debounceRef = useRef(null);
+    // Browse-mode AI extension (no-query browsing): fully separate from the
+    // aiSuggestions/runAiSearch state above so the typed-search flow can't be
+    // entangled by it. browseAiSuggestions accumulates across "Load more"
+    // rounds (unlike aiSuggestions, which is replaced wholesale per search);
+    // browseAiRounds bounds how many generation rounds a single browse
+    // context gets (see MAX_BROWSE_AI_ROUNDS below).
+    const [browseAiSuggestions, setBrowseAiSuggestions] = useState([]);
+    // Mirrors browseAiSuggestions synchronously, kept in lockstep everywhere the state is
+    // set (reset effect below, and inside runBrowseAiRound). Needed because computing "how
+    // many of this round's suggestions are actually new" requires reading the array as it
+    // stands *right now* — doing that inside a setBrowseAiSuggestions(prev => ...) functional
+    // updater instead (mutating an outer `freshCount` variable as a side effect of the
+    // updater) is impure, and React is explicitly allowed to invoke an updater function more
+    // than once for a single call (e.g. to compute eager state) — confirmed live: doing it
+    // that way made a round's *correctly-computed* fresh-item count silently read back as 0
+    // after the setState call returned, on a round that had in fact added 4 genuinely new
+    // products, which falsely tripped the "this looks like a dry/exhausted round" logic
+    // below and cut a typed search's "Load more" continuation short after only 2 rounds.
+    // Reading/writing this ref instead of `prev` sidesteps the double-invoke pitfall entirely.
+    const browseAiSuggestionsRef = useRef([]);
+    const [browseAiRounds, setBrowseAiRounds] = useState(0);
+    const [browseAiLoading, setBrowseAiLoading] = useState(false);
+    const browseAiAbortRef = useRef(null);
+    // Synchronous guard against two overlapping runBrowseAiRound calls processing the same
+    // round concurrently (the trigger effect firing again before the in-flight call's state
+    // updates have committed) — browseAiLoading is a state value and only reflects reality a
+    // render cycle later, which isn't fast enough to close this window.
+    const browseAiInFlightRef = useRef(false);
+    // How many CONSECUTIVE rounds in a row added zero genuinely new products.
+    // One dry round isn't strong evidence a category is exhausted — the model
+    // can repeat itself on a single batch and still have real, distinct
+    // products left to suggest on the next one (confirmed live: a typed
+    // search for "Kegel trainer" stopped dead after round 3 of a possible
+    // 10, on one unlucky duplicate batch, while later rounds for the same
+    // query independently found more real products). Only give up after two
+    // in a row.
+    const dryRoundStreakRef = useRef(0);
+    // Set when a round's fetchSearchSuggestions call itself failed (rate
+    // limit, auth required, server error) rather than genuinely succeeding
+    // with zero new suggestions — fetchSearchSuggestions never throws on
+    // these, it resolves with `suggestions: []` and an `error`/`code`
+    // field (see src/utils/fetchSearchSuggestions.js), which is otherwise
+    // indistinguishable from "the AI legitimately found nothing new" and
+    // was wrongly counted toward dryRoundStreakRef — confirmed live: after
+    // this session's own heavy testing tripped the 15-req/hour rate limit,
+    // two back-to-back 429s got treated as proof a category was exhausted
+    // and showed "that's everything we could find" for a query that had
+    // never actually been checked.
+    const [browseAiErrorCode, setBrowseAiErrorCode] = useState(null);
     const [dsldProducts, setDsldProducts] = useState([]);
     const [dsldLoading, setDsldLoading] = useState(false);
     const [resolvedImages, setResolvedImages] = useState({});
@@ -380,8 +489,19 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     // caching/concurrency limits. "Load more" reveals additional batches
     // instead of mounting everything up front.
     const PAGE_SIZE = 30;
+    // Bounds how many browse-AI generation rounds a single browse context
+    // (macro group + category + personalization) can trigger. Raised from 2
+    // to 10 per explicit direction: browsing a category should feel
+    // effectively endless (there are real products in every category well
+    // beyond what the static catalog holds), not stop after one extra
+    // batch. Still bounded, not literally infinite — a genuinely
+    // open-ended browse session (someone holding "Load more") shouldn't be
+    // able to run unlimited paid LLM calls, but 10 rounds x ~8 items is
+    // ~80 additional real products per category before it stops offering
+    // more, which is the point where the model would likely be repeating
+    // itself anyway.
+    const MAX_BROWSE_AI_ROUNDS = 10;
     const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-    const recommendedSet = useMemo(() => new Set(recommendedProductIds || []), [recommendedProductIds]);
     const recommendedRank = useMemo(() => new Map((recommendedProductIds || []).map((id, index) => [id, index])), [recommendedProductIds]);
 
     // AI-discovered products (api/discover-products.js), human-approved only —
@@ -402,11 +522,30 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         return () => { cancelled = true; };
     }, []);
 
+    // Arriving here with a query already set — the landing hero search box,
+    // a shared/bookmarked ?q= link, a related-search chip elsewhere in the
+    // app — used to only pre-fill the search box's text. It never actually
+    // submitted, so searchSubmitted stayed false and the whole AI-fallback
+    // engine below (runAiSearch / runBrowseAiRound) never fired: a query with
+    // zero catalog matches (confirmed live: "hair") landed on a bare "No
+    // matches" with none of the AI-suggested-product machinery this file
+    // already builds ever running. runSearch() is exactly what pressing
+    // Enter in this page's own search box does — routing the initial query
+    // through it (instead of just setting the two pieces of text state)
+    // makes a preset query behave identically to a manually typed-and-submitted
+    // one, category nudges and all.
     React.useEffect(() => {
-        if (initialSearch !== undefined) {
+        if (initialSearch === undefined) return;
+        if (initialSearch && initialSearch.trim().length >= 2) {
+            // runSearch is a plain (non-memoized) function defined later in this
+            // component — intentionally NOT a dependency here, since its identity
+            // changes every render and would re-fire this effect in a loop.
+            runSearch(initialSearch);
+        } else {
             setSearchQuery(initialSearch);
             setSubmittedQuery(initialSearch || '');
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [initialSearch]);
 
     // Mirror the submitted query into ?q= so a tab discard/reload while browsing
@@ -455,6 +594,24 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         return [...products, ...releasedAsProducts, ...discovered];
     }, [discoveredProducts]);
 
+    const combinedRelevance = useMemo(() => {
+        const map = new Map();
+        combined.forEach((item) => {
+            map.set(item.id, getProductRelevanceScore(item, quizResults, healthProfile));
+        });
+        return map;
+    }, [combined, quizResults, healthProfile]);
+
+    const personalizedSet = useMemo(() => {
+        const set = new Set();
+        combinedRelevance.forEach((score, id) => {
+            if (score != null && score > 0) set.add(id);
+        });
+        return set;
+    }, [combinedRelevance]);
+
+    const recommendedSet = personalizedSet;
+
     const availableMacroGroups = useMemo(
         () => MACRO_GROUPS.filter((group) => group.id === 'all' || combined.some((item) => itemMatchesMacroGroup(item, group.id))),
         [combined]
@@ -474,7 +631,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const filtered = useMemo(() => {
         const applyFilters = (items, skipCategory = false) => items.filter((item) => {
             if (omittedProducts[item.id]) return false;
-            if (personalizationFilter && recommendedSet.size > 0 && !recommendedSet.has(item.id)) return false;
+            // An explicit FSA/HSA filter should search the full eligible catalog,
+            // not only the user's personalized subset.
+            if (personalizationFilter && eligibilityFilter === 'all' && !personalizedSet.has(item.id)) return false;
             // Major Browse category chips. Match explicit categories first and
             // fall back to real catalog wording so newer Skin/Hair/etc. products
             // can participate without changing the data schema.
@@ -504,7 +663,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             if (eligibilityFilter === 'hsa' && !eligibility.hsa) return false;
             if (eligibilityFilter === 'fsa-hsa' && !(eligibility.fsa || eligibility.hsa)) return false;
 
-            if (aynaFilter === 'best-match' && !(getExplicitMatchPercent(item) != null || recommendedSet.has(item.id))) return false;
+            if (aynaFilter === 'best-match' && !(getProfileMatchPercentForProduct(item, quizResults, healthProfile) >= 50)) return false;
             if (aynaFilter === 'clinician' && !hasClinicianSupport(item)) return false;
             if (aynaFilter === 'community' && !hasCommunitySupport(item, aynaReviews[item.id])) return false;
             if (aynaFilter === 'ecosystem' && !myProducts?.[item.id]) return false;
@@ -522,7 +681,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         if (qTrim) {
             const scoreItem = (item) => ({
                 item,
-                matchScore: scoreQueryAgainstProduct(qTrim, buildSearchTextForItem(item, CATEGORY_LABELS)),
+                matchScore: scoreQueryAgainstProduct(qTrim, buildSearchTextForItem(item, CATEGORY_LABELS), buildIdentityTextForItem(item, CATEGORY_LABELS)),
             });
             let scored = list.map(scoreItem).filter((x) => x.matchScore > 0);
 
@@ -599,13 +758,22 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     const rb = recommendedRank.has(b.id) ? recommendedRank.get(b.id) : Number.MAX_SAFE_INTEGER;
                     if (ra !== rb) return ra - rb;
                 }
+                // Brand partners are pinned to the top of the default browsing sort
+                // (but not when personalized results are on — a partnership doesn't
+                // buy placement in a real recommendation, only visibility on the
+                // page you browse freely, per How We Make Money).
+                if (browsingWithoutTextQuery && !personalizationFilter) {
+                    const pa = isPartnerBrandItem(a) ? 1 : 0;
+                    const pb = isPartnerBrandItem(b) ? 1 : 0;
+                    if (pa !== pb) return pb - pa;
+                }
                 const baseA = getQualityScore(a, aynaReviews);
                 const baseB = getQualityScore(b, aynaReviews);
                 const qa = baseA + (browsingWithoutTextQuery ? shuffleJitter(a, shuffleSeed, baseA) : 0);
                 const qb = baseB + (browsingWithoutTextQuery ? shuffleJitter(b, shuffleSeed, baseB) : 0);
                 return qb - qa;
             });
-            if (browsingWithoutTextQuery && !(personalizationFilter && recommendedSet.size > 0)) {
+            if (browsingWithoutTextQuery && !personalizationFilter) {
                 list = applyColdStartFloor(list, PAGE_SIZE);
             }
         }
@@ -631,6 +799,39 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         [aiSuggestions]
     );
 
+    // Stable key for the active browse/search scope — used to know when the browse-AI
+    // accumulator below belongs to a *different* context (user picked a new macro
+    // group/category/personalization, or typed a new search) and needs to reset rather
+    // than keep accumulating onto a stale scope. Includes qTrimForAi so submitting a new
+    // typed query resets the "Load more" round accumulator instead of continuing to
+    // append results for whatever was previously searched.
+    const browseAiContextKey = useMemo(
+        () => `${macroGroup}|${categoryFilter}|${personalizationFilter ? '1' : '0'}|${qTrimForAi}`,
+        [macroGroup, categoryFilter, personalizationFilter, qTrimForAi]
+    );
+    const browseAiContextKeyRef = useRef(browseAiContextKey);
+
+    useEffect(() => {
+        if (browseAiContextKeyRef.current === browseAiContextKey) return;
+        browseAiContextKeyRef.current = browseAiContextKey;
+        if (browseAiAbortRef.current) { browseAiAbortRef.current.abort(); browseAiAbortRef.current = null; }
+        browseAiSuggestionsRef.current = [];
+        setBrowseAiSuggestions([]);
+        setBrowseAiRounds(0);
+        setBrowseAiLoading(false);
+        dryRoundStreakRef.current = 0;
+        setBrowseAiErrorCode(null);
+        browseAiInFlightRef.current = false;
+    }, [browseAiContextKey]);
+
+    // Abort any in-flight browse-AI request on unmount.
+    useEffect(() => () => { if (browseAiAbortRef.current) browseAiAbortRef.current.abort(); }, []);
+
+    const enrichedBrowseAiSuggestions = useMemo(
+        () => (Array.isArray(browseAiSuggestions) ? browseAiSuggestions.map((p) => enrichLlmProductForDiscovery(p)) : []),
+        [browseAiSuggestions]
+    );
+
     const gridItems = useMemo(() => {
         // Union real catalog matches for the submitted query with AI suggestions,
         // in both browsing and search modes. This used to show ONLY AI results
@@ -648,6 +849,22 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             if (n && names.has(n)) continue;
             out.push(p);
         }
+        // Round-accumulated AI suggestions (from "Load more" — browse-mode rounds when no
+        // text query is active, or typed-search continuation rounds once the initial
+        // one-shot search above has already run) are appended the same way, deduped
+        // against the catalog AND anything already added above. browseAiContextKey (which
+        // now includes qTrimForAi) already guarantees this accumulator gets reset to []
+        // whenever the query/scope changes, so there's no risk of a stale query's rounds
+        // leaking into a new one — no need to also gate this merge on !qTrimForAi.
+        if (enrichedBrowseAiSuggestions.length > 0) {
+            const outNames = new Set(out.map((p) => (p.name || '').trim().toLowerCase()).filter(Boolean));
+            for (const p of enrichedBrowseAiSuggestions) {
+                const n = (p.name || '').trim().toLowerCase();
+                if (n && outNames.has(n)) continue;
+                outNames.add(n);
+                out.push(p);
+            }
+        }
         // The AI suggestions above are appended in whatever order Claude returned
         // them — the prompt asks it to rank by relevance, but that's advisory,
         // not enforced, so the model's first pick is sometimes a weaker/tangential
@@ -659,13 +876,13 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             const scored = out.map((item, idx) => ({
                 item,
                 idx,
-                score: scoreQueryAgainstProduct(qTrimForAi, buildSearchTextForItem(item, CATEGORY_LABELS)),
+                score: scoreQueryAgainstProduct(qTrimForAi, buildSearchTextForItem(item, CATEGORY_LABELS), buildIdentityTextForItem(item, CATEGORY_LABELS)),
             }));
             scored.sort((a, b) => (b.score - a.score) || (a.idx - b.idx));
             return scored.map((x) => x.item);
         }
         return out;
-    }, [filtered, enrichedAiSuggestions, qTrimForAi]);
+    }, [filtered, enrichedAiSuggestions, enrichedBrowseAiSuggestions, qTrimForAi]);
 
     useEffect(() => {
         // Only resolve images for what's actually rendered (visibleCount),
@@ -676,7 +893,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         const missing = visible
             .filter((item) => item && item.id && item.name)
             .filter((item) => resolvedImages[item.id] === undefined)
-            .filter((item) => isPlaceholderProductImage(item.image));
+            .filter((item) => isPlaceholderProductImage(item.image, item.type === 'digital'));
         if (missing.length === 0) return;
 
         // Bounded worker pool. This used to fire one request per item with no
@@ -692,7 +909,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             while (!cancelled) {
                 const item = queue.shift();
                 if (!item) return;
-                const url = await resolveProductImage(item.name, item.brand || '', item.url || '');
+                const url = await resolveProductImage(item.name, item.brand || '', item.url || '', item.type || '');
                 if (cancelled) return;
                 // Record '' as well: gating on `if (url)` left a no-image product
                 // permanently `undefined`, so it was re-selected and re-resolved
@@ -716,22 +933,23 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         setAiRelatedSearches([]);
         setAiError(null);
         setAiQuerySummary('');
-        const intake = quizResults?.fullHealthIntake || null;
-        const profileSummary = personalizationFilter && intake ? [
-            intake.primaryConcerns?.length ? `Concerns: ${intake.primaryConcerns.slice(0, 5).join(', ')}` : '',
-            intake.conditions?.length ? `Conditions: ${intake.conditions.filter(c => c !== 'none').join(', ')}` : '',
-            intake.productPreferences?.length ? `Preferences: ${intake.productPreferences.join(', ')}` : '',
-            intake.goals?.length ? `Goals: ${intake.goals.join(', ')}` : '',
-        ].filter(Boolean).join('. ') : '';
-        const dislikedProducts = personalizationFilter ? (intake?.dislikedProductsText || '') : '';
-        const dislikedTerms = dislikedProducts.split(/[,\n]+/).map(s => s.trim().toLowerCase()).filter(s => s.length > 1);
+        const { profileSummary, dislikedProducts, dislikedTerms } = buildAiProfileContext(personalizationFilter, quizResults);
         try {
             const { suggestions, querySummary, relatedSearches, error } = await fetchSearchSuggestions({
                 query, category, symptom, signal: ac.signal,
                 personalized: personalizationFilter,
                 profileSummary,
                 dislikedProducts,
-                maxResults: personalizationFilter ? 10 : 20,
+                // Claude generates roughly linearly with requested count — each
+                // suggestion carries a full schema (summary, tags, retailers,
+                // search terms, safety note), so asking for 20 of them is what
+                // made every search feel slow (multi-second generation before
+                // anything new could render). Catalog matches (in `filtered`)
+                // already render instantly regardless of this call, so cutting
+                // the AI request down trades "more invented suggestions" for
+                // "results show up fast" — the better trade for a live per-
+                // keystroke search.
+                maxResults: personalizationFilter ? 6 : 8,
             });
             if (ac.signal.aborted) return;
             setAiLoading(false);
@@ -749,6 +967,151 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             setAiError(e?.message || 'Could not load suggestions');
         }
     }, [personalizationFilter, quizResults]);
+
+    // AI-round extension used for BOTH "Load more" cases: (1) browse-mode, generating
+    // more AI-suggested products for the currently-selected macro group / category with
+    // no text query active, and (2) typed-search continuation, generating more results
+    // for the query the user already submitted once results and gridItems.length there
+    // (or an appended-since-visited "Load more") caught up with what runAiSearch's
+    // initial one-shot fetch (round 0) returned. Both share the exact same
+    // fetchSearchSuggestions utility, anti-fabrication API, round-batching, and dedup
+    // logic — only the query text source differs (typed text verbatim vs. a synthesized
+    // category-label phrase), which is why they were unified into one function instead of
+    // typed search getting its own separate, weaker one-shot-only mechanism.
+    const runBrowseAiRound = useCallback(async (contextKeyAtCallTime, roundIndexAtCallTime) => {
+        // fetchSearchSuggestions session-caches by (query, category, symptom, maxResults) —
+        // an identical query on a later round would just replay an earlier round's cached
+        // response verbatim (every item then gets deduped away, silently wasting the round).
+        // Confirmed live: with only a single "later round" variant text, rounds 3+ all sent
+        // the exact same string as round 2 and fired back-to-back in under a second (cache
+        // hits resolve near-instantly) instead of ever reaching the network for genuinely new
+        // suggestions. See resolveBrowseAiRoundQuery for how each round gets a distinct
+        // "batch N" cache-busting suffix, and how typed-search continuation rounds avoid
+        // colliding with runAiSearch's own initial fetch.
+        const resolved = resolveBrowseAiRoundQuery(qTrimForAi, categoryFilter, macroGroup, roundIndexAtCallTime);
+        if (!resolved) return;
+        // Belt-and-suspenders against the trigger effect firing again before this round's
+        // state updates have committed (browseAiLoading is a state value, so it only reflects
+        // reality a render cycle later) — see browseAiInFlightRef's declaration above.
+        if (browseAiInFlightRef.current) return;
+        browseAiInFlightRef.current = true;
+        const { queryText, isTypedSearchContinuation } = resolved;
+        if (browseAiAbortRef.current) browseAiAbortRef.current.abort();
+        const ac = new AbortController();
+        browseAiAbortRef.current = ac;
+        setBrowseAiLoading(true);
+        const { profileSummary, dislikedProducts, dislikedTerms } = buildAiProfileContext(personalizationFilter, quizResults);
+        try {
+            const { suggestions, code: fetchErrorCode } = await fetchSearchSuggestions({
+                query: queryText,
+                category: categoryFilter !== 'all' ? categoryFilter : undefined,
+                symptom: isTypedSearchContinuation ? symptomFilter : undefined,
+                signal: ac.signal,
+                personalized: personalizationFilter,
+                profileSummary,
+                dislikedProducts,
+                maxResults: personalizationFilter ? 6 : 8,
+            });
+            if (ac.signal.aborted) return;
+            // The context may have changed (user switched category/group) while
+            // this request was in flight — discard stale results instead of
+            // leaking them into a different scope's accumulator. The reset
+            // effect above already cleared browseAiSuggestions/Rounds for the
+            // new context, so just bail here.
+            if (browseAiContextKeyRef.current !== contextKeyAtCallTime) return;
+            setBrowseAiLoading(false);
+            // A rate limit / auth / server error resolves here (see
+            // fetchSearchSuggestions) rather than throwing — the request
+            // itself never got a real answer, so this must NOT count as
+            // evidence the category is exhausted. Bound retries the same
+            // way an actual thrown error does (below) but keep the error
+            // code so the render can say "couldn't check" instead of
+            // falsely claiming "that's everything."
+            if (fetchErrorCode) {
+                setBrowseAiErrorCode(fetchErrorCode);
+                setBrowseAiRounds((r) => r + 1);
+                return;
+            }
+            setBrowseAiErrorCode(null);
+            // Dedup against catalog matches, whatever's already accumulated for this browse
+            // context (read from the ref, not React state — see browseAiSuggestionsRef's
+            // declaration above for why: computing this inside a setBrowseAiSuggestions(prev
+            // => ...) functional updater is impure, since it also assigns to an outer
+            // freshCount variable as a side effect, and React is allowed to invoke an
+            // updater more than once for a single call — which silently corrupted freshCount
+            // on rounds that had, in fact, added genuinely new products), and the
+            // search-flow's AI suggestions — mirrors the dedup gridItems already does above.
+            const existingNames = new Set([
+                ...filtered.map((p) => (p.name || '').trim().toLowerCase()),
+                ...browseAiSuggestionsRef.current.map((p) => (p.name || '').trim().toLowerCase()),
+                ...enrichedAiSuggestions.map((p) => (p.name || '').trim().toLowerCase()),
+            ].filter(Boolean));
+            const fresh = (Array.isArray(suggestions) ? suggestions : []).filter((s) => {
+                const nameAndBrand = `${s.name || ''} ${s.brand || ''}`.toLowerCase();
+                if (dislikedTerms.some((term) => nameAndBrand.includes(term))) return false;
+                const n = (s.name || '').trim().toLowerCase();
+                if (n && existingNames.has(n)) return false;
+                if (n) existingNames.add(n);
+                return true;
+            });
+            const freshCount = fresh.length;
+            if (freshCount > 0) {
+                browseAiSuggestionsRef.current = [...browseAiSuggestionsRef.current, ...fresh];
+                setBrowseAiSuggestions(browseAiSuggestionsRef.current);
+            }
+            // A DRY round (adds nothing new) isn't trusted on its own — the
+            // model can duplicate one batch and still have real, distinct
+            // products on the next (confirmed live, see dryRoundStreakRef
+            // above). Only two dry rounds IN A ROW is treated as "this
+            // category is genuinely tapped out" and jumps straight to the
+            // cap instead of burning through the rest of the budget on more
+            // no-op calls; a single dry round just costs one retry.
+            if (freshCount > 0) {
+                dryRoundStreakRef.current = 0;
+                setBrowseAiRounds((r) => r + 1);
+            } else {
+                dryRoundStreakRef.current += 1;
+                setBrowseAiRounds((r) => (dryRoundStreakRef.current >= 2 ? MAX_BROWSE_AI_ROUNDS : r + 1));
+            }
+        } catch (e) {
+            if (e?.name === 'AbortError') return;
+            setBrowseAiLoading(false);
+            // Count a failed round against the cap too, so a persistent server
+            // error can't cause the trigger effect below to retry indefinitely —
+            // the round budget is about bounding calls, not just successes. Same
+            // reasoning as the fetchErrorCode branch above: a thrown exception
+            // isn't evidence of "nothing left," so don't touch dryRoundStreakRef.
+            if (browseAiContextKeyRef.current === contextKeyAtCallTime) {
+                setBrowseAiErrorCode('request_failed');
+                setBrowseAiRounds((r) => r + 1);
+            }
+        } finally {
+            browseAiInFlightRef.current = false;
+        }
+    }, [categoryFilter, macroGroup, personalizationFilter, quizResults, filtered, enrichedAiSuggestions, qTrimForAi, symptomFilter]);
+
+    // Fires the next AI round exactly when "Load more" would otherwise vanish with
+    // nothing left to show, in either mode:
+    //   - Browse mode (no typed query): a specific scope actually selected (never for the
+    //     fully-unscoped "All" view — too unbounded for one LLM call).
+    //   - Typed-search continuation: gated on the initial one-shot fetch (runAiSearch)
+    //     having actually finished (searchSubmitted && !aiLoading) — otherwise this would
+    //     double-fire a first AI round in parallel with runSearch's own initial call for
+    //     the same query. A typed query is specific enough on its own that the "All"
+    //     scope restriction below doesn't apply to it.
+    // Both share: under the round cap, not already loading, and visibleCount has caught up
+    // to everything currently available (catalog + AI so far).
+    useEffect(() => {
+        if (qTrimForAi) {
+            if (!searchSubmitted || aiLoading) return;
+        } else if (macroGroup === 'all' && categoryFilter === 'all') {
+            return;
+        }
+        if (browseAiRounds >= MAX_BROWSE_AI_ROUNDS) return;
+        if (browseAiLoading) return;
+        if (gridItems.length > visibleCount) return;
+        runBrowseAiRound(browseAiContextKey, browseAiRounds);
+    }, [qTrimForAi, searchSubmitted, aiLoading, macroGroup, categoryFilter, browseAiRounds, browseAiLoading, gridItems.length, visibleCount, browseAiContextKey, runBrowseAiRound]);
 
     useEffect(() => {
         if (qTrimForAi.length < 2) {
@@ -780,7 +1143,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         const q = (rawQuery || '').trim();
         if (!q || q.length < 2) return;
         setSearchQuery(q);
-        posthog.capture('search_performed', { queryLength: q.length });
+        posthog.capture('search_performed', { query: q, queryLength: q.length });
         const qLower = q.toLowerCase();
 
         // Cancel any pending debounce — we're going immediate
@@ -828,6 +1191,12 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         runSearch(searchQuery);
     };
 
+    // "Clear" resets the FILTERS — Personalized is a standing preference the
+    // user turned on deliberately, not a filter value like price/rating/life
+    // stage, and turning it off as a side effect of clicking something
+    // labeled just "Clear" was a surprising, undocumented behavior (found
+    // live, 2026-08-24 bug bash). Personalized has its own explicit toggle
+    // right next to this button for anyone who actually wants it off.
     const clearBrowseFilters = () => {
         setMacroGroup('all');
         setCategoryFilter('all');
@@ -838,7 +1207,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         setLifeStageFilter('all');
         setAynaFilter('all');
         setPreferenceFilter('all');
-        setPersonalizationFilter(false);
         setSortBy('default');
         setSearchQuery('');
         setSubmittedQuery('');
@@ -853,7 +1221,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 <div>
                     <p className="ayna-browse__eyebrow">{personalizationFilter && recommendedSet.size > 0 ? 'For you' : 'Browse'}</p>
                     <h2>Shop</h2>
-                    <span>{gridItems.length} products</span>
                 </div>
             </div>
 
@@ -861,7 +1228,30 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 <input
                     type="search"
                     value={searchQuery}
-                    onChange={(e) => { setSearchQuery(e.target.value); if (!e.target.value.trim()) setSubmittedQuery(''); }}
+                    onChange={(e) => {
+                        const value = e.target.value;
+                        setSearchQuery(value);
+                        // Clearing the box (the native × or backspacing to empty) used to
+                        // leave the Product Type filter exactly as the search had left it —
+                        // often a category the search itself auto-selected via the nudge
+                        // logic in runSearch, with no text left to explain why results were
+                        // still scoped to it. Clearing the text now clears that filter too.
+                        if (!value.trim()) {
+                            setSubmittedQuery('');
+                            setCategoryFilter('all');
+                            clearTimeout(debounceRef.current);
+                            return;
+                        }
+                        // Typing used to do nothing at all until Enter was pressed — no
+                        // live feedback, felt broken (found live, 2026-08-24 bug bash).
+                        // Debounced instead of firing on every keystroke: this triggers
+                        // a real LLM call once local catalog matches run out, so an
+                        // immediate per-character fire would be both wasteful and noisy.
+                        clearTimeout(debounceRef.current);
+                        debounceRef.current = setTimeout(() => {
+                            if (value.trim().length >= 2) runSearch(value);
+                        }, 600);
+                    }}
                     placeholder="Search products"
                     aria-label="Search products"
                 />
@@ -893,12 +1283,27 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     <button type="button" className="ayna-browse__filter-button" onClick={() => setShowFilters((v) => !v)} aria-expanded={showFilters}>
                         Filters
                     </button>
-                    {recommendedSet.size > 0 && (
-                        <label className="ayna-browse__personalized-toggle">
-                            <input type="checkbox" checked={personalizationFilter} onChange={(e) => setPersonalizationFilter(e.target.checked)} />
-                            <span>Personalized</span>
-                        </label>
-                    )}
+                    <label className="ayna-browse__personalized-toggle">
+                        <span>Personalized</span>
+                        <span className="ayna-browse__personalized-switch">
+                            <input
+                                type="checkbox"
+                                checked={personalizationFilter}
+                                onChange={(e) => {
+                                    if (!user) {
+                                        // Checkbox visually can't move without a real change event,
+                                        // but there's nothing to personalize without an account —
+                                        // send them to sign in/up instead of silently flipping state
+                                        // that has no effect (or, worse, none they can see why).
+                                        onRequirePersonalizeAuth?.();
+                                        return;
+                                    }
+                                    setPersonalizationFilter(e.target.checked);
+                                }}
+                            />
+                            <span className="ayna-browse__personalized-track" aria-hidden="true" />
+                        </span>
+                    </label>
                 </div>
                 <label className="ayna-browse__sort">
                     <span>Sort</span>
@@ -937,7 +1342,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         </select>
                     </label>
                     <label>
-                        <span>Ayna</span>
+                        <span>ayna</span>
                         <select value={aynaFilter} onChange={(e) => setAynaFilter(e.target.value)}>
                             <option value="all">Any</option>
                             <option value="best-match">Best Match</option>
@@ -992,9 +1397,15 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 </div>
             )}
 
-            {/* Loading state for explicit search */}
+            {/* Loading state for explicit search — a bare skeleton grid with no
+                explanation for several seconds read as stuck/broken (found live,
+                2026-08-24 bug bash), since a query with no catalog matches has to
+                wait on a real LLM search, not an instant lookup. */}
             {searchSubmitted && aiLoading && (
                 <>
+                    <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', margin: '0 0 1rem' }}>
+                        Searching live for real products that match &ldquo;{submittedQuery}&rdquo;…
+                    </p>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(252px, 1fr))', gap: '1.5rem' }}>
                         {Array.from({ length: 8 }, (_, i) => (
                             <div key={i} className="card" style={{ padding: 0, overflow: 'hidden', border: '1px solid var(--color-border)' }} aria-hidden="true">
@@ -1016,10 +1427,20 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             <>
             <div className="ayna-browse__grid">
                 {gridItems.slice(0, visibleCount).map((item, idx) => {
-                    const cardImageSrc = resolvedImages[item.id] || item.image;
-                    const imageStillLoading = resolvedImages[item.id] === undefined && isPlaceholderProductImage(item.image);
-                    const tileLetter = (item.brand || item.name || '?').trim().charAt(0).toUpperCase();
-                    const matchPercent = getExplicitMatchPercent(item);
+                    // A defined (even empty-string) resolvedImages[item.id] came back
+                    // from the server's type-aware /api/product-image resolution —
+                    // trust it as-is below rather than re-running it through
+                    // isPlaceholderProductImage, which doesn't know the product is
+                    // 'digital' and would reject a legitimate app/telehealth logo.
+                    // Only the unresolved (undefined) raw catalog fallback still needs
+                    // that heuristic, since it was never server-vetted.
+                    const resolvedItemImage = resolvedImages[item.id];
+                    const cardImageSrc = resolvedItemImage !== undefined ? resolvedItemImage : item.image;
+                    const imageStillLoading = resolvedItemImage === undefined && isPlaceholderProductImage(item.image, item.type === 'digital');
+                    const profileMatchPercent = getProfileMatchPercentForProduct(item, quizResults, healthProfile);
+                    const matchPercent = (hasQuizFrustrations || hasHealthImport)
+                        ? profileMatchPercent
+                        : getExplicitMatchPercent(item);
                     const eligibility = getExplicitEligibility(item);
                     const eligibilityLabel = eligibility.fsa && eligibility.hsa ? 'FSA/HSA' : eligibility.fsa ? 'FSA' : eligibility.hsa ? 'HSA' : '';
                     const isWishlisted = !!savedProducts[item.id];
@@ -1038,11 +1459,16 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                 onClick={(e) => {
                                     if (!isPlainLeftClick(e)) return;
                                     e.preventDefault();
-                                    onOpenProduct?.(item);
+                                    onOpenProduct?.(item, searchSubmitted
+                                        ? { source: 'search_results', searchQuery: submittedQuery, position: idx }
+                                        : { source: 'browse', position: idx });
                                 }}
                             >
                                 <div className="ayna-discover-card__tile">
-                                    {cardImageSrc && !isPlaceholderProductImage(cardImageSrc) ? (
+                                    {isPartnerBrandItem(item) && (
+                                        <span className="ayna-browse-card__affiliate">Affiliate link</span>
+                                    )}
+                                    {cardImageSrc && (resolvedItemImage !== undefined || !isPlaceholderProductImage(cardImageSrc, item.type === 'digital')) ? (
                                         <>
                                             <img
                                                 src={cardImageSrc}
@@ -1054,14 +1480,20 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                                     if (fallback) fallback.style.display = 'flex';
                                                 }}
                                             />
-                                            <span className="ayna-discover-card__letter" style={{ display: 'none' }}>{tileLetter}</span>
+                                            <span className="ayna-discover-card__letter" style={{ display: 'none', position: 'absolute', inset: 0 }}>
+                                                <ProductImageFallback />
+                                            </span>
                                         </>
                                     ) : imageStillLoading ? (
                                         <div className="skeleton-shimmer" style={{ position: 'absolute', inset: 0 }} aria-hidden="true" />
                                     ) : (
-                                        <span className="ayna-discover-card__letter">{tileLetter}</span>
+                                        <ProductImageFallback />
                                     )}
-                                    {matchPercent != null && <span className="ayna-browse-card__match">{matchPercent}% Match</span>}
+                                    {matchPercent != null && (
+                                        <span className="ayna-browse-card__match">
+                                            <MatchGauge percent={matchPercent} size={24} theme="light" label="match" />
+                                        </span>
+                                    )}
                                     {isInEcosystem && <span className="ayna-browse-card__ecosystem">In ecosystem</span>}
                                 </div>
                                 <div className="ayna-discover-card__body">
@@ -1091,9 +1523,17 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                 <div className="ayna-browse__empty">
                     <p>No matches.</p>
                     <button type="button" onClick={clearBrowseFilters}>Clear filters</button>
+                    {personalizationFilter && (
+                        <p className="ayna-browse__empty-hint">
+                            Still nothing?{' '}
+                            <button type="button" onClick={() => setPersonalizationFilter(false)}>
+                                Try turning the personalized toggle off
+                            </button>
+                        </p>
+                    )}
                 </div>
             )}
-            {gridItems.length > visibleCount && (
+            {gridItems.length > visibleCount ? (
                 <div style={{ textAlign: 'center', marginTop: '2rem' }}>
                     <button
                         type="button"
@@ -1104,7 +1544,38 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         Load more
                     </button>
                 </div>
-            )}
+            ) : browseAiLoading ? (
+                // A browse-AI round is fetching more results for this scope in the
+                // background — show a disabled, clearly-labeled state instead of
+                // "Load more" just disappearing (which would look broken) or being
+                // clickable and double-firing a request.
+                <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+                    <button
+                        type="button"
+                        className="btn btn-outline"
+                        disabled
+                        style={{ padding: '0.7rem 1.75rem', opacity: 0.7, cursor: 'default' }}
+                    >
+                        Finding more…
+                    </button>
+                </div>
+            ) : (qTrimForAi || !(macroGroup === 'all' && categoryFilter === 'all')) && browseAiRounds >= MAX_BROWSE_AI_ROUNDS ? (
+                // The round budget is used up — say so explicitly rather than
+                // the button just vanishing with no explanation, which reads
+                // as broken/stuck. Two different reasons land here, and they
+                // need different, honest copy: genuinely ran out of new
+                // suggestions (or two duplicate-heavy rounds in a row — see
+                // dryRoundStreakRef) vs. the fetch itself kept failing/rate-
+                // limiting (browseAiErrorCode) — the latter is NOT "we
+                // checked and this is everything," it's "we couldn't check."
+                <p style={{ textAlign: 'center', marginTop: '2rem', color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>
+                    {browseAiErrorCode === 'rate_limited'
+                        ? "Couldn't check for more right now — too many searches recently. Try again in a bit."
+                        : browseAiErrorCode
+                            ? "Couldn't check for more products right now."
+                            : `That's everything we could find${qTrimForAi ? ` for "${qTrimForAi}"` : ''}.`}
+                </p>
+            ) : null}
             </>
             )}
 
@@ -1146,13 +1617,13 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Checking the government database…</p>
                     )}
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '1.25rem' }}>
-                        {dsldProducts.map((product) => (
+                        {dsldProducts.map((product, dsldIdx) => (
                             <div key={product.id} className="card hover-lift" style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-                                <div style={{ height: '120px', width: '100%', overflow: 'hidden', position: 'relative' }}>
-                                    {product.image ? (
-                                        <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => handleImageErrorWithRetry(e, () => { e.currentTarget.style.display = 'none'; })} />
+                                <div style={{ height: '120px', width: '100%', overflow: 'hidden', position: 'relative', background: 'linear-gradient(160deg, #F3EADC, #EFE3D2)' }}>
+                                    {safeProductImageSrc(product.image) ? (
+                                        <img src={safeProductImageSrc(product.image)} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '10px', boxSizing: 'border-box' }} onError={(e) => handleImageErrorWithRetry(e, () => { e.currentTarget.style.display = 'none'; })} />
                                     ) : (
-                                        <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, var(--color-secondary-fade), #f3e8ff)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem' }}>NIH</div>
+                                        <ProductImageFallback />
                                     )}
                                     <span style={{ position: 'absolute', top: '0.5rem', left: '0.5rem', background: '#DCFCE7', color: '#166534', padding: '0.2rem 0.55rem', borderRadius: 'var(--radius-pill)', fontSize: '0.68rem', fontWeight: '700' }}>
                                         NIH verified
@@ -1173,7 +1644,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                             {myProducts?.[product.id] ? 'Added' : 'Add'}
                                         </button>
                                         <button className="btn btn-primary" style={{ padding: '0.35rem 0.7rem', fontSize: '0.78rem', flex: 1 }}
-                                            onClick={() => onOpenProduct && onOpenProduct(product)}>
+                                            onClick={() => onOpenProduct && onOpenProduct(product, { source: 'search_results', searchQuery: submittedQuery, position: dsldIdx })}>
                                             Details
                                         </button>
                                     </div>

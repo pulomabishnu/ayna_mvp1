@@ -1,10 +1,17 @@
 /* global process */
 import { createClient } from '@supabase/supabase-js';
 
+function positiveIntEnv(name, fallback) {
+  const parsed = Number.parseInt(process.env[name] || '', 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
+
 export const LIMITS = {
   chat: 5,
   insights: 5,
-  ecosystem: 1,
+  // Defaults to 1, but beta/production can safely allow more builds
+  // with ECOSYSTEM_BUILD_LIMIT without another code change.
+  ecosystem: positiveIntEnv('ECOSYSTEM_BUILD_LIMIT', 1),
   // Inbound SMS previously had no quota and no rate limit at all: every text
   // was one unmetered Claude call plus one outbound SMS, entirely outside the
   // paywall this module exists to enforce.

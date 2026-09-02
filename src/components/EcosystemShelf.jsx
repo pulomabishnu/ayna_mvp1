@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
-import { ECOSYSTEM_AREAS } from './EcosystemBubbles';
+import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
+import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 
 /**
  * "Four shelves, built for you." — mockup board 1e, the alternate/organized
@@ -11,27 +12,22 @@ import { ECOSYSTEM_AREAS } from './EcosystemBubbles';
 const MAX_TILES = 4;
 
 function CareTile({ product, onOpenProduct }) {
-  const letter = (product.brand || product.name || '?').trim().charAt(0).toUpperCase();
   return (
     <button type="button" className="eco-shelf__tile" onClick={() => onOpenProduct?.(product)}>
       <span className="eco-shelf__tile-swatch" aria-hidden>
-        {product.image ? (
-          <img src={product.image} alt="" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
-        ) : (
-          <span className="eco-shelf__tile-letter">{letter}</span>
-        )}
+        <ProductTileImage product={product} letterNode={<ProductImageFallback compact />} />
       </span>
       <span className="eco-shelf__tile-name">{product.name}</span>
     </button>
   );
 }
 
-export default function EcosystemShelf({ myProducts = {}, onOpenProduct, onExploreArea }) {
+export default function EcosystemShelf({ myProducts = {}, onOpenProduct, onExploreArea, hideTitle = false }) {
   const { filled, gaps } = useMemo(() => {
     const products = Object.values(myProducts || {});
     const byArea = new Map();
     products.forEach((p) => {
-      const area = ECOSYSTEM_AREAS.find((a) => a.categories.includes(p.category));
+      const area = resolveEcosystemProductArea(p, ECOSYSTEM_AREAS);
       const key = area ? area.key : 'other';
       if (!byArea.has(key)) byArea.set(key, []);
       byArea.get(key).push(p);
@@ -55,7 +51,7 @@ export default function EcosystemShelf({ myProducts = {}, onOpenProduct, onExplo
 
   return (
     <section className="eco-shelf mockup-page">
-      <h2 className="eco-shelf__title">Your shelves.</h2>
+      {!hideTitle && <h2 className="eco-shelf__title">Your shelves.</h2>}
       <p className="eco-shelf__lede">
         Each row is an area of care. Swap anything, or leave a shelf empty and we'll keep watching for a match.
       </p>

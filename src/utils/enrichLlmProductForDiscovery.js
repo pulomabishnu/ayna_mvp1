@@ -13,8 +13,6 @@ function truncate(s, max) {
 
 function buildVerificationLinks(product) {
   const name = (product.name || 'product').trim();
-  const brand = (product.brand || '').trim();
-  const q = encodeURIComponent(`${name} ${brand}`.trim());
   const pubmed = `https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(name)}`;
   const medline = 'https://medlineplus.gov/';
   const ods = 'https://ods.od.nih.gov/';
@@ -33,12 +31,6 @@ function buildVerificationLinks(product) {
           justification: 'U.S. National Library of Medicine',
         },
         {
-          url: `https://www.google.com/search?q=${q}+site%3Aacog.org+OR+site%3Amayoclinic.org+OR+site%3Ahealthline.com`,
-          text: 'Web search: clinical guidance & reviews',
-          summary: 'Find clinician-trusted sources discussing this type of product.',
-          justification: 'Discovery link — verify sources independently',
-        },
-        {
           url: acog,
           text: 'ACOG — Women’s health topics',
           summary: 'Professional guidance on many women’s health concerns.',
@@ -48,7 +40,7 @@ function buildVerificationLinks(product) {
     },
     scientific: {
       aiSummary:
-        'Use PubMed and NIH resources to review evidence for ingredients relevant to your goals. This product is not in Ayna’s curated catalog.',
+        'Use PubMed and NIH resources to review evidence for ingredients relevant to your goals. This product is not in ayna’s curated catalog.',
       links: [
         {
           url: pubmed,
@@ -117,7 +109,7 @@ export function enrichLlmProductForDiscovery(product) {
   // and none of these caveats ever reached the UI.
   const safetyDefaults = {
     recalls:
-      'No Ayna-tracked recall data for this generated listing. Check the FDA recall database and the manufacturer before purchase.',
+      'No ayna-tracked recall data for this generated listing. Check the FDA recall database and the manufacturer before purchase.',
     materials: 'See the manufacturer label and official site for ingredients and materials.',
     sideEffects:
       product.safetyNote ||
@@ -142,7 +134,7 @@ export function enrichLlmProductForDiscovery(product) {
     clinicianOpinionSource: product.clinicianOpinionSource || 'ai-generated',
     clinicianAttribution:
       product.clinicianAttribution ||
-      'Ayna general guidance — this listing is AI-generated, not a curated catalog entry and not clinician-reviewed. Verify with your clinician.',
+      'ayna general guidance — this listing is AI-generated, not a curated catalog entry and not clinician-reviewed. Verify with your clinician.',
     doctorOpinion:
       product.doctorOpinion ||
       'This match is generated to help you explore options. It is not a substitute for personalized medical advice—confirm fit with your clinician.',

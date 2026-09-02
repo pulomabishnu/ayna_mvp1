@@ -1446,12 +1446,18 @@ html {
 /* Mobile drawer — hidden on desktop */
 .mobile-nav-drawer { display: none; }
 
-@media (max-width: 768px) {
-  /* Show hamburger, hide desktop nav sections */
+/* Nav-specific rules split out to their own 900px breakpoint — MUST match
+   .app-nav__links' own hide breakpoint below (also 900px). These used to be
+   two different numbers (768px here, 900px there), leaving a ~130px dead
+   zone (a common laptop-with-sidebar/split-screen width) where the desktop
+   links were already hidden but the hamburger hadn't appeared yet — no way
+   to navigate from the header at all (found live, 2026-08-24 bug bash).
+   Split out (instead of just widening the whole old block) so the unrelated
+   .btn/.container touch-target rules below keep their original 768px. */
+@media (max-width: 900px) {
   .mobile-menu-btn { display: flex; }
   .desktop-only    { display: none !important; }
 
-  /* Mobile nav drawer */
   .mobile-nav-drawer {
     display: flex;
     flex-direction: column;
@@ -1484,7 +1490,9 @@ html {
   .mobile-drawer-item:active {
     background: var(--color-secondary-fade);
   }
+}
 
+@media (max-width: 768px) {
   /* All buttons meet 44px touch target */
   .btn { min-height: 44px; }
 
@@ -1614,7 +1622,7 @@ html {
 .ayna-landing-hero {
   background: var(--mockup-hero-gradient);
   color: #F4F0FA;
-  padding: 78px 0 86px;
+  padding: 78px 0 56px;
 }
 
 .ayna-landing-hero-col {
@@ -1656,11 +1664,16 @@ html {
   align-items: center;
   background: var(--mockup-cream);
   border-radius: 999px;
-  padding: 8px 8px 8px 26px;
-  width: 520px;
+  padding: 10px 10px 10px 32px;
+  width: 640px;
   max-width: 100%;
-  margin-top: 16px;
-  box-shadow: 0 14px 40px rgba(20, 16, 40, 0.28);
+  margin-top: 22px;
+  box-shadow: 0 18px 50px rgba(20, 16, 40, 0.34);
+  transition: box-shadow 0.2s ease;
+}
+
+.ayna-landing-searchbar:focus-within {
+  box-shadow: 0 20px 56px rgba(20, 16, 40, 0.4), 0 0 0 3px rgba(240, 168, 75, 0.35);
 }
 
 .ayna-landing-searchbar input {
@@ -1670,7 +1683,7 @@ html {
   background: none;
   outline: none;
   font-family: inherit;
-  font-size: 15px;
+  font-size: 17px;
   color: var(--mockup-ink);
 }
 
@@ -1683,9 +1696,9 @@ html {
   background: linear-gradient(100deg, #F0A84B, #E5C15C);
   color: #2A2140;
   font-family: inherit;
-  font-weight: 500;
-  font-size: 14.5px;
-  padding: 14px 30px;
+  font-weight: 600;
+  font-size: 15.5px;
+  padding: 16px 34px;
   border: none;
   border-radius: 999px;
   cursor: pointer;
@@ -1806,6 +1819,7 @@ html {
   align-items: center;
   flex-wrap: wrap;
   gap: 24px;
+  min-width: 0;
 }
 
 .ayna-landing-filters {
@@ -1980,6 +1994,20 @@ html {
   cursor: pointer;
 }
 
+/* Small "beta" tag beside the wordmark — em-sized off .app-nav__logo's own
+   font-size so it scales automatically between the landing (27px) and
+   cream (24px) nav variants below, rather than needing its own breakpoints. */
+.app-nav__beta-badge {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 0.42em;
+  letter-spacing: 0.04em;
+  margin-left: 5px;
+  opacity: 0.6;
+  vertical-align: top;
+}
+
 .app-nav__tab {
   font-family: 'DM Sans', system-ui, sans-serif;
   font-size: 14px;
@@ -2031,9 +2059,15 @@ html {
   font-weight: 500;
 }
 
+/* One consistent avatar color everywhere, not gold on the dark hero header
+   and lavender everywhere else (found live, 2026-08-24 bug bash) — as a
+   personal-identity marker, it should look the same regardless of which
+   page you're on. Gold is the established brand accent already used here on
+   the hero; the cream-header override that swapped it for lavender is gone. */
 .app-nav__circle--avatar {
   background: #F0A84B;
   border-color: #F0A84B;
+  color: #242A52;
 }
 
 .app-nav__circle-pill {
@@ -2130,6 +2164,11 @@ html {
   color: #F0A84B !important;
 }
 
+.app-nav--landing .app-nav__beta-badge {
+  font-family: var(--font-serif) !important;
+  color: rgba(255, 246, 235, 0.6) !important;
+}
+
 .app-nav--landing .app-nav__tab {
   color: #F4F0FA !important;
 }
@@ -2173,6 +2212,10 @@ html {
   color: #1A1714;
 }
 
+.app-nav--cream .app-nav__beta-badge {
+  color: rgba(26, 23, 20, 0.5);
+}
+
 .app-nav--cream .app-nav__links {
   gap: 32px;
 }
@@ -2199,26 +2242,32 @@ html {
   background: rgba(26, 23, 20, 0.05);
 }
 
-.app-nav--cream .app-nav__circle--avatar {
-  background: #C3B6D8;
-  border-color: #C3B6D8;
-  color: #2A2140;
-}
-
 /* Landing hero picks the gradient up where the nav left off. */
 .ayna-landing-hero {
+  /* Same bug as .ayna-landing-hero--returning below, this is the OTHER
+     variant of it: real iPhone Safari screenshot showed the filter-pill
+     row wrapping to a second line on a narrow real device, pushing the
+     hero past the fixed 580px background-size, and the plain page
+     background cut through mid-hero right across the pills. Same fix —
+     a linear-gradient has no fixed natural size, so it fills the element
+     completely with no size/position override at all. */
   background: var(--mockup-hero-gradient);
-  background-size: 100% 655px;
-  background-position: 0 -84px;
-  background-repeat: no-repeat;
-  min-height: 571px;
+  min-height: 496px;
 }
 
 .ayna-landing-hero--returning {
+  /* Was background-size:100% 482px / position:0 -84px — a fixed-pixel crop
+     of the gradient calibrated for a ~398-482px-tall hero. Once the
+     two-column .ayna-landing-welcomeback grid stacks to one column (at
+     narrow widths / high zoom) the section grows well past 482px tall, the
+     gradient ran out partway down, and the page's plain background showed
+     through mid-hero — right behind the semi-transparent ecosystem card,
+     which is exactly the "cut off" look reported live. A CSS gradient (not
+     a raster image) has no fixed natural size, so it fills the element
+     completely with no size/position override at all — same as this
+     selector's OTHER declaration elsewhere in this file, which never had
+     this bug. */
   background: var(--mockup-hero-gradient-returning);
-  background-size: 100% 482px;
-  background-position: 0 -84px;
-  background-repeat: no-repeat;
   min-height: 398px;
 }
 
@@ -2516,10 +2565,12 @@ html {
 }
 
 .hiw-hero {
+  /* Same bug as .ayna-landing-hero / .ayna-landing-hero--returning: a fixed
+     background-size/position crop that runs out and exposes the plain page
+     background once real content (heading + subtext, shared by both
+     How It Works and About, which both use this class) wraps past the
+     assumed 342px height. No fixed size/position needed for a gradient. */
   background: linear-gradient(125deg, #242A52 0%, #33305F 34%, #4E3866 64%, #A2603C 100%);
-  background-size: 100% 342px;
-  background-position: 0 -84px;
-  background-repeat: no-repeat;
   color: #F4F0FA;
   padding: 58px 0 64px;
   min-height: 258px;
@@ -3027,6 +3078,7 @@ html {
   display: flex;
   flex-direction: column;
   gap: 18px;
+  min-width: 0;
 }
 
 .pdp-head__eyebrow {
@@ -3059,6 +3111,13 @@ html {
   background: #EDE7F3;
   padding: 6px 12px;
   border-radius: 999px;
+}
+
+.pdp-head__match--gauge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 12px 4px 4px;
 }
 
 .pdp-head__actions {
@@ -3108,6 +3167,64 @@ html {
   background: #F5F0E8;
   padding: 7px 12px;
   border-radius: 999px;
+}
+
+a.pdp-head__badge {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+a.pdp-head__badge:hover,
+a.pdp-head__badge:focus-visible {
+  background: #EDE4D3;
+  text-decoration: underline;
+}
+
+.pdp-safety-alert {
+  margin: 0.75rem 0;
+  padding: 0.85rem 1rem;
+  background: #FEF2F2;
+  border: 1px solid #FEE2E2;
+  border-left: 4px solid #DC2626;
+  border-radius: var(--radius-sm);
+}
+.pdp-safety-alert strong {
+  display: block;
+  font-size: 0.8rem;
+  color: #991B1B;
+}
+.pdp-safety-alert p {
+  margin: 0.3rem 0 0;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--color-text-main);
+}
+/* Collapsed by default (see SafetyAlert in ProductModal.jsx) — a long
+   safety paragraph used to push Buy Now/Wishlist below the fold. */
+.pdp-safety-alert__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+.pdp-safety-alert__chevron {
+  font-size: 0.75rem;
+  color: #991B1B;
+  flex-shrink: 0;
+  margin-left: 0.5rem;
+}
+.pdp-safety-alert__preview {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .pdp-head__link {
@@ -3160,6 +3277,25 @@ html {
 
 /* ---- Product detail: layout switch + evidence rail (mockup board 1g) ---- */
 
+.pdp-back {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 1.25rem clamp(1rem, 5vw, 56px) 0;
+  margin: 0;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-navy);
+}
+
+.pdp-back:hover {
+  opacity: 0.72;
+}
+
 .pdp-viewswitch {
   display: flex;
   align-items: center;
@@ -3203,7 +3339,12 @@ html {
    actual layout rather than approximating it by stacking two 2-column rows. */
 .pdp-evidence-head {
   display: grid;
-  grid-template-columns: minmax(220px, 400px) 1fr minmax(240px, 290px);
+  /* Middle (info: price/description/buttons) column was a bare `1fr`, no
+     floor — at some in-between widths (~981-1050px, above the 980px
+     single-column breakpoint below) the outer two columns' own minmax
+     maximums ate nearly all the space, crushing this one to ~22px and
+     reading as overlapping/jumbled content. Flagged live 2026-08-25. */
+  grid-template-columns: minmax(220px, 400px) minmax(280px, 1fr) minmax(240px, 290px);
   gap: 38px;
   align-items: start;
   padding: 44px clamp(1rem, 5vw, 56px) 52px;
@@ -3215,6 +3356,7 @@ html {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  min-width: 0;
 }
 
 .pdp-evidence-head__desc {
@@ -3327,9 +3469,21 @@ html {
   gap: 16px;
 }
 
+.pdp-rail__evidence > div > a:last-child,
 .pdp-rail__evidence > div > span:last-child {
   color: #8c8078;
   text-align: right;
+}
+
+.pdp-rail__evidence > div > a:last-child {
+  text-decoration: underline;
+  text-decoration-color: #d8cdbf;
+  text-underline-offset: 2px;
+}
+
+.pdp-rail__evidence > div > a:last-child:hover,
+.pdp-rail__evidence > div > a:last-child:focus-visible {
+  color: #3f3831;
 }
 
 .pdp-btn--disabled {
@@ -3455,6 +3609,60 @@ html {
   border-left: 2px solid rgba(26, 23, 20, 0.1);
 }
 
+.pdp-scientific__list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pdp-scientific__entry {
+  display: block;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: #F5F0E8;
+  color: inherit;
+  text-decoration: none;
+}
+
+.pdp-scientific__entry:hover,
+.pdp-scientific__entry:focus-visible {
+  background: #EDE4D3;
+}
+
+.pdp-scientific__entry-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.pdp-scientific__entry-kind {
+  font: 500 10px/1 'DM Mono', monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8c8078;
+}
+
+.pdp-scientific__entry-source {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1A1714;
+}
+
+.pdp-scientific__entry-text {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #3f3831;
+  margin: 0;
+}
+
+.pdp-scientific__entry-summary {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: #8c8078;
+  margin: 6px 0 0;
+}
+
 .pdp-community__rate {
   display: flex;
   align-items: center;
@@ -3551,16 +3759,65 @@ footer a[href*="career" i],
   appearance: none;
   border: 0;
   background: transparent;
-  color: #4a4356;
-  font: 500 12.5px 'DM Sans', system-ui, sans-serif;
-  padding: 2px 0;
+  color: #242A52;
+  font: 600 17px 'DM Sans', system-ui, sans-serif;
+  padding: 10px 0;
+  margin-top: 4px;
   text-decoration: underline;
-  text-underline-offset: 4px;
+  text-underline-offset: 5px;
   cursor: pointer;
 }
 
 .pdp-actions__ecosystem:hover {
-  color: #242A52;
+  color: #B4732A;
+}
+
+/* "Compare at" retailer links — real site-search links, never a per-retailer
+   price (see src/utils/retailerLinks.js). Styled as small pill chips so they
+   read as "go compare" rather than a second primary CTA next to Buy Now. */
+.pdp-retailers {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.pdp-retailers__label {
+  font: 500 10px 'DM Mono', ui-monospace, monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #9a8d82;
+  margin-right: 2px;
+}
+
+.pdp-retailers__link {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 12.5px;
+  color: #1A1714;
+  background: #F5F0E8;
+  border: 1px solid rgba(26, 23, 20, 0.12);
+  padding: 6px 12px;
+  border-radius: 999px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.pdp-retailers__link:hover {
+  background: #EFE3D2;
+  border-color: rgba(26, 23, 20, 0.22);
+}
+
+/* Specs tab "Where to buy" row, upgraded from plain text to real links. */
+.pdp-rail__spec-link {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.pdp-rail__spec-link:hover {
+  color: #B4732A;
 }
 
 /* 1g: tighter three-column composition + the mockup's large amber match number. */
@@ -3650,6 +3907,12 @@ footer a[href*="career" i],
   padding-bottom: 52px;
   font-family: 'DM Sans', system-ui, sans-serif;
   color: #1A1714;
+}
+
+.eco-bubbles__canvas-wrap {
+  width: 560px;
+  height: 520px;
+  overflow: hidden;
 }
 
 .eco-bubbles__canvas {
@@ -3754,6 +4017,7 @@ footer a[href*="career" i],
   flex-direction: column;
   gap: 22px;
   padding-top: 16px;
+  min-width: 0;
 }
 
 .eco-bubbles__title {
@@ -3794,10 +4058,14 @@ footer a[href*="career" i],
   margin-top: 8px;
   text-align: left;
   cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: rgba(26, 23, 20, 0.28);
+  text-underline-offset: 3px;
 }
 
 .eco-bubbles__card-name:hover {
   color: #B4732A;
+  text-decoration-color: #B4732A;
 }
 
 .eco-bubbles__card-body {
@@ -3805,28 +4073,6 @@ footer a[href*="career" i],
   line-height: 1.55;
   color: #5b524a;
   margin-top: 8px;
-}
-
-.eco-bubbles__card-more {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.eco-bubbles__card-more button {
-  font-family: inherit;
-  font-size: 12px;
-  color: #5b524a;
-  background: #F6F1E9;
-  border: none;
-  padding: 7px 12px;
-  border-radius: 999px;
-  cursor: pointer;
-}
-
-.eco-bubbles__card-more button:hover {
-  color: #B4732A;
 }
 
 .eco-bubbles__card-actions {
@@ -3848,6 +4094,19 @@ footer a[href*="career" i],
 
 .eco-bubbles__card-actions button:hover {
   border-color: #242A52;
+}
+
+.eco-bubbles__card-remove:hover {
+  border-color: #B3261E !important;
+  color: #B3261E;
+}
+
+/* One row per product when an area has more than one pick — was previously
+   collapsed to a single products[0], silently hiding the rest. */
+.eco-bubbles__card-product + .eco-bubbles__card-product {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(26, 23, 20, 0.08);
 }
 
 /* Saved for later shelf */
@@ -4070,14 +4329,28 @@ footer a[href*="career" i],
 
 @media (max-width: 1040px) {
   .eco-bubbles {
-    grid-template-columns: 1fr;
+    /* minmax(0, 1fr), not bare 1fr — a bare 1fr track's minimum size still
+       considers its content's intrinsic/explicit width (the canvas wrap's
+       own `width` below), so it doesn't actually cap the track and content
+       silently overflowed anyway (confirmed live: computed
+       gridTemplateColumns stayed at the wrap's fixed width even though the
+       container itself was narrower). minmax(0, 1fr) explicitly overrides
+       that default "auto" minimum. */
+    grid-template-columns: minmax(0, 1fr);
     justify-items: center;
+  }
+
+  .eco-bubbles__canvas-wrap {
+    width: 459px;
+    height: 427px;
+    max-width: 100%;
+    min-width: 0;
+    margin: 0 auto;
   }
 
   .eco-bubbles__canvas {
     transform: scale(0.82);
-    transform-origin: top center;
-    margin-bottom: -90px;
+    transform-origin: top left;
   }
 
   .eco-bubbles__side {
@@ -4090,9 +4363,15 @@ footer a[href*="career" i],
 }
 
 @media (max-width: 560px) {
+  .eco-bubbles__canvas-wrap {
+    width: 336px;
+    height: 312px;
+    max-width: 100%;
+    min-width: 0;
+  }
+
   .eco-bubbles__canvas {
     transform: scale(0.6);
-    margin-bottom: -200px;
   }
 
   .eco-bubbles__title {
@@ -4105,6 +4384,25 @@ footer a[href*="career" i],
 
   .eco-shelf__row {
     grid-template-columns: 1fr;
+  }
+}
+
+/* iPhone SE and similarly narrow phones (~320-340px): even the 560px
+   breakpoint's 336px-wide canvas wrap doesn't fit — found live (598px of
+   overflow at 320px). One more discrete scale step, same pattern as the
+   two above (the canvas's internal bubble positions are computed in JS
+   against a fixed 560x520, so this can't be made fluid without also
+   changing seatPosition() — see EcosystemBubbles.jsx). */
+@media (max-width: 340px) {
+  .eco-bubbles__canvas-wrap {
+    width: 280px;
+    height: 260px;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .eco-bubbles__canvas {
+    transform: scale(0.5);
   }
 }
 
@@ -4340,6 +4638,7 @@ textarea {
 
 .ayna-landing-filters {
   max-width: min(100%, 780px);
+  min-width: 0;
   overflow-x: auto;
   scrollbar-width: none;
   padding-bottom: 2px;
@@ -4600,6 +4899,74 @@ textarea {
   line-height: 1.45;
 }
 
+/* The "how many products got cut" story — was three flat numbers spread
+   across separate step cards with no visual connection between them. See
+   HowItWorksFunnel.jsx for why the bars use a sqrt, not linear, scale. */
+.hiw-mockup__funnel-section {
+  margin-top: clamp(3.5rem, 6vw, 5.5rem);
+}
+
+.hiw-mockup__funnel-section h2 {
+  font-family: var(--font-serif);
+  font-size: clamp(1.4rem, 2vw, 1.75rem);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  margin: 0 0 1.5rem;
+}
+
+.hiw-funnel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  background: #FFF;
+  border-radius: 22px;
+  padding: clamp(1.6rem, 3vw, 2.4rem);
+}
+
+.hiw-funnel__row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.hiw-funnel__bar-track {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.hiw-funnel__bar {
+  background: linear-gradient(135deg, #242A52 0%, #A2603C 100%);
+  border-radius: 10px;
+  padding: 0.85rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: width 0.4s ease;
+  min-width: 4.5rem;
+}
+
+.hiw-funnel__value {
+  color: #FFF;
+  font-family: var(--font-serif);
+  font-size: clamp(1.1rem, 1.8vw, 1.5rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+.hiw-funnel__label {
+  font-size: 0.85rem;
+  color: #615954;
+  text-align: center;
+}
+
+.hiw-funnel__arrow {
+  font-size: 1rem;
+  color: #CBBFB5;
+  margin: 0.1rem 0;
+}
+
 .hiw-mockup__disclaimer {
   margin-top: clamp(4rem, 7vw, 6.5rem);
   padding: clamp(1.8rem, 3vw, 2.7rem);
@@ -4678,6 +5045,22 @@ textarea {
   font-weight: 650;
   font-size: 0.92rem;
   white-space: nowrap;
+  max-width: 200px;
+  opacity: 1;
+  overflow: hidden;
+  transition: max-width 0.22s ease, opacity 0.15s ease, margin 0.22s ease;
+}
+
+/* Shrinks to just the orb once scrolled (see ProfileChatbot.jsx) — smaller
+   footprint for most of a session instead of a permanent full-width pill
+   that can sit over page content in the bottom-right corner. */
+.ayna-ask-launcher.is-compact {
+  padding: 0.5rem;
+}
+.ayna-ask-launcher.is-compact .ayna-ask-launcher__label {
+  max-width: 0;
+  opacity: 0;
+  margin: 0;
 }
 
 .ayna-ask-orb {
@@ -4828,6 +5211,43 @@ textarea {
 
 .ayna-ask-message--typing {
   color: #8C817B;
+}
+
+/* A profile-update confirmation — distinct from a plain reply bubble on
+   either side, since this is the app telling her what changed, not Ayna
+   speaking (see the "show chat changes clearly" fix, 2026-08-24). */
+.ayna-ask-message--system {
+  align-self: center;
+  max-width: 96%;
+  background: var(--color-secondary-fade, rgba(255, 199, 116, 0.18));
+  color: #4A3F2E;
+  border-radius: 12px;
+  font-size: 0.82rem;
+  padding: 0.6rem 0.8rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+.ayna-ask-message--system button {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #242A52;
+  background: #fff;
+  border: 1px solid rgba(36, 42, 82, 0.25);
+  border-radius: 999px;
+  padding: 0.28rem 0.7rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.ayna-ask-message--system button:hover {
+  border-color: #242A52;
+}
+
+.ayna-ask-panel__error {
+  margin: 0 0.8rem 0.5rem;
+  font-size: 0.8rem;
+  color: #B3261E;
 }
 
 .ayna-ask-panel__composer {
@@ -5044,4 +5464,30 @@ textarea {
   .ayna-voice-state__orb {
     animation: none !important;
   }
+}
+
+
+.brand-partner__affiliate-label {
+  margin-top: 10px;
+  margin-bottom: 2px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #8c8078;
+}
+
+.ayna-browse-card__affiliate {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(26, 23, 20, 0.10);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+  color: #5b524a;
 }

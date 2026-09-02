@@ -136,7 +136,7 @@ export default function EcosystemGenerationBar({ intakeFingerprint, onViewEcosys
             <span className="eco-gen-popup__icon" aria-hidden="true">🌸</span>
             <div>
               <p className="eco-gen-popup__title">Your ecosystem is ready!</p>
-              <p className="eco-gen-popup__subtitle">Take a look at what Ayna put together for you.</p>
+              <p className="eco-gen-popup__subtitle">Take a look at what ayna put together for you.</p>
             </div>
           </div>
           <div className="eco-gen-popup__actions">

@@ -1,6 +1,7 @@
 import React from 'react';
 import Disclaimer from './Disclaimer';
 import { CATEGORY_LABELS } from '../data/products';
+import { useEscapeToClose } from '../utils/useEscapeToClose';
 
 function googleUrl(q) {
   return `https://www.google.com/search?q=${encodeURIComponent(q)}`;
@@ -23,6 +24,7 @@ function getStoreSearchUrl(storeName, productName) {
 }
 
 export default function LlmSearchSuggestionModal({ product, onClose }) {
+  useEscapeToClose(true, onClose);
   if (!product?.llmGenerated) return null;
 
   const terms = Array.isArray(product.searchTerms) ? product.searchTerms : [];
@@ -106,7 +108,7 @@ export default function LlmSearchSuggestionModal({ product, onClose }) {
                 border: '1px solid #E9D5FF',
               }}
             >
-              Ayna preview · not in database
+              ayna preview · not in database
             </span>
           )}
           <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '0.35rem' }}>

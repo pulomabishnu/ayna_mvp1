@@ -1,13 +1,14 @@
 /**
  * Tests for the background product-discovery pipeline (cron-triggered,
  * api/discover-products.js). The whole point of this endpoint is that
- * nothing it finds reaches a real user without a human approving it first —
- * these tests exist to catch a regression in that specific guarantee, not
- * just "does it run".
+ * nothing it finds reaches a real user without EITHER a human approving it
+ * first OR the candidate clearing the narrow isAutoApprovable() gate (clean,
+ * fully-answered recall check + real https source URL) — these tests exist
+ * to catch a regression in that specific guarantee, not just "does it run".
  */
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { mockRes, mockReq, withEnv, anthropicOk } from './_test-helpers.js';
-import { slugify, normalizeKey, buildExclusionSet, toRow, dayOfYear, pickCategory, CATEGORIES } from './discover-products.js';
+import { slugify, normalizeKey, buildExclusionSet, toRow, isAutoApprovable, dayOfYear, pickCategory, slotOfDay, RUN_HOURS_UTC, CATEGORIES } from './discover-products.js';
 
 const realFetch = globalThis.fetch;
 let restoreEnv;
@@ -68,6 +69,16 @@ function makeMockAdmin({ existingByCategory = [], alreadyReviewed = [] } = {}) {
   };
 }
 
+/** Mocks a live fetch() Response for verifyUrlIsLive's liveness check — needs
+ * `.ok` and `.url` (the post-redirect location), not just `.json()` like the
+ * Anthropic/FDA mocks. */
+function liveUrl(finalUrl) {
+  return { ok: true, status: 200, url: finalUrl, json: async () => ({}) };
+}
+function deadUrl() {
+  return { ok: false, status: 404, url: '', json: async () => ({}) };
+}
+
 function fdaNoRecall() {
   return { ok: false, status: 404, json: async () => ({ error: { code: 'NOT_FOUND' } }) };
 }
@@ -75,9 +86,14 @@ function fdaActiveRecall() {
   return {
     ok: true, status: 200,
     json: async () => ({
+      // product_description deliberately contains the candidate's own
+      // name/brand ("Test Pad Pro" / "TestBrand") — recallRecordMatchesProduct
+      // (api/fda-recall.js) discards any FDA record that doesn't textually
+      // match the product, so a mock record with unrelated text would silently
+      // never match and this fixture would test nothing.
       results: [{
         recall_number: 'R-999', status: 'Ongoing', event_date_initiated: '20260101',
-        reason_for_recall: 'Contamination', product_description: 'Discovered Test Product',
+        reason_for_recall: 'Contamination', product_description: 'TestBrand Test Pad Pro',
       }],
     }),
   };
@@ -139,12 +155,13 @@ describe('GET /api/discover-products — access control', () => {
 });
 
 describe('GET /api/discover-products — happy path', () => {
-  it('inserts a discovered candidate as pending and inactive, never live', async () => {
+  it('auto-approves a candidate with a clean recall check AND a real, live source URL', async () => {
     globalThis.__mockAdmin = makeMockAdmin();
     globalThis.fetch = vi.fn(async (url) => {
       const u = String(url);
       if (u.includes('anthropic')) return anthropicOk(validLlmResponse);
       if (u.includes('api.fda.gov')) return fdaNoRecall();
+      if (u === 'https://testbrand.com/pad') return liveUrl('https://testbrand.com/pad');
       throw new Error(`unexpected fetch to ${u}`);
     });
 
@@ -153,14 +170,81 @@ describe('GET /api/discover-products — happy path', () => {
 
     expect(res.statusCode).toBe(200);
     expect(res.body.inserted).toBe(1);
+    expect(res.body.autoApproved).toBe(1);
     expect(globalThis.__mockAdmin.inserted).toHaveLength(1);
 
     const row = globalThis.__mockAdmin.inserted[0];
     expect(row.source).toBe('discovered');
-    expect(row.review_status).toBe('pending');
-    expect(row.is_active).toBe(false); // the one thing this endpoint must never get wrong
+    expect(row.review_status).toBe('approved');
+    expect(row.is_active).toBe(true);
+    expect(row.discovery_meta.autoApproved).toBe(true);
     expect(row.name).toBe('Test Pad Pro');
     expect(row.brand).toBe('TestBrand');
+  });
+
+  it('leaves a candidate pending when its source URL string exists but does not actually resolve', async () => {
+    globalThis.__mockAdmin = makeMockAdmin();
+    globalThis.fetch = vi.fn(async (url) => {
+      const u = String(url);
+      if (u.includes('anthropic')) return anthropicOk(validLlmResponse);
+      if (u.includes('api.fda.gov')) return fdaNoRecall();
+      if (u === 'https://testbrand.com/pad') return deadUrl();
+      throw new Error(`unexpected fetch to ${u}`);
+    });
+
+    const res = mockRes();
+    await (await loadHandler())(req({ query: { category: 'pad' } }), res);
+
+    expect(res.body.inserted).toBe(1);
+    expect(res.body.autoApproved).toBe(0);
+    const row = globalThis.__mockAdmin.inserted[0];
+    expect(row.review_status).toBe('pending');
+    expect(row.is_active).toBe(false);
+    expect(row.discovery_meta.autoApproved).toBeUndefined();
+  });
+
+  it('leaves a candidate pending when its source URL redirects to a different domain entirely', async () => {
+    // The exact failure mode found live: an expired brand domain silently
+    // parked/resold, still returning 200, just for someone else's page.
+    globalThis.__mockAdmin = makeMockAdmin();
+    globalThis.fetch = vi.fn(async (url) => {
+      const u = String(url);
+      if (u.includes('anthropic')) return anthropicOk(validLlmResponse);
+      if (u.includes('api.fda.gov')) return fdaNoRecall();
+      if (u === 'https://testbrand.com/pad') return liveUrl('https://totally-unrelated-domain.example/');
+      throw new Error(`unexpected fetch to ${u}`);
+    });
+
+    const res = mockRes();
+    await (await loadHandler())(req({ query: { category: 'pad' } }), res);
+
+    expect(res.body.autoApproved).toBe(0);
+    const row = globalThis.__mockAdmin.inserted[0];
+    expect(row.review_status).toBe('pending');
+    expect(row.is_active).toBe(false);
+  });
+
+  it('leaves a candidate pending and inactive when the model gave no source URL, even with a clean recall check', async () => {
+    globalThis.__mockAdmin = makeMockAdmin();
+    const noUrlResponse = JSON.stringify({
+      products: [{ name: 'Test Pad Pro', brand: 'TestBrand', category: 'pad', type: 'physical', summary: 'A test pad.', price: '$10', url: '', isSupplement: false }],
+    });
+    globalThis.fetch = vi.fn(async (url) => {
+      const u = String(url);
+      if (u.includes('anthropic')) return anthropicOk(noUrlResponse);
+      if (u.includes('api.fda.gov')) return fdaNoRecall();
+      throw new Error(`unexpected fetch to ${u}`);
+    });
+
+    const res = mockRes();
+    await (await loadHandler())(req({ query: { category: 'pad' } }), res);
+
+    expect(res.body.inserted).toBe(1);
+    expect(res.body.autoApproved).toBe(0);
+    const row = globalThis.__mockAdmin.inserted[0];
+    expect(row.review_status).toBe('pending');
+    expect(row.is_active).toBe(false); // the one thing this endpoint must never get wrong absent both signals
+    expect(row.discovery_meta.autoApproved).toBeUndefined();
   });
 
   it('still inserts (pending, inactive) when a recall is found — flags it for the reviewer instead of silently dropping or auto-approving', async () => {
@@ -288,6 +372,25 @@ describe('pure helpers', () => {
     expect(row.url).toBeNull();
   });
 
+  describe('isAutoApprovable', () => {
+    const base = { url: 'https://brand.com/product' };
+    it('true only when the recall check fully answered "ok" AND found nothing, AND a url exists', () => {
+      expect(isAutoApprovable({ ...base, discovery_meta: { recallCheck: { status: 'ok', hasRecalls: false } } })).toBe(true);
+    });
+    it('false when the recall check found an active recall, even if otherwise "ok"', () => {
+      expect(isAutoApprovable({ ...base, discovery_meta: { recallCheck: { status: 'ok', hasRecalls: true } } })).toBe(false);
+    });
+    it('false when the recall check was only "partial" — a failed dataset could be hiding a real recall', () => {
+      expect(isAutoApprovable({ ...base, discovery_meta: { recallCheck: { status: 'partial', hasRecalls: false } } })).toBe(false);
+    });
+    it('false when there is no url, even with a clean recall check', () => {
+      expect(isAutoApprovable({ url: null, discovery_meta: { recallCheck: { status: 'ok', hasRecalls: false } } })).toBe(false);
+    });
+    it('false when there is no recallCheck at all', () => {
+      expect(isAutoApprovable({ ...base, discovery_meta: {} })).toBe(false);
+    });
+  });
+
   it('pickCategory honours an explicit ?category= override', () => {
     const c = pickCategory({ query: { category: 'supplement' } });
     expect(c.category).toBe('supplement');
@@ -301,5 +404,35 @@ describe('pure helpers', () => {
   it('dayOfYear is deterministic for a given date', () => {
     expect(dayOfYear(new Date(Date.UTC(2026, 0, 1)))).toBe(1);
     expect(dayOfYear(new Date(Date.UTC(2026, 0, 31)))).toBe(31);
+  });
+
+  it('slotOfDay matches each scheduled cron hour to a distinct slot', () => {
+    expect(RUN_HOURS_UTC.map((h) => slotOfDay(new Date(Date.UTC(2026, 0, 1, h))))).toEqual([0, 1, 2]);
+  });
+
+  it('slotOfDay falls back to a sane bucket for an off-schedule hour', () => {
+    expect(slotOfDay(new Date(Date.UTC(2026, 0, 1, 3)))).toBeGreaterThanOrEqual(0);
+    expect(slotOfDay(new Date(Date.UTC(2026, 0, 1, 3)))).toBeLessThan(RUN_HOURS_UTC.length);
+  });
+
+  it("pickCategory gives each of a day's 3 scheduled runs a different category", () => {
+    const picks = RUN_HOURS_UTC.map((h) => pickCategory({ query: {} }, new Date(Date.UTC(2026, 5, 15, h))).category);
+    expect(new Set(picks).size).toBe(RUN_HOURS_UTC.length);
+  });
+
+  it('pickCategory advances to new categories on the next day rather than repeating the same 3', () => {
+    const day1 = RUN_HOURS_UTC.map((h) => pickCategory({ query: {} }, new Date(Date.UTC(2026, 5, 15, h))).category);
+    const day2 = RUN_HOURS_UTC.map((h) => pickCategory({ query: {} }, new Date(Date.UTC(2026, 5, 16, h))).category);
+    expect(day2).not.toEqual(day1);
+  });
+
+  it('a full 15-category rotation completes within 5 days at 3 runs/day', () => {
+    const seen = new Set();
+    for (let day = 0; day < 5; day++) {
+      for (const h of RUN_HOURS_UTC) {
+        seen.add(pickCategory({ query: {} }, new Date(Date.UTC(2026, 5, 15 + day, h))).category);
+      }
+    }
+    expect(seen.size).toBe(CATEGORIES.length);
   });
 });

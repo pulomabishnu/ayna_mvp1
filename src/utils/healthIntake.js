@@ -107,6 +107,21 @@ export const GOALS = [
   'learn what ingredients to avoid for my conditions',
 ];
 
+// Shared between the quiz (HealthIntakeForm.jsx) and the profile editor
+// (HealthProfileEditor.jsx) — the editor used to re-implement these two
+// fields as free-text inputs holding the literal word "Yes"/"yes" instead
+// of a real select, easy to enter garbage into and easy to misread (found
+// live, 2026-08-24 bug bash). One shared vocabulary now, not two that can
+// drift apart.
+export const CYCLE_OPTIONS = [
+  { value: 'yes', label: 'Yes' },
+  { value: 'no', label: 'No' },
+  { value: 'irregular', label: 'Irregular' },
+  { value: 'irregular_perimenopause', label: 'Irregular (Perimenopause)' },
+  { value: 'no_menopause', label: 'No (Menopause)' },
+];
+export const TTC_OPTIONS = ['Yes', 'No', 'Not right now'];
+
 export const CONCERN_AREAS = [
   'Period care (pads, tampons, cups, discs, underwear)',
   'Cramp and pain relief (devices, supplements, heat)',
@@ -115,6 +130,8 @@ export const CONCERN_AREAS = [
   'PCOS management (supplements, telehealth, apps)',
   'Endometriosis management (supplements, devices, telehealth)',
   'Fertility and conception (supplements, trackers, telehealth)',
+  'Pregnancy support (prenatal vitamins, trackers, comfort)',
+  'Postpartum recovery (nursing, healing, comfort)',
   'UTI support',
   'STI support',
   'Gut and vaginal health (probiotics, pH balance)',
@@ -135,6 +152,8 @@ const PRIMARY_CONCERN_TO_FRUSTRATION = {
   'PCOS management (supplements, telehealth, apps)': 'PCOS symptoms',
   'Endometriosis management (supplements, devices, telehealth)': 'Endometriosis',
   'Fertility and conception (supplements, trackers, telehealth)': 'Fertility / TTC',
+  'Pregnancy support (prenatal vitamins, trackers, comfort)': 'General discomfort',
+  'Postpartum recovery (nursing, healing, comfort)': 'General discomfort',
   'UTI support': 'Recurrent UTIs',
   'STI support': 'General discomfort',
   'Gut and vaginal health (probiotics, pH balance)': 'Recurrent UTIs',
@@ -324,7 +343,7 @@ export function buildQuizIntakeSummaryText(quizResults) {
   }
 
   const goals = Array.isArray(intake.goals) ? intake.goals.filter((g) => g && g !== 'None') : [];
-  if (goals.length) push(`Goals for using Ayna: ${goals.join('; ')}.`);
+  if (goals.length) push(`Goals for using ayna: ${goals.join('; ')}.`);
 
   return lines.join('\n');
 }

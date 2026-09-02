@@ -86,6 +86,22 @@ describe('dsld-search', () => {
     expect(calledUrl).not.toContain('size=-500');
   });
 
+  it('handles an HTML response from NIH without throwing JSON parse errors', async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      headers: new Headers({ 'content-type': 'text/html; charset=utf-8' }),
+      text: async () => '<!doctype html><html>temporary upstream page</html>',
+    });
+
+    const res = mockRes();
+    await handler({ method: 'GET', query: { query: 'magnesium' } }, res);
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.products).toEqual([]);
+    expect(res.body.error).toBe('DSLD non_json_response');
+  });
+
   it('returns an empty (200) result, not an error, when NIH responds non-2xx', async () => {
     globalThis.fetch = vi.fn().mockResolvedValue({ ok: false, status: 503 });
     const res = mockRes();

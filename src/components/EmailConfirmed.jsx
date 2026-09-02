@@ -59,7 +59,7 @@ export default function EmailConfirmed({ onAuthenticated }) {
       </div>
       <h2 style={{ fontSize: '1.5rem', fontWeight: 700, margin: 0 }}>Email confirmed!</h2>
       <p style={{ color: 'var(--color-text-muted, #666)', maxWidth: '340px', lineHeight: 1.6, margin: 0 }}>
-        You're all set. Close this tab and return to Ayna to sign in.
+        You're all set. Close this tab and return to ayna to sign in.
       </p>
     </div>
   );

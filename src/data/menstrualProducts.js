@@ -16,17 +16,17 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$7 for 24',
         userRating: 4.4,
         whereToBuy: ['CVS', 'Target', 'Walmart', 'Amazon'],
-        image: '/ayna_placeholder.png',
+        image: '', // caught by catalog-wide sweep — was the literal Ayna placeholder image, not a real photo
         summary: 'LeakGuard protection with 3D capture core. Widely available mainstream pad.',
         safety: { fdaStatus: 'FDA-registered', materials: 'Absorbent core, wings', recalls: 'No recalls.', allergens: 'Fragrance-free options' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Reliable absorption for everyday use.',
         communityReview: 'Community discussions note reliable performance and value.',
         ingredients: 'Absorbent polymer, non-woven fabric.',
         effectiveness: 'Strong leak protection, widely available.',
         badges: ['Mainstream', 'High Availability'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product research', summary: 'Research on absorbent materials and safety.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
     },
     {
         id: 'p-stayfree-ultra',
@@ -43,13 +43,13 @@ export const MENSTRUAL_PHYSICAL = [
         summary: 'Breathable cover with Stay-Dry technology. Affordable and reliable.',
         safety: { fdaStatus: 'FDA-registered', materials: 'Cotton-like cover', recalls: 'No recalls.', allergens: 'Fragrance-free' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'A trusted option for regular flow.',
         communityReview: 'Community discussions note budget-friendly and works well.',
         ingredients: 'Absorbent core, breathable cover.',
         effectiveness: 'Good absorption at low cost.',
         badges: ['Budget Friendly', 'Widely Available'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product research', summary: 'Research on absorbent materials and safety.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
     },
     {
         id: 'p-seventh-gen-pad',
@@ -62,17 +62,17 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$8 for 14',
         userRating: 4.4,
         whereToBuy: ['Target', 'Whole Foods', 'Amazon'],
-        image: 'https://www.seventhgeneration.com/themes/custom/svg3/favicon.png',
+        image: '',
         summary: 'Chlorine-free, fragrance-free pads. Plant-based materials where possible.',
         safety: { fdaStatus: 'FDA-registered', materials: 'Chlorine-free, plant-based', recalls: 'No recalls.', allergens: 'Hypoallergenic' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Good choice for those seeking cleaner ingredients.',
         communityReview: 'Community discussions note switched for the eco-credentials. no complaints.',
         ingredients: 'Chlorine-free pulp, plant-derived materials.',
         effectiveness: 'Reliable absorption with cleaner profile.',
         badges: ['Sustainable', 'Chlorine-Free'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product research', summary: 'Research on absorbent materials and safety.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
     },
     {
         id: 'p-u-kotex-pad',
@@ -85,11 +85,11 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$8 for 18',
         userRating: 4.4,
         whereToBuy: ['CVS', 'Target', 'Walmart', 'Amazon'],
-        image: '/ayna_placeholder.png',
+        image: '', // caught by catalog-wide sweep — was the literal Ayna placeholder image, not a real photo
         summary: 'Flexible pad with Xpress-DRI core. Designed for active lifestyles.',
         safety: { fdaStatus: 'FDA-registered', materials: 'Absorbent core', recalls: 'No recalls.', allergens: 'Fragrance-free' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Good for active women who need reliable protection.',
         communityReview: 'Community discussions note stays in place during workouts. love it.',
         ingredients: 'Absorbent polymer, flexible wings.',
@@ -106,18 +106,31 @@ export const MENSTRUAL_PHYSICAL = [
         tags: ['heavy-flow', 'leaks', 'comfort'],
         price: '$6 for 14',
         userRating: 4.3,
-        whereToBuy: ['Walmart', 'Amazon'],
-        image: 'https://assets.www.essity.com/libresse/1.157.0-release.5/img/favicons/apple-touch-icon-57x57.png',
+        // Bodyform is Essity's UK-branded feminine-care line, but it genuinely
+        // is sold to US customers too — real listings with real reviews
+        // confirmed live on amazon.com (2026-08-24 bug bash follow-up; the
+        // original report assumed it wasn't sold in the US at all, which
+        // turned out to be wrong). Walmart search results existed for it too,
+        // but the Walmart page itself couldn't be confirmed live (bot-walled
+        // every check), so it's dropped from whereToBuy rather than kept on
+        // an unverified claim. Pointing at a real Amazon search instead of
+        // one specific SKU page, since the exact product name/pack size
+        // wasn't confirmable for a single listing.
+        whereToBuy: ['Amazon'],
+        url: 'https://www.amazon.com/Womens-Health-Care-Products-Bodyform/s?rh=n%3A386373011%2Cp_4%3ABodyform',
+        // Real packaging photo from bodyform.co.uk's own product page
+        // (Ultimate 12 Ultra Regular+), verified before using.
+        image: 'https://libresse-images.essity.com/images-c5/497/702497/optimized-AzureJPG615CropUp/bodyform-phoenix-v3-ultimate-ultra-regular-plus-promo-x12-towels-7322542533789.jpg?w=295&h=295&imPolicy=dynamic',
         summary: 'European brand with BodyFit technology. Soft and absorbent.',
         safety: { fdaStatus: 'FDA-registered', materials: 'Soft cover', recalls: 'No recalls.', allergens: 'Fragrance-free' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Comfortable option for regular to heavy flow.',
         communityReview: 'Community discussions note soft and doesn\'t feel bulky.',
         ingredients: 'Absorbent core, soft cover.',
         effectiveness: 'Good absorption with comfort focus.',
         badges: ['Comfort Focus', 'European Brand'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product research', summary: 'Research on absorbent materials and safety.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
     },
     {
         id: 'p-rael-overnight',
@@ -127,16 +140,16 @@ export const MENSTRUAL_PHYSICAL = [
         internal: false,
         healthFunctions: ['menstrual-collection', 'leak-protection'],
         tags: ['heavy-flow', 'organic', 'leaks', 'safety-concern'],
-        price: '$10 for 10',
+        price: '$10 for 12',
         userRating: 4.5,
         whereToBuy: ['Target', 'Amazon', 'Rael.com'],
-        image: '/ayna_placeholder.png',
+        image: 'https://www.getrael.com/cdn/shop/files/DTC_Overnight_Pads_12_CT_Lower_Count_2048x2048_1.png?v=1787356458&width=2048',
         summary: 'Extra-long organic cotton overnight pads. 100% organic, fragrance-free.',
-        safety: { fdaStatus: 'FDA-registered', materials: '100% organic cotton', recalls: 'No recalls.', allergens: 'Hypoallergenic' },
+        safety: { fdaStatus: 'FDA-registered', materials: '100% organic cotton', recalls: 'No recalls.', allergens: 'Hypoallergenic', opinionAlerts: 'A 2022 independent lab investigation (Mamavation, EPA-certified lab) found organic-fluorine (PFAS "forever chemical") indicators in a Rael liner product (Organic Cotton Cover Panty Liners, 15 ppm) — a different SKU than this overnight pad, but it has made some PFAS-conscious users more cautious about the Rael brand generally despite its organic-cotton marketing.' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Organic overnight option for heavy sleepers.',
-        communityReview: 'Community discussions note satisfaction with overnight leak protection.',
+        communityReview: 'Community discussions note general satisfaction with overnight leak protection, though a 2022 independent PFAS lab test on a different Rael liner product (not this overnight pad) has added some brand-level caution among users who prioritize PFAS-free products.',
         ingredients: '100% organic cotton.',
         effectiveness: 'Extended coverage for overnight protection.',
         badges: ['Organic', 'Overnight', 'WOC Owned']
@@ -149,20 +162,23 @@ export const MENSTRUAL_PHYSICAL = [
         internal: false,
         healthFunctions: ['menstrual-collection', 'leak-protection'],
         tags: ['heavy-flow', 'organic', 'leaks', 'sustainability'],
-        price: '$12 for 8',
+        price: '$10 for 20',
         userRating: 4.5,
         whereToBuy: ['Cora.life', 'Target', 'Amazon'],
-        image: 'https://cdn.shopify.com/s/files/1/0940/5060/files/Logo_33a7614e-134f-4af3-9075-b4ac69ca81a0.png?height=628&pad_color=fefaf8&v=1646873247&width=1200',
+        url: 'https://cora.life/',
+        // Cora rebranded to "The Peace-of-Mind Maxi Overnight Pad" — hardcoding
+        // their verified current photo. Confirmed live before using.
+        image: 'https://cdn.shopify.com/s/files/1/0940/5060/files/Cora_Dynamic_Image_POM_Maxi_Overnight_1000X1000_1c7cdd2e-9eab-43c1-a8dc-52b28f7052c2.png?v=1787166033',
         summary: 'Extra-long organic cotton overnight pads. B-Corp, plastic-free packaging.',
-        safety: { fdaStatus: 'FDA-registered', materials: '100% organic cotton', recalls: 'No recalls.', allergens: 'Hypoallergenic' },
+        safety: { fdaStatus: 'FDA-registered', materials: '100% organic cotton', recalls: 'No recalls.', allergens: 'Hypoallergenic', opinionAlerts: 'A 2022 independent lab investigation (Mamavation, EPA-certified lab) found organic-fluorine (PFAS "forever chemical") indicators in a Cora liner product (Got-You-Covered Liner, 30 ppm) — the highest reading among liners in that test. This overnight pad SKU specifically was not part of that testing, but the finding has made some PFAS-conscious users more cautious about the Cora brand generally.' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Sustainable overnight option with clean ingredients.',
-        communityReview: 'Community discussions note heavy flow overnight? these have you covered.',
+        communityReview: 'Community discussions are largely positive on overnight coverage and sustainability, though a 2022 independent PFAS lab test on a different Cora liner product (not this overnight pad) has added some brand-level caution among users who prioritize PFAS-free products.',
         ingredients: 'Organic cotton.',
         effectiveness: 'Maximum overnight absorbency.',
         badges: ['Organic', 'B-Corp', 'Sustainable'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product research', summary: 'Research on absorbent materials and safety.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
     },
 
     // ─── PANTY LINERS ─────────────────────────────────────
@@ -177,17 +193,17 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$5 for 48',
         userRating: 4.3,
         whereToBuy: ['CVS', 'Target', 'Walmart', 'Amazon'],
-        image: '/ayna_placeholder.png',
+        image: 'https://carefreeliners.com/cdn/shop/files/CFR_656900_PDP-Beauty_Pack_Tiles_-_ATF_1_WRAPPED_Regular_20_CT_1024x.webp?v=1781797888',
         summary: 'Light absorbency liners for daily freshness or backup. Fragrance-free options.',
-        safety: { fdaStatus: 'FDA-registered', materials: 'Soft cover', recalls: 'No recalls.', allergens: 'Fragrance-free available' },
+        safety: { fdaStatus: 'FDA-registered', materials: 'Soft cover', recalls: 'No recalls.', allergens: 'Fragrance-free available', opinionAlerts: 'A 2022 independent lab investigation (Mamavation, EPA-certified lab) found organic-fluorine (PFAS "forever chemical") indicators in Carefree Acti-Fresh Unscented Daily Liners (17 ppm). Carefree has not confirmed a reformulation or recall tied to that finding, and no regulatory recall has followed.' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Suitable for light discharge or backup with tampons/cups.',
-        communityReview: 'Community discussions note stock up on these. so cheap and useful.',
+        communityReview: 'Community discussions are mostly about price and convenience, but also include a real thread of concern since a 2022 independent lab test found PFAS indicators in this exact liner, which has led some users to switch to organic-cotton alternatives.',
         ingredients: 'Absorbent core, adhesive.',
         effectiveness: 'Light protection for everyday use.',
         badges: ['Budget Friendly', 'Everyday Use'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product research', summary: 'Research on absorbent materials and safety.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
     },
     {
         id: 'p-always-liners',
@@ -200,17 +216,17 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$6 for 42',
         userRating: 4.4,
         whereToBuy: ['CVS', 'Target', 'Walmart', 'Amazon'],
-        image: 'https://images.ctfassets.net/o5hnyn1x0ewo/25qEBHyVBxNqa10PmPrBiP/777b65da9d366aab68b7aaa6b3326754/favicon.png',
+        image: '',
         summary: 'Thin liners for light days, spotting, or backup. Dri-Weave technology.',
-        safety: { fdaStatus: 'FDA-registered', materials: 'Dri-Weave cover', recalls: 'No recalls.', allergens: 'Fragrance-free options' },
+        safety: { fdaStatus: 'FDA-registered', materials: 'Dri-Weave cover', recalls: 'No recalls.', allergens: 'Fragrance-free options', opinionAlerts: 'A 2022 independent lab investigation (Mamavation, EPA-certified lab) found organic-fluorine (PFAS "forever chemical") indicators in several Always liner products (e.g., No Feel Protection Thin Liners at 21 ppm, Anti-Bunch Xtra Protection Liners at 15 ppm) — echoing similar PFAS concerns raised about Always pads. Always disputes any health risk and no regulatory recall has followed.' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Reliable backup option.',
-        communityReview: 'Community discussions note use these on light days or with my cup.',
+        communityReview: 'Community discussions are split: many like these for light days or cup backup, but a documented 2022 independent PFAS lab test on several Always liner lines has made a visible share of users wary and more likely to check for PFAS-free alternatives.',
         ingredients: 'Absorbent core, breathable cover.',
         effectiveness: 'Light, comfortable backup.',
         badges: ['Mainstream', 'Widely Available'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product research', summary: 'Research on absorbent materials and safety.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
     },
     {
         id: 'p-rael-liners',
@@ -222,17 +238,17 @@ export const MENSTRUAL_PHYSICAL = [
         tags: ['organic', 'safety-concern', 'sustainability'],
         price: '$8 for 30',
         whereToBuy: ['Target', 'Amazon', 'Rael.com'],
-        image: '/ayna_placeholder.png',
+        image: 'https://www.getrael.com/cdn/shop/files/ORGANIC_COTTON_COVER_PANTY_LINERS_RAEL-LN-03_DTC_60COUNT_REGULAR_PACK_FRONT_6f4b0e7e-aa38-482b-8206-02e3ab8fa67f.webp?v=1738800023&width=2048',
         summary: '100% organic cotton liners. Chlorine-free, fragrance-free, biodegradable.',
-        safety: { fdaStatus: 'FDA-registered', materials: '100% organic cotton', recalls: 'No recalls.', allergens: 'Hypoallergenic' },
+        safety: { fdaStatus: 'FDA-registered', materials: '100% organic cotton', recalls: 'No recalls.', allergens: 'Hypoallergenic', opinionAlerts: 'A 2022 independent lab investigation (Mamavation, EPA-certified lab) found organic-fluorine (PFAS "forever chemical") indicators in this exact product, Rael Organic Cotton Cover Panty Liners (15 ppm) — a result that surprised some shoppers given the brand\'s "100% organic cotton" positioning. Rael has not issued a public recall tied to that test.' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Clean option for daily or light-day use.',
-        communityReview: 'Community discussions note gentleness for sensitive skin.',
+        communityReview: 'Community discussions include genuine appreciation for softness and sensitive-skin comfort, alongside a real thread of concern after a 2022 independent lab test found PFAS indicators in this exact liner despite its organic-cotton marketing.',
         ingredients: 'Organic cotton.',
         effectiveness: 'Light organic protection.',
         badges: ['Organic', 'Sustainable', 'WOC Owned'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product research', summary: 'Research on absorbent materials and safety.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
     },
 
     // ─── TAMPONS (Additional) ────────────────────────────
@@ -247,17 +263,17 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$8 for 18',
         userRating: 4.5,
         whereToBuy: ['CVS', 'Target', 'Walmart', 'Amazon'],
-        image: '/ayna_placeholder.png',
+        image: 'https://target.scene7.com/is/image/Target/GUEST_b674b28e-9c6c-4d6d-a291-d45ab5200ba5',
         summary: 'Flexible applicator designed for active women. Expandable design for leak protection.',
-        safety: { fdaStatus: 'FDA-registered', materials: 'Cotton, plastic applicator', recalls: 'No recalls.', allergens: 'Fragrance-free' },
+        safety: { fdaStatus: 'FDA-registered', materials: 'Cotton, plastic applicator', recalls: 'No recalls.', allergens: 'Fragrance-free', opinionAlerts: 'A 2022 independent lab investigation (Mamavation, EPA-certified lab) found organic-fluorine (PFAS "forever chemical") indicators in Playtex SPORT Regular & Super tampons (19 ppm). Separately, a peer-reviewed 2024 UC Berkeley study (Environment International, Shearston et al.) found measurable heavy metals, including lead and arsenic, across tampons broadly — no brand names were disclosed and no single category (organic or non-organic) was consistently cleaner — which drove wide social media discussion about tampon safety generally.' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Popular choice for athletes and active lifestyles.',
-        communityReview: 'Community discussions note the only tampon i trust at the gym.',
+        communityReview: 'Community discussions on Reddit r/periods are largely positive about staying in place during workouts, but real, documented safety concerns exist too: a 2022 independent lab test found PFAS indicators in this exact product, and a 2024 university study found trace heavy metals across tampons as a category — both have made some users more cautious, though neither triggered an FDA recall.',
         ingredients: 'Cotton, rayon, plastic applicator.',
         effectiveness: 'Designed to stay in place during activity.',
         badges: ['Active Lifestyle', 'Sport Design'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product research', summary: 'Research on absorbent materials and safety.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
     },
     {
         id: 'p-kotex-tampon',
@@ -270,17 +286,17 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$8 for 18',
         userRating: 4.4,
         whereToBuy: ['CVS', 'Target', 'Walmart', 'Amazon'],
-        image: '/ayna_placeholder.png',
+        image: 'https://target.scene7.com/is/image/Target/GUEST_34cb7fec-ee4d-4c3b-aecc-707f88afee36',
         summary: 'Compact click applicator. Easy to use, discreet to carry.',
         safety: { fdaStatus: 'FDA-registered', materials: 'Cotton, plastic applicator', recalls: 'No recalls.', allergens: 'Fragrance-free' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Compact design appeals to many users.',
         communityReview: 'Community discussions note love the small applicator. fits in my pocket.',
         ingredients: 'Cotton, plastic applicator.',
         effectiveness: 'Compact, easy insertion.',
         badges: ['Compact', 'Discreet'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product research', summary: 'Research on absorbent materials and safety.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
     },
     {
         id: 'p-ob-tampon',
@@ -293,17 +309,17 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$6 for 40',
         userRating: 4.4,
         whereToBuy: ['CVS', 'Target', 'Walmart', 'Amazon'],
-        image: '/ayna_placeholder.png',
+        image: 'https://target.scene7.com/is/image/Target/GUEST_b762b05c-343e-4d2d-924f-b6aa6a3b6057',
         summary: 'Applicator-free tampons. Compact, less waste, easy to learn.',
         safety: { fdaStatus: 'FDA-registered', materials: 'Cotton', recalls: 'No recalls.', allergens: 'Fragrance-free' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Applicator-free reduces waste. Some prefer the control.',
         communityReview: 'Community discussions on Reddit r/periods note similar experiences.',
         ingredients: 'Cotton, compact design.',
         effectiveness: 'No applicator waste, compact packaging.',
         badges: ['Applicator-Free', 'Sustainable', 'Compact'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product research', summary: 'Research on absorbent materials and safety.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
     },
     {
         id: 'p-tampax-radiant',
@@ -316,17 +332,17 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$9 for 18',
         userRating: 4.5,
         whereToBuy: ['CVS', 'Target', 'Walmart', 'Amazon'],
-        image: 'https://images.ctfassets.net/xqcbjukrkf0k/if063utku3bo_1yhx0ohbOtZaEKVWM3f8tn/fe10c1263ad2cacbcde0ec66003f3525/tampax-logo.png',
+        image: '', // caught by catalog-wide sweep — was Tampax's own logo, not a product photo
         summary: 'Flexible braid design with LeakGuard. Smooth plastic applicator.',
-        safety: { fdaStatus: 'FDA-registered', materials: 'Cotton, plastic applicator', recalls: 'No recalls.', allergens: 'Fragrance-free' },
+        safety: { fdaStatus: 'FDA-registered', materials: 'Cotton, plastic applicator', recalls: 'No recalls.', allergens: 'Fragrance-free', opinionAlerts: '2022 independent lab testing (Mamavation) found mixed PFAS results across the Tampax lineup — e.g. positive for organic-fluorine in Cardboard Applicator Unscented Tampons (23 ppm), non-detect in Pearl Leakguard and 100% Organic Cotton Core; this exact Radiant line was not part of that testing round. Separately, a peer-reviewed 2024 UC Berkeley study (Environment International) found measurable heavy metals, including lead and arsenic, across tampons broadly regardless of brand, which drove significant social media discussion about tampon safety.' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Trusted brand with strong absorption.',
-        communityReview: 'Community discussions note radiant is my go-to. never had a leak.',
+        communityReview: 'Community discussions are largely positive about absorption and leak protection, but Tampax as a brand has also been part of real, documented safety conversations in recent years: mixed 2022 independent PFAS testing across different Tampax lines, and a 2024 university study finding trace heavy metals across tampons broadly — this exact Radiant line was not specifically named in either study.',
         ingredients: 'Cotton, flexible braid design.',
         effectiveness: 'LeakGuard protection, flexible fit.',
         badges: ['Mainstream Favorite', 'LeakGuard'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product research', summary: 'Research on absorbent materials and safety.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
     },
     {
         id: 'p-seventh-gen-tampon',
@@ -339,17 +355,17 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$8 for 18',
         userRating: 4.5,
         whereToBuy: ['Target', 'Whole Foods', 'Amazon'],
-        image: 'https://www.seventhgeneration.com/themes/custom/svg3/favicon.png',
+        image: '',
         summary: '100% organic cotton tampons. Chlorine-free, cardboard applicator.',
-        safety: { fdaStatus: 'FDA-registered', materials: 'Organic cotton', recalls: 'No recalls.', allergens: 'Hypoallergenic' },
+        safety: { fdaStatus: 'FDA-registered', materials: 'Organic cotton', recalls: 'No recalls.', allergens: 'Hypoallergenic', opinionAlerts: 'Tested clean (non-detect) for PFAS in 2022 independent lab testing (Mamavation). Separately, a peer-reviewed 2024 UC Berkeley study (Environment International) found that organic-cotton tampons as a category had higher arsenic levels than non-organic tampons, on average (even though lead was generally lower) — a nuance worth knowing given this product\'s organic positioning, and part of the broader 2024 social-media discussion about tampon safety.' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Organic option with eco-friendly applicator.',
-        communityReview: 'Community discussions note switched for the organic cotton. works great.',
+        communityReview: 'Community discussions note satisfaction with switching to organic cotton; independent testing found this line clean of PFAS, though a 2024 university study on heavy metals in tampons found organic-cotton tampons as a category had higher arsenic than non-organic ones — a nuance some organic-focused users have started factoring in.',
         ingredients: 'Organic cotton, cardboard applicator.',
         effectiveness: 'Reliable organic option.',
         badges: ['Organic', 'Sustainable', 'Chlorine-Free'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product research', summary: 'Research on absorbent materials and safety.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
     },
     {
         id: 'p-rael-tampon',
@@ -362,17 +378,17 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$10 for 18',
         userRating: 4.5,
         whereToBuy: ['Target', 'Amazon', 'Rael.com'],
-        image: '/ayna_placeholder.png',
+        image: 'https://www.getrael.com/cdn/shop/files/SITE_GetRael_BPA-Free_Organic_Cotton_Applicators_Regular_Super_32_CT_Updated_Packaging_1.png?v=1754670100&width=2048',
         summary: '100% organic cotton with BPA-free applicator. Subscription available.',
-        safety: { fdaStatus: 'FDA-registered', materials: 'Organic cotton', recalls: 'No recalls.', allergens: 'Hypoallergenic' },
+        safety: { fdaStatus: 'FDA-registered', materials: 'Organic cotton', recalls: 'No recalls.', allergens: 'Hypoallergenic', opinionAlerts: 'Rael was not among the brands included in available independent PFAS lab-testing panels for tampons. Separately, a peer-reviewed 2024 UC Berkeley study (Environment International) found that organic-cotton tampons as a category had higher arsenic levels than non-organic tampons, on average — a nuance relevant to any 100% organic cotton tampon, including this one, and part of the broader 2024 discussion about tampon safety.' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Full ingredient transparency. Good for sensitive users.',
-        communityReview: 'Community discussions note organic materials and effectiveness for heavy flow.',
+        communityReview: 'Community discussions note appreciation for organic materials and effectiveness for heavy flow; worth knowing alongside that a 2024 university study on heavy metals in tampons found organic-cotton tampons as a category had higher arsenic levels than non-organic ones — a nuance some organic-focused users now ask about.',
         ingredients: 'Organic cotton, BPA-free applicator.',
         effectiveness: 'Organic with strong absorption.',
         badges: ['Organic', 'WOC Owned', 'Sustainable'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product research', summary: 'Research on absorbent materials and safety.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on menstrual products.' }] } }
     },
 
     // ─── MENSTRUAL CUPS (Additional) ──────────────────────
@@ -384,20 +400,20 @@ export const MENSTRUAL_PHYSICAL = [
         internal: true,
         healthFunctions: ['menstrual-collection'],
         tags: ['heavy-flow', 'sustainability', 'comfort', 'cost'],
-        price: '$25 (reusable 10 years)',
+        price: '$30 (reusable 10 years)',
         userRating: 4.5,
         whereToBuy: ['Amazon', 'LenaCup.com'],
         image: 'https://cdn.shopify.com/s/files/1/1274/0057/files/Lena_Cup_Blue_Cotton_Bag.png?v=1777479161',
         summary: 'Beginner-friendly cup. Available in Original (firmer) and Sensitive (softer). 50,000+ 5-star reviews.',
         safety: { fdaStatus: 'FDA-registered', materials: 'Medical-grade silicone', recalls: 'No recalls.', allergens: 'Latex-free, BPA-free' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Lena is often recommended for first-time cup users due to its soft Sensitive option.',
         communityReview: 'Community discussions on Reddit r/menstrualcups note similar experiences.',
         ingredients: 'Medical-grade silicone.',
         effectiveness: 'Two firmness options for different preferences.',
         badges: ['Beginner Friendly', 'Award Winning'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cup/art-20045868', text: 'Mayo Clinic: Menstrual cup', summary: 'Clinical guidance on cup use and safety.', justification: 'Mayo Clinic is a leading clinical resource.' }] }, scientific: { links: [{ url: 'https://www.thelancet.com/journals/lanpub/article/PIIS2468-2667(19)30110-3/fulltext', text: 'Lancet: Menstrual cup', summary: 'Meta-analysis of cup safety and effectiveness.', justification: 'Lancet peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Community discussions on menstrual cups.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cup/art-20045868', text: 'Mayo Clinic: Menstrual cup', summary: 'Clinical guidance on cup use and safety.', justification: 'Mayo Clinic is a leading clinical resource.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Community discussions on menstrual cups.' }] } }
     },
     {
         id: 'p-ruby-cup',
@@ -407,20 +423,20 @@ export const MENSTRUAL_PHYSICAL = [
         internal: true,
         healthFunctions: ['menstrual-collection'],
         tags: ['sustainability', 'comfort'],
-        price: '$28 (reusable)',
+        price: '$32 (reusable)',
         userRating: 4.5,
         whereToBuy: ['Amazon', 'RubyCup.com'],
         image: 'https://cdn.shopify.com/s/files/1/0147/2724/9974/files/Ruby_Cup_menstrual_cup_duo_bundle.png?v=1765449371',
         summary: 'Buy one, give one. For every cup sold, one is donated to someone without access to period products.',
         safety: { fdaStatus: 'FDA-registered', materials: 'Medical-grade silicone', recalls: 'No recalls.', allergens: 'Latex-free' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Social impact model with quality product.',
         communityReview: 'Community discussions note appreciation for buy-one-give-one model.',
         ingredients: 'Medical-grade silicone.',
         effectiveness: 'Standard cup performance with social mission.',
         badges: ['Social Impact', 'Buy One Give One', 'Sustainable'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cup/art-20045868', text: 'Mayo Clinic: Menstrual cup', summary: 'Clinical guidance on cup use and safety.', justification: 'Mayo Clinic is a leading clinical resource.' }] }, scientific: { links: [{ url: 'https://www.thelancet.com/journals/lanpub/article/PIIS2468-2667(19)30110-3/fulltext', text: 'Lancet: Menstrual cup', summary: 'Meta-analysis of cup safety and effectiveness.', justification: 'Lancet peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Community discussions on menstrual cups.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cup/art-20045868', text: 'Mayo Clinic: Menstrual cup', summary: 'Clinical guidance on cup use and safety.', justification: 'Mayo Clinic is a leading clinical resource.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Community discussions on menstrual cups.' }] } }
     },
     {
         id: 'p-organicup',
@@ -437,13 +453,13 @@ export const MENSTRUAL_PHYSICAL = [
         summary: 'Soft medical-grade silicone. Four sizes including Mini for teens and first-time users.',
         safety: { fdaStatus: 'FDA-registered', materials: 'Medical-grade silicone', recalls: 'No recalls.', allergens: 'Latex-free' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Mini size is great for younger users or those with a low cervix.',
         communityReview: 'Community discussions on Reddit r/menstrualcups note similar experiences.',
         ingredients: 'Medical-grade silicone.',
         effectiveness: 'Four sizes for different anatomies.',
         badges: ['Teen Friendly', 'Multiple Sizes', 'Sustainable'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cup/art-20045868', text: 'Mayo Clinic: Menstrual cup', summary: 'Clinical guidance on cup use and safety.', justification: 'Mayo Clinic is a leading clinical resource.' }] }, scientific: { links: [{ url: 'https://www.thelancet.com/journals/lanpub/article/PIIS2468-2667(19)30110-3/fulltext', text: 'Lancet: Menstrual cup', summary: 'Meta-analysis of cup safety and effectiveness.', justification: 'Lancet peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Community discussions on menstrual cups.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cup/art-20045868', text: 'Mayo Clinic: Menstrual cup', summary: 'Clinical guidance on cup use and safety.', justification: 'Mayo Clinic is a leading clinical resource.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Community discussions on menstrual cups.' }] } }
     },
     {
         id: 'p-femmycycle',
@@ -453,20 +469,20 @@ export const MENSTRUAL_PHYSICAL = [
         internal: true,
         healthFunctions: ['menstrual-collection'],
         tags: ['heavy-flow', 'comfort'],
-        price: '$35 (reusable)',
+        price: '$30 (reusable)',
         userRating: 4.4,
         whereToBuy: ['Amazon', 'FemmyCycle.com'],
-        image: '/ayna_placeholder.png',
+        image: 'https://menstrualcupreviews.net/wp-content/uploads/2020/06/femmycycle-regular-cup.jpg',
         summary: 'Unique design with no stem. Ring pull for easy removal. Popular for high cervix.',
         safety: { fdaStatus: 'FDA-registered', materials: 'Medical-grade silicone', recalls: 'No recalls.', allergens: 'Latex-free' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'The ring design appeals to users who struggle with stem removal.',
         communityReview: 'Community discussions note the ring is a game changer. no more digging for the stem.',
         ingredients: 'Medical-grade silicone.',
         effectiveness: 'Unique ring design, high capacity.',
         badges: ['Unique Design', 'Easy Removal'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cup/art-20045868', text: 'Mayo Clinic: Menstrual cup', summary: 'Clinical guidance on cup use and safety.', justification: 'Mayo Clinic is a leading clinical resource.' }] }, scientific: { links: [{ url: 'https://www.thelancet.com/journals/lanpub/article/PIIS2468-2667(19)30110-3/fulltext', text: 'Lancet: Menstrual cup', summary: 'Meta-analysis of cup safety and effectiveness.', justification: 'Lancet peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Community discussions on menstrual cups.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cup/art-20045868', text: 'Mayo Clinic: Menstrual cup', summary: 'Clinical guidance on cup use and safety.', justification: 'Mayo Clinic is a leading clinical resource.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Community discussions on menstrual cups.' }] } }
     },
     {
         id: 'p-flex-cup',
@@ -479,11 +495,17 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$30 (reusable)',
         userRating: 4.5,
         whereToBuy: ['Target', 'Amazon', 'FlexFits.com'],
-        image: 'https://cdn.shopify.com/s/files/1/1097/9960/files/flex-period-cup-with-packaging-and-review.png?v=1763752341',
+        // Was the brand's own primary marketing image, which is itself a
+        // customer-review screenshot composite (5-star rating graphic,
+        // testimonial, reviewer name) — real, but reads as a forgotten
+        // placeholder next to properly photographed competitors (found live,
+        // 2026-08-24 bug bash). Swapped for a clean lifestyle photo, the
+        // SECOND image in FlexFits' own product feed, verified live.
+        image: 'https://cdn.shopify.com/s/files/1/1097/9960/files/menstrual-cup-with-ring-stem-held-in-hand.png?v=1763752341',
         summary: 'Pull-tab release breaks suction before removal. Easier removal than traditional cups.',
         safety: { fdaStatus: 'FDA-registered', materials: 'Medical-grade silicone', recalls: 'No recalls.', allergens: 'Latex-free' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'The pull-tab addresses the #1 complaint about cups. Difficult removal.',
         communityReview: 'Community discussions on Reddit r/menstrualcups note similar experiences.',
         ingredients: 'Medical-grade silicone.',
@@ -503,17 +525,17 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$40 (reusable)',
         userRating: 4.5,
         whereToBuy: ['Amazon', 'ZiggyCup.com'],
-        image: '/ayna_placeholder.png',
+        image: 'https://assets.intimina.com/files/static/product-images/2021-12/INTIMINA_Ziggy2_ProductShot_SizeA_Angle_425.jpg',
         summary: 'Reusable disc with notch for removal. Can be worn during intimacy. One size.',
         safety: { fdaStatus: 'FDA-registered', materials: 'Medical-grade silicone', recalls: 'No recalls.', allergens: 'Latex-free' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Ziggy is a well-established reusable disc option.',
         communityReview: 'Community discussions on Reddit r/menstrualcups note similar experiences.',
         ingredients: 'Medical-grade silicone.',
         effectiveness: 'Reusable, intimacy-friendly.',
         badges: ['Intimacy Friendly', 'Reusable'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.healthline.com/health/womens-health/menstrual-disc', text: 'Healthline: Menstrual disc', summary: 'Clinical guide on discs vs cups.', justification: 'Healthline is medically reviewed.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual disc research', summary: 'Research on internal menstrual products.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Community discussions on discs.' }] } }
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Community discussions on discs.' }] } }
     },
     {
         id: 'p-lumma-disc',
@@ -526,17 +548,17 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$35 (reusable)',
         userRating: 4.5,
         whereToBuy: ['Amazon', 'LummaUnique.com'],
-        image: '/ayna_placeholder.png',
+        image: 'https://mylumma.com/cdn/shop/files/bogo-pack-lumma-disc-pinklove-background.webp?v=1762928416',
         summary: 'Three sizes (S, M, L). String option for easier removal. High capacity.',
         safety: { fdaStatus: 'FDA-registered', materials: 'Medical-grade silicone', recalls: 'No recalls.', allergens: 'Latex-free' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Multiple sizes help users find the right fit.',
         communityReview: 'Community discussions note the string option was a lifesaver for removal.',
         ingredients: 'Medical-grade silicone.',
         effectiveness: 'Three sizes, optional removal string.',
         badges: ['Multiple Sizes', 'Easy Removal'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.healthline.com/health/womens-health/menstrual-disc', text: 'Healthline: Menstrual disc', summary: 'Clinical guide on discs vs cups.', justification: 'Healthline is medically reviewed.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual disc research', summary: 'Research on internal menstrual products.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Community discussions on discs.' }] } }
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Community discussions on discs.' }] } }
     },
     {
         id: 'p-softdisc',
@@ -546,14 +568,14 @@ export const MENSTRUAL_PHYSICAL = [
         internal: true,
         healthFunctions: ['menstrual-collection'],
         tags: ['heavy-flow', 'comfort'],
-        price: '$13 for 14',
+        price: '$16 for 14',
         userRating: 4.4,
         whereToBuy: ['Target', 'CVS', 'Amazon'],
         image: 'https://cdn.shopify.com/s/files/1/0597/6313/0435/files/220428_Softdisc_Amazon_0_c54ca2dd-0766-4028-aca2-790812e606cf.jpg?v=1727390547',
         summary: 'Disposable menstrual disc. Same concept as Flex disc, single-use. 12-hour wear.',
         safety: { fdaStatus: 'FDA-registered', materials: 'Medical-grade polymer', recalls: 'No recalls.', allergens: 'Latex-free' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Good option to try discs before committing to reusable.',
         communityReview: 'Community discussions note tried these before buying a reusable. great for testing.',
         ingredients: 'Medical-grade polymer.',
@@ -575,13 +597,13 @@ export const MENSTRUAL_PHYSICAL = [
         summary: 'Designed by Kim Rosas of Period Nirvana. Two sizes, notch for removal.',
         safety: { fdaStatus: 'FDA-registered', materials: 'Medical-grade silicone', recalls: 'No recalls.', allergens: 'Latex-free' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Expert-designed with period educator input.',
         communityReview: 'Community discussions on Reddit r/menstrualcups note similar experiences.',
         ingredients: 'Medical-grade silicone.',
         effectiveness: 'Expert-designed, two sizes.',
         badges: ['Expert Designed', 'Period Educator'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.healthline.com/health/womens-health/menstrual-disc', text: 'Healthline: Menstrual disc', summary: 'Clinical guide on discs vs cups.', justification: 'Healthline is medically reviewed.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual disc research', summary: 'Research on internal menstrual products.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Community discussions on discs.' }] } }
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Community discussions on discs.' }] } }
     },
 
     // ─── PERIOD UNDERWEAR (Additional) ─────────────────────
@@ -593,14 +615,14 @@ export const MENSTRUAL_PHYSICAL = [
         internal: false,
         healthFunctions: ['menstrual-collection', 'leak-protection'],
         tags: ['leaks', 'sustainability', 'comfort'],
-        price: '$24–$36 per pair',
+        price: '$38–$44 per pair',
         userRating: 4.5,
         whereToBuy: ['PeriodAisle.com', 'Amazon'],
         image: 'http://periodaisle.com/cdn/shop/files/S25_PA_Cheeky_Merlot_M02_31558_Cheeky_Merlot_33347_ad13f801-02fa-4756-a17d-1ba3518c930c.jpg?v=1767893880',
         summary: 'Modular period wear. Absorbent inserts can be swapped. PFAS-free, inclusive sizing.',
         safety: { fdaStatus: 'N/A', materials: 'PFAS-free, OEKO-TEX', recalls: 'No recalls.', allergens: 'Hypoallergenic' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Modular design allows customization for different flow levels.',
         communityReview: 'Community discussions note satisfaction with swap system and multiple inserts.',
         ingredients: 'Organic cotton, PFAS-free absorbent layer.',
@@ -622,13 +644,13 @@ export const MENSTRUAL_PHYSICAL = [
         summary: 'Affordable period underwear. Multiple absorbency levels. Teen-friendly styles.',
         safety: { fdaStatus: 'N/A', materials: 'PFAS-free', recalls: 'No recalls.', allergens: 'Hypoallergenic' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Budget-friendly option for those new to period underwear.',
         communityReview: 'Community discussions note best price i\'ve found. works great for light days.',
         ingredients: 'Cotton, absorbent layer.',
         effectiveness: 'Budget-friendly absorbency.',
         badges: ['Budget Friendly', 'Teen Friendly', 'PFAS-Free'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Period underwear research', summary: 'Research on reusable textiles and PFAS.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on period underwear.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on period underwear.' }] } }
     },
     {
         id: 'p-wuka-underwear',
@@ -641,17 +663,17 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$24–$32 per pair',
         userRating: 4.5,
         whereToBuy: ['Wuka.com', 'Amazon'],
-        image: '/ayna_placeholder.png',
+        image: 'https://wuka.co.uk/cdn/shop/files/1-stretch-midi-brief-black-heavy-flow-full-length.jpg',
         summary: 'UK brand. High absorbency, sport styles. PFAS-free, carbon neutral.',
         safety: { fdaStatus: 'N/A', materials: 'PFAS-free', recalls: 'No recalls.', allergens: 'Hypoallergenic' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Sport styles good for active users.',
         communityReview: 'Community discussions note reliable performance during exercise and running.',
         ingredients: 'Organic cotton, PFAS-free technology.',
         effectiveness: 'Sport and heavy-flow options.',
         badges: ['Sport Styles', 'Carbon Neutral', 'PFAS-Free'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Period underwear research', summary: 'Research on reusable textiles and PFAS.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on period underwear.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on period underwear.' }] } }
     },
     {
         id: 'p-tomboyx-period',
@@ -664,17 +686,21 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$28–$34 per pair',
         userRating: 4.5,
         whereToBuy: ['TomboyX.com', 'Target'],
-        image: 'http://tomboyx.com/cdn/shop/files/TomboyX_Logo_Black_86d06453-ccbd-441d-a163-1901e8d4c03f.png?v=1706301500',
+        url: 'https://tomboyx.com/',
+        // TomboyX's line is now branded "First Line Period" underwear —
+        // hardcoding their verified current photo (Bikini style, Plum).
+        // Confirmed live at tomboyx.com/products.json before using.
+        image: 'https://cdn.shopify.com/s/files/1/0204/2302/files/Plum_FL_Period_Bikini_1.jpg?v=1782399837',
         summary: 'Inclusive, gender-neutral period underwear. Multiple styles and sizes.',
         safety: { fdaStatus: 'N/A', materials: 'Oeko-Tex certified', recalls: 'No recalls.', allergens: 'Hypoallergenic' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Inclusive design meets a real need.',
         communityReview: 'Community discussions note style options and fit for diverse preferences.',
         ingredients: 'Cotton, absorbent gusset.',
         effectiveness: 'Inclusive sizing and styles.',
         badges: ['Inclusive', 'Gender Neutral', 'LGBTQ+ Owned'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Period underwear research', summary: 'Research on reusable textiles and PFAS.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on period underwear.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on period underwear.' }] } }
     },
     {
         id: 'p-dear-kate-underwear',
@@ -687,17 +713,21 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$32–$38 per pair',
         userRating: 4.5,
         whereToBuy: ['DearKate.com', 'Amazon'],
-        image: 'https://cdn.shopify.com/s/files/1/0152/4745/files/social_share_banner_1200x628_d66f9918-1081-413d-9ff1-5949fcf5e96a.jpg?v=1600804223',
+        url: 'https://dearkate.com/',
+        // "Ada Brief Full" style, verified real from dearkate.com's live
+        // Shopify catalog (catalog didn't specify a style; picked one
+        // representative real product rather than leave this blank).
+        image: 'https://cdn.shopify.com/s/files/1/0152/4745/products/DSC01403.jpg?v=1578089113',
         summary: 'Fashion-forward period underwear. Lace and athletic styles. PFAS-free.',
         safety: { fdaStatus: 'N/A', materials: 'PFAS-free', recalls: 'No recalls.', allergens: 'Hypoallergenic' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Stylish option that doesn\'t look like period underwear.',
         communityReview: 'Community discussions note lace styles suitable for regular wear.',
         ingredients: 'Cotton, lace, PFAS-free absorbent.',
         effectiveness: 'Fashion-forward with protection.',
         badges: ['Fashion Forward', 'PFAS-Free', 'Female Founded'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Period underwear research', summary: 'Research on reusable textiles and PFAS.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on period underwear.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on period underwear.' }] } }
     },
     {
         id: 'p-proof-period',
@@ -707,20 +737,20 @@ export const MENSTRUAL_PHYSICAL = [
         internal: false,
         healthFunctions: ['menstrual-collection', 'leak-protection'],
         tags: ['leaks', 'comfort'],
-        price: '$32 per pair',
+        price: '$20–$40 per pair',
         userRating: 4.5,
         whereToBuy: ['Proof.co', 'Amazon'],
-        image: '/ayna_placeholder.png',
+        image: 'https://m.media-amazon.com/images/I/81HsqBCJ9-L._AC_UL1500_.jpg',
         summary: 'Leak-proof underwear for periods and bladder leaks. Multiple absorbency levels.',
-        safety: { fdaStatus: 'N/A', materials: 'PFAS-free', recalls: 'No recalls.', allergens: 'Hypoallergenic' },
+        safety: { fdaStatus: 'N/A', materials: 'PFAS-free', recalls: 'No recalls.', allergens: 'Hypoallergenic', opinionAlerts: 'Despite PFAS-free marketing, a 2021–2022 independent lab investigation (Mamavation, EPA-certified lab) found notable PFAS/organic-fluorine levels in Proof Hipster underwear (234 ppm) — one of the higher readings among period underwear brands tested in that investigation. Proof has not publicly confirmed a reformulation tied to that finding, and this has driven real skepticism among PFAS-conscious users comparing brands.' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Dual use for periods and light bladder leaks.',
-        communityReview: 'Community discussions note versatility for period and postpartum use.',
+        communityReview: 'Community discussions are largely positive about the dual period/bladder-leak use case, but PFAS-conscious users should know a 2021–2022 independent lab test found notable PFAS levels in Proof Hipster underwear despite the brand\'s PFAS-free marketing — a real, documented gap between labeling and lab results that some users specifically flag when comparing period underwear brands.',
         ingredients: 'Cotton, PFAS-free absorbent.',
         effectiveness: 'Period and bladder leak protection.',
         badges: ['Dual Use', 'PFAS-Free'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Period underwear research', summary: 'Research on reusable textiles and PFAS.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on period underwear.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on period underwear.' }] } }
     },
     {
         id: 'p-hanes-period',
@@ -733,16 +763,16 @@ export const MENSTRUAL_PHYSICAL = [
         price: '$12–$16 per pair',
         userRating: 4.3,
         whereToBuy: ['Walmart', 'Target', 'Amazon'],
-        image: '/ayna_placeholder.png',
+        image: 'https://m.media-amazon.com/images/I/71Ph1Q772PL._AC_UL1500_.jpg',
         summary: 'Affordable period underwear from a trusted brand. Light to moderate absorbency.',
         safety: { fdaStatus: 'N/A', materials: 'Cotton blend', recalls: 'No recalls.', allergens: 'Check label' },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
         doctorOpinion: 'Budget-friendly entry to period underwear.',
         communityReview: 'Community discussions note hanes quality at a great price. good for light days.',
         ingredients: 'Cotton, absorbent layer.',
         effectiveness: 'Budget-friendly light to moderate protection.',
         badges: ['Budget Friendly', 'Trusted Brand'],
-        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Period underwear research', summary: 'Research on reusable textiles and PFAS.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on period underwear.' }] } }
+        verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/periods/', text: 'Reddit r/periods', summary: 'Community discussions on period underwear.' }] } }
     },
 ];

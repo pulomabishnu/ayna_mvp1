@@ -2,19 +2,97 @@ import React from 'react';
 
 const TERMS_HTML = `
 <style>
-  .terms-of-use-body [data-custom-class='body'], .terms-of-use-body [data-custom-class='body'] * { background: transparent !important; }
-  .terms-of-use-body [data-custom-class='title'], .terms-of-use-body [data-custom-class='title'] * { font-family: Arial !important; font-size: 26px !important; color: #000000 !important; }
-  .terms-of-use-body [data-custom-class='subtitle'], .terms-of-use-body [data-custom-class='subtitle'] * { font-family: Arial !important; color: #595959 !important; font-size: 14px !important; }
-  .terms-of-use-body [data-custom-class='heading_1'], .terms-of-use-body [data-custom-class='heading_1'] * { font-family: Arial !important; font-size: 19px !important; color: #000000 !important; }
-  .terms-of-use-body [data-custom-class='heading_2'], .terms-of-use-body [data-custom-class='heading_2'] * { font-family: Arial !important; font-size: 17px !important; color: #000000 !important; }
-  .terms-of-use-body [data-custom-class='body_text'], .terms-of-use-body [data-custom-class='body_text'] * { color: #595959 !important; font-size: 14px !important; font-family: Arial !important; }
-  .terms-of-use-body [data-custom-class='link'], .terms-of-use-body [data-custom-class='link'] * { color: #3030F1 !important; font-size: 14px !important; font-family: Arial !important; word-break: break-word !important; }
-  .terms-of-use-body ul { list-style-type: square; }
-  .terms-of-use-body ul > li > ul { list-style-type: circle; }
-  .terms-of-use-body ul > li > ul > li > ul { list-style-type: square; }
-  .terms-of-use-body ol li { font-family: Arial; }
-  .terms-of-use-body table { border-collapse: collapse; width: 100%; }
-  .terms-of-use-body h1, .terms-of-use-body h2, .terms-of-use-body h3 { margin: 0; }
+  .terms-of-use-body {
+    color: var(--color-text-main);
+    font-family: var(--font-body);
+    background: var(--color-surface-soft);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: clamp(1.5rem, 4vw, 2.75rem);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .terms-of-use-body [data-custom-class='body'],
+  .terms-of-use-body [data-custom-class='body'] * {
+    background: transparent !important;
+  }
+
+  .terms-of-use-body [data-custom-class='title'],
+  .terms-of-use-body [data-custom-class='title'] * {
+    font-family: var(--font-heading) !important;
+    font-size: clamp(2rem, 5vw, 2.6rem) !important;
+    line-height: 1.1 !important;
+    color: var(--color-text-main) !important;
+    letter-spacing: -0.04em;
+  }
+
+  .terms-of-use-body [data-custom-class='subtitle'],
+  .terms-of-use-body [data-custom-class='subtitle'] * {
+    font-family: var(--font-body) !important;
+    color: var(--color-text-muted) !important;
+    font-size: 0.9rem !important;
+  }
+
+  .terms-of-use-body [data-custom-class='heading_1'],
+  .terms-of-use-body [data-custom-class='heading_1'] * {
+    font-family: var(--font-heading) !important;
+    font-size: 1.25rem !important;
+    line-height: 1.35 !important;
+    color: var(--color-text-main) !important;
+    letter-spacing: -0.015em;
+  }
+
+  .terms-of-use-body [data-custom-class='heading_2'],
+  .terms-of-use-body [data-custom-class='heading_2'] * {
+    font-family: var(--font-heading) !important;
+    font-size: 1.05rem !important;
+    line-height: 1.4 !important;
+    color: var(--color-text-main) !important;
+  }
+
+  .terms-of-use-body [data-custom-class='body_text'],
+  .terms-of-use-body [data-custom-class='body_text'] * {
+    color: var(--color-text-muted) !important;
+    font-size: 0.95rem !important;
+    line-height: 1.75 !important;
+    font-family: var(--font-body) !important;
+  }
+
+  .terms-of-use-body [data-custom-class='link'],
+  .terms-of-use-body [data-custom-class='link'] * {
+    color: var(--color-amber-deep) !important;
+    font-size: inherit !important;
+    font-family: inherit !important;
+    word-break: break-word !important;
+    text-decoration-color: var(--color-primary);
+    text-underline-offset: 3px;
+  }
+
+  .terms-of-use-body ul {
+    padding-left: 1.4rem;
+  }
+
+  .terms-of-use-body li {
+    margin: 0.45rem 0;
+  }
+
+  .terms-of-use-body table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  .terms-of-use-body h1,
+  .terms-of-use-body h2,
+  .terms-of-use-body h3 {
+    margin: 0;
+  }
+
+  @media (max-width: 640px) {
+    .terms-of-use-body {
+      border-radius: var(--radius-md);
+      padding: 1.2rem;
+    }
+  }
 </style>
 <div data-custom-class="body">
 
@@ -24,11 +102,11 @@ const TERMS_HTML = `
 
 <div style="line-height: 1.5;"><strong><span data-custom-class="heading_1"><h2>AGREEMENT TO OUR LEGAL TERMS</h2></span></strong></div>
 
-<div data-custom-class="body_text" style="line-height: 1.5;"><span style="font-size: 15px; color: rgb(89, 89, 89);">We are <strong>Ayna Health, Inc.</strong>, doing business as <strong>Ayna</strong> ("Company," "we," "us," "our"), a company registered in Delaware, United States.</span></div>
+<div data-custom-class="body_text" style="line-height: 1.5;"><span style="font-size: 15px; color: rgb(89, 89, 89);">We are <strong>Ayna Health, Inc.</strong>, doing business as <strong>ayna</strong> ("Company," "we," "us," "our"), a company registered in Delaware, United States.</span></div>
 <div style="line-height: 1;"><br></div>
-<div data-custom-class="body_text" style="line-height: 1.5;"><span style="font-size: 15px; color: rgb(89, 89, 89);">We operate the website <a target="_blank" data-custom-class="link" href="https://aynamvp1.vercel.app">https://aynamvp1.vercel.app</a> (the "Site"), as well as any other related products and services that refer or link to these legal terms (the "Legal Terms") (collectively, the "Services").</span></div>
+<div data-custom-class="body_text" style="line-height: 1.5;"><span style="font-size: 15px; color: rgb(89, 89, 89);">We operate the website <a target="_blank" data-custom-class="link" href="https://www.aynahealth.co">https://www.aynahealth.co</a> (the "Site"), as well as any other related products and services that refer or link to these legal terms (the "Legal Terms") (collectively, the "Services").</span></div>
 <div style="line-height: 1;"><br></div>
-<div data-custom-class="body_text" style="line-height: 1.5;"><span style="font-size: 15px; color: rgb(89, 89, 89);">You can contact us by phone at 9786540921, email at <a target="_blank" data-custom-class="link" href="mailto:pulomabishnu@gmail.com">pulomabishnu@gmail.com</a>, or by mail to 252 Beacon Street, Andover, MA 01810, United States.</span></div>
+<div data-custom-class="body_text" style="line-height: 1.5;"><span style="font-size: 15px; color: rgb(89, 89, 89);">You can contact us by email at <a target="_blank" data-custom-class="link" href="mailto:puloma@aynahealth.co">puloma@aynahealth.co</a>.</span></div>
 <div style="line-height: 1;"><br></div>
 <div data-custom-class="body_text" style="line-height: 1.5;"><span style="font-size: 15px; color: rgb(89, 89, 89);">These Legal Terms constitute a legally binding agreement made between you, whether personally or on behalf of an entity ("you"), and Ayna Health, Inc., concerning your access to and use of the Services. You agree that by accessing the Services, you have read, understood, and agreed to be bound by all of these Legal Terms. IF YOU DO NOT AGREE WITH ALL OF THESE LEGAL TERMS, THEN YOU ARE EXPRESSLY PROHIBITED FROM USING THE SERVICES AND YOU MUST DISCONTINUE USE IMMEDIATELY.</span></div>
 <div style="line-height: 1;"><br></div>
@@ -93,7 +171,7 @@ const TERMS_HTML = `
 <div style="line-height: 1.5;"><br></div>
 <div data-custom-class="body_text" style="line-height: 1.5;"><span style="font-size: 15px; color: rgb(89, 89, 89);">Except as set out in this section or elsewhere in our Legal Terms, no part of the Services and no Content or Marks may be copied, reproduced, aggregated, republished, uploaded, posted, publicly displayed, encoded, translated, transmitted, distributed, sold, licensed, or otherwise exploited for any commercial purpose whatsoever, without our express prior written permission.</span></div>
 <div style="line-height: 1.5;"><br></div>
-<div data-custom-class="body_text" style="line-height: 1.5;"><span style="font-size: 15px; color: rgb(89, 89, 89);">If you wish to make any use of the Services, Content, or Marks other than as set out in this section, please address your request to: <a target="_blank" data-custom-class="link" href="mailto:pulomabishnu@gmail.com">pulomabishnu@gmail.com</a>.</span></div>
+<div data-custom-class="body_text" style="line-height: 1.5;"><span style="font-size: 15px; color: rgb(89, 89, 89);">If you wish to make any use of the Services, Content, or Marks other than as set out in this section, please address your request to: <a target="_blank" data-custom-class="link" href="mailto:puloma@aynahealth.co">puloma@aynahealth.co</a>.</span></div>
 <div style="line-height: 1.5;"><br></div>
 <div data-custom-class="body_text" style="line-height: 1.5;"><span style="font-size: 15px; color: rgb(89, 89, 89);">We reserve all rights not expressly granted to you in and to the Services, Content, and Marks.</span></div>
 <div style="line-height: 1.5;"><br></div>
@@ -138,7 +216,7 @@ const TERMS_HTML = `
 <div data-custom-class="heading_2" style="line-height: 1.5;"><strong><h3>Billing and Renewal</h3></strong></div>
 <div data-custom-class="body_text" style="line-height: 1.5;"><span style="font-size: 15px;">Your subscription will continue and automatically renew unless canceled. You consent to our charging your payment method on a recurring basis without requiring your prior approval for each recurring charge, until such time as you cancel the applicable order. The length of your billing cycle will depend on the type of subscription plan you choose when you subscribed to the Services.</span></div>
 <div data-custom-class="heading_2" style="line-height: 1.5;"><strong><h3>Cancellation</h3></strong></div>
-<div data-custom-class="body_text" style="line-height: 1.5;"><span style="font-size: 15px;">You can cancel your subscription at any time by contacting us using the contact information provided below. Your cancellation will take effect at the end of the current paid term. If you have any questions or are unsatisfied with our Services, please email us at <a target="_blank" data-custom-class="link" href="mailto:pulomabishnu@gmail.com">pulomabishnu@gmail.com</a>.</span></div>
+<div data-custom-class="body_text" style="line-height: 1.5;"><span style="font-size: 15px;">You can cancel your subscription at any time by contacting us using the contact information provided below. Your cancellation will take effect at the end of the current paid term. If you have any questions or are unsatisfied with our Services, please email us at <a target="_blank" data-custom-class="link" href="mailto:puloma@aynahealth.co">puloma@aynahealth.co</a>.</span></div>
 <div data-custom-class="heading_2" style="line-height: 1.5;"><strong><h3>Fee Changes</h3></strong></div>
 <div data-custom-class="body_text" style="line-height: 1.5;"><span style="font-size: 15px;">We may, from time to time, make changes to the subscription fee and will communicate any price changes to you in accordance with applicable law.</span></div>
 <div style="line-height: 1.5;"><br></div>
@@ -226,7 +304,7 @@ const TERMS_HTML = `
 <div style="line-height: 1.5;"><br></div>
 
 <div data-custom-class="heading_1" id="ppyes" style="line-height: 1.5;"><strong><h2>14. PRIVACY POLICY</h2></strong></div>
-<div data-custom-class="body_text" style="line-height: 1.5;"><span style="font-size: 15px; color: rgb(89, 89, 89);">We care about data privacy and security. Please review our Privacy Policy: <strong><a target="_blank" data-custom-class="link" href="https://aynamvp1.vercel.app/privacy-policy">https://aynamvp1.vercel.app/privacy-policy</a></strong>. By using the Services, you agree to be bound by our Privacy Policy, which is incorporated into these Legal Terms. Please be advised the Services are hosted in the United States. If you access the Services from any other region of the world with laws or other requirements governing personal data collection, use, or disclosure that differ from applicable laws in the United States, then through your continued use of the Services, you are transferring your data to the United States, and you expressly consent to have your data transferred to and processed in the United States.</span></div>
+<div data-custom-class="body_text" style="line-height: 1.5;"><span style="font-size: 15px; color: rgb(89, 89, 89);">We care about data privacy and security. Please review our Privacy Policy: <strong><a target="_blank" data-custom-class="link" href="https://www.aynahealth.co/privacy-policy">https://www.aynahealth.co/privacy-policy</a></strong>. By using the Services, you agree to be bound by our Privacy Policy, which is incorporated into these Legal Terms. Please be advised the Services are hosted in the United States. If you access the Services from any other region of the world with laws or other requirements governing personal data collection, use, or disclosure that differ from applicable laws in the United States, then through your continued use of the Services, you are transferring your data to the United States, and you expressly consent to have your data transferred to and processed in the United States.</span></div>
 <div style="line-height: 1.5;"><br></div>
 
 <div data-custom-class="heading_1" id="terms" style="line-height: 1.5;"><strong><h2>15. TERM AND TERMINATION</h2></strong></div>
@@ -295,7 +373,7 @@ const TERMS_HTML = `
 <div data-custom-class="heading_1" id="contact" style="line-height: 1.5;"><strong><h2>27. CONTACT US</h2></strong></div>
 <div data-custom-class="body_text" style="line-height: 1.5;"><span style="font-size: 15px; color: rgb(89, 89, 89);">In order to resolve a complaint regarding the Services or to receive further information regarding use of the Services, please contact us at:</span></div>
 <div style="line-height: 1.5;"><br></div>
-<div data-custom-class="body_text" style="line-height: 1.5;"><span style="font-size: 15px; color: rgb(89, 89, 89);"><strong>Ayna Health, Inc.</strong><br>252 Beacon Street<br>Andover, MA 01810<br>United States<br>Phone: 9786540921<br><a target="_blank" data-custom-class="link" href="mailto:pulomabishnu@gmail.com">pulomabishnu@gmail.com</a></span></div>
+<div data-custom-class="body_text" style="line-height: 1.5;"><span style="font-size: 15px; color: rgb(89, 89, 89);"><strong>Ayna Health, Inc.</strong><br><a target="_blank" data-custom-class="link" href="mailto:puloma@aynahealth.co">puloma@aynahealth.co</a></span></div>
 
 </div>
 `;
@@ -306,7 +384,7 @@ export default function TermsOfUse({ onBack }) {
       <button
         type="button"
         onClick={onBack}
-        style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-primary)', fontSize: '0.9rem', marginBottom: '1.5rem', padding: 0, display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+        style={{ background: 'var(--color-surface-soft)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-pill)', cursor: 'pointer', color: 'var(--color-text-main)', fontFamily: 'var(--font-body)', fontSize: '0.9rem', fontWeight: 600, marginBottom: '1.25rem', padding: '0.65rem 0.95rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem', boxShadow: 'var(--shadow-sm)' }}
       >
         ← Back
       </button>

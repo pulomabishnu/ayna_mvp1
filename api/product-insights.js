@@ -447,7 +447,7 @@ export default async function handler(req, res) {
   const userContextText =
     typeof userContextRaw === 'string' ? userContextRaw.trim().slice(0, 4000) : '';
 
-  const order = parseProviderOrder('AI_INSIGHTS_PROVIDER_ORDER', 'claude,openai');
+  const order = parseProviderOrder('AI_INSIGHTS_PROVIDER_ORDER', 'claude,openai,gemini');
   const fallback = ['anthropic', 'openai'];
   let tryProviders = (order.length ? order : fallback).filter((p) => providerConfigured(p));
   if (tryProviders.length === 0) {

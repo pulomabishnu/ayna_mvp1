@@ -1,5 +1,6 @@
 import React from 'react';
 import GlossaryTerm from './GlossaryTerm';
+import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 
 export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LABELS, myProducts = {}, onBrowseProducts, onAddToCompare }) {
     const ecosystemList = Object.values(myProducts || {});
@@ -160,8 +161,17 @@ export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LA
                         <button
                             onClick={() => onRemove(p)}
                             style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', background: 'none', border: 'none', color: 'var(--color-text-muted)', cursor: 'pointer', fontSize: '1rem' }}
-                        >✕</button>
-                        <img src={p.image} alt={p.name} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: 'var(--radius-md)', marginBottom: '1rem' }} />
+                        >X</button>
+                        <ProductTileImage
+                            product={p}
+                            alt={p.name}
+                            imgStyle={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: 'var(--radius-md)', marginBottom: '1rem' }}
+                            letterNode={(
+                                <div style={{ width: '80px', height: '80px', borderRadius: 'var(--radius-md)', marginBottom: '1rem', margin: '0 auto 1rem', overflow: 'hidden' }}>
+                                    <ProductImageFallback />
+                                </div>
+                            )}
+                        />
                         <h3 style={{ fontSize: '1rem', fontWeight: '700' }}>{p.name}</h3>
                     </div>
                 ))}
@@ -190,7 +200,7 @@ export default function Comparison({ compareList, onRemove, onClear, CATEGORY_LA
             </div>
 
             <div style={{ marginTop: '3rem', padding: '2rem', background: 'var(--color-secondary-fade)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-primary-fade)' }}>
-                <h3 style={{ fontSize: '1.1rem', color: 'var(--color-primary)', marginBottom: '1rem' }}>Ayna's Tip</h3>
+                <h3 style={{ fontSize: '1.1rem', color: 'var(--color-primary)', marginBottom: '1rem' }}>ayna's Tip</h3>
                 <p style={{ fontSize: '1rem', lineHeight: '1.7', color: 'var(--color-text-main)' }}>
                     When choosing between products, look closely at <strong>Materials & Ingredients</strong> and the <strong>Doctor's Opinion</strong>.
                     A higher price often means more marketing, not better ingredients. Look for "B-Corp" or "Sustainable" badges. They can mean higher ethical standards.

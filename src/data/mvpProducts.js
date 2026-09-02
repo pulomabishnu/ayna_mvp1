@@ -25,7 +25,7 @@ export const MVP_PHYSICAL = [
     summary: 'D-mannose and botanical blend to help flush bacteria and support urinary tract health. Designed for daily prevention.',
     safety: { fdaStatus: 'Dietary supplement', materials: 'D-mannose, hibiscus, etc.', recalls: 'No recalls.', allergens: 'Check label', sideEffects: 'Generally well tolerated. D-mannose may cause mild diarrhea or stomach upset in some people, especially at higher doses. Use caution if you have kidney disease.' },
     clinicianOpinionSource: 'independent',
-    clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+    clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
     doctorOpinion: 'D-mannose has evidence for UTI prevention in some women. Use alongside adequate hydration and post-coital voiding.',
     communityReview: 'Community discussions on Amazon note satisfaction with recurrent UTI prevention when taken daily.',
     ingredients: 'D-mannose, hibiscus extract.',
@@ -33,7 +33,7 @@ export const MVP_PHYSICAL = [
     badges: ['UTI Focus', 'Evidence-Based'],
     verificationLinks: {
       doctor: { links: [{ url: 'https://www.mayoclinic.org/diseases-conditions/urinary-tract-infection/symptoms-causes/syc-20353453', text: 'Mayo Clinic: UTI', summary: 'Clinical overview of UTI prevention and management.', justification: 'Mayo Clinic is a leading clinical resource.' }] },
-      scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/23974689/', text: 'D-mannose and UTI prevention', summary: 'Research on D-mannose for recurrent UTI prevention.', justification: 'PubMed peer-reviewed.' }] },
+      scientific: { links: [] },
       community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/HealthyHooha/search/?q=d-mannose&restrict_sr=1', text: 'Reddit r/HealthyHooha: D-mannose', summary: 'Community discussions on D-mannose for UTI prevention.' }] }
     }
   },
@@ -49,12 +49,11 @@ export const MVP_PHYSICAL = [
     price: '$12 for 60 caps',
     userRating: 4.4,
     whereToBuy: ['iHerb', 'Amazon', 'Walmart'],
-            // nowfoods.com blocks plain HTTP fetches (bot-challenge) — couldn't source a real image.
-        image: '/ayna_placeholder.png',
+        image: 'https://target.scene7.com/is/image/Target/GUEST_127d7700-f673-4c0d-8564-e47ca95076b3?wid=800&hei=800&qlt=80&fmt=pjpeg',
     summary: 'Affordable D-mannose powder/caps for urinary tract support. Often used as a natural alternative for prevention.',
     safety: { fdaStatus: 'Dietary supplement', materials: 'D-mannose', recalls: 'No recalls.', allergens: 'Vegan caps', sideEffects: 'Generally well tolerated. May cause mild diarrhea or stomach upset, particularly at higher doses. Use caution if you have kidney disease.' },
     clinicianOpinionSource: 'independent',
-    clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+    clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
     doctorOpinion: 'D-mannose may help prevent bacterial adherence in the bladder. Discuss with your clinician for recurrent UTIs.',
     communityReview: 'Community discussions on Reddit r/HealthyHooha note affordability and effectiveness when used after sex.',
     ingredients: 'D-mannose.',
@@ -62,7 +61,7 @@ export const MVP_PHYSICAL = [
     badges: ['Budget Friendly', 'Simple Formula'],
     verificationLinks: {
       doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/urinary-tract-infections', text: 'ACOG: Urinary Tract Infections', summary: 'Clinical guidance on UTI prevention and treatment.', justification: 'ACOG is the leading OB-GYN professional society.' }] },
-      scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/23974689/', text: 'D-mannose and UTI', summary: 'Research on D-mannose for bacterial adherence and UTI.', justification: 'PubMed peer-reviewed.' }] },
+      scientific: { links: [] },
       community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/HealthyHooha/search/?q=uti&restrict_sr=1', text: 'Reddit r/HealthyHooha', summary: 'Community discussions on UTI prevention and D-mannose.' }] }
     }
   },
@@ -82,7 +81,7 @@ export const MVP_PHYSICAL = [
     summary: 'Over-the-counter urinary pain relief with methenamine. Helps control bacteria and eases discomfort while you seek care.',
     safety: { fdaStatus: 'OTC drug', materials: 'Methenamine, sodium salicylate', recalls: 'No recalls.', allergens: 'Check label', sideEffects: 'May cause mild stomach upset, nausea, or rash in some users. Avoid with a sulfa allergy or significant kidney disease. Check with a clinician first.' },
     clinicianOpinionSource: 'independent',
-    clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+    clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
     doctorOpinion: 'Use only as directed while waiting for a clinician visit. Not a substitute for antibiotics when indicated.',
     communityReview: 'Community discussions on Amazon note temporary symptom relief while seeking care.',
     ingredients: 'Methenamine, sodium salicylate.',
@@ -90,7 +89,7 @@ export const MVP_PHYSICAL = [
     badges: ['OTC', 'Symptom Relief'],
     verificationLinks: {
       doctor: { links: [{ url: 'https://www.mayoclinic.org/diseases-conditions/urinary-tract-infection/diagnosis-treatment/drc-20353459', text: 'Mayo Clinic: UTI treatment', summary: 'Clinical guidance on when to seek care and OTC options.', justification: 'Mayo Clinic is a leading clinical resource.' }] },
-      scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/12605637/', text: 'Methenamine for urinary symptoms', summary: 'Evidence on methenamine for urinary tract.', justification: 'PubMed peer-reviewed.' }] },
+      scientific: { links: [] },
       community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/HealthyHooha/search/?q=cystex&restrict_sr=1', text: 'Reddit r/HealthyHooha: Cystex', summary: 'Community discussions on OTC UTI symptom relief.' }] }
     }
   },
@@ -104,24 +103,31 @@ export const MVP_PHYSICAL = [
     internal: false,
     healthFunctions: ['menstrual-collection'],
     tags: ['organic', 'sustainability', 'heavy-flow', 'safety-concern'],
-    price: '$12 for 18',
+    price: '$10 for 32',
     userRating: 4.5,
     whereToBuy: ['Cora.life', 'Target', 'Amazon'],
-    image: 'https://cdn.shopify.com/s/files/1/0940/5060/files/Logo_33a7614e-134f-4af3-9075-b4ac69ca81a0.png?height=628&pad_color=fefaf8&v=1646873247&width=1200',
+    url: 'https://cora.life/',
+    // Cora rebranded away from "Organic Pads" naming (their live catalog
+    // now calls this "The Peace-of-Mind Pad") — the live resolver's fuzzy
+    // name match can't bridge that gap, so hardcoding their verified
+    // current photo directly rather than leaving this on a letter avatar.
+    // Confirmed live at cora.life/products.json before using.
+    image: 'https://cdn.shopify.com/s/files/1/0940/5060/files/Cora_Dynamic_Image_POM_Pads_Regular_1000X1000_9e847653-7318-46fb-9fdf-a714e0931031.png?v=1787080092',
     summary: '100% organic cotton pads from Cora. Subscription or one-time. B-Corp, plastic-free packaging.',
-    safety: { fdaStatus: 'FDA-registered', materials: '100% organic cotton', recalls: 'No recalls.', allergens: 'Hypoallergenic', sideEffects: 'Organic cotton is generally well tolerated with a low rate of skin irritation. Change regularly during heavy flow and discontinue if you notice redness or itching.' },
+    safety: { fdaStatus: 'FDA-registered', materials: '100% organic cotton', recalls: 'No formal recalls. Note: a 2024 independent lab investigation (Mamavation, using an EPA-certified lab) found organic fluorine — an indicator of PFAS "forever chemicals" — at roughly 30 ppm in a Cora organic-cotton liner product, despite the brand\'s organic marketing. The same investigation found PFAS indicators in about half of tested pad/liner brands, including several other organic ones, while some organic brands tested clean.', allergens: 'Hypoallergenic', sideEffects: 'Organic cotton is generally well tolerated with a low rate of skin irritation. Change regularly during heavy flow and discontinue if you notice redness or itching.', opinionAlerts: 'Since the 2024 PFAS lab testing news, some shoppers have expressed concern about organic-marketed pads generally, including Cora, and a subset have shifted toward brands that tested clean.' },
     clinicianOpinionSource: 'independent',
-    clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+    clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
     doctorOpinion: 'Organic cotton reduces exposure to dyes and fragrances that can irritate sensitive skin.',
-    communityReview: 'Community discussions note satisfaction with subscription quality and reduced skin irritation.',
+    communityReview: 'Community discussions on Reddit r/periods generally reflect satisfaction with subscription quality and reduced skin irritation, but some users have raised concerns after 2024 independent lab testing (Mamavation) found PFAS indicators in a Cora organic-cotton liner product, prompting a shift among some shoppers toward brands that tested clean.',
     ingredients: 'Organic cotton.',
     effectiveness: 'Reliable absorption; sustainable choice.',
     badges: ['Organic', 'B-Corp', 'Sustainable'],
     verificationLinks: {
       doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care and product choices.', justification: 'ACOG is the leading OB-GYN professional society.' }] },
-      scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product safety', summary: 'Research on absorbent materials and skin contact.', justification: 'PubMed peer-reviewed.' }] },
+      scientific: { links: [] },
       community: { links: [
         { platform: 'reddit', url: 'https://www.reddit.com/r/periods/search/?q=organic+pad&restrict_sr=1', text: 'Reddit r/periods: organic pads', summary: 'Community discussions on organic menstrual products.' },
+        { platform: 'other', url: 'https://www.mamavation.com/beauty/pfas-forever-chemicals-sanitary-pads-incontinence-pads.html', text: 'Mamavation: PFAS testing in pads & liners', summary: 'Independent EPA-certified lab testing of sanitary pads and liners for organic fluorine (PFAS indicator), including a Cora liner product.' },
       ] }
     }
   },
@@ -134,14 +140,20 @@ export const MVP_PHYSICAL = [
     internal: true,
     healthFunctions: ['menstrual-collection'],
     tags: ['organic', 'sustainability', 'heavy-flow', 'safety-concern'],
-    price: '$10 for 18',
+    price: '$11 for 32',
     userRating: 4.5,
     whereToBuy: ['Cora.life', 'Target', 'Amazon'],
-    image: 'https://cdn.shopify.com/s/files/1/0940/5060/files/Logo_33a7614e-134f-4af3-9075-b4ac69ca81a0.png?height=628&pad_color=fefaf8&v=1646873247&width=1200',
+    url: 'https://cora.life/',
+    // Cora rebranded away from "Organic Tampons" naming (live catalog now
+    // splits this into "The Comfort Fit Tampon" [applicator] and "The
+    // Applicator-Free Tampon") — hardcoding the applicator version's
+    // verified current photo, since applicator is the more common default
+    // for a generic "tampons" listing. Confirmed live before using.
+    image: 'https://cdn.shopify.com/s/files/1/0940/5060/files/Cora_Dynamic_Image_Applicator_Tampons_V3_1000X1000_7f00668b-f217-4371-b8a1-1c3b4ab16741.png?v=1787190945',
     summary: '100% organic cotton tampons from Cora. Subscription or one-time. B-Corp, plastic-free packaging.',
     safety: { fdaStatus: 'FDA-registered', materials: '100% organic cotton', recalls: 'No recalls.', allergens: 'Hypoallergenic', sideEffects: 'Organic cotton is generally well tolerated. As with any tampon, leaving one in longer than recommended raises the risk of toxic shock syndrome (TSS). Change every 4-8 hours and use the lowest absorbency your flow needs.' },
     clinicianOpinionSource: 'independent',
-    clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+    clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
     doctorOpinion: 'Organic cotton reduces exposure to dyes and fragrances that can irritate sensitive skin.',
     communityReview: 'Community discussions note satisfaction with subscription quality and reduced skin irritation.',
     ingredients: 'Organic cotton.',
@@ -149,7 +161,7 @@ export const MVP_PHYSICAL = [
     badges: ['Organic', 'B-Corp', 'Sustainable'],
     verificationLinks: {
       doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/heavy-menstrual-bleeding', text: 'ACOG: Menstrual products', summary: 'Clinical guidance on menstrual care and product choices.', justification: 'ACOG is the leading OB-GYN professional society.' }] },
-      scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/30283038/', text: 'Menstrual product safety', summary: 'Research on absorbent materials and skin contact.', justification: 'PubMed peer-reviewed.' }] },
+      scientific: { links: [] },
       community: { links: [
         { platform: 'reddit', url: 'https://www.reddit.com/r/periods/search/?q=organic+tampon&restrict_sr=1', text: 'Reddit r/periods: organic tampons', summary: 'Community discussions on organic menstrual products.' },
         { platform: 'wirecutter', url: 'https://www.nytimes.com/wirecutter/reviews/best-tampons/', text: 'Wirecutter: Best Tampons', summary: 'NYT Wirecutter independent tampon testing and recommendations.' },
@@ -175,13 +187,13 @@ export const MVP_PHYSICAL = [
     summary: '40:1 ratio of myo-inositol and D-chiro inositol. Commonly used for PCOS, cycle regularity, and metabolic support.',
     safety: { fdaStatus: 'Dietary supplement', materials: 'Inositols', recalls: 'No recalls.', allergens: 'Vegan', opinionAlerts: 'Generally positive reception on Reddit r/PCOS for cycle regularity.', sideEffects: 'Generally well tolerated at typical doses. Occasional mild nausea, gas, or headache reported, especially when starting.' },
     clinicianOpinionSource: 'independent',
-    clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+    clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
     doctorOpinion: 'Inositol supplementation is often recommended in PCOS for insulin sensitivity and cycle regulation.',
     communityReview: 'Community discussions on Reddit r/PCOS note cycle regularization after several months of use.',
     ingredients: 'Myo-inositol, D-chiro inositol.',
     effectiveness: 'Evidence supports use in PCOS for metabolic and cycle benefits.',
     badges: ['PCOS Focus', 'Research Backed'],
-    verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/polycystic-ovary-syndrome', text: 'ACOG: PCOS', summary: 'Clinical guidance on PCOS and inositol supplementation.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/26983764/', text: 'Inositol and PCOS', summary: 'Review of myo-inositol and D-chiro inositol in PCOS.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/PCOS/search/?q=inositol&restrict_sr=1', text: 'Reddit r/PCOS: inositol', summary: 'Community discussions on inositol for PCOS.' }] } }
+    verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/PCOS/search/?q=inositol&restrict_sr=1', text: 'Reddit r/PCOS: inositol', summary: 'Community discussions on inositol for PCOS.' }] } }
   },
   {
     id: 'p-spearmint-pcos',
@@ -199,13 +211,13 @@ export const MVP_PHYSICAL = [
     summary: 'Spearmint may help lower free testosterone in PCOS. Caffeine-free herbal tea, typically brewed twice daily.',
     safety: { fdaStatus: 'Dietary supplement / food', materials: 'Spearmint', recalls: 'No recalls.', allergens: 'Mint family', sideEffects: 'Generally safe as a tea. Some people notice mild stomach upset. Spearmint may reduce milk supply. Best avoided while breastfeeding or trying to conceive without a clinician\'s guidance.' },
     clinicianOpinionSource: 'independent',
-    clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+    clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
     doctorOpinion: 'Some studies show spearmint tea can reduce androgens in PCOS. Discuss with your provider.',
     communityReview: 'Community discussions on Reddit r/PCOS note improvement in acne and hair growth with daily use.',
     ingredients: 'Spearmint leaf.',
     effectiveness: 'Small studies support anti-androgen effects in PCOS.',
     badges: ['Natural', 'PCOS Support'],
-    verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/polycystic-ovary-syndrome', text: 'ACOG: PCOS', summary: 'Clinical guidance on PCOS and complementary approaches.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/19585478/', text: 'Spearmint and androgens', summary: 'Study on spearmint tea and testosterone in PCOS.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/PCOS/search/?q=spearmint&restrict_sr=1', text: 'Reddit r/PCOS: spearmint', summary: 'Community discussions on spearmint for PCOS.' }] } }
+    verificationLinks: { doctor: { links: [] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/19585478/', text: 'Spearmint and androgens', summary: 'Study on spearmint tea and testosterone in PCOS.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/PCOS/search/?q=spearmint&restrict_sr=1', text: 'Reddit r/PCOS: spearmint', summary: 'Community discussions on spearmint for PCOS.' }] } }
   },
   // ─── ENDOMETRIOSIS ───────────────────────────────────────
   {
@@ -225,11 +237,11 @@ export const MVP_PHYSICAL = [
     summary: 'Prescription medication that reduces heavy menstrual bleeding by helping blood clot. Non-hormonal.',
     safety: { fdaStatus: 'FDA-approved', materials: 'Tranexamic acid', recalls: 'No recalls.', allergens: 'Check Rx', sideEffects: 'Common: nausea, headache, or mild GI upset. Carries a rare but serious risk of blood clots. Tell your prescriber about any personal or family history of clotting disorders.' },
     clinicianOpinionSource: 'independent',
-    clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+    clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
     doctorOpinion: 'First-line option for heavy menstrual bleeding when hormones are not desired. Reduces flow significantly.',
     communityReview: 'Community discussions on Reddit r/TwoXChromosomes note significant reduction in flow and duration.',
     ingredients: 'Tranexamic acid.',
-    effectiveness: 'Clinically proven to reduce menstrual blood loss.',
+    effectiveness: 'Tranexamic acid is FDA-approved for heavy menstrual bleeding and has been shown in clinical studies to reduce menstrual blood loss.',
     badges: ['Prescription', 'Heavy Bleeding']
   },
   // ─── HORMONAL BLOATING ─────────────────────────────────────
@@ -245,11 +257,13 @@ export const MVP_PHYSICAL = [
     price: '$22 for 30 capsules',
     userRating: 4.3,
     whereToBuy: ['Amazon', 'PinkStork.com', 'Target'],
-    image: 'https://pinkstork.com/cdn/shop/files/PINKSTORK_Logo_crop_90482267-d058-40f5-984c-73335bc42249.svg?v=1756906426',
+    // Was a hardcoded SVG brand-logo image (Pink Stork's own wordmark, not
+    // a bottle photo) — caught by the catalog-wide image sweep.
+    image: '',
     summary: 'Herbal blend with fennel, dandelion, and ginger to support digestion and ease cycle-related bloating and water retention.',
     safety: { fdaStatus: 'Dietary supplement', materials: 'Fennel, dandelion root, ginger, organic ingredients', recalls: 'No recalls.', allergens: 'Vegan, gluten-free', sideEffects: 'Generally well tolerated. Fennel and dandelion may interact with blood thinners or diuretics. Check with a clinician if you take either. Occasional mild GI upset reported.' },
     clinicianOpinionSource: 'independent',
-    clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+    clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
     doctorOpinion: 'Herbal digestive supports like fennel and ginger have traditional and some clinical use for bloating and gas. Discuss with your clinician if you have liver conditions or take blood thinners.',
     communityReview: 'Community discussions on Amazon and Reddit r/periods note relief from period bloat and digestive comfort with consistent use.',
     communityReviewSourceUrl: 'https://www.reddit.com/r/periods/search/?q=bloat&restrict_sr=1',
@@ -266,8 +280,7 @@ export const MVP_PHYSICAL = [
       },
       scientific: {
         links: [
-          { url: 'https://pubmed.ncbi.nlm.nih.gov/25051278/', text: 'Fennel for functional dyspepsia', summary: 'RCT of fennel for functional gastrointestinal symptoms.', justification: 'PubMed peer-reviewed.' },
-          { url: 'https://pubmed.ncbi.nlm.nih.gov/19585478/', text: 'Ginger for GI motility', summary: 'Research on ginger and gastric emptying; relevance to bloating.', justification: 'PubMed peer-reviewed.' }
+          
         ]
       },
       community: {
@@ -288,14 +301,14 @@ export const MVP_PHYSICAL = [
     internal: false,
     healthFunctions: ['supplement'],
     tags: ['bloating', 'discomfort', 'organic', 'pcos'],
-    price: '$24 for 30 capsules',
+    price: '$24 for 60 capsules',
     userRating: 4.2,
     whereToBuy: ['Amazon', 'LoveWellness.com', 'Target', 'Ulta'],
     image: 'https://cdn.shopify.com/s/files/1/1288/3849/files/01_LW_PDP_BBB_Silo_d91565b2-159b-4249-8db3-633000ab49bf.jpg?v=1762521813',
     summary: 'Enzyme and probiotic blend with ginger and dandelion to support digestion and reduce bloating. Take before meals.',
     safety: { fdaStatus: 'Dietary supplement', materials: 'Digestive enzymes, ginger, dandelion, probiotics', recalls: 'No recalls.', allergens: 'Vegan, gluten-free', sideEffects: 'Generally well tolerated. Some people notice mild gas or bloating in the first few days as the enzymes and probiotics take effect.' },
     clinicianOpinionSource: 'independent',
-    clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+    clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
     doctorOpinion: 'Digestive enzymes and herbal supports like ginger can help with post-meal bloating. Probiotics may support gut balance; evidence for bloating is mixed.',
     communityReview: 'Community discussions on Reddit and Amazon note relief from hormonal and post-meal bloating when taken consistently before eating.',
     communityReviewSourceUrl: 'https://www.reddit.com/r/WomensHealth/search/?q=bye+bye+bloat&restrict_sr=1',
@@ -306,13 +319,12 @@ export const MVP_PHYSICAL = [
     verificationLinks: {
       doctor: {
         links: [
-          { url: 'https://www.hopkinsmedicine.org/health/wellness-and-prevention/bloating-causes-and-prevention-tips', text: 'Johns Hopkins: Bloating', summary: 'Clinical overview of bloating causes and management, including diet and supplements.', justification: 'Johns Hopkins is a leading medical institution.' }
+          
         ]
       },
       scientific: {
         links: [
-          { url: 'https://pubmed.ncbi.nlm.nih.gov/23612738/', text: 'Digestive enzymes and functional GI symptoms', summary: 'Review of enzyme supplementation for digestive discomfort.', justification: 'PubMed peer-reviewed.' },
-          { url: 'https://pubmed.ncbi.nlm.nih.gov/19585478/', text: 'Ginger and gastric function', summary: 'Research on ginger for gastric emptying and GI symptoms.', justification: 'PubMed peer-reviewed.' }
+          
         ]
       },
       community: {
@@ -336,11 +348,12 @@ export const MVP_PHYSICAL = [
     price: '$25',
     userRating: 4.4,
     whereToBuy: ['Amazon', 'Intimina.com'],
-    image: 'https://www.intimina.com/themes/uhura/favicon.ico',
+    // Intimina rebranded "Luna Beads" to "Laselle" (same weighted-ball Kegel exerciser); image is from the current Laselle product page.
+    image: 'https://assets.intimina.com/files/static/product-images/2022-04/550x550_Laselle_EN.jpg?VersionId=_8_GLEGmnwIH1maYhAsvLEeLm4Usw1Em',
     summary: 'Vaginal weights for progressive Kegel training. Helps strengthen pelvic floor for leakage and comfort.',
     safety: { fdaStatus: 'Fitness device', materials: 'Silicone', recalls: 'No recalls.', allergens: 'Silicone', sideEffects: 'Medical-grade silicone is generally well tolerated. Mild discomfort during initial use is common; stop and check with a pelvic floor PT if you notice pain.' },
     clinicianOpinionSource: 'independent',
-    clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+    clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
     doctorOpinion: 'Pelvic floor muscle training is commonly recommended as an initial conservative treatment for stress urinary incontinence. Evidence for pelvic floor training generally does not establish that this specific weighted device improves outcomes.',
     communityReview: 'Community discussions on Amazon note progressive improvement with consistent use.',
     ingredients: 'Medical-grade silicone.',
@@ -348,8 +361,8 @@ export const MVP_PHYSICAL = [
     badges: ['Pelvic Health', 'Reusable'],
     recommendationWhyDetail: 'Kegel trainers like Luna Beads use progressive vaginal weights to strengthen the pelvic floor muscles. The same muscles targeted by Kegel exercises your OB-GYN or PT might recommend for leakage, prolapse prevention, or pelvic discomfort. They work by adding gentle resistance you contract against, building strength over weeks of daily use. They\'re different from Kegel apps or biofeedback devices. No technology, just weighted silicone balls that give your muscles something to work against.',
     verificationLinks: {
-      doctor: { links: [{ url: 'https://www.health.harvard.edu/womens-health/step-by-step-guide-to-kegel-exercises', text: 'Harvard Health: Kegel exercises', summary: 'Clinical guide to pelvic floor muscle training.', justification: 'Harvard Health is a trusted medical resource.' }] },
-      scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/22453472/', text: 'Pelvic floor muscle training', summary: 'Evidence on Kegel exercises for incontinence.', justification: 'PubMed peer-reviewed.' }] },
+      doctor: { links: [] },
+      scientific: { links: [] },
       community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/Incontinence/search/?q=kegel&restrict_sr=1', text: 'Reddit: Kegel devices', summary: 'Community discussions on pelvic floor trainers.' }] }
     }
   },
@@ -369,7 +382,7 @@ export const MVP_PHYSICAL = [
     summary: 'Curved wand for self-release of pelvic trigger points. Used with guidance from PT for pelvic pain and tightness.',
     safety: { fdaStatus: 'Wellness device', materials: 'Silicone, plastic', recalls: 'No recalls.', allergens: 'Silicone', sideEffects: 'Mild soreness after use is common, similar to any trigger-point massage. Best used with guidance from a pelvic floor PT at first, to avoid overuse or incorrect technique.' },
     clinicianOpinionSource: 'independent',
-    clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+    clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
     doctorOpinion: 'Pelvic floor physical therapy can address myofascial contributors to chronic pelvic pain. Internal self-treatment tools may be used as part of a supervised plan for selected patients.',
     communityReview: 'Community discussions include anecdotal reports of pelvic-wand use alongside pelvic floor physical therapy; individual experiences vary.',
     ingredients: 'Silicone.',
@@ -400,22 +413,22 @@ export const MVP_PHYSICAL = [
     internal: false,
     healthFunctions: ['supplement'],
     tags: ['menopause', 'discomfort', 'non-hormonal'],
-    price: '$18 for 28 caps',
+    price: '$18 for 30 caps',
     userRating: 4.2,
     whereToBuy: ['CVS', 'Walmart', 'Amazon'],
     image: 'https://cdn.shopify.com/s/files/1/0038/4188/4230/products/estroven-mood-boost-front-view.jpg?v=1699478289',
     summary: 'Non-hormonal supplement with soy isoflavones, rhodiola, and folate for mood and cognitive support during menopause.',
     safety: { fdaStatus: 'Dietary supplement', materials: 'Soy isoflavones, rhodiola', recalls: 'No recalls.', allergens: 'Soy', sideEffects: 'Generally well tolerated. Soy isoflavones may cause mild GI upset in some people; those with a history of hormone-sensitive conditions should discuss use with a clinician first.' },
     clinicianOpinionSource: 'independent',
-    clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+    clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
     doctorOpinion: 'Some women find relief with phytoestrogens; evidence is mixed. Discuss with your clinician.',
     communityReview: 'Community discussions on Amazon note improvement in brain fog and mood during perimenopause.',
     ingredients: 'Soy isoflavones, rhodiola rosea, folate.',
     effectiveness: 'Popular OTC option; individual response varies.',
     badges: ['Menopause Support', 'Non-Hormonal'],
     verificationLinks: {
-      doctor: { links: [{ url: 'https://www.menopause.org/for-women/menopause-faqs-management-of-menopause-symptoms', text: 'NAMS: Menopause symptoms', summary: 'Clinical guidance on non-hormonal options for menopause.', justification: 'NAMS is the leading menopause society.' }] },
-      scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/16897664/', text: 'Phytoestrogens and menopause', summary: 'Review of soy isoflavones for vasomotor symptoms.', justification: 'PubMed peer-reviewed.' }] },
+      doctor: { links: [] },
+      scientific: { links: [] },
       community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/Menopause/search/?q=estroven&restrict_sr=1', text: 'Reddit r/Menopause: Estroven', summary: 'Community discussions on Estroven and menopause supplements.' }] }
     }
   },
@@ -428,14 +441,14 @@ export const MVP_PHYSICAL = [
     internal: false,
     healthFunctions: ['supplement'],
     tags: ['menopause', 'discomfort', 'organic'],
-    price: '$15 for 40 tablets',
+    price: '$17 for 60 tablets',
     userRating: 4.3,
     whereToBuy: ['CVS', 'Walmart', 'Amazon', 'iHerb'],
-    image: 'https://www.remifemin.com/wp-content/uploads/cropped-Favicon-Remifemin-1-180x180.png',
+    image: '',
     summary: 'Standardized black cohosh for hot flashes and menopause symptoms. One of the most studied herbal options.',
     safety: { fdaStatus: 'Dietary supplement', materials: 'Black cohosh', recalls: 'No recalls.', allergens: 'Check label', sideEffects: 'Generally well tolerated short-term. Rare reports of stomach upset or headache. Black cohosh has rare case reports of liver concerns. Stop and see a clinician if you notice unusual fatigue, abdominal pain, or jaundice.' },
     clinicianOpinionSource: 'independent',
-    clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+    clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
     doctorOpinion: 'Black cohosh has the most clinical data among herbal options for vasomotor symptoms.',
     communityReview: 'Community discussions on Reddit r/Menopause note reduction in hot flashes within weeks.',
     ingredients: 'Black cohosh extract (standardized).',
@@ -443,7 +456,7 @@ export const MVP_PHYSICAL = [
     badges: ['Herbal', 'Menopause'],
     verificationLinks: {
       doctor: { links: [{ url: 'https://www.nccih.nih.gov/health/black-cohosh', text: 'NIH: Black cohosh', summary: 'NIH overview of black cohosh for menopause symptoms.', justification: 'NIH NCCIH is the federal authority on complementary health.' }] },
-      scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/16897664/', text: 'Black cohosh for hot flashes', summary: 'Review of black cohosh and vasomotor symptoms.', justification: 'PubMed peer-reviewed.' }] },
+      scientific: { links: [] },
       community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/Menopause/search/?q=black+cohosh&restrict_sr=1', text: 'Reddit r/Menopause: black cohosh', summary: 'Community discussions on Remifemin and hot flashes.' }] }
     }
   },
@@ -457,10 +470,10 @@ export const MVP_PHYSICAL = [
     internal: false,
     healthFunctions: ['supplement', 'fitness-cycle'],
     tags: ['creatine', 'menopause', 'energy', 'discomfort', 'cost'],
-    price: '$15–25 for 300–500g',
+    price: '$25–40 for 300–500g',
     userRating: 4.5,
     whereToBuy: ['Amazon', 'iHerb', 'Thorne.com', 'CVS'],
-    image: 'https://www.thorne.com/favicon.ico',
+    image: 'https://d1vo8zfysxy97v.cloudfront.net/media/product/sf903__ve8382489c6ce9fb7f28cdddef00e6f1ece146591.png',
     summary: 'Creatine supports muscle strength, cognitive function, and energy. Evidence-based for perimenopause: helps preserve lean mass, may improve brain fog and sleep when combined with resistance training.',
     safety: { fdaStatus: 'Dietary supplement', materials: 'Creatine monohydrate', recalls: 'No recalls.', allergens: 'Vegan options available', sideEffects: 'Well studied and generally safe. May cause mild water retention or stomach upset when starting. Stay well hydrated and consider starting at a lower dose.' },
     clinicianOpinionSource: 'independent',
@@ -470,7 +483,7 @@ export const MVP_PHYSICAL = [
     ingredients: 'Creatine monohydrate (typically 3–5 g daily).',
     effectiveness: 'Strong evidence for strength and lean mass; growing evidence for cognitive and sleep benefits in menopausal women.',
     badges: ['Evidence-Based', 'Perimenopause Support'],
-    verificationLinks: { doctor: { links: [{ url: 'https://www.menopause.org/for-women/menopause-faqs-management-of-menopause-symptoms', text: 'NAMS: Menopause and exercise', summary: 'Clinical guidance on strength and supplements in perimenopause.', justification: 'NAMS is the leading menopause society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/16897664/', text: 'Creatine and women', summary: 'Research on creatine for muscle and cognition in women.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/Menopause/search/?q=creatine&restrict_sr=1', text: 'Reddit r/Menopause: creatine', summary: 'Community discussions on creatine for perimenopause.' }] } }
+    verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/Menopause/search/?q=creatine&restrict_sr=1', text: 'Reddit r/Menopause: creatine', summary: 'Community discussions on creatine for perimenopause.' }] } }
   }
 ];
 
@@ -488,17 +501,21 @@ export const MVP_DIGITAL = [
     userRating: 4.5,
     whereToBuy: ['Nurx.com'],
     platform: 'Web, app',
-    image: 'https://www.nurx.com/wp-content/themes/nurx-theme-lazyload/favicon/nurx.png',
+    url: 'https://www.nurx.com/',
+    // App Store icon — confirmed via Apple's iTunes Search API (real, brand-
+    // name-matched result: "Nurx: Birth Control Delivered" by Thirty Madison,
+    // Inc., the real company behind Nurx). Verified the icon loads before using.
+    image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/4b/c9/d9/4bc9d930-40a1-9566-2ec1-83a23ae06789/AppIcon-0-0-1x_U007ephone-0-1-85-220.png/512x512bb.jpg',
     summary: 'Online birth control prescriptions and delivery. Pills, patch, ring. No in-person visit required in many states. Accepts insurance.',
     safety: { fdaStatus: 'Prescription via licensed clinicians', materials: 'N/A', recalls: 'N/A', allergens: 'N/A', sideEffects: 'Nurx is a telehealth service rather than a medication. Risks and side effects depend on the specific contraceptive or treatment prescribed and should be reviewed with the prescribing clinician.' },
     privacy: { dataStorage: 'US', sellsData: 'Check policy', hipaa: 'HIPAA-compliant for Rx', keyPolicy: 'Prescription service' },
     clinicianOpinionSource: 'independent',
-    clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+    clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
     doctorOpinion: 'Telehealth increases access to contraception. Same safety standards as in-person care.',
-    communityReview: 'Community discussions on Reddit r/birthcontrol note convenience and quick delivery.',
+    communityReview: 'Community sentiment is mixed. Many Reddit r/birthcontrol users value the convenience of prescription delivery, but independent review platforms show a real gap versus the company\'s own ratings, with recurring complaints about shipping delays, insurance billing, and cancellation difficulty. A 2019 New York Times report also found Nurx had reshipped previously returned, unopened birth control pills to new customers, a practice the company says it ended in 2018.',
     effectiveness: 'Same efficacy as pharmacy-filled prescriptions.',
     badges: ['Telehealth', 'Privacy'],
-    verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/combined-hormonal-birth-control', text: 'ACOG: Birth control', summary: 'Clinical guidance on contraception and access.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/32324464/', text: 'Telehealth and contraception', summary: 'Evidence on telehealth for prescription access.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/birthcontrol/search/?q=nurx&restrict_sr=1', text: 'Reddit r/birthcontrol: Nurx', summary: 'Community discussions on telehealth birth control.' }] } }
+    verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/birthcontrol/search/?q=nurx&restrict_sr=1', text: 'Reddit r/birthcontrol: Nurx', summary: 'Community discussions on telehealth birth control.' }] } }
   },
   {
     id: 'd-wisp-bc',
@@ -518,12 +535,12 @@ export const MVP_DIGITAL = [
     safety: { fdaStatus: 'Prescription via licensed clinicians', materials: 'N/A', recalls: 'N/A', allergens: 'N/A', sideEffects: 'Wisp is a telehealth service rather than a medication. Risks and side effects depend on the specific treatment prescribed and should be reviewed with the prescribing clinician.' },
     privacy: { dataStorage: 'US', sellsData: 'Check policy', hipaa: 'HIPAA-compliant for Rx', keyPolicy: 'Prescription service' },
     clinicianOpinionSource: 'independent',
-    clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+    clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
     doctorOpinion: 'Telehealth increases access to contraception. Same safety standards as in-person care.',
     communityReview: 'Community discussions on Reddit r/birthcontrol note fast turnaround and discreet packaging.',
     effectiveness: 'Same efficacy as pharmacy-filled prescriptions.',
     badges: ['Telehealth', 'Privacy'],
-    verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/combined-hormonal-birth-control', text: 'ACOG: Birth control', summary: 'Clinical guidance on contraception and access.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/32324464/', text: 'Telehealth and contraception', summary: 'Evidence on telehealth for prescription access.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/birthcontrol/search/?q=wisp&restrict_sr=1', text: 'Reddit r/birthcontrol: Wisp', summary: 'Community discussions on telehealth birth control.' }] } }
+    verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/birthcontrol/search/?q=wisp&restrict_sr=1', text: 'Reddit r/birthcontrol: Wisp', summary: 'Community discussions on telehealth birth control.' }] } }
   },
   {
     id: 'd-happi-pelvic',
@@ -539,19 +556,22 @@ export const MVP_DIGITAL = [
     whereToBuy: ['App Store', 'Google Play'],
     platform: 'iOS, Android',
     // happiapp.com is a HugeDomains parking listing, not this app's real site —
-    // couldn't confirm an official domain to source a real image from.
-    image: '/ayna_placeholder.png',
+    // couldn't confirm an official domain to source a real image from. Empty,
+    // not the literal /ayna_placeholder.png path — that file is Ayna's own
+    // marketing image, hardcoding it here would render OUR branding as if it
+    // were a photo of Happi's app. Empty correctly falls back to a letter avatar.
+    image: '',
     summary: 'Pelvic floor exercise app with guided Kegels and programs. Often recommended by pelvic PTs.',
     safety: { fdaStatus: 'N/A', materials: 'N/A', recalls: 'N/A', allergens: 'N/A', sideEffects: 'No physical side effects. This is a training app, not a device or medication. As with any pelvic floor exercise program, working too hard too fast can cause temporary muscle soreness.' },
     privacy: { dataStorage: 'Check app', sellsData: 'Check policy', hipaa: 'N/A', keyPolicy: 'Health data' },
     clinicianOpinionSource: 'independent',
-    clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+    clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
     doctorOpinion: 'App-guided pelvic floor training can improve adherence when used consistently.',
     communityReview: 'Community discussions on App Store note simplicity and PT recommendations for home use.',
     effectiveness: 'Structured programs for pelvic floor strength.',
     badges: ['Pelvic Health', 'PT Recommended'],
     recommendationWhyDetail: 'Happi guides you through pelvic floor exercises the way a physical therapist would. With timing, breathing cues, and progressive difficulty. The pelvic floor is a hammock of muscles you can\'t see or feel easily, which makes Kegels notoriously easy to do wrong (many people inadvertently bear down instead of lifting). An app with structured programs and reminders dramatically improves consistency, which is what makes pelvic floor training effective over time.',
-    verificationLinks: { doctor: { links: [{ url: 'https://www.acog.org/womens-health/faqs/pelvic-floor-disorders', text: 'ACOG: Pelvic floor', summary: 'Clinical guidance on pelvic floor exercises and apps.', justification: 'ACOG is the leading OB-GYN society.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/26989760/', text: 'Pelvic floor training', summary: 'Evidence on Kegels and app-guided programs.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/PelvicFloor/search/?q=app&restrict_sr=1', text: 'Reddit r/PelvicFloor', summary: 'Community discussions on pelvic floor apps.' }] } }
+    verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/PelvicFloor/search/?q=app&restrict_sr=1', text: 'Reddit r/PelvicFloor', summary: 'Community discussions on pelvic floor apps.' }] } }
   },
   {
     id: 'd-hers',
@@ -566,18 +586,17 @@ export const MVP_DIGITAL = [
     userRating: 4.4,
     whereToBuy: ['forhers.com'],
     platform: 'Web, iOS, Android',
-    // forhers.com currently returns 403 (bot-challenge) on plain fetch.
-    image: '/ayna_placeholder.png',
+    image: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/dd/b6/45/ddb645c3-4a99-9bcc-8603-9d47b9d4d912/HersIcon-0-0-1x_U007emarketing-0-6-0-85-220.png/512x512bb.jpg',
     summary: 'Ro\'s brand for women. Telehealth for anxiety, depression, and skin. Prescriptions and products delivered with ongoing support.',
     safety: { fdaStatus: 'Prescription via licensed clinicians', materials: 'N/A', recalls: 'N/A', allergens: 'N/A', sideEffects: 'Hers is a telehealth service rather than a medication. Risks and side effects depend on the specific medication or treatment prescribed and should be reviewed with the prescribing clinician.' },
     privacy: { dataStorage: 'US', sellsData: 'Check policy', hipaa: 'HIPAA-compliant for Rx', keyPolicy: 'Telehealth and prescription service' },
     clinicianOpinionSource: 'independent',
-    clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+    clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
     doctorOpinion: 'Telehealth improves access to mental health and dermatology. Same clinical standards as in-person care.',
     communityReview: 'Community discussions on Reddit note convenience and discrete access to medication.',
     effectiveness: 'Licensed clinicians; prescriptions same as in-person.',
     badges: ['Telehealth', 'Mental Health'],
-    verificationLinks: { doctor: { links: [{ url: 'https://www.apa.org/ptsd/guide', text: 'APA: Mental health treatment', summary: 'Clinical guidance on telehealth and mental health access.', justification: 'APA is the leading psychology association.' }] }, scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/32324464/', text: 'Telehealth and mental health', summary: 'Evidence on virtual care for anxiety and depression.', justification: 'PubMed peer-reviewed.' }] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/mentalhealth/search/?q=hers&restrict_sr=1', text: 'Reddit r/mentalhealth', summary: 'Community discussions on Hers and telehealth.' }] } }
+    verificationLinks: { doctor: { links: [{ url: 'https://www.apa.org/ptsd/guide', text: 'APA: Mental health treatment', summary: 'Clinical guidance on telehealth and mental health access.', justification: 'APA is the leading psychology association.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/mentalhealth/search/?q=hers&restrict_sr=1', text: 'Reddit r/mentalhealth', summary: 'Community discussions on Hers and telehealth.' }] } }
   },
   {
     id: 'd-midi-health',
@@ -590,21 +609,21 @@ export const MVP_DIGITAL = [
     tags: ['menopause', 'comfort', 'privacy', 'hormone-monitoring'],
     price: 'Membership / per visit; varies by plan and state',
     userRating: 4.5,
-    whereToBuy: ['midihealth.com'],
+    whereToBuy: ['joinmidi.com'], // midihealth.com no longer resolves; joinmidi.com is the brand's real current domain (confirmed via its own image CDN host, joinmidi-marketing.prismic.io, and page title)
     platform: 'Web, iOS, Android',
     image: 'https://images.prismic.io/joinmidi-marketing/Z92tBjxkOkZ2kJPK_3-clinician-1x1.jpg?auto=format%2Ccompress&rect=0%2C44%2C1440%2C756&w=2400&h=1260',
     summary: 'Virtual women\'s health clinic focused on perimenopause and menopause: visits with clinicians, personalized care plans, and prescription support (e.g. hormone therapy) where appropriate, without needing an in-person visit in many areas.',
     safety: { fdaStatus: 'Prescription via licensed clinicians', materials: 'N/A', recalls: 'N/A', allergens: 'N/A', sideEffects: 'Midi Health is a telehealth service rather than a treatment itself. Risks and side effects depend on the specific treatment prescribed, including hormone therapy when appropriate, and should be reviewed with the clinician.' },
     privacy: { dataStorage: 'US', sellsData: 'Check policy', hipaa: 'HIPAA-compliant for clinical care', keyPolicy: 'Telehealth and prescription service' },
     clinicianOpinionSource: 'independent',
-    clinicianAttribution: 'Ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+    clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
     doctorOpinion: 'Virtual access can help women navigate perimenopause and menopause symptoms and discuss hormone therapy with licensed clinicians using the same standards as in-person care.',
     communityReview: 'Community discussions on Reddit r/Menopause note convenience of virtual visits and clinician-led plans for midlife symptoms.',
     effectiveness: 'Licensed clinicians; prescriptions and follow-up same framework as in-person menopause care when clinically indicated.',
     badges: ['Telehealth', 'Menopause'],
     verificationLinks: {
-      doctor: { links: [{ url: 'https://www.menopause.org/for-women/menopause-faqs-management-of-menopause-symptoms', text: 'NAMS: Managing menopause symptoms', summary: 'Clinical guidance on menopause care and treatment options.', justification: 'NAMS is the leading menopause society.' }] },
-      scientific: { links: [{ url: 'https://pubmed.ncbi.nlm.nih.gov/32324464/', text: 'Telehealth in women\'s health', summary: 'Evidence on virtual care access for chronic and specialty needs.', justification: 'PubMed peer-reviewed.' }] },
+      doctor: { links: [] },
+      scientific: { links: [] },
       community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/Menopause/search/?q=telehealth&restrict_sr=1', text: 'Reddit r/Menopause: telehealth', summary: 'Community discussions on virtual menopause care.' }] }
     }
   },
@@ -627,7 +646,7 @@ export const MVP_DIGITAL = [
     safety: { fdaStatus: 'Clinical care via licensed professionals; not an emergency service', materials: 'N/A', recalls: 'N/A', allergens: 'N/A', sideEffects: 'Pomelo Care is a virtual care service rather than a treatment itself. Risks and side effects depend on any specific treatment or medication recommended and should be reviewed with the care team.' },
     privacy: { dataStorage: 'US', sellsData: 'Check policy', hipaa: 'HIPAA-aligned clinical platform', keyPolicy: 'Virtual women\'s and pediatric care; confirm coverage with your plan' },
     clinicianOpinionSource: 'independent',
-    clinicianAttribution: 'Ayna synthesis of public program descriptions and clinical norms. Not a direct clinician quote.',
+    clinicianAttribution: 'ayna synthesis of public program descriptions and clinical norms. Not a direct clinician quote.',
     doctorOpinion: 'Integrated virtual maternity and women\'s health programs can improve access to education, triage, and follow-up between in-person visits; eligibility and scope depend on your plan.',
     communityReview: 'Patients often cite fast responses and coordinated support across pregnancy and postpartum; access is plan-dependent.',
     effectiveness: 'Team-based virtual care with evidence-based protocols; outcomes vary by population and program design.',

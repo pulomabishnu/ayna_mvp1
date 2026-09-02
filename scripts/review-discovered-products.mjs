@@ -5,16 +5,26 @@
  *   node scripts/review-discovered-products.mjs list [category]
  *   node scripts/review-discovered-products.mjs approve <id> [id2 id3 ...]
  *   node scripts/review-discovered-products.mjs reject <id> [id2 id3 ...]
+ *   node scripts/review-discovered-products.mjs auto-approved [category]
  *
  * Requires SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in the environment
  * (same as scripts/migrate-premium-flag.mjs — Dashboard -> Project Settings
  * -> API -> the SERVICE ROLE key, never the anon key).
  *
- * WHY THIS IS A SCRIPT AND NOT AUTO-APPROVAL: every product on this site
- * carries a real safety/clinical review, and the site's own How We Make Money
- * page promises that bar applies to everything, no exceptions. `approve` is
- * the ONLY thing that flips a discovered row's is_active to true — nothing
- * else in the discovery pipeline can do that. Read what you're approving.
+ * WHY THIS IS A SCRIPT AND NOT ALWAYS AUTO-APPROVAL: every product on this
+ * site carries a real safety/clinical review, and the site's own How We Make
+ * Money page promises that bar applies to everything, no exceptions. `approve`
+ * is normally the ONLY thing that flips a discovered row's is_active to true.
+ *
+ * The one narrow exception (policy decision, Aditi, 2026-08-23):
+ * api/discover-products.js's isAutoApprovable() lets a candidate skip
+ * straight to is_active=true WITHOUT this script, but only when it cleared
+ * both a fully-answered clean FDA recall check and had a real https source
+ * URL — see that function's comment for the exact bar. Those rows are
+ * tagged `discovery_meta.autoApproved: true` so they stay auditable here via
+ * `auto-approved` even though they never showed up in `list`. `reject` still
+ * works on them exactly like any other discovered row, immediately pulling
+ * one back offline if a spot-check finds a problem.
  */
 import { createClient } from '@supabase/supabase-js';
 
@@ -80,6 +90,32 @@ async function list(category) {
   console.log(`Reject with:   node scripts/review-discovered-products.mjs reject ${data[0].id} [...]`);
 }
 
+async function listAutoApproved(category) {
+  let query = admin
+    .from('product_catalog')
+    .select('*')
+    .eq('source', 'discovered')
+    .eq('review_status', 'approved')
+    .eq('discovery_meta->>autoApproved', 'true')
+    .order('created_at', { ascending: false });
+  if (category) query = query.eq('category', category);
+
+  const { data, error } = await query;
+  if (error) {
+    console.error('Query failed:', error.message);
+    process.exit(1);
+  }
+  if (!data?.length) {
+    console.log(category
+      ? `No auto-approved discovered products in category "${category}".`
+      : 'No auto-approved discovered products yet.');
+    return;
+  }
+  console.log(`${data.length} auto-approved discovered product(s)${category ? ` in "${category}"` : ''} — already live, spot-check and reject if anything looks wrong:`);
+  data.forEach(printProduct);
+  console.log(`\nPull one offline with:  node scripts/review-discovered-products.mjs reject ${data[0].id}`);
+}
+
 async function setStatus(ids, status) {
   if (!ids.length) {
     console.error(`Usage: node scripts/review-discovered-products.mjs ${status === 'approved' ? 'approve' : 'reject'} <id> [id2 ...]`);
@@ -108,6 +144,8 @@ async function setStatus(ids, status) {
 
 if (cmd === 'list') {
   await list(args[0]);
+} else if (cmd === 'auto-approved') {
+  await listAutoApproved(args[0]);
 } else if (cmd === 'approve') {
   await setStatus(args, 'approved');
 } else if (cmd === 'reject') {
@@ -115,6 +153,7 @@ if (cmd === 'list') {
 } else {
   console.log('Usage:');
   console.log('  node scripts/review-discovered-products.mjs list [category]');
+  console.log('  node scripts/review-discovered-products.mjs auto-approved [category]');
   console.log('  node scripts/review-discovered-products.mjs approve <id> [id2 ...]');
   console.log('  node scripts/review-discovered-products.mjs reject <id> [id2 ...]');
   process.exit(cmd ? 2 : 0);

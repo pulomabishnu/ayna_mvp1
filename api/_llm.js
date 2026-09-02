@@ -317,15 +317,46 @@ export async function callWithFallback(order, args = {}) {
       if (provider === 'openai') return await callOpenAI({ ...args, ...(args.openai || {}) });
       if (provider === 'gemini') return await callGemini({ ...args, ...(args.gemini || {}) });
     } catch (e) {
-      console.error(`[llm] ${provider} failed:`, e?.status || '', e?.message, e?.body ? `| ${e.body}` : '');
-      errors.push(e);
+      // Some abort paths create an LlmError before the provider name is
+      // attached. Preserve the provider being attempted so production logs
+      // never collapse into the unhelpful "undefined=err".
+      const normalized = e instanceof LlmError
+        ? e
+        : new LlmError(e?.message || String(e), {
+            provider,
+            status: e?.status || 0,
+            retryable: Boolean(e?.retryable),
+            body: e?.body || '',
+          });
+
+      if (!normalized.provider) normalized.provider = provider;
+
+      console.error(
+        `[llm] ${provider} failed:`,
+        normalized.status || '',
+        normalized.message,
+        normalized.body ? `| ${normalized.body}` : ''
+      );
+
+      errors.push(normalized);
+
       if (args.signal?.aborted) break;
     }
   }
+
   const first = errors[0];
+
   throw new LlmError(
-    errors.length ? `all providers failed: ${errors.map((e) => `${e.provider}=${e.status || 'err'}`).join(', ')}` : 'no provider configured',
-    { provider: first?.provider || 'none', status: first?.status || 0, body: first?.body || '' }
+    errors.length
+      ? `all providers failed: ${errors
+          .map((e) => `${e.provider || 'unknown'}=${e.status || 'err'}`)
+          .join(', ')}`
+      : 'no provider configured',
+    {
+      provider: first?.provider || 'none',
+      status: first?.status || 0,
+      body: first?.body || '',
+    }
   );
 }
 
@@ -379,4 +410,25 @@ export function tryParseJsonCandidate(raw) {
     }
   }
   return null;
+}
+
+/**
+ * Last-line-of-defense for the "never diagnose" rule in chat-style prompts
+ * (ask-ayna.js, product-chat.js): a prompt instruction alone is a request,
+ * not a guarantee, so this catches the model literally using diagnostic
+ * language even after being told not to. It cannot catch every way a model
+ * could still name a condition without the word itself — the prompt rule is
+ * the real defense — this is only the net under it.
+ */
+const DIAGNOSTIC_LANGUAGE_PATTERNS = [
+  [/\bdiagnos(e[sd]?|is|ing|able)\b/gi, "can't say for certain"],
+];
+
+export function stripDiagnosticLanguage(text) {
+  if (typeof text !== 'string') return text;
+  let out = text;
+  for (const [pattern, replacement] of DIAGNOSTIC_LANGUAGE_PATTERNS) {
+    out = out.replace(pattern, replacement);
+  }
+  return out;
 }

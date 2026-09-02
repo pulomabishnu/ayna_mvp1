@@ -43,7 +43,10 @@ const wideIntake = {
 };
 
 /**
- * Expands to 17 concerns, i.e. genuinely past MAX_CONCERNS (12).
+ * Expands to 22 concerns, i.e. genuinely past MAX_CONCERNS (20, raised from
+ * 18 on 2026-08-25 when the quiz grew from 16 to 18 checkbox options, itself
+ * raised from 12 — the quiz explicitly lets a user pick more than that; see
+ * MAX_CONCERNS's own comment in llm-recommendations.js).
  * wideIntake is NOT sufficient to test the cap — at 9 concerns an uncapped
  * handler produces the same call count as a capped one, so the assertion
  * passes either way. This intake is what makes the cap observable.
@@ -54,7 +57,7 @@ const hugeIntake = {
   conditions: ['PCOS', 'Endometriosis', 'perimenopause'],
   symptoms: ['bloating', 'cramps', 'insomnia', 'mood', 'acne', 'fatigue', 'UTI', 'gut'],
   goals: ['fertility', 'gut health', 'menopause', 'UTI', 'hormone balance', 'sleep', 'skin', 'energy', 'mental health'],
-  customConcerns: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
+  customConcerns: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M'],
 };
 
 /** One well-formed concern payload, shaped as the prompt schema requires. */
@@ -211,11 +214,11 @@ describe('POST /api/llm-recommendations — client-controlled fan-out caps', () 
     const handler = await loadHandler();
     const res = mockRes();
 
-    // hugeIntake expands to 17 concerns; exactly 12 may reach the provider.
+    // hugeIntake expands to 22 concerns; exactly 20 may reach the provider.
     await handler(mockReq({ body: { intake: hugeIntake, buildId: 'b-7' } }), res);
 
     expect(res.statusCode).toBe(200);
-    expect(globalThis.fetch.mock.calls.length).toBe(12);
+    expect(globalThis.fetch.mock.calls.length).toBe(20);
   });
 
   it('clamps a negative batchIndex instead of slicing backwards', async () => {
@@ -271,8 +274,54 @@ describe('POST /api/llm-recommendations — function budget / deadline guard', (
     expect(res.body.delivered).toBe(2);
     expect(res.body.partial).toBe(true);
     expect(res.body.failedConcerns.length).toBe(7);
+    // Reason travels with each failed concern so a future incident is
+    // diagnosable from the response alone (see api/llm-recommendations.js's
+    // mapConcurrent comment — this was previously an undiagnosable-after-
+    // the-fact live bug).
+    expect(res.body.failedConcernReasons.length).toBe(7);
+    expect(res.body.failedConcernReasons.every((f) => f.reason === 'function_budget_exhausted')).toBe(true);
+    expect(res.body.failedConcernReasons.every((f) => typeof f.concern === 'string' && f.concern.length > 0)).toBe(true);
 
     dateSpy.mockRestore();
+  });
+
+  it('reports a real provider failure reason, not just the concern name, and does not misclassify it as a success', async () => {
+    restoreEnv();
+    restoreEnv = withEnv({
+      SUPABASE_URL: 'https://x.supabase.co',
+      SUPABASE_SERVICE_ROLE_KEY: 'service-key',
+      ANTHROPIC_API_KEY: 'test-key',
+      OPENAI_API_KEY: undefined,
+      AI_RECOMMENDATIONS_PROVIDER_ORDER: 'anthropic',
+      LLM_CONCERN_CONCURRENCY: '2',
+    });
+
+    // First concern's every retry attempt gets a non-retryable 401 (fails
+    // fast, no fallback provider configured); the rest succeed. This is the
+    // shape a real "no OpenAI key configured, Anthropic single point of
+    // failure" incident takes — a subset of concerns fail while the rest
+    // deliver, which is exactly the case the misleading "We couldn't build
+    // your ecosystem" banner (fixed in MyEcosystem.jsx) used to mishandle.
+    let callCount = 0;
+    globalThis.fetch = vi.fn(async () => {
+      callCount += 1;
+      if (callCount === 1) {
+        return { ok: false, status: 401, headers: { get: () => null }, text: async () => 'invalid api key' };
+      }
+      return anthropicOk(recPayload());
+    });
+
+    const handler = await loadHandler();
+    const res = mockRes();
+    await handler(mockReq({ body: { intake: wideIntake, buildId: 'b-provider-fail' } }), res);
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.partial).toBe(true);
+    expect(res.body.failedConcerns.length).toBe(1);
+    expect(res.body.failedConcernReasons.length).toBe(1);
+    expect(res.body.failedConcernReasons[0].reason).toBe('anthropic_401');
+    // The other 8 concerns actually succeeded — must not appear as failed.
+    expect(res.body.delivered).toBe(8);
   });
 });
 
@@ -347,5 +396,27 @@ describe('POST /api/llm-recommendations — PII never reaches the provider', () 
     expect(allPrompts).not.toContain('real@person.com');
     expect(allPrompts).not.toContain('Real Person');
     expect(allPrompts).not.toContain('123 Main St');
+  });
+});
+
+describe('POST /api/llm-recommendations — FSA/HSA prioritization', () => {
+  // Live gap (2026-08-24 meeting): FSA/HSA was passed to the prompt as inert
+  // context with no instruction to act on it — Puloma explicitly asked for
+  // eligible products to be prioritized. Pins that the rule text is actually
+  // there now, not just the raw field.
+  it('instructs the model to prioritize FSA/HSA-eligible products when the user has one', async () => {
+    let sentBody = null;
+    globalThis.fetch = vi.fn(async (_url, init) => {
+      sentBody = JSON.parse(init.body);
+      return anthropicOk(recPayload());
+    });
+    const handler = await loadHandler();
+    const res = mockRes();
+
+    await handler(mockReq({ body: { intake: { ...wideIntake, fsaHsa: 'hsa' }, buildId: 'b-fsa' } }), res);
+
+    const prompt = sentBody.messages[0].content;
+    expect(prompt).toContain('FSA/HSA: hsa');
+    expect(prompt).toMatch(/prioritize FSA\/HSA-eligible products/i);
   });
 });
