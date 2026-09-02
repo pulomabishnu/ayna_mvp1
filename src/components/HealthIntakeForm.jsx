@@ -180,12 +180,11 @@ function TextInput({ value, onChange, placeholder, type = 'text' }) {
   );
 }
 
-// Popular default suggestions shown before the user types anything, so the
-// picker isn't a blank box on a screen whose whole job is "search for a
-// product" — sorted by userRating, the same quality signal Discovery uses.
+// Neutral default suggestions shown before the user types anything.
+// Do not use unsourced catalog ratings as a quality or popularity signal.
 const DEFAULT_PRODUCT_SUGGESTIONS = ALL_PRODUCTS
-  .filter((p) => p.name && p.userRating != null)
-  .sort((a, b) => b.userRating - a.userRating)
+  .filter((p) => p.name)
+  .sort((a, b) => a.name.localeCompare(b.name))
   .slice(0, 12);
 
 const normalizeForMatch = (s) => String(s || '').toLowerCase().replace(/\s+/g, '');

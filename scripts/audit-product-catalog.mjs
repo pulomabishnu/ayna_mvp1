@@ -189,7 +189,7 @@ for (const product of ALL_PRODUCTS) {
     );
   }
 
-  if (!community.length && !product.communityReviewSourceUrl) {
+  if (product.communityReview && !community.length && !product.communityReviewSourceUrl) {
     add(
       warnings,
       product,

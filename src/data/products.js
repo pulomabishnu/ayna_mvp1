@@ -301,9 +301,9 @@ export const PHYSICAL_PRODUCTS = [
             opinionAlerts: 'Steep learning curve. Users often report a 2-3 cycle adjustment period before mastering the product.'
         },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Dr. Jen Gunter, OB-GYN. Source: ELLE Canada.',
-        doctorOpinion: '"You can\'t say that menstrual cups are medically better than tampons, but they\'re a great, valid choice for many women.". Dr. Jen Gunter, OB-GYN',
-        communityReview: 'Community discussions on Reddit r/menstrualcups note life-changing experiences and strong performance on heavy days.',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        doctorOpinion: 'Menstrual cups are a reusable menstrual-management option. Evidence supports their general safety and effectiveness when used correctly, but that evidence does not establish this specific cup as medically superior to other menstrual products.',
+        communityReview: 'Community discussions on Reddit r/menstrualcups include anecdotal experiences with menstrual cups, including use on heavier-flow days; individual experiences vary.',
         ingredients: '100% medical-grade silicone (USP Class VI certified).',
         effectiveness: 'Holds 25mL (regular) to 37mL (large). Significantly more than tampons. Up to 12-hour wear.',
         badges: ['Female-Owned', 'B-Corp', 'Sustainable'],
@@ -613,11 +613,11 @@ export const PHYSICAL_PRODUCTS = [
             opinionAlerts: 'Main complaint is the high price point compared to standard CoQ10 supplements. Some users find the large softgels difficult to swallow.'
         },
         clinicianOpinionSource: 'independent',
-        clinicianAttribution: 'Dr. Jolene Brighten, NMD, board-certified naturopathic endocrinologist; author (Beyond the Pill). Not brand-affiliated.',
-        doctorOpinion: '"Ubiquinol is frequently recommended for women over 35 to support mitochondrial health and egg quality. Thorne\'s NSF certification ensures purity and potency.". Dr. Jolene Brighten, NMD',
+        clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
+        doctorOpinion: 'CoQ10 and ubiquinol have been studied for mitochondrial function and reproductive-health outcomes, but ingredient-level evidence does not establish that this specific Thorne product improves egg quality or fertility outcomes.',
         communityReview: 'Community discussions on Reddit r/TTC35 note clinician recommendations and satisfaction with quality; NSF certification valued.',
         ingredients: 'Ubiquinol 100mg, Olive Oil, Gelatin, Glycerin, Water, Lycopene.',
-        effectiveness: 'Studies show Ubiquinol improves oocyte quality and mitochondrial function, potentially improving fertility outcomes.',
+        effectiveness: 'CoQ10 and ubiquinol have been studied for mitochondrial and reproductive-health outcomes. The evidence cited should not be interpreted as proof that this specific product improves fertility outcomes.',
         badges: ['Clinically Validated', 'High Bioavailability'],
         verificationLinks: {
             doctor: { url: 'https://drbrighten.com/coq10-for-fertility/', text: 'Dr. Jolene Brighten on CoQ10', summary: 'Expert explanation of how CoQ10/Ubiquinol supports egg health and hormone balance.' },

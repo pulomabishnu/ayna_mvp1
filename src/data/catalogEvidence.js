@@ -156,6 +156,125 @@ export const PRODUCT_EVIDENCE_KEYS = {
   'p-tena-intimates-very-light-liner': ['incontinenceAbsorbentProducts']
 };
 
+export const PRIVACY_REVIEW_REQUIRED_IDS = new Set([
+  'd-clue',
+  'd-nurx-bc',
+  'd-wisp-bc',
+  'd-hers',
+  'd-midi-health',
+  'd-natural-cycles',
+  'd-glow',
+  'd-maven',
+  'd-tia',
+  'd-ppd',
+  'd-initio',
+  'd-apple-health',
+  'd-visana',
+  'd-evernow'
+]);
+
+function applyPrivacyReviewGuardrail(product) {
+  if (!PRIVACY_REVIEW_REQUIRED_IDS.has(product?.id)) return product;
+
+  return {
+    ...product,
+    privacy: {
+      dataStorage: 'Review the provider current privacy policy for data storage details.',
+      sellsData: 'Review the provider current privacy policy for data sharing and sale disclosures.',
+      hipaa: 'Review the provider current privacy notices for applicable privacy protections.',
+      keyPolicy: 'Privacy practices can change. Verify the provider current policy before sharing sensitive health information.'
+    }
+  };
+}
+
+function applyRecallReviewGuardrail(product) {
+  const recalls = String(product?.safety?.recalls || '').trim();
+
+  if (!/^(no|no known) recalls?\.?$/i.test(recalls)) return product;
+
+  return {
+    ...product,
+    safety: {
+      ...(product.safety || {}),
+      recalls: 'Check current regulator and manufacturer recall notices.'
+    }
+  };
+}
+
+function hasEvidenceScope(link) {
+  const text = `${link?.text || ''} ${link?.summary || ''} ${link?.justification || ''}`.toLowerCase();
+  return /product|specific|category|general|intervention|adjacent|does not validate|not specific|not validate/.test(text);
+}
+
+function addConservativeEvidenceScope(link) {
+  if (!link || hasEvidenceScope(link)) return link;
+
+  return {
+    ...link,
+    justification: [
+      link.justification,
+      'Conservative ayna classification: category or adjacent evidence only; this source does not validate this specific product.'
+    ].filter(Boolean).join(' ')
+  };
+}
+
+function applyEvidenceScopeGuardrail(product) {
+  const scientific = product?.verificationLinks?.scientific;
+  if (!scientific) return product;
+
+  let scopedScientific = scientific;
+
+  if (Array.isArray(scientific)) {
+    scopedScientific = scientific.map(addConservativeEvidenceScope);
+  } else if (Array.isArray(scientific.links)) {
+    scopedScientific = {
+      ...scientific,
+      links: scientific.links.map(addConservativeEvidenceScope)
+    };
+  } else if (scientific.url) {
+    scopedScientific = addConservativeEvidenceScope(scientific);
+  }
+
+  return {
+    ...product,
+    verificationLinks: {
+      ...(product.verificationLinks || {}),
+      scientific: scopedScientific
+    }
+  };
+}
+
+function applyRatingSourceGuardrail(product) {
+  if (product?.userRating == null || product?.userRatingSourceUrl) return product;
+
+  return {
+    ...product,
+    userRating: null
+  };
+}
+
+function hasCommunitySource(product) {
+  if (product?.communityReviewSourceUrl) return true;
+
+  const community = product?.verificationLinks?.community;
+  if (!community) return false;
+
+  if (Array.isArray(community)) return community.some((link) => link?.url);
+  if (Array.isArray(community.links)) return community.links.some((link) => link?.url);
+  if (community.url) return true;
+
+  return false;
+}
+
+function applyCommunitySourceGuardrail(product) {
+  if (!product?.communityReview || hasCommunitySource(product)) return product;
+
+  return {
+    ...product,
+    communityReview: null
+  };
+}
+
 function existingScientificLinks(product) {
   const scientific = product?.verificationLinks?.scientific;
   if (!scientific) return [];
@@ -168,20 +287,21 @@ function existingScientificLinks(product) {
 export function applyCatalogEvidence(product) {
   if (!product) return product;
 
-  // Never overwrite hand-curated/product-specific scientific evidence.
-  if (existingScientificLinks(product).length) return product;
+  const guardedProduct = applyRatingSourceGuardrail(applyCommunitySourceGuardrail(applyEvidenceScopeGuardrail(applyRecallReviewGuardrail(applyPrivacyReviewGuardrail(product)))));
 
-  const keys = PRODUCT_EVIDENCE_KEYS[product.id] || [];
-  if (!keys.length) return product;
+  // Never overwrite hand-curated/product-specific scientific evidence.
+  if (existingScientificLinks(guardedProduct).length) return guardedProduct;
+
+  const keys = PRODUCT_EVIDENCE_KEYS[guardedProduct.id] || [];
+  if (!keys.length) return guardedProduct;
 
   const links = keys.flatMap((key) => CATALOG_EVIDENCE[key]?.scientific || []);
-
-  if (!links.length) return product;
+  if (!links.length) return guardedProduct;
 
   return {
-    ...product,
+    ...guardedProduct,
     verificationLinks: {
-      ...(product.verificationLinks || {}),
+      ...(guardedProduct.verificationLinks || {}),
       scientific: { links }
     }
   };
