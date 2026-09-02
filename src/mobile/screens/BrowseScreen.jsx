@@ -4,7 +4,8 @@ import SearchBar from '../components/SearchBar.jsx';
 import CategoryChips from '../components/CategoryChips.jsx';
 import CtaBanner from '../components/CtaBanner.jsx';
 import ProductCard from '../components/ProductCard.jsx';
-import ArticleCard from '../components/ArticleCard.jsx';
+import LibraryCard from '../components/LibraryCard.jsx';
+import { ARTICLE_CATEGORIES } from '../data/articleRows.js';
 
 function ModeTab({ label, active, onClick }) {
   return (
@@ -38,6 +39,7 @@ export default function BrowseScreen({
   onOpenSaved,
   onGoEco,
   onStartQuiz,
+  hasEcosystem = false,
 }) {
   const [mode, setMode] = useState('products');
   const [category, setCategory] = useState('all');
@@ -49,6 +51,12 @@ export default function BrowseScreen({
   // Until then, every chip shows the full list; only the active/highlighted
   // state is real.
   const filtered = products;
+
+  const articlesById = new Map(articles.map((a) => [a.id, a]));
+  const rows = ARTICLE_CATEGORIES.map((cat) => ({
+    ...cat,
+    items: cat.articleIds.map((id) => articlesById.get(id)).filter(Boolean),
+  })).filter((row) => row.items.length > 0);
 
   return (
     <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0 40px', animation: 'ay-page .25s ease-out' }}>
@@ -67,7 +75,10 @@ export default function BrowseScreen({
         <ModeTab label="Reads" active={mode === 'reads'} onClick={() => setMode('reads')} />
       </div>
 
-      {ctaVariant !== 'none' && (ctaVariant === 'gradient' || ctaVariant === 'inline') ? (
+      {/* Once the ecosystem exists, Browse stays pure browsing — the
+          "update your health" prompt lives on the Ecosystem screen instead,
+          after its Reads section. */}
+      {!hasEcosystem && ctaVariant !== 'none' && (ctaVariant === 'gradient' || ctaVariant === 'inline') ? (
         <CtaBanner variant={ctaVariant} onClick={onStartQuiz} />
       ) : null}
 
@@ -92,18 +103,23 @@ export default function BrowseScreen({
             ALL OTC · NOT A DIAGNOSIS
           </div>
         </>
-      ) : (
-        <div style={{ padding: '0 20px' }}>
-          {articles.length === 0 ? (
-            <div style={{ padding: '40px 0', textAlign: 'center', color: '#78716C', fontSize: 13.5 }}>
-              No reads yet.
-            </div>
-          ) : (
-            articles.map((a) => (
-              <ArticleCard key={a.id} article={a} onClick={() => onOpenArticle && onOpenArticle(a)} />
-            ))
-          )}
+      ) : rows.length === 0 ? (
+        <div style={{ padding: '40px 20px', textAlign: 'center', color: '#78716C', fontSize: 13.5 }}>
+          No reads yet.
         </div>
+      ) : (
+        rows.map((row) => (
+          <div key={row.id} style={{ marginBottom: 24 }}>
+            <div style={{ padding: '0 20px 11px' }}>
+              <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 17 }}>{row.label}</div>
+            </div>
+            <div style={{ display: 'flex', gap: 12, overflowX: 'auto', padding: '0 20px 4px', scrollbarWidth: 'none' }}>
+              {row.items.map((a) => (
+                <LibraryCard key={a.id} article={a} onClick={() => onOpenArticle && onOpenArticle(a)} />
+              ))}
+            </div>
+          </div>
+        ))
       )}
     </div>
   );
