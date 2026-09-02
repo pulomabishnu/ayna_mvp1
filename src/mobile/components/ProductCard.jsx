@@ -13,7 +13,9 @@ function labelForCategory(category) {
 }
 
 export default function ProductCard({ product, onClick }) {
-  const { name, category, price, userRating, image } = product || {};
+  const { name, category, price, priceDisplay, userRating, image, imageUrl, images } = product || {};
+  const resolvedImage = image || imageUrl || (Array.isArray(images) ? images[0] : undefined);
+  const resolvedPrice = price || priceDisplay;
   const color = colorForCategory(category);
 
   return (
@@ -36,8 +38,8 @@ export default function ProductCard({ product, onClick }) {
           aspectRatio: '1 / 1',
           borderRadius: 13,
           overflow: 'hidden',
-          background: image ? '#F3EFE9' : `linear-gradient(150deg, ${color}26, ${color}4d)`,
-          backgroundImage: image ? `url(${image})` : undefined,
+          background: resolvedImage ? '#F3EFE9' : `linear-gradient(150deg, ${color}26, ${color}4d)`,
+          backgroundImage: resolvedImage ? `url(${resolvedImage})` : undefined,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
@@ -73,8 +75,8 @@ export default function ProductCard({ product, onClick }) {
       )}
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginTop: 6 }}>
-        {price && (
-          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 13 }}>{price}</div>
+        {resolvedPrice && (
+          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 13 }}>{resolvedPrice}</div>
         )}
         {userRating != null && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 2, marginLeft: 'auto' }}>
