@@ -16,7 +16,12 @@ export default function EcosystemScreen({
   onBrowse,
   onRetake,
 }) {
+  const [selectedKey, setSelectedKey] = useState(null);
   const [selectedSeat, setSelectedSeat] = useState(null);
+
+  const showingArea = selectedSeat && !selectedSeat.gap;
+  const gridTitle = showingArea ? selectedSeat.label : 'Matched for you';
+  const gridProducts = showingArea ? selectedSeat.products : myProducts;
 
   return (
     <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0 40px', animation: 'ay-page .25s ease-out' }}>
@@ -32,24 +37,36 @@ export default function EcosystemScreen({
       </div>
 
       <div style={{ padding: '18px 20px 0' }}>
-        <EcosystemOrbit products={myProducts} name={name} tags={tags} onSelect={setSelectedSeat} onExploreArea={onBrowse} />
+        <EcosystemOrbit
+          products={myProducts}
+          name={name}
+          tags={tags}
+          selectedKey={selectedKey}
+          onSelectKey={setSelectedKey}
+          onSelect={setSelectedSeat}
+          onExploreArea={onBrowse}
+        />
       </div>
 
-      {selectedSeat && !selectedSeat.gap && (
-        <div style={{ padding: '18px 20px 0' }}>
-          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 12 }}>
-            <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 16 }}>{selectedSeat.label}</div>
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10.5, color: '#78716C' }}>
-              {selectedSeat.products.length} product{selectedSeat.products.length === 1 ? '' : 's'}
+      <div style={{ padding: '18px 20px 0' }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 12 }}>
+          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 16 }}>{gridTitle}</div>
+          {showingArea ? (
+            <div onClick={() => setSelectedKey(null)} style={{ fontFamily: "'DM Mono',monospace", fontSize: 10.5, color: '#A2603C', cursor: 'pointer' }}>
+              Show all
             </div>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 11 }}>
-            {selectedSeat.products.map((p) => (
-              <ProductCard key={p.id} product={p} onClick={() => onOpenProduct && onOpenProduct(p)} />
-            ))}
-          </div>
+          ) : (
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10.5, color: '#78716C' }}>
+              {gridProducts.length} product{gridProducts.length === 1 ? '' : 's'}
+            </div>
+          )}
         </div>
-      )}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 11 }}>
+          {gridProducts.map((p) => (
+            <ProductCard key={p.id} product={p} onClick={() => onOpenProduct && onOpenProduct(p)} />
+          ))}
+        </div>
+      </div>
 
       {relatedReads.length > 0 && (
         <div style={{ padding: '24px 20px 0' }}>

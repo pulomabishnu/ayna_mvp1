@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { ECOSYSTEM_AREAS, MAX_SATELLITES, CANVAS, CANVAS_H, BUBBLE, seatPosition } from '../data/ecosystemAreas.js';
 
 // Wrapper reserves the post-scale box (overflow hidden) while the inner
@@ -6,9 +6,9 @@ import { ECOSYSTEM_AREAS, MAX_SATELLITES, CANVAS, CANVAS_H, BUBBLE, seatPosition
 // — same technique EcosystemBubbles.jsx uses so bubble math stays correct.
 const SCALE = 0.62;
 
-export default function EcosystemOrbit({ products = [], name = 'You', tags = '', onSelect, onExploreArea }) {
-  const [selectedKey, setSelectedKey] = useState(null);
-
+// Controlled: selection state lives in the parent (EcosystemScreen) so a
+// "Show all" affordance elsewhere on the page can clear it.
+export default function EcosystemOrbit({ products = [], name = 'You', tags = '', selectedKey = null, onSelectKey, onSelect, onExploreArea }) {
   // NOTE: expects each product to already carry an `areaKey` (computed by
   // the real resolveEcosystemProductArea, once real data is wired in) —
   // this component intentionally does not resolve areas itself.
@@ -37,7 +37,9 @@ export default function EcosystemOrbit({ products = [], name = 'You', tags = '',
     return { seats, covered: filled.length };
   }, [products]);
 
-  const selected = seats.find((s) => s.key === selectedKey) || seats.find((s) => !s.gap) || null;
+  // No default selection — every node starts in its plain/white resting
+  // state until the person actually taps one, matching the design.
+  const selected = seats.find((s) => s.key === selectedKey) || null;
 
   useEffect(() => {
     if (onSelect) onSelect(selected);
@@ -109,7 +111,7 @@ export default function EcosystemOrbit({ products = [], name = 'You', tags = '',
             <button
               key={seat.key}
               type="button"
-              onClick={() => (seat.gap ? onExploreArea && onExploreArea() : setSelectedKey(seat.key))}
+              onClick={() => (seat.gap ? onExploreArea && onExploreArea() : onSelectKey && onSelectKey(isSelected ? null : seat.key))}
               style={{
                 position: 'absolute',
                 left: pos.left,
