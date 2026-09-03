@@ -140,16 +140,6 @@ export default function MobileApp() {
 
   return (
     <div className="ayna-mobile">
-      {/* Temporary dev-only screen switcher for smoke testing — not final navigation */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, padding: 8, fontSize: 11 }}>
-        {Object.keys(SCREENS).map((key) => (
-          <button key={key} onClick={() => setScreen(key)}>
-            {key}
-          </button>
-        ))}
-        <button onClick={() => nav.onOpenProduct(ALL_PRODUCTS[0])}>product</button>
-        <button onClick={() => nav.onOpenArticle(ARTICLES[0])}>article</button>
-      </div>
       <Screen
         {...nav}
         products={ALL_PRODUCTS}
