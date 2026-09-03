@@ -38,7 +38,16 @@ export default function ProductCard({ product, onClick, variant = 'grid' }) {
     return (
       <div
         onClick={onClick}
-        style={{ display: 'flex', gap: 12, alignItems: 'center', padding: '10px 6px', borderRadius: 14, cursor: 'pointer' }}
+        style={{
+          display: 'flex',
+          gap: 12,
+          alignItems: 'center',
+          padding: '10px 12px',
+          borderRadius: 16,
+          cursor: 'pointer',
+          background: 'var(--ayna-surface)',
+          border: '1px solid var(--ayna-border)',
+        }}
       >
         <div
           style={{
@@ -55,9 +64,9 @@ export default function ProductCard({ product, onClick, variant = 'grid' }) {
         />
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-            <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 14 }}>{name}</div>
+            <div style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 14 }}>{name}</div>
             {resolvedPrice && (
-              <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 13, color: 'var(--ayna-accent-dark)', marginLeft: 'auto', whiteSpace: 'nowrap' }}>
+              <div style={{ flex: 'none', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 13, color: 'var(--ayna-accent-dark)', whiteSpace: 'nowrap' }}>
                 {resolvedPrice}
               </div>
             )}
