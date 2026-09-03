@@ -5,7 +5,8 @@ import CtaBanner from '../components/CtaBanner.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import LibraryCard from '../components/LibraryCard.jsx';
 import { ARTICLE_CATEGORIES } from '../data/articleRows.js';
-import { productSearchText, getPersonalizedProductIds, MACRO_GROUPS, itemMatchesMacroGroup } from '../../data/products.js';
+import { getPersonalizedProductIds, MACRO_GROUPS, itemMatchesMacroGroup, CATEGORY_LABELS } from '../../data/products.js';
+import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../../utils/naturalLanguageSearch.js';
 import { useCardLayout } from '../hooks/useCardLayout.js';
 
 // Fisher-Yates — uniform shuffle, unlike sort(() => Math.random() - 0.5)
@@ -239,12 +240,32 @@ export default function BrowseScreen({
 
   const hasProfile = !!(quizAnswers?.frustrations?.length);
 
-  // Real filtering — reuses the site's own productSearchText/
-  // getPersonalizedProductIds/itemMatchesMacroGroup from src/data/products.js
-  // (the same personalization and category-matching functions the desktop
-  // Discovery page already uses — not a separate matching system).
-  const searchTerm = searchValue.trim().toLowerCase();
-  let filtered = shuffled.filter((p) => !searchTerm || productSearchText(p).includes(searchTerm));
+  // Real filtering — reuses the site's own scoreQueryAgainstProduct/
+  // buildSearchTextForItem/buildIdentityTextForItem (naturalLanguageSearch.js)
+  // and getPersonalizedProductIds/itemMatchesMacroGroup (products.js) — the
+  // exact same search-scoring and personalization/category-matching
+  // functions the desktop Discovery page already uses, not a separate,
+  // weaker matching system. This is why terms like "PCOS" or "hair
+  // thinning" now work here too: scoreQueryAgainstProduct already knows the
+  // real term aliases (e.g. pcos -> polycystic/ovarian) and scores natural-
+  // language queries, unlike a plain substring check.
+  const searchTermRaw = searchValue.trim();
+  const searchTerm = searchTermRaw.toLowerCase();
+  let filtered = shuffled;
+  if (searchTermRaw) {
+    filtered = shuffled
+      .map((p) => ({
+        item: p,
+        matchScore: scoreQueryAgainstProduct(
+          searchTermRaw,
+          buildSearchTextForItem(p, CATEGORY_LABELS),
+          buildIdentityTextForItem(p, CATEGORY_LABELS)
+        ),
+      }))
+      .filter((x) => x.matchScore > 0)
+      .sort((a, b) => b.matchScore - a.matchScore)
+      .map((x) => x.item);
+  }
   if (personalized && hasProfile) {
     const personalizedIds = new Set(getPersonalizedProductIds(quizAnswers, null));
     filtered = filtered.filter((p) => personalizedIds.has(p.id));
