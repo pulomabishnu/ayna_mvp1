@@ -36,6 +36,7 @@ export default function MobileHeader({
   onGoEco,
   onOpenSaved,
   onGoLanding,
+  onToggleTheme,
 }) {
   const dark = variant === 'dark';
 
@@ -72,6 +73,27 @@ export default function MobileHeader({
           ayna
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
+          {onToggleTheme && (
+            <div
+              onClick={onToggleTheme}
+              role="button"
+              aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+              style={{
+                width: 34,
+                height: 34,
+                borderRadius: 99,
+                border: dark ? '1px solid rgba(255,255,255,.28)' : '1px solid #E1D5CE',
+                background: dark ? 'rgba(255,249,242,.12)' : '#FFFCF9',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                fontSize: 14,
+              }}
+            >
+              {dark ? '☀️' : '🌙'}
+            </div>
+          )}
           <div
             onClick={onOpenSaved}
             style={{
