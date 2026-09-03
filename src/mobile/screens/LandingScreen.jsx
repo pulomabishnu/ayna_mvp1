@@ -199,9 +199,7 @@ export default function LandingScreen({ onStartQuiz, onBrowse }) {
             textAlign: 'center',
           }}
         >
-          Your body,
-          <br />
-          mapped.
+          Hey you, meet <span style={{ fontStyle: 'italic' }}>you</span>
         </div>
       </div>
 
