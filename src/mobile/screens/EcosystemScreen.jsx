@@ -30,8 +30,8 @@ export default function EcosystemScreen({
       <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoEco={() => {}} onGoBrowse={onBrowse} />
 
       <div style={{ padding: '18px 20px 0' }}>
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 23, lineHeight: 1.3 }}>
-          {`Good morning, ${name}`}
+        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 23, lineHeight: 1.3, textDecoration: 'none' }}>
+          Hey you, meet <span style={{ fontStyle: 'italic' }}>you</span>
         </div>
         <div style={{ fontSize: 12.5, color: '#78716C', marginTop: 5, lineHeight: 1.5 }}>
           Built from what's in your ecosystem — shifts as you add to it.

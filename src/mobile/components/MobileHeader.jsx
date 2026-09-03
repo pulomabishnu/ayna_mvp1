@@ -42,7 +42,10 @@ export default function MobileHeader({
   return (
     <div
       style={{
-        padding: '58px 20px 12px',
+        paddingTop: 'max(20px, env(safe-area-inset-top))',
+        paddingLeft: 20,
+        paddingRight: 20,
+        paddingBottom: 12,
         background: dark ? '#242A52' : '#F3EFE9',
         color: dark ? '#FFF9F2' : '#292524',
         position: 'relative',

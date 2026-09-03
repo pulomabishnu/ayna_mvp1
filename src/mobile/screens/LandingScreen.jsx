@@ -81,7 +81,9 @@ export default function LandingScreen({ onStartQuiz, onBrowse }) {
       <div
         style={{
           position: 'relative',
-          padding: '66px 26px 0',
+          paddingTop: 'max(20px, env(safe-area-inset-top))',
+          paddingLeft: 26,
+          paddingRight: 26,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',

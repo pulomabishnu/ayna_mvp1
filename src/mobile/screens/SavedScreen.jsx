@@ -6,7 +6,7 @@ export default function SavedScreen({ savedProducts = {}, onBack, onBrowse, onOp
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#F3EFE9', animation: 'ay-page .25s ease-out' }}>
-      <div style={{ padding: '58px 20px 14px', display: 'flex', alignItems: 'center', gap: 12 }}>
+      <div style={{ paddingTop: 'max(20px, env(safe-area-inset-top))', paddingLeft: 20, paddingRight: 20, paddingBottom: 14, display: 'flex', alignItems: 'center', gap: 12 }}>
         <div
           onClick={onBack}
           style={{

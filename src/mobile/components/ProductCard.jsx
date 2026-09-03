@@ -43,19 +43,7 @@ export default function ProductCard({ product, onClick }) {
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
-      >
-        <div
-          style={{
-            position: 'absolute',
-            top: 8,
-            left: 8,
-            width: 7,
-            height: 7,
-            borderRadius: 99,
-            background: color,
-          }}
-        />
-      </div>
+      />
 
       <div
         style={{

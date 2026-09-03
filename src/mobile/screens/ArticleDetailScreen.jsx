@@ -83,7 +83,7 @@ export default function ArticleDetailScreen({ article, onBack }) {
 
   return (
     <div ref={scrollRef} onScroll={handleScroll} style={{ flex: 1, overflowY: 'auto', background: '#FFFCF9', animation: 'ay-page .25s ease-out' }}>
-      <div style={{ position: 'relative', background: `linear-gradient(160deg,${tint1},${tint2})`, padding: '20px 20px 0' }}>
+      <div style={{ position: 'relative', background: `linear-gradient(160deg,${tint1},${tint2})`, paddingTop: 'max(20px, env(safe-area-inset-top))', paddingLeft: 20, paddingRight: 20 }}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
           <div
             onClick={onBack}

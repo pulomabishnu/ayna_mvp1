@@ -120,7 +120,7 @@ export default function IntakeScreen({ onBack, onComplete, onAskAyna }) {
         }}
       />
 
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '58px 24px 0', position: 'relative' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 'max(20px, env(safe-area-inset-top))', paddingLeft: 24, paddingRight: 24, position: 'relative' }}>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 5 }}>
           <span style={{ fontFamily: "'Playfair Display',serif", fontSize: 20 }}>ayna</span>
           <span style={{ fontSize: 10, color: 'rgba(255,249,242,.6)' }}>beta</span>

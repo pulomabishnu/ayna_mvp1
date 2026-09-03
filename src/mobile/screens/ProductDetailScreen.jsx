@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CATEGORY_LABELS } from '../../data/products.js';
 import { getBuyUrl } from '../data/buyUrl.js';
+import { getSupabaseClient } from '../../utils/supabaseClient.js';
+import { renderMarkdownLite } from '../../utils/renderMarkdownLite.jsx';
 
 function SpecRow({ label, value }) {
   return (
@@ -22,6 +24,161 @@ function EvidenceRow({ label, value }) {
 
 const VERIFICATION_LABELS = { doctor: 'Clinical guidance', scientific: 'Scientific', community: 'Community' };
 
+/**
+ * Ask Ayna, ported from AskAynaProductTab in src/components/ProductModal.jsx
+ * — same /api/product-chat contract, same getSupabaseClient() bearer-token
+ * auth, same not-signed-in / weekly-limit-reached handling. Only the markup
+ * changed (mobile's own inline-style patterns instead of the desktop
+ * pdp-* classes).
+ */
+function AskAynaTab({ product, quizAnswers, ecosystemProducts }) {
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState('');
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState('');
+  const [session, setSession] = useState(undefined); // undefined = still checking
+
+  useEffect(() => {
+    let cancelled = false;
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      setSession(null);
+      return undefined;
+    }
+    supabase.auth.getSession().then(({ data }) => {
+      if (!cancelled) setSession(data?.session || null);
+    }).catch(() => { if (!cancelled) setSession(null); });
+    return () => { cancelled = true; };
+  }, []);
+
+  const suggestions = [
+    `What is ${product?.name ? 'this' : 'it'} and how is it used?`,
+    'Who is this good for?',
+    'Any safety concerns I should know about?',
+  ];
+
+  const ask = async (question) => {
+    const q = String(question || '').trim();
+    if (!q || sending) return;
+    setError('');
+    setInput('');
+    const nextMessages = [...messages, { role: 'user', text: q }];
+    setMessages(nextMessages);
+    setSending(true);
+    try {
+      const token = session?.access_token;
+      if (!token) throw Object.assign(new Error('not_signed_in'), { code: 'not_signed_in' });
+      const res = await fetch('/api/product-chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          question: q,
+          product,
+          aiInsights: {},
+          userContext: quizAnswers?.fullHealthIntake ? JSON.stringify(quizAnswers.fullHealthIntake).slice(0, 4000) : '',
+          ecosystemProducts: Array.isArray(ecosystemProducts) ? ecosystemProducts.slice(0, 20) : [],
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 401) throw Object.assign(new Error('not_signed_in'), { code: 'not_signed_in' });
+      if (res.status === 429) throw Object.assign(new Error('weekly_limit_reached'), { code: 'weekly_limit_reached' });
+      if (!res.ok || !data?.answer) throw new Error(data?.error || 'Could not get an answer right now.');
+      setMessages((prev) => [...prev, { role: 'assistant', text: data.answer }]);
+    } catch (e) {
+      if (e?.code === 'not_signed_in') {
+        setError('Sign in to ask Ayna about this product — free accounts get a few AI chats per week.');
+      } else if (e?.code === 'weekly_limit_reached') {
+        setError("You've used your free chats for this week. They reset weekly, or upgrade for unlimited.");
+      } else {
+        setError(e?.message || 'Something went wrong. Try again in a moment.');
+      }
+      setMessages(nextMessages); // keep the question visible even though it failed
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <div style={{ background: '#FFFFFF', border: '1px solid #E1D5CE', borderRadius: 20, padding: '17px 18px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+      {messages.length === 0 && (
+        <>
+          <div style={{ fontSize: 13.5, lineHeight: 1.55, color: '#57534E' }}>
+            New to this kind of product, or not sure what it's actually for? Ask Ayna anything about it.
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
+            {suggestions.map((s) => (
+              <div
+                key={s}
+                onClick={() => ask(s)}
+                style={{ fontSize: 12.5, fontWeight: 500, padding: '8px 13px', borderRadius: 99, background: '#F3EFE9', color: '#57534E', cursor: 'pointer' }}
+              >
+                {s}
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
+      {messages.length > 0 && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 9, maxHeight: 340, overflowY: 'auto' }}>
+          {messages.map((m, i) => (
+            <div
+              key={i}
+              style={{
+                alignSelf: m.role === 'user' ? 'flex-end' : 'flex-start',
+                maxWidth: '85%',
+                background: m.role === 'user' ? '#242A52' : '#F3EFE9',
+                color: m.role === 'user' ? '#FFFCF9' : '#292524',
+                borderRadius: 14,
+                padding: '10px 13px',
+                fontSize: 13.5,
+                lineHeight: 1.5,
+                whiteSpace: 'pre-wrap',
+              }}
+            >
+              {m.role === 'assistant' ? renderMarkdownLite(m.text) : m.text}
+            </div>
+          ))}
+          {sending && <div style={{ alignSelf: 'flex-start', fontSize: 12.5, color: '#A8A29E' }}>Ayna is thinking…</div>}
+        </div>
+      )}
+
+      {error && <div style={{ fontSize: 12.5, color: '#B3261E', lineHeight: 1.5 }}>{error}</div>}
+
+      <form onSubmit={(e) => { e.preventDefault(); ask(input); }} style={{ display: 'flex', gap: 8 }}>
+        <input
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder={session === undefined ? 'Loading…' : 'Ask about this product…'}
+          disabled={sending || session === undefined}
+          style={{ flex: 1, padding: '11px 14px', borderRadius: 99, border: '1px solid #E1D5CE', fontSize: 13.5, background: '#FFFFFF', color: '#292524' }}
+        />
+        <button
+          type="submit"
+          disabled={sending || !input.trim() || session === undefined}
+          style={{
+            padding: '11px 18px',
+            borderRadius: 99,
+            border: 'none',
+            background: '#242A52',
+            color: '#FFFCF9',
+            fontFamily: "'DM Sans',sans-serif",
+            fontWeight: 600,
+            fontSize: 13.5,
+            cursor: 'pointer',
+            opacity: sending || !input.trim() || session === undefined ? 0.5 : 1,
+          }}
+        >
+          Ask
+        </button>
+      </form>
+
+      <div style={{ fontSize: 11.5, color: '#A8A29E' }}>Ayna's answers are educational, not medical advice.</div>
+    </div>
+  );
+}
+
 export default function ProductDetailScreen({
   product,
   onBack,
@@ -31,6 +188,8 @@ export default function ProductDetailScreen({
   onAddToEcosystem,
   whyMatched,
   reads = [],
+  quizAnswers = null,
+  ecosystemProducts = [],
 }) {
   const [activeTab, setActiveTab] = useState('summary');
 
@@ -80,7 +239,7 @@ export default function ProductDetailScreen({
 
   return (
     <div style={{ flex: 1, overflowY: 'auto', background: '#FFFCF9', color: '#292524', animation: 'ay-page .25s ease-out' }}>
-      <div style={{ padding: '24px 20px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ paddingTop: 'max(24px, env(safe-area-inset-top))', paddingLeft: 20, paddingRight: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div onClick={onBack} style={{ display: 'flex', alignItems: 'center', gap: 7, cursor: 'pointer' }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#242A52" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
             <path d="M19 12H5M11 18l-6-6 6-6" />
@@ -88,7 +247,7 @@ export default function ProductDetailScreen({
           <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: 14, color: '#242A52' }}>Back</span>
         </div>
         <div style={{ display: 'flex', gap: 6 }}>
-          {['summary', 'evidence'].map((tab) => (
+          {['summary', 'evidence', 'ask'].map((tab) => (
             <div
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -232,6 +391,8 @@ export default function ProductDetailScreen({
               </div>
             )}
           </>
+        ) : activeTab === 'ask' ? (
+          <AskAynaTab product={product} quizAnswers={quizAnswers} ecosystemProducts={ecosystemProducts} />
         ) : (
           <>
             {whyMatched && (

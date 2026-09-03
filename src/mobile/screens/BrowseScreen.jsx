@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import MobileHeader from '../components/MobileHeader.jsx';
 import SearchBar from '../components/SearchBar.jsx';
-import CategoryChips from '../components/CategoryChips.jsx';
 import CtaBanner from '../components/CtaBanner.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import LibraryCard from '../components/LibraryCard.jsx';
 import { ARTICLE_CATEGORIES } from '../data/articleRows.js';
-import { MACRO_GROUPS, itemMatchesMacroGroup, productSearchText, getPersonalizedProductIds } from '../../data/products.js';
+import { productSearchText, getPersonalizedProductIds } from '../../data/products.js';
 
 // Fisher-Yates — uniform shuffle, unlike sort(() => Math.random() - 0.5)
 // (which is biased and not a proper random permutation).
@@ -164,7 +163,6 @@ export default function BrowseScreen({
   quizAnswers = null,
 }) {
   const [mode, setMode] = useState('products');
-  const [category, setCategory] = useState('all');
   const [searchValue, setSearchValue] = useState('');
   const [personalized, setPersonalized] = useState(false);
 
@@ -175,24 +173,17 @@ export default function BrowseScreen({
 
   const hasProfile = !!(quizAnswers?.frustrations?.length);
 
-  // Real filtering — reuses the site's own itemMatchesMacroGroup/
-  // productSearchText/getPersonalizedProductIds from src/data/products.js
-  // (the same personalization function that seeds My Ecosystem — not a
-  // separate matching system). If our own CategoryChips taxonomy
-  // (src/mobile/data/categoryGroups.js) ever drifts from the real
-  // MACRO_GROUPS ids, this warns instead of silently showing everything.
-  if (category !== 'all' && !MACRO_GROUPS.some((g) => g.id === category)) {
-    console.warn(`[BrowseScreen] Category chip id "${category}" has no matching MACRO_GROUPS entry — showing all products instead of filtering.`);
-  }
+  // Real filtering — reuses the site's own productSearchText/
+  // getPersonalizedProductIds from src/data/products.js (the same
+  // personalization function that seeds My Ecosystem — not a separate
+  // matching system).
   const searchTerm = searchValue.trim().toLowerCase();
-  let filtered = shuffled
-    .filter((p) => itemMatchesMacroGroup(p, category))
-    .filter((p) => !searchTerm || productSearchText(p).includes(searchTerm));
+  let filtered = shuffled.filter((p) => !searchTerm || productSearchText(p).includes(searchTerm));
   if (personalized && hasProfile) {
     const personalizedIds = new Set(getPersonalizedProductIds(quizAnswers, null));
     filtered = filtered.filter((p) => personalizedIds.has(p.id));
   }
-  const filterKey = `${category}|${searchTerm}|${personalized}`;
+  const filterKey = `${searchTerm}|${personalized}`;
 
   const articlesById = new Map(articles.map((a) => [a.id, a]));
   const rows = ARTICLE_CATEGORIES.map((cat) => ({
@@ -231,7 +222,6 @@ export default function BrowseScreen({
 
       {mode === 'products' ? (
         <>
-          <CategoryChips active={category} onSelect={setCategory} />
           {filtered.length === 0 ? (
             <div style={{ padding: '40px 20px', textAlign: 'center', color: '#78716C', fontSize: 13.5 }}>
               No products match.
