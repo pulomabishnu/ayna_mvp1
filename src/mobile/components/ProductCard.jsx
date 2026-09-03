@@ -12,14 +12,17 @@ function labelForCategory(category) {
   return category.replace(/-/g, ' ').replace(/\b\w/g, (ch) => ch.toUpperCase());
 }
 
-function firstSentence(text, max = 70) {
-  const t = String(text || '').trim();
-  if (!t) return '';
-  const cut = t.split(/(?<=[.!?])\s/)[0] || t;
-  if (cut.length <= max) return cut;
-  const truncated = cut.slice(0, max);
-  const lastSpace = truncated.lastIndexOf(' ');
-  return `${(lastSpace > max * 0.6 ? truncated.slice(0, lastSpace) : truncated).trimEnd()}…`;
+// Catalog `price` strings are often a full descriptive sentence (e.g.
+// "$45.87 for 144 (4 Drop / Moderate Absorbency, Long)") — cards need just
+// the short dollar amount, not the full description, so it never overflows
+// a compact card. Falls back to the first comma/paren-delimited chunk for
+// non-dollar cases like "Free (built into iPhone)" -> "Free".
+function shortPrice(price) {
+  const s = String(price || '').trim();
+  if (!s) return '';
+  const m = s.match(/^(Free|\$[\d,]+(?:\.\d+)?(?:\s*[–-]\s*\$?[\d,]+(?:\.\d+)?)?)/i);
+  if (m) return m[1];
+  return s.split(/[,(]| for /i)[0].trim();
 }
 
 /**
@@ -28,13 +31,12 @@ function firstSentence(text, max = 70) {
  * both read the same real product fields, nothing is fetched twice.
  */
 export default function ProductCard({ product, onClick, variant = 'grid' }) {
-  const { name, category, price, priceDisplay, userRating, image, imageUrl, images, effectiveness, summary } = product || {};
+  const { name, category, price, priceDisplay, userRating, image, imageUrl, images } = product || {};
   const resolvedImage = image || imageUrl || (Array.isArray(images) ? images[0] : undefined);
-  const resolvedPrice = price || priceDisplay;
+  const resolvedPrice = shortPrice(price || priceDisplay);
   const color = colorForCategory(category);
 
   if (variant === 'list') {
-    const desc = firstSentence(effectiveness || summary);
     return (
       <div
         onClick={onClick}
@@ -71,11 +73,6 @@ export default function ProductCard({ product, onClick, variant = 'grid' }) {
               </div>
             )}
           </div>
-          {desc && (
-            <div style={{ fontSize: 11.5, lineHeight: 1.4, color: 'var(--ayna-text-muted)', marginTop: 3, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              {desc}
-            </div>
-          )}
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6 }}>
             {userRating != null && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -135,10 +132,6 @@ export default function ProductCard({ product, onClick, variant = 'grid' }) {
       >
         {name}
       </div>
-
-      {category && (
-        <div style={{ fontSize: 10.5, color: 'var(--ayna-text-faint)', marginTop: 2 }}>{labelForCategory(category)}</div>
-      )}
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginTop: 6 }}>
         {resolvedPrice && (
