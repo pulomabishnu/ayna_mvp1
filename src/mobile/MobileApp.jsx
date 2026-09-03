@@ -4,6 +4,7 @@ import { ALL_PRODUCTS, getPersonalizedProductIds, getProductById } from '../data
 import { ARTICLES } from '../components/Articles.jsx';
 import { ECOSYSTEM_AREAS as REAL_ECOSYSTEM_AREAS, resolveEcosystemProductArea } from '../components/EcosystemBubbles.jsx';
 import { useSavedProducts } from './hooks/useSavedProducts.js';
+import { useThemeMode } from './hooks/useThemeMode.js';
 import { ECOSYSTEM_AREAS as AREA_LABELS } from './data/ecosystemAreas.js';
 
 import LandingScreen from './screens/LandingScreen.jsx';
@@ -98,6 +99,7 @@ export default function MobileApp() {
   const [myProducts, setMyProducts] = useState([]);
   const [lastQuizAnswers, setLastQuizAnswers] = useState(null);
   const [userName, setUserName] = useState('You');
+  const { theme, toggleTheme } = useThemeMode();
 
   const Screen = SCREENS[screen] || LandingScreen;
 
@@ -139,9 +141,11 @@ export default function MobileApp() {
   };
 
   return (
-    <div className="ayna-mobile">
+    <div className="ayna-mobile" data-theme={theme}>
       <Screen
         {...nav}
+        theme={theme}
+        onToggleTheme={toggleTheme}
         products={ALL_PRODUCTS}
         articles={ARTICLES}
         savedProducts={savedMap}
@@ -161,7 +165,7 @@ export default function MobileApp() {
         ]}
       />
       {overlay?.type === 'product' && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 40, background: '#FFFCF9', display: 'flex' }}>
+        <div style={{ position: 'fixed', inset: 0, zIndex: 40, background: 'var(--ayna-surface)', display: 'flex' }}>
           <ProductDetailScreen
             product={overlay.item}
             onBack={() => setOverlay(null)}
@@ -169,12 +173,14 @@ export default function MobileApp() {
             onToggleSaved={() => toggleSaved(overlay.item)}
             quizAnswers={lastQuizAnswers}
             ecosystemProducts={myProducts}
+            theme={theme}
+            onToggleTheme={toggleTheme}
           />
         </div>
       )}
       {overlay?.type === 'article' && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 40, background: '#FFFCF9', display: 'flex' }}>
-          <ArticleDetailScreen article={overlay.item} onBack={() => setOverlay(null)} />
+        <div style={{ position: 'fixed', inset: 0, zIndex: 40, background: 'var(--ayna-surface)', display: 'flex' }}>
+          <ArticleDetailScreen article={overlay.item} onBack={() => setOverlay(null)} theme={theme} onToggleTheme={toggleTheme} />
         </div>
       )}
     </div>
