@@ -98,6 +98,11 @@ const TERM_ALIASES = {
   menstrual: ['period', 'menstruation'],
   pregnant: ['pregnancy', 'prenatal', 'maternity'],
   pregnancy: ['pregnant', 'prenatal', 'maternity'],
+  // "conceive"/"conceiving"/"TTC" (a very common fertility-community
+  // abbreviation for "trying to conceive") had no alias entry at all, so a
+  // query as plain as "conceive" — or the natural phrase "trying to
+  // conceive" — scored 0 even though "fertility" alone matches real
+  // products (Thorne Ubiquinol, Wholesome Story Inositol, Pomelo Care).
   fertility: ['fertile', 'ovulation', 'conceive', 'conceiving', 'ttc'],
   conceive: ['fertility', 'fertile', 'ovulation', 'conceiving', 'ttc'],
   conceiving: ['fertility', 'fertile', 'ovulation', 'conceive', 'ttc'],
@@ -140,6 +145,78 @@ const TERM_ALIASES = {
   thongs: ['thong', 'bikini', 'g-string', 'underwear', 'liner', 'liners', 'discreet', 'narrow', 'gusset', 'invisible', 'mini', 'light', 'string'],
 };
 
+/** Standard edit distance (insert/delete/substitute), iterative single-row DP. */
+function levenshteinDistance(a, b) {
+  if (a === b) return 0;
+  if (a.length === 0) return b.length;
+  if (b.length === 0) return a.length;
+  const prevRow = new Array(b.length + 1);
+  for (let j = 0; j <= b.length; j++) prevRow[j] = j;
+  for (let i = 1; i <= a.length; i++) {
+    let prevDiag = prevRow[0];
+    prevRow[0] = i;
+    for (let j = 1; j <= b.length; j++) {
+      const temp = prevRow[j];
+      prevRow[j] = a[i - 1] === b[j - 1]
+        ? prevDiag
+        : 1 + Math.min(prevDiag, prevRow[j], prevRow[j - 1]);
+      prevDiag = temp;
+    }
+  }
+  return prevRow[b.length];
+}
+
+// For words this short, only a SAME-LENGTH edit (a substitution, e.g.
+// "poize"->"poise") is trusted as a typo. Allowing a shorter/longer word
+// within the same edit distance lets a single inserted/deleted letter turn
+// one real word into a completely different real word — "hair" -> "chair"
+// via one inserted "c" is exactly this failure mode, and is covered by this
+// file's own regression test (naturalLanguageSearch.test.js). Longer words
+// are safe to compare across a length difference too, since an accidental
+// real-word collision gets far less likely as words get longer.
+const FUZZY_SAME_LENGTH_MAX = 5;
+
+/**
+ * Typo tolerance: only reached when the exact word-boundary check (and its
+ * alias list) already missed. Compares the query term against every word in
+ * the haystack and accepts a close-enough edit distance — catches ordinary
+ * misspellings like "concieve"/"conceive" or "endometriosis"/"endometreosis"
+ * without needing every typo hardcoded as an alias.
+ */
+function fuzzyWordMatchesInHaystack(word, haystack) {
+  if (!word || word.length < 4) return false;
+  const maxDist = word.length <= 7 ? 1 : 2;
+  const requireSameLength = word.length <= FUZZY_SAME_LENGTH_MAX;
+  const haystackWords = haystack.split(/[^a-z0-9]+/i).filter(Boolean);
+  for (const hw of haystackWords) {
+    if (requireSameLength ? hw.length !== word.length : Math.abs(hw.length - word.length) > maxDist) continue;
+    if (levenshteinDistance(word, hw) <= maxDist) return true;
+  }
+  return false;
+}
+
+const TERM_ALIAS_KEYS = Object.keys(TERM_ALIASES);
+
+/**
+ * A typo can land on a term whose CORRECT spelling has an alias list, but
+ * the alias lookup is a plain dictionary keyed by exact spelling — "conceive"
+ * has aliases, "concieve" (typo) does not. This finds the closest known
+ * alias key to a misspelled term and returns that key's real aliases, so
+ * "concieve" still resolves to conceive's aliases (fertility/ovulation/ttc)
+ * even though the literal word "conceive" never appears in any product's
+ * text (only those alias terms do).
+ */
+function fuzzyCanonicalAliases(term) {
+  if (!term || term.length < 4) return null;
+  const maxDist = term.length <= 7 ? 1 : 2;
+  const requireSameLength = term.length <= FUZZY_SAME_LENGTH_MAX;
+  for (const key of TERM_ALIAS_KEYS) {
+    if (requireSameLength ? key.length !== term.length : Math.abs(key.length - term.length) > maxDist) continue;
+    if (levenshteinDistance(term, key) <= maxDist) return TERM_ALIASES[key];
+  }
+  return null;
+}
+
 function termMatchesWithVariants(term, haystack) {
   if (wordMatchesInHaystack(term, haystack)) return true;
   const aliases = TERM_ALIASES[term];
@@ -147,7 +224,15 @@ function termMatchesWithVariants(term, haystack) {
     for (const a of aliases) {
       if (wordMatchesInHaystack(a, haystack)) return true;
     }
+  } else {
+    const fuzzyAliases = fuzzyCanonicalAliases(term);
+    if (fuzzyAliases) {
+      for (const a of fuzzyAliases) {
+        if (wordMatchesInHaystack(a, haystack)) return true;
+      }
+    }
   }
+  if (fuzzyWordMatchesInHaystack(term, haystack)) return true;
   return false;
 }
 
