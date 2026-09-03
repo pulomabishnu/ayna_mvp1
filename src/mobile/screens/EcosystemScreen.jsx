@@ -5,6 +5,13 @@ import ProductCard from '../components/ProductCard.jsx';
 import ArticleCard from '../components/ArticleCard.jsx';
 import CtaBanner from '../components/CtaBanner.jsx';
 
+function getTimeGreeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good morning';
+  if (hour < 17) return 'Good afternoon';
+  return 'Good evening';
+}
+
 export default function EcosystemScreen({
   myProducts = [],
   name = 'You',
@@ -30,11 +37,8 @@ export default function EcosystemScreen({
       <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoEco={() => {}} onGoBrowse={onBrowse} />
 
       <div style={{ padding: '18px 20px 0' }}>
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 23, lineHeight: 1.3, textDecoration: 'none' }}>
-          Hey you, meet <span style={{ fontStyle: 'italic' }}>you</span>
-        </div>
-        <div style={{ fontSize: 12.5, color: '#78716C', marginTop: 5, lineHeight: 1.5 }}>
-          Built from what's in your ecosystem — shifts as you add to it.
+        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 23, lineHeight: 1.3 }}>
+          {getTimeGreeting()}, {name}
         </div>
       </div>
 
