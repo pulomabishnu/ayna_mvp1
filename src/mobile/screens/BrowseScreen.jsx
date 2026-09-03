@@ -7,6 +7,7 @@ import LibraryCard from '../components/LibraryCard.jsx';
 import { ARTICLE_CATEGORIES } from '../data/articleRows.js';
 import { getPersonalizedProductIds, MACRO_GROUPS, itemMatchesMacroGroup, CATEGORY_LABELS } from '../../data/products.js';
 import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../../utils/naturalLanguageSearch.js';
+import { fetchSearchSuggestions } from '../../utils/fetchSearchSuggestions.js';
 import { useCardLayout } from '../hooks/useCardLayout.js';
 
 // Fisher-Yates — uniform shuffle, unlike sort(() => Math.random() - 0.5)
@@ -151,6 +152,35 @@ function SkeletonCard() {
   );
 }
 
+// AI-search loading state: a coarse checkerboard "pixel" pattern that
+// materializes in via steps() (a chunky, non-smooth animation) rather than
+// the plain fade SkeletonCard uses above — this is a live network+LLM call
+// (real latency, not instant like the local catalog filter), so it reads as
+// a distinct, more eventful kind of waiting.
+function PixelateCard() {
+  const pixelStyle = {
+    background: 'repeating-conic-gradient(var(--ayna-chip-bg) 0% 25%, var(--ayna-border) 0% 50%) 50% / 12px 12px',
+    animation: 'ay-pixelate 900ms steps(5, end) infinite alternate',
+  };
+  return (
+    <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 18, padding: 10 }}>
+      <div style={{ width: '100%', aspectRatio: '1 / 1', borderRadius: 13, ...pixelStyle }} />
+      <div style={{ height: 12, width: '70%', borderRadius: 4, marginTop: 9, ...pixelStyle }} />
+      <div style={{ height: 10, width: '40%', borderRadius: 4, marginTop: 6, ...pixelStyle }} />
+    </div>
+  );
+}
+
+function PixelateGrid({ count = 6 }) {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 11, padding: '0 20px' }}>
+      {Array.from({ length: count }).map((_, i) => (
+        <PixelateCard key={i} />
+      ))}
+    </div>
+  );
+}
+
 // Owns its own pagination state, remounted via `key` (from the parent)
 // whenever the active filters change — that gives it a fresh initial
 // visibleCount naturally, instead of needing a manual reset that either
@@ -232,6 +262,10 @@ export default function BrowseScreen({
   const [personalized, setPersonalized] = useState(false);
   const [activeGroup, setActiveGroup] = useState('all');
   const { layout: cardLayout, toggleLayout } = useCardLayout();
+  // AI fallback for a typed search the local catalog scoring found nothing
+  // for — same /api/search-suggestions the desktop Discovery page falls
+  // back to (see fetchSearchSuggestions.js), not a separate mechanism.
+  const [aiState, setAiState] = useState({ query: '', loading: false, suggestions: [], error: null });
 
   // Re-shuffled once per mount — this screen unmounts whenever you navigate
   // away (MobileApp swaps which screen component renders), so a fresh
@@ -266,6 +300,11 @@ export default function BrowseScreen({
       .sort((a, b) => b.matchScore - a.matchScore)
       .map((x) => x.item);
   }
+  // Captured before the personalized/category filters narrow `filtered`
+  // further — the AI fallback below should trigger on "the typed search
+  // itself found nothing in the catalog", not "this narrower filtered view
+  // happens to be empty because of an unrelated active filter".
+  const searchScored = filtered;
   if (personalized && hasProfile) {
     const personalizedIds = new Set(getPersonalizedProductIds(quizAnswers, null));
     filtered = filtered.filter((p) => personalizedIds.has(p.id));
@@ -274,6 +313,39 @@ export default function BrowseScreen({
     filtered = filtered.filter((p) => itemMatchesMacroGroup(p, activeGroup));
   }
   const filterKey = `${searchTerm}|${personalized}|${activeGroup}`;
+
+  useEffect(() => {
+    // Nothing to fetch — and nothing to reset either: the render logic below
+    // already gates on `aiState.query === searchTermRaw`, so a stale
+    // aiState from a previous search can never render once searchTermRaw
+    // has changed. Resetting it here would be a synchronous setState call
+    // in the effect body, which this project'''s lint rules disallow.
+    if (searchTermRaw.length < 2 || searchScored.length > 0) return undefined;
+    let cancelled = false;
+    const controller = new AbortController();
+    const timer = setTimeout(() => {
+      setAiState({ query: searchTermRaw, loading: true, suggestions: [], error: null });
+      fetchSearchSuggestions({
+        query: searchTermRaw,
+        category: activeGroup !== 'all' ? activeGroup : '',
+        maxResults: 20,
+        signal: controller.signal,
+      })
+        .then(({ suggestions, error }) => {
+          if (cancelled) return;
+          setAiState({ query: searchTermRaw, loading: false, suggestions: suggestions || [], error: error || null });
+        })
+        .catch((e) => {
+          if (cancelled || e?.name === 'AbortError') return;
+          setAiState({ query: searchTermRaw, loading: false, suggestions: [], error: 'Could not load suggestions.' });
+        });
+    }, 600);
+    return () => {
+      cancelled = true;
+      controller.abort();
+      clearTimeout(timer);
+    };
+  }, [searchTermRaw, searchScored.length, activeGroup]);
 
   const articlesById = new Map(articles.map((a) => [a.id, a]));
   const rows = ARTICLE_CATEGORIES.map((cat) => ({
@@ -320,12 +392,26 @@ export default function BrowseScreen({
 
       {mode === 'products' ? (
         <>
-          {filtered.length === 0 ? (
+          {filtered.length > 0 ? (
+            <ProductGrid key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} />
+          ) : searchTermRaw.length >= 2 && aiState.loading ? (
+            <>
+              <div style={{ padding: '0 20px 14px', fontFamily: "'DM Mono',monospace", fontSize: 10.5, letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
+                Searching beyond our catalog…
+              </div>
+              <PixelateGrid />
+            </>
+          ) : searchTermRaw.length >= 2 && aiState.query === searchTermRaw && aiState.suggestions.length > 0 ? (
+            <>
+              <div style={{ padding: '0 20px 14px', fontFamily: "'DM Mono',monospace", fontSize: 10.5, letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
+                Not in our catalog yet — found via AI search
+              </div>
+              <ProductGrid key={`ai-${filterKey}`} products={aiState.suggestions} onOpenProduct={onOpenProduct} layout={cardLayout} />
+            </>
+          ) : (
             <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 13.5 }}>
               No products match.
             </div>
-          ) : (
-            <ProductGrid key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} />
           )}
           <div
             style={{
