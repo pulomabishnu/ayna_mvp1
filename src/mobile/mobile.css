@@ -74,6 +74,7 @@
 @keyframes ay-bob { 0%, 100% { transform: translateY(4px); } 50% { transform: translateY(-4px); } }
 @keyframes ay-drift { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(14px,-18px) scale(1.09); } }
 @keyframes ay-skeleton { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+@keyframes ay-pixelate { 0% { opacity: .15; filter: blur(6px) saturate(0); transform: scale(.94); } 60% { opacity: .7; filter: blur(2px) saturate(.6); transform: scale(.98); } 100% { opacity: 1; filter: blur(0) saturate(1); transform: scale(1); } }
 
 .ayna-mobile input[type="range"] {
   -webkit-appearance: none;
