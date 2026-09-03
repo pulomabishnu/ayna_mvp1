@@ -5,7 +5,7 @@ import CtaBanner from '../components/CtaBanner.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import LibraryCard from '../components/LibraryCard.jsx';
 import { ARTICLE_CATEGORIES } from '../data/articleRows.js';
-import { productSearchText, getPersonalizedProductIds } from '../../data/products.js';
+import { productSearchText, getPersonalizedProductIds, MACRO_GROUPS, itemMatchesMacroGroup } from '../../data/products.js';
 
 // Fisher-Yates — uniform shuffle, unlike sort(() => Math.random() - 0.5)
 // (which is biased and not a proper random permutation).
@@ -81,6 +81,34 @@ function PersonalizedToggle({ on, disabled, onClick }) {
           }}
         />
       </div>
+    </div>
+  );
+}
+
+function CategoryChipRow({ groups, active, onSelect }) {
+  return (
+    <div style={{ display: 'flex', gap: 7, overflowX: 'auto', padding: '0 20px 12px', scrollbarWidth: 'none' }}>
+      {groups.map((g) => (
+        <div
+          key={g.id}
+          onClick={() => onSelect(g.id)}
+          style={{
+            flex: 'none',
+            padding: '7px 13px',
+            borderRadius: 99,
+            fontFamily: "'DM Sans',sans-serif",
+            fontWeight: 600,
+            fontSize: 12,
+            cursor: 'pointer',
+            whiteSpace: 'nowrap',
+            background: active === g.id ? '#292524' : '#F3EFE9',
+            color: active === g.id ? '#FFFCF9' : '#57534E',
+            border: '1px solid ' + (active === g.id ? '#292524' : '#E1D5CE'),
+          }}
+        >
+          {g.label}
+        </div>
+      ))}
     </div>
   );
 }
@@ -165,6 +193,7 @@ export default function BrowseScreen({
   const [mode, setMode] = useState('products');
   const [searchValue, setSearchValue] = useState('');
   const [personalized, setPersonalized] = useState(false);
+  const [activeGroup, setActiveGroup] = useState('all');
 
   // Re-shuffled once per mount — this screen unmounts whenever you navigate
   // away (MobileApp swaps which screen component renders), so a fresh
@@ -174,16 +203,19 @@ export default function BrowseScreen({
   const hasProfile = !!(quizAnswers?.frustrations?.length);
 
   // Real filtering — reuses the site's own productSearchText/
-  // getPersonalizedProductIds from src/data/products.js (the same
-  // personalization function that seeds My Ecosystem — not a separate
-  // matching system).
+  // getPersonalizedProductIds/itemMatchesMacroGroup from src/data/products.js
+  // (the same personalization and category-matching functions the desktop
+  // Discovery page already uses — not a separate matching system).
   const searchTerm = searchValue.trim().toLowerCase();
   let filtered = shuffled.filter((p) => !searchTerm || productSearchText(p).includes(searchTerm));
   if (personalized && hasProfile) {
     const personalizedIds = new Set(getPersonalizedProductIds(quizAnswers, null));
     filtered = filtered.filter((p) => personalizedIds.has(p.id));
   }
-  const filterKey = `${searchTerm}|${personalized}`;
+  if (activeGroup !== 'all') {
+    filtered = filtered.filter((p) => itemMatchesMacroGroup(p, activeGroup));
+  }
+  const filterKey = `${searchTerm}|${personalized}|${activeGroup}`;
 
   const articlesById = new Map(articles.map((a) => [a.id, a]));
   const rows = ARTICLE_CATEGORIES.map((cat) => ({
@@ -212,6 +244,10 @@ export default function BrowseScreen({
           <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />
         )}
       </div>
+
+      {mode === 'products' && (
+        <CategoryChipRow groups={MACRO_GROUPS} active={activeGroup} onSelect={setActiveGroup} />
+      )}
 
       {/* Once the ecosystem exists, Browse stays pure browsing — the
           "update your health" prompt lives on the Ecosystem screen instead,
