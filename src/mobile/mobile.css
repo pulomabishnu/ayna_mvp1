@@ -16,6 +16,8 @@
   --ayna-navy: #242A52;
   --ayna-purple: #4E3866;
   --ayna-peach: #FFEFD6;
+  --ayna-chip-bg: #F3EFE9;
+  --ayna-chip-border: #E1D5CE;
   --ayna-gradient-hero: linear-gradient(165deg, #2A1F4E 0%, #4E3866 42%, #8A4A3C 74%, #D97A2B 100%);
   --ayna-gradient-panel: linear-gradient(168deg, #242A52 0%, #4E3866 52%, #A2603C 100%);
 
@@ -31,6 +33,24 @@
   font-family: Inter, system-ui, sans-serif;
   color: var(--ayna-text);
   background: var(--ayna-bg);
+}
+
+/* Dark theme — exact tokens from the "Nebula"/"Mission control" reference
+   mockups (design-reference/). Only colors change here; typography (Playfair
+   Display/DM Sans/Inter/DM Mono) is identical in both themes. */
+.ayna-mobile[data-theme="dark"] {
+  --ayna-bg: #0B0E1F;
+  --ayna-bg-alt: #111427;
+  --ayna-surface: rgba(255,255,255,.055);
+  --ayna-surface-alt: #141833;
+  --ayna-border: rgba(255,255,255,.1);
+  --ayna-text: #F5F3FF;
+  --ayna-text-muted: #9E9BC4;
+  --ayna-text-faint: #55527A;
+  --ayna-accent: #FFC774;
+  --ayna-accent-dark: #FFC774;
+  --ayna-chip-bg: rgba(255,255,255,.06);
+  --ayna-chip-border: rgba(255,255,255,.12);
 }
 
 .ayna-mobile a { color: var(--ayna-brown); text-decoration: none; }
