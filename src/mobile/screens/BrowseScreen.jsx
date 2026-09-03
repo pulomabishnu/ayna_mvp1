@@ -6,6 +6,7 @@ import ProductCard from '../components/ProductCard.jsx';
 import LibraryCard from '../components/LibraryCard.jsx';
 import { ARTICLE_CATEGORIES } from '../data/articleRows.js';
 import { productSearchText, getPersonalizedProductIds, MACRO_GROUPS, itemMatchesMacroGroup } from '../../data/products.js';
+import { useCardLayout } from '../hooks/useCardLayout.js';
 
 // Fisher-Yates — uniform shuffle, unlike sort(() => Math.random() - 0.5)
 // (which is biased and not a proper random permutation).
@@ -30,7 +31,7 @@ function ModeTab({ label, active, onClick }) {
         fontSize: 14,
         cursor: 'pointer',
         paddingBottom: 10,
-        color: active ? '#292524' : '#A8A29E',
+        color: active ? 'var(--ayna-text)' : 'var(--ayna-text-faint)',
         borderBottom: '2px solid ' + (active ? '#FFC774' : 'transparent'),
         marginBottom: -1,
       }}
@@ -53,17 +54,17 @@ function PersonalizedToggle({ on, disabled, onClick }) {
         opacity: disabled ? 0.45 : 1,
         padding: '5px 5px 5px 10px',
         borderRadius: 99,
-        background: on ? '#292524' : '#F3EFE9',
+        background: on ? 'var(--ayna-text)' : 'var(--ayna-chip-bg)',
         transition: 'background .15s',
       }}
     >
-      <span style={{ fontSize: 12, fontWeight: 600, color: on ? '#FFFCF9' : '#57534E' }}>For You</span>
+      <span style={{ fontSize: 12, fontWeight: 600, color: on ? 'var(--ayna-bg)' : 'var(--ayna-text-muted)' }}>For You</span>
       <div
         style={{
           width: 30,
           height: 17,
           borderRadius: 99,
-          background: on ? '#FFC774' : '#D9D0C6',
+          background: on ? '#FFC774' : 'var(--ayna-chip-border)',
           position: 'relative',
           transition: 'background .15s',
         }}
@@ -85,6 +86,32 @@ function PersonalizedToggle({ on, disabled, onClick }) {
   );
 }
 
+function LayoutToggle({ layout, onToggle }) {
+  return (
+    <div
+      onClick={onToggle}
+      role="button"
+      aria-label={layout === 'grid' ? 'Switch to list view' : 'Switch to grid view'}
+      style={{
+        width: 30,
+        height: 30,
+        borderRadius: 8,
+        border: '1px solid var(--ayna-chip-border)',
+        background: 'var(--ayna-chip-bg)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        fontSize: 14,
+        color: 'var(--ayna-text-muted)',
+        marginLeft: 8,
+      }}
+    >
+      {layout === 'grid' ? '☰' : '▦'}
+    </div>
+  );
+}
+
 function CategoryChipRow({ groups, active, onSelect }) {
   return (
     <div style={{ display: 'flex', gap: 7, overflowX: 'auto', padding: '0 20px 12px', scrollbarWidth: 'none' }}>
@@ -101,9 +128,9 @@ function CategoryChipRow({ groups, active, onSelect }) {
             fontSize: 12,
             cursor: 'pointer',
             whiteSpace: 'nowrap',
-            background: active === g.id ? '#292524' : '#F3EFE9',
-            color: active === g.id ? '#FFFCF9' : '#57534E',
-            border: '1px solid ' + (active === g.id ? '#292524' : '#E1D5CE'),
+            background: active === g.id ? 'var(--ayna-text)' : 'var(--ayna-chip-bg)',
+            color: active === g.id ? 'var(--ayna-bg)' : 'var(--ayna-text-muted)',
+            border: '1px solid ' + (active === g.id ? 'var(--ayna-text)' : 'var(--ayna-chip-border)'),
           }}
         >
           {g.label}
@@ -115,10 +142,10 @@ function CategoryChipRow({ groups, active, onSelect }) {
 
 function SkeletonCard() {
   return (
-    <div style={{ background: '#FFFFFF', border: '1px solid #E1D5CE', borderRadius: 18, padding: 10 }}>
-      <div style={{ width: '100%', aspectRatio: '1 / 1', borderRadius: 13, background: '#EAE3DA', animation: 'ay-skeleton 1.2s ease-in-out infinite' }} />
-      <div style={{ height: 12, width: '70%', background: '#EAE3DA', borderRadius: 4, marginTop: 9, animation: 'ay-skeleton 1.2s ease-in-out infinite' }} />
-      <div style={{ height: 10, width: '40%', background: '#EAE3DA', borderRadius: 4, marginTop: 6, animation: 'ay-skeleton 1.2s ease-in-out infinite' }} />
+    <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 18, padding: 10 }}>
+      <div style={{ width: '100%', aspectRatio: '1 / 1', borderRadius: 13, background: 'var(--ayna-chip-bg)', animation: 'ay-skeleton 1.2s ease-in-out infinite' }} />
+      <div style={{ height: 12, width: '70%', background: 'var(--ayna-chip-bg)', borderRadius: 4, marginTop: 9, animation: 'ay-skeleton 1.2s ease-in-out infinite' }} />
+      <div style={{ height: 10, width: '40%', background: 'var(--ayna-chip-bg)', borderRadius: 4, marginTop: 6, animation: 'ay-skeleton 1.2s ease-in-out infinite' }} />
     </div>
   );
 }
@@ -128,7 +155,7 @@ function SkeletonCard() {
 // visibleCount naturally, instead of needing a manual reset that either
 // calls setState in an effect body or reads/writes a ref during render
 // (both flagged by this project's react-hooks lint rules).
-function ProductGrid({ products, onOpenProduct }) {
+function ProductGrid({ products, onOpenProduct, layout = 'grid' }) {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [loadingMore, setLoadingMore] = useState(false);
   const sentinelRef = useRef(null);
@@ -153,14 +180,21 @@ function ProductGrid({ products, onOpenProduct }) {
   }, [products.length, visibleCount, loadingMore]);
 
   const visibleProducts = products.slice(0, visibleCount);
+  const isList = layout === 'list';
 
   return (
     <>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 11, padding: '0 20px' }}>
+      <div
+        style={
+          isList
+            ? { display: 'flex', flexDirection: 'column', gap: 4, padding: '0 14px' }
+            : { display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 11, padding: '0 20px' }
+        }
+      >
         {visibleProducts.map((p) => (
-          <ProductCard key={p.id} product={p} onClick={() => onOpenProduct && onOpenProduct(p)} />
+          <ProductCard key={p.id} product={p} variant={layout} onClick={() => onOpenProduct && onOpenProduct(p)} />
         ))}
-        {loadingMore && (
+        {loadingMore && !isList && (
           <>
             <SkeletonCard />
             <SkeletonCard />
@@ -189,11 +223,14 @@ export default function BrowseScreen({
   onStartQuiz,
   hasEcosystem = false,
   quizAnswers = null,
+  theme = 'dark',
+  onToggleTheme,
 }) {
   const [mode, setMode] = useState('products');
   const [searchValue, setSearchValue] = useState('');
   const [personalized, setPersonalized] = useState(false);
   const [activeGroup, setActiveGroup] = useState('all');
+  const { layout: cardLayout, toggleLayout } = useCardLayout();
 
   // Re-shuffled once per mount — this screen unmounts whenever you navigate
   // away (MobileApp swaps which screen component renders), so a fresh
@@ -226,22 +263,26 @@ export default function BrowseScreen({
   return (
     <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0 40px', animation: 'ay-page .25s ease-out' }}>
       <MobileHeader
-        variant="light"
+        variant={theme}
         activeTab="browse"
         initial={headerInitial}
         onOpenSaved={onOpenSaved}
         onGoEco={onGoEco}
+        onToggleTheme={onToggleTheme}
       />
 
       <SearchBar value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
 
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px 12px', borderBottom: '1px solid #E1D5CE', margin: '0 0 14px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px 12px', borderBottom: '1px solid var(--ayna-border)', margin: '0 0 14px' }}>
         <div style={{ display: 'flex', gap: 18 }}>
           <ModeTab label="Products" active={mode === 'products'} onClick={() => setMode('products')} />
           <ModeTab label="Reads" active={mode === 'reads'} onClick={() => setMode('reads')} />
         </div>
         {mode === 'products' && (
-          <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />
+            <LayoutToggle layout={cardLayout} onToggle={toggleLayout} />
+          </div>
         )}
       </div>
 
@@ -259,11 +300,11 @@ export default function BrowseScreen({
       {mode === 'products' ? (
         <>
           {filtered.length === 0 ? (
-            <div style={{ padding: '40px 20px', textAlign: 'center', color: '#78716C', fontSize: 13.5 }}>
+            <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 13.5 }}>
               No products match.
             </div>
           ) : (
-            <ProductGrid key={filterKey} products={filtered} onOpenProduct={onOpenProduct} />
+            <ProductGrid key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} />
           )}
           <div
             style={{
@@ -272,14 +313,14 @@ export default function BrowseScreen({
               fontFamily: "'DM Mono',monospace",
               fontSize: 10,
               letterSpacing: 0.8,
-              color: '#A8A29E',
+              color: 'var(--ayna-text-faint)',
             }}
           >
             ALL OTC · NOT A DIAGNOSIS
           </div>
         </>
       ) : rows.length === 0 ? (
-        <div style={{ padding: '40px 20px', textAlign: 'center', color: '#78716C', fontSize: 13.5 }}>
+        <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 13.5 }}>
           No reads yet.
         </div>
       ) : (
