@@ -69,12 +69,17 @@ const ALLERGIES = [
 
 
 const MEDICATION_SUGGESTIONS = [
-  'Zoloft', 'Sertraline', 'Vyvanse', 'Lisdexamfetamine', 'Adderall', 'Amphetamine/dextroamphetamine',
-  'Lexapro', 'Escitalopram', 'Prozac', 'Fluoxetine', 'Wellbutrin', 'Bupropion', 'Buspirone',
-  'Metformin', 'Spironolactone', 'Levothyroxine', 'Synthroid', 'Ibuprofen', 'Naproxen', 'Acetaminophen',
+  'Zoloft', 'Sertraline', 'Lexapro', 'Escitalopram', 'Prozac', 'Fluoxetine', 'Wellbutrin', 'Bupropion',
+  'Buspirone', 'Celexa', 'Citalopram', 'Cymbalta', 'Duloxetine', 'Paxil', 'Paroxetine',
+  'Vyvanse', 'Lisdexamfetamine', 'Adderall', 'Amphetamine/dextroamphetamine',
+  'Accutane', 'Isotretinoin', 'Tretinoin', 'Doxycycline',
+  'Metformin', 'Spironolactone', 'Levothyroxine', 'Synthroid', 'Letrozole', 'Clomiphene',
+  'Ozempic', 'Semaglutide', 'Wegovy',
+  'Ibuprofen', 'Naproxen', 'Acetaminophen',
   'Melatonin', 'Magnesium', 'Vitamin D', 'Vitamin B12', 'Iron', 'Folic acid', 'Prenatal vitamin',
   'Omega-3', 'Probiotic', 'Multivitamin', 'Biotin', 'Inositol', 'Myo-inositol',
-  'Birth control pill', 'Hormonal IUD', 'Copper IUD', 'Nexplanon', 'Depo-Provera', 'NuvaRing', 'Xulane patch',
+  'Birth control pill', 'Yaz', 'Drospirenone/ethinyl estradiol', 'Hormonal IUD', 'Copper IUD',
+  'Nexplanon', 'Depo-Provera', 'NuvaRing', 'Xulane patch',
 ];
 
 const CATALOG_PRODUCT_NAMES = [...new Set((ALL_PRODUCTS || []).map((p) => p?.name).filter(Boolean))];
@@ -112,6 +117,7 @@ const STOP_REASONS = [
 const EMPTY = {
   age: '',
   lifeStage: '',
+  lifeStageSelections: [],
   lifeStageOther: '',
   zipcode: '',
   supportSelections: [],
@@ -260,23 +266,39 @@ function arrayHasAny(arr, set) {
   return (arr || []).some((value) => set.has(value));
 }
 
-function isPeriodRelevant(intake) {
-  return ['I get periods regularly', 'My periods are irregular'].includes(intake.lifeStage) || arrayHasAny(intake.supportSelections, PERIOD_TRIGGER);
+function getLifeStages(intake) {
+  const selected = Array.isArray(intake.lifeStageSelections) ? intake.lifeStageSelections.filter(Boolean) : [];
+  if (selected.length) return selected;
+  return intake.lifeStage ? [intake.lifeStage] : [];
 }
+
+function hasLifeStage(intake, value) {
+  return getLifeStages(intake).includes(value);
+}
+
+function isPeriodRelevant(intake) {
+  return getLifeStages(intake).some((value) => ['I get periods regularly', 'My periods are irregular'].includes(value)) || arrayHasAny(intake.supportSelections, PERIOD_TRIGGER);
+}
+
 function isUtiRelevant(intake) {
   return arrayHasAny(intake.supportSelections, UTI_TRIGGER);
 }
+
 function isTtcRelevant(intake) {
-  return intake.lifeStage === 'I am trying to conceive' || arrayHasAny(intake.supportSelections, TTC_TRIGGER);
+  return hasLifeStage(intake, 'I am trying to conceive') || arrayHasAny(intake.supportSelections, TTC_TRIGGER);
 }
+
 function isPregnancyRelevant(intake) {
-  return intake.lifeStage === 'I am pregnant' || arrayHasAny(intake.supportSelections, PREGNANCY_TRIGGER);
+  return hasLifeStage(intake, 'I am pregnant') || arrayHasAny(intake.supportSelections, PREGNANCY_TRIGGER);
 }
+
 function isPostpartumRelevant(intake) {
-  return intake.lifeStage === 'I am postpartum' || arrayHasAny(intake.supportSelections, POSTPARTUM_TRIGGER);
+  return hasLifeStage(intake, 'I am postpartum') || arrayHasAny(intake.supportSelections, POSTPARTUM_TRIGGER);
 }
 
 function buildSnapshot(intake) {
+  const lifeStageSelections = getLifeStages(intake);
+  const primaryLifeStage = intake.lifeStage || lifeStageSelections[0] || '';
   const primaryConcerns = [...new Set((intake.supportSelections || []).map((item) => LEGACY_CONCERN_BY_ITEM[item]).filter(Boolean))];
   const customConcerns = [
     ...(intake.supportSelections || []).filter((item) => !['Nothing right now', 'Something else'].includes(item)),
@@ -298,7 +320,7 @@ function buildSnapshot(intake) {
     'I am in perimenopause': 'irregular_perimenopause',
     'I am in menopause': 'no_menopause',
     'I am post-menopause': 'no_menopause',
-  }[intake.lifeStage] || '';
+  }[primaryLifeStage] || '';
 
   const flowLevel = {
     'Very light': 'light', Light: 'light', Moderate: 'medium', Heavy: 'heavy', 'Very heavy': 'very heavy',
@@ -335,7 +357,8 @@ function buildSnapshot(intake) {
     age: intake.age,
     zipcode: intake.zipcode.trim(),
     location: '',
-    lifeStage: intake.lifeStage,
+    lifeStage: primaryLifeStage,
+    lifeStageSelections,
     lifeStageOther: intake.lifeStageOther.trim(),
     supportSelections: intake.supportSelections,
     supportOtherText: intake.supportOtherText.trim(),
@@ -361,7 +384,7 @@ function buildSnapshot(intake) {
     takesCurrent: intake.takesCurrent,
     currentMedicationItems: intake.takesCurrent === 'Yes' ? intake.currentMedicationItems : [],
     currentMedications: intake.takesCurrent === 'Yes' ? intake.currentMedicationItems.join(', ') : '',
-    hormonalBirthControl: intake.lifeStage === 'I use hormonal birth control' ? 'Yes' : '',
+    hormonalBirthControl: hasLifeStage(intake, 'I use hormonal birth control') ? 'Yes' : '',
     hormonalBirthControlType: '',
     tryingToConceive: isTtcRelevant(intake) ? 'Yes' : 'No',
     productHistory: intake.productHistory,
@@ -476,12 +499,12 @@ function rankedSuggestions(query, options = [], limit = 6) {
     .map((entry) => entry.option);
 }
 
-function TokenInput({ values, onChange, placeholder, suggestions = [] }) {
+function TokenInput({ values, onChange, placeholder, suggestions = [], suggestionLimit = 6 }) {
   const [draft, setDraft] = useState('');
   const [open, setOpen] = useState(false);
   const matches = useMemo(
-    () => rankedSuggestions(draft, suggestions.filter((option) => !values.some((value) => normalizeSuggestion(value) === normalizeSuggestion(option))), 6),
-    [draft, suggestions, values]
+    () => rankedSuggestions(draft, suggestions.filter((option) => !values.some((value) => normalizeSuggestion(value) === normalizeSuggestion(option))), suggestionLimit),
+    [draft, suggestions, values, suggestionLimit]
   );
 
   const addValue = (rawValue) => {
@@ -569,7 +592,18 @@ function ProductHistoryBuilder({ products, onChange }) {
 
   return (
     <div className="ayna-product-builder">
+      {products.length > 0 && (
+        <div className="ayna-added-products">
+          <div className="ayna-added-products-label">Added products</div>
+          <div className="ayna-added-products-list">
+            {products.map((product, index) => (
+              <span key={`${product.name}-summary-${index}`}>{product.name}</span>
+            ))}
+          </div>
+        </div>
+      )}
       <div className="ayna-token-card">
+        {products.length > 0 && <div className="ayna-add-another-label">Add another product</div>}
         <div className="ayna-token-line">
           <input
             value={query}
@@ -577,7 +611,7 @@ function ProductHistoryBuilder({ products, onChange }) {
             onChange={(e) => { setQuery(e.target.value); setShowSuggestions(true); }}
             onBlur={() => window.setTimeout(() => setShowSuggestions(false), 120)}
             onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addProduct(query); } }}
-            placeholder="Start typing a product name"
+            placeholder={products.length ? "Search or add another product" : "Search or add a product"}
             autoComplete="off"
             aria-autocomplete="list"
           />
@@ -595,7 +629,7 @@ function ProductHistoryBuilder({ products, onChange }) {
       {products.map((product, index) => (
         <div className="ayna-product-card" key={`${product.name}-${index}`}>
           <div className="ayna-product-head"><div>{product.name}</div><button type="button" onClick={() => onChange(products.filter((_, i) => i !== index))}>Remove</button></div>
-          <div className="ayna-product-q"><div className="ayna-product-label">Are you currently using it?</div><Segmented options={['Yes', 'No']} value={product.current} onChange={(current) => updateProduct(index, { current })} /></div>
+          <div className="ayna-product-q"><div className="ayna-product-label">Are you currently using it? (optional)</div><Segmented options={['Yes', 'No']} value={product.current} onChange={(current) => updateProduct(index, { current })} /></div>
           <div className="ayna-product-q"><div className="ayna-product-label">How well did it work for you?</div><div className="ayna-pills left">{['Helped a lot', 'Helped somewhat', 'No noticeable difference', 'Made things worse', 'Not sure'].map((option) => <Pill key={option} label={option} selected={product.worked === option} onClick={() => updateProduct(index, { worked: option })} />)}</div></div>
           <div className="ayna-product-q"><div className="ayna-product-label">Did you experience any side effects or reactions?</div><div className="ayna-pills left">{['No', 'Mild side effects', 'Serious or concerning reaction', 'Not sure'].map((option) => <Pill key={option} label={option} selected={product.reaction === option} onClick={() => updateProduct(index, { reaction: option })} />)}</div></div>
           {['Mild side effects', 'Serious or concerning reaction'].includes(product.reaction) && <input className="ayna-inline-input" value={product.reactionText} onChange={(e) => updateProduct(index, { reactionText: e.target.value })} placeholder="What happened? (optional)" />}
@@ -652,7 +686,7 @@ function requiredReady(stepId, intake) {
   if (stepId === 'allergies') return intake.allergySelections.length > 0;
   if (stepId === 'medications') return !!intake.takesCurrent && (intake.takesCurrent !== 'Yes' || intake.currentMedicationItems.length > 0);
   if (stepId === 'safety') return !!intake.safetyConcern;
-  if (stepId === 'products' && intake.productHistory.length) return intake.productHistory.every((p) => p.current && p.worked && p.reaction);
+  if (stepId === 'products' && intake.productHistory.length) return intake.productHistory.every((p) => p.worked && p.reaction);
   return true;
 }
 
@@ -674,7 +708,7 @@ const STYLES = `
 .ayna-timeline{display:flex;align-items:flex-start;max-width:560px;margin:0 auto;padding:8px 2px}.ayna-timeline button{flex:1;position:relative;padding:30px 4px 0;background:none;border:none;cursor:pointer;color:rgba(255,249,242,.72)}.ayna-timeline button:before{content:'';position:absolute;top:11px;left:0;right:0;height:3px;background:rgba(255,249,242,.24)}.ayna-timeline button:first-child:before{left:50%}.ayna-timeline button:last-child:before{right:50%}.ayna-timeline-dot{position:absolute;top:3px;left:50%;transform:translateX(-50%);width:19px;height:19px;border-radius:50%;background:#FFF9F2;border:3px solid rgba(42,31,78,.28)}.ayna-timeline button.selected .ayna-timeline-dot{background:#2A1F4E;border-color:#FFDCA8}.ayna-timeline-label{font-size:11px;line-height:1.3}.ayna-timeline button.selected{color:#FFDCA8;font-weight:700}
 .ayna-token-card{max-width:520px;margin:0 auto;background:#FFF9F2;border-radius:18px;padding:16px;box-shadow:0 14px 28px -18px rgba(0,0,0,.45);text-align:left}.ayna-token-line{display:flex;gap:8px}.ayna-token-line input{flex:1;border:1.5px solid rgba(42,31,78,.14);border-radius:12px;padding:12px 13px;color:#2A1F4E;background:#fff;outline:none}.ayna-token-line button{border:none;border-radius:12px;background:#2A1F4E;color:#fff;padding:0 15px;font-weight:700;cursor:pointer}.ayna-tokens{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.ayna-tokens>span{display:inline-flex;align-items:center;gap:6px;background:#FFF3DD;color:#8A5A1E;padding:7px 10px;border-radius:999px;font-size:12px;font-weight:600}.ayna-tokens span button{border:none;background:none;color:inherit;padding:0;cursor:pointer;font-size:14px}
 .ayna-smart-suggestions{margin-top:8px;border:1px solid rgba(42,31,78,.12);border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 14px 28px -20px rgba(0,0,0,.5);position:relative;z-index:3}.ayna-smart-suggestions button{display:block;width:100%;padding:11px 12px;background:#fff;border:none;border-top:1px solid rgba(42,31,78,.08);text-align:left;color:#2A1F4E;cursor:pointer;font-size:13px}.ayna-smart-suggestions button:first-child{border-top:none}.ayna-smart-suggestions button:hover,.ayna-smart-suggestions button:focus{background:#FFF3DD}.ayna-allergy-list{max-height:none}
-.ayna-product-builder{max-width:540px;margin:0 auto}.ayna-product-suggestions{margin-top:8px;border:1px solid rgba(42,31,78,.12);border-radius:12px;overflow:hidden}.ayna-product-suggestions button{display:block;width:100%;padding:10px 12px;background:#fff;border:none;border-top:1px solid rgba(42,31,78,.08);text-align:left;color:#2A1F4E;cursor:pointer}.ayna-product-suggestions button:first-child{border-top:none}.ayna-product-card{background:#FFF9F2;color:#2A1F4E;border-radius:20px;padding:18px;margin-top:14px;text-align:left;box-shadow:0 16px 34px -20px rgba(0,0,0,.5)}.ayna-product-head{display:flex;align-items:center;justify-content:space-between;gap:12px;font-family:var(--font-serif,'Playfair Display',Georgia,serif);font-size:18px}.ayna-product-head button{border:none;background:none;color:#8c8078;font-size:12px;cursor:pointer}.ayna-product-q{margin-top:15px}.ayna-product-label{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.045em;margin-bottom:8px;color:#5c554e}.ayna-product-card .ayna-segmented{margin:0;max-width:none}.ayna-product-card .ayna-pill{border-color:rgba(42,31,78,.13);box-shadow:none}
+.ayna-product-builder{max-width:540px;margin:0 auto}.ayna-added-products{margin:0 auto 14px;text-align:left}.ayna-added-products-label,.ayna-add-another-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#FFDCA8;margin:0 4px 8px}.ayna-added-products-list{display:flex;flex-wrap:wrap;gap:8px}.ayna-added-products-list span{background:rgba(255,249,242,.14);border:1px solid rgba(255,249,242,.2);color:#FFF9F2;padding:7px 10px;border-radius:999px;font-size:12px;font-weight:600}.ayna-add-another-label{color:#5c554e;margin:0 0 9px}.ayna-product-suggestions{margin-top:8px;border:1px solid rgba(42,31,78,.12);border-radius:12px;overflow:hidden}.ayna-product-suggestions button{display:block;width:100%;padding:10px 12px;background:#fff;border:none;border-top:1px solid rgba(42,31,78,.08);text-align:left;color:#2A1F4E;cursor:pointer}.ayna-product-suggestions button:first-child{border-top:none}.ayna-product-card{background:#FFF9F2;color:#2A1F4E;border-radius:20px;padding:18px;margin-top:14px;text-align:left;box-shadow:0 16px 34px -20px rgba(0,0,0,.5)}.ayna-product-head{display:flex;align-items:center;justify-content:space-between;gap:12px;font-family:var(--font-serif,'Playfair Display',Georgia,serif);font-size:18px}.ayna-product-head button{border:none;background:none;color:#8c8078;font-size:12px;cursor:pointer}.ayna-product-q{margin-top:15px}.ayna-product-label{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.045em;margin-bottom:8px;color:#5c554e}.ayna-product-card .ayna-segmented{margin:0;max-width:none}.ayna-product-card .ayna-pill{border-color:rgba(42,31,78,.13);box-shadow:none}
 .ayna-spectrum{padding:20px 18px}.ayna-spectrum-line{height:5px;border-radius:999px;background:linear-gradient(90deg,#4E3866,#FFC774,#D97A2B);margin:8px 22px 18px}.ayna-spectrum-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.ayna-spectrum-grid button{padding:11px 7px;border-radius:12px;border:1.5px solid rgba(42,31,78,.1);background:#fff;font-size:10.5px;line-height:1.3;color:#2A1F4E;cursor:pointer}.ayna-spectrum-grid button.selected{border-color:#E8843C;background:#FFF3DD}
 .ayna-trust-list{max-width:520px;margin:0 auto;display:grid;gap:10px}.ayna-trust-item{display:flex;align-items:center;gap:10px;background:#FFF9F2;color:#2A1F4E;border-radius:16px;padding:13px 14px;box-shadow:0 10px 22px -16px rgba(0,0,0,.4)}.ayna-drag{color:#8c8078;cursor:grab;letter-spacing:-4px;font-size:18px}.ayna-rank{width:24px;height:24px;border-radius:50%;background:#FFF3DD;color:#8A5A1E;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}.ayna-trust-label{flex:1;text-align:left;font-size:13px;font-weight:600;line-height:1.35}.ayna-move{display:flex;gap:4px}.ayna-move button{width:26px;height:26px;border-radius:8px;border:1px solid rgba(42,31,78,.12);background:#fff;color:#2A1F4E;cursor:pointer}
 .ayna-saving{margin-top:14px;color:rgba(255,249,242,.72);font-size:12px}.ayna-error{margin-top:14px;color:#FFE0D6;font-size:12px;font-weight:600}.ayna-count{background:rgba(42,31,78,.16);border-radius:999px;padding:2px 9px;font-size:12px}
@@ -687,7 +721,11 @@ export default function HealthIntakeForm({ onComplete }) {
       const raw = window.sessionStorage.getItem(DRAFT_KEY);
       if (!raw) return EMPTY;
       const parsed = JSON.parse(raw);
-      return { ...EMPTY, ...(parsed?.intake || {}) };
+      const restored = { ...EMPTY, ...(parsed?.intake || {}) };
+      const lifeStageSelections = Array.isArray(restored.lifeStageSelections)
+        ? restored.lifeStageSelections
+        : (restored.lifeStage ? [restored.lifeStage] : []);
+      return { ...restored, lifeStageSelections, lifeStage: restored.lifeStage || lifeStageSelections[0] || '' };
     } catch (_) { return EMPTY; }
   });
   const [stepId, setStepId] = useState(() => {
@@ -703,7 +741,7 @@ export default function HealthIntakeForm({ onComplete }) {
   const visibleSteps = useMemo(() => {
     const steps = [
       { id: 'age', section: 'core', title: 'How old are you?', type: 'age', optional: true },
-      { id: 'lifeStage', section: 'core', title: 'Which option best describes you right now?', type: 'cards', optional: true },
+      { id: 'lifeStage', section: 'core', title: 'Which options best describe you right now?', subtitle: 'Select all that apply.', type: 'cards', optional: true },
       { id: 'zip', section: 'core', title: 'What is your ZIP code?', subtitle: 'Optional. This helps us personalize local care and availability.', type: 'text', optional: true },
       { id: 'support', section: 'support', title: 'What are you currently experiencing or looking for support with?', subtitle: 'Choose anything that feels relevant. You can search or browse by category.', type: 'support', optional: true },
       ...(isPeriodRelevant(intake) ? [
@@ -717,7 +755,7 @@ export default function HealthIntakeForm({ onComplete }) {
       { id: 'conditions', section: 'safety', title: 'Have you been diagnosed with any of the following?', subtitle: 'This is different from what you are experiencing. It helps us separate a diagnosed condition from a symptom or goal.', type: 'conditions', optional: false },
       { id: 'allergies', section: 'safety', title: 'What are you allergic or sensitive to, if anything?', subtitle: 'Select all that apply.', type: 'allergies', optional: false },
       { id: 'medications', section: 'safety', title: 'Are you currently taking any medications, supplements, vitamins, or hormonal birth control?', subtitle: 'This helps us avoid duplicate ingredients and flag possible compatibility issues.', type: 'medications', optional: false },
-      { id: 'products', section: 'history', title: 'Which health or wellness products have you already used?', subtitle: 'Start typing a product name, then choose a suggestion or add your own. This helps prevent repeat recommendations.', type: 'products', optional: true },
+      { id: 'products', section: 'history', title: 'What health or wellness products have you tried?', subtitle: 'Add any products you’ve tried. You can add more than one.', type: 'products', optional: true },
       { id: 'avoidRepeat', section: 'history', title: 'Are there any products or brands you definitely do not want recommended again?', type: 'tokens', optional: true },
       { id: 'safety', section: 'safety', title: 'Are any symptoms you are experiencing new, rapidly worsening, or concerning to you right now?', type: 'safety', optional: false },
       { id: 'formats', section: 'preferences', title: 'Which product formats do you prefer?', type: 'formats', optional: true },
@@ -762,6 +800,14 @@ export default function HealthIntakeForm({ onComplete }) {
     return { ...prev, [key]: next };
   });
 
+  const toggleLifeStage = (value) => setIntake((prev) => {
+    const current = getLifeStages(prev);
+    const next = current.includes(value)
+      ? current.filter((item) => item !== value)
+      : [...current, value];
+    return { ...prev, lifeStageSelections: next, lifeStage: next[0] || '' };
+  });
+
   const goBack = () => {
     if (currentIndex <= 0) return;
     setSearch('');
@@ -796,7 +842,10 @@ export default function HealthIntakeForm({ onComplete }) {
       const numeric = intake.age ? Number(intake.age) : 28;
       return <div className="ayna-white-card ayna-age-card"><div className="ayna-age-top"><button type="button" className="ayna-age-btn" onClick={() => set('age', String(Math.max(13, (intake.age ? Number(intake.age) : 28) - 1)))}>−</button><div className={`ayna-age-value${intake.age ? '' : ' empty'}`}>{intake.age || 'Select'}</div><button type="button" className="ayna-age-btn" onClick={() => set('age', String(Math.min(90, (intake.age ? Number(intake.age) : 27) + 1)))}>+</button></div><input className={`ayna-age-range${intake.age ? '' : ' unset'}`} type="range" min="13" max="90" value={numeric} onChange={(e) => set('age', e.target.value)} /><div className="ayna-range-labels"><span>13</span><span>90</span></div></div>;
     }
-    if (step.type === 'cards' && step.id === 'lifeStage') return <><div className="ayna-choice-grid">{LIFE_STAGES.map((option) => <ChoiceCard key={option} label={option} selected={intake.lifeStage === option} onClick={() => set('lifeStage', option)} />)}</div>{intake.lifeStage === 'Other' && <div className="ayna-other-box"><label>Tell us what best describes you</label><input className="ayna-text-input" value={intake.lifeStageOther} onChange={(e) => set('lifeStageOther', e.target.value)} placeholder="Type your answer..." /></div>}</>;
+    if (step.type === 'cards' && step.id === 'lifeStage') {
+      const selectedLifeStages = getLifeStages(intake);
+      return <><div className="ayna-choice-grid">{LIFE_STAGES.map((option) => <ChoiceCard key={option} label={option} selected={selectedLifeStages.includes(option)} onClick={() => toggleLifeStage(option)} />)}</div>{selectedLifeStages.includes('Other') && <div className="ayna-other-box"><label>Tell us what best describes you (optional)</label><input className="ayna-text-input" value={intake.lifeStageOther} onChange={(e) => set('lifeStageOther', e.target.value)} placeholder="Type your answer..." /></div>}</>;
+    }
     if (step.type === 'text' && step.id === 'zip') return <input className="ayna-text-input" inputMode="numeric" maxLength={5} value={intake.zipcode} onChange={(e) => set('zipcode', e.target.value.replace(/\D/g, '').slice(0, 5))} placeholder="e.g. 10001" />;
     if (step.type === 'support') return <><SearchableGroups groups={SUPPORT_GROUPS} selected={intake.supportSelections} search={search} onSearch={setSearch} onToggle={(item) => toggleExclusive('supportSelections', item, ['Nothing right now'])} />{intake.supportSelections.includes('Something else') && <div className="ayna-other-box"><label>Tell us what else you are looking for support with</label><input className="ayna-text-input" value={intake.supportOtherText} onChange={(e) => set('supportOtherText', e.target.value)} placeholder="Type your answer..." /></div>}</>;
     if (step.type === 'flow') return <Scale options={PERIOD_FLOW} value={intake.periodFlow} onChange={(value) => set('periodFlow', value)} kind="flow" />;
@@ -807,7 +856,7 @@ export default function HealthIntakeForm({ onComplete }) {
     }
     if (step.type === 'conditions') return <><div className="ayna-list-panel">{CONDITIONS.map((option) => <RowChoice key={option} label={option} selected={intake.diagnosisSelections.includes(option)} onClick={() => toggleExclusive('diagnosisSelections', option, ['None that I know of', 'Prefer not to say'])} square />)}</div>{intake.diagnosisSelections.includes('Other / not listed') && <div className="ayna-other-box"><label>What condition was diagnosed?</label><input className="ayna-text-input" value={intake.conditionOtherText} onChange={(e) => set('conditionOtherText', e.target.value)} placeholder="Type the condition..." /></div>}</>;
     if (step.type === 'allergies') return <><div className="ayna-list-panel ayna-allergy-list">{ALLERGIES.map((option) => <RowChoice key={option} label={option} selected={intake.allergySelections.includes(option)} onClick={() => toggleExclusive('allergySelections', option, ['None known', 'Not sure'])} square />)}</div>{intake.allergySelections.includes('Other') && <div className="ayna-other-box"><label>Tell us what you are allergic or sensitive to</label><input className="ayna-text-input" value={intake.allergyOtherText} onChange={(e) => set('allergyOtherText', e.target.value)} placeholder="Type your answer..." /></div>}</>;
-    if (step.type === 'medications') return <><Segmented options={['Yes', 'No', 'Prefer not to say']} value={intake.takesCurrent} onChange={(value) => set('takesCurrent', value)} />{intake.takesCurrent === 'Yes' && <div style={{ marginTop: 14 }}><TokenInput values={intake.currentMedicationItems} onChange={(values) => set('currentMedicationItems', values)} placeholder="Start typing a medication, supplement, vitamin, or birth control" suggestions={MEDICATION_SUGGESTIONS} /></div>}<div className="ayna-mini-note">Always consult a clinician before starting a new supplement or medication. Ayna surfaces options relevant to the profile you shared, but you should still check product ingredients, labels, and instructions.</div></>;
+    if (step.type === 'medications') return <><Segmented options={['Yes', 'No', 'Prefer not to say']} value={intake.takesCurrent} onChange={(value) => set('takesCurrent', value)} />{intake.takesCurrent === 'Yes' && <div style={{ marginTop: 14 }}><TokenInput values={intake.currentMedicationItems} onChange={(values) => set('currentMedicationItems', values)} placeholder="Start typing a medication, supplement, vitamin, or birth control" suggestions={MEDICATION_SUGGESTIONS} suggestionLimit={10} /></div>}<div className="ayna-mini-note">Always consult a clinician before starting a new supplement or medication. Ayna surfaces options relevant to the profile you shared, but you should still check product ingredients, labels, and instructions.</div></>;
     if (step.type === 'products') return <ProductHistoryBuilder products={intake.productHistory} onChange={(products) => set('productHistory', products)} />;
     if (step.type === 'tokens' && step.id === 'avoidRepeat') return <TokenInput values={intake.avoidRepeat} onChange={(values) => set('avoidRepeat', values)} placeholder="Start typing a product or brand" suggestions={PRODUCT_OR_BRAND_SUGGESTIONS} />;
     if (step.type === 'tokens' && step.id === 'trustedBrands') return <TokenInput values={intake.trustedBrands} onChange={(values) => set('trustedBrands', values)} placeholder="Start typing a brand" suggestions={BRAND_SUGGESTIONS} />;
@@ -847,7 +896,7 @@ export default function HealthIntakeForm({ onComplete }) {
             <button type="button" className="ayna-continue" onClick={goNext} disabled={!ready || saving}>{saving ? 'Saving...' : isLast ? 'Finish profile' : 'Continue'}{countForStep > 0 && <span className="ayna-count">{countForStep}</span>}<span aria-hidden="true">→</span></button>
             {step.optional && <button type="button" className="ayna-skip" onClick={goNext}>Skip this step</button>}
           </div>
-          {step.id === 'products' && intake.productHistory.length > 0 && !ready && <div className="ayna-saving">Finish the three quick questions for each product before continuing.</div>}
+          {step.id === 'products' && intake.productHistory.length > 0 && !ready && <div className="ayna-saving">Add how it worked and any reactions before continuing.</div>}
           {saveError && <div className="ayna-error">{saveError}</div>}
         </div>
       </div>
