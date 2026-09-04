@@ -299,7 +299,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
       style={overlayStyle}
       onClick={isModal && onSkip ? (e) => { if (e.target === e.currentTarget) onSkip(); } : undefined}
     >
-      <div style={styles.card}>
+      <div style={embedded ? { ...styles.card, maxWidth: '420px', borderRadius: '24px', padding: '1.45rem 1.6rem 1.5rem', gap: '0.7rem', background: 'rgba(251,248,242,0.98)', border: '1px solid rgba(255,255,255,0.5)', boxShadow: '0 20px 55px rgba(31,22,48,0.18)', maxHeight: 'none', overflowY: 'visible' } : styles.card}>
         {isModal && onSkip && (
           <button type="button" onClick={onSkip} style={styles.closeBtn} aria-label="Skip for now">×</button>
         )}
