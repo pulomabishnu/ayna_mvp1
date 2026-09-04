@@ -177,6 +177,24 @@ function levenshteinDistance(a, b) {
 const FUZZY_SAME_LENGTH_MAX = 5;
 
 /**
+ * Whether `candidate` is a trustworthy typo-match for `word`. Same-length
+ * candidates (a substitution or transposition, e.g. "concieve"/"conceive")
+ * get the full distance budget for their length. Cross-length candidates (an
+ * inserted/deleted letter) are capped at distance 1 regardless of word
+ * length — "thinning" vs "winning" is a real distance-2, different-length
+ * pair that a looser cap let through (found live: matched two unrelated
+ * menstrual cups via their "award winning" tag) even though "thinning" and
+ * "winning" are two completely different words, not typos of each other.
+ */
+function fuzzyEditDistanceAllows(word, candidate) {
+  const sameLength = candidate.length === word.length;
+  if (!sameLength && word.length <= FUZZY_SAME_LENGTH_MAX) return false;
+  const maxDist = sameLength ? (word.length <= 7 ? 1 : 2) : 1;
+  if (Math.abs(candidate.length - word.length) > maxDist) return false;
+  return levenshteinDistance(word, candidate) <= maxDist;
+}
+
+/**
  * Typo tolerance: only reached when the exact word-boundary check (and its
  * alias list) already missed. Compares the query term against every word in
  * the haystack and accepts a close-enough edit distance — catches ordinary
@@ -185,14 +203,8 @@ const FUZZY_SAME_LENGTH_MAX = 5;
  */
 function fuzzyWordMatchesInHaystack(word, haystack) {
   if (!word || word.length < 4) return false;
-  const maxDist = word.length <= 7 ? 1 : 2;
-  const requireSameLength = word.length <= FUZZY_SAME_LENGTH_MAX;
   const haystackWords = haystack.split(/[^a-z0-9]+/i).filter(Boolean);
-  for (const hw of haystackWords) {
-    if (requireSameLength ? hw.length !== word.length : Math.abs(hw.length - word.length) > maxDist) continue;
-    if (levenshteinDistance(word, hw) <= maxDist) return true;
-  }
-  return false;
+  return haystackWords.some((hw) => fuzzyEditDistanceAllows(word, hw));
 }
 
 const TERM_ALIAS_KEYS = Object.keys(TERM_ALIASES);
@@ -208,13 +220,8 @@ const TERM_ALIAS_KEYS = Object.keys(TERM_ALIASES);
  */
 function fuzzyCanonicalAliases(term) {
   if (!term || term.length < 4) return null;
-  const maxDist = term.length <= 7 ? 1 : 2;
-  const requireSameLength = term.length <= FUZZY_SAME_LENGTH_MAX;
-  for (const key of TERM_ALIAS_KEYS) {
-    if (requireSameLength ? key.length !== term.length : Math.abs(key.length - term.length) > maxDist) continue;
-    if (levenshteinDistance(term, key) <= maxDist) return TERM_ALIASES[key];
-  }
-  return null;
+  const key = TERM_ALIAS_KEYS.find((k) => fuzzyEditDistanceAllows(term, k));
+  return key ? TERM_ALIASES[key] : null;
 }
 
 function termMatchesWithVariants(term, haystack) {
