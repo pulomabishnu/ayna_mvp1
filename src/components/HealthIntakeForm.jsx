@@ -67,6 +67,25 @@ const ALLERGIES = [
   'Hormonal medications', 'Topical ingredients', 'Supplements or herbal ingredients', 'Other', 'None known', 'Not sure',
 ];
 
+
+const MEDICATION_SUGGESTIONS = [
+  'Zoloft', 'Sertraline', 'Vyvanse', 'Lisdexamfetamine', 'Adderall', 'Amphetamine/dextroamphetamine',
+  'Lexapro', 'Escitalopram', 'Prozac', 'Fluoxetine', 'Wellbutrin', 'Bupropion', 'Buspirone',
+  'Metformin', 'Spironolactone', 'Levothyroxine', 'Synthroid', 'Ibuprofen', 'Naproxen', 'Acetaminophen',
+  'Melatonin', 'Magnesium', 'Vitamin D', 'Vitamin B12', 'Iron', 'Folic acid', 'Prenatal vitamin',
+  'Omega-3', 'Probiotic', 'Multivitamin', 'Biotin', 'Inositol', 'Myo-inositol',
+  'Birth control pill', 'Hormonal IUD', 'Copper IUD', 'Nexplanon', 'Depo-Provera', 'NuvaRing', 'Xulane patch',
+];
+
+const CATALOG_PRODUCT_NAMES = [...new Set((ALL_PRODUCTS || []).map((p) => p?.name).filter(Boolean))];
+const CATALOG_BRANDS = [...new Set((ALL_PRODUCTS || []).flatMap((p) => [p?.brand, p?.brandName, p?.manufacturer, p?.company]).filter(Boolean))];
+const COMMON_BRAND_SUGGESTIONS = [
+  'LOLA', 'Cora', 'The Honey Pot', 'Rael', 'Saalt', 'August', 'Always', 'Tampax', 'U by Kotex',
+  'Ritual', 'O Positiv', 'Love Wellness', 'Thorne', 'Nature Made', 'Garden of Life', 'Good Clean Love',
+];
+const BRAND_SUGGESTIONS = [...new Set([...CATALOG_BRANDS, ...COMMON_BRAND_SUGGESTIONS])];
+const PRODUCT_OR_BRAND_SUGGESTIONS = [...new Set([...CATALOG_PRODUCT_NAMES, ...BRAND_SUGGESTIONS])];
+
 const PRODUCT_FORMATS = [
   'Pills or capsules', 'Gummies', 'Powders', 'Drinks or teas', 'Creams, lotions, or gels', 'Patches',
   'Suppositories', 'Devices or wearables', 'Period-care products', 'No preference', 'Other',
@@ -410,21 +429,103 @@ function Segmented({ options, value, onChange }) {
   return <div className="ayna-segmented">{options.map((option) => <button type="button" key={option} className={`ayna-seg-option${value === option ? ' selected' : ''}`} onClick={() => onChange(option)}>{option}</button>)}</div>;
 }
 
+function normalizeSuggestion(value) {
+  return String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+}
+
+function editDistance(a, b) {
+  const left = normalizeSuggestion(a);
+  const right = normalizeSuggestion(b);
+  if (!left) return right.length;
+  if (!right) return left.length;
+  const row = Array.from({ length: right.length + 1 }, (_, index) => index);
+  for (let i = 1; i <= left.length; i += 1) {
+    let previous = row[0];
+    row[0] = i;
+    for (let j = 1; j <= right.length; j += 1) {
+      const saved = row[j];
+      const cost = left[i - 1] === right[j - 1] ? 0 : 1;
+      row[j] = Math.min(row[j] + 1, row[j - 1] + 1, previous + cost);
+      previous = saved;
+    }
+  }
+  return row[right.length];
+}
+
+function rankedSuggestions(query, options = [], limit = 6) {
+  const q = normalizeSuggestion(query);
+  if (q.length < 2) return [];
+  return options
+    .map((option) => {
+      const normalized = normalizeSuggestion(option);
+      if (!normalized) return null;
+      let score = Number.POSITIVE_INFINITY;
+      if (normalized === q) score = 0;
+      else if (normalized.startsWith(q)) score = 1 + (normalized.length - q.length) / 100;
+      else if (normalized.includes(q)) score = 2 + normalized.indexOf(q) / 100;
+      else {
+        const distance = editDistance(q, normalized);
+        const threshold = Math.max(2, Math.ceil(Math.max(q.length, normalized.length) * 0.4));
+        if (distance <= threshold) score = 10 + distance + Math.abs(normalized.length - q.length) / 100;
+      }
+      return Number.isFinite(score) ? { option, score } : null;
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.score - b.score || String(a.option).localeCompare(String(b.option)))
+    .slice(0, limit)
+    .map((entry) => entry.option);
+}
+
 function TokenInput({ values, onChange, placeholder, suggestions = [] }) {
   const [draft, setDraft] = useState('');
-  const add = () => {
-    const next = draft.trim();
-    if (!next || values.includes(next)) return;
+  const [open, setOpen] = useState(false);
+  const matches = useMemo(
+    () => rankedSuggestions(draft, suggestions.filter((option) => !values.some((value) => normalizeSuggestion(value) === normalizeSuggestion(option))), 6),
+    [draft, suggestions, values]
+  );
+
+  const addValue = (rawValue) => {
+    const next = String(rawValue || '').trim();
+    if (!next || values.some((value) => normalizeSuggestion(value) === normalizeSuggestion(next))) return;
     onChange([...values, next]);
     setDraft('');
+    setOpen(false);
   };
+
   return (
     <div className="ayna-token-card">
       <div className="ayna-token-line">
-        <input value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); add(); } }} placeholder={placeholder} list={suggestions.length ? `${placeholder.replace(/\W/g, '')}-list` : undefined} />
-        <button type="button" onClick={add}>Add</button>
+        <input
+          value={draft}
+          onFocus={() => setOpen(true)}
+          onChange={(e) => { setDraft(e.target.value); setOpen(true); }}
+          onBlur={() => window.setTimeout(() => setOpen(false), 120)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              addValue(draft);
+            }
+          }}
+          placeholder={placeholder}
+          autoComplete="off"
+          aria-autocomplete="list"
+        />
+        <button type="button" onClick={() => addValue(draft)}>Add</button>
       </div>
-      {suggestions.length > 0 && <datalist id={`${placeholder.replace(/\W/g, '')}-list`}>{suggestions.map((x) => <option key={x} value={x} />)}</datalist>}
+      {open && draft.trim().length >= 2 && matches.length > 0 && (
+        <div className="ayna-smart-suggestions" role="listbox">
+          {matches.map((option) => (
+            <button
+              type="button"
+              key={option}
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => addValue(option)}
+            >
+              {option}
+            </button>
+          ))}
+        </div>
+      )}
       {values.length > 0 && <div className="ayna-tokens">{values.map((value, index) => <span key={`${value}-${index}`}>{value}<button type="button" aria-label={`Remove ${value}`} onClick={() => onChange(values.filter((_, i) => i !== index))}>×</button></span>)}</div>}
     </div>
   );
@@ -453,14 +554,13 @@ function ProductHistoryBuilder({ products, onChange }) {
   const [query, setQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const suggestions = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (q.length < 2) return [];
-    return ALL_PRODUCTS.filter((p) => p?.name && p.name.toLowerCase().includes(q) && !products.some((x) => x.name === p.name)).slice(0, 6);
+    const alreadyAdded = new Set(products.map((product) => normalizeSuggestion(product.name)));
+    return rankedSuggestions(query, CATALOG_PRODUCT_NAMES.filter((name) => !alreadyAdded.has(normalizeSuggestion(name))), 6);
   }, [query, products]);
 
   const addProduct = (name) => {
     const trimmed = String(name || '').trim();
-    if (!trimmed || products.some((p) => p.name.toLowerCase() === trimmed.toLowerCase())) return;
+    if (!trimmed || products.some((p) => normalizeSuggestion(p.name) === normalizeSuggestion(trimmed))) return;
     onChange([...products, { name: trimmed, current: '', worked: '', reaction: '', reactionText: '', stopReasons: [], stopOther: '' }]);
     setQuery('');
     setShowSuggestions(false);
@@ -471,10 +571,25 @@ function ProductHistoryBuilder({ products, onChange }) {
     <div className="ayna-product-builder">
       <div className="ayna-token-card">
         <div className="ayna-token-line">
-          <input value={query} onFocus={() => setShowSuggestions(true)} onChange={(e) => { setQuery(e.target.value); setShowSuggestions(true); }} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addProduct(suggestions[0]?.name || query); } }} placeholder="Search Ayna's catalog or type a product name" />
-          <button type="button" onClick={() => addProduct(suggestions[0]?.name || query)}>Add</button>
+          <input
+            value={query}
+            onFocus={() => setShowSuggestions(true)}
+            onChange={(e) => { setQuery(e.target.value); setShowSuggestions(true); }}
+            onBlur={() => window.setTimeout(() => setShowSuggestions(false), 120)}
+            onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addProduct(query); } }}
+            placeholder="Start typing a product name"
+            autoComplete="off"
+            aria-autocomplete="list"
+          />
+          <button type="button" onClick={() => addProduct(query)}>Add</button>
         </div>
-        {showSuggestions && suggestions.length > 0 && <div className="ayna-product-suggestions">{suggestions.map((p) => <button type="button" key={p.id} onClick={() => addProduct(p.name)}>{p.name}</button>)}</div>}
+        {showSuggestions && query.trim().length >= 2 && suggestions.length > 0 && (
+          <div className="ayna-smart-suggestions" role="listbox">
+            {suggestions.map((name) => (
+              <button type="button" key={name} onMouseDown={(e) => e.preventDefault()} onClick={() => addProduct(name)}>{name}</button>
+            ))}
+          </div>
+        )}
       </div>
 
       {products.map((product, index) => (
@@ -562,6 +677,7 @@ const STYLES = `
 .ayna-scale{display:flex;gap:8px;align-items:stretch;padding:18px}.ayna-scale button{flex:1;min-width:0;padding:12px 4px;border-radius:12px;background:#fff;border:1.5px solid rgba(42,31,78,.1);color:#2A1F4E;cursor:pointer;font-size:10.5px;line-height:1.2}.ayna-scale button.selected{background:#2A1F4E;color:#fff;border-color:#2A1F4E}.ayna-scale-mark{display:block;width:14px;border-radius:999px;background:rgba(42,31,78,.18);margin:0 auto 8px}.ayna-scale button.selected .ayna-scale-mark{background:#FFC774}
 .ayna-timeline{display:flex;align-items:flex-start;max-width:560px;margin:0 auto;padding:8px 2px}.ayna-timeline button{flex:1;position:relative;padding:30px 4px 0;background:none;border:none;cursor:pointer;color:rgba(255,249,242,.72)}.ayna-timeline button:before{content:'';position:absolute;top:11px;left:0;right:0;height:3px;background:rgba(255,249,242,.24)}.ayna-timeline button:first-child:before{left:50%}.ayna-timeline button:last-child:before{right:50%}.ayna-timeline-dot{position:absolute;top:3px;left:50%;transform:translateX(-50%);width:19px;height:19px;border-radius:50%;background:#FFF9F2;border:3px solid rgba(42,31,78,.28)}.ayna-timeline button.selected .ayna-timeline-dot{background:#2A1F4E;border-color:#FFDCA8}.ayna-timeline-label{font-size:11px;line-height:1.3}.ayna-timeline button.selected{color:#FFDCA8;font-weight:700}
 .ayna-token-card{max-width:520px;margin:0 auto;background:#FFF9F2;border-radius:18px;padding:16px;box-shadow:0 14px 28px -18px rgba(0,0,0,.45);text-align:left}.ayna-token-line{display:flex;gap:8px}.ayna-token-line input{flex:1;border:1.5px solid rgba(42,31,78,.14);border-radius:12px;padding:12px 13px;color:#2A1F4E;background:#fff;outline:none}.ayna-token-line button{border:none;border-radius:12px;background:#2A1F4E;color:#fff;padding:0 15px;font-weight:700;cursor:pointer}.ayna-tokens{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.ayna-tokens>span{display:inline-flex;align-items:center;gap:6px;background:#FFF3DD;color:#8A5A1E;padding:7px 10px;border-radius:999px;font-size:12px;font-weight:600}.ayna-tokens span button{border:none;background:none;color:inherit;padding:0;cursor:pointer;font-size:14px}
+.ayna-smart-suggestions{margin-top:8px;border:1px solid rgba(42,31,78,.12);border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 14px 28px -20px rgba(0,0,0,.5);position:relative;z-index:3}.ayna-smart-suggestions button{display:block;width:100%;padding:11px 12px;background:#fff;border:none;border-top:1px solid rgba(42,31,78,.08);text-align:left;color:#2A1F4E;cursor:pointer;font-size:13px}.ayna-smart-suggestions button:first-child{border-top:none}.ayna-smart-suggestions button:hover,.ayna-smart-suggestions button:focus{background:#FFF3DD}.ayna-allergy-list{max-height:none}
 .ayna-product-builder{max-width:540px;margin:0 auto}.ayna-product-suggestions{margin-top:8px;border:1px solid rgba(42,31,78,.12);border-radius:12px;overflow:hidden}.ayna-product-suggestions button{display:block;width:100%;padding:10px 12px;background:#fff;border:none;border-top:1px solid rgba(42,31,78,.08);text-align:left;color:#2A1F4E;cursor:pointer}.ayna-product-suggestions button:first-child{border-top:none}.ayna-product-card{background:#FFF9F2;color:#2A1F4E;border-radius:20px;padding:18px;margin-top:14px;text-align:left;box-shadow:0 16px 34px -20px rgba(0,0,0,.5)}.ayna-product-head{display:flex;align-items:center;justify-content:space-between;gap:12px;font-family:var(--font-serif,'Playfair Display',Georgia,serif);font-size:18px}.ayna-product-head button{border:none;background:none;color:#8c8078;font-size:12px;cursor:pointer}.ayna-product-q{margin-top:15px}.ayna-product-label{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.045em;margin-bottom:8px;color:#5c554e}.ayna-product-card .ayna-segmented{margin:0;max-width:none}.ayna-product-card .ayna-pill{border-color:rgba(42,31,78,.13);box-shadow:none}
 .ayna-spectrum{padding:20px 18px}.ayna-spectrum-line{height:5px;border-radius:999px;background:linear-gradient(90deg,#4E3866,#FFC774,#D97A2B);margin:8px 22px 18px}.ayna-spectrum-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.ayna-spectrum-grid button{padding:11px 7px;border-radius:12px;border:1.5px solid rgba(42,31,78,.1);background:#fff;font-size:10.5px;line-height:1.3;color:#2A1F4E;cursor:pointer}.ayna-spectrum-grid button.selected{border-color:#E8843C;background:#FFF3DD}
 .ayna-trust-list{max-width:520px;margin:0 auto;display:grid;gap:10px}.ayna-trust-item{display:flex;align-items:center;gap:10px;background:#FFF9F2;color:#2A1F4E;border-radius:16px;padding:13px 14px;box-shadow:0 10px 22px -16px rgba(0,0,0,.4)}.ayna-drag{color:#8c8078;cursor:grab;letter-spacing:-4px;font-size:18px}.ayna-rank{width:24px;height:24px;border-radius:50%;background:#FFF3DD;color:#8A5A1E;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}.ayna-trust-label{flex:1;text-align:left;font-size:13px;font-weight:600;line-height:1.35}.ayna-move{display:flex;gap:4px}.ayna-move button{width:26px;height:26px;border-radius:8px;border:1px solid rgba(42,31,78,.12);background:#fff;color:#2A1F4E;cursor:pointer}
@@ -603,9 +719,9 @@ export default function HealthIntakeForm({ onComplete }) {
       ...(isPostpartumRelevant(intake) ? [{ id: 'postpartumTiming', section: 'support', title: 'How long ago did you give birth?', type: 'timeline', optional: true }] : []),
       ...(isPregnancyRelevant(intake) ? [{ id: 'pregnancyTrimester', section: 'support', title: 'How far along are you?', type: 'timeline', optional: true }] : []),
       { id: 'conditions', section: 'safety', title: 'Have you been diagnosed with any of the following?', subtitle: 'This is different from what you are experiencing. It helps us separate a diagnosed condition from a symptom or goal.', type: 'conditions', optional: false },
-      { id: 'allergies', section: 'safety', title: 'What are you allergic or sensitive to, if anything?', type: 'allergies', optional: false },
+      { id: 'allergies', section: 'safety', title: 'What are you allergic or sensitive to, if anything?', subtitle: 'Select all that apply.', type: 'allergies', optional: false },
       { id: 'medications', section: 'safety', title: 'Are you currently taking any medications, supplements, vitamins, or hormonal birth control?', subtitle: 'This helps us avoid duplicate ingredients and flag possible compatibility issues.', type: 'medications', optional: false },
-      { id: 'products', section: 'history', title: 'Which health or wellness products have you already used?', subtitle: 'Search Ayna\'s catalog or add something manually. This helps prevent repeat recommendations.', type: 'products', optional: true },
+      { id: 'products', section: 'history', title: 'Which health or wellness products have you already used?', subtitle: 'Start typing a product name, then choose a suggestion or add your own. This helps prevent repeat recommendations.', type: 'products', optional: true },
       { id: 'avoidRepeat', section: 'history', title: 'Are there any products or brands you definitely do not want recommended again?', type: 'tokens', optional: true },
       { id: 'safety', section: 'safety', title: 'Are any symptoms you are experiencing new, rapidly worsening, or concerning to you right now?', type: 'safety', optional: false },
       { id: 'formats', section: 'preferences', title: 'Which product formats do you prefer?', type: 'formats', optional: true },
@@ -694,11 +810,11 @@ export default function HealthIntakeForm({ onComplete }) {
       return <Timeline options={config[1]} value={intake[config[0]]} onChange={(value) => set(config[0], value)} />;
     }
     if (step.type === 'conditions') return <><div className="ayna-list-panel">{CONDITIONS.map((option) => <RowChoice key={option} label={option} selected={intake.diagnosisSelections.includes(option)} onClick={() => toggleExclusive('diagnosisSelections', option, ['None that I know of', 'Prefer not to say'])} square />)}</div>{intake.diagnosisSelections.includes('Other / not listed') && <div className="ayna-other-box"><label>What condition was diagnosed?</label><input className="ayna-text-input" value={intake.conditionOtherText} onChange={(e) => set('conditionOtherText', e.target.value)} placeholder="Type the condition..." /></div>}</>;
-    if (step.type === 'allergies') return <><div className="ayna-pills">{ALLERGIES.map((option) => <Pill key={option} label={option} selected={intake.allergySelections.includes(option)} onClick={() => toggleExclusive('allergySelections', option, ['None known', 'Not sure'])} />)}</div>{intake.allergySelections.includes('Other') && <div className="ayna-other-box"><label>Tell us what you are allergic or sensitive to</label><input className="ayna-text-input" value={intake.allergyOtherText} onChange={(e) => set('allergyOtherText', e.target.value)} placeholder="Type your answer..." /></div>}</>;
-    if (step.type === 'medications') return <><Segmented options={['Yes', 'No', 'Prefer not to say']} value={intake.takesCurrent} onChange={(value) => set('takesCurrent', value)} />{intake.takesCurrent === 'Yes' && <div style={{ marginTop: 14 }}><TokenInput values={intake.currentMedicationItems} onChange={(values) => set('currentMedicationItems', values)} placeholder="Add medication or supplement" /></div>}<div className="ayna-mini-note">Always consult a clinician before starting a new supplement or medication. Ayna surfaces options relevant to the profile you shared, but you should still check product ingredients, labels, and instructions.</div></>;
+    if (step.type === 'allergies') return <><div className="ayna-list-panel ayna-allergy-list">{ALLERGIES.map((option) => <RowChoice key={option} label={option} selected={intake.allergySelections.includes(option)} onClick={() => toggleExclusive('allergySelections', option, ['None known', 'Not sure'])} square />)}</div>{intake.allergySelections.includes('Other') && <div className="ayna-other-box"><label>Tell us what you are allergic or sensitive to</label><input className="ayna-text-input" value={intake.allergyOtherText} onChange={(e) => set('allergyOtherText', e.target.value)} placeholder="Type your answer..." /></div>}</>;
+    if (step.type === 'medications') return <><Segmented options={['Yes', 'No', 'Prefer not to say']} value={intake.takesCurrent} onChange={(value) => set('takesCurrent', value)} />{intake.takesCurrent === 'Yes' && <div style={{ marginTop: 14 }}><TokenInput values={intake.currentMedicationItems} onChange={(values) => set('currentMedicationItems', values)} placeholder="Start typing a medication, supplement, vitamin, or birth control" suggestions={MEDICATION_SUGGESTIONS} /></div>}<div className="ayna-mini-note">Always consult a clinician before starting a new supplement or medication. Ayna surfaces options relevant to the profile you shared, but you should still check product ingredients, labels, and instructions.</div></>;
     if (step.type === 'products') return <ProductHistoryBuilder products={intake.productHistory} onChange={(products) => set('productHistory', products)} />;
-    if (step.type === 'tokens' && step.id === 'avoidRepeat') return <TokenInput values={intake.avoidRepeat} onChange={(values) => set('avoidRepeat', values)} placeholder="Add product or brand" />;
-    if (step.type === 'tokens' && step.id === 'trustedBrands') return <TokenInput values={intake.trustedBrands} onChange={(values) => set('trustedBrands', values)} placeholder="Add a brand you trust" />;
+    if (step.type === 'tokens' && step.id === 'avoidRepeat') return <TokenInput values={intake.avoidRepeat} onChange={(values) => set('avoidRepeat', values)} placeholder="Start typing a product or brand" suggestions={PRODUCT_OR_BRAND_SUGGESTIONS} />;
+    if (step.type === 'tokens' && step.id === 'trustedBrands') return <TokenInput values={intake.trustedBrands} onChange={(values) => set('trustedBrands', values)} placeholder="Start typing a brand" suggestions={BRAND_SUGGESTIONS} />;
     if (step.type === 'safety') return <><Segmented options={['Yes', 'No', 'Not sure']} value={intake.safetyConcern} onChange={(value) => set('safetyConcern', value)} />{['Yes', 'Not sure'].includes(intake.safetyConcern) && <div className="ayna-mini-note">Some new or worsening symptoms may need evaluation by a healthcare professional. Ayna helps with product discovery and education and does not diagnose medical conditions or replace professional medical care. If symptoms feel urgent or severe, seek appropriate medical care promptly.</div>}</>;
     if (step.type === 'formats') return <><div className="ayna-choice-grid">{PRODUCT_FORMATS.map((option) => <ChoiceCard key={option} label={option} selected={intake.preferredFormats.includes(option)} onClick={() => toggleExclusive('preferredFormats', option, ['No preference'])} />)}</div>{intake.preferredFormats.includes('Other') && <div className="ayna-other-box"><label>What format do you prefer?</label><input className="ayna-text-input" value={intake.formatOtherText} onChange={(e) => set('formatOtherText', e.target.value)} placeholder="Type your answer..." /></div>}</>;
     if (step.type === 'price') return <div className="ayna-pills">{PRICE_RANGES.map((option) => <Pill key={option} label={option} selected={intake.priceRange === option} onClick={() => set('priceRange', option)} />)}</div>;
