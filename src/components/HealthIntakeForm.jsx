@@ -133,7 +133,7 @@ const EMPTY = {
   safetyConcern: '',
   preferredFormats: [],
   formatOtherText: '',
-  priceRange: '',
+  priceRange: [],
   largePurchaseFrequency: '',
   brandOpenness: '',
   trustedBrands: [],
@@ -758,7 +758,7 @@ export default function HealthIntakeForm({ onComplete }) {
 
   const set = (key, value) => setIntake((prev) => ({ ...prev, [key]: value }));
   const toggleExclusive = (key, value, exclusiveValues = []) => setIntake((prev) => {
-    const current = prev[key] || [];
+    const current = Array.isArray(prev[key]) ? prev[key] : (prev[key] ? [prev[key]] : []);
     let next;
     if (current.includes(value)) next = current.filter((x) => x !== value);
     else if (exclusiveValues.includes(value)) next = [value];
@@ -817,7 +817,7 @@ export default function HealthIntakeForm({ onComplete }) {
     if (step.type === 'tokens' && step.id === 'trustedBrands') return <TokenInput values={intake.trustedBrands} onChange={(values) => set('trustedBrands', values)} placeholder="Start typing a brand" suggestions={BRAND_SUGGESTIONS} />;
     if (step.type === 'safety') return <><Segmented options={['Yes', 'No', 'Not sure']} value={intake.safetyConcern} onChange={(value) => set('safetyConcern', value)} />{['Yes', 'Not sure'].includes(intake.safetyConcern) && <div className="ayna-mini-note">Some new or worsening symptoms may need evaluation by a healthcare professional. Ayna helps with product discovery and education and does not diagnose medical conditions or replace professional medical care. If symptoms feel urgent or severe, seek appropriate medical care promptly.</div>}</>;
     if (step.type === 'formats') return <><div className="ayna-choice-grid">{PRODUCT_FORMATS.map((option) => <ChoiceCard key={option} label={option} selected={intake.preferredFormats.includes(option)} onClick={() => toggleExclusive('preferredFormats', option, ['No preference'])} />)}</div>{intake.preferredFormats.includes('Other') && <div className="ayna-other-box"><label>What format do you prefer?</label><input className="ayna-text-input" value={intake.formatOtherText} onChange={(e) => set('formatOtherText', e.target.value)} placeholder="Type your answer..." /></div>}</>;
-    if (step.type === 'price') return <div className="ayna-pills">{PRICE_RANGES.map((option) => <Pill key={option} label={option} selected={intake.priceRange === option} onClick={() => set('priceRange', option)} />)}</div>;
+    if (step.type === 'price') { const selectedPrices = Array.isArray(intake.priceRange) ? intake.priceRange : (intake.priceRange ? [intake.priceRange] : []); return <div className="ayna-pills">{PRICE_RANGES.map((option) => <Pill key={option} label={option} selected={selectedPrices.includes(option)} onClick={() => toggleExclusive('priceRange', option, ['Price is not a major factor for me'])} />)}</div>; }
     if (step.type === 'largeSpend') return <Timeline options={LARGE_PURCHASE_FREQUENCY} value={intake.largePurchaseFrequency} onChange={(value) => set('largePurchaseFrequency', value)} />;
     if (step.type === 'brand') return <BrandSpectrum value={intake.brandOpenness} onChange={(value) => set('brandOpenness', value)} />;
     if (step.type === 'avoidIngredients') return <><div className="ayna-pills">{AVOID_INGREDIENTS.map((option) => <Pill key={option} label={option} selected={intake.avoidIngredients.includes(option)} onClick={() => toggleExclusive('avoidIngredients', option, ['None'])} />)}</div>{intake.avoidIngredients.includes('Other') && <div className="ayna-other-box"><label>What else would you prefer to avoid?</label><input className="ayna-text-input" value={intake.avoidIngredientsOtherText} onChange={(e) => set('avoidIngredientsOtherText', e.target.value)} placeholder="Type your answer..." /></div>}</>;

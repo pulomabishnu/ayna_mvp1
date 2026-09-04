@@ -18,7 +18,7 @@ const CONSENT_ITEMS = [
 
 const CONSENT_VERSION = 'v1';
 
-export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAuthRedirect, redirectTo }) {
+export default function AuthGate({ isModal = false, embedded = false, onSkip, context, onBeforeOAuthRedirect, redirectTo }) {
   useEscapeToClose(isModal, onSkip);
   const [mode, setMode] = useState('signin');
   const [firstName, setFirstName] = useState('');
@@ -278,6 +278,13 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
     backdropFilter: 'blur(5px)',
     zIndex: 1000,
     padding: '7.5rem 1rem 1.5rem',
+  } : embedded ? {
+    width: '100%',
+    display: 'flex',
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+    background: 'transparent',
+    padding: 0,
   } : {
     minHeight: '100dvh',
     display: 'flex',

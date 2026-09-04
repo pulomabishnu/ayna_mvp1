@@ -340,6 +340,14 @@ function App() {
   // Ref mirrors pendingAction so onAuthStateChange (async callback) can read it synchronously
   const pendingActionRef = useRef(null);
   const [pendingQuizResults, setPendingQuizResults] = useState(null);
+  const [showQuizInlineAuth, setShowQuizInlineAuth] = useState(false);
+
+  useEffect(() => {
+    const shouldShowQuizCompletion = currentView === 'quiz' && user == null && pendingAction === 'quiz-complete' && pendingQuizResults;
+    if (Boolean(shouldShowQuizCompletion) === false) { setShowQuizInlineAuth(false); return undefined; }
+    const id = window.setTimeout(() => setShowQuizInlineAuth(true), 1400);
+    return () => window.clearTimeout(id);
+  }, [currentView, user, pendingAction, pendingQuizResults]);
   // Requested 2026-08-24 meeting: "sign-in required to build an ecosystem,
   // accompanied by a popup warning to prevent loss of unsaved progress." The
   // sign-in requirement already existed (handleQuizComplete gates on `user`
@@ -887,7 +895,7 @@ function App() {
     if (!user) {
       setPendingQuizResults(completedResults);
       setPendingAction('quiz-complete'); pendingActionRef.current = 'quiz-complete';
-      setShowAuthModal(true);
+      setShowAuthModal(false);
       return;
     }
     setQuizResults(completedResults);
@@ -1437,7 +1445,38 @@ function App() {
           />
         )}
         {currentView === 'quiz' && (
-          <HealthIntakeForm onComplete={handleQuizComplete} />
+          pendingAction === 'quiz-complete' && pendingQuizResults ? (
+            <div style={{ minHeight: '100dvh', background: 'linear-gradient(165deg, #2A1F4E 0%, #4E3866 42%, #8A4A3C 74%, #D97A2B 100%)', padding: '5.5rem 1rem 4rem' }}>
+              <div style={{ width: '100%', maxWidth: 640, margin: '0 auto', textAlign: 'center' }}>
+                <div style={{ width: '100%', maxWidth: 360, margin: '0 auto 1.5rem', borderRadius: 28, padding: '1rem', background: 'rgba(255,255,255,.09)', border: '1px solid rgba(255,255,255,.18)' }}>
+                  <svg viewBox="0 0 320 190" width="100%" aria-hidden="true">
+                    <g fill="none" stroke="rgba(255,255,255,.58)" strokeWidth="2">
+                      <path d="M160 95 L72 48" /><path d="M160 95 L248 48" /><path d="M160 95 L82 148" /><path d="M160 95 L238 148" />
+                    </g>
+                    <circle cx="160" cy="95" r="30" fill="#FFF8EF" />
+                    <circle cx="72" cy="48" r="18" fill="rgba(255,248,239,.92)"><animate attributeName="r" values="18;21;18" dur="1.4s" repeatCount="indefinite" /></circle>
+                    <circle cx="248" cy="48" r="18" fill="rgba(255,248,239,.86)"><animate attributeName="r" values="18;21;18" dur="1.4s" begin=".2s" repeatCount="indefinite" /></circle>
+                    <circle cx="82" cy="148" r="18" fill="rgba(255,248,239,.82)"><animate attributeName="r" values="18;21;18" dur="1.4s" begin=".4s" repeatCount="indefinite" /></circle>
+                    <circle cx="238" cy="148" r="18" fill="rgba(255,248,239,.88)"><animate attributeName="r" values="18;21;18" dur="1.4s" begin=".6s" repeatCount="indefinite" /></circle>
+                    <circle cx="160" cy="95" r="8" fill="#2A1F4E" />
+                  </svg>
+                </div>
+                <h1 style={{ margin: '0 0 .65rem', color: '#fff', fontFamily: 'var(--font-serif, Georgia, serif)', fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 500 }}>
+                  {showQuizInlineAuth ? 'Your ecosystem is taking shape' : 'Building your ecosystem...'}
+                </h1>
+                <p style={{ maxWidth: 520, margin: '0 auto 1.5rem', color: 'rgba(255,255,255,.82)', lineHeight: 1.6 }}>
+                  {showQuizInlineAuth ? 'Sign in or create an account to save your profile and continue to your personalized ecosystem.' : 'Connecting your health profile, preferences, and product history.'}
+                </p>
+                {showQuizInlineAuth && (
+                  <div style={{ marginTop: '1.25rem', textAlign: 'left' }}>
+                    <AuthGate embedded context="quiz" onBeforeOAuthRedirect={() => { try { sessionStorage.setItem('ayna_pending_auth_action', 'quiz-complete'); sessionStorage.setItem('ayna_pending_quiz_results', JSON.stringify(pendingQuizResults)); } catch (_) {} }} />
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            <HealthIntakeForm onComplete={handleQuizComplete} />
+          )
         )}
         {currentView === 'profile-edit' && (
           <HealthProfileEditor
