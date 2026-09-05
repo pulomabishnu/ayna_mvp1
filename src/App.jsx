@@ -60,6 +60,15 @@ const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls'];
 /** Landing boards (1a/1c) run the nav on the hero gradient; every other board is on cream. */
 const GRADIENT_NAV_VIEWS = ['welcome', 'hero', 'about'];
 
+const HEALTH_PROFILE_UPDATE_CUTOFF = Date.parse('2026-09-05T02:56:40.000Z');
+const HEALTH_PROFILE_UPDATE_NOTICE_KEY = 'ayna_health_profile_update_2026_09_05_seen';
+
+function accountFirstName(user) {
+  const meta = user?.user_metadata || {};
+  const rawName = meta.full_name || meta.name || meta.first_name || meta.given_name || '';
+  return String(rawName).trim().split(/\s+/).filter(Boolean)[0] || '';
+}
+
 /** Initials for the account circle. Prefer the real profile name; never expose the email handle as a "name". */
 function accountMonogram(user) {
   const meta = user?.user_metadata || {};
@@ -344,6 +353,7 @@ function App() {
   const [quizPreviewWhyOpen, setQuizPreviewWhyOpen] = useState(null);
   const [showQuizSaveBanner, setShowQuizSaveBanner] = useState(true);
   const [showQuizInlineAuth, setShowQuizInlineAuth] = useState(false);
+  const [showHealthProfileUpdateNotice, setShowHealthProfileUpdateNotice] = useState(false);
 
   useEffect(() => {
     const shouldShowQuizCompletion = currentView === 'quiz' && user == null && pendingAction === 'quiz-complete' && pendingQuizResults;
@@ -831,6 +841,88 @@ function App() {
   const navOnGradient = GRADIENT_NAV_VIEWS.includes(currentView);
   const accountInitials = accountMonogram(user);
 
+
+  useEffect(() => {
+    if (!user || authLoading || dataLoading || !quizResults) {
+      setShowHealthProfileUpdateNotice(false);
+      return;
+    }
+
+    const createdAt = Date.parse(user.created_at || '');
+    const completedAt = Date.parse(
+      quizResults?.personalizationCompletedAt
+      || quizResults?.fullHealthIntake?.personalizationCompletedAt
+      || ''
+    );
+
+    let seenLocally = false;
+    try {
+      seenLocally = localStorage.getItem(
+        `${HEALTH_PROFILE_UPDATE_NOTICE_KEY}:${user.id}`
+      ) === '1';
+    } catch (_) {}
+
+    const seenInAccount = user?.user_metadata?.[HEALTH_PROFILE_UPDATE_NOTICE_KEY] === true;
+
+    const hasCompletedProfile =
+      quizResults?.personalizationCompleted === true
+      || quizResults?.fullHealthIntake?.personalizationCompleted === true;
+
+    const profilePredatesCutoff = Number.isFinite(completedAt)
+      ? completedAt < HEALTH_PROFILE_UPDATE_CUTOFF
+      : hasCompletedProfile;
+
+    const eligible =
+      Number.isFinite(createdAt)
+      && createdAt < HEALTH_PROFILE_UPDATE_CUTOFF
+      && hasCompletedProfile
+      && profilePredatesCutoff
+      && !seenLocally
+      && !seenInAccount;
+
+    setShowHealthProfileUpdateNotice(eligible);
+  }, [user, authLoading, dataLoading, quizResults]);
+
+  const markHealthProfileUpdateNoticeSeen = async () => {
+    if (!user?.id) return;
+
+    try {
+      localStorage.setItem(`${HEALTH_PROFILE_UPDATE_NOTICE_KEY}:${user.id}`, '1');
+    } catch (_) {}
+
+    setShowHealthProfileUpdateNotice(false);
+
+    const supabase = getSupabaseClient();
+    if (!supabase) return;
+
+    try {
+      const { data, error } = await supabase.auth.getUser();
+      if (error || data?.user?.id !== user.id) return;
+
+      const current = data.user.user_metadata || {};
+      const { data: updated, error: updateError } = await supabase.auth.updateUser({
+        data: {
+          ...current,
+          [HEALTH_PROFILE_UPDATE_NOTICE_KEY]: true,
+        },
+      });
+
+      if (!updateError && updated?.user) {
+        setUser(updated.user);
+      }
+    } catch (error) {
+      console.warn('[Ayna] Could not persist health-profile update notice state:', error);
+    }
+  };
+
+  const handleKeepCurrentHealthProfile = () => {
+    markHealthProfileUpdateNoticeSeen();
+  };
+
+  const handleRedoUpdatedHealthProfile = () => {
+    markHealthProfileUpdateNoticeSeen();
+    setCurrentView('quiz');
+  };
 
   const handleStartQuiz = () => setCurrentView('quiz');
   const handleOpenHealthProfileEditor = () => setCurrentView('profile-edit');
@@ -2069,6 +2161,7 @@ function App() {
                       .ayna-result-title{
                         font-size:clamp(2.35rem,5vw,2.8rem);
                         margin-bottom:16px;
+                        color:#fffaf3;
                       }
 
                       .ayna-result-trust span{
@@ -3071,6 +3164,125 @@ function App() {
               </p>
               <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', lineHeight: 1.6, margin: 0 }}>
                 This request will be processed within <strong style={{ color: 'var(--color-text-main)' }}>1 week</strong>.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {showHealthProfileUpdateNotice && user && (
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="ayna-health-profile-update-title"
+            style={{
+              position: 'fixed',
+              inset: 0,
+              zIndex: 10050,
+              background: 'rgba(28, 19, 43, 0.58)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+              display: 'grid',
+              placeItems: 'center',
+              padding: '20px',
+            }}
+          >
+            <div
+              style={{
+                width: 'min(460px, 100%)',
+                borderRadius: '24px',
+                background: '#FFF9F2',
+                color: '#2A1F4E',
+                padding: '30px',
+                boxShadow: '0 28px 80px rgba(28,19,43,.28)',
+                border: '1px solid rgba(42,31,78,.08)',
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '12px',
+                  fontWeight: 700,
+                  letterSpacing: '.08em',
+                  textTransform: 'uppercase',
+                  color: '#D97A2B',
+                  marginBottom: '10px',
+                }}
+              >
+                Health profile update
+              </div>
+
+              <h2
+                id="ayna-health-profile-update-title"
+                style={{
+                  margin: '0 0 10px',
+                  fontFamily: 'var(--font-serif, Georgia, serif)',
+                  fontSize: '28px',
+                  fontWeight: 500,
+                  lineHeight: 1.15,
+                }}
+              >
+                {accountFirstName(user) ? `Hi ${accountFirstName(user)},` : 'Hi,'}
+              </h2>
+
+              <p
+                style={{
+                  margin: '0 0 22px',
+                  color: '#6F6580',
+                  fontSize: '14px',
+                  lineHeight: 1.6,
+                }}
+              >
+                We’ve updated our health profile to make personalization more useful.
+                You can redo it now, or keep your current profile exactly as it is.
+              </p>
+
+              <div style={{ display: 'grid', gap: '10px' }}>
+                <button
+                  type="button"
+                  onClick={handleRedoUpdatedHealthProfile}
+                  style={{
+                    width: '100%',
+                    border: 'none',
+                    borderRadius: '999px',
+                    background: '#2A1F4E',
+                    color: '#FFF9F2',
+                    padding: '13px 18px',
+                    fontSize: '14px',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
+                >
+                  Redo health profile
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleKeepCurrentHealthProfile}
+                  style={{
+                    width: '100%',
+                    border: '1px solid rgba(42,31,78,.16)',
+                    borderRadius: '999px',
+                    background: 'transparent',
+                    color: '#2A1F4E',
+                    padding: '12px 18px',
+                    fontSize: '14px',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
+                >
+                  Keep my current profile
+                </button>
+              </div>
+
+              <p
+                style={{
+                  margin: '14px 0 0',
+                  color: '#8C8078',
+                  fontSize: '11.5px',
+                  lineHeight: 1.5,
+                  textAlign: 'center',
+                }}
+              >
+                Keeping your current profile will not change or remove any saved information.
               </p>
             </div>
           </div>
