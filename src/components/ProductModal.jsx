@@ -521,10 +521,6 @@ export default function ProductModal({
   const matchPercent = profileMatchPercent ?? explicitMatchPercent;
   const headMatchLabel = matchLabels[0] || null;
   const buyUrl = useMemo(() => getBuyUrl(product), [product]);
-  const usesAffiliateLink = Boolean(
-    isExactBuyUrl(product?.affiliateUrl) &&
-    buyUrl === String(product.affiliateUrl).trim()
-  );
 
   const aynaData = useMemo(
     () => (aynaReviews && product ? (aynaReviews[product.id] || { ratings: [], reviews: [] }) : { ratings: [], reviews: [] }),
@@ -712,62 +708,45 @@ export default function ProductModal({
           {ecosystemBtnLabel}
         </button>
       )}
-      {isPartnerBrandItem(product) && (
-        <span className="pdp-head__badge" title="ayna has a partnership with this brand. It does not affect your recommendation.">
-          ayna Partner
-        </span>
-      )}
-      {isPartnerBrandItem(product) && (
-        <p className="pdp-partner-note">
-          ayna has personally vetted this brand for its marketing claims. ayna receives a commission from the brand if you buy through our site. We encourage buying through our site to support small businesses.
-        </p>
-      )}
     </div>
   );
 
   const galleryTile = (
-    <div className="pdp-head__tile" style={{ position: 'relative' }}>
-      {usesAffiliateLink && (
-        <span
-          title="ayna may earn a commission if you purchase through this link."
-          style={{
-            position: 'absolute',
-            top: '0.55rem',
-            right: '0.55rem',
-            zIndex: 2,
-            fontSize: '0.62rem',
-            lineHeight: 1,
-            color: 'var(--color-text-muted)',
-            background: 'rgba(255,255,255,0.88)',
-            padding: '0.3rem 0.4rem',
-            borderRadius: '999px',
-          }}
-        >
-          Affiliate link
-        </span>
-      )}
-      {/* resolvedModalImage, when set, came back from the server's
-          type-aware /api/product-image — trust it as-is instead of
-          re-running it through isPlaceholderProductImage, which doesn't
-          know the product is 'digital' and would reject a legitimate
-          app/telehealth logo again. Only the raw catalog fallback still
-          needs that heuristic. */}
-      {heroImageSrc && (resolvedModalImage || !isPlaceholderProductImage(heroImageSrc, product.type === 'digital')) ? (
-        <button
-          type="button"
-          onClick={() => setLightboxOpen(true)}
-          aria-label={`View larger photo of ${product.name}`}
-          style={{ all: 'unset', display: 'block', width: '100%', height: '100%', cursor: 'zoom-in' }}
-        >
-          <img
-            src={heroImageSrc}
-            alt={product.name}
-            onError={(e) => handleImageErrorWithRetry(e, () => { e.currentTarget.style.display = 'none'; })}
-            style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
-          />
-        </button>
-      ) : (
-        <ProductImageFallback />
+    <div>
+      <div className="pdp-head__tile">
+        {/* resolvedModalImage, when set, came back from the server's
+            type-aware /api/product-image — trust it as-is instead of
+            re-running it through isPlaceholderProductImage, which doesn't
+            know the product is 'digital' and would reject a legitimate
+            app/telehealth logo again. Only the raw catalog fallback still
+            needs that heuristic. */}
+        {heroImageSrc && (resolvedModalImage || !isPlaceholderProductImage(heroImageSrc, product.type === 'digital')) ? (
+          <button
+            type="button"
+            onClick={() => setLightboxOpen(true)}
+            aria-label={`View larger photo of ${product.name}`}
+            style={{ all: 'unset', display: 'block', width: '100%', height: '100%', cursor: 'zoom-in' }}
+          >
+            <img
+              src={heroImageSrc}
+              alt={product.name}
+              onError={(e) => handleImageErrorWithRetry(e, () => { e.currentTarget.style.display = 'none'; })}
+              style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+            />
+          </button>
+        ) : (
+          <ProductImageFallback />
+        )}
+      </div>
+      {isPartnerBrandItem(product) && (
+        <div className="pdp-partner-disclosure">
+          <span className="pdp-head__badge" title="ayna has a partnership with this brand. It does not affect your recommendation.">
+            ayna Partner
+          </span>
+          <p className="pdp-partner-note">
+            Vetted partner brand — ayna earns a commission on purchases made through our site.
+          </p>
+        </div>
       )}
     </div>
   );

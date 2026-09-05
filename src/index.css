@@ -3772,6 +3772,14 @@ footer a[href*="career" i],
   color: #B4732A;
 }
 
+.pdp-partner-disclosure {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 12px;
+}
+
 .pdp-partner-note {
   align-self: stretch;
   margin: 0;
