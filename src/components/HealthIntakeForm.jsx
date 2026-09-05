@@ -105,8 +105,36 @@ const BRAND_OPENNESS = [
   'I enjoy discovering new brands',
   'No preference',
 ];
-const AVOID_INGREDIENTS = ['Fragrance', 'Dyes', 'Parabens', 'Sulfates', 'Phthalates', 'Latex', 'Synthetic materials', 'Animal-derived ingredients', 'Added sugar', 'Artificial sweeteners', 'Other', 'None'];
-const BRAND_SUPPORT_PREFERENCES = ['Black-owned', 'Brown-owned', 'Cruelty-free'];
+const AVOID_INGREDIENTS = [
+  'Fragrance',
+  'Dyes',
+  'Parabens',
+  'Sulfates',
+  'Phthalates',
+  'Latex',
+  'Synthetic materials',
+  'Animal-derived',
+  'Added sugar',
+  'Artificial sweeteners',
+  'Pregnancy considerations',
+  'Fragrance-free',
+  'Dye-free',
+  'Paraben-free',
+  'Sulfate-free',
+  'Latex-free',
+  'Vegan',
+  'Cruelty-free',
+  'Black-owned',
+  'Brown-owned',
+  'Eco-friendly',
+  'Reusable',
+  'Organic',
+  'Minimal ingredients',
+  'Sensitive skin',
+  'Unscented',
+  'Other',
+  'No preference',
+];
 const FSA_HSA = ['FSA', 'HSA', 'Both', 'No', 'Not sure'];
 const TRUST_ITEMS = ['Clinical or scientific evidence', 'Reviews and experiences from other women', 'Brand reputation or expert recommendations'];
 
@@ -636,7 +664,6 @@ function SearchableGroups({ groups, selected, onToggle, search, onSearch }) {
 function ProductHistoryBuilder({ products, onChange }) {
   const [query, setQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [adding, setAdding] = useState(false);
   const [expandedIndex, setExpandedIndex] = useState(null);
 
   const suggestions = useMemo(() => {
@@ -668,8 +695,7 @@ function ProductHistoryBuilder({ products, onChange }) {
     onChange(next);
     setQuery('');
     setShowSuggestions(false);
-    setAdding(false);
-    setExpandedIndex(next.length - 1);
+    setExpandedIndex(null);
   };
 
   const updateProduct = (index, patch) => {
@@ -678,199 +704,189 @@ function ProductHistoryBuilder({ products, onChange }) {
 
   const removeProduct = (index) => {
     onChange(products.filter((_, i) => i !== index));
-    setExpandedIndex(null);
-  };
-
-  const beginAdding = () => {
-    setExpandedIndex(null);
-    setQuery('');
-    setShowSuggestions(false);
-    setAdding(true);
+    setExpandedIndex((current) => {
+      if (current === index) return null;
+      if (current > index) return current - 1;
+      return current;
+    });
   };
 
   return (
     <div className="ayna-product-builder">
-      {products.map((product, index) => {
-        const expanded = expandedIndex === index;
+      <div className="ayna-token-card ayna-product-search-card ayna-smart-search-card">
+        <div className="ayna-token-line ayna-smart-search-line">
+          <SearchIcon />
+          <input
+            value={query}
+            onFocus={() => setShowSuggestions(true)}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setShowSuggestions(true);
+            }}
+            onBlur={() => window.setTimeout(() => setShowSuggestions(false), 140)}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') setShowSuggestions(false);
+              if (e.key === 'Enter' && query.trim() && suggestions.length === 0) {
+                e.preventDefault();
+                addProduct(query);
+              }
+            }}
+            placeholder="Search products"
+            autoComplete="off"
+            aria-autocomplete="list"
+          />
+        </div>
 
-        return (
-          <div className={`ayna-product-card${expanded ? ' open' : ' compact'}`} key={`${product.name}-${index}`}>
-            <div className="ayna-product-head">
-              <div>{product.name}</div>
-
-              <div className="ayna-product-actions">
+        {showSuggestions && query.trim().length > 0 && (
+          <div className="ayna-smart-suggestions ayna-smart-dropdown" role="listbox">
+            {suggestions.length > 0 ? (
+              suggestions.map((name) => (
                 <button
                   type="button"
-                  onClick={() => {
-                    setAdding(false);
-                    setExpandedIndex(expanded ? null : index);
-                  }}
+                  key={name}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => addProduct(name)}
                 >
-                  {expanded ? 'Close' : 'Edit'}
+                  {name}
                 </button>
-
-                <button type="button" onClick={() => removeProduct(index)}>
-                  Remove
-                </button>
-              </div>
-            </div>
-
-            {!expanded && (
-              <div className="ayna-product-summary">
-                {product.worked || product.reaction
-                  ? [product.worked, product.reaction].filter(Boolean).join(' · ')
-                  : 'Add a few quick details'}
-              </div>
+              ))
+            ) : (
+              <button
+                type="button"
+                className="ayna-smart-add-row"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => addProduct(query)}
+              >
+                <span className="ayna-smart-plus">+</span>
+                <span>Add “{query.trim()}”</span>
+              </button>
             )}
+          </div>
+        )}
+      </div>
 
-            {expanded && (
-              <>
-                <div className="ayna-product-q">
-                  <div className="ayna-product-label">Are you currently using it? (optional)</div>
-                  <Segmented
-                    options={['Yes', 'No']}
-                    value={product.current}
-                    onChange={(current) => updateProduct(index, { current })}
-                  />
-                </div>
+      {products.length > 0 && (
+        <div className="ayna-product-list">
+          {products.map((product, index) => {
+            const expanded = expandedIndex === index;
+            const summary = [product.current, product.worked, product.reaction].filter(Boolean);
 
-                <div className="ayna-product-q">
-                  <div className="ayna-product-label">How well did it work for you?</div>
-                  <div className="ayna-pills left">
-                    {['Helped a lot', 'Helped somewhat', 'No noticeable difference', 'Made things worse', 'Not sure'].map((option) => (
-                      <Pill
-                        key={option}
-                        label={option}
-                        selected={product.worked === option}
-                        onClick={() => updateProduct(index, { worked: option })}
-                      />
-                    ))}
+            return (
+              <div className={`ayna-product-row${expanded ? ' open' : ''}`} key={`${product.name}-${index}`}>
+                <button
+                  type="button"
+                  className="ayna-product-row-toggle"
+                  onClick={() => setExpandedIndex(expanded ? null : index)}
+                  aria-expanded={expanded}
+                >
+                  <div className="ayna-product-row-copy">
+                    <strong>{product.name}</strong>
+                    <span>{summary.length ? summary.join(' · ') : 'Optional details'}</span>
                   </div>
-                </div>
 
-                <div className="ayna-product-q">
-                  <div className="ayna-product-label">Did you experience any side effects or reactions?</div>
-                  <div className="ayna-pills left">
-                    {['No', 'Mild side effects', 'Serious or concerning reaction', 'Not sure'].map((option) => (
-                      <Pill
-                        key={option}
-                        label={option}
-                        selected={product.reaction === option}
-                        onClick={() => updateProduct(index, { reaction: option })}
+                  <svg
+                    className="ayna-product-chevron"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
+
+                <div className="ayna-product-details-wrap">
+                  <div className="ayna-product-details">
+                    <div className="ayna-product-optional-note">Optional details</div>
+
+                    <div className="ayna-product-q">
+                      <div className="ayna-product-label">Currently using it?</div>
+                      <Segmented
+                        options={['Yes', 'No']}
+                        value={product.current}
+                        onChange={(current) => updateProduct(index, { current })}
                       />
-                    ))}
-                  </div>
-                </div>
-
-                {['Mild side effects', 'Serious or concerning reaction'].includes(product.reaction) && (
-                  <input
-                    className="ayna-inline-input"
-                    value={product.reactionText}
-                    onChange={(e) => updateProduct(index, { reactionText: e.target.value })}
-                    placeholder="What happened? (optional)"
-                  />
-                )}
-
-                {product.current === 'No' && (
-                  <div className="ayna-product-q">
-                    <div className="ayna-product-label">Why did you stop using it? (optional)</div>
-
-                    <div className="ayna-pills left compact">
-                      {STOP_REASONS.map((reason) => (
-                        <Pill
-                          key={reason}
-                          label={reason}
-                          selected={(product.stopReasons || []).includes(reason)}
-                          onClick={() => updateProduct(index, {
-                            stopReasons: (product.stopReasons || []).includes(reason)
-                              ? product.stopReasons.filter((x) => x !== reason)
-                              : [...(product.stopReasons || []), reason],
-                          })}
-                        />
-                      ))}
                     </div>
 
-                    {(product.stopReasons || []).includes('Other') && (
+                    <div className="ayna-product-q">
+                      <div className="ayna-product-label">How well did it work?</div>
+                      <div className="ayna-pills left compact">
+                        {['Helped a lot', 'Helped somewhat', 'No difference', 'Made it worse', 'Not sure'].map((option) => (
+                          <Pill
+                            key={option}
+                            label={option}
+                            selected={product.worked === option}
+                            onClick={() => updateProduct(index, { worked: option })}
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="ayna-product-q">
+                      <div className="ayna-product-label">Any side effects or reactions?</div>
+                      <div className="ayna-pills left compact">
+                        {['No', 'Mild', 'Serious', 'Not sure'].map((option) => (
+                          <Pill
+                            key={option}
+                            label={option}
+                            selected={product.reaction === option}
+                            onClick={() => updateProduct(index, { reaction: option })}
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    {['Mild', 'Serious'].includes(product.reaction) && (
                       <input
                         className="ayna-inline-input"
-                        value={product.stopOther || ''}
-                        onChange={(e) => updateProduct(index, { stopOther: e.target.value })}
-                        placeholder="Tell us why you stopped (optional)"
+                        value={product.reactionText}
+                        onChange={(e) => updateProduct(index, { reactionText: e.target.value })}
+                        placeholder="What happened? (optional)"
                       />
                     )}
+
+                    {product.current === 'No' && (
+                      <div className="ayna-product-q">
+                        <div className="ayna-product-label">Why did you stop?</div>
+                        <div className="ayna-pills left compact">
+                          {STOP_REASONS.map((reason) => (
+                            <Pill
+                              key={reason}
+                              label={reason}
+                              selected={(product.stopReasons || []).includes(reason)}
+                              onClick={() => updateProduct(index, {
+                                stopReasons: (product.stopReasons || []).includes(reason)
+                                  ? product.stopReasons.filter((x) => x !== reason)
+                                  : [...(product.stopReasons || []), reason],
+                              })}
+                            />
+                          ))}
+                        </div>
+
+                        {(product.stopReasons || []).includes('Other') && (
+                          <input
+                            className="ayna-inline-input"
+                            value={product.stopOther || ''}
+                            onChange={(e) => updateProduct(index, { stopOther: e.target.value })}
+                            placeholder="Other reason"
+                          />
+                        )}
+                      </div>
+                    )}
+
+                    <button
+                      type="button"
+                      className="ayna-product-remove"
+                      onClick={() => removeProduct(index)}
+                    >
+                      Remove product
+                    </button>
                   </div>
-                )}
-              </>
-            )}
-          </div>
-        );
-      })}
-
-      {!adding && (
-        <button type="button" className="ayna-product-add-trigger" onClick={beginAdding}>
-          {products.length ? '+ Add another product' : '+ Add a product'}
-        </button>
-      )}
-
-      {adding && (
-        <div className="ayna-token-card ayna-product-search-card ayna-smart-search-card">
-          <div className="ayna-token-line ayna-smart-search-line">
-            <SearchIcon />
-            <input
-              value={query}
-              autoFocus
-              onFocus={() => setShowSuggestions(true)}
-              onChange={(e) => {
-                setQuery(e.target.value);
-                setShowSuggestions(true);
-              }}
-              onBlur={() => window.setTimeout(() => setShowSuggestions(false), 140)}
-              onKeyDown={(e) => {
-                if (e.key === 'Escape') setShowSuggestions(false);
-              }}
-              placeholder="Search for a product"
-              autoComplete="off"
-              aria-autocomplete="list"
-            />
-          </div>
-
-          {showSuggestions && query.trim().length > 0 && (
-            <div className="ayna-smart-suggestions ayna-smart-dropdown" role="listbox">
-              {suggestions.length > 0 ? (
-                suggestions.map((name) => (
-                  <button
-                    type="button"
-                    key={name}
-                    onMouseDown={(e) => e.preventDefault()}
-                    onClick={() => addProduct(name)}
-                  >
-                    {name}
-                  </button>
-                ))
-              ) : (
-                <button
-                  type="button"
-                  className="ayna-smart-add-row"
-                  onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => addProduct(query)}
-                >
-                  <span className="ayna-smart-plus">+</span>
-                  <span>Add “{query.trim()}”</span>
-                </button>
-              )}
-            </div>
-          )}
-
-          <button
-            type="button"
-            className="ayna-product-cancel"
-            onClick={() => {
-              setAdding(false);
-              setQuery('');
-            }}
-          >
-            Cancel
-          </button>
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
@@ -923,7 +939,7 @@ function requiredReady(stepId, intake) {
   if (stepId === 'allergies') return !!intake.allergyStatus && (intake.allergyStatus !== 'Yes' || intake.allergyItems.length > 0);
   if (stepId === 'medications') return !!intake.takesCurrent && (intake.takesCurrent !== 'Yes' || intake.currentMedicationItems.length > 0);
   if (stepId === 'safety') return !!intake.safetyConcern;
-  if (stepId === 'products' && intake.productHistory.length) return intake.productHistory.every((p) => p.worked && p.reaction);
+  if (stepId === 'products') return true;
   return true;
 }
 
@@ -965,6 +981,203 @@ const STYLES = `
 .ayna-product-add-trigger{width:100%;max-width:360px;margin:14px auto 0;padding:14px 18px;border:1px solid rgba(255,249,242,.28);border-radius:16px;background:rgba(255,249,242,.1);color:#FFF9F2;font-weight:700;cursor:pointer}
 .ayna-product-search-card{margin-top:14px}.ayna-manual-product{width:100%;margin-top:10px;padding:11px 12px;border:1px dashed rgba(42,31,78,.22);border-radius:12px;background:#FFF3DD;color:#2A1F4E;font-weight:700;cursor:pointer;text-align:left}.ayna-product-cancel{display:block;margin:10px auto 0;border:none;background:none;color:#8c8078;font-size:12px;cursor:pointer}
 .ayna-product-actions{display:flex;align-items:center;gap:8px}.ayna-product-card.compact{padding:14px 16px}.ayna-product-card.compact .ayna-product-head{font-size:16px}.ayna-product-summary{margin-top:6px;font-size:11.5px;color:#8c8078}.ayna-product-card.open{padding:18px}
+
+/* Compact product history + smoother quiz interactions */
+.ayna-product-builder{
+  max-width:540px;
+  margin:0 auto;
+}
+
+.ayna-product-search-card{
+  margin-top:0;
+  position:relative;
+  z-index:20;
+}
+
+.ayna-product-list{
+  display:grid;
+  gap:8px;
+  margin-top:10px;
+}
+
+.ayna-product-row{
+  background:#FFF9F2;
+  color:#2A1F4E;
+  border:1px solid rgba(42,31,78,.09);
+  border-radius:14px;
+  overflow:hidden;
+  text-align:left;
+  box-shadow:0 8px 20px -18px rgba(0,0,0,.5);
+  transition:border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+.ayna-product-row.open{
+  border-color:rgba(232,132,60,.32);
+  box-shadow:0 12px 26px -20px rgba(0,0,0,.5);
+}
+
+.ayna-product-row-toggle{
+  width:100%;
+  min-height:54px;
+  padding:10px 12px;
+  border:0;
+  background:transparent;
+  color:inherit;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  text-align:left;
+  cursor:pointer;
+}
+
+.ayna-product-row-copy{
+  min-width:0;
+  display:grid;
+  gap:2px;
+}
+
+.ayna-product-row-copy strong{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:13px;
+  line-height:1.25;
+}
+
+.ayna-product-row-copy span{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#8c8078;
+  font-size:10.5px;
+  line-height:1.3;
+}
+
+.ayna-product-chevron{
+  flex:0 0 auto;
+  color:#D97A2B;
+  transition:transform .22s ease;
+}
+
+.ayna-product-row.open .ayna-product-chevron{
+  transform:rotate(180deg);
+}
+
+.ayna-product-details-wrap{
+  display:grid;
+  grid-template-rows:0fr;
+  opacity:0;
+  transition:grid-template-rows .28s ease, opacity .2s ease;
+}
+
+.ayna-product-row.open .ayna-product-details-wrap{
+  grid-template-rows:1fr;
+  opacity:1;
+}
+
+.ayna-product-details{
+  min-height:0;
+  overflow:hidden;
+  padding:0 12px;
+}
+
+.ayna-product-row.open .ayna-product-details{
+  padding-bottom:12px;
+}
+
+.ayna-product-optional-note{
+  padding-top:2px;
+  color:#9a8d84;
+  font-size:10px;
+  font-weight:600;
+}
+
+.ayna-product-q{
+  margin-top:10px;
+}
+
+.ayna-product-label{
+  margin-bottom:6px;
+  color:#5c554e;
+  font-size:10.5px;
+  font-weight:700;
+  letter-spacing:0;
+  text-transform:none;
+}
+
+.ayna-product-row .ayna-segmented{
+  margin:0;
+  max-width:220px;
+}
+
+.ayna-product-row .ayna-seg-option{
+  min-height:34px;
+  padding:7px 11px;
+  font-size:11px;
+}
+
+.ayna-product-row .ayna-pill{
+  padding:7px 10px;
+  font-size:10.5px;
+  box-shadow:none;
+}
+
+.ayna-product-remove{
+  margin-top:11px;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:#9a7062;
+  font-size:10.5px;
+  cursor:pointer;
+}
+
+.ayna-smart-dropdown{
+  transform-origin:top;
+  animation:aynaDropIn .16s ease-out;
+  box-shadow:0 14px 28px -18px rgba(42,31,78,.45);
+}
+
+@keyframes aynaDropIn{
+  from{opacity:0;transform:translateY(-4px) scaleY(.98)}
+  to{opacity:1;transform:translateY(0) scaleY(1)}
+}
+
+/* Soft feedback when selecting quiz choices */
+.ayna-pill,
+.ayna-choice-card,
+.ayna-seg-option,
+.ayna-row-choice,
+.ayna-spectrum-grid button,
+.ayna-timeline button{
+  transition:
+    transform .14s ease,
+    background-color .18s ease,
+    border-color .18s ease,
+    box-shadow .18s ease,
+    color .18s ease;
+}
+
+.ayna-pill:active,
+.ayna-choice-card:active,
+.ayna-seg-option:active,
+.ayna-row-choice:active,
+.ayna-spectrum-grid button:active,
+.ayna-timeline button:active{
+  transform:scale(.97);
+}
+
+@media(max-width:720px){
+  .ayna-product-row .ayna-segmented{
+    flex-direction:row;
+  }
+  .ayna-product-row .ayna-seg-option{
+    width:auto;
+    min-width:74px;
+  }
+}
+
 .ayna-spectrum{padding:20px 18px}.ayna-spectrum-line{height:5px;border-radius:999px;background:linear-gradient(90deg,#4E3866,#FFC774,#D97A2B);margin:8px 22px 18px}.ayna-spectrum-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.ayna-spectrum-grid button{padding:11px 7px;border-radius:12px;border:1.5px solid rgba(42,31,78,.1);background:#fff;font-size:10.5px;line-height:1.3;color:#2A1F4E;cursor:pointer}.ayna-spectrum-grid button.selected{border-color:#E8843C;background:#FFF3DD}
 .ayna-trust-list{max-width:520px;margin:0 auto;display:grid;gap:10px}.ayna-trust-item{display:flex;align-items:center;gap:10px;background:#FFF9F2;color:#2A1F4E;border-radius:16px;padding:13px 14px;box-shadow:0 10px 22px -16px rgba(0,0,0,.4)}.ayna-drag{color:#8c8078;cursor:grab;letter-spacing:-4px;font-size:18px}.ayna-rank{width:24px;height:24px;border-radius:50%;background:#FFF3DD;color:#8A5A1E;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}.ayna-trust-label{flex:1;text-align:left;font-size:13px;font-weight:600;line-height:1.35}.ayna-move{display:flex;gap:4px}.ayna-move button{width:26px;height:26px;border-radius:8px;border:1px solid rgba(42,31,78,.12);background:#fff;color:#2A1F4E;cursor:pointer}
 .ayna-saving{margin-top:14px;color:rgba(255,249,242,.72);font-size:12px}.ayna-error{margin-top:14px;color:#FFE0D6;font-size:12px;font-weight:600}.ayna-count{background:rgba(42,31,78,.16);border-radius:999px;padding:2px 9px;font-size:12px}
@@ -1038,9 +1251,8 @@ export default function HealthIntakeForm({ onComplete }) {
       { id: 'priceRange', section: 'preferences', title: 'What price range do you usually prefer for health and wellness products?', type: 'price', optional: true },
       { id: 'largePurchaseFrequency', section: 'preferences', title: 'How often do you make larger health or wellness purchases of $75 or more?', subtitle: 'This is about purchase frequency, not your usual preferred price per product.', type: 'largeSpend', optional: true },
       { id: 'brandOpenness', section: 'preferences', title: 'How do you feel about trying new brands?', type: 'brand', optional: true },
-      { id: 'brandSupport', section: 'preferences', title: 'Are there any types of brands you especially like to support?', subtitle: 'Select any that matter to you.', type: 'brandSupport', optional: true },
       ...(intake.brandOpenness === 'I mostly stick with brands I already trust' || intake.brandOpenness === 'I prefer trusted brands but am open to something new' ? [{ id: 'trustedBrands', section: 'preferences', title: 'Which brands do you already trust?', type: 'tokens', optional: true }] : []),
-      { id: 'avoidIngredients', section: 'preferences', title: 'Are there any ingredients or materials you prefer to avoid?', subtitle: 'This is a shopping preference. Allergies and sensitivities were captured separately for safety.', type: 'avoidIngredients', optional: true },
+      { id: 'avoidIngredients', section: 'preferences', title: 'Preferences', subtitle: 'Select any that matter to you. Allergies are handled separately.', type: 'avoidIngredients', optional: true },
       { id: 'fsaHsa', section: 'preferences', title: 'Do you have an FSA or HSA you would like to use?', type: 'fsa', optional: true },
       { id: 'trust', section: 'trust', title: 'What matters most to you when deciding whether to trust a product?', subtitle: 'Drag to rank, or use the arrows. You can also skip this.', type: 'trust', optional: true },
       { id: 'anythingElse', section: 'trust', title: 'Anything else you want Ayna to know?', subtitle: 'Share anything else that could help us personalize your recommendations.', type: 'textarea', optional: true },
@@ -1145,13 +1357,13 @@ export default function HealthIntakeForm({ onComplete }) {
         {selectedLifeStages.includes('Other') && (
           <div className="ayna-other-box">
             <label>Tell us what best describes you (optional)</label>
-            <input className="ayna-text-input" value={intake.lifeStageOther} onChange={(e) => set('lifeStageOther', e.target.value)} placeholder="Type your answer..." />
+            <input className="ayna-text-input" value={intake.lifeStageOther} onChange={(e) => set('lifeStageOther', e.target.value)} placeholder="Type here..." />
           </div>
         )}
       </>;
     }
     if (step.type === 'text' && step.id === 'zip') return <input className="ayna-text-input" inputMode="numeric" maxLength={5} value={intake.zipcode} onChange={(e) => set('zipcode', e.target.value.replace(/\D/g, '').slice(0, 5))} placeholder="e.g. 10001" />;
-    if (step.type === 'support') return <><SearchableGroups groups={SUPPORT_GROUPS} selected={intake.supportSelections} search={search} onSearch={setSearch} onToggle={(item) => toggleExclusive('supportSelections', item, ['Nothing right now'])} />{intake.supportSelections.includes('Something else') && <div className="ayna-other-box"><label>Tell us what else you are looking for support with</label><input className="ayna-text-input" value={intake.supportOtherText} onChange={(e) => set('supportOtherText', e.target.value)} placeholder="Type your answer..." /></div>}</>;
+    if (step.type === 'support') return <><SearchableGroups groups={SUPPORT_GROUPS} selected={intake.supportSelections} search={search} onSearch={setSearch} onToggle={(item) => toggleExclusive('supportSelections', item, ['Nothing right now'])} />{intake.supportSelections.includes('Something else') && <div className="ayna-other-box"><label>Tell us what else you are looking for support with</label><input className="ayna-text-input" value={intake.supportOtherText} onChange={(e) => set('supportOtherText', e.target.value)} placeholder="Type here..." /></div>}</>;
     if (step.type === 'flow') return <Scale options={PERIOD_FLOW} value={intake.periodFlow} onChange={(value) => set('periodFlow', value)} kind="flow" />;
     if (step.type === 'pain') return <Scale options={PERIOD_PAIN} value={intake.periodPain} onChange={(value) => set('periodPain', value)} kind="pain" />;
     if (step.type === 'timeline') {
@@ -1186,20 +1398,18 @@ export default function HealthIntakeForm({ onComplete }) {
     if (step.type === 'tokens' && step.id === 'avoidRepeat') return <TokenInput values={intake.avoidRepeat} onChange={(values) => set('avoidRepeat', values)} placeholder="Start typing a product or brand" suggestions={PRODUCT_OR_BRAND_SUGGESTIONS} />;
     if (step.type === 'tokens' && step.id === 'trustedBrands') return <TokenInput values={intake.trustedBrands} onChange={(values) => set('trustedBrands', values)} placeholder="Start typing a brand" suggestions={BRAND_SUGGESTIONS} />;
     if (step.type === 'safety') return <><Segmented options={['Yes', 'No', 'Not sure']} value={intake.safetyConcern} onChange={(value) => set('safetyConcern', value)} />{['Yes', 'Not sure'].includes(intake.safetyConcern) && <div className="ayna-mini-note">Some new or worsening symptoms may need evaluation by a healthcare professional. Ayna helps with product discovery and education and does not diagnose medical conditions or replace professional medical care. If symptoms feel urgent or severe, seek appropriate medical care promptly.</div>}</>;
-    if (step.type === 'formats') return <><div className="ayna-choice-grid">{PRODUCT_FORMATS.map((option) => <ChoiceCard key={option} label={option} selected={intake.preferredFormats.includes(option)} onClick={() => toggleExclusive('preferredFormats', option, ['No preference'])} />)}</div>{intake.preferredFormats.includes('Other') && <div className="ayna-other-box"><label>What format do you prefer?</label><input className="ayna-text-input" value={intake.formatOtherText} onChange={(e) => set('formatOtherText', e.target.value)} placeholder="Type your answer..." /></div>}</>;
+    if (step.type === 'formats') return <><div className="ayna-choice-grid">{PRODUCT_FORMATS.map((option) => <ChoiceCard key={option} label={option} selected={intake.preferredFormats.includes(option)} onClick={() => toggleExclusive('preferredFormats', option, ['No preference'])} />)}</div>{intake.preferredFormats.includes('Other') && <div className="ayna-other-box"><label>What format do you prefer?</label><input className="ayna-text-input" value={intake.formatOtherText} onChange={(e) => set('formatOtherText', e.target.value)} placeholder="Type here..." /></div>}</>;
     if (step.type === 'price') { const selectedPrices = Array.isArray(intake.priceRange) ? intake.priceRange : (intake.priceRange ? [intake.priceRange] : []); return <div className="ayna-pills">{PRICE_RANGES.map((option) => <Pill key={option} label={option} selected={selectedPrices.includes(option)} onClick={() => toggleExclusive('priceRange', option, ['Price is not a major factor for me'])} />)}</div>; }
     if (step.type === 'largeSpend') return <Timeline options={LARGE_PURCHASE_FREQUENCY} value={intake.largePurchaseFrequency} onChange={(value) => set('largePurchaseFrequency', value)} />;
     if (step.type === 'brand') return <BrandSpectrum value={intake.brandOpenness} onChange={(value) => set('brandOpenness', value)} />;
-
-    if (step.type === 'brandSupport') return <div className="ayna-pills">{BRAND_SUPPORT_PREFERENCES.map((option) => <Pill key={option} label={option} selected={intake.brandSupportPreferences.includes(option)} onClick={() => toggleExclusive('brandSupportPreferences', option)} />)}</div>;
-    if (step.type === 'avoidIngredients') return <><div className="ayna-pills">{AVOID_INGREDIENTS.map((option) => <Pill key={option} label={option} selected={intake.avoidIngredients.includes(option)} onClick={() => toggleExclusive('avoidIngredients', option, ['None'])} />)}</div>{intake.avoidIngredients.includes('Other') && <div className="ayna-other-box"><label>What else would you prefer to avoid?</label><input className="ayna-text-input" value={intake.avoidIngredientsOtherText} onChange={(e) => set('avoidIngredientsOtherText', e.target.value)} placeholder="Type your answer..." /></div>}</>;
+    if (step.type === 'avoidIngredients') return <><div className="ayna-pills">{AVOID_INGREDIENTS.map((option) => <Pill key={option} label={option} selected={intake.avoidIngredients.includes(option)} onClick={() => toggleExclusive('avoidIngredients', option, ['No preference'])} />)}</div>{intake.avoidIngredients.includes('Other') && <div className="ayna-other-box"><label>Other preference</label><input className="ayna-text-input" value={intake.avoidIngredientsOtherText} onChange={(e) => set('avoidIngredientsOtherText', e.target.value)} placeholder="Type here..." /></div>}</>;
     if (step.type === 'fsa') return <div className="ayna-pills">{FSA_HSA.map((option) => <Pill key={option} label={option} selected={intake.fsaHsaAnswer === option} onClick={() => set('fsaHsaAnswer', option)} />)}</div>;
     if (step.type === 'trust') return <TrustRanker order={intake.trustRanking} onChange={(order) => set('trustRanking', order)} onTouch={() => set('trustRankingTouched', true)} />;
     if (step.type === 'textarea') return <textarea className="ayna-textarea" value={intake.anythingElse} onChange={(e) => set('anythingElse', e.target.value)} placeholder="Share anything else that could help us personalize your recommendations." />;
     return null;
   };
 
-  const countForStep = step.id === 'support' ? intake.supportSelections.length : step.id === 'conditions' ? intake.diagnosisSelections.length : step.id === 'allergies' ? intake.allergyItems.length : step.id === 'formats' ? intake.preferredFormats.length : step.id === 'brandSupport' ? intake.brandSupportPreferences.length : step.id === 'avoidIngredients' ? intake.avoidIngredients.length : 0;
+  const countForStep = step.id === 'support' ? intake.supportSelections.length : step.id === 'conditions' ? intake.diagnosisSelections.length : step.id === 'allergies' ? intake.allergyItems.length : step.id === 'formats' ? intake.preferredFormats.length : step.id === 'avoidIngredients' ? intake.avoidIngredients.length : 0;
   const ready = requiredReady(step.id, intake);
   const isLast = currentIndex === visibleSteps.length - 1;
 
@@ -1223,7 +1433,7 @@ export default function HealthIntakeForm({ onComplete }) {
             <button type="button" className="ayna-continue" onClick={goNext} disabled={!ready || saving}>{saving ? 'Saving...' : isLast ? 'Finish profile' : 'Continue'}{countForStep > 0 && <span className="ayna-count">{countForStep}</span>}<span aria-hidden="true">→</span></button>
             {step.optional && <button type="button" className="ayna-skip" onClick={goNext}>{step.id === 'products' ? 'Skip for now' : 'Skip this step'}</button>}
           </div>
-          {step.id === 'products' && intake.productHistory.length > 0 && !ready && <div className="ayna-saving">Add how it worked and any reactions before continuing.</div>}
+
           {saveError && <div className="ayna-error">{saveError}</div>}
         </div>
       </div>

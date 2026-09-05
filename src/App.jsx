@@ -2269,6 +2269,159 @@ function App() {
                         .ayna-result-orbit-slot.two{left:-10%}
                         .ayna-result-orbit-slot.three{right:-10%}
                       }
+
+
+                      /* Results layout polish */
+                      .ayna-result-orbit-stage{
+                        width:min(420px,92vw);
+                        height:auto;
+                        aspect-ratio:1;
+                        margin:34px auto 18px;
+                        position:relative;
+                        overflow:visible;
+                      }
+
+                      .ayna-result-orbit{
+                        position:absolute;
+                        inset:0;
+                        transform-origin:50% 50%;
+                      }
+
+                      .ayna-result-ring{
+                        inset:30px;
+                      }
+
+                      .ayna-result-ring.second{
+                        inset:82px;
+                      }
+
+                      .ayna-result-you{
+                        left:50%;
+                        top:50%;
+                        width:158px;
+                        height:158px;
+                        margin:0;
+                        transform:translate(-50%,-50%);
+                      }
+
+                      .ayna-result-orbit-slot{
+                        width:178px;
+                        height:56px;
+                      }
+
+                      .ayna-result-orbit-slot.one{
+                        left:50%;
+                        top:42px;
+                        bottom:auto;
+                        right:auto;
+                        transform:translateX(-50%);
+                      }
+
+                      .ayna-result-orbit-slot.two{
+                        left:18px;
+                        top:auto;
+                        bottom:78px;
+                        right:auto;
+                      }
+
+                      .ayna-result-orbit-slot.three{
+                        right:18px;
+                        left:auto;
+                        top:auto;
+                        bottom:78px;
+                      }
+
+                      .ayna-result-orbit-pill{
+                        width:100%;
+                        height:56px;
+                        padding:8px 12px;
+                        white-space:normal;
+                        overflow:visible;
+                        text-overflow:clip;
+                        text-align:center;
+                        line-height:1.18;
+                        font-size:11.5px;
+                      }
+
+                      .ayna-result-orbit-pill span:last-child{
+                        min-width:0;
+                      }
+
+                      .ayna-result-grid{
+                        align-items:start;
+                      }
+
+                      .ayna-result-card-wrap{
+                        min-width:0;
+                        align-self:start;
+                      }
+
+                      .ayna-result-card{
+                        height:auto;
+                        min-height:0;
+                      }
+
+                      .ayna-result-why-panel{
+                        animation:aynaWhyOpen .18s ease-out;
+                        transform-origin:top;
+                      }
+
+                      @keyframes aynaWhyOpen{
+                        from{opacity:0;transform:translateY(-4px)}
+                        to{opacity:1;transform:translateY(0)}
+                      }
+
+                      .ayna-result-bottom{
+                        width:100%;
+                        clear:both;
+                        margin:36px auto 0;
+                        display:flex;
+                        justify-content:center;
+                        align-items:center;
+                        position:relative;
+                        z-index:2;
+                      }
+
+                      .ayna-result-start-over{
+                        margin:0 auto;
+                      }
+
+                      @media(max-width:560px){
+                        .ayna-result-orbit-stage{
+                          width:min(370px,96vw);
+                        }
+
+                        .ayna-result-orbit-slot{
+                          width:150px;
+                          height:54px;
+                        }
+
+                        .ayna-result-orbit-slot.one{
+                          top:34px;
+                        }
+
+                        .ayna-result-orbit-slot.two{
+                          left:8px;
+                          bottom:66px;
+                        }
+
+                        .ayna-result-orbit-slot.three{
+                          right:8px;
+                          bottom:66px;
+                        }
+
+                        .ayna-result-orbit-pill{
+                          height:54px;
+                          padding:7px 9px;
+                          font-size:10.5px;
+                        }
+
+                        .ayna-result-you{
+                          width:142px;
+                          height:142px;
+                        }
+                      }
+
 `}</style>
 
                     <div className="ayna-result-topbar">
