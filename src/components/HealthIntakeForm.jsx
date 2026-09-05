@@ -739,28 +739,25 @@ function ProductHistoryBuilder({ products, onChange }) {
 
         {showSuggestions && query.trim().length > 0 && (
           <div className="ayna-smart-suggestions ayna-smart-dropdown" role="listbox">
-            {suggestions.length > 0 ? (
-              suggestions.map((name) => (
-                <button
-                  type="button"
-                  key={name}
-                  onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => addProduct(name)}
-                >
-                  {name}
-                </button>
-              ))
-            ) : (
+            {suggestions.map((name) => (
               <button
                 type="button"
-                className="ayna-smart-add-row"
+                key={name}
                 onMouseDown={(e) => e.preventDefault()}
-                onClick={() => addProduct(query)}
+                onClick={() => addProduct(name)}
               >
-                <span className="ayna-smart-plus">+</span>
-                <span>Add “{query.trim()}”</span>
+                {name}
               </button>
-            )}
+            ))}
+            <button
+              type="button"
+              className="ayna-smart-add-row"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => addProduct(query)}
+            >
+              <span className="ayna-smart-plus">+</span>
+              <span>Add “{query.trim()}”</span>
+            </button>
           </div>
         )}
       </div>

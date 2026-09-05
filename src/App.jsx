@@ -1451,16 +1451,39 @@ function App() {
           pendingAction === 'quiz-complete' && pendingQuizResults ? (
             <div className="ayna-quiz-result-screen">
               {(() => {
-                const rawNodes = [
-                  ...(Array.isArray(pendingQuizResults.supportSelections) ? pendingQuizResults.supportSelections : []),
-                  ...(Array.isArray(pendingQuizResults.primaryConcerns) ? pendingQuizResults.primaryConcerns : []),
-                  ...(Array.isArray(pendingQuizResults.symptoms) ? pendingQuizResults.symptoms : []),
-                  ...(Array.isArray(pendingQuizResults.preferredFormats) ? pendingQuizResults.preferredFormats : []),
-                ].filter((item) => item && !['Nothing right now', 'Something else', 'Other', 'No preference'].includes(item));
+                const hasProfileValue = (...values) => values.some((value) => {
+                  if (Array.isArray(value)) {
+                    return value.some((item) =>
+                      item &&
+                      !['Nothing right now', 'Something else', 'Other', 'No preference'].includes(item)
+                    );
+                  }
+                  return Boolean(value);
+                });
 
-                const nodeLabels = [...new Set(rawNodes)].slice(0, 3);
-                const fallbacks = ['Your goals', 'Your preferences', 'Your needs'];
-                while (nodeLabels.length < 3) nodeLabels.push(fallbacks[nodeLabels.length]);
+                const nodeLabels = [];
+
+                if (hasProfileValue(
+                  pendingQuizResults.supportSelections,
+                  pendingQuizResults.primaryConcerns,
+                  pendingQuizResults.healthGoals
+                )) nodeLabels.push('Your goals');
+
+                if (hasProfileValue(
+                  pendingQuizResults.symptoms,
+                  pendingQuizResults.diagnosisSelections,
+                  pendingQuizResults.conditions
+                )) nodeLabels.push('Your needs');
+
+                if (hasProfileValue(
+                  pendingQuizResults.preferredFormats,
+                  pendingQuizResults.avoidIngredients,
+                  pendingQuizResults.priceRange,
+                  pendingQuizResults.trustedBrands,
+                  pendingQuizResults.brandOpenness
+                )) nodeLabels.push('Your preferences');
+
+                const cardLabels = nodeLabels.length ? nodeLabels : ['Your profile'];
 
                 const previewPool = getRecommendations(pendingQuizResults, healthProfile) || [];
                 const previewCards = [0, 1, 2].map((slot) => {
@@ -1511,8 +1534,8 @@ function App() {
                       }
 
                       @keyframes aynaQuizSoftPulse {
-                        0%,100% { transform: scale(1); }
-                        50% { transform: scale(1.035); }
+                        0%,100% { transform: translate(-50%, -50%) scale(1); }
+                        50% { transform: translate(-50%, -50%) scale(1.035); }
                       }
 
                       .ayna-quiz-result-screen {
@@ -2506,7 +2529,7 @@ function App() {
                           const isWhyOpen = quizPreviewWhyOpen === index;
 
                           const reasons = [
-                            `Matches your ${nodeLabels[index % nodeLabels.length]} priorities`,
+                            `Matches ${cardLabels[index % cardLabels.length].toLowerCase()}`,
                             'Uses the health profile and preferences you shared',
                             'Selected without sponsorship influencing the recommendation',
                           ];
@@ -2536,8 +2559,8 @@ function App() {
                                 <h3>{productName(product)}</h3>
 
                                 <div className="ayna-result-tags">
-                                  <span>{nodeLabels[index % nodeLabels.length]}</span>
-                                  <span>{nodeLabels[(index + 1) % nodeLabels.length]}</span>
+                                  <span>{cardLabels[index % cardLabels.length]}</span>
+                                  <span>{cardLabels[(index + 1) % cardLabels.length]}</span>
                                 </div>
 
                                 <div className="ayna-result-price">{productPrice(product)}</div>
