@@ -35,7 +35,8 @@
 
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   font-family: Inter, system-ui, sans-serif;
   color: var(--ayna-text);
   background: var(--ayna-bg);

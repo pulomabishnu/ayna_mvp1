@@ -82,11 +82,19 @@ function SavedCard({ item, status, onOpen, onRemove }) {
   const image = item.image || item.imageUrl || (Array.isArray(item.images) ? item.images[0] : undefined);
 
   return (
-    <article onClick={onOpen} style={{ minWidth: 0, cursor: 'pointer' }}>
-      <div style={{ position: 'relative', aspectRatio: '1 / 1.04', borderRadius: 16, overflow: 'hidden', background: 'var(--ayna-bg-alt)' }}>
-        {image && (
-          <img src={image} alt={item.name} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', padding: 14, boxSizing: 'border-box' }} />
-        )}
+    <article
+      onClick={onOpen}
+      style={{
+        minWidth: 0,
+        cursor: 'pointer',
+        background: 'var(--ayna-surface)',
+        border: '1px solid var(--ayna-border)',
+        borderRadius: 18,
+        padding: 10,
+        boxShadow: '0 1px 2px rgba(41,37,36,.04)',
+      }}
+    >
+      <div style={{ position: 'relative', aspectRatio: '1 / 1', borderRadius: 13, overflow: 'hidden', background: image ? 'var(--ayna-bg-alt)' : 'linear-gradient(150deg,#F6DCC026,#F6DCC04d)', backgroundImage: image ? `url(${image})` : undefined, backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <button
           onClick={(e) => { e.stopPropagation(); onRemove(); }}
           aria-label="Remove from saved"
@@ -233,7 +241,7 @@ export default function SavedScreen({ savedProducts = {}, myProducts = [], onBac
           </div>
         ) : (
           <>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px 13px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 11 }}>
               {visible.map(({ item, status }) => (
                 <SavedCard
                   key={item.id}
