@@ -1451,11 +1451,20 @@ function App() {
           pendingAction === 'quiz-complete' && pendingQuizResults ? (
             <div className="ayna-quiz-result-screen">
               {(() => {
+                const intake = pendingQuizResults.fullHealthIntake || pendingQuizResults;
+
                 const hasProfileValue = (...values) => values.some((value) => {
                   if (Array.isArray(value)) {
                     return value.some((item) =>
                       item &&
-                      !['Nothing right now', 'Something else', 'Other', 'No preference'].includes(item)
+                      ![
+                        'Nothing right now',
+                        'Something else',
+                        'Other',
+                        'No preference',
+                        'None that I know of',
+                        'Prefer not to say'
+                      ].includes(item)
                     );
                   }
                   return Boolean(value);
@@ -1464,24 +1473,34 @@ function App() {
                 const nodeLabels = [];
 
                 if (hasProfileValue(
-                  pendingQuizResults.supportSelections,
-                  pendingQuizResults.primaryConcerns,
-                  pendingQuizResults.healthGoals
-                )) nodeLabels.push('Your goals');
+                  intake.supportSelections,
+                  intake.primaryConcerns,
+                  intake.customConcerns
+                )) {
+                  nodeLabels.push('Your goals');
+                }
 
                 if (hasProfileValue(
-                  pendingQuizResults.symptoms,
-                  pendingQuizResults.diagnosisSelections,
-                  pendingQuizResults.conditions
-                )) nodeLabels.push('Your needs');
+                  intake.diagnosisSelections,
+                  intake.symptoms,
+                  intake.periodFlow,
+                  intake.periodPain,
+                  intake.allergyItems,
+                  intake.currentMedicationItems,
+                  intake.productHistory
+                )) {
+                  nodeLabels.push('Your needs');
+                }
 
                 if (hasProfileValue(
-                  pendingQuizResults.preferredFormats,
-                  pendingQuizResults.avoidIngredients,
-                  pendingQuizResults.priceRange,
-                  pendingQuizResults.trustedBrands,
-                  pendingQuizResults.brandOpenness
-                )) nodeLabels.push('Your preferences');
+                  intake.preferredFormats,
+                  intake.priceRange,
+                  intake.brandOpenness,
+                  intake.trustedBrands,
+                  intake.avoidIngredients
+                )) {
+                  nodeLabels.push('Your preferences');
+                }
 
                 const cardLabels = nodeLabels.length ? nodeLabels : ['Your profile'];
 
@@ -2370,6 +2389,30 @@ function App() {
                         min-width:0;
                       }
 
+                      .ayna-result-orbit-stage.count-1 .ayna-result-orbit-slot.one{
+                        left:50%;
+                        top:34px;
+                        right:auto;
+                        bottom:auto;
+                        transform:translateX(-50%);
+                      }
+
+                      .ayna-result-orbit-stage.count-2 .ayna-result-orbit-slot.one{
+                        left:10px;
+                        right:auto;
+                        top:50%;
+                        bottom:auto;
+                        transform:translateY(-50%);
+                      }
+
+                      .ayna-result-orbit-stage.count-2 .ayna-result-orbit-slot.two{
+                        right:10px;
+                        left:auto;
+                        top:50%;
+                        bottom:auto;
+                        transform:translateY(-50%);
+                      }
+
                       .ayna-result-grid{
                         align-items:start;
                       }
@@ -2504,7 +2547,7 @@ function App() {
                       <div className="ayna-result-build-title">Building your ecosystem</div>
                       <div className="ayna-result-build-sub">A little preview of how it all fits together</div>
 
-                      <div className="ayna-result-orbit-stage">
+                      <div className={`ayna-result-orbit-stage count-${Math.max(1, nodeLabels.length)}`}>
                         <div className="ayna-result-ring" />
                         <div className="ayna-result-ring second" />
                         <div className="ayna-result-you">you</div>
