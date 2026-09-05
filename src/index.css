@@ -3773,18 +3773,17 @@ footer a[href*="career" i],
 }
 
 .pdp-partner-disclosure {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-  margin-top: 12px;
+  margin: 12px 0 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+.pdp-partner-disclosure .pdp-head__badge {
+  margin-right: 8px;
+  vertical-align: middle;
 }
 
 .pdp-partner-note {
-  align-self: stretch;
-  margin: 0;
-  font-size: 12.5px;
-  line-height: 1.45;
   color: var(--color-text-muted, #6B7280);
 }
 

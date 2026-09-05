@@ -739,14 +739,14 @@ export default function ProductModal({
         )}
       </div>
       {isPartnerBrandItem(product) && (
-        <div className="pdp-partner-disclosure">
+        <p className="pdp-partner-disclosure">
           <span className="pdp-head__badge" title="ayna has a partnership with this brand. It does not affect your recommendation.">
             ayna Partner
+          </span>{' '}
+          <span className="pdp-partner-note">
+            ayna has vetted this brand's claims and earns commission on purchases. We encourage buying through ayna to support women-owned businesses.
           </span>
-          <p className="pdp-partner-note">
-            Vetted partner brand — ayna earns a commission on purchases made through our site.
-          </p>
-        </div>
+        </p>
       )}
     </div>
   );
