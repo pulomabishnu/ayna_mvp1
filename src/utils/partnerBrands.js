@@ -7,8 +7,10 @@
  * confirmed by Aditi. The other 3 brands that were here before the empty (winx, oboo, lola)
  * are still just in discussion, not re-added. Add a brand here only once its partnership is
  * actually contracted, not before.
+ *
+ * Added 2026-08-27: Connect Pelvic Floor Fitness — confirmed affiliate partnership.
  */
-export const PARTNER_BRAND_PATTERNS = [/\bneycher\b/, /\bconnect pelvic floor fitness\b/, /\belitone\b/, /\bproov\b/];
+export const PARTNER_BRAND_PATTERNS = [/\bneycher\b/, /\bconnect pelvic floor fitness\b/];
 
 export function isPartnerBrandItem(item) {
   const text = `${item?.brand || ''} ${item?.name || ''}`.toLowerCase();

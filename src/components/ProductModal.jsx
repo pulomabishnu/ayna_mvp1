@@ -717,6 +717,11 @@ export default function ProductModal({
           ayna Partner
         </span>
       )}
+      {isPartnerBrandItem(product) && (
+        <p className="pdp-partner-note">
+          ayna has personally vetted this brand for its marketing claims. ayna receives a commission from the brand if you buy through our site. We encourage buying through our site to support small businesses.
+        </p>
+      )}
     </div>
   );
 
