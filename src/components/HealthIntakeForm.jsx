@@ -312,7 +312,18 @@ function hasLifeStage(intake, value) {
 }
 
 function isPeriodRelevant(intake) {
-  return getLifeStages(intake).some((value) => ['I get periods regularly', 'My periods are irregular'].includes(value)) || arrayHasAny(intake.supportSelections, PERIOD_TRIGGER);
+  const lifeStages = getLifeStages(intake);
+
+  if (
+    lifeStages.includes('I am in menopause')
+    || lifeStages.includes('I am post-menopause')
+  ) {
+    return false;
+  }
+
+  return lifeStages.some((value) =>
+    ['I get periods regularly', 'My periods are irregular'].includes(value)
+  ) || arrayHasAny(intake.supportSelections, PERIOD_TRIGGER);
 }
 
 function isUtiRelevant(intake) {
