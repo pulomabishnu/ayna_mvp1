@@ -51,9 +51,9 @@ const LIFE_STAGES = [
 const PERIOD_FLOW = ['Very light', 'Light', 'Moderate', 'Heavy', 'Very heavy', 'It varies', 'I do not currently get periods', 'Not sure'];
 const PERIOD_PAIN = ['None', 'Mild', 'Moderate', 'Severe', 'Very severe', 'It varies', 'Not sure'];
 const UTI_FREQUENCY = ['This is the first time', 'Rarely', 'A few times a year', 'About monthly', 'More than once a month', 'I am experiencing them right now', 'Not sure'];
-const TTC_DURATION = ['I have not started trying yet', 'Less than 6 months', '6–12 months', 'More than 12 months', 'Prefer not to say'];
 const POSTPARTUM_TIMING = ['Less than 6 weeks ago', '6 weeks–3 months ago', '3–6 months ago', '6–12 months ago', 'More than 12 months ago'];
 const PREGNANCY_TRIMESTER = ['First trimester', 'Second trimester', 'Third trimester', 'Not sure', 'Prefer not to say'];
+const PERIMENOPAUSE_LAST_PERIOD = ['Within the past 3 months', '3–6 months ago', '6–12 months ago', 'More than 12 months ago', "I'm not sure", 'Prefer not to say'];
 
 const CONDITIONS = [
   'PCOS', 'Endometriosis', 'Fibroids', 'Adenomyosis', 'PMS', 'PMDD', 'Infertility', 'Thyroid condition',
@@ -64,7 +64,8 @@ const CONDITIONS = [
 
 const ALLERGIES = [
   'Latex', 'Fragrance', 'Adhesives', 'NSAIDs such as ibuprofen', 'Acetaminophen', 'Aspirin', 'Antibiotics',
-  'Hormonal medications', 'Topical ingredients', 'Supplements or herbal ingredients', 'Other', 'None known', 'Not sure',
+  'Hormonal medications', 'Topical ingredients', 'Supplements or herbal ingredients',
+  'Nickel', 'Essential oils', 'Dyes', 'Preservatives', 'Gluten', 'Soy', 'Dairy',
 ];
 
 
@@ -105,6 +106,7 @@ const BRAND_OPENNESS = [
   'No preference',
 ];
 const AVOID_INGREDIENTS = ['Fragrance', 'Dyes', 'Parabens', 'Sulfates', 'Phthalates', 'Latex', 'Synthetic materials', 'Animal-derived ingredients', 'Added sugar', 'Artificial sweeteners', 'Other', 'None'];
+const BRAND_SUPPORT_PREFERENCES = ['Black-owned', 'Brown-owned', 'Cruelty-free'];
 const FSA_HSA = ['FSA', 'HSA', 'Both', 'No', 'Not sure'];
 const TRUST_ITEMS = ['Clinical or scientific evidence', 'Reviews and experiences from other women', 'Brand reputation or expert recommendations'];
 
@@ -128,8 +130,12 @@ const EMPTY = {
   ttcDuration: '',
   postpartumTiming: '',
   pregnancyTrimester: '',
+  breastfeedingStatus: '',
+  perimenopauseLastPeriod: '',
   diagnosisSelections: [],
   conditionOtherText: '',
+  allergyStatus: '',
+  allergyItems: [],
   allergySelections: [],
   allergyOtherText: '',
   takesCurrent: '',
@@ -143,6 +149,7 @@ const EMPTY = {
   largePurchaseFrequency: '',
   brandOpenness: '',
   trustedBrands: [],
+  brandSupportPreferences: [],
   avoidIngredients: [],
   avoidIngredientsOtherText: '',
   fsaHsaAnswer: '',
@@ -346,8 +353,17 @@ function buildSnapshot(intake) {
     .map((p) => `${p.name}: ${[...(p.stopReasons || []), p.reactionText].filter(Boolean).join(', ')}`)
     .join('; ');
 
-  const allergies = (intake.allergySelections || []).filter((v) => !['None known', 'Not sure', 'Other'].includes(v));
-  if (intake.allergySelections.includes('Other') && intake.allergyOtherText.trim()) allergies.push(intake.allergyOtherText.trim());
+  const allergies = intake.allergyStatus === 'Yes'
+    ? [...new Set((intake.allergyItems || []).filter(Boolean))]
+    : [];
+
+  const legacyAllergySelections = intake.allergyStatus === 'Yes'
+    ? allergies
+    : intake.allergyStatus === 'No'
+      ? ['None known']
+      : intake.allergyStatus === "I'm not sure"
+        ? ['Not sure']
+        : [];
 
   const productPreferences = [...new Set((intake.avoidIngredients || []).map((x) => PREFERENCE_MAP[x]).filter(Boolean))];
   const preferredProductTypes = [...new Set((intake.preferredFormats || []).map((x) => FORMAT_TO_LEGACY[x]).filter(Boolean))];
@@ -372,14 +388,18 @@ function buildSnapshot(intake) {
     periodFlow: isPeriodRelevant(intake) ? intake.periodFlow : '',
     periodPain: isPeriodRelevant(intake) ? intake.periodPain : '',
     utiFrequency: isUtiRelevant(intake) ? intake.utiFrequency : '',
-    ttcDuration: isTtcRelevant(intake) ? intake.ttcDuration : '',
+    ttcDuration: '',
     postpartumTiming: isPostpartumRelevant(intake) ? intake.postpartumTiming : '',
     pregnancyTrimester: isPregnancyRelevant(intake) ? intake.pregnancyTrimester : '',
+    breastfeedingStatus: hasLifeStage(intake, 'I am postpartum') ? intake.breastfeedingStatus : '',
+    perimenopauseLastPeriod: hasLifeStage(intake, 'I am in perimenopause') ? intake.perimenopauseLastPeriod : '',
     diagnosisSelections: intake.diagnosisSelections,
     conditions,
     conditionOtherText: intake.conditionOtherText.trim(),
-    allergySelections: intake.allergySelections,
-    allergyOtherText: intake.allergyOtherText.trim(),
+    allergyStatus: intake.allergyStatus,
+    allergyItems: intake.allergyStatus === 'Yes' ? intake.allergyItems : [],
+    allergySelections: legacyAllergySelections,
+    allergyOtherText: '',
     allergies,
     takesCurrent: intake.takesCurrent,
     currentMedicationItems: intake.takesCurrent === 'Yes' ? intake.currentMedicationItems : [],
@@ -392,6 +412,7 @@ function buildSnapshot(intake) {
     avoidRepeat: intake.avoidRepeat,
     dislikedProducts,
     dislikedReason,
+    brandSupportPreferences: intake.brandSupportPreferences,
     safetyConcern: intake.safetyConcern,
     preferredFormats: intake.preferredFormats,
     formatOtherText: intake.formatOtherText.trim(),
@@ -576,66 +597,238 @@ function SearchableGroups({ groups, selected, onToggle, search, onSearch }) {
 function ProductHistoryBuilder({ products, onChange }) {
   const [query, setQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [adding, setAdding] = useState(false);
+  const [expandedIndex, setExpandedIndex] = useState(null);
+
   const suggestions = useMemo(() => {
     const alreadyAdded = new Set(products.map((product) => normalizeSuggestion(product.name)));
-    return rankedSuggestions(query, CATALOG_PRODUCT_NAMES.filter((name) => !alreadyAdded.has(normalizeSuggestion(name))), 6);
+    return rankedSuggestions(
+      query,
+      CATALOG_PRODUCT_NAMES.filter((name) => !alreadyAdded.has(normalizeSuggestion(name))),
+      6
+    );
   }, [query, products]);
 
   const addProduct = (name) => {
     const trimmed = String(name || '').trim();
     if (!trimmed || products.some((p) => normalizeSuggestion(p.name) === normalizeSuggestion(trimmed))) return;
-    onChange([...products, { name: trimmed, current: '', worked: '', reaction: '', reactionText: '', stopReasons: [], stopOther: '' }]);
+
+    const next = [
+      ...products,
+      {
+        name: trimmed,
+        current: '',
+        worked: '',
+        reaction: '',
+        reactionText: '',
+        stopReasons: [],
+        stopOther: '',
+      },
+    ];
+
+    onChange(next);
     setQuery('');
     setShowSuggestions(false);
+    setAdding(false);
+    setExpandedIndex(next.length - 1);
   };
-  const updateProduct = (index, patch) => onChange(products.map((product, i) => i === index ? { ...product, ...patch } : product));
+
+  const updateProduct = (index, patch) => {
+    onChange(products.map((product, i) => i === index ? { ...product, ...patch } : product));
+  };
+
+  const removeProduct = (index) => {
+    onChange(products.filter((_, i) => i !== index));
+    setExpandedIndex(null);
+  };
+
+  const beginAdding = () => {
+    setExpandedIndex(null);
+    setQuery('');
+    setShowSuggestions(false);
+    setAdding(true);
+  };
 
   return (
     <div className="ayna-product-builder">
-      {products.length > 0 && (
-        <div className="ayna-added-products">
-          <div className="ayna-added-products-label">Added products</div>
-          <div className="ayna-added-products-list">
-            {products.map((product, index) => (
-              <span key={`${product.name}-summary-${index}`}>{product.name}</span>
-            ))}
+      {products.map((product, index) => {
+        const expanded = expandedIndex === index;
+
+        return (
+          <div className={`ayna-product-card${expanded ? ' open' : ' compact'}`} key={`${product.name}-${index}`}>
+            <div className="ayna-product-head">
+              <div>{product.name}</div>
+
+              <div className="ayna-product-actions">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAdding(false);
+                    setExpandedIndex(expanded ? null : index);
+                  }}
+                >
+                  {expanded ? 'Close' : 'Edit'}
+                </button>
+
+                <button type="button" onClick={() => removeProduct(index)}>
+                  Remove
+                </button>
+              </div>
+            </div>
+
+            {!expanded && (
+              <div className="ayna-product-summary">
+                {product.worked || product.reaction
+                  ? [product.worked, product.reaction].filter(Boolean).join(' · ')
+                  : 'Add a few quick details'}
+              </div>
+            )}
+
+            {expanded && (
+              <>
+                <div className="ayna-product-q">
+                  <div className="ayna-product-label">Are you currently using it? (optional)</div>
+                  <Segmented
+                    options={['Yes', 'No']}
+                    value={product.current}
+                    onChange={(current) => updateProduct(index, { current })}
+                  />
+                </div>
+
+                <div className="ayna-product-q">
+                  <div className="ayna-product-label">How well did it work for you?</div>
+                  <div className="ayna-pills left">
+                    {['Helped a lot', 'Helped somewhat', 'No noticeable difference', 'Made things worse', 'Not sure'].map((option) => (
+                      <Pill
+                        key={option}
+                        label={option}
+                        selected={product.worked === option}
+                        onClick={() => updateProduct(index, { worked: option })}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="ayna-product-q">
+                  <div className="ayna-product-label">Did you experience any side effects or reactions?</div>
+                  <div className="ayna-pills left">
+                    {['No', 'Mild side effects', 'Serious or concerning reaction', 'Not sure'].map((option) => (
+                      <Pill
+                        key={option}
+                        label={option}
+                        selected={product.reaction === option}
+                        onClick={() => updateProduct(index, { reaction: option })}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {['Mild side effects', 'Serious or concerning reaction'].includes(product.reaction) && (
+                  <input
+                    className="ayna-inline-input"
+                    value={product.reactionText}
+                    onChange={(e) => updateProduct(index, { reactionText: e.target.value })}
+                    placeholder="What happened? (optional)"
+                  />
+                )}
+
+                {product.current === 'No' && (
+                  <div className="ayna-product-q">
+                    <div className="ayna-product-label">Why did you stop using it? (optional)</div>
+
+                    <div className="ayna-pills left compact">
+                      {STOP_REASONS.map((reason) => (
+                        <Pill
+                          key={reason}
+                          label={reason}
+                          selected={(product.stopReasons || []).includes(reason)}
+                          onClick={() => updateProduct(index, {
+                            stopReasons: (product.stopReasons || []).includes(reason)
+                              ? product.stopReasons.filter((x) => x !== reason)
+                              : [...(product.stopReasons || []), reason],
+                          })}
+                        />
+                      ))}
+                    </div>
+
+                    {(product.stopReasons || []).includes('Other') && (
+                      <input
+                        className="ayna-inline-input"
+                        value={product.stopOther || ''}
+                        onChange={(e) => updateProduct(index, { stopOther: e.target.value })}
+                        placeholder="Tell us why you stopped (optional)"
+                      />
+                    )}
+                  </div>
+                )}
+              </>
+            )}
           </div>
+        );
+      })}
+
+      {!adding && (
+        <button type="button" className="ayna-product-add-trigger" onClick={beginAdding}>
+          {products.length ? '+ Add another product' : '+ Add a product'}
+        </button>
+      )}
+
+      {adding && (
+        <div className="ayna-token-card ayna-product-search-card">
+          <div className="ayna-token-line">
+            <input
+              value={query}
+              autoFocus
+              onFocus={() => setShowSuggestions(true)}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setShowSuggestions(true);
+              }}
+              onBlur={() => window.setTimeout(() => setShowSuggestions(false), 120)}
+              placeholder="Search for a product"
+              autoComplete="off"
+              aria-autocomplete="list"
+            />
+          </div>
+
+          {showSuggestions && query.trim().length >= 2 && suggestions.length > 0 && (
+            <div className="ayna-smart-suggestions" role="listbox">
+              {suggestions.map((name) => (
+                <button
+                  type="button"
+                  key={name}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => addProduct(name)}
+                >
+                  {name}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {query.trim().length >= 2 && suggestions.length === 0 && (
+            <button
+              type="button"
+              className="ayna-manual-product"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => addProduct(query)}
+            >
+              Can't find your product? Add it manually
+            </button>
+          )}
+
+          <button
+            type="button"
+            className="ayna-product-cancel"
+            onClick={() => {
+              setAdding(false);
+              setQuery('');
+            }}
+          >
+            Cancel
+          </button>
         </div>
       )}
-      <div className="ayna-token-card">
-        {products.length > 0 && <div className="ayna-add-another-label">Add another product</div>}
-        <div className="ayna-token-line">
-          <input
-            value={query}
-            onFocus={() => setShowSuggestions(true)}
-            onChange={(e) => { setQuery(e.target.value); setShowSuggestions(true); }}
-            onBlur={() => window.setTimeout(() => setShowSuggestions(false), 120)}
-            onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addProduct(query); } }}
-            placeholder={products.length ? "Search or add another product" : "Search or add a product"}
-            autoComplete="off"
-            aria-autocomplete="list"
-          />
-          <button type="button" onClick={() => addProduct(query)}>Add</button>
-        </div>
-        {showSuggestions && query.trim().length >= 2 && suggestions.length > 0 && (
-          <div className="ayna-smart-suggestions" role="listbox">
-            {suggestions.map((name) => (
-              <button type="button" key={name} onMouseDown={(e) => e.preventDefault()} onClick={() => addProduct(name)}>{name}</button>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {products.map((product, index) => (
-        <div className="ayna-product-card" key={`${product.name}-${index}`}>
-          <div className="ayna-product-head"><div>{product.name}</div><button type="button" onClick={() => onChange(products.filter((_, i) => i !== index))}>Remove</button></div>
-          <div className="ayna-product-q"><div className="ayna-product-label">Are you currently using it? (optional)</div><Segmented options={['Yes', 'No']} value={product.current} onChange={(current) => updateProduct(index, { current })} /></div>
-          <div className="ayna-product-q"><div className="ayna-product-label">How well did it work for you?</div><div className="ayna-pills left">{['Helped a lot', 'Helped somewhat', 'No noticeable difference', 'Made things worse', 'Not sure'].map((option) => <Pill key={option} label={option} selected={product.worked === option} onClick={() => updateProduct(index, { worked: option })} />)}</div></div>
-          <div className="ayna-product-q"><div className="ayna-product-label">Did you experience any side effects or reactions?</div><div className="ayna-pills left">{['No', 'Mild side effects', 'Serious or concerning reaction', 'Not sure'].map((option) => <Pill key={option} label={option} selected={product.reaction === option} onClick={() => updateProduct(index, { reaction: option })} />)}</div></div>
-          {['Mild side effects', 'Serious or concerning reaction'].includes(product.reaction) && <input className="ayna-inline-input" value={product.reactionText} onChange={(e) => updateProduct(index, { reactionText: e.target.value })} placeholder="What happened? (optional)" />}
-          {product.current === 'No' && <div className="ayna-product-q"><div className="ayna-product-label">Why did you stop using it? (optional)</div><div className="ayna-pills left compact">{STOP_REASONS.map((reason) => <Pill key={reason} label={reason} selected={(product.stopReasons || []).includes(reason)} onClick={() => updateProduct(index, { stopReasons: (product.stopReasons || []).includes(reason) ? product.stopReasons.filter((x) => x !== reason) : [...(product.stopReasons || []), reason] })} />)}</div>{(product.stopReasons || []).includes('Other') && <input className="ayna-inline-input" value={product.stopOther || ''} onChange={(e) => updateProduct(index, { stopOther: e.target.value })} placeholder="Tell us why you stopped (optional)" />}</div>}
-        </div>
-      ))}
     </div>
   );
 }
@@ -683,7 +876,7 @@ function TrustRanker({ order, onChange, onTouch }) {
 
 function requiredReady(stepId, intake) {
   if (stepId === 'conditions') return intake.diagnosisSelections.length > 0;
-  if (stepId === 'allergies') return intake.allergySelections.length > 0;
+  if (stepId === 'allergies') return !!intake.allergyStatus && (intake.allergyStatus !== 'Yes' || intake.allergyItems.length > 0);
   if (stepId === 'medications') return !!intake.takesCurrent && (intake.takesCurrent !== 'Yes' || intake.currentMedicationItems.length > 0);
   if (stepId === 'safety') return !!intake.safetyConcern;
   if (stepId === 'products' && intake.productHistory.length) return intake.productHistory.every((p) => p.worked && p.reaction);
@@ -708,7 +901,12 @@ const STYLES = `
 .ayna-timeline{display:flex;align-items:flex-start;max-width:560px;margin:0 auto;padding:8px 2px}.ayna-timeline button{flex:1;position:relative;padding:30px 4px 0;background:none;border:none;cursor:pointer;color:rgba(255,249,242,.72)}.ayna-timeline button:before{content:'';position:absolute;top:11px;left:0;right:0;height:3px;background:rgba(255,249,242,.24)}.ayna-timeline button:first-child:before{left:50%}.ayna-timeline button:last-child:before{right:50%}.ayna-timeline-dot{position:absolute;top:3px;left:50%;transform:translateX(-50%);width:19px;height:19px;border-radius:50%;background:#FFF9F2;border:3px solid rgba(42,31,78,.28)}.ayna-timeline button.selected .ayna-timeline-dot{background:#2A1F4E;border-color:#FFDCA8}.ayna-timeline-label{font-size:11px;line-height:1.3}.ayna-timeline button.selected{color:#FFDCA8;font-weight:700}
 .ayna-token-card{max-width:520px;margin:0 auto;background:#FFF9F2;border-radius:18px;padding:16px;box-shadow:0 14px 28px -18px rgba(0,0,0,.45);text-align:left}.ayna-token-line{display:flex;gap:8px}.ayna-token-line input{flex:1;border:1.5px solid rgba(42,31,78,.14);border-radius:12px;padding:12px 13px;color:#2A1F4E;background:#fff;outline:none}.ayna-token-line button{border:none;border-radius:12px;background:#2A1F4E;color:#fff;padding:0 15px;font-weight:700;cursor:pointer}.ayna-tokens{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.ayna-tokens>span{display:inline-flex;align-items:center;gap:6px;background:#FFF3DD;color:#8A5A1E;padding:7px 10px;border-radius:999px;font-size:12px;font-weight:600}.ayna-tokens span button{border:none;background:none;color:inherit;padding:0;cursor:pointer;font-size:14px}
 .ayna-smart-suggestions{margin-top:8px;border:1px solid rgba(42,31,78,.12);border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 14px 28px -20px rgba(0,0,0,.5);position:relative;z-index:3}.ayna-smart-suggestions button{display:block;width:100%;padding:11px 12px;background:#fff;border:none;border-top:1px solid rgba(42,31,78,.08);text-align:left;color:#2A1F4E;cursor:pointer;font-size:13px}.ayna-smart-suggestions button:first-child{border-top:none}.ayna-smart-suggestions button:hover,.ayna-smart-suggestions button:focus{background:#FFF3DD}.ayna-allergy-list{max-height:none}
+.ayna-inline-followup{max-width:520px;margin:18px auto 0;padding:16px;background:rgba(255,249,242,.1);border:1px solid rgba(255,249,242,.18);border-radius:18px}
+.ayna-inline-followup-label{font-size:13px;font-weight:700;color:#FFF9F2;margin-bottom:12px;text-align:left}
 .ayna-product-builder{max-width:540px;margin:0 auto}.ayna-added-products{margin:0 auto 14px;text-align:left}.ayna-added-products-label,.ayna-add-another-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#FFDCA8;margin:0 4px 8px}.ayna-added-products-list{display:flex;flex-wrap:wrap;gap:8px}.ayna-added-products-list span{background:rgba(255,249,242,.14);border:1px solid rgba(255,249,242,.2);color:#FFF9F2;padding:7px 10px;border-radius:999px;font-size:12px;font-weight:600}.ayna-add-another-label{color:#5c554e;margin:0 0 9px}.ayna-product-suggestions{margin-top:8px;border:1px solid rgba(42,31,78,.12);border-radius:12px;overflow:hidden}.ayna-product-suggestions button{display:block;width:100%;padding:10px 12px;background:#fff;border:none;border-top:1px solid rgba(42,31,78,.08);text-align:left;color:#2A1F4E;cursor:pointer}.ayna-product-suggestions button:first-child{border-top:none}.ayna-product-card{background:#FFF9F2;color:#2A1F4E;border-radius:20px;padding:18px;margin-top:14px;text-align:left;box-shadow:0 16px 34px -20px rgba(0,0,0,.5)}.ayna-product-head{display:flex;align-items:center;justify-content:space-between;gap:12px;font-family:var(--font-serif,'Playfair Display',Georgia,serif);font-size:18px}.ayna-product-head button{border:none;background:none;color:#8c8078;font-size:12px;cursor:pointer}.ayna-product-q{margin-top:15px}.ayna-product-label{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.045em;margin-bottom:8px;color:#5c554e}.ayna-product-card .ayna-segmented{margin:0;max-width:none}.ayna-product-card .ayna-pill{border-color:rgba(42,31,78,.13);box-shadow:none}
+.ayna-product-add-trigger{width:100%;max-width:360px;margin:14px auto 0;padding:14px 18px;border:1px solid rgba(255,249,242,.28);border-radius:16px;background:rgba(255,249,242,.1);color:#FFF9F2;font-weight:700;cursor:pointer}
+.ayna-product-search-card{margin-top:14px}.ayna-manual-product{width:100%;margin-top:10px;padding:11px 12px;border:1px dashed rgba(42,31,78,.22);border-radius:12px;background:#FFF3DD;color:#2A1F4E;font-weight:700;cursor:pointer;text-align:left}.ayna-product-cancel{display:block;margin:10px auto 0;border:none;background:none;color:#8c8078;font-size:12px;cursor:pointer}
+.ayna-product-actions{display:flex;align-items:center;gap:8px}.ayna-product-card.compact{padding:14px 16px}.ayna-product-card.compact .ayna-product-head{font-size:16px}.ayna-product-summary{margin-top:6px;font-size:11.5px;color:#8c8078}.ayna-product-card.open{padding:18px}
 .ayna-spectrum{padding:20px 18px}.ayna-spectrum-line{height:5px;border-radius:999px;background:linear-gradient(90deg,#4E3866,#FFC774,#D97A2B);margin:8px 22px 18px}.ayna-spectrum-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.ayna-spectrum-grid button{padding:11px 7px;border-radius:12px;border:1.5px solid rgba(42,31,78,.1);background:#fff;font-size:10.5px;line-height:1.3;color:#2A1F4E;cursor:pointer}.ayna-spectrum-grid button.selected{border-color:#E8843C;background:#FFF3DD}
 .ayna-trust-list{max-width:520px;margin:0 auto;display:grid;gap:10px}.ayna-trust-item{display:flex;align-items:center;gap:10px;background:#FFF9F2;color:#2A1F4E;border-radius:16px;padding:13px 14px;box-shadow:0 10px 22px -16px rgba(0,0,0,.4)}.ayna-drag{color:#8c8078;cursor:grab;letter-spacing:-4px;font-size:18px}.ayna-rank{width:24px;height:24px;border-radius:50%;background:#FFF3DD;color:#8A5A1E;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}.ayna-trust-label{flex:1;text-align:left;font-size:13px;font-weight:600;line-height:1.35}.ayna-move{display:flex;gap:4px}.ayna-move button{width:26px;height:26px;border-radius:8px;border:1px solid rgba(42,31,78,.12);background:#fff;color:#2A1F4E;cursor:pointer}
 .ayna-saving{margin-top:14px;color:rgba(255,249,242,.72);font-size:12px}.ayna-error{margin-top:14px;color:#FFE0D6;font-size:12px;font-weight:600}.ayna-count{background:rgba(42,31,78,.16);border-radius:999px;padding:2px 9px;font-size:12px}
@@ -725,7 +923,28 @@ export default function HealthIntakeForm({ onComplete }) {
       const lifeStageSelections = Array.isArray(restored.lifeStageSelections)
         ? restored.lifeStageSelections
         : (restored.lifeStage ? [restored.lifeStage] : []);
-      return { ...restored, lifeStageSelections, lifeStage: restored.lifeStage || lifeStageSelections[0] || '' };
+
+      const legacyAllergies = Array.isArray(restored.allergySelections) ? restored.allergySelections : [];
+      const allergyItems = Array.isArray(restored.allergyItems) && restored.allergyItems.length
+        ? restored.allergyItems
+        : legacyAllergies.filter((value) => !['None known', 'Not sure', 'Other'].includes(value));
+
+      const allergyStatus = restored.allergyStatus
+        || (legacyAllergies.includes('None known')
+          ? 'No'
+          : legacyAllergies.includes('Not sure')
+            ? "I'm not sure"
+            : allergyItems.length
+              ? 'Yes'
+              : '');
+
+      return {
+        ...restored,
+        lifeStageSelections,
+        lifeStage: restored.lifeStage || lifeStageSelections[0] || '',
+        allergyStatus,
+        allergyItems,
+      };
     } catch (_) { return EMPTY; }
   });
   const [stepId, setStepId] = useState(() => {
@@ -749,11 +968,10 @@ export default function HealthIntakeForm({ onComplete }) {
         { id: 'periodPain', section: 'support', title: 'How would you describe your typical period pain?', type: 'pain', optional: true },
       ] : []),
       ...(isUtiRelevant(intake) ? [{ id: 'utiFrequency', section: 'support', title: 'How often do you experience UTI-like symptoms?', type: 'timeline', optional: true }] : []),
-      ...(isTtcRelevant(intake) ? [{ id: 'ttcDuration', section: 'support', title: 'How long have you been trying to conceive?', type: 'timeline', optional: true }] : []),
       ...(isPostpartumRelevant(intake) ? [{ id: 'postpartumTiming', section: 'support', title: 'How long ago did you give birth?', type: 'timeline', optional: true }] : []),
       ...(isPregnancyRelevant(intake) ? [{ id: 'pregnancyTrimester', section: 'support', title: 'How far along are you?', type: 'timeline', optional: true }] : []),
       { id: 'conditions', section: 'safety', title: 'Have you been diagnosed with any of the following?', subtitle: 'This is different from what you are experiencing. It helps us separate a diagnosed condition from a symptom or goal.', type: 'conditions', optional: false },
-      { id: 'allergies', section: 'safety', title: 'What are you allergic or sensitive to, if anything?', subtitle: 'Select all that apply.', type: 'allergies', optional: false },
+      { id: 'allergies', section: 'safety', title: 'Do you have any known allergies or sensitivities that affect the products you can use?', subtitle: 'We use this to help flag products that may not be a fit for you.', type: 'allergies', optional: false },
       { id: 'medications', section: 'safety', title: 'Are you currently taking any medications, supplements, vitamins, or hormonal birth control?', subtitle: 'This helps us avoid duplicate ingredients and flag possible compatibility issues.', type: 'medications', optional: false },
       { id: 'products', section: 'history', title: 'What health or wellness products have you tried?', subtitle: 'Add any products you’ve tried. You can add more than one.', type: 'products', optional: true },
       { id: 'avoidRepeat', section: 'history', title: 'Are there any products or brands you definitely do not want recommended again?', type: 'tokens', optional: true },
@@ -762,6 +980,7 @@ export default function HealthIntakeForm({ onComplete }) {
       { id: 'priceRange', section: 'preferences', title: 'What price range do you usually prefer for health and wellness products?', type: 'price', optional: true },
       { id: 'largePurchaseFrequency', section: 'preferences', title: 'How often do you make larger health or wellness purchases of $75 or more?', subtitle: 'This is about purchase frequency, not your usual preferred price per product.', type: 'largeSpend', optional: true },
       { id: 'brandOpenness', section: 'preferences', title: 'How do you feel about trying new brands?', type: 'brand', optional: true },
+      { id: 'brandSupport', section: 'preferences', title: 'Are there any types of brands you especially like to support?', subtitle: 'Select any that matter to you.', type: 'brandSupport', optional: true },
       ...(intake.brandOpenness === 'I mostly stick with brands I already trust' || intake.brandOpenness === 'I prefer trusted brands but am open to something new' ? [{ id: 'trustedBrands', section: 'preferences', title: 'Which brands do you already trust?', type: 'tokens', optional: true }] : []),
       { id: 'avoidIngredients', section: 'preferences', title: 'Are there any ingredients or materials you prefer to avoid?', subtitle: 'This is a shopping preference. Allergies and sensitivities were captured separately for safety.', type: 'avoidIngredients', optional: true },
       { id: 'fsaHsa', section: 'preferences', title: 'Do you have an FSA or HSA you would like to use?', type: 'fsa', optional: true },
@@ -844,18 +1063,66 @@ export default function HealthIntakeForm({ onComplete }) {
     }
     if (step.type === 'cards' && step.id === 'lifeStage') {
       const selectedLifeStages = getLifeStages(intake);
-      return <><div className="ayna-choice-grid">{LIFE_STAGES.map((option) => <ChoiceCard key={option} label={option} selected={selectedLifeStages.includes(option)} onClick={() => toggleLifeStage(option)} />)}</div>{selectedLifeStages.includes('Other') && <div className="ayna-other-box"><label>Tell us what best describes you (optional)</label><input className="ayna-text-input" value={intake.lifeStageOther} onChange={(e) => set('lifeStageOther', e.target.value)} placeholder="Type your answer..." /></div>}</>;
+      return <>
+        <div className="ayna-choice-grid">
+          {LIFE_STAGES.map((option) => <ChoiceCard key={option} label={option} selected={selectedLifeStages.includes(option)} onClick={() => toggleLifeStage(option)} />)}
+        </div>
+
+        {selectedLifeStages.includes('I am postpartum') && (
+          <div className="ayna-inline-followup">
+            <div className="ayna-inline-followup-label">Are you currently breastfeeding?</div>
+            <Segmented options={['Yes', 'No', 'Prefer not to say']} value={intake.breastfeedingStatus} onChange={(value) => set('breastfeedingStatus', value)} />
+          </div>
+        )}
+
+        {selectedLifeStages.includes('I am in perimenopause') && (
+          <div className="ayna-inline-followup">
+            <div className="ayna-inline-followup-label">When was your last period?</div>
+            <div className="ayna-pills">
+              {PERIMENOPAUSE_LAST_PERIOD.map((option) => <Pill key={option} label={option} selected={intake.perimenopauseLastPeriod === option} onClick={() => set('perimenopauseLastPeriod', option)} />)}
+            </div>
+          </div>
+        )}
+
+        {selectedLifeStages.includes('Other') && (
+          <div className="ayna-other-box">
+            <label>Tell us what best describes you (optional)</label>
+            <input className="ayna-text-input" value={intake.lifeStageOther} onChange={(e) => set('lifeStageOther', e.target.value)} placeholder="Type your answer..." />
+          </div>
+        )}
+      </>;
     }
     if (step.type === 'text' && step.id === 'zip') return <input className="ayna-text-input" inputMode="numeric" maxLength={5} value={intake.zipcode} onChange={(e) => set('zipcode', e.target.value.replace(/\D/g, '').slice(0, 5))} placeholder="e.g. 10001" />;
     if (step.type === 'support') return <><SearchableGroups groups={SUPPORT_GROUPS} selected={intake.supportSelections} search={search} onSearch={setSearch} onToggle={(item) => toggleExclusive('supportSelections', item, ['Nothing right now'])} />{intake.supportSelections.includes('Something else') && <div className="ayna-other-box"><label>Tell us what else you are looking for support with</label><input className="ayna-text-input" value={intake.supportOtherText} onChange={(e) => set('supportOtherText', e.target.value)} placeholder="Type your answer..." /></div>}</>;
     if (step.type === 'flow') return <Scale options={PERIOD_FLOW} value={intake.periodFlow} onChange={(value) => set('periodFlow', value)} kind="flow" />;
     if (step.type === 'pain') return <Scale options={PERIOD_PAIN} value={intake.periodPain} onChange={(value) => set('periodPain', value)} kind="pain" />;
     if (step.type === 'timeline') {
-      const config = step.id === 'utiFrequency' ? ['utiFrequency', UTI_FREQUENCY] : step.id === 'ttcDuration' ? ['ttcDuration', TTC_DURATION] : step.id === 'postpartumTiming' ? ['postpartumTiming', POSTPARTUM_TIMING] : ['pregnancyTrimester', PREGNANCY_TRIMESTER];
+      const config = step.id === 'utiFrequency' ? ['utiFrequency', UTI_FREQUENCY] : step.id === 'postpartumTiming' ? ['postpartumTiming', POSTPARTUM_TIMING] : ['pregnancyTrimester', PREGNANCY_TRIMESTER];
       return <Timeline options={config[1]} value={intake[config[0]]} onChange={(value) => set(config[0], value)} />;
     }
     if (step.type === 'conditions') return <><div className="ayna-list-panel">{CONDITIONS.map((option) => <RowChoice key={option} label={option} selected={intake.diagnosisSelections.includes(option)} onClick={() => toggleExclusive('diagnosisSelections', option, ['None that I know of', 'Prefer not to say'])} square />)}</div>{intake.diagnosisSelections.includes('Other / not listed') && <div className="ayna-other-box"><label>What condition was diagnosed?</label><input className="ayna-text-input" value={intake.conditionOtherText} onChange={(e) => set('conditionOtherText', e.target.value)} placeholder="Type the condition..." /></div>}</>;
-    if (step.type === 'allergies') return <><div className="ayna-list-panel ayna-allergy-list">{ALLERGIES.map((option) => <RowChoice key={option} label={option} selected={intake.allergySelections.includes(option)} onClick={() => toggleExclusive('allergySelections', option, ['None known', 'Not sure'])} square />)}</div>{intake.allergySelections.includes('Other') && <div className="ayna-other-box"><label>Tell us what you are allergic or sensitive to</label><input className="ayna-text-input" value={intake.allergyOtherText} onChange={(e) => set('allergyOtherText', e.target.value)} placeholder="Type your answer..." /></div>}</>;
+    if (step.type === 'allergies') return <>
+      <Segmented
+        options={['Yes', 'No', "I'm not sure", 'Prefer not to say']}
+        value={intake.allergyStatus}
+        onChange={(value) => setIntake((prev) => ({
+          ...prev,
+          allergyStatus: value,
+          allergyItems: value === 'Yes' ? prev.allergyItems : [],
+        }))}
+      />
+      {intake.allergyStatus === 'Yes' && (
+        <div style={{ marginTop: 14 }}>
+          <TokenInput
+            values={intake.allergyItems}
+            onChange={(values) => set('allergyItems', values)}
+            placeholder="Start typing an allergy or sensitivity"
+            suggestions={ALLERGIES}
+            suggestionLimit={8}
+          />
+        </div>
+      )}
+    </>;
     if (step.type === 'medications') return <><Segmented options={['Yes', 'No', 'Prefer not to say']} value={intake.takesCurrent} onChange={(value) => set('takesCurrent', value)} />{intake.takesCurrent === 'Yes' && <div style={{ marginTop: 14 }}><TokenInput values={intake.currentMedicationItems} onChange={(values) => set('currentMedicationItems', values)} placeholder="Start typing a medication, supplement, vitamin, or birth control" suggestions={MEDICATION_SUGGESTIONS} suggestionLimit={10} /></div>}<div className="ayna-mini-note">Always consult a clinician before starting a new supplement or medication. Ayna surfaces options relevant to the profile you shared, but you should still check product ingredients, labels, and instructions.</div></>;
     if (step.type === 'products') return <ProductHistoryBuilder products={intake.productHistory} onChange={(products) => set('productHistory', products)} />;
     if (step.type === 'tokens' && step.id === 'avoidRepeat') return <TokenInput values={intake.avoidRepeat} onChange={(values) => set('avoidRepeat', values)} placeholder="Start typing a product or brand" suggestions={PRODUCT_OR_BRAND_SUGGESTIONS} />;
@@ -865,6 +1132,8 @@ export default function HealthIntakeForm({ onComplete }) {
     if (step.type === 'price') { const selectedPrices = Array.isArray(intake.priceRange) ? intake.priceRange : (intake.priceRange ? [intake.priceRange] : []); return <div className="ayna-pills">{PRICE_RANGES.map((option) => <Pill key={option} label={option} selected={selectedPrices.includes(option)} onClick={() => toggleExclusive('priceRange', option, ['Price is not a major factor for me'])} />)}</div>; }
     if (step.type === 'largeSpend') return <Timeline options={LARGE_PURCHASE_FREQUENCY} value={intake.largePurchaseFrequency} onChange={(value) => set('largePurchaseFrequency', value)} />;
     if (step.type === 'brand') return <BrandSpectrum value={intake.brandOpenness} onChange={(value) => set('brandOpenness', value)} />;
+
+    if (step.type === 'brandSupport') return <div className="ayna-pills">{BRAND_SUPPORT_PREFERENCES.map((option) => <Pill key={option} label={option} selected={intake.brandSupportPreferences.includes(option)} onClick={() => toggleExclusive('brandSupportPreferences', option)} />)}</div>;
     if (step.type === 'avoidIngredients') return <><div className="ayna-pills">{AVOID_INGREDIENTS.map((option) => <Pill key={option} label={option} selected={intake.avoidIngredients.includes(option)} onClick={() => toggleExclusive('avoidIngredients', option, ['None'])} />)}</div>{intake.avoidIngredients.includes('Other') && <div className="ayna-other-box"><label>What else would you prefer to avoid?</label><input className="ayna-text-input" value={intake.avoidIngredientsOtherText} onChange={(e) => set('avoidIngredientsOtherText', e.target.value)} placeholder="Type your answer..." /></div>}</>;
     if (step.type === 'fsa') return <div className="ayna-pills">{FSA_HSA.map((option) => <Pill key={option} label={option} selected={intake.fsaHsaAnswer === option} onClick={() => set('fsaHsaAnswer', option)} />)}</div>;
     if (step.type === 'trust') return <TrustRanker order={intake.trustRanking} onChange={(order) => set('trustRanking', order)} onTouch={() => set('trustRankingTouched', true)} />;
@@ -872,7 +1141,7 @@ export default function HealthIntakeForm({ onComplete }) {
     return null;
   };
 
-  const countForStep = step.id === 'support' ? intake.supportSelections.length : step.id === 'conditions' ? intake.diagnosisSelections.length : step.id === 'allergies' ? intake.allergySelections.length : step.id === 'formats' ? intake.preferredFormats.length : step.id === 'avoidIngredients' ? intake.avoidIngredients.length : 0;
+  const countForStep = step.id === 'support' ? intake.supportSelections.length : step.id === 'conditions' ? intake.diagnosisSelections.length : step.id === 'allergies' ? intake.allergyItems.length : step.id === 'formats' ? intake.preferredFormats.length : step.id === 'brandSupport' ? intake.brandSupportPreferences.length : step.id === 'avoidIngredients' ? intake.avoidIngredients.length : 0;
   const ready = requiredReady(step.id, intake);
   const isLast = currentIndex === visibleSteps.length - 1;
 
@@ -894,7 +1163,7 @@ export default function HealthIntakeForm({ onComplete }) {
           <div className="ayna-intake-stage">{renderBody()}</div>
           <div className="ayna-continue-wrap">
             <button type="button" className="ayna-continue" onClick={goNext} disabled={!ready || saving}>{saving ? 'Saving...' : isLast ? 'Finish profile' : 'Continue'}{countForStep > 0 && <span className="ayna-count">{countForStep}</span>}<span aria-hidden="true">→</span></button>
-            {step.optional && <button type="button" className="ayna-skip" onClick={goNext}>Skip this step</button>}
+            {step.optional && <button type="button" className="ayna-skip" onClick={goNext}>{step.id === 'products' ? 'Skip for now' : 'Skip this step'}</button>}
           </div>
           {step.id === 'products' && intake.productHistory.length > 0 && !ready && <div className="ayna-saving">Add how it worked and any reactions before continuing.</div>}
           {saveError && <div className="ayna-error">{saveError}</div>}
