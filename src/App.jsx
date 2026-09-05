@@ -341,6 +341,8 @@ function App() {
   const pendingActionRef = useRef(null);
   const [pendingQuizResults, setPendingQuizResults] = useState(null);
   const [quizPreviewOffsets, setQuizPreviewOffsets] = useState([0, 0, 0]);
+  const [quizPreviewWhyOpen, setQuizPreviewWhyOpen] = useState(null);
+  const [showQuizSaveBanner, setShowQuizSaveBanner] = useState(true);
   const [showQuizInlineAuth, setShowQuizInlineAuth] = useState(false);
 
   useEffect(() => {
@@ -1958,7 +1960,316 @@ function App() {
                           top: 205px;
                         }
                       }
-                    `}</style>
+
+                      /* final mockup alignment */
+                      .ayna-quiz-result-screen{
+                        padding:6.5rem 1.5rem 4rem;
+                        background:
+                          radial-gradient(60% 50% at 8% 8%,rgba(90,60,110,.55),transparent 60%),
+                          radial-gradient(55% 45% at 95% 15%,rgba(217,138,82,.35),transparent 60%),
+                          radial-gradient(70% 60% at 85% 95%,rgba(217,138,82,.55),transparent 60%),
+                          linear-gradient(135deg,#241c3e 0%,#4d3a63 38%,#a9647a 68%,#d98a52 100%);
+                      }
+
+                      .ayna-result-topbar{
+                        padding:20px 28px;
+                        max-width:1040px;
+                        margin:0 auto;
+                        left:50%;
+                        right:auto;
+                        width:100%;
+                        transform:translateX(-50%);
+                      }
+
+                      .ayna-result-brand{
+                        font-family:var(--font-serif,Georgia,serif);
+                        font-style:italic;
+                        font-size:26px;
+                      }
+
+                      .ayna-result-brand small{
+                        color:#f3c26a;
+                        font-size:10px;
+                        letter-spacing:.08em;
+                        opacity:1;
+                      }
+
+                      .ayna-result-login,
+                      .ayna-result-signup{
+                        border-radius:999px;
+                        padding:9px 18px;
+                        font-size:13.5px;
+                        font-weight:700;
+                        cursor:pointer;
+                      }
+
+                      .ayna-result-login{
+                        background:transparent;
+                        border:1px solid rgba(255,255,255,.28);
+                        color:#fffaf3;
+                      }
+
+                      .ayna-result-signup{
+                        border:none;
+                        background:linear-gradient(135deg,#f3c26a,#e8934f);
+                        color:#241a3d;
+                        box-shadow:0 6px 18px rgba(232,147,79,.32);
+                      }
+
+                      .ayna-result-complete{
+                        background:rgba(255,255,255,.12);
+                        border:1px solid rgba(255,255,255,.28);
+                        color:#fffaf3;
+                        padding:6px 14px;
+                        font-size:11.5px;
+                      }
+
+                      .ayna-result-title{
+                        font-size:clamp(2.35rem,5vw,2.8rem);
+                        margin-bottom:16px;
+                      }
+
+                      .ayna-result-trust span{
+                        background:transparent;
+                        border:1px solid rgba(255,255,255,.28);
+                        padding:7px 15px;
+                        font-size:12.5px;
+                      }
+
+                      .ayna-result-save-banner{
+                        max-width:760px;
+                        margin:26px auto 0;
+                        padding:16px 22px;
+                        background:rgba(255,255,255,.1);
+                        border:1px solid rgba(255,255,255,.28);
+                        border-radius:14px;
+                        display:flex;
+                        align-items:center;
+                        justify-content:space-between;
+                        gap:16px;
+                        flex-wrap:wrap;
+                        text-align:left;
+                      }
+
+                      .ayna-result-save-banner p{
+                        margin:0;
+                        color:rgba(255,250,243,.88);
+                        font-size:14px;
+                        line-height:1.5;
+                      }
+
+                      .ayna-result-save-actions{
+                        display:flex;
+                        align-items:center;
+                        gap:10px;
+                      }
+
+                      .ayna-result-dismiss{
+                        border:none;
+                        background:transparent;
+                        color:rgba(255,250,243,.58);
+                        font-size:13px;
+                        text-decoration:underline;
+                        text-underline-offset:3px;
+                        cursor:pointer;
+                      }
+
+                      .ayna-result-build-title{
+                        margin-top:44px;
+                        font-size:22px;
+                      }
+
+                      .ayna-result-build-sub{
+                        font-size:13.5px;
+                      }
+
+                      .ayna-result-orbit-stage{
+                        width:min(360px,72vw);
+                        height:auto;
+                        aspect-ratio:1;
+                        margin:36px auto 10px;
+                      }
+
+                      .ayna-result-ring{
+                        inset:0;
+                        border:1px dashed rgba(255,255,255,.28);
+                      }
+
+                      .ayna-result-ring.second{
+                        inset:16%;
+                        opacity:1;
+                      }
+
+                      .ayna-result-you{
+                        width:44%;
+                        height:auto;
+                        aspect-ratio:1;
+                        background:radial-gradient(circle at 34% 28%,#f3c26a,#e8934f 55%,#d98a52 100%);
+                        font-size:19px;
+                      }
+
+                      .ayna-result-orbit-slot{
+                        width:190px;
+                        height:46px;
+                      }
+
+                      .ayna-result-orbit-slot.one{
+                        left:50%;
+                        top:4%;
+                        transform:translateX(-50%);
+                      }
+
+                      .ayna-result-orbit-slot.two{
+                        left:-18%;
+                        top:auto;
+                        bottom:8%;
+                      }
+
+                      .ayna-result-orbit-slot.three{
+                        right:-18%;
+                        top:auto;
+                        bottom:8%;
+                      }
+
+                      .ayna-result-orbit-pill{
+                        height:46px;
+                        padding:9px 14px;
+                        background:#fffaf3;
+                        color:#241a3d;
+                        font-size:12.5px;
+                        font-weight:600;
+                        box-shadow:0 8px 20px rgba(20,10,30,.28);
+                      }
+
+                      .ayna-result-orbit-dot{
+                        width:7px;
+                        height:7px;
+                        background:#d98a52;
+                      }
+
+                      .ayna-result-grid{
+                        gap:18px;
+                        margin-top:44px;
+                      }
+
+                      .ayna-result-card{
+                        background:#faf1e2;
+                        border:none;
+                        border-radius:22px;
+                        padding:22px;
+                        color:#241a3d;
+                        box-shadow:0 10px 30px rgba(36,20,50,.14);
+                        display:flex;
+                        flex-direction:column;
+                        gap:12px;
+                      }
+
+                      .ayna-result-card-icon{
+                        background:#f2e6d2;
+                        border-radius:12px;
+                      }
+
+                      .ayna-result-match{
+                        background:#241a3d;
+                        color:#f3c26a;
+                        padding:5px 11px;
+                        font-size:11px;
+                      }
+
+                      .ayna-result-category{
+                        color:#8d84a0;
+                        font-size:11px;
+                        letter-spacing:.08em;
+                      }
+
+                      .ayna-result-card h3{
+                        color:#241a3d;
+                        font-size:19px;
+                        margin:0;
+                      }
+
+                      .ayna-result-tags span{
+                        background:#f2e6d2;
+                        color:#6f6580;
+                        font-size:11.5px;
+                        padding:5px 10px;
+                      }
+
+                      .ayna-result-price{
+                        border-top:1px solid rgba(36,26,61,.14);
+                        padding-top:12px;
+                        font-size:15px;
+                      }
+
+                      .ayna-result-why{
+                        width:100%;
+                        border:1.5px solid #241a3d;
+                        border-radius:999px;
+                        background:transparent;
+                        color:#241a3d;
+                        padding:11px;
+                        font-size:13.5px;
+                        font-weight:700;
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+                        gap:7px;
+                      }
+
+                      .ayna-result-why svg{
+                        transition:transform .2s ease;
+                      }
+
+                      .ayna-result-why.open svg{
+                        transform:rotate(180deg);
+                      }
+
+                      .ayna-result-why-panel{
+                        background:#fffaf3;
+                        border-radius:10px;
+                        padding:14px 16px;
+                        color:#6f6580;
+                        font-size:13px;
+                        line-height:1.6;
+                      }
+
+                      .ayna-result-why-panel strong{
+                        color:#241a3d;
+                      }
+
+                      .ayna-result-why-panel ul{
+                        margin:6px 0 0;
+                        padding-left:18px;
+                      }
+
+                      .ayna-result-refresh{
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+                        gap:6px;
+                        font-size:12.5px;
+                      }
+
+                      .ayna-result-footnote{
+                        text-align:center;
+                        color:rgba(255,250,243,.5);
+                        font-size:12.5px;
+                        margin:56px 0 20px;
+                      }
+
+                      @media(max-width:860px){
+                        .ayna-result-grid{grid-template-columns:1fr 1fr}
+                      }
+
+                      @media(max-width:560px){
+                        .ayna-result-grid{grid-template-columns:1fr}
+                        .ayna-result-topbar{padding:18px 16px}
+                        .ayna-result-login{display:none}
+                        .ayna-result-orbit-slot{width:155px}
+                        .ayna-result-orbit-slot.two{left:-10%}
+                        .ayna-result-orbit-slot.three{right:-10%}
+                      }
+`}</style>
 
                     <div className="ayna-result-topbar">
                       <div className="ayna-result-brand">
@@ -1967,19 +2278,11 @@ function App() {
                       </div>
 
                       <div className="ayna-result-nav-actions">
-                        <button type="button" className="ayna-result-signin" onClick={openQuizAuth}>
-                          Sign in
+                        <button type="button" className="ayna-result-login" onClick={openQuizAuth}>
+                          Log in
                         </button>
-
-                        <button
-                          type="button"
-                          className="ayna-result-menu"
-                          aria-label="Open menu"
-                          onClick={() => setMobileMenuOpen(true)}
-                        >
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFF9F2" strokeWidth="1.8" strokeLinecap="round">
-                            <path d="M4 7h16M4 12h16M4 17h16" />
-                          </svg>
+                        <button type="button" className="ayna-result-signup" onClick={openQuizAuth}>
+                          Sign up free
                         </button>
                       </div>
                     </div>
@@ -1998,6 +2301,29 @@ function App() {
                         <span>High confidence match</span>
                         <span>Never influenced by sponsorships</span>
                       </div>
+
+                      {showQuizSaveBanner && (
+                        <div className="ayna-result-save-banner">
+                          <p>
+                            <strong>Save this ecosystem</strong> so it's here next time. No need to redo the quiz.
+                          </p>
+
+                          <div className="ayna-result-save-actions">
+                            <button type="button" className="ayna-result-signup" onClick={openQuizAuth}>
+                              Sign up free
+                            </button>
+
+                            <button
+                              type="button"
+                              className="ayna-result-dismiss"
+                              onClick={() => setShowQuizSaveBanner(false)}
+                            >
+                              Not now
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
 
                       <div className="ayna-result-build-title">Building your ecosystem</div>
                       <div className="ayna-result-build-sub">A little preview of how it all fits together</div>
@@ -2023,75 +2349,113 @@ function App() {
                       </div>
 
                       <div className="ayna-result-grid">
-                        {previewCards.map((product, index) => (
-                          <div className="ayna-result-card-wrap" key={`${product?.id || productName(product)}-${index}`}>
-                            <div className="ayna-result-card">
-                              <div className="ayna-result-card-top">
-                                <div className="ayna-result-card-icon">
-                                  {index === 0 ? (
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9B632C" strokeWidth="1.7">
-                                      <rect x="4" y="8" width="16" height="8" rx="4" />
-                                      <path d="M12 8v8" />
+                        {previewCards.map((product, index) => {
+                          const isWhyOpen = quizPreviewWhyOpen === index;
+
+                          const reasons = [
+                            `Matches your ${nodeLabels[index % nodeLabels.length]} priorities`,
+                            'Uses the health profile and preferences you shared',
+                            'Selected without sponsorship influencing the recommendation',
+                          ];
+
+                          return (
+                            <div className="ayna-result-card-wrap" key={`${product?.id || productName(product)}-${index}`}>
+                              <div className="ayna-result-card">
+                                <div className="ayna-result-card-top">
+                                  <div className="ayna-result-card-icon">
+                                    <svg
+                                      width="20"
+                                      height="20"
+                                      viewBox="0 0 24 24"
+                                      fill="none"
+                                      stroke="#D98A52"
+                                      strokeWidth="1.7"
+                                    >
+                                      <path d="M6 8h12l-1 12H7L6 8Z" />
+                                      <path d="M9 8V6a3 3 0 0 1 6 0v2" />
                                     </svg>
-                                  ) : index === 1 ? (
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9B632C" strokeWidth="1.7">
-                                      <path d="M12 3c4 5 7 8.5 7 12a7 7 0 1 1-14 0c0-3.5 3-7 7-12Z" />
-                                    </svg>
-                                  ) : (
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6E5B86" strokeWidth="1.7">
-                                      <rect x="5" y="7" width="14" height="11" rx="3" />
-                                      <path d="M9 7V5h6v2" />
-                                    </svg>
-                                  )}
+                                  </div>
+
+                                  <span className="ayna-result-match">{matchLabel(product)}</span>
                                 </div>
 
-                                <span className="ayna-result-match">{matchLabel(product)}</span>
+                                <div className="ayna-result-category">{productCategory(product)}</div>
+                                <h3>{productName(product)}</h3>
+
+                                <div className="ayna-result-tags">
+                                  <span>{nodeLabels[index % nodeLabels.length]}</span>
+                                  <span>{nodeLabels[(index + 1) % nodeLabels.length]}</span>
+                                </div>
+
+                                <div className="ayna-result-price">{productPrice(product)}</div>
+
+                                <button
+                                  type="button"
+                                  className={`ayna-result-why${isWhyOpen ? ' open' : ''}`}
+                                  onClick={() => setQuizPreviewWhyOpen(isWhyOpen ? null : index)}
+                                >
+                                  Why ayna picked this
+                                  <svg
+                                    width="13"
+                                    height="13"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                  >
+                                    <path d="M6 9l6 6 6-6" />
+                                  </svg>
+                                </button>
+
+                                {isWhyOpen && (
+                                  <div className="ayna-result-why-panel">
+                                    <strong>Matched using your profile:</strong>
+                                    <ul>
+                                      {reasons.map((reason) => (
+                                        <li key={reason}>{reason}</li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                )}
                               </div>
 
-                              <div className="ayna-result-category">{productCategory(product)}</div>
-                              <h3>{productName(product)}</h3>
-
-                              <div className="ayna-result-tags">
-                                <span>{nodeLabels[index % nodeLabels.length]}</span>
-                                <span>{nodeLabels[(index + 1) % nodeLabels.length]}</span>
-                              </div>
-
-                              <div className="ayna-result-check">
-                                <i>✓</i>
-                                <span>Matched using the health profile and preferences you shared.</span>
-                              </div>
-
-                              <div className="ayna-result-price">{productPrice(product)}</div>
-
-                              <button type="button" className="ayna-result-why" onClick={openQuizAuth}>
-                                Why ayna picked this
+                              <button
+                                type="button"
+                                className="ayna-result-refresh"
+                                onClick={() => setQuizPreviewOffsets((prev) => {
+                                  const next = [...prev];
+                                  next[index] = (next[index] || 0) + 1;
+                                  return next;
+                                })}
+                              >
+                                <svg
+                                  width="14"
+                                  height="14"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="1.8"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <path d="M20 11a8 8 0 1 0-2.3 5.7" />
+                                  <path d="M20 4v7h-7" />
+                                </svg>
+                                Refresh this pick
                               </button>
                             </div>
-
-                            <button
-                              type="button"
-                              className="ayna-result-refresh"
-                              onClick={() => setQuizPreviewOffsets((prev) => {
-                                const next = [...prev];
-                                next[index] = (next[index] || 0) + 1;
-                                return next;
-                              })}
-                            >
-                              ↻ Refresh this pick
-                            </button>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
-
                       <div className="ayna-result-bottom">
-                        <button type="button" className="ayna-result-save" onClick={openQuizAuth}>
-                          Save my ecosystem
-                        </button>
-
                         <button type="button" className="ayna-result-start-over" onClick={restartQuiz}>
                           Start over
                         </button>
                       </div>
+
+                      <p className="ayna-result-footnote">
+                        ayna provides wellness information only. Not medical advice. © ayna 2026
+                      </p>
                     </div>
                   </>
                 );

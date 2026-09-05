@@ -523,41 +523,64 @@ function rankedSuggestions(query, options = [], limit = 6) {
 function TokenInput({ values, onChange, placeholder, suggestions = [], suggestionLimit = 6 }) {
   const [draft, setDraft] = useState('');
   const [open, setOpen] = useState(false);
+
   const matches = useMemo(
-    () => rankedSuggestions(draft, suggestions.filter((option) => !values.some((value) => normalizeSuggestion(value) === normalizeSuggestion(option))), suggestionLimit),
+    () => rankedSuggestions(
+      draft,
+      suggestions.filter((option) => !values.some((value) => normalizeSuggestion(value) === normalizeSuggestion(option))),
+      suggestionLimit
+    ),
     [draft, suggestions, values, suggestionLimit]
   );
 
   const addValue = (rawValue) => {
     const next = String(rawValue || '').trim();
     if (!next || values.some((value) => normalizeSuggestion(value) === normalizeSuggestion(next))) return;
+
     onChange([...values, next]);
     setDraft('');
     setOpen(false);
   };
 
+  const hasDraft = draft.trim().length > 0;
+
   return (
-    <div className="ayna-token-card">
-      <div className="ayna-token-line">
+    <div className="ayna-token-card ayna-smart-search-card">
+      <div className="ayna-token-line ayna-smart-search-line">
+        <SearchIcon />
         <input
           value={draft}
           onFocus={() => setOpen(true)}
-          onChange={(e) => { setDraft(e.target.value); setOpen(true); }}
-          onBlur={() => window.setTimeout(() => setOpen(false), 120)}
+          onChange={(e) => {
+            setDraft(e.target.value);
+            setOpen(true);
+          }}
+          onBlur={() => window.setTimeout(() => setOpen(false), 140)}
           onKeyDown={(e) => {
-            if (e.key === 'Enter') {
+            if (e.key === 'Enter' && hasDraft) {
               e.preventDefault();
               addValue(draft);
             }
+            if (e.key === 'Escape') setOpen(false);
           }}
           placeholder={placeholder}
           autoComplete="off"
           aria-autocomplete="list"
         />
-        <button type="button" onClick={() => addValue(draft)}>Add</button>
       </div>
-      {open && draft.trim().length >= 2 && matches.length > 0 && (
-        <div className="ayna-smart-suggestions" role="listbox">
+
+      {open && hasDraft && (
+        <div className="ayna-smart-suggestions ayna-smart-dropdown" role="listbox">
+          <button
+            type="button"
+            className="ayna-smart-add-row"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => addValue(draft)}
+          >
+            <span className="ayna-smart-plus">+</span>
+            <span>Add “{draft.trim()}”</span>
+          </button>
+
           {matches.map((option) => (
             <button
               type="button"
@@ -570,7 +593,23 @@ function TokenInput({ values, onChange, placeholder, suggestions = [], suggestio
           ))}
         </div>
       )}
-      {values.length > 0 && <div className="ayna-tokens">{values.map((value, index) => <span key={`${value}-${index}`}>{value}<button type="button" aria-label={`Remove ${value}`} onClick={() => onChange(values.filter((_, i) => i !== index))}>×</button></span>)}</div>}
+
+      {values.length > 0 && (
+        <div className="ayna-tokens">
+          {values.map((value, index) => (
+            <span key={`${value}-${index}`}>
+              {value}
+              <button
+                type="button"
+                aria-label={`Remove ${value}`}
+                onClick={() => onChange(values.filter((_, i) => i !== index))}
+              >
+                ×
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -774,8 +813,9 @@ function ProductHistoryBuilder({ products, onChange }) {
       )}
 
       {adding && (
-        <div className="ayna-token-card ayna-product-search-card">
-          <div className="ayna-token-line">
+        <div className="ayna-token-card ayna-product-search-card ayna-smart-search-card">
+          <div className="ayna-token-line ayna-smart-search-line">
+            <SearchIcon />
             <input
               value={query}
               autoFocus
@@ -784,37 +824,41 @@ function ProductHistoryBuilder({ products, onChange }) {
                 setQuery(e.target.value);
                 setShowSuggestions(true);
               }}
-              onBlur={() => window.setTimeout(() => setShowSuggestions(false), 120)}
+              onBlur={() => window.setTimeout(() => setShowSuggestions(false), 140)}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') setShowSuggestions(false);
+              }}
               placeholder="Search for a product"
               autoComplete="off"
               aria-autocomplete="list"
             />
           </div>
 
-          {showSuggestions && query.trim().length >= 2 && suggestions.length > 0 && (
-            <div className="ayna-smart-suggestions" role="listbox">
-              {suggestions.map((name) => (
+          {showSuggestions && query.trim().length > 0 && (
+            <div className="ayna-smart-suggestions ayna-smart-dropdown" role="listbox">
+              {suggestions.length > 0 ? (
+                suggestions.map((name) => (
+                  <button
+                    type="button"
+                    key={name}
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => addProduct(name)}
+                  >
+                    {name}
+                  </button>
+                ))
+              ) : (
                 <button
                   type="button"
-                  key={name}
+                  className="ayna-smart-add-row"
                   onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => addProduct(name)}
+                  onClick={() => addProduct(query)}
                 >
-                  {name}
+                  <span className="ayna-smart-plus">+</span>
+                  <span>Add “{query.trim()}”</span>
                 </button>
-              ))}
+              )}
             </div>
-          )}
-
-          {query.trim().length >= 2 && suggestions.length === 0 && (
-            <button
-              type="button"
-              className="ayna-manual-product"
-              onMouseDown={(e) => e.preventDefault()}
-              onClick={() => addProduct(query)}
-            >
-              Can't find your product? Add it manually
-            </button>
           )}
 
           <button
@@ -901,6 +945,20 @@ const STYLES = `
 .ayna-timeline{display:flex;align-items:flex-start;max-width:560px;margin:0 auto;padding:8px 2px}.ayna-timeline button{flex:1;position:relative;padding:30px 4px 0;background:none;border:none;cursor:pointer;color:rgba(255,249,242,.72)}.ayna-timeline button:before{content:'';position:absolute;top:11px;left:0;right:0;height:3px;background:rgba(255,249,242,.24)}.ayna-timeline button:first-child:before{left:50%}.ayna-timeline button:last-child:before{right:50%}.ayna-timeline-dot{position:absolute;top:3px;left:50%;transform:translateX(-50%);width:19px;height:19px;border-radius:50%;background:#FFF9F2;border:3px solid rgba(42,31,78,.28)}.ayna-timeline button.selected .ayna-timeline-dot{background:#2A1F4E;border-color:#FFDCA8}.ayna-timeline-label{font-size:11px;line-height:1.3}.ayna-timeline button.selected{color:#FFDCA8;font-weight:700}
 .ayna-token-card{max-width:520px;margin:0 auto;background:#FFF9F2;border-radius:18px;padding:16px;box-shadow:0 14px 28px -18px rgba(0,0,0,.45);text-align:left}.ayna-token-line{display:flex;gap:8px}.ayna-token-line input{flex:1;border:1.5px solid rgba(42,31,78,.14);border-radius:12px;padding:12px 13px;color:#2A1F4E;background:#fff;outline:none}.ayna-token-line button{border:none;border-radius:12px;background:#2A1F4E;color:#fff;padding:0 15px;font-weight:700;cursor:pointer}.ayna-tokens{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.ayna-tokens>span{display:inline-flex;align-items:center;gap:6px;background:#FFF3DD;color:#8A5A1E;padding:7px 10px;border-radius:999px;font-size:12px;font-weight:600}.ayna-tokens span button{border:none;background:none;color:inherit;padding:0;cursor:pointer;font-size:14px}
 .ayna-smart-suggestions{margin-top:8px;border:1px solid rgba(42,31,78,.12);border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 14px 28px -20px rgba(0,0,0,.5);position:relative;z-index:3}.ayna-smart-suggestions button{display:block;width:100%;padding:11px 12px;background:#fff;border:none;border-top:1px solid rgba(42,31,78,.08);text-align:left;color:#2A1F4E;cursor:pointer;font-size:13px}.ayna-smart-suggestions button:first-child{border-top:none}.ayna-smart-suggestions button:hover,.ayna-smart-suggestions button:focus{background:#FFF3DD}.ayna-allergy-list{max-height:none}
+.ayna-smart-search-card{max-width:520px;margin:0 auto;background:transparent;border-radius:0;padding:0;box-shadow:none;position:relative;overflow:visible}
+.ayna-smart-search-line{display:flex;align-items:center;gap:10px;background:#FAF1E2;border-radius:999px;padding:14px 20px;box-shadow:0 10px 30px rgba(36,20,50,.14)}
+.ayna-smart-search-line svg{width:18px;height:18px;stroke:#8D84A0;flex:none}
+.ayna-smart-search-line input{flex:1;border:none!important;background:transparent!important;border-radius:0!important;padding:0!important;outline:none;color:#241A3D;font-size:15px;min-width:0}
+.ayna-smart-search-line input::placeholder{color:#8D84A0}
+.ayna-smart-dropdown{position:absolute;left:0;right:0;top:calc(100% + 8px);margin-top:0;border:1px solid rgba(36,26,61,.12);border-radius:14px;background:#FFFAF3;box-shadow:0 18px 48px rgba(20,10,30,.35);overflow:hidden;z-index:30;max-height:280px;overflow-y:auto}
+.ayna-smart-dropdown button{padding:13px 18px;font-size:14.5px;background:#FFFAF3;color:#241A3D;border-top:1px solid rgba(36,26,61,.08)}
+.ayna-smart-dropdown button:hover,.ayna-smart-dropdown button:focus{background:#F2E6D2}
+.ayna-smart-dropdown .ayna-smart-add-row{display:flex;align-items:center;gap:10px;color:#D98A52;font-weight:700}
+.ayna-smart-plus{font-size:19px;line-height:1;color:#D98A52}
+.ayna-smart-search-card .ayna-tokens{justify-content:center;margin-top:16px}
+.ayna-smart-search-card .ayna-tokens>span{background:#FFFAF3;color:#241A3D;padding:9px 10px 9px 16px;box-shadow:0 3px 10px rgba(20,10,30,.12)}
+.ayna-smart-search-card .ayna-tokens span button{width:20px;height:20px;border-radius:50%;background:#F2E6D2;display:inline-flex;align-items:center;justify-content:center}
+
 .ayna-inline-followup{max-width:520px;margin:18px auto 0;padding:16px;background:rgba(255,249,242,.1);border:1px solid rgba(255,249,242,.18);border-radius:18px}
 .ayna-inline-followup-label{font-size:13px;font-weight:700;color:#FFF9F2;margin-bottom:12px;text-align:left}
 .ayna-product-builder{max-width:540px;margin:0 auto}.ayna-added-products{margin:0 auto 14px;text-align:left}.ayna-added-products-label,.ayna-add-another-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#FFDCA8;margin:0 4px 8px}.ayna-added-products-list{display:flex;flex-wrap:wrap;gap:8px}.ayna-added-products-list span{background:rgba(255,249,242,.14);border:1px solid rgba(255,249,242,.2);color:#FFF9F2;padding:7px 10px;border-radius:999px;font-size:12px;font-weight:600}.ayna-add-another-label{color:#5c554e;margin:0 0 9px}.ayna-product-suggestions{margin-top:8px;border:1px solid rgba(42,31,78,.12);border-radius:12px;overflow:hidden}.ayna-product-suggestions button{display:block;width:100%;padding:10px 12px;background:#fff;border:none;border-top:1px solid rgba(42,31,78,.08);text-align:left;color:#2A1F4E;cursor:pointer}.ayna-product-suggestions button:first-child{border-top:none}.ayna-product-card{background:#FFF9F2;color:#2A1F4E;border-radius:20px;padding:18px;margin-top:14px;text-align:left;box-shadow:0 16px 34px -20px rgba(0,0,0,.5)}.ayna-product-head{display:flex;align-items:center;justify-content:space-between;gap:12px;font-family:var(--font-serif,'Playfair Display',Georgia,serif);font-size:18px}.ayna-product-head button{border:none;background:none;color:#8c8078;font-size:12px;cursor:pointer}.ayna-product-q{margin-top:15px}.ayna-product-label{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.045em;margin-bottom:8px;color:#5c554e}.ayna-product-card .ayna-segmented{margin:0;max-width:none}.ayna-product-card .ayna-pill{border-color:rgba(42,31,78,.13);box-shadow:none}
@@ -910,7 +968,7 @@ const STYLES = `
 .ayna-spectrum{padding:20px 18px}.ayna-spectrum-line{height:5px;border-radius:999px;background:linear-gradient(90deg,#4E3866,#FFC774,#D97A2B);margin:8px 22px 18px}.ayna-spectrum-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.ayna-spectrum-grid button{padding:11px 7px;border-radius:12px;border:1.5px solid rgba(42,31,78,.1);background:#fff;font-size:10.5px;line-height:1.3;color:#2A1F4E;cursor:pointer}.ayna-spectrum-grid button.selected{border-color:#E8843C;background:#FFF3DD}
 .ayna-trust-list{max-width:520px;margin:0 auto;display:grid;gap:10px}.ayna-trust-item{display:flex;align-items:center;gap:10px;background:#FFF9F2;color:#2A1F4E;border-radius:16px;padding:13px 14px;box-shadow:0 10px 22px -16px rgba(0,0,0,.4)}.ayna-drag{color:#8c8078;cursor:grab;letter-spacing:-4px;font-size:18px}.ayna-rank{width:24px;height:24px;border-radius:50%;background:#FFF3DD;color:#8A5A1E;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}.ayna-trust-label{flex:1;text-align:left;font-size:13px;font-weight:600;line-height:1.35}.ayna-move{display:flex;gap:4px}.ayna-move button{width:26px;height:26px;border-radius:8px;border:1px solid rgba(42,31,78,.12);background:#fff;color:#2A1F4E;cursor:pointer}
 .ayna-saving{margin-top:14px;color:rgba(255,249,242,.72);font-size:12px}.ayna-error{margin-top:14px;color:#FFE0D6;font-size:12px;font-weight:600}.ayna-count{background:rgba(42,31,78,.16);border-radius:999px;padding:2px 9px;font-size:12px}
-@media(max-width:720px){.ayna-intake-root{padding:24px 14px 58px}.ayna-intake-question{padding-top:20px}.ayna-choice-grid{grid-template-columns:1fr}.ayna-intake-question h1{font-size:25px}.ayna-spectrum-grid{grid-template-columns:1fr}.ayna-scale{overflow-x:auto}.ayna-scale button{min-width:76px}.ayna-timeline{overflow-x:auto;padding-bottom:8px}.ayna-timeline button{min-width:110px}.ayna-intake-section-label{padding-left:46px}.ayna-segmented{flex-wrap:wrap}.ayna-seg-option{min-width:110px}.ayna-token-line{flex-direction:column}.ayna-token-line button{padding:11px}.ayna-product-card .ayna-segmented{flex-direction:column}.ayna-product-card .ayna-seg-option{width:100%}}
+@media(max-width:720px){.ayna-intake-root{padding:24px 14px 58px}.ayna-intake-question{padding-top:20px}.ayna-choice-grid{grid-template-columns:1fr}.ayna-intake-question h1{font-size:25px}.ayna-spectrum-grid{grid-template-columns:1fr}.ayna-scale{overflow-x:auto}.ayna-scale button{min-width:76px}.ayna-timeline{overflow-x:auto;padding-bottom:8px}.ayna-timeline button{min-width:110px}.ayna-intake-section-label{padding-left:46px}.ayna-segmented{flex-wrap:wrap}.ayna-seg-option{min-width:110px}.ayna-token-line:not(.ayna-smart-search-line){flex-direction:column}.ayna-smart-search-line{flex-direction:row}.ayna-token-line button{padding:11px}.ayna-product-card .ayna-segmented{flex-direction:column}.ayna-product-card .ayna-seg-option{width:100%}}
 `;
 
 export default function HealthIntakeForm({ onComplete }) {
