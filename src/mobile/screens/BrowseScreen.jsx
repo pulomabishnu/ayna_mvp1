@@ -256,6 +256,7 @@ export default function BrowseScreen({
   quizAnswers = null,
   theme = 'dark',
   onToggleTheme,
+  onOpenProfile,
 }) {
   const [mode, setMode] = useState('products');
   const [searchValue, setSearchValue] = useState('');
@@ -362,6 +363,7 @@ export default function BrowseScreen({
         onOpenSaved={onOpenSaved}
         onGoEco={onGoEco}
         onToggleTheme={onToggleTheme}
+        onOpenProfile={onOpenProfile}
       />
 
       <SearchBar value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />

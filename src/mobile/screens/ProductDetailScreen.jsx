@@ -6,18 +6,18 @@ import { renderMarkdownLite } from '../../utils/renderMarkdownLite.jsx';
 
 function SpecRow({ label, value }) {
   return (
-    <div style={{ display: 'flex', gap: 16, padding: '15px 0', borderBottom: '1px solid #E1D5CE' }}>
-      <div style={{ fontSize: 13.5, color: '#A8A29E', flex: 'none', width: 82 }}>{label}</div>
-      <div style={{ flex: 1, fontSize: 13.5, lineHeight: 1.5, color: '#292524', textAlign: 'right' }}>{value}</div>
+    <div style={{ display: 'flex', gap: 16, padding: '15px 0', borderBottom: '1px solid var(--ayna-border)' }}>
+      <div style={{ fontSize: 13.5, color: 'var(--ayna-text-faint)', flex: 'none', width: 82 }}>{label}</div>
+      <div style={{ flex: 1, fontSize: 13.5, lineHeight: 1.5, color: 'var(--ayna-text)', textAlign: 'right' }}>{value}</div>
     </div>
   );
 }
 
 function EvidenceRow({ label, value }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, padding: '12px 0', borderTop: '1px solid #F3EFE9' }}>
-      <div style={{ fontSize: 13.5, color: '#292524' }}>{label}</div>
-      <div style={{ fontSize: 13.5, color: '#57534E', textDecoration: 'underline', textDecorationColor: '#D8CBC2' }}>{value}</div>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, padding: '12px 0', borderTop: '1px solid var(--ayna-chip-bg)' }}>
+      <div style={{ fontSize: 13.5, color: 'var(--ayna-text)' }}>{label}</div>
+      <div style={{ fontSize: 13.5, color: 'var(--ayna-text-muted)', textDecoration: 'underline', textDecorationColor: 'var(--ayna-border)' }}>{value}</div>
     </div>
   );
 }
@@ -99,10 +99,10 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts }) {
   };
 
   return (
-    <div style={{ background: '#FFFFFF', border: '1px solid #E1D5CE', borderRadius: 20, padding: '17px 18px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+    <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 20, padding: '17px 18px', display: 'flex', flexDirection: 'column', gap: 12 }}>
       {messages.length === 0 && (
         <>
-          <div style={{ fontSize: 13.5, lineHeight: 1.55, color: '#57534E' }}>
+          <div style={{ fontSize: 13.5, lineHeight: 1.55, color: 'var(--ayna-text-muted)' }}>
             New to this kind of product, or not sure what it's actually for? Ask Ayna anything about it.
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
@@ -110,7 +110,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts }) {
               <div
                 key={s}
                 onClick={() => ask(s)}
-                style={{ fontSize: 12.5, fontWeight: 500, padding: '8px 13px', borderRadius: 99, background: '#F3EFE9', color: '#57534E', cursor: 'pointer' }}
+                style={{ fontSize: 12.5, fontWeight: 500, padding: '8px 13px', borderRadius: 99, background: 'var(--ayna-chip-bg)', color: 'var(--ayna-text-muted)', cursor: 'pointer' }}
               >
                 {s}
               </div>
@@ -127,8 +127,8 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts }) {
               style={{
                 alignSelf: m.role === 'user' ? 'flex-end' : 'flex-start',
                 maxWidth: '85%',
-                background: m.role === 'user' ? '#242A52' : '#F3EFE9',
-                color: m.role === 'user' ? '#FFFCF9' : '#292524',
+                background: m.role === 'user' ? 'var(--ayna-cta-bg)' : 'var(--ayna-chip-bg)',
+                color: m.role === 'user' ? 'var(--ayna-cta-text)' : 'var(--ayna-text)',
                 borderRadius: 14,
                 padding: '10px 13px',
                 fontSize: 13.5,
@@ -139,7 +139,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts }) {
               {m.role === 'assistant' ? renderMarkdownLite(m.text) : m.text}
             </div>
           ))}
-          {sending && <div style={{ alignSelf: 'flex-start', fontSize: 12.5, color: '#A8A29E' }}>Ayna is thinking…</div>}
+          {sending && <div style={{ alignSelf: 'flex-start', fontSize: 12.5, color: 'var(--ayna-text-faint)' }}>Ayna is thinking…</div>}
         </div>
       )}
 
@@ -152,7 +152,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts }) {
           onChange={(e) => setInput(e.target.value)}
           placeholder={session === undefined ? 'Loading…' : 'Ask about this product…'}
           disabled={sending || session === undefined}
-          style={{ flex: 1, padding: '11px 14px', borderRadius: 99, border: '1px solid #E1D5CE', fontSize: 13.5, background: '#FFFFFF', color: '#292524' }}
+          style={{ flex: 1, padding: '11px 14px', borderRadius: 99, border: '1px solid var(--ayna-border)', fontSize: 13.5, background: 'var(--ayna-surface)', color: 'var(--ayna-text)' }}
         />
         <button
           type="submit"
@@ -161,8 +161,8 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts }) {
             padding: '11px 18px',
             borderRadius: 99,
             border: 'none',
-            background: '#242A52',
-            color: '#FFFCF9',
+            background: 'var(--ayna-cta-bg)',
+            color: 'var(--ayna-cta-text)',
             fontFamily: "'DM Sans',sans-serif",
             fontWeight: 600,
             fontSize: 13.5,
@@ -174,7 +174,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts }) {
         </button>
       </form>
 
-      <div style={{ fontSize: 11.5, color: '#A8A29E' }}>Ayna's answers are educational, not medical advice.</div>
+      <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)' }}>Ayna's answers are educational, not medical advice.</div>
     </div>
   );
 }
@@ -195,7 +195,7 @@ export default function ProductDetailScreen({
 
   if (!product) {
     return (
-      <div style={{ padding: 40, textAlign: 'center', color: '#78716C', fontSize: 13.5 }}>
+      <div style={{ padding: 40, textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 13.5 }}>
         No product selected.
       </div>
     );
@@ -238,13 +238,13 @@ export default function ProductDetailScreen({
   ].filter(Boolean);
 
   return (
-    <div style={{ flex: 1, overflowY: 'auto', background: '#FFFCF9', color: '#292524', animation: 'ay-page .25s ease-out' }}>
+    <div style={{ flex: 1, overflowY: 'auto', background: 'var(--ayna-bg)', color: 'var(--ayna-text)', animation: 'ay-page .25s ease-out' }}>
       <div style={{ paddingTop: 'max(24px, env(safe-area-inset-top))', paddingLeft: 20, paddingRight: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div onClick={onBack} style={{ display: 'flex', alignItems: 'center', gap: 7, cursor: 'pointer' }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#242A52" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" style={{ stroke: 'var(--ayna-heading)' }}>
             <path d="M19 12H5M11 18l-6-6 6-6" />
           </svg>
-          <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: 14, color: '#242A52' }}>Back</span>
+          <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: 14, color: 'var(--ayna-heading)' }}>Back</span>
         </div>
         <div style={{ display: 'flex', gap: 6 }}>
           {['summary', 'evidence', 'ask'].map((tab) => (
@@ -254,9 +254,9 @@ export default function ProductDetailScreen({
               style={{
                 padding: '9px 17px',
                 borderRadius: 99,
-                background: activeTab === tab ? '#242A52' : '#FFFCF9',
-                color: activeTab === tab ? '#FFFCF9' : '#57534E',
-                border: '1.5px solid ' + (activeTab === tab ? '#242A52' : '#E1D5CE'),
+                background: activeTab === tab ? 'var(--ayna-cta-bg)' : 'var(--ayna-surface)',
+                color: activeTab === tab ? 'var(--ayna-cta-text)' : 'var(--ayna-text-muted)',
+                border: '1.5px solid ' + (activeTab === tab ? 'var(--ayna-cta-bg)' : 'var(--ayna-border)'),
                 fontFamily: "'DM Sans',sans-serif",
                 fontWeight: 500,
                 fontSize: 13,
@@ -270,12 +270,12 @@ export default function ProductDetailScreen({
         </div>
       </div>
 
-      <div style={{ margin: '14px 20px 0', borderRadius: 24, padding: 24, background: 'linear-gradient(150deg,#FFEFD6,#F6DCC0)' }}>
+      <div style={{ margin: '14px 20px 0', borderRadius: 24, padding: 24, background: 'var(--ayna-product-panel)' }}>
         <div
           style={{
             width: '100%',
             aspectRatio: '1 / 1',
-            background: '#FFFFFF',
+            background: 'var(--ayna-surface)',
             borderRadius: 14,
             boxShadow: '0 10px 26px -16px rgba(41,37,36,.35)',
             overflow: 'hidden',
@@ -288,13 +288,13 @@ export default function ProductDetailScreen({
 
       <div style={{ padding: '22px 22px 34px' }}>
         {categoryLabel && (
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.4px', textTransform: 'uppercase', color: '#C0761F' }}>
+          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.4px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>
             {categoryLabel}
           </div>
         )}
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 33, lineHeight: 1.12, margin: '9px 0 10px', color: '#242A52' }}>{name}</div>
-        {price && <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 26, color: '#242A52', marginBottom: 12 }}>{price}</div>}
-        {summary && <div style={{ fontSize: 14.5, lineHeight: 1.55, color: '#57534E' }}>{summary}</div>}
+        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 33, lineHeight: 1.12, margin: '9px 0 10px', color: 'var(--ayna-heading)' }}>{name}</div>
+        {price && <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 26, color: 'var(--ayna-heading)', marginBottom: 12 }}>{price}</div>}
+        {summary && <div style={{ fontSize: 14.5, lineHeight: 1.55, color: 'var(--ayna-text-muted)' }}>{summary}</div>}
 
         <div style={{ display: 'flex', gap: 10, margin: '20px 0 16px' }}>
           {buyUrl ? (
@@ -304,8 +304,8 @@ export default function ProductDetailScreen({
               rel="noopener noreferrer"
               style={{
                 flex: 1,
-                background: '#242A52',
-                color: '#FFFCF9',
+                background: 'var(--ayna-cta-bg)',
+                color: 'var(--ayna-cta-text)',
                 textAlign: 'center',
                 padding: 15,
                 borderRadius: 99,
@@ -322,8 +322,8 @@ export default function ProductDetailScreen({
             <div
               style={{
                 flex: 1,
-                background: '#E1D5CE',
-                color: '#78716C',
+                background: 'var(--ayna-border)',
+                color: 'var(--ayna-text-muted)',
                 textAlign: 'center',
                 padding: 15,
                 borderRadius: 99,
@@ -346,9 +346,9 @@ export default function ProductDetailScreen({
               fontFamily: "'DM Sans',sans-serif",
               fontWeight: 600,
               fontSize: 14.5,
-              background: isSaved ? '#FFEFD6' : 'transparent',
-              color: '#242A52',
-              border: '1.5px solid ' + (isSaved ? '#E8A94F' : '#242A52'),
+              background: isSaved ? 'var(--ayna-chip-bg)' : 'transparent',
+              color: 'var(--ayna-heading)',
+              border: '1.5px solid ' + (isSaved ? 'var(--ayna-accent-dark)' : 'var(--ayna-heading)'),
             }}
           >
             {isSaved ? 'Saved' : 'Wishlist'}
@@ -362,8 +362,8 @@ export default function ProductDetailScreen({
             fontFamily: "'DM Sans',sans-serif",
             fontWeight: 700,
             fontSize: 15,
-            color: '#242A52',
-            borderBottom: '2px solid #242A52',
+            color: 'var(--ayna-heading)',
+            borderBottom: '2px solid var(--ayna-heading)',
             paddingBottom: 2,
             marginBottom: 22,
             cursor: 'pointer',
@@ -375,7 +375,7 @@ export default function ProductDetailScreen({
         {activeTab === 'summary' ? (
           <>
             {specRows.length > 0 && (
-              <div style={{ borderTop: '1px solid #E1D5CE' }}>
+              <div style={{ borderTop: '1px solid var(--ayna-border)' }}>
                 {specRows.map((row) => (
                   <SpecRow key={row.label} label={row.label} value={row.value} />
                 ))}
@@ -383,8 +383,8 @@ export default function ProductDetailScreen({
             )}
 
             {ingredients && (
-              <div style={{ background: '#FFFFFF', border: '1px solid #E1D5CE', borderRadius: 20, padding: 16, marginTop: 20 }}>
-                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.2px', textTransform: 'uppercase', color: '#A8A29E', marginBottom: 4 }}>
+              <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 20, padding: 16, marginTop: 20 }}>
+                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)', marginBottom: 4 }}>
                   Inside
                 </div>
                 <div style={{ fontSize: 13.5, lineHeight: 1.6, paddingTop: 8 }}>{ingredients}</div>
@@ -413,18 +413,18 @@ export default function ProductDetailScreen({
             )}
 
             {doctorOpinion && (
-              <div style={{ background: '#FFFFFF', border: '1px solid #E1D5CE', borderRadius: 20, padding: '17px 18px', marginBottom: 12 }}>
-                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.3px', textTransform: 'uppercase', color: '#A8A29E' }}>
+              <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 20, padding: '17px 18px', marginBottom: 12 }}>
+                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.3px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)' }}>
                   Clinician opinion
                 </div>
-                <div style={{ fontSize: 14, lineHeight: 1.6, marginTop: 9, color: '#292524' }}>{doctorOpinion}</div>
+                <div style={{ fontSize: 14, lineHeight: 1.6, marginTop: 9, color: 'var(--ayna-text)' }}>{doctorOpinion}</div>
                 {clinicianAttribution && (
-                  <div style={{ fontSize: 12, lineHeight: 1.5, color: '#A8A29E', marginTop: 11 }}>{clinicianAttribution}</div>
+                  <div style={{ fontSize: 12, lineHeight: 1.5, color: 'var(--ayna-text-faint)', marginTop: 11 }}>{clinicianAttribution}</div>
                 )}
                 {badges.length > 0 && (
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 13 }}>
                     {badges.map((b) => (
-                      <div key={b} style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 12, fontWeight: 500, padding: '7px 13px', borderRadius: 99, background: '#F3EFE9', color: '#57534E' }}>
+                      <div key={b} style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 12, fontWeight: 500, padding: '7px 13px', borderRadius: 99, background: 'var(--ayna-chip-bg)', color: 'var(--ayna-text-muted)' }}>
                         {b}
                       </div>
                     ))}
@@ -434,8 +434,8 @@ export default function ProductDetailScreen({
             )}
 
             {evidenceRows.length > 0 && (
-              <div style={{ background: '#FFFFFF', border: '1px solid #E1D5CE', borderRadius: 20, padding: '17px 18px' }}>
-                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.3px', textTransform: 'uppercase', color: '#A8A29E', marginBottom: 4 }}>
+              <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 20, padding: '17px 18px' }}>
+                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.3px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)', marginBottom: 4 }}>
                   Evidence
                 </div>
                 {evidenceRows.map((row) => (
@@ -457,8 +457,8 @@ export default function ProductDetailScreen({
                   display: 'flex',
                   alignItems: 'center',
                   gap: 12,
-                  background: '#FFFFFF',
-                  border: '1px solid #E1D5CE',
+                  background: 'var(--ayna-surface)',
+                  border: '1px solid var(--ayna-border)',
                   borderRadius: 16,
                   padding: '13px 15px',
                   marginBottom: 8,
@@ -466,7 +466,7 @@ export default function ProductDetailScreen({
                 }}
               >
                 <div style={{ flex: 1, fontSize: 13.5, lineHeight: 1.4, fontWeight: 500 }}>{r.title}</div>
-                {r.mins && <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, color: '#A8A29E', whiteSpace: 'nowrap' }}>{r.mins}</div>}
+                {r.mins && <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, color: 'var(--ayna-text-faint)', whiteSpace: 'nowrap' }}>{r.mins}</div>}
               </div>
             ))}
           </>

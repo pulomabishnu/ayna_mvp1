@@ -36,7 +36,7 @@ export default function MobileHeader({
   onGoEco,
   onOpenSaved,
   onGoLanding,
-  onToggleTheme,
+  onOpenProfile,
 }) {
   const dark = variant === 'dark';
 
@@ -73,27 +73,6 @@ export default function MobileHeader({
           ayna
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
-          {onToggleTheme && (
-            <div
-              onClick={onToggleTheme}
-              role="button"
-              aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
-              style={{
-                width: 34,
-                height: 34,
-                borderRadius: 99,
-                border: dark ? '1px solid rgba(255,255,255,.28)' : '1px solid #E1D5CE',
-                background: dark ? 'rgba(255,249,242,.12)' : '#FFFCF9',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                fontSize: 14,
-              }}
-            >
-              {dark ? '☀️' : '🌙'}
-            </div>
-          )}
           <div
             onClick={onOpenSaved}
             style={{
@@ -111,7 +90,9 @@ export default function MobileHeader({
             <HeartIcon stroke={dark ? '#FFC774' : '#A2603C'} />
           </div>
           <div
-            onClick={dark ? undefined : onGoEco}
+            onClick={onOpenProfile}
+            role="button"
+            aria-label="Open profile"
             style={{
               width: 34,
               height: 34,
@@ -124,7 +105,7 @@ export default function MobileHeader({
               fontFamily: "'DM Mono',monospace",
               fontSize: 11,
               color: dark ? '#FFF9F2' : '#78716C',
-              cursor: dark ? 'default' : 'pointer',
+              cursor: 'pointer',
             }}
           >
             {initial}

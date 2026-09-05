@@ -6,6 +6,9 @@ import { ECOSYSTEM_AREAS as REAL_ECOSYSTEM_AREAS, resolveEcosystemProductArea } 
 import { useSavedProducts } from './hooks/useSavedProducts.js';
 import { useThemeMode } from './hooks/useThemeMode.js';
 import { ECOSYSTEM_AREAS as AREA_LABELS } from './data/ecosystemAreas.js';
+import AskAynaChip from './components/AskAynaChip.jsx';
+import AskAynaModal from './components/AskAynaModal.jsx';
+import ProfileFlow from './screens/profile/ProfileFlow.jsx';
 
 import LandingScreen from './screens/LandingScreen.jsx';
 import BrowseScreen from './screens/BrowseScreen.jsx';
@@ -100,6 +103,8 @@ export default function MobileApp() {
   const [lastQuizAnswers, setLastQuizAnswers] = useState(null);
   const [userName, setUserName] = useState('You');
   const { theme, toggleTheme } = useThemeMode();
+  const [askAynaOpen, setAskAynaOpen] = useState(false);
+  const [askAynaHistory, setAskAynaHistory] = useState([]);
 
   const Screen = SCREENS[screen] || LandingScreen;
 
@@ -109,6 +114,18 @@ export default function MobileApp() {
     .slice(0, 3);
   const goalCount = lastQuizAnswers?.frustrations?.length || 0;
 
+  // No real auth session exists for the mobile mock sign-up flow yet, so
+  // "sign out" just resets local state back to a fresh visit rather than
+  // clearing a server session.
+  const handleSignOut = () => {
+    setOverlay(null);
+    setHasEcosystem(false);
+    setMyProducts([]);
+    setLastQuizAnswers(null);
+    setUserName('You');
+    setScreen('landing');
+  };
+
   const nav = {
     onStartQuiz: () => setScreen('quiz'),
     onBrowse: () => setScreen('browse'),
@@ -117,6 +134,8 @@ export default function MobileApp() {
     onGoLanding: () => setScreen('landing'),
     onOpenProduct: (p) => setOverlay({ type: 'product', item: p }),
     onOpenArticle: (a) => setOverlay({ type: 'article', item: a }),
+    onOpenProfile: () => setOverlay({ type: 'profile' }),
+    onAskAyna: () => setAskAynaOpen(true),
     onBack: () => setScreen('browse'),
     onRetake: () => setScreen('quiz'),
     onUpdateHealth: () => setScreen('quiz'),
@@ -149,6 +168,7 @@ export default function MobileApp() {
         products={ALL_PRODUCTS}
         articles={ARTICLES}
         savedProducts={savedMap}
+        onToggleSaved={toggleSaved}
         myProducts={myProducts}
         quizAnswers={lastQuizAnswers}
         name={userName}
@@ -183,6 +203,29 @@ export default function MobileApp() {
           <ArticleDetailScreen article={overlay.item} onBack={() => setOverlay(null)} theme={theme} onToggleTheme={toggleTheme} />
         </div>
       )}
+      {overlay?.type === 'profile' && (
+        <ProfileFlow
+          onClose={() => setOverlay(null)}
+          theme={theme}
+          onToggleTheme={toggleTheme}
+          onSignOut={handleSignOut}
+          name={userName}
+          ecosystemCount={myProducts.length}
+          savedCount={Object.keys(savedMap || {}).length}
+        />
+      )}
+      {!askAynaOpen && <AskAynaChip onClick={() => setAskAynaOpen(true)} />}
+      <AskAynaModal
+        open={askAynaOpen}
+        onClose={() => setAskAynaOpen(false)}
+        profile={lastQuizAnswers}
+        onProfileUpdate={setLastQuizAnswers}
+        chatHistory={askAynaHistory}
+        onChatHistoryUpdate={setAskAynaHistory}
+        name={userName}
+        onNavigateToDiscovery={() => { setAskAynaOpen(false); setScreen('browse'); }}
+        onViewRecommendations={() => { setAskAynaOpen(false); setScreen(hasEcosystem ? 'eco' : 'ecointro'); }}
+      />
     </div>
   );
 }

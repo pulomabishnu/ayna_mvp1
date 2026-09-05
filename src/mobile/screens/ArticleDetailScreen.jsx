@@ -57,13 +57,13 @@ function splitBodyAndSources(body) {
   return { mainBody, sourceLinks };
 }
 
-export default function ArticleDetailScreen({ article, onBack }) {
+export default function ArticleDetailScreen({ article, onBack, theme }) {
   const scrollRef = useRef(null);
   const [progress, setProgress] = useState(0);
 
   if (!article) {
     return (
-      <div style={{ padding: 40, textAlign: 'center', color: '#78716C', fontSize: 13.5 }}>
+      <div style={{ padding: 40, textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 13.5 }}>
         No article selected.
       </div>
     );
@@ -71,6 +71,9 @@ export default function ArticleDetailScreen({ article, onBack }) {
 
   const { id, title, source, tags = [], teaser, body } = article;
   const [tint1, tint2] = tintForId(id);
+  const heroBackground = theme === 'dark'
+    ? 'radial-gradient(130% 100% at 30% 0%, rgba(112,96,214,.35), rgba(255,255,255,.02) 70%)'
+    : `linear-gradient(160deg,${tint1},${tint2})`;
   const readMinutes = estimateReadMinutes(body);
   const { mainBody, sourceLinks } = splitBodyAndSources(body);
 
@@ -82,14 +85,14 @@ export default function ArticleDetailScreen({ article, onBack }) {
   };
 
   return (
-    <div ref={scrollRef} onScroll={handleScroll} style={{ flex: 1, overflowY: 'auto', background: '#FFFCF9', animation: 'ay-page .25s ease-out' }}>
-      <div style={{ position: 'relative', background: `linear-gradient(160deg,${tint1},${tint2})`, paddingTop: 'max(20px, env(safe-area-inset-top))', paddingLeft: 20, paddingRight: 20 }}>
+    <div ref={scrollRef} onScroll={handleScroll} style={{ flex: 1, overflowY: 'auto', background: 'var(--ayna-bg)', animation: 'ay-page .25s ease-out' }}>
+      <div style={{ position: 'relative', background: heroBackground, paddingTop: 'max(20px, env(safe-area-inset-top))', paddingLeft: 20, paddingRight: 20 }}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
           <div
             onClick={onBack}
-            style={{ width: 36, height: 36, borderRadius: 99, background: 'rgba(255,252,249,.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+            style={{ width: 36, height: 36, borderRadius: 99, background: 'var(--ayna-glass-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#292524" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" style={{ stroke: 'var(--ayna-text)' }}>
               <path d="M19 12H5M11 18l-6-6 6-6" />
             </svg>
           </div>
@@ -98,21 +101,21 @@ export default function ArticleDetailScreen({ article, onBack }) {
         <div style={{ height: 34 }} />
       </div>
 
-      <div style={{ background: '#FFFCF9', borderRadius: '28px 28px 0 0', marginTop: -24, position: 'relative', padding: '26px 24px 34px' }}>
+      <div style={{ background: 'var(--ayna-surface)', borderRadius: '28px 28px 0 0', marginTop: -24, position: 'relative', padding: '26px 24px 34px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 13 }}>
-          <div style={{ width: 7, height: 7, borderRadius: 99, background: '#C0761F' }} />
+          <div style={{ width: 7, height: 7, borderRadius: 99, background: 'var(--ayna-accent-dark)' }} />
           {tags[0] && (
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.4px', textTransform: 'uppercase', color: '#C0761F' }}>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.4px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>
               {tags[0]}
             </div>
           )}
-          <div style={{ flex: 1, height: 1, background: '#E1D5CE' }} />
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '.8px', color: '#A8A29E' }}>{readMinutes} MIN</div>
+          <div style={{ flex: 1, height: 1, background: 'var(--ayna-border)' }} />
+          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '.8px', color: 'var(--ayna-text-faint)' }}>{readMinutes} MIN</div>
         </div>
 
-        <div style={{ fontFamily: "'Playfair Display',serif", fontWeight: 400, fontSize: 32, lineHeight: 1.13, color: '#292524', margin: 0 }}>{title}</div>
+        <div style={{ fontFamily: "'Playfair Display',serif", fontWeight: 400, fontSize: 32, lineHeight: 1.13, color: 'var(--ayna-text)', margin: 0 }}>{title}</div>
         {teaser && (
-          <div style={{ fontFamily: "'Playfair Display',serif", fontStyle: 'italic', fontSize: 16.5, lineHeight: 1.5, color: '#7A5A2E', marginTop: 13 }}>
+          <div style={{ fontFamily: "'Playfair Display',serif", fontStyle: 'italic', fontSize: 16.5, lineHeight: 1.5, color: 'var(--ayna-accent-dark)', marginTop: 13 }}>
             {teaser}
           </div>
         )}
@@ -121,24 +124,24 @@ export default function ArticleDetailScreen({ article, onBack }) {
           {[0, 1, 2, 3, 4].map((i) => {
             const filled = progress >= i / 4;
             return i % 2 === 1 ? (
-              <div key={i} style={{ width: 5, height: 5, borderRadius: 99, background: filled ? '#E8A94F' : '#EAE3DA' }} />
+              <div key={i} style={{ width: 5, height: 5, borderRadius: 99, background: filled ? '#E8A94F' : 'var(--ayna-track)' }} />
             ) : (
-              <div key={i} style={{ flex: 1, height: 3, borderRadius: 99, background: filled ? '#FFC774' : '#EAE3DA' }} />
+              <div key={i} style={{ flex: 1, height: 3, borderRadius: 99, background: filled ? '#FFC774' : 'var(--ayna-track)' }} />
             );
           })}
         </div>
 
-        <div style={{ fontSize: 15, lineHeight: 1.75, color: '#292524' }}>{mainBody}</div>
+        <div style={{ fontSize: 15, lineHeight: 1.75, color: 'var(--ayna-text)' }}>{mainBody}</div>
 
         {(sourceLinks.length > 0 || source) && (
-          <div style={{ marginTop: 28, padding: 18, borderRadius: 22, background: '#F3EFE9', border: '1px solid #E1D5CE' }}>
+          <div style={{ marginTop: 28, padding: 18, borderRadius: 22, background: 'var(--ayna-chip-bg)', border: '1px solid var(--ayna-border)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <div
                 style={{
                   width: 46,
                   height: 46,
                   borderRadius: 99,
-                  background: 'linear-gradient(140deg,#242A52,#4E3866 60%,#A2603C)',
+                  background: 'linear-gradient(140deg,#242A52,#4E3866 60%,var(--ayna-brown))',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -151,26 +154,26 @@ export default function ArticleDetailScreen({ article, onBack }) {
                 A
               </div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.2px', textTransform: 'uppercase', color: '#A8A29E' }}>
+                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)' }}>
                   Sources
                 </div>
                 {source && (
-                  <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 14.5, marginTop: 3, color: '#292524' }}>
+                  <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 14.5, marginTop: 3, color: 'var(--ayna-text)' }}>
                     {source}
                   </div>
                 )}
               </div>
             </div>
             {sourceLinks.length > 0 && (
-              <div style={{ marginTop: 13, paddingTop: 13, borderTop: '1px solid #E1D5CE', display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div style={{ marginTop: 13, paddingTop: 13, borderTop: '1px solid var(--ayna-border)', display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {sourceLinks.map((l) => (
-                  <a key={l.href} href={l.href} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12.5, lineHeight: 1.5, color: '#A2603C', fontWeight: 600 }}>
+                  <a key={l.href} href={l.href} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12.5, lineHeight: 1.5, color: 'var(--ayna-brown)', fontWeight: 600 }}>
                     {l.text}
                   </a>
                 ))}
               </div>
             )}
-            <div style={{ fontSize: 12, lineHeight: 1.55, color: '#78716C', marginTop: 13, paddingTop: 13, borderTop: '1px solid #E1D5CE' }}>
+            <div style={{ fontSize: 12, lineHeight: 1.55, color: 'var(--ayna-text-muted)', marginTop: 13, paddingTop: 13, borderTop: '1px solid var(--ayna-border)' }}>
               Every guide draws on peer-reviewed literature and established clinical guidance.
             </div>
           </div>

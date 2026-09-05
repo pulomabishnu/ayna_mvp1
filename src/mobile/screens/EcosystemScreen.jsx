@@ -24,6 +24,7 @@ export default function EcosystemScreen({
   onBrowse,
   onRetake,
   onUpdateHealth,
+  onOpenProfile,
 }) {
   const [selectedKey, setSelectedKey] = useState(null);
   const [selectedSeat, setSelectedSeat] = useState(null);
@@ -34,7 +35,7 @@ export default function EcosystemScreen({
 
   return (
     <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0 40px', animation: 'ay-page .25s ease-out' }}>
-      <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoEco={() => {}} onGoBrowse={onBrowse} />
+      <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoEco={() => {}} onGoBrowse={onBrowse} onOpenProfile={onOpenProfile} />
 
       <div style={{ padding: '18px 20px 0' }}>
         <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 23, lineHeight: 1.3 }}>

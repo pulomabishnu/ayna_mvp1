@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { buildSteps, bucketAge, DECORATIVE_GOALS_STEP } from '../data/intakeSteps.js';
-import AskAynaChip from '../components/AskAynaChip.jsx';
 
 // Mirrors AUTO_ADVANCE_SINGLE_MS in src/components/Quiz.jsx.
 const AUTO_ADVANCE_SINGLE_MS = 500;
 
-export default function IntakeScreen({ onBack, onComplete, onAskAyna }) {
+export default function IntakeScreen({ onBack, onComplete }) {
   const [answers, setAnswers] = useState({});
   const [currentStep, setCurrentStep] = useState(0);
   const [ageSliderValue, setAgeSliderValue] = useState(28);
@@ -408,8 +407,6 @@ export default function IntakeScreen({ onBack, onComplete, onAskAyna }) {
           Skip this step
         </div>
       </div>
-
-      <AskAynaChip onClick={onAskAyna} />
     </div>
   );
 }

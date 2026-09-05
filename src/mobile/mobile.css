@@ -16,6 +16,12 @@
   --ayna-navy: #242A52;
   --ayna-purple: #4E3866;
   --ayna-peach: #FFEFD6;
+  --ayna-cta-bg: #242A52;
+  --ayna-cta-text: #FFFCF9;
+  --ayna-heading: #242A52;
+  --ayna-product-panel: linear-gradient(150deg,#FFEFD6,#F6DCC0);
+  --ayna-glass-bg: rgba(255,252,249,.9);
+  --ayna-track: #EAE3DA;
   --ayna-chip-bg: #F3EFE9;
   --ayna-chip-border: #E1D5CE;
   --ayna-gradient-hero: linear-gradient(165deg, #2A1F4E 0%, #4E3866 42%, #8A4A3C 74%, #D97A2B 100%);
@@ -49,6 +55,12 @@
   --ayna-text-faint: #55527A;
   --ayna-accent: #FFC774;
   --ayna-accent-dark: #FFC774;
+  --ayna-cta-bg: #FFC774;
+  --ayna-cta-text: #231A12;
+  --ayna-heading: #F5F3FF;
+  --ayna-product-panel: radial-gradient(130% 110% at 28% 0%, rgba(192,118,31,.34), rgba(255,255,255,.03) 68%);
+  --ayna-glass-bg: rgba(255,255,255,.09);
+  --ayna-track: rgba(255,255,255,.12);
   --ayna-chip-bg: rgba(255,255,255,.06);
   --ayna-chip-border: rgba(255,255,255,.12);
 }
