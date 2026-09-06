@@ -2,6 +2,15 @@ import { getSupabaseClient, getSupabaseUser } from './supabaseClient';
 
 const TABLE = 'health_intakes';
 const LOCAL_PREFIX = 'ayna_health_intake_v2:';
+const AUTH_TIMEOUT_MS = 3000;
+const SERVER_SAVE_TIMEOUT_MS = 6000;
+
+function withTimeout(promise, ms, reason = 'request_timeout') {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error(reason)), ms)),
+  ]);
+}
 
 function storageKey(userId) {
   return `${LOCAL_PREFIX}${userId || 'anonymous'}`;
@@ -19,11 +28,17 @@ function readLocal(userId) {
 
 async function resolveUserId(supabase) {
   if (!supabase) return null;
-  const user = await getSupabaseUser().catch(() => null);
-  if (user?.id) return user.id;
+
+  // Prefer the cached session. Calling getUser first can require a network
+  // round trip and previously allowed the Finish button to hang indefinitely.
   try {
-    const { data } = await supabase.auth.getSession();
-    return data?.session?.user?.id || null;
+    const { data } = await withTimeout(supabase.auth.getSession(), AUTH_TIMEOUT_MS, 'auth_session_timeout');
+    if (data?.session?.user?.id) return data.session.user.id;
+  } catch (_) {}
+
+  try {
+    const user = await withTimeout(getSupabaseUser(), AUTH_TIMEOUT_MS, 'auth_user_timeout');
+    return user?.id || null;
   } catch (_) {
     return null;
   }
@@ -109,7 +124,11 @@ export async function saveHealthIntakeForCurrentUser(profile) {
   };
 
   try {
-    const { error } = await supabase.from(TABLE).upsert(payload, { onConflict: 'user_id' });
+    const { error } = await withTimeout(
+      supabase.from(TABLE).upsert(payload, { onConflict: 'user_id' }),
+      SERVER_SAVE_TIMEOUT_MS,
+      'server_save_timeout'
+    );
     if (error) {
       console.warn('[healthIntakeStore] server save failed; local copy retained:', error.message || error);
       return { saved: false, localSaved, reason: error.message || 'server_save_failed' };
