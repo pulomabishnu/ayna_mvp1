@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore } from '../data/products';
+import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore, getProductMatchDetailsForProduct } from '../data/products';
 import { loadProductCatalog } from '../utils/productCatalog';
 import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../utils/naturalLanguageSearch';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
@@ -252,10 +252,10 @@ function shuffleJitter(item, seed, baseScore = 0) {
 // if fewer than COLD_START_PAGE_FLOOR cold-start items made it into the first `pageSize` results,
 // promote the highest score+jitter-ranked cold-start items that didn't (still using the SAME jitter
 // roll for this seed, so which items get promoted still rotates seed to seed) into those spots,
-// displacing the lowest-ranked non-partner items at the bottom of the page. 6/30 (20%) is a
-// deliberately conservative floor — below cold-start's ~28% catalog share, so this narrows the gap
-// without displacing enough established, well-reviewed products to feel like a regression for
-// users who came for the curated content. Partner-pinned items are never displaced.
+// displacing the lowest-ranked items at the bottom of the page. 6/30 (20%) is a deliberately
+// conservative floor — below cold-start's ~28% catalog share, so this narrows the gap without
+// displacing enough established, well-reviewed products to feel like a regression for users who
+// came for the curated content.
 const COLD_START_PAGE_FLOOR = 6;
 
 function applyColdStartFloor(rankedList, pageSize) {
@@ -268,8 +268,7 @@ function applyColdStartFloor(rankedList, pageSize) {
     const promotable = rest.filter(isColdStartItem).slice(0, shortfall);
     if (promotable.length === 0) return rankedList;
 
-    // Displace from the bottom of the page upward, never touching partner-pinned items —
-    // those stay pinned regardless of this guarantee.
+    // Displace from the bottom of the page upward, while keeping partner-pinned items in place.
     const displaceable = [];
     for (let i = page.length - 1; i >= 0 && displaceable.length < promotable.length; i--) {
         if (!isPartnerBrandItem(page[i])) displaceable.push(i);
@@ -758,15 +757,14 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     const rb = recommendedRank.has(b.id) ? recommendedRank.get(b.id) : Number.MAX_SAFE_INTEGER;
                     if (ra !== rb) return ra - rb;
                 }
-                // Brand partners are pinned to the top of the default browsing sort
-                // (but not when personalized results are on — a partnership doesn't
-                // buy placement in a real recommendation, only visibility on the
-                // page you browse freely, per How We Make Money).
+                // Partners are pinned in general browse only.
+                // Partnership never changes personalized match scores or recommendation order.
                 if (browsingWithoutTextQuery && !personalizationFilter) {
                     const pa = isPartnerBrandItem(a) ? 1 : 0;
                     const pb = isPartnerBrandItem(b) ? 1 : 0;
                     if (pa !== pb) return pb - pa;
                 }
+
                 const baseA = getQualityScore(a, aynaReviews);
                 const baseB = getQualityScore(b, aynaReviews);
                 const qa = baseA + (browsingWithoutTextQuery ? shuffleJitter(a, shuffleSeed, baseA) : 0);
@@ -1437,8 +1435,12 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     const resolvedItemImage = resolvedImages[item.id];
                     const cardImageSrc = resolvedItemImage !== undefined ? resolvedItemImage : item.image;
                     const imageStillLoading = resolvedItemImage === undefined && isPlaceholderProductImage(item.image, item.type === 'digital');
-                    const profileMatchPercent = getProfileMatchPercentForProduct(item, quizResults, healthProfile);
-                    const matchPercent = (hasQuizFrustrations || hasHealthImport)
+                    const matchDetails = getProductMatchDetailsForProduct(item, quizResults, healthProfile);
+                    const profileMatchPercent = matchDetails.percent;
+                    const cardMatchReasons = profileMatchPercent != null
+                        ? (matchDetails.reasons || []).slice(0, 2)
+                        : [];
+                    const matchPercent = profileMatchPercent != null
                         ? profileMatchPercent
                         : getExplicitMatchPercent(item);
                     const eligibility = getExplicitEligibility(item);
@@ -1504,6 +1506,13 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                     </div>
                                     <h3 className="ayna-discover-card__name">{item.name}</h3>
                                     <span className="ayna-discover-card__price">{item.price || item.stage || ''}</span>
+                                    {cardMatchReasons.length > 0 && (
+                                        <div className="ayna-browse-card__reasons" aria-label="Why this matches you">
+                                            {cardMatchReasons.map((reason) => (
+                                                <div className="ayna-browse-card__reason" key={reason}>{reason}</div>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
                             </a>
                             <button

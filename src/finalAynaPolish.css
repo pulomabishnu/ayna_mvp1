@@ -100,6 +100,9 @@
 .ayna-browse-card .ayna-discover-card__body { padding:.72rem .05rem 0; }
 .ayna-browse-card .ayna-discover-card__name { margin:.32rem 0 .15rem; font-family:var(--font-serif); font-weight:400; font-size:1.02rem; line-height:1.28; }
 .ayna-browse-card .ayna-discover-card__price { font-size:.79rem; color:var(--color-text-muted); }
+.ayna-browse-card__reasons { margin-top:.55rem; display:grid; gap:.28rem; }
+.ayna-browse-card__reason { position:relative; padding-left:.72rem; font-size:.7rem; line-height:1.35; color:var(--color-text-muted); }
+.ayna-browse-card__reason::before { content:""; position:absolute; left:.05rem; top:.48em; width:3px; height:3px; border-radius:50%; background:var(--color-amber-deep); }
 .ayna-browse-card .ayna-discover-card__category { font-family:var(--font-label); font-size:.6rem; letter-spacing:.09em; text-transform:uppercase; color:var(--color-amber-deep); }
 .ayna-browse-card__sponsored { font-family:var(--font-label); font-size:.55rem; letter-spacing:.07em; text-transform:uppercase; color:var(--color-text-muted); }
 

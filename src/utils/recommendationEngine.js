@@ -1,4 +1,4 @@
-import { ALL_PRODUCTS } from '../data/products';
+import { ALL_PRODUCTS, getProductMatchDetailsForProduct } from '../data/products';
 
 // `categories` used to be dead data — nothing ever read it, only `tags` did,
 // and several entries used category names ('app', 'device') that don't
@@ -85,80 +85,21 @@ function buildSubcategoryLabel(concern, tierType) {
 }
 
 function buildMatchExplanation(product, intake, concern, tierType) {
-  const lines = [];
-  const name = String(product?.name || '').toLowerCase();
-  const disliked = lowerList(intake?.dislikedProducts);
-  const dislikedReason = String(intake?.dislikedReason || '').toLowerCase();
-  const concernKey = String(concern?.key || '').toLowerCase();
-  const dislikedDisplay = asArray(intake?.dislikedProducts).map((x) => String(x || '').trim()).filter(Boolean);
+  const details = getProductMatchDetailsForProduct(product, intake);
 
-  // Only mention avoided products when the recommended product is in the same
-  // physical-product category as what was disliked. Never apply this to
-  // telehealth services, apps, or supplements — a PCOS telehealth service
-  // is not relevant to the user disliking an Always pad.
-  const isPeriodPhysical = tierType === 'physical' && (
-    concernKey.includes('period care') || concernKey.includes('leak') || concernKey.includes('cramp')
-  );
-  if (isPeriodPhysical) {
-    const avoidedDisliked = dislikedDisplay
-      .filter((d) => !name.includes(d.toLowerCase()))
-      .slice(0, 2);
-    if (avoidedDisliked.length > 0) {
-      if (dislikedReason.trim().length > 0) {
-        lines.push(`You said ${avoidedDisliked.join(' and ')} did not work for you (${dislikedReason.slice(0, 90)}), so this pick avoids that downside.`);
-      } else {
-        lines.push(`You said ${avoidedDisliked.join(' and ')} did not work for you, so this recommendation avoids those products.`);
-      }
-    }
+  const reasons = Array.isArray(details?.reasons)
+    ? details.reasons.filter(Boolean).slice(0, 3)
+    : [];
+
+  if (reasons.length > 0) {
+    return reasons.join(' ');
   }
 
-  const dislikedAzo = disliked.some((d) => d.includes('azo'));
-  if (dislikedAzo && !name.includes('azo') && concernKey.includes('uti')) {
-    if (/yellow|neon|stain/.test(dislikedReason)) {
-      lines.push("You shared that AZO side effects (like neon yellow staining) were a problem, so this non-AZO option is prioritized.");
-    } else {
-      lines.push('You shared AZO did not work well for you, so this recommendation avoids AZO-like picks.');
-    }
+  if (details?.healthMatch != null) {
+    return 'This product was ranked using your health profile, preferences, and the available evidence for this product.';
   }
 
-  const flow = String(intake?.flowLevel || '').toLowerCase();
-  if (concernKey.includes('period care') && /(heavy|very heavy)/.test(flow)) {
-    lines.push('This was prioritized for higher absorbency and leak protection based on your reported flow.');
-  }
-
-  const prefs = lowerList(intake?.productPreferences);
-  if (prefs.includes('fragrance-free') && String(product?.safety?.materials || '').toLowerCase().includes('fragrance')) {
-    lines.push('Review materials closely: your profile prefers fragrance-free options.');
-  } else if (prefs.length > 0) {
-    lines.push(`This aligns with your stated preferences (${prefs.slice(0, 2).join(', ')}).`);
-  }
-
-  const conditions = lowerList(intake?.conditions);
-  if (conditions.includes('pcos') && (product?.tags || []).includes('pcos')) {
-    lines.push('This matches your PCOS profile and was ranked for hormone-support relevance.');
-  }
-  if (conditions.includes('endometriosis')) {
-    lines.push('Safety filters were applied for endometriosis-sensitive materials.');
-  }
-
-  if (tierType === 'digital') {
-    lines.push('This digital option is included to support ongoing tracking or clinician access, not just one-time symptom relief.');
-  }
-
-  // Deduplicate near-identical match statements for cleaner copy.
-  const deduped = [];
-  const seen = new Set();
-  lines.forEach((line) => {
-    const key = line.toLowerCase();
-    if (seen.has(key)) return;
-    seen.add(key);
-    deduped.push(line);
-  });
-
-  if (deduped.length === 0) {
-    deduped.push('This was selected because it best matches your health intake details and safety filters.');
-  }
-  return deduped.join(' ');
+  return 'This product is relevant to this care area, but there is not enough profile information to give a highly personalized explanation yet.';
 }
 
 function textForSafety(product) {
@@ -196,7 +137,7 @@ function hasReliabilityConcern(product) {
     .join(' ')
     .toLowerCase();
 
-  if (/less scientific|split opinions|polarized|class-action|not robust|unreliable|incentivized|affiliate|sponsored/.test(concernText)) {
+  if (/less scientific|split opinions|polarized|class-action|not robust|unreliable|incentivized/.test(concernText)) {
     return true;
   }
   return false;
@@ -241,41 +182,9 @@ function fsaHsaEligibility(product) {
 }
 
 export function scoreProduct(product, intake, concern) {
-  const tags = new Set(product?.tags || []);
-  let score = 0;
-  concern.tags.forEach((tag) => {
-    if (tags.has(tag)) score += 4;
-  });
-  if ((intake?.flowLevel || '').toLowerCase().includes('heavy') && tags.has('heavy-flow')) score += 8;
-  if ((intake?.conditions || []).includes('PCOS') && tags.has('pcos')) score += 6;
-  if ((intake?.conditions || []).includes('endometriosis') && tags.has('endometriosis')) score += 6;
-  if ((intake?.productPreferences || []).includes('organic') && tags.has('organic')) score += 2;
-  if ((intake?.productPreferences || []).includes('budget-conscious') && tags.has('cost')) score += 2;
-  if ((intake?.productPreferences || []).includes('sustainable/eco-friendly') && tags.has('sustainability')) score += 2;
-  if ((intake?.preferredProductTypes || []).length > 0) {
-    const rawType = String(product?.category || '').toLowerCase();
-    if ((intake.preferredProductTypes || []).some((p) => rawType.includes(String(p).replace('menstrual ', '').slice(0, 5)))) {
-      score += 2;
-    }
-  }
-  // Confirmed live 2026-08-24: FSA/HSA status was passed to the LLM prompt as
-  // inert context with no instruction to act on it, and this local engine had
-  // no FSA/HSA logic at all — a user who told us she has an FSA/HSA never
-  // actually got eligible products prioritized despite Puloma explicitly
-  // asking for exactly that. +7 sits deliberately just above the PCOS/
-  // endometriosis condition-match boost (+6): a real, stated financial
-  // constraint should outweigh a soft preference, but not override a genuine
-  // clinical-concern match entirely.
-  const fsaHsa = intake?.fsaHsa;
-  if (fsaHsa) {
-    const eligibility = fsaHsaEligibility(product);
-    const matches = fsaHsa === 'both' ? (eligibility.fsa || eligibility.hsa)
-      : fsaHsa === 'fsa' ? eligibility.fsa
-      : fsaHsa === 'hsa' ? eligibility.hsa
-      : false;
-    if (matches) score += 7;
-  }
-  return score;
+  const details = getProductMatchDetailsForProduct(product, intake);
+  if (!details?.eligible) return -1;
+  return details?.percent == null ? 0 : details.percent;
 }
 
 function safetyNotes(product, intake) {
@@ -333,8 +242,7 @@ function selectTierProduct(products, intake, concern, tierType, alreadyChosen = 
     .filter((p) => !alreadyChosen.has(p.id))
     .filter((p) => !productDisliked(p, disliked))
     .filter((p) => !hasRecall(p))
-    .filter((p) => !hasReliabilityConcern(p))
-    .filter((p) => hasIndependentClinicianOpinion(p))
+    .filter((p) => getProductMatchDetailsForProduct(p, intake)?.eligible !== false)
     .filter((p) => {
       if (tierType === 'physical') return (p.type || 'physical') === 'physical';
       return (p.type || 'physical') === 'digital' || p.category === 'supplement';
@@ -350,8 +258,7 @@ function selectTierCandidates(products, intake, concern, tierType, alreadyChosen
     .filter((p) => !alreadyChosen.has(p.id))
     .filter((p) => !productDisliked(p, disliked))
     .filter((p) => !hasRecall(p))
-    .filter((p) => !hasReliabilityConcern(p))
-    .filter((p) => hasIndependentClinicianOpinion(p))
+    .filter((p) => getProductMatchDetailsForProduct(p, intake)?.eligible !== false)
     .filter((p) => matchesTierType(p, tierType))
     .sort((a, b) => scoreProduct(b, intake, concern) - scoreProduct(a, intake, concern))
     .slice(0, limit);
