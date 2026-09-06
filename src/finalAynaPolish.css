@@ -201,6 +201,8 @@
 
 /* 1g: cleaner evidence rail with a visual profile-overlap ring. */
 .pdp-rail__match-wrap { display:grid; grid-template-columns:88px 1fr; gap:14px; align-items:center; margin-top:10px; }
+.pdp-rail__reasons { display:grid; gap:8px; }
+.pdp-rail__reason { font-size:13px; line-height:1.42; color:#F6EFE6; }
 .pdp-rail__match-ring {
   --match-pct:0%; width:84px; height:84px; border-radius:50%;
   background:conic-gradient(#F0A84B var(--match-pct), rgba(255,255,255,.14) 0);

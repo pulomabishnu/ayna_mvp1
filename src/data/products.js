@@ -1529,6 +1529,22 @@ function getLifeStageLabels(intake) {
     ];
 }
 
+
+const DIAGNOSIS_SPECIFIC_SIGNALS = [
+    'pcos', 'pcos-management', 'endometriosis', 'fibroids', 'adenomyosis',
+    'pmdd', 'thyroid', 'diabetes', 'insulin-resistance', 'hypertension',
+    'migraine', 'anemia', 'ibs', 'autoimmune', 'anxiety', 'depression',
+];
+
+const LIFE_STAGE_SPECIFIC_SIGNALS = [
+    'pregnancy', 'postpartum', 'menopause', 'perimenopause',
+    'fertility', 'lactation', 'breastfeeding',
+];
+
+function productTargetsAnySignal(product, signals) {
+    return signals.some((signal) => productHasSignal(product, signal));
+}
+
 function weightedKnownScore(parts, weights) {
     let earned = 0;
     let possible = 0;
@@ -1706,6 +1722,17 @@ function getExtendedAvoidSet(quizAnswers) {
 
 function getSafetyAssessment(product, quizAnswers) {
     const intake = rawIntakeFromProfile(quizAnswers);
+    const lifeStages = getLifeStageLabels(quizAnswers).map((label) => String(label).toLowerCase());
+    const isPregnant = lifeStages.some((label) => /\bpregnan/.test(label));
+    const isPostpartum = lifeStages.some((label) => /\bpostpartum\b/.test(label));
+
+    if (product?.category === 'pregnancy' && !isPregnant) {
+        return { eligible: false, reason: 'This product is specifically for pregnancy, which does not match your current life stage' };
+    }
+
+    if (product?.category === 'postpartum' && !isPostpartum) {
+        return { eligible: false, reason: 'This product is specifically for postpartum recovery, which does not match your current life stage' };
+    }
 
     if (!isProductEligibleForProfile(product, quizAnswers)) {
         return { eligible: false, reason: 'Profile safety preference' };
@@ -1838,11 +1865,11 @@ function getProductRelevanceStats(product, quizAnswers, healthProfile = null) {
             ? { score: symptomMatch.matched ? 1 : 0 }
             : null,
 
-        diagnoses: diagnosisLabels.length
+        diagnoses: diagnosisLabels.length && productTargetsAnySignal(product, DIAGNOSIS_SPECIFIC_SIGNALS)
             ? { score: diagnosisMatch.matched ? 1 : 0 }
             : null,
 
-        lifeStage: lifeStageLabels.length
+        lifeStage: lifeStageLabels.length && productTargetsAnySignal(product, LIFE_STAGE_SPECIFIC_SIGNALS)
             ? { score: lifeStageMatch.matched ? 1 : 0 }
             : null,
 
