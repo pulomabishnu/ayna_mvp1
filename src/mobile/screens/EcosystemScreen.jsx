@@ -25,6 +25,8 @@ export default function EcosystemScreen({
   onRetake,
   onUpdateHealth,
   onOpenProfile,
+  quizAnswers = null,
+  onOpenWhyMatch,
 }) {
   const [selectedKey, setSelectedKey] = useState(null);
   const [selectedSeat, setSelectedSeat] = useState(null);
@@ -70,7 +72,7 @@ export default function EcosystemScreen({
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 11 }}>
           {gridProducts.map((p) => (
-            <ProductCard key={p.id} product={p} onClick={() => onOpenProduct && onOpenProduct(p)} />
+            <ProductCard key={p.id} product={p} onClick={() => onOpenProduct && onOpenProduct(p)} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} />
           ))}
         </div>
       </div>

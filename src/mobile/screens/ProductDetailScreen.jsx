@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
-import { CATEGORY_LABELS } from '../../data/products.js';
+import { CATEGORY_LABELS, getProfileMatchPercentForProduct } from '../../data/products.js';
 import { getBuyUrl } from '../data/buyUrl.js';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { renderMarkdownLite } from '../../utils/renderMarkdownLite.jsx';
+import MatchRing from '../components/MatchRing.jsx';
+import WhyMatchScreen from './WhyMatchScreen.jsx';
 
 function SpecRow({ label, value }) {
   return (
@@ -192,6 +194,10 @@ export default function ProductDetailScreen({
   ecosystemProducts = [],
 }) {
   const [activeTab, setActiveTab] = useState('summary');
+  // Rendered locally (not through MobileApp's shared `overlay` state, which
+  // only holds one layer) so "back" from here returns to this product
+  // instead of closing straight through to whatever screen sits underneath.
+  const [showWhyMatch, setShowWhyMatch] = useState(false);
 
   if (!product) {
     return (
@@ -200,6 +206,13 @@ export default function ProductDetailScreen({
       </div>
     );
   }
+
+  if (showWhyMatch) {
+    return <WhyMatchScreen product={product} quizAnswers={quizAnswers} onBack={() => setShowWhyMatch(false)} />;
+  }
+
+  const matchPercent = getProfileMatchPercentForProduct(product, quizAnswers);
+  const openWhyMatch = () => setShowWhyMatch(true);
 
   const {
     name,
@@ -273,6 +286,7 @@ export default function ProductDetailScreen({
       <div style={{ margin: '14px 20px 0', borderRadius: 24, padding: 24, background: 'var(--ayna-product-panel)' }}>
         <div
           style={{
+            position: 'relative',
             width: '100%',
             aspectRatio: '1 / 1',
             background: 'var(--ayna-surface)',
@@ -283,7 +297,19 @@ export default function ProductDetailScreen({
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}
-        />
+        >
+          {matchPercent != null && (
+            <div
+              onClick={openWhyMatch}
+              style={{ position: 'absolute', right: 14, bottom: 14, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, cursor: 'pointer' }}
+            >
+              <MatchRing percent={matchPercent} size={56} />
+              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1px', color: 'var(--ayna-accent-dark)', background: 'rgba(255,255,255,.9)', borderRadius: 99, padding: '3px 8px' }}>
+                WHY {matchPercent}%
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       <div style={{ padding: '22px 22px 34px' }}>

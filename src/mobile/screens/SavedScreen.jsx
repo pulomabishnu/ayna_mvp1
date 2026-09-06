@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { CATEGORY_LABELS } from '../../data/products.js';
+import { CATEGORY_LABELS, getProfileMatchPercentForProduct } from '../../data/products.js';
+import { getCategoryInsights } from '../utils/shopperProfileData.js';
+import MatchRing from '../components/MatchRing.jsx';
 
 /**
  * Mobile port of the "Saved screens B + C" design reference (filled grid +
@@ -34,6 +36,14 @@ function getRealMatchPercent(product) {
     if (pct != null) return pct;
   }
   return null;
+}
+
+// Prefers the live quiz-based relevance score (same engine every other
+// product card now uses) over a static field, since saved items are rarely
+// pre-tagged with one of the candidates above.
+function matchPercentFor(item, quizAnswers) {
+  const live = getProfileMatchPercentForProduct(item, quizAnswers);
+  return live != null ? live : getRealMatchPercent(item);
 }
 
 function categoryLabel(category) {
@@ -76,9 +86,126 @@ function statusFor(item, ecoIds) {
   return 'new';
 }
 
-function SavedCard({ item, status, onOpen, onRemove }) {
+// Same ⚠️-marker / denial-regex classification as getSafetyAlerts()
+// (src/mobile/utils/shopperProfileData.js), duplicated in miniature here
+// since this card only needs a short label, not the full alert object.
+function recallStatus(item) {
+  const t = (item?.safety?.recalls || '').trim();
+  const flagworthy = t && (t.includes('⚠') || /no formal recalls?\.?\s*note:/i.test(t));
+  if (!flagworthy) return { label: 'No active recalls', background: 'var(--ayna-peach)', color: 'var(--ayna-accent-dark)' };
+  const deniesRecall = /\b(not been subject to|no)\b[^.]*\brecalls?\b/i.test(t);
+  const mentionsRecall = /\brecalls?\b/i.test(t);
+  return mentionsRecall && !deniesRecall
+    ? { label: 'Active recall', background: 'rgba(180,64,42,.14)', color: '#B4402A' }
+    : { label: 'Safety note', background: 'var(--ayna-peach)', color: 'var(--ayna-accent-dark)' };
+}
+
+function tagLabel(tag) {
+  return tag.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+// The single-save state (design ref: "Saved screen A") — a full-width
+// editorial card instead of one small tile floating in an otherwise empty
+// grid. The "ecosystem gaps" callout only appears when getCategoryInsights()
+// (real ecosystem/saved coverage vs. the catalog) actually finds unexplored
+// categories — never fabricated placeholder gaps.
+function SingleSavedHero({ item, isInEco, onOpen, onRemove, onAddToEcosystem, gaps, onGoEco, quizAnswers, onOpenWhyMatch }) {
+  const match = matchPercentFor(item, quizAnswers);
+  const image = item.image || item.imageUrl || (Array.isArray(item.images) ? item.images[0] : undefined);
+  // Saved items are persisted through compactProduct() (savedProductsStore.js,
+  // shared with the desktop site), which doesn't carry `safety` or `tags` —
+  // only shown here when a full catalog object slipped through with them
+  // intact, never asserted as "no recalls" when we simply have no data.
+  const recall = item.safety ? recallStatus(item) : null;
+  const prefTag = Array.isArray(item.tags) && item.tags.length ? item.tags[0] : null;
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <article
+        onClick={onOpen}
+        style={{
+          cursor: 'pointer',
+          background: 'var(--ayna-surface)',
+          border: '1px solid var(--ayna-border)',
+          borderRadius: 24,
+          overflow: 'hidden',
+          boxShadow: '0 6px 22px rgba(41,37,36,.06)',
+          animation: 'ay-up .3s ease-out',
+        }}
+      >
+        <div style={{ position: 'relative', height: 230, background: image ? 'var(--ayna-bg-alt)' : 'linear-gradient(160deg,#F3EADC,#EFE3D2)', backgroundImage: image ? `url(${image})` : undefined, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+          <button
+            onClick={(e) => { e.stopPropagation(); onRemove(); }}
+            aria-label="Remove from saved"
+            style={{ position: 'absolute', right: 12, top: 12, width: 38, height: 38, borderRadius: 99, background: 'rgba(255,255,255,.94)', border: '1px solid rgba(26,23,20,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 0 }}
+          >
+            <HeartIcon filled />
+          </button>
+          <div style={{ position: 'absolute', right: 12, bottom: 12 }}>
+            <MatchRing percent={match} size={52} onClick={onOpenWhyMatch ? () => onOpenWhyMatch(item) : undefined} />
+          </div>
+        </div>
+        <div style={{ padding: '17px 18px 19px' }}>
+          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>{categoryLabel(item.category)}</div>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, margin: '8px 0 0' }}>
+            <div style={{ flex: 1, minWidth: 0, fontFamily: "'Playfair Display',serif", fontSize: 23, lineHeight: 1.2, color: 'var(--ayna-heading)' }}>{item.name}</div>
+            {item.price && <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 20, flex: 'none', color: 'var(--ayna-heading)' }}>{item.price}</div>}
+          </div>
+          {(item.summary || item.description) && (
+            <div style={{ fontSize: 13, color: 'var(--ayna-text-muted)', lineHeight: 1.5, marginTop: 8 }}>{item.summary || item.description}</div>
+          )}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 13 }}>
+            {prefTag && (
+              <div style={{ background: 'rgba(47,107,79,.12)', color: '#2F6B4F', fontSize: 11, padding: '5px 10px', borderRadius: 99 }}>{tagLabel(prefTag)}</div>
+            )}
+            {recall && (
+              <div style={{ background: recall.background, color: recall.color, fontSize: 11, padding: '5px 10px', borderRadius: 99 }}>{recall.label}</div>
+            )}
+          </div>
+          <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
+            <div
+              onClick={(e) => { e.stopPropagation(); if (!isInEco && onAddToEcosystem) onAddToEcosystem(item); }}
+              style={{
+                flex: 1,
+                fontFamily: "'DM Sans',sans-serif",
+                fontWeight: 600,
+                fontSize: 13.5,
+                padding: 13,
+                borderRadius: 99,
+                textAlign: 'center',
+                cursor: isInEco ? 'default' : 'pointer',
+                background: isInEco ? 'var(--ayna-glass-bg)' : 'var(--ayna-cta-bg)',
+                color: isInEco ? 'var(--ayna-text-muted)' : 'var(--ayna-cta-text)',
+              }}
+            >
+              {isInEco ? 'In your ecosystem' : 'Add to my ecosystem'}
+            </div>
+          </div>
+        </div>
+      </article>
+
+      {gaps.length > 0 && (
+        <div style={{ marginTop: 20, borderRadius: 22, padding: 20, background: 'linear-gradient(140deg,#4E3866,#242A52)', color: '#FFF9F2', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', right: -56, top: -56, width: 190, height: 190, borderRadius: '50%', border: '1px solid rgba(255,255,255,.16)' }} />
+          <div style={{ position: 'absolute', right: -16, top: 18, width: 110, height: 110, borderRadius: '50%', border: '1px solid rgba(255,255,255,.12)' }} />
+          <div style={{ position: 'relative', fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.4px', textTransform: 'uppercase', color: '#FFC774' }}>Your ecosystem · {gaps.length} gap{gaps.length === 1 ? '' : 's'}</div>
+          <div style={{ position: 'relative', fontFamily: "'Playfair Display',serif", fontSize: 23, lineHeight: 1.25, margin: '8px 0 9px', maxWidth: 235 }}>Saves become a routine once you fill the gaps.</div>
+          <div style={{ position: 'relative', fontSize: 12.5, color: 'rgba(255,249,242,.72)', lineHeight: 1.5, maxWidth: 255 }}>{gaps.join(', ')} {gaps.length === 1 ? 'is' : 'are'} still empty for you.</div>
+          <div onClick={onGoEco} style={{ position: 'relative', display: 'inline-block', marginTop: 15, background: '#FFC774', color: '#231A12', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 13, padding: '11px 18px', borderRadius: 99, cursor: 'pointer', animation: 'ay-bob 2.6s ease-in-out infinite' }}>
+            See what's missing
+          </div>
+        </div>
+      )}
+
+      <div style={{ textAlign: 'center', marginTop: 22, fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.5 }}>Saves are private. Only you see this list.</div>
+      <div style={{ height: 104 }} />
+    </div>
+  );
+}
+
+function SavedCard({ item, status, onOpen, onRemove, quizAnswers, onOpenWhyMatch }) {
   const badge = BADGE_STYLES[status];
-  const match = getRealMatchPercent(item);
+  const match = matchPercentFor(item, quizAnswers);
   const image = item.image || item.imageUrl || (Array.isArray(item.images) ? item.images[0] : undefined);
 
   return (
@@ -109,12 +236,14 @@ function SavedCard({ item, status, onOpen, onRemove }) {
         <div style={{ position: 'absolute', left: 8, bottom: 8, fontFamily: "'DM Mono',monospace", fontSize: 8, letterSpacing: '.8px', padding: '4px 7px', borderRadius: 99, background: badge.background, color: badge.color }}>
           {badge.label}
         </div>
+        <div style={{ position: 'absolute', right: 8, bottom: 8 }}>
+          <MatchRing percent={match} size={26} onClick={onOpenWhyMatch ? () => onOpenWhyMatch(item) : undefined} />
+        </div>
       </div>
       <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 8.5, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginTop: 9 }}>{categoryLabel(item.category)}</div>
       <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 15, lineHeight: 1.25, marginTop: 4, color: 'var(--ayna-text)' }}>{item.name}</div>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 7, marginTop: 4 }}>
         {item.price && <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)' }}>{item.price}</div>}
-        {match != null && <div style={{ fontSize: 11.5, color: '#2F6B4F' }}>{match}%</div>}
       </div>
     </article>
   );
@@ -127,7 +256,7 @@ const FILTERS = [
   { key: 'flag', label: 'Flagged' },
 ];
 
-export default function SavedScreen({ savedProducts = {}, myProducts = [], onBack, onBrowse, onOpenProduct, onToggleSaved, onGoEco }) {
+export default function SavedScreen({ savedProducts = {}, myProducts = [], products = [], onBack, onBrowse, onOpenProduct, onToggleSaved, onGoEco, onAddToEcosystem, quizAnswers = null, onOpenWhyMatch }) {
   const [filter, setFilter] = useState('all');
   const items = Object.values(savedProducts);
   const ecoIds = new Set(myProducts.map((p) => p.id));
@@ -142,6 +271,7 @@ export default function SavedScreen({ savedProducts = {}, myProducts = [], onBac
   const visible = filter === 'all' ? withStatus : withStatus.filter((x) => x.status === filter);
   const notInEcoCount = withStatus.length - counts.eco;
   const isEmpty = items.length === 0;
+  const isSingle = items.length === 1;
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'var(--ayna-bg)', animation: 'ay-page .25s ease-out' }}>
@@ -170,9 +300,14 @@ export default function SavedScreen({ savedProducts = {}, myProducts = [], onBac
               </div>
             )}
           </div>
+          {isSingle && (
+            <div onClick={onBrowse} style={{ flex: 'none', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 13, padding: '10px 17px', borderRadius: 99, cursor: 'pointer', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)' }}>
+              Browse
+            </div>
+          )}
         </div>
 
-        {!isEmpty && (
+        {!isEmpty && !isSingle && (
           <div style={{ display: 'flex', gap: 7, overflowX: 'auto', marginTop: 14, paddingBottom: 2 }}>
             {FILTERS.map((f) => (
               <div
@@ -239,6 +374,18 @@ export default function SavedScreen({ savedProducts = {}, myProducts = [], onBac
               </div>
             </div>
           </div>
+        ) : isSingle ? (
+          <SingleSavedHero
+            item={withStatus[0].item}
+            isInEco={withStatus[0].status === 'eco'}
+            onOpen={() => onOpenProduct && onOpenProduct(withStatus[0].item)}
+            onRemove={() => onToggleSaved && onToggleSaved(withStatus[0].item)}
+            onAddToEcosystem={onAddToEcosystem}
+            gaps={getCategoryInsights(myProducts, savedProducts, products).low.map((g) => g.name).slice(0, 3)}
+            onGoEco={onGoEco}
+            quizAnswers={quizAnswers}
+            onOpenWhyMatch={onOpenWhyMatch}
+          />
         ) : (
           <>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 11 }}>
@@ -249,6 +396,8 @@ export default function SavedScreen({ savedProducts = {}, myProducts = [], onBac
                   status={status}
                   onOpen={() => onOpenProduct && onOpenProduct(item)}
                   onRemove={() => onToggleSaved && onToggleSaved(item)}
+                  quizAnswers={quizAnswers}
+                  onOpenWhyMatch={onOpenWhyMatch}
                 />
               ))}
             </div>

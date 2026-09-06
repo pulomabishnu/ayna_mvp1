@@ -186,7 +186,7 @@ function PixelateGrid({ count = 6 }) {
 // visibleCount naturally, instead of needing a manual reset that either
 // calls setState in an effect body or reads/writes a ref during render
 // (both flagged by this project's react-hooks lint rules).
-function ProductGrid({ products, onOpenProduct, layout = 'grid' }) {
+function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = null, onOpenWhyMatch }) {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [loadingMore, setLoadingMore] = useState(false);
   const sentinelRef = useRef(null);
@@ -223,7 +223,7 @@ function ProductGrid({ products, onOpenProduct, layout = 'grid' }) {
         }
       >
         {visibleProducts.map((p) => (
-          <ProductCard key={p.id} product={p} variant={layout} onClick={() => onOpenProduct && onOpenProduct(p)} />
+          <ProductCard key={p.id} product={p} variant={layout} onClick={() => onOpenProduct && onOpenProduct(p)} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} />
         ))}
         {loadingMore && !isList && (
           <>
@@ -257,6 +257,7 @@ export default function BrowseScreen({
   theme = 'dark',
   onToggleTheme,
   onOpenProfile,
+  onOpenWhyMatch,
 }) {
   const [mode, setMode] = useState('products');
   const [searchValue, setSearchValue] = useState('');
@@ -395,7 +396,7 @@ export default function BrowseScreen({
       {mode === 'products' ? (
         <>
           {filtered.length > 0 ? (
-            <ProductGrid key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} />
+            <ProductGrid key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} />
           ) : searchTermRaw.length >= 2 && aiState.loading ? (
             <>
               <div style={{ padding: '0 20px 14px', fontFamily: "'DM Mono',monospace", fontSize: 10.5, letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
@@ -408,7 +409,7 @@ export default function BrowseScreen({
               <div style={{ padding: '0 20px 14px', fontFamily: "'DM Mono',monospace", fontSize: 10.5, letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
                 Not in our catalog yet — found via AI search
               </div>
-              <ProductGrid key={`ai-${filterKey}`} products={aiState.suggestions} onOpenProduct={onOpenProduct} layout={cardLayout} />
+              <ProductGrid key={`ai-${filterKey}`} products={aiState.suggestions} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} />
             </>
           ) : (
             <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 13.5 }}>

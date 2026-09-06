@@ -5,9 +5,9 @@ const THEME_KEY = 'ayna_mobile_theme_v1';
 function loadTheme() {
   try {
     const stored = localStorage.getItem(THEME_KEY);
-    return stored === 'light' ? 'light' : 'dark';
+    return stored === 'dark' ? 'dark' : 'light';
   } catch {
-    return 'dark';
+    return 'light';
   }
 }
 
@@ -22,5 +22,5 @@ export function useThemeMode() {
     setTheme((t) => (t === 'dark' ? 'light' : 'dark'));
   }, []);
 
-  return { theme, toggleTheme };
+  return { theme, toggleTheme, setTheme };
 }

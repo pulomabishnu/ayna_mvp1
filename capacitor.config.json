@@ -1,0 +1,14 @@
+{
+  "appId": "co.aynahealth.app",
+  "appName": "ayna",
+  "webDir": "dist",
+  "server": {
+    "url": "https://aynamvp1-git-mobile-app-pulomabishnu-4744s-projects.vercel.app/mobile-preview?x-vercel-protection-bypass=dgHDMGLONOjSAFQP2tXuDxBo3v0FgTyi&x-vercel-set-bypass-cookie=true",
+    "cleartext": false,
+    "allowNavigation": [
+      "aynamvp1-git-mobile-app-pulomabishnu-4744s-projects.vercel.app",
+      "*.vercel.app",
+      "vercel.com"
+    ]
+  }
+}

@@ -1,4 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { ALL_PRODUCTS } from '../../../data/products.js';
+import { getBrandAffinity, getCategoryInsights, getSafetyAlerts } from '../../utils/shopperProfileData.js';
+import { ROUTINE_BUCKET_LABELS, ROUTINE_BUCKETS, useRoutine } from '../../hooks/useRoutine.js';
 
 /**
  * Profile hub + its four sub-sections and one detail page, ported from the
@@ -13,6 +16,11 @@ import { useState } from 'react';
  * Real data is wired in wherever it already exists in the app (ecosystem
  * count, saved count, name); "profile filled %" stays a static placeholder
  * since there's no completeness calculation built yet.
+ *
+ * Shopper Profile is the one section wired to real backend logic (see
+ * shopperProfileData.js): safety alerts, brand affinity and category
+ * insights are all derived from the user's actual ecosystem/saved
+ * products and quiz answers, not mock data.
  */
 
 function BackIcon({ stroke = 'var(--ayna-heading)' }) {
@@ -124,7 +132,7 @@ function ToggleRow({ title, sub, on, onClick, first }) {
 
 function ProfileHub({ onOpen, onClose, onSignOut, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct }) {
   return (
-    <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
       <div
         style={{
           position: 'relative',
@@ -251,66 +259,74 @@ function ProfileHub({ onOpen, onClose, onSignOut, name, initial, memberSince, ec
 
 /* ------------------------- Shopper Profile ------------------------- */
 
-const ROUTINE_STEPS = [
-  { n: 1, name: 'Magnesium glycinate', note: 'With dinner', tag: 'PM', period: 'pm' },
-  { n: 2, name: 'Vitamin D3', note: 'With breakfast', tag: 'AM', period: 'am' },
-  { n: 3, name: 'Iron + Vitamin C', note: 'Empty stomach', tag: 'AM', period: 'am' },
-  { n: 4, name: 'Probiotic', note: 'Before bed', tag: 'PM', period: 'pm' },
-];
+function ShopperProfileScreen({ onBack, quizAnswers, myProducts = [], savedProducts = {}, onViewAlternative, onBrowse }) {
+  const [dismissedAlerts, setDismissedAlerts] = useState([]);
+  const [activeBucket, setActiveBucket] = useState('morning');
+  const { routineMap, setProductBucket, removeFromRoutine } = useRoutine();
 
-const TOP_CATEGORIES = [
-  { rank: '01', name: 'Cycle & hormones', count: '34 views', pct: 100 },
-  { rank: '02', name: 'Skincare', count: '27 views', pct: 78 },
-  { rank: '03', name: 'Sleep', count: '19 views', pct: 55 },
-  { rank: '04', name: 'Gut health', count: '12 views', pct: 34 },
-];
+  const allAlerts = getSafetyAlerts(myProducts, quizAnswers);
+  const activeAlerts = allAlerts.filter((a) => !dismissedAlerts.includes(a.id));
+  const dismissAlert = (id) => setDismissedAlerts((prev) => [...prev, id]);
 
-const LOW_CATEGORIES = [
-  { name: "Men's health", note: "Not something you've browsed", count: '2 views' },
-  { name: 'Fitness recovery', note: 'Might be worth a look', count: '3 views' },
-  { name: 'Oral care', note: 'Rarely comes up for you', count: '1 view' },
-];
+  const inBucket = myProducts.filter((p) => routineMap[p.id] === activeBucket);
+  const notInBucket = myProducts.filter((p) => routineMap[p.id] !== activeBucket);
+  const sortedCount = myProducts.filter((p) => routineMap[p.id]).length;
 
-function ShopperProfileScreen({ onBack }) {
-  const [routineTab, setRoutineTab] = useState('am');
-  const visibleSteps = ROUTINE_STEPS.filter((s) => s.period === routineTab);
+  const affinityChips = getBrandAffinity(quizAnswers, myProducts);
+
+  const { top: topCategories, low: lowCategories } = getCategoryInsights(myProducts, savedProducts, ALL_PRODUCTS);
 
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+    <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
       <BackHeader title="Shopper Profile" onBack={onBack} />
-      <div style={{ flex: 1, overflowY: 'auto', padding: '0 20px 30px', display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '0 20px 30px', display: 'flex', flexDirection: 'column', gap: 24 }}>
 
         <div>
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 11 }}>
             <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Safety alerts</div>
-            <div style={{ fontSize: 11.5, color: 'var(--ayna-text-muted)' }}>2 active</div>
+            <div style={{ fontSize: 11.5, color: 'var(--ayna-text-muted)' }}>{activeAlerts.length} active</div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
-            <div style={{ borderRadius: 18, padding: 15, background: 'rgba(180,64,42,.08)', border: '1px solid rgba(180,64,42,.25)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{ width: 7, height: 7, borderRadius: 99, background: '#B4402A', flex: 'none' }} />
-                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.2px', textTransform: 'uppercase', color: '#B4402A' }}>FDA recall · active</div>
-              </div>
-              <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 17, lineHeight: 1.3, margin: '8px 0 5px', color: 'var(--ayna-text)' }}>Lot #4471 · Prenatal Complete</div>
-              <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.5 }}>Elevated lead levels reported. This is in your ecosystem — swap suggested.</div>
-              <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-                <div style={{ background: '#B4402A', color: '#FFF9F2', fontWeight: 600, fontSize: 12, padding: '8px 14px', borderRadius: 99, cursor: 'pointer' }}>See swap</div>
-                <div style={{ border: '1px solid rgba(180,64,42,.35)', color: '#B4402A', fontWeight: 600, fontSize: 12, padding: '8px 14px', borderRadius: 99, cursor: 'pointer' }}>Dismiss</div>
-              </div>
+          {activeAlerts.length ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
+              {activeAlerts.map((alert) =>
+                alert.kind === 'recall' ? (
+                  <div key={alert.id} style={{ borderRadius: 18, padding: 15, background: 'rgba(180,64,42,.08)', border: '1px solid rgba(180,64,42,.25)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <div style={{ width: 7, height: 7, borderRadius: 99, background: '#B4402A', flex: 'none' }} />
+                      <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.2px', textTransform: 'uppercase', color: '#B4402A' }}>FDA recall · active</div>
+                    </div>
+                    <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 17, lineHeight: 1.3, margin: '8px 0 5px', color: 'var(--ayna-text)' }}>{alert.title}</div>
+                    <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.5 }}>{alert.body}</div>
+                    <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+                      <div onClick={() => onViewAlternative && onViewAlternative(alert.product)} style={{ background: '#B4402A', color: '#FFF9F2', fontWeight: 600, fontSize: 12, padding: '8px 14px', borderRadius: 99, cursor: 'pointer' }}>See swap</div>
+                      <div onClick={() => dismissAlert(alert.id)} style={{ border: '1px solid rgba(180,64,42,.35)', color: '#B4402A', fontWeight: 600, fontSize: 12, padding: '8px 14px', borderRadius: 99, cursor: 'pointer' }}>Dismiss</div>
+                    </div>
+                  </div>
+                ) : (
+                  <div key={alert.id} style={{ borderRadius: 18, padding: 15, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <div style={{ width: 7, height: 7, borderRadius: 99, background: 'var(--ayna-accent-dark)', flex: 'none' }} />
+                      <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Safety note · watching</div>
+                    </div>
+                    <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 17, lineHeight: 1.3, margin: '8px 0 5px', color: 'var(--ayna-text)' }}>{alert.title}</div>
+                    <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.5 }}>{alert.body}</div>
+                    <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+                      <div onClick={() => dismissAlert(alert.id)} style={{ border: '1px solid var(--ayna-border)', color: 'var(--ayna-text-muted)', fontWeight: 600, fontSize: 12, padding: '8px 14px', borderRadius: 99, cursor: 'pointer' }}>Dismiss</div>
+                    </div>
+                  </div>
+                )
+              )}
             </div>
-            <div style={{ borderRadius: 18, padding: 15, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{ width: 7, height: 7, borderRadius: 99, background: 'var(--ayna-accent-dark)', flex: 'none' }} />
-                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Ingredient flag · watching</div>
-              </div>
-              <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 17, lineHeight: 1.3, margin: '8px 0 5px', color: 'var(--ayna-text)' }}>Fragrance blend in 3 saved items</div>
-              <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.5 }}>You flagged sensitivity to synthetic fragrance during intake.</div>
+          ) : (
+            <div style={{ borderRadius: 18, padding: 15, border: '1px dashed var(--ayna-border)', fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.5 }}>
+              No active alerts. We'll watch your ecosystem for recalls and check it against what you flagged during intake.
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: 18, padding: '13px 15px', border: '1px dashed var(--ayna-border)', cursor: 'pointer' }}>
-              <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)' }}>Past alerts · 4 resolved</div>
-              <ChevronIcon />
+          )}
+          {dismissedAlerts.length > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: 18, padding: '13px 15px', marginTop: 9, border: '1px dashed var(--ayna-border)' }}>
+              <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)' }}>Dismissed · {dismissedAlerts.length}</div>
             </div>
-          </div>
+          )}
         </div>
 
         <div>
@@ -318,44 +334,76 @@ function ShopperProfileScreen({ onBack }) {
             <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Your routine</div>
           </div>
           <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 20, padding: 16 }}>
-            <div style={{ display: 'flex', gap: 6, marginBottom: 14 }}>
-              {[['am', 'Morning'], ['pm', 'Evening'], ['wk', 'Weekly']].map(([key, label]) => (
+            <div style={{ display: 'flex', gap: 7, overflowX: 'auto', touchAction: 'pan-x', paddingBottom: 2, marginBottom: 14 }}>
+              {ROUTINE_BUCKETS.map((key) => (
                 <div
                   key={key}
-                  onClick={() => setRoutineTab(key)}
+                  onClick={() => setActiveBucket(key)}
                   style={{
-                    flex: 1,
+                    flex: 'none',
                     textAlign: 'center',
-                    padding: '8px 0',
+                    padding: '8px 14px',
                     borderRadius: 99,
                     fontSize: 12.5,
                     fontWeight: 600,
                     cursor: 'pointer',
-                    background: routineTab === key ? 'var(--ayna-cta-bg)' : 'var(--ayna-chip-bg)',
-                    color: routineTab === key ? 'var(--ayna-cta-text)' : 'var(--ayna-text-muted)',
+                    background: activeBucket === key ? 'var(--ayna-cta-bg)' : 'var(--ayna-chip-bg)',
+                    color: activeBucket === key ? 'var(--ayna-cta-text)' : 'var(--ayna-text-muted)',
                   }}
                 >
-                  {label}
+                  {ROUTINE_BUCKET_LABELS[key]}
                 </div>
               ))}
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              {(visibleSteps.length ? visibleSteps : ROUTINE_STEPS).map((step, i) => (
-                <div key={step.n} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '9px 0', borderTop: i === 0 ? 'none' : '1px solid var(--ayna-border)' }}>
-                  <div style={{ width: 26, height: 26, borderRadius: 99, background: 'var(--ayna-chip-bg)', color: 'var(--ayna-accent-dark)', fontFamily: "'DM Mono',monospace", fontSize: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none' }}>{step.n}</div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontWeight: 500, fontSize: 14, color: 'var(--ayna-text)' }}>{step.name}</div>
-                    <div style={{ fontSize: 11.5, color: 'var(--ayna-text-muted)', marginTop: 1 }}>{step.note}</div>
-                  </div>
-                  <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '.8px', color: 'var(--ayna-text-muted)', border: '1px solid var(--ayna-border)', borderRadius: 99, padding: '3px 7px', flex: 'none' }}>{step.tag}</div>
-                </div>
-              ))}
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 14, paddingTop: 13, borderTop: '1px solid var(--ayna-border)' }}>
-              <div style={{ flex: 1, height: 6, borderRadius: 99, background: 'var(--ayna-border)', overflow: 'hidden' }}>
-                <div style={{ width: '82%', height: '100%', background: 'var(--ayna-accent-dark)' }} />
+
+            {!myProducts.length ? (
+              <div style={{ padding: '10px 2px', fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.5 }}>
+                Nothing in your ecosystem yet — add products so you can sort them into a routine.
+                {onBrowse && (
+                  <div onClick={onBrowse} style={{ display: 'inline-block', marginTop: 10, background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 12.5, padding: '9px 16px', borderRadius: 99, cursor: 'pointer' }}>Browse products</div>
+                )}
               </div>
-              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, color: 'var(--ayna-text-muted)', flex: 'none' }}>82% kept</div>
+            ) : (
+              <>
+                {inBucket.length ? (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginBottom: 16 }}>
+                    {inBucket.map((p) => (
+                      <div
+                        key={p.id}
+                        onClick={() => removeFromRoutine(p.id)}
+                        style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontSize: 12.5, fontWeight: 500, padding: '8px 12px', borderRadius: 99, cursor: 'pointer' }}
+                      >
+                        {p.name} <span style={{ opacity: 0.75, fontSize: 12 }}>×</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.5, marginBottom: 16 }}>
+                    Nothing in your {ROUTINE_BUCKET_LABELS[activeBucket].toLowerCase()} routine yet — tap a product below to add it.
+                  </div>
+                )}
+
+                {notInBucket.length > 0 && (
+                  <>
+                    <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)', marginBottom: 9 }}>Tap to add</div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
+                      {notInBucket.map((p) => (
+                        <div
+                          key={p.id}
+                          onClick={() => setProductBucket(p.id, activeBucket)}
+                          style={{ fontSize: 12.5, fontWeight: 500, padding: '8px 12px', borderRadius: 99, cursor: 'pointer', background: 'transparent', border: '1px solid var(--ayna-border)', color: 'var(--ayna-text-muted)' }}
+                        >
+                          {p.name}
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </>
+            )}
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 14, paddingTop: 13, borderTop: '1px solid var(--ayna-border)' }}>
+              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, color: 'var(--ayna-text-muted)' }}>{sortedCount} of {myProducts.length} sorted into a routine</div>
             </div>
           </div>
         </div>
@@ -363,74 +411,86 @@ function ShopperProfileScreen({ onBack }) {
         <div>
           <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 11 }}>Brand affinity</div>
           <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 20, padding: 16 }}>
-            <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.5, marginBottom: 13 }}>Drawn from what you save, view and keep. Tap to weight it more.</div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
-              {[
-                { label: 'Women-owned', score: 92, strong: true },
-                { label: 'Sustainable', score: 84, strong: true },
-                { label: 'Third-party tested', score: 77 },
-                { label: 'Fragrance-free', score: 71 },
-                { label: 'Small batch', score: 58, outline: true },
-                { label: 'Refillable', score: 44, outline: true },
-              ].map((chip) => (
-                <div
-                  key={chip.label}
-                  style={{
-                    fontSize: 12.5,
-                    fontWeight: 500,
-                    padding: '8px 13px',
-                    borderRadius: 99,
-                    cursor: 'pointer',
-                    background: chip.outline ? 'transparent' : chip.strong ? 'var(--ayna-cta-bg)' : 'var(--ayna-chip-bg)',
-                    color: chip.outline ? 'var(--ayna-text-muted)' : chip.strong ? 'var(--ayna-cta-text)' : 'var(--ayna-accent-dark)',
-                    border: chip.outline ? '1px solid var(--ayna-border)' : 'none',
-                  }}
-                >
-                  {chip.label} <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, opacity: 0.75 }}>{chip.score}</span>
+            <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.5, marginBottom: 13 }}>Drawn from what matters to you in intake and what you actually keep in your ecosystem.</div>
+            {affinityChips.length ? (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
+                {affinityChips.map((chip) => {
+                  const strong = chip.score >= 70;
+                  const outline = chip.score === 0;
+                  return (
+                    <div
+                      key={chip.tag}
+                      style={{
+                        fontSize: 12.5,
+                        fontWeight: 500,
+                        padding: '8px 13px',
+                        borderRadius: 99,
+                        cursor: 'default',
+                        background: outline ? 'transparent' : strong ? 'var(--ayna-cta-bg)' : 'var(--ayna-chip-bg)',
+                        color: outline ? 'var(--ayna-text-muted)' : strong ? 'var(--ayna-cta-text)' : 'var(--ayna-accent-dark)',
+                        border: outline ? '1px solid var(--ayna-border)' : 'none',
+                      }}
+                    >
+                      {chip.label} <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, opacity: 0.75 }}>{chip.score}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)' }}>
+                {quizAnswers ? "You didn't flag any of these during intake." : 'Take the quiz to see what matters most to you.'}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div>
+          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 11 }}>Most-represented categories</div>
+          {topCategories.length ? (
+            <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 20, padding: 16, display: 'flex', flexDirection: 'column', gap: 13 }}>
+              {topCategories.map((c) => (
+                <div key={c.rank}>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 6 }}>
+                    <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, color: 'var(--ayna-accent-dark)', flex: 'none' }}>{c.rank}</div>
+                    <div style={{ flex: 1, fontWeight: 500, fontSize: 14, color: 'var(--ayna-text)' }}>{c.name}</div>
+                    <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, color: 'var(--ayna-text-muted)', flex: 'none' }}>{c.count}</div>
+                  </div>
+                  <div style={{ height: 7, borderRadius: 99, background: 'var(--ayna-border)', overflow: 'hidden' }}>
+                    <div style={{ width: `${c.pct}%`, height: '100%', background: 'var(--ayna-accent-dark)' }} />
+                  </div>
                 </div>
               ))}
             </div>
-          </div>
+          ) : (
+            <div style={{ border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: 16, fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.5 }}>
+              Save or add a product to start building this out.
+            </div>
+          )}
         </div>
 
-        <div>
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 11 }}>Most-viewed categories</div>
-          <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 20, padding: 16, display: 'flex', flexDirection: 'column', gap: 13 }}>
-            {TOP_CATEGORIES.map((c) => (
-              <div key={c.rank}>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 6 }}>
-                  <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, color: 'var(--ayna-accent-dark)', flex: 'none' }}>{c.rank}</div>
-                  <div style={{ flex: 1, fontWeight: 500, fontSize: 14, color: 'var(--ayna-text)' }}>{c.name}</div>
-                  <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, color: 'var(--ayna-text-muted)', flex: 'none' }}>{c.count}</div>
+        {lowCategories.length > 0 && (
+          <div>
+            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 11 }}>
+              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)' }}>Least-represented</div>
+              <div style={{ fontSize: 12, color: 'var(--ayna-text-muted)' }}>Blind spots</div>
+            </div>
+            <div style={{ border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: '6px 16px' }}>
+              {lowCategories.map((c, i) => (
+                <div key={c.name} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 0', borderTop: i === 0 ? 'none' : '1px solid var(--ayna-border)' }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 13.5, color: 'var(--ayna-text-muted)' }}>{c.name}</div>
+                    <div style={{ fontSize: 12, color: 'var(--ayna-text-muted)', marginTop: 2 }}>{c.note}</div>
+                  </div>
                 </div>
-                <div style={{ height: 7, borderRadius: 99, background: 'var(--ayna-border)', overflow: 'hidden' }}>
-                  <div style={{ width: `${c.pct}%`, height: '100%', background: 'var(--ayna-accent-dark)' }} />
+              ))}
+              {onBrowse && (
+                <div style={{ padding: '12px 0 14px', borderTop: '1px solid var(--ayna-border)' }}>
+                  <div onClick={onBrowse} style={{ display: 'inline-block', border: '1px solid var(--ayna-border)', color: 'var(--ayna-brown)', fontWeight: 600, fontSize: 12, padding: '8px 14px', borderRadius: 99, cursor: 'pointer' }}>Explore a blind spot</div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 11 }}>
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)' }}>Least-viewed</div>
-            <div style={{ fontSize: 12, color: 'var(--ayna-text-muted)' }}>Blind spots</div>
-          </div>
-          <div style={{ border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: '6px 16px' }}>
-            {LOW_CATEGORIES.map((c, i) => (
-              <div key={c.name} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 0', borderTop: i === 0 ? 'none' : '1px solid var(--ayna-border)' }}>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 13.5, color: 'var(--ayna-text-muted)' }}>{c.name}</div>
-                  <div style={{ fontSize: 12, color: 'var(--ayna-text-muted)', marginTop: 2 }}>{c.note}</div>
-                </div>
-                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10.5, color: 'var(--ayna-text-muted)', flex: 'none' }}>{c.count}</div>
-              </div>
-            ))}
-            <div style={{ padding: '12px 0 14px', borderTop: '1px solid var(--ayna-border)' }}>
-              <div style={{ display: 'inline-block', border: '1px solid var(--ayna-border)', color: 'var(--ayna-brown)', fontWeight: 600, fontSize: 12, padding: '8px 14px', borderRadius: 99, cursor: 'pointer' }}>Explore a blind spot</div>
+              )}
             </div>
           </div>
-        </div>
+        )}
 
       </div>
     </div>
@@ -439,23 +499,91 @@ function ShopperProfileScreen({ onBack }) {
 
 /* ----------------------- Early Stage Startups ----------------------- */
 
-const STARTUPS = [
-  { id: 'lumen', kicker: 'Cycle support', name: 'Lumen Cycle', desc: 'Two OB-GYNs building magnesium-first PMS support. Third-party tested from batch one.', tags: ['Women-owned', 'Third-party tested'], match: '91% match', founded: 'FOUNDED 2025', hero: true },
-  { id: 'fold', kicker: 'Barrier care', name: 'Fold Skincare', desc: 'Refillable barrier balm, six ingredients, made in small batches in Oakland.', tags: ['Refillable'], match: '88% match' },
-  { id: 'ada', kicker: 'Iron & energy', name: 'Ada Labs', desc: 'Gentle iron for heavy cycles. Pre-seed, 400 early testers, no retail yet.', tags: ['Pre-seed'], match: '84% match' },
-];
+function formatCategoryLabel(category) {
+  if (!category) return '';
+  return category.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+}
 
-function EarlyStageScreen({ onBack }) {
+// Same frustration -> tag vocabulary as the desktop matching logic
+// (src/data/startups.js) — Airtable's Symptom Tags were filled in against
+// this exact vocabulary. This only ranks the real Airtable-sourced startups
+// fetched below; it deliberately does not pull in the desktop's separate
+// hardcoded STARTUPS catalog, which is a different, much larger list this
+// screen was never meant to show.
+const FRUSTRATION_TAG_MAP = {
+  'Heavy flow': 'heavy-flow',
+  'Painful cramps': 'cramps',
+  'Hormonal bloating': 'bloating',
+  'Irregular cycles': 'irregular',
+  'Leaks & staining': 'leaks',
+  'General discomfort': 'discomfort',
+  'Not sure if products are safe': 'safety-concern',
+  'Recurrent UTIs': 'uti',
+  'PCOS symptoms': 'pcos',
+  'Pelvic pain': 'pelvic-floor',
+  'Menopause symptoms': 'menopause',
+  'Endometriosis': 'endometriosis',
+};
+
+function sortByRelevance(startups, quizAnswers) {
+  const userTags = new Set();
+  (quizAnswers?.frustrations || []).forEach((f) => {
+    const tag = FRUSTRATION_TAG_MAP[f];
+    if (tag) userTags.add(tag);
+  });
+  if (userTags.size === 0) return startups;
+  return [...startups].sort((a, b) => {
+    const scoreA = (a.tags || []).filter((t) => userTags.has(t)).length;
+    const scoreB = (b.tags || []).filter((t) => userTags.has(t)).length;
+    return scoreB - scoreA;
+  });
+}
+
+// "Clinical" reads on real badge data (Airtable's Tags field) rather than a
+// field that doesn't exist — there's no dedicated "clinical" flag, so this is
+// the closest honest proxy: some form of clinical/medical validation.
+const CLINICAL_BADGES = new Set(['Clinically Backed', 'Doctor-Founded', 'FDA-Cleared']);
+
+function matchesFilter(startup, filter) {
+  if (filter === 'women') return startup.womenFounded === true;
+  if (filter === 'preseed') return startup.stage === 'Pre-Seed';
+  if (filter === 'clinical') return (startup.badges || []).some((b) => CLINICAL_BADGES.has(b));
+  return true;
+}
+
+function EarlyStageScreen({ onBack, quizAnswers }) {
   const [filter, setFilter] = useState('all');
+  // Real early-stage startups synced from Airtable via api/startups.js — no
+  // hardcoded placeholder companies here; an empty/failed fetch just shows
+  // an honest empty state below rather than fake data.
+  const [startups, setStartups] = useState([]);
+  const [loadState, setLoadState] = useState('loading');
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/startups')
+      .then((res) => (res.ok ? res.json() : Promise.reject(new Error('bad response'))))
+      .then((data) => {
+        if (cancelled) return;
+        setStartups(data.startups || []);
+        setLoadState('ready');
+      })
+      .catch(() => { if (!cancelled) setLoadState('error'); });
+    return () => { cancelled = true; };
+  }, []);
+
+  const ranked = useMemo(() => sortByRelevance(startups, quizAnswers), [startups, quizAnswers]);
+  const filtered = filter === 'all' ? ranked : ranked.filter((s) => matchesFilter(s, filter));
+
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+    <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
       <BackHeader title="Early Stage" onBack={onBack} />
-      <div style={{ flex: 1, overflowY: 'auto', padding: '0 20px 30px' }}>
+      <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '0 20px 30px' }}>
         <div style={{ borderRadius: 22, padding: 20, background: 'linear-gradient(140deg,#4E3866,#242A52)', color: '#FFF9F2', position: 'relative', overflow: 'hidden', marginBottom: 20 }}>
           <div style={{ position: 'absolute', right: -50, top: -50, width: 180, height: 180, borderRadius: '50%', border: '1px solid rgba(255,255,255,.16)' }} />
           <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.4px', textTransform: 'uppercase', color: '#FFC774' }}>Founder-first</div>
-          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 25, lineHeight: 1.2, margin: '8px 0 7px', maxWidth: 250 }}>Six brands under two years old.</div>
-          <div style={{ fontSize: 12.5, color: 'rgba(255,249,242,.72)', lineHeight: 1.5, maxWidth: 265 }}>Matched to your affinities, not to ad spend. Refreshed every Friday.</div>
+          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 25, lineHeight: 1.2, margin: '8px 0 7px', maxWidth: 250 }}>Real founders, not ad spend.</div>
+          <div style={{ fontSize: 12.5, color: 'rgba(255,249,242,.72)', lineHeight: 1.5, maxWidth: 265 }}>Ranked by what you told us during intake — never by who paid for placement.</div>
         </div>
 
         <div style={{ display: 'flex', gap: 7, overflowX: 'auto', paddingBottom: 16 }}>
@@ -481,29 +609,49 @@ function EarlyStageScreen({ onBack }) {
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          {STARTUPS.map((s) =>
-            s.hero ? (
-              <div key={s.id} style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, overflow: 'hidden', cursor: 'pointer' }}>
-                <div style={{ height: 168, background: 'linear-gradient(160deg,#F3EADC,#EFE3D2)', position: 'relative' }}>
-                  <div style={{ position: 'absolute', left: 12, top: 12, background: 'rgba(255,255,255,.93)', color: '#C0761F', fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '.9px', padding: '5px 9px', borderRadius: 99 }}>{s.founded}</div>
+          {loadState === 'loading' && (
+            <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontSize: 13 }}>Loading startups…</div>
+          )}
+          {loadState === 'error' && (
+            <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontSize: 13 }}>Couldn't load startups right now — try again shortly.</div>
+          )}
+          {loadState === 'ready' && filtered.length === 0 && (
+            <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontSize: 13 }}>No startups match that filter yet.</div>
+          )}
+
+          {filtered.map((s) => {
+            const href = s.url || s.waitlistUrl;
+            const openLink = href ? () => window.open(href, '_blank', 'noopener,noreferrer') : undefined;
+            return s.featured ? (
+              <div key={s.id} onClick={openLink} style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, overflow: 'hidden', cursor: openLink ? 'pointer' : 'default' }}>
+                <div style={{ height: 168, background: s.image ? undefined : 'linear-gradient(160deg,#F3EADC,#EFE3D2)', backgroundImage: s.image ? `url(${s.image})` : undefined, backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative' }}>
+                  {s.foundedYear && (
+                    <div style={{ position: 'absolute', left: 12, top: 12, background: 'rgba(255,255,255,.93)', color: '#C0761F', fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '.9px', padding: '5px 9px', borderRadius: 99 }}>FOUNDED {s.foundedYear}</div>
+                  )}
                 </div>
                 <div style={{ padding: '15px 16px 17px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
-                    <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>{s.kicker}</div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                      <div style={{ width: 6, height: 6, borderRadius: 99, background: '#2F6B4F' }} />
-                      <div style={{ fontSize: 11, color: '#2F6B4F' }}>{s.match}</div>
-                    </div>
+                    <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>{formatCategoryLabel(s.category)}</div>
+                    {s.stage && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                        <div style={{ width: 6, height: 6, borderRadius: 99, background: '#2F6B4F' }} />
+                        <div style={{ fontSize: 11, color: '#2F6B4F' }}>{s.stage}</div>
+                      </div>
+                    )}
                   </div>
                   <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 21, lineHeight: 1.2, margin: '7px 0 6px', color: 'var(--ayna-text)' }}>{s.name}</div>
-                  <div style={{ fontSize: 13, color: 'var(--ayna-text-muted)', lineHeight: 1.5 }}>{s.desc}</div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 12 }}>
-                    {s.tags.map((t) => (
-                      <div key={t} style={{ background: 'var(--ayna-chip-bg)', color: 'var(--ayna-accent-dark)', fontSize: 11, padding: '5px 10px', borderRadius: 99 }}>{t}</div>
-                    ))}
-                  </div>
+                  <div style={{ fontSize: 13, color: 'var(--ayna-text-muted)', lineHeight: 1.5 }}>{s.description || s.tagline}</div>
+                  {s.badges?.length > 0 && (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 12 }}>
+                      {s.badges.map((t) => (
+                        <div key={t} style={{ background: 'var(--ayna-chip-bg)', color: 'var(--ayna-accent-dark)', fontSize: 11, padding: '5px 10px', borderRadius: 99 }}>{t}</div>
+                      ))}
+                    </div>
+                  )}
                   <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
-                    <div style={{ flex: 1, background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 13, padding: 11, borderRadius: 99, textAlign: 'center', cursor: 'pointer' }}>View brand</div>
+                    <div style={{ flex: 1, background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 13, padding: 11, borderRadius: 99, textAlign: 'center', cursor: 'pointer' }}>
+                      {s.productReleased ? 'View brand' : 'Join waitlist'}
+                    </div>
                     <div style={{ width: 44, border: '1px solid var(--ayna-border)', borderRadius: 99, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
                       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" strokeWidth="1.8" strokeLinecap="round" style={{ stroke: 'var(--ayna-brown)' }}><path d="M12 20s-7-4.5-7-9.4A4.1 4.1 0 0 1 12 7.6a4.1 4.1 0 0 1 7 3c0 4.9-7 9.4-7 9.4Z" /></svg>
                     </div>
@@ -511,22 +659,22 @@ function EarlyStageScreen({ onBack }) {
                 </div>
               </div>
             ) : (
-              <div key={s.id} style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, overflow: 'hidden', display: 'flex', cursor: 'pointer' }}>
-                <div style={{ width: 120, flex: 'none', background: 'linear-gradient(160deg,#F3EADC,#EFE3D2)' }} />
+              <div key={s.id} onClick={openLink} style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, overflow: 'hidden', display: 'flex', cursor: openLink ? 'pointer' : 'default' }}>
+                <div style={{ width: 120, flex: 'none', background: s.image ? undefined : 'linear-gradient(160deg,#F3EADC,#EFE3D2)', backgroundImage: s.image ? `url(${s.image})` : undefined, backgroundSize: 'cover', backgroundPosition: 'center' }} />
                 <div style={{ flex: 1, minWidth: 0, padding: '14px 15px' }}>
-                  <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>{s.kicker}</div>
+                  <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>{formatCategoryLabel(s.category)}</div>
                   <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 19, lineHeight: 1.2, margin: '6px 0 5px', color: 'var(--ayna-text)' }}>{s.name}</div>
-                  <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.45 }}>{s.desc}</div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 10 }}>
-                    {s.tags.map((t) => (
+                  <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.45 }}>{s.description || s.tagline}</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 10, flexWrap: 'wrap' }}>
+                    {(s.badges || []).slice(0, 2).map((t) => (
                       <div key={t} style={{ background: 'var(--ayna-chip-bg)', color: 'var(--ayna-accent-dark)', fontSize: 10.5, padding: '4px 9px', borderRadius: 99 }}>{t}</div>
                     ))}
-                    <div style={{ fontSize: 11, color: '#2F6B4F' }}>{s.match}</div>
+                    {s.stage && <div style={{ fontSize: 11, color: '#2F6B4F' }}>{s.stage}</div>}
                   </div>
                 </div>
               </div>
-            )
-          )}
+            );
+          })}
 
           <div style={{ border: '1px dashed var(--ayna-border)', borderRadius: 22, padding: 18, textAlign: 'center' }}>
             <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 17, marginBottom: 4, color: 'var(--ayna-text)' }}>Know a founder?</div>
@@ -548,9 +696,9 @@ function PreferencesScreen({ onBack, theme, onToggleTheme }) {
   const [channel, setChannel] = useState('push');
 
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+    <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
       <BackHeader title="Preferences" onBack={onBack} />
-      <div style={{ flex: 1, overflowY: 'auto', padding: '0 20px 30px' }}>
+      <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '0 20px 30px' }}>
         <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 26, lineHeight: 1.25, margin: '4px 0 6px', color: 'var(--ayna-heading)' }}>How Ayna reaches you.</div>
         <div style={{ fontSize: 13, color: 'var(--ayna-text-muted)', lineHeight: 1.55, marginBottom: 22 }}>Everything here is off by default and reversible.</div>
 
@@ -597,9 +745,9 @@ function SettingsScreen({ onBack, onOpenMatchDetail, onSignOut }) {
   ];
 
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+    <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
       <BackHeader title="Settings" onBack={onBack} />
-      <div style={{ flex: 1, overflowY: 'auto', padding: '8px 20px 30px' }}>
+      <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '8px 20px 30px' }}>
         <div style={{ margin: '4px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>About Ayna</div>
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
           {aboutRows.map((r, i) => (
@@ -662,9 +810,9 @@ const MATCH_FACTORS = [
 
 function HowWeMatchScreen({ onBack }) {
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#242A52', color: '#FFF9F2' }}>
+    <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', background: '#242A52', color: '#FFF9F2' }}>
       <BackHeader title="How we match you" onBack={onBack} dark />
-      <div style={{ flex: 1, overflowY: 'auto', padding: '10px 22px 34px' }}>
+      <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '10px 22px 34px' }}>
         <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 32, lineHeight: 1.15, marginBottom: 12 }}>No ad spend<br />in the math.</div>
         <div style={{ fontSize: 13.5, color: 'rgba(255,249,242,.72)', lineHeight: 1.6, marginBottom: 26 }}>Your match score is four weighted inputs. Brands cannot pay to move any of them.</div>
 
@@ -706,7 +854,20 @@ const PARENT_OF = {
   matchDetail: 'settings',
 };
 
-export default function ProfileFlow({ onClose, theme, onToggleTheme, onSignOut, name = 'You', ecosystemCount = 0, savedCount = 0 }) {
+export default function ProfileFlow({
+  onClose,
+  theme,
+  onToggleTheme,
+  onSignOut,
+  name = 'You',
+  ecosystemCount = 0,
+  savedCount = 0,
+  quizAnswers = null,
+  myProducts = [],
+  savedProducts = {},
+  onViewAlternative,
+  onBrowse,
+}) {
   const [screen, setScreen] = useState('hub');
   const initial = (name || 'Y').trim().charAt(0).toUpperCase() || 'Y';
 
@@ -728,9 +889,18 @@ export default function ProfileFlow({ onClose, theme, onToggleTheme, onSignOut, 
       />
     );
   } else if (screen === 'shopper') {
-    body = <ShopperProfileScreen onBack={goBack} />;
+    body = (
+      <ShopperProfileScreen
+        onBack={goBack}
+        quizAnswers={quizAnswers}
+        myProducts={myProducts}
+        savedProducts={savedProducts}
+        onViewAlternative={onViewAlternative ? (product) => { onClose(); onViewAlternative(product); } : undefined}
+        onBrowse={onBrowse ? () => { onClose(); onBrowse(); } : undefined}
+      />
+    );
   } else if (screen === 'startups') {
-    body = <EarlyStageScreen onBack={goBack} />;
+    body = <EarlyStageScreen onBack={goBack} quizAnswers={quizAnswers} />;
   } else if (screen === 'preferences') {
     body = <PreferencesScreen onBack={goBack} theme={theme} onToggleTheme={onToggleTheme} />;
   } else if (screen === 'settings') {

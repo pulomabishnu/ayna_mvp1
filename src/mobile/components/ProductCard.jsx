@@ -1,3 +1,6 @@
+import { getProfileMatchPercentForProduct } from '../../data/products.js';
+import MatchRing from './MatchRing.jsx';
+
 const DOT_PALETTE = ['#C0761F', '#4E3866', '#5C7A4A', '#A2603C', '#3F7A6A', '#B0537A', '#242A52', '#78716C'];
 
 function colorForCategory(category) {
@@ -30,11 +33,13 @@ function shortPrice(price) {
  * control" dense list), switched via `variant` rather than duplicated —
  * both read the same real product fields, nothing is fetched twice.
  */
-export default function ProductCard({ product, onClick, variant = 'grid' }) {
+export default function ProductCard({ product, onClick, variant = 'grid', quizAnswers = null, onOpenWhyMatch }) {
   const { name, category, price, priceDisplay, userRating, image, imageUrl, images } = product || {};
   const resolvedImage = image || imageUrl || (Array.isArray(images) ? images[0] : undefined);
   const resolvedPrice = shortPrice(price || priceDisplay);
   const color = colorForCategory(category);
+  const matchPercent = getProfileMatchPercentForProduct(product, quizAnswers);
+  const openWhyMatch = onOpenWhyMatch ? () => onOpenWhyMatch(product) : undefined;
 
   if (variant === 'list') {
     return (
@@ -53,6 +58,7 @@ export default function ProductCard({ product, onClick, variant = 'grid' }) {
       >
         <div
           style={{
+            position: 'relative',
             width: 56,
             height: 56,
             flex: 'none',
@@ -63,7 +69,11 @@ export default function ProductCard({ product, onClick, variant = 'grid' }) {
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}
-        />
+        >
+          <div style={{ position: 'absolute', right: 2, bottom: 2 }}>
+            <MatchRing percent={matchPercent} size={24} onClick={openWhyMatch} />
+          </div>
+        </div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
             <div style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 14 }}>{name}</div>
@@ -118,7 +128,11 @@ export default function ProductCard({ product, onClick, variant = 'grid' }) {
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
-      />
+      >
+        <div style={{ position: 'absolute', right: 6, bottom: 6 }}>
+          <MatchRing percent={matchPercent} size={34} onClick={openWhyMatch} />
+        </div>
+      </div>
 
       <div
         style={{

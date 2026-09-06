@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import './mobile.css';
-import { ALL_PRODUCTS, getPersonalizedProductIds, getProductById } from '../data/products.js';
+import { ALL_PRODUCTS, getEcosystemAlternatives, getPersonalizedProductIds, getProductById } from '../data/products.js';
 import { ARTICLES } from '../components/Articles.jsx';
 import { ECOSYSTEM_AREAS as REAL_ECOSYSTEM_AREAS, resolveEcosystemProductArea } from '../components/EcosystemBubbles.jsx';
 import { useSavedProducts } from './hooks/useSavedProducts.js';
 import { useThemeMode } from './hooks/useThemeMode.js';
+import { useEcosystemSession } from './hooks/useEcosystemSession.js';
 import { ECOSYSTEM_AREAS as AREA_LABELS } from './data/ecosystemAreas.js';
 import AskAynaChip from './components/AskAynaChip.jsx';
 import AskAynaModal from './components/AskAynaModal.jsx';
@@ -21,6 +22,7 @@ import RevealScreen from './screens/RevealScreen.jsx';
 import SigninScreen from './screens/SigninScreen.jsx';
 import EcosystemScreen from './screens/EcosystemScreen.jsx';
 import SavedScreen from './screens/SavedScreen.jsx';
+import WhyMatchScreen from './screens/WhyMatchScreen.jsx';
 
 const SCREENS = {
   landing: LandingScreen,
@@ -88,7 +90,11 @@ function seedEcosystemFromAnswers(quizAnswers) {
 }
 
 export default function MobileApp() {
-  const [screen, setScreen] = useState('landing');
+  const { session, update: updateSession, reset: resetSession } = useEcosystemSession();
+  const { hasEcosystem, myProducts, lastQuizAnswers, userName } = session;
+  // A returning user (persisted hasEcosystem) lands back in their ecosystem
+  // instead of the landing page every time the app reloads.
+  const [screen, setScreen] = useState(() => (session.hasEcosystem ? 'eco' : 'landing'));
   // Product/article detail render as an overlay ON TOP of whichever base
   // screen (Browse, My Ecosystem, Saved) is currently mounted, instead of
   // replacing it — `screen` never changes when one opens. That's what makes
@@ -98,11 +104,7 @@ export default function MobileApp() {
   // fresh mount. Closing the overlay just reveals it again.
   const [overlay, setOverlay] = useState(null); // { type: 'product' | 'article', item }
   const { savedMap, isSaved, toggleSaved } = useSavedProducts();
-  const [hasEcosystem, setHasEcosystem] = useState(false);
-  const [myProducts, setMyProducts] = useState([]);
-  const [lastQuizAnswers, setLastQuizAnswers] = useState(null);
-  const [userName, setUserName] = useState('You');
-  const { theme, toggleTheme } = useThemeMode();
+  const { theme, toggleTheme, setTheme } = useThemeMode();
   const [askAynaOpen, setAskAynaOpen] = useState(false);
   const [askAynaHistory, setAskAynaHistory] = useState([]);
 
@@ -119,41 +121,61 @@ export default function MobileApp() {
   // clearing a server session.
   const handleSignOut = () => {
     setOverlay(null);
-    setHasEcosystem(false);
-    setMyProducts([]);
-    setLastQuizAnswers(null);
-    setUserName('You');
+    resetSession();
     setScreen('landing');
   };
 
+  // "Add to ecosystem" from a product detail overlay — was previously wired
+  // to nothing (ProductDetailScreen called onAddToEcosystem, but MobileApp
+  // never passed it), so the button did nothing at all.
+  const handleAddToEcosystem = (product) => {
+    if (!product?.id) return;
+    updateSession((prev) => ({
+      myProducts: prev.myProducts.some((p) => p.id === product.id) ? prev.myProducts : [...prev.myProducts, product],
+      hasEcosystem: true,
+    }));
+  };
+
+  // "See swap" on a Shopper Profile safety alert — reuses the same real
+  // alternative-finding logic as the desktop ecosystem swap flow instead of
+  // just linking back to the flagged product itself.
+  const handleViewAlternative = (product) => {
+    if (!product?.id) return;
+    const tag = Array.isArray(product.tags) ? product.tags[0] : undefined;
+    const alternatives = getEcosystemAlternatives(product.id, tag, lastQuizAnswers) || [];
+    setOverlay({ type: 'product', item: alternatives[0] || product });
+  };
+
   const nav = {
-    onStartQuiz: () => setScreen('quiz'),
-    onBrowse: () => setScreen('browse'),
+    // Landing's hero gradient is a fixed brand look, unrelated to the real
+    // light/dark toggle — but leaving it should still start users on light
+    // mode rather than whatever dark/light state happened to be persisted
+    // from a prior visit.
+    onStartQuiz: () => { setTheme('light'); setScreen('quiz'); },
+    onBrowse: () => { setTheme('light'); setScreen('browse'); },
     onOpenSaved: () => setScreen('saved'),
     onGoEco: () => setScreen(hasEcosystem ? 'eco' : 'ecointro'),
     onGoLanding: () => setScreen('landing'),
     onOpenProduct: (p) => setOverlay({ type: 'product', item: p }),
     onOpenArticle: (a) => setOverlay({ type: 'article', item: a }),
     onOpenProfile: () => setOverlay({ type: 'profile' }),
+    onOpenWhyMatch: (p) => setOverlay({ type: 'why-match', item: p }),
     onAskAyna: () => setAskAynaOpen(true),
     onBack: () => setScreen('browse'),
     onRetake: () => setScreen('quiz'),
     onUpdateHealth: () => setScreen('quiz'),
     onComplete: (quizAnswers) => {
-      setMyProducts(seedEcosystemFromAnswers(quizAnswers));
-      setLastQuizAnswers(quizAnswers);
+      updateSession({ myProducts: seedEcosystemFromAnswers(quizAnswers), lastQuizAnswers: quizAnswers });
       setScreen('building');
     },
     onFinish: () => setScreen('reveal'),
     onContinue: () => setScreen('signin'),
     onCreateAccount: ({ name } = {}) => {
-      if (name) setUserName(name);
-      setHasEcosystem(true);
+      updateSession((prev) => ({ userName: name || prev.userName, hasEcosystem: true }));
       setScreen('eco');
     },
     onContinueWithApple: ({ name } = {}) => {
-      if (name) setUserName(name);
-      setHasEcosystem(true);
+      updateSession((prev) => ({ userName: name || prev.userName, hasEcosystem: true }));
       setScreen('eco');
     },
     hasEcosystem,
@@ -169,6 +191,7 @@ export default function MobileApp() {
         articles={ARTICLES}
         savedProducts={savedMap}
         onToggleSaved={toggleSaved}
+        onAddToEcosystem={handleAddToEcosystem}
         myProducts={myProducts}
         quizAnswers={lastQuizAnswers}
         name={userName}
@@ -191,6 +214,8 @@ export default function MobileApp() {
             onBack={() => setOverlay(null)}
             isSaved={isSaved(overlay.item?.id)}
             onToggleSaved={() => toggleSaved(overlay.item)}
+            isInEcosystem={myProducts.some((p) => p.id === overlay.item?.id)}
+            onAddToEcosystem={() => handleAddToEcosystem(overlay.item)}
             quizAnswers={lastQuizAnswers}
             ecosystemProducts={myProducts}
             theme={theme}
@@ -203,6 +228,16 @@ export default function MobileApp() {
           <ArticleDetailScreen article={overlay.item} onBack={() => setOverlay(null)} theme={theme} onToggleTheme={toggleTheme} />
         </div>
       )}
+      {overlay?.type === 'why-match' && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 40, background: 'var(--ayna-surface)', display: 'flex' }}>
+          <WhyMatchScreen
+            product={overlay.item}
+            quizAnswers={lastQuizAnswers}
+            onBack={() => setOverlay(null)}
+            onUpdateHealth={() => { setOverlay(null); setScreen('quiz'); }}
+          />
+        </div>
+      )}
       {overlay?.type === 'profile' && (
         <ProfileFlow
           onClose={() => setOverlay(null)}
@@ -212,6 +247,11 @@ export default function MobileApp() {
           name={userName}
           ecosystemCount={myProducts.length}
           savedCount={Object.keys(savedMap || {}).length}
+          quizAnswers={lastQuizAnswers}
+          myProducts={myProducts}
+          savedProducts={savedMap}
+          onViewAlternative={handleViewAlternative}
+          onBrowse={() => setScreen('browse')}
         />
       )}
       {!askAynaOpen && <AskAynaChip onClick={() => setAskAynaOpen(true)} />}
@@ -219,7 +259,7 @@ export default function MobileApp() {
         open={askAynaOpen}
         onClose={() => setAskAynaOpen(false)}
         profile={lastQuizAnswers}
-        onProfileUpdate={setLastQuizAnswers}
+        onProfileUpdate={(answers) => updateSession({ lastQuizAnswers: answers })}
         chatHistory={askAynaHistory}
         onChatHistoryUpdate={setAskAynaHistory}
         name={userName}

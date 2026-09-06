@@ -55,6 +55,7 @@ See `.env.example` for the full annotated list. Summary by area:
 | PostHog | `VITE_PUBLIC_POSTHOG_KEY`, `VITE_PUBLIC_POSTHOG_HOST`, `VITE_POSTHOG_INTERNAL_IDS` |
 | Rate limiting / security | `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, `OTP_PEPPER`, `ALLOWED_ORIGINS` |
 | Health data APIs (optional, keyless by default) | `NCBI_API_KEY`, `OPENFDA_API_KEY` |
+| Airtable (startup sync script only, not needed to run the app) | `AIRTABLE_API_KEY`, `AIRTABLE_BASE_ID` |
 
 ### Scripts
 
