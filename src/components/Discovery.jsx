@@ -1437,9 +1437,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     const imageStillLoading = resolvedItemImage === undefined && isPlaceholderProductImage(item.image, item.type === 'digital');
                     const matchDetails = getProductMatchDetailsForProduct(item, quizResults, healthProfile);
                     const profileMatchPercent = matchDetails.percent;
-                    const cardMatchReasons = profileMatchPercent != null
-                        ? (matchDetails.reasons || []).slice(0, 2)
-                        : [];
                     const matchPercent = profileMatchPercent != null
                         ? profileMatchPercent
                         : getExplicitMatchPercent(item);
@@ -1506,13 +1503,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                     </div>
                                     <h3 className="ayna-discover-card__name">{item.name}</h3>
                                     <span className="ayna-discover-card__price">{item.price || item.stage || ''}</span>
-                                    {cardMatchReasons.length > 0 && (
-                                        <div className="ayna-browse-card__reasons" aria-label="Why this matches you">
-                                            {cardMatchReasons.map((reason) => (
-                                                <div className="ayna-browse-card__reason" key={reason}>{reason}</div>
-                                            ))}
-                                        </div>
-                                    )}
                                 </div>
                             </a>
                             <button
