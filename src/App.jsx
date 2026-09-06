@@ -1010,7 +1010,7 @@ function App() {
     try { window.sessionStorage.setItem('ayna_force_llm_refresh', '1'); } catch (_) {}
     const supabase = getSupabaseClient();
     // Local reset is immediate; remote sync is best-effort and never blocks build.
-    if (supabase && user) await resetRemoteEcosystemBestEffort(supabase, user.id);
+    if (supabase && user) resetRemoteEcosystemBestEffort(supabase, user.id);
     posthog.capture('intake_completed', {
       concernsCount: Array.isArray(completedResults.primaryConcerns) ? completedResults.primaryConcerns.length : 0,
       conditionsCount: Array.isArray(completedResults.conditions) ? completedResults.conditions.length : 0,
@@ -1040,7 +1040,7 @@ function App() {
     try { window.sessionStorage.setItem('ayna_force_llm_refresh', '1'); } catch (_) {}
     const supabase = getSupabaseClient();
     // Local reset is immediate; remote sync is best-effort and never blocks build.
-    if (supabase && user) await resetRemoteEcosystemBestEffort(supabase, user.id);
+    if (supabase && user) resetRemoteEcosystemBestEffort(supabase, user.id);
     setCurrentView('ecosystem');
   };
 
