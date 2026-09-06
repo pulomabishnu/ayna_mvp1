@@ -600,7 +600,9 @@ PRODUCT SPECIFICITY RULES — critical for quality:
 
 TASK: Generate recommendations for this ONE concern only: "${concern}"${concernFollowup ? `\nUser context: ${JSON.stringify(concernFollowup)}` : ''}
 
-Generate exactly 3 solution tracks for this concern: (1) supplement or wellness product, (2) physical device specifically designed for this concern, (3) app or telehealth service specifically designed for this concern. If a track isn't clinically relevant, substitute another supplement or digital tool rather than using an unrelated product. Each track: 1 top product + 2 brief alternatives.
+Generate 1 to 3 clinically relevant solution tracks for this concern. Choose the product types that genuinely make the most sense for this concern and this user's profile. Do NOT force a supplement, physical product, device, app, or telehealth option just to fill a category. A supplement tier should appear only when a supplement is genuinely one of the strongest evidence-informed options for this concern. Likewise, include physical or digital/telehealth tiers only when they are relevant. Put the strongest overall fit first. Each included track should contain 1 top product + 2 brief alternatives.
+
+The JSON example below shows all three possible tier types only to demonstrate the schema. Omit any tier that is not clinically relevant; returning 1 or 2 tiers is valid.
 
 Return ONLY valid JSON — exactly this shape:
 {

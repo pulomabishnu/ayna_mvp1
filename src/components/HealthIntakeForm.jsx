@@ -346,10 +346,9 @@ function buildSnapshot(intake) {
   const lifeStageSelections = getLifeStages(intake);
   const primaryLifeStage = intake.lifeStage || lifeStageSelections[0] || '';
   const primaryConcerns = [...new Set((intake.supportSelections || []).map((item) => LEGACY_CONCERN_BY_ITEM[item]).filter(Boolean))];
-  const customConcerns = [
-    ...(intake.supportSelections || []).filter((item) => !['Nothing right now', 'Something else'].includes(item)),
-    ...(intake.supportOtherText.trim() ? [intake.supportOtherText.trim()] : []),
-  ];
+  const customConcerns = intake.supportOtherText.trim()
+    ? [intake.supportOtherText.trim()]
+    : [];
 
   const conditions = (intake.diagnosisSelections || [])
     .filter((v) => !['None that I know of', 'Prefer not to say', 'Other / not listed'].includes(v))

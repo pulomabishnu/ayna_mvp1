@@ -1486,21 +1486,35 @@ export default function MyEcosystem({
         // Never auto-generate on page load or login, even if ecosystem is empty
         if (recommendationRefreshNonce === 0) return;
         // Each concern has 3 tiers (supplement, physical, telehealth) — add each as its own ecosystem card
-        const enrichedProducts = recommendedProductsForDisplay
-            .flatMap(section =>
-                (section.tiers || []).map(tier => {
-                    const product = tier?.product;
-                    if (!product) return null;
-                    return {
-                        ...product,
-                        // Always re-derive from concern — never trust healthFunctions the LLM may have added
-                        healthFunctions: inferHealthFunctionsFromLlm(product, section.concern, tier?.subcategory || ''),
-                        _llmAlternatives: (tier.alternatives || []).filter(p => p && p.id !== product.id).slice(0, 3),
-                        _llmConcern: section.concern || '',
-                    };
-                })
-            )
-            .filter(Boolean);
+        // Coverage first: put the strongest product from every distinct concern
+        // into the ecosystem before adding a second or third product from any
+        // one concern. This keeps broad profiles from being visually dominated
+        // by several products for the same need while other selected needs are
+        // pushed to the bottom.
+        const enrichedProducts = [];
+        const seenProductIds = new Set();
+        const sectionsWithTiers = recommendedProductsForDisplay.map((section) => ({
+            section,
+            tiers: Array.isArray(section?.tiers) ? section.tiers : [],
+        }));
+        const maxTierCount = Math.max(0, ...sectionsWithTiers.map(({ tiers }) => tiers.length));
+
+        for (let tierIndex = 0; tierIndex < maxTierCount; tierIndex += 1) {
+            sectionsWithTiers.forEach(({ section, tiers }) => {
+                const tier = tiers[tierIndex];
+                const product = tier?.product;
+                if (!product?.id || seenProductIds.has(product.id)) return;
+
+                seenProductIds.add(product.id);
+                enrichedProducts.push({
+                    ...product,
+                    // Always re-derive from concern — never trust healthFunctions the LLM may have added
+                    healthFunctions: inferHealthFunctionsFromLlm(product, section.concern, tier?.subcategory || ''),
+                    _llmAlternatives: (tier.alternatives || []).filter(p => p && p.id !== product.id).slice(0, 3),
+                    _llmConcern: section.concern || '',
+                });
+            });
+        }
         if (!enrichedProducts.length) return;
         onBuildEcosystemFromLlm(enrichedProducts);
         posthog.capture('recommendation_viewed', { concernCount: recommendedProductsForDisplay.length });
