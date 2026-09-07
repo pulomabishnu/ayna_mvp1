@@ -24,3 +24,22 @@ export function isPartnerBrandItem(item) {
   const text = `${item?.brand || ''} ${item?.name || ''}`.toLowerCase();
   return PARTNER_BRAND_PATTERNS.some((re) => re.test(text));
 }
+
+// Brands where "personally spoken with" would overstate how the partnership
+// was vetted — these get the softer "personally vetted" phrasing instead.
+// Per user direction 2026-09-07 for Connect Pelvic Floor Fitness and My
+// Pelvic Bra specifically; every other partner brand keeps the default text.
+const VETTED_ONLY_PATTERNS = [/\bconnect pelvic floor fitness\b/, /\bmy pelvic bra\b/];
+
+const DEFAULT_PARTNER_DISCLOSURE =
+  "ayna has personally spoken with this brand and vetted their claims. We earn commission on purchases, and encourage buying through ayna to support women-owned businesses.";
+const VETTED_ONLY_DISCLOSURE =
+  "ayna has personally vetted this brand's claims. We earn commission on purchases, and encourage buying through ayna to support women-owned businesses.";
+
+/** The disclosure sentence shown next to the "ayna Partner" pill for a given product. */
+export function getPartnerDisclosureText(item) {
+  const text = `${item?.brand || ''} ${item?.name || ''}`.toLowerCase();
+  return VETTED_ONLY_PATTERNS.some((re) => re.test(text))
+    ? VETTED_ONLY_DISCLOSURE
+    : DEFAULT_PARTNER_DISCLOSURE;
+}

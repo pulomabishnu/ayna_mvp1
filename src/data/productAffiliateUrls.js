@@ -25,6 +25,7 @@ Dame Arc G-Spot Vibrator|B0BG8WG6FG
 Dear Kate Period Underwear|B0BNPB6Q4F
 Depend Silhouette Incontinence Underwear|B09P1RYJCG
 DivaCup Model 1|B08TLJPR71
+Ecoblossom Menstrual Cup Small Large|B086JBZW48
 Eight Sleep Pod 4|B081V5MV2K
 Elvie Pelvic Floor Trainer|B018IFNSX4
 Estroven Mood & Memory|B0091CG65G
@@ -48,7 +49,6 @@ Intimate Rose Pelvic Wand|B07HR3GL6V
 Intimate Rose Vaginal Dilators|B07BKBCFDL
 Intimina Lily Cup Size A|B079JSS8LD
 Intimina Kegel Exerciser Luna Beads|B014GMBDQ2
-June Cup Menstrual|B086JBZW48
 Kindra Daily Vaginal Lotion|B08Y671B3S
 Knix Leakproof Underwear|B0HFTVGGSP
 Kotex Security Ultra Thin|B08HT5W7PF
@@ -166,13 +166,13 @@ const PRODUCT_NAME_ALIASES = {
   'cora organic tampons': 'cora organic cotton tampons',
   'depend silhouette incontinence underwear for women maximum absorbency': 'depend silhouette incontinence underwear',
   'divacup': 'divacup model 1',
+  'ecoblossom menstrual cup small and large set': 'ecoblossom menstrual cup small large',
   'flex cup': 'flex cup menstrual',
   'flex disc': 'flex disc disposable',
   'frida mom postpartum kit': 'frida mom postpartum recovery essentials kit',
   'hello disc': 'hello disc menstrual disc',
   'inito fertility monitor': 'inito fertility monitor starter kit',
   'intimina lily cup': 'intimina lily cup size a',
-  'june cup': 'june cup menstrual',
   'maude vibe': 'maude vibe personal massager',
   'nature made iron 65 mg tablets': 'nature made iron 65 mg',
   'nature s bounty vitamin d3 5000 iu softgels': 'nature s bounty vitamin d3 5000 iu',

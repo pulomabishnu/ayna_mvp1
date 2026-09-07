@@ -4,7 +4,7 @@ import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import { getProfileMatchLabelsForProduct, getProfileMatchPercentForProduct, CATEGORY_LABELS } from '../data/products';
 import { getAynaRating } from '../data/aynaReviews';
 import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
-import { isPartnerBrandItem } from '../utils/partnerBrands';
+import { isPartnerBrandItem, getPartnerDisclosureText } from '../utils/partnerBrands';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { renderMarkdownLite } from '../utils/renderMarkdownLite';
@@ -855,7 +855,7 @@ export default function ProductModal({
             ayna Partner
           </span>{' '}
           <span className="pdp-partner-note">
-            ayna has personally spoken with this brand and vetted their claims. We earn commission on purchases, and encourage buying through ayna to support women-owned businesses.
+            {getPartnerDisclosureText(product)}
           </span>
         </p>
       )}

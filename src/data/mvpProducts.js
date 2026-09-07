@@ -378,6 +378,11 @@ export const MVP_PHYSICAL = [
     price: '$30–50',
     userRating: 4.3,
     whereToBuy: ['Amazon', 'IntimateRose.com', 'Pelvic floor PT retailers'],
+    // Ayna affiliate link (2026-09-07) — resold through My Pelvic Bra's
+    // storefront (mypelvicbra.shop) as "Intimate Rose Original Pelvic
+    // Release Wand", confirmed as the same product. affiliateUrl wins over
+    // whereToBuy for the Buy Now destination (see getBuyUrl in ProductModal.jsx).
+    affiliateUrl: 'https://pelvic-bra.myshopify.com/unhpsn',
     image: 'https://cdn.shopify.com/s/files/1/0910/9374/files/BendablePelvicWand_Amanda_1500x1500_676edf52-0bd5-4cc3-9472-9226f31cfb2a.jpg?v=1740149967',
     summary: 'Curved wand for self-release of pelvic trigger points. Used with guidance from PT for pelvic pain and tightness.',
     safety: { fdaStatus: 'Wellness device', materials: 'Silicone, plastic', recalls: 'No recalls.', allergens: 'Silicone', sideEffects: 'Mild soreness after use is common, similar to any trigger-point massage. Best used with guidance from a pelvic floor PT at first, to avoid overuse or incorrect technique.' },

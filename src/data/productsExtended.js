@@ -82,30 +82,32 @@ export const EXTENDED_PHYSICAL = [
     },
     { id: 'p-lunette-cup', name: 'Lunette Menstrual Cup', category: 'cup', type: 'physical', internal: true, healthFunctions: ['menstrual-collection'], tags: ['sustainability', 'comfort'], price: '$28 (reusable)', userRating: 4.5, whereToBuy: ['Amazon', 'Lunette.com'], image: 'https://www.lunette.com/cdn/shop/files/Sizes.jpg?v=1766745881&width=3840', summary: 'Finnish-designed, softer silicone. Great for beginners. Comes in fun colors.', safety: { fdaStatus: 'FDA-registered', materials: 'Medical-grade silicone', recalls: 'No recalls.', allergens: 'BPA-free, latex-free', sideEffects: 'Minimal irritation risk. Softer silicone may be harder to "pop open" for some users.', opinionAlerts: 'Highly rated for comfort, though some users find the stem can be a bit long and may require trimming.' }, clinicianOpinionSource: 'independent', clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.', doctorOpinion: 'Softer silicone cups may be more comfortable for first-time users; firmness affects seal and comfort.', communityReview: 'Community discussions on Reddit r/menstrualcups note Lunette\'s softer silicone and ease of folding for beginners.', communityReviewSourceUrl: 'https://www.reddit.com/r/menstrualcups/', communityReviewSourceLabel: 'Reddit r/menstrualcups', ingredients: 'Medical-grade silicone, FDA-approved colorants.', effectiveness: 'Softer design, comfortable seal. 25mL capacity.', verificationLinks: { doctor: { links: [{ url: 'https://www.mayoclinic.org/healthy-lifestyle/womens-health/in-depth/menstrual-cup/art-20045868', text: 'Mayo Clinic: Menstrual cup', summary: 'Clinical guidance on cup use.', justification: 'Mayo Clinic.' }] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/menstrualcups/', text: 'Reddit r/menstrualcups', summary: 'Community discussions.' }] } } },
     {
-        id: 'p-june-cup', name: 'June Cup', category: 'cup', type: 'physical', internal: true, healthFunctions: ['menstrual-collection'], tags: ['cost', 'sustainability'], price: '$6 (pay-what-you-can)', userRating: 4.5, whereToBuy: ['Amazon'],       // Aditi confirmed 2026-08-23: thejunecup.com/junecup.co are no longer the brand's live storefront -- Amazon is the only real place to buy it now.
-        image: '', summary: 'The most affordable menstrual cup. Pay-what-you-can model starting at $6. Making cups accessible.', safety: { fdaStatus: 'FDA-registered', materials: 'Medical-grade silicone', recalls: 'No recalls.', allergens: 'BPA-free, latex-free', sideEffects: 'Risk of leakage if the seal isn\'t perfect. Insertion discomfort during initial use.', opinionAlerts: 'Revolutionary pricing made it accessible; the brand no longer sells directly, but June Cup remains available on Amazon. Medical-grade silicone remains safe to use.' },
+        // Was "June Cup" (June went out of business). Confirmed 2026-09-07: the
+        // Amazon listing this catalog entry points to (ASIN B086JBZW48, via the
+        // 'june cup' -> 'june cup menstrual' alias in productAffiliateUrls.js)
+        // is now sold by Ecoblossom, not June — same product slot/affiliate
+        // link, different brand, so this entry was updated in place rather
+        // than removed.
+        id: 'p-june-cup', name: 'Ecoblossom Menstrual Cup (Small & Large Set)', brand: 'Ecoblossom', category: 'cup', type: 'physical', internal: false, healthFunctions: ['menstrual-collection'], tags: ['cost', 'sustainability'], price: '$15.99 (2-pack: Small & Large)', userRating: 4.3, whereToBuy: ['Amazon'],
+        image: 'https://m.media-amazon.com/images/I/71S6JSSjhVL._AC_SX679_.jpg', summary: 'A two-size menstrual cup set (one Small, one Large) in medical-grade silicone, so first-time users can try both sizes and find their fit without buying two cups separately. Rated for up to 12 hours of leak-free wear.', safety: { fdaStatus: 'FDA-registered', materials: 'Medical-grade silicone', recalls: 'No recalls found.', allergens: 'BPA-free, latex-free', sideEffects: 'Risk of leakage if the seal isn\'t perfect. Insertion/removal discomfort during initial use, as with any menstrual cup.', opinionAlerts: 'Verify current pricing and availability directly on Amazon; this listing has changed sellers before.' },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
-        doctorOpinion: 'Accessibility in menstrual care matters; low-cost medical-grade silicone cups can reduce barriers.', communityReview: 'Community discussions on Reddit r/menstrualcups note June Cup\'s affordability and comparable performance.', communityReviewSourceUrl: 'https://www.reddit.com/r/menstrualcups/', communityReviewSourceLabel: 'Reddit r/menstrualcups', ingredients: 'Medical-grade silicone.', effectiveness: 'Standard cup performance at revolutionary pricing.', badges: ['Accessibility Leader', 'Sustainable'],
+        doctorOpinion: 'A two-size cup set lets first-time users try a smaller and a larger fit without committing to one size upfront, which can help with finding a proper seal.', communityReview: 'Community discussions on Reddit r/menstrualcups and Amazon reviews (4.3 stars, 10,000+ ratings at time of writing) note the value of getting two sizes in one purchase, with mixed feedback on firmness and ease of insertion for some users.', communityReviewSourceUrl: 'https://www.reddit.com/r/menstrualcups/', communityReviewSourceLabel: 'Reddit r/menstrualcups', ingredients: 'Medical-grade silicone.', effectiveness: 'Standard cup performance; rated 4.3 stars from over 10,000 Amazon ratings at time of writing.', badges: ['Sustainable'],
         integrations: [],
         verificationLinks: {
             doctor: {
-                aiSummary: "Clinicians, including Dr. Jessica Shepherd, endorse June Cup primarily for its social mission in addressing period poverty. While clinical studies on the specific June brand are more limited than the DivaCup, the use of medical-grade silicone is a universally accepted medical standard for internal menstrual devices.",
-                links: [
-                    
-                ]
+                aiSummary: "Medical-grade silicone is the accepted material standard for internal menstrual devices. Clinical literature on this specific brand is limited; general menstrual cup guidance from bodies like Mayo Clinic and ACOG applies.",
+                links: []
             },
             scientific: {
-                aiSummary: "The June Cup is an FDA-registered medical device, meaning its manufacturing and materials (medical-grade silicone) are subject to federal oversight for biocompatibility and safety. It follows established scientific protocols for internal reusable devices.",
+                aiSummary: "This is an FDA-registered device, meaning its manufacturing and materials (medical-grade silicone) are subject to federal oversight for biocompatibility and safety. It follows established protocols for internal reusable devices.",
                 links: [
                     { url: 'https://www.fda.gov/consumers/consumer-updates/facts-tampons-and-how-use-them-safely', text: 'FDA: Menstrual Product Regulation', summary: 'FDA registration for menstrual devices including cups.', justification: 'The FDA provides official registration status for medical devices in the US.' }
                 ]
             },
             community: {
-                aiSummary: "The community highly praises June Cup for its revolutionary 'pay-what-you-can' pricing. Users report that the silicone is softer than DivaCup, which many beginners find more comfortable, though some experienced users prefer a firmer rim for easier 'popping open.'",
-                links: [
-                    { url: 'https://winnefred.com/blogs/news/june-cup-review', text: 'Independent Cup Review', summary: 'Reviewers praise the softness of the silicone, making it a comfortable choice for beginners.', justification: 'Independent reviews provide unbiased testing data on the tactile properties of the product.' }
-                ]
+                aiSummary: "Amazon reviewers frequently cite the two-size set as good value for trying cups for the first time. Feedback on firmness and ease of insertion/removal is mixed, which is typical across menstrual cup brands.",
+                links: []
             }
         }
     },
