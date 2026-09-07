@@ -185,7 +185,7 @@ function ToggleRow({ title, sub, on, onClick, first }) {
 
 /* ---------------------------- Profile hub ---------------------------- */
 
-function ProfileHub({ onOpen, onClose, onSignOut, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, onEditProfile }) {
+function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, onEditProfile }) {
   return (
     <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
       <div
@@ -301,8 +301,6 @@ function ProfileHub({ onOpen, onClose, onSignOut, name, initial, memberSince, ec
             </div>
           </div>
         ))}
-
-        <div onClick={onSignOut} style={{ textAlign: 'center', padding: '16px 0 4px', fontSize: 13, color: 'var(--ayna-text-muted)', cursor: 'pointer' }}>Sign out</div>
       </div>
     </div>
   );
@@ -2010,7 +2008,6 @@ export default function ProfileFlow({
       <ProfileHub
         onOpen={setScreen}
         onClose={onClose}
-        onSignOut={onSignOut}
         name={name}
         initial={initial}
         memberSince={authUser?.created_at ? formatMemberSince(authUser.created_at) : 'Member since 2026'}
