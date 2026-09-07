@@ -497,7 +497,7 @@ function App() {
     // production. (PROTECTED_VIEWS below is what actually guards private ones.)
     const STATIC_VIEWS = [
       'privacy-policy', 'terms-of-use', 'confirmed', 'auth-callback', 'auth-confirm',
-      'welcome', 'hero', 'quiz', 'discovery', 'waitlist', 'articles',
+      'welcome', 'hero', 'quiz', 'discovery', 'product', 'waitlist', 'articles',
       'how-it-works', 'how-we-make-money',
     ];
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
