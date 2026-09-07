@@ -736,7 +736,6 @@ export default function ProductModal({
   const handleShare = async () => {
     const payload = {
       title: `${product.name} | ayna`,
-      text: shareText,
       url: shareUrl,
     };
 
