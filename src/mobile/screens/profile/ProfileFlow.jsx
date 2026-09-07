@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ALL_PRODUCTS } from '../../../data/products.js';
+import { getSupabaseClient } from '../../../utils/supabaseClient.js';
 import { getBrandAffinity, getCategoryInsights, getSafetyAlerts } from '../../utils/shopperProfileData.js';
 import { ROUTINE_BUCKET_LABELS, ROUTINE_BUCKETS, useRoutine } from '../../hooks/useRoutine.js';
 import { getProfileCompletionPct } from '../../utils/profileCompleteness.js';
@@ -1141,7 +1142,7 @@ function PreferencesScreen({ onBack, theme, onToggleTheme }) {
 
 /* ------------------------------ Settings ------------------------------ */
 
-function SettingsScreen({ onBack, onOpenHowItWorks, onOpenAboutAyna, onOpenContact, onSignOut }) {
+function SettingsScreen({ onBack, onOpenHowItWorks, onOpenAboutAyna, onOpenContact, onOpenAccountInfo, authUser, onSignOut }) {
   const aboutRows = [
     { title: 'How it works', sub: 'Nothing reaches you unchecked.', onClick: onOpenHowItWorks },
     { title: 'About ayna', sub: 'No mystery box.', onClick: onOpenAboutAyna },
@@ -1167,9 +1168,12 @@ function SettingsScreen({ onBack, onOpenHowItWorks, onOpenAboutAyna, onOpenConta
 
         <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Your account</div>
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 0' }}>
+          <div onClick={onOpenAccountInfo} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 0', cursor: 'pointer' }}>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontWeight: 500, fontSize: 14.5, color: 'var(--ayna-text)' }}>Account information</div>
+              {authUser?.email && (
+                <div style={{ fontSize: 12, color: 'var(--ayna-text-muted)', marginTop: 2 }}>{authUser.email}</div>
+              )}
             </div>
             <ChevronIcon />
           </div>
@@ -1198,6 +1202,390 @@ function SettingsScreen({ onBack, onOpenHowItWorks, onOpenAboutAyna, onOpenConta
 
         <div onClick={onSignOut} style={{ marginTop: 22, textAlign: 'center', padding: '14px 0', border: '1px solid rgba(180,64,42,.3)', borderRadius: 99, color: '#B4402A', fontWeight: 600, fontSize: 13.5, cursor: 'pointer', background: 'var(--ayna-surface)' }}>Sign out</div>
         <div style={{ textAlign: 'center', marginTop: 16, fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.2px', color: 'var(--ayna-text-muted)' }}>AYNA 0.9.4 · BETA</div>
+      </div>
+    </div>
+  );
+}
+
+/* --------------------------- Account information --------------------------- */
+
+function formatMemberSince(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  if (Number.isNaN(d.getTime())) return '';
+  return `Member since ${d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}`;
+}
+
+// Same E.164 phone_numbers.phone_number column PhoneVerifyPanel already
+// writes to, just masked for display — never shown in full.
+function maskPhone(e164) {
+  const digits = String(e164 || '').replace(/^\+1/, '').replace(/\D/g, '');
+  if (digits.length < 10) return e164 || '';
+  return `+1 (${digits.slice(0, 3)}) •••• ${digits.slice(-2)}`;
+}
+
+// Same slugs as IntakeScreen.jsx's FSA_HSA_REVERSE — the real stored value
+// (quizAnswers.fullHealthIntake.fsaHsa), not a separately-invented field.
+const FSA_HSA_LABELS = { fsa: 'FSA', hsa: 'HSA', both: 'Both', none: 'No', unsure: 'Not sure' };
+
+function AccountRow({ title, sub, value, badge, badgeTone = 'neutral', onClick, borderTop = true, dimmed = false }) {
+  const TONES = {
+    verified: { color: '#3F6B4A', background: 'rgba(63,107,74,.14)' },
+    unverified: { color: '#B4402A', background: 'rgba(180,64,42,.1)' },
+    neutral: { color: 'var(--ayna-text-muted)', background: 'var(--ayna-chip-bg)' },
+  };
+  const tone = TONES[badgeTone] || TONES.neutral;
+  return (
+    <div
+      onClick={onClick}
+      style={{
+        display: 'flex', alignItems: 'center', gap: 12, padding: '16px 0',
+        borderTop: borderTop ? '1px solid var(--ayna-border)' : 'none',
+        cursor: onClick ? 'pointer' : 'default',
+        opacity: dimmed ? 0.55 : 1,
+      }}
+    >
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontWeight: 500, fontSize: 14.5, color: 'var(--ayna-text)' }}>{title}</div>
+        {sub && <div style={{ fontSize: 12, color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>{sub}</div>}
+      </div>
+      {value && <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', flex: 'none' }}>{value}</div>}
+      {badge && (
+        <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 8.5, letterSpacing: '.9px', color: tone.color, background: tone.background, borderRadius: 99, padding: '4px 8px', flex: 'none' }}>
+          {badge}
+        </div>
+      )}
+      {onClick && <ChevronIcon />}
+    </div>
+  );
+}
+
+// Real fields only: email/phone/password/Google identity from the actual
+// Supabase session (src/mobile/hooks/useSupabaseAuth.js), phone number read
+// straight from phone_numbers (RLS-scoped to the caller, same table
+// PhoneVerifyPanel writes to), age/zip/FSA-HSA from the real intake
+// snapshot. Session list and data export have no backend yet, so they're
+// marked COMING SOON (same convention as Subscription/Two-step verification
+// elsewhere in this file) instead of showing invented devices/exports.
+// Delete account mirrors desktop's real flow exactly (App.jsx's delete
+// modal): an email request, not a self-serve API that doesn't exist.
+function AccountInfoScreen({ onBack, authUser, name, quizAnswers, onOpenPassword, onEditProfile }) {
+  const [phoneVerifyOpen, setPhoneVerifyOpen] = useState(false);
+  const [phone, setPhone] = useState({ loading: true, number: '', verified: false });
+
+  useEffect(() => {
+    let cancelled = false;
+    const supabase = getSupabaseClient();
+    if (!supabase || !authUser?.id) {
+      setPhone({ loading: false, number: '', verified: false });
+      return undefined;
+    }
+    supabase
+      .from('phone_numbers')
+      .select('phone_number, is_verified')
+      .eq('user_id', authUser.id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (cancelled) return;
+        setPhone({ loading: false, number: data?.phone_number || '', verified: data?.is_verified === true });
+      })
+      .catch(() => { if (!cancelled) setPhone({ loading: false, number: '', verified: false }); });
+    return () => { cancelled = true; };
+  }, [authUser?.id]);
+
+  if (phoneVerifyOpen) {
+    return (
+      <PhoneVerifyPanel
+        onBack={() => setPhoneVerifyOpen(false)}
+        onVerified={(number) => {
+          setPhone({ loading: false, number, verified: true });
+          setPhoneVerifyOpen(false);
+        }}
+      />
+    );
+  }
+
+  if (!authUser) {
+    return (
+      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+        <BackHeader title="Account information" onBack={onBack} />
+        <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '8px 20px 30px' }}>
+          <div style={{ border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: 18, fontSize: 13, color: 'var(--ayna-text-muted)', lineHeight: 1.55, textAlign: 'center' }}>
+            Sign in to see your account details.
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const initial = (name || 'Y').trim().charAt(0).toUpperCase() || 'Y';
+  const identities = authUser.identities || [];
+  const hasPasswordAuth = identities.length === 0 || identities.some((i) => i.provider === 'email');
+  const googleIdentity = identities.find((i) => i.provider === 'google');
+  const intake = quizAnswers?.fullHealthIntake || null;
+  const fsaHsaLabel = intake?.fsaHsa ? (FSA_HSA_LABELS[intake.fsaHsa] || intake.fsaHsa) : null;
+
+  return (
+    <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+      <BackHeader title="Account information" onBack={onBack} />
+      <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '8px 20px 30px' }}>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '16px 18px' }}>
+          <div style={{ width: 52, height: 52, borderRadius: 99, flex: 'none', background: 'linear-gradient(140deg,#FFDCA8,#FFC774 48%,#E8843C)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Playfair Display',serif", fontSize: 20, color: '#3A2410' }}>{initial}</div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 20, lineHeight: 1.2, color: 'var(--ayna-heading)' }}>{name || 'You'}</div>
+            {authUser.created_at && (
+              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-text-muted)', marginTop: 4 }}>{formatMemberSince(authUser.created_at)}</div>
+            )}
+          </div>
+        </div>
+
+        <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Login &amp; contact</div>
+        <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
+          <AccountRow
+            borderTop={false}
+            title="Email"
+            sub={authUser.email}
+            badge={authUser.email_confirmed_at ? 'VERIFIED' : 'UNVERIFIED'}
+            badgeTone={authUser.email_confirmed_at ? 'verified' : 'unverified'}
+          />
+          <AccountRow
+            title="Phone number"
+            sub={phone.loading ? 'Checking…' : phone.number ? maskPhone(phone.number) : 'Not added yet'}
+            badge={phone.loading ? undefined : phone.number ? (phone.verified ? 'VERIFIED' : 'UNVERIFIED') : undefined}
+            badgeTone={phone.verified ? 'verified' : 'unverified'}
+            onClick={() => setPhoneVerifyOpen(true)}
+          />
+          {hasPasswordAuth && (
+            <AccountRow title="Password" sub="Change your password" onClick={onOpenPassword} />
+          )}
+          {googleIdentity && (
+            <AccountRow title="Google" sub={`Connected · ${googleIdentity.identity_data?.email || authUser.email || ''}`} />
+          )}
+        </div>
+        <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', lineHeight: 1.5, marginTop: 9, padding: '0 4px' }}>
+          Phone verification unlocks text alerts as a delivery channel — your email{googleIdentity ? ' or Google login' : ''} is what signs you in either way.
+        </div>
+
+        <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>About you</div>
+        <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
+          <AccountRow borderTop={false} title="Name" value={name || undefined} onClick={onEditProfile} />
+          <AccountRow title="Age" value={intake?.age ? String(intake.age) : 'Not set'} onClick={onEditProfile} />
+          <AccountRow title="Zip code" value={intake?.zipcode || 'Not set'} onClick={onEditProfile} />
+          <AccountRow title="FSA / HSA account" sub="We'll show the lower price you'd pay." value={fsaHsaLabel || 'Not set'} onClick={onEditProfile} />
+        </div>
+        <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', lineHeight: 1.5, marginTop: 9, padding: '0 4px' }}>
+          From your intake answers — tap any of these to update your health profile.
+        </div>
+
+        <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Security</div>
+        <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
+          <AccountRow borderTop={false} dimmed title="Where you're signed in" sub="Session history isn't tracked yet." badge="COMING SOON" />
+          <AccountRow dimmed title="Two-step verification" sub="Arrives with phone verification." badge="COMING SOON" />
+        </div>
+
+        <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Your data</div>
+        <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
+          <AccountRow borderTop={false} dimmed title="Download a copy" sub="Intake answers, uploads, saved products." badge="COMING SOON" />
+          <a
+            href="mailto:puloma@aynahealth.co?subject=Account%20Deletion%20Request"
+            style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 0', borderTop: '1px solid var(--ayna-border)', textDecoration: 'none' }}
+          >
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontWeight: 500, fontSize: 14.5, color: '#B4402A' }}>Delete account</div>
+              <div style={{ fontSize: 12, color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>Removes your profile and health answers.</div>
+            </div>
+            <ExternalLinkIcon />
+          </a>
+        </div>
+
+        <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 14, padding: '0 4px' }}>
+          Questions about your account? Email <a href="mailto:puloma@aynahealth.co" style={{ color: 'var(--ayna-brown)' }}>puloma@aynahealth.co</a>.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------- Password ------------------------------- */
+
+function getPasswordStrength(pw) {
+  const hasDigitOrSymbol = /[0-9]/.test(pw) || /[^A-Za-z0-9]/.test(pw);
+  const hasDigitAndSymbol = /[0-9]/.test(pw) && /[^A-Za-z0-9]/.test(pw);
+  if (pw.length >= 12 && hasDigitAndSymbol) return 3;
+  if (pw.length >= 8 && hasDigitOrSymbol) return 2;
+  if (pw.length >= 8) return 1;
+  return 0;
+}
+
+const PASSWORD_ERROR_MESSAGES = {
+  invalid_credentials: 'That current password is wrong.',
+  weak_password: 'Choose a stronger password (at least 8 characters).',
+  same_password: "That's already your password — try a new one.",
+  over_request_rate_limit: 'Too many attempts. Please try again in a bit.',
+};
+
+function friendlyPasswordError(code) {
+  return PASSWORD_ERROR_MESSAGES[code] || 'Something went wrong. Please try again.';
+}
+
+// Real Supabase auth calls, not a mock form: the current-password field is
+// verified with a real signInWithPassword() (Supabase's client SDK has no
+// separate "check password" call) before updateUser() actually changes it.
+// isRecovery covers the "Forgot your current password?" link's real
+// resetPasswordForEmail() flow: clicking the emailed link fires a real
+// PASSWORD_RECOVERY auth event, which is when there's no "current password"
+// to ask for at all.
+function PasswordScreen({ onBack, authUser }) {
+  const [isRecovery, setIsRecovery] = useState(false);
+  const [current, setCurrent] = useState('');
+  const [next, setNext] = useState('');
+  const [confirm, setConfirm] = useState('');
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNext, setShowNext] = useState(false);
+  const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [done, setDone] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
+
+  useEffect(() => {
+    const supabase = getSupabaseClient();
+    if (!supabase) return undefined;
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'PASSWORD_RECOVERY') setIsRecovery(true);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const strength = getPasswordStrength(next);
+  const canSubmit = (isRecovery || current.length > 0) && next.length >= 8 && next === confirm && !saving;
+
+  const handleSubmit = async () => {
+    if (!canSubmit) return;
+    setError('');
+    setSaving(true);
+    try {
+      const supabase = getSupabaseClient();
+      if (!supabase) throw new Error('Sign-in is not configured right now.');
+      if (!isRecovery) {
+        const { error: signInError } = await supabase.auth.signInWithPassword({ email: authUser?.email, password: current });
+        if (signInError) {
+          const err = new Error(signInError.message);
+          err.code = 'invalid_credentials';
+          throw err;
+        }
+      }
+      const { error: updateError } = await supabase.auth.updateUser({ password: next });
+      if (updateError) throw updateError;
+      setDone(true);
+    } catch (e) {
+      setError(friendlyPasswordError(e.code || e.message));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleForgot = async () => {
+    setError('');
+    try {
+      const supabase = getSupabaseClient();
+      if (!supabase || !authUser?.email) throw new Error('no_email');
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(authUser.email, {
+        redirectTo: `${window.location.origin}/mobile-preview`,
+      });
+      if (resetError) throw resetError;
+      setResetSent(true);
+    } catch {
+      setError('Could not send a reset email right now. Please try again.');
+    }
+  };
+
+  if (done) {
+    return (
+      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+        <BackHeader title="Password" onBack={onBack} />
+        <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '40px 20px', textAlign: 'center' }}>
+          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 22, marginBottom: 10, color: 'var(--ayna-heading)' }}>Password updated.</div>
+          <div style={{ fontSize: 13.5, color: 'var(--ayna-text-muted)', lineHeight: 1.55 }}>You're signed in on this device with the new password.</div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+      <BackHeader title="Password" onBack={onBack} />
+      <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '0 20px 30px' }}>
+        <div style={{ fontSize: 13.5, lineHeight: 1.6, color: 'var(--ayna-text-muted)', marginBottom: 20 }}>
+          {isRecovery ? "You're resetting your password from the link we emailed you." : 'Enter your current password, then choose a new one.'}
+        </div>
+
+        <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: 18, display: 'flex', flexDirection: 'column', gap: 15 }}>
+          {!isRecovery && (
+            <div>
+              <div style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--ayna-text-muted)', marginBottom: 7 }}>Current password</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, border: '1px solid var(--ayna-border)', borderRadius: 12, background: 'var(--ayna-bg-alt)', padding: '13px 14px' }}>
+                <input
+                  type={showCurrent ? 'text' : 'password'}
+                  value={current}
+                  onChange={(e) => setCurrent(e.target.value)}
+                  style={{ flex: 1, minWidth: 0, border: 'none', outline: 'none', background: 'none', fontSize: 15, color: 'var(--ayna-text)' }}
+                />
+                <div onClick={() => setShowCurrent((v) => !v)} style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--ayna-brown)', cursor: 'pointer', flex: 'none' }}>{showCurrent ? 'Hide' : 'Show'}</div>
+              </div>
+            </div>
+          )}
+          <div>
+            <div style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--ayna-text-muted)', marginBottom: 7 }}>New password</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, border: '1px solid var(--ayna-border)', borderRadius: 12, background: 'var(--ayna-bg-alt)', padding: '13px 14px' }}>
+              <input
+                type={showNext ? 'text' : 'password'}
+                value={next}
+                onChange={(e) => setNext(e.target.value)}
+                placeholder="At least 8 characters"
+                style={{ flex: 1, minWidth: 0, border: 'none', outline: 'none', background: 'none', fontSize: 15, color: 'var(--ayna-text)' }}
+              />
+              <div onClick={() => setShowNext((v) => !v)} style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--ayna-brown)', cursor: 'pointer', flex: 'none' }}>{showNext ? 'Hide' : 'Show'}</div>
+            </div>
+            {next.length > 0 && (
+              <>
+                <div style={{ display: 'flex', gap: 5, marginTop: 9 }}>
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} style={{ flex: 1, height: 4, borderRadius: 99, background: strength >= i ? '#C0761F' : 'var(--ayna-border)' }} />
+                  ))}
+                </div>
+                <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', marginTop: 7 }}>
+                  {strength < 2 ? 'Add a number or symbol to make it stronger.' : strength < 3 ? 'Longer, with a number and a symbol, is stronger still.' : 'Strong password.'}
+                </div>
+              </>
+            )}
+          </div>
+          <div>
+            <div style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--ayna-text-muted)', marginBottom: 7 }}>Confirm new password</div>
+            <input
+              type={showNext ? 'text' : 'password'}
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+              placeholder="Re-enter it"
+              style={{ width: '100%', boxSizing: 'border-box', border: '1px solid var(--ayna-border)', borderRadius: 12, background: 'var(--ayna-bg-alt)', padding: '13px 14px', fontSize: 15, color: 'var(--ayna-text)', outline: 'none' }}
+            />
+          </div>
+          {error && <div style={{ color: '#B4402A', fontSize: 12.5 }}>{error}</div>}
+          <div
+            onClick={handleSubmit}
+            style={{ background: canSubmit ? 'var(--ayna-cta-bg)' : 'var(--ayna-border)', color: canSubmit ? 'var(--ayna-cta-text)' : 'var(--ayna-text-muted)', textAlign: 'center', padding: 15, borderRadius: 99, fontWeight: 600, fontSize: 14.5, cursor: canSubmit ? 'pointer' : 'not-allowed' }}
+          >
+            {saving ? 'Updating…' : 'Update password'}
+          </div>
+        </div>
+
+        {!isRecovery && (
+          resetSent ? (
+            <div style={{ textAlign: 'center', marginTop: 18, fontSize: 13, color: 'var(--ayna-text-muted)' }}>Check your email for a reset link.</div>
+          ) : (
+            <div onClick={handleForgot} style={{ textAlign: 'center', marginTop: 18, fontSize: 13, color: 'var(--ayna-brown)', fontWeight: 600, cursor: 'pointer' }}>Forgot your current password?</div>
+          )
+        )}
       </div>
     </div>
   );
@@ -1367,14 +1755,6 @@ const ADVISORS = [
   { name: 'Nishtha Kaushik', title: 'Advisor', photo: '/advisors/nishtha-kaushik.png' },
   { name: 'Navneet Kaur', title: 'Advisor', photo: '/advisors/navneet-kaur.png' },
 ];
-// Not yet a confirmed advisor — kept separate rather than implying a
-// relationship that isn't official yet, same as About.jsx.
-const ADVISOR_IN_DISCUSSION = {
-  name: 'Dr. Denise Howard',
-  title: 'Chief of OBGYN, NY-Presbyterian Brooklyn Methodist',
-  photo: '/advisors/denise-howard.png',
-};
-
 function advisorInitials(name) {
   return name.replace(/^Dr\.\s*/i, '').split(' ').filter(Boolean).map((w) => w[0]).slice(0, 2).join('').toUpperCase();
 }
@@ -1486,14 +1866,6 @@ function AboutAynaScreen({ onBack }) {
               <div style={{ fontSize: 11, lineHeight: 1.4, color: 'var(--ayna-text-muted)', marginTop: 3 }}>{advisor.title}</div>
             </div>
           ))}
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 18, border: '1px dashed var(--ayna-border)', borderRadius: 16, padding: 14 }}>
-          <AdvisorAvatar advisor={ADVISOR_IN_DISCUSSION} />
-          <div style={{ fontSize: 12, lineHeight: 1.5, color: 'var(--ayna-text-muted)' }}>
-            <strong style={{ color: 'var(--ayna-text)' }}>{ADVISOR_IN_DISCUSSION.name}</strong> — {ADVISOR_IN_DISCUSSION.title}
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '.8px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)', marginTop: 4 }}>In conversation with ayna, not yet a confirmed advisor</div>
-          </div>
         </div>
 
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 20, padding: '19px 18px', marginTop: 26 }}>
@@ -1635,6 +2007,8 @@ const PARENT_OF = {
   howItWorks: 'settings',
   aboutAyna: 'settings',
   contact: 'settings',
+  accountInfo: 'settings',
+  password: 'accountInfo',
 };
 
 export default function ProfileFlow({
@@ -1642,6 +2016,7 @@ export default function ProfileFlow({
   theme,
   onToggleTheme,
   onSignOut,
+  authUser = null,
   name = 'You',
   ecosystemCount = 0,
   savedCount = 0,
@@ -1669,7 +2044,7 @@ export default function ProfileFlow({
         onSignOut={onSignOut}
         name={name}
         initial={initial}
-        memberSince="Member since 2026"
+        memberSince={authUser?.created_at ? formatMemberSince(authUser.created_at) : 'Member since 2026'}
         ecosystemCount={ecosystemCount}
         savedCount={savedCount}
         profileFilledPct={profileFilledPct}
@@ -1701,6 +2076,8 @@ export default function ProfileFlow({
         onOpenHowItWorks={() => setScreen('howItWorks')}
         onOpenAboutAyna={() => setScreen('aboutAyna')}
         onOpenContact={() => setScreen('contact')}
+        onOpenAccountInfo={() => setScreen('accountInfo')}
+        authUser={authUser}
         onSignOut={onSignOut}
       />
     );
@@ -1710,6 +2087,19 @@ export default function ProfileFlow({
     body = <AboutAynaScreen onBack={goBack} />;
   } else if (screen === 'contact') {
     body = <ContactScreen onBack={goBack} />;
+  } else if (screen === 'accountInfo') {
+    body = (
+      <AccountInfoScreen
+        onBack={goBack}
+        authUser={authUser}
+        name={name}
+        quizAnswers={quizAnswers}
+        onOpenPassword={() => setScreen('password')}
+        onEditProfile={onEditProfile ? () => { onClose(); onEditProfile(); } : undefined}
+      />
+    );
+  } else if (screen === 'password') {
+    body = <PasswordScreen onBack={goBack} authUser={authUser} />;
   }
 
   return (

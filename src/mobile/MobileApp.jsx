@@ -311,6 +311,7 @@ export default function MobileApp() {
           theme={theme}
           onToggleTheme={toggleTheme}
           onSignOut={handleSignOut}
+          authUser={authUser}
           name={userName}
           ecosystemCount={myProducts.length}
           savedCount={Object.keys(savedMap || {}).length}
