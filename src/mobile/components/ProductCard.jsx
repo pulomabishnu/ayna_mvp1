@@ -56,7 +56,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
   const openWhyMatch = onOpenWhyMatch ? () => onOpenWhyMatch(product) : undefined;
   // Real brand-partnership flag (src/utils/partnerBrands.js) — same
   // pattern-match desktop's Discovery.jsx uses for its "Affiliate link"
-  // card badge, just labeled "ayna's favs" here per product's request.
+  // card badge, just labeled "ayna Favorite" here per product's request.
   const isPartner = isPartnerBrandItem(product);
 
   if (variant === 'list') {
@@ -103,7 +103,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6 }}>
             {isPartner && (
-              <div style={{ ...PARTNER_BADGE_STYLE, position: 'static', padding: '3px 7px' }}>ayna's favs</div>
+              <div style={{ ...PARTNER_BADGE_STYLE, position: 'static', padding: '3px 7px' }}>ayna Favorite</div>
             )}
             {userRating != null && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -150,7 +150,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
           backgroundPosition: 'center',
         }}
       >
-        {isPartner && <div style={{ ...PARTNER_BADGE_STYLE, top: 10, left: 10 }}>ayna's favs</div>}
+        {isPartner && <div style={{ ...PARTNER_BADGE_STYLE, top: 10, left: 10 }}>ayna Favorite</div>}
         <div style={{ position: 'absolute', right: 6, bottom: 6 }}>
           <MatchRing percent={matchPercent} size={34} onClick={openWhyMatch} />
         </div>
