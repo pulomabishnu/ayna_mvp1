@@ -183,7 +183,6 @@ function reconstructIntakeFromSnapshot(snapshot) {
   return next;
 }
 
-const SECTION_ORDER = ['core', 'support', 'safety', 'history', 'preferences', 'trust'];
 const SECTION_LABELS = {
   core: 'Core profile', support: 'What you are looking for', safety: 'Health & safety',
   history: 'What you have tried', preferences: 'Shopping preferences', trust: 'What matters to you',
@@ -509,48 +508,37 @@ function rankedSuggestions(query, options = [], limit = 6) {
 }
 
 /* ---------------------------- Shared style tokens ---------------------------- */
-// Colors lifted directly from the real desktop redesign's CSS-in-JS block so
-// the mobile version matches it, not the app's older 3-stop intake gradient.
+// Values from the intake design reference (Ayna_Intake_Flow.html), which
+// turned out to already be the app's own --ayna-* palette (surface, border,
+// accent-dark, peach, chip-bg, brown, navy, text-faint) — reused as CSS vars
+// here rather than re-hardcoded, so this screen gets the app's real dark
+// mode for free instead of staying permanently light like the mockup frame.
+// SELECTED_TEXT (#8A5A1E) is the one color the reference uses that has no
+// existing --ayna-* var; it's a fixed accent-on-peach text tone, not
+// intended to invert in dark mode (the reference's own dark-mode notes only
+// redefine the surface/border/accent tokens, not this one).
+const NAVY = 'var(--ayna-navy)';
+const CARD_BG = 'var(--ayna-surface)';
+const ROW_BORDER = 'var(--ayna-border)';
+const ACCENT_BORDER = 'var(--ayna-accent-dark)';
+const ACCENT_BG = 'var(--ayna-peach)';
+const PANEL_BG = 'var(--ayna-chip-bg)';
+const MUTED = 'var(--ayna-text-faint)';
+const LABEL_GOLD = 'var(--ayna-brown)';
+const SELECTED_TEXT = '#8A5A1E';
+const INK = 'var(--ayna-text)';
+const BODY_TEXT = 'var(--ayna-text-muted)';
 
-const NAVY = '#2A1F4E';
-const CARD_BG = '#FFF9F2';
-const ACCENT_BORDER = '#E8843C';
-const ACCENT_BG = '#FFF3DD';
-const MUTED = '#8c8078';
-const LABEL_GOLD = '#FFDCA8';
-
-const cardShadow = '0 10px 22px -16px rgba(0,0,0,.4)';
+const cardShadow = '0 1px 3px rgba(41,37,36,.04)';
 
 /* ------------------------------ Shared widgets ------------------------------ */
 
-function SectionIcon({ section }) {
-  const paths = {
-    core: 'M12 21s-7.5-4.6-10-9.3C.3 8 2 4 6 4c2 0 3.5 1.2 4 2.8.5-1.6 2-2.8 4-2.8 4 0 5.7 4 4 7.7C19.5 16.4 12 21 12 21Z',
-    support: null,
-    safety: 'M12 3 5 6v6c0 5 3 8 7 9 4-1 7-4 7-9V6l-7-3Z',
-    history: 'M12 7v5l3 3',
-    preferences: 'M6 8h12l-1 12H7L6 8Z',
-    trust: null,
-  };
-  const bg = { core: '#FFF3DD', support: '#EAEBF3', preferences: '#EAEBF3', trust: '#EAEBF3', safety: '#F1ECF4', history: '#FBEAD3' }[section];
-  const stroke = { core: '#C0761F', support: '#242A52', preferences: '#242A52', trust: '#242A52', safety: '#4E3866', history: '#8A5A1E' }[section];
-  return (
-    <div style={{ width: 52, height: 52, borderRadius: 15, background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 18px', boxShadow: '0 10px 24px -12px rgba(0,0,0,.35)' }}>
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-        {section === 'support' ? (<><circle cx="12" cy="12" r="8.2" /><circle cx="12" cy="12" r="4.4" /><circle cx="12" cy="12" r="1" /></>) :
-         section === 'history' ? (<><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 3" /></>) :
-         section === 'safety' ? (<><path d={paths.safety} /><path d="M9 12l2 2 4-4" /></>) :
-         section === 'preferences' ? (<><path d={paths.preferences} /><path d="M9 8V6a3 3 0 0 1 6 0v2" /></>) :
-         section === 'trust' ? (<><circle cx="12" cy="12" r="8.2" /><path d="M8 12h8M12 8v8" /></>) :
-         (<path d={paths.core} />)}
-      </svg>
-    </div>
-  );
-}
-
+// 2-column tile grid (design pattern B1/E1) — no per-option icon, since the
+// reference's decorative icons don't map to any real per-option data here
+// and inventing one per option would be guessing, not porting the design.
 function ChoiceGrid({ items, selected = [], onToggle }) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 12 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 9 }}>
       {items.map((item) => {
         const on = selected.includes(item);
         return (
@@ -558,13 +546,19 @@ function ChoiceGrid({ items, selected = [], onToggle }) {
             key={item}
             onClick={() => onToggle(item)}
             style={{
-              cursor: 'pointer', position: 'relative', display: 'flex', alignItems: 'center', minHeight: 60,
-              padding: '16px 40px 16px 16px', borderRadius: 16, background: on ? ACCENT_BG : CARD_BG,
-              border: '1.5px solid ' + (on ? ACCENT_BORDER : 'transparent'), boxShadow: cardShadow, color: NAVY,
+              cursor: 'pointer', position: 'relative', minHeight: 60, display: 'flex', alignItems: 'center',
+              padding: '13px 26px 13px 13px', borderRadius: 18,
+              background: on ? ACCENT_BG : CARD_BG,
+              border: '1.5px solid ' + (on ? ACCENT_BORDER : ROW_BORDER),
+              boxShadow: on ? '0 4px 14px rgba(232,169,79,.2)' : cardShadow,
             }}
           >
-            <span style={{ fontSize: 14, fontWeight: 500, lineHeight: 1.35 }}>{item}</span>
-            <span style={{ position: 'absolute', top: 14, right: 14, width: 19, height: 19, borderRadius: '50%', border: '1.5px solid ' + (on ? NAVY : 'rgba(42,31,78,.25)'), background: on ? NAVY : 'transparent' }} />
+            <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 12.5, lineHeight: 1.25, color: on ? SELECTED_TEXT : INK }}>{item}</span>
+            {on && (
+              <span style={{ position: 'absolute', top: 9, right: 9, width: 16, height: 16, borderRadius: 99, background: ACCENT_BORDER, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12.5l5.5 5.5L20 6.5" /></svg>
+              </span>
+            )}
           </div>
         );
       })}
@@ -572,25 +566,30 @@ function ChoiceGrid({ items, selected = [], onToggle }) {
   );
 }
 
-function RowChoiceList({ items, selected = [], onToggle }) {
+// Chip spec (design pattern C1/G1) — flex-wrapped pills, not vertical rows.
+// Used both flat (conditions) and grouped under a label (SearchableGroups).
+function RowChoiceList({ items, selected = [], onToggle, exclusiveValues = [] }) {
   return (
-    <div>
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
       {items.map((item) => {
         const on = selected.includes(item);
+        const exclusive = exclusiveValues.includes(item);
         return (
           <div
             key={item}
             onClick={() => onToggle(item)}
             style={{
-              width: '100%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14,
-              padding: '15px 16px', borderRadius: 16, background: on ? ACCENT_BG : CARD_BG,
-              border: '1.5px solid ' + (on ? ACCENT_BORDER : 'transparent'), boxShadow: cardShadow, marginBottom: 9, color: NAVY,
+              cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap',
+              fontFamily: "'DM Sans',sans-serif", fontSize: 12.5, lineHeight: 1, padding: '10px 14px', borderRadius: 99,
+              fontWeight: on ? 600 : 500,
+              background: on ? ACCENT_BG : (exclusive ? PANEL_BG : CARD_BG),
+              color: on ? SELECTED_TEXT : (exclusive ? MUTED : INK),
+              border: '1.5px solid ' + (on ? ACCENT_BORDER : ROW_BORDER),
+              boxShadow: on ? '0 2px 8px rgba(232,169,79,.22)' : 'none',
             }}
           >
-            <span style={{ fontSize: 14, fontWeight: 500, lineHeight: 1.35 }}>{item}</span>
-            <span style={{ width: 21, height: 21, borderRadius: 6, flex: 'none', border: '1.5px solid ' + (on ? NAVY : 'rgba(42,31,78,.25)'), background: on ? NAVY : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 12, fontWeight: 700 }}>
-              {on ? '✓' : ''}
-            </span>
+            {on && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={SELECTED_TEXT} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12.5l5.5 5.5L20 6.5" /></svg>}
+            {item}
           </div>
         );
       })}
@@ -598,22 +597,44 @@ function RowChoiceList({ items, selected = [], onToggle }) {
   );
 }
 
-function Pills({ options, selected, onToggle, left, compact }) {
+// Shared search-bar chrome (design rule: "search on every list over ~12
+// options") — same pill-shaped input used by SearchableGroups, TokenInput
+// and ProductHistoryBuilder, factored out so conditions/avoidIngredients
+// (previously ungrouped flat lists with no filtering at all) can use it too.
+function SearchBar({ value, onChange, placeholder }) {
   return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: compact ? 8 : 12, justifyContent: left ? 'flex-start' : 'center' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 9, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, borderRadius: 99, padding: '11px 14px', marginBottom: 14 }}>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
+      <input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 13, minWidth: 0 }} />
+    </div>
+  );
+}
+
+// Same chip spec as RowChoiceList — kept as a separate component since
+// callers pass a single non-array `selected` list built differently (some
+// single-select via toggleExclusive, some genuinely multi), and the
+// `compact`/`left` nested-context variants (inside ProductHistoryBuilder)
+// need a smaller size without becoming a third visual language.
+function Pills({ options, selected, onToggle, left, compact, exclusiveValues = [] }) {
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: compact ? 6 : 7, justifyContent: left ? 'flex-start' : 'center' }}>
       {options.map((opt) => {
         const on = selected.includes(opt);
+        const exclusive = exclusiveValues.includes(opt);
         return (
           <div
             key={opt}
             onClick={() => onToggle(opt)}
             style={{
-              cursor: 'pointer', padding: compact ? '8px 11px' : '12px 19px', borderRadius: 999,
-              background: on ? NAVY : CARD_BG, color: on ? '#fff' : NAVY,
-              border: '1.5px solid ' + (on ? NAVY : 'rgba(42,31,78,.1)'),
-              fontSize: compact ? 11.5 : 13.5, fontWeight: 600, boxShadow: on ? 'none' : '0 8px 16px -12px rgba(0,0,0,.35)',
+              cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap',
+              fontFamily: "'DM Sans',sans-serif", padding: compact ? '8px 11px' : '10px 14px', borderRadius: 99,
+              background: on ? ACCENT_BG : (exclusive ? PANEL_BG : CARD_BG), color: on ? SELECTED_TEXT : (exclusive ? MUTED : INK),
+              border: '1.5px solid ' + (on ? ACCENT_BORDER : ROW_BORDER),
+              fontSize: compact ? 11.5 : 12.5, fontWeight: on ? 600 : 500,
+              boxShadow: on ? '0 2px 8px rgba(232,169,79,.22)' : 'none',
             }}
           >
+            {on && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={SELECTED_TEXT} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12.5l5.5 5.5L20 6.5" /></svg>}
             {opt}
           </div>
         );
@@ -622,9 +643,12 @@ function Pills({ options, selected, onToggle, left, compact }) {
   );
 }
 
+// Vertical single-select radio list (design pattern F1) — the workhorse
+// pattern for every Yes/No/Not-sure-style question, replacing the old
+// horizontal segmented-button bar.
 function Segmented({ options, value, onChange }) {
   return (
-    <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
       {options.map((opt) => {
         const on = value === opt;
         return (
@@ -632,13 +656,17 @@ function Segmented({ options, value, onChange }) {
             key={opt}
             onClick={() => onChange(opt)}
             style={{
-              cursor: 'pointer', flex: '1 1 100px', minWidth: 100, textAlign: 'center', padding: '15px 11px', borderRadius: 16,
-              background: on ? NAVY : CARD_BG, color: on ? '#fff' : NAVY,
-              border: '1.5px solid ' + (on ? NAVY : 'rgba(42,31,78,.1)'), fontSize: 13.5, fontWeight: 600,
-              boxShadow: on ? 'none' : '0 10px 22px -16px rgba(0,0,0,.4)',
+              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 11, padding: '13px 15px', borderRadius: 16,
+              background: on ? ACCENT_BG : CARD_BG, border: '1.5px solid ' + (on ? ACCENT_BORDER : ROW_BORDER),
             }}
           >
-            {opt}
+            <span style={{
+              width: 19, height: 19, borderRadius: 99, flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: on ? ACCENT_BORDER : 'transparent', border: '1.5px solid ' + (on ? ACCENT_BORDER : ROW_BORDER),
+            }}>
+              {on && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12.5l5.5 5.5L20 6.5" /></svg>}
+            </span>
+            <span style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 13.5, lineHeight: 1.35, fontWeight: on ? 600 : 400, color: on ? SELECTED_TEXT : INK }}>{opt}</span>
           </div>
         );
       })}
@@ -654,7 +682,7 @@ function TextInput({ value, onChange, placeholder, inputMode, maxLength }) {
       placeholder={placeholder}
       inputMode={inputMode}
       maxLength={maxLength}
-      style={{ width: '100%', boxSizing: 'border-box', padding: '14px 16px', borderRadius: 14, border: 'none', fontSize: 14, color: NAVY, background: CARD_BG, boxShadow: '0 8px 18px -14px rgba(0,0,0,.5)', outline: 'none' }}
+      style={{ width: '100%', boxSizing: 'border-box', padding: '14px 16px', borderRadius: 14, border: '1.5px solid ' + ROW_BORDER, fontSize: 14, color: INK, background: CARD_BG, outline: 'none' }}
     />
   );
 }
@@ -662,78 +690,151 @@ function TextInput({ value, onChange, placeholder, inputMode, maxLength }) {
 function OtherBox({ label, value, onChange, placeholder }) {
   return (
     <div style={{ marginTop: 16, textAlign: 'left' }}>
-      <div style={{ fontSize: 12, fontWeight: 600, color: LABEL_GOLD, marginBottom: 9 }}>{label}</div>
+      <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.1px', textTransform: 'uppercase', color: LABEL_GOLD, marginBottom: 9 }}>{label}</div>
       <TextInput value={value} onChange={onChange} placeholder={placeholder} />
     </div>
   );
 }
 
+const AGE_MIN = 13;
+const AGE_MAX = 90;
+
+// Pattern A2: a real, draggable slider (invisible native <input type=range>
+// layered over a custom-drawn track/fill/thumb, since inline styles can't
+// reach ::-webkit-slider-thumb) plus a manual numeric-entry stepper panel
+// below it — same two ways to answer the design specifies, not just the
+// slider alone.
 function AgeCard({ value, onChange }) {
   const numeric = value ? Number(value) : 28;
+  const pct = ((numeric - AGE_MIN) / (AGE_MAX - AGE_MIN)) * 100;
+  const step = (delta) => onChange(String(Math.min(AGE_MAX, Math.max(AGE_MIN, numeric + delta))));
   return (
-    <div style={{ background: CARD_BG, borderRadius: 24, padding: '22px 24px 20px', boxShadow: '0 20px 44px -22px rgba(0,0,0,.5)', color: NAVY }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 20 }}>
-        <div onClick={() => onChange(String(Math.max(13, (value ? Number(value) : 28) - 1)))} style={{ width: 44, height: 44, borderRadius: '50%', border: '1.5px solid rgba(42,31,78,.15)', background: ACCENT_BG, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 20 }}>−</div>
-        <div style={{ minWidth: 100, textAlign: 'center', fontFamily: "'Playfair Display',serif", fontSize: value ? 44 : 22, color: value ? NAVY : MUTED }}>{value || 'Select'}</div>
-        <div onClick={() => onChange(String(Math.min(90, (value ? Number(value) : 27) + 1)))} style={{ width: 44, height: 44, borderRadius: '50%', border: '1.5px solid rgba(42,31,78,.15)', background: ACCENT_BG, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 20 }}>+</div>
+    <div>
+      <div style={{ position: 'relative', height: 76 }}>
+        <div style={{ position: 'absolute', left: 0, right: 0, top: 34, height: 8, borderRadius: 99, background: 'var(--ayna-track)' }} />
+        <div style={{ position: 'absolute', left: 0, width: `${pct}%`, top: 34, height: 8, borderRadius: 99, background: `linear-gradient(90deg, ${ACCENT_BG}, ${ACCENT_BORDER})` }} />
+        <div style={{ position: 'absolute', left: `${pct}%`, top: 22, transform: 'translateX(-50%)', width: 32, height: 32, borderRadius: 99, background: 'var(--ayna-surface-alt)', border: '3px solid ' + ACCENT_BORDER, boxShadow: '0 6px 16px rgba(232,169,79,.4)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', left: `${pct}%`, top: -24, transform: 'translateX(-50%)', fontFamily: "'Playfair Display',serif", fontSize: 36, color: NAVY, background: 'var(--ayna-surface-alt)', padding: '0 8px', pointerEvents: 'none' }}>
+          {value || '—'}
+        </div>
+        <div style={{ position: 'absolute', left: 0, right: 0, top: 56, display: 'flex', justifyContent: 'space-between', fontFamily: "'DM Mono',monospace", fontSize: 9.5, color: MUTED }}>
+          <span>{AGE_MIN}</span><span>{AGE_MAX}+</span>
+        </div>
+        <input
+          type="range" min={AGE_MIN} max={AGE_MAX} value={numeric} onChange={(e) => onChange(e.target.value)}
+          style={{ position: 'absolute', left: 0, right: 0, top: 16, height: 40, width: '100%', margin: 0, opacity: 0, cursor: 'grab' }}
+        />
       </div>
-      <input type="range" min="13" max="90" value={numeric} onChange={(e) => onChange(e.target.value)} style={{ width: '100%', marginTop: 18, display: 'block' }} />
-      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: MUTED, marginTop: 4 }}><span>13</span><span>90</span></div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 30, padding: '13px 15px', borderRadius: 16, background: PANEL_BG, border: '1px solid ' + ROW_BORDER }}>
+        <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 12.5, color: BODY_TEXT, flex: 1 }}>Prefer to type it?</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, borderRadius: 12, padding: '8px 12px' }}>
+          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 14, color: INK }}>{value || '—'}</div>
+          <div style={{ width: 1, height: 14, background: ROW_BORDER }} />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <div onClick={() => step(1)} style={{ cursor: 'pointer' }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" style={{ transform: 'rotate(180deg)' }}><path d="M6 9l6 6 6-6" /></svg>
+            </div>
+            <div onClick={() => step(-1)} style={{ cursor: 'pointer' }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
 
+// ZIP utility pattern: 5 digit boxes reading off one real, invisible numeric
+// input laid on top (same overlay technique as the age slider) — a single
+// text field is what's actually focusable/typeable, the boxes are just its
+// display.
+function ZipDigits({ value, onChange, onSkip }) {
+  const digits = String(value || '').padEnd(5, ' ').split('');
+  return (
+    <div>
+      <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', gap: 9 }}>
+        {digits.map((digit, i) => (
+          <div key={i} style={{
+            width: 52, height: 62, borderRadius: 16, background: CARD_BG,
+            border: '1.5px solid ' + (digit.trim() ? ACCENT_BORDER : ROW_BORDER),
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontFamily: "'Playfair Display',serif", fontSize: 26, color: NAVY,
+          }}>
+            {digit.trim()}
+          </div>
+        ))}
+        <input
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          inputMode="numeric"
+          maxLength={5}
+          aria-label="ZIP code"
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0, border: 'none', outline: 'none', textAlign: 'center', fontSize: 24 }}
+        />
+      </div>
+      {onSkip && (
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 20 }}>
+          <div onClick={onSkip} style={{ cursor: 'pointer', fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: 12.5, padding: '10px 14px', borderRadius: 99, background: PANEL_BG, border: '1.5px solid ' + ROW_BORDER, color: MUTED }}>
+            Skip this
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const SCALE_BAR_HEIGHTS = [18, 31, 44, 57, 70];
+
+// Pattern D2: rising bars for the first up-to-5 ordered levels; any
+// trailing non-ordinal options (e.g. "It varies", "Not sure") render as
+// plain chips below instead of getting an arbitrary bar height — same
+// options, just not force-fit onto a severity scale they don't belong on.
 function Scale({ options, value, onChange }) {
+  const scaleOptions = options.slice(0, 5);
+  const extraOptions = options.slice(5);
   return (
-    <div style={{ background: CARD_BG, borderRadius: 24, padding: 16, display: 'flex', gap: 7, overflowX: 'auto', boxShadow: '0 20px 44px -22px rgba(0,0,0,.5)' }}>
-      {options.map((opt, i) => {
-        const on = value === opt;
-        return (
-          <div key={opt} onClick={() => onChange(opt)} style={{ cursor: 'pointer', flex: 'none', minWidth: 74, padding: '12px 6px', borderRadius: 12, textAlign: 'center', background: on ? NAVY : '#fff', color: on ? '#fff' : NAVY, border: '1.5px solid rgba(42,31,78,.1)' }}>
-            <span style={{ display: 'block', width: 14, height: 8 + Math.min(i, 4) * 4, maxHeight: 24, borderRadius: 999, background: on ? '#FFC774' : 'rgba(42,31,78,.18)', margin: '0 auto 8px' }} />
-            <span style={{ fontSize: 10.5, lineHeight: 1.2 }}>{opt}</span>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-function Timeline({ options, value, onChange }) {
-  return (
-    <div style={{ display: 'flex', gap: 4, overflowX: 'auto', paddingBottom: 8 }}>
-      {options.map((opt) => {
-        const on = value === opt;
-        return (
-          <div key={opt} onClick={() => onChange(opt)} style={{ cursor: 'pointer', flex: 'none', minWidth: 108, position: 'relative', paddingTop: 30, textAlign: 'center', color: on ? LABEL_GOLD : 'rgba(255,249,242,.72)' }}>
-            <div style={{ position: 'absolute', top: 11, left: 0, right: 0, height: 3, background: 'rgba(255,249,242,.24)' }} />
-            <div style={{ position: 'absolute', top: 2, left: '50%', transform: 'translateX(-50%)', width: 19, height: 19, borderRadius: '50%', background: on ? NAVY : CARD_BG, border: '3px solid ' + (on ? LABEL_GOLD : 'rgba(42,31,78,.28)') }} />
-            <span style={{ fontSize: 11, lineHeight: 1.3, fontWeight: on ? 700 : 400 }}>{opt}</span>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-function BrandSpectrum({ value, onChange }) {
-  return (
-    <div style={{ background: CARD_BG, borderRadius: 24, padding: '20px 16px', boxShadow: '0 20px 44px -22px rgba(0,0,0,.5)' }}>
-      <div style={{ height: 5, borderRadius: 999, background: 'linear-gradient(90deg,#4E3866,#FFC774,#D97A2B)', margin: '0 8px 16px' }} />
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 8 }}>
-        {BRAND_OPENNESS.map((opt) => {
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 5 }}>
+        {scaleOptions.map((opt, i) => {
           const on = value === opt;
           return (
-            <div key={opt} onClick={() => onChange(opt)} style={{ cursor: 'pointer', padding: '12px 10px', borderRadius: 12, border: '1.5px solid ' + (on ? ACCENT_BORDER : 'rgba(42,31,78,.1)'), background: on ? ACCENT_BG : '#fff', color: NAVY, fontSize: 12.5, lineHeight: 1.3 }}>
-              {opt}
+            <div key={opt} onClick={() => onChange(opt)} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 9, cursor: 'pointer' }}>
+              <span style={{
+                width: '100%', height: SCALE_BAR_HEIGHTS[i], borderRadius: '10px 10px 4px 4px',
+                background: on ? `linear-gradient(180deg, ${ACCENT_BG}, ${ACCENT_BORDER})` : 'var(--ayna-track)',
+                boxShadow: on ? '0 6px 16px rgba(232,169,79,.35)' : 'none',
+              }} />
+              <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: on ? 600 : 500, fontSize: 10.5, lineHeight: 1.2, textAlign: 'center', color: on ? SELECTED_TEXT : MUTED }}>{opt}</span>
             </div>
           );
         })}
       </div>
+      {extraOptions.length > 0 && (
+        <div style={{ marginTop: 14 }}>
+          <Pills options={extraOptions} selected={value ? [value] : []} onToggle={onChange} left compact />
+        </div>
+      )}
     </div>
   );
 }
 
+// Timeline questions (UTI recurrence, postpartum timing, trimester, large-
+// purchase frequency) are single-select among ordered options — pattern F1
+// (the same vertical radio list as Yes/No questions), not a distinct
+// visual language of their own.
+function Timeline({ options, value, onChange }) {
+  return <Segmented options={options} value={value} onChange={onChange} />;
+}
+
+// Brand openness is a single-select among ordered options too — F1 again,
+// swapping in only the option order it already had.
+function BrandSpectrum({ value, onChange }) {
+  return <Segmented options={BRAND_OPENNESS} value={value} onChange={onChange} />;
+}
+
+// Pattern H1: search-styled input, added items as swatch+title cards (not
+// small chips), a dashed "Add" affordance implicit in the search bar
+// itself, and an × to remove — same values/suggestions/onChange contract.
 function TokenInput({ values, onChange, placeholder, suggestions = [], suggestionLimit = 6 }) {
   const [draft, setDraft] = useState('');
   const matches = useMemo(
@@ -748,35 +849,39 @@ function TokenInput({ values, onChange, placeholder, suggestions = [], suggestio
   };
   return (
     <div style={{ maxWidth: '100%' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: '#FAF1E2', borderRadius: 999, padding: '13px 18px', boxShadow: '0 10px 30px rgba(36,20,50,.14)' }}>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8D84A0" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 9, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, borderRadius: 99, padding: '11px 14px' }}>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
         <input
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter' && draft.trim()) addValue(draft); }}
           placeholder={placeholder}
-          style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: '#241A3D', fontSize: 14.5, minWidth: 0 }}
+          style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 13, minWidth: 0 }}
         />
       </div>
       {draft.trim().length > 0 && (
-        <div style={{ marginTop: 8, borderRadius: 14, background: '#FFFAF3', boxShadow: '0 14px 28px -18px rgba(42,31,78,.45)', overflow: 'hidden' }}>
-          <div onClick={() => addValue(draft)} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '13px 18px', color: '#D98A52', fontWeight: 700, cursor: 'pointer', fontSize: 14 }}>
-            <span style={{ fontSize: 18 }}>+</span><span>Add "{draft.trim()}"</span>
+        <div style={{ marginTop: 8, borderRadius: 16, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, overflow: 'hidden' }}>
+          <div onClick={() => addValue(draft)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '13px 14px', color: SELECTED_TEXT, fontWeight: 600, cursor: 'pointer', fontSize: 13.5, fontFamily: "'DM Sans',sans-serif" }}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={SELECTED_TEXT} strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
+            <span>Add "{draft.trim()}"</span>
           </div>
           {matches.map((option) => (
-            <div key={option} onClick={() => addValue(option)} style={{ padding: '13px 18px', fontSize: 14, color: '#241A3D', cursor: 'pointer', borderTop: '1px solid rgba(36,26,61,.08)' }}>
+            <div key={option} onClick={() => addValue(option)} style={{ padding: '13px 14px', fontSize: 13.5, color: INK, cursor: 'pointer', borderTop: '1px solid ' + ROW_BORDER }}>
               {option}
             </div>
           ))}
         </div>
       )}
       {values.length > 0 && (
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginTop: 14, justifyContent: 'center' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 12 }}>
           {values.map((value, i) => (
-            <span key={`${value}-${i}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#FFFAF3', color: '#241A3D', padding: '9px 10px 9px 16px', borderRadius: 999, fontSize: 12, fontWeight: 600, boxShadow: '0 3px 10px rgba(20,10,30,.12)' }}>
-              {value}
-              <span onClick={() => onChange(values.filter((_, idx) => idx !== i))} style={{ width: 20, height: 20, borderRadius: '50%', background: '#F2E6D2', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 12 }}>×</span>
-            </span>
+            <div key={`${value}-${i}`} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 14px', borderRadius: 16, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER }}>
+              <span style={{ width: 30, height: 30, borderRadius: 10, background: ACCENT_BG, border: '1px solid ' + ACCENT_BORDER, flex: 'none' }} />
+              <span style={{ flex: 1, fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 13.5, color: INK }}>{value}</span>
+              <span onClick={() => onChange(values.filter((_, idx) => idx !== i))} style={{ cursor: 'pointer', opacity: 0.55, flex: 'none', display: 'flex' }}>
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="3" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+              </span>
+            </div>
           ))}
         </div>
       )}
@@ -784,6 +889,8 @@ function TokenInput({ values, onChange, placeholder, suggestions = [], suggestio
   );
 }
 
+// Pattern C1: search bar + grouped chips, each group header showing a live
+// "n/m" selected count.
 function SearchableGroups({ groups, selected, onToggle, search, onSearch }) {
   const q = search.trim().toLowerCase();
   const visible = groups
@@ -791,18 +898,22 @@ function SearchableGroups({ groups, selected, onToggle, search, onSearch }) {
     .filter((group) => group.items.length);
   return (
     <div>
-      <div style={{ position: 'relative', marginBottom: 14 }}>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8c8078" strokeWidth="2" strokeLinecap="round" style={{ position: 'absolute', left: 15, top: '50%', transform: 'translateY(-50%)' }}><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-        <input value={search} onChange={(e) => onSearch(e.target.value)} placeholder="Search options..." style={{ width: '100%', boxSizing: 'border-box', padding: '13px 16px 13px 40px', borderRadius: 14, border: 'none', fontSize: 14, color: NAVY, background: CARD_BG, boxShadow: '0 8px 18px -14px rgba(0,0,0,.5)', outline: 'none' }} />
-      </div>
+      <SearchBar value={search} onChange={onSearch} placeholder="Search options..." />
       <div style={{ maxHeight: 400, overflowY: 'auto', textAlign: 'left' }}>
-        {visible.map((group) => (
-          <div key={group.label} style={{ marginBottom: 16 }}>
-            <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '.08em', color: LABEL_GOLD, fontWeight: 700, margin: '10px 4px 8px' }}>{group.label}</div>
-            <RowChoiceList items={group.items} selected={selected} onToggle={onToggle} />
-          </div>
-        ))}
-        {visible.length === 0 && <div style={{ padding: '22px 4px', color: 'rgba(255,249,242,.75)', fontSize: 13 }}>No matches. Try a different search.</div>}
+        {visible.map((group) => {
+          const count = group.items.filter((item) => selected.includes(item)).length;
+          return (
+            <div key={group.label} style={{ marginBottom: 20 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 11 }}>
+                <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 13, color: INK }}>{group.label}</span>
+                <span style={{ flex: 1, height: 1, background: ROW_BORDER }} />
+                <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, color: count > 0 ? LABEL_GOLD : MUTED }}>{count}/{group.items.length}</span>
+              </div>
+              <RowChoiceList items={group.items} selected={selected} onToggle={onToggle} />
+            </div>
+          );
+        })}
+        {visible.length === 0 && <div style={{ padding: '22px 4px', color: MUTED, fontSize: 13 }}>No matches. Try a different search.</div>}
       </div>
     </div>
   );
@@ -831,17 +942,18 @@ function ProductHistoryBuilder({ products, onChange }) {
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: '#FAF1E2', borderRadius: 999, padding: '13px 18px', boxShadow: '0 10px 30px rgba(36,20,50,.14)' }}>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8D84A0" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-        <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search products" style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: '#241A3D', fontSize: 14.5, minWidth: 0 }} />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 9, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, borderRadius: 99, padding: '11px 14px' }}>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
+        <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search products" style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 13, minWidth: 0 }} />
       </div>
       {query.trim().length > 0 && (
-        <div style={{ marginTop: 8, borderRadius: 14, background: '#FFFAF3', boxShadow: '0 14px 28px -18px rgba(42,31,78,.45)', overflow: 'hidden' }}>
-          <div onClick={() => addProduct(query)} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '13px 18px', color: '#D98A52', fontWeight: 700, cursor: 'pointer', fontSize: 14 }}>
-            <span style={{ fontSize: 18 }}>+</span><span>Add "{query.trim()}"</span>
+        <div style={{ marginTop: 8, borderRadius: 16, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, overflow: 'hidden' }}>
+          <div onClick={() => addProduct(query)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '13px 14px', color: SELECTED_TEXT, fontWeight: 600, cursor: 'pointer', fontSize: 13.5, fontFamily: "'DM Sans',sans-serif" }}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={SELECTED_TEXT} strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
+            <span>Add "{query.trim()}"</span>
           </div>
           {suggestions.map((name) => (
-            <div key={name} onClick={() => addProduct(name)} style={{ padding: '13px 18px', fontSize: 14, color: '#241A3D', cursor: 'pointer', borderTop: '1px solid rgba(36,26,61,.08)' }}>{name}</div>
+            <div key={name} onClick={() => addProduct(name)} style={{ padding: '13px 14px', fontSize: 13.5, color: INK, cursor: 'pointer', borderTop: '1px solid ' + ROW_BORDER }}>{name}</div>
           ))}
         </div>
       )}
@@ -852,42 +964,42 @@ function ProductHistoryBuilder({ products, onChange }) {
             const expanded = expandedIndex === index;
             const summary = [product.current, product.worked, product.reaction].filter(Boolean);
             return (
-              <div key={`${product.name}-${index}`} style={{ background: CARD_BG, color: NAVY, border: '1px solid ' + (expanded ? 'rgba(232,132,60,.32)' : 'rgba(42,31,78,.09)'), borderRadius: 14, overflow: 'hidden', textAlign: 'left', boxShadow: '0 8px 20px -18px rgba(0,0,0,.5)' }}>
+              <div key={`${product.name}-${index}`} style={{ background: CARD_BG, color: INK, border: '1.5px solid ' + (expanded ? ACCENT_BORDER : ROW_BORDER), borderRadius: 16, overflow: 'hidden', textAlign: 'left' }}>
                 <div onClick={() => setExpandedIndex(expanded ? null : index)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, padding: '13px 14px', cursor: 'pointer' }}>
                   <div style={{ minWidth: 0 }}>
-                    <div style={{ fontSize: 13.5, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{product.name}</div>
-                    <div style={{ fontSize: 11, color: MUTED, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{summary.length ? summary.join(' · ') : 'Optional details'}</div>
+                    <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 13.5, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{product.name}</div>
+                    <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 11, color: MUTED, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: 2 }}>{summary.length ? summary.join(' · ') : 'Optional details'}</div>
                   </div>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ flex: 'none', color: '#D97A2B', transform: expanded ? 'rotate(180deg)' : 'none', transition: 'transform .2s' }}>
-                    <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style={{ flex: 'none', color: MUTED, transform: expanded ? 'rotate(180deg)' : 'rotate(-90deg)', transition: 'transform .2s' }}>
+                    <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </div>
                 {expanded && (
-                  <div style={{ padding: '0 14px 16px' }}>
-                    <div style={{ fontSize: 10.5, fontWeight: 700, color: MUTED, marginBottom: 10 }}>Optional details</div>
-
-                    <div style={{ marginBottom: 12 }}>
-                      <div style={{ fontSize: 10.5, fontWeight: 700, color: '#5c554e', marginBottom: 6 }}>Currently using it?</div>
+                  <div style={{ padding: '0 14px 16px', borderTop: '1px solid ' + ROW_BORDER, paddingTop: 14 }}>
+                    <div style={{ marginBottom: 14 }}>
+                      <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 12.5, color: INK, marginBottom: 8 }}>Currently using it?</div>
                       <Segmented options={['Yes', 'No']} value={product.current} onChange={(v) => updateProduct(index, { current: v })} />
                     </div>
 
-                    <div style={{ marginBottom: 12 }}>
-                      <div style={{ fontSize: 10.5, fontWeight: 700, color: '#5c554e', marginBottom: 6 }}>How well did it work?</div>
+                    <div style={{ marginBottom: 14 }}>
+                      <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 12.5, color: INK, marginBottom: 8 }}>How well did it work?</div>
                       <Pills options={['Helped a lot', 'Helped somewhat', 'No difference', 'Made it worse', 'Not sure']} selected={product.worked ? [product.worked] : []} onToggle={(v) => updateProduct(index, { worked: v })} left compact />
                     </div>
 
-                    <div style={{ marginBottom: 12 }}>
-                      <div style={{ fontSize: 10.5, fontWeight: 700, color: '#5c554e', marginBottom: 6 }}>Any side effects or reactions?</div>
+                    <div style={{ marginBottom: 14 }}>
+                      <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 12.5, color: INK, marginBottom: 8 }}>Any side effects or reactions?</div>
                       <Pills options={['No', 'Mild', 'Serious', 'Not sure']} selected={product.reaction ? [product.reaction] : []} onToggle={(v) => updateProduct(index, { reaction: v })} left compact />
                     </div>
 
                     {['Mild', 'Serious'].includes(product.reaction) && (
-                      <input value={product.reactionText} onChange={(e) => updateProduct(index, { reactionText: e.target.value })} placeholder="What happened? (optional)" style={{ width: '100%', boxSizing: 'border-box', marginTop: 4, marginBottom: 12, padding: '10px 12px', borderRadius: 10, border: '1px solid rgba(42,31,78,.12)', fontSize: 13, color: NAVY }} />
+                      <div style={{ marginBottom: 14, padding: '12px 13px', borderRadius: 14, background: PANEL_BG, border: '1px solid ' + ROW_BORDER }}>
+                        <input value={product.reactionText} onChange={(e) => updateProduct(index, { reactionText: e.target.value })} placeholder="What happened? (optional)" style={{ width: '100%', boxSizing: 'border-box', border: 'none', background: 'transparent', outline: 'none', fontSize: 12.5, color: INK, fontFamily: 'inherit' }} />
+                      </div>
                     )}
 
                     {product.current === 'No' && (
                       <div style={{ marginBottom: 8 }}>
-                        <div style={{ fontSize: 10.5, fontWeight: 700, color: '#5c554e', marginBottom: 6 }}>Why did you stop?</div>
+                        <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 12.5, color: INK, marginBottom: 8 }}>Why did you stop?</div>
                         <Pills
                           options={STOP_REASONS}
                           selected={product.stopReasons || []}
@@ -897,12 +1009,14 @@ function ProductHistoryBuilder({ products, onChange }) {
                           left compact
                         />
                         {(product.stopReasons || []).includes('Other') && (
-                          <input value={product.stopOther || ''} onChange={(e) => updateProduct(index, { stopOther: e.target.value })} placeholder="Other reason" style={{ width: '100%', boxSizing: 'border-box', marginTop: 10, padding: '10px 12px', borderRadius: 10, border: '1px solid rgba(42,31,78,.12)', fontSize: 13, color: NAVY }} />
+                          <div style={{ marginTop: 10, padding: '12px 13px', borderRadius: 14, background: PANEL_BG, border: '1px solid ' + ROW_BORDER }}>
+                            <input value={product.stopOther || ''} onChange={(e) => updateProduct(index, { stopOther: e.target.value })} placeholder="Other reason" style={{ width: '100%', boxSizing: 'border-box', border: 'none', background: 'transparent', outline: 'none', fontSize: 12.5, color: INK, fontFamily: 'inherit' }} />
+                          </div>
                         )}
                       </div>
                     )}
 
-                    <div onClick={() => removeProduct(index)} style={{ marginTop: 6, color: '#9a7062', fontSize: 11, cursor: 'pointer' }}>Remove product</div>
+                    <div onClick={() => removeProduct(index)} style={{ marginTop: 10, color: LABEL_GOLD, fontSize: 11.5, fontFamily: "'DM Sans',sans-serif", fontWeight: 600, cursor: 'pointer' }}>Remove product</div>
                   </div>
                 )}
               </div>
@@ -914,6 +1028,10 @@ function ProductHistoryBuilder({ products, onChange }) {
   );
 }
 
+// Pattern L1 — same up/down-arrow reordering as before (see the file's own
+// top-of-file note on why: HTML5 drag-and-drop doesn't fire reliably on
+// touchscreens), just restyled: rank-1 gets the amber highlight treatment,
+// others plain rows.
 function TrustRanker({ order, onChange, onTouch }) {
   const move = (index, delta) => {
     const nextIndex = index + delta;
@@ -925,29 +1043,67 @@ function TrustRanker({ order, onChange, onTouch }) {
   };
   return (
     <div style={{ display: 'grid', gap: 10 }}>
-      {order.map((item, index) => (
-        <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 10, background: CARD_BG, color: NAVY, borderRadius: 16, padding: '13px 14px', boxShadow: cardShadow }}>
-          <span style={{ width: 24, height: 24, borderRadius: '50%', background: ACCENT_BG, color: '#8A5A1E', fontSize: 12, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none' }}>{index + 1}</span>
-          <span style={{ flex: 1, textAlign: 'left', fontSize: 13, fontWeight: 600, lineHeight: 1.35 }}>{item}</span>
-          <span style={{ display: 'flex', gap: 4, flex: 'none' }}>
-            <div onClick={() => move(index, -1)} aria-label={`Move ${item} up`} style={{ width: 28, height: 28, borderRadius: 8, border: '1px solid rgba(42,31,78,.12)', background: '#fff', color: NAVY, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', opacity: index === 0 ? 0.35 : 1 }}>↑</div>
-            <div onClick={() => move(index, 1)} aria-label={`Move ${item} down`} style={{ width: 28, height: 28, borderRadius: 8, border: '1px solid rgba(42,31,78,.12)', background: '#fff', color: NAVY, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', opacity: index === order.length - 1 ? 0.35 : 1 }}>↓</div>
-          </span>
-        </div>
-      ))}
+      {order.map((item, index) => {
+        const top = index === 0;
+        return (
+          <div
+            key={item}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 12, borderRadius: 18, padding: 14,
+              background: top ? ACCENT_BG : CARD_BG,
+              border: '1.5px solid ' + (top ? ACCENT_BORDER : ROW_BORDER),
+              boxShadow: top ? '0 8px 20px -10px rgba(232,169,79,.5)' : cardShadow,
+            }}
+          >
+            <span style={{
+              width: 26, height: 26, borderRadius: 9, flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: top ? 'rgba(255,255,255,.7)' : PANEL_BG, color: top ? SELECTED_TEXT : NAVY,
+              fontFamily: "'Playfair Display',serif", fontSize: 15,
+            }}>{index + 1}</span>
+            <span style={{ flex: 1, textAlign: 'left', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 13.5, lineHeight: 1.3, color: top ? SELECTED_TEXT : INK }}>{item}</span>
+            <span style={{ display: 'flex', gap: 4, flex: 'none' }}>
+              <div onClick={() => move(index, -1)} aria-label={`Move ${item} up`} style={{ width: 28, height: 28, borderRadius: 8, border: '1.5px solid ' + ROW_BORDER, background: CARD_BG, color: INK, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', opacity: index === 0 ? 0.35 : 1 }}>↑</div>
+              <div onClick={() => move(index, 1)} aria-label={`Move ${item} down`} style={{ width: 28, height: 28, borderRadius: 8, border: '1.5px solid ' + ROW_BORDER, background: CARD_BG, color: INK, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', opacity: index === order.length - 1 ? 0.35 : 1 }}>↓</div>
+            </span>
+          </div>
+        );
+      })}
     </div>
   );
 }
 
+// Pattern M1 — textarea plus dashed "inspiration only" prompt chips: tapping
+// one appends its starter phrase rather than committing an answer, since
+// unlike every selectable option elsewhere in this form, these never
+// represent a stored choice.
+const FREE_TEXT_PROMPTS = ['A goal I have', "Something that hasn't worked", "A concern I haven't mentioned"];
+
 function TextAreaField({ value, onChange, placeholder }) {
+  const appendPrompt = (prompt) => {
+    const prefix = value && !value.endsWith('\n') && !value.endsWith(' ') ? `${value}\n` : value;
+    onChange(`${prefix}${prompt}: `);
+  };
   return (
-    <textarea
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={placeholder}
-      rows={5}
-      style={{ width: '100%', boxSizing: 'border-box', padding: '14px 16px', borderRadius: 14, border: 'none', fontSize: 14, color: NAVY, background: CARD_BG, boxShadow: '0 8px 18px -14px rgba(0,0,0,.5)', outline: 'none', resize: 'vertical', minHeight: 128, lineHeight: 1.5, fontFamily: 'inherit' }}
-    />
+    <div>
+      <textarea
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        rows={5}
+        style={{ width: '100%', boxSizing: 'border-box', padding: 16, borderRadius: 20, border: '1.5px solid ' + ROW_BORDER, fontSize: 13.5, color: INK, background: CARD_BG, outline: 'none', resize: 'vertical', minHeight: 150, lineHeight: 1.65, fontFamily: 'inherit' }}
+      />
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginTop: 12 }}>
+        {FREE_TEXT_PROMPTS.map((prompt) => (
+          <div
+            key={prompt}
+            onClick={() => appendPrompt(prompt)}
+            style={{ cursor: 'pointer', fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: 12, padding: '9px 13px', borderRadius: 99, background: CARD_BG, border: '1.5px dashed ' + ROW_BORDER, color: BODY_TEXT }}
+          >
+            {prompt}
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -996,7 +1152,6 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
 
   const currentIndex = Math.max(0, visibleSteps.findIndex((s) => s.id === stepId));
   const step = visibleSteps[currentIndex] || visibleSteps[0];
-  const sectionIndex = Math.max(0, SECTION_ORDER.indexOf(step.section));
   const isLast = currentIndex === visibleSteps.length - 1;
 
   const set = (key, value) => setIntake((prev) => ({ ...prev, [key]: value }));
@@ -1039,15 +1194,15 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
       <>
         <ChoiceGrid items={LIFE_STAGES} selected={selectedLifeStages} onToggle={toggleLifeStage} />
         {selectedLifeStages.includes('I am postpartum') && (
-          <div style={{ marginTop: 18, padding: 16, background: 'rgba(255,249,242,.1)', border: '1px solid rgba(255,249,242,.18)', borderRadius: 18, textAlign: 'left' }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: '#FFF9F2', marginBottom: 12 }}>Are you currently breastfeeding?</div>
+          <div style={{ marginTop: 18, padding: 16, background: PANEL_BG, border: '1px solid ' + ROW_BORDER, borderRadius: 18, textAlign: 'left' }}>
+            <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 13, fontWeight: 600, color: INK, marginBottom: 12 }}>Are you currently breastfeeding?</div>
             <Segmented options={['Yes', 'No', 'Prefer not to say']} value={intake.breastfeedingStatus} onChange={(v) => set('breastfeedingStatus', v)} />
           </div>
         )}
         {selectedLifeStages.includes('I am in perimenopause') && (
-          <div style={{ marginTop: 18, padding: 16, background: 'rgba(255,249,242,.1)', border: '1px solid rgba(255,249,242,.18)', borderRadius: 18, textAlign: 'left' }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: '#FFF9F2', marginBottom: 12 }}>When was your last period?</div>
-            <Pills options={PERIMENOPAUSE_LAST_PERIOD} selected={intake.perimenopauseLastPeriod ? [intake.perimenopauseLastPeriod] : []} onToggle={(v) => set('perimenopauseLastPeriod', v)} />
+          <div style={{ marginTop: 18, padding: 16, background: PANEL_BG, border: '1px solid ' + ROW_BORDER, borderRadius: 18, textAlign: 'left' }}>
+            <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 13, fontWeight: 600, color: INK, marginBottom: 12 }}>When was your last period?</div>
+            <Pills options={PERIMENOPAUSE_LAST_PERIOD} selected={intake.perimenopauseLastPeriod ? [intake.perimenopauseLastPeriod] : []} onToggle={(v) => set('perimenopauseLastPeriod', v)} left />
           </div>
         )}
         {selectedLifeStages.includes('Other') && (
@@ -1056,7 +1211,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
       </>
     );
 
-    if (step.type === 'zip') return <TextInput value={intake.zipcode} onChange={(v) => set('zipcode', v.replace(/\D/g, '').slice(0, 5))} placeholder="e.g. 10001" inputMode="numeric" maxLength={5} />;
+    if (step.type === 'zip') return <ZipDigits value={intake.zipcode} onChange={(v) => set('zipcode', v.replace(/\D/g, '').slice(0, 5))} onSkip={goNext} />;
 
     if (step.type === 'support') return (
       <>
@@ -1073,14 +1228,20 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
     if (step.type === 'postpartumTiming') return <Timeline options={POSTPARTUM_TIMING} value={intake.postpartumTiming} onChange={(v) => set('postpartumTiming', v)} />;
     if (step.type === 'pregnancyTrimester') return <Timeline options={PREGNANCY_TRIMESTER} value={intake.pregnancyTrimester} onChange={(v) => set('pregnancyTrimester', v)} />;
 
-    if (step.type === 'conditions') return (
-      <>
-        <RowChoiceList items={CONDITIONS} selected={intake.diagnosisSelections} onToggle={(v) => toggleExclusive('diagnosisSelections', v, ['None that I know of', 'Prefer not to say'])} />
-        {intake.diagnosisSelections.includes('Other / not listed') && (
-          <OtherBox label="What condition was diagnosed?" value={intake.conditionOtherText} onChange={(v) => set('conditionOtherText', v)} placeholder="Type the condition..." />
-        )}
-      </>
-    );
+    if (step.type === 'conditions') {
+      const q = search.trim().toLowerCase();
+      const filtered = q ? CONDITIONS.filter((item) => item.toLowerCase().includes(q)) : CONDITIONS;
+      return (
+        <>
+          <SearchBar value={search} onChange={setSearch} placeholder="Search conditions..." />
+          <RowChoiceList items={filtered} selected={intake.diagnosisSelections} onToggle={(v) => toggleExclusive('diagnosisSelections', v, ['None that I know of', 'Prefer not to say'])} exclusiveValues={['None that I know of', 'Prefer not to say']} />
+          {filtered.length === 0 && <div style={{ padding: '22px 4px', color: MUTED, fontSize: 13 }}>No matches. Try a different search.</div>}
+          {intake.diagnosisSelections.includes('Other / not listed') && (
+            <OtherBox label="What condition was diagnosed?" value={intake.conditionOtherText} onChange={(v) => set('conditionOtherText', v)} placeholder="Type the condition..." />
+          )}
+        </>
+      );
+    }
 
     if (step.type === 'allergies') return (
       <>
@@ -1105,7 +1266,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
             <TokenInput values={intake.currentMedicationItems} onChange={(v) => set('currentMedicationItems', v)} placeholder="Start typing a medication, supplement, vitamin, or birth control" suggestions={MEDICATION_SUGGESTIONS} suggestionLimit={10} />
           </div>
         )}
-        <div style={{ maxWidth: 480, margin: '18px auto 0', padding: '13px 15px', border: '1px solid rgba(255,220,168,.25)', background: 'rgba(255,249,242,.08)', borderRadius: 14, color: 'rgba(255,249,242,.78)', fontSize: 12, lineHeight: 1.55, textAlign: 'left' }}>
+        <div style={{ marginTop: 16, padding: '13px 15px', border: '1px solid ' + ROW_BORDER, background: PANEL_BG, borderRadius: 14, color: BODY_TEXT, fontSize: 12, lineHeight: 1.55, textAlign: 'left' }}>
           Always consult a clinician before starting a new supplement or medication. Ayna surfaces options relevant to the profile you shared, but you should still check product ingredients, labels, and instructions.
         </div>
       </>
@@ -1115,12 +1276,23 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
     if (step.type === 'avoidRepeat') return <TokenInput values={intake.avoidRepeat} onChange={(v) => set('avoidRepeat', v)} placeholder="Start typing a product or brand" suggestions={PRODUCT_OR_BRAND_SUGGESTIONS} />;
     if (step.type === 'trustedBrands') return <TokenInput values={intake.trustedBrands} onChange={(v) => set('trustedBrands', v)} placeholder="Start typing a brand" suggestions={BRAND_SUGGESTIONS} />;
 
+    // Pattern J1: the conditional alert panel gets its own amber header
+    // band + "!" badge, distinct from the plain informational panels used
+    // elsewhere — this one's meant to read as an escalation, not a note.
     if (step.type === 'safety') return (
       <>
         <Segmented options={['Yes', 'No', 'Not sure']} value={intake.safetyConcern} onChange={(v) => set('safetyConcern', v)} />
         {['Yes', 'Not sure'].includes(intake.safetyConcern) && (
-          <div style={{ maxWidth: 480, margin: '18px auto 0', padding: '13px 15px', border: '1px solid rgba(255,220,168,.25)', background: 'rgba(255,249,242,.08)', borderRadius: 14, color: 'rgba(255,249,242,.78)', fontSize: 12, lineHeight: 1.55, textAlign: 'left' }}>
-            Some new or worsening symptoms may need evaluation by a healthcare professional. Ayna helps with product discovery and education and does not diagnose medical conditions or replace professional medical care. If symptoms feel urgent or severe, seek appropriate medical care promptly.
+          <div style={{ marginTop: 14, borderRadius: 20, overflow: 'hidden', border: '1.5px solid ' + ACCENT_BORDER }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '12px 15px', background: ACCENT_BG }}>
+              <span style={{ width: 20, height: 20, borderRadius: 99, background: ACCENT_BORDER, flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 12, color: '#fff' }}>!</span>
+              <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 12.5, color: SELECTED_TEXT }}>Worth a closer look</span>
+            </div>
+            <div style={{ padding: '14px 15px', background: CARD_BG }}>
+              <p style={{ margin: 0, fontFamily: 'Inter,system-ui,sans-serif', fontSize: 12.5, lineHeight: 1.6, color: BODY_TEXT }}>
+                Some new or worsening symptoms may need evaluation by a healthcare professional. Ayna helps with product discovery and education and does not diagnose medical conditions or replace professional medical care. If symptoms feel urgent or severe, seek appropriate medical care promptly.
+              </p>
+            </div>
           </div>
         )}
       </>
@@ -1137,18 +1309,24 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
 
     if (step.type === 'price') {
       const selectedPrices = Array.isArray(intake.priceRange) ? intake.priceRange : (intake.priceRange ? [intake.priceRange] : []);
-      return <Pills options={PRICE_RANGES} selected={selectedPrices} onToggle={(v) => toggleExclusive('priceRange', v, ['Price is not a major factor for me'])} />;
+      return <Pills options={PRICE_RANGES} selected={selectedPrices} onToggle={(v) => toggleExclusive('priceRange', v, ['Price is not a major factor for me'])} exclusiveValues={['Price is not a major factor for me']} />;
     }
     if (step.type === 'largeSpend') return <Timeline options={LARGE_PURCHASE_FREQUENCY} value={intake.largePurchaseFrequency} onChange={(v) => set('largePurchaseFrequency', v)} />;
     if (step.type === 'brand') return <BrandSpectrum value={intake.brandOpenness} onChange={(v) => set('brandOpenness', v)} />;
-    if (step.type === 'avoidIngredients') return (
-      <>
-        <Pills options={AVOID_INGREDIENTS} selected={intake.avoidIngredients} onToggle={(v) => toggleExclusive('avoidIngredients', v, ['No preference'])} />
-        {intake.avoidIngredients.includes('Other') && (
-          <OtherBox label="Other preference" value={intake.avoidIngredientsOtherText} onChange={(v) => set('avoidIngredientsOtherText', v)} placeholder="Type here..." />
-        )}
-      </>
-    );
+    if (step.type === 'avoidIngredients') {
+      const q = search.trim().toLowerCase();
+      const filtered = q ? AVOID_INGREDIENTS.filter((item) => item.toLowerCase().includes(q)) : AVOID_INGREDIENTS;
+      return (
+        <>
+          <SearchBar value={search} onChange={setSearch} placeholder="Search preferences..." />
+          <Pills options={filtered} selected={intake.avoidIngredients} onToggle={(v) => toggleExclusive('avoidIngredients', v, ['No preference'])} exclusiveValues={['No preference']} left />
+          {filtered.length === 0 && <div style={{ padding: '22px 4px', color: MUTED, fontSize: 13 }}>No matches. Try a different search.</div>}
+          {intake.avoidIngredients.includes('Other') && (
+            <OtherBox label="Other preference" value={intake.avoidIngredientsOtherText} onChange={(v) => set('avoidIngredientsOtherText', v)} placeholder="Type here..." />
+          )}
+        </>
+      );
+    }
     if (step.type === 'fsa') return <Pills options={FSA_HSA} selected={intake.fsaHsaAnswer ? [intake.fsaHsaAnswer] : []} onToggle={(v) => set('fsaHsaAnswer', v)} />;
     if (step.type === 'trust') return <TrustRanker order={intake.trustRanking} onChange={(order) => set('trustRanking', order)} onTouch={() => set('trustRankingTouched', true)} />;
     if (step.type === 'textarea') return <TextAreaField value={intake.anythingElse} onChange={(v) => set('anythingElse', v)} placeholder="Share anything else that could help us personalize your recommendations." />;
@@ -1168,73 +1346,65 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
     <div
       style={{
         flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column',
-        background: 'var(--ayna-gradient-hero, linear-gradient(165deg,#2A1F4E 0%,#4E3866 42%,#8A4A3C 74%,#D97A2B 100%))',
-        color: '#FFF9F2', position: 'relative', overflow: 'hidden',
-        fontFamily: "'DM Sans',system-ui,sans-serif", animation: 'ay-page .25s ease-out',
+        background: CARD_BG, color: INK, animation: 'ay-page .25s ease-out',
+        fontFamily: "'DM Sans',system-ui,sans-serif",
       }}
     >
-      <div style={{ position: 'absolute', top: -60, right: -60, width: 220, height: 220, borderRadius: '50%', background: 'radial-gradient(circle,rgba(255,199,116,.4),rgba(255,199,116,0) 70%)', pointerEvents: 'none' }} />
-      <div style={{ position: 'absolute', bottom: -50, left: -50, width: 200, height: 200, borderRadius: '50%', background: 'radial-gradient(circle,rgba(126,84,186,.35),rgba(126,84,186,0) 70%)', pointerEvents: 'none' }} />
-
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 'max(20px, env(safe-area-inset-top))', paddingLeft: 24, paddingRight: 24, position: 'relative' }}>
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: 5 }}>
-          <span style={{ fontFamily: "'Playfair Display',serif", fontSize: 20 }}>ayna</span>
-          <span style={{ fontSize: 10, color: 'rgba(255,249,242,.6)' }}>beta</span>
-        </div>
-        <div onClick={goBack} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12.5, color: 'rgba(255,249,242,.8)', cursor: 'pointer', padding: '4px 2px' }}>
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" style={{ stroke: 'rgba(255,249,242,.8)' }}>
-            <path d="M19 12H5M11 18l-6-6 6-6" />
-          </svg>
-          Back
-        </div>
-      </div>
-
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '22px 24px 0', position: 'relative' }}>
-        {SECTION_ORDER.map((section, i) => (
-          <div key={section} style={{ flex: 1, height: 6, borderRadius: 3, background: i <= sectionIndex ? '#FFC774' : 'rgba(255,249,242,.24)' }} />
-        ))}
-      </div>
-      <div style={{ padding: '8px 24px 0', fontSize: 12, color: 'rgba(255,249,242,.55)', position: 'relative' }}>{SECTION_LABELS[step.section]}</div>
-
-      <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', position: 'relative', padding: '20px 24px 24px', textAlign: 'center' }}>
-        <SectionIcon section={step.section} />
-        <div style={{ fontFamily: "'Playfair Display',serif", fontWeight: 500, fontSize: 25, lineHeight: 1.3, margin: '0 auto 10px', maxWidth: 480, color: '#FFF9F2' }}>{step.title}</div>
-        {step.subtitle && <p style={{ margin: '0 auto 10px', fontSize: 14, color: 'rgba(255,249,242,.72)', lineHeight: 1.5, maxWidth: 440 }}>{step.subtitle}</p>}
-        {!step.optional && <p style={{ margin: '5px auto 0', fontSize: 12, color: '#FFDCA8', fontWeight: 600 }}>Required for safety</p>}
-        {flaggedStepIds.has(step.id) && (
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, margin: '10px auto 0', padding: '6px 12px', borderRadius: 99, background: 'rgba(180,64,42,.16)', border: '1px solid rgba(180,64,42,.35)', color: '#FFC9BC', fontSize: 11.5, fontWeight: 600 }}>
-            <span style={{ width: 6, height: 6, borderRadius: 99, background: '#E8846F', flex: 'none' }} />
-            Not answered yet
+      <div style={{ flex: 'none', padding: 'max(16px, env(safe-area-inset-top)) 20px 12px', background: CARD_BG, borderBottom: '1px solid ' + ROW_BORDER }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
+          <div onClick={goBack} style={{ width: 30, height: 30, borderRadius: 99, border: '1.5px solid ' + ROW_BORDER, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flex: 'none' }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
           </div>
-        )}
-        <div style={{ marginTop: 26, textAlign: step.type === 'support' || step.type === 'medications' || step.type === 'allergies' || step.type === 'products' || step.type === 'avoidRepeat' || step.type === 'trustedBrands' ? 'left' : 'center' }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.3px', textTransform: 'uppercase', color: LABEL_GOLD, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{SECTION_LABELS[step.section]}</div>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '.8px', color: MUTED, marginTop: 2 }}>STEP {currentIndex + 1} OF 8–24</div>
+          </div>
+          {step.optional && (
+            <div onClick={goNext} style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, color: MUTED, cursor: 'pointer', flex: 'none' }}>Skip</div>
+          )}
+        </div>
+        <div style={{ height: 4, borderRadius: 99, background: 'var(--ayna-track)', overflow: 'hidden' }}>
+          <div style={{ width: `${((currentIndex + 1) / visibleSteps.length) * 100}%`, height: '100%', borderRadius: 99, background: `linear-gradient(90deg, var(--ayna-accent), ${ACCENT_BORDER})` }} />
+        </div>
+      </div>
+
+      <div style={{ flex: 1, minWidth: 0, overflowY: 'auto' }}>
+        <div style={{ padding: '22px 20px 0' }}>
+          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 25, lineHeight: 1.17, color: INK }}>{step.title}</div>
+          {step.subtitle && <p style={{ margin: '8px 0 0', fontFamily: 'Inter,system-ui,sans-serif', fontSize: 12.5, lineHeight: 1.5, color: BODY_TEXT }}>{step.subtitle}</p>}
+          <p style={{ margin: '9px 0 0', fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.1px', textTransform: 'uppercase', color: step.optional ? MUTED : LABEL_GOLD, fontWeight: 600 }}>
+            {step.optional ? 'Optional' : 'Required for safety'}
+          </p>
+          {flaggedStepIds.has(step.id) && (
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 11, padding: '6px 12px', borderRadius: 99, background: 'rgba(180,64,42,.1)', border: '1px solid rgba(180,64,42,.3)', color: '#B4402A', fontSize: 11.5, fontWeight: 600 }}>
+              <span style={{ width: 6, height: 6, borderRadius: 99, background: '#B4402A', flex: 'none' }} />
+              Not answered yet
+            </div>
+          )}
+        </div>
+        <div style={{ padding: '20px 20px 20px', textAlign: 'left' }}>
           {renderBody()}
         </div>
       </div>
 
-      <div style={{ padding: '14px 24px 34px', position: 'relative', background: 'linear-gradient(to top,rgba(36,42,82,.35),rgba(36,42,82,0))' }}>
+      <div style={{ flex: 'none', padding: '14px 20px max(20px, env(safe-area-inset-bottom))', background: CARD_BG, borderTop: '1px solid ' + ROW_BORDER }}>
         <button
           onClick={goNext}
           disabled={!ready}
           style={{
-            width: '100%', padding: 16, border: 'none', borderRadius: 16,
-            background: ready ? 'linear-gradient(140deg,#FFDCA8,#FFC774 46%,#E8843C)' : 'rgba(255,249,242,.18)',
-            color: ready ? NAVY : 'rgba(255,249,242,.5)',
-            fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 15,
+            width: '100%', padding: 15, border: 'none', borderRadius: 99,
+            background: ready ? 'var(--ayna-cta-bg)' : PANEL_BG,
+            color: ready ? 'var(--ayna-cta-text)' : MUTED,
+            fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 15,
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9,
             cursor: ready ? 'pointer' : 'not-allowed',
-            boxShadow: ready ? '0 16px 30px -14px rgba(232,132,60,.55)' : 'none',
+            boxShadow: ready ? '0 14px 28px -14px rgba(36,42,82,.65)' : 'none',
           }}
         >
           <span>{isLast ? 'Finish profile' : 'Continue'}</span>
-          {countForStep > 0 && <span style={{ background: 'rgba(42,31,78,.16)', borderRadius: 999, padding: '2px 9px', fontSize: 12 }}>{countForStep}</span>}
+          {countForStep > 0 && <span style={{ background: 'rgba(255,255,255,.18)', borderRadius: 999, padding: '2px 9px', fontSize: 12 }}>{countForStep}</span>}
           <span aria-hidden="true">→</span>
         </button>
-        {step.optional && (
-          <div onClick={goNext} style={{ textAlign: 'center', fontSize: 13, color: 'rgba(255,249,242,.62)', padding: '16px 0 0', cursor: 'pointer' }}>
-            {step.id === 'products' ? 'Skip for now' : 'Skip this step'}
-          </div>
-        )}
       </div>
     </div>
   );
