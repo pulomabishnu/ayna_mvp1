@@ -31,14 +31,6 @@ const ADVISORS = [
   { name: 'Navneet Kaur', title: 'Advisor', linkedin: 'https://www.linkedin.com/in/navneet-kaur-80109b227' },
 ];
 
-/** Not yet a confirmed advisor — keep separate from ADVISORS rather than
- * implying a relationship that isn't official yet (same standard as brand
- * partnerships elsewhere in the app). */
-const ADVISOR_IN_DISCUSSION = {
-  name: 'Dr. Denise Howard',
-  title: 'Chief of OBGYN, NY-Presbyterian Brooklyn Methodist',
-  photo: '/advisors/denise-howard.png',
-};
 
 function initials(name) {
   return name
@@ -152,13 +144,6 @@ export default function About({ onBack, onViewSources }) {
               )}
             </div>
           ))}
-        </div>
-        <div className="about-advisor-note">
-          <AdvisorPhoto advisor={ADVISOR_IN_DISCUSSION} />
-          <div>
-            <strong>{ADVISOR_IN_DISCUSSION.name}</strong> — {ADVISOR_IN_DISCUSSION.title}
-            <div className="about-advisor-note__label">In conversation with ayna, not yet a confirmed advisor</div>
-          </div>
         </div>
       </section>
 
