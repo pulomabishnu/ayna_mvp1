@@ -185,7 +185,7 @@ function ToggleRow({ title, sub, on, onClick, first }) {
 
 /* ---------------------------- Profile hub ---------------------------- */
 
-function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, onEditProfile }) {
+function ProfileHub({ onOpen, onClose, authUser, onSignOut, onSignIn, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, onEditProfile }) {
   return (
     <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
       <div
@@ -301,6 +301,12 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
             </div>
           </div>
         ))}
+
+        {authUser ? (
+          <div onClick={onSignOut} style={{ textAlign: 'center', padding: '16px 0 4px', fontSize: 13, color: 'var(--ayna-text-muted)', cursor: 'pointer' }}>Sign out</div>
+        ) : (
+          <div onClick={onSignIn} style={{ textAlign: 'center', padding: '16px 0 4px', fontSize: 13, color: 'var(--ayna-text-muted)', cursor: 'pointer' }}>Sign in</div>
+        )}
       </div>
     </div>
   );
@@ -2008,6 +2014,9 @@ export default function ProfileFlow({
       <ProfileHub
         onOpen={setScreen}
         onClose={onClose}
+        authUser={authUser}
+        onSignOut={onSignOut}
+        onSignIn={onSignIn ? () => { onClose(); onSignIn(); } : undefined}
         name={name}
         initial={initial}
         memberSince={authUser?.created_at ? formatMemberSince(authUser.created_at) : 'Member since 2026'}
