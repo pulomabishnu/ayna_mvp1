@@ -27,6 +27,11 @@ import { ProductImageFallback } from './ProductTileImage';
  * that's what should get the click/conversion credit. Same no-logo-yet
  * situation as Neycher — falls back to the text wordmark until a file lands
  * at public/brands/connect-pelvic-floor-fitness.png.
+ *
+ * Added 2026-09-07: VIO2 — confirmed affiliate partnership. `url` is the
+ * Ayna affiliate link (go.shopmy.us), not the bare homepage. Same no-logo-yet
+ * situation — falls back to the text wordmark until a file lands at
+ * public/brands/vio2.png.
  */
 
 const PARTNERS = [
@@ -45,6 +50,14 @@ const PARTNERS = [
     url: 'https://goto.connectpelvicfloorfitness.com/YVk7WO',
     blurb:
       'App and web membership for progressive pelvic floor training. Guided strength, HIIT, yoga and mobility workouts built by a pelvic floor physical therapist.',
+  },
+  {
+    brand: 'VIO2',
+    /** Drop a file at public/brands/vio2.png and it replaces the wordmark. */
+    logo: '/brands/vio2.png',
+    url: 'https://go.shopmy.us/p-83948920',
+    blurb:
+      'Dentist-designed, partial-coverage mouth tape for sleep. Encourages a gentle lip seal and nasal breathing to help with snoring and dry mouth.',
   },
 ];
 

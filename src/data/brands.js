@@ -826,4 +826,36 @@ export const BRAND_PRODUCTS = [
         verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ platform: 'reddit', url: 'https://www.reddit.com/r/PelvicFloor/search/?q=connect+pelvic+floor&restrict_sr=1', text: 'Reddit r/PelvicFloor', summary: 'Community discussions on pelvic floor training apps.' }] } },
         isEmergingBrand: true, // shows a 'Brand' tag on the Discovery card, next to the type badge
     },
+    {
+        id: 'p-vio2-mouth-tape',
+        name: 'VIO2 Partial-Coverage Mouth Tape',
+        brand: 'VIO2',
+        category: 'sleep',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['sleep-energy'],
+        tags: ['sleep', 'comfort'],
+        price: '$29.95 (48 strips)',
+        whereToBuy: [], // direct-to-consumer only; affiliateUrl below covers it
+        url: 'https://www.vio2tape.com/',
+        // Ayna affiliate partnership — affiliateUrl wins over `url` for the
+        // Buy Now / Visit Site destination (see getBuyUrl in ProductModal.jsx).
+        affiliateUrl: 'https://go.shopmy.us/p-83948920',
+        image: 'https://www.vio2tape.com/cdn/shop/files/vio2tape-health-beauty-1-pack-try-it-vio2-unscented-mouth-tape-33555330531505_1024x874.png?v=1781819129',
+        summary: 'A patented partial-coverage mouth tape, designed by a dentist, meant to encourage a gentle lip seal during sleep while still allowing natural airflow — intended to support nasal breathing, reduce snoring, and cut down on dry mouth.',
+        safety: {
+            fdaStatus: 'Personal-care product; not an FDA-cleared medical device.',
+            materials: 'Breathable cotton fabric with hypoallergenic medical-grade adhesive. Free from latex, PFAS, and gluten. Unscented. Made in USA.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Brand states this is not intended for children under 6, or for anyone with a breathing disorder, heart condition, nasal congestion, risk of vomiting, who has used alcohol or sedatives, or who is unable to remove the tape themselves. Single-use; discard after each application.',
+            opinionAlerts: 'Brand markets this as "the only mouth tape on the market designed, created & approved by a doctor" — a brand claim, not independently verified here.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Sourced from VIO2\'s own site marketing claims, not independent clinical literature.',
+        doctorOpinion: 'VIO2 states the tape was created by a dentist and designed to promote nasal breathing over mouth breathing during sleep, which the brand links to better sleep quality, oral/jaw muscle tone, and recovery.',
+        effectiveness: 'Positioned as a gentler, partial-coverage alternative to full-seal mouth tape; no independent clinical study of the product was found.',
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true, // shows a 'Brand' tag on the Discovery card, next to the type badge
+    },
 ];

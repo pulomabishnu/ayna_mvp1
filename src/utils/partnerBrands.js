@@ -9,8 +9,10 @@
  * actually contracted, not before.
  *
  * Added 2026-08-27: Connect Pelvic Floor Fitness — confirmed affiliate partnership.
+ *
+ * Added 2026-09-07: VIO2 — confirmed affiliate partnership.
  */
-export const PARTNER_BRAND_PATTERNS = [/\bneycher\b/, /\bconnect pelvic floor fitness\b/];
+export const PARTNER_BRAND_PATTERNS = [/\bneycher\b/, /\bconnect pelvic floor fitness\b/, /\bvio2\b/];
 
 export function isPartnerBrandItem(item) {
   const text = `${item?.brand || ''} ${item?.name || ''}`.toLowerCase();
