@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ALL_PRODUCTS } from '../../data/products.js';
 import { mapIntakeToLegacyQuizProfile } from '../../utils/healthIntake.js';
 import { getFirstIncompleteStepId, getIncompleteStepIds } from '../utils/profileCompleteness.js';
@@ -18,10 +18,9 @@ import { getFirstIncompleteStepId, getIncompleteStepIds } from '../utils/profile
 //   this build. onComplete still receives the exact same
 //   mapIntakeToLegacyQuizProfile(...) shape the recommendation engine
 //   expects, so matching works identically to the web version.
-// - Native drag-to-reorder for the "what matters to you" trust ranking —
-//   HTML5 drag-and-drop doesn't fire reliably on touchscreens. The real
-//   component's own up/down-arrow fallback (for accessibility) is used as
-//   the only interaction here instead, not a fallback.
+// - The "what matters to you" trust ranking uses real drag-to-reorder, but
+//   built on Pointer Events rather than HTML5 native drag-and-drop, which
+//   doesn't fire reliably on touchscreens (see TrustRanker below).
 
 /* ------------------------------- Data ------------------------------- */
 
@@ -107,7 +106,52 @@ const PRODUCT_FORMATS = [
   'Pills or capsules', 'Gummies', 'Powders', 'Drinks or teas', 'Creams, lotions, or gels', 'Patches',
   'Suppositories', 'Devices or wearables', 'Period-care products', 'No preference', 'Other',
 ];
+
+// One real icon per product format, keyed to the exact option strings above
+// (design pattern B1/E1 tiles) — line-art only, drawn with `currentColor` so
+// each tile's badge can recolor with the tile's own selected/unselected ink.
+const FORMAT_ICONS = {
+  'Pills or capsules': (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="10.5" width="18" height="7" rx="3.5" transform="rotate(-35 12 14)" stroke="currentColor" strokeWidth="1.8" /><path d="M9.5 8.2l5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
+  ),
+  Gummies: (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 4c3 0 5 2.2 5 5 0 1-.3 1.7-.8 2.4.9.5 1.6 1.5 1.6 3 0 2.5-2.1 4.6-4.7 4.6-1 0-1.9-.3-2.6-.8-.7.5-1.6.8-2.6.8-2.6 0-4.7-2-4.7-4.6 0-1.5.7-2.5 1.6-3-.5-.7-.8-1.4-.8-2.4 0-2.8 2-5 5-5" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /></svg>
+  ),
+  Powders: (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M8 3h8l1 4H7l1-4Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /><path d="M6 8h12l1.2 10.4a2 2 0 0 1-2 2.6H6.8a2 2 0 0 1-2-2.6L6 8Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /><path d="M9 12h6M8.5 15.5h7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+  ),
+  'Drinks or teas': (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 8h11l-1 9.5A2 2 0 0 1 13 19.3H8a2 2 0 0 1-2-1.8L5 8Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /><path d="M16 9.5h1.5a2.5 2.5 0 0 1 0 5H16" stroke="currentColor" strokeWidth="1.8" /><path d="M8 5.2c.4-.7 0-1-.3-1.5M12 5.2c.4-.7 0-1-.3-1.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+  ),
+  'Creams, lotions, or gels': (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M8 10c0-3 1.8-6 4-6.8C14.2 4 16 7 16 10v8a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-8Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /><path d="M8 10h8" stroke="currentColor" strokeWidth="1.8" /></svg>
+  ),
+  Patches: (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="5" stroke="currentColor" strokeWidth="1.8" /><circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.6" /><path d="M7 7l1.6 1.6M17 7l-1.6 1.6M7 17l1.6-1.6M17 17l-1.6-1.6" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" /></svg>
+  ),
+  Suppositories: (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3c2 2 3 5 3 8.5 0 4-1.3 7-3 9.5-1.7-2.5-3-5.5-3-9.5C9 8 10 5 12 3Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /></svg>
+  ),
+  'Devices or wearables': (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="7" y="2.5" width="10" height="19" rx="2.5" stroke="currentColor" strokeWidth="1.8" /><path d="M10.5 18.5h3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
+  ),
+  'Period-care products': (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3.5c3 4 6 8 6 11.5a6 6 0 1 1-12 0c0-3.5 3-7.5 6-11.5Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /></svg>
+  ),
+  'No preference': (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.8" /><path d="M6.5 17.5l11-11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
+  ),
+  Other: (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="6" cy="12" r="1.6" fill="currentColor" /><circle cx="12" cy="12" r="1.6" fill="currentColor" /><circle cx="18" cy="12" r="1.6" fill="currentColor" /></svg>
+  ),
+};
 const PRICE_RANGES = ['Under $25', '$25–$75', '$75–$150', '$150+', 'Price is not a major factor for me'];
+const PRICE_BAND_SUBTITLES = {
+  'Under $25': 'Everyday basics',
+  '$25–$75': 'Most supplements',
+  '$75–$150': 'Devices, longer courses',
+  '$150+': 'Bigger investments',
+};
 const LARGE_PURCHASE_FREQUENCY = ['Never', 'Rarely', 'A few times a year', 'About once a month', 'More than once a month'];
 const BRAND_OPENNESS = [
   'I mostly stick with brands I already trust',
@@ -533,26 +577,40 @@ const cardShadow = '0 1px 3px rgba(41,37,36,.04)';
 
 /* ------------------------------ Shared widgets ------------------------------ */
 
-// 2-column tile grid (design pattern B1/E1) — no per-option icon, since the
-// reference's decorative icons don't map to any real per-option data here
-// and inventing one per option would be guessing, not porting the design.
-function ChoiceGrid({ items, selected = [], onToggle }) {
+// 2-column tile grid (design pattern B1/E1). Callers with real per-option
+// icon art (currently just product formats — see FORMAT_ICONS above) pass an
+// `icons` map to render a small rounded-square badge above the label;
+// callers without one (life stages, which have no matching icon set) get the
+// plain label-only tile exactly as before.
+function ChoiceGrid({ items, selected = [], onToggle, icons }) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 9 }}>
       {items.map((item) => {
         const on = selected.includes(item);
+        const icon = icons && icons[item];
         return (
           <div
             key={item}
             onClick={() => onToggle(item)}
             style={{
-              cursor: 'pointer', position: 'relative', minHeight: 60, display: 'flex', alignItems: 'center',
+              cursor: 'pointer', position: 'relative', minHeight: 60, display: 'flex',
+              flexDirection: icon ? 'column' : 'row', alignItems: icon ? 'flex-start' : 'center',
               padding: '13px 26px 13px 13px', borderRadius: 18,
               background: on ? ACCENT_BG : CARD_BG,
               border: '1.5px solid ' + (on ? ACCENT_BORDER : ROW_BORDER),
               boxShadow: on ? '0 4px 14px rgba(232,169,79,.2)' : cardShadow,
             }}
           >
+            {icon && (
+              <span style={{
+                width: 32, height: 32, borderRadius: 10, marginBottom: 10, flex: 'none',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                background: on ? 'rgba(255,255,255,.55)' : PANEL_BG,
+                color: on ? SELECTED_TEXT : NAVY,
+              }}>
+                {icon}
+              </span>
+            )}
             <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 12.5, lineHeight: 1.25, color: on ? SELECTED_TEXT : INK }}>{item}</span>
             {on && (
               <span style={{ position: 'absolute', top: 9, right: 9, width: 16, height: 16, borderRadius: 99, background: ACCENT_BORDER, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -667,6 +725,39 @@ function Segmented({ options, value, onChange }) {
               {on && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12.5l5.5 5.5L20 6.5" /></svg>}
             </span>
             <span style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 13.5, lineHeight: 1.35, fontWeight: on ? 600 : 400, color: on ? SELECTED_TEXT : INK }}>{opt}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// Pattern K1: price bands as a vertical row list rather than chips — a
+// Playfair price label on the left, a descriptive subtitle right-aligned,
+// and a trailing checkmark instead of a leading radio circle.
+function PriceBandList({ options, selected, onToggle }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+      {options.map((opt) => {
+        const on = selected.includes(opt);
+        const subtitle = PRICE_BAND_SUBTITLES[opt];
+        return (
+          <div
+            key={opt}
+            onClick={() => onToggle(opt)}
+            style={{
+              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12, padding: '14px 15px', borderRadius: 16,
+              background: on ? ACCENT_BG : CARD_BG, border: '1.5px solid ' + (on ? ACCENT_BORDER : ROW_BORDER),
+            }}
+          >
+            <span style={{ fontFamily: "'Playfair Display',serif", fontSize: 18, flex: 'none', color: on ? SELECTED_TEXT : NAVY }}>{opt}</span>
+            <span style={{ flex: 1, textAlign: 'right', fontFamily: 'Inter,system-ui,sans-serif', fontSize: 11.5, color: on ? SELECTED_TEXT : MUTED }}>{subtitle}</span>
+            <span style={{
+              width: 19, height: 19, borderRadius: 99, flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: on ? ACCENT_BORDER : 'transparent', border: '1.5px solid ' + (on ? ACCENT_BORDER : ROW_BORDER),
+            }}>
+              {on && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12.5l5.5 5.5L20 6.5" /></svg>}
+            </span>
           </div>
         );
       })}
@@ -894,6 +985,117 @@ function TokenInput({ values, onChange, placeholder, suggestions = [], suggestio
   );
 }
 
+// The "never recommend again" step gets its own H1 variant: a dashed
+// "+ Add a product or brand" affordance (rather than an always-open search
+// bar) plus a "FROM YOUR HISTORY" quick-add row sourced from the real
+// products the person entered earlier in this same form (productHistory),
+// not invented data.
+function AddProductBuilder({ values, onChange, suggestions, historyNames, footerText }) {
+  const [adding, setAdding] = useState(false);
+  const [draft, setDraft] = useState('');
+  const matches = useMemo(
+    () => rankedSuggestions(draft, suggestions.filter((option) => !values.some((v) => normalizeSuggestion(v) === normalizeSuggestion(option))), 6),
+    [draft, suggestions, values]
+  );
+  const quickAdd = historyNames.filter((name) => !values.some((v) => normalizeSuggestion(v) === normalizeSuggestion(name)));
+
+  const addValue = (raw) => {
+    const next = String(raw || '').trim();
+    if (!next || values.some((v) => normalizeSuggestion(v) === normalizeSuggestion(next))) return;
+    onChange([...values, next]);
+    setDraft('');
+    setAdding(false);
+  };
+
+  return (
+    <div>
+      {values.length > 0 && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
+          {values.map((value, i) => (
+            <div key={`${value}-${i}`} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 14px', borderRadius: 16, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER }}>
+              <span style={{ width: 30, height: 30, borderRadius: 10, background: ACCENT_BG, border: '1px solid ' + ACCENT_BORDER, flex: 'none' }} />
+              <span style={{ flex: 1, fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 13.5, color: INK }}>{value}</span>
+              <span onClick={() => onChange(values.filter((_, idx) => idx !== i))} style={{ cursor: 'pointer', opacity: 0.55, flex: 'none', display: 'flex' }}>
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="3" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {!adding ? (
+        <div
+          onClick={() => setAdding(true)}
+          style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer',
+            padding: '15px', borderRadius: 16, border: '1.5px dashed ' + ROW_BORDER, background: 'transparent',
+            fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 13.5, color: LABEL_GOLD,
+          }}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={LABEL_GOLD} strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
+          Add a product or brand
+        </div>
+      ) : (
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 9, background: CARD_BG, border: '1.5px solid ' + ACCENT_BORDER, borderRadius: 99, padding: '11px 14px' }}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
+            <input
+              autoFocus
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter' && draft.trim()) addValue(draft); }}
+              placeholder="Start typing a product or brand"
+              style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 13, minWidth: 0 }}
+            />
+            <span onClick={() => { setAdding(false); setDraft(''); }} style={{ cursor: 'pointer', opacity: 0.55, flex: 'none', display: 'flex' }}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="2.6" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+            </span>
+          </div>
+          {draft.trim().length > 0 && (
+            <div style={{ marginTop: 8, borderRadius: 16, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, overflow: 'hidden' }}>
+              <div onClick={() => addValue(draft)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '13px 14px', color: SELECTED_TEXT, fontWeight: 600, cursor: 'pointer', fontSize: 13.5, fontFamily: "'DM Sans',sans-serif" }}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={SELECTED_TEXT} strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
+                <span>Add "{draft.trim()}"</span>
+              </div>
+              {matches.map((option) => (
+                <div key={option} onClick={() => addValue(option)} style={{ padding: '13px 14px', fontSize: 13.5, color: INK, cursor: 'pointer', borderTop: '1px solid ' + ROW_BORDER }}>
+                  {option}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {quickAdd.length > 0 && (
+        <div style={{ marginTop: 18 }}>
+          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.1px', textTransform: 'uppercase', color: LABEL_GOLD, marginBottom: 10 }}>From your history</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
+            {quickAdd.map((name) => (
+              <div
+                key={name}
+                onClick={() => addValue(name)}
+                style={{
+                  cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap',
+                  fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: 12.5, padding: '9px 13px', borderRadius: 99,
+                  background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, color: INK,
+                }}
+              >
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={LABEL_GOLD} strokeWidth="2.8" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
+                {name}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {footerText && (
+        <p style={{ margin: '18px 0 0', fontFamily: 'Inter,system-ui,sans-serif', fontSize: 11.5, lineHeight: 1.55, color: MUTED }}>{footerText}</p>
+      )}
+    </div>
+  );
+}
+
 // Pattern C1: search bar + grouped chips, each group header showing a live
 // "n/m" selected count.
 function SearchableGroups({ groups, selected, onToggle, search, onSearch }) {
@@ -1033,31 +1235,77 @@ function ProductHistoryBuilder({ products, onChange }) {
   );
 }
 
-// Pattern L1 — same up/down-arrow reordering as before (see the file's own
-// top-of-file note on why: HTML5 drag-and-drop doesn't fire reliably on
-// touchscreens), just restyled: rank-1 gets the amber highlight treatment,
-// others plain rows.
+// Pattern L1 — real drag-to-reorder, built on Pointer Events rather than
+// HTML5 native drag-and-drop (which doesn't fire reliably on touchscreens).
+// The dragged row tracks the pointer via a CSS transform computed from a
+// fixed rect snapshot taken at pointer-down, while the other rows' *live*
+// positions (read fresh on every move) decide when to splice the array —
+// so the list itself reorders live as you drag, not just on release.
 function TrustRanker({ order, onChange, onTouch }) {
-  const move = (index, delta) => {
-    const nextIndex = index + delta;
-    if (nextIndex < 0 || nextIndex >= order.length) return;
-    const next = [...order];
-    [next[index], next[nextIndex]] = [next[nextIndex], next[index]];
-    onTouch();
-    onChange(next);
+  const itemRefs = useRef({});
+  const [drag, setDrag] = useState(null); // { item, startClientY, top, height, y }
+
+  useEffect(() => {
+    if (!drag) return undefined;
+    const onMove = (e) => {
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      const deltaY = clientY - drag.startClientY;
+      setDrag((d) => (d ? { ...d, y: deltaY } : d));
+
+      const draggedMid = drag.top + drag.height / 2 + deltaY;
+      const others = order.filter((it) => it !== drag.item);
+      let newIndex = 0;
+      others.forEach((it) => {
+        const el = itemRefs.current[it];
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        if (draggedMid > rect.top + rect.height / 2) newIndex += 1;
+      });
+      const currentIndex = order.indexOf(drag.item);
+      if (newIndex !== currentIndex) {
+        const next = order.filter((it) => it !== drag.item);
+        next.splice(newIndex, 0, drag.item);
+        onTouch();
+        onChange(next);
+      }
+    };
+    const onUp = () => setDrag(null);
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onUp);
+    return () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
+    };
+  }, [drag, order, onChange, onTouch]);
+
+  const handlePointerDown = (item, e) => {
+    const el = itemRefs.current[item];
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    e.preventDefault();
+    setDrag({ item, startClientY: e.clientY, top: rect.top, height: rect.height, y: 0 });
   };
+
   return (
     <div style={{ display: 'grid', gap: 10 }}>
       {order.map((item, index) => {
         const top = index === 0;
+        const isDragging = drag && drag.item === item;
         return (
           <div
             key={item}
+            ref={(el) => { itemRefs.current[item] = el; }}
             style={{
               display: 'flex', alignItems: 'center', gap: 12, borderRadius: 18, padding: 14,
               background: top ? ACCENT_BG : CARD_BG,
               border: '1.5px solid ' + (top ? ACCENT_BORDER : ROW_BORDER),
-              boxShadow: top ? '0 8px 20px -10px rgba(232,169,79,.5)' : cardShadow,
+              boxShadow: isDragging ? '0 18px 32px -12px rgba(41,37,36,.4)' : (top ? '0 8px 20px -10px rgba(232,169,79,.5)' : cardShadow),
+              transform: isDragging ? `translateY(${drag.y}px) scale(1.02)` : 'none',
+              position: 'relative',
+              zIndex: isDragging ? 5 : 1,
+              touchAction: 'none',
             }}
           >
             <span style={{
@@ -1066,9 +1314,19 @@ function TrustRanker({ order, onChange, onTouch }) {
               fontFamily: "'Playfair Display',serif", fontSize: 15,
             }}>{index + 1}</span>
             <span style={{ flex: 1, textAlign: 'left', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 13.5, lineHeight: 1.3, color: top ? SELECTED_TEXT : INK }}>{item}</span>
-            <span style={{ display: 'flex', gap: 4, flex: 'none' }}>
-              <div onClick={() => move(index, -1)} aria-label={`Move ${item} up`} style={{ width: 28, height: 28, borderRadius: 8, border: '1.5px solid ' + ROW_BORDER, background: CARD_BG, color: INK, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', opacity: index === 0 ? 0.35 : 1 }}>↑</div>
-              <div onClick={() => move(index, 1)} aria-label={`Move ${item} down`} style={{ width: 28, height: 28, borderRadius: 8, border: '1.5px solid ' + ROW_BORDER, background: CARD_BG, color: INK, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', opacity: index === order.length - 1 ? 0.35 : 1 }}>↓</div>
+            <span
+              onPointerDown={(e) => handlePointerDown(item, e)}
+              aria-label={`Drag to reorder ${item}`}
+              style={{
+                width: 30, height: 30, borderRadius: 8, flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: top ? SELECTED_TEXT : MUTED, cursor: 'grab', touchAction: 'none',
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="9" cy="6" r="1.7" /><circle cx="15" cy="6" r="1.7" />
+                <circle cx="9" cy="12" r="1.7" /><circle cx="15" cy="12" r="1.7" />
+                <circle cx="9" cy="18" r="1.7" /><circle cx="15" cy="18" r="1.7" />
+              </svg>
             </span>
           </div>
         );
@@ -1144,12 +1402,11 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
       { id: 'safety', section: 'safety', title: 'Are any symptoms you are experiencing new, rapidly worsening, or concerning to you right now?', type: 'safety', optional: false },
       { id: 'formats', section: 'preferences', title: 'Which product formats do you prefer?', type: 'formats', optional: true },
       { id: 'priceRange', section: 'preferences', title: 'What price range do you usually prefer for health and wellness products?', type: 'price', optional: true },
-      { id: 'largePurchaseFrequency', section: 'preferences', title: 'How often do you make larger health or wellness purchases of $75 or more?', subtitle: 'This is about purchase frequency, not your usual preferred price per product.', type: 'largeSpend', optional: true },
       { id: 'brandOpenness', section: 'preferences', title: 'How do you feel about trying new brands?', type: 'brand', optional: true },
       ...(intake.brandOpenness === 'I mostly stick with brands I already trust' || intake.brandOpenness === 'I prefer trusted brands but am open to something new' ? [{ id: 'trustedBrands', section: 'preferences', title: 'Which brands do you already trust?', type: 'trustedBrands', optional: true }] : []),
       { id: 'avoidIngredients', section: 'preferences', title: 'Preferences', subtitle: 'Select any that matter to you. Allergies are handled separately.', type: 'avoidIngredients', optional: true },
       { id: 'fsaHsa', section: 'preferences', title: 'Do you have an FSA or HSA you would like to use?', type: 'fsa', optional: true },
-      { id: 'trust', section: 'trust', title: 'What matters most to you when deciding whether to trust a product?', subtitle: 'Rank these using the arrows. You can also skip this.', type: 'trust', optional: true },
+      { id: 'trust', section: 'trust', title: 'What matters most to you when deciding whether to trust a product?', subtitle: 'Drag the handle, or long-press and move. You can also skip this.', type: 'trust', optional: true },
       { id: 'anythingElse', section: 'trust', title: 'Anything else you want Ayna to know?', subtitle: 'Share anything else that could help us personalize your recommendations.', type: 'textarea', optional: true },
     ];
     return steps;
@@ -1278,7 +1535,15 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
     );
 
     if (step.type === 'products') return <ProductHistoryBuilder products={intake.productHistory} onChange={(v) => set('productHistory', v)} />;
-    if (step.type === 'avoidRepeat') return <TokenInput values={intake.avoidRepeat} onChange={(v) => set('avoidRepeat', v)} placeholder="Start typing a product or brand" suggestions={PRODUCT_OR_BRAND_SUGGESTIONS} />;
+    if (step.type === 'avoidRepeat') return (
+      <AddProductBuilder
+        values={intake.avoidRepeat}
+        onChange={(v) => set('avoidRepeat', v)}
+        suggestions={PRODUCT_OR_BRAND_SUGGESTIONS}
+        historyNames={[...new Set((intake.productHistory || []).map((p) => p.name).filter(Boolean))]}
+        footerText="Excluded items never appear in your ecosystem, search results, or “similar product” rows."
+      />
+    );
     if (step.type === 'trustedBrands') return <TokenInput values={intake.trustedBrands} onChange={(v) => set('trustedBrands', v)} placeholder="Start typing a brand" suggestions={BRAND_SUGGESTIONS} />;
 
     // Pattern J1: the conditional alert panel gets its own amber header
@@ -1305,7 +1570,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
 
     if (step.type === 'formats') return (
       <>
-        <ChoiceGrid items={PRODUCT_FORMATS} selected={intake.preferredFormats} onToggle={(v) => toggleExclusive('preferredFormats', v, ['No preference'])} />
+        <ChoiceGrid items={PRODUCT_FORMATS} selected={intake.preferredFormats} onToggle={(v) => toggleExclusive('preferredFormats', v, ['No preference'])} icons={FORMAT_ICONS} />
         {intake.preferredFormats.includes('Other') && (
           <OtherBox label="What format do you prefer?" value={intake.formatOtherText} onChange={(v) => set('formatOtherText', v)} placeholder="Type here..." />
         )}
@@ -1314,9 +1579,36 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
 
     if (step.type === 'price') {
       const selectedPrices = Array.isArray(intake.priceRange) ? intake.priceRange : (intake.priceRange ? [intake.priceRange] : []);
-      return <Pills options={PRICE_RANGES} selected={selectedPrices} onToggle={(v) => toggleExclusive('priceRange', v, ['Price is not a major factor for me'])} exclusiveValues={['Price is not a major factor for me']} />;
+      const priceOnlyBands = PRICE_RANGES.filter((opt) => opt !== 'Price is not a major factor for me');
+      const notAFactor = 'Price is not a major factor for me';
+      const notAFactorOn = selectedPrices.includes(notAFactor);
+      return (
+        <>
+          <PriceBandList options={priceOnlyBands} selected={selectedPrices} onToggle={(v) => toggleExclusive('priceRange', v, [notAFactor])} />
+          <div
+            onClick={() => toggleExclusive('priceRange', notAFactor, [notAFactor])}
+            style={{
+              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap', marginTop: 7,
+              fontFamily: "'DM Sans',sans-serif", fontSize: 12.5, padding: '10px 14px', borderRadius: 99,
+              fontWeight: notAFactorOn ? 600 : 500,
+              background: notAFactorOn ? ACCENT_BG : PANEL_BG,
+              color: notAFactorOn ? SELECTED_TEXT : MUTED,
+              border: '1.5px solid ' + (notAFactorOn ? ACCENT_BORDER : ROW_BORDER),
+              justifyContent: 'center',
+            }}
+          >
+            {notAFactorOn && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={SELECTED_TEXT} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12.5l5.5 5.5L20 6.5" /></svg>}
+            {notAFactor}
+          </div>
+
+          <div style={{ height: 1, background: ROW_BORDER, margin: '24px 0 20px' }} />
+
+          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 14, color: INK, marginBottom: 4 }}>How often do you spend $75 or more?</div>
+          <p style={{ margin: '0 0 14px', fontFamily: 'Inter,system-ui,sans-serif', fontSize: 12, lineHeight: 1.5, color: BODY_TEXT }}>This is about purchase frequency, not your usual preferred price per product.</p>
+          <Timeline options={LARGE_PURCHASE_FREQUENCY} value={intake.largePurchaseFrequency} onChange={(v) => set('largePurchaseFrequency', v)} />
+        </>
+      );
     }
-    if (step.type === 'largeSpend') return <Timeline options={LARGE_PURCHASE_FREQUENCY} value={intake.largePurchaseFrequency} onChange={(v) => set('largePurchaseFrequency', v)} />;
     if (step.type === 'brand') return <BrandSpectrum value={intake.brandOpenness} onChange={(v) => set('brandOpenness', v)} />;
     if (step.type === 'avoidIngredients') {
       const q = search.trim().toLowerCase();
