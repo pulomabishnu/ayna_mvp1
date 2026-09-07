@@ -693,12 +693,37 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
 // real publication's public subscribe page instead, the same
 // window.open(url, '_blank', 'noopener,noreferrer') pattern the Startups
 // hub already uses for its external links.
-const NEWSLETTER_URL = 'https://aynahealth.substack.com';
+const NEWSLETTER_URL = 'https://aynahealth.substack.com/subscribe';
+// There's no webhook back from Substack telling the app someone actually
+// completed the subscribe form on their site, so this can only track
+// "tapped through to the real subscribe page" (persisted, so it survives
+// the trip to Substack and back) — the closest honest stand-in for
+// "subscribed" without a real integration.
+const NEWSLETTER_CLICKED_KEY = 'ayna_mobile_newsletter_clicked_v1';
+
+function loadNewsletterClicked() {
+  try { return localStorage.getItem(NEWSLETTER_CLICKED_KEY) === '1'; } catch { return false; }
+}
+
+function ExternalLinkIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ stroke: 'var(--ayna-text-faint)', flex: 'none' }}>
+      <path d="M7 17 17 7M9 7h8v8" />
+    </svg>
+  );
+}
 
 function PreferencesScreen({ onBack, theme, onToggleTheme }) {
   const [notif, setNotif] = useState(true);
   const [updates, setUpdates] = useState(true);
   const [channel, setChannel] = useState('push');
+  const [newsletterClicked, setNewsletterClicked] = useState(loadNewsletterClicked);
+
+  const handleJoinNewsletter = () => {
+    window.open(NEWSLETTER_URL, '_blank', 'noopener,noreferrer');
+    setNewsletterClicked(true);
+    try { localStorage.setItem(NEWSLETTER_CLICKED_KEY, '1'); } catch { /* private mode */ }
+  };
 
   return (
     <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
@@ -712,14 +737,21 @@ function PreferencesScreen({ onBack, theme, onToggleTheme }) {
           <ToggleRow title="Updates" sub="New matches and restocks, weekly digest." on={updates} onClick={() => setUpdates((v) => !v)} />
           <ToggleRow title="Night mode" sub="Dim the app after sunset." on={theme === 'dark'} onClick={onToggleTheme} />
           <div
-            onClick={() => window.open(NEWSLETTER_URL, '_blank', 'noopener,noreferrer')}
+            onClick={handleJoinNewsletter}
             style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '17px 0', borderTop: '1px solid var(--ayna-border)', cursor: 'pointer' }}
           >
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 600, fontSize: 15, color: 'var(--ayna-text)' }}>Join newsletter</div>
-              <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', marginTop: 3, lineHeight: 1.45 }}>The Mirror — one letter a month, no products pushed.</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ fontWeight: 600, fontSize: 15, color: 'var(--ayna-text)' }}>Join newsletter</div>
+                {newsletterClicked && (
+                  <div style={{ fontSize: 10, fontWeight: 600, color: '#2F6B4F', background: 'var(--ayna-chip-bg)', padding: '2px 8px', borderRadius: 99 }}>Subscribed</div>
+                )}
+              </div>
+              <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', marginTop: 3, lineHeight: 1.45 }}>
+                {newsletterClicked ? "You're on the list — The Mirror lands monthly." : 'The Mirror — one letter a month, no products pushed.'}
+              </div>
             </div>
-            <ChevronIcon />
+            <ExternalLinkIcon />
           </div>
         </div>
 
