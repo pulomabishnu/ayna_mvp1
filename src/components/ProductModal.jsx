@@ -855,7 +855,7 @@ export default function ProductModal({
             ayna Partner
           </span>{' '}
           <span className="pdp-partner-note">
-            ayna has vetted this brand's claims and earns commission on purchases. We encourage buying through ayna to support women-owned businesses.
+            ayna has personally spoken with this brand and vetted their claims. We earn commission on purchases, and encourage buying through ayna to support women-owned businesses.
           </span>
         </p>
       )}
