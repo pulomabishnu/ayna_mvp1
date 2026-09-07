@@ -1507,22 +1507,31 @@ function productMatchesAnyHealthLabel(product, labels) {
 }
 
 function getPrimaryGoalLabels(intake, quizAnswers) {
-    const primary = asStringArray(intake.primaryConcerns);
+    const safeIntake = rawIntakeFromProfile(intake);
+
+    const primary = asStringArray(safeIntake.primaryConcerns);
     if (primary.length) return primary;
-    const support = asStringArray(intake.supportSelections);
+
+    const support = asStringArray(safeIntake.supportSelections);
     if (support.length) return support.slice(0, 3);
-    const goals = String(quizAnswers?.healthGoals || '').trim();
+
+    const goals = String(
+        quizAnswers?.healthGoals
+        || safeIntake.healthGoals
+        || ''
+    ).trim();
+
     return goals ? [goals] : [];
 }
 
 function getSymptomLabels(intake, quizAnswers) {
-    const explicit = asStringArray(intake.symptoms);
+    const explicit = asStringArray(intake?.symptoms);
     if (explicit.length) return explicit;
     return asStringArray(quizAnswers?.frustrations);
 }
 
 function getDiagnosisLabels(intake, healthProfile) {
-    const direct = asStringArray(intake.diagnosisSelections || intake.conditions);
+    const direct = asStringArray(intake?.diagnosisSelections || intake?.conditions);
     const imported = [
         ...asStringArray(healthProfile?.conditions),
         ...asStringArray(healthProfile?.fhirSummary?.conditions),
@@ -1532,8 +1541,8 @@ function getDiagnosisLabels(intake, healthProfile) {
 
 function getLifeStageLabels(intake) {
     return [
-        ...asStringArray(intake.lifeStageSelections),
-        ...asStringArray(intake.lifeStage),
+        ...asStringArray(intake?.lifeStageSelections),
+        ...asStringArray(intake?.lifeStage),
     ];
 }
 

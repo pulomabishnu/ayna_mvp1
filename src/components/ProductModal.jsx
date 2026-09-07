@@ -792,50 +792,6 @@ export default function ProductModal({
           </button>
         )}
 
-        <div className="pdp-share">
-          <button
-            type="button"
-            className="pdp-btn pdp-btn--outline pdp-btn--share"
-            aria-expanded={shareMenuOpen}
-            onClick={handleShare}
-          >
-            Share
-          </button>
-
-          {shareMenuOpen && (
-            <div className="pdp-share__menu" role="menu" aria-label="Share product">
-              <button type="button" role="menuitem" onClick={copyShareLink}>
-                {shareCopied ? 'Link copied' : 'Copy link'}
-              </button>
-
-              <a
-                role="menuitem"
-                href={`mailto:?subject=${emailSubject}&body=${emailBody}`}
-                onClick={() => recordShare('email')}
-              >
-                Email
-              </a>
-
-              <a
-                role="menuitem"
-                href={`sms:?&body=${encodedShareText}`}
-                onClick={() => recordShare('sms')}
-              >
-                Text
-              </a>
-
-              <a
-                role="menuitem"
-                href={`https://wa.me/?text=${encodedShareText}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => recordShare('whatsapp')}
-              >
-                WhatsApp
-              </a>
-            </div>
-          )}
-        </div>
       </div>
       {onAddToEcosystem && (
         <button
@@ -949,6 +905,67 @@ export default function ProductModal({
 
         {/* Which of the mockup's two product layouts to show (1f / 1g). */}
         <div className="pdp-viewswitch" style={{ paddingTop: '1.5rem' }}>
+          <div className="pdp-share pdp-share--top">
+            <button
+              type="button"
+              className="pdp-share__icon"
+              aria-label="Share product"
+              title="Share product"
+              aria-expanded={shareMenuOpen}
+              onClick={handleShare}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                aria-hidden="true"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M12 3v12" />
+                <path d="m7 8 5-5 5 5" />
+                <path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" />
+              </svg>
+            </button>
+
+            {shareMenuOpen && (
+              <div className="pdp-share__menu" role="menu" aria-label="Share product">
+                <button type="button" role="menuitem" onClick={copyShareLink}>
+                  {shareCopied ? 'Link copied' : 'Copy link'}
+                </button>
+
+                <a
+                  role="menuitem"
+                  href={`mailto:?subject=${emailSubject}&body=${emailBody}`}
+                  onClick={() => recordShare('email')}
+                >
+                  Email
+                </a>
+
+                <a
+                  role="menuitem"
+                  href={`sms:?&body=${encodedShareText}`}
+                  onClick={() => recordShare('sms')}
+                >
+                  Text
+                </a>
+
+                <a
+                  role="menuitem"
+                  href={`https://wa.me/?text=${encodedShareText}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => recordShare('whatsapp')}
+                >
+                  WhatsApp
+                </a>
+              </div>
+            )}
+          </div>
+
           <div className="pdp-viewswitch__group" role="group" aria-label="Product detail layout">
             <button
               type="button"
