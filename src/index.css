@@ -3734,6 +3734,7 @@ footer a[href*="career" i],
 
 .pdp-actions__primary {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
   width: 100%;
 }
