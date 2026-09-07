@@ -10,6 +10,7 @@ import { getSupabaseClient } from '../utils/supabaseClient';
 import { renderMarkdownLite } from '../utils/renderMarkdownLite';
 import MatchGauge from './MatchGauge';
 import { PRODUCT_BUY_URLS } from '../data/productBuyUrls';
+import { getAmazonAffiliateUrl } from '../data/productAffiliateUrls';
 import { getVerificationLinks, toSourceChips, hostLabel } from '../utils/verificationLinks';
 import posthog from 'posthog-js';
 import { productHref } from '../utils/productRoute';
@@ -444,13 +445,19 @@ function getBuyUrl(product) {
     return String(product.affiliateUrl).trim();
   }
 
-  // 2. Ayna's centrally verified exact destination.
+  // 2. Amazon Associates destination for products in Ayna's affiliate catalog.
+  const amazonAffiliateUrl = getAmazonAffiliateUrl(product?.name);
+  if (isExactBuyUrl(amazonAffiliateUrl)) {
+    return amazonAffiliateUrl;
+  }
+
+  // 3. Ayna's centrally verified exact destination.
   const verifiedCatalogUrl = PRODUCT_BUY_URLS[product?.id];
   if (isExactBuyUrl(verifiedCatalogUrl)) {
     return verifiedCatalogUrl;
   }
 
-  // 3. Explicit exact product URLs.
+  // 4. Explicit exact product URLs.
   for (const candidate of [product?.productUrl, product?.buyUrl]) {
     if (isExactBuyUrl(candidate)) return String(candidate).trim();
   }
