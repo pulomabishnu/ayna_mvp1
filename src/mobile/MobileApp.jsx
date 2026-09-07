@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './mobile.css';
-import { ALL_PRODUCTS, getEcosystemAlternatives, getPersonalizedProductIds, getProductById } from '../data/products.js';
+import { ALL_PRODUCTS, getEcosystemAlternatives, getProfileMatchPercentForProduct, getRecommendationMatchesAndRest } from '../data/products.js';
 import { ARTICLES } from '../components/Articles.jsx';
 import { ECOSYSTEM_AREAS as REAL_ECOSYSTEM_AREAS, resolveEcosystemProductArea } from '../components/EcosystemBubbles.jsx';
 import { useSavedProducts } from './hooks/useSavedProducts.js';
 import { useThemeMode } from './hooks/useThemeMode.js';
 import { useEcosystemSession } from './hooks/useEcosystemSession.js';
+import { useSupabaseAuth, MOBILE_OAUTH_PENDING_KEY } from './hooks/useSupabaseAuth.js';
 import { ECOSYSTEM_AREAS as AREA_LABELS } from './data/ecosystemAreas.js';
 import AskAynaChip from './components/AskAynaChip.jsx';
 import AskAynaModal from './components/AskAynaModal.jsx';
@@ -65,24 +66,32 @@ function capProductsPerBrand(products, maxPerBrand = MAX_PRODUCTS_PER_BRAND) {
   return result;
 }
 
-// Real business logic: getPersonalizedProductIds returns every real,
-// positively-scored catalog match for the quiz answers (not
-// getRecommendations()'s padded fallback list, and not limited to one pick
-// per frustration like getEcosystemSeedFromQuiz) — richer, so the orbit can
-// naturally populate more than a handful of areas when the answers
-// genuinely match more products. resolveEcosystemProductArea is the real
-// product -> pillar-area matcher (keyword + category scanning) that
-// EcosystemOrbit's contract has always deferred to rather than
-// reimplementing. Both reused here, not duplicated.
+// Real business logic, using the same weighted relevance engine as every
+// match-percent ring in the app (getProfileMatchPercentForProduct). Used to
+// go through getPersonalizedProductIds, which only requires percent > 0 —
+// that function's own doc comment in products.js admits this is "close to
+// a no-op (nearly every product qualifies)". That's exactly why the mobile
+// ecosystem was over-populating with weak, single-preference-tag matches:
+// there was no real quality bar. MIN_ECOSYSTEM_MATCH_PERCENT is that bar —
+// a lone preference-tag overlap scores well under it, while a genuine
+// concern-tag match clears it comfortably (see getProductRelevanceStats's
+// weights), so the ecosystem now reflects real relevance, not "any overlap
+// at all". resolveEcosystemProductArea is the real product -> pillar-area
+// matcher (keyword + category scanning) that EcosystemOrbit's contract has
+// always deferred to rather than reimplementing.
 //
 // Capped per brand (see capProductsPerBrand) AFTER ranking so the ecosystem
 // — and every per-area seat within it, since each seat's product list is a
 // subset of this same array — stays a variety of brands instead of one
 // brand's whole catalog crowding everything else out.
+const MIN_ECOSYSTEM_MATCH_PERCENT = 30;
+
 function seedEcosystemFromAnswers(quizAnswers) {
-  const ids = getPersonalizedProductIds(quizAnswers, null);
-  const products = ids.map((id) => getProductById(id)).filter(Boolean);
-  const withAreas = products.map((p) => {
+  const { matches } = getRecommendationMatchesAndRest(quizAnswers, null);
+  const strongMatches = matches.filter(
+    (p) => (getProfileMatchPercentForProduct(p, quizAnswers) || 0) >= MIN_ECOSYSTEM_MATCH_PERCENT
+  );
+  const withAreas = strongMatches.map((p) => {
     const area = resolveEcosystemProductArea(p, REAL_ECOSYSTEM_AREAS);
     return { ...p, areaKey: area ? area.key : null };
   });
@@ -107,6 +116,11 @@ export default function MobileApp() {
   const { theme, toggleTheme, setTheme } = useThemeMode();
   const [askAynaOpen, setAskAynaOpen] = useState(false);
   const [askAynaHistory, setAskAynaHistory] = useState([]);
+  // Distinguishes "Finish your profile" (resume with prior answers, jump to
+  // the first thing left blank) from every other way into the quiz screen
+  // (start quiz, retake, update health), which all start fresh on purpose.
+  const [editingHealthProfile, setEditingHealthProfile] = useState(false);
+  const { user: authUser, signUpWithPassword, signInWithPassword, signInWithGoogle, signOut: signOutSupabase, resendConfirmation } = useSupabaseAuth();
 
   const Screen = SCREENS[screen] || LandingScreen;
 
@@ -116,12 +130,38 @@ export default function MobileApp() {
     .slice(0, 3);
   const goalCount = lastQuizAnswers?.frustrations?.length || 0;
 
-  // No real auth session exists for the mobile mock sign-up flow yet, so
-  // "sign out" just resets local state back to a fresh visit rather than
-  // clearing a server session.
+  // Only true right after a mobile-initiated Google sign-in completes — the
+  // full-page OAuth redirect leaves this app entirely and comes back on
+  // /auth/callback (rendered by desktop's App.jsx, since main.jsx picks
+  // App vs MobileApp purely by URL path), which sends it on to
+  // /mobile-preview per this same flag (see useSupabaseAuth.js). Checked
+  // once per real sign-in event, not on every ordinary reopen with an old
+  // session — a returning user's local device has no synced ecosystem data
+  // to show, so forcing them into 'eco' on every mount would just be empty.
+  useEffect(() => {
+    if (!authUser) return;
+    let justSignedInViaOAuth = false;
+    try { justSignedInViaOAuth = sessionStorage.getItem(MOBILE_OAUTH_PENDING_KEY) === '1'; } catch { /* private mode */ }
+    if (!justSignedInViaOAuth) return;
+    try { sessionStorage.removeItem(MOBILE_OAUTH_PENDING_KEY); } catch { /* private mode */ }
+    const firstName = authUser.user_metadata?.first_name;
+    // Deferred a tick so the state updates run from a callback rather than
+    // directly in the effect body — same one-time transition, just shaped
+    // the way react-hooks/set-state-in-effect expects it.
+    Promise.resolve().then(() => {
+      updateSession((prev) => ({ userName: firstName || prev.userName, hasEcosystem: true }));
+      setScreen('eco');
+    });
+  }, [authUser]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Real Supabase sign-out, on top of the existing local reset — the app's
+  // own ecosystem/quiz data (useEcosystemSession) still lives on-device
+  // only, so it's cleared the same way it always was; identity is what's
+  // newly real here.
   const handleSignOut = () => {
     setOverlay(null);
     resetSession();
+    signOutSupabase();
     setScreen('landing');
   };
 
@@ -151,7 +191,7 @@ export default function MobileApp() {
     // light/dark toggle — but leaving it should still start users on light
     // mode rather than whatever dark/light state happened to be persisted
     // from a prior visit.
-    onStartQuiz: () => { setTheme('light'); setScreen('quiz'); },
+    onStartQuiz: () => { setTheme('light'); setEditingHealthProfile(false); setScreen('quiz'); },
     onBrowse: () => { setTheme('light'); setScreen('browse'); },
     onOpenSaved: () => setScreen('saved'),
     onGoEco: () => setScreen(hasEcosystem ? 'eco' : 'ecointro'),
@@ -162,19 +202,27 @@ export default function MobileApp() {
     onOpenWhyMatch: (p) => setOverlay({ type: 'why-match', item: p }),
     onAskAyna: () => setAskAynaOpen(true),
     onBack: () => setScreen('browse'),
-    onRetake: () => setScreen('quiz'),
-    onUpdateHealth: () => setScreen('quiz'),
+    onRetake: () => { setEditingHealthProfile(false); setScreen('quiz'); },
+    onUpdateHealth: () => { setEditingHealthProfile(false); setScreen('quiz'); },
+    onEditProfile: () => { setEditingHealthProfile(true); setScreen('quiz'); },
     onComplete: (quizAnswers) => {
       updateSession({ myProducts: seedEcosystemFromAnswers(quizAnswers), lastQuizAnswers: quizAnswers });
       setScreen('building');
     },
     onFinish: () => setScreen('reveal'),
     onContinue: () => setScreen('signin'),
-    onCreateAccount: ({ name } = {}) => {
-      updateSession((prev) => ({ userName: name || prev.userName, hasEcosystem: true }));
-      setScreen('eco');
-    },
-    onContinueWithApple: ({ name } = {}) => {
+    // Real Supabase auth (src/mobile/hooks/useSupabaseAuth.js) — the name
+    // comes from whatever SigninScreen already has in its own form state
+    // (the person just typed it) rather than from authUser here, since
+    // authUser's own state update from onAuthStateChange can lag behind
+    // this call by a render or two and there's no reason to race it when
+    // the real value is sitting right there in the caller.
+    authUser,
+    onSignUp: signUpWithPassword,
+    onSignIn: signInWithPassword,
+    onGoogleSignIn: signInWithGoogle,
+    onResendConfirmation: resendConfirmation,
+    onAuthenticated: (name) => {
       updateSession((prev) => ({ userName: name || prev.userName, hasEcosystem: true }));
       setScreen('eco');
     },
@@ -194,6 +242,7 @@ export default function MobileApp() {
         onAddToEcosystem={handleAddToEcosystem}
         myProducts={myProducts}
         quizAnswers={lastQuizAnswers}
+        initialSnapshot={editingHealthProfile ? lastQuizAnswers?.fullHealthIntake || null : null}
         name={userName}
         tags={topAreaLabels.length ? `${topAreaLabels.length} area${topAreaLabels.length === 1 ? '' : 's'} covered` : ''}
         relatedReads={ARTICLES.slice(0, 3)}
@@ -234,7 +283,7 @@ export default function MobileApp() {
             product={overlay.item}
             quizAnswers={lastQuizAnswers}
             onBack={() => setOverlay(null)}
-            onUpdateHealth={() => { setOverlay(null); setScreen('quiz'); }}
+            onUpdateHealth={() => { setOverlay(null); setEditingHealthProfile(false); setScreen('quiz'); }}
           />
         </div>
       )}
@@ -252,6 +301,7 @@ export default function MobileApp() {
           savedProducts={savedMap}
           onViewAlternative={handleViewAlternative}
           onBrowse={() => setScreen('browse')}
+          onEditProfile={() => { setEditingHealthProfile(true); setScreen('quiz'); }}
         />
       )}
       {!askAynaOpen && <AskAynaChip onClick={() => setAskAynaOpen(true)} />}
