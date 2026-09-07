@@ -1,5 +1,19 @@
 import { getProfileMatchPercentForProduct } from '../../data/products.js';
+import { isPartnerBrandItem } from '../../utils/partnerBrands.js';
 import MatchRing from './MatchRing.jsx';
+
+const AFFILIATE_BADGE_STYLE = {
+  position: 'absolute',
+  zIndex: 2,
+  padding: '4px 7px',
+  borderRadius: 999,
+  background: 'var(--ayna-surface)',
+  border: '1px solid var(--ayna-border)',
+  fontSize: 10,
+  fontWeight: 600,
+  lineHeight: 1,
+  color: 'var(--ayna-text-muted)',
+};
 
 const DOT_PALETTE = ['#C0761F', '#4E3866', '#5C7A4A', '#A2603C', '#3F7A6A', '#B0537A', '#242A52', '#78716C'];
 
@@ -40,6 +54,10 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
   const color = colorForCategory(category);
   const matchPercent = getProfileMatchPercentForProduct(product, quizAnswers);
   const openWhyMatch = onOpenWhyMatch ? () => onOpenWhyMatch(product) : undefined;
+  // Real brand-partnership flag (src/utils/partnerBrands.js) — same
+  // pattern-match desktop's Discovery.jsx uses for its "Affiliate link"
+  // card badge, not a new one invented for mobile.
+  const isPartner = isPartnerBrandItem(product);
 
   if (variant === 'list') {
     return (
@@ -84,6 +102,9 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
             )}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6 }}>
+            {isPartner && (
+              <div style={{ ...AFFILIATE_BADGE_STYLE, position: 'static', padding: '3px 7px' }}>Affiliate link</div>
+            )}
             {userRating != null && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                 <svg width="9" height="9" viewBox="0 0 24 24" fill="#FFC774">
@@ -129,6 +150,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
           backgroundPosition: 'center',
         }}
       >
+        {isPartner && <div style={{ ...AFFILIATE_BADGE_STYLE, top: 10, left: 10 }}>Affiliate link</div>}
         <div style={{ position: 'absolute', right: 6, bottom: 6 }}>
           <MatchRing percent={matchPercent} size={34} onClick={openWhyMatch} />
         </div>

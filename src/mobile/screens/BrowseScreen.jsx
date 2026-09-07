@@ -6,6 +6,7 @@ import ProductCard from '../components/ProductCard.jsx';
 import LibraryCard from '../components/LibraryCard.jsx';
 import { ARTICLE_CATEGORIES } from '../data/articleRows.js';
 import { getPersonalizedProductIds, MACRO_GROUPS, itemMatchesMacroGroup, CATEGORY_LABELS } from '../../data/products.js';
+import { isPartnerBrandItem } from '../../utils/partnerBrands.js';
 import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../../utils/naturalLanguageSearch.js';
 import { fetchSearchSuggestions } from '../../utils/fetchSearchSuggestions.js';
 import { useCardLayout } from '../hooks/useCardLayout.js';
@@ -313,6 +314,13 @@ export default function BrowseScreen({
   }
   if (activeGroup !== 'all') {
     filtered = filtered.filter((p) => itemMatchesMacroGroup(p, activeGroup));
+  }
+  // Brand partners pinned to the top of the default browsing sort — same
+  // rule as desktop Discovery.jsx: a partnership buys visibility on the
+  // page you browse freely, never placement inside an actual text search
+  // or personalized ("For You") recommendation.
+  if (!searchTermRaw && !(personalized && hasProfile)) {
+    filtered = [...filtered].sort((a, b) => (isPartnerBrandItem(b) ? 1 : 0) - (isPartnerBrandItem(a) ? 1 : 0));
   }
   const filterKey = `${searchTerm}|${personalized}|${activeGroup}`;
 

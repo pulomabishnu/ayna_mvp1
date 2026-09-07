@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import './mobile.css';
-import { ALL_PRODUCTS, getEcosystemAlternatives, getPersonalizedProductIds, getProductById } from '../data/products.js';
+import { ALL_PRODUCTS, getEcosystemAlternatives, getPersonalizedProductIds, getProductById, filterPrescriptionCareGate } from '../data/products.js';
+import { RELEASED_STARTUPS } from '../data/startups.js';
 import { ARTICLES } from '../components/Articles.jsx';
 import { ECOSYSTEM_AREAS as REAL_ECOSYSTEM_AREAS, resolveEcosystemProductArea } from '../components/EcosystemBubbles.jsx';
 import { useSavedProducts } from './hooks/useSavedProducts.js';
@@ -35,6 +36,23 @@ const SCREENS = {
   eco: EcosystemScreen,
   saved: SavedScreen,
 };
+
+// Same catalog desktop's Discovery page browses: prescription-only items
+// without a care path excluded (Ayna doesn't sell/dispense prescriptions —
+// see Discovery.jsx), released startups folded in as ordinary products
+// (unreleased ones stay Startups-hub-only). Kept separate from ALL_PRODUCTS
+// itself since other lookups here (ecosystem seeding, getProductById) key
+// off the real catalog only, the same as desktop.
+const BROWSE_PRODUCTS = [
+  ...filterPrescriptionCareGate(ALL_PRODUCTS).map((p) => ({ ...p, isStartup: false })),
+  ...RELEASED_STARTUPS.map((s) => ({
+    ...s,
+    isStartup: false,
+    type: 'digital',
+    summary: s.description || s.tagline,
+    price: s.stage || '',
+  })),
+];
 
 // No single brand should crowd out the rest of the ecosystem/orbit — keeps
 // at most this many products per brand, in whatever order they were ranked,
@@ -187,7 +205,7 @@ export default function MobileApp() {
         {...nav}
         theme={theme}
         onToggleTheme={toggleTheme}
-        products={ALL_PRODUCTS}
+        products={BROWSE_PRODUCTS}
         articles={ARTICLES}
         savedProducts={savedMap}
         onToggleSaved={toggleSaved}
