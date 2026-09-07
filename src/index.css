@@ -3855,6 +3855,10 @@ footer a[href*="career" i],
   color: var(--color-text-muted, #6B7280);
 }
 
+.pdp-amazon-disclosure {
+  margin-top: 8px;
+}
+
 /* "Compare at" retailer links — real site-search links, never a per-retailer
    price (see src/utils/retailerLinks.js). Styled as small pill chips so they
    read as "go compare" rather than a second primary CTA next to Buy Now. */

@@ -439,6 +439,15 @@ function isExactBuyUrl(value) {
   );
 }
 
+/** True when a buy URL resolves to Amazon — these are Ayna's affiliate links. */
+function isAmazonUrl(url) {
+  try {
+    return /(^|\.)amazon\.[a-z.]+$/i.test(new URL(url).hostname);
+  } catch {
+    return false;
+  }
+}
+
 function getBuyUrl(product) {
   // 1. Affiliate product URL wins when Ayna has one.
   if (isExactBuyUrl(product?.affiliateUrl)) {
@@ -567,6 +576,7 @@ export default function ProductModal({
   const matchPercent = profileMatchPercent ?? explicitMatchPercent;
   const headMatchLabel = matchLabels[0] || null;
   const buyUrl = useMemo(() => getBuyUrl(product), [product]);
+  const isAmazonBuyLink = useMemo(() => isAmazonUrl(buyUrl), [buyUrl]);
 
   const aynaData = useMemo(
     () => (aynaReviews && product ? (aynaReviews[product.id] || { ratings: [], reviews: [] }) : { ratings: [], reviews: [] }),
@@ -846,6 +856,13 @@ export default function ProductModal({
           </span>{' '}
           <span className="pdp-partner-note">
             ayna has vetted this brand's claims and earns commission on purchases. We encourage buying through ayna to support women-owned businesses.
+          </span>
+        </p>
+      )}
+      {isAmazonBuyLink && !isPartnerBrandItem(product) && (
+        <p className="pdp-partner-disclosure pdp-amazon-disclosure">
+          <span className="pdp-partner-note">
+            ayna receives a commission on purchases. We have no direct partnership with this brand.
           </span>
         </p>
       )}
