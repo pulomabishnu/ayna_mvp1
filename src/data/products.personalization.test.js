@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
 import { ALL_PRODUCTS, getRecommendations, getPersonalizedProductIds, getProductRelevanceScore } from './products';
-import { STARTUPS } from './startups';
 
 describe('getPersonalizedProductIds', () => {
     it('restricts to real tag matches, unlike getRecommendations()\'s full fallback list', () => {
@@ -36,7 +35,7 @@ describe('getPersonalizedProductIds', () => {
 });
 
 describe('personalized relevance scoring', () => {
-    const elitone = STARTUPS.find((p) => p.id === 's-elitone');
+    const elitone = ALL_PRODUCTS.find((p) => p.id === 'p-elitone');
     const oura = ALL_PRODUCTS.find((p) => p.id === 'd-oura');
 
     it('does not treat menstrual leaks and staining as urinary leakage', () => {

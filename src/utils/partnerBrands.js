@@ -13,8 +13,10 @@
  * Added 2026-09-07: VIO2 — confirmed affiliate partnership.
  *
  * Added 2026-09-07: Proov — confirmed affiliate partnership.
+ *
+ * Added 2026-09-07: Elitone — confirmed affiliate partnership.
  */
-export const PARTNER_BRAND_PATTERNS = [/\bneycher\b/, /\bconnect pelvic floor fitness\b/, /\bvio2\b/, /\bproov\b/];
+export const PARTNER_BRAND_PATTERNS = [/\bneycher\b/, /\bconnect pelvic floor fitness\b/, /\bvio2\b/, /\bproov\b/, /\belitone\b/];
 
 export function isPartnerBrandItem(item) {
   const text = `${item?.brand || ''} ${item?.name || ''}`.toLowerCase();

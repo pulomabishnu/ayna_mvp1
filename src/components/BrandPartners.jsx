@@ -38,6 +38,12 @@ import { ProductImageFallback } from './ProductTileImage';
  * to the general proovtest.com site since there's no single per-brand link.
  * Same no-logo-yet situation — falls back to the text wordmark until a file
  * lands at public/brands/proov.png.
+ *
+ * Added 2026-09-07: Elitone — confirmed affiliate partnership, 2 products
+ * (see brands.js). One general affiliate link (elitone.com/?af=aynahealth)
+ * covers both, unlike Proov's per-product links. Same no-logo-yet situation
+ * — falls back to the text wordmark until a file lands at
+ * public/brands/elitone.png.
  */
 
 const PARTNERS = [
@@ -72,6 +78,14 @@ const PARTNERS = [
     url: 'https://proovtest.com/',
     blurb:
       'At-home fertility and hormone testing. Track your full cycle, confirm ovulation, screen for common fertility factors, and get personalized next steps.',
+  },
+  {
+    brand: 'Elitone',
+    /** Drop a file at public/brands/elitone.png and it replaces the wordmark. */
+    logo: '/brands/elitone.png',
+    url: 'https://elitone.com/?af=aynahealth',
+    blurb:
+      'FDA-cleared, external at-home devices for bladder leaks. A wearable gel pad does pelvic floor stimulation for you — no insertion, no prescription needed.',
   },
 ];
 

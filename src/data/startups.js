@@ -579,20 +579,10 @@ export const STARTUPS = [
         url: 'https://www.joylux.com',
         image: 'http://joylux.com/cdn/shop/articles/femtech-leader-joylux-closes-on-oversubscribed-13m-series-a-round-to-expand-menopause-platform-686703.jpg?v=1667362254'
     },
-    {
-        id: 's-elitone',
-        name: 'Elitone',
-        tagline: 'Wearable pelvic floor therapy',
-        description: 'FDA-cleared wearable device for at-home pelvic floor strengthening. No insertion; used externally to improve bladder control and strength.',
-        tags: ['bladder-leaks', 'incontinence', 'urinary', 'pelvic-floor', 'discomfort'],
-        healthFunctions: ['vaginal-health'],
-        category: 'pelvic-health',
-        stage: 'Available in US',
-        productReleased: true,
-        spotsLeft: 410,
-        url: 'https://elitone.com/?af=aynahealth',
-        image: 'https://thebreastfeedingshop.com/wp-content/uploads/2024/08/Elitone-Pelvic-Floor-Exerciser-1-scaled.webp'
-    },
+    // 's-elitone' removed 2026-09-07: Elitone is now a confirmed brand
+    // partner with 2 real, individually-detailed products in
+    // src/data/brands.js (BRAND_PRODUCTS), replacing this single generic
+    // entry.
     {
         id: 's-kegg',
         name: 'Kegg',
