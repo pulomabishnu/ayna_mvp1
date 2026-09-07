@@ -704,28 +704,33 @@ const AGE_MAX = 90;
 // reach ::-webkit-slider-thumb) plus a manual numeric-entry stepper panel
 // below it — same two ways to answer the design specifies, not just the
 // slider alone.
+// Wrapped in its own light card (rather than sitting directly on the
+// screen background) since the floating value label works by painting an
+// opaque cutout over the track — that only blends in when its background
+// actually matches what's immediately behind it, which the page background
+// no longer does now that it's back to the dark hero gradient.
 function AgeCard({ value, onChange }) {
   const numeric = value ? Number(value) : 28;
   const pct = ((numeric - AGE_MIN) / (AGE_MAX - AGE_MIN)) * 100;
   const step = (delta) => onChange(String(Math.min(AGE_MAX, Math.max(AGE_MIN, numeric + delta))));
   return (
-    <div>
-      <div style={{ position: 'relative', height: 76 }}>
-        <div style={{ position: 'absolute', left: 0, right: 0, top: 34, height: 8, borderRadius: 99, background: 'var(--ayna-track)' }} />
-        <div style={{ position: 'absolute', left: 0, width: `${pct}%`, top: 34, height: 8, borderRadius: 99, background: `linear-gradient(90deg, ${ACCENT_BG}, ${ACCENT_BORDER})` }} />
-        <div style={{ position: 'absolute', left: `${pct}%`, top: 22, transform: 'translateX(-50%)', width: 32, height: 32, borderRadius: 99, background: 'var(--ayna-surface-alt)', border: '3px solid ' + ACCENT_BORDER, boxShadow: '0 6px 16px rgba(232,169,79,.4)', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', left: `${pct}%`, top: -24, transform: 'translateX(-50%)', fontFamily: "'Playfair Display',serif", fontSize: 36, color: NAVY, background: 'var(--ayna-surface-alt)', padding: '0 8px', pointerEvents: 'none' }}>
+    <div style={{ background: CARD_BG, borderRadius: 24, padding: '40px 20px 20px', boxShadow: '0 20px 44px -22px rgba(0,0,0,.5)' }}>
+      <div style={{ position: 'relative', height: 40 }}>
+        <div style={{ position: 'absolute', left: 0, right: 0, top: 16, height: 8, borderRadius: 99, background: 'var(--ayna-track)' }} />
+        <div style={{ position: 'absolute', left: 0, width: `${pct}%`, top: 16, height: 8, borderRadius: 99, background: `linear-gradient(90deg, ${ACCENT_BG}, ${ACCENT_BORDER})` }} />
+        <div style={{ position: 'absolute', left: `${pct}%`, top: 4, transform: 'translateX(-50%)', width: 32, height: 32, borderRadius: 99, background: CARD_BG, border: '3px solid ' + ACCENT_BORDER, boxShadow: '0 6px 16px rgba(232,169,79,.4)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', left: `${pct}%`, top: -38, transform: 'translateX(-50%)', fontFamily: "'Playfair Display',serif", fontSize: 36, color: NAVY, background: CARD_BG, padding: '0 8px', pointerEvents: 'none' }}>
           {value || '—'}
-        </div>
-        <div style={{ position: 'absolute', left: 0, right: 0, top: 56, display: 'flex', justifyContent: 'space-between', fontFamily: "'DM Mono',monospace", fontSize: 9.5, color: MUTED }}>
-          <span>{AGE_MIN}</span><span>{AGE_MAX}+</span>
         </div>
         <input
           type="range" min={AGE_MIN} max={AGE_MAX} value={numeric} onChange={(e) => onChange(e.target.value)}
-          style={{ position: 'absolute', left: 0, right: 0, top: 16, height: 40, width: '100%', margin: 0, opacity: 0, cursor: 'grab' }}
+          style={{ position: 'absolute', left: 0, right: 0, top: -2, height: 40, width: '100%', margin: 0, opacity: 0, cursor: 'grab' }}
         />
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 30, padding: '13px 15px', borderRadius: 16, background: PANEL_BG, border: '1px solid ' + ROW_BORDER }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4, fontFamily: "'DM Mono',monospace", fontSize: 9.5, color: MUTED }}>
+        <span>{AGE_MIN}</span><span>{AGE_MAX}+</span>
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 26, padding: '13px 15px', borderRadius: 16, background: PANEL_BG, border: '1px solid ' + ROW_BORDER }}>
         <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 12.5, color: BODY_TEXT, flex: 1 }}>Prefer to type it?</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, borderRadius: 12, padding: '8px 12px' }}>
           <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 14, color: INK }}>{value || '—'}</div>
@@ -1346,38 +1351,42 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
     <div
       style={{
         flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column',
-        background: CARD_BG, color: INK, animation: 'ay-page .25s ease-out',
-        fontFamily: "'DM Sans',system-ui,sans-serif",
+        background: 'var(--ayna-gradient-hero, linear-gradient(165deg,#2A1F4E 0%,#4E3866 42%,#8A4A3C 74%,#D97A2B 100%))',
+        color: '#FFF9F2', position: 'relative', overflow: 'hidden',
+        fontFamily: "'DM Sans',system-ui,sans-serif", animation: 'ay-page .25s ease-out',
       }}
     >
-      <div style={{ flex: 'none', padding: 'max(16px, env(safe-area-inset-top)) 20px 12px', background: CARD_BG, borderBottom: '1px solid ' + ROW_BORDER }}>
+      <div style={{ position: 'absolute', top: -60, right: -60, width: 220, height: 220, borderRadius: '50%', background: 'radial-gradient(circle,rgba(255,199,116,.4),rgba(255,199,116,0) 70%)', pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', bottom: -50, left: -50, width: 200, height: 200, borderRadius: '50%', background: 'radial-gradient(circle,rgba(126,84,186,.35),rgba(126,84,186,0) 70%)', pointerEvents: 'none' }} />
+
+      <div style={{ flex: 'none', padding: 'max(16px, env(safe-area-inset-top)) 20px 12px', position: 'relative' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
-          <div onClick={goBack} style={{ width: 30, height: 30, borderRadius: 99, border: '1.5px solid ' + ROW_BORDER, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flex: 'none' }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
+          <div onClick={goBack} style={{ width: 30, height: 30, borderRadius: 99, border: '1.5px solid rgba(255,249,242,.28)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flex: 'none' }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFF9F2" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.3px', textTransform: 'uppercase', color: LABEL_GOLD, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{SECTION_LABELS[step.section]}</div>
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '.8px', color: MUTED, marginTop: 2 }}>STEP {currentIndex + 1} OF 8–24</div>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.3px', textTransform: 'uppercase', color: '#FFC774', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{SECTION_LABELS[step.section]}</div>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '.8px', color: 'rgba(255,249,242,.55)', marginTop: 2 }}>STEP {currentIndex + 1} OF 8–24</div>
           </div>
           {step.optional && (
-            <div onClick={goNext} style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, color: MUTED, cursor: 'pointer', flex: 'none' }}>Skip</div>
+            <div onClick={goNext} style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, color: 'rgba(255,249,242,.65)', cursor: 'pointer', flex: 'none' }}>Skip</div>
           )}
         </div>
-        <div style={{ height: 4, borderRadius: 99, background: 'var(--ayna-track)', overflow: 'hidden' }}>
-          <div style={{ width: `${((currentIndex + 1) / visibleSteps.length) * 100}%`, height: '100%', borderRadius: 99, background: `linear-gradient(90deg, var(--ayna-accent), ${ACCENT_BORDER})` }} />
+        <div style={{ height: 4, borderRadius: 99, background: 'rgba(255,249,242,.24)', overflow: 'hidden' }}>
+          <div style={{ width: `${((currentIndex + 1) / visibleSteps.length) * 100}%`, height: '100%', borderRadius: 99, background: 'linear-gradient(90deg,#FFC774,#E8A94F)' }} />
         </div>
       </div>
 
-      <div style={{ flex: 1, minWidth: 0, overflowY: 'auto' }}>
+      <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', position: 'relative' }}>
         <div style={{ padding: '22px 20px 0' }}>
-          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 25, lineHeight: 1.17, color: INK }}>{step.title}</div>
-          {step.subtitle && <p style={{ margin: '8px 0 0', fontFamily: 'Inter,system-ui,sans-serif', fontSize: 12.5, lineHeight: 1.5, color: BODY_TEXT }}>{step.subtitle}</p>}
-          <p style={{ margin: '9px 0 0', fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.1px', textTransform: 'uppercase', color: step.optional ? MUTED : LABEL_GOLD, fontWeight: 600 }}>
+          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 25, lineHeight: 1.17, color: '#FFF9F2' }}>{step.title}</div>
+          {step.subtitle && <p style={{ margin: '8px 0 0', fontFamily: 'Inter,system-ui,sans-serif', fontSize: 12.5, lineHeight: 1.5, color: 'rgba(255,249,242,.72)' }}>{step.subtitle}</p>}
+          <p style={{ margin: '9px 0 0', fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.1px', textTransform: 'uppercase', color: step.optional ? 'rgba(255,249,242,.5)' : '#FFC774', fontWeight: 600 }}>
             {step.optional ? 'Optional' : 'Required for safety'}
           </p>
           {flaggedStepIds.has(step.id) && (
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 11, padding: '6px 12px', borderRadius: 99, background: 'rgba(180,64,42,.1)', border: '1px solid rgba(180,64,42,.3)', color: '#B4402A', fontSize: 11.5, fontWeight: 600 }}>
-              <span style={{ width: 6, height: 6, borderRadius: 99, background: '#B4402A', flex: 'none' }} />
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 11, padding: '6px 12px', borderRadius: 99, background: 'rgba(180,64,42,.16)', border: '1px solid rgba(180,64,42,.35)', color: '#FFC9BC', fontSize: 11.5, fontWeight: 600 }}>
+              <span style={{ width: 6, height: 6, borderRadius: 99, background: '#E8846F', flex: 'none' }} />
               Not answered yet
             </div>
           )}
@@ -1387,22 +1396,22 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
         </div>
       </div>
 
-      <div style={{ flex: 'none', padding: '14px 20px max(20px, env(safe-area-inset-bottom))', background: CARD_BG, borderTop: '1px solid ' + ROW_BORDER }}>
+      <div style={{ flex: 'none', padding: '14px 20px max(20px, env(safe-area-inset-bottom))', position: 'relative', background: 'linear-gradient(to top,rgba(36,42,82,.35),rgba(36,42,82,0))' }}>
         <button
           onClick={goNext}
           disabled={!ready}
           style={{
             width: '100%', padding: 15, border: 'none', borderRadius: 99,
-            background: ready ? 'var(--ayna-cta-bg)' : PANEL_BG,
-            color: ready ? 'var(--ayna-cta-text)' : MUTED,
-            fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 15,
+            background: ready ? 'linear-gradient(140deg,#FFDCA8,#FFC774 46%,#E8843C)' : 'rgba(255,249,242,.18)',
+            color: ready ? NAVY : 'rgba(255,249,242,.5)',
+            fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 15,
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9,
             cursor: ready ? 'pointer' : 'not-allowed',
-            boxShadow: ready ? '0 14px 28px -14px rgba(36,42,82,.65)' : 'none',
+            boxShadow: ready ? '0 16px 30px -14px rgba(232,132,60,.55)' : 'none',
           }}
         >
           <span>{isLast ? 'Finish profile' : 'Continue'}</span>
-          {countForStep > 0 && <span style={{ background: 'rgba(255,255,255,.18)', borderRadius: 999, padding: '2px 9px', fontSize: 12 }}>{countForStep}</span>}
+          {countForStep > 0 && <span style={{ background: 'rgba(42,31,78,.16)', borderRadius: 999, padding: '2px 9px', fontSize: 12 }}>{countForStep}</span>}
           <span aria-hidden="true">→</span>
         </button>
       </div>
