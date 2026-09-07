@@ -689,10 +689,15 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
 
 /* ---------------------------- Preferences ---------------------------- */
 
+// Substack has no API to subscribe someone by a toggle — this opens the
+// real publication's public subscribe page instead, the same
+// window.open(url, '_blank', 'noopener,noreferrer') pattern the Startups
+// hub already uses for its external links.
+const NEWSLETTER_URL = 'https://aynahealth.substack.com';
+
 function PreferencesScreen({ onBack, theme, onToggleTheme }) {
   const [notif, setNotif] = useState(true);
   const [updates, setUpdates] = useState(true);
-  const [news, setNews] = useState(false);
   const [channel, setChannel] = useState('push');
 
   return (
@@ -706,15 +711,17 @@ function PreferencesScreen({ onBack, theme, onToggleTheme }) {
           <ToggleRow first title="Notifications" sub="Recalls and safety flags on things you own." on={notif} onClick={() => setNotif((v) => !v)} />
           <ToggleRow title="Updates" sub="New matches and restocks, weekly digest." on={updates} onClick={() => setUpdates((v) => !v)} />
           <ToggleRow title="Night mode" sub="Dim the app after sunset." on={theme === 'dark'} onClick={onToggleTheme} />
-          <ToggleRow title="Join newsletter" sub="The Mirror — one letter a month, no products pushed." on={news} onClick={() => setNews((v) => !v)} />
-        </div>
-
-        {news && (
-          <div style={{ marginTop: 14, borderRadius: 22, padding: 18, background: 'linear-gradient(135deg,#FFF6E6,#FFEFD6)', border: '1px solid #F1DFC2' }}>
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.4px', textTransform: 'uppercase', color: '#C0761F' }}>You're in</div>
-            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 19, lineHeight: 1.3, margin: '7px 0 10px', color: '#3A2410' }}>First letter lands Thursday.</div>
+          <div
+            onClick={() => window.open(NEWSLETTER_URL, '_blank', 'noopener,noreferrer')}
+            style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '17px 0', borderTop: '1px solid var(--ayna-border)', cursor: 'pointer' }}
+          >
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontWeight: 600, fontSize: 15, color: 'var(--ayna-text)' }}>Join newsletter</div>
+              <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', marginTop: 3, lineHeight: 1.45 }}>The Mirror — one letter a month, no products pushed.</div>
+            </div>
+            <ChevronIcon />
           </div>
-        )}
+        </div>
 
         <div style={{ marginTop: 26, fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 11 }}>Delivery channel</div>
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '5px 18px' }}>
