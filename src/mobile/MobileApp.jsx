@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import './mobile.css';
 import { ALL_PRODUCTS, getEcosystemAlternatives, getProfileMatchPercentForProduct, getRecommendationMatchesAndRest, filterPrescriptionCareGate } from '../data/products.js';
 import { RELEASED_STARTUPS } from '../data/startups.js';
+import { loadProductCatalog } from '../utils/productCatalog.js';
 import { ARTICLES } from '../components/Articles.jsx';
 import { ECOSYSTEM_AREAS as REAL_ECOSYSTEM_AREAS, resolveEcosystemProductArea } from '../components/EcosystemBubbles.jsx';
 import { useSavedProducts } from './hooks/useSavedProducts.js';
@@ -41,19 +42,26 @@ const SCREENS = {
 // Same catalog desktop's Discovery page browses: prescription-only items
 // without a care path excluded (Ayna doesn't sell/dispense prescriptions —
 // see Discovery.jsx), released startups folded in as ordinary products
-// (unreleased ones stay Startups-hub-only). Kept separate from ALL_PRODUCTS
-// itself since ecosystem seeding below keys off the real catalog (via
-// getRecommendationMatchesAndRest) only, the same as desktop.
-const BROWSE_PRODUCTS = [
-  ...filterPrescriptionCareGate(ALL_PRODUCTS).map((p) => ({ ...p, isStartup: false })),
-  ...RELEASED_STARTUPS.map((s) => ({
-    ...s,
-    isStartup: false,
-    type: 'digital',
-    summary: s.description || s.tagline,
-    price: s.stage || '',
-  })),
-];
+// (unreleased ones stay Startups-hub-only), plus any live "discovered"
+// products from /api/products that aren't in the bundled catalog yet (see
+// productCatalog.js's migration-state comment — the API is meant to
+// eventually replace the bundle; discoveredProducts is what's already live
+// there but not yet in ALL_PRODUCTS). Kept separate from ALL_PRODUCTS
+// itself since ecosystem seeding below keys off the real bundled catalog
+// (via getRecommendationMatchesAndRest) only, the same as desktop.
+function buildBrowseProducts(discoveredProducts) {
+  return [
+    ...filterPrescriptionCareGate(ALL_PRODUCTS).map((p) => ({ ...p, isStartup: false })),
+    ...RELEASED_STARTUPS.map((s) => ({
+      ...s,
+      isStartup: false,
+      type: 'digital',
+      summary: s.description || s.tagline,
+      price: s.stage || '',
+    })),
+    ...filterPrescriptionCareGate(discoveredProducts).map((p) => ({ ...p, isStartup: false })),
+  ];
+}
 
 // No single brand should crowd out the rest of the ecosystem/orbit — keeps
 // at most this many products per brand, in whatever order they were ranked,
@@ -139,6 +147,22 @@ export default function MobileApp() {
   // (start quiz, retake, update health), which all start fresh on purpose.
   const [editingHealthProfile, setEditingHealthProfile] = useState(false);
   const { user: authUser, signUpWithPassword, signInWithPassword, signInWithGoogle, signOut: signOutSupabase, resendConfirmation } = useSupabaseAuth();
+
+  // Same loadProductCatalog() call Discovery.jsx makes — a live source
+  // ('api'/'cache') means the bundle no longer has the full catalog, so
+  // its 'discovered'-only items get folded into Browse too; a 'bundled'
+  // fallback (API unavailable) contributes nothing, since the bundle
+  // already has everything BROWSE_PRODUCTS needs in that case.
+  const [discoveredProducts, setDiscoveredProducts] = useState([]);
+  useEffect(() => {
+    let cancelled = false;
+    loadProductCatalog().then(({ products, source }) => {
+      if (cancelled || source === 'bundled') return;
+      setDiscoveredProducts(products.filter((p) => p.source === 'discovered'));
+    }).catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+  const browseProducts = buildBrowseProducts(discoveredProducts);
 
   const Screen = SCREENS[screen] || LandingScreen;
 
@@ -253,7 +277,7 @@ export default function MobileApp() {
         {...nav}
         theme={theme}
         onToggleTheme={toggleTheme}
-        products={BROWSE_PRODUCTS}
+        products={browseProducts}
         articles={ARTICLES}
         savedProducts={savedMap}
         onToggleSaved={toggleSaved}
@@ -311,6 +335,7 @@ export default function MobileApp() {
           theme={theme}
           onToggleTheme={toggleTheme}
           onSignOut={handleSignOut}
+          onSignIn={() => setScreen('signin')}
           authUser={authUser}
           name={userName}
           ecosystemCount={myProducts.length}

@@ -2,7 +2,7 @@ import { getProfileMatchPercentForProduct } from '../../data/products.js';
 import { isPartnerBrandItem } from '../../utils/partnerBrands.js';
 import MatchRing from './MatchRing.jsx';
 
-const AFFILIATE_BADGE_STYLE = {
+const PARTNER_BADGE_STYLE = {
   position: 'absolute',
   zIndex: 2,
   padding: '4px 7px',
@@ -56,7 +56,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
   const openWhyMatch = onOpenWhyMatch ? () => onOpenWhyMatch(product) : undefined;
   // Real brand-partnership flag (src/utils/partnerBrands.js) — same
   // pattern-match desktop's Discovery.jsx uses for its "Affiliate link"
-  // card badge, not a new one invented for mobile.
+  // card badge, just labeled "ayna's favs" here per product's request.
   const isPartner = isPartnerBrandItem(product);
 
   if (variant === 'list') {
@@ -103,7 +103,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6 }}>
             {isPartner && (
-              <div style={{ ...AFFILIATE_BADGE_STYLE, position: 'static', padding: '3px 7px' }}>Affiliate link</div>
+              <div style={{ ...PARTNER_BADGE_STYLE, position: 'static', padding: '3px 7px' }}>ayna's favs</div>
             )}
             {userRating != null && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -150,7 +150,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
           backgroundPosition: 'center',
         }}
       >
-        {isPartner && <div style={{ ...AFFILIATE_BADGE_STYLE, top: 10, left: 10 }}>Affiliate link</div>}
+        {isPartner && <div style={{ ...PARTNER_BADGE_STYLE, top: 10, left: 10 }}>ayna's favs</div>}
         <div style={{ position: 'absolute', right: 6, bottom: 6 }}>
           <MatchRing percent={matchPercent} size={34} onClick={openWhyMatch} />
         </div>

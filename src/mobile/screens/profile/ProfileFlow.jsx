@@ -1106,7 +1106,7 @@ function PreferencesScreen({ onBack, theme, onToggleTheme }) {
 
 /* ------------------------------ Settings ------------------------------ */
 
-function SettingsScreen({ onBack, onOpenHowItWorks, onOpenAboutAyna, onOpenContact, onOpenAccountInfo, authUser, onSignOut }) {
+function SettingsScreen({ onBack, onOpenHowItWorks, onOpenAboutAyna, onOpenContact, onOpenAccountInfo, authUser, onSignOut, onSignIn }) {
   const aboutRows = [
     { title: 'How it works', sub: 'Nothing reaches you unchecked.', onClick: onOpenHowItWorks },
     { title: 'About ayna', sub: 'No mystery box.', onClick: onOpenAboutAyna },
@@ -1165,7 +1165,11 @@ function SettingsScreen({ onBack, onOpenHowItWorks, onOpenAboutAyna, onOpenConta
           </div>
         </div>
 
-        <div onClick={onSignOut} style={{ marginTop: 22, textAlign: 'center', padding: '14px 0', border: '1px solid rgba(180,64,42,.3)', borderRadius: 99, color: '#B4402A', fontWeight: 600, fontSize: 13.5, cursor: 'pointer', background: 'var(--ayna-surface)' }}>Sign out</div>
+        {authUser ? (
+          <div onClick={onSignOut} style={{ marginTop: 22, textAlign: 'center', padding: '14px 0', border: '1px solid rgba(180,64,42,.3)', borderRadius: 99, color: '#B4402A', fontWeight: 600, fontSize: 13.5, cursor: 'pointer', background: 'var(--ayna-surface)' }}>Sign out</div>
+        ) : (
+          <div onClick={onSignIn} style={{ marginTop: 22, textAlign: 'center', padding: '14px 0', border: '1px solid var(--ayna-border)', borderRadius: 99, color: 'var(--ayna-heading)', fontWeight: 600, fontSize: 13.5, cursor: 'pointer', background: 'var(--ayna-surface)' }}>Sign in</div>
+        )}
         <div style={{ textAlign: 'center', marginTop: 16, fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.2px', color: 'var(--ayna-text-muted)' }}>AYNA 0.9.4 · BETA</div>
       </div>
     </div>
@@ -1980,6 +1984,7 @@ export default function ProfileFlow({
   theme,
   onToggleTheme,
   onSignOut,
+  onSignIn,
   authUser = null,
   name = 'You',
   ecosystemCount = 0,
@@ -2041,6 +2046,7 @@ export default function ProfileFlow({
         onOpenAccountInfo={() => setScreen('accountInfo')}
         authUser={authUser}
         onSignOut={onSignOut}
+        onSignIn={onSignIn ? () => { onClose(); onSignIn(); } : undefined}
       />
     );
   } else if (screen === 'howItWorks') {
