@@ -44,6 +44,12 @@ import { ProductImageFallback } from './ProductTileImage';
  * covers both, unlike Proov's per-product links. Same no-logo-yet situation
  * — falls back to the text wordmark until a file lands at
  * public/brands/elitone.png.
+ *
+ * Added 2026-09-07: My Pelvic Bra — confirmed affiliate partnership, 2
+ * products (see brands.js), each with its own pelvic-bra.myshopify.com
+ * affiliate link that redirects to the brand's real storefront at
+ * mypelvicbra.shop. Same no-logo-yet situation — falls back to the text
+ * wordmark until a file lands at public/brands/my-pelvic-bra.png.
  */
 
 const PARTNERS = [
@@ -86,6 +92,14 @@ const PARTNERS = [
     url: 'https://elitone.com/?af=aynahealth',
     blurb:
       'FDA-cleared, external at-home devices for bladder leaks. A wearable gel pad does pelvic floor stimulation for you — no insertion, no prescription needed.',
+  },
+  {
+    brand: 'My Pelvic Bra',
+    /** Drop a file at public/brands/my-pelvic-bra.png and it replaces the wordmark. */
+    logo: '/brands/my-pelvic-bra.png',
+    url: 'https://pelvic-bra.myshopify.com/nlbs3u',
+    blurb:
+      'A discreet, adjustable compression garment for pelvic heaviness, pressure, bulging, and leakage — worn during daily activity, not a corrective device.',
   },
 ];
 
