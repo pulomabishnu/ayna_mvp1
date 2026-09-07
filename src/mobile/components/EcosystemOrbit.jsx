@@ -8,7 +8,7 @@ const SCALE = 0.62;
 
 // Controlled: selection state lives in the parent (EcosystemScreen) so a
 // "Show all" affordance elsewhere on the page can clear it.
-export default function EcosystemOrbit({ products = [], name = 'You', tags = '', selectedKey = null, onSelectKey, onSelect, onExploreArea }) {
+export default function EcosystemOrbit({ products = [], name = 'You', selectedKey = null, onSelectKey, onSelect, onExploreArea }) {
   // NOTE: expects each product to already carry an `areaKey` (computed by
   // the real resolveEcosystemProductArea, once real data is wired in) —
   // this component intentionally does not resolve areas itself.
@@ -97,11 +97,6 @@ export default function EcosystemOrbit({ products = [], name = 'You', tags = '',
           }}
         >
           <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 21 }}>{name}</div>
-          {tags && (
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 8, letterSpacing: 0.9, opacity: 0.72, marginTop: 2 }}>
-              {tags}
-            </div>
-          )}
         </div>
 
         {seats.map((seat, i) => {

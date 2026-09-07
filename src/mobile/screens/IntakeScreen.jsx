@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { ALL_PRODUCTS } from '../../data/products.js';
 import { mapIntakeToLegacyQuizProfile } from '../../utils/healthIntake.js';
+import { getFirstIncompleteStepId, getIncompleteStepIds } from '../utils/profileCompleteness.js';
 
 // Mirrors the real onboarding form's one-question-per-step wizard from
 // src/components/HealthIntakeForm.jsx (a full redesign — SUPPORT_GROUPS,
@@ -145,6 +146,43 @@ const EMPTY = {
   trustRanking: TRUST_ITEMS, trustRankingTouched: false, anythingElse: '',
 };
 
+// Field-name map from the legacy snapshot shape (buildSnapshot()'s output,
+// what quizAnswers.fullHealthIntake actually holds) back to this wizard's
+// own EMPTY-shaped state, for resuming an already-completed intake instead
+// of starting over. Most fields are direct passthroughs in buildSnapshot
+// (see below), so reconstruction is lossless for everything listed here;
+// fsaHsa is the one field buildSnapshot maps to a different slug, so it
+// gets a real reverse-lookup instead of a passthrough.
+const FSA_HSA_REVERSE = { fsa: 'FSA', hsa: 'HSA', both: 'Both', none: 'No', unsure: 'Not sure' };
+const RESUMABLE_PASSTHROUGH_FIELDS = [
+  'age', 'lifeStage', 'lifeStageSelections', 'lifeStageOther', 'zipcode',
+  'supportSelections', 'supportOtherText',
+  'periodFlow', 'periodPain', 'utiFrequency', 'postpartumTiming', 'pregnancyTrimester',
+  'breastfeedingStatus', 'perimenopauseLastPeriod',
+  'diagnosisSelections', 'conditionOtherText',
+  'allergyStatus', 'allergyItems',
+  'takesCurrent', 'currentMedicationItems',
+  'productHistory', 'avoidRepeat', 'safetyConcern',
+  'preferredFormats', 'formatOtherText', 'priceRange', 'largePurchaseFrequency',
+  'brandOpenness', 'trustedBrands',
+  'avoidIngredients', 'avoidIngredientsOtherText',
+  'anythingElse',
+];
+
+function reconstructIntakeFromSnapshot(snapshot) {
+  if (!snapshot) return EMPTY;
+  const next = { ...EMPTY };
+  RESUMABLE_PASSTHROUGH_FIELDS.forEach((key) => {
+    if (snapshot[key] !== undefined && snapshot[key] !== null) next[key] = snapshot[key];
+  });
+  if (snapshot.fsaHsa) next.fsaHsaAnswer = FSA_HSA_REVERSE[snapshot.fsaHsa] || '';
+  if (Array.isArray(snapshot.trustRanking) && snapshot.trustRanking.length > 0) {
+    next.trustRanking = snapshot.trustRanking;
+    next.trustRankingTouched = true;
+  }
+  return next;
+}
+
 const SECTION_ORDER = ['core', 'support', 'safety', 'history', 'preferences', 'trust'];
 const SECTION_LABELS = {
   core: 'Core profile', support: 'What you are looking for', safety: 'Health & safety',
@@ -264,7 +302,18 @@ function hasLifeStage(intake, value) {
   return getLifeStages(intake).includes(value);
 }
 function isPeriodRelevant(intake) {
-  return getLifeStages(intake).some((value) => ['I get periods regularly', 'My periods are irregular'].includes(value)) || arrayHasAny(intake.supportSelections, PERIOD_TRIGGER);
+  const lifeStages = getLifeStages(intake);
+
+  if (
+    lifeStages.includes('I am in menopause')
+    || lifeStages.includes('I am post-menopause')
+  ) {
+    return false;
+  }
+
+  return lifeStages.some((value) =>
+    ['I get periods regularly', 'My periods are irregular'].includes(value)
+  ) || arrayHasAny(intake.supportSelections, PERIOD_TRIGGER);
 }
 function isUtiRelevant(intake) {
   return arrayHasAny(intake.supportSelections, UTI_TRIGGER);
@@ -283,10 +332,9 @@ function buildSnapshot(intake) {
   const lifeStageSelections = getLifeStages(intake);
   const primaryLifeStage = intake.lifeStage || lifeStageSelections[0] || '';
   const primaryConcerns = [...new Set((intake.supportSelections || []).map((item) => LEGACY_CONCERN_BY_ITEM[item]).filter(Boolean))];
-  const customConcerns = [
-    ...(intake.supportSelections || []).filter((item) => !['Nothing right now', 'Something else'].includes(item)),
-    ...(intake.supportOtherText.trim() ? [intake.supportOtherText.trim()] : []),
-  ];
+  const customConcerns = intake.supportOtherText.trim()
+    ? [intake.supportOtherText.trim()]
+    : [];
 
   const conditions = (intake.diagnosisSelections || [])
     .filter((v) => !['None that I know of', 'Prefer not to say', 'Other / not listed'].includes(v))
@@ -905,10 +953,14 @@ function TextAreaField({ value, onChange, placeholder }) {
 
 /* --------------------------------- Main screen --------------------------------- */
 
-export default function IntakeScreen({ onBack, onComplete }) {
-  const [intake, setIntake] = useState(EMPTY);
-  const [stepId, setStepId] = useState('age');
+export default function IntakeScreen({ onBack, onComplete, initialSnapshot = null }) {
+  const [intake, setIntake] = useState(() => reconstructIntakeFromSnapshot(initialSnapshot));
+  const [stepId, setStepId] = useState(() => getFirstIncompleteStepId(initialSnapshot) || 'age');
   const [search, setSearch] = useState('');
+  // Computed once, from how things stood when this resume started — not
+  // re-derived as answers change, so a step's flag clears only by actually
+  // reaching and completing it, not by something else on the page changing.
+  const [flaggedStepIds] = useState(() => new Set(getIncompleteStepIds(initialSnapshot)));
 
   const visibleSteps = useMemo(() => {
     const steps = [
@@ -1149,6 +1201,12 @@ export default function IntakeScreen({ onBack, onComplete }) {
         <div style={{ fontFamily: "'Playfair Display',serif", fontWeight: 500, fontSize: 25, lineHeight: 1.3, margin: '0 auto 10px', maxWidth: 480, color: '#FFF9F2' }}>{step.title}</div>
         {step.subtitle && <p style={{ margin: '0 auto 10px', fontSize: 14, color: 'rgba(255,249,242,.72)', lineHeight: 1.5, maxWidth: 440 }}>{step.subtitle}</p>}
         {!step.optional && <p style={{ margin: '5px auto 0', fontSize: 12, color: '#FFDCA8', fontWeight: 600 }}>Required for safety</p>}
+        {flaggedStepIds.has(step.id) && (
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, margin: '10px auto 0', padding: '6px 12px', borderRadius: 99, background: 'rgba(180,64,42,.16)', border: '1px solid rgba(180,64,42,.35)', color: '#FFC9BC', fontSize: 11.5, fontWeight: 600 }}>
+            <span style={{ width: 6, height: 6, borderRadius: 99, background: '#E8846F', flex: 'none' }} />
+            Not answered yet
+          </div>
+        )}
         <div style={{ marginTop: 26, textAlign: step.type === 'support' || step.type === 'medications' || step.type === 'allergies' || step.type === 'products' || step.type === 'avoidRepeat' || step.type === 'trustedBrands' ? 'left' : 'center' }}>
           {renderBody()}
         </div>
