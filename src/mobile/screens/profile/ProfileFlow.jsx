@@ -695,14 +695,14 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
 // hub already uses for its external links.
 const NEWSLETTER_URL = 'https://aynahealth.substack.com/subscribe';
 // There's no webhook back from Substack telling the app someone actually
-// completed the subscribe form on their site, so this can only track
-// "tapped through to the real subscribe page" (persisted, so it survives
-// the trip to Substack and back) — the closest honest stand-in for
-// "subscribed" without a real integration.
-const NEWSLETTER_CLICKED_KEY = 'ayna_mobile_newsletter_clicked_v1';
+// completed the subscribe form on their site, so "Subscribed" is only ever
+// shown once the user explicitly says so — a "Yes, I'm in" tap after
+// they've been sent to the real subscribe page — rather than assumed the
+// moment they tap through, which they might not follow through on.
+const NEWSLETTER_CONFIRMED_KEY = 'ayna_mobile_newsletter_confirmed_v1';
 
-function loadNewsletterClicked() {
-  try { return localStorage.getItem(NEWSLETTER_CLICKED_KEY) === '1'; } catch { return false; }
+function loadNewsletterConfirmed() {
+  try { return localStorage.getItem(NEWSLETTER_CONFIRMED_KEY) === '1'; } catch { return false; }
 }
 
 function ExternalLinkIcon() {
@@ -717,12 +717,22 @@ function PreferencesScreen({ onBack, theme, onToggleTheme }) {
   const [notif, setNotif] = useState(true);
   const [updates, setUpdates] = useState(true);
   const [channel, setChannel] = useState('push');
-  const [newsletterClicked, setNewsletterClicked] = useState(loadNewsletterClicked);
+  // Session-only nudge to ask "did you subscribe?" after sending them to
+  // Substack — not persisted, since it's just prompting for the confirm
+  // tap below, not the subscribed state itself.
+  const [awaitingConfirm, setAwaitingConfirm] = useState(false);
+  const [newsletterConfirmed, setNewsletterConfirmed] = useState(loadNewsletterConfirmed);
 
   const handleJoinNewsletter = () => {
     window.open(NEWSLETTER_URL, '_blank', 'noopener,noreferrer');
-    setNewsletterClicked(true);
-    try { localStorage.setItem(NEWSLETTER_CLICKED_KEY, '1'); } catch { /* private mode */ }
+    setAwaitingConfirm(true);
+  };
+
+  const handleConfirmSubscribed = (e) => {
+    e.stopPropagation();
+    setAwaitingConfirm(false);
+    setNewsletterConfirmed(true);
+    try { localStorage.setItem(NEWSLETTER_CONFIRMED_KEY, '1'); } catch { /* private mode */ }
   };
 
   return (
@@ -743,16 +753,27 @@ function PreferencesScreen({ onBack, theme, onToggleTheme }) {
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <div style={{ fontWeight: 600, fontSize: 15, color: 'var(--ayna-text)' }}>Join newsletter</div>
-                {newsletterClicked && (
+                {newsletterConfirmed && (
                   <div style={{ fontSize: 10, fontWeight: 600, color: '#2F6B4F', background: 'var(--ayna-chip-bg)', padding: '2px 8px', borderRadius: 99 }}>Subscribed</div>
                 )}
               </div>
               <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', marginTop: 3, lineHeight: 1.45 }}>
-                {newsletterClicked ? "You're on the list — The Mirror lands monthly." : 'The Mirror — one letter a month, no products pushed.'}
+                {newsletterConfirmed ? "You're on the list — The Mirror lands monthly." : 'The Mirror — one letter a month, no products pushed.'}
               </div>
             </div>
             <ExternalLinkIcon />
           </div>
+          {awaitingConfirm && !newsletterConfirmed && (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, padding: '0 0 14px' }}>
+              <div style={{ fontSize: 12, color: 'var(--ayna-text-muted)' }}>Subscribed on Substack?</div>
+              <div
+                onClick={handleConfirmSubscribed}
+                style={{ fontSize: 12, fontWeight: 700, color: '#2F6B4F', cursor: 'pointer', padding: '6px 12px', background: 'var(--ayna-chip-bg)', borderRadius: 99, flex: 'none' }}
+              >
+                Yes, I'm in
+              </div>
+            </div>
+          )}
         </div>
 
         <div style={{ marginTop: 26, fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 11 }}>Delivery channel</div>
