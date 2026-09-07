@@ -223,9 +223,6 @@ function ProfileHub({ onOpen, onClose, onSignOut, name, initial, memberSince, ec
         </div>
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 14, marginTop: 24 }}>
           <div
-            onClick={() => onOpen('partners')}
-            role="button"
-            aria-label="Brand partnerships"
             style={{
               width: 66,
               height: 66,
@@ -239,7 +236,6 @@ function ProfileHub({ onOpen, onClose, onSignOut, name, initial, memberSince, ec
               fontSize: 26,
               color: '#3A2410',
               boxShadow: '0 14px 30px -12px rgba(255,150,60,.7)',
-              cursor: 'pointer',
             }}
           >
             {initial}
@@ -742,44 +738,12 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
   );
 }
 
-/* ------------------------- Brand Partnerships ------------------------- */
-
 // Ayna's confirmed brand partnerships live only on the web today
-// (BrandPartners.jsx at aynahealth.co/startups) — this is a thin native
-// wrapper that opens the real page rather than duplicating its hardcoded
-// partner list here, so it never drifts out of sync with the actual list.
+// (BrandPartners.jsx at aynahealth.co/startups) — Settings links straight
+// out to that real page (see SettingsScreen's "About Ayna" rows) rather
+// than duplicating its hardcoded partner list in a native screen, so it
+// never drifts out of sync with the actual list.
 const BRAND_PARTNERSHIPS_URL = 'https://www.aynahealth.co/startups';
-
-function BrandPartnershipsScreen({ onBack }) {
-  return (
-    <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
-      <BackHeader title="Brand Partnerships" onBack={onBack} />
-      <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '0 20px 30px' }}>
-        <div style={{ borderRadius: 22, padding: 20, background: 'linear-gradient(140deg,#4E3866,#242A52)', color: '#FFF9F2', position: 'relative', overflow: 'hidden', marginBottom: 20 }}>
-          <div style={{ position: 'absolute', right: -50, top: -50, width: 180, height: 180, borderRadius: '50%', border: '1px solid rgba(255,255,255,.16)' }} />
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.4px', textTransform: 'uppercase', color: '#FFC774' }}>Confirmed partners</div>
-          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 25, lineHeight: 1.2, margin: '8px 0 7px', maxWidth: 250 }}>Brands Ayna actually works with.</div>
-          <div style={{ fontSize: 12.5, color: 'rgba(255,249,242,.72)', lineHeight: 1.5, maxWidth: 265 }}>Only confirmed partnerships, never paid placement.</div>
-        </div>
-
-        <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: 20, textAlign: 'center' }}>
-          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 18, lineHeight: 1.35, marginBottom: 8, color: 'var(--ayna-text)' }}>
-            See the full, up-to-date list on aynahealth.co
-          </div>
-          <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.5, marginBottom: 16 }}>
-            This opens in your browser.
-          </div>
-          <div
-            onClick={() => window.open(BRAND_PARTNERSHIPS_URL, '_blank', 'noopener,noreferrer')}
-            style={{ display: 'inline-block', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 13.5, padding: '13px 22px', borderRadius: 99, cursor: 'pointer' }}
-          >
-            View brand partnerships ↗
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 /* ---------------------------- Preferences ---------------------------- */
 
@@ -1146,6 +1110,7 @@ function SettingsScreen({ onBack, onOpenHowItWorks, onOpenAboutAyna, onOpenConta
   const aboutRows = [
     { title: 'How it works', sub: 'Nothing reaches you unchecked.', onClick: onOpenHowItWorks },
     { title: 'About ayna', sub: 'No mystery box.', onClick: onOpenAboutAyna },
+    { title: 'Brand partnership', sub: 'Brands ayna actually works with.', onClick: () => window.open(BRAND_PARTNERSHIPS_URL, '_blank', 'noopener,noreferrer'), external: true },
     { title: 'Terms & privacy', sub: 'The legal stuff, actually readable.' },
   ];
 
@@ -1161,7 +1126,7 @@ function SettingsScreen({ onBack, onOpenHowItWorks, onOpenAboutAyna, onOpenConta
                 <div style={{ fontWeight: 500, fontSize: 14.5, color: 'var(--ayna-text)' }}>{r.title}</div>
                 <div style={{ fontSize: 12, color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>{r.sub}</div>
               </div>
-              <ChevronIcon />
+              {r.external ? <ExternalLinkIcon /> : <ChevronIcon />}
             </div>
           ))}
         </div>
@@ -2001,7 +1966,6 @@ function ContactScreen({ onBack }) {
 const PARENT_OF = {
   shopper: 'hub',
   startups: 'hub',
-  partners: 'hub',
   preferences: 'hub',
   settings: 'hub',
   howItWorks: 'settings',
@@ -2065,8 +2029,6 @@ export default function ProfileFlow({
     );
   } else if (screen === 'startups') {
     body = <EarlyStageScreen onBack={goBack} quizAnswers={quizAnswers} />;
-  } else if (screen === 'partners') {
-    body = <BrandPartnershipsScreen onBack={goBack} />;
   } else if (screen === 'preferences') {
     body = <PreferencesScreen onBack={goBack} theme={theme} onToggleTheme={onToggleTheme} />;
   } else if (screen === 'settings') {
