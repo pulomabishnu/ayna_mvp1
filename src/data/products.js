@@ -15,6 +15,7 @@ import { INCONTINENCE_PHYSICAL } from './incontinenceProducts.js';
 import { applyCatalogEvidence } from './catalogEvidence.js';
 import { inferTagsFromHealthProfile } from '../utils/healthDataProfile.js';
 import { getInteractions } from './interactions.js';
+import { productRouteKey, productSlug } from '../utils/productRoute.js';
 
 // Tags used for quiz → product matching
 // frustrations: heavy-flow, cramps, bloating, irregular, leaks, discomfort, safety-concern, uti, pcos, pelvic-floor
@@ -784,7 +785,14 @@ export const ALL_PRODUCTS = [
  */
 export function getProductById(id) {
     if (!id) return null;
-    return ALL_PRODUCTS.find((p) => p.id === id) || null;
+
+    const key = String(id).trim();
+
+    return ALL_PRODUCTS.find((p) =>
+        p.id === key
+        || productRouteKey(p) === key
+        || productSlug(p.name) === key
+    ) || null;
 }
 
 /**

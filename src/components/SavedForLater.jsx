@@ -52,7 +52,7 @@ export default function SavedForLater({
               <article key={product.id} className="wishlist-card">
                 <a
                   className="wishlist-card__link"
-                  href={productHref(product.id)}
+                  href={productHref(product)}
                   onClick={(e) => {
                     if (!isPlainLeftClick(e)) return;
                     e.preventDefault();

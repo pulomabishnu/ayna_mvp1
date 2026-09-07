@@ -12,6 +12,7 @@ import MatchGauge from './MatchGauge';
 import { PRODUCT_BUY_URLS } from '../data/productBuyUrls';
 import { getVerificationLinks, toSourceChips, hostLabel } from '../utils/verificationLinks';
 import posthog from 'posthog-js';
+import { productHref } from '../utils/productRoute';
 
 /** Remembers whether this browser prefers the tabs (1f) or evidence rail (1g) layout. */
 const PRODUCT_VIEW_KEY = 'ayna_product_detail_view_v1';
@@ -23,6 +24,42 @@ const AYNA_TABS = [
   { id: 'community', label: 'Social Media' },
   { id: 'ask', label: 'Ask Ayna' },
 ];
+
+function productShareUrl(product) {
+  const path = productHref(product);
+
+  if (typeof window === 'undefined') {
+    return `https://www.aynahealth.co${path}`;
+  }
+
+  const host = window.location.hostname;
+  const isPreview =
+    host === 'localhost'
+    || host === '127.0.0.1'
+    || host.endsWith('.vercel.app');
+
+  const origin = isPreview
+    ? window.location.origin
+    : 'https://www.aynahealth.co';
+
+  return `${origin}${path}`;
+}
+
+function fallbackCopyText(value) {
+  const textarea = document.createElement('textarea');
+  textarea.value = value;
+  textarea.setAttribute('readonly', '');
+  textarea.style.position = 'fixed';
+  textarea.style.opacity = '0';
+  document.body.appendChild(textarea);
+  textarea.select();
+
+  try {
+    document.execCommand('copy');
+  } finally {
+    document.body.removeChild(textarea);
+  }
+}
 
 /**
  * Product Q&A — for a user who doesn't know what a product actually IS (a
@@ -487,6 +524,8 @@ export default function ProductModal({
   const [reviewInput, setReviewInput] = useState('');
   const [hoverRating, setHoverRating] = useState(0);
   const [resolvedModalImage, setResolvedModalImage] = useState('');
+  const [shareMenuOpen, setShareMenuOpen] = useState(false);
+  const [shareCopied, setShareCopied] = useState(false);
 
   // Most catalog entries only ever carry a single `image` URL — when that's a
   // placeholder, this tries once to resolve a real product photo instead.
@@ -663,6 +702,61 @@ export default function ProductModal({
   const ecosystemBtnLabel = isInEcosystem ? 'In ecosystem' : 'Add to ecosystem';
   const wishlistBtnLabel = isSaved ? 'Wishlisted' : 'Wishlist';
 
+  const shareUrl = productShareUrl(product);
+  const shareText = `Check out ${product.name} on ayna.`;
+
+  const recordShare = (channel) => {
+    posthog.capture('product_shared', {
+      productName: product.name,
+      productPath: productHref(product),
+      category: product.category,
+      channel,
+    });
+  };
+
+  const copyShareLink = async () => {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(shareUrl);
+      } else {
+        fallbackCopyText(shareUrl);
+      }
+
+      setShareCopied(true);
+      recordShare('copy_link');
+      window.setTimeout(() => setShareCopied(false), 1800);
+    } catch {
+      fallbackCopyText(shareUrl);
+      setShareCopied(true);
+      recordShare('copy_link');
+      window.setTimeout(() => setShareCopied(false), 1800);
+    }
+  };
+
+  const handleShare = async () => {
+    const payload = {
+      title: `${product.name} | ayna`,
+      text: shareText,
+      url: shareUrl,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(payload);
+        recordShare('native');
+        return;
+      } catch (error) {
+        if (error?.name === 'AbortError') return;
+      }
+    }
+
+    setShareMenuOpen((open) => !open);
+  };
+
+  const encodedShareText = encodeURIComponent(`${shareText}\n${shareUrl}`);
+  const emailSubject = encodeURIComponent(`${product.name} | ayna`);
+  const emailBody = encodeURIComponent(`${shareText}\n\n${shareUrl}`);
+
   const actionButtons = (
     <div className="pdp-actions">
       <div className="pdp-actions__primary">
@@ -697,6 +791,51 @@ export default function ProductModal({
             {wishlistBtnLabel}
           </button>
         )}
+
+        <div className="pdp-share">
+          <button
+            type="button"
+            className="pdp-btn pdp-btn--outline pdp-btn--share"
+            aria-expanded={shareMenuOpen}
+            onClick={handleShare}
+          >
+            Share
+          </button>
+
+          {shareMenuOpen && (
+            <div className="pdp-share__menu" role="menu" aria-label="Share product">
+              <button type="button" role="menuitem" onClick={copyShareLink}>
+                {shareCopied ? 'Link copied' : 'Copy link'}
+              </button>
+
+              <a
+                role="menuitem"
+                href={`mailto:?subject=${emailSubject}&body=${emailBody}`}
+                onClick={() => recordShare('email')}
+              >
+                Email
+              </a>
+
+              <a
+                role="menuitem"
+                href={`sms:?&body=${encodedShareText}`}
+                onClick={() => recordShare('sms')}
+              >
+                Text
+              </a>
+
+              <a
+                role="menuitem"
+                href={`https://wa.me/?text=${encodedShareText}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => recordShare('whatsapp')}
+              >
+                WhatsApp
+              </a>
+            </div>
+          )}
+        </div>
       </div>
       {onAddToEcosystem && (
         <button

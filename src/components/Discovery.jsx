@@ -1454,7 +1454,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         >
                             <a
                                 className="ayna-browse-card__link"
-                                href={productHref(item.id)}
+                                href={productHref(item)}
                                 onClick={(e) => {
                                     if (!isPlainLeftClick(e)) return;
                                     e.preventDefault();

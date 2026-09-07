@@ -3755,6 +3755,52 @@ footer a[href*="career" i],
   cursor: not-allowed;
 }
 
+.pdp-share {
+  position: relative;
+  display: flex;
+}
+
+.pdp-btn--share {
+  min-width: 132px;
+}
+
+.pdp-share__menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  width: 180px;
+  padding: 6px;
+  background: #FFFCF8;
+  border: 1px solid rgba(26, 23, 20, 0.14);
+  border-radius: 12px;
+  box-shadow: 0 14px 32px rgba(26, 23, 20, 0.14);
+}
+
+.pdp-share__menu button,
+.pdp-share__menu a {
+  appearance: none;
+  display: block;
+  width: 100%;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #1A1714;
+  padding: 10px 12px;
+  font: 500 14px 'DM Sans', system-ui, sans-serif;
+  line-height: 1.25;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.pdp-share__menu button:hover,
+.pdp-share__menu a:hover {
+  background: #F5F0E8;
+}
+
 .pdp-actions__ecosystem {
   appearance: none;
   border: 0;
@@ -3897,6 +3943,19 @@ footer a[href*="career" i],
 
   .pdp-actions__primary .pdp-btn {
     min-width: 0;
+    width: 100%;
+  }
+
+  .pdp-share {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .pdp-btn--share {
+    width: 100%;
+  }
+
+  .pdp-share__menu {
     width: 100%;
   }
 

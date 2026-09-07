@@ -54,7 +54,7 @@ import { loadReviewsForUser, upsertProductReviews } from './utils/reviewsStore';
 import { clearCachedLlmRecommendations, fingerprintIntake } from './utils/fetchLlmRecommendations';
 import posthog from 'posthog-js';
 import { tagInternalUserIfNeeded } from './utils/posthogInternal';
-import { productHref, parseProductIdFromPath } from './utils/productRoute';
+import { productHref, productRouteKey, parseProductIdFromPath } from './utils/productRoute';
 
 const ECOSYSTEM_NAV_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls'];
 /** Landing boards (1a/1c) run the nav on the hero gradient; every other board is on cream. */
@@ -215,6 +215,8 @@ function App() {
   // it) so VIEW_TO_PATH/PATH_TO_VIEW stay simple static maps for every other
   // route.
   const [productRouteId, setProductRouteId] = useState(getInitialProductId);
+  const [publicRouteProduct, setPublicRouteProduct] = useState(null);
+  const [publicRouteProductLoading, setPublicRouteProductLoading] = useState(false);
   // Ref always mirrors currentView synchronously — safe to read inside Supabase callbacks
   // that run outside React's render cycle.
   const currentViewRef = useRef(getInitialView());
@@ -241,15 +243,24 @@ function App() {
     }
   }, [pathForView]);
   /** Navigate to a specific product's dedicated page — a real URL, not modal state. */
-  const navigateToProduct = useCallback((id, { replace = false } = {}) => {
-    if (!id) return;
+  const navigateToProduct = useCallback((productOrId, { replace = false } = {}) => {
+    const routeKey = productRouteKey(productOrId);
+    if (!routeKey) return;
+
+    const internalId = productOrId && typeof productOrId === 'object'
+      ? productOrId.id
+      : productOrId;
+
     currentViewRef.current = 'product';
     setCurrentViewRaw('product');
-    setProductRouteId(id);
-    const path = productHref(id);
+    setProductRouteId(routeKey);
+
+    const path = productHref(productOrId);
+
     if (window.location.pathname !== path) {
-      if (replace) window.history.replaceState({ view: 'product', productId: id }, '', path);
-      else { window.history.pushState({ view: 'product', productId: id }, '', path); inAppPushCountRef.current += 1; }
+      const state = { view: 'product', productId: internalId, productRouteKey: routeKey };
+      if (replace) window.history.replaceState(state, '', path);
+      else { window.history.pushState(state, '', path); inAppPushCountRef.current += 1; }
     }
   }, []);
   /** Back control for the product page: real in-app back if we got here by
@@ -1281,7 +1292,7 @@ function App() {
     });
     setLastOpenOrigin(source === 'search_results' ? { productId: p.id, source, searchQuery: meta.searchQuery } : null);
     setLastClickedProduct(p);
-    navigateToProduct(p.id);
+    navigateToProduct(p);
   };
 
   // Resolves the product for the current /product/:id route. Checked in order:
@@ -1293,16 +1304,84 @@ function App() {
   // state instead of a premature "not found".
   const resolvedProduct = useMemo(() => {
     if (!productRouteId) return null;
-    if (lastClickedProduct?.id === productRouteId) return lastClickedProduct;
-    const raw = myProducts[productRouteId]
-      || savedProducts[productRouteId]
-      || trackedProducts[productRouteId]
-      || omittedProducts[productRouteId]
-      || getProductById(productRouteId);
+
+    if (lastClickedProduct && productRouteKey(lastClickedProduct) === productRouteId) {
+      return lastClickedProduct;
+    }
+
+    const stores = [myProducts, savedProducts, trackedProducts, omittedProducts];
+
+    let raw = null;
+
+    for (const store of stores) {
+      raw = store[productRouteId]
+        || Object.values(store).find((p) => productRouteKey(p) === productRouteId)
+        || null;
+
+      if (raw) break;
+    }
+
+    raw ||= getProductById(productRouteId);
+
     if (!raw) return null;
     return raw.llmGenerated ? enrichLlmProductForDiscovery(raw) : raw;
   }, [productRouteId, lastClickedProduct, myProducts, savedProducts, trackedProducts, omittedProducts]);
-  const productStillResolving = !resolvedProduct && (authLoading || dataLoading);
+  useEffect(() => {
+    let cancelled = false;
+    const controller = new AbortController();
+
+    setPublicRouteProduct(null);
+
+    if (
+      currentView !== 'product'
+      || !productRouteId
+      || resolvedProduct
+      || authLoading
+      || dataLoading
+    ) {
+      setPublicRouteProductLoading(false);
+      return () => {
+        cancelled = true;
+        controller.abort();
+      };
+    }
+
+    setPublicRouteProductLoading(true);
+
+    fetch(`/api/public-product?slug=${encodeURIComponent(productRouteId)}`, {
+      method: 'GET',
+      signal: controller.signal,
+      headers: { Accept: 'application/json' },
+    })
+      .then(async (response) => {
+        if (response.status === 404) return null;
+        if (!response.ok) throw new Error(`public_product_${response.status}`);
+        const body = await response.json();
+        return body?.product || null;
+      })
+      .then((product) => {
+        if (!cancelled) setPublicRouteProduct(product);
+      })
+      .catch((error) => {
+        if (!cancelled && error?.name !== 'AbortError') {
+          console.error('[product-route] public product lookup failed:', error?.message);
+          setPublicRouteProduct(null);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setPublicRouteProductLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
+  }, [currentView, productRouteId, resolvedProduct, authLoading, dataLoading]);
+
+  const displayedProduct = resolvedProduct || publicRouteProduct;
+
+  const productStillResolving = !displayedProduct
+    && (authLoading || dataLoading || publicRouteProductLoading);
 
   // Every route showed the identical generic <title> from index.html — no
   // way to tell tabs apart, bookmark a specific page, or get a useful link
@@ -1311,14 +1390,14 @@ function App() {
   useEffect(() => {
     const base = "ayna | Personalized Women's Health Product Recommendations";
     if (currentView === 'product') {
-      document.title = resolvedProduct?.name
-        ? `${resolvedProduct.name} | ayna`
+      document.title = displayedProduct?.name
+        ? `${displayedProduct.name} | ayna`
         : (productStillResolving ? 'Loading… | ayna' : base);
       return;
     }
     const label = VIEW_TITLES[currentView];
     document.title = label ? `${label} | ayna` : base;
-  }, [currentView, resolvedProduct, productStillResolving]);
+  }, [currentView, displayedProduct, productStillResolving]);
 
   const handleRateProduct = (product, rating) => {
     const next = addRating(product.id, rating);
@@ -3062,25 +3141,25 @@ function App() {
         )}
 
         {currentView === 'product' && (
-          resolvedProduct ? (
+          displayedProduct ? (
             // Keying by id forces a clean remount when navigating from one
             // product's page straight to another's — every internal tab,
             // the Summary/Evidence toggle, and the chat thread reset to that
             // product's own defaults instead of carrying the previous
             // product's state over.
             <ProductModal
-              key={resolvedProduct.id}
-              product={resolvedProduct}
-              isTracked={!!trackedProducts[resolvedProduct.id]}
+              key={displayedProduct.id}
+              product={displayedProduct}
+              isTracked={!!trackedProducts[displayedProduct.id]}
               onTrack={toggleTrackProduct}
               onOmit={toggleOmitProduct}
-              isOmitted={!!omittedProducts[resolvedProduct.id]}
+              isOmitted={!!omittedProducts[displayedProduct.id]}
               onToggleCompare={toggleCompare}
-              isInCompare={compareList.some(p => p.id === resolvedProduct.id)}
+              isInCompare={compareList.some(p => p.id === displayedProduct.id)}
               onAddToEcosystem={toggleMyProduct}
-              isInEcosystem={!!myProducts[resolvedProduct.id]}
+              isInEcosystem={!!myProducts[displayedProduct.id]}
               onToggleSaved={toggleSavedProduct}
-              isSaved={!!savedProducts[resolvedProduct.id]}
+              isSaved={!!savedProducts[displayedProduct.id]}
               userZipCode={userZipCode || undefined}
               aynaReviews={aynaReviews}
               onRate={handleRateProduct}
@@ -3092,7 +3171,7 @@ function App() {
               userSession={userSession}
               onOpenProduct={handleOpenProduct}
               onBack={handleBackFromProduct}
-              searchOrigin={lastOpenOrigin?.productId === resolvedProduct.id ? lastOpenOrigin : null}
+              searchOrigin={lastOpenOrigin?.productId === displayedProduct.id ? lastOpenOrigin : null}
             />
           ) : productStillResolving ? (
             <ViewLoadingFallback />
