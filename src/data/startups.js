@@ -314,20 +314,10 @@ export const STARTUPS = [
         url: 'https://app.myparla.com',
         image: '/startup_placeholder.png'
     },
-    {
-        id: 's-proov',
-        name: 'Proov',
-        tagline: 'At-home PdG tests for ovulation confirmation',
-        description: 'First FDA-cleared at-home test to confirm successful ovulation via PdG (urine progesterone). Helps identify if you ovulate and if levels are sufficient.',
-        tags: ['fertility', 'irregular', 'pcos'],
-        healthFunctions: ['cycle-tracking'],
-        category: 'fertility',
-        stage: 'Available in US',
-        productReleased: true,
-        spotsLeft: 290,
-        url: 'https://proovtest.com/?irclickid=092RZoWR3xyZWgGydJzTuXX9UkrxvuV9I08LVk0&sharedid=&irpid=7622078&utm_source=7622078&utm_medium=affiliate&irgwc=1&afsrc=1&tw_source=impact&tw_campaign=7622078',
-        image: 'https://proovtest.com/cdn/shop/products/1_ProHero.jpg?v=1669147223&width=3840'
-    },
+    // 's-proov' removed 2026-09-07: Proov is now a confirmed brand partner
+    // with 5 real, individually-linked products in src/data/brands.js
+    // (BRAND_PRODUCTS), replacing this single generic entry and its stale
+    // affiliate URL.
     {
         id: 's-premom',
         name: 'Premom',

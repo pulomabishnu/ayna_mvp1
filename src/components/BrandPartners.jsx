@@ -32,6 +32,12 @@ import { ProductImageFallback } from './ProductTileImage';
  * Ayna affiliate link (go.shopmy.us), not the bare homepage. Same no-logo-yet
  * situation — falls back to the text wordmark until a file lands at
  * public/brands/vio2.png.
+ *
+ * Added 2026-09-07: Proov — confirmed affiliate partnership, 5 products (see
+ * brands.js), each with its own proov.pxf.io affiliate link. `url` here goes
+ * to the general proovtest.com site since there's no single per-brand link.
+ * Same no-logo-yet situation — falls back to the text wordmark until a file
+ * lands at public/brands/proov.png.
  */
 
 const PARTNERS = [
@@ -58,6 +64,14 @@ const PARTNERS = [
     url: 'https://go.shopmy.us/p-83948920',
     blurb:
       'Dentist-designed, partial-coverage mouth tape for sleep. Encourages a gentle lip seal and nasal breathing to help with snoring and dry mouth.',
+  },
+  {
+    brand: 'Proov',
+    /** Drop a file at public/brands/proov.png and it replaces the wordmark. */
+    logo: '/brands/proov.png',
+    url: 'https://proovtest.com/',
+    blurb:
+      'At-home fertility and hormone testing. Track your full cycle, confirm ovulation, screen for common fertility factors, and get personalized next steps.',
   },
 ];
 
