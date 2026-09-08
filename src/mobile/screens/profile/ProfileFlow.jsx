@@ -1110,13 +1110,31 @@ function PreferencesScreen({ onBack, theme, onToggleTheme }) {
 
 /* ------------------------------ Settings ------------------------------ */
 
-function SettingsScreen({ onBack, onOpenHowItWorks, onOpenAboutAyna, onOpenContact, onOpenAccountInfo, authUser, onSignOut, onSignIn }) {
+function SettingsScreen({ onBack, onOpenHowItWorks, onOpenAboutAyna, onOpenContact, onOpenAccountInfo, onOpenPrivacyData, onOpenNotifications, onOpenLegal, authUser, onSignOut, onSignIn }) {
   const aboutRows = [
     { title: 'How it works', sub: 'Nothing reaches you unchecked.', onClick: onOpenHowItWorks },
     { title: 'About ayna', sub: 'No mystery box.', onClick: onOpenAboutAyna },
     { title: 'Brand partnership', sub: 'Brands ayna actually works with.', onClick: () => window.open(BRAND_PARTNERSHIPS_URL, '_blank', 'noopener,noreferrer'), external: true },
-    { title: 'Terms & privacy', sub: 'The legal stuff, actually readable.' },
   ];
+
+  // Same real phone_numbers read AccountInfoScreen already does, mirrored
+  // here just so this row's preview line can show the masked number
+  // alongside the email instead of email alone.
+  const [phone, setPhone] = useState('');
+  useEffect(() => {
+    let cancelled = false;
+    const supabase = getSupabaseClient();
+    if (!supabase || !authUser?.id) return undefined;
+    supabase
+      .from('phone_numbers')
+      .select('phone_number')
+      .eq('user_id', authUser.id)
+      .maybeSingle()
+      .then(({ data }) => { if (!cancelled) setPhone(data?.phone_number || ''); })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [authUser?.id]);
+  const accountPreview = [authUser?.email, phone ? maskPhone(phone) : ''].filter(Boolean).join(' · ');
 
   return (
     <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
@@ -1140,16 +1158,30 @@ function SettingsScreen({ onBack, onOpenHowItWorks, onOpenAboutAyna, onOpenConta
           <div onClick={onOpenAccountInfo} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 0', cursor: 'pointer' }}>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontWeight: 500, fontSize: 14.5, color: 'var(--ayna-text)' }}>Account information</div>
-              {authUser?.email && (
-                <div style={{ fontSize: 12, color: 'var(--ayna-text-muted)', marginTop: 2 }}>{authUser.email}</div>
+              {accountPreview && (
+                <div style={{ fontSize: 12, color: 'var(--ayna-text-muted)', marginTop: 2 }}>{accountPreview}</div>
               )}
             </div>
             <ChevronIcon />
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 0', borderTop: '1px solid var(--ayna-border)' }}>
+          <div onClick={onOpenPrivacyData} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 0', borderTop: '1px solid var(--ayna-border)', cursor: 'pointer' }}>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontWeight: 500, fontSize: 14.5, color: 'var(--ayna-text)' }}>Privacy & data</div>
-              <div style={{ fontSize: 12, color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>Export or delete your intake answers.</div>
+              <div style={{ fontSize: 12, color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>Policies, what we hold, exports and deletion.</div>
+            </div>
+            <ChevronIcon />
+          </div>
+          <div onClick={onOpenNotifications} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 0', borderTop: '1px solid var(--ayna-border)', cursor: 'pointer' }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontWeight: 500, fontSize: 14.5, color: 'var(--ayna-text)' }}>Notifications</div>
+              <div style={{ fontSize: 12, color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>Notifications, updates, night mode.</div>
+            </div>
+            <ChevronIcon />
+          </div>
+          <div onClick={onOpenLegal} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 0', borderTop: '1px solid var(--ayna-border)', cursor: 'pointer' }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontWeight: 500, fontSize: 14.5, color: 'var(--ayna-text)' }}>Legal</div>
+              <div style={{ fontSize: 12, color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>Policies, terms and licences.</div>
             </div>
             <ChevronIcon />
           </div>
@@ -1175,6 +1207,144 @@ function SettingsScreen({ onBack, onOpenHowItWorks, onOpenAboutAyna, onOpenConta
           <div onClick={onSignIn} style={{ marginTop: 22, textAlign: 'center', padding: '14px 0', border: '1px solid var(--ayna-border)', borderRadius: 99, color: 'var(--ayna-heading)', fontWeight: 600, fontSize: 13.5, cursor: 'pointer', background: 'var(--ayna-surface)' }}>Sign in</div>
         )}
         <div style={{ textAlign: 'center', marginTop: 16, fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.2px', color: 'var(--ayna-text-muted)' }}>AYNA 0.9.4 · BETA</div>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------ Privacy & data ------------------------------ */
+
+const DELETE_ACCOUNT_MAILTO = 'mailto:puloma@aynahealth.co?subject=Account%20Deletion%20Request';
+const PRIVACY_POLICY_URL = 'https://www.aynahealth.co/privacy-policy';
+const TERMS_URL = 'https://www.aynahealth.co/terms-of-use';
+
+// Real toggle: PostHog's own opt-out API (posthog-js exposes
+// opt_out_capturing/opt_in_capturing/has_opted_out_capturing — see
+// src/main.jsx for the real init). Not a stored per-user backend flag, but
+// a genuine SDK call, not invented state — and this app has no analytics
+// consent UI anywhere yet, so this is the first place it's wired up.
+// window.posthog may be undefined if VITE_PUBLIC_POSTHOG_KEY isn't set
+// (e.g. this dev environment) — every call below is guarded for that.
+function isAnalyticsOptedOut() {
+  try { return typeof window !== 'undefined' && window.posthog?.has_opted_out_capturing?.() === true; } catch { return false; }
+}
+
+function PrivacyDataScreen({ onBack, onOpenLegal }) {
+  const [analyticsOptedOut, setAnalyticsOptedOut] = useState(isAnalyticsOptedOut);
+
+  const toggleAnalytics = () => {
+    const nextOptedOut = !analyticsOptedOut;
+    setAnalyticsOptedOut(nextOptedOut);
+    try {
+      if (nextOptedOut) window.posthog?.opt_out_capturing?.();
+      else window.posthog?.opt_in_capturing?.();
+    } catch { /* posthog not initialized in this environment */ }
+  };
+
+  return (
+    <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+      <BackHeader title="Privacy & data" onBack={onBack} />
+      <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '8px 20px 30px' }}>
+        <div style={{ fontSize: 13.5, color: 'var(--ayna-text-muted)', lineHeight: 1.6, marginBottom: 20 }}>
+          Your health answers are the most sensitive thing you give us. Here is everything we hold, and every way to take it back.
+        </div>
+
+        <div style={{ margin: '0 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Your data</div>
+        <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
+          <AccountRow
+            title="Manage my data"
+            sub="See what we hold — account details, intake answers, saved products."
+            borderTop={false}
+            badge="COMING SOON"
+            dimmed
+          />
+          <AccountRow title="Download my data" sub="A full export of your account and intake answers." badge="COMING SOON" dimmed />
+          <AccountRow
+            title={<span style={{ color: '#B4402A' }}>Delete my account & data</span>}
+            sub="Email us and we'll process it within a week — nothing kept after."
+            onClick={() => window.open(DELETE_ACCOUNT_MAILTO, '_blank')}
+          />
+        </div>
+        <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 9, padding: '0 4px' }}>
+          Deletion removes your account and health answers from our active systems. We may keep limited records where the law requires it — never your health data.
+        </div>
+
+        <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>What you share</div>
+        <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '4px 18px' }}>
+          <ToggleRow
+            first
+            title="Share data for analytics"
+            sub="Anonymised product usage, so we can see which screens confuse people. Never your health answers."
+            on={!analyticsOptedOut}
+            onClick={toggleAnalytics}
+          />
+        </div>
+
+        <div style={{ marginTop: 14, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '16px 18px' }}>
+          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.3px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 8 }}>How AI is used</div>
+          <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.6 }}>
+            Ask Ayna and match explanations are powered by a third-party AI provider (Anthropic). Your questions and relevant profile details are shared with them to generate a response — never sold, and never used to train anyone else's model.
+          </div>
+          <div onClick={() => window.open(PRIVACY_POLICY_URL, '_blank', 'noopener,noreferrer')} style={{ fontSize: 12.5, color: 'var(--ayna-heading)', fontWeight: 600, marginTop: 10, cursor: 'pointer' }}>
+            Read the full privacy policy
+          </div>
+        </div>
+
+        <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>The fine print</div>
+        <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
+          <AccountRow title="Legal" sub="Privacy policy, terms, licences." borderTop={false} onClick={onOpenLegal} />
+        </div>
+
+        <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 16, padding: '0 4px' }}>
+          Privacy questions? Email <a href="mailto:puloma@aynahealth.co">puloma@aynahealth.co</a>.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------------- Legal ---------------------------------- */
+
+function LegalScreen({ onBack }) {
+  return (
+    <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+      <BackHeader title="Legal" onBack={onBack} />
+      <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '8px 20px 30px' }}>
+        <div style={{ margin: '4px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Policies</div>
+        <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
+          <AccountRow
+            title="Privacy Policy"
+            sub="How we collect, use and protect your information."
+            borderTop={false}
+            onClick={() => window.open(PRIVACY_POLICY_URL, '_blank', 'noopener,noreferrer')}
+          />
+          <AccountRow
+            title="Terms of Service"
+            sub="The rules for using ayna."
+            onClick={() => window.open(TERMS_URL, '_blank', 'noopener,noreferrer')}
+          />
+        </div>
+
+        <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Attributions</div>
+        <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
+          <AccountRow title="Typefaces" sub="Playfair Display, DM Sans, DM Mono — Google Fonts, SIL Open Font Licence." borderTop={false} />
+          <AccountRow title="Open-source licences" sub="A full list of packages and their licences." badge="COMING SOON" dimmed />
+        </div>
+
+        <div style={{ marginTop: 22, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '17px 18px' }}>
+          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.3px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 8 }}>Not medical advice</div>
+          <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.6 }}>
+            Ayna is a discovery and education tool. Nothing here diagnoses, treats or prevents a condition, and no match replaces a conversation with your clinician.
+          </div>
+        </div>
+
+        <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 16, padding: '0 4px' }}>
+          Questions about these policies? Email <a href="mailto:puloma@aynahealth.co">puloma@aynahealth.co</a>.
+        </div>
+
+        <div style={{ textAlign: 'center', marginTop: 22, fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.2px', color: 'var(--ayna-text-muted)', lineHeight: 1.9 }}>
+          AYNA HEALTH, INC.<br />DELAWARE, USA<br />APP 0.9.4 · BETA
+        </div>
       </div>
     </div>
   );
@@ -1971,18 +2141,6 @@ function ContactScreen({ onBack }) {
 
 /* ------------------------------- Orchestrator ------------------------------- */
 
-const PARENT_OF = {
-  shopper: 'hub',
-  startups: 'hub',
-  preferences: 'hub',
-  settings: 'hub',
-  howItWorks: 'settings',
-  aboutAyna: 'settings',
-  contact: 'settings',
-  accountInfo: 'settings',
-  password: 'accountInfo',
-};
-
 export default function ProfileFlow({
   onClose,
   theme,
@@ -2000,10 +2158,17 @@ export default function ProfileFlow({
   onBrowse,
   onEditProfile,
 }) {
-  const [screen, setScreen] = useState('hub');
+  // A real back-navigation stack rather than a static single-parent map —
+  // several screens (Preferences/Notifications, in particular) are now
+  // reachable from more than one place (ProfileHub's own row, and Settings'
+  // "Notifications" row), so "back" has to return to wherever the user
+  // actually came from, not a fixed screen.
+  const [screenStack, setScreenStack] = useState(['hub']);
+  const screen = screenStack[screenStack.length - 1];
+  const pushScreen = (next) => setScreenStack((stack) => [...stack, next]);
   const initial = (name || 'Y').trim().charAt(0).toUpperCase() || 'Y';
 
-  const goBack = () => setScreen(PARENT_OF[screen] || 'hub');
+  const goBack = () => setScreenStack((stack) => (stack.length > 1 ? stack.slice(0, -1) : stack));
 
   const profileFilledPct = getProfileCompletionPct(quizAnswers?.fullHealthIntake);
   const shopperAlertsCount = getSafetyAlerts(myProducts, quizAnswers).length;
@@ -2012,7 +2177,7 @@ export default function ProfileFlow({
   if (screen === 'hub') {
     body = (
       <ProfileHub
-        onOpen={setScreen}
+        onOpen={pushScreen}
         onClose={onClose}
         authUser={authUser}
         onSignOut={onSignOut}
@@ -2046,10 +2211,13 @@ export default function ProfileFlow({
     body = (
       <SettingsScreen
         onBack={goBack}
-        onOpenHowItWorks={() => setScreen('howItWorks')}
-        onOpenAboutAyna={() => setScreen('aboutAyna')}
-        onOpenContact={() => setScreen('contact')}
-        onOpenAccountInfo={() => setScreen('accountInfo')}
+        onOpenHowItWorks={() => pushScreen('howItWorks')}
+        onOpenAboutAyna={() => pushScreen('aboutAyna')}
+        onOpenContact={() => pushScreen('contact')}
+        onOpenAccountInfo={() => pushScreen('accountInfo')}
+        onOpenPrivacyData={() => pushScreen('privacyData')}
+        onOpenNotifications={() => pushScreen('preferences')}
+        onOpenLegal={() => pushScreen('legal')}
         authUser={authUser}
         onSignOut={onSignOut}
         onSignIn={onSignIn ? () => { onClose(); onSignIn(); } : undefined}
@@ -2068,12 +2236,16 @@ export default function ProfileFlow({
         authUser={authUser}
         name={name}
         quizAnswers={quizAnswers}
-        onOpenPassword={() => setScreen('password')}
+        onOpenPassword={() => pushScreen('password')}
         onEditProfile={onEditProfile ? () => { onClose(); onEditProfile(); } : undefined}
       />
     );
   } else if (screen === 'password') {
     body = <PasswordScreen onBack={goBack} authUser={authUser} />;
+  } else if (screen === 'privacyData') {
+    body = <PrivacyDataScreen onBack={goBack} onOpenLegal={() => pushScreen('legal')} />;
+  } else if (screen === 'legal') {
+    body = <LegalScreen onBack={goBack} />;
   }
 
   return (
