@@ -1487,10 +1487,10 @@ function tagsForHealthLabel(label) {
     if (/heavy period|heavy flow|menorrhagia/.test(text)) add('heavy-flow', 'leaks', 'menstrual-collection', 'leak-protection');
     if (/light period|period product|menstrual/.test(text)) add('menstrual-collection');
     if (/cramp|period pain/.test(text)) add('cramps', 'cramp-relief');
-    if (/pelvic pain|pain.*sex|sexual wellness|sexual.*comfort|dyspareunia/.test(text)) add('pelvic-floor', 'sexual-health', 'discomfort');
+    if (/pelvic pain|pain.*sex|sexual wellness|sexual.*comfort|dyspareunia/.test(text)) add('pelvic-floor', 'sexual-health');
     if (/irregular period|missed period|cycle tracking/.test(text)) add('irregular', 'cycle-tracking');
     if (/spotting/.test(text)) add('liner', 'menstrual-collection', 'leak-protection', 'irregular');
-    if (/pms|pmdd|mood swing|irritability|anxiety|low mood|cycle-related mood/.test(text)) add('mental-health', 'comfort');
+    if (/pms|pmdd|mood swing|irritability|anxiety|low mood|cycle-related mood/.test(text)) add('mental-health');
     if (/pcos|polycystic/.test(text)) add('pcos', 'pcos-management', 'hormone-balance');
     if (/endometriosis|adenomyosis/.test(text)) add('endometriosis', 'cramps', 'cramp-relief');
     if (/fibroid/.test(text)) add('heavy-flow', 'hormone-balance');
@@ -1628,8 +1628,10 @@ function selectedPriceMatches(price, ranges) {
     });
 }
 
-function formatMatchesProduct(product, formats) {
-    const selected = asStringArray(formats).filter((x) => x !== 'No preference' && x !== 'Other');
+function getFormatMatchDetails(product, formats) {
+    const selected = asStringArray(formats)
+        .filter((x) => x !== 'No preference' && x !== 'Other');
+
     if (!selected.length) return null;
 
     const text = productTextBlob(product);
@@ -1648,15 +1650,30 @@ function formatMatchesProduct(product, formats) {
         'Suppositories': /suppositor|vaginal insert/.test(text),
         'Devices or wearables': /device|wearable|tracker|trainer/.test(text),
         'Devices/wearables': /device|wearable|tracker|trainer/.test(text),
-        'Period-care products': ['pad', 'tampon', 'cup', 'disc', 'period-underwear'].includes(category)
+        'Period-care products':
+            ['pad', 'tampon', 'cup', 'disc', 'period-underwear'].includes(category)
             || product?.healthFunctions?.includes('menstrual-collection'),
-        'Internal products': ['tampon', 'cup', 'disc'].includes(category)
+        'Internal products':
+            ['tampon', 'cup', 'disc'].includes(category)
             || /suppositor|vaginal insert|internal menstrual|menstrual cup|menstrual disc|tampon/.test(text),
     };
 
-    const evaluable = selected.filter((label) => Object.prototype.hasOwnProperty.call(checks, label));
+    const evaluable = selected
+        .filter((label) => Object.prototype.hasOwnProperty.call(checks, label));
+
     if (!evaluable.length) return null;
-    return evaluable.some((label) => checks[label]);
+
+    const matchedLabel = evaluable.find((label) => checks[label]) || null;
+
+    return {
+        matched: Boolean(matchedLabel),
+        label: matchedLabel,
+    };
+}
+
+function formatMatchesProduct(product, formats) {
+    const details = getFormatMatchDetails(product, formats);
+    return details == null ? null : details.matched;
 }
 
 function preferenceLabelMatchesProduct(product, label) {
@@ -1765,16 +1782,82 @@ function getExtendedAvoidSet(quizAnswers) {
 
 function getSafetyAssessment(product, quizAnswers) {
     const intake = rawIntakeFromProfile(quizAnswers);
-    const lifeStages = getLifeStageLabels(quizAnswers).map((label) => String(label).toLowerCase());
-    const isPregnant = lifeStages.some((label) => /\bpregnan/.test(label));
-    const isPostpartum = lifeStages.some((label) => /\bpostpartum\b/.test(label));
+    const lifeStages = getLifeStageLabels(intake)
+        .map((label) => String(label).toLowerCase());
 
-    if (product?.category === 'pregnancy' && !isPregnant) {
-        return { eligible: false, reason: 'This product is specifically for pregnancy, which does not match your current life stage' };
+    const isPregnant = lifeStages.some((label) =>
+        /\bi am pregnant\b|\bpregnant\b/.test(label)
+    );
+    const isTryingToConceive = lifeStages.some((label) =>
+        /trying to conceive/.test(label)
+    );
+    const isPostpartum = lifeStages.some((label) =>
+        /\bpostpartum\b/.test(label)
+    );
+    const isPerimenopause = lifeStages.some((label) =>
+        /perimenopause/.test(label)
+    );
+    const isPostMenopause = lifeStages.some((label) =>
+        /post-menopause|post menopause/.test(label)
+    );
+    const isMenopause = lifeStages.some((label) =>
+        /\bi am in menopause\b/.test(label)
+        || (/menopause/.test(label) && !/peri|post/.test(label))
+    );
+
+    const category = String(product?.category || '').toLowerCase();
+    const productText = productTextBlob(product);
+
+    const pregnancySpecific =
+        category === 'pregnancy'
+        || productHasSignal(product, 'pregnancy')
+        || /\bprenatal\b/.test(productText);
+
+    const postpartumSpecific =
+        category === 'postpartum'
+        || productHasSignal(product, 'postpartum')
+        || /\bpostpartum\b|\blactation\b|\bbreastfeeding\b/.test(productText);
+
+    const menopauseSpecific =
+        category === 'menopause'
+        || productHasSignal(product, 'menopause')
+        || /\bmenopause\b|\bperimenopause\b|\bpost-menopause\b/.test(productText);
+
+    const menstrualCollection =
+        ['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'liner'].includes(category)
+        || productHasSignal(product, 'menstrual-collection');
+
+    if (pregnancySpecific && !isPregnant && !isTryingToConceive) {
+        return {
+            eligible: false,
+            reason: 'Pregnancy or prenatal product does not match your current life stage',
+        };
     }
 
-    if (product?.category === 'postpartum' && !isPostpartum) {
-        return { eligible: false, reason: 'This product is specifically for postpartum recovery, which does not match your current life stage' };
+    if (postpartumSpecific && !isPostpartum) {
+        return {
+            eligible: false,
+            reason: 'Postpartum product does not match your current life stage',
+        };
+    }
+
+    if (
+        menopauseSpecific
+        && !isPerimenopause
+        && !isMenopause
+        && !isPostMenopause
+    ) {
+        return {
+            eligible: false,
+            reason: 'Menopause-focused product does not match your current life stage',
+        };
+    }
+
+    if (menstrualCollection && (isPregnant || isMenopause || isPostMenopause)) {
+        return {
+            eligible: false,
+            reason: 'Period products do not match your current life stage',
+        };
     }
 
     if (!isProductEligibleForProfile(product, quizAnswers)) {
@@ -1911,17 +1994,18 @@ function evaluatePreferenceMatch(product, intake) {
     };
     const reasons = [];
 
-    const formatMatch = formatMatchesProduct(product, intake?.preferredFormats);
-    if (formatMatch != null) {
-        parts.format = { score: formatMatch ? 1 : 0 };
-        if (formatMatch) {
-            const preferred = asStringArray(intake?.preferredFormats)
-                .find((x) => x !== 'No preference' && x !== 'Other');
-            if (preferred) reasons.push({
+    const formatDetails =
+        getFormatMatchDetails(product, intake?.preferredFormats);
+
+    if (formatDetails != null) {
+        parts.format = { score: formatDetails.matched ? 1 : 0 };
+
+        if (formatDetails.matched && formatDetails.label) {
+            reasons.push({
                 component: 'format',
                 weight: PREFERENCE_WEIGHTS.format,
                 score: 1,
-                text: `Fits your preferred format: ${preferred}`,
+                text: `Format: ${formatDetails.label}`,
             });
         }
     }
@@ -2034,7 +2118,7 @@ function evaluatePreferenceMatch(product, intake) {
                 component: 'trustRanking',
                 weight: PREFERENCE_WEIGHTS.trustRanking,
                 score: trustScore,
-                text: `Reflects what you ranked most important: ${topTrust}`,
+                text: `Trust priority: ${topTrust}`,
             });
         }
     }
@@ -2216,7 +2300,7 @@ function getProductRelevanceStats(product, quizAnswers, healthProfile = null) {
             component: 'primaryGoal',
             weight: GOAL_MATCH_WEIGHTS.primaryGoal,
             score: 1,
-            text: `Supports what you selected: ${goalMatchResult.label}`,
+            text: `Goal: ${goalMatchResult.label}`,
         });
     }
 
@@ -2466,14 +2550,25 @@ function getProductRelevanceStats(product, quizAnswers, healthProfile = null) {
             : { weight: 25, value: preference.percent },
     ].filter(Boolean);
 
-    const hasPersonalizedDimension =
-        goalMatch != null
-        || profileFit != null
-        || preference.percent != null;
+    const hasPositiveGoalRelevance = Object.values(goalParts)
+        .some((part) => part?.score != null && part.score > 0);
+
+    const hasPositiveProfileRelevance = [
+        profileParts.lifeStage,
+        profileParts.breastfeeding,
+        profileParts.postpartumTiming,
+        profileParts.pregnancyTrimester,
+        profileParts.perimenopauseLastPeriod,
+        profileParts.diagnoses,
+        profileParts.triedBefore,
+    ].some((part) => part?.score != null && part.score > 0);
+
+    const hasHealthRelevance =
+        hasPositiveGoalRelevance || hasPositiveProfileRelevance;
 
     const totalWeight = topLevel.reduce((sum, item) => sum + item.weight, 0);
 
-    const percent = hasPersonalizedDimension && totalWeight
+    const percent = hasHealthRelevance && totalWeight
         ? Math.round(
             topLevel.reduce(
                 (sum, item) => sum + item.weight * item.value,
@@ -2504,12 +2599,14 @@ function getProductRelevanceStats(product, quizAnswers, healthProfile = null) {
                 ? 'medium'
                 : 'limited';
 
-    const allReasons = [
-        ...reasons,
-        ...preference.reasons,
-    ]
-        .filter((reason) => reason?.score > 0)
-        .sort((a, b) => (b.weight * b.score) - (a.weight * a.score));
+    const allReasons = hasHealthRelevance
+        ? [
+            ...reasons,
+            ...preference.reasons,
+        ]
+            .filter((reason) => reason?.score > 0)
+            .sort((a, b) => (b.weight * b.score) - (a.weight * a.score))
+        : [];
 
     const labels = allReasons
         .map((reason) => reason.text)

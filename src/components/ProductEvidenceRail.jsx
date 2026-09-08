@@ -65,22 +65,22 @@ export default function ProductEvidenceRail({ product, matchLabels = [], matchPe
               <span>{matchPercent}%</span>
               <small>match</small>
             </div>
-              <div className="pdp-rail__reasons">
+              <ul className="pdp-rail__reasons">
                 {matchLabels.length > 0
                   ? matchLabels.slice(0, 3).map((label) => (
-                      <div className="pdp-rail__reason" key={label}>{label}</div>
+                      <li className="pdp-rail__reason" key={label}>{label}</li>
                     ))
-                  : <div className="pdp-rail__reason">Based on your ecosystem.</div>}
-              </div>
+                  : <li className="pdp-rail__reason">Based on your ecosystem</li>}
+              </ul>
           </div>
         ) : (
-            <div className="pdp-rail__reasons">
+            <ul className="pdp-rail__reasons">
               {matchLabels.length > 0
                 ? matchLabels.slice(0, 3).map((label) => (
-                    <div className="pdp-rail__reason" key={label}>{label}</div>
+                    <li className="pdp-rail__reason" key={label}>{label}</li>
                   ))
-                : <div className="pdp-rail__reason">Build your ecosystem to see your match.</div>}
-            </div>
+                : <li className="pdp-rail__reason">Build your ecosystem to see your match</li>}
+            </ul>
         )}
       </div>
 
