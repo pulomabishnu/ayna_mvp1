@@ -27,6 +27,19 @@ import EcosystemScreen from './screens/EcosystemScreen.jsx';
 import SavedScreen from './screens/SavedScreen.jsx';
 import WhyMatchScreen from './screens/WhyMatchScreen.jsx';
 
+// Same real fallback chain used everywhere on desktop (App.jsx's
+// accountMonogram, Hero.jsx's displayNameFromUser, EcosystemBubbles.jsx,
+// ProfileChatbot.jsx) — first_name is what OUR OWN email/password signup
+// sets (see useSupabaseAuth.js), but Google's OAuth identity never sets
+// it; Google instead populates given_name/full_name/name, which the old
+// mobile-only `authUser.user_metadata?.first_name` read here ignored
+// entirely, so a Google sign-in always fell through to "You" everywhere.
+function displayNameFromUser(user) {
+  const meta = user?.user_metadata || {};
+  const raw = meta.first_name || meta.firstName || meta.given_name || meta.full_name || meta.name || '';
+  return String(raw).trim().split(/\s+/).filter(Boolean)[0] || '';
+}
+
 const SCREENS = {
   landing: LandingScreen,
   browse: BrowseScreen,
@@ -147,6 +160,11 @@ export default function MobileApp() {
   // (start quiz, retake, update health), which all start fresh on purpose.
   const [editingHealthProfile, setEditingHealthProfile] = useState(false);
   const { user: authUser, signUpWithPassword, signInWithPassword, signInWithGoogle, signOut: signOutSupabase, resendConfirmation } = useSupabaseAuth();
+  // Falls back to the real Supabase identity whenever the locally-cached
+  // session name is empty — covers a returning user whose device never
+  // captured a name (e.g. signed in with Google before this fallback
+  // chain existed), without needing a one-time migration.
+  const resolvedName = userName || displayNameFromUser(authUser);
 
   // Same loadProductCatalog() call Discovery.jsx makes — a live source
   // ('api'/'cache') means the bundle no longer has the full catalog, so
@@ -186,7 +204,7 @@ export default function MobileApp() {
     try { justSignedInViaOAuth = sessionStorage.getItem(MOBILE_OAUTH_PENDING_KEY) === '1'; } catch { /* private mode */ }
     if (!justSignedInViaOAuth) return;
     try { sessionStorage.removeItem(MOBILE_OAUTH_PENDING_KEY); } catch { /* private mode */ }
-    const firstName = authUser.user_metadata?.first_name;
+    const firstName = displayNameFromUser(authUser);
     // Deferred a tick so the state updates run from a callback rather than
     // directly in the effect body — same one-time transition, just shaped
     // the way react-hooks/set-state-in-effect expects it.
@@ -285,7 +303,7 @@ export default function MobileApp() {
         myProducts={myProducts}
         quizAnswers={lastQuizAnswers}
         initialSnapshot={editingHealthProfile ? lastQuizAnswers?.fullHealthIntake || null : null}
-        name={userName}
+        name={resolvedName}
         tags={topAreaLabels.length ? `${topAreaLabels.length} area${topAreaLabels.length === 1 ? '' : 's'} covered` : ''}
         relatedReads={ARTICLES.slice(0, 3)}
         topAreas={topAreaLabels.length ? topAreaLabels : ['Period', 'Hormones', 'Sleep']}
@@ -337,7 +355,8 @@ export default function MobileApp() {
           onSignOut={handleSignOut}
           onSignIn={() => setScreen('signin')}
           authUser={authUser}
-          name={userName}
+          name={resolvedName}
+          onNameChanged={(next) => updateSession({ userName: next })}
           ecosystemCount={myProducts.length}
           savedCount={Object.keys(savedMap || {}).length}
           quizAnswers={lastQuizAnswers}
@@ -356,7 +375,7 @@ export default function MobileApp() {
         onProfileUpdate={(answers) => updateSession({ lastQuizAnswers: answers })}
         chatHistory={askAynaHistory}
         onChatHistoryUpdate={setAskAynaHistory}
-        name={userName}
+        name={resolvedName}
         onNavigateToDiscovery={() => { setAskAynaOpen(false); setScreen('browse'); }}
         onViewRecommendations={() => { setAskAynaOpen(false); setScreen(hasEcosystem ? 'eco' : 'ecointro'); }}
       />

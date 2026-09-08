@@ -1412,9 +1412,38 @@ function AccountRow({ title, sub, value, badge, badgeTone = 'neutral', onClick, 
 // elsewhere in this file) instead of showing invented devices/exports.
 // Delete account mirrors desktop's real flow exactly (App.jsx's delete
 // modal): an email request, not a self-serve API that doesn't exist.
-function AccountInfoScreen({ onBack, authUser, name, quizAnswers, onOpenPassword, onEditProfile }) {
+function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers, onOpenPassword, onEditProfile }) {
   const [phoneVerifyOpen, setPhoneVerifyOpen] = useState(false);
   const [phone, setPhone] = useState({ loading: true, number: '', verified: false });
+  // Real Supabase auth.updateUser() call, same first_name/full_name fields
+  // the email/password signup form writes (see useSupabaseAuth.js) — the
+  // one place that data can be set for Google sign-ins, which never get a
+  // name-entry step of their own since the OAuth redirect leaves the app
+  // entirely. onNameChanged mirrors the save into the app's own session
+  // state immediately, so "You" doesn't linger elsewhere until next login.
+  const [editingName, setEditingName] = useState(false);
+  const [nameDraft, setNameDraft] = useState('');
+  const [nameSaving, setNameSaving] = useState(false);
+  const [nameError, setNameError] = useState('');
+
+  const saveName = async () => {
+    const trimmed = nameDraft.trim();
+    if (!trimmed) { setNameError('Please enter a name.'); return; }
+    setNameSaving(true);
+    setNameError('');
+    try {
+      const supabase = getSupabaseClient();
+      if (!supabase) throw new Error('Not available right now.');
+      const { error } = await supabase.auth.updateUser({ data: { first_name: trimmed, full_name: trimmed } });
+      if (error) throw error;
+      onNameChanged?.(trimmed);
+      setEditingName(false);
+    } catch (e) {
+      setNameError(e.message || "That didn't save — try again.");
+    } finally {
+      setNameSaving(false);
+    }
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -1511,14 +1540,55 @@ function AccountInfoScreen({ onBack, authUser, name, quizAnswers, onOpenPassword
         </div>
 
         <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>About you</div>
+        <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: editingName ? '16px 18px' : '0 18px' }}>
+          {editingName ? (
+            <div>
+              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)', marginBottom: 7 }}>Name</div>
+              <input
+                autoFocus
+                value={nameDraft}
+                onChange={(e) => setNameDraft(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter' && !nameSaving) saveName(); }}
+                placeholder="Your first name"
+                style={{ width: '100%', boxSizing: 'border-box', padding: '12px 14px', borderRadius: 12, border: '1px solid var(--ayna-border)', fontSize: 14.5, color: 'var(--ayna-text)', background: 'var(--ayna-bg)', outline: 'none' }}
+              />
+              {nameError && <div style={{ color: '#B4402A', fontSize: 12, marginTop: 8 }}>{nameError}</div>}
+              <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+                <div
+                  onClick={nameSaving ? undefined : saveName}
+                  style={{ flex: 1, textAlign: 'center', padding: '10px 0', borderRadius: 99, background: nameSaving ? 'var(--ayna-border)' : 'var(--ayna-cta-bg)', color: nameSaving ? 'var(--ayna-text-muted)' : 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 13, cursor: nameSaving ? 'not-allowed' : 'pointer' }}
+                >
+                  {nameSaving ? 'Saving…' : 'Save'}
+                </div>
+                <div
+                  onClick={() => { setEditingName(false); setNameError(''); }}
+                  style={{ flex: 1, textAlign: 'center', padding: '10px 0', borderRadius: 99, border: '1px solid var(--ayna-border)', color: 'var(--ayna-text-muted)', fontWeight: 600, fontSize: 13, cursor: 'pointer' }}
+                >
+                  Cancel
+                </div>
+              </div>
+            </div>
+          ) : (
+            <AccountRow
+              borderTop={false}
+              title="Name"
+              value={name || 'Add your name'}
+              onClick={() => { setNameDraft(name || ''); setNameError(''); setEditingName(true); }}
+            />
+          )}
+        </div>
+        <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', lineHeight: 1.5, marginTop: 9, padding: '0 4px' }}>
+          {authUser?.identities?.some((i) => i.provider === 'google') ? "Google didn't share a name with us, or you'd like to change it — set it here." : "What ayna calls you, everywhere in the app."}
+        </div>
+
+        <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>From your intake</div>
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
-          <AccountRow borderTop={false} title="Name" value={name || undefined} onClick={onEditProfile} />
-          <AccountRow title="Age" value={intake?.age ? String(intake.age) : 'Not set'} onClick={onEditProfile} />
+          <AccountRow borderTop={false} title="Age" value={intake?.age ? String(intake.age) : 'Not set'} onClick={onEditProfile} />
           <AccountRow title="Zip code" value={intake?.zipcode || 'Not set'} onClick={onEditProfile} />
           <AccountRow title="FSA / HSA account" sub="We'll show the lower price you'd pay." value={fsaHsaLabel || 'Not set'} onClick={onEditProfile} />
         </div>
         <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', lineHeight: 1.5, marginTop: 9, padding: '0 4px' }}>
-          From your intake answers — tap any of these to update your health profile.
+          Tap any of these to update your health profile.
         </div>
 
         <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Security</div>
@@ -2149,6 +2219,7 @@ export default function ProfileFlow({
   onSignIn,
   authUser = null,
   name = 'You',
+  onNameChanged,
   ecosystemCount = 0,
   savedCount = 0,
   quizAnswers = null,
@@ -2235,6 +2306,7 @@ export default function ProfileFlow({
         onBack={goBack}
         authUser={authUser}
         name={name}
+        onNameChanged={onNameChanged}
         quizAnswers={quizAnswers}
         onOpenPassword={() => pushScreen('password')}
         onEditProfile={onEditProfile ? () => { onClose(); onEditProfile(); } : undefined}

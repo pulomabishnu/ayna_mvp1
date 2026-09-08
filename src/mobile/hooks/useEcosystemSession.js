@@ -12,7 +12,13 @@ const DEFAULT_SESSION = {
   hasEcosystem: false,
   myProducts: [],
   lastQuizAnswers: null,
-  userName: 'You',
+  // Empty, not 'You' — this used to be a baked-in literal, which meant it
+  // was always truthy and MobileApp.jsx's `userName || <real fallback>`
+  // could never actually reach the real Supabase name for a returning
+  // Google sign-in. "You" is purely a last-resort display fallback now,
+  // applied at each render site (ProfileFlow, AccountInfoScreen, etc.),
+  // not baked into the stored value itself.
+  userName: '',
 };
 
 function loadSession() {
@@ -24,7 +30,7 @@ function loadSession() {
       hasEcosystem: Boolean(parsed?.hasEcosystem),
       myProducts: Array.isArray(parsed?.myProducts) ? parsed.myProducts : [],
       lastQuizAnswers: parsed?.lastQuizAnswers && typeof parsed.lastQuizAnswers === 'object' ? parsed.lastQuizAnswers : null,
-      userName: typeof parsed?.userName === 'string' && parsed.userName ? parsed.userName : 'You',
+      userName: typeof parsed?.userName === 'string' ? parsed.userName : '',
     };
   } catch {
     return DEFAULT_SESSION;
