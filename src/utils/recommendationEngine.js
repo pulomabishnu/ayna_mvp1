@@ -1,4 +1,4 @@
-import { ALL_PRODUCTS, getProductMatchDetailsForProduct } from '../data/products';
+import { ALL_PRODUCTS, getProductMatchDetailsForProduct } from '../data/products.js';
 
 // `categories` used to be dead data — nothing ever read it, only `tags` did,
 // and several entries used category names ('app', 'device') that don't
@@ -9,7 +9,7 @@ import { ALL_PRODUCTS, getProductMatchDetailsForProduct } from '../data/products
 // field, unlike free-text tags, so it's the more reliable signal. Rewritten
 // against the real current category taxonomy (2026-08-25).
 const CONCERN_CONFIG = [
-  { key: 'Period care (pads, tampons, cups, discs, underwear)', tags: ['heavy-flow', 'leaks'], categories: ['pad', 'tampon', 'cup', 'disc', 'period-underwear'] },
+  { key: 'Period care (pads, tampons, cups, discs, underwear)', tags: ['heavy-flow', 'leaks', 'cramps'], categories: ['pad', 'liner', 'tampon', 'cup', 'disc', 'period-underwear', 'cramp-relief'] },
   { key: 'Cramp and pain relief (devices, supplements, heat)', tags: ['cramps'], categories: ['cramp-relief', 'supplement'] },
   { key: 'Hormone balance (supplements, lifestyle)', tags: ['pcos', 'irregular', 'bloating'], categories: ['supplement'] },
   { key: 'Hormonal bloating', tags: ['bloating', 'bloat'], categories: ['supplement'] },
@@ -170,6 +170,146 @@ function matchesTierType(product, tierType) {
   return false;
 }
 
+function intakeProfile(intake) {
+  return intake?.fullHealthIntake && typeof intake.fullHealthIntake === 'object'
+    ? intake.fullHealthIntake
+    : intake;
+}
+
+function solutionTypeKey(product) {
+  const category = String(product?.category || '').toLowerCase();
+  const name = String(product?.name || '').toLowerCase();
+  const summary = String(product?.summary || '').toLowerCase();
+  const text = `${name} ${summary}`;
+
+  if (category === 'pad') return 'pad';
+  const isIncontinenceLiner =
+    category === 'incontinence'
+    || /incontinence|bladder leak|urinary leak/.test(text);
+
+  if (
+    category === 'liner'
+    || (!isIncontinenceLiner && /menstrual liner|period liner|panty liner/.test(text))
+  ) {
+    return 'liner';
+  }
+  if (category === 'tampon') return 'tampon';
+  if (category === 'cup') return 'cup';
+  if (category === 'disc') return 'disc';
+  if (category === 'period-underwear') return 'period-underwear';
+  if (category === 'cramp-relief' || /cramp|heating pad|heat wrap|tens/.test(text)) return 'cramp-relief';
+
+  if (isSupplementProduct(product)) return 'supplement';
+
+  if (isDigitalOrTelehealthProduct(product)) {
+    if (category.includes('telehealth')) return 'telehealth';
+    if (category.includes('tracker')) return 'tracker';
+    if (category.includes('app')) return 'app';
+    return `digital-${category || 'service'}`;
+  }
+
+  if (category) return category;
+
+  return String(product?.type || 'physical').toLowerCase();
+}
+
+function solutionTypeLabel(key, concern) {
+  const labels = {
+    pad: 'Pads',
+    liner: 'Liners for spotting or light days',
+    tampon: 'Tampons',
+    cup: 'Menstrual cups',
+    disc: 'Menstrual discs',
+    'period-underwear': 'Period underwear',
+    'cramp-relief': 'Cramp relief',
+    supplement: 'Supplement or wellness support',
+    telehealth: 'Telehealth care',
+    tracker: 'Tracking tool',
+    app: 'Digital support',
+  };
+
+  if (labels[key]) return labels[key];
+
+  if (['physical', 'supplement', 'digital'].includes(key)) {
+    return buildSubcategoryLabel(concern, key);
+  }
+
+  return String(key || 'Product')
+    .split('-')
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
+function periodPainIsRelevant(intake) {
+  const profile = intakeProfile(intake);
+  const pain = String(profile?.periodPain || profile?.painLevel || '').toLowerCase();
+
+  if (pain && !['none', 'not sure', '0'].includes(pain)) return true;
+
+  const support = [
+    ...asArray(profile?.supportSelections),
+    ...asArray(profile?.primaryConcerns),
+    ...asArray(profile?.symptoms),
+  ].map((value) => String(value || '').toLowerCase());
+
+  return support.some((value) => /cramp|period pain|pelvic pain/.test(value));
+}
+
+function candidateAllowedForConcern(product, intake, concern) {
+  const concernKey = String(concern?.key || '').toLowerCase();
+  const solutionKey = solutionTypeKey(product);
+
+  if (concernKey.includes('period care') && solutionKey === 'cramp-relief') {
+    return periodPainIsRelevant(intake);
+  }
+
+  return true;
+}
+
+function buildDiverseTiers(products, intake, concern, limit = 5) {
+  const profile = intakeProfile(intake);
+  const disliked = [
+    ...asArray(profile?.dislikedProducts),
+    ...asArray(profile?.avoidRepeat),
+  ];
+
+  const ranked = products
+    .filter(Boolean)
+    .filter((product) => !productDisliked(product, disliked))
+    .filter((product) => !hasRecall(product))
+    .filter((product) => candidateAllowedForConcern(product, intake, concern))
+    .filter((product) => getProductMatchDetailsForProduct(product, intake)?.eligible !== false)
+    .sort((a, b) => scoreProduct(b, intake, concern) - scoreProduct(a, intake, concern));
+
+  const groups = new Map();
+
+  ranked.forEach((product) => {
+    const key = solutionTypeKey(product);
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(product);
+  });
+
+  return [...groups.entries()]
+    .map(([key, candidates]) => ({
+      key,
+      product: candidates[0],
+      alternatives: candidates.slice(1, 3),
+      score: scoreProduct(candidates[0], intake, concern),
+    }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit)
+    .map((group, index) => ({
+      id: `tier-${group.key}-${index + 1}`,
+      name: solutionTypeLabel(group.key, concern),
+      subcategory: solutionTypeLabel(group.key, concern),
+      product: group.product,
+      matchExplanation: buildMatchExplanation(group.product, intake, concern, group.key),
+      safetyFlags: safetyNotes(group.product, intake),
+      alternatives: group.alternatives,
+    }));
+}
+
 // Same field-name fallback pattern as Discovery.jsx's eligibility filter —
 // the catalog has both camelCase and snake_case rows depending on when a
 // product was added.
@@ -265,113 +405,106 @@ function selectTierCandidates(products, intake, concern, tierType, alreadyChosen
 }
 
 export function buildRecommendationPrompt(intake, concern) {
+  const profile = intakeProfile(intake);
+
+  const conditions =
+    Array.isArray(profile?.diagnosisSelections) && profile.diagnosisSelections.length > 0
+      ? profile.diagnosisSelections
+      : asArray(intake?.conditions);
+
+  const medications =
+    Array.isArray(profile?.currentMedicationItems) && profile.currentMedicationItems.length > 0
+      ? profile.currentMedicationItems
+      : asArray(intake?.currentMedications);
+
+  const formats =
+    Array.isArray(profile?.preferredFormats) && profile.preferredFormats.length > 0
+      ? profile.preferredFormats
+      : asArray(intake?.productPreferences);
+
+  const support =
+    Array.isArray(profile?.supportSelections) && profile.supportSelections.length > 0
+      ? profile.supportSelections
+      : selectedConcerns(intake);
+
   return `USER PROFILE:
-- Age: ${intake?.age || 'unknown'}
-- Primary concerns: ${selectedConcerns(intake).join(', ') || 'none provided'}
-- Other concerns: ${asArray(intake?.customConcerns).join(', ') || 'none provided'}
-- Conditions: ${asArray(intake?.conditions).join(', ') || 'none provided'}
-- Cycle: menstrual cycle=${intake?.menstrualCycle || 'unknown'}, average cycle length=${intake?.averageCycleLength || 'unknown'}, average period length=${intake?.averagePeriodLength || 'unknown'}
-- Flow: ${intake?.flowLevel || 'unknown'}, Pain: ${intake?.painLevel || 'unknown'}/10
-- Symptoms: ${asArray(intake?.symptoms).join(', ') || 'none provided'}
-- Preferences: ${asArray(intake?.productPreferences).join(', ') || 'none provided'}
-- Currently uses: ${asArray(intake?.currentProducts).join(', ') || 'none listed'} WHEN ADDING THESE TO THE ECOSYSTEM, DON'T GENERATE A NEW PRODUCT CARD. for example, IF A USER TYPES IN ALWAYS PADS, JUST USE A PRODUCT CARD THAT ALREADY EXISTS AND ADD THE CLOSEST MATCH IN OUR DATABASE.
-- Has tried and disliked: ${asArray(intake?.dislikedProducts).join(', ') || 'none listed'} because ${intake?.dislikedReason || 'no reason provided'}
-- Goals: ${asArray(intake?.goals).join(', ') || 'none provided'}
+- Age: ${profile?.age || intake?.age || 'unknown'}
+- Life stage: ${asArray(profile?.lifeStageSelections).join(', ') || 'not provided'}
+- Support needs: ${support.join(', ') || 'none provided'}
+- Diagnosed conditions: ${conditions.join(', ') || 'none provided'}
+- Period flow: ${profile?.periodFlow || intake?.flowLevel || 'not applicable/not provided'}
+- Period pain: ${profile?.periodPain || intake?.painLevel || 'not applicable/not provided'}
+- UTI frequency: ${profile?.utiFrequency || 'not applicable/not provided'}
+- Preferred formats: ${formats.join(', ') || 'none provided'}
+- Price range: ${asArray(profile?.priceRange).join(', ') || 'not provided'}
+- Medications, supplements, vitamins, or hormonal birth control: ${medications.join(', ') || 'none provided'}
+- Products to avoid repeating: ${asArray(profile?.avoidRepeat || intake?.dislikedProducts).join(', ') || 'none provided'}
 
 TASK:
-For the concern area [${concern}], generate three recommendation tiers:
-
-TIER 1 - IMMEDIATE PHYSICAL PRODUCT
-Recommend the single best physical product for this user. Explain in 2-3 sentences exactly why it fits her specific profile, conditions, and preferences. Flag any ingredients or materials to be aware of given her conditions.
-
-TIER 2 - SUPPLEMENT OR WELLNESS PRODUCT
-Recommend the single best supplement, vitamin, or wellness product for this concern. Explain why it is appropriate for her specific conditions. Note any interactions with medications or conditions she should be aware of.
-
-TIER 3 - DIGITAL OR TELEHEALTH OPTION
-Recommend the best app, telehealth service, or digital resource for this concern. Explain why it is relevant to her situation specifically.
+For the concern area [${concern}], identify 3 to 5 genuinely distinct, safe, relevant solution types whenever enough strong options exist.
 
 RULES:
-- Never recommend a product the user has already tried and disliked
-- Always flag if a product contains ingredients that may worsen her conditions
-- If the user has endometriosis, always flag products with synthetic fragrances, dioxins, or hormone-disrupting materials
-- If the user has PCOS, prioritize products that support hormone balance
-- If the user has heavy flow, always prioritize capacity and leak protection above all else
-- Always explain the WHY behind every recommendation in plain language
-- Never be generic. Every recommendation must reference at least one specific detail from her profile`;
+- Safety and contraindications come first.
+- Do not force physical, supplement, digital, or telehealth categories just for variety.
+- Prefer one strong primary option per meaningfully different solution type.
+- A different brand of essentially the same product is an alternative, not a new primary recommendation.
+- If fewer than 3 strong distinct options exist, return fewer rather than adding weak or irrelevant products.
+- Respect the user's format, price, and other shopping preferences when clinically appropriate.
+- Never recommend something the user explicitly said to avoid or previously reacted badly to.
+- For period care, use flow, spotting, pain, and internal-product preference to diversify appropriately.
+- Always explain why each recommendation fits the user's actual profile in plain language.`;
 }
 
 export function generateTieredRecommendations(intake = {}) {
   const selected = selectedConcerns(intake);
   if (selected.length === 0) return [];
+
   const concerns = CONCERN_CONFIG
     .map((c) => ({ concern: c, score: concernRelevanceScore(c, intake) }))
     .filter(({ concern }) => selected.includes(concern.key))
     .sort((a, b) => b.score - a.score)
     .map(({ concern }) => concern);
-  // This only bounds an instant, purely local preview shown while the real
-  // per-concern LLM generation runs and then fully replaces it (see
-  // MyEcosystem.jsx) — capping it below what a user can actually select
-  // made the preview drop care areas that the final ecosystem still
-  // included seconds later, reading as a bug rather than a loading state.
-  // 20 comfortably covers every CONCERN_AREAS checkbox (16) plus derived
-  // concerns; it's a sanity ceiling, not a real limit in practice.
+
   const scopedConcerns = concerns.slice(0, 20);
 
   return scopedConcerns.map((concern) => {
-    const concernPool = ALL_PRODUCTS.filter((p) => {
-      const tags = p.tags || [];
-      const category = p.category || '';
-      return concern.tags.some((tag) => tags.includes(tag)) || concern.categories.includes(category);
+    const concernPool = ALL_PRODUCTS.filter((product) => {
+      const tags = product.tags || [];
+      const category = product.category || '';
+
+      if (concern.key.startsWith('Period care')) {
+        const allowedPeriodTypes = new Set([
+          'pad',
+          'liner',
+          'tampon',
+          'cup',
+          'disc',
+          'period-underwear',
+          'cramp-relief',
+        ]);
+
+        return allowedPeriodTypes.has(solutionTypeKey(product));
+      }
+
+      return concern.tags.some((tag) => tags.includes(tag))
+        || concern.categories.includes(category);
     });
 
-    const chosen = new Set();
-    const tier1Candidates = selectTierCandidates(concernPool, intake, concern, 'physical', chosen, 4);
-    if (tier1Candidates[0]) chosen.add(tier1Candidates[0].id);
-    const tier2Candidates = selectTierCandidates(concernPool, intake, concern, 'supplement', chosen, 4);
-    if (tier2Candidates[0]) chosen.add(tier2Candidates[0].id);
-    const tier3Candidates = selectTierCandidates(concernPool, intake, concern, 'digital', chosen, 4);
-    const tier1 = tier1Candidates[0] || null;
-    const tier2 = tier2Candidates[0] || null;
-    const tier3 = tier3Candidates[0] || null;
+    const tiers = buildDiverseTiers(concernPool, intake, concern, 5);
 
     const notes = [];
-    const painLevel = Number(intake?.painLevel || 0);
-    if (painLevel >= 8) {
+    const profile = intakeProfile(intake);
+    const pain = String(profile?.periodPain || profile?.painLevel || '');
+    const numericPain = Number(pain);
+
+    if (Number.isFinite(numericPain) && numericPain >= 8) {
       notes.push('Pain level is 8 or higher: include telehealth and suggest speaking to a provider.');
     }
 
     return {
       concern: concern.key,
       prompt: buildRecommendationPrompt(intake, concern.key),
-      tiers: [
-        tier1 ? {
-          id: 'tier-physical',
-          name: 'TIER 1 - IMMEDIATE PHYSICAL PRODUCT',
-          subcategory: buildSubcategoryLabel(concern, 'physical'),
-          product: tier1,
-          matchExplanation: buildMatchExplanation(tier1, intake, concern, 'physical'),
-          safetyFlags: safetyNotes(tier1, intake),
-          alternatives: tier1Candidates.slice(1, 4),
-        } : null,
-        tier2 ? {
-          id: 'tier-supplement',
-          name: 'TIER 2 - SUPPLEMENT OR WELLNESS PRODUCT',
-          subcategory: buildSubcategoryLabel(concern, 'supplement'),
-          product: tier2,
-          matchExplanation: buildMatchExplanation(tier2, intake, concern, 'supplement'),
-          safetyFlags: safetyNotes(tier2, intake),
-          alternatives: tier2Candidates.slice(1, 4),
-        } : null,
-        tier3 ? {
-          id: 'tier-digital',
-          name: 'TIER 3 - DIGITAL OR TELEHEALTH OPTION',
-          subcategory: buildSubcategoryLabel(concern, 'digital'),
-          product: tier3,
-          matchExplanation: buildMatchExplanation(tier3, intake, concern, 'digital'),
-          safetyFlags: safetyNotes(tier3, intake),
-          alternatives: tier3Candidates.slice(1, 4),
-        } : null,
-      ].filter(Boolean),
+      tiers,
       notes,
     };
   });

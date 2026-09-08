@@ -1421,17 +1421,33 @@ function noveltyAdjustment(product, quizAnswers) {
     return adjustment;
 }
 
-const HEALTH_MATCH_WEIGHTS = {
+const GOAL_MATCH_WEIGHTS = {
     primaryGoal: 20,
-    symptoms: 20,
-    diagnoses: 15,
-    lifeStage: 10,
-    productHealthAttributes: 10,
-    severity: 5,
-    frequency: 5,
-    timing: 5,
-    medicationCompatibility: 5,
-    triedBefore: 5,
+    periodFlow: 2,
+    periodPain: 2,
+    utiFrequency: 1,
+};
+
+const PROFILE_FIT_WEIGHTS = {
+    age: 2,
+    lifeStage: 6,
+    breastfeeding: 2,
+    postpartumTiming: 2,
+    pregnancyTrimester: 2,
+    perimenopauseLastPeriod: 2,
+    diagnoses: 5,
+    triedBefore: 4,
+};
+
+const PREFERENCE_WEIGHTS = {
+    format: 5,
+    price: 4,
+    largePurchaseFrequency: 2,
+    brandOpenness: 2,
+    trustedBrands: 3,
+    attributes: 5,
+    fsaHsa: 1,
+    trustRanking: 3,
 };
 
 function rawIntakeFromProfile(quizAnswers) {
@@ -1472,7 +1488,8 @@ function tagsForHealthLabel(label) {
     if (/light period|period product|menstrual/.test(text)) add('menstrual-collection');
     if (/cramp|period pain/.test(text)) add('cramps', 'cramp-relief');
     if (/pelvic pain|pain.*sex|sexual wellness|sexual.*comfort|dyspareunia/.test(text)) add('pelvic-floor', 'sexual-health', 'discomfort');
-    if (/irregular period|missed period|spotting|cycle tracking/.test(text)) add('irregular', 'cycle-tracking');
+    if (/irregular period|missed period|cycle tracking/.test(text)) add('irregular', 'cycle-tracking');
+    if (/spotting/.test(text)) add('liner', 'menstrual-collection', 'leak-protection', 'irregular');
     if (/pms|pmdd|mood swing|irritability|anxiety|low mood|cycle-related mood/.test(text)) add('mental-health', 'comfort');
     if (/pcos|polycystic/.test(text)) add('pcos', 'pcos-management', 'hormone-balance');
     if (/endometriosis|adenomyosis/.test(text)) add('endometriosis', 'cramps', 'cramp-relief');
@@ -1512,8 +1529,11 @@ function getPrimaryGoalLabels(intake, quizAnswers) {
     const primary = asStringArray(safeIntake.primaryConcerns);
     if (primary.length) return primary;
 
-    const support = asStringArray(safeIntake.supportSelections);
-    if (support.length) return support.slice(0, 3);
+    const support = asStringArray(safeIntake.supportSelections)
+        .filter((item) => !['Nothing right now', 'Something else'].includes(item));
+    const supportOther = String(safeIntake.supportOtherText || '').trim();
+    if (supportOther) support.push(supportOther);
+    if (support.length) return support;
 
     const goals = String(
         quizAnswers?.healthGoals
@@ -1555,7 +1575,7 @@ const DIAGNOSIS_SPECIFIC_SIGNALS = [
 
 const LIFE_STAGE_SPECIFIC_SIGNALS = [
     'pregnancy', 'postpartum', 'menopause', 'perimenopause',
-    'fertility', 'lactation', 'breastfeeding',
+    'fertility', 'lactation', 'breastfeeding', 'contraception',
 ];
 
 function productTargetsAnySignal(product, signals) {
@@ -1598,7 +1618,7 @@ function parseProductPrice(product) {
 function selectedPriceMatches(price, ranges) {
     if (price == null) return null;
     const selected = asStringArray(ranges);
-    if (!selected.length || selected.includes('Price is not a major factor')) return null;
+    if (!selected.length || selected.includes('Price is not a major factor') || selected.includes('Price is not a major factor for me')) return null;
     return selected.some((range) => {
         if (range === 'Under $25') return price < 25;
         if (range === '$25–$75' || range === '$25-$75') return price >= 25 && price <= 75;
@@ -1616,16 +1636,22 @@ function formatMatchesProduct(product, formats) {
     const category = String(product?.category || '').toLowerCase();
 
     const checks = {
-        'Pills/capsules': /pill|capsule|tablet|supplement/.test(text),
+        'Pills or capsules': /pill|capsule|tablet/.test(text),
+        'Pills/capsules': /pill|capsule|tablet/.test(text),
         'Gummies': /gumm/.test(text),
         'Powders': /powder/.test(text),
+        'Drinks or teas': /drink|tea|beverage/.test(text),
         'Drinks/teas': /drink|tea|beverage/.test(text),
+        'Creams, lotions, or gels': /cream|lotion|gel|lubricant/.test(text),
         'Creams/lotions/gels': /cream|lotion|gel|lubricant/.test(text),
         'Patches': /patch/.test(text),
         'Suppositories': /suppositor|vaginal insert/.test(text),
+        'Devices or wearables': /device|wearable|tracker|trainer/.test(text),
         'Devices/wearables': /device|wearable|tracker|trainer/.test(text),
         'Period-care products': ['pad', 'tampon', 'cup', 'disc', 'period-underwear'].includes(category)
             || product?.healthFunctions?.includes('menstrual-collection'),
+        'Internal products': ['tampon', 'cup', 'disc'].includes(category)
+            || /suppositor|vaginal insert|internal menstrual|menstrual cup|menstrual disc|tampon/.test(text),
     };
 
     const evaluable = selected.filter((label) => Object.prototype.hasOwnProperty.call(checks, label));
@@ -1786,56 +1812,355 @@ function getSafetyAssessment(product, quizAnswers) {
     return { eligible: true, medication };
 }
 
+function productBrandName(product) {
+    return String(
+        product?.brand
+        || product?.brandName
+        || product?.manufacturer
+        || product?.company
+        || ''
+    ).trim();
+}
+
+function productMatchesTrustedBrand(product, trustedBrands) {
+    const trusted = asStringArray(trustedBrands)
+        .map((value) => normalizedProductName(value))
+        .filter(Boolean);
+    if (!trusted.length) return null;
+
+    const brand = normalizedProductName(productBrandName(product));
+    const name = normalizedProductName(product?.name);
+
+    return trusted.some((trustedBrand) => (
+        (brand && (brand === trustedBrand || brand.includes(trustedBrand) || trustedBrand.includes(brand)))
+        || (name && name.includes(trustedBrand))
+    ));
+}
+
+function evaluateCommunityTrust(product) {
+    const links = product?.verificationLinks?.community?.links;
+    const hasCommunityLinks = Array.isArray(links) && links.length > 0;
+    const rating = Number(product?.userRating);
+
+    if (Number.isFinite(rating) && rating > 0) {
+        const ratingScore = Math.max(0, Math.min(1, rating / 5));
+        return hasCommunityLinks ? Math.min(1, ratingScore * 0.7 + 0.3) : ratingScore;
+    }
+
+    if (hasCommunityLinks) return 0.8;
+    if (String(product?.communityReview || '').trim()) return 0.6;
+    return 0;
+}
+
+function evaluateExpertTrust(product, intake) {
+    const trustedBrandMatch = productMatchesTrustedBrand(product, intake?.trustedBrands);
+    if (trustedBrandMatch === true) return 1;
+
+    const doctorLinks = product?.verificationLinks?.doctor?.links;
+    if (Array.isArray(doctorLinks) && doctorLinks.length > 0) return 1;
+
+    const source = String(product?.clinicianOpinionSource || '').toLowerCase();
+    if (source === 'independent') return 0.85;
+
+    if (String(product?.doctorOpinion || '').trim().length > 20) return 0.7;
+    if (source === 'mixed') return 0.5;
+    if (source === 'brand') return 0.35;
+
+    return 0;
+}
+
+function evaluateTrustRanking(product, intake) {
+    if (intake?.trustRankingTouched === false) return null;
+    const ranking = asStringArray(intake?.trustRanking).slice(0, 3);
+    if (!ranking.length) return null;
+
+    const rankWeights = [1.5, 1, 0.5];
+    let earned = 0;
+    let possible = 0;
+
+    ranking.forEach((item, index) => {
+        let score = null;
+
+        if (item === 'Clinical or scientific evidence') {
+            score = evaluateEvidenceQuality(product) / 100;
+        } else if (item === 'Reviews and experiences from other women') {
+            score = evaluateCommunityTrust(product);
+        } else if (item === 'Brand reputation or expert recommendations') {
+            score = evaluateExpertTrust(product, intake);
+        }
+
+        if (score == null) return;
+        const weight = rankWeights[index] || 0;
+        earned += weight * Math.max(0, Math.min(1, score));
+        possible += weight;
+    });
+
+    return possible > 0 ? earned / possible : null;
+}
+
 function evaluatePreferenceMatch(product, intake) {
-    const parts = [];
+    const parts = {
+        format: null,
+        price: null,
+        largePurchaseFrequency: null,
+        brandOpenness: null,
+        trustedBrands: null,
+        attributes: null,
+        fsaHsa: null,
+        trustRanking: null,
+    };
     const reasons = [];
 
-    const formatMatch = formatMatchesProduct(product, intake.preferredFormats);
+    const formatMatch = formatMatchesProduct(product, intake?.preferredFormats);
     if (formatMatch != null) {
-        parts.push(formatMatch ? 1 : 0);
+        parts.format = { score: formatMatch ? 1 : 0 };
         if (formatMatch) {
-            const preferred = asStringArray(intake.preferredFormats).find((x) => x !== 'No preference' && x !== 'Other');
-            if (preferred) reasons.push({ score: 1, text: `Fits your preferred format: ${preferred}` });
+            const preferred = asStringArray(intake?.preferredFormats)
+                .find((x) => x !== 'No preference' && x !== 'Other');
+            if (preferred) reasons.push({
+                component: 'format',
+                weight: PREFERENCE_WEIGHTS.format,
+                score: 1,
+                text: `Fits your preferred format: ${preferred}`,
+            });
         }
     }
 
     const price = parseProductPrice(product);
-    const priceMatch = selectedPriceMatches(price, intake.priceRange);
+    const priceMatch = selectedPriceMatches(price, intake?.priceRange);
     if (priceMatch != null) {
-        parts.push(priceMatch ? 1 : 0);
+        parts.price = { score: priceMatch ? 1 : 0 };
         if (priceMatch) {
-            const range = asStringArray(intake.priceRange).find((x) => x !== 'Price is not a major factor');
-            if (range) reasons.push({ score: 1, text: `Fits your budget: ${range}` });
+            const range = asStringArray(intake?.priceRange)
+                .find((x) => !['Price is not a major factor', 'Price is not a major factor for me'].includes(x));
+            if (range) reasons.push({
+                component: 'price',
+                weight: PREFERENCE_WEIGHTS.price,
+                score: 1,
+                text: `Fits your budget: ${range}`,
+            });
         }
     }
 
-    const preferenceLabels = asStringArray(intake.avoidIngredients).filter((label) => (
+    const purchaseFrequency = String(intake?.largePurchaseFrequency || '');
+    if (purchaseFrequency && price != null && price >= 75) {
+        const purchaseScores = {
+            'Never': 0,
+            'Rarely': 0.25,
+            'A few times a year': 0.5,
+            'About once a month': 0.8,
+            'More than once a month': 1,
+        };
+        if (Object.prototype.hasOwnProperty.call(purchaseScores, purchaseFrequency)) {
+            parts.largePurchaseFrequency = { score: purchaseScores[purchaseFrequency] };
+        }
+    }
+
+    const trustedBrandMatch = productMatchesTrustedBrand(product, intake?.trustedBrands);
+    if (trustedBrandMatch != null) {
+        parts.trustedBrands = { score: trustedBrandMatch ? 1 : 0 };
+        if (trustedBrandMatch) {
+            reasons.push({
+                component: 'trustedBrands',
+                weight: PREFERENCE_WEIGHTS.trustedBrands,
+                score: 1,
+                text: 'Matches a brand you already trust',
+            });
+        }
+    }
+
+    const brandOpenness = String(intake?.brandOpenness || '');
+    if (brandOpenness && brandOpenness !== 'No preference' && trustedBrandMatch != null) {
+        let score = null;
+        if (brandOpenness === 'I mostly stick with brands I already trust') {
+            score = trustedBrandMatch ? 1 : 0;
+        } else if (brandOpenness === 'I prefer trusted brands but am open to something new') {
+            score = trustedBrandMatch ? 1 : 0.65;
+        } else if (brandOpenness === 'I like a mix of familiar and new brands') {
+            score = trustedBrandMatch ? 1 : 0.9;
+        } else if (brandOpenness === 'I enjoy discovering new brands') {
+            score = trustedBrandMatch ? 0.8 : 1;
+        }
+        if (score != null) parts.brandOpenness = { score };
+    }
+
+    const preferenceLabels = asStringArray(intake?.avoidIngredients).filter((label) => (
         ['Fragrance-free', 'Dye-free', 'Paraben-free', 'Sulfate-free', 'Latex-free', 'Vegan',
             'Cruelty-free', 'Black-owned', 'Brown-owned', 'Eco-friendly', 'Reusable', 'Organic',
             'Minimal ingredients', 'Sensitive skin', 'Unscented'].includes(label)
     ));
 
+    const attributeScores = [];
     for (const label of preferenceLabels) {
         const match = preferenceLabelMatchesProduct(product, label);
         if (match == null) continue;
-        parts.push(match ? 1 : 0);
-        if (match) reasons.push({ score: 1, text: `Matches your preference: ${label}` });
+        attributeScores.push(match ? 1 : 0);
+        if (match) reasons.push({
+            component: 'attributes',
+            weight: PREFERENCE_WEIGHTS.attributes,
+            score: 1,
+            text: `Matches your preference: ${label}`,
+        });
     }
 
-    const fsaAnswer = String(intake.fsaHsaAnswer || intake.fsaHsa || '');
-    if (fsaAnswer && !['No', 'Not sure'].includes(fsaAnswer) && product?.fsaHsaEligible === true) {
-        parts.push(1);
-        reasons.push({ score: 1, text: 'FSA/HSA eligible' });
-    } else if (fsaAnswer && !['No', 'Not sure'].includes(fsaAnswer) && product?.fsaHsaEligible === false) {
-        parts.push(0);
+    if (attributeScores.length) {
+        parts.attributes = {
+            score: attributeScores.reduce((sum, value) => sum + value, 0) / attributeScores.length,
+        };
     }
 
-    if (!parts.length) return { percent: null, reasons: [] };
+    const fsaAnswer = String(intake?.fsaHsaAnswer || intake?.fsaHsa || '');
+    if (fsaAnswer && !['No', 'Not sure'].includes(fsaAnswer)) {
+        if (product?.fsaHsaEligible === true) {
+            parts.fsaHsa = { score: 1 };
+            reasons.push({
+                component: 'fsaHsa',
+                weight: PREFERENCE_WEIGHTS.fsaHsa,
+                score: 1,
+                text: 'FSA/HSA eligible',
+            });
+        } else if (product?.fsaHsaEligible === false) {
+            parts.fsaHsa = { score: 0 };
+        }
+    }
+
+    const trustScore = evaluateTrustRanking(product, intake);
+    if (trustScore != null) {
+        parts.trustRanking = { score: trustScore };
+
+        const topTrust = asStringArray(intake?.trustRanking)[0];
+        if (topTrust && trustScore > 0) {
+            reasons.push({
+                component: 'trustRanking',
+                weight: PREFERENCE_WEIGHTS.trustRanking,
+                score: trustScore,
+                text: `Reflects what you ranked most important: ${topTrust}`,
+            });
+        }
+    }
+
+    const percent = weightedKnownScore(parts, PREFERENCE_WEIGHTS);
 
     return {
-        percent: Math.round((parts.reduce((sum, value) => sum + value, 0) / parts.length) * 100),
+        percent,
         reasons,
+        components: parts,
     };
+}
+
+function knownWeightedPoints(parts, weights) {
+    return Object.entries(parts || {}).reduce((sum, [key, part]) => (
+        sum + (part?.score == null ? 0 : (weights[key] || 0))
+    ), 0);
+}
+
+function getAgeFitScore(product, intake) {
+    const age = Number(intake?.age);
+    if (!Number.isFinite(age)) return null;
+
+    const rawMin = product?.minAge ?? product?.minimumAge ?? product?.ageMin ?? product?.age_min;
+    const rawMax = product?.maxAge ?? product?.maximumAge ?? product?.ageMax ?? product?.age_max;
+
+    const minAge = rawMin == null || rawMin === '' ? null : Number(rawMin);
+    const maxAge = rawMax == null || rawMax === '' ? null : Number(rawMax);
+
+    if (Number.isFinite(minAge) || Number.isFinite(maxAge)) {
+        if (Number.isFinite(minAge) && age < minAge) return 0;
+        if (Number.isFinite(maxAge) && age > maxAge) return 0;
+        return 1;
+    }
+
+    const ageRange = String(product?.ageRange || product?.age_range || '');
+    const rangeMatch = ageRange.match(/(\d{1,2})\s*[-–]\s*(\d{1,2})/);
+    if (rangeMatch) {
+        const low = Number(rangeMatch[1]);
+        const high = Number(rangeMatch[2]);
+        return age >= low && age <= high ? 1 : 0;
+    }
+
+    return null;
+}
+
+function getLifeStageFitScore(product, lifeStageLabels) {
+    const userSignals = [...new Set(
+        asStringArray(lifeStageLabels)
+            .flatMap(tagsForHealthLabel)
+            .filter((signal) => LIFE_STAGE_SPECIFIC_SIGNALS.includes(signal))
+    )];
+
+    if (!userSignals.length) return null;
+
+    const productSignals = LIFE_STAGE_SPECIFIC_SIGNALS
+        .filter((signal) => productHasSignal(product, signal));
+
+    if (!productSignals.length) return null;
+
+    return userSignals.some((signal) => productSignals.includes(signal)) ? 1 : 0;
+}
+
+function getBreastfeedingFitScore(product, intake, lifeStageLabels) {
+    const status = String(intake?.breastfeedingStatus || '');
+    if (!status || status === 'Prefer not to say') return null;
+
+    const postpartum = asStringArray(lifeStageLabels)
+        .some((label) => /postpartum/i.test(String(label)));
+    if (!postpartum) return null;
+
+    const text = productTextBlob(product);
+    const lactationSpecific =
+        productHasSignal(product, 'breastfeeding')
+        || productHasSignal(product, 'lactation')
+        || /breastfeed|lactat|nursing/.test(text);
+    const postpartumSpecific = productHasSignal(product, 'postpartum');
+
+    if (!lactationSpecific && !postpartumSpecific) return null;
+
+    if (status === 'Yes') {
+        return lactationSpecific ? 1 : 0.75;
+    }
+
+    if (status === 'No') {
+        return lactationSpecific ? 0 : 1;
+    }
+
+    return null;
+}
+
+function getPostpartumTimingFitScore(product, intake, lifeStageLabels) {
+    const timing = String(intake?.postpartumTiming || '');
+    if (!timing) return null;
+
+    const postpartum = asStringArray(lifeStageLabels)
+        .some((label) => /postpartum/i.test(String(label)));
+    if (!postpartum || !productHasSignal(product, 'postpartum')) return null;
+
+    return 1;
+}
+
+function getPregnancyTrimesterFitScore(product, intake, lifeStageLabels) {
+    const trimester = String(intake?.pregnancyTrimester || '');
+    if (!trimester || ['Not sure', 'Prefer not to say'].includes(trimester)) return null;
+
+    const pregnant = asStringArray(lifeStageLabels)
+        .some((label) => /\bpregnan/i.test(String(label)));
+    if (!pregnant || !productHasSignal(product, 'pregnancy')) return null;
+
+    return 1;
+}
+
+function getPerimenopauseTimingFitScore(product, intake, lifeStageLabels) {
+    const timing = String(intake?.perimenopauseLastPeriod || '');
+    if (!timing || ["I'm not sure", 'Not sure', 'Prefer not to say'].includes(timing)) return null;
+
+    const perimenopause = asStringArray(lifeStageLabels)
+        .some((label) => /perimenopause/i.test(String(label)));
+    if (!perimenopause) return null;
+
+    const stageRelevant =
+        productHasSignal(product, 'perimenopause')
+        || productHasSignal(product, 'menopause');
+
+    return stageRelevant ? 1 : null;
 }
 
 function getProductRelevanceStats(product, quizAnswers, healthProfile = null) {
@@ -1846,14 +2171,22 @@ function getProductRelevanceStats(product, quizAnswers, healthProfile = null) {
         return {
             percent: 0,
             score: 0,
+            goalMatch: 0,
+            profileFit: 0,
             healthMatch: 0,
             preferenceMatch: null,
             evidenceQuality: evaluateEvidenceQuality(product),
             confidence: 'limited',
+            confidenceCoverage: 0,
             labels: [],
             reasons: [],
             considerations: [safety.reason].filter(Boolean),
             unknowns: [],
+            components: {
+                goal: {},
+                profile: {},
+                preference: {},
+            },
             eligible: false,
         };
     }
@@ -1863,237 +2196,319 @@ function getProductRelevanceStats(product, quizAnswers, healthProfile = null) {
     const unknowns = [];
 
     const primaryGoalLabels = getPrimaryGoalLabels(intake, quizAnswers);
-    const symptomLabels = getSymptomLabels(intake, quizAnswers);
     const diagnosisLabels = getDiagnosisLabels(intake, healthProfile);
     const lifeStageLabels = getLifeStageLabels(intake);
-    const importedTags = inferTagsFromHealthProfile(healthProfile);
 
-    const goalMatch = productMatchesAnyHealthLabel(product, primaryGoalLabels);
-    const symptomMatch = productMatchesAnyHealthLabel(product, symptomLabels);
+    const goalMatchResult = productMatchesAnyHealthLabel(product, primaryGoalLabels);
     const diagnosisMatch = productMatchesAnyHealthLabel(product, diagnosisLabels);
-    const lifeStageMatch = productMatchesAnyHealthLabel(product, lifeStageLabels);
 
-    const parts = {
+    const goalParts = {
         primaryGoal: primaryGoalLabels.length
-            ? { score: goalMatch.matched ? 1 : 0 }
+            ? { score: goalMatchResult.matched ? 1 : 0 }
             : null,
-
-        symptoms: symptomLabels.length
-            ? { score: symptomMatch.matched ? 1 : 0 }
-            : null,
-
-        diagnoses: diagnosisLabels.length && productTargetsAnySignal(product, DIAGNOSIS_SPECIFIC_SIGNALS)
-            ? { score: diagnosisMatch.matched ? 1 : 0 }
-            : null,
-
-        lifeStage: lifeStageLabels.length && productTargetsAnySignal(product, LIFE_STAGE_SPECIFIC_SIGNALS)
-            ? { score: lifeStageMatch.matched ? 1 : 0 }
-            : null,
-
-        productHealthAttributes: null,
-        severity: null,
-        frequency: null,
-        timing: null,
-        medicationCompatibility: null,
-        triedBefore: null,
+        periodFlow: null,
+        periodPain: null,
+        utiFrequency: null,
     };
 
-    if (goalMatch.matched) reasons.push({
-        component: 'primaryGoal',
-        weight: HEALTH_MATCH_WEIGHTS.primaryGoal,
-        score: 1,
-        text: `Supports your goal: ${goalMatch.label}`,
-    });
-
-    if (symptomMatch.matched) reasons.push({
-        component: 'symptoms',
-        weight: HEALTH_MATCH_WEIGHTS.symptoms,
-        score: 1,
-        text: `Relevant to symptoms you selected: ${symptomMatch.label}`,
-    });
-
-    if (diagnosisMatch.matched) reasons.push({
-        component: 'diagnoses',
-        weight: HEALTH_MATCH_WEIGHTS.diagnoses,
-        score: 1,
-        text: `Relevant to a condition you selected: ${diagnosisMatch.label}`,
-    });
-
-    if (lifeStageMatch.matched) reasons.push({
-        component: 'lifeStage',
-        weight: HEALTH_MATCH_WEIGHTS.lifeStage,
-        score: 1,
-        text: `Matches your life stage: ${lifeStageMatch.label}`,
-    });
-
-    const allHealthLabels = [
-        ...primaryGoalLabels,
-        ...symptomLabels,
-        ...diagnosisLabels,
-        ...lifeStageLabels,
-    ];
-    const derivedHealthTags = new Set([
-        ...allHealthLabels.flatMap(tagsForHealthLabel),
-        ...importedTags,
-    ]);
-
-    if (derivedHealthTags.size && ((product?.healthFunctions || []).length || (product?.tags || []).length)) {
-        const matchingTags = [...derivedHealthTags].filter((tag) => productHasSignal(product, tag));
-        parts.productHealthAttributes = { score: matchingTags.length ? 1 : 0 };
-
-        if (matchingTags.length) {
-            reasons.push({
-                component: 'productHealthAttributes',
-                weight: HEALTH_MATCH_WEIGHTS.productHealthAttributes,
-                score: 1,
-                text: 'Its health focus aligns with your profile',
-            });
-        }
+    if (goalMatchResult.matched) {
+        reasons.push({
+            component: 'primaryGoal',
+            weight: GOAL_MATCH_WEIGHTS.primaryGoal,
+            score: 1,
+            text: `Supports what you selected: ${goalMatchResult.label}`,
+        });
     }
 
-    const flow = String(intake.periodFlow || '');
-    const pain = String(intake.periodPain || '');
-
+    const flow = String(intake?.periodFlow || '');
     if (flow && !['Not sure', 'I do not currently get periods'].includes(flow)) {
-        const isMenstrualProduct = productHasSignal(product, 'heavy-flow')
-            || productHasSignal(product, 'menstrual-collection')
-            || productHasSignal(product, 'leak-protection');
+        const isMenstrualProduct =
+            productHasSignal(product, 'menstrual-collection')
+            || productHasSignal(product, 'leak-protection')
+            || ['pad', 'tampon', 'cup', 'disc', 'period-underwear'].includes(
+                String(product?.category || '').toLowerCase()
+            );
 
         if (isMenstrualProduct) {
-            let score = 0.7;
-            if (['Heavy', 'Very heavy'].includes(flow)) {
-                score = productHasSignal(product, 'heavy-flow') || productHasSignal(product, 'leak-protection') ? 1 : 0.6;
-            } else if (['Very light', 'Light', 'Moderate'].includes(flow)) {
-                score = productHasSignal(product, 'menstrual-collection') ? 1 : 0.7;
-            }
-            parts.severity = { score };
+            let score = 0.8;
 
-            if (score >= 0.9) {
+            if (['Heavy', 'Very heavy'].includes(flow)) {
+                score =
+                    productHasSignal(product, 'heavy-flow')
+                    || productHasSignal(product, 'leak-protection')
+                        ? 1
+                        : 0.6;
+            } else if (['Very light', 'Light', 'Moderate'].includes(flow)) {
+                score = productHasSignal(product, 'menstrual-collection') ? 1 : 0.8;
+            }
+
+            goalParts.periodFlow = { score };
+
+            if (score > 0) {
                 reasons.push({
-                    component: 'severity',
-                    weight: HEALTH_MATCH_WEIGHTS.severity,
+                    component: 'periodFlow',
+                    weight: GOAL_MATCH_WEIGHTS.periodFlow,
                     score,
-                    text: `Aligned with the flow level you selected: ${flow}`,
+                    text: `Fits the flow level you selected: ${flow}`,
                 });
             }
         }
     }
 
+    const pain = String(intake?.periodPain || '');
     if (pain && !['Not sure', 'None'].includes(pain)) {
-        const isPainProduct = productHasSignal(product, 'cramps')
+        const isPainProduct =
+            productHasSignal(product, 'cramps')
             || productHasSignal(product, 'cramp-relief')
             || productHasSignal(product, 'pelvic-floor');
 
         if (isPainProduct) {
-            const score = productHasSignal(product, 'cramp-relief') || productHasSignal(product, 'cramps') ? 1 : 0.7;
-            if (!parts.severity || score > parts.severity.score) parts.severity = { score };
+            const score =
+                productHasSignal(product, 'cramps')
+                || productHasSignal(product, 'cramp-relief')
+                    ? 1
+                    : 0.7;
 
-            if (score >= 0.9) {
-                reasons.push({
-                    component: 'severity',
-                    weight: HEALTH_MATCH_WEIGHTS.severity,
-                    score,
-                    text: `Relevant to the pain level you selected: ${pain}`,
-                });
-            }
+            goalParts.periodPain = { score };
+
+            reasons.push({
+                component: 'periodPain',
+                weight: GOAL_MATCH_WEIGHTS.periodPain,
+                score,
+                text: `Relevant to the period pain level you selected: ${pain}`,
+            });
         }
     }
 
-    const utiFrequency = String(intake.utiFrequency || '');
+    const utiFrequency = String(intake?.utiFrequency || '');
     if (utiFrequency && utiFrequency !== 'Not sure') {
-        const isUtiProduct = productHasSignal(product, 'uti') || productHasSignal(product, 'uti-prevention');
-        if (isUtiProduct) {
-            const recurrent = /few times a year|monthly|more than once a month|right now/i.test(utiFrequency);
-            parts.frequency = { score: recurrent ? 1 : 0.8 };
+        const isUtiProduct =
+            productHasSignal(product, 'uti')
+            || productHasSignal(product, 'uti-prevention');
 
-            if (recurrent) {
-                reasons.push({
-                    component: 'frequency',
-                    weight: HEALTH_MATCH_WEIGHTS.frequency,
-                    score: 1,
-                    text: 'Relevant to the UTI frequency you reported',
-                });
-            }
+        if (isUtiProduct) {
+            const recurrent =
+                /few times a year|monthly|more than once a month|right now/i.test(utiFrequency);
+            const score = recurrent ? 1 : 0.8;
+
+            goalParts.utiFrequency = { score };
+
+            reasons.push({
+                component: 'utiFrequency',
+                weight: GOAL_MATCH_WEIGHTS.utiFrequency,
+                score,
+                text: 'Relevant to the UTI frequency you reported',
+            });
         }
     }
 
-    const hasDetailedTiming = Boolean(
-        intake.postpartumTiming
-        || intake.pregnancyTrimester
-        || intake.perimenopauseLastPeriod
-    );
-    if (hasDetailedTiming) {
-        unknowns.push('Timing-specific compatibility is not yet structured for this product.');
+    const profileParts = {
+        age: null,
+        lifeStage: null,
+        breastfeeding: null,
+        postpartumTiming: null,
+        pregnancyTrimester: null,
+        perimenopauseLastPeriod: null,
+        diagnoses: null,
+        triedBefore: null,
+    };
+
+    const ageFit = getAgeFitScore(product, intake);
+    if (ageFit != null) {
+        profileParts.age = { score: ageFit };
+
+        if (ageFit === 1) {
+            reasons.push({
+                component: 'age',
+                weight: PROFILE_FIT_WEIGHTS.age,
+                score: 1,
+                text: 'Fits the product’s stated age range',
+            });
+        }
     }
 
-    const medication = safety.medication || getKnownInteractionAssessment(product, intake);
-    if (medication.score != null) {
-        parts.medicationCompatibility = { score: medication.score };
-        if (medication.interaction?.message) considerations.push(medication.interaction.message);
-    } else if (medication.unknown) {
-        unknowns.push('Medication compatibility was not fully assessed for this product.');
+    const lifeStageFit = getLifeStageFitScore(product, lifeStageLabels);
+    if (lifeStageFit != null) {
+        profileParts.lifeStage = { score: lifeStageFit };
+
+        if (lifeStageFit > 0) {
+            reasons.push({
+                component: 'lifeStage',
+                weight: PROFILE_FIT_WEIGHTS.lifeStage,
+                score: lifeStageFit,
+                text: 'Matches your current life stage',
+            });
+        }
+    }
+
+    const breastfeedingFit = getBreastfeedingFitScore(product, intake, lifeStageLabels);
+    if (breastfeedingFit != null) {
+        profileParts.breastfeeding = { score: breastfeedingFit };
+
+        if (breastfeedingFit > 0) {
+            reasons.push({
+                component: 'breastfeeding',
+                weight: PROFILE_FIT_WEIGHTS.breastfeeding,
+                score: breastfeedingFit,
+                text: 'Fits the breastfeeding information you provided',
+            });
+        }
+    }
+
+    const postpartumTimingFit =
+        getPostpartumTimingFitScore(product, intake, lifeStageLabels);
+    if (postpartumTimingFit != null) {
+        profileParts.postpartumTiming = { score: postpartumTimingFit };
+
+        reasons.push({
+            component: 'postpartumTiming',
+            weight: PROFILE_FIT_WEIGHTS.postpartumTiming,
+            score: postpartumTimingFit,
+            text: 'Fits your postpartum stage',
+        });
+    }
+
+    const pregnancyTrimesterFit =
+        getPregnancyTrimesterFitScore(product, intake, lifeStageLabels);
+    if (pregnancyTrimesterFit != null) {
+        profileParts.pregnancyTrimester = { score: pregnancyTrimesterFit };
+
+        reasons.push({
+            component: 'pregnancyTrimester',
+            weight: PROFILE_FIT_WEIGHTS.pregnancyTrimester,
+            score: pregnancyTrimesterFit,
+            text: 'Fits the pregnancy stage you provided',
+        });
+    }
+
+    const perimenopauseTimingFit =
+        getPerimenopauseTimingFitScore(product, intake, lifeStageLabels);
+    if (perimenopauseTimingFit != null) {
+        profileParts.perimenopauseLastPeriod = { score: perimenopauseTimingFit };
+
+        reasons.push({
+            component: 'perimenopauseLastPeriod',
+            weight: PROFILE_FIT_WEIGHTS.perimenopauseLastPeriod,
+            score: perimenopauseTimingFit,
+            text: 'Fits your perimenopause profile',
+        });
+    }
+
+    if (
+        diagnosisLabels.length
+        && productTargetsAnySignal(product, DIAGNOSIS_SPECIFIC_SIGNALS)
+    ) {
+        profileParts.diagnoses = {
+            score: diagnosisMatch.matched ? 1 : 0,
+        };
+
+        if (diagnosisMatch.matched) {
+            reasons.push({
+                component: 'diagnoses',
+                weight: PROFILE_FIT_WEIGHTS.diagnoses,
+                score: 1,
+                text: `Relevant to a condition you selected: ${diagnosisMatch.label}`,
+            });
+        }
     }
 
     const history = getProductHistoryEntry(product, intake);
     if (history) {
         if (history.worked === 'Helped a lot') {
-            parts.triedBefore = { score: 1 };
+            profileParts.triedBefore = { score: 1 };
             reasons.push({
                 component: 'triedBefore',
-                weight: HEALTH_MATCH_WEIGHTS.triedBefore,
+                weight: PROFILE_FIT_WEIGHTS.triedBefore,
                 score: 1,
                 text: 'You said this product helped you a lot before',
             });
         } else if (history.worked === 'Helped somewhat') {
-            parts.triedBefore = { score: 0.75 };
+            profileParts.triedBefore = { score: 0.75 };
             reasons.push({
                 component: 'triedBefore',
-                weight: HEALTH_MATCH_WEIGHTS.triedBefore,
+                weight: PROFILE_FIT_WEIGHTS.triedBefore,
                 score: 0.75,
                 text: 'You said this product helped somewhat before',
             });
         } else if (history.worked === 'No difference') {
-            parts.triedBefore = { score: 0 };
-        } else if (history.worked === 'Not sure' || !history.worked) {
-            parts.triedBefore = null;
+            profileParts.triedBefore = { score: 0 };
         }
     }
 
-    const healthMatch = weightedKnownScore(parts, HEALTH_MATCH_WEIGHTS);
+    const medication =
+        safety.medication || getKnownInteractionAssessment(product, intake);
+
+    if (medication?.interaction?.message) {
+        considerations.push(medication.interaction.message);
+    } else if (medication?.unknown) {
+        unknowns.push('Medication compatibility was not fully assessed for this product.');
+    }
+
+    const goalMatch = weightedKnownScore(goalParts, GOAL_MATCH_WEIGHTS);
+    const profileFit = weightedKnownScore(profileParts, PROFILE_FIT_WEIGHTS);
     const preference = evaluatePreferenceMatch(product, intake);
     const evidenceQuality = evaluateEvidenceQuality(product);
 
-    const topLevel = [
-        healthMatch == null ? null : { weight: 70, value: healthMatch },
-        preference.percent == null ? null : { weight: 20, value: preference.percent },
-        { weight: 10, value: evidenceQuality },
-    ].filter(Boolean);
-
-    const hasPersonalizedDimension = healthMatch != null || preference.percent != null;
-    const totalWeight = topLevel.reduce((sum, item) => sum + item.weight, 0);
-    const percent = hasPersonalizedDimension && totalWeight
-        ? Math.round(topLevel.reduce((sum, item) => sum + item.weight * item.value, 0) / totalWeight)
+    const healthPieces = [goalMatch, profileFit].filter((value) => value != null);
+    const healthMatch = healthPieces.length
+        ? Math.round(
+            healthPieces.reduce((sum, value) => sum + value, 0)
+            / healthPieces.length
+        )
         : null;
 
-    const knownHealthWeight = Object.entries(parts).reduce((sum, [key, part]) => (
-        sum + (part?.score == null ? 0 : HEALTH_MATCH_WEIGHTS[key] || 0)
-    ), 0);
+    const topLevel = [
+        goalMatch == null ? null : { weight: 25, value: goalMatch },
+        profileFit == null ? null : { weight: 25, value: profileFit },
+        { weight: 25, value: evidenceQuality },
+        preference.percent == null
+            ? null
+            : { weight: 25, value: preference.percent },
+    ].filter(Boolean);
 
-    const confidence = knownHealthWeight >= 65
-        ? 'high'
-        : knownHealthWeight >= 40
-            ? 'medium'
-            : 'limited';
+    const hasPersonalizedDimension =
+        goalMatch != null
+        || profileFit != null
+        || preference.percent != null;
+
+    const totalWeight = topLevel.reduce((sum, item) => sum + item.weight, 0);
+
+    const percent = hasPersonalizedDimension && totalWeight
+        ? Math.round(
+            topLevel.reduce(
+                (sum, item) => sum + item.weight * item.value,
+                0
+            ) / totalWeight
+        )
+        : null;
+
+    const knownGoalWeight = knownWeightedPoints(goalParts, GOAL_MATCH_WEIGHTS);
+    const knownProfileWeight =
+        knownWeightedPoints(profileParts, PROFILE_FIT_WEIGHTS);
+    const knownPreferenceWeight =
+        knownWeightedPoints(preference.components, PREFERENCE_WEIGHTS);
+
+    const confidenceCoverage = Math.round(
+        ((knownGoalWeight + knownProfileWeight + knownPreferenceWeight) / 75) * 100
+    );
+
+    const personalizedCategoryCount =
+        [goalMatch, profileFit, preference.percent]
+            .filter((value) => value != null)
+            .length;
+
+    const confidence =
+        personalizedCategoryCount === 3 && confidenceCoverage >= 35
+            ? 'high'
+            : personalizedCategoryCount >= 2
+                ? 'medium'
+                : 'limited';
 
     const allReasons = [
         ...reasons,
-        ...preference.reasons.map((reason) => ({
-            component: 'preference',
-            weight: 20,
-            ...reason,
-        })),
+        ...preference.reasons,
     ]
-        .filter((reason) => reason.score > 0)
+        .filter((reason) => reason?.score > 0)
         .sort((a, b) => (b.weight * b.score) - (a.weight * a.score));
 
     const labels = allReasons
@@ -2103,17 +2518,23 @@ function getProductRelevanceStats(product, quizAnswers, healthProfile = null) {
     return {
         percent,
         score: percent == null ? 0 : percent,
+        goalMatch,
+        profileFit,
         healthMatch,
         preferenceMatch: preference.percent,
         evidenceQuality,
         confidence,
-        confidenceCoverage: knownHealthWeight,
+        confidenceCoverage,
         labels,
         reasons: allReasons.slice(0, 4).map((reason) => reason.text),
         reasonDetails: allReasons.slice(0, 4),
         considerations: [...new Set(considerations)],
         unknowns: [...new Set(unknowns)],
-        components: parts,
+        components: {
+            goal: goalParts,
+            profile: profileParts,
+            preference: preference.components,
+        },
         eligible: true,
     };
 }

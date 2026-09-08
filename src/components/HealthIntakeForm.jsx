@@ -94,7 +94,7 @@ const PRODUCT_OR_BRAND_SUGGESTIONS = [...new Set([...CATALOG_PRODUCT_NAMES, ...B
 
 const PRODUCT_FORMATS = [
   'Pills or capsules', 'Gummies', 'Powders', 'Drinks or teas', 'Creams, lotions, or gels', 'Patches',
-  'Suppositories', 'Devices or wearables', 'Period-care products', 'No preference', 'Other',
+  'Suppositories', 'Devices or wearables', 'Period-care products', 'Internal products', 'No preference', 'Other',
 ];
 const PRICE_RANGES = ['Under $25', '$25–$75', '$75–$150', '$150+', 'Price is not a major factor for me'];
 const LARGE_PURCHASE_FREQUENCY = ['Never', 'Rarely', 'A few times a year', 'About once a month', 'More than once a month'];

@@ -64,6 +64,10 @@ function sanitizeIntake(raw) {
 function selectedConcerns(intake = {}) {
   const blocked = new Set(['general discomfort', 'other']);
   const concerns = new Set();
+  const profile =
+    intake?.fullHealthIntake && typeof intake.fullHealthIntake === 'object'
+      ? intake.fullHealthIntake
+      : intake;
 
   // 1. Explicitly selected by user (plus anything she typed herself —
   // customConcerns was collected by HealthProfileEditor and then never read,
@@ -77,10 +81,33 @@ function selectedConcerns(intake = {}) {
     if (v && !blocked.has(v.toLowerCase())) concerns.add(v);
   }
 
-  const conditions = (Array.isArray(intake.conditions) ? intake.conditions : []).map(c => String(c).toLowerCase());
-  const symptoms   = (Array.isArray(intake.symptoms)   ? intake.symptoms   : []).map(s => String(s).toLowerCase());
-  const goals      = (Array.isArray(intake.goals)      ? intake.goals      : []).map(g => String(g).toLowerCase());
-  const allText    = [...conditions, ...symptoms, ...goals, String(intake.dislikedProductsText || ''), String(intake.currentMedications || '')].join(' ').toLowerCase();
+  const rawConditions =
+    Array.isArray(profile?.diagnosisSelections) && profile.diagnosisSelections.length > 0
+      ? profile.diagnosisSelections
+      : (Array.isArray(intake.conditions) ? intake.conditions : []);
+
+  const rawMedications =
+    Array.isArray(profile?.currentMedicationItems) && profile.currentMedicationItems.length > 0
+      ? profile.currentMedicationItems
+      : (intake.currentMedications ? [intake.currentMedications] : []);
+
+  const conditions = rawConditions.map(c => String(c).toLowerCase());
+  const symptoms   = (Array.isArray(intake.symptoms) ? intake.symptoms : []).map(s => String(s).toLowerCase());
+  const goals      = (Array.isArray(intake.goals) ? intake.goals : []).map(g => String(g).toLowerCase());
+
+  const supportSelections =
+    Array.isArray(profile?.supportSelections)
+      ? profile.supportSelections.map(s => String(s).toLowerCase())
+      : [];
+
+  const allText = [
+    ...conditions,
+    ...symptoms,
+    ...goals,
+    ...supportSelections,
+    ...rawMedications,
+    String(intake.dislikedProductsText || ''),
+  ].join(' ').toLowerCase();
   const has = (...terms) => terms.some(t => allText.includes(t));
   const hasConcern = (substr) => [...concerns].some(c => c.toLowerCase().includes(substr));
 
@@ -220,7 +247,7 @@ function enrichProduct(p, idSuffix = '', namespace = '') {
   if (!p || typeof p !== 'object' || !String(p.name || '').trim()) return null;
   if (isBlockedRecommendationProduct(p)) return null;
   // ALWAYS namespace. The per-concern prompt hands the model literal placeholder
-  // ids ("slug", "slug2", "a1"..."a6") and every concern gets the same template,
+  // ids ("slug", "slug2", "a1", "a3", "a5") and every concern gets the same template,
   // so raw model ids collide across concerns. Downstream those ids are object
   // keys (App.jsx handleBuildEcosystemFromLlm), so a collision silently deletes
   // an ecosystem card.
@@ -278,7 +305,7 @@ function enrichRecommendations(recs, requestedConcern = '') {
             .map((alt, altIdx) => enrichProduct(alt, `-tier${tierIdx}-alt${altIdx}`, nsBase))
             .filter(Boolean)
             .filter((alt) => alt.id !== tierProduct.id)
-            .slice(0, 3);
+            .slice(0, 1);
           const tierName = String(tier?.name || '').trim() || `Option ${tierIdx + 1}`;
           const tierSubcategory = String(tier?.subcategory || '').trim();
           return {
@@ -297,7 +324,7 @@ function enrichRecommendations(recs, requestedConcern = '') {
       const fallbackAlts = (Array.isArray(entry?.alternatives) ? entry.alternatives : [])
         .map((alt, i) => enrichProduct(alt, `-alt${i}`, nsBase))
         .filter(Boolean)
-        .slice(0, 3);
+        .slice(0, 1);
 
       const tiers = normalizedTiers.length > 0
         ? normalizedTiers
@@ -430,12 +457,27 @@ async function searchProductsForConcerns(concerns, intake) {
   const serperKey = process.env.SERPER_API_KEY;
   if (!serperKey || !concerns.length) return null;
 
-  const prefs = Array.isArray(intake?.productPreferences)
-    ? intake.productPreferences.slice(0, 3).join(' ')
-    : '';
-  const conditions = Array.isArray(intake?.conditions)
-    ? intake.conditions.filter((c) => c !== 'none' && c !== 'other').slice(0, 2).join(' ')
-    : '';
+  const profile =
+    intake?.fullHealthIntake && typeof intake.fullHealthIntake === 'object'
+      ? intake.fullHealthIntake
+      : intake;
+
+  const rawPrefs =
+    Array.isArray(profile?.preferredFormats) && profile.preferredFormats.length > 0
+      ? profile.preferredFormats
+      : (Array.isArray(intake?.productPreferences) ? intake.productPreferences : []);
+
+  const prefs = rawPrefs.slice(0, 3).join(' ');
+
+  const rawConditions =
+    Array.isArray(profile?.diagnosisSelections) && profile.diagnosisSelections.length > 0
+      ? profile.diagnosisSelections
+      : (Array.isArray(intake?.conditions) ? intake.conditions : []);
+
+  const conditions = rawConditions
+    .filter((c) => !['none', 'other', 'none that i know of', 'prefer not to say'].includes(String(c).toLowerCase()))
+    .slice(0, 2)
+    .join(' ');
 
   const results = {};
 
@@ -529,6 +571,12 @@ function capIdList(list, max = 40) {
 
 function buildPromptForOneConcern(concern, intake = {}, feedback = {}, searchHits = null) {
   const concernFollowup = intake?.concernFollowups?.[concern];
+  const profile = intake?.fullHealthIntake && typeof intake.fullHealthIntake === 'object'
+    ? intake.fullHealthIntake
+    : intake;
+  const trustRanking = Array.isArray(profile?.trustRanking) && profile?.trustRankingTouched !== false
+    ? profile.trustRanking
+    : [];
   const knowledgeChunks = retrieveKnowledgeForIntake({ ...intake, primaryConcerns: [concern] }, 4);
   const knowledgeContext = buildKnowledgeContext(knowledgeChunks);
 
@@ -545,18 +593,43 @@ You CAN: make clinical inferences, recommend OTC products and supplements ground
 You CANNOT: diagnose, prescribe medications, or guarantee outcomes.
 
 PATIENT PROFILE:
-- Age: ${intake?.age || 'unknown'}, Location: ${intake?.location || 'unknown'}
+- Age: ${profile?.age || intake?.age || 'unknown'}, Location: ${intake?.location || profile?.zipcode || 'unknown'}
+- Life stage: ${(Array.isArray(profile?.lifeStageSelections) ? profile.lifeStageSelections : []).join(', ') || profile?.lifeStage || 'not provided'}
+- Pregnancy trimester: ${profile?.pregnancyTrimester || 'not applicable/not provided'}
+- Postpartum timing: ${profile?.postpartumTiming || 'not applicable/not provided'}
+- Breastfeeding: ${profile?.breastfeedingStatus || 'not applicable/not provided'}
+- Perimenopause last period: ${profile?.perimenopauseLastPeriod || 'not applicable/not provided'}
+- Period flow: ${profile?.periodFlow || intake?.flowLevel || 'not applicable/not provided'}
+- Period pain: ${profile?.periodPain || intake?.painLevel || 'not applicable/not provided'}
+- UTI frequency: ${profile?.utiFrequency || 'not applicable/not provided'}
 - Insurance type: ${intake?.insuranceType || 'not provided'}, Provider: ${intake?.insurancePlan || 'not provided'}
-- FSA/HSA: ${intake?.fsaHsa || 'not provided'}
-- All concerns: ${selectedConcerns(intake).join(', ') || 'none'}
-- Conditions: ${(Array.isArray(intake?.conditions) ? intake.conditions : []).join(', ') || 'none'}
+- FSA/HSA: ${profile?.fsaHsaAnswer || intake?.fsaHsa || 'not provided'}
+- All concerns: ${selectedConcerns(intake).join(', ') || (Array.isArray(profile?.supportSelections) ? profile.supportSelections.join(', ') : '') || 'none'}
+- Conditions: ${
+  (
+    Array.isArray(profile?.diagnosisSelections) && profile.diagnosisSelections.length > 0
+      ? profile.diagnosisSelections
+      : (Array.isArray(intake?.conditions) ? intake.conditions : [])
+  ).join(', ') || 'none'
+}
 - Family history: ${(Array.isArray(intake?.familyHistory) ? intake.familyHistory : []).join(', ') || 'not provided'}
 - Symptom duration: ${intake?.symptomDuration || 'not provided'}, Last OB/GYN: ${intake?.lastObgynVisit || 'not provided'}
-- Medications: ${intake?.currentMedications || 'none'}
+- Medications, supplements, vitamins, or hormonal birth control: ${
+  (
+    Array.isArray(profile?.currentMedicationItems) && profile.currentMedicationItems.length > 0
+      ? profile.currentMedicationItems
+      : (intake?.currentMedications ? [intake.currentMedications] : [])
+  ).join(', ') || 'none'
+}
 - Cycle: ${intake?.menstrualCycle || 'unknown'}, Flow: ${intake?.flowLevel || 'unknown'}, Pain: ${intake?.painLevel ? `${intake.painLevel}/10` : 'unknown'}
 - Symptoms: ${(Array.isArray(intake?.symptoms) ? intake.symptoms : []).join(', ') || 'none'}
 - TTC: ${intake?.tryingToConceive || 'unknown'}, Birth control: ${intake?.hormonalBirthControl || 'unknown'}${intake?.hormonalBirthControlType ? ` (${intake.hormonalBirthControlType})` : ''}
-- Preferences (hard filters): ${(Array.isArray(intake?.productPreferences) ? intake.productPreferences : []).join(', ') || 'none'}
+- Preferred formats: ${(Array.isArray(profile?.preferredFormats) ? profile.preferredFormats : []).join(', ') || 'none'}
+- Price range: ${(Array.isArray(profile?.priceRange) ? profile.priceRange : []).join(', ') || 'none'}
+- Brand openness: ${profile?.brandOpenness || 'not provided'}
+- Trusted brands: ${(Array.isArray(profile?.trustedBrands) ? profile.trustedBrands : []).join(', ') || 'none'}
+- Ingredient/material/value preferences: ${(Array.isArray(profile?.avoidIngredients) ? profile.avoidIngredients : []).join(', ') || 'none'}
+- Trust ranking, MOST important first: ${trustRanking.join(' > ') || 'not ranked'}
 - Products currently using: ${(Array.isArray(intake?.currentProducts) ? intake.currentProducts : []).join(', ') || 'none'}
 - Tried and disliked: ${intake?.dislikedProductsText || 'none'} — reason: ${intake?.dislikedReason || 'none'}
 - Goals: ${(Array.isArray(intake?.goals) ? intake.goals : []).join(', ') || 'none'}
@@ -569,11 +642,12 @@ SCOPE: Never name a prescription medication as a product recommendation, in any 
 
 QUALITY BAR: Every product must have (a) majority positive reviews from real women, (b) clinical/scientific support for the mechanism, (c) established US-available brand. No fabricated brands.
 
-REPUTABILITY RANKING — when multiple products could fit a concern, rank candidates by these three signals and pick the highest-scoring one as the top pick:
-1. Social media & community sentiment: does the product have predominantly positive sentiment from real women on Reddit, TikTok, Instagram, and women's health forums? Products with mixed or predominantly negative sentiment rank lower even if well-known.
-2. Scientific research alignment: does the available research (clinical studies, meta-analyses, published trials) support the specific claims the product makes? A product whose claims are backed by research ranks above one whose claims are unsupported or contradicted by evidence.
-3. Clinician endorsement: do OB/GYNs, women's health NPs, dietitians, or other relevant clinicians publicly recommend or commonly suggest this product to patients?
-A product that scores well on all three (positive community sentiment + research-supported claims + clinician-backed) is always the top pick over one that only scores on one. Never pick a product solely because it is famous or has high marketing spend.
+TRUST RANKING:
+Use all three trust signals below, but when the patient supplied a Trust ranking above, honor THEIR order when breaking ties and ordering otherwise-comparable products. Their #1 ranked signal matters most, #2 next, #3 least.
+- Clinical or scientific evidence: strength and relevance of research supporting the product or intervention.
+- Reviews and experiences from other women: predominantly positive, credible community experience.
+- Brand reputation or expert recommendations: reputable brand and meaningful clinician/expert support.
+This trust ranking is a preference signal only. It must NEVER override safety, contraindications, life-stage appropriateness, or a clearly better goal/profile match.
 
 ANTI-HALLUCINATION — this is the most important rule:
 - ONLY recommend brands you are CERTAIN exist and currently sell products in the US market. The test: can you state the brand's real website domain (e.g. thinx.com, pureenapsulations.com)? If you cannot recall the actual domain with confidence, do NOT recommend that brand.
@@ -584,7 +658,7 @@ ANTI-HALLUCINATION — this is the most important rule:
 - Well-known, safe brands for common categories: heat packs (Thermacare, Bed Buddy, Sunbeam), organic pads (Rael, The Honest Company, Cora, L. Organic), period underwear (Thinx, Knix, Saalt, Modibodi), PCOS supplements (Thorne, Pure Encapsulations, Jarrow, Garden of Life), telehealth (Allara Health, Ro, Nurx, Maven Clinic, Midi Health).
 
 PERSONALIZATION:
-- Product preferences are HARD FILTERS — if she prefers organic/fragrance-free, every physical product must meet that.
+- Explicit allergies, known contraindications, and items the user said to avoid are HARD FILTERS. Other shopping preferences such as format, price, brand openness, sustainability, and trust ranking should influence ordering but should not override safety or clinical relevance.
 - FSA/HSA prioritization: if "FSA/HSA" in the profile above is not "not provided", prioritize FSA/HSA-eligible products (physical products/supplements sold as FSA/HSA-eligible in the US) when choosing between otherwise-comparable candidates for a track, and say so briefly in whyItWorks when it's a real factor in the pick. This is a real stated financial constraint, not a soft preference — weight it accordingly — but don't force a clearly worse product into the top spot just because it's eligible when a genuinely better-fit option isn't.
 - Never recommend a brand she listed as disliked.
 - whyItWorks must be in plain everyday language — no medical jargon. Explain: (1) simply how the product works (mechanism in lay terms), (2) why it fits her specific profile (condition, pain level, preference), (3) what makes it the top pick over the alternatives. A user should read this and immediately understand why you chose THIS product for HER over everything else available.
@@ -600,9 +674,19 @@ PRODUCT SPECIFICITY RULES — critical for quality:
 
 TASK: Generate recommendations for this ONE concern only: "${concern}"${concernFollowup ? `\nUser context: ${JSON.stringify(concernFollowup)}` : ''}
 
-Generate 1 to 3 clinically relevant solution tracks for this concern. Choose the product types that genuinely make the most sense for this concern and this user's profile. Do NOT force a supplement, physical product, device, app, or telehealth option just to fill a category. A supplement tier should appear only when a supplement is genuinely one of the strongest evidence-informed options for this concern. Likewise, include physical or digital/telehealth tiers only when they are relevant. Put the strongest overall fit first. Each included track should contain 1 top product + 2 brief alternatives.
+Generate 3 to 5 clinically relevant DISTINCT solution tracks for this concern whenever at least 3 safe, relevant, real options exist. The primary products across tracks must solve meaningfully different parts of the user's need or use meaningfully different formats. Do NOT fill the list with near-duplicates just because they score similarly.
 
-The JSON example below shows all three possible tier types only to demonstrate the schema. Omit any tier that is not clinically relevant; returning 1 or 2 tiers is valid.
+DIVERSITY RULE:
+- Prefer one strong option per distinct solution type before recommending a second product of the same type.
+- A different brand of essentially the same product is an alternative, NOT a new primary track.
+- Keep every primary product individually safe and relevant. Diversity never overrides safety or fit.
+- If fewer than 3 genuinely safe/relevant distinct solution types exist, return fewer rather than inventing or forcing weak products.
+- Each included track should contain 1 primary product + up to 1 brief same-purpose alternative.
+
+PERIOD CARE EXAMPLE:
+Use the user's actual flow, spotting, pain, and format preferences. For someone with moderate flow + spotting + cramps, an appropriate diverse set could include a pad, a liner for spotting, an internal collection option such as a tampon/cup/disc if their format preferences allow it, and a purpose-built cramp-relief product. Do not return four pads. If the user prefers or avoids Internal products, honor that preference when ranking the internal option.
+
+The JSON example below demonstrates the tier object schema. The "tiers" array may contain 3, 4, or 5 objects using that same schema.
 
 Return ONLY valid JSON — exactly this shape:
 {
@@ -618,8 +702,7 @@ Return ONLY valid JSON — exactly this shape:
           "safetyFlags": [],
           "product": { "id": "slug", "name": "Name", "brand": "Brand", "category": "supplement", "type": "physical", "summary": "1-2 sentences", "whyItWorks": "2 sentences: mechanism + personal fit", "considerations": "", "price": "$XX", "image": "", "url": "https://brand.com", "safety": { "recalls": "", "materials": "", "sideEffects": "", "opinionAlerts": "" }, "clinicianOpinionSource": "", "clinicianAttribution": "" },
           "alternatives": [
-            { "id": "a1", "name": "Alt 1", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "$XX", "type": "physical", "image": "", "url": "https://brand.com", "safety": { "recalls": "", "materials": "", "sideEffects": "", "opinionAlerts": "" } },
-            { "id": "a2", "name": "Alt 2", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "$XX", "type": "physical", "image": "", "url": "https://brand.com", "safety": { "recalls": "", "materials": "", "sideEffects": "", "opinionAlerts": "" } }
+            { "id": "a1", "name": "Alt 1", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "$XX", "type": "physical", "image": "", "url": "https://brand.com", "safety": { "recalls": "", "materials": "", "sideEffects": "", "opinionAlerts": "" } }
           ]
         },
         {
@@ -630,8 +713,7 @@ Return ONLY valid JSON — exactly this shape:
           "safetyFlags": [],
           "product": { "id": "slug2", "name": "Name", "brand": "Brand", "category": "device", "type": "physical", "summary": "1-2 sentences", "whyItWorks": "2 sentences: mechanism + personal fit", "considerations": "", "price": "$XX", "image": "", "url": "https://brand.com", "safety": { "recalls": "", "materials": "", "sideEffects": "", "opinionAlerts": "" }, "clinicianOpinionSource": "", "clinicianAttribution": "" },
           "alternatives": [
-            { "id": "a3", "name": "Alt 3", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "$XX", "type": "physical", "image": "", "url": "https://brand.com", "safety": { "recalls": "", "materials": "", "sideEffects": "", "opinionAlerts": "" } },
-            { "id": "a4", "name": "Alt 4", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "$XX", "type": "physical", "image": "", "url": "https://brand.com", "safety": { "recalls": "", "materials": "", "sideEffects": "", "opinionAlerts": "" } }
+            { "id": "a3", "name": "Alt 3", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "$XX", "type": "physical", "image": "", "url": "https://brand.com", "safety": { "recalls": "", "materials": "", "sideEffects": "", "opinionAlerts": "" } }
           ]
         },
         {
@@ -642,8 +724,7 @@ Return ONLY valid JSON — exactly this shape:
           "safetyFlags": [],
           "product": { "id": "slug3", "name": "Name", "brand": "Brand", "category": "telehealth", "type": "digital", "summary": "1-2 sentences", "whyItWorks": "2 sentences: mechanism + personal fit", "considerations": "", "price": "Free or $XX/mo", "image": "", "url": "https://brand.com", "safety": { "recalls": "", "materials": "", "sideEffects": "", "opinionAlerts": "" }, "clinicianOpinionSource": "", "clinicianAttribution": "" },
           "alternatives": [
-            { "id": "a5", "name": "Alt 5", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "Free or $XX/mo", "type": "digital", "image": "", "url": "https://brand.com", "safety": { "recalls": "", "materials": "", "sideEffects": "", "opinionAlerts": "" } },
-            { "id": "a6", "name": "Alt 6", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "Free or $XX/mo", "type": "digital", "image": "", "url": "https://brand.com", "safety": { "recalls": "", "materials": "", "sideEffects": "", "opinionAlerts": "" } }
+            { "id": "a5", "name": "Alt 5", "brand": "Brand", "summary": "1 sentence", "whyItWorks": "1 sentence", "price": "Free or $XX/mo", "type": "digital", "image": "", "url": "https://brand.com", "safety": { "recalls": "", "materials": "", "sideEffects": "", "opinionAlerts": "" } }
           ]
         }
       ],
@@ -766,8 +847,8 @@ async function handleRequest(req, res) {
           // The OpenAI fallback must keep response_format: json_object — it is
           // what forces parseable output from that provider.
           jsonMode: true,
-          // Raised from 5000: the schema requires 9 product objects per concern,
-          // and truncation silently dropped the whole concern.
+          // 3-5 primary tracks plus at most 1 brief alternative each fit
+          // within this budget while reducing truncation risk.
           maxTokens: 8000,
           timeoutMs: 28_000,
           signal: deadline,
