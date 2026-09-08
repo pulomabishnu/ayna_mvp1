@@ -845,10 +845,14 @@ function AgeCard({ value, onChange }) {
 // text field is what's actually focusable/typeable, the boxes are just its
 // display.
 function ZipDigits({ value, onChange, onSkip }) {
+  const inputRef = useRef(null);
   const digits = String(value || '').padEnd(5, ' ').split('');
   return (
     <div>
-      <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', gap: 9 }}>
+      <div
+        onClick={() => inputRef.current && inputRef.current.focus()}
+        style={{ position: 'relative', display: 'flex', justifyContent: 'center', gap: 9, cursor: 'text' }}
+      >
         {digits.map((digit, i) => (
           <div key={i} style={{
             width: 52, height: 62, borderRadius: 16, background: CARD_BG,
@@ -860,12 +864,15 @@ function ZipDigits({ value, onChange, onSkip }) {
           </div>
         ))}
         <input
+          ref={inputRef}
           value={value}
           onChange={(e) => onChange(e.target.value)}
+          type="tel"
           inputMode="numeric"
+          pattern="[0-9]*"
           maxLength={5}
           aria-label="ZIP code"
-          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0, border: 'none', outline: 'none', textAlign: 'center', fontSize: 24 }}
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', zIndex: 2, opacity: 0, border: 'none', outline: 'none', textAlign: 'center', fontSize: 24, touchAction: 'manipulation' }}
         />
       </div>
       {onSkip && (
@@ -1127,6 +1134,7 @@ function SearchableGroups({ groups, selected, onToggle, search, onSearch }) {
 }
 
 function ProductHistoryBuilder({ products, onChange }) {
+  const [adding, setAdding] = useState(false);
   const [query, setQuery] = useState('');
   const [expandedIndex, setExpandedIndex] = useState(null);
   const suggestions = useMemo(() => {
@@ -1139,6 +1147,7 @@ function ProductHistoryBuilder({ products, onChange }) {
     if (!trimmed || products.some((p) => normalizeSuggestion(p.name) === normalizeSuggestion(trimmed))) return;
     onChange([...products, { name: trimmed, current: '', worked: '', reaction: '', reactionText: '', stopReasons: [], stopOther: '' }]);
     setQuery('');
+    setAdding(false);
     setExpandedIndex(null);
   };
   const updateProduct = (index, patch) => onChange(products.map((p, i) => (i === index ? { ...p, ...patch } : p)));
@@ -1149,19 +1158,38 @@ function ProductHistoryBuilder({ products, onChange }) {
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 9, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, borderRadius: 99, padding: '11px 14px' }}>
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-        <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search products" style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 13, minWidth: 0 }} />
-      </div>
-      {query.trim().length > 0 && (
-        <div style={{ marginTop: 8, borderRadius: 16, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, overflow: 'hidden' }}>
-          <div onClick={() => addProduct(query)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '13px 14px', color: SELECTED_TEXT, fontWeight: 600, cursor: 'pointer', fontSize: 13.5, fontFamily: "'DM Sans',sans-serif" }}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={SELECTED_TEXT} strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
-            <span>Add "{query.trim()}"</span>
+      {!adding ? (
+        <div
+          onClick={() => setAdding(true)}
+          style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer',
+            padding: '15px', borderRadius: 16, border: '1.5px dashed ' + ROW_BORDER, background: 'transparent',
+            fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 13.5, color: LABEL_GOLD,
+          }}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={LABEL_GOLD} strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
+          Add a product or brand
+        </div>
+      ) : (
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 9, background: CARD_BG, border: '1.5px solid ' + ACCENT_BORDER, borderRadius: 99, padding: '11px 14px' }}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
+            <input autoFocus value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && query.trim()) addProduct(query); }} placeholder="Search products" style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 13, minWidth: 0 }} />
+            <span onClick={() => { setAdding(false); setQuery(''); }} style={{ cursor: 'pointer', opacity: 0.55, flex: 'none', display: 'flex' }}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="2.6" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+            </span>
           </div>
-          {suggestions.map((name) => (
-            <div key={name} onClick={() => addProduct(name)} style={{ padding: '13px 14px', fontSize: 13.5, color: INK, cursor: 'pointer', borderTop: '1px solid ' + ROW_BORDER }}>{name}</div>
-          ))}
+          {query.trim().length > 0 && (
+            <div style={{ marginTop: 8, borderRadius: 16, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, overflow: 'hidden' }}>
+              <div onClick={() => addProduct(query)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '13px 14px', color: SELECTED_TEXT, fontWeight: 600, cursor: 'pointer', fontSize: 13.5, fontFamily: "'DM Sans',sans-serif" }}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={SELECTED_TEXT} strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
+                <span>Add "{query.trim()}"</span>
+              </div>
+              {suggestions.map((name) => (
+                <div key={name} onClick={() => addProduct(name)} style={{ padding: '13px 14px', fontSize: 13.5, color: INK, cursor: 'pointer', borderTop: '1px solid ' + ROW_BORDER }}>{name}</div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -1601,10 +1629,10 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
             {notAFactor}
           </div>
 
-          <div style={{ height: 1, background: ROW_BORDER, margin: '24px 0 20px' }} />
+          <div style={{ height: 1, background: 'rgba(255,249,242,.24)', margin: '24px 0 20px' }} />
 
-          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 14, color: INK, marginBottom: 4 }}>How often do you spend $75 or more?</div>
-          <p style={{ margin: '0 0 14px', fontFamily: 'Inter,system-ui,sans-serif', fontSize: 12, lineHeight: 1.5, color: BODY_TEXT }}>This is about purchase frequency, not your usual preferred price per product.</p>
+          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 14, color: '#FFF9F2', marginBottom: 4 }}>How often do you spend $75 or more?</div>
+          <p style={{ margin: '0 0 14px', fontFamily: 'Inter,system-ui,sans-serif', fontSize: 12, lineHeight: 1.5, color: 'rgba(255,249,242,.72)' }}>This is about purchase frequency, not your usual preferred price per product.</p>
           <Timeline options={LARGE_PURCHASE_FREQUENCY} value={intake.largePurchaseFrequency} onChange={(v) => set('largePurchaseFrequency', v)} />
         </>
       );
@@ -1673,9 +1701,6 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
         <div style={{ padding: '22px 20px 0' }}>
           <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 25, lineHeight: 1.17, color: '#FFF9F2' }}>{step.title}</div>
           {step.subtitle && <p style={{ margin: '8px 0 0', fontFamily: 'Inter,system-ui,sans-serif', fontSize: 12.5, lineHeight: 1.5, color: 'rgba(255,249,242,.72)' }}>{step.subtitle}</p>}
-          <p style={{ margin: '9px 0 0', fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.1px', textTransform: 'uppercase', color: step.optional ? 'rgba(255,249,242,.5)' : '#FFC774', fontWeight: 600 }}>
-            {step.optional ? 'Optional' : 'Required for safety'}
-          </p>
           {flaggedStepIds.has(step.id) && (
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 11, padding: '6px 12px', borderRadius: 99, background: 'rgba(180,64,42,.16)', border: '1px solid rgba(180,64,42,.35)', color: '#FFC9BC', fontSize: 11.5, fontWeight: 600 }}>
               <span style={{ width: 6, height: 6, borderRadius: 99, background: '#E8846F', flex: 'none' }} />
