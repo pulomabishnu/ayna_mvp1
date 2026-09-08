@@ -206,6 +206,11 @@ export const BRAND_PRODUCTS = [
         price: '$32.91',
         whereToBuy: ['helloneycher.com', 'Amazon'],
         url: 'https://www.helloneycher.com/product/vaginal-moisturizer',
+        // Ayna affiliate link — affiliateUrl wins over `url` for the Buy Now /
+        // Visit Site destination (see getBuyUrl in ProductModal.jsx). Verified
+        // 2026-09-08: the site's real path is singular "/product/", not the
+        // "/products/" path from the affiliate program's own link table.
+        affiliateUrl: 'https://helloneycher.com/product/vaginal-moisturizer?sca_ref=12276038.vwBYOKCYa7&utm_source=affiliate&utm_medium=socialmedia&utm_campaign=affiliate',
         faqUrl: 'https://www.helloneycher.com/faq',
         image: 'https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/686eb5fcdbbd35b6fc957602_Frame%201000011567.jpg',
         summary: 'A non-hormonal vaginal moisturizer positioned as a natural alternative for dryness, irritation, and discomfort. Part of Neycher\'s intimate-care line.',
@@ -237,6 +242,13 @@ export const BRAND_PRODUCTS = [
         price: '$29.97 (10 suppositories)',
         whereToBuy: ['helloneycher.com'],
         url: 'https://www.helloneycher.com/product/odor-be-gone',
+        // Ayna affiliate link — affiliateUrl wins over `url` for the Buy Now /
+        // Visit Site destination (see getBuyUrl in ProductModal.jsx). Verified
+        // 2026-09-08: the site's real path is singular "/product/", not the
+        // "/products/" path from the affiliate program's own link table.
+        // Note: this product showed "Notify when available" (out of stock) at
+        // verification time; the affiliate link still resolves to the real page.
+        affiliateUrl: 'https://helloneycher.com/product/odor-be-gone?sca_ref=12276038.vwBYOKCYa7&utm_source=affiliate&utm_medium=socialmedia&utm_campaign=affiliate',
         faqUrl: 'https://www.helloneycher.com/faq',
         image: 'https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/6a0b3e76d248803f468a5c1e_Frame%201000011416%20(1).webp',
         summary: 'Boric acid vaginal suppositories (10 per box) aimed at odor and pH balance. Brand directs use once every 2–3 days outside your period, and not for more than 30 consecutive days.',
@@ -269,6 +281,11 @@ export const BRAND_PRODUCTS = [
         price: '$25.97',
         whereToBuy: ['helloneycher.com'],
         url: 'https://www.helloneycher.com/product/hydrobloom-moisturizing-gel',
+        // Ayna affiliate link — affiliateUrl wins over `url` for the Buy Now /
+        // Visit Site destination (see getBuyUrl in ProductModal.jsx). Verified
+        // 2026-09-08: the site's real path is singular "/product/", not the
+        // "/products/" path from the affiliate program's own link table.
+        affiliateUrl: 'https://helloneycher.com/product/hydrobloom-moisturizing-gel?sca_ref=12276038.vwBYOKCYa7&utm_source=affiliate&utm_medium=socialmedia&utm_campaign=affiliate',
         faqUrl: 'https://www.helloneycher.com/faq',
         image: 'https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/69b007753e5c0c33308cc349_hand.webp',
         summary: 'A hormone-free vaginal moisturizing gel with hyaluronic acid and botanical extracts. Brand directs use for 7–10 consecutive days outside your period, and not for more than 30 consecutive days.',
