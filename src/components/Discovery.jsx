@@ -109,24 +109,6 @@ function isSponsoredItem(item) {
     return item?.sponsored === true || item?.isSponsored === true || String(item?.placementType || '').toLowerCase() === 'sponsored';
 }
 
-function getExplicitMatchPercent(item) {
-    const candidates = [
-        item?.aynaMatch,
-        item?.aynaMatchPercent,
-        item?.matchPercent,
-        item?.matchPercentage,
-        item?.personalizationScore,
-    ];
-    for (const value of candidates) {
-        if (value == null || value === '') continue;
-        const numeric = typeof value === 'string' ? Number(value.replace('%', '').trim()) : Number(value);
-        if (!Number.isFinite(numeric)) continue;
-        const normalized = numeric > 0 && numeric <= 1 ? numeric * 100 : numeric;
-        if (normalized >= 0 && normalized <= 100) return Math.round(normalized);
-    }
-    return null;
-}
-
 function matchesSustainability(item, filter) {
     if (filter === 'all') return true;
     const text = productSearchText(item);
@@ -1436,10 +1418,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     const cardImageSrc = resolvedItemImage !== undefined ? resolvedItemImage : item.image;
                     const imageStillLoading = resolvedItemImage === undefined && isPlaceholderProductImage(item.image, item.type === 'digital');
                     const matchDetails = getProductMatchDetailsForProduct(item, quizResults, healthProfile);
-                    const profileMatchPercent = matchDetails.percent;
-                    const matchPercent = profileMatchPercent != null
-                        ? profileMatchPercent
-                        : getExplicitMatchPercent(item);
+                    const matchPercent = matchDetails.percent;
                     const eligibility = getExplicitEligibility(item);
                     const eligibilityLabel = eligibility.fsa && eligibility.hsa ? 'FSA/HSA' : eligibility.fsa ? 'FSA' : eligibility.hsa ? 'HSA' : '';
                     const isWishlisted = !!savedProducts[item.id];
