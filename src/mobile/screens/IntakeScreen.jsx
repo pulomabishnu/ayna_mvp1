@@ -817,7 +817,7 @@ function isMinorAge(value) {
 // opaque cutout over the track — that only blends in when its background
 // actually matches what's immediately behind it, which the page background
 // no longer does now that it's back to the dark hero gradient.
-function AgeCard({ value, onChange, underage }) {
+function AgeCard({ value, onChange, underage, onOpenGate }) {
   const numeric = value ? Number(value) : 28;
   const pct = ((numeric - AGE_MIN) / (AGE_MAX - AGE_MIN)) * 100;
   const step = (delta) => onChange(String(Math.min(AGE_MAX, Math.max(AGE_MIN, numeric + delta))));
@@ -857,11 +857,14 @@ function AgeCard({ value, onChange, underage }) {
         </div>
       </div>
       {underage && (
-        <div style={{ display: 'flex', gap: 11, alignItems: 'flex-start', marginTop: 20, padding: '14px 15px', borderRadius: 16, background: WARNING_BG, border: '1px solid ' + WARNING_BORDER_SOFT }}>
+        <div
+          onClick={onOpenGate}
+          style={{ display: 'flex', gap: 11, alignItems: 'flex-start', marginTop: 20, padding: '14px 15px', borderRadius: 16, background: WARNING_BG, border: '1px solid ' + WARNING_BORDER_SOFT, cursor: 'pointer' }}
+        >
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={WARNING_BORDER} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flex: 'none', marginTop: 1 }}><circle cx="12" cy="12" r="9" /><path d="M12 8v4M12 16h.01" /></svg>
           <div>
             <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 13, color: WARNING_TITLE }}>ayna is for ages 18 and up</div>
-            <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 12, lineHeight: 1.5, color: WARNING_BODY, marginTop: 4 }}>We can't build a profile from this answer. Tap Continue to see what you can still do here.</div>
+            <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 12, lineHeight: 1.5, color: WARNING_BODY, marginTop: 4 }}>We can't build a profile from this answer. Tap here to see what you can still do.</div>
           </div>
         </div>
       )}
@@ -1605,10 +1608,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
     } else if (onBack) onBack();
   };
   const goNext = () => {
-    if (step.id === 'age' && isMinorAge(intake.age)) {
-      setMinorGate(true);
-      return;
-    }
+    if (step.id === 'age' && isMinorAge(intake.age)) return;
     if (!requiredReady(step.id, intake)) return;
     if (currentIndex >= visibleSteps.length - 1) {
       onComplete(mapIntakeToLegacyQuizProfile(buildSnapshot(intake)));
@@ -1621,7 +1621,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
   const selectedLifeStages = getLifeStages(intake);
 
   const renderBody = () => {
-    if (step.type === 'age') return <AgeCard value={intake.age} onChange={(v) => set('age', v)} underage={isMinorAge(intake.age)} />;
+    if (step.type === 'age') return <AgeCard value={intake.age} onChange={(v) => set('age', v)} underage={isMinorAge(intake.age)} onOpenGate={() => setMinorGate(true)} />;
 
     if (step.type === 'lifeStage') return (
       <>
@@ -1808,8 +1808,8 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
     step.id === 'allergies' ? intake.allergyItems.length :
     step.id === 'formats' ? intake.preferredFormats.length :
     step.id === 'avoidIngredients' ? intake.avoidIngredients.length : 0;
-  const ready = requiredReady(step.id, intake);
   const minorBlocked = step.id === 'age' && isMinorAge(intake.age);
+  const ready = requiredReady(step.id, intake) && !minorBlocked;
 
   if (minorGate) {
     return <MinorGateScreen onChangeAge={() => setMinorGate(false)} onBrowseLibrary={onBack} />;
@@ -1866,12 +1866,12 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
           disabled={!ready}
           style={{
             width: '100%', padding: 15, border: 'none', borderRadius: 99,
-            background: minorBlocked ? 'rgba(255,249,242,.18)' : (ready ? 'linear-gradient(140deg,#FFDCA8,#FFC774 46%,#E8843C)' : 'rgba(255,249,242,.18)'),
-            color: minorBlocked ? 'rgba(255,249,242,.5)' : (ready ? NAVY : 'rgba(255,249,242,.5)'),
+            background: ready ? 'linear-gradient(140deg,#FFDCA8,#FFC774 46%,#E8843C)' : 'rgba(255,249,242,.18)',
+            color: ready ? NAVY : 'rgba(255,249,242,.5)',
             fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 15,
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9,
             cursor: ready ? 'pointer' : 'not-allowed',
-            boxShadow: !minorBlocked && ready ? '0 16px 30px -14px rgba(232,132,60,.55)' : 'none',
+            boxShadow: ready ? '0 16px 30px -14px rgba(232,132,60,.55)' : 'none',
           }}
         >
           <span>{isLast ? 'Finish profile' : 'Continue'}</span>
