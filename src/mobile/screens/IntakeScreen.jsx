@@ -781,7 +781,7 @@ function TextInput({ value, onChange, placeholder, inputMode, maxLength }) {
 function OtherBox({ label, value, onChange, placeholder }) {
   return (
     <div style={{ marginTop: 16, textAlign: 'left' }}>
-      <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.1px', textTransform: 'uppercase', color: LABEL_GOLD, marginBottom: 9 }}>{label}</div>
+      <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.1px', textTransform: 'uppercase', color: '#FFC774', marginBottom: 9 }}>{label}</div>
       <TextInput value={value} onChange={onChange} placeholder={placeholder} />
     </div>
   );
@@ -844,36 +844,72 @@ function AgeCard({ value, onChange }) {
 // input laid on top (same overlay technique as the age slider) — a single
 // text field is what's actually focusable/typeable, the boxes are just its
 // display.
+// Five real per-digit inputs (the standard OTP-input pattern), not one
+// invisible input overlaid on decorative boxes — that overlay trick proved
+// unreliable for actually opening the keyboard/accepting taps on real
+// mobile browsers, where each digit box here is itself a genuine,
+// correctly-sized, tappable, typeable <input>.
 function ZipDigits({ value, onChange, onSkip }) {
-  const inputRef = useRef(null);
-  const digits = String(value || '').padEnd(5, ' ').split('');
+  const inputRefs = useRef([]);
+  const chars = String(value || '').split('');
+
+  const setDigit = (index, raw) => {
+    const clean = raw.replace(/\D/g, '');
+    const next = [...chars];
+    if (!clean) {
+      next[index] = '';
+      onChange(next.join('').slice(0, 5));
+      return;
+    }
+    next[index] = clean[clean.length - 1];
+    onChange(next.join('').slice(0, 5));
+    if (index < 4) {
+      const nextInput = inputRefs.current[index + 1];
+      if (nextInput) nextInput.focus();
+    }
+  };
+
+  const handleKeyDown = (index, e) => {
+    if (e.key === 'Backspace' && !chars[index] && index > 0) {
+      const prevInput = inputRefs.current[index - 1];
+      if (prevInput) prevInput.focus();
+    }
+  };
+
+  const handlePaste = (e) => {
+    const text = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 5);
+    if (!text) return;
+    e.preventDefault();
+    onChange(text);
+    const lastIndex = Math.max(0, Math.min(text.length, 5) - 1);
+    const el = inputRefs.current[lastIndex];
+    if (el) el.focus();
+  };
+
   return (
     <div>
-      <div
-        onClick={() => inputRef.current && inputRef.current.focus()}
-        style={{ position: 'relative', display: 'flex', justifyContent: 'center', gap: 9, cursor: 'text' }}
-      >
-        {digits.map((digit, i) => (
-          <div key={i} style={{
-            width: 52, height: 62, borderRadius: 16, background: CARD_BG,
-            border: '1.5px solid ' + (digit.trim() ? ACCENT_BORDER : ROW_BORDER),
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontFamily: "'Playfair Display',serif", fontSize: 26, color: NAVY,
-          }}>
-            {digit.trim()}
-          </div>
+      <div style={{ display: 'flex', justifyContent: 'center', gap: 9 }}>
+        {[0, 1, 2, 3, 4].map((i) => (
+          <input
+            key={i}
+            ref={(el) => { inputRefs.current[i] = el; }}
+            value={chars[i] || ''}
+            onChange={(e) => setDigit(i, e.target.value)}
+            onKeyDown={(e) => handleKeyDown(i, e)}
+            onPaste={handlePaste}
+            type="tel"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            maxLength={1}
+            aria-label={`ZIP code digit ${i + 1}`}
+            style={{
+              width: 52, height: 62, borderRadius: 16, background: CARD_BG,
+              border: '1.5px solid ' + (chars[i] ? ACCENT_BORDER : ROW_BORDER),
+              textAlign: 'center', padding: 0, outline: 'none', WebkitAppearance: 'none',
+              fontFamily: "'Playfair Display',serif", fontSize: 26, color: NAVY,
+            }}
+          />
         ))}
-        <input
-          ref={inputRef}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          type="tel"
-          inputMode="numeric"
-          pattern="[0-9]*"
-          maxLength={5}
-          aria-label="ZIP code"
-          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', zIndex: 2, opacity: 0, border: 'none', outline: 'none', textAlign: 'center', fontSize: 24, touchAction: 'manipulation' }}
-        />
       </div>
       {onSkip && (
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: 20 }}>
@@ -907,7 +943,7 @@ function Scale({ options, value, onChange }) {
                 background: on ? `linear-gradient(180deg, ${ACCENT_BG}, ${ACCENT_BORDER})` : 'var(--ayna-track)',
                 boxShadow: on ? '0 6px 16px rgba(232,169,79,.35)' : 'none',
               }} />
-              <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: on ? 600 : 500, fontSize: 10.5, lineHeight: 1.2, textAlign: 'center', color: on ? SELECTED_TEXT : MUTED }}>{opt}</span>
+              <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: on ? 600 : 500, fontSize: 10.5, lineHeight: 1.2, textAlign: 'center', color: on ? '#FFC774' : 'rgba(255,249,242,.6)' }}>{opt}</span>
             </div>
           );
         })}
@@ -1035,11 +1071,11 @@ function AddProductBuilder({ values, onChange, suggestions, historyNames, footer
           onClick={() => setAdding(true)}
           style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer',
-            padding: '15px', borderRadius: 16, border: '1.5px dashed ' + ROW_BORDER, background: 'transparent',
-            fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 13.5, color: LABEL_GOLD,
+            padding: '15px', borderRadius: 16, border: '1.5px dashed rgba(255,249,242,.35)', background: 'transparent',
+            fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 13.5, color: '#FFC774',
           }}
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={LABEL_GOLD} strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFC774" strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
           Add a product or brand
         </div>
       ) : (
@@ -1076,7 +1112,7 @@ function AddProductBuilder({ values, onChange, suggestions, historyNames, footer
 
       {quickAdd.length > 0 && (
         <div style={{ marginTop: 18 }}>
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.1px', textTransform: 'uppercase', color: LABEL_GOLD, marginBottom: 10 }}>From your history</div>
+          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.1px', textTransform: 'uppercase', color: '#FFC774', marginBottom: 10 }}>From your history</div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
             {quickAdd.map((name) => (
               <div
@@ -1097,7 +1133,7 @@ function AddProductBuilder({ values, onChange, suggestions, historyNames, footer
       )}
 
       {footerText && (
-        <p style={{ margin: '18px 0 0', fontFamily: 'Inter,system-ui,sans-serif', fontSize: 11.5, lineHeight: 1.55, color: MUTED }}>{footerText}</p>
+        <p style={{ margin: '18px 0 0', fontFamily: 'Inter,system-ui,sans-serif', fontSize: 11.5, lineHeight: 1.55, color: 'rgba(255,249,242,.6)' }}>{footerText}</p>
       )}
     </div>
   );
@@ -1119,15 +1155,15 @@ function SearchableGroups({ groups, selected, onToggle, search, onSearch }) {
           return (
             <div key={group.label} style={{ marginBottom: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 11 }}>
-                <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 13, color: INK }}>{group.label}</span>
-                <span style={{ flex: 1, height: 1, background: ROW_BORDER }} />
-                <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, color: count > 0 ? LABEL_GOLD : MUTED }}>{count}/{group.items.length}</span>
+                <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 13, color: '#FFF9F2' }}>{group.label}</span>
+                <span style={{ flex: 1, height: 1, background: 'rgba(255,249,242,.24)' }} />
+                <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, color: count > 0 ? '#FFC774' : 'rgba(255,249,242,.55)' }}>{count}/{group.items.length}</span>
               </div>
               <RowChoiceList items={group.items} selected={selected} onToggle={onToggle} />
             </div>
           );
         })}
-        {visible.length === 0 && <div style={{ padding: '22px 4px', color: MUTED, fontSize: 13 }}>No matches. Try a different search.</div>}
+        {visible.length === 0 && <div style={{ padding: '22px 4px', color: 'rgba(255,249,242,.6)', fontSize: 13 }}>No matches. Try a different search.</div>}
       </div>
     </div>
   );
@@ -1163,11 +1199,11 @@ function ProductHistoryBuilder({ products, onChange }) {
           onClick={() => setAdding(true)}
           style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer',
-            padding: '15px', borderRadius: 16, border: '1.5px dashed ' + ROW_BORDER, background: 'transparent',
-            fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 13.5, color: LABEL_GOLD,
+            padding: '15px', borderRadius: 16, border: '1.5px dashed rgba(255,249,242,.35)', background: 'transparent',
+            fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 13.5, color: '#FFC774',
           }}
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={LABEL_GOLD} strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFC774" strokeWidth="2.6" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
           Add a product or brand
         </div>
       ) : (
@@ -1525,7 +1561,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
         <>
           <SearchBar value={search} onChange={setSearch} placeholder="Search conditions..." />
           <RowChoiceList items={filtered} selected={intake.diagnosisSelections} onToggle={(v) => toggleExclusive('diagnosisSelections', v, ['None that I know of', 'Prefer not to say'])} exclusiveValues={['None that I know of', 'Prefer not to say']} />
-          {filtered.length === 0 && <div style={{ padding: '22px 4px', color: MUTED, fontSize: 13 }}>No matches. Try a different search.</div>}
+          {filtered.length === 0 && <div style={{ padding: '22px 4px', color: 'rgba(255,249,242,.6)', fontSize: 13 }}>No matches. Try a different search.</div>}
           {intake.diagnosisSelections.includes('Other / not listed') && (
             <OtherBox label="What condition was diagnosed?" value={intake.conditionOtherText} onChange={(v) => set('conditionOtherText', v)} placeholder="Type the condition..." />
           )}
@@ -1645,7 +1681,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
         <>
           <SearchBar value={search} onChange={setSearch} placeholder="Search preferences..." />
           <Pills options={filtered} selected={intake.avoidIngredients} onToggle={(v) => toggleExclusive('avoidIngredients', v, ['No preference'])} exclusiveValues={['No preference']} left />
-          {filtered.length === 0 && <div style={{ padding: '22px 4px', color: MUTED, fontSize: 13 }}>No matches. Try a different search.</div>}
+          {filtered.length === 0 && <div style={{ padding: '22px 4px', color: 'rgba(255,249,242,.6)', fontSize: 13 }}>No matches. Try a different search.</div>}
           {intake.avoidIngredients.includes('Other') && (
             <OtherBox label="Other preference" value={intake.avoidIngredientsOtherText} onChange={(v) => set('avoidIngredientsOtherText', v)} placeholder="Type here..." />
           )}
@@ -1686,7 +1722,6 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.3px', textTransform: 'uppercase', color: '#FFC774', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{SECTION_LABELS[step.section]}</div>
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '.8px', color: 'rgba(255,249,242,.55)', marginTop: 2 }}>STEP {currentIndex + 1} OF 8–24</div>
           </div>
           {step.optional && (
             <div onClick={goNext} style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, color: 'rgba(255,249,242,.65)', cursor: 'pointer', flex: 'none' }}>Skip</div>
