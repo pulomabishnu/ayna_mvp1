@@ -790,6 +790,23 @@ function OtherBox({ label, value, onChange, placeholder }) {
 const AGE_MIN = 13;
 const AGE_MAX = 90;
 
+// Under-18 gate (Ayna_Minor_Gate.html design reference) — a fixed warm
+// warning tone rather than a --ayna-* var, same reasoning as SELECTED_TEXT
+// above: the reference keeps this specific color regardless of theme, and
+// there's no existing token for it.
+const MINOR_AGE_LIMIT = 18;
+const WARNING_BORDER = '#B4402A';
+const WARNING_BG = '#FAEDE8';
+const WARNING_BORDER_SOFT = '#E8C6B8';
+const WARNING_TITLE = '#8A2F1D';
+const WARNING_BODY = '#7A4234';
+
+function isMinorAge(value) {
+  if (value === '' || value === null || value === undefined) return false;
+  const n = Number(value);
+  return Number.isFinite(n) && n < MINOR_AGE_LIMIT;
+}
+
 // Pattern A2: a real, draggable slider (invisible native <input type=range>
 // layered over a custom-drawn track/fill/thumb, since inline styles can't
 // reach ::-webkit-slider-thumb) plus a manual numeric-entry stepper panel
@@ -800,17 +817,20 @@ const AGE_MAX = 90;
 // opaque cutout over the track — that only blends in when its background
 // actually matches what's immediately behind it, which the page background
 // no longer does now that it's back to the dark hero gradient.
-function AgeCard({ value, onChange }) {
+function AgeCard({ value, onChange, underage }) {
   const numeric = value ? Number(value) : 28;
   const pct = ((numeric - AGE_MIN) / (AGE_MAX - AGE_MIN)) * 100;
   const step = (delta) => onChange(String(Math.min(AGE_MAX, Math.max(AGE_MIN, numeric + delta))));
+  const trackFill = underage ? 'linear-gradient(90deg, #F0D9CF, #C98A6D)' : `linear-gradient(90deg, ${ACCENT_BG}, ${ACCENT_BORDER})`;
+  const thumbBorder = underage ? WARNING_BORDER : ACCENT_BORDER;
+  const valueColor = underage ? WARNING_BORDER : NAVY;
   return (
     <div style={{ background: CARD_BG, borderRadius: 24, padding: '40px 20px 20px', boxShadow: '0 20px 44px -22px rgba(0,0,0,.5)' }}>
       <div style={{ position: 'relative', height: 40 }}>
         <div style={{ position: 'absolute', left: 0, right: 0, top: 16, height: 8, borderRadius: 99, background: 'var(--ayna-track)' }} />
-        <div style={{ position: 'absolute', left: 0, width: `${pct}%`, top: 16, height: 8, borderRadius: 99, background: `linear-gradient(90deg, ${ACCENT_BG}, ${ACCENT_BORDER})` }} />
-        <div style={{ position: 'absolute', left: `${pct}%`, top: 4, transform: 'translateX(-50%)', width: 32, height: 32, borderRadius: 99, background: CARD_BG, border: '3px solid ' + ACCENT_BORDER, boxShadow: '0 6px 16px rgba(232,169,79,.4)', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', left: `${pct}%`, top: -38, transform: 'translateX(-50%)', fontFamily: "'Playfair Display',serif", fontSize: 36, color: NAVY, background: CARD_BG, padding: '0 8px', pointerEvents: 'none' }}>
+        <div style={{ position: 'absolute', left: 0, width: `${pct}%`, top: 16, height: 8, borderRadius: 99, background: trackFill }} />
+        <div style={{ position: 'absolute', left: `${pct}%`, top: 4, transform: 'translateX(-50%)', width: 32, height: 32, borderRadius: 99, background: CARD_BG, border: '3px solid ' + thumbBorder, boxShadow: '0 6px 16px rgba(232,169,79,.4)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', left: `${pct}%`, top: -38, transform: 'translateX(-50%)', fontFamily: "'Playfair Display',serif", fontSize: 36, color: valueColor, background: CARD_BG, padding: '0 8px', pointerEvents: 'none' }}>
           {value || '—'}
         </div>
         <input
@@ -836,14 +856,19 @@ function AgeCard({ value, onChange }) {
           </div>
         </div>
       </div>
+      {underage && (
+        <div style={{ display: 'flex', gap: 11, alignItems: 'flex-start', marginTop: 20, padding: '14px 15px', borderRadius: 16, background: WARNING_BG, border: '1px solid ' + WARNING_BORDER_SOFT }}>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={WARNING_BORDER} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flex: 'none', marginTop: 1 }}><circle cx="12" cy="12" r="9" /><path d="M12 8v4M12 16h.01" /></svg>
+          <div>
+            <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 13, color: WARNING_TITLE }}>ayna is for ages 18 and up</div>
+            <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 12, lineHeight: 1.5, color: WARNING_BODY, marginTop: 4 }}>We can't build a profile from this answer. Tap Continue to see what you can still do here.</div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-// ZIP utility pattern: 5 digit boxes reading off one real, invisible numeric
-// input laid on top (same overlay technique as the age slider) — a single
-// text field is what's actually focusable/typeable, the boxes are just its
-// display.
 // Five real per-digit inputs (the standard OTP-input pattern), not one
 // invisible input overlaid on decorative boxes — that overlay trick proved
 // unreliable for actually opening the keyboard/accepting taps on real
@@ -1434,6 +1459,83 @@ function TextAreaField({ value, onChange, placeholder }) {
   );
 }
 
+// Under-18 gate, terminal screen (Ayna_Minor_Gate.html design reference).
+// Deliberately not styled with the rest of the quiz's dark hero-gradient
+// chrome — this is a policy/stop screen, not another question card, so it
+// keeps its own light card look from the reference. No progress bar, no
+// Skip, and nothing about the intake carries forward from here: leaving
+// (Browse the reading library) unmounts this screen entirely the same as
+// every other exit from this file, and Change my age just returns to the
+// still-populated age question — nothing was ever cleared.
+function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
+  const whatYouCanDo = [
+    ['01', 'Talk to someone who can help', 'A parent, guardian, school nurse or your own doctor can look at symptoms with your full history in front of them.'],
+    ['02', 'Read, without a profile', 'Our explainers on cycles, sleep and nutrition stay open to everyone. Nothing personalized, nothing stored.'],
+    ['03', 'Come back at 18', "We'll still be here, and the quiz takes about six minutes."],
+  ];
+  return (
+    <div style={{ flex: 1, minWidth: 0, minHeight: 0, display: 'flex', flexDirection: 'column', background: 'var(--ayna-bg)', color: INK, fontFamily: "'DM Sans',system-ui,sans-serif" }}>
+      <div style={{ flex: 'none', padding: 'max(16px, env(safe-area-inset-top)) 20px 12px', borderBottom: '1px solid ' + ROW_BORDER, background: CARD_BG }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div onClick={onChangeAge} style={{ width: 30, height: 30, borderRadius: 99, border: '1.5px solid ' + ROW_BORDER, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flex: 'none' }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.3px', textTransform: 'uppercase', color: LABEL_GOLD }}>About you</div>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '.8px', color: MUTED, marginTop: 2 }}>Quiz paused</div>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ flex: 1, minWidth: 0, minHeight: 0, overflowY: 'auto' }}>
+        <div style={{ padding: '38px 24px 30px', background: `linear-gradient(170deg, ${WARNING_BG}, ${CARD_BG})` }}>
+          <div style={{ width: 54, height: 54, borderRadius: 99, background: CARD_BG, border: '1.5px solid ' + WARNING_BORDER_SOFT, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 20px -10px rgba(180,64,42,.3)' }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={WARNING_BORDER} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l8 4v5c0 4.5-3.2 7.9-8 9-4.8-1.1-8-4.5-8-9V7l8-4z" /><path d="M12 10v3.5" /><path d="M12 16.5h.01" /></svg>
+          </div>
+          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.3px', textTransform: 'uppercase', color: LABEL_GOLD, marginTop: 20 }}>Age requirement</div>
+          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 31, lineHeight: 1.12, color: INK, marginTop: 9 }}>We can't take you through the quiz</div>
+          <p style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 14, lineHeight: 1.6, color: BODY_TEXT, margin: '12px 0 0' }}>
+            ayna is built for people 18 and over. Because the quiz leads to supplement and product guidance, we don't create profiles for minors — that's a conversation for a parent, guardian or clinician who knows your history.
+          </p>
+        </div>
+
+        <div style={{ padding: '26px 24px 30px' }}>
+          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 14, color: INK }}>What you can do now</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 13 }}>
+            {whatYouCanDo.map(([num, title, body]) => (
+              <div key={num} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', padding: '15px 16px', borderRadius: 18, background: PANEL_BG, border: '1px solid ' + ROW_BORDER }}>
+                <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 17, color: LABEL_GOLD, flex: 'none', lineHeight: 1.1 }}>{num}</div>
+                <div>
+                  <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 13.5, color: INK }}>{title}</div>
+                  <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 12.5, lineHeight: 1.5, color: BODY_TEXT, marginTop: 3 }}>{body}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ marginTop: 22, padding: '15px 16px', borderRadius: 18, background: CARD_BG, border: '1px solid ' + ROW_BORDER }}>
+            <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 13, color: INK }}>Entered the wrong age?</div>
+            <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 12.5, lineHeight: 1.5, color: BODY_TEXT, marginTop: 4 }}>Go back one screen and change it — nothing has been saved yet.</div>
+          </div>
+
+          <p style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 11, lineHeight: 1.55, color: MUTED, margin: '16px 0 0' }}>
+            If you're in immediate distress, contact a local emergency service or a crisis line rather than waiting on an answer here.
+          </p>
+        </div>
+      </div>
+
+      <div style={{ flex: 'none', padding: '14px 20px max(20px, env(safe-area-inset-bottom))', borderTop: '1px solid ' + ROW_BORDER, background: CARD_BG }}>
+        <div onClick={onBrowseLibrary} style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 15, textAlign: 'center', padding: 15, borderRadius: 99, cursor: 'pointer', background: NAVY, color: '#FFFCF9', boxShadow: '0 14px 28px -14px rgba(36,42,82,.65)' }}>
+          Browse the reading library
+        </div>
+        <div onClick={onChangeAge} style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 14.5, textAlign: 'center', padding: 14, borderRadius: 99, cursor: 'pointer', color: NAVY, border: '1.5px solid ' + NAVY, marginTop: 9 }}>
+          Change my age
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* --------------------------------- Main screen --------------------------------- */
 
 export default function IntakeScreen({ onBack, onComplete, initialSnapshot = null }) {
@@ -1444,6 +1546,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
   // re-derived as answers change, so a step's flag clears only by actually
   // reaching and completing it, not by something else on the page changing.
   const [flaggedStepIds] = useState(() => new Set(getIncompleteStepIds(initialSnapshot)));
+  const [minorGate, setMinorGate] = useState(false);
 
   const visibleSteps = useMemo(() => {
     const steps = [
@@ -1502,6 +1605,10 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
     } else if (onBack) onBack();
   };
   const goNext = () => {
+    if (step.id === 'age' && isMinorAge(intake.age)) {
+      setMinorGate(true);
+      return;
+    }
     if (!requiredReady(step.id, intake)) return;
     if (currentIndex >= visibleSteps.length - 1) {
       onComplete(mapIntakeToLegacyQuizProfile(buildSnapshot(intake)));
@@ -1514,7 +1621,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
   const selectedLifeStages = getLifeStages(intake);
 
   const renderBody = () => {
-    if (step.type === 'age') return <AgeCard value={intake.age} onChange={(v) => set('age', v)} />;
+    if (step.type === 'age') return <AgeCard value={intake.age} onChange={(v) => set('age', v)} underage={isMinorAge(intake.age)} />;
 
     if (step.type === 'lifeStage') return (
       <>
@@ -1702,11 +1809,16 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
     step.id === 'formats' ? intake.preferredFormats.length :
     step.id === 'avoidIngredients' ? intake.avoidIngredients.length : 0;
   const ready = requiredReady(step.id, intake);
+  const minorBlocked = step.id === 'age' && isMinorAge(intake.age);
+
+  if (minorGate) {
+    return <MinorGateScreen onChangeAge={() => setMinorGate(false)} onBrowseLibrary={onBack} />;
+  }
 
   return (
     <div
       style={{
-        flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column',
+        flex: 1, minWidth: 0, minHeight: 0, display: 'flex', flexDirection: 'column',
         background: 'var(--ayna-gradient-hero, linear-gradient(165deg,#2A1F4E 0%,#4E3866 42%,#8A4A3C 74%,#D97A2B 100%))',
         color: '#FFF9F2', position: 'relative', overflow: 'hidden',
         fontFamily: "'DM Sans',system-ui,sans-serif", animation: 'ay-page .25s ease-out',
@@ -1732,7 +1844,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
         </div>
       </div>
 
-      <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', position: 'relative' }}>
+      <div style={{ flex: 1, minWidth: 0, minHeight: 0, overflowY: 'auto', position: 'relative' }}>
         <div style={{ padding: '22px 20px 0' }}>
           <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 25, lineHeight: 1.17, color: '#FFF9F2' }}>{step.title}</div>
           {step.subtitle && <p style={{ margin: '8px 0 0', fontFamily: 'Inter,system-ui,sans-serif', fontSize: 12.5, lineHeight: 1.5, color: 'rgba(255,249,242,.72)' }}>{step.subtitle}</p>}
@@ -1754,12 +1866,12 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
           disabled={!ready}
           style={{
             width: '100%', padding: 15, border: 'none', borderRadius: 99,
-            background: ready ? 'linear-gradient(140deg,#FFDCA8,#FFC774 46%,#E8843C)' : 'rgba(255,249,242,.18)',
-            color: ready ? NAVY : 'rgba(255,249,242,.5)',
+            background: minorBlocked ? 'rgba(255,249,242,.18)' : (ready ? 'linear-gradient(140deg,#FFDCA8,#FFC774 46%,#E8843C)' : 'rgba(255,249,242,.18)'),
+            color: minorBlocked ? 'rgba(255,249,242,.5)' : (ready ? NAVY : 'rgba(255,249,242,.5)'),
             fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 15,
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9,
             cursor: ready ? 'pointer' : 'not-allowed',
-            boxShadow: ready ? '0 16px 30px -14px rgba(232,132,60,.55)' : 'none',
+            boxShadow: !minorBlocked && ready ? '0 16px 30px -14px rgba(232,132,60,.55)' : 'none',
           }}
         >
           <span>{isLast ? 'Finish profile' : 'Continue'}</span>
