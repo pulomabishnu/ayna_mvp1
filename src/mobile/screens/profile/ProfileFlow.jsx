@@ -11,6 +11,7 @@ import {
   sendPhoneVerificationCode,
   confirmPhoneVerificationCode,
 } from '../../utils/notificationPreferencesApi.js';
+import { fetchDataExport } from '../../utils/dataExportApi.js';
 
 /**
  * Profile hub + its four sub-sections and one detail page, ported from the
@@ -1229,7 +1230,7 @@ function isAnalyticsOptedOut() {
   try { return typeof window !== 'undefined' && window.posthog?.has_opted_out_capturing?.() === true; } catch { return false; }
 }
 
-function PrivacyDataScreen({ onBack, onOpenLegal }) {
+function PrivacyDataScreen({ onBack, onOpenLegal, onOpenManageData }) {
   const [analyticsOptedOut, setAnalyticsOptedOut] = useState(isAnalyticsOptedOut);
 
   const toggleAnalytics = () => {
@@ -1255,10 +1256,9 @@ function PrivacyDataScreen({ onBack, onOpenLegal }) {
             title="Manage my data"
             sub="See what we hold — account details, intake answers, saved products."
             borderTop={false}
-            badge="COMING SOON"
-            dimmed
+            onClick={onOpenManageData}
           />
-          <AccountRow title="Download my data" sub="A full export of your account and intake answers." badge="COMING SOON" dimmed />
+          <AccountRow title="Download my data" sub="A full export of your account and intake answers." onClick={onOpenManageData} />
           <AccountRow
             title={<span style={{ color: '#B4402A' }}>Delete my account & data</span>}
             sub="Email us and we'll process it within a week — nothing kept after."
@@ -1350,6 +1350,174 @@ function LegalScreen({ onBack }) {
   );
 }
 
+/* ------------------------------ Manage my data ------------------------------ */
+
+function humanizeKey(key) {
+  return String(key)
+    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+    .replace(/^./, (c) => c.toUpperCase())
+    .trim();
+}
+
+// Recursive on purpose — the health intake profile in particular nests
+// arrays of objects (productHistory, trustRanking, etc.), and this is a
+// generic "show me everything" viewer rather than a hand-built form field
+// per intake question (that's IntakeScreen's job, not this screen's).
+function formatValue(value) {
+  if (value === null || value === undefined || value === '') return '—';
+  if (typeof value === 'boolean') return value ? 'Yes' : 'No';
+  if (Array.isArray(value)) {
+    if (!value.length) return '—';
+    return value.map((v) => formatValue(v)).join(' · ');
+  }
+  if (typeof value === 'object') {
+    const entries = Object.entries(value).filter(([, v]) => v !== null && v !== undefined && v !== '' && !(Array.isArray(v) && v.length === 0));
+    if (!entries.length) return '—';
+    return entries.map(([k, v]) => `${humanizeKey(k)}: ${formatValue(v)}`).join(', ');
+  }
+  return String(value);
+}
+
+function DataSection({ title, rows }) {
+  const visibleRows = rows.filter(([, v]) => v !== null && v !== undefined && v !== '' && !(Array.isArray(v) && v.length === 0));
+  if (!visibleRows.length) return null;
+  return (
+    <div style={{ marginBottom: 22 }}>
+      <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 11 }}>{title}</div>
+      <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
+        {visibleRows.map(([key, value], i) => (
+          <div key={key} style={{ display: 'flex', gap: 14, padding: '13px 0', borderTop: i === 0 ? 'none' : '1px solid var(--ayna-border)' }}>
+            <div style={{ flex: 'none', width: 120, fontSize: 12.5, color: 'var(--ayna-text-muted)' }}>{humanizeKey(key)}</div>
+            <div style={{ flex: 1, minWidth: 0, fontSize: 13, color: 'var(--ayna-text)', lineHeight: 1.5, wordBreak: 'break-word' }}>{formatValue(value)}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function downloadJson(data, filenamePrefix) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${filenamePrefix}-${new Date().toISOString().slice(0, 10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+// Real backend: GET /api/export-data, service-role-authenticated, pulling
+// live from the same tables the rest of the app writes to (phone_numbers,
+// notification_preferences, health_intakes, user_ecosystems) — nothing
+// here is placeholder or cached. Also serves "Download my data": both the
+// Privacy & data screen's two separate rows and Account information's
+// "Download a copy" row all land here now, rather than three different
+// half-built flows for the same real feature.
+function ManageDataScreen({ onBack }) {
+  const [loadState, setLoadState] = useState('loading'); // 'loading' | 'signed_out' | 'error' | 'ready'
+  const [data, setData] = useState(null);
+  const [copied, setCopied] = useState(false);
+
+  // Initial state is already 'loading', so the mount effect below doesn't
+  // need to (and per the react-hooks lint rule, shouldn't) set it again
+  // synchronously — only the retry button, which isn't running inside an
+  // effect, does that explicitly. Same pattern as PreferencesScreen above.
+  const fetchData = () => {
+    fetchDataExport()
+      .then((result) => { setData(result); setLoadState('ready'); })
+      .catch((e) => setLoadState(e instanceof NotSignedInError ? 'signed_out' : 'error'));
+  };
+
+  useEffect(() => { fetchData(); }, []);
+
+  const retry = () => {
+    setLoadState('loading');
+    fetchData();
+  };
+
+  const handleDownload = () => data && downloadJson(data, 'ayna-my-data');
+  const handleCopy = async () => {
+    if (!data) return;
+    try {
+      await navigator.clipboard.writeText(JSON.stringify(data, null, 2));
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch { /* clipboard unavailable in this context — download still works */ }
+  };
+
+  const hasAnyData = data && (data.phone || data.healthIntake || (data.savedProducts || []).length || data.notificationPreferences);
+
+  return (
+    <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+      <BackHeader title="Manage my data" onBack={onBack} />
+      <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '8px 20px 30px' }}>
+        <div style={{ fontSize: 13.5, color: 'var(--ayna-text-muted)', lineHeight: 1.6, marginBottom: 20 }}>
+          Every field below is read live from your account — nothing here is cached or approximate.
+        </div>
+
+        {loadState === 'loading' && (
+          <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontSize: 13 }}>Loading your data…</div>
+        )}
+
+        {loadState === 'signed_out' && (
+          <div style={{ border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: 18, fontSize: 13, color: 'var(--ayna-text-muted)', lineHeight: 1.55, textAlign: 'center' }}>
+            Sign in to see and download your data.
+          </div>
+        )}
+
+        {loadState === 'error' && (
+          <div style={{ border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: 18, textAlign: 'center' }}>
+            <div style={{ fontSize: 13, color: 'var(--ayna-text-muted)', lineHeight: 1.55, marginBottom: 12 }}>Couldn't load your data.</div>
+            <div onClick={retry} style={{ display: 'inline-block', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 12.5, padding: '9px 16px', borderRadius: 99, cursor: 'pointer' }}>Try again</div>
+          </div>
+        )}
+
+        {loadState === 'ready' && data && (
+          <>
+            <div style={{ display: 'flex', gap: 8, marginBottom: 22 }}>
+              <div onClick={handleDownload} style={{ flex: 1, textAlign: 'center', padding: '13px 0', borderRadius: 99, background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 13.5, cursor: 'pointer' }}>
+                Download as JSON
+              </div>
+              <div onClick={handleCopy} style={{ flex: 1, textAlign: 'center', padding: '13px 0', borderRadius: 99, border: '1px solid var(--ayna-border)', color: 'var(--ayna-heading)', fontWeight: 600, fontSize: 13.5, cursor: 'pointer' }}>
+                {copied ? 'Copied!' : 'Copy raw data'}
+              </div>
+            </div>
+
+            <DataSection title="Account" rows={[
+              ['email', data.account?.email],
+              ['emailVerified', data.account?.emailVerified],
+              ['createdAt', data.account?.createdAt],
+              ['signInMethods', (data.account?.signInMethods || []).map((m) => m.provider)],
+            ]} />
+
+            <DataSection title="Phone" rows={[
+              ['number', data.phone?.number],
+              ['verified', data.phone?.verified],
+            ]} />
+
+            <DataSection title="Notification preferences" rows={Object.entries(data.notificationPreferences || {})} />
+
+            <DataSection title="Health intake" rows={Object.entries(data.healthIntake || {})} />
+
+            <DataSection
+              title="Saved products"
+              rows={(data.savedProducts || []).map((p, i) => [`item${i + 1}`, { name: p.product_name, brand: p.brand, category: p.category, saved: p.is_saved }])}
+            />
+
+            {!hasAnyData && (
+              <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', lineHeight: 1.55, padding: '0 4px' }}>
+                Nothing else on file yet — this fills in as you use ayna.
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 /* --------------------------- Account information --------------------------- */
 
 function formatMemberSince(dateStr) {
@@ -1412,7 +1580,7 @@ function AccountRow({ title, sub, value, badge, badgeTone = 'neutral', onClick, 
 // elsewhere in this file) instead of showing invented devices/exports.
 // Delete account mirrors desktop's real flow exactly (App.jsx's delete
 // modal): an email request, not a self-serve API that doesn't exist.
-function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers, onOpenPassword, onEditProfile }) {
+function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers, onOpenPassword, onEditProfile, onOpenManageData }) {
   const [phoneVerifyOpen, setPhoneVerifyOpen] = useState(false);
   const [phone, setPhone] = useState({ loading: true, number: '', verified: false });
   // Real Supabase auth.updateUser() call, same first_name/full_name fields
@@ -1599,7 +1767,7 @@ function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers,
 
         <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Your data</div>
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
-          <AccountRow borderTop={false} dimmed title="Download a copy" sub="Intake answers, uploads, saved products." badge="COMING SOON" />
+          <AccountRow borderTop={false} title="Manage & download my data" sub="Account details, intake answers, saved products." onClick={onOpenManageData} />
           <a
             href="mailto:puloma@aynahealth.co?subject=Account%20Deletion%20Request"
             style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 0', borderTop: '1px solid var(--ayna-border)', textDecoration: 'none' }}
@@ -2310,14 +2478,17 @@ export default function ProfileFlow({
         quizAnswers={quizAnswers}
         onOpenPassword={() => pushScreen('password')}
         onEditProfile={onEditProfile ? () => { onClose(); onEditProfile(); } : undefined}
+        onOpenManageData={() => pushScreen('manageData')}
       />
     );
   } else if (screen === 'password') {
     body = <PasswordScreen onBack={goBack} authUser={authUser} />;
   } else if (screen === 'privacyData') {
-    body = <PrivacyDataScreen onBack={goBack} onOpenLegal={() => pushScreen('legal')} />;
+    body = <PrivacyDataScreen onBack={goBack} onOpenLegal={() => pushScreen('legal')} onOpenManageData={() => pushScreen('manageData')} />;
   } else if (screen === 'legal') {
     body = <LegalScreen onBack={goBack} />;
+  } else if (screen === 'manageData') {
+    body = <ManageDataScreen onBack={goBack} />;
   }
 
   return (

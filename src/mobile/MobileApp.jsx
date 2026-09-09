@@ -3,6 +3,7 @@ import './mobile.css';
 import { ALL_PRODUCTS, getEcosystemAlternatives, getProfileMatchPercentForProduct, getRecommendationMatchesAndRest, filterPrescriptionCareGate } from '../data/products.js';
 import { RELEASED_STARTUPS } from '../data/startups.js';
 import { loadProductCatalog } from '../utils/productCatalog.js';
+import { saveHealthIntakeForCurrentUser } from '../utils/healthIntakeStore.js';
 import { ARTICLES } from '../components/Articles.jsx';
 import { ECOSYSTEM_AREAS as REAL_ECOSYSTEM_AREAS, resolveEcosystemProductArea } from '../components/EcosystemBubbles.jsx';
 import { useSavedProducts } from './hooks/useSavedProducts.js';
@@ -267,6 +268,13 @@ export default function MobileApp() {
     onEditProfile: () => { setEditingHealthProfile(true); setScreen('quiz'); },
     onComplete: (quizAnswers) => {
       updateSession({ myProducts: seedEcosystemFromAnswers(quizAnswers), lastQuizAnswers: quizAnswers });
+      // Same real save desktop's App.jsx makes after quiz completion — was
+      // never ported to mobile (a real signed-in session didn't exist here
+      // yet at the time), so a mobile-only user's intake answers lived on
+      // that one device only, invisible to "Manage/Download my data" and to
+      // that user on any other device. No-ops harmlessly when signed out.
+      const rawIntake = quizAnswers?.fullHealthIntake || quizAnswers;
+      saveHealthIntakeForCurrentUser(rawIntake).catch(() => {});
       setScreen('building');
     },
     onFinish: () => setScreen('reveal'),
