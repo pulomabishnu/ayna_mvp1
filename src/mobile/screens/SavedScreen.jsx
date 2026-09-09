@@ -4,12 +4,46 @@ import { getCategoryInsights } from '../utils/shopperProfileData.js';
 import MatchRing from '../components/MatchRing.jsx';
 
 /**
- * Mobile saved-products screen.
- * Match percentages always come from the current personalized recommendation engine.
+ * Mobile port of the "Saved screens B + C" design reference (filled grid +
+ * empty state). Badges/filters below are computed from real state already
+ * in the app — ecosystem membership (myProducts) and each product's own
+ * safety.recalls field — not fabricated. Match % reuses the same
+ * normalizePercent/getRealMatchPercent logic as ProductModal.jsx (desktop),
+ * duplicated here rather than imported so this file has no dependency on
+ * the desktop component's own JSX.
  */
 
+function normalizePercent(value) {
+  if (value == null || value === '') return null;
+  const n = Number(value);
+  if (!Number.isFinite(n)) return null;
+  const pct = n > 0 && n <= 1 ? n * 100 : n;
+  if (pct < 0 || pct > 100) return null;
+  return Math.round(pct);
+}
+
+function getRealMatchPercent(product) {
+  const candidates = [
+    product?.matchPercentage,
+    product?.matchPercent,
+    product?.matchScore,
+    product?.aynaMatchPercentage,
+    product?.aynaMatchPercent,
+    product?.aynaMatch,
+  ];
+  for (const value of candidates) {
+    const pct = normalizePercent(value);
+    if (pct != null) return pct;
+  }
+  return null;
+}
+
+// Prefers the live quiz-based relevance score (same engine every other
+// product card now uses) over a static field, since saved items are rarely
+// pre-tagged with one of the candidates above.
 function matchPercentFor(item, quizAnswers) {
-  return getProfileMatchPercentForProduct(item, quizAnswers);
+  const live = getProfileMatchPercentForProduct(item, quizAnswers);
+  return live != null ? live : getRealMatchPercent(item);
 }
 
 function categoryLabel(category) {
