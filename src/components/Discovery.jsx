@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore } from '../data/products';
+import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore, getProductMatchDetailsForProduct } from '../data/products';
 import { loadProductCatalog } from '../utils/productCatalog';
 import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../utils/naturalLanguageSearch';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
@@ -109,24 +109,6 @@ function isSponsoredItem(item) {
     return item?.sponsored === true || item?.isSponsored === true || String(item?.placementType || '').toLowerCase() === 'sponsored';
 }
 
-function getExplicitMatchPercent(item) {
-    const candidates = [
-        item?.aynaMatch,
-        item?.aynaMatchPercent,
-        item?.matchPercent,
-        item?.matchPercentage,
-        item?.personalizationScore,
-    ];
-    for (const value of candidates) {
-        if (value == null || value === '') continue;
-        const numeric = typeof value === 'string' ? Number(value.replace('%', '').trim()) : Number(value);
-        if (!Number.isFinite(numeric)) continue;
-        const normalized = numeric > 0 && numeric <= 1 ? numeric * 100 : numeric;
-        if (normalized >= 0 && normalized <= 100) return Math.round(normalized);
-    }
-    return null;
-}
-
 function matchesSustainability(item, filter) {
     if (filter === 'all') return true;
     const text = productSearchText(item);
@@ -211,7 +193,7 @@ function getQualityScore(item, aynaReviews = {}) {
     // Same idea for rating: no rating yet isn't evidence of a bad product, just an unrated one —
     // default to a neutral 0.7 (out of 1) instead of 0.
     const rating = hasRating ? ratedValue : 0.7;
-    const safetyOk = !(item.safety?.recalls && String(item.safety.recalls).includes('⚠️')) ? 1 : 0;
+    const safetyOk = !(item.safety?.recalls && String(item.safety.recalls).includes('\u26A0\uFE0F')) ? 1 : 0;
     return (rating * 2) + consensusScore + safetyOk;
 }
 
@@ -252,10 +234,10 @@ function shuffleJitter(item, seed, baseScore = 0) {
 // if fewer than COLD_START_PAGE_FLOOR cold-start items made it into the first `pageSize` results,
 // promote the highest score+jitter-ranked cold-start items that didn't (still using the SAME jitter
 // roll for this seed, so which items get promoted still rotates seed to seed) into those spots,
-// displacing the lowest-ranked non-partner items at the bottom of the page. 6/30 (20%) is a
-// deliberately conservative floor — below cold-start's ~28% catalog share, so this narrows the gap
-// without displacing enough established, well-reviewed products to feel like a regression for
-// users who came for the curated content. Partner-pinned items are never displaced.
+// displacing the lowest-ranked items at the bottom of the page. 6/30 (20%) is a deliberately
+// conservative floor — below cold-start's ~28% catalog share, so this narrows the gap without
+// displacing enough established, well-reviewed products to feel like a regression for users who
+// came for the curated content.
 const COLD_START_PAGE_FLOOR = 6;
 
 function applyColdStartFloor(rankedList, pageSize) {
@@ -268,8 +250,7 @@ function applyColdStartFloor(rankedList, pageSize) {
     const promotable = rest.filter(isColdStartItem).slice(0, shortfall);
     if (promotable.length === 0) return rankedList;
 
-    // Displace from the bottom of the page upward, never touching partner-pinned items —
-    // those stay pinned regardless of this guarantee.
+    // Displace from the bottom of the page upward, while keeping partner-pinned items in place.
     const displaceable = [];
     for (let i = page.length - 1; i >= 0 && displaceable.length < promotable.length; i--) {
         if (!isPartnerBrandItem(page[i])) displaceable.push(i);
@@ -758,15 +739,14 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     const rb = recommendedRank.has(b.id) ? recommendedRank.get(b.id) : Number.MAX_SAFE_INTEGER;
                     if (ra !== rb) return ra - rb;
                 }
-                // Brand partners are pinned to the top of the default browsing sort
-                // (but not when personalized results are on — a partnership doesn't
-                // buy placement in a real recommendation, only visibility on the
-                // page you browse freely, per How We Make Money).
+                // Partners are pinned in general browse only.
+                // Partnership never changes personalized match scores or recommendation order.
                 if (browsingWithoutTextQuery && !personalizationFilter) {
                     const pa = isPartnerBrandItem(a) ? 1 : 0;
                     const pb = isPartnerBrandItem(b) ? 1 : 0;
                     if (pa !== pb) return pb - pa;
                 }
+
                 const baseA = getQualityScore(a, aynaReviews);
                 const baseB = getQualityScore(b, aynaReviews);
                 const qa = baseA + (browsingWithoutTextQuery ? shuffleJitter(a, shuffleSeed, baseA) : 0);
@@ -1143,7 +1123,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         const q = (rawQuery || '').trim();
         if (!q || q.length < 2) return;
         setSearchQuery(q);
-        posthog.capture('search_performed', { queryLength: q.length });
+        posthog.capture('search_performed', { query: q, queryLength: q.length });
         const qLower = q.toLowerCase();
 
         // Cancel any pending debounce — we're going immediate
@@ -1437,10 +1417,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     const resolvedItemImage = resolvedImages[item.id];
                     const cardImageSrc = resolvedItemImage !== undefined ? resolvedItemImage : item.image;
                     const imageStillLoading = resolvedItemImage === undefined && isPlaceholderProductImage(item.image, item.type === 'digital');
-                    const profileMatchPercent = getProfileMatchPercentForProduct(item, quizResults, healthProfile);
-                    const matchPercent = (hasQuizFrustrations || hasHealthImport)
-                        ? profileMatchPercent
-                        : getExplicitMatchPercent(item);
+                    const matchDetails = getProductMatchDetailsForProduct(item, quizResults, healthProfile);
+                    const matchPercent = matchDetails.percent;
                     const eligibility = getExplicitEligibility(item);
                     const eligibilityLabel = eligibility.fsa && eligibility.hsa ? 'FSA/HSA' : eligibility.fsa ? 'FSA' : eligibility.hsa ? 'HSA' : '';
                     const isWishlisted = !!savedProducts[item.id];
@@ -1455,16 +1433,18 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         >
                             <a
                                 className="ayna-browse-card__link"
-                                href={productHref(item.id)}
+                                href={productHref(item)}
                                 onClick={(e) => {
                                     if (!isPlainLeftClick(e)) return;
                                     e.preventDefault();
-                                    onOpenProduct?.(item);
+                                    onOpenProduct?.(item, searchSubmitted
+                                        ? { source: 'search_results', searchQuery: submittedQuery, position: idx }
+                                        : { source: 'browse', position: idx });
                                 }}
                             >
                                 <div className="ayna-discover-card__tile">
                                     {isPartnerBrandItem(item) && (
-                                        <span className="ayna-browse-card__affiliate">Affiliate link</span>
+                                        <span className="ayna-browse-card__affiliate">ayna Favorite</span>
                                     )}
                                     {cardImageSrc && (resolvedItemImage !== undefined || !isPlaceholderProductImage(cardImageSrc, item.type === 'digital')) ? (
                                         <>
@@ -1615,7 +1595,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Checking the government database…</p>
                     )}
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '1.25rem' }}>
-                        {dsldProducts.map((product) => (
+                        {dsldProducts.map((product, dsldIdx) => (
                             <div key={product.id} className="card hover-lift" style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                                 <div style={{ height: '120px', width: '100%', overflow: 'hidden', position: 'relative', background: 'linear-gradient(160deg, #F3EADC, #EFE3D2)' }}>
                                     {safeProductImageSrc(product.image) ? (
@@ -1642,7 +1622,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                                             {myProducts?.[product.id] ? 'Added' : 'Add'}
                                         </button>
                                         <button className="btn btn-primary" style={{ padding: '0.35rem 0.7rem', fontSize: '0.78rem', flex: 1 }}
-                                            onClick={() => onOpenProduct && onOpenProduct(product)}>
+                                            onClick={() => onOpenProduct && onOpenProduct(product, { source: 'search_results', searchQuery: submittedQuery, position: dsldIdx })}>
                                             Details
                                         </button>
                                     </div>
