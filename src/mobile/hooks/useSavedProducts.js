@@ -89,7 +89,7 @@ export function useSavedProducts(user) {
           });
       }
     }
-  }, [savedMap, user?.id]);
+  }, [savedMap, user]);
 
   return { savedMap, isSaved, toggleSaved };
 }
