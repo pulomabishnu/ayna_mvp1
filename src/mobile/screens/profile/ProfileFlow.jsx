@@ -726,12 +726,6 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
               </div>
             );
           })}
-
-          <div style={{ border: '1px dashed var(--ayna-border)', borderRadius: 22, padding: 18, textAlign: 'center' }}>
-            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 17, marginBottom: 4, color: 'var(--ayna-text)' }}>Know a founder?</div>
-            <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.5, marginBottom: 13 }}>We review every submission by hand.</div>
-            <div style={{ display: 'inline-block', border: '1px solid var(--ayna-border)', background: 'var(--ayna-surface)', color: 'var(--ayna-brown)', fontWeight: 600, fontSize: 12.5, padding: '9px 16px', borderRadius: 99, cursor: 'pointer' }}>Submit a brand</div>
-          </div>
         </div>
       </div>
     </div>
