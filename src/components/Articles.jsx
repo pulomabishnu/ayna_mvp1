@@ -435,6 +435,7 @@ const ARTICLES = [
   },
   {
     id: 'menopause-basics',
+    image: '/articles/menopause-basics.webp',
     title: 'Menopause & Perimenopause',
     source: 'NAMS, UpToDate, ACOG',
     tags: ['Menopause', 'Hormone therapy'],
@@ -492,6 +493,7 @@ const ARTICLES = [
   },
   {
     id: 'period-pain-when-to-seek-care',
+    image: '/articles/period-pain-when-to-seek-care.webp',
     title: 'Period Pain: When to Seek Care',
     source: 'ACOG, UpToDate, Mayo Clinic',
     tags: ['Menstrual health', 'Pain'],
@@ -511,6 +513,7 @@ const ARTICLES = [
   },
   {
     id: 'pcos-basics',
+    image: '/articles/pcos-basics.webp',
     title: 'PCOS: What It Is and How It\'s Managed',
     source: 'ACOG, Endocrine Society, UpToDate',
     tags: ['Hormones', 'Reproductive health'],
@@ -531,6 +534,7 @@ const ARTICLES = [
   },
   {
     id: 'pelvic-floor-dysfunction',
+    image: '/articles/pelvic-floor-dysfunction.webp',
     title: 'Pelvic Floor Dysfunction',
     source: 'ACOG, UpToDate, APTA',
     tags: ['Pelvic health', 'Physical therapy'],
@@ -591,6 +595,7 @@ const ARTICLES = [
   },
   {
     id: 'pmdd',
+    image: '/articles/pmdd.webp',
     title: 'PMDD: Premenstrual Dysphoric Disorder',
     source: 'ACOG, IAPMD, UpToDate',
     tags: ['Mental health', 'Hormonal health'],
