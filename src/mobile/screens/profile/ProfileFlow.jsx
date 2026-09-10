@@ -1347,15 +1347,6 @@ function LegalScreen({ onBack, onOpenConsumerHealthData, onOpenOpenSourceLicense
 
 /* ------------------------ Consumer Health Data Policy ------------------------ */
 
-function PolicySection({ title, children }) {
-  return (
-    <div style={{ marginBottom: 22 }}>
-      <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 18, color: 'var(--ayna-heading)', marginBottom: 7 }}>{title}</div>
-      <div style={{ fontSize: 13, color: 'var(--ayna-text-muted)', lineHeight: 1.6 }}>{children}</div>
-    </div>
-  );
-}
-
 // Real disclosures reflecting how ayna actually works today — the third
 // parties named here (Supabase, Anthropic/OpenAI/Gemini, PostHog, Twilio,
 // Resend) are the app's actual real integrations (see .env.example), and
@@ -1370,60 +1361,156 @@ function PolicySection({ title, children }) {
 // actual compliance policy, the same as the Termly-generated Privacy
 // Policy/Terms of Service linked above were presumably reviewed before
 // publishing.
+const HEALTH_DATA_PROCESSORS = [
+  { initial: 'S', name: 'Supabase', role: 'Hosts your account and stored data.', bg: '#E6EFE6', fg: '#3F6B4A' },
+  { initial: 'A', name: 'Anthropic, OpenAI, Google', role: 'Generate product summaries and Ask Ayna answers.', bg: '#FDF0DC', fg: '#9A5B14' },
+  { initial: 'T', name: 'Twilio', role: 'Sends verification codes and opt-in safety-recall texts.', bg: '#E7EAF5', fg: '#3B4677' },
+  { initial: 'R', name: 'Resend', role: 'Delivers email, including contact-form messages.', bg: '#F5E9F0', fg: '#7A3E60' },
+  { initial: 'P', name: 'PostHog', role: 'Anonymised usage analytics — off any time in Privacy & data.', bg: '#F1EDE6', fg: '#6B6257' },
+];
+
+const HEALTH_DATA_RIGHTS = [
+  { title: 'See exactly what we hold', how: 'Settings → Privacy & data → Manage my data' },
+  { title: 'Download a copy', how: 'Same screen, in a portable format' },
+  { title: 'Withdraw consent for analytics', how: 'Settings → Privacy & data → the analytics toggle' },
+  { title: 'Delete your account and data', how: 'Email puloma@aynahealth.co — providers are directed too' },
+];
+
+function NumberedCard({ n, title, children }) {
+  return (
+    <div style={{ marginTop: 14, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 24, padding: 18, boxShadow: '0 2px 10px rgba(41,37,36,.04)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{ width: 26, height: 26, borderRadius: 99, background: '#FDF0DC', color: '#9A5B14', fontFamily: "'DM Mono',monospace", fontSize: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none' }}>{n}</div>
+        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 17, color: 'var(--ayna-heading)' }}>{title}</div>
+      </div>
+      {children}
+    </div>
+  );
+}
+
 function ConsumerHealthDataPolicyScreen({ onBack }) {
   return (
     <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
-      <BackHeader title="Consumer Health Data Policy" onBack={onBack} />
-      <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '8px 20px 36px' }}>
-        <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', margin: '4px 0 20px' }}>
-          Effective 10 Sep 2026. Required under Washington State's My Health My Data Act (MHMDA).
+      <BackHeader title="Health data policy" onBack={onBack} />
+      <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '6px 20px 30px' }}>
+        <div style={{ position: 'relative', overflow: 'hidden', background: 'linear-gradient(150deg,#EFF3EC,#E3EDE2 60%,#D6E7D6)', border: '1px solid #CFE0CE', borderRadius: 26, padding: 20, boxShadow: '0 3px 14px rgba(63,107,74,.08)' }}>
+          <div style={{ position: 'absolute', right: -30, top: -34, width: 110, height: 110, borderRadius: 99, background: 'rgba(255,255,255,.4)' }} />
+          <div style={{ position: 'relative', width: 38, height: 38, borderRadius: 99, background: '#FFFCF9', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 1px 5px rgba(63,107,74,.14)' }}>
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#3F6B4A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l7 3v6c0 4.2-2.9 7.6-7 9-4.1-1.4-7-4.8-7-9V6z" /><path d="M9 12l2 2 4-4" /></svg>
+          </div>
+          <div style={{ position: 'relative', fontFamily: "'Playfair Display',serif", fontSize: 23, lineHeight: 1.2, marginTop: 13, color: '#25382A' }}>Your health answers stay yours.</div>
+          <div style={{ position: 'relative', fontSize: 12.5, lineHeight: 1.6, color: '#42604A', marginTop: 8 }}>We never sell them, and we never trade them for advertising. Here is the whole picture, in plain words.</div>
+          <div style={{ position: 'relative', display: 'inline-flex', gap: 6, marginTop: 13 }}>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1px', background: '#FFFCF9', color: '#3F6B4A', borderRadius: 99, padding: '5px 10px' }}>EFFECTIVE 10 SEP 2026</div>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1px', background: '#FFFCF9', color: '#3F6B4A', borderRadius: 99, padding: '5px 10px' }}>WA MHMDA</div>
+          </div>
         </div>
 
-        <PolicySection title="What counts as Consumer Health Data">
-          Under the MHMDA, Consumer Health Data means personal information that is linked or reasonably linkable to you and that identifies your past, present, or future physical or mental health status — including reproductive or sexual health information, health conditions, diagnoses, symptoms, and information you share with ayna's AI features about any of the above.
-        </PolicySection>
-
-        <PolicySection title="What we collect, and why">
-          Your health-intake answers (stage of life, goals, sensitivities, conditions you tell us about), questions you ask Ask Ayna, and the products you save or track. We use this to generate your personal matches, explain why a product fits, and flag safety recalls relevant to what you own. We do not collect this to advertise to you elsewhere.
-        </PolicySection>
-
-        <PolicySection title="Who it's shared with, and why">
-          <div style={{ marginBottom: 8 }}>
-            We do not sell your consumer health data, and we do not share it for advertising. It is shared only with the service providers that make ayna work, each processing it solely to provide that specific function:
+        <NumberedCard n="01" title="What counts as health data">
+          <div style={{ fontSize: 13, lineHeight: 1.65, color: 'var(--ayna-text-muted)', marginTop: 11 }}>
+            Anything linked to you that says something about your past, present or future physical or mental health — including reproductive and sexual health, conditions, diagnoses, symptoms, and whatever you tell Ask Ayna about any of it.
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            <div>• <strong>Supabase</strong> — hosts your account and stored data.</div>
-            <div>• <strong>Anthropic, OpenAI, or Google (Gemini)</strong> — generate AI product summaries and Ask Ayna's answers from your questions.</div>
-            <div>• <strong>Twilio</strong> — sends phone verification codes and, if you opt in, SMS safety-recall alerts.</div>
-            <div>• <strong>Resend</strong> — delivers email, including your contact-form messages.</div>
-            <div>• <strong>PostHog</strong> — anonymised product-usage analytics, which you can turn off at any time in Privacy & data.</div>
+        </NumberedCard>
+
+        <NumberedCard n="02" title="What we collect, and why">
+          <div style={{ fontSize: 13, lineHeight: 1.65, color: 'var(--ayna-text-muted)', marginTop: 11 }}>
+            Your intake answers, your questions to Ask Ayna, and the products you save. We use them to build your matches, explain why a product fits, and flag safety recalls on what you own — nothing else.
           </div>
-        </PolicySection>
-
-        <PolicySection title="Your rights">
-          <div style={{ marginBottom: 8 }}>You can, at any time:</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            <div>• <strong>See exactly what we hold</strong> — Settings → Privacy & data → Manage my data.</div>
-            <div>• <strong>Download a copy</strong> — same screen, in a portable format.</div>
-            <div>• <strong>Withdraw consent for analytics</strong> — Settings → Privacy & data → the analytics toggle.</div>
-            <div>• <strong>Delete your account and data</strong> — email <a href={DELETE_ACCOUNT_MAILTO}>puloma@aynahealth.co</a>; we'll also direct any service provider above holding a copy to delete it.</div>
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 12 }}>
+            {['INTAKE ANSWERS', 'ASK AYNA', 'SAVED PRODUCTS'].map((t) => (
+              <div key={t} style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '.9px', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-text-muted)', borderRadius: 99, padding: '5px 9px' }}>{t}</div>
+            ))}
           </div>
-          <div style={{ marginTop: 8 }}>We respond to any request within 45 days, and never deny you access to ayna for exercising these rights.</div>
-        </PolicySection>
+        </NumberedCard>
 
-        <PolicySection title="Geofencing">
-          We do not use geofencing around any healthcare facility to collect your data, target you with messages, or infer that you sought care there.
-        </PolicySection>
+        <NumberedCard n="03" title="Who touches it">
+          <div style={{ fontSize: 13, lineHeight: 1.65, color: 'var(--ayna-text-muted)', marginTop: 11 }}>Five service providers, each doing exactly one job for us.</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 9, marginTop: 13 }}>
+            {HEALTH_DATA_PROCESSORS.map((p) => (
+              <div key={p.name} style={{ display: 'flex', alignItems: 'center', gap: 11, background: 'var(--ayna-chip-bg)', borderRadius: 18, padding: '11px 13px' }}>
+                <div style={{ width: 34, height: 34, borderRadius: 12, flex: 'none', background: p.bg, color: p.fg, fontFamily: "'Playfair Display',serif", fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{p.initial}</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ayna-text)' }}>{p.name}</div>
+                  <div style={{ fontSize: 11.5, color: 'var(--ayna-text-muted)', lineHeight: 1.45, marginTop: 2 }}>{p.role}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 11 }}>We do not sell your health data, and we do not share it for advertising.</div>
+        </NumberedCard>
 
-        <PolicySection title="Questions or an appeal">
-          Email <a href={DELETE_ACCOUNT_MAILTO.replace('subject=Account%20Deletion%20Request', 'subject=Consumer%20Health%20Data%20Question')}>puloma@aynahealth.co</a>. If we deny a request under this policy, you may appeal by replying to our decision email, and we'll respond within 45 days.
-        </PolicySection>
+        <NumberedCard n="04" title="What you can ask for">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 11, marginTop: 13 }}>
+            {HEALTH_DATA_RIGHTS.map((r) => (
+              <div key={r.title} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                <div style={{ width: 20, height: 20, borderRadius: 99, background: '#E6EFE6', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none', marginTop: 1 }}>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#3F6B4A" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 13l4 4L19 7" /></svg>
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ayna-text)' }}>{r.title}</div>
+                  <div style={{ fontSize: 11.5, color: 'var(--ayna-text-muted)', lineHeight: 1.5, marginTop: 2 }}>{r.how}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 13 }}>We answer within 45 days, and never lock you out of ayna for asking.</div>
+        </NumberedCard>
+
+        <div style={{ marginTop: 14, display: 'flex', alignItems: 'flex-start', gap: 12, background: '#EFF3EC', border: '1px solid #CFE0CE', borderRadius: 24, padding: '16px 18px' }}>
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#3F6B4A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ flex: 'none', marginTop: 1 }}><path d="M12 21s-7-5.1-7-10a7 7 0 1 1 14 0c0 4.9-7 10-7 10z" /><path d="M4 4l16 16" /></svg>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 13.5, fontWeight: 600, color: '#25382A' }}>No geofencing. Ever.</div>
+            <div style={{ fontSize: 12.5, color: '#42604A', lineHeight: 1.6, marginTop: 4 }}>We don't draw boundaries around clinics to collect your location, message you, or guess that you sought care.</div>
+          </div>
+        </div>
+
+        <div style={{ marginTop: 14, background: '#242A52', borderRadius: 24, padding: 19, color: '#F3EFE9' }}>
+          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 18 }}>Questions, or an appeal?</div>
+          <div style={{ fontSize: 12.5, lineHeight: 1.6, color: '#C7CADC', marginTop: 7 }}>If we deny a request, reply to our decision email and a person will look at it again within 45 days.</div>
+          <a
+            href={DELETE_ACCOUNT_MAILTO.replace('subject=Account%20Deletion%20Request', 'subject=Consumer%20Health%20Data%20Question')}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginTop: 14, background: '#FFFCF9', color: '#242A52', borderRadius: 99, padding: '11px 17px', fontSize: 12.5, fontWeight: 600, textDecoration: 'none' }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#242A52" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="18" height="14" rx="3" /><path d="M4 7l8 6 8-6" /></svg>
+            puloma@aynahealth.co
+          </a>
+        </div>
       </div>
     </div>
   );
 }
 
 /* ---------------------------- Open-source licences ---------------------------- */
+
+const LICENSE_GROUP_STYLES = {
+  MIT: { tint: '#FDF0DC', ink: '#9A5B14' },
+  'Apache-2.0': { tint: '#E6EFE6', ink: '#3F6B4A' },
+  '(MPL-2.0 OR Apache-2.0)': { tint: '#E7EAF5', ink: '#3B4677' },
+  '(Apache-2.0 AND MIT)': { tint: '#F5E9F0', ink: '#7A3E60' },
+  '0BSD': { tint: '#F1EDE6', ink: '#6B6257' },
+};
+
+function downloadText(content, filename) {
+  const blob = new Blob([content], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function buildLicensesText(grouped) {
+  const lines = ['ayna — open-source licences', `Generated ${new Date().toISOString().slice(0, 10)}`, ''];
+  for (const [license, packages] of grouped) {
+    lines.push(`${license} (${packages.length})`, '-'.repeat(40));
+    for (const pkg of packages) lines.push(`  ${pkg.name}@${pkg.version}`);
+    lines.push('');
+  }
+  return lines.join('\n');
+}
 
 function OpenSourceLicensesScreen({ onBack }) {
   const grouped = useMemo(() => {
@@ -1438,26 +1525,52 @@ function OpenSourceLicensesScreen({ onBack }) {
   return (
     <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
       <BackHeader title="Open-source licences" onBack={onBack} />
-      <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '8px 20px 36px' }}>
-        <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.55, margin: '4px 0 20px' }}>
-          {OPEN_SOURCE_PACKAGES.length} open-source packages ship inside the ayna app — the ones actually bundled into what runs on your device, not build tooling. Thank you to everyone who maintains them.
+      <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '6px 20px 30px' }}>
+        <div style={{ position: 'relative', overflow: 'hidden', background: 'linear-gradient(150deg,#FFF4E2,#FFE7C6 55%,#FFDCA8)', border: '1px solid #F0D9B4', borderRadius: 26, padding: '20px 20px 18px', boxShadow: '0 3px 14px rgba(192,118,31,.09)' }}>
+          <div style={{ position: 'absolute', right: -34, top: -30, width: 118, height: 118, borderRadius: 99, background: 'rgba(255,255,255,.42)' }} />
+          <div style={{ position: 'absolute', right: 26, bottom: -42, width: 74, height: 74, borderRadius: 99, background: 'rgba(255,255,255,.3)' }} />
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'baseline', gap: 9 }}>
+            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 52, lineHeight: .9, color: '#7A4410' }}>{OPEN_SOURCE_PACKAGES.length}</div>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.4px', textTransform: 'uppercase', color: '#9A5B14', paddingBottom: 5 }}>packages<br />inside ayna</div>
+          </div>
+          <div style={{ position: 'relative', fontSize: 13, lineHeight: 1.6, color: '#6B4413', marginTop: 12, maxWidth: 250 }}>These are the ones actually bundled into what runs on your device — not build tooling.</div>
+          <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: 7, marginTop: 14, background: '#FFFCF9', borderRadius: 99, padding: '7px 13px 7px 10px', boxShadow: '0 1px 4px rgba(122,68,16,.12)' }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#E8843C" style={{ flex: 'none' }}><path d="M12 21s-7.5-4.7-9.5-9A5.2 5.2 0 0 1 12 6.6 5.2 5.2 0 0 1 21.5 12c-2 4.3-9.5 9-9.5 9z" /></svg>
+            <div style={{ fontSize: 12, color: '#7A4410', fontWeight: 500 }}>Thank you to everyone who maintains them</div>
+          </div>
         </div>
 
-        {grouped.map(([license, packages]) => (
-          <div key={license} style={{ marginBottom: 20 }}>
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.3px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 9 }}>
-              {license} · {packages.length}
+        {grouped.map(([license, packages]) => {
+          const style = LICENSE_GROUP_STYLES[license] || { tint: 'var(--ayna-chip-bg)', ink: 'var(--ayna-text-muted)' };
+          return (
+            <div key={license} style={{ margin: '22px 0 0' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '0 4px 9px' }}>
+                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.1px', textTransform: 'uppercase', background: style.tint, color: style.ink, borderRadius: 99, padding: '5px 10px' }}>{license}</div>
+                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, color: style.ink, background: '#FFFCF9', border: `1px solid ${style.tint}`, borderRadius: 99, minWidth: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 6px' }}>{packages.length}</div>
+                <div style={{ flex: 1, height: 1, background: 'var(--ayna-border)' }} />
+              </div>
+              <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 24, padding: '6px 8px', boxShadow: '0 2px 10px rgba(41,37,36,.04)' }}>
+                {packages.map((pkg, i) => (
+                  <div key={pkg.name} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 10px', borderRadius: 14, boxShadow: i ? '0 -1px 0 var(--ayna-border)' : 'none' }}>
+                    <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 12.5, color: 'var(--ayna-text)', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{pkg.name}</div>
+                    <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, color: style.ink, background: style.tint, borderRadius: 99, padding: '4px 8px', flex: 'none' }}>{pkg.version}</div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
-              {packages.map((pkg, i) => (
-                <div key={pkg.name} style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, padding: '13px 0', borderTop: i ? '1px solid var(--ayna-border)' : 'none' }}>
-                  <div style={{ fontSize: 13.5, color: 'var(--ayna-text)', fontFamily: "'DM Mono',monospace" }}>{pkg.name}</div>
-                  <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', flex: 'none' }}>{pkg.version}</div>
-                </div>
-              ))}
-            </div>
+          );
+        })}
+
+        <div style={{ marginTop: 24, background: 'var(--ayna-surface)', border: '1px dashed var(--ayna-border)', borderRadius: 24, padding: '16px 18px', textAlign: 'center' }}>
+          <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.6 }}>Full licence texts ship with every build.</div>
+          <div
+            onClick={() => downloadText(buildLicensesText(grouped), 'ayna-open-source-licences.txt')}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 7, marginTop: 10, background: '#242A52', color: '#FFFCF9', borderRadius: 99, padding: '10px 17px', fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFCF9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v12" /><path d="M7 11l5 5 5-5" /><path d="M4 21h16" /></svg>
+            Download licences.txt
           </div>
-        ))}
+        </div>
       </div>
     </div>
   );
