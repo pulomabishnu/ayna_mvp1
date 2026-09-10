@@ -152,7 +152,8 @@ export default function MobileApp() {
   // scroll pagination) is exactly as the user left it, not reset to a
   // fresh mount. Closing the overlay just reveals it again.
   const [overlay, setOverlay] = useState(null); // { type: 'product' | 'article', item }
-  const { savedMap, isSaved, toggleSaved } = useSavedProducts();
+  const { user: authUser, signUpWithPassword, signInWithPassword, signInWithGoogle, signOut: signOutSupabase, resendConfirmation } = useSupabaseAuth();
+  const { savedMap, isSaved, toggleSaved } = useSavedProducts(authUser);
   const { theme, toggleTheme, setTheme } = useThemeMode();
   const [askAynaOpen, setAskAynaOpen] = useState(false);
   const [askAynaHistory, setAskAynaHistory] = useState([]);
@@ -160,7 +161,6 @@ export default function MobileApp() {
   // the first thing left blank) from every other way into the quiz screen
   // (start quiz, retake, update health), which all start fresh on purpose.
   const [editingHealthProfile, setEditingHealthProfile] = useState(false);
-  const { user: authUser, signUpWithPassword, signInWithPassword, signInWithGoogle, signOut: signOutSupabase, resendConfirmation } = useSupabaseAuth();
   // Falls back to the real Supabase identity whenever the locally-cached
   // session name is empty — covers a returning user whose device never
   // captured a name (e.g. signed in with Google before this fallback
