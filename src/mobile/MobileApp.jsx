@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './mobile.css';
 import { ALL_PRODUCTS, getEcosystemAlternatives, getProfileMatchPercentForProduct, getRecommendationMatchesAndRest, filterPrescriptionCareGate } from '../data/products.js';
 import { RELEASED_STARTUPS } from '../data/startups.js';
 import { loadProductCatalog } from '../utils/productCatalog.js';
+import { getSupabaseClient } from '../utils/supabaseClient.js';
+import { loadEcosystemForUser, upsertProductState, upsertProductsBatch } from '../utils/ecosystemStore.js';
 import { saveHealthIntakeForCurrentUser } from '../utils/healthIntakeStore.js';
 import { ARTICLES } from '../components/Articles.jsx';
 import { ECOSYSTEM_AREAS as REAL_ECOSYSTEM_AREAS, resolveEcosystemProductArea } from '../components/EcosystemBubbles.jsx';
@@ -153,6 +155,11 @@ export default function MobileApp() {
   // fresh mount. Closing the overlay just reveals it again.
   const [overlay, setOverlay] = useState(null); // { type: 'product' | 'article', item }
   const { user: authUser, signUpWithPassword, signInWithPassword, signInWithGoogle, signOut: signOutSupabase, resendConfirmation } = useSupabaseAuth();
+
+  // Backend-only state used to keep mobile ecosystem writes consistent with
+  // the same Supabase user_ecosystems rows used by the website.
+  const ecosystemFlagsRef = useRef({ trackedProducts: {}, omittedProducts: {} });
+  const pendingQuizEcosystemRef = useRef(null);
   const { savedMap, isSaved, toggleSaved } = useSavedProducts(authUser);
   const { theme, toggleTheme, setTheme } = useThemeMode();
   const [askAynaOpen, setAskAynaOpen] = useState(false);
@@ -166,6 +173,67 @@ export default function MobileApp() {
   // captured a name (e.g. signed in with Google before this fallback
   // chain existed), without needing a one-time migration.
   const resolvedName = userName || displayNameFromUser(authUser);
+
+  // Load the signed-in user's existing website ecosystem into mobile.
+  // Mobile still keeps its local session cache for instant rendering, but
+  // Supabase is the shared cross-device source when a real user is signed in.
+  useEffect(() => {
+    if (!authUser?.id) return undefined;
+
+    const supabase = getSupabaseClient();
+    if (!supabase) return undefined;
+
+    const userId = authUser.id;
+    const firstName = displayNameFromUser(authUser);
+    let cancelled = false;
+
+    (async () => {
+      // Mobile onboarding builds recommendations before sign-in. If that just
+      // happened in this app session, save those recommendations for this
+      // newly authenticated user before loading the canonical merged state.
+      const pending = pendingQuizEcosystemRef.current;
+      if (Array.isArray(pending) && pending.length > 0) {
+        await upsertProductsBatch(supabase, userId, pending, {
+          inEcosystem: true,
+          isTracked: false,
+          isOmitted: false,
+        });
+
+        if (cancelled) return;
+        pendingQuizEcosystemRef.current = null;
+      }
+
+      const ecosystem = await loadEcosystemForUser(supabase, userId);
+      if (cancelled) return;
+
+      ecosystemFlagsRef.current = {
+        trackedProducts: ecosystem?.trackedProducts || {},
+        omittedProducts: ecosystem?.omittedProducts || {},
+      };
+
+      const remoteProducts = Object.values(ecosystem?.myProducts || {}).map((product) => {
+        const area = resolveEcosystemProductArea(product, REAL_ECOSYSTEM_AREAS);
+        return {
+          ...product,
+          areaKey: product.areaKey || area?.key || null,
+        };
+      });
+
+      updateSession((prev) => ({
+        userName: firstName || prev.userName,
+        myProducts: remoteProducts,
+        hasEcosystem: remoteProducts.length > 0,
+      }));
+
+      if (remoteProducts.length > 0) setScreen('eco');
+    })().catch((error) => {
+      console.warn('[Ayna] mobile ecosystem sync failed:', error);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [authUser, updateSession]);
 
   // Same loadProductCatalog() call Discovery.jsx makes — a live source
   // ('api'/'cache') means the bundle no longer has the full catalog, so
@@ -237,10 +305,32 @@ export default function MobileApp() {
   // never passed it), so the button did nothing at all.
   const handleAddToEcosystem = (product) => {
     if (!product?.id) return;
+
+    const area = resolveEcosystemProductArea(product, REAL_ECOSYSTEM_AREAS);
+    const ecosystemProduct = {
+      ...product,
+      areaKey: product.areaKey || area?.key || null,
+    };
+
     updateSession((prev) => ({
-      myProducts: prev.myProducts.some((p) => p.id === product.id) ? prev.myProducts : [...prev.myProducts, product],
+      myProducts: prev.myProducts.some((p) => p.id === ecosystemProduct.id)
+        ? prev.myProducts
+        : [...prev.myProducts, ecosystemProduct],
       hasEcosystem: true,
     }));
+
+    const supabase = getSupabaseClient();
+    if (authUser && supabase) {
+      upsertProductState(supabase, authUser.id, ecosystemProduct, {
+        inEcosystem: true,
+        isTracked: true,
+        isOmitted: !!ecosystemFlagsRef.current.omittedProducts?.[ecosystemProduct.id],
+      }).catch((error) => {
+        console.warn('[Ayna] mobile ecosystem add sync failed:', error);
+      });
+
+      ecosystemFlagsRef.current.trackedProducts[ecosystemProduct.id] = ecosystemProduct;
+    }
   };
 
   // "See swap" on a Shopper Profile safety alert — reuses the same real
@@ -273,7 +363,26 @@ export default function MobileApp() {
     onUpdateHealth: () => { setEditingHealthProfile(false); setScreen('quiz'); },
     onEditProfile: () => { setEditingHealthProfile(true); setScreen('quiz'); },
     onComplete: (quizAnswers) => {
-      updateSession({ myProducts: seedEcosystemFromAnswers(quizAnswers), lastQuizAnswers: quizAnswers });
+      const seededProducts = seedEcosystemFromAnswers(quizAnswers);
+
+      updateSession({
+        myProducts: seededProducts,
+        lastQuizAnswers: quizAnswers,
+        hasEcosystem: seededProducts.length > 0,
+      });
+
+      const supabase = getSupabaseClient();
+      if (authUser && supabase) {
+        upsertProductsBatch(supabase, authUser.id, seededProducts, {
+          inEcosystem: true,
+          isTracked: false,
+          isOmitted: false,
+        }).catch((error) => {
+          console.warn('[Ayna] mobile generated ecosystem sync failed:', error);
+        });
+      } else {
+        pendingQuizEcosystemRef.current = seededProducts;
+      }
       // Same real save desktop's App.jsx makes after quiz completion — was
       // never ported to mobile (a real signed-in session didn't exist here
       // yet at the time), so a mobile-only user's intake answers lived on
