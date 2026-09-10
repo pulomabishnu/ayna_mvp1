@@ -1,4 +1,4 @@
-import { getProductMatchDetailsForProduct, getProfileMatchLabelsForProduct } from '../../data/products.js';
+import { getProfileMatchPercentForProduct, getProfileMatchLabelsForProduct, getRecommendationExplanation } from '../../data/products.js';
 import MatchRing from '../components/MatchRing.jsx';
 
 function BackIcon() {
@@ -29,11 +29,11 @@ function CheckIcon() {
  * guidance, so this only shows what's actually behind the number.
  */
 export default function WhyMatchScreen({ product, quizAnswers, onBack, onUpdateHealth }) {
-  const matchDetails = getProductMatchDetailsForProduct(product, quizAnswers);
-  const percent = matchDetails?.percent ?? null;
+  const percent = getProfileMatchPercentForProduct(product, quizAnswers);
   const labels = getProfileMatchLabelsForProduct(product, quizAnswers);
-  const reasons = Array.isArray(matchDetails?.reasons) ? matchDetails.reasons : [];
-  const considerations = Array.isArray(matchDetails?.considerations) ? matchDetails.considerations : [];
+  const { whyItWorks, considerations } = getRecommendationExplanation(product, quizAnswers);
+  const cleanWhy = whyItWorks ? whyItWorks.replace(/^Why it could work:\s*/i, '') : null;
+  const cleanConsideration = considerations ? considerations.replace(/^Consideration:\s*/i, '') : null;
 
   return (
     <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', background: 'var(--ayna-bg)', animation: 'ay-page .25s ease-out' }}>
@@ -57,15 +57,7 @@ export default function WhyMatchScreen({ product, quizAnswers, onBack, onUpdateH
             <div style={{ display: 'flex', gap: 16, alignItems: 'center', background: 'var(--ayna-peach)', borderRadius: 20, padding: 18 }}>
               <MatchRing percent={percent} size={56} />
               <div style={{ flex: 1, minWidth: 0, fontSize: 13.5, lineHeight: 1.5, color: 'var(--ayna-text)' }}>
-                {reasons.length > 0 ? (
-                  <ul style={{ margin: 0, paddingLeft: 18 }}>
-                    {reasons.map((reason) => (
-                      <li key={reason}>{reason}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  'A relevance score based on your health profile.'
-                )}
+                {cleanWhy || 'A relevance score based on your health profile.'}
               </div>
             </div>
 
@@ -85,17 +77,13 @@ export default function WhyMatchScreen({ product, quizAnswers, onBack, onUpdateH
               </>
             )}
 
-            {considerations.length > 0 && (
+            {cleanConsideration && (
               <>
                 <div style={{ marginTop: 26, fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>
                   Worth noting
                 </div>
                 <div style={{ marginTop: 12, borderLeft: '3px solid #D97A2B', background: 'rgba(217,122,43,.08)', borderRadius: '0 14px 14px 0', padding: '14px 16px' }}>
-                  <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12.5, lineHeight: 1.5, color: 'var(--ayna-text)' }}>
-                    {considerations.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
+                  <div style={{ fontSize: 12.5, lineHeight: 1.5, color: 'var(--ayna-text)' }}>{cleanConsideration}</div>
                 </div>
               </>
             )}

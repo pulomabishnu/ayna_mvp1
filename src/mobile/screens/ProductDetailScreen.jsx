@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { CATEGORY_LABELS, getProductMatchDetailsForProduct } from '../../data/products.js';
+import { CATEGORY_LABELS, getProfileMatchPercentForProduct } from '../../data/products.js';
 import { getBuyUrl } from '../data/buyUrl.js';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { renderMarkdownLite } from '../../utils/renderMarkdownLite.jsx';
@@ -188,6 +188,7 @@ export default function ProductDetailScreen({
   onToggleSaved,
   isInEcosystem = false,
   onAddToEcosystem,
+  whyMatched,
   reads = [],
   quizAnswers = null,
   ecosystemProducts = [],
@@ -210,9 +211,7 @@ export default function ProductDetailScreen({
     return <WhyMatchScreen product={product} quizAnswers={quizAnswers} onBack={() => setShowWhyMatch(false)} />;
   }
 
-  const matchDetails = getProductMatchDetailsForProduct(product, quizAnswers);
-  const matchPercent = matchDetails?.percent ?? null;
-  const matchReasons = Array.isArray(matchDetails?.reasons) ? matchDetails.reasons : [];
+  const matchPercent = getProfileMatchPercentForProduct(product, quizAnswers);
   const openWhyMatch = () => setShowWhyMatch(true);
 
   const {
@@ -422,7 +421,7 @@ export default function ProductDetailScreen({
           <AskAynaTab product={product} quizAnswers={quizAnswers} ecosystemProducts={ecosystemProducts} />
         ) : (
           <>
-            {matchReasons.length > 0 && (
+            {whyMatched && (
               <div
                 style={{
                   borderRadius: 20,
@@ -435,11 +434,7 @@ export default function ProductDetailScreen({
                 <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.3px', textTransform: 'uppercase', opacity: 0.62 }}>
                   Why you're seeing this
                 </div>
-                <ul style={{ margin: '9px 0 0', paddingLeft: 18, fontSize: 14.5, lineHeight: 1.5 }}>
-                  {matchReasons.map((reason) => (
-                    <li key={reason}>{reason}</li>
-                  ))}
-                </ul>
+                <div style={{ fontSize: 14.5, lineHeight: 1.5, marginTop: 9 }}>{whyMatched}</div>
               </div>
             )}
 

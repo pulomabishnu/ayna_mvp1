@@ -335,6 +335,31 @@ const PLATFORM_LABELS = {
   facebook: 'Facebook',
 };
 
+function normalizePercent(value) {
+  if (value == null || value === '') return null;
+  const n = Number(value);
+  if (!Number.isFinite(n)) return null;
+  const pct = n > 0 && n <= 1 ? n * 100 : n;
+  if (pct < 0 || pct > 100) return null;
+  return Math.round(pct);
+}
+
+function getRealMatchPercent(product) {
+  const candidates = [
+    product?.matchPercentage,
+    product?.matchPercent,
+    product?.matchScore,
+    product?.aynaMatchPercentage,
+    product?.aynaMatchPercent,
+    product?.aynaMatch,
+  ];
+  for (const value of candidates) {
+    const pct = normalizePercent(value);
+    if (pct != null) return pct;
+  }
+  return null;
+}
+
 /** True for a real URL with something after the domain — not just a bare homepage. */
 function hasRealPath(url) {
   try {
@@ -483,12 +508,13 @@ export default function ProductModal({
     () => getProfileMatchLabelsForProduct(product, quizResults, healthProfile),
     [product, quizResults, healthProfile]
   );
+  const explicitMatchPercent = useMemo(() => getRealMatchPercent(product), [product]);
   const profileMatchPercent = useMemo(
     () => getProfileMatchPercentForProduct(product, quizResults, healthProfile),
     [product, quizResults, healthProfile]
   );
   const hasEcosystemContext = isInEcosystem || (Array.isArray(ecosystemProducts) && ecosystemProducts.length > 0);
-  const matchPercent = profileMatchPercent;
+  const matchPercent = profileMatchPercent ?? explicitMatchPercent;
   const headMatchLabel = matchLabels[0] || null;
   const buyUrl = useMemo(() => getBuyUrl(product), [product]);
   const usesAffiliateLink = Boolean(
