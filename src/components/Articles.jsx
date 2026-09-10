@@ -477,6 +477,7 @@ const ARTICLES = [
   },
   {
     id: 'yeast-infection-basics',
+    image: '/articles/yeast-infection-basics.webp',
     title: 'Yeast Infection Basics',
     source: 'UpToDate, CDC, ACOG',
     tags: ['Vulvovaginal health', 'Infections'],
@@ -558,6 +559,7 @@ const ARTICLES = [
   },
   {
     id: 'endometriosis-basics',
+    image: '/articles/endometriosis-basics.webp',
     title: 'Endometriosis: Symptoms, Diagnosis, and Care',
     source: 'ACOG, EndoFound, UpToDate',
     tags: ['Chronic pain', 'Reproductive health'],
@@ -661,6 +663,7 @@ const ARTICLES = [
   },
   {
     id: 'ovarian-cysts',
+    image: '/articles/ovarian-cysts.webp',
     title: 'Ovarian Cysts',
     source: 'ACOG, Mayo Clinic, UpToDate',
     tags: ['Reproductive health', 'Pelvic health'],
