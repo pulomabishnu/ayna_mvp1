@@ -390,6 +390,7 @@ function DiagnosticProductsAndStartups({ articleId, quizResults, healthProfile, 
 const ARTICLES = [
   {
     id: 'intimate-wash',
+    image: '/articles/intimate-wash.webp',
     title: 'Intimate Washes',
     source: 'UpToDate, ACOG, CDC',
     tags: ['Gynecology', 'Vulvovaginal health'],
@@ -415,6 +416,7 @@ const ARTICLES = [
   },
   {
     id: 'heavy-bleeding',
+    image: '/articles/heavy-bleeding.webp',
     title: 'Heavy Menstrual Bleeding',
     source: 'UpToDate, ACOG, CDC',
     tags: ['Menstrual health', 'Clinical guidance'],
@@ -455,6 +457,7 @@ const ARTICLES = [
   },
   {
     id: 'uti-prevention',
+    image: '/articles/uti-prevention.webp',
     title: 'UTI Prevention',
     source: 'UpToDate, NIH, CDC',
     tags: ['Urinary health', 'Prevention'],
@@ -575,6 +578,7 @@ const ARTICLES = [
   },
   {
     id: 'bacterial-vaginosis',
+    image: '/articles/bacterial-vaginosis.webp',
     title: 'Bacterial Vaginosis (BV)',
     source: 'CDC, ACOG, UpToDate',
     tags: ['Vaginal health', 'Infections'],
@@ -636,6 +640,7 @@ const ARTICLES = [
   },
   {
     id: 'iron-deficiency-anemia',
+    image: '/articles/iron-deficiency-anemia.webp',
     title: 'Iron Deficiency & Anemia from Heavy Periods',
     source: 'ACOG, NIH, UpToDate',
     tags: ['Menstrual health', 'Nutrition'],
