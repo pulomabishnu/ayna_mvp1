@@ -186,7 +186,7 @@ function ToggleRow({ title, sub, on, onClick, first }) {
 
 /* ---------------------------- Profile hub ---------------------------- */
 
-function ProfileHub({ onOpen, onClose, authUser, onSignOut, onSignIn, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, onEditProfile }) {
+function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, onEditProfile }) {
   return (
     <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
       <div
@@ -302,12 +302,6 @@ function ProfileHub({ onOpen, onClose, authUser, onSignOut, onSignIn, name, init
             </div>
           </div>
         ))}
-
-        {authUser ? (
-          <div onClick={onSignOut} style={{ textAlign: 'center', padding: '16px 0 4px', fontSize: 13, color: 'var(--ayna-text-muted)', cursor: 'pointer' }}>Sign out</div>
-        ) : (
-          <div onClick={onSignIn} style={{ textAlign: 'center', padding: '16px 0 4px', fontSize: 13, color: 'var(--ayna-text-muted)', cursor: 'pointer' }}>Sign in</div>
-        )}
       </div>
     </div>
   );
@@ -1230,7 +1224,7 @@ function isAnalyticsOptedOut() {
   try { return typeof window !== 'undefined' && window.posthog?.has_opted_out_capturing?.() === true; } catch { return false; }
 }
 
-function PrivacyDataScreen({ onBack, onOpenLegal, onOpenManageData }) {
+function PrivacyDataScreen({ onBack, onOpenManageData }) {
   const [analyticsOptedOut, setAnalyticsOptedOut] = useState(isAnalyticsOptedOut);
 
   const toggleAnalytics = () => {
@@ -1288,11 +1282,6 @@ function PrivacyDataScreen({ onBack, onOpenLegal, onOpenManageData }) {
           <div onClick={() => window.open(PRIVACY_POLICY_URL, '_blank', 'noopener,noreferrer')} style={{ fontSize: 12.5, color: 'var(--ayna-heading)', fontWeight: 600, marginTop: 10, cursor: 'pointer' }}>
             Read the full privacy policy
           </div>
-        </div>
-
-        <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>The fine print</div>
-        <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
-          <AccountRow title="Legal" sub="Privacy policy, terms, licences." borderTop={false} onClick={onOpenLegal} />
         </div>
 
         <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 16, padding: '0 4px' }}>
@@ -2418,9 +2407,6 @@ export default function ProfileFlow({
       <ProfileHub
         onOpen={pushScreen}
         onClose={onClose}
-        authUser={authUser}
-        onSignOut={onSignOut}
-        onSignIn={onSignIn ? () => { onClose(); onSignIn(); } : undefined}
         name={name}
         initial={initial}
         memberSince={authUser?.created_at ? formatMemberSince(authUser.created_at) : 'Member since 2026'}
@@ -2484,7 +2470,7 @@ export default function ProfileFlow({
   } else if (screen === 'password') {
     body = <PasswordScreen onBack={goBack} authUser={authUser} />;
   } else if (screen === 'privacyData') {
-    body = <PrivacyDataScreen onBack={goBack} onOpenLegal={() => pushScreen('legal')} onOpenManageData={() => pushScreen('manageData')} />;
+    body = <PrivacyDataScreen onBack={goBack} onOpenManageData={() => pushScreen('manageData')} />;
   } else if (screen === 'legal') {
     body = <LegalScreen onBack={goBack} />;
   } else if (screen === 'manageData') {
