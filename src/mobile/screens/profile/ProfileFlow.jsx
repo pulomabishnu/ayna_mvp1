@@ -1288,7 +1288,7 @@ function PrivacyDataScreen({ onBack, onOpenManageData }) {
 
 /* ---------------------------------- Legal ---------------------------------- */
 
-function LegalScreen({ onBack, onOpenConsumerHealthData, onOpenOpenSourceLicenses }) {
+function LegalScreen({ onBack, onOpenConsumerHealthData, onOpenOpenSourceLicenses, onOpenTypefaces, onOpenResearchSources }) {
   const licenseFamilies = summarizeLicenses();
   return (
     <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
@@ -1322,8 +1322,8 @@ function LegalScreen({ onBack, onOpenConsumerHealthData, onOpenOpenSourceLicense
             borderTop={false}
             onClick={onOpenOpenSourceLicenses}
           />
-          <AccountRow title="Typefaces" sub="Playfair Display, DM Sans, DM Mono — Google Fonts, SIL Open Font Licence." />
-          <AccountRow title="Research and data sources" sub="Where ayna's product and safety information comes from." badge="COMING SOON" dimmed />
+          <AccountRow title="Typefaces" sub="Playfair Display, DM Sans, DM Mono — Google Fonts, SIL Open Font Licence." onClick={onOpenTypefaces} />
+          <AccountRow title="Research and data sources" sub="Where ayna's product and safety information comes from." onClick={onOpenResearchSources} />
         </div>
 
         <div style={{ marginTop: 22, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '17px 18px' }}>
@@ -1570,6 +1570,200 @@ function OpenSourceLicensesScreen({ onBack }) {
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFCF9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v12" /><path d="M7 11l5 5 5-5" /><path d="M4 21h16" /></svg>
             Download licences.txt
           </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------------- Typefaces ---------------------------------- */
+
+const TYPEFACES = [
+  {
+    key: 'pf', name: 'Playfair Display', role: 'Headlines and product names',
+    designer: 'Claus Eggers Sørensen', weights: 'Regular, Medium, Italic',
+    font: "'Playfair Display',serif", size: 26,
+  },
+  {
+    key: 'dms', name: 'DM Sans', role: 'Body copy and interface',
+    designer: 'Colophon Foundry, for Google Fonts', weights: '400, 500, 600, 700',
+    font: "'DM Sans',sans-serif", size: 21,
+  },
+  {
+    key: 'dmm', name: 'DM Mono', role: 'Labels, versions, timestamps',
+    designer: 'Colophon Foundry, for Google Fonts', weights: '400, 500',
+    font: "'DM Mono',monospace", size: 17,
+  },
+];
+
+const SIL_OFL_URL = 'https://scripts.sil.org/OFL';
+
+function TypefaceRow({ face, open, onToggle }) {
+  return (
+    <div style={{ marginTop: 14, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 24, overflow: 'hidden', boxShadow: '0 2px 10px rgba(41,37,36,.04)' }}>
+      <div onClick={onToggle} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 18px', cursor: 'pointer' }}>
+        <div style={{ width: 44, height: 44, borderRadius: 14, flex: 'none', background: '#FDF0DC', color: '#9A5B14', fontFamily: face.font, fontSize: 19, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Ag</div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontWeight: 600, fontSize: 14.5, color: 'var(--ayna-text)' }}>{face.name}</div>
+          <div style={{ fontSize: 11.5, color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>{face.role}</div>
+        </div>
+        <div style={{ flex: 'none', transition: 'transform .2s ease', transform: `rotate(${open ? 180 : 0}deg)` }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A8A29E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
+        </div>
+      </div>
+      {open && (
+        <div style={{ padding: '0 18px 18px' }}>
+          <div style={{ fontFamily: face.font, fontSize: face.size, lineHeight: 1.35, color: 'var(--ayna-text)', borderTop: '1px solid var(--ayna-border)', paddingTop: 15 }}>
+            Nothing reaches you unchecked.
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 14 }}>
+            {[['Designer', face.designer], ['Licence', 'SIL Open Font Licence 1.1'], ['Weights', face.weights]].map(([label, value]) => (
+              <div key={label} style={{ display: 'flex', gap: 10, fontSize: 12 }}>
+                <div style={{ width: 64, flex: 'none', fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)', paddingTop: 2 }}>{label}</div>
+                <div style={{ flex: 1, color: 'var(--ayna-text-muted)' }}>{value}</div>
+              </div>
+            ))}
+          </div>
+          <div onClick={() => window.open(SIL_OFL_URL, '_blank', 'noopener,noreferrer')} style={{ fontSize: 12.5, color: 'var(--ayna-heading)', fontWeight: 600, marginTop: 14, cursor: 'pointer' }}>
+            Read the licence
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TypefacesScreen({ onBack }) {
+  const [openFace, setOpenFace] = useState({ pf: true });
+  return (
+    <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+      <BackHeader title="Typefaces" onBack={onBack} />
+      <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '6px 20px 30px' }}>
+        <div style={{ position: 'relative', overflow: 'hidden', background: 'linear-gradient(150deg,#FFF4E2,#FFE7C6 55%,#FFDCA8)', border: '1px solid #F0D9B4', borderRadius: 26, padding: 20, boxShadow: '0 3px 14px rgba(192,118,31,.09)' }}>
+          <div style={{ position: 'absolute', right: -30, top: -36, width: 116, height: 116, borderRadius: 99, background: 'rgba(255,255,255,.4)' }} />
+          <div style={{ position: 'relative', fontFamily: "'Playfair Display',serif", fontSize: 56, lineHeight: .95, color: '#7A4410' }}>Aa</div>
+          <div style={{ position: 'relative', fontSize: 13, lineHeight: 1.6, color: '#6B4413', marginTop: 11, maxWidth: 250 }}>Three faces, all openly licensed under the SIL Open Font Licence.</div>
+        </div>
+
+        {TYPEFACES.map((face) => (
+          <TypefaceRow
+            key={face.key}
+            face={face}
+            open={!!openFace[face.key]}
+            onToggle={() => setOpenFace((s) => ({ ...s, [face.key]: !s[face.key] }))}
+          />
+        ))}
+
+        <div style={{ marginTop: 16, background: 'var(--ayna-surface)', border: '1px dashed var(--ayna-border)', borderRadius: 24, padding: '16px 18px' }}>
+          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.3px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 7 }}>Loaded via Google Fonts</div>
+          <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.6 }}>
+            Served from Google's font CDN over HTTPS — the standard way Google Fonts are delivered, not bundled with the app itself.
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------- Research & data sources ---------------------------- */
+
+// Accurate to what ayna actually does today — verified against the real
+// codebase rather than copied from the design mockup's placeholder text,
+// which claimed things that aren't true yet: fonts "self-hosted" (they load
+// from Google's CDN, see index.html), a manufacturer-vs-independently-
+// verified marking on product pages (no such UI exists), a human reviewing
+// AI output before it reaches a user (no such step exists in the code), and
+// a specific review cadence with invented dates (no real cadence exists to
+// cite). Each left out rather than asserted.
+const RESEARCH_SOURCES = [
+  {
+    key: 'clin', num: '01', title: 'Clinical guidance', blurb: 'The bodies whose guidance we follow.',
+    body: "Menstrual, reproductive and sexual health information is grounded in guidance from ACOG, the CDC, and NIH (including NICHD), plus peer-reviewed literature indexed in PubMed — the same sources cited directly on individual articles and product pages throughout the app.",
+    tags: ['ACOG', 'CDC', 'NIH / NICHD', 'PUBMED'],
+    note: "ayna's advisory board includes Dr. David Orbach, MD.",
+  },
+  {
+    key: 'safe', num: '02', title: 'Product & ingredient safety', blurb: 'What we check a product against.',
+    body: 'Recall checks run live against OpenFDA. Supplement products are checked against the NIH Dietary Supplement Label Database (DSLD). Ingredient and condition-specific concerns are checked against the clinical sources above.',
+    tags: ['OPENFDA', 'NIH DSLD', 'PUBMED'],
+    note: "We don't yet mark manufacturer-reported claims separately from independently verified ones on the product page — treat an ingredient claim as manufacturer-reported unless a citation says otherwise.",
+  },
+  {
+    key: 'ai', num: '03', title: 'How AI answers are grounded', blurb: 'Models read our sources, not the open web.',
+    body: "In-app recommendations and Ask Ayna's answers are generated with Anthropic, OpenAI, or Google models, retrieved against the clinical knowledge base above rather than answering from open-ended AI opinion.",
+    tags: ['ANTHROPIC', 'OPENAI', 'GOOGLE'],
+    note: 'AI outputs are not currently reviewed by a person before you see them.',
+  },
+  {
+    key: 'you', num: '04', title: 'Your own data', blurb: 'The part of a match that is only yours.',
+    body: "Personalised insights also draw on what you've told ayna — your intake answers, the products you've saved, and what you've asked Ask Ayna. That's why two people can see different matches for the same product. It is never used to advertise to you.",
+    tags: ['INTAKE ANSWERS', 'ASK AYNA', 'SAVED PRODUCTS'],
+    note: 'Read the Privacy Policy for how it is stored and deleted.',
+  },
+];
+
+function ResearchSourceRow({ source, open, onToggle }) {
+  return (
+    <div style={{ marginTop: 14, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 24, overflow: 'hidden', boxShadow: '0 2px 10px rgba(41,37,36,.04)' }}>
+      <div onClick={onToggle} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 18px', cursor: 'pointer' }}>
+        <div style={{ width: 30, height: 30, borderRadius: 99, flex: 'none', background: open ? '#FDF0DC' : 'var(--ayna-chip-bg)', color: open ? '#9A5B14' : 'var(--ayna-text-faint)', fontFamily: "'DM Mono',monospace", fontSize: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background .2s ease' }}>{source.num}</div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontWeight: 600, fontSize: 14.5, color: 'var(--ayna-text)' }}>{source.title}</div>
+          <div style={{ fontSize: 11.5, color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>{source.blurb}</div>
+        </div>
+        <div style={{ flex: 'none', transition: 'transform .2s ease', transform: `rotate(${open ? 180 : 0}deg)` }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A8A29E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
+        </div>
+      </div>
+      {open && (
+        <div style={{ padding: '2px 18px 18px' }}>
+          <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.65 }}>{source.body}</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 12 }}>
+            {source.tags.map((t) => (
+              <div key={t} style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '.9px', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-text-muted)', borderRadius: 99, padding: '5px 9px' }}>{t}</div>
+            ))}
+          </div>
+          <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 11, borderTop: '1px solid var(--ayna-border)', paddingTop: 11 }}>{source.note}</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ResearchSourcesScreen({ onBack }) {
+  const [openSrc, setOpenSrc] = useState({ clin: true });
+  return (
+    <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+      <BackHeader title="Research & sources" onBack={onBack} />
+      <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '6px 20px 30px' }}>
+        <div style={{ position: 'relative', overflow: 'hidden', background: 'linear-gradient(150deg,#EFF3EC,#E3EDE2 60%,#D6E7D6)', border: '1px solid #CFE0CE', borderRadius: 26, padding: 20, boxShadow: '0 3px 14px rgba(63,107,74,.08)' }}>
+          <div style={{ position: 'absolute', right: -30, top: -34, width: 110, height: 110, borderRadius: 99, background: 'rgba(255,255,255,.4)' }} />
+          <div style={{ position: 'relative', width: 38, height: 38, borderRadius: 99, background: '#FFFCF9', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 1px 5px rgba(63,107,74,.14)' }}>
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#3F6B4A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H19v15H6.5A2.5 2.5 0 0 0 4 20.5z" /><path d="M8 8h7" /><path d="M8 12h5" /></svg>
+          </div>
+          <div style={{ position: 'relative', fontFamily: "'Playfair Display',serif", fontSize: 23, lineHeight: 1.2, marginTop: 13, color: '#25382A' }}>Where our answers come from.</div>
+          <div style={{ position: 'relative', fontSize: 12.5, lineHeight: 1.6, color: '#42604A', marginTop: 8 }}>Every match, warning and explanation traces back to something on this page.</div>
+        </div>
+
+        {RESEARCH_SOURCES.map((source) => (
+          <ResearchSourceRow
+            key={source.key}
+            source={source}
+            open={!!openSrc[source.key]}
+            onToggle={() => setOpenSrc((s) => ({ ...s, [source.key]: !s[source.key] }))}
+          />
+        ))}
+
+        <div style={{ marginTop: 14, display: 'flex', alignItems: 'flex-start', gap: 12, background: '#F7EFE7', border: '1px solid #EBD9C6', borderRadius: 24, padding: '16px 18px' }}>
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#9A5B14" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" style={{ flex: 'none', marginTop: 1 }}><circle cx="12" cy="12" r="9" /><path d="M12 11v5" /><path d="M12 7.6v.1" /></svg>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 13.5, fontWeight: 600, color: '#6B4413' }}>Not a substitute for medical advice</div>
+            <div style={{ fontSize: 12.5, color: '#7A5A31', lineHeight: 1.6, marginTop: 4 }}>Ayna is a discovery and education tool. Nothing here diagnoses or treats a condition — talk to your clinician about anything that worries you.</div>
+          </div>
+        </div>
+
+        <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 14, padding: '0 4px', textAlign: 'center' }}>
+          Spotted something out of date? <a href={DELETE_ACCOUNT_MAILTO.replace('subject=Account%20Deletion%20Request', 'subject=Research%20source%20question')}>Tell us</a> and we'll check it.
         </div>
       </div>
     </div>
@@ -2713,12 +2907,18 @@ export default function ProfileFlow({
         onBack={goBack}
         onOpenConsumerHealthData={() => pushScreen('consumerHealthData')}
         onOpenOpenSourceLicenses={() => pushScreen('openSourceLicenses')}
+        onOpenTypefaces={() => pushScreen('typefaces')}
+        onOpenResearchSources={() => pushScreen('researchSources')}
       />
     );
   } else if (screen === 'consumerHealthData') {
     body = <ConsumerHealthDataPolicyScreen onBack={goBack} />;
   } else if (screen === 'openSourceLicenses') {
     body = <OpenSourceLicensesScreen onBack={goBack} />;
+  } else if (screen === 'typefaces') {
+    body = <TypefacesScreen onBack={goBack} />;
+  } else if (screen === 'researchSources') {
+    body = <ResearchSourcesScreen onBack={goBack} />;
   } else if (screen === 'manageData') {
     body = <ManageDataScreen onBack={goBack} />;
   }
