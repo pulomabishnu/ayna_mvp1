@@ -5,7 +5,8 @@ import { RELEASED_STARTUPS } from '../data/startups.js';
 import { loadProductCatalog } from '../utils/productCatalog.js';
 import { getSupabaseClient } from '../utils/supabaseClient.js';
 import { loadEcosystemForUser, upsertProductState, upsertProductsBatch } from '../utils/ecosystemStore.js';
-import { saveHealthIntakeForCurrentUser } from '../utils/healthIntakeStore.js';
+import { loadHealthIntakeForCurrentUser, saveHealthIntakeForCurrentUser } from '../utils/healthIntakeStore.js';
+import { mapIntakeToLegacyQuizProfile } from '../utils/healthIntake.js';
 import { ARTICLES } from '../components/Articles.jsx';
 import { ECOSYSTEM_AREAS as REAL_ECOSYSTEM_AREAS, resolveEcosystemProductArea } from '../components/EcosystemBubbles.jsx';
 import { useSavedProducts } from './hooks/useSavedProducts.js';
@@ -203,7 +204,15 @@ export default function MobileApp() {
         pendingQuizEcosystemRef.current = null;
       }
 
-      const ecosystem = await loadEcosystemForUser(supabase, userId);
+      // Loaded alongside the ecosystem itself — a synced ecosystem with no
+      // synced intake behind it left `lastQuizAnswers` empty on any device
+      // that didn't complete the intake locally, which silently disabled
+      // every profile-gated feature (the Products/Reads "For You" toggles
+      // in particular) even for a user with a complete, real profile.
+      const [ecosystem, rawIntake] = await Promise.all([
+        loadEcosystemForUser(supabase, userId),
+        loadHealthIntakeForCurrentUser(),
+      ]);
       if (cancelled) return;
 
       ecosystemFlagsRef.current = {
@@ -219,10 +228,18 @@ export default function MobileApp() {
         };
       });
 
+      const restoredQuizAnswers = rawIntake ? mapIntakeToLegacyQuizProfile(rawIntake) : null;
+
       updateSession((prev) => ({
         userName: firstName || prev.userName,
         myProducts: remoteProducts,
         hasEcosystem: remoteProducts.length > 0,
+        // Don't clobber a completion that just happened locally this same
+        // session (e.g. mobile onboarding right before sign-in) with
+        // possibly-older server data.
+        lastQuizAnswers: prev.lastQuizAnswers?.frustrations?.length
+          ? prev.lastQuizAnswers
+          : (restoredQuizAnswers || prev.lastQuizAnswers),
       }));
 
       if (remoteProducts.length > 0) setScreen('eco');
