@@ -622,6 +622,7 @@ const ARTICLES = [
   },
   {
     id: 'fibroids',
+    image: '/articles/fibroids.webp',
     title: 'Uterine Fibroids',
     source: 'ACOG, NIH, UpToDate',
     tags: ['Chronic conditions', 'Menstrual health'],
@@ -684,6 +685,7 @@ const ARTICLES = [
   },
   {
     id: 'hormonal-birth-control',
+    image: '/articles/hormonal-birth-control.webp',
     title: 'Hormonal Birth Control: Types, Benefits & Side Effects',
     source: 'ACOG, Planned Parenthood, UpToDate',
     tags: ['Contraception', 'Hormonal health'],
