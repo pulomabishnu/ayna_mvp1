@@ -6,6 +6,7 @@ import ProductCard from '../components/ProductCard.jsx';
 import LibraryCard from '../components/LibraryCard.jsx';
 import { ARTICLE_CATEGORIES } from '../data/articleRows.js';
 import { getPersonalizedProductIds, MACRO_GROUPS, itemMatchesMacroGroup, CATEGORY_LABELS } from '../../data/products.js';
+import { getArticlesByProfileRelevance } from '../../components/Articles.jsx';
 import { isPartnerBrandItem } from '../../utils/partnerBrands.js';
 import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../../utils/naturalLanguageSearch.js';
 import { fetchSearchSuggestions } from '../../utils/fetchSearchSuggestions.js';
@@ -263,6 +264,7 @@ export default function BrowseScreen({
   const [mode, setMode] = useState('products');
   const [searchValue, setSearchValue] = useState('');
   const [personalized, setPersonalized] = useState(false);
+  const [personalizedReads, setPersonalizedReads] = useState(false);
   const [activeGroup, setActiveGroup] = useState('all');
   const { layout: cardLayout, toggleLayout } = useCardLayout();
   // AI fallback for a typed search the local catalog scoring found nothing
@@ -363,6 +365,14 @@ export default function BrowseScreen({
     items: cat.articleIds.map((id) => articlesById.get(id)).filter(Boolean),
   })).filter((row) => row.items.length > 0);
 
+  // Same personalization logic as the "Recommended" filter on the desktop
+  // Health Articles Library (Articles.jsx's getArticlesByProfileRelevance) —
+  // not a separate/weaker mobile-only scoring system. Falls back to the
+  // category-grouped `rows` above when off or when there's no profile yet.
+  const recommendedReads = getArticlesByProfileRelevance(quizAnswers || {}, null).filter((a) =>
+    articlesById.has(a.id)
+  );
+
   return (
     <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0 40px', animation: 'ay-page .25s ease-out' }}>
       <MobileHeader
@@ -387,6 +397,9 @@ export default function BrowseScreen({
             <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />
             <LayoutToggle layout={cardLayout} onToggle={toggleLayout} />
           </div>
+        )}
+        {mode === 'reads' && (
+          <PersonalizedToggle on={personalizedReads} disabled={!hasProfile} onClick={() => setPersonalizedReads((v) => !v)} />
         )}
       </div>
 
@@ -437,6 +450,20 @@ export default function BrowseScreen({
             ALL OTC · NOT A DIAGNOSIS
           </div>
         </>
+      ) : personalizedReads && hasProfile ? (
+        recommendedReads.length === 0 ? (
+          <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 13.5 }}>
+            No reads match your profile yet.
+          </div>
+        ) : (
+          <div style={{ padding: '0 20px 4px' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+              {recommendedReads.map((a) => (
+                <LibraryCard key={a.id} article={a} onClick={() => onOpenArticle && onOpenArticle(a)} />
+              ))}
+            </div>
+          </div>
+        )
       ) : rows.length === 0 ? (
         <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 13.5 }}>
           No reads yet.

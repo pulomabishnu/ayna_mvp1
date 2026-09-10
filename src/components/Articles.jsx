@@ -733,7 +733,7 @@ export function getRecommendedArticles(quizAnswers, healthProfile = null) {
 }
 
 /** All articles sorted by relevance to health profile (for Articles page filter). */
-function getArticlesByProfileRelevance(quizAnswers, healthProfile = null) {
+export function getArticlesByProfileRelevance(quizAnswers, healthProfile = null) {
   const userTags = new Set([
     ...(quizAnswers?.frustrations || []).map((f) => FRUSTRATION_TO_TAG[f]).filter(Boolean),
     ...inferTagsFromHealthProfile(healthProfile),
