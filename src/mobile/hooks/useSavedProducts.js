@@ -1,12 +1,15 @@
-import { useCallback, useState } from 'react';
-import { loadSavedProducts, persistSavedProducts } from '../../utils/savedProductsStore.js';
+import { useCallback, useEffect, useState } from 'react';
+
+import {
+  loadSavedProducts,
+  persistSavedProducts,
+  loadSavedForUser,
+  setSavedForUser,
+} from '../../utils/savedProductsStore.js';
+import { getSupabaseClient } from '../../utils/supabaseClient.js';
 
 // Mirrors compactProduct() in savedProductsStore.js (not exported there) —
-// keeps our writes in the exact same shape the real store already persists
-// under the same localStorage key (ayna_saved_for_later_v1), so this stays
-// consistent with the real website if the same browser/webview opens both.
-// Uses only the local-storage half of the real store — Supabase sync
-// requires a signed-in user, which is deferred to the auth step.
+// keeps local writes in the same compact shape used by the website.
 const COMPACT_KEYS = [
   'id', 'name', 'brand', 'category', 'type', 'price', 'priceDisplay', 'stage',
   'image', 'imageUrl', 'images', 'summary', 'description', 'url', 'website',
@@ -24,25 +27,69 @@ function compactProduct(product) {
   return out;
 }
 
-export function useSavedProducts() {
+export function useSavedProducts(user) {
   const [savedMap, setSavedMap] = useState(() => loadSavedProducts());
 
-  const isSaved = useCallback((id) => Boolean(id && savedMap[id]), [savedMap]);
+  // When a user signs in, merge their Supabase-synced saves into anything
+  // already saved locally on this device, matching the website behavior.
+  useEffect(() => {
+    const userId = user?.id;
+    if (!userId) return undefined;
+
+    const supabase = getSupabaseClient();
+    if (!supabase) return undefined;
+
+    let cancelled = false;
+
+    loadSavedForUser(supabase, userId)
+      .then((remoteSaved) => {
+        if (cancelled || !remoteSaved) return;
+        setSavedMap((localSaved) => {
+          const merged = { ...localSaved, ...remoteSaved };
+          persistSavedProducts(merged);
+          return merged;
+        });
+      })
+      .catch((error) => {
+        console.warn('[Ayna] mobile saved-products sync unavailable:', error?.message || error);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.id]);
+
+  const isSaved = useCallback(
+    (id) => Boolean(id && savedMap[id]),
+    [savedMap],
+  );
 
   const toggleSaved = useCallback((product) => {
     if (!product?.id) return;
-    setSavedMap((prev) => {
-      const next = { ...prev };
-      if (next[product.id]) {
-        delete next[product.id];
-      } else {
-        const compact = compactProduct(product);
-        if (compact) next[product.id] = compact;
+
+    const wasSaved = Boolean(savedMap[product.id]);
+    const next = { ...savedMap };
+
+    if (wasSaved) {
+      delete next[product.id];
+    } else {
+      const compact = compactProduct(product);
+      if (compact) next[product.id] = compact;
+    }
+
+    setSavedMap(next);
+    persistSavedProducts(next);
+
+    if (user?.id) {
+      const supabase = getSupabaseClient();
+      if (supabase) {
+        setSavedForUser(supabase, user.id, product, !wasSaved)
+          .catch((error) => {
+            console.warn('[Ayna] mobile saved-product write unavailable:', error?.message || error);
+          });
       }
-      persistSavedProducts(next);
-      return next;
-    });
-  }, []);
+    }
+  }, [savedMap, user?.id]);
 
   return { savedMap, isSaved, toggleSaved };
 }
