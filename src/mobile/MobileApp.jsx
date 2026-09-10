@@ -202,9 +202,9 @@ export default function MobileApp() {
   useEffect(() => {
     if (!authUser) return;
     let justSignedInViaOAuth = false;
-    try { justSignedInViaOAuth = sessionStorage.getItem(MOBILE_OAUTH_PENDING_KEY) === '1'; } catch { /* private mode */ }
+    try { justSignedInViaOAuth = localStorage.getItem(MOBILE_OAUTH_PENDING_KEY) === '1'; } catch { /* private mode */ }
     if (!justSignedInViaOAuth) return;
-    try { sessionStorage.removeItem(MOBILE_OAUTH_PENDING_KEY); } catch { /* private mode */ }
+    try { localStorage.removeItem(MOBILE_OAUTH_PENDING_KEY); } catch { /* private mode */ }
     const firstName = displayNameFromUser(authUser);
     // Deferred a tick so the state updates run from a callback rather than
     // directly in the effect body — same one-time transition, just shaped

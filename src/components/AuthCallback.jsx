@@ -47,7 +47,7 @@ export default function AuthCallback({ onAuthenticated }) {
     // making some later, unrelated sign-in look like "just completed".
     function finishAuth(user) {
       let returnToMobile = false;
-      try { returnToMobile = sessionStorage.getItem('ayna_mobile_oauth_pending') === '1'; } catch { /* ignore */ }
+      try { returnToMobile = localStorage.getItem('ayna_mobile_oauth_pending') === '1'; } catch { /* ignore */ }
       if (returnToMobile) {
         window.location.replace('/mobile-preview');
         return;

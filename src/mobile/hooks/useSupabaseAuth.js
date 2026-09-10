@@ -100,7 +100,12 @@ export function useSupabaseAuth() {
     const supabase = getSupabaseClient();
     if (!supabase) throw new Error('Sign-in is not configured right now.');
     try {
-      sessionStorage.setItem(MOBILE_OAUTH_PENDING_KEY, '1');
+      // localStorage, not sessionStorage — the flag has to survive a
+      // full-page redirect out to Google's login and back, and
+      // sessionStorage was observed not reliably surviving that round trip
+      // (silent Google SSO in particular), silently dropping the user onto
+      // the desktop site instead of back at /mobile-preview.
+      localStorage.setItem(MOBILE_OAUTH_PENDING_KEY, '1');
     } catch {
       // Private browsing / storage disabled — AuthCallback.jsx will just
       // fall through to desktop's own post-auth handling in that case.
