@@ -61,10 +61,23 @@ for (const t of TARGETS) {
 
   let imageUrl = '';
   try {
-    const res = await fetch(requestUrl);
-    if (res.ok) {
+    // A bare Node fetch (no browser fingerprint/User-Agent) can get served
+    // an HTML challenge page by Vercel's bot protection instead of reaching
+    // the function — confirmed by hitting this same URL in a real browser
+    // and getting valid JSON back. A normal desktop User-Agent avoids that.
+    const res = await fetch(requestUrl, {
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+        Accept: 'application/json',
+      },
+    });
+    const contentType = res.headers.get('content-type') || '';
+    if (res.ok && contentType.includes('application/json')) {
       const data = await res.json();
       imageUrl = data?.imageUrl || '';
+    } else if (res.ok) {
+      console.log(`  got non-JSON response (content-type: ${contentType || 'unknown'}) for "${t.name}" — likely a bot-protection challenge page`);
     } else {
       console.log(`  HTTP ${res.status} for "${t.name}"`);
     }

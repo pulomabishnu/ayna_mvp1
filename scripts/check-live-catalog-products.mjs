@@ -80,3 +80,41 @@ for (const q of QUERIES) {
 console.log('\nIf a row above shows ✅ and it still isn\'t showing on mobile, that\'s the 1hr CDN +');
 console.log('1hr client cache (src/utils/productCatalog.js) — it will appear within an hour, or');
 console.log('clear localStorage key "ayna_product_catalog_v1" to force a refresh sooner.\n');
+
+// The exact-phrase search above can miss a real row whose stored name has
+// different punctuation/wording than the screenshot ("Elitone (Urge
+// Incontinence)" vs "Elitone URGE", a trademark symbol, etc). Search by
+// brand alone as a second pass so a genuine match can't be missed just
+// because of formatting.
+const BRANDS = ['Proov', 'Elitone', 'Luteal'];
+
+console.log('--- Second pass: everything under these brands, by any name ---\n');
+
+for (const brand of BRANDS) {
+  const { data, error } = await admin
+    .from('product_catalog')
+    .select('id, name, brand, source, review_status, is_active, image')
+    .ilike('brand', `%${brand}%`);
+
+  if (error) {
+    console.log(`❌ brand~"${brand}" — query failed: ${error.message}`);
+    continue;
+  }
+
+  if (!data || data.length === 0) {
+    console.log(`❓ brand~"${brand}" — no rows at all under this brand`);
+    continue;
+  }
+
+  for (const row of data) {
+    const visible = row.is_active && (row.source !== 'discovered' || row.review_status === 'approved');
+    const flags = [
+      `source=${row.source}`,
+      `review_status=${row.review_status}`,
+      `is_active=${row.is_active}`,
+      row.image ? 'has image' : 'NO IMAGE',
+    ].join(', ');
+    console.log(`${visible ? '✅' : '⚠️ '} "${row.name}" (${row.brand || 'no brand'}) [id=${row.id}] — ${flags}`);
+  }
+}
+console.log('');
