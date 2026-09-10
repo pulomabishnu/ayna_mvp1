@@ -244,9 +244,7 @@ export async function loadEcosystemForUser(supabase, userId) {
  */
 export async function clearEcosystemForUser(supabase, userId) {
   const shadow = clearLocalEcosystemShadow(userId);
-  const metadataSaved = await writeMetadataShadow(supabase, userId, shadow);
 
-  let tableSynced = false;
   try {
     const { error: updateError, count } = await supabase
       .from('user_ecosystems')
@@ -264,13 +262,12 @@ export async function clearEcosystemForUser(supabase, userId) {
       .eq('is_omitted', false)
       .eq('is_saved', false);
     if (deleteError && deleteError.code !== '42703') throw deleteError;
-    tableSynced = true;
     return { cleared: count ?? null, synced: true };
   } catch (error) {
     console.warn('[Ayna] user_ecosystems reset deferred; fallback copy is authoritative:', describeError(error, 'clearEcosystem'));
+    const metadataSaved = await writeMetadataShadow(supabase, userId, shadow);
+    return { cleared: null, synced: metadataSaved, fallback: true };
   }
-
-  return { cleared: null, synced: tableSynced || metadataSaved, fallback: true };
 }
 
 function toRow(userId, product, { inEcosystem, isTracked, isOmitted }) {
@@ -290,10 +287,14 @@ function toRow(userId, product, { inEcosystem, isTracked, isOmitted }) {
 }
 
 export async function upsertProductState(supabase, userId, product, flags) {
-  // Durable fallback FIRST. This is what makes a successful UI change survive
-  // logout/login even if the table write below is rejected.
+  // Local shadow is written first (instant, always succeeds) so a successful
+  // UI change survives logout/login even if the table write below is
+  // rejected. The auth-metadata copy is written ONLY when the table write
+  // actually fails below — not on every call — since user_metadata rides
+  // along in the auth JWT on every request; writing it unconditionally here
+  // used to make it grow without bound and eventually blow past header size
+  // limits (HTTP 431) even when the table was working fine.
   const shadow = updateLocalProductShadow(userId, product, flags);
-  const metadataPromise = writeMetadataShadow(supabase, userId, shadow);
 
   const { inEcosystem, isTracked, isOmitted } = flags;
   try {
@@ -321,13 +322,12 @@ export async function upsertProductState(supabase, userId, product, flags) {
         .upsert(toRow(userId, product, flags), { onConflict: 'user_id,product_id' });
       if (error) throw error;
     }
-    await metadataPromise;
     return { synced: true };
   } catch (error) {
-    const metadataSaved = await metadataPromise;
     console.warn('[Ayna] user_ecosystems write unavailable; ecosystem change saved to fallback:', describeError(error, 'upsertProduct'));
     // localStorage is already written, so this is still a successful user save
     // on this device. user_metadata makes it cross-session/device when allowed.
+    const metadataSaved = await writeMetadataShadow(supabase, userId, shadow);
     return { synced: metadataSaved, fallback: true };
   }
 }
@@ -343,7 +343,6 @@ export async function upsertProductsBatch(supabase, userId, products, flags) {
     if (row) shadow.rows[product.id] = row;
   }
   writeLocalShadow(userId, shadow);
-  const metadataPromise = writeMetadataShadow(supabase, userId, shadow);
 
   const CHUNK = 100;
   let saved = 0;
@@ -356,11 +355,10 @@ export async function upsertProductsBatch(supabase, userId, products, flags) {
       if (error) throw error;
       saved += rows.length;
     }
-    await metadataPromise;
     return { saved, synced: true };
   } catch (error) {
-    const metadataSaved = await metadataPromise;
     console.warn('[Ayna] ecosystem batch table write unavailable; fallback copy saved:', describeError(error, 'upsertProductsBatch'));
+    const metadataSaved = await writeMetadataShadow(supabase, userId, shadow);
     return { saved: valid.length, synced: metadataSaved, fallback: true };
   }
 }

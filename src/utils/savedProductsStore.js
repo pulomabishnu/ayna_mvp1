@@ -120,8 +120,12 @@ export async function loadSavedForUser(supabase, userId) {
 }
 
 /**
- * Set or clear a saved product. Auth metadata is written first so the user's
- * click is durable even when the table migration/RLS is not ready yet.
+ * Set or clear a saved product. The table write is tried first; auth
+ * metadata is only written as a fallback when that write actually fails
+ * (missing column, RLS, etc). Writing it unconditionally on every save used
+ * to make user_metadata grow without bound — it rides along in the auth JWT
+ * on every request, so that eventually blew past header size limits (HTTP
+ * 431) even once the table itself was working fine.
  */
 export async function setSavedForUser(supabase, userId, product, isSaved) {
   if (!supabase || !userId || !product?.id) return false;
@@ -130,9 +134,8 @@ export async function setSavedForUser(supabase, userId, product, isSaved) {
   const nextMetadata = { ...existing };
   if (isSaved) nextMetadata[product.id] = compactProduct(product);
   else delete nextMetadata[product.id];
-  const metadataSaved = await writeMetadataSaved(supabase, userId, nextMetadata);
 
-  if (remoteColumnMissing) return metadataSaved;
+  if (remoteColumnMissing) return writeMetadataSaved(supabase, userId, nextMetadata);
 
   const { error } = await supabase
     .from('user_ecosystems')
@@ -154,7 +157,7 @@ export async function setSavedForUser(supabase, userId, product, isSaved) {
   if (error) {
     if (isMissingColumn(error)) remoteColumnMissing = true;
     else console.warn('[Ayna] wishlist table write unavailable; auth fallback retained:', error.message || error);
-    return metadataSaved;
+    return writeMetadataSaved(supabase, userId, nextMetadata);
   }
   return true;
 }
