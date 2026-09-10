@@ -1105,7 +1105,7 @@ function PreferencesScreen({ onBack, theme, onToggleTheme }) {
 
 /* ------------------------------ Settings ------------------------------ */
 
-function SettingsScreen({ onBack, onOpenHowItWorks, onOpenAboutAyna, onOpenContact, onOpenAccountInfo, onOpenPrivacyData, onOpenNotifications, onOpenLegal, authUser, onSignOut, onSignIn }) {
+function SettingsScreen({ onBack, onOpenHowItWorks, onOpenAboutAyna, onOpenContact, onOpenAccountInfo, onOpenPrivacyData, onOpenLegal, authUser, onSignOut, onSignIn }) {
   const aboutRows = [
     { title: 'How it works', sub: 'Nothing reaches you unchecked.', onClick: onOpenHowItWorks },
     { title: 'About ayna', sub: 'No mystery box.', onClick: onOpenAboutAyna },
@@ -1163,13 +1163,6 @@ function SettingsScreen({ onBack, onOpenHowItWorks, onOpenAboutAyna, onOpenConta
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontWeight: 500, fontSize: 14.5, color: 'var(--ayna-text)' }}>Privacy & data</div>
               <div style={{ fontSize: 12, color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>Policies, what we hold, exports and deletion.</div>
-            </div>
-            <ChevronIcon />
-          </div>
-          <div onClick={onOpenNotifications} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 0', borderTop: '1px solid var(--ayna-border)', cursor: 'pointer' }}>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 500, fontSize: 14.5, color: 'var(--ayna-text)' }}>Notifications</div>
-              <div style={{ fontSize: 12, color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>Notifications, updates, night mode.</div>
             </div>
             <ChevronIcon />
           </div>
@@ -2441,7 +2434,6 @@ export default function ProfileFlow({
         onOpenContact={() => pushScreen('contact')}
         onOpenAccountInfo={() => pushScreen('accountInfo')}
         onOpenPrivacyData={() => pushScreen('privacyData')}
-        onOpenNotifications={() => pushScreen('preferences')}
         onOpenLegal={() => pushScreen('legal')}
         authUser={authUser}
         onSignOut={onSignOut}
