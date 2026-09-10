@@ -1,6 +1,31 @@
 /* global process, Buffer */
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
+import net from 'node:net'
+
+// Vite's default behavior on a taken port is to silently climb (5173 ->
+// 5174 -> 5175 -> ...) with just a console note easy to miss, which is how
+// stray `npm run dev` processes left running in other terminal tabs quietly
+// push the dev server up to ports nobody's bookmarked. This checks only the
+// two ports actually wanted, in order, and fails loudly instead of
+// wandering further if both are taken.
+function isPortFree(port) {
+  return new Promise((resolve) => {
+    const tester = net.createServer()
+    tester.once('error', () => resolve(false))
+    tester.once('listening', () => tester.close(() => resolve(true)))
+    tester.listen(port, '127.0.0.1')
+  })
+}
+
+async function pickAllowedPort() {
+  for (const port of [5173, 5174]) {
+    if (await isPortFree(port)) return port
+  }
+  throw new Error(
+    'Ports 5173 and 5174 are both already in use. Close whatever else is running there — old `npm run dev` tabs left open in other terminal windows are the usual cause (lsof -ti:5173,5174 | xargs kill -9 clears them) — then run `npm run dev` again.'
+  )
+}
 
 // `vite dev` only serves the SPA — it has no serverless runtime, so every
 // /api/*.js route (Vercel functions) 404s under plain `npm run dev`. That
@@ -75,11 +100,18 @@ function apiDevProxy(routes, env) {
 }
 
 // https://vite.dev/config/
-export default defineConfig(({ mode }) => {
+export default defineConfig(async ({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
+  const port = await pickAllowedPort()
   return {
     base: '/',
     plugins: [react(), apiDevProxy(LOCAL_API_ROUTES, env)],
+    server: {
+      port,
+      // Enforce exactly the port we just picked rather than letting Vite's
+      // own fallback logic re-climb past it if something raced us for it.
+      strictPort: true,
+    },
     test: {
       environment: 'node',
     },
