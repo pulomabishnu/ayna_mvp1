@@ -8,7 +8,7 @@ function colorForId(id) {
 }
 
 export default function ArticleCard({ article, onClick }) {
-  const { id, title, teaser, tags = [] } = article || {};
+  const { id, title, teaser, tags = [], image } = article || {};
   const color = colorForId(id || title);
 
   return (
@@ -31,9 +31,14 @@ export default function ArticleCard({ article, onClick }) {
           height: 40,
           borderRadius: 12,
           flexShrink: 0,
-          background: `linear-gradient(150deg, ${color}33, ${color}66)`,
+          overflow: 'hidden',
+          background: image ? undefined : `linear-gradient(150deg, ${color}33, ${color}66)`,
         }}
-      />
+      >
+        {image && (
+          <img src={image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        )}
+      </div>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 14.5, lineHeight: 1.3 }}>
           {title}
