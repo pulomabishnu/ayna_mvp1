@@ -6,13 +6,14 @@
  *
  * Same auth pattern as notification-preferences.js: verifyUser() reads the
  * caller's Supabase JWT from Authorization: Bearer <token> — a user id is
- * never trusted from the request. Reads use the service-role client so this
- * works regardless of each table's RLS policy shape, same reasoning as
- * notification-preferences.js's own admin client.
+ * never trusted from the request. Deployed environments use the existing
+ * service-role client; local development can fall back to the caller's JWT
+ * plus the public key, with each table's RLS policy enforcing ownership.
  */
 /* global process */
 import { createClient } from '@supabase/supabase-js';
 import { verifyUser } from './_usageLimit.js';
+import { verifyUserWithRls } from './_userScopedSupabase.js';
 
 let _admin = null;
 function getAdmin() {
@@ -33,17 +34,24 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'method_not_allowed' });
   }
 
-  const { user, error } = await verifyUser(req);
-  if (!user) return res.status(401).json({ error });
+  let { user, error } = await verifyUser(req);
+  let db = getAdmin();
 
-  const admin = getAdmin();
-  if (!admin) return res.status(500).json({ error: 'server_misconfigured' });
+  if (!user && error === 'server_misconfigured') {
+    const fallback = await verifyUserWithRls(req);
+    user = fallback.user;
+    error = fallback.error;
+    db = fallback.client;
+  }
+
+  if (!user) return res.status(401).json({ error });
+  if (!db) return res.status(500).json({ error: 'server_misconfigured' });
 
   const [phoneResult, prefsResult, intakeResult, ecosystemResult] = await Promise.all([
-    admin.from('phone_numbers').select('phone_number, is_verified').eq('user_id', user.id).maybeSingle(),
-    admin.from('notification_preferences').select('*').eq('user_id', user.id).maybeSingle(),
-    admin.from('health_intakes').select('profile, updated_at').eq('user_id', user.id).maybeSingle(),
-    admin.from('user_ecosystems').select('product_id, product_name, brand, category, is_saved, updated_at').eq('user_id', user.id),
+    db.from('phone_numbers').select('phone_number, is_verified').eq('user_id', user.id).maybeSingle(),
+    db.from('notification_preferences').select('*').eq('user_id', user.id).maybeSingle(),
+    db.from('health_intakes').select('profile, updated_at').eq('user_id', user.id).maybeSingle(),
+    db.from('user_ecosystems').select('product_id, product_name, brand, category, is_saved, updated_at').eq('user_id', user.id),
   ]);
 
   const prefsRow = prefsResult.data;

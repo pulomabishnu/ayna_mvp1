@@ -5,12 +5,14 @@
  * Same auth pattern as phone-verify-send/confirm: verifyUser() reads the
  * caller's Supabase JWT from Authorization: Bearer <token> — a user id is
  * never trusted from the request body. Reads/writes use the service-role
- * client so a first-ever GET can transparently create the default row
- * (RLS would otherwise just return zero rows for a brand-new user).
+ * client in deployed environments. Local development can fall back to a
+ * caller-scoped Supabase client using the public key; the existing RLS
+ * policies then restrict every read/write to auth.uid() = user_id.
  */
 /* global process */
 import { createClient } from '@supabase/supabase-js';
 import { verifyUser } from './_usageLimit.js';
+import { verifyUserWithRls } from './_userScopedSupabase.js';
 
 const DELIVERY_CHANNELS = new Set(['push', 'sms', 'email']);
 const BOOLEAN_FIELDS = ['notifications_enabled', 'updates_enabled', 'night_mode_enabled', 'newsletter_enabled'];
@@ -65,16 +67,23 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'method_not_allowed' });
   }
 
-  const { user, error } = await verifyUser(req);
+  let { user, error } = await verifyUser(req);
+  let db = getAdmin();
+
+  if (!user && error === 'server_misconfigured') {
+    const fallback = await verifyUserWithRls(req);
+    user = fallback.user;
+    error = fallback.error;
+    db = fallback.client;
+  }
+
   if (!user) return res.status(401).json({ error });
+  if (!db) return res.status(500).json({ error: 'server_misconfigured' });
 
-  const admin = getAdmin();
-  if (!admin) return res.status(500).json({ error: 'server_misconfigured' });
-
-  const phoneVerified = await isPhoneVerified(admin, user.id);
+  const phoneVerified = await isPhoneVerified(db, user.id);
 
   if (req.method === 'GET') {
-    const { data, error: selectError } = await admin
+    const { data, error: selectError } = await db
       .from('notification_preferences')
       .select('*')
       .eq('user_id', user.id)
@@ -85,7 +94,7 @@ export default async function handler(req, res) {
     }
 
     if (!data) {
-      const { data: created, error: insertError } = await admin
+      const { data: created, error: insertError } = await db
         .from('notification_preferences')
         .insert({ user_id: user.id, ...DEFAULT_PREFERENCES })
         .select('*')
@@ -94,7 +103,7 @@ export default async function handler(req, res) {
         // Two concurrent first-loads can both race past the select-miss
         // above; the loser hits the primary-key conflict, not a real error.
         if (insertError.code === '23505') {
-          const { data: existing } = await admin
+          const { data: existing } = await db
             .from('notification_preferences')
             .select('*')
             .eq('user_id', user.id)
@@ -111,7 +120,7 @@ export default async function handler(req, res) {
     // forward, but a row written before that trigger existed could still be
     // stuck on 'sms' with no verified phone behind it.
     if (data.delivery_channel === 'sms' && !phoneVerified) {
-      const { data: fixed, error: fixError } = await admin
+      const { data: fixed, error: fixError } = await db
         .from('notification_preferences')
         .update({ delivery_channel: 'push', updated_at: new Date().toISOString() })
         .eq('user_id', user.id)
@@ -154,7 +163,7 @@ export default async function handler(req, res) {
   // {...DEFAULT_PREFERENCES, ...patch} would silently reset every field the
   // caller didn't mention back to its default on a row that already has
   // other, real values in it.
-  const { data: updatedRows, error: updateError } = await admin
+  const { data: updatedRows, error: updateError } = await db
     .from('notification_preferences')
     .update(patch)
     .eq('user_id', user.id)
@@ -167,7 +176,7 @@ export default async function handler(req, res) {
 
   let result = updatedRows?.[0];
   if (!result) {
-    const { data: created, error: insertError } = await admin
+    const { data: created, error: insertError } = await db
       .from('notification_preferences')
       .insert({ user_id: user.id, ...DEFAULT_PREFERENCES, ...patch })
       .select('*')
