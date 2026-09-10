@@ -14,18 +14,20 @@
  * visibility gap (not yet approved / inactive) apart from mere caching
  * staleness (1hr CDN + 1hr client cache, same code path on both platforms).
  *
- *   node scripts/check-live-catalog-products.mjs
+ *   SUPABASE_SERVICE_ROLE_KEY=<key> node scripts/check-live-catalog-products.mjs
  *
- * Requires SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in the environment
- * (service role, not anon — this needs to see inactive/pending rows too).
+ * Requires SUPABASE_SERVICE_ROLE_KEY in the environment (service role, not
+ * anon — this needs to see inactive/pending rows too). The project URL is
+ * just the API host, not a secret, so it's defaulted below; override with
+ * SUPABASE_URL if this is ever pointed at a different project.
  */
 import { createClient } from '@supabase/supabase-js';
 
-const url = process.env.SUPABASE_URL;
+const url = process.env.SUPABASE_URL || 'https://mvvwgyspcohqxxcqkfrv.supabase.co';
 const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-if (!url || !key) {
-  console.error('Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.\n');
+if (!key) {
+  console.error('Set SUPABASE_SERVICE_ROLE_KEY.\n');
   console.error('  Dashboard -> Project Settings -> API');
   console.error('  The SERVICE ROLE key, not the anon key. Never expose it to a browser.');
   process.exit(2);
