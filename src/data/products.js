@@ -13,6 +13,7 @@ import { MENSTRUAL_PHYSICAL } from './menstrualProducts.js';
 import { BRAND_PRODUCTS } from './brands.js';
 import { INCONTINENCE_PHYSICAL } from './incontinenceProducts.js';
 import { inferTagsFromHealthProfile } from '../utils/healthDataProfile.js';
+import { getInteractions } from './interactions.js';
 
 // Tags used for quiz → product matching
 // frustrations: heavy-flow, cramps, bloating, irregular, leaks, discomfort, safety-concern, uti, pcos, pelvic-floor
