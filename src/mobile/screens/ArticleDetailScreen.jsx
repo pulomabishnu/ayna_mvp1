@@ -69,7 +69,7 @@ export default function ArticleDetailScreen({ article, onBack, theme }) {
     );
   }
 
-  const { id, title, source, tags = [], teaser, body } = article;
+  const { id, title, source, tags = [], teaser, body, image } = article;
   const [tint1, tint2] = tintForId(id);
   const heroBackground = theme === 'dark'
     ? 'radial-gradient(130% 100% at 30% 0%, rgba(112,96,214,.35), rgba(255,255,255,.02) 70%)'
@@ -97,7 +97,9 @@ export default function ArticleDetailScreen({ article, onBack, theme }) {
             </svg>
           </div>
         </div>
-        <div style={{ height: 290, borderRadius: '150px 150px 20px 20px', overflow: 'hidden', boxShadow: '0 16px 34px -20px rgba(41,37,36,.5)' }} />
+        <div style={{ position: 'relative', height: 290, borderRadius: '150px 150px 20px 20px', overflow: 'hidden', boxShadow: '0 16px 34px -20px rgba(41,37,36,.5)' }}>
+          {image && <img src={image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+        </div>
         <div style={{ height: 34 }} />
       </div>
 
