@@ -49,7 +49,15 @@ export default function AuthCallback({ onAuthenticated }) {
       let returnToMobile = false;
       try { returnToMobile = localStorage.getItem('ayna_mobile_oauth_pending') === '1'; } catch { /* ignore */ }
       if (returnToMobile) {
-        window.location.replace('/mobile-preview');
+        const mobileUrl = new URL('/mobile-preview', window.location.origin);
+        const currentParams = new URLSearchParams(window.location.search);
+
+        for (const key of ['x-vercel-protection-bypass', 'x-vercel-set-bypass-cookie']) {
+          const value = currentParams.get(key);
+          if (value) mobileUrl.searchParams.set(key, value);
+        }
+
+        window.location.replace(mobileUrl.toString());
         return;
       }
       onAuthenticated(user);

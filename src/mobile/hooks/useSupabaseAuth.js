@@ -110,10 +110,22 @@ export function useSupabaseAuth() {
       // Private browsing / storage disabled — AuthCallback.jsx will just
       // fall through to desktop's own post-auth handling in that case.
     }
+    const callbackUrl = new URL('/auth/callback', window.location.origin);
+
+    // The native shell loads a protected Vercel Preview using bypass query
+    // parameters. Preserve only those protection parameters through the OAuth
+    // round trip so Google returns directly to Ayna's callback instead of
+    // being intercepted by Vercel Authentication.
+    const currentParams = new URLSearchParams(window.location.search);
+    for (const key of ['x-vercel-protection-bypass', 'x-vercel-set-bypass-cookie']) {
+      const value = currentParams.get(key);
+      if (value) callbackUrl.searchParams.set(key, value);
+    }
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: callbackUrl.toString(),
         queryParams: { prompt: 'select_account' },
       },
     });
