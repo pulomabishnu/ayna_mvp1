@@ -12,6 +12,7 @@ import {
   confirmPhoneVerificationCode,
 } from '../../utils/notificationPreferencesApi.js';
 import { fetchDataExport } from '../../utils/dataExportApi.js';
+import { OPEN_SOURCE_PACKAGES, summarizeLicenses } from '../../data/openSourceLicenses.js';
 
 /**
  * Profile hub + its four sub-sections and one detail page, ported from the
@@ -1287,7 +1288,8 @@ function PrivacyDataScreen({ onBack, onOpenManageData }) {
 
 /* ---------------------------------- Legal ---------------------------------- */
 
-function LegalScreen({ onBack }) {
+function LegalScreen({ onBack, onOpenConsumerHealthData, onOpenOpenSourceLicenses }) {
+  const licenseFamilies = summarizeLicenses();
   return (
     <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
       <BackHeader title="Legal" onBack={onBack} />
@@ -1305,13 +1307,22 @@ function LegalScreen({ onBack }) {
             sub="The rules for using ayna."
             onClick={() => window.open(TERMS_URL, '_blank', 'noopener,noreferrer')}
           />
-          <AccountRow title="Consumer Health Data Policy" sub="How health data specifically is handled." badge="COMING SOON" dimmed />
+          <AccountRow
+            title="Consumer Health Data Policy"
+            sub="Required under Washington's MHMDA."
+            onClick={onOpenConsumerHealthData}
+          />
         </div>
 
         <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Attributions</div>
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
-          <AccountRow title="Typefaces" sub="Playfair Display, DM Sans, DM Mono — Google Fonts, SIL Open Font Licence." borderTop={false} />
-          <AccountRow title="Open-source licences" sub="A full list of packages and their licences." badge="COMING SOON" dimmed />
+          <AccountRow
+            title="Open-source licences"
+            sub={`${OPEN_SOURCE_PACKAGES.length} packages · ${licenseFamilies.join(', ')}.`}
+            borderTop={false}
+            onClick={onOpenOpenSourceLicenses}
+          />
+          <AccountRow title="Typefaces" sub="Playfair Display, DM Sans, DM Mono — Google Fonts, SIL Open Font Licence." />
           <AccountRow title="Research and data sources" sub="Where ayna's product and safety information comes from." badge="COMING SOON" dimmed />
         </div>
 
@@ -1329,6 +1340,124 @@ function LegalScreen({ onBack }) {
         <div style={{ textAlign: 'center', marginTop: 22, fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.2px', color: 'var(--ayna-text-muted)', lineHeight: 1.9 }}>
           AYNA HEALTH, INC.<br />DELAWARE, USA<br />APP 0.9.4 · BETA
         </div>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------ Consumer Health Data Policy ------------------------ */
+
+function PolicySection({ title, children }) {
+  return (
+    <div style={{ marginBottom: 22 }}>
+      <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 18, color: 'var(--ayna-heading)', marginBottom: 7 }}>{title}</div>
+      <div style={{ fontSize: 13, color: 'var(--ayna-text-muted)', lineHeight: 1.6 }}>{children}</div>
+    </div>
+  );
+}
+
+// Real disclosures reflecting how ayna actually works today — the third
+// parties named here (Supabase, Anthropic/OpenAI/Gemini, PostHog, Twilio,
+// Resend) are the app's actual real integrations (see .env.example), and
+// the rights described map to screens that already exist and work (Manage
+// my data / Download my data, the analytics opt-out toggle in Privacy &
+// data, account deletion via the email below) rather than promises of
+// features that don't exist yet.
+//
+// This is a good-faith draft written to cover Washington's My Health My
+// Data Act's (MHMDA) required disclosures. It has NOT been reviewed by a
+// lawyer — that review should happen before this is relied on as ayna's
+// actual compliance policy, the same as the Termly-generated Privacy
+// Policy/Terms of Service linked above were presumably reviewed before
+// publishing.
+function ConsumerHealthDataPolicyScreen({ onBack }) {
+  return (
+    <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+      <BackHeader title="Consumer Health Data Policy" onBack={onBack} />
+      <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '8px 20px 36px' }}>
+        <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', margin: '4px 0 20px' }}>
+          Effective 10 Sep 2026. Required under Washington State's My Health My Data Act (MHMDA).
+        </div>
+
+        <PolicySection title="What counts as Consumer Health Data">
+          Under the MHMDA, Consumer Health Data means personal information that is linked or reasonably linkable to you and that identifies your past, present, or future physical or mental health status — including reproductive or sexual health information, health conditions, diagnoses, symptoms, and information you share with ayna's AI features about any of the above.
+        </PolicySection>
+
+        <PolicySection title="What we collect, and why">
+          Your health-intake answers (stage of life, goals, sensitivities, conditions you tell us about), questions you ask Ask Ayna, and the products you save or track. We use this to generate your personal matches, explain why a product fits, and flag safety recalls relevant to what you own. We do not collect this to advertise to you elsewhere.
+        </PolicySection>
+
+        <PolicySection title="Who it's shared with, and why">
+          <div style={{ marginBottom: 8 }}>
+            We do not sell your consumer health data, and we do not share it for advertising. It is shared only with the service providers that make ayna work, each processing it solely to provide that specific function:
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <div>• <strong>Supabase</strong> — hosts your account and stored data.</div>
+            <div>• <strong>Anthropic, OpenAI, or Google (Gemini)</strong> — generate AI product summaries and Ask Ayna's answers from your questions.</div>
+            <div>• <strong>Twilio</strong> — sends phone verification codes and, if you opt in, SMS safety-recall alerts.</div>
+            <div>• <strong>Resend</strong> — delivers email, including your contact-form messages.</div>
+            <div>• <strong>PostHog</strong> — anonymised product-usage analytics, which you can turn off at any time in Privacy & data.</div>
+          </div>
+        </PolicySection>
+
+        <PolicySection title="Your rights">
+          <div style={{ marginBottom: 8 }}>You can, at any time:</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <div>• <strong>See exactly what we hold</strong> — Settings → Privacy & data → Manage my data.</div>
+            <div>• <strong>Download a copy</strong> — same screen, in a portable format.</div>
+            <div>• <strong>Withdraw consent for analytics</strong> — Settings → Privacy & data → the analytics toggle.</div>
+            <div>• <strong>Delete your account and data</strong> — email <a href={DELETE_ACCOUNT_MAILTO}>puloma@aynahealth.co</a>; we'll also direct any service provider above holding a copy to delete it.</div>
+          </div>
+          <div style={{ marginTop: 8 }}>We respond to any request within 45 days, and never deny you access to ayna for exercising these rights.</div>
+        </PolicySection>
+
+        <PolicySection title="Geofencing">
+          We do not use geofencing around any healthcare facility to collect your data, target you with messages, or infer that you sought care there.
+        </PolicySection>
+
+        <PolicySection title="Questions or an appeal">
+          Email <a href={DELETE_ACCOUNT_MAILTO.replace('subject=Account%20Deletion%20Request', 'subject=Consumer%20Health%20Data%20Question')}>puloma@aynahealth.co</a>. If we deny a request under this policy, you may appeal by replying to our decision email, and we'll respond within 45 days.
+        </PolicySection>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------- Open-source licences ---------------------------- */
+
+function OpenSourceLicensesScreen({ onBack }) {
+  const grouped = useMemo(() => {
+    const byLicense = new Map();
+    for (const pkg of OPEN_SOURCE_PACKAGES) {
+      if (!byLicense.has(pkg.license)) byLicense.set(pkg.license, []);
+      byLicense.get(pkg.license).push(pkg);
+    }
+    return [...byLicense.entries()].sort((a, b) => b[1].length - a[1].length);
+  }, []);
+
+  return (
+    <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+      <BackHeader title="Open-source licences" onBack={onBack} />
+      <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '8px 20px 36px' }}>
+        <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.55, margin: '4px 0 20px' }}>
+          {OPEN_SOURCE_PACKAGES.length} open-source packages ship inside the ayna app — the ones actually bundled into what runs on your device, not build tooling. Thank you to everyone who maintains them.
+        </div>
+
+        {grouped.map(([license, packages]) => (
+          <div key={license} style={{ marginBottom: 20 }}>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.3px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 9 }}>
+              {license} · {packages.length}
+            </div>
+            <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
+              {packages.map((pkg, i) => (
+                <div key={pkg.name} style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, padding: '13px 0', borderTop: i ? '1px solid var(--ayna-border)' : 'none' }}>
+                  <div style={{ fontSize: 13.5, color: 'var(--ayna-text)', fontFamily: "'DM Mono',monospace" }}>{pkg.name}</div>
+                  <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', flex: 'none' }}>{pkg.version}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -2466,7 +2595,17 @@ export default function ProfileFlow({
   } else if (screen === 'privacyData') {
     body = <PrivacyDataScreen onBack={goBack} onOpenManageData={() => pushScreen('manageData')} />;
   } else if (screen === 'legal') {
-    body = <LegalScreen onBack={goBack} />;
+    body = (
+      <LegalScreen
+        onBack={goBack}
+        onOpenConsumerHealthData={() => pushScreen('consumerHealthData')}
+        onOpenOpenSourceLicenses={() => pushScreen('openSourceLicenses')}
+      />
+    );
+  } else if (screen === 'consumerHealthData') {
+    body = <ConsumerHealthDataPolicyScreen onBack={goBack} />;
+  } else if (screen === 'openSourceLicenses') {
+    body = <OpenSourceLicensesScreen onBack={goBack} />;
   } else if (screen === 'manageData') {
     body = <ManageDataScreen onBack={goBack} />;
   }
