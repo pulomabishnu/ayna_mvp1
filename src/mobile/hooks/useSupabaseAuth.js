@@ -1,4 +1,7 @@
 import { useEffect, useState } from 'react';
+import { Capacitor } from '@capacitor/core';
+import { App as CapacitorApp } from '@capacitor/app';
+import { Browser } from '@capacitor/browser';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 
 // Real Supabase identity for the mobile app — separate from
@@ -26,6 +29,7 @@ const EMAIL_CONFIRM_REDIRECT = 'https://www.aynahealth.co/confirmed';
 // user into a screen built for an ecosystem that only exists locally on
 // whatever device originally built it).
 export const MOBILE_OAUTH_PENDING_KEY = 'ayna_mobile_oauth_pending';
+const NATIVE_OAUTH_REDIRECT = 'co.aynahealth.app://auth/callback';
 
 export function useSupabaseAuth() {
   const [user, setUser] = useState(null);
@@ -47,6 +51,79 @@ export function useSupabaseAuth() {
       setUser(session?.user ?? null);
     });
     return () => subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (Capacitor.getPlatform() !== 'ios') return undefined;
+
+    const supabase = getSupabaseClient();
+    if (!supabase) return undefined;
+
+    let listenerHandle = null;
+    let cancelled = false;
+    let lastHandledUrl = '';
+
+    async function handleNativeOAuthUrl(url) {
+      if (!url || !url.startsWith(NATIVE_OAUTH_REDIRECT) || url === lastHandledUrl) return;
+      lastHandledUrl = url;
+
+      try {
+        await Browser.close();
+      } catch {
+        // Browser may already be closed.
+      }
+
+      const parsed = new URL(url);
+      const hashParams = new URLSearchParams(parsed.hash.slice(1));
+      const searchParams = parsed.searchParams;
+
+      const errorDescription =
+        hashParams.get('error_description') ||
+        searchParams.get('error_description');
+
+      if (errorDescription) {
+        console.error('[Ayna] Native Google OAuth failed:', errorDescription);
+        return;
+      }
+
+      const accessToken = hashParams.get('access_token');
+      const refreshToken = hashParams.get('refresh_token');
+
+      if (!accessToken || !refreshToken) {
+        console.error('[Ayna] Native Google OAuth callback did not include a complete session.');
+        return;
+      }
+
+      const { error } = await supabase.auth.setSession({
+        access_token: accessToken,
+        refresh_token: refreshToken,
+      });
+
+      if (error) {
+        console.error('[Ayna] Could not establish native Google session:', error.message);
+      }
+    }
+
+    void CapacitorApp.addListener('appUrlOpen', ({ url }) => {
+      void handleNativeOAuthUrl(url);
+    }).then((handle) => {
+      if (cancelled) {
+        void handle.remove();
+      } else {
+        listenerHandle = handle;
+      }
+    });
+
+    void CapacitorApp.getLaunchUrl()
+      .then((result) => {
+        if (result?.url) void handleNativeOAuthUrl(result.url);
+      })
+      .catch(() => {});
+
+    return () => {
+      cancelled = true;
+      if (listenerHandle) void listenerHandle.remove();
+    };
   }, []);
 
   async function signUpWithPassword({ email, password, firstName }) {
@@ -99,24 +176,36 @@ export function useSupabaseAuth() {
   async function signInWithGoogle() {
     const supabase = getSupabaseClient();
     if (!supabase) throw new Error('Sign-in is not configured right now.');
+
     try {
-      // localStorage, not sessionStorage — the flag has to survive a
-      // full-page redirect out to Google's login and back, and
-      // sessionStorage was observed not reliably surviving that round trip
-      // (silent Google SSO in particular), silently dropping the user onto
-      // the desktop site instead of back at /mobile-preview.
       localStorage.setItem(MOBILE_OAUTH_PENDING_KEY, '1');
     } catch {
-      // Private browsing / storage disabled — AuthCallback.jsx will just
-      // fall through to desktop's own post-auth handling in that case.
+      // Storage unavailable.
     }
-    const callbackUrl = new URL('/auth/callback', window.location.origin);
 
-    // The native shell loads a protected Vercel Preview using bypass query
-    // parameters. Preserve only those protection parameters through the OAuth
-    // round trip so Google returns directly to Ayna's callback instead of
-    // being intercepted by Vercel Authentication.
+    if (Capacitor.getPlatform() === 'ios') {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: NATIVE_OAUTH_REDIRECT,
+          skipBrowserRedirect: true,
+          queryParams: { prompt: 'select_account' },
+        },
+      });
+
+      if (error) throw error;
+      if (!data?.url) throw new Error('Could not start Google sign-in.');
+
+      await Browser.open({
+        url: data.url,
+        presentationStyle: 'fullscreen',
+      });
+      return;
+    }
+
+    const callbackUrl = new URL('/auth/callback', window.location.origin);
     const currentParams = new URLSearchParams(window.location.search);
+
     for (const key of ['x-vercel-protection-bypass', 'x-vercel-set-bypass-cookie']) {
       const value = currentParams.get(key);
       if (value) callbackUrl.searchParams.set(key, value);
@@ -129,6 +218,7 @@ export function useSupabaseAuth() {
         queryParams: { prompt: 'select_account' },
       },
     });
+
     if (error) throw error;
   }
 

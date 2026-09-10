@@ -184,9 +184,9 @@ export default function SigninScreen({
     setGoogleLoading(true);
     try {
       await onGoogleSignIn();
-      // The page is about to navigate away to Google — nothing left to do.
     } catch (e) {
       setError(e.message || 'Could not start Google sign-in.');
+    } finally {
       setGoogleLoading(false);
     }
   };
