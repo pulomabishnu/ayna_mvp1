@@ -185,6 +185,12 @@ export default function MobileApp() {
 
   const Screen = SCREENS[screen] || LandingScreen;
 
+  // BrowseScreen/EcosystemScreen/EcosystemIntroScreen all default this to
+  // the literal letter 'A' when it's not passed — that default was always
+  // being used, since nothing here ever passed the signed-in user's real
+  // initial down to them.
+  const headerInitial = (resolvedName || '').trim().charAt(0).toUpperCase() || 'A';
+
   const topAreaLabels = [...new Set(myProducts.map((p) => p.areaKey).filter(Boolean))]
     .map((key) => AREA_LABELS.find((a) => a.key === key)?.label)
     .filter(Boolean)
@@ -312,6 +318,7 @@ export default function MobileApp() {
         quizAnswers={lastQuizAnswers}
         initialSnapshot={editingHealthProfile ? lastQuizAnswers?.fullHealthIntake || null : null}
         name={resolvedName}
+        headerInitial={headerInitial}
         tags={topAreaLabels.length ? `${topAreaLabels.length} area${topAreaLabels.length === 1 ? '' : 's'} covered` : ''}
         relatedReads={ARTICLES.slice(0, 3)}
         topAreas={topAreaLabels.length ? topAreaLabels : ['Period', 'Hormones', 'Sleep']}

@@ -1305,12 +1305,14 @@ function LegalScreen({ onBack }) {
             sub="The rules for using ayna."
             onClick={() => window.open(TERMS_URL, '_blank', 'noopener,noreferrer')}
           />
+          <AccountRow title="Consumer Health Data Policy" sub="How health data specifically is handled." badge="COMING SOON" dimmed />
         </div>
 
         <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Attributions</div>
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
           <AccountRow title="Typefaces" sub="Playfair Display, DM Sans, DM Mono — Google Fonts, SIL Open Font Licence." borderTop={false} />
           <AccountRow title="Open-source licences" sub="A full list of packages and their licences." badge="COMING SOON" dimmed />
+          <AccountRow title="Research and data sources" sub="Where ayna's product and safety information comes from." badge="COMING SOON" dimmed />
         </div>
 
         <div style={{ marginTop: 22, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '17px 18px' }}>
