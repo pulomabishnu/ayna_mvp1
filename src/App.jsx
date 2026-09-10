@@ -475,6 +475,11 @@ function App() {
         .then(({ data: { session } }) => {
           setUser(session?.user ?? null);
           setUserSession(session ?? null);
+
+          if (session?.user) {
+            posthog.identify(session.user.id, { email: session.user.email });
+            tagInternalUserIfNeeded(posthog);
+          }
         })
         .catch((e) => {
           console.error('[Ayna] getSession failed:', e);
