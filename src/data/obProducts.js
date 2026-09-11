@@ -35,7 +35,10 @@ function originalEntry({ id, name, affiliateUrl, url, tags = [], materials = ORI
     type: 'physical',
     internal: false,
     healthFunctions: ['menstrual-collection'],
-    tags: ['comfort', 'sustainability', ...tags],
+    // "ob" is intentionally included as a search alias because punctuation-aware
+    // tokenization treats the brand spelling "o.b." differently from what most
+    // users type into search ("ob"). This keeps every distinct SKU discoverable.
+    tags: ['ob', 'comfort', 'sustainability', ...tags],
     price: 'See Amazon',
     whereToBuy: ['Amazon', 'o.b.'],
     whereToBuyLinks: {
@@ -109,7 +112,7 @@ export const OB_PRODUCTS = [
     type: 'physical',
     internal: false,
     healthFunctions: ['menstrual-collection'],
-    tags: ['comfort'],
+    tags: ['ob', 'comfort'],
     price: 'See Amazon',
     whereToBuy: ['Amazon', 'o.b. Germany'],
     whereToBuyLinks: {
@@ -145,7 +148,7 @@ export const OB_PRODUCTS = [
     type: 'physical',
     internal: false,
     healthFunctions: ['menstrual-collection'],
-    tags: ['comfort'],
+    tags: ['ob', 'comfort'],
     price: 'See Amazon',
     whereToBuy: ['Amazon', 'o.b. Germany'],
     whereToBuyLinks: {
