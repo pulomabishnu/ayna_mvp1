@@ -165,7 +165,7 @@ export default function MobileApp() {
   const pendingQuizEcosystemRef = useRef(null);
   const { savedMap, isSaved, toggleSaved } = useSavedProducts(authUser);
   const { theme, resolvedTheme, setThemeMode } = useThemeMode();
-  const { textSizeIndex, setTextSizeIndex, textZoom } = useTextSize();
+  const { textSizeIndex, setTextSizeIndex } = useTextSize();
   const [askAynaOpen, setAskAynaOpen] = useState(false);
   const [askAynaHistory, setAskAynaHistory] = useState([]);
   // App-wide gate for Preferences > AI & Personalization > "Personalize with
@@ -448,7 +448,7 @@ export default function MobileApp() {
   };
 
   return (
-    <div className="ayna-mobile" data-theme={resolvedTheme} style={{ zoom: textZoom }}>
+    <div className="ayna-mobile" data-theme={resolvedTheme}>
       <Screen
         {...nav}
         theme={theme}

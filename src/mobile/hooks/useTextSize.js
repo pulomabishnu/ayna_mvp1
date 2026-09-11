@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react';
 
 const KEY = 'ayna_mobile_text_size_v1';
 
-// Four steps, applied app-wide via CSS `zoom` on the root .ayna-mobile
-// wrapper (see MobileApp.jsx) — the whole app's typography is hard-coded px
-// in inline styles rather than rem, so `zoom` is the one mechanism that
-// actually scales every screen's text without a rem/em rewrite of the whole
-// codebase. `zoom` is unprefixed-supported in Safari 15.4+/WKWebView and all
-// Chromium/Firefox, which covers this app's real targets (iOS + web preview).
+// Four steps. An earlier version applied `zoom` app-wide on the root
+// .ayna-mobile wrapper, but `zoom` doesn't compose safely with this app's
+// own transform-scaled (EcosystemOrbit) and fixed-position (AskAynaChip)
+// elements — it broke their centering/positioning in ways that are hard to
+// fully audit across every screen. Scaled back to just the live preview in
+// Preferences (PreferencesScreen) until a real app-wide mechanism (actually
+// converting typography to rem, driven off a root font-size) is worth the
+// much larger rewrite that requires.
 export const TEXT_SIZE_STEPS = [
   { label: 'Small', zoom: 0.9 },
   { label: 'Default', zoom: 1 },
@@ -38,5 +40,5 @@ export function useTextSize() {
     if (index >= 0 && index < TEXT_SIZE_STEPS.length) setTextSizeIndexState(index);
   };
 
-  return { textSizeIndex, setTextSizeIndex, textZoom: TEXT_SIZE_STEPS[textSizeIndex].zoom };
+  return { textSizeIndex, setTextSizeIndex };
 }

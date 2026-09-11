@@ -1201,7 +1201,7 @@ function PreferencesScreen({
             </div>
             <span style={{ fontSize: 20, color: 'var(--ayna-text-faint)', flex: 'none' }}>A</span>
           </div>
-          <div style={{ marginTop: 14, fontSize: 14, fontWeight: 600, color: 'var(--ayna-text)', lineHeight: 1.5 }}>
+          <div style={{ marginTop: 14, fontSize: 14 * (TEXT_SIZE_STEPS[textSizeIndex]?.zoom || 1), fontWeight: 600, color: 'var(--ayna-text)', lineHeight: 1.5 }}>
             This is what body text looks like across ayna.
           </div>
         </div>
