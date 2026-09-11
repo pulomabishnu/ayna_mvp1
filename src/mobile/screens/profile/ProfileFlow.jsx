@@ -933,16 +933,10 @@ function DrillRow({ title, sub, onClick, first }) {
 const THEME_SWATCHES = [
   { key: 'light', label: 'Light' },
   { key: 'dark', label: 'Dark' },
-  { key: 'system', label: 'System' },
 ];
 
 function ThemeSwatch({ mode, selected, onClick }) {
-  const bg =
-    mode === 'light'
-      ? 'var(--ayna-bg-alt)'
-      : mode === 'dark'
-        ? '#1B1B22'
-        : 'linear-gradient(115deg, var(--ayna-bg-alt) 0 48%, #1B1B22 52% 100%)';
+  const bg = mode === 'light' ? 'var(--ayna-bg-alt)' : '#1B1B22';
   const barColor = mode === 'dark' ? 'rgba(255,249,242,.35)' : 'rgba(41,37,36,.25)';
   return (
     <div onClick={onClick} style={{ cursor: 'pointer', textAlign: 'center' }}>
@@ -960,8 +954,8 @@ function ThemeSwatch({ mode, selected, onClick }) {
           boxSizing: 'border-box',
         }}
       >
-        <div style={{ height: 3, width: '75%', borderRadius: 2, background: mode === 'system' ? 'rgba(41,37,36,.25)' : barColor }} />
-        <div style={{ height: 3, width: '50%', borderRadius: 2, background: mode === 'system' ? 'rgba(255,249,242,.4)' : barColor }} />
+        <div style={{ height: 3, width: '75%', borderRadius: 2, background: barColor }} />
+        <div style={{ height: 3, width: '50%', borderRadius: 2, background: barColor }} />
       </div>
       <div style={{ marginTop: 7, fontSize: 12.5, fontWeight: selected ? 700 : 500, color: selected ? 'var(--ayna-heading)' : 'var(--ayna-text-muted)' }}>
         {THEME_SWATCHES.find((s) => s.key === mode)?.label}
@@ -1180,7 +1174,7 @@ function PreferencesScreen({
         <SectionLabel>Appearance</SectionLabel>
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: 18 }}>
           <div style={{ fontWeight: 600, fontSize: 14.5, marginBottom: 12 }}>Theme</div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 10 }}>
             {THEME_SWATCHES.map((s) => (
               <ThemeSwatch key={s.key} mode={s.key} selected={theme === s.key} onClick={() => onToggleTheme(s.key)} />
             ))}

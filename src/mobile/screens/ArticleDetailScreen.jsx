@@ -86,19 +86,39 @@ export default function ArticleDetailScreen({ article, onBack, theme }) {
 
   return (
     <div ref={scrollRef} onScroll={handleScroll} style={{ flex: 1, overflowY: 'auto', background: 'var(--ayna-bg)', animation: 'ay-page .25s ease-out' }}>
-      <div style={{ position: 'relative', background: heroBackground, paddingTop: 'max(20px, env(safe-area-inset-top))', paddingLeft: 20, paddingRight: 20 }}>
-        <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
-          <div
-            onClick={onBack}
-            style={{ width: 36, height: 36, borderRadius: 99, background: 'var(--ayna-glass-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" style={{ stroke: 'var(--ayna-text)' }}>
-              <path d="M19 12H5M11 18l-6-6 6-6" />
-            </svg>
-          </div>
+      <div style={{ position: 'relative', overflow: 'hidden', background: 'var(--ayna-bg)', paddingLeft: 20, paddingRight: 20 }}>
+        {/* Real blurred color fill for the space outside the arc — the arc's
+            rounded top corners (and, for a `contain`-fitted image, its own
+            letterboxed sides) reveal this instead of a flat tinted banner.
+            Oversized + clipped by this wrapper's overflow:hidden so the
+            blur's own soft edge never shows. */}
+        <div aria-hidden style={{ position: 'absolute', inset: '-60px', background: heroBackground, filter: 'blur(60px)' }} />
+        <div
+          onClick={onBack}
+          style={{
+            position: 'absolute',
+            top: 'max(20px, env(safe-area-inset-top))',
+            left: 20,
+            zIndex: 2,
+            width: 36,
+            height: 36,
+            borderRadius: 99,
+            background: 'var(--ayna-glass-bg)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+          }}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" style={{ stroke: 'var(--ayna-text)' }}>
+            <path d="M19 12H5M11 18l-6-6 6-6" />
+          </svg>
         </div>
-        <div style={{ position: 'relative', height: 290, borderRadius: '150px 150px 20px 20px', overflow: 'hidden', boxShadow: '0 16px 34px -20px rgba(41,37,36,.5)' }}>
-          {image && <img src={image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+        {/* Touches the very top of the screen (no padding/back-button row
+            above it) so the full image has room to show — objectFit:contain
+            rather than cover means nothing is ever cropped off a side. */}
+        <div style={{ position: 'relative', height: 340, marginTop: 'max(0px, env(safe-area-inset-top))', borderRadius: '150px 150px 20px 20px', overflow: 'hidden' }}>
+          {image && <img src={image} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />}
         </div>
         <div style={{ height: 34 }} />
       </div>
