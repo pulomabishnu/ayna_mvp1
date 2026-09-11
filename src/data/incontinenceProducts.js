@@ -6,7 +6,13 @@
 // symptoms — searches like "panty liners for bladder leaks" had nothing
 // relevant to surface. Products verified against brand/retailer listings; see
 // each entry's sourcing note.
+//
+// Regular (non-partner) o.b. tampon additions are appended at the bottom from
+// obProducts.js so they flow through the existing ALL_PRODUCTS bundle without
+// changing partnership logic.
 // ============================================================
+
+import { OB_PRODUCTS } from './obProducts.js';
 
 export const INCONTINENCE_PHYSICAL = [
     {
@@ -128,4 +134,6 @@ export const INCONTINENCE_PHYSICAL = [
         integrations: [],
         badges: [],
     },
+    // Regular catalog additions (not partner/favorite inventory).
+    ...OB_PRODUCTS,
 ];
