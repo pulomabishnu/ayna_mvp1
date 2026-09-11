@@ -15,7 +15,15 @@ import { verifyUser } from './_usageLimit.js';
 import { verifyUserWithRls } from './_userScopedSupabase.js';
 
 const DELIVERY_CHANNELS = new Set(['push', 'sms', 'email']);
-const BOOLEAN_FIELDS = ['notifications_enabled', 'updates_enabled', 'night_mode_enabled', 'newsletter_enabled'];
+const BOOLEAN_FIELDS = [
+  'notifications_enabled',
+  'updates_enabled',
+  'night_mode_enabled',
+  'newsletter_enabled',
+  'personalize_with_data_enabled',
+  'quiet_hours_enabled',
+];
+const TIME_HHMM = /^([01][0-9]|2[0-3]):[0-5][0-9]$/;
 
 const DEFAULT_PREFERENCES = {
   notifications_enabled: true,
@@ -23,6 +31,10 @@ const DEFAULT_PREFERENCES = {
   night_mode_enabled: false,
   newsletter_enabled: false,
   delivery_channel: 'push',
+  personalize_with_data_enabled: true,
+  quiet_hours_enabled: false,
+  quiet_hours_start: '22:00',
+  quiet_hours_end: '07:00',
 };
 
 let _admin = null;
@@ -51,6 +63,10 @@ function toClientShape(row, phoneVerified) {
     nightModeEnabled: row.night_mode_enabled,
     newsletterEnabled: row.newsletter_enabled,
     deliveryChannel: row.delivery_channel,
+    personalizeWithDataEnabled: row.personalize_with_data_enabled,
+    quietHoursEnabled: row.quiet_hours_enabled,
+    quietHoursStart: row.quiet_hours_start,
+    quietHoursEnd: row.quiet_hours_end,
     phoneVerified,
   };
 }
@@ -152,6 +168,14 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'phone_not_verified' });
     }
     patch.delivery_channel = body.delivery_channel;
+  }
+  for (const field of ['quiet_hours_start', 'quiet_hours_end']) {
+    if (body?.[field] !== undefined) {
+      if (typeof body[field] !== 'string' || !TIME_HHMM.test(body[field])) {
+        return res.status(400).json({ error: 'invalid_time' });
+      }
+      patch[field] = body[field];
+    }
   }
 
   if (Object.keys(patch).length === 0) {

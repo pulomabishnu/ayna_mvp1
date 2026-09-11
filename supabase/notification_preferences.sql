@@ -78,3 +78,37 @@ drop trigger if exists phone_numbers_unverify_fallback on public.phone_numbers;
 create trigger phone_numbers_unverify_fallback
 after update on public.phone_numbers
 for each row execute function public.fallback_delivery_channel_on_unverify();
+
+-- Personalize-with-my-data (Preferences > AI & Personalization) and quiet
+-- hours (Preferences > Channels & quiet hours) — added after this table was
+-- already live, so these are separate `alter table ... add column if not
+-- exists` statements rather than edits to the `create table` above (which
+-- only applies on a fresh create; see supabase/README.md's note on why that
+-- alone isn't enough once a table already exists in production).
+alter table public.notification_preferences
+  add column if not exists personalize_with_data_enabled boolean not null default true;
+
+alter table public.notification_preferences
+  add column if not exists quiet_hours_enabled boolean not null default false;
+
+-- 'HH:MM' 24-hour local time, compared as plain strings by whatever future
+-- sender respects it — no timezone stored here (same as every other local,
+-- device-facing time-of-day setting; the alternative, storing a UTC instant,
+-- would silently drift wrong every time the user crosses a timezone).
+alter table public.notification_preferences
+  add column if not exists quiet_hours_start text not null default '22:00';
+
+alter table public.notification_preferences
+  add column if not exists quiet_hours_end text not null default '07:00';
+
+alter table public.notification_preferences
+  drop constraint if exists notification_preferences_quiet_hours_start_check;
+alter table public.notification_preferences
+  add constraint notification_preferences_quiet_hours_start_check
+  check (quiet_hours_start ~ '^([01][0-9]|2[0-3]):[0-5][0-9]$');
+
+alter table public.notification_preferences
+  drop constraint if exists notification_preferences_quiet_hours_end_check;
+alter table public.notification_preferences
+  add constraint notification_preferences_quiet_hours_end_check
+  check (quiet_hours_end ~ '^([01][0-9]|2[0-3]):[0-5][0-9]$');

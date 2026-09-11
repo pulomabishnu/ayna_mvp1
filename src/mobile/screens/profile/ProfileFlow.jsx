@@ -4,6 +4,7 @@ import { getSupabaseClient } from '../../../utils/supabaseClient.js';
 import { getBrandAffinity, getCategoryInsights, getSafetyAlerts } from '../../utils/shopperProfileData.js';
 import { ROUTINE_BUCKET_LABELS, ROUTINE_BUCKETS, useRoutine } from '../../hooks/useRoutine.js';
 import { getProfileCompletionPct } from '../../utils/profileCompleteness.js';
+import { TEXT_SIZE_STEPS } from '../../hooks/useTextSize.js';
 import {
   NotSignedInError,
   fetchNotificationPreferences,
@@ -906,6 +907,69 @@ function friendlyPreferencesError(code) {
   return PREFERENCES_ERROR_MESSAGES[code] || "That didn't save — try again.";
 }
 
+function SectionLabel({ children }) {
+  return (
+    <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', margin: '22px 0 11px' }}>
+      {children}
+    </div>
+  );
+}
+
+function DrillRow({ title, sub, onClick, first }) {
+  return (
+    <div
+      onClick={onClick}
+      style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '17px 0', borderTop: first ? 'none' : '1px solid var(--ayna-border)', cursor: 'pointer' }}
+    >
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontWeight: 600, fontSize: 15, color: 'var(--ayna-text)' }}>{title}</div>
+        {sub && <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', marginTop: 3, lineHeight: 1.45 }}>{sub}</div>}
+      </div>
+      <ChevronIcon />
+    </div>
+  );
+}
+
+const THEME_SWATCHES = [
+  { key: 'light', label: 'Light' },
+  { key: 'dark', label: 'Dark' },
+  { key: 'system', label: 'System' },
+];
+
+function ThemeSwatch({ mode, selected, onClick }) {
+  const bg =
+    mode === 'light'
+      ? 'var(--ayna-bg-alt)'
+      : mode === 'dark'
+        ? '#1B1B22'
+        : 'linear-gradient(115deg, var(--ayna-bg-alt) 0 48%, #1B1B22 52% 100%)';
+  const barColor = mode === 'dark' ? 'rgba(255,249,242,.35)' : 'rgba(41,37,36,.25)';
+  return (
+    <div onClick={onClick} style={{ cursor: 'pointer', textAlign: 'center' }}>
+      <div
+        style={{
+          height: 58,
+          borderRadius: 14,
+          background: bg,
+          border: selected ? '2px solid var(--ayna-cta-bg)' : '1px solid var(--ayna-border)',
+          padding: '10px 12px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          gap: 5,
+          boxSizing: 'border-box',
+        }}
+      >
+        <div style={{ height: 3, width: '75%', borderRadius: 2, background: mode === 'system' ? 'rgba(41,37,36,.25)' : barColor }} />
+        <div style={{ height: 3, width: '50%', borderRadius: 2, background: mode === 'system' ? 'rgba(255,249,242,.4)' : barColor }} />
+      </div>
+      <div style={{ marginTop: 7, fontSize: 12.5, fontWeight: selected ? 700 : 500, color: selected ? 'var(--ayna-heading)' : 'var(--ayna-text-muted)' }}>
+        {THEME_SWATCHES.find((s) => s.key === mode)?.label}
+      </div>
+    </div>
+  );
+}
+
 // Real backend: GET/PATCH api/notification-preferences.js (a real Supabase
 // table, RLS-scoped to the signed-in user). Each toggle updates optimistic
 // local state immediately, then rolls back with a toast if the PATCH fails.
@@ -915,16 +979,27 @@ function friendlyPreferencesError(code) {
 // Join newsletter is deliberately NOT part of this backend-synced list: it
 // links out to the real Substack subscribe page instead (see NEWSLETTER_URL
 // above) rather than a toggle that can't actually enroll anyone.
-function PreferencesScreen({ onBack, theme, onToggleTheme }) {
+function PreferencesScreen({
+  onBack,
+  theme,
+  onToggleTheme,
+  onOpenChannels,
+  personalizeWithData,
+  onPersonalizeWithDataChange,
+  askAynaHistoryCount,
+  onClearAskAynaHistory,
+  textSizeIndex,
+  onTextSizeChange,
+}) {
   const [loadState, setLoadState] = useState('loading'); // 'loading' | 'signed_out' | 'error' | 'ready'
   const [prefs, setPrefs] = useState(null);
   const [toast, setToast] = useState('');
-  const [phoneVerifyOpen, setPhoneVerifyOpen] = useState(false);
   // Session-only nudge to ask "did you subscribe?" after sending them to
   // Substack — not persisted, since it's just prompting for the confirm
   // tap below, not the subscribed state itself.
   const [awaitingConfirm, setAwaitingConfirm] = useState(false);
   const [newsletterConfirmed, setNewsletterConfirmed] = useState(loadNewsletterConfirmed);
+  const [clearHistoryConfirm, setClearHistoryConfirm] = useState(false);
 
   // Initial state is already 'loading', so the mount effect below doesn't
   // need to (and per the react-hooks lint rule, shouldn't) set it again
@@ -957,21 +1032,23 @@ function PreferencesScreen({ onBack, theme, onToggleTheme }) {
     });
   };
 
-  const handleToggleTheme = () => {
-    onToggleTheme();
-    // Best-effort mirror only — the real theme toggle above is what
-    // actually changes the app; a failed save here never blocks or rolls
-    // back the visual flip, it just leaves the stored value stale.
-    patchNotificationPreferences({ night_mode_enabled: theme !== 'dark' }).catch(() => {});
+  // Mirrors the toggle into MobileApp's app-wide `personalizeWithData` state
+  // immediately (so match %, For You toggles, and Ask Ayna's context react
+  // right away everywhere, not just once this screen's own `prefs` update
+  // lands) and rolls that mirror back too if the save fails.
+  const handlePersonalizeToggle = () => {
+    const next = !personalizeWithData;
+    onPersonalizeWithDataChange && onPersonalizeWithDataChange(next);
+    patchNotificationPreferences({ personalize_with_data_enabled: next }).catch((e) => {
+      onPersonalizeWithDataChange && onPersonalizeWithDataChange(!next);
+      showToast(friendlyPreferencesError(e.code || e.message));
+    });
   };
 
-  const selectChannel = (key) => {
-    if (!prefs || key === prefs.deliveryChannel) return;
-    if (key === 'sms' && !prefs.phoneVerified) {
-      setPhoneVerifyOpen(true);
-      return;
-    }
-    patchField('delivery_channel', key, 'deliveryChannel');
+  const handleClearHistory = () => {
+    onClearAskAynaHistory && onClearAskAynaHistory();
+    setClearHistoryConfirm(false);
+    showToast('Ask Ayna history cleared.');
   };
 
   const handleJoinNewsletter = () => {
@@ -986,20 +1063,11 @@ function PreferencesScreen({ onBack, theme, onToggleTheme }) {
     try { localStorage.setItem(NEWSLETTER_CONFIRMED_KEY, '1'); } catch { /* private mode */ }
   };
 
-  if (phoneVerifyOpen) {
-    return (
-      <PhoneVerifyPanel
-        onBack={() => setPhoneVerifyOpen(false)}
-        onVerified={() => {
-          setPhoneVerifyOpen(false);
-          setPrefs((p) => (p ? { ...p, phoneVerified: true, deliveryChannel: 'sms' } : p));
-          patchNotificationPreferences({ delivery_channel: 'sms' }).catch((e) => {
-            showToast(friendlyPreferencesError(e.code || e.message));
-          });
-        }}
-      />
-    );
-  }
+  const channelsSummary = prefs
+    ? [{ push: 'Push', sms: 'Text message', email: 'Email' }[prefs.deliveryChannel], prefs.quietHoursEnabled ? `Quiet ${prefs.quietHoursStart}–${prefs.quietHoursEnd}` : null]
+        .filter(Boolean)
+        .join(' · ')
+    : '';
 
   return (
     <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
@@ -1042,39 +1110,232 @@ function PreferencesScreen({ onBack, theme, onToggleTheme }) {
           )}
         </div>
 
-        {/* Also always visible: unlike Notifications/Updates/delivery channel
-            below, Night mode is purely local (useThemeMode.js, localStorage
-            only) — it needs no account and no network call, so it shouldn't
-            sit behind the same sign-in gate as the account-scoped settings. */}
-        <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '4px 18px', marginBottom: 20 }}>
-          <ToggleRow first title="Night mode" sub="Dim the app after sunset." on={theme === 'dark'} onClick={handleToggleTheme} />
-        </div>
-
+        <SectionLabel>Notifications</SectionLabel>
         {loadState === 'loading' && (
           <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontSize: 13 }}>Loading your preferences…</div>
         )}
-
         {loadState === 'signed_out' && (
           <div style={{ border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: 18, fontSize: 13, color: 'var(--ayna-text-muted)', lineHeight: 1.55, textAlign: 'center' }}>
             Sign in to manage how Ayna reaches you — these settings save to your account, not just this device.
           </div>
         )}
-
         {loadState === 'error' && (
           <div style={{ border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: 18, textAlign: 'center' }}>
             <div style={{ fontSize: 13, color: 'var(--ayna-text-muted)', lineHeight: 1.55, marginBottom: 12 }}>Couldn't load your preferences.</div>
             <div onClick={retry} style={{ display: 'inline-block', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 12.5, padding: '9px 16px', borderRadius: 99, cursor: 'pointer' }}>Try again</div>
           </div>
         )}
-
         {loadState === 'ready' && prefs && (
           <>
             <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '4px 18px' }}>
               <ToggleRow first title="Notifications" sub="Recalls and safety flags on things you own." on={prefs.notificationsEnabled} onClick={() => patchField('notifications_enabled', !prefs.notificationsEnabled, 'notificationsEnabled')} />
               <ToggleRow title="Updates" sub="New matches and restocks, weekly digest." on={prefs.updatesEnabled} onClick={() => patchField('updates_enabled', !prefs.updatesEnabled, 'updatesEnabled')} />
+              <DrillRow title="Channels & quiet hours" sub={channelsSummary} onClick={onOpenChannels} />
             </div>
 
-            <div style={{ marginTop: 26, fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 11 }}>Delivery channel</div>
+            <SectionLabel>AI & personalization</SectionLabel>
+            <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '4px 18px' }}>
+              <ToggleRow first title="Personalize with my data" sub="Your intake answers and cycle logs shape your matches and Ask Ayna replies." on={personalizeWithData} onClick={handlePersonalizeToggle} />
+            </div>
+          </>
+        )}
+
+        {/* Clearing Ask Ayna history is purely local (in-memory chat state in
+            MobileApp.jsx — nothing is stored server-side for this feature),
+            so unlike the toggles above it needs no account and works whether
+            or not the fetch above succeeded. */}
+        {loadState !== 'ready' && <SectionLabel>AI & personalization</SectionLabel>}
+        <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '4px 18px', marginTop: loadState === 'ready' ? 20 : 0 }}>
+          <div onClick={() => setClearHistoryConfirm(true)} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '17px 0', cursor: 'pointer' }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontWeight: 600, fontSize: 15, color: '#B4402A' }}>Clear Ask Ayna history</div>
+              <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', marginTop: 3, lineHeight: 1.45 }}>
+                {askAynaHistoryCount} conversation{askAynaHistoryCount === 1 ? '' : 's'} this session. Deleted for good, not archived.
+              </div>
+            </div>
+            <ChevronIcon />
+          </div>
+          {clearHistoryConfirm && (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, padding: '0 0 14px' }}>
+              <div
+                onClick={() => setClearHistoryConfirm(false)}
+                style={{ fontSize: 12, fontWeight: 600, color: 'var(--ayna-text-muted)', cursor: 'pointer', padding: '6px 12px' }}
+              >
+                Cancel
+              </div>
+              <div
+                onClick={handleClearHistory}
+                style={{ fontSize: 12, fontWeight: 700, color: '#B4402A', cursor: 'pointer', padding: '6px 12px', background: 'rgba(180,64,42,.1)', borderRadius: 99, flex: 'none' }}
+              >
+                Yes, clear it
+              </div>
+            </div>
+          )}
+        </div>
+        <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', lineHeight: 1.5, margin: '10px 2px 0' }}>
+          This is separate from the analytics toggle in Privacy & data — that one is about anonymised usage stats, this one shapes what you see.
+        </div>
+
+        {/* Appearance — always local, no account needed. */}
+        <SectionLabel>Appearance</SectionLabel>
+        <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: 18 }}>
+          <div style={{ fontWeight: 600, fontSize: 14.5, marginBottom: 12 }}>Theme</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10 }}>
+            {THEME_SWATCHES.map((s) => (
+              <ThemeSwatch key={s.key} mode={s.key} selected={theme === s.key} onClick={() => onToggleTheme(s.key)} />
+            ))}
+          </div>
+        </div>
+
+        <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: 18, marginTop: 14 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+            <div style={{ fontWeight: 600, fontSize: 14.5 }}>Text size</div>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '.6px', color: 'var(--ayna-accent-dark)', background: 'var(--ayna-chip-bg)', padding: '3px 9px', borderRadius: 99 }}>
+              {TEXT_SIZE_STEPS[textSizeIndex]?.label}
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span style={{ fontSize: 12, color: 'var(--ayna-text-faint)', flex: 'none' }}>A</span>
+            <div style={{ flex: 1, display: 'flex', gap: 6 }}>
+              {TEXT_SIZE_STEPS.map((step, i) => (
+                <div
+                  key={step.label}
+                  onClick={() => onTextSizeChange(i)}
+                  style={{ flex: 1, height: 8, borderRadius: 99, cursor: 'pointer', background: i === textSizeIndex ? 'var(--ayna-heading)' : 'var(--ayna-border)' }}
+                />
+              ))}
+            </div>
+            <span style={{ fontSize: 20, color: 'var(--ayna-text-faint)', flex: 'none' }}>A</span>
+          </div>
+          <div style={{ marginTop: 14, fontSize: 14, fontWeight: 600, color: 'var(--ayna-text)', lineHeight: 1.5 }}>
+            This is what body text looks like across ayna.
+          </div>
+        </div>
+
+        {/* Region — both rows are informational only, matching how far the
+            real app actually reaches today (US-only, English-only); no
+            picker is shown for either since there is nothing real to pick
+            from yet. */}
+        <SectionLabel>Region</SectionLabel>
+        <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '4px 18px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '17px 0' }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontWeight: 600, fontSize: 15, color: 'var(--ayna-text)' }}>Language</div>
+              <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', marginTop: 3, lineHeight: 1.45 }}>More languages are on the way.</div>
+            </div>
+            <div style={{ fontSize: 13.5, color: 'var(--ayna-text-faint)', flex: 'none' }}>English</div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '17px 0', borderTop: '1px solid var(--ayna-border)' }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontWeight: 600, fontSize: 15, color: 'var(--ayna-text)' }}>Ship to</div>
+              <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', marginTop: 3, lineHeight: 1.45 }}>United States only, for now.</div>
+            </div>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10.5, letterSpacing: '.6px', color: 'var(--ayna-text-faint)', border: '1px solid var(--ayna-border)', borderRadius: 99, padding: '4px 9px', flex: 'none' }}>US</div>
+          </div>
+        </div>
+
+        <div style={{ marginTop: 20, fontSize: 12, color: 'var(--ayna-text-muted)', lineHeight: 1.55, textAlign: 'center', padding: '0 10px' }}>Ayna never sells your health data.</div>
+
+        {toast && (
+          <div style={{ position: 'fixed', left: 20, right: 20, bottom: 24, background: '#B4402A', color: '#FFF9F2', fontSize: 12.5, fontWeight: 600, padding: '12px 16px', borderRadius: 14, textAlign: 'center', boxShadow: '0 14px 30px -12px rgba(180,64,42,.5)' }}>
+            {toast}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Split out of PreferencesScreen so "delivery channel" and "quiet hours" —
+// both real, account-scoped fields on the same notification_preferences row
+// — get their own focused screen, matching the design's IA. Owns its own
+// fetch/patch rather than receiving `prefs` as a prop from PreferencesScreen,
+// since the two screens are never mounted at the same time (screenStack
+// navigation swaps one for the other) — sharing state would need lifting it
+// to the orchestrator for no real benefit.
+function ChannelsScreen({ onBack }) {
+  const [loadState, setLoadState] = useState('loading');
+  const [prefs, setPrefs] = useState(null);
+  const [toast, setToast] = useState('');
+  const [phoneVerifyOpen, setPhoneVerifyOpen] = useState(false);
+
+  const fetchPrefs = () => {
+    fetchNotificationPreferences()
+      .then((data) => { setPrefs(data); setLoadState('ready'); })
+      .catch((e) => setLoadState(e instanceof NotSignedInError ? 'signed_out' : 'error'));
+  };
+
+  useEffect(() => { fetchPrefs(); }, []);
+
+  const retry = () => {
+    setLoadState('loading');
+    fetchPrefs();
+  };
+
+  const showToast = (message) => {
+    setToast(message);
+    setTimeout(() => setToast(''), 3500);
+  };
+
+  const patchField = (apiField, value, clientField) => {
+    const previous = prefs;
+    setPrefs((p) => ({ ...p, [clientField]: value }));
+    patchNotificationPreferences({ [apiField]: value }).catch((e) => {
+      setPrefs(previous);
+      showToast(friendlyPreferencesError(e.code || e.message));
+    });
+  };
+
+  const selectChannel = (key) => {
+    if (!prefs || key === prefs.deliveryChannel) return;
+    if (key === 'sms' && !prefs.phoneVerified) {
+      setPhoneVerifyOpen(true);
+      return;
+    }
+    patchField('delivery_channel', key, 'deliveryChannel');
+  };
+
+  const patchQuietHoursTime = (field, value) => {
+    if (!prefs || !value) return;
+    patchField(field, value, field === 'quiet_hours_start' ? 'quietHoursStart' : 'quietHoursEnd');
+  };
+
+  if (phoneVerifyOpen) {
+    return (
+      <PhoneVerifyPanel
+        onBack={() => setPhoneVerifyOpen(false)}
+        onVerified={() => {
+          setPhoneVerifyOpen(false);
+          setPrefs((p) => (p ? { ...p, phoneVerified: true, deliveryChannel: 'sms' } : p));
+          patchNotificationPreferences({ delivery_channel: 'sms' }).catch((e) => {
+            showToast(friendlyPreferencesError(e.code || e.message));
+          });
+        }}
+      />
+    );
+  }
+
+  return (
+    <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+      <BackHeader title="Channels & quiet hours" onBack={onBack} />
+      <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '0 20px 30px' }}>
+        {loadState === 'loading' && (
+          <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontSize: 13 }}>Loading…</div>
+        )}
+        {loadState === 'signed_out' && (
+          <div style={{ marginTop: 16, border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: 18, fontSize: 13, color: 'var(--ayna-text-muted)', lineHeight: 1.55, textAlign: 'center' }}>
+            Sign in to manage channels and quiet hours.
+          </div>
+        )}
+        {loadState === 'error' && (
+          <div style={{ marginTop: 16, border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: 18, textAlign: 'center' }}>
+            <div style={{ fontSize: 13, color: 'var(--ayna-text-muted)', lineHeight: 1.55, marginBottom: 12 }}>Couldn't load this.</div>
+            <div onClick={retry} style={{ display: 'inline-block', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 12.5, padding: '9px 16px', borderRadius: 99, cursor: 'pointer' }}>Try again</div>
+          </div>
+        )}
+        {loadState === 'ready' && prefs && (
+          <>
+            <SectionLabel>Delivery channel</SectionLabel>
             <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '5px 18px' }}>
               {[
                 ['push', 'Push', null],
@@ -1091,7 +1352,32 @@ function PreferencesScreen({ onBack, theme, onToggleTheme }) {
               ))}
             </div>
 
-            <div style={{ marginTop: 20, fontSize: 12, color: 'var(--ayna-text-muted)', lineHeight: 1.55, textAlign: 'center', padding: '0 10px' }}>Ayna never sells your health data.</div>
+            <SectionLabel>Quiet hours</SectionLabel>
+            <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '4px 18px' }}>
+              <ToggleRow first title="Quiet hours" sub="Hold notifications overnight; they'll still be there when it opens." on={prefs.quietHoursEnabled} onClick={() => patchField('quiet_hours_enabled', !prefs.quietHoursEnabled, 'quietHoursEnabled')} />
+              {prefs.quietHoursEnabled && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '4px 0 16px' }}>
+                  <label style={{ flex: 1 }}>
+                    <div style={{ fontSize: 11, color: 'var(--ayna-text-muted)', marginBottom: 4 }}>From</div>
+                    <input
+                      type="time"
+                      value={prefs.quietHoursStart}
+                      onChange={(e) => patchQuietHoursTime('quiet_hours_start', e.target.value)}
+                      style={{ width: '100%', border: '1px solid var(--ayna-border)', borderRadius: 12, padding: '9px 10px', fontSize: 14, background: 'var(--ayna-bg-alt)', color: 'var(--ayna-text)', boxSizing: 'border-box' }}
+                    />
+                  </label>
+                  <label style={{ flex: 1 }}>
+                    <div style={{ fontSize: 11, color: 'var(--ayna-text-muted)', marginBottom: 4 }}>To</div>
+                    <input
+                      type="time"
+                      value={prefs.quietHoursEnd}
+                      onChange={(e) => patchQuietHoursTime('quiet_hours_end', e.target.value)}
+                      style={{ width: '100%', border: '1px solid var(--ayna-border)', borderRadius: 12, padding: '9px 10px', fontSize: 14, background: 'var(--ayna-bg-alt)', color: 'var(--ayna-text)', boxSizing: 'border-box' }}
+                    />
+                  </label>
+                </div>
+              )}
+            </div>
           </>
         )}
 
@@ -2817,6 +3103,12 @@ export default function ProfileFlow({
   onViewAlternative,
   onBrowse,
   onEditProfile,
+  personalizeWithData = true,
+  onPersonalizeWithDataChange,
+  askAynaHistoryCount = 0,
+  onClearAskAynaHistory,
+  textSizeIndex = 1,
+  onTextSizeChange,
 }) {
   // A real back-navigation stack rather than a static single-parent map —
   // several screens (Preferences/Notifications, in particular) are now
@@ -2863,7 +3155,22 @@ export default function ProfileFlow({
   } else if (screen === 'startups') {
     body = <EarlyStageScreen onBack={goBack} quizAnswers={quizAnswers} />;
   } else if (screen === 'preferences') {
-    body = <PreferencesScreen onBack={goBack} theme={theme} onToggleTheme={onToggleTheme} />;
+    body = (
+      <PreferencesScreen
+        onBack={goBack}
+        theme={theme}
+        onToggleTheme={onToggleTheme}
+        onOpenChannels={() => pushScreen('channels')}
+        personalizeWithData={personalizeWithData}
+        onPersonalizeWithDataChange={onPersonalizeWithDataChange}
+        askAynaHistoryCount={askAynaHistoryCount}
+        onClearAskAynaHistory={onClearAskAynaHistory}
+        textSizeIndex={textSizeIndex}
+        onTextSizeChange={onTextSizeChange}
+      />
+    );
+  } else if (screen === 'channels') {
+    body = <ChannelsScreen onBack={goBack} />;
   } else if (screen === 'settings') {
     body = (
       <SettingsScreen

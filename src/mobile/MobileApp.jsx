@@ -11,8 +11,10 @@ import { ARTICLES } from '../components/Articles.jsx';
 import { ECOSYSTEM_AREAS as REAL_ECOSYSTEM_AREAS, resolveEcosystemProductArea } from '../components/EcosystemBubbles.jsx';
 import { useSavedProducts } from './hooks/useSavedProducts.js';
 import { useThemeMode } from './hooks/useThemeMode.js';
+import { useTextSize } from './hooks/useTextSize.js';
 import { useEcosystemSession } from './hooks/useEcosystemSession.js';
 import { useSupabaseAuth, MOBILE_OAUTH_PENDING_KEY } from './hooks/useSupabaseAuth.js';
+import { fetchNotificationPreferences } from './utils/notificationPreferencesApi.js';
 import { ECOSYSTEM_AREAS as AREA_LABELS } from './data/ecosystemAreas.js';
 import AskAynaChip from './components/AskAynaChip.jsx';
 import AskAynaModal from './components/AskAynaModal.jsx';
@@ -162,9 +164,15 @@ export default function MobileApp() {
   const ecosystemFlagsRef = useRef({ trackedProducts: {}, omittedProducts: {} });
   const pendingQuizEcosystemRef = useRef(null);
   const { savedMap, isSaved, toggleSaved } = useSavedProducts(authUser);
-  const { theme, toggleTheme } = useThemeMode();
+  const { theme, resolvedTheme, setThemeMode } = useThemeMode();
+  const { textSizeIndex, setTextSizeIndex, textZoom } = useTextSize();
   const [askAynaOpen, setAskAynaOpen] = useState(false);
   const [askAynaHistory, setAskAynaHistory] = useState([]);
+  // App-wide gate for Preferences > AI & Personalization > "Personalize with
+  // my data" — real, account-scoped (notification_preferences table), loaded
+  // once on sign-in below. Defaults true (matches the DB column default) so
+  // a signed-out or not-yet-loaded user keeps today's behavior.
+  const [personalizeWithData, setPersonalizeWithData] = useState(true);
   // Distinguishes "Finish your profile" (resume with prior answers, jump to
   // the first thing left blank) from every other way into the quiz screen
   // (start quiz, retake, update health), which all start fresh on purpose.
@@ -209,11 +217,16 @@ export default function MobileApp() {
       // that didn't complete the intake locally, which silently disabled
       // every profile-gated feature (the Products/Reads "For You" toggles
       // in particular) even for a user with a complete, real profile.
-      const [ecosystem, rawIntake] = await Promise.all([
+      const [ecosystem, rawIntake, notificationPrefs] = await Promise.all([
         loadEcosystemForUser(supabase, userId),
         loadHealthIntakeForCurrentUser(),
+        fetchNotificationPreferences().catch(() => null),
       ]);
       if (cancelled) return;
+
+      if (typeof notificationPrefs?.personalizeWithDataEnabled === 'boolean') {
+        setPersonalizeWithData(notificationPrefs.personalizeWithDataEnabled);
+      }
 
       ecosystemFlagsRef.current = {
         trackedProducts: ecosystem?.trackedProducts || {},
@@ -281,6 +294,12 @@ export default function MobileApp() {
     .filter(Boolean)
     .slice(0, 3);
   const goalCount = lastQuizAnswers?.frustrations?.length || 0;
+  // "Personalize with my data" (Preferences > AI & Personalization) — off
+  // suppresses ambient personalization (match %, the For You toggles, Ask
+  // Ayna's profile context, safety-alert swaps) everywhere quizAnswers would
+  // otherwise be read, without touching the real stored answers themselves
+  // (still saved, still shown when editing your own profile).
+  const effectiveQuizAnswers = personalizeWithData ? lastQuizAnswers : null;
 
   // Only true right after a mobile-initiated Google sign-in completes — the
   // full-page OAuth redirect leaves this app entirely and comes back on
@@ -356,7 +375,7 @@ export default function MobileApp() {
   const handleViewAlternative = (product) => {
     if (!product?.id) return;
     const tag = Array.isArray(product.tags) ? product.tags[0] : undefined;
-    const alternatives = getEcosystemAlternatives(product.id, tag, lastQuizAnswers) || [];
+    const alternatives = getEcosystemAlternatives(product.id, tag, effectiveQuizAnswers) || [];
     setOverlay({ type: 'product', item: alternatives[0] || product });
   };
 
@@ -429,18 +448,18 @@ export default function MobileApp() {
   };
 
   return (
-    <div className="ayna-mobile" data-theme={theme}>
+    <div className="ayna-mobile" data-theme={resolvedTheme} style={{ zoom: textZoom }}>
       <Screen
         {...nav}
         theme={theme}
-        onToggleTheme={toggleTheme}
+        onToggleTheme={setThemeMode}
         products={browseProducts}
         articles={ARTICLES}
         savedProducts={savedMap}
         onToggleSaved={toggleSaved}
         onAddToEcosystem={handleAddToEcosystem}
         myProducts={myProducts}
-        quizAnswers={lastQuizAnswers}
+        quizAnswers={effectiveQuizAnswers}
         initialSnapshot={editingHealthProfile ? lastQuizAnswers?.fullHealthIntake || null : null}
         name={resolvedName}
         headerInitial={headerInitial}
@@ -465,23 +484,23 @@ export default function MobileApp() {
             onToggleSaved={() => toggleSaved(overlay.item)}
             isInEcosystem={myProducts.some((p) => p.id === overlay.item?.id)}
             onAddToEcosystem={() => handleAddToEcosystem(overlay.item)}
-            quizAnswers={lastQuizAnswers}
+            quizAnswers={effectiveQuizAnswers}
             ecosystemProducts={myProducts}
             theme={theme}
-            onToggleTheme={toggleTheme}
+            onToggleTheme={setThemeMode}
           />
         </div>
       )}
       {overlay?.type === 'article' && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 40, background: 'var(--ayna-surface)', display: 'flex' }}>
-          <ArticleDetailScreen article={overlay.item} onBack={() => setOverlay(null)} theme={theme} onToggleTheme={toggleTheme} />
+          <ArticleDetailScreen article={overlay.item} onBack={() => setOverlay(null)} theme={theme} onToggleTheme={setThemeMode} />
         </div>
       )}
       {overlay?.type === 'why-match' && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 40, background: 'var(--ayna-surface)', display: 'flex' }}>
           <WhyMatchScreen
             product={overlay.item}
-            quizAnswers={lastQuizAnswers}
+            quizAnswers={effectiveQuizAnswers}
             onBack={() => setOverlay(null)}
             onUpdateHealth={() => { setOverlay(null); setEditingHealthProfile(false); setScreen('quiz'); }}
           />
@@ -491,7 +510,7 @@ export default function MobileApp() {
         <ProfileFlow
           onClose={() => setOverlay(null)}
           theme={theme}
-          onToggleTheme={toggleTheme}
+          onToggleTheme={setThemeMode}
           onSignOut={handleSignOut}
           onSignIn={() => setScreen('signin')}
           authUser={authUser}
@@ -499,11 +518,17 @@ export default function MobileApp() {
           onNameChanged={(next) => updateSession({ userName: next })}
           ecosystemCount={myProducts.length}
           savedCount={Object.keys(savedMap || {}).length}
-          quizAnswers={lastQuizAnswers}
+          quizAnswers={effectiveQuizAnswers}
           myProducts={myProducts}
           savedProducts={savedMap}
           onViewAlternative={handleViewAlternative}
           onBrowse={() => setScreen('browse')}
+          personalizeWithData={personalizeWithData}
+          onPersonalizeWithDataChange={setPersonalizeWithData}
+          askAynaHistoryCount={askAynaHistory.length}
+          onClearAskAynaHistory={() => setAskAynaHistory([])}
+          textSizeIndex={textSizeIndex}
+          onTextSizeChange={setTextSizeIndex}
           onEditProfile={() => { setEditingHealthProfile(true); setScreen('quiz'); }}
         />
       )}
@@ -511,7 +536,7 @@ export default function MobileApp() {
       <AskAynaModal
         open={askAynaOpen}
         onClose={() => setAskAynaOpen(false)}
-        profile={lastQuizAnswers}
+        profile={effectiveQuizAnswers}
         onProfileUpdate={(answers) => updateSession({ lastQuizAnswers: answers })}
         chatHistory={askAynaHistory}
         onChatHistoryUpdate={setAskAynaHistory}
