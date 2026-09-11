@@ -456,12 +456,10 @@ export default function BrowseScreen({
             No reads match your profile yet.
           </div>
         ) : (
-          <div style={{ padding: '0 20px 4px' }}>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-              {recommendedReads.map((a) => (
-                <LibraryCard key={a.id} article={a} onClick={() => onOpenArticle && onOpenArticle(a)} />
-              ))}
-            </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 11, padding: '0 20px' }}>
+            {recommendedReads.map((a) => (
+              <LibraryCard key={a.id} article={a} fullWidth onClick={() => onOpenArticle && onOpenArticle(a)} />
+            ))}
           </div>
         )
       ) : rows.length === 0 ? (

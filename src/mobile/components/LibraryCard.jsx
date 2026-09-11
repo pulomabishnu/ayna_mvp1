@@ -16,12 +16,12 @@ function tintForId(id) {
   return TINT_PALETTE[hash % TINT_PALETTE.length];
 }
 
-export default function LibraryCard({ article, onClick }) {
+export default function LibraryCard({ article, onClick, fullWidth = false }) {
   const { id, title, tags = [], image } = article || {};
   const [c1, c2] = tintForId(id || title);
 
   return (
-    <div onClick={onClick} style={{ width: 158, flexShrink: 0, cursor: 'pointer' }}>
+    <div onClick={onClick} style={fullWidth ? { cursor: 'pointer' } : { width: 158, flexShrink: 0, cursor: 'pointer' }}>
       <div
         style={{
           position: 'relative',
