@@ -17,8 +17,11 @@
  * Added 2026-09-07: Elitone — confirmed affiliate partnership.
  *
  * Added 2026-09-07: My Pelvic Bra — confirmed affiliate partnership.
+ *
+ * Added 2026-09-11: BUNI — confirmed brand partnership. Direct brand
+ * affiliate link pending; current product purchase links use Amazon Associates.
  */
-export const PARTNER_BRAND_PATTERNS = [/\bneycher\b/, /\bconnect pelvic floor fitness\b/, /\bvio2\b/, /\bproov\b/, /\belitone\b/, /\bmy pelvic bra\b/];
+export const PARTNER_BRAND_PATTERNS = [/\bneycher\b/, /\bconnect pelvic floor fitness\b/, /\bvio2\b/, /\bproov\b/, /\belitone\b/, /\bmy pelvic bra\b/, /\bbuni\b/];
 
 export function isPartnerBrandItem(item) {
   const text = `${item?.brand || ''} ${item?.name || ''}`.toLowerCase();
