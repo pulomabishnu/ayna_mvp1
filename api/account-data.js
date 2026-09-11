@@ -1,22 +1,29 @@
-/* global process */
 import { verifyUser } from './_usageLimit.js';
 
 const USER_TABLES = [
-  'health_intakes',
-  'notification_preferences',
-  'pending_phone_verifications',
-  'phone_numbers',
-  'recall_notifications',
-  'sms_conversations',
-  'user_ai_usage',
-  'user_ecosystem_builds',
-  'user_ecosystems',
-  'user_learning_memory',
-  'user_reviews',
+  ['health_intakes', '*'],
+  ['notification_preferences', '*'],
+  // Verification code hashes are an internal security credential, not useful
+  // account data. Export the user's phone/status metadata without the hash.
+  ['pending_phone_verifications', 'user_id,phone_number,expires_at,attempts,created_at'],
+  ['phone_numbers', '*'],
+  ['recall_notifications', '*'],
+  ['sms_conversations', '*'],
+  ['user_ai_usage', '*'],
+  ['user_ecosystem_builds', '*'],
+  ['user_ecosystems', '*'],
+  ['user_learning_memory', '*'],
+  ['user_reviews', '*'],
 ];
 
-function safeFilenamePart(value) {
-  return String(value || 'account').replace(/[^a-z0-9._-]+/gi, '-').replace(/^-+|-+$/g, '') || 'account';
+function dedupeById(rows) {
+  const seen = new Set();
+  return (rows || []).filter((row) => {
+    const key = row?.id || JSON.stringify(row);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
 
 export default async function handler(req, res) {
@@ -36,21 +43,32 @@ export default async function handler(req, res) {
 
   try {
     const tableResults = await Promise.all(
-      USER_TABLES.map(async (table) => {
-        const { data, error: tableError } = await admin.from(table).select('*').eq('user_id', user.id);
+      USER_TABLES.map(async ([table, columns]) => {
+        const { data, error: tableError } = await admin.from(table).select(columns).eq('user_id', user.id);
         if (tableError) throw new Error(`${table}: ${tableError.message}`);
         return [table, data || []];
       })
     );
 
-    const [{ data: feedback, error: feedbackError }, { data: approvedUsers, error: approvedError }] = await Promise.all([
-      admin.from('feedback').select('*').or(`user_id.eq.${user.id},email.eq.${user.email || ''}`),
+    // Query feedback by user id and email separately instead of interpolating
+    // the email into a PostgREST .or() filter string. This avoids malformed
+    // filters for legitimate emails containing punctuation and removes an
+    // unnecessary filter-injection surface.
+    const feedbackQueries = [admin.from('feedback').select('*').eq('user_id', user.id)];
+    if (user.email) feedbackQueries.push(admin.from('feedback').select('*').eq('email', user.email));
+
+    const [feedbackResults, approvedResult] = await Promise.all([
+      Promise.all(feedbackQueries),
       user.email
-        ? admin.from('approved_users').select('*').eq('email', user.email)
+        ? admin.from('approved_users').select('email,approved_at').eq('email', user.email)
         : Promise.resolve({ data: [], error: null }),
     ]);
+
+    const feedbackError = feedbackResults.find((result) => result.error)?.error;
     if (feedbackError) throw new Error(`feedback: ${feedbackError.message}`);
-    if (approvedError) throw new Error(`approved_users: ${approvedError.message}`);
+    if (approvedResult.error) throw new Error(`approved_users: ${approvedResult.error.message}`);
+
+    const feedback = dedupeById(feedbackResults.flatMap((result) => result.data || []));
 
     const exportPayload = {
       exportedAt: new Date().toISOString(),
@@ -64,12 +82,12 @@ export default async function handler(req, res) {
       },
       data: Object.fromEntries([
         ...tableResults,
-        ['feedback', feedback || []],
-        ['approved_users', approvedUsers || []],
+        ['feedback', feedback],
+        ['approved_users', approvedResult.data || []],
       ]),
     };
 
-    const filename = `ayna-data-${safeFilenamePart(user.email || user.id)}-${new Date().toISOString().slice(0, 10)}.json`;
+    const filename = `ayna-data-${new Date().toISOString().slice(0, 10)}.json`;
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
     return res.status(200).send(JSON.stringify(exportPayload, null, 2));
