@@ -118,11 +118,11 @@ export default function ProductTileImage({ product, alt, imgStyle, imgClassName,
     return () => { active = false; };
   }, [initial, product?.id, product?.name, product?.brand, product?.url]);
 
-  // `resolved` came back from the server's /api/product-image, which already
-  // applied the type-aware (allowBrandLogo) check — re-running it through
-  // isPlaceholderProductImage here would reject a legitimate app/telehealth
-  // logo again, since that heuristic has no idea the product is 'digital'.
-  const finalSrc = resolved || safeProductImageSrc(initial, allowBrandLogo);
+  // Both catalog and dynamically resolved external photos pass through the
+  // same same-origin image cache. allowBrandLogo preserves valid app/
+  // telehealth artwork that the physical-product placeholder heuristic would
+  // otherwise reject.
+  const finalSrc = safeProductImageSrc(resolved || initial, allowBrandLogo);
   if (finalSrc) {
     return (
       <img
