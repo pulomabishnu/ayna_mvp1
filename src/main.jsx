@@ -19,13 +19,35 @@ if (window.location.hostname === 'aynamvp1.vercel.app') {
 }
 
 const POSTHOG_KEY = import.meta.env.VITE_PUBLIC_POSTHOG_KEY;
-// Default to the first-party /ingest proxy (see vercel.json rewrites) rather
-// than PostHog's own domain directly — ad blockers (uBlock, Brave, Safari's
-// tracking prevention) block requests to *.posthog.com/*.i.posthog.com by
-// domain, silently dropping every event for a real share of visitors. Same
-// project, same data — just routed through our own domain so it isn't
-// recognizable as third-party analytics traffic.
+// Keep PostHog enabled for product analytics. The same-origin proxy improves
+// delivery reliability, but event payloads are sanitized below so health
+// searches and account emails are not copied into analytics properties.
 const POSTHOG_HOST = import.meta.env.VITE_PUBLIC_POSTHOG_HOST || '/ingest';
+
+function sanitizePosthogEvent(event) {
+  if (!event || !event.properties) return event;
+  const properties = { ...event.properties };
+
+  // Discovery queries can contain highly sensitive health/sexual-health text.
+  // Keep the event and aggregate metadata, but never the literal search text.
+  if (event.event === 'search_performed') {
+    delete properties.query;
+  }
+
+  // User id is sufficient for pseudonymous analytics. Do not duplicate account
+  // email into PostHog person/event properties.
+  delete properties.email;
+  if (properties.$set && typeof properties.$set === 'object') {
+    properties.$set = { ...properties.$set };
+    delete properties.$set.email;
+  }
+  if (properties.$set_once && typeof properties.$set_once === 'object') {
+    properties.$set_once = { ...properties.$set_once };
+    delete properties.$set_once.email;
+  }
+
+  return { ...event, properties };
+}
 
 if (!POSTHOG_KEY) {
   console.warn(
@@ -48,6 +70,7 @@ if (!POSTHOG_KEY) {
     mask_all_text: true,
     disable_session_recording: true,
     ip: false,
+    before_send: sanitizePosthogEvent,
     // Catches uncaught JS errors and unhandled promise rejections anywhere
     // in the app (event handlers, async code) and reports them to PostHog's
     // Error tracking automatically. Doesn't cover React render errors caught
