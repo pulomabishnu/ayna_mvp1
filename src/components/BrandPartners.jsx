@@ -45,11 +45,17 @@ import { ProductImageFallback } from './ProductTileImage';
  * — falls back to the text wordmark until a file lands at
  * public/brands/elitone.png.
  *
- * Added 2026-09-07: My Pelvic Bra — confirmed affiliate partnership, 2
- * products (see brands.js), each with its own pelvic-bra.myshopify.com
- * affiliate link that redirects to the brand's real storefront at
- * mypelvicbra.shop. Same no-logo-yet situation — falls back to the text
- * wordmark until a file lands at public/brands/my-pelvic-bra.png.
+ * Added 2026-09-07: My Pelvic Bra — confirmed affiliate partnership, with
+ * products in brands.js using pelvic-bra.myshopify.com affiliate links that
+ * redirect to the brand's real storefront at mypelvicbra.shop. Same
+ * no-logo-yet situation — falls back to the text wordmark until a file lands
+ * at public/brands/my-pelvic-bra.png.
+ *
+ * Added 2026-09-11: BUNI — confirmed brand partnership. Direct BUNI affiliate
+ * link is still pending, so the partnership page uses the official brand site
+ * while individual product Buy Now links currently use Ayna's Amazon
+ * Associates links. Logo falls back to the text wordmark until a file lands
+ * at public/brands/buni.png.
  */
 
 const PARTNERS = [
@@ -100,6 +106,14 @@ const PARTNERS = [
     url: 'https://pelvic-bra.myshopify.com/nlbs3u',
     blurb:
       'A discreet, adjustable compression garment for pelvic heaviness, pressure, bulging, and leakage — worn during daily activity, not a corrective device.',
+  },
+  {
+    brand: 'BUNI',
+    /** Drop a file at public/brands/buni.png and it replaces the wordmark. */
+    logo: '/brands/buni.png',
+    url: 'https://www.bunibody.com/',
+    blurb:
+      'Intimate and body care for vulvar moisture, nipple and lip care, scar and body care, pregnancy, postpartum, menopause, and everyday comfort.',
   },
 ];
 
