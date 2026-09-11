@@ -148,14 +148,14 @@ export default function HealthDataImport({ onUpdate }) {
     <div id="health-data-import" style={{ maxWidth: '800px', margin: '0 auto 3rem', padding: '1.5rem', background: 'var(--color-surface-soft)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', scrollMarginTop: '1rem' }}>
       <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>Health data import</h3>
       <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem', lineHeight: 1.55, marginBottom: '1.25rem' }}>
-        Connect EHR exports, manual conditions, and wearable summaries so your ecosystem ranking matches what you share with your care team. Data stays in this browser unless you choose to sync (premium). We never sell health data.
+        Connect EHR exports, manual conditions, and wearable summaries so your ecosystem ranking matches what you share with your care team. Raw Apple Health and FHIR files are parsed locally in this browser and are not uploaded. The summaries and health details you choose to save may be used by ayna and its AI providers when you request personalized AI features. We never sell health data.
       </p>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem' }}>
         <div style={{ padding: '1rem', background: 'var(--color-surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
           <p style={{ fontWeight: '600', marginBottom: '0.5rem' }}>Apple Health</p>
           <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', lineHeight: 1.5, marginBottom: '0.75rem' }}>
-            ayna doesn’t have a phone app, so we can’t read Apple Health directly off your device. Instead: open the <strong>Health app → your profile picture (top right) → Export All Health Data</strong>, then unzip the download to find <strong>export.xml</strong> and upload it below. We parse steps, sleep, heart rate, and cycle tracking data locally in your browser. The file is not sent to our servers.
+            ayna doesn’t have a phone app, so we can’t read Apple Health directly off your device. Instead: open the <strong>Health app → your profile picture (top right) → Export All Health Data</strong>, then unzip the download to find <strong>export.xml</strong> and upload it below. We parse steps, sleep, heart rate, and cycle tracking data locally in your browser. The raw file is not sent to our servers.
           </p>
           <label style={{ fontSize: '0.9rem', cursor: 'pointer', display: 'inline-block' }}>
             <span className="btn btn-outline" style={{ padding: '0.45rem 1rem', fontSize: '0.85rem' }}>Choose export.xml</span>
@@ -176,7 +176,7 @@ export default function HealthDataImport({ onUpdate }) {
         <div style={{ padding: '1rem', background: 'var(--color-surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
           <p style={{ fontWeight: '600', marginBottom: '0.5rem' }}>Electronic health record (FHIR)</p>
           <p style={{ fontSize: '0.88rem', color: 'var(--color-text-muted)', lineHeight: 1.5, marginBottom: '0.75rem' }}>
-            Many Epic / MyChart portals offer a <strong>Download my data</strong> export as a FHIR JSON bundle. Upload it here. We parse conditions and medication statements locally in your browser; the file is not sent to our servers.
+            Many Epic / MyChart portals offer a <strong>Download my data</strong> export as a FHIR JSON bundle. Upload it here. We parse conditions and medication statements locally in your browser; the raw file is not sent to our servers.
           </p>
           <label style={{ fontSize: '0.9rem', cursor: 'pointer', display: 'inline-block' }}>
             <span className="btn btn-outline" style={{ padding: '0.45rem 1rem', fontSize: '0.85rem' }}>Choose FHIR JSON file</span>
@@ -184,7 +184,7 @@ export default function HealthDataImport({ onUpdate }) {
           </label>
           {fhirError && <p style={{ color: '#b91c1c', fontSize: '0.85rem', marginTop: '0.5rem' }}>{fhirError}</p>}
           {fhirConnected && !fhirError && (
-            <p style={{ fontSize: '0.85rem', color: 'var(--color-primary)', marginTop: '0.5rem' }}>FHIR summary saved. Used only to improve ranking on top of your quiz.</p>
+            <p style={{ fontSize: '0.85rem', color: 'var(--color-primary)', marginTop: '0.5rem' }}>FHIR summary saved. It can improve ranking and may be included as context when you request personalized AI features.</p>
           )}
         </div>
       </div>
@@ -227,7 +227,7 @@ export default function HealthDataImport({ onUpdate }) {
 
       <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.35rem', fontSize: '0.9rem' }}>Wearable &amp; activity summary (optional)</label>
       <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.5rem', lineHeight: 1.5 }}>
-        Paste averages or trends from Apple Health, Google Fit, Oura, Garmin, etc. (e.g. sleep 6.5h/night, 7k steps, resting HR 62). Used with your quiz and chat to tune recommendations. Stays in this browser.
+        Paste averages or trends from Apple Health, Google Fit, Oura, Garmin, etc. (e.g. sleep 6.5h/night, 7k steps, resting HR 62). Used with your quiz and chat to tune recommendations. The summary is saved locally and may be sent with your request when a personalized AI feature needs that context.
       </p>
       <textarea
         value={wearableText}
