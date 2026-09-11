@@ -50,7 +50,7 @@ export default function SearchBar({ value = '', onChange, onFilterClick, terms =
                 inset: 0,
                 display: 'flex',
                 alignItems: 'center',
-                fontSize: 13.5,
+                fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))',
                 color: '#78716C',
                 whiteSpace: 'nowrap',
                 animation: (rot % 2 ? 'ay-swap2' : 'ay-swap') + ' 2.4s ease-in-out',
@@ -70,7 +70,7 @@ export default function SearchBar({ value = '', onChange, onFilterClick, terms =
               border: 'none',
               outline: 'none',
               background: 'transparent',
-              fontSize: 13.5,
+              fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))',
               color: '#292524',
               fontFamily: 'Inter, system-ui, sans-serif',
             }}

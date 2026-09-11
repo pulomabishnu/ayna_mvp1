@@ -41,8 +41,8 @@ export default function BuildingScreen({ onFinish, statuses = DEFAULT_STATUSES, 
         <div style={{ position: 'absolute', inset: 0, borderRadius: 99, border: '1px solid rgba(255,255,255,.3)', animation: 'ay-pulse 2.6s ease-out infinite 1.3s' }} />
         <div style={{ width: 66, height: 66, borderRadius: 99, background: '#FFC774', animation: 'ay-float 3.4s ease-in-out infinite' }} />
       </div>
-      <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 24, textAlign: 'center', lineHeight: 1.3 }}>{headline}</div>
-      <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 11, letterSpacing: '.6px', opacity: 0.72, marginTop: 12, textAlign: 'center' }}>
+      <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(24px * var(--ayna-text-scale, 1))', textAlign: 'center', lineHeight: 1.3 }}>{headline}</div>
+      <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(11px * var(--ayna-text-scale, 1))', letterSpacing: '.6px', opacity: 0.72, marginTop: 12, textAlign: 'center' }}>
         {statuses[statusIndex]}
       </div>
     </div>

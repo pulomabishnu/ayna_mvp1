@@ -40,13 +40,13 @@ export default function ArticleCard({ article, onClick }) {
         )}
       </div>
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 14.5, lineHeight: 1.3 }}>
+        <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', lineHeight: 1.3 }}>
           {title}
         </div>
         {teaser && (
           <div
             style={{
-              fontSize: 12.5,
+              fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))',
               color: '#78716C',
               marginTop: 4,
               lineHeight: 1.45,
@@ -63,7 +63,7 @@ export default function ArticleCard({ article, onClick }) {
           <div
             style={{
               fontFamily: "'DM Mono',monospace",
-              fontSize: 9.5,
+              fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))',
               letterSpacing: 0.6,
               textTransform: 'uppercase',
               color: '#A2603C',

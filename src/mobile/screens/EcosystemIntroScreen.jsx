@@ -45,7 +45,7 @@ export default function EcosystemIntroScreen({ onStartQuiz, onOpenSaved, onBrows
             }}
           />
         </div>
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 31, lineHeight: 1.16, textAlign: 'center' }}>
+        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(31px * var(--ayna-text-scale, 1))', lineHeight: 1.16, textAlign: 'center' }}>
           Build your
           <br />
           ecosystem
@@ -63,7 +63,7 @@ export default function EcosystemIntroScreen({ onStartQuiz, onOpenSaved, onBrows
             borderRadius: 99,
             fontFamily: "'DM Sans',sans-serif",
             fontWeight: 600,
-            fontSize: 15,
+            fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
             cursor: 'pointer',
             boxShadow: '0 18px 34px -16px rgba(255,199,116,.8)',
             animation: 'ay-bob 2.5s ease-in-out infinite',

@@ -37,8 +37,8 @@ export default function RevealScreen({
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 'max(20px, env(safe-area-inset-top))', paddingLeft: 24, paddingRight: 24, position: 'relative' }}>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 5 }}>
-          <span style={{ fontFamily: "'Playfair Display',serif", fontSize: 20 }}>ayna</span>
-          <span style={{ fontSize: 10, color: '#8c8078' }}>beta</span>
+          <span style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(20px * var(--ayna-text-scale, 1))' }}>ayna</span>
+          <span style={{ fontSize: 'calc(10px * var(--ayna-text-scale, 1))', color: '#8c8078' }}>beta</span>
         </div>
       </div>
 
@@ -52,7 +52,7 @@ export default function RevealScreen({
             borderRadius: 999,
             background: '#FFEFD6',
             color: '#8a5a1e',
-            fontSize: 11,
+            fontSize: 'calc(11px * var(--ayna-text-scale, 1))',
             fontWeight: 600,
             letterSpacing: '.04em',
             textTransform: 'uppercase',
@@ -64,10 +64,10 @@ export default function RevealScreen({
           </svg>
           Intake complete
         </div>
-        <div style={{ fontFamily: "'Playfair Display',serif", fontWeight: 500, fontSize: 27, lineHeight: 1.25, margin: '0 0 8px' }}>
+        <div style={{ fontFamily: "'Playfair Display',serif", fontWeight: 500, fontSize: 'calc(27px * var(--ayna-text-scale, 1))', lineHeight: 1.25, margin: '0 0 8px' }}>
           Your ecosystem is ready.
         </div>
-        <p style={{ margin: '0 auto', maxWidth: 280, fontSize: 14, color: '#8c8078', lineHeight: 1.5 }}>Built from your answers.</p>
+        <p style={{ margin: '0 auto', maxWidth: 280, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: '#8c8078', lineHeight: 1.5 }}>Built from your answers.</p>
       </div>
 
       <div style={{ position: 'relative', width: 320, height: 320, margin: '22px auto 0' }}>
@@ -88,7 +88,7 @@ export default function RevealScreen({
             zIndex: 1,
           }}
         >
-          <span style={{ color: '#FFFFFF', fontFamily: "'Playfair Display',serif", fontSize: 16 }}>you</span>
+          <span style={{ color: '#FFFFFF', fontFamily: "'Playfair Display',serif", fontSize: 'calc(16px * var(--ayna-text-scale, 1))' }}>you</span>
         </div>
         <div style={{ position: 'absolute', inset: 0, zIndex: 2, animation: 'ay-orbit 28s linear infinite' }}>
           {orbit1 && (
@@ -110,7 +110,7 @@ export default function RevealScreen({
                 }}
               >
                 <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#4E3866', flex: 'none' }} />
-                <span style={{ fontSize: 12, fontWeight: 600 }}>{orbit1}</span>
+                <span style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 600 }}>{orbit1}</span>
               </div>
             </div>
           )}
@@ -133,7 +133,7 @@ export default function RevealScreen({
                 }}
               >
                 <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#C0761F', flex: 'none' }} />
-                <span style={{ fontSize: 12, fontWeight: 600 }}>{orbit2}</span>
+                <span style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 600 }}>{orbit2}</span>
               </div>
             </div>
           )}
@@ -156,14 +156,14 @@ export default function RevealScreen({
                 }}
               >
                 <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#242A52', flex: 'none' }} />
-                <span style={{ fontSize: 12, fontWeight: 600 }}>{orbit3}</span>
+                <span style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 600 }}>{orbit3}</span>
               </div>
             </div>
           )}
         </div>
       </div>
 
-      <div style={{ textAlign: 'center', fontSize: 11, color: '#8c8078', marginTop: 6, position: 'relative' }}>{caption}</div>
+      <div style={{ textAlign: 'center', fontSize: 'calc(11px * var(--ayna-text-scale, 1))', color: '#8c8078', marginTop: 6, position: 'relative' }}>{caption}</div>
 
       <div style={{ margin: '24px 24px 34px', position: 'relative' }}>
         <button
@@ -177,7 +177,7 @@ export default function RevealScreen({
             color: '#1A1714',
             fontFamily: "'DM Sans',sans-serif",
             fontWeight: 600,
-            fontSize: 15,
+            fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',

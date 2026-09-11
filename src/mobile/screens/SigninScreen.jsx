@@ -32,14 +32,14 @@ function Field({ label, icon, children }) {
     >
       {icon}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: '#A8A29E' }}>{label}</div>
+        <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1px', textTransform: 'uppercase', color: '#A8A29E' }}>{label}</div>
         {children}
       </div>
     </div>
   );
 }
 
-const inputStyle = { border: 'none', outline: 'none', background: 'transparent', fontFamily: "'DM Sans',sans-serif", fontSize: 15, color: '#292524', width: '100%', padding: '3px 0 0' };
+const inputStyle = { border: 'none', outline: 'none', background: 'transparent', fontFamily: "'DM Sans',sans-serif", fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: '#292524', width: '100%', padding: '3px 0 0' };
 
 const EmailIcon = (
   <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#A8A29E" strokeWidth="1.75" style={{ flex: 'none' }}>
@@ -66,7 +66,7 @@ function PrimaryButton({ onClick, disabled, children }) {
         borderRadius: 99,
         fontFamily: "'DM Sans',sans-serif",
         fontWeight: 600,
-        fontSize: 15,
+        fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
         cursor: disabled ? 'not-allowed' : 'pointer',
         display: 'flex',
         alignItems: 'center',
@@ -92,7 +92,7 @@ function GoogleButton({ onClick, disabled }) {
         borderRadius: 99,
         fontFamily: "'DM Sans',sans-serif",
         fontWeight: 500,
-        fontSize: 15,
+        fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
         cursor: disabled ? 'not-allowed' : 'pointer',
         opacity: disabled ? 0.6 : 1,
         display: 'flex',
@@ -223,16 +223,16 @@ export default function SigninScreen({
       {mode === 'check-email' ? (
         <>
           <div style={{ flex: 1 }} />
-          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 26, lineHeight: 1.3, marginBottom: 12, textAlign: 'center' }}>
+          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(26px * var(--ayna-text-scale, 1))', lineHeight: 1.3, marginBottom: 12, textAlign: 'center' }}>
             Almost there.
           </div>
-          <div style={{ fontSize: 14, lineHeight: 1.6, color: 'rgba(255,252,249,.82)', textAlign: 'center', marginBottom: 20 }}>
+          <div style={{ fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: 'rgba(255,252,249,.82)', textAlign: 'center', marginBottom: 20 }}>
             A confirmation email is on its way from ayna (puloma@aynahealth.co). Check your spam folder if you don't see it. Once confirmed, come back here — this screen updates on its own.
           </div>
-          {resendMsg && <div style={{ fontSize: 12.5, textAlign: 'center', color: 'rgba(255,252,249,.75)', marginBottom: 14 }}>{resendMsg}</div>}
+          {resendMsg && <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', textAlign: 'center', color: 'rgba(255,252,249,.75)', marginBottom: 14 }}>{resendMsg}</div>}
           <div
             onClick={resending ? undefined : handleResend}
-            style={{ textAlign: 'center', fontSize: 13, color: resending ? 'rgba(255,252,249,.5)' : '#FFC774', cursor: resending ? 'default' : 'pointer' }}
+            style={{ textAlign: 'center', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: resending ? 'rgba(255,252,249,.5)' : '#FFC774', cursor: resending ? 'default' : 'pointer' }}
           >
             {resending ? 'Sending…' : 'Resend confirmation email'}
           </div>
@@ -244,25 +244,25 @@ export default function SigninScreen({
             <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
               {stats.map((s) => (
                 <div key={s.label} style={{ flex: 1, borderRadius: 16, padding: '12px 10px', background: 'rgba(255,252,249,.13)', border: '1px solid rgba(255,255,255,.2)', textAlign: 'center' }}>
-                  <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 22 }}>{s.value}</div>
-                  <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 8.5, letterSpacing: '.8px', textTransform: 'uppercase', opacity: 0.68, marginTop: 3 }}>{s.label}</div>
+                  <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(22px * var(--ayna-text-scale, 1))' }}>{s.value}</div>
+                  <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(8.5px * var(--ayna-text-scale, 1))', letterSpacing: '.8px', textTransform: 'uppercase', opacity: 0.68, marginTop: 3 }}>{s.label}</div>
                 </div>
               ))}
             </div>
           )}
 
-          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 30, lineHeight: 1.2, marginBottom: 20 }}>
+          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(30px * var(--ayna-text-scale, 1))', lineHeight: 1.2, marginBottom: 20 }}>
             {mode === 'signup' ? (<>Save it under<br />your name.</>) : (<>Welcome<br />back.</>)}
           </div>
 
           {mode === 'signup' && (
             <div style={{ background: '#FFFFFF', borderRadius: 20, padding: '14px 16px', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 12, boxShadow: '0 8px 20px -12px rgba(0,0,0,.35)' }}>
-              <div style={{ width: 42, height: 42, borderRadius: 99, background: '#FFC774', color: '#292524', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontFamily: "'Playfair Display',serif", fontSize: 19 }}>
+              <div style={{ width: 42, height: 42, borderRadius: 99, background: '#FFC774', color: '#292524', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontFamily: "'Playfair Display',serif", fontSize: 'calc(19px * var(--ayna-text-scale, 1))' }}>
                 {initial}
               </div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: '#A8A29E' }}>First name</div>
-                <input type="text" placeholder="Maya" value={firstName} onChange={(e) => setFirstName(e.target.value)} style={{ ...inputStyle, fontSize: 17, fontWeight: 500 }} />
+                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1px', textTransform: 'uppercase', color: '#A8A29E' }}>First name</div>
+                <input type="text" placeholder="Maya" value={firstName} onChange={(e) => setFirstName(e.target.value)} style={{ ...inputStyle, fontSize: 'calc(17px * var(--ayna-text-scale, 1))', fontWeight: 500 }} />
               </div>
             </div>
           )}
@@ -279,16 +279,16 @@ export default function SigninScreen({
             <div style={{ marginTop: 6, marginBottom: 4, display: 'flex', flexDirection: 'column', gap: 10 }}>
               {CONSENT_ITEMS.map((text, i) => (
                 <div key={i} onClick={() => toggleCheck(i)} style={{ display: 'flex', gap: 10, cursor: 'pointer' }}>
-                  <div style={{ width: 18, height: 18, borderRadius: 5, border: '1.5px solid rgba(255,255,255,.5)', background: checked[i] ? '#FFC774' : 'transparent', flex: 'none', marginTop: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, color: '#292524', fontWeight: 700 }}>
+                  <div style={{ width: 18, height: 18, borderRadius: 5, border: '1.5px solid rgba(255,255,255,.5)', background: checked[i] ? '#FFC774' : 'transparent', flex: 'none', marginTop: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 'calc(11px * var(--ayna-text-scale, 1))', color: '#292524', fontWeight: 700 }}>
                     {checked[i] ? '✓' : ''}
                   </div>
-                  <div style={{ fontSize: 11.5, lineHeight: 1.45, color: 'rgba(255,252,249,.78)' }}>{text}</div>
+                  <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', lineHeight: 1.45, color: 'rgba(255,252,249,.78)' }}>{text}</div>
                 </div>
               ))}
             </div>
           )}
 
-          {error && <div style={{ color: '#FFC9BC', fontSize: 12.5, marginTop: 10 }}>{error}</div>}
+          {error && <div style={{ color: '#FFC9BC', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', marginTop: 10 }}>{error}</div>}
 
           <div style={{ flex: 1, minHeight: 14 }} />
 
@@ -312,7 +312,7 @@ export default function SigninScreen({
 
           <div
             onClick={() => { setMode(mode === 'signup' ? 'signin' : 'signup'); setError(''); }}
-            style={{ textAlign: 'center', fontSize: 13, color: 'rgba(255,252,249,.72)', marginTop: 16, cursor: 'pointer' }}
+            style={{ textAlign: 'center', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'rgba(255,252,249,.72)', marginTop: 16, cursor: 'pointer' }}
           >
             {mode === 'signup' ? 'Already have an account? Sign in' : "New here? Create an account"}
           </div>
@@ -322,7 +322,7 @@ export default function SigninScreen({
               <rect x="5" y="11" width="14" height="10" rx="2.5" />
               <path d="M8.5 11V8a3.5 3.5 0 0 1 7 0v3" />
             </svg>
-            <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '.6px' }}>ENCRYPTED · NEVER SOLD</span>
+            <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '.6px' }}>ENCRYPTED · NEVER SOLD</span>
           </div>
         </>
       )}

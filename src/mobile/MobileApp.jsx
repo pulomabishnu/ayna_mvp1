@@ -165,7 +165,7 @@ export default function MobileApp() {
   const pendingQuizEcosystemRef = useRef(null);
   const { savedMap, isSaved, toggleSaved } = useSavedProducts(authUser);
   const { theme, resolvedTheme, setThemeMode } = useThemeMode();
-  const { textSizeIndex, setTextSizeIndex } = useTextSize();
+  const { textSizeIndex, setTextSizeIndex, textScale } = useTextSize();
   const [askAynaOpen, setAskAynaOpen] = useState(false);
   const [askAynaHistory, setAskAynaHistory] = useState([]);
   // App-wide gate for Preferences > AI & Personalization > "Personalize with
@@ -227,6 +227,9 @@ export default function MobileApp() {
       if (typeof notificationPrefs?.personalizeWithDataEnabled === 'boolean') {
         setPersonalizeWithData(notificationPrefs.personalizeWithDataEnabled);
       }
+      if (Number.isInteger(notificationPrefs?.textSizeIndex)) {
+        setTextSizeIndex(notificationPrefs.textSizeIndex);
+      }
 
       ecosystemFlagsRef.current = {
         trackedProducts: ecosystem?.trackedProducts || {},
@@ -263,7 +266,7 @@ export default function MobileApp() {
     return () => {
       cancelled = true;
     };
-  }, [authUser, updateSession]);
+  }, [authUser, updateSession, setTextSizeIndex]);
 
   // Same loadProductCatalog() call Discovery.jsx makes — a live source
   // ('api'/'cache') means the bundle no longer has the full catalog, so
@@ -448,7 +451,7 @@ export default function MobileApp() {
   };
 
   return (
-    <div className="ayna-mobile" data-theme={resolvedTheme}>
+    <div className="ayna-mobile" data-theme={resolvedTheme} style={{ '--ayna-text-scale': textScale }}>
       <Screen
         {...nav}
         theme={theme}

@@ -24,6 +24,8 @@ const BOOLEAN_FIELDS = [
   'quiet_hours_enabled',
 ];
 const TIME_HHMM = /^([01][0-9]|2[0-3]):[0-5][0-9]$/;
+const TEXT_SIZE_MIN = 0;
+const TEXT_SIZE_MAX = 3;
 
 const DEFAULT_PREFERENCES = {
   notifications_enabled: true,
@@ -35,6 +37,7 @@ const DEFAULT_PREFERENCES = {
   quiet_hours_enabled: false,
   quiet_hours_start: '22:00',
   quiet_hours_end: '07:00',
+  text_size_index: 1,
 };
 
 let _admin = null;
@@ -67,6 +70,7 @@ function toClientShape(row, phoneVerified) {
     quietHoursEnabled: row.quiet_hours_enabled,
     quietHoursStart: row.quiet_hours_start,
     quietHoursEnd: row.quiet_hours_end,
+    textSizeIndex: row.text_size_index,
     phoneVerified,
   };
 }
@@ -176,6 +180,13 @@ export default async function handler(req, res) {
       }
       patch[field] = body[field];
     }
+  }
+  if (body?.text_size_index !== undefined) {
+    const n = body.text_size_index;
+    if (!Number.isInteger(n) || n < TEXT_SIZE_MIN || n > TEXT_SIZE_MAX) {
+      return res.status(400).json({ error: 'invalid_text_size' });
+    }
+    patch.text_size_index = n;
   }
 
   if (Object.keys(patch).length === 0) {

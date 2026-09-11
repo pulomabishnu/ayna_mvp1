@@ -146,20 +146,20 @@ function SingleSavedHero({ item, isInEco, onOpen, onRemove, onAddToEcosystem, ga
           </div>
         </div>
         <div style={{ padding: '17px 18px 19px' }}>
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>{categoryLabel(item.category)}</div>
+          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>{categoryLabel(item.category)}</div>
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, margin: '8px 0 0' }}>
-            <div style={{ flex: 1, minWidth: 0, fontFamily: "'Playfair Display',serif", fontSize: 23, lineHeight: 1.2, color: 'var(--ayna-heading)' }}>{item.name}</div>
-            {item.price && <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 20, flex: 'none', color: 'var(--ayna-heading)' }}>{item.price}</div>}
+            <div style={{ flex: 1, minWidth: 0, fontFamily: "'Playfair Display',serif", fontSize: 'calc(23px * var(--ayna-text-scale, 1))', lineHeight: 1.2, color: 'var(--ayna-heading)' }}>{item.name}</div>
+            {item.price && <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(20px * var(--ayna-text-scale, 1))', flex: 'none', color: 'var(--ayna-heading)' }}>{item.price}</div>}
           </div>
           {(item.summary || item.description) && (
-            <div style={{ fontSize: 13, color: 'var(--ayna-text-muted)', lineHeight: 1.5, marginTop: 8 }}>{item.summary || item.description}</div>
+            <div style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.5, marginTop: 8 }}>{item.summary || item.description}</div>
           )}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 13 }}>
             {prefTag && (
-              <div style={{ background: 'rgba(47,107,79,.12)', color: '#2F6B4F', fontSize: 11, padding: '5px 10px', borderRadius: 99 }}>{tagLabel(prefTag)}</div>
+              <div style={{ background: 'rgba(47,107,79,.12)', color: '#2F6B4F', fontSize: 'calc(11px * var(--ayna-text-scale, 1))', padding: '5px 10px', borderRadius: 99 }}>{tagLabel(prefTag)}</div>
             )}
             {recall && (
-              <div style={{ background: recall.background, color: recall.color, fontSize: 11, padding: '5px 10px', borderRadius: 99 }}>{recall.label}</div>
+              <div style={{ background: recall.background, color: recall.color, fontSize: 'calc(11px * var(--ayna-text-scale, 1))', padding: '5px 10px', borderRadius: 99 }}>{recall.label}</div>
             )}
           </div>
           <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
@@ -169,7 +169,7 @@ function SingleSavedHero({ item, isInEco, onOpen, onRemove, onAddToEcosystem, ga
                 flex: 1,
                 fontFamily: "'DM Sans',sans-serif",
                 fontWeight: 600,
-                fontSize: 13.5,
+                fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))',
                 padding: 13,
                 borderRadius: 99,
                 textAlign: 'center',
@@ -188,16 +188,16 @@ function SingleSavedHero({ item, isInEco, onOpen, onRemove, onAddToEcosystem, ga
         <div style={{ marginTop: 20, borderRadius: 22, padding: 20, background: 'linear-gradient(140deg,#4E3866,#242A52)', color: '#FFF9F2', position: 'relative', overflow: 'hidden' }}>
           <div style={{ position: 'absolute', right: -56, top: -56, width: 190, height: 190, borderRadius: '50%', border: '1px solid rgba(255,255,255,.16)' }} />
           <div style={{ position: 'absolute', right: -16, top: 18, width: 110, height: 110, borderRadius: '50%', border: '1px solid rgba(255,255,255,.12)' }} />
-          <div style={{ position: 'relative', fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.4px', textTransform: 'uppercase', color: '#FFC774' }}>Your ecosystem · {gaps.length} gap{gaps.length === 1 ? '' : 's'}</div>
-          <div style={{ position: 'relative', fontFamily: "'Playfair Display',serif", fontSize: 23, lineHeight: 1.25, margin: '8px 0 9px', maxWidth: 235 }}>Saves become a routine once you fill the gaps.</div>
-          <div style={{ position: 'relative', fontSize: 12.5, color: 'rgba(255,249,242,.72)', lineHeight: 1.5, maxWidth: 255 }}>{gaps.join(', ')} {gaps.length === 1 ? 'is' : 'are'} still empty for you.</div>
-          <div onClick={onGoEco} style={{ position: 'relative', display: 'inline-block', marginTop: 15, background: '#FFC774', color: '#231A12', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 13, padding: '11px 18px', borderRadius: 99, cursor: 'pointer', animation: 'ay-bob 2.6s ease-in-out infinite' }}>
+          <div style={{ position: 'relative', fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.4px', textTransform: 'uppercase', color: '#FFC774' }}>Your ecosystem · {gaps.length} gap{gaps.length === 1 ? '' : 's'}</div>
+          <div style={{ position: 'relative', fontFamily: "'Playfair Display',serif", fontSize: 'calc(23px * var(--ayna-text-scale, 1))', lineHeight: 1.25, margin: '8px 0 9px', maxWidth: 235 }}>Saves become a routine once you fill the gaps.</div>
+          <div style={{ position: 'relative', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'rgba(255,249,242,.72)', lineHeight: 1.5, maxWidth: 255 }}>{gaps.join(', ')} {gaps.length === 1 ? 'is' : 'are'} still empty for you.</div>
+          <div onClick={onGoEco} style={{ position: 'relative', display: 'inline-block', marginTop: 15, background: '#FFC774', color: '#231A12', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', padding: '11px 18px', borderRadius: 99, cursor: 'pointer', animation: 'ay-bob 2.6s ease-in-out infinite' }}>
             See what's missing
           </div>
         </div>
       )}
 
-      <div style={{ textAlign: 'center', marginTop: 22, fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.5 }}>Saves are private. Only you see this list.</div>
+      <div style={{ textAlign: 'center', marginTop: 22, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.5 }}>Saves are private. Only you see this list.</div>
       <div style={{ height: 104 }} />
     </div>
   );
@@ -233,17 +233,17 @@ function SavedCard({ item, status, onOpen, onRemove, quizAnswers, onOpenWhyMatch
         >
           <HeartIcon filled />
         </button>
-        <div style={{ position: 'absolute', left: 8, bottom: 8, fontFamily: "'DM Mono',monospace", fontSize: 8, letterSpacing: '.8px', padding: '4px 7px', borderRadius: 99, background: badge.background, color: badge.color }}>
+        <div style={{ position: 'absolute', left: 8, bottom: 8, fontFamily: "'DM Mono',monospace", fontSize: 'calc(8px * var(--ayna-text-scale, 1))', letterSpacing: '.8px', padding: '4px 7px', borderRadius: 99, background: badge.background, color: badge.color }}>
           {badge.label}
         </div>
         <div style={{ position: 'absolute', right: 8, bottom: 8 }}>
           <MatchRing percent={match} size={26} onClick={onOpenWhyMatch ? () => onOpenWhyMatch(item) : undefined} />
         </div>
       </div>
-      <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 8.5, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginTop: 9 }}>{categoryLabel(item.category)}</div>
-      <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 15, lineHeight: 1.25, marginTop: 4, color: 'var(--ayna-text)' }}>{item.name}</div>
+      <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(8.5px * var(--ayna-text-scale, 1))', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginTop: 9 }}>{categoryLabel(item.category)}</div>
+      <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(15px * var(--ayna-text-scale, 1))', lineHeight: 1.25, marginTop: 4, color: 'var(--ayna-text)' }}>{item.name}</div>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 7, marginTop: 4 }}>
-        {item.price && <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)' }}>{item.price}</div>}
+        {item.price && <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)' }}>{item.price}</div>}
       </div>
     </article>
   );
@@ -293,15 +293,15 @@ export default function SavedScreen({ savedProducts = {}, myProducts = [], produ
             <BackIcon />
           </div>
           <div style={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'baseline', gap: 9 }}>
-            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 27, color: 'var(--ayna-heading)' }}>Saved</div>
+            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(27px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>Saved</div>
             {!isEmpty && (
-              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1px', color: 'var(--ayna-accent-dark)', background: 'var(--ayna-peach)', borderRadius: 99, padding: '4px 8px' }}>
+              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1px', color: 'var(--ayna-accent-dark)', background: 'var(--ayna-peach)', borderRadius: 99, padding: '4px 8px' }}>
                 {items.length} ITEM{items.length === 1 ? '' : 'S'}
               </div>
             )}
           </div>
           {isSingle && (
-            <div onClick={onBrowse} style={{ flex: 'none', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 13, padding: '10px 17px', borderRadius: 99, cursor: 'pointer', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)' }}>
+            <div onClick={onBrowse} style={{ flex: 'none', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', padding: '10px 17px', borderRadius: 99, cursor: 'pointer', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)' }}>
               Browse
             </div>
           )}
@@ -315,7 +315,7 @@ export default function SavedScreen({ savedProducts = {}, myProducts = [], produ
                 onClick={() => setFilter(f.key)}
                 style={{
                   flex: 'none',
-                  fontSize: 12,
+                  fontSize: 'calc(12px * var(--ayna-text-scale, 1))',
                   padding: '7px 13px',
                   borderRadius: 99,
                   cursor: 'pointer',
@@ -343,32 +343,32 @@ export default function SavedScreen({ savedProducts = {}, myProducts = [], produ
               </svg>
             </div>
 
-            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 29, lineHeight: 1.2, margin: '4px 0 0', textAlign: 'center', color: 'var(--ayna-heading)' }}>Nothing saved yet.</div>
-            <div style={{ margin: '10px 0 0', padding: '0 12px', fontSize: 13.5, color: 'var(--ayna-text-muted)', lineHeight: 1.6, textAlign: 'center' }}>
+            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(29px * var(--ayna-text-scale, 1))', lineHeight: 1.2, margin: '4px 0 0', textAlign: 'center', color: 'var(--ayna-heading)' }}>Nothing saved yet.</div>
+            <div style={{ margin: '10px 0 0', padding: '0 12px', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.6, textAlign: 'center' }}>
               Tap the heart on anything in Browse. We'll watch it for recalls and price drops while it sits here.
             </div>
             <div
               onClick={onBrowse}
-              style={{ marginTop: 22, display: 'block', width: '100%', textAlign: 'center', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 14, padding: 14, borderRadius: 99, cursor: 'pointer', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)' }}
+              style={{ marginTop: 22, display: 'block', width: '100%', textAlign: 'center', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', padding: 14, borderRadius: 99, cursor: 'pointer', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)' }}
             >
               Browse products
             </div>
 
-            <div style={{ marginTop: 30, fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Start from your profile</div>
+            <div style={{ marginTop: 30, fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Start from your profile</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 9, marginTop: 12 }}>
               <div onClick={onBrowse} style={{ display: 'flex', alignItems: 'center', gap: 13, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 18, padding: '14px 15px', cursor: 'pointer' }}>
-                <div style={{ width: 38, height: 38, flex: 'none', borderRadius: 13, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Playfair Display',serif", fontSize: 17, background: 'var(--ayna-peach)', color: 'var(--ayna-accent-dark)' }}>1</div>
+                <div style={{ width: 38, height: 38, flex: 'none', borderRadius: 13, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Playfair Display',serif", fontSize: 'calc(17px * var(--ayna-text-scale, 1))', background: 'var(--ayna-peach)', color: 'var(--ayna-accent-dark)' }}>1</div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontWeight: 600, fontSize: 14, color: 'var(--ayna-text)' }}>Cycle support</div>
-                  <div style={{ fontSize: 12, color: 'var(--ayna-text-muted)', marginTop: 2 }}>Your most-viewed category</div>
+                  <div style={{ fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Cycle support</div>
+                  <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2 }}>Your most-viewed category</div>
                 </div>
                 <ChevronIcon />
               </div>
               <div onClick={onGoEco} style={{ display: 'flex', alignItems: 'center', gap: 13, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 18, padding: '14px 15px', cursor: 'pointer' }}>
-                <div style={{ width: 38, height: 38, flex: 'none', borderRadius: 13, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Playfair Display',serif", fontSize: 17, background: '#E7E3F2', color: 'var(--ayna-purple)' }}>2</div>
+                <div style={{ width: 38, height: 38, flex: 'none', borderRadius: 13, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Playfair Display',serif", fontSize: 'calc(17px * var(--ayna-text-scale, 1))', background: '#E7E3F2', color: 'var(--ayna-purple)' }}>2</div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontWeight: 600, fontSize: 14, color: 'var(--ayna-text)' }}>Your ecosystem gaps</div>
-                  <div style={{ fontSize: 12, color: 'var(--ayna-text-muted)', marginTop: 2 }}>See what's still missing</div>
+                  <div style={{ fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Your ecosystem gaps</div>
+                  <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2 }}>See what's still missing</div>
                 </div>
                 <ChevronIcon />
               </div>
@@ -404,11 +404,11 @@ export default function SavedScreen({ savedProducts = {}, myProducts = [], produ
 
             {notInEcoCount > 0 && (
               <div style={{ margin: '22px 0 0', border: '1px dashed var(--ayna-border)', borderRadius: 22, padding: 18, textAlign: 'center' }}>
-                <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 17, lineHeight: 1.3, margin: '0 0 5px', color: 'var(--ayna-heading)' }}>Ready to make these a routine?</div>
-                <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.5, margin: '0 0 13px' }}>
+                <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(17px * var(--ayna-text-scale, 1))', lineHeight: 1.3, margin: '0 0 5px', color: 'var(--ayna-heading)' }}>Ready to make these a routine?</div>
+                <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.5, margin: '0 0 13px' }}>
                   Move {notInEcoCount} save{notInEcoCount === 1 ? '' : 's'} into your ecosystem to get recall alerts on {notInEcoCount === 1 ? 'it' : 'them'}.
                 </div>
-                <div onClick={onGoEco} style={{ display: 'inline-block', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 13, padding: '11px 18px', borderRadius: 99, cursor: 'pointer', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)' }}>
+                <div onClick={onGoEco} style={{ display: 'inline-block', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', padding: '11px 18px', borderRadius: 99, cursor: 'pointer', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)' }}>
                   Sort into ecosystem
                 </div>
               </div>

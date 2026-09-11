@@ -16,7 +16,7 @@ function Tab({ label, active, dark, onClick }) {
         cursor: 'pointer',
         fontFamily: "'DM Sans',sans-serif",
         fontWeight: 600,
-        fontSize: 13.5,
+        fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))',
         background: active ? (dark ? '#FFF9F2' : '#FFFCF9') : 'transparent',
         color: active ? '#292524' : dark ? 'rgba(255,249,242,.7)' : '#78716C',
         boxShadow: active && !dark ? '0 1px 3px rgba(41,37,36,.10)' : active && dark ? '0 1px 3px rgba(0,0,0,.18)' : 'none',
@@ -65,7 +65,7 @@ export default function MobileHeader({
           onClick={dark ? onGoLanding : undefined}
           style={{
             fontFamily: "'Playfair Display',serif",
-            fontSize: 25,
+            fontSize: 'calc(25px * var(--ayna-text-scale, 1))',
             letterSpacing: 0.5,
             cursor: dark ? 'pointer' : 'default',
           }}
@@ -103,7 +103,7 @@ export default function MobileHeader({
               alignItems: 'center',
               justifyContent: 'center',
               fontFamily: "'DM Mono',monospace",
-              fontSize: 11,
+              fontSize: 'calc(11px * var(--ayna-text-scale, 1))',
               color: dark ? '#FFF9F2' : '#78716C',
               cursor: 'pointer',
             }}

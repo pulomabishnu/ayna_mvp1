@@ -96,7 +96,7 @@ export default function EcosystemOrbit({ products = [], name = 'You', selectedKe
             boxShadow: '0 12px 26px rgba(36,42,82,.24)',
           }}
         >
-          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 21 }}>{name}</div>
+          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(21px * var(--ayna-text-scale, 1))' }}>{name}</div>
         </div>
 
         {seats.map((seat, i) => {
@@ -133,9 +133,9 @@ export default function EcosystemOrbit({ products = [], name = 'You', selectedKe
                 transition: 'transform .18s cubic-bezier(.2,.8,.2,1), box-shadow .18s',
               }}
             >
-              <span style={{ fontWeight: 600, fontSize: 13, lineHeight: 1.15 }}>{seat.gap ? '+ Add' : seat.label}</span>
+              <span style={{ fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', lineHeight: 1.15 }}>{seat.gap ? '+ Add' : seat.label}</span>
               {!seat.gap && (
-                <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, color: '#78716C', marginTop: 2 }}>
+                <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', color: '#78716C', marginTop: 2 }}>
                   {seat.products.length}
                 </span>
               )}

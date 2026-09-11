@@ -63,7 +63,7 @@ export default function ArticleDetailScreen({ article, onBack, theme }) {
 
   if (!article) {
     return (
-      <div style={{ padding: 40, textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 13.5 }}>
+      <div style={{ padding: 40, textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))' }}>
         No article selected.
       </div>
     );
@@ -127,17 +127,17 @@ export default function ArticleDetailScreen({ article, onBack, theme }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 13 }}>
           <div style={{ width: 7, height: 7, borderRadius: 99, background: 'var(--ayna-accent-dark)' }} />
           {tags[0] && (
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.4px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.4px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>
               {tags[0]}
             </div>
           )}
           <div style={{ flex: 1, height: 1, background: 'var(--ayna-border)' }} />
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '.8px', color: 'var(--ayna-text-faint)' }}>{readMinutes} MIN</div>
+          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '.8px', color: 'var(--ayna-text-faint)' }}>{readMinutes} MIN</div>
         </div>
 
-        <div style={{ fontFamily: "'Playfair Display',serif", fontWeight: 400, fontSize: 32, lineHeight: 1.13, color: 'var(--ayna-text)', margin: 0 }}>{title}</div>
+        <div style={{ fontFamily: "'Playfair Display',serif", fontWeight: 400, fontSize: 'calc(32px * var(--ayna-text-scale, 1))', lineHeight: 1.13, color: 'var(--ayna-text)', margin: 0 }}>{title}</div>
         {teaser && (
-          <div style={{ fontFamily: "'Playfair Display',serif", fontStyle: 'italic', fontSize: 16.5, lineHeight: 1.5, color: 'var(--ayna-accent-dark)', marginTop: 13 }}>
+          <div style={{ fontFamily: "'Playfair Display',serif", fontStyle: 'italic', fontSize: 'calc(16.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: 'var(--ayna-accent-dark)', marginTop: 13 }}>
             {teaser}
           </div>
         )}
@@ -153,7 +153,7 @@ export default function ArticleDetailScreen({ article, onBack, theme }) {
           })}
         </div>
 
-        <div style={{ fontSize: 15, lineHeight: 1.75, color: 'var(--ayna-text)' }}>{mainBody}</div>
+        <div style={{ fontSize: 'calc(15px * var(--ayna-text-scale, 1))', lineHeight: 1.75, color: 'var(--ayna-text)' }}>{mainBody}</div>
 
         {(sourceLinks.length > 0 || source) && (
           <div style={{ marginTop: 28, padding: 18, borderRadius: 22, background: 'var(--ayna-chip-bg)', border: '1px solid var(--ayna-border)' }}>
@@ -169,18 +169,18 @@ export default function ArticleDetailScreen({ article, onBack, theme }) {
                   justifyContent: 'center',
                   flex: 'none',
                   fontFamily: "'Playfair Display',serif",
-                  fontSize: 18,
+                  fontSize: 'calc(18px * var(--ayna-text-scale, 1))',
                   color: '#FFF9F2',
                 }}
               >
                 A
               </div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)' }}>
+                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)' }}>
                   Sources
                 </div>
                 {source && (
-                  <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 14.5, marginTop: 3, color: 'var(--ayna-text)' }}>
+                  <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', marginTop: 3, color: 'var(--ayna-text)' }}>
                     {source}
                   </div>
                 )}
@@ -189,13 +189,13 @@ export default function ArticleDetailScreen({ article, onBack, theme }) {
             {sourceLinks.length > 0 && (
               <div style={{ marginTop: 13, paddingTop: 13, borderTop: '1px solid var(--ayna-border)', display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {sourceLinks.map((l) => (
-                  <a key={l.href} href={l.href} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12.5, lineHeight: 1.5, color: 'var(--ayna-brown)', fontWeight: 600 }}>
+                  <a key={l.href} href={l.href} target="_blank" rel="noopener noreferrer" style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: 'var(--ayna-brown)', fontWeight: 600 }}>
                     {l.text}
                   </a>
                 ))}
               </div>
             )}
-            <div style={{ fontSize: 12, lineHeight: 1.55, color: 'var(--ayna-text-muted)', marginTop: 13, paddingTop: 13, borderTop: '1px solid var(--ayna-border)' }}>
+            <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', lineHeight: 1.55, color: 'var(--ayna-text-muted)', marginTop: 13, paddingTop: 13, borderTop: '1px solid var(--ayna-border)' }}>
               Every guide draws on peer-reviewed literature and established clinical guidance.
             </div>
           </div>

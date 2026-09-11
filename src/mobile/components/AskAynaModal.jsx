@@ -196,10 +196,10 @@ export default function AskAynaModal({
           }}
         />
         <div style={{ flex: 1 }}>
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>
+          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>
             Ask Ayna
           </div>
-          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 15, color: 'var(--ayna-heading)' }}>
+          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>
             {name ? `Hey, ${name}.` : 'Hey.'}
           </div>
         </div>
@@ -213,7 +213,7 @@ export default function AskAynaModal({
             alignItems: 'center',
             justifyContent: 'center',
             cursor: 'pointer',
-            fontSize: 20,
+            fontSize: 'calc(20px * var(--ayna-text-scale, 1))',
             color: 'var(--ayna-text-muted)',
             background: 'var(--ayna-chip-bg)',
           }}
@@ -232,7 +232,7 @@ export default function AskAynaModal({
                 color: m.role === 'user' ? 'var(--ayna-cta-text)' : 'var(--ayna-text)',
                 borderRadius: 16,
                 padding: '11px 14px',
-                fontSize: 14,
+                fontSize: 'calc(14px * var(--ayna-text-scale, 1))',
                 lineHeight: 1.5,
                 whiteSpace: 'pre-wrap',
               }}
@@ -246,7 +246,7 @@ export default function AskAynaModal({
                   marginTop: 6,
                   fontFamily: "'DM Sans',sans-serif",
                   fontWeight: 600,
-                  fontSize: 12.5,
+                  fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))',
                   color: 'var(--ayna-accent-dark)',
                   cursor: 'pointer',
                   textDecoration: 'underline',
@@ -257,12 +257,12 @@ export default function AskAynaModal({
             )}
           </div>
         ))}
-        {sending && <div style={{ fontSize: 12.5, color: 'var(--ayna-text-faint)' }}>Ayna is thinking…</div>}
+        {sending && <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)' }}>Ayna is thinking…</div>}
         <div ref={bottomRef} />
       </div>
 
       {sendError && (
-        <div style={{ padding: '0 20px 8px', fontSize: 12.5, color: '#B3261E' }}>{sendError}</div>
+        <div style={{ padding: '0 20px 8px', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: '#B3261E' }}>{sendError}</div>
       )}
 
       <form
@@ -286,7 +286,7 @@ export default function AskAynaModal({
             padding: '12px 16px',
             borderRadius: 99,
             border: '1px solid var(--ayna-border)',
-            fontSize: 14,
+            fontSize: 'calc(14px * var(--ayna-text-scale, 1))',
             background: 'var(--ayna-surface)',
             color: 'var(--ayna-text)',
           }}
@@ -302,7 +302,7 @@ export default function AskAynaModal({
             color: 'var(--ayna-cta-text)',
             fontFamily: "'DM Sans',sans-serif",
             fontWeight: 600,
-            fontSize: 14,
+            fontSize: 'calc(14px * var(--ayna-text-scale, 1))',
             cursor: 'pointer',
             opacity: sending || !input.trim() || session === undefined ? 0.5 : 1,
           }}

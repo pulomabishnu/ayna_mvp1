@@ -89,13 +89,13 @@ export default function LandingScreen({ onStartQuiz, onBrowse }) {
           justifyContent: 'space-between',
         }}
       >
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 26, letterSpacing: 0.5 }}>
+        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(26px * var(--ayna-text-scale, 1))', letterSpacing: 0.5 }}>
           ayna
         </div>
         <div
           style={{
             fontFamily: "'DM Mono',monospace",
-            fontSize: 10,
+            fontSize: 'calc(10px * var(--ayna-text-scale, 1))',
             letterSpacing: 1.2,
             opacity: 0.62,
           }}
@@ -194,7 +194,7 @@ export default function LandingScreen({ onStartQuiz, onBrowse }) {
         <div
           style={{
             fontFamily: "'Playfair Display',serif",
-            fontSize: 39,
+            fontSize: 'calc(39px * var(--ayna-text-scale, 1))',
             lineHeight: 1.1,
             textAlign: 'center',
           }}
@@ -222,7 +222,7 @@ export default function LandingScreen({ onStartQuiz, onBrowse }) {
             textAlign: 'center',
             fontFamily: "'DM Sans',sans-serif",
             fontWeight: 600,
-            fontSize: 15.5,
+            fontSize: 'calc(15.5px * var(--ayna-text-scale, 1))',
             cursor: 'pointer',
             boxShadow: '0 18px 34px -14px rgba(255,199,116,.85)',
             display: 'flex',
@@ -257,7 +257,7 @@ export default function LandingScreen({ onStartQuiz, onBrowse }) {
             textAlign: 'center',
             fontFamily: "'DM Sans',sans-serif",
             fontWeight: 600,
-            fontSize: 15.5,
+            fontSize: 'calc(15.5px * var(--ayna-text-scale, 1))',
             cursor: 'pointer',
           }}
         >

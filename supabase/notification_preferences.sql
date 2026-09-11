@@ -112,3 +112,17 @@ alter table public.notification_preferences
 alter table public.notification_preferences
   add constraint notification_preferences_quiet_hours_end_check
   check (quiet_hours_end ~ '^([01][0-9]|2[0-3]):[0-5][0-9]$');
+
+-- Text size (Preferences > Appearance) — index into the client's
+-- TEXT_SIZE_STEPS array (src/mobile/hooks/useTextSize.js): 0 Small,
+-- 1 Default, 2 Large, 3 Extra large. Synced here so it follows a signed-in
+-- user across devices, same as theme would if that were account-scoped;
+-- localStorage remains the source of truth while signed out.
+alter table public.notification_preferences
+  add column if not exists text_size_index smallint not null default 1;
+
+alter table public.notification_preferences
+  drop constraint if exists notification_preferences_text_size_index_check;
+alter table public.notification_preferences
+  add constraint notification_preferences_text_size_index_check
+  check (text_size_index between 0 and 3);

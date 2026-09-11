@@ -130,7 +130,7 @@ export default function AskAynaChip({ onClick }) {
       <span
         style={{
           color: '#FFFFFF',
-          fontSize: 12,
+          fontSize: 'calc(12px * var(--ayna-text-scale, 1))',
           fontWeight: 600,
           whiteSpace: 'nowrap',
           overflow: 'hidden',

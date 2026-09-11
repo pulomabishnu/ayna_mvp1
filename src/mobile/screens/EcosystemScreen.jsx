@@ -40,7 +40,7 @@ export default function EcosystemScreen({
       <MobileHeader variant="light" activeTab="eco" initial={headerInitial} onOpenSaved={onOpenSaved} onGoEco={() => {}} onGoBrowse={onBrowse} onOpenProfile={onOpenProfile} />
 
       <div style={{ padding: '18px 20px 0' }}>
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 23, lineHeight: 1.3 }}>
+        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(23px * var(--ayna-text-scale, 1))', lineHeight: 1.3 }}>
           {getTimeGreeting()}, {name}
         </div>
       </div>
@@ -59,13 +59,13 @@ export default function EcosystemScreen({
 
       <div style={{ padding: '18px 20px 0' }}>
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 12 }}>
-          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 16 }}>{gridTitle}</div>
+          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(16px * var(--ayna-text-scale, 1))' }}>{gridTitle}</div>
           {showingArea ? (
-            <div onClick={() => setSelectedKey(null)} style={{ fontFamily: "'DM Mono',monospace", fontSize: 10.5, color: '#A2603C', cursor: 'pointer' }}>
+            <div onClick={() => setSelectedKey(null)} style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', color: '#A2603C', cursor: 'pointer' }}>
               Show all
             </div>
           ) : (
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10.5, color: '#78716C' }}>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', color: '#78716C' }}>
               {gridProducts.length} product{gridProducts.length === 1 ? '' : 's'}
             </div>
           )}
@@ -79,7 +79,7 @@ export default function EcosystemScreen({
 
       {relatedReads.length > 0 && (
         <div style={{ padding: '24px 20px 0' }}>
-          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 15, marginBottom: 12 }}>Reads for you</div>
+          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', marginBottom: 12 }}>Reads for you</div>
           {relatedReads.map((a) => (
             <ArticleCard key={a.id} article={a} onClick={() => onOpenArticle && onOpenArticle(a)} />
           ))}
@@ -98,7 +98,7 @@ export default function EcosystemScreen({
             padding: 14,
             border: '1px solid #E1D5CE',
             borderRadius: 99,
-            fontSize: 13.5,
+            fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))',
             color: '#78716C',
             cursor: 'pointer',
           }}

@@ -131,7 +131,7 @@ function BackHeader({ title, onBack, dark }) {
       >
         <BackIcon stroke={dark ? '#FFF9F2' : 'var(--ayna-heading)'} />
       </div>
-      <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 20, color: dark ? '#FFF9F2' : 'var(--ayna-heading)' }}>{title}</div>
+      <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(20px * var(--ayna-text-scale, 1))', color: dark ? '#FFF9F2' : 'var(--ayna-heading)' }}>{title}</div>
     </div>
   );
 }
@@ -178,8 +178,8 @@ function ToggleRow({ title, sub, on, onClick, first }) {
       }}
     >
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontWeight: 600, fontSize: 15, color: 'var(--ayna-text)' }}>{title}</div>
-        <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', marginTop: 3, lineHeight: 1.45 }}>{sub}</div>
+        <div style={{ fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>{title}</div>
+        <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 3, lineHeight: 1.45 }}>{sub}</div>
       </div>
       <Toggle on={on} onClick={onClick} />
     </div>
@@ -204,7 +204,7 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
         <div style={{ position: 'absolute', top: -70, right: -60, width: 230, height: 230, borderRadius: '50%', background: 'radial-gradient(circle,rgba(255,199,116,.45),rgba(255,199,116,0) 68%)', animation: 'ay-drift 15s ease-in-out infinite' }} />
         <div style={{ position: 'absolute', left: -40, bottom: -80, width: 200, height: 200, borderRadius: '50%', border: '1px solid rgba(255,255,255,.14)' }} />
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 24, letterSpacing: 0.5 }}>ayna</div>
+          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(24px * var(--ayna-text-scale, 1))', letterSpacing: 0.5 }}>ayna</div>
           <div
             onClick={onClose}
             style={{
@@ -217,7 +217,7 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
-              fontSize: 18,
+              fontSize: 'calc(18px * var(--ayna-text-scale, 1))',
               lineHeight: 1,
             }}
           >
@@ -236,7 +236,7 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
               alignItems: 'center',
               justifyContent: 'center',
               fontFamily: "'Playfair Display',serif",
-              fontSize: 26,
+              fontSize: 'calc(26px * var(--ayna-text-scale, 1))',
               color: '#3A2410',
               boxShadow: '0 14px 30px -12px rgba(255,150,60,.7)',
             }}
@@ -244,8 +244,8 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
             {initial}
           </div>
           <div style={{ minWidth: 0 }}>
-            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 26, lineHeight: 1.15 }}>{name}</div>
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.4px', textTransform: 'uppercase', color: 'rgba(255,249,242,.62)', marginTop: 5 }}>{memberSince}</div>
+            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(26px * var(--ayna-text-scale, 1))', lineHeight: 1.15 }}>{name}</div>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.4px', textTransform: 'uppercase', color: 'rgba(255,249,242,.62)', marginTop: 5 }}>{memberSince}</div>
           </div>
         </div>
         <div style={{ position: 'relative', display: 'flex', gap: 8, marginTop: 22 }}>
@@ -261,15 +261,15 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
               aria-label={s.onClick ? 'Finish your profile' : undefined}
               style={{ flex: 1, background: 'rgba(255,249,242,.11)', border: '1px solid rgba(255,255,255,.16)', borderRadius: 16, padding: '11px 12px', cursor: s.onClick ? 'pointer' : 'default' }}
             >
-              <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 23, color: '#FFC774' }}>{s.value}</div>
-              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 8.5, letterSpacing: '1.1px', textTransform: 'uppercase', color: 'rgba(255,249,242,.66)', marginTop: 3 }}>{s.label}</div>
+              <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(23px * var(--ayna-text-scale, 1))', color: '#FFC774' }}>{s.value}</div>
+              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(8.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.1px', textTransform: 'uppercase', color: 'rgba(255,249,242,.66)', marginTop: 3 }}>{s.label}</div>
             </div>
           ))}
         </div>
       </div>
 
       <div style={{ flex: 1, padding: '22px 20px 26px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 2 }}>Your account</div>
+        <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 2 }}>Your account</div>
 
         {[
           { key: 'shopper', title: 'Shopper Profile', sub: 'Alerts, routine, brand affinity', badge: shopperAlertsCount > 0 ? `${shopperAlertsCount} NEW` : null },
@@ -295,11 +295,11 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
               <AccountIcon type={row.key} />
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 600, fontSize: 15.5, color: 'var(--ayna-text)' }}>{row.title}</div>
-              <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', marginTop: 2 }}>{row.sub}</div>
+              <div style={{ fontWeight: 600, fontSize: 'calc(15.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>{row.title}</div>
+              <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2 }}>{row.sub}</div>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 'none' }}>
-              {row.badge && <div style={{ background: 'var(--ayna-accent)', color: '#231A12', fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '.5px', padding: '3px 7px', borderRadius: 99 }}>{row.badge}</div>}
+              {row.badge && <div style={{ background: 'var(--ayna-accent)', color: '#231A12', fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '.5px', padding: '3px 7px', borderRadius: 99 }}>{row.badge}</div>}
               <ChevronIcon />
             </div>
           </div>
@@ -335,8 +335,8 @@ function ShopperProfileScreen({ onBack, quizAnswers, myProducts = [], savedProdu
 
         <div>
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 11 }}>
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Safety alerts</div>
-            <div style={{ fontSize: 11.5, color: 'var(--ayna-text-muted)' }}>{activeAlerts.length} active</div>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Safety alerts</div>
+            <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)' }}>{activeAlerts.length} active</div>
           </div>
           {activeAlerts.length ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
@@ -345,45 +345,45 @@ function ShopperProfileScreen({ onBack, quizAnswers, myProducts = [], savedProdu
                   <div key={alert.id} style={{ borderRadius: 18, padding: 15, background: 'rgba(180,64,42,.08)', border: '1px solid rgba(180,64,42,.25)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                       <div style={{ width: 7, height: 7, borderRadius: 99, background: '#B4402A', flex: 'none' }} />
-                      <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.2px', textTransform: 'uppercase', color: '#B4402A' }}>FDA recall · active</div>
+                      <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', textTransform: 'uppercase', color: '#B4402A' }}>FDA recall · active</div>
                     </div>
-                    <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 17, lineHeight: 1.3, margin: '8px 0 5px', color: 'var(--ayna-text)' }}>{alert.title}</div>
-                    <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.5 }}>{alert.body}</div>
+                    <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(17px * var(--ayna-text-scale, 1))', lineHeight: 1.3, margin: '8px 0 5px', color: 'var(--ayna-text)' }}>{alert.title}</div>
+                    <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.5 }}>{alert.body}</div>
                     <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-                      <div onClick={() => onViewAlternative && onViewAlternative(alert.product)} style={{ background: '#B4402A', color: '#FFF9F2', fontWeight: 600, fontSize: 12, padding: '8px 14px', borderRadius: 99, cursor: 'pointer' }}>See swap</div>
-                      <div onClick={() => dismissAlert(alert.id)} style={{ border: '1px solid rgba(180,64,42,.35)', color: '#B4402A', fontWeight: 600, fontSize: 12, padding: '8px 14px', borderRadius: 99, cursor: 'pointer' }}>Dismiss</div>
+                      <div onClick={() => onViewAlternative && onViewAlternative(alert.product)} style={{ background: '#B4402A', color: '#FFF9F2', fontWeight: 600, fontSize: 'calc(12px * var(--ayna-text-scale, 1))', padding: '8px 14px', borderRadius: 99, cursor: 'pointer' }}>See swap</div>
+                      <div onClick={() => dismissAlert(alert.id)} style={{ border: '1px solid rgba(180,64,42,.35)', color: '#B4402A', fontWeight: 600, fontSize: 'calc(12px * var(--ayna-text-scale, 1))', padding: '8px 14px', borderRadius: 99, cursor: 'pointer' }}>Dismiss</div>
                     </div>
                   </div>
                 ) : (
                   <div key={alert.id} style={{ borderRadius: 18, padding: 15, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                       <div style={{ width: 7, height: 7, borderRadius: 99, background: 'var(--ayna-accent-dark)', flex: 'none' }} />
-                      <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Safety note · watching</div>
+                      <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Safety note · watching</div>
                     </div>
-                    <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 17, lineHeight: 1.3, margin: '8px 0 5px', color: 'var(--ayna-text)' }}>{alert.title}</div>
-                    <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.5 }}>{alert.body}</div>
+                    <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(17px * var(--ayna-text-scale, 1))', lineHeight: 1.3, margin: '8px 0 5px', color: 'var(--ayna-text)' }}>{alert.title}</div>
+                    <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.5 }}>{alert.body}</div>
                     <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-                      <div onClick={() => dismissAlert(alert.id)} style={{ border: '1px solid var(--ayna-border)', color: 'var(--ayna-text-muted)', fontWeight: 600, fontSize: 12, padding: '8px 14px', borderRadius: 99, cursor: 'pointer' }}>Dismiss</div>
+                      <div onClick={() => dismissAlert(alert.id)} style={{ border: '1px solid var(--ayna-border)', color: 'var(--ayna-text-muted)', fontWeight: 600, fontSize: 'calc(12px * var(--ayna-text-scale, 1))', padding: '8px 14px', borderRadius: 99, cursor: 'pointer' }}>Dismiss</div>
                     </div>
                   </div>
                 )
               )}
             </div>
           ) : (
-            <div style={{ borderRadius: 18, padding: 15, border: '1px dashed var(--ayna-border)', fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.5 }}>
+            <div style={{ borderRadius: 18, padding: 15, border: '1px dashed var(--ayna-border)', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.5 }}>
               No active alerts. We'll watch your ecosystem for recalls and check it against what you flagged during intake.
             </div>
           )}
           {dismissedAlerts.length > 0 && (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: 18, padding: '13px 15px', marginTop: 9, border: '1px dashed var(--ayna-border)' }}>
-              <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)' }}>Dismissed · {dismissedAlerts.length}</div>
+              <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)' }}>Dismissed · {dismissedAlerts.length}</div>
             </div>
           )}
         </div>
 
         <div>
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 11 }}>
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Your routine</div>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Your routine</div>
           </div>
           <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 20, padding: 16 }}>
             <div style={{ display: 'flex', gap: 7, overflowX: 'auto', touchAction: 'pan-x', paddingBottom: 2, marginBottom: 14, scrollbarWidth: 'none' }}>
@@ -396,7 +396,7 @@ function ShopperProfileScreen({ onBack, quizAnswers, myProducts = [], savedProdu
                     textAlign: 'center',
                     padding: '8px 14px',
                     borderRadius: 99,
-                    fontSize: 12.5,
+                    fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))',
                     fontWeight: 600,
                     cursor: 'pointer',
                     background: activeBucket === key ? 'var(--ayna-cta-bg)' : 'var(--ayna-chip-bg)',
@@ -409,10 +409,10 @@ function ShopperProfileScreen({ onBack, quizAnswers, myProducts = [], savedProdu
             </div>
 
             {!myProducts.length ? (
-              <div style={{ padding: '10px 2px', fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.5 }}>
+              <div style={{ padding: '10px 2px', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.5 }}>
                 Nothing in your ecosystem yet — add products so you can sort them into a routine.
                 {onBrowse && (
-                  <div onClick={onBrowse} style={{ display: 'inline-block', marginTop: 10, background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 12.5, padding: '9px 16px', borderRadius: 99, cursor: 'pointer' }}>Browse products</div>
+                  <div onClick={onBrowse} style={{ display: 'inline-block', marginTop: 10, background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', padding: '9px 16px', borderRadius: 99, cursor: 'pointer' }}>Browse products</div>
                 )}
               </div>
             ) : (
@@ -423,27 +423,27 @@ function ShopperProfileScreen({ onBack, quizAnswers, myProducts = [], savedProdu
                       <div
                         key={p.id}
                         onClick={() => removeFromRoutine(p.id)}
-                        style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontSize: 12.5, fontWeight: 500, padding: '8px 12px', borderRadius: 99, cursor: 'pointer' }}
+                        style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: 500, padding: '8px 12px', borderRadius: 99, cursor: 'pointer' }}
                       >
-                        {p.name} <span style={{ opacity: 0.75, fontSize: 12 }}>×</span>
+                        {p.name} <span style={{ opacity: 0.75, fontSize: 'calc(12px * var(--ayna-text-scale, 1))' }}>×</span>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.5, marginBottom: 16 }}>
+                  <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.5, marginBottom: 16 }}>
                     Nothing in your {ROUTINE_BUCKET_LABELS[activeBucket].toLowerCase()} routine yet — tap a product below to add it.
                   </div>
                 )}
 
                 {notInBucket.length > 0 && (
                   <>
-                    <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)', marginBottom: 9 }}>Tap to add</div>
+                    <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)', marginBottom: 9 }}>Tap to add</div>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
                       {notInBucket.map((p) => (
                         <div
                           key={p.id}
                           onClick={() => setProductBucket(p.id, activeBucket)}
-                          style={{ fontSize: 12.5, fontWeight: 500, padding: '8px 12px', borderRadius: 99, cursor: 'pointer', background: 'transparent', border: '1px solid var(--ayna-border)', color: 'var(--ayna-text-muted)' }}
+                          style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: 500, padding: '8px 12px', borderRadius: 99, cursor: 'pointer', background: 'transparent', border: '1px solid var(--ayna-border)', color: 'var(--ayna-text-muted)' }}
                         >
                           {p.name}
                         </div>
@@ -455,15 +455,15 @@ function ShopperProfileScreen({ onBack, quizAnswers, myProducts = [], savedProdu
             )}
 
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 14, paddingTop: 13, borderTop: '1px solid var(--ayna-border)' }}>
-              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, color: 'var(--ayna-text-muted)' }}>{sortedCount} of {myProducts.length} sorted into a routine</div>
+              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)' }}>{sortedCount} of {myProducts.length} sorted into a routine</div>
             </div>
           </div>
         </div>
 
         <div>
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 11 }}>Brand affinity</div>
+          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 11 }}>Brand affinity</div>
           <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 20, padding: 16 }}>
-            <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.5, marginBottom: 13 }}>Drawn from what matters to you in intake and what you actually keep in your ecosystem.</div>
+            <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.5, marginBottom: 13 }}>Drawn from what matters to you in intake and what you actually keep in your ecosystem.</div>
             {affinityChips.length ? (
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
                 {affinityChips.map((chip) => {
@@ -473,7 +473,7 @@ function ShopperProfileScreen({ onBack, quizAnswers, myProducts = [], savedProdu
                     <div
                       key={chip.tag}
                       style={{
-                        fontSize: 12.5,
+                        fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))',
                         fontWeight: 500,
                         padding: '8px 13px',
                         borderRadius: 99,
@@ -483,13 +483,13 @@ function ShopperProfileScreen({ onBack, quizAnswers, myProducts = [], savedProdu
                         border: outline ? '1px solid var(--ayna-border)' : 'none',
                       }}
                     >
-                      {chip.label} <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, opacity: 0.75 }}>{chip.score}</span>
+                      {chip.label} <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', opacity: 0.75 }}>{chip.score}</span>
                     </div>
                   );
                 })}
               </div>
             ) : (
-              <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)' }}>
+              <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)' }}>
                 {quizAnswers ? "You didn't flag any of these during intake." : 'Take the quiz to see what matters most to you.'}
               </div>
             )}
@@ -497,15 +497,15 @@ function ShopperProfileScreen({ onBack, quizAnswers, myProducts = [], savedProdu
         </div>
 
         <div>
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 11 }}>Most-represented categories</div>
+          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 11 }}>Most-represented categories</div>
           {topCategories.length ? (
             <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 20, padding: 16, display: 'flex', flexDirection: 'column', gap: 13 }}>
               {topCategories.map((c) => (
                 <div key={c.rank}>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 6 }}>
-                    <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, color: 'var(--ayna-accent-dark)', flex: 'none' }}>{c.rank}</div>
-                    <div style={{ flex: 1, fontWeight: 500, fontSize: 14, color: 'var(--ayna-text)' }}>{c.name}</div>
-                    <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, color: 'var(--ayna-text-muted)', flex: 'none' }}>{c.count}</div>
+                    <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', color: 'var(--ayna-accent-dark)', flex: 'none' }}>{c.rank}</div>
+                    <div style={{ flex: 1, fontWeight: 500, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>{c.name}</div>
+                    <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', flex: 'none' }}>{c.count}</div>
                   </div>
                   <div style={{ height: 7, borderRadius: 99, background: 'var(--ayna-border)', overflow: 'hidden' }}>
                     <div style={{ width: `${c.pct}%`, height: '100%', background: 'var(--ayna-accent-dark)' }} />
@@ -514,7 +514,7 @@ function ShopperProfileScreen({ onBack, quizAnswers, myProducts = [], savedProdu
               ))}
             </div>
           ) : (
-            <div style={{ border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: 16, fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.5 }}>
+            <div style={{ border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: 16, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.5 }}>
               Save or add a product to start building this out.
             </div>
           )}
@@ -523,21 +523,21 @@ function ShopperProfileScreen({ onBack, quizAnswers, myProducts = [], savedProdu
         {lowCategories.length > 0 && (
           <div>
             <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 11 }}>
-              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)' }}>Least-represented</div>
-              <div style={{ fontSize: 12, color: 'var(--ayna-text-muted)' }}>Blind spots</div>
+              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)' }}>Least-represented</div>
+              <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)' }}>Blind spots</div>
             </div>
             <div style={{ border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: '6px 16px' }}>
               {lowCategories.map((c, i) => (
                 <div key={c.name} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 0', borderTop: i === 0 ? 'none' : '1px solid var(--ayna-border)' }}>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 13.5, color: 'var(--ayna-text-muted)' }}>{c.name}</div>
-                    <div style={{ fontSize: 12, color: 'var(--ayna-text-muted)', marginTop: 2 }}>{c.note}</div>
+                    <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)' }}>{c.name}</div>
+                    <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2 }}>{c.note}</div>
                   </div>
                 </div>
               ))}
               {onBrowse && (
                 <div style={{ padding: '12px 0 14px', borderTop: '1px solid var(--ayna-border)' }}>
-                  <div onClick={onBrowse} style={{ display: 'inline-block', border: '1px solid var(--ayna-border)', color: 'var(--ayna-brown)', fontWeight: 600, fontSize: 12, padding: '8px 14px', borderRadius: 99, cursor: 'pointer' }}>Explore a blind spot</div>
+                  <div onClick={onBrowse} style={{ display: 'inline-block', border: '1px solid var(--ayna-border)', color: 'var(--ayna-brown)', fontWeight: 600, fontSize: 'calc(12px * var(--ayna-text-scale, 1))', padding: '8px 14px', borderRadius: 99, cursor: 'pointer' }}>Explore a blind spot</div>
                 </div>
               )}
             </div>
@@ -633,9 +633,9 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
       <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '0 20px 30px' }}>
         <div style={{ borderRadius: 22, padding: 20, background: 'linear-gradient(140deg,#4E3866,#242A52)', color: '#FFF9F2', position: 'relative', overflow: 'hidden', marginBottom: 20 }}>
           <div style={{ position: 'absolute', right: -50, top: -50, width: 180, height: 180, borderRadius: '50%', border: '1px solid rgba(255,255,255,.16)' }} />
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.4px', textTransform: 'uppercase', color: '#FFC774' }}>Founder-first</div>
-          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 25, lineHeight: 1.2, margin: '8px 0 7px', maxWidth: 250 }}>Real founders, not ad spend.</div>
-          <div style={{ fontSize: 12.5, color: 'rgba(255,249,242,.72)', lineHeight: 1.5, maxWidth: 265 }}>Ranked by what you told us during intake — never by who paid for placement.</div>
+          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.4px', textTransform: 'uppercase', color: '#FFC774' }}>Founder-first</div>
+          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(25px * var(--ayna-text-scale, 1))', lineHeight: 1.2, margin: '8px 0 7px', maxWidth: 250 }}>Real founders, not ad spend.</div>
+          <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'rgba(255,249,242,.72)', lineHeight: 1.5, maxWidth: 265 }}>Ranked by what you told us during intake — never by who paid for placement.</div>
         </div>
 
         <div style={{ display: 'flex', gap: 7, overflowX: 'auto', paddingBottom: 16, scrollbarWidth: 'none' }}>
@@ -644,7 +644,7 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
               key={key}
               onClick={() => setFilter(key)}
               style={{
-                fontSize: 12,
+                fontSize: 'calc(12px * var(--ayna-text-scale, 1))',
                 fontWeight: filter === key ? 500 : 400,
                 padding: '7px 13px',
                 borderRadius: 99,
@@ -662,13 +662,13 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {loadState === 'loading' && (
-            <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontSize: 13 }}>Loading startups…</div>
+            <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>Loading startups…</div>
           )}
           {loadState === 'error' && (
-            <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontSize: 13 }}>Couldn't load startups right now — try again shortly.</div>
+            <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>Couldn't load startups right now — try again shortly.</div>
           )}
           {loadState === 'ready' && filtered.length === 0 && (
-            <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontSize: 13 }}>No startups match that filter yet.</div>
+            <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>No startups match that filter yet.</div>
           )}
 
           {filtered.map((s) => {
@@ -678,30 +678,30 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
               <div key={s.id} onClick={openLink} style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, overflow: 'hidden', cursor: openLink ? 'pointer' : 'default' }}>
                 <div style={{ height: 168, background: s.image ? undefined : 'linear-gradient(160deg,#F3EADC,#EFE3D2)', backgroundImage: s.image ? `url(${s.image})` : undefined, backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative' }}>
                   {s.foundedYear && (
-                    <div style={{ position: 'absolute', left: 12, top: 12, background: 'rgba(255,255,255,.93)', color: '#C0761F', fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '.9px', padding: '5px 9px', borderRadius: 99 }}>FOUNDED {s.foundedYear}</div>
+                    <div style={{ position: 'absolute', left: 12, top: 12, background: 'rgba(255,255,255,.93)', color: '#C0761F', fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '.9px', padding: '5px 9px', borderRadius: 99 }}>FOUNDED {s.foundedYear}</div>
                   )}
                 </div>
                 <div style={{ padding: '15px 16px 17px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
-                    <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>{formatCategoryLabel(s.category)}</div>
+                    <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>{formatCategoryLabel(s.category)}</div>
                     {s.stage && (
                       <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                         <div style={{ width: 6, height: 6, borderRadius: 99, background: '#2F6B4F' }} />
-                        <div style={{ fontSize: 11, color: '#2F6B4F' }}>{s.stage}</div>
+                        <div style={{ fontSize: 'calc(11px * var(--ayna-text-scale, 1))', color: '#2F6B4F' }}>{s.stage}</div>
                       </div>
                     )}
                   </div>
-                  <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 21, lineHeight: 1.2, margin: '7px 0 6px', color: 'var(--ayna-text)' }}>{s.name}</div>
-                  <div style={{ fontSize: 13, color: 'var(--ayna-text-muted)', lineHeight: 1.5 }}>{s.description || s.tagline}</div>
+                  <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(21px * var(--ayna-text-scale, 1))', lineHeight: 1.2, margin: '7px 0 6px', color: 'var(--ayna-text)' }}>{s.name}</div>
+                  <div style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.5 }}>{s.description || s.tagline}</div>
                   {s.badges?.length > 0 && (
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 12 }}>
                       {s.badges.map((t) => (
-                        <div key={t} style={{ background: 'var(--ayna-chip-bg)', color: 'var(--ayna-accent-dark)', fontSize: 11, padding: '5px 10px', borderRadius: 99 }}>{t}</div>
+                        <div key={t} style={{ background: 'var(--ayna-chip-bg)', color: 'var(--ayna-accent-dark)', fontSize: 'calc(11px * var(--ayna-text-scale, 1))', padding: '5px 10px', borderRadius: 99 }}>{t}</div>
                       ))}
                     </div>
                   )}
                   <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
-                    <div style={{ flex: 1, background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 13, padding: 11, borderRadius: 99, textAlign: 'center', cursor: 'pointer' }}>
+                    <div style={{ flex: 1, background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', padding: 11, borderRadius: 99, textAlign: 'center', cursor: 'pointer' }}>
                       {s.productReleased ? 'View brand' : 'Join waitlist'}
                     </div>
                     <div style={{ width: 44, border: '1px solid var(--ayna-border)', borderRadius: 99, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
@@ -714,14 +714,14 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
               <div key={s.id} onClick={openLink} style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, overflow: 'hidden', display: 'flex', cursor: openLink ? 'pointer' : 'default' }}>
                 <div style={{ width: 120, flex: 'none', background: s.image ? undefined : 'linear-gradient(160deg,#F3EADC,#EFE3D2)', backgroundImage: s.image ? `url(${s.image})` : undefined, backgroundSize: 'cover', backgroundPosition: 'center' }} />
                 <div style={{ flex: 1, minWidth: 0, padding: '14px 15px' }}>
-                  <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>{formatCategoryLabel(s.category)}</div>
-                  <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 19, lineHeight: 1.2, margin: '6px 0 5px', color: 'var(--ayna-text)' }}>{s.name}</div>
-                  <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.45 }}>{s.description || s.tagline}</div>
+                  <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>{formatCategoryLabel(s.category)}</div>
+                  <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(19px * var(--ayna-text-scale, 1))', lineHeight: 1.2, margin: '6px 0 5px', color: 'var(--ayna-text)' }}>{s.name}</div>
+                  <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.45 }}>{s.description || s.tagline}</div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 10, flexWrap: 'wrap' }}>
                     {(s.badges || []).slice(0, 2).map((t) => (
-                      <div key={t} style={{ background: 'var(--ayna-chip-bg)', color: 'var(--ayna-accent-dark)', fontSize: 10.5, padding: '4px 9px', borderRadius: 99 }}>{t}</div>
+                      <div key={t} style={{ background: 'var(--ayna-chip-bg)', color: 'var(--ayna-accent-dark)', fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', padding: '4px 9px', borderRadius: 99 }}>{t}</div>
                     ))}
-                    {s.stage && <div style={{ fontSize: 11, color: '#2F6B4F' }}>{s.stage}</div>}
+                    {s.stage && <div style={{ fontSize: 'calc(11px * var(--ayna-text-scale, 1))', color: '#2F6B4F' }}>{s.stage}</div>}
                   </div>
                 </div>
               </div>
@@ -841,32 +841,32 @@ function PhoneVerifyPanel({ onBack, onVerified }) {
       <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '0 20px 30px' }}>
         {step === 'phone' ? (
           <>
-            <div style={{ fontSize: 13.5, color: 'var(--ayna-text-muted)', lineHeight: 1.55, marginBottom: 18 }}>
+            <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.55, marginBottom: 18 }}>
               We'll text a 6-digit code to confirm this number before texts can be your delivery channel.
             </div>
-            <div style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--ayna-text)', marginBottom: 7 }}>Phone number</div>
+            <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: 600, color: 'var(--ayna-text)', marginBottom: 7 }}>Phone number</div>
             <input
               type="tel"
               inputMode="tel"
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
               placeholder="(555) 555-5555"
-              style={{ width: '100%', boxSizing: 'border-box', padding: '14px 16px', borderRadius: 14, border: '1px solid var(--ayna-border)', fontSize: 15, color: 'var(--ayna-text)', background: 'var(--ayna-surface)', outline: 'none' }}
+              style={{ width: '100%', boxSizing: 'border-box', padding: '14px 16px', borderRadius: 14, border: '1px solid var(--ayna-border)', fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)', background: 'var(--ayna-surface)', outline: 'none' }}
             />
-            {error && <div style={{ color: '#B4402A', fontSize: 12.5, marginTop: 10 }}>{error}</div>}
+            {error && <div style={{ color: '#B4402A', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', marginTop: 10 }}>{error}</div>}
             <div
               onClick={() => !sending && phoneNumber.trim() && sendCode()}
-              style={{ marginTop: 18, textAlign: 'center', background: sending || !phoneNumber.trim() ? 'var(--ayna-border)' : 'var(--ayna-cta-bg)', color: sending || !phoneNumber.trim() ? 'var(--ayna-text-muted)' : 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 14.5, padding: 15, borderRadius: 99, cursor: sending || !phoneNumber.trim() ? 'not-allowed' : 'pointer' }}
+              style={{ marginTop: 18, textAlign: 'center', background: sending || !phoneNumber.trim() ? 'var(--ayna-border)' : 'var(--ayna-cta-bg)', color: sending || !phoneNumber.trim() ? 'var(--ayna-text-muted)' : 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', padding: 15, borderRadius: 99, cursor: sending || !phoneNumber.trim() ? 'not-allowed' : 'pointer' }}
             >
               {sending ? 'Sending…' : 'Send code'}
             </div>
           </>
         ) : (
           <>
-            <div style={{ fontSize: 13.5, color: 'var(--ayna-text-muted)', lineHeight: 1.55, marginBottom: 18 }}>
+            <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.55, marginBottom: 18 }}>
               We texted a code to {phoneNumber}. Enter it below.
             </div>
-            <div style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--ayna-text)', marginBottom: 7 }}>Verification code</div>
+            <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: 600, color: 'var(--ayna-text)', marginBottom: 7 }}>Verification code</div>
             <input
               type="text"
               inputMode="numeric"
@@ -874,18 +874,18 @@ function PhoneVerifyPanel({ onBack, onVerified }) {
               value={code}
               onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
               placeholder="123456"
-              style={{ width: '100%', boxSizing: 'border-box', padding: '14px 16px', borderRadius: 14, border: '1px solid var(--ayna-border)', fontSize: 20, letterSpacing: 4, textAlign: 'center', color: 'var(--ayna-text)', background: 'var(--ayna-surface)', outline: 'none' }}
+              style={{ width: '100%', boxSizing: 'border-box', padding: '14px 16px', borderRadius: 14, border: '1px solid var(--ayna-border)', fontSize: 'calc(20px * var(--ayna-text-scale, 1))', letterSpacing: 4, textAlign: 'center', color: 'var(--ayna-text)', background: 'var(--ayna-surface)', outline: 'none' }}
             />
-            {error && <div style={{ color: '#B4402A', fontSize: 12.5, marginTop: 10 }}>{error}</div>}
+            {error && <div style={{ color: '#B4402A', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', marginTop: 10 }}>{error}</div>}
             <div
               onClick={() => !sending && code.length === 6 && confirmCode()}
-              style={{ marginTop: 18, textAlign: 'center', background: sending || code.length !== 6 ? 'var(--ayna-border)' : 'var(--ayna-cta-bg)', color: sending || code.length !== 6 ? 'var(--ayna-text-muted)' : 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 14.5, padding: 15, borderRadius: 99, cursor: sending || code.length !== 6 ? 'not-allowed' : 'pointer' }}
+              style={{ marginTop: 18, textAlign: 'center', background: sending || code.length !== 6 ? 'var(--ayna-border)' : 'var(--ayna-cta-bg)', color: sending || code.length !== 6 ? 'var(--ayna-text-muted)' : 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', padding: 15, borderRadius: 99, cursor: sending || code.length !== 6 ? 'not-allowed' : 'pointer' }}
             >
               {sending ? 'Verifying…' : 'Verify'}
             </div>
             <div
               onClick={() => cooldown === 0 && !sending && sendCode()}
-              style={{ marginTop: 16, textAlign: 'center', fontSize: 12.5, color: cooldown === 0 ? 'var(--ayna-brown)' : 'var(--ayna-text-faint)', cursor: cooldown === 0 ? 'pointer' : 'default' }}
+              style={{ marginTop: 16, textAlign: 'center', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: cooldown === 0 ? 'var(--ayna-brown)' : 'var(--ayna-text-faint)', cursor: cooldown === 0 ? 'pointer' : 'default' }}
             >
               {cooldown === 0 ? 'Resend code' : `Resend code in ${cooldown}s`}
             </div>
@@ -909,7 +909,7 @@ function friendlyPreferencesError(code) {
 
 function SectionLabel({ children }) {
   return (
-    <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', margin: '22px 0 11px' }}>
+    <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', margin: '22px 0 11px' }}>
       {children}
     </div>
   );
@@ -922,8 +922,8 @@ function DrillRow({ title, sub, onClick, first }) {
       style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '17px 0', borderTop: first ? 'none' : '1px solid var(--ayna-border)', cursor: 'pointer' }}
     >
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontWeight: 600, fontSize: 15, color: 'var(--ayna-text)' }}>{title}</div>
-        {sub && <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', marginTop: 3, lineHeight: 1.45 }}>{sub}</div>}
+        <div style={{ fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>{title}</div>
+        {sub && <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 3, lineHeight: 1.45 }}>{sub}</div>}
       </div>
       <ChevronIcon />
     </div>
@@ -957,7 +957,7 @@ function ThemeSwatch({ mode, selected, onClick }) {
         <div style={{ height: 3, width: '75%', borderRadius: 2, background: barColor }} />
         <div style={{ height: 3, width: '50%', borderRadius: 2, background: barColor }} />
       </div>
-      <div style={{ marginTop: 7, fontSize: 12.5, fontWeight: selected ? 700 : 500, color: selected ? 'var(--ayna-heading)' : 'var(--ayna-text-muted)' }}>
+      <div style={{ marginTop: 7, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: selected ? 700 : 500, color: selected ? 'var(--ayna-heading)' : 'var(--ayna-text-muted)' }}>
         {THEME_SWATCHES.find((s) => s.key === mode)?.label}
       </div>
     </div>
@@ -1039,6 +1039,15 @@ function PreferencesScreen({
     });
   };
 
+  // Best-effort mirror only, same as Night mode above — the real local
+  // change (onTextSizeChange, working with no account) is what actually
+  // scales the app; a failed save here never blocks or rolls back the
+  // visual change, it just leaves the synced value stale until next edit.
+  const handleTextSizeChange = (index) => {
+    onTextSizeChange && onTextSizeChange(index);
+    patchNotificationPreferences({ text_size_index: index }).catch(() => {});
+  };
+
   const handleClearHistory = () => {
     onClearAskAynaHistory && onClearAskAynaHistory();
     setClearHistoryConfirm(false);
@@ -1067,8 +1076,8 @@ function PreferencesScreen({
     <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
       <BackHeader title="Preferences" onBack={onBack} />
       <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '0 20px 30px' }}>
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 26, lineHeight: 1.25, margin: '4px 0 6px', color: 'var(--ayna-heading)' }}>How Ayna reaches you.</div>
-        <div style={{ fontSize: 13, color: 'var(--ayna-text-muted)', lineHeight: 1.55, marginBottom: 22 }}>Everything here is off by default and reversible.</div>
+        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(26px * var(--ayna-text-scale, 1))', lineHeight: 1.25, margin: '4px 0 6px', color: 'var(--ayna-heading)' }}>How Ayna reaches you.</div>
+        <div style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.55, marginBottom: 22 }}>Everything here is off by default and reversible.</div>
 
         {/* Always visible regardless of the notification-preferences backend's
             load state below — Substack subscription has nothing to do with
@@ -1080,12 +1089,12 @@ function PreferencesScreen({
           >
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{ fontWeight: 600, fontSize: 15, color: 'var(--ayna-text)' }}>Join newsletter</div>
+                <div style={{ fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Join newsletter</div>
                 {newsletterConfirmed && (
-                  <div style={{ fontSize: 10, fontWeight: 600, color: '#2F6B4F', background: 'var(--ayna-chip-bg)', padding: '2px 8px', borderRadius: 99 }}>Subscribed</div>
+                  <div style={{ fontSize: 'calc(10px * var(--ayna-text-scale, 1))', fontWeight: 600, color: '#2F6B4F', background: 'var(--ayna-chip-bg)', padding: '2px 8px', borderRadius: 99 }}>Subscribed</div>
                 )}
               </div>
-              <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', marginTop: 3, lineHeight: 1.45 }}>
+              <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 3, lineHeight: 1.45 }}>
                 {newsletterConfirmed ? "You're on the list — The Mirror lands monthly." : 'The Mirror — one letter a month, no products pushed.'}
               </div>
             </div>
@@ -1093,10 +1102,10 @@ function PreferencesScreen({
           </div>
           {awaitingConfirm && !newsletterConfirmed && (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, padding: '0 0 14px' }}>
-              <div style={{ fontSize: 12, color: 'var(--ayna-text-muted)' }}>Subscribed on Substack?</div>
+              <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)' }}>Subscribed on Substack?</div>
               <div
                 onClick={handleConfirmSubscribed}
-                style={{ fontSize: 12, fontWeight: 700, color: '#2F6B4F', cursor: 'pointer', padding: '6px 12px', background: 'var(--ayna-chip-bg)', borderRadius: 99, flex: 'none' }}
+                style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 700, color: '#2F6B4F', cursor: 'pointer', padding: '6px 12px', background: 'var(--ayna-chip-bg)', borderRadius: 99, flex: 'none' }}
               >
                 Yes, I'm in
               </div>
@@ -1106,17 +1115,17 @@ function PreferencesScreen({
 
         <SectionLabel>Notifications</SectionLabel>
         {loadState === 'loading' && (
-          <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontSize: 13 }}>Loading your preferences…</div>
+          <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>Loading your preferences…</div>
         )}
         {loadState === 'signed_out' && (
-          <div style={{ border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: 18, fontSize: 13, color: 'var(--ayna-text-muted)', lineHeight: 1.55, textAlign: 'center' }}>
+          <div style={{ border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: 18, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.55, textAlign: 'center' }}>
             Sign in to manage how Ayna reaches you — these settings save to your account, not just this device.
           </div>
         )}
         {loadState === 'error' && (
           <div style={{ border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: 18, textAlign: 'center' }}>
-            <div style={{ fontSize: 13, color: 'var(--ayna-text-muted)', lineHeight: 1.55, marginBottom: 12 }}>Couldn't load your preferences.</div>
-            <div onClick={retry} style={{ display: 'inline-block', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 12.5, padding: '9px 16px', borderRadius: 99, cursor: 'pointer' }}>Try again</div>
+            <div style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.55, marginBottom: 12 }}>Couldn't load your preferences.</div>
+            <div onClick={retry} style={{ display: 'inline-block', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', padding: '9px 16px', borderRadius: 99, cursor: 'pointer' }}>Try again</div>
           </div>
         )}
         {loadState === 'ready' && prefs && (
@@ -1142,8 +1151,8 @@ function PreferencesScreen({
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '4px 18px', marginTop: loadState === 'ready' ? 20 : 0 }}>
           <div onClick={() => setClearHistoryConfirm(true)} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '17px 0', cursor: 'pointer' }}>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 600, fontSize: 15, color: '#B4402A' }}>Clear Ask Ayna history</div>
-              <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', marginTop: 3, lineHeight: 1.45 }}>
+              <div style={{ fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: '#B4402A' }}>Clear Ask Ayna history</div>
+              <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 3, lineHeight: 1.45 }}>
                 {askAynaHistoryCount} conversation{askAynaHistoryCount === 1 ? '' : 's'} this session. Deleted for good, not archived.
               </div>
             </div>
@@ -1153,27 +1162,27 @@ function PreferencesScreen({
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, padding: '0 0 14px' }}>
               <div
                 onClick={() => setClearHistoryConfirm(false)}
-                style={{ fontSize: 12, fontWeight: 600, color: 'var(--ayna-text-muted)', cursor: 'pointer', padding: '6px 12px' }}
+                style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 600, color: 'var(--ayna-text-muted)', cursor: 'pointer', padding: '6px 12px' }}
               >
                 Cancel
               </div>
               <div
                 onClick={handleClearHistory}
-                style={{ fontSize: 12, fontWeight: 700, color: '#B4402A', cursor: 'pointer', padding: '6px 12px', background: 'rgba(180,64,42,.1)', borderRadius: 99, flex: 'none' }}
+                style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 700, color: '#B4402A', cursor: 'pointer', padding: '6px 12px', background: 'rgba(180,64,42,.1)', borderRadius: 99, flex: 'none' }}
               >
                 Yes, clear it
               </div>
             </div>
           )}
         </div>
-        <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', lineHeight: 1.5, margin: '10px 2px 0' }}>
+        <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.5, margin: '10px 2px 0' }}>
           This is separate from the analytics toggle in Privacy & data — that one is about anonymised usage stats, this one shapes what you see.
         </div>
 
         {/* Appearance — always local, no account needed. */}
         <SectionLabel>Appearance</SectionLabel>
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: 18 }}>
-          <div style={{ fontWeight: 600, fontSize: 14.5, marginBottom: 12 }}>Theme</div>
+          <div style={{ fontWeight: 600, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', marginBottom: 12 }}>Theme</div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 10 }}>
             {THEME_SWATCHES.map((s) => (
               <ThemeSwatch key={s.key} mode={s.key} selected={theme === s.key} onClick={() => onToggleTheme(s.key)} />
@@ -1183,25 +1192,25 @@ function PreferencesScreen({
 
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: 18, marginTop: 14 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-            <div style={{ fontWeight: 600, fontSize: 14.5 }}>Text size</div>
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '.6px', color: 'var(--ayna-accent-dark)', background: 'var(--ayna-chip-bg)', padding: '3px 9px', borderRadius: 99 }}>
+            <div style={{ fontWeight: 600, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))' }}>Text size</div>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '.6px', color: 'var(--ayna-accent-dark)', background: 'var(--ayna-chip-bg)', padding: '3px 9px', borderRadius: 99 }}>
               {TEXT_SIZE_STEPS[textSizeIndex]?.label}
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{ fontSize: 12, color: 'var(--ayna-text-faint)', flex: 'none' }}>A</span>
+            <span style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', flex: 'none' }}>A</span>
             <div style={{ flex: 1, display: 'flex', gap: 6 }}>
               {TEXT_SIZE_STEPS.map((step, i) => (
                 <div
                   key={step.label}
-                  onClick={() => onTextSizeChange(i)}
+                  onClick={() => handleTextSizeChange(i)}
                   style={{ flex: 1, height: 8, borderRadius: 99, cursor: 'pointer', background: i === textSizeIndex ? 'var(--ayna-heading)' : 'var(--ayna-border)' }}
                 />
               ))}
             </div>
-            <span style={{ fontSize: 20, color: 'var(--ayna-text-faint)', flex: 'none' }}>A</span>
+            <span style={{ fontSize: 'calc(20px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', flex: 'none' }}>A</span>
           </div>
-          <div style={{ marginTop: 14, fontSize: 14 * (TEXT_SIZE_STEPS[textSizeIndex]?.zoom || 1), fontWeight: 600, color: 'var(--ayna-text)', lineHeight: 1.5 }}>
+          <div style={{ marginTop: 14, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', fontWeight: 600, color: 'var(--ayna-text)', lineHeight: 1.5 }}>
             This is what body text looks like across ayna.
           </div>
         </div>
@@ -1214,24 +1223,24 @@ function PreferencesScreen({
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '4px 18px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '17px 0' }}>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 600, fontSize: 15, color: 'var(--ayna-text)' }}>Language</div>
-              <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', marginTop: 3, lineHeight: 1.45 }}>More languages are on the way.</div>
+              <div style={{ fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Language</div>
+              <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 3, lineHeight: 1.45 }}>More languages are on the way.</div>
             </div>
-            <div style={{ fontSize: 13.5, color: 'var(--ayna-text-faint)', flex: 'none' }}>English</div>
+            <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', flex: 'none' }}>English</div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '17px 0', borderTop: '1px solid var(--ayna-border)' }}>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 600, fontSize: 15, color: 'var(--ayna-text)' }}>Ship to</div>
-              <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', marginTop: 3, lineHeight: 1.45 }}>United States only, for now.</div>
+              <div style={{ fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Ship to</div>
+              <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 3, lineHeight: 1.45 }}>United States only, for now.</div>
             </div>
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10.5, letterSpacing: '.6px', color: 'var(--ayna-text-faint)', border: '1px solid var(--ayna-border)', borderRadius: 99, padding: '4px 9px', flex: 'none' }}>US</div>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', letterSpacing: '.6px', color: 'var(--ayna-text-faint)', border: '1px solid var(--ayna-border)', borderRadius: 99, padding: '4px 9px', flex: 'none' }}>US</div>
           </div>
         </div>
 
-        <div style={{ marginTop: 20, fontSize: 12, color: 'var(--ayna-text-muted)', lineHeight: 1.55, textAlign: 'center', padding: '0 10px' }}>Ayna never sells your health data.</div>
+        <div style={{ marginTop: 20, fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.55, textAlign: 'center', padding: '0 10px' }}>Ayna never sells your health data.</div>
 
         {toast && (
-          <div style={{ position: 'fixed', left: 20, right: 20, bottom: 24, background: '#B4402A', color: '#FFF9F2', fontSize: 12.5, fontWeight: 600, padding: '12px 16px', borderRadius: 14, textAlign: 'center', boxShadow: '0 14px 30px -12px rgba(180,64,42,.5)' }}>
+          <div style={{ position: 'fixed', left: 20, right: 20, bottom: 24, background: '#B4402A', color: '#FFF9F2', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: 600, padding: '12px 16px', borderRadius: 14, textAlign: 'center', boxShadow: '0 14px 30px -12px rgba(180,64,42,.5)' }}>
             {toast}
           </div>
         )}
@@ -1314,17 +1323,17 @@ function ChannelsScreen({ onBack }) {
       <BackHeader title="Channels & quiet hours" onBack={onBack} />
       <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '0 20px 30px' }}>
         {loadState === 'loading' && (
-          <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontSize: 13 }}>Loading…</div>
+          <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>Loading…</div>
         )}
         {loadState === 'signed_out' && (
-          <div style={{ marginTop: 16, border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: 18, fontSize: 13, color: 'var(--ayna-text-muted)', lineHeight: 1.55, textAlign: 'center' }}>
+          <div style={{ marginTop: 16, border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: 18, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.55, textAlign: 'center' }}>
             Sign in to manage channels and quiet hours.
           </div>
         )}
         {loadState === 'error' && (
           <div style={{ marginTop: 16, border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: 18, textAlign: 'center' }}>
-            <div style={{ fontSize: 13, color: 'var(--ayna-text-muted)', lineHeight: 1.55, marginBottom: 12 }}>Couldn't load this.</div>
-            <div onClick={retry} style={{ display: 'inline-block', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 12.5, padding: '9px 16px', borderRadius: 99, cursor: 'pointer' }}>Try again</div>
+            <div style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.55, marginBottom: 12 }}>Couldn't load this.</div>
+            <div onClick={retry} style={{ display: 'inline-block', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', padding: '9px 16px', borderRadius: 99, cursor: 'pointer' }}>Try again</div>
           </div>
         )}
         {loadState === 'ready' && prefs && (
@@ -1340,8 +1349,8 @@ function ChannelsScreen({ onBack }) {
                   <div style={{ width: 18, height: 18, borderRadius: '50%', border: '2px solid ' + (prefs.deliveryChannel === key ? 'var(--ayna-cta-bg)' : 'var(--ayna-border)'), flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     {prefs.deliveryChannel === key && <div style={{ width: 9, height: 9, borderRadius: '50%', background: 'var(--ayna-cta-bg)' }} />}
                   </div>
-                  <div style={{ flex: 1, fontSize: 14.5, fontWeight: 500, color: 'var(--ayna-text)' }}>{label}</div>
-                  {badge && <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '.8px', color: 'var(--ayna-text-muted)', border: '1px solid var(--ayna-border)', borderRadius: 99, padding: '3px 7px' }}>{badge}</div>}
+                  <div style={{ flex: 1, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', fontWeight: 500, color: 'var(--ayna-text)' }}>{label}</div>
+                  {badge && <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '.8px', color: 'var(--ayna-text-muted)', border: '1px solid var(--ayna-border)', borderRadius: 99, padding: '3px 7px' }}>{badge}</div>}
                 </div>
               ))}
             </div>
@@ -1352,21 +1361,21 @@ function ChannelsScreen({ onBack }) {
               {prefs.quietHoursEnabled && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '4px 0 16px' }}>
                   <label style={{ flex: 1 }}>
-                    <div style={{ fontSize: 11, color: 'var(--ayna-text-muted)', marginBottom: 4 }}>From</div>
+                    <div style={{ fontSize: 'calc(11px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginBottom: 4 }}>From</div>
                     <input
                       type="time"
                       value={prefs.quietHoursStart}
                       onChange={(e) => patchQuietHoursTime('quiet_hours_start', e.target.value)}
-                      style={{ width: '100%', border: '1px solid var(--ayna-border)', borderRadius: 12, padding: '9px 10px', fontSize: 14, background: 'var(--ayna-bg-alt)', color: 'var(--ayna-text)', boxSizing: 'border-box' }}
+                      style={{ width: '100%', border: '1px solid var(--ayna-border)', borderRadius: 12, padding: '9px 10px', fontSize: 'calc(14px * var(--ayna-text-scale, 1))', background: 'var(--ayna-bg-alt)', color: 'var(--ayna-text)', boxSizing: 'border-box' }}
                     />
                   </label>
                   <label style={{ flex: 1 }}>
-                    <div style={{ fontSize: 11, color: 'var(--ayna-text-muted)', marginBottom: 4 }}>To</div>
+                    <div style={{ fontSize: 'calc(11px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginBottom: 4 }}>To</div>
                     <input
                       type="time"
                       value={prefs.quietHoursEnd}
                       onChange={(e) => patchQuietHoursTime('quiet_hours_end', e.target.value)}
-                      style={{ width: '100%', border: '1px solid var(--ayna-border)', borderRadius: 12, padding: '9px 10px', fontSize: 14, background: 'var(--ayna-bg-alt)', color: 'var(--ayna-text)', boxSizing: 'border-box' }}
+                      style={{ width: '100%', border: '1px solid var(--ayna-border)', borderRadius: 12, padding: '9px 10px', fontSize: 'calc(14px * var(--ayna-text-scale, 1))', background: 'var(--ayna-bg-alt)', color: 'var(--ayna-text)', boxSizing: 'border-box' }}
                     />
                   </label>
                 </div>
@@ -1376,7 +1385,7 @@ function ChannelsScreen({ onBack }) {
         )}
 
         {toast && (
-          <div style={{ position: 'fixed', left: 20, right: 20, bottom: 24, background: '#B4402A', color: '#FFF9F2', fontSize: 12.5, fontWeight: 600, padding: '12px 16px', borderRadius: 14, textAlign: 'center', boxShadow: '0 14px 30px -12px rgba(180,64,42,.5)' }}>
+          <div style={{ position: 'fixed', left: 20, right: 20, bottom: 24, background: '#B4402A', color: '#FFF9F2', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: 600, padding: '12px 16px', borderRadius: 14, textAlign: 'center', boxShadow: '0 14px 30px -12px rgba(180,64,42,.5)' }}>
             {toast}
           </div>
         )}
@@ -1417,66 +1426,66 @@ function SettingsScreen({ onBack, onOpenHowItWorks, onOpenAboutAyna, onOpenConta
     <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
       <BackHeader title="Settings" onBack={onBack} />
       <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '8px 20px 30px' }}>
-        <div style={{ margin: '4px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>About Ayna</div>
+        <div style={{ margin: '4px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>About Ayna</div>
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
           {aboutRows.map((r, i) => (
             <div key={r.title} onClick={r.onClick} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 0', borderTop: i === 0 ? 'none' : '1px solid var(--ayna-border)', cursor: r.onClick ? 'pointer' : 'default' }}>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontWeight: 500, fontSize: 14.5, color: 'var(--ayna-text)' }}>{r.title}</div>
-                <div style={{ fontSize: 12, color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>{r.sub}</div>
+                <div style={{ fontWeight: 500, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>{r.title}</div>
+                <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>{r.sub}</div>
               </div>
               {r.external ? <ExternalLinkIcon /> : <ChevronIcon />}
             </div>
           ))}
         </div>
 
-        <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Your account</div>
+        <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Your account</div>
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
           <div onClick={onOpenAccountInfo} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 0', cursor: 'pointer' }}>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 500, fontSize: 14.5, color: 'var(--ayna-text)' }}>Account information</div>
+              <div style={{ fontWeight: 500, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Account information</div>
               {accountPreview && (
-                <div style={{ fontSize: 12, color: 'var(--ayna-text-muted)', marginTop: 2 }}>{accountPreview}</div>
+                <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2 }}>{accountPreview}</div>
               )}
             </div>
             <ChevronIcon />
           </div>
           <div onClick={onOpenPrivacyData} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 0', borderTop: '1px solid var(--ayna-border)', cursor: 'pointer' }}>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 500, fontSize: 14.5, color: 'var(--ayna-text)' }}>Privacy & data</div>
-              <div style={{ fontSize: 12, color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>Policies, what we hold, exports and deletion.</div>
+              <div style={{ fontWeight: 500, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Privacy & data</div>
+              <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>Policies, what we hold, exports and deletion.</div>
             </div>
             <ChevronIcon />
           </div>
           <div onClick={onOpenLegal} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 0', borderTop: '1px solid var(--ayna-border)', cursor: 'pointer' }}>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 500, fontSize: 14.5, color: 'var(--ayna-text)' }}>Legal</div>
-              <div style={{ fontSize: 12, color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>Policies, terms and licences.</div>
+              <div style={{ fontWeight: 500, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Legal</div>
+              <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>Policies, terms and licences.</div>
             </div>
             <ChevronIcon />
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 0', borderTop: '1px solid var(--ayna-border)', opacity: 0.55 }}>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 500, fontSize: 14.5, color: 'var(--ayna-text)' }}>Subscription</div>
-              <div style={{ fontSize: 12, color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>Ayna is free while we're in beta.</div>
+              <div style={{ fontWeight: 500, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Subscription</div>
+              <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>Ayna is free while we're in beta.</div>
             </div>
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '.9px', color: 'var(--ayna-text-muted)', border: '1px solid var(--ayna-border)', borderRadius: 99, padding: '4px 8px', flex: 'none' }}>COMING SOON</div>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '.9px', color: 'var(--ayna-text-muted)', border: '1px solid var(--ayna-border)', borderRadius: 99, padding: '4px 8px', flex: 'none' }}>COMING SOON</div>
           </div>
           <div onClick={onOpenContact} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 0', borderTop: '1px solid var(--ayna-border)', cursor: 'pointer' }}>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 500, fontSize: 14.5, color: 'var(--ayna-text)' }}>Contact</div>
-              <div style={{ fontSize: 12, color: 'var(--ayna-text-muted)', marginTop: 2 }}>Usually a reply within a day.</div>
+              <div style={{ fontWeight: 500, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Contact</div>
+              <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2 }}>Usually a reply within a day.</div>
             </div>
             <ChevronIcon />
           </div>
         </div>
 
         {authUser ? (
-          <div onClick={onSignOut} style={{ marginTop: 22, textAlign: 'center', padding: '14px 0', border: '1px solid rgba(180,64,42,.3)', borderRadius: 99, color: '#B4402A', fontWeight: 600, fontSize: 13.5, cursor: 'pointer', background: 'var(--ayna-surface)' }}>Sign out</div>
+          <div onClick={onSignOut} style={{ marginTop: 22, textAlign: 'center', padding: '14px 0', border: '1px solid rgba(180,64,42,.3)', borderRadius: 99, color: '#B4402A', fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', cursor: 'pointer', background: 'var(--ayna-surface)' }}>Sign out</div>
         ) : (
-          <div onClick={onSignIn} style={{ marginTop: 22, textAlign: 'center', padding: '14px 0', border: '1px solid var(--ayna-border)', borderRadius: 99, color: 'var(--ayna-heading)', fontWeight: 600, fontSize: 13.5, cursor: 'pointer', background: 'var(--ayna-surface)' }}>Sign in</div>
+          <div onClick={onSignIn} style={{ marginTop: 22, textAlign: 'center', padding: '14px 0', border: '1px solid var(--ayna-border)', borderRadius: 99, color: 'var(--ayna-heading)', fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', cursor: 'pointer', background: 'var(--ayna-surface)' }}>Sign in</div>
         )}
-        <div style={{ textAlign: 'center', marginTop: 16, fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.2px', color: 'var(--ayna-text-muted)' }}>AYNA 0.9.4 · BETA</div>
+        <div style={{ textAlign: 'center', marginTop: 16, fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', color: 'var(--ayna-text-muted)' }}>AYNA 0.9.4 · BETA</div>
       </div>
     </div>
   );
@@ -1515,11 +1524,11 @@ function PrivacyDataScreen({ onBack, onOpenManageData }) {
     <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
       <BackHeader title="Privacy & data" onBack={onBack} />
       <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '8px 20px 30px' }}>
-        <div style={{ fontSize: 13.5, color: 'var(--ayna-text-muted)', lineHeight: 1.6, marginBottom: 20 }}>
+        <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.6, marginBottom: 20 }}>
           Your health answers are the most sensitive thing you give us. Here is everything we hold, and every way to take it back.
         </div>
 
-        <div style={{ margin: '0 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Your data</div>
+        <div style={{ margin: '0 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Your data</div>
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
           <AccountRow
             title="Manage my data"
@@ -1534,11 +1543,11 @@ function PrivacyDataScreen({ onBack, onOpenManageData }) {
             onClick={() => window.open(DELETE_ACCOUNT_MAILTO, '_blank')}
           />
         </div>
-        <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 9, padding: '0 4px' }}>
+        <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 9, padding: '0 4px' }}>
           Deletion removes your account and health answers from our active systems. We may keep limited records where the law requires it — never your health data.
         </div>
 
-        <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>What you share</div>
+        <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>What you share</div>
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '4px 18px' }}>
           <ToggleRow
             first
@@ -1550,16 +1559,16 @@ function PrivacyDataScreen({ onBack, onOpenManageData }) {
         </div>
 
         <div style={{ marginTop: 14, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '16px 18px' }}>
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.3px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 8 }}>How AI is used</div>
-          <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.6 }}>
+          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 8 }}>How AI is used</div>
+          <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.6 }}>
             Ask Ayna and match explanations are powered by a third-party AI provider (Anthropic). Your questions and relevant profile details are shared with them to generate a response — never sold, and never used to train anyone else's model.
           </div>
-          <div onClick={() => window.open(PRIVACY_POLICY_URL, '_blank', 'noopener,noreferrer')} style={{ fontSize: 12.5, color: 'var(--ayna-heading)', fontWeight: 600, marginTop: 10, cursor: 'pointer' }}>
+          <div onClick={() => window.open(PRIVACY_POLICY_URL, '_blank', 'noopener,noreferrer')} style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', fontWeight: 600, marginTop: 10, cursor: 'pointer' }}>
             Read the full privacy policy
           </div>
         </div>
 
-        <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 16, padding: '0 4px' }}>
+        <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 16, padding: '0 4px' }}>
           Privacy questions? Email <a href="mailto:puloma@aynahealth.co">puloma@aynahealth.co</a>.
         </div>
       </div>
@@ -1575,7 +1584,7 @@ function LegalScreen({ onBack, onOpenConsumerHealthData, onOpenOpenSourceLicense
     <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
       <BackHeader title="Legal" onBack={onBack} />
       <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '8px 20px 30px' }}>
-        <div style={{ margin: '4px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Policies</div>
+        <div style={{ margin: '4px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Policies</div>
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
           <AccountRow
             title="Privacy Policy"
@@ -1595,7 +1604,7 @@ function LegalScreen({ onBack, onOpenConsumerHealthData, onOpenOpenSourceLicense
           />
         </div>
 
-        <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Attributions</div>
+        <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Attributions</div>
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
           <AccountRow
             title="Open-source licences"
@@ -1608,17 +1617,17 @@ function LegalScreen({ onBack, onOpenConsumerHealthData, onOpenOpenSourceLicense
         </div>
 
         <div style={{ marginTop: 22, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '17px 18px' }}>
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.3px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 8 }}>Not medical advice</div>
-          <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.6 }}>
+          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 8 }}>Not medical advice</div>
+          <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.6 }}>
             Ayna is a discovery and education tool. Nothing here diagnoses, treats or prevents a condition, and no match replaces a conversation with your clinician.
           </div>
         </div>
 
-        <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 16, padding: '0 4px' }}>
+        <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 16, padding: '0 4px' }}>
           Questions about these policies? Email <a href="mailto:puloma@aynahealth.co">puloma@aynahealth.co</a>.
         </div>
 
-        <div style={{ textAlign: 'center', marginTop: 22, fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.2px', color: 'var(--ayna-text-muted)', lineHeight: 1.9 }}>
+        <div style={{ textAlign: 'center', marginTop: 22, fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', color: 'var(--ayna-text-muted)', lineHeight: 1.9 }}>
           AYNA HEALTH, INC.<br />DELAWARE, USA<br />APP 0.9.4 · BETA
         </div>
       </div>
@@ -1661,8 +1670,8 @@ function NumberedCard({ n, title, children }) {
   return (
     <div style={{ marginTop: 14, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 24, padding: 18, boxShadow: '0 2px 10px rgba(41,37,36,.04)' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <div style={{ width: 26, height: 26, borderRadius: 99, background: '#FDF0DC', color: '#9A5B14', fontFamily: "'DM Mono',monospace", fontSize: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none' }}>{n}</div>
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 17, color: 'var(--ayna-heading)' }}>{title}</div>
+        <div style={{ width: 26, height: 26, borderRadius: 99, background: '#FDF0DC', color: '#9A5B14', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none' }}>{n}</div>
+        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(17px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>{title}</div>
       </div>
       {children}
     </div>
@@ -1679,45 +1688,45 @@ function ConsumerHealthDataPolicyScreen({ onBack }) {
           <div style={{ position: 'relative', width: 38, height: 38, borderRadius: 99, background: '#FFFCF9', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 1px 5px rgba(63,107,74,.14)' }}>
             <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#3F6B4A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l7 3v6c0 4.2-2.9 7.6-7 9-4.1-1.4-7-4.8-7-9V6z" /><path d="M9 12l2 2 4-4" /></svg>
           </div>
-          <div style={{ position: 'relative', fontFamily: "'Playfair Display',serif", fontSize: 23, lineHeight: 1.2, marginTop: 13, color: '#25382A' }}>Your health answers stay yours.</div>
-          <div style={{ position: 'relative', fontSize: 12.5, lineHeight: 1.6, color: '#42604A', marginTop: 8 }}>We never sell them, and we never trade them for advertising. Here is the whole picture, in plain words.</div>
+          <div style={{ position: 'relative', fontFamily: "'Playfair Display',serif", fontSize: 'calc(23px * var(--ayna-text-scale, 1))', lineHeight: 1.2, marginTop: 13, color: '#25382A' }}>Your health answers stay yours.</div>
+          <div style={{ position: 'relative', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: '#42604A', marginTop: 8 }}>We never sell them, and we never trade them for advertising. Here is the whole picture, in plain words.</div>
           <div style={{ position: 'relative', display: 'inline-flex', gap: 6, marginTop: 13 }}>
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1px', background: '#FFFCF9', color: '#3F6B4A', borderRadius: 99, padding: '5px 10px' }}>EFFECTIVE 10 SEP 2026</div>
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1px', background: '#FFFCF9', color: '#3F6B4A', borderRadius: 99, padding: '5px 10px' }}>WA MHMDA</div>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1px', background: '#FFFCF9', color: '#3F6B4A', borderRadius: 99, padding: '5px 10px' }}>EFFECTIVE 10 SEP 2026</div>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1px', background: '#FFFCF9', color: '#3F6B4A', borderRadius: 99, padding: '5px 10px' }}>WA MHMDA</div>
           </div>
         </div>
 
         <NumberedCard n="01" title="What counts as health data">
-          <div style={{ fontSize: 13, lineHeight: 1.65, color: 'var(--ayna-text-muted)', marginTop: 11 }}>
+          <div style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', lineHeight: 1.65, color: 'var(--ayna-text-muted)', marginTop: 11 }}>
             Anything linked to you that says something about your past, present or future physical or mental health — including reproductive and sexual health, conditions, diagnoses, symptoms, and whatever you tell Ask Ayna about any of it.
           </div>
         </NumberedCard>
 
         <NumberedCard n="02" title="What we collect, and why">
-          <div style={{ fontSize: 13, lineHeight: 1.65, color: 'var(--ayna-text-muted)', marginTop: 11 }}>
+          <div style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', lineHeight: 1.65, color: 'var(--ayna-text-muted)', marginTop: 11 }}>
             Your intake answers, your questions to Ask Ayna, and the products you save. We use them to build your matches, explain why a product fits, and flag safety recalls on what you own — nothing else.
           </div>
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 12 }}>
             {['INTAKE ANSWERS', 'ASK AYNA', 'SAVED PRODUCTS'].map((t) => (
-              <div key={t} style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '.9px', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-text-muted)', borderRadius: 99, padding: '5px 9px' }}>{t}</div>
+              <div key={t} style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '.9px', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-text-muted)', borderRadius: 99, padding: '5px 9px' }}>{t}</div>
             ))}
           </div>
         </NumberedCard>
 
         <NumberedCard n="03" title="Who touches it">
-          <div style={{ fontSize: 13, lineHeight: 1.65, color: 'var(--ayna-text-muted)', marginTop: 11 }}>Five service providers, each doing exactly one job for us.</div>
+          <div style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', lineHeight: 1.65, color: 'var(--ayna-text-muted)', marginTop: 11 }}>Five service providers, each doing exactly one job for us.</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 9, marginTop: 13 }}>
             {HEALTH_DATA_PROCESSORS.map((p) => (
               <div key={p.name} style={{ display: 'flex', alignItems: 'center', gap: 11, background: 'var(--ayna-chip-bg)', borderRadius: 18, padding: '11px 13px' }}>
-                <div style={{ width: 34, height: 34, borderRadius: 12, flex: 'none', background: p.bg, color: p.fg, fontFamily: "'Playfair Display',serif", fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{p.initial}</div>
+                <div style={{ width: 34, height: 34, borderRadius: 12, flex: 'none', background: p.bg, color: p.fg, fontFamily: "'Playfair Display',serif", fontSize: 'calc(16px * var(--ayna-text-scale, 1))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{p.initial}</div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ayna-text)' }}>{p.name}</div>
-                  <div style={{ fontSize: 11.5, color: 'var(--ayna-text-muted)', lineHeight: 1.45, marginTop: 2 }}>{p.role}</div>
+                  <div style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', fontWeight: 600, color: 'var(--ayna-text)' }}>{p.name}</div>
+                  <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.45, marginTop: 2 }}>{p.role}</div>
                 </div>
               </div>
             ))}
           </div>
-          <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 11 }}>We do not sell your health data, and we do not share it for advertising.</div>
+          <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 11 }}>We do not sell your health data, and we do not share it for advertising.</div>
         </NumberedCard>
 
         <NumberedCard n="04" title="What you can ask for">
@@ -1728,29 +1737,29 @@ function ConsumerHealthDataPolicyScreen({ onBack }) {
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#3F6B4A" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 13l4 4L19 7" /></svg>
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ayna-text)' }}>{r.title}</div>
-                  <div style={{ fontSize: 11.5, color: 'var(--ayna-text-muted)', lineHeight: 1.5, marginTop: 2 }}>{r.how}</div>
+                  <div style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', fontWeight: 600, color: 'var(--ayna-text)' }}>{r.title}</div>
+                  <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.5, marginTop: 2 }}>{r.how}</div>
                 </div>
               </div>
             ))}
           </div>
-          <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 13 }}>We answer within 45 days, and never lock you out of ayna for asking.</div>
+          <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 13 }}>We answer within 45 days, and never lock you out of ayna for asking.</div>
         </NumberedCard>
 
         <div style={{ marginTop: 14, display: 'flex', alignItems: 'flex-start', gap: 12, background: '#EFF3EC', border: '1px solid #CFE0CE', borderRadius: 24, padding: '16px 18px' }}>
           <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#3F6B4A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ flex: 'none', marginTop: 1 }}><path d="M12 21s-7-5.1-7-10a7 7 0 1 1 14 0c0 4.9-7 10-7 10z" /><path d="M4 4l16 16" /></svg>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 13.5, fontWeight: 600, color: '#25382A' }}>No geofencing. Ever.</div>
-            <div style={{ fontSize: 12.5, color: '#42604A', lineHeight: 1.6, marginTop: 4 }}>We don't draw boundaries around clinics to collect your location, message you, or guess that you sought care.</div>
+            <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', fontWeight: 600, color: '#25382A' }}>No geofencing. Ever.</div>
+            <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: '#42604A', lineHeight: 1.6, marginTop: 4 }}>We don't draw boundaries around clinics to collect your location, message you, or guess that you sought care.</div>
           </div>
         </div>
 
         <div style={{ marginTop: 14, background: '#242A52', borderRadius: 24, padding: 19, color: '#F3EFE9' }}>
-          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 18 }}>Questions, or an appeal?</div>
-          <div style={{ fontSize: 12.5, lineHeight: 1.6, color: '#C7CADC', marginTop: 7 }}>If we deny a request, reply to our decision email and a person will look at it again within 45 days.</div>
+          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(18px * var(--ayna-text-scale, 1))' }}>Questions, or an appeal?</div>
+          <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: '#C7CADC', marginTop: 7 }}>If we deny a request, reply to our decision email and a person will look at it again within 45 days.</div>
           <a
             href={DELETE_ACCOUNT_MAILTO.replace('subject=Account%20Deletion%20Request', 'subject=Consumer%20Health%20Data%20Question')}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginTop: 14, background: '#FFFCF9', color: '#242A52', borderRadius: 99, padding: '11px 17px', fontSize: 12.5, fontWeight: 600, textDecoration: 'none' }}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginTop: 14, background: '#FFFCF9', color: '#242A52', borderRadius: 99, padding: '11px 17px', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: 600, textDecoration: 'none' }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#242A52" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="18" height="14" rx="3" /><path d="M4 7l8 6 8-6" /></svg>
             puloma@aynahealth.co
@@ -1811,13 +1820,13 @@ function OpenSourceLicensesScreen({ onBack }) {
           <div style={{ position: 'absolute', right: -34, top: -30, width: 118, height: 118, borderRadius: 99, background: 'rgba(255,255,255,.42)' }} />
           <div style={{ position: 'absolute', right: 26, bottom: -42, width: 74, height: 74, borderRadius: 99, background: 'rgba(255,255,255,.3)' }} />
           <div style={{ position: 'relative', display: 'flex', alignItems: 'baseline', gap: 9 }}>
-            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 52, lineHeight: .9, color: '#7A4410' }}>{OPEN_SOURCE_PACKAGES.length}</div>
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.4px', textTransform: 'uppercase', color: '#9A5B14', paddingBottom: 5 }}>packages<br />inside ayna</div>
+            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(52px * var(--ayna-text-scale, 1))', lineHeight: .9, color: '#7A4410' }}>{OPEN_SOURCE_PACKAGES.length}</div>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.4px', textTransform: 'uppercase', color: '#9A5B14', paddingBottom: 5 }}>packages<br />inside ayna</div>
           </div>
-          <div style={{ position: 'relative', fontSize: 13, lineHeight: 1.6, color: '#6B4413', marginTop: 12, maxWidth: 250 }}>These are the ones actually bundled into what runs on your device — not build tooling.</div>
+          <div style={{ position: 'relative', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: '#6B4413', marginTop: 12, maxWidth: 250 }}>These are the ones actually bundled into what runs on your device — not build tooling.</div>
           <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: 7, marginTop: 14, background: '#FFFCF9', borderRadius: 99, padding: '7px 13px 7px 10px', boxShadow: '0 1px 4px rgba(122,68,16,.12)' }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="#E8843C" style={{ flex: 'none' }}><path d="M12 21s-7.5-4.7-9.5-9A5.2 5.2 0 0 1 12 6.6 5.2 5.2 0 0 1 21.5 12c-2 4.3-9.5 9-9.5 9z" /></svg>
-            <div style={{ fontSize: 12, color: '#7A4410', fontWeight: 500 }}>Thank you to everyone who maintains them</div>
+            <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: '#7A4410', fontWeight: 500 }}>Thank you to everyone who maintains them</div>
           </div>
         </div>
 
@@ -1826,15 +1835,15 @@ function OpenSourceLicensesScreen({ onBack }) {
           return (
             <div key={license} style={{ margin: '22px 0 0' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '0 4px 9px' }}>
-                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.1px', textTransform: 'uppercase', background: style.tint, color: style.ink, borderRadius: 99, padding: '5px 10px' }}>{license}</div>
-                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, color: style.ink, background: '#FFFCF9', border: `1px solid ${style.tint}`, borderRadius: 99, minWidth: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 6px' }}>{packages.length}</div>
+                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.1px', textTransform: 'uppercase', background: style.tint, color: style.ink, borderRadius: 99, padding: '5px 10px' }}>{license}</div>
+                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', color: style.ink, background: '#FFFCF9', border: `1px solid ${style.tint}`, borderRadius: 99, minWidth: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 6px' }}>{packages.length}</div>
                 <div style={{ flex: 1, height: 1, background: 'var(--ayna-border)' }} />
               </div>
               <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 24, padding: '6px 8px', boxShadow: '0 2px 10px rgba(41,37,36,.04)' }}>
                 {packages.map((pkg, i) => (
                   <div key={pkg.name} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 10px', borderRadius: 14, boxShadow: i ? '0 -1px 0 var(--ayna-border)' : 'none' }}>
-                    <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 12.5, color: 'var(--ayna-text)', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{pkg.name}</div>
-                    <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, color: style.ink, background: style.tint, borderRadius: 99, padding: '4px 8px', flex: 'none' }}>{pkg.version}</div>
+                    <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{pkg.name}</div>
+                    <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', color: style.ink, background: style.tint, borderRadius: 99, padding: '4px 8px', flex: 'none' }}>{pkg.version}</div>
                   </div>
                 ))}
               </div>
@@ -1843,10 +1852,10 @@ function OpenSourceLicensesScreen({ onBack }) {
         })}
 
         <div style={{ marginTop: 24, background: 'var(--ayna-surface)', border: '1px dashed var(--ayna-border)', borderRadius: 24, padding: '16px 18px', textAlign: 'center' }}>
-          <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.6 }}>Full licence texts ship with every build.</div>
+          <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.6 }}>Full licence texts ship with every build.</div>
           <div
             onClick={() => downloadText(buildLicensesText(grouped), 'ayna-open-source-licences.txt')}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 7, marginTop: 10, background: '#242A52', color: '#FFFCF9', borderRadius: 99, padding: '10px 17px', fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 7, marginTop: 10, background: '#242A52', color: '#FFFCF9', borderRadius: 99, padding: '10px 17px', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: 600, cursor: 'pointer' }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFCF9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v12" /><path d="M7 11l5 5 5-5" /><path d="M4 21h16" /></svg>
             Download licences.txt
@@ -1883,10 +1892,10 @@ function TypefaceRow({ face, open, onToggle }) {
   return (
     <div style={{ marginTop: 14, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 24, overflow: 'hidden', boxShadow: '0 2px 10px rgba(41,37,36,.04)' }}>
       <div onClick={onToggle} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 18px', cursor: 'pointer' }}>
-        <div style={{ width: 44, height: 44, borderRadius: 14, flex: 'none', background: '#FDF0DC', color: '#9A5B14', fontFamily: face.font, fontSize: 19, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Ag</div>
+        <div style={{ width: 44, height: 44, borderRadius: 14, flex: 'none', background: '#FDF0DC', color: '#9A5B14', fontFamily: face.font, fontSize: 'calc(19px * var(--ayna-text-scale, 1))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Ag</div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontWeight: 600, fontSize: 14.5, color: 'var(--ayna-text)' }}>{face.name}</div>
-          <div style={{ fontSize: 11.5, color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>{face.role}</div>
+          <div style={{ fontWeight: 600, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>{face.name}</div>
+          <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>{face.role}</div>
         </div>
         <div style={{ flex: 'none', transition: 'transform .2s ease', transform: `rotate(${open ? 180 : 0}deg)` }}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A8A29E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
@@ -1899,13 +1908,13 @@ function TypefaceRow({ face, open, onToggle }) {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 14 }}>
             {[['Designer', face.designer], ['Licence', 'SIL Open Font Licence 1.1'], ['Weights', face.weights]].map(([label, value]) => (
-              <div key={label} style={{ display: 'flex', gap: 10, fontSize: 12 }}>
-                <div style={{ width: 64, flex: 'none', fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)', paddingTop: 2 }}>{label}</div>
+              <div key={label} style={{ display: 'flex', gap: 10, fontSize: 'calc(12px * var(--ayna-text-scale, 1))' }}>
+                <div style={{ width: 64, flex: 'none', fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)', paddingTop: 2 }}>{label}</div>
                 <div style={{ flex: 1, color: 'var(--ayna-text-muted)' }}>{value}</div>
               </div>
             ))}
           </div>
-          <div onClick={() => window.open(SIL_OFL_URL, '_blank', 'noopener,noreferrer')} style={{ fontSize: 12.5, color: 'var(--ayna-heading)', fontWeight: 600, marginTop: 14, cursor: 'pointer' }}>
+          <div onClick={() => window.open(SIL_OFL_URL, '_blank', 'noopener,noreferrer')} style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', fontWeight: 600, marginTop: 14, cursor: 'pointer' }}>
             Read the licence
           </div>
         </div>
@@ -1922,8 +1931,8 @@ function TypefacesScreen({ onBack }) {
       <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '6px 20px 30px' }}>
         <div style={{ position: 'relative', overflow: 'hidden', background: 'linear-gradient(150deg,#FFF4E2,#FFE7C6 55%,#FFDCA8)', border: '1px solid #F0D9B4', borderRadius: 26, padding: 20, boxShadow: '0 3px 14px rgba(192,118,31,.09)' }}>
           <div style={{ position: 'absolute', right: -30, top: -36, width: 116, height: 116, borderRadius: 99, background: 'rgba(255,255,255,.4)' }} />
-          <div style={{ position: 'relative', fontFamily: "'Playfair Display',serif", fontSize: 56, lineHeight: .95, color: '#7A4410' }}>Aa</div>
-          <div style={{ position: 'relative', fontSize: 13, lineHeight: 1.6, color: '#6B4413', marginTop: 11, maxWidth: 250 }}>Three faces, all openly licensed under the SIL Open Font Licence.</div>
+          <div style={{ position: 'relative', fontFamily: "'Playfair Display',serif", fontSize: 'calc(56px * var(--ayna-text-scale, 1))', lineHeight: .95, color: '#7A4410' }}>Aa</div>
+          <div style={{ position: 'relative', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: '#6B4413', marginTop: 11, maxWidth: 250 }}>Three faces, all openly licensed under the SIL Open Font Licence.</div>
         </div>
 
         {TYPEFACES.map((face) => (
@@ -1936,8 +1945,8 @@ function TypefacesScreen({ onBack }) {
         ))}
 
         <div style={{ marginTop: 16, background: 'var(--ayna-surface)', border: '1px dashed var(--ayna-border)', borderRadius: 24, padding: '16px 18px' }}>
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.3px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 7 }}>Loaded via Google Fonts</div>
-          <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.6 }}>
+          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 7 }}>Loaded via Google Fonts</div>
+          <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.6 }}>
             Served from Google's font CDN over HTTPS — the standard way Google Fonts are delivered, not bundled with the app itself.
           </div>
         </div>
@@ -1987,10 +1996,10 @@ function ResearchSourceRow({ source, open, onToggle }) {
   return (
     <div style={{ marginTop: 14, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 24, overflow: 'hidden', boxShadow: '0 2px 10px rgba(41,37,36,.04)' }}>
       <div onClick={onToggle} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 18px', cursor: 'pointer' }}>
-        <div style={{ width: 30, height: 30, borderRadius: 99, flex: 'none', background: open ? '#FDF0DC' : 'var(--ayna-chip-bg)', color: open ? '#9A5B14' : 'var(--ayna-text-faint)', fontFamily: "'DM Mono',monospace", fontSize: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background .2s ease' }}>{source.num}</div>
+        <div style={{ width: 30, height: 30, borderRadius: 99, flex: 'none', background: open ? '#FDF0DC' : 'var(--ayna-chip-bg)', color: open ? '#9A5B14' : 'var(--ayna-text-faint)', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background .2s ease' }}>{source.num}</div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontWeight: 600, fontSize: 14.5, color: 'var(--ayna-text)' }}>{source.title}</div>
-          <div style={{ fontSize: 11.5, color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>{source.blurb}</div>
+          <div style={{ fontWeight: 600, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>{source.title}</div>
+          <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>{source.blurb}</div>
         </div>
         <div style={{ flex: 'none', transition: 'transform .2s ease', transform: `rotate(${open ? 180 : 0}deg)` }}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A8A29E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
@@ -1998,13 +2007,13 @@ function ResearchSourceRow({ source, open, onToggle }) {
       </div>
       {open && (
         <div style={{ padding: '2px 18px 18px' }}>
-          <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', lineHeight: 1.65 }}>{source.body}</div>
+          <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.65 }}>{source.body}</div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 12 }}>
             {source.tags.map((t) => (
-              <div key={t} style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '.9px', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-text-muted)', borderRadius: 99, padding: '5px 9px' }}>{t}</div>
+              <div key={t} style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '.9px', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-text-muted)', borderRadius: 99, padding: '5px 9px' }}>{t}</div>
             ))}
           </div>
-          <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 11, borderTop: '1px solid var(--ayna-border)', paddingTop: 11 }}>{source.note}</div>
+          <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 11, borderTop: '1px solid var(--ayna-border)', paddingTop: 11 }}>{source.note}</div>
         </div>
       )}
     </div>
@@ -2022,8 +2031,8 @@ function ResearchSourcesScreen({ onBack }) {
           <div style={{ position: 'relative', width: 38, height: 38, borderRadius: 99, background: '#FFFCF9', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 1px 5px rgba(63,107,74,.14)' }}>
             <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#3F6B4A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H19v15H6.5A2.5 2.5 0 0 0 4 20.5z" /><path d="M8 8h7" /><path d="M8 12h5" /></svg>
           </div>
-          <div style={{ position: 'relative', fontFamily: "'Playfair Display',serif", fontSize: 23, lineHeight: 1.2, marginTop: 13, color: '#25382A' }}>Where our answers come from.</div>
-          <div style={{ position: 'relative', fontSize: 12.5, lineHeight: 1.6, color: '#42604A', marginTop: 8 }}>Every match, warning and explanation traces back to something on this page.</div>
+          <div style={{ position: 'relative', fontFamily: "'Playfair Display',serif", fontSize: 'calc(23px * var(--ayna-text-scale, 1))', lineHeight: 1.2, marginTop: 13, color: '#25382A' }}>Where our answers come from.</div>
+          <div style={{ position: 'relative', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: '#42604A', marginTop: 8 }}>Every match, warning and explanation traces back to something on this page.</div>
         </div>
 
         {RESEARCH_SOURCES.map((source) => (
@@ -2038,12 +2047,12 @@ function ResearchSourcesScreen({ onBack }) {
         <div style={{ marginTop: 14, display: 'flex', alignItems: 'flex-start', gap: 12, background: '#F7EFE7', border: '1px solid #EBD9C6', borderRadius: 24, padding: '16px 18px' }}>
           <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#9A5B14" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" style={{ flex: 'none', marginTop: 1 }}><circle cx="12" cy="12" r="9" /><path d="M12 11v5" /><path d="M12 7.6v.1" /></svg>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 13.5, fontWeight: 600, color: '#6B4413' }}>Not a substitute for medical advice</div>
-            <div style={{ fontSize: 12.5, color: '#7A5A31', lineHeight: 1.6, marginTop: 4 }}>Ayna is a discovery and education tool. Nothing here diagnoses or treats a condition — talk to your clinician about anything that worries you.</div>
+            <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', fontWeight: 600, color: '#6B4413' }}>Not a substitute for medical advice</div>
+            <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: '#7A5A31', lineHeight: 1.6, marginTop: 4 }}>Ayna is a discovery and education tool. Nothing here diagnoses or treats a condition — talk to your clinician about anything that worries you.</div>
           </div>
         </div>
 
-        <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 14, padding: '0 4px', textAlign: 'center' }}>
+        <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 14, padding: '0 4px', textAlign: 'center' }}>
           Spotted something out of date? <a href={DELETE_ACCOUNT_MAILTO.replace('subject=Account%20Deletion%20Request', 'subject=Research%20source%20question')}>Tell us</a> and we'll check it.
         </div>
       </div>
@@ -2084,12 +2093,12 @@ function DataSection({ title, rows }) {
   if (!visibleRows.length) return null;
   return (
     <div style={{ marginBottom: 22 }}>
-      <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 11 }}>{title}</div>
+      <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 11 }}>{title}</div>
       <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
         {visibleRows.map(([key, value], i) => (
           <div key={key} style={{ display: 'flex', gap: 14, padding: '13px 0', borderTop: i === 0 ? 'none' : '1px solid var(--ayna-border)' }}>
-            <div style={{ flex: 'none', width: 120, fontSize: 12.5, color: 'var(--ayna-text-muted)' }}>{humanizeKey(key)}</div>
-            <div style={{ flex: 1, minWidth: 0, fontSize: 13, color: 'var(--ayna-text)', lineHeight: 1.5, wordBreak: 'break-word' }}>{formatValue(value)}</div>
+            <div style={{ flex: 'none', width: 120, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)' }}>{humanizeKey(key)}</div>
+            <div style={{ flex: 1, minWidth: 0, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)', lineHeight: 1.5, wordBreak: 'break-word' }}>{formatValue(value)}</div>
           </div>
         ))}
       </div>
@@ -2154,34 +2163,34 @@ function ManageDataScreen({ onBack }) {
     <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
       <BackHeader title="Manage my data" onBack={onBack} />
       <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '8px 20px 30px' }}>
-        <div style={{ fontSize: 13.5, color: 'var(--ayna-text-muted)', lineHeight: 1.6, marginBottom: 20 }}>
+        <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.6, marginBottom: 20 }}>
           Every field below is read live from your account — nothing here is cached or approximate.
         </div>
 
         {loadState === 'loading' && (
-          <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontSize: 13 }}>Loading your data…</div>
+          <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>Loading your data…</div>
         )}
 
         {loadState === 'signed_out' && (
-          <div style={{ border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: 18, fontSize: 13, color: 'var(--ayna-text-muted)', lineHeight: 1.55, textAlign: 'center' }}>
+          <div style={{ border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: 18, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.55, textAlign: 'center' }}>
             Sign in to see and download your data.
           </div>
         )}
 
         {loadState === 'error' && (
           <div style={{ border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: 18, textAlign: 'center' }}>
-            <div style={{ fontSize: 13, color: 'var(--ayna-text-muted)', lineHeight: 1.55, marginBottom: 12 }}>Couldn't load your data.</div>
-            <div onClick={retry} style={{ display: 'inline-block', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 12.5, padding: '9px 16px', borderRadius: 99, cursor: 'pointer' }}>Try again</div>
+            <div style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.55, marginBottom: 12 }}>Couldn't load your data.</div>
+            <div onClick={retry} style={{ display: 'inline-block', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', padding: '9px 16px', borderRadius: 99, cursor: 'pointer' }}>Try again</div>
           </div>
         )}
 
         {loadState === 'ready' && data && (
           <>
             <div style={{ display: 'flex', gap: 8, marginBottom: 22 }}>
-              <div onClick={handleDownload} style={{ flex: 1, textAlign: 'center', padding: '13px 0', borderRadius: 99, background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 13.5, cursor: 'pointer' }}>
+              <div onClick={handleDownload} style={{ flex: 1, textAlign: 'center', padding: '13px 0', borderRadius: 99, background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', cursor: 'pointer' }}>
                 Download as JSON
               </div>
-              <div onClick={handleCopy} style={{ flex: 1, textAlign: 'center', padding: '13px 0', borderRadius: 99, border: '1px solid var(--ayna-border)', color: 'var(--ayna-heading)', fontWeight: 600, fontSize: 13.5, cursor: 'pointer' }}>
+              <div onClick={handleCopy} style={{ flex: 1, textAlign: 'center', padding: '13px 0', borderRadius: 99, border: '1px solid var(--ayna-border)', color: 'var(--ayna-heading)', fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', cursor: 'pointer' }}>
                 {copied ? 'Copied!' : 'Copy raw data'}
               </div>
             </div>
@@ -2208,7 +2217,7 @@ function ManageDataScreen({ onBack }) {
             />
 
             {!hasAnyData && (
-              <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', lineHeight: 1.55, padding: '0 4px' }}>
+              <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.55, padding: '0 4px' }}>
                 Nothing else on file yet — this fills in as you use ayna.
               </div>
             )}
@@ -2258,12 +2267,12 @@ function AccountRow({ title, sub, value, badge, badgeTone = 'neutral', onClick, 
       }}
     >
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontWeight: 500, fontSize: 14.5, color: 'var(--ayna-text)' }}>{title}</div>
-        {sub && <div style={{ fontSize: 12, color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>{sub}</div>}
+        <div style={{ fontWeight: 500, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>{title}</div>
+        {sub && <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>{sub}</div>}
       </div>
-      {value && <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', flex: 'none' }}>{value}</div>}
+      {value && <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', flex: 'none' }}>{value}</div>}
       {badge && (
-        <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 8.5, letterSpacing: '.9px', color: tone.color, background: tone.background, borderRadius: 99, padding: '4px 8px', flex: 'none' }}>
+        <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(8.5px * var(--ayna-text-scale, 1))', letterSpacing: '.9px', color: tone.color, background: tone.background, borderRadius: 99, padding: '4px 8px', flex: 'none' }}>
           {badge}
         </div>
       )}
@@ -2351,7 +2360,7 @@ function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers,
       <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
         <BackHeader title="Account information" onBack={onBack} />
         <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '8px 20px 30px' }}>
-          <div style={{ border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: 18, fontSize: 13, color: 'var(--ayna-text-muted)', lineHeight: 1.55, textAlign: 'center' }}>
+          <div style={{ border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: 18, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.55, textAlign: 'center' }}>
             Sign in to see your account details.
           </div>
         </div>
@@ -2372,16 +2381,16 @@ function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers,
       <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '8px 20px 30px' }}>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 14, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '16px 18px' }}>
-          <div style={{ width: 52, height: 52, borderRadius: 99, flex: 'none', background: 'linear-gradient(140deg,#FFDCA8,#FFC774 48%,#E8843C)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Playfair Display',serif", fontSize: 20, color: '#3A2410' }}>{initial}</div>
+          <div style={{ width: 52, height: 52, borderRadius: 99, flex: 'none', background: 'linear-gradient(140deg,#FFDCA8,#FFC774 48%,#E8843C)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Playfair Display',serif", fontSize: 'calc(20px * var(--ayna-text-scale, 1))', color: '#3A2410' }}>{initial}</div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 20, lineHeight: 1.2, color: 'var(--ayna-heading)' }}>{name || 'You'}</div>
+            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(20px * var(--ayna-text-scale, 1))', lineHeight: 1.2, color: 'var(--ayna-heading)' }}>{name || 'You'}</div>
             {authUser.created_at && (
-              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-text-muted)', marginTop: 4 }}>{formatMemberSince(authUser.created_at)}</div>
+              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-text-muted)', marginTop: 4 }}>{formatMemberSince(authUser.created_at)}</div>
             )}
           </div>
         </div>
 
-        <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Login &amp; contact</div>
+        <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Login &amp; contact</div>
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
           <AccountRow
             borderTop={false}
@@ -2404,34 +2413,34 @@ function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers,
             <AccountRow title="Google" sub={`Connected · ${googleIdentity.identity_data?.email || authUser.email || ''}`} />
           )}
         </div>
-        <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', lineHeight: 1.5, marginTop: 9, padding: '0 4px' }}>
+        <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.5, marginTop: 9, padding: '0 4px' }}>
           Phone verification unlocks text alerts as a delivery channel — your email{googleIdentity ? ' or Google login' : ''} is what signs you in either way.
         </div>
 
-        <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>About you</div>
+        <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>About you</div>
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: editingName ? '16px 18px' : '0 18px' }}>
           {editingName ? (
             <div>
-              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)', marginBottom: 7 }}>Name</div>
+              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)', marginBottom: 7 }}>Name</div>
               <input
                 autoFocus
                 value={nameDraft}
                 onChange={(e) => setNameDraft(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter' && !nameSaving) saveName(); }}
                 placeholder="Your first name"
-                style={{ width: '100%', boxSizing: 'border-box', padding: '12px 14px', borderRadius: 12, border: '1px solid var(--ayna-border)', fontSize: 14.5, color: 'var(--ayna-text)', background: 'var(--ayna-bg)', outline: 'none' }}
+                style={{ width: '100%', boxSizing: 'border-box', padding: '12px 14px', borderRadius: 12, border: '1px solid var(--ayna-border)', fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)', background: 'var(--ayna-bg)', outline: 'none' }}
               />
-              {nameError && <div style={{ color: '#B4402A', fontSize: 12, marginTop: 8 }}>{nameError}</div>}
+              {nameError && <div style={{ color: '#B4402A', fontSize: 'calc(12px * var(--ayna-text-scale, 1))', marginTop: 8 }}>{nameError}</div>}
               <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
                 <div
                   onClick={nameSaving ? undefined : saveName}
-                  style={{ flex: 1, textAlign: 'center', padding: '10px 0', borderRadius: 99, background: nameSaving ? 'var(--ayna-border)' : 'var(--ayna-cta-bg)', color: nameSaving ? 'var(--ayna-text-muted)' : 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 13, cursor: nameSaving ? 'not-allowed' : 'pointer' }}
+                  style={{ flex: 1, textAlign: 'center', padding: '10px 0', borderRadius: 99, background: nameSaving ? 'var(--ayna-border)' : 'var(--ayna-cta-bg)', color: nameSaving ? 'var(--ayna-text-muted)' : 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', cursor: nameSaving ? 'not-allowed' : 'pointer' }}
                 >
                   {nameSaving ? 'Saving…' : 'Save'}
                 </div>
                 <div
                   onClick={() => { setEditingName(false); setNameError(''); }}
-                  style={{ flex: 1, textAlign: 'center', padding: '10px 0', borderRadius: 99, border: '1px solid var(--ayna-border)', color: 'var(--ayna-text-muted)', fontWeight: 600, fontSize: 13, cursor: 'pointer' }}
+                  style={{ flex: 1, textAlign: 'center', padding: '10px 0', borderRadius: 99, border: '1px solid var(--ayna-border)', color: 'var(--ayna-text-muted)', fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', cursor: 'pointer' }}
                 >
                   Cancel
                 </div>
@@ -2446,27 +2455,27 @@ function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers,
             />
           )}
         </div>
-        <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', lineHeight: 1.5, marginTop: 9, padding: '0 4px' }}>
+        <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.5, marginTop: 9, padding: '0 4px' }}>
           {authUser?.identities?.some((i) => i.provider === 'google') ? "Google didn't share a name with us, or you'd like to change it — set it here." : "What ayna calls you, everywhere in the app."}
         </div>
 
-        <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>From your intake</div>
+        <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>From your intake</div>
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
           <AccountRow borderTop={false} title="Age" value={intake?.age ? String(intake.age) : 'Not set'} onClick={onEditProfile} />
           <AccountRow title="Zip code" value={intake?.zipcode || 'Not set'} onClick={onEditProfile} />
           <AccountRow title="FSA / HSA account" sub="We'll show the lower price you'd pay." value={fsaHsaLabel || 'Not set'} onClick={onEditProfile} />
         </div>
-        <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', lineHeight: 1.5, marginTop: 9, padding: '0 4px' }}>
+        <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.5, marginTop: 9, padding: '0 4px' }}>
           Tap any of these to update your health profile.
         </div>
 
-        <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Security</div>
+        <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Security</div>
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
           <AccountRow borderTop={false} dimmed title="Where you're signed in" sub="Session history isn't tracked yet." badge="COMING SOON" />
           <AccountRow dimmed title="Two-step verification" sub="Arrives with phone verification." badge="COMING SOON" />
         </div>
 
-        <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Your data</div>
+        <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Your data</div>
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
           <AccountRow borderTop={false} title="Manage & download my data" sub="Account details, intake answers, saved products." onClick={onOpenManageData} />
           <a
@@ -2474,14 +2483,14 @@ function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers,
             style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 0', borderTop: '1px solid var(--ayna-border)', textDecoration: 'none' }}
           >
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 500, fontSize: 14.5, color: '#B4402A' }}>Delete account</div>
-              <div style={{ fontSize: 12, color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>Removes your profile and health answers.</div>
+              <div style={{ fontWeight: 500, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', color: '#B4402A' }}>Delete account</div>
+              <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>Removes your profile and health answers.</div>
             </div>
             <ExternalLinkIcon />
           </a>
         </div>
 
-        <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 14, padding: '0 4px' }}>
+        <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 14, padding: '0 4px' }}>
           Questions about your account? Email <a href="mailto:puloma@aynahealth.co" style={{ color: 'var(--ayna-brown)' }}>puloma@aynahealth.co</a>.
         </div>
       </div>
@@ -2587,8 +2596,8 @@ function PasswordScreen({ onBack, authUser }) {
       <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
         <BackHeader title="Password" onBack={onBack} />
         <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '40px 20px', textAlign: 'center' }}>
-          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 22, marginBottom: 10, color: 'var(--ayna-heading)' }}>Password updated.</div>
-          <div style={{ fontSize: 13.5, color: 'var(--ayna-text-muted)', lineHeight: 1.55 }}>You're signed in on this device with the new password.</div>
+          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(22px * var(--ayna-text-scale, 1))', marginBottom: 10, color: 'var(--ayna-heading)' }}>Password updated.</div>
+          <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.55 }}>You're signed in on this device with the new password.</div>
         </div>
       </div>
     );
@@ -2598,36 +2607,36 @@ function PasswordScreen({ onBack, authUser }) {
     <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
       <BackHeader title="Password" onBack={onBack} />
       <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '0 20px 30px' }}>
-        <div style={{ fontSize: 13.5, lineHeight: 1.6, color: 'var(--ayna-text-muted)', marginBottom: 20 }}>
+        <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: 'var(--ayna-text-muted)', marginBottom: 20 }}>
           {isRecovery ? "You're resetting your password from the link we emailed you." : 'Enter your current password, then choose a new one.'}
         </div>
 
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: 18, display: 'flex', flexDirection: 'column', gap: 15 }}>
           {!isRecovery && (
             <div>
-              <div style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--ayna-text-muted)', marginBottom: 7 }}>Current password</div>
+              <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: 600, color: 'var(--ayna-text-muted)', marginBottom: 7 }}>Current password</div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, border: '1px solid var(--ayna-border)', borderRadius: 12, background: 'var(--ayna-bg-alt)', padding: '13px 14px' }}>
                 <input
                   type={showCurrent ? 'text' : 'password'}
                   value={current}
                   onChange={(e) => setCurrent(e.target.value)}
-                  style={{ flex: 1, minWidth: 0, border: 'none', outline: 'none', background: 'none', fontSize: 15, color: 'var(--ayna-text)' }}
+                  style={{ flex: 1, minWidth: 0, border: 'none', outline: 'none', background: 'none', fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}
                 />
-                <div onClick={() => setShowCurrent((v) => !v)} style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--ayna-brown)', cursor: 'pointer', flex: 'none' }}>{showCurrent ? 'Hide' : 'Show'}</div>
+                <div onClick={() => setShowCurrent((v) => !v)} style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: 600, color: 'var(--ayna-brown)', cursor: 'pointer', flex: 'none' }}>{showCurrent ? 'Hide' : 'Show'}</div>
               </div>
             </div>
           )}
           <div>
-            <div style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--ayna-text-muted)', marginBottom: 7 }}>New password</div>
+            <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: 600, color: 'var(--ayna-text-muted)', marginBottom: 7 }}>New password</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, border: '1px solid var(--ayna-border)', borderRadius: 12, background: 'var(--ayna-bg-alt)', padding: '13px 14px' }}>
               <input
                 type={showNext ? 'text' : 'password'}
                 value={next}
                 onChange={(e) => setNext(e.target.value)}
                 placeholder="At least 8 characters"
-                style={{ flex: 1, minWidth: 0, border: 'none', outline: 'none', background: 'none', fontSize: 15, color: 'var(--ayna-text)' }}
+                style={{ flex: 1, minWidth: 0, border: 'none', outline: 'none', background: 'none', fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}
               />
-              <div onClick={() => setShowNext((v) => !v)} style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--ayna-brown)', cursor: 'pointer', flex: 'none' }}>{showNext ? 'Hide' : 'Show'}</div>
+              <div onClick={() => setShowNext((v) => !v)} style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: 600, color: 'var(--ayna-brown)', cursor: 'pointer', flex: 'none' }}>{showNext ? 'Hide' : 'Show'}</div>
             </div>
             {next.length > 0 && (
               <>
@@ -2636,26 +2645,26 @@ function PasswordScreen({ onBack, authUser }) {
                     <div key={i} style={{ flex: 1, height: 4, borderRadius: 99, background: strength >= i ? '#C0761F' : 'var(--ayna-border)' }} />
                   ))}
                 </div>
-                <div style={{ fontSize: 11.5, color: 'var(--ayna-text-faint)', marginTop: 7 }}>
+                <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', marginTop: 7 }}>
                   {strength < 2 ? 'Add a number or symbol to make it stronger.' : strength < 3 ? 'Longer, with a number and a symbol, is stronger still.' : 'Strong password.'}
                 </div>
               </>
             )}
           </div>
           <div>
-            <div style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--ayna-text-muted)', marginBottom: 7 }}>Confirm new password</div>
+            <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: 600, color: 'var(--ayna-text-muted)', marginBottom: 7 }}>Confirm new password</div>
             <input
               type={showNext ? 'text' : 'password'}
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
               placeholder="Re-enter it"
-              style={{ width: '100%', boxSizing: 'border-box', border: '1px solid var(--ayna-border)', borderRadius: 12, background: 'var(--ayna-bg-alt)', padding: '13px 14px', fontSize: 15, color: 'var(--ayna-text)', outline: 'none' }}
+              style={{ width: '100%', boxSizing: 'border-box', border: '1px solid var(--ayna-border)', borderRadius: 12, background: 'var(--ayna-bg-alt)', padding: '13px 14px', fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)', outline: 'none' }}
             />
           </div>
-          {error && <div style={{ color: '#B4402A', fontSize: 12.5 }}>{error}</div>}
+          {error && <div style={{ color: '#B4402A', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))' }}>{error}</div>}
           <div
             onClick={handleSubmit}
-            style={{ background: canSubmit ? 'var(--ayna-cta-bg)' : 'var(--ayna-border)', color: canSubmit ? 'var(--ayna-cta-text)' : 'var(--ayna-text-muted)', textAlign: 'center', padding: 15, borderRadius: 99, fontWeight: 600, fontSize: 14.5, cursor: canSubmit ? 'pointer' : 'not-allowed' }}
+            style={{ background: canSubmit ? 'var(--ayna-cta-bg)' : 'var(--ayna-border)', color: canSubmit ? 'var(--ayna-cta-text)' : 'var(--ayna-text-muted)', textAlign: 'center', padding: 15, borderRadius: 99, fontWeight: 600, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', cursor: canSubmit ? 'pointer' : 'not-allowed' }}
           >
             {saving ? 'Updating…' : 'Update password'}
           </div>
@@ -2663,9 +2672,9 @@ function PasswordScreen({ onBack, authUser }) {
 
         {!isRecovery && (
           resetSent ? (
-            <div style={{ textAlign: 'center', marginTop: 18, fontSize: 13, color: 'var(--ayna-text-muted)' }}>Check your email for a reset link.</div>
+            <div style={{ textAlign: 'center', marginTop: 18, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)' }}>Check your email for a reset link.</div>
           ) : (
-            <div onClick={handleForgot} style={{ textAlign: 'center', marginTop: 18, fontSize: 13, color: 'var(--ayna-brown)', fontWeight: 600, cursor: 'pointer' }}>Forgot your current password?</div>
+            <div onClick={handleForgot} style={{ textAlign: 'center', marginTop: 18, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-brown)', fontWeight: 600, cursor: 'pointer' }}>Forgot your current password?</div>
           )
         )}
       </div>
@@ -2689,7 +2698,7 @@ function PlainBackLink({ onBack, color = 'var(--ayna-text-muted)' }) {
       onClick={onBack}
       role="button"
       aria-label="Back"
-      style={{ display: 'flex', alignItems: 'center', gap: 7, color, fontSize: 14, fontWeight: 500, cursor: 'pointer', padding: 'max(20px, env(safe-area-inset-top)) 20px 0' }}
+      style={{ display: 'flex', alignItems: 'center', gap: 7, color, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', fontWeight: 500, cursor: 'pointer', padding: 'max(20px, env(safe-area-inset-top)) 20px 0' }}
     >
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ stroke: color }}>
         <path d="M15 18l-6-6 6-6" />
@@ -2719,11 +2728,11 @@ function NarrowingFunnel() {
           const widthPct = Math.max(14, (Math.sqrt(stage.value) / maxWidth) * 100);
           return (
             <div key={stage.label} style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
-              <div style={{ width: `${widthPct}%`, height: 44, borderRadius: 11, background: stage.fill, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'DM Mono',monospace", fontSize: 15, color: '#FFFCF9' }}>
+              <div style={{ width: `${widthPct}%`, height: 44, borderRadius: 11, background: stage.fill, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'DM Mono',monospace", fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: '#FFFCF9' }}>
                 {stage.value.toLocaleString()}
               </div>
-              <div style={{ fontSize: 11.5, color: 'var(--ayna-text-muted)', textAlign: 'center', lineHeight: 1.4 }}>{stage.label}</div>
-              {i < NARROWING_STAGES.length - 1 && <div style={{ color: 'var(--ayna-text-faint)', fontSize: 14, lineHeight: 1 }}>↓</div>}
+              <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', textAlign: 'center', lineHeight: 1.4 }}>{stage.label}</div>
+              {i < NARROWING_STAGES.length - 1 && <div style={{ color: 'var(--ayna-text-faint)', fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1 }}>↓</div>}
             </div>
           );
         })}
@@ -2736,19 +2745,19 @@ function HowItWorksScreen({ onBack }) {
   const steps = [
     {
       n: '01', title: 'You tell us', body: 'Stage of life, goals, sensitivities, city.',
-      content: <div style={{ marginTop: 14, background: 'var(--ayna-chip-bg)', borderRadius: 13, padding: '13px 14px', fontSize: 12.5, color: 'var(--ayna-text)' }}>Postpartum · 8 weeks · sensitive skin · NYC</div>,
+      content: <div style={{ marginTop: 14, background: 'var(--ayna-chip-bg)', borderRadius: 13, padding: '13px 14px', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Postpartum · 8 weeks · sensitive skin · NYC</div>,
     },
     {
       n: '02', title: 'We scan the market', body: 'Everything pulled in, then cut down.',
       content: (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 14 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', background: 'var(--ayna-chip-bg)', borderRadius: 13, padding: '13px 14px' }}>
-            <div style={{ fontSize: 12.5, color: 'var(--ayna-text)' }}>Pulled in</div>
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 13.5, color: 'var(--ayna-navy)' }}>3,140</div>
+            <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Pulled in</div>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-navy)' }}>3,140</div>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', background: 'var(--ayna-chip-bg)', borderRadius: 13, padding: '13px 14px' }}>
-            <div style={{ fontSize: 12.5, color: 'var(--ayna-text)' }}>Relevant to you</div>
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 13.5, color: '#C0761F' }}>212</div>
+            <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Relevant to you</div>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: '#C0761F' }}>212</div>
           </div>
         </div>
       ),
@@ -2758,9 +2767,9 @@ function HowItWorksScreen({ onBack }) {
       content: (
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginTop: 14 }}>
           {['NIH research', 'ACOG guidance', 'CDC data'].map((t) => (
-            <div key={t} style={{ background: 'var(--ayna-chip-bg)', borderRadius: 99, padding: '9px 14px', fontSize: 12.5, color: 'var(--ayna-text)' }}>{t}</div>
+            <div key={t} style={{ background: 'var(--ayna-chip-bg)', borderRadius: 99, padding: '9px 14px', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>{t}</div>
           ))}
-          <div style={{ border: '1px dashed var(--ayna-border)', borderRadius: 99, padding: '8px 14px', fontSize: 12.5, color: 'var(--ayna-text-faint)' }}>Fails → dropped</div>
+          <div style={{ border: '1px dashed var(--ayna-border)', borderRadius: 99, padding: '8px 14px', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)' }}>Fails → dropped</div>
         </div>
       ),
     },
@@ -2768,8 +2777,8 @@ function HowItWorksScreen({ onBack }) {
       n: '04', title: 'Your ecosystem', body: "What's left is ranked, with the reason attached.",
       content: (
         <div style={{ marginTop: 14, background: 'linear-gradient(120deg,#3B2E55,#7A4A47)', borderRadius: 16, padding: '17px 17px 18px' }}>
-          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 31, color: '#F0A84B', lineHeight: 1 }}>14</div>
-          <div style={{ fontSize: 12.5, lineHeight: 1.45, color: 'rgba(255,252,249,.9)', marginTop: 5 }}>products, each with its match reason</div>
+          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(31px * var(--ayna-text-scale, 1))', color: '#F0A84B', lineHeight: 1 }}>14</div>
+          <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.45, color: 'rgba(255,252,249,.9)', marginTop: 5 }}>products, each with its match reason</div>
         </div>
       ),
     },
@@ -2779,29 +2788,29 @@ function HowItWorksScreen({ onBack }) {
     <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
       <PlainBackLink onBack={onBack} />
       <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '0 20px 36px' }}>
-        <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.6px', textTransform: 'uppercase', color: 'var(--ayna-text-muted)', marginTop: 18 }}>How it works</div>
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 30, lineHeight: 1.2, color: 'var(--ayna-heading)', margin: '9px 0 10px' }}>Nothing reaches you unchecked.</div>
-        <div style={{ fontSize: 13.5, lineHeight: 1.6, color: 'var(--ayna-text-muted)', marginBottom: 24 }}>
+        <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.6px', textTransform: 'uppercase', color: 'var(--ayna-text-muted)', marginTop: 18 }}>How it works</div>
+        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(30px * var(--ayna-text-scale, 1))', lineHeight: 1.2, color: 'var(--ayna-heading)', margin: '9px 0 10px' }}>Nothing reaches you unchecked.</div>
+        <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: 'var(--ayna-text-muted)', marginBottom: 24 }}>
           ayna filters the open market against your profile, then against published research. Anything that fails a step never reaches your shop.
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           {steps.map((step) => (
             <div key={step.n} style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 20, padding: '18px 18px 19px' }}>
-              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.5px', color: '#C0761F' }}>STEP {step.n}</div>
-              <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 21, color: 'var(--ayna-heading)', margin: '7px 0 5px' }}>{step.title}</div>
-              <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)' }}>{step.body}</div>
+              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', color: '#C0761F' }}>STEP {step.n}</div>
+              <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(21px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', margin: '7px 0 5px' }}>{step.title}</div>
+              <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)' }}>{step.body}</div>
               {step.content}
             </div>
           ))}
         </div>
 
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 22, color: 'var(--ayna-heading)', margin: '30px 0 14px' }}>The narrowing down, in one picture</div>
+        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(22px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', margin: '30px 0 14px' }}>The narrowing down, in one picture</div>
         <NarrowingFunnel />
 
         <div style={{ marginTop: 22, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 20, padding: 18 }}>
-          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 19, lineHeight: 1.3, color: 'var(--ayna-heading)' }}>ayna is not a doctor, and never pretends to be.</div>
-          <div style={{ fontSize: 12.5, color: 'var(--ayna-text-muted)', marginTop: 8, lineHeight: 1.5 }}>Summaries are AI-written from cited sources and clinician input.</div>
+          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(19px * var(--ayna-text-scale, 1))', lineHeight: 1.3, color: 'var(--ayna-heading)' }}>ayna is not a doctor, and never pretends to be.</div>
+          <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 8, lineHeight: 1.5 }}>Summaries are AI-written from cited sources and clinician input.</div>
         </div>
       </div>
     </div>
@@ -2854,7 +2863,7 @@ function AdvisorAvatar({ advisor }) {
     );
   }
   return (
-    <div style={{ width: 62, height: 62, borderRadius: '50%', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-accent-dark)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Playfair Display',serif", fontSize: 20, flex: 'none' }}>
+    <div style={{ width: 62, height: 62, borderRadius: '50%', background: 'var(--ayna-chip-bg)', color: 'var(--ayna-accent-dark)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Playfair Display',serif", fontSize: 'calc(20px * var(--ayna-text-scale, 1))', flex: 'none' }}>
       {advisorInitials(advisor.name)}
     </div>
   );
@@ -2866,26 +2875,26 @@ function AboutAynaScreen({ onBack }) {
       <div style={{ background: 'linear-gradient(165deg,#4A3663,#332748 62%,#2C2340)', paddingBottom: 30 }}>
         <PlainBackLink onBack={onBack} color="rgba(255,252,249,.72)" />
         <div style={{ textAlign: 'center', padding: '4px 22px 0' }}>
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.8px', textTransform: 'uppercase', color: 'rgba(255,252,249,.6)' }}>About ayna</div>
-          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 34, lineHeight: 1.1, color: '#FFF9F2', margin: '10px 0 8px' }}>
+          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.8px', textTransform: 'uppercase', color: 'rgba(255,252,249,.6)' }}>About ayna</div>
+          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(34px * var(--ayna-text-scale, 1))', lineHeight: 1.1, color: '#FFF9F2', margin: '10px 0 8px' }}>
             No <span style={{ fontStyle: 'italic', color: '#F0A84B' }}>mystery box</span>.
           </div>
-          <div style={{ fontSize: 13.5, color: 'rgba(255,249,242,.78)' }}>See what shapes your shop.</div>
+          <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'rgba(255,249,242,.78)' }}>See what shapes your shop.</div>
         </div>
       </div>
 
       <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '26px 20px 36px' }}>
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 25, lineHeight: 1.2, color: 'var(--ayna-heading)' }}>Women's health isn't one-size-fits-all.</div>
-        <div style={{ fontSize: 13.5, lineHeight: 1.6, color: 'var(--ayna-text-muted)', marginTop: 11 }}>
+        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(25px * var(--ayna-text-scale, 1))', lineHeight: 1.2, color: 'var(--ayna-heading)' }}>Women's health isn't one-size-fits-all.</div>
+        <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: 'var(--ayna-text-muted)', marginTop: 11 }}>
           ayna starts with you, scans relevant products, checks available evidence, then makes the reasoning visible.
         </div>
 
-        <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.6px', textTransform: 'uppercase', color: '#B4402A', margin: '28px 0 7px' }}>The funnel</div>
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 22, color: 'var(--ayna-heading)', marginBottom: 14 }}>Broad in. Focused out.</div>
+        <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.6px', textTransform: 'uppercase', color: '#B4402A', margin: '28px 0 7px' }}>The funnel</div>
+        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(22px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', marginBottom: 14 }}>Broad in. Focused out.</div>
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 20, padding: 18, display: 'flex', flexDirection: 'column', gap: 14 }}>
           {CONCEPT_FUNNEL.map((row) => (
             <div key={row.label}>
-              <div style={{ fontSize: 12.5, color: 'var(--ayna-text)', marginBottom: 6 }}>{row.label}</div>
+              <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)', marginBottom: 6 }}>{row.label}</div>
               <div style={{ height: 9, borderRadius: 99, background: 'var(--ayna-track)', overflow: 'hidden' }}>
                 <div style={{ width: row.width, height: '100%', borderRadius: 99, background: row.fill }} />
               </div>
@@ -2895,64 +2904,64 @@ function AboutAynaScreen({ onBack }) {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 22 }}>
           <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 20, padding: 18 }}>
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.4px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)' }}>What we look at</div>
-            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 19, color: 'var(--ayna-heading)', margin: '7px 0 13px' }}>Multiple signals, one view</div>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.4px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)' }}>What we look at</div>
+            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(19px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', margin: '7px 0 13px' }}>Multiple signals, one view</div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 7 }}>
               {['Published research', 'Clinical guidance', 'Clinician input', 'Community experience'].map((t) => (
-                <div key={t} style={{ background: 'var(--ayna-chip-bg)', borderRadius: 11, padding: '11px 12px', fontSize: 12, color: 'var(--ayna-text)' }}>{t}</div>
+                <div key={t} style={{ background: 'var(--ayna-chip-bg)', borderRadius: 11, padding: '11px 12px', fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>{t}</div>
               ))}
             </div>
           </div>
           <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 20, padding: 18 }}>
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: '1.4px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)' }}>What shapes a match</div>
-            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 19, color: 'var(--ayna-heading)', margin: '7px 0 13px' }}>Relevant, not paid-first</div>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.4px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)' }}>What shapes a match</div>
+            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(19px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', margin: '7px 0 13px' }}>Relevant, not paid-first</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
               {['Your profile', 'Evidence', 'Clinician context', 'Community context'].map((t) => (
-                <div key={t} style={{ background: 'var(--ayna-chip-bg)', borderRadius: 11, padding: 12, fontSize: 12.5, color: 'var(--ayna-text)' }}>{t}</div>
+                <div key={t} style={{ background: 'var(--ayna-chip-bg)', borderRadius: 11, padding: 12, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>{t}</div>
               ))}
             </div>
-            <div style={{ fontSize: 11.5, color: '#B4402A', marginTop: 11 }}>Sponsorship is never a match input.</div>
+            <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: '#B4402A', marginTop: 11 }}>Sponsorship is never a match input.</div>
           </div>
         </div>
 
-        <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.6px', textTransform: 'uppercase', color: '#B4402A', margin: '32px 0 7px' }}>The process</div>
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 22, color: 'var(--ayna-heading)', marginBottom: 14 }}>Four gates, in order.</div>
+        <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.6px', textTransform: 'uppercase', color: '#B4402A', margin: '32px 0 7px' }}>The process</div>
+        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(22px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', marginBottom: 14 }}>Four gates, in order.</div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
           {TRUST_GATES.map((gate) => {
             const dark = gate.n === '04';
             return (
               <div key={gate.n} style={{ background: dark ? 'linear-gradient(150deg,#3B2E55,#5B3B57)' : 'var(--ayna-surface)', border: dark ? 'none' : '1px solid var(--ayna-border)', borderRadius: 18, padding: '15px 14px 17px' }}>
-                <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 22, color: dark ? '#F0A84B' : '#C0761F' }}>{gate.n}</div>
-                <div style={{ fontWeight: 600, fontSize: 13.5, color: dark ? '#FFF9F2' : 'var(--ayna-text)', margin: '5px 0' }}>{gate.title}</div>
-                <div style={{ fontSize: 11.5, lineHeight: 1.45, color: dark ? 'rgba(255,252,249,.82)' : 'var(--ayna-text-muted)' }}>{gate.body}</div>
+                <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(22px * var(--ayna-text-scale, 1))', color: dark ? '#F0A84B' : '#C0761F' }}>{gate.n}</div>
+                <div style={{ fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: dark ? '#FFF9F2' : 'var(--ayna-text)', margin: '5px 0' }}>{gate.title}</div>
+                <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', lineHeight: 1.45, color: dark ? 'rgba(255,252,249,.82)' : 'var(--ayna-text-muted)' }}>{gate.body}</div>
               </div>
             );
           })}
         </div>
 
-        <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.6px', textTransform: 'uppercase', color: '#B4402A', margin: '32px 0 7px' }}>Why ayna</div>
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 22, color: 'var(--ayna-heading)', marginBottom: 14 }}>Discovery with context.</div>
+        <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.6px', textTransform: 'uppercase', color: '#B4402A', margin: '32px 0 7px' }}>Why ayna</div>
+        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(22px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', marginBottom: 14 }}>Discovery with context.</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {WHY_AYNA_DIFFERENCES.map((t) => (
-            <div key={t} style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 13, padding: 14, fontSize: 13, color: 'var(--ayna-text)' }}>{t}</div>
+            <div key={t} style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 13, padding: 14, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>{t}</div>
           ))}
         </div>
 
-        <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.6px', textTransform: 'uppercase', color: '#B4402A', margin: '32px 0 7px' }}>Our advisors</div>
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 22, color: 'var(--ayna-heading)', marginBottom: 16 }}>Guided by real expertise.</div>
+        <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.6px', textTransform: 'uppercase', color: '#B4402A', margin: '32px 0 7px' }}>Our advisors</div>
+        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(22px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', marginBottom: 16 }}>Guided by real expertise.</div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px 12px' }}>
           {ADVISORS.map((advisor) => (
             <div key={advisor.name} style={{ textAlign: 'center' }}>
               <div style={{ display: 'flex', justifyContent: 'center' }}><AdvisorAvatar advisor={advisor} /></div>
-              <div style={{ fontWeight: 600, fontSize: 12.5, color: 'var(--ayna-text)', marginTop: 8 }}>{advisor.name}</div>
-              <div style={{ fontSize: 11, lineHeight: 1.4, color: 'var(--ayna-text-muted)', marginTop: 3 }}>{advisor.title}</div>
+              <div style={{ fontWeight: 600, fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)', marginTop: 8 }}>{advisor.name}</div>
+              <div style={{ fontSize: 'calc(11px * var(--ayna-text-scale, 1))', lineHeight: 1.4, color: 'var(--ayna-text-muted)', marginTop: 3 }}>{advisor.title}</div>
             </div>
           ))}
         </div>
 
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 20, padding: '19px 18px', marginTop: 26 }}>
-          <div style={{ fontWeight: 600, fontSize: 15, color: 'var(--ayna-text)' }}>ayna is not a doctor.</div>
-          <div style={{ fontSize: 12.5, lineHeight: 1.55, color: 'var(--ayna-text-muted)', marginTop: 6 }}>Medical decisions stay with you and your clinician.</div>
+          <div style={{ fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>ayna is not a doctor.</div>
+          <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.55, color: 'var(--ayna-text-muted)', marginTop: 6 }}>Medical decisions stay with you and your clinician.</div>
         </div>
       </div>
     </div>
@@ -2995,19 +3004,19 @@ function ContactScreen({ onBack }) {
   const canSend = form.name.trim().length >= 2 && form.email.trim() && form.reason && form.subject.trim().length >= 2 && form.message.trim().length >= 10;
   const sendReady = canSend && status !== 'sending';
 
-  const fieldStyle = { border: '1px solid #ded9e4', borderRadius: 10, background: '#fff', padding: 14, fontSize: 15, color: '#1A1714', width: '100%', boxSizing: 'border-box', outline: 'none', fontFamily: 'inherit' };
-  const labelStyle = { fontSize: 13, fontWeight: 600, color: '#4a4356', marginBottom: 7 };
+  const fieldStyle = { border: '1px solid #ded9e4', borderRadius: 10, background: '#fff', padding: 14, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: '#1A1714', width: '100%', boxSizing: 'border-box', outline: 'none', fontFamily: 'inherit' };
+  const labelStyle = { fontSize: 'calc(13px * var(--ayna-text-scale, 1))', fontWeight: 600, color: '#4a4356', marginBottom: 7 };
 
   return (
     <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', background: '#FAF6F2' }}>
       <PlainBackLink onBack={onBack} color="#6f6880" />
       <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '18px 20px 40px' }}>
-        <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, letterSpacing: '1.7px', textTransform: 'uppercase', color: '#766d83' }}>Contact</div>
-        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 34, lineHeight: 1.1, color: '#1A1714', margin: '11px 0 0' }}>How can we help?</div>
-        <div style={{ fontSize: 13.5, lineHeight: 1.6, color: '#6f6880', marginTop: 13 }}>
+        <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.7px', textTransform: 'uppercase', color: '#766d83' }}>Contact</div>
+        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(34px * var(--ayna-text-scale, 1))', lineHeight: 1.1, color: '#1A1714', margin: '11px 0 0' }}>How can we help?</div>
+        <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: '#6f6880', marginTop: 13 }}>
           Send us a note and we'll make sure it reaches the right person on the ayna team.
         </div>
-        <div style={{ marginTop: 18, paddingTop: 15, borderTop: '1px solid #e5e0e9', fontSize: 12.5, lineHeight: 1.65, color: '#6f6880' }}>
+        <div style={{ marginTop: 18, paddingTop: 15, borderTop: '1px solid #e5e0e9', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.65, color: '#6f6880' }}>
           For brand collaborations, choose <strong style={{ color: '#4a4356' }}>Partnerships</strong>. For questions about using ayna, choose <strong style={{ color: '#4a4356' }}>Help &amp; Support</strong>.
         </div>
 
@@ -3032,7 +3041,7 @@ function ContactScreen({ onBack }) {
               {reasonOpen && (
                 <div style={{ marginTop: 6, border: '1px solid #ded9e4', borderRadius: 10, background: '#fff', overflow: 'hidden', boxShadow: '0 14px 28px -18px rgba(42,31,78,.45)' }}>
                   {CONTACT_REASONS.map((r, i) => (
-                    <div key={r} onClick={() => { setForm((f) => ({ ...f, reason: r })); setReasonOpen(false); }} style={{ padding: '12px 14px', fontSize: 14, color: '#1A1714', cursor: 'pointer', borderTop: i === 0 ? 'none' : '1px solid #f0ecf3' }}>{r}</div>
+                    <div key={r} onClick={() => { setForm((f) => ({ ...f, reason: r })); setReasonOpen(false); }} style={{ padding: '12px 14px', fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: '#1A1714', cursor: 'pointer', borderTop: i === 0 ? 'none' : '1px solid #f0ecf3' }}>{r}</div>
                   ))}
                 </div>
               )}
@@ -3048,12 +3057,12 @@ function ContactScreen({ onBack }) {
           </div>
 
           {status === 'sent' && (
-            <div style={{ marginTop: 16, padding: '11px 13px', borderRadius: 9, background: '#f3f6f1', color: '#435143', fontSize: 13.5 }}>
+            <div style={{ marginTop: 16, padding: '11px 13px', borderRadius: 9, background: '#f3f6f1', color: '#435143', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))' }}>
               Thanks. Your message has been sent to the ayna team.
             </div>
           )}
           {status === 'error' && (
-            <div style={{ marginTop: 16, padding: '11px 13px', borderRadius: 9, background: '#fff2f0', color: '#8b342d', fontSize: 13.5 }}>
+            <div style={{ marginTop: 16, padding: '11px 13px', borderRadius: 9, background: '#fff2f0', color: '#8b342d', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))' }}>
               {error}
             </div>
           )}
@@ -3063,7 +3072,7 @@ function ContactScreen({ onBack }) {
             role="button"
             aria-label="Send message"
             style={{
-              marginTop: 20, textAlign: 'center', borderRadius: 99, padding: 16, fontWeight: 600, fontSize: 15,
+              marginTop: 20, textAlign: 'center', borderRadius: 99, padding: 16, fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
               background: sendReady ? '#242A52' : '#E4DFE8',
               color: sendReady ? '#fff' : '#A8A29E',
               cursor: sendReady ? 'pointer' : 'not-allowed',

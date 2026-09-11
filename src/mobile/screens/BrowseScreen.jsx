@@ -32,7 +32,7 @@ function ModeTab({ label, active, onClick }) {
       style={{
         fontFamily: "'DM Sans',sans-serif",
         fontWeight: 600,
-        fontSize: 14,
+        fontSize: 'calc(14px * var(--ayna-text-scale, 1))',
         cursor: 'pointer',
         paddingBottom: 10,
         color: active ? 'var(--ayna-text)' : 'var(--ayna-text-faint)',
@@ -62,7 +62,7 @@ function PersonalizedToggle({ on, disabled, onClick }) {
         transition: 'background .15s',
       }}
     >
-      <span style={{ fontSize: 12, fontWeight: 600, color: on ? 'var(--ayna-bg)' : 'var(--ayna-text-muted)' }}>For You</span>
+      <span style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', fontWeight: 600, color: on ? 'var(--ayna-bg)' : 'var(--ayna-text-muted)' }}>For You</span>
       <div
         style={{
           width: 30,
@@ -106,7 +106,7 @@ function LayoutToggle({ layout, onToggle }) {
         alignItems: 'center',
         justifyContent: 'center',
         cursor: 'pointer',
-        fontSize: 14,
+        fontSize: 'calc(14px * var(--ayna-text-scale, 1))',
         color: 'var(--ayna-text-muted)',
         marginLeft: 8,
       }}
@@ -129,7 +129,7 @@ function CategoryChipRow({ groups, active, onSelect }) {
             borderRadius: 99,
             fontFamily: "'DM Sans',sans-serif",
             fontWeight: 600,
-            fontSize: 12,
+            fontSize: 'calc(12px * var(--ayna-text-scale, 1))',
             cursor: 'pointer',
             whiteSpace: 'nowrap',
             background: active === g.id ? 'var(--ayna-text)' : 'var(--ayna-chip-bg)',
@@ -420,20 +420,20 @@ export default function BrowseScreen({
             <ProductGrid key={filterKey} products={filtered} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} />
           ) : searchTermRaw.length >= 2 && aiState.loading ? (
             <>
-              <div style={{ padding: '0 20px 14px', fontFamily: "'DM Mono',monospace", fontSize: 10.5, letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
+              <div style={{ padding: '0 20px 14px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
                 Searching beyond our catalog…
               </div>
               <PixelateGrid />
             </>
           ) : searchTermRaw.length >= 2 && aiState.query === searchTermRaw && aiState.suggestions.length > 0 ? (
             <>
-              <div style={{ padding: '0 20px 14px', fontFamily: "'DM Mono',monospace", fontSize: 10.5, letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
+              <div style={{ padding: '0 20px 14px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
                 Not in our catalog yet — found via AI search
               </div>
               <ProductGrid key={`ai-${filterKey}`} products={aiState.suggestions} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} />
             </>
           ) : (
-            <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 13.5 }}>
+            <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))' }}>
               No products match.
             </div>
           )}
@@ -442,7 +442,7 @@ export default function BrowseScreen({
               margin: '22px 20px 0',
               textAlign: 'center',
               fontFamily: "'DM Mono',monospace",
-              fontSize: 10,
+              fontSize: 'calc(10px * var(--ayna-text-scale, 1))',
               letterSpacing: 0.8,
               color: 'var(--ayna-text-faint)',
             }}
@@ -452,7 +452,7 @@ export default function BrowseScreen({
         </>
       ) : personalizedReads && hasProfile ? (
         recommendedReads.length === 0 ? (
-          <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 13.5 }}>
+          <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))' }}>
             No reads match your profile yet.
           </div>
         ) : (
@@ -463,14 +463,14 @@ export default function BrowseScreen({
           </div>
         )
       ) : rows.length === 0 ? (
-        <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 13.5 }}>
+        <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))' }}>
           No reads yet.
         </div>
       ) : (
         rows.map((row) => (
           <div key={row.id} style={{ marginBottom: 24 }}>
             <div style={{ padding: '0 20px 11px' }}>
-              <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 17 }}>{row.label}</div>
+              <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(17px * var(--ayna-text-scale, 1))' }}>{row.label}</div>
             </div>
             <div style={{ display: 'flex', gap: 12, overflowX: 'auto', padding: '0 20px 4px', scrollbarWidth: 'none' }}>
               {row.items.map((a) => (

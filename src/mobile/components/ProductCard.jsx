@@ -9,7 +9,7 @@ const PARTNER_BADGE_STYLE = {
   borderRadius: 999,
   background: 'var(--ayna-surface)',
   border: '1px solid var(--ayna-border)',
-  fontSize: 10,
+  fontSize: 'calc(10px * var(--ayna-text-scale, 1))',
   fontWeight: 600,
   lineHeight: 1,
   color: 'var(--ayna-text-muted)',
@@ -94,9 +94,9 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-            <div style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 14 }}>{name}</div>
+            <div style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))' }}>{name}</div>
             {resolvedPrice && (
-              <div style={{ flex: 'none', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 13, color: 'var(--ayna-accent-dark)', whiteSpace: 'nowrap' }}>
+              <div style={{ flex: 'none', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-accent-dark)', whiteSpace: 'nowrap' }}>
                 {resolvedPrice}
               </div>
             )}
@@ -110,11 +110,11 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
                 <svg width="9" height="9" viewBox="0 0 24 24" fill="#FFC774">
                   <path d="M12 3l2.7 5.8 6.3.8-4.6 4.4 1.2 6.2L12 17.3 6.4 20.2l1.2-6.2L3 9.6l6.3-.8L12 3Z" />
                 </svg>
-                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, color: 'var(--ayna-text-muted)' }}>{userRating}</div>
+                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)' }}>{userRating}</div>
               </div>
             )}
             {category && (
-              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9.5, color: 'var(--ayna-text-faint)', marginLeft: 'auto' }}>
+              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', marginLeft: 'auto' }}>
                 {labelForCategory(category)}
               </div>
             )}
@@ -160,7 +160,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
         style={{
           fontFamily: "'DM Sans',sans-serif",
           fontWeight: 600,
-          fontSize: 14,
+          fontSize: 'calc(14px * var(--ayna-text-scale, 1))',
           lineHeight: 1.25,
           marginTop: 9,
           textWrap: 'pretty',
@@ -171,14 +171,14 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginTop: 6 }}>
         {resolvedPrice && (
-          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 13 }}>{resolvedPrice}</div>
+          <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>{resolvedPrice}</div>
         )}
         {userRating != null && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 2, marginLeft: 'auto' }}>
             <svg width="10" height="10" viewBox="0 0 24 24" fill="#FFC774">
               <path d="M12 3l2.7 5.8 6.3.8-4.6 4.4 1.2 6.2L12 17.3 6.4 20.2l1.2-6.2L3 9.6l6.3-.8L12 3Z" />
             </svg>
-            <div style={{ fontSize: 10.5, color: 'var(--ayna-text-faint)' }}>{userRating}</div>
+            <div style={{ fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)' }}>{userRating}</div>
           </div>
         )}
       </div>

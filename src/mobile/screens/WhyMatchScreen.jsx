@@ -45,7 +45,7 @@ export default function WhyMatchScreen({ product, quizAnswers, onBack, onUpdateH
           >
             <BackIcon />
           </div>
-          <div style={{ flex: 1, minWidth: 0, fontFamily: "'Playfair Display',serif", fontSize: 25, color: 'var(--ayna-heading)' }}>
+          <div style={{ flex: 1, minWidth: 0, fontFamily: "'Playfair Display',serif", fontSize: 'calc(25px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>
             {percent != null ? `Why ${percent}%` : 'About this match'}
           </div>
         </div>
@@ -56,21 +56,21 @@ export default function WhyMatchScreen({ product, quizAnswers, onBack, onUpdateH
           <>
             <div style={{ display: 'flex', gap: 16, alignItems: 'center', background: 'var(--ayna-peach)', borderRadius: 20, padding: 18 }}>
               <MatchRing percent={percent} size={56} />
-              <div style={{ flex: 1, minWidth: 0, fontSize: 13.5, lineHeight: 1.5, color: 'var(--ayna-text)' }}>
+              <div style={{ flex: 1, minWidth: 0, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: 'var(--ayna-text)' }}>
                 {cleanWhy || 'A relevance score based on your health profile.'}
               </div>
             </div>
 
             {labels.length > 0 && (
               <>
-                <div style={{ marginTop: 26, fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>
+                <div style={{ marginTop: 26, fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>
                   What matched
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 9, marginTop: 12 }}>
                   {labels.map((label) => (
                     <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 12, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 16, padding: '12px 15px' }}>
                       <CheckIcon />
-                      <div style={{ fontSize: 13.5, color: 'var(--ayna-text)', textTransform: 'capitalize' }}>{label}</div>
+                      <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)', textTransform: 'capitalize' }}>{label}</div>
                     </div>
                   ))}
                 </div>
@@ -79,24 +79,24 @@ export default function WhyMatchScreen({ product, quizAnswers, onBack, onUpdateH
 
             {cleanConsideration && (
               <>
-                <div style={{ marginTop: 26, fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>
+                <div style={{ marginTop: 26, fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>
                   Worth noting
                 </div>
                 <div style={{ marginTop: 12, borderLeft: '3px solid #D97A2B', background: 'rgba(217,122,43,.08)', borderRadius: '0 14px 14px 0', padding: '14px 16px' }}>
-                  <div style={{ fontSize: 12.5, lineHeight: 1.5, color: 'var(--ayna-text)' }}>{cleanConsideration}</div>
+                  <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: 'var(--ayna-text)' }}>{cleanConsideration}</div>
                 </div>
               </>
             )}
           </>
         ) : (
           <div>
-            <div style={{ fontSize: 14, lineHeight: 1.6, color: 'var(--ayna-text-muted)' }}>
+            <div style={{ fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: 'var(--ayna-text-muted)' }}>
               We don't have enough from your health profile yet to score this one personally.
             </div>
             {onUpdateHealth && (
               <div
                 onClick={onUpdateHealth}
-                style={{ marginTop: 18, display: 'inline-block', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 13.5, padding: '12px 20px', borderRadius: 99, cursor: 'pointer', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)' }}
+                style={{ marginTop: 18, display: 'inline-block', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', padding: '12px 20px', borderRadius: 99, cursor: 'pointer', background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)' }}
               >
                 Complete your health profile
               </div>
@@ -104,7 +104,7 @@ export default function WhyMatchScreen({ product, quizAnswers, onBack, onUpdateH
           </div>
         )}
 
-        <div style={{ marginTop: 28, fontSize: 11.5, color: 'var(--ayna-text-faint)', lineHeight: 1.5 }}>
+        <div style={{ marginTop: 28, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.5 }}>
           This is a relevance score based on what you've told us, not a medical recommendation or a guarantee of results.
         </div>
       </div>
