@@ -162,7 +162,7 @@ export default function MobileApp() {
   const ecosystemFlagsRef = useRef({ trackedProducts: {}, omittedProducts: {} });
   const pendingQuizEcosystemRef = useRef(null);
   const { savedMap, isSaved, toggleSaved } = useSavedProducts(authUser);
-  const { theme, toggleTheme, setTheme } = useThemeMode();
+  const { theme, toggleTheme } = useThemeMode();
   const [askAynaOpen, setAskAynaOpen] = useState(false);
   const [askAynaHistory, setAskAynaHistory] = useState([]);
   // Distinguishes "Finish your profile" (resume with prior answers, jump to
@@ -361,12 +361,11 @@ export default function MobileApp() {
   };
 
   const nav = {
-    // Landing's hero gradient is a fixed brand look, unrelated to the real
-    // light/dark toggle — but leaving it should still start users on light
-    // mode rather than whatever dark/light state happened to be persisted
-    // from a prior visit.
-    onStartQuiz: () => { setTheme('light'); setEditingHealthProfile(false); setScreen('quiz'); },
-    onBrowse: () => { setTheme('light'); setScreen('browse'); },
+    // Night mode is a persistent user preference (Preferences screen) — it
+    // stays on everywhere until turned off there, so navigation must never
+    // force it back to light.
+    onStartQuiz: () => { setEditingHealthProfile(false); setScreen('quiz'); },
+    onBrowse: () => setScreen('browse'),
     onOpenSaved: () => setScreen('saved'),
     onGoEco: () => setScreen(hasEcosystem ? 'eco' : 'ecointro'),
     onGoLanding: () => setScreen('landing'),
