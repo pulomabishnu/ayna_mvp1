@@ -1042,6 +1042,14 @@ function PreferencesScreen({ onBack, theme, onToggleTheme }) {
           )}
         </div>
 
+        {/* Also always visible: unlike Notifications/Updates/delivery channel
+            below, Night mode is purely local (useThemeMode.js, localStorage
+            only) — it needs no account and no network call, so it shouldn't
+            sit behind the same sign-in gate as the account-scoped settings. */}
+        <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '4px 18px', marginBottom: 20 }}>
+          <ToggleRow first title="Night mode" sub="Dim the app after sunset." on={theme === 'dark'} onClick={handleToggleTheme} />
+        </div>
+
         {loadState === 'loading' && (
           <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--ayna-text-muted)', fontSize: 13 }}>Loading your preferences…</div>
         )}
@@ -1064,7 +1072,6 @@ function PreferencesScreen({ onBack, theme, onToggleTheme }) {
             <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '4px 18px' }}>
               <ToggleRow first title="Notifications" sub="Recalls and safety flags on things you own." on={prefs.notificationsEnabled} onClick={() => patchField('notifications_enabled', !prefs.notificationsEnabled, 'notificationsEnabled')} />
               <ToggleRow title="Updates" sub="New matches and restocks, weekly digest." on={prefs.updatesEnabled} onClick={() => patchField('updates_enabled', !prefs.updatesEnabled, 'updatesEnabled')} />
-              <ToggleRow title="Night mode" sub="Dim the app after sunset." on={theme === 'dark'} onClick={handleToggleTheme} />
             </div>
 
             <div style={{ marginTop: 26, fontFamily: "'DM Mono',monospace", fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 11 }}>Delivery channel</div>
