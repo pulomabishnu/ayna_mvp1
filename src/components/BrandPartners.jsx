@@ -1,6 +1,5 @@
 import React from 'react';
-import { BRAND_PRODUCTS } from '../data/brands';
-import { CATEGORY_LABELS } from '../data/products';
+import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { safeProductImageSrc } from '../utils/resolveProductImage';
 import { ProductImageFallback } from './ProductTileImage';
@@ -12,9 +11,9 @@ import { ProductImageFallback } from './ProductTileImage';
  * plus a list of unreleased startups to join waitlists for. Neither is what
  * this page is for any more: it holds the brands Ayna actually works with.
  *
- * Only confirmed partners belong here. src/data/brands.js is explicit that its
- * entries are catalog entries and "NOT partnership relationships", so the
- * partner list is its own thing below.
+ * Only confirmed partners belong here. The products themselves can live in
+ * any catalog module, so this page reads from ALL_PRODUCTS rather than only
+ * src/data/brands.js.
  *
  * Emptied 2026-08-24 (no contract signed yet), refilled 2026-08-25: Neycher
  * signed a real, official partnership — confirmed by Aditi. No logo file has
@@ -33,29 +32,24 @@ import { ProductImageFallback } from './ProductTileImage';
  * situation — falls back to the text wordmark until a file lands at
  * public/brands/vio2.png.
  *
- * Added 2026-09-07: Proov — confirmed affiliate partnership, 5 products (see
- * brands.js), each with its own proov.pxf.io affiliate link. `url` here goes
- * to the general proovtest.com site since there's no single per-brand link.
- * Same no-logo-yet situation — falls back to the text wordmark until a file
- * lands at public/brands/proov.png.
+ * Added 2026-09-07: Proov — confirmed affiliate partnership, 5 products, each
+ * with its own proov.pxf.io affiliate link. `url` here goes to the general
+ * proovtest.com site since there's no single per-brand link.
  *
- * Added 2026-09-07: Elitone — confirmed affiliate partnership, 2 products
- * (see brands.js). One general affiliate link (elitone.com/?af=aynahealth)
- * covers both, unlike Proov's per-product links. Same no-logo-yet situation
- * — falls back to the text wordmark until a file lands at
- * public/brands/elitone.png.
+ * Added 2026-09-07: Elitone — confirmed affiliate partnership, 2 products.
+ * One general affiliate link (elitone.com/?af=aynahealth) covers both.
  *
- * Added 2026-09-07: My Pelvic Bra — confirmed affiliate partnership, with
- * products in brands.js using pelvic-bra.myshopify.com affiliate links that
- * redirect to the brand's real storefront at mypelvicbra.shop. Same
- * no-logo-yet situation — falls back to the text wordmark until a file lands
- * at public/brands/my-pelvic-bra.png.
+ * Added 2026-09-07: My Pelvic Bra — confirmed affiliate partnership, using
+ * pelvic-bra.myshopify.com affiliate links that redirect to the brand's real
+ * storefront at mypelvicbra.shop.
  *
  * Added 2026-09-11: BUNI — confirmed brand partnership. Direct BUNI affiliate
  * link is still pending, so the partnership page uses the official brand site
  * while individual product Buy Now links currently use Ayna's Amazon
- * Associates links. Logo falls back to the text wordmark until a file lands
- * at public/brands/buni.png.
+ * Associates links.
+ *
+ * Added 2026-09-11: LiM Method — confirmed affiliate partnership. Product and
+ * brand links use the ref=Ayna_Health tracking parameter supplied by Ayna.
  */
 
 const PARTNERS = [
@@ -115,6 +109,14 @@ const PARTNERS = [
     blurb:
       'Intimate and body care for vulvar moisture, nipple and lip care, scar and body care, pregnancy, postpartum, menopause, and everyday comfort.',
   },
+  {
+    brand: 'LiM Method',
+    /** Drop a file at public/brands/lim-method.png and it replaces the wordmark. */
+    logo: '/brands/lim-method.png',
+    url: 'https://www.limmethod.com/?ref=Ayna_Health',
+    blurb:
+      'Pelvic-floor wellness through guided, low-impact multidirectional movement using the LiM Sliding Board, accessories, and expert-led Movement Sessions.',
+  },
 ];
 
 function eyebrowFor(product) {
@@ -155,7 +157,7 @@ export default function BrandPartners({ onOpenProduct, myProducts = {}, onAddToE
 
       <div className="mockup-page">
         {PARTNERS.map((partner) => {
-          const products = BRAND_PRODUCTS.filter((p) => p.brand === partner.brand);
+          const products = ALL_PRODUCTS.filter((p) => p.brand === partner.brand);
           return (
             <article key={partner.brand} className="brand-partner">
               <header className="brand-partner__head">
