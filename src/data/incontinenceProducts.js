@@ -6,7 +6,13 @@
 // symptoms — searches like "panty liners for bladder leaks" had nothing
 // relevant to surface. Products verified against brand/retailer listings; see
 // each entry's sourcing note.
+//
+// Additional catalog modules are appended at the bottom so they flow through
+// the existing ALL_PRODUCTS bundle without changing recommendation logic.
 // ============================================================
+
+import { OB_PRODUCTS } from './obProducts.js';
+import { LIM_METHOD_PRODUCTS } from './limMethodProducts.js';
 
 export const INCONTINENCE_PHYSICAL = [
     {
@@ -128,4 +134,7 @@ export const INCONTINENCE_PHYSICAL = [
         integrations: [],
         badges: [],
     },
+    // Additional catalog products.
+    ...OB_PRODUCTS,
+    ...LIM_METHOD_PRODUCTS,
 ];
