@@ -99,6 +99,11 @@ export function isPlaceholderProductImage(imageUrl, allowBrandLogo = false) {
   return false;
 }
 
+function proxyExternalImage(src) {
+  if (!/^https?:\/\//i.test(src)) return src;
+  return `/api/image-proxy?url=${encodeURIComponent(src)}`;
+}
+
 /**
  * A raw `product.image` field is only ever safe to render directly if it
  * ISN'T a placeholder — a bare `product.image ? <img src={product.image}> :
@@ -109,9 +114,16 @@ export function isPlaceholderProductImage(imageUrl, allowBrandLogo = false) {
  * actual product. Use this everywhere a component decides whether to render
  * `product.image` vs. an initial-letter/blank fallback, instead of a bare
  * truthiness check on the raw field.
+ *
+ * External photos are now loaded through Ayna's same-origin image proxy. That
+ * keeps brand/CDN hosts from seeing a visitor's IP merely because a product
+ * card appeared, and lets Vercel cache repeat image requests. The proxy falls
+ * back to the original URL if a CDN refuses server-side fetching, so privacy
+ * improvements do not come at the cost of missing product photos.
  */
 export function safeProductImageSrc(imageUrl, allowBrandLogo = false) {
-  return isPlaceholderProductImage(imageUrl, allowBrandLogo) ? '' : String(imageUrl || '');
+  if (isPlaceholderProductImage(imageUrl, allowBrandLogo)) return '';
+  return proxyExternalImage(String(imageUrl || '').trim());
 }
 
 export async function resolveProductImage(name, brand, url, type) {
