@@ -1,42 +1,22 @@
 /**
  * analyticsConsent.js
  *
- * Backs the ConsentBanner UI with a stored granted/denied decision (12-month
- * expiry) and applies it to the PostHog instance via opt_in_capturing() /
- * opt_out_capturing() — the same SDK calls src/components/AccountDataControls.jsx
- * already uses for its "Usage analytics" settings toggle, and the same ones
- * main.jsx already uses for Global Privacy Control (GPC). All three paths
- * (banner, account settings, GPC) converge on that one SDK-level opt state,
- * so whichever one a visitor used last is the one that sticks.
+ * Product analytics are on by default, with a persistent visitor opt-out.
+ * Global Privacy Control is enforced in main.jsx before PostHog can emit an
+ * initial pageview. Account settings and this notice use the same PostHog SDK
+ * opt state, so a visitor can change the choice at any time.
  *
- * Because of that shared state, this module treats "the SDK already has an
- * EXPLICIT opt-in/opt-out on record" (per get_explicit_consent_status(), not
- * has_opted_in/out_capturing() — see explicitSdkDecision() below for why) as
- * equivalent to "the banner has already been answered". That matters for
- * anyone who used the account-settings toggle (or whose browser sends GPC)
- * before ever seeing this banner: they should not be asked again.
- *
- * NOTE ON WORDING: what this gates is analytics. It is NOT the Supabase
- * session, which lives in localStorage (not a cookie) and is genuinely
- * necessary for login to work. Anything user-facing should say "necessary
- * storage", never "necessary cookies" — this app sets no cookies.
+ * This controls analytics only. It does not control the Supabase session or
+ * necessary local storage used for authentication.
  */
 
 export const CONSENT_STORAGE_KEY = 'ayna_analytics_consent';
 export const CONSENT_TTL_MS = 365 * 24 * 60 * 60 * 1000;
 
 /**
- * An EXPLICIT prior SDK-level decision ('granted'/'denied'), or undefined if
- * none has ever been made.
- *
- * Deliberately NOT has_opted_in_capturing()/has_opted_out_capturing(): with
- * opt_out_capturing_by_default: true (set in main.jsx so nothing is sent
- * before a decision exists), has_opted_out_capturing() returns true for
- * EVERY visitor who has never made a choice at all — posthog-js's "pending"
- * state reads as "opted out" once that default flag is on. Treating that as
- * an explicit decision would hide the banner for every first-time visitor.
- * get_explicit_consent_status() is the one API that actually distinguishes
- * "pending" from a real granted/denied call.
+ * Return an explicit prior SDK-level decision ('granted'/'denied'), or
+ * undefined if none has ever been made. get_explicit_consent_status() is used
+ * because it distinguishes a real decision from PostHog's default state.
  */
 function explicitSdkDecision(ph) {
   try {
@@ -56,8 +36,6 @@ function readRaw() {
   if (!raw) return null;
 
   if (raw === 'granted' || raw === 'denied') {
-    // Pre-expiry format migration, if this ever shipped without a
-    // timestamp — treat as decided now so it isn't instantly stale.
     const migrated = { decision: raw, timestamp: new Date().toISOString() };
     try { localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(migrated)); } catch { /* private mode */ }
     return migrated;
@@ -77,18 +55,24 @@ function isExpired(record) {
   return Number.isNaN(ts) || Date.now() - ts > CONSENT_TTL_MS;
 }
 
-/** This banner's own stored decision, ignoring any other opt state. */
+/** This notice's stored preference, ignoring any other SDK opt state. */
 export function getStoredConsent() {
   const record = readRaw();
-  if (!record || isExpired(record)) return undefined;
+  if (!record) return undefined;
+
+  // An opt-out is a privacy preference, not a temporary consent grant. Never
+  // silently turn analytics back on because a timestamp aged out.
+  if (record.decision === 'denied') return 'denied';
+
+  // A stale grant may expire back to the product's default-on state without
+  // changing behavior or suppressing a fresh notice forever.
+  if (isExpired(record)) return undefined;
   return record.decision;
 }
 
 /**
- * Whether there's any reason NOT to show the banner: our own stored
- * decision, or an explicit PostHog SDK-level opt-in/opt-out already on
- * record (set via the account-settings toggle or GPC, possibly before this
- * banner ever existed). `ph` is optional — omit it to check only our own key.
+ * Whether the visitor has already made an explicit choice through this notice,
+ * account controls, GPC, or another PostHog opt-state surface.
  */
 export function hasRecordedChoice(ph) {
   const v = getStoredConsent();
@@ -102,31 +86,41 @@ function persist(decision) {
       CONSENT_STORAGE_KEY,
       JSON.stringify({ decision, timestamp: new Date().toISOString() })
     );
-  } catch { /* private mode — the SDK-level opt-out below still applies */ }
+  } catch { /* private mode — the SDK-level state still applies */ }
 }
 
 /**
- * Called once from main.jsx's posthog.init `loaded` callback (after the GPC
- * check there, which takes priority). Defaults to opted OUT — nothing is
- * sent until the visitor actively consents — unless a decision already
- * exists, from this banner or from elsewhere (see hasRecordedChoice above).
+ * Called once from main.jsx's PostHog loaded callback. The default-on state is
+ * established by posthog.init itself, so an undecided visitor intentionally
+ * gets NO explicit SDK opt-in here. Keeping that state "pending" is what lets
+ * the visible opt-out notice distinguish default-on from a real prior choice.
+ * GPC is handled in main.jsx before this runs and always takes priority.
  */
 export function applyStoredConsent(ph) {
   const stored = getStoredConsent();
   if (stored === 'granted') return ph.opt_in_capturing();
   if (stored === 'denied') return ph.opt_out_capturing();
 
-  if (explicitSdkDecision(ph) !== undefined) return; // already decided elsewhere — leave it
+  if (explicitSdkDecision(ph) !== undefined) return;
 
-  ph.opt_out_capturing(); // truly undecided — stay out until the banner is answered
+  // No explicit action: analytics is already on because init did not set
+  // opt_out_capturing_by_default for this visitor, and the notice stays visible.
 }
 
+/** Persist acknowledgement of the default-on analytics notice. */
+export function acknowledgeAnalytics(ph) {
+  persist('granted');
+  ph.opt_in_capturing();
+}
+
+/** Explicit opt-in used by settings controls when re-enabling analytics. */
 export function grantConsent(ph) {
   persist('granted');
   ph.opt_in_capturing();
   ph.capture('$pageview');
 }
 
+/** Explicit opt-out used by the notice and privacy/account controls. */
 export function denyConsent(ph) {
   persist('denied');
   ph.opt_out_capturing();

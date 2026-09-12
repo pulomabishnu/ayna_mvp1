@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { hasRecordedChoice, grantConsent, denyConsent } from '../utils/analyticsConsent'
+import { hasRecordedChoice, acknowledgeAnalytics, denyConsent } from '../utils/analyticsConsent'
 
 function gpcEnabled() {
   try {
@@ -66,13 +66,13 @@ export default function ConsentBanner() {
   if (!visible) return null
 
   return (
-    <div role="dialog" aria-live="polite" aria-label="Analytics consent" className="consent-banner">
+    <div role="dialog" aria-live="polite" aria-label="Analytics notice" className="consent-banner">
       <p>
-        We use analytics to understand how people use Ayna so we can improve it.
-        We don&apos;t use this data for advertising, and we don&apos;t sell it. If you
-        choose &quot;Necessary only,&quot; we won&apos;t build any profile of your visits —
-        we&apos;ll only count that a visit happened, with nothing that identifies
-        you or links it to any other visit. Read our{' '}
+        Usage analytics are on by default so we can understand how people use ayna and improve it.
+        We don&apos;t use analytics for advertising or sell it. Health-search text, account email, direct
+        account IDs and common health-profile fields are stripped from analytics; session recording and
+        automatic text/click capture are off. You can turn analytics off now or anytime from Privacy
+        Preferences. Read our{' '}
         <a href="/privacy-policy" target="_blank" rel="noreferrer">Privacy Policy</a>.
       </p>
       <div className="consent-banner__actions">
@@ -81,14 +81,14 @@ export default function ConsentBanner() {
           data-testid="consent-decline"
           onClick={() => { denyConsent(ph); setVisible(false) }}
         >
-          Necessary only
+          Turn analytics off
         </button>
         <button
           type="button"
           data-testid="consent-accept"
-          onClick={() => { grantConsent(ph); setVisible(false) }}
+          onClick={() => { acknowledgeAnalytics(ph); setVisible(false) }}
         >
-          Accept
+          Got it
         </button>
       </div>
     </div>

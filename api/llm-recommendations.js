@@ -3,6 +3,7 @@ import { retrieveKnowledgeForIntake, buildKnowledgeContext } from '../src/utils/
 import { verifyUser, claimEcosystemBuild, releaseEcosystemBuild } from './_usageLimit.js';
 import { callWithFallback, parseProviderOrder, tryParseJsonCandidate, providerConfigured } from './_llm.js';
 import { isPremiumUser, hasLegacyClientPremiumFlag } from './_entitlement.js';
+import { routeHealthQuery, minimizeExternalHealthQuery } from './_healthKnowledge.js';
 
 // Hard ceilings on client-supplied work. Without these, one request with 500
 // primaryConcerns and batchSize 500 issued 500 sequential LLM calls.
@@ -454,9 +455,9 @@ export async function lookupDsldProduct(name) {
 // ─── Live product web search via Serper ──────────────────────────────────────
 
 async function searchProductsForConcerns(concerns, intake) {
-  const serperKey = process.env.SERPER_API_KEY;
-  if (!serperKey || !concerns.length) return null;
+  if (!concerns.length) return null;
 
+  const serperKey = process.env.SERPER_API_KEY;
   const profile =
     intake?.fullHealthIntake && typeof intake.fullHealthIntake === 'object'
       ? intake.fullHealthIntake
@@ -466,42 +467,42 @@ async function searchProductsForConcerns(concerns, intake) {
     Array.isArray(profile?.preferredFormats) && profile.preferredFormats.length > 0
       ? profile.preferredFormats
       : (Array.isArray(intake?.productPreferences) ? intake.productPreferences : []);
-
   const prefs = rawPrefs.slice(0, 3).join(' ');
 
   const rawConditions =
     Array.isArray(profile?.diagnosisSelections) && profile.diagnosisSelections.length > 0
       ? profile.diagnosisSelections
       : (Array.isArray(intake?.conditions) ? intake.conditions : []);
-
-  const conditions = rawConditions
+  const conditionsForInternalLookup = rawConditions
     .filter((c) => !['none', 'other', 'none that i know of', 'prefer not to say'].includes(String(c).toLowerCase()))
-    .slice(0, 2)
+    .slice(0, 6)
     .join(' ');
 
   const results = {};
-
   await Promise.all(
-    // Was slice(0, 5): concerns past the fifth in a batch silently got no
-    // search grounding, producing a materially different prompt with no signal.
     concerns.map(async (concern) => {
       const cleanConcern = concern.replace(/\(.*?\)/g, '').trim();
-      const query = [
-        `best ${cleanConcern} product women`,
-        conditions && `${conditions}`,
-        prefs && `${prefs}`,
-        `2024 2025 brand`,
-      ]
+      const internalQuery = [cleanConcern, conditionsForInternalLookup].filter(Boolean).join(' ');
+      const routing = await routeHealthQuery(internalQuery, { limit: 4 });
+
+      if (routing.internalHits.length) {
+        results[concern] = routing.internalHits;
+        return;
+      }
+      if (routing.sensitive && !routing.allowExternal) return;
+      if (!serperKey) return;
+
+      // External fallback receives only the topic plus non-sensitive product
+      // format preferences. The user's diagnosis list/profile is never appended.
+      const topicOnly = minimizeExternalHealthQuery(cleanConcern);
+      const query = [`best ${topicOnly} product women`, prefs, '2025 2026 brand']
         .filter(Boolean)
         .join(' ');
 
       try {
         const r = await fetch('https://google.serper.dev/search', {
           method: 'POST',
-          headers: {
-            'X-API-KEY': serperKey,
-            'Content-Type': 'application/json',
-          },
+          headers: { 'X-API-KEY': serperKey, 'Content-Type': 'application/json' },
           body: JSON.stringify({ q: query, num: 8, gl: 'us' }),
           signal: AbortSignal.timeout(5000),
         });
@@ -510,7 +511,7 @@ async function searchProductsForConcerns(concerns, intake) {
         const hits = (data?.organic || [])
           .filter((h) => h.title && h.snippet)
           .slice(0, 6)
-          .map((h) => ({ title: h.title, snippet: h.snippet.slice(0, 180), url: h.link || '' }));
+          .map((h) => ({ title: h.title, snippet: h.snippet.slice(0, 180), url: h.link || '', sourceType: 'web' }));
         if (hits.length) results[concern] = hits;
       } catch {
         // search failure is non-fatal
@@ -548,13 +549,21 @@ async function mapConcurrent(items, fn, limit = 4) {
 // ─── Per-concern search context ───────────────────────────────────────────────
 function formatSearchContextForConcern(concern, hits) {
   if (!hits?.length) return '';
-  const lines = [`\nLIVE SEARCH for "${concern}":`];
+  const internal = hits.every((h) => h.sourceType === 'ayna_knowledge');
+  const lines = [internal
+    ? `\nAYNA INTERNAL HEALTH KNOWLEDGE for "${concern}":`
+    : `\nLIVE EXTERNAL SEARCH for "${concern}":`];
   hits.forEach((h, i) => {
     lines.push(`  ${i + 1}. ${h.title}`);
     if (h.snippet) lines.push(`     ${h.snippet}`);
-    if (h.url) lines.push(`     Source: ${h.url}`);
+    if (!internal && h.url) lines.push(`     Source: ${h.url}`);
+    if (internal && Array.isArray(h.sourceNames) && h.sourceNames.length) {
+      lines.push(`     Reviewed sources: ${h.sourceNames.join(', ')}`);
+    }
   });
-  lines.push('Use as discovery signal only — quality bar still applies.');
+  lines.push(internal
+    ? 'Use as clinical context. It is not evidence that a particular commercial product exists.'
+    : 'Use as discovery signal only — quality bar still applies.');
   return lines.join('\n');
 }
 

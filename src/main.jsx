@@ -4,7 +4,7 @@ import App from './App.jsx';
 import './index.css';
 import posthog from 'posthog-js';
 import { getInternalIds, tagInternalUserIfNeeded } from './utils/posthogInternal';
-import { applyStoredConsent } from './utils/analyticsConsent';
+import { applyStoredConsent, getStoredConsent } from './utils/analyticsConsent';
 
 if (window.location.hostname === 'aynamvp1.vercel.app') {
   window.location.replace(
@@ -15,6 +15,7 @@ if (window.location.hostname === 'aynamvp1.vercel.app') {
 const POSTHOG_KEY = import.meta.env.VITE_PUBLIC_POSTHOG_KEY;
 const POSTHOG_HOST = import.meta.env.VITE_PUBLIC_POSTHOG_HOST || '/ingest';
 const GPC_ENABLED = typeof navigator !== 'undefined' && navigator.globalPrivacyControl === true;
+const STORED_ANALYTICS_PREF = getStoredConsent();
 const ANALYTICS_ID_PREFIX = 'ayna_analytics_id_v1:';
 
 // PostHog must not use the same identifier as Supabase. A random analytics ID
@@ -122,13 +123,11 @@ if (!POSTHOG_KEY) {
     mask_all_text: true,
     disable_session_recording: true,
     ip: false,
-    // Always start opted out — nothing is sent until the visitor actively
-    // consents via the ConsentBanner (src/utils/analyticsConsent.js), or
-    // already has an explicit opt-in/opt-out on record from elsewhere (the
-    // account-settings toggle, or a prior visit). GPC_ENABLED alone used to
-    // gate this; it's now just one of the paths applyStoredConsent respects
-    // in `loaded` below.
-    opt_out_capturing_by_default: true,
+    // Usage analytics are on by default, but a prior opt-out or Global
+    // Privacy Control must be honored before PostHog can emit the initial
+    // pageview. Health free text and direct identifiers are still stripped by
+    // before_send below, and session recording/autocapture remain disabled.
+    opt_out_capturing_by_default: GPC_ENABLED || STORED_ANALYTICS_PREF === 'denied',
     before_send: sanitizePosthogEvent,
     // Automatic exception capture can include raw error messages/stacks. In a
     // health product those may accidentally contain user-entered context, so

@@ -402,14 +402,14 @@ export default async function handler(req, res) {
 
   if (!anyApiKeyConfigured()) {
     console.warn(
-      'product-insights: no provider keys visible to this function. Set ANTHROPIC_API_KEY or OPENAI_API_KEY in Vercel and redeploy.'
+      'product-insights: no provider keys visible to this function. Set ANTHROPIC_API_KEY, OPENAI_API_KEY, or GEMINI_API_KEY in Vercel and redeploy.'
     );
     return res.status(503).json({
       error: 'not_configured',
       message:
-        'No AI provider key set. Add ANTHROPIC_API_KEY (Claude) or OPENAI_API_KEY in Vercel.',
+        'No AI provider key set. Add ANTHROPIC_API_KEY, OPENAI_API_KEY, or GEMINI_API_KEY in Vercel.',
       hint:
-        'In Vercel: Project → Settings → Environment Variables → add ANTHROPIC_API_KEY for Production (and Preview if you test previews). Save, then Deployments → Redeploy — env vars apply at deploy time.',
+        'In Vercel: Project → Settings → Environment Variables → add at least one configured provider key for Production (and Preview if you test previews), then redeploy.',
     });
   }
 
@@ -448,7 +448,7 @@ export default async function handler(req, res) {
     typeof userContextRaw === 'string' ? userContextRaw.trim().slice(0, 4000) : '';
 
   const order = parseProviderOrder('AI_INSIGHTS_PROVIDER_ORDER', 'claude,openai,gemini');
-  const fallback = ['anthropic', 'openai'];
+  const fallback = ['anthropic', 'openai', 'gemini'];
   let tryProviders = (order.length ? order : fallback).filter((p) => providerConfigured(p));
   if (tryProviders.length === 0) {
     tryProviders = fallback.filter((p) => providerConfigured(p));

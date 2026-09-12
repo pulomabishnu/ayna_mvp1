@@ -8,13 +8,13 @@ Use this internal checklist whenever ayna adds or materially changes a vendor th
 
 - Supabase — authentication, database, account-linked health data
 - Vercel — hosting and server APIs
-- PostHog — consent-based product analytics
+- PostHog — default-on product analytics with persistent opt-out / GPC handling
 - OpenAI — AI processing where configured
 - Anthropic — AI processing where configured
 - Google Gemini — AI processing where configured
 - Twilio — phone verification / opted-in SMS
 - Resend — transactional/support email
-- External search provider(s) — product discovery/search where configured
+- External search provider(s) — ordinary product discovery, plus minimized sensitive-health fallback only after the reviewed internal database has no adequate match
 - Retailer / affiliate networks — outbound purchase attribution
 
 ## Before enabling a processor

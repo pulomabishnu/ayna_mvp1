@@ -3,11 +3,11 @@ import React from 'react';
 const PROCESSORS = [
   ['Supabase', 'Authentication and storage of account-linked data, including health-profile data you choose to save.'],
   ['Vercel', 'Website hosting and server-side API infrastructure.'],
-  ['PostHog', 'Optional product analytics. Analytics starts only after consent. ayna uses a dedicated analytics identifier rather than your Supabase account ID, removes raw health-search text, account email, direct account identifiers and common health-profile fields at the analytics boundary, and has session recording and automatic text/click capture disabled.'],
+  ['PostHog', 'Product analytics are on by default with an opt-out available from Privacy Preferences and account privacy controls. ayna honors Global Privacy Control where supported, uses a dedicated analytics identifier rather than your Supabase account ID, removes raw health-search text, account email, direct account identifiers and common health-profile fields at the analytics boundary, and has session recording and automatic text/click capture disabled.'],
   ['OpenAI, Anthropic, and Google Gemini', 'Depending on feature availability and server configuration, one provider may process a prompt, product information and limited relevant health context when you intentionally use an AI-powered feature such as Ask ayna or AI product insights. Not every request is sent to every provider.'],
   ['Twilio', 'Phone verification and opted-in SMS features such as safety or recall messaging.'],
   ['Resend', 'Transactional and support email.'],
-  ['Search providers', 'Some product-discovery features may use an external search service to locate public product information. If a feature sends the text of a search, that provider may process the text.'],
+  ['Search providers', 'For sensitive symptom or condition searches, ayna checks its reviewed first-party health knowledge before using an external search service. External search is permitted only after the internal database has no adequate match; the fallback query is minimized and does not append your saved diagnosis list or health profile. Ordinary non-health product discovery may still use external search directly.'],
   ['Retailers and affiliate networks', 'When you choose a Buy link, the destination retailer may receive normal web-request information and an affiliate identifier. ayna does not send your saved ayna health profile to a retailer as part of an ordinary Buy-link click.'],
 ];
 
@@ -72,7 +72,7 @@ export default function PrivacyPolicy({ onBack }) {
         <div style={sectionStyle}>
           <h2>4. Analytics and privacy preferences</h2>
           <p style={pStyle}>
-            ayna uses PostHog for optional product analytics only after the visitor has made an explicit analytics choice. Analytics starts opted out by default for a visitor who has not yet decided. Session recording, automatic click/text capture and automatic exception capture are disabled, and IP collection is disabled in ayna's PostHog configuration.
+            ayna uses PostHog for product analytics that are on by default. You can opt out at any time from Privacy Preferences or account privacy controls, and a prior opt-out is honored before analytics starts on a later visit. Global Privacy Control is also honored where supported. Session recording, automatic click/text capture and automatic exception capture are disabled, and IP collection is disabled in ayna's PostHog configuration.
           </p>
           <p style={pStyle}>
             Raw health-search text, account email, direct account identifiers and common health-profile fields are removed at the analytics boundary. For signed-in analytics, ayna substitutes a dedicated random analytics identifier rather than using the same user ID stored with your health records. You can change your analytics choice from Privacy Preferences or account privacy controls, and Global Privacy Control is honored where supported.

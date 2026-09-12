@@ -12,6 +12,7 @@ import { checkProductInsightsRateLimit } from './_rateLimitProductInsights.js';
 import { verifyUser } from './_usageLimit.js';
 import { tryParseJsonCandidate, callWithFallback, parseProviderOrder, providerConfigured } from './_llm.js';
 import { ALL_PRODUCTS } from '../src/data/products.js';
+import { routeHealthQuery } from './_healthKnowledge.js';
 
 // Mirrors PRESCRIPTION_DRUG_PATTERN in api/llm-recommendations.js — keep the two in sync.
 const PRESCRIPTION_DRUG_PATTERN = new RegExp(
@@ -194,13 +195,18 @@ function sanitizeOfficialUrl(s) {
 // without loosening the actual fabrication rules — it still may only report
 // what these results actually show.
 async function searchWebForQuery(query) {
+  const routing = await routeHealthQuery(query, { limit: 4 });
+  if (routing.sensitive && routing.internalHits.length) return routing.internalHits;
+  if (routing.sensitive && !routing.allowExternal) return null;
+
   const serperKey = process.env.SERPER_API_KEY;
   if (!serperKey) return null;
+  const externalQuery = routing.sensitive ? routing.minimizedQuery : query;
   try {
     const r = await fetch('https://google.serper.dev/search', {
       method: 'POST',
       headers: { 'X-API-KEY': serperKey, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ q: `${query} buy`, num: 8, gl: 'us' }),
+      body: JSON.stringify({ q: `${externalQuery} buy`, num: 8, gl: 'us' }),
       signal: AbortSignal.timeout(5000),
     });
     if (!r.ok) return null;
@@ -208,19 +214,25 @@ async function searchWebForQuery(query) {
     const hits = (data?.organic || [])
       .filter((h) => h.title && h.snippet)
       .slice(0, 6)
-      .map((h) => ({ title: h.title, snippet: h.snippet.slice(0, 200), url: h.link || '' }));
+      .map((h) => ({ title: h.title, snippet: h.snippet.slice(0, 200), url: h.link || '', sourceType: 'web' }));
     return hits.length ? hits : null;
   } catch {
-    // Search failure is non-fatal — the prompt just falls back to
-    // recall-only, i.e. today's behavior.
     return null;
   }
 }
 
 function formatSearchHitsForPrompt(hits) {
   if (!hits || !hits.length) return '';
+  const internal = hits.every((h) => h.sourceType === 'ayna_knowledge');
+  if (internal) {
+    const lines = hits.map((h, i) => {
+      const sources = Array.isArray(h.sourceNames) && h.sourceNames.length ? ` Sources: ${h.sourceNames.join(', ')}.` : '';
+      return `${i + 1}. ${h.title} — ${h.snippet}${sources}`;
+    });
+    return `\n\nAYNA INTERNAL HEALTH KNOWLEDGE (reviewed first-party context; do not treat this as proof that a particular brand/product exists):\n${lines.join('\n')}`;
+  }
   const lines = hits.map((h, i) => `${i + 1}. ${h.title} — ${h.snippet}${h.url ? ` (${h.url})` : ''}`);
-  return `\n\nLIVE WEB SEARCH RESULTS for this exact query (real, current — use these to confirm a specific product actually exists, especially for a smaller or newer brand you would not otherwise be fully confident naming from memory alone). Only report what these results actually show — a brand or product name that doesn't appear here and that you're not independently confident about is still not something to include:\n${lines.join('\n')}`;
+  return `\n\nLIVE WEB SEARCH RESULTS (external search is used only after ayna's health knowledge database has no adequate match for a sensitive health query). Only report what these results actually show:\n${lines.join('\n')}`;
 }
 
 function clampTypicalRating(n) {
