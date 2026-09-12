@@ -4,20 +4,17 @@
  * Backs the ConsentBanner UI with a stored granted/denied decision (12-month
  * expiry) and applies it to the PostHog instance via opt_in_capturing() /
  * opt_out_capturing() — the same SDK calls src/components/AccountDataControls.jsx
- * uses for its "Usage analytics" settings toggle, and the same ones main.jsx
- * uses for Global Privacy Control (GPC).
+ * already uses for its "Usage analytics" settings toggle, and the same ones
+ * main.jsx already uses for Global Privacy Control (GPC). All three paths
+ * (banner, account settings, GPC) converge on that one SDK-level opt state,
+ * so whichever one a visitor used last is the one that sticks.
  *
- * Deliberate choice: whether the BANNER shows is governed ONLY by this
- * module's own storage key, never by the SDK's underlying opt state. GPC (or
- * a stale/implicit opt-out from before this banner existed) can still set
- * PostHog's own consent state to "denied" — main.jsx's GPC branch does
- * exactly that — but that must not be read as "the banner already asked".
- * Every visitor gets the explicit banner once, including GPC senders; if
- * they click "Accept" that's a genuine, informed per-site choice that's
- * allowed to override GPC's default. (An earlier version of this module did
- * treat any prior explicit SDK-level decision as "already asked", which
- * silently suppressed the banner for anyone whose browser sends GPC — not
- * what we want: everyone should be asked.)
+ * Because of that shared state, this module treats "the SDK already has an
+ * EXPLICIT opt-in/opt-out on record" (per get_explicit_consent_status(), not
+ * has_opted_in/out_capturing() — see explicitSdkDecision() below for why) as
+ * equivalent to "the banner has already been answered". That matters for
+ * anyone who used the account-settings toggle (or whose browser sends GPC)
+ * before ever seeing this banner: they should not be asked again.
  *
  * NOTE ON WORDING: what this gates is analytics. It is NOT the Supabase
  * session, which lives in localStorage (not a cookie) and is genuinely
@@ -27,6 +24,27 @@
 
 export const CONSENT_STORAGE_KEY = 'ayna_analytics_consent';
 export const CONSENT_TTL_MS = 365 * 24 * 60 * 60 * 1000;
+
+/**
+ * An EXPLICIT prior SDK-level decision ('granted'/'denied'), or undefined if
+ * none has ever been made.
+ *
+ * Deliberately NOT has_opted_in_capturing()/has_opted_out_capturing(): with
+ * opt_out_capturing_by_default: true (set in main.jsx so nothing is sent
+ * before a decision exists), has_opted_out_capturing() returns true for
+ * EVERY visitor who has never made a choice at all — posthog-js's "pending"
+ * state reads as "opted out" once that default flag is on. Treating that as
+ * an explicit decision would hide the banner for every first-time visitor.
+ * get_explicit_consent_status() is the one API that actually distinguishes
+ * "pending" from a real granted/denied call.
+ */
+function explicitSdkDecision(ph) {
+  try {
+    const status = ph?.get_explicit_consent_status?.();
+    if (status === 'granted' || status === 'denied') return status;
+  } catch { /* fall through */ }
+  return undefined;
+}
 
 function readRaw() {
   let raw;
@@ -59,7 +77,7 @@ function isExpired(record) {
   return Number.isNaN(ts) || Date.now() - ts > CONSENT_TTL_MS;
 }
 
-/** This banner's own stored decision. */
+/** This banner's own stored decision, ignoring any other opt state. */
 export function getStoredConsent() {
   const record = readRaw();
   if (!record || isExpired(record)) return undefined;
@@ -67,13 +85,15 @@ export function getStoredConsent() {
 }
 
 /**
- * Whether THIS banner has been answered. Intentionally checks nothing but
- * our own key — see the module comment above for why GPC/other SDK-level
- * state must not short-circuit this.
+ * Whether there's any reason NOT to show the banner: our own stored
+ * decision, or an explicit PostHog SDK-level opt-in/opt-out already on
+ * record (set via the account-settings toggle or GPC, possibly before this
+ * banner ever existed). `ph` is optional — omit it to check only our own key.
  */
-export function hasRecordedChoice() {
+export function hasRecordedChoice(ph) {
   const v = getStoredConsent();
-  return v === 'granted' || v === 'denied';
+  if (v === 'granted' || v === 'denied') return true;
+  return explicitSdkDecision(ph) !== undefined;
 }
 
 function persist(decision) {
@@ -86,15 +106,19 @@ function persist(decision) {
 }
 
 /**
- * Called once from main.jsx's posthog.init `loaded` callback, for visitors
- * whose browser isn't sending GPC (main.jsx handles that case itself).
- * Always defaults to opted OUT — nothing is sent until the banner is
- * actually answered.
+ * Called once from main.jsx's posthog.init `loaded` callback (after the GPC
+ * check there, which takes priority). Defaults to opted OUT — nothing is
+ * sent until the visitor actively consents — unless a decision already
+ * exists, from this banner or from elsewhere (see hasRecordedChoice above).
  */
 export function applyStoredConsent(ph) {
   const stored = getStoredConsent();
   if (stored === 'granted') return ph.opt_in_capturing();
-  return ph.opt_out_capturing(); // denied, or no decision yet — stay out until answered
+  if (stored === 'denied') return ph.opt_out_capturing();
+
+  if (explicitSdkDecision(ph) !== undefined) return; // already decided elsewhere — leave it
+
+  ph.opt_out_capturing(); // truly undecided — stay out until the banner is answered
 }
 
 export function grantConsent(ph) {

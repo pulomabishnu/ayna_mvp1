@@ -1,6 +1,14 @@
 import { useEffect, useState } from 'react'
 import { hasRecordedChoice, grantConsent, denyConsent } from '../utils/analyticsConsent'
 
+function gpcEnabled() {
+  try {
+    return typeof navigator !== 'undefined' && navigator.globalPrivacyControl === true
+  } catch {
+    return false
+  }
+}
+
 /**
  * Bottom-of-screen analytics consent bar.
  *
@@ -17,15 +25,15 @@ import { hasRecordedChoice, grantConsent, denyConsent } from '../utils/analytics
  *     de-emphasised decline is the exact dark pattern California penalised
  *     Sephora for under CCPA.
  *  2. There is no dismiss/close control. Silence is not a decision, so the
- *     bar persists across reloads until one of the two buttons is clicked.
+ *     bar persists across reloads until one of the two buttons is clicked,
+ *     or until it's answered some other way (see the GPC/hasRecordedChoice
+ *     checks below).
  *
- * Shown to EVERY visitor, including ones whose browser sends Global Privacy
- * Control (GPC) — main.jsx's GPC handling still keeps analytics off by
- * default until this banner is answered, but it must not suppress the
- * banner itself: see the comment at the top of analyticsConsent.js for why
- * conflating "GPC set an opt-out" with "the banner already asked" is wrong.
- * Clicking "Accept" here is a genuine, informed per-site choice a visitor is
- * allowed to make even with GPC on.
+ * Never shown when the browser sends Global Privacy Control (GPC) — main.jsx
+ * already force-opts-out for that case, so there's no decision left to ask
+ * for — or when the visitor already has an explicit analytics decision on
+ * record from elsewhere (e.g. the "Usage analytics" toggle in account
+ * settings), so returning users are never asked twice.
  *
  * The copy says "necessary storage", not "necessary cookies", because this
  * app sets no cookies — the necessary thing is the Supabase session living
@@ -38,14 +46,14 @@ export default function ConsentBanner() {
   // we wait for it — but we have to actually re-render when it arrives, not
   // just check once, or the banner would never appear at all.
   const [ph, setPh] = useState(() => (typeof window !== 'undefined' ? window.posthog : undefined))
-  const [visible, setVisible] = useState(() => !!ph && !hasRecordedChoice())
+  const [visible, setVisible] = useState(() => !!ph && !gpcEnabled() && !hasRecordedChoice(ph))
 
   useEffect(() => {
     if (ph) return
     const id = setInterval(() => {
       if (window.posthog) {
         setPh(window.posthog)
-        setVisible(!hasRecordedChoice())
+        setVisible(!gpcEnabled() && !hasRecordedChoice(window.posthog))
       }
     }, 150)
     // If PostHog never loads (no VITE_PUBLIC_POSTHOG_KEY, blocked by an

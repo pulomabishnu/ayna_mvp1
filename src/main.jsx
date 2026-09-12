@@ -14,6 +14,7 @@ if (window.location.hostname === 'aynamvp1.vercel.app') {
 
 const POSTHOG_KEY = import.meta.env.VITE_PUBLIC_POSTHOG_KEY;
 const POSTHOG_HOST = import.meta.env.VITE_PUBLIC_POSTHOG_HOST || '/ingest';
+const GPC_ENABLED = typeof navigator !== 'undefined' && navigator.globalPrivacyControl === true;
 const ANALYTICS_ID_PREFIX = 'ayna_analytics_id_v1:';
 
 // PostHog must not use the same identifier as Supabase. A random analytics ID
@@ -122,11 +123,11 @@ if (!POSTHOG_KEY) {
     disable_session_recording: true,
     ip: false,
     // Always start opted out — nothing is sent until the visitor actively
-    // consents via the ConsentBanner (src/utils/analyticsConsent.js). See
-    // applyStoredConsent() in `loaded` below, which is called unconditionally
-    // (including for GPC senders): GPC does not skip the banner, it's just
-    // what the default reads as until the banner is answered — see the
-    // module comment at the top of analyticsConsent.js for why.
+    // consents via the ConsentBanner (src/utils/analyticsConsent.js), or
+    // already has an explicit opt-in/opt-out on record from elsewhere (the
+    // account-settings toggle, or a prior visit). GPC_ENABLED alone used to
+    // gate this; it's now just one of the paths applyStoredConsent respects
+    // in `loaded` below.
     opt_out_capturing_by_default: true,
     before_send: sanitizePosthogEvent,
     // Automatic exception capture can include raw error messages/stacks. In a
@@ -135,13 +136,8 @@ if (!POSTHOG_KEY) {
     errorTracking: { autocaptureExceptions: false },
     loaded: (ph) => {
       window.posthog = ph;
-      // Unconditional, including for GPC senders — see the comment on
-      // opt_out_capturing_by_default above. A previous version special-cased
-      // GPC here by force-calling opt_out_capturing() every load, which would
-      // have silently re-opted-out a GPC visitor on every subsequent visit
-      // even after they explicitly clicked "Accept" once, since it never
-      // consulted the stored decision at all.
-      applyStoredConsent(ph);
+      if (GPC_ENABLED) ph.opt_out_capturing?.();
+      else applyStoredConsent(ph);
       tagInternalUserIfNeeded(ph);
     },
   });
