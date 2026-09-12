@@ -6,6 +6,7 @@ on:
       - analytics-health-knowledge-routing
     paths:
       - scripts/apply-analytics-health-routing-patch.mjs
+      - scripts/fix-analytics-consent-patch.mjs
       - .github/workflows/apply-analytics-health-routing-patch.yml
 
 permissions:
@@ -32,7 +33,9 @@ jobs:
           PUPPETEER_SKIP_DOWNLOAD: 'true'
 
       - name: Apply deterministic source patch
-        run: node scripts/apply-analytics-health-routing-patch.mjs
+        run: |
+          node scripts/apply-analytics-health-routing-patch.mjs
+          node scripts/fix-analytics-consent-patch.mjs
 
       - name: Run tests and capture diagnostics
         id: tests
@@ -62,7 +65,9 @@ jobs:
       - name: Remove one-time patch helpers
         run: |
           rm scripts/apply-analytics-health-routing-patch.mjs
+          rm scripts/fix-analytics-consent-patch.mjs
           rm .github/workflows/apply-analytics-health-routing-patch.yml
+          rm -f audit-test-output.txt
 
       - name: Commit patched sources
         run: |
