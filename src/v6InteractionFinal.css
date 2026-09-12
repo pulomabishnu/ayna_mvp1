@@ -1,0 +1,95 @@
+/* Final interaction/spacing overrides. Loaded after v6InteractionFixes.css. */
+
+/* Search dropdown should read as part of the field, not a floating unrelated panel. */
+.v6-typeahead-host{isolation:isolate!important}
+.v6-live-search-dropdown{
+  top:calc(100% + 5px)!important;
+  border-radius:16px!important;
+  padding:6px!important;
+  box-shadow:0 18px 48px rgba(45,33,44,.14)!important;
+}
+.v6-typeahead-row,.v6-typeahead-add{min-height:48px!important;padding:6px 8px!important}
+.v6-typeahead-copy strong{font-size:12.5px!important}
+.v6-typeahead-copy small{font-size:10px!important}
+.v6-typeahead-visual{width:34px!important;height:34px!important;border-radius:10px!important}
+.v6-typeahead-open{z-index:12000!important}
+.v6-typeahead-open .v6-live-search-dropdown{z-index:12010!important}
+.v6-auth-overlay.v6-auth-sheet-mode{z-index:9000!important}
+
+/* Intake: one scroll surface only. The stage scrolls, not a panel inside the stage. */
+.ayna-intake-root .ayna-intake-question{
+  height:min(560px,calc(100dvh - 112px))!important;
+  max-height:560px!important;
+  min-height:420px!important;
+  padding:18px 28px 14px!important;
+}
+.ayna-intake-root .ayna-intake-question>h1{font-size:clamp(27px,2.8vw,38px)!important}
+.ayna-intake-root .ayna-intake-icon{width:36px!important;height:36px!important;margin-bottom:7px!important}
+.ayna-intake-root .ayna-intake-stage{margin-top:11px!important;overflow:auto!important}
+.ayna-intake-root .ayna-list-panel{
+  max-height:none!important;
+  overflow:visible!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:6px!important;
+}
+.ayna-intake-root .ayna-search-wrap{margin-bottom:7px!important}
+.ayna-intake-root .v6-intake-search-dropdown{z-index:12500!important;max-height:220px!important}
+.ayna-intake-root .ayna-smart-dropdown{z-index:12500!important}
+.ayna-intake-root .ayna-continue-wrap{margin-top:8px!important}
+.ayna-intake-root .ayna-skip{margin-top:5px!important}
+
+/* When an intake suggestion menu is open, do not clip it at the question edge. */
+.ayna-intake-root .ayna-intake-question:has(.v6-intake-typeahead-open),
+.ayna-intake-root .ayna-intake-question:has(.ayna-smart-dropdown:not([hidden])){overflow:visible!important;z-index:80!important}
+.ayna-intake-root .ayna-intake-stage:has(.v6-intake-typeahead-open),
+.ayna-intake-root .ayna-intake-stage:has(.ayna-smart-dropdown:not([hidden])){overflow:visible!important}
+
+/* Sign in stays compact and to the side so Browse/search remain usable. */
+.v6-auth-overlay.v6-auth-sheet-mode{padding:68px 18px 16px!important}
+.v6-auth-overlay.v6-auth-sheet-mode .v6-auth-card{
+  width:min(380px,calc(100vw - 28px))!important;
+  max-height:calc(100dvh - 84px)!important;
+  padding:23px 24px 21px!important;
+}
+
+/* Ecosystem: exact V6 feeling. The universe owns the whole first viewport. */
+.v6-page-ecosystem .v6-ecosystem-page{
+  width:100vw!important;
+  max-width:none!important;
+  margin-left:calc(50% - 50vw)!important;
+  margin-right:calc(50% - 50vw)!important;
+  padding:0!important;
+}
+.v6-page-ecosystem .v6-ecosystem-panel{
+  min-height:calc(100dvh - 62px)!important;
+  border-radius:0!important;
+  border-left:0!important;
+  border-right:0!important;
+  padding:clamp(34px,4.2vw,58px) clamp(26px,5vw,72px) 28px!important;
+  justify-content:center!important;
+}
+.v6-page-ecosystem .v6-eco-main{
+  flex:1 1 auto!important;
+  align-items:center!important;
+  min-height:0!important;
+}
+.v6-page-ecosystem .v6-universe-wrap{width:min(610px,47vw)!important}
+.v6-page-ecosystem .v6-eco-stats{margin-top:auto!important;padding-top:18px!important}
+.v6-page-ecosystem .eco2-body{margin-top:0!important;padding-top:54px!important}
+
+@media(max-height:760px) and (min-width:761px){
+  .ayna-intake-root .ayna-intake-question{height:calc(100dvh - 106px)!important;max-height:none!important;min-height:0!important;padding-top:15px!important}
+  .ayna-intake-root .ayna-intake-icon{width:32px!important;height:32px!important;margin-bottom:5px!important}
+  .ayna-intake-root .ayna-intake-question>h1{font-size:32px!important}
+  .ayna-intake-root .ayna-intake-stage{margin-top:9px!important}
+}
+
+@media(max-width:760px){
+  .ayna-intake-root .ayna-intake-question{height:calc(100dvh - 104px)!important;max-height:none!important;min-height:0!important;padding:16px 14px 12px!important}
+  .ayna-intake-root .ayna-list-panel{grid-template-columns:1fr!important}
+  .v6-auth-overlay.v6-auth-sheet-mode{padding:8px!important}
+  .v6-auth-overlay.v6-auth-sheet-mode .v6-auth-card{width:100%!important;max-height:82dvh!important}
+  .v6-page-ecosystem .v6-ecosystem-panel{min-height:calc(100dvh - 58px)!important;padding:24px 14px 20px!important}
+  .v6-page-ecosystem .v6-universe-wrap{width:min(390px,100%)!important}
+  .v6-page-ecosystem .eco2-body{padding-top:36px!important}
+}

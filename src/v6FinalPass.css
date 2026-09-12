@@ -1,0 +1,359 @@
+/* Final V6 pass: one coherent matte system across light, dark, auth, browse and quiz. */
+
+:root {
+  --v6-paper: #e7e3e9;
+  --v6-paper-2: #ddd2dd;
+  --v6-dust: #c9bbc7;
+  --v6-dust-2: #bba9b8;
+  --v6-plum: #554561;
+  --v6-plum-deep: #31283e;
+  --v6-ink: #3d343e;
+  --v6-muted: #6d626a;
+  --v6-peach: #d99772;
+  --v6-gold: #e2ad72;
+  --v6-cream: #fff8f2;
+}
+
+/* A very light texture makes the redesign feel printed/matte rather than glossy. */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  opacity: .032;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.38'/%3E%3C/svg%3E");
+}
+
+/* Never show a personalized score to someone who has no signed-in profile. */
+.v6-signed-out .ayna-browse-card__match,
+.v6-signed-out .ayna-match-gauge,
+.v6-signed-out .pdp-head__match--gauge,
+.v6-signed-out .ayna-result-match,
+.v6-signed-out [class*='personalized-score'],
+.v6-signed-out [class*='match-percent'] {
+  display: none !important;
+}
+
+/* Product cards: same dusty V6 material everywhere. */
+.ayna-browse.v6-browse-live .ayna-discover-card__tile {
+  background:
+    radial-gradient(circle at 75% 18%, rgba(255,255,255,.18), transparent 34%),
+    linear-gradient(145deg, rgba(199,184,196,.58), rgba(187,170,184,.42)) !important;
+  border: 1px solid rgba(78,60,82,.10) !important;
+  box-shadow: 0 12px 30px rgba(58,43,56,.055) !important;
+}
+.ayna-browse.v6-browse-live .ayna-discover-card:hover .ayna-discover-card__tile {
+  transform: translateY(-3px) scale(1.006) !important;
+  background: linear-gradient(145deg, rgba(194,178,191,.62), rgba(183,166,181,.46)) !important;
+}
+.ayna-browse.v6-browse-live .ayna-discover-card__tile img {
+  background: transparent !important;
+  mix-blend-mode: normal !important;
+  filter: drop-shadow(0 12px 15px rgba(50,35,48,.09)) !important;
+}
+.ayna-browse.v6-browse-live .ayna-discover-card__body {
+  padding-top: 12px !important;
+}
+.ayna-browse.v6-browse-live .ayna-discover-card__name {
+  font-size: 18px !important;
+  line-height: 1.14 !important;
+}
+.ayna-browse.v6-browse-live .ayna-discover-card__price {
+  font-size: 11px !important;
+}
+
+/* Quiz dark mode is the dark sibling of V6 light, not a pale light card pasted on a gradient. */
+.ayna-intake-root.v6-quiz-dark {
+  background:
+    radial-gradient(circle at 86% 17%, rgba(213,135,93,.20), transparent 31%),
+    radial-gradient(circle at 7% 82%, rgba(128,95,142,.17), transparent 34%),
+    linear-gradient(135deg, #242a52 0%, #49395a 53%, #8c574b 100%) !important;
+  color: var(--v6-cream) !important;
+}
+.ayna-intake-root.v6-quiz-dark .ayna-intake-question {
+  background: linear-gradient(145deg, rgba(55,44,67,.88), rgba(66,50,69,.78)) !important;
+  border-color: rgba(255,248,242,.10) !important;
+  color: var(--v6-cream) !important;
+  box-shadow: 0 22px 58px rgba(16,11,24,.22) !important;
+}
+.ayna-intake-root.v6-quiz-dark .ayna-intake-question > h1,
+.ayna-intake-root.v6-quiz-dark .ayna-intake-question h2,
+.ayna-intake-root.v6-quiz-dark .ayna-intake-question strong {
+  color: var(--v6-cream) !important;
+}
+.ayna-intake-root.v6-quiz-dark .ayna-intake-subtitle,
+.ayna-intake-root.v6-quiz-dark .ayna-mini-note,
+.ayna-intake-root.v6-quiz-dark .ayna-timeline button,
+.ayna-intake-root.v6-quiz-dark .ayna-skip {
+  color: rgba(255,248,242,.68) !important;
+}
+.ayna-intake-root.v6-quiz-dark .ayna-choice-card,
+.ayna-intake-root.v6-quiz-dark .ayna-pill,
+.ayna-intake-root.v6-quiz-dark .ayna-seg-option,
+.ayna-intake-root.v6-quiz-dark .ayna-scale,
+.ayna-intake-root.v6-quiz-dark .ayna-spectrum,
+.ayna-intake-root.v6-quiz-dark .ayna-trust-item,
+.ayna-intake-root.v6-quiz-dark .ayna-product-row,
+.ayna-intake-root.v6-quiz-dark .v6-support-category,
+.ayna-intake-root.v6-quiz-dark .ayna-mini-note {
+  background: rgba(255,255,255,.055) !important;
+  border-color: rgba(255,248,242,.11) !important;
+  color: rgba(255,248,242,.91) !important;
+}
+.ayna-intake-root.v6-quiz-dark .v6-support-category .ayna-category-title,
+.ayna-intake-root.v6-quiz-dark .ayna-product-row-copy strong,
+.ayna-intake-root.v6-quiz-dark .ayna-trust-label {
+  color: rgba(255,248,242,.91) !important;
+}
+.ayna-intake-root.v6-quiz-dark .v6-support-category > .ayna-row-choice,
+.ayna-intake-root.v6-quiz-dark .ayna-smart-dropdown,
+.ayna-intake-root.v6-quiz-dark .ayna-smart-dropdown button {
+  background: rgba(255,255,255,.065) !important;
+  color: rgba(255,248,242,.92) !important;
+  border-color: rgba(255,248,242,.10) !important;
+}
+.ayna-intake-root.v6-quiz-dark .ayna-text-input,
+.ayna-intake-root.v6-quiz-dark .ayna-textarea,
+.ayna-intake-root.v6-quiz-dark .ayna-inline-input,
+.ayna-intake-root.v6-quiz-dark .ayna-search-wrap input,
+.ayna-intake-root.v6-quiz-dark .ayna-smart-search-line {
+  background: rgba(255,255,255,.075) !important;
+  color: var(--v6-cream) !important;
+  border-color: rgba(255,248,242,.12) !important;
+}
+.ayna-intake-root.v6-quiz-dark input::placeholder,
+.ayna-intake-root.v6-quiz-dark textarea::placeholder {
+  color: rgba(255,248,242,.45) !important;
+}
+.ayna-intake-root.v6-quiz-dark .ayna-choice-card.selected,
+.ayna-intake-root.v6-quiz-dark .ayna-pill.selected,
+.ayna-intake-root.v6-quiz-dark .ayna-seg-option.selected,
+.ayna-intake-root.v6-quiz-dark .v6-support-category > .ayna-row-choice.selected,
+.ayna-intake-root.v6-quiz-dark .ayna-spectrum-grid button.selected {
+  background: #a86d64 !important;
+  border-color: #ba7f70 !important;
+  color: #fffaf5 !important;
+}
+.ayna-intake-root.v6-quiz-dark .ayna-continue {
+  background: #e0ad78 !important;
+  color: #30263b !important;
+}
+
+/* Synthetic first-name question. */
+.ayna-intake-question.v6-name-gated > :not(.v6-name-step) {
+  display: none !important;
+}
+.v6-name-step {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 24px 10px;
+}
+.v6-name-step__eyebrow,
+.v6-account-step__eyebrow {
+  font: 500 9px/1 var(--font-label, monospace);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: #9b6552;
+  margin-bottom: 13px;
+}
+.v6-name-step h1,
+.v6-account-step h1 {
+  margin: 0;
+  font: 500 clamp(34px, 4.3vw, 48px)/1.03 var(--font-serif, Georgia, serif);
+  letter-spacing: -.038em;
+}
+.v6-name-step p,
+.v6-account-step__sub {
+  max-width: 520px;
+  margin: 10px auto 18px;
+  color: #6b6068;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.v6-name-step__input {
+  width: min(440px, 100%);
+  height: 54px;
+  border: 1px solid rgba(78,60,82,.13);
+  border-radius: 15px;
+  background: rgba(194,180,191,.72);
+  color: #3d343e;
+  padding: 0 16px;
+  outline: 0;
+  font-size: 16px;
+  text-align: center;
+}
+.v6-name-step__button,
+.v6-account-primary {
+  border: 0;
+  border-radius: 999px;
+  background: #554561;
+  color: #fff;
+  min-height: 44px;
+  padding: 10px 18px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 12px;
+}
+.v6-name-step__button:disabled,
+.v6-account-primary:disabled { opacity: .38; cursor: not-allowed; }
+.v6-quiz-dark .v6-name-step__eyebrow { color: #e3b278; }
+.v6-quiz-dark .v6-name-step h1 { color: var(--v6-cream); }
+.v6-quiz-dark .v6-name-step p { color: rgba(255,248,242,.66); }
+.v6-quiz-dark .v6-name-step__input { background: rgba(255,255,255,.07); color: var(--v6-cream); border-color: rgba(255,248,242,.12); }
+.v6-quiz-dark .v6-name-step__button { background: #e0ad78; color: #30263b; }
+
+/* Final account step is visually another quiz question, not a generic auth modal. */
+.ayna-quiz-result-screen.v6-awaiting-account > :not(.v6-account-step) {
+  visibility: hidden !important;
+}
+.v6-account-step {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 74px 18px 28px;
+  color: #3d343e;
+  visibility: visible !important;
+}
+.v6-account-step__card {
+  width: min(680px, 94vw);
+  max-height: calc(100dvh - 96px);
+  overflow: auto;
+  border-radius: 30px;
+  padding: 30px 34px 26px;
+  background:
+    radial-gradient(circle at 82% 14%, rgba(224,158,121,.15), transparent 32%),
+    linear-gradient(145deg, rgba(219,208,217,.98), rgba(202,188,200,.96));
+  border: 1px solid rgba(255,255,255,.36);
+  box-shadow: 0 26px 68px rgba(43,31,43,.16);
+  text-align: center;
+}
+.v6-account-step__methods {
+  width: fit-content;
+  display: flex;
+  gap: 5px;
+  padding: 4px;
+  margin: 0 auto 12px;
+  border-radius: 999px;
+  background: rgba(172,155,170,.34);
+}
+.v6-account-method {
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #6b5f67;
+  padding: 8px 13px;
+  font-size: 11.5px;
+  cursor: pointer;
+}
+.v6-account-method.is-active { background: #554561; color: #fff; }
+.v6-account-fields { width: min(470px, 100%); margin: 0 auto; display: grid; gap: 8px; }
+.v6-account-input {
+  width: 100%;
+  height: 47px;
+  box-sizing: border-box;
+  border-radius: 13px;
+  border: 1px solid rgba(78,60,82,.13);
+  background: rgba(190,174,187,.74);
+  color: #3d343e;
+  padding: 0 13px;
+  outline: 0;
+  font-size: 12.5px;
+}
+.v6-account-input::placeholder { color: #796d74; }
+.v6-account-primary { width: 100%; margin-top: 3px; }
+.v6-account-google {
+  width: min(470px,100%);
+  min-height: 44px;
+  margin: 9px auto 0;
+  border-radius: 999px;
+  border: 1px solid rgba(78,60,82,.13);
+  background: rgba(199,185,196,.80);
+  color: #3d343e;
+  font-size: 12px;
+  cursor: pointer;
+}
+.v6-account-divider { display: flex; align-items: center; gap: 10px; width: min(470px,100%); margin: 10px auto 0; color: #82757d; font-size: 10px; }
+.v6-account-divider::before,.v6-account-divider::after { content:''; height: 1px; flex: 1; background: rgba(78,60,82,.12); }
+.v6-account-consent { width: min(470px,100%); margin: 9px auto 0; border: 1px solid rgba(78,60,82,.11); background: rgba(185,170,182,.28); border-radius: 13px; padding: 9px 11px; text-align: left; }
+.v6-account-consent > button { width:100%; display:flex; justify-content:space-between; border:0; background:transparent; color:#554561; font-size:10.5px; font-weight:600; cursor:pointer; padding:0; }
+.v6-account-consent-list { display:none; gap:7px; margin-top:8px; }
+.v6-account-consent.is-open .v6-account-consent-list { display:grid; }
+.v6-account-consent label { display:flex; gap:7px; align-items:flex-start; color:#6b6068; font-size:10px; line-height:1.35; }
+.v6-account-consent input { accent-color:#554561; margin-top:1px; }
+.v6-account-legal { max-width:470px; margin:8px auto 0; color:#7a6e76; font-size:9.5px; line-height:1.45; }
+.v6-account-legal a { color:#554561; }
+.v6-account-status { min-height:18px; max-width:470px; margin:7px auto 0; color:#8e493f; font-size:11px; line-height:1.4; }
+.v6-account-signin-link { border:0; background:transparent; color:#695b66; font-size:11px; text-decoration:underline; text-underline-offset:3px; cursor:pointer; margin-top:8px; }
+.v6-account-code-note { color:#6d626a; font-size:11px; margin:1px 0 0; }
+
+/* Existing sign-in modal: same V6 matte material, not a white SaaS box. */
+.v6-auth-card {
+  background:
+    radial-gradient(circle at 78% 8%, rgba(224,158,121,.14), transparent 32%),
+    linear-gradient(145deg, rgba(217,206,215,.98), rgba(199,184,197,.98)) !important;
+}
+.v6-auth-card .v6-auth-input,
+.v6-auth-card input[type='email'],
+.v6-auth-card input[type='password'],
+.v6-auth-card input[type='tel'],
+.v6-auth-card input[type='text'] {
+  background: rgba(187,171,184,.72) !important;
+}
+.v6-auth-inline-error { color:#8f423d; font-size:11px; line-height:1.4; margin:0; }
+
+/* Verification gate shown only after somebody has actually started account creation. */
+.v6-verify-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10001;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(44,34,48,.36);
+  backdrop-filter: blur(8px);
+}
+.v6-verify-card {
+  width: min(430px, 94vw);
+  border-radius: 27px;
+  padding: 28px;
+  text-align: center;
+  background: linear-gradient(145deg,#ddd1dc,#c7b7c5);
+  border:1px solid rgba(255,255,255,.4);
+  box-shadow:0 25px 65px rgba(42,30,42,.18);
+  color:#3d343e;
+}
+.v6-verify-card h2 { margin:0 0 8px; font:500 32px/1 var(--font-serif,Georgia,serif); letter-spacing:-.03em; }
+.v6-verify-card p { margin:0; color:#6d6169; font-size:12.5px; line-height:1.5; }
+.v6-verify-actions { display:flex; justify-content:center; gap:8px; margin-top:16px; flex-wrap:wrap; }
+.v6-verify-actions button { border-radius:999px; padding:9px 13px; font-size:11px; cursor:pointer; }
+.v6-verify-primary { border:0; background:#554561; color:#fff; }
+.v6-verify-secondary { border:1px solid rgba(78,60,82,.15); background:transparent; color:#554561; }
+
+/* Result preview stays in the same muted V6 palette. */
+.ayna-result-card {
+  background: linear-gradient(145deg,#eee5df,#dfd1da) !important;
+  border:1px solid rgba(255,255,255,.16) !important;
+  box-shadow:0 13px 32px rgba(29,19,39,.11) !important;
+}
+.ayna-result-card-icon { background: rgba(194,178,188,.38) !important; }
+.ayna-result-tags span { background: rgba(190,174,184,.40) !important; color:#675a66 !important; }
+
+@media (max-width: 720px) {
+  .v6-account-step { padding: 60px 10px 18px; }
+  .v6-account-step__card { padding: 24px 17px 20px; border-radius: 24px; }
+  .v6-account-step h1 { font-size: 34px; }
+  .v6-name-step h1 { font-size: 34px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+}
