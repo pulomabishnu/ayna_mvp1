@@ -90,7 +90,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts }) {
       if (e?.code === 'not_signed_in') {
         setError('Sign in to ask Ayna about this product — free accounts get a few AI chats per week.');
       } else if (e?.code === 'weekly_limit_reached') {
-        setError("You've used your free chats for this week. They reset weekly, or upgrade for unlimited.");
+        setError("You've used your free chats for this week. They reset weekly.");
       } else {
         setError(e?.message || 'Something went wrong. Try again in a moment.');
       }

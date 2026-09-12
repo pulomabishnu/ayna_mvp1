@@ -92,16 +92,6 @@ export default function LandingScreen({ onStartQuiz, onBrowse }) {
         <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(26px * var(--ayna-text-scale, 1))', letterSpacing: 0.5 }}>
           ayna
         </div>
-        <div
-          style={{
-            fontFamily: "'DM Mono',monospace",
-            fontSize: 'calc(10px * var(--ayna-text-scale, 1))',
-            letterSpacing: 1.2,
-            opacity: 0.62,
-          }}
-        >
-          BETA
-        </div>
       </div>
 
       <div

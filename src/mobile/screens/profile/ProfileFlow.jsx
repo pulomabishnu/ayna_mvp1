@@ -1464,13 +1464,6 @@ function SettingsScreen({ onBack, onOpenHowItWorks, onOpenAboutAyna, onOpenConta
             </div>
             <ChevronIcon />
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 0', borderTop: '1px solid var(--ayna-border)', opacity: 0.55 }}>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 500, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Subscription</div>
-              <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>Ayna is free while we're in beta.</div>
-            </div>
-            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '.9px', color: 'var(--ayna-text-muted)', border: '1px solid var(--ayna-border)', borderRadius: 99, padding: '4px 8px', flex: 'none' }}>COMING SOON</div>
-          </div>
           <div onClick={onOpenContact} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 0', borderTop: '1px solid var(--ayna-border)', cursor: 'pointer' }}>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontWeight: 500, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>Contact</div>
@@ -1485,7 +1478,7 @@ function SettingsScreen({ onBack, onOpenHowItWorks, onOpenAboutAyna, onOpenConta
         ) : (
           <div onClick={onSignIn} style={{ marginTop: 22, textAlign: 'center', padding: '14px 0', border: '1px solid var(--ayna-border)', borderRadius: 99, color: 'var(--ayna-heading)', fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', cursor: 'pointer', background: 'var(--ayna-surface)' }}>Sign in</div>
         )}
-        <div style={{ textAlign: 'center', marginTop: 16, fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', color: 'var(--ayna-text-muted)' }}>AYNA 0.9.4 · BETA</div>
+        <div style={{ textAlign: 'center', marginTop: 16, fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', color: 'var(--ayna-text-muted)' }}>AYNA 0.9.4</div>
       </div>
     </div>
   );
@@ -1628,7 +1621,7 @@ function LegalScreen({ onBack, onOpenConsumerHealthData, onOpenOpenSourceLicense
         </div>
 
         <div style={{ textAlign: 'center', marginTop: 22, fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', color: 'var(--ayna-text-muted)', lineHeight: 1.9 }}>
-          AYNA HEALTH, INC.<br />DELAWARE, USA<br />APP 0.9.4 · BETA
+          AYNA HEALTH, INC.<br />DELAWARE, USA<br />APP 0.9.4
         </div>
       </div>
     </div>
@@ -2285,11 +2278,12 @@ function AccountRow({ title, sub, value, badge, badgeTone = 'neutral', onClick, 
 // Supabase session (src/mobile/hooks/useSupabaseAuth.js), phone number read
 // straight from phone_numbers (RLS-scoped to the caller, same table
 // PhoneVerifyPanel writes to), age/zip/FSA-HSA from the real intake
-// snapshot. Session list has no backend yet, so it's marked COMING SOON
-// (same convention as Subscription/Two-step verification elsewhere in this
-// file) instead of showing invented devices. Delete account opens a real
-// in-app confirm flow (DeleteAccountScreen) backed by
-// account_deletion_requests, not an email link.
+// snapshot. No "Security" section here (session list, two-step verification)
+// since neither has a backend yet — showing a row that just says "coming
+// soon" isn't something to ship, not even as a placeholder; add it back once
+// either is real. Delete account opens a real in-app confirm flow
+// (DeleteAccountScreen) backed by account_deletion_requests, not an email
+// link.
 function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers, onOpenPassword, onEditProfile, onOpenManageData, onOpenDeleteAccount }) {
   const [phoneVerifyOpen, setPhoneVerifyOpen] = useState(false);
   const [phone, setPhone] = useState({ loading: true, number: '', verified: false });
@@ -2467,12 +2461,6 @@ function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers,
         </div>
         <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.5, marginTop: 9, padding: '0 4px' }}>
           Tap any of these to update your health profile.
-        </div>
-
-        <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Security</div>
-        <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
-          <AccountRow borderTop={false} dimmed title="Where you're signed in" sub="Session history isn't tracked yet." badge="COMING SOON" />
-          <AccountRow dimmed title="Two-step verification" sub="Arrives with phone verification." badge="COMING SOON" />
         </div>
 
         <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Your data</div>

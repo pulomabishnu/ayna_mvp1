@@ -152,7 +152,7 @@ export default function AskAynaModal({
       if (err?.code === 'not_signed_in') {
         setSendError('Sign in to ask Ayna anything — free accounts get a few AI chats per week.');
       } else if (err?.code === 'weekly_limit_reached') {
-        setSendError("You've used your free chats for this week. They reset weekly, or upgrade for unlimited.");
+        setSendError("You've used your free chats for this week. They reset weekly.");
       } else {
         setSendError(err?.message || 'Something went wrong. Try again in a moment.');
       }
