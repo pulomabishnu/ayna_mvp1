@@ -3,16 +3,14 @@ import { deriveBrandSearchContext } from './productBrandContext.js';
 
 const API_PATH = '/api/product-insights';
 const CACHE_PREFIX = 'ayna_insights_v2_';
-const CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // active-tab cache; never durable health-derived storage
 
 function simpleHash(str) {
   // Hashes the WHOLE string. It previously truncated to 300 chars, but the
   // health-context string emits the quiz block (frustrations, preferences,
   // sensitivities) BEFORE conditions, medications and allergies. Any user with
   // a filled-in quiz therefore produced an identical cache key no matter how
-  // her conditions or medications changed — so she kept seeing insights
-  // personalized to a profile missing, say, a newly added allergy, for the full
-  // 30-day TTL, on a health product.
+  // her conditions or medications changed.
   const s = String(str || '');
   let h1 = 0x811c9dc5;
   let h2 = 0x01000193;
@@ -28,37 +26,70 @@ function cacheKey(productId, contextHash) {
   return `${CACHE_PREFIX}${productId}_${contextHash}`;
 }
 
+function storage() {
+  return typeof window === 'undefined' ? null : window.sessionStorage;
+}
+
+/** Remove health-derived insight caches left by older persistent-storage builds. */
+function purgeLegacyInsightCache() {
+  if (typeof window === 'undefined') return;
+  try {
+    const keys = [];
+    for (let i = 0; i < window.localStorage.length; i += 1) {
+      const key = window.localStorage.key(i);
+      if (key?.startsWith(CACHE_PREFIX)) keys.push(key);
+    }
+    keys.forEach((key) => window.localStorage.removeItem(key));
+  } catch {}
+}
+
 export function loadCachedInsights(productId, healthContextKey) {
   try {
+    purgeLegacyInsightCache();
+    const store = storage();
+    if (!store) return null;
     const key = cacheKey(productId, simpleHash(healthContextKey));
-    const raw = localStorage.getItem(key);
+    const raw = store.getItem(key);
     if (!raw) return null;
     const { data, ts } = JSON.parse(raw);
-    if (Date.now() - ts > CACHE_TTL_MS) { localStorage.removeItem(key); return null; }
+    if (Date.now() - ts > CACHE_TTL_MS) { store.removeItem(key); return null; }
     return data || null;
   } catch { return null; }
 }
 
 export function saveCachedInsights(productId, healthContextKey, data) {
   try {
+    purgeLegacyInsightCache();
+    const store = storage();
+    if (!store) return;
     const key = cacheKey(productId, simpleHash(healthContextKey));
-    localStorage.setItem(key, JSON.stringify({ data, ts: Date.now() }));
-    // Prune expired entries so localStorage doesn't grow unbounded
-    for (const k of Object.keys(localStorage)) {
-      if (!k.startsWith(CACHE_PREFIX)) continue;
+    store.setItem(key, JSON.stringify({ data, ts: Date.now() }));
+    // Prune expired entries so sessionStorage doesn't grow unbounded.
+    const keys = [];
+    for (let i = 0; i < store.length; i += 1) {
+      const k = store.key(i);
+      if (k?.startsWith(CACHE_PREFIX)) keys.push(k);
+    }
+    for (const k of keys) {
       try {
-        const { ts } = JSON.parse(localStorage.getItem(k) || '{}');
-        if (!ts || Date.now() - ts > CACHE_TTL_MS) localStorage.removeItem(k);
-      } catch { localStorage.removeItem(k); }
+        const { ts } = JSON.parse(store.getItem(k) || '{}');
+        if (!ts || Date.now() - ts > CACHE_TTL_MS) store.removeItem(k);
+      } catch { store.removeItem(k); }
     }
   } catch {}
 }
 
 export function clearInsightsCacheForProduct(productId) {
   try {
-    for (const k of Object.keys(localStorage)) {
-      if (k.startsWith(`${CACHE_PREFIX}${productId}_`)) localStorage.removeItem(k);
+    purgeLegacyInsightCache();
+    const store = storage();
+    if (!store) return;
+    const keys = [];
+    for (let i = 0; i < store.length; i += 1) {
+      const k = store.key(i);
+      if (k?.startsWith(`${CACHE_PREFIX}${productId}_`)) keys.push(k);
     }
+    keys.forEach((k) => store.removeItem(k));
   } catch {}
 }
 
@@ -103,10 +134,6 @@ export async function fetchProductInsights(product, options = {}) {
     throw new Error('Invalid product');
   }
 
-  // Had neither a timeout nor an AbortSignal, unlike its sibling
-  // fetchLlmRecommendations. A hung provider left the modal's insight panel
-  // spinning until the browser's own ~5-minute network timeout, and closing and
-  // reopening fired a second request against the same 5/week quota.
   const controller = new AbortController();
   const tid = setTimeout(() => controller.abort(), timeoutMs);
   const onExternalAbort = () => controller.abort();
