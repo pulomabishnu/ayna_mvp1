@@ -3,6 +3,7 @@ import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import '../daintyAyna.css';
 import '../daintyEcosystem.css';
+import '../daintyQuiz.css';
 
 const APPEARANCE_KEY = 'ayna_appearance_v1';
 
