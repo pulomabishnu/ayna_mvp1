@@ -1,0 +1,54 @@
+name: Apply analytics and health routing patch
+
+on:
+  push:
+    branches:
+      - analytics-health-knowledge-routing
+    paths:
+      - scripts/apply-analytics-health-routing-patch.mjs
+      - .github/workflows/apply-analytics-health-routing-patch.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: analytics-health-knowledge-routing
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: 'true'
+
+      - name: Apply deterministic source patch
+        run: node scripts/apply-analytics-health-routing-patch.mjs
+
+      - name: Run tests
+        run: npm test -- --reporter=verbose
+
+      - name: Production build
+        run: npm run build
+
+      - name: Remove one-time patch helpers
+        run: |
+          rm scripts/apply-analytics-health-routing-patch.mjs
+          rm .github/workflows/apply-analytics-health-routing-patch.yml
+
+      - name: Commit patched sources
+        run: |
+          git config user.name "ayna-ci"
+          git config user.email "noreply@aynahealth.co"
+          git add -A
+          git commit -m "Make analytics opt-out and keep health search first-party"
+          git push origin HEAD:analytics-health-knowledge-routing
