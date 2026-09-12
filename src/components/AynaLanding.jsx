@@ -2,6 +2,21 @@ import React, { useMemo, useState } from 'react';
 import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import '../daintyAyna.css';
+import '../daintyEcosystem.css';
+
+const APPEARANCE_KEY = 'ayna_appearance_v1';
+
+function applyStoredAppearance() {
+  if (typeof document === 'undefined') return;
+  let mode = 'light';
+  try { mode = localStorage.getItem(APPEARANCE_KEY) || 'light'; } catch (_) {}
+  const resolved = mode === 'system'
+    ? (window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+    : (mode === 'dark' ? 'dark' : 'light');
+  document.documentElement.dataset.aynaTheme = resolved;
+}
+
+applyStoredAppearance();
 
 const CARE_AREAS = [
   { label: 'Period care', query: 'period care', keywords: ['pad', 'tampon', 'period', 'menstrual'] },
