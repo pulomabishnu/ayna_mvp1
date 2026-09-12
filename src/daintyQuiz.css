@@ -1,0 +1,8 @@
+/* Keep the health intake visually isolated from the rest of the app while preserving its existing data/save logic. */
+body:has(.ayna-intake-root) main{background:var(--dainty-cream)!important}
+body:has(.ayna-intake-root) .app-container{background:var(--dainty-cream)!important;min-height:100dvh!important}
+body:has(.ayna-intake-root) .ayna-intake-root{display:block!important}
+body:has(.ayna-intake-root) .ayna-intake-question{min-height:calc(100dvh - 170px)!important;display:flex!important;flex-direction:column!important;align-items:center!important}
+body:has(.ayna-intake-root) .ayna-intake-stage{width:100%!important}
+body:has(.ayna-intake-root) .ayna-continue-wrap{margin-top:auto!important;padding-top:26px!important}
+body:has(.ayna-intake-root) .ayna-intake-root ~ *{max-width:100%!important}

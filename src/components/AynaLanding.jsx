@@ -1,937 +1,93 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
-import { getVerificationLinks } from '../utils/verificationLinks';
+import '../daintyAyna.css';
+import '../daintyEcosystem.css';
+import '../daintyQuiz.css';
 
-/**
- * Landing page — a direct port of boards 1a and 1c of the Aug 2026 desktop
- * mockup ("Ayna Mockups").
- *
- *   1a  first-time visitor: gradient hero, search, "Tell us about your body
- *       once" band, then Shop.
- *   1c  returning user with an ecosystem: "Welcome back" hero with the
- *       ecosystem summary card, then a personalized Shop.
- *
- * The mockup's decision notes are what settle the shape here: the shop lives
- * on the landing page for everyone, the pre-ecosystem section is called Shop
- * (not "Curated for you"), and returning users get rebuild-or-browse rather
- * than being sent straight back into the quiz.
- *
- * Numbers below are the mockup's literal values, not the app's design tokens,
- * because the point is to reproduce those two boards.
- */
+const APPEARANCE_KEY = 'ayna_appearance_v1';
 
-/** The eight products in board 1a's Shop grid, with the mockup's own category eyebrows. */
-const SHOP_LINEUP = [
-  { id: 'p-lola-pad', label: 'PADS' },
-  { id: 'p-elvie-trainer', label: 'PELVIC FLOOR' },
-  { id: 'p-wuka-underwear', label: 'PERIOD WEAR' },
-  { id: 'p-b-complex', label: 'SUPPLEMENTS' },
-  { id: 'p-silverette-cups', label: 'POSTPARTUM' },
-  { id: 'p-neycher-vaginal-moisturizer', label: 'INTIMATE CARE' },
-  { id: 'p-lola-tampon', label: 'TAMPONS' },
-  { id: 'p-dame-arc', label: 'INTIMACY' },
+function applyStoredAppearance() {
+  if (typeof document === 'undefined') return;
+  let mode = 'light';
+  try { mode = localStorage.getItem(APPEARANCE_KEY) || 'light'; } catch (_) {}
+  const resolved = mode === 'system'
+    ? (window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+    : (mode === 'dark' ? 'dark' : 'light');
+  document.documentElement.dataset.aynaTheme = resolved;
+}
+
+applyStoredAppearance();
+
+const CARE_AREAS = [
+  { label: 'Period care', query: 'period care', keywords: ['pad', 'tampon', 'period', 'menstrual'] },
+  { label: 'PCOS', query: 'PCOS', keywords: ['pcos', 'inositol', 'spearmint'] },
+  { label: 'Vaginal health', query: 'vaginal health', keywords: ['vaginal', 'intimate', 'bv', 'yeast'] },
+  { label: 'UTI support', query: 'UTI support', keywords: ['uti', 'urinary', 'bladder'] },
+  { label: 'Fertility', query: 'fertility', keywords: ['fertility', 'ovulation', 'conception'] },
+  { label: 'Pelvic health', query: 'pelvic health', keywords: ['pelvic', 'kegel', 'floor'] },
 ];
 
-const CHIP_SETS = [
-  ['Postpartum recovery', 'Organic pads', 'Pelvic floor', 'Supplements for cramps'],
-  ['Vaginal dryness', 'Ovulation tests', 'PCOS support', 'Sensitive skin'],
-  ['Period underwear', 'Menopause', 'Hair thinning', 'Sleep support'],
-  ['Fertility', 'Intimate care', 'Hot flashes', 'Cycle support'],
-];
-
-const SHOP_FILTERS = [
-  { key: 'all', label: 'All', categories: [], keywords: [] },
-  { key: 'period', label: 'Period', categories: ['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'cramp-relief'], keywords: ['period', 'menstrual'] },
-  { key: 'intimate', label: 'Intimate Care', categories: ['intimate-care'], keywords: ['vaginal', 'intimate', 'moisturizer', 'ph'] },
-  { key: 'sexual', label: 'Sexual Wellness', categories: ['sex-tech'], keywords: ['intimacy', 'lubricant', 'lube'] },
-  { key: 'postpartum', label: 'Postpartum', categories: ['postpartum', 'pregnancy'], keywords: ['postpartum', 'nursing', 'lactation'] },
-  { key: 'pelvic', label: 'Pelvic', categories: ['pelvic-floor', 'pelvic-health'], keywords: ['pelvic', 'kegel'] },
-  { key: 'hormones', label: 'Hormones', categories: ['supplement', 'hormone-monitoring'], keywords: ['pms', 'pcos', 'hormone', 'cycle'] },
-  { key: 'menopause', label: 'Menopause', categories: ['menopause'], keywords: ['menopause', 'perimenopause', 'hot flash'] },
-  { key: 'fertility', label: 'Fertility', categories: ['fertility'], keywords: ['fertility', 'ovulation'] },
-  { key: 'skin', label: 'Skin', categories: ['skin', 'skincare', 'body-care'], keywords: ['skin', 'spf', 'acne'] },
-  { key: 'hair', label: 'Hair', categories: ['hair', 'haircare'], keywords: ['hair', 'scalp', 'shampoo'] },
-];
+function firstName(user) {
+  const meta = user?.user_metadata || {};
+  const raw = meta.first_name || meta.firstName || meta.given_name || meta.full_name || meta.name || '';
+  return String(raw).trim().split(/\s+/).filter(Boolean)[0] || '';
+}
 
 function productText(product) {
-  return [product?.name, product?.brand, product?.category, product?.summary, product?.description, ...(product?.tags || [])]
-    .filter(Boolean).join(' ').toLowerCase();
-}
-
-function matchesShopFilter(product, key) {
-  if (!key || key === 'all') return true;
-  const filter = SHOP_FILTERS.find((item) => item.key === key);
-  if (!filter) return true;
-  if (filter.categories.includes(product?.category)) return true;
-  const text = productText(product);
-  return filter.keywords.some((keyword) => text.includes(keyword));
-}
-
-function priceNumber(product) {
-  const match = String(product?.price || product?.priceDisplay || '').match(/\$(\d+(?:\.\d+)?)/);
-  return match ? Number(match[1]) : null;
-}
-
-function explicitEligibility(product) {
-  const combined = product?.fsaHsaEligible === true || product?.fsa_hsa_eligible === true;
-  return {
-    fsa: combined || product?.fsaEligible === true || product?.fsa_eligible === true,
-    hsa: combined || product?.hsaEligible === true || product?.hsa_eligible === true,
-  };
-}
-
-function matchesPreference(product, preference) {
-  if (!preference || preference === 'all') return true;
-  const text = productText(product);
-  const map = {
-    organic: ['organic'],
-    'fragrance-free': ['fragrance free', 'fragrance-free'],
-    'sensitive-skin': ['sensitive skin'],
-    vegan: ['vegan'],
-    'cruelty-free': ['cruelty free', 'cruelty-free'],
-    reusable: ['reusable'],
-  };
-  return (map[preference] || []).some((term) => text.includes(term));
-}
-
-function matchesSustainability(product, filter) {
-  if (!filter || filter === 'all') return true;
-  const text = productText(product);
-  const map = {
-    reusable: ['reusable'],
-    recyclable: ['recyclable', 'recycled'],
-    'low-waste': ['low waste', 'low-waste', 'zero waste'],
-    packaging: ['sustainable packaging', 'plastic-free packaging', 'compostable packaging'],
-  };
-  return (map[filter] || []).some((term) => text.includes(term));
-}
-
-function matchesLifeStage(product, filter) {
-  if (!filter || filter === 'all') return true;
-  const text = productText(product);
-  const terms = {
-    fertility: ['fertility', 'ovulation', 'conception'],
-    pregnancy: ['pregnancy', 'prenatal'],
-    postpartum: ['postpartum', 'lactation', 'breastfeeding', 'nursing'],
-    perimenopause: ['perimenopause', 'menopause'],
-    menopause: ['menopause', 'hot flash'],
-  };
-  return (terms[filter] || []).some((term) => text.includes(term));
-}
-
-function explicitRating(product) {
-  const value = Number(product?.rating ?? product?.userRating ?? product?.reviewRating);
-  return Number.isFinite(value) ? value : null;
-}
-
-function hasClinicianSupport(product) {
-  const links = getVerificationLinks(product, 'doctor');
-  return Boolean(product?.doctorOpinion || product?.clinicianOpinion || product?.clinicianReview || links.length > 0);
-}
-
-function hasCommunitySupport(product) {
-  const rating = explicitRating(product);
-  const communityLinks = getVerificationLinks(product, 'community');
-  return (Number.isFinite(rating) && rating >= 4) || Boolean(product?.communityReview) || communityLinks.length > 0;
-}
-
-function productTypeOptions() {
-  const set = new Set();
-  ALL_PRODUCTS.forEach((product) => { if (product?.category) set.add(product.category); });
-  return Array.from(set).sort();
-}
-
-/** Mirrors Discovery's "Ayna" match-quality filter, minus the quiz-derived
- * best-match ranking that only Discovery has access to — here "Best Match"
- * just means "already recommended to you," and "In My Ecosystem" is only
- * meaningful (and only passed) for the returning-user shop. */
-function matchesAyna(product, filter, { ownedIds, recommendedIds } = {}) {
-  if (!filter || filter === 'all') return true;
-  if (filter === 'best-match') return Boolean(recommendedIds?.has(product?.id));
-  if (filter === 'clinician') return hasClinicianSupport(product);
-  if (filter === 'community') return hasCommunitySupport(product);
-  if (filter === 'ecosystem') return Boolean(ownedIds?.has(product?.id));
-  return true;
-}
-
-/**
- * Turn a free-text query into the discovery view's filter options, so the hero
- * search and the chips land on a pre-filtered feed instead of a raw text search.
- * Carried over from the previous hero — the routing rules are unchanged.
- */
-function discoveryTargetFor(text) {
-  const q = String(text || '').trim();
-  if (!q) return '';
-  const lower = q.toLowerCase();
-
-  if (lower.includes('pad')) {
-    const opts = { query: q, initialCategory: 'pad' };
-    if (lower.includes('organic')) opts.initialPadPreference = 'organic';
-    else if (lower.includes('overnight')) opts.initialPadUseCase = 'overnight';
-    else if (lower.includes('heavy')) opts.initialPadFlow = 'heavy';
-    return opts;
-  }
-  if (lower.includes('postpartum') || lower.includes('breastfeeding') || lower.includes('nursing')) {
-    return { query: q, initialCategory: 'postpartum' };
-  }
-  if (lower.includes('prenatal') || (lower.includes('pregnancy') && !lower.includes('postpartum'))) {
-    return { query: q, initialCategory: (lower.includes('prenatal') || lower.includes('vitamin')) ? 'supplement' : 'pregnancy' };
-  }
-  if (lower.includes('supplement')) {
-    const opts = { query: q, initialCategory: 'supplement' };
-    if (lower.includes('cramps')) opts.initialSymptom = 'cramps';
-    else if (lower.includes('pcos')) opts.initialSymptom = 'pcos';
-    return opts;
-  }
-  if (lower.includes('pelvic floor')) {
-    return { query: q, initialCategory: 'pelvic-floor' };
-  }
-  return q;
-}
-
-function displayNameFromUser(user) {
-  const meta = user?.user_metadata || {};
-  const rawName = meta.first_name || meta.firstName || meta.given_name || meta.full_name || meta.name || '';
-  const firstFromMeta = String(rawName).trim().split(/\s+/)[0] || '';
-  if (firstFromMeta) return firstFromMeta.charAt(0).toUpperCase() + firstFromMeta.slice(1);
-
-  return '';
+  return [
+    product?.name,
+    product?.brand,
+    product?.brandName,
+    product?.category,
+    product?.summary,
+    product?.description,
+    ...(Array.isArray(product?.tags) ? product.tags : []),
+  ].filter(Boolean).join(' ').toLowerCase();
 }
 
 function productById(id) {
-  return ALL_PRODUCTS.find((p) => p.id === id) || null;
+  return ALL_PRODUCTS.find((product) => product?.id === id) || null;
 }
 
-/** Cream tile with the product photo, falling back to the mockup's initial-on-cream block. */
-function ProductTile({ product, aspectRatio = 1, radius = 10, badge, showHeart }) {
+function uniqueProducts(products) {
+  const seen = new Set();
+  return products.filter((product) => {
+    const key = product?.id || `${product?.brand || ''}:${product?.name || ''}`;
+    if (!product?.name || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function discoveryTargetFor(value) {
+  const query = String(value || '').trim();
+  if (!query) return '';
+  const q = query.toLowerCase();
+  if (q.includes('pad')) return { query, initialCategory: 'pad' };
+  if (q.includes('tampon')) return { query, initialCategory: 'tampon' };
+  if (q.includes('cup')) return { query, initialCategory: 'cup' };
+  if (q.includes('pcos')) return { query, initialMacroGroup: 'hormones' };
+  if (q.includes('fertil') || q.includes('ovulation')) return { query, initialMacroGroup: 'fertility' };
+  if (q.includes('pelvic')) return { query, initialMacroGroup: 'pelvic' };
+  return query;
+}
+
+function ProductImage({ product, className = '' }) {
   return (
-    <div
-      className="ayna-landing-tile"
-      style={{
-        aspectRatio: String(aspectRatio),
-        borderRadius: `${radius}px`,
-        background: 'linear-gradient(160deg, #F3EADC, #EFE3D2)',
-        display: 'flex',
-        alignItems: 'flex-start',
-        justifyContent: 'space-between',
-        padding: '12px',
-        position: 'relative',
-        overflow: 'hidden',
-      }}
-    >
+    <div className={`dainty-product-image ${className}`}>
       <ProductTileImage
         product={product}
         alt={product?.name || ''}
-        imgStyle={{
-          position: 'absolute',
-          inset: 0,
-          width: '100%',
-          height: '100%',
-          objectFit: 'contain',
-          padding: '14px',
-        }}
-        letterNode={<ProductImageFallback style={{ position: 'absolute', inset: 0 }} />}
+        imgStyle={{ width: '100%', height: '100%', objectFit: 'contain' }}
+        letterNode={<ProductImageFallback />}
       />
-
-      {badge && (
-        <span style={{
-          position: 'relative',
-          font: "500 9px 'DM Mono', monospace",
-          letterSpacing: '0.08em',
-          background: 'rgba(255,255,255,0.9)',
-          padding: '5px 9px',
-          borderRadius: '999px',
-          color: '#B4732A',
-        }}>
-          {badge}
-        </span>
-      )}
-      {showHeart && (
-        <span aria-hidden className="ayna-landing-heart"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z" /></svg></span>
-      )}
     </div>
   );
 }
 
-/** Board 1a's Shop grid: 4-up, cream tiles, DM Mono eyebrow, Playfair name, muted price. */
-function ShopGrid({ items, onOpenProduct }) {
-  return (
-    <div className="ayna-landing-shop-grid">
-      {items.map(({ product, label, badge }) => (
-        <button
-          key={product.id}
-          type="button"
-          className="ayna-landing-shop-card"
-          onClick={() => onOpenProduct?.(product)}
-        >
-          <ProductTile product={product} badge={badge} />
-          <div style={{
-            font: "500 9.5px 'DM Mono', monospace",
-            letterSpacing: '0.1em',
-            color: '#C0761F',
-            marginTop: '12px',
-          }}>
-            {label}
-          </div>
-          <div style={{
-            font: "400 16px/1.3 'Playfair Display', serif",
-            marginTop: '4px',
-            color: '#171429',
-          }}>
-            {product.name}
-          </div>
-          <div style={{ fontSize: '12.5px', color: '#6f6880', marginTop: '3px' }}>
-            {product.price}
-          </div>
-        </button>
-      ))}
-    </div>
-  );
-}
-
-/** The mockup's 38×22 pill toggle. Off = grey track, knob left; on = knob right. */
-function Toggle({ on, offTrack = '#DCD5CB', onTrack = '#242A52', onKnob = '#F0A84B', ...rest }) {
-  return (
-    <span
-      role="switch"
-      aria-checked={on}
-      tabIndex={0}
-      {...rest}
-      style={{
-        width: '38px',
-        height: '22px',
-        borderRadius: '999px',
-        background: on ? onTrack : offTrack,
-        position: 'relative',
-        display: 'inline-block',
-        cursor: 'pointer',
-        flex: 'none',
-        transition: 'background 0.2s ease',
-      }}
-    >
-      <span style={{
-        position: 'absolute',
-        top: '3px',
-        left: on ? '19px' : '3px',
-        width: '16px',
-        height: '16px',
-        borderRadius: '50%',
-        background: on ? onKnob : '#fff',
-        transition: 'left 0.2s ease, background 0.2s ease',
-      }} />
-    </span>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* 1c — returning user                                                 */
-/* ------------------------------------------------------------------ */
-
-function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds = [], onStartQuiz, onViewDiscovery, onViewEcosystem, onOpenProduct, initialCategory = null }) {
-  const name = displayNameFromUser(user) || 'there';
-  const [filter, setFilter] = useState(initialCategory || 'all');
-  useEffect(() => {
-    if (initialCategory) setFilter(initialCategory);
-  }, [initialCategory]);
-  useEffect(() => {
-    const url = new URL(window.location.href);
-    if (filter && filter !== 'all') url.searchParams.set('category', filter);
-    else url.searchParams.delete('category');
-    if (url.search !== window.location.search) {
-      window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}`);
-    }
-  }, [filter]);
-  const [personalize, setPersonalize] = useState(true);
-  const [showShopFilters, setShowShopFilters] = useState(false);
-  const [priceFilter, setPriceFilter] = useState('all');
-  const [eligibilityFilter, setEligibilityFilter] = useState('all');
-  const [preferenceFilter, setPreferenceFilter] = useState('all');
-  const [sustainabilityFilter, setSustainabilityFilter] = useState('all');
-  const [lifeStageFilter, setLifeStageFilter] = useState('all');
-  const [ratingFilter, setRatingFilter] = useState('all');
-  const [productTypeFilter, setProductTypeFilter] = useState('all');
-  const [aynaFilter, setAynaFilter] = useState('all');
-
-  const areas = useMemo(() => {
-    const byCategory = new Map();
-    Object.values(myProducts || {}).forEach((p) => {
-      const key = p.category || 'other';
-      byCategory.set(key, (byCategory.get(key) || 0) + 1);
-    });
-    return Array.from(byCategory.entries())
-      .map(([category, count]) => ({
-        category,
-        label: String(CATEGORY_LABELS[category] || category).replace(/^[^\w]+\s*/, ''),
-        count,
-      }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 4);
-  }, [myProducts]);
-
-  const ownedIds = useMemo(() => new Set(Object.keys(myProducts || {})), [myProducts]);
-  const recommendedIds = useMemo(() => new Set(recommendedProductIds || []), [recommendedProductIds]);
-
-  const availableShopFilters = useMemo(
-    () => SHOP_FILTERS.filter((item) => item.key === 'all' || ALL_PRODUCTS.some((product) => matchesShopFilter(product, item.key))),
-    [],
-  );
-
-  const availableProductTypes = useMemo(() => productTypeOptions(), []);
-
-  const shownProducts = useMemo(() => {
-    let list = ALL_PRODUCTS.filter((product) => product?.id && product?.name && matchesShopFilter(product, filter));
-
-    if (productTypeFilter !== 'all') list = list.filter((product) => product.category === productTypeFilter);
-    if (aynaFilter !== 'all') list = list.filter((product) => matchesAyna(product, aynaFilter, { ownedIds, recommendedIds }));
-
-    if (priceFilter !== 'all') {
-      list = list.filter((product) => {
-        const price = priceNumber(product);
-        if (price == null) return false;
-        if (priceFilter === 'under-25') return price < 25;
-        if (priceFilter === '25-50') return price >= 25 && price <= 50;
-        if (priceFilter === '50-100') return price > 50 && price <= 100;
-        if (priceFilter === '100-plus') return price > 100;
-        return true;
-      });
-    }
-
-    if (eligibilityFilter !== 'all') {
-      list = list.filter((product) => {
-        const eligibility = explicitEligibility(product);
-        if (eligibilityFilter === 'fsa-hsa') return eligibility.fsa || eligibility.hsa;
-        if (eligibilityFilter === 'fsa') return eligibility.fsa;
-        if (eligibilityFilter === 'hsa') return eligibility.hsa;
-        return true;
-      });
-    }
-
-    list = list.filter((product) => matchesPreference(product, preferenceFilter));
-    list = list.filter((product) => matchesSustainability(product, sustainabilityFilter));
-    list = list.filter((product) => matchesLifeStage(product, lifeStageFilter));
-    if (ratingFilter === '4-plus') list = list.filter((product) => (explicitRating(product) ?? 0) >= 4);
-
-    if (personalize) {
-      list = [...list].sort((a, b) => {
-        const score = (product) => {
-          if (ownedIds.has(product.id)) return 3;
-          if (recommendedIds.has(product.id)) return 2;
-          if (areas.some((area) => area.category === product.category)) return 1;
-          return 0;
-        };
-        return score(b) - score(a);
-      });
-    }
-
-    return list.slice(0, 8);
-  }, [filter, priceFilter, eligibilityFilter, preferenceFilter, sustainabilityFilter, lifeStageFilter, ratingFilter, productTypeFilter, aynaFilter, personalize, ownedIds, recommendedIds, areas]);
-
-  const clearShopFilters = () => {
-    setFilter('all');
-    setProductTypeFilter('all');
-    setAynaFilter('all');
-    setPriceFilter('all');
-    setEligibilityFilter('all');
-    setPreferenceFilter('all');
-    setSustainabilityFilter('all');
-    setLifeStageFilter('all');
-    setRatingFilter('all');
-  };
-
-  return (
-    <div className="mockup-landing mockup-landing--returning">
-      <section className="ayna-landing-hero ayna-landing-hero--returning">
-        <div className="mockup-page ayna-landing-welcomeback">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            <div className="ayna-landing-eyebrow">Hello, {name}</div>
-            <h1 className="ayna-landing-headline ayna-landing-headline--returning">
-              {ecosystemCount > 0 ? (
-                <>
-                  Your ecosystem is{' '}
-                  <span style={{ fontStyle: 'italic', color: '#F0A84B' }}>
-                    {ecosystemCount} product{ecosystemCount === 1 ? '' : 's'}
-                  </span>{' '}
-                  strong.
-                </>
-              ) : (
-                <>Build your <span style={{ fontStyle: 'italic', color: '#F0A84B' }}>ecosystem</span>.</>
-              )}
-            </h1>
-            <p style={{
-              fontSize: '16px',
-              lineHeight: 1.55,
-              color: 'rgba(244,240,250,0.78)',
-              maxWidth: '420px',
-              margin: 0,
-            }}>
-              Personalized products, all in one place.
-            </p>
-            <div style={{ display: 'flex', gap: '13px', marginTop: '6px', flexWrap: 'wrap' }}>
-              <button
-                type="button"
-                className="ayna-landing-btn ayna-landing-btn--amber"
-                onClick={ecosystemCount > 0 ? onViewEcosystem : onStartQuiz}
-              >
-                {ecosystemCount > 0 ? 'Edit ecosystem' : 'Build your ecosystem'}
-              </button>
-              <button type="button" className="ayna-landing-btn ayna-landing-btn--browse" onClick={() => onViewDiscovery?.('')}>
-                Browse
-              </button>
-            </div>
-          </div>
-
-          <button type="button" className="ayna-landing-ecocard" onClick={onViewEcosystem}>
-            <div style={{
-              font: "500 10px 'DM Mono', monospace",
-              letterSpacing: '0.1em',
-              color: 'rgba(244,240,250,0.6)',
-            }}>
-              YOUR ECOSYSTEM
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', marginTop: '12px' }}>
-              {areas.length === 0 ? (
-                <div className="ayna-landing-ecocard__empty">Start here</div>
-              ) : areas.map((a, i) => (
-                <div
-                  key={a.category}
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    gap: '12px',
-                    padding: '12px 0',
-                    borderBottom: i === areas.length - 1 ? 'none' : '1px solid rgba(244,240,250,0.14)',
-                  }}
-                >
-                  <span style={{ font: "400 15px 'Playfair Display', serif" }}>{a.label}</span>
-                  <span style={{ fontSize: '11.5px', color: '#F0A84B' }}>
-                    {a.count} {a.count === 1 ? 'pick' : 'picks'}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </button>
-        </div>
-      </section>
-
-      <section className="ayna-landing-shop ayna-landing-shop--returning">
-        <div className="mockup-page">
-          <div className="ayna-landing-shop-head">
-            <div className="ayna-landing-shop-title ayna-landing-shop-title--returning">Trending on ayna</div>
-            <div className="ayna-landing-shop-controls">
-              <div className="ayna-landing-filters">
-                {availableShopFilters.map((item) => (
-                  <button
-                    key={item.key}
-                    type="button"
-                    className={filter === item.key ? 'is-active' : undefined}
-                    onClick={() => setFilter(item.key)}
-                  >
-                    {item.label}
-                  </button>
-                ))}
-              </div>
-              <button
-                type="button"
-                className="ayna-landing-filter-toggle"
-                onClick={() => setShowShopFilters((value) => !value)}
-                aria-expanded={showShopFilters}
-              >
-                Filters
-              </button>
-              <div className="ayna-landing-personalize">
-                <span>{personalize ? 'Personalized' : 'Personalize'}</span>
-                <Toggle on={personalize} onTrack="#4E3866" onClick={() => setPersonalize((value) => !value)} />
-              </div>
-            </div>
-          </div>
-
-          {showShopFilters && (
-            <div className="ayna-landing-filter-panel">
-              <label>
-                <span>Product type</span>
-                <select value={productTypeFilter} onChange={(e) => setProductTypeFilter(e.target.value)}>
-                  <option value="all">All</option>
-                  {availableProductTypes.map((category) => (
-                    <option key={category} value={category}>{CATEGORY_LABELS[category] || category.replace(/-/g, ' ')}</option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                <span>Price</span>
-                <select value={priceFilter} onChange={(e) => setPriceFilter(e.target.value)}>
-                  <option value="all">Any</option>
-                  <option value="under-25">Under $25</option>
-                  <option value="25-50">$25-$50</option>
-                  <option value="50-100">$50-$100</option>
-                  <option value="100-plus">$100+</option>
-                </select>
-              </label>
-              <label>
-                <span>ayna</span>
-                <select value={aynaFilter} onChange={(e) => setAynaFilter(e.target.value)}>
-                  <option value="all">Any</option>
-                  <option value="best-match">Best Match</option>
-                  <option value="clinician">Clinical Context</option>
-                  <option value="community">Community Favorite</option>
-                  <option value="ecosystem">In My Ecosystem</option>
-                </select>
-              </label>
-              <label>
-                <span>Preferences</span>
-                <select value={preferenceFilter} onChange={(e) => setPreferenceFilter(e.target.value)}>
-                  <option value="all">Any</option>
-                  <option value="organic">Organic</option>
-                  <option value="fragrance-free">Fragrance Free</option>
-                  <option value="sensitive-skin">Sensitive Skin</option>
-                  <option value="vegan">Vegan</option>
-                  <option value="cruelty-free">Cruelty Free</option>
-                  <option value="reusable">Reusable</option>
-                </select>
-              </label>
-              <label>
-                <span>Sustainability</span>
-                <select value={sustainabilityFilter} onChange={(e) => setSustainabilityFilter(e.target.value)}>
-                  <option value="all">Any</option>
-                  <option value="reusable">Reusable</option>
-                  <option value="recyclable">Recyclable</option>
-                  <option value="low-waste">Low Waste</option>
-                  <option value="packaging">Sustainable Packaging</option>
-                </select>
-              </label>
-              <label>
-                <span>Life stage</span>
-                <select value={lifeStageFilter} onChange={(e) => setLifeStageFilter(e.target.value)}>
-                  <option value="all">Any</option>
-                  <option value="fertility">Fertility</option>
-                  <option value="pregnancy">Pregnancy</option>
-                  <option value="postpartum">Postpartum</option>
-                  <option value="perimenopause">Perimenopause</option>
-                  <option value="menopause">Menopause</option>
-                </select>
-              </label>
-              <label>
-                <span>Rating</span>
-                <select value={ratingFilter} onChange={(e) => setRatingFilter(e.target.value)}>
-                  <option value="all">Any</option>
-                  <option value="4-plus">4+ stars</option>
-                </select>
-              </label>
-              <label>
-                <span>Eligibility</span>
-                <select value={eligibilityFilter} onChange={(e) => setEligibilityFilter(e.target.value)}>
-                  <option value="all">Any</option>
-                  <option value="fsa-hsa">FSA/HSA Eligible</option>
-                  <option value="fsa">FSA Eligible</option>
-                  <option value="hsa">HSA Eligible</option>
-                </select>
-              </label>
-              <button type="button" onClick={clearShopFilters}>Clear</button>
-            </div>
-          )}
-
-          <div className="ayna-landing-shop-grid ayna-landing-shop-grid--returning">
-            {shownProducts.map((product) => {
-              const badge = ownedIds.has(product.id)
-                ? 'IN YOUR ECOSYSTEM'
-                : (personalize && recommendedIds.has(product.id) ? 'FOR YOU' : null);
-              return (
-                <button
-                  key={product.id}
-                  type="button"
-                  className="ayna-landing-shop-card"
-                  onClick={() => onOpenProduct?.(product)}
-                >
-                  <ProductTile product={product} aspectRatio={1.1} badge={badge} />
-                  <div style={{ font: "400 15px/1.3 'Playfair Display', serif", marginTop: '10px', color: '#171429' }}>
-                    {product.name}
-                  </div>
-                  <div style={{ fontSize: '12px', color: '#6f6880', marginTop: '3px' }}>{product.price}</div>
-                </button>
-              );
-            })}
-          </div>
-          {shownProducts.length === 0 && (
-            <div className="ayna-landing-shop-empty">No matches yet. Try another filter.</div>
-          )}
-        </div>
-      </section>
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* 1a — first visit                                                    */
-/* ------------------------------------------------------------------ */
-
-function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasProfile, profileCategories, initialCategory = null }) {
-  const [query, setQuery] = useState('');
-  const [filter, setFilter] = useState(initialCategory || 'all');
-  useEffect(() => {
-    if (initialCategory) setFilter(initialCategory);
-  }, [initialCategory]);
-  useEffect(() => {
-    const url = new URL(window.location.href);
-    if (filter && filter !== 'all') url.searchParams.set('category', filter);
-    else url.searchParams.delete('category');
-    if (url.search !== window.location.search) {
-      window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}`);
-    }
-  }, [filter]);
-  const [personalize, setPersonalize] = useState(false);
-  const [chipSetIndex, setChipSetIndex] = useState(0);
-  const [showShopFilters, setShowShopFilters] = useState(false);
-  const [priceFilter, setPriceFilter] = useState('all');
-  const [eligibilityFilter, setEligibilityFilter] = useState('all');
-  const [preferenceFilter, setPreferenceFilter] = useState('all');
-  const [sustainabilityFilter, setSustainabilityFilter] = useState('all');
-  const [lifeStageFilter, setLifeStageFilter] = useState('all');
-  const [ratingFilter, setRatingFilter] = useState('all');
-  const [productTypeFilter, setProductTypeFilter] = useState('all');
-  const [aynaFilter, setAynaFilter] = useState('all');
-
-  useEffect(() => {
-    const timer = window.setInterval(() => {
-      setChipSetIndex((current) => (current + 1) % CHIP_SETS.length);
-    }, 3800);
-    return () => window.clearInterval(timer);
-  }, []);
-
-  const lineup = useMemo(
-    () => SHOP_LINEUP
-      .map(({ id, label }) => ({ product: productById(id), label }))
-      .filter((x) => x.product),
-    [],
-  );
-
-  const availableShopFilters = useMemo(
-    () => SHOP_FILTERS.filter((item) => item.key === 'all' || lineup.some(({ product }) => matchesShopFilter(product, item.key))),
-    [lineup],
-  );
-
-  const availableProductTypes = useMemo(
-    () => Array.from(new Set(lineup.map(({ product }) => product.category).filter(Boolean))).sort(),
-    [lineup],
-  );
-
-  const shown = useMemo(() => {
-    let list = lineup.filter(({ product }) => matchesShopFilter(product, filter));
-    if (productTypeFilter !== 'all') list = list.filter(({ product }) => product.category === productTypeFilter);
-    if (aynaFilter !== 'all') list = list.filter(({ product }) => matchesAyna(product, aynaFilter));
-    if (priceFilter !== 'all') {
-      list = list.filter(({ product }) => {
-        const price = priceNumber(product);
-        if (price == null) return false;
-        if (priceFilter === 'under-25') return price < 25;
-        if (priceFilter === '25-50') return price >= 25 && price <= 50;
-        if (priceFilter === '50-100') return price > 50 && price <= 100;
-        if (priceFilter === '100-plus') return price > 100;
-        return true;
-      });
-    }
-    if (eligibilityFilter !== 'all') {
-      list = list.filter(({ product }) => {
-        const e = explicitEligibility(product);
-        if (eligibilityFilter === 'fsa-hsa') return e.fsa || e.hsa;
-        return eligibilityFilter === 'fsa' ? e.fsa : e.hsa;
-      });
-    }
-    list = list.filter(({ product }) => matchesPreference(product, preferenceFilter));
-    list = list.filter(({ product }) => matchesSustainability(product, sustainabilityFilter));
-    list = list.filter(({ product }) => matchesLifeStage(product, lifeStageFilter));
-    if (ratingFilter === '4-plus') list = list.filter(({ product }) => (explicitRating(product) ?? 0) >= 4);
-    if (personalize && profileCategories?.length) {
-      const rank = new Set(profileCategories);
-      list = [...list].sort(
-        (a, b) => (rank.has(b.product.category) ? 1 : 0) - (rank.has(a.product.category) ? 1 : 0),
-      );
-    }
-    return list;
-  }, [lineup, filter, personalize, profileCategories, priceFilter, eligibilityFilter, preferenceFilter, sustainabilityFilter, lifeStageFilter, ratingFilter, productTypeFilter, aynaFilter]);
-
-  const submitSearch = (e) => {
-    if (e && typeof e.preventDefault === 'function') e.preventDefault();
-    onViewDiscovery?.(discoveryTargetFor(query));
-  };
-
-  return (
-    <div className="mockup-landing">
-      <section className="ayna-landing-hero">
-        <div className="ayna-landing-hero-col">
-          <div className="ayna-landing-eyebrow">Women&apos;s health, personalized</div>
-          <h1 className="ayna-landing-headline">
-            Care that&apos;s <span style={{ fontStyle: 'italic', color: '#F0A84B' }}>matched</span> to your body.
-          </h1>
-          <p className="ayna-landing-sub">
-            Cited research, clinical context, and other women&apos;s experiences in one place.
-          </p>
-
-          <form className="ayna-landing-searchbar" onSubmit={submitSearch}>
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="What are you looking for?"
-              aria-label="Search products"
-            />
-            <button type="submit">Search</button>
-          </form>
-
-          <div key={chipSetIndex} className="ayna-landing-chips ayna-landing-chips--rotating" aria-label="Popular searches">
-            {CHIP_SETS[chipSetIndex].map((chip) => (
-              <button key={chip} type="button" onClick={() => onViewDiscovery?.(discoveryTargetFor(chip))}>
-                {chip}
-              </button>
-            ))}
-          </div>
-
-        </div>
-      </section>
-
-      <section className="ayna-landing-band">
-        <div className="mockup-page ayna-landing-band__inner">
-          <div className="ayna-landing-band__copy">
-            Tell us about your body once.
-            <span>Six questions, and your shop rebuilds around you.</span>
-          </div>
-          <button type="button" className="ayna-landing-btn ayna-landing-btn--navy" onClick={onStartQuiz}>
-            Build your ecosystem
-          </button>
-        </div>
-      </section>
-
-      <section className="ayna-landing-shop">
-        <div className="mockup-page">
-          <div className="ayna-landing-shop-head">
-            <div className="ayna-landing-shop-title">Trending on ayna</div>
-            <div className="ayna-landing-shop-controls">
-              <div className="ayna-landing-filters">
-                {availableShopFilters.map((f) => (
-                  <button
-                    key={f.key}
-                    type="button"
-                    className={filter === f.key ? 'is-active' : undefined}
-                    onClick={() => setFilter(f.key)}
-                  >
-                    {f.label}
-                  </button>
-                ))}
-              </div>
-              <button type="button" className="ayna-landing-filter-toggle" onClick={() => setShowShopFilters((value) => !value)} aria-expanded={showShopFilters}>
-                Filters
-              </button>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '11px', fontSize: '12.5px', color: '#6f6880' }}>
-                Personalize
-                <Toggle
-                  on={personalize}
-                  onClick={() => {
-                    if (!hasProfile) { onStartQuiz?.(); return; }
-                    setPersonalize((v) => !v);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key !== 'Enter' && e.key !== ' ') return;
-                    e.preventDefault();
-                    if (!hasProfile) { onStartQuiz?.(); return; }
-                    setPersonalize((v) => !v);
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-
-          {showShopFilters && (
-            <div className="ayna-landing-filter-panel">
-              <label>
-                <span>Product type</span>
-                <select value={productTypeFilter} onChange={(e) => setProductTypeFilter(e.target.value)}>
-                  <option value="all">All</option>
-                  {availableProductTypes.map((category) => (
-                    <option key={category} value={category}>{CATEGORY_LABELS[category] || category.replace(/-/g, ' ')}</option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                <span>Price</span>
-                <select value={priceFilter} onChange={(e) => setPriceFilter(e.target.value)}>
-                  <option value="all">Any</option>
-                  <option value="under-25">Under $25</option>
-                  <option value="25-50">$25-$50</option>
-                  <option value="50-100">$50-$100</option>
-                  <option value="100-plus">$100+</option>
-                </select>
-              </label>
-              <label>
-                <span>ayna</span>
-                <select value={aynaFilter} onChange={(e) => setAynaFilter(e.target.value)}>
-                  <option value="all">Any</option>
-                  <option value="clinician">Clinical Context</option>
-                  <option value="community">Community Favorite</option>
-                </select>
-              </label>
-              <label>
-                <span>Preferences</span>
-                <select value={preferenceFilter} onChange={(e) => setPreferenceFilter(e.target.value)}>
-                  <option value="all">Any</option>
-                  <option value="organic">Organic</option>
-                  <option value="fragrance-free">Fragrance Free</option>
-                  <option value="sensitive-skin">Sensitive Skin</option>
-                  <option value="vegan">Vegan</option>
-                  <option value="cruelty-free">Cruelty Free</option>
-                  <option value="reusable">Reusable</option>
-                </select>
-              </label>
-              <label>
-                <span>Sustainability</span>
-                <select value={sustainabilityFilter} onChange={(e) => setSustainabilityFilter(e.target.value)}>
-                  <option value="all">Any</option>
-                  <option value="reusable">Reusable</option>
-                  <option value="recyclable">Recyclable</option>
-                  <option value="low-waste">Low Waste</option>
-                  <option value="packaging">Sustainable Packaging</option>
-                </select>
-              </label>
-              <label>
-                <span>Life stage</span>
-                <select value={lifeStageFilter} onChange={(e) => setLifeStageFilter(e.target.value)}>
-                  <option value="all">Any</option>
-                  <option value="fertility">Fertility</option>
-                  <option value="pregnancy">Pregnancy</option>
-                  <option value="postpartum">Postpartum</option>
-                  <option value="perimenopause">Perimenopause</option>
-                  <option value="menopause">Menopause</option>
-                </select>
-              </label>
-              <label>
-                <span>Rating</span>
-                <select value={ratingFilter} onChange={(e) => setRatingFilter(e.target.value)}>
-                  <option value="all">Any</option>
-                  <option value="4-plus">4+ stars</option>
-                </select>
-              </label>
-              <label>
-                <span>Eligibility</span>
-                <select value={eligibilityFilter} onChange={(e) => setEligibilityFilter(e.target.value)}>
-                  <option value="all">Any</option>
-                  <option value="fsa-hsa">FSA/HSA Eligible</option>
-                  <option value="fsa">FSA Eligible</option>
-                  <option value="hsa">HSA Eligible</option>
-                </select>
-              </label>
-              <button
-                type="button"
-                onClick={() => { setPriceFilter('all'); setEligibilityFilter('all'); setPreferenceFilter('all'); setSustainabilityFilter('all'); setLifeStageFilter('all'); setRatingFilter('all'); setFilter('all'); setProductTypeFilter('all'); setAynaFilter('all'); }}
-              >
-                Clear
-              </button>
-            </div>
-          )}
-
-          <ShopGrid items={shown} onOpenProduct={onOpenProduct} />
-        </div>
-      </section>
-    </div>
-  );
+function categoryLabel(product) {
+  return CATEGORY_LABELS[product?.category] || product?.category || 'Ayna pick';
 }
 
 export default function AynaLanding({
@@ -942,35 +98,154 @@ export default function AynaLanding({
   user,
   myProducts,
   ecosystemCount = 0,
-  hasProfile = false,
-  profileCategories,
   recommendedProductIds = [],
-  initialCategory = null,
 }) {
-  if (user) {
-    return (
-      <WelcomeBack
-        user={user}
-        myProducts={myProducts}
-        ecosystemCount={ecosystemCount}
-        recommendedProductIds={recommendedProductIds}
-        onStartQuiz={onStartQuiz}
-        onViewDiscovery={onViewDiscovery}
-        onViewEcosystem={onViewEcosystem}
-        onOpenProduct={onOpenProduct}
-        initialCategory={initialCategory}
-      />
-    );
-  }
+  const [query, setQuery] = useState('');
+  const [seed] = useState(() => Math.floor(Math.random() * 10000));
+  const name = firstName(user);
+
+  const pool = useMemo(() => {
+    const owned = Object.values(myProducts || {});
+    const recommended = (recommendedProductIds || []).map(productById).filter(Boolean);
+    return uniqueProducts([...owned, ...recommended, ...ALL_PRODUCTS]);
+  }, [myProducts, recommendedProductIds]);
+
+  const heroProducts = useMemo(() => {
+    const visual = pool.filter((product) => product?.image || product?.imageUrl || product?.images?.length);
+    return (visual.length >= 4 ? visual : pool).slice(0, 4);
+  }, [pool]);
+
+  const categoryCards = useMemo(() => CARE_AREAS.map((care, index) => {
+    const matches = pool.filter((product) => care.keywords.some((keyword) => productText(product).includes(keyword)));
+    const source = matches.length ? matches : pool;
+    const product = source.length ? source[(seed + index * 7) % source.length] : null;
+    return { ...care, product };
+  }), [pool, seed]);
+
+  const submitSearch = (event) => {
+    event.preventDefault();
+    if (!query.trim()) return;
+    onViewDiscovery?.(discoveryTargetFor(query));
+  };
 
   return (
-    <FirstVisitLanding
-      onStartQuiz={onStartQuiz}
-      onViewDiscovery={onViewDiscovery}
-      onOpenProduct={onOpenProduct}
-      hasProfile={hasProfile}
-      profileCategories={profileCategories}
-      initialCategory={initialCategory}
-    />
+    <main className="dainty-home-shell">
+      <section className="dainty-home-hero">
+        <div className="dainty-eyebrow">personalized women&apos;s health</div>
+        <h1>women&apos;s health, made for <em>you.</em></h1>
+        <p className="dainty-home-hero__copy">Find products, care, and support that make sense for your body, your goals, and your everyday life.</p>
+
+        <form className="dainty-search" onSubmit={submitSearch}>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16.4 16.4 4.1 4.1"/></svg>
+          <input
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search products, brands, or health needs…"
+            aria-label="Search Ayna"
+          />
+          <button type="submit" aria-label="Search">→</button>
+        </form>
+
+        <div className="dainty-quick-links">
+          {['period care', 'PCOS', 'vaginal health', 'fertility'].map((label) => (
+            <button key={label} type="button" onClick={() => onViewDiscovery?.(discoveryTargetFor(label))}>{label}</button>
+          ))}
+        </div>
+      </section>
+
+      <section className="dainty-editorial-stage" aria-label="Ayna personalized health preview">
+        <span className="dainty-hand-note dainty-hand-note--left">made around<br/>your real life</span>
+        <span className="dainty-hand-note dainty-hand-note--right">less guessing,<br/>more you</span>
+
+        {heroProducts[1] && (
+          <button type="button" className="dainty-stage-prop dainty-stage-prop--left" onClick={() => onOpenProduct?.(heroProducts[1])}>
+            <ProductImage product={heroProducts[1]} />
+          </button>
+        )}
+        {heroProducts[2] && (
+          <button type="button" className="dainty-stage-prop dainty-stage-prop--right" onClick={() => onOpenProduct?.(heroProducts[2])}>
+            <ProductImage product={heroProducts[2]} />
+          </button>
+        )}
+
+        <article className="dainty-stage-preview">
+          <div className="dainty-eyebrow">{user ? 'your health universe' : 'personalized for you'}</div>
+          <h2>{user ? `hi, ${name || 'there'}.` : 'your health universe starts here.'}</h2>
+          <p>{user ? 'A few things Ayna is keeping close for you.' : 'Explore freely, or create your ecosystem for personalized matches.'}</p>
+
+          <div className="dainty-preview-list">
+            {heroProducts.slice(0, 3).map((product) => (
+              <button type="button" className="dainty-preview-row" key={product?.id || product?.name} onClick={() => onOpenProduct?.(product)}>
+                <ProductImage product={product} />
+                <span>
+                  <strong>{product?.name}</strong>
+                  <small>{categoryLabel(product)}</small>
+                </span>
+                <b>→</b>
+              </button>
+            ))}
+          </div>
+
+          <button type="button" className="dainty-preview-link" onClick={user ? onViewEcosystem : onStartQuiz}>
+            <span>{user ? 'open my ecosystem' : 'build my ecosystem'}</span><span>→</span>
+          </button>
+        </article>
+
+        <div className="dainty-stage-proof" aria-hidden="true">
+          <span>real products</span><span>personalized matches</span><span>your preferences</span>
+        </div>
+      </section>
+
+      <section className="dainty-home-section">
+        <div className="dainty-section-top">
+          <div>
+            <div className="dainty-eyebrow">browse without the clutter</div>
+            <h2>explore by <em>need.</em></h2>
+          </div>
+          <p>Real products from the Ayna catalog. The product shown for each need can rotate when you come back.</p>
+        </div>
+
+        <div className="dainty-need-grid">
+          {categoryCards.map((card) => (
+            <button type="button" className="dainty-need-card" key={card.label} onClick={() => onViewDiscovery?.(discoveryTargetFor(card.query))}>
+              <div className="dainty-need-card__media">
+                <span className="dainty-refresh-tag">refresh pick</span>
+                {card.product && <ProductImage product={card.product} />}
+              </div>
+              <div className="dainty-need-card__copy">
+                <h3>{card.label}</h3>
+                <p>{card.product?.name || 'Explore products'}</p>
+              </div>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section className="dainty-universe-strip">
+        <div className="dainty-universe-strip__copy">
+          <div className="dainty-eyebrow dainty-eyebrow--warm">my ecosystem</div>
+          <h3>{user ? <>hi, {name || 'there'}. this is your <em>health universe.</em></> : <>make this universe <em>yours.</em></>}</h3>
+          <p>{user
+            ? 'Each bubble is an area of care. Tap one to see what is in it, why it was matched, and your personalized product score.'
+            : 'Create an account to save products, see your scores, and build your personalized ecosystem.'}</p>
+          <div className="dainty-universe-strip__actions">
+            <button type="button" className="dainty-light-button" onClick={user ? onViewEcosystem : onStartQuiz}>{user ? 'open my ecosystem' : 'create my ecosystem'}</button>
+            <button type="button" className="dainty-ghost-button" onClick={() => onViewDiscovery?.('')}>browse products</button>
+          </div>
+        </div>
+
+        <div className="dainty-mini-orbit" aria-hidden="true">
+          <div className="dainty-mini-center">{user ? (name || 'you') : 'you'}</div>
+          <span className="dainty-mini-dot d1">Period</span>
+          <span className="dainty-mini-dot d2">PCOS</span>
+          <span className="dainty-mini-dot d3">Pelvic</span>
+          <span className="dainty-mini-dot d4">UTI</span>
+        </div>
+      </section>
+
+      {user && ecosystemCount > 0 && (
+        <div className="dainty-home-footnote">{ecosystemCount} saved {ecosystemCount === 1 ? 'product' : 'products'} in your ecosystem</div>
+      )}
+    </main>
   );
 }
