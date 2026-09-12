@@ -331,12 +331,6 @@ function Toggle({ on, offTrack = '#DCD5CB', onTrack = '#242A52', onKnob = '#F0A8
 function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds = [], onStartQuiz, onViewDiscovery, onViewEcosystem, onOpenProduct, initialCategory = null }) {
   const name = displayNameFromUser(user) || 'there';
   const [filter, setFilter] = useState(initialCategory || 'all');
-  // A shop category pick was pure local state with no URL round-trip —
-  // clicking into a product from a filtered Shop view and hitting Back
-  // always landed on "All". Mirrors Discovery's ?q= pattern: read the
-  // initial value from App.jsx (which reads the URL), and keep the URL in
-  // sync as the filter changes so a real browser Back restores it.
-  // Flagged live 2026-08-25.
   useEffect(() => {
     if (initialCategory) setFilter(initialCategory);
   }, [initialCategory]);
@@ -579,7 +573,7 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
                 <select value={aynaFilter} onChange={(e) => setAynaFilter(e.target.value)}>
                   <option value="all">Any</option>
                   <option value="best-match">Best Match</option>
-                  <option value="clinician">Clinician Backed</option>
+                  <option value="clinician">Clinical Context</option>
                   <option value="community">Community Favorite</option>
                   <option value="ecosystem">In My Ecosystem</option>
                 </select>
@@ -674,7 +668,6 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
 function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasProfile, profileCategories, initialCategory = null }) {
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState(initialCategory || 'all');
-  // See the matching effect in WelcomeBack for why — same fix, same pattern.
   useEffect(() => {
     if (initialCategory) setFilter(initialCategory);
   }, [initialCategory]);
@@ -771,7 +764,7 @@ function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasPro
             Care that&apos;s <span style={{ fontStyle: 'italic', color: '#F0A84B' }}>matched</span> to your body.
           </h1>
           <p className="ayna-landing-sub">
-            Real research, doctor input, and other women&apos;s experiences in one place.
+            Cited research, clinical context, and other women&apos;s experiences in one place.
           </p>
 
           <form className="ayna-landing-searchbar" onSubmit={submitSearch}>
@@ -872,7 +865,7 @@ function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasPro
                 <span>ayna</span>
                 <select value={aynaFilter} onChange={(e) => setAynaFilter(e.target.value)}>
                   <option value="all">Any</option>
-                  <option value="clinician">Clinician Backed</option>
+                  <option value="clinician">Clinical Context</option>
                   <option value="community">Community Favorite</option>
                 </select>
               </label>

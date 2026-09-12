@@ -1,20 +1,6 @@
 import React from 'react';
 import PrivacyPreferencesLink from './PrivacyPreferencesLink';
 
-/**
- * Site footer — a direct port of the footer that repeats on every board of the
- * Aug 2026 desktop mockup ("Ayna Mockups"): four columns (brand blurb, Explore,
- * Company, Get in touch) over a © / tagline row. Type sizes, colours, gaps and
- * copy are the mockup's own values rather than the app's token scale, because
- * the point of this component is to reproduce that block exactly.
- *
- * The one addition the mockup has no place for is the legal line: Ayna is a
- * health product, so the wellness-not-medical-advice disclaimer and the
- * Privacy / Terms / How We Make Money links have to stay reachable from every
- * page. They sit under the © row as fine print, which is where a real site
- * would put them anyway.
- */
-
 const LINK_STYLE = {
   background: 'none',
   border: 'none',
@@ -80,7 +66,7 @@ export default function SiteFooter({
             color: '#6f6880',
             marginTop: '16px',
           }}>
-            Personalized women's health discovery. Matched to your body, your goals, your data.
+            Personalized women&apos;s health discovery. Matched to your body, your goals, your data.
           </div>
         </div>
 
@@ -93,6 +79,7 @@ export default function SiteFooter({
         <FooterColumn title="Company">
           <button type="button" style={LINK_STYLE} onClick={onViewAbout}>About</button>
           <button type="button" style={LINK_STYLE} onClick={onViewWaitlist}>Brand Partnerships</button>
+          <a style={LINK_STYLE} href="/consumer-health-data.html">Consumer Health Data Privacy</a>
         </FooterColumn>
 
         <FooterColumn title="Get in touch">
@@ -109,18 +96,15 @@ export default function SiteFooter({
       </div>
 
       <div className="site-footer__legal">
-        ayna provides wellness information only. Not medical advice. Always consult a qualified
-        healthcare provider for medical decisions. By using ayna, you agree your data is stored
-        securely and never sold.
+        18+ only. ayna provides wellness information only, not medical advice. We do not sell your personal health information.
         {' '}
         <button type="button" style={{ ...LINK_STYLE, textDecoration: 'underline' }} onClick={onViewPrivacyPolicy}>Privacy Policy</button>
+        {' · '}
+        <a style={{ ...LINK_STYLE, textDecoration: 'underline' }} href="/consumer-health-data.html">Consumer Health Data Privacy</a>
         {' · '}
         <button type="button" style={{ ...LINK_STYLE, textDecoration: 'underline' }} onClick={onViewTermsOfUse}>Terms of Use</button>
         {' · '}
         <button type="button" style={{ ...LINK_STYLE, textDecoration: 'underline' }} onClick={onViewHowWeMakeMoney}>How We Make Money</button>
-        {/* Renders nothing (separator included) until an analytics decision
-            exists — while the consent bar is still up, the question is
-            already being asked on screen. */}
         <PrivacyPreferencesLink style={{ ...LINK_STYLE, textDecoration: 'underline' }} />
       </div>
     </footer>

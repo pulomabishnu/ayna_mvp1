@@ -15,57 +15,57 @@ export default function HowItWorks({ onBack, onViewSources }) {
         <h1 className="hiw-mockup__title">No mystery box.</h1>
 
         <p className="hiw-mockup__intro">
-          ayna filters the open market against your profile, then against published research.
+          ayna compares products with the health profile and preferences you choose to share, then adds cited research, clinical guidance, safety information, and community context where available.
           <br className="hiw-desktop-break" />
-          Anything that fails a step never reaches your shop.
+          Personalized picks are ranked on relevance to you, not on commission rate or partnership status.
         </p>
 
         <div className="hiw-mockup__steps">
           <article className="hiw-mockup__step">
             <div className="hiw-mockup__stepno">STEP 01</div>
             <h2>You tell us</h2>
-            <p>Stage of life, goals, sensitivities, city.</p>
+            <p>Stage of life, goals, sensitivities, and the details you choose to share.</p>
 
             <div className="hiw-mockup__profile-card">
-              Postpartum · 8 weeks · sensitive skin · NYC
+              Your profile · your choices
             </div>
           </article>
 
           <article className="hiw-mockup__step">
             <div className="hiw-mockup__stepno">STEP 02</div>
-            <h2>We scan the market</h2>
-            <p>Everything pulled in, then cut down.</p>
+            <h2>We narrow the catalog</h2>
+            <p>Products are filtered for category fit, known safety conflicts, and relevance.</p>
 
             <div className="hiw-mockup__metric">
-              <span>Pulled in</span>
-              <strong>3,140</strong>
+              <span>Start</span>
+              <strong>Catalog</strong>
             </div>
 
             <div className="hiw-mockup__metric">
-              <span>Relevant to you</span>
-              <strong>212</strong>
+              <span>Then</span>
+              <strong>Relevant set</strong>
             </div>
           </article>
 
           <article className="hiw-mockup__step">
             <div className="hiw-mockup__stepno">STEP 03</div>
-            <h2>Evidence check</h2>
-            <p>Checked against published guidance.</p>
+            <h2>Evidence context</h2>
+            <p>Where available, ayna links published research, clinical guidance, product-specific evidence, safety information, and community sources.</p>
 
-            <div className="hiw-mockup__evidence">NIH research</div>
-            <div className="hiw-mockup__evidence">ACOG guidance</div>
-            <div className="hiw-mockup__evidence">CDC data</div>
-            <div className="hiw-mockup__dropped">Fails → dropped</div>
+            <div className="hiw-mockup__evidence">Published research</div>
+            <div className="hiw-mockup__evidence">Clinical guidance</div>
+            <div className="hiw-mockup__evidence">Product & safety sources</div>
+            <div className="hiw-mockup__dropped">Unsupported claims are labeled, not upgraded into facts</div>
           </article>
 
           <article className="hiw-mockup__step">
             <div className="hiw-mockup__stepno">STEP 04</div>
             <h2>Your ecosystem</h2>
-            <p>What's left is ranked, with the reason attached.</p>
+            <p>Your strongest relevant picks are shown with the match reason attached.</p>
 
             <div className="hiw-mockup__ecosystem-card">
-              <strong>14</strong>
-              <span>products, each with its match reason</span>
+              <strong>Your picks</strong>
+              <span>with match reasons and source context</span>
             </div>
           </article>
         </div>
@@ -79,7 +79,7 @@ export default function HowItWorks({ onBack, onViewSources }) {
           <div>
             <h2>ayna is not a doctor, and never pretends to be.</h2>
             <p>
-              Summaries are AI-written from cited sources and clinician input.
+              Summaries may be AI-assisted and are grounded in cited sources where available. “Clinical context” can include published guidance, clinician-authored sources, or clearly labeled brand-provided clinician claims; it does not mean every product has been independently reviewed by an ayna clinician.
             </p>
           </div>
 

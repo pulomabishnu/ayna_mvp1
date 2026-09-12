@@ -12,11 +12,13 @@ const SUBTITLES = {
 
 const CONSENT_ITEMS = [
   'The health information I share with ayna is self-reported wellness information, not a clinical record.',
-  'My wellness data may be processed by an external AI service to personalize recommendations. ayna takes measures to anonymize and secure this information and never sells it.',
+  'When I intentionally use an AI-powered feature, limited relevant wellness context may be processed by an external AI provider to generate my requested response. ayna minimizes the context sent, protects it in transit, and does not sell it.',
   'ayna provides wellness information, not medical advice or a substitute for care from a qualified healthcare provider.',
+  'I confirm that I am at least 18 years old.',
 ];
 
-const CONSENT_VERSION = 'v1';
+const CONSENT_VERSION = 'v2-18plus';
+const AGE_REQUIREMENT_VERSION = '18plus-v1';
 
 export default function AuthGate({ isModal = false, embedded = false, onSkip, context, onBeforeOAuthRedirect, redirectTo }) {
   useEscapeToClose(isModal, onSkip);
@@ -30,7 +32,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
   const [successMsg, setSuccessMsg] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConsentDetails, setShowConsentDetails] = useState(false);
-  const [checked, setChecked] = useState([false, false, false]);
+  const [checked, setChecked] = useState([false, false, false, false]);
   // Two real signups reported never getting a confirmation email
   // (2026-08-25) — Supabase's built-in email sender has a very low rate
   // limit and no delivery guarantee, so a signup silently succeeding with
@@ -64,10 +66,21 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
   const toggleCheck = (i) =>
     setChecked(prev => prev.map((v, idx) => (idx === i ? !v : v)));
 
+  const signupMetadata = () => {
+    const now = new Date().toISOString();
+    return {
+      consent_given_at: now,
+      consent_version: CONSENT_VERSION,
+      age_18_confirmed: true,
+      age_18_confirmed_at: now,
+      age_requirement_version: AGE_REQUIREMENT_VERSION,
+    };
+  };
+
   const handleEmailAuth = async (e) => {
     e.preventDefault();
     if (isSignup && !allConsented) {
-      setError("Please agree to the three statements above before creating your account.");
+      setError("Please agree to all four statements above before creating your account.");
       return;
     }
     setError('');
@@ -77,7 +90,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
     setLoading(true);
     try {
       if (isSignup) {
-        const consentAt = new Date().toISOString();
+        const metadata = signupMetadata();
         const cleanFirstName = firstName.trim();
         const { data, error } = await supabase.auth.signUp({
           email,
@@ -87,8 +100,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
             data: {
               first_name: cleanFirstName,
               full_name: cleanFirstName,
-              consent_given_at: consentAt,
-              consent_version: CONSENT_VERSION,
+              ...metadata,
             },
           },
         });
@@ -99,11 +111,6 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
           return;
         }
         if (data.session) {
-          // Supabase already returned a live session, meaning this project's
-          // "Confirm email" setting is off — no confirmation email is coming.
-          // Telling her to go check her inbox here would be actively wrong:
-          // she's already signed in, which App.jsx's onAuthStateChange handler
-          // is about to act on.
           setSuccessMsg('You\'re all set. Signing you in...');
         } else {
           setSuccessMsg('Almost there! A confirmation email is on its way from ayna (puloma@aynahealth.co). Check your spam folder if you don\'t see it. Once confirmed, come back here to sign in.');
@@ -112,10 +119,6 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) {
-          // Real, known failure mode (found live 2026-08-25): a user whose
-          // confirmation email never arrived tries to sign in anyway and
-          // hits this exact, stable Supabase error string. Surface a resend
-          // option right here instead of a dead-end error.
           if (/email not confirmed/i.test(error.message || '')) {
             setNeedsConfirmation(true);
           }
@@ -148,11 +151,6 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
     }
   };
 
-  // Same US-default E.164 normalization as the server's normalizeE164
-  // (api/_otp.js) — kept independent since that one's server-only, but
-  // matching it means a number that works for one phone feature works for
-  // this one too, no surprise "invalid number" for something the rest of
-  // the app already accepts.
   const normalizePhoneE164 = (raw) => {
     const trimmed = String(raw || '').trim();
     if (/^\+[1-9]\d{6,14}$/.test(trimmed)) return trimmed;
@@ -164,12 +162,16 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
 
   const handleSendPhoneOtp = async (e) => {
     e.preventDefault();
+    if (!allConsented) {
+      setError('Please agree to all four statements above before creating your account.');
+      return;
+    }
     setError('');
     setLoading(true);
     try {
       const e164 = normalizePhoneE164(phoneNumber);
       if (!e164) throw new Error('Please enter a valid 10-digit phone number.');
-      const consentAt = new Date().toISOString();
+      const metadata = signupMetadata();
       const cleanFirstName = firstName.trim();
       const { error } = await supabase.auth.signInWithOtp({
         phone: e164,
@@ -177,8 +179,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
           data: {
             first_name: cleanFirstName,
             full_name: cleanFirstName,
-            consent_given_at: consentAt,
-            consent_version: CONSENT_VERSION,
+            ...metadata,
           },
         },
       });
@@ -203,8 +204,6 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
         type: 'sms',
       });
       if (error) throw error;
-      // Session now exists — App.jsx's onAuthStateChange SIGNED_IN handler
-      // takes it from here, same as any other sign-in path.
     } catch (err) {
       setError(err.message || 'That code is wrong or expired. Please try again.');
     } finally {
@@ -214,7 +213,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
 
   const handleGoogle = async () => {
     if (isSignup && !allConsented) {
-      setError("Please agree to the three statements above before continuing.");
+      setError("Please agree to all four statements above before continuing.");
       return;
     }
     if (!supabase) {
@@ -224,18 +223,11 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
     setError('');
     setGoogleLoading(true);
     try {
-      // Persist consent so AuthCallback can write it to user metadata after the
-      // redirect. Stored in BOTH modes: Supabase's Google provider
-      // auto-provisions an account for any unseen Google address, so a
-      // first-time visitor who happens to click the "Sign in" toggle used to get
-      // an account created — and reach the health intake — with the consent
-      // checkboxes never shown and no consent record written at all.
-      try {
-        sessionStorage.setItem('ayna_pending_consent', JSON.stringify({
-          consent_given_at: new Date().toISOString(),
-          consent_version: CONSENT_VERSION,
-        }));
-      } catch (_) { /* private mode */ }
+      if (isSignup) {
+        try {
+          sessionStorage.setItem('ayna_pending_consent', JSON.stringify(signupMetadata()));
+        } catch (_) { /* private mode */ }
+      }
       if (onBeforeOAuthRedirect) onBeforeOAuthRedirect();
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
@@ -257,6 +249,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
     setSuccessMsg('');
     setAuthMethod('email');
     setPhoneStep('number');
+    setChecked([false, false, false, false]);
   };
 
   const switchAuthMethod = (next) => {
@@ -308,12 +301,6 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
         <p style={styles.tagline}>{subtitle}</p>
 
         {!supabase && (
-          // Without this, a missing/blank .env.local silently disabled the
-          // email/password submit button with zero feedback — clicking it
-          // did nothing, no error, no console output, nothing to search for.
-          // The Google button already surfaced this same problem via its own
-          // error state; email/password had no equivalent, so it looked
-          // exactly like a hang rather than a config gap.
           <p style={styles.configWarning}>
             Sign-in isn't configured on this device: VITE_SUPABASE_URL and
             VITE_SUPABASE_ANON_KEY are missing or empty in .env.local. Add them
@@ -385,7 +372,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
                   style={styles.consentToggle}
                   aria-expanded={showConsentDetails}
                 >
-                  <span>How we handle your data</span>
+                  <span>Privacy, AI & age confirmation</span>
                   <span style={{ transform: showConsentDetails ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s ease' }}>⌄</span>
                 </button>
 
@@ -407,8 +394,10 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
               </div>
 
               <p style={styles.legalNotice}>
-                By creating an account you agree to ayna's{' '}
+                ayna accounts are for adults 18+. By creating an account you agree to ayna's{' '}
                 <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" style={styles.link}>Privacy Policy</a>
+                {', '}
+                <a href="/consumer-health-data.html" target="_blank" rel="noopener noreferrer" style={styles.link}>Consumer Health Data Privacy Notice</a>
                 {' '}and{' '}
                 <a href="/terms-of-use" target="_blank" rel="noopener noreferrer" style={styles.link}>Terms of Service</a>.
               </p>
@@ -486,50 +475,50 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
             )
           ) : (
             <>
-          {isSignup && (
-            <input
-              type="text"
-              placeholder="First name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              required
-              style={styles.input}
-              autoComplete="given-name"
-              maxLength={50}
-            />
-          )}
-          <input
-            type="email"
-            placeholder="Email address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={styles.input}
-            autoComplete="email"
-          />
-          <div style={{ position: 'relative' }}>
-            <input
-              type={showPassword ? 'text' : 'password'}
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              style={{
-                ...styles.input,
-                width: '100%', boxSizing: 'border-box', paddingRight: '2.5rem',
-              }}
-              autoComplete={isSignup ? 'new-password' : 'current-password'}
-              minLength={isSignup ? 8 : undefined}
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(v => !v)}
-              style={{ position: 'absolute', right: '0.65rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)', fontSize: '1rem', padding: '0.25rem', lineHeight: 1 }}
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
-            >
-              {showPassword ? 'Hide' : 'Show'}
-            </button>
-          </div>
+              {isSignup && (
+                <input
+                  type="text"
+                  placeholder="First name"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  required
+                  style={styles.input}
+                  autoComplete="given-name"
+                  maxLength={50}
+                />
+              )}
+              <input
+                type="email"
+                placeholder="Email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                style={styles.input}
+                autoComplete="email"
+              />
+              <div style={{ position: 'relative' }}>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  style={{
+                    ...styles.input,
+                    width: '100%', boxSizing: 'border-box', paddingRight: '2.5rem',
+                  }}
+                  autoComplete={isSignup ? 'new-password' : 'current-password'}
+                  minLength={isSignup ? 8 : undefined}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(v => !v)}
+                  style={{ position: 'absolute', right: '0.65rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)', fontSize: '1rem', padding: '0.25rem', lineHeight: 1 }}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? 'Hide' : 'Show'}
+                </button>
+              </div>
             </>
           )}
 
@@ -552,9 +541,10 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
 
           <button
             type="submit"
-            disabled={loading || !supabase}
+            disabled={loading || !supabase || (isSignup && !allConsented)}
             style={{
               ...styles.primaryBtn,
+              ...((isSignup && !allConsented) ? styles.primaryBtnDisabled : {}),
             }}
           >
             {loading
@@ -574,9 +564,10 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
         <button
           type="button"
           onClick={handleGoogle}
-          disabled={googleLoading}
+          disabled={googleLoading || (isSignup && !allConsented)}
           style={{
             ...styles.googleBtn,
+            ...((isSignup && !allConsented) ? styles.googleBtnDisabled : {}),
           }}
         >
           <GoogleIcon />
@@ -585,7 +576,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
 
         {!isSignup && (
           <p style={styles.fine}>
-            By continuing you agree to our{' '}
+            ayna is for adults 18+. By continuing you agree to our{' '}
             <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'underline' }}>Privacy Policy</a>
             {' '}and{' '}
             <a href="/terms-of-use" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'underline' }}>Terms of Use</a>.
@@ -747,14 +738,12 @@ const styles = {
     cursor: 'pointer',
     fontFamily: 'var(--font-body)',
   },
-
   consentDetails: {
     display: 'flex',
     flexDirection: 'column',
     gap: '0.55rem',
     marginTop: '0.65rem',
   },
-
   consentItem: {
     display: 'flex',
     alignItems: 'flex-start',
