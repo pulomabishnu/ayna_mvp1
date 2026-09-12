@@ -24,10 +24,27 @@ describe('founder analytics exclusion', () => {
     vi.stubGlobal('localStorage', localStorage);
   });
 
-  it('recognizes only the three founder emails', () => {
-    expect(isFounderEmail('ameera@aynahealth.co')).toBe(true);
+  it('recognizes every exact founder email alias observed in PostHog', () => {
+    const founderEmails = [
+      'ameera@aynahealth.co',
+      'ao369@cornell.edu',
+      'lalaloops99@gmail.com',
+      'o.ameera24@gmail.com',
+      'eliz@aynahealth.co',
+      'elizcelik2003@gmail.com',
+      'puloma@aynahealth.co',
+      'pulomabishnu@gmail.com',
+    ];
+
+    for (const email of founderEmails) {
+      expect(isFounderEmail(email)).toBe(true);
+    }
     expect(isFounderEmail(' ELIZ@AYNAHEALTH.CO ')).toBe(true);
-    expect(isFounderEmail('puloma@aynahealth.co')).toBe(true);
+  });
+
+  it('does not use broad name substring matching', () => {
+    expect(isFounderEmail('elizabeth.customer@example.com')).toBe(false);
+    expect(isFounderEmail('ameera-fan@example.com')).toBe(false);
     expect(isFounderEmail('someone@aynahealth.co')).toBe(false);
     expect(isFounderEmail('')).toBe(false);
   });
@@ -38,11 +55,11 @@ describe('founder analytics exclusion', () => {
       people: { set: vi.fn() },
     };
 
-    expect(tagFounderAnalyticsIfNeeded(ph, 'ameera@aynahealth.co')).toBe(true);
+    expect(tagFounderAnalyticsIfNeeded(ph, 'ao369@cornell.edu')).toBe(true);
     expect(hasInternalBrowserMarker()).toBe(true);
     expect(ph.register).toHaveBeenCalledWith({ is_internal: true, internal_role: 'founder' });
     expect(ph.people.set).toHaveBeenCalledWith({ is_internal: true, internal_role: 'founder' });
-    expect(JSON.stringify(ph.register.mock.calls)).not.toContain('ameera@aynahealth.co');
+    expect(JSON.stringify(ph.register.mock.calls)).not.toContain('ao369@cornell.edu');
   });
 
   it('keeps the same browser internal on later signed-out visits', () => {
@@ -51,7 +68,7 @@ describe('founder analytics exclusion', () => {
       people: { set: vi.fn() },
     };
 
-    tagFounderAnalyticsIfNeeded(ph, 'eliz@aynahealth.co');
+    tagFounderAnalyticsIfNeeded(ph, 'pulomabishnu@gmail.com');
     ph.register.mockClear();
     ph.people.set.mockClear();
 
