@@ -5,6 +5,12 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   base: '/',
   plugins: [react()],
+  // Keep implementation/source paths out of the public production artifact.
+  // Vite defaults to false, but make the security expectation explicit so a
+  // future config change cannot silently publish source maps.
+  build: {
+    sourcemap: false,
+  },
   test: {
     environment: 'node',
   },

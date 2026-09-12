@@ -2,6 +2,7 @@ import { verifyUser } from './_usageLimit.js';
 
 const USER_TABLES = [
   ['health_intakes', '*'],
+  ['user_health_profiles', '*'],
   ['notification_preferences', '*'],
   // Verification code hashes are an internal security credential, not useful
   // account data. Export the user's phone/status metadata without the hash.

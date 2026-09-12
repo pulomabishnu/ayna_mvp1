@@ -1,3 +1,10 @@
+import { getSupabaseClient } from './supabaseClient';
+import {
+  loadLearningMemorySession,
+  saveLearningMemorySession,
+  saveLearningMemoryForUser,
+} from './learningMemoryStore';
+
 const API_PATH = '/api/llm-recommendations';
 /** Prevents the ecosystem page from showing “Loading…” forever if the server never responds. */
 // Must sit ABOVE the server's function ceiling (vercel.json maxDuration = 60s)
@@ -5,8 +12,7 @@ const API_PATH = '/api/llm-recommendations';
 // batched work assuming a 252s server budget, so the client aborted ~100s
 // before the server could possibly finish and threw the work away.
 const DEFAULT_FETCH_TIMEOUT_MS = 75_000;
-const MEMORY_KEY = 'ayna_llm_learning_memory_v1';
-/** Persistent cache so re-login does not re-call the LLM for the same intake. */
+/** Health-derived recommendation caches are active-tab only; Supabase stores the durable user state. */
 const RECS_CACHE_KEY = 'ayna_llm_recommendations_by_intake_v2';
 const FETCHED_FINGERPRINT_KEY = 'ayna_llm_recommendations_fetched_fingerprint_v2';
 
@@ -15,6 +21,21 @@ function stableStringify(val) {
   if (Array.isArray(val)) return '[' + val.map(stableStringify).join(',') + ']';
   const keys = Object.keys(val).sort();
   return '{' + keys.map(k => JSON.stringify(k) + ':' + stableStringify(val[k])).join(',') + '}';
+}
+
+function migrateLegacyCacheKey(key) {
+  if (typeof window === 'undefined') return null;
+  try {
+    const current = window.sessionStorage.getItem(key);
+    if (current != null) return current;
+    const legacy = window.localStorage.getItem(key);
+    if (legacy == null) return null;
+    try { window.sessionStorage.setItem(key, legacy); } catch (_) {}
+    try { window.localStorage.removeItem(key); } catch (_) {}
+    return legacy;
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -44,7 +65,7 @@ export function fingerprintIntake(intake) {
 export function loadCachedLlmRecommendations(fingerprint) {
   if (!fingerprint || typeof window === 'undefined') return null;
   try {
-    const raw = window.localStorage.getItem(RECS_CACHE_KEY);
+    const raw = migrateLegacyCacheKey(RECS_CACHE_KEY);
     if (!raw) return null;
     const o = JSON.parse(raw);
     if (!o || o.fingerprint !== fingerprint) return null;
@@ -56,21 +77,20 @@ export function loadCachedLlmRecommendations(fingerprint) {
 }
 
 /**
-  * @returns {boolean} whether the payload was actually persisted. The caller MUST
-  * check this before recording the fingerprint as fetched: a swallowed
-  * QuotaExceededError plus a recorded fingerprint is the exact combination that
-  * leaves the ecosystem permanently empty with no error.
+  * @returns {boolean} whether the payload was actually persisted for this tab.
+  * The caller MUST check this before recording the fingerprint as fetched.
   */
 export function saveCachedLlmRecommendations(fingerprint, recommendations) {
   if (!fingerprint || typeof window === 'undefined') return false;
   try {
-    window.localStorage.setItem(
+    window.sessionStorage.setItem(
       RECS_CACHE_KEY,
       JSON.stringify({ fingerprint, recommendations })
     );
+    try { window.localStorage.removeItem(RECS_CACHE_KEY); } catch (_) {}
     return true;
   } catch (e) {
-    console.warn('[Ayna] could not cache recommendations (quota or private mode):', e?.name);
+    console.warn('[Ayna] could not cache recommendations for this session:', e?.name);
     return false;
   }
 }
@@ -78,6 +98,9 @@ export function saveCachedLlmRecommendations(fingerprint, recommendations) {
 export function clearCachedLlmRecommendations() {
   try {
     if (typeof window === 'undefined') return;
+    window.sessionStorage.removeItem(RECS_CACHE_KEY);
+    window.sessionStorage.removeItem(FETCHED_FINGERPRINT_KEY);
+    // Clear persistent copies left by older builds.
     window.localStorage.removeItem(RECS_CACHE_KEY);
     window.localStorage.removeItem(FETCHED_FINGERPRINT_KEY);
   } catch {
@@ -88,7 +111,7 @@ export function clearCachedLlmRecommendations() {
 export function loadFetchedLlmFingerprint() {
   if (typeof window === 'undefined') return '';
   try {
-    return String(window.localStorage.getItem(FETCHED_FINGERPRINT_KEY) || '');
+    return String(migrateLegacyCacheKey(FETCHED_FINGERPRINT_KEY) || '');
   } catch {
     return '';
   }
@@ -97,7 +120,8 @@ export function loadFetchedLlmFingerprint() {
 export function saveFetchedLlmFingerprint(fingerprint) {
   if (!fingerprint || typeof window === 'undefined') return;
   try {
-    window.localStorage.setItem(FETCHED_FINGERPRINT_KEY, String(fingerprint));
+    window.sessionStorage.setItem(FETCHED_FINGERPRINT_KEY, String(fingerprint));
+    try { window.localStorage.removeItem(FETCHED_FINGERPRINT_KEY); } catch (_) {}
   } catch {
     // no-op
   }
@@ -137,23 +161,30 @@ export function buildLlmRecommendationsRequestBody({
 }
 
 export function loadLearningMemory() {
-  try {
-    if (typeof window === 'undefined') return {};
-    const raw = window.localStorage.getItem(MEMORY_KEY);
-    if (!raw) return {};
-    const parsed = JSON.parse(raw);
-    return parsed && typeof parsed === 'object' ? parsed : {};
-  } catch {
-    return {};
-  }
+  return loadLearningMemorySession();
 }
 
 export function saveLearningMemory(memory) {
+  saveLearningMemorySession(memory);
+
+  // Persist the full learning memory directly to the user's RLS-protected row.
+  // App.jsx still contains a legacy compatibility callback that reads a
+  // localStorage mirror; learningMemoryStore returns only a harmless sentinel
+  // to that path so it cannot overwrite this full server copy.
   try {
-    if (typeof window === 'undefined') return;
-    window.localStorage.setItem(MEMORY_KEY, JSON.stringify(memory || {}));
+    const supabase = getSupabaseClient();
+    if (!supabase) return;
+    supabase.auth.getSession()
+      .then(({ data }) => {
+        const userId = data?.session?.user?.id;
+        if (!userId) return;
+        return saveLearningMemoryForUser(supabase, userId, memory || {});
+      })
+      .catch((error) => {
+        console.warn('[Ayna] could not sync learning memory:', error?.message || 'save_failed');
+      });
   } catch {
-    // no-op
+    // Session cache still works; server sync will retry on the next build.
   }
 }
 

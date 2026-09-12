@@ -2,14 +2,14 @@
  * Supabase persistence for user_ecosystems.
  * One row per (user_id, product_id). Flags track which lists the product lives in.
  *
- * IMPORTANT: the live database has historically drifted from the frontend
- * schema/RLS. Ecosystem edits must never disappear just because that table is
- * temporarily unwritable. We therefore keep a tiny per-user shadow copy in
- * localStorage and in Supabase auth user_metadata. The table remains the primary
- * store when it works; the shadow is a durable fallback and conflict resolver.
+ * The live table is the durable source of truth, with Supabase auth user_metadata
+ * as a cross-session fallback for temporary schema/RLS outages. A browser shadow
+ * is kept only for the active tab: ecosystem snapshots can contain personalized
+ * match metadata, so they should not remain indefinitely in localStorage on a
+ * shared computer. Older localStorage shadows are migrated once and removed.
  */
 
-const SHADOW_VERSION = 2;
+const SHADOW_VERSION = 3;
 const SHADOW_META_KEY = 'ayna_ecosystem_shadow_v2';
 const SHADOW_LS_PREFIX = 'ayna_ecosystem_shadow_v2:';
 
@@ -45,8 +45,19 @@ function localShadowKey(userId) {
 
 function readLocalShadow(userId) {
   if (!userId || typeof window === 'undefined') return emptyShadow();
+  const key = localShadowKey(userId);
   try {
-    return normalizeShadow(JSON.parse(window.localStorage.getItem(localShadowKey(userId)) || 'null'));
+    const current = window.sessionStorage.getItem(key);
+    if (current) return normalizeShadow(JSON.parse(current));
+
+    // One-time migration from older builds that persisted a personalized
+    // ecosystem snapshot in localStorage.
+    const legacy = window.localStorage.getItem(key);
+    if (!legacy) return emptyShadow();
+    const parsed = normalizeShadow(JSON.parse(legacy));
+    try { window.sessionStorage.setItem(key, JSON.stringify(parsed)); } catch (_) {}
+    try { window.localStorage.removeItem(key); } catch (_) {}
+    return parsed;
   } catch {
     return emptyShadow();
   }
@@ -54,8 +65,10 @@ function readLocalShadow(userId) {
 
 function writeLocalShadow(userId, shadow) {
   if (!userId || typeof window === 'undefined') return false;
+  const key = localShadowKey(userId);
   try {
-    window.localStorage.setItem(localShadowKey(userId), JSON.stringify(normalizeShadow(shadow)));
+    window.sessionStorage.setItem(key, JSON.stringify(normalizeShadow(shadow)));
+    try { window.localStorage.removeItem(key); } catch (_) {}
     return true;
   } catch {
     return false;
@@ -208,15 +221,12 @@ export async function loadEcosystemForUser(supabase, userId) {
   const localShadow = readLocalShadow(userId);
   const metadataShadow = await readMetadataShadow(supabase, userId);
   const shadow = mergeShadows(localShadow, metadataShadow);
-  // Keep the newest metadata copy available locally for the next login even if
-  // the table is still unavailable.
+  // Keep a current tab copy for resilience without persistent local storage.
   writeLocalShadow(userId, shadow);
 
   const mergedRows = {};
   for (const row of dbData) {
     const converted = dbRowToShadowRow(row);
-    // A local reset is a tombstone for old DB ecosystem flags. This prevents a
-    // stale row from popping back in after logout/login while RLS is broken.
     if (shadow.resetAt && converted.updatedAt <= shadow.resetAt) {
       converted.inEcosystem = false;
     }
@@ -239,8 +249,8 @@ export async function loadEcosystemForUser(supabase, userId) {
 
 /**
  * Remove products from the ecosystem WITHOUT destroying tracked/omitted state.
- * The local/auth shadow is written first so reset remains durable even when the
- * live table rejects UPDATE/DELETE through RLS.
+ * The session/auth shadow is written first so reset remains durable even when
+ * the live table temporarily rejects UPDATE/DELETE.
  */
 export async function clearEcosystemForUser(supabase, userId) {
   const shadow = clearLocalEcosystemShadow(userId);
@@ -290,8 +300,8 @@ function toRow(userId, product, { inEcosystem, isTracked, isOmitted }) {
 }
 
 export async function upsertProductState(supabase, userId, product, flags) {
-  // Durable fallback FIRST. This is what makes a successful UI change survive
-  // logout/login even if the table write below is rejected.
+  // Active-tab fallback FIRST; auth user_metadata keeps it cross-session if the
+  // table is temporarily unavailable.
   const shadow = updateLocalProductShadow(userId, product, flags);
   const metadataPromise = writeMetadataShadow(supabase, userId, shadow);
 
@@ -326,13 +336,11 @@ export async function upsertProductState(supabase, userId, product, flags) {
   } catch (error) {
     const metadataSaved = await metadataPromise;
     console.warn('[Ayna] user_ecosystems write unavailable; ecosystem change saved to fallback:', describeError(error, 'upsertProduct'));
-    // localStorage is already written, so this is still a successful user save
-    // on this device. user_metadata makes it cross-session/device when allowed.
     return { synced: metadataSaved, fallback: true };
   }
 }
 
-/** Persist many products in ONE request per chunk, with the same durable fallback. */
+/** Persist many products in ONE request per chunk, with the same fallback. */
 export async function upsertProductsBatch(supabase, userId, products, flags) {
   const valid = (Array.isArray(products) ? products : []).filter((p) => p?.id);
   if (valid.length === 0) return { saved: 0 };
