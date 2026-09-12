@@ -1,13 +1,5 @@
 import { useEffect, useState } from 'react'
-import { hasRecordedChoice, acknowledgeAnalytics, denyConsent } from '../utils/analyticsConsent'
-
-function gpcEnabled() {
-  try {
-    return typeof navigator !== 'undefined' && navigator.globalPrivacyControl === true
-  } catch {
-    return false
-  }
-}
+import { hasRecordedChoice, acknowledgeAnalytics, denyConsent, isMandatoryGpcVisitor } from '../utils/analyticsConsent'
 
 /**
  * Bottom-of-screen analytics consent bar.
@@ -25,15 +17,18 @@ function gpcEnabled() {
  *     de-emphasised decline is the exact dark pattern California penalised
  *     Sephora for under CCPA.
  *  2. There is no dismiss/close control. Silence is not a decision, so the
- *     bar persists across reloads until one of the two buttons is clicked,
- *     or until it's answered some other way (see the GPC/hasRecordedChoice
- *     checks below).
+ *     bar persists across reloads until one of the two buttons is clicked.
  *
- * Never shown when the browser sends Global Privacy Control (GPC) — main.jsx
- * already force-opts-out for that case, so there's no decision left to ask
- * for — or when the visitor already has an explicit analytics decision on
- * record from elsewhere (e.g. the "Usage analytics" toggle in account
- * settings), so returning users are never asked twice.
+ * Hidden only for visitors in a state whose privacy law actually mandates
+ * honoring Global Privacy Control (see isMandatoryGpcVisitor() /
+ * api/_gpcRegions.js) — GPC's legal scope is narrow (opt-out of sale/
+ * sharing, which this app's analytics isn't). A GPC sender OUTSIDE those
+ * states is corrected to the same default-on, consent-still-pending state
+ * as anyone else in main.jsx (via set_config, not opt_in_capturing — see
+ * the comment there), so they see this notice exactly like a normal
+ * visitor would, and can decline the same way. The region check is async
+ * and only runs at all when GPC is actually active, so most visitors
+ * resolve instantly with no network call.
  *
  * The copy says "necessary storage", not "necessary cookies", because this
  * app sets no cookies — the necessary thing is the Supabase session living
@@ -46,21 +41,34 @@ export default function ConsentBanner() {
   // we wait for it — but we have to actually re-render when it arrives, not
   // just check once, or the banner would never appear at all.
   const [ph, setPh] = useState(() => (typeof window !== 'undefined' ? window.posthog : undefined))
-  const [visible, setVisible] = useState(() => !!ph && !gpcEnabled() && !hasRecordedChoice(ph))
+  const [visible, setVisible] = useState(false)
 
   useEffect(() => {
-    if (ph) return
+    let cancelled = false
+    // Only mandatory-GPC visitors trigger the async region check; everyone
+    // else resolves synchronously (isMandatoryGpcVisitor short-circuits to
+    // Promise.resolve(false) without a network call — see
+    // analyticsConsent.js), so there's no visible delay for the common case.
+    async function resolveVisibility(instance) {
+      if (hasRecordedChoice(instance)) return false
+      if (await isMandatoryGpcVisitor()) return false
+      return true
+    }
+    if (ph) {
+      resolveVisibility(ph).then((v) => { if (!cancelled) setVisible(v) })
+      return () => { cancelled = true }
+    }
     const id = setInterval(() => {
       if (window.posthog) {
         setPh(window.posthog)
-        setVisible(!gpcEnabled() && !hasRecordedChoice(window.posthog))
+        resolveVisibility(window.posthog).then((v) => { if (!cancelled) setVisible(v) })
       }
     }, 150)
     // If PostHog never loads (no VITE_PUBLIC_POSTHOG_KEY, blocked by an
     // extension, offline), stop polling and leave the banner hidden — there
     // is no analytics running, so there is no decision to ask for.
     const giveUp = setTimeout(() => clearInterval(id), 10000)
-    return () => { clearInterval(id); clearTimeout(giveUp) }
+    return () => { cancelled = true; clearInterval(id); clearTimeout(giveUp) }
   }, [ph])
 
   if (!visible) return null

@@ -163,14 +163,18 @@ if (!POSTHOG_KEY) {
         // isMandatoryGpcVisitor() only makes a network call (to
         // /api/gpc-region) because GPC is active here — see
         // analyticsConsent.js. If this state's law doesn't actually mandate
-        // honoring GPC, correct the synchronous default above: switch this
-        // visitor to the same default-on state as anyone else. (This also
-        // marks their SDK consent as explicit, so the opt-out notice won't
-        // reappear for them afterward — the same as if they'd clicked "Got
-        // it" themselves. Not a compliance concern: their analytics state
-        // now simply matches a normal default-on visitor's.)
+        // honoring GPC, correct the synchronous default above via
+        // set_config rather than opt_in_capturing(): set_config live-updates
+        // opt_out_capturing_by_default without ever recording an explicit
+        // SDK decision, so this visitor ends up in EXACTLY the same state as
+        // anyone else who's never touched the notice — captured by default,
+        // consent still "pending", opt-out notice still showing (see
+        // ConsentBanner.jsx, which asks the same isMandatoryGpcVisitor()
+        // question for that same reason). Calling opt_in_capturing() here
+        // instead would mark their consent explicit and wrongly suppress
+        // the notice, as if they'd already answered it themselves.
         isMandatoryGpcVisitor().then((mandatory) => {
-          if (!mandatory) ph.opt_in_capturing();
+          if (!mandatory) ph.set_config?.({ opt_out_capturing_by_default: false });
         });
       } else {
         applyStoredConsent(ph);
