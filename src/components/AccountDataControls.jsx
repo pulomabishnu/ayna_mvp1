@@ -2,17 +2,19 @@ import React, { useEffect, useState } from 'react';
 import posthog from 'posthog-js';
 import { getSupabaseClient } from '../utils/supabaseClient';
 
-function clearLocalAynaData() {
-  try {
-    const keys = [];
-    for (let i = 0; i < localStorage.length; i += 1) {
-      const key = localStorage.key(i);
-      if (key && /^ayna(?:_|:)/i.test(key)) keys.push(key);
-    }
-    keys.forEach((key) => localStorage.removeItem(key));
-  } catch {
-    // Private mode/storage failures should never block account deletion.
+function clearAynaStorage(store) {
+  if (!store) return;
+  const keys = [];
+  for (let i = 0; i < store.length; i += 1) {
+    const key = store.key(i);
+    if (key && /^ayna(?:_|:)/i.test(key)) keys.push(key);
   }
+  keys.forEach((key) => store.removeItem(key));
+}
+
+function clearLocalAynaData() {
+  try { clearAynaStorage(window.localStorage); } catch { /* private mode */ }
+  try { clearAynaStorage(window.sessionStorage); } catch { /* private mode */ }
 }
 
 async function getAccessToken() {
@@ -132,7 +134,7 @@ export default function AccountDataControls() {
           <div style={{ minWidth: '220px', flex: 1 }}>
             <div style={{ fontWeight: 600 }}>Usage analytics</div>
             <div style={{ color: 'var(--color-text-muted)', fontSize: '0.82rem', lineHeight: 1.45, marginTop: '0.2rem' }}>
-              Helps us understand which screens and products are useful. Raw health-search text and account email are excluded from PostHog analytics, and session recording is off.
+              Helps us understand which screens and products are useful. Raw health-search text, account email and direct health-account identifiers are excluded from PostHog analytics, and session recording is off.
               {gpcEnabled ? ' Your browser is sending Global Privacy Control, so analytics remain off.' : ''}
             </div>
           </div>
@@ -169,7 +171,7 @@ export default function AccountDataControls() {
       {showDelete && (
         <div style={{ marginTop: '0.9rem', padding: '0.9rem', border: '1px solid #f0b8b2', borderRadius: 'var(--radius-md)', background: '#fff7f6' }}>
           <p style={{ margin: '0 0 0.6rem', color: '#8a1c13', fontSize: '0.88rem', lineHeight: 1.5 }}>
-            This permanently deletes your ayna account, health intake, ecosystem, saved/tracked/hidden products, reviews, learning memory, phone/SMS records, notification preferences, and other account-linked data. This cannot be undone.
+            This permanently deletes your ayna account, health intake, imported health profile, ecosystem, saved/tracked/hidden products, reviews, learning memory, phone/SMS records, notification preferences, and other account-linked data. Active-tab ayna caches on this browser are cleared too. This cannot be undone.
           </p>
           <label style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', fontSize: '0.85rem' }}>
             Type DELETE to confirm
