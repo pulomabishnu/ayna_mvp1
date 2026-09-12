@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import posthog from 'posthog-js';
 import { getSupabaseClient } from '../utils/supabaseClient';
 
 function clearLocalAynaData() {
@@ -23,11 +24,48 @@ async function getAccessToken() {
   return { supabase, token };
 }
 
+function browserGlobalPrivacyControl() {
+  try {
+    return typeof navigator !== 'undefined' && navigator.globalPrivacyControl === true;
+  } catch {
+    return false;
+  }
+}
+
+function readAnalyticsOptOut() {
+  try {
+    return browserGlobalPrivacyControl() || posthog.has_opted_out_capturing?.() === true;
+  } catch {
+    return browserGlobalPrivacyControl();
+  }
+}
+
 export default function AccountDataControls() {
   const [busy, setBusy] = useState('');
   const [message, setMessage] = useState('');
   const [showDelete, setShowDelete] = useState(false);
   const [deleteText, setDeleteText] = useState('');
+  const [analyticsOptedOut, setAnalyticsOptedOut] = useState(readAnalyticsOptOut);
+  const gpcEnabled = browserGlobalPrivacyControl();
+
+  useEffect(() => {
+    if (!gpcEnabled) return;
+    try { posthog.opt_out_capturing?.(); } catch { /* PostHog may not be configured in dev */ }
+    setAnalyticsOptedOut(true);
+  }, [gpcEnabled]);
+
+  const toggleAnalytics = () => {
+    if (gpcEnabled) return;
+    const nextOptedOut = !analyticsOptedOut;
+    try {
+      if (nextOptedOut) posthog.opt_out_capturing?.();
+      else posthog.opt_in_capturing?.();
+      setAnalyticsOptedOut(nextOptedOut);
+      setMessage(nextOptedOut ? 'Usage analytics are now off on this browser.' : 'Usage analytics are now on on this browser.');
+    } catch {
+      setMessage('Analytics settings are unavailable right now.');
+    }
+  };
 
   const downloadData = async () => {
     if (busy) return;
@@ -73,6 +111,7 @@ export default function AccountDataControls() {
       if (!res.ok) throw new Error('We could not delete your account. Nothing else will be changed; please retry.');
 
       clearLocalAynaData();
+      try { posthog.reset?.(); } catch { /* analytics may be unavailable */ }
       try { await supabase.auth.signOut({ scope: 'local' }); } catch { /* user is already deleted server-side */ }
       window.location.replace('/');
     } catch (e) {
@@ -85,8 +124,32 @@ export default function AccountDataControls() {
     <div style={{ marginTop: '1.5rem', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', background: 'var(--color-surface-soft)' }}>
       <div style={{ fontWeight: 700, marginBottom: '0.25rem' }}>Your data & privacy</div>
       <p style={{ margin: '0 0 0.85rem', color: 'var(--color-text-muted)', fontSize: '0.9rem', lineHeight: 1.5 }}>
-        Download a copy of the account data ayna stores, or permanently delete your account and user-linked data.
+        Control usage analytics, download a copy of the account data ayna stores, or permanently delete your account and user-linked data.
       </p>
+
+      <div style={{ padding: '0.8rem 0', borderTop: '1px solid var(--color-border)', borderBottom: '1px solid var(--color-border)', marginBottom: '0.9rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <div style={{ minWidth: '220px', flex: 1 }}>
+            <div style={{ fontWeight: 600 }}>Usage analytics</div>
+            <div style={{ color: 'var(--color-text-muted)', fontSize: '0.82rem', lineHeight: 1.45, marginTop: '0.2rem' }}>
+              Helps us understand which screens and products are useful. Raw health-search text and account email are excluded from PostHog analytics, and session recording is off.
+              {gpcEnabled ? ' Your browser is sending Global Privacy Control, so analytics remain off.' : ''}
+            </div>
+          </div>
+          <button
+            type="button"
+            className="btn btn-outline"
+            role="switch"
+            aria-checked={!analyticsOptedOut}
+            aria-label="Usage analytics"
+            onClick={toggleAnalytics}
+            disabled={gpcEnabled}
+            style={{ minWidth: '125px' }}
+          >
+            {analyticsOptedOut ? 'Analytics off' : 'Analytics on'}
+          </button>
+        </div>
+      </div>
 
       <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
         <button type="button" className="btn btn-outline" onClick={downloadData} disabled={!!busy}>
