@@ -15,12 +15,10 @@ import {
 } from './analyticsConsent';
 
 // Mirrors the real posthog-js API surface this module actually reads.
-// get_explicit_consent_status() returns 'pending' until opt_in/opt_out has
-// been called at least once — has_opted_in/out_capturing() is deliberately
-// NOT used here (or in the module under test) because, with
-// opt_out_capturing_by_default: true, has_opted_out_capturing() returns true
-// even for a visitor who was never asked. See the comment on
-// explicitSdkDecision() in analyticsConsent.js.
+// get_explicit_consent_status() remains 'pending' until opt_in/opt_out is
+// explicitly called. That is important for default-on analytics: a fresh
+// visitor is already being captured by posthog.init, but still has no explicit
+// decision, so the visible opt-out notice should appear.
 function mockPh() {
   let consent = 'pending';
   return {
@@ -46,17 +44,15 @@ describe('analyticsConsent', () => {
     expect(getStoredConsent()).toBeUndefined();
   });
 
-  it('has no recorded choice for a fresh PostHog instance that was never asked (the opt_out_capturing_by_default=true case)', () => {
-    // This is the regression this suite guards against: with the SDK
-    // defaulting to opted-out, has_opted_out_capturing() alone would say
-    // "true" here and wrongly hide the banner forever.
+  it('has no recorded choice for a fresh PostHog instance in the implicit default-on state', () => {
     expect(hasRecordedChoice(ph)).toBe(false);
   });
 
-  it('applyStoredConsent opts in when nothing is stored anywhere', () => {
+  it('applyStoredConsent leaves an undecided visitor implicit so the opt-out notice stays visible', () => {
     applyStoredConsent(ph);
-    expect(ph.opt_in_capturing).toHaveBeenCalled();
+    expect(ph.opt_in_capturing).not.toHaveBeenCalled();
     expect(ph.opt_out_capturing).not.toHaveBeenCalled();
+    expect(hasRecordedChoice(ph)).toBe(false);
   });
 
   it('applyStoredConsent opts in for a stored grant', () => {
@@ -112,7 +108,7 @@ describe('analyticsConsent', () => {
     expect(JSON.parse(localStorage.getItem(CONSENT_STORAGE_KEY)).decision).toBe('denied');
   });
 
-  it('hasRecordedChoice is true when the SDK already has an explicit opt state, even with no local banner decision', () => {
+  it('hasRecordedChoice is true when the SDK already has an explicit opt state, even with no local notice decision', () => {
     expect(hasRecordedChoice(ph)).toBe(false);
     ph.get_explicit_consent_status = vi.fn(() => 'denied');
     expect(hasRecordedChoice(ph)).toBe(true);
