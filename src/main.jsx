@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
 import './index.css';
 import posthog from 'posthog-js';
-import { tagInternalUserIfNeeded } from './utils/posthogInternal';
+import { getInternalIds, tagInternalUserIfNeeded } from './utils/posthogInternal';
 
 if (window.location.hostname === 'aynamvp1.vercel.app') {
   window.location.replace(
@@ -14,18 +14,81 @@ if (window.location.hostname === 'aynamvp1.vercel.app') {
 const POSTHOG_KEY = import.meta.env.VITE_PUBLIC_POSTHOG_KEY;
 const POSTHOG_HOST = import.meta.env.VITE_PUBLIC_POSTHOG_HOST || '/ingest';
 const GPC_ENABLED = typeof navigator !== 'undefined' && navigator.globalPrivacyControl === true;
+const ANALYTICS_ID_PREFIX = 'ayna_analytics_id_v1:';
 
-// Health-related free text should never become analytics payload. This is a
-// final network-boundary guard in addition to keeping analytics events coarse
-// at their call sites. Exact keys only so useful non-sensitive counters such as
-// queryLength/concernsCount remain available for product analytics.
+// PostHog must not use the same identifier as Supabase. A random analytics ID
+// per signed-in account/browser keeps product analytics useful without making
+// the analytics warehouse directly joinable to reproductive-health rows by ID.
+function opaqueAccountKey(value) {
+  const s = String(value || '');
+  let h1 = 0x811c9dc5;
+  let h2 = 0x9e3779b9;
+  for (let i = 0; i < s.length; i += 1) {
+    const c = s.charCodeAt(i);
+    h1 = Math.imul(h1 ^ c, 16777619);
+    h2 = Math.imul(h2 ^ c, 2246822519);
+  }
+  return `${(h1 >>> 0).toString(36)}${(h2 >>> 0).toString(36)}`;
+}
+
+function randomAnalyticsId() {
+  try {
+    if (globalThis.crypto?.randomUUID) return `ayna_${globalThis.crypto.randomUUID()}`;
+  } catch (_) {}
+  return `ayna_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 14)}`;
+}
+
+function analyticsIdForAuthId(authId) {
+  if (!authId || typeof window === 'undefined') return randomAnalyticsId();
+  const key = `${ANALYTICS_ID_PREFIX}${opaqueAccountKey(authId)}`;
+  try {
+    const existing = window.localStorage.getItem(key);
+    if (existing?.startsWith('ayna_')) return existing;
+    const next = randomAnalyticsId();
+    window.localStorage.setItem(key, next);
+    return next;
+  } catch {
+    // Private mode: keep analytics working for this session without falling
+    // back to the Supabase UUID.
+    return randomAnalyticsId();
+  }
+}
+
+// App.jsx still calls posthog.identify(supabaseUserId, { email }) in two legacy
+// auth paths. Intercept at the analytics boundary: discard those PII person
+// properties and substitute a dedicated random analytics identifier.
+const originalIdentify = typeof posthog.identify === 'function'
+  ? posthog.identify.bind(posthog)
+  : null;
+if (originalIdentify) {
+  posthog.identify = (authId) => {
+    const analyticsId = analyticsIdForAuthId(authId);
+    const result = originalIdentify(analyticsId);
+
+    // Preserve the existing internal-user filtering even though the configured
+    // internal list may still contain old Supabase UUIDs.
+    try {
+      const internalIds = getInternalIds();
+      if (internalIds.has(String(authId)) || internalIds.has(analyticsId)) {
+        posthog.people?.set?.({ is_internal: true });
+      }
+    } catch (_) {}
+    return result;
+  };
+}
+
+// Health-related free text and direct account identifiers should never become
+// analytics payload. Exact keys only so useful non-sensitive counters such as
+// queryLength/concernsCount and product/category analytics remain available.
 const SENSITIVE_ANALYTICS_KEYS = new Set([
-  'query', 'searchquery', 'search_query', 'email', 'prompt', 'message', 'notes',
+  'query', 'searchquery', 'search_query', 'email', 'useremail', 'prompt', 'message', 'notes',
   'healthprofile', 'health_profile', 'fullhealthintake', 'full_health_intake',
   'conditions', 'medications', 'allergies', 'symptoms', 'diagnosis', 'diagnoses',
   'concerns', 'intake', 'fhirsummary', 'fhir_summary', 'wearablesummary',
   'wearable_summary', 'freetext', 'free_text', 'supportothertext',
   'support_other_text', 'customconcerns', 'custom_concerns',
+  'userid', 'user_id', 'authuserid', 'auth_user_id', 'phone', 'phonenumber',
+  'phone_number', 'zipcode', 'zip', 'full_name', 'first_name', 'last_name',
 ]);
 
 function sanitizeAnalyticsObject(value) {
