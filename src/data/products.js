@@ -1808,21 +1808,27 @@ function getSafetyAssessment(product, quizAnswers) {
 
     const category = String(product?.category || '').toLowerCase();
     const productText = productTextBlob(product);
+    // Life-stage tags can describe an additional use case (for example, an
+    // incontinence device that is also relevant postpartum or in menopause).
+    // Do not turn those secondary tags into an exclusion gate. Only products
+    // whose category/name/summary is actually stage-specific should be hidden
+    // from users outside that stage.
+    const coreProductText = [product?.name, product?.category, product?.summary]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
 
     const pregnancySpecific =
         category === 'pregnancy'
-        || productHasSignal(product, 'pregnancy')
-        || /\bprenatal\b/.test(productText);
+        || /\bprenatal\b|\bpregnancy support\b|\bfor pregnancy\b/.test(coreProductText);
 
     const postpartumSpecific =
         category === 'postpartum'
-        || productHasSignal(product, 'postpartum')
-        || /\bpostpartum\b|\blactation\b|\bbreastfeeding\b/.test(productText);
+        || /\bpostpartum recovery\b|\bpostpartum support\b|\blactation\b|\bbreastfeeding\b|\bnursing\b/.test(coreProductText);
 
     const menopauseSpecific =
         category === 'menopause'
-        || productHasSignal(product, 'menopause')
-        || /\bmenopause\b|\bperimenopause\b|\bpost-menopause\b/.test(productText);
+        || /\bmenopause\b|\bperimenopause\b|\bpost-menopause\b/.test(coreProductText);
 
     const menstrualCollection =
         ['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'liner'].includes(category)

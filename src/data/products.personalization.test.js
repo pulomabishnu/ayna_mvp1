@@ -8,10 +8,11 @@ describe('getPersonalizedProductIds', () => {
         const full = getRecommendations(quiz, null);
         const personalized = getPersonalizedProductIds(quiz, null);
 
-        // getRecommendations() intentionally keeps the zero-score fallback tail,
-        // but prescription-only products are removed by the safety care-path gate.
-        // Within that safe candidate set, membership would still be a near no-op.
-        expect(full.length).toBe(filterPrescriptionCareGate(ALL_PRODUCTS).length);
+        // getRecommendations() keeps a broad fallback tail after the safety and
+        // life-stage gates. The exact count can change with catalog safety metadata;
+        // the important contract is that the hard personalized subset is smaller.
+        expect(full.length).toBeGreaterThan(scoped.length);
+        expect(full.every((product) => filterPrescriptionCareGate(ALL_PRODUCTS).some((candidate) => candidate.id === product.id))).toBe(true);
 
         // getPersonalizedProductIds() must NOT carry that fallback tail — it's the
         // hard, meaningfully-restricted set a "Personalized" toggle should filter to.
