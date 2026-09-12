@@ -3,7 +3,7 @@ import React from 'react';
 const PROCESSORS = [
   ['Supabase', 'Authentication and storage of account-linked data, including health-profile data you choose to save.'],
   ['Vercel', 'Website hosting and server-side API infrastructure.'],
-  ['PostHog', 'Product analytics. We do not intentionally send your raw health-search text or account email as analytics properties, and session recording is disabled.'],
+  ['PostHog', 'Product analytics. ayna uses a dedicated analytics identifier rather than your Supabase account ID, does not intentionally send raw health-search text or account email as analytics properties, and has session recording disabled.'],
   ['OpenAI, Anthropic, and Google Gemini', 'Depending on feature availability and server configuration, one or more may process prompts or limited health context when you explicitly use an AI-powered feature such as Ask ayna or AI product insights.'],
   ['Twilio', 'Phone verification and opted-in SMS features such as safety or recall messaging.'],
   ['Resend', 'Transactional and support email.'],
@@ -33,7 +33,7 @@ export default function PrivacyPolicy({ onBack }) {
         )}
 
         <h1 style={{ margin: 0, fontFamily: 'var(--font-heading)', fontSize: 'clamp(2rem, 5vw, 2.7rem)' }}>Privacy Policy</h1>
-        <p style={{ ...pStyle, marginTop: '0.4rem' }}><strong>Last updated September 11, 2026</strong></p>
+        <p style={{ ...pStyle, marginTop: '0.4rem' }}><strong>Last updated September 12, 2026</strong></p>
         <p style={pStyle}>
           This policy explains how ayna handles information when you use www.aynahealth.co and related ayna services. ayna is a product-discovery and educational service, not a healthcare provider or emergency service.
         </p>
@@ -68,10 +68,10 @@ export default function PrivacyPolicy({ onBack }) {
         <div style={sectionStyle}>
           <h2>4. Analytics</h2>
           <p style={pStyle}>
-            ayna uses PostHog to understand product usage and reliability. Session recording and automatic click/text capture are disabled. We intentionally remove raw search text from the <code>search_performed</code> analytics event and remove account email from PostHog identify/person properties. You can opt out of analytics from your account privacy controls. We also honor Global Privacy Control where supported by the browser.
+            ayna uses PostHog to understand product usage and reliability. Session recording and automatic click/text capture are disabled. Raw health-search text, account email, direct account identifiers and common health-profile fields are removed at the analytics boundary. For signed-in analytics, ayna substitutes a dedicated random analytics identifier rather than using the same user ID stored with your health records. You can opt out of analytics from your account privacy controls, and we honor Global Privacy Control where supported by the browser.
           </p>
           <p style={pStyle}>
-            Please avoid putting information you do not want processed into free-text fields. We also design our analytics layer to minimize health information, but no online system can guarantee that every user-entered error message or technical edge case is free of sensitive context.
+            Please avoid putting information you do not want processed into free-text fields. We design our analytics layer to minimize health information and disable automatic exception capture, but no online system can guarantee that every technical edge case is risk-free.
           </p>
         </div>
 
@@ -110,7 +110,7 @@ export default function PrivacyPolicy({ onBack }) {
         <div style={sectionStyle}>
           <h2>8. Storage, security and retention</h2>
           <p style={pStyle}>
-            Account-linked data is primarily stored using Supabase and protected by access controls, including row-level security for user-owned records. ayna also uses HTTPS, server-side authentication checks, rate limiting and other safeguards. No system is perfectly secure.
+            Account-linked health data is primarily stored using Supabase and protected by access controls, including row-level security for user-owned records. Sensitive browser fallbacks such as health-intake answers, imported health context, AI recommendation memory and personalized insight caches are limited to the active browser tab rather than persistent local storage. Older persistent copies are removed as users load the updated site. Public catalog data and ordinary UI preferences may still be cached locally because they do not contain a user's health profile. ayna also uses HTTPS, server-side authentication checks, rate limiting, content-security controls and other safeguards. No system is perfectly secure.
           </p>
           <p style={pStyle}>
             We keep information only for as long as reasonably necessary to provide the service, comply with legal obligations, resolve disputes, prevent abuse and maintain required records. Different records may have different retention periods.
@@ -120,7 +120,7 @@ export default function PrivacyPolicy({ onBack }) {
         <div style={sectionStyle}>
           <h2>9. Your choices and rights</h2>
           <p style={pStyle}>
-            Signed-in users can edit their health profile, opt out of analytics, download a copy of account-linked data and permanently delete their account from the account privacy controls. Deletion removes active user-linked data handled by the self-service deletion flow, subject to limited information we may be legally required to retain.
+            Signed-in users can edit their health profile, opt out of analytics, download a copy of account-linked data and permanently delete their account from the account privacy controls. The download includes saved health-intake and imported health-profile records associated with the account. Deletion removes active user-linked data handled by the self-service deletion flow, subject to limited information we may be legally required to retain.
           </p>
           <p style={pStyle}>
             Depending on where you live, you may also have rights to access, correct, delete, restrict or obtain a copy of personal information, and to appeal certain privacy decisions.
