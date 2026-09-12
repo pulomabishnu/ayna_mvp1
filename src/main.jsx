@@ -4,6 +4,7 @@ import App from './App.jsx';
 import './index.css';
 import posthog from 'posthog-js';
 import { getInternalIds, tagInternalUserIfNeeded } from './utils/posthogInternal';
+import { applyStoredConsent } from './utils/analyticsConsent';
 
 if (window.location.hostname === 'aynamvp1.vercel.app') {
   window.location.replace(
@@ -121,7 +122,13 @@ if (!POSTHOG_KEY) {
     mask_all_text: true,
     disable_session_recording: true,
     ip: false,
-    opt_out_capturing_by_default: GPC_ENABLED,
+    // Always start opted out — nothing is sent until the visitor actively
+    // consents via the ConsentBanner (src/utils/analyticsConsent.js), or
+    // already has an explicit opt-in/opt-out on record from elsewhere (the
+    // account-settings toggle, or a prior visit). GPC_ENABLED alone used to
+    // gate this; it's now just one of the paths applyStoredConsent respects
+    // in `loaded` below.
+    opt_out_capturing_by_default: true,
     before_send: sanitizePosthogEvent,
     // Automatic exception capture can include raw error messages/stacks. In a
     // health product those may accidentally contain user-entered context, so
@@ -130,6 +137,7 @@ if (!POSTHOG_KEY) {
     loaded: (ph) => {
       window.posthog = ph;
       if (GPC_ENABLED) ph.opt_out_capturing?.();
+      else applyStoredConsent(ph);
       tagInternalUserIfNeeded(ph);
     },
   });

@@ -5578,3 +5578,79 @@ textarea {
   line-height: 1;
   color: #5b524a;
 }
+
+/* ============================================================
+   Analytics consent bar  (src/components/ConsentBanner.jsx)
+   ------------------------------------------------------------
+   Styled to read as part of the site rather than a bolted-on generic
+   banner: the background is the same --mockup-hero-gradient the landing
+   hero uses, and the buttons are a verbatim copy of
+   .ayna-landing-chips button (the "Vaginal dryness" / "PCOS support"
+   pills on the homepage).
+
+   Both buttons share ONE rule on purpose. Neither gets a filled/primary
+   treatment. A dominant "Accept" beside a de-emphasised decline is the
+   pattern California's Sephora enforcement action penalised under CCPA —
+   check that history before changing this.
+
+   Full-bleed and square-cornered on purpose too: it's a bottom bar, not
+   a floating card.
+   ============================================================ */
+
+.consent-banner {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 1000;
+  padding: 1.25rem 1.5rem;
+  background: var(--mockup-hero-gradient);
+  border-top: 1px solid rgba(244, 240, 250, 0.2);
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.25);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap;
+  font-family: var(--font-body);
+}
+
+.consent-banner p {
+  color: #F4F0FA;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  margin: 0;
+  flex: 1;
+  min-width: 220px;
+}
+
+.consent-banner a {
+  color: var(--color-amber);
+  text-decoration: underline;
+}
+
+.consent-banner__actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* Same rule as .ayna-landing-chips button — equal weight, neither button
+   styled as the "real" choice. */
+.consent-banner__actions button {
+  border: 1px solid rgba(244, 240, 250, 0.26);
+  background: rgba(255, 255, 255, 0.07);
+  color: #F4F0FA;
+  font-family: inherit;
+  font-size: 13px;
+  padding: 11px 19px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.consent-banner__actions button:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+@media (max-width: 560px) {
+  .consent-banner__actions {
+    width: 100%;
+  }
+  .consent-banner__actions button {
+    flex: 1;
+  }
+}

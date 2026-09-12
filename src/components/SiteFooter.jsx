@@ -1,4 +1,5 @@
 import React from 'react';
+import PrivacyPreferencesLink from './PrivacyPreferencesLink';
 
 /**
  * Site footer — a direct port of the footer that repeats on every board of the
@@ -117,6 +118,10 @@ export default function SiteFooter({
         <button type="button" style={{ ...LINK_STYLE, textDecoration: 'underline' }} onClick={onViewTermsOfUse}>Terms of Use</button>
         {' · '}
         <button type="button" style={{ ...LINK_STYLE, textDecoration: 'underline' }} onClick={onViewHowWeMakeMoney}>How We Make Money</button>
+        {/* Renders nothing (separator included) until an analytics decision
+            exists — while the consent bar is still up, the question is
+            already being asked on screen. */}
+        <PrivacyPreferencesLink style={{ ...LINK_STYLE, textDecoration: 'underline' }} />
       </div>
     </footer>
   );

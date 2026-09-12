@@ -1,6 +1,7 @@
 import React, { Suspense, useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import AynaLanding from './components/AynaLanding';
 import SiteFooter from './components/SiteFooter';
+import ConsentBanner from './components/ConsentBanner';
 import SavedForLater from './components/SavedForLater';
 import EcosystemGenerationBar from './components/EcosystemGenerationBar';
 import HealthIntakeForm from './components/HealthIntakeForm';
@@ -228,11 +229,23 @@ function App() {
   // entry before the app even loads, making history.length > 1 true even
   // with zero in-app navigation.
   const inAppPushCountRef = useRef(0);
+  // Lets a product opened from Browse keep Browse mounted (hidden) behind it,
+  // so clicking a card then going back doesn't blow away the personalization
+  // toggle, filters, sort, or scroll position — see the Discovery render
+  // block and the scroll-restore effect below. Reset on every genuine
+  // navigation in setCurrentView, so leaving to a different tab and coming
+  // back still gives Browse a clean, freshly-initialized mount.
+  const discoveryKeepAliveRef = useRef(false);
+  const discoveryScrollYRef = useRef(0);
   const pathForView = useCallback((view, id) => {
     if (view === 'product') return id ? productHref(id) : '/';
     return VIEW_TO_PATH[view] || '/';
   }, []);
   const setCurrentView = useCallback((view, { replace = false } = {}) => {
+    // Any explicit navigation (nav tab, "browse products" button, etc.) is a
+    // genuine departure from wherever Browse's kept-alive state came from —
+    // clear it so the next time Browse mounts, it's a clean, fresh instance.
+    discoveryKeepAliveRef.current = false;
     currentViewRef.current = view;
     setCurrentViewRaw(view);
     if (view !== 'product') setProductRouteId(null);
@@ -250,6 +263,16 @@ function App() {
     const internalId = productOrId && typeof productOrId === 'object'
       ? productOrId.id
       : productOrId;
+
+    // Opened straight from Browse — keep it mounted (hidden) behind the
+    // product page so browser-back restores it exactly as it was, instead
+    // of remounting a fresh one. A product-to-product hop (e.g. a "related
+    // products" link) leaves this alone, so the chain still traces back to
+    // the original Browse session rather than clearing it.
+    if (currentViewRef.current === 'discovery') {
+      discoveryKeepAliveRef.current = true;
+      discoveryScrollYRef.current = window.scrollY;
+    }
 
     currentViewRef.current = 'product';
     setCurrentViewRaw('product');
@@ -324,7 +347,14 @@ function App() {
     return () => { window.history.scrollRestoration = previous; };
   }, []);
   useEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    // Returning to a kept-alive Browse (product card -> back) restores the
+    // exact scroll spot instead of jumping to top — applies to every
+    // visitor, not just signed-in/personalized ones.
+    if (currentView === 'discovery' && discoveryKeepAliveRef.current) {
+      window.scrollTo({ top: discoveryScrollYRef.current, left: 0, behavior: 'auto' });
+    } else {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    }
   }, [currentView, productRouteId]);
   const [quizResults, setQuizResults] = useState(null);
   const [trackedProducts, setTrackedProducts] = useState({});
@@ -3022,7 +3052,8 @@ function App() {
             onBrowse={() => handleViewDiscovery('')}
           />
         )}
-        {currentView === 'discovery' && (
+        {(currentView === 'discovery' || (currentView === 'product' && discoveryKeepAliveRef.current)) && (
+          <div style={currentView === 'discovery' ? undefined : { display: 'none' }}>
           <Suspense fallback={<ViewLoadingFallback />}>
           <Discovery
             trackedProducts={trackedProducts}
@@ -3054,6 +3085,7 @@ function App() {
             onRequirePersonalizeAuth={handleRequirePersonalizeAuth}
           />
           </Suspense>
+          </div>
         )}
         {currentView === 'screenings' && (
           <Screenings checkinData={checkinData} onNavigate={setCurrentView} onOpenProduct={handleOpenProduct} />
@@ -3411,6 +3443,10 @@ function App() {
           onViewTermsOfUse={() => setCurrentView('terms-of-use')}
         onViewHowWeMakeMoney={handleViewHowWeMakeMoney}
       />
+      {/* Outside the currentView switch on purpose — the same bar on every
+          view, fixed to the bottom of the viewport, so DOM order here is
+          only about it never being unmounted by navigation. */}
+      <ConsentBanner />
     </div>
   );
 }
