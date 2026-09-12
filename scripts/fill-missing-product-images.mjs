@@ -8,14 +8,17 @@
  * pipeline already uses, so a bundled product gets the same quality bar as
  * an AI-discovered one.
  *
- *   node scripts/fill-missing-product-images.mjs            # dry run
- *   node scripts/fill-missing-product-images.mjs --apply    # writes results
+ *   API_BASE_URL=https://<deployment>.vercel.app VERCEL_BYPASS_TOKEN=<token> \
+ *     node scripts/fill-missing-product-images.mjs            # dry run
+ *   ...--apply                                                # writes results
  *
  * Targets a deployed environment (local `vite dev` has no /api/product-image
  * route running, and this endpoint needs Redis/Serper env vars configured on
- * Vercel anyway). Defaults to the same protected preview URL the app's own
- * capacitor.config.json already points at; override with API_BASE_URL if you
- * want to run this against a different deployment.
+ * Vercel anyway). Requires API_BASE_URL; VERCEL_BYPASS_TOKEN is only needed
+ * if that deployment has Vercel's Deployment Protection turned on — get your
+ * own from Vercel Dashboard > project > Settings > Deployment Protection >
+ * Protection Bypass for Automation. Never hardcode either value here or
+ * anywhere else in git.
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 
@@ -43,10 +46,12 @@ const TARGETS = [
   { file: 'src/data/brands.js', name: 'Connect Pelvic Floor Fitness', brand: 'Connect Pelvic Floor Fitness', type: 'digital', url: 'https://www.connectpelvicfloorfitness.com/' },
 ];
 
-const DEFAULT_BASE = 'https://aynamvp1-git-mobile-app-pulomabishnu-4744s-projects.vercel.app';
-const DEFAULT_BYPASS = '?x-vercel-protection-bypass=dgHDMGLONOjSAFQP2tXuDxBo3v0FgTyi&x-vercel-set-bypass-cookie=true';
-const base = process.env.API_BASE_URL || DEFAULT_BASE;
-const bypassSuffix = process.env.API_BASE_URL ? '' : DEFAULT_BYPASS;
+const base = process.env.API_BASE_URL;
+if (!base) {
+  console.error('Set API_BASE_URL (see the header comment above for the exact shape).');
+  process.exit(2);
+}
+const bypassToken = process.env.VERCEL_BYPASS_TOKEN;
 
 console.log(`\n${APPLY ? 'APPLYING' : 'DRY RUN'} — resolving images via ${base}/api/product-image\n`);
 
@@ -56,8 +61,11 @@ let skipped = 0;
 for (const t of TARGETS) {
   const params = new URLSearchParams({ name: t.name, brand: t.brand, type: t.type });
   if (t.url) params.set('url', t.url);
-  const sep = bypassSuffix ? '&' : '?';
-  const requestUrl = `${base}/api/product-image?${params.toString()}${bypassSuffix ? sep + bypassSuffix.slice(1) : ''}`;
+  if (bypassToken) {
+    params.set('x-vercel-protection-bypass', bypassToken);
+    params.set('x-vercel-set-bypass-cookie', 'true');
+  }
+  const requestUrl = `${base}/api/product-image?${params.toString()}`;
 
   let imageUrl = '';
   try {
