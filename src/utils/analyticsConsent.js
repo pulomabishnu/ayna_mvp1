@@ -90,9 +90,11 @@ function persist(decision) {
 }
 
 /**
- * Called once from main.jsx's PostHog loaded callback. Analytics is on by
- * default unless the visitor previously opted out. GPC is handled in main.jsx
- * before this runs and always takes priority.
+ * Called once from main.jsx's PostHog loaded callback. The default-on state is
+ * established by posthog.init itself, so an undecided visitor intentionally
+ * gets NO explicit SDK opt-in here. Keeping that state "pending" is what lets
+ * the visible opt-out notice distinguish default-on from a real prior choice.
+ * GPC is handled in main.jsx before this runs and always takes priority.
  */
 export function applyStoredConsent(ph) {
   const stored = getStoredConsent();
@@ -101,7 +103,8 @@ export function applyStoredConsent(ph) {
 
   if (explicitSdkDecision(ph) !== undefined) return;
 
-  ph.opt_in_capturing();
+  // No explicit action: analytics is already on because init did not set
+  // opt_out_capturing_by_default for this visitor, and the notice stays visible.
 }
 
 /** Persist acknowledgement of the default-on analytics notice. */
