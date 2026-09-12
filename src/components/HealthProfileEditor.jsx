@@ -9,6 +9,7 @@ import {
   validateHealthIntake,
 } from '../utils/healthIntake';
 import { saveHealthIntakeForCurrentUser } from '../utils/healthIntakeStore';
+import AccountDataControls from './AccountDataControls';
 
 const BASE_INTAKE = {
   insurancePlan: '',
@@ -287,6 +288,8 @@ export default function HealthProfileEditor({ currentProfile, onSave, onCancel, 
             </button>
           </div>
         )}
+
+        <AccountDataControls />
 
         {saveMessage && <p style={{ marginTop: '0.75rem', color: 'var(--color-text-muted)' }}>{saveMessage}</p>}
 

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ALL_PRODUCTS, getRecommendations, getPersonalizedProductIds, getProductRelevanceScore } from './products';
+import { ALL_PRODUCTS, filterPrescriptionCareGate, getRecommendations, getPersonalizedProductIds, getProductRelevanceScore } from './products';
 
 describe('getPersonalizedProductIds', () => {
     it('restricts to real tag matches, unlike getRecommendations()\'s full fallback list', () => {
@@ -8,10 +8,11 @@ describe('getPersonalizedProductIds', () => {
         const full = getRecommendations(quiz, null);
         const personalized = getPersonalizedProductIds(quiz, null);
 
-        // getRecommendations() intentionally pads with every zero-score product as a
-        // fallback tail (ecosystem-building always wants candidates) — so it stays
-        // the full catalog. A membership filter built from it would be a near no-op.
-        expect(full.length).toBe(ALL_PRODUCTS.length);
+        // getRecommendations() keeps a broad fallback tail after the safety and
+        // life-stage gates. The exact count can change with catalog safety metadata;
+        // the important contract is that the hard personalized subset is smaller.
+        expect(full.length).toBeGreaterThan(personalized.length);
+        expect(full.every((product) => filterPrescriptionCareGate(ALL_PRODUCTS).some((candidate) => candidate.id === product.id))).toBe(true);
 
         // getPersonalizedProductIds() must NOT carry that fallback tail — it's the
         // hard, meaningfully-restricted set a "Personalized" toggle should filter to.
@@ -27,8 +28,6 @@ describe('getPersonalizedProductIds', () => {
     });
 
     it('returns an empty set (not the whole catalog) when nothing scores', () => {
-        // A profile with no frustrations mapped and no health tags has nothing to
-        // score against — must not silently fall back to "everything matches".
         const ids = getPersonalizedProductIds({ frustrations: [] }, null);
         expect(ids.length).toBe(0);
     });
@@ -40,19 +39,11 @@ describe('personalized relevance scoring', () => {
 
     it('does not treat menstrual leaks and staining as urinary leakage', () => {
         expect(elitone).toBeTruthy();
-
-        const score = getProductRelevanceScore(
-            elitone,
-            { frustrations: ['Leaks & staining'] },
-            null
-        );
-
-        expect(score).toBe(0);
+        expect(getProductRelevanceScore(elitone, { frustrations: ['Leaks & staining'] }, null)).toBe(0);
     });
 
     it('raises Elitone relevance for an imported urinary-incontinence signal', () => {
         expect(elitone).toBeTruthy();
-
         const score = getProductRelevanceScore(
             elitone,
             { frustrations: [] },
@@ -66,34 +57,17 @@ describe('personalized relevance scoring', () => {
                 wearableSummary: '',
             }
         );
-
         expect(score).toBeGreaterThan(0);
     });
 
     it('does not treat a UTI as urinary incontinence', () => {
         expect(elitone).toBeTruthy();
-
-        const score = getProductRelevanceScore(
-            elitone,
-            { frustrations: ['Recurrent UTIs'] },
-            null
-        );
-
-        expect(score).toBe(0);
+        expect(getProductRelevanceScore(elitone, { frustrations: ['Recurrent UTIs'] }, null)).toBe(0);
     });
 
-    it('can give a modest contextual score from age and life stage without pretending it is a direct need', () => {
+    it('does not turn an age band alone into a personalized product recommendation', () => {
         expect(oura).toBeTruthy();
-
-        const score = getProductRelevanceScore(
-            oura,
-            { age: '35-44', frustrations: [] },
-            null
-        );
-
-        expect(score).toBeGreaterThan(0);
-        expect(score).toBeLessThan(50);
-        expect([0, 50, 100]).not.toContain(score);
+        expect(getProductRelevanceScore(oura, { age: '35-44', frustrations: [] }, null)).toBeNull();
     });
 
     it('returns no personalized percentage when there are no personalization signals', () => {
@@ -109,18 +83,9 @@ describe('personalized relevance scoring', () => {
             healthFunctions: ['cramp-relief'],
             category: 'cramp-relief',
         };
-
-        const partnered = {
-            ...base,
-            partner: true,
-            affiliateUrl: 'affiliate-test',
-            affiliateCommission: 99,
-        };
-
+        const partnered = { ...base, partner: true, affiliateUrl: 'affiliate-test', affiliateCommission: 99 };
         const quiz = { frustrations: ['Painful cramps'] };
-
         expect(getProductRelevanceScore(partnered, quiz, null))
             .toBe(getProductRelevanceScore(base, quiz, null));
     });
 });
-

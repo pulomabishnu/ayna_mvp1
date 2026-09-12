@@ -26,8 +26,22 @@
   <div id="root">Loading Ayna…</div>
   <script>
     window.onerror = function(msg, url, line, col, err) {
-      var el = document.getElementById('root');
-      if (el) el.innerHTML = '<div style="padding:2rem;font-family:sans-serif"><h2>Error</h2><p>' + (msg || err?.message || 'Unknown error') + '</p></div>';
+      var root = document.getElementById('root');
+      if (!root) return false;
+
+      var wrap = document.createElement('div');
+      wrap.style.padding = '2rem';
+      wrap.style.fontFamily = 'sans-serif';
+
+      var heading = document.createElement('h2');
+      heading.textContent = 'Error';
+
+      var detail = document.createElement('p');
+      detail.textContent = String(msg || (err && err.message) || 'Unknown error');
+
+      wrap.appendChild(heading);
+      wrap.appendChild(detail);
+      root.replaceChildren(wrap);
       return false;
     };
   </script>

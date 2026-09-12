@@ -1,46 +1,44 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
-import './index.css'
-import posthog from 'posthog-js'
-import { tagInternalUserIfNeeded } from './utils/posthogInternal'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App.jsx';
+import './index.css';
+import posthog from 'posthog-js';
+import { tagInternalUserIfNeeded } from './utils/posthogInternal';
 
-
-// Keep the public Vercel alias from becoming a second app origin.
-// Auth, local storage, and session storage should all live on the canonical site.
-// Unique Vercel preview deployment URLs are intentionally left untouched.
 if (window.location.hostname === 'aynamvp1.vercel.app') {
   window.location.replace(
-    'https://www.aynahealth.co' +
-    window.location.pathname +
-    window.location.search +
-    window.location.hash
+    'https://www.aynahealth.co' + window.location.pathname + window.location.search + window.location.hash
   );
 }
 
 const POSTHOG_KEY = import.meta.env.VITE_PUBLIC_POSTHOG_KEY;
-// Default to the first-party /ingest proxy (see vercel.json rewrites) rather
-// than PostHog's own domain directly — ad blockers (uBlock, Brave, Safari's
-// tracking prevention) block requests to *.posthog.com/*.i.posthog.com by
-// domain, silently dropping every event for a real share of visitors. Same
-// project, same data — just routed through our own domain so it isn't
-// recognizable as third-party analytics traffic.
 const POSTHOG_HOST = import.meta.env.VITE_PUBLIC_POSTHOG_HOST || '/ingest';
+const GPC_ENABLED = typeof navigator !== 'undefined' && navigator.globalPrivacyControl === true;
+
+function sanitizePosthogEvent(event) {
+  if (!event?.properties) return event;
+  const properties = { ...event.properties };
+
+  if (event.event === 'search_performed') delete properties.query;
+  delete properties.email;
+
+  if (properties.$set && typeof properties.$set === 'object') {
+    properties.$set = { ...properties.$set };
+    delete properties.$set.email;
+  }
+  if (properties.$set_once && typeof properties.$set_once === 'object') {
+    properties.$set_once = { ...properties.$set_once };
+    delete properties.$set_once.email;
+  }
+
+  return { ...event, properties };
+}
 
 if (!POSTHOG_KEY) {
-  console.warn(
-    '[Ayna/PostHog] VITE_PUBLIC_POSTHOG_KEY is not set. ' +
-    'PostHog will not initialize. ' +
-    'Add it to Vercel environment variables. ' +
-    'Get the key from: app.posthog.com → Settings → Project API Key'
-  );
+  console.warn('[Ayna/PostHog] VITE_PUBLIC_POSTHOG_KEY is not set; analytics are disabled.');
 } else {
   posthog.init(POSTHOG_KEY, {
     api_host: POSTHOG_HOST,
-    // Only meaningful when api_host is a same-origin proxy (the default
-    // above) — tells the SDK where the real PostHog app lives so in-app
-    // links (session recordings, the toolbar) still resolve correctly
-    // instead of trying to open a URL under our own /ingest path.
     ui_host: 'https://us.posthog.com',
     person_profiles: 'always',
     autocapture: false,
@@ -48,98 +46,76 @@ if (!POSTHOG_KEY) {
     mask_all_text: true,
     disable_session_recording: true,
     ip: false,
-    // Catches uncaught JS errors and unhandled promise rejections anywhere
-    // in the app (event handlers, async code) and reports them to PostHog's
-    // Error tracking automatically. Doesn't cover React render errors caught
-    // by ErrorBoundary below — those are explicitly reported via
-    // posthog.captureException() in componentDidCatch, since React swallows
-    // them before they'd ever reach window.onerror.
+    opt_out_capturing_by_default: GPC_ENABLED,
+    before_send: sanitizePosthogEvent,
     errorTracking: { autocaptureExceptions: true },
     loaded: (ph) => {
-      // Expose on window so Puloma can verify from browser console in any environment:
-      // Run: window.posthog.get_distinct_id()
-      // Run: window.posthog.get_property('is_internal')
       window.posthog = ph;
-
-      console.info(
-        '[Ayna/PostHog] Initialized successfully. ' +
-        'Distinct ID: ' + ph.get_distinct_id() + '. ' +
-        'To verify internal filtering: ' +
-        'window.posthog.get_property("is_internal") should return true ' +
-        'if this device is in the internal ID list.'
-      );
-
+      if (GPC_ENABLED) ph.opt_out_capturing?.();
       tagInternalUserIfNeeded(ph);
     },
   });
 }
 
-// Vite's lazy-loaded chunks are hashed per deploy. A tab left open across a
-// new deploy (we ship many in a session) still has the OLD hash cached in its
-// React.lazy() closures, so the next click into Discovery/MyEcosystem/
-// Articles 404s on a chunk that no longer exists on the CDN — surfacing as
-// "Failed to fetch dynamically imported module" in this boundary. That's not
-// a real app error, it's a stale asset manifest: reload once, automatically,
-// rather than dead-ending on a scary error screen the user has to notice and
-// click through. The sessionStorage flag caps it at one silent retry per
-// session so a genuinely broken deploy still surfaces the real error instead
-// of reload-looping forever.
 const CHUNK_RELOAD_KEY = 'ayna_chunk_reload_attempted';
 function isChunkLoadError(error) {
-  const msg = String(error?.message || error || '');
-  return /Failed to fetch dynamically imported module|error loading dynamically imported module|Importing a module script failed/i.test(msg);
+  return /Failed to fetch dynamically imported module|error loading dynamically imported module|Importing a module script failed/i.test(
+    String(error?.message || error || '')
+  );
 }
 
 class ErrorBoundary extends React.Component {
-  state = { hasError: false, error: null, recovering: false }
+  state = { hasError: false, error: null, recovering: false };
+
   static getDerivedStateFromError(error) {
-    return { hasError: true, error }
+    return { hasError: true, error };
   }
+
   componentDidMount() {
-    // A clean mount means this reload (if any) actually fixed things — clear
-    // the one-shot flag so a LATER, unrelated chunk error in the same tab
-    // session (e.g. another deploy landing while it's still open) still gets
-    // its own automatic retry instead of going straight to the error screen.
-    try { sessionStorage.removeItem(CHUNK_RELOAD_KEY); } catch (_) { /* private mode */ }
+    try { sessionStorage.removeItem(CHUNK_RELOAD_KEY); } catch { /* storage unavailable */ }
   }
+
   componentDidCatch(error, info) {
-    console.error('App error:', error, info)
+    console.error('App error:', error, info);
     try {
       posthog.captureException(error, {
         componentStack: info?.componentStack,
         isChunkLoadError: isChunkLoadError(error),
       });
-    } catch (_) { /* posthog not initialized (missing key) — never block error handling on this */ }
-    if (isChunkLoadError(error)) {
-      let alreadyTried = false;
-      try { alreadyTried = sessionStorage.getItem(CHUNK_RELOAD_KEY) === '1'; } catch (_) { /* private mode */ }
-      if (!alreadyTried) {
-        try { sessionStorage.setItem(CHUNK_RELOAD_KEY, '1'); } catch (_) { /* private mode */ }
-        this.setState({ recovering: true });
-        window.location.reload();
-      } else {
-        try { sessionStorage.removeItem(CHUNK_RELOAD_KEY); } catch (_) { /* private mode */ }
-      }
+    } catch { /* analytics unavailable */ }
+
+    if (!isChunkLoadError(error)) return;
+
+    let alreadyTried = false;
+    try { alreadyTried = sessionStorage.getItem(CHUNK_RELOAD_KEY) === '1'; } catch { /* storage unavailable */ }
+
+    if (!alreadyTried) {
+      try { sessionStorage.setItem(CHUNK_RELOAD_KEY, '1'); } catch { /* storage unavailable */ }
+      this.setState({ recovering: true });
+      window.location.reload();
+    } else {
+      try { sessionStorage.removeItem(CHUNK_RELOAD_KEY); } catch { /* storage unavailable */ }
     }
   }
+
   render() {
     if (this.state.recovering) {
-      return (
-        <div style={{ padding: '2rem', fontFamily: 'sans-serif', maxWidth: '600px', margin: '2rem auto', color: '#666' }}>
-          Updating…
-        </div>
-      )
+      return <div style={{ padding: '2rem', fontFamily: 'sans-serif', maxWidth: 600, margin: '2rem auto', color: '#666' }}>Updating…</div>;
     }
+
     if (this.state.hasError) {
       return (
-        <div style={{ padding: '2rem', fontFamily: 'sans-serif', maxWidth: '600px', margin: '2rem auto' }}>
+        <div style={{ padding: '2rem', fontFamily: 'sans-serif', maxWidth: 600, margin: '2rem auto' }}>
           <h1>Something went wrong</h1>
           <p style={{ color: '#666' }}>{String(this.state.error?.message || this.state.error)}</p>
-          <button onClick={() => window.location.reload()} style={{ padding: '0.5rem 1rem', marginTop: '1rem' }}>Reload</button>
+          <button type="button" onClick={() => window.location.reload()} style={{ padding: '0.5rem 1rem', marginTop: '1rem' }}>
+            Reload
+          </button>
         </div>
-      )
+      );
     }
-    return this.props.children
+
+    return this.props.children;
   }
 }
 
@@ -148,5 +124,5 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <ErrorBoundary>
       <App />
     </ErrorBoundary>
-  </React.StrictMode>,
-)
+  </React.StrictMode>
+);

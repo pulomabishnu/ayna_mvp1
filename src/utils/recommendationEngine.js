@@ -324,7 +324,22 @@ function fsaHsaEligibility(product) {
 export function scoreProduct(product, intake, concern) {
   const details = getProductMatchDetailsForProduct(product, intake);
   if (!details?.eligible) return -1;
-  return details?.percent == null ? 0 : details.percent;
+
+  let score = details?.percent == null ? 0 : details.percent;
+  const profile = intakeProfile(intake);
+  const account = String(profile?.fsaHsaAnswer || profile?.fsaHsa || '').trim().toLowerCase();
+  const eligibility = fsaHsaEligibility(product);
+  const accountMatch =
+    account === 'fsa' ? eligibility.fsa
+      : account === 'hsa' ? eligibility.hsa
+        : account === 'both' ? (eligibility.fsa || eligibility.hsa)
+          : false;
+
+  // A small shopping-preference boost only. It can break ties among
+  // otherwise relevant products, but it does not turn FSA/HSA status
+  // into a medical recommendation signal.
+  if (accountMatch) score += 5;
+  return score;
 }
 
 function safetyNotes(product, intake) {
