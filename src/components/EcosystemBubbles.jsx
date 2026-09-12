@@ -1,5 +1,12 @@
 import React, { useMemo, useState } from 'react';
-import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, getProfileMatchLabelsForProduct } from '../data/products';
+import {
+  ALL_PRODUCTS,
+  CATEGORY_LABELS,
+  MACRO_GROUPS,
+  productSearchText,
+  getProfileMatchLabelsForProduct,
+  getRecommendationExplanation,
+} from '../data/products';
 
 // A product added to the ecosystem is stored as a frozen JSON snapshot
 // (user_ecosystems.product_data, see src/utils/ecosystemStore.js) taken at
@@ -7,37 +14,15 @@ import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, getProf
 // `category` field can't always be trusted even once the area taxonomy
 // itself is complete:
 //   1. An older snapshot can predate a category being assigned at all, or
-//      predate a later reclassification (found live, Aditi 2026-08-24: Rael
-//      Organic Cotton Pads' stored snapshot didn't resolve to any area even
-//      though the live catalog has always had it as category: 'pad').
+//      predate a later reclassification.
 //   2. A product that was never in the catalog at all — an AI-generated
-//      recommendation from api/llm-recommendations.js — has a `category`
-//      the LLM wrote as FREEFORM text (see enrichProduct there), not
-//      constrained to this site's real taxonomy at all, so it can be
-//      anything ("device", "wellness", ...) or missing entirely (found
-//      live: "Lumie Bodyclock Starter 30," a real product with full content,
-//      whose category matched nothing here or anywhere in the catalog).
+//      recommendation from api/llm-recommendations.js — has a freeform
+//      category rather than one constrained to this site's taxonomy.
 const CURRENT_CATEGORY_BY_ID = new Map(ALL_PRODUCTS.map((p) => [p.id, p.category]));
 
-// A single bare word, shared with an unrelated everyday meaning, is weak
-// evidence on its own for which of several possible areas a product belongs
-// to — 'cycle' is Discovery's own documented repeat offender (see its
-// comments on the Hormones/Period chips: it satisfies a "sleep-wake cycle,"
-// a "fitness-cycle" healthFunction slug, etc., none of them the menstrual
-// cycle it's meant to catch). Discovery can afford to let a weak keyword
-// hit through — a false-positive filter chip is low stakes. Bucketing a
-// product into exactly ONE ecosystem area is higher stakes: a weak,
-// ambiguous match winning by pure array order over a correct, specific one
-// misfiles the product outright (found live, Aditi 2026-08-24: "Lumie
-// Bodyclock Starter 30," a sunrise wake-up light whose summary mentions a
-// "sleep-wake cycle," matched Hormones via bare 'cycle' before ever
-// reaching Sleep + Stress's correct, specific 'sleep' match).
 const WEAK_FALLBACK_KEYWORDS = new Set(['cycle']);
 
 function scoreGroupMatch(product, group) {
-  // Same guard Discovery's keyword scan uses: some categories are opted out
-  // of a chip's free-text scan entirely (e.g. an intimate-care product
-  // saying "skin" shouldn't match Skin) — see MACRO_GROUPS' own comments.
   if (Array.isArray(group.excludeCategories) && group.excludeCategories.includes(product?.category)) return 0;
   let score = 0;
   if (Array.isArray(group.healthFunctions) && Array.isArray(product?.healthFunctions) &&
@@ -54,31 +39,12 @@ function resolveArea(product, areas) {
     const area = areas.find((a) => a.categories.includes(category));
     if (area) return area;
   }
-  // Last resort: the same name/summary/tags keyword inference Discovery's
-  // category chips use, for a product with no usable category anywhere —
-  // scored by match strength instead of "first group in array order wins,"
-  // so a specific match beats a merely-coincidental one regardless of which
-  // area happens to be listed first. Only tried against MACRO_GROUPS-sourced
-  // areas (they alone carry `keywords`) — 'care'/'supplements' are
-  // EcosystemBubbles-only additions with no keyword list, and category
-  // membership (already checked above) is the right bar for those two
-  // either way.
   const best = MACRO_GROUPS
     .filter((g) => g.id !== 'all' && Array.isArray(g.keywords))
     .map((g) => ({ id: g.id, score: scoreGroupMatch(product, g) }))
     .reduce((max, cur) => (cur.score > (max?.score || 0) ? cur : max), null);
   return best ? areas.find((a) => a.key === best.id) : null;
 }
-
-/**
- * "This is your ecosystem." — mockup board 1d, the circular layout.
- *
- * A centre bubble for the person, one satellite per area of care she has
- * products in, and dashed satellites for the areas she doesn't. Selecting a
- * satellite fills the card on the right; the product name in that card opens
- * the same product modal Discovery opens, so a product looks identical
- * wherever it is clicked from.
- */
 
 /** Board 1d's canvas. Positions are computed against it, then scaled to fit. */
 const CANVAS = 560;
@@ -87,31 +53,12 @@ const CENTRE = { x: 280, y: 260 };
 const ORBIT = 178;
 const BUBBLE = 128;
 
-/**
- * Care areas, and the catalog categories that roll up into each — derived from
- * MACRO_GROUPS (../data/products), the same taxonomy Discovery's category
- * chips use, rather than a separately hand-maintained list. That list used to
- * live only here and had drifted out of sync with the real category set
- * (missing birth control, breast care, menopause, skin, hair, gut, pain
- * relief, tests + devices...), so a product in any of those categories
- * silently fell into a generic "Other" bubble instead of a properly named one
- * (found live, Aditi 2026-08-24: a sleep product added to an ecosystem should
- * get its own "Sleep" bubble, not "Other"). 'telehealth' isn't one of
- * MACRO_GROUPS' chips (Discovery doesn't filter by it) but still deserves its
- * own area here, so it's added back explicitly.
- */
 const AREAS = [
   ...MACRO_GROUPS.filter((g) => g.id !== 'all').map((g) => ({ key: g.id, label: g.label, categories: g.categories })),
   { key: 'care', label: 'Clinicians', categories: ['telehealth'] },
-  // MACRO_GROUPS deliberately excludes the bare 'supplement' category from every
-  // area (see its own comment: one flat "Supplements" chip would be useless for
-  // FILTERING ~40 unrelated supplements down by what they treat). That reasoning
-  // is specific to Discovery's filter chips — here, someone just wants to see
-  // "the supplements in my ecosystem" as one group, so it's added back only here.
   { key: 'supplements', label: 'Supplements', categories: ['supplement'] },
 ];
 
-/** How many satellites to draw at most, so the ring stays legible. */
 const MAX_SATELLITES = 6;
 
 function displayNameFromUser(user, healthProfile, quizResults) {
@@ -121,17 +68,26 @@ function displayNameFromUser(user, healthProfile, quizResults) {
     meta.first_name || meta.firstName || meta.given_name || meta.full_name || meta.name ||
     healthProfile?.firstName || healthProfile?.first_name || healthProfile?.name ||
     intake?.firstName || intake?.first_name || intake?.name || '';
-  const first = String(raw).trim().split(/\s+/).filter(Boolean)[0] || '';
-  return first;
+  return String(raw).trim().split(/\s+/).filter(Boolean)[0] || '';
 }
 
-/** Evenly spaces satellites around the ring, starting at 12 o'clock. */
 function seatPosition(index, total) {
   const angle = (index / Math.max(total, 1)) * Math.PI * 2;
   return {
     left: CENTRE.x + ORBIT * Math.sin(angle) - BUBBLE / 2,
     top: CENTRE.y - ORBIT * Math.cos(angle) - BUBBLE / 2,
   };
+}
+
+function snapshotReason(product) {
+  const candidates = [
+    product?.recommendationReason,
+    product?.whyThis,
+    product?.aynaMatchReason,
+    product?._llmReason,
+    product?._llmConcern,
+  ];
+  return candidates.find((value) => typeof value === 'string' && value.trim())?.trim() || '';
 }
 
 export default function EcosystemBubbles({
@@ -144,6 +100,7 @@ export default function EcosystemBubbles({
   onToggleProduct,
 }) {
   const [selectedKey, setSelectedKey] = useState(null);
+  const [whyOpenProductId, setWhyOpenProductId] = useState(null);
 
   const { seats, covered } = useMemo(() => {
     const products = Object.values(myProducts || {});
@@ -159,18 +116,11 @@ export default function EcosystemBubbles({
       .filter((a) => byArea.has(a.key))
       .map((a) => ({ ...a, products: byArea.get(a.key), gap: false }));
 
-    // Anything left over that didn't map to a named area still deserves a seat.
     if (byArea.has('other')) {
       filled.push({ key: 'other', label: 'Other', products: byArea.get('other'), gap: false });
     }
 
     const filledCapped = filled.slice(0, MAX_SATELLITES);
-    // One "Add More" seat, not one dashed seat per empty area (was AREAS not
-    // yet covered, up to MAX_SATELLITES - filled.length of them, each
-    // pre-suggesting a specific category to fill — Aditi/team decided this
-    // should instead be a single affordance to Browse and pick anything,
-    // not the app pre-choosing which gaps look most fillable). Only shown
-    // when there's an actual empty seat in the ring to put it in.
     const addMoreSeat = { key: '__add-more__', label: 'Add More', products: [], gap: true };
     const seats = filledCapped.length < MAX_SATELLITES ? [...filledCapped, addMoreSeat] : filledCapped;
 
@@ -189,13 +139,6 @@ export default function EcosystemBubbles({
 
   return (
     <section className="eco-bubbles mockup-page">
-      {/* .eco-bubbles__canvas is a fixed 560x520 (CANVAS/CANVAS_H) so every
-          bubble's JS-computed left/top stays correct — it's visually shrunk
-          on narrower screens with transform:scale, which is paint-only and
-          does NOT reduce the box's layout footprint. Without this wrapper
-          reserving the real (post-scale) space via CSS, the still-560px-wide
-          canvas overflowed its grid track on mobile (found live: 598px of
-          content in a 390px viewport). */}
       <div className="eco-bubbles__canvas-wrap">
       <div className="eco-bubbles__canvas" style={{ width: CANVAS, height: CANVAS_H }}>
         <div className="eco-bubbles__ring" />
@@ -214,7 +157,11 @@ export default function EcosystemBubbles({
               type="button"
               className={`eco-bubble${seat.gap ? ' eco-bubble--gap' : ''}${isSelected ? ' eco-bubble--selected' : ''}`}
               style={{ left: pos.left, top: pos.top, width: BUBBLE, height: BUBBLE }}
-              onClick={() => (seat.gap ? onExploreArea?.(seat) : setSelectedKey(seat.key))}
+              onClick={() => {
+                setWhyOpenProductId(null);
+                if (seat.gap) onExploreArea?.(seat);
+                else setSelectedKey(seat.key);
+              }}
               aria-pressed={!seat.gap && isSelected}
             >
               <span className="eco-bubble__label">{seat.gap ? '' : seat.label}</span>
@@ -238,11 +185,16 @@ export default function EcosystemBubbles({
           <div className="eco-bubbles__card">
             <div className="eco-bubbles__card-label">{selected.label} · Selected</div>
             {selected.products.map((product) => {
-              // Every product this area covers gets its own row — this card
-              // used to show only products[0], so a "2 picks" area silently
-              // hid its second product with no way to see or act on it here.
               const labels = getProfileMatchLabelsForProduct(product, quizResults, healthProfile);
               const line = labels.length ? `Matched on ${labels.slice(0, 3).join(', ')}.` : '';
+              const explanation = getRecommendationExplanation(product, quizResults, healthProfile);
+              const storedReason = snapshotReason(product);
+              const whyText = explanation?.whyItWorks ||
+                (storedReason ? `Why it could work: ${storedReason}` : '') ||
+                line ||
+                'This product is in your ecosystem, but a specific personalized match reason is not available for this saved item.';
+              const isWhyOpen = whyOpenProductId === product.id;
+
               return (
                 <div key={product.id} className="eco-bubbles__card-product">
                   <button
@@ -255,7 +207,13 @@ export default function EcosystemBubbles({
                   {line && <div className="eco-bubbles__card-body">{line}</div>}
                   <div className="eco-bubbles__card-actions">
                     <button type="button" onClick={() => onExploreArea?.(selected)}>Swap</button>
-                    <button type="button" onClick={() => onOpenProduct?.(product)}>Why this?</button>
+                    <button
+                      type="button"
+                      onClick={() => setWhyOpenProductId(isWhyOpen ? null : product.id)}
+                      aria-expanded={isWhyOpen}
+                    >
+                      {isWhyOpen ? 'Hide why' : 'Why this?'}
+                    </button>
                     {onToggleProduct && (
                       <button
                         type="button"
@@ -266,6 +224,22 @@ export default function EcosystemBubbles({
                       </button>
                     )}
                   </div>
+                  {isWhyOpen && (
+                    <div
+                      className="eco-bubbles__card-body"
+                      style={{ marginTop: '0.55rem', paddingTop: '0.55rem', borderTop: '1px solid var(--color-border)' }}
+                    >
+                      {whyText}
+                      {explanation?.considerations && (
+                        <div style={{ marginTop: '0.35rem', color: 'var(--color-text-muted)' }}>
+                          {explanation.considerations}
+                        </div>
+                      )}
+                      <div style={{ marginTop: '0.35rem', color: 'var(--color-text-muted)', fontSize: '0.78rem' }}>
+                        Match explanations are relevance signals, not medical advice or a guarantee that a product will work for you.
+                      </div>
+                    </div>
+                  )}
                 </div>
               );
             })}
