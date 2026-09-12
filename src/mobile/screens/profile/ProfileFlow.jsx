@@ -12,7 +12,7 @@ import {
   sendPhoneVerificationCode,
   confirmPhoneVerificationCode,
 } from '../../utils/notificationPreferencesApi.js';
-import { fetchDataExport } from '../../utils/dataExportApi.js';
+import { fetchDataExport, requestAccountDeletion } from '../../utils/dataExportApi.js';
 import { OPEN_SOURCE_PACKAGES, summarizeLicenses } from '../../data/openSourceLicenses.js';
 
 /**
@@ -1508,7 +1508,7 @@ function isAnalyticsOptedOut() {
   try { return typeof window !== 'undefined' && window.posthog?.has_opted_out_capturing?.() === true; } catch { return false; }
 }
 
-function PrivacyDataScreen({ onBack, onOpenManageData }) {
+function PrivacyDataScreen({ onBack, onOpenManageData, onOpenDeleteAccount }) {
   const [analyticsOptedOut, setAnalyticsOptedOut] = useState(isAnalyticsOptedOut);
 
   const toggleAnalytics = () => {
@@ -1539,8 +1539,8 @@ function PrivacyDataScreen({ onBack, onOpenManageData }) {
           <AccountRow title="Download my data" sub="A full export of your account and intake answers." onClick={onOpenManageData} />
           <AccountRow
             title={<span style={{ color: '#B4402A' }}>Delete my account & data</span>}
-            sub="Email us and we'll process it within a week — nothing kept after."
-            onClick={() => window.open(DELETE_ACCOUNT_MAILTO, '_blank')}
+            sub="We'll process it within a week — nothing kept after."
+            onClick={onOpenDeleteAccount}
           />
         </div>
         <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 9, padding: '0 4px' }}>
@@ -2285,12 +2285,12 @@ function AccountRow({ title, sub, value, badge, badgeTone = 'neutral', onClick, 
 // Supabase session (src/mobile/hooks/useSupabaseAuth.js), phone number read
 // straight from phone_numbers (RLS-scoped to the caller, same table
 // PhoneVerifyPanel writes to), age/zip/FSA-HSA from the real intake
-// snapshot. Session list and data export have no backend yet, so they're
-// marked COMING SOON (same convention as Subscription/Two-step verification
-// elsewhere in this file) instead of showing invented devices/exports.
-// Delete account mirrors desktop's real flow exactly (App.jsx's delete
-// modal): an email request, not a self-serve API that doesn't exist.
-function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers, onOpenPassword, onEditProfile, onOpenManageData }) {
+// snapshot. Session list has no backend yet, so it's marked COMING SOON
+// (same convention as Subscription/Two-step verification elsewhere in this
+// file) instead of showing invented devices. Delete account opens a real
+// in-app confirm flow (DeleteAccountScreen) backed by
+// account_deletion_requests, not an email link.
+function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers, onOpenPassword, onEditProfile, onOpenManageData, onOpenDeleteAccount }) {
   const [phoneVerifyOpen, setPhoneVerifyOpen] = useState(false);
   const [phone, setPhone] = useState({ loading: true, number: '', verified: false });
   // Real Supabase auth.updateUser() call, same first_name/full_name fields
@@ -2478,20 +2478,122 @@ function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers,
         <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Your data</div>
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
           <AccountRow borderTop={false} title="Manage & download my data" sub="Account details, intake answers, saved products." onClick={onOpenManageData} />
-          <a
-            href="mailto:puloma@aynahealth.co?subject=Account%20Deletion%20Request"
-            style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 0', borderTop: '1px solid var(--ayna-border)', textDecoration: 'none' }}
-          >
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 500, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', color: '#B4402A' }}>Delete account</div>
-              <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 2, lineHeight: 1.45 }}>Removes your profile and health answers.</div>
-            </div>
-            <ExternalLinkIcon />
-          </a>
+          <AccountRow title={<span style={{ color: '#B4402A' }}>Delete account</span>} sub="Removes your profile and health answers." onClick={onOpenDeleteAccount} />
         </div>
 
         <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 14, padding: '0 4px' }}>
           Questions about your account? Email <a href="mailto:puloma@aynahealth.co" style={{ color: 'var(--ayna-brown)' }}>puloma@aynahealth.co</a>.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------- Delete account ---------------------------- */
+
+// Real in-app action — files a row in account_deletion_requests via
+// api/export-data.js's POST branch, instead of a mailto: link with no
+// record on our side unless the email is actually sent and read. Requires
+// typing DELETE (not just a tap) before the button enables, since this is
+// irreversible. Signs out and closes the profile overlay after a successful
+// request, same as the real "Sign out" action elsewhere in Settings.
+function DeleteAccountScreen({ onBack, onSignOut, onClose }) {
+  const [confirmText, setConfirmText] = useState('');
+  const [status, setStatus] = useState('idle'); // 'idle' | 'submitting' | 'error' | 'success'
+  const [errorMsg, setErrorMsg] = useState('');
+  const canSubmit = confirmText.trim().toUpperCase() === 'DELETE';
+
+  const handleSubmit = async () => {
+    if (!canSubmit || status === 'submitting') return;
+    setStatus('submitting');
+    setErrorMsg('');
+    try {
+      await requestAccountDeletion();
+      setStatus('success');
+    } catch (e) {
+      setStatus('error');
+      setErrorMsg(e instanceof NotSignedInError ? 'Please sign in again, then retry.' : (e.message || "That didn't go through — try again."));
+    }
+  };
+
+  const handleDone = () => {
+    onSignOut && onSignOut();
+    onClose && onClose();
+  };
+
+  if (status === 'success') {
+    return (
+      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+        <BackHeader title="Delete account" onBack={onBack} />
+        <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '30px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+          <div style={{ width: 56, height: 56, borderRadius: 99, background: 'var(--ayna-chip-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 'calc(26px * var(--ayna-text-scale, 1))', marginBottom: 18 }}>✓</div>
+          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(22px * var(--ayna-text-scale, 1))', marginBottom: 10, color: 'var(--ayna-heading)' }}>Request received.</div>
+          <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.6, maxWidth: 280 }}>
+            We'll process it within a week — nothing kept after. You're being signed out now.
+          </div>
+          <div
+            onClick={handleDone}
+            style={{ marginTop: 26, width: '100%', maxWidth: 280, textAlign: 'center', padding: '14px 0', borderRadius: 99, background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', cursor: 'pointer' }}
+          >
+            Done
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+      <BackHeader title="Delete account" onBack={onBack} />
+      <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '8px 20px 30px' }}>
+        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(22px * var(--ayna-text-scale, 1))', lineHeight: 1.3, marginBottom: 12, color: 'var(--ayna-heading)' }}>
+          This can't be undone.
+        </div>
+        <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.6, marginBottom: 20 }}>
+          Deleting your account removes your profile, health intake answers, saved products, and ecosystem from our active systems. We may keep limited records where the law requires it — never your health data. We process requests within a week.
+        </div>
+
+        <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginBottom: 8 }}>
+          Type <strong style={{ color: 'var(--ayna-text)' }}>DELETE</strong> to confirm.
+        </div>
+        <input
+          type="text"
+          value={confirmText}
+          onChange={(e) => { setConfirmText(e.target.value); if (status === 'error') setStatus('idle'); }}
+          placeholder="DELETE"
+          autoCapitalize="characters"
+          autoCorrect="off"
+          style={{
+            width: '100%',
+            boxSizing: 'border-box',
+            border: '1.5px solid var(--ayna-border)',
+            borderRadius: 14,
+            padding: '13px 16px',
+            fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
+            fontFamily: "'DM Sans',sans-serif",
+            background: 'var(--ayna-surface)',
+            color: 'var(--ayna-text)',
+          }}
+        />
+
+        {errorMsg && <div style={{ color: '#B4402A', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', marginTop: 10 }}>{errorMsg}</div>}
+
+        <div
+          onClick={handleSubmit}
+          style={{
+            marginTop: 20,
+            textAlign: 'center',
+            padding: '14px 0',
+            borderRadius: 99,
+            fontWeight: 600,
+            fontSize: 'calc(14px * var(--ayna-text-scale, 1))',
+            cursor: canSubmit && status !== 'submitting' ? 'pointer' : 'default',
+            background: canSubmit ? '#B4402A' : 'var(--ayna-chip-bg)',
+            color: canSubmit ? '#FFF9F2' : 'var(--ayna-text-faint)',
+            transition: 'background .15s, color .15s',
+          }}
+        >
+          {status === 'submitting' ? 'Submitting…' : 'Delete my account'}
         </div>
       </div>
     </div>
@@ -3206,12 +3308,21 @@ export default function ProfileFlow({
         onOpenPassword={() => pushScreen('password')}
         onEditProfile={onEditProfile ? () => { onClose(); onEditProfile(); } : undefined}
         onOpenManageData={() => pushScreen('manageData')}
+        onOpenDeleteAccount={() => pushScreen('deleteAccount')}
       />
     );
   } else if (screen === 'password') {
     body = <PasswordScreen onBack={goBack} authUser={authUser} />;
   } else if (screen === 'privacyData') {
-    body = <PrivacyDataScreen onBack={goBack} onOpenManageData={() => pushScreen('manageData')} />;
+    body = (
+      <PrivacyDataScreen
+        onBack={goBack}
+        onOpenManageData={() => pushScreen('manageData')}
+        onOpenDeleteAccount={() => pushScreen('deleteAccount')}
+      />
+    );
+  } else if (screen === 'deleteAccount') {
+    body = <DeleteAccountScreen onBack={goBack} onSignOut={onSignOut} onClose={onClose} />;
   } else if (screen === 'legal') {
     body = (
       <LegalScreen

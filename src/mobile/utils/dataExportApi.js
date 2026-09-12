@@ -35,3 +35,26 @@ export async function fetchDataExport() {
   }
   return data;
 }
+
+// Same route, POST — files a real account_deletion_requests row (see that
+// table's header comment for what "processed" actually still requires).
+export async function requestAccountDeletion() {
+  const token = await getAccessToken();
+  if (!token) throw new NotSignedInError();
+  const res = await fetch('/api/export-data', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  let data;
+  try {
+    data = await res.json();
+  } catch {
+    data = {};
+  }
+  if (!res.ok) {
+    const err = new Error(data?.error || `HTTP ${res.status}`);
+    err.code = data?.error || `http_${res.status}`;
+    throw err;
+  }
+  return data;
+}
