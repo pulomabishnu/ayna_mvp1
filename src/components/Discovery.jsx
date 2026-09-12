@@ -1123,7 +1123,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         const q = (rawQuery || '').trim();
         if (!q || q.length < 2) return;
         setSearchQuery(q);
-        posthog.capture('search_performed', { query: q, queryLength: q.length });
         const qLower = q.toLowerCase();
 
         // Cancel any pending debounce — we're going immediate
@@ -1150,6 +1149,16 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         for (const { test, cat } of categoryNudges) {
             if (test(qLower)) { setCategoryFilter(cat); resolvedCategory = cat; break; }
         }
+
+        // `category` is one of a small, fixed set of catalog buckets (or
+        // 'all' when nothing matched) — the same classification this
+        // function already does to pick which products to show, just also
+        // reported here. Deliberately never the raw query text: a category
+        // label like 'pregnancy' answers "what kind of thing were they
+        // looking for" without answering "what exactly did they type",
+        // which could be an entire sentence naming a specific condition,
+        // medication, or life event in the user's own words.
+        posthog.capture('search_performed', { category: resolvedCategory, queryLength: q.length });
 
         if (qLower.includes('waitlist') || qLower.includes('startup')) {
             if (setCurrentView) setCurrentView('waitlist');
