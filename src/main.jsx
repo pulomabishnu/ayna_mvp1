@@ -4,6 +4,7 @@ import App from './App.jsx';
 import './index.css';
 import posthog from 'posthog-js';
 import { getInternalIds, tagInternalUserIfNeeded } from './utils/posthogInternal';
+import { hasInternalBrowserMarker, tagFounderAnalyticsIfNeeded } from './utils/founderAnalytics';
 import { applyStoredConsent, getStoredConsent } from './utils/analyticsConsent';
 
 if (window.location.hostname === 'aynamvp1.vercel.app') {
@@ -58,20 +59,28 @@ function analyticsIdForAuthId(authId) {
 
 // App.jsx still calls posthog.identify(supabaseUserId, { email }) in two legacy
 // auth paths. Intercept at the analytics boundary: discard those PII person
-// properties and substitute a dedicated random analytics identifier.
+// properties and substitute a dedicated random analytics identifier. The email
+// is inspected locally only to recognize the three founders; it is never passed
+// through to PostHog.
 const originalIdentify = typeof posthog.identify === 'function'
   ? posthog.identify.bind(posthog)
   : null;
 if (originalIdentify) {
-  posthog.identify = (authId) => {
+  posthog.identify = (authId, properties = {}) => {
     const analyticsId = analyticsIdForAuthId(authId);
     const result = originalIdentify(analyticsId);
 
-    // Preserve the existing internal-user filtering even though the configured
-    // internal list may still contain old Supabase UUIDs.
+    // Founder filtering is account-based, so a new phone/laptop/browser becomes
+    // internal as soon as Ameera, Eliz, or Puloma signs in once. The helper also
+    // persists a local browser marker for future signed-out visits.
+    tagFounderAnalyticsIfNeeded(posthog, properties?.email);
+
+    // Preserve the older explicit-ID filter for previously-known internal test
+    // devices and accounts.
     try {
       const internalIds = getInternalIds();
       if (internalIds.has(String(authId)) || internalIds.has(analyticsId)) {
+        posthog.register?.({ is_internal: true });
         posthog.people?.set?.({ is_internal: true });
       }
     } catch (_) {}
@@ -107,6 +116,11 @@ function sanitizeAnalyticsObject(value) {
 }
 
 function sanitizePosthogEvent(event) {
+  // Once this browser has been recognized as one of the three founders, do not
+  // send further analytics at all. The PostHog person is also tagged internal
+  // at sign-in so any earlier anonymous events from a brand-new browser can be
+  // excluded by the internal-user filter after identity merge.
+  if (hasInternalBrowserMarker()) return null;
   if (!event?.properties) return event;
   return { ...event, properties: sanitizeAnalyticsObject(event.properties) };
 }
@@ -137,6 +151,7 @@ if (!POSTHOG_KEY) {
       window.posthog = ph;
       if (GPC_ENABLED) ph.opt_out_capturing?.();
       else applyStoredConsent(ph);
+      tagFounderAnalyticsIfNeeded(ph);
       tagInternalUserIfNeeded(ph);
     },
   });

@@ -1,6 +1,38 @@
+import posthog from 'posthog-js';
+
 /**
- * Calls /api/search-suggestions (Claude on the server). Same-origin on Vercel.
+ * Calls /api/search-suggestions (multi-provider AI on the server). Same-origin on Vercel.
  */
+
+const HEALTH_ANALYTICS_TERMS = [
+  'period', 'menstrual', 'bleeding', 'cramp', 'pelvic', 'vagina', 'vaginal', 'vulva', 'discharge', 'odor',
+  'itching', 'uti', 'urinary', 'yeast infection', 'bacterial vaginosis', 'pcos', 'polycystic', 'endometriosis',
+  'fibroid', 'ovarian cyst', 'pmdd', 'pms', 'menopause', 'perimenopause', 'fertility', 'infertility', 'pregnan',
+  'postpartum', 'birth control', 'contraception', 'hormone', 'sexual health', 'painful sex', 'vaginismus',
+  'vulvodynia', 'iron deficiency', 'anemia', 'reproductive', 'cycle', 'hot flash', 'night sweat',
+];
+
+function looksHealthSensitive(query) {
+  const q = String(query || '').toLowerCase();
+  return HEALTH_ANALYTICS_TERMS.some((term) => q.includes(term));
+}
+
+function captureSearchAnalytics(event, properties) {
+  try {
+    posthog.capture(event, properties);
+  } catch {
+    // Analytics must never break search.
+  }
+}
+
+function baseAnalyticsProps({ query, category, personalized }) {
+  return {
+    queryLength: String(query || '').length,
+    category: category || 'all',
+    personalized: Boolean(personalized),
+    sensitiveHealthQuery: looksHealthSensitive(query),
+  };
+}
 
 function sessionCacheKey(query, category, symptom, maxResults) {
   const q = `${query.trim().toLowerCase()}|${category || ''}|${symptom || ''}|${maxResults || 20}`;
@@ -23,8 +55,6 @@ function readSessionCache(key) {
     return {
       suggestions: o.suggestions,
       querySummary: typeof o.querySummary === 'string' ? o.querySummary : '',
-      // Was read at the call site but never persisted, so the "related
-      // searches" row silently vanished for 45 minutes on any repeated query.
       relatedSearches: Array.isArray(o.relatedSearches) ? o.relatedSearches : [],
     };
   } catch {
@@ -64,11 +94,26 @@ export async function fetchSearchSuggestions(opts) {
   const profileSummary = typeof opts?.profileSummary === 'string' ? opts.profileSummary : '';
   const dislikedProducts = typeof opts?.dislikedProducts === 'string' ? opts.dislikedProducts : '';
   const maxResults = typeof opts?.maxResults === 'number' ? opts.maxResults : 20;
+  const analyticsBase = baseAnalyticsProps({ query, category, personalized });
+
   // Don't cache personalized results — they're user-specific
   const cacheKey = personalized ? null : sessionCacheKey(query, category, symptom, maxResults);
   if (cacheKey) {
     const cached = readSessionCache(cacheKey);
-    if (cached) return { suggestions: cached.suggestions, querySummary: cached.querySummary, relatedSearches: cached.relatedSearches || [], fromCache: true };
+    if (cached) {
+      captureSearchAnalytics('ai_search_completed', {
+        ...analyticsBase,
+        resultCount: cached.suggestions.length,
+        fromCache: true,
+        providerUsed: 'cache',
+      });
+      return {
+        suggestions: cached.suggestions,
+        querySummary: cached.querySummary,
+        relatedSearches: cached.relatedSearches || [],
+        fromCache: true,
+      };
+    }
   }
 
   const res = await fetch('/api/search-suggestions', {
@@ -81,8 +126,7 @@ export async function fetchSearchSuggestions(opts) {
   const data = await res.json().catch(() => ({}));
 
   if (res.status === 401) {
-    // AI search is gated to signed-in users on this deployment. Not an error
-    // state — Discovery still shows catalog results.
+    captureSearchAnalytics('ai_search_failed', { ...analyticsBase, code: 'auth_required', status: 401 });
     return {
       suggestions: [],
       querySummary: '',
@@ -92,6 +136,7 @@ export async function fetchSearchSuggestions(opts) {
   }
 
   if (res.status === 429) {
+    captureSearchAnalytics('ai_search_failed', { ...analyticsBase, code: 'rate_limited', status: 429 });
     return {
       suggestions: [],
       querySummary: '',
@@ -100,19 +145,17 @@ export async function fetchSearchSuggestions(opts) {
     };
   }
 
-  if (res.status === 503 && data?.error === 'no_anthropic_key') {
+  if (res.status === 503 && (data?.error === 'no_anthropic_key' || data?.error === 'no_ai_provider')) {
+    captureSearchAnalytics('ai_search_failed', { ...analyticsBase, code: 'no_ai_provider', status: 503 });
     return {
       suggestions: [],
       querySummary: '',
-      error: 'AI search is not configured on the server (missing ANTHROPIC_API_KEY).',
+      error: 'AI search is not configured on the server.',
       code: 'no_key',
     };
   }
 
   if (!res.ok) {
-    // Discovery renders `error` verbatim, so raw server codes used to reach the
-    // user as e.g. "Showing 0 results. claude_failed". Map them to human copy
-    // and keep the raw code on `code` for telemetry.
     const raw = data?.error || '';
     const friendly =
       raw === 'claude_failed' || raw === 'invalid_model_json' || res.status === 502
@@ -120,6 +163,11 @@ export async function fetchSearchSuggestions(opts) {
         : raw === 'query_too_short'
           ? 'Type a little more to search.'
           : 'Could not load suggestions.';
+    captureSearchAnalytics('ai_search_failed', {
+      ...analyticsBase,
+      code: raw || 'request_failed',
+      status: res.status,
+    });
     return {
       suggestions: [],
       querySummary: '',
@@ -132,5 +180,24 @@ export async function fetchSearchSuggestions(opts) {
   const querySummary = typeof data.querySummary === 'string' ? data.querySummary : '';
   const relatedSearches = Array.isArray(data.relatedSearches) ? data.relatedSearches : [];
   if (cacheKey) writeSessionCache(cacheKey, suggestions, querySummary, relatedSearches);
-  return { suggestions, querySummary, relatedSearches };
+
+  captureSearchAnalytics('ai_search_completed', {
+    ...analyticsBase,
+    resultCount: suggestions.length,
+    fromCache: false,
+    providerUsed: typeof data.providerUsed === 'string' ? data.providerUsed : 'server_fallback',
+    healthRoutingMode: typeof data.healthRoutingMode === 'string' ? data.healthRoutingMode : undefined,
+    externalSearchUsed: typeof data.externalSearchUsed === 'boolean' ? data.externalSearchUsed : undefined,
+    internalKnowledgeHits: Number.isFinite(Number(data.internalKnowledgeHits)) ? Number(data.internalKnowledgeHits) : undefined,
+  });
+
+  return {
+    suggestions,
+    querySummary,
+    relatedSearches,
+    providerUsed: data.providerUsed,
+    healthRoutingMode: data.healthRoutingMode,
+    externalSearchUsed: data.externalSearchUsed,
+    internalKnowledgeHits: data.internalKnowledgeHits,
+  };
 }
