@@ -1198,6 +1198,14 @@ export default function HealthIntakeForm({ onComplete }) {
       if (!raw) return EMPTY;
       const parsed = JSON.parse(raw);
       const restored = { ...EMPTY, ...(parsed?.intake || {}) };
+      // ayna accounts are 18+. Clamp any stale pre-18 draft left in this tab
+      // so an old session cannot reintroduce an under-18 age into the intake.
+      if (restored.age) {
+        const restoredAge = Number(restored.age);
+        restored.age = Number.isFinite(restoredAge)
+          ? String(Math.min(90, Math.max(18, restoredAge)))
+          : '';
+      }
       const lifeStageSelections = Array.isArray(restored.lifeStageSelections)
         ? restored.lifeStageSelections
         : (restored.lifeStage ? [restored.lifeStage] : []);
@@ -1335,8 +1343,8 @@ export default function HealthIntakeForm({ onComplete }) {
 
   const renderBody = () => {
     if (step.type === 'age') {
-      const numeric = intake.age ? Number(intake.age) : 28;
-      return <div className="ayna-white-card ayna-age-card"><div className="ayna-age-top"><button type="button" className="ayna-age-btn" onClick={() => set('age', String(Math.max(13, (intake.age ? Number(intake.age) : 28) - 1)))}>−</button><div className={`ayna-age-value${intake.age ? '' : ' empty'}`}>{intake.age || 'Select'}</div><button type="button" className="ayna-age-btn" onClick={() => set('age', String(Math.min(90, (intake.age ? Number(intake.age) : 27) + 1)))}>+</button></div><input className={`ayna-age-range${intake.age ? '' : ' unset'}`} type="range" min="13" max="90" value={numeric} onChange={(e) => set('age', e.target.value)} /><div className="ayna-range-labels"><span>13</span><span>90</span></div></div>;
+      const numeric = intake.age ? Math.min(90, Math.max(18, Number(intake.age))) : 18;
+      return <div className="ayna-white-card ayna-age-card"><div className="ayna-age-top"><button type="button" className="ayna-age-btn" onClick={() => set('age', String(Math.max(18, (intake.age ? Math.max(18, Number(intake.age)) : 19) - 1)))}>−</button><div className={`ayna-age-value${intake.age ? '' : ' empty'}`}>{intake.age || 'Select'}</div><button type="button" className="ayna-age-btn" onClick={() => set('age', String(Math.min(90, (intake.age ? Math.max(18, Number(intake.age)) : 17) + 1)))}>+</button></div><input className={`ayna-age-range${intake.age ? '' : ' unset'}`} type="range" min="18" max="90" value={numeric} onChange={(e) => set('age', e.target.value)} /><div className="ayna-range-labels"><span>18</span><span>90</span></div></div>;
     }
     if (step.type === 'cards' && step.id === 'lifeStage') {
       const selectedLifeStages = getLifeStages(intake);
