@@ -1,3 +1,4 @@
+import posthog from 'posthog-js';
 import { getSupabaseClient } from './supabaseClient';
 import {
   loadLearningMemorySession,
@@ -6,15 +7,13 @@ import {
 } from './learningMemoryStore';
 
 const API_PATH = '/api/llm-recommendations';
-/** Prevents the ecosystem page from showing “Loading…” forever if the server never responds. */
-// Must sit ABOVE the server's function ceiling (vercel.json maxDuration = 60s)
-// plus network overhead. The old 150s value was paired with a client that
-// batched work assuming a 252s server budget, so the client aborted ~100s
-// before the server could possibly finish and threw the work away.
 const DEFAULT_FETCH_TIMEOUT_MS = 75_000;
-/** Health-derived recommendation caches are active-tab only; Supabase stores the durable user state. */
 const RECS_CACHE_KEY = 'ayna_llm_recommendations_by_intake_v2';
 const FETCHED_FINGERPRINT_KEY = 'ayna_llm_recommendations_fetched_fingerprint_v2';
+
+function captureRecommendationAnalytics(event, properties) {
+  try { posthog.capture(event, properties); } catch { /* analytics must never break recommendations */ }
+}
 
 function stableStringify(val) {
   if (val === null || typeof val !== 'object') return JSON.stringify(val);
@@ -38,11 +37,6 @@ function migrateLegacyCacheKey(key) {
   }
 }
 
-/**
-  * Stable id for one ecosystem build, derived from the intake fingerprint.
-  * The server claims quota against this rather than per request, so every batch
-  * of a build shares one claim and a retry after failure costs nothing.
-  */
 export function buildIdFromFingerprint(fingerprint) {
   const s = String(fingerprint || '');
   let h1 = 0x811c9dc5, h2 = 0x01000193;
@@ -76,10 +70,6 @@ export function loadCachedLlmRecommendations(fingerprint) {
   }
 }
 
-/**
-  * @returns {boolean} whether the payload was actually persisted for this tab.
-  * The caller MUST check this before recording the fingerprint as fetched.
-  */
 export function saveCachedLlmRecommendations(fingerprint, recommendations) {
   if (!fingerprint || typeof window === 'undefined') return false;
   try {
@@ -100,7 +90,6 @@ export function clearCachedLlmRecommendations() {
     if (typeof window === 'undefined') return;
     window.sessionStorage.removeItem(RECS_CACHE_KEY);
     window.sessionStorage.removeItem(FETCHED_FINGERPRINT_KEY);
-    // Clear persistent copies left by older builds.
     window.localStorage.removeItem(RECS_CACHE_KEY);
     window.localStorage.removeItem(FETCHED_FINGERPRINT_KEY);
   } catch {
@@ -167,10 +156,6 @@ export function loadLearningMemory() {
 export function saveLearningMemory(memory) {
   saveLearningMemorySession(memory);
 
-  // Persist the full learning memory directly to the user's RLS-protected row.
-  // App.jsx still contains a legacy compatibility callback that reads a
-  // localStorage mirror; learningMemoryStore returns only a harmless sentinel
-  // to that path so it cannot overwrite this full server copy.
   try {
     const supabase = getSupabaseClient();
     if (!supabase) return;
@@ -188,18 +173,20 @@ export function saveLearningMemory(memory) {
   }
 }
 
-/**
- * @param {object} options — passed to build body (intake, feedback maps, etc.)
- * @param {{ timeoutMs?: number, signal?: AbortSignal }} [fetchOpts] — `signal` lets a caller
- *   cancel the request directly (e.g. a user-clicked Cancel button), distinct from the
- *   internal timeout-based abort.
- */
 export async function fetchLlmRecommendations(options = {}, fetchOpts = {}) {
   const body = buildLlmRecommendationsRequestBody(options);
   if (!body) throw new Error('Missing intake profile');
 
   const timeoutMs = typeof fetchOpts.timeoutMs === 'number' ? fetchOpts.timeoutMs : DEFAULT_FETCH_TIMEOUT_MS;
   const { authToken, signal: externalSignal } = fetchOpts;
+  const analyticsBase = {
+    batchIndex: typeof body.batchIndex === 'number' ? body.batchIndex : 0,
+    hasBatching: typeof body.batchSize === 'number',
+    trackedCount: body.feedback?.trackedProductIds?.length || 0,
+    ecosystemCount: body.feedback?.ecosystemProductIds?.length || 0,
+    omittedCount: body.feedback?.omittedProductIds?.length || 0,
+  };
+
   const controller = new AbortController();
   const tid = setTimeout(() => controller.abort(), timeoutMs);
   const onExternalAbort = () => controller.abort();
@@ -221,6 +208,8 @@ export async function fetchLlmRecommendations(options = {}, fetchOpts = {}) {
     });
   } catch (e) {
     if (e?.name === 'AbortError') {
+      const code = externalSignal?.aborted ? 'cancelled' : 'timeout';
+      captureRecommendationAnalytics('ai_recommendations_failed', { ...analyticsBase, code });
       if (externalSignal?.aborted) {
         const err = new Error('Cancelled');
         err.code = 'cancelled';
@@ -230,6 +219,7 @@ export async function fetchLlmRecommendations(options = {}, fetchOpts = {}) {
       err.code = 'timeout';
       throw err;
     }
+    captureRecommendationAnalytics('ai_recommendations_failed', { ...analyticsBase, code: 'network_error' });
     throw e;
   } finally {
     clearTimeout(tid);
@@ -240,16 +230,28 @@ export async function fetchLlmRecommendations(options = {}, fetchOpts = {}) {
   try {
     data = await res.json();
   } catch {
+    captureRecommendationAnalytics('ai_recommendations_failed', { ...analyticsBase, code: 'invalid_response', status: res.status });
     throw new Error('Invalid recommendation response');
   }
 
   if (!res.ok) {
     const msg = data?.message || data?.error || `HTTP ${res.status}`;
+    captureRecommendationAnalytics('ai_recommendations_failed', {
+      ...analyticsBase,
+      code: data?.error || 'request_failed',
+      status: res.status,
+    });
     const err = new Error(msg);
     err.status = res.status;
     err.code = data?.error;
     throw err;
   }
 
+  captureRecommendationAnalytics('ai_recommendations_completed', {
+    ...analyticsBase,
+    providerUsed: typeof data?.providerUsed === 'string' && data.providerUsed ? data.providerUsed : 'unknown',
+    recommendationCount: Array.isArray(data?.recommendations) ? data.recommendations.length : 0,
+    concernsTotal: Number.isFinite(Number(data?.concernsTotal)) ? Number(data.concernsTotal) : undefined,
+  });
   return data;
 }
