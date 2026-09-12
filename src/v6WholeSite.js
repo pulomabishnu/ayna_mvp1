@@ -1,5 +1,6 @@
 import './v6WholeSite.css';
 import './v6WholeSiteDetails.css';
+import './v6WholeSiteExtra.css';
 import { getSupabaseClient } from './utils/supabaseClient';
 
 const ROUTE_CLASS_PREFIX = 'v6-page-';
