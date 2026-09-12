@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from './naturalLanguageSearch';
+import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct, findConfidentProductMatch } from './naturalLanguageSearch';
 
 describe('buildSearchTextForItem — brand searchability', () => {
   // A product whose brand name is NOT embedded in `name` used to be
@@ -101,5 +101,83 @@ describe('scoreQueryAgainstProduct — "sti" / "std" search (2026-08-25 live bug
     const haystack = buildSearchTextForItem(item);
     const identity = buildIdentityTextForItem(item);
     expect(scoreQueryAgainstProduct('std', haystack, identity)).toBeGreaterThan(0);
+  });
+});
+
+describe('findConfidentProductMatch', () => {
+  const catalog = [
+    {
+      id: 'flex-cup-001',
+      name: 'Flex Cup',
+      brand: 'Flex',
+      category: 'cup',
+      tags: ['reusable', 'menstrual cup'],
+      summary: 'A flexible, reusable menstrual cup.',
+    },
+    {
+      id: 'generic-cup-001',
+      name: 'Basic Menstrual Cup',
+      brand: 'GenericBrand',
+      category: 'cup',
+      tags: ['reusable'],
+      summary: 'An affordable menstrual cup option.',
+    },
+    {
+      id: 'pain-relief-001',
+      name: 'Cramp Relief Heating Pad',
+      brand: 'ComfortCo',
+      category: 'cramp-relief',
+      tags: ['heat therapy'],
+      summary: 'Portable heat therapy for period cramps, mentions vitamin E in the fabric lining.',
+    },
+  ];
+
+  it('returns undefined for an empty or missing query', () => {
+    expect(findConfidentProductMatch('', catalog, {})).toBeUndefined();
+    expect(findConfidentProductMatch(null, catalog, {})).toBeUndefined();
+    expect(findConfidentProductMatch(undefined, catalog, {})).toBeUndefined();
+  });
+
+  it('returns undefined for an empty or missing catalog', () => {
+    expect(findConfidentProductMatch('flex cup', [], {})).toBeUndefined();
+    expect(findConfidentProductMatch('flex cup', null, {})).toBeUndefined();
+  });
+
+  it('matches a clear brand + product name search to that exact product', () => {
+    expect(findConfidentProductMatch('flex cup', catalog, {})).toBe('flex-cup-001');
+  });
+
+  it('does not report a match for a generic category search that fits many products', () => {
+    // "cup" alone matches both cup products with no dominant winner —
+    // exactly the ambiguous case this should stay silent on.
+    expect(findConfidentProductMatch('cup', catalog, {})).toBeUndefined();
+  });
+
+  it('does not report a match for a one-word incidental prose mention', () => {
+    // "vitamin" only appears once, in passing, in the heating pad's summary
+    // — not what that product actually is. scoreQueryAgainstProduct itself
+    // already rejects this (no identity-field hit), so this should too.
+    expect(findConfidentProductMatch('vitamin', catalog, {})).toBeUndefined();
+  });
+
+  it('excludes an omitted product even if it would otherwise be the dominant match', () => {
+    expect(findConfidentProductMatch('flex cup', catalog, { 'flex-cup-001': true })).toBeUndefined();
+  });
+
+  it('never returns a product with a non-positive score', () => {
+    expect(findConfidentProductMatch('something completely unrelated to anything', catalog, {})).toBeUndefined();
+  });
+
+  it('resolves a category code to its human-readable label via the optional categoryLabels arg', () => {
+    const labeledCatalog = [
+      { id: 'menopause-relief-001', name: 'ReliefCo Cooling Wrap', brand: 'ReliefCo', category: 'menopause', tags: [] },
+    ];
+    // "hot flash relief" doesn't literally appear anywhere on the item, but
+    // the category label does — without categoryLabels this should find
+    // nothing; with it, the label text becomes part of the haystack.
+    expect(findConfidentProductMatch('menopause relief', labeledCatalog, {})).toBeUndefined();
+    expect(
+      findConfidentProductMatch('menopause relief', labeledCatalog, {}, { menopause: 'Menopause Relief' })
+    ).toBe('menopause-relief-001');
   });
 });

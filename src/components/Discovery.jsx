@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore, getProductMatchDetailsForProduct } from '../data/products';
 import { loadProductCatalog } from '../utils/productCatalog';
-import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../utils/naturalLanguageSearch';
+import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct, findConfidentProductMatch } from '../utils/naturalLanguageSearch';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { isPartnerBrandItem } from '../utils/partnerBrands';
 import { fetchSearchSuggestions } from '../utils/fetchSearchSuggestions';
@@ -1153,12 +1153,20 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         // `category` is one of a small, fixed set of catalog buckets (or
         // 'all' when nothing matched) — the same classification this
         // function already does to pick which products to show, just also
-        // reported here. Deliberately never the raw query text: a category
-        // label like 'pregnancy' answers "what kind of thing were they
-        // looking for" without answering "what exactly did they type",
-        // which could be an entire sentence naming a specific condition,
-        // medication, or life event in the user's own words.
-        posthog.capture('search_performed', { category: resolvedCategory, queryLength: q.length });
+        // reported here. `topMatchedProductId` is similarly a fixed catalog
+        // ID, only ever attached for a clear, dominant single-product match
+        // (see findConfidentProductMatch in naturalLanguageSearch.js) — a
+        // vague symptom search correctly leaves it undefined. Deliberately
+        // never the raw query text either way: these answer "what kind of
+        // thing" / "which specific product" without answering "what exactly
+        // did they type", which could be an entire sentence naming a
+        // specific condition, medication, or life event in the user's own
+        // words.
+        posthog.capture('search_performed', {
+            category: resolvedCategory,
+            queryLength: q.length,
+            topMatchedProductId: findConfidentProductMatch(q, combined, omittedProducts, CATEGORY_LABELS),
+        });
 
         if (qLower.includes('waitlist') || qLower.includes('startup')) {
             if (setCurrentView) setCurrentView('waitlist');
