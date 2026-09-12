@@ -11,7 +11,8 @@ import './test-setup-localstorage.js';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   getStoredConsent, hasRecordedChoice, applyStoredConsent, acknowledgeAnalytics,
-  grantConsent, denyConsent, CONSENT_STORAGE_KEY, CONSENT_TTL_MS,
+  grantConsent, denyConsent, isGpcActive, isMandatoryGpcVisitor,
+  _resetMandatoryGpcCacheForTests, CONSENT_STORAGE_KEY, CONSENT_TTL_MS,
 } from './analyticsConsent';
 
 // Mirrors the real posthog-js API surface this module actually reads.
@@ -34,10 +35,16 @@ describe('analyticsConsent', () => {
 
   beforeEach(() => {
     localStorage.clear();
+    delete navigator.globalPrivacyControl;
+    vi.unstubAllGlobals();
+    _resetMandatoryGpcCacheForTests();
     ph = mockPh();
   });
 
-  afterEach(() => vi.restoreAllMocks());
+  afterEach(() => {
+    delete navigator.globalPrivacyControl;
+    vi.restoreAllMocks();
+  });
 
   it('has no recorded choice before any decision', () => {
     expect(hasRecordedChoice()).toBe(false);
@@ -135,5 +142,54 @@ describe('analyticsConsent', () => {
     expect(getStoredConsent()).toBeUndefined();
     localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify({ decision: 'maybe', timestamp: new Date().toISOString() }));
     expect(getStoredConsent()).toBeUndefined();
+  });
+
+  describe('isGpcActive', () => {
+    it('is false when the browser sends no GPC signal', () => {
+      expect(isGpcActive()).toBe(false);
+    });
+
+    it('is true when navigator.globalPrivacyControl is exactly true', () => {
+      navigator.globalPrivacyControl = true;
+      expect(isGpcActive()).toBe(true);
+    });
+
+    it('is false for any truthy-but-not-true value (spec says only literal true counts)', () => {
+      navigator.globalPrivacyControl = 1;
+      expect(isGpcActive()).toBe(false);
+    });
+  });
+
+  describe('isMandatoryGpcVisitor', () => {
+    it('resolves false without any network call when GPC is not active', async () => {
+      const fetchSpy = vi.fn();
+      vi.stubGlobal('fetch', fetchSpy);
+      await expect(isMandatoryGpcVisitor()).resolves.toBe(false);
+      expect(fetchSpy).not.toHaveBeenCalled();
+    });
+
+    it('resolves true when GPC is active and the region check says mandatory', async () => {
+      navigator.globalPrivacyControl = true;
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, json: async () => ({ mandatory: true }) }));
+      await expect(isMandatoryGpcVisitor()).resolves.toBe(true);
+    });
+
+    it('resolves false when GPC is active but the region check says not mandatory', () => {
+      navigator.globalPrivacyControl = true;
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, json: async () => ({ mandatory: false }) }));
+      return expect(isMandatoryGpcVisitor()).resolves.toBe(false);
+    });
+
+    it('fails closed (mandatory) on a network error', () => {
+      navigator.globalPrivacyControl = true;
+      vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('offline')));
+      return expect(isMandatoryGpcVisitor()).resolves.toBe(true);
+    });
+
+    it('fails closed (mandatory) on a non-OK response', () => {
+      navigator.globalPrivacyControl = true;
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false }));
+      return expect(isMandatoryGpcVisitor()).resolves.toBe(true);
+    });
   });
 });

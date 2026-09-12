@@ -125,3 +125,70 @@ export function denyConsent(ph) {
   persist('denied');
   ph.opt_out_capturing();
 }
+
+/**
+ * GLOBAL PRIVACY CONTROL (GPC), REGION-SCOPED: honored only where a state's
+ * privacy law actually mandates it (see isMandatoryGpcVisitor() below and
+ * api/_gpcRegions.js for the state list and its legal caveats), not for
+ * every GPC-sending browser everywhere. GPC's legal scope is narrow — an
+ * opt-out of "sale"/"sharing" of personal information — and this app's
+ * analytics is neither. main.jsx starts every GPC sender opted out
+ * synchronously (safe default, since we can't know their region yet at
+ * init time), then asynchronously confirms via isMandatoryGpcVisitor(): if
+ * their state doesn't actually require honoring GPC, they're switched to
+ * the same default-on state as everyone else.
+ */
+
+/** Sync — reads the browser's own signal, no network call. */
+export function isGpcActive() {
+  try {
+    return typeof navigator !== 'undefined' && navigator.globalPrivacyControl === true;
+  } catch {
+    return false;
+  }
+}
+
+let mandatoryRegionPromise = null;
+
+/**
+ * Asks /api/gpc-region whether this visitor is in a state that legally
+ * mandates honoring GPC. Cached at module scope. FAILS CLOSED (resolves
+ * true) on any error, non-OK response, or timeout — see the fail-closed
+ * rationale in api/gpc-region.js.
+ */
+function checkMandatoryGpcRegion() {
+  if (mandatoryRegionPromise) return mandatoryRegionPromise;
+  mandatoryRegionPromise = (async () => {
+    const hasAbort = typeof AbortController !== 'undefined';
+    const controller = hasAbort ? new AbortController() : undefined;
+    const timeoutId = hasAbort ? setTimeout(() => controller.abort(), 2500) : undefined;
+    try {
+      const res = await fetch('/api/gpc-region', { signal: controller?.signal });
+      if (!res.ok) return true;
+      const data = await res.json();
+      return data?.mandatory !== false; // fail closed unless explicitly told otherwise
+    } catch {
+      return true; // network error, timeout, blocked by an extension, etc.
+    } finally {
+      if (timeoutId) clearTimeout(timeoutId);
+    }
+  })();
+  return mandatoryRegionPromise;
+}
+
+/**
+ * Is this visitor someone GPC must be honored for? False immediately (no
+ * network call) if GPC isn't active at all — the region check only ever
+ * runs for the minority of visitors whose browser actually sends the
+ * signal.
+ * @returns {Promise<boolean>}
+ */
+export async function isMandatoryGpcVisitor() {
+  if (!isGpcActive()) return false;
+  return checkMandatoryGpcRegion();
+}
+
+/** Test-only: clears the module-scope region cache between test cases. */
+export function _resetMandatoryGpcCacheForTests() {
+  mandatoryRegionPromise = null;
+}

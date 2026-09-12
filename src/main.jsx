@@ -5,7 +5,7 @@ import './index.css';
 import posthog from 'posthog-js';
 import { getInternalIds, tagInternalUserIfNeeded } from './utils/posthogInternal';
 import { hasInternalBrowserMarker, tagFounderAnalyticsIfNeeded } from './utils/founderAnalytics';
-import { applyStoredConsent, getStoredConsent } from './utils/analyticsConsent';
+import { applyStoredConsent, getStoredConsent, isMandatoryGpcVisitor } from './utils/analyticsConsent';
 
 if (window.location.hostname === 'aynamvp1.vercel.app') {
   window.location.replace(
@@ -141,6 +141,16 @@ if (!POSTHOG_KEY) {
     // Privacy Control must be honored before PostHog can emit the initial
     // pageview. Health free text and direct identifiers are still stripped by
     // before_send below, and session recording/autocapture remain disabled.
+    //
+    // Every GPC sender starts opted out here, synchronously, regardless of
+    // which state they're in — confirming whether their specific state's law
+    // actually mandates honoring GPC requires an async geolocation lookup
+    // (isMandatoryGpcVisitor() in `loaded` below), which can't complete
+    // before this init call returns. This is the conservative direction to
+    // fail in: worst case a GPC visitor outside a mandatory state stays
+    // opted out a few hundred ms longer than strictly required; capturing
+    // before confirming they're NOT in a mandatory state is not a trade
+    // worth making for a slightly earlier pageview.
     opt_out_capturing_by_default: GPC_ENABLED || STORED_ANALYTICS_PREF === 'denied',
     before_send: sanitizePosthogEvent,
     // Automatic exception capture can include raw error messages/stacks. In a
@@ -149,8 +159,22 @@ if (!POSTHOG_KEY) {
     errorTracking: { autocaptureExceptions: false },
     loaded: (ph) => {
       window.posthog = ph;
-      if (GPC_ENABLED) ph.opt_out_capturing?.();
-      else applyStoredConsent(ph);
+      if (GPC_ENABLED) {
+        // isMandatoryGpcVisitor() only makes a network call (to
+        // /api/gpc-region) because GPC is active here — see
+        // analyticsConsent.js. If this state's law doesn't actually mandate
+        // honoring GPC, correct the synchronous default above: switch this
+        // visitor to the same default-on state as anyone else. (This also
+        // marks their SDK consent as explicit, so the opt-out notice won't
+        // reappear for them afterward — the same as if they'd clicked "Got
+        // it" themselves. Not a compliance concern: their analytics state
+        // now simply matches a normal default-on visitor's.)
+        isMandatoryGpcVisitor().then((mandatory) => {
+          if (!mandatory) ph.opt_in_capturing();
+        });
+      } else {
+        applyStoredConsent(ph);
+      }
       tagFounderAnalyticsIfNeeded(ph);
       tagInternalUserIfNeeded(ph);
     },
