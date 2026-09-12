@@ -5,9 +5,23 @@ import {
   tagFounderAnalyticsIfNeeded,
 } from './founderAnalytics';
 
+function createMemoryStorage() {
+  const data = new Map();
+  return {
+    getItem: (key) => (data.has(String(key)) ? data.get(String(key)) : null),
+    setItem: (key, value) => { data.set(String(key), String(value)); },
+    removeItem: (key) => { data.delete(String(key)); },
+    clear: () => { data.clear(); },
+    key: (index) => Array.from(data.keys())[index] ?? null,
+    get length() { return data.size; },
+  };
+}
+
 describe('founder analytics exclusion', () => {
   beforeEach(() => {
-    localStorage.clear();
+    const localStorage = createMemoryStorage();
+    vi.stubGlobal('window', { localStorage });
+    vi.stubGlobal('localStorage', localStorage);
   });
 
   it('recognizes only the three founder emails', () => {
