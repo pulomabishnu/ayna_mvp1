@@ -1,5 +1,6 @@
 // ============================================================
-// Ayna Reviews — User ratings and reviews (localStorage)
+// Ayna Reviews — User ratings and reviews
+// Supabase is durable; browser fallback is active-tab only.
 // ============================================================
 
 const STORAGE_KEY = 'ayna_reviews';
@@ -7,10 +8,22 @@ const STORAGE_KEY = 'ayna_reviews';
 function loadFromStorage() {
   try {
     if (typeof window === 'undefined') return {};
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
+    const sessionRaw = window.sessionStorage.getItem(STORAGE_KEY);
+    if (sessionRaw) {
+      const parsed = JSON.parse(sessionRaw);
       if (parsed && typeof parsed === 'object') return parsed;
+    }
+
+    // One-time migration from older builds that persisted free-text reviews in
+    // localStorage. Preserve the data for this tab, then remove the persistent copy.
+    const legacyRaw = window.localStorage.getItem(STORAGE_KEY);
+    if (legacyRaw) {
+      const parsed = JSON.parse(legacyRaw);
+      if (parsed && typeof parsed === 'object') {
+        try { window.sessionStorage.setItem(STORAGE_KEY, legacyRaw); } catch (_) {}
+        try { window.localStorage.removeItem(STORAGE_KEY); } catch (_) {}
+        return parsed;
+      }
     }
   } catch (_) {}
   return {};
@@ -19,13 +32,14 @@ function loadFromStorage() {
 function saveToStorage(data) {
   try {
     if (typeof window !== 'undefined') {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      try { window.localStorage.removeItem(STORAGE_KEY); } catch (_) {}
     }
   } catch (_) {}
 }
 
 /**
- * Load all Ayna reviews from storage.
+ * Load all Ayna reviews from the active-tab cache.
  * @returns {{ [productId: string]: { ratings: number[], reviews: { text: string, date?: string }[] } }}
  */
 export function loadAynaReviews() {
@@ -33,14 +47,11 @@ export function loadAynaReviews() {
 }
 
 /**
- * Replace local storage with the server's copy after a Supabase load.
+ * Replace the session cache with the server's copy after a Supabase load.
  *
- * addRating/addReview mutate whatever is in localStorage and then the caller
- * upserts that whole object as the user's row. Without this hydration step, a
- * second device starts from an EMPTY local blob: the UI shows the 8 reviews
- * loaded from Supabase, but rating a 9th product writes a single-element array
- * over the server row and destroys the other 8 — including the free-text
- * review bodies.
+ * addRating/addReview mutate the cached object and the caller upserts the whole
+ * object as the user's row. Hydrating first prevents a second device from
+ * overwriting older reviews with only the newest rating/review.
  */
 export function hydrateAynaReviews(serverReviews) {
   if (!serverReviews || typeof serverReviews !== 'object') return loadFromStorage();
