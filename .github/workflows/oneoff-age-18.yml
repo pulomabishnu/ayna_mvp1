@@ -1,0 +1,62 @@
+name: One-off age 18 quiz fix
+
+on:
+  push:
+    branches: [quiz-age-18]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: quiz-age-18
+      - name: Set Build Your Ecosystem age floor to 18
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('src/components/HealthIntakeForm.jsx')
+          s = p.read_text()
+
+          old_restore = "      const restored = { ...EMPTY, ...(parsed?.intake || {}) };"
+          new_restore = """      const restored = { ...EMPTY, ...(parsed?.intake || {}) };
+      // ayna accounts are 18+. Clamp any stale pre-18 draft left in this tab
+      // so an old session cannot reintroduce an under-18 age into the intake.
+      if (restored.age) {
+        const restoredAge = Number(restored.age);
+        restored.age = Number.isFinite(restoredAge)
+          ? String(Math.min(90, Math.max(18, restoredAge)))
+          : '';
+      }"""
+          if s.count(old_restore) != 1:
+              raise SystemExit(f'expected one restore marker, found {s.count(old_restore)}')
+          s = s.replace(old_restore, new_restore)
+
+          old_age = """    if (step.type === 'age') {
+      const numeric = intake.age ? Number(intake.age) : 28;
+      return <div className=\"ayna-white-card ayna-age-card\"><div className=\"ayna-age-top\"><button type=\"button\" className=\"ayna-age-btn\" onClick={() => set('age', String(Math.max(13, (intake.age ? Number(intake.age) : 28) - 1)))}>−</button><div className={`ayna-age-value${intake.age ? '' : ' empty'}`}>{intake.age || 'Select'}</div><button type=\"button\" className=\"ayna-age-btn\" onClick={() => set('age', String(Math.min(90, (intake.age ? Number(intake.age) : 27) + 1)))}>+</button></div><input className={`ayna-age-range${intake.age ? '' : ' unset'}`} type=\"range\" min=\"13\" max=\"90\" value={numeric} onChange={(e) => set('age', e.target.value)} /><div className=\"ayna-range-labels\"><span>13</span><span>90</span></div></div>;
+    }"""
+          new_age = """    if (step.type === 'age') {
+      const numeric = intake.age ? Math.min(90, Math.max(18, Number(intake.age))) : 18;
+      return <div className=\"ayna-white-card ayna-age-card\"><div className=\"ayna-age-top\"><button type=\"button\" className=\"ayna-age-btn\" onClick={() => set('age', String(Math.max(18, (intake.age ? Number(intake.age) : 19) - 1)))}>−</button><div className={`ayna-age-value${intake.age ? '' : ' empty'}`}>{intake.age || 'Select'}</div><button type=\"button\" className=\"ayna-age-btn\" onClick={() => set('age', String(Math.min(90, (intake.age ? Number(intake.age) : 17) + 1)))}>+</button></div><input className={`ayna-age-range${intake.age ? '' : ' unset'}`} type=\"range\" min=\"18\" max=\"90\" value={numeric} onChange={(e) => set('age', e.target.value)} /><div className=\"ayna-range-labels\"><span>18</span><span>90</span></div></div>;
+    }"""
+          if s.count(old_age) != 1:
+              raise SystemExit(f'expected one age block, found {s.count(old_age)}')
+          s = s.replace(old_age, new_age)
+          p.write_text(s)
+          PY
+
+          git diff --check
+          grep -F 'min="18" max="90"' src/components/HealthIntakeForm.jsx
+          if grep -F 'Math.max(13' src/components/HealthIntakeForm.jsx; then
+            echo 'old under-18 decrement floor still present' >&2
+            exit 1
+          fi
+          git config user.name 'ayna-ci'
+          git config user.email 'noreply@aynahealth.co'
+          git add src/components/HealthIntakeForm.jsx
+          git commit -m 'Set ecosystem quiz minimum age to 18'
+          git push origin HEAD:quiz-age-18
