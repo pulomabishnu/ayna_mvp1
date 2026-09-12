@@ -4,34 +4,34 @@ const SECTIONS = [
     {
         eyebrow: 'How a recommendation actually gets made',
         paragraphs: [
-            'We earn a commission if you buy something from a brand we are partnered with, BUT our recommendation for you is never for sale. Our recommendation engine that decides what products to recommend you has no idea which brand pays us or not. Clinical logic, safety checks, and personalization are the only things that influence your recommendation.',
-            'Only after you get your recommendations, do we check internally if we have a brand partnership with any of the products we recommended. If we do, and you do decide to buy something, we make a commission. If we don’t have a partnership with any of the brands we recommended you, then we don’t make commission. That’s fine with us, as long as it means you can make a product decision with confidence.',
-            'This commission never comes out of your pocket. The price you pay is the same whether or not we’re partnered with the brand. And when brands pay us different commission rates, that difference has no bearing on your recommendation. A product with a lower payout to us can still outrank one with a higher payout, and we regularly recommend brands we have no financial relationship with at all, as long as they’re the best fit for you.',
+            'ayna can earn money in two ways when you buy a product: through a direct brand partnership or through a retailer affiliate program such as Amazon Associates. Neither relationship is used as a signal in your personalized recommendation score.',
+            'Personalized recommendations are ranked from the product information and the health profile or preferences you choose to share. Commercial status, commission rate, and whether we have a direct relationship with the brand do not increase a product’s personalized match score or move it higher in your personalized recommendation order.',
+            'If you choose to buy through an affiliate link, ayna may earn a commission at no additional cost to you. As an Amazon Associate, ayna earns from qualifying purchases.',
         ],
     },
     {
         eyebrow: 'What partnership means (and doesn’t mean)',
         paragraphs: [
-            'Our brand partners are displayed higher on the discovery page (but not the recommendation engine). Some of the brands we recommend, we also partner with more directly, on things like discount codes, co-marketing, or early product access. Those partnerships fund the work we do and get you better deals.',
-            'They do not buy placement in your specific recommendation. They will be surfaced higher, however, on the discovery page, which is a page where you can freely browse anything, not just your recommendations. If a brand isn’t right for you, it doesn’t matter what deal we have with them. They will not be recommended to you. We label these placements clearly, so you’ll always see a “Sponsored” or “Partner” tag on any brand shown higher for this reason on the discovery page.',
+            'Confirmed brand partners can be displayed higher in general Browse, which is the page where you freely explore the catalog. That is separate from personalized recommendation ranking.',
+            'In Browse, the “ayna Favorite” label identifies products from confirmed partner brands. On a product page, the “ayna Partner” disclosure explains the commercial relationship. A product can still use an affiliate retailer link without being a brand partner; affiliate-only products do not receive partner Browse promotion.',
         ],
     },
     {
-        eyebrow: 'How we choose our partners, and when we walk away',
+        eyebrow: 'How we choose partners',
         paragraphs: [
-            'We only partner with brands whose products pass our clinical and safety review, the same bar we hold every product to, partner or not. If a brand’s products ever stop meeting our quality or safety standards, we end the partnership, no matter how long we’ve worked together or what it costs us.',
+            'We review potential partners for fit with ayna’s audience, product quality, safety, transparency, and brand practices. A partnership does not turn a marketing claim into a medical fact, and we may change or end a partnership if new information changes our assessment.',
         ],
     },
     {
-        eyebrow: 'No exclusivity, ever',
+        eyebrow: 'No exclusivity in personalized recommendations',
         paragraphs: [
-            'We don’t do exclusivity. We will never sign an agreement that locks a category to one brand. All brands compete for every recommendation for you based on the quality of their product, not on who’s paying us the most. This is also just good business for us: it’s what keeps our advice worth trusting.',
+            'A direct partner does not get an exclusive right to a recommendation category. Partner and non-partner products can both appear in personalized results when they are relevant to the user.',
         ],
     },
     {
         eyebrow: 'Something feel off? Tell us.',
         paragraphs: [
-            'If you’re ever concerned about a specific product or a recommendation you received, you can report it directly to us at puloma@aynahealth.co. We review every report.',
+            'If you are concerned about a product, affiliate disclosure, partner placement, or recommendation you received, contact us at puloma@aynahealth.co and we will review it.',
         ],
     },
 ];
@@ -59,7 +59,7 @@ export default function HowWeMakeMoney({ onBack }) {
                     How We Make Money
                 </h1>
                 <p style={{ fontSize: '1.15rem', color: 'var(--color-text-main)', maxWidth: '600px', margin: '0 auto', lineHeight: 1.65, fontWeight: 500 }}>
-                    We think you deserve to know how a health platform gets paid, especially one that's telling you what to do about your own body. So here it is, plainly.
+                    Health-product recommendations and commercial relationships should be easy to tell apart. Here is how ayna handles both.
                 </p>
             </div>
 
@@ -72,12 +72,12 @@ export default function HowWeMakeMoney({ onBack }) {
                         }}>
                             {section.eyebrow}
                         </h2>
-                        {section.paragraphs.map((p, i) => (
-                            <p key={i} style={{
+                        {section.paragraphs.map((paragraph, index) => (
+                            <p key={paragraph} style={{
                                 fontSize: '1rem', color: 'var(--color-text-main)', lineHeight: 1.75,
-                                marginBottom: i === section.paragraphs.length - 1 ? 0 : '1rem',
+                                marginBottom: index === section.paragraphs.length - 1 ? 0 : '1rem',
                             }}>
-                                {p}
+                                {paragraph}
                             </p>
                         ))}
                     </div>
@@ -95,10 +95,7 @@ export default function HowWeMakeMoney({ onBack }) {
                     The bottom line
                 </h2>
                 <p style={{ fontSize: '1.05rem', color: 'var(--color-surface-contrast)', lineHeight: 1.75, fontWeight: 500, margin: 0 }}>
-                    We make money when you find the right product. We do not make money by pointing you toward the wrong one. If those two things were ever in conflict, that would be the day to stop trusting us, and we intend to never let that day come.
-                </p>
-                <p style={{ fontSize: '1.05rem', color: 'var(--color-surface-contrast)', lineHeight: 1.75, fontWeight: 500, margin: '0.75rem 0 0' }}>
-                    Brand partnerships help support ayna, but they never decide what we recommend to you.
+                    Partnerships and affiliate links help support ayna. They can affect visibility in general Browse when clearly labeled, but they do not decide your personalized match score or recommendation order.
                 </p>
             </div>
         </section>
