@@ -16,8 +16,12 @@ import { getStoredConsent, grantConsent, denyConsent } from '../utils/analyticsC
  * the new decision applied to this visit rather than the next one.
  */
 export default function PrivacyPreferencesLink({ style }) {
-  const current = getStoredConsent()
-  if (typeof window === 'undefined' || !window.posthog || !current) return null
+  if (typeof window === 'undefined' || !window.posthog) return null
+
+  const stored = getStoredConsent()
+  let sdkStatus
+  try { sdkStatus = window.posthog.get_explicit_consent_status?.() } catch { sdkStatus = undefined }
+  const current = stored || (sdkStatus === 'denied' ? 'denied' : 'granted')
 
   const toggle = () => {
     if (current === 'granted') denyConsent(window.posthog)
@@ -25,13 +29,11 @@ export default function PrivacyPreferencesLink({ style }) {
     window.location.reload()
   }
 
-  // Owns its own leading separator so the footer's fine-print line doesn't
-  // end in a dangling " · " on the renders where this returns null.
   return (
     <>
       {' · '}
       <button type="button" className="privacy-preferences-link" style={style} onClick={toggle}>
-        {current === 'granted' ? 'Switch to necessary only' : 'Turn analytics back on'}
+        {current === 'granted' ? 'Turn usage analytics off' : 'Turn usage analytics on'}
       </button>
     </>
   )

@@ -10,7 +10,7 @@
 import './test-setup-localstorage.js';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
-  getStoredConsent, hasRecordedChoice, applyStoredConsent,
+  getStoredConsent, hasRecordedChoice, applyStoredConsent, acknowledgeAnalytics,
   grantConsent, denyConsent, CONSENT_STORAGE_KEY, CONSENT_TTL_MS,
 } from './analyticsConsent';
 
@@ -53,10 +53,10 @@ describe('analyticsConsent', () => {
     expect(hasRecordedChoice(ph)).toBe(false);
   });
 
-  it('applyStoredConsent opts out when nothing is stored anywhere', () => {
+  it('applyStoredConsent opts in when nothing is stored anywhere', () => {
     applyStoredConsent(ph);
-    expect(ph.opt_out_capturing).toHaveBeenCalled();
-    expect(ph.opt_in_capturing).not.toHaveBeenCalled();
+    expect(ph.opt_in_capturing).toHaveBeenCalled();
+    expect(ph.opt_out_capturing).not.toHaveBeenCalled();
   });
 
   it('applyStoredConsent opts in for a stored grant', () => {
@@ -89,6 +89,13 @@ describe('analyticsConsent', () => {
     expect(ph.opt_out_capturing).not.toHaveBeenCalled();
   });
 
+  it('acknowledgeAnalytics persists the default-on choice without duplicating a pageview', () => {
+    acknowledgeAnalytics(ph);
+    expect(ph.opt_in_capturing).toHaveBeenCalled();
+    expect(ph.capture).not.toHaveBeenCalled();
+    expect(JSON.parse(localStorage.getItem(CONSENT_STORAGE_KEY)).decision).toBe('granted');
+  });
+
   it('grantConsent opts in, fires a pageview, and persists with a timestamp', () => {
     grantConsent(ph);
     expect(ph.opt_in_capturing).toHaveBeenCalled();
@@ -111,11 +118,13 @@ describe('analyticsConsent', () => {
     expect(hasRecordedChoice(ph)).toBe(true);
   });
 
-  it('a decision older than the TTL is treated as unset', () => {
+  it('an old grant expires to the default-on state, but an opt-out never silently expires', () => {
     const stale = new Date(Date.now() - CONSENT_TTL_MS - 1000).toISOString();
     localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify({ decision: 'granted', timestamp: stale }));
     expect(getStoredConsent()).toBeUndefined();
-    expect(hasRecordedChoice()).toBe(false);
+    localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify({ decision: 'denied', timestamp: stale }));
+    expect(getStoredConsent()).toBe('denied');
+    expect(hasRecordedChoice()).toBe(true);
   });
 
   it('migrates the legacy plain-string format without losing the decision', () => {
