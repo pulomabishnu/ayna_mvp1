@@ -6,20 +6,11 @@ import {
   productSearchText,
   getProfileMatchLabelsForProduct,
   getRecommendationExplanation,
+  getProfileMatchPercentForProduct,
 } from '../data/products';
+import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 
-// A product added to the ecosystem is stored as a frozen JSON snapshot
-// (user_ecosystems.product_data, see src/utils/ecosystemStore.js) taken at
-// the moment it was added — not re-fetched from the catalog on load. Its own
-// `category` field can't always be trusted even once the area taxonomy
-// itself is complete:
-//   1. An older snapshot can predate a category being assigned at all, or
-//      predate a later reclassification.
-//   2. A product that was never in the catalog at all — an AI-generated
-//      recommendation from api/llm-recommendations.js — has a freeform
-//      category rather than one constrained to this site's taxonomy.
 const CURRENT_CATEGORY_BY_ID = new Map(ALL_PRODUCTS.map((p) => [p.id, p.category]));
-
 const WEAK_FALLBACK_KEYWORDS = new Set(['cycle']);
 
 function scoreGroupMatch(product, group) {
@@ -28,33 +19,36 @@ function scoreGroupMatch(product, group) {
   if (Array.isArray(group.healthFunctions) && Array.isArray(product?.healthFunctions) &&
       product.healthFunctions.some((hf) => group.healthFunctions.includes(hf))) score += 50;
   const text = productSearchText(product);
-  const matched = (group.keywords || []).filter((k) => text.includes(k));
-  score += matched.reduce((sum, k) => sum + (WEAK_FALLBACK_KEYWORDS.has(k) ? 1 : k.length), 0);
+  const matched = (group.keywords || []).filter((keyword) => text.includes(keyword));
+  score += matched.reduce((sum, keyword) => sum + (WEAK_FALLBACK_KEYWORDS.has(keyword) ? 1 : keyword.length), 0);
   return score;
 }
 
 function resolveArea(product, areas) {
   const category = CURRENT_CATEGORY_BY_ID.get(product?.id) || product?.category;
   if (category) {
-    const area = areas.find((a) => a.categories.includes(category));
+    const area = areas.find((candidate) => candidate.categories.includes(category));
     if (area) return area;
   }
   const best = MACRO_GROUPS
-    .filter((g) => g.id !== 'all' && Array.isArray(g.keywords))
-    .map((g) => ({ id: g.id, score: scoreGroupMatch(product, g) }))
-    .reduce((max, cur) => (cur.score > (max?.score || 0) ? cur : max), null);
-  return best ? areas.find((a) => a.key === best.id) : null;
+    .filter((group) => group.id !== 'all' && Array.isArray(group.keywords))
+    .map((group) => ({ id: group.id, score: scoreGroupMatch(product, group) }))
+    .reduce((max, current) => (current.score > (max?.score || 0) ? current : max), null);
+  return best ? areas.find((area) => area.key === best.id) : null;
 }
 
-/** Board 1d's canvas. Positions are computed against it, then scaled to fit. */
 const CANVAS = 560;
 const CANVAS_H = 520;
 const CENTRE = { x: 280, y: 260 };
 const ORBIT = 178;
-const BUBBLE = 128;
+const BUBBLE = 112;
 
 const AREAS = [
-  ...MACRO_GROUPS.filter((g) => g.id !== 'all').map((g) => ({ key: g.id, label: g.label, categories: g.categories })),
+  ...MACRO_GROUPS.filter((group) => group.id !== 'all').map((group) => ({
+    key: group.id,
+    label: group.label,
+    categories: group.categories,
+  })),
   { key: 'care', label: 'Clinicians', categories: ['telehealth'] },
   { key: 'supplements', label: 'Supplements', categories: ['supplement'] },
 ];
@@ -90,6 +84,19 @@ function snapshotReason(product) {
   return candidates.find((value) => typeof value === 'string' && value.trim())?.trim() || '';
 }
 
+function ProductThumb({ product }) {
+  return (
+    <div className="eco-bubbles__product-image">
+      <ProductTileImage
+        product={product}
+        alt={product?.name || ''}
+        imgStyle={{ width: '100%', height: '100%', objectFit: 'contain' }}
+        letterNode={<ProductImageFallback compact />}
+      />
+    </div>
+  );
+}
+
 export default function EcosystemBubbles({
   myProducts = {},
   quizResults = null,
@@ -100,157 +107,148 @@ export default function EcosystemBubbles({
   onToggleProduct,
 }) {
   const [selectedKey, setSelectedKey] = useState(null);
-  const [whyOpenProductId, setWhyOpenProductId] = useState(null);
+  const [productIndex, setProductIndex] = useState(0);
+  const [whyOpen, setWhyOpen] = useState(false);
 
   const { seats, covered } = useMemo(() => {
     const products = Object.values(myProducts || {});
     const byArea = new Map();
-    products.forEach((p) => {
-      const area = resolveArea(p, AREAS);
+
+    products.forEach((product) => {
+      const area = resolveArea(product, AREAS);
       const key = area ? area.key : 'other';
       if (!byArea.has(key)) byArea.set(key, []);
-      byArea.get(key).push(p);
+      byArea.get(key).push(product);
     });
 
     const filled = AREAS
-      .filter((a) => byArea.has(a.key))
-      .map((a) => ({ ...a, products: byArea.get(a.key), gap: false }));
+      .filter((area) => byArea.has(area.key))
+      .map((area) => ({ ...area, products: byArea.get(area.key), gap: false }));
 
     if (byArea.has('other')) {
-      filled.push({ key: 'other', label: 'Other', products: byArea.get('other'), gap: false });
+      filled.push({ key: 'other', label: 'Other', products: byArea.get('other'), gap: false, categories: [] });
     }
 
     const filledCapped = filled.slice(0, MAX_SATELLITES);
-    const addMoreSeat = { key: '__add-more__', label: 'Add More', products: [], gap: true };
-    const seats = filledCapped.length < MAX_SATELLITES ? [...filledCapped, addMoreSeat] : filledCapped;
+    const addMoreSeat = { key: '__add-more__', label: 'Add more', products: [], gap: true, categories: [] };
+    const withAdd = filledCapped.length < MAX_SATELLITES ? [...filledCapped, addMoreSeat] : filledCapped;
 
-    return { seats, covered: filled.length };
+    return { seats: withAdd, covered: filled.length };
   }, [myProducts]);
 
-  const selected = seats.find((s) => s.key === selectedKey) || seats.find((s) => !s.gap) || null;
+  const selected = seats.find((seat) => seat.key === selectedKey) || seats.find((seat) => !seat.gap) || null;
+  const selectedProducts = selected?.products || [];
+  const safeIndex = selectedProducts.length ? Math.min(productIndex, selectedProducts.length - 1) : 0;
+  const product = selectedProducts[safeIndex] || null;
 
-  const name = displayNameFromUser(user, healthProfile, quizResults) || 'You';
-  const centreTags = useMemo(() => {
-    const tags = [];
-    if (quizResults?.lifeStage) tags.push(String(quizResults.lifeStage));
-    if (covered > 0) tags.push(`${covered} area${covered === 1 ? '' : 's'} covered`);
-    return tags.join(' · ').toUpperCase();
-  }, [quizResults, covered]);
+  const name = displayNameFromUser(user, healthProfile, quizResults) || 'you';
+  const score = product ? getProfileMatchPercentForProduct(product, quizResults, healthProfile) : null;
+  const labels = product ? getProfileMatchLabelsForProduct(product, quizResults, healthProfile) : [];
+  const explanation = product ? getRecommendationExplanation(product, quizResults, healthProfile) : null;
+  const storedReason = product ? snapshotReason(product) : '';
+  const whyText = explanation?.whyItWorks || storedReason ||
+    (labels.length ? `Matched on ${labels.slice(0, 3).join(', ')}.` : 'This item is saved in your ecosystem.');
+
+  const chooseSeat = (seat) => {
+    setWhyOpen(false);
+    setProductIndex(0);
+    if (seat.gap) onExploreArea?.(seat);
+    else setSelectedKey(seat.key);
+  };
+
+  const prev = () => {
+    if (!selectedProducts.length) return;
+    setWhyOpen(false);
+    setProductIndex((current) => (current - 1 + selectedProducts.length) % selectedProducts.length);
+  };
+
+  const next = () => {
+    if (!selectedProducts.length) return;
+    setWhyOpen(false);
+    setProductIndex((current) => (current + 1) % selectedProducts.length);
+  };
 
   return (
-    <section className="eco-bubbles mockup-page">
+    <section className="eco-bubbles">
       <div className="eco-bubbles__canvas-wrap">
-      <div className="eco-bubbles__canvas" style={{ width: CANVAS, height: CANVAS_H }}>
-        <div className="eco-bubbles__ring" />
+        <div className="eco-bubbles__canvas" style={{ width: CANVAS, height: CANVAS_H }}>
+          <div className="eco-bubbles__ring" />
 
-        <div className="eco-bubbles__centre">
-          <div className="eco-bubbles__centre-name">{name}</div>
-          {centreTags && <div className="eco-bubbles__centre-tags">{centreTags}</div>}
+          <div className="eco-bubbles__centre">
+            <div className="eco-bubbles__centre-name">{name.toLowerCase()}</div>
+            <div className="eco-bubbles__centre-tags">{covered ? `${covered} care areas` : 'your universe'}</div>
+          </div>
+
+          {seats.map((seat, index) => {
+            const pos = seatPosition(index, seats.length);
+            const isSelected = selected && seat.key === selected.key;
+            return (
+              <button
+                key={seat.key}
+                type="button"
+                className={`eco-bubble${seat.gap ? ' eco-bubble--gap' : ''}${isSelected ? ' eco-bubble--selected' : ''}`}
+                style={{ left: pos.left, top: pos.top, width: BUBBLE, height: BUBBLE }}
+                onClick={() => chooseSeat(seat)}
+                aria-pressed={!seat.gap && isSelected}
+              >
+                <span className="eco-bubble__label">{seat.gap ? '+' : seat.label}</span>
+                <span className="eco-bubble__count">{seat.gap ? 'add more' : `${seat.products.length} ${seat.products.length === 1 ? 'pick' : 'picks'}`}</span>
+              </button>
+            );
+          })}
         </div>
-
-        {seats.map((seat, i) => {
-          const pos = seatPosition(i, seats.length);
-          const isSelected = selected && seat.key === selected.key;
-          return (
-            <button
-              key={seat.key}
-              type="button"
-              className={`eco-bubble${seat.gap ? ' eco-bubble--gap' : ''}${isSelected ? ' eco-bubble--selected' : ''}`}
-              style={{ left: pos.left, top: pos.top, width: BUBBLE, height: BUBBLE }}
-              onClick={() => {
-                setWhyOpenProductId(null);
-                if (seat.gap) onExploreArea?.(seat);
-                else setSelectedKey(seat.key);
-              }}
-              aria-pressed={!seat.gap && isSelected}
-            >
-              <span className="eco-bubble__label">{seat.gap ? '' : seat.label}</span>
-              <span className="eco-bubble__count">
-                {seat.gap ? seat.label : `${seat.products.length} pick${seat.products.length === 1 ? '' : 's'}`}
-              </span>
-            </button>
-          );
-        })}
-      </div>
       </div>
 
       <div className="eco-bubbles__side">
-        <h2 className="eco-bubbles__title">This is your ecosystem.</h2>
-        <p className="eco-bubbles__lede">
-          Each circle is an area of care. Tap one to see what&apos;s in it and why. The dashed
-          circle adds more.
-        </p>
+        <div className="dainty-eyebrow dainty-eyebrow--warm">my ecosystem</div>
+        <h2 className="eco-bubbles__title">hi, {name.toLowerCase()}. this is your health universe.</h2>
+        <p className="eco-bubbles__lede">Each bubble is an area of care. Tap one to see what is in it, why it was matched, and your personalized product score.</p>
 
-        {selected && !selected.gap && selected.products.length > 0 ? (
-          <div className="eco-bubbles__card">
-            <div className="eco-bubbles__card-label">{selected.label} · Selected</div>
-            {selected.products.map((product) => {
-              const labels = getProfileMatchLabelsForProduct(product, quizResults, healthProfile);
-              const line = labels.length ? `Matched on ${labels.slice(0, 3).join(', ')}.` : '';
-              const explanation = getRecommendationExplanation(product, quizResults, healthProfile);
-              const storedReason = snapshotReason(product);
-              const whyText = explanation?.whyItWorks ||
-                (storedReason ? `Why it could work: ${storedReason}` : '') ||
-                line ||
-                'This product is in your ecosystem, but a specific personalized match reason is not available for this saved item.';
-              const isWhyOpen = whyOpenProductId === product.id;
-
-              return (
-                <div key={product.id} className="eco-bubbles__card-product">
-                  <button
-                    type="button"
-                    className="eco-bubbles__card-name"
-                    onClick={() => onOpenProduct?.(product)}
-                  >
-                    {product.name}
-                  </button>
-                  {line && <div className="eco-bubbles__card-body">{line}</div>}
-                  <div className="eco-bubbles__card-actions">
-                    <button type="button" onClick={() => onExploreArea?.(selected)}>Swap</button>
-                    <button
-                      type="button"
-                      onClick={() => setWhyOpenProductId(isWhyOpen ? null : product.id)}
-                      aria-expanded={isWhyOpen}
-                    >
-                      {isWhyOpen ? 'Hide why' : 'Why this?'}
-                    </button>
-                    {onToggleProduct && (
-                      <button
-                        type="button"
-                        className="eco-bubbles__card-remove"
-                        onClick={() => onToggleProduct(product)}
-                      >
-                        Remove
-                      </button>
-                    )}
-                  </div>
-                  {isWhyOpen && (
-                    <div
-                      className="eco-bubbles__card-body"
-                      style={{ marginTop: '0.55rem', paddingTop: '0.55rem', borderTop: '1px solid var(--color-border)' }}
-                    >
-                      {whyText}
-                      {explanation?.considerations && (
-                        <div style={{ marginTop: '0.35rem', color: 'var(--color-text-muted)' }}>
-                          {explanation.considerations}
-                        </div>
-                      )}
-                      <div style={{ marginTop: '0.35rem', color: 'var(--color-text-muted)', fontSize: '0.78rem' }}>
-                        Match explanations are relevance signals, not medical advice or a guarantee that a product will work for you.
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="eco-bubbles__card">
-            <div className="eco-bubbles__card-label">Nothing here yet</div>
-            <div className="eco-bubbles__card-body">
-              Add a product to an area and it will show up here with the reason it was matched.
+        {product ? (
+          <article className="eco-bubbles__card">
+            <div className="eco-bubbles__card-topline">
+              <span>{selected?.label}</span>
+              <span>{safeIndex + 1} of {selectedProducts.length}</span>
             </div>
-          </div>
+
+            <div className="eco-bubbles__selected-product">
+              <ProductThumb product={product} />
+              <div className="eco-bubbles__selected-copy">
+                <button type="button" className="eco-bubbles__card-name" onClick={() => onOpenProduct?.(product)}>{product.name}</button>
+                <div className="eco-bubbles__card-meta">{CATEGORY_LABELS[product.category] || product.category || 'Ayna pick'}</div>
+                <div className="eco-bubbles__score">your ayna score · {Number.isFinite(score) ? `${score}/100` : 'personalized match'}</div>
+                {labels.length > 0 && <div className="eco-bubbles__card-body">Matched on {labels.slice(0, 3).join(', ')}.</div>}
+              </div>
+            </div>
+
+            {selectedProducts.length > 1 && (
+              <div className="eco-bubbles__carousel">
+                <button type="button" onClick={prev} aria-label="Previous product">←</button>
+                <span>{safeIndex + 1} of {selectedProducts.length}</span>
+                <button type="button" onClick={next} aria-label="Next product">→</button>
+              </div>
+            )}
+
+            <div className="eco-bubbles__card-actions">
+              <button type="button" onClick={() => onExploreArea?.(selected)}>swap</button>
+              <button type="button" onClick={() => setWhyOpen((value) => !value)}>{whyOpen ? 'hide why' : 'why this?'}</button>
+              {onToggleProduct && <button type="button" onClick={() => onToggleProduct(product)}>remove</button>}
+            </div>
+
+            {whyOpen && (
+              <div className="eco-bubbles__why">
+                <p>{whyText}</p>
+                {explanation?.considerations && <p>{explanation.considerations}</p>}
+                <small>Match explanations are relevance signals, not medical advice or a guarantee that a product will work for you.</small>
+              </div>
+            )}
+          </article>
+        ) : (
+          <article className="eco-bubbles__card eco-bubbles__card--empty">
+            <div className="eco-bubbles__card-topline"><span>your universe</span></div>
+            <p className="eco-bubbles__card-body">Add a product and it will appear here inside the care area it belongs to.</p>
+            <div className="eco-bubbles__card-actions"><button type="button" onClick={() => onExploreArea?.({ key: '__add-more__', gap: true, categories: [] })}>add a product</button></div>
+          </article>
         )}
       </div>
     </section>
