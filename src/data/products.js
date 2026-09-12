@@ -1571,6 +1571,7 @@ const DIAGNOSIS_SPECIFIC_SIGNALS = [
     'pcos', 'pcos-management', 'endometriosis', 'fibroids', 'adenomyosis',
     'pmdd', 'thyroid', 'diabetes', 'insulin-resistance', 'hypertension',
     'migraine', 'anemia', 'ibs', 'autoimmune', 'anxiety', 'depression',
+    'bladder-leaks', 'bladder-leak-protection', 'incontinence',
 ];
 
 const LIFE_STAGE_SPECIFIC_SIGNALS = [
@@ -2093,18 +2094,27 @@ function evaluatePreferenceMatch(product, intake) {
         };
     }
 
-    const fsaAnswer = String(intake?.fsaHsaAnswer || intake?.fsaHsa || '');
-    if (fsaAnswer && !['No', 'Not sure'].includes(fsaAnswer)) {
-        if (product?.fsaHsaEligible === true) {
-            parts.fsaHsa = { score: 1 };
+    const fsaAnswer = String(intake?.fsaHsaAnswer || intake?.fsaHsa || '').trim().toLowerCase();
+    const combinedEligible = product?.fsaHsaEligible === true || product?.fsa_hsa_eligible === true;
+    const fsaEligible = combinedEligible || product?.fsaEligible === true || product?.fsa_eligible === true;
+    const hsaEligible = combinedEligible || product?.hsaEligible === true || product?.hsa_eligible === true;
+    const hasEligibilityData = [
+        product?.fsaHsaEligible, product?.fsa_hsa_eligible,
+        product?.fsaEligible, product?.fsa_eligible,
+        product?.hsaEligible, product?.hsa_eligible,
+    ].some((value) => typeof value === 'boolean');
+    const wantsFsa = ['fsa', 'both', 'yes'].includes(fsaAnswer);
+    const wantsHsa = ['hsa', 'both', 'yes'].includes(fsaAnswer);
+    if ((wantsFsa || wantsHsa) && hasEligibilityData) {
+        const eligible = (wantsFsa && fsaEligible) || (wantsHsa && hsaEligible);
+        parts.fsaHsa = { score: eligible ? 1 : 0 };
+        if (eligible) {
             reasons.push({
                 component: 'fsaHsa',
                 weight: PREFERENCE_WEIGHTS.fsaHsa,
                 score: 1,
-                text: 'FSA/HSA eligible',
+                text: wantsFsa && wantsHsa ? 'FSA/HSA eligible' : `${wantsFsa ? 'FSA' : 'HSA'} eligible`,
             });
-        } else if (product?.fsaHsaEligible === false) {
-            parts.fsaHsa = { score: 0 };
         }
     }
 

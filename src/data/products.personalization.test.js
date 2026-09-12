@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ALL_PRODUCTS, getRecommendations, getPersonalizedProductIds, getProductRelevanceScore } from './products';
+import { ALL_PRODUCTS, filterPrescriptionCareGate, getRecommendations, getPersonalizedProductIds, getProductRelevanceScore } from './products';
 
 describe('getPersonalizedProductIds', () => {
     it('restricts to real tag matches, unlike getRecommendations()\'s full fallback list', () => {
@@ -8,10 +8,10 @@ describe('getPersonalizedProductIds', () => {
         const full = getRecommendations(quiz, null);
         const personalized = getPersonalizedProductIds(quiz, null);
 
-        // getRecommendations() intentionally pads with every zero-score product as a
-        // fallback tail (ecosystem-building always wants candidates) — so it stays
-        // the full catalog. A membership filter built from it would be a near no-op.
-        expect(full.length).toBe(ALL_PRODUCTS.length);
+        // getRecommendations() intentionally keeps the zero-score fallback tail,
+        // but prescription-only products are removed by the safety care-path gate.
+        // Within that safe candidate set, membership would still be a near no-op.
+        expect(full.length).toBe(filterPrescriptionCareGate(ALL_PRODUCTS).length);
 
         // getPersonalizedProductIds() must NOT carry that fallback tail — it's the
         // hard, meaningfully-restricted set a "Personalized" toggle should filter to.
@@ -82,7 +82,7 @@ describe('personalized relevance scoring', () => {
         expect(score).toBe(0);
     });
 
-    it('can give a modest contextual score from age and life stage without pretending it is a direct need', () => {
+    it('does not turn an age band alone into a personalized product recommendation', () => {
         expect(oura).toBeTruthy();
 
         const score = getProductRelevanceScore(
@@ -91,9 +91,7 @@ describe('personalized relevance scoring', () => {
             null
         );
 
-        expect(score).toBeGreaterThan(0);
-        expect(score).toBeLessThan(50);
-        expect([0, 50, 100]).not.toContain(score);
+        expect(score).toBeNull();
     });
 
     it('returns no personalized percentage when there are no personalization signals', () => {
