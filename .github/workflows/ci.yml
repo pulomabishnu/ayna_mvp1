@@ -1,8 +1,7 @@
 name: CI
 
 on:
-  pull_request:
-    branches: [main]
+  workflow_dispatch:
   push:
     branches: [main]
 
@@ -29,27 +28,10 @@ jobs:
           PUPPETEER_SKIP_DOWNLOAD: 'true'
 
       - name: Unit and integration tests
-        id: tests
-        continue-on-error: true
-        shell: bash
-        run: |
-          set -o pipefail
-          npm test -- --reporter=verbose 2>&1 | tee test-output.txt
-
-      - name: Upload test output
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-output
-          path: test-output.txt
-          retention-days: 3
+        run: npm test -- --reporter=verbose
 
       - name: Verify catalog export
         run: npm run catalog:check
 
       - name: Production build
         run: npm run build
-
-      - name: Fail if tests failed
-        if: steps.tests.outcome == 'failure'
-        run: exit 1

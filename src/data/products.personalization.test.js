@@ -11,7 +11,7 @@ describe('getPersonalizedProductIds', () => {
         // getRecommendations() keeps a broad fallback tail after the safety and
         // life-stage gates. The exact count can change with catalog safety metadata;
         // the important contract is that the hard personalized subset is smaller.
-        expect(full.length).toBeGreaterThan(scoped.length);
+        expect(full.length).toBeGreaterThan(personalized.length);
         expect(full.every((product) => filterPrescriptionCareGate(ALL_PRODUCTS).some((candidate) => candidate.id === product.id))).toBe(true);
 
         // getPersonalizedProductIds() must NOT carry that fallback tail — it's the
@@ -28,8 +28,6 @@ describe('getPersonalizedProductIds', () => {
     });
 
     it('returns an empty set (not the whole catalog) when nothing scores', () => {
-        // A profile with no frustrations mapped and no health tags has nothing to
-        // score against — must not silently fall back to "everything matches".
         const ids = getPersonalizedProductIds({ frustrations: [] }, null);
         expect(ids.length).toBe(0);
     });
@@ -41,19 +39,11 @@ describe('personalized relevance scoring', () => {
 
     it('does not treat menstrual leaks and staining as urinary leakage', () => {
         expect(elitone).toBeTruthy();
-
-        const score = getProductRelevanceScore(
-            elitone,
-            { frustrations: ['Leaks & staining'] },
-            null
-        );
-
-        expect(score).toBe(0);
+        expect(getProductRelevanceScore(elitone, { frustrations: ['Leaks & staining'] }, null)).toBe(0);
     });
 
     it('raises Elitone relevance for an imported urinary-incontinence signal', () => {
         expect(elitone).toBeTruthy();
-
         const score = getProductRelevanceScore(
             elitone,
             { frustrations: [] },
@@ -67,32 +57,17 @@ describe('personalized relevance scoring', () => {
                 wearableSummary: '',
             }
         );
-
         expect(score).toBeGreaterThan(0);
     });
 
     it('does not treat a UTI as urinary incontinence', () => {
         expect(elitone).toBeTruthy();
-
-        const score = getProductRelevanceScore(
-            elitone,
-            { frustrations: ['Recurrent UTIs'] },
-            null
-        );
-
-        expect(score).toBe(0);
+        expect(getProductRelevanceScore(elitone, { frustrations: ['Recurrent UTIs'] }, null)).toBe(0);
     });
 
     it('does not turn an age band alone into a personalized product recommendation', () => {
         expect(oura).toBeTruthy();
-
-        const score = getProductRelevanceScore(
-            oura,
-            { age: '35-44', frustrations: [] },
-            null
-        );
-
-        expect(score).toBeNull();
+        expect(getProductRelevanceScore(oura, { age: '35-44', frustrations: [] }, null)).toBeNull();
     });
 
     it('returns no personalized percentage when there are no personalization signals', () => {
@@ -108,18 +83,9 @@ describe('personalized relevance scoring', () => {
             healthFunctions: ['cramp-relief'],
             category: 'cramp-relief',
         };
-
-        const partnered = {
-            ...base,
-            partner: true,
-            affiliateUrl: 'affiliate-test',
-            affiliateCommission: 99,
-        };
-
+        const partnered = { ...base, partner: true, affiliateUrl: 'affiliate-test', affiliateCommission: 99 };
         const quiz = { frustrations: ['Painful cramps'] };
-
         expect(getProductRelevanceScore(partnered, quiz, null))
             .toBe(getProductRelevanceScore(base, quiz, null));
     });
 });
-
