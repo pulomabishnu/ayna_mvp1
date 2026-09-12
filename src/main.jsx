@@ -15,23 +15,35 @@ const POSTHOG_KEY = import.meta.env.VITE_PUBLIC_POSTHOG_KEY;
 const POSTHOG_HOST = import.meta.env.VITE_PUBLIC_POSTHOG_HOST || '/ingest';
 const GPC_ENABLED = typeof navigator !== 'undefined' && navigator.globalPrivacyControl === true;
 
+// Health-related free text should never become analytics payload. This is a
+// final network-boundary guard in addition to keeping analytics events coarse
+// at their call sites. Exact keys only so useful non-sensitive counters such as
+// queryLength/concernsCount remain available for product analytics.
+const SENSITIVE_ANALYTICS_KEYS = new Set([
+  'query', 'searchquery', 'search_query', 'email', 'prompt', 'message', 'notes',
+  'healthprofile', 'health_profile', 'fullhealthintake', 'full_health_intake',
+  'conditions', 'medications', 'allergies', 'symptoms', 'diagnosis', 'diagnoses',
+  'concerns', 'intake', 'fhirsummary', 'fhir_summary', 'wearablesummary',
+  'wearable_summary', 'freetext', 'free_text', 'supportothertext',
+  'support_other_text', 'customconcerns', 'custom_concerns',
+]);
+
+function sanitizeAnalyticsObject(value) {
+  if (Array.isArray(value)) return value.map(sanitizeAnalyticsObject);
+  if (!value || typeof value !== 'object') return value;
+
+  const clean = {};
+  for (const [key, nestedValue] of Object.entries(value)) {
+    const normalized = String(key).toLowerCase();
+    if (SENSITIVE_ANALYTICS_KEYS.has(normalized)) continue;
+    clean[key] = sanitizeAnalyticsObject(nestedValue);
+  }
+  return clean;
+}
+
 function sanitizePosthogEvent(event) {
   if (!event?.properties) return event;
-  const properties = { ...event.properties };
-
-  if (event.event === 'search_performed') delete properties.query;
-  delete properties.email;
-
-  if (properties.$set && typeof properties.$set === 'object') {
-    properties.$set = { ...properties.$set };
-    delete properties.$set.email;
-  }
-  if (properties.$set_once && typeof properties.$set_once === 'object') {
-    properties.$set_once = { ...properties.$set_once };
-    delete properties.$set_once.email;
-  }
-
-  return { ...event, properties };
+  return { ...event, properties: sanitizeAnalyticsObject(event.properties) };
 }
 
 if (!POSTHOG_KEY) {
@@ -48,7 +60,10 @@ if (!POSTHOG_KEY) {
     ip: false,
     opt_out_capturing_by_default: GPC_ENABLED,
     before_send: sanitizePosthogEvent,
-    errorTracking: { autocaptureExceptions: true },
+    // Automatic exception capture can include raw error messages/stacks. In a
+    // health product those may accidentally contain user-entered context, so
+    // we send only a coarse, explicitly-sanitized app_error event below.
+    errorTracking: { autocaptureExceptions: false },
     loaded: (ph) => {
       window.posthog = ph;
       if (GPC_ENABLED) ph.opt_out_capturing?.();
@@ -75,11 +90,11 @@ class ErrorBoundary extends React.Component {
     try { sessionStorage.removeItem(CHUNK_RELOAD_KEY); } catch { /* storage unavailable */ }
   }
 
-  componentDidCatch(error, info) {
-    console.error('App error:', error, info);
+  componentDidCatch(error) {
+    console.error('App error:', error);
     try {
-      posthog.captureException(error, {
-        componentStack: info?.componentStack,
+      posthog.capture('app_error', {
+        errorName: String(error?.name || 'Error').slice(0, 64),
         isChunkLoadError: isChunkLoadError(error),
       });
     } catch { /* analytics unavailable */ }
@@ -107,7 +122,7 @@ class ErrorBoundary extends React.Component {
       return (
         <div style={{ padding: '2rem', fontFamily: 'sans-serif', maxWidth: 600, margin: '2rem auto' }}>
           <h1>Something went wrong</h1>
-          <p style={{ color: '#666' }}>{String(this.state.error?.message || this.state.error)}</p>
+          <p style={{ color: '#666' }}>Please reload the page and try again.</p>
           <button type="button" onClick={() => window.location.reload()} style={{ padding: '0.5rem 1rem', marginTop: '1rem' }}>
             Reload
           </button>

@@ -1,6 +1,7 @@
 import { isSafePublicUrl, safeFetch } from './_ssrfSafeFetch.js';
 
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+const MAX_TARGET_LENGTH = 4096;
 const CACHE_HEADER = 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=2592000';
 
 function redirectToOriginal(res, target) {
@@ -19,7 +20,7 @@ export default async function handler(req, res) {
   }
 
   const target = typeof req.query?.url === 'string' ? req.query.url.trim() : '';
-  if (!target || !(await isSafePublicUrl(target))) {
+  if (!target || target.length > MAX_TARGET_LENGTH || !(await isSafePublicUrl(target))) {
     return res.status(400).json({ error: 'invalid_image_url' });
   }
 
@@ -45,8 +46,11 @@ export default async function handler(req, res) {
     if (!bytes.length || bytes.length > MAX_IMAGE_BYTES) return redirectToOriginal(res, target);
 
     res.setHeader('Content-Type', contentType);
+    res.setHeader('Content-Disposition', 'inline');
     res.setHeader('Cache-Control', CACHE_HEADER);
     res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
+    res.setHeader('Vary', 'Accept');
     if (req.method === 'HEAD') return res.status(200).end();
     return res.status(200).send(bytes);
   } catch (e) {

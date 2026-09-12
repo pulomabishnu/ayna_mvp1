@@ -1,12 +1,19 @@
 import { verifyUser } from './_usageLimit.js';
 
+function setPrivateResponseHeaders(res) {
+  res.setHeader('Cache-Control', 'private, no-store, max-age=0');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Content-Security-Policy', "default-src 'none'");
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'DELETE') {
     res.setHeader('Allow', 'DELETE');
     return res.status(405).json({ error: 'method_not_allowed' });
   }
 
-  res.setHeader('Cache-Control', 'no-store');
+  setPrivateResponseHeaders(res);
 
   const { user, error, admin } = await verifyUser(req);
   if (error || !user || !admin) {

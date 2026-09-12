@@ -26,13 +26,20 @@ function dedupeById(rows) {
   });
 }
 
+function setPrivateResponseHeaders(res) {
+  res.setHeader('Cache-Control', 'private, no-store, max-age=0');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Content-Security-Policy', "default-src 'none'");
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
     res.setHeader('Allow', 'GET');
     return res.status(405).json({ error: 'method_not_allowed' });
   }
 
-  res.setHeader('Cache-Control', 'no-store');
+  setPrivateResponseHeaders(res);
 
   const { user, error, admin } = await verifyUser(req);
   if (error || !user || !admin) {
@@ -92,6 +99,8 @@ export default async function handler(req, res) {
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
     return res.status(200).send(JSON.stringify(exportPayload, null, 2));
   } catch (e) {
+    // Never include table contents or user data in the response. Server logs get
+    // only the coarse error text needed to diagnose a failed export.
     console.error('[account-data] export failed:', e?.message);
     return res.status(500).json({ error: 'export_failed' });
   }

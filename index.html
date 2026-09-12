@@ -23,28 +23,8 @@
 </head>
 
 <body>
-  <div id="root">Loading Ayna…</div>
-  <script>
-    window.onerror = function(msg, url, line, col, err) {
-      var root = document.getElementById('root');
-      if (!root) return false;
-
-      var wrap = document.createElement('div');
-      wrap.style.padding = '2rem';
-      wrap.style.fontFamily = 'sans-serif';
-
-      var heading = document.createElement('h2');
-      heading.textContent = 'Error';
-
-      var detail = document.createElement('p');
-      detail.textContent = String(msg || (err && err.message) || 'Unknown error');
-
-      wrap.appendChild(heading);
-      wrap.appendChild(detail);
-      root.replaceChildren(wrap);
-      return false;
-    };
-  </script>
+  <div id="root">Loading ayna…</div>
+  <script src="/bootstrap-error.js"></script>
   <script type="module" src="/src/main.jsx"></script>
 </body>
 
