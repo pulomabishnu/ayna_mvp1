@@ -180,6 +180,14 @@ export default function SigninScreen({
   };
 
   const handleGoogle = async () => {
+    // Same gate as desktop's AuthGate.jsx handleGoogle — the three consent
+    // statements above only render in signup mode, so this is the one place
+    // stopping Google from creating a real account with none of them agreed
+    // to. Signing in with an existing account needs no re-consent.
+    if (mode === 'signup' && !allConsented) {
+      setError('Please agree to the three statements above before continuing.');
+      return;
+    }
     setError('');
     setGoogleLoading(true);
     try {

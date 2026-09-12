@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
+import { CONSENT_VERSION, stashPendingConsent } from '../utils/pendingConsent.js';
 
 const SUBTITLES = {
   quiz: 'Create an account to save your health profile and keep your ecosystem across sessions.',
@@ -15,8 +16,6 @@ const CONSENT_ITEMS = [
   'My wellness data may be processed by an external AI service to personalize recommendations. ayna takes measures to anonymize and secure this information and never sells it.',
   'ayna provides wellness information, not medical advice or a substitute for care from a qualified healthcare provider.',
 ];
-
-const CONSENT_VERSION = 'v1';
 
 export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAuthRedirect, redirectTo }) {
   useEscapeToClose(isModal, onSkip);
@@ -230,12 +229,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
       // first-time visitor who happens to click the "Sign in" toggle used to get
       // an account created — and reach the health intake — with the consent
       // checkboxes never shown and no consent record written at all.
-      try {
-        sessionStorage.setItem('ayna_pending_consent', JSON.stringify({
-          consent_given_at: new Date().toISOString(),
-          consent_version: CONSENT_VERSION,
-        }));
-      } catch (_) { /* private mode */ }
+      stashPendingConsent();
       if (onBeforeOAuthRedirect) onBeforeOAuthRedirect();
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',

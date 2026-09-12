@@ -3,6 +3,7 @@ import { Capacitor } from '@capacitor/core';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Browser } from '@capacitor/browser';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
+import { CONSENT_VERSION, stashPendingConsent, flushPendingConsent } from '../../utils/pendingConsent.js';
 
 // Real Supabase identity for the mobile app — separate from
 // useEcosystemSession.js's local app-data cache (products, quiz answers),
@@ -11,7 +12,6 @@ import { getSupabaseClient } from '../../utils/supabaseClient.js';
 // (same options shapes, same consent metadata, same confirmation-email
 // target), so mobile authenticates through the exact same Supabase
 // project/flow as desktop instead of a second, parallel auth system.
-const CONSENT_VERSION = 'v1';
 // aynahealth.co, not window.location.origin — a confirmation email has to
 // link somewhere that works for the person reading it, not wherever this
 // build happens to be running (localhost, a preview URL). Matches
@@ -101,7 +101,14 @@ export function useSupabaseAuth() {
 
       if (error) {
         console.error('[Ayna] Could not establish native Google session:', error.message);
+        return;
       }
+
+      // This native flow never passes through AuthCallback.jsx (that only
+      // renders for the web/preview OAuth redirect) — it's the one place
+      // that would otherwise silently skip writing the consent stashed
+      // before the redirect by signInWithGoogle below.
+      await flushPendingConsent(supabase);
     }
 
     void CapacitorApp.addListener('appUrlOpen', ({ url }) => {
@@ -182,6 +189,12 @@ export function useSupabaseAuth() {
     } catch {
       // Storage unavailable.
     }
+
+    // Stashed before EITHER redirect path below, same as AuthGate.jsx's
+    // handleGoogle — Supabase's Google provider auto-provisions a real
+    // account for any unseen address the instant this redirect completes,
+    // with no consent checkboxes shown at all in mobile's "sign in" mode.
+    stashPendingConsent();
 
     if (Capacitor.getPlatform() === 'ios') {
       const { data, error } = await supabase.auth.signInWithOAuth({

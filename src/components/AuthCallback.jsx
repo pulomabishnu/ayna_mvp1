@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getSupabaseClient } from '../utils/supabaseClient';
+import { flushPendingConsent } from '../utils/pendingConsent.js';
 
 export default function AuthCallback({ onAuthenticated }) {
   const [status, setStatus] = useState('loading');
@@ -17,7 +18,7 @@ export default function AuthCallback({ onAuthenticated }) {
     // readable by any third-party script on the page.
     try {
       window.history.replaceState(null, '', window.location.pathname + window.location.search);
-    } catch (_) { /* non-fatal */ }
+    } catch { /* non-fatal */ }
     const searchParams = new URLSearchParams(window.location.search);
     const accessToken = hashParams.get('access_token');
     const refreshToken = hashParams.get('refresh_token');
@@ -63,41 +64,6 @@ export default function AuthCallback({ onAuthenticated }) {
       onAuthenticated(user);
     }
 
-    // Flush consent stored before the OAuth redirect into user metadata.
-    // Awaited, retried once, and the stash is cleared ONLY after the write
-    // succeeds — the old order removed it first and swallowed the failure, so a
-    // transient error erased the consent record from both places.
-    async function flushPendingConsent() {
-      let raw = null;
-      try {
-        raw = sessionStorage.getItem('ayna_pending_consent');
-      } catch (_) { return; }
-      if (!raw) return;
-
-      let consent;
-      try {
-        consent = JSON.parse(raw);
-      } catch (_) {
-        try { sessionStorage.removeItem('ayna_pending_consent'); } catch (_) { /* ignore */ }
-        return;
-      }
-
-      for (let attempt = 0; attempt < 2; attempt += 1) {
-        try {
-          const { error } = await supabase.auth.updateUser({ data: consent });
-          if (!error) {
-            try { sessionStorage.removeItem('ayna_pending_consent'); } catch (_) { /* ignore */ }
-            return;
-          }
-          console.error('[Ayna] consent write failed:', error.message);
-        } catch (e) {
-          console.error('[Ayna] consent write threw:', e);
-        }
-      }
-      // Left in sessionStorage deliberately so a later load can retry.
-      console.error('[Ayna] consent not persisted after retries. Record retained for retry');
-    }
-
     // OAuth — set session and navigate to ecosystem
     if (accessToken && refreshToken) {
       supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken })
@@ -106,7 +72,7 @@ export default function AuthCallback({ onAuthenticated }) {
             setStatus('error');
             setErrorMsg(error?.message || 'Could not establish session.');
           } else {
-            void flushPendingConsent();
+            void flushPendingConsent(supabase);
             finishAuth(data.session.user);
           }
         });
@@ -115,12 +81,12 @@ export default function AuthCallback({ onAuthenticated }) {
 
     // Fallback: check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) { void flushPendingConsent(); finishAuth(session.user); return; }
+      if (session?.user) { void flushPendingConsent(supabase); finishAuth(session.user); return; }
 
       const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
         if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session?.user) {
           subscription.unsubscribe();
-          void flushPendingConsent();
+          void flushPendingConsent(supabase);
           finishAuth(session.user);
         }
       });
