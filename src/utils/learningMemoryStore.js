@@ -22,9 +22,16 @@ export function loadLearningMemorySession() {
   if (typeof window === 'undefined') return {};
   try {
     const current = parseObject(window.sessionStorage.getItem(SESSION_KEY));
-    if (current) return current;
+    if (current && !current[EPHEMERAL_MARKER]) return current;
+    if (current?.[EPHEMERAL_MARKER]) window.sessionStorage.removeItem(SESSION_KEY);
 
     const legacy = parseObject(window.localStorage.getItem(SESSION_KEY));
+    if (legacy?.[EPHEMERAL_MARKER]) {
+      // Compatibility stub written by old App.jsx; it intentionally contains
+      // no health learning memory and should not be treated as real context.
+      window.localStorage.removeItem(SESSION_KEY);
+      return {};
+    }
     if (legacy) {
       try { window.sessionStorage.setItem(SESSION_KEY, JSON.stringify(legacy)); } catch (_) {}
       try { window.localStorage.removeItem(SESSION_KEY); } catch (_) {}
