@@ -10,10 +10,11 @@
  * so whichever one a visitor used last is the one that sticks.
  *
  * Because of that shared state, this module treats "the SDK already has an
- * explicit opt-in/opt-out on record" as equivalent to "the banner has already
- * been answered" — see hasRecordedChoice()/applyStoredConsent() below. That
- * matters for anyone who used the account-settings toggle (or whose browser
- * sends GPC) before ever seeing this banner: they should not be asked again.
+ * EXPLICIT opt-in/opt-out on record" (per get_explicit_consent_status(), not
+ * has_opted_in/out_capturing() — see explicitSdkDecision() below for why) as
+ * equivalent to "the banner has already been answered". That matters for
+ * anyone who used the account-settings toggle (or whose browser sends GPC)
+ * before ever seeing this banner: they should not be asked again.
  *
  * NOTE ON WORDING: what this gates is analytics. It is NOT the Supabase
  * session, which lives in localStorage (not a cookie) and is genuinely
@@ -23,6 +24,27 @@
 
 export const CONSENT_STORAGE_KEY = 'ayna_analytics_consent';
 export const CONSENT_TTL_MS = 365 * 24 * 60 * 60 * 1000;
+
+/**
+ * An EXPLICIT prior SDK-level decision ('granted'/'denied'), or undefined if
+ * none has ever been made.
+ *
+ * Deliberately NOT has_opted_in_capturing()/has_opted_out_capturing(): with
+ * opt_out_capturing_by_default: true (set in main.jsx so nothing is sent
+ * before a decision exists), has_opted_out_capturing() returns true for
+ * EVERY visitor who has never made a choice at all — posthog-js's "pending"
+ * state reads as "opted out" once that default flag is on. Treating that as
+ * an explicit decision would hide the banner for every first-time visitor.
+ * get_explicit_consent_status() is the one API that actually distinguishes
+ * "pending" from a real granted/denied call.
+ */
+function explicitSdkDecision(ph) {
+  try {
+    const status = ph?.get_explicit_consent_status?.();
+    if (status === 'granted' || status === 'denied') return status;
+  } catch { /* fall through */ }
+  return undefined;
+}
 
 function readRaw() {
   let raw;
@@ -71,11 +93,7 @@ export function getStoredConsent() {
 export function hasRecordedChoice(ph) {
   const v = getStoredConsent();
   if (v === 'granted' || v === 'denied') return true;
-  try {
-    return !!(ph?.has_opted_in_capturing?.() || ph?.has_opted_out_capturing?.());
-  } catch {
-    return false;
-  }
+  return explicitSdkDecision(ph) !== undefined;
 }
 
 function persist(decision) {
@@ -98,9 +116,7 @@ export function applyStoredConsent(ph) {
   if (stored === 'granted') return ph.opt_in_capturing();
   if (stored === 'denied') return ph.opt_out_capturing();
 
-  try {
-    if (ph.has_opted_in_capturing?.() || ph.has_opted_out_capturing?.()) return; // already decided elsewhere — leave it
-  } catch { /* fall through to the safe default below */ }
+  if (explicitSdkDecision(ph) !== undefined) return; // already decided elsewhere — leave it
 
   ph.opt_out_capturing(); // truly undecided — stay out until the banner is answered
 }

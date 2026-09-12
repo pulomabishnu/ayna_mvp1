@@ -14,13 +14,20 @@ import {
   grantConsent, denyConsent, CONSENT_STORAGE_KEY, CONSENT_TTL_MS,
 } from './analyticsConsent';
 
+// Mirrors the real posthog-js API surface this module actually reads.
+// get_explicit_consent_status() returns 'pending' until opt_in/opt_out has
+// been called at least once — has_opted_in/out_capturing() is deliberately
+// NOT used here (or in the module under test) because, with
+// opt_out_capturing_by_default: true, has_opted_out_capturing() returns true
+// even for a visitor who was never asked. See the comment on
+// explicitSdkDecision() in analyticsConsent.js.
 function mockPh() {
+  let consent = 'pending';
   return {
-    opt_in_capturing: vi.fn(),
-    opt_out_capturing: vi.fn(),
+    opt_in_capturing: vi.fn(() => { consent = 'granted'; }),
+    opt_out_capturing: vi.fn(() => { consent = 'denied'; }),
     capture: vi.fn(),
-    has_opted_in_capturing: vi.fn(() => false),
-    has_opted_out_capturing: vi.fn(() => false),
+    get_explicit_consent_status: vi.fn(() => consent),
   };
 }
 
@@ -37,6 +44,13 @@ describe('analyticsConsent', () => {
   it('has no recorded choice before any decision', () => {
     expect(hasRecordedChoice()).toBe(false);
     expect(getStoredConsent()).toBeUndefined();
+  });
+
+  it('has no recorded choice for a fresh PostHog instance that was never asked (the opt_out_capturing_by_default=true case)', () => {
+    // This is the regression this suite guards against: with the SDK
+    // defaulting to opted-out, has_opted_out_capturing() alone would say
+    // "true" here and wrongly hide the banner forever.
+    expect(hasRecordedChoice(ph)).toBe(false);
   });
 
   it('applyStoredConsent opts out when nothing is stored anywhere', () => {
@@ -61,15 +75,15 @@ describe('analyticsConsent', () => {
     expect(fresh.opt_in_capturing).not.toHaveBeenCalled();
   });
 
-  it('applyStoredConsent leaves an existing SDK-level opt-in alone (e.g. from account settings or GPC history)', () => {
-    ph.has_opted_in_capturing = vi.fn(() => true);
+  it('applyStoredConsent leaves an existing explicit SDK-level grant alone (e.g. from account settings)', () => {
+    ph.get_explicit_consent_status = vi.fn(() => 'granted');
     applyStoredConsent(ph);
     expect(ph.opt_in_capturing).not.toHaveBeenCalled();
     expect(ph.opt_out_capturing).not.toHaveBeenCalled();
   });
 
-  it('applyStoredConsent leaves an existing SDK-level opt-out alone', () => {
-    ph.has_opted_out_capturing = vi.fn(() => true);
+  it('applyStoredConsent leaves an existing explicit SDK-level denial alone (e.g. from GPC)', () => {
+    ph.get_explicit_consent_status = vi.fn(() => 'denied');
     applyStoredConsent(ph);
     expect(ph.opt_in_capturing).not.toHaveBeenCalled();
     expect(ph.opt_out_capturing).not.toHaveBeenCalled();
@@ -93,7 +107,7 @@ describe('analyticsConsent', () => {
 
   it('hasRecordedChoice is true when the SDK already has an explicit opt state, even with no local banner decision', () => {
     expect(hasRecordedChoice(ph)).toBe(false);
-    ph.has_opted_out_capturing = vi.fn(() => true);
+    ph.get_explicit_consent_status = vi.fn(() => 'denied');
     expect(hasRecordedChoice(ph)).toBe(true);
   });
 
