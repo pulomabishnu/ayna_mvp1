@@ -1,12 +1,19 @@
 const INTERNAL_BROWSER_KEY = 'ayna_internal_analytics_v1';
 
-// Explicitly limited to the three founders requested for permanent internal
-// analytics exclusion. The email is only used locally at sign-in to decide
-// whether this browser should be marked internal; it is never sent to PostHog.
+// Exact founder account aliases observed in PostHog. Keeping this list exact
+// avoids broad substring matching that could accidentally suppress analytics
+// for a real user with a similar name. The email is only used locally at
+// sign-in to decide whether this browser should be marked internal; it is
+// never sent to PostHog.
 export const INTERNAL_FOUNDER_EMAILS = new Set([
   'ameera@aynahealth.co',
+  'ao369@cornell.edu',
+  'lalaloops99@gmail.com',
+  'o.ameera24@gmail.com',
   'eliz@aynahealth.co',
+  'elizcelik2003@gmail.com',
   'puloma@aynahealth.co',
+  'pulomabishnu@gmail.com',
 ]);
 
 export function isFounderEmail(email) {
