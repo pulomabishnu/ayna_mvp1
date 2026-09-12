@@ -5,6 +5,7 @@ import { getSupabaseClient } from './utils/supabaseClient';
 const THEME_KEY = 'ayna_v6_site_theme';
 let observerTimer = null;
 let signingOut = false;
+let settingsKeyHandler = null;
 
 function cleanText(node) {
   return String(node?.textContent || '').replace(/\s+/g, ' ').trim();
@@ -97,6 +98,14 @@ async function downloadMyData(status) {
 function closeSettings() {
   document.querySelector('.v6-settings-backdrop')?.remove();
   document.body.classList.remove('v6-settings-open');
+  if (settingsKeyHandler) {
+    window.removeEventListener('keydown', settingsKeyHandler);
+    settingsKeyHandler = null;
+  }
+}
+
+function settingsRow(path, title, copy, arrow = '→') {
+  return `<button type="button" class="v6-settings-row" data-go="${path}"><span><strong>${title}</strong><small>${copy}</small></span><b>${arrow}</b></button>`;
 }
 
 function openSettings() {
@@ -109,25 +118,38 @@ function openSettings() {
         <div><span>your ayna</span><h2 id="v6-settings-title">settings</h2></div>
         <button type="button" class="v6-settings-close" aria-label="Close settings">×</button>
       </header>
+
       <div class="v6-settings-section">
         <div class="v6-settings-label">appearance</div>
-        <p>Choose the version of the same matte Ayna palette you want to use.</p>
+        <p>Same dainty matte Ayna, in the version that feels best on your screen.</p>
         <div class="v6-settings-theme" role="group" aria-label="Appearance">
           <button type="button" data-theme="light">☀ light</button>
           <button type="button" data-theme="dark">☾ dark</button>
           <button type="button" data-theme="system">system</button>
         </div>
       </div>
+
       <div class="v6-settings-section">
-        <div class="v6-settings-label">health + account</div>
-        <button type="button" class="v6-settings-row" data-go="/profile"><span><strong>health profile</strong><small>review or update the information Ayna uses</small></span><b>→</b></button>
-        <button type="button" class="v6-settings-row" data-download><span><strong>download my data</strong><small>get a copy of the account data Ayna stores</small></span><b>↓</b></button>
+        <div class="v6-settings-label">your health universe</div>
+        ${settingsRow('/ecosystem', 'my ecosystem', 'open your saved care areas and personalized products')}
+        ${settingsRow('/profile', 'health profile', 'review or update the information Ayna uses')}
+        ${settingsRow('/text-ayna', 'text ayna', 'manage the phone number used for personalized Ayna texts')}
       </div>
+
+      <div class="v6-settings-section">
+        <div class="v6-settings-label">your data</div>
+        <button type="button" class="v6-settings-row" data-download><span><strong>download my data</strong><small>get a copy of the account data Ayna stores</small></span><b>↓</b></button>
+        ${settingsRow('/profile', 'manage data + privacy', 'analytics controls and account deletion live with your profile')}
+      </div>
+
       <div class="v6-settings-section">
         <div class="v6-settings-label">privacy + legal</div>
-        <button type="button" class="v6-settings-row" data-go="/privacy-policy"><span><strong>privacy policy</strong><small>how Ayna handles your information</small></span><b>→</b></button>
-        <button type="button" class="v6-settings-row" data-go="/terms-of-use"><span><strong>terms of use</strong><small>the terms for using Ayna</small></span><b>→</b></button>
+        ${settingsRow('/privacy-policy', 'privacy policy', 'how Ayna handles your information')}
+        ${settingsRow('/consumer-health-data.html', 'consumer health data privacy', 'your rights for consumer health information')}
+        ${settingsRow('/terms-of-use', 'terms of use', 'the terms for using Ayna')}
+        ${settingsRow('/how-we-make-money', 'how we make money', 'how partnerships and recommendations stay separate')}
       </div>
+
       <div class="v6-settings-section v6-settings-last">
         <button type="button" class="v6-settings-logout">log out</button>
         <small class="v6-settings-status" role="status"></small>
@@ -136,13 +158,17 @@ function openSettings() {
   document.body.appendChild(backdrop);
   document.body.classList.add('v6-settings-open');
 
-  backdrop.querySelector('.v6-settings-close').addEventListener('click', closeSettings);
+  const closeButton = backdrop.querySelector('.v6-settings-close');
+  closeButton.addEventListener('click', closeSettings);
   backdrop.addEventListener('click', (event) => { if (event.target === backdrop) closeSettings(); });
   backdrop.querySelectorAll('.v6-settings-theme button').forEach((button) => button.addEventListener('click', () => applyTheme(button.dataset.theme)));
   backdrop.querySelectorAll('[data-go]').forEach((button) => button.addEventListener('click', () => { window.location.href = button.dataset.go; }));
   backdrop.querySelector('[data-download]').addEventListener('click', () => downloadMyData(backdrop.querySelector('.v6-settings-status')));
   backdrop.querySelector('.v6-settings-logout').addEventListener('click', robustSignOut);
+  settingsKeyHandler = (event) => { if (event.key === 'Escape') closeSettings(); };
+  window.addEventListener('keydown', settingsKeyHandler);
   applyTheme(storedTheme());
+  closeButton.focus();
 }
 
 function enhanceAccountMenus() {
