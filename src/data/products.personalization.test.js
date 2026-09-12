@@ -2,8 +2,12 @@ import { describe, it, expect } from 'vitest';
 import { ALL_PRODUCTS, filterPrescriptionCareGate, getRecommendations, getPersonalizedProductIds, getProductRelevanceScore } from './products';
 
 describe('getPersonalizedProductIds', () => {
-    it('restricts to real tag matches, unlike getRecommendations()\'s full fallback list', () => {
-        const quiz = { frustrations: ['Painful cramps'], preference: ['Non-hormonal / hormone-free'] };
+    it('restricts to real positive matches, unlike getRecommendations()\'s full fallback list', () => {
+        const quiz = {
+            fullHealthIntake: {
+                primaryConcerns: ['Cramp and pain relief (devices, supplements, heat)'],
+            },
+        };
 
         const full = getRecommendations(quiz, null);
         const personalized = getPersonalizedProductIds(quiz, null);
@@ -14,16 +18,15 @@ describe('getPersonalizedProductIds', () => {
         expect(full.length).toBeGreaterThan(personalized.length);
         expect(full.every((product) => filterPrescriptionCareGate(ALL_PRODUCTS).some((candidate) => candidate.id === product.id))).toBe(true);
 
-        // getPersonalizedProductIds() must NOT carry that fallback tail — it's the
-        // hard, meaningfully-restricted set a "Personalized" toggle should filter to.
+        // Use the current intake schema here. Every id returned by the hard
+        // Personalized filter must be a genuinely positive relevance match.
         expect(personalized.length).toBeGreaterThan(0);
         expect(personalized.length).toBeLessThan(ALL_PRODUCTS.length);
 
-        const cramp_relief_or_non_hormonal = new Set(
-            ALL_PRODUCTS.filter((p) => (p.tags || []).some((t) => t === 'cramps' || t === 'non-hormonal')).map((p) => p.id)
-        );
         personalized.forEach((id) => {
-            expect(cramp_relief_or_non_hormonal.has(id)).toBe(true);
+            const product = ALL_PRODUCTS.find((candidate) => candidate.id === id);
+            expect(product).toBeTruthy();
+            expect(getProductRelevanceScore(product, quiz, null)).toBeGreaterThan(0);
         });
     });
 
@@ -37,9 +40,20 @@ describe('personalized relevance scoring', () => {
     const elitone = ALL_PRODUCTS.find((p) => p.id === 'p-elitone');
     const oura = ALL_PRODUCTS.find((p) => p.id === 'd-oura');
 
-    it('does not treat menstrual leaks and staining as urinary leakage', () => {
+    it('does not treat menstrual care as urinary leakage', () => {
         expect(elitone).toBeTruthy();
-        expect(getProductRelevanceScore(elitone, { frustrations: ['Leaks & staining'] }, null)).toBe(0);
+        const score = getProductRelevanceScore(
+            elitone,
+            {
+                fullHealthIntake: {
+                    primaryConcerns: ['Period care (pads, tampons, cups, discs, underwear)'],
+                },
+            },
+            null
+        );
+        // null means there is no positive personalized health match. Returning
+        // an artificial 0 would incorrectly imply that a percentage was scored.
+        expect(score).toBeNull();
     });
 
     it('raises Elitone relevance for an imported urinary-incontinence signal', () => {
@@ -62,7 +76,16 @@ describe('personalized relevance scoring', () => {
 
     it('does not treat a UTI as urinary incontinence', () => {
         expect(elitone).toBeTruthy();
-        expect(getProductRelevanceScore(elitone, { frustrations: ['Recurrent UTIs'] }, null)).toBe(0);
+        const score = getProductRelevanceScore(
+            elitone,
+            {
+                fullHealthIntake: {
+                    primaryConcerns: ['UTI support'],
+                },
+            },
+            null
+        );
+        expect(score).toBeNull();
     });
 
     it('does not turn an age band alone into a personalized product recommendation', () => {
