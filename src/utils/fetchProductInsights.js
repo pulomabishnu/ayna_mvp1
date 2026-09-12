@@ -1,3 +1,4 @@
+import posthog from 'posthog-js';
 import { buildUserHealthContextString } from './userHealthContextForInsights';
 import { deriveBrandSearchContext } from './productBrandContext.js';
 
@@ -5,12 +6,11 @@ const API_PATH = '/api/product-insights';
 const CACHE_PREFIX = 'ayna_insights_v2_';
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // active-tab cache; never durable health-derived storage
 
+function captureInsightAnalytics(event, properties) {
+  try { posthog.capture(event, properties); } catch { /* analytics must never break insights */ }
+}
+
 function simpleHash(str) {
-  // Hashes the WHOLE string. It previously truncated to 300 chars, but the
-  // health-context string emits the quiz block (frustrations, preferences,
-  // sensitivities) BEFORE conditions, medications and allergies. Any user with
-  // a filled-in quiz therefore produced an identical cache key no matter how
-  // her conditions or medications changed.
   const s = String(str || '');
   let h1 = 0x811c9dc5;
   let h2 = 0x01000193;
@@ -64,7 +64,6 @@ export function saveCachedInsights(productId, healthContextKey, data) {
     if (!store) return;
     const key = cacheKey(productId, simpleHash(healthContextKey));
     store.setItem(key, JSON.stringify({ data, ts: Date.now() }));
-    // Prune expired entries so sessionStorage doesn't grow unbounded.
     const keys = [];
     for (let i = 0; i < store.length; i += 1) {
       const k = store.key(i);
@@ -134,6 +133,12 @@ export async function fetchProductInsights(product, options = {}) {
     throw new Error('Invalid product');
   }
 
+  const analyticsBase = {
+    productId: product?.id,
+    category: product?.category || 'unknown',
+    hasPersonalizedContext: Boolean(body.userContext),
+  };
+
   const controller = new AbortController();
   const tid = setTimeout(() => controller.abort(), timeoutMs);
   const onExternalAbort = () => controller.abort();
@@ -155,12 +160,15 @@ export async function fetchProductInsights(product, options = {}) {
     });
   } catch (e) {
     if (e?.name === 'AbortError') {
+      const code = signal?.aborted ? 'cancelled' : 'timeout';
+      captureInsightAnalytics('ai_product_insights_failed', { ...analyticsBase, code });
       const err = new Error(
         signal?.aborted ? 'Cancelled' : 'That took too long — please try again.'
       );
-      err.code = signal?.aborted ? 'cancelled' : 'timeout';
+      err.code = code;
       throw err;
     }
+    captureInsightAnalytics('ai_product_insights_failed', { ...analyticsBase, code: 'network_error' });
     throw e;
   } finally {
     clearTimeout(tid);
@@ -171,10 +179,16 @@ export async function fetchProductInsights(product, options = {}) {
   try {
     data = await res.json();
   } catch {
+    captureInsightAnalytics('ai_product_insights_failed', { ...analyticsBase, code: 'invalid_response', status: res.status });
     throw new Error('Invalid response');
   }
   if (!res.ok) {
     const msg = data?.message || data?.error || `HTTP ${res.status}`;
+    captureInsightAnalytics('ai_product_insights_failed', {
+      ...analyticsBase,
+      code: data?.error || 'request_failed',
+      status: res.status,
+    });
     const err = new Error(msg);
     err.code = data?.error;
     err.hint = data?.hint;
@@ -191,5 +205,11 @@ export async function fetchProductInsights(product, options = {}) {
     }
     throw err;
   }
+
+  captureInsightAnalytics('ai_product_insights_completed', {
+    ...analyticsBase,
+    providerUsed: typeof data?.providerUsed === 'string' ? data.providerUsed : 'unknown',
+    linkMode: typeof data?.linkMode === 'string' ? data.linkMode : 'unknown',
+  });
   return data;
 }
