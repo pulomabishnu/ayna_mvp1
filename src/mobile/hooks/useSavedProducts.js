@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   loadSavedProducts,
   persistSavedProducts,
+  clearSavedProducts,
   loadSavedForUser,
   setSavedForUser,
 } from '../../utils/savedProductsStore.js';
@@ -91,5 +92,10 @@ export function useSavedProducts(user) {
     }
   }, [savedMap, user]);
 
-  return { savedMap, isSaved, toggleSaved };
+  const resetSaved = useCallback(() => {
+    setSavedMap({});
+    clearSavedProducts();
+  }, []);
+
+  return { savedMap, isSaved, toggleSaved, resetSaved };
 }
