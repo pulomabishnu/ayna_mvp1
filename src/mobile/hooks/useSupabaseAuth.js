@@ -273,6 +273,33 @@ export function useSupabaseAuth() {
     }
 
     if (consented) await flushPendingConsent(supabase);
+
+    // Apple returns a one-time authorization code alongside the identity token.
+    // Exchange it server-side for a refresh token and store only an encrypted
+    // copy so account deletion can revoke the Apple authorization later. This
+    // is best-effort during sign-in: a temporary server/config problem must not
+    // strand an otherwise valid Apple login, but it is surfaced in logs without
+    // ever logging the code/token itself.
+    const authorizationCode = String(result.authorizationCode || '').trim();
+    const accessToken = data?.session?.access_token;
+    if (authorizationCode && accessToken) {
+      try {
+        const response = await fetch('/api/apple-token', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({ authorizationCode }),
+        });
+        if (!response.ok) {
+          console.warn('[Ayna] Apple authorization could not be prepared for future revocation.');
+        }
+      } catch {
+        console.warn('[Ayna] Apple authorization could not be prepared for future revocation.');
+      }
+    }
+
     return data?.user || null;
   }
 
