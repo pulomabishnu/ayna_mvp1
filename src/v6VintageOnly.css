@@ -83,6 +83,37 @@ body:has(.ayna-intake-root.v6-quiz-dark) .app-nav svg {
   stroke: currentColor !important;
 }
 
+/* Short intake questions should hug their content rather than inherit the old tall panel. */
+.ayna-intake-question:has(.ayna-age-card),
+.ayna-intake-question:has(> .ayna-text-input[inputmode='numeric'][maxlength='5']),
+.ayna-intake-question.v6-master-support {
+  min-height: 0 !important;
+  height: auto !important;
+  padding-top: 42px !important;
+  padding-bottom: 42px !important;
+}
+
+.ayna-intake-question:has(.ayna-age-card) .ayna-intake-actions,
+.ayna-intake-question:has(> .ayna-text-input[inputmode='numeric'][maxlength='5']) .ayna-intake-actions,
+.ayna-intake-question.v6-master-support .ayna-intake-actions {
+  margin-top: 30px !important;
+}
+
+@media (max-width: 760px) {
+  .ayna-intake-question:has(.ayna-age-card),
+  .ayna-intake-question:has(> .ayna-text-input[inputmode='numeric'][maxlength='5']),
+  .ayna-intake-question.v6-master-support {
+    min-height: 0 !important;
+    padding-top: 32px !important;
+    padding-bottom: 32px !important;
+  }
+  .ayna-intake-question:has(.ayna-age-card) .ayna-intake-actions,
+  .ayna-intake-question:has(> .ayna-text-input[inputmode='numeric'][maxlength='5']) .ayna-intake-actions,
+  .ayna-intake-question.v6-master-support .ayna-intake-actions {
+    margin-top: 24px !important;
+  }
+}
+
 /* Make the search-first support step reliable even if older quiz CSS loads first. */
 .v6-master-support:not(.v6-support-browse-all) .ayna-list-panel,
 .v6-support-search-only:not(.v6-support-browse-all) .ayna-list-panel {
