@@ -1,3 +1,4 @@
+/* global process, Buffer */
 import crypto from 'node:crypto';
 
 const APPLE_TOKEN_URL = 'https://appleid.apple.com/auth/token';
@@ -36,9 +37,6 @@ function appleConfig() {
 export function createAppleClientSecret(nowSeconds = Math.floor(Date.now() / 1000)) {
   const { teamId, keyId, privateKey, clientId } = appleConfig();
   const header = base64url(JSON.stringify({ alg: 'ES256', kid: keyId, typ: 'JWT' }));
-  // Keep each generated client secret short-lived even though Apple permits a
-  // longer maximum lifetime. There is no reason for a server request token to
-  // remain useful for months after a single exchange/revocation operation.
   const payload = base64url(JSON.stringify({
     iss: teamId,
     iat: nowSeconds,
@@ -144,11 +142,6 @@ export async function storeAppleRefreshToken(admin, userId, refreshToken) {
   if (error) throw new Error(`apple_token_store_failed:${error.code || 'db'}`);
 }
 
-/**
- * Best-effort Apple authorization revocation for account deletion.
- * Account deletion must never be blocked when an older user has no stored
- * refresh token or production credentials are temporarily unavailable.
- */
 export async function revokeStoredAppleAuthorization(admin, userId) {
   if (!admin || !userId) return { status: 'not_available' };
   const { data, error } = await admin
@@ -168,8 +161,6 @@ export async function revokeStoredAppleAuthorization(admin, userId) {
     await revokeAppleRefreshToken(refreshToken);
     return { status: 'revoked' };
   } catch (e) {
-    // Do not include Apple tokens, private keys, or provider response bodies in
-    // logs. A status-only result lets account deletion continue as required.
     console.warn('[account-delete] Apple authorization revocation was not completed:', e?.message || 'unknown');
     return { status: 'revoke_failed' };
   }
