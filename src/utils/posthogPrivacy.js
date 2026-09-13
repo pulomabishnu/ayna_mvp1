@@ -15,6 +15,11 @@ const SENSITIVE_KEYS = new Set([
   'supabasetoken', 'supabase_token', 'oauth_token', 'oauthtoken',
   'chat_history', 'chathistory', 'conversation', 'conversationhistory', 'conversation_history',
   'fhirsummary', 'fhir_summary', 'wearablesummary', 'wearable_summary',
+  // In a women's-health catalog, the exact product/category can itself reveal
+  // a health interest (for example UTI, fertility, PCOS or menopause). Keep
+  // aggregate interaction counts, but do not attach the health-inferential item.
+  'productid', 'product_id', 'productname', 'product_name', 'productbrand', 'product_brand',
+  'category', 'categoryid', 'category_id', 'healtharea', 'health_area', 'pillar',
 ]);
 
 const EMAIL_RE = /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi;
@@ -34,6 +39,7 @@ function isSensitiveKey(key) {
   if (/^(askayna|sms|chat).*(text|body|message|prompt)$/.test(normalized)) return true;
   if (/^(health|medical|reproductive|pregnancy).*(answer|answers|profile|data|text)$/.test(normalized)) return true;
   if (/^(access|refresh|oauth|auth).*token$/.test(normalized)) return true;
+  if (/^product.*(id|name|brand|category)$/.test(normalized)) return true;
   return false;
 }
 
