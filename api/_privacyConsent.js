@@ -1,8 +1,10 @@
-export const REQUIRED_AI_CONSENT_VERSION = 'v2';
+export const REQUIRED_AI_CONSENT_VERSION = 'v2-18plus';
 
 export function hasRequiredAiConsent(user) {
   const meta = user?.user_metadata || {};
-  return meta.consent_version === REQUIRED_AI_CONSENT_VERSION && Boolean(meta.consent_given_at);
+  return meta.consent_version === REQUIRED_AI_CONSENT_VERSION &&
+    Boolean(meta.consent_given_at) &&
+    meta.age_18_confirmed === true;
 }
 
 export function requireAiConsent(user, res) {
