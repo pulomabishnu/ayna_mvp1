@@ -54,6 +54,35 @@ html.v6-vintage-only .v6-live-search-dropdown {
   border-style: solid !important;
 }
 
+/* The synthetic first-name step must use the same readable ink as the rest of light intake. */
+html:not([data-v6-site-theme='dark']) .v6-name-step h1,
+.ayna-intake-root:not(.v6-quiz-dark) .v6-name-step h1 {
+  color: #373238 !important;
+}
+
+/* Safety and suggestion metadata must remain readable in dark intake. */
+.ayna-intake-root.v6-quiz-dark .ayna-intake-hint,
+.ayna-intake-root.v6-quiz-dark .v6-support-suggestion-label,
+.ayna-intake-root.v6-quiz-dark .v6-support-bubble,
+.ayna-intake-root.v6-quiz-dark .v6-master-suggestion-bubble {
+  color: #e8e0d7 !important;
+}
+
+/* The intake-only moon toggle should visually carry the nav into the same dark sibling. */
+body:has(.ayna-intake-root.v6-quiz-dark) .app-nav,
+body:has(.ayna-intake-root.v6-quiz-dark) .app-nav--cream,
+body:has(.ayna-intake-root.v6-quiz-dark) .app-nav--landing {
+  background: rgba(47, 48, 66, .94) !important;
+  border-bottom-color: rgba(232, 224, 215, .14) !important;
+  color: #e8e0d7 !important;
+}
+body:has(.ayna-intake-root.v6-quiz-dark) .app-nav button,
+body:has(.ayna-intake-root.v6-quiz-dark) .app-nav a,
+body:has(.ayna-intake-root.v6-quiz-dark) .app-nav svg {
+  color: #e8e0d7 !important;
+  stroke: currentColor !important;
+}
+
 /* Make the search-first support step reliable even if older quiz CSS loads first. */
 .v6-master-support:not(.v6-support-browse-all) .ayna-list-panel,
 .v6-support-search-only:not(.v6-support-browse-all) .ayna-list-panel {
