@@ -1,0 +1,58 @@
+/* Final visual intent: grainy vintage indie-film texture, not literal camera UI. */
+
+/* Remove every literal camcorder/HUD treatment. */
+.v6-camcorder-hud,
+.v6-hud-rec,
+.v6-hud-battery,
+.v6-hud-time,
+.v6-hud-mark {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* Keep the analog atmosphere subtle and readable. */
+body::after {
+  opacity: .06 !important;
+  mix-blend-mode: soft-light !important;
+  animation-duration: .62s !important;
+}
+
+html[data-v6-site-theme='dark'] body::after {
+  opacity: .075 !important;
+}
+
+.v6-film-vignette {
+  box-shadow:
+    inset 0 0 90px rgba(47, 37, 42, .12),
+    inset 0 0 18px rgba(47, 37, 42, .045) !important;
+}
+
+html[data-v6-site-theme='dark'] .v6-film-vignette {
+  box-shadow:
+    inset 0 0 105px rgba(8, 8, 12, .22),
+    inset 0 0 22px rgba(8, 8, 12, .07) !important;
+}
+
+/* Vintage editorial texture without pretending the website is a camera. */
+html.v6-vintage-only .app-nav,
+html.v6-vintage-only .v6-home-search,
+html.v6-vintage-only .ayna-intake-question,
+html.v6-vintage-only .ayna-discover-card,
+html.v6-vintage-only .v6-product-bubble,
+html.v6-vintage-only .v6-auth-card,
+html.v6-vintage-only .v6-eco-product-card {
+  box-shadow: none !important;
+}
+
+html.v6-vintage-only .app-nav,
+html.v6-vintage-only .v6-home-search,
+html.v6-vintage-only .ayna-intake-question,
+html.v6-vintage-only .ayna-discover-card__tile,
+html.v6-vintage-only .v6-auth-card,
+html.v6-vintage-only .v6-live-search-dropdown {
+  border-style: solid !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::after { animation: none !important; }
+}
