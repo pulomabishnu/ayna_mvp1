@@ -11,7 +11,8 @@ function write(path, text) { fs.writeFileSync(path, text); }
   const path = 'src/mobile/hooks/useSupabaseAuth.js';
   let text = read(path);
   const marker = 'apple-token secure capture';
-  if (!text.includes(marker)) {
+  const alreadyWired = text.includes(marker) || text.includes("fetch('/api/apple-token'");
+  if (!alreadyWired) {
     const anchor = `    if (error) throw error;
 
     // Apple only supplies name on the first authorization.`;
