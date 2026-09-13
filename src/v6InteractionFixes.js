@@ -97,21 +97,32 @@ function rememberSubmission(name, source, submission = {}) {
 
 async function submitMissingProduct(name, source, button) {
   const value = clean(name); if (value.length < 2 || !button || button.dataset.busy === '1') return;
-  if (source === 'browse') {
-    const helperButton = document.querySelector('.ayna-browse__search .v6-add-product-helper button');
-    if (helperButton) {
-      button.dataset.busy = '1'; button.textContent = 'adding…'; helperButton.click();
-      window.setTimeout(() => { button.textContent = 'added ✓'; delete button.dataset.busy; }, 700); return;
-    }
-  }
-  button.dataset.busy = '1'; button.textContent = 'adding…';
+  button.dataset.busy = '1';
+  const originalText = button.textContent;
+  button.textContent = 'adding…';
   try {
     const headers = await authHeader();
-    const response = await fetch('/api/product-submissions', { method: 'POST', headers: { 'Content-Type': 'application/json', ...headers }, body: JSON.stringify({ name: value, source, clientSubmissionId: globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}` }) });
-    const body = await response.json().catch(() => ({})); if (!response.ok || !body?.submission) throw new Error(body?.error || 'submission_failed');
-    rememberSubmission(value, source, body.submission); button.textContent = 'added ✓';
-  } catch { button.textContent = 'couldn’t add · try again'; }
-  finally { window.setTimeout(() => { delete button.dataset.busy; }, 500); }
+    const response = await fetch('/api/product-submissions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...headers },
+      body: JSON.stringify({
+        name: value,
+        source,
+        clientSubmissionId: globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      }),
+    });
+    const body = await response.json().catch(() => ({}));
+    if (!response.ok || !body?.submission) throw new Error(body?.error || 'submission_failed');
+    rememberSubmission(value, source, body.submission);
+    button.textContent = 'added ✓';
+  } catch {
+    button.textContent = 'couldn’t add · try again';
+  } finally {
+    window.setTimeout(() => {
+      delete button.dataset.busy;
+      if (button.textContent === 'adding…') button.textContent = originalText;
+    }, 500);
+  }
 }
 
 function resultRow(record, onChoose) {
