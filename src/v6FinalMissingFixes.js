@@ -20,25 +20,38 @@ function setControlledInput(input, value) {
   input.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
-function openRealSignIn() {
-  const visibleButtons = [...document.querySelectorAll('button')].filter((button) => {
-    const style = window.getComputedStyle(button);
-    return style.display !== 'none' && style.visibility !== 'hidden';
-  });
+function clickVisibleLogin() {
+  const login = [...document.querySelectorAll('.nav-account-menu button, .mobile-nav-drawer button, button, a')]
+    .find((node) => {
+      const style = window.getComputedStyle(node);
+      return style.display !== 'none'
+        && style.visibility !== 'hidden'
+        && /^(sign in|log in)$/i.test(text(node))
+        && !node.closest('.v6-ask-locked-fallback');
+    });
+  if (!login) return false;
+  login.click();
+  return true;
+}
 
-  const direct = visibleButtons.find((button) => /^sign\s*in$/i.test(text(button)) && !button.closest('.v6-ask-locked-fallback'));
-  if (direct) {
-    direct.click();
-    return;
-  }
+function openRealSignIn() {
+  if (clickVisibleLogin()) return;
 
   const account = document.querySelector('.app-nav__circle--account, [aria-label*="account" i]');
   if (account) {
     account.click();
     window.setTimeout(() => {
-      const login = [...document.querySelectorAll('button, a')].find((node) => /^(sign in|log in)$/i.test(text(node)));
-      login?.click();
-    }, 60);
+      if (clickVisibleLogin()) return;
+      // If a decorative/transition layer swallowed the first account click,
+      // try the real account control once more before falling back to /quiz.
+      account.click();
+      window.setTimeout(() => {
+        if (!clickVisibleLogin()) {
+          window.history.pushState({ view: 'quiz' }, '', '/quiz');
+          window.dispatchEvent(new PopStateEvent('popstate', { state: { view: 'quiz' } }));
+        }
+      }, 90);
+    }, 70);
     return;
   }
 
@@ -60,13 +73,18 @@ function ensureSignedOutAskAyna() {
   fallback = document.createElement('button');
   fallback.type = 'button';
   fallback.className = 'v6-ask-locked-fallback';
-  fallback.setAttribute('aria-label', 'Sign in to Ask Ayna');
+  fallback.setAttribute('aria-label', 'Sign in to Ask ayna');
   fallback.innerHTML = `
     <span class="v6-ask-locked-fallback__inner">
       <span class="v6-ask-locked-fallback__star" aria-hidden="true">✦</span>
       <span class="v6-ask-locked-fallback__label">ask ayna</span>
     </span>
-    <span class="v6-ask-locked-fallback__lock" aria-hidden="true">⌑</span>`;
+    <span class="v6-ask-locked-fallback__lock" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="6.5" y="10.3" width="11" height="8.3" rx="2" />
+        <path d="M9 10.3V8a3 3 0 0 1 6 0v2.3" />
+      </svg>
+    </span>`;
   fallback.addEventListener('click', openRealSignIn);
   document.body.appendChild(fallback);
 }
