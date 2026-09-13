@@ -1,19 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Capacitor } from '@capacitor/core';
 import posthog from 'posthog-js';
 import { denyConsent, getStoredConsent, grantConsent, isGpcActive } from '../../utils/analyticsConsent.js';
 
-export default function AnalyticsConsentPrompt() {
-  const [visible, setVisible] = useState(false);
+function shouldShowPrompt() {
+  const isIosApp = Capacitor.getPlatform() === 'ios';
+  const isPreview = typeof window !== 'undefined' && window.location.pathname === '/mobile-preview';
+  if (!isIosApp && !isPreview) return false;
+  if (isGpcActive()) return false;
+  const existing = getStoredConsent();
+  return existing !== 'granted' && existing !== 'denied';
+}
 
-  useEffect(() => {
-    const isIosApp = Capacitor.getPlatform() === 'ios';
-    const isPreview = window.location.pathname === '/mobile-preview';
-    if (!isIosApp && !isPreview) return;
-    if (isGpcActive()) return;
-    const existing = getStoredConsent();
-    setVisible(existing !== 'granted' && existing !== 'denied');
-  }, []);
+export default function AnalyticsConsentPrompt() {
+  const [visible, setVisible] = useState(shouldShowPrompt);
 
   if (!visible) return null;
 
