@@ -1,4 +1,5 @@
 import { verifyUser } from './_usageLimit.js';
+import { revokeStoredAppleAuthorization } from './_appleSignIn.js';
 
 const USER_TABLES = [
   'health_intakes',
@@ -14,6 +15,9 @@ const USER_TABLES = [
   'user_learning_memory',
   'user_reviews',
   'account_deletion_requests',
+  // Stored separately because it is a credential, not profile data. It is
+  // revoked with Apple before this row is purged whenever a token is present.
+  'apple_oauth_tokens',
 ];
 
 function setPrivateHeaders(res) {
@@ -52,6 +56,12 @@ export default async function handler(req, res) {
   if (body.confirm !== 'DELETE') return res.status(400).json({ error: 'confirmation_required' });
 
   try {
+    // Apple asks apps using Sign in with Apple to revoke the associated token
+    // when the user deletes the account. This is best-effort by design: an
+    // older account may predate secure refresh-token storage, and account
+    // deletion must still be completed even if no revocable token is available.
+    const appleAuthorization = await revokeStoredAppleAuthorization(admin, user.id);
+
     // Explicitly purge every known user-owned table instead of assuming an
     // ON DELETE CASCADE is present or correct. Missing-table errors are ignored
     // only to allow a release to work across a schema rollout; real permission,
@@ -65,7 +75,11 @@ export default async function handler(req, res) {
     const { error: authDeleteError } = await admin.auth.admin.deleteUser(user.id, false);
     if (authDeleteError) throw new Error(`auth.users: ${authDeleteError.message || 'delete failed'}`);
 
-    return res.status(200).json({ ok: true, deleted: true });
+    return res.status(200).json({
+      ok: true,
+      deleted: true,
+      appleAuthorization: appleAuthorization.status,
+    });
   } catch (e) {
     console.error('[account-delete] deletion failed:', e?.message || 'unknown error');
     return res.status(500).json({ error: 'delete_failed' });
