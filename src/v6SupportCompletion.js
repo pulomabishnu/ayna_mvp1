@@ -38,11 +38,25 @@ function readDraft() {
   catch { return {}; }
 }
 
+function isSupportQuestion(question) {
+  const heading = clean(question?.querySelector(':scope > h1')?.textContent);
+  return Boolean(question?.querySelector('.ayna-search-wrap'))
+    && /currently experiencing|looking for support|which options best describe you right now/i.test(heading);
+}
+
 function supportQuestion() {
-  return [...document.querySelectorAll('.ayna-intake-question')].find((question) => {
-    const heading = clean(question.querySelector(':scope > h1')?.textContent);
-    return Boolean(question.querySelector('.ayna-search-wrap')) && /currently experiencing|looking for support|which options best describe you right now/i.test(heading);
-  }) || null;
+  return [...document.querySelectorAll('.ayna-intake-question')].find(isSupportQuestion) || null;
+}
+
+function cleanupStaleSupportEnhancements() {
+  document.querySelectorAll('.ayna-intake-question').forEach((question) => {
+    if (isSupportQuestion(question)) return;
+
+    question.classList.remove('v6-master-support', 'v6-support-search-only', 'v6-support-browse-all');
+    question.querySelectorAll('.v6-support-suggestion-shell').forEach((node) => node.remove());
+    question.querySelectorAll('.v6-support-browse-toggle').forEach((node) => node.remove());
+    question.querySelectorAll('.v6-support-search-with-toggle').forEach((node) => node.classList.remove('v6-support-search-with-toggle'));
+  });
 }
 
 function selectSupport(question, label) {
@@ -153,7 +167,7 @@ function finishUnlockCard() {
   const heading = card.querySelector('h2');
   const copy = card.querySelector('p');
   if (heading) heading.textContent = 'sign in to unlock your personalized results.';
-  if (copy) copy.textContent = 'Save picks, see your Ayna score, and open your health universe.';
+  if (copy) copy.textContent = 'Save picks, see your ayna score, and open your health universe.';
   const actions = [...card.querySelectorAll('.v6-unlock-actions button')];
   if (actions[1]) actions[1].textContent = 'new here? build your ecosystem';
 }
@@ -183,6 +197,7 @@ function finishReducedMotion() {
 }
 
 function run() {
+  cleanupStaleSupportEnhancements();
   finishSupportStep();
   finishUnlockCard();
   finishReducedMotion();
