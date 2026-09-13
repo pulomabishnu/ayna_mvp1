@@ -4,6 +4,27 @@ import { NotSignedInError } from './notificationPreferencesApi.js';
 
 export { NotSignedInError };
 
+const PRIVATE_LOCAL_KEYS = [
+  'ayna_ecosystem_session_v1',
+  'ayna_routine_v1',
+  'ayna_saved_for_later_v1',
+  'ayna_zip',
+];
+
+function purgeLocalPrivateState() {
+  try {
+    for (const key of PRIVATE_LOCAL_KEYS) localStorage.removeItem(key);
+  } catch { /* storage unavailable */ }
+  try {
+    const remove = [];
+    for (let i = 0; i < sessionStorage.length; i += 1) {
+      const key = sessionStorage.key(i);
+      if (key && (key.startsWith('ayna-ai-search') || key === 'ayna_pending_consent')) remove.push(key);
+    }
+    for (const key of remove) sessionStorage.removeItem(key);
+  } catch { /* storage unavailable */ }
+}
+
 async function getAccessToken() {
   const supabase = getSupabaseClient();
   if (!supabase) return null;
@@ -48,11 +69,11 @@ export async function requestAccountDeletion() {
     throw err;
   }
 
-  // The server has removed the auth user. Clear local auth and analytics state
-  // so a deleted person's old device session cannot continue looking signed in
-  // or reuse the previous PostHog identity on a later signup.
+  // The server has removed the auth user. Clear local auth, analytics identity,
+  // and any legacy device caches that could reveal health interests.
   try { await getSupabaseClient()?.auth.signOut({ scope: 'local' }); } catch { /* deleted session */ }
   try { posthog.reset(); } catch { /* analytics unavailable or opted out */ }
+  purgeLocalPrivateState();
 
   return data;
 }
