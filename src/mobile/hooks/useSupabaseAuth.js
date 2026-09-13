@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import posthog from 'posthog-js';
 import { Capacitor, registerPlugin } from '@capacitor/core';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Browser } from '@capacitor/browser';
@@ -151,6 +152,9 @@ export function useSupabaseAuth() {
           age_18_confirmed: true,
           age_18_confirmed_at: consentAt,
           age_requirement_version: AGE_REQUIREMENT_VERSION,
+          ai_health_processing_allowed: true,
+          ai_health_processing_consented_at: consentAt,
+          ai_health_processing_revoked_at: null,
         },
       },
     });
@@ -306,6 +310,7 @@ export function useSupabaseAuth() {
   async function signOut() {
     const supabase = getSupabaseClient();
     if (supabase) await supabase.auth.signOut();
+    try { posthog.reset(); } catch { /* analytics may be unavailable/opted out */ }
   }
 
   return { user, authLoading, signUpWithPassword, signInWithPassword, signInWithGoogle, signInWithApple, signOut, resendConfirmation };

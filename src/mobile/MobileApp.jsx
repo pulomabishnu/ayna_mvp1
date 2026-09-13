@@ -168,7 +168,7 @@ export default function MobileApp() {
   // the same Supabase user_ecosystems rows used by the website.
   const ecosystemFlagsRef = useRef({ trackedProducts: {}, omittedProducts: {} });
   const pendingQuizEcosystemRef = useRef(null);
-  const { savedMap, isSaved, toggleSaved } = useSavedProducts(authUser);
+  const { savedMap, isSaved, toggleSaved, resetSaved } = useSavedProducts(authUser);
   const { theme, resolvedTheme, setThemeMode } = useThemeMode();
   const { textSizeIndex, setTextSizeIndex, textScale } = useTextSize();
   const [askAynaOpen, setAskAynaOpen] = useState(false);
@@ -352,6 +352,11 @@ export default function MobileApp() {
   // newly real here.
   const handleSignOut = () => {
     setOverlay(null);
+    setAskAynaOpen(false);
+    setAskAynaHistory([]);
+    pendingQuizEcosystemRef.current = null;
+    ecosystemFlagsRef.current = { trackedProducts: {}, omittedProducts: {} };
+    resetSaved();
     resetSession();
     signOutSupabase();
     setScreen('landing');

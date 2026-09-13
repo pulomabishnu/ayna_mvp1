@@ -182,7 +182,7 @@ describe('POST /api/llm-recommendations — build quota', () => {
   it('ignores client-writable user_metadata.is_premium (privilege escalation)', async () => {
     globalThis.__mockSupabase = supa = claimingSupabase();
     supa.auth.getUser = vi.fn(async () => ({
-      data: { user: { id: 'u-x', email: 'x@x.com', app_metadata: {}, user_metadata: { consent_version: 'v2-18plus', consent_given_at: '2026-09-13T00:00:00.000Z', age_18_confirmed: true, is_premium: true } } },
+      data: { user: { id: 'u-x', email: 'x@x.com', app_metadata: {}, user_metadata: { consent_version: 'v2-18plus', consent_given_at: '2026-09-13T00:00:00.000Z', age_18_confirmed: true, ai_health_processing_allowed: true, is_premium: true } } },
       error: null,
     }));
     globalThis.fetch = vi.fn(async () => anthropicOk(recPayload()));

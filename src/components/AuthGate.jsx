@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
-import { CONSENT_VERSION, stashPendingConsent } from '../utils/pendingConsent.js';
+import { AGE_REQUIREMENT_VERSION, CONSENT_VERSION, stashPendingConsent } from '../utils/pendingConsent.js';
 
 const SUBTITLES = {
   quiz: 'Create an account to save your health profile and keep your ecosystem across sessions.',
@@ -13,11 +13,12 @@ const SUBTITLES = {
 
 const CONSENT_ITEMS = [
   'The health information I share with ayna is self-reported wellness information, not a clinical record.',
-  'My wellness data may be processed by an external AI service to personalize recommendations. ayna takes measures to anonymize and secure this information and never sells it.',
+  'When I intentionally use an AI-powered feature, relevant information I provide may be processed by third-party AI providers such as Anthropic, OpenAI, or Google to generate my requested response. ayna minimizes the context sent and does not sell it.',
   'ayna provides wellness information, not medical advice or a substitute for care from a qualified healthcare provider.',
+  'I confirm that I am at least 18 years old.',
 ];
 
-export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAuthRedirect, redirectTo }) {
+export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAuthRedirect }) {
   useEscapeToClose(isModal, onSkip);
   const [mode, setMode] = useState('signin');
   const [firstName, setFirstName] = useState('');
@@ -29,7 +30,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
   const [successMsg, setSuccessMsg] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConsentDetails, setShowConsentDetails] = useState(false);
-  const [checked, setChecked] = useState([false, false, false]);
+  const [checked, setChecked] = useState([false, false, false, false]);
   // Two real signups reported never getting a confirmation email
   // (2026-08-25) — Supabase's built-in email sender has a very low rate
   // limit and no delivery guarantee, so a signup silently succeeding with
@@ -53,7 +54,6 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
   const [phoneStep, setPhoneStep] = useState('number');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [phoneCode, setPhoneCode] = useState('');
-  const [phoneSending, setPhoneSending] = useState(false);
 
   const supabase = getSupabaseClient();
   const subtitle = SUBTITLES[context] || SUBTITLES.default;
@@ -66,7 +66,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
   const handleEmailAuth = async (e) => {
     e.preventDefault();
     if (isSignup && !allConsented) {
-      setError("Please agree to the three statements above before creating your account.");
+      setError("Please agree to all four statements above before creating your account.");
       return;
     }
     setError('');
@@ -88,6 +88,12 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
               full_name: cleanFirstName,
               consent_given_at: consentAt,
               consent_version: CONSENT_VERSION,
+              age_18_confirmed: true,
+              age_18_confirmed_at: consentAt,
+              age_requirement_version: AGE_REQUIREMENT_VERSION,
+              ai_health_processing_allowed: true,
+              ai_health_processing_consented_at: consentAt,
+              ai_health_processing_revoked_at: null,
             },
           },
         });
@@ -212,8 +218,8 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
   };
 
   const handleGoogle = async () => {
-    if (isSignup && !allConsented) {
-      setError("Please agree to the three statements above before continuing.");
+    if (!allConsented) {
+      setError("Please agree to all four statements above before continuing.");
       return;
     }
     if (!supabase) {
@@ -551,6 +557,35 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
                 : isSignup ? 'Create account' : 'Sign in'}
           </button>
         </form>
+
+        {!isSignup && (
+          <div style={styles.consentSection}>
+            <button
+              type="button"
+              onClick={() => setShowConsentDetails(v => !v)}
+              style={styles.consentToggle}
+              aria-expanded={showConsentDetails}
+            >
+              <span>Privacy confirmations for Google</span>
+              <span style={{ transform: showConsentDetails ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s ease' }}>⌄</span>
+            </button>
+            {showConsentDetails && (
+              <div style={styles.consentDetails}>
+                {CONSENT_ITEMS.map((text, i) => (
+                  <label key={i} style={styles.consentItem}>
+                    <input
+                      type="checkbox"
+                      checked={checked[i]}
+                      onChange={() => toggleCheck(i)}
+                      style={styles.checkbox}
+                    />
+                    <span style={styles.consentText}>{text}</span>
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         <div style={styles.divider}>
           <span style={styles.dividerLine} />

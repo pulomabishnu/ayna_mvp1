@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import posthog from 'posthog-js';
 import { ALL_PRODUCTS } from '../../../data/products.js';
 import { getSupabaseClient } from '../../../utils/supabaseClient.js';
 import { getBrandAffinity, getCategoryInsights, getSafetyAlerts } from '../../utils/shopperProfileData.js';
@@ -15,6 +16,8 @@ import {
 import { fetchDataExport, requestAccountDeletion } from '../../utils/dataExportApi.js';
 import { OPEN_SOURCE_PACKAGES, summarizeLicenses } from '../../data/openSourceLicenses.js';
 import LegalFooter from '../../components/LegalFooter.jsx';
+import { denyConsent, getStoredConsent, grantConsent } from '../../../utils/analyticsConsent.js';
+import { grantCurrentUserConsent, hasCurrentConsent, revokeCurrentUserAiConsent } from '../../../utils/pendingConsent.js';
 
 /**
  * Profile hub + its four sub-sections and one detail page, ported from the
@@ -1497,27 +1500,56 @@ const DELETE_ACCOUNT_MAILTO = 'mailto:puloma@aynahealth.co?subject=Account%20Del
 const PRIVACY_POLICY_URL = 'https://www.aynahealth.co/privacy-policy';
 const TERMS_URL = 'https://www.aynahealth.co/terms-of-use';
 
-// Real toggle: PostHog's own opt-out API (posthog-js exposes
-// opt_out_capturing/opt_in_capturing/has_opted_out_capturing — see
-// src/main.jsx for the real init). Not a stored per-user backend flag, but
-// a genuine SDK call, not invented state — and this app has no analytics
-// consent UI anywhere yet, so this is the first place it's wired up.
-// window.posthog may be undefined if VITE_PUBLIC_POSTHOG_KEY isn't set
-// (e.g. this dev environment) — every call below is guarded for that.
-function isAnalyticsOptedOut() {
-  try { return typeof window !== 'undefined' && window.posthog?.has_opted_out_capturing?.() === true; } catch { return false; }
+function readAnalyticsEnabled() {
+  return getStoredConsent() === 'granted';
 }
 
-function PrivacyDataScreen({ onBack, onOpenManageData, onOpenDeleteAccount }) {
-  const [analyticsOptedOut, setAnalyticsOptedOut] = useState(isAnalyticsOptedOut);
+function PrivacyDataScreen({ onBack, onOpenManageData, onOpenDeleteAccount, authUser }) {
+  const [analyticsEnabled, setAnalyticsEnabled] = useState(readAnalyticsEnabled);
+  const [aiOverride, setAiOverride] = useState(null);
+  const [privacyStatus, setPrivacyStatus] = useState('');
+  const aiEnabled = aiOverride ?? hasCurrentConsent(authUser);
 
   const toggleAnalytics = () => {
-    const nextOptedOut = !analyticsOptedOut;
-    setAnalyticsOptedOut(nextOptedOut);
+    const next = !analyticsEnabled;
+    setAnalyticsEnabled(next);
     try {
-      if (nextOptedOut) window.posthog?.opt_out_capturing?.();
-      else window.posthog?.opt_in_capturing?.();
-    } catch { /* posthog not initialized in this environment */ }
+      if (next) grantConsent(posthog);
+      else denyConsent(posthog);
+    } catch {
+      setAnalyticsEnabled(!next);
+      setPrivacyStatus('Analytics choice could not be saved right now.');
+    }
+  };
+
+  const toggleAi = async () => {
+    if (!authUser) {
+      setPrivacyStatus('Sign in to change AI permission for your account.');
+      return;
+    }
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      setPrivacyStatus('AI permission is not available right now.');
+      return;
+    }
+    setPrivacyStatus('');
+    try {
+      if (aiEnabled) {
+        await revokeCurrentUserAiConsent(supabase);
+        setAiOverride(false);
+        setPrivacyStatus('AI features are off. Non-AI parts of ayna still work.');
+      } else {
+        if (authUser?.user_metadata?.age_18_confirmed !== true) {
+          setPrivacyStatus('Open an AI feature first to review the 18+ and AI privacy confirmation.');
+          return;
+        }
+        await grantCurrentUserConsent(supabase);
+        setAiOverride(true);
+        setPrivacyStatus('AI features are allowed for this account.');
+      }
+    } catch (e) {
+      setPrivacyStatus(e?.message || 'AI permission could not be changed right now.');
+    }
   };
 
   return (
@@ -1544,7 +1576,7 @@ function PrivacyDataScreen({ onBack, onOpenManageData, onOpenDeleteAccount }) {
           />
         </div>
         <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 9, padding: '0 4px' }}>
-          Deletion removes your account and health answers from our active systems. We may keep limited records where the law requires it — never your health data.
+          Deletion removes account-linked data from the active systems ayna controls. Limited records may remain where law requires, and processor backups may expire under their documented retention schedules.
         </div>
 
         <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>What you share</div>
@@ -1552,16 +1584,23 @@ function PrivacyDataScreen({ onBack, onOpenManageData, onOpenDeleteAccount }) {
           <ToggleRow
             first
             title="Share data for analytics"
-            sub="Usage analytics that help us understand how the app is used. We do not include your health-profile answers."
-            on={!analyticsOptedOut}
+            sub="Optional product analytics. On iPhone this stays off until you allow it. Health answers, AI messages, SMS content, names, emails, phone numbers, and raw searches are filtered from analytics events."
+            on={analyticsEnabled}
             onClick={toggleAnalytics}
           />
+          <ToggleRow
+            title="Allow AI features"
+            sub="When on, the minimum relevant context for an AI feature may be sent to Anthropic, OpenAI, or Google to generate the response. Turn this off any time without deleting your account or health profile."
+            on={aiEnabled}
+            onClick={toggleAi}
+          />
         </div>
+        {privacyStatus && <div style={{ marginTop: 9, padding: '0 4px', fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.5 }}>{privacyStatus}</div>}
 
         <div style={{ marginTop: 14, background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '16px 18px' }}>
           <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 8 }}>How AI is used</div>
           <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.6 }}>
-            Ask Ayna and match explanations are powered by a third-party AI provider (Anthropic). Your questions and relevant profile details are shared with them to generate a response — never sold, and never used to train anyone else's model.
+            AI-powered features may use Anthropic, OpenAI, or Google depending on the feature and provider availability. They only receive the context needed to generate the response after you allow AI features. ayna does not sell that information.
           </div>
           <div onClick={() => window.open(PRIVACY_POLICY_URL, '_blank', 'noopener,noreferrer')} style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', fontWeight: 600, marginTop: 10, cursor: 'pointer' }}>
             Read the full privacy policy
@@ -1643,9 +1682,8 @@ function LegalScreen({ onBack, onOpenConsumerHealthData, onOpenOpenSourceLicense
 // parties named here (Supabase, Anthropic/OpenAI/Gemini, PostHog, Twilio,
 // Resend) are the app's actual real integrations (see .env.example), and
 // the rights described map to screens that already exist and work (Manage
-// my data / Download my data, the analytics opt-out toggle in Privacy &
-// data, account deletion via the email below) rather than promises of
-// features that don't exist yet.
+// my data / Download my data, analytics and AI permission toggles, and direct
+// in-app account deletion) rather than promises of features that do not exist.
 //
 // This is a good-faith draft written to cover Washington's My Health My
 // Data Act's (MHMDA) required disclosures. It has NOT been reviewed by a
@@ -1658,13 +1696,14 @@ const HEALTH_DATA_PROCESSORS = [
   { initial: 'A', name: 'Anthropic, OpenAI, Google', role: 'Generate product summaries and Ask Ayna answers.', bg: '#FDF0DC', fg: '#9A5B14' },
   { initial: 'T', name: 'Twilio', role: 'Sends phone verification and user-initiated SMS health conversations.', bg: '#E7EAF5', fg: '#3B4677' },
   { initial: 'R', name: 'Resend', role: 'Delivers email, including contact-form messages.', bg: '#F5E9F0', fg: '#7A3E60' },
-  { initial: 'P', name: 'PostHog', role: 'Anonymised usage analytics — off any time in Privacy & data.', bg: '#F1EDE6', fg: '#6B6257' },
+  { initial: 'P', name: 'PostHog', role: 'Optional product analytics after you opt in on iPhone; sensitive health, message, search, and direct-identifier fields are filtered.', bg: '#F1EDE6', fg: '#6B6257' },
 ];
 
 const HEALTH_DATA_RIGHTS = [
   { title: 'See exactly what we hold', how: 'Settings → Privacy & data → Manage my data' },
   { title: 'Download a copy', how: 'Same screen, in a portable format' },
   { title: 'Withdraw consent for analytics', how: 'Settings → Privacy & data → the analytics toggle' },
+  { title: 'Turn off third-party AI processing', how: 'Settings → Privacy & data → Allow AI features' },
   { title: 'Delete your account and data', how: 'Settings → Account → Delete account. Email puloma@aynahealth.co for additional privacy support.' },
 ];
 
@@ -1706,7 +1745,7 @@ function ConsumerHealthDataPolicyScreen({ onBack }) {
 
         <NumberedCard n="02" title="What we collect, and why">
           <div style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', lineHeight: 1.65, color: 'var(--ayna-text-muted)', marginTop: 11 }}>
-            Your intake answers, your questions to Ask Ayna, and the products you save. We use them to build your matches, explain why a product fits, and flag safety recalls on what you own — nothing else.
+            Depending on what you use, this can include intake answers, AI questions, saved or tracked products, account/contact details, preferences, and user-initiated SMS health conversations. We use them to provide the features you request, personalize matches, and support safety or account functions.
           </div>
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 12 }}>
             {['INTAKE ANSWERS', 'ASK AYNA', 'SAVED PRODUCTS'].map((t) => (
@@ -1716,7 +1755,7 @@ function ConsumerHealthDataPolicyScreen({ onBack }) {
         </NumberedCard>
 
         <NumberedCard n="03" title="Who touches it">
-          <div style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', lineHeight: 1.65, color: 'var(--ayna-text-muted)', marginTop: 11 }}>Five service providers, each doing exactly one job for us.</div>
+          <div style={{ fontSize: 'calc(13px * var(--ayna-text-scale, 1))', lineHeight: 1.65, color: 'var(--ayna-text-muted)', marginTop: 11 }}>These service-provider groups support specific parts of ayna.</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 9, marginTop: 13 }}>
             {HEALTH_DATA_PROCESSORS.map((p) => (
               <div key={p.name} style={{ display: 'flex', alignItems: 'center', gap: 11, background: 'var(--ayna-chip-bg)', borderRadius: 18, padding: '11px 13px' }}>
@@ -3334,6 +3373,7 @@ export default function ProfileFlow({
         onBack={goBack}
         onOpenManageData={() => pushScreen('manageData')}
         onOpenDeleteAccount={() => pushScreen('deleteAccount')}
+        authUser={authUser}
       />
     );
   } else if (screen === 'deleteAccount') {
