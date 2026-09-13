@@ -546,8 +546,8 @@ function ShopperProfileScreen({ onBack, quizAnswers, myProducts = [], savedProdu
           </div>
         )}
 
+        <LegalFooter />
       </div>
-      <LegalFooter />
     </div>
   );
 }
@@ -731,8 +731,8 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
             );
           })}
         </div>
+        <LegalFooter />
       </div>
-      <LegalFooter />
     </div>
   );
 }
@@ -1248,8 +1248,8 @@ function PreferencesScreen({
             {toast}
           </div>
         )}
+        <LegalFooter />
       </div>
-      <LegalFooter />
     </div>
   );
 }
@@ -1394,8 +1394,8 @@ function ChannelsScreen({ onBack }) {
             {toast}
           </div>
         )}
+        <LegalFooter />
       </div>
-      <LegalFooter />
     </div>
   );
 }
@@ -1485,8 +1485,8 @@ function SettingsScreen({ onBack, onOpenHowItWorks, onOpenAboutAyna, onOpenConta
           <div onClick={onSignIn} style={{ marginTop: 22, textAlign: 'center', padding: '14px 0', border: '1px solid var(--ayna-border)', borderRadius: 99, color: 'var(--ayna-heading)', fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', cursor: 'pointer', background: 'var(--ayna-surface)' }}>Sign in</div>
         )}
         <div style={{ textAlign: 'center', marginTop: 16, fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', color: 'var(--ayna-text-muted)' }}>AYNA 0.9.4</div>
+        <LegalFooter />
       </div>
-      <LegalFooter />
     </div>
   );
 }
@@ -1571,8 +1571,8 @@ function PrivacyDataScreen({ onBack, onOpenManageData, onOpenDeleteAccount }) {
         <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 16, padding: '0 4px' }}>
           Privacy questions? Email <a href="mailto:puloma@aynahealth.co">puloma@aynahealth.co</a>.
         </div>
+        <LegalFooter />
       </div>
-      <LegalFooter />
     </div>
   );
 }
@@ -1631,8 +1631,8 @@ function LegalScreen({ onBack, onOpenConsumerHealthData, onOpenOpenSourceLicense
         <div style={{ textAlign: 'center', marginTop: 22, fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', color: 'var(--ayna-text-muted)', lineHeight: 1.9 }}>
           AYNA HEALTH, INC.<br />DELAWARE, USA<br />APP 0.9.4
         </div>
+        <LegalFooter />
       </div>
-      <LegalFooter />
     </div>
   );
 }
@@ -1767,8 +1767,8 @@ function ConsumerHealthDataPolicyScreen({ onBack }) {
             puloma@aynahealth.co
           </a>
         </div>
+        <LegalFooter />
       </div>
-      <LegalFooter />
     </div>
   );
 }
@@ -1864,8 +1864,8 @@ function OpenSourceLicensesScreen({ onBack }) {
             Download licences.txt
           </div>
         </div>
+        <LegalFooter />
       </div>
-      <LegalFooter />
     </div>
   );
 }
@@ -1954,8 +1954,8 @@ function TypefacesScreen({ onBack }) {
             Served from Google's font CDN over HTTPS — the standard way Google Fonts are delivered, not bundled with the app itself.
           </div>
         </div>
+        <LegalFooter />
       </div>
-      <LegalFooter />
     </div>
   );
 }
@@ -2060,8 +2060,8 @@ function ResearchSourcesScreen({ onBack }) {
         <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 14, padding: '0 4px', textAlign: 'center' }}>
           Spotted something out of date? <a href={DELETE_ACCOUNT_MAILTO.replace('subject=Account%20Deletion%20Request', 'subject=Research%20source%20question')}>Tell us</a> and we'll check it.
         </div>
+        <LegalFooter />
       </div>
-      <LegalFooter />
     </div>
   );
 }
@@ -2229,8 +2229,8 @@ function ManageDataScreen({ onBack }) {
             )}
           </>
         )}
+        <LegalFooter />
       </div>
-      <LegalFooter />
     </div>
   );
 }
@@ -2371,6 +2371,7 @@ function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers,
           <div style={{ border: '1px dashed var(--ayna-border)', borderRadius: 20, padding: 18, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.55, textAlign: 'center' }}>
             Sign in to see your account details.
           </div>
+          <LegalFooter />
         </div>
       </div>
     );
@@ -2486,8 +2487,8 @@ function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers,
         <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 14, padding: '0 4px' }}>
           Questions about your account? Email <a href="mailto:puloma@aynahealth.co" style={{ color: 'var(--ayna-brown)' }}>puloma@aynahealth.co</a>.
         </div>
+        <LegalFooter />
       </div>
-      <LegalFooter />
     </div>
   );
 }
@@ -2540,8 +2541,8 @@ function DeleteAccountScreen({ onBack, onSignOut, onClose }) {
           >
             Done
           </div>
+          <LegalFooter />
         </div>
-        <LegalFooter />
       </div>
     );
   }
@@ -2599,8 +2600,8 @@ function DeleteAccountScreen({ onBack, onSignOut, onClose }) {
         >
           {status === 'submitting' ? 'Submitting…' : 'Delete my account'}
         </div>
+        <LegalFooter />
       </div>
-      <LegalFooter />
     </div>
   );
 }
@@ -2705,6 +2706,7 @@ function PasswordScreen({ onBack, authUser }) {
         <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', padding: '40px 20px', textAlign: 'center' }}>
           <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(22px * var(--ayna-text-scale, 1))', marginBottom: 10, color: 'var(--ayna-heading)' }}>Password updated.</div>
           <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.55 }}>You're signed in on this device with the new password.</div>
+          <LegalFooter />
         </div>
       </div>
     );
@@ -2784,8 +2786,8 @@ function PasswordScreen({ onBack, authUser }) {
             <div onClick={handleForgot} style={{ textAlign: 'center', marginTop: 18, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-brown)', fontWeight: 600, cursor: 'pointer' }}>Forgot your current password?</div>
           )
         )}
+        <LegalFooter />
       </div>
-      <LegalFooter />
     </div>
   );
 }
@@ -2920,8 +2922,8 @@ function HowItWorksScreen({ onBack }) {
           <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(19px * var(--ayna-text-scale, 1))', lineHeight: 1.3, color: 'var(--ayna-heading)' }}>ayna is not a doctor, and never pretends to be.</div>
           <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 8, lineHeight: 1.5 }}>Summaries are AI-written from cited sources and clinician input.</div>
         </div>
+        <LegalFooter />
       </div>
-      <LegalFooter />
     </div>
   );
 }
@@ -3072,8 +3074,8 @@ function AboutAynaScreen({ onBack }) {
           <div style={{ fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}>ayna is not a doctor.</div>
           <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.55, color: 'var(--ayna-text-muted)', marginTop: 6 }}>Medical decisions stay with you and your clinician.</div>
         </div>
+        <LegalFooter />
       </div>
-      <LegalFooter />
     </div>
   );
 }
@@ -3192,8 +3194,8 @@ function ContactScreen({ onBack }) {
             {status === 'sending' ? 'Sending…' : 'Send message'}
           </div>
         </div>
+        <LegalFooter />
       </div>
-      <LegalFooter />
     </div>
   );
 }
