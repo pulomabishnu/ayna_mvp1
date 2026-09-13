@@ -9,9 +9,6 @@ import { tagInternalUserIfNeeded } from './utils/posthogInternal'
 import { getStoredConsent, isGpcActive } from './utils/analyticsConsent.js'
 import { sanitizePosthogEvent } from './utils/posthogPrivacy.js'
 
-// Keep the public Vercel alias from becoming a second app origin.
-// Auth, local storage, and session storage should all live on the canonical site.
-// Unique Vercel preview deployment URLs are intentionally left untouched.
 if (window.location.hostname === 'aynamvp1.vercel.app') {
   window.location.replace(
     'https://www.aynahealth.co' +
@@ -27,11 +24,6 @@ const IS_NATIVE_IOS = Capacitor.getPlatform() === 'ios';
 const STORED_ANALYTICS_PREF = getStoredConsent();
 const GPC_ENABLED = isGpcActive();
 
-// The iOS app is opt-in: on a fresh install PostHog may initialize in a fully
-// opted-out state so the privacy controls can talk to the SDK, but it cannot
-// emit a pageview, exception, or other analytics event until the user chooses
-// Allow analytics. The website keeps its existing opt-out model; a prior web
-// opt-out and Global Privacy Control are still honored before the first event.
 const SHOULD_CAPTURE_AT_START = !GPC_ENABLED && (
   IS_NATIVE_IOS
     ? STORED_ANALYTICS_PREF === 'granted'
@@ -55,13 +47,8 @@ if (!POSTHOG_KEY) {
     ip: false,
     opt_out_capturing_by_default: !SHOULD_CAPTURE_AT_START,
     before_send: sanitizePosthogEvent,
-    // Automatic exception capture can include raw messages/stacks. In a health
-    // app those can contain user-entered context, so only a coarse app_error
-    // event is sent by ErrorBoundary below, and only when analytics is allowed.
     errorTracking: { autocaptureExceptions: false },
     loaded: (ph) => {
-      // Exposed only so the app's explicit Privacy settings can change the SDK
-      // choice. Do not log the distinct ID or health/account information.
       window.posthog = ph;
       if (SHOULD_CAPTURE_AT_START) tagInternalUserIfNeeded(ph);
     },
@@ -80,27 +67,25 @@ class ErrorBoundary extends React.Component {
     return { hasError: true, error }
   }
   componentDidMount() {
-    try { sessionStorage.removeItem(CHUNK_RELOAD_KEY); } catch (_) { /* private mode */ }
+    try { sessionStorage.removeItem(CHUNK_RELOAD_KEY); } catch { /* private mode */ }
   }
   componentDidCatch(error) {
-    // Keep production telemetry deliberately coarse: no error message, stack,
-    // component props, request body, prompt, or user-entered text is attached.
     try {
       posthog.capture('app_error', {
         errorName: String(error?.name || 'Error').slice(0, 64),
         isChunkLoadError: isChunkLoadError(error),
       });
-    } catch (_) { /* PostHog unavailable or opted out */ }
+    } catch { /* PostHog unavailable or opted out */ }
 
     if (isChunkLoadError(error)) {
       let alreadyTried = false;
-      try { alreadyTried = sessionStorage.getItem(CHUNK_RELOAD_KEY) === '1'; } catch (_) { /* private mode */ }
+      try { alreadyTried = sessionStorage.getItem(CHUNK_RELOAD_KEY) === '1'; } catch { /* private mode */ }
       if (!alreadyTried) {
-        try { sessionStorage.setItem(CHUNK_RELOAD_KEY, '1'); } catch (_) { /* private mode */ }
+        try { sessionStorage.setItem(CHUNK_RELOAD_KEY, '1'); } catch { /* private mode */ }
         this.setState({ recovering: true });
         window.location.reload();
       } else {
-        try { sessionStorage.removeItem(CHUNK_RELOAD_KEY); } catch (_) { /* private mode */ }
+        try { sessionStorage.removeItem(CHUNK_RELOAD_KEY); } catch { /* private mode */ }
       }
     }
   }
@@ -125,9 +110,6 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-// Native apps (iOS/Android via Capacitor) have no /mobile-preview URL to
-// check — they always show the mobile UI. The web build still gates it
-// behind the path, so the live website's normal routing is unaffected.
 const isMobilePreview = window.location.pathname === '/mobile-preview' || Capacitor.isNativePlatform();
 
 ReactDOM.createRoot(document.getElementById('root')).render(
