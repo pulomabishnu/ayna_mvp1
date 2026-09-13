@@ -2,16 +2,26 @@
 // A consent timestamp must represent a real affirmative user action. Callers
 // must never stash or write this metadata merely because an OAuth button was
 // clicked.
-export const CONSENT_VERSION = 'v2';
+export const CONSENT_VERSION = 'v2-18plus';
+export const AGE_REQUIREMENT_VERSION = '18plus-v1';
 const STORAGE_KEY = 'ayna_pending_consent';
 
 function currentConsentRecord() {
-  return { consent_given_at: new Date().toISOString(), consent_version: CONSENT_VERSION };
+  const now = new Date().toISOString();
+  return {
+    consent_given_at: now,
+    consent_version: CONSENT_VERSION,
+    age_18_confirmed: true,
+    age_18_confirmed_at: now,
+    age_requirement_version: AGE_REQUIREMENT_VERSION,
+  };
 }
 
 export function hasCurrentConsent(user) {
   const meta = user?.user_metadata || {};
-  return meta.consent_version === CONSENT_VERSION && Boolean(meta.consent_given_at);
+  return meta.consent_version === CONSENT_VERSION &&
+    Boolean(meta.consent_given_at) &&
+    meta.age_18_confirmed === true;
 }
 
 /**
@@ -23,8 +33,8 @@ export function stashPendingConsent() {
   try {
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(currentConsentRecord()));
   } catch {
-    // Storage unavailable: the post-login consent gate will still require the
-    // current consent version before AI-powered features can be used.
+    // Storage unavailable: the post-login privacy prompt will still require
+    // the current consent version before AI-powered features can be used.
   }
 }
 
@@ -60,7 +70,7 @@ export async function flushPendingConsent(supabase) {
     return;
   }
 
-  if (consent?.consent_version !== CONSENT_VERSION || !consent?.consent_given_at) {
+  if (consent?.consent_version !== CONSENT_VERSION || !consent?.consent_given_at || consent?.age_18_confirmed !== true) {
     clearPendingConsent();
     return;
   }
@@ -77,6 +87,5 @@ export async function flushPendingConsent(supabase) {
       console.error('[Ayna] consent metadata write failed:', e?.message || 'unknown error');
     }
   }
-  // Retain the affirmative record in this browser session so a later load can retry.
   console.error('[Ayna] consent metadata could not be persisted after retries');
 }
