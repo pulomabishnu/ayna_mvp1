@@ -1,36 +1,48 @@
-// Shared by src/components/AuthGate.jsx (desktop) and
-// src/mobile/hooks/useSupabaseAuth.js (mobile, native iOS Google sign-in) —
-// one real consent-capture mechanism for every Google OAuth entry point,
-// not a separate one per platform that can silently drift out of sync.
-//
-// WHY THIS EXISTS: Supabase's Google provider auto-provisions a real account
-// for any unseen Google address the instant the OAuth redirect completes —
-// before this app's own code runs again. The three consent checkboxes
-// (health data is self-reported, AI processing, not medical advice) can only
-// be shown and captured BEFORE that redirect leaves the page/app. So consent
-// is stashed here right before redirecting, then flushed into the new
-// account's user_metadata the moment a session exists on return — in BOTH
-// the sign-in and sign-up UI modes, since a first-time visitor clicking
-// "Sign in" still gets a real new account provisioned with no record of
-// having agreed to anything if this were skipped.
-export const CONSENT_VERSION = 'v1';
+// Shared consent metadata for email/password, Google OAuth and Apple sign-in.
+// A consent timestamp must represent a real affirmative user action. Callers
+// must never stash or write this metadata merely because an OAuth button was
+// clicked.
+export const CONSENT_VERSION = 'v2';
 const STORAGE_KEY = 'ayna_pending_consent';
 
+function currentConsentRecord() {
+  return { consent_given_at: new Date().toISOString(), consent_version: CONSENT_VERSION };
+}
+
+export function hasCurrentConsent(user) {
+  const meta = user?.user_metadata || {};
+  return meta.consent_version === CONSENT_VERSION && Boolean(meta.consent_given_at);
+}
+
+/**
+ * Stash consent only after the visible consent controls were affirmatively
+ * accepted immediately before an OAuth redirect. The stash is short-lived
+ * session storage and contains no health data.
+ */
 export function stashPendingConsent() {
   try {
-    sessionStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({ consent_given_at: new Date().toISOString(), consent_version: CONSENT_VERSION })
-    );
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(currentConsentRecord()));
   } catch {
-    // Private mode / storage unavailable — the account still gets created;
-    // there is simply no earlier record to flush after the redirect.
+    // Storage unavailable: the post-login consent gate will still require the
+    // current consent version before AI-powered features can be used.
   }
 }
 
-// Awaited, retried once, and the stash is cleared ONLY after the write
-// succeeds — clearing first (an earlier version of this logic did) would
-// erase the consent record from both places on a transient failure.
+export function clearPendingConsent() {
+  try { sessionStorage.removeItem(STORAGE_KEY); } catch { /* ignore */ }
+}
+
+export async function grantCurrentUserConsent(supabase) {
+  if (!supabase) throw new Error('Sign-in is not configured right now.');
+  const record = currentConsentRecord();
+  const { data, error } = await supabase.auth.updateUser({ data: record });
+  if (error) throw error;
+  clearPendingConsent();
+  return data?.user || null;
+}
+
+// Awaited, retried once, and cleared ONLY after the write succeeds. This is
+// used only when consent was affirmatively collected before an OAuth redirect.
 export async function flushPendingConsent(supabase) {
   let raw = null;
   try {
@@ -44,7 +56,12 @@ export async function flushPendingConsent(supabase) {
   try {
     consent = JSON.parse(raw);
   } catch {
-    try { sessionStorage.removeItem(STORAGE_KEY); } catch { /* ignore */ }
+    clearPendingConsent();
+    return;
+  }
+
+  if (consent?.consent_version !== CONSENT_VERSION || !consent?.consent_given_at) {
+    clearPendingConsent();
     return;
   }
 
@@ -52,14 +69,14 @@ export async function flushPendingConsent(supabase) {
     try {
       const { error } = await supabase.auth.updateUser({ data: consent });
       if (!error) {
-        try { sessionStorage.removeItem(STORAGE_KEY); } catch { /* ignore */ }
+        clearPendingConsent();
         return;
       }
-      console.error('[Ayna] consent write failed:', error.message);
+      console.error('[Ayna] consent metadata write failed:', error.message);
     } catch (e) {
-      console.error('[Ayna] consent write threw:', e);
+      console.error('[Ayna] consent metadata write failed:', e?.message || 'unknown error');
     }
   }
-  // Left in sessionStorage deliberately so a later load can retry.
-  console.error('[Ayna] consent not persisted after retries. Record retained for retry');
+  // Retain the affirmative record in this browser session so a later load can retry.
+  console.error('[Ayna] consent metadata could not be persisted after retries');
 }
