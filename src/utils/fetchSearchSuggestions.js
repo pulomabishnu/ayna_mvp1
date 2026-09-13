@@ -1,6 +1,8 @@
 /**
- * Calls /api/search-suggestions (Claude on the server). Same-origin on Vercel.
+ * Calls /api/search-suggestions. External AI/web discovery is authenticated
+ * and consent-gated server-side; ordinary catalog search remains local.
  */
+import { getSupabaseClient } from './supabaseClient.js';
 
 function sessionCacheKey(query, category, symptom, maxResults) {
   const q = `${query.trim().toLowerCase()}|${category || ''}|${symptom || ''}|${maxResults || 20}`;
@@ -64,16 +66,20 @@ export async function fetchSearchSuggestions(opts) {
   const profileSummary = typeof opts?.profileSummary === 'string' ? opts.profileSummary : '';
   const dislikedProducts = typeof opts?.dislikedProducts === 'string' ? opts.dislikedProducts : '';
   const maxResults = typeof opts?.maxResults === 'number' ? opts.maxResults : 20;
-  // Don't cache personalized results — they're user-specific
-  const cacheKey = personalized ? null : sessionCacheKey(query, category, symptom, maxResults);
-  if (cacheKey) {
-    const cached = readSessionCache(cacheKey);
-    if (cached) return { suggestions: cached.suggestions, querySummary: cached.querySummary, relatedSearches: cached.relatedSearches || [], fromCache: true };
+  // Do not persist AI-search results in browser storage. Search text can be
+  // health-sensitive, and a stored result must not outlive logout or consent withdrawal.
+  const cacheKey = null;
+
+  const headers = { 'Content-Type': 'application/json' };
+  const supabase = getSupabaseClient();
+  if (supabase) {
+    const { data } = await supabase.auth.getSession();
+    if (data?.session?.access_token) headers.Authorization = `Bearer ${data.session.access_token}`;
   }
 
   const res = await fetch('/api/search-suggestions', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify({ query, category, symptom, personalized, profileSummary, dislikedProducts, maxResults }),
     signal: opts?.signal,
   });
@@ -88,6 +94,15 @@ export async function fetchSearchSuggestions(opts) {
       querySummary: '',
       error: 'Sign in to search beyond the ayna catalog.',
       code: 'auth_required',
+    };
+  }
+
+  if (res.status === 403 && data?.error === 'ai_consent_required') {
+    return {
+      suggestions: [],
+      querySummary: '',
+      error: 'Turn on AI features in ayna before searching beyond the ayna catalog.',
+      code: 'ai_consent_required',
     };
   }
 

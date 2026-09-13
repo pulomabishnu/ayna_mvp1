@@ -11,13 +11,12 @@
  */
 
 export class LlmError extends Error {
-  constructor(message, { provider, status = 0, retryable = false, body = '' } = {}) {
+  constructor(message, { provider, status = 0, retryable = false } = {}) {
     super(message);
     this.name = 'LlmError';
     this.provider = provider;
     this.status = status;
     this.retryable = retryable;
-    this.body = body;
   }
 }
 
@@ -82,7 +81,7 @@ async function requestWithRetry(url, init, { provider, timeoutMs, maxAttempts, s
     const body = await res.text().catch(() => '');
     const retryable = isRetryableStatus(res.status);
     last = new LlmError(`${provider} returned ${res.status}`, {
-      provider, status: res.status, retryable, body: body.slice(0, 400),
+      provider, status: res.status, retryable,
     });
     // A bad key or bad model will fail identically forever — don't burn the budget.
     if (!retryable) throw last;
@@ -326,7 +325,6 @@ export async function callWithFallback(order, args = {}) {
             provider,
             status: e?.status || 0,
             retryable: Boolean(e?.retryable),
-            body: e?.body || '',
           });
 
       if (!normalized.provider) normalized.provider = provider;

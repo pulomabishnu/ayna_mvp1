@@ -28,7 +28,7 @@ import { ALL_PRODUCTS as BUNDLED_FALLBACK } from '../data/products.js';
 
 const API_PATH = '/api/products';
 const CACHE_KEY = 'ayna_product_catalog_v1';
-const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 const REQUEST_TIMEOUT_MS = 10_000;
 
 let inFlight = null;
@@ -60,10 +60,11 @@ function writeCache(products) {
  *   `source` is exposed so callers can tell a live catalog from the fallback;
  *   surfacing "showing a cached catalog" beats silently serving stale data.
  */
-export async function loadProductCatalog() {
+export async function loadProductCatalog({ force = false } = {}) {
+  if (force) memo = null;
   if (memo) return memo;
 
-  const cached = readCache();
+  const cached = force ? null : readCache();
   if (cached) {
     memo = { products: cached, source: 'cache' };
     return memo;

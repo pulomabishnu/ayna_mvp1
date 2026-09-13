@@ -1539,7 +1539,7 @@ function PrivacyDataScreen({ onBack, onOpenManageData, onOpenDeleteAccount }) {
           <AccountRow title="Download my data" sub="A full export of your account and intake answers." onClick={onOpenManageData} />
           <AccountRow
             title={<span style={{ color: '#B4402A' }}>Delete my account & data</span>}
-            sub="We'll process it within a week — nothing kept after."
+            sub="Your account and associated personal data will be deleted, except information we are legally required to retain."
             onClick={onOpenDeleteAccount}
           />
         </div>
@@ -1552,7 +1552,7 @@ function PrivacyDataScreen({ onBack, onOpenManageData, onOpenDeleteAccount }) {
           <ToggleRow
             first
             title="Share data for analytics"
-            sub="Anonymised product usage, so we can see which screens confuse people. Never your health answers."
+            sub="Usage analytics that help us understand how the app is used. We do not include your health-profile answers."
             on={!analyticsOptedOut}
             onClick={toggleAnalytics}
           />
@@ -1656,7 +1656,7 @@ function LegalScreen({ onBack, onOpenConsumerHealthData, onOpenOpenSourceLicense
 const HEALTH_DATA_PROCESSORS = [
   { initial: 'S', name: 'Supabase', role: 'Hosts your account and stored data.', bg: '#E6EFE6', fg: '#3F6B4A' },
   { initial: 'A', name: 'Anthropic, OpenAI, Google', role: 'Generate product summaries and Ask Ayna answers.', bg: '#FDF0DC', fg: '#9A5B14' },
-  { initial: 'T', name: 'Twilio', role: 'Sends verification codes and opt-in safety-recall texts.', bg: '#E7EAF5', fg: '#3B4677' },
+  { initial: 'T', name: 'Twilio', role: 'Sends phone verification and user-initiated SMS health conversations.', bg: '#E7EAF5', fg: '#3B4677' },
   { initial: 'R', name: 'Resend', role: 'Delivers email, including contact-form messages.', bg: '#F5E9F0', fg: '#7A3E60' },
   { initial: 'P', name: 'PostHog', role: 'Anonymised usage analytics — off any time in Privacy & data.', bg: '#F1EDE6', fg: '#6B6257' },
 ];
@@ -1665,7 +1665,7 @@ const HEALTH_DATA_RIGHTS = [
   { title: 'See exactly what we hold', how: 'Settings → Privacy & data → Manage my data' },
   { title: 'Download a copy', how: 'Same screen, in a portable format' },
   { title: 'Withdraw consent for analytics', how: 'Settings → Privacy & data → the analytics toggle' },
-  { title: 'Delete your account and data', how: 'Email puloma@aynahealth.co — providers are directed too' },
+  { title: 'Delete your account and data', how: 'Settings → Account → Delete account. Email puloma@aynahealth.co for additional privacy support.' },
 ];
 
 function NumberedCard({ n, title, children }) {
@@ -2533,7 +2533,7 @@ function DeleteAccountScreen({ onBack, onSignOut, onClose }) {
           <div style={{ width: 56, height: 56, borderRadius: 99, background: 'var(--ayna-chip-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 'calc(26px * var(--ayna-text-scale, 1))', marginBottom: 18 }}>✓</div>
           <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(22px * var(--ayna-text-scale, 1))', marginBottom: 10, color: 'var(--ayna-heading)' }}>Request received.</div>
           <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.6, maxWidth: 280 }}>
-            We'll process it within a week — nothing kept after. You're being signed out now.
+            Your account and associated personal data will be deleted, except information we are legally required to retain. You're being signed out now.
           </div>
           <div
             onClick={handleDone}

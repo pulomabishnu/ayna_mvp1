@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Capacitor } from '@capacitor/core';
+import { Capacitor, registerPlugin } from '@capacitor/core';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Browser } from '@capacitor/browser';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
-import { CONSENT_VERSION, stashPendingConsent, flushPendingConsent } from '../../utils/pendingConsent.js';
+import { AGE_REQUIREMENT_VERSION, CONSENT_VERSION, clearPendingConsent, stashPendingConsent, flushPendingConsent } from '../../utils/pendingConsent.js';
 
 // Real Supabase identity for the mobile app — separate from
 // useEcosystemSession.js's local app-data cache (products, quiz answers),
@@ -30,6 +30,7 @@ const EMAIL_CONFIRM_REDIRECT = 'https://www.aynahealth.co/confirmed';
 // whatever device originally built it).
 export const MOBILE_OAUTH_PENDING_KEY = 'ayna_mobile_oauth_pending';
 const NATIVE_OAUTH_REDIRECT = 'co.aynahealth.app://auth/callback';
+const AppleSignIn = registerPlugin('AppleSignIn');
 
 export function useSupabaseAuth() {
   const [user, setUser] = useState(null);
@@ -147,6 +148,9 @@ export function useSupabaseAuth() {
           full_name: firstName,
           consent_given_at: consentAt,
           consent_version: CONSENT_VERSION,
+          age_18_confirmed: true,
+          age_18_confirmed_at: consentAt,
+          age_requirement_version: AGE_REQUIREMENT_VERSION,
         },
       },
     });
@@ -180,7 +184,7 @@ export function useSupabaseAuth() {
     if (error) throw error;
   }
 
-  async function signInWithGoogle() {
+  async function signInWithGoogle({ consented = false } = {}) {
     const supabase = getSupabaseClient();
     if (!supabase) throw new Error('Sign-in is not configured right now.');
 
@@ -190,11 +194,11 @@ export function useSupabaseAuth() {
       // Storage unavailable.
     }
 
-    // Stashed before EITHER redirect path below, same as AuthGate.jsx's
-    // handleGoogle — Supabase's Google provider auto-provisions a real
-    // account for any unseen address the instant this redirect completes,
-    // with no consent checkboxes shown at all in mobile's "sign in" mode.
-    stashPendingConsent();
+    // Only persist consent metadata when the person actually checked the
+    // visible signup confirmations. A normal returning-user sign-in must never
+    // manufacture a consent timestamp just because Google was clicked.
+    if (consented) stashPendingConsent();
+    else clearPendingConsent();
 
     if (Capacitor.getPlatform() === 'ios') {
       const { data, error } = await supabase.auth.signInWithOAuth({
@@ -235,10 +239,47 @@ export function useSupabaseAuth() {
     if (error) throw error;
   }
 
+  async function signInWithApple({ consented = false } = {}) {
+    const supabase = getSupabaseClient();
+    if (!supabase) throw new Error('Sign-in is not configured right now.');
+    if (Capacitor.getPlatform() !== 'ios') throw new Error('Sign in with Apple is available in the iOS app.');
+
+    if (consented) stashPendingConsent();
+    else clearPendingConsent();
+
+    const result = await AppleSignIn.authorize();
+    if (!result?.identityToken || !result?.nonce) throw new Error('Apple did not return a usable sign-in token.');
+
+    const { data, error } = await supabase.auth.signInWithIdToken({
+      provider: 'apple',
+      token: result.identityToken,
+      nonce: result.nonce,
+    });
+    if (error) throw error;
+
+    // Apple only supplies name on the first authorization. Save it then, but
+    // never overwrite an existing profile name with an empty value later.
+    const givenName = String(result.givenName || '').trim();
+    const familyName = String(result.familyName || '').trim();
+    const fullName = [givenName, familyName].filter(Boolean).join(' ');
+    if (givenName || fullName) {
+      const { error: nameError } = await supabase.auth.updateUser({
+        data: {
+          ...(givenName ? { first_name: givenName } : {}),
+          ...(fullName ? { full_name: fullName } : {}),
+        },
+      });
+      if (nameError) console.warn('[Ayna] Apple display name could not be saved:', nameError.message);
+    }
+
+    if (consented) await flushPendingConsent(supabase);
+    return data?.user || null;
+  }
+
   async function signOut() {
     const supabase = getSupabaseClient();
     if (supabase) await supabase.auth.signOut();
   }
 
-  return { user, authLoading, signUpWithPassword, signInWithPassword, signInWithGoogle, signOut, resendConfirmation };
+  return { user, authLoading, signUpWithPassword, signInWithPassword, signInWithGoogle, signInWithApple, signOut, resendConfirmation };
 }

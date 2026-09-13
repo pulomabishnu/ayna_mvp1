@@ -53,6 +53,7 @@ import { loadLearningMemoryForUser, saveLearningMemoryForUser } from './utils/le
 import { loadReviewsForUser, upsertProductReviews } from './utils/reviewsStore';
 import { clearCachedLlmRecommendations, fingerprintIntake } from './utils/fetchLlmRecommendations';
 import posthog from 'posthog-js';
+import { safePosthogIdentify } from './utils/posthogPrivacy.js';
 import { tagInternalUserIfNeeded } from './utils/posthogInternal';
 import { productHref, parseProductIdFromPath } from './utils/productRoute';
 
@@ -472,7 +473,7 @@ function App() {
       setUser(session?.user ?? null);
       setUserSession(session ?? null);
       if (event === 'SIGNED_IN' && session?.user) {
-        posthog.identify(session.user.id, { email: session.user.email });
+        safePosthogIdentify(posthog, session.user.id);
         tagInternalUserIfNeeded(posthog);
         setShowAuthModal(false);
         // Deliberately does NOT navigate here. Every in-app path that opens the

@@ -3,6 +3,7 @@ import { CATEGORY_LABELS, getProfileMatchPercentForProduct } from '../../data/pr
 import { getBuyUrl } from '../data/buyUrl.js';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { renderMarkdownLite } from '../../utils/renderMarkdownLite.jsx';
+import { buildAiHealthContext } from '../../utils/aiHealthContext.js';
 import MatchRing from '../components/MatchRing.jsx';
 import WhyMatchScreen from './WhyMatchScreen.jsx';
 import LegalFooter from '../components/LegalFooter.jsx';
@@ -78,7 +79,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts }) {
           question: q,
           product,
           aiInsights: {},
-          userContext: quizAnswers?.fullHealthIntake ? JSON.stringify(quizAnswers.fullHealthIntake).slice(0, 4000) : '',
+          userContext: JSON.stringify(buildAiHealthContext(quizAnswers, q)).slice(0, 3000),
           ecosystemProducts: Array.isArray(ecosystemProducts) ? ecosystemProducts.slice(0, 20) : [],
         }),
       });

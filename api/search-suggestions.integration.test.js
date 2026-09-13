@@ -140,47 +140,33 @@ describe('POST /api/search-suggestions — CORS is the abuse control', () => {
   });
 });
 
-describe('POST /api/search-suggestions — REQUIRE_AUTH_FOR_SEARCH_SUGGESTIONS kill switch', () => {
-  it('an anonymous request goes through when the flag is unset', async () => {
-    globalThis.fetch = vi.fn(async () => claudeOk());
-    const handler = await loadHandler();
-    const res = mockRes();
-
-    await handler(searchReq({ query: 'cramp relief' }, {}), res);
-
-    expect(res.statusCode).toBe(200);
-    expect(globalThis.fetch).toHaveBeenCalledTimes(1);
-  });
-
-  it('an anonymous request is rejected with 401 when the flag is "1", before spending a Claude call', async () => {
-    restoreEnv();
-    restoreEnv = withEnv({
-      ANTHROPIC_API_KEY: 'test-key',
-      REQUIRE_AUTH_FOR_SEARCH_SUGGESTIONS: '1',
-      SUPABASE_URL: 'https://x.supabase.co',
-      SUPABASE_SERVICE_ROLE_KEY: 'service-key',
-    });
+describe('POST /api/search-suggestions — mandatory auth and AI consent', () => {
+  it('rejects an anonymous request with 401 before sending the query anywhere', async () => {
     globalThis.__mockSupabase = mockSupabase({ authError: { message: 'no token' } });
     globalThis.fetch = vi.fn();
     const handler = await loadHandler();
     const res = mockRes();
 
-    // No Authorization header at all.
-    await handler(searchReq({ query: 'cramp relief' }, {}), res);
+    await handler(searchReq({ query: 'cramp relief' }, { authorization: undefined }), res);
 
     expect(res.statusCode).toBe(401);
-    expect(res.body.suggestions).toEqual([]);
     expect(globalThis.fetch).not.toHaveBeenCalled();
   });
 
-  it('an authenticated request goes through when the flag is "true"', async () => {
-    restoreEnv();
-    restoreEnv = withEnv({
-      ANTHROPIC_API_KEY: 'test-key',
-      REQUIRE_AUTH_FOR_SEARCH_SUGGESTIONS: 'true',
-      SUPABASE_URL: 'https://x.supabase.co',
-      SUPABASE_SERVICE_ROLE_KEY: 'service-key',
-    });
+  it('rejects a signed-in user without current AI consent with 403 before sending the query anywhere', async () => {
+    globalThis.__mockSupabase = mockSupabase({ withAiConsent: false });
+    globalThis.fetch = vi.fn();
+    const handler = await loadHandler();
+    const res = mockRes();
+
+    await handler(searchReq({ query: 'cramp relief' }, { authorization: 'Bearer real-token' }), res);
+
+    expect(res.statusCode).toBe(403);
+    expect(res.body.error).toBe('ai_consent_required');
+    expect(globalThis.fetch).not.toHaveBeenCalled();
+  });
+
+  it('allows a signed-in user with current consent', async () => {
     globalThis.__mockSupabase = mockSupabase();
     globalThis.fetch = vi.fn(async () => claudeOk());
     const handler = await loadHandler();
@@ -208,7 +194,11 @@ describe('POST /api/search-suggestions — request validation', () => {
 
   it('503s when ANTHROPIC_API_KEY is not configured', async () => {
     restoreEnv();
-    restoreEnv = withEnv({ ANTHROPIC_API_KEY: undefined });
+    restoreEnv = withEnv({
+      ANTHROPIC_API_KEY: undefined,
+      SUPABASE_URL: 'https://x.supabase.co',
+      SUPABASE_SERVICE_ROLE_KEY: 'service-key',
+    });
     const handler = await loadHandler();
     const res = mockRes();
 

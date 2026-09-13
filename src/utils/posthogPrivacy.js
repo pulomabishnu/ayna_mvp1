@@ -94,7 +94,7 @@ export function safePosthogIdentify(posthog, authId) {
   if (!posthog || !authId) return;
   // The App Store label declares a linked analytics Device ID. Use a separate,
   // opaque analytics identifier rather than the Supabase account UUID itself.
-  const storageKey = `ayna_analytics_id:${String(authId)}`;
+  const storageKey = 'ayna_analytics_id';
   let analyticsId = '';
   try {
     analyticsId = localStorage.getItem(storageKey) || '';

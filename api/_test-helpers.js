@@ -45,7 +45,17 @@ export function mockSupabase({
   authError = null,
   rpcResults = {},
   tableResults = {},
+  withAiConsent = true,
 } = {}) {
+  const consentMetadata = withAiConsent ? {
+    consent_version: 'v2-18plus',
+    consent_given_at: '2026-09-13T00:00:00.000Z',
+    age_18_confirmed: true,
+  } : {};
+  const resolvedUser = user == null ? null : {
+    ...user,
+    user_metadata: { ...consentMetadata, ...(user.user_metadata || {}) },
+  };
   const rpcCalls = [];
   const tableCalls = [];
 
@@ -53,9 +63,13 @@ export function mockSupabase({
     rpcCalls,
     tableCalls,
     auth: {
-      getUser: vi.fn(async () => (authError ? { data: null, error: authError } : { data: { user }, error: null })),
+      getUser: vi.fn(async () => (authError ? { data: null, error: authError } : { data: { user: resolvedUser }, error: null })),
       admin: {
         updateUserById: vi.fn(async () => ({ data: {}, error: null })),
+        getUserById: vi.fn(async (id) => ({
+          data: { user: resolvedUser ? { ...resolvedUser, id } : null },
+          error: resolvedUser ? null : { message: 'user not found' },
+        })),
       },
     },
     rpc: vi.fn(async (name, args) => {
