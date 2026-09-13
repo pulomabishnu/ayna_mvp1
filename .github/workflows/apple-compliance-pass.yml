@@ -25,6 +25,7 @@ jobs:
         run: |
           node scripts/apply-apple-compliance-patches-5.mjs
           node scripts/apply-apple-token-revocation-patch.mjs
+          node scripts/apply-privacy-lint-cleanups.mjs
           node scripts/restore-search-test-coverage.mjs
           node scripts/update-catalog-cache-test.mjs
       - name: Inspect working tree
@@ -126,6 +127,7 @@ jobs:
         run: |
           node scripts/apply-apple-compliance-patches-5.mjs
           node scripts/apply-apple-token-revocation-patch.mjs
+          node scripts/apply-privacy-lint-cleanups.mjs
       - name: Build web bundle and sync Capacitor
         run: |
           npm run build
