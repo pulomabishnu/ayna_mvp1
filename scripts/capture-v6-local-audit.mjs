@@ -73,6 +73,45 @@ async function captureViewport(page, file) {
   await page.screenshot({ path: path.join(OUT, file), fullPage: false, captureBeyondViewport: false });
 }
 
+async function captureHomeDiagnostics(page, width, theme) {
+  const data = await page.evaluate(() => {
+    const describe = (el) => {
+      if (!el) return null;
+      const style = getComputedStyle(el);
+      const rect = el.getBoundingClientRect();
+      return {
+        tagName: el.tagName,
+        className: el.className,
+        type: el.getAttribute?.('type'),
+        outerHTML: el.outerHTML?.slice(0, 1200),
+        rect: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
+        style: {
+          appearance: style.appearance,
+          background: style.background,
+          backgroundColor: style.backgroundColor,
+          border: style.border,
+          borderTopWidth: style.borderTopWidth,
+          borderRadius: style.borderRadius,
+          boxShadow: style.boxShadow,
+          outline: style.outline,
+          padding: style.padding,
+          minHeight: style.minHeight,
+          height: style.height,
+        },
+      };
+    };
+    const form = document.querySelector('.v6-home-search');
+    const input = form?.querySelector('input') || null;
+    return {
+      htmlTheme: document.documentElement.dataset.v6SiteTheme || '',
+      form: describe(form),
+      input: describe(input),
+      inputParent: describe(input?.parentElement || null),
+    };
+  });
+  await fs.writeFile(path.join(OUT, `after-home-diagnostics-${theme}-${width}.json`), JSON.stringify(data, null, 2));
+}
+
 async function moveBranchQuizToSupport(page) {
   const name = await page.$('.v6-name-step__input');
   if (name) {
@@ -119,6 +158,7 @@ async function capture(label, base, width, theme, isAfter) {
   const page = await newPage(width, theme);
   try {
     await goto(page, `${base}/?qa=${Date.now()}`, theme);
+    if (isAfter) await captureHomeDiagnostics(page, width, theme);
     await captureViewport(page, `${label}-home-${theme}-${width}.png`);
 
     const unlock = await page.$('.v6-unlock-card');
@@ -156,6 +196,7 @@ try {
     'Pages/states: home, signed-out unlock state, quiz',
     'Widths: 375, 768, 1440',
     'Themes: light, dark',
+    'Home diagnostics: computed form/input styles for the redesign build.',
     'Literal REC/battery/timestamp HUD is removed from the after build by design.',
   ].join('\n'));
   if (pngs.length !== 36) throw new Error(`Expected 36 screenshots, got ${pngs.length}`);
