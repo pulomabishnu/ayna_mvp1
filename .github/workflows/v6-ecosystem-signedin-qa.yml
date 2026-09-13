@@ -47,7 +47,7 @@ jobs:
           exit 1
 
       - name: Run signed-in ecosystem QA five times
-        run: node scripts/qa-v6-signedin-ecosystem.mjs
+        run: node scripts/qa-v6-signedin-ecosystem-v2.mjs
         env:
           CHROME_PATH: /usr/bin/google-chrome
           AYNA_AFTER_URL: http://127.0.0.1:4173
