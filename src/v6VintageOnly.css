@@ -112,6 +112,53 @@ body:has(.ayna-intake-root.v6-quiz-dark) .app-nav svg {
   .ayna-intake-question.v6-master-support .ayna-intake-actions {
     margin-top: 24px !important;
   }
+
+  /* Keep the required floating Ask ayna control away from intake choices and the Continue bar. */
+  body:has(.ayna-intake-root) .v6-ask-locked-fallback,
+  body:has(.ayna-intake-root) .ayna-ask-launcher {
+    top: 72px !important;
+    right: 8px !important;
+    bottom: auto !important;
+    width: 56px !important;
+    min-width: 56px !important;
+    height: 46px !important;
+    min-height: 46px !important;
+    padding: 6px !important;
+  }
+  body:has(.ayna-intake-root) .v6-ask-locked-fallback__label,
+  body:has(.ayna-intake-root) .ayna-ask-launcher__label {
+    font-size: 8px !important;
+  }
+  body:has(.ayna-intake-root) .v6-ask-locked-fallback__star {
+    font-size: 11px !important;
+  }
+  body:has(.ayna-intake-root) .v6-ask-locked-fallback__lock {
+    width: 18px !important;
+    height: 18px !important;
+  }
+}
+
+@media (max-width: 520px) {
+  /* Outside intake, keep the mobile launcher dainty enough that it does not cover headings/cards. */
+  body:not(:has(.ayna-intake-root)) .v6-ask-locked-fallback,
+  body:not(:has(.ayna-intake-root)) .ayna-ask-launcher {
+    right: 9px !important;
+    bottom: 18px !important;
+    width: 58px !important;
+    min-width: 58px !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    padding: 6px !important;
+  }
+  body:not(:has(.ayna-intake-root)) .v6-ask-locked-fallback__label,
+  body:not(:has(.ayna-intake-root)) .ayna-ask-launcher__label {
+    font-size: 8px !important;
+  }
+}
+
+@media (min-width: 900px) {
+  /* Reserve the footer's lower-right corner so the fixed launcher cannot cover legal links. */
+  .site-footer { padding-right: 136px !important; }
 }
 
 /* Make the search-first support step reliable even if older quiz CSS loads first. */
