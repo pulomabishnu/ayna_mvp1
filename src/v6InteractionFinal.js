@@ -69,6 +69,16 @@ function syncExpandedState(input) {
   input.setAttribute('autocomplete', 'off');
 }
 
+function normalizePartnerLabels() {
+  document.querySelectorAll('.ayna-browse-card__affiliate').forEach((badge) => {
+    if (/ayna favorite/i.test(clean(badge.textContent))) {
+      badge.textContent = 'ayna Partner';
+      badge.setAttribute('title', 'Commercial brand partner. Partnership does not change your personalized match score.');
+      badge.setAttribute('aria-label', 'ayna commercial brand partner');
+    }
+  });
+}
+
 function enhance() {
   document.querySelectorAll('.v6-home-search input, .ayna-browse__search input').forEach(syncExpandedState);
   const support = document.querySelector('.ayna-intake-question .ayna-search-wrap input');
@@ -78,6 +88,7 @@ function enhance() {
     support.setAttribute('aria-haspopup', 'listbox');
     support.setAttribute('autocomplete', 'off');
   }
+  normalizePartnerLabels();
 }
 
 let timer = null;
