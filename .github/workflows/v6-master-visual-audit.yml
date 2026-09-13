@@ -28,9 +28,6 @@ jobs:
         env:
           PUPPETEER_SKIP_DOWNLOAD: 'true'
 
-      - name: Wait for branch preview
-        run: sleep 55
-
       - name: Capture before and after screenshots
         run: node scripts/capture-v6-master-audit.mjs
         env:
