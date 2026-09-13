@@ -119,9 +119,12 @@ export default function ArticleDetailScreen({ article, onBack, theme }) {
             </svg>
           </div>
         </div>
-        {/* objectFit:contain (not cover) + centered so the full illustration
-            is always visible, never cropped off any side. */}
-        <div style={{ position: 'relative', height: 300, borderRadius: '150px 150px 20px 20px', overflow: 'hidden' }}>
+        {/* A true arc — 50%/50% top corners form one continuous dome across
+            the full width (not two separate rounded corners with a flat gap
+            between them), flat square bottom, matching the reference shape.
+            objectFit:contain + centered so the full illustration is always
+            visible, never cropped off any side. */}
+        <div style={{ position: 'relative', height: 300, borderRadius: '50% 50% 0 0', overflow: 'hidden' }}>
           {image && <img src={image} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center' }} />}
         </div>
         <div style={{ height: 34 }} />

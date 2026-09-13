@@ -1105,6 +1105,59 @@ function productMatchesAvoidTrigger(product, trigger) {
     return keywords.some(kw => text.includes(kw.toLowerCase()));
 }
 
+/**
+ * "Worth noting" cards for a still-eligible (not excluded) product — real,
+ * actionable considerations, not the product's whole safety.sideEffects text
+ * dumped in. Two sources, both already real:
+ *  - A known medication/supplement interaction (getKnownInteractionAssessment)
+ *    that wasn't severe enough to exclude the product outright.
+ *  - A real overlap between what the user actually flagged and this
+ *    product's own side-effects/allergens text, for the cases that don't
+ *    already cause a hard exclusion (isProductEligibleForProfile/
+ *    getExtendedAvoidSet handle the 3 mapped triggers — fragrance, latex,
+ *    essential oils — so a product reaching this point already cleared
+ *    those). Two schemas exist in the wild and both are checked: the
+ *    current mobile intake's free-text allergyItems (matched directly
+ *    against the product's text), and the legacy quiz's fixed
+ *    "Other allergies" option — the one entry in
+ *    SENSITIVITY_AVOID_TO_TRIGGER with no exclusion mapping since we don't
+ *    know what it refers to, checked via the same keyword lists used for
+ *    the mapped triggers.
+ */
+function buildWorthNotingNotes(product, quizAnswers, medication) {
+    const notes = [];
+
+    if (medication?.interaction?.message) {
+        notes.push({ text: medication.interaction.message, cta: 'Read the interaction' });
+    }
+
+    const text = [product?.safety?.sideEffects, product?.safety?.allergens]
+        .filter(Boolean).join(' ').toLowerCase();
+
+    if (text) {
+        const intake = rawIntakeFromProfile(quizAnswers);
+        const freeTextAllergies = asStringArray(intake?.allergyItems)
+            .map((s) => String(s).toLowerCase().trim())
+            .filter((s) => s.length >= 4 && !['none known', 'not sure'].includes(s));
+
+        const legacyOtherAllergies = asStringArray(quizAnswers?.sensitivities).includes('Other allergies');
+        const legacyKeywords = legacyOtherAllergies ? Object.values(AVOID_TRIGGER_KEYWORDS).flat() : [];
+
+        const hasOverlap =
+            freeTextAllergies.some((term) => text.includes(term))
+            || legacyKeywords.some((kw) => text.includes(kw.toLowerCase()));
+
+        if (hasOverlap) {
+            notes.push({
+                text: 'Review the side effects before you commit — a few of them overlap with what you flagged as sensitivities.',
+                cta: 'See side effects',
+            });
+        }
+    }
+
+    return notes;
+}
+
 /** Rank catalog when only imported health signals exist (no quiz frustrations). */
 /**
  * Splits (not concatenates) so callers can tell a real tag match from the
@@ -2240,7 +2293,7 @@ function getProductRelevanceStats(product, quizAnswers, healthProfile = null) {
             confidenceCoverage: 0,
             labels: [],
             reasons: [],
-            considerations: [safety.reason].filter(Boolean),
+            considerations: safety.reason ? [{ text: safety.reason, cta: null }] : [],
             unknowns: [],
             components: {
                 goal: {},
@@ -2498,11 +2551,10 @@ function getProductRelevanceStats(product, quizAnswers, healthProfile = null) {
     const medication =
         safety.medication || getKnownInteractionAssessment(product, intake);
 
-    if (medication?.interaction?.message) {
-        considerations.push(medication.interaction.message);
-    } else if (medication?.unknown) {
+    if (medication?.unknown) {
         unknowns.push('Medication compatibility was not fully assessed for this product.');
     }
+    considerations.push(...buildWorthNotingNotes(product, quizAnswers, medication));
 
     const goalMatch = weightedKnownScore(goalParts, GOAL_MATCH_WEIGHTS);
     const profileFit = weightedKnownScore(profileParts, PROFILE_FIT_WEIGHTS);
@@ -2601,7 +2653,7 @@ function getProductRelevanceStats(product, quizAnswers, healthProfile = null) {
         labels,
         reasons: allReasons.slice(0, 4).map((reason) => reason.text),
         reasonDetails: allReasons.slice(0, 4),
-        considerations: [...new Set(considerations)],
+        considerations: Array.from(new Map(considerations.map((c) => [c.text, c])).values()),
         unknowns: [...new Set(unknowns)],
         components: {
             goal: goalParts,

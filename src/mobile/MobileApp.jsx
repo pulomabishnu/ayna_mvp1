@@ -506,6 +506,7 @@ export default function MobileApp() {
             quizAnswers={effectiveQuizAnswers}
             onBack={() => setOverlay(null)}
             onUpdateHealth={() => { setOverlay(null); setEditingHealthProfile(false); setScreen('quiz'); }}
+            onViewDetails={() => setOverlay({ type: 'product', item: overlay.item })}
           />
         </div>
       )}

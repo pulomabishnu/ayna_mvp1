@@ -208,7 +208,14 @@ export default function ProductDetailScreen({
   }
 
   if (showWhyMatch) {
-    return <WhyMatchScreen product={product} quizAnswers={quizAnswers} onBack={() => setShowWhyMatch(false)} />;
+    return (
+      <WhyMatchScreen
+        product={product}
+        quizAnswers={quizAnswers}
+        onBack={() => setShowWhyMatch(false)}
+        onViewDetails={() => { setShowWhyMatch(false); setActiveTab('summary'); }}
+      />
+    );
   }
 
   const matchPercent = getProfileMatchPercentForProduct(product, quizAnswers);
