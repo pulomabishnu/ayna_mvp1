@@ -53,6 +53,93 @@ html.v6-vintage-only .v6-live-search-dropdown {
   border-style: solid !important;
 }
 
+/* Make the search-first support step reliable even if older quiz CSS loads first. */
+.v6-master-support:not(.v6-support-browse-all) .ayna-list-panel,
+.v6-support-search-only:not(.v6-support-browse-all) .ayna-list-panel {
+  display: none !important;
+}
+
+.v6-master-support.v6-support-browse-all .ayna-list-panel,
+.v6-support-search-only.v6-support-browse-all .ayna-list-panel {
+  display: block !important;
+}
+
+/* Native compact signed-out prompt. */
+.v6-unlock-card.v6-unlock-card--slim {
+  width: min(680px, calc(100vw - 32px)) !important;
+  min-height: 0 !important;
+  padding: 10px 12px !important;
+  display: grid !important;
+  grid-template-columns: 34px minmax(0, 1fr) auto !important;
+  gap: 10px !important;
+  align-items: center !important;
+  text-align: left !important;
+}
+
+.v6-unlock-card--slim .v6-unlock-icon {
+  width: 32px !important;
+  height: 32px !important;
+  margin: 0 !important;
+}
+
+.v6-unlock-copy {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.v6-unlock-copy strong {
+  color: var(--v6-aa-light-text, #373238) !important;
+  font-size: 14px !important;
+  line-height: 1.15 !important;
+  font-weight: 600 !important;
+}
+
+.v6-unlock-copy span {
+  color: var(--v6-aa-light-muted, #50484e) !important;
+  font-size: 10.5px !important;
+  line-height: 1.3 !important;
+}
+
+html[data-v6-site-theme='dark'] .v6-unlock-copy strong {
+  color: var(--v6-aa-dark-text, #e8e0d7) !important;
+}
+
+html[data-v6-site-theme='dark'] .v6-unlock-copy span {
+  color: var(--v6-aa-dark-muted, #c7bbc3) !important;
+}
+
+.v6-unlock-card--slim .v6-unlock-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
+}
+
+.v6-unlock-card--slim .v6-unlock-actions button {
+  min-height: 32px !important;
+  padding: 6px 10px !important;
+  font-size: 10px !important;
+}
+
+@media (max-width: 680px) {
+  .v6-unlock-card.v6-unlock-card--slim {
+    grid-template-columns: 30px minmax(0, 1fr) !important;
+  }
+
+  .v6-unlock-card--slim .v6-unlock-actions {
+    grid-column: 1 / -1;
+    margin-top: 2px !important;
+    flex-wrap: wrap !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .v6-unlock-copy span { display: none !important; }
+  .v6-unlock-card.v6-unlock-card--slim { padding: 9px 10px !important; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   body::after { animation: none !important; }
 }
