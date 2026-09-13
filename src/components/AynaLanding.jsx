@@ -10,6 +10,19 @@ const CARE_AREAS = [
   { label: 'UTI support', query: 'UTI support', terms: ['uti', 'urinary', 'bladder', 'd-mannose', 'cranberry'] },
   { label: 'Fertility', query: 'fertility', terms: ['fertility', 'ovulation', 'conception'] },
   { label: 'Pelvic health', query: 'pelvic health', terms: ['pelvic', 'kegel', 'floor', 'dilator'] },
+  { label: 'Pregnancy', query: 'pregnancy', terms: ['pregnancy', 'prenatal', 'maternity'] },
+  { label: 'Postpartum', query: 'postpartum', terms: ['postpartum', 'nursing', 'breastfeeding', 'recovery'] },
+  { label: 'Menopause', query: 'menopause', terms: ['menopause', 'perimenopause', 'hot flash', 'dryness'] },
+  { label: 'Sleep + energy', query: 'sleep and energy', terms: ['sleep', 'fatigue', 'energy', 'melatonin'] },
+  { label: 'Skin + hair', query: 'skin and hair', terms: ['skin', 'hair', 'acne', 'hair loss'] },
+  { label: 'Gut health', query: 'gut health', terms: ['gut', 'digestive', 'probiotic', 'bloating'] },
+];
+
+const QUICK_CATEGORIES = [
+  'period care', 'PCOS', 'vaginal health', 'UTI support',
+  'fertility', 'pregnancy', 'postpartum', 'perimenopause',
+  'menopause', 'pelvic health', 'sleep + energy', 'skin + hair',
+  'gut health', 'cycle mood', 'sexual wellness', 'provider matching',
 ];
 
 function firstName(user) {
@@ -151,12 +164,23 @@ export default function AynaLanding({
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [cabinetOpen, setCabinetOpen] = useState(false);
-  const [seed] = useState(() => Math.floor(Math.random() * 10000));
+  const [seed, setSeed] = useState(() => Math.floor(Math.random() * 10000));
+  const [quickOffset, setQuickOffset] = useState(0);
+  const [quickPaused, setQuickPaused] = useState(false);
+  const [exploreOffset, setExploreOffset] = useState(0);
 
   useEffect(() => {
     const timer = window.setTimeout(() => setCabinetOpen(true), 150);
     return () => window.clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (quickPaused) return undefined;
+    const timer = window.setInterval(() => {
+      setQuickOffset((current) => (current + 4) % QUICK_CATEGORIES.length);
+    }, 3200);
+    return () => window.clearInterval(timer);
+  }, [quickPaused]);
 
   useEffect(() => {
     if (!initialCategory) return;
@@ -183,17 +207,30 @@ export default function AynaLanding({
   }, [owned, recommended, visualPool]);
   const selected = cabinetProducts[selectedIndex] || cabinetProducts[0] || visualPool[0] || null;
 
-  const categoryCards = useMemo(() => CARE_AREAS.map((area, index) => {
+  const visibleAreas = useMemo(() => Array.from({ length: 6 }, (_, index) => (
+    CARE_AREAS[(exploreOffset + index) % CARE_AREAS.length]
+  )), [exploreOffset]);
+
+  const categoryCards = useMemo(() => visibleAreas.map((area, index) => {
     const matches = visualPool.filter((product) => area.terms.some((term) => textFor(product).includes(term)));
     const source = matches.length ? matches : visualPool;
     const product = source.length ? source[(seed + index * 7) % source.length] : null;
     return { ...area, product };
-  }), [visualPool, seed]);
+  }), [visibleAreas, visualPool, seed]);
+
+  const quickLinks = useMemo(() => Array.from({ length: 4 }, (_, index) => (
+    QUICK_CATEGORIES[(quickOffset + index) % QUICK_CATEGORIES.length]
+  )), [quickOffset]);
 
   const submitSearch = (event) => {
     event.preventDefault();
     if (!query.trim()) return;
     onViewDiscovery?.(discoveryTargetFor(query));
+  };
+
+  const refreshExplore = () => {
+    setExploreOffset((current) => (current + 6) % CARE_AREAS.length);
+    setSeed((current) => (current + 137 + Math.floor(Math.random() * 997)) % 100000);
   };
 
   const name = firstName(user);
@@ -213,9 +250,15 @@ export default function AynaLanding({
           <button type="submit" aria-label="Search">→</button>
         </form>
 
-        <div className="v6-quick-links">
-          {['period care', 'PCOS', 'vaginal health', 'fertility'].map((label) => (
-            <button key={label} type="button" onClick={() => onViewDiscovery?.(discoveryTargetFor(label))}>{label}</button>
+        <div
+          className="v6-quick-links v6-quick-links--rotating"
+          data-v6-sept-quick="1"
+          onMouseEnter={() => setQuickPaused(true)}
+          onMouseLeave={() => setQuickPaused(false)}
+          aria-label="Popular health categories"
+        >
+          {quickLinks.map((label) => (
+            <button key={`${quickOffset}-${label}`} type="button" onClick={() => onViewDiscovery?.(discoveryTargetFor(label))}>{label}</button>
           ))}
         </div>
       </section>
@@ -274,7 +317,10 @@ export default function AynaLanding({
             <div className="v6-eyebrow">explore by need</div>
             <h2>find your way in, <em>fast.</em></h2>
           </div>
-          <p>Browse real Ayna products by the health need that matters to you.</p>
+          <div className="v6-explore-meta">
+            <p>Browse real Ayna products by the health need that matters to you.</p>
+            <button type="button" className="v6-explore-refresh" onClick={refreshExplore} aria-label="Refresh health categories">↻ refresh</button>
+          </div>
         </div>
 
         <div className="v6-category-grid">
