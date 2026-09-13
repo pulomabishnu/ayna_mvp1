@@ -1,5 +1,7 @@
 import './v6InteractionFinal.css';
 
+let lastPointerType = 'mouse';
+
 function clean(value) {
   return String(value || '').replace(/\s+/g, ' ').trim();
 }
@@ -52,6 +54,12 @@ function closeBrowseFilters() {
   if (panel && button) button.click();
 }
 
+function clearTouchMatchReveal(except = null) {
+  document.querySelectorAll('.ayna-browse-card.v6-match-revealed').forEach((card) => {
+    if (card !== except) card.classList.remove('v6-match-revealed');
+  });
+}
+
 function syncExpandedState(input) {
   if (!input) return;
   const form = input.closest('.v6-typeahead-host');
@@ -83,16 +91,39 @@ function start() {
   enhance();
 
   document.addEventListener('pointerdown', (event) => {
+    lastPointerType = event.pointerType || 'mouse';
+
     const needsTrigger = event.target?.closest?.('.v6-browse-needs-trigger');
     const filterButton = event.target?.closest?.('.ayna-browse__filter-button');
 
     // Only one floating Browse panel should be open at a time.
     if (needsTrigger) closeBrowseFilters();
     if (filterButton) closeBrowseNeedsMenu();
+
+    if ((lastPointerType === 'touch' || lastPointerType === 'pen') && !event.target?.closest?.('.ayna-browse-card')) {
+      clearTouchMatchReveal();
+    }
   }, true);
 
   document.addEventListener('click', (event) => {
-    if (!document.documentElement.classList.contains('v6-signed-out')) return;
+    const cardLink = event.target?.closest?.('.ayna-browse-card__link');
+    const card = cardLink?.closest?.('.ayna-browse-card');
+    const hasRealMatch = Boolean(card?.querySelector('.ayna-browse-card__match .ayna-match-gauge'));
+    const signedOut = document.documentElement.classList.contains('v6-signed-out');
+
+    // On touch, first tap reveals the real personalized Match bubble. A second
+    // tap on the same product follows the normal product link. Desktop keeps
+    // normal one-click navigation because hover/focus already reveals Match.
+    if (!signedOut && cardLink && card && hasRealMatch && (lastPointerType === 'touch' || lastPointerType === 'pen') && !card.classList.contains('v6-match-revealed')) {
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+      clearTouchMatchReveal(card);
+      card.classList.add('v6-match-revealed');
+      return;
+    }
+
+    if (!signedOut) return;
 
     const personalize = event.target?.closest?.('.ayna-browse__personalized-toggle');
     if (personalize) {
