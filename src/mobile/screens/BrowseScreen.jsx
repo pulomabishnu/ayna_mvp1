@@ -263,8 +263,11 @@ export default function BrowseScreen({
 }) {
   const [mode, setMode] = useState('products');
   const [searchValue, setSearchValue] = useState('');
+  // One shared toggle for both Products and Reads — a preference like "show
+  // me what's relevant to me" is about the person, not about which of the
+  // two tabs they happen to be looking at, so switching tabs shouldn't
+  // silently turn it back off on one side.
   const [personalized, setPersonalized] = useState(false);
-  const [personalizedReads, setPersonalizedReads] = useState(false);
   const [activeGroup, setActiveGroup] = useState('all');
   const { layout: cardLayout, toggleLayout } = useCardLayout();
   // AI fallback for a typed search the local catalog scoring found nothing
@@ -277,7 +280,16 @@ export default function BrowseScreen({
   // shuffle happens on every visit to Browse, not just once per app load.
   const [shuffled] = useState(() => fisherYatesShuffle(products));
 
-  const hasProfile = !!(quizAnswers?.frustrations?.length);
+  // frustrations is the legacy desktop quiz shape; the real current mobile
+  // intake (IntakeScreen.jsx) never sets it at all — it produces
+  // fullHealthIntake.supportSelections/primaryConcerns instead — so relying
+  // on frustrations alone meant "For You" personalization was permanently
+  // disabled for every real mobile user who'd actually completed the quiz.
+  const hasProfile = !!(
+    quizAnswers?.frustrations?.length
+    || quizAnswers?.fullHealthIntake?.supportSelections?.length
+    || quizAnswers?.fullHealthIntake?.primaryConcerns?.length
+  );
 
   // Real filtering — reuses the site's own scoreQueryAgainstProduct/
   // buildSearchTextForItem/buildIdentityTextForItem (naturalLanguageSearch.js)
@@ -399,7 +411,7 @@ export default function BrowseScreen({
           </div>
         )}
         {mode === 'reads' && (
-          <PersonalizedToggle on={personalizedReads} disabled={!hasProfile} onClick={() => setPersonalizedReads((v) => !v)} />
+          <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />
         )}
       </div>
 
@@ -450,7 +462,7 @@ export default function BrowseScreen({
             ALL OTC · NOT A DIAGNOSIS
           </div>
         </>
-      ) : personalizedReads && hasProfile ? (
+      ) : personalized && hasProfile ? (
         recommendedReads.length === 0 ? (
           <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))' }}>
             No reads match your profile yet.

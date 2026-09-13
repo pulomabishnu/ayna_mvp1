@@ -54,8 +54,18 @@ function nearestEdgeX(x, width) {
  * position around; scrolling back near the top returns it there, and
  * grabbing it at any point immediately releases the dock so it tracks the
  * finger exactly, with no jump.
+ *
+ * `viewKey` identifies whatever screen/overlay is currently showing (see
+ * MobileApp.jsx). This component is mounted once and never unmounts as the
+ * app navigates, so without this its `compact`/docked state — set from a
+ * scroll event on whatever was on screen before — would carry over
+ * unchanged onto a brand-new screen that hasn't been scrolled at all,
+ * making the chip look like it "jumps around" between screens (docked and
+ * icon-only on one, expanded and free on the next, with no scrolling in
+ * between to explain why). A fresh screen always starts scrolled to the
+ * top, so `viewKey` changing resets it to match.
  */
-export default function AskAynaChip({ onClick }) {
+export default function AskAynaChip({ onClick, viewKey }) {
   const [pos, setPos] = useState(loadPosition);
   const [compact, setCompact] = useState(false);
   const [dragging, setDragging] = useState(false);
@@ -92,6 +102,13 @@ export default function AskAynaChip({ onClick }) {
     setDockedX(compact ? nearestEdgeX(pos.x, CHIP_WIDTH) : null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [compact]);
+
+  useEffect(() => {
+    // A new screen always starts scrolled to the top — undock/un-compact
+    // immediately rather than waiting for a scroll event on it (which may
+    // never come if the new screen's content is short).
+    setCompact(false);
+  }, [viewKey]);
 
   const handlePointerDown = (e) => {
     e.currentTarget.setPointerCapture?.(e.pointerId);

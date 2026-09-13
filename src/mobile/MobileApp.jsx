@@ -538,7 +538,12 @@ export default function MobileApp() {
           onEditProfile={() => { setEditingHealthProfile(true); setScreen('quiz'); }}
         />
       )}
-      {!askAynaOpen && <AskAynaChip onClick={() => setAskAynaOpen(true)} />}
+      {!askAynaOpen && (
+        <AskAynaChip
+          onClick={() => setAskAynaOpen(true)}
+          viewKey={overlay ? `${overlay.type}:${overlay.item?.id || ''}` : screen}
+        />
+      )}
       <AskAynaModal
         open={askAynaOpen}
         onClose={() => setAskAynaOpen(false)}

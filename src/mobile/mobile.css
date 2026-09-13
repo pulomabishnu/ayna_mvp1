@@ -89,6 +89,21 @@
 @keyframes ay-skeleton { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
 @keyframes ay-pixelate { 0% { opacity: .15; filter: blur(6px) saturate(0); transform: scale(.94); } 60% { opacity: .7; filter: blur(2px) saturate(.6); transform: scale(.98); } 100% { opacity: 1; filter: blur(0) saturate(1); transform: scale(1); } }
 
+/* Universal tap feedback — targets the inline cursor:pointer every
+   clickable element in this app already sets (the dominant interactive
+   pattern here is a styled <div onClick>, not <button>), so every tap
+   anywhere gets an immediate, consistent press response without having to
+   touch each of the hundreds of clickable elements individually. Skips
+   anything currently mid keyframe-animation (a couple of bobbing CTAs) —
+   the animation's own transform already wins there regardless. */
+.ayna-mobile [style*="cursor: pointer"] {
+  transition: transform .12s ease, opacity .12s ease;
+}
+.ayna-mobile [style*="cursor: pointer"]:active {
+  transform: scale(0.97);
+  opacity: 0.85;
+}
+
 .ayna-mobile input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
