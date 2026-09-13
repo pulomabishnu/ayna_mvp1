@@ -28,21 +28,29 @@ jobs:
         env:
           PUPPETEER_SKIP_DOWNLOAD: 'true'
 
-      - name: Wait for branch preview
+      - name: Build isolated signed-in QA fixture
+        run: npm run build
+        env:
+          VITE_SUPABASE_URL: https://qaproject.supabase.co
+          VITE_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiZXhwIjo0MTAyNDQ0ODAwfQ.fake
+
+      - name: Serve exact branch build
         run: |
-          for i in {1..45}; do
-            if curl -fsS "https://aynamvp1-git-ameera-v6-real-b9ae33-pulomabishnu-4744s-projects.vercel.app/?qa=$GITHUB_SHA" >/dev/null; then
+          nohup npm run preview -- --host 127.0.0.1 --port 4173 >/tmp/ayna-v6-qa-preview.log 2>&1 &
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then
               exit 0
             fi
-            sleep 3
+            sleep 1
           done
+          cat /tmp/ayna-v6-qa-preview.log || true
           exit 1
 
       - name: Run signed-in ecosystem QA five times
         run: node scripts/qa-v6-signedin-ecosystem.mjs
         env:
           CHROME_PATH: /usr/bin/google-chrome
-          AYNA_AFTER_URL: https://aynamvp1-git-ameera-v6-real-b9ae33-pulomabishnu-4744s-projects.vercel.app
+          AYNA_AFTER_URL: http://127.0.0.1:4173
 
       - name: Upload ecosystem QA
         if: always()
