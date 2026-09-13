@@ -26,6 +26,7 @@ jobs:
           node scripts/apply-apple-compliance-patches.mjs
           node scripts/apply-apple-compliance-patches-2.mjs
           node scripts/apply-apple-compliance-patches-3.mjs
+          node scripts/apply-apple-compliance-patches-4.mjs
       - name: Inspect working tree
         run: |
           git diff --check
@@ -75,9 +76,13 @@ jobs:
             api/_llm.js \
             api/ask-ayna.js \
             api/product-chat.js \
+            api/product-chat.integration.test.js \
             api/product-insights.js \
+            api/product-insights.integration.test.js \
             api/llm-recommendations.js \
+            api/llm-recommendations.integration.test.js \
             api/search-suggestions.js \
+            api/search-suggestions.integration.test.js \
             api/sms-webhook.js \
             api/products.js \
             ios/App/App.xcodeproj/project.pbxproj
@@ -104,6 +109,7 @@ jobs:
           node scripts/apply-apple-compliance-patches.mjs
           node scripts/apply-apple-compliance-patches-2.mjs
           node scripts/apply-apple-compliance-patches-3.mjs
+          node scripts/apply-apple-compliance-patches-4.mjs
       - name: Build web bundle and sync Capacitor
         run: |
           npm run build
