@@ -48,13 +48,11 @@ jobs:
             src/utils/aiHealthContext.test.js \
             src/utils/userHealthContextForInsights.test.js \
             src/utils/productCatalog.test.js
-      - name: Full repository test suite (baseline signal)
-        continue-on-error: true
+      - name: Full repository test suite
         run: npx vitest run
       - name: Production web build
         run: npm run build
-      - name: Full lint (baseline signal)
-        continue-on-error: true
+      - name: Full lint
         run: npm run lint
       - name: Commit verified patch output
         if: github.actor != 'github-actions[bot]'
@@ -62,6 +60,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add \
+            src/components/AuthGate.jsx \
             src/mobile/hooks/useSupabaseAuth.js \
             src/mobile/screens/SigninScreen.jsx \
             src/mobile/MobileApp.jsx \
