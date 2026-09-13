@@ -154,6 +154,71 @@ async function moveBranchQuizToSupport(page) {
   return false;
 }
 
+async function clickFirstVisible(page, selectors) {
+  for (const selector of selectors) {
+    const handle = await page.$(selector);
+    if (!handle) continue;
+    const visible = await page.evaluate((el) => {
+      const style = getComputedStyle(el);
+      const rect = el.getBoundingClientRect();
+      return style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 0 && rect.height > 0;
+    }, handle);
+    if (visible) {
+      await handle.click();
+      return true;
+    }
+  }
+  return false;
+}
+
+async function moveBranchQuizToDiagnosis(page) {
+  for (let i = 0; i < 8; i += 1) {
+    const heading = await page.$eval('.ayna-intake-question > h1', (el) => (el.textContent || '').trim()).catch(() => '');
+
+    if (/diagnosed with any of the following/i.test(heading)) {
+      const data = await page.evaluate(() => ({
+        heading: document.querySelector('.ayna-intake-question > h1')?.textContent?.trim() || '',
+        choices: [...document.querySelectorAll('.ayna-intake-question .ayna-list-panel .ayna-row-choice')]
+          .filter((node) => {
+            const style = getComputedStyle(node);
+            const rect = node.getBoundingClientRect();
+            return style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 0 && rect.height > 0;
+          })
+          .map((node) => node.textContent?.replace(/\s+/g, ' ').trim() || ''),
+        staleSupportShells: document.querySelectorAll('.ayna-intake-question .v6-support-suggestion-shell').length,
+        supportOnlyClass: document.querySelector('.ayna-intake-question')?.classList.contains('v6-support-search-only') || false,
+      }));
+      if (data.choices.length < 5) throw new Error(`Diagnosis regression: expected visible condition choices, got ${data.choices.length}`);
+      if (!data.choices.some((choice) => /None that I know of/i.test(choice))) throw new Error('Diagnosis regression: missing “None that I know of”');
+      if (!data.choices.some((choice) => /Prefer not to say/i.test(choice))) throw new Error('Diagnosis regression: missing “Prefer not to say”');
+      if (data.staleSupportShells !== 0 || data.supportOnlyClass) throw new Error('Diagnosis regression: stale support-search enhancement leaked into diagnosis step');
+      return data;
+    }
+
+    if (/which options best describe you right now/i.test(heading)) {
+      await clickFirstVisible(page, ['.v6-support-bubble', '.v6-master-suggestion-bubble', '.ayna-row-choice']);
+    } else if (/period flow/i.test(heading)) {
+      await clickFirstVisible(page, ['.ayna-scale button', '.ayna-seg-option', '.ayna-row-choice']);
+    } else if (/period pain/i.test(heading)) {
+      await clickFirstVisible(page, ['.ayna-scale button', '.ayna-seg-option', '.ayna-row-choice']);
+    } else {
+      const skip = await page.$('.ayna-skip');
+      if (skip) await skip.click();
+    }
+
+    await sleep(120);
+    const next = await page.$('.ayna-continue:not([disabled])');
+    if (next) await next.click();
+    else {
+      const skip = await page.$('.ayna-skip');
+      if (skip) await skip.click();
+      else throw new Error(`Could not advance intake from “${heading}”`);
+    }
+    await sleep(240);
+  }
+  throw new Error('Diagnosis regression: did not reach diagnosis question');
+}
+
 async function capture(label, base, width, theme, isAfter) {
   const page = await newPage(width, theme);
   try {
@@ -169,9 +234,16 @@ async function capture(label, base, width, theme, isAfter) {
     await captureViewport(page, `${label}-signin-banner-${theme}-${width}.png`);
 
     await goto(page, `${base}/quiz?qa=${Date.now()}`, theme);
-    if (isAfter) await moveBranchQuizToSupport(page).catch(() => false);
+    if (isAfter) await moveBranchQuizToSupport(page);
     await forceTheme(page, theme);
     await captureViewport(page, `${label}-quiz-${theme}-${width}.png`);
+
+    if (isAfter) {
+      const diagnosis = await moveBranchQuizToDiagnosis(page);
+      await forceTheme(page, theme);
+      await fs.writeFile(path.join(OUT, `after-diagnosis-${theme}-${width}.json`), JSON.stringify(diagnosis, null, 2));
+      await captureViewport(page, `after-diagnosis-${theme}-${width}.png`);
+    }
   } finally {
     await page.close();
   }
@@ -193,14 +265,15 @@ try {
     `Before local build: ${BEFORE}`,
     `After local build: ${AFTER}`,
     `PNG count: ${pngs.length}`,
-    'Pages/states: home, signed-out unlock state, quiz',
+    'Pages/states: home, signed-out unlock state, support-step quiz, diagnosis-step regression check',
     'Widths: 375, 768, 1440',
     'Themes: light, dark',
     'Home diagnostics: computed form/input styles for the redesign build.',
+    'Diagnosis diagnostics: visible required choices plus stale-support-enhancement assertions.',
     'Literal REC/battery/timestamp HUD is removed from the after build by design.',
   ].join('\n'));
-  if (pngs.length !== 36) throw new Error(`Expected 36 screenshots, got ${pngs.length}`);
-  console.log(`Captured ${pngs.length} real local-build screenshots.`);
+  if (pngs.length !== 42) throw new Error(`Expected 42 screenshots, got ${pngs.length}`);
+  console.log(`Captured ${pngs.length} real local-build screenshots and verified the diagnosis step.`);
 } finally {
   await browser.close();
 }
