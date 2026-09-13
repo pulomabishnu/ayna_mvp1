@@ -21,8 +21,10 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Apply final deterministic privacy patch
-        run: node scripts/apply-apple-compliance-patches-5.mjs
+      - name: Apply final deterministic privacy patches
+        run: |
+          node scripts/apply-apple-compliance-patches-5.mjs
+          node scripts/apply-apple-token-revocation-patch.mjs
       - name: Inspect working tree
         run: |
           git diff --check
@@ -32,6 +34,7 @@ jobs:
         run: |
           npx vitest run \
             api/_privacyConsent.test.js \
+            api/_appleSignIn.test.js \
             api/_llm.test.js \
             api/ask-ayna.integration.test.js \
             api/product-chat.integration.test.js \
@@ -55,6 +58,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add \
+            .env.example \
             src/components/AuthGate.jsx \
             src/mobile/hooks/useSupabaseAuth.js \
             src/mobile/MobileApp.jsx \
@@ -65,7 +69,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "No generated patch changes to commit."
           else
-            git commit -m "privacy: finish consent withdrawal controls"
+            git commit -m "privacy: finish consent withdrawal and Apple revocation wiring"
             git push origin HEAD:privacy/apple-app-store-compliance
           fi
 
@@ -78,8 +82,10 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Apply final deterministic privacy patch
-        run: node scripts/apply-apple-compliance-patches-5.mjs
+      - name: Apply final deterministic privacy patches
+        run: |
+          node scripts/apply-apple-compliance-patches-5.mjs
+          node scripts/apply-apple-token-revocation-patch.mjs
       - name: Build web bundle and sync Capacitor
         run: |
           npm run build
