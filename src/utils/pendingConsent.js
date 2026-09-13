@@ -14,6 +14,9 @@ function currentConsentRecord() {
     age_18_confirmed: true,
     age_18_confirmed_at: now,
     age_requirement_version: AGE_REQUIREMENT_VERSION,
+    ai_health_processing_allowed: true,
+    ai_health_processing_consented_at: now,
+    ai_health_processing_revoked_at: null,
   };
 }
 
@@ -21,7 +24,8 @@ export function hasCurrentConsent(user) {
   const meta = user?.user_metadata || {};
   return meta.consent_version === CONSENT_VERSION &&
     Boolean(meta.consent_given_at) &&
-    meta.age_18_confirmed === true;
+    meta.age_18_confirmed === true &&
+    meta.ai_health_processing_allowed === true;
 }
 
 /**
@@ -42,10 +46,33 @@ export function clearPendingConsent() {
   try { sessionStorage.removeItem(STORAGE_KEY); } catch { /* ignore */ }
 }
 
+/**
+ * Records an affirmative AI choice. Call only after the visible 18+ and AI
+ * disclosures have been accepted by the person using the account.
+ */
 export async function grantCurrentUserConsent(supabase) {
   if (!supabase) throw new Error('Sign-in is not configured right now.');
   const record = currentConsentRecord();
   const { data, error } = await supabase.auth.updateUser({ data: record });
+  if (error) throw error;
+  clearPendingConsent();
+  return data?.user || null;
+}
+
+/**
+ * Withdraws permission for third-party AI processing without deleting the
+ * account, health profile, or the person's prior 18+ confirmation. Server
+ * routes require ai_health_processing_allowed === true, so this takes effect
+ * for every AI endpoint as soon as Supabase updates the user metadata.
+ */
+export async function revokeCurrentUserAiConsent(supabase) {
+  if (!supabase) throw new Error('Sign-in is not configured right now.');
+  const { data, error } = await supabase.auth.updateUser({
+    data: {
+      ai_health_processing_allowed: false,
+      ai_health_processing_revoked_at: new Date().toISOString(),
+    },
+  });
   if (error) throw error;
   clearPendingConsent();
   return data?.user || null;
@@ -70,7 +97,12 @@ export async function flushPendingConsent(supabase) {
     return;
   }
 
-  if (consent?.consent_version !== CONSENT_VERSION || !consent?.consent_given_at || consent?.age_18_confirmed !== true) {
+  if (
+    consent?.consent_version !== CONSENT_VERSION ||
+    !consent?.consent_given_at ||
+    consent?.age_18_confirmed !== true ||
+    consent?.ai_health_processing_allowed !== true
+  ) {
     clearPendingConsent();
     return;
   }
