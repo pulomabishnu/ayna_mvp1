@@ -135,14 +135,15 @@ function triggerExistingSignIn(fallback) {
 
 function UnlockCard({ onStartQuiz }) {
   return (
-    <div className="v6-unlock-card" role="dialog" aria-label="Unlock personalized results">
+    <div className="v6-unlock-card v6-unlock-card--slim" role="dialog" aria-label="Unlock personalized results">
       <span className="v6-unlock-icon"><LockIcon /></span>
-      <div className="v6-eyebrow">personalized for you</div>
-      <h2>unlock personalized results.</h2>
-      <p>Sign in or create an account to see your Ayna score, why a product fits you, saved matches, and your ecosystem.</p>
+      <div className="v6-unlock-copy">
+        <strong>sign in to unlock personalized results.</strong>
+        <span>save picks, see your Ayna score, and open your health universe.</span>
+      </div>
       <div className="v6-unlock-actions">
         <button type="button" className="primary" onClick={() => triggerExistingSignIn(onStartQuiz)}>sign in</button>
-        <button type="button" onClick={onStartQuiz}>create account</button>
+        <button type="button" onClick={onStartQuiz}>build my ecosystem</button>
       </div>
     </div>
   );
@@ -167,6 +168,7 @@ export default function AynaLanding({
   const [seed, setSeed] = useState(() => Math.floor(Math.random() * 10000));
   const [quickOffset, setQuickOffset] = useState(0);
   const [quickPaused, setQuickPaused] = useState(false);
+  const [reduceMotion, setReduceMotion] = useState(false);
   const [exploreOffset, setExploreOffset] = useState(0);
 
   useEffect(() => {
@@ -175,12 +177,21 @@ export default function AynaLanding({
   }, []);
 
   useEffect(() => {
-    if (quickPaused) return undefined;
+    const media = window.matchMedia?.('(prefers-reduced-motion: reduce)');
+    if (!media) return undefined;
+    const sync = () => setReduceMotion(media.matches);
+    sync();
+    media.addEventListener?.('change', sync);
+    return () => media.removeEventListener?.('change', sync);
+  }, []);
+
+  useEffect(() => {
+    if (quickPaused || reduceMotion) return undefined;
     const timer = window.setInterval(() => {
       setQuickOffset((current) => (current + 4) % QUICK_CATEGORIES.length);
-    }, 3200);
+    }, 3000);
     return () => window.clearInterval(timer);
-  }, [quickPaused]);
+  }, [quickPaused, reduceMotion]);
 
   useEffect(() => {
     if (!initialCategory) return;
@@ -219,8 +230,8 @@ export default function AynaLanding({
   }), [visibleAreas, visualPool, seed]);
 
   const quickLinks = useMemo(() => Array.from({ length: 4 }, (_, index) => (
-    QUICK_CATEGORIES[(quickOffset + index) % QUICK_CATEGORIES.length]
-  )), [quickOffset]);
+    QUICK_CATEGORIES[((reduceMotion ? 0 : quickOffset) + index) % QUICK_CATEGORIES.length]
+  )), [quickOffset, reduceMotion]);
 
   const submitSearch = (event) => {
     event.preventDefault();
@@ -252,10 +263,12 @@ export default function AynaLanding({
 
         <div
           className="v6-quick-links v6-quick-links--rotating"
-          data-v6-sept-quick="1"
           onMouseEnter={() => setQuickPaused(true)}
           onMouseLeave={() => setQuickPaused(false)}
+          onFocus={() => setQuickPaused(true)}
+          onBlur={() => setQuickPaused(false)}
           aria-label="Popular health categories"
+          aria-live="off"
         >
           {quickLinks.map((label) => (
             <button key={`${quickOffset}-${label}`} type="button" onClick={() => onViewDiscovery?.(discoveryTargetFor(label))}>{label}</button>
@@ -300,7 +313,7 @@ export default function AynaLanding({
             <h3>{selected?.name || 'your match'}</h3>
             <p>{selected?.summary || selected?.description || 'A personalized match based on your health profile and preferences.'}</p>
             <div className="v6-bubble-tags"><span>personalized</span><span>research backed</span></div>
-            {selectedScore != null && <div className="v6-bubble-score">your ayna score · {selectedScore}/100</div>}
+            {personalizedUnlocked && selectedScore != null && <div className="v6-bubble-score">your ayna score · {selectedScore}/100</div>}
             <div className="v6-bubble-actions">
               <button type="button" className="primary" onClick={() => selected && onOpenProduct?.(selected)}>view product →</button>
               <button type="button" aria-label="Open ecosystem" onClick={onViewEcosystem}>♡</button>
