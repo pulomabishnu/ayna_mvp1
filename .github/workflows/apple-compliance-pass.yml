@@ -1,0 +1,90 @@
+name: Apple compliance pass
+
+on:
+  push:
+    branches:
+      - privacy/apple-app-store-compliance
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  web-and-api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Apply deterministic compliance patches
+        run: node scripts/apply-apple-compliance-patches.mjs
+      - name: Inspect working tree
+        run: |
+          git diff --check
+          git status --short
+          git diff --stat
+      - name: Unit and integration tests
+        run: npx vitest run
+      - name: Production web build
+        run: npm run build
+      - name: Lint
+        run: npm run lint
+      - name: Commit verified patch output
+        if: github.actor != 'github-actions[bot]'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            src/mobile/hooks/useSupabaseAuth.js \
+            src/mobile/screens/SigninScreen.jsx \
+            src/mobile/MobileApp.jsx \
+            src/mobile/screens/ProductDetailScreen.jsx \
+            src/mobile/screens/profile/ProfileFlow.jsx \
+            src/App.jsx \
+            api/ask-ayna.js \
+            api/product-chat.js \
+            ios/App/App.xcodeproj/project.pbxproj
+          git diff --cached --check
+          git diff --cached --stat
+          if git diff --cached --quiet; then
+            echo "No generated patch changes to commit."
+          else
+            git commit -m "privacy: apply Apple compliance fixes"
+            git push origin HEAD:privacy/apple-app-store-compliance
+          fi
+
+  ios-simulator-build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Apply deterministic compliance patches
+        run: node scripts/apply-apple-compliance-patches.mjs
+      - name: Build web bundle and sync Capacitor
+        run: |
+          npm run build
+          npx cap sync ios
+      - name: Validate plist files
+        run: |
+          plutil -lint ios/App/App/Info.plist
+          plutil -lint ios/App/App/App.entitlements
+          plutil -lint ios/App/App/PrivacyInfo.xcprivacy
+      - name: Build unsigned iOS simulator app
+        run: |
+          xcodebuild \
+            -project ios/App/App.xcodeproj \
+            -scheme App \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO \
+            build
