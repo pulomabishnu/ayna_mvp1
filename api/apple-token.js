@@ -7,6 +7,12 @@ function privateHeaders(res) {
   res.setHeader('X-Content-Type-Options', 'nosniff');
 }
 
+function userHasAppleIdentity(user) {
+  if (user?.app_metadata?.provider === 'apple') return true;
+  if (Array.isArray(user?.app_metadata?.providers) && user.app_metadata.providers.includes('apple')) return true;
+  return Array.isArray(user?.identities) && user.identities.some((identity) => identity?.provider === 'apple');
+}
+
 export default async function handler(req, res) {
   privateHeaders(res);
   if (req.method !== 'POST') {
@@ -19,6 +25,9 @@ export default async function handler(req, res) {
     return res.status(error === 'auth_required' || error === 'invalid_session' ? 401 : 503).json({
       error: error || 'auth_required',
     });
+  }
+  if (!userHasAppleIdentity(user)) {
+    return res.status(403).json({ error: 'apple_identity_required' });
   }
 
   const body = typeof req.body === 'string' ? (() => {
