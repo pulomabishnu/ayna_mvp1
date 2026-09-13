@@ -66,10 +66,11 @@ export default async function handler(req, res) {
 
   const [phone, prefs, intake, ecosystem, healthProfiles, reviews, sms, aiUsage, builds, learningMemory, recalls, deletionRequests] = entries;
   const warnings = entries.map((entry) => entry.warning).filter(Boolean);
+  const meta = user.user_metadata || {};
 
   return res.status(200).json({
     exportedAt: new Date().toISOString(),
-    scope: 'Account-linked data stored in ayna application databases. Third-party processor logs or platform records may be subject to separate retention and access processes.',
+    scope: 'Account-linked data stored in ayna application databases. Third-party processor logs or platform records may be subject to separate retention and access processes. Security credentials such as password hashes, session tokens, encryption keys, and encrypted OAuth refresh tokens are intentionally not included.',
     incomplete: warnings.length > 0,
     warnings,
     account: {
@@ -77,9 +78,13 @@ export default async function handler(req, res) {
       emailVerified: !!user.email_confirmed_at,
       createdAt: user.created_at || null,
       consent: {
-        consentGivenAt: user.user_metadata?.consent_given_at || null,
-        consentVersion: user.user_metadata?.consent_version || null,
-        age18Confirmed: user.user_metadata?.age_18_confirmed === true,
+        consentGivenAt: meta.consent_given_at || null,
+        consentVersion: meta.consent_version || null,
+        age18Confirmed: meta.age_18_confirmed === true,
+        age18ConfirmedAt: meta.age_18_confirmed_at || null,
+        aiHealthProcessingAllowed: meta.ai_health_processing_allowed === true,
+        aiHealthProcessingConsentedAt: meta.ai_health_processing_consented_at || null,
+        aiHealthProcessingRevokedAt: meta.ai_health_processing_revoked_at || null,
       },
       signInMethods: (user.identities || []).map((identity) => ({ provider: identity.provider })),
     },
