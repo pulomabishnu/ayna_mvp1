@@ -3,12 +3,12 @@ import React from 'react';
 const PROCESSORS = [
   ['Supabase', 'Authentication and storage of account-linked data, including health profiles, preferences, saved products, SMS-related account records, and other user-owned records.'],
   ['Vercel', 'Website and API hosting infrastructure used to deliver ayna services.'],
-  ['PostHog', 'Product-usage analytics and coarse app-error signals. In the iOS app, analytics require a first-use choice before collection starts. ayna disables session recording, automatic click/text capture, automatic exception capture, and IP collection, and filters health-profile answers, message content, direct contact information, raw sensitive search text, and authentication tokens from analytics payloads.'],
+  ['PostHog', 'Product-usage analytics and coarse app-error signals. In the iOS app, analytics require a first-use choice before collection starts. ayna disables session recording, automatic click/text capture, automatic exception capture, and IP collection, and filters health-profile answers, message content, direct contact information, raw sensitive search text, authentication tokens, and health-inferential product/category fields from analytics payloads.'],
   ['Anthropic, OpenAI, and Google Gemini', 'When you intentionally use an AI-powered feature, the provider selected for that request may process your prompt, product information, and a limited amount of relevant wellness context to generate the requested response. Google Gemini may be reached through Vercel AI Gateway where configured. Not every request is sent to every provider.'],
   ['Twilio', 'Phone verification and user-initiated SMS functionality, including personalized health-question conversations when you choose to use them.'],
   ['Resend', 'Transactional, contact, and support email delivery.'],
   ['Google and Apple', 'Account authentication when you choose Google sign-in or Sign in with Apple. The identity provider may supply identifiers, email, and profile information permitted by that provider and your choices, such as Apple Hide My Email.'],
-  ['Search providers', 'Product and information discovery where an external search service is used. Sensitive health searches are minimized and should not be combined with your saved account profile for external search.'],
+  ['Search providers', 'Product and information discovery when you intentionally search beyond the ayna catalog. External discovery is account-authenticated and requires the current AI privacy permission before a potentially health-sensitive query leaves ayna.'],
   ['Retailers and affiliate networks', 'When you choose a Buy link, the destination retailer may receive normal web-request information and an affiliate identifier. ayna does not send your identifiable health profile to a retailer as part of an ordinary Buy-link click.'],
 ];
 
@@ -78,7 +78,7 @@ export default function PrivacyPolicy({ onBack }) {
             ayna uses PostHog for product analytics and coarse app-error signals. In the native iOS app, optional analytics do not begin on a fresh install until you choose <strong>Allow analytics</strong>. You can decline and still use core app features, and you can change the choice later from Privacy &amp; Data. A prior opt-out is honored on later launches. Global Privacy Control is respected where applicable.
           </p>
           <p style={pStyle}>
-            ayna disables PostHog session recording, automatic click/text capture, automatic exception capture, and IP collection. Analytics use a dedicated device/account analytics identifier and may therefore be linkable for analytics purposes; we do not describe this analytics data as anonymous. The analytics boundary is designed to remove direct contact information, account IDs, raw health-profile answers, Ask ayna or SMS message text, authentication tokens, and raw sensitive search text before an event is sent.
+            ayna disables PostHog session recording, automatic click/text capture, automatic exception capture, and IP collection. Analytics use a dedicated device/account analytics identifier and may therefore be linkable for analytics purposes; we do not describe this analytics data as anonymous. The analytics boundary is designed to remove direct contact information, account IDs, raw health-profile answers, Ask ayna or SMS message text, authentication tokens, raw sensitive search text, and health-inferential product/category identifiers before an event is sent.
           </p>
         </div>
 
@@ -88,7 +88,7 @@ export default function PrivacyPolicy({ onBack }) {
             When you intentionally use an AI-powered feature, ayna may send your prompt, relevant product information, recent conversation context, and a limited amount of relevant wellness context through ayna's server to a third-party AI provider selected for that request. Depending on availability and configuration, that provider may be Anthropic, OpenAI, or Google Gemini. Gemini may use Vercel AI Gateway as routing infrastructure. Not every request is sent to every provider.
           </p>
           <p style={pStyle}>
-            The iOS app asks for an explicit AI privacy choice before account-linked personal or health information is used with these AI features. If you do not agree, you can continue using non-AI parts of ayna. ayna is designed not to include your name, email address, phone number, or account UUID in AI prompts and to minimize health context to what is relevant for the feature. AI output can be wrong and is educational only, not a medical diagnosis, prescription, or substitute for professional care.
+            The iOS app asks for an explicit AI privacy choice before account-linked personal or health information is used with these AI features. If you do not agree, you can continue using non-AI parts of ayna. After allowing AI features, you can withdraw that permission at any time from <strong>Settings → Privacy &amp; Data → Allow AI features</strong>. The server checks the current permission for protected AI routes, so turning it off prevents new account-linked requests from being sent to these AI providers until you allow it again. ayna is designed not to include your name, email address, phone number, or account UUID in AI prompts and to minimize health context to what is relevant for the feature. AI output can be wrong and is educational only, not a medical diagnosis, prescription, or substitute for professional care.
           </p>
         </div>
 
@@ -120,14 +120,14 @@ export default function PrivacyPolicy({ onBack }) {
         <div style={sectionStyle}>
           <h2>8. Search history</h2>
           <p style={pStyle}>
-            Search terms may be processed to return results. The current release is designed not to build a persistent account-linked history of raw search queries. Shared discovery or cache metadata may retain a query without attaching it to an account identity. Product interactions resulting from a search can still be recorded separately as app/product interactions where appropriate.
+            Search terms are processed to return results. The current release is designed not to build a persistent account-linked history of raw search queries in ayna browser/device storage. Ordinary catalog search stays inside ayna. If you intentionally search beyond the ayna catalog, the external discovery request requires a signed-in account and the current AI privacy permission before the query is sent to configured AI/search providers. Those providers may process or retain request data under their own applicable service terms and the production settings/contracts ayna uses with them. Product interactions resulting from a search can still be recorded separately where needed to provide account features, but ayna's analytics filter removes raw search text and health-inferential product/category identifiers.
           </p>
         </div>
 
         <div style={sectionStyle}>
           <h2>9. SMS</h2>
           <p style={pStyle}>
-            If you verify a phone number and use ayna's SMS features, inbound and outbound message content may be stored with your account so ayna can provide and personalize that conversation. Twilio processes the phone/SMS traffic and ayna may use an AI provider to generate a requested health-information reply. SMS health conversations are not marketing consent. STOP, UNSUBSCRIBE, CANCEL, END, or QUIT opt you out of ordinary ayna SMS; START or UNSTOP can re-enable it subject to carrier/provider behavior and ayna's stored preference.
+            If you verify a phone number and use ayna's SMS features, inbound and outbound message content may be stored with your account so ayna can provide and personalize that conversation. Twilio processes the phone/SMS traffic and ayna may use an AI provider to generate a requested health-information reply only while the account has the current AI permission. SMS health conversations are not marketing consent. STOP, UNSUBSCRIBE, CANCEL, END, or QUIT opt you out of ordinary ayna SMS; START or UNSTOP can re-enable it subject to carrier/provider behavior and ayna's stored preference.
           </p>
         </div>
 
@@ -144,10 +144,10 @@ export default function PrivacyPolicy({ onBack }) {
         <div style={sectionStyle}>
           <h2>11. Your choices, data export, and account deletion</h2>
           <p style={pStyle}>
-            Signed-in users can edit profile information, change analytics preferences, view or download a copy of account-linked data available through ayna's self-service export, and permanently delete their account from <strong>Settings → Account → Delete account</strong>. The export describes its scope and may not include every independent log held by an infrastructure or identity provider.
+            Signed-in users can edit profile information, change analytics preferences, turn third-party AI processing off or back on, view or download a copy of account-linked data available through ayna's self-service export, and permanently delete their account from <strong>Settings → Account → Delete account</strong>. The export describes its scope and may not include every independent log held by an infrastructure or identity provider.
           </p>
           <p style={pStyle}>
-            Account deletion removes the ayna account and associated active user-linked personal data handled by the deletion flow, except information that must be retained for legal, security, fraud-prevention, or other permitted purposes. Where applicable, processors or identity-provider records may have separate deletion or revocation requirements.
+            Account deletion removes the ayna account and associated active user-linked personal data handled by the deletion flow, except information that must be retained for legal, security, fraud-prevention, or other permitted purposes. When a revocable Sign in with Apple authorization is available to ayna's server, the deletion flow also attempts to revoke that Apple authorization. Where applicable, processors or identity-provider records may have separate deletion or revocation requirements.
           </p>
           <p style={pStyle}>
             Depending on where you live, you may also have rights to access, correct, delete, restrict, withdraw consent for certain processing, obtain a copy of personal information, learn categories of recipients, and appeal certain privacy decisions. See the Consumer Health Data Privacy Notice for additional health-data rights.
