@@ -12,10 +12,12 @@ permissions:
 jobs:
   capture:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
-      - name: Checkout
+      - name: Checkout redesign branch
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Use Node.js
         uses: actions/setup-node@v4
@@ -23,17 +25,41 @@ jobs:
           node-version: 22
           cache: npm
 
-      - name: Install dependencies
+      - name: Install redesign dependencies
         run: npm ci
         env:
           PUPPETEER_SKIP_DOWNLOAD: 'true'
 
-      - name: Capture before and after screenshots
+      - name: Build redesign branch
+        run: npm run build
+
+      - name: Start redesign preview
+        run: |
+          nohup npx vite preview --host 127.0.0.1 --port 4173 > /tmp/ayna-master-after.log 2>&1 &
+          echo $! > /tmp/ayna-master-after.pid
+
+      - name: Prepare current main build
+        run: |
+          git fetch origin main
+          git worktree add --detach /tmp/ayna-master-main origin/main
+          cd /tmp/ayna-master-main
+          npm ci
+          npm run build
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: 'true'
+
+      - name: Start current main preview
+        run: |
+          cd /tmp/ayna-master-main
+          nohup npx vite preview --host 127.0.0.1 --port 4174 > /tmp/ayna-master-before.log 2>&1 &
+          echo $! > /tmp/ayna-master-before.pid
+
+      - name: Capture real local before and after screenshots
         run: node scripts/capture-v6-master-audit.mjs
         env:
           CHROME_PATH: /usr/bin/google-chrome
-          AYNA_BEFORE_URL: https://aynamvp1.vercel.app
-          AYNA_AFTER_URL: https://aynamvp1-git-ameera-v6-real-b9ae33-pulomabishnu-4744s-projects.vercel.app
+          AYNA_BEFORE_URL: http://127.0.0.1:4174
+          AYNA_AFTER_URL: http://127.0.0.1:4173
 
       - name: Upload visual audit
         if: always()
