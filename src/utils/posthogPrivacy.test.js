@@ -2,12 +2,15 @@ import { describe, expect, it } from 'vitest';
 import { sanitizePosthogEvent } from './posthogPrivacy.js';
 
 describe('sanitizePosthogEvent', () => {
-  it('removes direct identifiers, health answers, messages, tokens and raw search text', () => {
+  it('removes direct identifiers, health answers, health-inferential product data, messages, tokens and raw search text', () => {
     const event = sanitizePosthogEvent({
       event: 'product_opened',
       properties: {
-        productId: 'p-123',
-        category: 'period-care',
+        productId: 'uti-relief-kit',
+        productName: 'UTI Relief Kit',
+        category: 'uti',
+        source: 'browse',
+        position: 3,
         email: 'person@example.com',
         phone_number: '+1 212 555 1212',
         user_id: 'supabase-user-id',
@@ -19,7 +22,7 @@ describe('sanitizePosthogEvent', () => {
       },
     });
 
-    expect(event.properties).toEqual({ productId: 'p-123', category: 'period-care' });
+    expect(event.properties).toEqual({ source: 'browse', position: 3 });
   });
 
   it('strips query strings and hashes from analytics URLs', () => {
