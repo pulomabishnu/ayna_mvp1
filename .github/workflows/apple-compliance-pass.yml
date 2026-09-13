@@ -25,6 +25,7 @@ jobs:
         run: |
           node scripts/apply-apple-compliance-patches-5.mjs
           node scripts/apply-apple-token-revocation-patch.mjs
+          node scripts/restore-search-test-coverage.mjs
       - name: Inspect working tree
         run: |
           git diff --check
@@ -63,7 +64,8 @@ jobs:
             src/mobile/hooks/useSupabaseAuth.js \
             src/mobile/MobileApp.jsx \
             src/mobile/screens/profile/ProfileFlow.jsx \
-            api/llm-recommendations.integration.test.js
+            api/llm-recommendations.integration.test.js \
+            api/search-suggestions.integration.test.js
           git diff --cached --check
           git diff --cached --stat
           if git diff --cached --quiet; then
