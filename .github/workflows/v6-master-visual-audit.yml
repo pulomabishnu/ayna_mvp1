@@ -1,0 +1,47 @@
+name: V6 Master Visual Audit
+
+on:
+  push:
+    branches:
+      - ameera/v6-real-site-current
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: 'true'
+
+      - name: Wait for branch preview
+        run: sleep 55
+
+      - name: Capture before and after screenshots
+        run: node scripts/capture-v6-master-audit.mjs
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+          AYNA_BEFORE_URL: https://aynamvp1.vercel.app
+          AYNA_AFTER_URL: https://aynamvp1-git-ameera-v6-real-b9ae33-pulomabishnu-4744s-projects.vercel.app
+
+      - name: Upload visual audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v6-master-visual-audit
+          path: artifacts/v6-master-audit
+          if-no-files-found: error
