@@ -51,6 +51,7 @@ export function mockSupabase({
     consent_version: 'v2-18plus',
     consent_given_at: '2026-09-13T00:00:00.000Z',
     age_18_confirmed: true,
+    ai_health_processing_allowed: true,
   } : {};
   const resolvedUser = user == null ? null : {
     ...user,
@@ -128,29 +129,17 @@ export function anthropicOk(text, stopReason = 'end_turn') {
     status: 200,
     headers: new Headers(),
     json: async () => ({ content: [{ text }], stop_reason: stopReason }),
-    text: async () => text,
+    text: async () => '',
   };
 }
 
-/** OpenAI-shaped success response for a mocked fetch — for testing the actual
- * cross-provider fallback (Anthropic fails, OpenAI picks it up), not just the
- * Anthropic-only path most callers exercise. */
+/** OpenAI-shaped success response for a mocked fetch. */
 export function openaiOk(text, finishReason = 'stop') {
   return {
     ok: true,
     status: 200,
     headers: new Headers(),
     json: async () => ({ choices: [{ message: { content: text }, finish_reason: finishReason }] }),
-    text: async () => text,
-  };
-}
-
-export function httpError(status, headers = {}) {
-  return {
-    ok: false,
-    status,
-    headers: new Headers(headers),
-    json: async () => ({ error: `status ${status}` }),
-    text: async () => `status ${status}`,
+    text: async () => '',
   };
 }
