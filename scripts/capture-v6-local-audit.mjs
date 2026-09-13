@@ -112,11 +112,28 @@ async function captureHomeDiagnostics(page, width, theme) {
   await fs.writeFile(path.join(OUT, `after-home-diagnostics-${theme}-${width}.json`), JSON.stringify(data, null, 2));
 }
 
+async function clickFirstVisible(page, selectors) {
+  for (const selector of selectors) {
+    const handles = await page.$$(selector);
+    for (const handle of handles) {
+      const visible = await page.evaluate((el) => {
+        const style = getComputedStyle(el);
+        const rect = el.getBoundingClientRect();
+        return style.display !== 'none' && style.visibility !== 'hidden' && style.pointerEvents !== 'none' && rect.width > 0 && rect.height > 0;
+      }, handle);
+      if (!visible) continue;
+      await page.evaluate((el) => el.click(), handle);
+      return true;
+    }
+  }
+  return false;
+}
+
 async function moveBranchQuizToSupport(page) {
   const name = await page.$('.v6-name-step__input');
   if (name) {
     await name.type('Ameera');
-    await page.click('.v6-name-step__button');
+    await page.evaluate(() => document.querySelector('.v6-name-step__button')?.click());
     await sleep(200);
   }
 
@@ -135,38 +152,15 @@ async function moveBranchQuizToSupport(page) {
         }, range);
       }
     } else if (/which options best describe you right now/i.test(heading)) {
-      const choice = await page.$('.ayna-choice-card, .ayna-row-choice');
-      if (choice) await choice.click();
+      await clickFirstVisible(page, ['.ayna-choice-card', '.ayna-row-choice']);
     } else if (/zip/i.test(heading)) {
       const input = await page.$('input');
       if (input) await input.type('10001');
     }
 
-    const next = await page.$('.ayna-continue:not([disabled])');
-    if (next) await next.click();
-    else {
-      const skip = await page.$('.ayna-skip');
-      if (skip) await skip.click();
-      else break;
-    }
+    const advanced = await clickFirstVisible(page, ['.ayna-continue:not([disabled])', '.ayna-skip']);
+    if (!advanced) break;
     await sleep(220);
-  }
-  return false;
-}
-
-async function clickFirstVisible(page, selectors) {
-  for (const selector of selectors) {
-    const handle = await page.$(selector);
-    if (!handle) continue;
-    const visible = await page.evaluate((el) => {
-      const style = getComputedStyle(el);
-      const rect = el.getBoundingClientRect();
-      return style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 0 && rect.height > 0;
-    }, handle);
-    if (visible) {
-      await handle.click();
-      return true;
-    }
   }
   return false;
 }
@@ -202,18 +196,12 @@ async function moveBranchQuizToDiagnosis(page) {
     } else if (/period pain/i.test(heading)) {
       await clickFirstVisible(page, ['.ayna-scale button', '.ayna-seg-option', '.ayna-row-choice']);
     } else {
-      const skip = await page.$('.ayna-skip');
-      if (skip) await skip.click();
+      await clickFirstVisible(page, ['.ayna-skip']);
     }
 
     await sleep(120);
-    const next = await page.$('.ayna-continue:not([disabled])');
-    if (next) await next.click();
-    else {
-      const skip = await page.$('.ayna-skip');
-      if (skip) await skip.click();
-      else throw new Error(`Could not advance intake from “${heading}”`);
-    }
+    const advanced = await clickFirstVisible(page, ['.ayna-continue:not([disabled])', '.ayna-skip']);
+    if (!advanced) throw new Error(`Could not advance intake from “${heading}”`);
     await sleep(240);
   }
   throw new Error('Diagnosis regression: did not reach diagnosis question');
