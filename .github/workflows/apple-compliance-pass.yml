@@ -21,13 +21,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Apply deterministic compliance patches
-        run: |
-          node scripts/apply-apple-compliance-patches.mjs
-          node scripts/apply-apple-compliance-patches-2.mjs
-          node scripts/apply-apple-compliance-patches-3.mjs
-          node scripts/apply-apple-compliance-patches-4.mjs
-          node scripts/apply-apple-compliance-patches-5.mjs
+      - name: Apply final deterministic privacy patch
+        run: node scripts/apply-apple-compliance-patches-5.mjs
       - name: Inspect working tree
         run: |
           git diff --check
@@ -54,7 +49,7 @@ jobs:
         run: npm run build
       - name: Full lint
         run: npm run lint
-      - name: Commit verified patch output
+      - name: Commit verified final privacy output
         if: github.actor != 'github-actions[bot]'
         run: |
           git config user.name "github-actions[bot]"
@@ -62,36 +57,15 @@ jobs:
           git add \
             src/components/AuthGate.jsx \
             src/mobile/hooks/useSupabaseAuth.js \
-            src/mobile/screens/SigninScreen.jsx \
             src/mobile/MobileApp.jsx \
-            src/mobile/screens/ProductDetailScreen.jsx \
             src/mobile/screens/profile/ProfileFlow.jsx \
-            src/App.jsx \
-            src/utils/productCatalog.js \
-            src/utils/fetchSearchSuggestions.js \
-            src/utils/userHealthContextForInsights.js \
-            src/utils/posthogPrivacy.js \
-            api/_test-helpers.js \
-            api/_privacyConsent.test.js \
-            api/_llm.js \
-            api/ask-ayna.js \
-            api/product-chat.js \
-            api/product-chat.integration.test.js \
-            api/product-insights.js \
-            api/product-insights.integration.test.js \
-            api/llm-recommendations.js \
-            api/llm-recommendations.integration.test.js \
-            api/search-suggestions.js \
-            api/search-suggestions.integration.test.js \
-            api/sms-webhook.js \
-            api/products.js \
-            ios/App/App.xcodeproj/project.pbxproj
+            api/llm-recommendations.integration.test.js
           git diff --cached --check
           git diff --cached --stat
           if git diff --cached --quiet; then
             echo "No generated patch changes to commit."
           else
-            git commit -m "privacy: apply Apple compliance and shared catalog fixes"
+            git commit -m "privacy: finish consent withdrawal controls"
             git push origin HEAD:privacy/apple-app-store-compliance
           fi
 
@@ -104,13 +78,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Apply deterministic compliance patches
-        run: |
-          node scripts/apply-apple-compliance-patches.mjs
-          node scripts/apply-apple-compliance-patches-2.mjs
-          node scripts/apply-apple-compliance-patches-3.mjs
-          node scripts/apply-apple-compliance-patches-4.mjs
-          node scripts/apply-apple-compliance-patches-5.mjs
+      - name: Apply final deterministic privacy patch
+        run: node scripts/apply-apple-compliance-patches-5.mjs
       - name: Build web bundle and sync Capacitor
         run: |
           npm run build
