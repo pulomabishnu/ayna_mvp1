@@ -188,7 +188,7 @@ function ToggleRow({ title, sub, on, onClick, first }) {
 
 /* ---------------------------- Profile hub ---------------------------- */
 
-function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, onEditProfile }) {
+function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, onEditProfile, onOpenEcosystem, onOpenSaved }) {
   return (
     <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
       <div
@@ -250,15 +250,15 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
         </div>
         <div style={{ position: 'relative', display: 'flex', gap: 8, marginTop: 22 }}>
           {[
-            { value: ecosystemCount, label: 'In ecosystem' },
-            { value: savedCount, label: 'Saved' },
-            { value: `${profileFilledPct}%`, label: 'Profile filled', onClick: profileFilledPct < 100 ? onEditProfile : undefined },
+            { value: ecosystemCount, label: 'In ecosystem', onClick: onOpenEcosystem, ariaLabel: 'Go to your ecosystem' },
+            { value: savedCount, label: 'Saved', onClick: onOpenSaved, ariaLabel: 'Go to saved products' },
+            { value: `${profileFilledPct}%`, label: 'Profile filled', onClick: profileFilledPct < 100 ? onEditProfile : undefined, ariaLabel: 'Finish your profile' },
           ].map((s) => (
             <div
               key={s.label}
               onClick={s.onClick}
               role={s.onClick ? 'button' : undefined}
-              aria-label={s.onClick ? 'Finish your profile' : undefined}
+              aria-label={s.onClick ? s.ariaLabel : undefined}
               style={{ flex: 1, background: 'rgba(255,249,242,.11)', border: '1px solid rgba(255,255,255,.16)', borderRadius: 16, padding: '11px 12px', cursor: s.onClick ? 'pointer' : 'default' }}
             >
               <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(23px * var(--ayna-text-scale, 1))', color: '#FFC774' }}>{s.value}</div>
@@ -3195,6 +3195,8 @@ export default function ProfileFlow({
   savedProducts = {},
   onViewAlternative,
   onBrowse,
+  onGoEcosystem,
+  onOpenSaved,
   onEditProfile,
   personalizeWithData = true,
   onPersonalizeWithDataChange,
@@ -3232,6 +3234,8 @@ export default function ProfileFlow({
         profileFilledPct={profileFilledPct}
         shopperAlertsCount={shopperAlertsCount}
         onEditProfile={onEditProfile ? () => { onClose(); onEditProfile(); } : undefined}
+        onOpenEcosystem={onGoEcosystem ? () => { onClose(); onGoEcosystem(); } : undefined}
+        onOpenSaved={onOpenSaved ? () => { onClose(); onOpenSaved(); } : undefined}
       />
     );
   } else if (screen === 'shopper') {

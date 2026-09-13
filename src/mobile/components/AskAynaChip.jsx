@@ -1,9 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 
 const POSITION_KEY = 'ayna_ask_chip_pos_v1';
-const CHIP_WIDTH = 118; // approx rendered width, used only for clamping to the viewport
+const CHIP_WIDTH = 118; // approx rendered width when expanded, used only for clamping to the viewport
+const CHIP_COMPACT_WIDTH = 44; // approx rendered width when scrolled-compact (icon only) — a
+// separate value from CHIP_WIDTH so clamping/docking don't reserve room for
+// the "Ask Ayna" label when it isn't actually showing.
 const CHIP_HEIGHT = 42;
 const DRAG_THRESHOLD = 6; // px of movement before a press counts as a drag, not a tap
+const EDGE_MARGIN = 8;
 
 function defaultPosition() {
   const vw = typeof window !== 'undefined' ? window.innerWidth : 390;
@@ -22,30 +26,51 @@ function loadPosition() {
   return defaultPosition();
 }
 
-function clamp(pos) {
+function clamp(pos, width) {
   const vw = window.innerWidth;
   const vh = window.innerHeight;
   return {
-    x: Math.min(Math.max(pos.x, 8), vw - CHIP_WIDTH - 8),
-    y: Math.min(Math.max(pos.y, 8), vh - CHIP_HEIGHT - 8),
+    x: Math.min(Math.max(pos.x, EDGE_MARGIN), vw - width - EDGE_MARGIN),
+    y: Math.min(Math.max(pos.y, EDGE_MARGIN), vh - CHIP_HEIGHT - EDGE_MARGIN),
   };
+}
+
+function nearestEdgeX(x, width) {
+  const vw = window.innerWidth;
+  const center = x + width / 2;
+  return center < vw / 2 ? EDGE_MARGIN : vw - CHIP_COMPACT_WIDTH - EDGE_MARGIN;
 }
 
 /**
  * Draggable launcher — press-and-drag repositions it anywhere on screen; a
  * plain tap (movement under DRAG_THRESHOLD) still opens Ask Ayna. Position
  * persists across screens and reloads via localStorage.
+ *
+ * Scrolling down docks it to whichever screen edge (left/right) it's
+ * currently nearer to and shrinks it to an icon — like iOS's AssistiveTouch
+ * bubble — so it stays out of the way of content instead of just shrinking
+ * in place. The dock target is computed once, at the moment scrolling
+ * crosses the threshold (not continuously), so it doesn't chase the free
+ * position around; scrolling back near the top returns it there, and
+ * grabbing it at any point immediately releases the dock so it tracks the
+ * finger exactly, with no jump.
  */
 export default function AskAynaChip({ onClick }) {
   const [pos, setPos] = useState(loadPosition);
   const [compact, setCompact] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  const [dockedX, setDockedX] = useState(null);
   const drag = useRef({ active: false, moved: false, startX: 0, startY: 0, originX: 0, originY: 0 });
 
   useEffect(() => {
-    const onResize = () => setPos((p) => clamp(p));
+    const onResize = () => {
+      setPos((p) => clamp(p, compact ? CHIP_COMPACT_WIDTH : CHIP_WIDTH));
+      setDockedX((d) => (d === null ? d : nearestEdgeX(pos.x, CHIP_WIDTH)));
+    };
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [compact]);
 
   useEffect(() => {
     // Every screen scrolls its own inner container rather than the window,
@@ -60,9 +85,19 @@ export default function AskAynaChip({ onClick }) {
     return () => document.removeEventListener('scroll', onScroll, true);
   }, []);
 
+  useEffect(() => {
+    // Compute the dock target only at the instant compact turns on/off —
+    // deliberately not reacting to `pos` here, so it anchors once rather
+    // than following the free position around while docked.
+    setDockedX(compact ? nearestEdgeX(pos.x, CHIP_WIDTH) : null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [compact]);
+
   const handlePointerDown = (e) => {
     e.currentTarget.setPointerCapture?.(e.pointerId);
-    drag.current = { active: true, moved: false, startX: e.clientX, startY: e.clientY, originX: pos.x, originY: pos.y };
+    const visualX = dockedX !== null ? dockedX : pos.x;
+    setDragging(true);
+    drag.current = { active: true, moved: false, startX: e.clientX, startY: e.clientY, originX: visualX, originY: pos.y };
   };
 
   const handlePointerMove = (e) => {
@@ -70,14 +105,20 @@ export default function AskAynaChip({ onClick }) {
     if (!d.active) return;
     const dx = e.clientX - d.startX;
     const dy = e.clientY - d.startY;
-    if (Math.abs(dx) > DRAG_THRESHOLD || Math.abs(dy) > DRAG_THRESHOLD) d.moved = true;
-    setPos(clamp({ x: d.originX + dx, y: d.originY + dy }));
+    if (!d.moved && (Math.abs(dx) > DRAG_THRESHOLD || Math.abs(dy) > DRAG_THRESHOLD)) {
+      d.moved = true;
+      setDockedX(null); // picking it up and actually moving it releases the dock immediately
+    }
+    if (d.moved) {
+      setPos(clamp({ x: d.originX + dx, y: d.originY + dy }, compact ? CHIP_COMPACT_WIDTH : CHIP_WIDTH));
+    }
   };
 
   const endDrag = () => {
     const d = drag.current;
     if (!d.active) return;
     d.active = false;
+    setDragging(false);
     setPos((p) => {
       try { localStorage.setItem(POSITION_KEY, JSON.stringify(p)); } catch { /* private mode */ }
       return p;
@@ -92,6 +133,8 @@ export default function AskAynaChip({ onClick }) {
     onClick?.();
   };
 
+  const renderX = dockedX !== null ? dockedX : pos.x;
+
   return (
     <div
       onPointerDown={handlePointerDown}
@@ -101,7 +144,7 @@ export default function AskAynaChip({ onClick }) {
       onClick={handleClick}
       style={{
         position: 'fixed',
-        left: pos.x,
+        left: renderX,
         top: pos.y,
         display: 'flex',
         alignItems: 'center',
@@ -114,7 +157,7 @@ export default function AskAynaChip({ onClick }) {
         zIndex: 45,
         touchAction: 'none',
         userSelect: 'none',
-        transition: 'padding .22s ease, gap .22s ease',
+        transition: dragging ? 'none' : 'left .28s cubic-bezier(.4,0,.2,1), padding .22s ease, gap .22s ease',
       }}
     >
       <div

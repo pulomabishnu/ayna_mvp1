@@ -526,6 +526,8 @@ export default function MobileApp() {
           savedProducts={savedMap}
           onViewAlternative={handleViewAlternative}
           onBrowse={() => setScreen('browse')}
+          onGoEcosystem={() => setScreen(hasEcosystem ? 'eco' : 'ecointro')}
+          onOpenSaved={() => setScreen('saved')}
           personalizeWithData={personalizeWithData}
           onPersonalizeWithDataChange={setPersonalizeWithData}
           askAynaHistoryCount={askAynaHistory.length}
