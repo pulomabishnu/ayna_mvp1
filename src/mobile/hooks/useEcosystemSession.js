@@ -1,57 +1,74 @@
 import { useCallback, useState } from 'react';
+import { Capacitor } from '@capacitor/core';
 
-// Persists the mock "signed-in" state — ecosystem membership, quiz answers,
-// display name — so refreshing the app (or relaunching the native shell)
-// doesn't wipe it back to a blank slate. There's no real Supabase session
-// wired into the mobile UI yet (that's a separate, larger integration), so
-// this is a local stand-in for "remember me" using the same localStorage
-// pattern as useSavedProducts/useThemeMode/useRoutine.
+// This hook is only a fast in-memory UI session. Signed-in account state is
+// restored from Supabase by MobileApp. Health answers must never be persisted
+// in localStorage. On native iOS we do not persist this session at all, because
+// ecosystem membership can itself reveal sensitive health interests.
 const SESSION_KEY = 'ayna_ecosystem_session_v1';
+const IS_NATIVE_IOS = Capacitor.getPlatform() === 'ios';
 
 const DEFAULT_SESSION = {
   hasEcosystem: false,
   myProducts: [],
   lastQuizAnswers: null,
-  // Empty, not 'You' — this used to be a baked-in literal, which meant it
-  // was always truthy and MobileApp.jsx's `userName || <real fallback>`
-  // could never actually reach the real Supabase name for a returning
-  // Google sign-in. "You" is purely a last-resort display fallback now,
-  // applied at each render site (ProfileFlow, AccountInfoScreen, etc.),
-  // not baked into the stored value itself.
   userName: '',
 };
 
+function scrubLegacyNativeSession() {
+  if (!IS_NATIVE_IOS) return;
+  try { localStorage.removeItem(SESSION_KEY); } catch { /* storage unavailable */ }
+}
+
+function serializableNonHealthSession(session) {
+  return {
+    hasEcosystem: Boolean(session?.hasEcosystem),
+    myProducts: Array.isArray(session?.myProducts) ? session.myProducts : [],
+    // Deliberately never persisted. This may contain conditions, symptoms,
+    // reproductive-health details, medications, allergies, ZIP code, etc.
+    lastQuizAnswers: null,
+    userName: typeof session?.userName === 'string' ? session.userName : '',
+  };
+}
+
 function loadSession() {
+  if (IS_NATIVE_IOS) {
+    scrubLegacyNativeSession();
+    return DEFAULT_SESSION;
+  }
+
   try {
     const raw = localStorage.getItem(SESSION_KEY);
     if (!raw) return DEFAULT_SESSION;
     const parsed = JSON.parse(raw);
-    return {
-      hasEcosystem: Boolean(parsed?.hasEcosystem),
-      myProducts: Array.isArray(parsed?.myProducts) ? parsed.myProducts : [],
-      lastQuizAnswers: parsed?.lastQuizAnswers && typeof parsed.lastQuizAnswers === 'object' ? parsed.lastQuizAnswers : null,
-      userName: typeof parsed?.userName === 'string' ? parsed.userName : '',
-    };
+    const safe = serializableNonHealthSession(parsed);
+
+    // Immediately overwrite any pre-privacy version that still contained
+    // lastQuizAnswers so old health answers are removed from browser storage.
+    if (parsed?.lastQuizAnswers) {
+      try { localStorage.setItem(SESSION_KEY, JSON.stringify(safe)); } catch { /* ignore */ }
+    }
+    return safe;
   } catch {
     return DEFAULT_SESSION;
   }
 }
 
 function persistSession(session) {
+  if (IS_NATIVE_IOS) {
+    scrubLegacyNativeSession();
+    return;
+  }
   try {
-    localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+    localStorage.setItem(SESSION_KEY, JSON.stringify(serializableNonHealthSession(session)));
   } catch {
-    // Best-effort — same as savedProductsStore, a full/unavailable
-    // localStorage shouldn't crash the app.
+    // In-memory state still works for this session.
   }
 }
 
 export function useEcosystemSession() {
   const [session, setSession] = useState(loadSession);
 
-  // Accepts either a partial object (merged in) or an updater function
-  // receiving the previous session, mirroring useState's own setter shape
-  // so call sites read like ordinary state updates.
   const update = useCallback((patch) => {
     setSession((prev) => {
       const next = typeof patch === 'function' ? { ...prev, ...patch(prev) } : { ...prev, ...patch };
