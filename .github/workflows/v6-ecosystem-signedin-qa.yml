@@ -1,0 +1,53 @@
+name: V6 Signed-in Ecosystem QA
+
+on:
+  push:
+    branches:
+      - ameera/v6-real-site-current
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: 'true'
+
+      - name: Wait for branch preview
+        run: |
+          for i in {1..45}; do
+            if curl -fsS "https://aynamvp1-git-ameera-v6-real-b9ae33-pulomabishnu-4744s-projects.vercel.app/?qa=$GITHUB_SHA" >/dev/null; then
+              exit 0
+            fi
+            sleep 3
+          done
+          exit 1
+
+      - name: Run signed-in ecosystem QA five times
+        run: node scripts/qa-v6-signedin-ecosystem.mjs
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+          AYNA_AFTER_URL: https://aynamvp1-git-ameera-v6-real-b9ae33-pulomabishnu-4744s-projects.vercel.app
+
+      - name: Upload ecosystem QA
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v6-ecosystem-signedin-qa
+          path: artifacts/v6-ecosystem-signedin-qa
+          if-no-files-found: error
