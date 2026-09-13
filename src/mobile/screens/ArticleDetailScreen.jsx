@@ -87,14 +87,28 @@ export default function ArticleDetailScreen({ article, onBack, theme }) {
   return (
     <div ref={scrollRef} onScroll={handleScroll} style={{ flex: 1, overflowY: 'auto', background: 'var(--ayna-bg)', animation: 'ay-page .25s ease-out' }}>
       <div style={{ position: 'relative', overflow: 'hidden', background: 'var(--ayna-bg)', paddingTop: 'max(20px, env(safe-area-inset-top))', paddingLeft: 20, paddingRight: 20 }}>
-        {/* Real blurred color fill for the space outside the arc — the arc's
-            rounded top corners (and, for a `contain`-fitted image, its own
-            letterboxed sides) reveal this instead of a flat tinted banner.
-            Oversized + clipped by this wrapper's overflow:hidden so the
-            blur's own soft edge never shows. Covers the back-button gap
-            above the arc too, so the arc reads as floating rather than
-            docked to the very top of the screen. */}
-        <div aria-hidden style={{ position: 'absolute', inset: '-60px', background: heroBackground, filter: 'blur(60px)' }} />
+        {/* Blurred fill for the space outside the arc — a scaled-up, blurred
+            copy of the article's OWN image (not a generic per-article tint)
+            so the corners the arc's curve reveals are always the same color
+            as the picture itself and the seam disappears. Falls back to the
+            tint only for the rare article with no image. Oversized (inset
+            -60px) + scaled up further so the blur's own soft edge, and any
+            hard edge from objectFit:cover on the backdrop, both land well
+            outside the visible area; clipped by this wrapper's
+            overflow:hidden. Also covers the back-button gap above the arc,
+            so the arc reads as floating rather than docked to the very top
+            of the screen. */}
+        <div aria-hidden style={{ position: 'absolute', inset: '-60px', overflow: 'hidden' }}>
+          {image ? (
+            <img
+              src={image}
+              alt=""
+              style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scale(1.3)', filter: 'blur(50px)' }}
+            />
+          ) : (
+            <div style={{ width: '100%', height: '100%', background: heroBackground, filter: 'blur(60px)' }} />
+          )}
+        </div>
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', marginBottom: 16 }}>
           <div
             onClick={onBack}
@@ -105,10 +119,10 @@ export default function ArticleDetailScreen({ article, onBack, theme }) {
             </svg>
           </div>
         </div>
-        {/* objectFit:contain (not cover) so the full illustration is always
-            visible, centered, nothing cropped off any side. */}
+        {/* objectFit:contain (not cover) + centered so the full illustration
+            is always visible, never cropped off any side. */}
         <div style={{ position: 'relative', height: 300, borderRadius: '150px 150px 20px 20px', overflow: 'hidden' }}>
-          {image && <img src={image} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />}
+          {image && <img src={image} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center' }} />}
         </div>
         <div style={{ height: 34 }} />
       </div>
