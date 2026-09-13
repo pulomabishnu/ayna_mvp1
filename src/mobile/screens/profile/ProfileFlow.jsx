@@ -3361,8 +3361,15 @@ export default function ProfileFlow({
   }
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 55, background: 'var(--ayna-bg)', display: 'flex', animation: 'ay-page .25s ease-out' }}>
-      {body}
+    <div style={{ position: 'fixed', inset: 0, zIndex: 55, background: 'var(--ayna-bg)', display: 'flex' }}>
+      {/* Keyed on `screen` so each push/pop within this overlay (hub -> Shopper
+          Profile -> Preferences -> Settings, etc.) remounts this wrapper and
+          replays the entrance animation — without the key, only the overlay's
+          own first mount would ever animate, since `body` swapping alone
+          doesn't restart a running CSS animation. */}
+      <div key={screen} style={{ flex: 1, minWidth: 0, display: 'flex', animation: 'ay-page .22s ease-out' }}>
+        {body}
+      </div>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import { ASK_AYNA_CHIP_POSITION_KEY as POSITION_KEY } from '../utils/askAynaChipPosition.js';
 
-const POSITION_KEY = 'ayna_ask_chip_pos_v1';
 const CHIP_WIDTH = 118; // approx rendered width when expanded, used only for clamping to the viewport
 const CHIP_COMPACT_WIDTH = 44; // approx rendered width when scrolled-compact (icon only) — a
 // separate value from CHIP_WIDTH so clamping/docking don't reserve room for
@@ -10,8 +10,11 @@ const DRAG_THRESHOLD = 6; // px of movement before a press counts as a drag, not
 const EDGE_MARGIN = 8;
 
 function defaultPosition() {
-  const vw = typeof window !== 'undefined' ? window.innerWidth : 390;
-  const vh = typeof window !== 'undefined' ? window.innerHeight : 812;
+  // `|| 390`/`|| 812` rather than just checking `typeof window` — guards
+  // against innerWidth/innerHeight themselves reading 0 at a very early
+  // render (before layout has run), not just `window` being undefined.
+  const vw = (typeof window !== 'undefined' && window.innerWidth) || 390;
+  const vh = (typeof window !== 'undefined' && window.innerHeight) || 812;
   return { x: vw - CHIP_WIDTH - 20, y: vh - CHIP_HEIGHT - 96 };
 }
 

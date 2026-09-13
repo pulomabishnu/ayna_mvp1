@@ -260,14 +260,24 @@ export default function BrowseScreen({
   onToggleTheme,
   onOpenProfile,
   onOpenWhyMatch,
+  // Controlled from MobileApp.jsx (and persisted there) so the toggle
+  // survives this screen unmounting when the user navigates away (e.g. to
+  // My Ecosystem) and back — it should stay on until the user explicitly
+  // turns it off, not reset just because they left the tab.
+  personalized: personalizedProp,
+  onPersonalizedChange,
 }) {
   const [mode, setMode] = useState('products');
   const [searchValue, setSearchValue] = useState('');
-  // One shared toggle for both Products and Reads — a preference like "show
-  // me what's relevant to me" is about the person, not about which of the
-  // two tabs they happen to be looking at, so switching tabs shouldn't
-  // silently turn it back off on one side.
-  const [personalized, setPersonalized] = useState(false);
+  // Falls back to local state only if no controlled value is passed in
+  // (keeps this component usable/testable standalone).
+  const [personalizedLocal, setPersonalizedLocal] = useState(false);
+  const personalized = personalizedProp ?? personalizedLocal;
+  const setPersonalized = (updater) => {
+    const next = typeof updater === 'function' ? updater(personalized) : updater;
+    if (onPersonalizedChange) onPersonalizedChange(next);
+    else setPersonalizedLocal(next);
+  };
   const [activeGroup, setActiveGroup] = useState('all');
   const { layout: cardLayout, toggleLayout } = useCardLayout();
   // AI fallback for a typed search the local catalog scoring found nothing
