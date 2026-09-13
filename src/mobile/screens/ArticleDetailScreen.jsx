@@ -119,12 +119,18 @@ export default function ArticleDetailScreen({ article, onBack, theme }) {
             </svg>
           </div>
         </div>
-        {/* A true arc — 50%/50% top corners form one continuous dome across
-            the full width (not two separate rounded corners with a flat gap
-            between them), flat square bottom, matching the reference shape.
+        {/* A true semicircular arc — border-radius: 50% 50% ties the curve to
+            this box's own HEIGHT (300px), not its width, so it actually drew
+            a squashed ellipse (radius 150 vs the 175 a true semicircle over
+            a ~350px-wide screen needs), not a circle. calc(50vw - 20px) is
+            exactly half of this container's real width (100vw minus the
+            20px+20px side padding on the parent), used as a literal pixel
+            radius for both axes — so the two top corners are true quarter-
+            CIRCLES that meet at a single point dead center, matching the
+            reference shape exactly, on any phone width. Flat square bottom.
             objectFit:contain + centered so the full illustration is always
             visible, never cropped off any side. */}
-        <div style={{ position: 'relative', height: 300, borderRadius: '50% 50% 0 0', overflow: 'hidden' }}>
+        <div style={{ position: 'relative', height: 300, borderRadius: 'calc(50vw - 20px) calc(50vw - 20px) 0 0', overflow: 'hidden' }}>
           {image && <img src={image} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center' }} />}
         </div>
         <div style={{ height: 34 }} />
