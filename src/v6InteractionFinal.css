@@ -16,6 +16,46 @@
 .v6-typeahead-open .v6-live-search-dropdown{z-index:12010!important}
 .v6-auth-overlay.v6-auth-sheet-mode{z-index:9000!important}
 
+/* Ayna Match is a reveal, not a permanently stamped badge. The score itself is
+   still the real MatchGauge value from Discovery, never generated here. */
+.ayna-browse-card .ayna-browse-card__match{
+  top:12px!important;
+  left:12px!important;
+  width:58px!important;
+  height:58px!important;
+  display:grid!important;
+  place-items:center!important;
+  border-radius:56% 44% 52% 48% / 47% 55% 45% 53%!important;
+  background:rgba(247,239,233,.94)!important;
+  border:1px solid rgba(85,69,97,.18)!important;
+  box-shadow:0 8px 22px rgba(49,40,62,.10)!important;
+  opacity:0!important;
+  visibility:hidden!important;
+  transform:translateY(5px) scale(.92)!important;
+  transition:opacity 170ms ease,transform 180ms ease,visibility 0s linear 180ms!important;
+  pointer-events:none!important;
+}
+.ayna-browse-card .ayna-browse-card__match .ayna-match-gauge{
+  transform:scale(1.8)!important;
+  transform-origin:center!important;
+}
+.ayna-browse-card:hover .ayna-browse-card__match,
+.ayna-browse-card:focus-within .ayna-browse-card__match,
+.ayna-browse-card.v6-match-revealed .ayna-browse-card__match{
+  opacity:1!important;
+  visibility:visible!important;
+  transform:translateY(0) scale(1)!important;
+  transition-delay:0s!important;
+}
+html[data-v6-site-theme='dark'] .ayna-browse-card .ayna-browse-card__match{
+  background:rgba(55,48,65,.95)!important;
+  border-color:rgba(255,248,242,.20)!important;
+}
+/* No account/profile means no Match reveal at all, including hover/touch. */
+.v6-signed-out .ayna-browse-card .ayna-browse-card__match{
+  display:none!important;
+}
+
 /* Intake: one scroll surface only. The stage scrolls, not a panel inside the stage. */
 .ayna-intake-root .ayna-intake-question{
   height:min(560px,calc(100dvh - 112px))!important;
@@ -92,4 +132,8 @@
   .v6-page-ecosystem .v6-ecosystem-panel{min-height:calc(100dvh - 58px)!important;padding:24px 14px 20px!important}
   .v6-page-ecosystem .v6-universe-wrap{width:min(390px,100%)!important}
   .v6-page-ecosystem .eco2-body{padding-top:36px!important}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .ayna-browse-card .ayna-browse-card__match{transition:none!important;transform:none!important}
 }
