@@ -27,6 +27,7 @@ jobs:
           node scripts/apply-apple-compliance-patches-2.mjs
           node scripts/apply-apple-compliance-patches-3.mjs
           node scripts/apply-apple-compliance-patches-4.mjs
+          node scripts/apply-apple-compliance-patches-5.mjs
       - name: Inspect working tree
         run: |
           git diff --check
@@ -110,6 +111,7 @@ jobs:
           node scripts/apply-apple-compliance-patches-2.mjs
           node scripts/apply-apple-compliance-patches-3.mjs
           node scripts/apply-apple-compliance-patches-4.mjs
+          node scripts/apply-apple-compliance-patches-5.mjs
       - name: Build web bundle and sync Capacitor
         run: |
           npm run build
