@@ -1,5 +1,3 @@
-import LegalFooter from '../components/LegalFooter.jsx';
-
 export default function LandingScreen({ onStartQuiz, onBrowse }) {
   return (
     <div
@@ -255,7 +253,6 @@ export default function LandingScreen({ onStartQuiz, onBrowse }) {
         >
           Browse everything
         </div>
-        <LegalFooter variant="light" />
       </div>
     </div>
   );
