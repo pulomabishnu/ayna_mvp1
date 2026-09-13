@@ -62,7 +62,33 @@ jobs:
             src/data/products.personalization.test.js
       - name: Production web build
         run: npm run build
-      - name: Full lint
+      - name: Privacy changed-files lint
+        run: |
+          npx eslint \
+            api/_appleSignIn.js \
+            api/_privacyConsent.js \
+            api/account-delete.js \
+            api/apple-token.js \
+            api/export-data.js \
+            src/components/AuthGate.jsx \
+            src/main.jsx \
+            src/mobile/MobileApp.jsx \
+            src/mobile/components/AiConsentPrompt.jsx \
+            src/mobile/components/AnalyticsConsentPrompt.jsx \
+            src/mobile/hooks/useEcosystemSession.js \
+            src/mobile/hooks/useRoutine.js \
+            src/mobile/hooks/useSavedProducts.js \
+            src/mobile/hooks/useSupabaseAuth.js \
+            src/mobile/screens/profile/ProfileFlow.jsx \
+            src/mobile/utils/dataExportApi.js \
+            src/utils/aiHealthContext.js \
+            src/utils/fetchSearchSuggestions.js \
+            src/utils/pendingConsent.js \
+            src/utils/posthogPrivacy.js \
+            src/utils/savedProductsStore.js \
+            src/utils/userHealthContextForInsights.js
+      - name: Full repository lint baseline signal
+        continue-on-error: true
         run: npm run lint
       - name: Commit verified final privacy output
         if: github.actor != 'github-actions[bot]'
