@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import LegalFooter from '../components/LegalFooter.jsx';
 
 const DEFAULT_STATS = [
   { label: 'Products', value: 0 },
@@ -334,6 +335,7 @@ export default function SigninScreen({
           </div>
         </>
       )}
+      <LegalFooter variant="light" />
     </div>
   );
 }

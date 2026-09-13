@@ -1,3 +1,5 @@
+import LegalFooter from '../components/LegalFooter.jsx';
+
 export default function RevealScreen({
   topAreas = ['Cycle', 'Energy', 'Sleep'],
   productCount = 0,
@@ -192,6 +194,7 @@ export default function RevealScreen({
           </svg>
         </button>
       </div>
+      <LegalFooter />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { getProductMatchDetailsForProduct } from '../../data/products.js';
+import LegalFooter from '../components/LegalFooter.jsx';
 
 function BackIcon() {
   return (
@@ -107,6 +108,7 @@ export default function WhyMatchScreen({ product, quizAnswers, onBack, onUpdateH
               Complete your health profile
             </div>
           )}
+          <LegalFooter />
         </div>
       </div>
     );
@@ -133,6 +135,7 @@ export default function WhyMatchScreen({ product, quizAnswers, onBack, onUpdateH
           >
             Back to product
           </div>
+          <LegalFooter />
         </div>
       </div>
     );
@@ -257,6 +260,7 @@ export default function WhyMatchScreen({ product, quizAnswers, onBack, onUpdateH
         >
           Back to product
         </div>
+        <LegalFooter />
       </div>
     </div>
   );

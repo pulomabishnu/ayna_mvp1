@@ -1,4 +1,5 @@
 import { Children, isValidElement, useRef, useState } from 'react';
+import LegalFooter from '../components/LegalFooter.jsx';
 
 const HERO_TINTS = [
   ['#F5E8DA', '#EADACB'],
@@ -214,6 +215,7 @@ export default function ArticleDetailScreen({ article, onBack, theme }) {
           </div>
         )}
       </div>
+      <LegalFooter />
     </div>
   );
 }

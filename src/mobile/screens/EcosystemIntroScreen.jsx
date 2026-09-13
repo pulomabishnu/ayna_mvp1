@@ -1,4 +1,5 @@
 import MobileHeader from '../components/MobileHeader.jsx';
+import LegalFooter from '../components/LegalFooter.jsx';
 
 export default function EcosystemIntroScreen({ onStartQuiz, onOpenSaved, onBrowse, headerInitial = 'A', onOpenProfile }) {
   return (
@@ -79,6 +80,7 @@ export default function EcosystemIntroScreen({ onStartQuiz, onOpenSaved, onBrows
           </svg>
         </div>
       </div>
+      <LegalFooter variant="light" />
     </div>
   );
 }

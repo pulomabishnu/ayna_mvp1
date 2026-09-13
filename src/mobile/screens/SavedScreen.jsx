@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { CATEGORY_LABELS, getProfileMatchPercentForProduct } from '../../data/products.js';
 import { getCategoryInsights } from '../utils/shopperProfileData.js';
 import MatchRing from '../components/MatchRing.jsx';
+import LegalFooter from '../components/LegalFooter.jsx';
 
 /**
  * Mobile port of the "Saved screens B + C" design reference (filled grid +
@@ -414,6 +415,7 @@ export default function SavedScreen({ savedProducts = {}, myProducts = [], produ
               </div>
             )}
 
+            <LegalFooter />
             <div style={{ height: 104 }} />
           </>
         )}

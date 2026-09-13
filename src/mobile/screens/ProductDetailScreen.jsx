@@ -5,6 +5,7 @@ import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { renderMarkdownLite } from '../../utils/renderMarkdownLite.jsx';
 import MatchRing from '../components/MatchRing.jsx';
 import WhyMatchScreen from './WhyMatchScreen.jsx';
+import LegalFooter from '../components/LegalFooter.jsx';
 
 function SpecRow({ label, value }) {
   return (
@@ -505,6 +506,7 @@ export default function ProductDetailScreen({
           </>
         )}
       </div>
+      <LegalFooter />
     </div>
   );
 }

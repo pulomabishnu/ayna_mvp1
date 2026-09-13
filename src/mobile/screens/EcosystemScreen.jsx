@@ -4,6 +4,7 @@ import EcosystemOrbit from '../components/EcosystemOrbit.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import ArticleCard from '../components/ArticleCard.jsx';
 import CtaBanner from '../components/CtaBanner.jsx';
+import LegalFooter from '../components/LegalFooter.jsx';
 
 function getTimeGreeting() {
   const hour = new Date().getHours();
@@ -106,6 +107,7 @@ export default function EcosystemScreen({
           Retake the intake
         </div>
       </div>
+      <LegalFooter />
     </div>
   );
 }

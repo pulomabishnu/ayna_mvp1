@@ -14,6 +14,7 @@ import {
 } from '../../utils/notificationPreferencesApi.js';
 import { fetchDataExport, requestAccountDeletion } from '../../utils/dataExportApi.js';
 import { OPEN_SOURCE_PACKAGES, summarizeLicenses } from '../../data/openSourceLicenses.js';
+import LegalFooter from '../../components/LegalFooter.jsx';
 
 /**
  * Profile hub + its four sub-sections and one detail page, ported from the
@@ -305,6 +306,7 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
           </div>
         ))}
       </div>
+      <LegalFooter />
     </div>
   );
 }
@@ -545,6 +547,7 @@ function ShopperProfileScreen({ onBack, quizAnswers, myProducts = [], savedProdu
         )}
 
       </div>
+      <LegalFooter />
     </div>
   );
 }
@@ -729,6 +732,7 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
           })}
         </div>
       </div>
+      <LegalFooter />
     </div>
   );
 }
@@ -1245,6 +1249,7 @@ function PreferencesScreen({
           </div>
         )}
       </div>
+      <LegalFooter />
     </div>
   );
 }
@@ -1390,6 +1395,7 @@ function ChannelsScreen({ onBack }) {
           </div>
         )}
       </div>
+      <LegalFooter />
     </div>
   );
 }
@@ -1480,6 +1486,7 @@ function SettingsScreen({ onBack, onOpenHowItWorks, onOpenAboutAyna, onOpenConta
         )}
         <div style={{ textAlign: 'center', marginTop: 16, fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', color: 'var(--ayna-text-muted)' }}>AYNA 0.9.4</div>
       </div>
+      <LegalFooter />
     </div>
   );
 }
@@ -1565,6 +1572,7 @@ function PrivacyDataScreen({ onBack, onOpenManageData, onOpenDeleteAccount }) {
           Privacy questions? Email <a href="mailto:puloma@aynahealth.co">puloma@aynahealth.co</a>.
         </div>
       </div>
+      <LegalFooter />
     </div>
   );
 }
@@ -1624,6 +1632,7 @@ function LegalScreen({ onBack, onOpenConsumerHealthData, onOpenOpenSourceLicense
           AYNA HEALTH, INC.<br />DELAWARE, USA<br />APP 0.9.4
         </div>
       </div>
+      <LegalFooter />
     </div>
   );
 }
@@ -1759,6 +1768,7 @@ function ConsumerHealthDataPolicyScreen({ onBack }) {
           </a>
         </div>
       </div>
+      <LegalFooter />
     </div>
   );
 }
@@ -1855,6 +1865,7 @@ function OpenSourceLicensesScreen({ onBack }) {
           </div>
         </div>
       </div>
+      <LegalFooter />
     </div>
   );
 }
@@ -1944,6 +1955,7 @@ function TypefacesScreen({ onBack }) {
           </div>
         </div>
       </div>
+      <LegalFooter />
     </div>
   );
 }
@@ -2049,6 +2061,7 @@ function ResearchSourcesScreen({ onBack }) {
           Spotted something out of date? <a href={DELETE_ACCOUNT_MAILTO.replace('subject=Account%20Deletion%20Request', 'subject=Research%20source%20question')}>Tell us</a> and we'll check it.
         </div>
       </div>
+      <LegalFooter />
     </div>
   );
 }
@@ -2217,6 +2230,7 @@ function ManageDataScreen({ onBack }) {
           </>
         )}
       </div>
+      <LegalFooter />
     </div>
   );
 }
@@ -2473,6 +2487,7 @@ function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers,
           Questions about your account? Email <a href="mailto:puloma@aynahealth.co" style={{ color: 'var(--ayna-brown)' }}>puloma@aynahealth.co</a>.
         </div>
       </div>
+      <LegalFooter />
     </div>
   );
 }
@@ -2526,6 +2541,7 @@ function DeleteAccountScreen({ onBack, onSignOut, onClose }) {
             Done
           </div>
         </div>
+        <LegalFooter />
       </div>
     );
   }
@@ -2584,6 +2600,7 @@ function DeleteAccountScreen({ onBack, onSignOut, onClose }) {
           {status === 'submitting' ? 'Submitting…' : 'Delete my account'}
         </div>
       </div>
+      <LegalFooter />
     </div>
   );
 }
@@ -2768,6 +2785,7 @@ function PasswordScreen({ onBack, authUser }) {
           )
         )}
       </div>
+      <LegalFooter />
     </div>
   );
 }
@@ -2903,6 +2921,7 @@ function HowItWorksScreen({ onBack }) {
           <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginTop: 8, lineHeight: 1.5 }}>Summaries are AI-written from cited sources and clinician input.</div>
         </div>
       </div>
+      <LegalFooter />
     </div>
   );
 }
@@ -3054,6 +3073,7 @@ function AboutAynaScreen({ onBack }) {
           <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.55, color: 'var(--ayna-text-muted)', marginTop: 6 }}>Medical decisions stay with you and your clinician.</div>
         </div>
       </div>
+      <LegalFooter />
     </div>
   );
 }
@@ -3173,6 +3193,7 @@ function ContactScreen({ onBack }) {
           </div>
         </div>
       </div>
+      <LegalFooter />
     </div>
   );
 }
