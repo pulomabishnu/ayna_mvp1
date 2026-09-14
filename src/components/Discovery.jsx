@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore } from '../data/products';
-import { loadProductCatalog } from '../utils/productCatalog';
 import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct } from '../utils/naturalLanguageSearch';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { isPartnerBrandItem } from '../utils/partnerBrands';
@@ -380,7 +379,7 @@ function buildAiProfileContext(personalizationFilter, quizResults) {
     return { profileSummary, dislikedProducts, dislikedTerms };
 }
 
-export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, aynaReviews = {}, initialCategory, initialMacroGroup, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, healthProfile = null, savedProducts = {}, onToggleSaved, user = null, onRequirePersonalizeAuth = null }) {
+export default function Discovery({ trackedProducts, toggleTrackProduct, myProducts, onToggleProduct, joinedWaitlists, toggleJoinWaitlist, omittedProducts, toggleOmitProduct, setCurrentView, onOpenProduct, initialSearch, recommendedProductIds, catalogProducts = null, aynaReviews = {}, initialCategory, initialMacroGroup, initialPadFlow, initialPadPreference, initialPadUseCase, initialSymptom, hasQuizFrustrations = false, hasHealthImport = false, quizResults = null, healthProfile = null, savedProducts = {}, onToggleSaved, user = null, onRequirePersonalizeAuth = null }) {
     const [macroGroup, setMacroGroup] = useState(() => {
         // initialMacroGroup (a whole care area, e.g. from "Swap" in the
         // ecosystem view) sets ONLY the broader group, leaving every
@@ -504,23 +503,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
     const recommendedRank = useMemo(() => new Map((recommendedProductIds || []).map((id, index) => [id, index])), [recommendedProductIds]);
 
-    // AI-discovered products (api/discover-products.js), human-approved only —
-    // /api/products already filters to is_active=true, and a discovered row is
-    // never is_active until scripts/review-discovered-products.mjs approves it
-    // (see supabase/product_catalog_discovery.sql). This is additive on top of
-    // the bundled catalog, not a replacement for it: loadProductCatalog() falls
-    // back to the bundled copy on any failure, so filtering to source==='discovered'
-    // here means a fallback response (source:'bundled') just contributes nothing,
-    // never duplicates the bundled products it already contains.
-    const [discoveredProducts, setDiscoveredProducts] = useState([]);
-    React.useEffect(() => {
-        let cancelled = false;
-        loadProductCatalog().then(({ products, source }) => {
-            if (cancelled || source === 'bundled') return;
-            setDiscoveredProducts(products.filter((p) => p.source === 'discovered'));
-        }).catch(() => {});
-        return () => { cancelled = true; };
-    }, []);
+    // App.jsx supplies the same live /api/products snapshot used by native iOS.
+    // Keep ALL_PRODUCTS only as an outage/standalone fallback for this component.
+    const liveProducts = Array.isArray(catalogProducts) && catalogProducts.length
+        ? catalogProducts
+        : ALL_PRODUCTS;
 
     // Arriving here with a query already set — the landing hero search box,
     // a shared/bookmarked ?q= link, a related-search chip elsewhere in the
@@ -575,24 +562,21 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
     const combined = useMemo(() => {
         // Ayna doesn't sell or dispense prescriptions, so prescription-only items
-        // (birth control requiring an Rx, HRT patches/inserts, etc.) never show as
-        // shoppable products here — searching what they treat (e.g. "hormone
-        // replacement therapy") surfaces telehealth providers that prescribe it instead.
-        const products = filterPrescriptionCareGate(ALL_PRODUCTS).map(p => ({ ...p, isStartup: false }));
-        // Released startups appear as normal products (no startup badge); unreleased are only on Startups page
-        const releasedAsProducts = RELEASED_STARTUPS.map(s => ({
-            ...s,
-            isStartup: false,
-            type: 'digital',
-            summary: s.description || s.tagline,
-            price: s.stage || ''
-        }));
-        // discoveredProducts are already the client-ready shape /api/products
-        // returns (toClientProduct in api/products.js), so no mapping needed —
-        // just stamp isStartup like the other two sources for consistent shape.
-        const discovered = filterPrescriptionCareGate(discoveredProducts).map(p => ({ ...p, isStartup: false }));
-        return [...products, ...releasedAsProducts, ...discovered];
-    }, [discoveredProducts]);
+        // never show as shoppable products. The live API catalog is canonical.
+        const products = filterPrescriptionCareGate(liveProducts).map(p => ({ ...p, isStartup: false }));
+        const seen = new Set(products.map((p) => String(p?.id || '')));
+        // Released startups stay additive until they graduate into product_catalog.
+        const releasedAsProducts = RELEASED_STARTUPS
+            .filter((s) => !seen.has(String(s?.id || '')))
+            .map(s => ({
+                ...s,
+                isStartup: false,
+                type: 'digital',
+                summary: s.description || s.tagline,
+                price: s.stage || ''
+            }));
+        return [...products, ...releasedAsProducts];
+    }, [liveProducts]);
 
     const combinedRelevance = useMemo(() => {
         const map = new Map();
