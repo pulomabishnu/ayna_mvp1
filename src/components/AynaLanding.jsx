@@ -1,28 +1,28 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
+import '../v6Real.css';
 
-const NEEDS = [
-  { label: 'Periods + cramps', query: 'period cramps', terms: ['period', 'pad', 'tampon', 'menstrual', 'cramp'] },
-  { label: 'Hormones + PCOS', query: 'hormones pcos', terms: ['pcos', 'inositol', 'spearmint', 'hormone'] },
-  { label: 'Sleep + energy', query: 'sleep energy', terms: ['sleep', 'fatigue', 'energy', 'melatonin'] },
-  { label: 'Fertility + pregnancy', query: 'fertility pregnancy', terms: ['fertility', 'ovulation', 'pregnancy', 'prenatal'] },
+const CARE_AREAS = [
+  { label: 'Period care', query: 'period care', terms: ['period', 'pad', 'tampon', 'menstrual', 'cramp'] },
+  { label: 'PCOS', query: 'PCOS', terms: ['pcos', 'inositol', 'spearmint', 'hormone'] },
   { label: 'Vaginal health', query: 'vaginal health', terms: ['vaginal', 'intimate', 'bv', 'yeast', 'dryness'] },
-  { label: 'Skin + hair', query: 'skin hair', terms: ['skin', 'hair', 'acne', 'hair loss'] },
+  { label: 'UTI support', query: 'UTI support', terms: ['uti', 'urinary', 'bladder', 'd-mannose', 'cranberry'] },
+  { label: 'Fertility', query: 'fertility', terms: ['fertility', 'ovulation', 'conception'] },
+  { label: 'Pelvic health', query: 'pelvic health', terms: ['pelvic', 'kegel', 'floor', 'dilator'] },
+  { label: 'Pregnancy', query: 'pregnancy', terms: ['pregnancy', 'prenatal', 'maternity'] },
+  { label: 'Postpartum', query: 'postpartum', terms: ['postpartum', 'nursing', 'breastfeeding', 'recovery'] },
   { label: 'Menopause', query: 'menopause', terms: ['menopause', 'perimenopause', 'hot flash', 'dryness'] },
+  { label: 'Sleep + energy', query: 'sleep and energy', terms: ['sleep', 'fatigue', 'energy', 'melatonin'] },
+  { label: 'Skin + hair', query: 'skin and hair', terms: ['skin', 'hair', 'acne', 'hair loss'] },
+  { label: 'Gut health', query: 'gut health', terms: ['gut', 'digestive', 'probiotic', 'bloating'] },
 ];
 
-const TRUST = [
-  ['01', 'Personal to you', 'Your health context and preferences shape what you see.'],
-  ['02', 'Evidence in context', 'Research, clinician context, and product information stay visible.'],
-  ['03', 'Partnerships labeled', 'Commercial relationships are disclosed and do not decide your Match.'],
-  ['04', 'Your health stays yours', 'Your profile is there to personalize your experience, not to become ad inventory.'],
-];
-
-const LEARN = [
-  ['periods + pain', 'Why period pain can feel different month to month', 'period cramps'],
-  ['hormones', 'A calmer way to compare products for PCOS and hormone support', 'PCOS'],
-  ['vaginal health', 'What to look for before buying intimate-health products', 'vaginal health'],
+const QUICK_CATEGORIES = [
+  'period care', 'PCOS', 'vaginal health', 'UTI support',
+  'fertility', 'pregnancy', 'postpartum', 'perimenopause',
+  'menopause', 'pelvic health', 'sleep + energy', 'skin + hair',
+  'gut health', 'cycle mood', 'sexual wellness', 'provider matching',
 ];
 
 function firstName(user) {
@@ -64,18 +64,8 @@ function hasImage(product) {
   );
 }
 
-function brandText(product) {
-  return product?.brand || product?.brandName || CATEGORY_LABELS[product?.category] || product?.category || 'ayna';
-}
-
-function priceText(product) {
-  const raw = product?.priceDisplay ?? product?.displayPrice ?? product?.price ?? product?.priceText;
-  if (raw == null || raw === '') return 'view details';
-  if (typeof raw === 'number' && Number.isFinite(raw)) return `$${raw.toFixed(raw % 1 ? 2 : 0)}`;
-  const text = String(raw).trim();
-  if (!text) return 'view details';
-  if (/^[0-9]+(?:\.[0-9]{1,2})?$/.test(text)) return `$${text}`;
-  return text;
+function categoryLabel(product) {
+  return CATEGORY_LABELS[product?.category] || product?.category || 'ayna pick';
 }
 
 function scoreFor(product) {
@@ -98,6 +88,19 @@ function discoveryTargetFor(value) {
   return query;
 }
 
+function ProductVisual({ product, compact = false }) {
+  return (
+    <div className={`v6-product-visual${compact ? ' compact' : ''}`}>
+      <ProductTileImage
+        product={product}
+        alt={product?.name || ''}
+        imgStyle={{ width: '100%', height: '100%', objectFit: 'contain' }}
+        letterNode={<ProductImageFallback />}
+      />
+    </div>
+  );
+}
+
 function SearchIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
@@ -107,17 +110,9 @@ function SearchIcon() {
   );
 }
 
-function HeartIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-      <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z" />
-    </svg>
-  );
-}
-
 function LockIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true" width="14" height="14">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.45" aria-hidden="true">
       <rect x="6.5" y="10.5" width="11" height="8.5" rx="2" />
       <path d="M9 10.5V8a3 3 0 0 1 6 0v2.5" />
     </svg>
@@ -131,16 +126,18 @@ function triggerExistingSignIn(fallback) {
   else fallback?.();
 }
 
-function ProductImage({ product, className = '' }) {
-  if (!product) return null;
+function UnlockCard({ onStartQuiz }) {
   return (
-    <div className={className}>
-      <ProductTileImage
-        product={product}
-        alt={product?.name || ''}
-        imgStyle={{ width: '100%', height: '100%', objectFit: 'contain' }}
-        letterNode={<ProductImageFallback />}
-      />
+    <div className="v6-unlock-card v6-unlock-card--slim" role="dialog" aria-label="Unlock personalized results">
+      <span className="v6-unlock-icon"><LockIcon /></span>
+      <div className="v6-unlock-copy">
+        <strong>sign in to unlock personalized results.</strong>
+        <span>save picks, see your ayna score, and open your health universe.</span>
+      </div>
+      <div className="v6-unlock-actions">
+        <button type="button" className="primary" onClick={() => triggerExistingSignIn(onStartQuiz)}>sign in</button>
+        <button type="button" onClick={onStartQuiz}>build my ecosystem</button>
+      </div>
     </div>
   );
 }
@@ -154,15 +151,45 @@ export default function AynaLanding({
   myProducts,
   ecosystemCount = 0,
   hasProfile = false,
+  profileCategories,
   recommendedProductIds = [],
   initialCategory = null,
 }) {
   const [query, setQuery] = useState('');
-  const [searchSummary, setSearchSummary] = useState('');
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [cabinetOpen, setCabinetOpen] = useState(false);
+  const [seed, setSeed] = useState(() => Math.floor(Math.random() * 10000));
+  const [quickOffset, setQuickOffset] = useState(0);
+  const [quickPaused, setQuickPaused] = useState(false);
+  const [reduceMotion, setReduceMotion] = useState(false);
+  const [exploreOffset, setExploreOffset] = useState(0);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setCabinetOpen(true), 150);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const media = window.matchMedia?.('(prefers-reduced-motion: reduce)');
+    if (!media) return undefined;
+    const sync = () => setReduceMotion(media.matches);
+    sync();
+    media.addEventListener?.('change', sync);
+    return () => media.removeEventListener?.('change', sync);
+  }, []);
+
+  useEffect(() => {
+    if (quickPaused || reduceMotion) return undefined;
+    const timer = window.setInterval(() => {
+      setQuickOffset((current) => (current + 4) % QUICK_CATEGORIES.length);
+    }, 3000);
+    return () => window.clearInterval(timer);
+  }, [quickPaused, reduceMotion]);
 
   useEffect(() => {
     if (!initialCategory) return;
-    onViewDiscovery?.(discoveryTargetFor(initialCategory));
+    const area = CARE_AREAS.find((item) => item.query.toLowerCase().includes(String(initialCategory).toLowerCase()));
+    if (area) onViewDiscovery?.(discoveryTargetFor(area.query));
   }, [initialCategory, onViewDiscovery]);
 
   const owned = useMemo(() => Object.values(myProducts || {}), [myProducts]);
@@ -170,176 +197,144 @@ export default function AynaLanding({
     () => (recommendedProductIds || []).map(productById).filter(Boolean),
     [recommendedProductIds],
   );
-  const pool = useMemo(() => {
-    const all = uniqueProducts([...recommended, ...owned, ...ALL_PRODUCTS]);
-    const withImages = all.filter(hasImage);
-    return withImages.length >= 8 ? withImages : all;
-  }, [owned, recommended]);
+  const pool = useMemo(() => uniqueProducts([...owned, ...recommended, ...ALL_PRODUCTS]), [owned, recommended]);
+  const visualPool = useMemo(() => {
+    const visual = pool.filter(hasImage);
+    return visual.length >= 8 ? visual : pool;
+  }, [pool]);
 
-  const featured = useMemo(() => pool.slice(0, 4), [pool]);
-  const heroProduct = featured[0] || pool[0] || null;
-  const ecosystemProduct = featured[1] || featured[0] || pool[0] || null;
-  const matchProduct = featured.find((product) => scoreFor(product) != null) || featured[0] || null;
-  const name = firstName(user);
-  const personalizedUnlocked = Boolean(user && (hasProfile || ecosystemCount > 0 || recommendedProductIds?.length));
-  const matchScore = personalizedUnlocked ? scoreFor(matchProduct) : null;
+  const cabinetProducts = useMemo(() => {
+    const priority = uniqueProducts([...owned.filter(hasImage), ...recommended.filter(hasImage), ...visualPool]);
+    return [priority[0], priority[2], priority[4], priority[6]].filter(Boolean).slice(0, 4);
+  }, [owned, recommended, visualPool]);
+  const selected = cabinetProducts[selectedIndex] || cabinetProducts[0] || visualPool[0] || null;
 
-  const learnProducts = useMemo(() => LEARN.map((entry, index) => {
-    const needle = entry[2].toLowerCase();
-    const terms = NEEDS.find((need) => need.query.toLowerCase() === needle)?.terms || needle.split(/\s+/);
-    const found = pool.find((product) => terms.some((term) => textFor(product).includes(term)));
-    return found || pool[(index + 2) % Math.max(pool.length, 1)] || null;
-  }), [pool]);
+  const visibleAreas = useMemo(() => Array.from({ length: 6 }, (_, index) => (
+    CARE_AREAS[(exploreOffset + index) % CARE_AREAS.length]
+  )), [exploreOffset]);
+
+  const categoryCards = useMemo(() => visibleAreas.map((area, index) => {
+    const matches = visualPool.filter((product) => area.terms.some((term) => textFor(product).includes(term)));
+    const source = matches.length ? matches : visualPool;
+    const product = source.length ? source[(seed + index * 7) % source.length] : null;
+    return { ...area, product };
+  }), [visibleAreas, visualPool, seed]);
+
+  const quickLinks = useMemo(() => Array.from({ length: 4 }, (_, index) => (
+    QUICK_CATEGORIES[((reduceMotion ? 0 : quickOffset) + index) % QUICK_CATEGORIES.length]
+  )), [quickOffset, reduceMotion]);
 
   const submitSearch = (event) => {
     event.preventDefault();
-    const clean = query.trim();
-    if (!clean) return;
-    setSearchSummary(`Opening ayna results for “${clean}”.`);
-    onViewDiscovery?.(discoveryTargetFor(clean));
+    if (!query.trim()) return;
+    onViewDiscovery?.(discoveryTargetFor(query));
   };
 
-  const browseNeed = (need) => {
-    setQuery(need.query);
-    onViewDiscovery?.(discoveryTargetFor(need.query));
+  const refreshExplore = () => {
+    setExploreOffset((current) => (current + 6) % CARE_AREAS.length);
+    setSeed((current) => (current + 137 + Math.floor(Math.random() * 997)) % 100000);
   };
 
-  const openPersonalization = () => {
-    if (user) onStartQuiz?.();
-    else triggerExistingSignIn(onStartQuiz);
-  };
+  const name = firstName(user);
+  const selectedScore = selected ? scoreFor(selected) : null;
+  const personalizedUnlocked = Boolean(user && (hasProfile || ecosystemCount > 0 || recommendedProductIds?.length));
 
   return (
-    <main className="canva-live-home">
-      <section className="canva-live-hero">
-        <div className="canva-live-hero-copy">
-          <div className="canva-live-hero-text">
-            <p className="canva-live-kicker">personalized women&apos;s health</p>
-            <h1 className="canva-live-editorial">women&apos;s health,<br />made for <em>you.</em></h1>
-            <p className="canva-live-hero-description">Find products, care, and support that make sense for your body, your goals, and your everyday life.</p>
-          </div>
-          <div>
-            <form className="canva-live-search" onSubmit={submitSearch} role="search">
-              <SearchIcon />
-              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search products, symptoms, goals, or health needs" aria-label="Search ayna" />
-              <button type="submit">search</button>
-            </form>
-            <p className="canva-live-search-summary" aria-live="polite">{searchSummary}</p>
-          </div>
-        </div>
-        <div className="canva-live-hero-visual">
-          <ProductImage product={heroProduct} className="canva-live-hero-product" />
-          <p className="canva-live-hero-caption">A calmer way to find what fits your health, without opening 47 tabs.</p>
-        </div>
-      </section>
+    <main className="v6-home-shell">
+      <section className="v6-home-hero">
+        <div className="v6-eyebrow">personalized women&apos;s health</div>
+        <h1>women&apos;s health, made for <em>you.</em></h1>
+        <p>Find products, care, and support that make sense for your body, your goals, and your everyday life.</p>
 
-      <section className="canva-live-section" aria-labelledby="browse-needs-title">
-        <div className="canva-live-section-head">
-          <div>
-            <p className="canva-live-kicker">browse by need</p>
-            <h2 id="browse-needs-title" className="canva-live-editorial">start with what&apos;s<br />on your mind.</h2>
-          </div>
-          <p>Explore the same real ayna catalog through the health need that matters to you right now.</p>
-        </div>
-        <div className="canva-live-needs">
-          {NEEDS.map((need) => <button type="button" className="canva-live-chip" key={need.label} onClick={() => browseNeed(need)}>{need.label}</button>)}
-        </div>
-      </section>
+        <form className="v6-home-search" onSubmit={submitSearch}>
+          <SearchIcon />
+          <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search period care, PCOS, UTI support, sleep…" aria-label="Search ayna" />
+          <button type="submit" aria-label="Search">→</button>
+        </form>
 
-      <section className="canva-live-matches" aria-labelledby="matches-title">
-        <div className="canva-live-match-copy">
-          <p className="canva-live-kicker">made around you</p>
-          <h2 id="matches-title" className="canva-live-editorial">your health context changes what fits.</h2>
-          <p>Build your health profile and ayna can surface products based on your needs, life stage, symptoms, preferences, and shopping priorities.</p>
-          <button type="button" className="canva-live-primary" onClick={openPersonalization}>{hasProfile ? 'update my profile' : 'build my profile'}</button>
-        </div>
-        <div className="canva-live-match-visual">
-          <div className="canva-live-match-card">
-            <div className="canva-live-match-top">
-              <div>
-                <p className="canva-live-match-brand">{brandText(matchProduct)}</p>
-                <p className="canva-live-match-name">{matchProduct?.name || 'your personalized match'}</p>
-              </div>
-              <div className="canva-live-match-score">{matchScore != null ? `${matchScore}%` : <LockIcon />}</div>
-            </div>
-            <div className="canva-live-match-note"><LockIcon /><span>{matchScore != null ? 'Match uses your real health profile.' : 'Sign in and complete your profile to reveal your Match.'}</span></div>
-          </div>
-        </div>
-      </section>
-
-      <section className="canva-live-shop" aria-labelledby="shop-title">
-        <div className="canva-live-shop-head">
-          <div>
-            <p className="canva-live-kicker">the marketplace</p>
-            <h2 id="shop-title" className="canva-live-editorial">products worth exploring.</h2>
-          </div>
-          <button type="button" className="canva-live-shop-link" onClick={() => onViewDiscovery?.('')}>browse everything</button>
-        </div>
-        <div className="canva-live-product-grid">
-          {featured.map((product) => {
-            const score = personalizedUnlocked ? scoreFor(product) : null;
-            return (
-              <article className="canva-live-product-card" key={product.id || product.name} tabIndex="0" onClick={() => onOpenProduct?.(product)} onKeyDown={(event) => { if (event.key === 'Enter') onOpenProduct?.(product); }}>
-                <div className="canva-live-product-media">
-                  <ProductTileImage product={product} alt={product?.name || ''} imgStyle={{ width: '100%', height: '100%', objectFit: 'contain' }} letterNode={<ProductImageFallback />} />
-                  <button type="button" className="canva-live-heart" aria-label="Open saved products" onClick={(event) => { event.stopPropagation(); onViewEcosystem?.(); }}><HeartIcon /></button>
-                  {score != null && <div className="canva-live-match-bubble"><strong>{score}%</strong><span>match</span></div>}
-                </div>
-                <p className="canva-live-product-brand">{brandText(product)}</p>
-                <h3 className="canva-live-product-name">{product.name}</h3>
-                <p className="canva-live-product-price">{priceText(product)}</p>
-              </article>
-            );
-          })}
-        </div>
-      </section>
-
-      <section className="canva-live-dark">
-        <p className="canva-live-kicker">less noise. more context.</p>
-        <h2 className="canva-live-editorial">your health shouldn&apos;t require 47 tabs.</h2>
-      </section>
-
-      <section className="canva-live-ecosystem" aria-labelledby="ecosystem-home-title">
-        <div className="canva-live-ecosystem-visual">
-          <ProductImage product={ecosystemProduct} className="canva-live-ecosystem-product" />
-        </div>
-        <div className="canva-live-ecosystem-copy">
-          <p className="canva-live-kicker">your ecosystem</p>
-          <h2 id="ecosystem-home-title" className="canva-live-editorial">one place for what you&apos;re using, saving, and considering.</h2>
-          <p>{user ? `Welcome back${name ? `, ${name}` : ''}. Your ecosystem keeps your products and personalized context together.` : 'Sign in to build a personal health ecosystem that stays useful as your needs change.'}</p>
-          <div className="canva-live-ecosystem-stats">
-            <div className="canva-live-stat"><small>products</small><strong>{user ? ecosystemCount : 'sign in to view'}</strong></div>
-            <div className="canva-live-stat"><small>health profile</small><strong>{hasProfile ? 'active' : 'not built yet'}</strong></div>
-          </div>
-          <div className="canva-live-baseline"><small>your starting point</small><p>{hasProfile ? 'Your saved health context is available for personalization.' : 'Build your profile once, then use it across ayna.'}</p></div>
-          <button type="button" className="canva-live-secondary" onClick={user ? onViewEcosystem : openPersonalization}>{user ? 'open my ecosystem' : 'get started'}</button>
-        </div>
-      </section>
-
-      <section className="canva-live-trust" aria-labelledby="trust-title">
-        <p className="canva-live-kicker">how ayna earns trust</p>
-        <h2 id="trust-title" className="canva-live-editorial">clearer choices, without pretending health is simple.</h2>
-        <div className="canva-live-trust-grid">
-          {TRUST.map(([number, title, copy]) => <div className="canva-live-trust-item" key={number}><span className="num">{number}</span><h3>{title}</h3><p>{copy}</p></div>)}
-        </div>
-      </section>
-
-      <section className="canva-live-learn" aria-labelledby="learn-title">
-        <div className="canva-live-learn-head"><div><p className="canva-live-kicker">learn</p><h2 id="learn-title" className="canva-live-editorial">a little more context.</h2></div></div>
-        <div className="canva-live-learn-grid">
-          {LEARN.map(([category, title, search], index) => (
-            <article className="canva-live-learn-card" key={title} role="button" tabIndex="0" onClick={() => onViewDiscovery?.(discoveryTargetFor(search))} onKeyDown={(event) => { if (event.key === 'Enter') onViewDiscovery?.(discoveryTargetFor(search)); }}>
-              <div className="canva-live-learn-media"><ProductTileImage product={learnProducts[index]} alt="" imgStyle={{ width: '100%', height: '100%', objectFit: 'contain' }} letterNode={<ProductImageFallback />} /></div>
-              <p className="canva-live-learn-category">{category}</p>
-              <h3>{title}</h3>
-            </article>
+        <div
+          className="v6-quick-links v6-quick-links--rotating"
+          onMouseEnter={() => setQuickPaused(true)}
+          onMouseLeave={() => setQuickPaused(false)}
+          onFocus={() => setQuickPaused(true)}
+          onBlur={() => setQuickPaused(false)}
+          aria-label="Popular health categories"
+          aria-live="off"
+        >
+          {quickLinks.map((label) => (
+            <button key={`${quickOffset}-${label}`} type="button" onClick={() => onViewDiscovery?.(discoveryTargetFor(label))}>{label}</button>
           ))}
         </div>
       </section>
 
-      <section className="canva-live-about">
-        <div><p className="canva-live-kicker">about ayna</p><h2 className="canva-live-editorial">women&apos;s health discovery, designed around the person buying.</h2></div>
-        <div><p>ayna brings product discovery, health context, evidence, and your own preferences into one experience so finding what fits feels less fragmented.</p><button type="button" onClick={openPersonalization}>build your starting point</button></div>
+      <section className={`v6-cabinet-zone${personalizedUnlocked ? '' : ' is-locked'}`}>
+        <div className="v6-cabinet-copy">
+          <div className="v6-eyebrow">your health cabinet</div>
+          <h2>{user ? <>hi, {name || 'there'},<br/><em>here&apos;s your ecosystem</em></> : <>your cabinet,<br/><em>made around you.</em></>}</h2>
+          <p>A small shelf of personalized picks, made around your health profile and preferences.</p>
+          <button type="button" onClick={user ? onStartQuiz : () => triggerExistingSignIn(onStartQuiz)}>{user ? 'edit my preferences' : 'sign in to personalize'}</button>
+          <span className="v6-scribble">less guessing,<br/>more you ♡</span>
+        </div>
+
+        <div className={`v6-wood-cabinet${cabinetOpen ? ' is-open' : ''}`}>
+          <div className="v6-cabinet-door left"><span>ayna</span></div>
+          <div className="v6-cabinet-door right"><span>made for you</span></div>
+          <div className="v6-cabinet-topper"><i/><span>ayna health cabinet</span><i/></div>
+          <div className="v6-cabinet-grid">
+            {cabinetProducts.map((product, index) => (
+              <button
+                type="button"
+                key={`${product?.id || product?.name}-${index}`}
+                className={`v6-shelf-product${index === selectedIndex ? ' is-active' : ''}`}
+                onClick={() => setSelectedIndex(index)}
+                aria-label={`Select ${product?.name || 'product'}`}
+              >
+                <ProductVisual product={product} />
+                <span>{product?.name}</span>
+              </button>
+            ))}
+          </div>
+          <div className="v6-cabinet-drawers"><span><i/></span><span><i/></span><span><i/></span></div>
+        </div>
+
+        <div className="v6-product-bubble">
+          <div className="v6-bubble-product"><ProductVisual product={selected} /></div>
+          <div className="v6-bubble-copy">
+            <div className="v6-eyebrow">selected for you</div>
+            <h3>{selected?.name || 'your match'}</h3>
+            <p>{selected?.summary || selected?.description || 'A personalized match based on your health profile and preferences.'}</p>
+            <div className="v6-bubble-tags"><span>personalized</span><span>evidence context</span></div>
+            {personalizedUnlocked && selectedScore != null && <div className="v6-bubble-score">your ayna score · {selectedScore}/100</div>}
+            <div className="v6-bubble-actions">
+              <button type="button" className="primary" onClick={() => selected && onOpenProduct?.(selected)}>view product →</button>
+              <button type="button" aria-label="Open ecosystem" onClick={onViewEcosystem}>♡</button>
+            </div>
+          </div>
+        </div>
+
+        {!personalizedUnlocked && <div className="v6-cabinet-lock"><UnlockCard onStartQuiz={onStartQuiz} /></div>}
+      </section>
+
+      <section className="v6-explore">
+        <div className="v6-section-head">
+          <div>
+            <div className="v6-eyebrow">explore by need</div>
+            <h2>find your way in, <em>fast.</em></h2>
+          </div>
+          <div className="v6-explore-meta">
+            <p>Browse real ayna products by the health need that matters to you.</p>
+            <button type="button" className="v6-explore-refresh" onClick={refreshExplore} aria-label="Refresh health categories">↻ refresh</button>
+          </div>
+        </div>
+
+        <div className="v6-category-grid">
+          {categoryCards.map((card) => (
+            <button type="button" className="v6-category-card" key={card.label} onClick={() => onViewDiscovery?.(discoveryTargetFor(card.query))}>
+              <div className="v6-category-media">{card.product && <ProductVisual product={card.product} compact />}</div>
+              <div><strong>{card.label}</strong><small>{card.product ? card.product.name : categoryLabel(card.product)}</small><em>explore →</em></div>
+            </button>
+          ))}
+        </div>
       </section>
     </main>
   );
