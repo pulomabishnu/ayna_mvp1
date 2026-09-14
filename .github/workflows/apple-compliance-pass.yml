@@ -21,9 +21,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Apply final deterministic privacy patches
+      - name: Apply retained deterministic privacy patches
         run: |
-          node scripts/apply-apple-compliance-patches-5.mjs
           node scripts/apply-apple-token-revocation-patch.mjs
           node scripts/apply-privacy-lint-cleanups.mjs
           node scripts/restore-search-test-coverage.mjs
@@ -144,9 +143,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Apply final deterministic privacy patches
+      - name: Apply retained deterministic privacy patches
         run: |
-          node scripts/apply-apple-compliance-patches-5.mjs
           node scripts/apply-apple-token-revocation-patch.mjs
           node scripts/apply-privacy-lint-cleanups.mjs
       - name: Sync latest non-conflicting mobile UI changes
