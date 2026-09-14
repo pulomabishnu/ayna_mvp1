@@ -26,6 +26,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [appleLoading, setAppleLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -251,6 +252,36 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
     }
   };
 
+  const handleApple = async () => {
+    if (!allConsented) {
+      setError("Please agree to all four statements above before continuing.");
+      return;
+    }
+    if (!supabase) {
+      setError('Supabase is not configured. Check environment variables.');
+      return;
+    }
+    setError('');
+    setAppleLoading(true);
+    try {
+      // Apple's OAuth provider can auto-provision an account for an unseen
+      // Apple ID just like Google, so preserve the same explicit consent gate
+      // and metadata handoff used by the Google path.
+      stashPendingConsent();
+      if (onBeforeOAuthRedirect) onBeforeOAuthRedirect();
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'apple',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      if (error) throw error;
+    } catch (err) {
+      setError(err.message || 'Could not sign in with Apple.');
+      setAppleLoading(false);
+    }
+  };
+
   const switchMode = (next) => {
     setMode(next);
     setError('');
@@ -348,7 +379,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
                 Phone sign-up is coming soon
               </h2>
               <p style={{ margin: '0 0 1.5rem', color: '#57534e', lineHeight: 1.6 }}>
-                We’re still putting the finishing touches on phone verification. For now, please create your ayna account with email or Google.
+                We’re still putting the finishing touches on phone verification. For now, please create your ayna account with email, Google, or Apple.
               </p>
               <button
                 type="button"
@@ -566,7 +597,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
               style={styles.consentToggle}
               aria-expanded={showConsentDetails}
             >
-              <span>Privacy confirmations for Google</span>
+              <span>Privacy confirmations for Google or Apple</span>
               <span style={{ transform: showConsentDetails ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s ease' }}>⌄</span>
             </button>
             {showConsentDetails && (
@@ -593,17 +624,31 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
           <span style={styles.dividerLine} />
         </div>
 
-        <button
-          type="button"
-          onClick={handleGoogle}
-          disabled={googleLoading}
-          style={{
-            ...styles.googleBtn,
-          }}
-        >
-          <GoogleIcon />
-          {googleLoading ? 'Redirecting…' : 'Continue with Google'}
-        </button>
+        <div style={styles.oauthRow}>
+          <button
+            type="button"
+            onClick={handleGoogle}
+            disabled={googleLoading}
+            style={{
+              ...styles.googleBtn,
+            }}
+          >
+            <GoogleIcon />
+            {googleLoading ? 'Redirecting…' : 'Continue with Google'}
+          </button>
+
+          <button
+            type="button"
+            onClick={handleApple}
+            disabled={appleLoading}
+            style={{
+              ...styles.googleBtn,
+            }}
+          >
+            <AppleIcon />
+            {appleLoading ? 'Redirecting…' : 'Continue with Apple'}
+          </button>
+        </div>
 
         {!isSignup && (
           <p style={styles.fine}>
@@ -631,6 +676,15 @@ function GoogleIcon() {
       <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/>
       <path fill="#FBBC05" d="M3.964 10.706A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.706V4.962H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.038l3.007-2.332z"/>
       <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.962L3.964 7.294C4.672 5.163 6.656 3.58 9 3.58z"/>
+    </svg>
+  );
+}
+
+function AppleIcon() {
+  return (
+    <svg width="16" height="18" viewBox="0 0 16 18" aria-hidden="true" style={{ flexShrink: 0 }}>
+      <path fill="#000000" d="M13.06 9.53c-.02-1.96 1.6-2.9 1.67-2.94-.91-1.33-2.33-1.51-2.84-1.53-1.21-.12-2.36.71-2.97.71-.62 0-1.55-.7-2.55-.68-1.31.02-2.53.76-3.2 1.93-1.37 2.37-.35 5.87.98 7.79.65.94 1.42 1.99 2.44 1.96 0.98-.04 1.35-.63 2.53-.63 1.18 0 1.51.63 2.55.6 1.05-.02 1.72-.95 2.36-1.89.75-1.08 1.05-2.13 1.06-2.18-.02-.01-2.03-.78-2.03-3.13z"/>
+      <path fill="#000000" d="M11.1 3.68c.54-.65.9-1.56.8-2.46-.77.03-1.71.51-2.27 1.15-.5.57-.94 1.5-.82 2.38.86.06 1.75-.44 2.29-1.07z"/>
     </svg>
   );
 }
@@ -852,13 +906,17 @@ const styles = {
     fontSize: '0.75rem',
     color: 'var(--color-text-muted)',
   },
+  oauthRow: {
+    display: 'flex',
+    gap: '0.65rem',
+  },
   googleBtn: {
     display: 'flex',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     justifyContent: 'center',
-    gap: '0.65rem',
-    padding: '0.7rem',
-    fontSize: '0.875rem',
+    gap: '0.4rem',
+    padding: '0.7rem 0.35rem',
+    fontSize: '0.76rem',
     fontWeight: '500',
     background: '#FFFFFF',
     color: '#2C2333',
@@ -867,7 +925,9 @@ const styles = {
     cursor: 'pointer',
     transition: 'background var(--transition-fast)',
     fontFamily: 'var(--font-body)',
-    width: '100%',
+    textAlign: 'center',
+    minWidth: 0,
+    flex: 1,
   },
   googleBtnDisabled: {
     opacity: 0.45,
