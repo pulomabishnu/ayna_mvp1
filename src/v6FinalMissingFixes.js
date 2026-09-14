@@ -46,6 +46,28 @@ function fallbackToQuiz() {
   window.dispatchEvent(new PopStateEvent('popstate', { state: { view: 'quiz' } }));
 }
 
+function clickLoginWhenRendered(timeoutMs = 1100) {
+  if (clickVisibleLogin()) return true;
+
+  let finished = false;
+  const observer = new MutationObserver(() => {
+    if (finished) return;
+    if (clickVisibleLogin()) {
+      finished = true;
+      observer.disconnect();
+    }
+  });
+  observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style'] });
+
+  window.setTimeout(() => {
+    if (finished) return;
+    finished = true;
+    observer.disconnect();
+    if (!clickVisibleLogin()) fallbackToQuiz();
+  }, timeoutMs);
+  return false;
+}
+
 function openRealSignIn() {
   if (clickVisibleLogin()) return;
 
@@ -56,31 +78,17 @@ function openRealSignIn() {
     .find(isVisible);
   if (account) {
     account.click();
-    window.setTimeout(() => {
-      if (clickVisibleLogin()) return;
-      account.click();
-      window.setTimeout(() => {
-        if (!clickVisibleLogin()) fallbackToQuiz();
-      }, 90);
-    }, 70);
+    clickLoginWhenRendered();
     return;
   }
 
-  // Mobile: open the real hamburger drawer, then invoke the same real Log in
-  // button a visitor would tap. This preserves App.jsx auth state rather than
-  // fabricating an auth overlay in the DOM enhancement layer.
+  // Mobile: React mounts the drawer after the hamburger click. Observe for the
+  // real Log in control and click it the moment it exists instead of relying on
+  // a timing guess. This preserves the app's actual auth modal/state.
   const mobileMenu = [...document.querySelectorAll('.mobile-menu-btn')].find(isVisible);
   if (mobileMenu) {
+    clickLoginWhenRendered();
     mobileMenu.click();
-    window.setTimeout(() => {
-      if (!clickVisibleLogin()) {
-        // One retry covers the drawer transition/render frame without turning
-        // the interaction into a double-tap requirement for the user.
-        window.setTimeout(() => {
-          if (!clickVisibleLogin()) fallbackToQuiz();
-        }, 90);
-      }
-    }, 70);
     return;
   }
 
