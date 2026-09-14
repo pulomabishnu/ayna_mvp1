@@ -1,0 +1,47 @@
+/* Visual-only skin. Preserve every page's existing content, structure and workflow. */
+:root{--skin-cream:#F3EFE9;--skin-paper:#FFFCF9;--skin-ink:#292524;--skin-muted:#78716C;--skin-navy:#242A52;--skin-indigo:#303354;--skin-plum:#4E3866;--skin-terra:#A2603C;--skin-amber:#F0A84B;--skin-pale:#FFEFD6;--skin-line:rgba(41,37,36,.14);--skin-dark-line:rgba(255,252,249,.16);--skin-serif:'Playfair Display','Cormorant Garamond',Georgia,serif;--skin-sans:'DM Sans',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+
+/* shared typography + canvas */
+.app-container,.ayna-browse,.pdp-shell,.v6-eco-page,.v6-settings-page,.hiw{background:var(--skin-cream)!important;color:var(--skin-ink)!important;font-family:var(--skin-sans)!important}
+.app-container h1,.app-container h2,.app-container h3,.ayna-browse h1,.ayna-browse h2,.pdp-shell h1,.pdp-shell h2,.pdp-shell h3,.v6-eco-page h1,.v6-eco-page h2,.v6-eco-page h3,.v6-settings-page h1,.v6-settings-page h2,.v6-settings-page h3,.hiw h1,.hiw h2,.hiw h3,.hiw h4,.article-body h1,.article-body h2,.article-body h3{font-family:var(--skin-serif)!important;color:var(--skin-ink)!important;font-weight:500!important;letter-spacing:-.035em!important}
+.card,.pdp-summary-card,.v6-settings-card,.v6-submitted-card,.hiw-card,.about-advisor,.ayna-auth-card,.auth-card,.v6-auth-sheet{background:var(--skin-paper)!important;border-color:var(--skin-line)!important;box-shadow:none!important}
+
+/* nav/footer */
+.app-nav,.app-nav--cream,.app-nav--landing{background:rgba(243,239,233,.95)!important;border-bottom-color:var(--skin-line)!important;box-shadow:none!important;backdrop-filter:blur(14px)!important}
+.app-footer,.ayna-footer,footer{background:var(--skin-navy)!important;color:var(--skin-paper)!important;border-color:var(--skin-dark-line)!important}
+
+/* buttons + forms, same actions */
+.btn,.pdp-btn,.ayna-continue,.v6-settings-page button,.v6-eco-page button,.hiw button{font-family:var(--skin-sans)!important;box-shadow:none!important}
+.btn-primary,.btn-navy,.pdp-btn--navy,.ayna-continue,.ayna-auth-primary,.v6-settings-primary,.hiw-band__cta{background:var(--skin-navy)!important;border-color:var(--skin-navy)!important;color:var(--skin-paper)!important}
+.app-container input:not([type='checkbox']):not([type='radio']),.app-container textarea,.app-container select,.ayna-browse input,.ayna-browse select,.pdp-shell input,.pdp-shell textarea,.pdp-shell select,.v6-settings-page input,.v6-settings-page textarea,.v6-settings-page select{background:var(--skin-paper)!important;color:var(--skin-ink)!important;border-color:var(--skin-line)!important;box-shadow:none!important}
+
+/* browse: keep all filters/categories/toggles/grid */
+.ayna-browse__toolbar,.ayna-browse__categories,.v6-browse-needs-menu,.ayna-browse__filters-panel,.ayna-browse__filter-panel{background:var(--skin-cream)!important;border-color:var(--skin-line)!important;box-shadow:none!important}
+.ayna-browse__filter-button,.v6-browse-needs-trigger,.ayna-browse__sort,.ayna-browse__personalized-switch{background:var(--skin-paper)!important;color:var(--skin-ink)!important;border-color:var(--skin-line)!important;box-shadow:none!important}
+.ayna-browse-card,.ayna-discover-card{background:transparent!important;border-color:transparent!important;box-shadow:none!important}
+.ayna-discover-card__tile,.ayna-browse-card__image{background:#E8E0D7!important;border-radius:2px!important;box-shadow:none!important}
+.ayna-browse-card__brand,.ayna-browse-card__price,.ayna-browse__meta,.ayna-browse__heading p{color:var(--skin-muted)!important}
+.ayna-browse-card__wishlist{background:rgba(255,252,249,.94)!important;border-color:rgba(41,37,36,.10)!important;color:var(--skin-ink)!important;box-shadow:none!important}
+.ayna-browse-card__affiliate,.ayna-partner-badge{background:var(--skin-pale)!important;color:var(--skin-plum)!important;border-color:rgba(160,96,60,.18)!important}
+html.v6-signed-in .ayna-browse-card__match{background:var(--skin-navy)!important;color:var(--skin-paper)!important;border:0!important;box-shadow:none!important}
+html.v6-signed-out .ayna-browse-card__match{display:none!important}
+
+/* product detail: keep all current evidence/safety/reviews sections */
+.pdp-head,.pdp-body,.pdp-section,.pdp-section-row,.pdp-accordion{border-color:var(--skin-line)!important}
+.pdp-media,.pdp-gallery,.pdp-image-shell{background:#E8E0D7!important;border-color:var(--skin-line)!important;box-shadow:none!important}
+.pdp-chip,.pdp-tag,.pdp-pill{background:transparent!important;color:var(--skin-plum)!important;border-color:var(--skin-line)!important;box-shadow:none!important}
+.pdp-muted,.pdp-head__brand,.pdp-section__kicker{color:var(--skin-muted)!important}
+
+/* ecosystem: same saved/using/considering/recommended content */
+.v6-eco-tabs{border-color:var(--skin-line)!important}.v6-eco-tabs button{background:transparent!important;color:var(--skin-muted)!important;border-radius:0!important;box-shadow:none!important}.v6-eco-tabs button.is-active,.v6-eco-tabs button[aria-selected='true']{color:var(--skin-ink)!important;border-bottom-color:var(--skin-ink)!important}.v6-eco-product-card{background:transparent!important;border:0!important;box-shadow:none!important}.v6-eco-muted,.v6-eco-copy p{color:var(--skin-muted)!important}
+
+/* about/how it works: preserve funnel, gates, advisors */
+.hiw-hero{background:linear-gradient(135deg,var(--skin-paper),var(--skin-cream) 72%,#ECE5DB)!important;color:var(--skin-ink)!important}.hiw-hero__eyebrow,.hiw-kicker{color:var(--skin-plum)!important}.hiw-card,.hiw-gate,.about-advisor{border-color:var(--skin-line)!important;box-shadow:none!important}.hiw-gate--dark,.hiw-band{background:radial-gradient(circle at 84% 12%,rgba(78,56,102,.70),transparent 36%),linear-gradient(135deg,var(--skin-navy),var(--skin-indigo) 58%,var(--skin-plum))!important;color:var(--skin-paper)!important;border-color:var(--skin-dark-line)!important}.hiw-gate--dark *,.hiw-band *{color:inherit!important}.about-advisor__link{color:var(--skin-plum)!important}
+
+/* learn/articles: same article library and bodies */
+.article-body{color:var(--skin-ink)!important;line-height:1.82!important}.article-body a{color:var(--skin-plum)!important;text-underline-offset:3px!important}.article-body blockquote{border-left:2px solid var(--skin-terra)!important;color:#5F5753!important;background:transparent!important}.article-body hr{border-color:var(--skin-line)!important}
+
+/* auth + Ask ayna */
+.v6-auth-overlay,.ayna-auth-overlay{background:rgba(36,42,82,.88)!important;backdrop-filter:blur(10px)!important}.v6-auth-sheet,.ayna-auth-card,.auth-card{background:var(--skin-paper)!important;color:var(--skin-ink)!important;border-color:var(--skin-line)!important;box-shadow:0 24px 80px rgba(20,18,31,.16)!important}.ayna-ask-launcher,.v6-ask-locked-fallback{background:radial-gradient(circle at 80% 15%,rgba(106,72,91,.70),transparent 35%),radial-gradient(circle at 12% 92%,rgba(240,168,75,.13),transparent 28%),var(--skin-navy)!important;color:var(--skin-paper)!important;border-color:rgba(255,252,249,.14)!important;box-shadow:none!important}.ayna-chatbot,.ayna-chatbot-panel,.profile-chatbot{background:var(--skin-paper)!important;color:var(--skin-ink)!important;border-color:var(--skin-line)!important;box-shadow:0 24px 80px rgba(20,18,31,.14)!important}
+
+@media(max-width:767px){.app-nav,.app-nav--cream,.app-nav--landing{background:rgba(243,239,233,.98)!important}.ayna-browse-card__match{width:58px!important;height:58px!important}.ayna-ask-launcher,.v6-ask-locked-fallback{transform:scale(.9)!important;transform-origin:bottom right!important}}
