@@ -12,6 +12,7 @@ import { ECOSYSTEM_AREAS as REAL_ECOSYSTEM_AREAS, resolveEcosystemProductArea } 
 import { useSavedProducts } from './hooks/useSavedProducts.js';
 import { useThemeMode } from './hooks/useThemeMode.js';
 import { usePersonalizedFeed } from './hooks/usePersonalizedFeed.js';
+import { usePushNotifications } from './hooks/usePushNotifications.js';
 import { useTextSize } from './hooks/useTextSize.js';
 import { useEcosystemSession } from './hooks/useEcosystemSession.js';
 import { useSupabaseAuth, MOBILE_OAUTH_PENDING_KEY } from './hooks/useSupabaseAuth.js';
@@ -167,6 +168,10 @@ export default function MobileApp() {
   const { savedMap, isSaved, toggleSaved } = useSavedProducts(authUser);
   const { theme, resolvedTheme, setThemeMode } = useThemeMode();
   const [personalized, setPersonalized] = usePersonalizedFeed();
+  // Requests push permission and registers this device on launch (iOS only
+  // for now); stores the token against authUser once both are available.
+  // Registration only — nothing sends a push yet.
+  usePushNotifications(authUser?.id);
   const { textSizeIndex, setTextSizeIndex, textScale } = useTextSize();
   const [askAynaOpen, setAskAynaOpen] = useState(false);
   const [askAynaHistory, setAskAynaHistory] = useState([]);
