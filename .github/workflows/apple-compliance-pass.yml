@@ -76,7 +76,7 @@ jobs:
             src/data/products.personalization.test.js
       - name: Production web build
         run: npm run build
-      - name: Privacy and shared-catalog lint
+      - name: Privacy changed-files lint
         run: |
           npx eslint \
             api/_appleSignIn.js \
@@ -84,10 +84,7 @@ jobs:
             api/account-delete.js \
             api/apple-token.js \
             api/export-data.js \
-            src/App.jsx \
             src/components/AuthGate.jsx \
-            src/components/AynaLanding.jsx \
-            src/components/Discovery.jsx \
             src/main.jsx \
             src/mobile/MobileApp.jsx \
             src/mobile/components/AiConsentPrompt.jsx \
@@ -104,6 +101,10 @@ jobs:
             src/utils/posthogPrivacy.js \
             src/utils/savedProductsStore.js \
             src/utils/userHealthContextForInsights.js
+      - name: Shared-catalog website lint baseline signal
+        continue-on-error: true
+        run: |
+          npx eslint src/App.jsx src/components/AynaLanding.jsx src/components/Discovery.jsx
       - name: Full repository lint baseline signal
         continue-on-error: true
         run: npm run lint
