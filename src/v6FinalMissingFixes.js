@@ -10,6 +10,17 @@ function norm(value) {
   return text({ textContent: value }).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 }
 
+function isVisible(node) {
+  if (!node) return false;
+  const style = window.getComputedStyle(node);
+  const rect = node.getBoundingClientRect();
+  return style.display !== 'none'
+    && style.visibility !== 'hidden'
+    && Number(style.opacity || 1) !== 0
+    && rect.width > 0
+    && rect.height > 0;
+}
+
 function setControlledInput(input, value) {
   if (!input) return;
   const proto = input instanceof HTMLTextAreaElement ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype;
@@ -22,41 +33,58 @@ function setControlledInput(input, value) {
 
 function clickVisibleLogin() {
   const login = [...document.querySelectorAll('.nav-account-menu button, .mobile-nav-drawer button, button, a')]
-    .find((node) => {
-      const style = window.getComputedStyle(node);
-      return style.display !== 'none'
-        && style.visibility !== 'hidden'
-        && /^(sign in|log in)$/i.test(text(node))
-        && !node.closest('.v6-ask-locked-fallback');
-    });
+    .find((node) => isVisible(node)
+      && /^(sign in|log in)$/i.test(text(node))
+      && !node.closest('.v6-ask-locked-fallback'));
   if (!login) return false;
   login.click();
   return true;
 }
 
+function fallbackToQuiz() {
+  window.history.pushState({ view: 'quiz' }, '', '/quiz');
+  window.dispatchEvent(new PopStateEvent('popstate', { state: { view: 'quiz' } }));
+}
+
 function openRealSignIn() {
   if (clickVisibleLogin()) return;
 
-  const account = document.querySelector('.app-nav__circle--account, [aria-label*="account" i]');
+  // Desktop: only use an account control that is actually visible. The DOM
+  // contains a desktop-only account button at mobile widths, and clicking that
+  // hidden node was the reason Ask ayna appeared dead on a phone.
+  const account = [...document.querySelectorAll('.app-nav__circle--account, [aria-label*="account" i]')]
+    .find(isVisible);
   if (account) {
     account.click();
     window.setTimeout(() => {
       if (clickVisibleLogin()) return;
-      // If a decorative/transition layer swallowed the first account click,
-      // try the real account control once more before falling back to /quiz.
       account.click();
       window.setTimeout(() => {
-        if (!clickVisibleLogin()) {
-          window.history.pushState({ view: 'quiz' }, '', '/quiz');
-          window.dispatchEvent(new PopStateEvent('popstate', { state: { view: 'quiz' } }));
-        }
+        if (!clickVisibleLogin()) fallbackToQuiz();
       }, 90);
     }, 70);
     return;
   }
 
-  window.history.pushState({ view: 'quiz' }, '', '/quiz');
-  window.dispatchEvent(new PopStateEvent('popstate', { state: { view: 'quiz' } }));
+  // Mobile: open the real hamburger drawer, then invoke the same real Log in
+  // button a visitor would tap. This preserves App.jsx auth state rather than
+  // fabricating an auth overlay in the DOM enhancement layer.
+  const mobileMenu = [...document.querySelectorAll('.mobile-menu-btn')].find(isVisible);
+  if (mobileMenu) {
+    mobileMenu.click();
+    window.setTimeout(() => {
+      if (!clickVisibleLogin()) {
+        // One retry covers the drawer transition/render frame without turning
+        // the interaction into a double-tap requirement for the user.
+        window.setTimeout(() => {
+          if (!clickVisibleLogin()) fallbackToQuiz();
+        }, 90);
+      }
+    }, 70);
+    return;
+  }
+
+  fallbackToQuiz();
 }
 
 function ensureSignedOutAskAyna() {
