@@ -1,18 +1,25 @@
-import React, { useMemo, useState } from 'react';
-import { ALL_PRODUCTS } from '../data/products';
-import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
+import React, { useEffect, useMemo, useState } from 'react';
+import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
 import '../v6Real.css';
 import '../v6CanvaHome.css';
+import '../v6CanvaTextHome.css';
 
 const NEEDS = [
-  ['Periods', 'period cramps'],
+  ['Periods', 'period care'],
   ['Hormones + PCOS', 'hormones pcos'],
-  ['Sleep + energy', 'sleep energy'],
-  ['Fertility + pregnancy', 'fertility pregnancy'],
   ['Vaginal health', 'vaginal health'],
-  ['Skin + hair', 'skin hair'],
+  ['UTI support', 'uti support'],
+  ['Fertility', 'fertility'],
+  ['Pregnancy + postpartum', 'pregnancy postpartum'],
+  ['Pelvic health', 'pelvic health'],
   ['Menopause', 'menopause'],
+  ['Sleep + energy', 'sleep energy'],
+  ['Skin + hair', 'skin hair'],
+  ['Gut health', 'gut health'],
+  ['Sexual wellness', 'sexual wellness'],
 ];
+
+const QUICK = ['period care', 'PCOS', 'vaginal health', 'bloating'];
 
 const TRUST = [
   ['01', 'Personal to you', 'Discovery can use your health needs, goals, life stage, and preferences when you choose to personalize.'],
@@ -32,13 +39,6 @@ function uniqueProducts(products) {
   });
 }
 
-function hasImage(product) {
-  return Boolean(
-    product?.image || product?.imageUrl || product?.image_url || product?.thumbnail ||
-    (Array.isArray(product?.images) && product.images.length)
-  );
-}
-
 function matchPercent(product) {
   const raw = product?.matchPercentage ?? product?.matchScore ?? product?.score;
   if (typeof raw !== 'number' || !Number.isFinite(raw)) return null;
@@ -54,7 +54,11 @@ function priceText(product) {
 }
 
 function brandText(product) {
-  return product?.brand || product?.brandName || 'ayna';
+  return product?.brand || product?.brandName || product?.manufacturer || 'ayna';
+}
+
+function categoryText(product) {
+  return CATEGORY_LABELS?.[product?.category] || String(product?.category || 'women’s health').replace(/[-_]/g, ' ');
 }
 
 function discoveryTargetFor(value) {
@@ -79,36 +83,19 @@ function SearchIcon() {
   );
 }
 
-function ProductImage({ product }) {
-  return (
-    <ProductTileImage
-      product={product}
-      alt={product?.name || ''}
-      imgStyle={{ width: '100%', height: '100%', objectFit: 'contain' }}
-      letterNode={<ProductImageFallback />}
-    />
-  );
-}
-
-function ProductCard({ product, user, onOpenProduct }) {
+function TextProductCard({ product, user, onOpenProduct }) {
   if (!product) return null;
   const score = user ? matchPercent(product) : null;
   return (
-    <article className="canva-product" tabIndex={0} onClick={() => onOpenProduct?.(product)} onKeyDown={(event) => {
-      if (event.key === 'Enter' || event.key === ' ') onOpenProduct?.(product);
-    }}>
-      <div className="canva-product__media">
-        <ProductImage product={product} />
-        {score != null && (
-          <div className="canva-product__match" aria-label={`${score}% Health Match`}>
-            <strong>{score}%</strong><span>match</span>
-          </div>
-        )}
-      </div>
-      <p className="canva-product__brand">{brandText(product)}</p>
+    <button type="button" className="cth-product" onClick={() => onOpenProduct?.(product)}>
+      <p className="cth-product__brand">{brandText(product)}</p>
       <h3>{product.name}</h3>
-      {priceText(product) && <p className="canva-product__price">{priceText(product)}</p>}
-    </article>
+      {priceText(product) && <p className="cth-product__price">{priceText(product)}</p>}
+      <div className="cth-product__bottom">
+        <span className="cth-product__category">{categoryText(product)}</span>
+        {score != null && <span className="cth-product__match" aria-label={`${score}% Health Match`}>{score}%</span>}
+      </div>
+    </button>
   );
 }
 
@@ -122,24 +109,25 @@ export default function AynaLanding({
   ecosystemCount = 0,
   hasProfile = false,
   recommendedProductIds = [],
+  initialCategory = null,
 }) {
   const [query, setQuery] = useState('');
 
-  const owned = useMemo(() => Object.values(myProducts || {}), [myProducts]);
+  const owned = useMemo(() => Object.values(myProducts || {}).filter(Boolean), [myProducts]);
   const recommended = useMemo(() => {
     const byId = new Map(ALL_PRODUCTS.map((product) => [product?.id, product]));
     return (recommendedProductIds || []).map((id) => byId.get(id)).filter(Boolean);
   }, [recommendedProductIds]);
-
-  const visualProducts = useMemo(() => {
-    const all = uniqueProducts([...owned, ...recommended, ...ALL_PRODUCTS]).filter(hasImage);
-    return all.length ? all : uniqueProducts([...owned, ...recommended, ...ALL_PRODUCTS]);
-  }, [owned, recommended]);
-
-  const featured = visualProducts.slice(0, 4);
-  const previewProduct = featured[0] || null;
+  const products = useMemo(() => uniqueProducts([...recommended, ...owned, ...ALL_PRODUCTS]), [recommended, owned]);
+  const featured = products.slice(0, 4);
+  const previewProduct = recommended[0] || owned[0] || featured[0] || null;
   const previewScore = user ? matchPercent(previewProduct) : null;
   const personalizedUnlocked = Boolean(user && (hasProfile || ecosystemCount > 0 || recommendedProductIds?.length));
+
+  useEffect(() => {
+    if (!initialCategory) return;
+    onViewDiscovery?.(discoveryTargetFor(initialCategory));
+  }, [initialCategory, onViewDiscovery]);
 
   const submitSearch = (event) => {
     event.preventDefault();
@@ -147,125 +135,142 @@ export default function AynaLanding({
     onViewDiscovery?.(discoveryTargetFor(query));
   };
 
-  const goTo = (path) => {
-    window.location.assign(path);
-  };
+  const goTo = (path) => window.location.assign(path);
 
   return (
-    <main className="canva-home">
-      <section className="canva-home__frame canva-hero">
-        <div className="canva-hero__copy canva-paper">
-          <div className="canva-hero__text">
-            <p className="canva-kicker">personalized women&apos;s health</p>
-            <h1 className="canva-display">women&apos;s health, made for you.</h1>
-            <p className="canva-hero__lede">Find products, care, and support that make sense for your body, your goals, and your everyday life.</p>
-          </div>
-          <form className="canva-search" onSubmit={submitSearch} role="search">
+    <main className="canva-text-home">
+      <section className="cth-frame cth-hero cth-paper">
+        <div className="cth-hero__copy">
+          <p className="cth-kicker">personalized women&apos;s health</p>
+          <h1 className="cth-display">women&apos;s health, made for you.</h1>
+          <p className="cth-hero__lede">Find products, care, and support that make sense for your body, your goals, and your everyday life.</p>
+
+          <form className="cth-search" onSubmit={submitSearch} role="search">
             <SearchIcon />
-            <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search products, symptoms, goals, or health needs" aria-label="Search ayna" />
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search products, symptoms, goals, or health needs"
+              aria-label="Search ayna"
+            />
             <button type="submit">search</button>
           </form>
+
+          <div className="cth-quick" aria-label="Popular searches">
+            {QUICK.map((item) => (
+              <button key={item} type="button" onClick={() => onViewDiscovery?.(discoveryTargetFor(item))}>{item}</button>
+            ))}
+          </div>
         </div>
-        <div className="canva-hero__visual canva-film">
-          <img src="/landing-bg.png" alt="" aria-hidden="true" />
-          <p className="canva-hero__caption">health discovery should feel clear, personal, and a little more human.</p>
-        </div>
+        <p className="cth-hero__note">one place to start, instead of forty-seven tabs.</p>
       </section>
 
-      <section className="canva-section">
-        <div className="canva-section-head">
+      <section className="cth-frame cth-statement cth-film">
+        <p className="cth-kicker">less searching, more clarity</p>
+        <h2 className="cth-display">health shopping should feel personal, not impossible.</h2>
+      </section>
+
+      <section className="cth-section">
+        <div className="cth-section-head">
           <div>
-            <p className="canva-kicker">start where you are</p>
-            <h2 className="canva-display">what do you need help with?</h2>
+            <p className="cth-kicker">start where you are</p>
+            <h2 className="cth-display">what do you need help with?</h2>
           </div>
-          <p>Browse by the health need that matters to you, then narrow down with real products and context.</p>
+          <p>Browse by the health need that matters today. No giant catalog wall, no clinical portal, no guessing where to begin.</p>
         </div>
-        <div className="canva-needs" aria-label="Browse health needs">
-          {NEEDS.map(([label, value]) => (
-            <button key={label} type="button" onClick={() => onViewDiscovery?.(discoveryTargetFor(value))}>{label}</button>
+        <div className="cth-needs" aria-label="Browse health needs">
+          {NEEDS.map(([label, value], index) => (
+            <button key={label} type="button" className="cth-need" onClick={() => onViewDiscovery?.(discoveryTargetFor(value))}>
+              <span>{label}</span>
+              <span>{String(index + 1).padStart(2, '0')} · explore</span>
+            </button>
           ))}
         </div>
       </section>
 
-      <section className="canva-section" style={{ paddingTop: 0 }}>
-        <div className="canva-matches">
-          <div className="canva-matches__copy">
-            <p className="canva-kicker">made around you</p>
-            <h2 className="canva-display">personalized discovery, without the noise.</h2>
-            <p>Build your health profile to make Browse more relevant to your needs, life stage, goals, and preferences.</p>
-            <button type="button" className="canva-primary" onClick={onStartQuiz}>{user ? 'update my health profile' : 'build my health profile'}</button>
+      <section className="cth-section" style={{ paddingTop: 0 }}>
+        <div className="cth-personal">
+          <div className="cth-personal__copy">
+            <p className="cth-kicker">made around you</p>
+            <h2 className="cth-display">personalized discovery, without the noise.</h2>
+            <p>Build your health profile to make Browse more relevant to your needs, life stage, goals, sensitivities, budget, and preferences.</p>
+            <button type="button" className="cth-primary" onClick={onStartQuiz}>{user ? 'update my health profile' : 'build my health profile'}</button>
           </div>
-          <div className="canva-matches__preview">
-            <div className="canva-match-card">
-              <div className="canva-match-card__top">
-                <div>
-                  <p className="canva-match-card__brand">{previewProduct ? brandText(previewProduct) : 'ayna'}</p>
-                  <p className="canva-match-card__name">{previewProduct?.name || 'your personalized matches'}</p>
-                </div>
-                {personalizedUnlocked && previewScore != null ? (
-                  <div className="canva-match-card__score">{previewScore}%</div>
-                ) : null}
+          <div className="cth-personal__ui">
+            <div className="cth-match">
+              <p className="cth-match__eyebrow">your health match</p>
+              <div className="cth-match__top">
+                <h3>{previewProduct?.name || 'your personalized matches'}</h3>
+                {personalizedUnlocked && previewScore != null && <div className="cth-match__score">{previewScore}%</div>}
               </div>
-              <div className="canva-match-card__locked">{personalizedUnlocked ? 'Based on the health information and preferences you chose to share.' : 'Sign in and build your health profile to see your real Match.'}</div>
+              <div className="cth-match__rule" />
+              <div className="cth-match__meta">
+                <div><small>brand</small><strong>{previewProduct ? brandText(previewProduct) : 'matched for you'}</strong></div>
+                <div><small>category</small><strong>{previewProduct ? categoryText(previewProduct) : 'based on your profile'}</strong></div>
+              </div>
+              <p className="cth-match__locked">{personalizedUnlocked ? 'Your Match is based on the health information and preferences you chose to share.' : 'Sign in and build your health profile to unlock real Match percentages.'}</p>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="canva-section canva-shop">
-        <div className="canva-shop__header">
+      <section className="cth-section cth-shop">
+        <div className="cth-shop__head">
           <div>
-            <p className="canva-kicker">shop ayna</p>
-            <h2 className="canva-display">a few places to start.</h2>
+            <p className="cth-kicker">from the marketplace</p>
+            <h2 className="cth-display">a few places to start.</h2>
           </div>
-          <button type="button" onClick={() => onViewDiscovery?.('')}>browse all</button>
+          <button type="button" onClick={() => onViewDiscovery?.('')}>browse all products</button>
         </div>
-        <div className="canva-products">
-          {featured.map((product) => <ProductCard key={product?.id || product?.name} product={product} user={user} onOpenProduct={onOpenProduct} />)}
+        <div className="cth-products">
+          {featured.map((product) => (
+            <TextProductCard key={product?.id || product?.name} product={product} user={user} onOpenProduct={onOpenProduct} />
+          ))}
         </div>
       </section>
 
-      <section className="canva-statement canva-film">
-        <p className="canva-kicker">the point</p>
-        <h2 className="canva-display">your health shouldn&apos;t require 47 tabs.</h2>
+      <section className="cth-frame cth-statement cth-film">
+        <p className="cth-kicker">the point</p>
+        <h2 className="cth-display">your health shouldn&apos;t require 47 tabs.</h2>
       </section>
 
-      <section className="canva-ecosystem">
-        <div className="canva-ecosystem__media">
-          <img src="/landing-bg.png" alt="" aria-hidden="true" />
-        </div>
-        <div className="canva-ecosystem__copy canva-paper">
-          <p className="canva-kicker">my ecosystem</p>
-          <h2 className="canva-display">your health, in one place.</h2>
-          <p>Keep what you use, what you saved, what you&apos;re considering, and what ayna recommends together without turning your health into a dashboard.</p>
-          <div className="canva-ecosystem__stats">
-            <div className="canva-ecosystem__stat"><small>in your ecosystem</small><strong>{user ? `${ecosystemCount} ${ecosystemCount === 1 ? 'item' : 'items'}` : 'sign in to build yours'}</strong></div>
-            <div className="canva-ecosystem__stat"><small>personalization</small><strong>{hasProfile ? 'health profile connected' : 'ready when you are'}</strong></div>
+      <section className="cth-section" style={{ paddingBottom: 0 }}>
+        <div className="cth-ecosystem">
+          <div className="cth-ecosystem__copy">
+            <p className="cth-kicker">my ecosystem</p>
+            <h2 className="cth-display">your health, in one place.</h2>
+            <p>Keep what you use, what you saved, what you&apos;re considering, and what ayna recommends together without turning your health into a dashboard.</p>
           </div>
-          <div className="canva-baseline"><small>your starting point</small><p>Save a baseline, come back later, and let your recommendations evolve with you.</p></div>
-          <button type="button" className="canva-secondary" onClick={user ? onViewEcosystem : onStartQuiz}>{user ? 'open my ecosystem' : 'save my starting point'}</button>
+          <div className="cth-ecosystem__panel">
+            <div className="cth-stat"><small>in your ecosystem</small><strong>{user ? `${ecosystemCount} ${ecosystemCount === 1 ? 'item' : 'items'}` : 'sign in to build yours'}</strong></div>
+            <div className="cth-stat"><small>personalization</small><strong>{hasProfile ? 'health profile connected' : 'ready when you are'}</strong></div>
+            <div className="cth-stat"><small>your starting point</small><strong>save now, evolve later</strong></div>
+            <div className="cth-baseline">Your products and recommendations can change with you. Your baseline gives you something useful to come back to.</div>
+            <button type="button" className="cth-secondary" onClick={user ? onViewEcosystem : onStartQuiz}>{user ? 'open my ecosystem' : 'save my starting point'}</button>
+          </div>
         </div>
       </section>
 
-      <section className="canva-section">
-        <div className="canva-section-head">
+      <section className="cth-section">
+        <div className="cth-section-head">
           <div>
-            <p className="canva-kicker">why trust ayna</p>
-            <h2 className="canva-display">clearer by design.</h2>
+            <p className="cth-kicker">why trust ayna</p>
+            <h2 className="cth-display">clearer by design.</h2>
           </div>
+          <p>Personalized does not mean paid-first. Health Match stays separate from commercial partnerships.</p>
         </div>
-        <div className="canva-trust">
+        <div className="cth-trust">
           {TRUST.map(([number, title, copy]) => (
             <article key={number}><span>{number}</span><h3>{title}</h3><p>{copy}</p></article>
           ))}
         </div>
       </section>
 
-      <section className="canva-about canva-film">
-        <div className="canva-about__grid">
+      <section className="cth-frame cth-about cth-film">
+        <div className="cth-about__grid">
           <div>
-            <p className="canva-kicker" style={{ color: '#FFC774' }}>about ayna</p>
-            <h2 className="canva-display">women&apos;s health should feel less fragmented.</h2>
+            <p className="cth-kicker">about ayna</p>
+            <h2 className="cth-display">women&apos;s health should feel less fragmented.</h2>
           </div>
           <div>
             <p>ayna brings product discovery, care, education, and your own health context into one place so finding what fits you feels simpler.</p>
