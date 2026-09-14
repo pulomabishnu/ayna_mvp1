@@ -1,37 +1,20 @@
+import { compactLegacyAuthMetadata } from './authMetadataCleanup';
+
 /**
  * Wishlist / Save for later persistence.
  *
- * localStorage keeps the UI instant. Supabase user_ecosystems is the primary
- * sync layer, but the live table may be missing is_saved or blocked by RLS.
- * user_metadata is therefore a small authenticated fallback so saved products
- * still come back after logout/login instead of disappearing with a false
- * "could not save" banner.
+ * localStorage keeps the UI instant. Supabase user_ecosystems is the durable
+ * sync layer. Saved-product blobs must never be stored in Auth user_metadata,
+ * because Supabase embeds user_metadata in the JWT sent on every API request.
  */
 
 const LS_KEY = 'ayna_saved_for_later_v1';
-const META_KEY = 'ayna_saved_products_v1';
 let remoteColumnMissing = false;
 const UNDEFINED_COLUMN = '42703';
 
 function isMissingColumn(error) {
   if (!error) return false;
   return error.code === UNDEFINED_COLUMN || /column .*is_saved.* does not exist/i.test(error.message || '');
-}
-
-function compactProduct(product) {
-  if (!product?.id) return null;
-  const keys = [
-    'id', 'name', 'brand', 'category', 'type', 'price', 'priceDisplay', 'stage',
-    'image', 'imageUrl', 'images', 'summary', 'description', 'url', 'website',
-    'buyUrl', 'purchaseUrl', 'affiliateUrl', 'aynaMatch', 'aynaMatchPercent',
-    'matchPercent', 'matchPercentage',
-  ];
-  const out = {};
-  for (const key of keys) {
-    const value = product[key];
-    if (value !== undefined && value !== null && value !== '') out[key] = value;
-  }
-  return out;
 }
 
 export function loadSavedProducts() {
@@ -60,39 +43,15 @@ export function clearSavedProducts() {
   }
 }
 
-async function loadMetadataSaved(supabase, userId) {
-  if (!supabase || !userId) return {};
-  try {
-    const { data, error } = await supabase.auth.getUser();
-    if (error || data?.user?.id !== userId) return {};
-    const raw = data.user.user_metadata?.[META_KEY];
-    return raw && typeof raw === 'object' ? raw : {};
-  } catch {
-    return {};
-  }
-}
-
-async function writeMetadataSaved(supabase, userId, map) {
-  if (!supabase || !userId) return false;
-  try {
-    const { data, error } = await supabase.auth.getUser();
-    if (error || data?.user?.id !== userId) return false;
-    const current = data.user.user_metadata || {};
-    const { error: updateError } = await supabase.auth.updateUser({
-      data: { ...current, [META_KEY]: map || {} },
-    });
-    return !updateError;
-  } catch {
-    return false;
-  }
-}
-
-/** id -> product, merging the table with authenticated metadata fallback. */
+/** id -> product from the user_ecosystems table. */
 export async function loadSavedForUser(supabase, userId) {
   if (!supabase || !userId) return null;
-  const metadataSaved = await loadMetadataSaved(supabase, userId);
 
-  if (remoteColumnMissing) return metadataSaved;
+  try { await compactLegacyAuthMetadata(supabase); } catch (error) {
+    console.warn('[Ayna] legacy wishlist auth metadata cleanup deferred:', error?.message || error);
+  }
+
+  if (remoteColumnMissing) return null;
 
   const { data, error } = await supabase
     .from('user_ecosystems')
@@ -102,11 +61,11 @@ export async function loadSavedForUser(supabase, userId) {
 
   if (error) {
     if (isMissingColumn(error)) remoteColumnMissing = true;
-    else console.warn('[Ayna] wishlist table read unavailable; using auth fallback:', error.message || error);
-    return metadataSaved;
+    else console.warn('[Ayna] wishlist table read unavailable; keeping local copy:', error.message || error);
+    return null;
   }
 
-  const out = { ...metadataSaved };
+  const out = {};
   for (const row of data || []) {
     out[row.product_id] = row.product_data || {
       id: row.product_id,
@@ -119,20 +78,12 @@ export async function loadSavedForUser(supabase, userId) {
   return out;
 }
 
-/**
- * Set or clear a saved product. Auth metadata is written first so the user's
- * click is durable even when the table migration/RLS is not ready yet.
- */
+/** Set or clear a saved product in user_ecosystems only. */
 export async function setSavedForUser(supabase, userId, product, isSaved) {
   if (!supabase || !userId || !product?.id) return false;
+  if (remoteColumnMissing) return false;
 
-  const existing = await loadMetadataSaved(supabase, userId);
-  const nextMetadata = { ...existing };
-  if (isSaved) nextMetadata[product.id] = compactProduct(product);
-  else delete nextMetadata[product.id];
-  const metadataSaved = await writeMetadataSaved(supabase, userId, nextMetadata);
-
-  if (remoteColumnMissing) return metadataSaved;
+  try { await compactLegacyAuthMetadata(supabase); } catch (_) {}
 
   const { error } = await supabase
     .from('user_ecosystems')
@@ -153,8 +104,8 @@ export async function setSavedForUser(supabase, userId, product, isSaved) {
 
   if (error) {
     if (isMissingColumn(error)) remoteColumnMissing = true;
-    else console.warn('[Ayna] wishlist table write unavailable; auth fallback retained:', error.message || error);
-    return metadataSaved;
+    else console.warn('[Ayna] wishlist table write unavailable; local copy retained:', error.message || error);
+    return false;
   }
   return true;
 }

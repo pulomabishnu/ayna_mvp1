@@ -94,7 +94,7 @@ export function resolveCatalogProductImage(product) {
 // is always a meaningful description for a product photo, so it's the
 // default now instead of blank; an explicit alt (including "" for a
 // genuinely decorative use) still overrides it.
-export default function ProductTileImage({ product, alt, imgStyle, imgClassName, letterNode }) {
+export default function ProductTileImage({ product, alt, imgStyle, imgClassName, letterNode, loading = 'lazy' }) {
   const resolvedAlt = alt !== undefined ? alt : (product?.name || '');
   const allowBrandLogo = product?.type === 'digital';
   const initial = resolveCatalogProductImage(product);
@@ -128,7 +128,7 @@ export default function ProductTileImage({ product, alt, imgStyle, imgClassName,
       <img
         src={finalSrc}
         alt={resolvedAlt}
-        loading="lazy"
+        loading={loading}
         className={imgClassName}
         style={imgStyle}
         // A backgrounded tab can abort an in-flight/lazy image load with a

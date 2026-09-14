@@ -1,0 +1,120 @@
+/* Final health-intake referral question. Loaded last so it inherits the V6 film system. */
+.ayna-intake-question.v6-referral-active > h1,
+.ayna-intake-question.v6-referral-active > .ayna-intake-subtitle,
+.ayna-intake-question.v6-referral-active > .ayna-intake-hint,
+.ayna-intake-question.v6-referral-active > .ayna-intake-stage,
+.ayna-intake-question.v6-referral-active > .ayna-continue-wrap {
+  display: none !important;
+}
+
+.v6-referral-step {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: min(680px, 100%);
+  margin: 2px auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4px 0 2px;
+}
+
+.v6-referral-step__eyebrow {
+  margin-bottom: 9px;
+  font: 500 10px/1.2 var(--v6-film-ui, 'DM Mono', ui-monospace, monospace);
+  letter-spacing: .13em;
+  text-transform: lowercase;
+  color: #50484e;
+}
+
+.v6-referral-step h1 {
+  margin: 0;
+  max-width: 620px;
+  font: 500 clamp(31px, 3.4vw, 44px)/1.03 var(--v6-film-display, 'Jost', system-ui, sans-serif);
+  letter-spacing: -.035em;
+  color: #373238;
+}
+
+.v6-referral-step__sub {
+  margin: 8px 0 17px;
+  color: #50484e;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.v6-referral-options {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.v6-referral-option {
+  min-height: 48px;
+  padding: 10px 13px;
+  border-radius: 14px;
+  border: 1.5px solid #635a60;
+  background: rgba(207, 197, 203, .78);
+  color: #373238;
+  font-size: 12.5px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.v6-referral-option:hover,
+.v6-referral-option:focus-visible {
+  background: rgba(218, 207, 213, .95);
+  outline: none;
+}
+
+.v6-referral-option.is-selected {
+  background: #554561;
+  border-color: #554561;
+  color: #fff9f2;
+}
+
+.v6-referral-other {
+  width: 100%;
+  margin-top: 9px;
+}
+
+.v6-referral-other[hidden] { display: none !important; }
+.v6-referral-other .ayna-text-input { max-width: none !important; }
+
+.v6-referral-actions {
+  width: min(430px, 100%);
+  margin-top: 17px;
+}
+
+.v6-referral-actions .ayna-continue { min-height: 43px !important; }
+.v6-referral-actions .ayna-skip { margin-top: 8px !important; }
+
+.ayna-intake-root.v6-quiz-dark .v6-referral-step__eyebrow,
+.ayna-intake-root.v6-quiz-dark .v6-referral-step__sub {
+  color: #c7bbc3;
+}
+
+.ayna-intake-root.v6-quiz-dark .v6-referral-step h1 { color: #e8e0d7; }
+.ayna-intake-root.v6-quiz-dark .v6-referral-option {
+  background: rgba(255, 248, 242, .055);
+  border-color: #9d9297;
+  color: #e8e0d7;
+}
+.ayna-intake-root.v6-quiz-dark .v6-referral-option:hover,
+.ayna-intake-root.v6-quiz-dark .v6-referral-option:focus-visible {
+  background: rgba(255, 248, 242, .09);
+}
+.ayna-intake-root.v6-quiz-dark .v6-referral-option.is-selected {
+  background: #d0a06c;
+  border-color: #d0a06c;
+  color: #272532;
+}
+
+@media (max-width: 620px) {
+  .v6-referral-step { justify-content: flex-start; padding-top: 8px; }
+  .v6-referral-options { grid-template-columns: 1fr; gap: 7px; }
+  .v6-referral-option { min-height: 44px; }
+}
