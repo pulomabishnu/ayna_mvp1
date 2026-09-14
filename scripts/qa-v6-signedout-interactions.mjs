@@ -66,10 +66,16 @@ async function closeAuth(page) {
 async function testDesktopBrowse() {
   const page = await pageFor(1440);
   try {
-    await goto(page, '/browse');
+    // Exercise the real SPA path a visitor uses. Direct /browse was never an
+    // app route, so it could only test the harness rather than first-click nav.
+    await goto(page, '/');
+    const browse = await findVisibleTextHandle(page, /^Browse$/i);
+    assert(Boolean(browse), 'Could not find visible Browse navigation control on Home');
+    await browse.click();
     await page.waitForSelector('.ayna-browse');
-    await page.waitForSelector('.v6-browse-needs-trigger');
+    results.push('Browse opens from Home on the first physical click');
 
+    await page.waitForSelector('.v6-browse-needs-trigger');
     await page.click('.v6-browse-needs-trigger');
     await sleep(100);
     assert(await page.$eval('.ayna-browse__categories', (el) => el.classList.contains('is-open')), 'Browse by Need did not open on first click');
