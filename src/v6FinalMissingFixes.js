@@ -41,54 +41,67 @@ function clickVisibleLogin() {
   return true;
 }
 
+function clickAccountMenuLogin() {
+  const login = [...document.querySelectorAll('.nav-account-menu button')]
+    .find((node) => /^(sign in|log in)$/i.test(text(node)));
+  if (!login) return false;
+  login.click();
+  return true;
+}
+
 function fallbackToQuiz() {
   window.history.pushState({ view: 'quiz' }, '', '/quiz');
   window.dispatchEvent(new PopStateEvent('popstate', { state: { view: 'quiz' } }));
 }
 
-function clickLoginWhenRendered(timeoutMs = 1100) {
+function clickLoginWhenRendered(timeoutMs = 1100, allowHiddenAccountLogin = false) {
   if (clickVisibleLogin()) return true;
+  if (allowHiddenAccountLogin && clickAccountMenuLogin()) return true;
 
-  let finished = false;
-  const observer = new MutationObserver(() => {
-    if (finished) return;
-    if (clickVisibleLogin()) {
-      finished = true;
-      observer.disconnect();
+  const started = Date.now();
+  const tryAgain = () => {
+    if (clickVisibleLogin()) return;
+    if (allowHiddenAccountLogin && clickAccountMenuLogin()) return;
+    if (Date.now() - started >= timeoutMs) {
+      fallbackToQuiz();
+      return;
     }
-  });
-  observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style'] });
-
-  window.setTimeout(() => {
-    if (finished) return;
-    finished = true;
-    observer.disconnect();
-    if (!clickVisibleLogin()) fallbackToQuiz();
-  }, timeoutMs);
+    window.setTimeout(tryAgain, 40);
+  };
+  window.setTimeout(tryAgain, 0);
   return false;
 }
 
 function openRealSignIn() {
   if (clickVisibleLogin()) return;
 
-  // Desktop: only use an account control that is actually visible. The DOM
-  // contains a desktop-only account button at mobile widths, and clicking that
-  // hidden node was the reason Ask ayna appeared dead on a phone.
-  const account = [...document.querySelectorAll('.app-nav__circle--account, [aria-label*="account" i]')]
+  // Desktop uses the visible account control and the real App.jsx Log in
+  // handler. Keep this path visually identical to a normal visitor action.
+  const visibleAccount = [...document.querySelectorAll('.app-nav__circle--account, [aria-label*="account" i]')]
     .find(isVisible);
-  if (account) {
-    account.click();
+  if (visibleAccount) {
+    visibleAccount.click();
     clickLoginWhenRendered();
     return;
   }
 
-  // Mobile: React mounts the drawer after the hamburger click. Observe for the
-  // real Log in control and click it the moment it exists instead of relying on
-  // a timing guess. This preserves the app's actual auth modal/state.
+  // At mobile widths the desktop account control still exists in React but is
+  // CSS-hidden. Triggering it programmatically is more reliable than opening a
+  // transient drawer, and the Log in button it mounts still runs the exact real
+  // App.jsx auth handler. No fake modal/state is created here.
+  const account = document.querySelector('.app-nav__circle--account, [aria-label*="account" i]');
+  if (account) {
+    account.click();
+    clickLoginWhenRendered(1100, true);
+    return;
+  }
+
+  // Fallback for layouts that genuinely omit the account control: use the real
+  // mobile drawer and wait for its real Log in action to mount.
   const mobileMenu = [...document.querySelectorAll('.mobile-menu-btn')].find(isVisible);
   if (mobileMenu) {
-    clickLoginWhenRendered();
     mobileMenu.click();
+    clickLoginWhenRendered();
     return;
   }
 
