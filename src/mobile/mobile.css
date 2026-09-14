@@ -33,6 +33,12 @@
      reused inside the mobile app, instead of falling back to default blue. */
   --color-primary: #FFC774;
 
+  /* Grows OrbHero.jsx's orb+chips on wider phones instead of it looking
+     small in a lot of empty gradient — never below 1 (the size it was
+     designed/tested at), capped so chips never crowd off the sides of a
+     narrow phone even at a wide viewport. */
+  --ayna-orb-scale: clamp(1, calc(100vw / 320), 1.32);
+
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -90,15 +96,18 @@
 @keyframes ay-pixelate { 0% { opacity: .15; filter: blur(6px) saturate(0); transform: scale(.94); } 60% { opacity: .7; filter: blur(2px) saturate(.6); transform: scale(.98); } 100% { opacity: 1; filter: blur(0) saturate(1); transform: scale(1); } }
 @keyframes ay-orbit-path { from { offset-distance: 0%; } to { offset-distance: 100%; } }
 
-/* Landing screen's three signal chips traveling around the "you" orb —
-   coordinates are pixel values within the 232x222 circle container in
-   LandingScreen.jsx (center ~116,111), so the two must be edited together. */
+/* OrbHero's three signal chips traveling around the "you" orb — coordinates
+   are pixel values within OrbHero.jsx's 250x240 container (center 125,120),
+   so the two files must be edited together. offset-path is plain SVG path
+   syntax (no %/calc/var support), so it can't be made responsive on its
+   own — OrbHero scales the whole assembly, path included, with a uniform
+   CSS transform instead (see --ayna-orb-scale below). */
 .ayna-mobile .ayna-orbiter {
   position: absolute;
   top: 0;
   left: 0;
   z-index: 1;
-  offset-path: path("M 212,111 A 96,89 0 1,1 20,111 A 96,89 0 1,1 212,111");
+  offset-path: path("M 229,120 A 104,96 0 1,1 21,120 A 104,96 0 1,1 229,120");
   offset-rotate: 0deg;
   animation: ay-orbit-path 34s linear infinite;
 }

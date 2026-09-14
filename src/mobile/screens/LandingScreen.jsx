@@ -1,3 +1,5 @@
+import OrbHero from '../components/OrbHero.jsx';
+
 export default function LandingScreen({ onStartQuiz, onBrowse }) {
   return (
     <div
@@ -80,67 +82,7 @@ export default function LandingScreen({ onStartQuiz, onBrowse }) {
           padding: '0 26px',
         }}
       >
-        <div
-          style={{
-            position: 'relative',
-            width: 232,
-            height: 222,
-            marginBottom: 20,
-          }}
-        >
-          <div
-            style={{
-              position: 'absolute',
-              left: '50%',
-              top: '50%',
-              width: 210,
-              height: 210,
-              margin: '-105px 0 0 -105px',
-              borderRadius: '50%',
-              background: 'radial-gradient(circle,rgba(255,199,116,.5),rgba(255,199,116,0) 68%)',
-              animation: 'ay-breathe 7s ease-in-out infinite',
-            }}
-          />
-          <div
-            style={{
-              position: 'absolute',
-              left: '50%',
-              top: '50%',
-              width: 116,
-              height: 116,
-              margin: '-58px 0 0 -58px',
-              borderRadius: '50%',
-              background: 'radial-gradient(circle at 34% 28%,#FFDCA8,#FFC774 46%,#E8843C)',
-              boxShadow: '0 22px 46px -14px rgba(255,150,60,.7)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              animation: 'ay-breathe 5s ease-in-out infinite',
-            }}
-          >
-            <div style={{ fontFamily: "'Playfair Display',serif", fontStyle: 'italic', fontSize: 'calc(22px * var(--ayna-text-scale, 1))', color: '#3A2547' }}>
-              you
-            </div>
-          </div>
-          <div className="ayna-orbiter" style={{ animationDelay: '0s' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 7, background: '#FFFCF9', borderRadius: 99, padding: '9px 14px', boxShadow: '0 10px 26px rgba(36,27,56,.3)', whiteSpace: 'nowrap' }}>
-              <div style={{ width: 7, height: 7, borderRadius: 99, background: '#E8943F', flex: 'none' }} />
-              <div style={{ fontSize: 11, fontWeight: 600, color: '#292524' }}>Preferences</div>
-            </div>
-          </div>
-          <div className="ayna-orbiter" style={{ animationDelay: '-11.33s' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 7, background: '#FFFCF9', borderRadius: 99, padding: '9px 14px', boxShadow: '0 10px 26px rgba(36,27,56,.3)', whiteSpace: 'nowrap' }}>
-              <div style={{ width: 7, height: 7, borderRadius: 99, background: '#E8943F', flex: 'none' }} />
-              <div style={{ fontSize: 11, fontWeight: 600, color: '#292524' }}>Health history</div>
-            </div>
-          </div>
-          <div className="ayna-orbiter" style={{ animationDelay: '-22.66s' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 7, background: '#FFFCF9', borderRadius: 99, padding: '9px 14px', boxShadow: '0 10px 26px rgba(36,27,56,.3)', whiteSpace: 'nowrap' }}>
-              <div style={{ width: 7, height: 7, borderRadius: 99, background: '#E8943F', flex: 'none' }} />
-              <div style={{ fontSize: 11, fontWeight: 600, color: '#292524' }}>Goals</div>
-            </div>
-          </div>
-        </div>
+        <OrbHero />
         <div
           style={{
             fontFamily: "'Playfair Display',serif",
