@@ -27,7 +27,7 @@ jobs:
           node scripts/apply-privacy-lint-cleanups.mjs
           node scripts/restore-search-test-coverage.mjs
           node scripts/update-catalog-cache-test.mjs
-      - name: Sync latest non-conflicting mobile UI changes
+      - name: Sync latest mobile UI and shared website catalog
         run: |
           git fetch origin mobile-app:refs/remotes/origin/mobile-app
           git checkout origin/mobile-app -- \
@@ -40,6 +40,7 @@ jobs:
             src/mobile/screens/LandingScreen.jsx \
             src/mobile/utils/askAynaChipPosition.js
           node scripts/apply-latest-mobile-sync.mjs
+          node scripts/apply-shared-website-catalog.mjs
       - name: Inspect working tree
         run: |
           git diff --check
@@ -75,7 +76,7 @@ jobs:
             src/data/products.personalization.test.js
       - name: Production web build
         run: npm run build
-      - name: Privacy changed-files lint
+      - name: Privacy and shared-catalog lint
         run: |
           npx eslint \
             api/_appleSignIn.js \
@@ -83,7 +84,10 @@ jobs:
             api/account-delete.js \
             api/apple-token.js \
             api/export-data.js \
+            src/App.jsx \
             src/components/AuthGate.jsx \
+            src/components/AynaLanding.jsx \
+            src/components/Discovery.jsx \
             src/main.jsx \
             src/mobile/MobileApp.jsx \
             src/mobile/components/AiConsentPrompt.jsx \
@@ -110,7 +114,10 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add \
             .env.example \
+            src/App.jsx \
             src/components/AuthGate.jsx \
+            src/components/AynaLanding.jsx \
+            src/components/Discovery.jsx \
             src/mobile/components/AskAynaChip.jsx \
             src/mobile/components/OrbHero.jsx \
             src/mobile/hooks/usePersonalizedFeed.js \
@@ -130,7 +137,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "No generated patch changes to commit."
           else
-            git commit -m "sync: latest mobile UI with privacy compliance"
+            git commit -m "sync: share live catalog across web and iOS"
             git push origin HEAD:privacy/apple-app-store-compliance
           fi
 
@@ -147,7 +154,7 @@ jobs:
         run: |
           node scripts/apply-apple-token-revocation-patch.mjs
           node scripts/apply-privacy-lint-cleanups.mjs
-      - name: Sync latest non-conflicting mobile UI changes
+      - name: Sync latest mobile UI and shared website catalog
         run: |
           git fetch origin mobile-app:refs/remotes/origin/mobile-app
           git checkout origin/mobile-app -- \
@@ -160,6 +167,7 @@ jobs:
             src/mobile/screens/LandingScreen.jsx \
             src/mobile/utils/askAynaChipPosition.js
           node scripts/apply-latest-mobile-sync.mjs
+          node scripts/apply-shared-website-catalog.mjs
       - name: Build web bundle and sync Capacitor
         run: |
           npm run build
