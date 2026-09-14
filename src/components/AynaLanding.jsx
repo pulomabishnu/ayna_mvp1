@@ -1,64 +1,78 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
+import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import '../v6Real.css';
-import '../v6CanvaHome.css';
-import '../v6CanvaTextHome.css';
 
-const NEEDS = [
-  ['Periods', 'period care'],
-  ['Hormones + PCOS', 'hormones pcos'],
-  ['Vaginal health', 'vaginal health'],
-  ['UTI support', 'uti support'],
-  ['Fertility', 'fertility'],
-  ['Pregnancy + postpartum', 'pregnancy postpartum'],
-  ['Pelvic health', 'pelvic health'],
-  ['Menopause', 'menopause'],
-  ['Sleep + energy', 'sleep energy'],
-  ['Skin + hair', 'skin hair'],
-  ['Gut health', 'gut health'],
-  ['Sexual wellness', 'sexual wellness'],
+const CARE_AREAS = [
+  { label: 'Period care', query: 'period care', terms: ['period', 'pad', 'tampon', 'menstrual', 'cramp'] },
+  { label: 'PCOS', query: 'PCOS', terms: ['pcos', 'inositol', 'spearmint', 'hormone'] },
+  { label: 'Vaginal health', query: 'vaginal health', terms: ['vaginal', 'intimate', 'bv', 'yeast', 'dryness'] },
+  { label: 'UTI support', query: 'UTI support', terms: ['uti', 'urinary', 'bladder', 'd-mannose', 'cranberry'] },
+  { label: 'Fertility', query: 'fertility', terms: ['fertility', 'ovulation', 'conception'] },
+  { label: 'Pelvic health', query: 'pelvic health', terms: ['pelvic', 'kegel', 'floor', 'dilator'] },
+  { label: 'Pregnancy', query: 'pregnancy', terms: ['pregnancy', 'prenatal', 'maternity'] },
+  { label: 'Postpartum', query: 'postpartum', terms: ['postpartum', 'nursing', 'breastfeeding', 'recovery'] },
+  { label: 'Menopause', query: 'menopause', terms: ['menopause', 'perimenopause', 'hot flash', 'dryness'] },
+  { label: 'Sleep + energy', query: 'sleep and energy', terms: ['sleep', 'fatigue', 'energy', 'melatonin'] },
+  { label: 'Skin + hair', query: 'skin and hair', terms: ['skin', 'hair', 'acne', 'hair loss'] },
+  { label: 'Gut health', query: 'gut health', terms: ['gut', 'digestive', 'probiotic', 'bloating'] },
 ];
 
-const QUICK = ['period care', 'PCOS', 'vaginal health', 'bloating'];
-
-const TRUST = [
-  ['01', 'Personal to you', 'Discovery can use your health needs, goals, life stage, and preferences when you choose to personalize.'],
-  ['02', 'Evidence in context', 'See research, safety information, and useful context without turning product discovery into a diagnosis.'],
-  ['03', 'Partnerships labeled', 'Commercial relationships are identified and do not determine your personalized Health Match.'],
-  ['04', 'Your health stays yours', 'Sensitive health information is treated differently from ordinary browsing and product analytics.'],
+const QUICK_CATEGORIES = [
+  'period care', 'PCOS', 'vaginal health', 'UTI support',
+  'fertility', 'pregnancy', 'postpartum', 'perimenopause',
+  'menopause', 'pelvic health', 'sleep + energy', 'skin + hair',
+  'gut health', 'cycle mood', 'sexual wellness', 'provider matching',
 ];
+
+function firstName(user) {
+  const meta = user?.user_metadata || {};
+  const raw = meta.first_name || meta.firstName || meta.given_name || meta.full_name || meta.name || '';
+  return String(raw).trim().split(/\s+/).filter(Boolean)[0] || '';
+}
+
+function textFor(product) {
+  return [
+    product?.name,
+    product?.brand,
+    product?.brandName,
+    product?.category,
+    product?.summary,
+    product?.description,
+    ...(Array.isArray(product?.tags) ? product.tags : []),
+  ].filter(Boolean).join(' ').toLowerCase();
+}
 
 function uniqueProducts(products) {
   const seen = new Set();
   return products.filter((product) => {
-    if (!product?.name) return false;
-    const key = product?.id || `${product?.brand || product?.brandName || ''}:${product.name}`;
-    if (seen.has(key)) return false;
+    const key = product?.id || `${product?.brand || ''}:${product?.name || ''}`;
+    if (!product?.name || seen.has(key)) return false;
     seen.add(key);
     return true;
   });
 }
 
-function matchPercent(product) {
+function productById(id) {
+  return ALL_PRODUCTS.find((product) => product?.id === id) || null;
+}
+
+function hasImage(product) {
+  return Boolean(
+    product?.image || product?.imageUrl || product?.image_url || product?.thumbnail ||
+    (Array.isArray(product?.images) && product.images.length)
+  );
+}
+
+function categoryLabel(product) {
+  return CATEGORY_LABELS[product?.category] || product?.category || 'ayna pick';
+}
+
+function scoreFor(product) {
   const raw = product?.matchPercentage ?? product?.matchScore ?? product?.score;
   if (typeof raw !== 'number' || !Number.isFinite(raw)) return null;
   const normalized = raw <= 1 ? Math.round(raw * 100) : Math.round(raw);
   return Math.max(0, Math.min(100, normalized));
-}
-
-function priceText(product) {
-  const value = product?.priceDisplay ?? product?.displayPrice ?? product?.price ?? product?.price_text;
-  if (value == null || value === '') return '';
-  if (typeof value === 'number') return `$${value.toFixed(2)}`;
-  return String(value);
-}
-
-function brandText(product) {
-  return product?.brand || product?.brandName || product?.manufacturer || 'ayna';
-}
-
-function categoryText(product) {
-  return CATEGORY_LABELS?.[product?.category] || String(product?.category || 'women’s health').replace(/[-_]/g, ' ');
 }
 
 function discoveryTargetFor(value) {
@@ -68,10 +82,23 @@ function discoveryTargetFor(value) {
   if (q.includes('pad')) return { query, initialCategory: 'pad' };
   if (q.includes('tampon')) return { query, initialCategory: 'tampon' };
   if (q.includes('cup')) return { query, initialCategory: 'cup' };
-  if (q.includes('pcos') || q.includes('hormon')) return { query, initialMacroGroup: 'hormones' };
+  if (q.includes('pcos')) return { query, initialMacroGroup: 'hormones' };
   if (q.includes('fertil') || q.includes('ovulation')) return { query, initialMacroGroup: 'fertility' };
   if (q.includes('pelvic')) return { query, initialMacroGroup: 'pelvic' };
   return query;
+}
+
+function ProductVisual({ product, compact = false }) {
+  return (
+    <div className={`v6-product-visual${compact ? ' compact' : ''}`}>
+      <ProductTileImage
+        product={product}
+        alt={product?.name || ''}
+        imgStyle={{ width: '100%', height: '100%', objectFit: 'contain' }}
+        letterNode={<ProductImageFallback />}
+      />
+    </div>
+  );
 }
 
 function SearchIcon() {
@@ -83,19 +110,35 @@ function SearchIcon() {
   );
 }
 
-function TextProductCard({ product, user, onOpenProduct }) {
-  if (!product) return null;
-  const score = user ? matchPercent(product) : null;
+function LockIcon() {
   return (
-    <button type="button" className="cth-product" onClick={() => onOpenProduct?.(product)}>
-      <p className="cth-product__brand">{brandText(product)}</p>
-      <h3>{product.name}</h3>
-      {priceText(product) && <p className="cth-product__price">{priceText(product)}</p>}
-      <div className="cth-product__bottom">
-        <span className="cth-product__category">{categoryText(product)}</span>
-        {score != null && <span className="cth-product__match" aria-label={`${score}% Health Match`}>{score}%</span>}
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.45" aria-hidden="true">
+      <rect x="6.5" y="10.5" width="11" height="8.5" rx="2" />
+      <path d="M9 10.5V8a3 3 0 0 1 6 0v2.5" />
+    </svg>
+  );
+}
+
+function triggerExistingSignIn(fallback) {
+  const buttons = Array.from(document.querySelectorAll('button'));
+  const target = buttons.find((button) => /^sign\s*in$/i.test(String(button.textContent || '').trim()));
+  if (target) target.click();
+  else fallback?.();
+}
+
+function UnlockCard({ onStartQuiz }) {
+  return (
+    <div className="v6-unlock-card v6-unlock-card--slim" role="dialog" aria-label="Unlock personalized results">
+      <span className="v6-unlock-icon"><LockIcon /></span>
+      <div className="v6-unlock-copy">
+        <strong>sign in to unlock personalized results.</strong>
+        <span>save picks, see your ayna score, and open your health universe.</span>
       </div>
-    </button>
+      <div className="v6-unlock-actions">
+        <button type="button" className="primary" onClick={() => triggerExistingSignIn(onStartQuiz)}>sign in</button>
+        <button type="button" onClick={onStartQuiz}>build my ecosystem</button>
+      </div>
+    </div>
   );
 }
 
@@ -108,26 +151,78 @@ export default function AynaLanding({
   myProducts,
   ecosystemCount = 0,
   hasProfile = false,
+  profileCategories,
   recommendedProductIds = [],
   initialCategory = null,
 }) {
   const [query, setQuery] = useState('');
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [cabinetOpen, setCabinetOpen] = useState(false);
+  const [seed, setSeed] = useState(() => Math.floor(Math.random() * 10000));
+  const [quickOffset, setQuickOffset] = useState(0);
+  const [quickPaused, setQuickPaused] = useState(false);
+  const [reduceMotion, setReduceMotion] = useState(false);
+  const [exploreOffset, setExploreOffset] = useState(0);
 
-  const owned = useMemo(() => Object.values(myProducts || {}).filter(Boolean), [myProducts]);
-  const recommended = useMemo(() => {
-    const byId = new Map(ALL_PRODUCTS.map((product) => [product?.id, product]));
-    return (recommendedProductIds || []).map((id) => byId.get(id)).filter(Boolean);
-  }, [recommendedProductIds]);
-  const products = useMemo(() => uniqueProducts([...recommended, ...owned, ...ALL_PRODUCTS]), [recommended, owned]);
-  const featured = products.slice(0, 4);
-  const previewProduct = recommended[0] || owned[0] || featured[0] || null;
-  const previewScore = user ? matchPercent(previewProduct) : null;
-  const personalizedUnlocked = Boolean(user && (hasProfile || ecosystemCount > 0 || recommendedProductIds?.length));
+  useEffect(() => {
+    const timer = window.setTimeout(() => setCabinetOpen(true), 150);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const media = window.matchMedia?.('(prefers-reduced-motion: reduce)');
+    if (!media) return undefined;
+    const sync = () => setReduceMotion(media.matches);
+    sync();
+    media.addEventListener?.('change', sync);
+    return () => media.removeEventListener?.('change', sync);
+  }, []);
+
+  useEffect(() => {
+    if (quickPaused || reduceMotion) return undefined;
+    const timer = window.setInterval(() => {
+      setQuickOffset((current) => (current + 4) % QUICK_CATEGORIES.length);
+    }, 3000);
+    return () => window.clearInterval(timer);
+  }, [quickPaused, reduceMotion]);
 
   useEffect(() => {
     if (!initialCategory) return;
-    onViewDiscovery?.(discoveryTargetFor(initialCategory));
+    const area = CARE_AREAS.find((item) => item.query.toLowerCase().includes(String(initialCategory).toLowerCase()));
+    if (area) onViewDiscovery?.(discoveryTargetFor(area.query));
   }, [initialCategory, onViewDiscovery]);
+
+  const owned = useMemo(() => Object.values(myProducts || {}), [myProducts]);
+  const recommended = useMemo(
+    () => (recommendedProductIds || []).map(productById).filter(Boolean),
+    [recommendedProductIds],
+  );
+  const pool = useMemo(() => uniqueProducts([...owned, ...recommended, ...ALL_PRODUCTS]), [owned, recommended]);
+  const visualPool = useMemo(() => {
+    const visual = pool.filter(hasImage);
+    return visual.length >= 8 ? visual : pool;
+  }, [pool]);
+
+  const cabinetProducts = useMemo(() => {
+    const priority = uniqueProducts([...owned.filter(hasImage), ...recommended.filter(hasImage), ...visualPool]);
+    return [priority[0], priority[2], priority[4], priority[6]].filter(Boolean).slice(0, 4);
+  }, [owned, recommended, visualPool]);
+  const selected = cabinetProducts[selectedIndex] || cabinetProducts[0] || visualPool[0] || null;
+
+  const visibleAreas = useMemo(() => Array.from({ length: 6 }, (_, index) => (
+    CARE_AREAS[(exploreOffset + index) % CARE_AREAS.length]
+  )), [exploreOffset]);
+
+  const categoryCards = useMemo(() => visibleAreas.map((area, index) => {
+    const matches = visualPool.filter((product) => area.terms.some((term) => textFor(product).includes(term)));
+    const source = matches.length ? matches : visualPool;
+    const product = source.length ? source[(seed + index * 7) % source.length] : null;
+    return { ...area, product };
+  }), [visibleAreas, visualPool, seed]);
+
+  const quickLinks = useMemo(() => Array.from({ length: 4 }, (_, index) => (
+    QUICK_CATEGORIES[((reduceMotion ? 0 : quickOffset) + index) % QUICK_CATEGORIES.length]
+  )), [quickOffset, reduceMotion]);
 
   const submitSearch = (event) => {
     event.preventDefault();
@@ -135,147 +230,110 @@ export default function AynaLanding({
     onViewDiscovery?.(discoveryTargetFor(query));
   };
 
-  const goTo = (path) => window.location.assign(path);
+  const refreshExplore = () => {
+    setExploreOffset((current) => (current + 6) % CARE_AREAS.length);
+    setSeed((current) => (current + 137 + Math.floor(Math.random() * 997)) % 100000);
+  };
+
+  const name = firstName(user);
+  const selectedScore = selected ? scoreFor(selected) : null;
+  const personalizedUnlocked = Boolean(user && (hasProfile || ecosystemCount > 0 || recommendedProductIds?.length));
 
   return (
-    <main className="canva-text-home">
-      <section className="cth-frame cth-hero cth-paper">
-        <div className="cth-hero__copy">
-          <p className="cth-kicker">personalized women&apos;s health</p>
-          <h1 className="cth-display">women&apos;s health, made for you.</h1>
-          <p className="cth-hero__lede">Find products, care, and support that make sense for your body, your goals, and your everyday life.</p>
+    <main className="v6-home-shell">
+      <section className="v6-home-hero">
+        <div className="v6-eyebrow">personalized women&apos;s health</div>
+        <h1>women&apos;s health, made for <em>you.</em></h1>
+        <p>Find products, care, and support that make sense for your body, your goals, and your everyday life.</p>
 
-          <form className="cth-search" onSubmit={submitSearch} role="search">
-            <SearchIcon />
-            <input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search products, symptoms, goals, or health needs"
-              aria-label="Search ayna"
-            />
-            <button type="submit">search</button>
-          </form>
+        <form className="v6-home-search" onSubmit={submitSearch}>
+          <SearchIcon />
+          <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search period care, PCOS, UTI support, sleep…" aria-label="Search ayna" />
+          <button type="submit" aria-label="Search">→</button>
+        </form>
 
-          <div className="cth-quick" aria-label="Popular searches">
-            {QUICK.map((item) => (
-              <button key={item} type="button" onClick={() => onViewDiscovery?.(discoveryTargetFor(item))}>{item}</button>
-            ))}
-          </div>
-        </div>
-        <p className="cth-hero__note">one place to start, instead of forty-seven tabs.</p>
-      </section>
-
-      <section className="cth-frame cth-statement cth-film">
-        <p className="cth-kicker">less searching, more clarity</p>
-        <h2 className="cth-display">health shopping should feel personal, not impossible.</h2>
-      </section>
-
-      <section className="cth-section">
-        <div className="cth-section-head">
-          <div>
-            <p className="cth-kicker">start where you are</p>
-            <h2 className="cth-display">what do you need help with?</h2>
-          </div>
-          <p>Browse by the health need that matters today. No giant catalog wall, no clinical portal, no guessing where to begin.</p>
-        </div>
-        <div className="cth-needs" aria-label="Browse health needs">
-          {NEEDS.map(([label, value], index) => (
-            <button key={label} type="button" className="cth-need" onClick={() => onViewDiscovery?.(discoveryTargetFor(value))}>
-              <span>{label}</span>
-              <span>{String(index + 1).padStart(2, '0')} · explore</span>
-            </button>
+        <div
+          className="v6-quick-links v6-quick-links--rotating"
+          onMouseEnter={() => setQuickPaused(true)}
+          onMouseLeave={() => setQuickPaused(false)}
+          onFocus={() => setQuickPaused(true)}
+          onBlur={() => setQuickPaused(false)}
+          aria-label="Popular health categories"
+          aria-live="off"
+        >
+          {quickLinks.map((label) => (
+            <button key={`${quickOffset}-${label}`} type="button" onClick={() => onViewDiscovery?.(discoveryTargetFor(label))}>{label}</button>
           ))}
         </div>
       </section>
 
-      <section className="cth-section" style={{ paddingTop: 0 }}>
-        <div className="cth-personal">
-          <div className="cth-personal__copy">
-            <p className="cth-kicker">made around you</p>
-            <h2 className="cth-display">personalized discovery, without the noise.</h2>
-            <p>Build your health profile to make Browse more relevant to your needs, life stage, goals, sensitivities, budget, and preferences.</p>
-            <button type="button" className="cth-primary" onClick={onStartQuiz}>{user ? 'update my health profile' : 'build my health profile'}</button>
+      <section className={`v6-cabinet-zone${personalizedUnlocked ? '' : ' is-locked'}`}>
+        <div className="v6-cabinet-copy">
+          <div className="v6-eyebrow">your health cabinet</div>
+          <h2>{user ? <>hi, {name || 'there'},<br/><em>here&apos;s your ecosystem</em></> : <>your cabinet,<br/><em>made around you.</em></>}</h2>
+          <p>A small shelf of personalized picks, made around your health profile and preferences.</p>
+          <button type="button" onClick={user ? onStartQuiz : () => triggerExistingSignIn(onStartQuiz)}>{user ? 'edit my preferences' : 'sign in to personalize'}</button>
+          <span className="v6-scribble">less guessing,<br/>more you ♡</span>
+        </div>
+
+        <div className={`v6-wood-cabinet${cabinetOpen ? ' is-open' : ''}`}>
+          <div className="v6-cabinet-door left"><span>ayna</span></div>
+          <div className="v6-cabinet-door right"><span>made for you</span></div>
+          <div className="v6-cabinet-topper"><i/><span>ayna health cabinet</span><i/></div>
+          <div className="v6-cabinet-grid">
+            {cabinetProducts.map((product, index) => (
+              <button
+                type="button"
+                key={`${product?.id || product?.name}-${index}`}
+                className={`v6-shelf-product${index === selectedIndex ? ' is-active' : ''}`}
+                onClick={() => setSelectedIndex(index)}
+                aria-label={`Select ${product?.name || 'product'}`}
+              >
+                <ProductVisual product={product} />
+                <span>{product?.name}</span>
+              </button>
+            ))}
           </div>
-          <div className="cth-personal__ui">
-            <div className="cth-match">
-              <p className="cth-match__eyebrow">your health match</p>
-              <div className="cth-match__top">
-                <h3>{previewProduct?.name || 'your personalized matches'}</h3>
-                {personalizedUnlocked && previewScore != null && <div className="cth-match__score">{previewScore}%</div>}
-              </div>
-              <div className="cth-match__rule" />
-              <div className="cth-match__meta">
-                <div><small>brand</small><strong>{previewProduct ? brandText(previewProduct) : 'matched for you'}</strong></div>
-                <div><small>category</small><strong>{previewProduct ? categoryText(previewProduct) : 'based on your profile'}</strong></div>
-              </div>
-              <p className="cth-match__locked">{personalizedUnlocked ? 'Your Match is based on the health information and preferences you chose to share.' : 'Sign in and build your health profile to unlock real Match percentages.'}</p>
+          <div className="v6-cabinet-drawers"><span><i/></span><span><i/></span><span><i/></span></div>
+        </div>
+
+        <div className="v6-product-bubble">
+          <div className="v6-bubble-product"><ProductVisual product={selected} /></div>
+          <div className="v6-bubble-copy">
+            <div className="v6-eyebrow">selected for you</div>
+            <h3>{selected?.name || 'your match'}</h3>
+            <p>{selected?.summary || selected?.description || 'A personalized match based on your health profile and preferences.'}</p>
+            <div className="v6-bubble-tags"><span>personalized</span><span>evidence context</span></div>
+            {personalizedUnlocked && selectedScore != null && <div className="v6-bubble-score">your ayna score · {selectedScore}/100</div>}
+            <div className="v6-bubble-actions">
+              <button type="button" className="primary" onClick={() => selected && onOpenProduct?.(selected)}>view product →</button>
+              <button type="button" aria-label="Open ecosystem" onClick={onViewEcosystem}>♡</button>
             </div>
           </div>
         </div>
+
+        {!personalizedUnlocked && <div className="v6-cabinet-lock"><UnlockCard onStartQuiz={onStartQuiz} /></div>}
       </section>
 
-      <section className="cth-section cth-shop">
-        <div className="cth-shop__head">
+      <section className="v6-explore">
+        <div className="v6-section-head">
           <div>
-            <p className="cth-kicker">from the marketplace</p>
-            <h2 className="cth-display">a few places to start.</h2>
+            <div className="v6-eyebrow">explore by need</div>
+            <h2>find your way in, <em>fast.</em></h2>
           </div>
-          <button type="button" onClick={() => onViewDiscovery?.('')}>browse all products</button>
+          <div className="v6-explore-meta">
+            <p>Browse real ayna products by the health need that matters to you.</p>
+            <button type="button" className="v6-explore-refresh" onClick={refreshExplore} aria-label="Refresh health categories">↻ refresh</button>
+          </div>
         </div>
-        <div className="cth-products">
-          {featured.map((product) => (
-            <TextProductCard key={product?.id || product?.name} product={product} user={user} onOpenProduct={onOpenProduct} />
+
+        <div className="v6-category-grid">
+          {categoryCards.map((card) => (
+            <button type="button" className="v6-category-card" key={card.label} onClick={() => onViewDiscovery?.(discoveryTargetFor(card.query))}>
+              <div className="v6-category-media">{card.product && <ProductVisual product={card.product} compact />}</div>
+              <div><strong>{card.label}</strong><small>{card.product ? card.product.name : categoryLabel(card.product)}</small><em>explore →</em></div>
+            </button>
           ))}
-        </div>
-      </section>
-
-      <section className="cth-frame cth-statement cth-film">
-        <p className="cth-kicker">the point</p>
-        <h2 className="cth-display">your health shouldn&apos;t require 47 tabs.</h2>
-      </section>
-
-      <section className="cth-section" style={{ paddingBottom: 0 }}>
-        <div className="cth-ecosystem">
-          <div className="cth-ecosystem__copy">
-            <p className="cth-kicker">my ecosystem</p>
-            <h2 className="cth-display">your health, in one place.</h2>
-            <p>Keep what you use, what you saved, what you&apos;re considering, and what ayna recommends together without turning your health into a dashboard.</p>
-          </div>
-          <div className="cth-ecosystem__panel">
-            <div className="cth-stat"><small>in your ecosystem</small><strong>{user ? `${ecosystemCount} ${ecosystemCount === 1 ? 'item' : 'items'}` : 'sign in to build yours'}</strong></div>
-            <div className="cth-stat"><small>personalization</small><strong>{hasProfile ? 'health profile connected' : 'ready when you are'}</strong></div>
-            <div className="cth-stat"><small>your starting point</small><strong>save now, evolve later</strong></div>
-            <div className="cth-baseline">Your products and recommendations can change with you. Your baseline gives you something useful to come back to.</div>
-            <button type="button" className="cth-secondary" onClick={user ? onViewEcosystem : onStartQuiz}>{user ? 'open my ecosystem' : 'save my starting point'}</button>
-          </div>
-        </div>
-      </section>
-
-      <section className="cth-section">
-        <div className="cth-section-head">
-          <div>
-            <p className="cth-kicker">why trust ayna</p>
-            <h2 className="cth-display">clearer by design.</h2>
-          </div>
-          <p>Personalized does not mean paid-first. Health Match stays separate from commercial partnerships.</p>
-        </div>
-        <div className="cth-trust">
-          {TRUST.map(([number, title, copy]) => (
-            <article key={number}><span>{number}</span><h3>{title}</h3><p>{copy}</p></article>
-          ))}
-        </div>
-      </section>
-
-      <section className="cth-frame cth-about cth-film">
-        <div className="cth-about__grid">
-          <div>
-            <p className="cth-kicker">about ayna</p>
-            <h2 className="cth-display">women&apos;s health should feel less fragmented.</h2>
-          </div>
-          <div>
-            <p>ayna brings product discovery, care, education, and your own health context into one place so finding what fits you feels simpler.</p>
-            <button type="button" onClick={() => goTo('/about')}>about ayna</button>
-          </div>
         </div>
       </section>
     </main>
