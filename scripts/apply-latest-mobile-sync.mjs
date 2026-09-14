@@ -10,22 +10,28 @@ function replaceOnce(text, before, after, label) {
 
 // Merge the latest mobile-app's persistent "For You" state and Ask Ayna chip
 // navigation reset into the privacy-hardened MobileApp without replacing the
-// privacy catalog/auth/consent changes in this file.
+// privacy catalog/auth/consent changes in this file. Each check is deliberately
+// feature-based rather than adjacency-based so later hooks (for example push
+// notifications) can sit between these imports/state declarations safely.
 {
   const path = 'src/mobile/MobileApp.jsx';
   let text = read(path);
-  text = replaceOnce(
-    text,
-    "import { useThemeMode } from './hooks/useThemeMode.js';\nimport { useTextSize } from './hooks/useTextSize.js';",
-    "import { useThemeMode } from './hooks/useThemeMode.js';\nimport { usePersonalizedFeed } from './hooks/usePersonalizedFeed.js';\nimport { useTextSize } from './hooks/useTextSize.js';",
-    'MobileApp personalized hook import'
-  );
-  text = replaceOnce(
-    text,
-    "  const { theme, resolvedTheme, setThemeMode } = useThemeMode();\n  const { textSizeIndex, setTextSizeIndex, textScale } = useTextSize();",
-    "  const { theme, resolvedTheme, setThemeMode } = useThemeMode();\n  const [personalized, setPersonalized] = usePersonalizedFeed();\n  const { textSizeIndex, setTextSizeIndex, textScale } = useTextSize();",
-    'MobileApp personalized hook state'
-  );
+  if (!text.includes("import { usePersonalizedFeed } from './hooks/usePersonalizedFeed.js';")) {
+    text = replaceOnce(
+      text,
+      "import { useThemeMode } from './hooks/useThemeMode.js';",
+      "import { useThemeMode } from './hooks/useThemeMode.js';\nimport { usePersonalizedFeed } from './hooks/usePersonalizedFeed.js';",
+      'MobileApp personalized hook import'
+    );
+  }
+  if (!text.includes('const [personalized, setPersonalized] = usePersonalizedFeed();')) {
+    text = replaceOnce(
+      text,
+      "  const { theme, resolvedTheme, setThemeMode } = useThemeMode();",
+      "  const { theme, resolvedTheme, setThemeMode } = useThemeMode();\n  const [personalized, setPersonalized] = usePersonalizedFeed();",
+      'MobileApp personalized hook state'
+    );
+  }
   text = replaceOnce(
     text,
     "        theme={theme}\n        onToggleTheme={setThemeMode}\n        products={browseProducts}",
