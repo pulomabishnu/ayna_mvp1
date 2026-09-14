@@ -16,6 +16,29 @@
 .v6-typeahead-open .v6-live-search-dropdown{z-index:12010!important}
 .v6-auth-overlay.v6-auth-sheet-mode{z-index:9000!important}
 
+/* v6WholeSite intentionally gives ordinary inputs a filled treatment. The
+   editorial home search owns its surrounding field, so its inner input must
+   stay visually transparent instead of inheriting that legacy mini-pill. */
+html body .app-container .v6-home-shell.v6e-home form.v6e-search > input:not([type='checkbox']):not([type='radio']):not([type='range']){
+  display:block!important;
+  align-self:stretch!important;
+  width:100%!important;
+  min-width:0!important;
+  height:auto!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  outline:0!important;
+  background:transparent!important;
+  background-color:transparent!important;
+  box-shadow:none!important;
+  color:#25232a!important;
+  -webkit-appearance:none!important;
+  appearance:none!important;
+}
+
 /* The Browse-by-Need menu is intentionally a floating panel. The older layout
    pulls the toolbar upward with a negative margin, so define the stack
    explicitly: trigger > toolbar controls > open menu. This keeps both Browse
