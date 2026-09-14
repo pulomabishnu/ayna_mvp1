@@ -123,7 +123,26 @@ async function testAskAyna(width) {
     await page.waitForSelector('.v6-ask-locked-fallback');
     assert(await visible(page, '.v6-ask-locked-fallback'), `Ask ayna fallback not visible at ${width}px`);
     await page.click('.v6-ask-locked-fallback');
-    await page.waitForSelector('.v6-auth-overlay');
+
+    // Give the real React auth action a moment, then capture state before the
+    // hard assertion. This does not weaken the test; it makes a mobile failure
+    // actionable instead of another opaque selector timeout.
+    await sleep(1400);
+    const debug = await page.evaluate(() => ({
+      path: location.pathname,
+      authOverlay: Boolean(document.querySelector('.v6-auth-overlay')),
+      mobileDrawer: Boolean(document.querySelector('.mobile-nav-drawer')),
+      accountMenu: Boolean(document.querySelector('.nav-account-menu')),
+      accountExpanded: document.querySelector('.app-nav__circle--account')?.getAttribute('aria-expanded') || null,
+      visibleLoginTexts: [...document.querySelectorAll('button,a')].filter((el) => {
+        const r = el.getBoundingClientRect();
+        const s = getComputedStyle(el);
+        return r.width > 0 && r.height > 0 && s.display !== 'none' && s.visibility !== 'hidden' && /^(sign in|log in)$/i.test((el.textContent || '').trim());
+      }).map((el) => (el.textContent || '').trim()),
+    }));
+    await fs.writeFile(path.join(OUT, `ask-debug-${width}.json`), JSON.stringify(debug, null, 2));
+    assert(debug.authOverlay, `Ask ayna did not open auth at ${width}px; debug=${JSON.stringify(debug)}`);
+
     results.push(`signed-out Ask ayna opens auth on first click at ${width}px`);
     await page.screenshot({ path: path.join(OUT, `ask-auth-${width}.png`), fullPage: false });
   } finally {
