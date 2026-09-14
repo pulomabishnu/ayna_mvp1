@@ -1,0 +1,407 @@
+/* Strong visual-only Canva pass. Keeps original DOM, page order, data, and interactions. */
+
+/* Remove the old V6 lavender/orange orb identity. */
+html body .app-container{
+  background:#F3EFE9!important;
+}
+html body .app-container::before,
+html body .app-container::after{
+  display:none!important;
+}
+
+/* Global shape language: quieter, less pill-heavy, less SaaS. */
+html body .app-container .card,
+html body .app-container [class*='card']{
+  box-shadow:none!important;
+}
+html body .app-container .btn,
+html body .app-container button:not(.ayna-browse-card__wishlist):not(.ayna-ask-launcher){
+  box-shadow:none!important;
+}
+html body .app-container .btn-primary,
+html body .app-container .btn-navy,
+html body .app-container .ayna-continue,
+html body .app-container .pdp-btn--navy{
+  border-radius:12px!important;
+}
+
+/* NAV: flat editorial paper bar. */
+html body .app-nav,
+html body .app-nav--cream,
+html body .app-nav--landing{
+  height:64px!important;
+  background:rgba(255,252,249,.94)!important;
+  border-bottom:1px solid rgba(41,37,36,.13)!important;
+  backdrop-filter:blur(12px)!important;
+}
+html body .app-nav__logo{
+  font-family:'Playfair Display',Georgia,serif!important;
+  font-style:normal!important;
+  font-size:28px!important;
+  color:#242A52!important;
+}
+
+/* HOME HERO: same centered layout, unmistakably Canva editorial. */
+html body .v6-home-shell{
+  max-width:1420px!important;
+  background:#F3EFE9!important;
+}
+html body .v6-home-hero{
+  padding-top:76px!important;
+  padding-bottom:54px!important;
+  background:transparent!important;
+}
+html body .v6-home-hero .v6-eyebrow{
+  color:#4E3866!important;
+  font-family:'DM Sans',sans-serif!important;
+  font-size:10px!important;
+  font-weight:600!important;
+  letter-spacing:.18em!important;
+}
+html body .v6-home-hero h1{
+  max-width:1100px!important;
+  font-family:'Playfair Display',Georgia,serif!important;
+  font-size:clamp(62px,7vw,102px)!important;
+  font-weight:500!important;
+  line-height:.94!important;
+  letter-spacing:-.065em!important;
+  color:#292524!important;
+}
+html body .v6-home-hero h1 em{
+  color:#4E3866!important;
+  font-style:italic!important;
+}
+html body .v6-home-hero>p{
+  max-width:590px!important;
+  width:auto!important;
+  white-space:normal!important;
+  margin:24px auto 30px!important;
+  color:#78716C!important;
+  font-size:15px!important;
+  line-height:1.75!important;
+}
+html body .v6-home-search{
+  width:min(760px,94%)!important;
+  height:64px!important;
+  padding:0 12px 0 22px!important;
+  border:1px solid rgba(41,37,36,.16)!important;
+  border-radius:22px!important;
+  background:#FFFCF9!important;
+  box-shadow:none!important;
+}
+html body .v6-home-search button{
+  width:44px!important;
+  height:44px!important;
+  border-radius:12px!important;
+  background:#242A52!important;
+  color:#FFFCF9!important;
+}
+html body .v6-quick-links{
+  margin-top:18px!important;
+  gap:22px!important;
+}
+html body .v6-quick-links button{
+  padding:0 0 3px!important;
+  border:0!important;
+  border-bottom:1px solid transparent!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:#78716C!important;
+}
+html body .v6-quick-links button:hover{
+  color:#4E3866!important;
+  border-bottom-color:#4E3866!important;
+}
+
+/* PERSONALIZATION: preserve 3-column cabinet layout but remove literal furniture aesthetic. */
+html body .v6-cabinet-zone{
+  margin-top:22px!important;
+  padding:42px!important;
+  border:0!important;
+  border-radius:18px!important;
+  background:
+    radial-gradient(circle at 88% 8%,rgba(78,56,102,.72),transparent 35%),
+    radial-gradient(circle at 8% 96%,rgba(240,168,75,.12),transparent 24%),
+    linear-gradient(135deg,#242A52 0%,#303354 55%,#4E3866 100%)!important;
+  color:#FFFCF9!important;
+}
+html body .v6-cabinet-zone .v6-eyebrow{
+  color:#FFC774!important;
+}
+html body .v6-cabinet-copy h2,
+html body .v6-cabinet-copy h2 em,
+html body .v6-cabinet-copy>p,
+html body .v6-scribble{
+  color:#FFFCF9!important;
+}
+html body .v6-cabinet-copy>p{opacity:.75!important}
+html body .v6-scribble{opacity:.7!important}
+html body .v6-cabinet-copy>button{
+  border-radius:12px!important;
+  border:1px solid rgba(255,252,249,.28)!important;
+  background:transparent!important;
+  color:#FFFCF9!important;
+}
+
+/* The cabinet still exists and behaves the same, but visually becomes an editorial product shelf. */
+html body .v6-wood-cabinet{
+  height:235px!important;
+  border:1px solid rgba(255,252,249,.18)!important;
+  border-radius:12px!important;
+  background:rgba(255,252,249,.08)!important;
+  box-shadow:none!important;
+  backdrop-filter:blur(4px)!important;
+}
+html body .v6-cabinet-topper{
+  top:-1px!important;
+  left:0!important;
+  right:0!important;
+  height:36px!important;
+  border-radius:11px 11px 0 0!important;
+  background:rgba(255,252,249,.07)!important;
+  color:rgba(255,252,249,.78)!important;
+  border-bottom:1px solid rgba(255,252,249,.12)!important;
+}
+html body .v6-cabinet-topper i{background:rgba(255,252,249,.18)!important}
+html body .v6-cabinet-grid{
+  inset:44px 10px 10px!important;
+  padding:12px!important;
+  border-radius:8px!important;
+  background:rgba(255,252,249,.04)!important;
+  border:1px solid rgba(255,252,249,.10)!important;
+}
+html body .v6-cabinet-grid::before,
+html body .v6-cabinet-grid::after,
+html body .v6-cabinet-drawers{
+  display:none!important;
+}
+html body .v6-cabinet-door{
+  background:#242A52!important;
+  border:1px solid rgba(255,252,249,.14)!important;
+  color:#FFFCF9!important;
+  box-shadow:none!important;
+}
+html body .v6-shelf-product{
+  height:160px!important;
+  color:#FFFCF9!important;
+}
+html body .v6-shelf-product .v6-product-visual{
+  height:132px!important;
+}
+html body .v6-shelf-product:hover .v6-product-visual img,
+html body .v6-shelf-product.is-active .v6-product-visual img{
+  transform:translateY(-5px) scale(1.035)!important;
+  filter:drop-shadow(0 12px 16px rgba(0,0,0,.18))!important;
+}
+
+html body .v6-product-bubble{
+  min-height:245px!important;
+  padding:24px!important;
+  border:1px solid rgba(255,252,249,.18)!important;
+  border-radius:14px!important;
+  background:rgba(255,252,249,.94)!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  color:#292524!important;
+}
+html body .v6-product-bubble .v6-eyebrow{color:#4E3866!important}
+html body .v6-product-bubble h3{color:#292524!important}
+html body .v6-product-bubble p{color:#78716C!important}
+html body .v6-bubble-tags span{
+  padding:4px 0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:#4E3866!important;
+}
+html body .v6-bubble-tags span+span::before{
+  content:'·';
+  margin-right:6px;
+  color:#A2603C;
+}
+html body .v6-bubble-actions button{
+  border-radius:10px!important;
+}
+
+/* Unlock overlay uses paper, not a glossy SaaS modal. */
+html body .v6-cabinet-lock{
+  background:rgba(23,28,56,.34)!important;
+  backdrop-filter:blur(7px)!important;
+}
+html body .v6-unlock-card{
+  border-radius:16px!important;
+  background:#FFFCF9!important;
+  color:#292524!important;
+  border:1px solid rgba(41,37,36,.12)!important;
+  box-shadow:none!important;
+}
+html body .v6-unlock-icon{
+  background:#F3EFE9!important;
+  border-color:rgba(41,37,36,.12)!important;
+}
+
+/* EXPLORE: same category grid, editorial materials. */
+html body .v6-explore{
+  padding-top:96px!important;
+  padding-bottom:96px!important;
+  background:#F3EFE9!important;
+}
+html body .v6-section-head{
+  padding-bottom:28px!important;
+  border-bottom:1px solid rgba(41,37,36,.14)!important;
+}
+html body .v6-section-head h2{
+  font-family:'Playfair Display',Georgia,serif!important;
+  font-size:clamp(44px,5vw,68px)!important;
+  line-height:.98!important;
+  letter-spacing:-.055em!important;
+}
+html body .v6-category-card{
+  border-radius:8px!important;
+  background:#FFFCF9!important;
+  border:1px solid rgba(41,37,36,.12)!important;
+  box-shadow:none!important;
+}
+html body .v6-category-media{
+  background:#ECE5DB!important;
+}
+html body .v6-category-card:hover{
+  transform:translateY(-2px)!important;
+  border-color:rgba(78,56,102,.24)!important;
+}
+
+/* BROWSE: same controls/grid, much more premium commerce. */
+html body .ayna-browse__heading h2{
+  font-family:'Playfair Display',Georgia,serif!important;
+  font-size:clamp(48px,5vw,70px)!important;
+  letter-spacing:-.055em!important;
+}
+html body .ayna-browse__search input{
+  min-height:58px!important;
+  border-radius:16px!important;
+  background:#FFFCF9!important;
+}
+html body .ayna-browse__categories button,
+html body .ayna-browse__filter-button,
+html body .v6-browse-needs-trigger,
+html body .ayna-browse__sort select{
+  border-radius:10px!important;
+}
+html body .ayna-browse-card,
+html body .ayna-discover-card{
+  background:transparent!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+}
+html body .ayna-discover-card__tile{
+  border:0!important;
+  border-radius:8px!important;
+  background:#EEE7DE!important;
+  box-shadow:none!important;
+}
+html body .ayna-discover-card__body{
+  padding-top:14px!important;
+  background:transparent!important;
+}
+html body .ayna-discover-card__category{
+  padding:0!important;
+  background:transparent!important;
+  border:0!important;
+  border-radius:0!important;
+  color:#4E3866!important;
+  font-size:9px!important;
+  font-weight:700!important;
+  letter-spacing:.15em!important;
+}
+html body .ayna-discover-card__name{
+  margin-top:7px!important;
+  font-size:15px!important;
+  font-weight:600!important;
+  line-height:1.3!important;
+}
+html body .ayna-discover-card__price{
+  margin-top:6px!important;
+  color:#78716C!important;
+  font-size:12px!important;
+}
+html body .ayna-browse-card__wishlist{
+  top:12px!important;
+  right:12px!important;
+  width:38px!important;
+  height:38px!important;
+  border-radius:50%!important;
+  background:rgba(255,252,249,.92)!important;
+  border:1px solid rgba(41,37,36,.10)!important;
+  box-shadow:none!important;
+}
+html.v6-signed-in body .ayna-browse-card__match{
+  width:58px!important;
+  height:58px!important;
+  border-radius:56% 44% 52% 48% / 47% 55% 45% 53%!important;
+  background:#242A52!important;
+  color:#FFFCF9!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+
+/* PDP/info surfaces: editorial rules instead of card soup. */
+html body .pdp-summary-card,
+html body .v6-settings-card,
+html body .article-card,
+html body .about-card{
+  border-radius:10px!important;
+  background:#FFFCF9!important;
+  border:1px solid rgba(41,37,36,.12)!important;
+  box-shadow:none!important;
+}
+html body .pdp-head__name,
+html body .article-title,
+html body .articles-page h1,
+html body .about-page h1,
+html body .about-page h2{
+  font-family:'Playfair Display',Georgia,serif!important;
+  letter-spacing:-.055em!important;
+}
+
+/* Auth and intake use paper + dark film, not lavender SaaS. */
+html body .v6-auth-card,
+html body .ayna-auth-card,
+html body .auth-card{
+  border-radius:16px!important;
+  background:#FFFCF9!important;
+  border:1px solid rgba(41,37,36,.12)!important;
+  box-shadow:none!important;
+}
+html body .ayna-intake-root:not(.v6-quiz-dark) .ayna-intake-question{
+  border-radius:16px!important;
+  background:#FFFCF9!important;
+  box-shadow:none!important;
+}
+html body .ayna-intake-root.v6-quiz-dark{
+  background:
+    radial-gradient(circle at 84% 8%,rgba(78,56,102,.82),transparent 35%),
+    radial-gradient(circle at 8% 94%,rgba(240,168,75,.14),transparent 25%),
+    linear-gradient(135deg,#242A52,#303354 56%,#4E3866)!important;
+}
+
+/* Footer is a clear cinematic end-cap. */
+html body footer,
+html body .app-footer,
+html body .ayna-footer{
+  background:linear-gradient(135deg,#242A52 0%,#303354 58%,#4E3866 100%)!important;
+  color:#FFFCF9!important;
+}
+
+@media(max-width:760px){
+  html body .v6-home-hero{padding-top:52px!important;padding-bottom:40px!important}
+  html body .v6-home-hero h1{font-size:clamp(50px,15vw,70px)!important}
+  html body .v6-home-search{height:58px!important;border-radius:18px!important}
+  html body .v6-cabinet-zone{padding:26px 18px!important;border-radius:14px!important}
+  html body .v6-section-head h2{font-size:44px!important}
+}
+
+@media(prefers-reduced-motion:reduce){
+  html body .ayna-browse-card:hover .ayna-discover-card__tile img,
+  html body .v6-category-card:hover{transform:none!important}
+}
