@@ -24,8 +24,8 @@ export default function OrbHero({ showYou = true }) {
     <div
       style={{
         position: 'relative',
-        width: 300,
-        height: 260,
+        width: 340,
+        height: 300,
         marginBottom: 20,
         transform: 'scale(var(--ayna-orb-scale, 1))',
       }}
@@ -35,9 +35,9 @@ export default function OrbHero({ showYou = true }) {
           position: 'absolute',
           left: '50%',
           top: '50%',
-          width: 250,
-          height: 250,
-          margin: '-125px 0 0 -125px',
+          width: 290,
+          height: 290,
+          margin: '-145px 0 0 -145px',
           borderRadius: '50%',
           background: 'radial-gradient(circle,rgba(255,199,116,.5),rgba(255,199,116,0) 68%)',
           animation: 'ay-breathe 7s ease-in-out infinite',
@@ -48,12 +48,12 @@ export default function OrbHero({ showYou = true }) {
           position: 'absolute',
           left: '50%',
           top: '50%',
-          width: 140,
-          height: 140,
-          margin: '-70px 0 0 -70px',
+          width: 168,
+          height: 168,
+          margin: '-84px 0 0 -84px',
           borderRadius: '50%',
           background: 'radial-gradient(circle at 34% 28%,#FFDCA8,#FFC774 46%,#E8843C)',
-          boxShadow: '0 24px 50px -14px rgba(255,150,60,.7)',
+          boxShadow: '0 26px 56px -14px rgba(255,150,60,.7)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -61,7 +61,7 @@ export default function OrbHero({ showYou = true }) {
         }}
       >
         {showYou && (
-          <div style={{ fontFamily: "'Playfair Display',serif", fontStyle: 'italic', fontSize: 'calc(25px * var(--ayna-text-scale, 1))', color: '#3A2547' }}>
+          <div style={{ fontFamily: "'Playfair Display',serif", fontStyle: 'italic', fontSize: 'calc(28px * var(--ayna-text-scale, 1))', color: '#3A2547' }}>
             you
           </div>
         )}

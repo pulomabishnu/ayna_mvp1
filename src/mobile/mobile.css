@@ -34,17 +34,20 @@
   --color-primary: #FFC774;
 
   /* Scales OrbHero.jsx's orb+chips so the chips' worst-case reach during
-     their orbit (219px from center either way, at the component's native
+     their orbit (241px from center either way, at the component's native
      1:1 size — see OrbHero.jsx/mobile.css's .ayna-orbiter path) lands
      exactly 14px short of each screen edge, on any viewport width — so it
      reads as "touching the edge without going past it" on every phone,
      and grows automatically on wider ones, instead of a fixed size that
-     looks small on a big phone or clips chips off a narrow one.
+     looks small on a big phone or clips chips off a narrow one. Re-measure
+     this constant (see measure-orb-worst-case.js in the session scratch
+     dir, or re-derive one) any time OrbHero.jsx's orb/halo/ellipse sizes
+     change — it's specific to that geometry, not a fixed ratio.
      length/length division here (not length/number) is deliberate: it's
      the documented way to get a unitless value out of calc() in modern
      CSS (same trick as the common `calc(100% / 1px)` unit-stripping
-     pattern), which a plain `100vw / 219` would not reliably give. */
-  --ayna-orb-scale: clamp(0.7, calc((50vw - 14px) / 219px), 1.6);
+     pattern), which a plain `100vw / 241` would not reliably give. */
+  --ayna-orb-scale: clamp(0.7, calc((50vw - 14px) / 241px), 1.6);
 
   display: flex;
   flex-direction: column;
@@ -104,7 +107,7 @@
 @keyframes ay-orbit-path { from { offset-distance: 0%; } to { offset-distance: 100%; } }
 
 /* OrbHero's three signal chips traveling around the "you" orb — coordinates
-   are pixel values within OrbHero.jsx's 300x260 container (center 150,130),
+   are pixel values within OrbHero.jsx's 340x300 container (center 170,150),
    so the two files must be edited together. offset-path is plain SVG path
    syntax (no %/calc/var support), so it can't be made responsive on its
    own — OrbHero scales the whole assembly, path included, with a uniform
@@ -116,7 +119,7 @@
   top: 0;
   left: 0;
   z-index: 1;
-  offset-path: path("M 298,130 A 148,98 0 1,1 2,130 A 148,98 0 1,1 298,130");
+  offset-path: path("M 340,150 A 170,112 0 1,1 0,150 A 170,112 0 1,1 340,150");
   offset-rotate: 0deg;
   animation: ay-orbit-path 34s linear infinite;
 }
