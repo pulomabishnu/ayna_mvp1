@@ -42,12 +42,18 @@ if (!POSTHOG_KEY) {
     person_profiles: 'always',
     autocapture: false,
     capture_pageview: SHOULD_CAPTURE_AT_START,
+    capture_pageleave: false,
+    capture_exceptions: false,
+    capture_performance: false,
+    capture_heatmaps: false,
+    disable_scroll_properties: true,
+    rageclick: false,
+    enable_recording_console_log: false,
     mask_all_text: true,
     disable_session_recording: true,
     ip: false,
     opt_out_capturing_by_default: !SHOULD_CAPTURE_AT_START,
     before_send: sanitizePosthogEvent,
-    errorTracking: { autocaptureExceptions: false },
     loaded: (ph) => {
       window.posthog = ph;
       if (SHOULD_CAPTURE_AT_START) tagInternalUserIfNeeded(ph);
