@@ -1,1 +1,1 @@
-import './canvaExactLive.css';
+import './canvaAestheticOnly.css';
