@@ -33,11 +33,18 @@
      reused inside the mobile app, instead of falling back to default blue. */
   --color-primary: #FFC774;
 
-  /* Grows OrbHero.jsx's orb+chips on wider phones instead of it looking
-     small in a lot of empty gradient — never below 1 (the size it was
-     designed/tested at), capped so chips never crowd off the sides of a
-     narrow phone even at a wide viewport. */
-  --ayna-orb-scale: clamp(1, calc(100vw / 320), 1.32);
+  /* Scales OrbHero.jsx's orb+chips so the chips' worst-case reach during
+     their orbit (219px from center either way, at the component's native
+     1:1 size — see OrbHero.jsx/mobile.css's .ayna-orbiter path) lands
+     exactly 14px short of each screen edge, on any viewport width — so it
+     reads as "touching the edge without going past it" on every phone,
+     and grows automatically on wider ones, instead of a fixed size that
+     looks small on a big phone or clips chips off a narrow one.
+     length/length division here (not length/number) is deliberate: it's
+     the documented way to get a unitless value out of calc() in modern
+     CSS (same trick as the common `calc(100% / 1px)` unit-stripping
+     pattern), which a plain `100vw / 219` would not reliably give. */
+  --ayna-orb-scale: clamp(0.7, calc((50vw - 14px) / 219px), 1.6);
 
   display: flex;
   flex-direction: column;
@@ -97,17 +104,19 @@
 @keyframes ay-orbit-path { from { offset-distance: 0%; } to { offset-distance: 100%; } }
 
 /* OrbHero's three signal chips traveling around the "you" orb — coordinates
-   are pixel values within OrbHero.jsx's 250x240 container (center 125,120),
+   are pixel values within OrbHero.jsx's 300x260 container (center 150,130),
    so the two files must be edited together. offset-path is plain SVG path
    syntax (no %/calc/var support), so it can't be made responsive on its
    own — OrbHero scales the whole assembly, path included, with a uniform
-   CSS transform instead (see --ayna-orb-scale below). */
+   CSS transform instead (see --ayna-orb-scale below). The ellipse is
+   deliberately much wider (rx) than tall (ry) so the chips spend more of
+   the orbit near the horizontal edges instead of just briefly grazing them. */
 .ayna-mobile .ayna-orbiter {
   position: absolute;
   top: 0;
   left: 0;
   z-index: 1;
-  offset-path: path("M 229,120 A 104,96 0 1,1 21,120 A 104,96 0 1,1 229,120");
+  offset-path: path("M 298,130 A 148,98 0 1,1 2,130 A 148,98 0 1,1 298,130");
   offset-rotate: 0deg;
   animation: ay-orbit-path 34s linear infinite;
 }

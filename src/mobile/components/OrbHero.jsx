@@ -24,8 +24,8 @@ export default function OrbHero({ showYou = true }) {
     <div
       style={{
         position: 'relative',
-        width: 250,
-        height: 240,
+        width: 300,
+        height: 260,
         marginBottom: 20,
         transform: 'scale(var(--ayna-orb-scale, 1))',
       }}
@@ -35,9 +35,9 @@ export default function OrbHero({ showYou = true }) {
           position: 'absolute',
           left: '50%',
           top: '50%',
-          width: 226,
-          height: 226,
-          margin: '-113px 0 0 -113px',
+          width: 250,
+          height: 250,
+          margin: '-125px 0 0 -125px',
           borderRadius: '50%',
           background: 'radial-gradient(circle,rgba(255,199,116,.5),rgba(255,199,116,0) 68%)',
           animation: 'ay-breathe 7s ease-in-out infinite',
@@ -48,12 +48,12 @@ export default function OrbHero({ showYou = true }) {
           position: 'absolute',
           left: '50%',
           top: '50%',
-          width: 126,
-          height: 126,
-          margin: '-63px 0 0 -63px',
+          width: 140,
+          height: 140,
+          margin: '-70px 0 0 -70px',
           borderRadius: '50%',
           background: 'radial-gradient(circle at 34% 28%,#FFDCA8,#FFC774 46%,#E8843C)',
-          boxShadow: '0 22px 46px -14px rgba(255,150,60,.7)',
+          boxShadow: '0 24px 50px -14px rgba(255,150,60,.7)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -61,16 +61,16 @@ export default function OrbHero({ showYou = true }) {
         }}
       >
         {showYou && (
-          <div style={{ fontFamily: "'Playfair Display',serif", fontStyle: 'italic', fontSize: 'calc(23px * var(--ayna-text-scale, 1))', color: '#3A2547' }}>
+          <div style={{ fontFamily: "'Playfair Display',serif", fontStyle: 'italic', fontSize: 'calc(25px * var(--ayna-text-scale, 1))', color: '#3A2547' }}>
             you
           </div>
         )}
       </div>
       {CHIPS.map((chip) => (
         <div key={chip.label} className="ayna-orbiter" style={{ animationDelay: chip.delay }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 7, background: '#FFFCF9', borderRadius: 99, padding: '9px 14px', boxShadow: '0 10px 26px rgba(36,27,56,.3)', whiteSpace: 'nowrap' }}>
-            <div style={{ width: 7, height: 7, borderRadius: 99, background: '#E8943F', flex: 'none' }} />
-            <div style={{ fontSize: 11, fontWeight: 600, color: '#292524' }}>{chip.label}</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 7, background: '#FFFCF9', borderRadius: 99, padding: '10px 16px', boxShadow: '0 10px 26px rgba(36,27,56,.3)', whiteSpace: 'nowrap' }}>
+            <div style={{ width: 8, height: 8, borderRadius: 99, background: '#E8943F', flex: 'none' }} />
+            <div style={{ fontSize: 12, fontWeight: 600, color: '#292524' }}>{chip.label}</div>
           </div>
         </div>
       ))}
