@@ -1,6 +1,7 @@
 import './v6FinalMissingFixes.css';
 
 let scheduled = false;
+let authCaptureBound = false;
 
 function text(node) {
   return String(node?.textContent || '').replace(/\s+/g, ' ').trim();
@@ -31,19 +32,20 @@ function setControlledInput(input, value) {
   input.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
+function realLoginButtons() {
+  return [...document.querySelectorAll('.nav-account-menu button, .mobile-nav-drawer button')]
+    .filter((node) => /^(sign in|log in)$/i.test(text(node)));
+}
+
 function clickVisibleLogin() {
-  const login = [...document.querySelectorAll('.nav-account-menu button, .mobile-nav-drawer button, button, a')]
-    .find((node) => isVisible(node)
-      && /^(sign in|log in)$/i.test(text(node))
-      && !node.closest('.v6-ask-locked-fallback'));
+  const login = realLoginButtons().find(isVisible);
   if (!login) return false;
   login.click();
   return true;
 }
 
 function clickAccountMenuLogin() {
-  const login = [...document.querySelectorAll('.nav-account-menu button')]
-    .find((node) => /^(sign in|log in)$/i.test(text(node)));
+  const login = realLoginButtons()[0];
   if (!login) return false;
   login.click();
   return true;
@@ -106,6 +108,23 @@ function openRealSignIn() {
   }
 
   fallbackToQuiz();
+}
+
+function bindSignedOutAuthCtas() {
+  if (authCaptureBound) return;
+  authCaptureBound = true;
+  document.addEventListener('click', (event) => {
+    if (!document.documentElement.classList.contains('v6-signed-out')) return;
+    const button = event.target.closest('button,a');
+    if (!button) return;
+    const label = text(button).toLowerCase();
+    const isHomepageAuth = Boolean(button.closest('.v6e-personalized'))
+      && (label === 'sign in' || label.includes('sign in to see my matches'));
+    if (!isHomepageAuth) return;
+    event.preventDefault();
+    event.stopPropagation();
+    openRealSignIn();
+  }, true);
 }
 
 function ensureSignedOutAskAyna() {
@@ -292,6 +311,7 @@ function bindReliableSupportSearch() {
 
 function run() {
   removeLiteralHud();
+  bindSignedOutAuthCtas();
   ensureSignedOutAskAyna();
   fixSearchAutocomplete();
   bindReliableSupportSearch();
