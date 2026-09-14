@@ -16,6 +16,20 @@
 .v6-typeahead-open .v6-live-search-dropdown{z-index:12010!important}
 .v6-auth-overlay.v6-auth-sheet-mode{z-index:9000!important}
 
+/* The Browse-by-Need menu is intentionally a floating panel. Keep the actual
+   toolbar controls above it so Filters remains a real first-click target even
+   while the need menu is open; pointerdown then closes the other panel. */
+.ayna-browse.v6-browse-live .ayna-browse__toolbar{
+  position:relative!important;
+  z-index:40!important;
+}
+.ayna-browse.v6-browse-live .ayna-browse__toolbar button,
+.ayna-browse.v6-browse-live .ayna-browse__toolbar label,
+.ayna-browse.v6-browse-live .ayna-browse__toolbar select{
+  position:relative!important;
+  z-index:41!important;
+}
+
 /* Ayna Match is a reveal, not a permanently stamped badge. The score itself is
    still the real MatchGauge value from Discovery, never generated here. */
 .ayna-browse-card .ayna-browse-card__match{
