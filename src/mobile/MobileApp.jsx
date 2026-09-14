@@ -12,6 +12,7 @@ import { ARTICLES } from '../components/Articles.jsx';
 import { ECOSYSTEM_AREAS as REAL_ECOSYSTEM_AREAS, resolveEcosystemProductArea } from '../components/EcosystemBubbles.jsx';
 import { useSavedProducts } from './hooks/useSavedProducts.js';
 import { useThemeMode } from './hooks/useThemeMode.js';
+import { usePersonalizedFeed } from './hooks/usePersonalizedFeed.js';
 import { useTextSize } from './hooks/useTextSize.js';
 import { useEcosystemSession } from './hooks/useEcosystemSession.js';
 import { useSupabaseAuth, MOBILE_OAUTH_PENDING_KEY } from './hooks/useSupabaseAuth.js';
@@ -170,6 +171,7 @@ export default function MobileApp() {
   const pendingQuizEcosystemRef = useRef(null);
   const { savedMap, isSaved, toggleSaved, resetSaved } = useSavedProducts(authUser);
   const { theme, resolvedTheme, setThemeMode } = useThemeMode();
+  const [personalized, setPersonalized] = usePersonalizedFeed();
   const { textSizeIndex, setTextSizeIndex, textScale } = useTextSize();
   const [askAynaOpen, setAskAynaOpen] = useState(false);
   const [askAynaHistory, setAskAynaHistory] = useState([]);
@@ -482,6 +484,8 @@ export default function MobileApp() {
         {...nav}
         theme={theme}
         onToggleTheme={setThemeMode}
+        personalized={personalized}
+        onPersonalizedChange={setPersonalized}
         products={browseProducts}
         articles={ARTICLES}
         savedProducts={savedMap}
@@ -564,7 +568,12 @@ export default function MobileApp() {
           onEditProfile={() => { setEditingHealthProfile(true); setScreen('quiz'); }}
         />
       )}
-      {!askAynaOpen && <AskAynaChip onClick={() => setAskAynaOpen(true)} />}
+      {!askAynaOpen && (
+        <AskAynaChip
+          onClick={() => setAskAynaOpen(true)}
+          viewKey={overlay ? `${overlay.type}:${overlay.item?.id || ''}` : screen}
+        />
+      )}
       <AskAynaModal
         open={askAynaOpen}
         onClose={() => setAskAynaOpen(false)}

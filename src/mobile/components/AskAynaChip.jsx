@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import { ASK_AYNA_CHIP_POSITION_KEY as POSITION_KEY } from '../utils/askAynaChipPosition.js';
 
-const POSITION_KEY = 'ayna_ask_chip_pos_v1';
 const CHIP_WIDTH = 118; // approx rendered width when expanded, used only for clamping to the viewport
 const CHIP_COMPACT_WIDTH = 44; // approx rendered width when scrolled-compact (icon only) — a
 // separate value from CHIP_WIDTH so clamping/docking don't reserve room for
@@ -10,8 +10,11 @@ const DRAG_THRESHOLD = 6; // px of movement before a press counts as a drag, not
 const EDGE_MARGIN = 8;
 
 function defaultPosition() {
-  const vw = typeof window !== 'undefined' ? window.innerWidth : 390;
-  const vh = typeof window !== 'undefined' ? window.innerHeight : 812;
+  // `|| 390`/`|| 812` rather than just checking `typeof window` — guards
+  // against innerWidth/innerHeight themselves reading 0 at a very early
+  // render (before layout has run), not just `window` being undefined.
+  const vw = (typeof window !== 'undefined' && window.innerWidth) || 390;
+  const vh = (typeof window !== 'undefined' && window.innerHeight) || 812;
   return { x: vw - CHIP_WIDTH - 20, y: vh - CHIP_HEIGHT - 96 };
 }
 
@@ -54,8 +57,18 @@ function nearestEdgeX(x, width) {
  * position around; scrolling back near the top returns it there, and
  * grabbing it at any point immediately releases the dock so it tracks the
  * finger exactly, with no jump.
+ *
+ * `viewKey` identifies whatever screen/overlay is currently showing (see
+ * MobileApp.jsx). This component is mounted once and never unmounts as the
+ * app navigates, so without this its `compact`/docked state — set from a
+ * scroll event on whatever was on screen before — would carry over
+ * unchanged onto a brand-new screen that hasn't been scrolled at all,
+ * making the chip look like it "jumps around" between screens (docked and
+ * icon-only on one, expanded and free on the next, with no scrolling in
+ * between to explain why). A fresh screen always starts scrolled to the
+ * top, so `viewKey` changing resets it to match.
  */
-export default function AskAynaChip({ onClick }) {
+export default function AskAynaChip({ onClick, viewKey }) {
   const [pos, setPos] = useState(loadPosition);
   const [compact, setCompact] = useState(false);
   const [dragging, setDragging] = useState(false);
@@ -92,6 +105,13 @@ export default function AskAynaChip({ onClick }) {
     setDockedX(compact ? nearestEdgeX(pos.x, CHIP_WIDTH) : null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [compact]);
+
+  useEffect(() => {
+    // A new screen always starts scrolled to the top — undock/un-compact
+    // immediately rather than waiting for a scroll event on it (which may
+    // never come if the new screen's content is short).
+    setCompact(false);
+  }, [viewKey]);
 
   const handlePointerDown = (e) => {
     e.currentTarget.setPointerCapture?.(e.pointerId);

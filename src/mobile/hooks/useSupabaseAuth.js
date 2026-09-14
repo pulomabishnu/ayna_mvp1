@@ -5,6 +5,7 @@ import { App as CapacitorApp } from '@capacitor/app';
 import { Browser } from '@capacitor/browser';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { AGE_REQUIREMENT_VERSION, CONSENT_VERSION, clearPendingConsent, stashPendingConsent, flushPendingConsent } from '../../utils/pendingConsent.js';
+import { resetChipPosition } from '../utils/askAynaChipPosition.js';
 
 // Real Supabase identity for the mobile app — separate from
 // useEcosystemSession.js's local app-data cache (products, quiz answers),
@@ -311,6 +312,7 @@ export function useSupabaseAuth() {
     const supabase = getSupabaseClient();
     if (supabase) await supabase.auth.signOut();
     try { posthog.reset(); } catch { /* analytics may be unavailable/opted out */ }
+    resetChipPosition();
   }
 
   return { user, authLoading, signUpWithPassword, signInWithPassword, signInWithGoogle, signInWithApple, signOut, resendConfirmation };

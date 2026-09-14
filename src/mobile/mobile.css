@@ -33,6 +33,22 @@
      reused inside the mobile app, instead of falling back to default blue. */
   --color-primary: #FFC774;
 
+  /* Scales OrbHero.jsx's orb+chips so the chips' worst-case reach during
+     their orbit (241px from center either way, at the component's native
+     1:1 size — see OrbHero.jsx/mobile.css's .ayna-orbiter path) lands
+     exactly 14px short of each screen edge, on any viewport width — so it
+     reads as "touching the edge without going past it" on every phone,
+     and grows automatically on wider ones, instead of a fixed size that
+     looks small on a big phone or clips chips off a narrow one. Re-measure
+     this constant (see measure-orb-worst-case.js in the session scratch
+     dir, or re-derive one) any time OrbHero.jsx's orb/halo/ellipse sizes
+     change — it's specific to that geometry, not a fixed ratio.
+     length/length division here (not length/number) is deliberate: it's
+     the documented way to get a unitless value out of calc() in modern
+     CSS (same trick as the common `calc(100% / 1px)` unit-stripping
+     pattern), which a plain `100vw / 241` would not reliably give. */
+  --ayna-orb-scale: clamp(0.7, calc((50vw - 14px) / 241px), 1.6);
+
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -88,6 +104,40 @@
 @keyframes ay-drift { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(14px,-18px) scale(1.09); } }
 @keyframes ay-skeleton { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
 @keyframes ay-pixelate { 0% { opacity: .15; filter: blur(6px) saturate(0); transform: scale(.94); } 60% { opacity: .7; filter: blur(2px) saturate(.6); transform: scale(.98); } 100% { opacity: 1; filter: blur(0) saturate(1); transform: scale(1); } }
+@keyframes ay-orbit-path { from { offset-distance: 0%; } to { offset-distance: 100%; } }
+
+/* OrbHero's three signal chips traveling around the "you" orb — coordinates
+   are pixel values within OrbHero.jsx's 340x300 container (center 170,150),
+   so the two files must be edited together. offset-path is plain SVG path
+   syntax (no %/calc/var support), so it can't be made responsive on its
+   own — OrbHero scales the whole assembly, path included, with a uniform
+   CSS transform instead (see --ayna-orb-scale below). The ellipse is
+   deliberately much wider (rx) than tall (ry) so the chips spend more of
+   the orbit near the horizontal edges instead of just briefly grazing them. */
+.ayna-mobile .ayna-orbiter {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  offset-path: path("M 340,150 A 170,112 0 1,1 0,150 A 170,112 0 1,1 340,150");
+  offset-rotate: 0deg;
+  animation: ay-orbit-path 34s linear infinite;
+}
+
+/* Universal tap feedback — targets the inline cursor:pointer every
+   clickable element in this app already sets (the dominant interactive
+   pattern here is a styled <div onClick>, not <button>), so every tap
+   anywhere gets an immediate, consistent press response without having to
+   touch each of the hundreds of clickable elements individually. Skips
+   anything currently mid keyframe-animation (a couple of bobbing CTAs) —
+   the animation's own transform already wins there regardless. */
+.ayna-mobile [style*="cursor: pointer"] {
+  transition: transform .12s ease, opacity .12s ease;
+}
+.ayna-mobile [style*="cursor: pointer"]:active {
+  transform: scale(0.97);
+  opacity: 0.85;
+}
 
 .ayna-mobile input[type="range"] {
   -webkit-appearance: none;

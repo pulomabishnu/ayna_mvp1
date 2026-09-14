@@ -1,5 +1,5 @@
 import MobileHeader from '../components/MobileHeader.jsx';
-import LegalFooter from '../components/LegalFooter.jsx';
+import OrbHero from '../components/OrbHero.jsx';
 
 export default function EcosystemIntroScreen({ onStartQuiz, onOpenSaved, onBrowse, headerInitial = 'A', onOpenProfile }) {
   return (
@@ -32,20 +32,7 @@ export default function EcosystemIntroScreen({ onStartQuiz, onOpenSaved, onBrows
       />
 
       <div style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '6px 24px 20px' }}>
-        <div style={{ position: 'relative', width: 150, height: 150, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 28 }}>
-          <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '1px solid rgba(255,255,255,.3)', animation: 'ay-pulse 3.4s ease-out infinite' }} />
-          <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '1px solid rgba(255,255,255,.3)', animation: 'ay-pulse 3.4s ease-out infinite 1.7s' }} />
-          <div
-            style={{
-              width: 92,
-              height: 92,
-              borderRadius: '50%',
-              background: 'linear-gradient(140deg,#FFDCA8,#FFC774 46%,#E8843C)',
-              boxShadow: '0 20px 40px -16px rgba(255,150,60,.65)',
-              animation: 'ay-breathe 5s ease-in-out infinite',
-            }}
-          />
-        </div>
+        <OrbHero showYou={false} />
         <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(31px * var(--ayna-text-scale, 1))', lineHeight: 1.16, textAlign: 'center' }}>
           Build your
           <br />
@@ -80,7 +67,6 @@ export default function EcosystemIntroScreen({ onStartQuiz, onOpenSaved, onBrows
           </svg>
         </div>
       </div>
-      <LegalFooter variant="light" />
     </div>
   );
 }

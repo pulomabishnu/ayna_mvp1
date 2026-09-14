@@ -260,11 +260,24 @@ export default function BrowseScreen({
   onToggleTheme,
   onOpenProfile,
   onOpenWhyMatch,
+  // Controlled from MobileApp.jsx (and persisted there) so the toggle
+  // survives this screen unmounting when the user navigates away (e.g. to
+  // My Ecosystem) and back — it should stay on until the user explicitly
+  // turns it off, not reset just because they left the tab.
+  personalized: personalizedProp,
+  onPersonalizedChange,
 }) {
   const [mode, setMode] = useState('products');
   const [searchValue, setSearchValue] = useState('');
-  const [personalized, setPersonalized] = useState(false);
-  const [personalizedReads, setPersonalizedReads] = useState(false);
+  // Falls back to local state only if no controlled value is passed in
+  // (keeps this component usable/testable standalone).
+  const [personalizedLocal, setPersonalizedLocal] = useState(false);
+  const personalized = personalizedProp ?? personalizedLocal;
+  const setPersonalized = (updater) => {
+    const next = typeof updater === 'function' ? updater(personalized) : updater;
+    if (onPersonalizedChange) onPersonalizedChange(next);
+    else setPersonalizedLocal(next);
+  };
   const [activeGroup, setActiveGroup] = useState('all');
   const { layout: cardLayout, toggleLayout } = useCardLayout();
   // AI fallback for a typed search the local catalog scoring found nothing
@@ -277,7 +290,16 @@ export default function BrowseScreen({
   // shuffle happens on every visit to Browse, not just once per app load.
   const [shuffled] = useState(() => fisherYatesShuffle(products));
 
-  const hasProfile = !!(quizAnswers?.frustrations?.length);
+  // frustrations is the legacy desktop quiz shape; the real current mobile
+  // intake (IntakeScreen.jsx) never sets it at all — it produces
+  // fullHealthIntake.supportSelections/primaryConcerns instead — so relying
+  // on frustrations alone meant "For You" personalization was permanently
+  // disabled for every real mobile user who'd actually completed the quiz.
+  const hasProfile = !!(
+    quizAnswers?.frustrations?.length
+    || quizAnswers?.fullHealthIntake?.supportSelections?.length
+    || quizAnswers?.fullHealthIntake?.primaryConcerns?.length
+  );
 
   // Real filtering — reuses the site's own scoreQueryAgainstProduct/
   // buildSearchTextForItem/buildIdentityTextForItem (naturalLanguageSearch.js)
@@ -399,7 +421,7 @@ export default function BrowseScreen({
           </div>
         )}
         {mode === 'reads' && (
-          <PersonalizedToggle on={personalizedReads} disabled={!hasProfile} onClick={() => setPersonalizedReads((v) => !v)} />
+          <PersonalizedToggle on={personalized} disabled={!hasProfile} onClick={() => setPersonalized((v) => !v)} />
         )}
       </div>
 
@@ -450,7 +472,7 @@ export default function BrowseScreen({
             ALL OTC · NOT A DIAGNOSIS
           </div>
         </>
-      ) : personalizedReads && hasProfile ? (
+      ) : personalized && hasProfile ? (
         recommendedReads.length === 0 ? (
           <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))' }}>
             No reads match your profile yet.

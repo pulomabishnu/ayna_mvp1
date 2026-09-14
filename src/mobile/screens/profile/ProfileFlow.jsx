@@ -3401,8 +3401,13 @@ export default function ProfileFlow({
   }
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 55, background: 'var(--ayna-bg)', display: 'flex', animation: 'ay-page .25s ease-out' }}>
-      {body}
+    <div style={{ position: 'fixed', inset: 0, zIndex: 55, background: 'var(--ayna-bg)', display: 'flex' }}>
+      {/* Keyed on `screen` so each push/pop within this overlay remounts the
+          inner wrapper and replays the same page entrance animation used by
+          top-level mobile screens. */}
+      <div key={screen} style={{ flex: 1, minWidth: 0, display: 'flex', animation: 'ay-page .22s ease-out' }}>
+        {body}
+      </div>
     </div>
   );
 }

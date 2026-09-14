@@ -1,3 +1,5 @@
+import OrbHero from '../components/OrbHero.jsx';
+
 export default function LandingScreen({ onStartQuiz, onBrowse }) {
   return (
     <div
@@ -55,31 +57,6 @@ export default function LandingScreen({ onStartQuiz, onBrowse }) {
       />
       <div
         style={{
-          position: 'absolute',
-          left: '50%',
-          top: '24%',
-          width: 310,
-          height: 310,
-          marginLeft: -155,
-          borderRadius: '50%',
-          border: '1px solid rgba(255,255,255,.13)',
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          left: '50%',
-          top: '30%',
-          width: 210,
-          height: 210,
-          marginLeft: -105,
-          borderRadius: '50%',
-          border: '1px solid rgba(255,255,255,.17)',
-        }}
-      />
-
-      <div
-        style={{
           position: 'relative',
           paddingTop: 'max(20px, env(safe-area-inset-top))',
           paddingLeft: 26,
@@ -105,82 +82,7 @@ export default function LandingScreen({ onStartQuiz, onBrowse }) {
           padding: '0 26px',
         }}
       >
-        <div
-          style={{
-            position: 'relative',
-            width: 176,
-            height: 176,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: 28,
-          }}
-        >
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              borderRadius: '50%',
-              border: '1px solid rgba(255,255,255,.34)',
-              animation: 'ay-pulse 3.4s ease-out infinite',
-            }}
-          />
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              borderRadius: '50%',
-              border: '1px solid rgba(255,255,255,.34)',
-              animation: 'ay-pulse 3.4s ease-out infinite 1.7s',
-            }}
-          />
-          <div
-            style={{
-              width: 106,
-              height: 106,
-              borderRadius: '50%',
-              background: 'linear-gradient(140deg,#FFDCA8,#FFC774 46%,#E8843C)',
-              boxShadow: '0 22px 46px -14px rgba(255,150,60,.7)',
-              animation: 'ay-breathe 5s ease-in-out infinite',
-            }}
-          />
-          <div
-            style={{
-              position: 'absolute',
-              left: 4,
-              top: 26,
-              width: 14,
-              height: 14,
-              borderRadius: '50%',
-              background: '#FFF9F2',
-              opacity: 0.9,
-            }}
-          />
-          <div
-            style={{
-              position: 'absolute',
-              right: 10,
-              bottom: 16,
-              width: 9,
-              height: 9,
-              borderRadius: '50%',
-              background: '#FFF9F2',
-              opacity: 0.72,
-            }}
-          />
-          <div
-            style={{
-              position: 'absolute',
-              right: 0,
-              top: 58,
-              width: 6,
-              height: 6,
-              borderRadius: '50%',
-              background: '#FFF9F2',
-              opacity: 0.55,
-            }}
-          />
-        </div>
+        <OrbHero />
         <div
           style={{
             fontFamily: "'Playfair Display',serif",
