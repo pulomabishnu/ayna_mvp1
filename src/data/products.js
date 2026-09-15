@@ -243,8 +243,10 @@ export const PHYSICAL_PRODUCTS = [
         url: 'https://mylola.com/',
         // Ayna affiliate partnership — affiliateUrl wins over `url`/`productUrl`
         // for the Buy Now / Visit Site destination (see getBuyUrl in
-        // ProductModal.jsx). One general LOLA affiliate link.
-        affiliateUrl: 'https://lvnta.com/lv_9s1mlpiV0gHbgRP8fx',
+        // ProductModal.jsx). Product-specific LOLA affiliate link — this
+        // lvnta.com link resolves to amazon.com/dp/B0D5NXK8RR (LOLA Organic
+        // Tampons), the same ASIN already on file for this product.
+        affiliateUrl: 'https://lvnta.com/lv_lV9gmDbqDB8xIEp6W2',
         faqUrl: 'https://help.mylola.com/',
         image: 'https://mylola.com/cdn/shop/files/four-lola-plastic-applicator-tampon-boxes.img.jpg?v=1753220344&width=1946',
         summary: '100% organic cotton with compact BPA-free applicator. Customizable subscription box.',

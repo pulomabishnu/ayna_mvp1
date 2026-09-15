@@ -51,8 +51,9 @@ import { ProductImageFallback } from './ProductTileImage';
  * Added 2026-09-11: LiM Method — confirmed affiliate partnership. Product and
  * brand links use the ref=Ayna_Health tracking parameter supplied by Ayna.
  *
- * Added 2026-09-15: LOLA — confirmed affiliate partnership. One general
- * lvnta.com affiliate link covers both LOLA products in the catalog.
+ * Added 2026-09-15: LOLA — confirmed affiliate partnership. Each LOLA
+ * product uses its own product-specific lvnta.com affiliate link (they
+ * redirect to different Amazon ASINs, not one shared link).
  */
 
 const PARTNERS = [
@@ -124,7 +125,8 @@ const PARTNERS = [
     brand: 'LOLA',
     /** Drop a file at public/brands/lola.png and it replaces the wordmark. */
     logo: '/brands/lola.png',
-    url: 'https://lvnta.com/lv_9s1mlpiV0gHbgRP8fx',
+    // No single shared affiliate link — each product below has its own.
+    url: 'https://mylola.com/',
     blurb:
       'Organic cotton period care. Tampons and pads made with 100% organic cotton, transparent ingredients, and a customizable subscription.',
   },

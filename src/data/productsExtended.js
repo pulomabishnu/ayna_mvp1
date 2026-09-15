@@ -9,7 +9,9 @@ export const EXTENDED_PHYSICAL = [
         id: 'p-lola-pad', name: 'LOLA Organic Cotton Pads', brand: 'LOLA', productUrl: 'https://mylola.com/products/pads', category: 'pad', type: 'physical', internal: false, healthFunctions: ['menstrual-collection', 'leak-protection'], tags: ['heavy-flow', 'organic', 'safety-concern'], price: '$11 for 12', userRating: 4.5, whereToBuy: ['Amazon', 'LOLA.com'], url: 'https://mylola.com/', faqUrl: 'https://help.mylola.com/',
         // Ayna affiliate partnership — affiliateUrl wins over `url`/`productUrl`
         // for the Buy Now / Visit Site destination (see getBuyUrl in
-        // ProductModal.jsx). One general LOLA affiliate link.
+        // ProductModal.jsx). Product-specific LOLA affiliate link — this
+        // lvnta.com link resolves to amazon.com/dp/B0BPP9J2GQ (LOLA Organic
+        // Cotton Pads, Ultra Thin with Wings, Heavy, 36ct).
         affiliateUrl: 'https://lvnta.com/lv_9s1mlpiV0gHbgRP8fx', image: 'https://m.media-amazon.com/images/I/71j3reiHuBL.jpg', summary: '100% organic cotton pads with a breathable back sheet. Customizable subscription.', safety: { fdaStatus: 'FDA-registered', materials: '100% organic cotton', recalls: 'No recalls.', allergens: 'Hypoallergenic, fragrance-free', sideEffects: 'Minimal irritation risk. Rare sensitivity to adhesive.', opinionAlerts: 'Subscription can be difficult to cancel through the website; some users prefer buying in-store at Target.' },
         clinicianOpinionSource: 'independent',
         clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
