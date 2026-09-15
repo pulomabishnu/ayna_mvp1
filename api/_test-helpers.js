@@ -45,7 +45,18 @@ export function mockSupabase({
   authError = null,
   rpcResults = {},
   tableResults = {},
+  withAiConsent = true,
 } = {}) {
+  const consentMetadata = withAiConsent ? {
+    consent_version: 'v2-18plus',
+    consent_given_at: '2026-09-13T00:00:00.000Z',
+    age_18_confirmed: true,
+    ai_health_processing_allowed: true,
+  } : {};
+  const resolvedUser = user == null ? null : {
+    ...user,
+    user_metadata: { ...consentMetadata, ...(user.user_metadata || {}) },
+  };
   const rpcCalls = [];
   const tableCalls = [];
 
@@ -53,9 +64,13 @@ export function mockSupabase({
     rpcCalls,
     tableCalls,
     auth: {
-      getUser: vi.fn(async () => (authError ? { data: null, error: authError } : { data: { user }, error: null })),
+      getUser: vi.fn(async () => (authError ? { data: null, error: authError } : { data: { user: resolvedUser }, error: null })),
       admin: {
         updateUserById: vi.fn(async () => ({ data: {}, error: null })),
+        getUserById: vi.fn(async (id) => ({
+          data: { user: resolvedUser ? { ...resolvedUser, id } : null },
+          error: resolvedUser ? null : { message: 'user not found' },
+        })),
       },
     },
     rpc: vi.fn(async (name, args) => {
@@ -114,29 +129,17 @@ export function anthropicOk(text, stopReason = 'end_turn') {
     status: 200,
     headers: new Headers(),
     json: async () => ({ content: [{ text }], stop_reason: stopReason }),
-    text: async () => text,
+    text: async () => '',
   };
 }
 
-/** OpenAI-shaped success response for a mocked fetch — for testing the actual
- * cross-provider fallback (Anthropic fails, OpenAI picks it up), not just the
- * Anthropic-only path most callers exercise. */
+/** OpenAI-shaped success response for a mocked fetch. */
 export function openaiOk(text, finishReason = 'stop') {
   return {
     ok: true,
     status: 200,
     headers: new Headers(),
     json: async () => ({ choices: [{ message: { content: text }, finish_reason: finishReason }] }),
-    text: async () => text,
-  };
-}
-
-export function httpError(status, headers = {}) {
-  return {
-    ok: false,
-    status,
-    headers: new Headers(headers),
-    json: async () => ({ error: `status ${status}` }),
-    text: async () => `status ${status}`,
+    text: async () => '',
   };
 }

@@ -1,21 +1,32 @@
+import { Capacitor } from '@capacitor/core';
 import { getSupabaseClient, getSupabaseUser } from './supabaseClient';
 
 const TABLE = 'health_intakes';
 const LOCAL_PREFIX = 'ayna_health_intake_v2:';
+const IS_NATIVE_IOS = Capacitor.getPlatform() === 'ios';
 
 function storageKey(userId) {
   return `${LOCAL_PREFIX}${userId || 'anonymous'}`;
 }
 
+function scrubLegacyNativeIntake(userId) {
+  if (!IS_NATIVE_IOS) return;
+  try { window.localStorage.removeItem(storageKey(userId)); } catch { /* storage unavailable */ }
+  try { window.localStorage.removeItem(storageKey('anonymous')); } catch { /* storage unavailable */ }
+}
+
 function readLocal(userId) {
+  if (IS_NATIVE_IOS) {
+    scrubLegacyNativeIntake(userId);
+    return null;
+  }
   try {
     const raw = window.localStorage.getItem(storageKey(userId));
     return raw ? JSON.parse(raw) : null;
-  } catch (_) {
+  } catch {
     return null;
   }
 }
-
 
 async function resolveUserId(supabase) {
   if (!supabase) return null;
@@ -24,16 +35,23 @@ async function resolveUserId(supabase) {
   try {
     const { data } = await supabase.auth.getSession();
     return data?.session?.user?.id || null;
-  } catch (_) {
+  } catch {
     return null;
   }
 }
 
 function writeLocal(userId, profile) {
+  if (IS_NATIVE_IOS) {
+    // Health answers can reveal conditions, symptoms, medications, fertility
+    // status, and other sensitive information. Native iOS keeps them in
+    // memory only and uses the authenticated Supabase row as durable storage.
+    scrubLegacyNativeIntake(userId);
+    return false;
+  }
   try {
     window.localStorage.setItem(storageKey(userId), JSON.stringify(profile || {}));
     return true;
-  } catch (_) {
+  } catch {
     return false;
   }
 }
@@ -51,9 +69,8 @@ export async function loadHealthIntakeForCurrentUser() {
     .eq('user_id', userId)
     .maybeSingle();
 
-  // The ecosystem should never become unusable because the live Supabase
-  // table/policy is temporarily unavailable. We keep a per-user local copy as
-  // the immediate read path, then use the server as the durable sync layer.
+  // On the website, a user-scoped local copy is an availability fallback.
+  // Native iOS deliberately has no persistent local health-intake fallback.
   if (error) {
     console.warn('[healthIntakeStore] server load failed; using local copy:', error.message || error);
     return local;
@@ -66,8 +83,9 @@ export async function loadHealthIntakeForCurrentUser() {
   }
 
   if (local) {
-    // Best-effort repair for a device that has the completed intake locally but
-    // no row on the server yet. Never block rendering on this sync.
+    // Best-effort repair for a browser that has the completed intake locally
+    // but no server row yet. Native iOS never enters this path because local is
+    // intentionally null there.
     supabase
       .from(TABLE)
       .upsert({ user_id: userId, profile: local, updated_at: new Date().toISOString() }, { onConflict: 'user_id' })
@@ -93,10 +111,9 @@ export async function saveHealthIntakeForCurrentUser(profile) {
     toStore = profile.fullHealthIntake;
   }
 
-  // Save locally FIRST. That means Finish can always build the ecosystem even
-  // if Supabase is offline, the RLS policy is misconfigured, or the table has
-  // not reached this environment yet. The key is user-scoped, so another user
-  // on the same browser does not inherit this profile.
+  // Browser gets a user-scoped availability fallback. Native iOS returns false
+  // here and relies on Supabase for durable storage, keeping sensitive health
+  // answers out of localStorage.
   const localSaved = writeLocal(userId, toStore);
 
   if (!supabase) return { saved: false, localSaved, reason: 'supabase_not_configured' };

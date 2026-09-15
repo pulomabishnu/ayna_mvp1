@@ -1,13 +1,15 @@
 import { inferTagsFromHealthProfile, normalizeProfile } from './healthDataProfile';
 
-const MAX_TOTAL = 4000;
+const MAX_TOTAL = 2500;
 
-function stripEmails(s) {
-  return String(s).replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g, '[redacted]');
+function stripDirectIdentifiers(s) {
+  return String(s)
+    .replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g, '[redacted]')
+    .replace(/(?<!\d)(?:\+?1[\s.-]?)?(?:\(?\d{3}\)?[\s.-]?)\d{3}[\s.-]?\d{4}(?!\d)/g, '[redacted]');
 }
 
 function truncateItem(s, max) {
-  return stripEmails(String(s).trim().slice(0, max));
+  return stripDirectIdentifiers(String(s).trim().slice(0, max));
 }
 
 /**
@@ -23,11 +25,8 @@ export function buildUserHealthContextString(quizResults, healthProfile) {
       preference,
       sensitivities,
       productsToAvoid,
-      currentProductBrands,
       currentMedications,
       currentSupplements,
-      contraceptionUse,
-      contraceptionPreference,
       internalComfort,
     } = quizResults;
     if (Array.isArray(frustrations) && frustrations.length) {
@@ -56,26 +55,14 @@ export function buildUserHealthContextString(quizResults, healthProfile) {
       );
     }
     const customListed = [
-      ...(Array.isArray(currentProductBrands) ? currentProductBrands : []),
       ...(Array.isArray(currentMedications) ? currentMedications : []),
       ...(Array.isArray(currentSupplements) ? currentSupplements : []),
     ].filter(Boolean);
     if (customListed.length) {
       lines.push(
-        `User-listed products/meds/supplements: ${customListed
+        `User-listed medications/supplements: ${customListed
           .slice(0, 24)
           .map((t) => truncateItem(t, 80))
-          .join('; ')}`
-      );
-    }
-    if (contraceptionUse && contraceptionUse !== 'Prefer not to say') {
-      lines.push(`Contraception: ${truncateItem(contraceptionUse, 40)}`);
-    }
-    if (Array.isArray(contraceptionPreference) && contraceptionPreference.length) {
-      lines.push(
-        `Contraception types: ${contraceptionPreference
-          .slice(0, 8)
-          .map((t) => truncateItem(t, 60))
           .join('; ')}`
       );
     }
@@ -119,15 +106,6 @@ export function buildUserHealthContextString(quizResults, healthProfile) {
           .map((a) => truncateItem(a, 80))
           .join('; ')}`
       );
-    }
-    if (hp.notes?.trim()) {
-      lines.push(`Notes: ${truncateItem(hp.notes, 500)}`);
-    }
-    if (hp.intakeSummary?.trim()) {
-      lines.push(`Health profile summary (user-edited): ${truncateItem(hp.intakeSummary, 1200)}`);
-    }
-    if (hp.wearableSummary?.text?.trim()) {
-      lines.push(`Wearable / activity summary: ${truncateItem(hp.wearableSummary.text, 600)}`);
     }
   }
 

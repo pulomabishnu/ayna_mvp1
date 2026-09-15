@@ -11,6 +11,7 @@ import { retrieveKnowledgeForIntake, buildKnowledgeContext } from '../src/utils/
 import { consumeUsage } from './_usageLimit.js';
 import { rateLimit } from './_rateLimit.js';
 import { callWithFallback, parseProviderOrder } from './_llm.js';
+import { hasRequiredAiConsent } from './_privacyConsent.js';
 
 const NO_ACCOUNT_REPLY =
   "Hi! I'm Ayna. To get personalized health texts, complete your free health profile at https://ayna.health/quiz. It takes 5 minutes.";
@@ -69,28 +70,51 @@ async function logMessage(admin, userId, direction, body, messageSid = null) {
   }
 }
 
+function smsAgeRange(age) {
+  const n = Number.parseInt(age, 10);
+  if (!Number.isFinite(n)) return undefined;
+  if (n < 25) return '18-24';
+  if (n < 35) return '25-34';
+  if (n < 45) return '35-44';
+  if (n < 55) return '45-54';
+  if (n < 65) return '55-64';
+  return '65+';
+}
+
 function buildSmsPrompt(message, profile, knowledgeContext, recentMessages) {
-  const profileSummary = JSON.stringify({
-    age: profile?.age,
-    location: profile?.location,
-    conditions: profile?.conditions,
-    symptoms: profile?.symptoms,
-    primaryConcerns: profile?.primaryConcerns,
-    productPreferences: profile?.productPreferences,
+  const q = String(message || '').toLowerCase();
+  const summary = {
+    ageRange: smsAgeRange(profile?.age),
+    conditions: Array.isArray(profile?.conditions) ? profile.conditions.slice(0, 12) : undefined,
+    symptoms: Array.isArray(profile?.symptoms) ? profile.symptoms.slice(0, 12) : undefined,
+    primaryConcerns: Array.isArray(profile?.primaryConcerns) ? profile.primaryConcerns.slice(0, 12) : undefined,
+    productPreferences: Array.isArray(profile?.productPreferences) ? profile.productPreferences.slice(0, 10) : undefined,
     painLevel: profile?.painLevel,
-    insuranceType: profile?.insuranceType,
-  });
+  };
+  if (/near|where|clinic|pharmacy|location|city|zip/.test(q)) summary.coarseLocation = String(profile?.location || '').slice(0, 40) || undefined;
+  if (/insurance|covered|coverage|cost|pay|price/.test(q)) summary.insuranceType = String(profile?.insuranceType || '').slice(0, 80) || undefined;
+  if (/interact|medication|medicine|drug|supplement|safe with/.test(q)) {
+    summary.currentMedications = profile?.currentMedications || profile?.medications;
+    summary.currentSupplements = profile?.currentSupplements || profile?.supplements;
+  }
+  if (/pregnan|postpartum|breastfeed|fertil|trying to conceive|ttc/.test(q)) {
+    summary.pregnancyStatus = profile?.pregnancyStatus || profile?.pregnancy;
+    summary.postpartumStatus = profile?.postpartumStatus || profile?.postpartum;
+    summary.breastfeeding = profile?.breastfeeding;
+  }
+  const profileSummary = JSON.stringify(Object.fromEntries(Object.entries(summary).filter(([, v]) => v !== undefined && v !== '')));
 
   const historyLines = (recentMessages || [])
+    .slice(0, 6)
     .slice()
     .reverse()
-    .map((m) => `${m.direction === 'inbound' ? 'Her' : 'Ayna'}: ${m.message_body}`)
+    .map((m) => `${m.direction === 'inbound' ? 'Her' : 'Ayna'}: ${String(m.message_body || '').slice(0, 400)}`)
     .join('\n');
 
-  return `HER HEALTH PROFILE:
+  return `HER RELEVANT HEALTH CONTEXT:
 ${profileSummary}
 
-${knowledgeContext ? `${knowledgeContext}\n\n` : ''}${historyLines ? `RECENT CONVERSATION (most recent last):\n${historyLines}\n\n` : ''}HER NEW TEXT: ${message}
+${knowledgeContext ? `${knowledgeContext}\n\n` : ''}${historyLines ? `RECENT CONVERSATION (most recent last):\n${historyLines}\n\n` : ''}HER NEW TEXT: ${String(message || '').slice(0, 800)}
 
 Reply to her text now, following all the rules above.`;
 }
@@ -265,6 +289,13 @@ export default async function handler(req, res) {
     return res.status(200).send('');
   }
 
+  const { data: authUserResult, error: authUserError } = await admin.auth.admin.getUserById(userId);
+  if (authUserError || !hasRequiredAiConsent(authUserResult?.user)) {
+    const msg = 'Open ayna and review the current AI privacy choice before using personalized AI health replies by text.';
+    await logMessage(admin, userId, 'outbound', msg);
+    return sendTwiml(res, msg);
+  }
+
   // These three share only userId and are independent of each other.
   const [, intakeRes, recentRes] = await Promise.all([
     admin.from('phone_numbers').update({ last_sms_at: new Date().toISOString() }).eq('user_id', userId),
@@ -274,7 +305,7 @@ export default async function handler(req, res) {
       .select('direction, message_body, created_at')
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
-      .limit(10),
+      .limit(6),
   ]);
   const profile = intakeRes?.data?.profile || {};
   const recentMessages = recentRes?.data;

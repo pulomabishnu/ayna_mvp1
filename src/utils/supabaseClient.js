@@ -1,12 +1,17 @@
 import { createClient } from '@supabase/supabase-js';
 
+// Supabase's publishable client credentials are intentionally safe to ship in
+// browser/native bundles. Row Level Security remains the authorization boundary.
+// Environment variables still override these values for alternate projects.
+const PRODUCTION_SUPABASE_URL = 'https://mvvwgyspcohqxxcqkfrv.supabase.co';
+const PRODUCTION_SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_osUmc6fdapgq2mi5EAhkrA_LLW9OQH_';
+
 let client = null;
 
 export function getSupabaseClient() {
   if (client) return client;
-  const url = import.meta.env.VITE_SUPABASE_URL;
-  const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-  if (!url || !anonKey) return null;
+  const url = import.meta.env.VITE_SUPABASE_URL || PRODUCTION_SUPABASE_URL;
+  const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || PRODUCTION_SUPABASE_PUBLISHABLE_KEY;
   try {
     client = createClient(url, anonKey, {
       auth: {
@@ -15,15 +20,10 @@ export function getSupabaseClient() {
       },
     });
   } catch (e) {
-    // createClient throws synchronously on a malformed VITE_SUPABASE_URL
-    // (e.g. missing "https://", a stray trailing space, a copy-pasted anon
-    // key in the URL slot). Uncaught, that crashes every caller — App.jsx's
-    // auth effect on mount, AuthGate's render — with no message, which looks
-    // exactly like "login is broken" and gives no clue why. Every call site
-    // already treats a null return as "not configured," so surfacing the
-    // same signal here instead of throwing means that path — and the
-    // config-warning banner in AuthGate — actually gets a chance to run.
-    console.error('[Ayna] Supabase client init failed — check VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY in .env.local:', e);
+    // createClient throws synchronously on a malformed override. Falling back
+    // to the production publishable config above means ordinary Xcode/local
+    // builds work without copying credentials into .env.local.
+    console.error('[Ayna] Supabase client init failed — check any VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY overrides:', e);
     return null;
   }
   return client;

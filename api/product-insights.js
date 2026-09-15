@@ -10,6 +10,7 @@ import { verifyUser, consumeUsage, refundUsage } from './_usageLimit.js';
 import { isPremiumUser, hasLegacyClientPremiumFlag } from './_entitlement.js';
 import { checkProductInsightsRateLimit } from './_rateLimitProductInsights.js';
 import { callAnthropic, callOpenAI, callGemini, providerConfigured, parseProviderOrder } from './_llm.js';
+import { requireAiConsent } from './_privacyConsent.js';
 
 const MAX_NARRATIVE_LEN = 2200;
 const MAX_EXTRA_SUMMARY_LEN = 800;
@@ -349,7 +350,7 @@ async function runModel(product, provider, userContextText = '') {
   try {
     out = await callProvider(provider, buildUserPrompt(product, userContextText));
   } catch (e) {
-    console.error(`[product-insights] ${provider} failed:`, e?.status || '', e?.message, e?.body ? `| ${e.body}` : '');
+    console.error(`[product-insights] ${provider} failed:`, e?.status || '', e?.message);
     return null;
   }
   if (!out) return null;
@@ -385,6 +386,7 @@ export default async function handler(req, res) {
 
   const { user, error, admin } = await verifyUser(req);
   if (!user) return res.status(401).json({ error });
+  if (!requireAiConsent(user, res)) return;
 
   // _rateLimitProductInsights.js is named for THIS route but was only ever
   // imported by search-suggestions.js — so the endpoint it was written to

@@ -13,8 +13,9 @@ const DEFAULT_STATS = [
 // decoration, so it isn't something to drop for a simpler mobile form.
 const CONSENT_ITEMS = [
   'The health information I share with ayna is self-reported wellness information, not a clinical record.',
-  'My wellness data may be processed by an external AI service to personalize recommendations. ayna takes measures to anonymize and secure this information and never sells it.',
+  'When I intentionally use an AI-powered feature, relevant information I provide may be processed by third-party AI providers such as Anthropic, OpenAI, or Google to generate my requested response. ayna minimizes the context sent and does not sell it.',
   'ayna provides wellness information, not medical advice or a substitute for care from a qualified healthcare provider.',
+  'I confirm that I am at least 18 years old.',
 ];
 
 function Field({ label, icon, children }) {
@@ -113,12 +114,31 @@ function GoogleButton({ onClick, disabled }) {
   );
 }
 
+function AppleButton({ onClick, disabled }) {
+  return (
+    <button
+      type="button"
+      onClick={disabled ? undefined : onClick}
+      disabled={disabled}
+      style={{
+        width: '100%', background: '#000', color: '#fff', border: '1px solid #000',
+        textAlign: 'center', padding: 15, borderRadius: 99, fontFamily: "-apple-system, BlinkMacSystemFont, 'DM Sans', sans-serif",
+        fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', cursor: disabled ? 'not-allowed' : 'pointer',
+        opacity: disabled ? .6 : 1,
+      }}
+    >
+      {disabled ? 'Opening Apple…' : 'Continue with Apple'}
+    </button>
+  );
+}
+
 export default function SigninScreen({
   stats = DEFAULT_STATS,
   authUser,
   onSignUp,
   onSignIn,
   onGoogleSignIn,
+  onAppleSignIn,
   onResendConfirmation,
   onAuthenticated,
 }) {
@@ -126,9 +146,10 @@ export default function SigninScreen({
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [checked, setChecked] = useState([false, false, false]);
+  const [checked, setChecked] = useState([false, false, false, false]);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [appleLoading, setAppleLoading] = useState(false);
   const [error, setError] = useState('');
   const [resending, setResending] = useState(false);
   const [resendMsg, setResendMsg] = useState('');
@@ -150,7 +171,7 @@ export default function SigninScreen({
 
   const handleSignUp = async () => {
     if (!allConsented) {
-      setError('Please agree to the three statements above before creating your account.');
+      setError('Please agree to all four statements above before creating your account.');
       return;
     }
     setError('');
@@ -185,18 +206,36 @@ export default function SigninScreen({
     // statements above only render in signup mode, so this is the one place
     // stopping Google from creating a real account with none of them agreed
     // to. Signing in with an existing account needs no re-consent.
-    if (mode === 'signup' && !allConsented) {
-      setError('Please agree to the three statements above before continuing.');
+    if (!allConsented) {
+      setError('Please agree to all four statements above before continuing.');
       return;
     }
     setError('');
     setGoogleLoading(true);
     try {
-      await onGoogleSignIn();
+      await onGoogleSignIn({ consented: true });
     } catch (e) {
       setError(e.message || 'Could not start Google sign-in.');
     } finally {
       setGoogleLoading(false);
+    }
+  };
+
+  const handleApple = async () => {
+    if (!onAppleSignIn) return;
+    if (!allConsented) {
+      setError('Please agree to all four statements above before continuing.');
+      return;
+    }
+    setError('');
+    setAppleLoading(true);
+    try {
+      await onAppleSignIn({ consented: true });
+      onAuthenticated(firstName.trim() || undefined);
+    } catch (e) {
+      if (!/cancel/i.test(e?.message || '')) setError(e?.message || 'Could not sign in with Apple.');
+    } finally {
+      setAppleLoading(false);
     }
   };
 
@@ -284,7 +323,7 @@ export default function SigninScreen({
             <input type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} style={inputStyle} />
           </Field>
 
-          {mode === 'signup' && (
+          {(mode === 'signup' || mode === 'signin') && (
             <div style={{ marginTop: 6, marginBottom: 4, display: 'flex', flexDirection: 'column', gap: 10 }}>
               {CONSENT_ITEMS.map((text, i) => (
                 <div key={i} onClick={() => toggleCheck(i)} style={{ display: 'flex', gap: 10, cursor: 'pointer' }}>
@@ -316,7 +355,8 @@ export default function SigninScreen({
                 <span>{loading ? 'Signing in…' : 'Sign in'}</span>
               </PrimaryButton>
             )}
-            <GoogleButton onClick={handleGoogle} disabled={googleLoading || loading} />
+            <GoogleButton onClick={handleGoogle} disabled={googleLoading || appleLoading || loading} />
+            {onAppleSignIn && <AppleButton onClick={handleApple} disabled={appleLoading || googleLoading || loading} />}
           </div>
 
           <div

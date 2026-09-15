@@ -136,9 +136,9 @@ function hasCommunitySupport(product) {
   return (Number.isFinite(rating) && rating >= 4) || Boolean(product?.communityReview) || communityLinks.length > 0;
 }
 
-function productTypeOptions() {
+function productTypeOptions(products = ALL_PRODUCTS) {
   const set = new Set();
-  ALL_PRODUCTS.forEach((product) => { if (product?.category) set.add(product.category); });
+  products.forEach((product) => { if (product?.category) set.add(product.category); });
   return Array.from(set).sort();
 }
 
@@ -199,8 +199,8 @@ function displayNameFromUser(user) {
   return '';
 }
 
-function productById(id) {
-  return ALL_PRODUCTS.find((p) => p.id === id) || null;
+function productById(id, products = ALL_PRODUCTS) {
+  return products.find((p) => p.id === id) || ALL_PRODUCTS.find((p) => p.id === id) || null;
 }
 
 /** Cream tile with the product photo, falling back to the mockup's initial-on-cream block. */
@@ -328,7 +328,7 @@ function Toggle({ on, offTrack = '#DCD5CB', onTrack = '#242A52', onKnob = '#F0A8
 /* 1c — returning user                                                 */
 /* ------------------------------------------------------------------ */
 
-function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds = [], onStartQuiz, onViewDiscovery, onViewEcosystem, onOpenProduct, initialCategory = null }) {
+function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds = [], catalogProducts = ALL_PRODUCTS, onStartQuiz, onViewDiscovery, onViewEcosystem, onOpenProduct, initialCategory = null }) {
   const name = displayNameFromUser(user) || 'there';
   const [filter, setFilter] = useState(initialCategory || 'all');
   // A shop category pick was pure local state with no URL round-trip —
@@ -379,14 +379,14 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
   const recommendedIds = useMemo(() => new Set(recommendedProductIds || []), [recommendedProductIds]);
 
   const availableShopFilters = useMemo(
-    () => SHOP_FILTERS.filter((item) => item.key === 'all' || ALL_PRODUCTS.some((product) => matchesShopFilter(product, item.key))),
-    [],
+    () => SHOP_FILTERS.filter((item) => item.key === 'all' || catalogProducts.some((product) => matchesShopFilter(product, item.key))),
+    [catalogProducts],
   );
 
-  const availableProductTypes = useMemo(() => productTypeOptions(), []);
+  const availableProductTypes = useMemo(() => productTypeOptions(catalogProducts), [catalogProducts]);
 
   const shownProducts = useMemo(() => {
-    let list = ALL_PRODUCTS.filter((product) => product?.id && product?.name && matchesShopFilter(product, filter));
+    let list = catalogProducts.filter((product) => product?.id && product?.name && matchesShopFilter(product, filter));
 
     if (productTypeFilter !== 'all') list = list.filter((product) => product.category === productTypeFilter);
     if (aynaFilter !== 'all') list = list.filter((product) => matchesAyna(product, aynaFilter, { ownedIds, recommendedIds }));
@@ -431,7 +431,7 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
     }
 
     return list.slice(0, 8);
-  }, [filter, priceFilter, eligibilityFilter, preferenceFilter, sustainabilityFilter, lifeStageFilter, ratingFilter, productTypeFilter, aynaFilter, personalize, ownedIds, recommendedIds, areas]);
+  }, [catalogProducts, filter, priceFilter, eligibilityFilter, preferenceFilter, sustainabilityFilter, lifeStageFilter, ratingFilter, productTypeFilter, aynaFilter, personalize, ownedIds, recommendedIds, areas]);
 
   const clearShopFilters = () => {
     setFilter('all');
@@ -671,7 +671,7 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
 /* 1a — first visit                                                    */
 /* ------------------------------------------------------------------ */
 
-function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasProfile, profileCategories, initialCategory = null }) {
+function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasProfile, profileCategories, catalogProducts = ALL_PRODUCTS, initialCategory = null }) {
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState(initialCategory || 'all');
   // See the matching effect in WelcomeBack for why — same fix, same pattern.
@@ -707,9 +707,9 @@ function FirstVisitLanding({ onStartQuiz, onViewDiscovery, onOpenProduct, hasPro
 
   const lineup = useMemo(
     () => SHOP_LINEUP
-      .map(({ id, label }) => ({ product: productById(id), label }))
+      .map(({ id, label }) => ({ product: productById(id, catalogProducts), label }))
       .filter((x) => x.product),
-    [],
+    [catalogProducts],
   );
 
   const availableShopFilters = useMemo(
@@ -952,6 +952,7 @@ export default function AynaLanding({
   hasProfile = false,
   profileCategories,
   recommendedProductIds = [],
+  catalogProducts = ALL_PRODUCTS,
   initialCategory = null,
 }) {
   if (user) {
@@ -961,6 +962,7 @@ export default function AynaLanding({
         myProducts={myProducts}
         ecosystemCount={ecosystemCount}
         recommendedProductIds={recommendedProductIds}
+        catalogProducts={catalogProducts}
         onStartQuiz={onStartQuiz}
         onViewDiscovery={onViewDiscovery}
         onViewEcosystem={onViewEcosystem}
@@ -977,6 +979,7 @@ export default function AynaLanding({
       onOpenProduct={onOpenProduct}
       hasProfile={hasProfile}
       profileCategories={profileCategories}
+      catalogProducts={catalogProducts}
       initialCategory={initialCategory}
     />
   );

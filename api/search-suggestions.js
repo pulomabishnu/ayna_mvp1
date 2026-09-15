@@ -10,6 +10,7 @@
 
 import { checkProductInsightsRateLimit } from './_rateLimitProductInsights.js';
 import { verifyUser } from './_usageLimit.js';
+import { requireAiConsent } from './_privacyConsent.js';
 import { tryParseJsonCandidate, callWithFallback, parseProviderOrder, providerConfigured } from './_llm.js';
 import { ALL_PRODUCTS } from '../src/data/products.js';
 
@@ -455,6 +456,13 @@ export default async function handler(req, res) {
 
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+  // Raw search text may contain symptoms/conditions. Never send it to Serper,
+  // Anthropic, OpenAI, or Gemini unless the account has current explicit AI
+  // consent and the 18+ confirmation.
+  const { user: searchUser, error: searchAuthError } = await verifyUser(req);
+  if (!searchUser) return res.status(401).json({ error: searchAuthError || 'auth_required' });
+  if (!requireAiConsent(searchUser, res)) return;
 
   // This route spends Anthropic tokens and is anonymous by default so that
   // Discovery works signed-out. That is a deliberate product tradeoff, not an

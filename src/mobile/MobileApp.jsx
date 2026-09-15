@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Capacitor } from '@capacitor/core';
 import './mobile.css';
 import { ALL_PRODUCTS, getEcosystemAlternatives, getProfileMatchPercentForProduct, getRecommendationMatchesAndRest, filterPrescriptionCareGate } from '../data/products.js';
 import { RELEASED_STARTUPS } from '../data/startups.js';
@@ -20,6 +21,8 @@ import { fetchNotificationPreferences } from './utils/notificationPreferencesApi
 import { ECOSYSTEM_AREAS as AREA_LABELS } from './data/ecosystemAreas.js';
 import AskAynaChip from './components/AskAynaChip.jsx';
 import AskAynaModal from './components/AskAynaModal.jsx';
+import AnalyticsConsentPrompt from './components/AnalyticsConsentPrompt.jsx';
+import AiConsentPrompt from './components/AiConsentPrompt.jsx';
 import ProfileFlow from './screens/profile/ProfileFlow.jsx';
 
 import LandingScreen from './screens/LandingScreen.jsx';
@@ -70,18 +73,20 @@ const SCREENS = {
 // there but not yet in ALL_PRODUCTS). Kept separate from ALL_PRODUCTS
 // itself since ecosystem seeding below keys off the real bundled catalog
 // (via getRecommendationMatchesAndRest) only, the same as desktop.
-function buildBrowseProducts(discoveredProducts) {
-  return [
-    ...filterPrescriptionCareGate(ALL_PRODUCTS).map((p) => ({ ...p, isStartup: false })),
-    ...RELEASED_STARTUPS.map((s) => ({
+function buildBrowseProducts(catalogProducts) {
+  const source = Array.isArray(catalogProducts) && catalogProducts.length ? catalogProducts : ALL_PRODUCTS;
+  const liveProducts = filterPrescriptionCareGate(source).map((p) => ({ ...p, isStartup: false }));
+  const seen = new Set(liveProducts.map((p) => String(p?.id || '')));
+  const releasedStartups = RELEASED_STARTUPS
+    .filter((s) => !seen.has(String(s?.id || '')))
+    .map((s) => ({
       ...s,
       isStartup: false,
       type: 'digital',
       summary: s.description || s.tagline,
       price: s.stage || '',
-    })),
-    ...filterPrescriptionCareGate(discoveredProducts).map((p) => ({ ...p, isStartup: false })),
-  ];
+    }));
+  return [...liveProducts, ...releasedStartups];
 }
 
 // No single brand should crowd out the rest of the ecosystem/orbit — keeps
@@ -159,13 +164,13 @@ export default function MobileApp() {
   // scroll pagination) is exactly as the user left it, not reset to a
   // fresh mount. Closing the overlay just reveals it again.
   const [overlay, setOverlay] = useState(null); // { type: 'product' | 'article', item }
-  const { user: authUser, signUpWithPassword, signInWithPassword, signInWithGoogle, signOut: signOutSupabase, resendConfirmation } = useSupabaseAuth();
+  const { user: authUser, signUpWithPassword, signInWithPassword, signInWithGoogle, signInWithApple, signOut: signOutSupabase, resendConfirmation } = useSupabaseAuth();
 
   // Backend-only state used to keep mobile ecosystem writes consistent with
   // the same Supabase user_ecosystems rows used by the website.
   const ecosystemFlagsRef = useRef({ trackedProducts: {}, omittedProducts: {} });
   const pendingQuizEcosystemRef = useRef(null);
-  const { savedMap, isSaved, toggleSaved } = useSavedProducts(authUser);
+  const { savedMap, isSaved, toggleSaved, resetSaved } = useSavedProducts(authUser);
   const { theme, resolvedTheme, setThemeMode } = useThemeMode();
   const [personalized, setPersonalized] = usePersonalizedFeed();
   // Requests push permission and registers this device on launch (iOS only
@@ -275,21 +280,34 @@ export default function MobileApp() {
     };
   }, [authUser, updateSession, setTextSizeIndex]);
 
-  // Same loadProductCatalog() call Discovery.jsx makes — a live source
-  // ('api'/'cache') means the bundle no longer has the full catalog, so
-  // its 'discovered'-only items get folded into Browse too; a 'bundled'
-  // fallback (API unavailable) contributes nothing, since the bundle
-  // already has everything BROWSE_PRODUCTS needs in that case.
-  const [discoveredProducts, setDiscoveredProducts] = useState([]);
+  // Website and iPhone now consume the exact same live product_catalog feed.
+  // Start with the bundled copy so Browse is never empty, then replace it with
+  // the complete API catalog. Force-refresh while the app stays open and when
+  // it returns to the foreground so a newly added/edited/deactivated product
+  // propagates without shipping a new iOS build.
+  const [catalogProducts, setCatalogProducts] = useState(ALL_PRODUCTS);
   useEffect(() => {
     let cancelled = false;
-    loadProductCatalog().then(({ products, source }) => {
-      if (cancelled || source === 'bundled') return;
-      setDiscoveredProducts(products.filter((p) => p.source === 'discovered'));
-    }).catch(() => {});
-    return () => { cancelled = true; };
+    const applyCatalog = ({ products }) => {
+      if (cancelled || !Array.isArray(products) || !products.length) return;
+      setCatalogProducts(products);
+    };
+    const refresh = () => loadProductCatalog({ force: true }).then(applyCatalog).catch(() => {});
+
+    loadProductCatalog().then(applyCatalog).catch(() => {});
+    const timer = setInterval(refresh, 5 * 60 * 1000);
+    const onVisibility = () => {
+      if (typeof document === 'undefined' || document.visibilityState === 'visible') refresh();
+    };
+    if (typeof document !== 'undefined') document.addEventListener('visibilitychange', onVisibility);
+
+    return () => {
+      cancelled = true;
+      clearInterval(timer);
+      if (typeof document !== 'undefined') document.removeEventListener('visibilitychange', onVisibility);
+    };
   }, []);
-  const browseProducts = buildBrowseProducts(discoveredProducts);
+  const browseProducts = buildBrowseProducts(catalogProducts);
 
   const Screen = SCREENS[screen] || LandingScreen;
 
@@ -341,6 +359,11 @@ export default function MobileApp() {
   // newly real here.
   const handleSignOut = () => {
     setOverlay(null);
+    setAskAynaOpen(false);
+    setAskAynaHistory([]);
+    pendingQuizEcosystemRef.current = null;
+    ecosystemFlagsRef.current = { trackedProducts: {}, omittedProducts: {} };
+    resetSaved();
     resetSession();
     signOutSupabase();
     setScreen('landing');
@@ -449,6 +472,7 @@ export default function MobileApp() {
     onSignUp: signUpWithPassword,
     onSignIn: signInWithPassword,
     onGoogleSignIn: signInWithGoogle,
+    onAppleSignIn: Capacitor.getPlatform() === 'ios' ? signInWithApple : undefined,
     onResendConfirmation: resendConfirmation,
     onAuthenticated: (name) => {
       updateSession((prev) => ({ userName: name || prev.userName, hasEcosystem: true }));
@@ -459,6 +483,8 @@ export default function MobileApp() {
 
   return (
     <div className="ayna-mobile" data-theme={resolvedTheme} style={{ '--ayna-text-scale': textScale }}>
+      <AnalyticsConsentPrompt />
+      <AiConsentPrompt user={authUser} />
       <Screen
         {...nav}
         theme={theme}

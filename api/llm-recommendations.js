@@ -3,6 +3,7 @@ import { retrieveKnowledgeForIntake, buildKnowledgeContext } from '../src/utils/
 import { verifyUser, claimEcosystemBuild, releaseEcosystemBuild } from './_usageLimit.js';
 import { callWithFallback, parseProviderOrder, tryParseJsonCandidate, providerConfigured } from './_llm.js';
 import { isPremiumUser, hasLegacyClientPremiumFlag } from './_entitlement.js';
+import { requireAiConsent } from './_privacyConsent.js';
 
 // Hard ceilings on client-supplied work. Without these, one request with 500
 // primaryConcerns and batchSize 500 issued 500 sequential LLM calls.
@@ -41,24 +42,26 @@ function ageRange(age) {
   return '55+';
 }
 
-function zipOnly(location) {
-  if (!location) return 'not provided';
-  const match = String(location).match(/\b(\d{5})(?:-\d{4})?\b/);
-  return match ? match[1] : 'not provided';
-}
-
-// Strip PII fields that must never reach Claude; replace age/location with
-// privacy-safe equivalents. Applied once at the API boundary in handleRequest.
+// Build a narrow recommendation context instead of forwarding the whole intake.
+// Direct identifiers, ZIP/location, insurance/FSA/HSA, support notes, and other
+// unrelated free text never leave ayna for this generation path.
 function sanitizeIntake(raw) {
-  if (!raw || typeof raw !== 'object') return raw || {};
-  // Destructure to explicitly drop identifying fields
-  // eslint-disable-next-line no-unused-vars
-  const { email, name, user_id, userId, fullAddress, address, ...rest } = raw;
-  return {
-    ...rest,
-    age: ageRange(raw.age),
-    location: zipOnly(raw.location),
+  if (!raw || typeof raw !== 'object') return {};
+  const out = { age: ageRange(raw.age) };
+  const copy = (key, max = 16) => {
+    const value = raw[key];
+    if (Array.isArray(value)) out[key] = value.filter(Boolean).slice(0, max).map((v) => String(v).slice(0, 120));
+    else if (typeof value === 'string' && value.trim()) out[key] = value.trim().slice(0, 500);
+    else if (typeof value === 'boolean' || typeof value === 'number') out[key] = value;
   };
+  [
+    'lifeStage', 'menstrualCycle', 'primaryConcerns', 'customConcerns', 'conditions', 'symptoms',
+    'goals', 'sensitivities', 'allergies', 'productPreferences', 'productsToAvoid',
+    'ingredientPreferences', 'materialPreferences', 'productFormats', 'budget', 'painLevel',
+    'tryingToConceive', 'pregnancyStatus', 'postpartumStatus', 'breastfeeding',
+    'currentMedications', 'currentSupplements', 'dislikedProductsText', 'internalComfort',
+  ].forEach((key) => copy(key));
+  return out;
 }
 
 function selectedConcerns(intake = {}) {
@@ -665,8 +668,8 @@ export default async function handler(req, res) {
   try {
     return await handleRequest(req, res);
   } catch (e) {
-    console.error('[LLM API] Unhandled error:', e?.message, e?.stack?.slice(0, 400));
-    return res.status(500).json({ error: e?.message || String(e), type: 'unhandled_exception' });
+    console.error('[LLM API] Unhandled error:', e?.name || 'Error');
+    return res.status(500).json({ error: 'generation_failed', type: 'unhandled_exception' });
   }
 }
 
@@ -711,6 +714,7 @@ async function handleRequest(req, res) {
 
   const { user, error: authError, admin } = await verifyUser(req);
   if (!user) return res.status(401).json({ error: authError });
+  if (!requireAiConsent(user, res)) return;
   const isPremium = isPremiumUser(user);
   if (hasLegacyClientPremiumFlag(user)) {
     console.warn(`[llm-recs] user ${user.id} has the legacy client-writable is_premium flag; migrate it to app_metadata`);

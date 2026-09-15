@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="index,follow" />
+  <title>Consumer Health Data Privacy Notice | ayna</title>
+  <style>
+    :root { color-scheme: light; --ink:#242A52; --muted:#6f6880; --cream:#fbf8f2; --line:#e8dfd3; --amber:#b56d20; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--cream); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; line-height:1.7; }
+    main { width:min(900px,calc(100% - 32px)); margin:40px auto 80px; background:#fff; border:1px solid var(--line); border-radius:22px; padding:clamp(24px,5vw,48px); box-shadow:0 14px 40px rgba(36,42,82,.06); }
+    h1,h2 { font-family:Georgia,"Times New Roman",serif; line-height:1.15; color:#1d2144; }
+    h1 { font-size:clamp(2rem,5vw,3rem); margin:.4rem 0 .6rem; }
+    h2 { font-size:1.35rem; margin:2.2rem 0 .6rem; }
+    p,li,td { color:var(--muted); }
+    a { color:var(--amber); }
+    .eyebrow { font-size:.78rem; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--amber); }
+    .updated { font-size:.9rem; color:var(--muted); }
+    .callout { margin:1.5rem 0; padding:1rem 1.1rem; border:1px solid #ead5b7; border-radius:14px; background:#fff8ed; }
+    .back { display:inline-block; margin-bottom:1rem; text-decoration:none; font-weight:600; }
+    table { width:100%; border-collapse:collapse; margin:.8rem 0 1.4rem; }
+    th,td { text-align:left; vertical-align:top; border-top:1px solid var(--line); padding:.8rem .7rem; }
+    th { color:var(--ink); }
+    @media (max-width:650px) { table,thead,tbody,tr,th,td { display:block; } th { padding-bottom:.15rem; } td { border-top:0; padding-top:0; } tr { border-top:1px solid var(--line); padding:.55rem 0; } }
+  </style>
+</head>
+<body>
+<main>
+  <a class="back" href="/">← Back to ayna</a>
+  <div class="eyebrow">Consumer health data privacy</div>
+  <h1>Consumer Health Data Privacy Notice</h1>
+  <p class="updated"><strong>Effective September 13, 2026</strong></p>
+  <p>This notice explains how ayna collects, uses, shares, secures, and lets you control consumer health data. It supplements our general <a href="/privacy-policy">Privacy Policy</a>. It is intended to provide additional health-data disclosures and rights where consumer-health-data laws apply.</p>
+
+  <div class="callout"><strong>ayna does not sell consumer health data.</strong> ayna is a wellness and product-discovery service, not a healthcare provider, medical device, diagnosis service, or emergency service. ayna accounts and account-only health features in this release are for adults age 18 and older.</div>
+
+  <h2>1. Consumer health data we may collect</h2>
+  <p>Depending on the features you choose to use, consumer health data may include:</p>
+  <ul>
+    <li>health concerns, symptoms, sensitivities, goals, conditions, medications, supplements, allergies, pain or severity, life stage, pregnancy or postpartum information, cycle information, and sexual or reproductive wellness information;</li>
+    <li>insurance, FSA/HSA, ZIP/coarse location, budget, and product preferences when those details are used to personalize health-product discovery;</li>
+    <li>products you save, track, hide, review, or add to your ecosystem when those choices reveal or can be used to infer a health interest;</li>
+    <li>health-related searches, Ask ayna questions, product-chat questions, reviews, support content, and other health-related text you choose to submit; and</li>
+    <li>SMS health questions and replies when you choose to use ayna's SMS functionality.</li>
+  </ul>
+  <p>The current iOS release does not directly collect HealthKit/Fitness data, precise GPS location, or microphone/audio data.</p>
+
+  <h2>2. Sources of consumer health data</h2>
+  <p>We collect consumer health data primarily from you, including intake and profile answers, text you submit, product choices and interactions, SMS conversations, and personalized features you choose to use. We may derive limited health-related inferences from information you provide to produce a requested match, safety check, recommendation, or response.</p>
+
+  <h2>3. Why we collect and use it</h2>
+  <p>We use consumer health data to provide features you request, including building and saving your profile and ecosystem, personalizing product discovery, calculating relevance or match explanations, checking known safety conflicts, generating user-requested AI or SMS responses, remembering preferences you ask us to remember, providing support, and maintaining service security and integrity.</p>
+  <p>Commercial, affiliate, or partner status is not used as an input to personalized health-match scores, personalized recommendation order, or Ask ayna answers.</p>
+
+  <h2>4. Who may receive consumer health data</h2>
+  <table>
+    <thead><tr><th>Recipient</th><th>What may be involved and why</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Supabase</strong></td><td>Stores account-linked health profiles, intake information, ecosystem state, SMS-related account records, and other user-owned records, and provides authentication.</td></tr>
+      <tr><td><strong>Vercel</strong></td><td>Hosts ayna and processes server requests needed to operate app and API functionality.</td></tr>
+      <tr><td><strong>Anthropic, OpenAI, or Google Gemini</strong></td><td>When you intentionally use an AI-powered feature after the required privacy choice, the selected provider may receive your prompt, product information, recent conversation context, and only the relevant wellness context needed to generate the requested response. Google Gemini may be routed through Vercel AI Gateway. Not every request is sent to every provider.</td></tr>
+      <tr><td><strong>Twilio</strong></td><td>Processes phone information for verification and SMS traffic for user-initiated health conversations and other SMS features you choose to use.</td></tr>
+      <tr><td><strong>PostHog</strong></td><td>Receives optional iOS product-usage analytics and coarse error signals after you allow analytics. ayna disables session recording, automatic text/click capture, automatic exception capture, and IP collection and filters health-profile answers, message bodies, direct contact information, raw sensitive search text, and authentication tokens from analytics payloads.</td></tr>
+      <tr><td><strong>Search providers</strong></td><td>May process minimized search terms when external discovery is needed. Sensitive external search should not be combined with your saved account health profile.</td></tr>
+      <tr><td><strong>Resend</strong></td><td>Processes information needed for transactional, contact, or support email.</td></tr>
+    </tbody>
+  </table>
+  <p>We may also disclose information when required by law, to investigate fraud, abuse, or security incidents, or as part of a corporate transaction subject to applicable law and this notice.</p>
+
+  <h2>5. AI consent and withdrawing consent</h2>
+  <p>Before account-linked personal or health information is used with third-party AI in the iOS app, ayna asks you to affirm the current AI privacy disclosure. If you do not agree, you can continue using non-AI parts of ayna. To stop future optional AI processing, do not use AI-powered features. If ayna materially changes how existing information is shared with AI providers, additional notice or consent will be requested when required.</p>
+
+  <h2>6. Analytics choice</h2>
+  <p>Optional iOS analytics require a first-use choice. You can decline without losing core app functionality and can later change the setting under Privacy &amp; Data. ayna also respects Global Privacy Control where applicable. Analytics identifiers may be linkable for analytics purposes, so ayna does not describe them as anonymous.</p>
+
+  <h2>7. Aggregate and de-identified partner insights</h2>
+  <p>ayna may use de-identified or aggregated information to understand trends, improve services, and create aggregate insights. ayna does not provide partners with identifiable individual health profiles for advertising or targeting. Partners must not receive names, emails, phone numbers, account IDs, individual health profiles, identifiable Ask ayna histories, identifiable SMS content, or other individual-level sensitive health data for advertising or targeting. ayna does not use consumer health data to build third-party targeted advertising audiences and does not attempt to re-identify aggregate or de-identified health information.</p>
+
+  <h2>8. Your consumer health data rights</h2>
+  <p>Depending on where you live, you may have rights to confirm whether ayna collects, shares, or sells consumer health data; access that data; learn categories of recipients; correct inaccuracies; withdraw consent for future collection or sharing; obtain a copy; delete data; and appeal certain privacy decisions.</p>
+  <p>Signed-in users can edit profile information, change analytics preferences, view or download account-linked data, and permanently delete their account from <strong>Settings → Account → Delete account</strong>. You may also email <a href="mailto:puloma@aynahealth.co">puloma@aynahealth.co</a> for privacy support or to submit a rights request. We may need to verify your identity before completing a request.</p>
+
+  <h2>9. Account deletion</h2>
+  <p>The in-app deletion flow is the primary self-service deletion method. It is designed to remove the ayna authentication account and associated active user-linked data handled by ayna's deletion workflow. Limited information may be retained when legally required or permitted for security, fraud prevention, dispute resolution, or similar obligations. Independent service-provider or identity-provider records can have separate deletion or authorization-revocation requirements.</p>
+
+  <h2>10. SMS privacy</h2>
+  <p>SMS conversation bodies can contain sensitive health information and are stored with the user's account so ayna can provide and personalize the conversation. Phone verification is not marketing consent. STOP, UNSUBSCRIBE, CANCEL, END, or QUIT opt you out of ordinary ayna SMS; START or UNSTOP can re-enable it subject to carrier/provider behavior and ayna's stored preference.</p>
+
+  <h2>11. Security and retention</h2>
+  <p>ayna uses safeguards designed for the sensitivity of consumer health data, including authenticated access, database row-level/access controls for user-owned records, HTTPS, server-side authorization checks, rate limiting, analytics filtering, and data minimization. No online system can guarantee absolute security.</p>
+  <p>We retain information only for as long as reasonably necessary for the purposes described here, to provide requested services, satisfy legal obligations, resolve disputes, prevent abuse, investigate security incidents, and maintain required records. We do not promise a specific retention period unless it is actually enforced.</p>
+
+  <h2>12. No sale, tracking, or health-facility geofencing</h2>
+  <p>ayna does not sell consumer health data, does not use it for third-party targeted advertising, and does not use geofences around healthcare facilities to identify or infer a person's health status for advertising. The current iOS release does not request IDFA and does not use Apple-defined cross-company tracking.</p>
+
+  <h2>13. Adults only</h2>
+  <p>ayna accounts and account-only health features in this release are intended only for people age 18 and older. If you are under 18, do not create an account or submit consumer health data to ayna.</p>
+
+  <h2>14. Changes and contact</h2>
+  <p>If we materially change the categories of consumer health data we collect, the purposes for which we use it, or the ways we share it, we will update this notice and obtain additional consent when required before using existing information for a newly disclosed purpose.</p>
+  <p>Privacy and consumer health data requests or appeals: <a href="mailto:puloma@aynahealth.co">puloma@aynahealth.co</a>.</p>
+</main>
+</body>
+</html>

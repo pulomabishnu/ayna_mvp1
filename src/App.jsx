@@ -47,12 +47,14 @@ import AuthCallback from './components/AuthCallback';
 import AuthConfirm from './components/AuthConfirm';
 import EmailConfirmed from './components/EmailConfirmed';
 import { getSupabaseClient } from './utils/supabaseClient';
+import { loadProductCatalog } from './utils/productCatalog.js';
 import { loadEcosystemForUser, upsertProductState, upsertProductsBatch, clearEcosystemForUser } from './utils/ecosystemStore';
 import { loadSavedProducts, persistSavedProducts, clearSavedProducts, loadSavedForUser, setSavedForUser } from './utils/savedProductsStore';
 import { loadLearningMemoryForUser, saveLearningMemoryForUser } from './utils/learningMemoryStore';
 import { loadReviewsForUser, upsertProductReviews } from './utils/reviewsStore';
 import { clearCachedLlmRecommendations, fingerprintIntake } from './utils/fetchLlmRecommendations';
 import posthog from 'posthog-js';
+import { safePosthogIdentify } from './utils/posthogPrivacy.js';
 import { tagInternalUserIfNeeded } from './utils/posthogInternal';
 import { productHref, parseProductIdFromPath } from './utils/productRoute';
 
@@ -200,6 +202,45 @@ function NotFoundState({ title, subtitle, ctaLabel, onCta }) {
 }
 
 function App() {
+  const [liveCatalogProducts, setLiveCatalogProducts] = useState([]);
+  const [liveCatalogLoading, setLiveCatalogLoading] = useState(true);
+
+  // Website and iPhone consume the same product_catalog feed. Keep the bundle
+  // as an outage fallback inside loadProductCatalog(), but refresh the shared
+  // feed while the tab stays open so catalog edits do not require a deploy.
+  useEffect(() => {
+    let cancelled = false;
+    const refresh = async (force = false) => {
+      try {
+        const { products } = await loadProductCatalog({ force });
+        if (!cancelled && Array.isArray(products) && products.length) {
+          setLiveCatalogProducts(products);
+        }
+      } catch {
+        // loadProductCatalog already provides the bundled fallback; keep the
+        // last good snapshot if an unexpected fetch failure still bubbles up.
+      } finally {
+        if (!cancelled) setLiveCatalogLoading(false);
+      }
+    };
+    refresh(false);
+    const timer = window.setInterval(() => refresh(true), 5 * 60 * 1000);
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') refresh(true);
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
+  }, []);
+
+  const liveCatalogById = useMemo(
+    () => new Map((liveCatalogProducts || []).filter((p) => p?.id).map((p) => [String(p.id), p])),
+    [liveCatalogProducts],
+  );
+
   const [currentView, setCurrentViewRaw] = useState(getInitialView);
   // Only meaningful when currentView === 'product' — the :id segment of
   // /product/:id. Kept separate from currentView (rather than encoded into
@@ -472,7 +513,7 @@ function App() {
       setUser(session?.user ?? null);
       setUserSession(session ?? null);
       if (event === 'SIGNED_IN' && session?.user) {
-        posthog.identify(session.user.id, { email: session.user.email });
+        safePosthogIdentify(posthog, session.user.id);
         tagInternalUserIfNeeded(posthog);
         setShowAuthModal(false);
         // Deliberately does NOT navigate here. Every in-app path that opens the
@@ -1176,11 +1217,12 @@ function App() {
       || savedProducts[productRouteId]
       || trackedProducts[productRouteId]
       || omittedProducts[productRouteId]
+      || liveCatalogById.get(String(productRouteId))
       || getProductById(productRouteId);
     if (!raw) return null;
     return raw.llmGenerated ? enrichLlmProductForDiscovery(raw) : raw;
-  }, [productRouteId, lastClickedProduct, myProducts, savedProducts, trackedProducts, omittedProducts]);
-  const productStillResolving = !resolvedProduct && (authLoading || dataLoading);
+  }, [productRouteId, lastClickedProduct, myProducts, savedProducts, trackedProducts, omittedProducts, liveCatalogById]);
+  const productStillResolving = !resolvedProduct && (authLoading || dataLoading || liveCatalogLoading);
 
   // Every route showed the identical generic <title> from index.html — no
   // way to tell tabs apart, bookmark a specific page, or get a useful link
@@ -1414,6 +1456,7 @@ function App() {
             hasProfile={!!quizResults}
             profileCategories={landingProfileCategories}
             recommendedProductIds={recommendedProductIds}
+            catalogProducts={liveCatalogProducts}
             initialCategory={homeCategory}
           />
         )}
@@ -1601,6 +1644,7 @@ function App() {
             onOpenProduct={handleOpenProduct}
             initialSearch={discoverySearch}
             recommendedProductIds={recommendedProductIds}
+            catalogProducts={liveCatalogProducts}
             aynaReviews={aynaReviews}
             savedProducts={savedProducts}
             onToggleSaved={toggleSavedProduct}

@@ -8,6 +8,7 @@ import { verifyUser, consumeUsage, refundUsage } from './_usageLimit.js';
 import { isPremiumUser, hasLegacyClientPremiumFlag } from './_entitlement.js';
 import { callWithFallback, parseProviderOrder, stripDiagnosticLanguage } from './_llm.js';
 import { fetchOfficialSiteText } from './_officialSiteFetch.js';
+import { requireAiConsent } from './_privacyConsent.js';
 
 /**
  * Every field below arrives in the request body and is interpolated into the
@@ -138,6 +139,7 @@ export default async function handler(req, res) {
 
   const { user, error, admin } = await verifyUser(req);
   if (!user) return res.status(401).json({ error });
+  if (!requireAiConsent(user, res)) return;
 
   const isPremium = isPremiumUser(user);
   if (hasLegacyClientPremiumFlag(user)) {
