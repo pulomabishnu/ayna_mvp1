@@ -155,6 +155,28 @@ export function useSupabaseAuth() {
           debugLog('raw fetch probe FAILED/timed out:', probeErr?.name, probeErr?.message);
         }
 
+        // Same request setSession()'s internal _getUser() makes — GET
+        // /auth/v1/user with the fresh access token as a Bearer header —
+        // but raw, bypassing GoTrueClient entirely. The unauthenticated
+        // /health probe above succeeded fast; this isolates whether it's
+        // specifically an authenticated request that hangs.
+        try {
+          const userUrl = `${import.meta.env.VITE_SUPABASE_URL}/auth/v1/user`;
+          const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+          debugLog('probing authenticated /auth/v1/user ...');
+          const userProbeStart = Date.now();
+          const userProbeController = new AbortController();
+          const userProbeTimeout = setTimeout(() => userProbeController.abort(), 8000);
+          const userProbeRes = await fetch(userUrl, {
+            headers: { Authorization: `Bearer ${accessToken}`, apikey: anonKey },
+            signal: userProbeController.signal,
+          });
+          clearTimeout(userProbeTimeout);
+          debugLog('raw authenticated /user probe finished in', Date.now() - userProbeStart, 'ms, status:', userProbeRes.status);
+        } catch (userProbeErr) {
+          debugLog('raw authenticated /user probe FAILED/timed out:', userProbeErr?.name, userProbeErr?.message);
+        }
+
         const setSessionPromise = supabase.auth.setSession({
           access_token: accessToken,
           refresh_token: refreshToken,
