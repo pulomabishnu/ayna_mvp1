@@ -94,6 +94,15 @@ function AccountIcon({ type }) {
       </svg>
     );
   }
+  if (type === 'checkin') {
+    return (
+      <svg {...props}>
+        <rect x="4" y="5" width="16" height="16" rx="3" />
+        <path d="M4 10h16M8 3v4M16 3v4" />
+        <path d="M9 14.5l2 2 4-4" />
+      </svg>
+    );
+  }
   return (
     <svg {...props}>
       <circle cx="12" cy="12" r="3.5" />
@@ -190,7 +199,7 @@ function ToggleRow({ title, sub, on, onClick, first }) {
 
 /* ---------------------------- Profile hub ---------------------------- */
 
-function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, onEditProfile, onOpenEcosystem, onOpenSaved }) {
+function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenMonthlyCheckin }) {
   return (
     <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
       <div
@@ -274,6 +283,7 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
         <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 2 }}>Your account</div>
 
         {[
+          { key: 'checkin', title: 'Monthly check-in', sub: "What's changed since last time", onClick: onOpenMonthlyCheckin },
           { key: 'shopper', title: 'Shopper Profile', sub: 'Alerts, routine, brand affinity', badge: shopperAlertsCount > 0 ? `${shopperAlertsCount} NEW` : null },
           { key: 'startups', title: 'Early Stage Startups', sub: 'Emerging brands worth backing' },
           { key: 'preferences', title: 'Preferences', sub: 'Notifications, updates, night mode' },
@@ -281,7 +291,7 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
         ].map((row) => (
           <div
             key={row.key}
-            onClick={() => onOpen(row.key)}
+            onClick={row.onClick || (() => onOpen(row.key))}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -3222,6 +3232,7 @@ export default function ProfileFlow({
   onGoEcosystem,
   onOpenSaved,
   onEditProfile,
+  onOpenMonthlyCheckin,
   personalizeWithData = true,
   onPersonalizeWithDataChange,
   askAynaHistoryCount = 0,
@@ -3260,6 +3271,7 @@ export default function ProfileFlow({
         onEditProfile={onEditProfile ? () => { onClose(); onEditProfile(); } : undefined}
         onOpenEcosystem={onGoEcosystem ? () => { onClose(); onGoEcosystem(); } : undefined}
         onOpenSaved={onOpenSaved ? () => { onClose(); onOpenSaved(); } : undefined}
+        onOpenMonthlyCheckin={onOpenMonthlyCheckin ? () => { onClose(); onOpenMonthlyCheckin(); } : undefined}
       />
     );
   } else if (screen === 'shopper') {

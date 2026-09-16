@@ -34,6 +34,7 @@ import SigninScreen from './screens/SigninScreen.jsx';
 import EcosystemScreen from './screens/EcosystemScreen.jsx';
 import SavedScreen from './screens/SavedScreen.jsx';
 import WhyMatchScreen from './screens/WhyMatchScreen.jsx';
+import MonthlyCheckinScreen from './screens/MonthlyCheckinScreen.jsx';
 
 // Same real fallback chain used everywhere on desktop (App.jsx's
 // accountMonogram, Hero.jsx's displayNameFromUser, EcosystemBubbles.jsx,
@@ -58,6 +59,7 @@ const SCREENS = {
   signin: SigninScreen,
   eco: EcosystemScreen,
   saved: SavedScreen,
+  checkin: MonthlyCheckinScreen,
 };
 
 // Same catalog desktop's Discovery page browses: prescription-only items
@@ -394,6 +396,7 @@ export default function MobileApp() {
     // stays on everywhere until turned off there, so navigation must never
     // force it back to light.
     onStartQuiz: () => { setEditingHealthProfile(false); setScreen('quiz'); },
+    onOpenMonthlyCheckin: () => setScreen('checkin'),
     onBrowse: () => setScreen('browse'),
     onOpenSaved: () => setScreen('saved'),
     onGoEco: () => setScreen(hasEcosystem ? 'eco' : 'ecointro'),
@@ -473,6 +476,7 @@ export default function MobileApp() {
         onAddToEcosystem={handleAddToEcosystem}
         myProducts={myProducts}
         quizAnswers={effectiveQuizAnswers}
+        lastQuizAnswers={lastQuizAnswers}
         initialSnapshot={editingHealthProfile ? lastQuizAnswers?.fullHealthIntake || null : null}
         name={resolvedName}
         headerInitial={headerInitial}
@@ -546,6 +550,7 @@ export default function MobileApp() {
           textSizeIndex={textSizeIndex}
           onTextSizeChange={setTextSizeIndex}
           onEditProfile={() => { setEditingHealthProfile(true); setScreen('quiz'); }}
+          onOpenMonthlyCheckin={() => setScreen('checkin')}
         />
       )}
       {!askAynaOpen && (
