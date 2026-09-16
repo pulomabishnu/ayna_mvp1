@@ -25,6 +25,17 @@
 --    Support" ($32/30-day). Fixing the name rather than deactivating, since
 --    the brand+product is real, just misnamed by the same generic-name bug.
 --
+-- 5) "Minna Life | Smart Kegel Exerciser" (disc-minna-life-smart-kegel-
+--    exerciser) — Minna Life is real and does make a biofeedback Kegel
+--    device, but its actual product name is "kGoal", not "Smart Kegel
+--    Exerciser" (generic-name bug again) — and this catalog already has
+--    that exact product properly named as "kGoal Classic" (disc-kgoal-
+--    kgoal-classic, brand kGoal). Deactivating as a duplicate rather than
+--    renaming, to avoid creating two listings for the same device.
+-- 6) "Intimate Rose | Vaginal Weights" (disc-intimate-rose-vaginal-weights)
+--    — real brand and product, just not their exact product name (it's
+--    marketed as "Kegel Weights"). Fixing the name.
+--
 -- Not touched here: "Lunapads Period Underwear" (disc-lunapads-lunapads-
 -- period-underwear) is a different issue, not a name/hallucination bug —
 -- Lunapads rebranded to Aisle in 2020 and was acquired by Somedays in 2024,
@@ -36,9 +47,14 @@ set is_active = false, review_status = 'pending'
 where id in (
   'disc-vella-pelvic-floor-exerciser',
   'disc-we-vibe-pelvic-floor-exerciser',
-  'disc-pelvic-partner-pelvic-partner-pelvic-floor-trainer'
+  'disc-pelvic-partner-pelvic-partner-pelvic-floor-trainer',
+  'disc-minna-life-smart-kegel-exerciser'
 );
 
 update product_catalog
 set name = 'New Chapter Estrotone Menopause Support'
 where id = 'disc-new-chapter-menopause-support';
+
+update product_catalog
+set name = 'Intimate Rose Kegel Weights'
+where id = 'disc-intimate-rose-vaginal-weights';
