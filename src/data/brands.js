@@ -1375,4 +1375,73 @@ export const BRAND_PRODUCTS = [
         isEmergingBrand: true,
     },
 
+    // SootheHer brand partnership (2026-09-16) — affiliate links supplied by
+    // Ayna (collabs.shop short links carrying the AYNA discount/tracking
+    // code); product facts, pricing, and safety details checked live against
+    // sootheher.com on 2026-09-16. Category is 'cramp-relief', not a pelvic
+    // floor trainer/exerciser: Elaris is a TENS device for menstrual cramp
+    // pain, not a device that trains or contracts the pelvic floor.
+    {
+        id: 'p-sootheher-elaris-pod',
+        name: "SootheHer's Elaris Pod",
+        brand: 'SootheHer',
+        category: 'cramp-relief',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['cramp-relief'],
+        tags: ['cramps', 'discomfort', 'wearable', 'drug-free'],
+        price: '$89.99 (list $120)',
+        whereToBuy: [], // direct-to-consumer only; affiliateUrl below covers it
+        url: 'https://sootheher.com/',
+        // Ayna affiliate partnership — affiliateUrl wins over `url` for the
+        // Buy Now / Visit Site destination (see getBuyUrl in ProductModal.jsx).
+        affiliateUrl: 'https://collabs.shop/jfue1u',
+        image: 'https://sootheher.com/assets/elaris-butterfly-hero-DnUO3OIN.webp',
+        summary: 'A discreet, wearable TENS (transcutaneous electrical nerve stimulation) device for menstrual cramps. A butterfly-shaped gel pad worn on the lower abdomen sends adjustable electrical pulses meant to block pain signals, prompt endorphin release, and relax uterine muscles — worn under clothing, drug-free.',
+        safety: {
+            fdaStatus: 'FDA-cleared, per the brand.',
+            materials: 'Device, reusable butterfly and circular gel pads, connecting wire, USB-C charging cable, user manual, per the brand.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Brand states not for use if pregnant, or if you have a pacemaker, epilepsy, or a heart rhythm condition — consult a clinician first if any of these apply.',
+            opinionAlerts: 'Brand cites a 4.8-star rating across 718 reviews and offers a 30-day money-back guarantee — brand-hosted figures, not independently verified here.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: "Sourced from SootheHer's own site marketing claims, not independent clinical literature.",
+        doctorOpinion: 'TENS (transcutaneous electrical nerve stimulation) has real supportive evidence for reducing primary dysmenorrhea pain via the gate-control mechanism the brand describes; this does not independently establish that the Elaris Pod specifically matches published TENS study outcomes.',
+        effectiveness: 'Positioned by the brand as fast-acting, drug-free cramp relief; no independently conducted clinical study of this specific device was found here. TENS as a pain-relief category has supportive evidence for dysmenorrhea.',
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-sootheher-gel-pad-refills',
+        name: 'SootheHer Gel Pad Refills',
+        brand: 'SootheHer',
+        category: 'cramp-relief',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['cramp-relief'],
+        tags: ['cramps', 'accessory', 'reusable'],
+        price: '$11.99 (list $16, pack of 4)',
+        whereToBuy: [],
+        url: 'https://sootheher.com/',
+        affiliateUrl: 'https://collabs.shop/uj8q5x',
+        image: '',
+        summary: 'A 4-pack of replacement butterfly gel pads for the Elaris Pod. Each gel pad is rated for roughly 30-40 uses; store on the plastic backing between uses to extend pad life, per the brand.',
+        safety: {
+            fdaStatus: 'Accessory to the FDA-cleared Elaris Pod device, per the brand; not separately FDA-cleared.',
+            materials: 'Reusable gel pad material, per the brand.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Same use precautions as the Elaris Pod — brand states not for use if pregnant, or if you have a pacemaker, epilepsy, or a heart rhythm condition.',
+            opinionAlerts: 'Brand-hosted rating shown at time of listing was based on very few reviews — check current review volume before treating it as representative.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: "Sourced from SootheHer's own site marketing claims, not independent clinical literature.",
+        doctorOpinion: 'A consumable accessory for the Elaris Pod rather than a standalone treatment; replacing worn gel pads maintains the skin contact needed for the device to deliver its stimulation effectively.',
+        effectiveness: 'Maintenance accessory, not a standalone treatment — effectiveness depends on the Elaris Pod device itself.',
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+
 ];
