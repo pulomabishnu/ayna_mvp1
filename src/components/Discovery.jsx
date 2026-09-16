@@ -749,11 +749,22 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
 
                 const baseA = getQualityScore(a, aynaReviews);
                 const baseB = getQualityScore(b, aynaReviews);
-                const qa = baseA + (browsingWithoutTextQuery ? shuffleJitter(a, shuffleSeed, baseA) : 0);
-                const qb = baseB + (browsingWithoutTextQuery ? shuffleJitter(b, shuffleSeed, baseB) : 0);
+                // Jitter used to be limited to plain browsing (no text query), but a text
+                // search produces the exact same large tied-relevance buckets browsing does
+                // (e.g. every product whose only hit is one shared tag/category, all scoring
+                // identically) — without jitter here, ties fall back to pure getQualityScore,
+                // which stacks every cold-start item at the bottom of its bucket every time
+                // (found live, 2026-09-15: two brand-new pelvic-health devices, tagged and
+                // scoring correctly for "menopause"/"postpartum" searches, never appeared
+                // because ~30 other equally-relevant products all outrank them on reviews).
+                const qa = baseA + shuffleJitter(a, shuffleSeed, baseA);
+                const qb = baseB + shuffleJitter(b, shuffleSeed, baseB);
                 return qb - qa;
             });
-            if (browsingWithoutTextQuery && !personalizationFilter) {
+            // Same reasoning as the jitter above: a cold-start product needs a guaranteed
+            // shot at page 1 whether the tied bucket it's sitting in came from browsing or
+            // from a text search — the visibility problem is identical either way.
+            if (!personalizationFilter) {
                 list = applyColdStartFloor(list, PAGE_SIZE);
             }
         }
@@ -1136,9 +1147,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             { test: (s) => s.includes('tampon'), cat: 'tampon' },
             { test: (s) => (s.includes('cup') && s.includes('menstrual')) || (s.includes('cup') && !s.includes('supplement')), cat: 'cup' },
             { test: (s) => s.includes('disc') && !s.includes('discover'), cat: 'disc' },
-            { test: (s) => s.includes('menopause') || s.includes('perimenopause'), cat: 'menopause' },
+            { test: (s) => s.includes('menopause') || s.includes('perimenopause'), cat: 'menopause', macro: 'menopause' },
             { test: (s) => s.includes('pregnancy') || s.includes('prenatal'), cat: 'pregnancy' },
-            { test: (s) => s.includes('postpartum') || s.includes('breastfeeding') || s.includes('nursing'), cat: 'postpartum' },
+            { test: (s) => s.includes('postpartum') || s.includes('breastfeeding') || s.includes('nursing'), cat: 'postpartum', macro: 'postpartum' },
             { test: (s) => s.includes('fertility') || s.includes('conceive') || s.includes('ttc'), cat: 'fertility' },
             { test: (s) => s.includes('cramp') || s.includes('dysmenorrhea'), cat: 'cramp-relief' },
             { test: (s) => s.includes('pelvic floor') || s.includes('kegel'), cat: 'pelvic-floor' },
@@ -1146,8 +1157,28 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         ];
 
         let resolvedCategory = categoryFilter;
-        for (const { test, cat } of categoryNudges) {
-            if (test(qLower)) { setCategoryFilter(cat); resolvedCategory = cat; break; }
+        for (const { test, cat, macro } of categoryNudges) {
+            if (test(qLower)) {
+                if (macro) {
+                    // Life-stage concerns (menopause, postpartum, ...) span several real
+                    // `category` values plus tag/keyword-only matches (e.g. Elitone's
+                    // incontinence devices are tagged menopause/postpartum but categorized
+                    // 'incontinence') — the strict categoryFilter equality below excludes
+                    // all of those. Route through the same lenient macro-group membership
+                    // (itemMatchesMacroGroup) the "Menopause"/"Postpartum" chips already use,
+                    // instead of a single-category filter meant for literal SKU types like
+                    // "pads"/"tampons" (found live, 2026-09-15: typing "menopause" or
+                    // "postpartum" showed zero Elitone results despite both being tagged and
+                    // scoring correctly, because categoryFilter got set to the exact string
+                    // and item.category !== categoryFilter silently dropped them).
+                    setMacroGroup(macro);
+                    setCategoryFilter('all');
+                } else {
+                    setCategoryFilter(cat);
+                }
+                resolvedCategory = cat;
+                break;
+            }
         }
 
         // `category` is one of a small, fixed set of catalog buckets (or
