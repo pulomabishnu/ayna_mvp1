@@ -236,11 +236,65 @@ export function useSupabaseAuth() {
     if (error) throw error;
   }
 
+  // Required alongside Google per App Store Review Guideline 4.8: an app
+  // offering a third-party login must offer Sign in with Apple as an
+  // equivalent option. Same native OAuth treatment as signInWithGoogle
+  // above — appUrlOpen's handleNativeOAuthUrl doesn't care which provider
+  // produced the redirect, so no changes needed there.
+  async function signInWithApple() {
+    const supabase = getSupabaseClient();
+    if (!supabase) throw new Error('Sign-in is not configured right now.');
+
+    try {
+      localStorage.setItem(MOBILE_OAUTH_PENDING_KEY, '1');
+    } catch {
+      // Storage unavailable.
+    }
+
+    stashPendingConsent();
+
+    if (Capacitor.getPlatform() === 'ios') {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'apple',
+        options: {
+          redirectTo: NATIVE_OAUTH_REDIRECT,
+          skipBrowserRedirect: true,
+        },
+      });
+
+      if (error) throw error;
+      if (!data?.url) throw new Error('Could not start Apple sign-in.');
+
+      await Browser.open({
+        url: data.url,
+        presentationStyle: 'fullscreen',
+      });
+      return;
+    }
+
+    const callbackUrl = new URL('/auth/callback', window.location.origin);
+    const currentParams = new URLSearchParams(window.location.search);
+
+    for (const key of ['x-vercel-protection-bypass', 'x-vercel-set-bypass-cookie']) {
+      const value = currentParams.get(key);
+      if (value) callbackUrl.searchParams.set(key, value);
+    }
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'apple',
+      options: {
+        redirectTo: callbackUrl.toString(),
+      },
+    });
+
+    if (error) throw error;
+  }
+
   async function signOut() {
     const supabase = getSupabaseClient();
     if (supabase) await supabase.auth.signOut();
     resetChipPosition();
   }
 
-  return { user, authLoading, signUpWithPassword, signInWithPassword, signInWithGoogle, signOut, resendConfirmation };
+  return { user, authLoading, signUpWithPassword, signInWithPassword, signInWithGoogle, signInWithApple, signOut, resendConfirmation };
 }

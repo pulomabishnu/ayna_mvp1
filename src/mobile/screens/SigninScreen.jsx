@@ -113,12 +113,43 @@ function GoogleButton({ onClick, disabled }) {
   );
 }
 
+function AppleButton({ onClick, disabled }) {
+  return (
+    <div
+      onClick={disabled ? undefined : onClick}
+      style={{
+        background: 'rgba(255,252,249,.14)',
+        border: '1px solid rgba(255,255,255,.28)',
+        textAlign: 'center',
+        padding: 15,
+        borderRadius: 99,
+        fontFamily: "'DM Sans',sans-serif",
+        fontWeight: 500,
+        fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
+        cursor: disabled ? 'not-allowed' : 'pointer',
+        opacity: disabled ? 0.6 : 1,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 8,
+      }}
+    >
+      <svg width="16" height="18" viewBox="0 0 16 18">
+        <path fill="#FFFCF9" d="M13.06 9.53c-.02-1.96 1.6-2.9 1.67-2.94-.91-1.33-2.33-1.51-2.84-1.53-1.21-.12-2.36.71-2.97.71-.62 0-1.55-.7-2.55-.68-1.31.02-2.53.76-3.2 1.93-1.37 2.37-.35 5.87.98 7.79.65.94 1.42 1.99 2.44 1.96.98-.04 1.35-.63 2.53-.63 1.18 0 1.51.63 2.55.6 1.05-.02 1.72-.95 2.36-1.89.75-1.08 1.05-2.13 1.06-2.18-.02-.01-2.03-.78-2.03-3.13z" />
+        <path fill="#FFFCF9" d="M11.1 3.68c.54-.65.9-1.56.8-2.46-.77.03-1.71.51-2.27 1.15-.5.57-.94 1.5-.82 2.38.86.06 1.75-.44 2.29-1.07z" />
+      </svg>
+      {disabled ? 'Opening Apple…' : 'Continue with Apple'}
+    </div>
+  );
+}
+
 export default function SigninScreen({
   stats = DEFAULT_STATS,
   authUser,
   onSignUp,
   onSignIn,
   onGoogleSignIn,
+  onAppleSignIn,
   onResendConfirmation,
   onAuthenticated,
 }) {
@@ -129,6 +160,7 @@ export default function SigninScreen({
   const [checked, setChecked] = useState([false, false, false]);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [appleLoading, setAppleLoading] = useState(false);
   const [error, setError] = useState('');
   const [resending, setResending] = useState(false);
   const [resendMsg, setResendMsg] = useState('');
@@ -197,6 +229,23 @@ export default function SigninScreen({
       setError(e.message || 'Could not start Google sign-in.');
     } finally {
       setGoogleLoading(false);
+    }
+  };
+
+  const handleApple = async () => {
+    // Same gate as handleGoogle above.
+    if (mode === 'signup' && !allConsented) {
+      setError('Please agree to the three statements above before continuing.');
+      return;
+    }
+    setError('');
+    setAppleLoading(true);
+    try {
+      await onAppleSignIn();
+    } catch (e) {
+      setError(e.message || 'Could not start Apple sign-in.');
+    } finally {
+      setAppleLoading(false);
     }
   };
 
@@ -316,7 +365,8 @@ export default function SigninScreen({
                 <span>{loading ? 'Signing in…' : 'Sign in'}</span>
               </PrimaryButton>
             )}
-            <GoogleButton onClick={handleGoogle} disabled={googleLoading || loading} />
+            <GoogleButton onClick={handleGoogle} disabled={googleLoading || appleLoading || loading} />
+            <AppleButton onClick={handleApple} disabled={appleLoading || googleLoading || loading} />
           </div>
 
           <div
