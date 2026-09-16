@@ -28,7 +28,10 @@ import { ALL_PRODUCTS as BUNDLED_FALLBACK } from '../data/products.js';
 
 const API_PATH = '/api/products';
 const CACHE_KEY = 'ayna_product_catalog_v1';
-const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
+// Matches api/products.js's s-maxage — was 1hr on both layers, so a
+// confirmed-correct SQL Editor fix could take up to 2hrs to actually show
+// up on the site (found live 2026-09-16). Lowered together.
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 const REQUEST_TIMEOUT_MS = 10_000;
 
 let inFlight = null;

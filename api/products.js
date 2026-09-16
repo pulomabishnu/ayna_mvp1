@@ -94,9 +94,15 @@ export default async function handler(req, res) {
       return res.status(503).json({ error: 'catalog_empty', products: [] });
     }
 
-    // Catalog changes are rare and every visitor needs it; this is the single
-    // highest-value cache in the app.
-    res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
+    // Catalog changes are rare and every visitor needs it, so this is still
+    // the single highest-value cache in the app — but s-maxage was 3600
+    // (1hr), which combined with the client's own 1hr localStorage cache
+    // (see src/utils/productCatalog.js) meant a SQL Editor fix to a bad
+    // listing could take up to 2 hours to actually appear on the site. Found
+    // live 2026-09-16 when a confirmed-correct DB fix looked like it "did
+    // nothing." 300s trades a little origin load during active catalog
+    // cleanup for fixes actually being visible within minutes.
+    res.setHeader('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=86400');
     return res.status(200).json({ products, count: products.length, source: 'product_catalog' });
   } catch (e) {
     console.error('[products] query failed:', e?.message);
