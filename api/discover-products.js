@@ -146,17 +146,24 @@ export function normalizeKey(name, brand) {
 // Floor Trainer", the category label, instead of a real product name.
 // Rejects a candidate whose name (once a leading brand is stripped) is
 // nothing more than one of the site's own category labels.
-const GENERIC_CATEGORY_NAMES = new Set(
-  Object.values(CATEGORY_LABELS).map((label) => label.toLowerCase())
-);
+const GENERIC_CATEGORY_LABELS = [...new Set(Object.values(CATEGORY_LABELS).map((l) => l.toLowerCase()))];
+// A handful of filler words a model tacks onto a bare category label instead
+// of naming the actual product — "Pelvic Floor Exerciser with App" was found
+// live (2026-09-16) riding past an exact-match-only check for exactly this
+// reason. Matched as a whole trailing clause, not a substring, so a real
+// product name that happens to contain one of these words elsewhere isn't
+// falsely caught.
+const GENERIC_TRAILERS = /^(with app|app|device|kit|system|program|tool|for women)$/;
 export function isGenericName(name, brand) {
   const n = String(name || '').trim().toLowerCase();
   if (!n) return true;
-  if (GENERIC_CATEGORY_NAMES.has(n)) return true;
   const b = String(brand || '').trim().toLowerCase();
-  if (b && n.startsWith(b)) {
-    const rest = n.slice(b.length).trim();
-    if (GENERIC_CATEGORY_NAMES.has(rest)) return true;
+  const stripped = b && n.startsWith(b) ? n.slice(b.length).trim() : n;
+  if (GENERIC_CATEGORY_LABELS.includes(stripped)) return true;
+  for (const label of GENERIC_CATEGORY_LABELS) {
+    if (!stripped.startsWith(label)) continue;
+    const trailer = stripped.slice(label.length).trim();
+    if (!trailer || GENERIC_TRAILERS.test(trailer)) return true;
   }
   return false;
 }

@@ -292,17 +292,21 @@ function buildDisplayName(brand, name) {
 // keep the two in sync. Rejects a raw name (before buildDisplayName prefixes
 // the brand on) that is nothing more than one of the site's own category
 // labels, e.g. "Pelvic Floor Trainer" instead of a real product name.
-const GENERIC_CATEGORY_NAMES = new Set(
-  Object.values(CATEGORY_LABELS).map((label) => label.toLowerCase())
-);
+const GENERIC_CATEGORY_LABELS = [...new Set(Object.values(CATEGORY_LABELS).map((l) => l.toLowerCase()))];
+// Also catches a bare category label plus a generic filler word/clause
+// (e.g. "Pelvic Floor Exerciser with App", found live 2026-09-16) — see the
+// mirrored comment in api/discover-products.js's isGenericName.
+const GENERIC_TRAILERS = /^(with app|app|device|kit|system|program|tool|for women)$/;
 function isGenericName(name, brand) {
   const n = String(name || '').trim().toLowerCase();
   if (!n) return true;
-  if (GENERIC_CATEGORY_NAMES.has(n)) return true;
   const b = String(brand || '').trim().toLowerCase();
-  if (b && n.startsWith(b)) {
-    const rest = n.slice(b.length).trim();
-    if (GENERIC_CATEGORY_NAMES.has(rest)) return true;
+  const stripped = b && n.startsWith(b) ? n.slice(b.length).trim() : n;
+  if (GENERIC_CATEGORY_LABELS.includes(stripped)) return true;
+  for (const label of GENERIC_CATEGORY_LABELS) {
+    if (!stripped.startsWith(label)) continue;
+    const trailer = stripped.slice(label.length).trim();
+    if (!trailer || GENERIC_TRAILERS.test(trailer)) return true;
   }
   return false;
 }
