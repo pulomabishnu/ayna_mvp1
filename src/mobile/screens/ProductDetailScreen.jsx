@@ -6,6 +6,7 @@ import { renderMarkdownLite } from '../../utils/renderMarkdownLite.jsx';
 import MatchRing from '../components/MatchRing.jsx';
 import WhyMatchScreen from './WhyMatchScreen.jsx';
 import LegalFooter from '../components/LegalFooter.jsx';
+import ProductImage from '../components/ProductImage.jsx';
 
 function SpecRow({ label, value }) {
   return (
@@ -301,11 +302,9 @@ export default function ProductDetailScreen({
             borderRadius: 14,
             boxShadow: '0 10px 26px -16px rgba(41,37,36,.35)',
             overflow: 'hidden',
-            backgroundImage: image ? `url(${image})` : undefined,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
           }}
         >
+          <ProductImage src={image} alt={name} allowBrandLogo={product?.type === 'digital'} />
           {matchPercent != null && (
             <div
               onClick={openWhyMatch}
