@@ -1,7 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { processLock } from '@supabase/auth-js';
 import { Capacitor } from '@capacitor/core';
-import { debugLog } from './aynaDebugLog.js';
 
 let client = null;
 
@@ -11,28 +10,18 @@ export function getSupabaseClient() {
   const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
   if (!url || !anonKey) return null;
   try {
-    // TEMPORARY (2026-09-16): production minification mangles function
-    // names, so inspecting supabase.auth.lock.name later is useless for
-    // confirming which lock actually got applied — log the decision here,
-    // at the one place that actually knows it, instead.
-    const useNativeLock = Capacitor.isNativePlatform();
-    debugLog('supabaseClient: Capacitor.isNativePlatform() =', useNativeLock, '— applying', useNativeLock ? 'processLock' : 'default (navigatorLock/lockNoOp)');
     client = createClient(url, anonKey, {
       auth: {
         flowType: 'implicit',   // avoids PKCE verifier storage — Chrome bounce tracking deletes it
         detectSessionInUrl: false, // AuthCallback.jsx handles implicit OAuth tokens explicitly
         // GoTrueClient auto-selects the browser's navigator.locks API to
-        // serialize auth calls (setSession, refresh, etc.) whenever it's
-        // merely present — true in a WKWebView, but its Web Locks
-        // implementation there is unreliable: a lock request can simply
-        // never resolve or reject. That silently hangs every subsequent
-        // auth call forever (no error, nothing — confirmed live on a real
-        // device: native Google sign-in's setSession() call never
-        // returned). processLock is Supabase's own single-process
-        // alternative, built for exactly this (their docs: "React Native
-        // or other non-browser single-process environments") — same
-        // category as a Capacitor native app.
-        ...(useNativeLock ? { lock: processLock } : {}),
+        // serialize auth calls whenever it's merely present — true in a
+        // WKWebView, but not necessarily reliable there. processLock is
+        // Supabase's own single-process alternative, built for exactly
+        // this (their docs: "React Native or other non-browser
+        // single-process environments") — same category as a Capacitor
+        // native app, so used there instead.
+        ...(Capacitor.isNativePlatform() ? { lock: processLock } : {}),
       },
     });
   } catch (e) {

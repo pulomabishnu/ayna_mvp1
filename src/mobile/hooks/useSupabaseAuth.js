@@ -5,7 +5,6 @@ import { Browser } from '@capacitor/browser';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { CONSENT_VERSION, stashPendingConsent, flushPendingConsent } from '../../utils/pendingConsent.js';
 import { resetChipPosition } from '../utils/askAynaChipPosition.js';
-import { debugLog } from '../../utils/aynaDebugLog.js';
 
 // Real Supabase identity for the mobile app — separate from
 // useEcosystemSession.js's local app-data cache (products, quiz answers),
@@ -44,22 +43,9 @@ export function useSupabaseAuth() {
     const supabase = getSupabaseClient();
     if (!supabase) return undefined;
 
-    // TEMPORARY diagnostic (2026-09-16) — see handleNativeOAuthUrl below.
-    // getSession() here runs on every mount and shares GoTrueClient's one
-    // lock with every other auth call; if THIS hangs, everything queued
-    // behind it (including a later setSession() from native sign-in) would
-    // wait forever regardless of which lock implementation is used.
-    debugLog('mount getSession() starting...');
-    const mountGetSessionStart = Date.now();
     supabase.auth.getSession()
-      .then(({ data }) => {
-        debugLog('mount getSession() resolved in', Date.now() - mountGetSessionStart, 'ms, has session:', !!data?.session);
-        setUser(data?.session?.user ?? null);
-      })
-      .catch((e) => {
-        debugLog('mount getSession() REJECTED after', Date.now() - mountGetSessionStart, 'ms:', e?.message);
-        setUser(null);
-      })
+      .then(({ data }) => setUser(data?.session?.user ?? null))
+      .catch(() => setUser(null))
       .finally(() => setAuthLoading(false));
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -79,139 +65,51 @@ export function useSupabaseAuth() {
     let lastHandledUrl = '';
 
     async function handleNativeOAuthUrl(url) {
-      // TEMPORARY diagnostic logging (2026-09-16) — the "bounced back to
-      // sign-in" report couldn't be pinned down from the existing
-      // console.error calls alone (nothing was showing up in Safari Web
-      // Inspector, filtered view or genuinely silent, unclear which).
-      // Every branch below logs explicitly with this prefix, and the whole
-      // body is now wrapped in try/catch so nothing can fail as a silent
-      // unhandled rejection. Remove once the real cause is found.
-      debugLog('appUrlOpen fired, url:', url);
-      if (!url || !url.startsWith(NATIVE_OAUTH_REDIRECT) || url === lastHandledUrl) {
-        debugLog('ignored — no url / prefix mismatch / duplicate. lastHandledUrl =', lastHandledUrl);
-        return;
-      }
+      if (!url || !url.startsWith(NATIVE_OAUTH_REDIRECT) || url === lastHandledUrl) return;
       lastHandledUrl = url;
 
       try {
         await Browser.close();
-      } catch (closeErr) {
-        debugLog('Browser.close() threw (probably already closed):', closeErr?.message);
+      } catch {
+        // Browser may already be closed.
       }
 
-      try {
-        const parsed = new URL(url);
-        const hashParams = new URLSearchParams(parsed.hash.slice(1));
-        const searchParams = parsed.searchParams;
+      const parsed = new URL(url);
+      const hashParams = new URLSearchParams(parsed.hash.slice(1));
+      const searchParams = parsed.searchParams;
 
-        const errorDescription =
-          hashParams.get('error_description') ||
-          searchParams.get('error_description');
+      const errorDescription =
+        hashParams.get('error_description') ||
+        searchParams.get('error_description');
 
-        if (errorDescription) {
-          console.error('[Ayna] Native Google OAuth failed:', errorDescription);
-          debugLog('OAuth error_description:', errorDescription);
-          return;
-        }
-
-        const accessToken = hashParams.get('access_token');
-        const refreshToken = hashParams.get('refresh_token');
-        debugLog('accessToken present:', !!accessToken, 'refreshToken present:', !!refreshToken);
-
-        if (!accessToken || !refreshToken) {
-          console.error('[Ayna] Native Google OAuth callback did not include a complete session.');
-          debugLog('missing tokens — hash keys:', Object.keys(Object.fromEntries(hashParams)));
-          return;
-        }
-
-        // Isolates whether the LOCK ITSELF is what's stuck (a trivial
-        // no-op function queued on the exact same lock name GoTrueClient
-        // uses internally) vs something inside setSession()'s own body
-        // once the lock is already held.
-        try {
-          const lockName = `lock:${supabase.auth.storageKey}`;
-          debugLog('testing raw lock acquisition, name:', lockName, '...');
-          const lockTestStart = Date.now();
-          const lockResult = await Promise.race([
-            supabase.auth.lock(lockName, 5000, async () => 'ACQUIRED'),
-            new Promise((resolve) => setTimeout(() => resolve('LOCK_TIMED_OUT'), 6000)),
-          ]);
-          debugLog('raw lock test finished in', Date.now() - lockTestStart, 'ms, result:', lockResult);
-        } catch (lockErr) {
-          debugLog('raw lock test THREW after', 'ms:', lockErr?.name, lockErr?.message);
-        }
-
-        // Raw network probe, completely bypassing the Supabase JS client's
-        // locking/state machine.
-        try {
-          const healthUrl = `${import.meta.env.VITE_SUPABASE_URL}/auth/v1/health`;
-          const probeStart = Date.now();
-          const probeController = new AbortController();
-          const probeTimeout = setTimeout(() => probeController.abort(), 8000);
-          const probeRes = await fetch(healthUrl, { signal: probeController.signal });
-          clearTimeout(probeTimeout);
-          debugLog('raw fetch probe finished in', Date.now() - probeStart, 'ms, status:', probeRes.status);
-        } catch (probeErr) {
-          debugLog('raw fetch probe FAILED/timed out:', probeErr?.name, probeErr?.message);
-        }
-
-        // Same request setSession()'s internal _getUser() makes — GET
-        // /auth/v1/user with the fresh access token as a Bearer header —
-        // but raw, bypassing GoTrueClient entirely. The unauthenticated
-        // /health probe above succeeded fast; this isolates whether it's
-        // specifically an authenticated request that hangs.
-        try {
-          const userUrl = `${import.meta.env.VITE_SUPABASE_URL}/auth/v1/user`;
-          const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-          debugLog('probing authenticated /auth/v1/user ...');
-          const userProbeStart = Date.now();
-          const userProbeController = new AbortController();
-          const userProbeTimeout = setTimeout(() => userProbeController.abort(), 8000);
-          const userProbeRes = await fetch(userUrl, {
-            headers: { Authorization: `Bearer ${accessToken}`, apikey: anonKey },
-            signal: userProbeController.signal,
-          });
-          clearTimeout(userProbeTimeout);
-          debugLog('raw authenticated /user probe finished in', Date.now() - userProbeStart, 'ms, status:', userProbeRes.status);
-        } catch (userProbeErr) {
-          debugLog('raw authenticated /user probe FAILED/timed out:', userProbeErr?.name, userProbeErr?.message);
-        }
-
-        const setSessionPromise = supabase.auth.setSession({
-          access_token: accessToken,
-          refresh_token: refreshToken,
-        });
-        const timeoutPromise = new Promise((resolve) => {
-          setTimeout(() => resolve({ __timedOut: true }), 8000);
-        });
-        debugLog('calling setSession now...');
-        const raceResult = await Promise.race([setSessionPromise, timeoutPromise]);
-        if (raceResult?.__timedOut) {
-          debugLog('setSession did NOT resolve within 8000ms — confirmed hang.');
-          setSessionPromise
-            .then((r) => debugLog('setSession eventually resolved (late):', !!r?.data?.session, r?.error?.message))
-            .catch((e) => debugLog('setSession eventually REJECTED (late):', e?.message));
-          return;
-        }
-        const { data: setSessionData, error } = raceResult;
-
-        if (error) {
-          console.error('[Ayna] Could not establish native Google session:', error.message);
-          debugLog('setSession error:', error.message);
-          return;
-        }
-
-        debugLog('setSession succeeded, user id:', setSessionData?.session?.user?.id);
-
-        // This native flow never passes through AuthCallback.jsx (that only
-        // renders for the web/preview OAuth redirect) — it's the one place
-        // that would otherwise silently skip writing the consent stashed
-        // before the redirect by signInWithGoogle below.
-        await flushPendingConsent(supabase);
-        debugLog('flushPendingConsent completed — native Google sign-in flow finished successfully.');
-      } catch (err) {
-        debugLog('handleNativeOAuthUrl threw an unexpected error:', err?.message);
+      if (errorDescription) {
+        console.error('[Ayna] Native Google OAuth failed:', errorDescription);
+        return;
       }
+
+      const accessToken = hashParams.get('access_token');
+      const refreshToken = hashParams.get('refresh_token');
+
+      if (!accessToken || !refreshToken) {
+        console.error('[Ayna] Native Google OAuth callback did not include a complete session.');
+        return;
+      }
+
+      const { error } = await supabase.auth.setSession({
+        access_token: accessToken,
+        refresh_token: refreshToken,
+      });
+
+      if (error) {
+        console.error('[Ayna] Could not establish native Google session:', error.message);
+        return;
+      }
+
+      // This native flow never passes through AuthCallback.jsx (that only
+      // renders for the web/preview OAuth redirect) — it's the one place
+      // that would otherwise silently skip writing the consent stashed
+      // before the redirect by signInWithGoogle below.
+      await flushPendingConsent(supabase);
     }
 
     void CapacitorApp.addListener('appUrlOpen', ({ url }) => {
