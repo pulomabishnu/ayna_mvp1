@@ -11,7 +11,7 @@
 import { checkProductInsightsRateLimit } from './_rateLimitProductInsights.js';
 import { verifyUser } from './_usageLimit.js';
 import { tryParseJsonCandidate, callWithFallback, parseProviderOrder, providerConfigured } from './_llm.js';
-import { ALL_PRODUCTS } from '../src/data/products.js';
+import { ALL_PRODUCTS, CATEGORY_LABELS } from '../src/data/products.js';
 import { routeHealthQuery } from './_healthKnowledge.js';
 
 // Mirrors PRESCRIPTION_DRUG_PATTERN in api/llm-recommendations.js — keep the two in sync.
@@ -287,8 +287,29 @@ function buildDisplayName(brand, name) {
   return `${b} ${n}`.trim().slice(0, 140);
 }
 
+// Code-level backstop for the NAME rule above — a prompt instruction is
+// advisory, not enforced. Mirrors isGenericName in api/discover-products.js;
+// keep the two in sync. Rejects a raw name (before buildDisplayName prefixes
+// the brand on) that is nothing more than one of the site's own category
+// labels, e.g. "Pelvic Floor Trainer" instead of a real product name.
+const GENERIC_CATEGORY_NAMES = new Set(
+  Object.values(CATEGORY_LABELS).map((label) => label.toLowerCase())
+);
+function isGenericName(name, brand) {
+  const n = String(name || '').trim().toLowerCase();
+  if (!n) return true;
+  if (GENERIC_CATEGORY_NAMES.has(n)) return true;
+  const b = String(brand || '').trim().toLowerCase();
+  if (b && n.startsWith(b)) {
+    const rest = n.slice(b.length).trim();
+    if (GENERIC_CATEGORY_NAMES.has(rest)) return true;
+  }
+  return false;
+}
+
 function normalizeSuggestion(raw, index) {
   const brandRaw = sanitizeStr(raw?.brand, 80);
+  if (isGenericName(raw?.name || raw?.productName, brandRaw)) return null;
   const name = buildDisplayName(brandRaw, raw?.name || raw?.productName);
   const summary = sanitizeStr(raw?.summary, 900);
   const priceHint = sanitizeStr(raw?.priceHint || raw?.price || 'See retailer', 80);
@@ -392,6 +413,7 @@ Return ONE JSON object ONLY (no markdown) with up to ${maxResults} suggestions i
 }
 
 RULES (apply to every suggestion):
+- "name" must be the specific product line or SKU a shopper would see on the package or product page (e.g. "Lily Cup Compact", "Kegel8 Ultra 20"), never a generic category description like "Pelvic Floor Trainer" or "Menstrual Cup" — that belongs in "category", not "name". If you can't name the specific product, don't include it.
 - Pelvic floor devices: use "pelvic-floor-trainer" ONLY for biofeedback/self-training devices that are not FDA-cleared to activate anything themselves — the user does the contracting (e.g. Elvie, Perifit, weighted Kegel balls/cones). Use "pelvic-floor-exerciser" ONLY for FDA-cleared Class II devices that electrically stimulate and contract the pelvic floor FOR the user (e.g. Emsella, INNOVO, Yarlap, Elitone — but NOT Elitone URGE, which calms an overactive bladder rather than exercising the pelvic floor, so it belongs in "incontinence"). Never call a stimulation/exerciser device a "trainer," and never call a biofeedback-only device an "exerciser." If a pelvic-floor product doesn't clearly fit either (a support garment, dilator, wand, or coaching app), use "pelvic-floor" or "incontinence" instead.
 - Draw on your full knowledge of relevant brands — mainstream, indie, DTC, clinical, international — sold in the US. Rank by: relevance to the query, clinical reputation/safety record, availability, community reputation.
 - Only suggest brands/products you are confident genuinely exist and sell in the US market. Never invent a brand name, product line, feature, or service — even as a placeholder. Confidence can come from either your own knowledge OR the live web search results above (a smaller/newer real brand you wouldn't otherwise recall confidently is fine to include if those results clearly confirm it) — but never extrapolate a name, price, or count beyond what the search results actually show, and if neither source supports it, leave it out — it likely doesn't exist.

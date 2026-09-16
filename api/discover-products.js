@@ -33,7 +33,7 @@
  * secret must be set at all before anything runs, not just checked.
  */
 import { createClient } from '@supabase/supabase-js';
-import { ALL_PRODUCTS } from '../src/data/products.js';
+import { ALL_PRODUCTS, CATEGORY_LABELS } from '../src/data/products.js';
 import { callWithFallback, parseProviderOrder, tryParseJsonCandidate } from './_llm.js';
 import { checkRecallsForProduct } from './fda-recall.js';
 import { lookupDsldProduct } from './llm-recommendations.js';
@@ -53,7 +53,16 @@ export const CATEGORIES = [
   { category: 'cup', label: 'menstrual cups' },
   { category: 'period-underwear', label: 'period underwear' },
   { category: 'supplement', label: 'women\'s health supplements' },
-  { category: 'pelvic-floor', label: 'pelvic floor devices' },
+  // Split 2026-09-16 from a single 'pelvic-floor' slot: that slot's prompt
+  // had no way to tell the model to distinguish a biofeedback-only trainer
+  // from an FDA-cleared Class II exerciser, and it also had no rule against
+  // returning a generic descriptor (e.g. "Pelvic Floor Trainer") in `name`
+  // instead of a real product name — found live when a discovered "Yoni"
+  // listing's name field was literally the category label. See the
+  // trainer/exerciser distinction spelled out in buildDiscoveryPrompt below
+  // and the isGenericName() backstop.
+  { category: 'pelvic-floor-trainer', label: 'pelvic floor trainers (biofeedback-only Kegel devices)' },
+  { category: 'pelvic-floor-exerciser', label: 'pelvic floor exercisers (FDA-cleared Class II stimulation devices)' },
   { category: 'postpartum', label: 'postpartum recovery products' },
   { category: 'pregnancy', label: 'pregnancy support products' },
   { category: 'menopause', label: 'menopause and perimenopause products' },
@@ -131,6 +140,27 @@ export function normalizeKey(name, brand) {
   return slugify(`${brand || ''} ${name || ''}`);
 }
 
+// Code-level backstop for the NAME rule in buildDiscoveryPrompt — a prompt
+// instruction is advisory, and this exact failure mode was found live
+// (2026-09-16): a discovered "Yoni" listing's `name` was literally "Pelvic
+// Floor Trainer", the category label, instead of a real product name.
+// Rejects a candidate whose name (once a leading brand is stripped) is
+// nothing more than one of the site's own category labels.
+const GENERIC_CATEGORY_NAMES = new Set(
+  Object.values(CATEGORY_LABELS).map((label) => label.toLowerCase())
+);
+export function isGenericName(name, brand) {
+  const n = String(name || '').trim().toLowerCase();
+  if (!n) return true;
+  if (GENERIC_CATEGORY_NAMES.has(n)) return true;
+  const b = String(brand || '').trim().toLowerCase();
+  if (b && n.startsWith(b)) {
+    const rest = n.slice(b.length).trim();
+    if (GENERIC_CATEGORY_NAMES.has(rest)) return true;
+  }
+  return false;
+}
+
 async function searchForCategory(categoryLabel) {
   const serperKey = process.env.SERPER_API_KEY;
   if (!serperKey) return [];
@@ -172,6 +202,12 @@ ANTI-HALLUCINATION — this is the most important rule:
 
 QUALITY BAR — only include a product if it plausibly has: majority positive reviews from real women, a real US-available brand, and no obvious red flags. Do not include anything you're not confident is real and currently sold.
 
+NAME — "name" must be the specific product line or SKU a shopper would see on the package or product page (e.g. "Lily Cup Compact", "Kegel8 Ultra 20"), never a generic category description like "Pelvic Floor Trainer" or "Menstrual Cup" — that belongs in "category", not "name". If you can't name the specific product, don't include it.
+${
+  category === 'pelvic-floor-trainer' || category === 'pelvic-floor-exerciser'
+    ? `\nPELVIC FLOOR DEVICES — use "pelvic-floor-trainer" ONLY for biofeedback/self-training devices not FDA-cleared to activate anything themselves (e.g. Elvie, Perifit, weighted Kegel balls/cones — the user does the contracting). Use "pelvic-floor-exerciser" ONLY for FDA-cleared Class II devices that electrically stimulate and contract the pelvic floor FOR the user (e.g. Emsella, INNOVO, Yarlap, Elitone — never Elitone URGE, which calms an overactive bladder rather than exercising the pelvic floor). Never call a stimulation device a "trainer," and never call a biofeedback-only device an "exerciser." This run is scoped to "${category}" — only suggest products of that specific kind, not the other one.\n`
+    : ''
+}
 TASK: Suggest up to ${MAX_CANDIDATES_PER_RUN} real, currently-sold products in this category that are NOT in the exclusion list above. Fewer is fine if you're not confident about more — never pad the list with a guess.
 
 Return ONLY valid JSON, exactly this shape:
@@ -413,6 +449,7 @@ export default async function handler(req, res) {
     const seenThisRun = new Set();
     const fresh = rawCandidates.filter((c) => {
       if (!c?.name || !c?.brand) return false;
+      if (isGenericName(c.name, c.brand)) return false;
       const key = normalizeKey(c.name, c.brand);
       if (excludeKeys.has(key) || seenThisRun.has(key)) return false;
       seenThisRun.add(key);

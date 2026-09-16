@@ -426,9 +426,10 @@ describe('pure helpers', () => {
     expect(day2).not.toEqual(day1);
   });
 
-  it('a full 15-category rotation completes within 5 days at 3 runs/day', () => {
+  it('a full category rotation completes within ceil(CATEGORIES.length / RUN_HOURS_UTC.length) days', () => {
+    const days = Math.ceil(CATEGORIES.length / RUN_HOURS_UTC.length);
     const seen = new Set();
-    for (let day = 0; day < 5; day++) {
+    for (let day = 0; day < days; day++) {
       for (const h of RUN_HOURS_UTC) {
         seen.add(pickCategory({ query: {} }, new Date(Date.UTC(2026, 5, 15 + day, h))).category);
       }
