@@ -240,6 +240,19 @@ function shuffleJitter(item, seed, baseScore = 0) {
 // came for the curated content.
 const COLD_START_PAGE_FLOOR = 6;
 
+// TEMPORARY manual boost, requested 2026-09-16: Elitone's two devices sort to
+// the very top of Browse/search results (Best-Match/Featured sort only —
+// explicit Price/Rating sorts are left truthful to what the visitor asked
+// for) until partner ranking is actually designed. Remove this block (and
+// its one call site below) once that's in place — it deliberately
+// overrides relevance score, personalized rank, and the existing
+// isPartnerBrandItem pin, all of which normally take priority over a raw
+// partnership status.
+const TEMP_BOOSTED_PRODUCT_IDS = new Set(['p-elitone', 'p-elitone-urge']);
+function isTempBoostedProduct(item) {
+    return TEMP_BOOSTED_PRODUCT_IDS.has(item?.id);
+}
+
 function applyColdStartFloor(rankedList, pageSize) {
     const page = rankedList.slice(0, pageSize);
     const rest = rankedList.slice(pageSize);
@@ -730,6 +743,13 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         } else {
             const browsingWithoutTextQuery = !scoreById;
             list = [...list].sort((a, b) => {
+                // TEMP_BOOSTED_PRODUCT_IDS — see definition above. Checked first,
+                // ahead of relevance score, so it wins even when a boosted item
+                // would otherwise rank lower on a given search.
+                const boostedA = isTempBoostedProduct(a) ? 1 : 0;
+                const boostedB = isTempBoostedProduct(b) ? 1 : 0;
+                if (boostedA !== boostedB) return boostedB - boostedA;
+
                 const m = matchTieBreak(a, b);
                 if (m !== 0) return m;
                 // When personalized results are on, preserve the real recommendation engine's

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { hasRecordedChoice, acknowledgeAnalytics, denyConsent, isMandatoryGpcVisitor } from '../utils/analyticsConsent'
 
 /**
@@ -42,6 +42,31 @@ export default function ConsentBanner() {
   // just check once, or the banner would never appear at all.
   const [ph, setPh] = useState(() => (typeof window !== 'undefined' ? window.posthog : undefined))
   const [visible, setVisible] = useState(false)
+  const bannerRef = useRef(null)
+
+  // The Ask Ayna launcher (ProfileChatbot.jsx) sits fixed bottom-right and
+  // would otherwise land underneath this bar while it's up — .ayna-ask-
+  // launcher and .ayna-ask-panel in index.css read this custom property
+  // (falling back to 0px once it's removed) to lift above the banner, then
+  // drop back to their normal spot the moment it's dismissed.
+  useEffect(() => {
+    if (!visible) {
+      document.documentElement.style.removeProperty('--consent-banner-height')
+      return undefined
+    }
+    const el = bannerRef.current
+    if (!el) return undefined
+    const setHeight = () => {
+      document.documentElement.style.setProperty('--consent-banner-height', `${el.offsetHeight}px`)
+    }
+    setHeight()
+    const ro = new ResizeObserver(setHeight)
+    ro.observe(el)
+    return () => {
+      ro.disconnect()
+      document.documentElement.style.removeProperty('--consent-banner-height')
+    }
+  }, [visible])
 
   useEffect(() => {
     let cancelled = false
@@ -74,7 +99,7 @@ export default function ConsentBanner() {
   if (!visible) return null
 
   return (
-    <div role="dialog" aria-live="polite" aria-label="Analytics notice" className="consent-banner">
+    <div ref={bannerRef} role="dialog" aria-live="polite" aria-label="Analytics notice" className="consent-banner">
       <p>
         Usage analytics are on by default so we can understand how people use ayna and improve it.
         We don&apos;t use analytics for advertising or sell it. Health-search text, account email, direct
