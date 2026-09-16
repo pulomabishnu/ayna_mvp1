@@ -43,9 +43,22 @@ export function useSupabaseAuth() {
     const supabase = getSupabaseClient();
     if (!supabase) return undefined;
 
+    // TEMPORARY diagnostic (2026-09-16) — see handleNativeOAuthUrl below.
+    // getSession() here runs on every mount and shares GoTrueClient's one
+    // lock with every other auth call; if THIS hangs, everything queued
+    // behind it (including a later setSession() from native sign-in) would
+    // wait forever regardless of which lock implementation is used.
+    console.log('[AYNA-DEBUG] mount getSession() starting...');
+    const mountGetSessionStart = Date.now();
     supabase.auth.getSession()
-      .then(({ data }) => setUser(data?.session?.user ?? null))
-      .catch(() => setUser(null))
+      .then(({ data }) => {
+        console.log('[AYNA-DEBUG] mount getSession() resolved in', Date.now() - mountGetSessionStart, 'ms, has session:', !!data?.session);
+        setUser(data?.session?.user ?? null);
+      })
+      .catch((e) => {
+        console.error('[AYNA-DEBUG] mount getSession() rejected after', Date.now() - mountGetSessionStart, 'ms:', e?.message);
+        setUser(null);
+      })
       .finally(() => setAuthLoading(false));
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -115,6 +128,27 @@ export function useSupabaseAuth() {
         // Confirms which lock GoTrueClient actually picked — should read
         // "processLock" after the supabaseClient.js fix, on a native build.
         console.log('[AYNA-DEBUG] supabase.auth.lock in use:', supabase.auth?.lock?.name || String(supabase.auth?.lock));
+
+        // Raw network probe, completely bypassing the Supabase JS client's
+        // locking/state machine — a plain fetch to GoTrue's public,
+        // unauthenticated /health endpoint. The processLock fix didn't
+        // change the hang, which points at something the lock is
+        // serializing behind (e.g. an earlier getSession() call on mount
+        // hanging for a real network reason) rather than the lock
+        // mechanism itself — this isolates whether raw network requests to
+        // Supabase's auth server work from inside this WKWebView at all.
+        try {
+          const healthUrl = `${import.meta.env.VITE_SUPABASE_URL}/auth/v1/health`;
+          console.log('[AYNA-DEBUG] probing', healthUrl, '...');
+          const probeStart = Date.now();
+          const probeController = new AbortController();
+          const probeTimeout = setTimeout(() => probeController.abort(), 8000);
+          const probeRes = await fetch(healthUrl, { signal: probeController.signal });
+          clearTimeout(probeTimeout);
+          console.log('[AYNA-DEBUG] raw fetch probe finished in', Date.now() - probeStart, 'ms, status:', probeRes.status);
+        } catch (probeErr) {
+          console.error('[AYNA-DEBUG] raw fetch probe FAILED/timed out:', probeErr?.name, probeErr?.message);
+        }
 
         // Races setSession against a hard timeout so a hang produces an
         // explicit, unambiguous log line instead of silently never

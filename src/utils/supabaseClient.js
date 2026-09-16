@@ -10,6 +10,12 @@ export function getSupabaseClient() {
   const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
   if (!url || !anonKey) return null;
   try {
+    // TEMPORARY (2026-09-16): production minification mangles function
+    // names, so inspecting supabase.auth.lock.name later is useless for
+    // confirming which lock actually got applied — log the decision here,
+    // at the one place that actually knows it, instead.
+    const useNativeLock = Capacitor.isNativePlatform();
+    console.log('[AYNA-DEBUG] supabaseClient: Capacitor.isNativePlatform() =', useNativeLock, '— applying', useNativeLock ? 'processLock' : 'default (navigatorLock/lockNoOp)');
     client = createClient(url, anonKey, {
       auth: {
         flowType: 'implicit',   // avoids PKCE verifier storage — Chrome bounce tracking deletes it
@@ -25,7 +31,7 @@ export function getSupabaseClient() {
         // alternative, built for exactly this (their docs: "React Native
         // or other non-browser single-process environments") — same
         // category as a Capacitor native app.
-        ...(Capacitor.isNativePlatform() ? { lock: processLock } : {}),
+        ...(useNativeLock ? { lock: processLock } : {}),
       },
     });
   } catch (e) {
