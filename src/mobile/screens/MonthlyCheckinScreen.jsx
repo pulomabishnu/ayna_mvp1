@@ -99,7 +99,7 @@ const MEDICATION_OPTIONS = [
 const SAFETY_OPTIONS = ['Yes', 'No', 'Not sure'];
 const LIFE_STAGE_OPTIONS = [
   ['same', 'No, still the same'],
-  ['changed', 'Yes, my cycle or life stage changed'],
+  ['changed', 'Yes, my cycle/life stage status changed'],
   ['not_sure', 'Not sure'],
 ];
 
@@ -107,11 +107,6 @@ function monthLabel(key) {
   const d = new Date(`${key}T00:00:00`);
   return d.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
 }
-function shortMonthLabel(key) {
-  const d = new Date(`${key}T00:00:00`);
-  return d.toLocaleDateString(undefined, { month: 'long' });
-}
-
 function OptionCard({ selected, title, subtitle, onClick, tone }) {
   const isWarning = tone === 'warning' && selected;
   return (
@@ -278,7 +273,6 @@ function applyCheckinToIntake(fullHealthIntake, answers) {
 
 export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswers, myProducts = [] }) {
   const [status, setStatus] = useState('loading'); // loading | ready | already-done | error
-  const [lastCheckin, setLastCheckin] = useState(null);
   const [stepIndex, setStepIndex] = useState(0);
   const [answers, setAnswers] = useState(null);
   const [lifeStageEditSelections, setLifeStageEditSelections] = useState(lastQuizAnswers?.fullHealthIntake?.lifeStageSelections || []);
@@ -294,10 +288,8 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
       if (!active) return;
       if (thisMonthCheckin) {
         setStatus('already-done');
-        setLastCheckin(thisMonthCheckin);
         return;
       }
-      setLastCheckin(prior);
       setAnswers(buildInitialAnswers(prior?.answers, fullHealthIntake));
       setStatus('ready');
     }).catch(() => {
@@ -442,7 +434,7 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
       <Header onBack={goBack} label="Monthly check-in" progress={(stepIndex + 1) / steps.length} stepText={`${stepIndex + 1}/${steps.length}`} />
 
       {stepId === 'lifeStage' && (
-        <StepShell title={`Has anything changed since ${lastCheckin ? shortMonthLabel(lastCheckin.check_in_month) : 'your intake'}?`} subtitle="We only ask again when something big shifts — starting to try, a pregnancy, postpartum, perimenopause." footer={footer}>
+        <StepShell title="Has anything changed since your last check-in?" subtitle="We only ask again when something big shifts — starting to try, a pregnancy, postpartum, perimenopause." footer={footer}>
           {LIFE_STAGE_OPTIONS.map(([value, label]) => (
             <OptionCard key={value} selected={answers.lifeStageChanged === value} title={label} onClick={() => set('lifeStageChanged', value)} />
           ))}
@@ -499,7 +491,7 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
       )}
 
       {stepId === 'recs' && (
-        <StepShell title="How did last month's suggestions work out?" subtitle="This is the answer that changes your matches the most — worth the ten seconds." footer={footer}>
+        <StepShell title="How did the products we suggested work for you?" subtitle="This is the answer that changes your matches the most — worth the ten seconds." footer={footer}>
           {myProducts.length > 0 && (
             <div style={{ padding: '12px 14px', borderRadius: 14, background: PANEL_BG, border: '1px solid ' + ROW_BORDER, marginBottom: 16 }}>
               <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1px', textTransform: 'uppercase', color: MUTED, marginBottom: 6 }}>In your ecosystem</div>

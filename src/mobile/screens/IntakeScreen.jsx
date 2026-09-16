@@ -828,12 +828,18 @@ function isMinorAge(value) {
   return Number.isFinite(n) && n < MINOR_AGE_LIMIT;
 }
 
-// Newest year first — most people land straight in the already-18+ range
-// without scrolling; "Scroll for earlier years" (below the row) reaches
-// further back. 100 years is generous headroom past any real user.
+// Newest-eligible year first — the list simply never offers a year that
+// could put someone under 18, rather than letting them pick one and then
+// showing the warning card. We don't collect a birth day, so a bare
+// MINOR_AGE_LIMIT years back (e.g. 2008 in 2026) is NOT safe for every
+// month: December of that year hasn't turned 18 yet in most of the current
+// year. One year further back than that guarantees 18+ regardless of which
+// month gets paired with it. "Scroll for earlier years" (below the row)
+// reaches further back from there. 100 years is generous headroom past any
+// real user.
 function birthYearOptions() {
-  const currentYear = new Date().getFullYear();
-  return Array.from({ length: 101 }, (_, i) => currentYear - i);
+  const newestEligibleYear = new Date().getFullYear() - MINOR_AGE_LIMIT - 1;
+  return Array.from({ length: 101 }, (_, i) => newestEligibleYear - i);
 }
 
 // Two taps (a month grid, then a year rail), no keyboard, no scroll wheels
