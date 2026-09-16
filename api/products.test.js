@@ -126,11 +126,11 @@ describe('products', () => {
     expect(res.body).toEqual({ error: 'query_failed', products: [] });
   });
 
-  it('sets a long-lived public cache header on a successful response', async () => {
+  it('sets a public cache header on a successful response', async () => {
     queryResult = { data: [{ id: 'p1', name: 'x', category: 'c', product_type: 'physical' }], error: null };
     const handler = await loadHandler();
     const res = mockRes();
     await handler({ method: 'GET' }, res);
-    expect(res.headers['cache-control']).toMatch(/s-maxage=3600/);
+    expect(res.headers['cache-control']).toMatch(/s-maxage=300\b/);
   });
 });

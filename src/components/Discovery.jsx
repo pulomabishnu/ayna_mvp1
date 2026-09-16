@@ -3,7 +3,7 @@ import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMat
 import { loadProductCatalog } from '../utils/productCatalog';
 import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct, findConfidentProductMatch } from '../utils/naturalLanguageSearch';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
-import { isPartnerBrandItem } from '../utils/partnerBrands';
+import { isPartnerBrandItem, getPartnerBrandRank } from '../utils/partnerBrands';
 import { fetchSearchSuggestions } from '../utils/fetchSearchSuggestions';
 import { getVerificationLinks } from '../utils/verificationLinks';
 import { RELEASED_STARTUPS } from '../data/startups';
@@ -239,19 +239,6 @@ function shuffleJitter(item, seed, baseScore = 0) {
 // displacing enough established, well-reviewed products to feel like a regression for users who
 // came for the curated content.
 const COLD_START_PAGE_FLOOR = 6;
-
-// TEMPORARY manual boost, requested 2026-09-16: Elitone's two devices sort to
-// the very top of Browse/search results (Best-Match/Featured sort only —
-// explicit Price/Rating sorts are left truthful to what the visitor asked
-// for) until partner ranking is actually designed. Remove this block (and
-// its one call site below) once that's in place — it deliberately
-// overrides relevance score, personalized rank, and the existing
-// isPartnerBrandItem pin, all of which normally take priority over a raw
-// partnership status.
-const TEMP_BOOSTED_PRODUCT_IDS = new Set(['p-elitone', 'p-elitone-urge']);
-function isTempBoostedProduct(item) {
-    return TEMP_BOOSTED_PRODUCT_IDS.has(item?.id);
-}
 
 function applyColdStartFloor(rankedList, pageSize) {
     const page = rankedList.slice(0, pageSize);
@@ -743,13 +730,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         } else {
             const browsingWithoutTextQuery = !scoreById;
             list = [...list].sort((a, b) => {
-                // TEMP_BOOSTED_PRODUCT_IDS — see definition above. Checked first,
-                // ahead of relevance score, so it wins even when a boosted item
-                // would otherwise rank lower on a given search.
-                const boostedA = isTempBoostedProduct(a) ? 1 : 0;
-                const boostedB = isTempBoostedProduct(b) ? 1 : 0;
-                if (boostedA !== boostedB) return boostedB - boostedA;
-
                 const m = matchTieBreak(a, b);
                 if (m !== 0) return m;
                 // When personalized results are on, preserve the real recommendation engine's
@@ -759,12 +739,17 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     const rb = recommendedRank.has(b.id) ? recommendedRank.get(b.id) : Number.MAX_SAFE_INTEGER;
                     if (ra !== rb) return ra - rb;
                 }
-                // Partners are pinned in general browse only.
+                // Partners are pinned AND ordered (by PARTNER_BRAND_ORDER's explicit
+                // priority, requested 2026-09-16) in general browse only.
                 // Partnership never changes personalized match scores or recommendation order.
                 if (browsingWithoutTextQuery && !personalizationFilter) {
-                    const pa = isPartnerBrandItem(a) ? 1 : 0;
-                    const pb = isPartnerBrandItem(b) ? 1 : 0;
-                    if (pa !== pb) return pb - pa;
+                    const ra = getPartnerBrandRank(a);
+                    const rb = getPartnerBrandRank(b);
+                    if (ra !== null && rb !== null) {
+                        if (ra !== rb) return ra - rb;
+                    } else if (ra !== null || rb !== null) {
+                        return ra !== null ? -1 : 1;
+                    }
                 }
 
                 const baseA = getQualityScore(a, aynaReviews);
