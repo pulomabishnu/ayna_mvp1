@@ -176,7 +176,7 @@ const STOP_REASONS = [
 ];
 
 const EMPTY = {
-  age: '', lifeStage: '', lifeStageSelections: [], lifeStageOther: '', zipcode: '',
+  birthMonth: '', birthYear: '', lifeStage: '', lifeStageSelections: [], lifeStageOther: '', zipcode: '',
   supportSelections: [], supportOtherText: '',
   periodFlow: '', periodPain: '', utiFrequency: '', ttcDuration: '', postpartumTiming: '',
   pregnancyTrimester: '', breastfeedingStatus: '', perimenopauseLastPeriod: '',
@@ -199,7 +199,7 @@ const EMPTY = {
 // gets a real reverse-lookup instead of a passthrough.
 const FSA_HSA_REVERSE = { fsa: 'FSA', hsa: 'HSA', both: 'Both', none: 'No', unsure: 'Not sure' };
 const RESUMABLE_PASSTHROUGH_FIELDS = [
-  'age', 'lifeStage', 'lifeStageSelections', 'lifeStageOther', 'zipcode',
+  'birthMonth', 'birthYear', 'lifeStage', 'lifeStageSelections', 'lifeStageOther', 'zipcode',
   'supportSelections', 'supportOtherText',
   'periodFlow', 'periodPain', 'utiFrequency', 'postpartumTiming', 'pregnancyTrimester',
   'breastfeedingStatus', 'perimenopauseLastPeriod',
@@ -432,7 +432,9 @@ function buildSnapshot(intake) {
   const fsaHsa = { FSA: 'fsa', HSA: 'hsa', Both: 'both', No: 'none', 'Not sure': 'unsure' }[intake.fsaHsaAnswer] || '';
 
   return {
-    age: intake.age,
+    age: computeAgeFromBirth(intake.birthMonth, intake.birthYear),
+    birthMonth: intake.birthMonth,
+    birthYear: intake.birthYear,
     zipcode: intake.zipcode.trim(),
     location: '',
     lifeStage: primaryLifeStage,
@@ -787,9 +789,6 @@ function OtherBox({ label, value, onChange, placeholder }) {
   );
 }
 
-const AGE_MIN = 13;
-const AGE_MAX = 90;
-
 // Under-18 gate (Ayna_Minor_Gate.html design reference) — a fixed warm
 // warning tone rather than a --ayna-* var, same reasoning as SELECTED_TEXT
 // above: the reference keeps this specific color regardless of theme, and
@@ -801,65 +800,149 @@ const WARNING_BORDER_SOFT = '#E8C6B8';
 const WARNING_TITLE = '#8A2F1D';
 const WARNING_BODY = '#7A4234';
 
+const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+function monthLabelFor(month) {
+  return MONTH_LABELS[Number(month) - 1] || '';
+}
+
+// Month + year only, deliberately never a day (Ayna_Intake_Birthday.html
+// design reference) — a full date of birth is an identifier, useless to
+// the matching logic and a real liability if this data ever leaked. A
+// typed age goes stale the moment it's saved; birth month/year stays true
+// and lets this be recomputed fresh (in buildSnapshot below, and anywhere
+// else it's ever read) instead of trusting a number someone entered once.
+function computeAgeFromBirth(month, year) {
+  const m = Number(month);
+  const y = Number(year);
+  if (!Number.isFinite(m) || !Number.isFinite(y) || m < 1 || m > 12 || y < 1900) return '';
+  const now = new Date();
+  let age = now.getFullYear() - y;
+  if (now.getMonth() + 1 < m) age -= 1;
+  return String(Math.max(0, age));
+}
+
 function isMinorAge(value) {
   if (value === '' || value === null || value === undefined) return false;
   const n = Number(value);
   return Number.isFinite(n) && n < MINOR_AGE_LIMIT;
 }
 
-// Pattern A2: a real, draggable slider (invisible native <input type=range>
-// layered over a custom-drawn track/fill/thumb, since inline styles can't
-// reach ::-webkit-slider-thumb) plus a manual numeric-entry stepper panel
-// below it — same two ways to answer the design specifies, not just the
-// slider alone.
-// Wrapped in its own light card (rather than sitting directly on the
-// screen background) since the floating value label works by painting an
-// opaque cutout over the track — that only blends in when its background
-// actually matches what's immediately behind it, which the page background
-// no longer does now that it's back to the dark hero gradient.
-function AgeCard({ value, onChange, underage, onOpenGate }) {
-  const numeric = value ? Number(value) : 28;
-  const pct = ((numeric - AGE_MIN) / (AGE_MAX - AGE_MIN)) * 100;
-  const step = (delta) => onChange(String(Math.min(AGE_MAX, Math.max(AGE_MIN, numeric + delta))));
-  const trackFill = underage ? 'linear-gradient(90deg, #F0D9CF, #C98A6D)' : `linear-gradient(90deg, ${ACCENT_BG}, ${ACCENT_BORDER})`;
-  const thumbBorder = underage ? WARNING_BORDER : ACCENT_BORDER;
-  const valueColor = underage ? WARNING_BORDER : NAVY;
+// Newest year first — most people land straight in the already-18+ range
+// without scrolling; "Scroll for earlier years" (below the row) reaches
+// further back. 100 years is generous headroom past any real user.
+function birthYearOptions() {
+  const currentYear = new Date().getFullYear();
+  return Array.from({ length: 101 }, (_, i) => currentYear - i);
+}
+
+// Two taps (a month grid, then a year rail), no keyboard, no scroll wheels
+// to fight. The answer card fills in warm as soon as both halves are set
+// and states the derived age so nobody has to do the arithmetic; under 18
+// turns it to the same warning tone the old slider used, and tapping it
+// opens the real minor-gate screen instead of blocking with an error.
+function BirthdayCard({ month, year, onChangeMonth, onChangeYear, underage, onOpenGate }) {
+  const age = computeAgeFromBirth(month, year);
+  const hasBoth = !!month && !!year;
+  const years = useMemo(() => birthYearOptions(), []);
+
   return (
-    <div style={{ background: CARD_BG, borderRadius: 24, padding: '40px 20px 20px', boxShadow: '0 20px 44px -22px rgba(0,0,0,.5)' }}>
-      <div style={{ position: 'relative', height: 40 }}>
-        <div style={{ position: 'absolute', left: 0, right: 0, top: 16, height: 8, borderRadius: 99, background: 'var(--ayna-track)' }} />
-        <div style={{ position: 'absolute', left: 0, width: `${pct}%`, top: 16, height: 8, borderRadius: 99, background: trackFill }} />
-        <div style={{ position: 'absolute', left: `${pct}%`, top: 4, transform: 'translateX(-50%)', width: 32, height: 32, borderRadius: 99, background: CARD_BG, border: '3px solid ' + thumbBorder, boxShadow: '0 6px 16px rgba(232,169,79,.4)', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', left: `${pct}%`, top: -38, transform: 'translateX(-50%)', fontFamily: "'Playfair Display',serif", fontSize: 'calc(36px * var(--ayna-text-scale, 1))', color: valueColor, background: CARD_BG, padding: '0 8px', pointerEvents: 'none' }}>
-          {value || '—'}
-        </div>
-        <input
-          type="range" min={AGE_MIN} max={AGE_MAX} value={numeric} onChange={(e) => onChange(e.target.value)}
-          style={{ position: 'absolute', left: 0, right: 0, top: -2, height: 40, width: '100%', margin: 0, opacity: 0, cursor: 'grab' }}
-        />
-      </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4, fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', color: MUTED }}>
-        <span>{AGE_MIN}</span><span>{AGE_MAX}+</span>
-      </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 26, padding: '13px 15px', borderRadius: 16, background: PANEL_BG, border: '1px solid ' + ROW_BORDER }}>
-        <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: BODY_TEXT, flex: 1 }}>Prefer to type it?</div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, borderRadius: 12, padding: '8px 12px' }}>
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: INK }}>{value || '—'}</div>
-          <div style={{ width: 1, height: 14, background: ROW_BORDER }} />
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <div onClick={() => step(1)} style={{ cursor: 'pointer' }}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" style={{ transform: 'rotate(180deg)' }}><path d="M6 9l6 6 6-6" /></svg>
+    <div style={{ background: CARD_BG, borderRadius: 24, padding: 20, boxShadow: '0 20px 44px -22px rgba(0,0,0,.5)' }}>
+      <div
+        style={{
+          borderRadius: 18,
+          padding: '16px 18px',
+          textAlign: 'center',
+          background: !hasBoth ? PANEL_BG : underage ? WARNING_BG : 'linear-gradient(160deg,#FCEBD1,#F7D9A8)',
+          border: '1px solid ' + (!hasBoth ? ROW_BORDER : underage ? WARNING_BORDER_SOFT : ACCENT_BORDER),
+        }}
+      >
+        <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: MUTED }}>Your birthday</div>
+        {hasBoth ? (
+          <>
+            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(26px * var(--ayna-text-scale, 1))', color: underage ? WARNING_BORDER : NAVY, marginTop: 6 }}>
+              {monthLabelFor(month)} {year}
             </div>
-            <div onClick={() => step(-1)} style={{ cursor: 'pointer' }}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
+            <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: underage ? WARNING_BODY : BODY_TEXT, marginTop: 4 }}>
+              {underage ? "That's under our age requirement" : `That makes you ${age} this month`}
             </div>
+          </>
+        ) : (
+          <div style={{ marginTop: 6 }}>
+            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(22px * var(--ayna-text-scale, 1))', color: MUTED }}>Month ····</div>
+            <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: MUTED, marginTop: 4 }}>Pick a month below to start</div>
           </div>
+        )}
+      </div>
+
+      <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1px', textTransform: 'uppercase', color: MUTED, marginTop: 20, marginBottom: 8 }}>Month</div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
+        {MONTH_LABELS.map((label, i) => {
+          const value = i + 1;
+          const selected = Number(month) === value;
+          return (
+            <div
+              key={label}
+              onClick={() => onChangeMonth(value)}
+              style={{
+                textAlign: 'center',
+                padding: '11px 0',
+                borderRadius: 12,
+                cursor: 'pointer',
+                fontFamily: "'DM Sans',sans-serif",
+                fontWeight: 600,
+                fontSize: 'calc(13px * var(--ayna-text-scale, 1))',
+                background: selected ? NAVY : PANEL_BG,
+                color: selected ? '#FFFCF9' : INK,
+                border: '1px solid ' + (selected ? NAVY : ROW_BORDER),
+              }}
+            >
+              {label}
+            </div>
+          );
+        })}
+      </div>
+
+      <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1px', textTransform: 'uppercase', color: MUTED, marginTop: 20, marginBottom: 8 }}>Year</div>
+      <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
+        {years.map((y) => {
+          const selected = Number(year) === y;
+          return (
+            <div
+              key={y}
+              onClick={() => onChangeYear(y)}
+              style={{
+                flex: 'none',
+                textAlign: 'center',
+                padding: '10px 14px',
+                borderRadius: 12,
+                cursor: 'pointer',
+                fontFamily: "'DM Mono',monospace",
+                fontWeight: 600,
+                fontSize: 'calc(13px * var(--ayna-text-scale, 1))',
+                background: selected ? NAVY : PANEL_BG,
+                color: selected ? '#FFFCF9' : INK,
+                border: '1px solid ' + (selected ? NAVY : ROW_BORDER),
+              }}
+            >
+              {y}
+            </div>
+          );
+        })}
+      </div>
+      <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', color: MUTED, marginTop: 6 }}>Scroll for earlier years</div>
+
+      <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', marginTop: 20, padding: '13px 15px', borderRadius: 16, background: PANEL_BG, border: '1px solid ' + ROW_BORDER }}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flex: 'none', marginTop: 2 }}><circle cx="12" cy="12" r="9" /><path d="M12 8v4M12 16h.01" /></svg>
+        <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: BODY_TEXT }}>
+          We store the month and year, not a full date of birth. It's health data under our policy, and it's never used to advertise to you.
         </div>
       </div>
+
       {underage && (
         <div
           onClick={onOpenGate}
-          style={{ display: 'flex', gap: 11, alignItems: 'flex-start', marginTop: 20, padding: '14px 15px', borderRadius: 16, background: WARNING_BG, border: '1px solid ' + WARNING_BORDER_SOFT, cursor: 'pointer' }}
+          style={{ display: 'flex', gap: 11, alignItems: 'flex-start', marginTop: 14, padding: '14px 15px', borderRadius: 16, background: WARNING_BG, border: '1px solid ' + WARNING_BORDER_SOFT, cursor: 'pointer' }}
         >
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={WARNING_BORDER} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flex: 'none', marginTop: 1 }}><circle cx="12" cy="12" r="9" /><path d="M12 8v4M12 16h.01" /></svg>
           <div>
@@ -1468,8 +1551,8 @@ function TextAreaField({ value, onChange, placeholder }) {
 // keeps its own light card look from the reference. No progress bar, no
 // Skip, and nothing about the intake carries forward from here: leaving
 // (Browse the reading library) unmounts this screen entirely the same as
-// every other exit from this file, and Change my age just returns to the
-// still-populated age question — nothing was ever cleared.
+// every other exit from this file, and Change my birthday just returns to
+// the still-populated birthday question — nothing was ever cleared.
 function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
   const whatYouCanDo = [
     ['01', 'Talk to someone who can help', 'A parent, guardian, school nurse or your own doctor can look at symptoms with your full history in front of them.'],
@@ -1517,7 +1600,7 @@ function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
           </div>
 
           <div style={{ marginTop: 22, padding: '15px 16px', borderRadius: 18, background: CARD_BG, border: '1px solid ' + ROW_BORDER }}>
-            <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: INK }}>Entered the wrong age?</div>
+            <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: INK }}>Entered the wrong birthday?</div>
             <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: BODY_TEXT, marginTop: 4 }}>Go back one screen and change it — nothing has been saved yet.</div>
           </div>
 
@@ -1532,7 +1615,7 @@ function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
           Browse the reading library
         </div>
         <div onClick={onChangeAge} style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', textAlign: 'center', padding: 14, borderRadius: 99, cursor: 'pointer', color: NAVY, border: '1.5px solid ' + NAVY, marginTop: 9 }}>
-          Change my age
+          Change my birthday
         </div>
       </div>
     </div>
@@ -1553,7 +1636,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
 
   const visibleSteps = useMemo(() => {
     const steps = [
-      { id: 'age', section: 'core', title: 'How old are you?', type: 'age', optional: true },
+      { id: 'age', section: 'core', title: 'When were you born?', type: 'birthday', optional: true },
       { id: 'lifeStage', section: 'core', title: 'Which options best describe you right now?', subtitle: 'Select all that apply.', type: 'lifeStage', optional: true },
       { id: 'zip', section: 'core', title: 'What is your ZIP code?', subtitle: 'Optional. This helps us personalize local care and availability.', type: 'zip', optional: true },
       { id: 'support', section: 'support', title: 'What are you currently experiencing or looking for support with?', subtitle: 'Choose anything that feels relevant. You can search or browse by category.', type: 'support', optional: true },
@@ -1608,7 +1691,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
     } else if (onBack) onBack();
   };
   const goNext = () => {
-    if (step.id === 'age' && isMinorAge(intake.age)) return;
+    if (step.id === 'age' && isMinorAge(computeAgeFromBirth(intake.birthMonth, intake.birthYear))) return;
     if (!requiredReady(step.id, intake)) return;
     if (currentIndex >= visibleSteps.length - 1) {
       onComplete(mapIntakeToLegacyQuizProfile(buildSnapshot(intake)));
@@ -1621,7 +1704,16 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
   const selectedLifeStages = getLifeStages(intake);
 
   const renderBody = () => {
-    if (step.type === 'age') return <AgeCard value={intake.age} onChange={(v) => set('age', v)} underage={isMinorAge(intake.age)} onOpenGate={() => setMinorGate(true)} />;
+    if (step.type === 'birthday') return (
+      <BirthdayCard
+        month={intake.birthMonth}
+        year={intake.birthYear}
+        onChangeMonth={(v) => set('birthMonth', v)}
+        onChangeYear={(v) => set('birthYear', v)}
+        underage={isMinorAge(computeAgeFromBirth(intake.birthMonth, intake.birthYear))}
+        onOpenGate={() => setMinorGate(true)}
+      />
+    );
 
     if (step.type === 'lifeStage') return (
       <>
@@ -1808,7 +1900,7 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
     step.id === 'allergies' ? intake.allergyItems.length :
     step.id === 'formats' ? intake.preferredFormats.length :
     step.id === 'avoidIngredients' ? intake.avoidIngredients.length : 0;
-  const minorBlocked = step.id === 'age' && isMinorAge(intake.age);
+  const minorBlocked = step.id === 'age' && isMinorAge(computeAgeFromBirth(intake.birthMonth, intake.birthYear));
   const ready = requiredReady(step.id, intake) && !minorBlocked;
 
   if (minorGate) {
