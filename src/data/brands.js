@@ -1033,9 +1033,9 @@ export const BRAND_PRODUCTS = [
         badges: [],
         isEmergingBrand: true,
     },
-    // Elitone brand partnership (2026-09-07) — one general affiliate link
-    // (elitone.com/?af=aynahealth) covers both devices; there's no
-    // per-product affiliate link, so affiliateUrl is the same on each entry.
+    // Elitone brand partnership (2026-09-07) — per-product affiliate links
+    // (each product's own URL with ?af=aynahealth appended, corrected
+    // 2026-09-15 from a single shared elitone.com/?af=aynahealth link).
     {
         id: 'p-elitone',
         name: 'Elitone (Stress + Mixed Incontinence)',
@@ -1044,13 +1044,13 @@ export const BRAND_PRODUCTS = [
         type: 'physical',
         internal: false,
         healthFunctions: ['bladder-leak-protection'],
-        tags: ['bladder-leaks', 'incontinence', 'urinary', 'menopause', 'postpartum'],
-        price: 'From $359',
+        tags: ['bladder-leaks', 'incontinence', 'urinary', 'pelvic-floor', 'menopause', 'postpartum'],
+        price: 'From $399',
         whereToBuy: [], // direct-to-consumer only; affiliateUrl below covers it
         url: 'https://elitone.com/product/elitone/',
         // Ayna affiliate partnership — affiliateUrl wins over `url` for the
         // Buy Now / Visit Site destination (see getBuyUrl in ProductModal.jsx).
-        affiliateUrl: 'https://elitone.com/?af=aynahealth',
+        affiliateUrl: 'https://elitone.com/product/elitone/?af=aynahealth',
         image: 'https://elitone.com/wp-content/uploads/2021/05/SUI-Hero-2-1200x1000-AVIF.avif',
         summary: 'An external, at-home pelvic floor stimulation device for stress and mixed urinary incontinence. A gel pad worn near the pubic bone delivers gentle electrical stimulation to contract and relax pelvic floor muscles for you during 20-minute sessions — the brand describes it as "doing Kegels for you."',
         safety: {
@@ -1076,11 +1076,11 @@ export const BRAND_PRODUCTS = [
         type: 'physical',
         internal: false,
         healthFunctions: ['bladder-leak-protection'],
-        tags: ['bladder-leaks', 'incontinence', 'urinary', 'menopause', 'postpartum'],
-        price: 'From $359',
+        tags: ['bladder-leaks', 'incontinence', 'urinary', 'pelvic-floor', 'menopause', 'postpartum'],
+        price: 'From $399',
         whereToBuy: [],
         url: 'https://elitone.com/product/elitone-urge/',
-        affiliateUrl: 'https://elitone.com/?af=aynahealth',
+        affiliateUrl: 'https://elitone.com/product/elitone-urge/?af=aynahealth',
         image: 'https://elitone.com/wp-content/uploads/2023/02/UUI-Hero-071426.avif',
         summary: 'An external, at-home device for overactive bladder (OAB) and urge incontinence. The same GelPad-and-controller system as Elitone, but tuned to send calming signals that aim to reduce sudden urges, frequent bathroom trips, and urge-related leaks, without medication or a procedure.',
         safety: {
