@@ -112,10 +112,36 @@ export function useSupabaseAuth() {
           return;
         }
 
-        const { data: setSessionData, error } = await supabase.auth.setSession({
+        // Confirms which lock GoTrueClient actually picked — should read
+        // "processLock" after the supabaseClient.js fix, on a native build.
+        console.log('[AYNA-DEBUG] supabase.auth.lock in use:', supabase.auth?.lock?.name || String(supabase.auth?.lock));
+
+        // Races setSession against a hard timeout so a hang produces an
+        // explicit, unambiguous log line instead of silently never
+        // finishing — same symptom persisted even after the processLock
+        // fix, so this either proves it's still hanging (pointing
+        // elsewhere) or reveals setSession is actually rejecting in a way
+        // that isn't reaching the normal error/catch paths below.
+        const setSessionPromise = supabase.auth.setSession({
           access_token: accessToken,
           refresh_token: refreshToken,
         });
+        const timeoutPromise = new Promise((resolve) => {
+          setTimeout(() => resolve({ __timedOut: true }), 8000);
+        });
+        console.log('[AYNA-DEBUG] calling setSession now...');
+        const raceResult = await Promise.race([setSessionPromise, timeoutPromise]);
+        if (raceResult?.__timedOut) {
+          console.error('[AYNA-DEBUG] setSession did NOT resolve within 8000ms — confirmed hang.');
+          // Keep waiting on the real promise in the background in case it
+          // eventually settles, so we at least learn the outcome even if
+          // very late.
+          setSessionPromise
+            .then((r) => console.log('[AYNA-DEBUG] setSession eventually resolved (late):', JSON.stringify({ hasSession: !!r?.data?.session, error: r?.error?.message })))
+            .catch((e) => console.error('[AYNA-DEBUG] setSession eventually rejected (late):', e?.message));
+          return;
+        }
+        const { data: setSessionData, error } = raceResult;
 
         if (error) {
           console.error('[Ayna] Could not establish native Google session:', error.message);
