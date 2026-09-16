@@ -5,6 +5,7 @@ import { Browser } from '@capacitor/browser';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { CONSENT_VERSION, stashPendingConsent, flushPendingConsent } from '../../utils/pendingConsent.js';
 import { resetChipPosition } from '../utils/askAynaChipPosition.js';
+import { debugLog } from '../../utils/aynaDebugLog.js';
 
 // Real Supabase identity for the mobile app — separate from
 // useEcosystemSession.js's local app-data cache (products, quiz answers),
@@ -48,15 +49,15 @@ export function useSupabaseAuth() {
     // lock with every other auth call; if THIS hangs, everything queued
     // behind it (including a later setSession() from native sign-in) would
     // wait forever regardless of which lock implementation is used.
-    console.log('[AYNA-DEBUG] mount getSession() starting...');
+    debugLog('mount getSession() starting...');
     const mountGetSessionStart = Date.now();
     supabase.auth.getSession()
       .then(({ data }) => {
-        console.log('[AYNA-DEBUG] mount getSession() resolved in', Date.now() - mountGetSessionStart, 'ms, has session:', !!data?.session);
+        debugLog('mount getSession() resolved in', Date.now() - mountGetSessionStart, 'ms, has session:', !!data?.session);
         setUser(data?.session?.user ?? null);
       })
       .catch((e) => {
-        console.error('[AYNA-DEBUG] mount getSession() rejected after', Date.now() - mountGetSessionStart, 'ms:', e?.message);
+        debugLog('mount getSession() REJECTED after', Date.now() - mountGetSessionStart, 'ms:', e?.message);
         setUser(null);
       })
       .finally(() => setAuthLoading(false));
@@ -85,9 +86,9 @@ export function useSupabaseAuth() {
       // Every branch below logs explicitly with this prefix, and the whole
       // body is now wrapped in try/catch so nothing can fail as a silent
       // unhandled rejection. Remove once the real cause is found.
-      console.log('[AYNA-DEBUG] appUrlOpen fired, url:', url);
+      debugLog('appUrlOpen fired, url:', url);
       if (!url || !url.startsWith(NATIVE_OAUTH_REDIRECT) || url === lastHandledUrl) {
-        console.log('[AYNA-DEBUG] ignored — no url / prefix mismatch / duplicate. NATIVE_OAUTH_REDIRECT =', NATIVE_OAUTH_REDIRECT, 'lastHandledUrl =', lastHandledUrl);
+        debugLog('ignored — no url / prefix mismatch / duplicate. lastHandledUrl =', lastHandledUrl);
         return;
       }
       lastHandledUrl = url;
@@ -95,12 +96,11 @@ export function useSupabaseAuth() {
       try {
         await Browser.close();
       } catch (closeErr) {
-        console.log('[AYNA-DEBUG] Browser.close() threw (probably already closed):', closeErr?.message);
+        debugLog('Browser.close() threw (probably already closed):', closeErr?.message);
       }
 
       try {
         const parsed = new URL(url);
-        console.log('[AYNA-DEBUG] parsed url — hash:', parsed.hash, 'search:', parsed.search);
         const hashParams = new URLSearchParams(parsed.hash.slice(1));
         const searchParams = parsed.searchParams;
 
@@ -110,52 +110,51 @@ export function useSupabaseAuth() {
 
         if (errorDescription) {
           console.error('[Ayna] Native Google OAuth failed:', errorDescription);
-          console.log('[AYNA-DEBUG] full hash params:', Object.fromEntries(hashParams), 'full search params:', Object.fromEntries(searchParams));
+          debugLog('OAuth error_description:', errorDescription);
           return;
         }
 
         const accessToken = hashParams.get('access_token');
         const refreshToken = hashParams.get('refresh_token');
-        const code = hashParams.get('code') || searchParams.get('code');
-        console.log('[AYNA-DEBUG] accessToken present:', !!accessToken, 'refreshToken present:', !!refreshToken, 'code param present:', !!code);
+        debugLog('accessToken present:', !!accessToken, 'refreshToken present:', !!refreshToken);
 
         if (!accessToken || !refreshToken) {
           console.error('[Ayna] Native Google OAuth callback did not include a complete session.');
-          console.log('[AYNA-DEBUG] full hash params:', Object.fromEntries(hashParams), 'full search params:', Object.fromEntries(searchParams));
+          debugLog('missing tokens — hash keys:', Object.keys(Object.fromEntries(hashParams)));
           return;
         }
 
-        // Confirms which lock GoTrueClient actually picked — should read
-        // "processLock" after the supabaseClient.js fix, on a native build.
-        console.log('[AYNA-DEBUG] supabase.auth.lock in use:', supabase.auth?.lock?.name || String(supabase.auth?.lock));
+        // Isolates whether the LOCK ITSELF is what's stuck (a trivial
+        // no-op function queued on the exact same lock name GoTrueClient
+        // uses internally) vs something inside setSession()'s own body
+        // once the lock is already held.
+        try {
+          const lockName = `lock:${supabase.auth.storageKey}`;
+          debugLog('testing raw lock acquisition, name:', lockName, '...');
+          const lockTestStart = Date.now();
+          const lockResult = await Promise.race([
+            supabase.auth.lock(lockName, 5000, async () => 'ACQUIRED'),
+            new Promise((resolve) => setTimeout(() => resolve('LOCK_TIMED_OUT'), 6000)),
+          ]);
+          debugLog('raw lock test finished in', Date.now() - lockTestStart, 'ms, result:', lockResult);
+        } catch (lockErr) {
+          debugLog('raw lock test THREW after', 'ms:', lockErr?.name, lockErr?.message);
+        }
 
         // Raw network probe, completely bypassing the Supabase JS client's
-        // locking/state machine — a plain fetch to GoTrue's public,
-        // unauthenticated /health endpoint. The processLock fix didn't
-        // change the hang, which points at something the lock is
-        // serializing behind (e.g. an earlier getSession() call on mount
-        // hanging for a real network reason) rather than the lock
-        // mechanism itself — this isolates whether raw network requests to
-        // Supabase's auth server work from inside this WKWebView at all.
+        // locking/state machine.
         try {
           const healthUrl = `${import.meta.env.VITE_SUPABASE_URL}/auth/v1/health`;
-          console.log('[AYNA-DEBUG] probing', healthUrl, '...');
           const probeStart = Date.now();
           const probeController = new AbortController();
           const probeTimeout = setTimeout(() => probeController.abort(), 8000);
           const probeRes = await fetch(healthUrl, { signal: probeController.signal });
           clearTimeout(probeTimeout);
-          console.log('[AYNA-DEBUG] raw fetch probe finished in', Date.now() - probeStart, 'ms, status:', probeRes.status);
+          debugLog('raw fetch probe finished in', Date.now() - probeStart, 'ms, status:', probeRes.status);
         } catch (probeErr) {
-          console.error('[AYNA-DEBUG] raw fetch probe FAILED/timed out:', probeErr?.name, probeErr?.message);
+          debugLog('raw fetch probe FAILED/timed out:', probeErr?.name, probeErr?.message);
         }
 
-        // Races setSession against a hard timeout so a hang produces an
-        // explicit, unambiguous log line instead of silently never
-        // finishing — same symptom persisted even after the processLock
-        // fix, so this either proves it's still hanging (pointing
-        // elsewhere) or reveals setSession is actually rejecting in a way
-        // that isn't reaching the normal error/catch paths below.
         const setSessionPromise = supabase.auth.setSession({
           access_token: accessToken,
           refresh_token: refreshToken,
@@ -163,36 +162,33 @@ export function useSupabaseAuth() {
         const timeoutPromise = new Promise((resolve) => {
           setTimeout(() => resolve({ __timedOut: true }), 8000);
         });
-        console.log('[AYNA-DEBUG] calling setSession now...');
+        debugLog('calling setSession now...');
         const raceResult = await Promise.race([setSessionPromise, timeoutPromise]);
         if (raceResult?.__timedOut) {
-          console.error('[AYNA-DEBUG] setSession did NOT resolve within 8000ms — confirmed hang.');
-          // Keep waiting on the real promise in the background in case it
-          // eventually settles, so we at least learn the outcome even if
-          // very late.
+          debugLog('setSession did NOT resolve within 8000ms — confirmed hang.');
           setSessionPromise
-            .then((r) => console.log('[AYNA-DEBUG] setSession eventually resolved (late):', JSON.stringify({ hasSession: !!r?.data?.session, error: r?.error?.message })))
-            .catch((e) => console.error('[AYNA-DEBUG] setSession eventually rejected (late):', e?.message));
+            .then((r) => debugLog('setSession eventually resolved (late):', !!r?.data?.session, r?.error?.message))
+            .catch((e) => debugLog('setSession eventually REJECTED (late):', e?.message));
           return;
         }
         const { data: setSessionData, error } = raceResult;
 
         if (error) {
           console.error('[Ayna] Could not establish native Google session:', error.message);
-          console.log('[AYNA-DEBUG] setSession error details:', JSON.stringify(error));
+          debugLog('setSession error:', error.message);
           return;
         }
 
-        console.log('[AYNA-DEBUG] setSession succeeded, user id:', setSessionData?.session?.user?.id, 'user email:', setSessionData?.session?.user?.email);
+        debugLog('setSession succeeded, user id:', setSessionData?.session?.user?.id);
 
         // This native flow never passes through AuthCallback.jsx (that only
         // renders for the web/preview OAuth redirect) — it's the one place
         // that would otherwise silently skip writing the consent stashed
         // before the redirect by signInWithGoogle below.
         await flushPendingConsent(supabase);
-        console.log('[AYNA-DEBUG] flushPendingConsent completed — native Google sign-in flow finished successfully.');
+        debugLog('flushPendingConsent completed — native Google sign-in flow finished successfully.');
       } catch (err) {
-        console.error('[AYNA-DEBUG] handleNativeOAuthUrl threw an unexpected error:', err?.message, err?.stack);
+        debugLog('handleNativeOAuthUrl threw an unexpected error:', err?.message);
       }
     }
 

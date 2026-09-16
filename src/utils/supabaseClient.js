@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { processLock } from '@supabase/auth-js';
 import { Capacitor } from '@capacitor/core';
+import { debugLog } from './aynaDebugLog.js';
 
 let client = null;
 
@@ -15,7 +16,7 @@ export function getSupabaseClient() {
     // confirming which lock actually got applied — log the decision here,
     // at the one place that actually knows it, instead.
     const useNativeLock = Capacitor.isNativePlatform();
-    console.log('[AYNA-DEBUG] supabaseClient: Capacitor.isNativePlatform() =', useNativeLock, '— applying', useNativeLock ? 'processLock' : 'default (navigatorLock/lockNoOp)');
+    debugLog('supabaseClient: Capacitor.isNativePlatform() =', useNativeLock, '— applying', useNativeLock ? 'processLock' : 'default (navigatorLock/lockNoOp)');
     client = createClient(url, anonKey, {
       auth: {
         flowType: 'implicit',   // avoids PKCE verifier storage — Chrome bounce tracking deletes it
