@@ -358,7 +358,7 @@ export const MVP_PHYSICAL = [
     safety: { fdaStatus: 'Fitness device', materials: 'Silicone', recalls: 'No recalls.', allergens: 'Silicone', sideEffects: 'Medical-grade silicone is generally well tolerated. Mild discomfort during initial use is common; stop and check with a pelvic floor PT if you notice pain.' },
     clinicianOpinionSource: 'independent',
     clinicianAttribution: 'ayna synthesis of peer-reviewed literature and clinical guidance. Not a direct clinician quote.',
-    doctorOpinion: 'Pelvic floor muscle training is commonly recommended as an initial conservative treatment for stress urinary incontinence. Evidence for pelvic floor training generally does not establish that this specific weighted device improves outcomes.',
+    doctorOpinion: 'This is a pelvic floor TRAINER, not an exerciser: these are passive weights you contract around yourself — there is no electrical stimulation and no FDA clearance to activate the pelvic floor for you the way a Class II exerciser (e.g. Elitone, Emsella) does. Pelvic floor muscle training is commonly recommended as an initial conservative treatment for stress urinary incontinence. Evidence for pelvic floor training generally does not establish that this specific weighted device improves outcomes.',
     communityReview: 'Community discussions on Amazon note progressive improvement with consistent use.',
     ingredients: 'Medical-grade silicone.',
     effectiveness: 'Progressive resistance improves pelvic floor strength.',
