@@ -65,51 +65,75 @@ export function useSupabaseAuth() {
     let lastHandledUrl = '';
 
     async function handleNativeOAuthUrl(url) {
-      if (!url || !url.startsWith(NATIVE_OAUTH_REDIRECT) || url === lastHandledUrl) return;
+      // TEMPORARY diagnostic logging (2026-09-16) — the "bounced back to
+      // sign-in" report couldn't be pinned down from the existing
+      // console.error calls alone (nothing was showing up in Safari Web
+      // Inspector, filtered view or genuinely silent, unclear which).
+      // Every branch below logs explicitly with this prefix, and the whole
+      // body is now wrapped in try/catch so nothing can fail as a silent
+      // unhandled rejection. Remove once the real cause is found.
+      console.log('[AYNA-DEBUG] appUrlOpen fired, url:', url);
+      if (!url || !url.startsWith(NATIVE_OAUTH_REDIRECT) || url === lastHandledUrl) {
+        console.log('[AYNA-DEBUG] ignored — no url / prefix mismatch / duplicate. NATIVE_OAUTH_REDIRECT =', NATIVE_OAUTH_REDIRECT, 'lastHandledUrl =', lastHandledUrl);
+        return;
+      }
       lastHandledUrl = url;
 
       try {
         await Browser.close();
-      } catch {
-        // Browser may already be closed.
+      } catch (closeErr) {
+        console.log('[AYNA-DEBUG] Browser.close() threw (probably already closed):', closeErr?.message);
       }
 
-      const parsed = new URL(url);
-      const hashParams = new URLSearchParams(parsed.hash.slice(1));
-      const searchParams = parsed.searchParams;
+      try {
+        const parsed = new URL(url);
+        console.log('[AYNA-DEBUG] parsed url — hash:', parsed.hash, 'search:', parsed.search);
+        const hashParams = new URLSearchParams(parsed.hash.slice(1));
+        const searchParams = parsed.searchParams;
 
-      const errorDescription =
-        hashParams.get('error_description') ||
-        searchParams.get('error_description');
+        const errorDescription =
+          hashParams.get('error_description') ||
+          searchParams.get('error_description');
 
-      if (errorDescription) {
-        console.error('[Ayna] Native Google OAuth failed:', errorDescription);
-        return;
+        if (errorDescription) {
+          console.error('[Ayna] Native Google OAuth failed:', errorDescription);
+          console.log('[AYNA-DEBUG] full hash params:', Object.fromEntries(hashParams), 'full search params:', Object.fromEntries(searchParams));
+          return;
+        }
+
+        const accessToken = hashParams.get('access_token');
+        const refreshToken = hashParams.get('refresh_token');
+        const code = hashParams.get('code') || searchParams.get('code');
+        console.log('[AYNA-DEBUG] accessToken present:', !!accessToken, 'refreshToken present:', !!refreshToken, 'code param present:', !!code);
+
+        if (!accessToken || !refreshToken) {
+          console.error('[Ayna] Native Google OAuth callback did not include a complete session.');
+          console.log('[AYNA-DEBUG] full hash params:', Object.fromEntries(hashParams), 'full search params:', Object.fromEntries(searchParams));
+          return;
+        }
+
+        const { data: setSessionData, error } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken,
+        });
+
+        if (error) {
+          console.error('[Ayna] Could not establish native Google session:', error.message);
+          console.log('[AYNA-DEBUG] setSession error details:', JSON.stringify(error));
+          return;
+        }
+
+        console.log('[AYNA-DEBUG] setSession succeeded, user id:', setSessionData?.session?.user?.id, 'user email:', setSessionData?.session?.user?.email);
+
+        // This native flow never passes through AuthCallback.jsx (that only
+        // renders for the web/preview OAuth redirect) — it's the one place
+        // that would otherwise silently skip writing the consent stashed
+        // before the redirect by signInWithGoogle below.
+        await flushPendingConsent(supabase);
+        console.log('[AYNA-DEBUG] flushPendingConsent completed — native Google sign-in flow finished successfully.');
+      } catch (err) {
+        console.error('[AYNA-DEBUG] handleNativeOAuthUrl threw an unexpected error:', err?.message, err?.stack);
       }
-
-      const accessToken = hashParams.get('access_token');
-      const refreshToken = hashParams.get('refresh_token');
-
-      if (!accessToken || !refreshToken) {
-        console.error('[Ayna] Native Google OAuth callback did not include a complete session.');
-        return;
-      }
-
-      const { error } = await supabase.auth.setSession({
-        access_token: accessToken,
-        refresh_token: refreshToken,
-      });
-
-      if (error) {
-        console.error('[Ayna] Could not establish native Google session:', error.message);
-        return;
-      }
-
-      // This native flow never passes through AuthCallback.jsx (that only
-      // renders for the web/preview OAuth redirect) — it's the one place
-      // that would otherwise silently skip writing the consent stashed
-      // before the redirect by signInWithGoogle below.
-      await flushPendingConsent(supabase);
     }
 
     void CapacitorApp.addListener('appUrlOpen', ({ url }) => {
