@@ -40,7 +40,11 @@ function Field({ label, icon, children }) {
   );
 }
 
-const inputStyle = { border: 'none', outline: 'none', background: 'transparent', fontFamily: "'DM Sans',sans-serif", fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: '#292524', width: '100%', padding: '3px 0 0' };
+// iOS zooms the whole page in on focus for any text input whose computed
+// font-size is under 16px, then doesn't reliably zoom back out — the
+// max() floor keeps that from firing without changing the size at any
+// --ayna-text-scale setting that was already >= 16px.
+const inputStyle = { border: 'none', outline: 'none', background: 'transparent', fontFamily: "'DM Sans',sans-serif", fontSize: 'max(16px, calc(15px * var(--ayna-text-scale, 1)))', color: '#292524', width: '100%', padding: '3px 0 0' };
 
 const EmailIcon = (
   <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#A8A29E" strokeWidth="1.75" style={{ flex: 'none' }}>

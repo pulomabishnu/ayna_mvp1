@@ -663,7 +663,7 @@ function SearchBar({ value, onChange, placeholder }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 9, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, borderRadius: 99, padding: '11px 14px', marginBottom: 14 }}>
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-      <input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', minWidth: 0 }} />
+      <input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 'max(16px, calc(13px * var(--ayna-text-scale, 1)))', minWidth: 0 }} />
     </div>
   );
 }
@@ -773,7 +773,7 @@ function TextInput({ value, onChange, placeholder, inputMode, maxLength }) {
       placeholder={placeholder}
       inputMode={inputMode}
       maxLength={maxLength}
-      style={{ width: '100%', boxSizing: 'border-box', padding: '14px 16px', borderRadius: 14, border: '1.5px solid ' + ROW_BORDER, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: INK, background: CARD_BG, outline: 'none' }}
+      style={{ width: '100%', boxSizing: 'border-box', padding: '14px 16px', borderRadius: 14, border: '1.5px solid ' + ROW_BORDER, fontSize: 'max(16px, calc(14px * var(--ayna-text-scale, 1)))', color: INK, background: CARD_BG, outline: 'none' }}
     />
   );
 }
@@ -1023,7 +1023,7 @@ function TokenInput({ values, onChange, placeholder, suggestions = [], suggestio
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter' && draft.trim()) addValue(draft); }}
           placeholder={placeholder}
-          style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', minWidth: 0 }}
+          style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 'max(16px, calc(13px * var(--ayna-text-scale, 1)))', minWidth: 0 }}
         />
       </div>
       {draft.trim().length > 0 && (
@@ -1116,7 +1116,7 @@ function AddProductBuilder({ values, onChange, suggestions, historyNames, footer
               onChange={(e) => setDraft(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter' && draft.trim()) addValue(draft); }}
               placeholder="Start typing a product or brand"
-              style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', minWidth: 0 }}
+              style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 'max(16px, calc(13px * var(--ayna-text-scale, 1)))', minWidth: 0 }}
             />
             <span onClick={() => { setAdding(false); setDraft(''); }} style={{ cursor: 'pointer', opacity: 0.55, flex: 'none', display: 'flex' }}>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="2.6" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
@@ -1238,7 +1238,7 @@ function ProductHistoryBuilder({ products, onChange }) {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 9, background: CARD_BG, border: '1.5px solid ' + ACCENT_BORDER, borderRadius: 99, padding: '11px 14px' }}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-            <input autoFocus value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && query.trim()) addProduct(query); }} placeholder="Search products" style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', minWidth: 0 }} />
+            <input autoFocus value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && query.trim()) addProduct(query); }} placeholder="Search products" style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 'max(16px, calc(13px * var(--ayna-text-scale, 1)))', minWidth: 0 }} />
             <span onClick={() => { setAdding(false); setQuery(''); }} style={{ cursor: 'pointer', opacity: 0.55, flex: 'none', display: 'flex' }}>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="2.6" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
             </span>
@@ -1292,7 +1292,7 @@ function ProductHistoryBuilder({ products, onChange }) {
 
                     {['Mild', 'Serious'].includes(product.reaction) && (
                       <div style={{ marginBottom: 14, padding: '12px 13px', borderRadius: 14, background: PANEL_BG, border: '1px solid ' + ROW_BORDER }}>
-                        <input value={product.reactionText} onChange={(e) => updateProduct(index, { reactionText: e.target.value })} placeholder="What happened? (optional)" style={{ width: '100%', boxSizing: 'border-box', border: 'none', background: 'transparent', outline: 'none', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: INK, fontFamily: 'inherit' }} />
+                        <input value={product.reactionText} onChange={(e) => updateProduct(index, { reactionText: e.target.value })} placeholder="What happened? (optional)" style={{ width: '100%', boxSizing: 'border-box', border: 'none', background: 'transparent', outline: 'none', fontSize: 'max(16px, calc(12.5px * var(--ayna-text-scale, 1)))', color: INK, fontFamily: 'inherit' }} />
                       </div>
                     )}
 
@@ -1309,7 +1309,7 @@ function ProductHistoryBuilder({ products, onChange }) {
                         />
                         {(product.stopReasons || []).includes('Other') && (
                           <div style={{ marginTop: 10, padding: '12px 13px', borderRadius: 14, background: PANEL_BG, border: '1px solid ' + ROW_BORDER }}>
-                            <input value={product.stopOther || ''} onChange={(e) => updateProduct(index, { stopOther: e.target.value })} placeholder="Other reason" style={{ width: '100%', boxSizing: 'border-box', border: 'none', background: 'transparent', outline: 'none', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: INK, fontFamily: 'inherit' }} />
+                            <input value={product.stopOther || ''} onChange={(e) => updateProduct(index, { stopOther: e.target.value })} placeholder="Other reason" style={{ width: '100%', boxSizing: 'border-box', border: 'none', background: 'transparent', outline: 'none', fontSize: 'max(16px, calc(12.5px * var(--ayna-text-scale, 1)))', color: INK, fontFamily: 'inherit' }} />
                           </div>
                         )}
                       </div>
@@ -1445,7 +1445,7 @@ function TextAreaField({ value, onChange, placeholder }) {
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         rows={5}
-        style={{ width: '100%', boxSizing: 'border-box', padding: 16, borderRadius: 20, border: '1.5px solid ' + ROW_BORDER, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: INK, background: CARD_BG, outline: 'none', resize: 'vertical', minHeight: 150, lineHeight: 1.65, fontFamily: 'inherit' }}
+        style={{ width: '100%', boxSizing: 'border-box', padding: 16, borderRadius: 20, border: '1.5px solid ' + ROW_BORDER, fontSize: 'max(16px, calc(13.5px * var(--ayna-text-scale, 1)))', color: INK, background: CARD_BG, outline: 'none', resize: 'vertical', minHeight: 150, lineHeight: 1.65, fontFamily: 'inherit' }}
       />
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginTop: 12 }}>
         {FREE_TEXT_PROMPTS.map((prompt) => (

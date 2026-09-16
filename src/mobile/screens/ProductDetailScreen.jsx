@@ -155,7 +155,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts }) {
           onChange={(e) => setInput(e.target.value)}
           placeholder={session === undefined ? 'Loading…' : 'Ask about this product…'}
           disabled={sending || session === undefined}
-          style={{ flex: 1, padding: '11px 14px', borderRadius: 99, border: '1px solid var(--ayna-border)', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', background: 'var(--ayna-surface)', color: 'var(--ayna-text)' }}
+          style={{ flex: 1, padding: '11px 14px', borderRadius: 99, border: '1px solid var(--ayna-border)', fontSize: 'max(16px, calc(13.5px * var(--ayna-text-scale, 1)))', background: 'var(--ayna-surface)', color: 'var(--ayna-text)' }}
         />
         <button
           type="submit"

@@ -286,7 +286,7 @@ export default function AskAynaModal({
             padding: '12px 16px',
             borderRadius: 99,
             border: '1px solid var(--ayna-border)',
-            fontSize: 'calc(14px * var(--ayna-text-scale, 1))',
+            fontSize: 'max(16px, calc(14px * var(--ayna-text-scale, 1)))',
             background: 'var(--ayna-surface)',
             color: 'var(--ayna-text)',
           }}

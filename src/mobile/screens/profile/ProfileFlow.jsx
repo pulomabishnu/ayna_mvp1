@@ -855,7 +855,7 @@ function PhoneVerifyPanel({ onBack, onVerified }) {
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
               placeholder="(555) 555-5555"
-              style={{ width: '100%', boxSizing: 'border-box', padding: '14px 16px', borderRadius: 14, border: '1px solid var(--ayna-border)', fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)', background: 'var(--ayna-surface)', outline: 'none' }}
+              style={{ width: '100%', boxSizing: 'border-box', padding: '14px 16px', borderRadius: 14, border: '1px solid var(--ayna-border)', fontSize: 'max(16px, calc(15px * var(--ayna-text-scale, 1)))', color: 'var(--ayna-text)', background: 'var(--ayna-surface)', outline: 'none' }}
             />
             {error && <div style={{ color: '#B4402A', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', marginTop: 10 }}>{error}</div>}
             <div
@@ -2437,7 +2437,7 @@ function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers,
                 onChange={(e) => setNameDraft(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter' && !nameSaving) saveName(); }}
                 placeholder="Your first name"
-                style={{ width: '100%', boxSizing: 'border-box', padding: '12px 14px', borderRadius: 12, border: '1px solid var(--ayna-border)', fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)', background: 'var(--ayna-bg)', outline: 'none' }}
+                style={{ width: '100%', boxSizing: 'border-box', padding: '12px 14px', borderRadius: 12, border: '1px solid var(--ayna-border)', fontSize: 'max(16px, calc(14.5px * var(--ayna-text-scale, 1)))', color: 'var(--ayna-text)', background: 'var(--ayna-bg)', outline: 'none' }}
               />
               {nameError && <div style={{ color: '#B4402A', fontSize: 'calc(12px * var(--ayna-text-scale, 1))', marginTop: 8 }}>{nameError}</div>}
               <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
@@ -2574,7 +2574,7 @@ function DeleteAccountScreen({ onBack, onSignOut, onClose }) {
             border: '1.5px solid var(--ayna-border)',
             borderRadius: 14,
             padding: '13px 16px',
-            fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
+            fontSize: 'max(16px, calc(15px * var(--ayna-text-scale, 1)))',
             fontFamily: "'DM Sans',sans-serif",
             background: 'var(--ayna-surface)',
             color: 'var(--ayna-text)',
@@ -2729,7 +2729,7 @@ function PasswordScreen({ onBack, authUser }) {
                   type={showCurrent ? 'text' : 'password'}
                   value={current}
                   onChange={(e) => setCurrent(e.target.value)}
-                  style={{ flex: 1, minWidth: 0, border: 'none', outline: 'none', background: 'none', fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}
+                  style={{ flex: 1, minWidth: 0, border: 'none', outline: 'none', background: 'none', fontSize: 'max(16px, calc(15px * var(--ayna-text-scale, 1)))', color: 'var(--ayna-text)' }}
                 />
                 <div onClick={() => setShowCurrent((v) => !v)} style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: 600, color: 'var(--ayna-brown)', cursor: 'pointer', flex: 'none' }}>{showCurrent ? 'Hide' : 'Show'}</div>
               </div>
@@ -2743,7 +2743,7 @@ function PasswordScreen({ onBack, authUser }) {
                 value={next}
                 onChange={(e) => setNext(e.target.value)}
                 placeholder="At least 8 characters"
-                style={{ flex: 1, minWidth: 0, border: 'none', outline: 'none', background: 'none', fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}
+                style={{ flex: 1, minWidth: 0, border: 'none', outline: 'none', background: 'none', fontSize: 'max(16px, calc(15px * var(--ayna-text-scale, 1)))', color: 'var(--ayna-text)' }}
               />
               <div onClick={() => setShowNext((v) => !v)} style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: 600, color: 'var(--ayna-brown)', cursor: 'pointer', flex: 'none' }}>{showNext ? 'Hide' : 'Show'}</div>
             </div>
@@ -2767,7 +2767,7 @@ function PasswordScreen({ onBack, authUser }) {
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
               placeholder="Re-enter it"
-              style={{ width: '100%', boxSizing: 'border-box', border: '1px solid var(--ayna-border)', borderRadius: 12, background: 'var(--ayna-bg-alt)', padding: '13px 14px', fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)', outline: 'none' }}
+              style={{ width: '100%', boxSizing: 'border-box', border: '1px solid var(--ayna-border)', borderRadius: 12, background: 'var(--ayna-bg-alt)', padding: '13px 14px', fontSize: 'max(16px, calc(15px * var(--ayna-text-scale, 1)))', color: 'var(--ayna-text)', outline: 'none' }}
             />
           </div>
           {error && <div style={{ color: '#B4402A', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))' }}>{error}</div>}
@@ -3116,7 +3116,7 @@ function ContactScreen({ onBack }) {
   const canSend = form.name.trim().length >= 2 && form.email.trim() && form.reason && form.subject.trim().length >= 2 && form.message.trim().length >= 10;
   const sendReady = canSend && status !== 'sending';
 
-  const fieldStyle = { border: '1px solid #ded9e4', borderRadius: 10, background: '#fff', padding: 14, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: '#1A1714', width: '100%', boxSizing: 'border-box', outline: 'none', fontFamily: 'inherit' };
+  const fieldStyle = { border: '1px solid #ded9e4', borderRadius: 10, background: '#fff', padding: 14, fontSize: 'max(16px, calc(15px * var(--ayna-text-scale, 1)))', color: '#1A1714', width: '100%', boxSizing: 'border-box', outline: 'none', fontFamily: 'inherit' };
   const labelStyle = { fontSize: 'calc(13px * var(--ayna-text-scale, 1))', fontWeight: 600, color: '#4a4356', marginBottom: 7 };
 
   return (
