@@ -27,7 +27,7 @@ import { productHref, isPlainLeftClick } from '../utils/productRoute';
 
 // Re-exported for unit testing of the category-chip filtering logic (see
 // Discovery.macroGroupFilter.test.js), which imports these from here.
-export { MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, resolveBrowseAiRoundQuery, getSortPrice };
+export { MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, resolveBrowseAiRoundQuery, getSortPrice, pickOnePerPartnerBrand };
 
 /** Natural-language phrase for the browse-AI extension's `query` param — prefers the
  * more specific active scope (a chosen sub-category) over the broader macro group, and
@@ -223,6 +223,41 @@ const COLD_START_JITTER_RANGE = 3;
 function shuffleJitter(item, seed, baseScore = 0) {
     const range = baseScore < COLD_START_QUALITY_THRESHOLD ? COLD_START_JITTER_RANGE : SHUFFLE_JITTER_RANGE;
     return hashToUnitInterval(`${seed}:${item?.id || ''}`) * range;
+}
+
+// Requested 2026-09-16: until each partner brand's full catalog is
+// incorporated and a real per-product ranking exists, show only ONE product
+// per partner brand in general Browse — not every SKU from every partner —
+// and rotate which one on every fresh page load (same seed mechanism as
+// shuffleJitter/shuffleSeed above: stable for a single visit, different on
+// the next). Non-partner items are untouched. Scoped to the same
+// browsingWithoutTextQuery && !personalizationFilter condition as the
+// partner-rank sort below, for the same reason: partnership must never
+// affect search results or personalized recommendations.
+function pickOnePerPartnerBrand(items, seed) {
+    const groups = new Map();
+    const result = [];
+    for (const item of items) {
+        const rank = getPartnerBrandRank(item);
+        if (rank === null) {
+            result.push(item);
+            continue;
+        }
+        if (!groups.has(rank)) groups.set(rank, []);
+        groups.get(rank).push(item);
+    }
+    for (const [rank, group] of groups) {
+        if (group.length === 1) {
+            result.push(group[0]);
+            continue;
+        }
+        const idx = Math.min(
+            group.length - 1,
+            Math.floor(hashToUnitInterval(`${seed}:partner-brand:${rank}`) * group.length)
+        );
+        result.push(group[idx]);
+    }
+    return result;
 }
 
 // Even with the wider cold-start jitter band above, simulating the real catalog (154 products +
@@ -729,6 +764,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             });
         } else {
             const browsingWithoutTextQuery = !scoreById;
+            if (browsingWithoutTextQuery && !personalizationFilter) {
+                list = pickOnePerPartnerBrand(list, shuffleSeed);
+            }
             list = [...list].sort((a, b) => {
                 const m = matchTieBreak(a, b);
                 if (m !== 0) return m;
