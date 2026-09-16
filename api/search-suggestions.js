@@ -61,6 +61,9 @@ const ALLOWED_CATEGORIES = new Set([
   'fertility',
   'pelvic-health',
   'pelvic-floor',
+  'pelvic-floor-trainer',
+  'pelvic-floor-exerciser',
+  'incontinence',
   'cramp-relief',
   'postpartum',
   'pregnancy',
@@ -389,6 +392,7 @@ Return ONE JSON object ONLY (no markdown) with up to ${maxResults} suggestions i
 }
 
 RULES (apply to every suggestion):
+- Pelvic floor devices: use "pelvic-floor-trainer" ONLY for biofeedback/self-training devices that are not FDA-cleared to activate anything themselves — the user does the contracting (e.g. Elvie, Perifit, weighted Kegel balls/cones). Use "pelvic-floor-exerciser" ONLY for FDA-cleared Class II devices that electrically stimulate and contract the pelvic floor FOR the user (e.g. Emsella, INNOVO, Yarlap, Elitone — but NOT Elitone URGE, which calms an overactive bladder rather than exercising the pelvic floor, so it belongs in "incontinence"). Never call a stimulation/exerciser device a "trainer," and never call a biofeedback-only device an "exerciser." If a pelvic-floor product doesn't clearly fit either (a support garment, dilator, wand, or coaching app), use "pelvic-floor" or "incontinence" instead.
 - Draw on your full knowledge of relevant brands — mainstream, indie, DTC, clinical, international — sold in the US. Rank by: relevance to the query, clinical reputation/safety record, availability, community reputation.
 - Only suggest brands/products you are confident genuinely exist and sell in the US market. Never invent a brand name, product line, feature, or service — even as a placeholder. Confidence can come from either your own knowledge OR the live web search results above (a smaller/newer real brand you wouldn't otherwise recall confidently is fine to include if those results clearly confirm it) — but never extrapolate a name, price, or count beyond what the search results actually show, and if neither source supports it, leave it out — it likely doesn't exist.
 - Same standard applies to pack sizes/counts as to brand names: state a specific count (e.g. "60 capsules") only if you're confident that's the real configuration for this brand+product — an invented-but-plausible count is a fabrication just like an invented brand, and it's more deceptive because it looks precise. When unsure, give a price range with no count attached.

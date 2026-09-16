@@ -127,7 +127,7 @@ function matchesLifeStage(item, filter) {
 }
 
 // Kept for sub-filter pills within a selected group
-const ALL_CATEGORIES = ['all', 'pad', 'tampon', 'cup', 'disc', 'period-underwear', 'supplement', 'tracker', 'telehealth', 'mental-health', 'fitness', 'diagnostics', 'hormone-monitoring', 'menopause', 'fertility', 'pelvic-health', 'pelvic-floor', 'cramp-relief', 'postpartum', 'pregnancy', 'sex-tech', 'intimate-care', 'contraception'];
+const ALL_CATEGORIES = ['all', 'pad', 'tampon', 'cup', 'disc', 'period-underwear', 'supplement', 'tracker', 'telehealth', 'mental-health', 'fitness', 'diagnostics', 'hormone-monitoring', 'menopause', 'fertility', 'pelvic-health', 'pelvic-floor', 'pelvic-floor-trainer', 'pelvic-floor-exerciser', 'incontinence', 'cramp-relief', 'postpartum', 'pregnancy', 'sex-tech', 'intimate-care', 'contraception'];
 
 /** Extract a numeric price for sorting (rough proxy: first $ amount, or monthly equivalent when obvious). */
 /**
@@ -1172,7 +1172,12 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             { test: (s) => s.includes('postpartum') || s.includes('breastfeeding') || s.includes('nursing'), cat: 'postpartum', macro: 'postpartum' },
             { test: (s) => s.includes('fertility') || s.includes('conceive') || s.includes('ttc'), cat: 'fertility' },
             { test: (s) => s.includes('cramp') || s.includes('dysmenorrhea'), cat: 'cramp-relief' },
-            { test: (s) => s.includes('pelvic floor') || s.includes('kegel'), cat: 'pelvic-floor' },
+            // Routed through the 'pelvic' macro group, not a strict category filter — a
+            // pelvic-floor-exerciser device like Elitone is categorized 'incontinence'
+            // (its primary shopping aisle), so a strict `item.category !== 'pelvic-floor'`
+            // filter silently dropped it, same bug class as the menopause/postpartum
+            // nudges above (see their comment for the 2026-09-15 live repro).
+            { test: (s) => s.includes('pelvic floor') || s.includes('kegel'), cat: 'pelvic-floor', macro: 'pelvic' },
             { test: (s) => s.includes('tracker') || s.includes('tracking') || s.includes('wearable'), cat: 'tracker' },
         ];
 

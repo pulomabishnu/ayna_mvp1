@@ -850,6 +850,15 @@ export const CATEGORY_LABELS = {
     'fitness': 'Fitness',
     'fitness-cycle': 'Cycle Fitness',
     'pelvic-floor': 'Pelvic Floor',
+    // Split 2026-09-16 per Ayna's clinical correction: "Trainer" devices are
+    // biofeedback-only (Elvie, Perifit, Kegel balls) — not FDA-cleared to
+    // activate anything, they just help you do Kegels yourself. "Exerciser"
+    // devices are FDA-cleared Class II stimulation devices that contract the
+    // pelvic floor FOR you (Emsella, Yarlap, Elitone — not Elitone URGE,
+    // which calms rather than exercises). Generic 'pelvic-floor' remains for
+    // items that are neither (garments, wands, dilators, apps, programs).
+    'pelvic-floor-trainer': 'Pelvic Floor Trainer',
+    'pelvic-floor-exerciser': 'Pelvic Floor Exerciser',
     'pelvic-health': 'Pelvic Health',
     'cramp-relief': 'Cramp Relief',
     'intimate-care': 'Intimate Care',
@@ -908,7 +917,7 @@ export const MACRO_GROUPS = [
     { id: 'pregnancy', label: 'Pregnancy', categories: ['pregnancy'], keywords: ['pregnancy', 'prenatal'] },
     { id: 'postpartum', label: 'Postpartum', categories: ['postpartum'], keywords: ['postpartum', 'lactation', 'breastfeeding', 'perineal'] },
     { id: 'breast', label: 'Breast Care', categories: ['breast-care', 'lactation'], keywords: ['breast', 'breastfeeding', 'nipple', 'pump', 'lactation'] },
-    { id: 'pelvic', label: 'Pelvic', categories: ['pelvic-floor', 'pelvic-health', 'incontinence'], keywords: ['pelvic', 'kegel', 'bladder', 'incontinence', 'bladder leak'] },
+    { id: 'pelvic', label: 'Pelvic', categories: ['pelvic-floor', 'pelvic-floor-trainer', 'pelvic-floor-exerciser', 'pelvic-health', 'incontinence'], keywords: ['pelvic', 'kegel', 'bladder', 'incontinence', 'bladder leak'] },
     { id: 'menopause', label: 'Menopause', categories: ['menopause'], keywords: ['menopause', 'perimenopause', 'hot flash'] },
     // 'supplement' is a product-TYPE category shared by dozens of unrelated items (iron for
     // anemia, plain vitamin D, omega-3 for cramps, etc.) — it used to be listed here directly,
@@ -1375,7 +1384,7 @@ function productHasSignal(product, tag) {
     if (tag === 'cycle-tracking' && funcs.has('cycle-tracking')) return true;
     if (tag === 'menopause' && (funcs.has('perimenopause') || product?.category === 'menopause')) return true;
     if (tag === 'fertility' && funcs.has('fertility')) return true;
-    if (tag === 'pelvic-floor' && (funcs.has('sexual-health') || product?.category === 'pelvic-floor' || product?.category === 'pelvic-health')) return true;
+    if (tag === 'pelvic-floor' && (funcs.has('sexual-health') || product?.category === 'pelvic-floor' || product?.category === 'pelvic-floor-trainer' || product?.category === 'pelvic-floor-exerciser' || product?.category === 'pelvic-health')) return true;
     if (tag === 'mental-health' && product?.category === 'mental-health') return true;
     if (tag === 'bladder-leaks' && ([...tags].some((t) => BLADDER_TAGS.has(t)) || funcs.has('bladder-leak-protection'))) return true;
 

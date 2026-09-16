@@ -340,7 +340,11 @@ export const MVP_PHYSICAL = [
     id: 'p-intimina-kegel',
     name: 'Intimina Kegel Exerciser (Luna Beads)',
     brand: 'Intimina',
-    category: 'pelvic-floor',
+    // Category is 'pelvic-floor-trainer' despite the product's own retail
+    // name saying "Exerciser" — per Ayna's taxonomy these are weighted Kegel
+    // balls, a self-training biofeedback-adjacent tool, not an FDA-cleared
+    // device that contracts the pelvic floor for you (see CATEGORY_LABELS).
+    category: 'pelvic-floor-trainer',
     type: 'physical',
     internal: true,
     healthFunctions: ['vaginal-health'],

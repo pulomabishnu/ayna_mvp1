@@ -1036,6 +1036,13 @@ export const BRAND_PRODUCTS = [
     // Elitone brand partnership (2026-09-07) — per-product affiliate links
     // (each product's own URL with ?af=aynahealth appended, corrected
     // 2026-09-15 from a single shared elitone.com/?af=aynahealth link).
+    // Category stays 'incontinence' (its primary shopping aisle), but per
+    // Ayna's taxonomy Elitone is clinically a "pelvic floor exerciser": an
+    // FDA-cleared Class II device that contracts the pelvic floor FOR the
+    // user (see CATEGORY_LABELS in products.js) — it's included in the
+    // 'pelvic' macro group and the pelvic-floor/kegel search nudge in
+    // Discovery.jsx. Elitone URGE below is deliberately NOT an "exerciser":
+    // it calms an overactive bladder rather than exercising the pelvic floor.
     {
         id: 'p-elitone',
         name: 'Elitone (Stress + Mixed Incontinence)',

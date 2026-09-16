@@ -46,7 +46,7 @@ const SHOP_FILTERS = [
   { key: 'intimate', label: 'Intimate Care', categories: ['intimate-care'], keywords: ['vaginal', 'intimate', 'moisturizer', 'ph'] },
   { key: 'sexual', label: 'Sexual Wellness', categories: ['sex-tech'], keywords: ['intimacy', 'lubricant', 'lube'] },
   { key: 'postpartum', label: 'Postpartum', categories: ['postpartum', 'pregnancy'], keywords: ['postpartum', 'nursing', 'lactation'] },
-  { key: 'pelvic', label: 'Pelvic', categories: ['pelvic-floor', 'pelvic-health'], keywords: ['pelvic', 'kegel'] },
+  { key: 'pelvic', label: 'Pelvic', categories: ['pelvic-floor', 'pelvic-floor-trainer', 'pelvic-floor-exerciser', 'pelvic-health', 'incontinence'], keywords: ['pelvic', 'kegel'] },
   { key: 'hormones', label: 'Hormones', categories: ['supplement', 'hormone-monitoring'], keywords: ['pms', 'pcos', 'hormone', 'cycle'] },
   { key: 'menopause', label: 'Menopause', categories: ['menopause'], keywords: ['menopause', 'perimenopause', 'hot flash'] },
   { key: 'fertility', label: 'Fertility', categories: ['fertility'], keywords: ['fertility', 'ovulation'] },
@@ -185,7 +185,12 @@ function discoveryTargetFor(text) {
     return opts;
   }
   if (lower.includes('pelvic floor')) {
-    return { query: q, initialCategory: 'pelvic-floor' };
+    // Routed through the 'pelvic' macro group, not a strict category — a
+    // pelvic-floor-exerciser device like Elitone is categorized
+    // 'incontinence' (its primary shopping aisle), so a strict
+    // initialCategory: 'pelvic-floor' silently excluded it (same bug class
+    // documented on the equivalent nudge in Discovery.jsx).
+    return { query: q, initialMacroGroup: 'pelvic' };
   }
   return q;
 }
