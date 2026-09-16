@@ -176,6 +176,22 @@ export default function SigninScreen({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, authUser]);
 
+  // The native Google/Apple round trip (Browser.open -> appUrlOpen) lands
+  // back on this same mounted screen instead of navigating anywhere, so a
+  // failure there previously only reached console.error — invisible on a
+  // real device with no attached debugger. useSupabaseAuth dispatches this
+  // event instead of (or in addition to) logging, so the failure actually
+  // reaches the person trying to sign in.
+  useEffect(() => {
+    const onOAuthError = (e) => {
+      setGoogleLoading(false);
+      setAppleLoading(false);
+      setError(e.detail || 'Sign-in did not complete. Please try again.');
+    };
+    window.addEventListener('ayna:native-oauth-error', onOAuthError);
+    return () => window.removeEventListener('ayna:native-oauth-error', onOAuthError);
+  }, []);
+
   const initial = (firstName || '').trim().charAt(0).toUpperCase() || '?';
   const allConsented = checked.every(Boolean);
   const toggleCheck = (i) => setChecked((prev) => prev.map((v, idx) => (idx === i ? !v : v)));

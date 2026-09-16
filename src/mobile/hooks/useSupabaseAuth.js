@@ -32,6 +32,14 @@ const EMAIL_CONFIRM_REDIRECT = 'https://www.aynahealth.co/confirmed';
 export const MOBILE_OAUTH_PENDING_KEY = 'ayna_mobile_oauth_pending';
 const NATIVE_OAUTH_REDIRECT = 'co.aynahealth.app://auth/callback';
 
+// SigninScreen listens for this — a failure inside handleNativeOAuthUrl
+// otherwise only reaches console.error, which is invisible on a real device
+// with no debugger attached and looks identical to just landing back on the
+// sign-in screen for no reason.
+function reportNativeOAuthError(message) {
+  window.dispatchEvent(new CustomEvent('ayna:native-oauth-error', { detail: message }));
+}
+
 export function useSupabaseAuth() {
   const [user, setUser] = useState(null);
   // Starts false (nothing to wait for) when there's no client at all, so
@@ -83,7 +91,8 @@ export function useSupabaseAuth() {
         searchParams.get('error_description');
 
       if (errorDescription) {
-        console.error('[Ayna] Native Google OAuth failed:', errorDescription);
+        console.error('[Ayna] Native OAuth failed:', errorDescription);
+        reportNativeOAuthError(errorDescription);
         return;
       }
 
@@ -91,7 +100,8 @@ export function useSupabaseAuth() {
       const refreshToken = hashParams.get('refresh_token');
 
       if (!accessToken || !refreshToken) {
-        console.error('[Ayna] Native Google OAuth callback did not include a complete session.');
+        console.error('[Ayna] Native OAuth callback did not include a complete session.');
+        reportNativeOAuthError('Sign-in did not return a complete session. Please try again.');
         return;
       }
 
@@ -101,7 +111,8 @@ export function useSupabaseAuth() {
       });
 
       if (error) {
-        console.error('[Ayna] Could not establish native Google session:', error.message);
+        console.error('[Ayna] Could not establish native session:', error.message);
+        reportNativeOAuthError(error.message);
         return;
       }
 
