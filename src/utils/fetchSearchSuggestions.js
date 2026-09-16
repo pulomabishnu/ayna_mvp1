@@ -1,6 +1,10 @@
 /**
- * Calls /api/search-suggestions (Claude on the server). Same-origin on Vercel.
+ * Calls /api/search-suggestions (Claude on the server). Same-origin on
+ * Vercel for desktop web; the native mobile app has no server of its own
+ * (it loads bundled assets from a local capacitor:// origin), so apiUrl()
+ * resolves it against the real deployment there instead.
  */
+import { apiUrl } from './apiUrl.js';
 
 function sessionCacheKey(query, category, symptom, maxResults) {
   const q = `${query.trim().toLowerCase()}|${category || ''}|${symptom || ''}|${maxResults || 20}`;
@@ -71,7 +75,7 @@ export async function fetchSearchSuggestions(opts) {
     if (cached) return { suggestions: cached.suggestions, querySummary: cached.querySummary, relatedSearches: cached.relatedSearches || [], fromCache: true };
   }
 
-  const res = await fetch('/api/search-suggestions', {
+  const res = await fetch(apiUrl('/api/search-suggestions'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ query, category, symptom, personalized, profileSummary, dislikedProducts, maxResults }),

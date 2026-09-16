@@ -5,6 +5,7 @@
 // app already uses (one thin client per backend concern). Reuses that
 // file's NotSignedInError rather than declaring a second, identical class.
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
+import { apiUrl } from '../../utils/apiUrl.js';
 import { NotSignedInError } from './notificationPreferencesApi.js';
 
 export { NotSignedInError };
@@ -19,7 +20,7 @@ async function getAccessToken() {
 export async function fetchDataExport() {
   const token = await getAccessToken();
   if (!token) throw new NotSignedInError();
-  const res = await fetch('/api/export-data', {
+  const res = await fetch(apiUrl('/api/export-data'), {
     headers: { Authorization: `Bearer ${token}` },
   });
   let data;
@@ -41,7 +42,7 @@ export async function fetchDataExport() {
 export async function requestAccountDeletion() {
   const token = await getAccessToken();
   if (!token) throw new NotSignedInError();
-  const res = await fetch('/api/export-data', {
+  const res = await fetch(apiUrl('/api/export-data'), {
     method: 'POST',
     headers: { Authorization: `Bearer ${token}` },
   });

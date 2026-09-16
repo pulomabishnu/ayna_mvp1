@@ -7,6 +7,7 @@ import MatchRing from '../components/MatchRing.jsx';
 import WhyMatchScreen from './WhyMatchScreen.jsx';
 import LegalFooter from '../components/LegalFooter.jsx';
 import ProductImage from '../components/ProductImage.jsx';
+import { apiUrl } from '../../utils/apiUrl.js';
 
 function SpecRow({ label, value }) {
   return (
@@ -72,7 +73,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts }) {
     try {
       const token = session?.access_token;
       if (!token) throw Object.assign(new Error('not_signed_in'), { code: 'not_signed_in' });
-      const res = await fetch('/api/product-chat', {
+      const res = await fetch(apiUrl('/api/product-chat'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({

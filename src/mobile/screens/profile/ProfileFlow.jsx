@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ALL_PRODUCTS } from '../../../data/products.js';
 import { getSupabaseClient } from '../../../utils/supabaseClient.js';
+import { apiUrl } from '../../../utils/apiUrl.js';
 import { getBrandAffinity, getCategoryInsights, getSafetyAlerts } from '../../utils/shopperProfileData.js';
 import { ROUTINE_BUCKET_LABELS, ROUTINE_BUCKETS, useRoutine } from '../../hooks/useRoutine.js';
 import { getProfileCompletionPct } from '../../utils/profileCompleteness.js';
@@ -616,7 +617,7 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
 
   useEffect(() => {
     let cancelled = false;
-    fetch('/api/startups')
+    fetch(apiUrl('/api/startups'))
       .then((res) => (res.ok ? res.json() : Promise.reject(new Error('bad response'))))
       .then((data) => {
         if (cancelled) return;
@@ -3098,7 +3099,7 @@ function ContactScreen({ onBack }) {
     setStatus('sending');
     setError('');
     try {
-      const res = await fetch('/api/contact', {
+      const res = await fetch(apiUrl('/api/contact'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),

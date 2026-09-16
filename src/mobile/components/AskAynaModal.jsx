@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { renderMarkdownLite } from '../../utils/renderMarkdownLite.jsx';
+import { apiUrl } from '../../utils/apiUrl.js';
 
 /**
  * Mobile port of ProfileChatbot's merge/summary logic
@@ -115,7 +116,7 @@ export default function AskAynaModal({
     try {
       const token = session?.access_token;
       if (!token) throw Object.assign(new Error('not_signed_in'), { code: 'not_signed_in' });
-      const res = await fetch('/api/ask-ayna', {
+      const res = await fetch(apiUrl('/api/ask-ayna'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({
