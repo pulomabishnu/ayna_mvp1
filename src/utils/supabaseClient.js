@@ -1,4 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
+import { processLock } from '@supabase/auth-js';
+import { Capacitor } from '@capacitor/core';
 
 let client = null;
 
@@ -12,6 +14,18 @@ export function getSupabaseClient() {
       auth: {
         flowType: 'implicit',   // avoids PKCE verifier storage — Chrome bounce tracking deletes it
         detectSessionInUrl: false, // AuthCallback.jsx handles implicit OAuth tokens explicitly
+        // GoTrueClient auto-selects the browser's navigator.locks API to
+        // serialize auth calls (setSession, refresh, etc.) whenever it's
+        // merely present — true in a WKWebView, but its Web Locks
+        // implementation there is unreliable: a lock request can simply
+        // never resolve or reject. That silently hangs every subsequent
+        // auth call forever (no error, nothing — confirmed live on a real
+        // device: native Google sign-in's setSession() call never
+        // returned). processLock is Supabase's own single-process
+        // alternative, built for exactly this (their docs: "React Native
+        // or other non-browser single-process environments") — same
+        // category as a Capacitor native app.
+        ...(Capacitor.isNativePlatform() ? { lock: processLock } : {}),
       },
     });
   } catch (e) {
