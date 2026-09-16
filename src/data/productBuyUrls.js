@@ -150,7 +150,6 @@ export const PRODUCT_BUY_DISABLED = {
   "d-eight-sleep": "Pod 4 is a previous generation and the current catalog has moved to newer hardware.",
   "p-v-wash": "No exact verified official V-Wash Plus purchase page.",
   "p-sweet-spot-wipes": "Current SweetSpot Labs wipes are sold out.",
-  "d-flutter": "Exact legitimate Flutter chronic pain service could not be verified.",
   "d-menolabs": "MenoLife app/service no longer has a reliable current official destination.",
   "p-snoogle-pillow": "Direct Snoogle catalog listing is currently sold out.",
   "p-queen-v-pop": "Exact current Queen V Pop It suppository page could not be verified.",

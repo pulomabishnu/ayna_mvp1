@@ -867,14 +867,6 @@ export const RESTORED_SCIENTIFIC_EVIDENCE = {
       "justification": "PubMed peer-reviewed. Conservative ayna classification: category or adjacent evidence only; this source does not validate this specific product."
     }
   ],
-  "d-flutter": [
-    {
-      "url": "https://pubmed.ncbi.nlm.nih.gov/26989760/",
-      "text": "Pain tracking and endometriosis",
-      "summary": "Evidence on symptom tracking for diagnosis.",
-      "justification": "PubMed peer-reviewed. Conservative ayna classification: category or adjacent evidence only; this source does not validate this specific product."
-    }
-  ],
   "d-menolabs": [
     {
       "url": "https://pubmed.ncbi.nlm.nih.gov/32324464/",
