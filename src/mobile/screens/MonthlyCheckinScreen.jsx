@@ -69,7 +69,13 @@ const ALL_CHECKIN_LABELS = SYMPTOM_GROUPS.flatMap((g) => g.items.map(([label]) =
 const CHECKIN_TO_INTAKE = Object.fromEntries(SYMPTOM_GROUPS.flatMap((g) => g.items));
 const PERIOD_SYMPTOM_LABELS = new Set(['Cramps', 'Heavy periods', 'Irregular periods', 'Spotting between periods', 'PMS mood shifts']);
 
-const FLOW_OPTIONS = ['Spotting', 'Light', 'Moderate', 'Heavy', 'Very heavy'];
+const FLOW_OPTIONS = [
+  ['Spotting', 'Lighter than a period — barely there.'],
+  ['Light', 'On the lighter side for you.'],
+  ['Moderate', 'Normal for you — regular changes, nothing unusual.'],
+  ['Heavy', 'Heavier than typical — worth keeping an eye on.'],
+  ['Very heavy', 'Significantly heavier than usual for you.'],
+];
 const PAIN_OPTIONS = [
   ['None', 'Nothing worth mentioning'],
   ['Mild', 'Noticeable, but it does not stop anything'],
@@ -107,7 +113,40 @@ function monthLabel(key) {
   const d = new Date(`${key}T00:00:00`);
   return d.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
 }
-function OptionCard({ selected, title, subtitle, onClick, tone }) {
+// A distinct, at-a-glance colored badge per verdict — matches the design
+// reference's own treatment (a plain radio circle reads identically for
+// "helped" and "made it worse," which are opposite signals for the
+// algorithm and shouldn't look the same while scanning the list).
+const RECS_ICON_STYLE = { width: 28, height: 28, borderRadius: 99, flex: 'none', marginTop: -2, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 13 };
+function RecsIcon({ value }) {
+  if (value === 'helped') {
+    return (
+      <div style={{ ...RECS_ICON_STYLE, background: '#DCEEDD' }}>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#3E7A4C" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
+      </div>
+    );
+  }
+  if (value === 'didnt_help') {
+    return (
+      <div style={{ ...RECS_ICON_STYLE, background: '#E6E4F2', color: NAVY }}>—</div>
+    );
+  }
+  if (value === 'worse') {
+    return (
+      <div style={{ ...RECS_ICON_STYLE, background: WARNING_BG, color: WARNING_BORDER }}>!</div>
+    );
+  }
+  if (value === 'na') {
+    return (
+      <div style={{ ...RECS_ICON_STYLE }}>
+        <div style={{ width: 6, height: 6, borderRadius: 99, background: MUTED }} />
+      </div>
+    );
+  }
+  return <div style={{ ...RECS_ICON_STYLE, border: '2px solid ' + ROW_BORDER }} />;
+}
+
+function OptionCard({ selected, title, subtitle, onClick, tone, icon }) {
   const isWarning = tone === 'warning' && selected;
   return (
     <div
@@ -124,22 +163,24 @@ function OptionCard({ selected, title, subtitle, onClick, tone }) {
         marginBottom: 10,
       }}
     >
-      <div
-        style={{
-          width: 20,
-          height: 20,
-          borderRadius: 99,
-          border: '2px solid ' + (selected ? (isWarning ? WARNING_BORDER : ACCENT_BORDER) : ROW_BORDER),
-          background: selected ? (isWarning ? WARNING_BORDER : ACCENT_BORDER) : 'transparent',
-          flex: 'none',
-          marginTop: 1,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        {selected && <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#FFFCF9" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>}
-      </div>
+      {icon || (
+        <div
+          style={{
+            width: 20,
+            height: 20,
+            borderRadius: 99,
+            border: '2px solid ' + (selected ? (isWarning ? WARNING_BORDER : ACCENT_BORDER) : ROW_BORDER),
+            background: selected ? (isWarning ? WARNING_BORDER : ACCENT_BORDER) : 'transparent',
+            flex: 'none',
+            marginTop: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          {selected && <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#FFFCF9" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>}
+        </div>
+      )}
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: INK }}>{title}</div>
         {subtitle && <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(12px * var(--ayna-text-scale, 1))', color: BODY_TEXT, marginTop: 3 }}>{subtitle}</div>}
@@ -148,9 +189,54 @@ function OptionCard({ selected, title, subtitle, onClick, tone }) {
   );
 }
 
+function DividerLabel({ children, right }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 9 }}>
+      <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', textTransform: 'uppercase', color: MUTED, flex: 'none' }}>{children}</div>
+      <div style={{ flex: 1, height: 1, background: ROW_BORDER }} />
+      {right != null && (
+        <div style={{ flex: 'none', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', color: MUTED }}>{right}</div>
+      )}
+    </div>
+  );
+}
+
+// Bar height increases left to right — severity read as a shape, not just
+// a label, same as the design reference's flow/pain scale. Bars are purely
+// visual; the actual hit target is the whole column (bar + label).
+const SCALE_BAR_HEIGHTS = [34, 52, 70, 88, 106];
+
+function ScaleSelector({ options, value, onChange }) {
+  const selectedOption = options.find(([label]) => label === value);
+  return (
+    <div>
+      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8 }}>
+        {options.map(([label], i) => {
+          const on = value === label;
+          return (
+            <div key={label} onClick={() => onChange(label)} style={{ flex: 1, cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+              <div style={{ width: '100%', height: SCALE_BAR_HEIGHTS[i] || 60, borderRadius: 10, background: on ? ACCENT_BORDER : ROW_BORDER, transition: 'background .15s' }} />
+              <div style={{ textAlign: 'center', fontFamily: "'DM Sans',sans-serif", fontWeight: on ? 700 : 500, fontSize: 'calc(11px * var(--ayna-text-scale, 1))', color: on ? INK : MUTED }}>{label}</div>
+            </div>
+          );
+        })}
+      </div>
+      {selectedOption && (
+        <div style={{ marginTop: 20, padding: '16px 18px', borderRadius: 18, background: CARD_BG, border: '1px solid ' + ROW_BORDER }}>
+          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(19px * var(--ayna-text-scale, 1))', color: NAVY }}>{selectedOption[0]}</div>
+          <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: BODY_TEXT, marginTop: 6 }}>{selectedOption[1]}</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function GroupedSymptomPicker({ selected, onToggle, onClearAll }) {
   return (
     <div>
+      <DividerLabel right={selected.length ? <span style={{ background: ACCENT_BG, color: ACCENT_BORDER, padding: '3px 9px', borderRadius: 99, fontWeight: 600 }}>{selected.length} selected</span> : '0 selected'}>
+        Selected
+      </DividerLabel>
       <div
         onClick={onClearAll}
         style={{
@@ -165,39 +251,43 @@ function GroupedSymptomPicker({ selected, onToggle, onClearAll }) {
           fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))',
           cursor: 'pointer',
           marginBottom: 18,
+          marginTop: 4,
         }}
       >
         None right now
       </div>
-      {SYMPTOM_GROUPS.map((group) => (
-        <div key={group.label} style={{ marginBottom: 18 }}>
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', textTransform: 'uppercase', color: MUTED, marginBottom: 9 }}>{group.label}</div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
-            {group.items.map(([label]) => {
-              const on = selected.includes(label);
-              return (
-                <div
-                  key={label}
-                  onClick={() => onToggle(label)}
-                  style={{
-                    padding: '9px 14px',
-                    borderRadius: 99,
-                    border: '1.5px solid ' + (on ? ACCENT_BORDER : ROW_BORDER),
-                    background: on ? ACCENT_BG : CARD_BG,
-                    color: INK,
-                    fontFamily: "'DM Sans',sans-serif",
-                    fontWeight: 500,
-                    fontSize: 'calc(13px * var(--ayna-text-scale, 1))',
-                    cursor: 'pointer',
-                  }}
-                >
-                  {label}
-                </div>
-              );
-            })}
+      {SYMPTOM_GROUPS.map((group) => {
+        const groupCount = group.items.filter(([label]) => selected.includes(label)).length;
+        return (
+          <div key={group.label} style={{ marginBottom: 18 }}>
+            <DividerLabel right={`${groupCount}/${group.items.length}`}>{group.label}</DividerLabel>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
+              {group.items.map(([label]) => {
+                const on = selected.includes(label);
+                return (
+                  <div
+                    key={label}
+                    onClick={() => onToggle(label)}
+                    style={{
+                      padding: '9px 14px',
+                      borderRadius: 99,
+                      border: '1.5px solid ' + (on ? NAVY : ROW_BORDER),
+                      background: on ? NAVY : CARD_BG,
+                      color: on ? '#FFFCF9' : INK,
+                      fontFamily: "'DM Sans',sans-serif",
+                      fontWeight: 500,
+                      fontSize: 'calc(13px * var(--ayna-text-scale, 1))',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {label}
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
@@ -481,17 +571,13 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
 
       {stepId === 'flow' && (
         <StepShell tag="Shown because · a period symptom" title="How was your flow this month?" subtitle={fullHealthIntake?.periodFlow ? `Last time you said ${fullHealthIntake.periodFlow.toLowerCase()}.` : undefined} footer={footer}>
-          {FLOW_OPTIONS.map((label) => (
-            <OptionCard key={label} selected={answers.flow === label} title={label} onClick={() => set('flow', label)} />
-          ))}
+          <ScaleSelector options={FLOW_OPTIONS} value={answers.flow} onChange={(v) => set('flow', v)} />
         </StepShell>
       )}
 
       {stepId === 'pain' && (
         <StepShell tag="Shown because · cramps" title="How was your pain this month?" subtitle={fullHealthIntake?.periodPain ? `Last time you said ${fullHealthIntake.periodPain.toLowerCase()}.` : undefined} footer={footer}>
-          {PAIN_OPTIONS.map(([label, sub]) => (
-            <OptionCard key={label} selected={answers.pain === label} title={label} subtitle={sub} onClick={() => set('pain', label)} />
-          ))}
+          <ScaleSelector options={PAIN_OPTIONS} value={answers.pain} onChange={(v) => set('pain', v)} />
         </StepShell>
       )}
 
@@ -506,13 +592,16 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
       {stepId === 'recs' && (
         <StepShell title="How did the products we suggested work for you?" subtitle="This is the answer that changes your matches the most — worth the ten seconds." footer={footer}>
           {myProducts.length > 0 && (
-            <div style={{ padding: '12px 14px', borderRadius: 14, background: PANEL_BG, border: '1px solid ' + ROW_BORDER, marginBottom: 16 }}>
-              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1px', textTransform: 'uppercase', color: MUTED, marginBottom: 6 }}>In your ecosystem</div>
-              <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: INK }}>{myProducts.slice(0, 3).map((p) => p.name).join(' · ')}</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px', borderRadius: 14, background: PANEL_BG, border: '1px solid ' + ROW_BORDER, marginBottom: 16 }}>
+              <div style={{ width: 36, height: 36, borderRadius: 10, flex: 'none', background: ACCENT_BG, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Playfair Display',serif", fontSize: 'calc(16px * var(--ayna-text-scale, 1))', color: ACCENT_BORDER }}>{myProducts.length}</div>
+              <div>
+                <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1px', textTransform: 'uppercase', color: MUTED, marginBottom: 3 }}>In your ecosystem</div>
+                <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: INK }}>{myProducts.slice(0, 3).map((p) => p.name).join(' · ')}</div>
+              </div>
             </div>
           )}
           {RECS_OPTIONS.map(([value, label, sub]) => (
-            <OptionCard key={value} selected={answers.recsVerdict === value} title={label} subtitle={sub} onClick={() => set('recsVerdict', value)} />
+            <OptionCard key={value} selected={answers.recsVerdict === value} title={label} subtitle={sub} icon={<RecsIcon value={value} />} onClick={() => set('recsVerdict', value)} />
           ))}
         </StepShell>
       )}
@@ -560,6 +649,26 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
           {SAFETY_OPTIONS.map((label) => (
             <OptionCard key={label} selected={answers.safetyConcern === label} title={label} tone={label === 'Yes' ? 'warning' : undefined} onClick={() => set('safetyConcern', label)} />
           ))}
+          {answers.safetyConcern === 'Yes' && (
+            <div style={{ marginTop: 4, padding: 16, borderRadius: 18, background: WARNING_BG, border: '1px solid ' + WARNING_BORDER }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={WARNING_BORDER} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9" /><path d="M12 8v4M12 16h.01" /></svg>
+                <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(17px * var(--ayna-text-scale, 1))', color: WARNING_BORDER }}>Please talk to a clinician</div>
+              </div>
+              <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: '#7A4234' }}>
+                Ayna is a discovery tool, not a diagnosis. We'll keep your check-in, but nothing here should replace being seen — especially for something new or getting worse.
+              </div>
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=urgent+care+near+me"
+                target="_blank"
+                rel="noreferrer"
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 14, padding: 14, borderRadius: 99, background: CARD_BG, border: '1px solid ' + WARNING_BORDER, color: WARNING_BORDER, fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', textDecoration: 'none' }}
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={WARNING_BORDER} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" /></svg>
+                Find urgent care near me
+              </a>
+            </div>
+          )}
         </StepShell>
       )}
 
