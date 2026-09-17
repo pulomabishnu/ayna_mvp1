@@ -309,6 +309,13 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
 
   const periodRelevant = answers ? answers.symptoms.some((s) => PERIOD_SYMPTOM_LABELS.has(s)) : false;
   const utiRelevant = answers ? answers.symptoms.includes('Recurrent UTIs') : false;
+  // Reminds the person what's actually on file instead of asking them to
+  // recall it cold — the single highest-value context this step can show,
+  // since "has anything changed" is meaningless without knowing what
+  // "unchanged" currently means for them.
+  const currentLifeStageOnFile = Array.isArray(fullHealthIntake?.lifeStageSelections) && fullHealthIntake.lifeStageSelections.length
+    ? fullHealthIntake.lifeStageSelections.join(', ')
+    : fullHealthIntake?.lifeStage || '';
 
   const steps = useMemo(() => {
     const list = ['lifeStage', 'symptoms'];
@@ -436,7 +443,13 @@ export default function MonthlyCheckinScreen({ onBack, onComplete, lastQuizAnswe
       {stepId === 'lifeStage' && (
         <StepShell title="Has anything changed since your last check-in?" subtitle="We only ask again when something big shifts — starting to try, a pregnancy, postpartum, perimenopause." footer={footer}>
           {LIFE_STAGE_OPTIONS.map(([value, label]) => (
-            <OptionCard key={value} selected={answers.lifeStageChanged === value} title={label} onClick={() => set('lifeStageChanged', value)} />
+            <OptionCard
+              key={value}
+              selected={answers.lifeStageChanged === value}
+              title={label}
+              subtitle={value === 'same' ? (currentLifeStageOnFile ? `${currentLifeStageOnFile} · on file` : undefined) : undefined}
+              onClick={() => set('lifeStageChanged', value)}
+            />
           ))}
           {answers.lifeStageChanged === 'changed' && (
             <div style={{ marginTop: 10, padding: 14, borderRadius: 16, background: PANEL_BG, border: '1px solid ' + ROW_BORDER }}>

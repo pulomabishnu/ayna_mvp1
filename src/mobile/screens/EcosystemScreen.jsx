@@ -24,7 +24,7 @@ export default function EcosystemScreen({
   onOpenSaved,
   onBrowse,
   onRetake,
-  onUpdateHealth,
+  onOpenMonthlyCheckin,
   onOpenProfile,
   quizAnswers = null,
   onOpenWhyMatch,
@@ -88,7 +88,7 @@ export default function EcosystemScreen({
       )}
 
       <div style={{ padding: '20px 20px 0' }}>
-        <CtaBanner title="Update Ayna on your health" buttonLabel="Monthly check-in" onClick={onUpdateHealth} />
+        <CtaBanner title="Update Ayna on your health" buttonLabel="Monthly check-in" onClick={onOpenMonthlyCheckin} />
       </div>
 
       <div style={{ padding: '4px 20px 0' }}>
