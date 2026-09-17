@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { Capacitor } from '@capacitor/core';
 import './mobile.css';
-import { ALL_PRODUCTS, getEcosystemAlternatives, getProfileMatchPercentForProduct, getRecommendationMatchesAndRest, filterPrescriptionCareGate } from '../data/products.js';
+import { ALL_PRODUCTS, getEcosystemAlternatives, getEcosystemSeedFromQuiz, filterPrescriptionCareGate } from '../data/products.js';
 import { RELEASED_STARTUPS } from '../data/startups.js';
 import { loadProductCatalog } from '../utils/productCatalog.js';
 import { getSupabaseClient } from '../utils/supabaseClient.js';
-import { loadEcosystemForUser, upsertProductState, upsertProductsBatch } from '../utils/ecosystemStore.js';
+import { clearEcosystemForUser, loadEcosystemForUser, upsertProductState, upsertProductsBatch } from '../utils/ecosystemStore.js';
 import { loadHealthIntakeForCurrentUser, saveHealthIntakeForCurrentUser } from '../utils/healthIntakeStore.js';
+import { loadHealthProfile } from '../utils/healthDataProfile.js';
+import { loadHealthProfileForCurrentUser } from '../utils/healthProfileStore.js';
 import { mapIntakeToLegacyQuizProfile } from '../utils/healthIntake.js';
 import { ARTICLES } from '../components/Articles.jsx';
 import { ECOSYSTEM_AREAS as REAL_ECOSYSTEM_AREAS, resolveEcosystemProductArea } from '../components/EcosystemBubbles.jsx';
@@ -70,9 +72,7 @@ const SCREENS = {
 // products from /api/products that aren't in the bundled catalog yet (see
 // productCatalog.js's migration-state comment — the API is meant to
 // eventually replace the bundle; discoveredProducts is what's already live
-// there but not yet in ALL_PRODUCTS). Kept separate from ALL_PRODUCTS
-// itself since ecosystem seeding below keys off the real bundled catalog
-// (via getRecommendationMatchesAndRest) only, the same as desktop.
+// there but not yet in ALL_PRODUCTS).
 function buildBrowseProducts(catalogProducts) {
   const source = Array.isArray(catalogProducts) && catalogProducts.length ? catalogProducts : ALL_PRODUCTS;
   const liveProducts = filterPrescriptionCareGate(source).map((p) => ({ ...p, isStartup: false }));
@@ -89,65 +89,18 @@ function buildBrowseProducts(catalogProducts) {
   return [...liveProducts, ...releasedStartups];
 }
 
-// No single brand should crowd out the rest of the ecosystem/orbit — keeps
-// at most this many products per brand, in whatever order they were ranked,
-// so the highest-relevance picks for every other brand still get a seat.
-const MAX_PRODUCTS_PER_BRAND = 2;
-
-function brandKeyForProduct(product) {
-  if (product?.brand) return String(product.brand).trim().toLowerCase();
-  // Most entries in this catalog don't carry an explicit `brand` field, but
-  // product names are consistently "Brand Product Line ..." — the first
-  // word is a good enough grouping key for capping purposes even when it
-  // isn't the literal brand (it's never displayed, only used to spread
-  // picks across distinct product lines).
-  const firstWord = String(product?.name || '').trim().split(/\s+/)[0];
-  return firstWord ? firstWord.toLowerCase() : product?.id || '';
-}
-
-function capProductsPerBrand(products, maxPerBrand = MAX_PRODUCTS_PER_BRAND) {
-  const counts = new Map();
-  const result = [];
-  for (const p of products) {
-    const key = brandKeyForProduct(p);
-    const count = counts.get(key) || 0;
-    if (count >= maxPerBrand) continue;
-    counts.set(key, count + 1);
-    result.push(p);
-  }
-  return result;
-}
-
-// Real business logic, using the same weighted relevance engine as every
-// match-percent ring in the app (getProfileMatchPercentForProduct). Used to
-// go through getPersonalizedProductIds, which only requires percent > 0 —
-// that function's own doc comment in products.js admits this is "close to
-// a no-op (nearly every product qualifies)". That's exactly why the mobile
-// ecosystem was over-populating with weak, single-preference-tag matches:
-// there was no real quality bar. MIN_ECOSYSTEM_MATCH_PERCENT is that bar —
-// a lone preference-tag overlap scores well under it, while a genuine
-// concern-tag match clears it comfortably (see getProductRelevanceStats's
-// weights), so the ecosystem now reflects real relevance, not "any overlap
-// at all". resolveEcosystemProductArea is the real product -> pillar-area
-// matcher (keyword + category scanning) that EcosystemOrbit's contract has
-// always deferred to rather than reimplementing.
-//
-// Capped per brand (see capProductsPerBrand) AFTER ranking so the ecosystem
-// — and every per-area seat within it, since each seat's product list is a
-// subset of this same array — stays a variety of brands instead of one
-// brand's whole catalog crowding everything else out.
-const MIN_ECOSYSTEM_MATCH_PERCENT = 30;
-
-function seedEcosystemFromAnswers(quizAnswers) {
-  const { matches } = getRecommendationMatchesAndRest(quizAnswers, null);
-  const strongMatches = matches.filter(
-    (p) => (getProfileMatchPercentForProduct(p, quizAnswers) || 0) >= MIN_ECOSYSTEM_MATCH_PERCENT
-  );
-  const withAreas = strongMatches.map((p) => {
-    const area = resolveEcosystemProductArea(p, REAL_ECOSYSTEM_AREAS);
-    return { ...p, areaKey: area ? area.key : null };
+// Mobile and desktop must build the same initial ecosystem. Keep the actual
+// selection logic in products.js so there is one recommendation algorithm,
+// then add only mobile's display-only areaKey after the shared picks exist.
+function seedEcosystemFromAnswers(quizAnswers, healthProfile = null) {
+  const { mergedProducts } = getEcosystemSeedFromQuiz(quizAnswers, healthProfile);
+  return Object.values(mergedProducts || {}).map((product) => {
+    const area = resolveEcosystemProductArea(product, REAL_ECOSYSTEM_AREAS);
+    return {
+      ...product,
+      areaKey: product.areaKey || area?.key || null,
+    };
   });
-  return capProductsPerBrand(withAreas);
 }
 
 export default function MobileApp() {
@@ -210,10 +163,12 @@ export default function MobileApp() {
 
     (async () => {
       // Mobile onboarding builds recommendations before sign-in. If that just
-      // happened in this app session, save those recommendations for this
-      // newly authenticated user before loading the canonical merged state.
+      // happened in this app session, it represents a replacement ecosystem,
+      // not additions to whatever this account previously had. Desktop follows
+      // the same reset-then-save semantics after quiz completion.
       const pending = pendingQuizEcosystemRef.current;
       if (Array.isArray(pending) && pending.length > 0) {
+        await clearEcosystemForUser(supabase, userId);
         await upsertProductsBatch(supabase, userId, pending, {
           inEcosystem: true,
           isTracked: false,
@@ -229,9 +184,13 @@ export default function MobileApp() {
       // that didn't complete the intake locally, which silently disabled
       // every profile-gated feature (the Products/Reads "For You" toggles
       // in particular) even for a user with a complete, real profile.
-      const [ecosystem, rawIntake, notificationPrefs] = await Promise.all([
+      // Loading the imported health profile here also mirrors the server copy
+      // into local storage, so a later mobile rebuild uses the same health
+      // context that desktop passes to getEcosystemSeedFromQuiz().
+      const [ecosystem, rawIntake, _healthProfileResult, notificationPrefs] = await Promise.all([
         loadEcosystemForUser(supabase, userId),
         loadHealthIntakeForCurrentUser(),
+        loadHealthProfileForCurrentUser().catch(() => null),
         fetchNotificationPreferences().catch(() => null),
       ]);
       if (cancelled) return;
@@ -431,7 +390,7 @@ export default function MobileApp() {
     onUpdateHealth: () => { setEditingHealthProfile(false); setScreen('quiz'); },
     onEditProfile: () => { setEditingHealthProfile(true); setScreen('quiz'); },
     onComplete: (quizAnswers) => {
-      const seededProducts = seedEcosystemFromAnswers(quizAnswers);
+      const seededProducts = seedEcosystemFromAnswers(quizAnswers, loadHealthProfile());
 
       updateSession({
         myProducts: seededProducts,
@@ -441,11 +400,17 @@ export default function MobileApp() {
 
       const supabase = getSupabaseClient();
       if (authUser && supabase) {
-        upsertProductsBatch(supabase, authUser.id, seededProducts, {
-          inEcosystem: true,
-          isTracked: false,
-          isOmitted: false,
-        }).catch((error) => {
+        // A retake/update replaces the ecosystem. Without clearing first, rows
+        // from the previous website/mobile build stayed active in Supabase and
+        // were merged back on the next login, making the two clients diverge.
+        (async () => {
+          await clearEcosystemForUser(supabase, authUser.id);
+          await upsertProductsBatch(supabase, authUser.id, seededProducts, {
+            inEcosystem: true,
+            isTracked: false,
+            isOmitted: false,
+          });
+        })().catch((error) => {
           console.warn('[Ayna] mobile generated ecosystem sync failed:', error);
         });
       } else {
