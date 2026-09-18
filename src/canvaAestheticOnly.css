@@ -309,4 +309,51 @@ html body .v6-home-search input { border: 0 !important; }
   background: var(--canva-paper) !important;
   color: var(--canva-ink) !important;
 }
+
+/* A signed-out preview should not become a tall blurred stack on small screens. */
+@media (max-width: 900px) {
+  .v6-cabinet-zone.is-locked {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    min-height: 180px !important;
+    padding: 18px 12px !important;
+    gap: 0 !important;
+  }
+  .v6-cabinet-zone.is-locked > .v6-cabinet-copy,
+  .v6-cabinet-zone.is-locked > .v6-product-bubble { display: none !important; }
+  .v6-cabinet-zone.is-locked > .v6-wood-cabinet {
+    position: absolute !important;
+    inset: 12px !important;
+    width: auto !important;
+    max-width: none !important;
+    height: calc(100% - 24px) !important;
+    margin: 0 !important;
+  }
+  .v6-cabinet-zone.is-locked .v6-cabinet-lock {
+    position: relative !important;
+    inset: auto !important;
+    padding: 0 !important;
+    backdrop-filter: none !important;
+  }
+  .v6-unlock-card.v6-unlock-card--slim {
+    width: 100% !important;
+    max-width: 580px !important;
+    padding: 12px !important;
+    grid-template-columns: 28px minmax(0, 1fr) !important;
+    grid-template-areas: 'icon copy' 'actions actions' !important;
+    gap: 10px !important;
+  }
+  .v6-unlock-card--slim .v6-unlock-copy { grid-area: copy !important; }
+  .v6-unlock-card--slim .v6-unlock-actions {
+    grid-area: actions !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    white-space: normal !important;
+  }
+  .v6-unlock-card--slim .v6-unlock-actions button {
+    display: inline-flex !important;
+    min-height: 40px !important;
+    align-items: center !important;
+  }
+}
 }
