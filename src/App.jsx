@@ -1179,7 +1179,11 @@ function App() {
       return limitEcosystemProductMapByCategory(
         combined,
         MAX_ECOSYSTEM_PRODUCTS_PER_CATEGORY,
-        { priorityIds: new Set(manualIds) }
+        { protectedIds: new Set([
+          ...manualIds,
+          ...Object.keys(trackedProducts || {}),
+          ...Object.keys(savedProducts || {}),
+        ]) }
       );
     });
     setEcosystemOrder(() => [
@@ -1195,7 +1199,7 @@ function App() {
       upsertProductsBatch(supabase, user.id, valid, { inEcosystem: true, isTracked: false, isOmitted: false })
         .catch(e => reportSaveFailure('Could not save your ecosystem', e));
     }
-  }, [user, reportSaveFailure]);
+  }, [user, reportSaveFailure, trackedProducts, savedProducts]);
 
   // Cache of the exact product object last clicked, so the dedicated page can
   // render instantly without waiting on a lookup — a fresh LLM-generated

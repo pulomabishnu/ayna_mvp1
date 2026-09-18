@@ -170,6 +170,7 @@ function dbRowToShadowRow(row) {
     inEcosystem: !!row.in_ecosystem,
     isTracked: !!row.is_tracked,
     isOmitted: !!row.is_omitted,
+    isSaved: !!row.is_saved,
     updatedAt: Date.parse(row.updated_at || '') || 0,
   };
 }
@@ -191,17 +192,18 @@ function hydrateFromRows(rowsById) {
       trackedProducts[productId] = product;
       priorityIds.add(productId);
     }
+    if (row.isSaved) priorityIds.add(productId);
     if (row.isOmitted) omittedProducts[productId] = product;
   }
 
-  // Existing accounts may contain dozens of legacy rows from the old
-  // "append every matching product" behavior. Limit what My Ecosystem renders
-  // without deleting or rewriting any user's stored rows. Tracked/manual items
-  // are preferred when choosing the five visible products in a care category.
+  // Existing accounts may contain dozens of legacy generated rows from the old
+  // "append every matching product" behavior. Limit only generated items in
+  // My Ecosystem without deleting or rewriting stored rows. Manual, swapped,
+  // tracked and saved products remain visible even above the generated cap.
   const visibleEcosystem = limitEcosystemProductsByCategory(
     ecosystemCandidates,
     MAX_ECOSYSTEM_PRODUCTS_PER_CATEGORY,
-    { priorityIds }
+    { protectedIds: priorityIds }
   );
 
   for (const product of visibleEcosystem) {
@@ -248,7 +250,10 @@ export async function loadEcosystemForUser(supabase, userId) {
   for (const [productId, row] of Object.entries(shadow.rows || {})) {
     const existing = mergedRows[productId];
     if (!existing || Number(row?.updatedAt || 0) >= Number(existing?.updatedAt || 0)) {
-      mergedRows[productId] = row;
+      // Wishlist state is owned by the table/saved-products store and is not
+      // represented in the ecosystem shadow. Do not lose it when a newer
+      // local ecosystem edit wins the rest of the row.
+      mergedRows[productId] = { ...row, isSaved: !!existing?.isSaved };
     }
   }
 

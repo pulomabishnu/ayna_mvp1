@@ -2807,7 +2807,7 @@ export function getEcosystemSeedFromQuiz(quizAnswers, healthProfile = null) {
         const product = recs.find((p) => (p.tags || []).includes(tag) && !picked.has(p.id));
         if (product) {
             picked.add(product.id);
-            mergedProducts[product.id] = product;
+            mergedProducts[product.id] = { ...product, intakeGenerated: true };
             seedMeta[product.id] = { frustration: f, tag };
         }
     }

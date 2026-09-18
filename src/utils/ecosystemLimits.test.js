@@ -6,7 +6,7 @@ import {
 } from './ecosystemLimits.js';
 
 function product(id, category, extra = {}) {
-  return { id, name: id, category, ...extra };
+  return { id, name: id, category, llmGenerated: true, ...extra };
 }
 
 describe('ecosystem category limits', () => {
@@ -67,5 +67,26 @@ describe('ecosystem category limits', () => {
     expect(limited.map((item) => item.id)).toContain('period-6');
     expect(products.map((item) => item.id)).toEqual(originalIds);
     expect(products).toHaveLength(7);
+  });
+
+  it('preserves manual and swapped items above the generated cap', () => {
+    const generated = Array.from({ length: 7 }, (_, index) => product(`generated-${index}`, 'pad'));
+    const manual = product('manual', 'tampon', { llmGenerated: false });
+    const swapped = product('swapped', 'cup', { _userSwapped: true });
+
+    const limited = limitEcosystemProductsByCategory([...generated, manual, swapped]);
+
+    expect(limited.filter((item) => item.llmGenerated && !item._userSwapped)).toHaveLength(5);
+    expect(limited.map((item) => item.id)).toEqual(expect.arrayContaining(['manual', 'swapped']));
+  });
+
+  it('preserves tracked or saved generated items without consuming the generated allowance', () => {
+    const products = Array.from({ length: 7 }, (_, index) => product(`period-${index}`, 'pad'));
+    const limited = limitEcosystemProductsByCategory(products, 5, {
+      protectedIds: new Set(['period-6']),
+    });
+
+    expect(limited).toHaveLength(6);
+    expect(limited.map((item) => item.id)).toContain('period-6');
   });
 });
