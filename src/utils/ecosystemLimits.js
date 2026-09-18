@@ -17,6 +17,8 @@ const PERIOD_CATEGORIES = new Set([
   'menstrual care',
   'period-care',
   'period care',
+  'cramp-relief',
+  'cup-steamer',
 ]);
 
 const PERIOD_HEALTH_FUNCTIONS = new Set([
@@ -24,6 +26,7 @@ const PERIOD_HEALTH_FUNCTIONS = new Set([
   'leak-protection',
   'period-care',
   'menstrual-care',
+  'cramp-relief',
 ]);
 
 function normalize(value) {
@@ -67,7 +70,8 @@ export function getEcosystemCategoryKey(product) {
     concern.includes('menstrual') ||
     concern.includes('heavy flow') ||
     concern.includes('leak') ||
-    concern.includes('staining')
+    concern.includes('staining') ||
+    concern.includes('cramp')
   ) {
     return 'period-care';
   }

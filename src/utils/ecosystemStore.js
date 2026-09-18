@@ -356,7 +356,10 @@ export async function upsertProductState(supabase, userId, product, flags) {
 
 /** Persist many products in ONE request per chunk, with the same durable fallback. */
 export async function upsertProductsBatch(supabase, userId, products, flags) {
-  const valid = (Array.isArray(products) ? products : []).filter((p) => p?.id);
+  const inputProducts = (Array.isArray(products) ? products : []).filter((p) => p?.id);
+  const valid = flags?.inEcosystem
+    ? limitEcosystemProductsByCategory(inputProducts, MAX_ECOSYSTEM_PRODUCTS_PER_CATEGORY)
+    : inputProducts;
   if (valid.length === 0) return { saved: 0 };
 
   let shadow = readLocalShadow(userId);

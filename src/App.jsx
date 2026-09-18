@@ -49,6 +49,7 @@ import EmailConfirmed from './components/EmailConfirmed';
 import { getSupabaseClient } from './utils/supabaseClient';
 import { loadProductCatalog } from './utils/productCatalog.js';
 import { loadEcosystemForUser, upsertProductState, upsertProductsBatch, clearEcosystemForUser } from './utils/ecosystemStore';
+import { limitEcosystemProductsByCategory, limitEcosystemProductMapByCategory, MAX_ECOSYSTEM_PRODUCTS_PER_CATEGORY } from './utils/ecosystemLimits.js';
 import { loadSavedProducts, persistSavedProducts, clearSavedProducts, loadSavedForUser, setSavedForUser } from './utils/savedProductsStore';
 import { loadLearningMemoryForUser, saveLearningMemoryForUser } from './utils/learningMemoryStore';
 import { loadReviewsForUser, upsertProductReviews } from './utils/reviewsStore';
@@ -720,8 +721,12 @@ function App() {
               .slice(0, 6)
               .map((product) => [product.id, product])
           );
-      setMyProducts(instantProducts);
-      setEcosystemOrder(Object.keys(instantProducts));
+      const limitedInstantProducts = limitEcosystemProductMapByCategory(
+        instantProducts,
+        MAX_ECOSYSTEM_PRODUCTS_PER_CATEGORY
+      );
+      setMyProducts(limitedInstantProducts);
+      setEcosystemOrder(Object.keys(limitedInstantProducts));
       clearCachedLlmRecommendations();
       try { window.sessionStorage.setItem('ayna_force_llm_refresh', '1'); } catch (_) {}
       const _supabase = getSupabaseClient();
@@ -941,8 +946,12 @@ function App() {
             .slice(0, 6)
             .map((product) => [product.id, product])
         );
-    setMyProducts(instantProducts);
-    setEcosystemOrder(Object.keys(instantProducts));
+    const limitedInstantProducts = limitEcosystemProductMapByCategory(
+      instantProducts,
+      MAX_ECOSYSTEM_PRODUCTS_PER_CATEGORY
+    );
+    setMyProducts(limitedInstantProducts);
+    setEcosystemOrder(Object.keys(limitedInstantProducts));
     llmBuiltThisSessionRef.current = false;
     clearCachedLlmRecommendations();
     try { window.sessionStorage.setItem('ayna_force_llm_refresh', '1'); } catch (_) {}
@@ -971,8 +980,12 @@ function App() {
             .slice(0, 6)
             .map((product) => [product.id, product])
         );
-    setMyProducts(instantProducts);
-    setEcosystemOrder(Object.keys(instantProducts));
+    const limitedInstantProducts = limitEcosystemProductMapByCategory(
+      instantProducts,
+      MAX_ECOSYSTEM_PRODUCTS_PER_CATEGORY
+    );
+    setMyProducts(limitedInstantProducts);
+    setEcosystemOrder(Object.keys(limitedInstantProducts));
     llmBuiltThisSessionRef.current = false;
     clearCachedLlmRecommendations();
     try { window.sessionStorage.setItem('ayna_force_llm_refresh', '1'); } catch (_) {}
@@ -1148,7 +1161,10 @@ function App() {
     setSaveError(null);
     if (!Array.isArray(products) || products.length === 0) return;
     llmBuiltThisSessionRef.current = true;
-    const valid = products.filter(p => p?.id);
+    const valid = limitEcosystemProductsByCategory(
+      products.filter(p => p?.id),
+      MAX_ECOSYSTEM_PRODUCTS_PER_CATEGORY
+    );
     const llmIdSet = new Set(valid.map(p => p.id));
     let manualIds = [];
     setMyProducts(prev => {
@@ -1159,7 +1175,12 @@ function App() {
         return p && (!p.llmGenerated && !p.intakeGenerated) || p?._userSwapped;
       });
       const manual = Object.fromEntries(manualIds.map(id => [id, prev[id]]));
-      return { ...valid.reduce((acc, p) => { acc[p.id] = p; return acc; }, {}), ...manual };
+      const combined = { ...valid.reduce((acc, p) => { acc[p.id] = p; return acc; }, {}), ...manual };
+      return limitEcosystemProductMapByCategory(
+        combined,
+        MAX_ECOSYSTEM_PRODUCTS_PER_CATEGORY,
+        { priorityIds: new Set(manualIds) }
+      );
     });
     setEcosystemOrder(() => [
       ...valid.map(p => p.id),

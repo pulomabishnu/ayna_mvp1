@@ -6,6 +6,7 @@ import { RELEASED_STARTUPS } from '../data/startups.js';
 import { loadProductCatalog } from '../utils/productCatalog.js';
 import { getSupabaseClient } from '../utils/supabaseClient.js';
 import { clearEcosystemForUser, loadEcosystemForUser, upsertProductState, upsertProductsBatch } from '../utils/ecosystemStore.js';
+import { limitEcosystemProductsByCategory, MAX_ECOSYSTEM_PRODUCTS_PER_CATEGORY } from '../utils/ecosystemLimits.js';
 import { loadHealthIntakeForCurrentUser, saveHealthIntakeForCurrentUser } from '../utils/healthIntakeStore.js';
 import { loadHealthProfile } from '../utils/healthDataProfile.js';
 import { loadHealthProfileForCurrentUser } from '../utils/healthProfileStore.js';
@@ -94,13 +95,17 @@ function buildBrowseProducts(catalogProducts) {
 // then add only mobile's display-only areaKey after the shared picks exist.
 function seedEcosystemFromAnswers(quizAnswers, healthProfile = null) {
   const { mergedProducts } = getEcosystemSeedFromQuiz(quizAnswers, healthProfile);
-  return Object.values(mergedProducts || {}).map((product) => {
+  const seeded = Object.values(mergedProducts || {}).map((product) => {
     const area = resolveEcosystemProductArea(product, REAL_ECOSYSTEM_AREAS);
     return {
       ...product,
       areaKey: product.areaKey || area?.key || null,
     };
   });
+  return limitEcosystemProductsByCategory(
+    seeded,
+    MAX_ECOSYSTEM_PRODUCTS_PER_CATEGORY
+  );
 }
 
 export default function MobileApp() {
