@@ -1,3 +1,5 @@
+import { limitEcosystemProductsByCategory, MAX_ECOSYSTEM_PRODUCTS_PER_CATEGORY } from './ecosystemLimits.js';
+
 /**
  * Supabase persistence for user_ecosystems.
  * One row per (user_id, product_id). Flags track which lists the product lives in.
@@ -69,6 +71,7 @@ function compactProduct(product) {
     'image', 'imageUrl', 'images', 'summary', 'description', 'tagline',
     'whereToBuy', 'url', 'website', 'buyUrl', 'purchaseUrl', 'affiliateUrl',
     'llmGenerated', 'intakeGenerated', '_llmConcern', '_userSwapped',
+    'healthFunctions', 'tags',
     'aynaMatch', 'aynaMatchPercent', 'matchPercent', 'matchPercentage',
   ];
   const out = {};
@@ -176,16 +179,35 @@ function hydrateFromRows(rowsById) {
   const trackedProducts = {};
   const omittedProducts = {};
   const ecosystemUpdatedAt = {};
+  const ecosystemCandidates = [];
+  const priorityIds = new Set();
 
   for (const [productId, row] of Object.entries(rowsById || {})) {
     const product = row?.product;
     if (!product?.id) continue;
-    if (row.inEcosystem) {
-      myProducts[productId] = product;
-      ecosystemUpdatedAt[productId] = row.updatedAt ? new Date(row.updatedAt).toISOString() : null;
+
+    if (row.inEcosystem) ecosystemCandidates.push(product);
+    if (row.isTracked) {
+      trackedProducts[productId] = product;
+      priorityIds.add(productId);
     }
-    if (row.isTracked) trackedProducts[productId] = product;
     if (row.isOmitted) omittedProducts[productId] = product;
+  }
+
+  // Existing accounts may contain dozens of legacy rows from the old
+  // "append every matching product" behavior. Limit what My Ecosystem renders
+  // without deleting or rewriting any user's stored rows. Tracked/manual items
+  // are preferred when choosing the five visible products in a care category.
+  const visibleEcosystem = limitEcosystemProductsByCategory(
+    ecosystemCandidates,
+    MAX_ECOSYSTEM_PRODUCTS_PER_CATEGORY,
+    { priorityIds }
+  );
+
+  for (const product of visibleEcosystem) {
+    myProducts[product.id] = product;
+    const row = rowsById?.[product.id];
+    ecosystemUpdatedAt[product.id] = row?.updatedAt ? new Date(row.updatedAt).toISOString() : null;
   }
 
   return { myProducts, trackedProducts, omittedProducts, ecosystemUpdatedAt };
