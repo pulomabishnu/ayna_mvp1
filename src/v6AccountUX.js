@@ -12,7 +12,7 @@ function cleanText(node) {
 }
 
 function storedTheme() {
-  try { return localStorage.getItem(THEME_KEY) || 'system'; } catch { return 'system'; }
+  try { return localStorage.getItem(THEME_KEY) || 'dark'; } catch { return 'dark'; }
 }
 
 function resolvedTheme(mode = storedTheme()) {
