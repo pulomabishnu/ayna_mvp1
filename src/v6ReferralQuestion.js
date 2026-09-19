@@ -1,4 +1,3 @@
-import './v6ReferralQuestion.css';
 import { getSupabaseClient } from './utils/supabaseClient';
 
 const NAME_KEY = 'ayna_v6_first_name';

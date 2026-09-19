@@ -1,4 +1,3 @@
-import './v6MasterCompletion.css';
 
 const SUPPORT_HEADING = 'Which options best describe you right now?';
 const SUPPORT_SUBCOPY = 'Search, or tap an Ayna suggestion below.';

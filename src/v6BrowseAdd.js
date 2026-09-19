@@ -1,4 +1,3 @@
-import './v6BrowseAdd.css';
 import { getSupabaseClient } from './utils/supabaseClient';
 
 const STORAGE_KEY = 'ayna_v6_submitted_products';

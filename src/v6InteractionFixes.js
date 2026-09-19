@@ -1,4 +1,3 @@
-import './v6InteractionFixes.css';
 import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS } from './data/products';
 import { getSupabaseClient } from './utils/supabaseClient';
 

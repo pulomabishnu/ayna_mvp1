@@ -1,4 +1,3 @@
-import './v6FinalPass.css';
 import { getSupabaseClient } from './utils/supabaseClient';
 import { mapIntakeToLegacyQuizProfile } from './utils/healthIntake';
 

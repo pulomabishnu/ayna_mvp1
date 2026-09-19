@@ -1,4 +1,3 @@
-import './v6QuizPersonalization.css';
 
 const NAME_KEY = 'ayna_v6_first_name';
 let timer = null;

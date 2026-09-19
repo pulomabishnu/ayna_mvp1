@@ -1,4 +1,3 @@
-import './v6MasterCompletion.css';
 
 const PROMPTS = [
   'What can help with cramps?',

@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
-import '../v6Real.css';
+import LiveSiteLanding from './LiveSiteLanding';
 
 const CARE_AREAS = [
   { label: 'Period care', query: 'period care', terms: ['period', 'pad', 'tampon', 'menstrual', 'cramp'] },
@@ -18,12 +18,6 @@ const CARE_AREAS = [
   { label: 'Gut health', query: 'gut health', terms: ['gut', 'digestive', 'probiotic', 'bloating'] },
 ];
 
-const QUICK_CATEGORIES = [
-  'period care', 'PCOS', 'vaginal health', 'UTI support',
-  'fertility', 'pregnancy', 'postpartum', 'perimenopause',
-  'menopause', 'pelvic health', 'sleep + energy', 'skin + hair',
-  'gut health', 'cycle mood', 'sexual wellness', 'provider matching',
-];
 
 function firstName(user) {
   const meta = user?.user_metadata || {};
@@ -101,14 +95,6 @@ function ProductVisual({ product, compact = false }) {
   );
 }
 
-function SearchIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-      <circle cx="11" cy="11" r="7" />
-      <path d="m16.4 16.4 4.1 4.1" />
-    </svg>
-  );
-}
 
 function LockIcon() {
   return (
@@ -142,7 +128,7 @@ function UnlockCard({ onStartQuiz }) {
   );
 }
 
-export default function AynaLanding({
+function LandingFeatures({
   onStartQuiz,
   onViewDiscovery,
   onOpenProduct,
@@ -151,46 +137,11 @@ export default function AynaLanding({
   myProducts,
   ecosystemCount = 0,
   hasProfile = false,
-  profileCategories,
   recommendedProductIds = [],
-  initialCategory = null,
 }) {
-  const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [cabinetOpen, setCabinetOpen] = useState(false);
   const [seed, setSeed] = useState(() => Math.floor(Math.random() * 10000));
-  const [quickOffset, setQuickOffset] = useState(0);
-  const [quickPaused, setQuickPaused] = useState(false);
-  const [reduceMotion, setReduceMotion] = useState(false);
   const [exploreOffset, setExploreOffset] = useState(0);
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => setCabinetOpen(true), 150);
-    return () => window.clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    const media = window.matchMedia?.('(prefers-reduced-motion: reduce)');
-    if (!media) return undefined;
-    const sync = () => setReduceMotion(media.matches);
-    sync();
-    media.addEventListener?.('change', sync);
-    return () => media.removeEventListener?.('change', sync);
-  }, []);
-
-  useEffect(() => {
-    if (quickPaused || reduceMotion) return undefined;
-    const timer = window.setInterval(() => {
-      setQuickOffset((current) => (current + 4) % QUICK_CATEGORIES.length);
-    }, 3000);
-    return () => window.clearInterval(timer);
-  }, [quickPaused, reduceMotion]);
-
-  useEffect(() => {
-    if (!initialCategory) return;
-    const area = CARE_AREAS.find((item) => item.query.toLowerCase().includes(String(initialCategory).toLowerCase()));
-    if (area) onViewDiscovery?.(discoveryTargetFor(area.query));
-  }, [initialCategory, onViewDiscovery]);
 
   const owned = useMemo(() => Object.values(myProducts || {}), [myProducts]);
   const recommended = useMemo(
@@ -220,16 +171,6 @@ export default function AynaLanding({
     return { ...area, product };
   }), [visibleAreas, visualPool, seed]);
 
-  const quickLinks = useMemo(() => Array.from({ length: 4 }, (_, index) => (
-    QUICK_CATEGORIES[((reduceMotion ? 0 : quickOffset) + index) % QUICK_CATEGORIES.length]
-  )), [quickOffset, reduceMotion]);
-
-  const submitSearch = (event) => {
-    event.preventDefault();
-    if (!query.trim()) return;
-    onViewDiscovery?.(discoveryTargetFor(query));
-  };
-
   const refreshExplore = () => {
     setExploreOffset((current) => (current + 6) % CARE_AREAS.length);
     setSeed((current) => (current + 137 + Math.floor(Math.random() * 997)) % 100000);
@@ -240,33 +181,7 @@ export default function AynaLanding({
   const personalizedUnlocked = Boolean(user && (hasProfile || ecosystemCount > 0 || recommendedProductIds?.length));
 
   return (
-    <main className="v6-home-shell">
-      <section className="v6-home-hero">
-        <div className="v6-eyebrow">personalized women&apos;s health</div>
-        <h1>women&apos;s health, made for <em>you.</em></h1>
-        <p>Find products, care, and support that make sense for your body, your goals, and your everyday life.</p>
-
-        <form className="v6-home-search" onSubmit={submitSearch}>
-          <SearchIcon />
-          <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search period care, PCOS, UTI support, sleep…" aria-label="Search ayna" />
-          <button type="submit" aria-label="Search">→</button>
-        </form>
-
-        <div
-          className="v6-quick-links v6-quick-links--rotating"
-          onMouseEnter={() => setQuickPaused(true)}
-          onMouseLeave={() => setQuickPaused(false)}
-          onFocus={() => setQuickPaused(true)}
-          onBlur={() => setQuickPaused(false)}
-          aria-label="Popular health categories"
-          aria-live="off"
-        >
-          {quickLinks.map((label) => (
-            <button key={`${quickOffset}-${label}`} type="button" onClick={() => onViewDiscovery?.(discoveryTargetFor(label))}>{label}</button>
-          ))}
-        </div>
-      </section>
-
+    <section className="v6-home-shell ayna-added-features" aria-label="More ways to personalize your care">
       <section className={`v6-cabinet-zone${personalizedUnlocked ? '' : ' is-locked'}`}>
         <div className="v6-cabinet-copy">
           <div className="v6-eyebrow">your health cabinet</div>
@@ -276,7 +191,7 @@ export default function AynaLanding({
           <span className="v6-scribble">less guessing,<br/>more you ♡</span>
         </div>
 
-        <div className={`v6-wood-cabinet${cabinetOpen ? ' is-open' : ''}`}>
+        <div className="v6-wood-cabinet is-open">
           <div className="v6-cabinet-door left"><span>ayna</span></div>
           <div className="v6-cabinet-door right"><span>made for you</span></div>
           <div className="v6-cabinet-topper"><i/><span>ayna health cabinet</span><i/></div>
@@ -336,6 +251,13 @@ export default function AynaLanding({
           ))}
         </div>
       </section>
-    </main>
+    </section>
   );
+}
+
+export default function AynaLanding(props) {
+  return <>
+    <LiveSiteLanding {...props} />
+    <LandingFeatures {...props} />
+  </>;
 }

@@ -1,4 +1,3 @@
-import './v6AccountUX.css';
 import posthog from 'posthog-js';
 import { getSupabaseClient } from './utils/supabaseClient';
 
@@ -12,7 +11,7 @@ function cleanText(node) {
 }
 
 function storedTheme() {
-  try { return localStorage.getItem(THEME_KEY) || 'dark'; } catch { return 'dark'; }
+  try { return localStorage.getItem(THEME_KEY) || 'light'; } catch { return 'light'; }
 }
 
 function resolvedTheme(mode = storedTheme()) {

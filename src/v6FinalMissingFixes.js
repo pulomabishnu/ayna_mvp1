@@ -1,4 +1,3 @@
-import './v6FinalMissingFixes.css';
 
 let scheduled = false;
 let authCaptureBound = false;

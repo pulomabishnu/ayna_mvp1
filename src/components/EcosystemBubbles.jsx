@@ -8,7 +8,6 @@ import {
   getRecommendationExplanation,
 } from '../data/products';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
-import '../v6Real.css';
 
 const CURRENT_CATEGORY_BY_ID = new Map(ALL_PRODUCTS.map((product) => [product.id, product.category]));
 const WEAK_FALLBACK_KEYWORDS = new Set(['cycle']);

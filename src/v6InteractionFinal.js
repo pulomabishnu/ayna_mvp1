@@ -1,4 +1,3 @@
-import './v6InteractionFinal.css';
 
 let lastPointerType = 'mouse';
 

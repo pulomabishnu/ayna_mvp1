@@ -1,4 +1,3 @@
-import './v6SeptemberAudit.css';
 
 const DRAFT_KEY = 'ayna_intake_redesign_draft_v1';
 const QUICK_CATEGORIES = [

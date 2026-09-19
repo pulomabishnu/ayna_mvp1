@@ -1,4 +1,3 @@
-import './v6Enhancements.css';
 
 const QUIZ_THEME_KEY = 'ayna_v6_quiz_theme';
 
