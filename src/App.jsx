@@ -7,6 +7,7 @@ import EcosystemGenerationBar from './components/EcosystemGenerationBar';
 import HealthIntakeForm from './components/HealthIntakeForm';
 import HealthProfileEditor from './components/HealthProfileEditor';
 import DeleteAccountPage from './components/DeleteAccountPage';
+import AdminReviewsPage from './components/AdminReviewsPage';
 import PhoneVerification from './components/PhoneVerification';
 import Recommendations from './components/Recommendations';
 import TrackedItems from './components/TrackedItems';
@@ -115,6 +116,9 @@ const VIEW_TO_PATH = {
   'auth-callback': '/auth/callback',
   'auth-confirm': '/auth/confirm',
   'confirmed': '/confirmed',
+  // Not linked from any nav — internal, reached by typing the URL directly.
+  // Real access control is server-side (api/reviews-admin checks ADMIN_EMAILS).
+  'admin-reviews': '/admin/reviews',
 };
 // Friendly document.title per view — 'welcome'/'hero' and any view not
 // listed here fall back to the site's base title (see the title effect).
@@ -127,6 +131,7 @@ const VIEW_TITLES = {
   'privacy-policy': 'Privacy Policy', 'terms-of-use': 'Terms of Use',
   'how-we-make-money': 'How We Make Money', 'how-it-works': 'How It Works',
   about: 'About', contact: 'Contact', 'not-found': 'Page Not Found',
+  'admin-reviews': 'All Reviews',
 };
 
 const PATH_TO_VIEW = Object.fromEntries(
@@ -2910,6 +2915,9 @@ function App() {
         )}
         {currentView === 'delete-account' && (
           <DeleteAccountPage onBack={() => setCurrentView('profile-edit')} />
+        )}
+        {currentView === 'admin-reviews' && (
+          <AdminReviewsPage onBack={handleBackFromStandalonePage} />
         )}
         {currentView === 'phone-verify' && (
           <PhoneVerification
