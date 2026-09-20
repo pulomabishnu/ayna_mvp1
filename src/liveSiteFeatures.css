@@ -142,6 +142,41 @@
     color: #FFFCF9 !important; border-color: #625C73 !important;
   }
 
+  /* "hi, Ameera. this is your health universe." bubble map - keep it on the
+     same dark navy/plum/amber theme as the ecosystem summary hero
+     (ayna-landing-hero--returning) instead of the pale card look the
+     :where(...) text-color reset above gives every h1/p/span/strong/small/
+     label/button/a inside .v6-eco-main. That reset lives in this same
+     @layer with !important, so (per the cascade-layers spec) it beats any
+     unlayered !important rule no matter how specific - it has to be
+     out-prioritized from inside this layer, later in source, which is what
+     this block does. */
+  .v6-eco-copy h1,
+  .v6-eco-product-name,
+  .v6-eco-arrow,
+  .v6-universe-center strong,
+  .v6-care-bubble strong,
+  .v6-why-link {
+    color: #FFFCF9 !important;
+  }
+  .v6-eco-copy > p,
+  .v6-eco-product-copy small,
+  .v6-universe-center small,
+  .v6-care-bubble small,
+  .v6-eco-why p,
+  .v6-eco-why small {
+    color: rgba(255, 252, 249, .7) !important;
+  }
+  .v6-eco-product-card {
+    background: rgba(255, 255, 255, .06) !important;
+    color: #FFFCF9 !important;
+    border-color: rgba(255, 255, 255, .14) !important;
+  }
+  .v6-care-bubble.is-active strong,
+  .v6-care-bubble.is-active small {
+    color: #443748 !important;
+  }
+
 }
 
 .ayna-login-actions { display: grid; gap: 10px; text-align: center; }

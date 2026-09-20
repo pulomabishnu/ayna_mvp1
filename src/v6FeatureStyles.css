@@ -613,8 +613,15 @@ html[data-v6-site-theme='dark'] .v6-browse-needs-trigger {
   min-height: calc(100dvh - 104px) !important;
   border-radius: 30px !important;
   padding: 46px clamp(28px, 4vw, 58px) 26px !important;
-  background: var(--v6-ws-dark-gradient) !important;
-  color: var(--v6-ws-cream) !important;
+  /* Same navy -> plum -> amber gradient as the ecosystem summary hero
+     (LiveSiteLanding.jsx's .ayna-landing-hero--returning) - this used to
+     reference --v6-ws-dark-gradient, a variable only ever defined in
+     v6WholeSite.css, which nothing imports, so it was always invalid and
+     let the html[data-v6-site-theme='light'] override below win by
+     default. Inlined here so this page always matches the home page
+     instead of tracking that mostly-unused toggle. */
+  background: linear-gradient(125deg, #242A52 0%, #33305F 34%, #4E3866 62%, #8A5049 100%) !important;
+  color: #FFFCF9 !important;
   border: 1px solid rgba(255,255,255,.085) !important;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.025), 0 20px 50px rgba(37,28,45,.08) !important;
   overflow: hidden;
@@ -675,7 +682,7 @@ html[data-v6-site-theme='dark'] .v6-browse-needs-trigger {
 }
 
 .v6-eco-product-name {
-  font-family: var(--v6-ws-serif) !important;
+  font-family: var(--v6-serif) !important;
   font-size: 17px !important;
   letter-spacing: -.018em !important;
 }
@@ -693,54 +700,18 @@ html[data-v6-site-theme='dark'] .v6-browse-needs-trigger {
 }
 
 .v6-care-bubble strong {
-  font-family: var(--v6-ws-serif) !important;
+  font-family: var(--v6-serif) !important;
   font-weight: 500 !important;
 }
-html[data-v6-site-theme='light'] .v6-ecosystem-panel {
-  background:
-    radial-gradient(circle at 83% 17%, rgba(214,151,112,.20), transparent 29%),
-    radial-gradient(circle at 8% 82%, rgba(157,135,177,.16), transparent 32%),
-    linear-gradient(135deg, #cfd0df 0%, #d5c8d6 53%, #e1c4b6 100%) !important;
-  color: var(--v6-ws-ink) !important;
-  border-color: rgba(78,60,82,.09) !important;
-}
 
-html[data-v6-site-theme='light'] .v6-eco-copy h1,
-html[data-v6-site-theme='light'] .v6-eco-product-name,
-html[data-v6-site-theme='light'] .v6-eco-arrow,
-html[data-v6-site-theme='light'] .v6-care-bubble {
-  color: var(--v6-ws-ink) !important;
-}
-
-html[data-v6-site-theme='light'] .v6-eco-copy h1 em,
-html[data-v6-site-theme='light'] .v6-eco-count,
-html[data-v6-site-theme='light'] .v6-eco-product-copy em {
-  color: #986151 !important;
-}
-
-html[data-v6-site-theme='light'] .v6-eco-copy > p,
-html[data-v6-site-theme='light'] .v6-eco-product-copy small,
-html[data-v6-site-theme='light'] .v6-eco-why p,
-html[data-v6-site-theme='light'] .v6-eco-why small,
-html[data-v6-site-theme='light'] .v6-eco-stats small {
-  color: #6e626a !important;
-}
-
-html[data-v6-site-theme='light'] .v6-eco-product-card,
-html[data-v6-site-theme='light'] .v6-care-bubble {
-  background: rgba(255,255,255,.14) !important;
-  border-color: rgba(78,60,82,.11) !important;
-}
-
-html[data-v6-site-theme='light'] .v6-care-bubble.is-active {
-  background: linear-gradient(145deg, #c7b9c5, #b7a5b3) !important;
-  color: #443748 !important;
-}
-
-html[data-v6-site-theme='light'] .v6-eco-stats span,
-html[data-v6-site-theme='light'] .v6-eco-why {
-  border-color: rgba(78,60,82,.12) !important;
-}
+/* This page always uses the dark navy/plum/amber theme now (matching the
+   ecosystem summary hero) instead of flipping pale lavender/peach whenever
+   the site's light/dark toggle defaulted to 'light' - see v6AccountUX.js
+   storedTheme(), which returns 'light' until someone explicitly picks a
+   theme, so nearly everyone landed on the light variant below without
+   choosing it. The light-theme override block that used to live here has
+   been removed; .v6-ecosystem-panel and its children above already carry
+   the intended dark colors unconditionally. */
 
 .v6-support-category {
   overflow: hidden !important;
@@ -1003,7 +974,7 @@ html[data-v6-site-theme='dark'] .v6-footer-column__title{color:var(--v6-ws-amber
 .v6-add-product-helper{margin-top:8px!important;padding:8px 10px!important;display:flex!important;align-items:center!important;gap:8px!important;min-height:42px!important}
 .v6-add-product-helper[hidden]{display:none!important}.v6-add-product-copy{font-size:11px!important;color:#6d6169!important}.v6-add-product-helper button{margin-left:auto!important;border:0!important;min-height:31px!important;padding:6px 10px!important;font-size:10.5px!important}.v6-add-product-status{font-size:9.5px!important;color:#805c54!important;white-space:nowrap!important}
 .v6-submitted-products{margin:20px 0 26px!important;padding-top:18px!important;border-top:1px solid rgba(78,60,82,.10)!important}.v6-submitted-products__head{display:flex!important;align-items:flex-end!important;justify-content:space-between!important;gap:12px!important;margin-bottom:10px!important}.v6-submitted-products__head span{font:500 23px/1 var(--v6-ws-serif)!important}.v6-submitted-products__head small{font-size:10px!important;color:#776b73!important}.v6-submitted-products__grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:14px!important}.v6-submitted-card{min-width:0!important}.v6-submitted-card__tile{aspect-ratio:1!important;display:grid!important;place-items:center!important}.v6-submitted-card__tile span{font:italic 500 46px var(--v6-ws-serif)!important;color:#6d596f!important}.v6-submitted-card__body{padding:8px 2px 0!important}.v6-submitted-card__body small{font:500 8px var(--v6-ws-mono)!important;text-transform:uppercase!important;letter-spacing:.08em!important;color:#976152!important}.v6-submitted-card__body strong{display:block!important;margin-top:4px!important;font:500 16px var(--v6-ws-serif)!important}.v6-submitted-card__body p{font-size:10px!important;line-height:1.45!important;color:#746971!important}
-.v6-eco-product-copy small{line-height:1.35!important}.v6-eco-product-copy em{font-family:var(--v6-ws-mono)!important;letter-spacing:.02em!important}.v6-eco-arrow:hover:not(:disabled){background:rgba(255,255,255,.07)!important}.v6-care-bubble small{font-family:var(--v6-ws-mono)!important;letter-spacing:.04em!important}.v6-care-bubble.is-active{box-shadow:0 13px 30px rgba(29,20,31,.13),inset 0 1px 0 rgba(255,255,255,.24)!important}.v6-eco-stats strong{font-family:var(--v6-ws-serif)!important}.v6-eco-actions button:hover{background:rgba(255,255,255,.065)!important}
+.v6-eco-product-copy small{line-height:1.35!important}.v6-eco-product-copy em{font-family:var(--v6-mono)!important;letter-spacing:.02em!important}.v6-eco-arrow:hover:not(:disabled){background:rgba(255,255,255,.07)!important}.v6-care-bubble small{font-family:var(--v6-mono)!important;letter-spacing:.04em!important}.v6-care-bubble.is-active{box-shadow:0 13px 30px rgba(29,20,31,.13),inset 0 1px 0 rgba(255,255,255,.24)!important}.v6-eco-stats strong{font-family:var(--v6-serif)!important}.v6-eco-actions button:hover{background:rgba(255,255,255,.065)!important}
 .v6-settings-row strong{font-size:13px!important}.v6-settings-row small{font-size:10.5px!important;line-height:1.35!important}.v6-settings-row b{color:#9a6453!important}.v6-settings-logout{display:inline-flex!important;align-items:center!important;gap:5px!important;border:1px solid rgba(138,79,71,.17)!important;border-radius:999px!important;padding:8px 12px!important;background:rgba(160,92,80,.06)!important}.v6-settings-status{line-height:1.4!important}
 .v6-auth-card form{gap:8px!important}.v6-auth-card label{font-size:10.5px!important;color:#655a63!important}.v6-auth-card [style*='consent'],.v6-auth-card [class*='consent']{border-radius:13px!important}.v6-auth-card p[style*='color']{line-height:1.45!important}.v6-auth-card button[aria-label*='password']{color:#655a63!important}
 html[data-v6-site-theme='dark'] .v6-auth-overlay{background:rgba(22,17,28,.34)!important}.v6-whole-site[data-v6-site-theme='dark'] .v6-auth-card,html[data-v6-site-theme='dark'] .v6-auth-card{background:linear-gradient(145deg,rgba(55,44,67,.98),rgba(75,56,76,.96))!important;color:var(--v6-ws-cream)!important;border-color:rgba(255,248,242,.10)!important}.v6-whole-site[data-v6-site-theme='dark'] .v6-auth-logo,html[data-v6-site-theme='dark'] .v6-auth-logo{color:var(--v6-ws-cream)!important}html[data-v6-site-theme='dark'] .v6-auth-tagline,html[data-v6-site-theme='dark'] .v6-auth-switch-link,html[data-v6-site-theme='dark'] .v6-auth-card label{color:rgba(255,248,242,.65)!important}
@@ -1144,8 +1115,6 @@ html body .app-container .v6-home-shell.v6e-home form.v6e-search > input:not([ty
 .v6-category-card:hover strong,.v6-support-bubble:hover,.v6-browse-needs-trigger:hover {
   text-shadow: .65px 0 rgba(174, 76, 68, .42), -.65px 0 rgba(71, 102, 127, .34) !important;
 }
-html[data-v6-site-theme='light'] .v6-ecosystem-page { color:var(--v6-aa-light-text)!important; }
-
 html[data-v6-site-theme='light'] .v6-typeahead-copy small,
 html[data-v6-site-theme='light'] .v6-support-selected__label,
 html[data-v6-site-theme='light'] .v6-cabinet-copy>p { color:var(--v6-aa-light-muted)!important; }
