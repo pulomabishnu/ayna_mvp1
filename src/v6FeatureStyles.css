@@ -324,10 +324,109 @@ html body .v6-home-search.v6-typeahead-host > input[data-v6-typeahead-bound='1']
 }
 .v6-verify-actions { display:flex; }
 
+/* One-time "how are you liking ayna" satisfaction survey popup. */
+.v6-survey-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10002;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(20,14,26,.46);
+}
+.v6-survey-card {
+  position: relative;
+  width: min(440px, 100%);
+  max-height: calc(100dvh - 40px);
+  overflow: auto;
+  border-radius: 26px;
+  padding: 30px 26px 24px;
+  background:
+    radial-gradient(circle at 82% 14%, rgba(224,158,121,.15), transparent 32%),
+    linear-gradient(145deg, rgba(219,208,217,.98), rgba(202,188,200,.96));
+  border: 1px solid rgba(255,255,255,.36);
+  box-shadow: 0 26px 68px rgba(43,31,43,.20);
+  text-align: center;
+  color: #3d343e;
+}
+.v6-survey-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(78,60,82,.10);
+  color: #6b5f67;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+}
+.v6-survey-card h2 { margin: 4px 0 6px; font: 500 clamp(22px,4vw,26px)/1.15 var(--font-serif, Georgia, serif); letter-spacing: -.03em; color: #3d343e; }
+.v6-survey-sub { margin: 0 0 16px; color: #6b6068; font-size: 12.5px; line-height: 1.5; }
+.v6-survey-stars { display: flex; justify-content: center; gap: 6px; margin-bottom: 16px; }
+.v6-survey-star {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-size: 32px;
+  line-height: 1;
+  color: rgba(78,60,82,.22);
+  padding: 0;
+  transition: color .12s, transform .12s;
+}
+.v6-survey-star.is-filled { color: #e0ad78; }
+.v6-survey-star:hover, .v6-survey-star:focus-visible { transform: scale(1.12); }
+.v6-survey-textarea {
+  display: block;
+  width: 100%;
+  min-height: 74px;
+  box-sizing: border-box;
+  border-radius: 13px;
+  border: 1px solid rgba(78,60,82,.13);
+  background: rgba(190,174,187,.74);
+  color: #3d343e;
+  padding: 10px 13px;
+  outline: 0;
+  font-size: 12.5px;
+  font-family: inherit;
+  resize: vertical;
+  margin-bottom: 8px;
+}
+.v6-survey-textarea::placeholder { color: #796d74; }
+.v6-survey-select { margin-bottom: 8px; }
+.v6-survey-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.v6-survey-submit {
+  width: 100%;
+  border: 0;
+  border-radius: 999px;
+  background: #554561;
+  color: #fff;
+  min-height: 44px;
+  padding: 10px 18px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.v6-survey-submit:disabled { opacity: .38; cursor: not-allowed; }
+.v6-survey-skip {
+  border: 0;
+  background: transparent;
+  color: #695b66;
+  font-size: 11px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.v6-survey-status { min-height: 16px; margin-top: 8px; font-size: 11px; }
+
 @media (max-width: 720px) {
   .v6-account-step { padding: 60px 10px 18px; }
   .v6-account-step__card { padding: 24px 17px 20px; border-radius: 24px; }
   .v6-account-step h1 { font-size: 34px; }
+  .v6-survey-card { padding: 26px 18px 20px; border-radius: 22px; }
+  .v6-survey-star { font-size: 28px; }
   .v6-name-step h1 { font-size: 34px; }
 }
 
