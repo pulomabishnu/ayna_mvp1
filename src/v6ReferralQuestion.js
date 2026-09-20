@@ -20,6 +20,7 @@ const OPTIONS = [
 let active = false;
 let bypassNextFinish = false;
 let syncing = false;
+let nativeFinishButton = null;
 
 function clean(value) {
   return String(value || '').replace(/\s+/g, ' ').trim();
@@ -96,7 +97,8 @@ function restoreNativeStep(question) {
 }
 
 function finishNative(question) {
-  const nativeButton = question?.querySelector(':scope > .ayna-continue-wrap .ayna-continue');
+  const nativeButton = nativeFinishButton || question?.querySelector(':scope > .ayna-continue-wrap .ayna-continue');
+  nativeFinishButton = null;
   restoreNativeStep(question);
   if (!nativeButton) return;
   bypassNextFinish = true;
@@ -218,7 +220,7 @@ function installFinishIntercept() {
       return;
     }
 
-    if (!target.classList.contains('ayna-continue')) return;
+    if (!target.matches('.ayna-continue, .ayna-skip')) return;
     if (target.closest('.v6-referral-step')) return;
     if (bypassNextFinish) return;
 
@@ -228,6 +230,7 @@ function installFinishIntercept() {
 
     event.preventDefault();
     event.stopImmediatePropagation();
+    nativeFinishButton = target;
     buildReferralStep(question);
   }, true);
 }
