@@ -1,0 +1,126 @@
+/* Final WCAG contrast corrections discovered in the September source audit. */
+html[data-v6-site-theme='light']{
+  --color-text-main:#373238;
+  --color-text-muted:#50484e;
+  --color-border:#635a60;
+  --color-border-strong:#554d53;
+  --v6-ws-ink:#373238;
+  --v6-ws-muted:#50484e;
+  --v6-film-ink:#373238;
+  --v6-film-muted:#50484e;
+}
+html[data-v6-site-theme='dark']{
+  --color-text-main:#e8e0d7;
+  --color-text-muted:#c7bbc3;
+  --color-border:#9d9297;
+  --color-border-strong:#b9afb0;
+  --v6-ws-cream:#e8e0d7;
+  --v6-film-muted:#c7bbc3;
+}
+
+/* Keep the dark matte base dark enough that muted copy stays AA even at the terracotta edge. */
+html[data-v6-site-theme='dark'] body{
+  background:
+    radial-gradient(circle at 87% 11%,rgba(190,103,61,.25),transparent 36%),
+    radial-gradient(circle at 8% 87%,rgba(108,88,123,.12),transparent 35%),
+    linear-gradient(135deg,#2f3042 0%,#4a414f 56%,#5f4844 100%) fixed!important;
+}
+
+/* Small labels that were terracotta-on-lilac fell below 4.5:1. */
+html[data-v6-site-theme='light'] .ayna-intake-section-label,
+html[data-v6-site-theme='light'] .ayna-intake-hint,
+html[data-v6-site-theme='light'] .v6-typeahead-label,
+html[data-v6-site-theme='light'] .v6-typeahead-row>em,
+html[data-v6-site-theme='light'] .v6-add-product-status,
+html[data-v6-site-theme='light'] .v6-submitted-products__head>span{
+  color:#50484e!important;
+}
+html[data-v6-site-theme='dark'] .ayna-intake-section-label,
+html[data-v6-site-theme='dark'] .ayna-intake-hint,
+html[data-v6-site-theme='dark'] .v6-typeahead-label,
+html[data-v6-site-theme='dark'] .v6-typeahead-row>em,
+html[data-v6-site-theme='dark'] .v6-add-product-status,
+html[data-v6-site-theme='dark'] .v6-submitted-products__head>span{
+  color:#d2c8c4!important;
+}
+
+html[data-v6-site-theme='light'] .ayna-intake-root .ayna-skip,
+html[data-v6-site-theme='light'] .ayna-intake-root .ayna-timeline button,
+html[data-v6-site-theme='light'] .ayna-intake-root .ayna-scale button,
+html[data-v6-site-theme='light'] .ayna-intake-root .ayna-spectrum-grid button,
+html[data-v6-site-theme='light'] .ayna-intake-root .ayna-product-label,
+html[data-v6-site-theme='light'] .ayna-intake-root .ayna-product-row-copy span,
+html[data-v6-site-theme='light'] .ayna-intake-root .ayna-mini-note{
+  color:#50484e!important;
+}
+
+/* Dark intake had several controls retaining the light-mode text and fill. */
+.ayna-intake-root.v6-quiz-dark .ayna-skip,
+.ayna-intake-root.v6-quiz-dark .ayna-timeline button,
+.ayna-intake-root.v6-quiz-dark .ayna-scale button,
+.ayna-intake-root.v6-quiz-dark .ayna-spectrum-grid button,
+.ayna-intake-root.v6-quiz-dark .ayna-product-label,
+.ayna-intake-root.v6-quiz-dark .ayna-product-row-copy strong,
+.ayna-intake-root.v6-quiz-dark .ayna-product-row-copy span,
+.ayna-intake-root.v6-quiz-dark .ayna-mini-note,
+.ayna-intake-root.v6-quiz-dark .ayna-count{
+  color:#c7bbc3!important;
+}
+.ayna-intake-root.v6-quiz-dark .ayna-age-card,
+.ayna-intake-root.v6-quiz-dark .ayna-scale,
+.ayna-intake-root.v6-quiz-dark .ayna-spectrum,
+.ayna-intake-root.v6-quiz-dark .ayna-product-row,
+.ayna-intake-root.v6-quiz-dark .ayna-smart-search-line,
+.ayna-intake-root.v6-quiz-dark .ayna-mini-note{
+  background:#3e3947!important;
+  border-color:#9d9297!important;
+  color:#e8e0d7!important;
+  box-shadow:none!important;
+}
+.ayna-intake-root.v6-quiz-dark .ayna-age-btn,
+.ayna-intake-root.v6-quiz-dark .ayna-spectrum-grid button,
+.ayna-intake-root.v6-quiz-dark .ayna-scale button,
+.ayna-intake-root.v6-quiz-dark .ayna-timeline button{
+  color:#e8e0d7!important;
+}
+.ayna-intake-root.v6-quiz-dark .ayna-spectrum-grid button.selected,
+.ayna-intake-root.v6-quiz-dark .ayna-scale button.selected,
+.ayna-intake-root.v6-quiz-dark .ayna-timeline button.selected{
+  color:#e8e0d7!important;
+}
+
+/* Visible UI outlines need 3:1 against their adjacent surfaces. */
+html[data-v6-site-theme='light'] .ayna-intake-root .ayna-age-btn,
+html[data-v6-site-theme='light'] .ayna-intake-root .ayna-pill,
+html[data-v6-site-theme='light'] .ayna-intake-root .ayna-seg-option,
+html[data-v6-site-theme='light'] .ayna-intake-root .ayna-choice-card,
+html[data-v6-site-theme='light'] .ayna-intake-root .ayna-product-row,
+html[data-v6-site-theme='light'] .ayna-intake-root .v6-support-category{
+  border-color:#635a60!important;
+}
+html[data-v6-site-theme='dark'] .ayna-intake-root .ayna-age-btn,
+html[data-v6-site-theme='dark'] .ayna-intake-root .ayna-pill,
+html[data-v6-site-theme='dark'] .ayna-intake-root .ayna-seg-option,
+html[data-v6-site-theme='dark'] .ayna-intake-root .ayna-choice-card,
+html[data-v6-site-theme='dark'] .ayna-intake-root .ayna-product-row,
+html[data-v6-site-theme='dark'] .ayna-intake-root .v6-support-category{
+  border-color:#9d9297!important;
+}
+
+/* Account/auth copy follows the same tokens rather than old inline-muted values where CSS can override. */
+html[data-v6-site-theme='light'] .v6-auth-card,
+html[data-v6-site-theme='light'] .v6-auth-card label,
+html[data-v6-site-theme='light'] .v6-auth-card span,
+html[data-v6-site-theme='light'] .v6-auth-card p{color:#373238!important}
+html[data-v6-site-theme='light'] .v6-auth-tagline,
+html[data-v6-site-theme='light'] .v6-auth-switch-link{color:#50484e!important}
+html[data-v6-site-theme='dark'] .v6-auth-card{
+  background:linear-gradient(145deg,#3e3947,#47404a)!important;
+  border-color:#9d9297!important;
+  color:#e8e0d7!important;
+}
+html[data-v6-site-theme='dark'] .v6-auth-card label,
+html[data-v6-site-theme='dark'] .v6-auth-card span,
+html[data-v6-site-theme='dark'] .v6-auth-card p,
+html[data-v6-site-theme='dark'] .v6-auth-tagline,
+html[data-v6-site-theme='dark'] .v6-auth-switch-link{color:#e8e0d7!important}

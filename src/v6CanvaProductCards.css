@@ -1,0 +1,388 @@
+/* Premium commerce treatment for the existing Browse cards.
+ * Structure/data stay in Discovery.jsx. This file only changes presentation.
+ */
+
+.ayna-browse.v6-browse-live .ayna-browse__grid{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:46px 22px!important;
+  align-items:start!important;
+}
+
+.ayna-browse.v6-browse-live .ayna-browse-card{
+  position:relative!important;
+  min-width:0!important;
+  overflow:visible!important;
+  background:transparent!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+}
+
+.ayna-browse.v6-browse-live .ayna-browse-card__link{
+  display:block!important;
+  color:inherit!important;
+  text-decoration:none!important;
+  outline:none!important;
+}
+
+/* Calm editorial image field. Product remains the focal point. */
+.ayna-browse.v6-browse-live .ayna-discover-card__tile{
+  position:relative!important;
+  display:grid!important;
+  place-items:center!important;
+  width:100%!important;
+  height:auto!important;
+  aspect-ratio:1 / 1.12!important;
+  overflow:hidden!important;
+  border:1px solid rgba(41,37,36,.10)!important;
+  border-radius:10px!important;
+  background:
+    radial-gradient(circle at 80% 12%,rgba(255,199,116,.16),transparent 30%),
+    linear-gradient(145deg,#F2ECE4 0%,#EAE2D9 100%)!important;
+  box-shadow:none!important;
+  transition:transform 220ms cubic-bezier(.2,.72,.2,1),border-color 220ms ease,background 220ms ease!important;
+}
+
+.ayna-browse.v6-browse-live .ayna-discover-card__tile::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  border-radius:inherit;
+  box-shadow:inset 0 0 0 1px rgba(255,252,249,.24);
+}
+
+.ayna-browse.v6-browse-live .ayna-discover-card__tile>img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
+  box-sizing:border-box!important;
+  padding:clamp(22px,8%,40px)!important;
+  transform:scale(.96)!important;
+  filter:saturate(.94) contrast(.98)!important;
+  transition:transform 260ms cubic-bezier(.2,.72,.2,1),filter 220ms ease!important;
+}
+
+.ayna-browse.v6-browse-live .ayna-browse-card:hover .ayna-discover-card__tile,
+.ayna-browse.v6-browse-live .ayna-browse-card:focus-within .ayna-discover-card__tile{
+  transform:translateY(-2px)!important;
+  border-color:rgba(78,56,102,.24)!important;
+  background:
+    radial-gradient(circle at 78% 10%,rgba(255,199,116,.22),transparent 31%),
+    linear-gradient(145deg,#F5EFE8 0%,#EDE5DC 100%)!important;
+}
+
+.ayna-browse.v6-browse-live .ayna-browse-card:hover .ayna-discover-card__tile>img,
+.ayna-browse.v6-browse-live .ayna-browse-card:focus-within .ayna-discover-card__tile>img{
+  transform:scale(1.015)!important;
+  filter:saturate(1) contrast(1)!important;
+}
+
+/* Product copy sits outside the image, like premium beauty/fashion commerce. */
+.ayna-browse.v6-browse-live .ayna-discover-card__body{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-start!important;
+  min-height:96px!important;
+  padding:14px 2px 0!important;
+  background:transparent!important;
+  border:0!important;
+}
+
+.ayna-browse.v6-browse-live .ayna-browse-card__labels{
+  display:flex!important;
+  align-items:center!important;
+  flex-wrap:wrap!important;
+  gap:5px 8px!important;
+  min-height:15px!important;
+  margin:0 0 8px!important;
+}
+
+.ayna-browse.v6-browse-live .ayna-discover-card__category{
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:#4E3866!important;
+  font-family:'DM Sans',system-ui,sans-serif!important;
+  font-size:9px!important;
+  font-weight:700!important;
+  line-height:1.2!important;
+  letter-spacing:.14em!important;
+  text-transform:uppercase!important;
+}
+
+.ayna-browse.v6-browse-live .ayna-browse-card__sponsored,
+.ayna-browse.v6-browse-live .ayna-browse-card__eligibility{
+  display:inline-flex!important;
+  align-items:center!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:#8A817B!important;
+  font-family:'DM Sans',system-ui,sans-serif!important;
+  font-size:9px!important;
+  font-weight:500!important;
+  line-height:1.2!important;
+  letter-spacing:.06em!important;
+  text-transform:uppercase!important;
+}
+
+.ayna-browse.v6-browse-live .ayna-browse-card__sponsored::before,
+.ayna-browse.v6-browse-live .ayna-browse-card__eligibility::before{
+  content:'·';
+  margin-right:8px;
+  color:rgba(41,37,36,.32);
+}
+
+.ayna-browse.v6-browse-live .ayna-discover-card__name{
+  display:-webkit-box!important;
+  -webkit-box-orient:vertical!important;
+  -webkit-line-clamp:2!important;
+  overflow:hidden!important;
+  min-height:2.55em!important;
+  margin:0!important;
+  color:#292524!important;
+  font-family:'DM Sans',system-ui,sans-serif!important;
+  font-size:15.5px!important;
+  font-weight:560!important;
+  line-height:1.28!important;
+  letter-spacing:-.016em!important;
+  text-wrap:balance!important;
+}
+
+.ayna-browse.v6-browse-live .ayna-discover-card__price{
+  display:block!important;
+  margin-top:8px!important;
+  color:#78716C!important;
+  font-family:'DM Sans',system-ui,sans-serif!important;
+  font-size:12.5px!important;
+  font-weight:450!important;
+  line-height:1.3!important;
+}
+
+/* Heart floats quietly over the product canvas. */
+.ayna-browse.v6-browse-live .ayna-browse-card__wishlist{
+  position:absolute!important;
+  top:12px!important;
+  right:12px!important;
+  z-index:8!important;
+  display:grid!important;
+  place-items:center!important;
+  width:38px!important;
+  height:38px!important;
+  padding:0!important;
+  border:1px solid rgba(41,37,36,.10)!important;
+  border-radius:50%!important;
+  background:rgba(255,252,249,.88)!important;
+  color:#292524!important;
+  box-shadow:none!important;
+  backdrop-filter:blur(8px)!important;
+  transition:transform 180ms ease,background 180ms ease,color 180ms ease,border-color 180ms ease!important;
+}
+
+.ayna-browse.v6-browse-live .ayna-browse-card__wishlist svg{
+  width:16px!important;
+  height:16px!important;
+  fill:none!important;
+  stroke:currentColor!important;
+  stroke-width:1.45!important;
+}
+
+.ayna-browse.v6-browse-live .ayna-browse-card__wishlist:hover,
+.ayna-browse.v6-browse-live .ayna-browse-card__wishlist:focus-visible{
+  transform:scale(1.05)!important;
+  background:#FFFCF9!important;
+  border-color:rgba(78,56,102,.22)!important;
+  color:#4E3866!important;
+}
+
+.ayna-browse.v6-browse-live .ayna-browse-card__wishlist.is-saved{
+  background:#242A52!important;
+  border-color:#242A52!important;
+  color:#FFFCF9!important;
+}
+
+.ayna-browse.v6-browse-live .ayna-browse-card__wishlist.is-saved svg{
+  fill:currentColor!important;
+}
+
+/* Relationship labels stay factual but visually secondary. */
+.ayna-browse.v6-browse-live .ayna-browse-card__affiliate{
+  position:absolute!important;
+  top:12px!important;
+  left:12px!important;
+  z-index:7!important;
+  max-width:calc(100% - 66px)!important;
+  padding:6px 9px!important;
+  border:1px solid rgba(41,37,36,.10)!important;
+  border-radius:7px!important;
+  background:rgba(255,252,249,.88)!important;
+  color:#4E3866!important;
+  box-shadow:none!important;
+  backdrop-filter:blur(8px)!important;
+  font-family:'DM Sans',system-ui,sans-serif!important;
+  font-size:9px!important;
+  font-weight:700!important;
+  line-height:1!important;
+  letter-spacing:.08em!important;
+  text-transform:uppercase!important;
+}
+
+.ayna-browse.v6-browse-live .ayna-browse-card__ecosystem{
+  position:absolute!important;
+  top:auto!important;
+  right:12px!important;
+  bottom:12px!important;
+  left:auto!important;
+  z-index:7!important;
+  padding:6px 9px!important;
+  border:1px solid rgba(41,37,36,.10)!important;
+  border-radius:7px!important;
+  background:rgba(255,252,249,.88)!important;
+  color:#292524!important;
+  box-shadow:none!important;
+  backdrop-filter:blur(8px)!important;
+  font-family:'DM Sans',system-ui,sans-serif!important;
+  font-size:9px!important;
+  font-weight:650!important;
+  line-height:1!important;
+  letter-spacing:.04em!important;
+  text-transform:uppercase!important;
+}
+
+/* The real Match score becomes the playful hover/touch moment. */
+html.v6-signed-in .ayna-browse.v6-browse-live .ayna-browse-card .ayna-browse-card__match{
+  top:auto!important;
+  right:auto!important;
+  bottom:12px!important;
+  left:12px!important;
+  z-index:9!important;
+  width:64px!important;
+  height:64px!important;
+  display:grid!important;
+  place-items:center!important;
+  border:1px solid rgba(255,252,249,.18)!important;
+  border-radius:57% 43% 54% 46% / 46% 55% 45% 54%!important;
+  background:
+    radial-gradient(circle at 72% 22%,rgba(78,56,102,.92),transparent 45%),
+    #242A52!important;
+  color:#FFFCF9!important;
+  box-shadow:0 13px 32px rgba(36,42,82,.20)!important;
+  opacity:0!important;
+  visibility:hidden!important;
+  transform:translateY(7px) scale(.88)!important;
+  transition:opacity 170ms ease,transform 190ms cubic-bezier(.2,.72,.2,1),visibility 0s linear 190ms!important;
+  pointer-events:none!important;
+}
+
+html.v6-signed-in .ayna-browse.v6-browse-live .ayna-browse-card .ayna-browse-card__match .ayna-match-gauge{
+  transform:scale(1.92)!important;
+  transform-origin:center!important;
+  --gauge-hole:#242A52!important;
+  --gauge-track:rgba(255,252,249,.18)!important;
+  --gauge-text:#FFFCF9!important;
+  --gauge-ring:#FFC774!important;
+}
+
+html.v6-signed-in .ayna-browse.v6-browse-live .ayna-browse-card:hover .ayna-browse-card__match,
+html.v6-signed-in .ayna-browse.v6-browse-live .ayna-browse-card:focus-within .ayna-browse-card__match,
+html.v6-signed-in .ayna-browse.v6-browse-live .ayna-browse-card.v6-match-revealed .ayna-browse-card__match{
+  opacity:1!important;
+  visibility:visible!important;
+  transform:translateY(0) scale(1)!important;
+  transition-delay:0s!important;
+}
+
+html.v6-signed-out .ayna-browse.v6-browse-live .ayna-browse-card__match{
+  display:none!important;
+}
+
+@media(max-width:1100px){
+  .ayna-browse.v6-browse-live .ayna-browse__grid{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:38px 18px!important;
+  }
+}
+
+@media(max-width:760px){
+  .ayna-browse.v6-browse-live .ayna-browse__grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:30px 10px!important;
+  }
+  .ayna-browse.v6-browse-live .ayna-discover-card__tile{
+    aspect-ratio:1 / 1.15!important;
+    border-radius:8px!important;
+  }
+  .ayna-browse.v6-browse-live .ayna-discover-card__tile>img{
+    padding:18px!important;
+  }
+  .ayna-browse.v6-browse-live .ayna-discover-card__body{
+    min-height:88px!important;
+    padding-top:10px!important;
+  }
+  .ayna-browse.v6-browse-live .ayna-browse-card__labels{
+    gap:4px 6px!important;
+    margin-bottom:6px!important;
+  }
+  .ayna-browse.v6-browse-live .ayna-discover-card__category,
+  .ayna-browse.v6-browse-live .ayna-browse-card__sponsored,
+  .ayna-browse.v6-browse-live .ayna-browse-card__eligibility{
+    font-size:7.5px!important;
+  }
+  .ayna-browse.v6-browse-live .ayna-browse-card__sponsored::before,
+  .ayna-browse.v6-browse-live .ayna-browse-card__eligibility::before{
+    margin-right:6px!important;
+  }
+  .ayna-browse.v6-browse-live .ayna-discover-card__name{
+    font-size:13.5px!important;
+    line-height:1.25!important;
+  }
+  .ayna-browse.v6-browse-live .ayna-discover-card__price{
+    margin-top:6px!important;
+    font-size:11.5px!important;
+  }
+  .ayna-browse.v6-browse-live .ayna-browse-card__wishlist{
+    top:9px!important;
+    right:9px!important;
+    width:34px!important;
+    height:34px!important;
+  }
+  .ayna-browse.v6-browse-live .ayna-browse-card__affiliate{
+    top:9px!important;
+    left:9px!important;
+    max-width:calc(100% - 56px)!important;
+    padding:5px 7px!important;
+    font-size:7.5px!important;
+  }
+  .ayna-browse.v6-browse-live .ayna-browse-card__ecosystem{
+    right:9px!important;
+    bottom:9px!important;
+    padding:5px 7px!important;
+    font-size:7.5px!important;
+  }
+  html.v6-signed-in .ayna-browse.v6-browse-live .ayna-browse-card .ayna-browse-card__match{
+    bottom:9px!important;
+    left:9px!important;
+    width:56px!important;
+    height:56px!important;
+  }
+  html.v6-signed-in .ayna-browse.v6-browse-live .ayna-browse-card .ayna-browse-card__match .ayna-match-gauge{
+    transform:scale(1.68)!important;
+  }
+}
+
+@media(max-width:340px){
+  .ayna-browse.v6-browse-live .ayna-browse__grid{grid-template-columns:1fr!important}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .ayna-browse.v6-browse-live .ayna-discover-card__tile,
+  .ayna-browse.v6-browse-live .ayna-discover-card__tile>img,
+  .ayna-browse.v6-browse-live .ayna-browse-card__wishlist,
+  html.v6-signed-in .ayna-browse.v6-browse-live .ayna-browse-card .ayna-browse-card__match{
+    transition:none!important;
+  }
+}

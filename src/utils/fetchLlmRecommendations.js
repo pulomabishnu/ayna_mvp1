@@ -1,5 +1,6 @@
 import posthog from 'posthog-js';
 import { getSupabaseClient } from './supabaseClient';
+import { getCompactAccessToken } from './authMetadataCleanup';
 import {
   loadLearningMemorySession,
   saveLearningMemorySession,
@@ -187,6 +188,26 @@ export async function fetchLlmRecommendations(options = {}, fetchOpts = {}) {
     omittedCount: body.feedback?.omittedProductIds?.length || 0,
   };
 
+  // Older builds stored whole ecosystem/wishlist snapshots in Supabase Auth
+  // user_metadata. Because Supabase embeds that metadata in the JWT, affected
+  // users can carry a 30KB+ Authorization header that Vercel rejects before
+  // this endpoint ever runs. Compact the legacy metadata and use the freshly
+  // issued token before every recommendation request. The helper deduplicates
+  // concurrent cleanup, so the seven batch calls share one refresh.
+  let requestAuthToken = authToken || '';
+  if (requestAuthToken) {
+    try {
+      const supabase = getSupabaseClient();
+      requestAuthToken = await getCompactAccessToken(supabase, requestAuthToken);
+    } catch (error) {
+      captureRecommendationAnalytics('ai_recommendations_failed', {
+        ...analyticsBase,
+        code: error?.code || 'auth_token_cleanup_failed',
+      });
+      throw error;
+    }
+  }
+
   const controller = new AbortController();
   const tid = setTimeout(() => controller.abort(), timeoutMs);
   const onExternalAbort = () => controller.abort();
@@ -201,7 +222,7 @@ export async function fetchLlmRecommendations(options = {}, fetchOpts = {}) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+        ...(requestAuthToken ? { Authorization: `Bearer ${requestAuthToken}` } : {}),
       },
       body: JSON.stringify(body),
       signal: controller.signal,
@@ -226,12 +247,21 @@ export async function fetchLlmRecommendations(options = {}, fetchOpts = {}) {
     if (externalSignal) externalSignal.removeEventListener('abort', onExternalAbort);
   }
 
+  const raw = await res.text();
   let data;
   try {
-    data = await res.json();
+    data = raw ? JSON.parse(raw) : {};
   } catch {
-    captureRecommendationAnalytics('ai_recommendations_failed', { ...analyticsBase, code: 'invalid_response', status: res.status });
-    throw new Error('Invalid recommendation response');
+    const code = res.status === 494 ? 'request_header_too_large' : 'invalid_response';
+    captureRecommendationAnalytics('ai_recommendations_failed', { ...analyticsBase, code, status: res.status });
+    const err = new Error(
+      res.status === 494
+        ? 'Recommendation request was rejected because the authentication header is too large. Please sign out and back in.'
+        : 'Invalid recommendation response'
+    );
+    err.status = res.status;
+    err.code = code;
+    throw err;
   }
 
   if (!res.ok) {

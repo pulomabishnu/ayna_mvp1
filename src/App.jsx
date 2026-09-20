@@ -1640,6 +1640,7 @@ function App() {
 
         {(currentView === 'welcome' || currentView === 'hero') && (
           <AynaLanding
+            onLogIn={() => { setPendingAction('login'); pendingActionRef.current = 'login'; setShowAuthModal(true); }}
             onStartQuiz={handleStartQuiz}
             onViewDiscovery={handleViewDiscovery}
             onOpenProduct={handleOpenProduct}
@@ -3407,6 +3408,7 @@ function App() {
         {showAuthModal && (
           <AuthGate
             isModal
+            onStartEcosystem={() => { setShowAuthModal(false); setPendingAction(null); pendingActionRef.current = null; handleStartQuiz(); }}
             context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : pendingAction === 'personalize' ? 'personalize' : pendingAction === 'login' ? 'login' : undefined}
             onBeforeOAuthRedirect={() => {
               try {

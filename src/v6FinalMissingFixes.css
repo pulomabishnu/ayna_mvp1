@@ -1,0 +1,279 @@
+/* Final visible-gap fixes discovered from the real local-build screenshots. */
+
+/* Home search should look like one designed control, never a browser input nested inside it. */
+.v6-home-search input,
+.v6-home-search input[type='search'],
+html[data-v6-site-theme='light'] .v6-home-search input,
+html[data-v6-site-theme='dark'] .v6-home-search input {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  background: none !important;
+  background-color: transparent !important;
+  min-width: 0 !important;
+}
+.v6-home-search input:focus,
+.v6-home-search input:focus-visible {
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+html[data-v6-site-theme='dark'] .v6-home-search {
+  background: rgba(62,57,71,.82) !important;
+  border-color: #9d9297 !important;
+  color: #e8e0d7 !important;
+}
+html[data-v6-site-theme='dark'] .v6-home-search input {
+  color: #e8e0d7 !important;
+  -webkit-text-fill-color: #e8e0d7 !important;
+}
+html[data-v6-site-theme='dark'] .v6-home-search input::placeholder {
+  color: #c7bbc3 !important;
+  opacity: 1 !important;
+}
+html[data-v6-site-theme='dark'] .v6-quick-links button {
+  color: #c7bbc3 !important;
+  opacity: 1 !important;
+}
+html[data-v6-site-theme='dark'] .v6-quick-links button:hover,
+html[data-v6-site-theme='dark'] .v6-quick-links button:focus-visible {
+  color: #e8e0d7 !important;
+}
+
+/* Missing-product action should use the same stacked row language as intake/ecosystem. */
+.v6-add-product-helper {
+  width: min(100%, 760px) !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 6px !important;
+  margin: 7px 0 0 !important;
+  color: #50484e !important;
+}
+.v6-add-product-helper[hidden] { display: none !important; }
+.v6-add-product-helper > .v6-add-product-copy { display: none !important; }
+.v6-add-product-helper button {
+  width: 100% !important;
+  min-height: 48px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 30px !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 8px 9px 8px 13px !important;
+  border: 1px solid #635a60 !important;
+  border-radius: 11px !important;
+  background: rgba(205, 195, 201, .58) !important;
+  color: #373238 !important;
+  text-align: left !important;
+  box-shadow: none !important;
+}
+.v6-add-product-helper button span {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  font: 600 11px/1.25 var(--v6-film-ui, 'DM Mono', ui-monospace, monospace) !important;
+  white-space: normal !important;
+}
+.v6-add-product-helper button b {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  width: 29px !important;
+  height: 29px !important;
+  border: 1px solid #635a60 !important;
+  border-radius: 50% !important;
+  display: grid !important;
+  place-items: center !important;
+  background: rgba(229, 220, 224, .56) !important;
+  color: #554561 !important;
+  font: 400 17px/1 var(--v6-film-ui, monospace) !important;
+}
+.v6-add-product-helper button:hover {
+  transform: translateY(-1px) !important;
+  background: rgba(196, 184, 192, .68) !important;
+}
+.v6-add-product-helper .v6-add-product-status {
+  min-height: 0 !important;
+  padding-left: 12px !important;
+  color: #50484e !important;
+  font-size: 10px !important;
+}
+html[data-v6-site-theme='dark'] .v6-add-product-helper { color: #c7bbc3 !important; }
+html[data-v6-site-theme='dark'] .v6-add-product-helper button {
+  border-color: #aaa0a4 !important;
+  background: rgba(62, 57, 71, .88) !important;
+  color: #e8e0d7 !important;
+}
+html[data-v6-site-theme='dark'] .v6-add-product-helper button b {
+  border-color: #aaa0a4 !important;
+  background: #47404a !important;
+  color: #e8e0d7 !important;
+}
+html[data-v6-site-theme='dark'] .v6-add-product-helper .v6-add-product-status { color: #c7bbc3 !important; }
+
+/* Support suggestions should read as small translucent bubbles, not a checklist reborn as full-width rows. */
+.v6-support-bubbles,
+.v6-support-suggestions {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 7px !important;
+}
+.v6-support-bubble,
+.v6-master-suggestion-bubble {
+  width: auto !important;
+  min-width: 0 !important;
+  flex: 0 0 auto !important;
+  min-height: 35px !important;
+  padding: 7px 12px !important;
+  border-radius: 999px !important;
+  background: rgba(226,217,222,.34) !important;
+  backdrop-filter: blur(5px) !important;
+  -webkit-backdrop-filter: blur(5px) !important;
+  white-space: normal !important;
+}
+html[data-v6-site-theme='dark'] .v6-support-bubble,
+html[data-v6-site-theme='dark'] .v6-master-suggestion-bubble {
+  background: rgba(86,78,91,.5) !important;
+  color: #e8e0d7 !important;
+}
+
+/* A locked Ask Ayna launcher must exist even before an anonymous user has quizResults. */
+.v6-ask-locked-fallback {
+  position: fixed !important;
+  right: max(18px, env(safe-area-inset-right)) !important;
+  bottom: max(22px, env(safe-area-inset-bottom)) !important;
+  z-index: 145 !important;
+  width: 92px !important;
+  min-height: 68px !important;
+  border: 1px solid rgba(240, 233, 227, .62) !important;
+  border-radius: 63% 37% 54% 46% / 43% 39% 61% 57% !important;
+  background:
+    radial-gradient(circle at 76% 18%, rgba(232, 177, 119, .48), transparent 31%),
+    linear-gradient(135deg, #343858 0%, #5f4b69 48%, #9a6655 100%) !important;
+  color: #f1eae3 !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 10px !important;
+  box-shadow: none !important;
+  cursor: pointer !important;
+  filter: saturate(.86) contrast(.97) !important;
+}
+.v6-ask-locked-fallback__inner {
+  display: grid;
+  place-items: center;
+  gap: 3px;
+  text-align: center;
+}
+.v6-ask-locked-fallback__star { font-size: 16px; line-height: 1; }
+.v6-ask-locked-fallback__label {
+  font: 600 10px/1 var(--v6-film-ui, 'DM Mono', ui-monospace, monospace);
+  letter-spacing: .02em;
+}
+.v6-ask-locked-fallback__lock {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 23px;
+  height: 23px;
+  border: 1px solid #aaa0a4;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #3e3947;
+  color: #f1eae3;
+  font-size: 11px;
+}
+.v6-ask-locked-fallback:hover,
+.v6-ask-locked-fallback:focus-visible {
+  transform: translateY(-2px) rotate(-1deg) !important;
+  outline: 2px solid rgba(95, 75, 105, .42) !important;
+  outline-offset: 3px !important;
+}
+
+/* Keep the real Ask Ayna button organic too. */
+.ayna-ask-launcher {
+  border-radius: 63% 37% 54% 46% / 43% 39% 61% 57% !important;
+  background:
+    radial-gradient(circle at 76% 18%, rgba(232, 177, 119, .42), transparent 30%),
+    linear-gradient(135deg, #343858 0%, #5f4b69 48%, #9a6655 100%) !important;
+  box-shadow: none !important;
+}
+
+/* Make grain visible as texture, not as a camera overlay. */
+body::after { opacity: .072 !important; }
+html[data-v6-site-theme='dark'] body::after { opacity: .084 !important; }
+
+/* Keep the Explore copy clear of the floating Ask Ayna blob on wide screens. */
+@media (min-width: 900px) {
+  .v6-explore-meta { padding-right: 112px !important; }
+}
+
+/* Explicit dark unlock treatment. The previous white glass card was illegible over the dark universe. */
+html[data-v6-site-theme='dark'] .v6-unlock-card.v6-unlock-card--slim {
+  background: rgba(62,57,71,.96) !important;
+  border-color: #9d9297 !important;
+  color: #e8e0d7 !important;
+}
+html[data-v6-site-theme='dark'] .v6-unlock-card--slim .v6-unlock-icon {
+  background: #47404a !important;
+  border-color: #9d9297 !important;
+  color: #e8e0d7 !important;
+}
+html[data-v6-site-theme='dark'] .v6-unlock-card--slim .v6-unlock-actions button {
+  color: #e8e0d7 !important;
+  border-color: #9d9297 !important;
+}
+html[data-v6-site-theme='dark'] .v6-unlock-card--slim .v6-unlock-actions .primary {
+  background: #8c755f !important;
+  color: #1f1d25 !important;
+  border-color: #b8a188 !important;
+}
+
+/* Mobile lock bar must not become another large card. */
+@media (max-width: 520px) {
+  .v6-unlock-card.v6-unlock-card--slim {
+    width: calc(100vw - 28px) !important;
+    grid-template-columns: 28px minmax(0, 1fr) auto !important;
+    gap: 7px !important;
+    padding: 8px 9px !important;
+    border-radius: 14px !important;
+  }
+  .v6-unlock-card--slim .v6-unlock-icon { width: 28px !important; height: 28px !important; }
+  .v6-unlock-card--slim .v6-unlock-copy strong { font-size: 11.5px !important; }
+  .v6-unlock-card--slim .v6-unlock-copy span { display: none !important; }
+  .v6-unlock-card--slim .v6-unlock-actions { grid-column: auto !important; margin: 0 !important; }
+  .v6-unlock-card--slim .v6-unlock-actions button { display: none !important; }
+  .v6-unlock-card--slim .v6-unlock-actions .primary {
+    display: inline-flex !important;
+    min-height: 29px !important;
+    padding: 5px 8px !important;
+    font-size: 9px !important;
+  }
+  .v6-ask-locked-fallback {
+    right: 12px !important;
+    bottom: 82px !important;
+    width: 72px !important;
+    min-height: 58px !important;
+  }
+  .ayna-ask-launcher {
+    bottom: 82px !important;
+  }
+  .v6-support-bubbles,
+  .v6-support-suggestions {
+    justify-content: flex-start !important;
+    gap: 6px !important;
+  }
+  .v6-support-bubble,
+  .v6-master-suggestion-bubble {
+    max-width: 100% !important;
+    padding: 7px 10px !important;
+    font-size: 10px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v6-ask-locked-fallback:hover,
+  .v6-ask-locked-fallback:focus-visible { transform: none !important; }
+}

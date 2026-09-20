@@ -1,0 +1,126 @@
+/* Micro-interaction pass: keep the V6 character in the small moments too. */
+
+/* Personalized score stays quiet until the product itself is being explored. */
+html.v6-signed-in .ayna-browse.v6-browse-live .ayna-browse-card__match {
+  top: 12px !important;
+  left: 12px !important;
+  width: 72px !important;
+  height: 72px !important;
+  display: grid !important;
+  place-items: start center !important;
+  padding-top: 8px !important;
+  border: 1px solid rgba(82, 67, 83, .20) !important;
+  border-radius: 61% 39% 55% 45% / 44% 52% 48% 56% !important;
+  background: rgba(226, 216, 223, .92) !important;
+  color: #4f4054 !important;
+  box-shadow: none !important;
+  opacity: 0 !important;
+  transform: translateY(7px) scale(.84) rotate(-2deg) !important;
+  transform-origin: 25% 20% !important;
+  pointer-events: none !important;
+  overflow: visible !important;
+  transition:
+    opacity 180ms ease,
+    transform 230ms cubic-bezier(.2,.72,.2,1),
+    background-color 180ms ease !important;
+}
+
+html.v6-signed-in .ayna-browse.v6-browse-live .ayna-browse-card__match::after {
+  content: 'ayna match';
+  position: absolute;
+  left: 50%;
+  bottom: 9px;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 62px;
+  color: #725d6f;
+  font: 600 7.5px/1 var(--v6-film-ui, 'DM Mono', ui-monospace, monospace);
+  letter-spacing: .025em;
+  text-transform: lowercase;
+}
+
+html.v6-signed-in .ayna-browse.v6-browse-live .ayna-browse-card__match .ayna-match-gauge {
+  --gauge-size: 40px !important;
+  --gauge-font: 10px !important;
+  --gauge-hole: rgba(244, 238, 241, .96) !important;
+  --gauge-track: rgba(85, 69, 97, .13) !important;
+  --gauge-text: #51435a !important;
+  --gauge-ring: #b47d67 !important;
+  filter: saturate(.82) contrast(.97) !important;
+}
+
+html.v6-signed-in .ayna-browse.v6-browse-live .ayna-browse-card:hover .ayna-browse-card__match,
+html.v6-signed-in .ayna-browse.v6-browse-live .ayna-browse-card:focus-within .ayna-browse-card__match {
+  opacity: 1 !important;
+  transform: translateY(0) scale(1) rotate(-1deg) !important;
+}
+
+/* If personalized ranking is switched off, the personalized score should disappear too. */
+html:has(.ayna-browse__personalized-switch input:not(:checked)) .ayna-browse-card__match {
+  display: none !important;
+}
+
+/* Small tactile lift, matching the original V6 product-hover language. */
+.ayna-browse.v6-browse-live .ayna-browse-card .ayna-discover-card__tile img {
+  transition: transform 230ms cubic-bezier(.2,.72,.2,1), filter 230ms ease !important;
+}
+.ayna-browse.v6-browse-live .ayna-browse-card:hover .ayna-discover-card__tile img,
+.ayna-browse.v6-browse-live .ayna-browse-card:focus-within .ayna-discover-card__tile img {
+  transform: translateY(-5px) scale(1.045) !important;
+  filter: drop-shadow(0 13px 13px rgba(49, 35, 47, .13)) !important;
+}
+
+.ayna-browse.v6-browse-live .ayna-browse-card__wishlist {
+  transition: transform 180ms ease, background-color 180ms ease, border-color 180ms ease !important;
+}
+.ayna-browse.v6-browse-live .ayna-browse-card:hover .ayna-browse-card__wishlist,
+.ayna-browse.v6-browse-live .ayna-browse-card:focus-within .ayna-browse-card__wishlist {
+  transform: translateY(-1px) scale(1.035) !important;
+  border-color: rgba(85, 69, 97, .26) !important;
+}
+
+html[data-v6-site-theme='dark'].v6-signed-in .ayna-browse.v6-browse-live .ayna-browse-card__match {
+  border-color: rgba(232, 224, 215, .25) !important;
+  background: rgba(78, 68, 83, .94) !important;
+  color: #ece4dc !important;
+}
+html[data-v6-site-theme='dark'].v6-signed-in .ayna-browse.v6-browse-live .ayna-browse-card__match::after {
+  color: #d7cbd2 !important;
+}
+html[data-v6-site-theme='dark'].v6-signed-in .ayna-browse.v6-browse-live .ayna-browse-card__match .ayna-match-gauge {
+  --gauge-hole: rgba(66, 58, 72, .96) !important;
+  --gauge-track: rgba(244, 237, 229, .14) !important;
+  --gauge-text: #f1e8df !important;
+  --gauge-ring: #d7a16f !important;
+}
+
+/* Hover has no meaning on touch screens, so keep the score visible there when personalization is on. */
+@media (hover: none) {
+  html.v6-signed-in .ayna-browse.v6-browse-live .ayna-browse-card__match {
+    width: 60px !important;
+    height: 60px !important;
+    padding-top: 6px !important;
+    opacity: .96 !important;
+    transform: none !important;
+  }
+  html.v6-signed-in .ayna-browse.v6-browse-live .ayna-browse-card__match::after {
+    bottom: 7px;
+    font-size: 6.8px;
+  }
+  html.v6-signed-in .ayna-browse.v6-browse-live .ayna-browse-card__match .ayna-match-gauge {
+    --gauge-size: 34px !important;
+    --gauge-font: 9px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.v6-signed-in .ayna-browse.v6-browse-live .ayna-browse-card__match,
+  .ayna-browse.v6-browse-live .ayna-browse-card .ayna-discover-card__tile img,
+  .ayna-browse.v6-browse-live .ayna-browse-card__wishlist {
+    transition: none !important;
+  }
+  .ayna-browse.v6-browse-live .ayna-browse-card:hover .ayna-discover-card__tile img,
+  .ayna-browse.v6-browse-live .ayna-browse-card:focus-within .ayna-discover-card__tile img {
+    transform: none !important;
+  }
+}
