@@ -1124,11 +1124,11 @@ html[data-v6-site-theme='dark'] .v6-support-custom-plus { color:#e8e0d7;backgrou
 
 .v6-page-ecosystem .v6-ecosystem-page { width:100%!important;max-width:none!important; }
 .v6-page-ecosystem .v6-ecosystem-panel { min-height:calc(100dvh - 62px)!important;border-radius:0!important; }
-.v6-page-ecosystem .v6-eco-main { grid-template-columns:minmax(0,1fr) minmax(280px,420px)!important;align-items:center!important;gap:clamp(22px,4vw,58px)!important; }
+.v6-page-ecosystem .v6-eco-main { grid-template-columns:minmax(0,1fr) minmax(280px,680px)!important;align-items:center!important;gap:clamp(22px,4vw,58px)!important; }
 .v6-page-ecosystem .v6-eco-stats { grid-template-columns:repeat(auto-fit,minmax(160px,1fr))!important; }
 
 @media (max-width:1100px) {
-  .v6-page-ecosystem .v6-eco-main { grid-template-columns:minmax(0,1fr) minmax(250px,340px)!important;gap:28px!important; }
+  .v6-page-ecosystem .v6-eco-main { grid-template-columns:minmax(0,1fr) minmax(250px,480px)!important;gap:28px!important; }
 }
 
 @media (max-width:900px) {
@@ -1668,4 +1668,40 @@ html.v6-signed-in .ayna-browse.v6-browse-live .ayna-browse-card__match {
   display: grid !important;
   pointer-events: none !important;
   overflow: visible !important;
+}
+
+/* Fix: .v6-universe-wrap never got position:relative, so its absolutely
+   positioned children (.v6-orbit-ring, .v6-universe-center, the .v6-care-bubble
+   "b1".."b6" avatars) were positioning against the wider .v6-eco-main grid row
+   instead of against their own wrap — spilling the care bubbles across the
+   heading/copy text on wide screens instead of orbiting the center circle. */
+.v6-universe-wrap {
+  position: relative !important;
+  aspect-ratio: 1 !important;
+  margin: auto !important;
+}
+.v6-orbit-ring {
+  position: absolute !important;
+  inset: 13% !important;
+  border: 1px solid rgba(255, 255, 255, .13);
+  border-radius: 50% !important;
+  pointer-events: none;
+}
+.v6-universe-center {
+  position: absolute !important;
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  border-radius: 50% !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center;
+}
+
+/* Claude fix (2): give the wrap a definite width directly — its children are
+   all position:absolute now, so it has nothing left in normal flow to
+   stretch/shrink-to-fit against, and was collapsing to 0x0. */
+.v6-universe-wrap {
+  width: min(680px, 100%) !important;
 }
