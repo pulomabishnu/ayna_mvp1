@@ -1,0 +1,32 @@
+.v6-quiz-encouragement {
+  margin: 8px auto -2px;
+  max-width: 620px;
+  text-align: center;
+  font-family: var(--font-serif, 'Cormorant Garamond', Georgia, serif);
+  font-size: 15px;
+  line-height: 1.25;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: #8f655d;
+  opacity: .9;
+}
+
+.ayna-intake-root.v6-quiz-dark .v6-quiz-encouragement {
+  color: #e7b78b;
+  opacity: .92;
+}
+
+@media (max-width: 760px) {
+  .v6-quiz-encouragement {
+    margin-top: 7px;
+    font-size: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v6-quiz-encouragement {
+    animation: none !important;
+    transition: none !important;
+  }
+}

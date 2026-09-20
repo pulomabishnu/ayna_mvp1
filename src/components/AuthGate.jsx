@@ -20,7 +20,7 @@ const CONSENT_ITEMS = [
 const CONSENT_VERSION = 'v2-18plus';
 const AGE_REQUIREMENT_VERSION = '18plus-v1';
 
-export default function AuthGate({ isModal = false, embedded = false, onSkip, context, onBeforeOAuthRedirect, redirectTo }) {
+export default function AuthGate({ isModal = false, embedded = false, onSkip, onStartEcosystem, context, onBeforeOAuthRedirect, redirectTo }) {
   useEscapeToClose(isModal, onSkip);
   const [mode, setMode] = useState('signin');
   const [firstName, setFirstName] = useState('');
@@ -61,7 +61,8 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
   const supabase = getSupabaseClient();
   const subtitle = SUBTITLES[context] || SUBTITLES.default;
   const allConsented = checked.every(Boolean);
-  const isSignup = mode === 'signup';
+  const allowSignup = context === 'quiz';
+  const isSignup = allowSignup && mode === 'signup';
 
   const toggleCheck = (i) =>
     setChecked(prev => prev.map((v, idx) => (idx === i ? !v : v)));
@@ -302,13 +303,11 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
 
         {!supabase && (
           <p style={styles.configWarning}>
-            Sign-in isn't configured on this device: VITE_SUPABASE_URL and
-            VITE_SUPABASE_ANON_KEY are missing or empty in .env.local. Add them
-            and restart the dev server.
+            Sign-in isn't configured on this device: the connection is unavailable. Please try again later.
           </p>
         )}
 
-        <div style={styles.toggleRow}>
+        {allowSignup && <div style={styles.toggleRow}>
           <button
             type="button"
             style={{ ...styles.toggleBtn, ...(isSignup ? styles.toggleBtnActive : {}) }}
@@ -323,7 +322,8 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
           >
             Sign in
           </button>
-        </div>
+        </div>}
+        {!allowSignup && <h2 style={{ fontFamily: 'var(--font-serif)', textAlign: 'center' }}>Log in</h2>}
 
         {showPhoneNotice && (
           <div
@@ -551,10 +551,11 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
               ? 'Please wait…'
               : isSignup && authMethod === 'phone'
                 ? (phoneStep === 'number' ? 'Send code' : 'Verify')
-                : isSignup ? 'Create account' : 'Sign in'}
+                : isSignup ? 'Create account' : 'Log in'}
           </button>
         </form>
 
+        {allowSignup && <>
         <div style={styles.divider}>
           <span style={styles.dividerLine} />
           <span style={styles.dividerText}>or</span>
@@ -573,6 +574,9 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
           <GoogleIcon />
           {googleLoading ? 'Redirecting…' : 'Continue with Google'}
         </button>
+        </>}
+        {!allowSignup && <p className="ayna-login-new">Don’t have an account? <button type="button" onClick={onStartEcosystem} style={styles.skipBtn}>Build your ecosystem</button></p>}
+        {!allowSignup && <p style={styles.fine}>New here or using Google? Start with your ecosystem, then create or connect your account.</p>}
 
         {!isSignup && (
           <p style={styles.fine}>

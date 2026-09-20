@@ -1,0 +1,41 @@
+/* V6 account/settings layer: matte, dainty, no glassy blur. */
+.v6-settings-backdrop{
+  position:fixed;inset:0;z-index:10020;display:grid;place-items:center;padding:22px;
+  background:rgba(43,34,44,.36);
+}
+.v6-settings-card{
+  width:min(610px,96vw);max-height:min(760px,90dvh);overflow:auto;
+  border:1px solid rgba(78,60,82,.13);border-radius:28px;
+  background:linear-gradient(145deg,#e3dde5,#d7cad5 64%,#e4cfc5);
+  color:#3d343e;box-shadow:0 24px 60px rgba(46,34,45,.14);padding:26px;
+}
+.v6-settings-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding-bottom:18px;border-bottom:1px solid rgba(78,60,82,.11)}
+.v6-settings-head span,.v6-settings-label{display:block;font:500 9px/1 var(--font-label,monospace);text-transform:uppercase;letter-spacing:.16em;color:#9b6552}
+.v6-settings-head h2{margin:7px 0 0;font:500 40px/1 var(--font-serif,Georgia,serif);letter-spacing:-.035em}
+.v6-settings-close{width:36px;height:36px;border:1px solid rgba(78,60,82,.12);border-radius:50%;background:#c7b8c4;color:#554561;font-size:22px;cursor:pointer}
+.v6-settings-section{padding:18px 0;border-bottom:1px solid rgba(78,60,82,.10)}
+.v6-settings-section>p{margin:7px 0 13px;color:#6d626a;font-size:12px;line-height:1.45}
+.v6-settings-theme{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.v6-settings-theme button{min-height:42px;border:1px solid rgba(78,60,82,.12);border-radius:999px;background:#c8bac5;color:#554561;font-size:12px;cursor:pointer}
+.v6-settings-theme button.is-active{background:#554561;color:#fff}
+.v6-settings-row{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 0;border:0;border-top:1px solid rgba(78,60,82,.08);background:transparent;color:#3d343e;text-align:left;cursor:pointer}
+.v6-settings-row:first-of-type{margin-top:7px}.v6-settings-row span{display:grid;gap:2px}.v6-settings-row strong{font-size:13px;font-weight:600}.v6-settings-row small{font-size:10.5px;color:#766b72}.v6-settings-row b{font-size:14px;font-weight:400;color:#9b6552}
+.v6-settings-last{border-bottom:0;padding-bottom:2px}.v6-settings-logout{border:0;background:transparent;color:#8c4f47;padding:0;font-size:12px;cursor:pointer}.v6-settings-status{display:block;color:#6d626a;margin-top:9px;min-height:14px;font-size:10.5px}
+body.v6-settings-open{overflow:hidden}
+.v6-signing-out body{cursor:progress}
+
+/* Keep the chosen site appearance anchored to one V6 palette. */
+html[data-v6-site-theme='light']{color-scheme:light}
+html[data-v6-site-theme='dark']{color-scheme:dark}
+html[data-v6-site-theme='dark'] body{background:#302a3c;color:#fff8f2}
+html[data-v6-site-theme='dark'] .v6-settings-card{background:linear-gradient(145deg,#3b3047,#4d3b51 58%,#755147);color:#fff8f2;border-color:rgba(255,248,242,.10)}
+html[data-v6-site-theme='dark'] .v6-settings-head,html[data-v6-site-theme='dark'] .v6-settings-section{border-color:rgba(255,248,242,.09)}
+html[data-v6-site-theme='dark'] .v6-settings-head span,html[data-v6-site-theme='dark'] .v6-settings-label{color:#e0ad78}
+html[data-v6-site-theme='dark'] .v6-settings-section>p,html[data-v6-site-theme='dark'] .v6-settings-row small,html[data-v6-site-theme='dark'] .v6-settings-status{color:rgba(255,248,242,.63)}
+html[data-v6-site-theme='dark'] .v6-settings-row{color:#fff8f2;border-color:rgba(255,248,242,.08)}
+html[data-v6-site-theme='dark'] .v6-settings-theme button,html[data-v6-site-theme='dark'] .v6-settings-close{background:rgba(255,255,255,.06);color:#fff8f2;border-color:rgba(255,248,242,.11)}
+html[data-v6-site-theme='dark'] .v6-settings-theme button.is-active{background:#d9a572;color:#30263b}
+
+@media(max-width:640px){
+  .v6-settings-backdrop{padding:10px;align-items:end}.v6-settings-card{width:100%;max-height:88dvh;border-radius:24px 24px 10px 10px;padding:22px 18px}.v6-settings-head h2{font-size:34px}
+}

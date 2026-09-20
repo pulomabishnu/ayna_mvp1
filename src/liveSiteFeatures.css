@@ -1,0 +1,150 @@
+/* The public site's index.css + finalAynaPolish.css remain the visual baseline.
+   Only new feature surfaces are adapted here; existing page rules are untouched. */
+@layer live-features {
+  :root {
+    --v6-ink: var(--color-text-main) !important;
+    --v6-muted: var(--color-text-muted) !important;
+    --v6-navy: #242A52 !important;
+    --v6-plum: #4E3866 !important;
+    --v6-plum-deep: #242A52 !important;
+    --v6-terracotta: #A2603C !important;
+    --v6-orange: #F0A84B !important;
+    --v6-amber: #F0A84B !important;
+    --v6-gold: #F0A84B !important;
+    --v6-peach: #FFC774 !important;
+    --v6-cream: #FFFCF9 !important;
+    --v6-paper: var(--color-surface-soft) !important;
+    --v6-paper-2: var(--color-bg) !important;
+    --v6-surface: var(--color-surface-soft) !important;
+    --v6-surface-2: var(--color-bg) !important;
+    --v6-border: var(--color-border) !important;
+    --v6-serif: var(--font-serif) !important;
+    --v6-sans: var(--font-heading) !important;
+    --v6-mono: var(--font-label) !important;
+    --v6-film-ui: var(--font-heading) !important;
+    --v6-light-gradient: var(--color-bg) !important;
+    --v6-dark-gradient: var(--mockup-hero-gradient) !important;
+  }
+  .v6-camcorder-hud, .v6-film-vignette,
+  .v6-cabinet-door, .v6-cabinet-topper, .v6-cabinet-drawers,
+  .v6-cabinet-grid::before, .v6-cabinet-grid::after, .v6-scribble {
+    display: none !important;
+  }
+  .ayna-added-features {
+    max-width: 1120px !important; margin: 0 auto !important; padding: 28px 24px 64px !important;
+    color: var(--color-text-main) !important; font-family: var(--font-heading) !important;
+  }
+  .v6-cabinet-zone, .v6-product-bubble, .v6-wood-cabinet,
+  .v6-unlock-card, .v6-category-card, .v6-eco-product-card,
+  .v6-settings-card, .v6-auth-card, .v6-auth-sheet, .v6-account-step__card,
+  .v6-referral-card, .v6-submitted-card, .v6-live-search-dropdown,
+  .v6-intake-search-dropdown, .v6-browse-needs-menu {
+    background: var(--color-surface-soft) !important;
+    color: var(--color-text-main) !important;
+    border-color: var(--color-border) !important;
+    border-radius: 18px !important;
+    box-shadow: var(--shadow-sm) !important;
+    backdrop-filter: none !important;
+  }
+  .v6-category-media, .v6-submitted-card__tile, .v6-eco-product-image {
+    background: var(--color-bg) !important; border-radius: 16px !important;
+  }
+  .v6-cabinet-grid, .v6-shelf-product { background: transparent !important; box-shadow: none !important; }
+  .v6-product-visual img, .v6-eco-product-image img { filter: none !important; mix-blend-mode: normal !important; }
+  .v6-eyebrow, .v6-eco-kicker { color: var(--color-terracotta) !important; }
+  :where(.ayna-added-features, .v6-settings-card, .v6-eco-main, .v6-auth-card, .v6-account-step, .v6-referral-card)
+  :where(h1,h2,h3,h4,p,span,strong,small,label,button,a) { color: var(--color-text-main) !important; }
+  .v6-support-bubble, .v6-ask-suggestion-bubble, .v6-settings-theme button,
+  .v6-referral-option, .v6-add-product-helper button, .v6-support-browse-toggle {
+    background: var(--color-bg) !important; color: var(--color-text-main) !important;
+    border-color: var(--color-border) !important; backdrop-filter: none !important;
+  }
+  .v6-bubble-actions .primary, .v6-unlock-actions .primary,
+  .v6-account-primary, .v6-auth-primary, .v6-settings-theme button.is-active {
+    background: var(--color-navy) !important; color: white !important;
+    border: 1px solid var(--color-navy) !important; border-radius: 999px !important;
+  }
+  .v6-cabinet-copy button, .v6-explore-refresh { border-radius: 999px !important; }
+  .v6-cabinet-zone { position: relative !important; margin-bottom: 48px !important; padding: 24px !important; }
+  .v6-cabinet-zone.is-locked { min-height: 150px !important; height: auto !important; display: grid !important; grid-template-columns: 1fr !important; }
+  .v6-cabinet-zone.is-locked > .v6-cabinet-copy,
+  .v6-cabinet-zone.is-locked > .v6-product-bubble { display: none !important; }
+  .v6-cabinet-zone.is-locked > .v6-wood-cabinet { position: absolute !important; inset: 12px !important; width: auto !important; height: calc(100% - 24px) !important; overflow: hidden !important; }
+  .v6-cabinet-lock { position: relative !important; inset: auto !important; padding: 0 !important; backdrop-filter: none !important; }
+  .v6-unlock-card--slim { margin: auto !important; }
+  .v6-category-card { overflow: hidden !important; }
+  .v6-category-card strong { font-family: var(--font-serif) !important; font-size: 20px !important; }
+  .v6-category-card small { font-size: 12px !important; }
+  .v6-category-card > div:last-child { padding: 16px !important; }
+  .v6-section-head h2 { font-size: clamp(32px,4vw,48px) !important; }
+  .v6-footer { background: var(--color-bg) !important; color: var(--color-text-main) !important; }
+  .v6-footer * { color: inherit !important; }
+  .v6-footer-column__title { color: var(--color-terracotta) !important; }
+  .v6-footer__wordmark { font-family: var(--font-serif) !important; }
+  /* Honor the retained appearance control without changing the live default. */
+  html[data-v6-site-theme='dark'] {
+    color-scheme: dark !important;
+    --color-bg: #242A52 !important;
+    --color-surface-soft: #30304A !important;
+    --color-surface: #30304A !important;
+    --color-text-main: #FFFCF9 !important;
+    --color-text-muted: #CDC7D2 !important;
+    --color-border: #625C73 !important;
+  }
+  .v6-live-search-dropdown :is(strong,small,span),
+  .v6-intake-search-dropdown :is(strong,small,span),
+  .v6-browse-needs-menu button {
+    color: var(--color-text-main) !important;
+  }
+  html[data-v6-site-theme='dark'] :is(.app-container,.ayna-browse,.pdp-page,.pdp-shell,.ayna-landing-band,.ayna-landing-shop,.site-footer) {
+    background: var(--color-bg) !important; color: var(--color-text-main) !important;
+  }
+  html[data-v6-site-theme='dark'] :is(.app-nav--cream,.pdp-card,.pdp-summary-card,.pdp-evidence-card,.pdp-safety-card,.pdp-review-card,.ayna-browse__filters,.nav-account-menu) {
+    background: var(--color-surface-soft) !important; color: var(--color-text-main) !important;
+  }
+  :where(html[data-v6-site-theme='dark']) :where(main,.ayna-browse,.pdp-page,.pdp-shell,.ayna-landing-band,.ayna-landing-shop,.app-nav--cream,.site-footer)
+  :where(h1,h2,h3,h4,p,div,span,small,strong,a,button,label) { color: var(--color-text-main) !important; }
+  html[data-v6-site-theme='dark'] .ayna-landing-btn--navy { background: #30304A !important; color: #FFFCF9 !important; }
+  html[data-v6-site-theme='dark'] .ayna-landing-shop-card > div { color: var(--color-text-main) !important; }
+  html[data-v6-site-theme='dark'] :is(.ayna-browse__search input,.ayna-browse__sort select,.v6-settings-card input) {
+    background: var(--color-surface-soft) !important; color: var(--color-text-main) !important;
+  }
+  @media(max-width:760px) {
+    .ayna-added-features { padding: 20px 18px 44px !important; }
+    .v6-cabinet-zone { padding: 16px 10px !important; }
+    .v6-unlock-card.v6-unlock-card--slim { width: 100% !important; grid-template-columns: 28px minmax(0,1fr) !important; grid-template-areas: 'icon copy' 'actions actions' !important; gap: 10px !important; }
+    .v6-unlock-card--slim .v6-unlock-copy { grid-area: copy !important; }
+    .v6-unlock-card--slim .v6-unlock-actions { grid-area: actions !important; flex-wrap: wrap !important; white-space: normal !important; }
+    .v6-unlock-card--slim .v6-unlock-actions button { min-height: 40px !important; display: inline-flex !important; align-items: center !important; }
+    .v6-explore-meta p { white-space: normal !important; }
+  }
+  .ayna-intake-root .v6-support-suggestion-label,
+  .ayna-intake-root .v6-support-suggestion-label span { color: #FFFCF9 !important; }
+  .v6-support-search-only.v6-support-browse-all .ayna-list-panel {
+    background: var(--color-surface-soft) !important;
+    border-color: var(--color-border) !important;
+  }
+  .v6-support-search-only.v6-support-browse-all .ayna-category-title {
+    color: var(--color-terracotta) !important;
+  }
+  .v6-support-bubble.is-selected, .v6-support-bubble.selected {
+    background: #242A52 !important; color: #FFFCF9 !important;
+  }
+  .ayna-intake-root.v6-quiz-dark :is(.ayna-age-picker,.ayna-row-choice,.ayna-text-input,.ayna-search-wrap input,.v6-name-step__input) {
+    background: #30304A !important; color: #FFFCF9 !important; border-color: #625C73 !important;
+  }
+  .ayna-intake-root.v6-quiz-dark .ayna-row-choice.selected { background: #4E3866 !important; }
+
+  html[data-v6-site-theme='dark'] :is(.pdp-head__badge,.pdp-info-card,.pdp-tabpanel,.pdp-layout-toggle,.pdp-btn,.pdp-head__summary) {
+    background: #30304A !important; color: #FFFCF9 !important; border-color: #625C73 !important;
+  }
+  html[data-v6-site-theme='dark'] :is(.pdp-tabs button,.pdp-head__link,.pdp-back,.pdp-actions__ecosystem) {
+    color: #FFFCF9 !important; border-color: #625C73 !important;
+  }
+
+}
+
+.ayna-login-actions { display: grid; gap: 10px; text-align: center; }
+.ayna-login-actions p, .ayna-login-new { font: 400 13px/1.5 var(--font-heading); color: var(--color-text-main); }
+.ayna-login-actions p button { padding: 0; background: transparent; border: 0; color: inherit; text-decoration: underline; cursor: pointer; font: inherit; }
+.ayna-login-new { text-align: center; }
