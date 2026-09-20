@@ -6,6 +6,7 @@ import SavedForLater from './components/SavedForLater';
 import EcosystemGenerationBar from './components/EcosystemGenerationBar';
 import HealthIntakeForm from './components/HealthIntakeForm';
 import HealthProfileEditor from './components/HealthProfileEditor';
+import DeleteAccountPage from './components/DeleteAccountPage';
 import PhoneVerification from './components/PhoneVerification';
 import Recommendations from './components/Recommendations';
 import TrackedItems from './components/TrackedItems';
@@ -768,6 +769,10 @@ function App() {
       handleViewDiscovery('');
     } else if (pendingAction === 'login') {
       setCurrentView('ecosystem');
+    } else if (pendingAction === 'delete-account') {
+      // Returning from the Google re-confirmation redirect the delete-account
+      // page kicks off before it lets someone delete a Google-linked account.
+      setCurrentView('delete-account');
     }
     setPendingAction(null); pendingActionRef.current = null;
   }, [user, pendingAction]);
@@ -973,6 +978,7 @@ function App() {
   const handleStartQuiz = () => setCurrentView('quiz');
   const handleOpenHealthProfileEditor = () => setCurrentView('profile-edit');
   const handleOpenPhoneVerification = () => setCurrentView('phone-verify');
+  const handleOpenDeleteAccount = () => setCurrentView('delete-account');
   const handleViewWaitlist = () => setCurrentView('waitlist');
   const handleViewEcosystem = () => setCurrentView('ecosystem');
   const handleViewWishlist = () => {
@@ -2899,7 +2905,11 @@ function App() {
             onSave={handleHealthProfileEditorSave}
             onCancel={() => setCurrentView('ecosystem')}
             onOpenPhoneVerify={handleOpenPhoneVerification}
+            onOpenDeleteAccount={handleOpenDeleteAccount}
           />
+        )}
+        {currentView === 'delete-account' && (
+          <DeleteAccountPage onBack={() => setCurrentView('profile-edit')} />
         )}
         {currentView === 'phone-verify' && (
           <PhoneVerification

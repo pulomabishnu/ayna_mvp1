@@ -69,7 +69,7 @@ function buildInitial(profile) {
   };
 }
 
-export default function HealthProfileEditor({ currentProfile, onSave, onCancel, onOpenPhoneVerify }) {
+export default function HealthProfileEditor({ currentProfile, onSave, onCancel, onOpenPhoneVerify, onOpenDeleteAccount }) {
   const [draft, setDraft] = useState(() => buildInitial(currentProfile));
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
@@ -289,7 +289,7 @@ export default function HealthProfileEditor({ currentProfile, onSave, onCancel, 
           </div>
         )}
 
-        <AccountDataControls />
+        <AccountDataControls onOpenDeleteAccount={onOpenDeleteAccount} />
 
         {saveMessage && <p style={{ marginTop: '0.75rem', color: 'var(--color-text-muted)' }}>{saveMessage}</p>}
 

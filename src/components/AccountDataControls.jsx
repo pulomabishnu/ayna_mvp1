@@ -2,21 +2,6 @@ import React, { useEffect, useState } from 'react';
 import posthog from 'posthog-js';
 import { getSupabaseClient } from '../utils/supabaseClient';
 
-function clearAynaStorage(store) {
-  if (!store) return;
-  const keys = [];
-  for (let i = 0; i < store.length; i += 1) {
-    const key = store.key(i);
-    if (key && /^ayna(?:_|:)/i.test(key)) keys.push(key);
-  }
-  keys.forEach((key) => store.removeItem(key));
-}
-
-function clearLocalAynaData() {
-  try { clearAynaStorage(window.localStorage); } catch { /* private mode */ }
-  try { clearAynaStorage(window.sessionStorage); } catch { /* private mode */ }
-}
-
 async function getAccessToken() {
   const supabase = getSupabaseClient();
   if (!supabase) throw new Error('Sign in again to manage your account data.');
@@ -42,11 +27,9 @@ function readAnalyticsOptOut() {
   }
 }
 
-export default function AccountDataControls() {
+export default function AccountDataControls({ onOpenDeleteAccount }) {
   const [busy, setBusy] = useState('');
   const [message, setMessage] = useState('');
-  const [showDelete, setShowDelete] = useState(false);
-  const [deleteText, setDeleteText] = useState('');
   const [analyticsOptedOut, setAnalyticsOptedOut] = useState(readAnalyticsOptOut);
   const gpcEnabled = browserGlobalPrivacyControl();
 
@@ -96,32 +79,6 @@ export default function AccountDataControls() {
     }
   };
 
-  const deleteAccount = async () => {
-    if (busy || deleteText !== 'DELETE') return;
-    setBusy('delete');
-    setMessage('');
-    try {
-      const { supabase, token } = await getAccessToken();
-      const res = await fetch('/api/account-delete', {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ confirm: 'DELETE' }),
-      });
-      if (!res.ok) throw new Error('We could not delete your account. Nothing else will be changed; please retry.');
-
-      clearLocalAynaData();
-      try { posthog.reset?.(); } catch { /* analytics may be unavailable */ }
-      try { await supabase.auth.signOut({ scope: 'local' }); } catch { /* user is already deleted server-side */ }
-      window.location.replace('/');
-    } catch (e) {
-      setMessage(e?.message || 'Could not delete your account.');
-      setBusy('');
-    }
-  };
-
   return (
     <div style={{ marginTop: '1.5rem', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', background: 'var(--color-surface-soft)' }}>
       <div style={{ fontWeight: 700, marginBottom: '0.25rem' }}>Your data & privacy</div>
@@ -160,39 +117,13 @@ export default function AccountDataControls() {
         <button
           type="button"
           className="btn btn-outline"
-          onClick={() => { setShowDelete((v) => !v); setDeleteText(''); setMessage(''); }}
+          onClick={() => onOpenDeleteAccount?.()}
           disabled={!!busy}
           style={{ color: '#b42318', borderColor: '#f0b8b2' }}
         >
           Delete my account
         </button>
       </div>
-
-      {showDelete && (
-        <div style={{ marginTop: '0.9rem', padding: '0.9rem', border: '1px solid #f0b8b2', borderRadius: 'var(--radius-md)', background: '#fff7f6' }}>
-          <p style={{ margin: '0 0 0.6rem', color: '#8a1c13', fontSize: '0.88rem', lineHeight: 1.5 }}>
-            This permanently deletes your ayna account, health intake, imported health profile, ecosystem, saved/tracked/hidden products, reviews, learning memory, phone/SMS records, notification preferences, and other account-linked data. Active-tab ayna caches on this browser are cleared too. This cannot be undone.
-          </p>
-          <label style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', fontSize: '0.85rem' }}>
-            Type DELETE to confirm
-            <input
-              value={deleteText}
-              onChange={(e) => setDeleteText(e.target.value)}
-              autoComplete="off"
-              spellCheck={false}
-              style={{ maxWidth: '260px' }}
-            />
-          </label>
-          <button
-            type="button"
-            onClick={deleteAccount}
-            disabled={deleteText !== 'DELETE' || !!busy}
-            style={{ marginTop: '0.7rem', padding: '0.55rem 0.9rem', border: 0, borderRadius: 'var(--radius-md)', background: '#b42318', color: 'white', fontWeight: 700, cursor: deleteText === 'DELETE' && !busy ? 'pointer' : 'not-allowed', opacity: deleteText === 'DELETE' && !busy ? 1 : 0.55 }}
-          >
-            {busy === 'delete' ? 'Deleting…' : 'Permanently delete account'}
-          </button>
-        </div>
-      )}
 
       {message && <p role="status" style={{ margin: '0.75rem 0 0', color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>{message}</p>}
     </div>

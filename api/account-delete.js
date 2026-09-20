@@ -26,6 +26,17 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'confirmation_required' });
   }
 
+  // Reason/reasonDetails are optional exit-survey fields from the delete
+  // account page. They are logged for product visibility only, never
+  // persisted to a table: the `feedback` rows for this user are deleted a
+  // few lines below in this same handler, so writing there would just be
+  // deleted again immediately.
+  const reason = typeof req.body?.reason === 'string' ? req.body.reason.slice(0, 120) : null;
+  const reasonDetails = typeof req.body?.reasonDetails === 'string' ? req.body.reasonDetails.slice(0, 600) : null;
+  if (reason || reasonDetails) {
+    console.info('[account-delete] exit reason', { userId: user.id, reason, hasDetails: Boolean(reasonDetails) });
+  }
+
   try {
     // feedback uses ON DELETE SET NULL rather than CASCADE, so remove it
     // explicitly to avoid retaining a deleted user's message/email.
