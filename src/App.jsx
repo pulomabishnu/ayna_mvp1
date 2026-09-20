@@ -107,6 +107,7 @@ const VIEW_TO_PATH = {
   articles: '/library', screenings: '/screenings', omitted: '/omitted',
   comparison: '/comparison', recalls: '/recalls',
   'doctor-prep': '/appointment-prep', 'profile-edit': '/profile', 'phone-verify': '/text-ayna', tracked: '/tracked',
+  'delete-account': '/delete-account',
   'privacy-policy': '/privacy-policy',
   'terms-of-use': '/terms-of-use',
   'how-we-make-money': '/how-we-make-money',
@@ -127,7 +128,7 @@ const VIEW_TITLES = {
   waitlist: 'Startups', articles: 'Health Library', screenings: 'Screenings',
   omitted: 'Omitted Products', comparison: 'Compare Products', recalls: 'Recalls',
   'doctor-prep': 'Appointment Prep', 'profile-edit': 'Edit Profile',
-  'phone-verify': 'Verify Phone', tracked: 'Tracked Products',
+  'phone-verify': 'Verify Phone', tracked: 'Tracked Products', 'delete-account': 'Delete Account',
   'privacy-policy': 'Privacy Policy', 'terms-of-use': 'Terms of Use',
   'how-we-make-money': 'How We Make Money', 'how-it-works': 'How It Works',
   about: 'About', contact: 'Contact', 'not-found': 'Page Not Found',
@@ -797,7 +798,7 @@ function App() {
     setShowAuthModal(true);
   }, []);
 
-  const PROTECTED_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls', 'doctor-prep', 'profile-edit', 'phone-verify', 'tracked', 'screenings'];
+  const PROTECTED_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls', 'doctor-prep', 'profile-edit', 'phone-verify', 'tracked', 'screenings', 'delete-account'];
   useEffect(() => {
     if (!authLoading && !user && PROTECTED_VIEWS.includes(currentView)) {
       setCurrentView('welcome', { replace: true });
