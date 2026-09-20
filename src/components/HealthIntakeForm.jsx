@@ -145,6 +145,7 @@ const STOP_REASONS = [
 ];
 
 const EMPTY = {
+  name: '',
   age: '',
   lifeStage: '',
   lifeStageSelections: [],
@@ -408,6 +409,7 @@ function buildSnapshot(intake) {
   const fsaHsa = { FSA: 'fsa', HSA: 'hsa', Both: 'both', No: 'none', 'Not sure': 'unsure' }[intake.fsaHsaAnswer] || '';
 
   return {
+    name: intake.name.trim(),
     age: intake.age,
     zipcode: intake.zipcode.trim(),
     location: '',
@@ -942,6 +944,7 @@ function TrustRanker({ order, onChange, onTouch }) {
 }
 
 function requiredReady(stepId, intake) {
+  if (stepId === 'name') return !!(intake.name && intake.name.trim().length > 0);
   if (stepId === 'conditions') return intake.diagnosisSelections.length > 0;
   if (stepId === 'allergies') return !!intake.allergyStatus && (intake.allergyStatus !== 'Yes' || intake.allergyItems.length > 0);
   if (stepId === 'medications') return !!intake.takesCurrent && (intake.takesCurrent !== 'Yes' || intake.currentMedicationItems.length > 0);
@@ -1236,8 +1239,8 @@ export default function HealthIntakeForm({ onComplete }) {
   const [stepId, setStepId] = useState(() => {
     try {
       const raw = window.sessionStorage.getItem(DRAFT_KEY);
-      return raw ? JSON.parse(raw)?.stepId || 'age' : 'age';
-    } catch (_) { return 'age'; }
+      return raw ? JSON.parse(raw)?.stepId || 'name' : 'name';
+    } catch (_) { return 'name'; }
   });
   const [search, setSearch] = useState('');
   const [saving, setSaving] = useState(false);
@@ -1245,6 +1248,7 @@ export default function HealthIntakeForm({ onComplete }) {
 
   const visibleSteps = useMemo(() => {
     const steps = [
+      { id: 'name', section: 'core', title: 'What is your name?', subtitle: 'Your first name is all we need.', type: 'name', optional: false },
       { id: 'age', section: 'core', title: 'How old are you?', type: 'age', optional: true },
       { id: 'lifeStage', section: 'core', title: 'Which options best describe you right now?', subtitle: 'Select all that apply.', type: 'cards', optional: true },
       { id: 'zip', section: 'core', title: 'What is your ZIP code?', subtitle: 'Optional. This helps us personalize local care and availability.', type: 'text', optional: true },
@@ -1276,7 +1280,7 @@ export default function HealthIntakeForm({ onComplete }) {
   }, [intake]);
 
   useEffect(() => {
-    if (!visibleSteps.some((step) => step.id === stepId)) setStepId(visibleSteps[0]?.id || 'age');
+    if (!visibleSteps.some((step) => step.id === stepId)) setStepId(visibleSteps[0]?.id || 'name');
   }, [visibleSteps, stepId]);
 
   const currentIndex = Math.max(0, visibleSteps.findIndex((step) => step.id === stepId));
@@ -1342,6 +1346,20 @@ export default function HealthIntakeForm({ onComplete }) {
   };
 
   const renderBody = () => {
+    if (step.type === 'name') {
+      return (
+        <input
+          className="ayna-text-input"
+          type="text"
+          value={intake.name}
+          onChange={(e) => set('name', e.target.value)}
+          placeholder="e.g. Jordan"
+          maxLength={50}
+          autoComplete="given-name"
+          autoFocus
+        />
+      );
+    }
     if (step.type === 'age') {
       const numeric = intake.age ? Math.min(90, Math.max(18, Number(intake.age))) : 18;
       return <div className="ayna-white-card ayna-age-card"><div className="ayna-age-top"><button type="button" className="ayna-age-btn" onClick={() => set('age', String(Math.max(18, (intake.age ? Math.max(18, Number(intake.age)) : 19) - 1)))}>−</button><div className={`ayna-age-value${intake.age ? '' : ' empty'}`}>{intake.age || 'Select'}</div><button type="button" className="ayna-age-btn" onClick={() => set('age', String(Math.min(90, (intake.age ? Math.max(18, Number(intake.age)) : 17) + 1)))}>+</button></div><input className={`ayna-age-range${intake.age ? '' : ' unset'}`} type="range" min="18" max="90" value={numeric} onChange={(e) => set('age', e.target.value)} /><div className="ayna-range-labels"><span>18</span><span>90</span></div></div>;
@@ -1442,7 +1460,7 @@ export default function HealthIntakeForm({ onComplete }) {
           <SectionIcon section={step.section} />
           <h1>{step.title}</h1>
           {step.subtitle && <p className="ayna-intake-subtitle">{step.subtitle}</p>}
-          {!step.optional && <p className="ayna-intake-hint">Required for safety</p>}
+          {!step.optional && <p className="ayna-intake-hint">{step.section === 'safety' ? 'Required for safety' : 'Required'}</p>}
           <div className="ayna-intake-stage">{renderBody()}</div>
           <div className="ayna-continue-wrap">
             <button type="button" className="ayna-continue" onClick={goNext} disabled={!ready || saving}>{saving ? 'Saving...' : isLast ? 'Finish profile' : 'Continue'}{countForStep > 0 && <span className="ayna-count">{countForStep}</span>}<span aria-hidden="true">→</span></button>

@@ -214,6 +214,8 @@ export function mapIntakeToLegacyQuizProfile(intake) {
   if ((intake?.symptoms || []).includes('bloating')) frustrations.add('Hormonal bloating');
 
   return {
+    name: intake?.name || '',
+    firstName: intake?.name || '',
     age: intake?.age || '',
     frustrations: [...frustrations],
     preference: intake?.productPreferences || [],
@@ -235,6 +237,7 @@ export function mapIntakeToLegacyQuizProfile(intake) {
 
 export function validateHealthIntake(intake) {
   const errors = {};
+  if (!String(intake?.name || '').trim()) errors.name = 'Name is required.';
   if (!intake?.age || Number.isNaN(Number(intake.age))) errors.age = 'Age is required.';
   const concerns = Array.isArray(intake?.primaryConcerns)
     ? intake.primaryConcerns
