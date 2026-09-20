@@ -8,6 +8,17 @@ const ACCOUNT_DONE_KEY = 'ayna_v6_account_step_done';
 const CONSENT_VERSION = 'v2-18plus';
 const AGE_REQUIREMENT_VERSION = '18plus-v1';
 
+const REFERRAL_OPTIONS = [
+  'TikTok',
+  'Instagram',
+  'LinkedIn',
+  'Google / search',
+  'Friend / word of mouth',
+  'Event / conference',
+  'Brand / partner',
+  'Other',
+];
+
 const CONSENT_ITEMS = [
   'The health information I share with ayna is self-reported wellness information, not a clinical record.',
   'When I intentionally use an AI-powered feature, limited relevant wellness context may be processed by an external AI provider to generate my requested response. ayna minimizes the context sent, protects it in transit, and does not sell it.',
@@ -79,7 +90,7 @@ async function syncAuthState() {
   }
 }
 
-function signupMetadata() {
+function signupMetadata(extra = {}) {
   const now = new Date().toISOString();
   const firstName = String(window.sessionStorage.getItem(NAME_KEY) || '').trim();
   return {
@@ -90,6 +101,7 @@ function signupMetadata() {
     age_18_confirmed: true,
     age_18_confirmed_at: now,
     age_requirement_version: AGE_REQUIREMENT_VERSION,
+    ...extra,
   };
 }
 
@@ -242,6 +254,10 @@ function buildAccountStep(result) {
         <input class="v6-account-input v6-account-phone" type="tel" autocomplete="tel" placeholder="phone number" hidden />
         <input class="v6-account-input v6-account-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code" hidden />
         <p class="v6-account-code-note" hidden></p>
+        <select class="v6-account-input v6-account-referral" aria-label="How did you hear about us?">
+          <option value="">how did you hear about us? (optional)</option>
+        </select>
+        <input class="v6-account-input v6-account-referral-other" type="text" maxlength="120" placeholder="tell us where you found ayna" hidden />
         <button class="v6-account-primary" type="submit" disabled>create account + build my ecosystem</button>
       </form>
 
@@ -259,6 +275,13 @@ function buildAccountStep(result) {
   `;
 
   if (firstName) step.querySelector('.v6-account-name').textContent = firstName;
+  const referralSelect = step.querySelector('.v6-account-referral');
+  REFERRAL_OPTIONS.forEach((option) => {
+    const opt = document.createElement('option');
+    opt.value = option;
+    opt.textContent = option;
+    referralSelect.appendChild(opt);
+  });
   const consentList = step.querySelector('.v6-account-consent-list');
   CONSENT_ITEMS.forEach((text, index) => {
     const label = document.createElement('label');
@@ -287,6 +310,8 @@ function setupAccountStep(result, step) {
   const phone = step.querySelector('.v6-account-phone');
   const code = step.querySelector('.v6-account-code');
   const codeNote = step.querySelector('.v6-account-code-note');
+  const referralSelect = step.querySelector('.v6-account-referral');
+  const referralOther = step.querySelector('.v6-account-referral-other');
   const primary = step.querySelector('.v6-account-primary');
   const google = step.querySelector('.v6-account-google');
   const status = step.querySelector('.v6-account-status');
@@ -329,6 +354,20 @@ function setupAccountStep(result, step) {
   methodButtons.forEach((button) => button.addEventListener('click', () => setMethod(button.dataset.method)));
   [email, password, phone, code].forEach((input) => input.addEventListener('input', syncPrimary));
   step.querySelectorAll('.v6-account-consent-list input').forEach((box) => box.addEventListener('change', syncPrimary));
+
+  const syncReferral = () => {
+    const showOther = referralSelect.value === 'Other';
+    referralOther.hidden = !showOther;
+    if (showOther) window.setTimeout(() => referralOther.focus(), 30);
+  };
+  referralSelect.addEventListener('change', syncReferral);
+
+  const referralValue = () => {
+    const source = referralSelect.value;
+    if (!source) return '';
+    const other = String(referralOther.value || '').trim();
+    return source === 'Other' && other ? `Other: ${other}` : source;
+  };
 
   consentToggle.addEventListener('click', () => {
     const open = !consent.classList.contains('is-open');
@@ -378,6 +417,8 @@ function setupAccountStep(result, step) {
     primary.textContent = 'please wait…';
     persistPendingQuizForRedirect();
 
+    const heardAboutUs = referralValue();
+
     try {
       if (method === 'email') {
         const cleanEmail = email.value.trim();
@@ -386,7 +427,7 @@ function setupAccountStep(result, step) {
           password: password.value,
           options: {
             emailRedirectTo: 'https://www.aynahealth.co/confirmed',
-            data: signupMetadata(),
+            data: signupMetadata(heardAboutUs ? { heard_about_us: heardAboutUs } : {}),
           },
         }), 15000);
         if (error) throw error;
@@ -413,7 +454,7 @@ function setupAccountStep(result, step) {
         if (!normalizedPhone) throw new Error('Please enter a valid phone number.');
         const { error } = await withTimeout(supabase.auth.signInWithOtp({
           phone: normalizedPhone,
-          options: { data: signupMetadata() },
+          options: { data: signupMetadata(heardAboutUs ? { heard_about_us: heardAboutUs } : {}) },
         }), 15000);
         if (error) throw error;
         phoneStage = 'code';
