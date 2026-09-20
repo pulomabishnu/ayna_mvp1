@@ -1,3 +1,4 @@
+import posthog from 'posthog-js';
 import { getSupabaseClient } from './utils/supabaseClient';
 import { mapIntakeToLegacyQuizProfile } from './utils/healthIntake';
 
@@ -369,6 +370,19 @@ function setupAccountStep(result, step) {
     return source === 'Other' && other ? `Other: ${other}` : source;
   };
 
+  // PostHog only ever gets the picked category (e.g. "Other"), never the
+  // free-text detail someone typed into the "Other" box - that detail stays
+  // in Supabase only, consistent with how this app keeps user-authored text
+  // out of analytics (see SENSITIVE_ANALYTICS_KEYS in main.jsx).
+  const captureReferralAnalytics = () => {
+    const category = referralSelect.value;
+    if (!category) return;
+    try {
+      posthog.capture('signup_referral_source', { source: category });
+      posthog.people?.set?.({ heard_about_us: category });
+    } catch (_) {}
+  };
+
   consentToggle.addEventListener('click', () => {
     const open = !consent.classList.contains('is-open');
     consent.classList.toggle('is-open', open);
@@ -432,6 +446,7 @@ function setupAccountStep(result, step) {
         }), 15000);
         if (error) throw error;
         if (data?.user?.identities?.length === 0) throw new Error('An account with this email already exists. Sign in instead.');
+        captureReferralAnalytics();
 
         try { window.sessionStorage.setItem(ACCOUNT_DONE_KEY, '1'); } catch (_) {}
         if (data?.session) {
@@ -457,6 +472,7 @@ function setupAccountStep(result, step) {
           options: { data: signupMetadata(heardAboutUs ? { heard_about_us: heardAboutUs } : {}) },
         }), 15000);
         if (error) throw error;
+        captureReferralAnalytics();
         phoneStage = 'code';
         phone.hidden = true;
         code.hidden = false;
