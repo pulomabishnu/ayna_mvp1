@@ -75,6 +75,16 @@ function applyAuthClasses(user) {
   if (isVerifiedUser(authUser)) {
     writeVerificationPending(null);
     try { window.sessionStorage.removeItem(ACCOUNT_DONE_KEY); } catch (_) {}
+    // The account step now lives at document.body (see buildAccountStep) so it
+    // survives React re-rendering .ayna-quiz-result-screen underneath it. That
+    // means it's no longer torn down for free when React later unmounts the
+    // result screen on the way to the built ecosystem - clean it up explicitly
+    // here, the moment sign-in actually succeeds, instead of leaving it to
+    // whichever unmount happened to catch it before.
+    document.querySelectorAll('.v6-account-step').forEach((node) => node.remove());
+    document.querySelectorAll('.ayna-quiz-result-screen.v6-awaiting-account').forEach((node) => {
+      node.classList.remove('v6-awaiting-account');
+    });
   }
 }
 
@@ -234,7 +244,7 @@ function allConsented(step) {
   return boxes.length === CONSENT_ITEMS.length && boxes.every((box) => box.checked);
 }
 
-function buildAccountStep(result) {
+function buildAccountStep() {
   const firstName = String(window.sessionStorage.getItem(NAME_KEY) || '').trim();
   const step = document.createElement('div');
   step.className = 'v6-account-step';
@@ -295,7 +305,21 @@ function buildAccountStep(result) {
     consentList.append(label);
   });
 
-  result.append(step);
+  // Appended to document.body, NOT `result` (.ayna-quiz-result-screen) - that
+  // element is owned and re-rendered by React (it's a real JSX component, see
+  // App.jsx), and this script inserts `step` into it imperatively, outside
+  // React's knowledge. React re-rendering that container for an unrelated
+  // reason (the async preview-products fetch resolving, a parent state change
+  // elsewhere in App.jsx, etc.) can reconcile its children and reposition or
+  // duplicate a foreign node living inside it - which is a plausible source of
+  // the account-step card intermittently landing in the wrong place instead of
+  // centered (reported live, 2026-09-20). showVerificationNotice()'s backdrop
+  // already uses this same document.body pattern for exactly this reason; this
+  // brings buildAccountStep's overlay in line with it. It's position:fixed, so
+  // where it lives in the DOM tree doesn't affect how it's drawn. Cleanup on
+  // successful sign-in now happens explicitly in applyAuthClasses() instead of
+  // implicitly via React unmounting `result` (which no longer contains it).
+  document.body.append(step);
   return step;
 }
 
@@ -513,10 +537,11 @@ function ensureQuizAccountStep() {
   let done = false;
   try { done = window.sessionStorage.getItem(ACCOUNT_DONE_KEY) === '1'; } catch (_) {}
   if (done) return;
-  if (result.querySelector('.v6-account-step')) return;
+  // Lives at document.body now (see buildAccountStep), not inside `result`.
+  if (document.querySelector('.v6-account-step')) return;
 
   result.classList.add('v6-awaiting-account');
-  const step = buildAccountStep(result);
+  const step = buildAccountStep();
   setupAccountStep(result, step);
 }
 
