@@ -110,11 +110,33 @@ function buildHelper(input, source) {
   return helper;
 }
 
+// On Browse the "add product" box stays tucked away behind a link until it's clicked.
+// The open state lives on the helper element itself, which is rebuilt every time the
+// Browse page mounts, so leaving the page naturally puts the link back.
+function ensureBrowseLink(input, helper) {
+  let link = helper.parentElement?.querySelector(':scope > .v6-add-product-link');
+  if (!link) {
+    link = document.createElement('button');
+    link.type = 'button';
+    link.className = 'v6-add-product-link';
+    link.textContent = 'Can’t find the exact product you’re looking for? ayna can populate it for you.';
+    helper.insertAdjacentElement('beforebegin', link);
+    link.addEventListener('click', () => {
+      helper.dataset.v6Open = '1';
+      syncInput(input, 'browse');
+    });
+  }
+  return link;
+}
+
 function syncInput(input, source) {
   if (!input || input.closest('.ayna-intake-root')) return;
   const query = clean(input.value);
   const helper = buildHelper(input, source);
-  const show = source === 'browse' || (query.length >= 2 && !exactVisibleMatch(query));
+  const isBrowse = source === 'browse';
+  const open = helper.dataset.v6Open === '1';
+  if (isBrowse) ensureBrowseLink(input, helper).hidden = open;
+  const show = isBrowse ? open : (query.length >= 2 && !exactVisibleMatch(query));
   helper.hidden = !show;
   if (!show) return;
   const label = helper.querySelector('.v6-add-product-copy');

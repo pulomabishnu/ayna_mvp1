@@ -429,7 +429,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [categoryFilter, setCategoryFilter] = useState(initialCategory || 'all');
     const [typeFilter] = useState('all');
     const [searchQuery, setSearchQuery] = useState(initialSearch || '');
-    const searchPlaceholder = useRotatingPlaceholder(SEARCH_PLACEHOLDER_EXAMPLES, { prefix: 'Try: ', fallback: 'Search products', enabled: !searchQuery });
+    // Holds the rotating example still while the box is focused or hovered (see useRotatingPlaceholder).
+    const [searchHeld, setSearchHeld] = useState(false);
+    const searchPlaceholder = useRotatingPlaceholder(SEARCH_PLACEHOLDER_EXAMPLES, { prefix: 'Try: ', fallback: 'Search products', enabled: !searchQuery, paused: searchHeld });
     const [submittedQuery, setSubmittedQuery] = useState(initialSearch || '');
     const [sortBy, setSortBy] = useState('default');
     // Freshly generated on every mount — Discovery unmounts/remounts on each navigation to it,
@@ -1351,6 +1353,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     }}
                     placeholder={searchPlaceholder}
                     aria-label="Search products"
+                    onFocus={() => setSearchHeld(true)}
+                    onBlur={() => setSearchHeld(false)}
+                    onMouseEnter={() => setSearchHeld(true)}
+                    onMouseLeave={(e) => { if (document.activeElement !== e.currentTarget) setSearchHeld(false); }}
                 />
             </form>
 

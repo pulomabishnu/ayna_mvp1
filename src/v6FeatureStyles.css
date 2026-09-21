@@ -1816,3 +1816,26 @@ html.v6-signed-in .ayna-browse.v6-browse-live .ayna-browse-card__match {
   margin-top:0!important;
   padding-left:0!important;
 }
+
+/* Browse: the add-product box hides behind this link until it is clicked. */
+.ayna-browse .ayna-browse__search .v6-add-product-link{
+  display:block!important;
+  margin:10px 4px 0!important;
+  padding:0!important;
+  border:0!important;
+  background:none!important;
+  box-shadow:none!important;
+  border-radius:0!important;
+  height:auto!important;
+  color:#8a5a44!important;
+  font:inherit!important;
+  font-size:13px!important;
+  text-align:left!important;
+  text-decoration:underline!important;
+  text-underline-offset:3px;
+  cursor:pointer;
+}
+.ayna-browse .ayna-browse__search .v6-add-product-link:hover{color:#5a3a2c!important}
+.ayna-browse .ayna-browse__search .v6-add-product-link[hidden]{display:none!important}
+.ayna-browse__search.v6-typeahead-open .v6-add-product-link{display:none!important}
+html[data-v6-site-theme='dark'] .ayna-browse .ayna-browse__search .v6-add-product-link{color:#e0ad78!important}
