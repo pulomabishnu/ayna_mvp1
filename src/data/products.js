@@ -961,13 +961,18 @@ export const MACRO_GROUPS = [
 // those ids) — each pill simply covers several MACRO_GROUPS ids.
 export const BROWSE_GROUPS = [
     { id: 'all', label: 'All', covers: [] },
-    { id: 'life-periods', label: 'Periods & Cycles', covers: ['period', 'hormones'] },
+    { id: 'life-periods', label: 'Cycle', covers: ['period', 'hormones'] },
     { id: 'life-intimate', label: 'Vaginal & Sexual', covers: ['intimate', 'sexual'] },
-    { id: 'life-fertility', label: 'Fertility & Birth Control', covers: ['fertility', 'birth-control'] },
+    { id: 'life-fertility', label: 'Fertility', covers: ['fertility', 'birth-control'] },
     { id: 'life-pregnancy', label: 'Pregnancy', covers: ['pregnancy'] },
     { id: 'life-postpartum', label: 'Postpartum', covers: ['postpartum', 'breast'] },
     { id: 'life-pelvic', label: 'Pelvic Health', covers: ['pelvic'] },
-    { id: 'life-menopause', label: 'Menopause & Beyond', covers: ['menopause'] },
+    // The catalog has no per-stage field: products are tagged/categorized 'menopause' as a
+    // whole. So Perimenopause and Postmenopause match on their own tag/wording, and Menopause
+    // stays the broad pill (it also covers everything general to all three stages).
+    { id: 'life-perimenopause', label: 'Perimenopause', covers: [], tags: ['perimenopause'], keywords: ['perimenopause', 'perimenopausal'] },
+    { id: 'life-menopause', label: 'Menopause', covers: ['menopause'] },
+    { id: 'life-postmenopause', label: 'Postmenopause', covers: [], tags: ['postmenopause'], keywords: ['postmenopause', 'post-menopause', 'postmenopausal', 'post-menopausal', 'after menopause', 'osteoporosis', 'bone density', 'vaginal atrophy', 'genitourinary syndrome'] },
     { id: 'life-wellness', label: 'Wellness & Tests', covers: ['skin', 'hair', 'gut', 'sleep-stress', 'pain-recovery', 'tests-devices'] },
 ];
 
@@ -1019,7 +1024,15 @@ export function productSearchText(item) {
 export function itemMatchesMacroGroup(item, groupId) {
     if (!groupId || groupId === 'all') return true;
     const broad = BROWSE_GROUPS.find((g) => g.id === groupId);
-    if (broad) return broad.covers.some((id) => itemMatchesMacroGroup(item, id));
+    if (broad) {
+        if (broad.covers.some((id) => itemMatchesMacroGroup(item, id))) return true;
+        if (Array.isArray(broad.tags) && Array.isArray(item?.tags) && item.tags.some((t) => broad.tags.includes(t))) return true;
+        if (Array.isArray(broad.keywords) && broad.keywords.length) {
+            const text = productSearchText(item);
+            return broad.keywords.some((keyword) => text.includes(keyword));
+        }
+        return false;
+    }
     const group = MACRO_GROUPS.find((g) => g.id === groupId);
     if (!group) return true;
     if (group.categories.includes(item?.category)) return true;
