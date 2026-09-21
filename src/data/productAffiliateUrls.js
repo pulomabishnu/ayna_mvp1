@@ -121,6 +121,7 @@ U by Kotex Clean Wear|B00BM90GCA
 U by Kotex Click Tampons|B083M24HGP
 Uberlube Luxury Lubricant|B00KDHSAAM
 Uqora Control|B0DLBSVB4Q
+VIBOOS Electric Heating Pad|B0GG6HHCYM
 V-Wash Plus Intimate Hygiene Wash|B00S6KDGNE
 Veeda Natural Cotton Pads|B071HDJH7W
 Wholesome Story Myo & D-Chiro Inositol|B07HX2DMY8
