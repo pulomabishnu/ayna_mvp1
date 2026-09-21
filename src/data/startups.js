@@ -844,15 +844,28 @@ export const STARTUPS = [
         id: 's-femometry',
         name: 'Femometer',
         tagline: 'Smart ring for cycle, temperature, and sleep tracking',
-        description: 'Women-focused smart rings (Ring Gen 2 and Ring Air) that track overnight basal body temperature with three sensors to predict ovulation and period, plus sleep, heart rate, HRV, blood oxygen, stress, and recovery. Up to 7-day battery, IP68 water resistant, and no subscription needed for core insights.',
+        description: 'Women-focused smart rings (Ring Gen 2 and Ring Air) that track overnight basal body temperature with three sensors to predict ovulation and period, plus sleep, heart rate, HRV, blood oxygen, stress, and recovery. Regularly $199.99. Up to 7-day battery, IP68 water resistant, and no subscription needed for core insights.',
         tags: ['fertility', 'irregular', 'pcos'],
         healthFunctions: ['cycle-tracking'],
         category: 'fertility',
-        stage: 'Available in US',
+        stage: '$199.99 · Available in US',
         productReleased: true,
         spotsLeft: 430,
         url: 'https://www.femometer.com/',
-        image: 'https://s.femometer.com/products/smart-ring-air/femometer-ring-air.webp'
+        image: 'https://s.femometer.com/products/smart-ring-air/femometer-ring-air.webp',
+        communityReview: 'Reviews are mixed. TikTok reviewers and independent write-ups praise the price versus subscription-based rings, the comfort, the 7-day battery, and the overnight temperature charts. A 2024 independent reviewer found early charts "jumpy" that later smoothed out after firmware updates, noted it measures skin temperature rather than true BBT, and would not rely on it alone to avoid pregnancy. Trustpilot is negative (2.3/5 from only 7 reviews for femometer.com): reviewers report the battery failing after a few months, the ring cracking or the shell separating, and slow or unresolved refunds and support. Amazon star ratings, Walmart reviews, and Reddit threads could not be verified at time of writing, so treat the sample as small.',
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: { links: [
+                { platform: 'tiktok', url: 'https://www.tiktok.com/@dr.randiblikely/video/7636209543688506654', text: 'TikTok: Femometer vs RingConn', summary: 'A creator video titled "Help me decide between RingConn Smart Ring or Femometer," one of many TikTok comparisons of Femometer against other smart rings. Video contents could not be read automatically; open the link for the full review.' },
+                { platform: 'tiktok', url: 'https://www.tiktok.com/@daniellencarey/video/7646871798360853791', text: 'TikTok: comparing smart rings I have tried', summary: 'A creator video comparing several smart rings, including Femometer, RingConn, and others. Video contents could not be read automatically; open the link for the full comparison.' },
+                { platform: 'instagram', url: 'https://www.instagram.com/femometer_ring/', text: 'Instagram @femometer_ring', summary: "Femometer's own account (about 6.3k followers) with highlights for Smart Ring, BBT, Review, and Giveaway. This is brand-run content, not independent reviews." },
+                { url: 'https://www.trustpilot.com/review/femometer.com', text: 'Trustpilot: femometer.com', summary: 'Rated 2.3/5 from 7 reviews, all 1 or 2 stars. Reviewers describe battery failure after about 4 months, the ring cracking in half or the shell separating from the electronics, and slow or unresolved refunds and customer service. A very small sample.' },
+                { url: 'https://www.amazon.com/femometer-Monitoring-Subscription-Fertility-Technology/dp/B0FVSNHC6F', text: 'Amazon: femometer Ring Gen2', summary: 'Amazon listing for the Ring Gen 2 with customer reviews. Star rating and review count could not be read automatically; check the listing for current numbers.' },
+                { url: 'https://cedarcreekholistic.com/femometer-ring/', text: 'Independent review (Cedar Creek Holistic, Aug 2024)', summary: 'Hands-on review of the first-generation ring. Praises price, overnight convenience, 7-10 day battery, and firmware improvements. Notes early jumpy temperatures, that it measures skin rather than true basal temperature, and does not recommend it as a sole method for avoiding pregnancy.' }
+            ] }
+        }
     },
     // ─── UNRELEASED STARTUPS (Startups / waitlist page only) ─
     {
