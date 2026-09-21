@@ -1,13 +1,19 @@
 import posthog from 'posthog-js';
 import { getSupabaseClient } from './utils/supabaseClient';
 
-// One-time "how are you liking ayna" popup for verified users. Shown at most
-// once per account, ever - the "shown" flag is written to Supabase user
-// metadata (not localStorage) so it follows the account across devices and
-// survives a cleared browser, matching how ACCOUNT_DONE_KEY/verification
-// state are treated elsewhere in this app as account-level, not device-level.
+// "How are you liking ayna" popup for verified users.
+//   - WHEN: only after the person has opened a product card, closed it, and a couple of
+//     seconds have passed since closing (see start()).
+//   - HOW OFTEN: at most once a week until they submit feedback; once they have
+//     (satisfaction_survey_completed_at is set) it is never shown again. Dismissing it
+//     ("not now" / X) does not count as feedback, so it comes back a week later.
+// The "last shown" and "completed" timestamps live in Supabase user metadata (not
+// localStorage) so they follow the account across devices and survive a cleared browser.
 
 const SHOWN_META_KEY = 'satisfaction_survey_shown_at';
+const COMPLETED_META_KEY = 'satisfaction_survey_completed_at';
+const REASK_AFTER_MS = 7 * 24 * 60 * 60 * 1000; // once a week until feedback is given
+const AFTER_PRODUCT_CLOSE_MS = 2500; // "a couple seconds" after the product view is closed
 
 const REFERRAL_OPTIONS = [
   'TikTok',
@@ -22,7 +28,6 @@ const REFERRAL_OPTIONS = [
 
 const supabase = getSupabaseClient();
 let attempted = false;
-let pollTimer = null;
 
 function isVerifiedUser(user) {
   if (!user) return false;
@@ -36,7 +41,7 @@ function isVerifiedUser(user) {
 }
 
 function competingOverlayOpen() {
-  return Boolean(document.querySelector('.v6-account-step, .v6-verify-backdrop, .v6-survey-backdrop'));
+  return Boolean(document.querySelector('.v6-account-step, .v6-verify-backdrop, .v6-survey-backdrop, [aria-label="Finish creating your ayna account"]'));
 }
 
 async function markShown(user, meta) {
@@ -209,7 +214,14 @@ async function maybeShowSurvey() {
   if (!user || !isVerifiedUser(user)) return;
 
   const meta = user.user_metadata || {};
-  if (meta[SHOWN_META_KEY]) {
+  // Already gave feedback: never ask again.
+  if (meta[COMPLETED_META_KEY]) {
+    attempted = true;
+    return;
+  }
+  // Asked within the last week (and no feedback yet): wait until a week has passed.
+  const lastShown = Date.parse(meta[SHOWN_META_KEY] || '');
+  if (Number.isFinite(lastShown) && Date.now() - lastShown < REASK_AFTER_MS) {
     attempted = true;
     return;
   }
@@ -223,22 +235,35 @@ async function maybeShowSurvey() {
   buildSurvey(user, meta);
 }
 
+// The survey is only offered right after someone finishes looking at a product: a product
+// page is open at /product/<slug>; once they leave it, wait a couple of seconds and, if
+// they have not opened another one, ask.
+function isProductViewOpen() {
+  return /^\/product\//.test(window.location.pathname);
+}
+
 function start() {
   if (!supabase) return;
 
-  window.setTimeout(maybeShowSurvey, 4000);
-  pollTimer = window.setInterval(() => {
-    if (attempted) {
-      window.clearInterval(pollTimer);
+  let sawProduct = false;
+  let closeTimer = null;
+  window.setInterval(() => {
+    if (isProductViewOpen()) {
+      sawProduct = true;
+      if (closeTimer) { window.clearTimeout(closeTimer); closeTimer = null; }
       return;
     }
-    maybeShowSurvey();
-  }, 2500);
+    if (sawProduct && !closeTimer) {
+      closeTimer = window.setTimeout(() => {
+        closeTimer = null;
+        sawProduct = false;
+        if (!isProductViewOpen()) maybeShowSurvey();
+      }, AFTER_PRODUCT_CLOSE_MS);
+    }
+  }, 400);
 
-  supabase.auth.onAuthStateChange(() => {
-    attempted = false;
-    window.setTimeout(maybeShowSurvey, 600);
-  });
+  // A new sign-in re-evaluates eligibility, but never pops the survey up by itself.
+  supabase.auth.onAuthStateChange(() => { attempted = false; });
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
