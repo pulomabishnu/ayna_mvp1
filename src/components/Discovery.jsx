@@ -5,6 +5,7 @@ import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProd
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { isPartnerBrandItem, getPartnerBrandRank } from '../utils/partnerBrands';
 import { fetchSearchSuggestions } from '../utils/fetchSearchSuggestions';
+import useRotatingPlaceholder from '../utils/useRotatingPlaceholder';
 import { getVerificationLinks } from '../utils/verificationLinks';
 import { RELEASED_STARTUPS } from '../data/startups';
 import { getAynaRating } from '../data/aynaReviews';
@@ -28,6 +29,24 @@ import { productHref, isPlainLeftClick } from '../utils/productRoute';
 // Re-exported for unit testing of the category-chip filtering logic (see
 // Discovery.macroGroupFilter.test.js), which imports these from here.
 export { MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, resolveBrowseAiRoundQuery, getSortPrice, pickOnePerPartnerBrand };
+
+// Example searches the Browse search box cycles through as its placeholder, spanning
+// life from first period to post-menopause.
+const SEARCH_PLACEHOLDER_EXAMPLES = [
+    'best perimenopause telehealth provider',
+    'non-hormonal vaginal moisturizers',
+    'organic tampons for a heavy flow',
+    'period underwear for teens',
+    'magnesium for period cramps',
+    'at-home ovulation tests',
+    'pelvic floor trainer for postpartum leaks',
+    'prenatal vitamins with choline',
+    'hot flash relief without hormones',
+    'lubricant for sensitive skin',
+    'wearable breast pump for work',
+    'postmenopausal bone health supplements',
+    'cycle tracking apps that respect privacy',
+];
 
 /** Natural-language phrase for the browse-AI extension's `query` param — prefers the
  * more specific active scope (a chosen sub-category) over the broader macro group, and
@@ -409,6 +428,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [categoryFilter, setCategoryFilter] = useState(initialCategory || 'all');
     const [typeFilter] = useState('all');
     const [searchQuery, setSearchQuery] = useState(initialSearch || '');
+    const searchPlaceholder = useRotatingPlaceholder(SEARCH_PLACEHOLDER_EXAMPLES, { prefix: 'Try: ', fallback: 'Search products', enabled: !searchQuery });
     const [submittedQuery, setSubmittedQuery] = useState(initialSearch || '');
     const [sortBy, setSortBy] = useState('default');
     // Freshly generated on every mount — Discovery unmounts/remounts on each navigation to it,
@@ -1328,7 +1348,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                             if (value.trim().length >= 2) runSearch(value);
                         }, 600);
                     }}
-                    placeholder="Search products"
+                    placeholder={searchPlaceholder}
                     aria-label="Search products"
                 />
             </form>

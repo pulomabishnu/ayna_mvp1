@@ -963,7 +963,6 @@ export const BROWSE_GROUPS = [
     { id: 'all', label: 'All', covers: [] },
     { id: 'life-periods', label: 'Cycle', covers: ['period', 'hormones'] },
     { id: 'life-intimate', label: 'Vaginal & Sexual', covers: ['intimate', 'sexual'] },
-    { id: 'life-fertility', label: 'Fertility', covers: ['fertility', 'birth-control'] },
     { id: 'life-pregnancy', label: 'Pregnancy', covers: ['pregnancy'] },
     { id: 'life-postpartum', label: 'Postpartum', covers: ['postpartum', 'breast'] },
     { id: 'life-pelvic', label: 'Pelvic Health', covers: ['pelvic'] },
