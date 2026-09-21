@@ -260,15 +260,15 @@ function buildAccountStep() {
       </div>
 
       <form class="v6-account-fields" novalidate>
+        <select class="v6-account-input v6-account-referral" aria-label="How did you hear about us?" required>
+          <option value="">how did you hear about us?</option>
+        </select>
+        <input class="v6-account-input v6-account-referral-other" type="text" maxlength="120" placeholder="tell us where you found ayna" hidden />
         <input class="v6-account-input v6-account-email" type="email" autocomplete="email" placeholder="email address" />
         <input class="v6-account-input v6-account-password" type="password" autocomplete="new-password" minlength="8" placeholder="create a password" />
         <input class="v6-account-input v6-account-phone" type="tel" autocomplete="tel" placeholder="phone number" hidden />
         <input class="v6-account-input v6-account-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code" hidden />
         <p class="v6-account-code-note" hidden></p>
-        <select class="v6-account-input v6-account-referral" aria-label="How did you hear about us?">
-          <option value="">how did you hear about us? (optional)</option>
-        </select>
-        <input class="v6-account-input v6-account-referral-other" type="text" maxlength="120" placeholder="tell us where you found ayna" hidden />
         <button class="v6-account-primary" type="submit" disabled>create account + build my ecosystem</button>
       </form>
 
@@ -349,6 +349,12 @@ function setupAccountStep(result, step) {
     status.style.color = good ? '#4f6d50' : '#8e493f';
   };
 
+  const referralOk = () => {
+    const value = referralSelect.value;
+    if (!value) return false;
+    return value !== 'Other' || Boolean(referralOther.value.trim());
+  };
+
   const syncPrimary = () => {
     const consentOk = allConsented(step);
     const fieldsOk = method === 'email'
@@ -356,7 +362,7 @@ function setupAccountStep(result, step) {
       : phoneStage === 'number'
         ? Boolean(normalizePhoneE164(phone.value))
         : Boolean(code.value.trim().length === 6);
-    primary.disabled = !(consentOk && fieldsOk);
+    primary.disabled = !(consentOk && referralOk() && fieldsOk);
     primary.textContent = method === 'email'
       ? 'create account + build my ecosystem'
       : phoneStage === 'number' ? 'text me a code' : 'verify + build my ecosystem';
@@ -384,8 +390,10 @@ function setupAccountStep(result, step) {
     const showOther = referralSelect.value === 'Other';
     referralOther.hidden = !showOther;
     if (showOther) window.setTimeout(() => referralOther.focus(), 30);
+    syncPrimary();
   };
   referralSelect.addEventListener('change', syncReferral);
+  referralOther.addEventListener('input', syncPrimary);
 
   const referralValue = () => {
     const source = referralSelect.value;
@@ -419,6 +427,11 @@ function setupAccountStep(result, step) {
   });
 
   google.addEventListener('click', async () => {
+    if (!referralOk()) {
+      setStatus('Please tell us how you heard about ayna first.');
+      referralSelect.focus();
+      return;
+    }
     if (!allConsented(step)) {
       consent.classList.add('is-open');
       consentToggle.setAttribute('aria-expanded', 'true');
@@ -427,6 +440,16 @@ function setupAccountStep(result, step) {
     }
     if (!supabase) {
       setStatus('Sign-in is not configured on this deployment.');
+      return;
+    }
+    // AuthCallback saves this after Google returns, including the referral answer.
+    try {
+      const heardAboutUs = referralValue();
+      window.sessionStorage.setItem('ayna_pending_consent', JSON.stringify(
+        signupMetadata(heardAboutUs ? { heard_about_us: heardAboutUs } : {}),
+      ));
+    } catch (_) {
+      setStatus('Please enable browser storage or use email to create your account.');
       return;
     }
     setStatus('Opening Google…', true);

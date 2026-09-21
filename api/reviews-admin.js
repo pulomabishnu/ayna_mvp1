@@ -1,6 +1,5 @@
 /* global process */
 import { verifyUser } from './_usageLimit.js';
-import { getProductById } from '../src/data/products.js';
 
 function setPrivateResponseHeaders(res) {
   res.setHeader('Cache-Control', 'private, no-store, max-age=0');
@@ -41,42 +40,28 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { data: rows, error: rowsError } = await admin
-      .from('user_reviews')
-      .select('user_id, product_id, ratings, reviews');
-    if (rowsError) throw new Error(rowsError.message);
-
-    // user_reviews has no email column — look reviewers up via the auth
-    // admin API instead of joining a table that doesn't carry it. Paginated
-    // defensively; a beta-stage product won't have more than a page or two.
-    const emailByUserId = new Map();
-    for (let page = 1; page <= 10; page += 1) {
+    const results = [];
+    // The popup stores its response in auth metadata, not user_reviews.
+    for (let page = 1; ; page += 1) {
       const { data, error: listError } = await admin.auth.admin.listUsers({ page, perPage: 1000 });
-      if (listError || !data?.users?.length) break;
-      for (const u of data.users) emailByUserId.set(u.id, u.email || u.phone || u.id);
-      if (data.users.length < 1000) break;
+      if (listError) throw listError;
+      const users = data?.users || [];
+      for (const reviewer of users) {
+        const meta = reviewer.user_metadata || {};
+        if (!meta.satisfaction_survey_completed_at) continue;
+        const rating = Number(meta.satisfaction_rating);
+        results.push({
+          userId: reviewer.id,
+          reviewerEmail: reviewer.email || reviewer.phone || reviewer.id,
+          rating: Number.isInteger(rating) && rating >= 1 && rating <= 5 ? rating : null,
+          feedback: typeof meta.satisfaction_feedback === 'string' ? meta.satisfaction_feedback : '',
+          heardAboutUs: typeof meta.heard_about_us === 'string' ? meta.heard_about_us : '',
+          submittedAt: typeof meta.satisfaction_survey_completed_at === 'string' ? meta.satisfaction_survey_completed_at : '',
+        });
+      }
+      if (users.length < 1000) break;
     }
-
-    const results = (rows || [])
-      .filter((row) => (row.reviews?.length || 0) > 0 || (row.ratings?.length || 0) > 0)
-      .map((row) => {
-        const product = getProductById(row.product_id);
-        return {
-          productId: row.product_id,
-          productName: product?.name || row.product_id,
-          reviewerEmail: emailByUserId.get(row.user_id) || row.user_id,
-          ratings: Array.isArray(row.ratings) ? row.ratings : [],
-          // { text, date } entries — see src/data/aynaReviews.js addReview().
-          reviews: Array.isArray(row.reviews) ? row.reviews : [],
-        };
-      })
-      // Newest activity first: most recent review date per product, falling
-      // back to product name so rating-only rows still sort predictably.
-      .sort((a, b) => {
-        const aLatest = a.reviews.map((r) => r.date || '').sort().pop() || '';
-        const bLatest = b.reviews.map((r) => r.date || '').sort().pop() || '';
-        return bLatest.localeCompare(aLatest) || a.productName.localeCompare(b.productName);
-      });
+    results.sort((a, b) => b.submittedAt.localeCompare(a.submittedAt));
 
     return res.status(200).json({ ok: true, count: results.length, results });
   } catch (e) {

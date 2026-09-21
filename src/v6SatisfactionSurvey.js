@@ -156,18 +156,22 @@ function buildSurvey(user, meta) {
     try {
       const { data } = await supabase.auth.getUser();
       const currentMeta = data?.user?.user_metadata || meta || {};
-      await supabase.auth.updateUser({
+      const { error: saveError } = await supabase.auth.updateUser({
         data: {
           ...currentMeta,
           satisfaction_rating: rating,
-          satisfaction_feedback: feedback || undefined,
+          satisfaction_feedback: feedback,
           satisfaction_survey_completed_at: new Date().toISOString(),
           ...(heardAboutUs ? { heard_about_us: heardAboutUs } : {}),
         },
       });
+      if (saveError) throw saveError;
     } catch (_) {
-      // Non-critical: the shown-flag is already saved, so this popup will not
-      // reappear even if this particular save failed.
+      status.style.color = '#8e493f';
+      status.textContent = "Couldn't save your feedback. Please try again.";
+      submit.disabled = false;
+      submit.textContent = 'send feedback';
+      return;
     }
 
     try {

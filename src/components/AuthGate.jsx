@@ -23,6 +23,8 @@ const AGE_REQUIREMENT_VERSION = '18plus-v1';
 export default function AuthGate({ isModal = false, embedded = false, onSkip, onStartEcosystem, context, onBeforeOAuthRedirect, redirectTo }) {
   useEscapeToClose(isModal, onSkip);
   const [mode, setMode] = useState('signin');
+  const [referral, setReferral] = useState('');
+  const [referralOther, setReferralOther] = useState('');
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -63,6 +65,10 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
   const allConsented = checked.every(Boolean);
   const allowSignup = context === 'quiz';
   const isSignup = allowSignup && mode === 'signup';
+  const referralOk = () => {
+    if (!referral) return false;
+    return referral !== 'Other' || Boolean(referralOther.trim());
+  };
 
   const toggleCheck = (i) =>
     setChecked(prev => prev.map((v, idx) => (idx === i ? !v : v)));
@@ -70,6 +76,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
   const signupMetadata = () => {
     const now = new Date().toISOString();
     return {
+      ...(referral ? { heard_about_us: referral === 'Other' && referralOther.trim() ? `Other: ${referralOther.trim()}` : referral } : {}),
       consent_given_at: now,
       consent_version: CONSENT_VERSION,
       age_18_confirmed: true,
@@ -82,6 +89,10 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
     e.preventDefault();
     if (isSignup && !allConsented) {
       setError("Please agree to all four statements above before creating your account.");
+      return;
+    }
+    if (isSignup && !referralOk()) {
+      setError('Please tell us how you heard about ayna.');
       return;
     }
     setError('');
@@ -167,6 +178,10 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
       setError('Please agree to all four statements above before creating your account.');
       return;
     }
+    if (!referralOk()) {
+      setError('Please tell us how you heard about ayna.');
+      return;
+    }
     setError('');
     setLoading(true);
     try {
@@ -215,6 +230,10 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
   const handleGoogle = async () => {
     if (isSignup && !allConsented) {
       setError("Please agree to all four statements above before continuing.");
+      return;
+    }
+    if (isSignup && !referralOk()) {
+      setError('Please tell us how you heard about ayna.');
       return;
     }
     if (!supabase) {
@@ -419,6 +438,19 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
                   Use email instead
                 </button>
               )}
+
+              <label style={styles.consentText}>
+                How did you hear about us?
+                <select value={referral} onChange={(e) => setReferral(e.target.value)} required style={{ ...styles.input, width: '100%', marginTop: '0.4rem' }}>
+                  <option value="">Select an option</option>
+                  {['TikTok', 'Instagram', 'LinkedIn', 'Google / search', 'Friend / word of mouth', 'Event / conference', 'Brand / partner', 'Other'].map((option) => (
+                    <option key={option} value={option}>{option}</option>
+                  ))}
+                </select>
+              </label>
+              {referral === 'Other' && (
+                <input aria-label="Where did you find ayna?" placeholder="Tell us where you found ayna" value={referralOther} onChange={(e) => setReferralOther(e.target.value)} maxLength={120} style={styles.input} />
+              )}
             </>
           )}
 
@@ -541,10 +573,10 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
 
           <button
             type="submit"
-            disabled={loading || !supabase || (isSignup && !allConsented)}
+            disabled={loading || !supabase || (isSignup && (!allConsented || !referralOk()))}
             style={{
               ...styles.primaryBtn,
-              ...((isSignup && !allConsented) ? styles.primaryBtnDisabled : {}),
+              ...((isSignup && (!allConsented || !referralOk())) ? styles.primaryBtnDisabled : {}),
             }}
           >
             {loading
@@ -565,10 +597,10 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
         <button
           type="button"
           onClick={handleGoogle}
-          disabled={googleLoading || (isSignup && !allConsented)}
+          disabled={googleLoading || (isSignup && (!allConsented || !referralOk()))}
           style={{
             ...styles.googleBtn,
-            ...((isSignup && !allConsented) ? styles.googleBtnDisabled : {}),
+            ...((isSignup && (!allConsented || !referralOk())) ? styles.googleBtnDisabled : {}),
           }}
         >
           <GoogleIcon />
