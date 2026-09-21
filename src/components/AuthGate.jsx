@@ -5,7 +5,7 @@ import { useEscapeToClose } from '../utils/useEscapeToClose';
 const SUBTITLES = {
   quiz: 'Create an account to save your health profile and keep your ecosystem across sessions.',
   browse: 'Create an account to save your discoveries and track products over time.',
-  login: 'Welcome back. Sign in to access your health ecosystem.',
+  login: 'Welcome back. Sign in to access your personalized health ecosystem.',
   personalize: 'Personalized results are matched to your health profile — sign in or create an account to turn this on.',
   default: 'Your personal women\'s health manager',
 };
@@ -343,7 +343,6 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
             Sign in
           </button>
         </div>}
-        {!allowSignup && <h2 style={{ fontFamily: 'var(--font-serif)', textAlign: 'center' }}>Log in</h2>}
 
         {showPhoneNotice && (
           <div
