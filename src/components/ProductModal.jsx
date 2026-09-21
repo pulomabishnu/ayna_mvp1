@@ -22,7 +22,7 @@ const AYNA_TABS = [
   { id: 'summary', label: 'ayna summary' },
   { id: 'clinician', label: 'Clinician opinion' },
   { id: 'scientific', label: 'Scientific literature' },
-  { id: 'community', label: 'Social Media' },
+  { id: 'community', label: 'Social Media + Reviews' },
   { id: 'ask', label: 'Ask Ayna' },
 ];
 
