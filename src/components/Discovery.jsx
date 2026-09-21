@@ -5,7 +5,7 @@ import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProd
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { isPartnerBrandItem, getPartnerBrandRank } from '../utils/partnerBrands';
 import { fetchSearchSuggestions } from '../utils/fetchSearchSuggestions';
-import useRotatingPlaceholder from '../utils/useRotatingPlaceholder';
+import useStaticPlaceholder from '../utils/useStaticPlaceholder';
 import { getVerificationLinks } from '../utils/verificationLinks';
 import { RELEASED_STARTUPS } from '../data/startups';
 import { getAynaRating } from '../data/aynaReviews';
@@ -30,9 +30,9 @@ import { productHref, isPlainLeftClick } from '../utils/productRoute';
 // Discovery.macroGroupFilter.test.js), which imports these from here.
 export { MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, resolveBrowseAiRoundQuery, getSortPrice, pickOnePerPartnerBrand };
 
-// Example searches the Browse search box cycles through as its placeholder. Grouped by
-// care theme (life stage order, 18+ audience) and interleaved below so consecutive
-// examples always come from DIFFERENT themes instead of clustering on one topic.
+// Example searches for the Browse search box's placeholder: one is picked at random each time
+// Browse is opened or refreshed and then stays put. Grouped by care theme, in life-stage order,
+// for an 18+ audience.
 const SEARCH_PLACEHOLDER_THEMES = [
     ['magnesium for period cramps', 'organic tampons for a heavy flow', 'period underwear for overnight leaks'],
     ['non-hormonal vaginal moisturizers', 'lubricant for sensitive skin', 'pH-balanced intimate wash'],
@@ -44,10 +44,7 @@ const SEARCH_PLACEHOLDER_THEMES = [
     ['postmenopausal bone health supplements', 'vaginal dryness after menopause', 'calcium and vitamin D for bone density'],
     ['at-home hormone test', 'sleep support for hormonal changes', 'probiotics for bloating'],
 ];
-const SEARCH_PLACEHOLDER_EXAMPLES = Array.from(
-    { length: Math.max(...SEARCH_PLACEHOLDER_THEMES.map((t) => t.length)) },
-    (_, round) => SEARCH_PLACEHOLDER_THEMES.map((theme) => theme[round]).filter(Boolean)
-).flat();
+const SEARCH_PLACEHOLDER_EXAMPLES = SEARCH_PLACEHOLDER_THEMES.flat();
 
 /** Natural-language phrase for the browse-AI extension's `query` param — prefers the
  * more specific active scope (a chosen sub-category) over the broader macro group, and
@@ -429,9 +426,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [categoryFilter, setCategoryFilter] = useState(initialCategory || 'all');
     const [typeFilter] = useState('all');
     const [searchQuery, setSearchQuery] = useState(initialSearch || '');
-    // Holds the rotating example still while the box is focused or hovered (see useRotatingPlaceholder).
-    const [searchHeld, setSearchHeld] = useState(false);
-    const searchPlaceholder = useRotatingPlaceholder(SEARCH_PLACEHOLDER_EXAMPLES, { prefix: 'Try: ', fallback: 'Search products', enabled: !searchQuery, paused: searchHeld });
+    const searchPlaceholder = useStaticPlaceholder(SEARCH_PLACEHOLDER_EXAMPLES, { prefix: 'Try: ', fallback: 'Search products', enabled: !searchQuery });
     const [submittedQuery, setSubmittedQuery] = useState(initialSearch || '');
     const [sortBy, setSortBy] = useState('default');
     // Freshly generated on every mount — Discovery unmounts/remounts on each navigation to it,
@@ -1353,10 +1348,6 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     }}
                     placeholder={searchPlaceholder}
                     aria-label="Search products"
-                    onFocus={() => setSearchHeld(true)}
-                    onBlur={() => setSearchHeld(false)}
-                    onMouseEnter={() => setSearchHeld(true)}
-                    onMouseLeave={(e) => { if (document.activeElement !== e.currentTarget) setSearchHeld(false); }}
                 />
             </form>
 
