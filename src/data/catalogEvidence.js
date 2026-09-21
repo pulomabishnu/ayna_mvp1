@@ -259,7 +259,6 @@ export const PRODUCT_EVIDENCE_KEYS = {
   'p-neycher-odor-be-gone': ['boricAcidLimitedUse'],
   'p-neycher-hydrobloom-gel': ['vaginalMoisturizers', 'vaginalHyaluronicAcid'],
   'p-neycher-botanical-vulva-balm': ['vulvarExternalCare'],
-  'p-neycher-goodbye-dryness-bundle': ['vaginalMoisturizers', 'vulvarExternalCare'],
 
   'p-good-kitty-uti-biome-shield': ['recurrentUtiSupplements'],
 

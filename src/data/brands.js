@@ -306,43 +306,6 @@ export const BRAND_PRODUCTS = [
         isEmergingBrand: true,
     },
     {
-        id: 'p-neycher-goodbye-dryness-bundle',
-        name: 'Neycher Goodbye, Dryness Bundle',
-        brand: 'Neycher',
-        category: 'intimate-care',
-        type: 'physical',
-        internal: true,
-        healthFunctions: ['vaginal-health'],
-        tags: ['discomfort', 'comfort', 'organic', 'non-hormonal', 'cost'],
-        price: '$49.97 (bundle; $61.97 separately)',
-        whereToBuy: ['helloneycher.com'],
-        url: 'https://www.helloneycher.com/product/goodbye-dryness-bundle',
-        faqUrl: 'https://www.helloneycher.com/faq',
-        // Neycher's own site is inconsistent about what's in this bundle: the product
-        // page text names the Vaginal Moisturizer + HydroBloom Gel, while their official
-        // bundle photo (used below, taken from their shop listing) shows the Vaginal
-        // Moisturizer + Botanical Everyday Balm. Summary deliberately doesn't name the
-        // contents so it can't contradict the image. Confirm with Neycher before
-        // asserting either pairing.
-        image: 'https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/68650ca0d383b3c169e56331_6.webp',
-        summary: 'Neycher\'s dryness bundle. Two of their intimate-care products sold together at a discount versus buying them separately. Check the product page for the current pairing.',
-        ingredients: 'See the individual Neycher product entries for full ingredient lists.',
-        safety: {
-            fdaStatus: 'Manufactured in FDA-registered facilities per the brand\'s site; not an FDA-cleared medical device.',
-            materials: 'See product packaging for the full ingredient list.',
-            recalls: 'No recalls found.',
-            sideEffects: 'None specific reported; discontinue use and consult a clinician if irritation occurs.',
-            opinionAlerts: 'Contains an internally used product. Brand states products are "not intended to diagnose, treat, cure, or prevent any disease". Standard cosmetic/wellness disclaimer language.',
-        },
-        clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'Sourced from Neycher\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'Neycher positions this as an "inside-outside" pairing, per the brand\'s own site. See the individual products for their respective claims.',
-        effectiveness: 'Bundle of two products; see the individual entries for the brand\'s cited results. No independent clinical study of the bundle was found.',
-        integrations: [],
-        badges: [],
-        isEmergingBrand: true,
-    },
-    {
         id: 'p-good-kitty-uti-biome-shield',
         name: 'Good Kitty UTI Biome Shield',
         brand: 'Good Kitty Co',

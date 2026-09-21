@@ -1377,26 +1377,6 @@ export const RESTORED_SCIENTIFIC_EVIDENCE = {
       "justification": "Peer-reviewed systematic review; category-level safety evidence."
     }
   ],
-  "p-neycher-goodbye-dryness-bundle": [
-    {
-      "url": "https://pubmed.ncbi.nlm.nih.gov/39250810/",
-      "text": "Vaginal Moisturizers for Genitourinary Syndrome of Menopause: Systematic Review",
-      "summary": "A systematic review evaluated randomized trials of vaginal moisturizers and other treatments for genitourinary syndrome of menopause. This is intervention-level evidence and does not validate a specific moisturizer product.",
-      "justification": "Peer-reviewed systematic review; category-level evidence."
-    },
-    {
-      "url": "https://www.acog.org/womens-health/faqs/vulvovaginal-health",
-      "text": "ACOG: Vulvovaginal Health",
-      "summary": "ACOG notes that over-the-counter vaginal moisturizers and lubricants can help relieve vaginal dryness and painful sex. This is clinical-guidance-level evidence, not product-specific validation.",
-      "justification": "Clinical guidance from ACOG; category-level evidence."
-    },
-    {
-      "url": "https://pubmed.ncbi.nlm.nih.gov/36458568/",
-      "text": "Vulvar Contact Dermatitis Systematic Review",
-      "summary": "A systematic review identifies fragrances, preservatives, cosmetic constituents, and other exposures as potential vulvar allergens or irritants. This supports cautious external-care guidance but does not validate a specific wipe, wash, or balm.",
-      "justification": "Peer-reviewed systematic review; category-level safety evidence."
-    }
-  ],
   "p-good-kitty-uti-biome-shield": [
     {
       "url": "https://pubmed.ncbi.nlm.nih.gov/37947276/",
