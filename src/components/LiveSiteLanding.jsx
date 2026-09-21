@@ -796,7 +796,7 @@ function FirstVisitLanding({ onLogIn, onStartQuiz, onViewDiscovery, onOpenProduc
       <section className="ayna-landing-band">
         <div className="mockup-page ayna-landing-band__inner">
           <div className="ayna-landing-band__copy">
-            ayna is free. Access your personal ecosystem of health and wellness picks, just for you.
+            Access for free your personal ecosystem of health and wellness picks, just for you.
           </div>
           <div className="ayna-login-actions">
             <button type="button" className="ayna-landing-btn ayna-landing-btn--navy" onClick={onLogIn}>Log in</button>
