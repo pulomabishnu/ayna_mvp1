@@ -842,17 +842,17 @@ export const STARTUPS = [
     },
     {
         id: 's-femometry',
-        name: 'Femometry',
-        tagline: 'Hormone and cycle insights from at-home tests',
-        description: 'At-home hormone testing paired with app for cycle and fertility insights. For people with irregular cycles and PCOS.',
+        name: 'Femometer',
+        tagline: 'Smart basal thermometer for ovulation and cycle tracking',
+        description: 'Bluetooth basal body thermometer with 0.01° accuracy that syncs to the Femometer app to chart your temperature, predict ovulation, and understand your cycle. No subscription fees.',
         tags: ['fertility', 'irregular', 'pcos'],
         healthFunctions: ['cycle-tracking'],
         category: 'fertility',
         stage: 'Available in US',
         productReleased: true,
         spotsLeft: 430,
-        url: 'https://femometry.com',
-        image: 'https://i.ytimg.com/vi/P6Z8f3PcZxg/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLC9m7w-IaatPOF3INeupFtf0E4atQ'
+        url: 'https://www.femometer.com/products/Vinca3.0-Basal-Body-Thermometer',
+        image: 'https://s.femometer.com/ad/imgs/a21b529704ea9a1e45a8ee6b6a690125.png'
     },
     // ─── UNRELEASED STARTUPS (Startups / waitlist page only) ─
     {
