@@ -1784,3 +1784,35 @@ html.v6-signed-in .ayna-browse.v6-browse-live .ayna-browse-card__match {
 .v6-universe-wrap {
   width: min(680px, 100%) !important;
 }
+
+/* Browse: category pills sit under the search bar at its full width (the old
+   "browse by need" dropdown button was removed). Selectors carry the extra
+   .v6-browse-pills class so they beat the older stacked browse rules
+   regardless of stylesheet order. */
+.ayna-browse.v6-browse-live.v6-browse-pills .ayna-browse__categories{
+  display:flex!important;
+  position:static!important;
+  flex-wrap:wrap!important;
+  gap:8px!important;
+  width:100%!important;
+  max-width:none!important;
+  box-sizing:border-box!important;
+  margin:0 0 12px!important;
+  padding:0!important;
+  overflow:visible!important;
+  max-height:none!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  -webkit-mask-image:none!important;
+  mask-image:none!important;
+}
+.ayna-browse.v6-browse-live.v6-browse-pills .ayna-browse__categories button{
+  flex:1 1 auto!important;
+  text-align:center!important;
+  justify-content:center!important;
+}
+.ayna-browse.v6-browse-live.v6-browse-pills .ayna-browse__toolbar{
+  margin-top:0!important;
+  padding-left:0!important;
+}
