@@ -440,7 +440,12 @@ export default function MobileApp() {
       saveHealthIntakeForCurrentUser(rawIntake).catch(() => {});
       setScreen('building');
     },
-    onFinish: () => setScreen('reveal'),
+    // The reveal->sign-in funnel is for a first-time, still-anonymous build:
+    // "here's your ecosystem, sign in to save it." Someone already signed in
+    // (a monthly check-in, a retaken quiz, an edited profile) already has an
+    // account and this same ecosystem attached to it — routing them through
+    // "sign in" again after finishing is a dead end, not a next step.
+    onFinish: () => setScreen(authUser ? 'eco' : 'reveal'),
     onContinue: () => setScreen('signin'),
     // Real Supabase auth (src/mobile/hooks/useSupabaseAuth.js) — the name
     // comes from whatever SigninScreen already has in its own form state
