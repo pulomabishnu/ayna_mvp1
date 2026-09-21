@@ -843,16 +843,16 @@ export const STARTUPS = [
     {
         id: 's-femometry',
         name: 'Femometer',
-        tagline: 'Smart basal thermometer for ovulation and cycle tracking',
-        description: 'Bluetooth basal body thermometer with 0.01° accuracy that syncs to the Femometer app to chart your temperature, predict ovulation, and understand your cycle. No subscription fees.',
+        tagline: 'Smart ring for cycle, temperature, and sleep tracking',
+        description: 'Women-focused smart rings (Ring Gen 2 and Ring Air) that track overnight basal body temperature with three sensors to predict ovulation and period, plus sleep, heart rate, HRV, blood oxygen, stress, and recovery. Up to 7-day battery, IP68 water resistant, and no subscription needed for core insights.',
         tags: ['fertility', 'irregular', 'pcos'],
         healthFunctions: ['cycle-tracking'],
         category: 'fertility',
         stage: 'Available in US',
         productReleased: true,
         spotsLeft: 430,
-        url: 'https://www.femometer.com/products/Vinca3.0-Basal-Body-Thermometer',
-        image: 'https://s.femometer.com/ad/imgs/a21b529704ea9a1e45a8ee6b6a690125.png'
+        url: 'https://www.femometer.com/',
+        image: 'https://s.femometer.com/products/smart-ring-air/femometer-ring-air.webp'
     },
     // ─── UNRELEASED STARTUPS (Startups / waitlist page only) ─
     {
