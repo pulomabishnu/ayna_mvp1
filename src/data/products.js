@@ -973,6 +973,7 @@ export const BROWSE_GROUPS = [
     { id: 'life-menopause', label: 'Menopause', covers: ['menopause'] },
     { id: 'life-postmenopause', label: 'Postmenopause', covers: [], tags: ['postmenopause'], keywords: ['postmenopause', 'post-menopause', 'postmenopausal', 'post-menopausal', 'after menopause', 'osteoporosis', 'bone density', 'vaginal atrophy', 'genitourinary syndrome'] },
     { id: 'life-tests-telehealth', label: 'Tests & Telehealth', covers: ['tests-devices'], categories: ['telehealth'] },
+    { id: 'life-wellness', label: 'Wellness', covers: ['skin', 'hair', 'gut', 'sleep-stress', 'pain-recovery'] },
 ];
 
 /** Maps any group id (a fine MACRO_GROUPS id or a BROWSE_GROUPS id) to the Browse pill that contains it. */
