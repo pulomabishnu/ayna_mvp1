@@ -756,7 +756,25 @@ function App() {
       clearCachedLlmRecommendations();
       try { window.sessionStorage.setItem('ayna_force_llm_refresh', '1'); } catch (_) {}
       const _supabase = getSupabaseClient();
-      if (_supabase && user) resetRemoteEcosystemBestEffort(_supabase, user.id);
+      if (_supabase && user) {
+        // Persist the instant seed right away rather than waiting on the async
+        // LLM build (handleBuildEcosystemFromLlm) to be the only thing that
+        // ever writes to user_ecosystems. That build can fail (provider error,
+        // 502, the tab closing mid-fetch) and previously left NOTHING saved —
+        // the seed only ever lived in React state + a sessionStorage shadow,
+        // so it silently evaporated the moment the session ended, even though
+        // it was visibly "in" her ecosystem the whole time. Chained after the
+        // reset (not fired in parallel) so the clear-then-seed writes can't
+        // race and have the seed's `in_ecosystem: true` lost to the reset's
+        // `in_ecosystem: false` landing second.
+        resetRemoteEcosystemBestEffort(_supabase, user.id).then(() => {
+          const seeded = Object.values(instantProducts);
+          if (seeded.length) {
+            upsertProductsBatch(_supabase, user.id, seeded, { inEcosystem: true, isTracked: false, isOmitted: false })
+              .catch(e => reportSaveFailure('Could not save your ecosystem', e));
+          }
+        });
+      }
       setCurrentView('ecosystem');
       // Persist the RAW intake, not the legacy wrapper. `pendingQuizResults` is
       // already the output of mapIntakeToLegacyQuizProfile(), so saving it stored
@@ -1066,7 +1084,21 @@ function App() {
     try { window.sessionStorage.setItem('ayna_force_llm_refresh', '1'); } catch (_) {}
     const supabase = getSupabaseClient();
     // Local reset is immediate; remote sync is best-effort and never blocks build.
-    if (supabase && user) resetRemoteEcosystemBestEffort(supabase, user.id);
+    // Persist the instant seed too (chained after the reset, not fired in
+    // parallel, so a race can't have the reset's in_ecosystem:false land
+    // after the seed's in_ecosystem:true) — otherwise the seed only lives in
+    // React state + a sessionStorage shadow and is gone the moment the
+    // session ends if the async LLM build (the only other thing that writes
+    // to user_ecosystems) never finishes.
+    if (supabase && user) {
+      resetRemoteEcosystemBestEffort(supabase, user.id).then(() => {
+        const seeded = Object.values(instantProducts);
+        if (seeded.length) {
+          upsertProductsBatch(supabase, user.id, seeded, { inEcosystem: true, isTracked: false, isOmitted: false })
+            .catch(e => reportSaveFailure('Could not save your ecosystem', e));
+        }
+      });
+    }
     posthog.capture('intake_completed', {
       concernsCount: Array.isArray(completedResults.primaryConcerns) ? completedResults.primaryConcerns.length : 0,
       conditionsCount: Array.isArray(completedResults.conditions) ? completedResults.conditions.length : 0,
@@ -1096,7 +1128,19 @@ function App() {
     try { window.sessionStorage.setItem('ayna_force_llm_refresh', '1'); } catch (_) {}
     const supabase = getSupabaseClient();
     // Local reset is immediate; remote sync is best-effort and never blocks build.
-    if (supabase && user) resetRemoteEcosystemBestEffort(supabase, user.id);
+    // Persist the instant seed too (chained after the reset, not fired in
+    // parallel — see handleQuizComplete for why) so an edited profile's
+    // re-seeded ecosystem survives even if the async LLM rebuild never
+    // completes.
+    if (supabase && user) {
+      resetRemoteEcosystemBestEffort(supabase, user.id).then(() => {
+        const seeded = Object.values(instantProducts);
+        if (seeded.length) {
+          upsertProductsBatch(supabase, user.id, seeded, { inEcosystem: true, isTracked: false, isOmitted: false })
+            .catch(e => reportSaveFailure('Could not save your ecosystem', e));
+        }
+      });
+    }
     setCurrentView('ecosystem');
   };
 
