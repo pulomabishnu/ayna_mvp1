@@ -1838,3 +1838,10 @@ html.v6-signed-in .ayna-browse.v6-browse-live .ayna-browse-card__match {
 .ayna-browse .v6-add-product-link:hover{color:#5a3a2c!important}
 .ayna-browse .v6-add-product-link[hidden]{display:none!important}
 html[data-v6-site-theme='dark'] .ayna-browse .v6-add-product-link{color:#e0ad78!important}
+
+/* Home hero: size to its content (it was pinned to a 496px minimum, which left a
+   large empty band between the rotating pills and the banner below). */
+.mockup-landing .ayna-landing-hero:not(.ayna-landing-hero--returning){
+  min-height:0!important;
+  padding-bottom:36px!important;
+}
