@@ -30,23 +30,24 @@ import { productHref, isPlainLeftClick } from '../utils/productRoute';
 // Discovery.macroGroupFilter.test.js), which imports these from here.
 export { MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, resolveBrowseAiRoundQuery, getSortPrice, pickOnePerPartnerBrand };
 
-// Example searches the Browse search box cycles through as its placeholder, spanning
-// life from first period to post-menopause.
-const SEARCH_PLACEHOLDER_EXAMPLES = [
-    'best perimenopause telehealth provider',
-    'non-hormonal vaginal moisturizers',
-    'organic tampons for a heavy flow',
-    'period underwear for teens',
-    'magnesium for period cramps',
-    'at-home ovulation tests',
-    'pelvic floor trainer for postpartum leaks',
-    'prenatal vitamins with choline',
-    'hot flash relief without hormones',
-    'lubricant for sensitive skin',
-    'wearable breast pump for work',
-    'postmenopausal bone health supplements',
-    'cycle tracking apps that respect privacy',
+// Example searches the Browse search box cycles through as its placeholder. Grouped by
+// care theme (life stage order, 18+ audience) and interleaved below so consecutive
+// examples always come from DIFFERENT themes instead of clustering on one topic.
+const SEARCH_PLACEHOLDER_THEMES = [
+    ['magnesium for period cramps', 'organic tampons for a heavy flow', 'period underwear for overnight leaks'],
+    ['non-hormonal vaginal moisturizers', 'lubricant for sensitive skin', 'pH-balanced intimate wash'],
+    ['prenatal vitamins with choline', 'pregnancy pillow for back pain', 'morning sickness relief'],
+    ['postpartum recovery kit', 'wearable breast pump for work', 'nipple balm for breastfeeding'],
+    ['pelvic floor trainer for leaks', 'bladder leak pads that stay dry', 'pelvic floor therapy app'],
+    ['best perimenopause telehealth provider', 'supplements for perimenopause sleep', 'perimenopause mood and anxiety support'],
+    ['hot flash relief without hormones', 'cooling products for night sweats', 'menopause telehealth clinics'],
+    ['postmenopausal bone health supplements', 'vaginal dryness after menopause', 'calcium and vitamin D for bone density'],
+    ['at-home hormone test', 'sleep support for hormonal changes', 'probiotics for bloating'],
 ];
+const SEARCH_PLACEHOLDER_EXAMPLES = Array.from(
+    { length: Math.max(...SEARCH_PLACEHOLDER_THEMES.map((t) => t.length)) },
+    (_, round) => SEARCH_PLACEHOLDER_THEMES.map((theme) => theme[round]).filter(Boolean)
+).flat();
 
 /** Natural-language phrase for the browse-AI extension's `query` param — prefers the
  * more specific active scope (a chosen sub-category) over the broader macro group, and
