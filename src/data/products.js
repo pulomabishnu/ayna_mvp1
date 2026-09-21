@@ -972,7 +972,7 @@ export const BROWSE_GROUPS = [
     { id: 'life-perimenopause', label: 'Perimenopause', covers: [], tags: ['perimenopause'], keywords: ['perimenopause', 'perimenopausal'] },
     { id: 'life-menopause', label: 'Menopause', covers: ['menopause'] },
     { id: 'life-postmenopause', label: 'Postmenopause', covers: [], tags: ['postmenopause'], keywords: ['postmenopause', 'post-menopause', 'postmenopausal', 'post-menopausal', 'after menopause', 'osteoporosis', 'bone density', 'vaginal atrophy', 'genitourinary syndrome'] },
-    { id: 'life-wellness', label: 'Wellness & Tests', covers: ['skin', 'hair', 'gut', 'sleep-stress', 'pain-recovery', 'tests-devices'] },
+    { id: 'life-tests-telehealth', label: 'Tests & Telehealth', covers: ['tests-devices'], categories: ['telehealth'] },
 ];
 
 /** Maps any group id (a fine MACRO_GROUPS id or a BROWSE_GROUPS id) to the Browse pill that contains it. */
@@ -1025,6 +1025,7 @@ export function itemMatchesMacroGroup(item, groupId) {
     const broad = BROWSE_GROUPS.find((g) => g.id === groupId);
     if (broad) {
         if (broad.covers.some((id) => itemMatchesMacroGroup(item, id))) return true;
+        if (Array.isArray(broad.categories) && broad.categories.includes(item?.category)) return true;
         if (Array.isArray(broad.tags) && Array.isArray(item?.tags) && item.tags.some((t) => broad.tags.includes(t))) return true;
         if (Array.isArray(broad.keywords) && broad.keywords.length) {
             const text = productSearchText(item);
