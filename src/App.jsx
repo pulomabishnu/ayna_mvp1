@@ -38,7 +38,7 @@ import { loadHealthProfile, hasHealthProfileSignals } from './utils/healthDataPr
 import { loadHealthProfileForCurrentUser, saveHealthProfileForCurrentUser } from './utils/healthProfileStore';
 import { loadHealthIntakeForCurrentUser, saveHealthIntakeForCurrentUser } from './utils/healthIntakeStore';
 import { mapIntakeToLegacyQuizProfile } from './utils/healthIntake';
-import AuthGate from './components/AuthGate';
+import AuthGate, { ConsentGate } from './components/AuthGate';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import HowWeMakeMoney from './components/HowWeMakeMoney';
 import HowItWorks from './components/HowItWorks';
@@ -392,6 +392,15 @@ function App() {
   const llmBuiltThisSessionRef = useRef(false);
   const [authLoading, setAuthLoading] = useState(true);
   const [dataLoading, setDataLoading] = useState(false);
+  // Which user's saved data (health profile, ecosystem, ...) has finished loading. Lets the
+  // "no health profile yet, so start the quiz" check below wait for the real answer instead of
+  // firing while the profile is still being fetched.
+  const [dataLoadedForUserId, setDataLoadedForUserId] = useState(null);
+  // True right after a fresh sign-in (Log in, Google, browse/personalize gate); cleared once
+  // the profile check has run so it never re-prompts on later visits.
+  const justSignedInRef = useRef(false);
+  // Google account with no recorded consent (created straight from Log in): gate until agreed.
+  const [consentGateOpen, setConsentGateOpen] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [pendingAction, setPendingAction] = useState(null);
   // Ref mirrors pendingAction so onAuthStateChange (async callback) can read it synchronously
@@ -727,7 +736,10 @@ function App() {
       }
       if (healthProfileResult?.profile) setHealthProfile(healthProfileResult.profile);
     }).finally(() => {
-      if (!cancelled) setDataLoading(false);
+      if (!cancelled) {
+        setDataLoading(false);
+        setDataLoadedForUserId(loadForUserId);
+      }
     });
     return () => { cancelled = true; };
   }, [user?.id]);
@@ -740,6 +752,9 @@ function App() {
       return;
     }
     setShowAuthModal(false);
+    if (pendingAction === 'login' || pendingAction === 'browse' || pendingAction === 'personalize') {
+      justSignedInRef.current = true;
+    }
     if (pendingAction === 'quiz-complete' && pendingQuizResults) {
       setQuizResults(pendingQuizResults);
       const { seedMeta, mergedProducts } = getEcosystemSeedFromQuiz(pendingQuizResults, healthProfile);
@@ -815,6 +830,34 @@ function App() {
     setPendingAction('personalize'); pendingActionRef.current = 'personalize';
     setShowAuthModal(true);
   }, []);
+
+  // Someone who just signed in but has no completed health profile (typically a Google
+  // account created from Log in) is taken to the health quiz instead of an empty ecosystem.
+  useEffect(() => {
+    if (!user || !justSignedInRef.current) return;
+    if (dataLoadedForUserId !== user.id) return; // profile still loading
+    justSignedInRef.current = false;
+    if (!hasCompletedPersonalization) setCurrentView('quiz');
+  }, [user, dataLoadedForUserId, hasCompletedPersonalization]);
+
+  // A Google account with no consent on record (created straight from Log in, which skips the
+  // signup form) must confirm 18+ / consent / referral before going further. Waits briefly so a
+  // signup-form Google account, whose consent is written right after the redirect, never flashes it.
+  useEffect(() => {
+    const isGoogle = user?.app_metadata?.provider === 'google'
+      || (Array.isArray(user?.identities) && user.identities.some((i) => i?.provider === 'google'));
+    const missingConsent = Boolean(user) && isGoogle && !user.user_metadata?.consent_given_at;
+    if (!missingConsent || authLoading || currentView === 'auth-callback') {
+      setConsentGateOpen(false);
+      return undefined;
+    }
+    const timer = setTimeout(() => {
+      let pendingStash = false;
+      try { pendingStash = Boolean(sessionStorage.getItem('ayna_pending_consent')); } catch (_) {}
+      if (!pendingStash) setConsentGateOpen(true);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [user, authLoading, currentView]);
 
   const PROTECTED_VIEWS = ['ecosystem', 'comparison', 'omitted', 'recalls', 'doctor-prep', 'profile-edit', 'phone-verify', 'tracked', 'screenings', 'delete-account'];
   useEffect(() => {
@@ -3409,6 +3452,16 @@ function App() {
               </p>
             </div>
           </div>
+        )}
+
+        {consentGateOpen && user && (
+          <ConsentGate
+            onAgreed={(updatedUser) => { if (updatedUser) setUser(updatedUser); setConsentGateOpen(false); }}
+            onDecline={async () => {
+              setConsentGateOpen(false);
+              try { await getSupabaseClient()?.auth.signOut(); } catch (_) {}
+            }}
+          />
         )}
 
         {showAuthModal && (

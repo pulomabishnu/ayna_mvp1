@@ -311,6 +311,19 @@ function isGenericName(name, brand) {
   return false;
 }
 
+// Brands whose product line Ayna has hand-verified against the brand's own
+// site and lists in the curated catalog. The model is NOT allowed to add
+// products for these brands: a live search for "femometer" surfaced invented
+// products (a heating pad, a "Rose" thermometer, pregnancy-test sticks) with
+// guessed price ranges next to the one real, verified entry. Add a brand here
+// only after its real product list is in the catalog, and add missing real
+// products to the catalog instead of loosening this.
+const VERIFIED_ONLY_BRANDS = ['femometer'];
+function isUnverifiedProductFromVerifiedOnlyBrand(s) {
+  const haystack = `${s?.brand || ''} ${s?.name || ''}`.toLowerCase().replace(/[^a-z0-9]+/g, ' ');
+  return VERIFIED_ONLY_BRANDS.some((b) => new RegExp(`\\b${b}\\b`).test(haystack));
+}
+
 function normalizeSuggestion(raw, index) {
   const brandRaw = sanitizeStr(raw?.brand, 80);
   if (isGenericName(raw?.name || raw?.productName, brandRaw)) return null;
@@ -580,6 +593,7 @@ export default async function handler(req, res) {
     .map((s, i) => normalizeSuggestion(s, i))
     .filter(Boolean)
     .filter((s) => !/\bayna\b/i.test(s.brand || '') && !/\bayna\b/i.test(s.name || ''))
+    .filter((s) => !isUnverifiedProductFromVerifiedOnlyBrand(s))
     .slice(0, maxResults);
   const querySummary = normalizeQuerySummary(parsed?.querySummary);
   const relatedSearches = Array.isArray(parsed?.relatedSearches)

@@ -500,6 +500,28 @@ describe('POST /api/search-suggestions — output sanitization', () => {
     expect(res.body.suggestions.some((s) => /\bayna\b/i.test(s.name))).toBe(false);
   });
 
+  it('never lets the model invent products for a hand-verified brand (Femometer)', async () => {
+    globalThis.fetch = vi.fn(async () => claudeOk({
+      suggestions: [
+        {
+          brand: 'Femometer', name: 'Femometer Menstrual Heating Pad and Massager', category: 'cramp-relief', type: 'physical',
+          summary: 'A heating pad and massager for menstrual cramp relief with several heat settings.',
+        },
+        {
+          brand: 'Acme', name: 'Heat Patch', category: 'cramp-relief', type: 'physical',
+          summary: 'A adhesive heat patch that provides several hours of low-level warmth relief.',
+        },
+      ],
+    }));
+    const handler = await loadHandler();
+    const res = mockRes();
+
+    await handler(searchReq({ query: 'femometer' }), res);
+
+    expect(res.body.suggestions).toHaveLength(1);
+    expect(res.body.suggestions[0].name).toContain('Heat Patch');
+  });
+
   it('drops a suggestion whose summary is too short to be real content', async () => {
     globalThis.fetch = vi.fn(async () => claudeOk({
       suggestions: [{ brand: 'Acme', name: 'Heat Patch', category: 'cramp-relief', summary: 'Too short.' }],

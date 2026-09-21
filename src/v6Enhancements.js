@@ -166,39 +166,11 @@ function enhanceBrowse() {
   const browse = document.querySelector('.ayna-browse');
   if (!browse) return;
 
-  browse.classList.add('v6-browse-live');
-  const categories = browse.querySelector('.ayna-browse__categories');
-  if (!categories) return;
-
-  categories.classList.add('v6-browse-needs-menu');
-
-  let trigger = browse.querySelector('.v6-browse-needs-trigger');
-  if (!trigger) {
-    trigger = document.createElement('button');
-    trigger.type = 'button';
-    trigger.className = 'v6-browse-needs-trigger';
-    trigger.textContent = 'browse by need ↓';
-    trigger.setAttribute('aria-expanded', 'false');
-    categories.insertAdjacentElement('beforebegin', trigger);
-
-    trigger.addEventListener('click', (event) => {
-      event.stopPropagation();
-      const open = !categories.classList.contains('is-open');
-      categories.classList.toggle('is-open', open);
-      trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
-    });
-  }
-
-  if (!categories.dataset.v6Bound) {
-    categories.dataset.v6Bound = '1';
-    categories.addEventListener('click', (event) => {
-      if (!event.target.closest('button')) return;
-      window.setTimeout(() => {
-        categories.classList.remove('is-open');
-        trigger?.setAttribute('aria-expanded', 'false');
-      }, 80);
-    });
-  }
+  browse.classList.add('v6-browse-live', 'v6-browse-pills');
+  // The category pills sit in the page under the search bar (no "browse by need"
+  // dropdown), so make sure no stale trigger/menu state is left behind.
+  browse.querySelectorAll('.v6-browse-needs-trigger').forEach((node) => node.remove());
+  browse.querySelector('.ayna-browse__categories')?.classList.remove('v6-browse-needs-menu', 'is-open');
 }
 
 function findAuthCard() {
@@ -285,16 +257,6 @@ const observer = new MutationObserver(() => {
 function start() {
   observer.observe(document.documentElement, { childList: true, subtree: true });
   enhanceAll();
-
-  document.addEventListener('pointerdown', (event) => {
-    const browse = document.querySelector('.ayna-browse');
-    const menu = browse?.querySelector('.ayna-browse__categories');
-    const trigger = browse?.querySelector('.v6-browse-needs-trigger');
-    if (!menu?.classList.contains('is-open')) return;
-    if (menu.contains(event.target) || trigger?.contains(event.target)) return;
-    menu.classList.remove('is-open');
-    trigger?.setAttribute('aria-expanded', 'false');
-  }, true);
 
   document.addEventListener('click', () => nextFrame(enhanceAll), true);
   document.addEventListener('input', () => nextFrame(enhanceAll), true);

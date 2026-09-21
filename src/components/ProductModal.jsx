@@ -19,10 +19,10 @@ import { productHref } from '../utils/productRoute';
 const PRODUCT_VIEW_KEY = 'ayna_product_detail_view_v1';
 
 const AYNA_TABS = [
-  { id: 'summary', label: 'ayna summary' },
-  { id: 'clinician', label: 'Clinician opinion' },
-  { id: 'scientific', label: 'Scientific literature' },
-  { id: 'community', label: 'Social Media' },
+  { id: 'summary', label: 'ayna Summary' },
+  { id: 'clinician', label: 'Clinician Opinion' },
+  { id: 'scientific', label: 'Scientific Literature' },
+  { id: 'community', label: 'Social Media + Reviews' },
   { id: 'ask', label: 'Ask Ayna' },
 ];
 

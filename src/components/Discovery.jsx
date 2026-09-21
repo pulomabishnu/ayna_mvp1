@@ -1,10 +1,11 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore, getProductMatchDetailsForProduct } from '../data/products';
+import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, BROWSE_GROUPS, browseGroupIdFor, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore, getProductMatchDetailsForProduct } from '../data/products';
 import { loadProductCatalog } from '../utils/productCatalog';
 import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct, findConfidentProductMatch } from '../utils/naturalLanguageSearch';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { isPartnerBrandItem, getPartnerBrandRank } from '../utils/partnerBrands';
 import { fetchSearchSuggestions } from '../utils/fetchSearchSuggestions';
+import useStaticPlaceholder from '../utils/useStaticPlaceholder';
 import { getVerificationLinks } from '../utils/verificationLinks';
 import { RELEASED_STARTUPS } from '../data/startups';
 import { getAynaRating } from '../data/aynaReviews';
@@ -29,6 +30,22 @@ import { productHref, isPlainLeftClick } from '../utils/productRoute';
 // Discovery.macroGroupFilter.test.js), which imports these from here.
 export { MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, resolveBrowseAiRoundQuery, getSortPrice, pickOnePerPartnerBrand };
 
+// Example searches for the Browse search box's placeholder: one is picked at random each time
+// Browse is opened or refreshed and then stays put. Grouped by care theme, in life-stage order,
+// for an 18+ audience.
+const SEARCH_PLACEHOLDER_THEMES = [
+    ['magnesium for period cramps', 'organic tampons for a heavy flow', 'period underwear for overnight leaks'],
+    ['non-hormonal vaginal moisturizers', 'lubricant for sensitive skin', 'pH-balanced intimate wash'],
+    ['prenatal vitamins with choline', 'pregnancy pillow for back pain', 'morning sickness relief'],
+    ['postpartum recovery kit', 'wearable breast pump for work', 'nipple balm for breastfeeding'],
+    ['pelvic floor trainer for leaks', 'bladder leak pads that stay dry', 'pelvic floor therapy app'],
+    ['best perimenopause telehealth provider', 'supplements for perimenopause sleep', 'perimenopause mood and anxiety support'],
+    ['hot flash relief without hormones', 'cooling products for night sweats', 'menopause telehealth clinics'],
+    ['postmenopausal bone health supplements', 'vaginal dryness after menopause', 'calcium and vitamin D for bone density'],
+    ['at-home hormone test', 'sleep support for hormonal changes', 'probiotics for bloating'],
+];
+const SEARCH_PLACEHOLDER_EXAMPLES = SEARCH_PLACEHOLDER_THEMES.flat();
+
 /** Natural-language phrase for the browse-AI extension's `query` param — prefers the
  * more specific active scope (a chosen sub-category) over the broader macro group, and
  * returns '' when browsing is fully unscoped (both 'all'), which the caller treats as
@@ -38,7 +55,7 @@ function buildBrowseAiQueryText(categoryFilter, macroGroup) {
     if (categoryFilter && categoryFilter !== 'all') {
         return CATEGORY_LABELS[categoryFilter] || categoryFilter.replace(/-/g, ' ');
     }
-    const group = MACRO_GROUPS.find((g) => g.id === macroGroup);
+    const group = MACRO_GROUPS.find((g) => g.id === macroGroup) || BROWSE_GROUPS.find((g) => g.id === macroGroup);
     if (group && group.id !== 'all') {
         return `${group.label} products`;
     }
@@ -409,6 +426,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [categoryFilter, setCategoryFilter] = useState(initialCategory || 'all');
     const [typeFilter] = useState('all');
     const [searchQuery, setSearchQuery] = useState(initialSearch || '');
+    const searchPlaceholder = useStaticPlaceholder(SEARCH_PLACEHOLDER_EXAMPLES, { prefix: 'Try: ', fallback: 'Search products', enabled: !searchQuery });
     const [submittedQuery, setSubmittedQuery] = useState(initialSearch || '');
     const [sortBy, setSortBy] = useState('default');
     // Freshly generated on every mount — Discovery unmounts/remounts on each navigation to it,
@@ -629,7 +647,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const recommendedSet = personalizedSet;
 
     const availableMacroGroups = useMemo(
-        () => MACRO_GROUPS.filter((group) => group.id === 'all' || combined.some((item) => itemMatchesMacroGroup(item, group.id))),
+        () => BROWSE_GROUPS.filter((group) => group.id === 'all' || combined.some((item) => itemMatchesMacroGroup(item, group.id))),
         [combined]
     );
 
@@ -1328,7 +1346,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                             if (value.trim().length >= 2) runSearch(value);
                         }, 600);
                     }}
-                    placeholder="Search products"
+                    placeholder={searchPlaceholder}
                     aria-label="Search products"
                 />
             </form>
@@ -1338,7 +1356,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     <button
                         key={group.id}
                         type="button"
-                        className={macroGroup === group.id ? 'is-active' : ''}
+                        className={browseGroupIdFor(macroGroup) === group.id ? 'is-active' : ''}
                         onClick={() => {
                             setMacroGroup(group.id);
                             setCategoryFilter('all');

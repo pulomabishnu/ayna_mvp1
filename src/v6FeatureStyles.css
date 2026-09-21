@@ -1784,3 +1784,64 @@ html.v6-signed-in .ayna-browse.v6-browse-live .ayna-browse-card__match {
 .v6-universe-wrap {
   width: min(680px, 100%) !important;
 }
+
+/* Browse: category pills sit under the search bar at its full width (the old
+   "browse by need" dropdown button was removed). Selectors carry the extra
+   .v6-browse-pills class so they beat the older stacked browse rules
+   regardless of stylesheet order. */
+.ayna-browse.v6-browse-live.v6-browse-pills .ayna-browse__categories{
+  display:flex!important;
+  position:static!important;
+  flex-wrap:wrap!important;
+  gap:8px!important;
+  width:100%!important;
+  max-width:none!important;
+  box-sizing:border-box!important;
+  margin:0 0 12px!important;
+  padding:0!important;
+  overflow:visible!important;
+  max-height:none!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  -webkit-mask-image:none!important;
+  mask-image:none!important;
+}
+.ayna-browse.v6-browse-live.v6-browse-pills .ayna-browse__categories button{
+  flex:1 1 auto!important;
+  text-align:center!important;
+  justify-content:center!important;
+}
+.ayna-browse.v6-browse-live.v6-browse-pills .ayna-browse__toolbar{
+  margin-top:0!important;
+  padding-left:0!important;
+}
+
+/* Browse: the add-product box hides behind this link until it is clicked. */
+.ayna-browse .v6-add-product-link{
+  display:block!important;
+  margin:0 4px 14px!important;
+  padding:0!important;
+  border:0!important;
+  background:none!important;
+  box-shadow:none!important;
+  border-radius:0!important;
+  height:auto!important;
+  color:#8a5a44!important;
+  font:inherit!important;
+  font-size:13px!important;
+  text-align:left!important;
+  text-decoration:underline!important;
+  text-underline-offset:3px;
+  cursor:pointer;
+}
+.ayna-browse .v6-add-product-link:hover{color:#5a3a2c!important}
+.ayna-browse .v6-add-product-link[hidden]{display:none!important}
+html[data-v6-site-theme='dark'] .ayna-browse .v6-add-product-link{color:#e0ad78!important}
+
+/* Home hero: size to its content (it was pinned to a 496px minimum, which left a
+   large empty band between the rotating pills and the banner below). */
+.mockup-landing .ayna-landing-hero:not(.ayna-landing-hero--returning){
+  min-height:0!important;
+  padding-bottom:36px!important;
+}

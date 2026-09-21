@@ -5,7 +5,7 @@ import { useEscapeToClose } from '../utils/useEscapeToClose';
 const SUBTITLES = {
   quiz: 'Create an account to save your health profile and keep your ecosystem across sessions.',
   browse: 'Create an account to save your discoveries and track products over time.',
-  login: 'Welcome back. Sign in to access your health ecosystem.',
+  login: 'Welcome back. Sign in to access your personalized health ecosystem.',
   personalize: 'Personalized results are matched to your health profile — sign in or create an account to turn this on.',
   default: 'Your personal women\'s health manager',
 };
@@ -19,6 +19,7 @@ const CONSENT_ITEMS = [
 
 const CONSENT_VERSION = 'v2-18plus';
 const AGE_REQUIREMENT_VERSION = '18plus-v1';
+const REFERRAL_OPTIONS = ['TikTok', 'Instagram', 'LinkedIn', 'Google / search', 'Friend / word of mouth', 'Event / conference', 'Brand / partner', 'Other'];
 
 export default function AuthGate({ isModal = false, embedded = false, onSkip, onStartEcosystem, context, onBeforeOAuthRedirect, redirectTo }) {
   useEscapeToClose(isModal, onSkip);
@@ -289,7 +290,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
     overflowY: 'auto',
     background: 'linear-gradient(135deg, rgba(36, 42, 82, 0.94) 0%, rgba(78, 56, 102, 0.94) 58%, rgba(162, 96, 60, 0.88) 100%)',
     backdropFilter: 'blur(5px)',
-    zIndex: 1000,
+    zIndex: 10030,
     padding: '2rem 1rem',
   } : embedded ? {
     width: '100%',
@@ -342,7 +343,6 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
             Sign in
           </button>
         </div>}
-        {!allowSignup && <h2 style={{ fontFamily: 'var(--font-serif)', textAlign: 'center' }}>Log in</h2>}
 
         {showPhoneNotice && (
           <div
@@ -443,7 +443,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
                 How did you hear about us?
                 <select value={referral} onChange={(e) => setReferral(e.target.value)} required style={{ ...styles.input, width: '100%', marginTop: '0.4rem' }}>
                   <option value="">Select an option</option>
-                  {['TikTok', 'Instagram', 'LinkedIn', 'Google / search', 'Friend / word of mouth', 'Event / conference', 'Brand / partner', 'Other'].map((option) => (
+                  {REFERRAL_OPTIONS.map((option) => (
                     <option key={option} value={option}>{option}</option>
                   ))}
                 </select>
@@ -587,6 +587,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
           </button>
         </form>
 
+        <>
         <div style={styles.divider}>
           <span style={styles.dividerLine} />
           <span style={styles.dividerText}>or</span>
@@ -605,7 +606,9 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
           <GoogleIcon />
           {googleLoading ? 'Redirecting…' : 'Continue with Google'}
         </button>
+        </>
         {!allowSignup && <p className="ayna-login-new">Don’t have an account? <button type="button" onClick={onStartEcosystem} style={styles.skipBtn}>Build your ecosystem</button></p>}
+        {!allowSignup && <p style={styles.fine}>New to ayna? Continuing with Google creates your account. We&apos;ll ask you to confirm a few statements first.</p>}
 
         {!isSignup && (
           <p style={styles.fine}>
@@ -621,6 +624,111 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
             Skip for now
           </button>
         )}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Shown to a signed-in Google user whose account has no recorded consent, i.e. one created
+ * by tapping "Continue with Google" on Log in instead of going through the signup form,
+ * which is where the 18+ confirmation, consent statements and referral question are
+ * collected. They can agree, or sign out.
+ */
+export function ConsentGate({ onAgreed, onDecline }) {
+  const [checked, setChecked] = useState([false, false, false, false]);
+  const [referral, setReferral] = useState('');
+  const [referralOther, setReferralOther] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  const allChecked = checked.every(Boolean);
+  const referralOk = Boolean(referral) && (referral !== 'Other' || Boolean(referralOther.trim()));
+
+  const submit = async () => {
+    if (!allChecked) { setError('Please agree to all four statements to continue.'); return; }
+    if (!referralOk) { setError('Please tell us how you heard about ayna.'); return; }
+    const supabase = getSupabaseClient();
+    if (!supabase) { setError('Sign-in is unavailable right now. Please try again later.'); return; }
+    setSaving(true);
+    setError('');
+    const now = new Date().toISOString();
+    try {
+      const { data, error: updateError } = await supabase.auth.updateUser({
+        data: {
+          heard_about_us: referral === 'Other' && referralOther.trim() ? `Other: ${referralOther.trim()}` : referral,
+          consent_given_at: now,
+          consent_version: CONSENT_VERSION,
+          age_18_confirmed: true,
+          age_18_confirmed_at: now,
+          age_requirement_version: AGE_REQUIREMENT_VERSION,
+        },
+      });
+      if (updateError) throw updateError;
+      onAgreed?.(data?.user || null);
+    } catch (err) {
+      setError(err?.message || 'Could not save that. Please try again.');
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Finish creating your ayna account"
+      style={{
+        position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', overflowY: 'auto',
+        background: 'linear-gradient(135deg, rgba(36, 42, 82, 0.94) 0%, rgba(78, 56, 102, 0.94) 58%, rgba(162, 96, 60, 0.88) 100%)',
+        backdropFilter: 'blur(5px)', zIndex: 10040, padding: '2rem 1rem',
+      }}
+    >
+      <div style={styles.card}>
+        <div style={styles.logo}>ayna</div>
+        <h2 style={{ fontFamily: 'var(--font-serif)', textAlign: 'center', margin: 0 }}>One more step</h2>
+        <p style={styles.tagline}>Welcome to ayna. Before we set up your account, please confirm the following.</p>
+        <div style={styles.consentDetails}>
+          {CONSENT_ITEMS.map((text, i) => (
+            <label key={i} style={styles.consentItem}>
+              <input
+                type="checkbox"
+                checked={checked[i]}
+                onChange={() => setChecked((prev) => prev.map((v, idx) => (idx === i ? !v : v)))}
+                style={styles.checkbox}
+              />
+              <span style={styles.consentText}>{text}</span>
+            </label>
+          ))}
+        </div>
+        <p style={styles.legalNotice}>
+          ayna accounts are for adults 18+. By continuing you agree to ayna&apos;s{' '}
+          <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" style={styles.link}>Privacy Policy</a>
+          {', '}
+          <a href="/consumer-health-data.html" target="_blank" rel="noopener noreferrer" style={styles.link}>Consumer Health Data Privacy Notice</a>
+          {' '}and{' '}
+          <a href="/terms-of-use" target="_blank" rel="noopener noreferrer" style={styles.link}>Terms of Service</a>.
+        </p>
+        <label style={styles.consentText}>
+          How did you hear about us?
+          <select value={referral} onChange={(e) => setReferral(e.target.value)} style={{ ...styles.input, width: '100%', marginTop: '0.4rem' }}>
+            <option value="">Select an option</option>
+            {REFERRAL_OPTIONS.map((option) => (
+              <option key={option} value={option}>{option}</option>
+            ))}
+          </select>
+        </label>
+        {referral === 'Other' && (
+          <input aria-label="Where did you find ayna?" placeholder="Tell us where you found ayna" value={referralOther} onChange={(e) => setReferralOther(e.target.value)} maxLength={120} style={styles.input} />
+        )}
+        {error && <p style={styles.error} role="alert">{error}</p>}
+        <button
+          type="button"
+          onClick={submit}
+          disabled={saving}
+          style={{ ...styles.primaryBtn, ...((!allChecked || !referralOk || saving) ? styles.primaryBtnDisabled : {}) }}
+        >
+          {saving ? 'Saving…' : 'Agree and continue'}
+        </button>
+        <button type="button" onClick={onDecline} style={styles.skipBtn}>No thanks, sign me out</button>
       </div>
     </div>
   );

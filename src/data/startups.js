@@ -23,6 +23,8 @@ export const STARTUPS = [
     {
         id: 's-inne',
         name: 'inne',
+        communityReview: 'Trustpilot rates inne 4.1/5 from 276 reviews (59% 5-star, 10% 1-star). Reviewers praise easy-to-use app and effective cycle tracking / pregnancy planning. Common complaints: needs wifi and is hard to use with shift-work schedules. One reviewer: "The app is user-friendly, with a clear and comprehensive layout that made the learning curve fast and easy."',
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ url: 'https://www.trustpilot.com/review/inne.io', text: 'Trustpilot: inne', summary: 'Trustpilot rates inne 4.1/5 from 276 reviews (59% 5-star, 10% 1-star). Reviewers praise easy-to-use app and effective cycle tracking / pregnancy planning. Common complaints: needs wifi and is hard to use with shift-work schedules. One reviewer: "The app is user-friendly, with a clear and comprehensive layout that made the learning curve fast and easy."' }] } },
         tagline: 'At-home saliva hormone monitoring',
         description: 'A minilab that reads your progesterone from saliva daily. Gives real hormone data, not estimates, to understand your fertility window and cycle health.',
         tags: ['irregular', 'pcos', 'fertility', 'sustainability'],
@@ -37,6 +39,8 @@ export const STARTUPS = [
     {
         id: 's-daye',
         name: 'Daye',
+        communityReview: 'Trustpilot rates Daye 4.3/5 from 700 reviews (83% 5-star, 7% 1-star). Reviewers praise innovative at-home testing and eco-friendly products. Common complaints: slow customer-service replies and delivery issues. One reviewer: "The microbiome screen test is a game changer. No second guessing or self medicating before knowing what is really going on."',
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ url: 'https://www.trustpilot.com/review/yourdaye.com', text: 'Trustpilot: Daye', summary: 'Trustpilot rates Daye 4.3/5 from 700 reviews (83% 5-star, 7% 1-star). Reviewers praise innovative at-home testing and eco-friendly products. Common complaints: slow customer-service replies and delivery issues. One reviewer: "The microbiome screen test is a game changer. No second guessing or self medicating before knowing what is really going on."' }] } },
         tagline: 'CBD-infused tampons + at-home vaginal microbiome screening',
         description: 'Tampons with pain-relieving CBD coating, plus an at-home screening kit that tests your vaginal microbiome for infections like BV using the tampon you already wore.',
         tags: ['cramps', 'discomfort', 'organic', 'safety-concern', 'heavy-flow'],
@@ -51,6 +55,8 @@ export const STARTUPS = [
     {
         id: 's-allara',
         name: 'Allara',
+        communityReview: 'Trustpilot rates Allara 4.4/5 from 1,002 reviews (81% 5-star, 13% 1-star). Reviewers praise attentive, knowledgeable providers and convenient telehealth. Common complaints: unexpected billing and unclear insurance coverage. One reviewer: "Providers are knowledgeable, empathetic, listen carefully to symptoms"',
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ url: 'https://www.trustpilot.com/review/allarahealth.com', text: 'Trustpilot: Allara', summary: 'Trustpilot rates Allara 4.4/5 from 1,002 reviews (81% 5-star, 13% 1-star). Reviewers praise attentive, knowledgeable providers and convenient telehealth. Common complaints: unexpected billing and unclear insurance coverage. One reviewer: "Providers are knowledgeable, empathetic, listen carefully to symptoms"' }] } },
         tagline: 'Comprehensive PCOS care. Virtual clinic',
         description: 'Telehealth-first PCOS clinic with OB-GYNs, endocrinologists, dietitians, and mental health therapists. Complete care plans instead of "just take birth control."',
         tags: ['pcos', 'irregular', 'heavy-flow'],
@@ -65,6 +71,8 @@ export const STARTUPS = [
     {
         id: 's-evernow',
         name: 'Evernow',
+        communityReview: 'Trustpilot rates Evernow 2.0/5 from 15 reviews (80% 1-star, 20% 2-star). Reviewers praise provider quality and easy insurance/booking. Common complaints: billing surprises and prescription delays. One reviewer: "The provider I had was thorough, responsive, and high quality." Small sample.',
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ url: 'https://www.trustpilot.com/review/evernow.com', text: 'Trustpilot: Evernow', summary: 'Trustpilot rates Evernow 2.0/5 from 15 reviews (80% 1-star, 20% 2-star). Reviewers praise provider quality and easy insurance/booking. Common complaints: billing surprises and prescription delays. One reviewer: "The provider I had was thorough, responsive, and high quality." Small sample.' }] } },
         tagline: 'Menopause treatment. Personalized HRT delivered',
         description: 'Board-certified menopause specialists prescribe personalized hormone replacement therapy with ongoing support. Prescription meds delivered to your door.',
         tags: ['discomfort', 'menopause', 'sustainability'],
@@ -79,6 +87,8 @@ export const STARTUPS = [
     {
         id: 's-midi',
         name: 'Midi Health',
+        communityReview: 'Trustpilot rates Midi Health 4.0/5 from 1,658 reviews (74% 5-star, 17% 1-star). Reviewers praise attentive staff who listen and an easy booking platform. Common complaints: hard to reach a human for billing and prescription delays. One reviewer: "They made me feel truly heard, valued, and understood."',
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ url: 'https://www.trustpilot.com/review/joinmidi.com', text: 'Trustpilot: Midi Health', summary: 'Trustpilot rates Midi Health 4.0/5 from 1,658 reviews (74% 5-star, 17% 1-star). Reviewers praise attentive staff who listen and an easy booking platform. Common complaints: hard to reach a human for billing and prescription delays. One reviewer: "They made me feel truly heard, valued, and understood."' }] } },
         tagline: 'Midlife women\'s health. Perimenopause to post-menopause',
         description: 'Virtual clinic specializing in the 20+ symptoms of perimenopause and menopause. Clinicians trained specifically in midlife hormonal care.',
         tags: ['discomfort', 'irregular', 'menopause', 'heavy-flow'],
@@ -93,6 +103,8 @@ export const STARTUPS = [
     {
         id: 's-hertility',
         name: 'Hertility',
+        communityReview: 'Trustpilot rates Hertility 4.1/5 from 1,276 reviews (72% 5-star, 9% 1-star). Reviewers praise supportive staff and fast, detailed results. Common complaints: painful finger-prick collection and some follow-ups feeling generic. One reviewer: "friendly, supportive, and empathetic"',
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ url: 'https://www.trustpilot.com/review/hertilityhealth.com', text: 'Trustpilot: Hertility', summary: 'Trustpilot rates Hertility 4.1/5 from 1,276 reviews (72% 5-star, 9% 1-star). Reviewers praise supportive staff and fast, detailed results. Common complaints: painful finger-prick collection and some follow-ups feeling generic. One reviewer: "friendly, supportive, and empathetic"' }] } },
         tagline: 'At-home hormone & fertility testing',
         description: 'Finger-prick blood test that measures up to 10 key reproductive hormones. Results reviewed by reproductive scientists with personalized care plan.',
         tags: ['irregular', 'pcos', 'safety-concern', 'fertility'],
@@ -189,6 +201,8 @@ export const STARTUPS = [
     {
         id: 's-elvie',
         name: 'Elvie',
+        communityReview: 'Trustpilot rates Elvie 3.3/5 from 11,837 reviews (70% 5-star, 18% 1-star). Reviewers praise responsive customer-support chat. Common complaints: product quality and reliability issues. One reviewer: "They don\'t close the chat out on you if you\'re interrupted by being a mom with kids at home, the agents will actually read what was last communicated, and respond from there."',
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ url: 'https://www.trustpilot.com/review/elvie.com', text: 'Trustpilot: Elvie', summary: 'Trustpilot rates Elvie 3.3/5 from 11,837 reviews (70% 5-star, 18% 1-star). Reviewers praise responsive customer-support chat. Common complaints: product quality and reliability issues. One reviewer: "They don\'t close the chat out on you if you\'re interrupted by being a mom with kids at home, the agents will actually read what was last communicated, and respond from there."' }] } },
         tagline: 'Smart pelvic floor trainer + silent breast pump',
         description: 'Award-winning Kegel trainer with biofeedback via app. Also makes the world\'s first silent wearable breast pump. Technology designed around women\'s bodies.',
         tags: ['discomfort', 'leaks', 'pelvic-floor'],
@@ -203,6 +217,8 @@ export const STARTUPS = [
     {
         id: 's-wisp',
         name: 'Wisp',
+        communityReview: 'Trustpilot rates Wisp 4.1/5 from 11,498 reviews (84% 5-star, 10% 1-star). Reviewers praise fast, convenient online process with quick prescription delivery to a local pharmacy. Common complaints: slow or inconsistent customer-service replies. One reviewer: "Service was super fast and easy. My prescription was ready to pick up at my local pharmacy within an hour."',
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ url: 'https://www.trustpilot.com/review/hellowisp.com', text: 'Trustpilot: Wisp', summary: 'Trustpilot rates Wisp 4.1/5 from 11,498 reviews (84% 5-star, 10% 1-star). Reviewers praise fast, convenient online process with quick prescription delivery to a local pharmacy. Common complaints: slow or inconsistent customer-service replies. One reviewer: "Service was super fast and easy. My prescription was ready to pick up at my local pharmacy within an hour."' }] } },
         tagline: 'UTI treatment & birth control. Same-day delivery',
         description: 'Get UTI antibiotics or birth control prescribed online and delivered to your door. Same-day or next-day options in many areas. No in-person visit needed.',
         tags: ['uti', 'contraception', 'privacy', 'comfort'],
@@ -275,6 +291,8 @@ export const STARTUPS = [
     {
         id: 's-maven',
         name: 'Maven',
+        communityReview: 'Trustpilot rates Maven 3.6/5 from 13 reviews (69% 5-star, 23% 1-star). Reviewers praise same- or next-day specialist access during pregnancy and postpartum. Common complaints: a confusing, slow Maven Wallet reimbursement process. One reviewer: "Having the ability to get care within the same day or next day was invaluable to my postpartum experience." Small sample.',
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ url: 'https://www.trustpilot.com/review/mavenclinic.com', text: 'Trustpilot: Maven', summary: 'Trustpilot rates Maven 3.6/5 from 13 reviews (69% 5-star, 23% 1-star). Reviewers praise same- or next-day specialist access during pregnancy and postpartum. Common complaints: a confusing, slow Maven Wallet reimbursement process. One reviewer: "Having the ability to get care within the same day or next day was invaluable to my postpartum experience." Small sample.' }] } },
         tagline: 'Digital clinic for women and family health',
         description: 'Largest digital health clinic for women. Fertility, pregnancy, postpartum, parenting, and menopause. Used by employers and health plans.',
         tags: ['fertility', 'menopause', 'discomfort', 'privacy'],
@@ -463,6 +481,8 @@ export const STARTUPS = [
     {
         id: 's-nurx',
         name: 'Nurx',
+        communityReview: 'Trustpilot rates Nurx 4.0/5 from 1,824 reviews (51% 5-star, 39% 1-star). Reviewers praise convenient, affordable at-home access to prescriptions. Common complaints: unexpected charges, hidden fees and slow customer service. One reviewer: "Getting birth control has never been easier! Especially if you don\'t have insurance. Nurx is extremely affordable and delivered right to my door."',
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ url: 'https://www.trustpilot.com/review/nurx.com', text: 'Trustpilot: Nurx', summary: 'Trustpilot rates Nurx 4.0/5 from 1,824 reviews (51% 5-star, 39% 1-star). Reviewers praise convenient, affordable at-home access to prescriptions. Common complaints: unexpected charges, hidden fees and slow customer service. One reviewer: "Getting birth control has never been easier! Especially if you don\'t have insurance. Nurx is extremely affordable and delivered right to my door."' }] } },
         tagline: 'Birth control and STI testing online',
         description: 'Get birth control, emergency contraception, and STI testing prescribed online and delivered. Available in most US states with flexible pricing.',
         tags: ['contraception', 'privacy', 'comfort'],
@@ -482,6 +502,8 @@ export const STARTUPS = [
     {
         id: 's-pandia',
         name: 'Pandia Health',
+        communityReview: 'Trustpilot rates Pandia Health 4.9/5 from 557 reviews (95% 5-star, 3% 1-star). Reviewers praise responsive, helpful staff. Common complaints: initial setup challenges and occasional missed messages. One reviewer: "They\'re very reliable and responsive which is extremely helpful for busy people like me."',
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ url: 'https://www.trustpilot.com/review/pandiahealth.com', text: 'Trustpilot: Pandia Health', summary: 'Trustpilot rates Pandia Health 4.9/5 from 557 reviews (95% 5-star, 3% 1-star). Reviewers praise responsive, helpful staff. Common complaints: initial setup challenges and occasional missed messages. One reviewer: "They\'re very reliable and responsive which is extremely helpful for busy people like me."' }] } },
         tagline: 'Birth control delivery by women doctors',
         description: 'Telehealth birth control prescriptions and delivery. Founded by women physicians. Accepts insurance and offers affordable options.',
         tags: ['contraception', 'privacy', 'comfort'],
@@ -568,6 +590,8 @@ export const STARTUPS = [
     {
         id: 's-joylux',
         name: 'Joylux',
+        communityReview: 'Trustpilot rates Joylux 3.9/5 from 147 reviews (65% 5-star, 17% 1-star). Reviewers praise effectiveness for menopause symptoms. Common complaints: device charging and durability issues. One reviewer: "It has been a total game changer. Going through perimenopause has been awful... I have seen results in 1-2 weeks with dryness and uncomfortability."',
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ url: 'https://www.trustpilot.com/review/joylux.com', text: 'Trustpilot: Joylux', summary: 'Trustpilot rates Joylux 3.9/5 from 147 reviews (65% 5-star, 17% 1-star). Reviewers praise effectiveness for menopause symptoms. Common complaints: device charging and durability issues. One reviewer: "It has been a total game changer. Going through perimenopause has been awful... I have seen results in 1-2 weeks with dryness and uncomfortability."' }] } },
         tagline: 'Vaginal health and wellness devices',
         description: 'vFit and other FDA-cleared devices for vaginal rejuvenation, dryness, and pelvic floor. At-home, clinically studied treatments.',
         tags: ['discomfort', 'pelvic-floor', 'menopause'],
@@ -672,6 +696,8 @@ export const STARTUPS = [
     {
         id: 's-hers',
         name: 'Hers',
+        communityReview: 'Trustpilot rates Hers 3.3/5 from 10,329 reviews (38% 5-star, 24% 1-star). Reviewers praise easy access to medical professionals and a straightforward program. Common complaints: high subscription costs and unexpected medication price increases.',
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ url: 'https://www.trustpilot.com/review/forhers.com', text: 'Trustpilot: Hers', summary: 'Trustpilot rates Hers 3.3/5 from 10,329 reviews (38% 5-star, 24% 1-star). Reviewers praise easy access to medical professionals and a straightforward program. Common complaints: high subscription costs and unexpected medication price increases.' }] } },
         tagline: 'Mental health and skincare from Ro',
         description: 'Ro’s brand for women. Telehealth for anxiety, depression, and skin. Prescriptions and products delivered with ongoing support.',
         tags: ['discomfort', 'privacy', 'mental-health'],
@@ -801,6 +827,8 @@ export const STARTUPS = [
     {
         id: 's-naturalcycles',
         name: 'Natural Cycles',
+        communityReview: 'Trustpilot rates Natural Cycles 4.2/5 from 1,885 reviews (77% 5-star, 14% 1-star). Reviewers praise an easy-to-use app that helps people understand their cycles. Common complaints: steep price increases and subscription-renewal frustration. One reviewer: "Easy to use and I\'m learning a lot about my cycles!"',
+        verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ url: 'https://www.trustpilot.com/review/naturalcycles.com', text: 'Trustpilot: Natural Cycles', summary: 'Trustpilot rates Natural Cycles 4.2/5 from 1,885 reviews (77% 5-star, 14% 1-star). Reviewers praise an easy-to-use app that helps people understand their cycles. Common complaints: steep price increases and subscription-renewal frustration. One reviewer: "Easy to use and I\'m learning a lot about my cycles!"' }] } },
         tagline: 'FDA-cleared birth control app',
         description: 'First FDA-cleared app for contraception and pregnancy planning. Uses basal body temperature and algorithm to identify fertile days.',
         tags: ['contraception', 'fertility', 'irregular'],
@@ -842,17 +870,30 @@ export const STARTUPS = [
     },
     {
         id: 's-femometry',
-        name: 'Femometry',
-        tagline: 'Hormone and cycle insights from at-home tests',
-        description: 'At-home hormone testing paired with app for cycle and fertility insights. For people with irregular cycles and PCOS.',
+        name: 'Femometer',
+        tagline: 'Smart ring for cycle, temperature, and sleep tracking',
+        description: 'Women-focused smart rings (Ring Gen 2 and Ring Air) that track overnight basal body temperature with three sensors to predict ovulation and period, plus sleep, heart rate, HRV, blood oxygen, stress, and recovery. Regularly $199.99. Up to 7-day battery, IP68 water resistant, and no subscription needed for core insights.',
         tags: ['fertility', 'irregular', 'pcos'],
         healthFunctions: ['cycle-tracking'],
         category: 'fertility',
-        stage: 'Available in US',
+        stage: '$199.99 · Available in US',
         productReleased: true,
         spotsLeft: 430,
-        url: 'https://femometry.com',
-        image: 'https://i.ytimg.com/vi/P6Z8f3PcZxg/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLC9m7w-IaatPOF3INeupFtf0E4atQ'
+        url: 'https://www.femometer.com/',
+        image: 'https://s.femometer.com/products/smart-ring-air/femometer-ring-air.webp',
+        communityReview: 'Reviews are mixed but lean positive on Amazon. The Ring Air listing is rated 4.1/5 from 61 ratings (64% 5-star, 12% 1-star). Customers call it comfortable and an affordable way to track health metrics, especially for trying to conceive or natural family planning, though fit gets mixed feedback and some reviewers had sizing problems. Critical reviewers mention the gold finish scratching off within a month, sleep tracking that felt inaccurate, and one who preferred the RingConn. TikTok reviewers and independent write-ups also praise the price versus subscription-based rings and the overnight temperature charts. A 2024 independent reviewer found early charts jumpy, noted it measures skin temperature rather than true BBT, and would not rely on it alone to avoid pregnancy. Trustpilot is negative (2.3/5 from only 7 reviews for femometer.com): reviewers report battery failure after a few months, the ring cracking or the shell separating, and slow or unresolved refunds. Walmart reviews and Reddit threads could not be verified at time of writing.',
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: { links: [
+                { platform: 'tiktok', url: 'https://www.tiktok.com/@dr.randiblikely/video/7636209543688506654', text: 'TikTok: Femometer vs RingConn', summary: 'A creator video titled "Help me decide between RingConn Smart Ring or Femometer," one of many TikTok comparisons of Femometer against other smart rings. Video contents could not be read automatically; open the link for the full review.' },
+                { platform: 'tiktok', url: 'https://www.tiktok.com/@daniellencarey/video/7646871798360853791', text: 'TikTok: comparing smart rings I have tried', summary: 'A creator video comparing several smart rings, including Femometer, RingConn, and others. Video contents could not be read automatically; open the link for the full comparison.' },
+                { platform: 'instagram', url: 'https://www.instagram.com/femometer_ring/', text: 'Instagram @femometer_ring', summary: "Femometer's own account (about 6.3k followers) with highlights for Smart Ring, BBT, Review, and Giveaway. This is brand-run content, not independent reviews." },
+                { url: 'https://www.trustpilot.com/review/femometer.com', text: 'Trustpilot: femometer.com', summary: 'Rated 2.3/5 from 7 reviews, all 1 or 2 stars. Reviewers describe battery failure after about 4 months, the ring cracking in half or the shell separating from the electronics, and slow or unresolved refunds and customer service. A very small sample.' },
+                { url: 'https://www.amazon.com/dp/B0H2VQQKKB', text: 'Amazon: femometer Ring Air (4.1/5, 61 ratings)', summary: 'Amazon rating 4.1 out of 5 from 61 ratings: 64% 5-star, 13% 4-star, 4% 3-star, 7% 2-star, 12% 1-star. Amazon’s review summary says customers find it comfortable and an affordable way to track health metrics, with mixed feedback on fit. Reviewers say: "So far I am very pleased with my ring!", "I like it but it’s been less than a month and the gold is scratching off", "Not impressed. Gen Air 2 RingConn better", and "Only reads bbt .. not accurate on sleep and was too loose (got size 8)".' },
+                { url: 'https://cedarcreekholistic.com/femometer-ring/', text: 'Independent review (Cedar Creek Holistic, Aug 2024)', summary: 'Hands-on review of the first-generation ring. Praises price, overnight convenience, 7-10 day battery, and firmware improvements. Notes early jumpy temperatures, that it measures skin rather than true basal temperature, and does not recommend it as a sole method for avoiding pregnancy.' }
+            ] }
+        }
     },
     // ─── UNRELEASED STARTUPS (Startups / waitlist page only) ─
     {

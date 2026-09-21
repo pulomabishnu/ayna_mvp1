@@ -71,9 +71,9 @@ function syncExpandedState(input) {
 function normalizePartnerLabels() {
   document.querySelectorAll('.ayna-browse-card__affiliate').forEach((badge) => {
     if (/ayna favorite/i.test(clean(badge.textContent))) {
-      badge.textContent = 'ayna Partner';
+      badge.textContent = 'ayna Favorite';
       badge.setAttribute('title', 'Commercial brand partner. Partnership does not change your personalized match score.');
-      badge.setAttribute('aria-label', 'ayna commercial brand partner');
+      badge.setAttribute('aria-label', 'ayna Favorite, a commercial brand partner');
     }
   });
 }
