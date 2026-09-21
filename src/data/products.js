@@ -955,6 +955,29 @@ export const MACRO_GROUPS = [
     { id: 'tests-devices', label: 'Tests + Devices', categories: ['tracker', 'diagnostics', 'hormone-monitoring'], keywords: ['test strip', 'test kit', 'rapid test', 'diagnostic test', 'lab test', 'tracker', 'wearable', 'monitor'] },
 ];
 
+// The Browse pills: a few BROAD groups that run in order through life, from
+// first period to post-menopause. They are a layer over MACRO_GROUPS (which stays
+// fine-grained because EcosystemBubbles, deep links and search nudges all key off
+// those ids) — each pill simply covers several MACRO_GROUPS ids.
+export const BROWSE_GROUPS = [
+    { id: 'all', label: 'All', covers: [] },
+    { id: 'life-periods', label: 'Periods & Cycles', covers: ['period', 'hormones'] },
+    { id: 'life-intimate', label: 'Intimate & Sexual', covers: ['intimate', 'sexual'] },
+    { id: 'life-fertility', label: 'Fertility & Birth Control', covers: ['fertility', 'birth-control'] },
+    { id: 'life-pregnancy', label: 'Pregnancy', covers: ['pregnancy'] },
+    { id: 'life-postpartum', label: 'Postpartum', covers: ['postpartum', 'breast'] },
+    { id: 'life-pelvic', label: 'Pelvic Health', covers: ['pelvic'] },
+    { id: 'life-menopause', label: 'Menopause & Beyond', covers: ['menopause'] },
+    { id: 'life-wellness', label: 'Wellness & Tests', covers: ['skin', 'hair', 'gut', 'sleep-stress', 'pain-recovery', 'tests-devices'] },
+];
+
+/** Maps any group id (a fine MACRO_GROUPS id or a BROWSE_GROUPS id) to the Browse pill that contains it. */
+export function browseGroupIdFor(groupId) {
+    if (!groupId || groupId === 'all') return 'all';
+    if (BROWSE_GROUPS.some((g) => g.id === groupId)) return groupId;
+    return BROWSE_GROUPS.find((g) => g.covers.includes(groupId))?.id || groupId;
+}
+
 // Some product copy legitimately advertises the ABSENCE of a property — e.g. Neycher's
 // intimate-care line describing itself as "hormone-free" / "non-hormonal" — rather than the
 // presence of it. A naive substring match on a concern keyword like "hormone" can't tell "this
@@ -995,6 +1018,8 @@ export function productSearchText(item) {
 
 export function itemMatchesMacroGroup(item, groupId) {
     if (!groupId || groupId === 'all') return true;
+    const broad = BROWSE_GROUPS.find((g) => g.id === groupId);
+    if (broad) return broad.covers.some((id) => itemMatchesMacroGroup(item, id));
     const group = MACRO_GROUPS.find((g) => g.id === groupId);
     if (!group) return true;
     if (group.categories.includes(item?.category)) return true;

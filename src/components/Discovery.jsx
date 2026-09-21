@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore, getProductMatchDetailsForProduct } from '../data/products';
+import { ALL_PRODUCTS, CATEGORY_LABELS, MACRO_GROUPS, BROWSE_GROUPS, browseGroupIdFor, productSearchText, itemMatchesMacroGroup, SYMPTOM_TO_SUPPLEMENTS, filterPrescriptionCareGate, getProfileMatchPercentForProduct, getProductRelevanceScore, getProductMatchDetailsForProduct } from '../data/products';
 import { loadProductCatalog } from '../utils/productCatalog';
 import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProduct, findConfidentProductMatch } from '../utils/naturalLanguageSearch';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
@@ -38,7 +38,7 @@ function buildBrowseAiQueryText(categoryFilter, macroGroup) {
     if (categoryFilter && categoryFilter !== 'all') {
         return CATEGORY_LABELS[categoryFilter] || categoryFilter.replace(/-/g, ' ');
     }
-    const group = MACRO_GROUPS.find((g) => g.id === macroGroup);
+    const group = MACRO_GROUPS.find((g) => g.id === macroGroup) || BROWSE_GROUPS.find((g) => g.id === macroGroup);
     if (group && group.id !== 'all') {
         return `${group.label} products`;
     }
@@ -629,7 +629,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const recommendedSet = personalizedSet;
 
     const availableMacroGroups = useMemo(
-        () => MACRO_GROUPS.filter((group) => group.id === 'all' || combined.some((item) => itemMatchesMacroGroup(item, group.id))),
+        () => BROWSE_GROUPS.filter((group) => group.id === 'all' || combined.some((item) => itemMatchesMacroGroup(item, group.id))),
         [combined]
     );
 
@@ -1338,7 +1338,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     <button
                         key={group.id}
                         type="button"
-                        className={macroGroup === group.id ? 'is-active' : ''}
+                        className={browseGroupIdFor(macroGroup) === group.id ? 'is-active' : ''}
                         onClick={() => {
                             setMacroGroup(group.id);
                             setCategoryFilter('all');
