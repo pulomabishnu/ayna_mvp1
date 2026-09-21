@@ -768,9 +768,6 @@ function FirstVisitLanding({ onLogIn, onStartQuiz, onViewDiscovery, onOpenProduc
           <h1 className="ayna-landing-headline">
             Care that&apos;s <span style={{ fontStyle: 'italic', color: '#F0A84B' }}>matched</span> to your body.
           </h1>
-          <p className="ayna-landing-sub">
-            Cited research, clinical context, and other women&apos;s experiences in one place.
-          </p>
 
           <form className="ayna-landing-searchbar v6-home-search" onSubmit={submitSearch}>
             <input
