@@ -587,7 +587,6 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
           </button>
         </form>
 
-        {allowSignup && <>
         <div style={styles.divider}>
           <span style={styles.dividerLine} />
           <span style={styles.dividerText}>or</span>
@@ -606,9 +605,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
           <GoogleIcon />
           {googleLoading ? 'Redirecting…' : 'Continue with Google'}
         </button>
-        </>}
         {!allowSignup && <p className="ayna-login-new">Don’t have an account? <button type="button" onClick={onStartEcosystem} style={styles.skipBtn}>Build your ecosystem</button></p>}
-        {!allowSignup && <p style={styles.fine}>New here or using Google? Start with your ecosystem, then create or connect your account.</p>}
 
         {!isSignup && (
           <p style={styles.fine}>
