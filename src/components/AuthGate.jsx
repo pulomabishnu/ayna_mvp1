@@ -290,7 +290,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
     overflowY: 'auto',
     background: 'linear-gradient(135deg, rgba(36, 42, 82, 0.94) 0%, rgba(78, 56, 102, 0.94) 58%, rgba(162, 96, 60, 0.88) 100%)',
     backdropFilter: 'blur(5px)',
-    zIndex: 1000,
+    zIndex: 10030,
     padding: '2rem 1rem',
   } : embedded ? {
     width: '100%',
@@ -679,7 +679,7 @@ export function ConsentGate({ onAgreed, onDecline }) {
       style={{
         position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', overflowY: 'auto',
         background: 'linear-gradient(135deg, rgba(36, 42, 82, 0.94) 0%, rgba(78, 56, 102, 0.94) 58%, rgba(162, 96, 60, 0.88) 100%)',
-        backdropFilter: 'blur(5px)', zIndex: 1100, padding: '2rem 1rem',
+        backdropFilter: 'blur(5px)', zIndex: 10040, padding: '2rem 1rem',
       }}
     >
       <div style={styles.card}>
