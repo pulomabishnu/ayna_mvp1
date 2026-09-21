@@ -48,7 +48,7 @@ export function getPartnerBrandRank(item) {
 }
 
 const PARTNER_DISCLOSURE =
-  'ayna has a commercial partnership with this brand and may earn a commission if you buy through our link. Partner status can affect placement in general Browse, but it never changes personalized match scores or personalized recommendation order.';
+  'ayna has chosen to commercially partner with this brand after personally reviewing them, and ayna may earn a commission if you buy through their link. ayna Partners appear at the top of search results only if personalization is turned off. Partners do not and cannot influence which products ayna honestly curates for you.';
 
 export function getPartnerDisclosureText() {
   return PARTNER_DISCLOSURE;
