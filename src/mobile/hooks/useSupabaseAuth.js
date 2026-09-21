@@ -63,7 +63,11 @@ export function useSupabaseAuth() {
   }, []);
 
   useEffect(() => {
-    if (Capacitor.getPlatform() !== 'ios') return undefined;
+    // Native (iOS or Android) only — this catches the co.aynahealth.app://
+    // custom-scheme redirect Browser.open leaves the OS to hand back to the
+    // app; the web build never gets this URL at all (AuthCallback.jsx
+    // handles its own /auth/callback route instead).
+    if (!Capacitor.isNativePlatform()) return undefined;
 
     const supabase = getSupabaseClient();
     if (!supabase) return undefined;
@@ -208,7 +212,7 @@ export function useSupabaseAuth() {
     // with no consent checkboxes shown at all in mobile's "sign in" mode.
     stashPendingConsent();
 
-    if (Capacitor.getPlatform() === 'ios') {
+    if (Capacitor.isNativePlatform()) {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -264,7 +268,7 @@ export function useSupabaseAuth() {
 
     stashPendingConsent();
 
-    if (Capacitor.getPlatform() === 'ios') {
+    if (Capacitor.isNativePlatform()) {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'apple',
         options: {
