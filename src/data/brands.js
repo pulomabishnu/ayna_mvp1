@@ -208,7 +208,7 @@ export const BRAND_PRODUCTS = [
         url: 'https://www.helloneycher.com/product/vaginal-moisturizer',
         faqUrl: 'https://www.helloneycher.com/faq',
         image: 'https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/686eb5fcdbbd35b6fc957602_Frame%201000011567.jpg',
-        summary: '"It feels like sandpaper down there" or "sex hurts now" — that\'s vaginal dryness, and it\'s common in perimenopause, menopause, postpartum, while breastfeeding, after cancer treatment, or after a hysterectomy. This hormone-free vaginal suppository (10 count, 2 g each) moisturizes from the inside, no applicator needed.',
+        summary: 'A hormone-free vaginal suppository that pairs hyaluronic acid with a bioadhesive gel to moisturize from the inside, holding moisture at the vaginal wall for days rather than hours. Positioned for the dryness, irritation, and pain during sex common in perimenopause, menopause, postpartum, and after cancer treatment or a hysterectomy.',
         safety: {
             fdaStatus: 'Manufactured in FDA-registered facilities per the brand\'s site; not an FDA-cleared medical device.',
             // Full packaging ingredient list lives here (not truncated — see
@@ -250,7 +250,7 @@ export const BRAND_PRODUCTS = [
             'Irritation or burning: stop and see a doctor.',
         ],
         communityReview: 'Neycher.com and Amazon both carry customer reviews for this moisturizer; visible feedback centers on noticeably improved day-to-day comfort after adding it to a routine. A specific rating/review count wasn\'t independently verifiable at time of writing. Amazon blocked automated access, and the badge shown on Neycher\'s own product pages is identical across multiple different products, so it isn\'t trustworthy as a per-product figure.',
-        effectiveness: 'When estrogen drops — in perimenopause, menopause, after giving birth, while breastfeeding, or after cancer treatment — the vaginal lining gets thinner, makes less moisture, and loses elasticity; pH rises and protective lactobacilli decline, so irritation, burning, and infections become more common. This suppository pairs hyaluronic acid, which binds water into the tissue and supports repair, with polycarbophil, a bioadhesive gel that holds that moisture against the vaginal wall for days rather than hours — which is why it\'s positioned as a moisturizer, not a lubricant. It restores moisture and supports tissue without adding hormones, so it works for anyone who can\'t or doesn\'t want to use hormone therapy. Positioned as a non-hormonal alternative to antibiotic, antifungal, or hormone treatments for vaginal dryness and irritation; no independent clinical study of the product itself was found.',
+        effectiveness: 'Vaginal moisturizers as a category are supported by systematic-review evidence for improving dryness versus placebo (low certainty); no independent clinical study of this specific product was found.',
         // The per-ingredient science reasoning (not the packaging list — that
         // moved to safety.materials above). Rendered on the Scientific
         // literature tab, after the citation entries.
@@ -261,16 +261,12 @@ export const BRAND_PRODUCTS = [
         // back empty on an environment, like a fresh localhost checkout, that
         // doesn't have one set).
         verificationLinks: {
-            doctor: {
-                links: [
-                    {
-                        url: 'https://www.acog.org/womens-health/faqs/vulvovaginal-health',
-                        text: 'ACOG: Vulvovaginal Health',
-                        summary: 'ACOG notes that over-the-counter vaginal moisturizers and lubricants can help relieve vaginal dryness and painful sex. This is clinical-guidance-level evidence, not product-specific validation.',
-                        justification: 'ACOG is the leading professional body for OB/GYN care in the U.S.',
-                    },
-                ],
-            },
+            // Both citations filed as scientific (not split doctor/scientific)
+            // so the Evidence rail reads "Scientific: 2 sources" instead of
+            // splitting into "1 Scientific" + "1 Clinical". They still both
+            // surface as source chips on the Clinician opinion card, which
+            // pools doctor + scientific links regardless of category.
+            doctor: { links: [] },
             scientific: {
                 links: [
                     {
@@ -279,9 +275,30 @@ export const BRAND_PRODUCTS = [
                         summary: 'A systematic review (Danan et al., Annals of Internal Medicine, 2024) of randomized trials found vaginal moisturizers may improve dryness versus placebo (low certainty of evidence). This is intervention-level evidence and does not validate a specific moisturizer product.',
                         justification: 'Peer-reviewed systematic review, PubMed-indexed.',
                     },
+                    {
+                        url: 'https://www.acog.org/womens-health/faqs/vulvovaginal-health',
+                        text: 'ACOG: Vulvovaginal Health',
+                        summary: 'ACOG notes that over-the-counter vaginal moisturizers and lubricants can help relieve vaginal dryness and painful sex. This is clinical-guidance-level evidence, not product-specific validation.',
+                        justification: 'ACOG is the leading professional body for OB/GYN care in the U.S.',
+                    },
                 ],
             },
-            community: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'reddit',
+                        url: 'https://www.reddit.com/r/HealthyHooha/search/?q=neycher&restrict_sr=1',
+                        text: 'Reddit r/HealthyHooha: Neycher',
+                        summary: 'Community discussions on Neycher\'s intimate-care line, including this moisturizer.',
+                    },
+                    {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/s?k=Neycher+Vaginal+Moisturizer',
+                        text: 'Amazon: Neycher Vaginal Moisturizer reviews',
+                        summary: 'Visible feedback centers on noticeably improved day-to-day comfort after adding it to a routine. A specific rating/review count wasn\'t independently verifiable at time of writing — Amazon blocks automated access.',
+                    },
+                ],
+            },
         },
         integrations: [],
         badges: [],

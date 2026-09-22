@@ -1168,21 +1168,6 @@ export default function ProductModal({
                 </div>
               )}
 
-              {Array.isArray(product.warnings) && product.warnings.length > 0 && (
-                <div style={{ marginTop: 18, padding: '14px 16px', background: '#FEF2F2', border: '1px solid #FEE2E2', borderLeft: '4px solid #DC2626', borderRadius: 8 }}>
-                  <div style={{ font: '500 9.5px "DM Mono", ui-monospace, monospace', letterSpacing: '0.1em', color: '#991B1B', marginBottom: 8 }}>
-                    WARNINGS
-                  </div>
-                  <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
-                    {product.warnings.map((item) => (
-                      <li key={item} style={{ display: 'flex', gap: 10, fontSize: 13.5, lineHeight: 1.5, color: '#3f3831', marginBottom: 6 }}>
-                        <span style={{ flex: 'none', color: '#DC2626' }}>•</span>
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
             </div>
 
             <ProductEvidenceRail
