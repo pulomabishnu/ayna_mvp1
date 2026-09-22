@@ -779,10 +779,7 @@ export const BRAND_PRODUCTS = [
         internal: true,
         healthFunctions: ['vaginal-health'],
         tags: ['discomfort', 'comfort', 'organic', 'non-hormonal'],
-        // Exact current price wasn't confirmed — Gina sells this as a
-        // recurring "comfort membership" (3-month supply shipped every 3
-        // months) rather than a flat one-time price, per the brand's site.
-        price: 'Subscription (price not confirmed — check getgina.com)',
+        price: '$101.00',
         whereToBuy: ['getgina.com'],
         url: 'https://getgina.com/products/vaginal-moisturizing-glides',
         image: '/products/gina/vaginal-moisturizing-glides.webp',
@@ -860,6 +857,16 @@ export const BRAND_PRODUCTS = [
                 text: 'ACOG: Vulvovaginal Health',
                 summary: 'ACOG notes that over-the-counter vaginal moisturizers and lubricants can help relieve vaginal dryness and painful sex. This is clinical-guidance-level evidence, not product-specific validation.',
             },
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/37594604/',
+                text: 'Antimicrobial Potential of Cocos nucifera (Coconut) Oil on Bacterial Isolates',
+                summary: 'An in vitro lab study testing coconut oil against clinical and reference bacterial isolates — Streptococcus species showed the highest susceptibility, E. coli the least, attributed to coconut oil\'s lauric acid content. This is ingredient-level lab evidence, not a clinical study of this specific product.',
+            },
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/28707186/',
+                text: 'Natural Oils for Skin-Barrier Repair: Ancient Compounds Now Backed by Modern Science',
+                summary: 'A 2018 review (Vaughn et al., American Journal of Clinical Dermatology) of natural plant oils — including coconut oil — for repairing skin-barrier function, covering antimicrobial, antioxidant, and anti-inflammatory properties. This is general dermatology evidence about the oil, not a clinical study of this specific product or vaginal use.',
+            },
         ],
         verificationLinks: {
             doctor: { links: [] },
@@ -880,8 +887,8 @@ export const BRAND_PRODUCTS = [
         internal: true,
         healthFunctions: ['vaginal-health'],
         tags: ['comfort', 'non-hormonal'],
-        // Exact price and refill-pack count weren't confirmed.
-        price: 'Not confirmed — check getgina.com',
+        // Exact refill-pack count wasn't confirmed.
+        price: '$10.00',
         whereToBuy: ['getgina.com'],
         url: 'https://getgina.com/products/insertion-applicator-refills',
         image: '/products/gina/insertion-applicator-refills.png',
