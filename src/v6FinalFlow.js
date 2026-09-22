@@ -520,12 +520,11 @@ function setupAccountStep(result, step) {
 
         writeVerificationPending({ type: 'email', value: cleanEmail });
         setStatus('Code sent. Enter the 8-digit verification code to finish creating your account.', true);
+        result.classList.add('v6-awaiting-account');
         window.setTimeout(() => {
-          result.classList.remove('v6-awaiting-account');
-          step.remove();
           enhancePendingVerificationResult();
           showVerificationNotice();
-        }, 250);
+        }, 100);
         return;
       }
 
@@ -594,31 +593,105 @@ function showVerificationNotice() {
 
   const backdrop = document.createElement('div');
   backdrop.className = 'v6-verify-backdrop';
+  Object.assign(backdrop.style, {
+    position: 'fixed',
+    inset: '0',
+    zIndex: '10050',
+    display: 'grid',
+    placeItems: 'center',
+    padding: '24px',
+    boxSizing: 'border-box',
+    background: 'rgba(30, 24, 36, 0.48)',
+    backdropFilter: 'blur(12px)',
+    WebkitBackdropFilter: 'blur(12px)',
+  });
+
   backdrop.innerHTML = `
-    <div class="v6-verify-card v6-auth-card" role="dialog" aria-modal="true" aria-labelledby="v6-verify-title">
-      <div class="v6-account-step__eyebrow">one last step</div>
-      <h2 id="v6-verify-title">verify your email.</h2>
-      <p>We sent an 8-digit verification code to <strong class="v6-verify-email"></strong>. Enter it below to save your ecosystem.</p>
-      <form class="v6-verify-form" novalidate>
+    <div
+      class="v6-verify-card"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="v6-verify-title"
+      style="
+        width:min(430px,calc(100vw - 32px));
+        box-sizing:border-box;
+        border-radius:28px;
+        padding:30px 28px 26px;
+        text-align:center;
+        background:linear-gradient(145deg,rgba(217,206,215,.99),rgba(199,184,197,.99));
+        border:1px solid rgba(255,255,255,.42);
+        box-shadow:0 28px 72px rgba(25,18,30,.28);
+        color:#3d343e;
+      "
+    >
+      <div class="v6-account-step__eyebrow" style="margin-bottom:12px;">one last step</div>
+      <h2 id="v6-verify-title" style="margin:0 0 9px;font:500 34px/1.05 var(--font-serif,Georgia,serif);letter-spacing:-.035em;color:#3d343e;">verify your email.</h2>
+      <p style="margin:0 auto 18px;max-width:350px;color:#6d6169;font-size:12.5px;line-height:1.55;">
+        We sent an 8-digit verification code to
+        <strong class="v6-verify-email" style="display:block;margin-top:3px;color:#4f4352;font-weight:700;word-break:break-word;"></strong>
+      </p>
+
+      <form class="v6-verify-form" novalidate style="display:grid;gap:9px;width:100%;margin:0;">
         <input
-          class="v6-account-input v6-verify-code"
+          class="v6-verify-code"
           type="text"
           inputmode="numeric"
           autocomplete="one-time-code"
           maxlength="8"
           placeholder="8-digit code"
           aria-label="8-digit verification code"
+          style="
+            width:100%;
+            height:50px;
+            box-sizing:border-box;
+            border-radius:14px;
+            border:1px solid rgba(78,60,82,.14);
+            background:#c3b4c0;
+            color:#3d343e;
+            padding:0 14px;
+            outline:none;
+            text-align:center;
+            font-size:19px;
+            letter-spacing:.2em;
+            font-weight:700;
+          "
         />
-        <button type="submit" class="v6-account-primary v6-verify-submit" disabled>verify email</button>
+        <button
+          type="submit"
+          class="v6-verify-submit"
+          disabled
+          style="
+            width:100%;
+            min-height:46px;
+            border:0;
+            border-radius:999px;
+            background:#554561;
+            color:#fff;
+            font-size:12.5px;
+            font-weight:700;
+            cursor:pointer;
+            padding:10px 16px;
+          "
+        >verify email</button>
       </form>
-      <div class="v6-verify-actions">
-        <button type="button" class="v6-verify-resend">resend code</button>
-        <button type="button" class="v6-verify-change">change email</button>
+
+      <div class="v6-verify-actions" style="display:flex;justify-content:center;align-items:center;gap:18px;margin-top:14px;flex-wrap:wrap;">
+        <button type="button" class="v6-verify-resend" style="border:0;background:transparent;color:#554561;font-size:11.5px;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:4px 0;">resend code</button>
+        <button type="button" class="v6-verify-change" style="border:0;background:transparent;color:#554561;font-size:11.5px;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:4px 0;">change email</button>
       </div>
-      <p class="v6-account-status" role="status"></p>
+
+      <p class="v6-account-status" role="status" style="min-height:18px;margin:10px auto 0;color:#8e493f;font-size:11px;line-height:1.4;"></p>
     </div>
   `;
+
   document.body.append(backdrop);
+  const previousOverflow = document.body.style.overflow;
+  document.body.style.overflow = 'hidden';
+
+  const closeBackdrop = () => {
+    backdrop.remove();
+    document.body.style.overflow = previousOverflow;
+  };
 
   const emailLabel = backdrop.querySelector('.v6-verify-email');
   const form = backdrop.querySelector('.v6-verify-form');
@@ -629,17 +702,21 @@ function showVerificationNotice() {
   const status = backdrop.querySelector('.v6-account-status');
 
   emailLabel.textContent = pending.value;
+
   const sync = () => {
-    input.value = String(input.value || '').replace(/\D/g, '').slice(0, 8);
+    input.value = String(input.value || '').replace(/\\D/g, '').slice(0, 8);
     submit.disabled = input.value.length !== 8;
+    submit.style.opacity = submit.disabled ? '.42' : '1';
+    submit.style.cursor = submit.disabled ? 'not-allowed' : 'pointer';
   };
   input.addEventListener('input', sync);
+  sync();
   window.setTimeout(() => input.focus(), 60);
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
-    const token = String(input.value || '').replace(/\D/g, '').slice(0, 8);
-    if (!/^\d{8}$/.test(token)) {
+    const token = String(input.value || '').replace(/\\D/g, '').slice(0, 8);
+    if (!/^\\d{8}$/.test(token)) {
       status.style.color = '#8e493f';
       status.textContent = 'Enter the full 8-digit verification code from your email.';
       return;
@@ -651,8 +728,10 @@ function showVerificationNotice() {
 
     submit.disabled = true;
     resend.disabled = true;
+    change.disabled = true;
     status.style.color = '#6d6169';
     status.textContent = 'verifying…';
+
     try {
       const { data, error } = await withTimeout(supabase.auth.verifyOtp({
         email: pending.value,
@@ -665,8 +744,13 @@ function showVerificationNotice() {
       writeVerificationPending(null);
       try { window.sessionStorage.setItem(ACCOUNT_DONE_KEY, '1'); } catch (_) {}
       status.style.color = '#4f6d50';
-      status.textContent = 'Verified. Building your ecosystem…';
-      window.setTimeout(() => backdrop.remove(), 250);
+      status.textContent = 'Verified. Opening your ecosystem…';
+
+      document.querySelectorAll('.v6-account-step').forEach((node) => node.remove());
+      const result = document.querySelector('.ayna-quiz-result-screen');
+      result?.classList.remove('v6-awaiting-account');
+
+      window.setTimeout(closeBackdrop, 180);
     } catch (error) {
       status.style.color = '#8e493f';
       status.textContent = /expired|invalid|token/i.test(String(error?.message || ''))
@@ -674,6 +758,7 @@ function showVerificationNotice() {
         : messageFromError(error, 'Could not verify that code.');
       sync();
       resend.disabled = false;
+      change.disabled = false;
     }
   });
 
@@ -708,23 +793,22 @@ function showVerificationNotice() {
   change.addEventListener('click', () => {
     writeVerificationPending(null);
     try { window.sessionStorage.removeItem(ACCOUNT_DONE_KEY); } catch (_) {}
-    backdrop.remove();
+    closeBackdrop();
+    document.querySelectorAll('.v6-account-step').forEach((node) => node.remove());
     const result = document.querySelector('.ayna-quiz-result-screen');
-    if (result) result.classList.add('v6-awaiting-account');
+    result?.classList.add('v6-awaiting-account');
     nextFrame(ensureQuizAccountStep);
   });
 }
-
 function enhancePendingVerificationResult() {
   const pending = readVerificationPending();
   if (!pending) return;
   const result = document.querySelector('.ayna-quiz-result-screen');
   if (!result) return;
-  result.classList.remove('v6-awaiting-account');
+  result.classList.add('v6-awaiting-account');
 
-  // Keep the normal result-page actions intact. The verification dialog is
-  // the actual gate; mutating/hiding buttons here made the page look like the
-  // user had already advanced even though their email was still unverified.
+  // Keep the result page hidden until verification succeeds. The verification
+  // popup is the only thing the user should see after account creation.
   const title = result.querySelector('.ayna-result-title');
   if (title && !result.querySelector('.v6-result-verify-note')) {
     const note = document.createElement('p');
