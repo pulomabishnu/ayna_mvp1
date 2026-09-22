@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
 
@@ -21,7 +21,7 @@ const CONSENT_VERSION = 'v2-18plus';
 const AGE_REQUIREMENT_VERSION = '18plus-v1';
 const REFERRAL_OPTIONS = ['TikTok', 'Instagram', 'LinkedIn', 'Google / search', 'Friend / word of mouth', 'Event / conference', 'Brand / partner', 'Other'];
 
-export default function AuthGate({ isModal = false, embedded = false, onSkip, onStartEcosystem, context, onBeforeOAuthRedirect, redirectTo }) {
+export default function AuthGate({ isModal = false, embedded = false, onSkip, onStartEcosystem, context, onBeforeOAuthRedirect, redirectTo, onAuthenticated }) {
   useEscapeToClose(isModal, onSkip);
   const [mode, setMode] = useState('signin');
   const [referral, setReferral] = useState('');
@@ -45,8 +45,6 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
   // resend option means a stuck user isn't just left staring at "check your
   // inbox" forever.
   const [needsConfirmation, setNeedsConfirmation] = useState(false);
-  const [checkingConfirmation, setCheckingConfirmation] = useState(false);
-  const lastConfirmationCheck = useRef(0);
   const [resending, setResending] = useState(false);
   const [resendMsg, setResendMsg] = useState('');
   const [emailSignupStep, setEmailSignupStep] = useState('details');
@@ -106,11 +104,12 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
     setNeedsConfirmation(false);
     setLoading(true);
     try {
+      const cleanEmail = email.trim().toLowerCase();
       if (isSignup) {
         const metadata = signupMetadata();
         const cleanFirstName = firstName.trim();
         const { data, error } = await supabase.auth.signUp({
-          email,
+          email: cleanEmail,
           password,
           options: {
             emailRedirectTo: 'https://www.aynahealth.co/confirmed',
@@ -129,16 +128,17 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
         }
         if (data.session) {
           setSuccessMsg('You\'re all set. Signing you in...');
+          onAuthenticated?.(data.user || data.session.user, data.session);
         } else {
           setEmailSignupStep('code');
           setEmailCode('');
-          setSuccessMsg(`We sent a verification code to ${email}. Enter it below to finish creating your account.`);
+          setSuccessMsg(`We sent a verification code to ${cleanEmail}. Enter it below to finish creating your account.`);
           setNeedsConfirmation(true);
         }
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { data, error } = await supabase.auth.signInWithPassword({ email: cleanEmail, password });
         if (error) {
-          if (/email not confirmed/i.test(error.message || '')) {
+          if (error.code === 'email_not_confirmed' || /email[_ ]not[_ ]confirmed|confirm your email|not verified/i.test(error.message || '')) {
             setNeedsConfirmation(true);
             setEmailSignupStep('code');
             setEmailCode('');
@@ -146,6 +146,9 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
           }
           throw error;
         }
+        if (!data?.session?.user) throw new Error('Sign-in succeeded but no session was created. Please try again.');
+        setSuccessMsg('Signed in. Loading your ecosystem…');
+        onAuthenticated?.(data.user || data.session.user, data.session);
       }
     } catch (err) {
       setError(err.message || 'Something went wrong. Please try again.');
@@ -161,7 +164,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
     try {
       const { error } = await supabase.auth.resend({
         type: 'signup',
-        email,
+        email: email.trim().toLowerCase(),
         options: { emailRedirectTo: 'https://www.aynahealth.co/confirmed' },
       });
       if (error) throw error;
@@ -176,9 +179,9 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
   const handleVerifyEmailOtp = async (e) => {
     e.preventDefault();
     if (!supabase || !email) return;
-    const token = emailCode.replace(/\D/g, '').slice(0, 8);
-    if (token.length < 6) {
-      setError('Enter the verification code from your email.');
+    const token = emailCode.replace(/\D/g, '').slice(0, 6);
+    if (!/^\d{6}$/.test(token)) {
+      setError('Enter the 6-digit verification code from your email.');
       return;
     }
     setError('');
@@ -186,7 +189,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
     setLoading(true);
     try {
       const { data, error } = await supabase.auth.verifyOtp({
-        email: email.trim(),
+        email: email.trim().toLowerCase(),
         token,
         type: 'email',
       });
@@ -197,6 +200,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
       setNeedsConfirmation(false);
       setResendMsg('');
       setSuccessMsg('Email verified. Signing you in...');
+      onAuthenticated?.(data.user || data.session.user, data.session);
     } catch (err) {
       setError(
         /expired|invalid|token/i.test(err?.message || '')
@@ -207,47 +211,6 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
       setLoading(false);
     }
   };
-
-  // The confirmation link may open in Safari while Ayna stays in its own app
-  // window. Those windows do not share a Supabase session, so retry the email
-  // sign-in in Ayna when the user returns. No password is persisted to storage.
-  const checkConfirmedEmail = async (automatic = false) => {
-    if (!supabase || !email || !password || checkingConfirmation) return;
-    if (automatic && Date.now() - lastConfirmationCheck.current < 5000) return;
-    lastConfirmationCheck.current = Date.now();
-    setCheckingConfirmation(true);
-    try {
-      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-      if (signInError) {
-        if (!automatic && !/email not confirmed/i.test(signInError.message || '')) {
-          setError(signInError.message || 'Could not sign in. Please try again.');
-        }
-        return;
-      }
-      setNeedsConfirmation(false);
-      setError('');
-      setSuccessMsg('Email confirmed. Signing you in…');
-    } catch (checkError) {
-      if (!automatic) setError(checkError.message || 'Could not check your email yet. Please try again.');
-    } finally {
-      setCheckingConfirmation(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!needsConfirmation) return undefined;
-    const onReturn = () => {
-      if (document.visibilityState === 'visible') void checkConfirmedEmail(true);
-    };
-    document.addEventListener('visibilitychange', onReturn);
-    window.addEventListener('focus', onReturn);
-    window.addEventListener('pageshow', onReturn);
-    return () => {
-      document.removeEventListener('visibilitychange', onReturn);
-      window.removeEventListener('focus', onReturn);
-      window.removeEventListener('pageshow', onReturn);
-    };
-  }, [needsConfirmation, email, password, checkingConfirmation]);
 
   const normalizePhoneE164 = (raw) => {
     const trimmed = String(raw || '').trim();
@@ -300,12 +263,13 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
     setError('');
     setLoading(true);
     try {
-      const { error } = await supabase.auth.verifyOtp({
+      const { data, error } = await supabase.auth.verifyOtp({
         phone: phoneNumber,
         token: phoneCode.trim(),
         type: 'sms',
       });
       if (error) throw error;
+      if (data?.session?.user) onAuthenticated?.(data.user || data.session.user, data.session);
     } catch (err) {
       setError(err.message || 'That code is wrong or expired. Please try again.');
     } finally {
@@ -607,13 +571,13 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
               <input
                 type="text"
                 inputMode="numeric"
-                placeholder="Verification code"
+                placeholder="6-digit code"
                 value={emailCode}
-                onChange={(e) => setEmailCode(e.target.value.replace(/\D/g, '').slice(0, 8))}
+                onChange={(e) => setEmailCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                 required
                 style={styles.input}
                 autoComplete="one-time-code"
-                maxLength={8}
+                maxLength={6}
                 autoFocus
               />
               <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
