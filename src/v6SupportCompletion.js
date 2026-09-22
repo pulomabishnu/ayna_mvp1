@@ -1,6 +1,6 @@
 
-const SUPPORT_HEADING = 'Which options best describe you right now?';
-const SUPPORT_SUBCOPY = 'Search, or tap an Ayna suggestion below.';
+const SUPPORT_HEADING = 'What are you looking for support with?';
+const SUPPORT_SUBCOPY = 'Search anything you are experiencing, or tap an Ayna suggestion. Choose as many as you want.';
 const DRAFT_KEY = 'ayna_intake_redesign_draft_v1';
 const DEFAULT_SUGGESTIONS = ['Cramps or period pain', 'Irregular periods', 'PCOS support', 'Fertility support', 'Vaginal dryness'];
 const SUGGESTIONS_BY_STAGE = new Map([
@@ -93,9 +93,18 @@ function ensureSuggestionShell(question, wrap) {
 function populateSuggestions(question, wrap) {
   const shell = ensureSuggestionShell(question, wrap);
   const bubbles = shell.querySelector('.v6-support-bubbles');
-  if (!bubbles || bubbles.children.length) return;
+  if (!bubbles) return;
 
   const intake = readDraft();
+  const selected = Array.isArray(intake.supportSelections) ? intake.supportSelections : [];
+  if (bubbles.children.length) {
+    [...bubbles.querySelectorAll('.v6-support-bubble')].forEach((button) => {
+      const isSelected = selected.includes(clean(button.textContent));
+      button.classList.toggle('is-selected', isSelected);
+      button.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+    });
+    return;
+  }
   const stages = Array.isArray(intake.lifeStageSelections) && intake.lifeStageSelections.length
     ? intake.lifeStageSelections
     : intake.lifeStage ? [intake.lifeStage] : [];
@@ -108,8 +117,9 @@ function populateSuggestions(question, wrap) {
   (suggestions.length ? suggestions : DEFAULT_SUGGESTIONS).slice(0, 6).forEach((item) => {
     const button = document.createElement('button');
     button.type = 'button';
-    button.className = 'v6-support-bubble v6-master-suggestion-bubble';
+    button.className = `v6-support-bubble v6-master-suggestion-bubble${selected.includes(item) ? ' is-selected' : ''}`;
     button.textContent = item;
+    button.setAttribute('aria-pressed', selected.includes(item) ? 'true' : 'false');
     button.addEventListener('click', () => {
       selectSupport(question, item);
       window.setTimeout(schedule, 40);
