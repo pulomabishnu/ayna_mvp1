@@ -190,6 +190,8 @@ async function moveBranchQuizToDiagnosis(page) {
     }
 
     if (/which options best describe you right now/i.test(heading)) {
+      await clickFirstVisible(page, ['.ayna-choice-card']);
+    } else if (/looking for support|currently experiencing/i.test(heading)) {
       await clickFirstVisible(page, ['.v6-support-bubble', '.v6-master-suggestion-bubble', '.ayna-row-choice']);
     } else if (/period flow/i.test(heading)) {
       await clickFirstVisible(page, ['.ayna-scale button', '.ayna-seg-option', '.ayna-row-choice']);
