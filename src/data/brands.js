@@ -2381,7 +2381,7 @@ export const BRAND_PRODUCTS = [
         // Buy Now / Visit Site destination (see getBuyUrl in ProductModal.jsx).
         affiliateUrl: 'https://pelvic-bra.myshopify.com/nlbs3u',
         image: 'https://www.mypelvicbra.shop/cdn/shop/files/ClassicPelvicBra.jpg',
-        summary: 'A 4-way adjustable, everyday pelvic support garment with a compressive bikini-style fit, designed to ease sensations of heaviness, pressure, and bulging by giving gentle compressive lift to the pelvic floor and perineal tissue.',
+        summary: 'My Pelvic Bra was created by Jeanice Mitchell, PT, MPT, WCS, BCB-PMD — a pelvic floor physical therapist who developed pelvic organ prolapse after the birth of her first child and spent nearly 25 years looking for a discreet, supportive external option before designing her own, launching in May 2024. The Classic Pelvic Bra is a 4-way adjustable, everyday pelvic support garment with a compressive bikini-style fit, designed to ease sensations of heaviness, pressure, and bulging by giving gentle compressive lift to the pelvic floor and perineal tissue.',
         safety: {
             fdaStatus: 'Compression support garment; not an FDA-cleared medical device. Brand states it is not designed to correct prolapse.',
             materials: 'Breathable, skin-friendly, high-stretch compression fabric with a creaseless gusset and sweat-wicking liner, per the brand.',
@@ -2390,9 +2390,76 @@ export const BRAND_PRODUCTS = [
             opinionAlerts: 'Store pricing defaults to EUR; a US/USD option is available via the site\'s own country selector. Verify current pricing directly at mypelvicbra.shop.',
         },
         clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'Sourced from My Pelvic Bra\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'My Pelvic Bra positions this as a discreet, wearable support option for pelvic heaviness, pressure, bulging, and leakage symptoms — worn during activities that stress the pelvic floor (walking, lifting, running), not as a substitute for pelvic floor therapy or a prolapse treatment.',
-        effectiveness: 'Positioned as symptom-management support wear, not a corrective device; no independent clinical study of the product was found.',
+        clinicianAttribution: 'Founder Jeanice Mitchell is a real, credentialed pelvic floor physical therapist (PT, MPT, WCS, BCB-PMD) who also founded Integrity Rehab (2001) and the myPFM nonprofit pelvic-health campaign (2018); no independent clinician endorsement of this specific product has been verified by ayna.',
+        doctorOpinion: 'Independent research on external pelvic compression garments as a category is real but mixed. A 2026 exploratory, randomized crossover study in 13 postpartum runners with pelvic floor dysfunction found that wearing a compression garment measurably smoothed running gait, reduced pelvic shock/jerk forces, and increased perceived pelvic floor and core support while reducing fear of symptoms — real, positive, if preliminary, findings. An earlier pilot study (13 women with prolapse) found no significant improvement on validated quality-of-life questionnaires from a similar supportive underwear product, though several participants subjectively felt some relief.\n\nThese studies are about the general category of external compression garments, not this specific product — no independent clinical study of the Classic Pelvic Bra itself was found. The brand\'s own honest positioning, that it\'s not designed to correct prolapse, lines up with what this research supports: possible symptom-management, biomechanical, and confidence benefits, not a structural fix.',
+        doctorOpinionShort: 'Research on external pelvic compression garments as a category is mixed: a 2026 study found real biomechanical and perceived-support benefits while running; an earlier pilot study found no significant quality-of-life improvement from a similar product. No independent study of this specific garment was found — consistent with the brand\'s own "not a prolapse treatment" framing.',
+        // Kept out of verificationLinks so it doesn't pool with the
+        // Scientific literature tab's citation list.
+        doctorOpinionCitations: [
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/41586016/', label: 'PubMed: Pelvic compression garments alter running biomechanics, perceived support, and fear of symptoms in postpartum women with pelvic floor dysfunction' },
+            { url: 'https://www.researchgate.net/publication/51408102_The_effectiveness_of_supportive_underwear_in_women_with_pelvic_organ_prolapse_A_pilot_study', label: 'Lammers et al., Int Urogynecol J 2008: The effectiveness of supportive underwear in women with pelvic organ prolapse — a pilot study' },
+        ],
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Women with pelvic heaviness, pressure, bulging, or leakage symptoms wanting discreet external support during activity',
+            'Runners or anyone doing weight-bearing activity (walking, lifting) who wants added pelvic support and confidence',
+            'Not a substitute for pelvic floor physical therapy or a prolapse diagnosis/treatment plan — the brand recommends working with a pelvic floor PT alongside it',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // mypelvicbra.shop/products/classic-pelvic-bra.
+        howToUse: {
+            intro: 'Per My Pelvic Bra\'s own site: wear during activities that stress the pelvic floor, using the 4-way adjustment to find the minimum compression needed.',
+            steps: [
+                'Adjust the waistband and leg straps (4-way adjustable) for a comfortable, supportive fit.',
+                'Wear during walking, lifting, running, or other activities that trigger heaviness or pressure symptoms.',
+                'Use the minimum compression needed for symptom relief — more isn\'t necessarily better.',
+                'Remove before sleep, per the brand.',
+            ],
+            sourceUrl: 'https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE',
+            sourceLabel: 'mypelvicbra.shop: Classic Pelvic Bra',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'Not designed to correct prolapse — this is symptom-management support wear, not a structural treatment, per the brand.',
+            'Remove for sleep, and use the minimum compression needed for symptom relief.',
+            'Stop use and see a doctor or pelvic floor PT if the garment causes pain, numbness, or worsening symptoms.',
+        ],
+        communityReview: 'No independently verified customer review data was found for this product at time of writing.',
+        effectiveness: 'Positioned as symptom-management support wear, not a corrective device. Research on external compression garments as a category is real but mixed — some evidence for biomechanical and perceived-support benefits, some finding no significant quality-of-life change — and no independent clinical study of this specific product was found.',
+        // Category-level citations shown only on the Scientific literature
+        // tab, kept out of verificationLinks so they don't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/41586016/',
+                text: 'PubMed: Pelvic compression garments alter running biomechanics, perceived support, and fear of symptoms in postpartum women with pelvic floor dysfunction',
+                summary: '2026 exploratory, randomized crossover study, 13 postpartum runners. Found real biomechanical improvements and increased perceived pelvic floor/core support. General category evidence, not product-specific.',
+            },
+            {
+                url: 'https://www.researchgate.net/publication/51408102_The_effectiveness_of_supportive_underwear_in_women_with_pelvic_organ_prolapse_A_pilot_study',
+                text: 'Lammers et al., Int Urogynecol J 2008: The effectiveness of supportive underwear in women with pelvic organ prolapse — a pilot study',
+                summary: '13 women with prolapse. Found no significant quality-of-life improvement on validated questionnaires, though some participants subjectively felt relief. Included for balance — a real negative finding for a similar (not identical) product.',
+            },
+            {
+                url: 'https://www.acog.org/clinical/clinical-guidance/practice-bulletin/articles/2019/11/pelvic-organ-prolapse',
+                text: 'ACOG Practice Bulletin 214: Pelvic Organ Prolapse',
+                summary: 'Women in the US have a 13% lifetime risk of surgery for pelvic organ prolapse — general clinical context, not product-specific validation.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://www.mypelvicbra.shop/pages/about',
+                        text: 'mypelvicbra.shop: About',
+                        summary: 'My Pelvic Bra\'s own about page with founder Jeanice Mitchell\'s story.',
+                    },
+                ],
+            },
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true,
@@ -2911,7 +2978,7 @@ export const BRAND_PRODUCTS = [
         url: 'https://www.mypelvicbra.shop/products/mypelvicbra%C2%AE-pink-prolapse-chicken',
         affiliateUrl: 'https://pelvic-bra.myshopify.com/products/mypelvicbra%C2%AE-pink-prolapse-chicken?bg_ref=bZYYwMBpTa',
         image: 'https://cdn.shopify.com/s/files/1/0640/1513/8877/files/36.png?v=1788468282',
-        summary: 'A soft, squeezable pelvic-health demonstration tool designed to make pelvic organ prolapse education easier to visualize, including how external perineal compression can provide support from below.',
+        summary: 'A soft, squeezable pelvic-health demonstration tool from My Pelvic Bra — founded by pelvic floor physical therapist Jeanice Mitchell, PT — designed to make pelvic organ prolapse education easier to visualize, including how external perineal compression can provide support from below.',
         safety: {
             fdaStatus: 'Educational demonstration item; not an FDA-cleared medical device or treatment.',
             materials: 'Soft squeezable demonstration tool; exact material composition was not listed on the product page.',
@@ -2920,9 +2987,19 @@ export const BRAND_PRODUCTS = [
             opinionAlerts: 'The educational explanation is sourced from My Pelvic Bra’s product page.',
         },
         clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'Educational positioning is sourced from My Pelvic Bra; no independent clinician endorsement verified by ayna.',
-        doctorOpinion: 'The product is intended as a hands-on teaching aid for explaining prolapse and external support concepts, not as a therapeutic device.',
+        clinicianAttribution: 'Educational positioning is sourced from My Pelvic Bra, founded by pelvic floor physical therapist Jeanice Mitchell, PT, MPT, WCS, BCB-PMD; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'The product is intended as a hands-on teaching aid for explaining prolapse and external support concepts, not as a therapeutic device. Pelvic organ prolapse is genuinely common — ACOG estimates women in the US have a 13% lifetime risk of undergoing surgery for it — so a visual, tactile teaching tool like this has real educational value for explaining a condition many people have never had described to them clearly.',
         effectiveness: 'Educational demonstration tool only; it is not intended to provide a clinical treatment effect.',
+        // Category-level citation shown only on the Scientific literature
+        // tab, kept out of verificationLinks so it doesn't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/31651832/',
+                text: 'ACOG Practice Bulletin 214: Pelvic Organ Prolapse',
+                summary: 'Women in the US have a 13% lifetime risk of surgery for pelvic organ prolapse — real epidemiological context for why prolapse education matters.',
+            },
+        ],
         integrations: [],
         badges: [],
         isEmergingBrand: true,
@@ -2941,7 +3018,7 @@ export const BRAND_PRODUCTS = [
         url: 'https://www.mypelvicbra.shop/products/waistband-extenders',
         affiliateUrl: 'https://pelvic-bra.myshopify.com/products/waistband-extenders?bg_ref=bZYYwMBpTa',
         image: 'https://cdn.shopify.com/s/files/1/0640/1513/8877/files/WaistbandExtenders_4.jpg?v=1766335111',
-        summary: 'A set of two removable waistband extenders that adds extra room to a Pelvic Bra® while preserving its intended support and compression. S-series fits the Classic; L-series fits the wider Classic Plus waistband.',
+        summary: 'A set of two removable waistband extenders from My Pelvic Bra that adds extra room to a Pelvic Bra® while preserving its intended support and compression. S-series fits the Classic; L-series fits the wider Classic Plus waistband.',
         safety: {
             fdaStatus: 'Garment accessory; not an FDA-cleared medical device.',
             materials: 'Hook-on waistband extenders sold as a set of two; select the series that matches the Pelvic Bra® style.',
@@ -2971,7 +3048,7 @@ export const BRAND_PRODUCTS = [
         url: 'https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE-classic-plus',
         affiliateUrl: 'https://pelvic-bra.myshopify.com/products/classic-pelvic-bra%C2%AE-classic-plus?bg_ref=bZYYwMBpTa',
         image: 'https://cdn.shopify.com/s/files/1/0640/1513/8877/files/6.png?v=1788247226',
-        summary: 'The fuller-coverage Pelvic Bra® style, with a wider adjustable waistband and reinforced supportive hammock for people wanting more substantial external pelvic-floor and perineal support during daily activity.',
+        summary: 'The fuller-coverage Pelvic Bra® style from My Pelvic Bra — founded by pelvic floor physical therapist Jeanice Mitchell, PT (see the Classic Pelvic Bra entry for her story) — with a wider adjustable waistband and reinforced supportive hammock for people wanting more substantial external pelvic-floor and perineal support during daily activity.',
         safety: {
             fdaStatus: 'Compression support garment; not an FDA-cleared medical device and not a corrective treatment for prolapse.',
             materials: 'Breathable, skin-friendly stretch fabric with reinforced hammock, creaseless gusset, sweat-wicking liner, and wider adjustable hook-and-eye waistband, per the brand.',
@@ -2980,9 +3057,49 @@ export const BRAND_PRODUCTS = [
             opinionAlerts: 'Support and symptom-relief descriptions are sourced from My Pelvic Bra; product-specific clinical outcomes have not been independently established.',
         },
         clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'Sourced from My Pelvic Bra’s own product and educational materials; no independent clinician endorsement verified by ayna.',
-        doctorOpinion: 'My Pelvic Bra positions Classic Plus as its maximum-support, fuller-coverage adjustable option for external pelvic-floor and perineal support during standing, walking, lifting, exercise, pregnancy, and postpartum activity.',
-        effectiveness: 'Positioned as external symptom-management support wear rather than a corrective device; no independent clinical study of the Classic Plus product was found.',
+        clinicianAttribution: 'Same founder (Jeanice Mitchell, PT, MPT, WCS, BCB-PMD) and brand as the Classic Pelvic Bra; no independent clinician endorsement of this specific product has been verified by ayna.',
+        doctorOpinion: 'My Pelvic Bra positions Classic Plus as its maximum-support, fuller-coverage adjustable option for external pelvic-floor and perineal support during standing, walking, lifting, exercise, pregnancy, and postpartum activity — the same fabric and design approach as the Classic Pelvic Bra, just wider coverage and a reinforced hammock for more substantial support.\n\nSee the Classic Pelvic Bra entry for the independent research on external pelvic compression garments as a category (a 2026 study found real biomechanical/perceived-support benefits; an earlier pilot study found no significant quality-of-life change from a similar product) — that research applies to the garment category generally, not this specific style, and no independent clinical study of Classic Plus itself was found.',
+        doctorOpinionShort: 'Same brand, founder, and fabric approach as the Classic Pelvic Bra, with wider coverage and a reinforced hammock for more support. See the Classic Pelvic Bra entry for the mixed independent research on external compression garments as a category. No independent study of this specific style was found.',
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Women wanting more substantial external pelvic-floor and perineal support than the Classic style provides',
+            'Pregnancy and postpartum use, or anyone with more pronounced heaviness/pressure symptoms during standing, walking, lifting, or exercise',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // mypelvicbra.shop/products/classic-pelvic-bra-classic-plus.
+        howToUse: {
+            intro: 'Per My Pelvic Bra\'s own site: wear during activities that stress the pelvic floor, adjusting the wider hook-and-eye waistband for a comfortable, supportive fit.',
+            steps: [
+                'Adjust the wider hook-and-eye waistband for comfortable, supportive coverage.',
+                'Wear during standing, walking, lifting, exercise, or other pelvic-floor-stressing activity.',
+                'Use the minimum compression needed for comfort and support.',
+                'Remove for sleep, per the brand.',
+            ],
+            sourceUrl: 'https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE-classic-plus',
+            sourceLabel: 'mypelvicbra.shop: Classic Plus Pelvic Bra',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'Not designed to correct prolapse — this is symptom-management support wear, not a structural treatment, per the brand.',
+            'Remove for sleep, and use the minimum compression needed for comfort and support.',
+            'Reduce or stop use if the garment causes pain, numbness, skin irritation, or worsening symptoms.',
+        ],
+        communityReview: 'No independently verified customer review data was found for this product at time of writing.',
+        effectiveness: 'Positioned as external symptom-management support wear rather than a corrective device. See the Classic Pelvic Bra entry for the mixed independent research on external compression garments as a category; no independent clinical study of the Classic Plus product specifically was found.',
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://www.mypelvicbra.shop/pages/about',
+                        text: 'mypelvicbra.shop: About',
+                        summary: 'My Pelvic Bra\'s own about page with founder Jeanice Mitchell\'s story.',
+                    },
+                ],
+            },
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true,
