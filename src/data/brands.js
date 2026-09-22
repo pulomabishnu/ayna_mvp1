@@ -222,6 +222,34 @@ export const BRAND_PRODUCTS = [
         communityReview: 'Neycher.com and Amazon both carry customer reviews for this moisturizer; visible feedback centers on noticeably improved day-to-day comfort after adding it to a routine. A specific rating/review count wasn\'t independently verifiable at time of writing. Amazon blocked automated access, and the badge shown on Neycher\'s own product pages is identical across multiple different products, so it isn\'t trustworthy as a per-product figure.',
         effectiveness: 'When estrogen drops — in perimenopause, menopause, after giving birth, while breastfeeding, or after cancer treatment — the vaginal lining gets thinner, makes less moisture, and loses elasticity; pH rises and protective lactobacilli decline, so irritation, burning, and infections become more common. This suppository pairs hyaluronic acid, which binds water into the tissue and supports repair, with polycarbophil, a bioadhesive gel that holds that moisture against the vaginal wall for days rather than hours — which is why it\'s positioned as a moisturizer, not a lubricant. It restores moisture and supports tissue without adding hormones, so it works for anyone who can\'t or doesn\'t want to use hormone therapy. Positioned as a non-hormonal alternative to antibiotic, antifungal, or hormone treatments for vaginal dryness and irritation; no independent clinical study of the product itself was found.',
         ingredients: '10 suppositories per box, 2 g each. Ingredients (per the box): hyaluronic acid (sodium hyaluronate, 10 mg per suppository), polycarbophil, glycyrrhetinic acid (from licorice root), vitamin E (tocopheryl acetate), vitamin A (retinyl palmitate), tea tree oil, phosphatidylcholine, and lactic acid, in a caprylic/capric triglyceride base.\n\nHyaluronic acid (10 mg): binds large amounts of water. It draws moisture into the vaginal lining, holds it there, and supports tissue repair.\n\nPolycarbophil: a bioadhesive gel that sticks to the vaginal wall and holds water against it for days, so the effect lasts much longer than a lubricant. It also helps the tissue renew — as it does, old, dry cells that have built up come away, so some women notice a white, clumpy discharge that looks like a yeast infection. It isn\'t one; it\'s the old cells leaving, and it usually lessens with regular use.\n\nGlycyrrhetinic acid (from licorice root): calms irritation, redness, and burning.\n\nLactic acid: the same acid healthy vaginal bacteria produce. It keeps pH in its natural acidic range (3.8 to 4.5).\n\nVitamins E and A: vitamin E is an antioxidant that protects and softens the tissue; vitamin A supports renewal of the vaginal lining.\n\nTea tree oil: used in a small, carefully chosen amount — pure tea tree oil at high concentrations can irritate, but here it sits inside a formula built to hydrate and calm (hyaluronic acid, polycarbophil, glycyrrhetinic acid, vitamin E), not as a stand-alone antiseptic.',
+        // Curated so the Scientific literature tab always has real citations on
+        // file, instead of depending on api/product-insights.js's live LLM call
+        // succeeding (which needs its own API key configured — silently comes
+        // back empty on an environment, like a fresh localhost checkout, that
+        // doesn't have one set).
+        verificationLinks: {
+            doctor: {
+                links: [
+                    {
+                        url: 'https://www.acog.org/womens-health/faqs/vulvovaginal-health',
+                        text: 'ACOG: Vulvovaginal Health',
+                        summary: 'ACOG notes that over-the-counter vaginal moisturizers and lubricants can help relieve vaginal dryness and painful sex. This is clinical-guidance-level evidence, not product-specific validation.',
+                        justification: 'ACOG is the leading professional body for OB/GYN care in the U.S.',
+                    },
+                ],
+            },
+            scientific: {
+                links: [
+                    {
+                        url: 'https://pubmed.ncbi.nlm.nih.gov/39250810/',
+                        text: 'Hormonal Treatments and Vaginal Moisturizers for Genitourinary Syndrome of Menopause: A Systematic Review',
+                        summary: 'A systematic review (Danan et al., Annals of Internal Medicine, 2024) of randomized trials found vaginal moisturizers may improve dryness versus placebo (low certainty of evidence). This is intervention-level evidence and does not validate a specific moisturizer product.',
+                        justification: 'Peer-reviewed systematic review, PubMed-indexed.',
+                    },
+                ],
+            },
+            community: { links: [] },
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true, // shows a 'Brand' tag on the Discovery card, next to the type badge
