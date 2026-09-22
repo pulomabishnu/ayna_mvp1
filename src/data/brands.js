@@ -421,8 +421,8 @@ export const BRAND_PRODUCTS = [
         healthFunctions: ['vaginal-health'],
         tags: ['discomfort', 'comfort', 'organic', 'non-hormonal'],
         price: '$25.97',
-        whereToBuy: ['helloneycher.com'],
-        url: 'https://www.helloneycher.com/product/hydrobloom-moisturizing-gel',
+        whereToBuy: ['helloneycher.com', 'Amazon'],
+        url: 'https://helloneycher.com/products/hydrobloom-moisturizing-gel?Title=Default',
         faqUrl: 'https://www.helloneycher.com/faq',
         image: 'https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/69b007753e5c0c33308cc349_hand.webp',
         summary: '"It\'s dry and itchy down there" or "everything burns after I shave" — that\'s vulvar dryness and irritation, common from hormonal changes, friction, or harsh soaps. This hormone-free, pH-balanced moisturizing gel (30 ml tube with applicator) works outside on the vulva and inside the vagina, non-sticky and fast-absorbing.',
@@ -455,7 +455,7 @@ export const BRAND_PRODUCTS = [
                 'Gently insert the applicator into the vagina and squeeze the tube lightly until a comfortable amount of gel comes out.',
                 'Unscrew the applicator after use and rinse it well with warm water.',
             ],
-            sourceUrl: 'https://www.helloneycher.com/product/hydrobloom-moisturizing-gel',
+            sourceUrl: 'https://helloneycher.com/products/hydrobloom-moisturizing-gel?Title=Default',
             sourceLabel: 'helloneycher.com: HydroBloom Gel',
         },
         // Rendered as a red warning box on the Evidence view.
@@ -561,9 +561,21 @@ export const BRAND_PRODUCTS = [
                     },
                     {
                         platform: 'website',
-                        url: 'https://www.helloneycher.com/product/hydrobloom-moisturizing-gel',
+                        url: 'https://helloneycher.com/products/hydrobloom-moisturizing-gel?Title=Default',
                         text: 'helloneycher.com: Customer reviews',
                         summary: 'Neycher\'s own product page for this gel.',
+                    },
+                    {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/Neycher-Hyaluronic-Vaginal-Moisturizing-Calendula/dp/B0G822S3QN?ref_=ast_sto_dp',
+                        text: 'Amazon: Neycher HydroBloom reviews',
+                        // Amazon blocks automated access, so this isn't a
+                        // summary of actual review text — just confirms
+                        // this is the real, current product listing (Made
+                        // in Italy, 20 mg hyaluronic acid, ranked in
+                        // Amazon's Vaginal Moisturizers category at time of
+                        // writing). Read the reviews directly on Amazon.
+                        summary: 'Real, current Amazon listing for this exact product. Amazon blocks automated access, so review content/ratings weren\'t independently verifiable at time of writing — read them directly on the page.',
                     },
                 ],
             },
