@@ -327,6 +327,8 @@ function setupAccountStep(result, step) {
   let method = 'email';
   let phoneStage = 'number';
   let normalizedPhone = '';
+  let emailSignupInFlight = false;
+  let lastEmailSignup = { email: '', at: 0 };
 
   const methodButtons = [...step.querySelectorAll('.v6-account-method')];
   const form = step.querySelector('form');
@@ -499,7 +501,22 @@ function setupAccountStep(result, step) {
 
     try {
       if (method === 'email') {
-        const cleanEmail = email.value.trim();
+        const cleanEmail = email.value.trim().toLowerCase();
+        const now = Date.now();
+
+        if (emailSignupInFlight) return;
+
+        if (lastEmailSignup.email === cleanEmail && now - lastEmailSignup.at < 30000) {
+          writeVerificationPending({ type: 'email', value: cleanEmail });
+          setStatus('A verification code was already sent. Check your inbox or use Resend code.', true);
+          result.classList.add('v6-awaiting-account');
+          showVerificationNotice();
+          return;
+        }
+
+        emailSignupInFlight = true;
+        lastEmailSignup = { email: cleanEmail, at: now };
+
         const { data, error } = await withTimeout(supabase.auth.signUp({
           email: cleanEmail,
           password: password.value,
@@ -513,11 +530,13 @@ function setupAccountStep(result, step) {
         captureReferralAnalytics();
 
         if (data?.session) {
+          emailSignupInFlight = false;
           try { window.sessionStorage.setItem(ACCOUNT_DONE_KEY, '1'); } catch (_) {}
           setStatus('Account created. Building your ecosystem…', true);
           return;
         }
 
+        emailSignupInFlight = false;
         writeVerificationPending({ type: 'email', value: cleanEmail });
         setStatus('Code sent. Enter the 8-digit verification code to finish creating your account.', true);
         result.classList.add('v6-awaiting-account');
@@ -558,6 +577,7 @@ function setupAccountStep(result, step) {
       try { window.sessionStorage.setItem(ACCOUNT_DONE_KEY, '1'); } catch (_) {}
       setStatus('Verified. Building your ecosystem…', true);
     } catch (error) {
+      if (method === 'email') emailSignupInFlight = false;
       setStatus(messageFromError(error));
       syncPrimary();
     }
@@ -704,7 +724,7 @@ function showVerificationNotice() {
   emailLabel.textContent = pending.value;
 
   const sync = () => {
-    input.value = String(input.value || '').replace(/\\D/g, '').slice(0, 8);
+    input.value = String(input.value || '').replace(/\D/g, '').slice(0, 8);
     submit.disabled = input.value.length !== 8;
     submit.style.opacity = submit.disabled ? '.42' : '1';
     submit.style.cursor = submit.disabled ? 'not-allowed' : 'pointer';
@@ -715,8 +735,8 @@ function showVerificationNotice() {
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
-    const token = String(input.value || '').replace(/\\D/g, '').slice(0, 8);
-    if (!/^\\d{8}$/.test(token)) {
+    const token = String(input.value || '').replace(/\D/g, '').slice(0, 8);
+    if (!/^\d{8}$/.test(token)) {
       status.style.color = '#8e493f';
       status.textContent = 'Enter the full 8-digit verification code from your email.';
       return;
