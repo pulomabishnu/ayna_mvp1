@@ -106,35 +106,21 @@ const BRAND_OPENNESS = [
   'No preference',
 ];
 const AVOID_INGREDIENTS = [
-  'Fragrance',
-  'Dyes',
-  'Parabens',
-  'Sulfates',
-  'Phthalates',
-  'Latex',
-  'Synthetic materials',
-  'Animal-derived',
-  'Added sugar',
-  'Artificial sweeteners',
-  'Pregnancy considerations',
-  'Fragrance-free',
-  'Dye-free',
-  'Paraben-free',
-  'Sulfate-free',
-  'Latex-free',
-  'Vegan',
-  'Cruelty-free',
-  'Black-owned',
-  'Brown-owned',
-  'Eco-friendly',
-  'Reusable',
-  'Organic',
-  'Minimal ingredients',
-  'Sensitive skin',
-  'Unscented',
-  'Other',
-  'No preference',
+  'Fragrance', 'Dyes', 'Parabens', 'Sulfates', 'Phthalates', 'Latex', 'Synthetic materials',
+  'Animal-derived', 'Added sugar', 'Artificial sweeteners', 'Pregnancy considerations', 'Other',
 ];
+const PRODUCT_PREFERENCES = [
+  'Fragrance-free', 'Dye-free', 'Paraben-free', 'Sulfate-free', 'Latex-free', 'Vegan', 'Cruelty-free',
+  'Black-owned', 'Brown-owned', 'Eco-friendly', 'Reusable', 'Organic', 'Minimal ingredients', 'Sensitive skin',
+  'Unscented', 'No preference',
+];
+const PREFERENCE_CONFLICTS = {
+  Fragrance: 'Fragrance-free', 'Fragrance-free': 'Fragrance',
+  Dyes: 'Dye-free', 'Dye-free': 'Dyes',
+  Parabens: 'Paraben-free', 'Paraben-free': 'Parabens',
+  Sulfates: 'Sulfate-free', 'Sulfate-free': 'Sulfates',
+  Latex: 'Latex-free', 'Latex-free': 'Latex',
+};
 const FSA_HSA = ['FSA', 'HSA', 'Both', 'No', 'Not sure'];
 const TRUST_ITEMS = ['Clinical or scientific evidence', 'Reviews and experiences from other women', 'Brand reputation or expert recommendations'];
 
@@ -293,9 +279,15 @@ const FORMAT_TO_LEGACY = {
 };
 
 const PREFERENCE_MAP = {
-  Fragrance: 'fragrance-free', Dyes: 'dye-free', Parabens: 'paraben-free', Sulfates: 'sulfate-free',
-  Phthalates: 'phthalate-free', Latex: 'latex-free', 'Synthetic materials': 'natural-materials',
-  'Animal-derived ingredients': 'vegan', 'Added sugar': 'sugar-free', 'Artificial sweeteners': 'no-artificial-sweeteners',
+  Fragrance: 'fragrance-free', 'Fragrance-free': 'fragrance-free',
+  Dyes: 'dye-free', 'Dye-free': 'dye-free',
+  Parabens: 'paraben-free', 'Paraben-free': 'paraben-free',
+  Sulfates: 'sulfate-free', 'Sulfate-free': 'sulfate-free',
+  Phthalates: 'phthalate-free',
+  Latex: 'latex-free', 'Latex-free': 'latex-free',
+  'Synthetic materials': 'natural-materials',
+  'Animal-derived': 'vegan', Vegan: 'vegan',
+  'Added sugar': 'sugar-free', 'Artificial sweeteners': 'no-artificial-sweeteners',
 };
 
 function arrayHasAny(arr, set) {
@@ -491,7 +483,7 @@ function SectionIcon({ section }) {
 
 function ChoiceCard({ label, selected, onClick }) {
   return (
-    <button type="button" className={`ayna-choice-card${selected ? ' selected' : ''}`} onClick={onClick}>
+    <button type="button" className={`ayna-choice-card${selected ? ' selected' : ''}`} onClick={onClick} aria-pressed={selected}>
       <span>{label}</span><span className="ayna-choice-indicator" aria-hidden="true" />
     </button>
   );
@@ -506,7 +498,7 @@ function RowChoice({ label, selected, onClick, square = false }) {
 }
 
 function Pill({ label, selected, onClick }) {
-  return <button type="button" className={`ayna-pill${selected ? ' selected' : ''}`} onClick={onClick}>{label}</button>;
+  return <button type="button" className={`ayna-pill${selected ? ' selected' : ''}`} onClick={onClick} aria-pressed={selected}>{label}</button>;
 }
 
 function Segmented({ options, value, onChange }) {
@@ -945,6 +937,7 @@ function TrustRanker({ order, onChange, onTouch }) {
 
 function requiredReady(stepId, intake) {
   if (stepId === 'name') return !!(intake.name && intake.name.trim().length > 0);
+  if (stepId === 'zip') return !intake.zipcode || /^\d{5}$/.test(String(intake.zipcode));
   if (stepId === 'conditions') return intake.diagnosisSelections.length > 0;
   if (stepId === 'allergies') return !!intake.allergyStatus && (intake.allergyStatus !== 'Yes' || intake.allergyItems.length > 0);
   if (stepId === 'medications') return !!intake.takesCurrent && (intake.takesCurrent !== 'Yes' || intake.currentMedicationItems.length > 0);
@@ -954,16 +947,16 @@ function requiredReady(stepId, intake) {
 }
 
 const STYLES = `
-.ayna-intake-root{min-height:calc(100dvh - 70px);background:linear-gradient(165deg,#2A1F4E 0%,#4E3866 42%,#8A4A3C 74%,#D97A2B 100%);font-family:var(--font-body,'DM Sans',system-ui,sans-serif);color:#FFF9F2;position:relative;overflow:hidden;padding:36px 18px 72px}
+.ayna-intake-root{min-height:calc(100dvh - 70px);background:linear-gradient(165deg,#2A1F4E 0%,#4E3866 42%,#8A4A3C 74%,#D97A2B 100%);font-family:var(--font-body,'DM Sans',system-ui,sans-serif);color:#FFF9F2;position:relative;overflow-x:hidden;padding:36px 18px 72px}
 .ayna-intake-root *{box-sizing:border-box}.ayna-intake-root button,.ayna-intake-root input,.ayna-intake-root textarea{font:inherit}.ayna-intake-glow{position:absolute;border-radius:50%;pointer-events:none}.ayna-intake-glow.g1{top:-120px;right:-110px;width:420px;height:420px;background:radial-gradient(circle,rgba(255,199,116,.4),rgba(255,199,116,0) 70%)}.ayna-intake-glow.g2{bottom:-110px;left:-110px;width:360px;height:360px;background:radial-gradient(circle,rgba(126,84,186,.35),rgba(126,84,186,0) 70%)}.ayna-intake-glow.g3{top:340px;left:-70px;width:220px;height:220px;background:radial-gradient(circle,rgba(217,122,43,.3),rgba(217,122,43,0) 70%)}
 .ayna-intake-shell{max-width:640px;margin:0 auto;position:relative;z-index:1}.ayna-intake-top{display:flex;align-items:center;gap:12px;max-width:600px;margin:0 auto}.ayna-intake-back{width:34px;height:34px;border-radius:50%;border:1.5px solid rgba(255,249,242,.25);background:rgba(255,249,242,.08);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;padding:0;color:#FFF9F2}.ayna-intake-back svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.25;stroke-linecap:round;stroke-linejoin:round}.ayna-intake-segments{display:flex;gap:6px;flex:1}.ayna-intake-segment{flex:1;height:6px;border-radius:3px;background:rgba(255,249,242,.22)}.ayna-intake-segment.on{background:#FFC774}.ayna-intake-section-label{max-width:600px;margin:0 auto;padding:9px 0 0 46px;font-size:12px;color:rgba(255,249,242,.55);letter-spacing:.02em}
 .ayna-intake-question{text-align:center;padding-top:28px;max-width:620px;margin:0 auto}.ayna-intake-icon{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 22px;box-shadow:0 10px 24px -12px rgba(0,0,0,.35)}.ayna-intake-icon svg{width:24px;height:24px;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}.ayna-intake-icon.core{background:#FFF3DD}.ayna-intake-icon.core svg{stroke:#C0761F}.ayna-intake-icon.support,.ayna-intake-icon.preferences,.ayna-intake-icon.trust{background:#EAEBF3}.ayna-intake-icon.support svg,.ayna-intake-icon.preferences svg,.ayna-intake-icon.trust svg{stroke:#242A52}.ayna-intake-icon.safety{background:#F1ECF4}.ayna-intake-icon.safety svg{stroke:#4E3866}.ayna-intake-icon.history{background:#FBEAD3}.ayna-intake-icon.history svg{stroke:#8A5A1E}
 .ayna-intake-question h1{font-family:var(--font-serif,'Playfair Display',Georgia,serif);font-weight:500;font-size:27px;line-height:1.3;margin:0 auto 10px;max-width:540px;color:#FFF9F2}.ayna-intake-subtitle{margin:0 auto 10px;font-size:14px;color:rgba(255,249,242,.72);line-height:1.5;max-width:460px}.ayna-intake-hint{margin:5px auto 0;font-size:12px;color:#FFDCA8;font-weight:600}.ayna-intake-stage{margin-top:28px}.ayna-white-card{background:#FFF9F2;border-radius:24px;padding:24px 26px;box-shadow:0 20px 44px -22px rgba(0,0,0,.5);color:#2A1F4E}
-.ayna-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.ayna-choice-card{cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center;text-align:center;min-height:82px;padding:20px 36px 20px 16px;border-radius:18px;background:#FFF9F2;border:1.5px solid transparent;box-shadow:0 10px 22px -16px rgba(0,0,0,.4);color:#2A1F4E;transition:.15s}.ayna-choice-card:hover{transform:translateY(-1px)}.ayna-choice-card.selected{border-color:#E8843C;background:#FFF3DD}.ayna-choice-card>span:first-child{font-size:14px;font-weight:500;line-height:1.35}.ayna-choice-indicator{position:absolute;top:10px;right:10px;width:19px;height:19px;border-radius:50%;border:1.5px solid rgba(42,31,78,.25)}.ayna-choice-card.selected .ayna-choice-indicator{background:#2A1F4E;border-color:#2A1F4E}.ayna-choice-card.selected .ayna-choice-indicator:after{content:'';position:absolute;inset:5px;border-radius:50%;background:#fff}
+.ayna-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.ayna-choice-card{cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center;text-align:center;min-height:82px;padding:20px 36px 20px 16px;border-radius:18px;background:#FFF9F2;border:1.5px solid transparent;box-shadow:0 10px 22px -16px rgba(0,0,0,.4);color:#2A1F4E;transition:.15s}.ayna-choice-card:hover{transform:translateY(-1px)}.ayna-choice-card.selected{border-color:#E8843C;background:#FFF3DD}.ayna-choice-card>span:first-child{font-size:14px;font-weight:500;line-height:1.35}.ayna-choice-indicator{position:absolute;top:10px;right:10px;width:20px;height:20px;border-radius:6px;border:1.5px solid rgba(42,31,78,.3);background:#fff}.ayna-choice-card.selected .ayna-choice-indicator{background:#2A1F4E;border-color:#2A1F4E}.ayna-choice-card.selected .ayna-choice-indicator:after{content:'✓';position:absolute;inset:0;color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center}
 .ayna-row-choice{width:100%;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px 16px;border-radius:16px;background:#FFF9F2;border:1.5px solid transparent;box-shadow:0 10px 22px -16px rgba(0,0,0,.4);margin-bottom:9px;color:#2A1F4E;text-align:left}.ayna-row-choice.selected{border-color:#E8843C;background:#FFF3DD}.ayna-row-choice>span:first-child{font-size:14px;font-weight:500;line-height:1.35}.ayna-row-indicator{width:21px;height:21px;border-radius:50%;border:1.5px solid rgba(42,31,78,.25);flex:none;position:relative}.ayna-row-indicator.square{border-radius:6px}.ayna-row-choice.selected .ayna-row-indicator{background:#2A1F4E;border-color:#2A1F4E}.ayna-row-choice.selected .ayna-row-indicator:after{content:'✓';position:absolute;inset:0;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
-.ayna-pills{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}.ayna-pills.left{justify-content:flex-start}.ayna-pill{cursor:pointer;padding:12px 19px;border-radius:999px;background:#FFF9F2;border:1.5px solid rgba(42,31,78,.1);box-shadow:0 8px 16px -12px rgba(0,0,0,.35);font-size:13.5px;font-weight:600;color:#2A1F4E}.ayna-pill.selected{background:#2A1F4E;color:#fff;border-color:#2A1F4E}.ayna-pills.compact .ayna-pill{padding:8px 11px;font-size:11.5px}
+.ayna-pills{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}.ayna-pills.left{justify-content:flex-start}.ayna-pill{cursor:pointer;padding:12px 19px;border-radius:999px;background:#FFF9F2;border:1.5px solid rgba(42,31,78,.1);box-shadow:0 8px 16px -12px rgba(0,0,0,.35);font-size:13.5px;font-weight:600;color:#2A1F4E}.ayna-pill.selected{background:#2A1F4E;color:#fff;border-color:#2A1F4E;box-shadow:0 0 0 2px rgba(255,199,116,.38)}.ayna-pill:focus-visible,.ayna-choice-card:focus-visible,.ayna-row-choice:focus-visible,.ayna-seg-option:focus-visible,.ayna-continue:focus-visible,.ayna-skip:focus-visible{outline:3px solid rgba(255,220,168,.72);outline-offset:3px}.ayna-pills.compact .ayna-pill{padding:8px 11px;font-size:11.5px}
 .ayna-segmented{display:flex;gap:10px;max-width:520px;margin:0 auto}.ayna-seg-option{cursor:pointer;flex:1;padding:15px 11px;text-align:center;border-radius:16px;background:#FFF9F2;border:1.5px solid rgba(42,31,78,.1);box-shadow:0 10px 22px -16px rgba(0,0,0,.4);font-size:13.5px;font-weight:600;color:#2A1F4E}.ayna-seg-option.selected{background:#2A1F4E;color:#fff;border-color:#2A1F4E}
-.ayna-text-input,.ayna-textarea,.ayna-inline-input{width:100%;padding:14px 16px;border-radius:14px;border:none;font-size:14px;color:#2A1F4E;background:#FFF9F2;box-shadow:0 8px 18px -14px rgba(0,0,0,.5);outline:none}.ayna-text-input{max-width:440px}.ayna-textarea{min-height:128px;resize:vertical;line-height:1.5}.ayna-inline-input{margin-top:10px;border:1px solid rgba(42,31,78,.12);box-shadow:none}.ayna-other-box{max-width:480px;margin:18px auto 0;text-align:left}.ayna-other-box label{display:block;font-size:12px;font-weight:600;color:#FFDCA8;margin-bottom:9px}
+.ayna-text-input,.ayna-textarea,.ayna-inline-input{width:100%;padding:14px 16px;border-radius:14px;border:1.5px solid transparent;font-size:14px;color:#2A1F4E;background:#FFF9F2;box-shadow:0 8px 18px -14px rgba(0,0,0,.5);outline:none}.ayna-text-input:focus-visible,.ayna-textarea:focus-visible,.ayna-inline-input:focus-visible{border-color:#FFC774;box-shadow:0 0 0 3px rgba(255,199,116,.22)}.ayna-text-input[aria-invalid="true"]{border-color:#FFB3A1}.ayna-field-stack{max-width:440px;margin:0 auto}.ayna-field-error{margin:8px 4px 0;color:#FFE0D6;font-size:12px;line-height:1.4;text-align:left}.ayna-preference-group{max-width:560px;margin:0 auto 22px}.ayna-preference-label{margin-bottom:10px;color:#FFDCA8;font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}.ayna-text-input{max-width:440px}.ayna-textarea{min-height:128px;resize:vertical;line-height:1.5}.ayna-inline-input{margin-top:10px;border:1px solid rgba(42,31,78,.12);box-shadow:none}.ayna-other-box{max-width:480px;margin:18px auto 0;text-align:left}.ayna-other-box label{display:block;font-size:12px;font-weight:600;color:#FFDCA8;margin-bottom:9px}
 .ayna-search-wrap{position:relative;margin-bottom:12px;max-width:520px;margin-left:auto;margin-right:auto}.ayna-search-wrap svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);width:16px;height:16px;fill:none;stroke:#8c8078;stroke-width:2;stroke-linecap:round}.ayna-search-wrap input{width:100%;padding:13px 16px 13px 40px;border-radius:14px;border:none;font-size:14px;color:#2A1F4E;background:#FFF9F2;box-shadow:0 8px 18px -14px rgba(0,0,0,.5);outline:none}.ayna-list-panel{max-width:520px;margin:0 auto;max-height:405px;overflow-y:auto;padding-right:7px}.ayna-list-panel::-webkit-scrollbar{width:7px}.ayna-list-panel::-webkit-scrollbar-thumb{background:rgba(255,249,242,.22);border-radius:4px}.ayna-category{max-width:520px;margin:0 auto 16px;text-align:left}.ayna-category-title{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#FFDCA8;font-weight:700;margin:16px 4px 8px}.ayna-no-matches{padding:22px 4px;color:rgba(255,249,242,.75);font-size:13px}
 .ayna-age-card{padding:26px 28px 22px}.ayna-age-top{display:flex;align-items:center;justify-content:center;gap:22px}.ayna-age-btn{width:46px;height:46px;border-radius:50%;border:1.5px solid rgba(42,31,78,.15);background:#FFF3DD;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#2A1F4E;font-size:22px}.ayna-age-value{min-width:112px;text-align:center;font-family:var(--font-serif,'Playfair Display',Georgia,serif);font-size:48px;line-height:1;color:#2A1F4E}.ayna-age-value.empty{font-size:24px;color:#8c8078}.ayna-age-range{width:100%;margin-top:20px;display:block;-webkit-appearance:none;height:4px;border-radius:2px;background:rgba(42,31,78,.12);outline:none}.ayna-age-range::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#2A1F4E;border:3px solid #FFDCA8;cursor:pointer}.ayna-age-range.unset::-webkit-slider-thumb{opacity:0}.ayna-range-labels{display:flex;justify-content:space-between;font-size:11px;color:#8c8078;margin-top:6px}
 .ayna-continue-wrap{max-width:400px;margin:32px auto 0}.ayna-continue{width:100%;padding:16px;border:none;border-radius:16px;background:linear-gradient(140deg,#FFDCA8,#FFC774 46%,#E8843C);color:#2A1F4E;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;box-shadow:0 16px 30px -14px rgba(232,132,60,.55)}.ayna-continue:disabled{opacity:.42;cursor:not-allowed}.ayna-skip{margin-top:16px;border:none;background:none;color:rgba(255,249,242,.62);font-size:13px;cursor:pointer}.ayna-mini-note{max-width:520px;margin:18px auto 0;padding:13px 15px;border:1px solid rgba(255,220,168,.25);background:rgba(255,249,242,.08);border-radius:14px;color:rgba(255,249,242,.78);font-size:12px;line-height:1.55;text-align:left}
@@ -1245,6 +1238,7 @@ export default function HealthIntakeForm({ onComplete }) {
   const [search, setSearch] = useState('');
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState('');
+  const [zipError, setZipError] = useState('');
 
   const visibleSteps = useMemo(() => {
     const steps = [
@@ -1263,15 +1257,15 @@ export default function HealthIntakeForm({ onComplete }) {
       { id: 'conditions', section: 'safety', title: 'Have you been diagnosed with any of the following?', subtitle: 'This is different from what you are experiencing. It helps us separate a diagnosed condition from a symptom or goal.', type: 'conditions', optional: false },
       { id: 'allergies', section: 'safety', title: 'Do you have any known allergies or sensitivities that affect the products you can use?', subtitle: 'We use this to help flag products that may not be a fit for you.', type: 'allergies', optional: false },
       { id: 'medications', section: 'safety', title: 'Are you currently taking any medications, supplements, vitamins, or hormonal birth control?', subtitle: 'This helps us avoid duplicate ingredients and flag possible compatibility issues.', type: 'medications', optional: false },
+      { id: 'safety', section: 'safety', title: 'Are any symptoms you are experiencing new, rapidly worsening, or concerning to you right now?', type: 'safety', optional: false },
       { id: 'products', section: 'history', title: 'What health or wellness products have you tried?', subtitle: 'Add any products you’ve tried. You can add more than one.', type: 'products', optional: true },
       { id: 'avoidRepeat', section: 'history', title: 'Are there any products or brands you definitely do not want recommended again?', type: 'tokens', optional: true },
-      { id: 'safety', section: 'safety', title: 'Are any symptoms you are experiencing new, rapidly worsening, or concerning to you right now?', type: 'safety', optional: false },
       { id: 'formats', section: 'preferences', title: 'Which product formats do you prefer?', type: 'formats', optional: true },
       { id: 'priceRange', section: 'preferences', title: 'What price range do you usually prefer for health and wellness products?', type: 'price', optional: true },
       { id: 'largePurchaseFrequency', section: 'preferences', title: 'How often do you make larger health or wellness purchases of $75 or more?', subtitle: 'This is about purchase frequency, not your usual preferred price per product.', type: 'largeSpend', optional: true },
       { id: 'brandOpenness', section: 'preferences', title: 'How do you feel about trying new brands?', type: 'brand', optional: true },
       ...(intake.brandOpenness === 'I mostly stick with brands I already trust' || intake.brandOpenness === 'I prefer trusted brands but am open to something new' ? [{ id: 'trustedBrands', section: 'preferences', title: 'Which brands do you already trust?', type: 'tokens', optional: true }] : []),
-      { id: 'avoidIngredients', section: 'preferences', title: 'Preferences', subtitle: 'Select any that matter to you. Allergies are handled separately.', type: 'avoidIngredients', optional: true },
+      { id: 'avoidIngredients', section: 'preferences', title: 'Product preferences', subtitle: 'Tell us what you want to avoid and what you prefer. Allergies are handled separately.', type: 'avoidIngredients', optional: true },
       { id: 'fsaHsa', section: 'preferences', title: 'Do you have an FSA or HSA you would like to use?', type: 'fsa', optional: true },
       { id: 'trust', section: 'trust', title: 'What matters most to you when deciding whether to trust a product?', subtitle: 'Drag to rank, or use the arrows. You can also skip this.', type: 'trust', optional: true },
       { id: 'anythingElse', section: 'trust', title: 'Anything else you want Ayna to know?', subtitle: 'Share anything else that could help us personalize your recommendations.', type: 'textarea', optional: true },
@@ -1310,10 +1304,29 @@ export default function HealthIntakeForm({ onComplete }) {
 
   const toggleLifeStage = (value) => setIntake((prev) => {
     const current = getLifeStages(prev);
-    const next = current.includes(value)
-      ? current.filter((item) => item !== value)
-      : [...current, value];
+    if (current.includes(value)) {
+      const next = current.filter((item) => item !== value);
+      return { ...prev, lifeStageSelections: next, lifeStage: next[0] || '' };
+    }
+    const periodStates = ['I get periods regularly', 'My periods are irregular', 'I do not currently get periods'];
+    const menopauseStates = ['I am in menopause', 'I am post-menopause'];
+    let next = [...current];
+    if (periodStates.includes(value)) next = next.filter((item) => !periodStates.includes(item));
+    if (value === 'I am pregnant') next = next.filter((item) => item !== 'I am trying to conceive');
+    if (value === 'I am trying to conceive') next = next.filter((item) => item !== 'I am pregnant');
+    if (menopauseStates.includes(value)) next = next.filter((item) => !menopauseStates.includes(item) && !['I get periods regularly', 'My periods are irregular'].includes(item));
+    if (['I get periods regularly', 'My periods are irregular'].includes(value)) next = next.filter((item) => !menopauseStates.includes(item));
+    next.push(value);
     return { ...prev, lifeStageSelections: next, lifeStage: next[0] || '' };
+  });
+
+  const togglePreference = (value) => setIntake((prev) => {
+    const current = Array.isArray(prev.avoidIngredients) ? prev.avoidIngredients : [];
+    if (current.includes(value)) return { ...prev, avoidIngredients: current.filter((item) => item !== value) };
+    if (value === 'No preference') return { ...prev, avoidIngredients: ['No preference'] };
+    const opposite = PREFERENCE_CONFLICTS[value];
+    const next = current.filter((item) => item !== 'No preference' && item !== opposite);
+    return { ...prev, avoidIngredients: [...next, value] };
   });
 
   const goBack = () => {
@@ -1395,7 +1408,25 @@ export default function HealthIntakeForm({ onComplete }) {
         )}
       </>;
     }
-    if (step.type === 'text' && step.id === 'zip') return <input className="ayna-text-input" inputMode="numeric" maxLength={5} value={intake.zipcode} onChange={(e) => set('zipcode', e.target.value.replace(/\D/g, '').slice(0, 5))} placeholder="e.g. 10001" />;
+    if (step.type === 'text' && step.id === 'zip') return (
+      <div className="ayna-field-stack">
+        <input className="ayna-text-input" inputMode="numeric" autoComplete="postal-code" maxLength={5}
+          value={intake.zipcode} aria-invalid={Boolean(zipError)} aria-describedby={zipError ? 'ayna-zip-error' : undefined}
+          onChange={(e) => {
+            const raw = e.target.value;
+            const digits = raw.replace(/\D/g, '').slice(0, 5);
+            set('zipcode', digits);
+            if (/\D/.test(raw)) setZipError('ZIP codes use numbers only. Enter 5 digits, or skip this step.');
+            else if (!digits || digits.length === 5) setZipError('');
+          }}
+          onBlur={() => {
+            if (intake.zipcode && !/^\d{5}$/.test(intake.zipcode)) setZipError('Enter all 5 ZIP-code digits, or skip this step.');
+          }}
+          placeholder="e.g. 10001"
+        />
+        {zipError && <div id="ayna-zip-error" className="ayna-field-error" role="alert">{zipError}</div>}
+      </div>
+    );
     if (step.type === 'support') return <><SearchableGroups groups={SUPPORT_GROUPS} selected={intake.supportSelections} search={search} onSearch={setSearch} onToggle={(item) => toggleExclusive('supportSelections', item, ['Nothing right now'])} />{intake.supportSelections.includes('Something else') && <div className="ayna-other-box"><label>Tell us what else you are looking for support with</label><input className="ayna-text-input" value={intake.supportOtherText} onChange={(e) => set('supportOtherText', e.target.value)} placeholder="Type here..." /></div>}</>;
     if (step.type === 'flow') return <Scale options={PERIOD_FLOW} value={intake.periodFlow} onChange={(value) => set('periodFlow', value)} kind="flow" />;
     if (step.type === 'pain') return <Scale options={PERIOD_PAIN} value={intake.periodPain} onChange={(value) => set('periodPain', value)} kind="pain" />;
@@ -1435,7 +1466,17 @@ export default function HealthIntakeForm({ onComplete }) {
     if (step.type === 'price') { const selectedPrices = Array.isArray(intake.priceRange) ? intake.priceRange : (intake.priceRange ? [intake.priceRange] : []); return <div className="ayna-pills">{PRICE_RANGES.map((option) => <Pill key={option} label={option} selected={selectedPrices.includes(option)} onClick={() => toggleExclusive('priceRange', option, ['Price is not a major factor for me'])} />)}</div>; }
     if (step.type === 'largeSpend') return <Timeline options={LARGE_PURCHASE_FREQUENCY} value={intake.largePurchaseFrequency} onChange={(value) => set('largePurchaseFrequency', value)} />;
     if (step.type === 'brand') return <BrandSpectrum value={intake.brandOpenness} onChange={(value) => set('brandOpenness', value)} />;
-    if (step.type === 'avoidIngredients') return <><div className="ayna-pills">{AVOID_INGREDIENTS.map((option) => <Pill key={option} label={option} selected={intake.avoidIngredients.includes(option)} onClick={() => toggleExclusive('avoidIngredients', option, ['No preference'])} />)}</div>{intake.avoidIngredients.includes('Other') && <div className="ayna-other-box"><label>Other preference</label><input className="ayna-text-input" value={intake.avoidIngredientsOtherText} onChange={(e) => set('avoidIngredientsOtherText', e.target.value)} placeholder="Type here..." /></div>}</>;
+    if (step.type === 'avoidIngredients') return <>
+      <div className="ayna-preference-group">
+        <div className="ayna-preference-label">I want to avoid</div>
+        <div className="ayna-pills">{AVOID_INGREDIENTS.map((option) => <Pill key={option} label={option} selected={intake.avoidIngredients.includes(option)} onClick={() => togglePreference(option)} />)}</div>
+      </div>
+      <div className="ayna-preference-group">
+        <div className="ayna-preference-label">I prefer or value</div>
+        <div className="ayna-pills">{PRODUCT_PREFERENCES.map((option) => <Pill key={option} label={option} selected={intake.avoidIngredients.includes(option)} onClick={() => togglePreference(option)} />)}</div>
+      </div>
+      {intake.avoidIngredients.includes('Other') && <div className="ayna-other-box"><label>Other preference</label><input className="ayna-text-input" value={intake.avoidIngredientsOtherText} onChange={(e) => set('avoidIngredientsOtherText', e.target.value)} placeholder="Type here..." /></div>}
+    </>;
     if (step.type === 'fsa') return <div className="ayna-pills">{FSA_HSA.map((option) => <Pill key={option} label={option} selected={intake.fsaHsaAnswer === option} onClick={() => set('fsaHsaAnswer', option)} />)}</div>;
     if (step.type === 'trust') return <TrustRanker order={intake.trustRanking} onChange={(order) => set('trustRanking', order)} onTouch={() => set('trustRankingTouched', true)} />;
     if (step.type === 'textarea') return <textarea className="ayna-textarea" value={intake.anythingElse} onChange={(e) => set('anythingElse', e.target.value)} placeholder="Share anything else that could help us personalize your recommendations." />;
@@ -1443,8 +1484,10 @@ export default function HealthIntakeForm({ onComplete }) {
   };
 
   const countForStep = step.id === 'support' ? intake.supportSelections.length : step.id === 'conditions' ? intake.diagnosisSelections.length : step.id === 'allergies' ? intake.allergyItems.length : step.id === 'formats' ? intake.preferredFormats.length : step.id === 'avoidIngredients' ? intake.avoidIngredients.length : 0;
-  const ready = requiredReady(step.id, intake);
   const isLast = currentIndex === visibleSteps.length - 1;
+  // The final free-text note is optional. Keep "Finish profile" enabled when
+  // it is blank so users never have to discover a separate skip affordance.
+  const ready = (isLast && step.optional) ? true : requiredReady(step.id, intake);
 
   return (
     <div className="ayna-intake-root">

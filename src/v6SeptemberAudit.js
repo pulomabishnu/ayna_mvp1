@@ -174,8 +174,10 @@ function renderSupportSuggestions(question) {
   suggestions.forEach((item) => {
     const button = document.createElement('button');
     button.type = 'button';
-    button.className = `v6-support-bubble${selected.includes(item) ? ' is-selected' : ''}`;
+    const isSelected = selected.includes(item);
+    button.className = `v6-support-bubble${isSelected ? ' is-selected' : ''}`;
     button.textContent = item;
+    button.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
     button.addEventListener('click', () => clickSupportLabel(question, item));
     bubbles.appendChild(button);
   });

@@ -1811,6 +1811,7 @@ export default function MyEcosystem({
                     onOpenProduct={onOpenProduct}
                     onExploreArea={(area) => onGoToSearch?.(exploreAreaOptions(area))}
                     onToggleProduct={onToggleProduct}
+                    onSwapProduct={onSwapSeedProduct}
                 />
 
                 {llmError && !llmLoading && (

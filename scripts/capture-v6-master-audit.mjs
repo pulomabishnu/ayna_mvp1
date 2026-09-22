@@ -101,7 +101,7 @@ async function reachSupportStep(page, baseUrl) {
   for (let guard = 0; guard < 7; guard += 1) {
     const heading = await page.$eval('.ayna-intake-question > h1', (el) => el.textContent?.trim() || '').catch(() => '');
     const hasSearch = Boolean(await page.$('.ayna-search-wrap'));
-    if (/which options best describe you right now/i.test(heading) && hasSearch) return true;
+    if (/looking for support|currently experiencing/i.test(heading) && hasSearch) return true;
 
     if (/which options best describe you right now/i.test(heading)) {
       const firstChoice = await page.$('.ayna-choice-card');

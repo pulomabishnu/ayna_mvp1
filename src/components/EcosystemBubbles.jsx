@@ -75,6 +75,16 @@ function snapshotReason(product) {
   return candidates.find((value) => typeof value === 'string' && value.trim())?.trim() || '';
 }
 
+function orbitPosition(index, total) {
+  const count = Math.max(1, total);
+  const angle = (-90 + (360 / count) * index) * (Math.PI / 180);
+  const radius = count <= 2 ? 37 : 39;
+  return {
+    left: `${50 + Math.cos(angle) * radius}%`,
+    top: `${50 + Math.sin(angle) * radius}%`,
+  };
+}
+
 function ProductVisual({ product }) {
   return (
     <div className="v6-eco-product-image">
@@ -96,10 +106,12 @@ export default function EcosystemBubbles({
   onOpenProduct,
   onExploreArea,
   onToggleProduct,
+  onSwapProduct,
 }) {
   const [selectedKey, setSelectedKey] = useState(null);
   const [productIndex, setProductIndex] = useState(0);
   const [whyOpen, setWhyOpen] = useState(false);
+  const [swapOpen, setSwapOpen] = useState(false);
 
   const areas = useMemo(() => {
     const products = Object.values(myProducts || {});
@@ -124,6 +136,7 @@ export default function EcosystemBubbles({
   useEffect(() => {
     setProductIndex(0);
     setWhyOpen(false);
+    setSwapOpen(false);
   }, [selectedKey]);
 
   const selectedArea = areas.find((area) => area.key === selectedKey) || areas[0] || null;
@@ -143,6 +156,12 @@ export default function EcosystemBubbles({
   const storedReason = selectedProduct ? snapshotReason(selectedProduct) : '';
   const whyText = explanation?.whyItWorks || storedReason || (labels.length ? `Matched to ${labels.slice(0, 3).join(', ')}.` : '') || 'This product is saved in your ecosystem. A more specific personalized match explanation is not available for this saved item yet.';
   const score = selectedProduct ? personalizedScore(selectedProduct, quizResults, healthProfile) : null;
+  const swapAlternatives = selectedProduct
+    ? (Array.isArray(selectedProduct._llmAlternatives) ? selectedProduct._llmAlternatives : [])
+        .filter((product) => product?.id && product.id !== selectedProduct.id && !myProducts?.[product.id])
+        .slice(0, 3)
+    : [];
+  const orbitBubbleCount = areas.length + (areas.length < MAX_AREAS ? 1 : 0);
 
   const previousProduct = () => {
     if (!selectedProducts.length) return;
@@ -165,8 +184,8 @@ export default function EcosystemBubbles({
             <p>Each bubble is an area of care. Tap one to see what is in it, why it was matched, and your personalized product score.</p>
 
             {selectedProduct ? (
-              <article className="v6-eco-product-card">
-                <button type="button" className="v6-eco-arrow" onClick={previousProduct} disabled={selectedProducts.length <= 1} aria-label="Previous product">‹</button>
+              <article className={`v6-eco-product-card${selectedProducts.length <= 1 ? ' single' : ''}`}>
+                {selectedProducts.length > 1 && <button type="button" className="v6-eco-arrow" onClick={previousProduct} aria-label="Previous product">‹</button>}
                 <ProductVisual product={selectedProduct} />
                 <div className="v6-eco-product-copy">
                   <div className="v6-eco-count">{safeIndex + 1} of {selectedProducts.length}</div>
@@ -175,15 +194,39 @@ export default function EcosystemBubbles({
                   {score != null && <em>your ayna score · {score}/100</em>}
                   <button type="button" className="v6-why-link" onClick={() => setWhyOpen((value) => !value)}>{whyOpen ? 'hide why' : 'why this?'}</button>
                 </div>
-                <button type="button" className="v6-eco-arrow" onClick={nextProduct} disabled={selectedProducts.length <= 1} aria-label="Next product">›</button>
+                {selectedProducts.length > 1 && <button type="button" className="v6-eco-arrow" onClick={nextProduct} aria-label="Next product">›</button>}
                 {whyOpen && (
                   <div className="v6-eco-why">
                     <p>{whyText}</p>
                     {explanation?.considerations && <small>{explanation.considerations}</small>}
                     <div className="v6-eco-actions">
-                      <button type="button" onClick={() => onExploreArea?.(selectedArea)}>swap</button>
+                      {swapAlternatives.length > 0 && onSwapProduct ? (
+                        <button type="button" aria-expanded={swapOpen} onClick={() => setSwapOpen((value) => !value)}>
+                          {swapOpen ? 'close swap' : 'swap'}
+                        </button>
+                      ) : (
+                        <button type="button" onClick={() => onExploreArea?.(selectedArea)}>find alternatives</button>
+                      )}
                       {onToggleProduct && <button type="button" onClick={() => onToggleProduct(selectedProduct)}>remove</button>}
                     </div>
+                    {swapOpen && swapAlternatives.length > 0 && (
+                      <div className="v6-eco-swap-list" aria-label="Swap options">
+                        {swapAlternatives.map((alternative) => (
+                          <button
+                            type="button"
+                            key={alternative.id}
+                            onClick={() => {
+                              onSwapProduct?.(selectedProduct.id, alternative);
+                              setSwapOpen(false);
+                              setWhyOpen(false);
+                            }}
+                          >
+                            <span>{alternative.name}</span>
+                            <small>{alternative.brand || CATEGORY_LABELS[alternative.category] || 'Ayna pick'}</small>
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 )}
               </article>
@@ -196,12 +239,13 @@ export default function EcosystemBubbles({
 
           <div className="v6-universe-wrap">
             <div className="v6-orbit-ring" />
-            <div className="v6-universe-center"><strong>{name}</strong><small>{areas.length} areas covered</small></div>
+            <div className="v6-universe-center"><strong>{name}</strong><small>{areas.length} {areas.length === 1 ? 'area' : 'areas'} covered</small></div>
             {areas.map((area, index) => (
               <button
                 type="button"
                 key={area.key}
-                className={`v6-care-bubble b${index + 1}${selectedArea?.key === area.key ? ' is-active' : ''}`}
+                className={`v6-care-bubble${selectedArea?.key === area.key ? ' is-active' : ''}`}
+                style={orbitPosition(index, orbitBubbleCount)}
                 onClick={() => setSelectedKey(area.key)}
               >
                 <strong>{area.label}</strong>
@@ -209,7 +253,7 @@ export default function EcosystemBubbles({
               </button>
             ))}
             {areas.length < MAX_AREAS && (
-              <button type="button" className={`v6-care-bubble add b${areas.length + 1}`} onClick={() => onExploreArea?.({ key: '__add-more__', label: 'Add more', gap: true })}>
+              <button type="button" className="v6-care-bubble add" style={orbitPosition(areas.length, orbitBubbleCount)} onClick={() => onExploreArea?.({ key: '__add-more__', label: 'Add more', gap: true })}>
                 <strong>+</strong><small>add more</small>
               </button>
             )}
