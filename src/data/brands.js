@@ -797,8 +797,16 @@ export const BRAND_PRODUCTS = [
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Sourced from Gina\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'Gina positions its coconut-oil glides as a simple, single-ingredient way to hydrate and soothe vaginal dryness and discomfort, per the brand\'s own site. There\'s real clinical evidence behind coconut oil for this specific use: a 2023 pilot study followed 53 women using virgin coconut oil for vaginal dryness and painful sex over 6 months, and found most reported real improvement (83% improved dryness, 87% improved moisture duration) — though it wasn\'t placebo-controlled and didn\'t test this specific product. Lab evidence is more mixed: one study found coconut oil, unlike several other commercial vaginal products, didn\'t inhibit the growth of E. coli in vitro. Coconut oil\'s natural pH (roughly 7 to 8) is also more alkaline than the vagina\'s normal acidic range (3.8 to 4.5) — a documented reason intravaginal oil use is linked to a higher risk of bacterial vaginosis or a yeast infection in some people. No independent clinical study of this specific product was found.',
+        doctorOpinion: 'Gina positions its coconut-oil glides as a simple, single-ingredient way to hydrate and soothe vaginal dryness and discomfort, per the brand\'s own site.\n\nThere\'s real clinical evidence behind coconut oil for this specific use: a 2023 pilot study followed 53 women using virgin coconut oil for vaginal dryness and painful sex over 6 months, and found most reported real improvement (83% improved dryness, 87% improved moisture duration) — though it wasn\'t placebo-controlled and didn\'t test this specific product.\n\nLab evidence is more mixed: one study found coconut oil, unlike several other commercial vaginal products, didn\'t inhibit the growth of E. coli in vitro. Coconut oil\'s natural pH (roughly 7 to 8) is also more alkaline than the vagina\'s normal acidic range (3.8 to 4.5) — a documented reason intravaginal oil use is linked to a higher risk of bacterial vaginosis or a yeast infection in some people.\n\nNo independent clinical study of this specific product was found.',
         doctorOpinionShort: 'A 2023 pilot study found most of 53 women using coconut oil for vaginal dryness over 6 months reported real improvement, though it wasn\'t placebo-controlled. Coconut oil is also naturally alkaline (pH roughly 7 to 8) versus the vagina\'s normal acidic range, which can raise BV/yeast risk in some people. No independent clinical study of this specific product was found.',
+        // Backs the "didn't inhibit E. coli" claim in doctorOpinion with a
+        // direct link, same as Neycher's doctorOpinionCitations — kept out
+        // of verificationLinks so it doesn't pool with the Scientific
+        // literature tab's citation list (it's also listed there, in
+        // scientificCitations below, since it backs a general claim too).
+        doctorOpinionCitations: [
+            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7203152/', label: 'NIH (PMC): Effect of Commercial Vaginal Products on the Growth of Uropathogenic and Commensal Vaginal Bacteria' },
+        ],
         // Rendered as a bulleted list on the Evidence view, under "Best for".
         whoItsFor: [
             'Women with vaginal dryness or irritation at any life stage — perimenopause, menopause, postpartum, or day to day',
@@ -808,7 +816,7 @@ export const BRAND_PRODUCTS = [
         // Rendered as a bulleted list on the Evidence view. Matches
         // getgina.com/pages/how-to-use-moisturizing-glides.
         howToUse: {
-            intro: 'Insert up to 3 times a week before bedtime or intercourse for ongoing hydration.',
+            intro: 'Per Gina\'s own site: insert up to 3 times a week before bedtime or intercourse for ongoing hydration.',
             steps: [
                 'Empty your bladder, clean the area, and wash your hands.',
                 'Separate a single chilled glide, wait 1 to 3 minutes, then peel back the foil.',
@@ -827,7 +835,7 @@ export const BRAND_PRODUCTS = [
             'Pregnant or breastfeeding: check with a doctor first.',
             'Irritation or an allergic reaction: stop using it and see a doctor.',
         ],
-        communityReview: 'No independent customer review data was found for this product at time of writing — Gina launched in April 2026.',
+        communityReview: 'Gina\'s own product page shows three customer testimonials: "The moisturizing glide melts instantly and feels so clean and natural," "I love that it\'s one ingredient and pre-measured. No more mess, just long lasting hydration and comfort," and "The glide melts instantly and gives a precise, soothing dose of hydration. The relief was immediate." No star rating or review count was shown alongside them, and no independent (non-brand) review data was found at time of writing — Gina launched in April 2026.',
         effectiveness: 'A 2023 pilot study found most of 53 women using virgin coconut oil for vaginal dryness and painful sex over 6 months reported real improvement (83% improved dryness, 87% improved moisture duration) — real but not placebo-controlled evidence. No independent clinical study of this specific product was found.',
         // Plain-text ingredient summary — kept as a string since search
         // indexing, the interaction checker, DoctorPrep.jsx, and the Ask
@@ -881,7 +889,16 @@ export const BRAND_PRODUCTS = [
         verificationLinks: {
             doctor: { links: [] },
             scientific: { links: [] },
-            community: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://getgina.com/products/vaginal-moisturizing-glides',
+                        text: 'getgina.com: Customer testimonials',
+                        summary: 'Gina\'s own product page shows three customer testimonials (see the Community summary above). No star rating or review count is shown alongside them.',
+                    },
+                ],
+            },
         },
         integrations: [],
         badges: [],
