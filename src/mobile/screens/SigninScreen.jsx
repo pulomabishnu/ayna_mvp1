@@ -211,9 +211,9 @@ export default function SigninScreen({
   const toggleCheck = (i) => setChecked((prev) => prev.map((v, idx) => (idx === i ? !v : v)));
 
   const handleVerifyCode = async () => {
-    const cleanCode = emailCode.replace(/\D/g, '').slice(0, 6);
-    if (!/^\d{6}$/.test(cleanCode)) {
-      setError('Enter the 6-digit verification code from your email.');
+    const cleanCode = emailCode.replace(/\D/g, '').slice(0, 8);
+    if (!/^\d{8}$/.test(cleanCode)) {
+      setError('Enter the 8-digit verification code from your email.');
       return;
     }
     setError('');
@@ -349,7 +349,7 @@ export default function SigninScreen({
             Verify your email.
           </div>
           <div style={{ fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: 'rgba(255,252,249,.82)', textAlign: 'center', marginBottom: 18 }}>
-            We sent a 6-digit verification code to {email}. Enter it below to finish creating your account.
+            We sent an 8-digit verification code to {email}. Enter it below to finish creating your account.
           </div>
           <div style={{ background: '#FFFFFF', borderRadius: 20, padding: '14px 16px', marginBottom: 12, boxShadow: '0 8px 20px -12px rgba(0,0,0,.35)' }}>
             <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1px', textTransform: 'uppercase', color: '#A8A29E', textAlign: 'center' }}>Verification code</div>
@@ -357,16 +357,16 @@ export default function SigninScreen({
               type="text"
               inputMode="numeric"
               autoComplete="one-time-code"
-              placeholder="123456"
+              placeholder="12345678"
               value={emailCode}
-              onChange={(e) => setEmailCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-              maxLength={6}
+              onChange={(e) => setEmailCode(e.target.value.replace(/\D/g, '').slice(0, 8))}
+              maxLength={8}
               autoFocus
               style={{ ...inputStyle, textAlign: 'center', fontSize: '24px', letterSpacing: '8px', fontWeight: 700, padding: '8px 0 2px' }}
             />
           </div>
           {error && <div style={{ color: '#FFC9BC', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', textAlign: 'center', marginBottom: 12 }}>{error}</div>}
-          <PrimaryButton onClick={handleVerifyCode} disabled={verifyingCode || emailCode.length !== 6}>
+          <PrimaryButton onClick={handleVerifyCode} disabled={verifyingCode || emailCode.length !== 8}>
             {verifyingCode ? 'Verifying…' : 'Verify email'}
           </PrimaryButton>
           {resendMsg && <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', textAlign: 'center', color: 'rgba(255,252,249,.75)', marginTop: 12 }}>{resendMsg}</div>}
