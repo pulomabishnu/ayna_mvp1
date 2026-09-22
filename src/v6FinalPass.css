@@ -224,7 +224,7 @@ body::after {
   visibility: visible !important;
 }
 .v6-account-step__card {
-  width: min(680px, 94vw);
+  width: min(480px, 94vw);
   max-height: calc(100dvh - 96px);
   overflow: auto;
   border-radius: 30px;
@@ -326,17 +326,31 @@ body::after {
   border-radius: 27px;
   padding: 28px;
   text-align: center;
-  background: linear-gradient(145deg,#ddd1dc,#c7b7c5);
+  background:
+    radial-gradient(circle at 78% 8%, rgba(224,158,121,.14), transparent 32%),
+    linear-gradient(145deg, rgba(217,206,215,.98), rgba(199,184,197,.98));
   border:1px solid rgba(255,255,255,.4);
   box-shadow:0 25px 65px rgba(42,30,42,.18);
   color:#3d343e;
 }
 .v6-verify-card h2 { margin:0 0 8px; font:500 32px/1 var(--font-serif,Georgia,serif); letter-spacing:-.03em; }
 .v6-verify-card p { margin:0; color:#6d6169; font-size:12.5px; line-height:1.5; }
-.v6-verify-actions { display:flex; justify-content:center; gap:8px; margin-top:16px; flex-wrap:wrap; }
-.v6-verify-actions button { border-radius:999px; padding:9px 13px; font-size:11px; cursor:pointer; }
-.v6-verify-primary { border:0; background:#554561; color:#fff; }
-.v6-verify-secondary { border:1px solid rgba(78,60,82,.15); background:transparent; color:#554561; }
+.v6-verify-card strong { color:#4f4352; font-weight:600; }
+.v6-verify-form { width:100%; margin:16px auto 0; display:grid; gap:8px; }
+.v6-verify-code { text-align:center; font-size:18px; letter-spacing:.18em; font-weight:600; }
+.v6-verify-submit { width:100%; margin-top:0; }
+.v6-verify-actions { display:flex; justify-content:center; gap:8px; margin-top:12px; flex-wrap:wrap; }
+.v6-verify-actions button {
+  border-radius:999px;
+  padding:9px 13px;
+  font-size:11px;
+  cursor:pointer;
+  border:1px solid rgba(78,60,82,.15);
+  background:transparent;
+  color:#554561;
+}
+.v6-verify-actions button:disabled { opacity:.45; cursor:not-allowed; }
+.v6-verify-resend { background:rgba(199,185,196,.52) !important; }
 
 /* Result preview stays in the same muted V6 palette. */
 .ayna-result-card {
