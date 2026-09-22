@@ -783,7 +783,7 @@ export const BRAND_PRODUCTS = [
         whereToBuy: ['getgina.com'],
         url: 'https://getgina.com/products/vaginal-moisturizing-glides',
         image: '/products/gina/vaginal-moisturizing-glides.webp',
-        summary: 'Vaginal dryness, irritation, or discomfort during intimacy can happen at any life stage — perimenopause, menopause, postpartum, or day to day. This single-ingredient suppository (12 per box, 1.72 g each) is 100% pure, extra virgin, unrefined, cold-pressed coconut oil, inserted with a reusable applicator to hydrate and soothe.',
+        summary: 'Vaginal dryness, irritation, or discomfort during intimacy can happen at any life stage — perimenopause, menopause, postpartum, or day to day. This single-ingredient suppository (12 per box, 1.72 g each) is 100% pure, extra virgin, unrefined, cold-pressed coconut oil, inserted directly or with Gina\'s optional reusable applicator to hydrate and soothe.',
         safety: {
             // No FDA-registered-facility claim was found on Gina's site
             // (unlike Neycher's), so fdaStatus is left off rather than
@@ -797,8 +797,8 @@ export const BRAND_PRODUCTS = [
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Sourced from Gina\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'Gina positions its coconut-oil glides as a simple, single-ingredient way to hydrate and soothe vaginal dryness and discomfort, per the brand\'s own site. Coconut oil is a widely used home remedy for vaginal dryness, but the evidence is mixed: one NIH-hosted lab study found coconut oil, unlike several other commercial vaginal products, didn\'t inhibit the growth of E. coli in vitro. Coconut oil\'s natural pH (roughly 7 to 8) is also more alkaline than the vagina\'s normal acidic range (3.8 to 4.5) — a documented reason intravaginal oil use is linked to a higher risk of bacterial vaginosis or a yeast infection in some people. No independent clinical study of this specific product was found.',
-        doctorOpinionShort: 'Coconut oil is a common home remedy for vaginal dryness, but it\'s naturally alkaline (pH roughly 7 to 8) versus the vagina\'s normal acidic range, which can raise BV/yeast risk in some people. No independent clinical study of this specific product was found.',
+        doctorOpinion: 'Gina positions its coconut-oil glides as a simple, single-ingredient way to hydrate and soothe vaginal dryness and discomfort, per the brand\'s own site. There\'s real clinical evidence behind coconut oil for this specific use: a 2023 pilot study followed 53 women using virgin coconut oil for vaginal dryness and painful sex over 6 months, and found most reported real improvement (83% improved dryness, 87% improved moisture duration) — though it wasn\'t placebo-controlled and didn\'t test this specific product. Lab evidence is more mixed: one study found coconut oil, unlike several other commercial vaginal products, didn\'t inhibit the growth of E. coli in vitro. Coconut oil\'s natural pH (roughly 7 to 8) is also more alkaline than the vagina\'s normal acidic range (3.8 to 4.5) — a documented reason intravaginal oil use is linked to a higher risk of bacterial vaginosis or a yeast infection in some people. No independent clinical study of this specific product was found.',
+        doctorOpinionShort: 'A 2023 pilot study found most of 53 women using coconut oil for vaginal dryness over 6 months reported real improvement, though it wasn\'t placebo-controlled. Coconut oil is also naturally alkaline (pH roughly 7 to 8) versus the vagina\'s normal acidic range, which can raise BV/yeast risk in some people. No independent clinical study of this specific product was found.',
         // Rendered as a bulleted list on the Evidence view, under "Best for".
         whoItsFor: [
             'Women with vaginal dryness or irritation at any life stage — perimenopause, menopause, postpartum, or day to day',
@@ -808,11 +808,13 @@ export const BRAND_PRODUCTS = [
         // Rendered as a bulleted list on the Evidence view. Matches
         // getgina.com/pages/how-to-use-moisturizing-glides.
         howToUse: {
-            intro: 'Unwrap the applicator and moisten the tip with water or lubricant. Pull the plunger down to stop, then load a glide rounded side first.',
+            intro: 'Insert up to 3 times a week before bedtime or intercourse for ongoing hydration.',
             steps: [
-                'Lie back with your knees raised and insert to a comfortable depth, then press the plunger to release the glide and remove the applicator.',
-                'Use at bedtime and stay lying down for about 3 minutes, until the glide fully melts and absorbs.',
-                'Rinse the applicator well and air-dry it before storing — it\'s reusable.',
+                'Empty your bladder, clean the area, and wash your hands.',
+                'Separate a single chilled glide, wait 1 to 3 minutes, then peel back the foil.',
+                'Squeeze to pop the glide out onto a clean surface.',
+                'Insert while lying on your back, with your knees raised.',
+                'Wait 3 minutes, or until it\'s fully melted.',
             ],
             sourceUrl: 'https://getgina.com/pages/how-to-use-moisturizing-glides',
             sourceLabel: 'getgina.com: How to Use Moisturizing Glides',
@@ -826,7 +828,7 @@ export const BRAND_PRODUCTS = [
             'Irritation or an allergic reaction: stop using it and see a doctor.',
         ],
         communityReview: 'No independent customer review data was found for this product at time of writing — Gina launched in April 2026.',
-        effectiveness: 'Coconut oil is a common home remedy for vaginal dryness, but rigorous product-specific clinical evidence is limited; no independent clinical study of this product was found.',
+        effectiveness: 'A 2023 pilot study found most of 53 women using virgin coconut oil for vaginal dryness and painful sex over 6 months reported real improvement (83% improved dryness, 87% improved moisture duration) — real but not placebo-controlled evidence. No independent clinical study of this specific product was found.',
         // Plain-text ingredient summary — kept as a string since search
         // indexing, the interaction checker, DoctorPrep.jsx, and the Ask
         // Ayna context builder all read this field as a string.
@@ -866,6 +868,14 @@ export const BRAND_PRODUCTS = [
                 url: 'https://pubmed.ncbi.nlm.nih.gov/28707186/',
                 text: 'Natural Oils for Skin-Barrier Repair: Ancient Compounds Now Backed by Modern Science',
                 summary: 'A 2018 review (Vaughn et al., American Journal of Clinical Dermatology) of natural plant oils — including coconut oil — for repairing skin-barrier function, covering antimicrobial, antioxidant, and anti-inflammatory properties. This is general dermatology evidence about the oil, not a clinical study of this specific product or vaginal use.',
+            },
+            {
+                // Same paper as PubMed 37461787 (PMC is the full-text
+                // mirror) — included once, under its PMC link, rather than
+                // as two separate entries for the same study.
+                url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10350307/',
+                text: 'Virgin Coconut Oil in Paste Form as Treatment for Dyspareunia and Vaginal Dryness in Patients With and Without Rheumatic Autoimmune Diseases: An Efficacy and Safety Assessment Pilot Study',
+                summary: 'A 2023 pilot study (Cureus) followed 53 women using virgin coconut oil for vaginal dryness and painful sex over 6 months — 83% reported improved dryness and 87% reported improved moisture duration. Real clinical outcomes, but not placebo-controlled and not a study of this specific product.',
             },
         ],
         verificationLinks: {
