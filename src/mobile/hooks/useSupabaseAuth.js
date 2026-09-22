@@ -218,6 +218,23 @@ export function useSupabaseAuth() {
     if (error) throw error;
   }
 
+  async function verifyEmailOtp({ email, token }) {
+    const supabase = getSupabaseClient();
+    if (!supabase) throw new Error('Sign-in is not configured right now.');
+    const cleanToken = String(token || '').replace(/\D/g, '').slice(0, 6);
+    if (!/^\d{6}$/.test(cleanToken)) {
+      throw new Error('Enter the 6-digit verification code from your email.');
+    }
+    const { data, error } = await supabase.auth.verifyOtp({
+      email: String(email || '').trim(),
+      token: cleanToken,
+      type: 'email',
+    });
+    if (error) throw error;
+    if (!data?.session) throw new Error('Your email was verified, but we could not start your session. Please sign in.');
+    return data;
+  }
+
   async function signInWithGoogle({ consented = false } = {}) {
     const supabase = getSupabaseClient();
     if (!supabase) throw new Error('Sign-in is not configured right now.');
@@ -344,5 +361,5 @@ export function useSupabaseAuth() {
     resetChipPosition();
   }
 
-  return { user, authLoading, signUpWithPassword, signInWithPassword, signInWithGoogle, signInWithApple, signOut, resendConfirmation };
+  return { user, authLoading, signUpWithPassword, signInWithPassword, signInWithGoogle, signInWithApple, signOut, resendConfirmation, verifyEmailOtp };
 }
