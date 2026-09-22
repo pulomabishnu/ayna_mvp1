@@ -1915,18 +1915,24 @@ export const BRAND_PRODUCTS = [
         },
         image: 'https://cdn.shopify.com/s/files/1/0661/0432/8271/files/buni-nipple-lip-balm-product-page-main_1.webp?v=1776774214',
         summary: 'A lanolin-free balm for nipples, lips, cuticles, and other dry skin, positioned for nursing and pumping comfort as well as pregnancy and postpartum care.',
-        ingredients: 'BUNI lists organic olive oil, kokum butter, beeswax, shea butter, cacao seed butter, calendula, avocado oil, and other botanical oils and butters.',
+        ingredients: 'Per BUNI\'s own "What\'s Inside" list: organic olive oil (deep nourishment + protection, rich in antioxidants for barrier repair), organic kokum butter (non-greasy moisture, a protective layer without clogging pores), organic beeswax (a natural sealant that locks in moisture and shields against friction), organic shea butter (intensive healing for cracked and damaged skin), organic cacao seed butter (a rich emollient that softens and conditions rough, dry patches), and organic calendula (gentle, traditional healing for delicate skin). Also contains organic avocado oil and organic tocopherol (vitamin E), per BUNI.',
         safety: {
             fdaStatus: 'Made in an FDA-registered, GMP facility in the USA and third-party lab tested, per BUNI\'s site; the balm itself is a cosmetic / personal-care product, not an FDA-cleared drug or medical device.',
-            materials: 'Lanolin-free balm, made with no animal-derived ingredients (safe for wool/lanolin sensitivities). Ingredients per BUNI: organic olive fruit oil, organic beeswax, organic shea butter, organic cocoa seed butter, organic avocado oil, organic kokum seed butter, organic tocopherol (vitamin E), and organic calendula flower extract.',
+            materials: 'Lanolin-free balm, made with no animal-derived ingredients (safe for wool/lanolin sensitivities) — BUNI positions this against lanolin creams, describing a smooth, buttery, hypoallergenic formula that absorbs cleanly with no residue, versus a thick, sticky wax that can stain clothing and nursing pads. Per BUNI\'s own "What\'s Inside" list: organic olive oil (deep nourishment + protection), organic kokum butter (non-greasy moisture), organic beeswax (locks in moisture, shields against friction), organic shea butter (intensive healing), organic cacao seed butter (rich emollient), and organic calendula (gentle healing). Also contains organic avocado oil and organic tocopherol (vitamin E), per BUNI.',
             recalls: 'No recalls found.',
             sideEffects: 'People with sensitivities or allergies to botanical ingredients or beeswax should review the ingredient list before use and stop if irritation develops. Full warnings are listed below.',
             opinionAlerts: 'BUNI markets the balm as suitable around nursing and states no wipe-off is needed; users should follow current label directions and their clinician or lactation professional’s guidance.',
         },
         clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'Product positioning and safety statements are sourced from BUNI; no independent clinician endorsement verified by ayna.',
-        doctorOpinion: 'BUNI positions SOOTHE as a lanolin-free option for reducing friction and moisturizing sore or dry nipple skin during nursing and pumping, formulated by board-certified OB/GYNs and dermatologists, per the brand\'s own site.\n\nCalendula, one of its named ingredients, has real supporting research: a systematic review of animal and clinical studies found evidence for calendula extract improving acute wound healing and reducing venous ulcer size, though the review also called for larger, better-designed trials. Shea butter and beeswax are traditional occlusive moisturizers with a long history of topical use, though less formal clinical-trial evidence exists for either specifically.\n\nNo independent clinical study of this specific product was found.',
-        doctorOpinionShort: 'Calendula, one of its named ingredients, has supporting evidence from a systematic review of wound-healing studies, though that review also called for larger trials. No independent clinical study of this specific product was found.',
+        clinicianAttribution: 'BUNI states the balm was crafted by herbalists with organic ingredients, per the brand\'s own site; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'BUNI positions SOOTHE as a lanolin-free, herbalist-formulated balm for healing cracked and sore nipples, protecting against friction, and supporting deep hydration and softening — safe for baby with no wipe-off needed, and multi-use for lips, cuticles, and other dry skin, per the brand\'s own site.\n\nSeveral of its named ingredients have real supporting research. Calendula has a systematic review of animal and clinical studies behind BUNI\'s "gentle healing" claim, showing evidence for calendula extract speeding acute wound healing and reducing venous ulcer size, though the review also called for larger, better-designed trials. Beeswax has real evidence for BUNI\'s "locks in moisture" claim: a 2023 review of clinical and lab studies found it functions as an effective occlusive that reduces water loss through skin. Shea butter has real evidence for BUNI\'s "intensive healing" claim, in a clinical trial where a shea-butter-based cream performed comparably to a ceramide-based product for skin barrier repair. Olive oil and cacao seed butter both have supporting antioxidant and barrier-repair evidence in plant-oil and cocoa-polyphenol review literature. Kokum butter has documented antioxidant, anti-inflammatory, and wound-healing pharmacological activity in an independent review, though the specific moisturizing and elasticity testing available for it comes from the ingredient supplier\'s own testing rather than independent peer-reviewed research.\n\nNo independent clinical study of this specific product was found.',
+        doctorOpinionShort: 'BUNI positions this herbalist-formulated, lanolin-free balm for healing cracked nipples, protecting against friction, and deep hydration. Calendula, beeswax, shea butter, olive oil, and cacao seed butter each have real supporting research for the specific claim BUNI makes; kokum butter\'s clinical testing comes mainly from its ingredient supplier rather than independent literature. No independent clinical study of this specific product was found.',
+        // Kept out of verificationLinks so it doesn't pool with the
+        // Scientific literature tab's citation list.
+        doctorOpinionCitations: [
+            { url: 'https://www.bunibody.com/products/buni-nipple-balm', label: 'bunibody.com: SOOTHE Nipple and Lip Balm — ingredient list and claims' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/31145533/', label: 'PubMed: A systematic review of Calendula officinalis extract for wound healing' },
+        ],
         // Rendered as a bulleted list on the Evidence view, under "Best for".
         whoItsFor: [
             'Nursing and pumping mothers with sore, dry, or cracked nipples',
@@ -1951,11 +1957,47 @@ export const BRAND_PRODUCTS = [
             'Irritation or an allergic reaction: stop using it and see a doctor or lactation professional.',
         ],
         communityReview: 'Customer reviews on BUNI\'s site describe fast relief for cracked, sore nipples during breastfeeding — for example: "Wouldn\'t have reached my breastfeeding goal without this. Healed every crack." and "Apply after last feed. Wake up with softer healed skin. The overnight healing is incredible." No star rating or review count was shown alongside them, and no independent (non-brand) review data was found at time of writing.',
-        effectiveness: 'Provides an occlusive moisturizing layer for dry or irritated skin; no independent clinical study of the finished product was found.',
+        effectiveness: 'Provides an occlusive moisturizing layer for dry or irritated skin; several named ingredients (calendula, beeswax, shea butter, olive oil, cacao seed butter) have real independent research behind the specific mechanism BUNI claims for them. No independent clinical study of the finished product was found.',
         // Per-ingredient science claims, each paired with a credible
-        // source (NIH-hosted or PubMed). Rendered on the Scientific
-        // literature tab.
+        // source (NIH-hosted or PubMed) where independent research
+        // exists. Rendered on the Scientific literature tab. Matches
+        // BUNI's own "What's Inside" ingredient list and stated purposes.
         ingredientScience: [
+            {
+                name: 'Olive oil',
+                text: 'BUNI states this gives deep nourishment and protection, rich in antioxidants for barrier repair. Plant oils including olive oil have shown anti-inflammatory and skin-barrier-repair effects, reducing water loss through skin, in review literature.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5796020/', label: 'NIH (PMC): Anti-Inflammatory and Skin Barrier Repair Effects of Topical Application of Some Plant Oils' },
+                ],
+            },
+            {
+                name: 'Kokum butter',
+                text: 'BUNI states this gives non-greasy moisture and a protective layer without clogging pores. An independent review of Garcinia indica (kokum) found documented antioxidant, anti-inflammatory, and wound-healing pharmacological activity. The specific moisturizing and elasticity testing available for kokum butter comes from an ingredient supplier\'s own testing, not independent peer-reviewed research.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8708457/', label: 'NIH (PMC): Pharmacological Activity of Garcinia indica (Kokum) — an updated review' },
+                ],
+            },
+            {
+                name: 'Beeswax',
+                text: 'BUNI states this is a natural sealant that locks in moisture and shields against friction. A 2023 review of clinical and lab studies found beeswax functions as an effective occlusive that reduces water loss through skin and supports barrier integrity.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/36999457/', label: 'PubMed: A review of the use of beeswax in skincare' },
+                ],
+            },
+            {
+                name: 'Shea butter',
+                text: 'BUNI states this gives intensive healing, deeply repairing cracked and damaged skin. A clinical trial found a shea-butter-based cream performed comparably to a ceramide-based product for skin barrier repair and hydration.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/26314567/', label: 'PubMed: Patient acceptability, efficacy, and skin biophysiology of a cream containing shea butter extract versus a ceramide product' },
+                ],
+            },
+            {
+                name: 'Cacao seed butter',
+                text: 'BUNI states this is a rich emollient that softens and conditions rough, dry patches. Cocoa (cacao) polyphenols have documented, measurable antioxidant activity after topical application.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/39429210/', label: 'PubMed: Topical Antioxidant Cocoa Polyphenol Skin Penetration' },
+                ],
+            },
             {
                 name: 'Calendula',
                 text: 'A traditional wound-care botanical. A systematic review of animal and clinical studies found evidence for calendula extract speeding acute wound healing and reducing venous ulcer surface area, though it also called for larger, better-designed trials.',
