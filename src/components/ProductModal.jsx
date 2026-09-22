@@ -340,7 +340,10 @@ function buildFactRows(product) {
     .slice(0, 3)
     .map(humanizeTag)
     .join(', ');
-  const materials = firstSentence(product.safety?.materials, 56);
+  // Not truncated like the other rows — a curated materials/ingredient list
+  // (e.g. Neycher's) is meant to be read in full here, not cut at the first
+  // period.
+  const materials = (product.safety?.materials || '').trim();
   const skipIf = firstSentence(product.safety?.sideEffects, 56) || firstSentence(product.safety?.allergens, 56);
   return [
     bestFor ? { label: 'Best for', value: bestFor } : null,
@@ -574,6 +577,25 @@ export default function ProductModal({
 
   const safetyAlert = useMemo(() => getSafetyAlertText(product), [product]);
 
+  // "Who it's for" / "How to use" only exist as tabs for the handful of
+  // products with that level of brand-supplied detail on file — inserted
+  // dynamically rather than added to the static AYNA_TABS list so every
+  // other product doesn't grow two permanently-empty tabs.
+  const visibleTabs = useMemo(() => {
+    const extra = [];
+    if (Array.isArray(product?.whoItsFor) && product.whoItsFor.length > 0) {
+      extra.push({ id: 'whoitsfor', label: 'Who it’s for' });
+    }
+    if (product?.howToUse?.steps?.length > 0) {
+      extra.push({ id: 'howtouse', label: 'How to use' });
+    }
+    if (extra.length === 0) return AYNA_TABS;
+    // After Social Media, not before — inserted ahead of 'ask' (Ask Ayna),
+    // which always stays last.
+    const askIdx = AYNA_TABS.findIndex((t) => t.id === 'ask');
+    return [...AYNA_TABS.slice(0, askIdx), ...extra, ...AYNA_TABS.slice(askIdx)];
+  }, [product]);
+
   const sourceCounts = useMemo(() => {
     const doctor = getVerificationLinks(product, 'doctor').length;
     const scientific = getVerificationLinks(product, 'scientific').length;
@@ -606,11 +628,23 @@ export default function ProductModal({
   // citations only ever showed up as generic chips on a different tab
   // (ayna summary), disconnected from the claim they support. Flagged live
   // 2026-08-25: "if we're stating stuff we need to have links to sources."
-  // Doctor + scientific links both back clinical claims, so both show here.
-  const clinicianSourceLinks = useMemo(() => toSourceChips([
-    ...getVerificationLinks(product, 'doctor'),
-    ...getVerificationLinks(product, 'scientific'),
-  ]), [product]);
+  // Doctor + scientific links both back clinical claims, so both show here —
+  // except when a product curates its own product.scientificCitations, which
+  // exists specifically so category-level citations show only on the
+  // Scientific literature tab. That field is only ever non-empty alongside
+  // an empty verificationLinks.scientific, which applyCatalogEvidence (in
+  // catalogEvidence.js) treats as "nothing curated yet" and can backfill
+  // with its own real citations — silently defeating that separation. So a
+  // curated scientificCitations list means "scientific evidence for this
+  // product is already handled elsewhere," and 'scientific' links are left
+  // out of this chip row entirely rather than deduped link-by-link.
+  const clinicianSourceLinks = useMemo(() => {
+    const hasCuratedScientific = (product?.scientificCitations || []).length > 0;
+    return toSourceChips([
+      ...getVerificationLinks(product, 'doctor'),
+      ...(hasCuratedScientific ? [] : getVerificationLinks(product, 'scientific')),
+    ]);
+  }, [product]);
 
   // Dedicated "Scientific literature" tab: every doctor + scientific citation
   // in full (not the small link-chip form used elsewhere), each with its own
@@ -632,6 +666,56 @@ export default function ProductModal({
     }
     return entries;
   }, [product]);
+
+  // Curated category-level citations (product.scientificCitations) — kept
+  // out of verificationLinks for the same reason as ingredientCitationEntries
+  // below: that data also feeds the Clinician opinion card's chip row, which
+  // here only wants doctorOpinionCitations (the two clinical-study links).
+  // Excludes any URL already surfaced by scientificLiteratureEntries — a
+  // product left with an empty verificationLinks.scientific can get real
+  // citations auto-restored there (see applyCatalogEvidence in
+  // catalogEvidence.js), and those restored links sometimes cite the exact
+  // same paper this curated list already names.
+  const curatedScientificEntries = useMemo(() => {
+    const seenUrls = new Set(scientificLiteratureEntries.map((e) => e.url));
+    const entries = [];
+    for (const c of product?.scientificCitations || []) {
+      if (!c.url || seenUrls.has(c.url)) continue;
+      const label = hostLabel(c.url);
+      if (!label) continue;
+      seenUrls.add(c.url);
+      entries.push({ url: c.url, label, kind: 'Scientific', text: c.text || null, summary: c.summary || null });
+    }
+    return entries;
+  }, [product, scientificLiteratureEntries]);
+
+  // Per-ingredient citations, rendered as extra cards on the Scientific
+  // literature tab only — deliberately NOT part of verificationLinks, since
+  // that also feeds the Clinician opinion card's chip row (pools doctor +
+  // scientific), and several ingredient-level NIH links there would bury the
+  // 1-2 study-level citations that chip row actually wants to surface.
+  // Same cross-source dedup as curatedScientificEntries above.
+  const ingredientCitationEntries = useMemo(() => {
+    const seenUrls = new Set([
+      ...scientificLiteratureEntries.map((e) => e.url),
+      ...curatedScientificEntries.map((e) => e.url),
+    ]);
+    const entries = [];
+    for (const item of product?.ingredientScience || []) {
+      // When one ingredient entry cites more than one source, the
+      // citation's own label distinguishes the cards instead of both
+      // showing the same shared ingredient name and text.
+      const multi = (item.citations || []).length > 1;
+      for (const c of item.citations || []) {
+        if (!c.url || seenUrls.has(c.url)) continue;
+        const label = hostLabel(c.url);
+        if (!label) continue;
+        seenUrls.add(c.url);
+        entries.push({ url: c.url, label, kind: 'Scientific', text: multi ? c.label : item.name, summary: item.text });
+      }
+    }
+    return entries;
+  }, [product, scientificLiteratureEntries, curatedScientificEntries]);
 
   // Every social-media "review" now carries its own link, right next to the
   // review text it belongs to — the old version showed a synthesized
@@ -967,7 +1051,30 @@ export default function ProductModal({
           {/* Product head — mockup board 1f: square product tile beside the
               eyebrow / name / price / actions column. */}
           <div className="pdp-head">
-            {galleryTile}
+            <div>
+              {galleryTile}
+
+              {/* Fills the dead space below a short square image while the
+                  detail column (name/price/tabs/tab content) runs much
+                  taller — same fix as the Evidence view's left column. Only
+                  on the Scientific literature tab (where this ingredient
+                  detail is relevant), not shown under every tab, and only
+                  when a catalog entry has this on file. */}
+              {activeTab === 'scientific' && Array.isArray(product.ingredientScience) && product.ingredientScience.length > 0 && (
+                <div style={{ marginTop: 20 }}>
+                  <div style={{ font: '500 9.5px "DM Mono", ui-monospace, monospace', letterSpacing: '0.1em', color: '#8c8078', marginBottom: 8 }}>
+                    INSIDE
+                  </div>
+                  <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+                    {product.ingredientScience.map((item) => (
+                      <li key={item.name} style={{ fontSize: 13, lineHeight: 1.5, color: '#3f3831', marginBottom: 10 }}>
+                        <strong>{item.name}:</strong> {item.text}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
 
             <div className="pdp-head__detail">
               <div className="pdp-head__eyebrow">{eyebrow}</div>
@@ -998,7 +1105,7 @@ export default function ProductModal({
                   tab, muted text on the rest, one compact card below. */}
               <div className="pdp-tabpanel">
                 <div className="pdp-tabs" role="tablist" aria-label="Product information">
-                  {AYNA_TABS.map((tab) => (
+                  {visibleTabs.map((tab) => (
                     <button
                       key={tab.id}
                       type="button"
@@ -1070,7 +1177,7 @@ export default function ProductModal({
                         {product.clinicianAttribution && (
                           <div className="pdp-summary-card__foot">{product.clinicianAttribution}</div>
                         )}
-                        {clinicianSourceLinks.length > 0 && (
+                        {(clinicianSourceLinks.length > 0 || Array.isArray(product.doctorOpinionCitations)) && (
                           <div className="pdp-summary-card__chips">
                             {clinicianSourceLinks.map((chip) => (
                               <a
@@ -1084,11 +1191,69 @@ export default function ProductModal({
                                 {chip.label}
                               </a>
                             ))}
+                            {/* Kept out of verificationLinks on purpose — that data
+                                also feeds the Scientific literature tab's citation
+                                list, and this link belongs only here, on the
+                                clinical claim it backs, not mixed into that list. */}
+                            {(product.doctorOpinionCitations || []).map((c) => (
+                              <a
+                                key={c.url}
+                                className="pdp-head__badge"
+                                href={c.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title={c.label}
+                              >
+                                {hostLabel(c.url) || c.label}
+                              </a>
+                            ))}
                           </div>
                         )}
                       </>
                     ) : (
                       <p className="pdp-summary-card__empty">No clinician note yet.</p>
+                    )}
+                  </div>
+                )}
+
+                {activeTab === 'whoitsfor' && (
+                  <div className="pdp-summary-card">
+                    <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+                      {(product.whoItsFor || []).map((item) => (
+                        <li key={item} style={{ display: 'flex', gap: 10, fontSize: 14, lineHeight: 1.55, color: '#3f3831', marginBottom: 10 }}>
+                          <span style={{ flex: 'none', color: '#B4732A' }}>•</span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {activeTab === 'howtouse' && (
+                  <div className="pdp-summary-card">
+                    {product.howToUse?.intro && (
+                      <p className="pdp-summary-card__body" style={{ marginTop: 0 }}>{product.howToUse.intro}</p>
+                    )}
+                    <ul style={{ margin: '12px 0 0', padding: 0, listStyle: 'none' }}>
+                      {(product.howToUse?.steps || []).map((step) => (
+                        <li key={step} style={{ display: 'flex', gap: 10, fontSize: 14, lineHeight: 1.55, color: '#3f3831', marginBottom: 10 }}>
+                          <span style={{ flex: 'none', color: '#B4732A' }}>•</span>
+                          <span>{step}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    {product.howToUse?.sourceUrl && (
+                      <div style={{ marginTop: 10 }}>
+                        <a
+                          href={product.howToUse.sourceUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="pdp-head__badge"
+                          title={product.howToUse.sourceLabel || product.howToUse.sourceUrl}
+                        >
+                          {hostLabel(product.howToUse.sourceUrl) || 'Source'}
+                        </a>
+                      </div>
                     )}
                   </div>
                 )}
@@ -1182,9 +1347,9 @@ export default function ProductModal({
 
                 {activeTab === 'scientific' && (
                   <div className="pdp-summary-card">
-                    {scientificLiteratureEntries.length > 0 ? (
+                    {(scientificLiteratureEntries.length + curatedScientificEntries.length + ingredientCitationEntries.length) > 0 ? (
                       <div className="pdp-scientific__list">
-                        {scientificLiteratureEntries.map((entry) => (
+                        {[...scientificLiteratureEntries, ...curatedScientificEntries, ...ingredientCitationEntries].map((entry) => (
                           <a
                             key={entry.url}
                             className="pdp-scientific__entry"
@@ -1215,7 +1380,64 @@ export default function ProductModal({
 
         {detailView === 'rail' && (
           <div className="pdp-evidence-head">
-            {galleryTile}
+            <div>
+              {galleryTile}
+
+              {/* Sits under the product image, in the same left column — not
+                  every product has this (only rendered when a catalog entry
+                  carries whoItsFor/howToUse), so it's invisible for the vast
+                  majority of products without this level of brand-supplied
+                  detail on file. Filling the dead space below a short square
+                  image beats stacking these under the much taller middle
+                  info column, which pushed them far down the page. */}
+              {Array.isArray(product.whoItsFor) && product.whoItsFor.length > 0 && (
+                <div style={{ marginTop: 20 }}>
+                  <div style={{ font: '500 9.5px "DM Mono", ui-monospace, monospace', letterSpacing: '0.1em', color: '#8c8078', marginBottom: 8 }}>
+                    WHO IT&apos;S FOR
+                  </div>
+                  <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+                    {product.whoItsFor.map((item) => (
+                      <li key={item} style={{ display: 'flex', gap: 10, fontSize: 13.5, lineHeight: 1.5, color: '#3f3831', marginBottom: 8 }}>
+                        <span style={{ flex: 'none', color: '#B4732A' }}>•</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {product.howToUse?.steps?.length > 0 && (
+                <div style={{ marginTop: 20 }}>
+                  <div style={{ font: '500 9.5px "DM Mono", ui-monospace, monospace', letterSpacing: '0.1em', color: '#8c8078', marginBottom: 8 }}>
+                    HOW TO USE
+                  </div>
+                  {product.howToUse.intro && (
+                    <p style={{ fontSize: 13.5, lineHeight: 1.5, color: '#3f3831', margin: '0 0 8px' }}>{product.howToUse.intro}</p>
+                  )}
+                  <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+                    {product.howToUse.steps.map((step) => (
+                      <li key={step} style={{ display: 'flex', gap: 10, fontSize: 13.5, lineHeight: 1.5, color: '#3f3831', marginBottom: 8 }}>
+                        <span style={{ flex: 'none', color: '#B4732A' }}>•</span>
+                        <span>{step}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  {product.howToUse.sourceUrl && (
+                    <div style={{ marginTop: 10 }}>
+                      <a
+                        href={product.howToUse.sourceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="pdp-head__badge"
+                        title={product.howToUse.sourceLabel || product.howToUse.sourceUrl}
+                      >
+                        {hostLabel(product.howToUse.sourceUrl) || 'Source'}
+                      </a>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
 
             <div className="pdp-evidence-head__info">
               <div className="pdp-head__eyebrow">{eyebrow}</div>

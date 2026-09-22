@@ -213,19 +213,163 @@ export const BRAND_PRODUCTS = [
         affiliateUrl: 'https://helloneycher.com/product/vaginal-moisturizer?sca_ref=12276038.vwBYOKCYa7&utm_source=affiliate&utm_medium=socialmedia&utm_campaign=affiliate',
         faqUrl: 'https://www.helloneycher.com/faq',
         image: 'https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/686eb5fcdbbd35b6fc957602_Frame%201000011567.jpg',
-        summary: 'A non-hormonal vaginal moisturizer positioned as a natural alternative for dryness, irritation, and discomfort. Part of Neycher\'s intimate-care line.',
+        summary: 'A hormone-free vaginal suppository that pairs hyaluronic acid with a bioadhesive gel to moisturize from the inside, holding moisture at the vaginal wall for days rather than hours. Positioned for the dryness, irritation, and pain during sex common in perimenopause, menopause, postpartum, and after cancer treatment or a hysterectomy.',
         safety: {
             fdaStatus: 'Manufactured in FDA-registered facilities per the brand\'s site; not an FDA-cleared medical device.',
-            materials: 'See product packaging for full ingredient list.',
+            // Full packaging ingredient list lives here (not truncated — see
+            // buildFactRows in ProductModal.jsx) so it shows in full under
+            // "Materials" on the Evidence view, instead of the leftover-space
+            // ingredient science paragraphs below.
+            materials: '10 suppositories per box, 2 g each. Ingredients (from the box): hyaluronic acid (sodium hyaluronate, 10 mg per suppository), polycarbophil, glycyrrhetinic acid (from licorice root), vitamin E (tocopheryl acetate), vitamin A (retinyl palmitate), tea tree oil, phosphatidylcholine, and lactic acid, in a caprylic/capric triglyceride base.',
             recalls: 'No recalls found.',
-            sideEffects: 'None specific reported; discontinue use and consult a clinician if irritation occurs.',
+            sideEffects: 'Discontinue and see a doctor if you notice irritation or burning. One ingredient, polycarbophil, can cause a white, clumpy discharge as old tissue sheds — that looks like a yeast infection but isn\'t one, and it usually lessens with regular use. Full warnings are listed below.',
             opinionAlerts: 'Brand states products are "not intended to diagnose, treat, cure, or prevent any disease". Standard cosmetic/wellness disclaimer language.',
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Sourced from Neycher\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'Neycher states its formulas are developed with input from "scientists, doctors, and researchers" and are "OB/GYN and real people-approved," per the brand\'s own site.',
+        doctorOpinion: 'Neycher states its formulas are developed with input from "scientists, doctors, and researchers" and are "OB/GYN and real people-approved," per the brand\'s own site.\n\nNeycher also cites its own clinical evaluation: 20 women (ages 29-74) with vulvovaginal symptoms used the product for about a month, assessed with the Vulvovaginal Symptoms Questionnaire (VSQ) — a real, peer-reviewed tool (Erekson et al., Menopause, 2013) — analyzed by paired t-test (brand-reported as p<0.001 on every measure).\n\nResults: mean VSQ symptom score dropped from 9.22 to 0.61 (p<0.001), with complete symptom remission in 65% of participants and a greater than 50% reduction in discomfort in 89%, with improvement reported after just one week. No adverse events were recorded.\n\nNeycher\'s own site doesn\'t publish this study as a standalone paper — the closest verifiable public source is Gruppo FarmaImpresa (the manufacturer named on Neycher\'s own technical documentation, doc ref FT.CE.110), whose hyaluronic acid + polycarbophil + lactic acid ovule — the same formulation profile as this product — matches this exact study design and these exact numbers on their own site. This is the manufacturer\'s own published summary of its clinical evaluation, not an independently peer-reviewed journal article; the VSQ instrument it used is real and independently validated.',
+        // Shorter, results-first version for the Evidence view's rail card
+        // (ProductEvidenceRail.jsx), which has much less horizontal room
+        // than the ayna-summary tab's full-width Clinician opinion card —
+        // that one keeps the full walkthrough above.
+        doctorOpinionShort: 'Neycher cites its own 20-woman clinical evaluation: mean VSQ symptom score dropped from 9.22 to 0.61 (p<0.001), with complete symptom remission in 65% of participants and improvement reported within one week. No adverse events were recorded. This is the manufacturer\'s own funded evaluation, not an independently peer-reviewed study.',
+        // Kept separate from verificationLinks.scientific/doctor on purpose —
+        // that data also feeds the Scientific literature tab's citation
+        // list, and these two links belong only on the clinical-study claim
+        // above, not mixed into that list.
+        doctorOpinionCitations: [
+            { url: 'https://farmaimpresa.com/en/hyaluronic-acid-eggs-clinical-study-shows-positive-effects-on-vulvovaginal-symptoms/', label: 'Farmaimpresa: the study\'s actual source' },
+            { url: 'https://helloneycher.com/products/vaginal-moisturizer?Title=Default', label: 'Helloneycher: where Neycher presents this claim' },
+        ],
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Women in perimenopause and menopause',
+            'Women after a hysterectomy or removal of the ovaries (surgical menopause)',
+            'Postpartum women, once their doctor has cleared them (usually at the 6-week checkup), and breastfeeding women',
+            'Breast cancer survivors and anyone who can\'t or doesn\'t want to use hormone therapy',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches the
+        // "Application" section on Neycher's own live product page.
+        howToUse: {
+            intro: 'Lie down and insert one suppository into the vagina. Stay lying down for about 30 minutes so it absorbs fully, which makes bedtime the easiest time to use it.',
+            steps: [
+                'For the first 10 nights, use one each night.',
+                'After that, every 3 to 5 nights is enough for most, or adjust to your comfort and your doctor\'s guidance.',
+                'Don\'t use it more than 30 days in a row. Some customers cut a suppository in half.',
+                'Don\'t use it during your period. A thin pad can help with any discharge.',
+            ],
+            sourceUrl: 'https://helloneycher.com/products/vaginal-moisturizer?Title=Default',
+            sourceLabel: 'helloneycher.com: Vaginal Moisturizer — Application',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'No oral sex during the course: tea tree oil must not be swallowed.',
+            'Oil-based: can weaken latex condoms.',
+            'After giving birth: only once her doctor clears it, usually at 6 weeks.',
+            'Pregnant or breastfeeding: check with a doctor first.',
+            'Irritation or burning: stop and see a doctor.',
+        ],
         communityReview: 'Neycher.com and Amazon both carry customer reviews for this moisturizer; visible feedback centers on noticeably improved day-to-day comfort after adding it to a routine. A specific rating/review count wasn\'t independently verifiable at time of writing. Amazon blocked automated access, and the badge shown on Neycher\'s own product pages is identical across multiple different products, so it isn\'t trustworthy as a per-product figure.',
-        effectiveness: 'Positioned as a non-hormonal alternative to antibiotic, antifungal, or hormone treatments for vaginal dryness and irritation; no independent clinical study of the product was found.',
+        effectiveness: 'Vaginal moisturizers as a category are supported by systematic-review evidence for improving dryness versus placebo (low certainty); no independent clinical study of this specific product was found.',
+        // Plain-text ingredient summary — kept as a string since search
+        // indexing (naturalLanguageSearch.js), the interaction checker
+        // (interactions.js), DoctorPrep.jsx, and the Ask Ayna context
+        // builder (productHowToUse.js) all read this field as a string.
+        // Changing its shape would break all four.
+        ingredients: 'Hyaluronic acid (10 mg), polycarbophil, glycyrrhetinic acid (from licorice root), lactic acid, vitamins E and A, tea tree oil.',
+        // Per-ingredient science claims, each paired with its own credible
+        // source (NIH-hosted: PMC/PubMed or an NIH institute's own fact
+        // sheet) — not the plain-string `ingredients` above, so this can
+        // carry structured citations without changing that field's shape.
+        // Rendered on the Scientific literature tab.
+        ingredientScience: [
+            {
+                name: 'Hyaluronic acid (10 mg)',
+                text: 'Binds large amounts of water. It draws moisture into the vaginal lining, holds it there, and supports tissue repair.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC13160248/', label: 'NIH (PMC): Real-world effectiveness of a hyaluronic acid-based vaginal moisturizer' },
+                ],
+            },
+            {
+                name: 'Polycarbophil',
+                text: 'A bioadhesive gel that sticks to the vaginal wall and holds water against it for days, so the effect lasts much longer than a lubricant. It also helps the tissue renew — as it does, old, dry cells that have built up come away, so some women notice a white, clumpy discharge that looks like a yeast infection. It isn\'t one; it\'s the old cells leaving, and it usually lessens with regular use.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7838131/', label: 'NIH (PMC): Polycarbophil-based cream for genitourinary syndrome of menopause' },
+                ],
+            },
+            {
+                name: 'Glycyrrhetinic acid (from licorice root)',
+                text: 'Calms irritation, redness, and burning.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC9025446/', label: 'NIH (PMC): Anti-inflammatory properties of licorice (Glycyrrhiza glabra)' },
+                ],
+            },
+            {
+                name: 'Lactic acid',
+                text: 'The same acid healthy vaginal bacteria produce. It keeps pH in its natural acidic range (3.8 to 4.5).',
+                citations: [
+                    { url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6332693/', label: 'NIH (PMC): Vaginal pH measured in vivo — lactobacilli determine pH and lactic acid concentration' },
+                ],
+            },
+            {
+                name: 'Vitamins E and A',
+                text: 'Vitamin E is an antioxidant that protects and softens the tissue; vitamin A supports renewal of the vaginal lining.',
+                citations: [
+                    { url: 'https://ods.od.nih.gov/factsheets/VitaminE-HealthProfessional/', label: 'NIH Office of Dietary Supplements: Vitamin E' },
+                    { url: 'https://ods.od.nih.gov/factsheets/VitaminA-HealthProfessional/', label: 'NIH Office of Dietary Supplements: Vitamin A' },
+                ],
+            },
+            {
+                name: 'Tea tree oil',
+                text: 'Used in a small, carefully chosen amount — pure tea tree oil at high concentrations can irritate, but here it sits inside a formula built to hydrate and calm (hyaluronic acid, polycarbophil, glycyrrhetinic acid, vitamin E), not as a stand-alone antiseptic.',
+                citations: [
+                    { url: 'https://www.nccih.nih.gov/health/tea-tree-oil', label: 'NIH NCCIH: Tea Tree Oil — Usefulness and Safety' },
+                ],
+            },
+        ],
+        // Category-level citations shown only on the Scientific literature
+        // tab (merged there with the per-ingredient citations above) — kept
+        // out of verificationLinks so they don't also pool onto the
+        // Clinician opinion card's chip row, which only wants
+        // doctorOpinionCitations (the two clinical-study-specific links).
+        scientificCitations: [
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/39250810/',
+                text: 'Hormonal Treatments and Vaginal Moisturizers for Genitourinary Syndrome of Menopause: A Systematic Review',
+                summary: 'A systematic review (Danan et al., Annals of Internal Medicine, 2024) of randomized trials found vaginal moisturizers may improve dryness versus placebo (low certainty of evidence). This is intervention-level evidence and does not validate a specific moisturizer product.',
+            },
+            {
+                url: 'https://www.acog.org/womens-health/faqs/vulvovaginal-health',
+                text: 'ACOG: Vulvovaginal Health',
+                summary: 'ACOG notes that over-the-counter vaginal moisturizers and lubricants can help relieve vaginal dryness and painful sex. This is clinical-guidance-level evidence, not product-specific validation.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'reddit',
+                        url: 'https://www.reddit.com/r/HealthyHooha/search/?q=neycher&restrict_sr=1',
+                        text: 'Reddit r/HealthyHooha: Neycher',
+                        summary: 'Community discussions on Neycher\'s intimate-care line, including this moisturizer.',
+                    },
+                    {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/dp/B0DMTDP1J7?lv=shuf&channelId=500&plpRedirect=mhFallback&th=1',
+                        text: 'Amazon: Neycher Vaginal Moisturizer reviews',
+                        summary: 'Visible feedback centers on noticeably improved day-to-day comfort after adding it to a routine. A specific rating/review count wasn\'t independently verifiable at time of writing — Amazon blocks automated access.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://helloneycher.com/products/vaginal-moisturizer?Title=Default',
+                        text: 'helloneycher.com: Customer reviews',
+                        summary: 'Neycher\'s own site carries customer reviews across its intimate-care line, including this moisturizer.',
+                    },
+                ],
+            },
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true, // shows a 'Brand' tag on the Discovery card, next to the type badge
@@ -240,7 +384,7 @@ export const BRAND_PRODUCTS = [
         healthFunctions: ['vaginal-health'],
         tags: ['discomfort', 'comfort', 'non-hormonal'],
         price: '$29.97 (10 suppositories)',
-        whereToBuy: ['helloneycher.com'],
+        whereToBuy: ['helloneycher.com', 'Amazon'],
         url: 'https://www.helloneycher.com/product/odor-be-gone',
         // Ayna affiliate link — affiliateUrl wins over `url` for the Buy Now /
         // Visit Site destination (see getBuyUrl in ProductModal.jsx). Verified
@@ -251,20 +395,131 @@ export const BRAND_PRODUCTS = [
         affiliateUrl: 'https://helloneycher.com/product/odor-be-gone?sca_ref=12276038.vwBYOKCYa7&utm_source=affiliate&utm_medium=socialmedia&utm_campaign=affiliate',
         faqUrl: 'https://www.helloneycher.com/faq',
         image: 'https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/6a0b3e76d248803f468a5c1e_Frame%201000011416%20(1).webp',
-        summary: 'Boric acid vaginal suppositories (10 per box) aimed at odor and pH balance. Brand directs use once every 2–3 days outside your period, and not for more than 30 consecutive days.',
-        ingredients: 'Boric acid (300mg), sodium hyaluronate (20mg), lactic acid, tea tree leaf oil, vitamin E (tocopheryl acetate), 18β-glycyrrhetinic acid, chlorhexidine digluconate.',
+        summary: 'Vaginal odor, unusual discharge, and irritation often mean the vagina\'s pH has shifted, letting BV or yeast overgrow. This boric acid suppository (10 count, 2 g each) uses half the usual dose, paired with hyaluronic acid, lactic acid, and calming plant extracts, so it works without the dryness and burning pure boric acid products are known for.',
         safety: {
             fdaStatus: 'Manufactured in FDA-registered facilities per the brand\'s site; not an FDA-cleared medical device.',
-            materials: 'Boric acid suppository. See packaging for the full ingredient list.',
+            // Full packaging ingredient list — shown in full under
+            // "Materials" on the Evidence view (see buildFactRows in
+            // ProductModal.jsx, which doesn't truncate this field).
+            materials: '10 suppositories per box, 2 g each. Ingredients (from the box): boric acid (300 mg), hyaluronic acid (20 mg), lactic acid, tea tree oil, vitamin E, glycyrrhetinic acid (from licorice root), and chlorhexidine (stabilizer), in a semi-synthetic triglyceride base.',
             recalls: 'No recalls found.',
-            sideEffects: 'Boric acid suppositories are for vaginal use only and are toxic if swallowed. Keep away from children. Not for use during pregnancy. Discontinue and consult a clinician if irritation occurs.',
-            opinionAlerts: 'Brand directs no more than 30 consecutive days of use. Brand states products are "not intended to diagnose, treat, cure, or prevent any disease". Standard cosmetic/wellness disclaimer language.',
+            sideEffects: 'Boric acid suppositories are for vaginal use only and are toxic if swallowed — keep away from children. Discontinue and see a doctor if you notice irritation, or if symptoms don\'t improve, keep coming back, or come with fever, pain, or bleeding. Full warnings are listed below.',
+            opinionAlerts: 'Brand states products are "not intended to diagnose, treat, cure, or prevent any disease". Standard cosmetic/wellness disclaimer language.',
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Sourced from Neycher\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'Neycher states this formula "helps decrease your pH, preventing the formation of bacteria and yeast overgrowth," per the brand\'s own site. Boric acid is a recognized option for recurrent vaginal complaints, but talk to a clinician before starting it.',
-        communityReview: 'Reviewers on Amazon and Neycher\'s own site report reduced odor, itching, and discharge, with several noting relief starting within the first few uses. As with the rest of this brand\'s catalog, an exact rating/review count wasn\'t independently verifiable at time of writing.',
-        effectiveness: 'Brand cites its own consumer study in which 94% of users reported reduced vaginal itching; no independent clinical study of the product was found.',
+        doctorOpinion: 'Neycher states this formula "helps decrease your pH, preventing the formation of bacteria and yeast overgrowth," per the brand\'s own site. Boric acid is a recognized, commonly used option for recurrent vaginal odor and BV/yeast-related complaints generally — talk to a clinician before starting it. No clinical trial or study specific to this product was found on the brand\'s site.',
+        doctorOpinionShort: 'Boric acid is a recognized, commonly used option for recurrent vaginal odor and BV/yeast complaints generally. No clinical trial specific to this product was found on Neycher\'s site.',
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Women with odor, unusual discharge, itching, or irritation',
+            'Women whose symptoms keep coming back after a period, sex, or antibiotics',
+            'Women who\'ve tried boric acid capsules and found them drying or burning',
+            'Women in perimenopause and menopause who notice their scent has changed',
+        ],
+        // Rendered as a bulleted list on the Evidence view.
+        howToUse: {
+            intro: 'With clean, dry hands, peel open the blister and insert one suppository into the vagina with your fingers, preferably at bedtime — no applicator needed.',
+            steps: [
+                'One a night for 10 nights in a row, or occasionally as needed.',
+                'Don\'t use it during your period. A thin pad can help with any discharge.',
+            ],
+            sourceUrl: 'https://helloneycher.com/products/odor-be-gone',
+            sourceLabel: 'helloneycher.com: Odor Be Gone',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'Not for dryness on its own (that\'s the Vaginal Moisturizer or HydroBloom Gel), or for STIs, which can cause similar odor and discharge.',
+            'No oral sex during the course: boric acid and tea tree oil must not be swallowed.',
+            'Oil-based: can weaken latex condoms.',
+            'Never recommended in pregnancy. Breastfeeding: check with a doctor first.',
+            'See a doctor if symptoms don\'t improve, keep coming back, or come with fever, pain, or bleeding.',
+        ],
+        communityReview: 'Neycher.com and Amazon both carry customer reviews for this product; a specific rating/review count wasn\'t independently verifiable at time of writing — Amazon blocks automated access.',
+        effectiveness: 'Used nightly for about ten nights, it\'s meant to bring odor and discharge back under control gently rather than all at once.',
+        // Plain-text summary — kept as a string since search indexing,
+        // the interaction checker, and DoctorPrep.jsx all read this as text.
+        ingredients: 'Boric acid (300 mg), hyaluronic acid (20 mg), lactic acid, tea tree oil, vitamin E, glycyrrhetinic acid (from licorice root), chlorhexidine.',
+        // Per-ingredient science claims, each paired with a credible source
+        // (NIH-hosted or ACOG). Rendered on the Scientific literature tab.
+        ingredientScience: [
+            {
+                name: 'Boric acid (300 mg)',
+                text: 'A mild acid that brings pH back down to its natural range. Half the usual dose, to avoid the burning and dryness pure boric acid products cause.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/21774671/', label: 'NIH: Boric acid for recurrent vulvovaginal candidiasis — the clinical evidence (Iavazzo et al., 2011)' },
+                ],
+            },
+            {
+                name: 'Lactic acid',
+                text: 'The same acid healthy lactobacilli produce. It helps restore the acidic environment they need to take over again.',
+                citations: [
+                    { url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6332693/', label: 'NIH (PMC): Vaginal pH measured in vivo — lactobacilli determine pH and lactic acid concentration' },
+                ],
+            },
+            {
+                name: 'Hyaluronic acid (20 mg)',
+                text: 'Binds water and keeps the vaginal lining hydrated, so the tissue doesn\'t dry out while the pH resets.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC13160248/', label: 'NIH (PMC): Real-world effectiveness of a hyaluronic acid-based vaginal moisturizer' },
+                ],
+            },
+            {
+                name: 'Tea tree oil',
+                text: 'Used in a small, carefully chosen amount — pure tea tree oil at high concentrations can irritate, but here it sits inside a formula built to hydrate and calm.',
+                citations: [
+                    { url: 'https://www.nccih.nih.gov/health/tea-tree-oil', label: 'NIH NCCIH: Tea Tree Oil — Usefulness and Safety' },
+                ],
+            },
+            {
+                name: 'Glycyrrhetinic acid (from licorice root) and vitamin E',
+                text: 'Calm irritation, redness, and burning, and protect the tissue.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC9025446/', label: 'NIH (PMC): Anti-inflammatory properties of licorice (Glycyrrhiza glabra)' },
+                    { url: 'https://ods.od.nih.gov/factsheets/VitaminE-HealthProfessional/', label: 'NIH Office of Dietary Supplements: Vitamin E' },
+                ],
+            },
+        ],
+        // Category-level citation shown only on the Scientific literature
+        // tab, kept out of verificationLinks so it doesn't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://www.acog.org/womens-health/faqs/vaginitis',
+                text: 'ACOG: Vaginitis',
+                summary: 'ACOG on bacterial vaginosis, yeast infections, and how vaginal pH relates to odor and discharge. This is clinical-guidance-level evidence, not product-specific validation.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'reddit',
+                        url: 'https://www.reddit.com/r/HealthyHooha/search/?q=neycher+odor&restrict_sr=1',
+                        text: 'Reddit r/HealthyHooha: Neycher Odor Be Gone',
+                        summary: 'Community discussions on Neycher\'s intimate-care line, including this product.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://helloneycher.com/products/odor-be-gone',
+                        text: 'helloneycher.com: Customer reviews',
+                        summary: 'Neycher\'s own product page for this product.',
+                    },
+                    {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/Neycher-Suppositories-Acting-Inserts-Control/dp/B0HJ6GYKQC/ref=sr_1_2?crid=CL8QR8MLEMBV&dib=eyJ2IjoiMSJ9.yS5SRCyC9xJWjRHdGllkk97WIdbc8H7L1ZMCfNqpBh8jS4oGVW5GRpYa44XUWbjO-UEgm558Qlbesdl8GD7mpTXDyri-D4sm363-_ltDEXU.hNeWuaJaBMbUQ16VIWoL0JF28q6iezfdZncHiVJ1xDk&dib_tag=se&keywords=neycher&qid=1790103716&sprefix=neyche%2Caps%2C158&sr=8-2',
+                        text: 'Amazon: Neycher Odor Be Gone reviews',
+                        // Amazon blocks automated access, so this isn't a
+                        // summary of actual review text — just confirms this
+                        // is the real, current product listing. Read the
+                        // reviews directly on Amazon.
+                        summary: 'Real, current Amazon listing for this exact product. Amazon blocks automated access, so review content/ratings weren\'t independently verifiable at time of writing — read them directly on the page.',
+                    },
+                ],
+            },
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true,
@@ -279,7 +534,7 @@ export const BRAND_PRODUCTS = [
         healthFunctions: ['vaginal-health'],
         tags: ['discomfort', 'comfort', 'organic', 'non-hormonal'],
         price: '$25.97',
-        whereToBuy: ['helloneycher.com'],
+        whereToBuy: ['helloneycher.com', 'Amazon'],
         url: 'https://www.helloneycher.com/product/hydrobloom-moisturizing-gel',
         // Ayna affiliate link — affiliateUrl wins over `url` for the Buy Now /
         // Visit Site destination (see getBuyUrl in ProductModal.jsx). Verified
@@ -288,19 +543,159 @@ export const BRAND_PRODUCTS = [
         affiliateUrl: 'https://helloneycher.com/product/hydrobloom-moisturizing-gel?sca_ref=12276038.vwBYOKCYa7&utm_source=affiliate&utm_medium=socialmedia&utm_campaign=affiliate',
         faqUrl: 'https://www.helloneycher.com/faq',
         image: 'https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/69b007753e5c0c33308cc349_hand.webp',
-        summary: 'A hormone-free vaginal moisturizing gel with hyaluronic acid and botanical extracts. Brand directs use for 7–10 consecutive days outside your period, and not for more than 30 consecutive days.',
-        ingredients: 'Hyaluronic acid (20mg), lactic acid, vitamins A and E, plus aloe vera, chamomile, and calendula botanical extracts.',
+        summary: 'Vulvar dryness and irritation are common from hormonal changes, friction, or harsh soaps. This hormone-free, pH-balanced gel pairs hyaluronic acid and glycerin to hydrate outside on the vulva and inside the vagina, non-sticky and fast-absorbing.',
         safety: {
             fdaStatus: 'Manufactured in FDA-registered facilities per the brand\'s site; not an FDA-cleared medical device.',
-            materials: 'See product packaging for the full ingredient list.',
+            materials: '30 ml tube with applicator. Ingredients (from the box): water, glycerin, aloe leaf juice, black currant fruit extract, lavender flower water, hyaluronic acid (sodium hyaluronate), chamomile flower extract, calendula flower extract, lactic acid, vitamin E (tocopheryl acetate), linseed oil, vitamin A (retinyl palmitate), in a hydroxyethylcellulose gel base, with preservatives (imidazolidinyl urea, potassium sorbate, disodium EDTA) and solubilizers (PEG-40 hydrogenated castor oil, polysorbate 20).',
             recalls: 'No recalls found.',
-            sideEffects: 'None specific reported; discontinue use and consult a clinician if irritation occurs.',
-            opinionAlerts: 'Brand directs no more than 30 consecutive days of use. Brand states products are "not intended to diagnose, treat, cure, or prevent any disease". Standard cosmetic/wellness disclaimer language.',
+            sideEffects: 'Discontinue and see a doctor if you notice irritation or an allergic reaction. Contains chamomile and calendula — if you have a daisy-family allergy (such as ragweed), test on a small area first. Full warnings are listed below.',
+            opinionAlerts: 'Brand states products are "not intended to diagnose, treat, cure, or prevent any disease". Standard cosmetic/wellness disclaimer language.',
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Sourced from Neycher\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'Neycher states the formula "creates a protective hydrating layer that supports long-lasting moisture and comfort," per the brand\'s own site. Hyaluronic-acid vaginal moisturizers are a common non-hormonal approach to dryness.',
-        effectiveness: 'Brand cites its own clinical trial in which 94% of users reported improvement in vaginal dryness; no independent clinical study of the product was found.',
+        doctorOpinion: 'Neycher states the formula "creates a protective hydrating layer that supports long-lasting moisture and comfort," per the brand\'s own site. No clinical trial or study specific to this gel was found on the brand\'s site.',
+        // Shorter version for the Evidence view's narrower rail card — see
+        // the Vaginal Moisturizer entry for why these are split.
+        doctorOpinionShort: 'No clinical trial specific to this gel was found on Neycher\'s site.',
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Anyone whose vulva feels dry, tight, itchy, or irritated, at any age',
+            'Women in perimenopause and menopause who feel dryness on the outside (pairs with the Vaginal Moisturizer for inside-plus-outside care)',
+            'Postpartum women once stitches or tears have healed (inside use only after a doctor clears it), and breastfeeding women',
+            'Women with irritation from shaving, waxing, workouts, cycling, tight clothes, or sex',
+            'Women who prefer a gel to suppositories, or want quick comfort during the day',
+        ],
+        // Rendered as a bulleted list on the Evidence view.
+        howToUse: {
+            intro: 'Outside: with clean hands, apply a fingertip amount to clean skin around the vulva, daily or as often as needed.',
+            steps: [
+                'Inside: take the applicator out of its sachet and screw it onto the tube.',
+                'Gently insert the applicator into the vagina and squeeze the tube lightly until a comfortable amount of gel comes out.',
+                'Unscrew the applicator after use and rinse it well with warm water.',
+            ],
+            sourceUrl: 'https://helloneycher.com/products/hydrobloom-moisturizing-gel?Title=Default',
+            sourceLabel: 'helloneycher.com: HydroBloom Gel',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'Not for odor, unusual discharge, or itching inside the vagina — that can signal an infection; Neycher\'s Odor Be Gone is for that instead.',
+            'After giving birth: outside only on healed skin; inside only once a doctor clears it.',
+            'Daisy-family allergy (such as ragweed): test on a small area first — contains chamomile and calendula.',
+            'Irritation or an allergic reaction: stop using it.',
+        ],
+        communityReview: 'Neycher.com and Amazon both carry customer reviews for this gel; a specific rating/review count wasn\'t independently verifiable at time of writing.',
+        effectiveness: 'No clinical trial specific to this gel was found on the brand\'s site.',
+        // Plain-text summary — kept as a string since search indexing,
+        // the interaction checker, and DoctorPrep.jsx all read this as text.
+        ingredients: 'Hyaluronic acid (sodium hyaluronate), glycerin, aloe leaf juice, black currant fruit extract, lavender flower water, chamomile flower extract, calendula flower extract, lactic acid, vitamin E, linseed oil, vitamin A.',
+        // Per-ingredient science claims, each paired with a credible source
+        // (NIH-hosted or ACOG). Rendered on the Scientific literature tab.
+        ingredientScience: [
+            {
+                name: 'Hyaluronic acid and glycerin',
+                text: 'Both bind water and draw moisture into the skin and mucosa, so they stay soft and hydrated.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC13160248/', label: 'NIH (PMC): Real-world effectiveness of a hyaluronic acid-based vaginal moisturizer' },
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC9205919/', label: 'NIH (PMC): Moisture retention of glycerin solutions' },
+                ],
+            },
+            {
+                name: 'Linseed oil',
+                text: 'Rich in omega-3 fatty acids. It softens the skin and helps the skin barrier hold on to moisture.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/21088453/', label: 'NIH: Flaxseed oil diminishes skin sensitivity and improves skin barrier function' },
+                ],
+            },
+            {
+                name: 'Lactic acid',
+                text: 'The same acid healthy vaginal bacteria produce. It keeps intimate skin at its natural acidic pH.',
+                citations: [
+                    { url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6332693/', label: 'NIH (PMC): Vaginal pH measured in vivo — lactobacilli determine pH and lactic acid concentration' },
+                ],
+            },
+            {
+                name: 'Vitamin E',
+                text: 'An antioxidant that protects the skin barrier and softens the skin.',
+                citations: [
+                    { url: 'https://ods.od.nih.gov/factsheets/VitaminE-HealthProfessional/', label: 'NIH Office of Dietary Supplements: Vitamin E' },
+                ],
+            },
+            {
+                name: 'Vitamin A',
+                text: 'Supports skin renewal, so irritated skin recovers faster.',
+                citations: [
+                    { url: 'https://ods.od.nih.gov/factsheets/VitaminA-HealthProfessional/', label: 'NIH Office of Dietary Supplements: Vitamin A' },
+                ],
+            },
+            {
+                name: 'Aloe vera',
+                text: 'Cools and soothes irritated skin.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/18253066/', label: 'NIH: Anti-inflammatory potential of Aloe vera gel in the ultraviolet erythema test' },
+                ],
+            },
+            {
+                name: 'Calendula and chamomile',
+                text: 'Classic calming plants for sensitive skin. They reduce redness and sensitivity and support skin recovery.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/31145533/', label: 'NIH: Systematic review of Calendula officinalis extract for wound healing' },
+                ],
+            },
+            {
+                name: 'Lavender flower water',
+                text: 'A gentle floral water (not the essential oil) that soothes and calms redness.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC13466918/', label: 'NIH (PMC): Pharmacological properties of lavender essential oil — background on the active compound family, not a hydrosol-specific study' },
+                ],
+            },
+            {
+                name: 'Black currant fruit extract',
+                text: 'Rich in antioxidants that protect the skin.',
+                citations: [
+                    { url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12899128/', label: 'NIH (PMC): Antioxidant and antiproliferative properties of black currant (Ribes nigrum) extracts' },
+                ],
+            },
+        ],
+        // Category-level citation shown only on the Scientific literature
+        // tab, kept out of verificationLinks so it doesn't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://www.acog.org/womens-health/faqs/disorders-of-the-vulva-common-causes-of-vulvar-pain-burning-and-itching',
+                text: 'ACOG: Disorders of the Vulva — Common Causes of Vulvar Pain, Burning, and Itching',
+                summary: 'ACOG on why vulvar skin is especially prone to dryness, friction, and irritation, and general management guidance. This is clinical-guidance-level evidence, not product-specific validation.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'reddit',
+                        url: 'https://www.reddit.com/r/HealthyHooha/search/?q=neycher+hydrobloom&restrict_sr=1',
+                        text: 'Reddit r/HealthyHooha: Neycher HydroBloom',
+                        summary: 'Community discussions on Neycher\'s intimate-care line, including this gel.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://helloneycher.com/products/hydrobloom-moisturizing-gel?Title=Default',
+                        text: 'helloneycher.com: Customer reviews',
+                        summary: 'Neycher\'s own product page for this gel.',
+                    },
+                    {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/Neycher-Hyaluronic-Vaginal-Moisturizing-Calendula/dp/B0G822S3QN?ref_=ast_sto_dp',
+                        text: 'Amazon: Neycher HydroBloom reviews',
+                        // Amazon blocks automated access, so this isn't a
+                        // summary of actual review text — just confirms
+                        // this is the real, current product listing. Read
+                        // the reviews directly on Amazon.
+                        summary: 'Real, current Amazon listing for this exact product. Amazon blocks automated access, so review content/ratings weren\'t independently verifiable at time of writing — read them directly on the page.',
+                    },
+                ],
+            },
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true,

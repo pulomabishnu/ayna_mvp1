@@ -1,5 +1,5 @@
 import React from 'react';
-import { getVerificationLinks, toSourceChips } from '../utils/verificationLinks';
+import { getVerificationLinks, toSourceChips, hostLabel } from '../utils/verificationLinks';
 
 /**
  * The right-hand rail on the evidence layout (mockup board 1g): three small
@@ -24,14 +24,23 @@ function firstSentence(text, max = 140) {
 }
 
 export default function ProductEvidenceRail({ product, matchLabels = [], matchPercent = null, aynaReviewCount = 0 }) {
-  const clinicianNote = product.doctorOpinion || product.clinicianOpinion || null;
+  // Prefers a shorter, results-first version when a catalog entry has one —
+  // this rail card has much less width than the ayna-summary tab's
+  // full-width Clinician opinion card, which always gets the full text.
+  const clinicianNote = product.doctorOpinionShort || product.doctorOpinion || product.clinicianOpinion || null;
   // Backs the clinician-opinion claim with an actual link to check it against
   // — a stated claim with no source a reader can click isn't evidence, it's
-  // just a bigger claim. Flagged live 2026-08-25.
-  const clinicianSourceChips = toSourceChips([
-    ...getVerificationLinks(product, 'doctor'),
-    ...getVerificationLinks(product, 'scientific'),
-  ]);
+  // just a bigger claim. Flagged live 2026-08-25. Skips 'scientific' links
+  // when the product curates its own scientificCitations — see the matching
+  // note on clinicianSourceLinks in ProductModal.jsx for why.
+  const hasCuratedScientific = (product.scientificCitations || []).length > 0;
+  const clinicianSourceChips = [
+    ...toSourceChips([
+      ...getVerificationLinks(product, 'doctor'),
+      ...(hasCuratedScientific ? [] : getVerificationLinks(product, 'scientific')),
+    ]),
+    ...(product.doctorOpinionCitations || []).map((c) => ({ url: c.url, label: hostLabel(c.url) || c.label, text: c.label })),
+  ];
 
   const scientificChips = toSourceChips(getVerificationLinks(product, 'scientific'));
   const clinicalChips = toSourceChips(getVerificationLinks(product, 'doctor'));
@@ -115,6 +124,20 @@ export default function ProductEvidenceRail({ product, matchLabels = [], matchPe
           </div>
         )}
       </div>
+
+      {Array.isArray(product.warnings) && product.warnings.length > 0 && (
+        <div className="pdp-rail__card" style={{ background: '#FEF2F2', border: '1px solid #FEE2E2', borderLeft: '4px solid #DC2626' }}>
+          <div className="pdp-rail__label" style={{ color: '#991B1B' }}>Warnings</div>
+          <ul style={{ margin: '8px 0 0', padding: 0, listStyle: 'none' }}>
+            {product.warnings.map((item) => (
+              <li key={item} style={{ display: 'flex', gap: 10, fontSize: 13.5, lineHeight: 1.5, color: '#3f3831', marginBottom: 6 }}>
+                <span style={{ flex: 'none', color: '#DC2626' }}>•</span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <div className="pdp-rail__card">
         <div className="pdp-rail__label">Evidence</div>
