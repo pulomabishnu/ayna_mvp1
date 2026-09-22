@@ -410,20 +410,13 @@ export default async function handler(req, res) {
     rows.push({ row, categoryConfident });
   }
 
+  // PRODUCT INTEGRITY (2026-09-22 audit): nothing imported here goes live
+  // without a human. The recall/URL/category checks are recorded as a review
+  // hint (autoApprovalEligible) for scripts/review-discovered-products.mjs.
   const toInsert = await Promise.all(
     rows.map(async ({ row, categoryConfident }) => {
-      // categoryConfident gates auto-approval on top of isAutoApprovable's
-      // own recall+URL checks — a product this classifier couldn't place
-      // confidently should never silently go live even if otherwise clean.
-      if (!categoryConfident || !isAutoApprovable(row)) return row;
-      const urlIsLive = await verifyUrlIsLive(row.url);
-      if (!urlIsLive) return row;
-      return {
-        ...row,
-        review_status: 'approved',
-        is_active: true,
-        discovery_meta: { ...row.discovery_meta, autoApproved: true, autoApprovedAt: new Date().toISOString() },
-      };
+      const eligible = categoryConfident && isAutoApprovable(row) && (await verifyUrlIsLive(row.url));
+      return { ...row, discovery_meta: { ...row.discovery_meta, autoApprovalEligible: !!eligible } };
     })
   );
 
@@ -442,7 +435,8 @@ export default async function handler(req, res) {
     excluded: excludedCounts,
     duplicates: duplicateCount,
     inserted,
-    autoApproved: toInsert.filter((r) => r.discovery_meta?.autoApproved).length,
+    autoApproved: 0,
+    reviewEligible: toInsert.filter((r) => r.discovery_meta?.autoApprovalEligible).length,
     insertedIds: toInsert.map((r) => r.id),
   });
 }

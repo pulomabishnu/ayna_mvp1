@@ -831,7 +831,17 @@ export function createCustomEcosystemProducts(quizResults) {
             out[exact.id] = exact;
             return;
         }
-        const partial = ALL_PRODUCTS.find((p) => String(p.name || '').toLowerCase().includes(needle) || needle.includes(String(p.name || '').toLowerCase()));
+        // Partial matches must be specific: every word of what she typed has
+        // to appear in the product name (and it must be >= 2 words or a
+        // distinctive brand-length token). "pads" alone used to map to the
+        // first pad in the catalog and claim she already uses it.
+        const words = needle.split(/[^a-z0-9]+/).filter(Boolean);
+        if (words.length < 2 && needle.length < 5) return;
+        const partial = ALL_PRODUCTS.find((p) => {
+            const pn = String(p.name || '').toLowerCase();
+            return words.every((w) => new RegExp(`\\b${w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(pn))
+                || (pn.length >= 8 && needle.includes(pn));
+        });
         if (partial) out[partial.id] = partial;
     });
 

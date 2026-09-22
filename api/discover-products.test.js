@@ -155,7 +155,7 @@ describe('GET /api/discover-products — access control', () => {
 });
 
 describe('GET /api/discover-products — happy path', () => {
-  it('auto-approves a candidate with a clean recall check AND a real, live source URL', async () => {
+  it('never auto-approves an AI-discovered candidate, even with a clean recall check AND a live URL', async () => {
     globalThis.__mockAdmin = makeMockAdmin();
     globalThis.fetch = vi.fn(async (url) => {
       const u = String(url);
@@ -170,14 +170,14 @@ describe('GET /api/discover-products — happy path', () => {
 
     expect(res.statusCode).toBe(200);
     expect(res.body.inserted).toBe(1);
-    expect(res.body.autoApproved).toBe(1);
+    expect(res.body.autoApproved).toBe(0);
     expect(globalThis.__mockAdmin.inserted).toHaveLength(1);
 
     const row = globalThis.__mockAdmin.inserted[0];
     expect(row.source).toBe('discovered');
-    expect(row.review_status).toBe('approved');
-    expect(row.is_active).toBe(true);
-    expect(row.discovery_meta.autoApproved).toBe(true);
+    expect(row.review_status).toBe('pending');
+    expect(row.is_active).toBe(false);
+    expect(row.discovery_meta.autoApproved).toBeUndefined();
     expect(row.name).toBe('Test Pad Pro');
     expect(row.brand).toBe('TestBrand');
   });

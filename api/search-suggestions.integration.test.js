@@ -47,24 +47,12 @@ async function loadHandler() {
   return (await import('./search-suggestions.js')).default;
 }
 
-/** A well-formed Claude JSON response, shaped as normalizeSuggestion requires
- * (name >= 3 chars, summary >= 25 chars) so it survives normalization. */
+/** A well-formed model response that picks a REAL catalog product by id. */
 function claudeOk(overrides = {}) {
   return anthropicOk(JSON.stringify({
-    querySummary: 'Options like these are commonly discussed for period cramp relief, and always check fit with a clinician.',
-    relatedSearches: ['heating pad for cramps', 'magnesium for periods'],
-    suggestions: [{
-      brand: 'Acme',
-      name: 'Heat Patch',
-      category: 'cramp-relief',
-      type: 'physical',
-      summary: 'A adhesive heat patch that provides several hours of low-level warmth for cramp relief.',
-      priceHint: '$12',
-      whereToBuy: ['Amazon', 'Target'],
-      tags: ['heat', 'otc'],
-      searchTerms: ['acme heat patch'],
-      typicalUserRating: 4.3,
-    }],
+    querySummary: 'Options like these are commonly discussed for heavy period days, and always check fit with a clinician.',
+    relatedSearches: ['overnight pads', 'organic pads'],
+    suggestions: [{ catalogId: 'p-rael-organic-pad', reason: 'Organic cotton pads for everyday flow.' }],
     ...overrides,
   }));
 }
@@ -245,7 +233,7 @@ describe('POST /api/search-suggestions — request validation', () => {
     await handler(searchReq({ query: 'cramp relief', maxResults: 500 }), res);
 
     const promptSent = JSON.parse(globalThis.fetch.mock.calls[0][1].body).messages[0].content;
-    expect(promptSent).toContain('top 25 options');
+    expect(promptSent).toContain('up to 25 suggestions');
   });
 });
 
@@ -267,74 +255,26 @@ describe('POST /api/search-suggestions — prompt injection guards', () => {
   });
 });
 
-describe('POST /api/search-suggestions — live web search grounding', () => {
-  it('includes real Serper results in the prompt sent to Claude when SERPER_API_KEY is set', async () => {
+describe('POST /api/search-suggestions — catalog grounding', () => {
+  it('sends the Ayna catalog in the prompt and never calls an outside web search', async () => {
     restoreEnv();
     restoreEnv = withEnv({
       ANTHROPIC_API_KEY: 'test-key', ALLOWED_ORIGINS: 'https://ayna.health',
       SUPABASE_URL: 'https://x.supabase.co', SUPABASE_SERVICE_ROLE_KEY: 'service-key',
       SERPER_API_KEY: 'serper-test-key',
     });
-    globalThis.fetch = vi.fn(async (url) => {
-      const u = String(url);
-      if (u.includes('google.serper.dev')) {
-        return {
-          ok: true, status: 200, headers: new Headers(),
-          json: async () => ({
-            organic: [
-              { title: 'Femigist Balancing Brew — Femigist', snippet: 'Herbal tea for hormonal support, made in the USA.', link: 'https://femigist.com/products/balancing-brew' },
-            ],
-          }),
-        };
-      }
-      return claudeOk();
-    });
-    const handler = await loadHandler();
-    const res = mockRes();
-
-    await handler(searchReq({ query: 'femigist' }), res);
-
-    expect(res.statusCode).toBe(200);
-    const claudeCall = globalThis.fetch.mock.calls.find((c) => !String(c[0]).includes('serper'));
-    const promptSent = JSON.parse(claudeCall[1].body).messages[0].content;
-    expect(promptSent).toContain('LIVE WEB SEARCH RESULTS');
-    expect(promptSent).toContain('Femigist Balancing Brew');
-    expect(promptSent).toContain('https://femigist.com/products/balancing-brew');
-  });
-
-  it('omits the search-grounding section entirely when SERPER_API_KEY is not set', async () => {
     globalThis.fetch = vi.fn(async () => claudeOk());
     const handler = await loadHandler();
     const res = mockRes();
 
-    await handler(searchReq({ query: 'femigist' }), res);
-
-    expect(globalThis.fetch).toHaveBeenCalledTimes(1); // no Serper call attempted at all
-    const promptSent = JSON.parse(globalThis.fetch.mock.calls[0][1].body).messages[0].content;
-    expect(promptSent).not.toContain('LIVE WEB SEARCH RESULTS');
-  });
-
-  it('degrades to recall-only (no grounding, no failure) when the Serper call itself fails', async () => {
-    restoreEnv();
-    restoreEnv = withEnv({
-      ANTHROPIC_API_KEY: 'test-key', ALLOWED_ORIGINS: 'https://ayna.health',
-      SUPABASE_URL: 'https://x.supabase.co', SUPABASE_SERVICE_ROLE_KEY: 'service-key',
-      SERPER_API_KEY: 'serper-test-key',
-    });
-    globalThis.fetch = vi.fn(async (url) => {
-      const u = String(url);
-      if (u.includes('google.serper.dev')) throw new Error('network down');
-      return claudeOk();
-    });
-    const handler = await loadHandler();
-    const res = mockRes();
-
-    await handler(searchReq({ query: 'femigist' }), res);
+    await handler(searchReq({ query: 'heavy days' }), res);
 
     expect(res.statusCode).toBe(200);
-    const claudeCall = globalThis.fetch.mock.calls.find((c) => !String(c[0]).includes('serper'));
-    const promptSent = JSON.parse(claudeCall[1].body).messages[0].content;
-    expect(promptSent).not.toContain('LIVE WEB SEARCH RESULTS');
+    expect(globalThis.fetch.mock.calls.some((c) => String(c[0]).includes('serper'))).toBe(false);
+    const promptSent = JSON.parse(globalThis.fetch.mock.calls[0][1].body).messages[0].content;
+    expect(promptSent).toContain('AYNA CATALOG');
+    expect(promptSent).toContain('p-rael-organic-pad');
+    expect(promptSent).toContain('CATALOG-ONLY RULE');
   });
 });
 
@@ -446,14 +386,14 @@ describe('POST /api/search-suggestions — Claude call and retry', () => {
 
   it('recovers suggestions from a response with a trailing comma, which a naive JSON.parse rejects', async () => {
     globalThis.fetch = vi.fn(async () => anthropicOk(
-      '{"querySummary":"Heat and warmth options for cramp relief, always confirm with your clinician.","relatedSearches":["cramp relief"],"suggestions":[{"brand":"Acme","name":"Heat Patch","category":"cramp-relief","type":"physical","summary":"A adhesive heat patch that provides several hours of low-level warmth for cramp relief.","priceHint":"$12","whereToBuy":["Amazon"],"tags":["heat"],"searchTerms":["acme heat patch"],},]}'
+      '{"querySummary":"Heat and warmth options for cramp relief, always confirm with your clinician.","relatedSearches":["cramp relief"],"suggestions":[{"catalogId":"p-rael-organic-pad","reason":"Soft organic pads",},]}'
     ));
     const handler = await loadHandler();
     const res = mockRes();
     await handler(searchReq({ query: 'cramp relief' }), res);
     expect(res.statusCode).toBe(200);
     expect(res.body.suggestions).toHaveLength(1);
-    expect(res.body.suggestions[0].name).toBe('Acme Heat Patch');
+    expect(res.body.suggestions[0].name).toBe('Rael Organic Cotton Pads');
   });
 
   it('recovers suggestions from a response wrapped in prose, which a naive JSON.parse rejects', async () => {
@@ -461,11 +401,7 @@ describe('POST /api/search-suggestions — Claude call and retry', () => {
       `Sure, here are some options! ${JSON.stringify({
         querySummary: 'Heat and warmth options for cramp relief, always confirm with your clinician.',
         relatedSearches: ['cramp relief'],
-        suggestions: [{
-          brand: 'Acme', name: 'Heat Patch', category: 'cramp-relief', type: 'physical',
-          summary: 'A adhesive heat patch that provides several hours of low-level warmth for cramp relief.',
-          priceHint: '$12', whereToBuy: ['Amazon'], tags: ['heat'], searchTerms: ['acme heat patch'],
-        }],
+        suggestions: [{ catalogId: 'p-rael-organic-pad', reason: 'Soft organic pads' }],
       })} Hope that helps!`
     ));
     const handler = await loadHandler();
@@ -476,18 +412,15 @@ describe('POST /api/search-suggestions — Claude call and retry', () => {
   });
 });
 
-describe('POST /api/search-suggestions — output sanitization', () => {
-  it('never recommends Ayna itself, even if the model suggests it', async () => {
+describe('POST /api/search-suggestions — product integrity (catalog only)', () => {
+  it('drops every product the model names that is not in the Ayna catalog', async () => {
     globalThis.fetch = vi.fn(async () => claudeOk({
       suggestions: [
-        {
-          brand: 'Ayna', name: 'Ayna Premium', category: 'other', type: 'digital',
-          summary: 'A women\'s health app that tracks your cycle and symptoms in one place.',
-        },
-        {
-          brand: 'Acme', name: 'Heat Patch', category: 'cramp-relief', type: 'physical',
-          summary: 'A adhesive heat patch that provides several hours of low-level warmth relief.',
-        },
+        { brand: 'Acme', name: 'Heat Patch', category: 'cramp-relief', summary: 'An invented heat patch that does not exist in the catalog at all.' },
+        { catalogId: 'p-made-up-id', name: 'Imaginary Cup' },
+        { brand: 'Ayna', name: 'Ayna Premium' },
+        { brand: 'Femometer', name: 'Femometer Menstrual Heating Pad and Massager' },
+        { catalogId: 'p-rael-organic-pad' },
       ],
     }));
     const handler = await loadHandler();
@@ -495,75 +428,58 @@ describe('POST /api/search-suggestions — output sanitization', () => {
 
     await handler(searchReq({ query: 'cramp relief' }), res);
 
-    expect(res.body.suggestions).toHaveLength(1);
-    expect(res.body.suggestions[0].name).toContain('Heat Patch');
-    expect(res.body.suggestions.some((s) => /\bayna\b/i.test(s.name))).toBe(false);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.suggestions.map((s) => s.id)).toEqual(['p-rael-organic-pad']);
   });
 
-  it('never lets the model invent products for a hand-verified brand (Femometer)', async () => {
+  it('rebuilds every field from the catalog record, ignoring model-supplied facts', async () => {
+    globalThis.fetch = vi.fn(async () => claudeOk({
+      suggestions: [{
+        catalogId: 'p-rael-organic-pad',
+        name: 'Rael SUPER Pads 900-pack',
+        price: '$1',
+        url: 'https://sketchy-affiliate-link.example/x',
+        whereToBuy: ['https://sketchy.example'],
+        reason: 'Soft organic cotton for sensitive skin.',
+      }],
+    }));
+    const handler = await loadHandler();
+    const res = mockRes();
+
+    await handler(searchReq({ query: 'sensitive skin pads' }), res);
+
+    const s = res.body.suggestions[0];
+    expect(s.name).toBe('Rael Organic Cotton Pads');
+    expect(s.price).toBe('$9 for 14');
+    expect(s.url).not.toBe('https://sketchy-affiliate-link.example/x');
+    expect(s.whereToBuy.some((w) => /https?:/i.test(w))).toBe(false);
+    expect(s.catalogVerified).toBe(true);
+    expect(s.llmGenerated).toBeUndefined();
+    expect(s.whyItWorks).toBe('Soft organic cotton for sensitive skin.');
+  });
+
+  it('matches an exact catalog brand+name when the model omits the id, but never fuzzy-matches', async () => {
     globalThis.fetch = vi.fn(async () => claudeOk({
       suggestions: [
-        {
-          brand: 'Femometer', name: 'Femometer Menstrual Heating Pad and Massager', category: 'cramp-relief', type: 'physical',
-          summary: 'A heating pad and massager for menstrual cramp relief with several heat settings.',
-        },
-        {
-          brand: 'Acme', name: 'Heat Patch', category: 'cramp-relief', type: 'physical',
-          summary: 'A adhesive heat patch that provides several hours of low-level warmth relief.',
-        },
+        { brand: 'Cora', name: 'Organic Pads' },
+        { brand: 'Cora', name: 'Organic Pads Ultra Night XL' },
       ],
     }));
     const handler = await loadHandler();
     const res = mockRes();
 
-    await handler(searchReq({ query: 'femometer' }), res);
+    await handler(searchReq({ query: 'cora' }), res);
 
+    expect(res.body.suggestions.map((s) => s.id)).toEqual(['p-cora-organic-pads']);
+  });
+
+  it('dedupes the same catalog product returned twice', async () => {
+    globalThis.fetch = vi.fn(async () => claudeOk({
+      suggestions: [{ catalogId: 'p-rael-organic-pad' }, { catalogId: 'P-RAEL-ORGANIC-PAD' }],
+    }));
+    const handler = await loadHandler();
+    const res = mockRes();
+    await handler(searchReq({ query: 'pads' }), res);
     expect(res.body.suggestions).toHaveLength(1);
-    expect(res.body.suggestions[0].name).toContain('Heat Patch');
-  });
-
-  it('drops a suggestion whose summary is too short to be real content', async () => {
-    globalThis.fetch = vi.fn(async () => claudeOk({
-      suggestions: [{ brand: 'Acme', name: 'Heat Patch', category: 'cramp-relief', summary: 'Too short.' }],
-    }));
-    const handler = await loadHandler();
-    const res = mockRes();
-
-    await handler(searchReq({ query: 'cramp relief' }), res);
-
-    expect(res.body.suggestions).toHaveLength(0);
-  });
-
-  it('strips a URL-like whereToBuy entry rather than passing it through', async () => {
-    globalThis.fetch = vi.fn(async () => claudeOk({
-      suggestions: [{
-        brand: 'Acme', name: 'Heat Patch', category: 'cramp-relief', type: 'physical',
-        summary: 'A adhesive heat patch that provides several hours of low-level warmth relief.',
-        whereToBuy: ['Amazon', 'https://sketchy-affiliate-link.example/x'],
-      }],
-    }));
-    const handler = await loadHandler();
-    const res = mockRes();
-
-    await handler(searchReq({ query: 'cramp relief' }), res);
-
-    const suggestion = res.body.suggestions[0];
-    expect(suggestion.whereToBuy).toContain('Amazon');
-    expect(suggestion.whereToBuy.some((w) => /https?:/i.test(w))).toBe(false);
-  });
-
-  it('falls back to a default disclaimer when the model gives no safetyNote', async () => {
-    globalThis.fetch = vi.fn(async () => claudeOk({
-      suggestions: [{
-        brand: 'Acme', name: 'Heat Patch', category: 'cramp-relief', type: 'physical',
-        summary: 'A adhesive heat patch that provides several hours of low-level warmth relief.',
-      }],
-    }));
-    const handler = await loadHandler();
-    const res = mockRes();
-
-    await handler(searchReq({ query: 'cramp relief' }), res);
-
-    expect(res.body.suggestions[0].safetyNote).toMatch(/educational information only/i);
   });
 });

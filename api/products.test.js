@@ -133,4 +133,21 @@ describe('products', () => {
     await handler({ method: 'GET' }, res);
     expect(res.headers['cache-control']).toMatch(/s-maxage=300\b/);
   });
+
+  it('withholds discovered rows that were auto-approved but never human-reviewed', async () => {
+    queryResult = {
+      data: [
+        { id: 'curated-1', name: 'Real Curated', category: 'pad', product_type: 'physical', is_active: true },
+        { id: 'disc-auto', name: 'AI Guess', category: 'pad', product_type: 'physical', is_active: true, source: 'discovered', review_status: 'approved', discovery_meta: { autoApproved: true } },
+        { id: 'disc-pending', name: 'Pending', category: 'pad', product_type: 'physical', is_active: true, source: 'discovered', review_status: 'pending' },
+        { id: 'disc-human', name: 'Human OK', category: 'pad', product_type: 'physical', is_active: true, source: 'discovered', review_status: 'approved', discovery_meta: { autoApproved: true, humanReviewedAt: '2026-09-22T00:00:00Z' } },
+      ],
+      error: null,
+    };
+    const handler = await loadHandler();
+    const res = mockRes();
+    await handler({ method: 'GET' }, res);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.products.map((p) => p.id)).toEqual(['curated-1', 'disc-human']);
+  });
 });

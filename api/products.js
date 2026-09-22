@@ -27,7 +27,7 @@ function getClient() {
 }
 
 /** DB row -> the object shape the app has always consumed. */
-function toClientProduct(row) {
+export function toClientProduct(row) {
   const p = {
     id: row.id,
     name: row.name,
@@ -63,6 +63,23 @@ function toClientProduct(row) {
   return p;
 }
 
+/**
+ * PRODUCT INTEGRITY (2026-09-22 audit): is_active alone is not enough.
+ * Before the audit, api/discover-products.js could flip an AI-generated
+ * candidate to is_active=true on its own ("auto-approval"). Those rows were
+ * never seen by a human, so they are withheld here until someone runs
+ * `scripts/review-discovered-products.mjs approve <id>`, which stamps
+ * discovery_meta.humanReviewedAt. Curated rows are unaffected.
+ */
+export function isPublishable(row) {
+  if (!row || row.is_active === false) return false;
+  if ((row.source || 'curated') !== 'discovered') return true;
+  if (row.review_status !== 'approved') return false;
+  const meta = row.discovery_meta || {};
+  if (meta.autoApproved && !meta.humanReviewedAt) return false;
+  return true;
+}
+
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
@@ -84,7 +101,7 @@ export default async function handler(req, res) {
 
     if (error) throw new Error(error.message);
 
-    const products = (data || []).map(toClientProduct);
+    const products = (data || []).filter(isPublishable).map(toClientProduct);
 
     if (products.length === 0) {
       // An empty table almost certainly means "not seeded yet", which is very

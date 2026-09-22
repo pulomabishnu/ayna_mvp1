@@ -12,6 +12,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { rateLimit, getClientIp } from './_rateLimit.js';
+import { isPublishable } from './products.js';
 
 let _admin = null;
 
@@ -72,103 +73,6 @@ function searchPattern(slug) {
   const tokens = slug.split('-').filter(Boolean);
   const lastToken = tokens[tokens.length - 1] || '';
   return lastToken ? `%${lastToken}%` : '';
-}
-
-function cleanSafety(value) {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
-
-  const out = {};
-  const allowed = [
-    'fdaStatus',
-    'materials',
-    'recalls',
-    'allergens',
-    'sideEffects',
-    'opinionAlerts',
-  ];
-
-  for (const key of allowed) {
-    if (value[key] !== undefined && value[key] !== null) out[key] = value[key];
-  }
-
-  return out;
-}
-
-function copyPublicFields(raw) {
-  if (!raw || typeof raw !== 'object') return null;
-
-  const name = String(raw.name || '').trim();
-  if (!name) return null;
-
-  const slug = publicProductSlug(raw) || slugify(name);
-
-  // Never expose the sender's generated/private product ID.
-  const out = {
-    id: `shared-${slug}`,
-    name,
-    source: 'shared',
-  };
-
-  const simpleFields = [
-    'brand',
-    'category',
-    'type',
-    'summary',
-    'price',
-    'image',
-    'url',
-    'website',
-    'productUrl',
-    'buyUrl',
-    'purchaseUrl',
-    'affiliateUrl',
-    'faqUrl',
-    'doctorOpinion',
-    'communityReview',
-    'effectiveness',
-    'clinicianOpinionSource',
-    'clinicianAttribution',
-    'ingredients',
-    'platform',
-  ];
-
-  for (const key of simpleFields) {
-    if (raw[key] !== undefined && raw[key] !== null && raw[key] !== '') {
-      out[key] = raw[key];
-    }
-  }
-
-  const arrayFields = ['whereToBuy', 'badges', 'integrations'];
-  for (const key of arrayFields) {
-    if (Array.isArray(raw[key])) out[key] = raw[key];
-  }
-
-  const objectFields = [
-    'whereToBuyLinks',
-    'whereToBuyInStock',
-    'verificationLinks',
-  ];
-
-  for (const key of objectFields) {
-    if (raw[key] && typeof raw[key] === 'object' && !Array.isArray(raw[key])) {
-      out[key] = raw[key];
-    }
-  }
-
-  out.safety = cleanSafety(raw.safety);
-
-  if (raw.requiresPrescription === true) out.requiresPrescription = true;
-  if (raw.userRating !== undefined && raw.userRating !== null) {
-    const rating = Number(raw.userRating);
-    if (Number.isFinite(rating)) out.userRating = rating;
-  }
-
-  // These flags tell the UI not to present generated content as curated
-  // clinician-verified catalog content. They contain no user information.
-  if (raw.llmGenerated === true) out.llmGenerated = true;
-  if (raw.intakeGenerated === true) out.intakeGenerated = true;
-
-  return out;
 }
 
 function catalogRowToClient(row) {
@@ -254,7 +158,7 @@ export default async function handler(req, res) {
 
     if (catalogError) throw new Error(catalogError.message);
 
-    const catalogRow = (catalogRows || []).find(
+    const catalogRow = (catalogRows || []).filter(isPublishable).find(
       (row) => publicProductSlug(row) === slug || slugify(row.name) === slug
     );
 
@@ -270,64 +174,12 @@ export default async function handler(req, res) {
       });
     }
 
-    // Generated/custom ecosystem products live only in a user's ecosystem.
-    //
-    // Backward compatibility: first try the historical private product ID so
-    // old shared/bookmarked /product/<id> links continue to resolve. We never
-    // return product_id to the browser.
-    let ecosystemRow = null;
-
-    const { data: legacyRows, error: legacyError } = await admin
-      .from('user_ecosystems')
-      .select('product_name, product_data, updated_at')
-      .eq('product_id', slug)
-      .order('updated_at', { ascending: false })
-      .limit(1);
-
-    if (legacyError) throw new Error(legacyError.message);
-
-    ecosystemRow = legacyRows?.[0] || null;
-
-    // New public links use a clean name slug instead of a private generated ID.
-    if (!ecosystemRow) {
-      const { data: ecosystemRows, error: ecosystemError } = await admin
-        .from('user_ecosystems')
-        .select('product_name, product_data, updated_at')
-        .ilike('product_name', pattern)
-        .order('updated_at', { ascending: false })
-        .limit(1000);
-
-      if (ecosystemError) throw new Error(ecosystemError.message);
-
-      ecosystemRow = (ecosystemRows || []).find((row) => {
-        const raw = {
-          ...(row.product_data || {}),
-          name: row.product_name || row.product_data?.name,
-        };
-
-        return publicProductSlug(raw) === slug || slugify(raw.name) === slug;
-      });
-    }
-
-    if (!ecosystemRow) {
-      return res.status(404).json({ error: 'not_found' });
-    }
-
-    const product = copyPublicFields(ecosystemRow.product_data || {
-      name: ecosystemRow.product_name,
-    });
-
-    if (!product) return res.status(404).json({ error: 'not_found' });
-
-    res.setHeader(
-      'Cache-Control',
-      'public, s-maxage=300, stale-while-revalidate=3600'
-    );
-
-    return res.status(200).json({
-      product,
-      source: 'shared',
-    });
+    // PRODUCT INTEGRITY (2026-09-22 audit): public product pages resolve
+    // ONLY against the reviewed catalog. The old fallback rebuilt a listing
+    // from another user's user_ecosystems.product_data snapshot, which could
+    // contain model-generated names/URLs/prices that were never in the
+    // catalog (and leaked data derived from a private ecosystem).
+    return res.status(404).json({ error: 'not_found' });
   } catch (error) {
     console.error('[public-product] lookup failed:', error?.message);
     return res.status(502).json({ error: 'query_failed' });

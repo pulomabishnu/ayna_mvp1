@@ -331,14 +331,16 @@ describe('POST /api/discover-brand-catalog — happy path', () => {
     expect(res.body.found).toBe(5);
     expect(res.body.excluded).toEqual({ bundle: 1, prescription: 1, merch: 1 });
     expect(res.body.inserted).toBe(2); // probiotic + UTI test survive filtering
-    expect(res.body.autoApproved).toBe(2); // both: clean recall + live URL + confidently classified
+    expect(res.body.autoApproved).toBe(0); // integrity audit: never auto-publish
+    expect(res.body.reviewEligible).toBe(2); // both: clean recall + live URL + confidently classified
 
     const inserted = globalThis.__mockAdmin.inserted;
     const probiotic = inserted.find((r) => r.name === 'Daily Wellness Probiotic');
     expect(probiotic.url).toBe('https://testbrand.com/products/daily-wellness-probiotic');
     expect(probiotic.image).toBe('https://cdn.shopify.com/example/probiotic.png');
-    expect(probiotic.is_active).toBe(true);
-    expect(probiotic.review_status).toBe('approved');
+    expect(probiotic.is_active).toBe(false);
+    expect(probiotic.review_status).toBe('pending');
+    expect(probiotic.discovery_meta.autoApprovalEligible).toBe(true);
     expect(probiotic.source).toBe('discovered');
     expect(probiotic.clinician_opinion_source).toBe('brand');
   });

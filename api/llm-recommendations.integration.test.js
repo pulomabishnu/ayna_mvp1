@@ -65,7 +65,7 @@ function recPayload(concern = 'Sleep and energy') {
   return JSON.stringify({
     recommendations: [{
       concern,
-      tiers: [{ tier: 'best', product: { name: 'Magnesium Glycinate', brand: 'Acme', why: 'helps sleep' } }],
+      tiers: [{ tier: 'best', product: { catalogId: 'p-magnesium-glycinate', whyItWorks: 'helps sleep' } }],
     }],
   });
 }
@@ -418,5 +418,62 @@ describe('POST /api/llm-recommendations — FSA/HSA prioritization', () => {
     const prompt = sentBody.messages[0].content;
     expect(prompt).toContain('FSA/HSA: hsa');
     expect(prompt).toMatch(/prioritize FSA\/HSA-eligible products/i);
+  });
+});
+
+describe('POST /api/llm-recommendations — product integrity (catalog only)', () => {
+  function payload(tiers) {
+    return JSON.stringify({ recommendations: [{ concern: 'x', tiers }] });
+  }
+
+  it('drops invented products and rebuilds catalog products from the catalog record', async () => {
+    globalThis.fetch = vi.fn(async () => anthropicOk(payload([
+      { name: 'Invented', product: { id: 'slug', name: 'Luna Sleep Gummies', brand: 'Nightfall Labs', url: 'https://nightfall.example', price: '$5' } },
+      {
+        name: 'Real',
+        product: { catalogId: 'p-magnesium-glycinate', name: 'Mega Magnesium 9000', price: '$1', url: 'https://evil.example', whyItWorks: 'Calms muscles before bed.' },
+        alternatives: [{ catalogId: 'p-not-in-catalog', name: 'Fake Alt' }, { catalogId: 'p-ubiquinol-thorne', whyItWorks: 'Energy support.' }],
+      },
+    ])));
+    const handler = await loadHandler();
+    const res = mockRes();
+    await handler(mockReq({ body: { intake: { primaryConcerns: ['Sleep and energy'] }, buildId: 'b-integrity' } }), res);
+
+    expect(res.statusCode).toBe(200);
+    const tiers = res.body.recommendations[0].tiers;
+    expect(tiers).toHaveLength(1);
+    const p = tiers[0].product;
+    expect(p.id).toBe('p-magnesium-glycinate');
+    expect(p.name).toBe('Nature Made Magnesium Glycinate');
+    expect(p.url).not.toBe('https://evil.example');
+    expect(p.price).not.toBe('$1');
+    expect(p.catalogVerified).toBe(true);
+    expect(p.llmGenerated).toBeUndefined();
+    expect(p.whyItWorks).toBe('Calms muscles before bed.');
+    expect(tiers[0].alternatives.map((a) => a.id)).toEqual(['p-ubiquinol-thorne']);
+    const json = JSON.stringify(res.body);
+    expect(json).not.toContain('Nightfall');
+    expect(json).not.toContain('Fake Alt');
+  });
+
+  it('returns a retryable 502 (and releases the build) when the model only invents products', async () => {
+    globalThis.fetch = vi.fn(async () => anthropicOk(payload([
+      { name: 'Invented', product: { name: 'Totally Real Pads', brand: 'Madeup Co' } },
+    ])));
+    const handler = await loadHandler();
+    const res = mockRes();
+    await handler(mockReq({ body: { intake: { primaryConcerns: ['Sleep and energy'] }, buildId: 'b-invented' } }), res);
+    expect(res.statusCode).toBe(502);
+    expect(supa.rpc).toHaveBeenCalledWith('release_ecosystem_build', expect.anything());
+  });
+
+  it('puts the catalog and the catalog-only rule in the prompt', async () => {
+    globalThis.fetch = vi.fn(async () => anthropicOk(recPayload()));
+    const handler = await loadHandler();
+    await handler(mockReq({ body: { intake: { primaryConcerns: ['Sleep and energy'] }, buildId: 'b-prompt' } }), mockRes());
+    const prompt = JSON.parse(globalThis.fetch.mock.calls[0][1].body).messages[0].content;
+    expect(prompt).toContain('AYNA CATALOG');
+    expect(prompt).toContain('CATALOG-ONLY RULE');
+    expect(prompt).toContain('p-magnesium-glycinate');
   });
 });
