@@ -179,9 +179,9 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
   const handleVerifyEmailOtp = async (e) => {
     e.preventDefault();
     if (!supabase || !email) return;
-    const token = emailCode.replace(/\D/g, '').slice(0, 6);
-    if (!/^\d{6}$/.test(token)) {
-      setError('Enter the 6-digit verification code from your email.');
+    const token = emailCode.replace(/\D/g, '').slice(0, 8);
+    if (!/^\d{8}$/.test(token)) {
+      setError('Enter the 8-digit verification code from your email.');
       return;
     }
     setError('');
@@ -571,13 +571,13 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
               <input
                 type="text"
                 inputMode="numeric"
-                placeholder="6-digit code"
+                placeholder="8-digit code"
                 value={emailCode}
-                onChange={(e) => setEmailCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                onChange={(e) => setEmailCode(e.target.value.replace(/\D/g, '').slice(0, 8))}
                 required
                 style={styles.input}
                 autoComplete="one-time-code"
-                maxLength={6}
+                maxLength={8}
                 autoFocus
               />
               <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
