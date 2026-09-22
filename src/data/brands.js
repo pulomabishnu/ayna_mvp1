@@ -767,6 +767,161 @@ export const BRAND_PRODUCTS = [
         isEmergingBrand: true,
     },
     {
+        // Not yet an ayna brand partner — isEmergingBrand only adds the
+        // "Brand" tag on Discovery. The "ayna Partner" badge is driven
+        // entirely by src/utils/partnerBrands.js's PARTNER_BRAND_PATTERNS
+        // allowlist, which Gina isn't in, so it won't show here.
+        id: 'p-gina-vaginal-moisturizing-glides',
+        name: 'Gina Vaginal Moisturizing Glides',
+        brand: 'Gina',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: true,
+        healthFunctions: ['vaginal-health'],
+        tags: ['discomfort', 'comfort', 'organic', 'non-hormonal'],
+        // Exact current price wasn't confirmed — Gina sells this as a
+        // recurring "comfort membership" (3-month supply shipped every 3
+        // months) rather than a flat one-time price, per the brand's site.
+        price: 'Subscription (price not confirmed — check getgina.com)',
+        whereToBuy: ['getgina.com'],
+        url: 'https://getgina.com/products/vaginal-moisturizing-glides',
+        image: '/products/gina/vaginal-moisturizing-glides.webp',
+        summary: 'Vaginal dryness, irritation, or discomfort during intimacy can happen at any life stage — perimenopause, menopause, postpartum, or day to day. This single-ingredient suppository (12 per box, 1.72 g each) is 100% pure, extra virgin, unrefined, cold-pressed coconut oil, inserted with a reusable applicator to hydrate and soothe.',
+        safety: {
+            // No FDA-registered-facility claim was found on Gina's site
+            // (unlike Neycher's), so fdaStatus is left off rather than
+            // assumed.
+            // Full packaging text — shown in full under "Materials" on
+            // the Evidence view (see buildFactRows in ProductModal.jsx,
+            // which doesn't truncate this field).
+            materials: 'Box of 12 vaginal moisturizing glides. Ingredients (from the box): 100% pure, extra virgin, unrefined, cold-pressed coconut oil. Net weight per glide: 0.061 oz (1.72 g). Chill before use.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Discontinue and see a doctor if you notice irritation or an allergic reaction. Coconut oil is oil-based and can weaken latex condoms. Full warnings are listed below.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Sourced from Gina\'s own site marketing claims, not independent clinical literature.',
+        doctorOpinion: 'Gina positions its coconut-oil glides as a simple, single-ingredient way to hydrate and soothe vaginal dryness and discomfort, per the brand\'s own site. Coconut oil is a widely used home remedy for vaginal dryness, but the evidence is mixed: one NIH-hosted lab study found coconut oil, unlike several other commercial vaginal products, didn\'t inhibit the growth of E. coli in vitro. Coconut oil\'s natural pH (roughly 7 to 8) is also more alkaline than the vagina\'s normal acidic range (3.8 to 4.5) — a documented reason intravaginal oil use is linked to a higher risk of bacterial vaginosis or a yeast infection in some people. No independent clinical study of this specific product was found.',
+        doctorOpinionShort: 'Coconut oil is a common home remedy for vaginal dryness, but it\'s naturally alkaline (pH roughly 7 to 8) versus the vagina\'s normal acidic range, which can raise BV/yeast risk in some people. No independent clinical study of this specific product was found.',
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Women with vaginal dryness or irritation at any life stage — perimenopause, menopause, postpartum, or day to day',
+            'Women who prefer a single-ingredient, hormone-free option over multi-ingredient formulas',
+            'Women who want a precision applicator rather than applying oil by hand',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // getgina.com/pages/how-to-use-moisturizing-glides.
+        howToUse: {
+            intro: 'Unwrap the applicator and moisten the tip with water or lubricant. Pull the plunger down to stop, then load a glide rounded side first.',
+            steps: [
+                'Lie back with your knees raised and insert to a comfortable depth, then press the plunger to release the glide and remove the applicator.',
+                'Use at bedtime and stay lying down for about 3 minutes, until the glide fully melts and absorbs.',
+                'Rinse the applicator well and air-dry it before storing — it\'s reusable.',
+            ],
+            sourceUrl: 'https://getgina.com/pages/how-to-use-moisturizing-glides',
+            sourceLabel: 'getgina.com: How to Use Moisturizing Glides',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'Oil-based: can weaken latex condoms.',
+            'Coconut oil\'s natural pH is more alkaline than the vagina\'s — introducing it can shift vaginal pH and, in some people, raise the risk of bacterial vaginosis or a yeast infection.',
+            'Chill before use, per the box.',
+            'Pregnant or breastfeeding: check with a doctor first.',
+            'Irritation or an allergic reaction: stop using it and see a doctor.',
+        ],
+        communityReview: 'No independent customer review data was found for this product at time of writing — Gina launched in April 2026.',
+        effectiveness: 'Coconut oil is a common home remedy for vaginal dryness, but rigorous product-specific clinical evidence is limited; no independent clinical study of this product was found.',
+        // Plain-text ingredient summary — kept as a string since search
+        // indexing, the interaction checker, DoctorPrep.jsx, and the Ask
+        // Ayna context builder all read this field as a string.
+        ingredients: 'Coconut oil (100% pure, extra virgin, unrefined, cold-pressed).',
+        // Per-ingredient science claims, each paired with a credible
+        // source (NIH-hosted or PubMed). Rendered on the Scientific
+        // literature tab.
+        ingredientScience: [
+            {
+                name: 'Coconut oil (100% pure, extra virgin, unrefined, cold-pressed)',
+                text: 'A natural moisturizer rich in lauric acid. In a randomized, double-blind clinical trial, topical virgin coconut oil improved skin barrier function (lower transepidermal water loss, higher skin capacitance) more than mineral oil.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/24320105/', label: 'PubMed: Topical virgin coconut oil in pediatric atopic dermatitis — a randomized, double-blind clinical trial' },
+                ],
+            },
+        ],
+        // Category-level citation shown only on the Scientific literature
+        // tab, kept out of verificationLinks so it doesn't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7203152/',
+                text: 'Effect of Commercial Vaginal Products on the Growth of Uropathogenic and Commensal Vaginal Bacteria',
+                summary: 'A lab study (Scientific Reports) compared five commercial vaginal products, including coconut oil, for effects on E. coli and Lactobacillus growth — coconut oil, unlike the others, didn\'t inhibit E. coli growth in vitro. This is ingredient-level lab evidence, not a clinical study of this specific product.',
+            },
+            {
+                url: 'https://www.acog.org/womens-health/faqs/vulvovaginal-health',
+                text: 'ACOG: Vulvovaginal Health',
+                summary: 'ACOG notes that over-the-counter vaginal moisturizers and lubricants can help relieve vaginal dryness and painful sex. This is clinical-guidance-level evidence, not product-specific validation.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: { links: [] },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        // See the note on the Glides entry above re: partner status.
+        id: 'p-gina-insertion-applicator-refills',
+        name: 'Gina Insertion Applicator Refills',
+        brand: 'Gina',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: true,
+        healthFunctions: ['vaginal-health'],
+        tags: ['comfort', 'non-hormonal'],
+        // Exact price and refill-pack count weren't confirmed.
+        price: 'Not confirmed — check getgina.com',
+        whereToBuy: ['getgina.com'],
+        url: 'https://getgina.com/products/insertion-applicator-refills',
+        image: '/products/gina/insertion-applicator-refills.png',
+        summary: 'A reusable, BPA-free applicator designed exclusively for Gina\'s Vaginal Moisturizing Glides, for smooth, precise, and deeper placement. This refill replaces a worn or lost applicator — exact pack size wasn\'t confirmed at time of writing.',
+        safety: {
+            materials: 'BPA-free reusable applicator, designed exclusively for Gina Vaginal Moisturizing Glides.',
+            recalls: 'No recalls found.',
+            sideEffects: 'Discontinue and see a doctor if you notice irritation. Rinse well and air-dry before storing.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Sourced from Gina\'s own site marketing claims, not independent clinical literature.',
+        doctorOpinion: 'Gina states this applicator allows for smooth, precise, and deeper placement of its Glide, per the brand\'s own site. It\'s a delivery accessory, not an active ingredient — see the Vaginal Moisturizing Glides entry for the product it\'s used with.',
+        // Rendered as a bulleted list on the Evidence view.
+        howToUse: {
+            intro: 'Unwrap the applicator and moisten the tip with water or lubricant. Pull the plunger down to stop, then load a Gina glide rounded side first.',
+            steps: [
+                'Lie back with your knees raised and insert to a comfortable depth, then press the plunger to release the glide and remove the applicator.',
+                'Rinse the applicator well and air-dry it before storing — it\'s reusable.',
+            ],
+            sourceUrl: 'https://getgina.com/pages/how-to-use-moisturizing-glides',
+            sourceLabel: 'getgina.com: How to Use Moisturizing Glides',
+        },
+        warnings: [
+            'Designed exclusively for use with Gina Vaginal Moisturizing Glides.',
+            'Rinse well and air-dry between uses.',
+            'Irritation or discomfort: stop using it and see a doctor.',
+        ],
+        communityReview: 'No independent customer review data was found for this product at time of writing — Gina launched in April 2026.',
+        effectiveness: 'A reusable delivery accessory rather than an active ingredient; effectiveness depends on the Vaginal Moisturizing Glide it\'s used with.',
+        ingredients: 'BPA-free applicator (plastic components; no active ingredients).',
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: { links: [] },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
         id: 'p-good-kitty-uti-biome-shield',
         name: 'Good Kitty UTI Biome Shield',
         brand: 'Good Kitty Co',
