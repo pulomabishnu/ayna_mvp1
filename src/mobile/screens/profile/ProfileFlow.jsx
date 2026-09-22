@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import posthog from 'posthog-js';
 import { ALL_PRODUCTS } from '../../../data/products.js';
 import { getSupabaseClient } from '../../../utils/supabaseClient.js';
+import { apiUrl } from '../../../utils/apiUrl.js';
 import { getBrandAffinity, getCategoryInsights, getSafetyAlerts } from '../../utils/shopperProfileData.js';
 import { ROUTINE_BUCKET_LABELS, ROUTINE_BUCKETS, useRoutine } from '../../hooks/useRoutine.js';
 import { getProfileCompletionPct } from '../../utils/profileCompleteness.js';
@@ -93,6 +94,15 @@ function AccountIcon({ type }) {
       <svg {...props}>
         <path d="M18 16v-5a6 6 0 1 0-12 0v5l-2 3h16l-2-3Z" />
         <path d="M9.5 21a2.5 2.5 0 0 0 5 0" />
+      </svg>
+    );
+  }
+  if (type === 'checkin') {
+    return (
+      <svg {...props}>
+        <rect x="4" y="5" width="16" height="16" rx="3" />
+        <path d="M4 10h16M8 3v4M16 3v4" />
+        <path d="M9 14.5l2 2 4-4" />
       </svg>
     );
   }
@@ -192,7 +202,7 @@ function ToggleRow({ title, sub, on, onClick, first }) {
 
 /* ---------------------------- Profile hub ---------------------------- */
 
-function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, onEditProfile, onOpenEcosystem, onOpenSaved }) {
+function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenMonthlyCheckin }) {
   return (
     <div style={{ flex: 1, minWidth: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
       <div
@@ -276,6 +286,7 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
         <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)', marginBottom: 2 }}>Your account</div>
 
         {[
+          { key: 'checkin', title: 'Monthly check-in', sub: "What's changed since last time", onClick: onOpenMonthlyCheckin },
           { key: 'shopper', title: 'Shopper Profile', sub: 'Alerts, routine, brand affinity', badge: shopperAlertsCount > 0 ? `${shopperAlertsCount} NEW` : null },
           { key: 'startups', title: 'Early Stage Startups', sub: 'Emerging brands worth backing' },
           { key: 'preferences', title: 'Preferences', sub: 'Notifications, updates, night mode' },
@@ -283,7 +294,7 @@ function ProfileHub({ onOpen, onClose, name, initial, memberSince, ecosystemCoun
         ].map((row) => (
           <div
             key={row.key}
-            onClick={() => onOpen(row.key)}
+            onClick={row.onClick || (() => onOpen(row.key))}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -619,7 +630,7 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
 
   useEffect(() => {
     let cancelled = false;
-    fetch('/api/startups')
+    fetch(apiUrl('/api/startups'))
       .then((res) => (res.ok ? res.json() : Promise.reject(new Error('bad response'))))
       .then((data) => {
         if (cancelled) return;
@@ -858,7 +869,7 @@ function PhoneVerifyPanel({ onBack, onVerified }) {
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
               placeholder="(555) 555-5555"
-              style={{ width: '100%', boxSizing: 'border-box', padding: '14px 16px', borderRadius: 14, border: '1px solid var(--ayna-border)', fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)', background: 'var(--ayna-surface)', outline: 'none' }}
+              style={{ width: '100%', boxSizing: 'border-box', padding: '14px 16px', borderRadius: 14, border: '1px solid var(--ayna-border)', fontSize: 'max(16px, calc(15px * var(--ayna-text-scale, 1)))', color: 'var(--ayna-text)', background: 'var(--ayna-surface)', outline: 'none' }}
             />
             {error && <div style={{ color: '#B4402A', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', marginTop: 10 }}>{error}</div>}
             <div
@@ -1563,13 +1574,7 @@ function PrivacyDataScreen({ onBack, onOpenManageData, onOpenDeleteAccount, auth
         <div style={{ margin: '0 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Your data</div>
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
           <AccountRow
-            title="Manage my data"
-            sub="See what we hold — account details, intake answers, saved products."
             borderTop={false}
-            onClick={onOpenManageData}
-          />
-          <AccountRow title="Download my data" sub="A full export of your account and intake answers." onClick={onOpenManageData} />
-          <AccountRow
             title={<span style={{ color: '#B4402A' }}>Delete my account & data</span>}
             sub="Your account and associated personal data will be deleted, except information we are legally required to retain."
             onClick={onOpenDeleteAccount}
@@ -1700,8 +1705,7 @@ const HEALTH_DATA_PROCESSORS = [
 ];
 
 const HEALTH_DATA_RIGHTS = [
-  { title: 'See exactly what we hold', how: 'Settings → Privacy & data → Manage my data' },
-  { title: 'Download a copy', how: 'Same screen, in a portable format' },
+  { title: 'See or download what we hold', how: 'Email puloma@aynahealth.co — we will send it directly' },
   { title: 'Withdraw consent for analytics', how: 'Settings → Privacy & data → the analytics toggle' },
   { title: 'Turn off third-party AI processing', how: 'Settings → Privacy & data → Allow AI features' },
   { title: 'Delete your account and data', how: 'Settings → Account → Delete account. Email puloma@aynahealth.co for additional privacy support.' },
@@ -2476,7 +2480,7 @@ function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers,
                 onChange={(e) => setNameDraft(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter' && !nameSaving) saveName(); }}
                 placeholder="Your first name"
-                style={{ width: '100%', boxSizing: 'border-box', padding: '12px 14px', borderRadius: 12, border: '1px solid var(--ayna-border)', fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)', background: 'var(--ayna-bg)', outline: 'none' }}
+                style={{ width: '100%', boxSizing: 'border-box', padding: '12px 14px', borderRadius: 12, border: '1px solid var(--ayna-border)', fontSize: 'max(16px, calc(14.5px * var(--ayna-text-scale, 1)))', color: 'var(--ayna-text)', background: 'var(--ayna-bg)', outline: 'none' }}
               />
               {nameError && <div style={{ color: '#B4402A', fontSize: 'calc(12px * var(--ayna-text-scale, 1))', marginTop: 8 }}>{nameError}</div>}
               <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
@@ -2519,8 +2523,7 @@ function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers,
 
         <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Your data</div>
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
-          <AccountRow borderTop={false} title="Manage & download my data" sub="Account details, intake answers, saved products." onClick={onOpenManageData} />
-          <AccountRow title={<span style={{ color: '#B4402A' }}>Delete account</span>} sub="Removes your profile and health answers." onClick={onOpenDeleteAccount} />
+          <AccountRow borderTop={false} title={<span style={{ color: '#B4402A' }}>Delete account</span>} sub="Removes your profile and health answers." onClick={onOpenDeleteAccount} />
         </div>
 
         <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 14, padding: '0 4px' }}>
@@ -2613,7 +2616,7 @@ function DeleteAccountScreen({ onBack, onSignOut, onClose }) {
             border: '1.5px solid var(--ayna-border)',
             borderRadius: 14,
             padding: '13px 16px',
-            fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
+            fontSize: 'max(16px, calc(15px * var(--ayna-text-scale, 1)))',
             fontFamily: "'DM Sans',sans-serif",
             background: 'var(--ayna-surface)',
             color: 'var(--ayna-text)',
@@ -2768,7 +2771,7 @@ function PasswordScreen({ onBack, authUser }) {
                   type={showCurrent ? 'text' : 'password'}
                   value={current}
                   onChange={(e) => setCurrent(e.target.value)}
-                  style={{ flex: 1, minWidth: 0, border: 'none', outline: 'none', background: 'none', fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}
+                  style={{ flex: 1, minWidth: 0, border: 'none', outline: 'none', background: 'none', fontSize: 'max(16px, calc(15px * var(--ayna-text-scale, 1)))', color: 'var(--ayna-text)' }}
                 />
                 <div onClick={() => setShowCurrent((v) => !v)} style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: 600, color: 'var(--ayna-brown)', cursor: 'pointer', flex: 'none' }}>{showCurrent ? 'Hide' : 'Show'}</div>
               </div>
@@ -2782,7 +2785,7 @@ function PasswordScreen({ onBack, authUser }) {
                 value={next}
                 onChange={(e) => setNext(e.target.value)}
                 placeholder="At least 8 characters"
-                style={{ flex: 1, minWidth: 0, border: 'none', outline: 'none', background: 'none', fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)' }}
+                style={{ flex: 1, minWidth: 0, border: 'none', outline: 'none', background: 'none', fontSize: 'max(16px, calc(15px * var(--ayna-text-scale, 1)))', color: 'var(--ayna-text)' }}
               />
               <div onClick={() => setShowNext((v) => !v)} style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', fontWeight: 600, color: 'var(--ayna-brown)', cursor: 'pointer', flex: 'none' }}>{showNext ? 'Hide' : 'Show'}</div>
             </div>
@@ -2806,7 +2809,7 @@ function PasswordScreen({ onBack, authUser }) {
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
               placeholder="Re-enter it"
-              style={{ width: '100%', boxSizing: 'border-box', border: '1px solid var(--ayna-border)', borderRadius: 12, background: 'var(--ayna-bg-alt)', padding: '13px 14px', fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text)', outline: 'none' }}
+              style={{ width: '100%', boxSizing: 'border-box', border: '1px solid var(--ayna-border)', borderRadius: 12, background: 'var(--ayna-bg-alt)', padding: '13px 14px', fontSize: 'max(16px, calc(15px * var(--ayna-text-scale, 1)))', color: 'var(--ayna-text)', outline: 'none' }}
             />
           </div>
           {error && <div style={{ color: '#B4402A', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))' }}>{error}</div>}
@@ -3137,7 +3140,7 @@ function ContactScreen({ onBack }) {
     setStatus('sending');
     setError('');
     try {
-      const res = await fetch('/api/contact', {
+      const res = await fetch(apiUrl('/api/contact'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
@@ -3155,7 +3158,7 @@ function ContactScreen({ onBack }) {
   const canSend = form.name.trim().length >= 2 && form.email.trim() && form.reason && form.subject.trim().length >= 2 && form.message.trim().length >= 10;
   const sendReady = canSend && status !== 'sending';
 
-  const fieldStyle = { border: '1px solid #ded9e4', borderRadius: 10, background: '#fff', padding: 14, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: '#1A1714', width: '100%', boxSizing: 'border-box', outline: 'none', fontFamily: 'inherit' };
+  const fieldStyle = { border: '1px solid #ded9e4', borderRadius: 10, background: '#fff', padding: 14, fontSize: 'max(16px, calc(15px * var(--ayna-text-scale, 1)))', color: '#1A1714', width: '100%', boxSizing: 'border-box', outline: 'none', fontFamily: 'inherit' };
   const labelStyle = { fontSize: 'calc(13px * var(--ayna-text-scale, 1))', fontWeight: 600, color: '#4a4356', marginBottom: 7 };
 
   return (
@@ -3260,6 +3263,7 @@ export default function ProfileFlow({
   onGoEcosystem,
   onOpenSaved,
   onEditProfile,
+  onOpenMonthlyCheckin,
   personalizeWithData = true,
   onPersonalizeWithDataChange,
   askAynaHistoryCount = 0,
@@ -3298,6 +3302,7 @@ export default function ProfileFlow({
         onEditProfile={onEditProfile ? () => { onClose(); onEditProfile(); } : undefined}
         onOpenEcosystem={onGoEcosystem ? () => { onClose(); onGoEcosystem(); } : undefined}
         onOpenSaved={onOpenSaved ? () => { onClose(); onOpenSaved(); } : undefined}
+        onOpenMonthlyCheckin={onOpenMonthlyCheckin ? () => { onClose(); onOpenMonthlyCheckin(); } : undefined}
       />
     );
   } else if (screen === 'shopper') {

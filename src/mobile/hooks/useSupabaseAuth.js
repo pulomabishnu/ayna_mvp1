@@ -4,6 +4,7 @@ import { Capacitor, registerPlugin } from '@capacitor/core';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Browser } from '@capacitor/browser';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
+import { apiUrl } from '../../utils/apiUrl.js';
 import { AGE_REQUIREMENT_VERSION, CONSENT_VERSION, clearPendingConsent, stashPendingConsent, flushPendingConsent } from '../../utils/pendingConsent.js';
 import { resetChipPosition } from '../utils/askAynaChipPosition.js';
 
@@ -34,6 +35,27 @@ export const MOBILE_OAUTH_PENDING_KEY = 'ayna_mobile_oauth_pending';
 const NATIVE_OAUTH_REDIRECT = 'co.aynahealth.app://auth/callback';
 const AppleSignIn = registerPlugin('AppleSignIn');
 
+// On native, point email confirmation at the exact same custom-scheme URL as
+// Google/Apple sign-in — handleNativeOAuthUrl below already parses any
+// co.aynahealth.app://auth/callback hit for access/refresh tokens and calls
+// setSession() with no regard for which flow produced them, so reusing that
+// URL means email confirmation lands back in THIS app's own auth state, no
+// extra code needed. This is what lets the "check your email" screen advance
+// itself the moment confirmation actually happens server-side, instead of a
+// self-reported "I confirmed" button someone could tap without ever
+// confirming anything.
+function emailConfirmRedirect() {
+  return Capacitor.isNativePlatform() ? NATIVE_OAUTH_REDIRECT : EMAIL_CONFIRM_REDIRECT;
+}
+
+// SigninScreen listens for this — a failure inside handleNativeOAuthUrl
+// otherwise only reaches console.error, which is invisible on a real device
+// with no debugger attached and looks identical to just landing back on the
+// sign-in screen for no reason.
+function reportNativeOAuthError(message) {
+  window.dispatchEvent(new CustomEvent('ayna:native-oauth-error', { detail: message }));
+}
+
 export function useSupabaseAuth() {
   const [user, setUser] = useState(null);
   // Starts false (nothing to wait for) when there's no client at all, so
@@ -57,7 +79,11 @@ export function useSupabaseAuth() {
   }, []);
 
   useEffect(() => {
-    if (Capacitor.getPlatform() !== 'ios') return undefined;
+    // Native (iOS or Android) only — this catches the co.aynahealth.app://
+    // custom-scheme redirect Browser.open leaves the OS to hand back to the
+    // app; the web build never gets this URL at all (AuthCallback.jsx
+    // handles its own /auth/callback route instead).
+    if (!Capacitor.isNativePlatform()) return undefined;
 
     const supabase = getSupabaseClient();
     if (!supabase) return undefined;
@@ -85,7 +111,8 @@ export function useSupabaseAuth() {
         searchParams.get('error_description');
 
       if (errorDescription) {
-        console.error('[Ayna] Native Google OAuth failed:', errorDescription);
+        console.error('[Ayna] Native OAuth failed:', errorDescription);
+        reportNativeOAuthError(errorDescription);
         return;
       }
 
@@ -93,7 +120,8 @@ export function useSupabaseAuth() {
       const refreshToken = hashParams.get('refresh_token');
 
       if (!accessToken || !refreshToken) {
-        console.error('[Ayna] Native Google OAuth callback did not include a complete session.');
+        console.error('[Ayna] Native OAuth callback did not include a complete session.');
+        reportNativeOAuthError('Sign-in did not return a complete session. Please try again.');
         return;
       }
 
@@ -103,7 +131,8 @@ export function useSupabaseAuth() {
       });
 
       if (error) {
-        console.error('[Ayna] Could not establish native Google session:', error.message);
+        console.error('[Ayna] Could not establish native session:', error.message);
+        reportNativeOAuthError(error.message);
         return;
       }
 
@@ -144,7 +173,7 @@ export function useSupabaseAuth() {
       email,
       password,
       options: {
-        emailRedirectTo: EMAIL_CONFIRM_REDIRECT,
+        emailRedirectTo: emailConfirmRedirect(),
         data: {
           first_name: firstName,
           full_name: firstName,
@@ -184,7 +213,7 @@ export function useSupabaseAuth() {
     const { error } = await supabase.auth.resend({
       type: 'signup',
       email,
-      options: { emailRedirectTo: EMAIL_CONFIRM_REDIRECT },
+      options: { emailRedirectTo: emailConfirmRedirect() },
     });
     if (error) throw error;
   }
@@ -205,7 +234,7 @@ export function useSupabaseAuth() {
     if (consented) stashPendingConsent();
     else clearPendingConsent();
 
-    if (Capacitor.getPlatform() === 'ios') {
+    if (Capacitor.isNativePlatform()) {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -289,7 +318,7 @@ export function useSupabaseAuth() {
     const accessToken = data?.session?.access_token;
     if (authorizationCode && accessToken) {
       try {
-        const response = await fetch('/api/apple-token', {
+        const response = await fetch(apiUrl('/api/apple-token'), {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

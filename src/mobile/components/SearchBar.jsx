@@ -70,7 +70,7 @@ export default function SearchBar({ value = '', onChange, onFilterClick, terms =
               border: 'none',
               outline: 'none',
               background: 'transparent',
-              fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))',
+              fontSize: 'max(16px, calc(13.5px * var(--ayna-text-scale, 1)))',
               color: '#292524',
               fontFamily: 'Inter, system-ui, sans-serif',
             }}

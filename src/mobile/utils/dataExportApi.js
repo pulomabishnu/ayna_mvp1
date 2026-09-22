@@ -1,5 +1,6 @@
 import posthog from 'posthog-js';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
+import { apiUrl } from '../../utils/apiUrl.js';
 import { NotSignedInError } from './notificationPreferencesApi.js';
 
 export { NotSignedInError };
@@ -35,7 +36,7 @@ async function getAccessToken() {
 export async function fetchDataExport() {
   const token = await getAccessToken();
   if (!token) throw new NotSignedInError();
-  const res = await fetch('/api/export-data', {
+  const res = await fetch(apiUrl('/api/export-data'), {
     headers: { Authorization: `Bearer ${token}` },
   });
   let data;
@@ -52,7 +53,7 @@ export async function requestAccountDeletion() {
   const token = await getAccessToken();
   if (!token) throw new NotSignedInError();
 
-  const res = await fetch('/api/account-delete', {
+  const res = await fetch(apiUrl('/api/account-delete'), {
     method: 'DELETE',
     headers: {
       Authorization: `Bearer ${token}`,

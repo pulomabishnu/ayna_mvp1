@@ -663,7 +663,7 @@ function SearchBar({ value, onChange, placeholder }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 9, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, borderRadius: 99, padding: '11px 14px', marginBottom: 14 }}>
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-      <input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', minWidth: 0 }} />
+      <input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 'max(16px, calc(13px * var(--ayna-text-scale, 1)))', minWidth: 0 }} />
     </div>
   );
 }
@@ -773,7 +773,7 @@ function TextInput({ value, onChange, placeholder, inputMode, maxLength }) {
       placeholder={placeholder}
       inputMode={inputMode}
       maxLength={maxLength}
-      style={{ width: '100%', boxSizing: 'border-box', padding: '14px 16px', borderRadius: 14, border: '1.5px solid ' + ROW_BORDER, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: INK, background: CARD_BG, outline: 'none' }}
+      style={{ width: '100%', boxSizing: 'border-box', padding: '14px 16px', borderRadius: 14, border: '1.5px solid ' + ROW_BORDER, fontSize: 'max(16px, calc(14px * var(--ayna-text-scale, 1)))', color: INK, background: CARD_BG, outline: 'none' }}
     />
   );
 }
@@ -786,9 +786,6 @@ function OtherBox({ label, value, onChange, placeholder }) {
     </div>
   );
 }
-
-const AGE_MIN = 13;
-const AGE_MAX = 90;
 
 // Under-18 gate (Ayna_Minor_Gate.html design reference) — a fixed warm
 // warning tone rather than a --ayna-* var, same reasoning as SELECTED_TEXT
@@ -807,59 +804,82 @@ function isMinorAge(value) {
   return Number.isFinite(n) && n < MINOR_AGE_LIMIT;
 }
 
-// Pattern A2: a real, draggable slider (invisible native <input type=range>
-// layered over a custom-drawn track/fill/thumb, since inline styles can't
-// reach ::-webkit-slider-thumb) plus a manual numeric-entry stepper panel
-// below it — same two ways to answer the design specifies, not just the
-// slider alone.
-// Wrapped in its own light card (rather than sitting directly on the
-// screen background) since the floating value label works by painting an
-// opaque cutout over the track — that only blends in when its background
-// actually matches what's immediately behind it, which the page background
-// no longer does now that it's back to the dark hero gradient.
+// A direct numeric age, per product request — replaces the earlier
+// month/year birthday picker. Simpler and one tap faster, at the cost of
+// going stale over time (a typed age isn't recomputed later the way a
+// birth year would be), which is an accepted tradeoff here.
 function AgeCard({ value, onChange, underage, onOpenGate }) {
-  const numeric = value ? Number(value) : 28;
-  const pct = ((numeric - AGE_MIN) / (AGE_MAX - AGE_MIN)) * 100;
-  const step = (delta) => onChange(String(Math.min(AGE_MAX, Math.max(AGE_MIN, numeric + delta))));
-  const trackFill = underage ? 'linear-gradient(90deg, #F0D9CF, #C98A6D)' : `linear-gradient(90deg, ${ACCENT_BG}, ${ACCENT_BORDER})`;
-  const thumbBorder = underage ? WARNING_BORDER : ACCENT_BORDER;
-  const valueColor = underage ? WARNING_BORDER : NAVY;
+  const hasValue = value !== '' && value !== null && value !== undefined;
+  const step = (delta) => {
+    const current = Number(value) || 0;
+    const next = Math.min(120, Math.max(0, current + delta));
+    onChange(String(next));
+  };
+
   return (
-    <div style={{ background: CARD_BG, borderRadius: 24, padding: '40px 20px 20px', boxShadow: '0 20px 44px -22px rgba(0,0,0,.5)' }}>
-      <div style={{ position: 'relative', height: 40 }}>
-        <div style={{ position: 'absolute', left: 0, right: 0, top: 16, height: 8, borderRadius: 99, background: 'var(--ayna-track)' }} />
-        <div style={{ position: 'absolute', left: 0, width: `${pct}%`, top: 16, height: 8, borderRadius: 99, background: trackFill }} />
-        <div style={{ position: 'absolute', left: `${pct}%`, top: 4, transform: 'translateX(-50%)', width: 32, height: 32, borderRadius: 99, background: CARD_BG, border: '3px solid ' + thumbBorder, boxShadow: '0 6px 16px rgba(232,169,79,.4)', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', left: `${pct}%`, top: -38, transform: 'translateX(-50%)', fontFamily: "'Playfair Display',serif", fontSize: 'calc(36px * var(--ayna-text-scale, 1))', color: valueColor, background: CARD_BG, padding: '0 8px', pointerEvents: 'none' }}>
-          {value || '—'}
-        </div>
-        <input
-          type="range" min={AGE_MIN} max={AGE_MAX} value={numeric} onChange={(e) => onChange(e.target.value)}
-          style={{ position: 'absolute', left: 0, right: 0, top: -2, height: 40, width: '100%', margin: 0, opacity: 0, cursor: 'grab' }}
-        />
-      </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4, fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', color: MUTED }}>
-        <span>{AGE_MIN}</span><span>{AGE_MAX}+</span>
-      </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 26, padding: '13px 15px', borderRadius: 16, background: PANEL_BG, border: '1px solid ' + ROW_BORDER }}>
-        <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: BODY_TEXT, flex: 1 }}>Prefer to type it?</div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: CARD_BG, border: '1.5px solid ' + ROW_BORDER, borderRadius: 12, padding: '8px 12px' }}>
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: INK }}>{value || '—'}</div>
-          <div style={{ width: 1, height: 14, background: ROW_BORDER }} />
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <div onClick={() => step(1)} style={{ cursor: 'pointer' }}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" style={{ transform: 'rotate(180deg)' }}><path d="M6 9l6 6 6-6" /></svg>
-            </div>
-            <div onClick={() => step(-1)} style={{ cursor: 'pointer' }}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
-            </div>
+    <div style={{ background: CARD_BG, borderRadius: 24, padding: 20, boxShadow: '0 20px 44px -22px rgba(0,0,0,.5)' }}>
+      <div
+        style={{
+          borderRadius: 18,
+          padding: '16px 18px',
+          textAlign: 'center',
+          background: !hasValue ? PANEL_BG : underage ? WARNING_BG : 'linear-gradient(160deg,#FCEBD1,#F7D9A8)',
+          border: '1px solid ' + (!hasValue ? ROW_BORDER : underage ? WARNING_BORDER_SOFT : ACCENT_BORDER),
+        }}
+      >
+        <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: MUTED }}>Your age</div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 20, marginTop: 10 }}>
+          <div
+            onClick={() => step(-1)}
+            style={{ width: 38, height: 38, borderRadius: 99, border: '1px solid ' + ROW_BORDER, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 'calc(18px * var(--ayna-text-scale, 1))', color: NAVY, background: '#fff' }}
+          >
+            −
+          </div>
+          <input
+            type="number"
+            inputMode="numeric"
+            min={0}
+            max={120}
+            value={value}
+            onChange={(e) => {
+              const digits = e.target.value.replace(/[^0-9]/g, '').slice(0, 3);
+              onChange(digits);
+            }}
+            placeholder="··"
+            style={{
+              width: 74,
+              textAlign: 'center',
+              border: 'none',
+              outline: 'none',
+              background: 'transparent',
+              fontFamily: "'Playfair Display',serif",
+              fontSize: 'calc(30px * var(--ayna-text-scale, 1))',
+              color: underage ? WARNING_BORDER : hasValue ? NAVY : MUTED,
+            }}
+          />
+          <div
+            onClick={() => step(1)}
+            style={{ width: 38, height: 38, borderRadius: 99, border: '1px solid ' + ROW_BORDER, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 'calc(18px * var(--ayna-text-scale, 1))', color: NAVY, background: '#fff' }}
+          >
+            +
           </div>
         </div>
+        <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: underage ? WARNING_BODY : BODY_TEXT, marginTop: 8 }}>
+          {hasValue ? (underage ? "That's under our age requirement" : 'Tap the number to type it directly') : 'Type your age, or use the − and +'}
+        </div>
       </div>
+
+      <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', marginTop: 20, padding: '13px 15px', borderRadius: 16, background: PANEL_BG, border: '1px solid ' + ROW_BORDER }}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flex: 'none', marginTop: 2 }}><circle cx="12" cy="12" r="9" /><path d="M12 8v4M12 16h.01" /></svg>
+        <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: BODY_TEXT }}>
+          We store your age, not a date of birth. It's health data under our policy, and it's never used to advertise to you.
+        </div>
+      </div>
+
       {underage && (
         <div
           onClick={onOpenGate}
-          style={{ display: 'flex', gap: 11, alignItems: 'flex-start', marginTop: 20, padding: '14px 15px', borderRadius: 16, background: WARNING_BG, border: '1px solid ' + WARNING_BORDER_SOFT, cursor: 'pointer' }}
+          style={{ display: 'flex', gap: 11, alignItems: 'flex-start', marginTop: 14, padding: '14px 15px', borderRadius: 16, background: WARNING_BG, border: '1px solid ' + WARNING_BORDER_SOFT, cursor: 'pointer' }}
         >
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={WARNING_BORDER} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flex: 'none', marginTop: 1 }}><circle cx="12" cy="12" r="9" /><path d="M12 8v4M12 16h.01" /></svg>
           <div>
@@ -1023,7 +1043,7 @@ function TokenInput({ values, onChange, placeholder, suggestions = [], suggestio
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter' && draft.trim()) addValue(draft); }}
           placeholder={placeholder}
-          style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', minWidth: 0 }}
+          style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 'max(16px, calc(13px * var(--ayna-text-scale, 1)))', minWidth: 0 }}
         />
       </div>
       {draft.trim().length > 0 && (
@@ -1116,7 +1136,7 @@ function AddProductBuilder({ values, onChange, suggestions, historyNames, footer
               onChange={(e) => setDraft(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter' && draft.trim()) addValue(draft); }}
               placeholder="Start typing a product or brand"
-              style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', minWidth: 0 }}
+              style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 'max(16px, calc(13px * var(--ayna-text-scale, 1)))', minWidth: 0 }}
             />
             <span onClick={() => { setAdding(false); setDraft(''); }} style={{ cursor: 'pointer', opacity: 0.55, flex: 'none', display: 'flex' }}>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="2.6" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
@@ -1238,7 +1258,7 @@ function ProductHistoryBuilder({ products, onChange }) {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 9, background: CARD_BG, border: '1.5px solid ' + ACCENT_BORDER, borderRadius: 99, padding: '11px 14px' }}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={MUTED} strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-            <input autoFocus value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && query.trim()) addProduct(query); }} placeholder="Search products" style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', minWidth: 0 }} />
+            <input autoFocus value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && query.trim()) addProduct(query); }} placeholder="Search products" style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: INK, fontSize: 'max(16px, calc(13px * var(--ayna-text-scale, 1)))', minWidth: 0 }} />
             <span onClick={() => { setAdding(false); setQuery(''); }} style={{ cursor: 'pointer', opacity: 0.55, flex: 'none', display: 'flex' }}>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="2.6" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
             </span>
@@ -1292,7 +1312,7 @@ function ProductHistoryBuilder({ products, onChange }) {
 
                     {['Mild', 'Serious'].includes(product.reaction) && (
                       <div style={{ marginBottom: 14, padding: '12px 13px', borderRadius: 14, background: PANEL_BG, border: '1px solid ' + ROW_BORDER }}>
-                        <input value={product.reactionText} onChange={(e) => updateProduct(index, { reactionText: e.target.value })} placeholder="What happened? (optional)" style={{ width: '100%', boxSizing: 'border-box', border: 'none', background: 'transparent', outline: 'none', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: INK, fontFamily: 'inherit' }} />
+                        <input value={product.reactionText} onChange={(e) => updateProduct(index, { reactionText: e.target.value })} placeholder="What happened? (optional)" style={{ width: '100%', boxSizing: 'border-box', border: 'none', background: 'transparent', outline: 'none', fontSize: 'max(16px, calc(12.5px * var(--ayna-text-scale, 1)))', color: INK, fontFamily: 'inherit' }} />
                       </div>
                     )}
 
@@ -1309,7 +1329,7 @@ function ProductHistoryBuilder({ products, onChange }) {
                         />
                         {(product.stopReasons || []).includes('Other') && (
                           <div style={{ marginTop: 10, padding: '12px 13px', borderRadius: 14, background: PANEL_BG, border: '1px solid ' + ROW_BORDER }}>
-                            <input value={product.stopOther || ''} onChange={(e) => updateProduct(index, { stopOther: e.target.value })} placeholder="Other reason" style={{ width: '100%', boxSizing: 'border-box', border: 'none', background: 'transparent', outline: 'none', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', color: INK, fontFamily: 'inherit' }} />
+                            <input value={product.stopOther || ''} onChange={(e) => updateProduct(index, { stopOther: e.target.value })} placeholder="Other reason" style={{ width: '100%', boxSizing: 'border-box', border: 'none', background: 'transparent', outline: 'none', fontSize: 'max(16px, calc(12.5px * var(--ayna-text-scale, 1)))', color: INK, fontFamily: 'inherit' }} />
                           </div>
                         )}
                       </div>
@@ -1445,7 +1465,7 @@ function TextAreaField({ value, onChange, placeholder }) {
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         rows={5}
-        style={{ width: '100%', boxSizing: 'border-box', padding: 16, borderRadius: 20, border: '1.5px solid ' + ROW_BORDER, fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', color: INK, background: CARD_BG, outline: 'none', resize: 'vertical', minHeight: 150, lineHeight: 1.65, fontFamily: 'inherit' }}
+        style={{ width: '100%', boxSizing: 'border-box', padding: 16, borderRadius: 20, border: '1.5px solid ' + ROW_BORDER, fontSize: 'max(16px, calc(13.5px * var(--ayna-text-scale, 1)))', color: INK, background: CARD_BG, outline: 'none', resize: 'vertical', minHeight: 150, lineHeight: 1.65, fontFamily: 'inherit' }}
       />
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginTop: 12 }}>
         {FREE_TEXT_PROMPTS.map((prompt) => (
@@ -1468,8 +1488,8 @@ function TextAreaField({ value, onChange, placeholder }) {
 // keeps its own light card look from the reference. No progress bar, no
 // Skip, and nothing about the intake carries forward from here: leaving
 // (Browse the reading library) unmounts this screen entirely the same as
-// every other exit from this file, and Change my age just returns to the
-// still-populated age question — nothing was ever cleared.
+// every other exit from this file, and Change my birthday just returns to
+// the still-populated birthday question — nothing was ever cleared.
 function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
   const whatYouCanDo = [
     ['01', 'Talk to someone who can help', 'A parent, guardian, school nurse or your own doctor can look at symptoms with your full history in front of them.'],
@@ -1517,7 +1537,7 @@ function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
           </div>
 
           <div style={{ marginTop: 22, padding: '15px 16px', borderRadius: 18, background: CARD_BG, border: '1px solid ' + ROW_BORDER }}>
-            <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: INK }}>Entered the wrong age?</div>
+            <div style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: INK }}>Entered the wrong birthday?</div>
             <div style={{ fontFamily: 'Inter,system-ui,sans-serif', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: BODY_TEXT, marginTop: 4 }}>Go back one screen and change it — nothing has been saved yet.</div>
           </div>
 
@@ -1532,7 +1552,7 @@ function MinorGateScreen({ onChangeAge, onBrowseLibrary }) {
           Browse the reading library
         </div>
         <div onClick={onChangeAge} style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 'calc(14.5px * var(--ayna-text-scale, 1))', textAlign: 'center', padding: 14, borderRadius: 99, cursor: 'pointer', color: NAVY, border: '1.5px solid ' + NAVY, marginTop: 9 }}>
-          Change my age
+          Change my birthday
         </div>
       </div>
     </div>
@@ -1574,9 +1594,9 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
       { id: 'priceRange', section: 'preferences', title: 'What price range do you usually prefer for health and wellness products?', type: 'price', optional: true },
       { id: 'brandOpenness', section: 'preferences', title: 'How do you feel about trying new brands?', type: 'brand', optional: true },
       ...(intake.brandOpenness === 'I mostly stick with brands I already trust' || intake.brandOpenness === 'I prefer trusted brands but am open to something new' ? [{ id: 'trustedBrands', section: 'preferences', title: 'Which brands do you already trust?', type: 'trustedBrands', optional: true }] : []),
-      { id: 'avoidIngredients', section: 'preferences', title: 'Preferences', subtitle: 'Select any that matter to you. Allergies are handled separately.', type: 'avoidIngredients', optional: true },
+      { id: 'avoidIngredients', section: 'preferences', title: 'Any ingredients or product qualities you prefer?', subtitle: 'Things like fragrance-free, vegan, or eco-friendly. Allergies are handled separately.', type: 'avoidIngredients', optional: true },
       { id: 'fsaHsa', section: 'preferences', title: 'Do you have an FSA or HSA you would like to use?', type: 'fsa', optional: true },
-      { id: 'trust', section: 'trust', title: 'What matters most to you when deciding whether to trust a product?', subtitle: 'Drag the handle, or long-press and move. You can also skip this.', type: 'trust', optional: true },
+      { id: 'trust', section: 'trust', title: 'What matters most to you when deciding whether to trust a product?', type: 'trust', optional: false },
       { id: 'anythingElse', section: 'trust', title: 'Anything else you want Ayna to know?', subtitle: 'Share anything else that could help us personalize your recommendations.', type: 'textarea', optional: true },
     ];
     return steps;
@@ -1621,7 +1641,14 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
   const selectedLifeStages = getLifeStages(intake);
 
   const renderBody = () => {
-    if (step.type === 'age') return <AgeCard value={intake.age} onChange={(v) => set('age', v)} underage={isMinorAge(intake.age)} onOpenGate={() => setMinorGate(true)} />;
+    if (step.type === 'age') return (
+      <AgeCard
+        value={intake.age}
+        onChange={(v) => set('age', v)}
+        underage={isMinorAge(intake.age)}
+        onOpenGate={() => setMinorGate(true)}
+      />
+    );
 
     if (step.type === 'lifeStage') return (
       <>

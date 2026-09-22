@@ -1,6 +1,7 @@
 import { getProfileMatchPercentForProduct } from '../../data/products.js';
 import { isPartnerBrandItem } from '../../utils/partnerBrands.js';
 import MatchRing from './MatchRing.jsx';
+import ProductImage from './ProductImage.jsx';
 
 const PARTNER_BADGE_STYLE = {
   position: 'absolute',
@@ -14,15 +15,6 @@ const PARTNER_BADGE_STYLE = {
   lineHeight: 1,
   color: 'var(--ayna-text-muted)',
 };
-
-const DOT_PALETTE = ['#C0761F', '#4E3866', '#5C7A4A', '#A2603C', '#3F7A6A', '#B0537A', '#242A52', '#78716C'];
-
-function colorForCategory(category) {
-  const str = category || '';
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) hash = (hash * 31 + str.charCodeAt(i)) >>> 0;
-  return DOT_PALETTE[hash % DOT_PALETTE.length];
-}
 
 function labelForCategory(category) {
   if (!category) return '';
@@ -51,7 +43,6 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
   const { name, category, price, priceDisplay, userRating, image, imageUrl, images } = product || {};
   const resolvedImage = image || imageUrl || (Array.isArray(images) ? images[0] : undefined);
   const resolvedPrice = shortPrice(price || priceDisplay);
-  const color = colorForCategory(category);
   const matchPercent = getProfileMatchPercentForProduct(product, quizAnswers);
   const openWhyMatch = onOpenWhyMatch ? () => onOpenWhyMatch(product) : undefined;
   // Real brand-partnership flag (src/utils/partnerBrands.js) — same
@@ -82,12 +73,10 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
             flex: 'none',
             borderRadius: 14,
             overflow: 'hidden',
-            background: resolvedImage ? 'var(--ayna-bg-alt)' : `linear-gradient(150deg, ${color}26, ${color}4d)`,
-            backgroundImage: resolvedImage ? `url(${resolvedImage})` : undefined,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
+            background: 'var(--ayna-bg-alt)',
           }}
         >
+          <ProductImage src={resolvedImage} alt={name} allowBrandLogo={product?.type === 'digital'} compact />
           <div style={{ position: 'absolute', right: 2, bottom: 2 }}>
             <MatchRing percent={matchPercent} size={24} onClick={openWhyMatch} />
           </div>
@@ -144,12 +133,10 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
           aspectRatio: '1 / 1',
           borderRadius: 13,
           overflow: 'hidden',
-          background: resolvedImage ? 'var(--ayna-bg-alt)' : `linear-gradient(150deg, ${color}26, ${color}4d)`,
-          backgroundImage: resolvedImage ? `url(${resolvedImage})` : undefined,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          background: 'var(--ayna-bg-alt)',
         }}
       >
+        <ProductImage src={resolvedImage} alt={name} allowBrandLogo={product?.type === 'digital'} />
         {isPartner && <div style={{ ...PARTNER_BADGE_STYLE, top: 10, left: 10 }}>ayna Favorite</div>}
         <div style={{ position: 'absolute', right: 6, bottom: 6 }}>
           <MatchRing percent={matchPercent} size={34} onClick={openWhyMatch} />

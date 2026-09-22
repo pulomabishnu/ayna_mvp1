@@ -1,5 +1,10 @@
 {
   "appId": "co.aynahealth.app",
   "appName": "ayna",
-  "webDir": "dist"
+  "webDir": "dist",
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  }
 }

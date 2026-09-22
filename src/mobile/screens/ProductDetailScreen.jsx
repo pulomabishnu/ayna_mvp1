@@ -7,6 +7,8 @@ import { buildAiHealthContext } from '../../utils/aiHealthContext.js';
 import MatchRing from '../components/MatchRing.jsx';
 import WhyMatchScreen from './WhyMatchScreen.jsx';
 import LegalFooter from '../components/LegalFooter.jsx';
+import ProductImage from '../components/ProductImage.jsx';
+import { apiUrl } from '../../utils/apiUrl.js';
 
 function SpecRow({ label, value }) {
   return (
@@ -72,7 +74,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts }) {
     try {
       const token = session?.access_token;
       if (!token) throw Object.assign(new Error('not_signed_in'), { code: 'not_signed_in' });
-      const res = await fetch('/api/product-chat', {
+      const res = await fetch(apiUrl('/api/product-chat'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({
@@ -156,7 +158,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts }) {
           onChange={(e) => setInput(e.target.value)}
           placeholder={session === undefined ? 'Loading…' : 'Ask about this product…'}
           disabled={sending || session === undefined}
-          style={{ flex: 1, padding: '11px 14px', borderRadius: 99, border: '1px solid var(--ayna-border)', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', background: 'var(--ayna-surface)', color: 'var(--ayna-text)' }}
+          style={{ flex: 1, padding: '11px 14px', borderRadius: 99, border: '1px solid var(--ayna-border)', fontSize: 'max(16px, calc(13.5px * var(--ayna-text-scale, 1)))', background: 'var(--ayna-surface)', color: 'var(--ayna-text)' }}
         />
         <button
           type="submit"
@@ -302,11 +304,9 @@ export default function ProductDetailScreen({
             borderRadius: 14,
             boxShadow: '0 10px 26px -16px rgba(41,37,36,.35)',
             overflow: 'hidden',
-            backgroundImage: image ? `url(${image})` : undefined,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
           }}
         >
+          <ProductImage src={image} alt={name} allowBrandLogo={product?.type === 'digital'} />
           {matchPercent != null && (
             <div
               onClick={openWhyMatch}
@@ -417,12 +417,17 @@ export default function ProductDetailScreen({
               </div>
             )}
 
-            {ingredients && (
+            {(safety.materials || ingredients) && (
               <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 20, padding: 16, marginTop: 20 }}>
                 <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)', marginBottom: 4 }}>
                   Inside
                 </div>
-                <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.6, paddingTop: 8 }}>{ingredients}</div>
+                {safety.materials && (
+                  <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.6, paddingTop: 8, whiteSpace: 'pre-line' }}>{safety.materials}</div>
+                )}
+                {ingredients && (
+                  <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.6, paddingTop: safety.materials ? 14 : 8, whiteSpace: 'pre-line' }}>{ingredients}</div>
+                )}
               </div>
             )}
           </>
@@ -452,7 +457,7 @@ export default function ProductDetailScreen({
                 <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)' }}>
                   Clinician opinion
                 </div>
-                <div style={{ fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.6, marginTop: 9, color: 'var(--ayna-text)' }}>{doctorOpinion}</div>
+                <div style={{ fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.6, marginTop: 9, color: 'var(--ayna-text)', whiteSpace: 'pre-line' }}>{doctorOpinion}</div>
                 {clinicianAttribution && (
                   <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: 'var(--ayna-text-faint)', marginTop: 11 }}>{clinicianAttribution}</div>
                 )}

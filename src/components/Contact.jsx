@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { apiUrl } from '../utils/apiUrl.js';
 
 const REASONS = [
   'Partnerships',
@@ -52,7 +53,7 @@ export default function Contact({ onBack }) {
     setError('');
 
     try {
-      const response = await fetch('/api/contact', {
+      const response = await fetch(apiUrl('/api/contact'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),

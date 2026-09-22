@@ -121,7 +121,7 @@ export async function callAnthropic({
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        model: model || process.env.ANTHROPIC_MODEL || 'claude-haiku-4-5',
+        model: model || process.env.ANTHROPIC_MODEL || 'claude-haiku-4-5-20251001',
         max_tokens: maxTokens,
         temperature,
         ...(system ? { system } : {}),

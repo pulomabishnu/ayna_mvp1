@@ -1856,14 +1856,22 @@ function getSafetyAssessment(product, quizAnswers) {
         ['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'liner'].includes(category)
         || productHasSignal(product, 'menstrual-collection');
 
-    if (pregnancySpecific && !isPregnant && !isTryingToConceive) {
+    // Each of these three only excludes when the person has actually told us
+    // a life stage that rules the product out — with no quiz/ecosystem data
+    // at all (signed-out browsing, or before the health intake), lifeStages
+    // is empty and "unknown" must stay neutral, not get silently read as
+    // "confirmed not pregnant/postpartum/in menopause." That previously
+    // forced eligible: false (and so percent: 0, a visible "0% match" ring)
+    // on any pregnancy/postpartum/menopause product for every signed-out or
+    // no-ecosystem view, rather than the null percent that hides the ring.
+    if (lifeStages.length > 0 && pregnancySpecific && !isPregnant && !isTryingToConceive) {
         return {
             eligible: false,
             reason: 'Pregnancy or prenatal product does not match your current life stage',
         };
     }
 
-    if (postpartumSpecific && !isPostpartum) {
+    if (lifeStages.length > 0 && postpartumSpecific && !isPostpartum) {
         return {
             eligible: false,
             reason: 'Postpartum product does not match your current life stage',
@@ -1871,7 +1879,8 @@ function getSafetyAssessment(product, quizAnswers) {
     }
 
     if (
-        menopauseSpecific
+        lifeStages.length > 0
+        && menopauseSpecific
         && !isPerimenopause
         && !isMenopause
         && !isPostMenopause

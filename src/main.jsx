@@ -118,6 +118,21 @@ class ErrorBoundary extends React.Component {
 
 const isMobilePreview = window.location.pathname === '/mobile-preview' || Capacitor.isNativePlatform();
 
+// Lock pinch-zoom in the native app only. The WKWebView has no browser chrome
+// to reset an accidental pinch, so once someone zooms in there is no way
+// back to 100% and the whole layout stays broken — this is the "you can
+// zoom out when you zoom in" bug. The web build keeps normal pinch-zoom
+// (accessibility), so this only touches the meta tag on native.
+if (Capacitor.isNativePlatform()) {
+  const viewportMeta = document.querySelector('meta[name="viewport"]');
+  if (viewportMeta) {
+    viewportMeta.setAttribute(
+      'content',
+      'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover'
+    );
+  }
+}
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ErrorBoundary>

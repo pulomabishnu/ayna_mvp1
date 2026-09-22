@@ -1,4 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
+import { processLock } from '@supabase/auth-js';
+import { Capacitor } from '@capacitor/core';
 
 // Supabase's publishable client credentials are intentionally safe to ship in
 // browser/native bundles. Row Level Security remains the authorization boundary.
@@ -17,6 +19,14 @@ export function getSupabaseClient() {
       auth: {
         flowType: 'implicit',   // avoids PKCE verifier storage — Chrome bounce tracking deletes it
         detectSessionInUrl: false, // AuthCallback.jsx handles implicit OAuth tokens explicitly
+        // GoTrueClient auto-selects the browser's navigator.locks API to
+        // serialize auth calls whenever it's merely present — true in a
+        // WKWebView, but not necessarily reliable there. processLock is
+        // Supabase's own single-process alternative, built for exactly
+        // this (their docs: "React Native or other non-browser
+        // single-process environments") — same category as a Capacitor
+        // native app, so used there instead.
+        ...(Capacitor.isNativePlatform() ? { lock: processLock } : {}),
       },
     });
   } catch (e) {

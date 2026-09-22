@@ -3,6 +3,7 @@ import { CATEGORY_LABELS, getProfileMatchPercentForProduct } from '../../data/pr
 import { getCategoryInsights } from '../utils/shopperProfileData.js';
 import MatchRing from '../components/MatchRing.jsx';
 import LegalFooter from '../components/LegalFooter.jsx';
+import ProductImage from '../components/ProductImage.jsx';
 
 /**
  * Mobile port of the "Saved screens B + C" design reference (filled grid +
@@ -134,7 +135,8 @@ function SingleSavedHero({ item, isInEco, onOpen, onRemove, onAddToEcosystem, ga
           animation: 'ay-up .3s ease-out',
         }}
       >
-        <div style={{ position: 'relative', height: 230, background: image ? 'var(--ayna-bg-alt)' : 'linear-gradient(160deg,#F3EADC,#EFE3D2)', backgroundImage: image ? `url(${image})` : undefined, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+        <div style={{ position: 'relative', height: 230, background: 'var(--ayna-bg-alt)' }}>
+          <ProductImage src={image} alt={item.name} allowBrandLogo={item.type === 'digital'} />
           <button
             onClick={(e) => { e.stopPropagation(); onRemove(); }}
             aria-label="Remove from saved"
@@ -222,7 +224,8 @@ function SavedCard({ item, status, onOpen, onRemove, quizAnswers, onOpenWhyMatch
         boxShadow: '0 1px 2px rgba(41,37,36,.04)',
       }}
     >
-      <div style={{ position: 'relative', aspectRatio: '1 / 1', borderRadius: 13, overflow: 'hidden', background: image ? 'var(--ayna-bg-alt)' : 'linear-gradient(150deg,#F6DCC026,#F6DCC04d)', backgroundImage: image ? `url(${image})` : undefined, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+      <div style={{ position: 'relative', aspectRatio: '1 / 1', borderRadius: 13, overflow: 'hidden', background: 'var(--ayna-bg-alt)' }}>
+        <ProductImage src={image} alt={item.name} allowBrandLogo={item.type === 'digital'} compact />
         <button
           onClick={(e) => { e.stopPropagation(); onRemove(); }}
           aria-label="Remove from saved"

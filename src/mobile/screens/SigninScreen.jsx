@@ -43,7 +43,11 @@ function Field({ label, icon, children }) {
   );
 }
 
-const inputStyle = { border: 'none', outline: 'none', background: 'transparent', fontFamily: "'DM Sans',sans-serif", fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: '#292524', width: '100%', padding: '3px 0 0' };
+// iOS zooms the whole page in on focus for any text input whose computed
+// font-size is under 16px, then doesn't reliably zoom back out — the
+// max() floor keeps that from firing without changing the size at any
+// --ayna-text-scale setting that was already >= 16px.
+const inputStyle = { border: 'none', outline: 'none', background: 'transparent', fontFamily: "'DM Sans',sans-serif", fontSize: 'max(16px, calc(15px * var(--ayna-text-scale, 1)))', color: '#292524', width: '100%', padding: '3px 0 0' };
 
 const EmailIcon = (
   <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#A8A29E" strokeWidth="1.75" style={{ flex: 'none' }}>
@@ -140,6 +144,36 @@ function AppleButton({ onClick, disabled }) {
   );
 }
 
+function AppleButton({ onClick, disabled }) {
+  return (
+    <div
+      onClick={disabled ? undefined : onClick}
+      style={{
+        background: 'rgba(255,252,249,.14)',
+        border: '1px solid rgba(255,255,255,.28)',
+        textAlign: 'center',
+        padding: 15,
+        borderRadius: 99,
+        fontFamily: "'DM Sans',sans-serif",
+        fontWeight: 500,
+        fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
+        cursor: disabled ? 'not-allowed' : 'pointer',
+        opacity: disabled ? 0.6 : 1,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 8,
+      }}
+    >
+      <svg width="16" height="18" viewBox="0 0 16 18">
+        <path fill="#FFFCF9" d="M13.06 9.53c-.02-1.96 1.6-2.9 1.67-2.94-.91-1.33-2.33-1.51-2.84-1.53-1.21-.12-2.36.71-2.97.71-.62 0-1.55-.7-2.55-.68-1.31.02-2.53.76-3.2 1.93-1.37 2.37-.35 5.87.98 7.79.65.94 1.42 1.99 2.44 1.96.98-.04 1.35-.63 2.53-.63 1.18 0 1.51.63 2.55.6 1.05-.02 1.72-.95 2.36-1.89.75-1.08 1.05-2.13 1.06-2.18-.02-.01-2.03-.78-2.03-3.13z" />
+        <path fill="#FFFCF9" d="M11.1 3.68c.54-.65.9-1.56.8-2.46-.77.03-1.71.51-2.27 1.15-.5.57-.94 1.5-.82 2.38.86.06 1.75-.44 2.29-1.07z" />
+      </svg>
+      {disabled ? 'Opening Apple…' : 'Continue with Apple'}
+    </div>
+  );
+}
+
 export default function SigninScreen({
   stats = DEFAULT_STATS,
   authUser,
@@ -173,6 +207,22 @@ export default function SigninScreen({
     if (mode === 'check-email' && authUser) onAuthenticated(firstName.trim() || undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, authUser]);
+
+  // The native Google/Apple round trip (Browser.open -> appUrlOpen) lands
+  // back on this same mounted screen instead of navigating anywhere, so a
+  // failure there previously only reached console.error — invisible on a
+  // real device with no attached debugger. useSupabaseAuth dispatches this
+  // event instead of (or in addition to) logging, so the failure actually
+  // reaches the person trying to sign in.
+  useEffect(() => {
+    const onOAuthError = (e) => {
+      setGoogleLoading(false);
+      setAppleLoading(false);
+      setError(e.detail || 'Sign-in did not complete. Please try again.');
+    };
+    window.addEventListener('ayna:native-oauth-error', onOAuthError);
+    return () => window.removeEventListener('ayna:native-oauth-error', onOAuthError);
+  }, []);
 
   const initial = (firstName || '').trim().charAt(0).toUpperCase() || '?';
   const allConsented = checked.every(Boolean);

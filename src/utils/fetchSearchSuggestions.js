@@ -1,11 +1,62 @@
 /**
- * Calls /api/search-suggestions. External AI/web discovery is authenticated
- * and consent-gated server-side; ordinary catalog search remains local.
+ * Calls /api/search-suggestions (Claude on the server). External AI/web
+ * discovery is authenticated and consent-gated server-side; ordinary
+ * catalog search remains local. Same-origin on Vercel for desktop web; the
+ * native mobile app has no server of its own (it loads bundled assets from
+ * a local capacitor:// origin), so apiUrl() resolves it against the real
+ * deployment there instead.
  *
- * Health-sensitive search text/results are intentionally not cached in
- * localStorage or sessionStorage.
+ * Non-personalized results only are cached in sessionStorage (45 min) --
+ * health-sensitive personalized search text/results are never cached.
  */
 import { getSupabaseClient } from './supabaseClient.js';
+import { apiUrl } from './apiUrl.js';
+
+function sessionCacheKey(query, category, symptom, maxResults) {
+  const q = `${query.trim().toLowerCase()}|${category || ''}|${symptom || ''}|${maxResults || 20}`;
+  let h = 0;
+  for (let i = 0; i < q.length; i += 1) h = (Math.imul(31, h) + q.charCodeAt(i)) | 0;
+  return `ayna-ai-search-v2:${h.toString(16)}`;
+}
+
+function readSessionCache(key) {
+  try {
+    const raw = sessionStorage.getItem(key);
+    if (!raw) return null;
+    const o = JSON.parse(raw);
+    if (!o || typeof o !== 'object' || !Array.isArray(o.suggestions)) return null;
+    const ts = o.ts || 0;
+    if (Date.now() - ts > 45 * 60 * 1000) {
+      sessionStorage.removeItem(key);
+      return null;
+    }
+    return {
+      suggestions: o.suggestions,
+      querySummary: typeof o.querySummary === 'string' ? o.querySummary : '',
+      // Was read at the call site but never persisted, so the "related
+      // searches" row silently vanished for 45 minutes on any repeated query.
+      relatedSearches: Array.isArray(o.relatedSearches) ? o.relatedSearches : [],
+    };
+  } catch {
+    return null;
+  }
+}
+
+function writeSessionCache(key, suggestions, querySummary, relatedSearches) {
+  try {
+    sessionStorage.setItem(
+      key,
+      JSON.stringify({
+        ts: Date.now(),
+        suggestions,
+        querySummary: querySummary || '',
+        relatedSearches: Array.isArray(relatedSearches) ? relatedSearches : [],
+      })
+    );
+  } catch {
+    /* quota */
+  }
+}
 
 /**
  * @param {{ query: string, category?: string, symptom?: string, signal?: AbortSignal }} opts
@@ -31,7 +82,7 @@ export async function fetchSearchSuggestions(opts) {
     if (data?.session?.access_token) headers.Authorization = `Bearer ${data.session.access_token}`;
   }
 
-  const res = await fetch('/api/search-suggestions', {
+  const res = await fetch(apiUrl('/api/search-suggestions'), {
     method: 'POST',
     headers,
     body: JSON.stringify({ query, category, symptom, personalized, profileSummary, dislikedProducts, maxResults }),
