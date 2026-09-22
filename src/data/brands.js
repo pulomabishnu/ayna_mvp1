@@ -393,7 +393,7 @@ export const BRAND_PRODUCTS = [
         url: 'https://helloneycher.com/products/odor-be-gone',
         faqUrl: 'https://www.helloneycher.com/faq',
         image: 'https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/6a0b3e76d248803f468a5c1e_Frame%201000011416%20(1).webp',
-        summary: '"It smells fishy down there" or "it\'s BV again, it keeps coming back" — that\'s the odor, unusual discharge, and irritation this suppository is designed to fix. It\'s a boric acid suppository (10 count, 2 g each) that pairs half the usual dose with hyaluronic acid, lactic acid, and calming plant extracts, so it works without the dryness and burning pure boric acid products are known for.',
+        summary: 'Vaginal odor, unusual discharge, and irritation often mean the vagina\'s pH has shifted, letting BV or yeast overgrow. This boric acid suppository (10 count, 2 g each) uses half the usual dose, paired with hyaluronic acid, lactic acid, and calming plant extracts, so it works without the dryness and burning pure boric acid products are known for.',
         safety: {
             fdaStatus: 'Manufactured in FDA-registered facilities per the brand\'s site; not an FDA-cleared medical device.',
             // Full packaging ingredient list — shown in full under
@@ -536,7 +536,7 @@ export const BRAND_PRODUCTS = [
         url: 'https://helloneycher.com/products/hydrobloom-moisturizing-gel?Title=Default',
         faqUrl: 'https://www.helloneycher.com/faq',
         image: 'https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/69b007753e5c0c33308cc349_hand.webp',
-        summary: '"It\'s dry and itchy down there" or "everything burns after I shave" — that\'s vulvar dryness and irritation, common from hormonal changes, friction, or harsh soaps. This hormone-free, pH-balanced gel pairs hyaluronic acid and glycerin to hydrate outside on the vulva and inside the vagina, non-sticky and fast-absorbing.',
+        summary: 'Vulvar dryness and irritation are common from hormonal changes, friction, or harsh soaps. This hormone-free, pH-balanced gel pairs hyaluronic acid and glycerin to hydrate outside on the vulva and inside the vagina, non-sticky and fast-absorbing.',
         safety: {
             fdaStatus: 'Manufactured in FDA-registered facilities per the brand\'s site; not an FDA-cleared medical device.',
             materials: '30 ml tube with applicator. Ingredients (from the box): water, glycerin, aloe leaf juice, black currant fruit extract, lavender flower water, hyaluronic acid (sodium hyaluronate), chamomile flower extract, calendula flower extract, lactic acid, vitamin E (tocopheryl acetate), linseed oil, vitamin A (retinyl palmitate), in a hydroxyethylcellulose gel base, with preservatives (imidazolidinyl urea, potassium sorbate, disodium EDTA) and solubilizers (PEG-40 hydrogenated castor oil, polysorbate 20).',
