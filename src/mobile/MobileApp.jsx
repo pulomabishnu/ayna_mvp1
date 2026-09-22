@@ -125,7 +125,7 @@ export default function MobileApp() {
   // scroll pagination) is exactly as the user left it, not reset to a
   // fresh mount. Closing the overlay just reveals it again.
   const [overlay, setOverlay] = useState(null); // { type: 'product' | 'article', item }
-  const { user: authUser, signUpWithPassword, signInWithPassword, signInWithGoogle, signInWithApple, signOut: signOutSupabase, resendConfirmation } = useSupabaseAuth();
+  const { user: authUser, signUpWithPassword, signInWithPassword, signInWithGoogle, signInWithApple, signOut: signOutSupabase, resendConfirmation, verifyEmailOtp } = useSupabaseAuth();
 
   // Backend-only state used to keep mobile ecosystem writes consistent with
   // the same Supabase user_ecosystems rows used by the website.
@@ -453,6 +453,7 @@ export default function MobileApp() {
     onGoogleSignIn: signInWithGoogle,
     onAppleSignIn: Capacitor.getPlatform() === 'ios' ? signInWithApple : undefined,
     onResendConfirmation: resendConfirmation,
+    onVerifyEmailOtp: verifyEmailOtp,
     onAuthenticated: (name) => {
       updateSession((prev) => ({ userName: name || prev.userName, hasEcosystem: true }));
       setScreen('eco');
