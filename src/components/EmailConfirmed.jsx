@@ -60,7 +60,7 @@ export default function EmailConfirmed({ onAuthenticated }) {
       </div>
       <h2 style={{ fontSize: '1.5rem', fontWeight: 700, margin: 0 }}>Email confirmed!</h2>
       <p style={{ color: 'var(--color-text-muted, #666)', maxWidth: '340px', lineHeight: 1.6, margin: 0 }}>
-        Return to the ayna app. It will check your sign-in when you reopen it. If the screen stays the same, tap “I confirmed my email” in the app or sign in with your email and password.
+        This page is only for older confirmation links. New ayna signups verify with the code sent by email. Return to ayna and enter your verification code, or request a new code from the sign-in screen.
       </p>
       {confirmedUser && <button type="button" onClick={() => onAuthenticated(confirmedUser)} style={{ border: 0, borderRadius: '10px', background: '#FF7417', color: '#fff', padding: '12px 20px', cursor: 'pointer' }}>Continue in this browser</button>}
     </div>
