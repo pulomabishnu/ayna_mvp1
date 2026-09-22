@@ -435,10 +435,10 @@ export const BRAND_PRODUCTS = [
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Sourced from Neycher\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'Neycher states the formula "creates a protective hydrating layer that supports long-lasting moisture and comfort," per the brand\'s own site. No clinical trial or study specific to this gel was found on the brand\'s site — the "94% of users" clinical claim shown elsewhere on Neycher\'s site is explicitly about the Vaginal Moisturizer (10 mg hyaluronic acid + polycarbophil suppository), a different formula from this gel.',
+        doctorOpinion: 'Neycher states the formula "creates a protective hydrating layer that supports long-lasting moisture and comfort," per the brand\'s own site. No clinical trial or study specific to this gel was found on the brand\'s site.',
         // Shorter version for the Evidence view's narrower rail card — see
         // the Vaginal Moisturizer entry for why these are split.
-        doctorOpinionShort: 'No clinical trial specific to this gel was found on Neycher\'s site. The brand\'s "94% of users" claim elsewhere on its site is about a different product (the Vaginal Moisturizer suppository), not this gel.',
+        doctorOpinionShort: 'No clinical trial specific to this gel was found on Neycher\'s site.',
         // Rendered as a bulleted list on the Evidence view, under "Best for".
         whoItsFor: [
             'Anyone whose vulva feels dry, tight, itchy, or irritated, at any age',
