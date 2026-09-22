@@ -1755,7 +1755,7 @@ export const BRAND_PRODUCTS = [
         type: 'physical',
         internal: false,
         healthFunctions: ['vaginal-health'],
-        tags: ['discomfort', 'menopause', 'postpartum', 'hormone-free'],
+        tags: ['discomfort', 'menopause', 'postpartum', 'hormone-free', 'organic', 'cruelty-free', 'vegan'],
         price: '$42',
         whereToBuy: ['Amazon', 'BUNI Body'],
         url: 'https://www.bunibody.com/products/buni-vulva-balm',
@@ -1768,16 +1768,107 @@ export const BRAND_PRODUCTS = [
         summary: 'A hormone-free external vulva moisturizer in an airless pump, formulated for dryness, friction, itching, and everyday vulvar skin comfort. BUNI positions it for menopause and perimenopause, pregnancy and postpartum, grooming, exercise, and intimate activity.',
         ingredients: 'Key ingredients listed by BUNI include organic avocado oil, honey and propolis, chamomile, lavender, shea butter, cacao butter, hyaluronic acid, and sea buckthorn oil.',
         safety: {
-            fdaStatus: 'Cosmetic / external personal-care product; not an FDA-cleared drug or medical device.',
-            materials: 'BUNI describes the formula as hormone-free and made with 99.5–100% natural ingredients.',
+            fdaStatus: 'Made in an FDA-registered, GMP facility in the USA and third-party lab tested, per BUNI\'s site; the balm itself is a cosmetic / external personal-care product, not an FDA-cleared drug or medical device.',
+            // Full packaging/formula description — shown in full under
+            // "Materials" on the Evidence view (see buildFactRows in
+            // ProductModal.jsx, which doesn't truncate this field).
+            materials: 'Airless pump dispenser. Formula is hormone-free, paraben-free, phthalate-free, dye-free, and made with 99.5–100% natural ingredients, per BUNI. Key ingredients: organic avocado oil, honey and propolis, organic chamomile, organic lavender, shea butter, cacao butter, hyaluronic acid, and sea buckthorn oil.',
             recalls: 'No recalls found.',
-            sideEffects: 'External vulvar use only; the brand states it is not intended for internal vaginal use. Stop use if irritation develops and check with a clinician before use during pregnancy or breastfeeding.',
+            sideEffects: 'For external vulvar use only — not intended for internal vaginal use, per the brand. Discontinue and see a doctor if you notice irritation or an allergic reaction. Full warnings are listed below.',
             opinionAlerts: 'Benefit and ingredient claims are from BUNI; no independent clinical trial of the finished product was identified.',
         },
         clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'BUNI states the product was developed by OB/GYNs and dermatologists; no independent clinician endorsement verified by ayna.',
-        doctorOpinion: 'BUNI positions REJUVENATE as a gynecologist-developed, hormone-free external moisturizer for vulvar dryness, friction, and irritation.',
-        effectiveness: 'Designed to moisturize and reduce friction on external vulvar skin; no independent clinical study of the finished product was found.',
+        clinicianAttribution: 'BUNI states the product was developed by board-certified OB/GYNs and dermatologists; no independent clinician endorsement verified by ayna.',
+        doctorOpinion: 'BUNI positions REJUVENATE as a gynecologist- and dermatologist-developed, hormone-free external moisturizer for vulvar dryness, friction, and irritation — pure, simple, and effective, per the brand\'s own site.\n\nSeveral of its named ingredients have real supporting research, though none of it tested this finished product. Honey and propolis have documented antibacterial, antifungal, and wound-healing properties in general skin studies, and propolis specifically has shown antifungal activity against vaginal Candida albicans in lab research. Hyaluronic acid is a well-studied humectant that draws and holds moisture in tissue. Avocado oil has shown skin-barrier-repair and wound-healing effects in review literature covering several plant oils.\n\nSea buckthorn oil has real clinical evidence for vaginal dryness specifically — a randomized, placebo-controlled trial found daily oral sea buckthorn oil improved vaginal epithelium integrity in postmenopausal women over 3 months. That trial tested oral intake, though, not a topical balm like this one, so it doesn\'t directly validate this product\'s use.\n\nNo independent clinical study of this specific product was found.',
+        doctorOpinionShort: 'Several named ingredients (honey, propolis, hyaluronic acid, avocado oil, sea buckthorn oil) have real supporting research individually, including one placebo-controlled trial on oral sea buckthorn oil for vaginal dryness — though that tested oral intake, not a topical balm. No independent clinical study of this specific product was found.',
+        // Kept out of verificationLinks so it doesn't pool with the
+        // Scientific literature tab's citation list.
+        doctorOpinionCitations: [
+            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4359870/', label: 'NIH (PMC): Propolis Is an Efficient Fungicide and Inhibitor of Biofilm Production by Vaginal Candida albicans' },
+        ],
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Women with vulvar dryness, friction, or itching from menopause or perimenopause',
+            'Postpartum women, once cleared by their doctor',
+            'Women dealing with irritation from shaving, waxing, tight clothing, or exercise',
+            'Women who want a hormone-free, external-only option',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // bunibody.com/products/buni-vulva-balm.
+        howToUse: {
+            intro: 'Per BUNI\'s own site: apply daily for lasting hydration and comfort — morning or night, wherever it fits.',
+            steps: [
+                'Dispensed through an airless pump, so the product is never exposed to air or direct hand contact between uses.',
+                'For external vulvar use only.',
+            ],
+            sourceUrl: 'https://www.bunibody.com/products/buni-vulva-balm',
+            sourceLabel: 'bunibody.com: REJUVENATE Vulva Balm',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'External vulvar use only — not intended for internal vaginal use, per the brand.',
+            'Pregnant or breastfeeding: check with a doctor first.',
+            'Irritation or an allergic reaction: stop using it and see a doctor.',
+        ],
+        communityReview: 'One customer review on BUNI\'s site: "I use Rejuvenate after every spin class. No more irritation from the seat, no more dryness from tight leggings." No star rating or review count was shown alongside it, and no independent (non-brand) review data was found at time of writing.',
+        effectiveness: 'Formulated by board-certified OB/GYNs and dermatologists to moisturize and reduce friction on external vulvar skin; no independent clinical study of the finished product was found.',
+        // Per-ingredient science claims, each paired with a credible
+        // source (NIH-hosted or PubMed). Rendered on the Scientific
+        // literature tab.
+        ingredientScience: [
+            {
+                name: 'Honey and propolis',
+                text: 'Honey has documented antibacterial, immune-modulating properties useful in wound care; propolis (a resin bees make from plant compounds) adds antibacterial, antifungal, and anti-inflammatory activity.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7700082/', label: 'NIH (PMC): Honey Combination Therapies for Skin and Wound Infections — a systematic review' },
+                ],
+            },
+            {
+                name: 'Hyaluronic acid',
+                text: 'Binds large amounts of water. It draws moisture into tissue and holds it there.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC13160248/', label: 'NIH (PMC): Real-world effectiveness of a hyaluronic acid-based vaginal moisturizer' },
+                ],
+            },
+            {
+                name: 'Avocado oil',
+                text: 'A plant oil shown to support skin-barrier repair and reduce inflammation in topical-oil review literature.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5796020/', label: 'NIH (PMC): Anti-Inflammatory and Skin Barrier Repair Effects of Topical Application of Some Plant Oils' },
+                ],
+            },
+            {
+                name: 'Sea buckthorn oil',
+                text: 'In a placebo-controlled trial, daily oral sea buckthorn oil improved vaginal epithelium integrity in postmenopausal women over 3 months. That trial tested oral intake, not a topical balm.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/25104582/', label: 'PubMed: Effects of sea buckthorn oil intake on vaginal atrophy in postmenopausal women — a randomized, double-blind, placebo-controlled study' },
+                ],
+            },
+        ],
+        // Category-level citation shown only on the Scientific literature
+        // tab, kept out of verificationLinks so it doesn't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://www.acog.org/womens-health/faqs/vulvovaginal-health',
+                text: 'ACOG: Vulvovaginal Health',
+                summary: 'ACOG on vulvovaginal dryness, irritation, and general management guidance. This is clinical-guidance-level evidence, not product-specific validation.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://www.bunibody.com/products/buni-vulva-balm',
+                        text: 'bunibody.com: Customer reviews',
+                        summary: 'BUNI\'s own product page shows a customer testimonial about post-workout relief (see the Community summary above). No star rating or review count is shown alongside it.',
+                    },
+                ],
+            },
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true,
@@ -1790,7 +1881,7 @@ export const BRAND_PRODUCTS = [
         type: 'physical',
         internal: false,
         healthFunctions: ['comfort'],
-        tags: ['postpartum', 'pregnancy', 'comfort'],
+        tags: ['postpartum', 'pregnancy', 'comfort', 'cruelty-free', 'vegan'],
         price: '$25',
         whereToBuy: ['Amazon', 'BUNI Body'],
         url: 'https://www.bunibody.com/products/buni-nipple-balm',
@@ -1803,16 +1894,78 @@ export const BRAND_PRODUCTS = [
         summary: 'A lanolin-free balm for nipples, lips, cuticles, and other dry skin, positioned for nursing and pumping comfort as well as pregnancy and postpartum care.',
         ingredients: 'BUNI lists organic olive oil, kokum butter, beeswax, shea butter, cacao seed butter, calendula, avocado oil, and other botanical oils and butters.',
         safety: {
-            fdaStatus: 'Cosmetic / personal-care product; not an FDA-cleared drug or medical device.',
-            materials: 'Lanolin-free balm made with botanical oils, butters, and beeswax.',
+            fdaStatus: 'Made in an FDA-registered, GMP facility in the USA and third-party lab tested, per BUNI\'s site; the balm itself is a cosmetic / personal-care product, not an FDA-cleared drug or medical device.',
+            materials: 'Lanolin-free balm, made with no animal-derived ingredients (safe for wool/lanolin sensitivities). Ingredients per BUNI: organic olive fruit oil, organic beeswax, organic shea butter, organic cocoa seed butter, organic avocado oil, organic kokum seed butter, organic tocopherol (vitamin E), and organic calendula flower extract.',
             recalls: 'No recalls found.',
-            sideEffects: 'People with sensitivities or allergies to botanical ingredients or beeswax should review the ingredient list before use and stop if irritation develops.',
+            sideEffects: 'People with sensitivities or allergies to botanical ingredients or beeswax should review the ingredient list before use and stop if irritation develops. Full warnings are listed below.',
             opinionAlerts: 'BUNI markets the balm as suitable around nursing and states no wipe-off is needed; users should follow current label directions and their clinician or lactation professional’s guidance.',
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Product positioning and safety statements are sourced from BUNI; no independent clinician endorsement verified by ayna.',
-        doctorOpinion: 'BUNI positions SOOTHE as a lanolin-free option for reducing friction and moisturizing sore or dry nipple skin during nursing and pumping.',
+        doctorOpinion: 'BUNI positions SOOTHE as a lanolin-free option for reducing friction and moisturizing sore or dry nipple skin during nursing and pumping, formulated by board-certified OB/GYNs and dermatologists, per the brand\'s own site.\n\nCalendula, one of its named ingredients, has real supporting research: a systematic review of animal and clinical studies found evidence for calendula extract improving acute wound healing and reducing venous ulcer size, though the review also called for larger, better-designed trials. Shea butter and beeswax are traditional occlusive moisturizers with a long history of topical use, though less formal clinical-trial evidence exists for either specifically.\n\nNo independent clinical study of this specific product was found.',
+        doctorOpinionShort: 'Calendula, one of its named ingredients, has supporting evidence from a systematic review of wound-healing studies, though that review also called for larger trials. No independent clinical study of this specific product was found.',
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Nursing and pumping mothers with sore, dry, or cracked nipples',
+            'Women with wool/lanolin sensitivities who want a lanolin-free option',
+            'Anyone wanting a multi-use balm for lips, cuticles, elbows, or other dry skin',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // bunibody.com/products/buni-nipple-balm.
+        howToUse: {
+            intro: 'Per BUNI\'s own site: dab onto nipples for nursing relief, or use as a daily lip balm.',
+            steps: [
+                'Safe to nurse right after applying — no wipe-off needed.',
+                'A small amount before pumping can reduce friction between skin and the pump flange.',
+                'Also works on lips, cuticles, elbows, or anywhere dry skin needs relief.',
+            ],
+            sourceUrl: 'https://www.bunibody.com/products/buni-nipple-balm',
+            sourceLabel: 'bunibody.com: SOOTHE Nipple and Lip Balm',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'Allergy or sensitivity to a botanical ingredient or beeswax: review the ingredient list before use.',
+            'Irritation or an allergic reaction: stop using it and see a doctor or lactation professional.',
+        ],
+        communityReview: 'No independent (non-brand) customer review data was found for this product at time of writing.',
         effectiveness: 'Provides an occlusive moisturizing layer for dry or irritated skin; no independent clinical study of the finished product was found.',
+        // Per-ingredient science claims, each paired with a credible
+        // source (NIH-hosted or PubMed). Rendered on the Scientific
+        // literature tab.
+        ingredientScience: [
+            {
+                name: 'Calendula',
+                text: 'A traditional wound-care botanical. A systematic review of animal and clinical studies found evidence for calendula extract speeding acute wound healing and reducing venous ulcer surface area, though it also called for larger, better-designed trials.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/31145533/', label: 'PubMed: A systematic review of Calendula officinalis extract for wound healing' },
+                ],
+            },
+            {
+                name: 'Avocado oil',
+                text: 'A plant oil shown to support skin-barrier repair and reduce inflammation in topical-oil review literature.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5796020/', label: 'NIH (PMC): Anti-Inflammatory and Skin Barrier Repair Effects of Topical Application of Some Plant Oils' },
+                ],
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/BUNI-Balance-Your-Beautiful-Soothe/dp/B0G45C6G8S',
+                        text: 'Amazon: BUNI SOOTHE Nipple and Lip Balm reviews',
+                        // Amazon blocks automated access, so this isn't a
+                        // summary of actual review text — just confirms this
+                        // is the real, current product listing. Read the
+                        // reviews directly on Amazon.
+                        summary: 'Real, current Amazon listing for this exact product. Amazon blocks automated access, so review content/ratings weren\'t independently verifiable at time of writing — read them directly on the page.',
+                    },
+                ],
+            },
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true,
@@ -1825,7 +1978,7 @@ export const BRAND_PRODUCTS = [
         type: 'physical',
         internal: false,
         healthFunctions: ['comfort'],
-        tags: ['postpartum', 'comfort'],
+        tags: ['postpartum', 'comfort', 'cruelty-free', 'vegan'],
         price: '$35',
         whereToBuy: ['Amazon', 'BUNI Body'],
         url: 'https://www.bunibody.com/products/buni-natural-scar-body-treatment-oil',
@@ -1838,16 +1991,93 @@ export const BRAND_PRODUCTS = [
         summary: 'A 1.7 oz scar and body treatment oil with a rollerball applicator and included onyx gua sha tool, marketed for the appearance of scars, stretch marks, and postpartum body care.',
         ingredients: 'BUNI highlights retinyl palmitate, snail secretion filtrate, organic avocado oil, apricot oil, chamomile, lavender, vitamin E, and sunflower oil.',
         safety: {
-            fdaStatus: 'Cosmetic / personal-care product; not an FDA-cleared scar treatment.',
-            materials: 'Topical oil with rollerball applicator plus an onyx gua sha massage tool.',
+            fdaStatus: 'Made in an FDA-registered, GMP facility in the USA and third-party lab tested, per BUNI\'s site; the oil itself is a cosmetic / personal-care product, not an FDA-cleared scar treatment.',
+            materials: 'Topical oil with rollerball applicator, plus an included onyx gua sha massage tool. Ingredients per BUNI: retinyl palmitate, snail secretion filtrate, organic avocado oil, apricot oil, chamomile, lavender, vitamin E, and sunflower oil.',
             recalls: 'No recalls found.',
-            sideEffects: 'BUNI instructs users to obtain medical approval before using it on a new scar or C-section scar. Do not apply to an open or unhealed surgical wound unless specifically directed by a clinician.',
+            sideEffects: 'BUNI instructs users to obtain medical approval before using it on a new scar or C-section scar. Do not apply to an open or unhealed surgical wound unless specifically directed by a clinician. Full warnings are listed below.',
             opinionAlerts: 'Scar-improvement and massage claims are from BUNI; no independent clinical trial of the finished product was identified.',
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Product claims and usage guidance are sourced from BUNI; no independent clinician endorsement verified by ayna.',
-        doctorOpinion: 'BUNI combines a topical body oil with rollerball and gua sha massage and advises medical approval before use on new or C-section scars.',
-        effectiveness: 'May moisturize skin and support a regular scar-massage routine after appropriate wound healing; product-specific clinical benefit has not been independently established.',
+        doctorOpinion: 'BUNI combines a topical body oil with rollerball and gua sha massage, advising medical approval before use on new or C-section scars, per the brand\'s own site.\n\nThe evidence on one of its named ingredients, vitamin E, is genuinely mixed. A systematic review of 6 studies found only half showed a significant cosmetic improvement in scars from topical vitamin E, and 2 of the 6 studies reported adverse events — contact dermatitis and increased itching or rash. It\'s a widely used scar-care ingredient, but the research doesn\'t clearly support it working better than other moisturizers, and it carries a real irritation risk for some people.\n\nGua sha massage itself has real supporting research: a pilot study found it measurably increased microcirculation (blood flow) at the treated area for at least 25 minutes, which is one proposed mechanism for how massage may help soften scar tissue and improve skin appearance over time — though that study measured circulation in healthy skin, not scar-specific outcomes.\n\nNo independent clinical study of this specific product was found.',
+        doctorOpinionShort: 'Vitamin E evidence for scars is genuinely mixed — a systematic review found only half of eligible studies showed benefit, with some reporting dermatitis or itching. Gua sha massage itself has real evidence for increasing local circulation, though not scar-specific outcomes. No independent clinical study of this specific product was found.',
+        // Kept out of verificationLinks so it doesn't pool with the
+        // Scientific literature tab's citation list.
+        doctorOpinionCitations: [
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/26977069/', label: 'PubMed: The Role of Topical Vitamin E in Scar Management — a systematic review' },
+        ],
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Women wanting a moisturizing routine for the appearance of scars or stretch marks after skin has fully healed',
+            'C-section or postpartum recovery, once a doctor has cleared scar massage',
+            'Anyone wanting a rollerball + gua sha massage routine for general dry skin',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // bunibody.com/products/buni-natural-scar-body-treatment-oil.
+        howToUse: {
+            intro: 'Per BUNI\'s own site: roll the oil directly onto scars, stretch marks, or dry patches using the rollerball applicator.',
+            steps: [
+                'Gently massage it in with the rollerball or the included onyx gua sha tool to help absorption and circulation.',
+                'Use 1 to 2 times daily.',
+                'For scar care, start only once the skin is fully healed.',
+                'Consistent use for 3 to 6 months is what BUNI says shows the most visible improvement.',
+            ],
+            sourceUrl: 'https://www.bunibody.com/products/buni-natural-scar-body-treatment-oil',
+            sourceLabel: 'bunibody.com: TRANSFORM Scar+Body Treatment Oil',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'Get medical approval before using on a new scar or a C-section scar.',
+            'Do not apply to an open or unhealed surgical wound unless a clinician directs it.',
+            'Vitamin E can cause contact dermatitis or itching in some people — patch test first.',
+            'Irritation or an allergic reaction: stop using it and see a doctor.',
+        ],
+        communityReview: 'No independent (non-brand) customer review data was found for this product at time of writing.',
+        effectiveness: 'May moisturize skin and support a regular scar-massage routine after appropriate wound healing; the gua sha component has real evidence for boosting local circulation, but vitamin E\'s scar-specific benefit is not well established, and product-specific clinical benefit has not been independently established.',
+        // Per-ingredient science claims, each paired with a credible
+        // source (NIH-hosted or PubMed). Rendered on the Scientific
+        // literature tab.
+        ingredientScience: [
+            {
+                name: 'Vitamin E',
+                text: 'Widely used for scar care, but the evidence is genuinely mixed. A systematic review of 6 eligible studies found only 3 showed significant cosmetic improvement, and 2 reported adverse events (contact dermatitis, increased itching or rash).',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/26977069/', label: 'PubMed: The Role of Topical Vitamin E in Scar Management — a systematic review' },
+                ],
+            },
+            {
+                name: 'Gua sha massage',
+                text: 'A pilot study using laser Doppler imaging found gua sha caused a measurable, sustained increase in microcirculation (blood flow) at the treated area, one proposed mechanism behind massage-based scar and tissue work. The study measured healthy skin, not scar-specific outcomes.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/17905355/', label: 'PubMed: The Effect of Gua Sha Treatment on the Microcirculation of Surface Tissue — a pilot study in healthy subjects' },
+                ],
+            },
+            {
+                name: 'Avocado oil',
+                text: 'A plant oil shown to support skin-barrier repair, collagen synthesis, and wound healing in review and lab literature.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5796020/', label: 'NIH (PMC): Anti-Inflammatory and Skin Barrier Repair Effects of Topical Application of Some Plant Oils' },
+                ],
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/BUNI-Premium-Scar-Oil-Gua/dp/B0G45CR6TP',
+                        text: 'Amazon: BUNI TRANSFORM Scar Oil reviews',
+                        // Amazon blocks automated access, so this isn't a
+                        // summary of actual review text — just confirms this
+                        // is the real, current product listing. Read the
+                        // reviews directly on Amazon.
+                        summary: 'Real, current Amazon listing for this exact product. Amazon blocks automated access, so review content/ratings weren\'t independently verifiable at time of writing — read them directly on the page.',
+                    },
+                ],
+            },
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true,
@@ -1860,7 +2090,7 @@ export const BRAND_PRODUCTS = [
         type: 'physical',
         internal: false,
         healthFunctions: ['comfort', 'vaginal-health'],
-        tags: ['postpartum', 'pregnancy', 'menopause', 'comfort', 'hormone-free'],
+        tags: ['postpartum', 'pregnancy', 'menopause', 'comfort', 'hormone-free', 'cruelty-free', 'vegan'],
         price: '$98',
         whereToBuy: ['Amazon', 'BUNI Body'],
         url: 'https://www.bunibody.com/products/buni-bundle',
@@ -1872,18 +2102,32 @@ export const BRAND_PRODUCTS = [
         image: 'https://cdn.shopify.com/s/files/1/0661/0432/8271/files/buni-bundle-product-page-main.webp?v=1776772005',
         summary: 'BUNI’s complete body-care set containing REJUVENATE Vulva Balm, SOOTHE Nipple and Lip Balm, TRANSFORM Scar+Body Treatment Oil, and an onyx gua sha tool.',
         safety: {
-            fdaStatus: 'Bundle of cosmetic / personal-care products; not an FDA-cleared medical treatment.',
-            materials: 'Contains the three BUNI topical products plus an onyx gua sha tool.',
+            fdaStatus: 'Made in an FDA-registered, GMP facility in the USA and third-party lab tested, per BUNI\'s site; the products themselves are cosmetic / personal-care items, not FDA-cleared medical treatments.',
+            materials: 'Contains the three BUNI topical products plus an onyx gua sha tool. See each product\'s own entry for its full ingredient list.',
             recalls: 'No recalls found.',
             sideEffects: 'Follow the individual product directions and ingredient warnings. TRANSFORM should not be used on a new or C-section scar without medical approval.',
             opinionAlerts: 'Product benefits are based on BUNI’s descriptions; no independent clinical study of the bundle was found.',
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Bundle contents and product positioning are sourced from BUNI; no independent clinician endorsement verified by ayna.',
-        doctorOpinion: 'The bundle combines BUNI’s intimate moisturizer, nipple/lip balm, and scar/body oil into one postpartum and body-care set.',
+        doctorOpinion: 'The bundle combines BUNI’s intimate moisturizer, nipple/lip balm, and scar/body oil into one postpartum and body-care set, formulated by board-certified OB/GYNs and dermatologists, per the brand\'s own site. See each individual product\'s entry for its own ingredient-level evidence and citations.',
         effectiveness: 'Convenience bundle containing three distinct topical products; effectiveness depends on the individual product and use case.',
         integrations: [],
         badges: [],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/BUNI-Bundle-Moisturizing-Plant-Derived-Fragrance-Free/dp/B0G53D19CK',
+                        text: 'Amazon: BUNI Bundle reviews',
+                        summary: 'Real, current Amazon listing for this exact bundle. Amazon blocks automated access, so review content/ratings weren\'t independently verifiable at time of writing — read them directly on the page.',
+                    },
+                ],
+            },
+        },
         isEmergingBrand: true,
     },
 
