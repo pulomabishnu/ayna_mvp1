@@ -356,13 +356,14 @@ function setupAccountStep(result, step) {
   };
 
   const syncPrimary = () => {
-    const consentOk = allConsented(step);
     const fieldsOk = method === 'email'
       ? Boolean(email.value.trim() && password.value.length >= 8)
       : phoneStage === 'number'
         ? Boolean(normalizePhoneE164(phone.value))
         : Boolean(code.value.trim().length === 6);
-    primary.disabled = !(consentOk && referralOk() && fieldsOk);
+    // Do not silently disable the CTA because consent/referral is missing.
+    // Let the click explain exactly what the user still needs to do.
+    primary.disabled = !fieldsOk;
     primary.textContent = method === 'email'
       ? 'create account + build my ecosystem'
       : phoneStage === 'number' ? 'text me a code' : 'verify + build my ecosystem';
@@ -472,7 +473,23 @@ function setupAccountStep(result, step) {
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
-    if (primary.disabled || !supabase) return;
+    if (primary.disabled) return;
+    if (!supabase) {
+      setStatus('Sign-in is not configured on this deployment.');
+      return;
+    }
+    if (!allConsented(step)) {
+      consent.classList.add('is-open');
+      consentToggle.setAttribute('aria-expanded', 'true');
+      setStatus('Please accept the privacy, AI, wellness, and 18+ confirmations before continuing.');
+      consent.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    if (!referralOk()) {
+      setStatus('Please tell us how you heard about ayna before continuing.');
+      referralSelect.focus();
+      return;
+    }
     setStatus('');
     primary.disabled = true;
     primary.textContent = 'please wait…';
@@ -495,19 +512,20 @@ function setupAccountStep(result, step) {
         if (data?.user?.identities?.length === 0) throw new Error('An account with this email already exists. Sign in instead.');
         captureReferralAnalytics();
 
-        try { window.sessionStorage.setItem(ACCOUNT_DONE_KEY, '1'); } catch (_) {}
         if (data?.session) {
+          try { window.sessionStorage.setItem(ACCOUNT_DONE_KEY, '1'); } catch (_) {}
           setStatus('Account created. Building your ecosystem…', true);
           return;
         }
 
         writeVerificationPending({ type: 'email', value: cleanEmail });
-        setStatus('Check your email to verify your account. Your ecosystem preview is ready.', true);
+        setStatus('Code sent. Enter the 8-digit verification code to finish creating your account.', true);
         window.setTimeout(() => {
           result.classList.remove('v6-awaiting-account');
           step.remove();
           enhancePendingVerificationResult();
-        }, 650);
+          showVerificationNotice();
+        }, 250);
         return;
       }
 
@@ -555,6 +573,7 @@ function ensureQuizAccountStep() {
   if (!result) return;
   if (readVerificationPending()) {
     enhancePendingVerificationResult();
+    showVerificationNotice();
     return;
   }
   let done = false;
@@ -571,31 +590,100 @@ function ensureQuizAccountStep() {
 function showVerificationNotice() {
   if (document.querySelector('.v6-verify-backdrop')) return;
   const pending = readVerificationPending();
+  if (!pending || pending.type !== 'email' || !pending.value) return;
+
   const backdrop = document.createElement('div');
   backdrop.className = 'v6-verify-backdrop';
   backdrop.innerHTML = `
-    <div class="v6-verify-card" role="dialog" aria-modal="true" aria-labelledby="v6-verify-title">
-      <div class="v6-account-step__eyebrow">almost yours</div>
-      <h2 id="v6-verify-title">verify first.</h2>
-      <p>Verify your account before opening Browse or your saved ecosystem. Your quiz answers are still here.</p>
+    <div class="v6-verify-card v6-auth-card" role="dialog" aria-modal="true" aria-labelledby="v6-verify-title">
+      <div class="v6-account-step__eyebrow">one last step</div>
+      <h2 id="v6-verify-title">verify your email.</h2>
+      <p>We sent an 8-digit verification code to <strong class="v6-verify-email"></strong>. Enter it below to save your ecosystem.</p>
+      <form class="v6-verify-form" novalidate>
+        <input
+          class="v6-account-input v6-verify-code"
+          type="text"
+          inputmode="numeric"
+          autocomplete="one-time-code"
+          maxlength="8"
+          placeholder="8-digit code"
+          aria-label="8-digit verification code"
+        />
+        <button type="submit" class="v6-account-primary v6-verify-submit" disabled>verify email</button>
+      </form>
       <div class="v6-verify-actions">
-        <button type="button" class="v6-verify-primary">resend verification</button>
-        <button type="button" class="v6-verify-secondary">not now</button>
+        <button type="button" class="v6-verify-resend">resend code</button>
+        <button type="button" class="v6-verify-change">change email</button>
       </div>
       <p class="v6-account-status" role="status"></p>
     </div>
   `;
   document.body.append(backdrop);
+
+  const emailLabel = backdrop.querySelector('.v6-verify-email');
+  const form = backdrop.querySelector('.v6-verify-form');
+  const input = backdrop.querySelector('.v6-verify-code');
+  const submit = backdrop.querySelector('.v6-verify-submit');
+  const resend = backdrop.querySelector('.v6-verify-resend');
+  const change = backdrop.querySelector('.v6-verify-change');
   const status = backdrop.querySelector('.v6-account-status');
-  backdrop.querySelector('.v6-verify-secondary').addEventListener('click', () => backdrop.remove());
-  backdrop.addEventListener('click', (event) => { if (event.target === backdrop) backdrop.remove(); });
-  backdrop.querySelector('.v6-verify-primary').addEventListener('click', async () => {
-    if (!supabase || pending?.type !== 'email' || !pending?.value) {
-      status.textContent = 'Open the verification message we sent you, then come back to ayna.';
+
+  emailLabel.textContent = pending.value;
+  const sync = () => {
+    input.value = String(input.value || '').replace(/\D/g, '').slice(0, 8);
+    submit.disabled = input.value.length !== 8;
+  };
+  input.addEventListener('input', sync);
+  window.setTimeout(() => input.focus(), 60);
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const token = String(input.value || '').replace(/\D/g, '').slice(0, 8);
+    if (!/^\d{8}$/.test(token)) {
+      status.style.color = '#8e493f';
+      status.textContent = 'Enter the full 8-digit verification code from your email.';
       return;
     }
-    const button = backdrop.querySelector('.v6-verify-primary');
-    button.disabled = true;
+    if (!supabase) {
+      status.textContent = 'Sign-in is not configured on this deployment.';
+      return;
+    }
+
+    submit.disabled = true;
+    resend.disabled = true;
+    status.style.color = '#6d6169';
+    status.textContent = 'verifying…';
+    try {
+      const { data, error } = await withTimeout(supabase.auth.verifyOtp({
+        email: pending.value,
+        token,
+        type: 'email',
+      }), 15000);
+      if (error) throw error;
+      if (!data?.session) throw new Error('Your email was verified, but we could not start your session. Please sign in.');
+
+      writeVerificationPending(null);
+      try { window.sessionStorage.setItem(ACCOUNT_DONE_KEY, '1'); } catch (_) {}
+      status.style.color = '#4f6d50';
+      status.textContent = 'Verified. Building your ecosystem…';
+      window.setTimeout(() => backdrop.remove(), 250);
+    } catch (error) {
+      status.style.color = '#8e493f';
+      status.textContent = /expired|invalid|token/i.test(String(error?.message || ''))
+        ? 'That code is invalid or expired. Request a new code and try again.'
+        : messageFromError(error, 'Could not verify that code.');
+      sync();
+      resend.disabled = false;
+    }
+  });
+
+  resend.addEventListener('click', async () => {
+    if (!supabase) {
+      status.textContent = 'Sign-in is not configured on this deployment.';
+      return;
+    }
+    resend.disabled = true;
+    status.style.color = '#6d6169';
     status.textContent = 'sending…';
     try {
       const { error } = await supabase.auth.resend({
@@ -604,13 +692,26 @@ function showVerificationNotice() {
         options: { emailRedirectTo: 'https://www.aynahealth.co/confirmed' },
       });
       if (error) throw error;
+      input.value = '';
+      sync();
+      input.focus();
       status.style.color = '#4f6d50';
-      status.textContent = 'Sent. Check your inbox and spam folder.';
+      status.textContent = 'New code sent. Check your inbox and spam folder.';
     } catch (error) {
+      status.style.color = '#8e493f';
       status.textContent = messageFromError(error, 'Could not resend right now.');
     } finally {
-      button.disabled = false;
+      resend.disabled = false;
     }
+  });
+
+  change.addEventListener('click', () => {
+    writeVerificationPending(null);
+    try { window.sessionStorage.removeItem(ACCOUNT_DONE_KEY); } catch (_) {}
+    backdrop.remove();
+    const result = document.querySelector('.ayna-quiz-result-screen');
+    if (result) result.classList.add('v6-awaiting-account');
+    nextFrame(ensureQuizAccountStep);
   });
 }
 
@@ -636,7 +737,7 @@ function enhancePendingVerificationResult() {
   if (title && !result.querySelector('.v6-result-verify-note')) {
     const note = document.createElement('p');
     note.className = 'v6-result-verify-note';
-    note.textContent = 'Your preview is ready. Verify your account to unlock Browse and save this ecosystem.';
+    note.textContent = 'Verification required. Enter the 8-digit code we emailed you to save and open your ecosystem.';
     note.style.cssText = 'margin:10px auto 0;max-width:620px;color:rgba(255,250,243,.68);font-size:12px;line-height:1.5;';
     title.insertAdjacentElement('afterend', note);
   }
