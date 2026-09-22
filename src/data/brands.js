@@ -781,7 +781,13 @@ export const BRAND_PRODUCTS = [
         type: 'physical',
         internal: true,
         healthFunctions: ['vaginal-health'],
-        tags: ['discomfort', 'comfort', 'organic', 'non-hormonal'],
+        // 'cruelty-free', 'non-toxic', 'ph-neutral', 'single-use', and
+        // 'clinician-informed' are gina's own stated Key Benefits (per the
+        // brand's site) — feeds both the Discovery "Preferences" filter
+        // (matchesPreference in Discovery.jsx) and the ecosystem
+        // preference matcher (preferenceLabelMatchesProduct in
+        // products.js), both of which scan this tags array as text.
+        tags: ['discomfort', 'comfort', 'organic', 'non-hormonal', 'cruelty-free', 'non-toxic', 'ph-neutral', 'single-use', 'clinician-informed'],
         price: '$101.00',
         whereToBuy: ['getgina.com'],
         url: 'https://getgina.com/products/vaginal-moisturizing-glides',
@@ -800,7 +806,7 @@ export const BRAND_PRODUCTS = [
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Sourced from gina\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'gina positions its coconut-oil glides as a simple, single-ingredient way to hydrate and soothe vaginal dryness and discomfort, per the brand\'s own site.\n\nThere\'s real clinical evidence behind coconut oil for this specific use: a 2023 pilot study followed 53 women using virgin coconut oil for vaginal dryness and painful sex over 6 months, and found most reported real improvement (83% improved dryness, 87% improved moisture duration) — though it wasn\'t placebo-controlled and didn\'t test this specific product.\n\nLab evidence is more mixed: one study found coconut oil, unlike several other commercial vaginal products, didn\'t inhibit the growth of E. coli in vitro. Coconut oil\'s natural pH (roughly 7 to 8) is also more alkaline than the vagina\'s normal acidic range (3.8 to 4.5), and a separate cohort study found intravaginal oil use was linked to a much higher rate of yeast colonization — a documented reason intravaginal oil use is linked to a higher risk of bacterial vaginosis or a yeast infection in some people.\n\nNo independent clinical study of this specific product was found.',
+        doctorOpinion: 'gina positions its coconut-oil glides as pure, simple, and effective — developed without hormones or harsh additives, non-irritating, non-toxic, pH-neutral, cruelty-free, pre-portioned for single use, and clinician-informed — per the brand\'s own site.\n\nThere\'s real clinical evidence behind coconut oil for this specific use: a 2023 pilot study followed 53 women using virgin coconut oil for vaginal dryness and painful sex over 6 months, and found most reported real improvement (83% improved dryness, 87% improved moisture duration) — though it wasn\'t placebo-controlled and didn\'t test this specific product.\n\nLab evidence is more mixed: one study found coconut oil, unlike several other commercial vaginal products, didn\'t inhibit the growth of E. coli in vitro. Coconut oil\'s natural pH (roughly 7 to 8) is also more alkaline than the vagina\'s normal acidic range (3.8 to 4.5), and a separate cohort study found intravaginal oil use was linked to a much higher rate of yeast colonization — a documented reason intravaginal oil use is linked to a higher risk of bacterial vaginosis or a yeast infection in some people.\n\nNo independent clinical study of this specific product was found.',
         doctorOpinionShort: 'A 2023 pilot study found most of 53 women using coconut oil for vaginal dryness over 6 months reported real improvement, though it wasn\'t placebo-controlled. Coconut oil is also naturally alkaline (pH roughly 7 to 8) versus the vagina\'s normal acidic range, which can raise BV/yeast risk in some people. No independent clinical study of this specific product was found.',
         // Backs specific claims made in doctorOpinion with direct links,
         // same as Neycher's doctorOpinionCitations — kept out of
