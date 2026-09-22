@@ -50,7 +50,7 @@ import AuthCallback from './components/AuthCallback';
 import AuthConfirm from './components/AuthConfirm';
 import EmailConfirmed from './components/EmailConfirmed';
 import { getSupabaseClient } from './utils/supabaseClient';
-import { loadEcosystemForUser, upsertProductState, upsertProductsBatch, clearEcosystemForUser } from './utils/ecosystemStore';
+import { loadEcosystemForUser, upsertProductState, upsertProductsBatch, clearEcosystemForUser, removeGeneratedProductsFromEcosystem } from './utils/ecosystemStore';
 import { loadSavedProducts, persistSavedProducts, clearSavedProducts, loadSavedForUser, setSavedForUser } from './utils/savedProductsStore';
 import { loadLearningMemoryForUser, saveLearningMemoryForUser } from './utils/learningMemoryStore';
 import { loadReviewsForUser, upsertProductReviews } from './utils/reviewsStore';
@@ -390,6 +390,9 @@ function App() {
   // Set to true once the LLM builds the ecosystem this session — prevents
   // Supabase token-refresh reloads from overwriting in-memory LLM products.
   const llmBuiltThisSessionRef = useRef(false);
+  const myProductsRef = useRef({});
+  const seedSavePromiseRef = useRef(Promise.resolve());
+  useEffect(() => { myProductsRef.current = myProducts; }, [myProducts]);
   const [authLoading, setAuthLoading] = useState(true);
   const [dataLoading, setDataLoading] = useState(false);
   // Which user's saved data (health profile, ecosystem, ...) has finished loading. Lets the
@@ -767,13 +770,14 @@ function App() {
       setQuizResults(pendingQuizResults);
       const { seedMeta, mergedProducts } = getEcosystemSeedFromQuiz(pendingQuizResults, healthProfile);
       setEcosystemSeedMeta(seedMeta);
-      const instantProducts = Object.keys(mergedProducts || {}).length
+      const rawInstantProducts = Object.keys(mergedProducts || {}).length
         ? mergedProducts
         : Object.fromEntries(
             getRecommendations(pendingQuizResults, healthProfile)
               .slice(0, 6)
               .map((product) => [product.id, product])
           );
+      const instantProducts = Object.fromEntries(Object.entries(rawInstantProducts).map(([id, product]) => [id, { ...product, intakeGenerated: true }]));
       setMyProducts(instantProducts);
       setEcosystemOrder(Object.keys(instantProducts));
       clearCachedLlmRecommendations();
@@ -790,13 +794,14 @@ function App() {
         // reset (not fired in parallel) so the clear-then-seed writes can't
         // race and have the seed's `in_ecosystem: true` lost to the reset's
         // `in_ecosystem: false` landing second.
-        resetRemoteEcosystemBestEffort(_supabase, user.id).then(() => {
+        seedSavePromiseRef.current = seedSavePromiseRef.current.then(() => resetRemoteEcosystemBestEffort(_supabase, user.id)).then(() => {
           const seeded = Object.values(instantProducts);
           if (seeded.length) {
-            upsertProductsBatch(_supabase, user.id, seeded, { inEcosystem: true, isTracked: false, isOmitted: false })
-              .catch(e => reportSaveFailure('Could not save your ecosystem', e));
+            return upsertProductsBatch(_supabase, user.id, seeded, { inEcosystem: true, isTracked: false, isOmitted: false });
           }
-        });
+        }).then(result => {
+          if (result?.synced === false) reportSaveFailure('Could not save your ecosystem', new Error('The server did not accept the product update.'));
+        }).catch(e => reportSaveFailure('Could not save your ecosystem', e));
       }
       setCurrentView('ecosystem');
       // Persist the RAW intake, not the legacy wrapper. `pendingQuizResults` is
@@ -1121,13 +1126,14 @@ function App() {
     setQuizResults(completedResults);
     const { seedMeta, mergedProducts } = getEcosystemSeedFromQuiz(completedResults, healthProfile);
     setEcosystemSeedMeta(seedMeta);
-    const instantProducts = Object.keys(mergedProducts || {}).length
+    const rawInstantProducts = Object.keys(mergedProducts || {}).length
       ? mergedProducts
       : Object.fromEntries(
           getRecommendations(completedResults, healthProfile)
             .slice(0, 6)
             .map((product) => [product.id, product])
         );
+    const instantProducts = Object.fromEntries(Object.entries(rawInstantProducts).map(([id, product]) => [id, { ...product, intakeGenerated: true }]));
     setMyProducts(instantProducts);
     setEcosystemOrder(Object.keys(instantProducts));
     llmBuiltThisSessionRef.current = false;
@@ -1142,13 +1148,14 @@ function App() {
     // session ends if the async LLM build (the only other thing that writes
     // to user_ecosystems) never finishes.
     if (supabase && user) {
-      resetRemoteEcosystemBestEffort(supabase, user.id).then(() => {
+      seedSavePromiseRef.current = seedSavePromiseRef.current.then(() => resetRemoteEcosystemBestEffort(supabase, user.id)).then(() => {
         const seeded = Object.values(instantProducts);
         if (seeded.length) {
-          upsertProductsBatch(supabase, user.id, seeded, { inEcosystem: true, isTracked: false, isOmitted: false })
-            .catch(e => reportSaveFailure('Could not save your ecosystem', e));
+          return upsertProductsBatch(supabase, user.id, seeded, { inEcosystem: true, isTracked: false, isOmitted: false });
         }
-      });
+      }).then(result => {
+        if (result?.synced === false) reportSaveFailure('Could not save your ecosystem', new Error('The server did not accept the product update.'));
+      }).catch(e => reportSaveFailure('Could not save your ecosystem', e));
     }
     posthog.capture('intake_completed', {
       concernsCount: Array.isArray(completedResults.primaryConcerns) ? completedResults.primaryConcerns.length : 0,
@@ -1165,13 +1172,14 @@ function App() {
     setQuizResults(updatedResults);
     const { seedMeta, mergedProducts } = getEcosystemSeedFromQuiz(updatedResults, healthProfile);
     setEcosystemSeedMeta(seedMeta);
-    const instantProducts = Object.keys(mergedProducts || {}).length
+    const rawInstantProducts = Object.keys(mergedProducts || {}).length
       ? mergedProducts
       : Object.fromEntries(
           getRecommendations(updatedResults, healthProfile)
             .slice(0, 6)
             .map((product) => [product.id, product])
         );
+    const instantProducts = Object.fromEntries(Object.entries(rawInstantProducts).map(([id, product]) => [id, { ...product, intakeGenerated: true }]));
     setMyProducts(instantProducts);
     setEcosystemOrder(Object.keys(instantProducts));
     llmBuiltThisSessionRef.current = false;
@@ -1184,13 +1192,14 @@ function App() {
     // re-seeded ecosystem survives even if the async LLM rebuild never
     // completes.
     if (supabase && user) {
-      resetRemoteEcosystemBestEffort(supabase, user.id).then(() => {
+      seedSavePromiseRef.current = seedSavePromiseRef.current.then(() => resetRemoteEcosystemBestEffort(supabase, user.id)).then(() => {
         const seeded = Object.values(instantProducts);
         if (seeded.length) {
-          upsertProductsBatch(supabase, user.id, seeded, { inEcosystem: true, isTracked: false, isOmitted: false })
-            .catch(e => reportSaveFailure('Could not save your ecosystem', e));
+          return upsertProductsBatch(supabase, user.id, seeded, { inEcosystem: true, isTracked: false, isOmitted: false });
         }
-      });
+      }).then(result => {
+        if (result?.synced === false) reportSaveFailure('Could not save your ecosystem', new Error('The server did not accept the product update.'));
+      }).catch(e => reportSaveFailure('Could not save your ecosystem', e));
     }
     setCurrentView('ecosystem');
   };
@@ -1369,15 +1378,21 @@ function App() {
     llmBuiltThisSessionRef.current = true;
     const valid = products.filter(p => p?.id);
     const llmIdSet = new Set(valid.map(p => p.id));
-    let manualIds = [];
+    const staleGeneratedIds = Object.values(myProductsRef.current)
+      .filter(p => p?.id && (p.llmGenerated || p.intakeGenerated) && !p._userSwapped && !llmIdSet.has(p.id))
+      .map(p => p.id);
+    const manualIds = Object.keys(myProductsRef.current).filter(id => {
+      const product = myProductsRef.current[id];
+      return product && ((!product.llmGenerated && !product.intakeGenerated) || product._userSwapped);
+    });
     setMyProducts(prev => {
       // Preserve manually-added products (DB products without llmGenerated flag)
       // so navigating away and back doesn't wipe things like the Saalt steamer
-      manualIds = Object.keys(prev).filter(id => {
+      const currentManualIds = Object.keys(prev).filter(id => {
         const p = prev[id];
-        return p && (!p.llmGenerated && !p.intakeGenerated) || p?._userSwapped;
+        return p && ((!p.llmGenerated && !p.intakeGenerated) || p._userSwapped);
       });
-      const manual = Object.fromEntries(manualIds.map(id => [id, prev[id]]));
+      const manual = Object.fromEntries(currentManualIds.map(id => [id, prev[id]]));
       return { ...valid.reduce((acc, p) => { acc[p.id] = p; return acc; }, {}), ...manual };
     });
     setEcosystemOrder(() => [
@@ -1386,12 +1401,19 @@ function App() {
     ]);
     const supabase = getSupabaseClient();
     if (supabase && user) {
-      // One request per 100 products instead of one per product. The old
-      // Promise.all fired up to ~50 individual POSTs, any subset of which could
-      // fail independently; the .catch reported only the first rejection, so a
-      // partially-saved ecosystem looked identical to a fully-saved one.
-      upsertProductsBatch(supabase, user.id, valid, { inEcosystem: true, isTracked: false, isOmitted: false })
-        .catch(e => reportSaveFailure('Could not save your ecosystem', e));
+      // The seed write may still be running. Replace its generated picks only
+      // after it finishes, while leaving manual, tracked and saved rows intact.
+      seedSavePromiseRef.current = seedSavePromiseRef.current.then(async () => {
+        if (staleGeneratedIds.length) {
+          try {
+            await removeGeneratedProductsFromEcosystem(supabase, user.id, staleGeneratedIds);
+          } catch (error) {
+            reportSaveFailure('Could not remove old ecosystem picks', error);
+          }
+        }
+        const result = await upsertProductsBatch(supabase, user.id, valid, { inEcosystem: true, isTracked: false, isOmitted: false });
+        if (result?.synced === false) reportSaveFailure('Could not save your ecosystem', new Error('The server did not accept the product update.'));
+      }).catch(e => reportSaveFailure('Could not save your ecosystem', e));
     }
   }, [user, reportSaveFailure]);
 

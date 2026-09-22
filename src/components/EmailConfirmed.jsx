@@ -3,6 +3,7 @@ import { getSupabaseClient } from '../utils/supabaseClient';
 
 export default function EmailConfirmed({ onAuthenticated }) {
   const [status, setStatus] = useState('loading');
+  const [confirmedUser, setConfirmedUser] = useState(null);
 
   useEffect(() => {
     const supabase = getSupabaseClient();
@@ -22,15 +23,15 @@ export default function EmailConfirmed({ onAuthenticated }) {
 
     if (accessToken && refreshToken) {
       // Supabase returned tokens — establish the session.
-      // This writes to localStorage, which fires onAuthStateChange in any
-      // other open Ayna tab, making it navigate to ecosystem automatically.
+      // Safari and an installed app do not share browser storage. Confirming
+      // here makes the account eligible to sign in, but the app must establish
+      // its own session when the user returns to it.
       supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken })
         .then(({ data, error }) => {
           if (!error && data.session?.user) {
-            // Try to close this tab — works when email client opens links as popups.
-            // If browser blocks it, navigate to ecosystem in this tab instead.
+            setConfirmedUser(data.session.user);
+            setStatus('confirmed');
             window.close();
-            setTimeout(() => onAuthenticated(data.session.user), 300);
           } else {
             setStatus('manual');
           }
@@ -59,8 +60,9 @@ export default function EmailConfirmed({ onAuthenticated }) {
       </div>
       <h2 style={{ fontSize: '1.5rem', fontWeight: 700, margin: 0 }}>Email confirmed!</h2>
       <p style={{ color: 'var(--color-text-muted, #666)', maxWidth: '340px', lineHeight: 1.6, margin: 0 }}>
-        You're all set. Close this tab and return to ayna to sign in.
+        Return to the ayna app. It will check your sign-in when you reopen it. If the screen stays the same, tap “I confirmed my email” in the app or sign in with your email and password.
       </p>
+      {confirmedUser && <button type="button" onClick={() => onAuthenticated(confirmedUser)} style={{ border: 0, borderRadius: '10px', background: '#FF7417', color: '#fff', padding: '12px 20px', cursor: 'pointer' }}>Continue in this browser</button>}
     </div>
   );
 }

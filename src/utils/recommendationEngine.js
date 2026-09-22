@@ -40,6 +40,10 @@ const CONCERN_CONFIG = [
 
 const ENDOMETRIOSIS_FLAGS = ['synthetic fragrance', 'dioxins', 'chlorine bleaching', 'bpa'];
 const PCOS_HORMONE_FLAGS = ['phthalate', 'paraben', 'bpa', 'synthetic fragrance'];
+// These categories describe a format, not a health need. Treating them as a
+// concern match put any supplement, tracker or telehealth service into nearly
+// every section, including UTI products under cramps and PCOS.
+const GENERIC_CATEGORIES = new Set(['supplement', 'telehealth', 'tracker', 'diagnostics', 'app', 'device']);
 
 function asArray(value) {
   if (Array.isArray(value)) return value;
@@ -502,7 +506,8 @@ export function generateTieredRecommendations(intake = {}) {
       }
 
       return concern.tags.some((tag) => tags.includes(tag))
-        || concern.categories.includes(category);
+        || (concern.categories.includes(category)
+          && (!GENERIC_CATEGORIES.has(category) || concern.tags.length === 0));
     });
 
     const tiers = buildDiverseTiers(concernPool, intake, concern, 5);

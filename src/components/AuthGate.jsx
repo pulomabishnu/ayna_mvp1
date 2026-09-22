@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
 
@@ -45,6 +45,8 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
   // resend option means a stuck user isn't just left staring at "check your
   // inbox" forever.
   const [needsConfirmation, setNeedsConfirmation] = useState(false);
+  const [checkingConfirmation, setCheckingConfirmation] = useState(false);
+  const lastConfirmationCheck = useRef(0);
   const [resending, setResending] = useState(false);
   const [resendMsg, setResendMsg] = useState('');
   // Signup via native Supabase phone-OTP auth instead of email/password —
@@ -163,6 +165,47 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
       setResending(false);
     }
   };
+
+  // The confirmation link may open in Safari while Ayna stays in its own app
+  // window. Those windows do not share a Supabase session, so retry the email
+  // sign-in in Ayna when the user returns. No password is persisted to storage.
+  const checkConfirmedEmail = async (automatic = false) => {
+    if (!supabase || !email || !password || checkingConfirmation) return;
+    if (automatic && Date.now() - lastConfirmationCheck.current < 5000) return;
+    lastConfirmationCheck.current = Date.now();
+    setCheckingConfirmation(true);
+    try {
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      if (signInError) {
+        if (!automatic && !/email not confirmed/i.test(signInError.message || '')) {
+          setError(signInError.message || 'Could not sign in. Please try again.');
+        }
+        return;
+      }
+      setNeedsConfirmation(false);
+      setError('');
+      setSuccessMsg('Email confirmed. Signing you in…');
+    } catch (checkError) {
+      if (!automatic) setError(checkError.message || 'Could not check your email yet. Please try again.');
+    } finally {
+      setCheckingConfirmation(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!needsConfirmation) return undefined;
+    const onReturn = () => {
+      if (document.visibilityState === 'visible') void checkConfirmedEmail(true);
+    };
+    document.addEventListener('visibilitychange', onReturn);
+    window.addEventListener('focus', onReturn);
+    window.addEventListener('pageshow', onReturn);
+    return () => {
+      document.removeEventListener('visibilitychange', onReturn);
+      window.removeEventListener('focus', onReturn);
+      window.removeEventListener('pageshow', onReturn);
+    };
+  }, [needsConfirmation, email, password, checkingConfirmation]);
 
   const normalizePhoneE164 = (raw) => {
     const trimmed = String(raw || '').trim();
@@ -558,6 +601,16 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
           {successMsg && <p style={styles.success}>{successMsg}</p>}
           {needsConfirmation && authMethod === 'email' && (
             <p style={{ ...styles.error, color: 'var(--color-text-muted)' }}>
+              After confirming in Safari, return to ayna. We’ll check when you come back.{' '}
+              <button
+                type="button"
+                onClick={() => void checkConfirmedEmail()}
+                disabled={checkingConfirmation}
+                style={{ ...styles.link, background: 'none', border: 'none', padding: 0, font: 'inherit', cursor: checkingConfirmation ? 'not-allowed' : 'pointer' }}
+              >
+                {checkingConfirmation ? 'Checking…' : 'I confirmed my email'}
+              </button>
+              <br />
               Didn&apos;t get it?{' '}
               <button
                 type="button"

@@ -15,11 +15,19 @@ describe('generateTieredRecommendations — every CONCERN_AREAS checkbox produce
     expect(result[0].concern).toBe('Hormonal bloating');
   });
 
-  it('"STI support" matches a real product via category, not just a coincidental tag', () => {
+  it('does not fill STI support with unrelated generic diagnostic products', () => {
     const result = generateTieredRecommendations({ primaryConcerns: ['STI support'] });
     expect(result.length).toBeGreaterThan(0);
-    const hasAnyTier = result[0].tiers.some((t) => t.product);
-    expect(hasAnyTier).toBe(true);
+    expect(result[0].tiers).toHaveLength(0);
+  });
+
+  it('keeps UTI pain relief out of cramp and hormone sections', () => {
+    const result = generateTieredRecommendations({ primaryConcerns: [
+      'Cramp and pain relief (devices, supplements, heat)',
+      'Hormone balance (supplements, lifestyle)',
+    ] });
+    expect(result.flatMap((section) => section.tiers.map((tier) => tier.product.name)))
+      .not.toContain('Winx Health UTI Fast-Acting Pain Relief');
   });
 
   it('"Mental health and cycle mood support" matches via the mental-health category', () => {

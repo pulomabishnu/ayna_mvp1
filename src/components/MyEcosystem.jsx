@@ -977,6 +977,7 @@ export default function MyEcosystem({
         } catch (_) {}
         return 0;
     });
+    const [completedGenerationNonce, setCompletedGenerationNonce] = useState(0);
     const [phoneNumberInfo, setPhoneNumberInfo] = useState(null);
     const [smsCardCopied, setSmsCardCopied] = useState(false);
     const [smsCardShown, setSmsCardShown] = useState(() => {
@@ -1149,6 +1150,9 @@ export default function MyEcosystem({
             setLlmError(rec.error);
             setLlmPartialConcerns(rec.partialConcerns || []);
             setLlmLoadStartedAt(rec.startedAt);
+            if (recommendationRefreshNonce > 0 && !rec.loading && !rec.error && rec.tiered.length > 0) {
+                setCompletedGenerationNonce(recommendationRefreshNonce);
+            }
         };
 
         const unsubscribe = subscribeToGeneration(intakeFingerprint, onUpdate, (rec) => {
@@ -1493,16 +1497,17 @@ export default function MyEcosystem({
         });
     }, [recommendedProductsForDisplay]);
 
-    // When LLM results arrive, push ALL tier products into the ecosystem (supplement + physical + telehealth)
+    // Save the completed recommendation set after generation finishes.
     useEffect(() => {
-        // Guard: only fire when we have actual LLM results, not the rule-based fallback
+        // The local set remains visible during generation and can be the final
+        // fallback if the AI service fails.
         if (!llmTiered.length) return;
         if (!recommendedProductsForDisplay.length || !onBuildEcosystemFromLlm) return;
         // Only build the ecosystem when explicitly requested:
         // quiz completion sets ayna_force_llm_refresh → nonce=1, rebuild button increments nonce
         // Never auto-generate on page load or login, even if ecosystem is empty
-        if (recommendationRefreshNonce === 0) return;
-        // Each concern has 3 tiers (supplement, physical, telehealth) — add each as its own ecosystem card
+        if (recommendationRefreshNonce === 0 || completedGenerationNonce !== recommendationRefreshNonce || llmLoading) return;
+        // Add each available distinct tier as its own ecosystem card.
         // Coverage first: put the strongest product from every distinct concern
         // into the ecosystem before adding a second or third product from any
         // one concern. This keeps broad profiles from being visually dominated
@@ -1535,7 +1540,7 @@ export default function MyEcosystem({
         if (!enrichedProducts.length) return;
         onBuildEcosystemFromLlm(enrichedProducts);
         posthog.capture('recommendation_viewed', { concernCount: recommendedProductsForDisplay.length });
-    }, [recommendedProductsForDisplay, onBuildEcosystemFromLlm, llmTiered, recommendationRefreshNonce]);
+    }, [recommendedProductsForDisplay, onBuildEcosystemFromLlm, llmTiered, recommendationRefreshNonce, completedGenerationNonce, llmLoading]);
 
     // Bounded worker pool — mirrors the fix already applied to Discovery.jsx.
     // Both effects below used to fire one request per product with no cap: a

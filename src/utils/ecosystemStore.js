@@ -322,6 +322,28 @@ export async function upsertProductState(supabase, userId, product, flags) {
   }
 }
 
+/** Replace superseded quiz/AI picks without changing tracking, omission or saved flags. */
+export async function removeGeneratedProductsFromEcosystem(supabase, userId, productIds) {
+  const ids = [...new Set((productIds || []).filter(Boolean))];
+  if (!ids.length) return { updated: 0 };
+  const shadow = readLocalShadow(userId);
+  const now = Date.now();
+  for (const id of ids) {
+    if (shadow.rows[id]) {
+      shadow.rows[id].inEcosystem = false;
+      shadow.rows[id].updatedAt = now;
+    }
+  }
+  writeLocalShadow(userId, shadow);
+  const { error } = await supabase
+    .from('user_ecosystems')
+    .update({ in_ecosystem: false, updated_at: new Date(now).toISOString() })
+    .eq('user_id', userId)
+    .in('product_id', ids);
+  if (error) throw error;
+  return { updated: ids.length };
+}
+
 /** Persist many products in chunks. Never write product blobs to Auth metadata. */
 export async function upsertProductsBatch(supabase, userId, products, flags) {
   const valid = (Array.isArray(products) ? products : []).filter((p) => p?.id);
