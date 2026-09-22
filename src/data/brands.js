@@ -406,7 +406,7 @@ export const BRAND_PRODUCTS = [
         clinicianAttribution: 'Sourced from Neycher\'s own site marketing claims, not independent clinical literature.',
         doctorOpinion: 'Neycher states this formula "helps decrease your pH, preventing the formation of bacteria and yeast overgrowth," per the brand\'s own site. Boric acid is a recognized option for recurrent vaginal complaints, but talk to a clinician before starting it.',
         communityReview: 'Reviewers on Amazon and Neycher\'s own site report reduced odor, itching, and discharge, with several noting relief starting within the first few uses. As with the rest of this brand\'s catalog, an exact rating/review count wasn\'t independently verifiable at time of writing.',
-        effectiveness: 'Brand cites its own consumer study in which 94% of users reported reduced vaginal itching; no independent clinical study of the product was found.',
+        effectiveness: 'No clinical trial or consumer study specific to this product was found on Neycher\'s site; no independent clinical study was found either. Boric acid is a recognized, commonly used option for recurrent vaginal odor and BV/yeast-related complaints generally.',
         integrations: [],
         badges: [],
         isEmergingBrand: true,
@@ -435,10 +435,10 @@ export const BRAND_PRODUCTS = [
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Sourced from Neycher\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'Neycher states the formula "creates a protective hydrating layer that supports long-lasting moisture and comfort," per the brand\'s own site. It also cites its own clinical trial in which 94% of users reported improvement in vaginal dryness. This is the brand\'s own reported result; no independently published or peer-reviewed study of this specific product was found.',
+        doctorOpinion: 'Neycher states the formula "creates a protective hydrating layer that supports long-lasting moisture and comfort," per the brand\'s own site. No clinical trial or study specific to this gel was found on the brand\'s site — the "94% of users" clinical claim shown elsewhere on Neycher\'s site is explicitly about the Vaginal Moisturizer (10 mg hyaluronic acid + polycarbophil suppository), a different formula from this gel.',
         // Shorter version for the Evidence view's narrower rail card — see
         // the Vaginal Moisturizer entry for why these are split.
-        doctorOpinionShort: 'Neycher cites its own clinical trial: 94% of users reported improvement in vaginal dryness. This is the brand\'s own reported result, not an independently peer-reviewed study.',
+        doctorOpinionShort: 'No clinical trial specific to this gel was found on Neycher\'s site. The brand\'s "94% of users" claim elsewhere on its site is about a different product (the Vaginal Moisturizer suppository), not this gel.',
         // Rendered as a bulleted list on the Evidence view, under "Best for".
         whoItsFor: [
             'Anyone whose vulva feels dry, tight, itchy, or irritated, at any age',
@@ -466,7 +466,7 @@ export const BRAND_PRODUCTS = [
             'Irritation or an allergic reaction: stop using it.',
         ],
         communityReview: 'Neycher.com and Amazon both carry customer reviews for this gel; a specific rating/review count wasn\'t independently verifiable at time of writing.',
-        effectiveness: 'Hyaluronic acid and glycerin draw moisture into the skin and mucosa, keeping it soft and hydrated; the brand cites its own clinical trial in which 94% of users reported improvement in vaginal dryness, though no independent clinical study of this specific product was found.',
+        effectiveness: 'Hyaluronic acid and glycerin draw moisture into the skin and mucosa, keeping it soft and hydrated. No clinical trial specific to this gel was found; no independent clinical study of this product was found either.',
         // Plain-text summary — kept as a string since search indexing,
         // the interaction checker, and DoctorPrep.jsx all read this as text.
         ingredients: 'Hyaluronic acid (sodium hyaluronate), glycerin, aloe leaf juice, black currant fruit extract, lavender flower water, chamomile flower extract, calendula flower extract, lactic acid, vitamin E, linseed oil, vitamin A.',
