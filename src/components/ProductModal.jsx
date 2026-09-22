@@ -902,6 +902,15 @@ export default function ProductModal({
                     ) : (
                       <p className="pdp-summary-card__empty">No summary yet.</p>
                     )}
+                    {product.ingredients && (
+                      <>
+                        <div className="pdp-summary-card__meta" style={{ marginTop: 20 }}>
+                          <span className="pdp-summary-card__dot" />
+                          INSIDE THE BOX
+                        </div>
+                        <p className="pdp-summary-card__body" style={{ whiteSpace: 'pre-line' }}>{product.ingredients}</p>
+                      </>
+                    )}
                     {sourceChips.length > 0 && (
                       <div className="pdp-summary-card__chips">
                         {sourceChips.map((chip) => (
@@ -943,7 +952,7 @@ export default function ProductModal({
                   <div className="pdp-summary-card">
                     {product.doctorOpinion ? (
                       <>
-                        <p className="pdp-summary-card__body" style={{ marginTop: 0 }}>{product.doctorOpinion}</p>
+                        <p className="pdp-summary-card__body" style={{ marginTop: 0, whiteSpace: 'pre-line' }}>{product.doctorOpinion}</p>
                         {product.clinicianAttribution && (
                           <div className="pdp-summary-card__foot">{product.clinicianAttribution}</div>
                         )}

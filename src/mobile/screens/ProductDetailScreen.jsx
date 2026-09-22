@@ -421,7 +421,7 @@ export default function ProductDetailScreen({
                 <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)', marginBottom: 4 }}>
                   Inside
                 </div>
-                <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.6, paddingTop: 8 }}>{ingredients}</div>
+                <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.6, paddingTop: 8, whiteSpace: 'pre-line' }}>{ingredients}</div>
               </div>
             )}
           </>
@@ -451,7 +451,7 @@ export default function ProductDetailScreen({
                 <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.3px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)' }}>
                   Clinician opinion
                 </div>
-                <div style={{ fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.6, marginTop: 9, color: 'var(--ayna-text)' }}>{doctorOpinion}</div>
+                <div style={{ fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.6, marginTop: 9, color: 'var(--ayna-text)', whiteSpace: 'pre-line' }}>{doctorOpinion}</div>
                 {clinicianAttribution && (
                   <div style={{ fontSize: 'calc(12px * var(--ayna-text-scale, 1))', lineHeight: 1.5, color: 'var(--ayna-text-faint)', marginTop: 11 }}>{clinicianAttribution}</div>
                 )}
