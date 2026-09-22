@@ -116,6 +116,13 @@ function isSponsoredItem(item) {
     return item?.sponsored === true || item?.isSponsored === true || String(item?.placementType || '').toLowerCase() === 'sponsored';
 }
 
+const SUSTAINABILITY_OPTIONS = [
+    { value: 'reusable', label: 'Reusable' },
+    { value: 'recyclable', label: 'Recyclable' },
+    { value: 'low-waste', label: 'Low Waste' },
+    { value: 'packaging', label: 'Sustainable Packaging' },
+];
+
 function matchesSustainability(item, filter) {
     if (filter === 'all') return true;
     const text = productSearchText(item);
@@ -656,6 +663,15 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     // suggestions used to be appended after filtering, so a selected
     // preference/price/rating/FSA filter didn't apply to them (2026-09-22 audit).
     const preferenceOptions = useMemo(() => availablePreferenceOptions(combined), [combined]);
+    // Only offer filter values that match at least one real product — options
+    // that always returned an empty grid (4+ stars with no verified ratings,
+    // Recyclable, Low Waste) read as broken controls (2026-09-22 audit).
+    const sustainabilityOptions = useMemo(() => SUSTAINABILITY_OPTIONS
+        .filter((opt) => opt.value === sustainabilityFilter || combined.some((item) => matchesSustainability(item, opt.value))), [combined, sustainabilityFilter]);
+    const hasFourPlusRated = useMemo(() => combined.some((item) => {
+        const rating = item.ratingNote ? null : (getAynaRating(item, aynaReviews[item.id]) ?? (item.userRating != null ? Number(item.userRating) : null));
+        return Number.isFinite(rating) && rating >= 4;
+    }), [combined, aynaReviews]);
 
     const passesActiveFilters = useCallback((item, skipCategory = false) => {
             if (omittedProducts[item.id]) return false;
@@ -1438,7 +1454,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         <span>Rating</span>
                         <select value={ratingFilter} onChange={(e) => setRatingFilter(e.target.value)}>
                             <option value="all">Any</option>
-                            <option value="4-plus">4+ stars</option>
+                            {(hasFourPlusRated || ratingFilter === '4-plus') && <option value="4-plus">4+ stars</option>}
                         </select>
                     </label>
                     <label>
@@ -1471,10 +1487,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         <span>Sustainability</span>
                         <select value={sustainabilityFilter} onChange={(e) => setSustainabilityFilter(e.target.value)}>
                             <option value="all">Any</option>
-                            <option value="reusable">Reusable</option>
-                            <option value="recyclable">Recyclable</option>
-                            <option value="low-waste">Low Waste</option>
-                            <option value="packaging">Sustainable Packaging</option>
+                            {sustainabilityOptions.map((opt) => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                         </select>
                     </label>
                     <label>
