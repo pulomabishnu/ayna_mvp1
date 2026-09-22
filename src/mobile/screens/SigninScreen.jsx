@@ -128,24 +128,6 @@ function GoogleButton({ onClick, disabled }) {
 
 function AppleButton({ onClick, disabled }) {
   return (
-    <button
-      type="button"
-      onClick={disabled ? undefined : onClick}
-      disabled={disabled}
-      style={{
-        width: '100%', background: '#000', color: '#fff', border: '1px solid #000',
-        textAlign: 'center', padding: 15, borderRadius: 99, fontFamily: "-apple-system, BlinkMacSystemFont, 'DM Sans', sans-serif",
-        fontWeight: 600, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', cursor: disabled ? 'not-allowed' : 'pointer',
-        opacity: disabled ? .6 : 1,
-      }}
-    >
-      {disabled ? 'Opening Apple…' : 'Continue with Apple'}
-    </button>
-  );
-}
-
-function AppleButton({ onClick, disabled }) {
-  return (
     <div
       onClick={disabled ? undefined : onClick}
       style={{
