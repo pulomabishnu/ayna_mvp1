@@ -131,7 +131,7 @@ export async function fetchSearchSuggestions(opts) {
     return {
       suggestions: [],
       querySummary: '',
-      error: 'Sign in to search beyond the ayna catalog.',
+      error: 'Sign in to use smart search across the ayna catalog.',
       code: 'auth_required',
     };
   }
