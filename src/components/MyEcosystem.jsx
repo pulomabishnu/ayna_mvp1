@@ -1243,7 +1243,24 @@ export default function MyEcosystem({
                     });
 
                     if (rec.cancelled) return;
-                    const recs = accumulated;
+                    // Preserve screened local picks when AI returns only part
+                    // of the requested ecosystem or too few distinct options.
+                    const aiByConcern = new Map(accumulated.map((entry) => [String(entry.concern || '').toLowerCase(), entry]));
+                    const recs = accumulated.length ? instantLocal.map((local) => {
+                        const key = String(local.concern || '').toLowerCase();
+                        const ai = aiByConcern.get(key);
+                        if (!ai) return local;
+                        aiByConcern.delete(key);
+                        const tiers = Array.isArray(ai.tiers) ? [...ai.tiers] : [];
+                        const chosen = new Set(tiers.map((tier) => String(tier?.product?.name || '').toLowerCase()));
+                        for (const tier of local.tiers || []) {
+                            if (tiers.length >= 3) break;
+                            const name = String(tier?.product?.name || '').toLowerCase();
+                            if (name && !chosen.has(name)) { tiers.push(tier); chosen.add(name); }
+                        }
+                        return { ...ai, tiers: tiers.slice(0, 5) };
+                    }) : [];
+                    recs.push(...aiByConcern.values());
                     console.log('[Ayna LLM] Done. Sections:', recs.length, '| errors:', errorCount);
 
                     // Swap in the completed AI result only after all batches finish.

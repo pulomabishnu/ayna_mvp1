@@ -34,7 +34,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [showConsentDetails, setShowConsentDetails] = useState(false);
+  const [showConsentDetails, setShowConsentDetails] = useState(true);
   const [checked, setChecked] = useState([false, false, false, false]);
   // Two real signups reported never getting a confirmation email
   // (2026-08-25) — Supabase's built-in email sender has a very low rate
@@ -769,7 +769,7 @@ const styles = {
     width: '36px',
     height: '36px',
     display: 'flex',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     justifyContent: 'center',
     background: 'rgba(255,255,255,0.7)',
     border: '1px solid #E7E0D4',
@@ -962,7 +962,7 @@ const styles = {
   },
   googleBtn: {
     display: 'flex',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     justifyContent: 'center',
     gap: '0.65rem',
     padding: '0.7rem',

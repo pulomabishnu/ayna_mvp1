@@ -549,9 +549,11 @@ function App() {
       'welcome', 'hero', 'quiz', 'discovery', 'product', 'waitlist', 'articles',
       'how-it-works', 'how-we-make-money',
     ];
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setUser(session?.user ?? null);
-      setUserSession(session ?? null);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        setUser(session.user);
+        setUserSession(session);
+      }
       if (event === 'SIGNED_IN' && session?.user) {
         posthog.identify(session.user.id, { email: session.user.email });
         tagInternalUserIfNeeded(posthog);
@@ -575,6 +577,9 @@ function App() {
         posthog.reset();
       }
       if (!session) {
+        // Leave Supabase's auth callback before checking the session again.
+        // Awaiting an auth method here can block the sign-in event itself.
+        setTimeout(async () => {
         // supabase-js is known to emit a spurious SIGNED_OUT (session: null)
         // on a transient background token-refresh failure — a brief network
         // blip, not a real sign-out. This block wipes EVERY piece of local
@@ -595,6 +600,8 @@ function App() {
           // unrelated network error, same as every other best-effort check
           // in this handler.
         }
+        setUser(null);
+        setUserSession(null);
         setMyProducts({});
         setTrackedProducts({});
         setOmittedProducts({});
@@ -626,6 +633,7 @@ function App() {
           localStorage.removeItem('ayna_health_profile_v1');
           sessionStorage.removeItem('ayna_force_llm_refresh');
         } catch (_) {}
+        }, 0);
       }
     });
     return () => subscription.unsubscribe();
