@@ -2187,18 +2187,86 @@ export const BRAND_PRODUCTS = [
         // Buy Now / Visit Site destination (see getBuyUrl in ProductModal.jsx).
         affiliateUrl: 'https://elitone.com/?af=aynahealth',
         image: 'https://elitone.com/wp-content/uploads/2021/05/SUI-Hero-2-1200x1000-AVIF.avif',
-        summary: 'An external, at-home pelvic floor stimulation device for stress and mixed urinary incontinence. A gel pad worn near the pubic bone delivers gentle electrical stimulation to contract and relax pelvic floor muscles for you during 20-minute sessions — the brand describes it as "doing Kegels for you."',
+        summary: 'Elitone was created by Gloria Kolb, an MIT- and Stanford-trained engineer who co-founded Elidah, Inc. after developing stress incontinence following the birth of 13-pound twins and finding the available treatments too invasive or time-consuming. It\'s an external, at-home pelvic floor stimulation device for stress and mixed urinary incontinence — a gel pad worn near the pubic bone delivers gentle electrical stimulation to contract and relax pelvic floor muscles for you during 20-minute sessions.',
         safety: {
-            fdaStatus: 'FDA-cleared (over-the-counter) for the treatment of stress and mixed urinary incontinence, per the brand.',
+            fdaStatus: 'FDA 510(k)-cleared in 2019 (K183585) for over-the-counter, no-prescription-needed treatment of stress and mixed urinary incontinence.',
             materials: 'Reusable GelPads (rated for 3+ uses), controller with belt clip, charging cable.',
             recalls: 'No recalls found.',
             sideEffects: 'Brand states contraindications are available on request; consult a clinician before use if pregnant, or if you have electronic implants (e.g. a pacemaker), epilepsy, cancer, or recent pelvic surgery.',
             opinionAlerts: 'Brand cites a 3.7% return rate for non-improvement and offers a 60-day money-back guarantee — brand claims, not independently verified here.',
         },
         clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'Sourced from Elitone\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'Elitone uses a proprietary high-frequency PMW waveform delivered through an external adhesive pad, positioned as a no-prescription-needed alternative to doing pelvic floor exercises manually — the brand states it performs roughly 100 contractions per 20-minute session.',
-        effectiveness: 'FDA-cleared, claim-specific device for stress/mixed incontinence per the brand; no independently conducted clinical study of the device was found here.',
+        clinicianAttribution: 'Founder Gloria Kolb is a real MIT/Stanford-trained engineer and co-founder/CEO of Elidah, Inc.; the clinical studies cited below were run by the company, not a fully independent research group, and no independent clinician endorsement of this device has been verified by ayna.',
+        doctorOpinion: 'Elidah, Inc. is a Connecticut-based, woman-owned medical device company that has worked with medical professionals since 2014, partly funded by National Science Foundation grants. Elitone delivers neuromuscular electrical stimulation through an external adhesive pad near the pubic bone, contracting pelvic floor muscles automatically rather than requiring the user to do Kegels manually — the brand states roughly 100 contractions per 20-minute session.\n\nTwo real clinical studies back this device specifically. A published, peer-reviewed pilot study (20 women with mild/moderate stress incontinence, 20-minute daily sessions for 6 weeks, no control group) found a 75% reduction in incontinence episode frequency, an 85% reduction in pad usage, and a 67% improvement in quality-of-life scores (all statistically significant). A later randomized, sham-controlled trial (48 women, 12 weeks) found leaks reduced by 52.8% in the treatment group — notably higher than the roughly 32% improvement seen in a meta-analysis of intravaginal electrical stimulation studies, though that\'s a cross-study comparison, not a head-to-head trial.\n\nThis is more independent-style clinical evidence than most products in this catalog carry — the pilot study was peer-reviewed and published, and the larger trial was sham-controlled — though both were run by the device\'s own company rather than a fully independent research group.',
+        doctorOpinionShort: 'Founded by engineer Gloria Kolb after her own postpartum incontinence. FDA-cleared (2019, 510(k) K183585) for OTC use. A published pilot study (20 women) found a 75% reduction in incontinence episodes and 85% reduction in pad use; a later sham-controlled RCT (48 women) found a 52.8% reduction in leaks — real, though company-run rather than fully independent, evidence.',
+        // Kept out of verificationLinks so it doesn't pool with the
+        // Scientific literature tab's citation list.
+        doctorOpinionCitations: [
+            { url: 'https://doi.org/10.1097/JWH.0000000000000147', label: 'Journal of Women\'s Health Physical Therapy: Surface-Applied Electrical Muscle Stimulation for Self-Administered Treatment of Female Stress Urinary Incontinence' },
+            { url: 'https://clinicaltrials.gov/study/NCT03782116', label: 'ClinicalTrials.gov: Stress Incontinence Trial With Elitone Device (NCT03782116)' },
+        ],
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Women with mild-to-moderate stress or mixed urinary incontinence wanting a no-prescription, at-home option',
+            'Anyone who finds doing Kegels consistently difficult, or wants the muscle contractions done for them',
+            'Not for anyone pregnant, with electronic implants, epilepsy, cancer, or recent pelvic surgery without a doctor\'s clearance first',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // elitone.com/product/elitone/.
+        howToUse: {
+            intro: 'Per Elitone\'s own site: wear the GelPad daily for 20-minute sessions.',
+            steps: [
+                'Position the reusable GelPad externally, near the pubic bone — no internal insertion.',
+                'Attach the controller (clips to a belt or waistband) and start a session; the device delivers roughly 100 gentle contractions over 20 minutes.',
+                'Use daily — the published pilot-study protocol was 20 minutes/day for 6 weeks to see results.',
+                'Each GelPad is rated for 3+ uses before replacement.',
+            ],
+            sourceUrl: 'https://elitone.com/product/elitone/',
+            sourceLabel: 'elitone.com: Elitone',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'Consult a clinician before use if pregnant, or if you have electronic implants (e.g. a pacemaker), epilepsy, cancer, or recent pelvic surgery, per the brand.',
+            'Not a substitute for a clinical incontinence work-up if leaks are severe, sudden-onset, or accompanied by pain or blood.',
+            'Irritation from the adhesive pad or electrical stimulation: stop use and consult a doctor.',
+        ],
+        communityReview: 'The brand\'s own site and major retailers report a 4.5/5 average with thousands of reviews and under 4% returns. A small Trustpilot sample (Canada, 3 reviews) shows a lower 2.8/5 — too few reviews to be a reliable independent signal, but included here for balance rather than only citing the brand\'s more favorable numbers.',
+        effectiveness: 'FDA-cleared (2019, 510(k) K183585) for stress/mixed incontinence. Backed by a published pilot study (75% reduction in incontinence episodes, 85% reduction in pad use) and a later sham-controlled RCT (52.8% reduction in leaks) — real clinical evidence, though run by the device\'s own company rather than a fully independent research group.',
+        // Category-level citations shown only on the Scientific literature
+        // tab, kept out of verificationLinks so they don't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://doi.org/10.1097/JWH.0000000000000147',
+                text: 'Journal of Women\'s Health Physical Therapy: Surface-Applied Electrical Muscle Stimulation for Self-Administered Treatment of Female Stress Urinary Incontinence',
+                summary: 'Published, peer-reviewed pilot study: 20 women with mild/moderate SUI, 6 weeks. Found a 75% reduction in incontinence episodes, 85% reduction in pad use, and 67% improvement in quality of life (all P<.001). Company-run, not independently replicated.',
+            },
+            {
+                url: 'https://clinicaltrials.gov/study/NCT03782116',
+                text: 'ClinicalTrials.gov: Stress Incontinence Trial With Elitone Device',
+                summary: 'Randomized, sham-controlled trial, 48 women, 12 weeks. Found a 52.8% reduction in leaks in the treatment group.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://elitone.com/reviews/',
+                        text: 'elitone.com: Customer reviews',
+                        summary: 'Elitone\'s own reviews page (see the Community summary above for the brand-reported vs. independent Trustpilot rating comparison).',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://www.trustpilot.com/review/elitone.com',
+                        text: 'Trustpilot: elitone.com reviews',
+                        summary: 'Real, current Trustpilot listing. Small sample size at time of writing — read the reviews directly on the page.',
+                    },
+                ],
+            },
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true,
@@ -2217,18 +2285,73 @@ export const BRAND_PRODUCTS = [
         url: 'https://elitone.com/product/elitone-urge/',
         affiliateUrl: 'https://elitone.com/?af=aynahealth',
         image: 'https://elitone.com/wp-content/uploads/2023/02/UUI-Hero-071426.avif',
-        summary: 'An external, at-home device for overactive bladder (OAB) and urge incontinence. The same GelPad-and-controller system as Elitone, but tuned to send calming signals that aim to reduce sudden urges, frequent bathroom trips, and urge-related leaks, without medication or a procedure.',
+        summary: 'An external, at-home device for overactive bladder (OAB) and urge incontinence, from Elidah, Inc. — the same company and GelPad-and-controller hardware as the original Elitone (see that entry for founder Gloria Kolb\'s story), tuned to send calming signals that aim to reduce sudden urges, frequent bathroom trips, and urge-related leaks, without medication or a procedure.',
         safety: {
-            fdaStatus: 'FDA-cleared (over-the-counter) medical device for overactive bladder / urge incontinence, per the brand.',
+            fdaStatus: 'FDA-cleared (over-the-counter) medical device for overactive bladder / urge incontinence, per the brand; unlike the original Elitone\'s 510(k) K183585, ayna could not independently confirm this device\'s specific FDA clearance number — verify current status on elitone.com.',
             materials: 'Reusable GelPads (rated for 3+ uses), controller with belt clip, charging cable, storage case.',
             recalls: 'No recalls found.',
-            sideEffects: 'Brand states do not use if pregnant, or if you have electronic implants (e.g. a pacemaker), epilepsy, cancer, recent pelvic surgery, or urinary retention issues.',
-            opinionAlerts: 'Brand cites "95% of users reported reduced leaks," a 70% average leak reduction, and 85% reduction in pad use — brand-reported figures, not independently verified here.',
+            sideEffects: 'Brand states do not use if pregnant, or if you have electronic implants (e.g. a pacemaker), epilepsy, cancer, recent pelvic surgery, or urinary retention issues. In the referenced clinical trial, mild urinary tract infection was the most commonly reported issue.',
+            opinionAlerts: 'Brand cites "95% of users reported reduced leaks," a 70% average leak reduction, and 85% reduction in pad use — brand-reported figures. A company-run randomized trial independently found a real, if smaller, effect: roughly a 70% reduction in leaks and improvement on all 22 points of a standard quality-of-life questionnaire (see Clinician opinion).',
         },
         clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'Sourced from Elitone\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'Elitone URGE uses the same proprietary PMW waveform technology as the original Elitone, tuned to calm unwanted bladder-muscle contractions from misfiring nerve signals rather than to strengthen pelvic floor muscles directly.',
-        effectiveness: 'FDA-cleared device for OAB/urge incontinence per the brand; no independently conducted clinical study of the device was found here.',
+        clinicianAttribution: 'Same company (Elidah, Inc.) and founder (Gloria Kolb) as the original Elitone; the clinical trial cited below was run by the company, not a fully independent research group, and no independent clinician endorsement of this device has been verified by ayna.',
+        doctorOpinion: 'Elitone URGE uses the same hardware as the original Elitone, from the same company (Elidah, Inc., founded by engineer Gloria Kolb — see the original Elitone entry for her story and the company\'s history), but with a different waveform aimed at calming overactive bladder-muscle signals rather than strengthening pelvic floor muscles directly.\n\nA randomized trial (NCT04752709) evaluating this surface-stimulation approach for urge incontinence found real results: roughly a 70% reduction in leaks, improvement across all 22 points of the standard Incontinence Quality-of-Life questionnaire, and improved bladder-voiding measures (maximum urinary flow rate and voiding efficiency). The brand separately states 76% of study participants reached a clinically significant leak reduction within 6 weeks. Safety findings were reassuring, with mild urinary tract infection as the main reported issue.\n\nAs with the original Elitone, this research was run by the device\'s own company rather than a fully independent group, and ayna could not confirm the specific FDA clearance number for the URGE device — verify current clearance status on elitone.com.',
+        doctorOpinionShort: 'Same hardware and company as the original Elitone, tuned for overactive bladder. A company-run randomized trial found roughly a 70% reduction in leaks and improvement on all 22 points of a standard quality-of-life questionnaire — real, if not independently replicated, evidence. FDA-cleared per the brand; ayna could not confirm the specific clearance number for this device.',
+        // Kept out of verificationLinks so it doesn't pool with the
+        // Scientific literature tab's citation list.
+        doctorOpinionCitations: [
+            { url: 'https://clinicaltrials.gov/study/NCT04752709', label: 'ClinicalTrials.gov: Efficacy of Surface Electrical Stimulation for Urge Urinary Incontinence in Women (NCT04752709)' },
+        ],
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Women with overactive bladder (OAB) or urge incontinence — sudden urges, frequent bathroom trips, or urge-related leaks',
+            'Anyone wanting a no-prescription, at-home option to try before medication',
+            'Not for anyone pregnant, with electronic implants, epilepsy, cancer, recent pelvic surgery, or urinary retention issues without a doctor\'s clearance first',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // elitone.com/product/elitone-urge/.
+        howToUse: {
+            intro: 'Per Elitone\'s own site: wear the GelPad daily for 20-minute sessions — same hardware as the original Elitone, tuned for urge/OAB signals.',
+            steps: [
+                'Position the reusable GelPad externally, near the pubic bone — no internal insertion.',
+                'Attach the controller and start a session.',
+                'Use daily — the referenced trial ran 6 weeks to see clinically significant results.',
+            ],
+            sourceUrl: 'https://elitone.com/product/elitone-urge/',
+            sourceLabel: 'elitone.com: Elitone URGE',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'Do not use if pregnant, or if you have electronic implants (e.g. a pacemaker), epilepsy, cancer, recent pelvic surgery, or urinary retention issues, per the brand.',
+            'Mild urinary tract infection was the most commonly reported issue in the referenced trial — see a doctor if you develop UTI symptoms.',
+            'Not a substitute for a clinical work-up if urgency is sudden-onset or accompanied by pain, blood, or fever.',
+        ],
+        communityReview: 'The brand\'s own site and major retailers report a 4.5/5 average across both Elitone devices with thousands of reviews. See the original Elitone entry for the independent Trustpilot comparison (2.8/5, small sample) — no URGE-specific independent rating was found separately.',
+        effectiveness: 'FDA-cleared device for OAB/urge incontinence per the brand (specific clearance number not independently confirmed). A company-run randomized trial found roughly a 70% reduction in leaks and improvement across all 22 points of a standard quality-of-life questionnaire — real evidence, though not independently replicated.',
+        // Category-level citations shown only on the Scientific literature
+        // tab, kept out of verificationLinks so they don't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://clinicaltrials.gov/study/NCT04752709',
+                text: 'ClinicalTrials.gov: Efficacy of Surface Electrical Stimulation for Urge Urinary Incontinence in Women',
+                summary: 'Randomized trial evaluating this surface-stimulation approach for urge incontinence. Found roughly a 70% reduction in leaks, improvement on all 22 points of the Incontinence Quality-of-Life questionnaire, and improved bladder-voiding measures. Company-run, not independently replicated.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://elitone.com/reviews/',
+                        text: 'elitone.com: Customer reviews',
+                        summary: 'Elitone\'s own reviews page, covering both Elitone devices.',
+                    },
+                ],
+            },
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true,
