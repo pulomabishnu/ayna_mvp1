@@ -536,7 +536,7 @@ export const BRAND_PRODUCTS = [
         url: 'https://helloneycher.com/products/hydrobloom-moisturizing-gel?Title=Default',
         faqUrl: 'https://www.helloneycher.com/faq',
         image: 'https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/69b007753e5c0c33308cc349_hand.webp',
-        summary: '"It\'s dry and itchy down there" or "everything burns after I shave" — that\'s vulvar dryness and irritation, common from hormonal changes, friction, or harsh soaps. This hormone-free, pH-balanced moisturizing gel (30 ml tube with applicator) works outside on the vulva and inside the vagina, non-sticky and fast-absorbing.',
+        summary: '"It\'s dry and itchy down there" or "everything burns after I shave" — that\'s vulvar dryness and irritation, common from hormonal changes, friction, or harsh soaps. This hormone-free, pH-balanced gel pairs hyaluronic acid and glycerin to hydrate outside on the vulva and inside the vagina, non-sticky and fast-absorbing.',
         safety: {
             fdaStatus: 'Manufactured in FDA-registered facilities per the brand\'s site; not an FDA-cleared medical device.',
             materials: '30 ml tube with applicator. Ingredients (from the box): water, glycerin, aloe leaf juice, black currant fruit extract, lavender flower water, hyaluronic acid (sodium hyaluronate), chamomile flower extract, calendula flower extract, lactic acid, vitamin E (tocopheryl acetate), linseed oil, vitamin A (retinyl palmitate), in a hydroxyethylcellulose gel base, with preservatives (imidazolidinyl urea, potassium sorbate, disodium EDTA) and solubilizers (PEG-40 hydrogenated castor oil, polysorbate 20).',
@@ -577,7 +577,7 @@ export const BRAND_PRODUCTS = [
             'Irritation or an allergic reaction: stop using it.',
         ],
         communityReview: 'Neycher.com and Amazon both carry customer reviews for this gel; a specific rating/review count wasn\'t independently verifiable at time of writing.',
-        effectiveness: 'Hyaluronic acid and glycerin draw moisture into the skin and mucosa, keeping it soft and hydrated. No clinical trial specific to this gel was found; no independent clinical study of this product was found either.',
+        effectiveness: 'No clinical trial specific to this gel was found on the brand\'s site.',
         // Plain-text summary — kept as a string since search indexing,
         // the interaction checker, and DoctorPrep.jsx all read this as text.
         ingredients: 'Hyaluronic acid (sodium hyaluronate), glycerin, aloe leaf juice, black currant fruit extract, lavender flower water, chamomile flower extract, calendula flower extract, lactic acid, vitamin E, linseed oil, vitamin A.',
