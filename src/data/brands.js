@@ -390,10 +390,10 @@ export const BRAND_PRODUCTS = [
         tags: ['discomfort', 'comfort', 'non-hormonal'],
         price: '$29.97 (10 suppositories)',
         whereToBuy: ['helloneycher.com'],
-        url: 'https://www.helloneycher.com/product/odor-be-gone',
+        url: 'https://helloneycher.com/products/odor-be-gone',
         faqUrl: 'https://www.helloneycher.com/faq',
         image: 'https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/6a0b3e76d248803f468a5c1e_Frame%201000011416%20(1).webp',
-        summary: '"It smells fishy down there" or "it\'s BV again, it keeps coming back" — that\'s the odor, unusual discharge, and irritation that happen when vaginal pH rises and BV or yeast overgrow. This 8-ingredient suppository (10 count, 2 g each) uses half the usual boric acid dose to bring pH back down, without the dryness and burning of pure boric acid products.',
+        summary: '"It smells fishy down there" or "it\'s BV again, it keeps coming back" — that\'s the odor, unusual discharge, and irritation this suppository is designed to fix. It\'s a boric acid suppository (10 count, 2 g each) that pairs half the usual dose with hyaluronic acid, lactic acid, and calming plant extracts, so it works without the dryness and burning pure boric acid products are known for.',
         safety: {
             fdaStatus: 'Manufactured in FDA-registered facilities per the brand\'s site; not an FDA-cleared medical device.',
             // Full packaging ingredient list — shown in full under
@@ -422,7 +422,7 @@ export const BRAND_PRODUCTS = [
                 'One a night for 10 nights in a row, or occasionally as needed.',
                 'Don\'t use it during your period. A thin pad can help with any discharge.',
             ],
-            sourceUrl: 'https://www.helloneycher.com/product/odor-be-gone',
+            sourceUrl: 'https://helloneycher.com/products/odor-be-gone',
             sourceLabel: 'helloneycher.com: Odor Be Gone',
         },
         // Rendered as a red warning box on the Evidence view.
@@ -433,8 +433,8 @@ export const BRAND_PRODUCTS = [
             'Never recommended in pregnancy. Breastfeeding: check with a doctor first.',
             'See a doctor if symptoms don\'t improve, keep coming back, or come with fever, pain, or bleeding.',
         ],
-        communityReview: 'Reviewers on Amazon and Neycher\'s own site report reduced odor, itching, and discharge, with several noting relief starting within the first few uses. As with the rest of this brand\'s catalog, an exact rating/review count wasn\'t independently verifiable at time of writing.',
-        effectiveness: 'A healthy vagina is acidic (pH 3.8–4.5), kept that way by lactobacilli that produce lactic acid; periods, sex, antibiotics, and hormonal changes can raise pH, letting BV or yeast overgrow. Most boric-acid-only odor products use 600 mg, a dose linked to burning, watery discharge, and redness (Iavazzo et al., 2011); this product uses half that dose alongside ingredients that hydrate and calm the tissue while it works.',
+        communityReview: 'Neycher.com and Amazon both carry customer reviews for this product; a specific rating/review count wasn\'t independently verifiable at time of writing — Amazon blocks automated access.',
+        effectiveness: 'Used nightly for about ten nights, it\'s meant to bring odor and discharge back under control gently rather than all at once.',
         // Plain-text summary — kept as a string since search indexing,
         // the interaction checker, and DoctorPrep.jsx all read this as text.
         ingredients: 'Boric acid (300 mg), hyaluronic acid (20 mg), lactic acid, tea tree oil, vitamin E, glycyrrhetinic acid (from licorice root), chlorhexidine.',
@@ -501,9 +501,19 @@ export const BRAND_PRODUCTS = [
                     },
                     {
                         platform: 'website',
-                        url: 'https://www.helloneycher.com/product/odor-be-gone',
+                        url: 'https://helloneycher.com/products/odor-be-gone',
                         text: 'helloneycher.com: Customer reviews',
                         summary: 'Neycher\'s own product page for this product.',
+                    },
+                    {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/Neycher-Suppositories-Acting-Inserts-Control/dp/B0HJ6GYKQC/ref=sr_1_2?crid=CL8QR8MLEMBV&dib=eyJ2IjoiMSJ9.yS5SRCyC9xJWjRHdGllkk97WIdbc8H7L1ZMCfNqpBh8jS4oGVW5GRpYa44XUWbjO-UEgm558Qlbesdl8GD7mpTXDyri-D4sm363-_ltDEXU.hNeWuaJaBMbUQ16VIWoL0JF28q6iezfdZncHiVJ1xDk&dib_tag=se&keywords=neycher&qid=1790103716&sprefix=neyche%2Caps%2C158&sr=8-2',
+                        text: 'Amazon: Neycher Odor Be Gone reviews',
+                        // Amazon blocks automated access, so this isn't a
+                        // summary of actual review text — just confirms this
+                        // is the real, current product listing. Read the
+                        // reviews directly on Amazon.
+                        summary: 'Real, current Amazon listing for this exact product. Amazon blocks automated access, so review content/ratings weren\'t independently verifiable at time of writing — read them directly on the page.',
                     },
                 ],
             },
