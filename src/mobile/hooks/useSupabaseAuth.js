@@ -32,6 +32,19 @@ const EMAIL_CONFIRM_REDIRECT = 'https://www.aynahealth.co/confirmed';
 export const MOBILE_OAUTH_PENDING_KEY = 'ayna_mobile_oauth_pending';
 const NATIVE_OAUTH_REDIRECT = 'co.aynahealth.app://auth/callback';
 
+// On native, point email confirmation at the exact same custom-scheme URL as
+// Google/Apple sign-in — handleNativeOAuthUrl below already parses any
+// co.aynahealth.app://auth/callback hit for access/refresh tokens and calls
+// setSession() with no regard for which flow produced them, so reusing that
+// URL means email confirmation lands back in THIS app's own auth state, no
+// extra code needed. This is what lets the "check your email" screen advance
+// itself the moment confirmation actually happens server-side, instead of a
+// self-reported "I confirmed" button someone could tap without ever
+// confirming anything.
+function emailConfirmRedirect() {
+  return Capacitor.isNativePlatform() ? NATIVE_OAUTH_REDIRECT : EMAIL_CONFIRM_REDIRECT;
+}
+
 // SigninScreen listens for this — a failure inside handleNativeOAuthUrl
 // otherwise only reaches console.error, which is invisible on a real device
 // with no debugger attached and looks identical to just landing back on the
@@ -157,7 +170,7 @@ export function useSupabaseAuth() {
       email,
       password,
       options: {
-        emailRedirectTo: EMAIL_CONFIRM_REDIRECT,
+        emailRedirectTo: emailConfirmRedirect(),
         data: {
           first_name: firstName,
           full_name: firstName,
@@ -191,7 +204,7 @@ export function useSupabaseAuth() {
     const { error } = await supabase.auth.resend({
       type: 'signup',
       email,
-      options: { emailRedirectTo: EMAIL_CONFIRM_REDIRECT },
+      options: { emailRedirectTo: emailConfirmRedirect() },
     });
     if (error) throw error;
   }

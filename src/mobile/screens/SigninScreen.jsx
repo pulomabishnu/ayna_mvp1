@@ -305,14 +305,9 @@ export default function SigninScreen({
             Almost there.
           </div>
           <div style={{ fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: 'rgba(255,252,249,.82)', textAlign: 'center', marginBottom: 20 }}>
-            A confirmation email is on its way from ayna (puloma@aynahealth.co). Check your spam folder if you don't see it. The link opens in your browser — once you see "Email confirmed," come back here and tap below to sign in.
+            A confirmation email is on its way from ayna (puloma@aynahealth.co). Check your spam folder if you don't see it. Once confirmed, come back here — this screen updates on its own.
           </div>
           {resendMsg && <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', textAlign: 'center', color: 'rgba(255,252,249,.75)', marginBottom: 14 }}>{resendMsg}</div>}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 9, marginBottom: 14 }}>
-            <PrimaryButton onClick={() => { setMode('signin'); setPassword(''); setError(''); }}>
-              <span>I've confirmed — sign in</span>
-            </PrimaryButton>
-          </div>
           <div
             onClick={resending ? undefined : handleResend}
             style={{ textAlign: 'center', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: resending ? 'rgba(255,252,249,.5)' : '#FFC774', cursor: resending ? 'default' : 'pointer' }}
