@@ -1673,16 +1673,83 @@ export const BRAND_PRODUCTS = [
         image: 'https://proovtest.com/cdn/shop/files/Complete-PDP-HSA_FSA_3.png?v=1767377529&width=1920',
         summary: 'An at-home fertility testing system that tracks FSH, E1G, LH, and PdG across a full cycle to identify up to a 6-day fertile window and confirm ovulation, rather than only predicting it.',
         safety: {
-            fdaStatus: 'Physician-grade at-home urine test; verify current FDA clearance status directly on proovtest.com.',
+            fdaStatus: 'The core PdG (progesterone metabolite) test technology in this kit received FDA 510(k) clearance in 2020 (K191462, MFB Fertility, Inc.) as the first at-home test cleared to confirm ovulation; verify current clearance status for the full Complete kit directly on proovtest.com.',
             materials: '20 test strips (3 FSH + 17 multi-hormone) plus the Proov Insight app for automatic reading. See packaging for full component list.',
             recalls: 'No recalls found.',
             sideEffects: 'None specific to the test itself.',
             opinionAlerts: 'Brand states "women who track their whole cycle get pregnant 3x faster" than those tracking ovulation timing alone — a brand claim, not independently verified here.',
         },
         clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'Sourced from Proov\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'Proov positions Complete as covering a full-cycle hormone picture (ovarian reserve, fertile window, ovulation confirmation) in one kit, with a Progesterone Score and access to fertility coaching for follow-up.',
-        effectiveness: 'Tracks four hormones across a full cycle rather than a single ovulation-prediction hormone; no independent clinical study of the finished product itself was found.',
+        clinicianAttribution: 'Sourced from Proov\'s own site; founder Amy Beckley, PhD, is a real pharmacologist, but no independent clinician endorsement of this specific kit has been verified by ayna.',
+        doctorOpinion: 'Proov was founded by Amy Beckley, PhD (pharmacology), after years of infertility and seven miscarriages she traced to a luteal phase defect — low progesterone after ovulation. She invented the PdG test at home to track her own hormones, founded MFB Fertility, and the resulting Proov PdG test received FDA clearance in 2020 (510(k) K191462) as the first at-home test cleared to confirm ovulation.\n\nA published pilot study of the PdG test (13 women, 34 cycles) found it could confirm ovulation using a validated urine PdG threshold, building on prior ultrasound-validated research. Proov has also published its own later study (in Obstetrics & Gynecology Research, 2022) linking sustained elevated PdG across a cycle to higher clinical pregnancy rates and lower first-trimester loss — a real, notable finding, though it\'s the brand\'s own sponsored research rather than a fully independent trial.\n\nComplete adds FSH and estrogen (E1G) tracking on top of the core PdG technology, covering ovarian reserve and the fertile window in the same kit; no independent study of the full Complete kit specifically (versus the standalone PdG test) was found.',
+        doctorOpinionShort: 'The core PdG technology in this kit is FDA-cleared (2020) and has real, published, if still limited, evidence behind it — a pilot study and the brand\'s own larger follow-up study linking PdG patterns to pregnancy outcomes. No independent study of the full Complete kit (FSH + estrogen + PdG together) was found.',
+        // Kept out of verificationLinks so it doesn't pool with the
+        // Scientific literature tab's citation list.
+        doctorOpinionCitations: [
+            { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6614355/', label: 'NIH (PMC): Pilot Evaluation of a New Urine Progesterone Test to Confirm Ovulation in Women Using a Fertility Monitor' },
+            { url: 'https://www.accessdata.fda.gov/scripts/cdrh/cfdocs/cfpmn/pmn.cfm?ID=K191462', label: 'FDA: 510(k) clearance K191462 — MFB Fertility, Inc. (Proov)' },
+        ],
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Women trying to conceive who want to confirm ovulation actually happened, not just predict when it might',
+            'Anyone with irregular cycles or suspected luteal phase issues who wants a fuller hormone picture before a fertility clinic visit',
+            'Women wanting ovarian reserve (FSH), fertile-window (E1G), and ovulation-confirmation (PdG) tracking in one kit',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // proovtest.com/products/complete-testing-system.
+        howToUse: {
+            intro: 'Per Proov\'s own site: test FSH early in the cycle, then track E1G and PdG through the rest of the cycle using the Proov Insight app to read results.',
+            steps: [
+                'Use the 3 FSH strips near the start of your cycle to check ovarian reserve.',
+                'Use the multi-hormone strips to track E1G (estrogen) daily to identify your fertile window.',
+                'Continue testing PdG after ovulation to confirm it actually occurred.',
+                'Scan each strip with the Proov Insight app for an automatic, unbiased reading.',
+            ],
+            sourceUrl: 'https://proovtest.com/products/complete-testing-system',
+            sourceLabel: 'proovtest.com: Complete Testing System',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'A single cycle of testing doesn\'t diagnose infertility — talk to a doctor about persistent irregular results, or if you don\'t conceive after 6–12 months of trying (standard fertility guidance).',
+            'Follow the app\'s testing-window and strip-reading instructions closely; urine concentration and timing affect hormone test accuracy.',
+        ],
+        communityReview: 'Proov has 181 reviews on the independent platform reviews.io, averaging 4.43/5 stars (138 rated "excellent"). Feedback is mixed — many highlight the app-based reading and full-cycle hormone picture as genuinely useful, while others report frustration with test accuracy or customer service.',
+        effectiveness: 'Tracks four hormones across a full cycle rather than a single ovulation-prediction hormone. The underlying PdG technology is FDA-cleared and has real published validation; the full 3-hormone Complete kit itself hasn\'t been independently studied as a unit.',
+        // Category-level citations shown only on the Scientific literature
+        // tab, kept out of verificationLinks so they don't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6614355/',
+                text: 'NIH (PMC): Pilot Evaluation of a New Urine Progesterone Test to Confirm Ovulation in Women Using a Fertility Monitor',
+                summary: '13 women, 34 cycles — an early, small pilot validation of the PdG test technology at the heart of this kit.',
+            },
+            {
+                url: 'https://www.accessdata.fda.gov/scripts/cdrh/cfdocs/cfpmn/pmn.cfm?ID=K191462',
+                text: 'FDA 510(k) K191462 — MFB Fertility, Inc.',
+                summary: 'The FDA clearance record for the Proov PdG test, cleared in 2020 as the first at-home test to confirm ovulation.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://www.reviews.io/company-reviews/store/proov-test',
+                        text: 'reviews.io: Proov Test reviews',
+                        summary: 'Independent, third-party review platform — 181 reviews, 4.43/5 average at time of writing.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://www.trustpilot.com/review/proovtest.com',
+                        text: 'Trustpilot: proovtest.com reviews',
+                        summary: 'Real, current Trustpilot listing. Review content/aggregate rating weren\'t independently re-verified beyond the reviews.io figure above — read them directly on the page.',
+                    },
+                ],
+            },
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true,
@@ -1703,16 +1770,76 @@ export const BRAND_PRODUCTS = [
         image: 'https://proovtest.com/cdn/shop/files/His_Hers-PDP-HSA_FSA_1.png?v=1771351002&width=1920',
         summary: 'A couples\' fertility kit pairing Proov\'s Complete testing (ovarian reserve, fertile window, ovulation confirmation) for her with an at-home motile sperm concentration test for him, plus early pregnancy tests — covering both sides of a fertility picture at once.',
         safety: {
-            fdaStatus: 'Physician-grade at-home urine and semen tests; verify current FDA clearance status directly on proovtest.com.',
-            materials: 'Includes Complete for Her, an at-home sperm test for Him, and Check for Her (early pregnancy tests). See packaging for full component list.',
+            fdaStatus: 'Uses the same FDA-cleared PdG ovulation test as Proov Complete (510(k) K191462) plus the FDA-cleared YO Home Sperm Test for the male-fertility component; verify current clearance status for the combined kit directly on proovtest.com.',
+            materials: 'Includes Complete for Her, an at-home YO sperm test for Him, and Check for Her (early pregnancy tests). See packaging for full component list.',
             recalls: 'No recalls found.',
             sideEffects: 'None specific to the tests themselves.',
-            opinionAlerts: 'Brand states results are "99% accurate" and that "up to 60% of fertility challenges" involve a male factor — brand claims, not independently verified here.',
+            opinionAlerts: 'Brand states results are "99% accurate" and that "up to 60% of fertility challenges" involve a male factor — brand claims, not independently verified here. Independent ASRM/WHO data put male factor as sole or contributing cause in roughly 40–50% of infertile couples, somewhat lower than the brand\'s figure.',
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Sourced from Proov\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'Proov positions this as a lower-cost, at-home alternative to a first fertility clinic visit by screening both partners for common fertility factors together, with an optional expedited telehealth consult for male-factor results.',
-        effectiveness: 'Combines female hormone testing with a male sperm test across two cycles; no independent clinical study of the finished kit itself was found.',
+        doctorOpinion: 'The male-fertility component of this kit uses the YO Home Sperm Test, an FDA-cleared at-home device that reads a semen sample through a phone-connected microscope to measure motile sperm concentration — the brand states 97% accuracy for the device, a manufacturer claim not independently verified here. The female-fertility component reuses Proov\'s FDA-cleared PdG ovulation-confirmation technology (see Proov Complete\'s entry for that validation).\n\nMale-factor issues are a real, commonly under-tested part of fertility: ASRM and WHO data put male factor as the sole or contributing cause in roughly 40–50% of infertile couples — somewhat lower than the brand\'s "up to 60%" figure, but still a substantial share. Testing both partners together, as this kit does, reflects real clinical guidance to evaluate male factor alongside female factor rather than only after female testing is exhausted.\n\nNo independent study of this specific combined kit was found.',
+        doctorOpinionShort: 'Combines Proov\'s FDA-cleared PdG ovulation test with the FDA-cleared YO home sperm test. Real ASRM/WHO data support testing male factor early — it\'s the sole or contributing cause in roughly 40–50% of infertile couples — though the brand\'s "up to 60%" figure runs a bit higher than that commonly cited range. No independent study of the combined kit itself was found.',
+        // Kept out of verificationLinks so it doesn't pool with the
+        // Scientific literature tab's citation list.
+        doctorOpinionCitations: [
+            { url: 'https://www.asrm.org/news-and-events/asrm-news/press-releasesbulletins/half-of-infertility-cases-involve-men.-why-does-care-still-treat-it-as-a-womens-issue/', label: 'ASRM: Half of Infertility Cases Involve Men' },
+        ],
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Couples wanting to test both partners for common fertility factors at the same time, before or instead of a first clinic visit',
+            'Couples who\'ve only pursued female-side testing so far and want to rule a male-factor contribution in or out',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // proovtest.com/products/his-and-hers-fertility-starter-kit.
+        howToUse: {
+            intro: 'Per Proov\'s own site: she completes the Complete kit and Check tests across a cycle, he completes the YO sperm test.',
+            steps: [
+                'He collects a semen sample at home, ideally 2–5 days after his last ejaculation for the most reliable result.',
+                'The YO device and app read motile sperm concentration from the sample.',
+                'She tests FSH, E1G, and PdG across her cycle as in Proov Complete, and uses Check tests to test for pregnancy.',
+                'Results for both partners are viewable in their respective apps.',
+            ],
+            sourceUrl: 'https://proovtest.com/products/his-and-hers-fertility-starter-kit',
+            sourceLabel: 'proovtest.com: His & Hers Fertility Kit',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'At-home semen analysis has real limitations (sample collection technique, transport time to the reader) versus a lab-based semen analysis — consult a doctor for a full clinical work-up if results are abnormal or concerning.',
+            'A single cycle of female hormone testing or one semen sample doesn\'t diagnose infertility on its own.',
+        ],
+        communityReview: 'No independently verified rating specific to this combined kit was found; see Proov\'s general reviews (181 reviews, 4.43/5 on reviews.io) for the Complete component, and the YO Home Sperm Test\'s own listings for the male-test component.',
+        effectiveness: 'Combines FDA-cleared female ovulation-confirmation technology with an FDA-cleared home sperm test, reflecting real clinical guidance to evaluate both partners together; no independent study of the combined kit itself was found.',
+        // Category-level citations shown only on the Scientific literature
+        // tab, kept out of verificationLinks so they don't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://www.asrm.org/news-and-events/asrm-news/press-releasesbulletins/half-of-infertility-cases-involve-men.-why-does-care-still-treat-it-as-a-womens-issue/',
+                text: 'ASRM: Half of Infertility Cases Involve Men',
+                summary: 'Real-world data on how common male-factor infertility is — general clinical context, not product-specific validation.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://www.reviews.io/company-reviews/store/proov-test',
+                        text: 'reviews.io: Proov Test reviews',
+                        summary: 'Independent, third-party review platform — 181 reviews, 4.43/5 average at time of writing (covers Proov overall, not this kit specifically).',
+                    },
+                    {
+                        platform: 'amazon',
+                        url: 'https://www.amazon.com/YO-Analysis-Concentration-Motility-Progressive/dp/B0DWXGG9M8',
+                        text: 'Amazon: YO Home Sperm Test',
+                        summary: 'Real, current Amazon listing for the sperm-test device used in this kit\'s male-fertility component. Amazon blocks automated access, so review content/ratings weren\'t independently verifiable at time of writing — read them directly on the page.',
+                    },
+                ],
+            },
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true,
@@ -1733,16 +1860,68 @@ export const BRAND_PRODUCTS = [
         image: 'https://proovtest.com/cdn/shop/files/Empower-PDP-HSA_FSA.png?v=1759414142&width=1920',
         summary: 'An at-home hormone testing system for women 35+ that measures FSH, LH, E1G, and PdG at four points in the cycle, aimed at explaining perimenopause-linked symptoms like brain fog, anxiety, and sleep disturbance and offering personalized next steps.',
         safety: {
-            fdaStatus: 'At-home urine hormone test; verify current FDA clearance status directly on proovtest.com.',
+            fdaStatus: 'Uses the same FDA-cleared PdG ovulation-test technology as Proov Complete (510(k) K191462), repositioned for perimenopause tracking; verify current clearance status for this specific kit directly on proovtest.com.',
             materials: 'Non-invasive urine test strips read via the Proov Insights app. See packaging for full component list.',
             recalls: 'No recalls found.',
             sideEffects: 'None specific to the test itself.',
-            opinionAlerts: 'Brand states "85% of women have hormone imbalances that cause symptoms like anxiety, weight gain, brain fog" — a brand claim, not independently verified here.',
+            opinionAlerts: 'Brand states "85% of women have hormone imbalances that cause symptoms like anxiety, weight gain, brain fog" — this specific figure wasn\'t independently traceable to a clinical source and should be read as marketing language, not a verified statistic.',
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Sourced from Proov\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'Proov positions Empower as a way to see which hormones are actually shifting during perimenopause, then connect to medical professionals for prescriptions or the brand\'s own Cycle Wisely supplement recommendations.',
-        effectiveness: 'Tracks four hormones across multiple cycle timepoints rather than a single snapshot; no independent clinical study of the finished product itself was found.',
+        doctorOpinion: 'Empower repositions Proov\'s core hormone-strip technology (the same FSH, LH, E1G, and PdG tests used in Complete — see that entry for validation) for women 35+ navigating perimenopause, testing at four points across the cycle rather than a single day. Perimenopause hormone fluctuation is real and well documented in clinical literature — FSH and LH generally rise while estrogen and progesterone become more erratic in the years before menopause — but the brand\'s specific "85% of women have hormone imbalances" figure wasn\'t traceable to an independent source and should be read as marketing language rather than a clinical statistic.\n\nNo independent study of the Empower kit or protocol specifically was found.',
+        doctorOpinionShort: 'Reuses the same FDA-cleared hormone-strip technology validated for Proov Complete, repositioned for perimenopause. The brand\'s "85% of women have hormone imbalances" statistic wasn\'t independently traceable — treat it as marketing language, not a clinical figure. No independent study of the Empower kit itself was found.',
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Women 35+ noticing possible perimenopause symptoms (brain fog, anxiety, sleep disturbance, cycle changes) who want to see which hormones are actually shifting',
+            'Women wanting objective, at-home hormone data to bring to a clinician conversation about perimenopause',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // proovtest.com/products/empower-perimenopause-test-kit.
+        howToUse: {
+            intro: 'Per Proov\'s own site: test FSH, LH, E1G, and PdG at four points across your cycle using the Proov Insights app to read results.',
+            steps: [
+                'Test at the four recommended cycle timepoints rather than on a single day.',
+                'Scan each strip with the Proov Insights app for an automatic reading.',
+                'Review your hormone pattern in the app and use it as a starting point for a clinician conversation.',
+            ],
+            sourceUrl: 'https://proovtest.com/products/empower-perimenopause-test-kit',
+            sourceLabel: 'proovtest.com: Empower Perimenopause Test Kit',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'A home hormone-strip test doesn\'t replace a clinical perimenopause or menopause work-up — bring results to a doctor rather than self-diagnosing or self-treating.',
+        ],
+        communityReview: 'No independently verified rating specific to Empower was found; see Proov\'s general reviews (181 reviews, 4.43/5 on reviews.io) for feedback on the brand\'s hormone-strip technology overall.',
+        effectiveness: 'Reuses FDA-cleared hormone-strip technology across four cycle timepoints; the underlying strips have real published validation for ovulation confirmation, though no independent study of the Empower kit/protocol for perimenopause specifically was found.',
+        // Category-level citations shown only on the Scientific literature
+        // tab, kept out of verificationLinks so they don't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6614355/',
+                text: 'NIH (PMC): Pilot Evaluation of a New Urine Progesterone Test to Confirm Ovulation in Women Using a Fertility Monitor',
+                summary: 'Early, small pilot validation of the underlying PdG strip technology this kit reuses for perimenopause tracking.',
+            },
+            {
+                url: 'https://www.acog.org/womens-health/faqs/the-menopause-years',
+                text: 'ACOG: The Menopause Years',
+                summary: 'ACOG on perimenopause hormone changes and symptoms — general clinical guidance, not product-specific validation.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://www.reviews.io/company-reviews/store/proov-test',
+                        text: 'reviews.io: Proov Test reviews',
+                        summary: 'Independent, third-party review platform — 181 reviews, 4.43/5 average at time of writing (covers Proov overall, not this kit specifically).',
+                    },
+                ],
+            },
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true,
@@ -1767,13 +1946,91 @@ export const BRAND_PRODUCTS = [
             fdaStatus: 'Dietary supplement / topical cosmetic; not evaluated by the FDA.',
             materials: 'See ingredients above; full formulation on product packaging.',
             recalls: 'No recalls found.',
-            sideEffects: 'Consult a clinician before use if pregnant, nursing, or taking medications, especially given the bioidentical progesterone content.',
-            opinionAlerts: 'No clinical-study claims found on the brand site for this specific bundle.',
+            sideEffects: 'Consult a clinician before use if pregnant, nursing, or taking medications, especially given the bioidentical progesterone and chasteberry content — chasteberry can interact with hormonal medications, including hormonal birth control.',
+            opinionAlerts: 'No independent clinical-study claims found for this specific bundle; independent literature on transdermal progesterone specifically (see Clinician opinion) is more skeptical than the brand\'s absorption claim implies.',
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Sourced from Proov\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'Proov markets the Balancing Oil\'s progesterone as absorbed via nanoemulsion technology for topical delivery, paired with herbal luteal-phase support in the Pro capsules.',
-        effectiveness: 'Combines a topical progesterone product with an herbal supplement; no independent clinical study of the bundle itself was found.',
+        doctorOpinion: 'Proov markets the Balancing Oil\'s bioidentical progesterone as absorbed via nanoemulsion technology for topical delivery, paired with chasteberry (vitex), ashwagandha, and maca in the Pro capsules for broader hormonal and luteal-phase support.\n\nTransdermal progesterone specifically has real, documented skepticism in reproductive medicine: a review in Maturitas found insufficient evidence that topical progesterone reaches meaningful systemic levels, and identified vaginal or oral micronized progesterone — not transdermal — as the routes with proven efficacy for luteal-phase support in fertility care. That\'s a real gap between the brand\'s absorption claim and the independent literature.\n\nThe capsule ingredients have more independent support. A randomized, placebo-controlled study found chasteberry normalized luteal-phase length and progesterone synthesis in women with luteal phase defects, and a systematic review of clinical trials found supporting evidence for chasteberry across several reproductive conditions. Ashwagandha has a randomized, placebo-controlled trial showing improved estradiol/progesterone and reduced FSH/LH and stress scores — though that trial was in menopausal women, not luteal-phase support specifically, so it\'s supportive but indirect evidence here. Maca has a small pilot RCT showing a libido benefit and animal-model evidence for hormone effects, though human fertility-specific trials are limited.\n\nNo independent clinical study of this specific bundle was found.',
+        doctorOpinionShort: 'Chasteberry has real RCT and systematic-review support for luteal-phase/progesterone effects; maca and ashwagandha have some supporting evidence, mostly outside a fertility-specific context. Topical progesterone specifically has real, documented skepticism in reproductive medicine — vaginal or oral routes, not transdermal, are the ones with proven efficacy for luteal support. No independent study of this bundle was found.',
+        // Kept out of verificationLinks so it doesn't pool with the
+        // Scientific literature tab's citation list.
+        doctorOpinionCitations: [
+            { url: 'https://doi.org/10.1016/j.maturitas.2014.07.009', label: 'Maturitas: Systemic progesterone therapy — oral, vaginal, injections, and even transdermal?' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/8369008/', label: 'PubMed: Vitex agnus castus extract for luteal phase defects — a randomized, placebo-controlled study' },
+        ],
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Women trying to conceive who want herbal luteal-phase and general hormone-balance support alongside (not instead of) medical care',
+            'Anyone curious about chasteberry, ashwagandha, or maca specifically, given real independent research on each',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // proovtest.com/products/balance-bundle.
+        howToUse: {
+            intro: 'Per Proov\'s own site: use daily for a 2-month cycle.',
+            steps: [
+                'Apply the Balancing Oil topically as directed.',
+                'Take the Pro capsules (chasteberry, ashwagandha, maca) daily.',
+            ],
+            sourceUrl: 'https://proovtest.com/products/balance-bundle',
+            sourceLabel: 'proovtest.com: Balance Bundle',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'Consult a clinician before use if pregnant, nursing, or taking medications — especially given the bioidentical progesterone content and chasteberry\'s hormonal effects.',
+            'Don\'t rely on topical progesterone in place of clinician-prescribed vaginal or oral progesterone if you\'ve been told you need luteal-phase support — the independent evidence favors those routes, not transdermal.',
+            'Chasteberry can interact with hormonal medications, including hormonal birth control — check with a doctor first.',
+        ],
+        communityReview: 'No independently verified rating specific to this bundle was found; see Proov\'s general reviews (181 reviews, 4.43/5 on reviews.io) for brand-level feedback.',
+        effectiveness: 'Combines a topical progesterone product (evidence for transdermal absorption specifically is weak in independent literature) with an herbal supplement — chasteberry has the strongest independent evidence of the three herbs for luteal-phase/progesterone effects specifically. No independent clinical study of the bundle itself was found.',
+        // Per-ingredient science claims, each paired with a credible
+        // source (NIH-hosted or PubMed) where independent research
+        // exists. Rendered on the Scientific literature tab.
+        ingredientScience: [
+            {
+                name: 'Chasteberry (Vitex agnus-castus)',
+                text: 'A randomized, placebo-controlled study in women with luteal phase defects found Vitex normalized luteal-phase length and eliminated deficits in luteal progesterone synthesis. A systematic review of clinical trials found supporting evidence for Vitex across several reproductive conditions.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/8369008/', label: 'PubMed: Vitex agnus castus extract in the treatment of luteal phase defects — a randomized, placebo-controlled, double-blind study' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/23136064/', label: 'PubMed: Vitex agnus-castus extracts for female reproductive disorders — a systematic review of clinical trials' },
+                ],
+            },
+            {
+                name: 'Ashwagandha',
+                text: 'A randomized, placebo-controlled trial found ashwagandha root extract improved estradiol and progesterone levels and reduced FSH, LH, and stress scores — though that trial was in menopausal women, not specifically for luteal-phase or fertility support.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC12812913/', label: 'NIH (PMC): Efficacy and safety of Ashwagandha root extract for managing menopausal symptoms — a randomized, double-blind, placebo-controlled study' },
+                ],
+            },
+            {
+                name: 'Maca',
+                text: 'A double-blind, randomized pilot study found a significant libido improvement with maca root. Animal studies suggest maca affects LH and reproductive hormone levels, but human fertility-specific trials are limited.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6494062/', label: 'NIH (PMC): A Double-Blind, Randomized, Pilot Dose-Finding Study of Maca Root for the Management of SSRI-Induced Sexual Dysfunction' },
+                ],
+            },
+            {
+                name: 'Bioidentical progesterone (topical)',
+                text: 'Proov states this is delivered via nanoemulsion technology for topical absorption. Independent reproductive-medicine literature is skeptical of transdermal progesterone specifically — a review found insufficient evidence that it reaches meaningful systemic levels, and identifies vaginal and oral micronized progesterone, not transdermal, as the routes with proven efficacy for luteal-phase support.',
+                citations: [
+                    { url: 'https://doi.org/10.1016/j.maturitas.2014.07.009', label: 'Maturitas: Systemic progesterone therapy — oral, vaginal, injections, and even transdermal?' },
+                ],
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://www.reviews.io/company-reviews/store/proov-test',
+                        text: 'reviews.io: Proov Test reviews',
+                        summary: 'Independent, third-party review platform — 181 reviews, 4.43/5 average at time of writing (covers Proov overall, not this bundle specifically).',
+                    },
+                ],
+            },
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true,
@@ -1794,16 +2051,71 @@ export const BRAND_PRODUCTS = [
         image: 'https://proovtest.com/cdn/shop/files/PPP-PDP-HSA_FSA_1.png',
         summary: 'A 3-month at-home fertility optimization program combining monthly Proov Complete and Check kits with review by a reproductive endocrinologist (Dr. Aimee\'s F.A.S.T. Method), including prescription support (capped cost) if a user qualifies.',
         safety: {
-            fdaStatus: 'Combines at-home test kits with prescription medication support issued by a licensed provider, not the kits themselves.',
+            fdaStatus: 'Combines the FDA-cleared Proov PdG test technology (510(k) K191462) with prescription medication support issued by a licensed provider, not the kits themselves.',
             materials: '3 Proov Complete kits (hormone tests) + 3 Proov Check kits (early pregnancy tests) + clinician-reviewed protocol.',
             recalls: 'No recalls found.',
             sideEffects: 'Any medication side effects depend on what a provider prescribes (letrozole, progesterone, or metformin per the brand).',
             opinionAlerts: 'Brand states eligibility excludes anyone with a history of cancer, unexplained vaginal bleeding, liver disease, BMI over 49.9, or who is more than 10 weeks pregnant. Verify current eligibility criteria on proovtest.com.',
         },
         clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'Reviewed per the brand by a reproductive endocrinologist as part of Dr. Aimee\'s F.A.S.T. Method; not independently verified here.',
-        doctorOpinion: 'Proov positions this as a lower-cost, at-home alternative to a fertility clinic, combining hormone monitoring with clinician-reviewed, capped-cost prescription support over three cycles.',
-        effectiveness: 'Bundles three months of hormone/pregnancy testing with clinician review and possible prescription support; no independent clinical study of program-level outcomes was found.',
+        clinicianAttribution: 'Reviewed per the brand by Dr. Aimee Eyvazzadeh, MD, MPH — a real, practicing reproductive endocrinologist and Proov medical advisor — as part of the F.A.S.T. Method; ayna hasn\'t independently verified her direct review of individual program results.',
+        doctorOpinion: 'This program is reviewed per the brand by Dr. Aimee Eyvazzadeh, MD, MPH — a real, practicing reproductive endocrinologist trained at UCLA, Harvard, and the University of Michigan, known publicly as "The Egg Whisperer," and a genuine medical advisor to Proov. That\'s a verifiable, legitimate credential, though ayna hasn\'t independently confirmed her personal, direct review of every individual program participant\'s results.\n\nThe program combines Proov\'s FDA-cleared PdG/hormone testing (see Proov Complete\'s entry for that technology\'s validation) with clinician-reviewed, capped-cost prescription support across three cycles. No independent study of program-level outcomes (pregnancy rates, time-to-conception) for this specific 3-month protocol was found.',
+        doctorOpinionShort: 'Dr. Aimee Eyvazzadeh, the reviewing physician named by the brand, is a real, credentialed reproductive endocrinologist and a genuine Proov medical advisor. The underlying hormone-testing technology is FDA-cleared and independently validated; program-level outcomes for this specific 3-month protocol haven\'t been independently studied.',
+        // Kept out of verificationLinks so it doesn't pool with the
+        // Scientific literature tab's citation list.
+        doctorOpinionCitations: [
+            { url: 'https://eggwhisperer.com/about/', label: 'Dr. Aimee Eyvazzadeh (Egg Whisperer): credentials and background' },
+        ],
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Women wanting a lower-cost, at-home alternative to an initial fertility clinic workup, with real clinician review built in',
+            'Anyone who wants monthly hormone/pregnancy testing plus a path to prescription support without starting at a full clinic',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // proovtest.com/products/path-to-pregnancy.
+        howToUse: {
+            intro: 'Per Proov\'s own site: complete monthly testing across 3 cycles while a reproductive endocrinologist reviews your results.',
+            steps: [
+                'Test each cycle with a Proov Complete kit (hormone tests) and Proov Check kit (early pregnancy tests).',
+                'Results are reviewed against the F.A.S.T. Method protocol.',
+                'If you qualify, get capped-cost prescription support (letrozole, progesterone, or metformin per the brand) through a licensed provider.',
+                'Continue for up to 3 cycles.',
+            ],
+            sourceUrl: 'https://proovtest.com/products/path-to-pregnancy',
+            sourceLabel: 'proovtest.com: Path to Pregnancy',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'Not eligible if you have a history of cancer, unexplained vaginal bleeding, liver disease, a BMI over 49.9, or are more than 10 weeks pregnant, per the brand — verify current eligibility on proovtest.com.',
+            'Any prescribed medication (letrozole, progesterone, or metformin) carries its own real side-effect profile — discuss with the prescribing provider.',
+            'Not a substitute for in-person fertility clinic care if you need procedures like IUI or IVF.',
+        ],
+        communityReview: 'No independently verified rating specific to this program was found; see Proov\'s general reviews (181 reviews, 4.43/5 on reviews.io) for brand-level feedback.',
+        effectiveness: 'Bundles three months of FDA-cleared hormone/pregnancy testing with review by a real, credentialed reproductive endocrinologist and possible capped-cost prescription support; no independent study of program-level outcomes was found.',
+        // Category-level citations shown only on the Scientific literature
+        // tab, kept out of verificationLinks so they don't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://www.accessdata.fda.gov/scripts/cdrh/cfdocs/cfpmn/pmn.cfm?ID=K191462',
+                text: 'FDA 510(k) K191462 — MFB Fertility, Inc.',
+                summary: 'The FDA clearance record for the Proov PdG test technology used across this program\'s monthly testing.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'website',
+                        url: 'https://www.reviews.io/company-reviews/store/proov-test',
+                        text: 'reviews.io: Proov Test reviews',
+                        summary: 'Independent, third-party review platform — 181 reviews, 4.43/5 average at time of writing (covers Proov overall, not this program specifically).',
+                    },
+                ],
+            },
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true,
