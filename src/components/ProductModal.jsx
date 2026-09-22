@@ -646,6 +646,23 @@ export default function ProductModal({
     return entries;
   }, [product]);
 
+  // Curated category-level citations (product.scientificCitations) — kept
+  // out of verificationLinks for the same reason as ingredientCitationEntries
+  // below: that data also feeds the Clinician opinion card's chip row, which
+  // here only wants doctorOpinionCitations (the two clinical-study links).
+  const curatedScientificEntries = useMemo(() => {
+    const seenUrls = new Set();
+    const entries = [];
+    for (const c of product?.scientificCitations || []) {
+      if (!c.url || seenUrls.has(c.url)) continue;
+      const label = hostLabel(c.url);
+      if (!label) continue;
+      seenUrls.add(c.url);
+      entries.push({ url: c.url, label, kind: 'Scientific', text: c.text || null, summary: c.summary || null });
+    }
+    return entries;
+  }, [product]);
+
   // Per-ingredient citations, rendered as extra cards on the Scientific
   // literature tab only — deliberately NOT part of verificationLinks, since
   // that also feeds the Clinician opinion card's chip row (pools doctor +
@@ -1189,9 +1206,9 @@ export default function ProductModal({
 
                 {activeTab === 'scientific' && (
                   <div className="pdp-summary-card">
-                    {(scientificLiteratureEntries.length + ingredientCitationEntries.length) > 0 ? (
+                    {(scientificLiteratureEntries.length + curatedScientificEntries.length + ingredientCitationEntries.length) > 0 ? (
                       <div className="pdp-scientific__list">
-                        {[...scientificLiteratureEntries, ...ingredientCitationEntries].map((entry) => (
+                        {[...scientificLiteratureEntries, ...curatedScientificEntries, ...ingredientCitationEntries].map((entry) => (
                           <a
                             key={entry.url}
                             className="pdp-scientific__entry"

@@ -225,10 +225,11 @@ export const BRAND_PRODUCTS = [
         doctorOpinion: 'Neycher states its formulas are developed with input from "scientists, doctors, and researchers" and are "OB/GYN and real people-approved," per the brand\'s own site.\n\nNeycher also cites its own clinical evaluation: 20 women (ages 29-74) with vulvovaginal symptoms used the product for about a month, assessed with the Vulvovaginal Symptoms Questionnaire (VSQ) — a real, peer-reviewed tool (Erekson et al., Menopause, 2013) — analyzed by paired t-test (brand-reported as p<0.001 on every measure).\n\nResults: mean VSQ symptom score dropped from 9.22 to 0.61 (p<0.001), with complete symptom remission in 65% of participants and a greater than 50% reduction in discomfort in 89%, with improvement reported after just one week. No adverse events were recorded.\n\nNeycher\'s own site doesn\'t publish this study as a standalone paper — the closest verifiable public source is Gruppo FarmaImpresa (the manufacturer named on Neycher\'s own technical documentation, doc ref FT.CE.110), whose hyaluronic acid + polycarbophil + lactic acid ovule — the same formulation profile as this product — matches this exact study design and these exact numbers on their own site. This is the manufacturer\'s own published summary of its clinical evaluation, not an independently peer-reviewed journal article; the VSQ instrument it used is real and independently validated.',
         // Kept separate from verificationLinks.scientific/doctor on purpose —
         // that data also feeds the Scientific literature tab's citation
-        // list, and this belongs only on the clinical claim above, not mixed
-        // into that list.
+        // list, and these two links belong only on the clinical-study claim
+        // above, not mixed into that list.
         doctorOpinionCitations: [
-            { url: 'https://pubmed.ncbi.nlm.nih.gov/23481118/', label: 'VSQ questionnaire (Erekson et al., Menopause, 2013)' },
+            { url: 'https://farmaimpresa.com/en/hyaluronic-acid-eggs-clinical-study-shows-positive-effects-on-vulvovaginal-symptoms/', label: 'Farmaimpresa: the study\'s actual source' },
+            { url: 'https://helloneycher.com/products/vaginal-moisturizer?Title=Default', label: 'Helloneycher: where Neycher presents this claim' },
         ],
         // Rendered as a bulleted list on the Evidence view, under "Best for".
         whoItsFor: [
@@ -324,40 +325,27 @@ export const BRAND_PRODUCTS = [
         // succeeding (which needs its own API key configured — silently comes
         // back empty on an environment, like a fresh localhost checkout, that
         // doesn't have one set).
+        // Category-level citations shown only on the Scientific literature
+        // tab (merged there with the per-ingredient citations below) — kept
+        // out of verificationLinks so they don't also pool onto the
+        // Clinician opinion card's chip row, which only wants
+        // doctorOpinionCitations (the two clinical-study-specific links).
+        scientificCitations: [
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/39250810/',
+                text: 'Hormonal Treatments and Vaginal Moisturizers for Genitourinary Syndrome of Menopause: A Systematic Review',
+                summary: 'A systematic review (Danan et al., Annals of Internal Medicine, 2024) of randomized trials found vaginal moisturizers may improve dryness versus placebo (low certainty of evidence). This is intervention-level evidence and does not validate a specific moisturizer product.',
+            },
+            {
+                url: 'https://www.acog.org/womens-health/faqs/vulvovaginal-health',
+                text: 'ACOG: Vulvovaginal Health',
+                summary: 'ACOG notes that over-the-counter vaginal moisturizers and lubricants can help relieve vaginal dryness and painful sex. This is clinical-guidance-level evidence, not product-specific validation.',
+            },
+        ],
         verificationLinks: {
-            // Both citations filed as scientific (not split doctor/scientific)
-            // so the Evidence rail reads "Scientific: 2 sources" instead of
-            // splitting into "1 Scientific" + "1 Clinical". They still both
-            // surface as source chips on the Clinician opinion card, which
-            // pools doctor + scientific links regardless of category.
             doctor: { links: [] },
             scientific: {
-                links: [
-                    {
-                        url: 'https://pubmed.ncbi.nlm.nih.gov/39250810/',
-                        text: 'Hormonal Treatments and Vaginal Moisturizers for Genitourinary Syndrome of Menopause: A Systematic Review',
-                        summary: 'A systematic review (Danan et al., Annals of Internal Medicine, 2024) of randomized trials found vaginal moisturizers may improve dryness versus placebo (low certainty of evidence). This is intervention-level evidence and does not validate a specific moisturizer product.',
-                        justification: 'Peer-reviewed systematic review, PubMed-indexed.',
-                    },
-                    {
-                        url: 'https://www.acog.org/womens-health/faqs/vulvovaginal-health',
-                        text: 'ACOG: Vulvovaginal Health',
-                        summary: 'ACOG notes that over-the-counter vaginal moisturizers and lubricants can help relieve vaginal dryness and painful sex. This is clinical-guidance-level evidence, not product-specific validation.',
-                        justification: 'ACOG is the leading professional body for OB/GYN care in the U.S.',
-                    },
-                    {
-                        url: 'https://farmaimpresa.com/en/hyaluronic-acid-eggs-clinical-study-shows-positive-effects-on-vulvovaginal-symptoms/',
-                        text: 'Hyaluronic acid ovules: Clinical study shows positive effects on vulvovaginal symptoms',
-                        summary: 'Gruppo FarmaImpresa\'s own published summary of the exact study Neycher cites — 20 women, VSQ questionnaire, mean score dropped from 9.22 to 0.61 (p<0.001), 65% complete remission, >50% reduction in discomfort in 89% of participants, improvement within one week, no adverse events. FarmaImpresa is the manufacturer named on Neycher\'s own technical documentation (doc ref FT.CE.110); this is the manufacturer\'s own site, not an independent peer-reviewed journal.',
-                        justification: 'Manufacturer\'s own published clinical evaluation summary — the closest verifiable public source for the study Neycher\'s clinician-opinion claim describes.',
-                    },
-                    {
-                        url: 'https://helloneycher.com/products/vaginal-moisturizer?Title=Default',
-                        text: 'helloneycher.com: Vaginal Moisturizer — Clinical Study Results',
-                        summary: 'Neycher\'s own product page, where it displays this clinical study\'s design, methodology, and results directly (study design, methodology, results panels).',
-                        justification: 'Brand\'s own site — primary source for how Neycher itself presents this claim.',
-                    },
-                ],
+                links: [],
             },
             community: {
                 links: [
