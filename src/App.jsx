@@ -3497,6 +3497,13 @@ function App() {
         {showAuthModal && (
           <AuthGate
             isModal
+            onAuthenticated={(authenticatedUser, session) => {
+              if (!authenticatedUser) return;
+              setUser(authenticatedUser);
+              if (session) setUserSession(session);
+              setAuthLoading(false);
+              setShowAuthModal(false);
+            }}
             onStartEcosystem={() => { setShowAuthModal(false); setPendingAction(null); pendingActionRef.current = null; handleStartQuiz(); }}
             context={pendingAction === 'quiz-complete' ? 'quiz' : pendingAction === 'browse' ? 'browse' : pendingAction === 'personalize' ? 'personalize' : pendingAction === 'login' ? 'login' : undefined}
             onBeforeOAuthRedirect={() => {
