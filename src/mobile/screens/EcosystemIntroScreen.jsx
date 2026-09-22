@@ -32,7 +32,7 @@ export default function EcosystemIntroScreen({ onStartQuiz, onOpenSaved, onBrows
       />
 
       <div style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '6px 24px 20px' }}>
-        <OrbHero showYou={false} />
+        <OrbHero showYou={false} onChipTap={onStartQuiz} />
         <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(31px * var(--ayna-text-scale, 1))', lineHeight: 1.16, textAlign: 'center' }}>
           Build your
           <br />

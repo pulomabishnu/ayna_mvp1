@@ -82,7 +82,7 @@ export default function LandingScreen({ onStartQuiz, onBrowse }) {
           padding: '0 26px',
         }}
       >
-        <OrbHero />
+        <OrbHero onChipTap={onStartQuiz} />
         <div
           style={{
             fontFamily: "'Playfair Display',serif",

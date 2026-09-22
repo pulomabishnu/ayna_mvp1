@@ -168,6 +168,7 @@ const AVOID_INGREDIENTS = [
   'Black-owned', 'Brown-owned', 'Eco-friendly', 'Reusable', 'Organic', 'Minimal ingredients',
   'Sensitive skin', 'Unscented', 'Other', 'No preference',
 ];
+const AVOID_GROUP = ['Fragrance', 'Dyes', 'Parabens', 'Sulfates', 'Phthalates', 'Latex', 'Synthetic materials', 'Animal-derived', 'Added sugar', 'Artificial sweeteners'];
 const FSA_HSA = ['FSA', 'HSA', 'Both', 'No', 'Not sure'];
 const TRUST_ITEMS = ['Clinical or scientific evidence', 'Reviews and experiences from other women', 'Brand reputation or expert recommendations'];
 const STOP_REASONS = [
@@ -1812,7 +1813,19 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
       return (
         <>
           <SearchBar value={search} onChange={setSearch} placeholder="Search preferences..." />
-          <Pills options={filtered} selected={intake.avoidIngredients} onToggle={(v) => toggleExclusive('avoidIngredients', v, ['No preference'])} exclusiveValues={['No preference']} left />
+          {/* The question says "prefer", but the first options ("Fragrance",
+              "Parabens", ...) mean AVOID — shown unlabeled they read as the
+              opposite. Grouped and labeled (2026-09-22 audit). */}
+          {[
+            { label: 'Avoid', items: filtered.filter((o) => AVOID_GROUP.includes(o)) },
+            { label: 'Prefer', items: filtered.filter((o) => !AVOID_GROUP.includes(o) && !['Other', 'No preference'].includes(o)) },
+            { label: null, items: filtered.filter((o) => ['Other', 'No preference'].includes(o)) },
+          ].filter((g) => g.items.length).map((g) => (
+            <div key={g.label || 'rest'} style={{ marginBottom: 12 }}>
+              {g.label && <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', textTransform: 'uppercase', color: '#FFC774', margin: '4px 0 8px' }}>{g.label}</div>}
+              <Pills options={g.items} selected={intake.avoidIngredients} onToggle={(v) => toggleExclusive('avoidIngredients', v, ['No preference'])} exclusiveValues={['No preference']} left />
+            </div>
+          ))}
           {filtered.length === 0 && <div style={{ padding: '22px 4px', color: 'rgba(255,249,242,.6)', fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>No matches. Try a different search.</div>}
           {intake.avoidIngredients.includes('Other') && (
             <OtherBox label="Other preference" value={intake.avoidIngredientsOtherText} onChange={(v) => set('avoidIngredientsOtherText', v)} placeholder="Type here..." />
@@ -1849,8 +1862,14 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
         fontFamily: "'DM Sans',system-ui,sans-serif", animation: 'ay-page .25s ease-out',
       }}
     >
-      <div style={{ position: 'absolute', top: -60, right: -60, width: 220, height: 220, borderRadius: '50%', background: 'radial-gradient(circle,rgba(255,199,116,.4),rgba(255,199,116,0) 70%)', pointerEvents: 'none' }} />
-      <div style={{ position: 'absolute', bottom: -50, left: -50, width: 200, height: 200, borderRadius: '50%', background: 'radial-gradient(circle,rgba(126,84,186,.35),rgba(126,84,186,0) 70%)', pointerEvents: 'none' }} />
+      {/* Decorative glows live in their own clipped layer: when they overflowed
+          the scrollable root directly, focusing the preference search (or iOS
+          tapping a chip) scrolled the whole screen ~20px sideways, clipping
+          the left edge (2026-09-22 audit). */}
+      <div aria-hidden="true" style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
+        <div style={{ position: 'absolute', top: -60, right: -60, width: 220, height: 220, borderRadius: '50%', background: 'radial-gradient(circle,rgba(255,199,116,.4),rgba(255,199,116,0) 70%)' }} />
+        <div style={{ position: 'absolute', bottom: -50, left: -50, width: 200, height: 200, borderRadius: '50%', background: 'radial-gradient(circle,rgba(126,84,186,.35),rgba(126,84,186,0) 70%)' }} />
+      </div>
 
       <div style={{ flex: 'none', padding: 'max(16px, env(safe-area-inset-top)) 20px 12px', position: 'relative' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>

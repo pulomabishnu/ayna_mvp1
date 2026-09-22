@@ -19,7 +19,10 @@ const CHIPS = [
  * the whole assembly is built at one fixed pixel size and scaled up
  * uniformly with a CSS transform instead of resizing the path itself.
  */
-export default function OrbHero({ showYou = true }) {
+// The chips look like buttons, so they must act like buttons: before the
+// 2026-09-22 audit tapping "Preferences" / "Health history" / "Goals" did
+// nothing. They now start the intake (onChipTap), same as the main CTA.
+export default function OrbHero({ showYou = true, onChipTap }) {
   return (
     <div
       style={{
@@ -68,10 +71,16 @@ export default function OrbHero({ showYou = true }) {
       </div>
       {CHIPS.map((chip) => (
         <div key={chip.label} className="ayna-orbiter" style={{ animationDelay: chip.delay }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 7, background: '#FFFCF9', borderRadius: 99, padding: '10px 16px', boxShadow: '0 10px 26px rgba(36,27,56,.3)', whiteSpace: 'nowrap' }}>
-            <div style={{ width: 8, height: 8, borderRadius: 99, background: '#E8943F', flex: 'none' }} />
-            <div style={{ fontSize: 12, fontWeight: 600, color: '#292524' }}>{chip.label}</div>
-          </div>
+          <button
+            type="button"
+            onClick={onChipTap ? () => onChipTap(chip.label) : undefined}
+            disabled={!onChipTap}
+            aria-label={onChipTap ? `${chip.label}: start building your ecosystem` : chip.label}
+            style={{ display: 'flex', alignItems: 'center', gap: 7, background: '#FFFCF9', borderRadius: 99, padding: '10px 16px', boxShadow: '0 10px 26px rgba(36,27,56,.3)', whiteSpace: 'nowrap', border: 'none', font: 'inherit', cursor: onChipTap ? 'pointer' : 'default', WebkitTapHighlightColor: 'transparent', opacity: 1 }}
+          >
+            <span style={{ width: 8, height: 8, borderRadius: 99, background: '#E8943F', flex: 'none' }} />
+            <span style={{ fontSize: 12, fontWeight: 600, color: '#292524' }}>{chip.label}</span>
+          </button>
         </div>
       ))}
     </div>
