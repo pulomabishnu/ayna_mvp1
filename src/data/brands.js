@@ -1564,7 +1564,7 @@ export const BRAND_PRODUCTS = [
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Sourced from VIO2\'s own site; Dr. Vincent Ip, DDS, is a real, practicing dentist in Austin, TX, but no independent clinician endorsement of this specific product has been verified by ayna.',
-        doctorOpinion: 'VIO2 was created by Dr. Vincent Ip, DDS, a dentist, and his wife Lindsey Ip after their son was diagnosed with a breathing disorder and open-mouth posture at age 3 in 2015. At the time, the only mouth tape on the market was full-coverage, which they weren\'t comfortable using on their son — so Lindsey spent years developing a partial-coverage design instead, launching VIO2 in 2022 after prototyping and safety testing, per the brand\'s own site.\n\nIndependent research on mouth taping generally is real but still limited and mixed. A 2024 scoping review found only 9 studies (4 randomized controlled trials) on the topic, described the evidence as markedly heterogeneous, and noted many of the touted benefits aren\'t grounded in the literature. A separate preliminary study specifically in mouth-breathers with mild obstructive sleep apnea found mouth-taping roughly halved measures of apnea severity (AHI) and snoring — a real, positive finding, but from a small, preliminary study, and not a test of this specific product.\n\nSeparately, several sleep and ENT specialists have publicly cautioned against mouth taping for people with untreated sleep apnea or nasal obstruction, since it doesn\'t address the underlying airway issue and could worsen it. No independent clinical study of this specific product was found.',
+        doctorOpinion: 'Independent research on mouth taping generally is real but still limited and mixed. A 2024 scoping review found only 9 studies (4 randomized controlled trials) on the topic, described the evidence as markedly heterogeneous, and noted many of the touted benefits aren\'t grounded in the literature. A separate preliminary study specifically in mouth-breathers with mild obstructive sleep apnea found mouth-taping roughly halved measures of apnea severity (AHI) and snoring — a real, positive finding, but from a small, preliminary study, and not a test of this specific product.\n\nSeparately, several sleep and ENT specialists have publicly cautioned against mouth taping for people with untreated sleep apnea or nasal obstruction, since it doesn\'t address the underlying airway issue and could worsen it. No independent clinical study of this specific product was found.',
         doctorOpinionShort: 'Independent research on mouth taping is real but limited: a 2024 scoping review found the evidence heterogeneous and many claimed benefits not literature-backed, while a small preliminary study in mild OSA mouth-breathers found roughly a 50% reduction in apnea severity. Sleep and ENT specialists caution against it for anyone with untreated sleep apnea or nasal obstruction. No independent study of this specific product was found.',
         // Kept out of verificationLinks so it doesn't pool with the
         // Scientific literature tab's citation list.
@@ -1639,9 +1639,9 @@ export const BRAND_PRODUCTS = [
                     },
                     {
                         platform: 'website',
-                        url: 'https://www.vio2tape.com/pages/about-us',
-                        text: 'vio2tape.com: About VIO2',
-                        summary: 'VIO2\'s own about page with the founders\' story and mission.',
+                        url: 'https://www.vio2tape.com/products/vio2-partial-coverage-mouth-tape-for-sleep-unscented?variant=40800110837937&utm_source=ShopMy&utm_medium=affiliate&utm_campaign=Puloma%20Bishnu&utm_content=Quick%20Link&utm_referrer=shopmy.us&smsclickid=fd2d10e7-a850-4203-9d74-4bcb9c91f6bd&utm_term=fd2d10e7-a850-4203-9d74-4bcb9c91f6bd',
+                        text: 'vio2tape.com: Customer reviews',
+                        summary: 'VIO2\'s own product page, which displays customer reviews directly on the listing. Review content/ratings weren\'t independently verifiable at time of writing — read them directly on the page.',
                     },
                 ],
             },
