@@ -393,20 +393,121 @@ export const BRAND_PRODUCTS = [
         url: 'https://www.helloneycher.com/product/odor-be-gone',
         faqUrl: 'https://www.helloneycher.com/faq',
         image: 'https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/6a0b3e76d248803f468a5c1e_Frame%201000011416%20(1).webp',
-        summary: 'Boric acid vaginal suppositories (10 per box) aimed at odor and pH balance. Brand directs use once every 2–3 days outside your period, and not for more than 30 consecutive days.',
-        ingredients: 'Boric acid (300mg), sodium hyaluronate (20mg), lactic acid, tea tree leaf oil, vitamin E (tocopheryl acetate), 18β-glycyrrhetinic acid, chlorhexidine digluconate.',
+        summary: '"It smells fishy down there" or "it\'s BV again, it keeps coming back" — that\'s the odor, unusual discharge, and irritation that happen when vaginal pH rises and BV or yeast overgrow. This 8-ingredient suppository (10 count, 2 g each) uses half the usual boric acid dose to bring pH back down, without the dryness and burning of pure boric acid products.',
         safety: {
             fdaStatus: 'Manufactured in FDA-registered facilities per the brand\'s site; not an FDA-cleared medical device.',
-            materials: 'Boric acid suppository. See packaging for the full ingredient list.',
+            // Full packaging ingredient list — shown in full under
+            // "Materials" on the Evidence view (see buildFactRows in
+            // ProductModal.jsx, which doesn't truncate this field).
+            materials: '10 suppositories per box, 2 g each. Ingredients (from the box): boric acid (300 mg), hyaluronic acid (20 mg), lactic acid, tea tree oil, vitamin E, glycyrrhetinic acid (from licorice root), and chlorhexidine (stabilizer), in a semi-synthetic triglyceride base.',
             recalls: 'No recalls found.',
-            sideEffects: 'Boric acid suppositories are for vaginal use only and are toxic if swallowed. Keep away from children. Not for use during pregnancy. Discontinue and consult a clinician if irritation occurs.',
-            opinionAlerts: 'Brand directs no more than 30 consecutive days of use. Brand states products are "not intended to diagnose, treat, cure, or prevent any disease". Standard cosmetic/wellness disclaimer language.',
+            sideEffects: 'Boric acid suppositories are for vaginal use only and are toxic if swallowed — keep away from children. Discontinue and see a doctor if you notice irritation, or if symptoms don\'t improve, keep coming back, or come with fever, pain, or bleeding. Full warnings are listed below.',
+            opinionAlerts: 'Brand states products are "not intended to diagnose, treat, cure, or prevent any disease". Standard cosmetic/wellness disclaimer language.',
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Sourced from Neycher\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'Neycher states this formula "helps decrease your pH, preventing the formation of bacteria and yeast overgrowth," per the brand\'s own site. Boric acid is a recognized option for recurrent vaginal complaints, but talk to a clinician before starting it.',
+        doctorOpinion: 'Neycher states this formula "helps decrease your pH, preventing the formation of bacteria and yeast overgrowth," per the brand\'s own site. Boric acid is a recognized, commonly used option for recurrent vaginal odor and BV/yeast-related complaints generally — talk to a clinician before starting it. No clinical trial or study specific to this product was found on the brand\'s site.',
+        doctorOpinionShort: 'Boric acid is a recognized, commonly used option for recurrent vaginal odor and BV/yeast complaints generally. No clinical trial specific to this product was found on Neycher\'s site.',
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Women with odor, unusual discharge, itching, or irritation',
+            'Women whose symptoms keep coming back after a period, sex, or antibiotics',
+            'Women who\'ve tried boric acid capsules and found them drying or burning',
+            'Women in perimenopause and menopause who notice their scent has changed',
+        ],
+        // Rendered as a bulleted list on the Evidence view.
+        howToUse: {
+            intro: 'With clean, dry hands, peel open the blister and insert one suppository into the vagina with your fingers, preferably at bedtime — no applicator needed.',
+            steps: [
+                'One a night for 10 nights in a row, or occasionally as needed.',
+                'Don\'t use it during your period. A thin pad can help with any discharge.',
+            ],
+            sourceUrl: 'https://www.helloneycher.com/product/odor-be-gone',
+            sourceLabel: 'helloneycher.com: Odor Be Gone',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'Not for dryness on its own (that\'s the Vaginal Moisturizer or HydroBloom Gel), or for STIs, which can cause similar odor and discharge.',
+            'No oral sex during the course: boric acid and tea tree oil must not be swallowed.',
+            'Oil-based: can weaken latex condoms.',
+            'Never recommended in pregnancy. Breastfeeding: check with a doctor first.',
+            'See a doctor if symptoms don\'t improve, keep coming back, or come with fever, pain, or bleeding.',
+        ],
         communityReview: 'Reviewers on Amazon and Neycher\'s own site report reduced odor, itching, and discharge, with several noting relief starting within the first few uses. As with the rest of this brand\'s catalog, an exact rating/review count wasn\'t independently verifiable at time of writing.',
-        effectiveness: 'No clinical trial or consumer study specific to this product was found on Neycher\'s site; no independent clinical study was found either. Boric acid is a recognized, commonly used option for recurrent vaginal odor and BV/yeast-related complaints generally.',
+        effectiveness: 'A healthy vagina is acidic (pH 3.8–4.5), kept that way by lactobacilli that produce lactic acid; periods, sex, antibiotics, and hormonal changes can raise pH, letting BV or yeast overgrow. Most boric-acid-only odor products use 600 mg, a dose linked to burning, watery discharge, and redness (Iavazzo et al., 2011); this product uses half that dose alongside ingredients that hydrate and calm the tissue while it works.',
+        // Plain-text summary — kept as a string since search indexing,
+        // the interaction checker, and DoctorPrep.jsx all read this as text.
+        ingredients: 'Boric acid (300 mg), hyaluronic acid (20 mg), lactic acid, tea tree oil, vitamin E, glycyrrhetinic acid (from licorice root), chlorhexidine.',
+        // Per-ingredient science claims, each paired with a credible source
+        // (NIH-hosted or ACOG). Rendered on the Scientific literature tab.
+        ingredientScience: [
+            {
+                name: 'Boric acid (300 mg)',
+                text: 'A mild acid that brings pH back down to its natural range. Half the usual dose, to avoid the burning and dryness pure boric acid products cause.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/21774671/', label: 'NIH: Boric acid for recurrent vulvovaginal candidiasis — the clinical evidence (Iavazzo et al., 2011)' },
+                ],
+            },
+            {
+                name: 'Lactic acid',
+                text: 'The same acid healthy lactobacilli produce. It helps restore the acidic environment they need to take over again.',
+                citations: [
+                    { url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6332693/', label: 'NIH (PMC): Vaginal pH measured in vivo — lactobacilli determine pH and lactic acid concentration' },
+                ],
+            },
+            {
+                name: 'Hyaluronic acid (20 mg)',
+                text: 'Binds water and keeps the vaginal lining hydrated, so the tissue doesn\'t dry out while the pH resets.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC13160248/', label: 'NIH (PMC): Real-world effectiveness of a hyaluronic acid-based vaginal moisturizer' },
+                ],
+            },
+            {
+                name: 'Tea tree oil',
+                text: 'Used in a small, carefully chosen amount — pure tea tree oil at high concentrations can irritate, but here it sits inside a formula built to hydrate and calm.',
+                citations: [
+                    { url: 'https://www.nccih.nih.gov/health/tea-tree-oil', label: 'NIH NCCIH: Tea Tree Oil — Usefulness and Safety' },
+                ],
+            },
+            {
+                name: 'Glycyrrhetinic acid (from licorice root) and vitamin E',
+                text: 'Calm irritation, redness, and burning, and protect the tissue.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC9025446/', label: 'NIH (PMC): Anti-inflammatory properties of licorice (Glycyrrhiza glabra)' },
+                    { url: 'https://ods.od.nih.gov/factsheets/VitaminE-HealthProfessional/', label: 'NIH Office of Dietary Supplements: Vitamin E' },
+                ],
+            },
+        ],
+        // Category-level citation shown only on the Scientific literature
+        // tab, kept out of verificationLinks so it doesn't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://www.acog.org/womens-health/faqs/vaginitis',
+                text: 'ACOG: Vaginitis',
+                summary: 'ACOG on bacterial vaginosis, yeast infections, and how vaginal pH relates to odor and discharge. This is clinical-guidance-level evidence, not product-specific validation.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'reddit',
+                        url: 'https://www.reddit.com/r/HealthyHooha/search/?q=neycher+odor&restrict_sr=1',
+                        text: 'Reddit r/HealthyHooha: Neycher Odor Be Gone',
+                        summary: 'Community discussions on Neycher\'s intimate-care line, including this product.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://www.helloneycher.com/product/odor-be-gone',
+                        text: 'helloneycher.com: Customer reviews',
+                        summary: 'Neycher\'s own product page for this product.',
+                    },
+                ],
+            },
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true,
