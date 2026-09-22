@@ -43,6 +43,11 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
   const [needsConfirmation, setNeedsConfirmation] = useState(false);
   const [resending, setResending] = useState(false);
   const [resendMsg, setResendMsg] = useState('');
+  // Native email verification: keep the user inside ayna and verify the
+  // one-time code Supabase emails. This avoids Safari/Chrome deep-link
+  // handoff failures and email-client link prefetching invalidating links.
+  const [emailSignupStep, setEmailSignupStep] = useState('details');
+  const [emailCode, setEmailCode] = useState('');
   // Signup via native Supabase phone-OTP auth instead of email/password —
   // requested 2026-08-25 as an alternative for anyone whose confirmation
   // email never arrives (see the resend feature above). Fully independent
@@ -105,14 +110,14 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
           return;
         }
         if (data.session) {
-          // Supabase already returned a live session, meaning this project's
-          // "Confirm email" setting is off — no confirmation email is coming.
-          // Telling her to go check her inbox here would be actively wrong:
-          // she's already signed in, which App.jsx's onAuthStateChange handler
-          // is about to act on.
+          // Email confirmation is disabled for this Supabase project.
           setSuccessMsg('You\'re all set. Signing you in...');
         } else {
-          setSuccessMsg('Almost there! A confirmation email is on its way from ayna (puloma@aynahealth.co). Check your spam folder if you don\'t see it. Once confirmed, come back here to sign in.');
+          // The Confirm signup email template should contain {{ .Token }}.
+          // Supabase then emails a numeric OTP which we verify directly in-app.
+          setEmailSignupStep('code');
+          setEmailCode('');
+          setSuccessMsg(`We sent a verification code to ${email}. Enter it below to finish creating your account.`);
           setNeedsConfirmation(true);
         }
       } else {
@@ -146,11 +151,45 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
         options: { emailRedirectTo: 'https://www.aynahealth.co/confirmed' },
       });
       if (error) throw error;
-      setResendMsg('Sent! Check your inbox (and spam folder) again in a minute.');
+      setResendMsg('New code sent. Check your inbox and spam folder.');
     } catch (err) {
       setResendMsg(err.message || 'Could not resend right now — try again in a moment.');
     } finally {
       setResending(false);
+    }
+  };
+
+  const handleVerifyEmailOtp = async (e) => {
+    e.preventDefault();
+    if (!supabase || !email) return;
+    const token = emailCode.replace(/\D/g, '').slice(0, 8);
+    if (token.length < 6) {
+      setError('Enter the verification code from your email.');
+      return;
+    }
+    setError('');
+    setSuccessMsg('');
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.auth.verifyOtp({
+        email: email.trim(),
+        token,
+        type: 'email',
+      });
+      if (error) throw error;
+      if (!data?.session) throw new Error('Your email was verified, but we could not start your session. Please sign in.');
+      setNeedsConfirmation(false);
+      setResendMsg('');
+      setSuccessMsg('Email verified. Signing you in...');
+      // App.jsx listens for Supabase SIGNED_IN and continues onboarding.
+    } catch (err) {
+      setError(
+        /expired|invalid|token/i.test(err?.message || '')
+          ? 'That code is invalid or expired. Request a new code and try again.'
+          : (err.message || 'Could not verify that code. Please try again.')
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -288,6 +327,10 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
     setSuccessMsg('');
     setAuthMethod('email');
     setPhoneStep('number');
+    setEmailSignupStep('details');
+    setEmailCode('');
+    setNeedsConfirmation(false);
+    setResendMsg('');
   };
 
   const switchAuthMethod = (next) => {
@@ -296,6 +339,9 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
     setSuccessMsg('');
     setNeedsConfirmation(false);
     setPhoneStep('number');
+    setEmailSignupStep('details');
+    setEmailCode('');
+    setResendMsg('');
   };
 
   const overlayStyle = isModal ? {
@@ -396,7 +442,9 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
           onSubmit={
             isSignup && authMethod === 'phone'
               ? (phoneStep === 'number' ? handleSendPhoneOtp : handleVerifyPhoneOtp)
-              : handleEmailAuth
+              : isSignup && authMethod === 'email' && emailSignupStep === 'code'
+                ? handleVerifyEmailOtp
+                : handleEmailAuth
           }
           style={styles.form}
         >
@@ -508,58 +556,100 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
                 </button>
               </>
             )
+          ) : isSignup && authMethod === 'email' && emailSignupStep === 'code' ? (
+            <>
+              <p style={{ ...styles.success, color: 'var(--color-text-muted)' }}>
+                Enter the verification code sent to <strong>{email}</strong>.
+              </p>
+              <input
+                type="text"
+                inputMode="numeric"
+                placeholder="Verification code"
+                value={emailCode}
+                onChange={(e) => setEmailCode(e.target.value.replace(/\D/g, '').slice(0, 8))}
+                required
+                style={styles.input}
+                autoComplete="one-time-code"
+                maxLength={8}
+                autoFocus
+              />
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEmailSignupStep('details');
+                    setEmailCode('');
+                    setError('');
+                    setSuccessMsg('');
+                    setResendMsg('');
+                  }}
+                  style={{ ...styles.link, background: 'none', border: 'none', padding: 0, font: 'inherit', cursor: 'pointer' }}
+                >
+                  Change email
+                </button>
+                <button
+                  type="button"
+                  onClick={handleResend}
+                  disabled={resending}
+                  style={{ ...styles.link, background: 'none', border: 'none', padding: 0, font: 'inherit', cursor: resending ? 'not-allowed' : 'pointer' }}
+                >
+                  {resending ? 'Sending…' : 'Resend code'}
+                </button>
+              </div>
+              {resendMsg && <p style={{ ...styles.success, margin: 0 }}>{resendMsg}</p>}
+            </>
           ) : (
             <>
-          {isSignup && (
-            <input
-              type="text"
-              placeholder="First name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              required
-              style={styles.input}
-              autoComplete="given-name"
-              maxLength={50}
-            />
-          )}
-          <input
-            type="email"
-            placeholder="Email address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={styles.input}
-            autoComplete="email"
-          />
-          <div style={{ position: 'relative' }}>
-            <input
-              type={showPassword ? 'text' : 'password'}
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              style={{
-                ...styles.input,
-                width: '100%', boxSizing: 'border-box', paddingRight: '2.5rem',
-              }}
-              autoComplete={isSignup ? 'new-password' : 'current-password'}
-              minLength={isSignup ? 8 : undefined}
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(v => !v)}
-              style={{ position: 'absolute', right: '0.65rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)', fontSize: '1rem', padding: '0.25rem', lineHeight: 1 }}
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
-            >
-              {showPassword ? 'Hide' : 'Show'}
-            </button>
-          </div>
+              {isSignup && (
+                <input
+                  type="text"
+                  placeholder="First name"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  required
+                  style={styles.input}
+                  autoComplete="given-name"
+                  maxLength={50}
+                />
+              )}
+              <input
+                type="email"
+                placeholder="Email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                style={styles.input}
+                autoComplete="email"
+              />
+              <div style={{ position: 'relative' }}>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  style={{
+                    ...styles.input,
+                    width: '100%', boxSizing: 'border-box', paddingRight: '2.5rem',
+                  }}
+                  autoComplete={isSignup ? 'new-password' : 'current-password'}
+                  minLength={isSignup ? 8 : undefined}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(v => !v)}
+                  style={{ position: 'absolute', right: '0.65rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)', fontSize: '1rem', padding: '0.25rem', lineHeight: 1 }}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? 'Hide' : 'Show'}
+                </button>
+              </div>
             </>
           )}
 
           {error && <p style={styles.error}>{error}</p>}
           {successMsg && <p style={styles.success}>{successMsg}</p>}
-          {needsConfirmation && authMethod === 'email' && (
+          {needsConfirmation && authMethod === 'email' && emailSignupStep !== 'code' && (
             <p style={{ ...styles.error, color: 'var(--color-text-muted)' }}>
               Didn&apos;t get it?{' '}
               <button
@@ -568,7 +658,7 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
                 disabled={resending}
                 style={{ ...styles.link, background: 'none', border: 'none', padding: 0, font: 'inherit', cursor: resending ? 'not-allowed' : 'pointer' }}
               >
-                {resending ? 'Sending…' : 'Resend confirmation email'}
+                {resending ? 'Sending…' : 'Resend code'}
               </button>
               {resendMsg && <><br />{resendMsg}</>}
             </p>
@@ -585,7 +675,9 @@ export default function AuthGate({ isModal = false, onSkip, context, onBeforeOAu
               ? 'Please wait…'
               : isSignup && authMethod === 'phone'
                 ? (phoneStep === 'number' ? 'Send code' : 'Verify')
-                : isSignup ? 'Create account' : 'Sign in'}
+                : isSignup && authMethod === 'email'
+                  ? (emailSignupStep === 'code' ? 'Verify email' : 'Send verification code')
+                  : 'Sign in'}
           </button>
         </form>
 
