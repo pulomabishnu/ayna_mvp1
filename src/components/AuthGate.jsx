@@ -694,17 +694,16 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, on
           {successMsg && <p style={styles.success}>{successMsg}</p>}
           {needsConfirmation && authMethod === 'email' && emailSignupStep !== 'code' && (
             <p style={{ ...styles.error, color: 'var(--color-text-muted)' }}>
-              After confirming in Safari, return to ayna. We’ll check when you come back.{' '}
+              Your email still needs verification.{' '}
               <button
                 type="button"
-                onClick={() => void checkConfirmedEmail()}
-                disabled={checkingConfirmation}
-                style={{ ...styles.link, background: 'none', border: 'none', padding: 0, font: 'inherit', cursor: checkingConfirmation ? 'not-allowed' : 'pointer' }}
+                onClick={() => { setEmailSignupStep('code'); setEmailCode(''); setError(''); }}
+                style={{ ...styles.link, background: 'none', border: 'none', padding: 0, font: 'inherit', cursor: 'pointer' }}
               >
-                {checkingConfirmation ? 'Checking…' : 'I confirmed my email'}
+                Enter verification code
               </button>
               <br />
-              Didn&apos;t get it?{' '}
+              Didn&apos;t get a code?{' '}
               <button
                 type="button"
                 onClick={handleResend}
