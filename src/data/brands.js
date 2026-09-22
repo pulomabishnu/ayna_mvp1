@@ -2264,6 +2264,12 @@ export const BRAND_PRODUCTS = [
                         text: 'Trustpilot: elitone.com reviews',
                         summary: 'Real, current Trustpilot listing. Small sample size at time of writing — read the reviews directly on the page.',
                     },
+                    {
+                        platform: 'reddit',
+                        url: 'https://www.reddit.com/r/Incontinence/comments/1c6peo9/has_anyone_tried_a_elitone_external_pelvic_floor/',
+                        text: 'Reddit r/Incontinence: "Has anyone tried a Elitone external pelvic floor..."',
+                        summary: 'Real, current Reddit thread asking about experiences with Elitone. Reddit couldn\'t be fetched directly, so individual comment content wasn\'t independently verified here — read them on the page.',
+                    },
                 ],
             },
         },
