@@ -425,19 +425,149 @@ export const BRAND_PRODUCTS = [
         url: 'https://www.helloneycher.com/product/hydrobloom-moisturizing-gel',
         faqUrl: 'https://www.helloneycher.com/faq',
         image: 'https://cdn.prod.website-files.com/66dc3b9581bf97e670861652/69b007753e5c0c33308cc349_hand.webp',
-        summary: 'A hormone-free vaginal moisturizing gel with hyaluronic acid and botanical extracts. Brand directs use for 7–10 consecutive days outside your period, and not for more than 30 consecutive days.',
-        ingredients: 'Hyaluronic acid (20mg), lactic acid, vitamins A and E, plus aloe vera, chamomile, and calendula botanical extracts.',
+        summary: '"It\'s dry and itchy down there" or "everything burns after I shave" — that\'s vulvar dryness and irritation, common from hormonal changes, friction, or harsh soaps. This hormone-free, pH-balanced moisturizing gel (30 ml tube with applicator) works outside on the vulva and inside the vagina, non-sticky and fast-absorbing.',
         safety: {
             fdaStatus: 'Manufactured in FDA-registered facilities per the brand\'s site; not an FDA-cleared medical device.',
-            materials: 'See product packaging for the full ingredient list.',
+            materials: '30 ml tube with applicator. Ingredients (from the box): water, glycerin, aloe leaf juice, black currant fruit extract, lavender flower water, hyaluronic acid (sodium hyaluronate), chamomile flower extract, calendula flower extract, lactic acid, vitamin E (tocopheryl acetate), linseed oil, vitamin A (retinyl palmitate), in a hydroxyethylcellulose gel base, with preservatives (imidazolidinyl urea, potassium sorbate, disodium EDTA) and solubilizers (PEG-40 hydrogenated castor oil, polysorbate 20).',
             recalls: 'No recalls found.',
-            sideEffects: 'None specific reported; discontinue use and consult a clinician if irritation occurs.',
-            opinionAlerts: 'Brand directs no more than 30 consecutive days of use. Brand states products are "not intended to diagnose, treat, cure, or prevent any disease". Standard cosmetic/wellness disclaimer language.',
+            sideEffects: 'Discontinue and see a doctor if you notice irritation or an allergic reaction. Contains chamomile and calendula — if you have a daisy-family allergy (such as ragweed), test on a small area first. Full warnings are listed below.',
+            opinionAlerts: 'Brand states products are "not intended to diagnose, treat, cure, or prevent any disease". Standard cosmetic/wellness disclaimer language.',
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Sourced from Neycher\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'Neycher states the formula "creates a protective hydrating layer that supports long-lasting moisture and comfort," per the brand\'s own site. Hyaluronic-acid vaginal moisturizers are a common non-hormonal approach to dryness.',
-        effectiveness: 'Brand cites its own clinical trial in which 94% of users reported improvement in vaginal dryness; no independent clinical study of the product was found.',
+        doctorOpinion: 'Neycher states the formula "creates a protective hydrating layer that supports long-lasting moisture and comfort," per the brand\'s own site. It also cites its own clinical trial in which 94% of users reported improvement in vaginal dryness. This is the brand\'s own reported result; no independently published or peer-reviewed study of this specific product was found.',
+        // Shorter version for the Evidence view's narrower rail card — see
+        // the Vaginal Moisturizer entry for why these are split.
+        doctorOpinionShort: 'Neycher cites its own clinical trial: 94% of users reported improvement in vaginal dryness. This is the brand\'s own reported result, not an independently peer-reviewed study.',
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Anyone whose vulva feels dry, tight, itchy, or irritated, at any age',
+            'Women in perimenopause and menopause who feel dryness on the outside (pairs with the Vaginal Moisturizer for inside-plus-outside care)',
+            'Postpartum women once stitches or tears have healed (inside use only after a doctor clears it), and breastfeeding women',
+            'Women with irritation from shaving, waxing, workouts, cycling, tight clothes, or sex',
+            'Women who prefer a gel to suppositories, or want quick comfort during the day',
+        ],
+        // Rendered as a bulleted list on the Evidence view.
+        howToUse: {
+            intro: 'Outside: with clean hands, apply a fingertip amount to clean skin around the vulva, daily or as often as needed.',
+            steps: [
+                'Inside: take the applicator out of its sachet and screw it onto the tube.',
+                'Gently insert the applicator into the vagina and squeeze the tube lightly until a comfortable amount of gel comes out.',
+                'Unscrew the applicator after use and rinse it well with warm water.',
+            ],
+            sourceUrl: 'https://www.helloneycher.com/product/hydrobloom-moisturizing-gel',
+            sourceLabel: 'helloneycher.com: HydroBloom Gel',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'Not for odor, unusual discharge, or itching inside the vagina — that can signal an infection; Neycher\'s Odor Be Gone is for that instead.',
+            'After giving birth: outside only on healed skin; inside only once a doctor clears it.',
+            'Daisy-family allergy (such as ragweed): test on a small area first — contains chamomile and calendula.',
+            'Irritation or an allergic reaction: stop using it.',
+        ],
+        communityReview: 'Neycher.com and Amazon both carry customer reviews for this gel; a specific rating/review count wasn\'t independently verifiable at time of writing.',
+        effectiveness: 'Hyaluronic acid and glycerin draw moisture into the skin and mucosa, keeping it soft and hydrated; the brand cites its own clinical trial in which 94% of users reported improvement in vaginal dryness, though no independent clinical study of this specific product was found.',
+        // Plain-text summary — kept as a string since search indexing,
+        // the interaction checker, and DoctorPrep.jsx all read this as text.
+        ingredients: 'Hyaluronic acid (sodium hyaluronate), glycerin, aloe leaf juice, black currant fruit extract, lavender flower water, chamomile flower extract, calendula flower extract, lactic acid, vitamin E, linseed oil, vitamin A.',
+        // Per-ingredient science claims, each paired with a credible source
+        // (NIH-hosted or ACOG). Rendered on the Scientific literature tab.
+        ingredientScience: [
+            {
+                name: 'Hyaluronic acid and glycerin',
+                text: 'Both bind water and draw moisture into the skin and mucosa, so they stay soft and hydrated.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC13160248/', label: 'NIH (PMC): Real-world effectiveness of a hyaluronic acid-based vaginal moisturizer' },
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC9205919/', label: 'NIH (PMC): Moisture retention of glycerin solutions' },
+                ],
+            },
+            {
+                name: 'Linseed oil',
+                text: 'Rich in omega-3 fatty acids. It softens the skin and helps the skin barrier hold on to moisture.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/21088453/', label: 'NIH: Flaxseed oil diminishes skin sensitivity and improves skin barrier function' },
+                ],
+            },
+            {
+                name: 'Lactic acid',
+                text: 'The same acid healthy vaginal bacteria produce. It keeps intimate skin at its natural acidic pH.',
+                citations: [
+                    { url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6332693/', label: 'NIH (PMC): Vaginal pH measured in vivo — lactobacilli determine pH and lactic acid concentration' },
+                ],
+            },
+            {
+                name: 'Vitamin E',
+                text: 'An antioxidant that protects the skin barrier and softens the skin.',
+                citations: [
+                    { url: 'https://ods.od.nih.gov/factsheets/VitaminE-HealthProfessional/', label: 'NIH Office of Dietary Supplements: Vitamin E' },
+                ],
+            },
+            {
+                name: 'Vitamin A',
+                text: 'Supports skin renewal, so irritated skin recovers faster.',
+                citations: [
+                    { url: 'https://ods.od.nih.gov/factsheets/VitaminA-HealthProfessional/', label: 'NIH Office of Dietary Supplements: Vitamin A' },
+                ],
+            },
+            {
+                name: 'Aloe vera',
+                text: 'Cools and soothes irritated skin.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/18253066/', label: 'NIH: Anti-inflammatory potential of Aloe vera gel in the ultraviolet erythema test' },
+                ],
+            },
+            {
+                name: 'Calendula and chamomile',
+                text: 'Classic calming plants for sensitive skin. They reduce redness and sensitivity and support skin recovery.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/31145533/', label: 'NIH: Systematic review of Calendula officinalis extract for wound healing' },
+                ],
+            },
+            {
+                name: 'Lavender flower water',
+                text: 'A gentle floral water (not the essential oil) that soothes and calms redness.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC13466918/', label: 'NIH (PMC): Pharmacological properties of lavender essential oil — background on the active compound family, not a hydrosol-specific study' },
+                ],
+            },
+            {
+                name: 'Black currant fruit extract',
+                text: 'Rich in antioxidants that protect the skin.',
+                citations: [
+                    { url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12899128/', label: 'NIH (PMC): Antioxidant and antiproliferative properties of black currant (Ribes nigrum) extracts' },
+                ],
+            },
+        ],
+        // Category-level citation shown only on the Scientific literature
+        // tab, kept out of verificationLinks so it doesn't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://www.acog.org/womens-health/faqs/disorders-of-the-vulva-common-causes-of-vulvar-pain-burning-and-itching',
+                text: 'ACOG: Disorders of the Vulva — Common Causes of Vulvar Pain, Burning, and Itching',
+                summary: 'ACOG on why vulvar skin is especially prone to dryness, friction, and irritation, and general management guidance. This is clinical-guidance-level evidence, not product-specific validation.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'reddit',
+                        url: 'https://www.reddit.com/r/HealthyHooha/search/?q=neycher+hydrobloom&restrict_sr=1',
+                        text: 'Reddit r/HealthyHooha: Neycher HydroBloom',
+                        summary: 'Community discussions on Neycher\'s intimate-care line, including this gel.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://www.helloneycher.com/product/hydrobloom-moisturizing-gel',
+                        text: 'helloneycher.com: Customer reviews',
+                        summary: 'Neycher\'s own product page for this gel.',
+                    },
+                ],
+            },
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true,
