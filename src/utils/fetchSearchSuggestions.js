@@ -1,9 +1,15 @@
 /**
- * Calls /api/search-suggestions (Claude on the server). Same-origin on
- * Vercel for desktop web; the native mobile app has no server of its own
- * (it loads bundled assets from a local capacitor:// origin), so apiUrl()
- * resolves it against the real deployment there instead.
+ * Calls /api/search-suggestions (Claude on the server). External AI/web
+ * discovery is authenticated and consent-gated server-side; ordinary
+ * catalog search remains local. Same-origin on Vercel for desktop web; the
+ * native mobile app has no server of its own (it loads bundled assets from
+ * a local capacitor:// origin), so apiUrl() resolves it against the real
+ * deployment there instead.
+ *
+ * Non-personalized results only are cached in sessionStorage (45 min) --
+ * health-sensitive personalized search text/results are never cached.
  */
+import { getSupabaseClient } from './supabaseClient.js';
 import { apiUrl } from './apiUrl.js';
 
 function sessionCacheKey(query, category, symptom, maxResults) {
@@ -54,7 +60,7 @@ function writeSessionCache(key, suggestions, querySummary, relatedSearches) {
 
 /**
  * @param {{ query: string, category?: string, symptom?: string, signal?: AbortSignal }} opts
- * @returns {Promise<{ suggestions: object[], querySummary?: string, error?: string, code?: string, fromCache?: boolean }>}
+ * @returns {Promise<{ suggestions: object[], querySummary?: string, error?: string, code?: string }>}
  */
 export async function fetchSearchSuggestions(opts) {
   const query = (opts?.query || '').trim();
@@ -68,16 +74,17 @@ export async function fetchSearchSuggestions(opts) {
   const profileSummary = typeof opts?.profileSummary === 'string' ? opts.profileSummary : '';
   const dislikedProducts = typeof opts?.dislikedProducts === 'string' ? opts.dislikedProducts : '';
   const maxResults = typeof opts?.maxResults === 'number' ? opts.maxResults : 20;
-  // Don't cache personalized results — they're user-specific
-  const cacheKey = personalized ? null : sessionCacheKey(query, category, symptom, maxResults);
-  if (cacheKey) {
-    const cached = readSessionCache(cacheKey);
-    if (cached) return { suggestions: cached.suggestions, querySummary: cached.querySummary, relatedSearches: cached.relatedSearches || [], fromCache: true };
+
+  const headers = { 'Content-Type': 'application/json' };
+  const supabase = getSupabaseClient();
+  if (supabase) {
+    const { data } = await supabase.auth.getSession();
+    if (data?.session?.access_token) headers.Authorization = `Bearer ${data.session.access_token}`;
   }
 
   const res = await fetch(apiUrl('/api/search-suggestions'), {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify({ query, category, symptom, personalized, profileSummary, dislikedProducts, maxResults }),
     signal: opts?.signal,
   });
@@ -85,13 +92,20 @@ export async function fetchSearchSuggestions(opts) {
   const data = await res.json().catch(() => ({}));
 
   if (res.status === 401) {
-    // AI search is gated to signed-in users on this deployment. Not an error
-    // state — Discovery still shows catalog results.
     return {
       suggestions: [],
       querySummary: '',
       error: 'Sign in to search beyond the ayna catalog.',
       code: 'auth_required',
+    };
+  }
+
+  if (res.status === 403 && data?.error === 'ai_consent_required') {
+    return {
+      suggestions: [],
+      querySummary: '',
+      error: 'Turn on AI features in ayna before searching beyond the ayna catalog.',
+      code: 'ai_consent_required',
     };
   }
 
@@ -104,23 +118,20 @@ export async function fetchSearchSuggestions(opts) {
     };
   }
 
-  if (res.status === 503 && data?.error === 'no_anthropic_key') {
+  if (res.status === 503 && (data?.error === 'no_ai_provider' || data?.error === 'no_anthropic_key')) {
     return {
       suggestions: [],
       querySummary: '',
-      error: 'AI search is not configured on the server (missing ANTHROPIC_API_KEY).',
+      error: 'AI search is not configured on the server.',
       code: 'no_key',
     };
   }
 
   if (!res.ok) {
-    // Discovery renders `error` verbatim, so raw server codes used to reach the
-    // user as e.g. "Showing 0 results. claude_failed". Map them to human copy
-    // and keep the raw code on `code` for telemetry.
     const raw = data?.error || '';
     const friendly =
       raw === 'claude_failed' || raw === 'invalid_model_json' || res.status === 502
-        ? 'AI search is having trouble right now — try again in a moment.'
+        ? 'AI search is having trouble right now. Try again in a moment.'
         : raw === 'query_too_short'
           ? 'Type a little more to search.'
           : 'Could not load suggestions.';
@@ -135,6 +146,5 @@ export async function fetchSearchSuggestions(opts) {
   const suggestions = Array.isArray(data.suggestions) ? data.suggestions : [];
   const querySummary = typeof data.querySummary === 'string' ? data.querySummary : '';
   const relatedSearches = Array.isArray(data.relatedSearches) ? data.relatedSearches : [];
-  if (cacheKey) writeSessionCache(cacheKey, suggestions, querySummary, relatedSearches);
   return { suggestions, querySummary, relatedSearches };
 }

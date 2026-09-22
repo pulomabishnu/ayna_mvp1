@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Capacitor } from '@capacitor/core';
+import posthog from 'posthog-js';
+import { Capacitor, registerPlugin } from '@capacitor/core';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Browser } from '@capacitor/browser';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
-import { CONSENT_VERSION, stashPendingConsent, flushPendingConsent } from '../../utils/pendingConsent.js';
+import { apiUrl } from '../../utils/apiUrl.js';
+import { AGE_REQUIREMENT_VERSION, CONSENT_VERSION, clearPendingConsent, stashPendingConsent, flushPendingConsent } from '../../utils/pendingConsent.js';
 import { resetChipPosition } from '../utils/askAynaChipPosition.js';
 
 // Real Supabase identity for the mobile app — separate from
@@ -31,6 +33,7 @@ const EMAIL_CONFIRM_REDIRECT = 'https://www.aynahealth.co/confirmed';
 // whatever device originally built it).
 export const MOBILE_OAUTH_PENDING_KEY = 'ayna_mobile_oauth_pending';
 const NATIVE_OAUTH_REDIRECT = 'co.aynahealth.app://auth/callback';
+const AppleSignIn = registerPlugin('AppleSignIn');
 
 // On native, point email confirmation at the exact same custom-scheme URL as
 // Google/Apple sign-in — handleNativeOAuthUrl below already parses any
@@ -176,6 +179,12 @@ export function useSupabaseAuth() {
           full_name: firstName,
           consent_given_at: consentAt,
           consent_version: CONSENT_VERSION,
+          age_18_confirmed: true,
+          age_18_confirmed_at: consentAt,
+          age_requirement_version: AGE_REQUIREMENT_VERSION,
+          ai_health_processing_allowed: true,
+          ai_health_processing_consented_at: consentAt,
+          ai_health_processing_revoked_at: null,
         },
       },
     });
@@ -209,7 +218,24 @@ export function useSupabaseAuth() {
     if (error) throw error;
   }
 
-  async function signInWithGoogle() {
+  async function verifyEmailOtp({ email, token }) {
+    const supabase = getSupabaseClient();
+    if (!supabase) throw new Error('Sign-in is not configured right now.');
+    const cleanToken = String(token || '').replace(/\D/g, '').slice(0, 8);
+    if (!/^\d{8}$/.test(cleanToken)) {
+      throw new Error('Enter the 8-digit verification code from your email.');
+    }
+    const { data, error } = await supabase.auth.verifyOtp({
+      email: String(email || '').trim(),
+      token: cleanToken,
+      type: 'email',
+    });
+    if (error) throw error;
+    if (!data?.session) throw new Error('Your email was verified, but we could not start your session. Please sign in.');
+    return data;
+  }
+
+  async function signInWithGoogle({ consented = false } = {}) {
     const supabase = getSupabaseClient();
     if (!supabase) throw new Error('Sign-in is not configured right now.');
 
@@ -219,11 +245,11 @@ export function useSupabaseAuth() {
       // Storage unavailable.
     }
 
-    // Stashed before EITHER redirect path below, same as AuthGate.jsx's
-    // handleGoogle — Supabase's Google provider auto-provisions a real
-    // account for any unseen address the instant this redirect completes,
-    // with no consent checkboxes shown at all in mobile's "sign in" mode.
-    stashPendingConsent();
+    // Only persist consent metadata when the person actually checked the
+    // visible signup confirmations. A normal returning-user sign-in must never
+    // manufacture a consent timestamp just because Google was clicked.
+    if (consented) stashPendingConsent();
+    else clearPendingConsent();
 
     if (Capacitor.isNativePlatform()) {
       const { data, error } = await supabase.auth.signInWithOAuth({
@@ -264,65 +290,76 @@ export function useSupabaseAuth() {
     if (error) throw error;
   }
 
-  // Required alongside Google per App Store Review Guideline 4.8: an app
-  // offering a third-party login must offer Sign in with Apple as an
-  // equivalent option. Same native OAuth treatment as signInWithGoogle
-  // above — appUrlOpen's handleNativeOAuthUrl doesn't care which provider
-  // produced the redirect, so no changes needed there.
-  async function signInWithApple() {
+  async function signInWithApple({ consented = false } = {}) {
     const supabase = getSupabaseClient();
     if (!supabase) throw new Error('Sign-in is not configured right now.');
+    if (Capacitor.getPlatform() !== 'ios') throw new Error('Sign in with Apple is available in the iOS app.');
 
-    try {
-      localStorage.setItem(MOBILE_OAUTH_PENDING_KEY, '1');
-    } catch {
-      // Storage unavailable.
-    }
+    if (consented) stashPendingConsent();
+    else clearPendingConsent();
 
-    stashPendingConsent();
+    const result = await AppleSignIn.authorize();
+    if (!result?.identityToken || !result?.nonce) throw new Error('Apple did not return a usable sign-in token.');
 
-    if (Capacitor.isNativePlatform()) {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'apple',
-        options: {
-          redirectTo: NATIVE_OAUTH_REDIRECT,
-          skipBrowserRedirect: true,
+    const { data, error } = await supabase.auth.signInWithIdToken({
+      provider: 'apple',
+      token: result.identityToken,
+      nonce: result.nonce,
+    });
+    if (error) throw error;
+
+    // Apple only supplies name on the first authorization. Save it then, but
+    // never overwrite an existing profile name with an empty value later.
+    const givenName = String(result.givenName || '').trim();
+    const familyName = String(result.familyName || '').trim();
+    const fullName = [givenName, familyName].filter(Boolean).join(' ');
+    if (givenName || fullName) {
+      const { error: nameError } = await supabase.auth.updateUser({
+        data: {
+          ...(givenName ? { first_name: givenName } : {}),
+          ...(fullName ? { full_name: fullName } : {}),
         },
       });
-
-      if (error) throw error;
-      if (!data?.url) throw new Error('Could not start Apple sign-in.');
-
-      await Browser.open({
-        url: data.url,
-        presentationStyle: 'fullscreen',
-      });
-      return;
+      if (nameError) console.warn('[Ayna] Apple display name could not be saved:', nameError.message);
     }
 
-    const callbackUrl = new URL('/auth/callback', window.location.origin);
-    const currentParams = new URLSearchParams(window.location.search);
+    if (consented) await flushPendingConsent(supabase);
 
-    for (const key of ['x-vercel-protection-bypass', 'x-vercel-set-bypass-cookie']) {
-      const value = currentParams.get(key);
-      if (value) callbackUrl.searchParams.set(key, value);
+    // Apple returns a one-time authorization code alongside the identity token.
+    // Exchange it server-side for a refresh token and store only an encrypted
+    // copy so account deletion can revoke the Apple authorization later. This
+    // is best-effort during sign-in: a temporary server/config problem must not
+    // strand an otherwise valid Apple login, but it is surfaced in logs without
+    // ever logging the code/token itself.
+    const authorizationCode = String(result.authorizationCode || '').trim();
+    const accessToken = data?.session?.access_token;
+    if (authorizationCode && accessToken) {
+      try {
+        const response = await fetch(apiUrl('/api/apple-token'), {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({ authorizationCode }),
+        });
+        if (!response.ok) {
+          console.warn('[Ayna] Apple authorization could not be prepared for future revocation.');
+        }
+      } catch {
+        console.warn('[Ayna] Apple authorization could not be prepared for future revocation.');
+      }
     }
 
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'apple',
-      options: {
-        redirectTo: callbackUrl.toString(),
-      },
-    });
-
-    if (error) throw error;
+    return data?.user || null;
   }
 
   async function signOut() {
     const supabase = getSupabaseClient();
     if (supabase) await supabase.auth.signOut();
+    try { posthog.reset(); } catch { /* analytics may be unavailable/opted out */ }
     resetChipPosition();
   }
 
-  return { user, authLoading, signUpWithPassword, signInWithPassword, signInWithGoogle, signInWithApple, signOut, resendConfirmation };
+  return { user, authLoading, signUpWithPassword, signInWithPassword, signInWithGoogle, signInWithApple, signOut, resendConfirmation, verifyEmailOtp };
 }

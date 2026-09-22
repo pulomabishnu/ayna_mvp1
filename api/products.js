@@ -96,7 +96,7 @@ export default async function handler(req, res) {
 
     // Catalog changes are rare and every visitor needs it; this is the single
     // highest-value cache in the app.
-    res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
+    res.setHeader('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=3600');
     return res.status(200).json({ products, count: products.length, source: 'product_catalog' });
   } catch (e) {
     console.error('[products] query failed:', e?.message);

@@ -1,15 +1,17 @@
+import { Capacitor } from '@capacitor/core';
+
 /**
  * Wishlist / Save for later persistence.
  *
- * localStorage keeps the UI instant. Supabase user_ecosystems is the primary
- * sync layer, but the live table may be missing is_saved or blocked by RLS.
- * user_metadata is therefore a small authenticated fallback so saved products
- * still come back after logout/login instead of disappearing with a false
- * "could not save" banner.
+ * Supabase user_ecosystems is the account-scoped sync layer. The website may
+ * keep a compact local cache for fast rendering, but native iOS does not:
+ * saved products can reveal sensitive health interests, so the iPhone app
+ * restores them from the authenticated backend instead of localStorage.
  */
 
 const LS_KEY = 'ayna_saved_for_later_v1';
 const META_KEY = 'ayna_saved_products_v1';
+const IS_NATIVE_IOS = Capacitor.getPlatform() === 'ios';
 let remoteColumnMissing = false;
 const UNDEFINED_COLUMN = '42703';
 
@@ -34,7 +36,16 @@ function compactProduct(product) {
   return out;
 }
 
+function scrubNativeSavedCache() {
+  if (!IS_NATIVE_IOS) return;
+  try { localStorage.removeItem(LS_KEY); } catch { /* storage unavailable */ }
+}
+
 export function loadSavedProducts() {
+  if (IS_NATIVE_IOS) {
+    scrubNativeSavedCache();
+    return {};
+  }
   try {
     const raw = localStorage.getItem(LS_KEY);
     const parsed = raw ? JSON.parse(raw) : {};
@@ -45,10 +56,14 @@ export function loadSavedProducts() {
 }
 
 export function persistSavedProducts(map) {
+  if (IS_NATIVE_IOS) {
+    scrubNativeSavedCache();
+    return;
+  }
   try {
     localStorage.setItem(LS_KEY, JSON.stringify(map || {}));
   } catch {
-    // Private mode / quota — the in-memory copy still works for this session.
+    // Private mode / quota: in-memory state still works for this session.
   }
 }
 
@@ -123,9 +138,7 @@ export async function loadSavedForUser(supabase, userId) {
  * Set or clear a saved product. The table write is tried first; auth
  * metadata is only written as a fallback when that write actually fails
  * (missing column, RLS, etc). Writing it unconditionally on every save used
- * to make user_metadata grow without bound — it rides along in the auth JWT
- * on every request, so that eventually blew past header size limits (HTTP
- * 431) even once the table itself was working fine.
+ * to make user_metadata grow without bound because it rides in the auth JWT.
  */
 export async function setSavedForUser(supabase, userId, product, isSaved) {
   if (!supabase || !userId || !product?.id) return false;

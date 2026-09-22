@@ -13,8 +13,9 @@ const DEFAULT_STATS = [
 // decoration, so it isn't something to drop for a simpler mobile form.
 const CONSENT_ITEMS = [
   'The health information I share with ayna is self-reported wellness information, not a clinical record.',
-  'My wellness data may be processed by an external AI service to personalize recommendations. ayna takes measures to anonymize and secure this information and never sells it.',
+  'When I intentionally use an AI-powered feature, relevant information I provide may be processed by third-party AI providers such as Anthropic, OpenAI, or Google to generate my requested response. ayna minimizes the context sent and does not sell it.',
   'ayna provides wellness information, not medical advice or a substitute for care from a qualified healthcare provider.',
+  'I confirm that I am at least 18 years old.',
 ];
 
 function Field({ label, icon, children }) {
@@ -61,9 +62,12 @@ const LockIcon = (
 
 function PrimaryButton({ onClick, disabled, children }) {
   return (
-    <div
-      onClick={disabled ? undefined : onClick}
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
       style={{
+        width: '100%', border: 'none',
         background: disabled ? 'rgba(255,199,116,.45)' : '#FFC774',
         color: '#292524',
         textAlign: 'center',
@@ -81,15 +85,18 @@ function PrimaryButton({ onClick, disabled, children }) {
       }}
     >
       {children}
-    </div>
+    </button>
   );
 }
 
 function GoogleButton({ onClick, disabled }) {
   return (
-    <div
-      onClick={disabled ? undefined : onClick}
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
       style={{
+        width: '100%', color: '#FFFCF9',
         background: 'rgba(255,252,249,.14)',
         border: '1px solid rgba(255,255,255,.28)',
         textAlign: 'center',
@@ -113,7 +120,7 @@ function GoogleButton({ onClick, disabled }) {
         <path fill="#EA4335" d="M12 4.75c1.76 0 3.34.6 4.58 1.79l3.44-3.44C17.94 1.19 15.23 0 12 0A12 12 0 0 0 1.28 6.62l3.99 3.09C6.22 6.86 8.87 4.75 12 4.75Z" />
       </svg>
       {disabled ? 'Opening Google…' : 'Continue with Google'}
-    </div>
+    </button>
   );
 }
 
@@ -155,19 +162,22 @@ export default function SigninScreen({
   onGoogleSignIn,
   onAppleSignIn,
   onResendConfirmation,
+  onVerifyEmailOtp,
   onAuthenticated,
 }) {
   const [mode, setMode] = useState('signup'); // 'signup' | 'signin' | 'check-email'
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [checked, setChecked] = useState([false, false, false]);
+  const [checked, setChecked] = useState([false, false, false, false]);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [appleLoading, setAppleLoading] = useState(false);
   const [error, setError] = useState('');
   const [resending, setResending] = useState(false);
   const [resendMsg, setResendMsg] = useState('');
+  const [emailCode, setEmailCode] = useState('');
+  const [verifyingCode, setVerifyingCode] = useState(false);
 
   // Cross-tab pickup: confirming email in a different tab establishes the
   // session there via localStorage, which fires onAuthStateChange back in
@@ -200,17 +210,42 @@ export default function SigninScreen({
   const allConsented = checked.every(Boolean);
   const toggleCheck = (i) => setChecked((prev) => prev.map((v, idx) => (idx === i ? !v : v)));
 
+  const handleVerifyCode = async () => {
+    const cleanCode = emailCode.replace(/\D/g, '').slice(0, 8);
+    if (!/^\d{8}$/.test(cleanCode)) {
+      setError('Enter the 8-digit verification code from your email.');
+      return;
+    }
+    setError('');
+    setVerifyingCode(true);
+    try {
+      await onVerifyEmailOtp({ email: email.trim(), token: cleanCode });
+      onAuthenticated(firstName.trim() || undefined);
+    } catch (e) {
+      setError(/expired|invalid|token/i.test(e?.message || '')
+        ? 'That code is invalid or expired. Tap Resend code and try again.'
+        : (e?.message || 'Could not verify that code. Please try again.'));
+    } finally {
+      setVerifyingCode(false);
+    }
+  };
+
   const handleSignUp = async () => {
-    if (!allConsented) {
-      setError('Please agree to the three statements above before creating your account.');
+    if (mode === 'signup' && !allConsented) {
+      setError('Please agree to all four statements above before creating your account.');
       return;
     }
     setError('');
     setLoading(true);
     try {
       const { needsConfirmation } = await onSignUp({ email: email.trim(), password, firstName: firstName.trim() });
-      if (needsConfirmation) setMode('check-email');
-      else onAuthenticated(firstName.trim() || undefined);
+      if (needsConfirmation) {
+        setEmailCode('');
+        setResendMsg('');
+        setMode('check-email');
+      } else {
+        onAuthenticated(firstName.trim() || undefined);
+      }
     } catch (e) {
       if (e.code === 'email_already_exists') setMode('signin');
       setError(e.message || 'Something went wrong. Please try again.');
@@ -226,7 +261,14 @@ export default function SigninScreen({
       await onSignIn({ email: email.trim(), password });
       onAuthenticated();
     } catch (e) {
-      setError(e.message || 'Something went wrong. Please try again.');
+      if (/email not confirmed|confirm your email|not verified/i.test(e?.message || '')) {
+        setEmailCode('');
+        setResendMsg('');
+        setMode('check-email');
+        setError('Your email still needs verification. Enter the code from your email below.');
+      } else {
+        setError(e.message || 'Something went wrong. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -238,13 +280,13 @@ export default function SigninScreen({
     // stopping Google from creating a real account with none of them agreed
     // to. Signing in with an existing account needs no re-consent.
     if (mode === 'signup' && !allConsented) {
-      setError('Please agree to the three statements above before continuing.');
+      setError('Please agree to all four statements above before continuing.');
       return;
     }
     setError('');
     setGoogleLoading(true);
     try {
-      await onGoogleSignIn();
+      await onGoogleSignIn({ consented: mode === 'signup' });
     } catch (e) {
       setError(e.message || 'Could not start Google sign-in.');
     } finally {
@@ -253,17 +295,18 @@ export default function SigninScreen({
   };
 
   const handleApple = async () => {
-    // Same gate as handleGoogle above.
+    if (!onAppleSignIn) return;
     if (mode === 'signup' && !allConsented) {
-      setError('Please agree to the three statements above before continuing.');
+      setError('Please agree to all four statements above before continuing.');
       return;
     }
     setError('');
     setAppleLoading(true);
     try {
-      await onAppleSignIn();
+      await onAppleSignIn({ consented: mode === 'signup' });
+      onAuthenticated(firstName.trim() || undefined);
     } catch (e) {
-      setError(e.message || 'Could not start Apple sign-in.');
+      if (!/cancel/i.test(e?.message || '')) setError(e?.message || 'Could not sign in with Apple.');
     } finally {
       setAppleLoading(false);
     }
@@ -274,7 +317,8 @@ export default function SigninScreen({
     setResendMsg('');
     try {
       await onResendConfirmation(email.trim());
-      setResendMsg('Sent! Check your inbox (and spam folder) again in a minute.');
+      setEmailCode('');
+      setResendMsg('New code sent. Check your inbox and spam folder.');
     } catch (e) {
       setResendMsg(e.message || 'Could not resend right now — try again in a moment.');
     } finally {
@@ -302,17 +346,41 @@ export default function SigninScreen({
         <>
           <div style={{ flex: 1 }} />
           <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(26px * var(--ayna-text-scale, 1))', lineHeight: 1.3, marginBottom: 12, textAlign: 'center' }}>
-            Almost there.
+            Verify your email.
           </div>
-          <div style={{ fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: 'rgba(255,252,249,.82)', textAlign: 'center', marginBottom: 20 }}>
-            A confirmation email is on its way from ayna (puloma@aynahealth.co). Check your spam folder if you don't see it. Once confirmed, come back here — this screen updates on its own.
+          <div style={{ fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: 'rgba(255,252,249,.82)', textAlign: 'center', marginBottom: 18 }}>
+            We sent an 8-digit verification code to {email}. Enter it below to finish creating your account.
           </div>
-          {resendMsg && <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', textAlign: 'center', color: 'rgba(255,252,249,.75)', marginBottom: 14 }}>{resendMsg}</div>}
+          <div style={{ background: '#FFFFFF', borderRadius: 20, padding: '14px 16px', marginBottom: 12, boxShadow: '0 8px 20px -12px rgba(0,0,0,.35)' }}>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1px', textTransform: 'uppercase', color: '#A8A29E', textAlign: 'center' }}>Verification code</div>
+            <input
+              type="text"
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              placeholder="12345678"
+              value={emailCode}
+              onChange={(e) => setEmailCode(e.target.value.replace(/\D/g, '').slice(0, 8))}
+              maxLength={8}
+              autoFocus
+              style={{ ...inputStyle, textAlign: 'center', fontSize: '24px', letterSpacing: '8px', fontWeight: 700, padding: '8px 0 2px' }}
+            />
+          </div>
+          {error && <div style={{ color: '#FFC9BC', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', textAlign: 'center', marginBottom: 12 }}>{error}</div>}
+          <PrimaryButton onClick={handleVerifyCode} disabled={verifyingCode || emailCode.length !== 8}>
+            {verifyingCode ? 'Verifying…' : 'Verify email'}
+          </PrimaryButton>
+          {resendMsg && <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', textAlign: 'center', color: 'rgba(255,252,249,.75)', marginTop: 12 }}>{resendMsg}</div>}
           <div
             onClick={resending ? undefined : handleResend}
-            style={{ textAlign: 'center', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: resending ? 'rgba(255,252,249,.5)' : '#FFC774', cursor: resending ? 'default' : 'pointer' }}
+            style={{ textAlign: 'center', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: resending ? 'rgba(255,252,249,.5)' : '#FFC774', cursor: resending ? 'default' : 'pointer', marginTop: 12 }}
           >
-            {resending ? 'Sending…' : 'Resend confirmation email'}
+            {resending ? 'Sending…' : 'Resend code'}
+          </div>
+          <div
+            onClick={() => { setMode('signup'); setEmailCode(''); setError(''); setResendMsg(''); }}
+            style={{ textAlign: 'center', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'rgba(255,252,249,.72)', cursor: 'pointer', marginTop: 12 }}
+          >
+            Change email
           </div>
           <div style={{ flex: 1 }} />
         </>
@@ -386,7 +454,7 @@ export default function SigninScreen({
               </PrimaryButton>
             )}
             <GoogleButton onClick={handleGoogle} disabled={googleLoading || appleLoading || loading} />
-            <AppleButton onClick={handleApple} disabled={appleLoading || googleLoading || loading} />
+            {onAppleSignIn && <AppleButton onClick={handleApple} disabled={appleLoading || googleLoading || loading} />}
           </div>
 
           <div

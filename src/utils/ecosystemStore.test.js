@@ -112,6 +112,30 @@ describe('upsertProductsBatch', () => {
     expect(sb.calls.filter((c) => c.op === 'upsert')).toHaveLength(3);
   });
 
+  it('caps only auto-generated products before LLM persistence', async () => {
+    const sb = makeSupabase();
+    const generated = Array.from({ length: 8 }, (_, i) => ({
+      id: `generated-${i}`,
+      name: `Generated ${i}`,
+      category: 'pad',
+      llmGenerated: true,
+    }));
+    const manual = { id: 'manual', name: 'Manual', category: 'tampon' };
+    const swapped = { ...generated[7], id: 'swapped', _userSwapped: true };
+
+    const result = await upsertProductsBatch(
+      sb,
+      'user-1',
+      [...generated, manual, swapped],
+      { inEcosystem: true },
+    );
+
+    const payload = sb.calls.find((call) => call.op === 'upsert').payload;
+    expect(payload.filter((row) => row.product_data.llmGenerated && !row.product_data._userSwapped)).toHaveLength(5);
+    expect(payload.map((row) => row.product_id)).toEqual(expect.arrayContaining(['manual', 'swapped']));
+    expect(result.saved).toBe(7);
+  });
+
   it('targets the composite key so rows update instead of duplicating', async () => {
     const sb = makeSupabase();
     await upsertProductsBatch(sb, 'user-1', [{ id: 'p1', name: 'P' }], { inEcosystem: true });
@@ -197,5 +221,20 @@ describe('loadEcosystemForUser', () => {
     });
     const out = await loadEcosystemForUser(sb, 'u');
     expect(out.myProducts.a).toMatchObject({ id: 'a', name: 'Name', brand: 'B' });
+  });
+
+  it('keeps tracked and saved generated rows visible above the generated cap', async () => {
+    const generatedRows = Array.from({ length: 7 }, (_, index) => ({
+      product_id: `p${index}`,
+      in_ecosystem: true,
+      is_tracked: index === 5,
+      is_saved: index === 6,
+      product_data: { id: `p${index}`, category: 'pad', llmGenerated: true },
+    }));
+    const out = await loadEcosystemForUser(makeSupabase({ selectData: generatedRows }), 'u');
+
+    expect(Object.keys(out.myProducts)).toHaveLength(7);
+    expect(out.myProducts).toHaveProperty('p5');
+    expect(out.myProducts).toHaveProperty('p6');
   });
 });

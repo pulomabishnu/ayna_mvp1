@@ -100,9 +100,13 @@ function apiDevProxy(routes, env) {
 }
 
 // https://vite.dev/config/
-export default defineConfig(async ({ mode }) => {
+export default defineConfig(async ({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
-  const port = await pickAllowedPort()
+  // Port selection is a development-server concern. Running it while loading
+  // config for `vite build` made release builds depend on local port state (or
+  // fail in restricted CI/build environments that cannot bind a probe socket).
+  const needsDevPort = command === 'serve' && mode !== 'test' && !process.env.VITEST
+  const port = needsDevPort ? await pickAllowedPort() : 5173
   return {
     base: '/',
     plugins: [react(), apiDevProxy(LOCAL_API_ROUTES, env)],
