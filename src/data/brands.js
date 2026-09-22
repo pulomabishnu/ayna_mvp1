@@ -251,10 +251,62 @@ export const BRAND_PRODUCTS = [
         ],
         communityReview: 'Neycher.com and Amazon both carry customer reviews for this moisturizer; visible feedback centers on noticeably improved day-to-day comfort after adding it to a routine. A specific rating/review count wasn\'t independently verifiable at time of writing. Amazon blocked automated access, and the badge shown on Neycher\'s own product pages is identical across multiple different products, so it isn\'t trustworthy as a per-product figure.',
         effectiveness: 'Vaginal moisturizers as a category are supported by systematic-review evidence for improving dryness versus placebo (low certainty); no independent clinical study of this specific product was found.',
-        // The per-ingredient science reasoning (not the packaging list — that
-        // moved to safety.materials above). Rendered on the Scientific
-        // literature tab, after the citation entries.
-        ingredients: 'Hyaluronic acid (10 mg): binds large amounts of water. It draws moisture into the vaginal lining, holds it there, and supports tissue repair.\n\nPolycarbophil: a bioadhesive gel that sticks to the vaginal wall and holds water against it for days, so the effect lasts much longer than a lubricant. It also helps the tissue renew — as it does, old, dry cells that have built up come away, so some women notice a white, clumpy discharge that looks like a yeast infection. It isn\'t one; it\'s the old cells leaving, and it usually lessens with regular use.\n\nGlycyrrhetinic acid (from licorice root): calms irritation, redness, and burning.\n\nLactic acid: the same acid healthy vaginal bacteria produce. It keeps pH in its natural acidic range (3.8 to 4.5).\n\nVitamins E and A: vitamin E is an antioxidant that protects and softens the tissue; vitamin A supports renewal of the vaginal lining.\n\nTea tree oil: used in a small, carefully chosen amount — pure tea tree oil at high concentrations can irritate, but here it sits inside a formula built to hydrate and calm (hyaluronic acid, polycarbophil, glycyrrhetinic acid, vitamin E), not as a stand-alone antiseptic.',
+        // Plain-text ingredient summary — kept as a string since search
+        // indexing (naturalLanguageSearch.js), the interaction checker
+        // (interactions.js), DoctorPrep.jsx, and the Ask Ayna context
+        // builder (productHowToUse.js) all read this field as a string.
+        // Changing its shape would break all four.
+        ingredients: 'Hyaluronic acid (10 mg), polycarbophil, glycyrrhetinic acid (from licorice root), lactic acid, vitamins E and A, tea tree oil.',
+        // Per-ingredient science claims, each paired with its own credible
+        // source (NIH-hosted: PMC/PubMed or an NIH institute's own fact
+        // sheet) — not the plain-string `ingredients` above, so this can
+        // carry structured citations without changing that field's shape.
+        // Rendered on the Scientific literature tab.
+        ingredientScience: [
+            {
+                name: 'Hyaluronic acid (10 mg)',
+                text: 'Binds large amounts of water. It draws moisture into the vaginal lining, holds it there, and supports tissue repair.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC13160248/', label: 'NIH (PMC): Real-world effectiveness of a hyaluronic acid-based vaginal moisturizer' },
+                ],
+            },
+            {
+                name: 'Polycarbophil',
+                text: 'A bioadhesive gel that sticks to the vaginal wall and holds water against it for days, so the effect lasts much longer than a lubricant. It also helps the tissue renew — as it does, old, dry cells that have built up come away, so some women notice a white, clumpy discharge that looks like a yeast infection. It isn\'t one; it\'s the old cells leaving, and it usually lessens with regular use.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7838131/', label: 'NIH (PMC): Polycarbophil-based cream for genitourinary syndrome of menopause' },
+                ],
+            },
+            {
+                name: 'Glycyrrhetinic acid (from licorice root)',
+                text: 'Calms irritation, redness, and burning.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC9025446/', label: 'NIH (PMC): Anti-inflammatory properties of licorice (Glycyrrhiza glabra)' },
+                ],
+            },
+            {
+                name: 'Lactic acid',
+                text: 'The same acid healthy vaginal bacteria produce. It keeps pH in its natural acidic range (3.8 to 4.5).',
+                citations: [
+                    { url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6332693/', label: 'NIH (PMC): Vaginal pH measured in vivo — lactobacilli determine pH and lactic acid concentration' },
+                ],
+            },
+            {
+                name: 'Vitamins E and A',
+                text: 'Vitamin E is an antioxidant that protects and softens the tissue; vitamin A supports renewal of the vaginal lining.',
+                citations: [
+                    { url: 'https://ods.od.nih.gov/factsheets/VitaminE-HealthProfessional/', label: 'NIH Office of Dietary Supplements: Vitamin E' },
+                    { url: 'https://ods.od.nih.gov/factsheets/VitaminA-HealthProfessional/', label: 'NIH Office of Dietary Supplements: Vitamin A' },
+                ],
+            },
+            {
+                name: 'Tea tree oil',
+                text: 'Used in a small, carefully chosen amount — pure tea tree oil at high concentrations can irritate, but here it sits inside a formula built to hydrate and calm (hyaluronic acid, polycarbophil, glycyrrhetinic acid, vitamin E), not as a stand-alone antiseptic.',
+                citations: [
+                    { url: 'https://www.nccih.nih.gov/health/tea-tree-oil', label: 'NIH NCCIH: Tea Tree Oil — Usefulness and Safety' },
+                ],
+            },
+        ],
         // Curated so the Scientific literature tab always has real citations on
         // file, instead of depending on api/product-insights.js's live LLM call
         // succeeding (which needs its own API key configured — silently comes
@@ -293,9 +345,15 @@ export const BRAND_PRODUCTS = [
                     },
                     {
                         platform: 'amazon',
-                        url: 'https://www.amazon.com/s?k=Neycher+Vaginal+Moisturizer',
+                        url: 'https://www.amazon.com/dp/B0DMTDP1J7?lv=shuf&channelId=500&plpRedirect=mhFallback&th=1',
                         text: 'Amazon: Neycher Vaginal Moisturizer reviews',
                         summary: 'Visible feedback centers on noticeably improved day-to-day comfort after adding it to a routine. A specific rating/review count wasn\'t independently verifiable at time of writing — Amazon blocks automated access.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://helloneycher.com/products/goodbye-dryness-bundle?Title=Default',
+                        text: 'helloneycher.com: Customer reviews',
+                        summary: 'Neycher\'s own site carries customer reviews across its intimate-care line, including this moisturizer.',
                     },
                 ],
             },
