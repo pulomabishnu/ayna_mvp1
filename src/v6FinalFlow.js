@@ -249,7 +249,7 @@ function buildAccountStep() {
   const step = document.createElement('div');
   step.className = 'v6-account-step';
   step.innerHTML = `
-    <div class="v6-account-step__card">
+    <div class="v6-account-step__card v6-auth-card">
       <div class="v6-account-step__eyebrow">one last step</div>
       <h1>save your health universe.</h1>
       <p class="v6-account-step__sub">Your answers are done${firstName ? `, <span class="v6-account-name"></span>` : ''}. Create your private account so your ecosystem can be built and saved.</p>
@@ -721,18 +721,10 @@ function enhancePendingVerificationResult() {
   const result = document.querySelector('.ayna-quiz-result-screen');
   if (!result) return;
   result.classList.remove('v6-awaiting-account');
-  result.querySelectorAll('.ayna-result-login').forEach((button) => { button.style.display = 'none'; });
-  result.querySelectorAll('.ayna-result-signup').forEach((button) => {
-    button.textContent = 'go to your ecosystem';
-    if (!button.dataset.v6VerifyBound) {
-      button.dataset.v6VerifyBound = '1';
-      button.addEventListener('click', (event) => {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        showVerificationNotice();
-      }, true);
-    }
-  });
+
+  // Keep the normal result-page actions intact. The verification dialog is
+  // the actual gate; mutating/hiding buttons here made the page look like the
+  // user had already advanced even though their email was still unverified.
   const title = result.querySelector('.ayna-result-title');
   if (title && !result.querySelector('.v6-result-verify-note')) {
     const note = document.createElement('p');
