@@ -5,6 +5,7 @@ import { buildSearchTextForItem, buildIdentityTextForItem, scoreQueryAgainstProd
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { isPartnerBrandItem, getPartnerBrandRank } from '../utils/partnerBrands';
 import { fetchSearchSuggestions } from '../utils/fetchSearchSuggestions';
+import { availablePreferenceOptions, matchesProductPreference } from '../utils/productPreferences';
 import useStaticPlaceholder from '../utils/useStaticPlaceholder';
 import { getVerificationLinks } from '../utils/verificationLinks';
 import { hasFlaggedRecall } from '../utils/productSafetyAlert';
@@ -97,19 +98,7 @@ function getExplicitEligibility(item) {
     return { fsa, hsa };
 }
 
-function matchesPreference(item, filter) {
-    if (filter === 'all') return true;
-    const text = productSearchText(item);
-    const exact = {
-        'fragrance-free': ['fragrance free', 'fragrance-free'],
-        'sensitive-skin': ['sensitive skin'],
-        vegan: ['vegan'],
-        'cruelty-free': ['cruelty free', 'cruelty-free'],
-        organic: ['organic'],
-        'clean-ingredients': ['clean ingredients'],
-    };
-    return (exact[filter] || []).some((needle) => text.includes(needle));
-}
+const matchesPreference = matchesProductPreference;
 
 function hasClinicianSupport(item) {
     const links = getVerificationLinks(item, 'doctor');
@@ -663,8 +652,12 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         return Array.from(categories).sort((a, b) => (CATEGORY_LABELS[a] || a).localeCompare(CATEGORY_LABELS[b] || b));
     }, [combined, macroGroup]);
 
-    const filtered = useMemo(() => {
-        const applyFilters = (items, skipCategory = false) => items.filter((item) => {
+    // Shared by the catalog grid AND the AI-suggestion merge below. AI
+    // suggestions used to be appended after filtering, so a selected
+    // preference/price/rating/FSA filter didn't apply to them (2026-09-22 audit).
+    const preferenceOptions = useMemo(() => availablePreferenceOptions(combined), [combined]);
+
+    const passesActiveFilters = useCallback((item, skipCategory = false) => {
             if (omittedProducts[item.id]) return false;
             // An explicit FSA/HSA filter should search the full eligible catalog,
             // not only the user's personalized subset.
@@ -707,7 +700,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             if (!matchesSustainability(item, sustainabilityFilter)) return false;
             if (!matchesLifeStage(item, lifeStageFilter)) return false;
             return true;
-        });
+    }, [omittedProducts, personalizationFilter, eligibilityFilter, personalizedSet, macroGroup, categoryFilter, typeFilter, padFlowFilter, padPreferenceFilter, padUseCaseFilter, symptomFilter, priceFilter, ratingFilter, aynaReviews, aynaFilter, quizResults, healthProfile, myProducts, preferenceFilter, sustainabilityFilter, lifeStageFilter]);
+
+    const filtered = useMemo(() => {
+        const applyFilters = (items, skipCategory = false) => items.filter((item) => passesActiveFilters(item, skipCategory));
 
         let list = applyFilters(combined);
 
@@ -831,7 +827,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             }
         }
         return list;
-    }, [combined, macroGroup, categoryFilter, typeFilter, omittedProducts, submittedQuery, sortBy, personalizationFilter, recommendedSet, recommendedRank, aynaReviews, padFlowFilter, padPreferenceFilter, padUseCaseFilter, symptomFilter, shuffleSeed, priceFilter, ratingFilter, eligibilityFilter, sustainabilityFilter, lifeStageFilter, aynaFilter, preferenceFilter, myProducts]);
+    }, [combined, passesActiveFilters, categoryFilter, submittedQuery, sortBy, personalizationFilter, recommendedSet, recommendedRank, aynaReviews, shuffleSeed]);
 
     // Back to the first page whenever the underlying result set actually
     // changes (new filter/search/sort) — not when AI suggestions arrive later
@@ -896,10 +892,17 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         // product instantly through `filtered`.
         const catalog = filtered;
         const names = new Set(catalog.map((p) => (p.name || '').trim().toLowerCase()).filter(Boolean));
+        const ids = new Set(catalog.map((p) => p.id));
         const out = [...catalog];
+        // A typed query already defines the product type, so AI matches may
+        // cross the category tab — but every other active filter still applies.
+        const skipCategoryForAi = !!qTrimForAi;
         for (const p of enrichedAiSuggestions) {
             const n = (p.name || '').trim().toLowerCase();
-            if (n && names.has(n)) continue;
+            if ((n && names.has(n)) || ids.has(p.id)) continue;
+            if (!passesActiveFilters(p, skipCategoryForAi)) continue;
+            names.add(n);
+            ids.add(p.id);
             out.push(p);
         }
         // Round-accumulated AI suggestions (from "Load more" — browse-mode rounds when no
@@ -913,8 +916,10 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             const outNames = new Set(out.map((p) => (p.name || '').trim().toLowerCase()).filter(Boolean));
             for (const p of enrichedBrowseAiSuggestions) {
                 const n = (p.name || '').trim().toLowerCase();
-                if (n && outNames.has(n)) continue;
+                if ((n && outNames.has(n)) || ids.has(p.id)) continue;
+                if (!passesActiveFilters(p, skipCategoryForAi)) continue;
                 outNames.add(n);
+                ids.add(p.id);
                 out.push(p);
             }
         }
@@ -935,7 +940,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             return scored.map((x) => x.item);
         }
         return out;
-    }, [filtered, enrichedAiSuggestions, enrichedBrowseAiSuggestions, qTrimForAi]);
+    }, [filtered, enrichedAiSuggestions, enrichedBrowseAiSuggestions, qTrimForAi, passesActiveFilters]);
 
     useEffect(() => {
         // Only resolve images for what's actually rendered (visibleCount),
@@ -1450,12 +1455,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         <span>Preferences</span>
                         <select value={preferenceFilter} onChange={(e) => setPreferenceFilter(e.target.value)}>
                             <option value="all">Any</option>
-                            <option value="fragrance-free">Fragrance Free</option>
-                            <option value="sensitive-skin">Sensitive Skin</option>
-                            <option value="vegan">Vegan</option>
-                            <option value="cruelty-free">Cruelty Free</option>
-                            <option value="organic">Organic</option>
-                            <option value="clean-ingredients">Clean Ingredients</option>
+                            {preferenceOptions.map((opt) => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                         </select>
                     </label>
                     <label>

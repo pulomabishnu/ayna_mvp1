@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { AVOID_INGREDIENTS, PREFERENCE_MAP } from '../utils/intakePreferenceMap';
 import { ALL_PRODUCTS } from '../data/products';
 import { mapIntakeToLegacyQuizProfile } from '../utils/healthIntake';
 import { saveHealthIntakeForCurrentUser } from '../utils/healthIntakeStore';
@@ -103,36 +104,6 @@ const BRAND_OPENNESS = [
   'I prefer trusted brands but am open to something new',
   'I like a mix of familiar and new brands',
   'I enjoy discovering new brands',
-  'No preference',
-];
-const AVOID_INGREDIENTS = [
-  'Fragrance',
-  'Dyes',
-  'Parabens',
-  'Sulfates',
-  'Phthalates',
-  'Latex',
-  'Synthetic materials',
-  'Animal-derived',
-  'Added sugar',
-  'Artificial sweeteners',
-  'Pregnancy considerations',
-  'Fragrance-free',
-  'Dye-free',
-  'Paraben-free',
-  'Sulfate-free',
-  'Latex-free',
-  'Vegan',
-  'Cruelty-free',
-  'Black-owned',
-  'Brown-owned',
-  'Eco-friendly',
-  'Reusable',
-  'Organic',
-  'Minimal ingredients',
-  'Sensitive skin',
-  'Unscented',
-  'Other',
   'No preference',
 ];
 const FSA_HSA = ['FSA', 'HSA', 'Both', 'No', 'Not sure'];
@@ -292,11 +263,7 @@ const FORMAT_TO_LEGACY = {
   'Devices or wearables': 'devices', 'Period-care products': 'pads',
 };
 
-const PREFERENCE_MAP = {
-  Fragrance: 'fragrance-free', Dyes: 'dye-free', Parabens: 'paraben-free', Sulfates: 'sulfate-free',
-  Phthalates: 'phthalate-free', Latex: 'latex-free', 'Synthetic materials': 'natural-materials',
-  'Animal-derived ingredients': 'vegan', 'Added sugar': 'sugar-free', 'Artificial sweeteners': 'no-artificial-sweeteners',
-};
+
 
 function arrayHasAny(arr, set) {
   return (arr || []).some((value) => set.has(value));

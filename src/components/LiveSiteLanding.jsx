@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { availablePreferenceOptions, matchesProductPreference } from '../utils/productPreferences';
 import { ALL_PRODUCTS, CATEGORY_LABELS } from '../data/products';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import { getVerificationLinks } from '../utils/verificationLinks';
@@ -81,19 +82,8 @@ function explicitEligibility(product) {
   };
 }
 
-function matchesPreference(product, preference) {
-  if (!preference || preference === 'all') return true;
-  const text = productText(product);
-  const map = {
-    organic: ['organic'],
-    'fragrance-free': ['fragrance free', 'fragrance-free'],
-    'sensitive-skin': ['sensitive skin'],
-    vegan: ['vegan'],
-    'cruelty-free': ['cruelty free', 'cruelty-free'],
-    reusable: ['reusable'],
-  };
-  return (map[preference] || []).some((term) => text.includes(term));
-}
+const matchesPreference = matchesProductPreference;
+const PREFERENCE_OPTIONS_WITH_MATCHES = availablePreferenceOptions(ALL_PRODUCTS);
 
 function matchesSustainability(product, filter) {
   if (!filter || filter === 'all') return true;
@@ -579,12 +569,7 @@ function WelcomeBack({ user, myProducts, ecosystemCount, recommendedProductIds =
                 <span>Preferences</span>
                 <select value={preferenceFilter} onChange={(e) => setPreferenceFilter(e.target.value)}>
                   <option value="all">Any</option>
-                  <option value="organic">Organic</option>
-                  <option value="fragrance-free">Fragrance Free</option>
-                  <option value="sensitive-skin">Sensitive Skin</option>
-                  <option value="vegan">Vegan</option>
-                  <option value="cruelty-free">Cruelty Free</option>
-                  <option value="reusable">Reusable</option>
+                  {PREFERENCE_OPTIONS_WITH_MATCHES.map((opt) => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                 </select>
               </label>
               <label>
@@ -877,12 +862,7 @@ function FirstVisitLanding({ onLogIn, onStartQuiz, onViewDiscovery, onOpenProduc
                 <span>Preferences</span>
                 <select value={preferenceFilter} onChange={(e) => setPreferenceFilter(e.target.value)}>
                   <option value="all">Any</option>
-                  <option value="organic">Organic</option>
-                  <option value="fragrance-free">Fragrance Free</option>
-                  <option value="sensitive-skin">Sensitive Skin</option>
-                  <option value="vegan">Vegan</option>
-                  <option value="cruelty-free">Cruelty Free</option>
-                  <option value="reusable">Reusable</option>
+                  {PREFERENCE_OPTIONS_WITH_MATCHES.map((opt) => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                 </select>
               </label>
               <label>
