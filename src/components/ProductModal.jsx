@@ -318,7 +318,11 @@ function buildFactRows(product) {
     .slice(0, 3)
     .map(humanizeTag)
     .join(', ');
-  const materials = firstSentence(product.safety?.materials, 56);
+  // Not truncated like the other rows — a curated materials/ingredient list
+  // (e.g. Neycher's) is meant to be read in full here, not cut at the first
+  // period, which would chop it after "10 suppositories per box." and drop
+  // the actual ingredient list entirely.
+  const materials = (product.safety?.materials || '').trim();
   const skipIf = firstSentence(product.safety?.sideEffects, 56) || firstSentence(product.safety?.allergens, 56);
   return [
     bestFor ? { label: 'Best for', value: bestFor } : null,
@@ -902,15 +906,6 @@ export default function ProductModal({
                     ) : (
                       <p className="pdp-summary-card__empty">No summary yet.</p>
                     )}
-                    {product.ingredients && (
-                      <>
-                        <div className="pdp-summary-card__meta" style={{ marginTop: 20 }}>
-                          <span className="pdp-summary-card__dot" />
-                          INSIDE THE BOX
-                        </div>
-                        <p className="pdp-summary-card__body" style={{ whiteSpace: 'pre-line' }}>{product.ingredients}</p>
-                      </>
-                    )}
                     {sourceChips.length > 0 && (
                       <div className="pdp-summary-card__chips">
                         {sourceChips.map((chip) => (
@@ -1090,6 +1085,15 @@ export default function ProductModal({
                     ) : (
                       <p className="pdp-summary-card__empty">No scientific literature yet.</p>
                     )}
+                    {product.ingredients && (
+                      <>
+                        <div className="pdp-summary-card__meta" style={{ marginTop: 20 }}>
+                          <span className="pdp-summary-card__dot" />
+                          HOW EACH INGREDIENT WORKS
+                        </div>
+                        <p className="pdp-summary-card__body" style={{ whiteSpace: 'pre-line' }}>{product.ingredients}</p>
+                      </>
+                    )}
                   </div>
                 )}
               </div>
@@ -1122,6 +1126,61 @@ export default function ProductModal({
                       <span>{row.value}</span>
                     </div>
                   ))}
+                </div>
+              )}
+
+              {/* Not every product has this — only rendered when a catalog entry
+                  actually carries whoItsFor/howToUse/warnings, so this is invisible
+                  for the vast majority of products that don't have this level of
+                  brand-supplied detail on file. */}
+              {Array.isArray(product.whoItsFor) && product.whoItsFor.length > 0 && (
+                <div style={{ marginTop: 18 }}>
+                  <div style={{ font: '500 9.5px "DM Mono", ui-monospace, monospace', letterSpacing: '0.1em', color: '#8c8078', marginBottom: 8 }}>
+                    WHO IT&apos;S FOR
+                  </div>
+                  <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+                    {product.whoItsFor.map((item) => (
+                      <li key={item} style={{ display: 'flex', gap: 10, fontSize: 13.5, lineHeight: 1.5, color: '#3f3831', marginBottom: 8 }}>
+                        <span style={{ flex: 'none', color: '#B4732A' }}>•</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {product.howToUse?.steps?.length > 0 && (
+                <div style={{ marginTop: 18 }}>
+                  <div style={{ font: '500 9.5px "DM Mono", ui-monospace, monospace', letterSpacing: '0.1em', color: '#8c8078', marginBottom: 8 }}>
+                    HOW TO USE
+                  </div>
+                  {product.howToUse.intro && (
+                    <p style={{ fontSize: 13.5, lineHeight: 1.5, color: '#3f3831', margin: '0 0 8px' }}>{product.howToUse.intro}</p>
+                  )}
+                  <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+                    {product.howToUse.steps.map((step) => (
+                      <li key={step} style={{ display: 'flex', gap: 10, fontSize: 13.5, lineHeight: 1.5, color: '#3f3831', marginBottom: 8 }}>
+                        <span style={{ flex: 'none', color: '#B4732A' }}>•</span>
+                        <span>{step}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {Array.isArray(product.warnings) && product.warnings.length > 0 && (
+                <div style={{ marginTop: 18, padding: '14px 16px', background: '#FEF2F2', border: '1px solid #FEE2E2', borderLeft: '4px solid #DC2626', borderRadius: 8 }}>
+                  <div style={{ font: '500 9.5px "DM Mono", ui-monospace, monospace', letterSpacing: '0.1em', color: '#991B1B', marginBottom: 8 }}>
+                    WARNINGS
+                  </div>
+                  <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+                    {product.warnings.map((item) => (
+                      <li key={item} style={{ display: 'flex', gap: 10, fontSize: 13.5, lineHeight: 1.5, color: '#3f3831', marginBottom: 6 }}>
+                        <span style={{ flex: 'none', color: '#DC2626' }}>•</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               )}
             </div>

@@ -416,12 +416,17 @@ export default function ProductDetailScreen({
               </div>
             )}
 
-            {ingredients && (
+            {(safety.materials || ingredients) && (
               <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 20, padding: 16, marginTop: 20 }}>
                 <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9.5px * var(--ayna-text-scale, 1))', letterSpacing: '1.2px', textTransform: 'uppercase', color: 'var(--ayna-text-faint)', marginBottom: 4 }}>
                   Inside
                 </div>
-                <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.6, paddingTop: 8, whiteSpace: 'pre-line' }}>{ingredients}</div>
+                {safety.materials && (
+                  <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.6, paddingTop: 8, whiteSpace: 'pre-line' }}>{safety.materials}</div>
+                )}
+                {ingredients && (
+                  <div style={{ fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))', lineHeight: 1.6, paddingTop: safety.materials ? 14 : 8, whiteSpace: 'pre-line' }}>{ingredients}</div>
+                )}
               </div>
             )}
           </>

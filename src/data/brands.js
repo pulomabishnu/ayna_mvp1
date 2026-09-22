@@ -211,17 +211,50 @@ export const BRAND_PRODUCTS = [
         summary: '"It feels like sandpaper down there" or "sex hurts now" — that\'s vaginal dryness, and it\'s common in perimenopause, menopause, postpartum, while breastfeeding, after cancer treatment, or after a hysterectomy. This hormone-free vaginal suppository (10 count, 2 g each) moisturizes from the inside, no applicator needed.',
         safety: {
             fdaStatus: 'Manufactured in FDA-registered facilities per the brand\'s site; not an FDA-cleared medical device.',
-            materials: 'Hormone-free. Hyaluronic acid (10 mg per suppository), polycarbophil, glycyrrhetinic acid (from licorice root), lactic acid, vitamin E (tocopheryl acetate), vitamin A (retinyl palmitate), tea tree oil, phosphatidylcholine, in a caprylic/capric triglyceride base.',
+            // Full packaging ingredient list lives here (not truncated — see
+            // buildFactRows in ProductModal.jsx) so it shows in full under
+            // "Materials" on the Evidence view, instead of the leftover-space
+            // ingredient science paragraphs below.
+            materials: '10 suppositories per box, 2 g each. Ingredients (from the box): hyaluronic acid (sodium hyaluronate, 10 mg per suppository), polycarbophil, glycyrrhetinic acid (from licorice root), vitamin E (tocopheryl acetate), vitamin A (retinyl palmitate), tea tree oil, phosphatidylcholine, and lactic acid, in a caprylic/capric triglyceride base.',
             recalls: 'No recalls found.',
-            sideEffects: 'Discontinue and see a doctor if you notice irritation or burning. Oil-based — can weaken latex condoms. Avoid oral sex during the course, since the tea tree oil in the formula isn\'t meant to be swallowed. Don\'t use it more than 30 days in a row, and don\'t use it during your period (a thin pad can help with any discharge). After giving birth, only use once a doctor has cleared you — usually at the 6-week checkup — and check with a doctor first if pregnant or breastfeeding. One ingredient, polycarbophil, can cause a white, clumpy discharge as old tissue sheds — that looks like a yeast infection but isn\'t one, and it usually lessens with regular use.',
+            sideEffects: 'Discontinue and see a doctor if you notice irritation or burning. One ingredient, polycarbophil, can cause a white, clumpy discharge as old tissue sheds — that looks like a yeast infection but isn\'t one, and it usually lessens with regular use. Full warnings are listed below.',
             opinionAlerts: 'Brand states products are "not intended to diagnose, treat, cure, or prevent any disease". Standard cosmetic/wellness disclaimer language.',
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Sourced from Neycher\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'Neycher positions this for women in perimenopause and menopause; women after a hysterectomy or removal of the ovaries (surgical menopause); postpartum women once their doctor has cleared them, usually at the 6-week checkup, who are breastfeeding; breast cancer survivors; and anyone who can\'t or doesn\'t want to use hormone therapy — per the brand\'s own site. Its formulas are developed with input from "scientists, doctors, and researchers" and are "OB/GYN and real people-approved," per the brand.\n\nHow to use: with clean, dry hands, insert one suppository into the vagina at night — no applicator needed. First course: one a night for 10 nights in a row. After that: 2 to 3 times a week to maintain the effect, or as needed; many customers find 1 to 2 times a week is enough.',
+        doctorOpinion: 'Neycher states its formulas are developed with input from "scientists, doctors, and researchers" and are "OB/GYN and real people-approved," per the brand\'s own site.',
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Women in perimenopause and menopause',
+            'Women after a hysterectomy or removal of the ovaries (surgical menopause)',
+            'Postpartum women, once their doctor has cleared them (usually at the 6-week checkup), and breastfeeding women',
+            'Breast cancer survivors and anyone who can\'t or doesn\'t want to use hormone therapy',
+        ],
+        // Rendered as a bulleted list on the Evidence view.
+        howToUse: {
+            intro: 'With clean, dry hands, insert one suppository into the vagina at night, no applicator needed.',
+            steps: [
+                'First course: one a night for 10 nights in a row.',
+                'After that: 2 to 3 times a week to keep the effect, or as needed; many customers find 1 to 2 times a week is enough.',
+                'Don\'t use it more than 30 days in a row. Some customers cut a suppository in half.',
+                'Don\'t use it during your period. A thin pad can help with any discharge.',
+                'Step-by-step guide at helloneycher.com.',
+            ],
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'No oral sex during the course: tea tree oil must not be swallowed.',
+            'Oil-based: can weaken latex condoms.',
+            'After giving birth: only once her doctor clears it, usually at 6 weeks.',
+            'Pregnant or breastfeeding: check with a doctor first.',
+            'Irritation or burning: stop and see a doctor.',
+        ],
         communityReview: 'Neycher.com and Amazon both carry customer reviews for this moisturizer; visible feedback centers on noticeably improved day-to-day comfort after adding it to a routine. A specific rating/review count wasn\'t independently verifiable at time of writing. Amazon blocked automated access, and the badge shown on Neycher\'s own product pages is identical across multiple different products, so it isn\'t trustworthy as a per-product figure.',
         effectiveness: 'When estrogen drops — in perimenopause, menopause, after giving birth, while breastfeeding, or after cancer treatment — the vaginal lining gets thinner, makes less moisture, and loses elasticity; pH rises and protective lactobacilli decline, so irritation, burning, and infections become more common. This suppository pairs hyaluronic acid, which binds water into the tissue and supports repair, with polycarbophil, a bioadhesive gel that holds that moisture against the vaginal wall for days rather than hours — which is why it\'s positioned as a moisturizer, not a lubricant. It restores moisture and supports tissue without adding hormones, so it works for anyone who can\'t or doesn\'t want to use hormone therapy. Positioned as a non-hormonal alternative to antibiotic, antifungal, or hormone treatments for vaginal dryness and irritation; no independent clinical study of the product itself was found.',
-        ingredients: '10 suppositories per box, 2 g each. Ingredients (per the box): hyaluronic acid (sodium hyaluronate, 10 mg per suppository), polycarbophil, glycyrrhetinic acid (from licorice root), vitamin E (tocopheryl acetate), vitamin A (retinyl palmitate), tea tree oil, phosphatidylcholine, and lactic acid, in a caprylic/capric triglyceride base.\n\nHyaluronic acid (10 mg): binds large amounts of water. It draws moisture into the vaginal lining, holds it there, and supports tissue repair.\n\nPolycarbophil: a bioadhesive gel that sticks to the vaginal wall and holds water against it for days, so the effect lasts much longer than a lubricant. It also helps the tissue renew — as it does, old, dry cells that have built up come away, so some women notice a white, clumpy discharge that looks like a yeast infection. It isn\'t one; it\'s the old cells leaving, and it usually lessens with regular use.\n\nGlycyrrhetinic acid (from licorice root): calms irritation, redness, and burning.\n\nLactic acid: the same acid healthy vaginal bacteria produce. It keeps pH in its natural acidic range (3.8 to 4.5).\n\nVitamins E and A: vitamin E is an antioxidant that protects and softens the tissue; vitamin A supports renewal of the vaginal lining.\n\nTea tree oil: used in a small, carefully chosen amount — pure tea tree oil at high concentrations can irritate, but here it sits inside a formula built to hydrate and calm (hyaluronic acid, polycarbophil, glycyrrhetinic acid, vitamin E), not as a stand-alone antiseptic.',
+        // The per-ingredient science reasoning (not the packaging list — that
+        // moved to safety.materials above). Rendered on the Scientific
+        // literature tab, after the citation entries.
+        ingredients: 'Hyaluronic acid (10 mg): binds large amounts of water. It draws moisture into the vaginal lining, holds it there, and supports tissue repair.\n\nPolycarbophil: a bioadhesive gel that sticks to the vaginal wall and holds water against it for days, so the effect lasts much longer than a lubricant. It also helps the tissue renew — as it does, old, dry cells that have built up come away, so some women notice a white, clumpy discharge that looks like a yeast infection. It isn\'t one; it\'s the old cells leaving, and it usually lessens with regular use.\n\nGlycyrrhetinic acid (from licorice root): calms irritation, redness, and burning.\n\nLactic acid: the same acid healthy vaginal bacteria produce. It keeps pH in its natural acidic range (3.8 to 4.5).\n\nVitamins E and A: vitamin E is an antioxidant that protects and softens the tissue; vitamin A supports renewal of the vaginal lining.\n\nTea tree oil: used in a small, carefully chosen amount — pure tea tree oil at high concentrations can irritate, but here it sits inside a formula built to hydrate and calm (hyaluronic acid, polycarbophil, glycyrrhetinic acid, vitamin E), not as a stand-alone antiseptic.',
         // Curated so the Scientific literature tab always has real citations on
         // file, instead of depending on api/product-insights.js's live LLM call
         // succeeding (which needs its own API key configured — silently comes
