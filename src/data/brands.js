@@ -1554,18 +1554,98 @@ export const BRAND_PRODUCTS = [
         // Buy Now / Visit Site destination (see getBuyUrl in ProductModal.jsx).
         affiliateUrl: 'https://go.shopmy.us/p-83948920',
         image: 'https://www.vio2tape.com/cdn/shop/files/vio2tape-health-beauty-1-pack-try-it-vio2-unscented-mouth-tape-33555330531505_1024x874.png?v=1781819129',
-        summary: 'A patented partial-coverage mouth tape, designed by a dentist, meant to encourage a gentle lip seal during sleep while still allowing natural airflow — intended to support nasal breathing, reduce snoring, and cut down on dry mouth.',
+        summary: 'A patented, partial-coverage mouth tape designed by dentist Dr. Vincent Ip and his wife Lindsey Ip after their young son was diagnosed with a breathing disorder and open-mouth posture. Meant to encourage a gentle lip seal during sleep while still allowing natural airflow — intended to support nasal breathing and reduce snoring.',
         safety: {
             fdaStatus: 'Personal-care product; not an FDA-cleared medical device.',
-            materials: 'Breathable cotton fabric with hypoallergenic medical-grade adhesive. Free from latex, PFAS, and gluten. Unscented. Made in USA.',
+            materials: 'Breathable cotton-and-spandex blend fabric with hypoallergenic medical-grade adhesive, in a patented I-shaped, partial-coverage design (U.S. Design Patent No. D1,047,152). Free from latex, PFAS, and gluten. Unscented. Made in USA.',
             recalls: 'No recalls found.',
-            sideEffects: 'Brand states this is not intended for children under 6, or for anyone with a breathing disorder, heart condition, nasal congestion, risk of vomiting, who has used alcohol or sedatives, or who is unable to remove the tape themselves. Single-use; discard after each application.',
-            opinionAlerts: 'Brand markets this as "the only mouth tape on the market designed, created & approved by a doctor" — a brand claim, not independently verified here.',
+            sideEffects: 'Brand states this is not intended for children under 6, or for anyone with a breathing disorder, heart condition, nasal congestion, risk of vomiting, who has used alcohol or sedatives, or who is unable to remove the tape themselves. Single-use; discard after each application. Independent sleep and ENT specialists separately caution that mouth taping in general is not recommended for anyone with untreated or undiagnosed sleep apnea, significant nasal obstruction, GERD, or a heart or lung condition (including asthma), since forcing the mouth closed can worsen airway resistance if nasal breathing is already blocked.',
+            opinionAlerts: 'Brand markets this as "the only mouth tape on the market designed, created & approved by a doctor" and "the #1 recommended mouth tape by medical professionals" — brand claims, not independently verified here.',
         },
         clinicianOpinionSource: 'brand',
-        clinicianAttribution: 'Sourced from VIO2\'s own site marketing claims, not independent clinical literature.',
-        doctorOpinion: 'VIO2 states the tape was created by a dentist and designed to promote nasal breathing over mouth breathing during sleep, which the brand links to better sleep quality, oral/jaw muscle tone, and recovery.',
-        effectiveness: 'Positioned as a gentler, partial-coverage alternative to full-seal mouth tape; no independent clinical study of the product was found.',
+        clinicianAttribution: 'Sourced from VIO2\'s own site; Dr. Vincent Ip, DDS, is a real, practicing dentist in Austin, TX, but no independent clinician endorsement of this specific product has been verified by ayna.',
+        doctorOpinion: 'VIO2 was created by Dr. Vincent Ip, DDS, a dentist, and his wife Lindsey Ip after their son was diagnosed with a breathing disorder and open-mouth posture at age 3 in 2015. At the time, the only mouth tape on the market was full-coverage, which they weren\'t comfortable using on their son — so Lindsey spent years developing a partial-coverage design instead, launching VIO2 in 2022 after prototyping and safety testing, per the brand\'s own site.\n\nIndependent research on mouth taping generally is real but still limited and mixed. A 2024 scoping review found only 9 studies (4 randomized controlled trials) on the topic, described the evidence as markedly heterogeneous, and noted many of the touted benefits aren\'t grounded in the literature. A separate preliminary study specifically in mouth-breathers with mild obstructive sleep apnea found mouth-taping roughly halved measures of apnea severity (AHI) and snoring — a real, positive finding, but from a small, preliminary study, and not a test of this specific product.\n\nSeparately, several sleep and ENT specialists have publicly cautioned against mouth taping for people with untreated sleep apnea or nasal obstruction, since it doesn\'t address the underlying airway issue and could worsen it. No independent clinical study of this specific product was found.',
+        doctorOpinionShort: 'Independent research on mouth taping is real but limited: a 2024 scoping review found the evidence heterogeneous and many claimed benefits not literature-backed, while a small preliminary study in mild OSA mouth-breathers found roughly a 50% reduction in apnea severity. Sleep and ENT specialists caution against it for anyone with untreated sleep apnea or nasal obstruction. No independent study of this specific product was found.',
+        // Kept out of verificationLinks so it doesn't pool with the
+        // Scientific literature tab's citation list.
+        doctorOpinionCitations: [
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/39662104/', label: 'PubMed: Nocturnal mouth-taping and social media — a scoping review of the evidence' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/36141367/', label: 'PubMed: The Impact of Mouth-Taping in Mouth-Breathers with Mild Obstructive Sleep Apnea — a preliminary study' },
+        ],
+        // Rendered as a bulleted list on the Evidence view, under "Best for".
+        whoItsFor: [
+            'Adults who want to try partial-coverage mouth taping as a gentler alternative to full-seal tape',
+            'People with mild, occasional mouth-breathing or snoring who have no diagnosed sleep apnea or nasal obstruction',
+            'Anyone curious about mouth taping who wants an easy-to-remove, emergency-breathable design over a full seal',
+        ],
+        // Rendered as a bulleted list on the Evidence view. Matches
+        // vio2tape.com/products/vio2-unscented-mouth-tape.
+        howToUse: {
+            intro: 'Per VIO2\'s own site: remove one strip from the backing paper and apply nightly.',
+            steps: [
+                'Choose your preferred orientation — the patented design can be worn two ways.',
+                'Close your mouth, apply the tape over the lips, and press gently to secure.',
+                'Leave on overnight; the partial-coverage shape leaves room for natural lip movement and emergency mouth breathing if needed.',
+                'Remove and discard in the morning — single-use, one strip per night.',
+            ],
+            sourceUrl: 'https://www.vio2tape.com/products/vio2-unscented-mouth-tape',
+            sourceLabel: 'vio2tape.com: Partial-Coverage Mouth Tape',
+        },
+        // Rendered as a red warning box on the Evidence view.
+        warnings: [
+            'Not for anyone with untreated or undiagnosed sleep apnea, significant nasal obstruction, GERD, or a heart or lung condition (including asthma) — get evaluated by a doctor first.',
+            'Not intended for children under 6, or for anyone who has used alcohol or sedatives, or who is unable to remove the tape themselves.',
+            'Single-use — discard after each night.',
+            'Irritation or an allergic reaction: stop using it and see a doctor.',
+        ],
+        communityReview: 'Customer reviews across retailers describe the tape as staying securely in place overnight while remaining comfortable, with the flexible two-way design and adhesive that holds well but removes easily in the morning cited as pluses; some reviews mention removal can feel sticky or mildly uncomfortable. No independently verified aggregate star rating was found at time of writing.',
+        effectiveness: 'Positioned as a gentler, partial-coverage alternative to full-seal mouth tape. Independent research on mouth taping generally is limited but shows some promise specifically for mild OSA mouth-breathers; evidence for snorers without diagnosed sleep apnea is less clear, and no independent clinical study of this specific product was found.',
+        // Category-level citations shown only on the Scientific literature
+        // tab, kept out of verificationLinks so they don't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/39662104/',
+                text: 'PubMed: Nocturnal mouth-taping and social media — a scoping review of the evidence',
+                summary: 'Found only 9 studies (4 RCTs) on mouth taping as of 2024; called the evidence markedly heterogeneous and noted many popular claims aren\'t literature-backed.',
+            },
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/36141367/',
+                text: 'PubMed: The Impact of Mouth-Taping in Mouth-Breathers with Mild Obstructive Sleep Apnea — a preliminary study',
+                summary: 'Found mouth-taping roughly halved apnea-severity (AHI) and snoring measures in mouth-breathers with mild OSA — a real but small, preliminary finding.',
+            },
+            {
+                url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7153879/',
+                text: 'NIH (PMC): The effect of nasal and oral breathing on airway collapsibility in obstructive sleep apnea — computational fluid dynamics analyses',
+                summary: 'Mechanistic evidence that oral breathing is associated with greater airway collapsibility than nasal breathing — general physiology, not product-specific validation.',
+            },
+        ],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    {
+                        platform: 'tiktok',
+                        url: 'https://www.tiktok.com/discover/vio2-mouth-tape-review',
+                        text: 'TikTok: VIO2 mouth tape reviews',
+                        summary: 'Real, current TikTok discover page aggregating VIO2 mouth tape review content. Individual video claims are user-generated and not independently verified here.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://www.ulta.com/p/unscented-partial-coverage-mouth-tape-mkt77007521?sku=77011678',
+                        text: 'Ulta Beauty: VIO2 Unscented Partial-Coverage Mouth Tape',
+                        summary: 'Real, current retail listing. Review content/ratings weren\'t independently verifiable at time of writing — read them directly on the page.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://www.vio2tape.com/pages/about-us',
+                        text: 'vio2tape.com: About VIO2',
+                        summary: 'VIO2\'s own about page with the founders\' story and mission.',
+                    },
+                ],
+            },
+        },
         integrations: [],
         badges: [],
         isEmergingBrand: true, // shows a 'Brand' tag on the Discovery card, next to the type badge
