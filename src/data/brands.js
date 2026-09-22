@@ -223,6 +223,13 @@ export const BRAND_PRODUCTS = [
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Sourced from Neycher\'s own site marketing claims, not independent clinical literature.',
         doctorOpinion: 'Neycher states its formulas are developed with input from "scientists, doctors, and researchers" and are "OB/GYN and real people-approved," per the brand\'s own site.\n\nNeycher also cites its own clinical evaluation: 20 women (ages 29-74) with vulvovaginal symptoms used the product for about a month, assessed with the Vulvovaginal Symptoms Questionnaire (VSQ) — a real, peer-reviewed tool (Erekson et al., Menopause, 2013) — analyzed by paired t-test (brand-reported as p<0.001 on every measure).\n\nResults: mean VSQ symptom score dropped from 9.22 to 0.61 (p<0.001), with complete symptom remission in 65% of participants and a greater than 50% reduction in discomfort in 89%, with improvement reported after just one week. No adverse events were recorded.\n\nNeycher\'s own site doesn\'t publish this study as a standalone paper — the closest verifiable public source is Gruppo FarmaImpresa (the manufacturer named on Neycher\'s own technical documentation, doc ref FT.CE.110), whose hyaluronic acid + polycarbophil + lactic acid ovule — the same formulation profile as this product — matches this exact study design and these exact numbers on their own site. This is the manufacturer\'s own published summary of its clinical evaluation, not an independently peer-reviewed journal article; the VSQ instrument it used is real and independently validated.',
+        // Kept separate from verificationLinks.scientific/doctor on purpose —
+        // that data also feeds the Scientific literature tab's citation
+        // list, and this belongs only on the clinical claim above, not mixed
+        // into that list.
+        doctorOpinionCitations: [
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/23481118/', label: 'VSQ questionnaire (Erekson et al., Menopause, 2013)' },
+        ],
         // Rendered as a bulleted list on the Evidence view, under "Best for".
         whoItsFor: [
             'Women in perimenopause and menopause',
@@ -337,12 +344,6 @@ export const BRAND_PRODUCTS = [
                         text: 'ACOG: Vulvovaginal Health',
                         summary: 'ACOG notes that over-the-counter vaginal moisturizers and lubricants can help relieve vaginal dryness and painful sex. This is clinical-guidance-level evidence, not product-specific validation.',
                         justification: 'ACOG is the leading professional body for OB/GYN care in the U.S.',
-                    },
-                    {
-                        url: 'https://pubmed.ncbi.nlm.nih.gov/23481118/',
-                        text: 'The Vulvovaginal Symptoms Questionnaire (VSQ): a questionnaire for measuring vulvovaginal symptoms in postmenopausal women',
-                        summary: 'Erekson et al., Menopause, 2013 (Yale). This is the real, peer-reviewed, validated questionnaire Neycher says it used to assess its own brand-funded 20-person evaluation — the tool itself is independently validated; Neycher\'s specific evaluation using it is not independently published or peer-reviewed.',
-                        justification: 'Peer-reviewed instrument-validation study, PubMed-indexed.',
                     },
                     {
                         url: 'https://farmaimpresa.com/en/hyaluronic-acid-eggs-clinical-study-shows-positive-effects-on-vulvovaginal-symptoms/',
