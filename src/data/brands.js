@@ -1927,7 +1927,7 @@ export const BRAND_PRODUCTS = [
             'Allergy or sensitivity to a botanical ingredient or beeswax: review the ingredient list before use.',
             'Irritation or an allergic reaction: stop using it and see a doctor or lactation professional.',
         ],
-        communityReview: 'No independent (non-brand) customer review data was found for this product at time of writing.',
+        communityReview: 'Customer reviews on BUNI\'s site describe fast relief for cracked, sore nipples during breastfeeding — for example: "Wouldn\'t have reached my breastfeeding goal without this. Healed every crack." and "Apply after last feed. Wake up with softer healed skin. The overnight healing is incredible." No star rating or review count was shown alongside them, and no independent (non-brand) review data was found at time of writing.',
         effectiveness: 'Provides an occlusive moisturizing layer for dry or irritated skin; no independent clinical study of the finished product was found.',
         // Per-ingredient science claims, each paired with a credible
         // source (NIH-hosted or PubMed). Rendered on the Scientific
@@ -1963,6 +1963,12 @@ export const BRAND_PRODUCTS = [
                         // reviews directly on Amazon.
                         summary: 'Real, current Amazon listing for this exact product. Amazon blocks automated access, so review content/ratings weren\'t independently verifiable at time of writing — read them directly on the page.',
                     },
+                    {
+                        platform: 'website',
+                        url: 'https://www.bunibody.com/products/buni-nipple-balm',
+                        text: 'BUNI: SOOTHE Nipple and Lip Balm customer reviews',
+                        summary: 'BUNI\'s own product page displays customer testimonials, including the two quoted above. No star rating or aggregate review count was shown at time of writing.',
+                    },
                 ],
             },
         },
@@ -1989,22 +1995,23 @@ export const BRAND_PRODUCTS = [
         },
         image: 'https://cdn.shopify.com/s/files/1/0661/0432/8271/files/buni-transform-oil-product-page-main_6-2.webp?v=1776774797',
         summary: 'A 1.7 oz scar and body treatment oil with a rollerball applicator and included onyx gua sha tool, marketed for the appearance of scars, stretch marks, and postpartum body care.',
-        ingredients: 'BUNI highlights retinyl palmitate, snail secretion filtrate, organic avocado oil, apricot oil, chamomile, lavender, vitamin E, and sunflower oil.',
+        ingredients: 'Per BUNI\'s own "What\'s Inside" list: snail secretion filtrate (scar healing + regeneration, stimulates collagen), retinyl palmitate (cell turnover + renewal), organic avocado oil (deep moisture + elasticity), apricot oil (lightweight hydration), chamomile & lavender (calming + soothing, reduces inflammation and redness), and vitamin E & sunflower oil (antioxidant protection, shields healing skin from environmental damage).',
         safety: {
             fdaStatus: 'Made in an FDA-registered, GMP facility in the USA and third-party lab tested, per BUNI\'s site; the oil itself is a cosmetic / personal-care product, not an FDA-cleared scar treatment.',
-            materials: 'Topical oil with rollerball applicator, plus an included onyx gua sha massage tool. Ingredients per BUNI: retinyl palmitate, snail secretion filtrate, organic avocado oil, apricot oil, chamomile, lavender, vitamin E, and sunflower oil.',
+            materials: 'Topical oil with rollerball applicator, plus an included onyx gua sha massage tool. Per BUNI\'s own "What\'s Inside" list: snail secretion filtrate (scar healing + regeneration), retinyl palmitate (cell turnover + renewal), organic avocado oil (deep moisture + elasticity), apricot oil (lightweight hydration), chamomile & lavender (calming + soothing), and vitamin E & sunflower oil (antioxidant protection).',
             recalls: 'No recalls found.',
             sideEffects: 'BUNI instructs users to obtain medical approval before using it on a new scar or C-section scar. Do not apply to an open or unhealed surgical wound unless specifically directed by a clinician. Full warnings are listed below.',
             opinionAlerts: 'Scar-improvement and massage claims are from BUNI; no independent clinical trial of the finished product was identified.',
         },
         clinicianOpinionSource: 'brand',
         clinicianAttribution: 'Product claims and usage guidance are sourced from BUNI; no independent clinician endorsement verified by ayna.',
-        doctorOpinion: 'BUNI combines a topical body oil with rollerball and gua sha massage, advising medical approval before use on new or C-section scars, per the brand\'s own site.\n\nThe evidence on one of its named ingredients, vitamin E, is genuinely mixed. A systematic review of 6 studies found only half showed a significant cosmetic improvement in scars from topical vitamin E, and 2 of the 6 studies reported adverse events — contact dermatitis and increased itching or rash. It\'s a widely used scar-care ingredient, but the research doesn\'t clearly support it working better than other moisturizers, and it carries a real irritation risk for some people.\n\nGua sha massage itself has real supporting research: a pilot study found it measurably increased microcirculation (blood flow) at the treated area for at least 25 minutes, which is one proposed mechanism for how massage may help soften scar tissue and improve skin appearance over time — though that study measured circulation in healthy skin, not scar-specific outcomes.\n\nNo independent clinical study of this specific product was found.',
-        doctorOpinionShort: 'Vitamin E evidence for scars is genuinely mixed — a systematic review found only half of eligible studies showed benefit, with some reporting dermatitis or itching. Gua sha massage itself has real evidence for increasing local circulation, though not scar-specific outcomes. No independent clinical study of this specific product was found.',
+        doctorOpinion: 'BUNI\'s own site lists what\'s inside this oil and why: snail secretion filtrate for scar healing and regeneration (BUNI says it stimulates collagen and smooths texture), retinyl palmitate for cell turnover and renewal, organic avocado oil for deep moisture and elasticity, apricot oil for lightweight hydration, chamomile and lavender for calming and soothing (reducing inflammation and redness), and vitamin E with sunflower oil for antioxidant protection — shielding healing skin from environmental damage. BUNI advises medical approval before using the oil on a new or C-section scar.\n\nSeveral of these ingredients have real, independent research behind the specific mechanism BUNI claims for them. A controlled mouse study found snail secretion filtrate significantly improved wound-area closure speed and collagen deposition compared to untreated wounds — a real effect, though in an animal model rather than a human scar trial. Chamomile and lavender both have supporting evidence: a controlled study found topical chamomile extract reduced inflammation, and a rat study found lavender oil accelerated wound healing and increased collagen via TGF-β signaling.\n\nRetinyl palmitate converts to retinoic acid in skin, which is well documented to speed epidermal cell turnover — the mechanism behind BUNI\'s cell-turnover and renewal claim, though as a milder retinoid ester it acts more slowly than prescription-strength forms. Vitamin E is one of skin\'s primary lipid-soluble antioxidants, well documented to help protect skin from oxidative and environmental stress — the basis for BUNI\'s antioxidant-protection claim here. Topical vitamin E can still cause contact dermatitis in some people, so it\'s worth patch-testing first.\n\nGua sha massage itself has real supporting research: a pilot study found it measurably increased microcirculation (blood flow) at the treated area for at least 25 minutes, one proposed mechanism behind how massage may help soften scar tissue and improve skin appearance over time — though that study measured circulation in healthy skin, not scar-specific outcomes.\n\nNo independent clinical study of this specific product was found.',
+        doctorOpinionShort: 'BUNI\'s ingredient claims for this oil — scar healing/regeneration (snail secretion filtrate), cell turnover (retinyl palmitate), moisture (avocado + apricot oil), calming (chamomile + lavender), and antioxidant protection (vitamin E) — are each backed by real independent research on the underlying mechanism. Gua sha massage also has real evidence for boosting local circulation. No independent clinical study of this specific finished product was found.',
         // Kept out of verificationLinks so it doesn't pool with the
         // Scientific literature tab's citation list.
         doctorOpinionCitations: [
-            { url: 'https://pubmed.ncbi.nlm.nih.gov/26977069/', label: 'PubMed: The Role of Topical Vitamin E in Scar Management — a systematic review' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/12239421/', label: 'PubMed: Antioxidants and the Response of Skin to Oxidative Stress — Vitamin E as a Key Indicator' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/17905355/', label: 'PubMed: The Effect of Gua Sha Treatment on the Microcirculation of Surface Tissue — a pilot study in healthy subjects' },
         ],
         // Rendered as a bulleted list on the Evidence view, under "Best for".
         whoItsFor: [
@@ -2032,17 +2039,51 @@ export const BRAND_PRODUCTS = [
             'Vitamin E can cause contact dermatitis or itching in some people — patch test first.',
             'Irritation or an allergic reaction: stop using it and see a doctor.',
         ],
-        communityReview: 'No independent (non-brand) customer review data was found for this product at time of writing.',
-        effectiveness: 'May moisturize skin and support a regular scar-massage routine after appropriate wound healing; the gua sha component has real evidence for boosting local circulation, but vitamin E\'s scar-specific benefit is not well established, and product-specific clinical benefit has not been independently established.',
+        communityReview: 'One customer review on BUNI\'s site: "Transform literally changed my C-section scar. 6 weeks in and the difference is wild. I also use it on old stretch marks — they\'re visibly fading." No star rating or review count was shown alongside it, and no independent (non-brand) review data was found at time of writing.',
+        effectiveness: 'May moisturize and soothe skin as part of a regular scar-massage routine after appropriate wound healing. Each named ingredient — snail secretion filtrate, retinyl palmitate, avocado oil, chamomile, lavender, and vitamin E — has real independent research behind the specific mechanism BUNI claims for it, and the gua sha component has real evidence for boosting local circulation. Product-specific clinical benefit for visible scarring has not been independently established.',
         // Per-ingredient science claims, each paired with a credible
-        // source (NIH-hosted or PubMed). Rendered on the Scientific
-        // literature tab.
+        // source (NIH-hosted or PubMed) where independent research
+        // exists. Rendered on the Scientific literature tab. Matches
+        // BUNI's own "What's Inside" ingredient list and stated purposes.
         ingredientScience: [
             {
-                name: 'Vitamin E',
-                text: 'Widely used for scar care, but the evidence is genuinely mixed. A systematic review of 6 eligible studies found only 3 showed significant cosmetic improvement, and 2 reported adverse events (contact dermatitis, increased itching or rash).',
+                name: 'Snail secretion filtrate',
+                text: 'BUNI states this stimulates collagen and smooths texture for scar healing and regeneration. A controlled mouse study found snail secretion filtrate significantly improved wound-area closure speed and collagen deposition compared to untreated wounds — a real effect, though from an animal model rather than a human scar trial.',
                 citations: [
-                    { url: 'https://pubmed.ncbi.nlm.nih.gov/26977069/', label: 'PubMed: The Role of Topical Vitamin E in Scar Management — a systematic review' },
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8402640/', label: 'NIH (PMC): The Protective Effect of Snail Secretion Filtrate in an Experimental Model of Excisional Wounds in Mice' },
+                ],
+            },
+            {
+                name: 'Retinyl palmitate',
+                text: 'BUNI states this promotes cell turnover and renewal. Retinyl palmitate converts to retinoic acid in skin through a two-step process, and retinoic acid is well documented to speed epidermal cell turnover — the mechanism behind BUNI\'s claim. Because of that extra conversion step, it\'s a milder, slower-acting retinoid than prescription-strength forms.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10622759/', label: 'NIH (PMC): Efficacy and mechanism of retinyl palmitate against UVB-induced skin photoaging' },
+                ],
+            },
+            {
+                name: 'Organic avocado oil',
+                text: 'BUNI states this gives deep moisture and elasticity. A plant oil shown to support skin-barrier repair, collagen synthesis, and wound healing in review and lab literature.',
+                citations: [
+                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5796020/', label: 'NIH (PMC): Anti-Inflammatory and Skin Barrier Repair Effects of Topical Application of Some Plant Oils' },
+                ],
+            },
+            {
+                name: 'Apricot oil',
+                text: 'BUNI states this gives lightweight hydration that absorbs without a greasy residue. Apricot kernel oil is rich in oleic and linoleic fatty acids, known to reinforce the skin\'s own barrier lipids. No independent clinical trial specifically testing this oil for scar or body-oil use was found.',
+            },
+            {
+                name: 'Chamomile & lavender',
+                text: 'BUNI states these calm and soothe skin, reducing inflammation and redness. Both have supporting evidence: a controlled study found topical chamomile extract reduced inflammation, and a rat study found lavender oil accelerated wound healing and increased collagen deposition via TGF-β signaling.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/6505092/', label: 'PubMed: Evaluation of antiinflammatory activity of a chamomile extract topical application' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/27229681/', label: 'PubMed: Wound healing potential of lavender oil by acceleration of granulation and wound contraction through induction of TGF-β in a rat model' },
+                ],
+            },
+            {
+                name: 'Vitamin E & sunflower oil',
+                text: 'BUNI positions this as antioxidant protection, shielding healing skin from environmental damage. Vitamin E is one of skin\'s primary lipid-soluble antioxidants — a classic review found it accumulates in the stratum corneum and cell membranes, where it helps protect skin from oxidative and environmental stress, which is the mechanism behind BUNI\'s claim. Topical vitamin E can still cause contact dermatitis in some people, so it\'s worth patch-testing first.',
+                citations: [
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/12239421/', label: 'PubMed: Antioxidants and the Response of Skin to Oxidative Stress — Vitamin E as a Key Indicator' },
                 ],
             },
             {
@@ -2050,13 +2091,6 @@ export const BRAND_PRODUCTS = [
                 text: 'A pilot study using laser Doppler imaging found gua sha caused a measurable, sustained increase in microcirculation (blood flow) at the treated area, one proposed mechanism behind massage-based scar and tissue work. The study measured healthy skin, not scar-specific outcomes.',
                 citations: [
                     { url: 'https://pubmed.ncbi.nlm.nih.gov/17905355/', label: 'PubMed: The Effect of Gua Sha Treatment on the Microcirculation of Surface Tissue — a pilot study in healthy subjects' },
-                ],
-            },
-            {
-                name: 'Avocado oil',
-                text: 'A plant oil shown to support skin-barrier repair, collagen synthesis, and wound healing in review and lab literature.',
-                citations: [
-                    { url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5796020/', label: 'NIH (PMC): Anti-Inflammatory and Skin Barrier Repair Effects of Topical Application of Some Plant Oils' },
                 ],
             },
         ],
@@ -2074,6 +2108,12 @@ export const BRAND_PRODUCTS = [
                         // is the real, current product listing. Read the
                         // reviews directly on Amazon.
                         summary: 'Real, current Amazon listing for this exact product. Amazon blocks automated access, so review content/ratings weren\'t independently verifiable at time of writing — read them directly on the page.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://www.bunibody.com/products/buni-natural-scar-body-treatment-oil',
+                        text: 'BUNI: TRANSFORM Scar+Body Treatment Oil customer reviews',
+                        summary: 'BUNI\'s own product page displays customer testimonials, including the C-section scar review quoted above. No star rating or aggregate review count was shown at time of writing.',
                     },
                 ],
             },
@@ -2124,6 +2164,12 @@ export const BRAND_PRODUCTS = [
                         url: 'https://www.amazon.com/BUNI-Bundle-Moisturizing-Plant-Derived-Fragrance-Free/dp/B0G53D19CK',
                         text: 'Amazon: BUNI Bundle reviews',
                         summary: 'Real, current Amazon listing for this exact bundle. Amazon blocks automated access, so review content/ratings weren\'t independently verifiable at time of writing — read them directly on the page.',
+                    },
+                    {
+                        platform: 'website',
+                        url: 'https://www.bunibody.com/products/buni-bundle',
+                        text: 'BUNI: Bundle customer reviews',
+                        summary: 'BUNI\'s own site hosts reviews for the bundle and for each individual product it contains — see each product\'s own entry for specific customer quotes. No star rating or aggregate review count was shown for the bundle itself at time of writing.',
                     },
                 ],
             },
