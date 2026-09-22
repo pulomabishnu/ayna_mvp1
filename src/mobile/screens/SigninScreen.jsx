@@ -1,6 +1,4 @@
 import { useEffect, useState } from 'react';
-import { App as CapacitorApp } from '@capacitor/app';
-import { Capacitor } from '@capacitor/core';
 import LegalFooter from '../components/LegalFooter.jsx';
 
 const DEFAULT_STATS = [
@@ -164,6 +162,7 @@ export default function SigninScreen({
   onGoogleSignIn,
   onAppleSignIn,
   onResendConfirmation,
+  onVerifyEmailOtp,
   onAuthenticated,
 }) {
   const [mode, setMode] = useState('signup'); // 'signup' | 'signin' | 'check-email'
@@ -177,7 +176,8 @@ export default function SigninScreen({
   const [error, setError] = useState('');
   const [resending, setResending] = useState(false);
   const [resendMsg, setResendMsg] = useState('');
-  const [checkingConfirmation, setCheckingConfirmation] = useState(false);
+  const [emailCode, setEmailCode] = useState('');
+  const [verifyingCode, setVerifyingCode] = useState(false);
 
   // Cross-tab pickup: confirming email in a different tab establishes the
   // session there via localStorage, which fires onAuthStateChange back in
@@ -210,36 +210,25 @@ export default function SigninScreen({
   const allConsented = checked.every(Boolean);
   const toggleCheck = (i) => setChecked((prev) => prev.map((v, idx) => (idx === i ? !v : v)));
 
-  const checkConfirmation = async (showError = true) => {
-    if (!email.trim() || !password || checkingConfirmation) return;
-    setCheckingConfirmation(true);
-    if (showError) setError('');
+  const handleVerifyCode = async () => {
+    const cleanCode = emailCode.replace(/\D/g, '').slice(0, 6);
+    if (!/^\d{6}$/.test(cleanCode)) {
+      setError('Enter the 6-digit verification code from your email.');
+      return;
+    }
+    setError('');
+    setVerifyingCode(true);
     try {
-      await onSignIn({ email: email.trim(), password });
+      await onVerifyEmailOtp({ email: email.trim(), token: cleanCode });
       onAuthenticated(firstName.trim() || undefined);
     } catch (e) {
-      if (showError) setError(/confirm/i.test(e?.message || '')
-        ? 'Your email is not confirmed yet. Open the link in your email, then try again.'
-        : (e?.message || 'Could not check your account yet. Please try again.'));
+      setError(/expired|invalid|token/i.test(e?.message || '')
+        ? 'That code is invalid or expired. Tap Resend code and try again.'
+        : (e?.message || 'Could not verify that code. Please try again.'));
     } finally {
-      setCheckingConfirmation(false);
+      setVerifyingCode(false);
     }
   };
-
-  useEffect(() => {
-    if (mode !== 'check-email' || Capacitor.getPlatform() !== 'ios') return undefined;
-    let listener;
-    let cancelled = false;
-    void CapacitorApp.addListener('appStateChange', ({ isActive }) => {
-      if (isActive && !cancelled) void checkConfirmation(false);
-    }).then((handle) => {
-      if (cancelled) void handle.remove();
-      else listener = handle;
-    });
-    return () => { cancelled = true; if (listener) void listener.remove(); };
-    // Email/password are retained in this screen only while confirmation is pending.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode, email, password, checkingConfirmation]);
 
   const handleSignUp = async () => {
     if (mode === 'signup' && !allConsented) {
@@ -250,8 +239,13 @@ export default function SigninScreen({
     setLoading(true);
     try {
       const { needsConfirmation } = await onSignUp({ email: email.trim(), password, firstName: firstName.trim() });
-      if (needsConfirmation) setMode('check-email');
-      else onAuthenticated(firstName.trim() || undefined);
+      if (needsConfirmation) {
+        setEmailCode('');
+        setResendMsg('');
+        setMode('check-email');
+      } else {
+        onAuthenticated(firstName.trim() || undefined);
+      }
     } catch (e) {
       if (e.code === 'email_already_exists') setMode('signin');
       setError(e.message || 'Something went wrong. Please try again.');
@@ -267,7 +261,14 @@ export default function SigninScreen({
       await onSignIn({ email: email.trim(), password });
       onAuthenticated();
     } catch (e) {
-      setError(e.message || 'Something went wrong. Please try again.');
+      if (/email not confirmed|confirm your email|not verified/i.test(e?.message || '')) {
+        setEmailCode('');
+        setResendMsg('');
+        setMode('check-email');
+        setError('Your email still needs verification. Enter the code from your email below.');
+      } else {
+        setError(e.message || 'Something went wrong. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -316,7 +317,8 @@ export default function SigninScreen({
     setResendMsg('');
     try {
       await onResendConfirmation(email.trim());
-      setResendMsg('Sent! Check your inbox (and spam folder) again in a minute.');
+      setEmailCode('');
+      setResendMsg('New code sent. Check your inbox and spam folder.');
     } catch (e) {
       setResendMsg(e.message || 'Could not resend right now — try again in a moment.');
     } finally {
@@ -344,21 +346,41 @@ export default function SigninScreen({
         <>
           <div style={{ flex: 1 }} />
           <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(26px * var(--ayna-text-scale, 1))', lineHeight: 1.3, marginBottom: 12, textAlign: 'center' }}>
-            Almost there.
+            Verify your email.
           </div>
-          <div style={{ fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: 'rgba(255,252,249,.82)', textAlign: 'center', marginBottom: 20 }}>
-            Check your email for ayna’s confirmation link. You can open it in Safari, then return here to finish signing in.
+          <div style={{ fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: 'rgba(255,252,249,.82)', textAlign: 'center', marginBottom: 18 }}>
+            We sent a 6-digit verification code to {email}. Enter it below to finish creating your account.
+          </div>
+          <div style={{ background: '#FFFFFF', borderRadius: 20, padding: '14px 16px', marginBottom: 12, boxShadow: '0 8px 20px -12px rgba(0,0,0,.35)' }}>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 'calc(9px * var(--ayna-text-scale, 1))', letterSpacing: '1px', textTransform: 'uppercase', color: '#A8A29E', textAlign: 'center' }}>Verification code</div>
+            <input
+              type="text"
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              placeholder="123456"
+              value={emailCode}
+              onChange={(e) => setEmailCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+              maxLength={6}
+              autoFocus
+              style={{ ...inputStyle, textAlign: 'center', fontSize: '24px', letterSpacing: '8px', fontWeight: 700, padding: '8px 0 2px' }}
+            />
           </div>
           {error && <div style={{ color: '#FFC9BC', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', textAlign: 'center', marginBottom: 12 }}>{error}</div>}
-          <PrimaryButton onClick={() => checkConfirmation()} disabled={checkingConfirmation}>
-            {checkingConfirmation ? 'Checking…' : 'I confirmed my email'}
+          <PrimaryButton onClick={handleVerifyCode} disabled={verifyingCode || emailCode.length !== 6}>
+            {verifyingCode ? 'Verifying…' : 'Verify email'}
           </PrimaryButton>
-          {resendMsg && <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', textAlign: 'center', color: 'rgba(255,252,249,.75)', marginBottom: 14 }}>{resendMsg}</div>}
+          {resendMsg && <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', textAlign: 'center', color: 'rgba(255,252,249,.75)', marginTop: 12 }}>{resendMsg}</div>}
           <div
             onClick={resending ? undefined : handleResend}
-            style={{ textAlign: 'center', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: resending ? 'rgba(255,252,249,.5)' : '#FFC774', cursor: resending ? 'default' : 'pointer' }}
+            style={{ textAlign: 'center', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: resending ? 'rgba(255,252,249,.5)' : '#FFC774', cursor: resending ? 'default' : 'pointer', marginTop: 12 }}
           >
-            {resending ? 'Sending…' : 'Resend confirmation email'}
+            {resending ? 'Sending…' : 'Resend code'}
+          </div>
+          <div
+            onClick={() => { setMode('signup'); setEmailCode(''); setError(''); setResendMsg(''); }}
+            style={{ textAlign: 'center', fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'rgba(255,252,249,.72)', cursor: 'pointer', marginTop: 12 }}
+          >
+            Change email
           </div>
           <div style={{ flex: 1 }} />
         </>
