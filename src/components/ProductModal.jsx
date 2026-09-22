@@ -1173,7 +1173,7 @@ export default function ProductModal({
                   <div className="pdp-summary-card">
                     {product.doctorOpinion ? (
                       <>
-                        <p className="pdp-summary-card__body" style={{ marginTop: 0 }}>{product.doctorOpinion}</p>
+                        <p className="pdp-summary-card__body" style={{ marginTop: 0, whiteSpace: 'pre-line' }}>{product.doctorOpinion}</p>
                         {product.clinicianAttribution && (
                           <div className="pdp-summary-card__foot">{product.clinicianAttribution}</div>
                         )}
