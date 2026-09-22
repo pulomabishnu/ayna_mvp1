@@ -9,6 +9,7 @@
  * Non-personalized results only are cached in sessionStorage (45 min) --
  * health-sensitive personalized search text/results are never cached.
  */
+import { filterProductListToCatalog } from './catalogIntegrity';
 import { getSupabaseClient } from './supabaseClient.js';
 import { apiUrl } from './apiUrl.js';
 
@@ -16,7 +17,7 @@ function sessionCacheKey(query, category, symptom, maxResults) {
   const q = `${query.trim().toLowerCase()}|${category || ''}|${symptom || ''}|${maxResults || 20}`;
   let h = 0;
   for (let i = 0; i < q.length; i += 1) h = (Math.imul(31, h) + q.charCodeAt(i)) | 0;
-  return `ayna-ai-search-v2:${h.toString(16)}`;
+  return `ayna-ai-search-v3:${h.toString(16)}`;
 }
 
 function readSessionCache(key) {
@@ -31,7 +32,7 @@ function readSessionCache(key) {
       return null;
     }
     return {
-      suggestions: o.suggestions,
+      suggestions: filterProductListToCatalog(o.suggestions),
       querySummary: typeof o.querySummary === 'string' ? o.querySummary : '',
       // Was read at the call site but never persisted, so the "related
       // searches" row silently vanished for 45 minutes on any repeated query.
@@ -95,7 +96,7 @@ export async function fetchSearchSuggestions(opts) {
     return {
       suggestions: [],
       querySummary: '',
-      error: 'Sign in to search beyond the ayna catalog.',
+      error: 'Sign in to use smart search across the ayna catalog.',
       code: 'auth_required',
     };
   }
@@ -143,7 +144,7 @@ export async function fetchSearchSuggestions(opts) {
     };
   }
 
-  const suggestions = Array.isArray(data.suggestions) ? data.suggestions : [];
+  const suggestions = filterProductListToCatalog(data.suggestions);
   const querySummary = typeof data.querySummary === 'string' ? data.querySummary : '';
   const relatedSearches = Array.isArray(data.relatedSearches) ? data.relatedSearches : [];
   return { suggestions, querySummary, relatedSearches };

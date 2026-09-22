@@ -1092,16 +1092,26 @@ const AVOID_TRIGGER_KEYWORDS = {
     'synthetic': [], // only use product.avoidIfSensitivity for synthetic to avoid over-excluding
 };
 
-function productMatchesAvoidTrigger(product, trigger) {
+// "Fragrance-free", "no latex", "unscented" etc. are the OPPOSITE of the
+// trigger; before this a fragrance-free product was hidden from
+// fragrance-sensitive users (2026-09-22 audit).
+function stripNegatedTriggerPhrases(text) {
+    return text
+        .replace(/\b(fragrances?|scents?|perfumes?|parfum|latex|essential[\s-]oils?|dyes?)[\s-]*free\b/g, ' ')
+        .replace(/\b(no|without|free of|free from|zero|0%)\s+(added\s+|synthetic\s+)?(fragrances?|scents?|perfumes?|parfum|latex|essential oils?|dyes?)\b/g, ' ')
+        .replace(/\bunscented\b/g, ' ');
+}
+
+export function productMatchesAvoidTrigger(product, trigger) {
     if (product.avoidIfSensitivity && product.avoidIfSensitivity.includes(trigger)) return true;
     const keywords = AVOID_TRIGGER_KEYWORDS[trigger];
     if (!keywords || keywords.length === 0) return false;
-    const text = [
+    const text = stripNegatedTriggerPhrases([
         product.ingredients,
         product.summary,
         product.safety?.materials,
         product.safety?.allergens,
-    ].filter(Boolean).join(' ').toLowerCase();
+    ].flat().filter(Boolean).join(' ').toLowerCase());
     return keywords.some(kw => text.includes(kw.toLowerCase()));
 }
 
@@ -1323,6 +1333,9 @@ const PREFERENCE_TAGS = {
     'Comfort/Convenience': 'comfort',
     'Privacy & data security': 'privacy',
     'Sustainability/Zero-waste': 'sustainability',
+    organic: 'organic',
+    'eco-friendly': 'sustainability',
+    reusable: 'sustainability',
 };
 
 const GOAL_RULES = [
@@ -1795,6 +1808,9 @@ function getExtendedAvoidSet(quizAnswers) {
         'fragrance sensitivity': 'fragrance',
         'essential oils': 'essential-oils',
         'synthetic materials': 'synthetic',
+        'fragrance-free': 'fragrance',
+        'unscented': 'fragrance',
+        'latex-free': 'latex',
     };
 
     [

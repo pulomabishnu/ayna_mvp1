@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ALL_PRODUCTS } from '../../data/products.js';
 import { mapIntakeToLegacyQuizProfile } from '../../utils/healthIntake.js';
+import { PREFERENCE_MAP } from '../../utils/intakePreferenceMap.js';
 import { getFirstIncompleteStepId, getIncompleteStepIds } from '../utils/profileCompleteness.js';
 
 // Mirrors the real onboarding form's one-question-per-step wizard from
@@ -327,11 +328,8 @@ const FORMAT_TO_LEGACY = {
   'Devices or wearables': 'devices', 'Period-care products': 'pads',
 };
 
-const PREFERENCE_MAP = {
-  Fragrance: 'fragrance-free', Dyes: 'dye-free', Parabens: 'paraben-free', Sulfates: 'sulfate-free',
-  Phthalates: 'phthalate-free', Latex: 'latex-free', 'Synthetic materials': 'natural-materials',
-  'Animal-derived ingredients': 'vegan', 'Added sugar': 'sugar-free', 'Artificial sweeteners': 'no-artificial-sweeteners',
-};
+// PREFERENCE_MAP now lives in utils/intakePreferenceMap.js and covers every
+// AVOID_INGREDIENTS option (2026-09-22 audit: Vegan/Organic/Fragrance-free etc. were dropped).
 
 function arrayHasAny(arr, set) {
   return (arr || []).some((value) => set.has(value));

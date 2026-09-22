@@ -347,6 +347,13 @@ export default function BrowseScreen({
     filtered = [...filtered].sort((a, b) => (isPartnerBrandItem(b) ? 1 : 0) - (isPartnerBrandItem(a) ? 1 : 0));
   }
   const filterKey = `${searchTerm}|${personalized}|${activeGroup}`;
+  // AI matches are catalog products (server + catalogIntegrity), but they
+  // must still respect the active group/personalized filters (2026-09-22 audit).
+  const personalizedIdSet = personalized && hasProfile ? new Set(getPersonalizedProductIds(quizAnswers, null)) : null;
+  const aiSuggestionsFiltered = (aiState.suggestions || []).filter((p) => (
+    (activeGroup === 'all' || itemMatchesMacroGroup(p, activeGroup))
+    && (!personalizedIdSet || personalizedIdSet.has(p.id))
+  ));
 
   useEffect(() => {
     // Nothing to fetch — and nothing to reset either: the render logic below
@@ -443,16 +450,16 @@ export default function BrowseScreen({
           ) : searchTermRaw.length >= 2 && aiState.loading ? (
             <>
               <div style={{ padding: '0 20px 14px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
-                Searching beyond our catalog…
+                Finding related picks in our catalog…
               </div>
               <PixelateGrid />
             </>
-          ) : searchTermRaw.length >= 2 && aiState.query === searchTermRaw && aiState.suggestions.length > 0 ? (
+          ) : searchTermRaw.length >= 2 && aiState.query === searchTermRaw && aiSuggestionsFiltered.length > 0 ? (
             <>
               <div style={{ padding: '0 20px 14px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10.5px * var(--ayna-text-scale, 1))', letterSpacing: 0.6, color: 'var(--ayna-text-faint)', textTransform: 'uppercase' }}>
-                Not in our catalog yet — found via AI search
+                Related picks from our catalog
               </div>
-              <ProductGrid key={`ai-${filterKey}`} products={aiState.suggestions} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} />
+              <ProductGrid key={`ai-${filterKey}`} products={aiSuggestionsFiltered} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} />
             </>
           ) : (
             <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--ayna-text-muted)', fontSize: 'calc(13.5px * var(--ayna-text-scale, 1))' }}>

@@ -1,4 +1,5 @@
 import { limitEcosystemProductsByCategory, MAX_ECOSYSTEM_PRODUCTS_PER_CATEGORY } from './ecosystemLimits.js';
+import { toCatalogProduct } from './catalogIntegrity.js';
 
 /**
  * Supabase persistence for user_ecosystems.
@@ -70,7 +71,8 @@ function compactProduct(product) {
     'id', 'name', 'brand', 'category', 'type', 'price', 'priceDisplay', 'stage',
     'image', 'imageUrl', 'images', 'summary', 'description', 'tagline',
     'whereToBuy', 'url', 'website', 'buyUrl', 'purchaseUrl', 'affiliateUrl',
-    'llmGenerated', 'intakeGenerated', '_llmConcern', '_userSwapped',
+    'intakeGenerated', '_llmConcern', '_userSwapped',
+    'catalogId', 'catalogVerified', 'whyItWorks', 'considerations', 'matchExplanation',
     'healthFunctions', 'tags',
     'aynaMatch', 'aynaMatchPercent', 'matchPercent', 'matchPercentage',
   ];
@@ -183,9 +185,13 @@ function hydrateFromRows(rowsById) {
   const ecosystemCandidates = [];
   const priorityIds = new Set();
 
-  for (const [productId, row] of Object.entries(rowsById || {})) {
-    const product = row?.product;
+  for (const [, row] of Object.entries(rowsById || {})) {
+    // PRODUCT INTEGRITY: older builds saved free-form model output. Only
+    // catalog-backed products are shown, with current catalog facts. Rows
+    // are not deleted.
+    const product = toCatalogProduct(row?.product);
     if (!product?.id) continue;
+    const productId = product.id;
 
     if (row.inEcosystem) ecosystemCandidates.push(product);
     if (row.isTracked) {

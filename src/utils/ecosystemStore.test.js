@@ -204,37 +204,50 @@ describe('loadEcosystemForUser', () => {
   it('routes each row into the lists its flags name', async () => {
     const sb = makeSupabase({
       selectData: [
-        { product_id: 'a', in_ecosystem: true, is_tracked: false, is_omitted: false, product_data: { id: 'a' } },
-        { product_id: 'b', in_ecosystem: true, is_tracked: true, is_omitted: false, product_data: { id: 'b' } },
-        { product_id: 'c', in_ecosystem: false, is_tracked: false, is_omitted: true, product_data: { id: 'c' } },
+        { product_id: 'p-rael-organic-pad', in_ecosystem: true, is_tracked: false, is_omitted: false, product_data: { id: 'p-rael-organic-pad' } },
+        { product_id: 'p-lola-pad', in_ecosystem: true, is_tracked: true, is_omitted: false, product_data: { id: 'p-lola-pad' } },
+        { product_id: 'p-cora-organic-pads', in_ecosystem: false, is_tracked: false, is_omitted: true, product_data: { id: 'p-cora-organic-pads' } },
       ],
     });
     const out = await loadEcosystemForUser(sb, 'u');
-    expect(Object.keys(out.myProducts)).toEqual(['a', 'b']);
-    expect(Object.keys(out.trackedProducts)).toEqual(['b']);
-    expect(Object.keys(out.omittedProducts)).toEqual(['c']);
+    expect(Object.keys(out.myProducts).sort()).toEqual(['p-lola-pad', 'p-rael-organic-pad']);
+    expect(Object.keys(out.trackedProducts)).toEqual(['p-lola-pad']);
+    expect(Object.keys(out.omittedProducts)).toEqual(['p-cora-organic-pads']);
+  });
+
+  it('never surfaces a saved non-catalog (AI-invented) snapshot, and refreshes catalog facts', async () => {
+    const sb = makeSupabase({
+      selectData: [
+        { product_id: 'sleep-slug-tier0', in_ecosystem: true, product_data: { id: 'sleep-slug-tier0', name: 'Luna Sleep Gummies', llmGenerated: true } },
+        { product_id: 'p-rael-organic-pad', in_ecosystem: true, product_data: { id: 'p-rael-organic-pad', name: 'Old Name', price: '$1' } },
+      ],
+    });
+    const out = await loadEcosystemForUser(sb, 'u');
+    expect(Object.keys(out.myProducts)).toEqual(['p-rael-organic-pad']);
+    expect(out.myProducts['p-rael-organic-pad'].name).toBe('Rael Organic Cotton Pads');
   });
 
   it('falls back to the flat columns when product_data is absent', async () => {
     const sb = makeSupabase({
-      selectData: [{ product_id: 'a', in_ecosystem: true, product_name: 'Name', brand: 'B', category: 'pad', product_type: 'physical' }],
+      selectData: [{ product_id: 'p-cora-organic-pads', in_ecosystem: true, product_name: 'Name', brand: 'B', category: 'pad', product_type: 'physical' }],
     });
     const out = await loadEcosystemForUser(sb, 'u');
-    expect(out.myProducts.a).toMatchObject({ id: 'a', name: 'Name', brand: 'B' });
+    expect(out.myProducts['p-cora-organic-pads']).toMatchObject({ id: 'p-cora-organic-pads', name: 'Cora Organic Pads', brand: 'Cora' });
   });
 
   it('keeps tracked and saved generated rows visible above the generated cap', async () => {
-    const generatedRows = Array.from({ length: 7 }, (_, index) => ({
-      product_id: `p${index}`,
+    const padIds = ['p-always-infinity', 'p-rael-organic-pad', 'p-honeypot-pad', 'p-cora-organic-pads', 'p-lola-pad', 'p-natracare-pad', 'p-organyc-pad'];
+    const generatedRows = padIds.map((id, index) => ({
+      product_id: id,
       in_ecosystem: true,
       is_tracked: index === 5,
       is_saved: index === 6,
-      product_data: { id: `p${index}`, category: 'pad', llmGenerated: true },
+      product_data: { id, category: 'pad', intakeGenerated: true },
     }));
     const out = await loadEcosystemForUser(makeSupabase({ selectData: generatedRows }), 'u');
 
     expect(Object.keys(out.myProducts)).toHaveLength(7);
-    expect(out.myProducts).toHaveProperty('p5');
-    expect(out.myProducts).toHaveProperty('p6');
+    expect(out.myProducts).toHaveProperty('p-natracare-pad');
+    expect(out.myProducts).toHaveProperty('p-organyc-pad');
   });
 });

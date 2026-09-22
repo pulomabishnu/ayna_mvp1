@@ -1,3 +1,4 @@
+import { filterRecommendationsToCatalog } from './catalogIntegrity';
 const API_PATH = '/api/llm-recommendations';
 /** Prevents the ecosystem page from showing “Loading…” forever if the server never responds. */
 // Must sit ABOVE the server's function ceiling (vercel.json maxDuration = 60s)
@@ -7,8 +8,9 @@ const API_PATH = '/api/llm-recommendations';
 const DEFAULT_FETCH_TIMEOUT_MS = 75_000;
 const MEMORY_KEY = 'ayna_llm_learning_memory_v1';
 /** Persistent cache so re-login does not re-call the LLM for the same intake. */
-const RECS_CACHE_KEY = 'ayna_llm_recommendations_by_intake_v2';
-const FETCHED_FINGERPRINT_KEY = 'ayna_llm_recommendations_fetched_fingerprint_v2';
+// v3 (2026-09-22 integrity audit): never read back caches holding free-form model products.
+const RECS_CACHE_KEY = 'ayna_llm_recommendations_by_intake_v3';
+const FETCHED_FINGERPRINT_KEY = 'ayna_llm_recommendations_fetched_fingerprint_v3';
 
 function stableStringify(val) {
   if (val === null || typeof val !== 'object') return JSON.stringify(val);
@@ -48,8 +50,8 @@ export function loadCachedLlmRecommendations(fingerprint) {
     if (!raw) return null;
     const o = JSON.parse(raw);
     if (!o || o.fingerprint !== fingerprint) return null;
-    const recs = o.recommendations;
-    return Array.isArray(recs) && recs.length > 0 ? recs : null;
+    const recs = filterRecommendationsToCatalog(o.recommendations);
+    return recs.length > 0 ? recs : null;
   } catch {
     return null;
   }
@@ -220,5 +222,9 @@ export async function fetchLlmRecommendations(options = {}, fetchOpts = {}) {
     throw err;
   }
 
+  // Belt and braces: the server already hydrates products from the catalog.
+  if (Array.isArray(data?.recommendations)) {
+    data.recommendations = filterRecommendationsToCatalog(data.recommendations);
+  }
   return data;
 }

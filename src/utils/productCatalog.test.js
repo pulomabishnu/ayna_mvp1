@@ -55,7 +55,7 @@ describe('loadProductCatalog', () => {
     globalThis.fetch = vi.fn().mockResolvedValue({ ok: false, status: 500 });
     const { loadProductCatalog } = await freshModule();
     await loadProductCatalog();
-    expect(localStorage.getItem('ayna_product_catalog_v1')).toBeNull();
+    expect(localStorage.getItem('ayna_product_catalog_v2')).toBeNull();
   });
 
   it('single-flights concurrent callers instead of fetching the catalog N times', async () => {
@@ -70,7 +70,7 @@ describe('loadProductCatalog', () => {
 
   it('serves a warm cache without hitting the network', async () => {
     localStorage.setItem(
-      'ayna_product_catalog_v1',
+      'ayna_product_catalog_v2',
       JSON.stringify({ ts: Date.now(), products: [{ id: 'cached' }] })
     );
     const fetchMock = vi.fn();
@@ -83,7 +83,7 @@ describe('loadProductCatalog', () => {
 
   it('ignores an expired cache', async () => {
     localStorage.setItem(
-      'ayna_product_catalog_v1',
+      'ayna_product_catalog_v2',
       JSON.stringify({ ts: Date.now() - 7 * 60 * 60 * 1000, products: [{ id: 'old' }] })
     );
     globalThis.fetch = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ products: [{ id: 'fresh' }] }) });
