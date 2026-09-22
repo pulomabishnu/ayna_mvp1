@@ -8,7 +8,7 @@ import { ALL_PRODUCTS, getProductMatchDetailsForProduct } from '../data/products
 // generateTieredRecommendations) — category is a controlled, always-present
 // field, unlike free-text tags, so it's the more reliable signal. Rewritten
 // against the real current category taxonomy (2026-08-25).
-const CONCERN_CONFIG = [
+export const CONCERN_CONFIG = [
   { key: 'Period care (pads, tampons, cups, discs, underwear)', tags: ['heavy-flow', 'leaks', 'cramps'], categories: ['pad', 'liner', 'tampon', 'cup', 'disc', 'period-underwear', 'cramp-relief'] },
   { key: 'Cramp and pain relief (devices, supplements, heat)', tags: ['cramps'], categories: ['cramp-relief', 'supplement'] },
   { key: 'Hormone balance (supplements, lifestyle)', tags: ['pcos', 'irregular', 'bloating'], categories: ['supplement'] },
@@ -27,7 +27,7 @@ const CONCERN_CONFIG = [
   { key: 'STI support', tags: ['sti', 'std', 'sexual-health'], categories: ['telehealth', 'diagnostics'] },
   { key: 'Gut and vaginal health (probiotics, pH balance)', tags: ['vaginal-health', 'probiotic', 'ph-balance'], categories: ['supplement', 'intimate-care'] },
   { key: 'Perimenopause and menopause support', tags: ['menopause'], categories: ['menopause', 'supplement', 'telehealth'] },
-  { key: 'Sexual health and comfort (lubricants, pelvic floor)', tags: ['pelvic-floor'], categories: ['sex-tech', 'intimate-care', 'pelvic-floor'] },
+  { key: 'Sexual health and comfort (lubricants, pelvic floor)', tags: ['pelvic-floor'], categories: ['sex-tech', 'intimate-care', 'pelvic-floor', 'pelvic-floor-trainer', 'pelvic-floor-exerciser'] },
   { key: 'Mental health and cycle mood support', tags: ['mood', 'anxiety'], categories: ['mental-health'] },
   { key: 'Sleep and energy', tags: ['sleep', 'energy'], categories: ['sleep', 'supplement'] },
   // No live product currently carries category 'skin'/'skincare'/'hair'/'haircare' — a real
@@ -40,6 +40,10 @@ const CONCERN_CONFIG = [
 
 const ENDOMETRIOSIS_FLAGS = ['synthetic fragrance', 'dioxins', 'chlorine bleaching', 'bpa'];
 const PCOS_HORMONE_FLAGS = ['phthalate', 'paraben', 'bpa', 'synthetic fragrance'];
+// These categories describe a format, not a health need. Treating them as a
+// concern match put any supplement, tracker or telehealth service into nearly
+// every section, including UTI products under cramps and PCOS.
+const GENERIC_CATEGORIES = new Set(['supplement', 'telehealth', 'tracker', 'diagnostics', 'app', 'device']);
 
 function asArray(value) {
   if (Array.isArray(value)) return value;
@@ -324,7 +328,22 @@ function fsaHsaEligibility(product) {
 export function scoreProduct(product, intake, concern) {
   const details = getProductMatchDetailsForProduct(product, intake);
   if (!details?.eligible) return -1;
-  return details?.percent == null ? 0 : details.percent;
+
+  let score = details?.percent == null ? 0 : details.percent;
+  const profile = intakeProfile(intake);
+  const account = String(profile?.fsaHsaAnswer || profile?.fsaHsa || '').trim().toLowerCase();
+  const eligibility = fsaHsaEligibility(product);
+  const accountMatch =
+    account === 'fsa' ? eligibility.fsa
+      : account === 'hsa' ? eligibility.hsa
+        : account === 'both' ? (eligibility.fsa || eligibility.hsa)
+          : false;
+
+  // A small shopping-preference boost only. It can break ties among
+  // otherwise relevant products, but it does not turn FSA/HSA status
+  // into a medical recommendation signal.
+  if (accountMatch) score += 5;
+  return score;
 }
 
 function safetyNotes(product, intake) {
@@ -487,7 +506,8 @@ export function generateTieredRecommendations(intake = {}) {
       }
 
       return concern.tags.some((tag) => tags.includes(tag))
-        || concern.categories.includes(category);
+        || (concern.categories.includes(category)
+          && (!GENERIC_CATEGORIES.has(category) || concern.tags.length === 0));
     });
 
     const tiers = buildDiverseTiers(concernPool, intake, concern, 5);

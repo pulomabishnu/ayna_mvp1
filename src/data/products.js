@@ -1613,6 +1613,9 @@ const DIAGNOSIS_SPECIFIC_SIGNALS = [
     'pcos', 'pcos-management', 'endometriosis', 'fibroids', 'adenomyosis',
     'pmdd', 'thyroid', 'diabetes', 'insulin-resistance', 'hypertension',
     'migraine', 'anemia', 'ibs', 'autoimmune', 'anxiety', 'depression',
+    // Synced from main: imported bladder/incontinence conditions must count
+    // as a diagnosis-specific signal (Apple Health / FHIR imports).
+    'bladder-leaks', 'bladder-leak-protection', 'incontinence',
 ];
 
 const LIFE_STAGE_SPECIFIC_SIGNALS = [
