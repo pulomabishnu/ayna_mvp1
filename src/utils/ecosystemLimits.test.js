@@ -89,4 +89,15 @@ describe('ecosystem category limits', () => {
     expect(limited).toHaveLength(6);
     expect(limited.map((item) => item.id)).toContain('period-6');
   });
+
+  it('caps legacy ecosystem rows that lost their generated marker', () => {
+    const legacy = Array.from({ length: 52 }, (_, index) => ({
+      id: `legacy-${index}`,
+      category: index % 2 ? 'tampon' : 'pad',
+    }));
+    const limited = limitEcosystemProductsByCategory(legacy, 5, {
+      capAllUnprotected: true,
+    });
+    expect(limited).toHaveLength(5);
+  });
 });

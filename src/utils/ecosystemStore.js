@@ -196,14 +196,13 @@ function hydrateFromRows(rowsById) {
     if (row.isOmitted) omittedProducts[productId] = product;
   }
 
-  // Existing accounts may contain dozens of legacy generated rows from the old
-  // "append every matching product" behavior. Limit only generated items in
-  // My Ecosystem without deleting or rewriting stored rows. Manual, swapped,
-  // tracked and saved products remain visible even above the generated cap.
+  // Older builds saved generated recommendations without their origin flag.
+  // Cap all unprotected ecosystem rows on load so those legacy accounts do
+  // not reopen with dozens of products. Tracked/saved rows remain accessible.
   const visibleEcosystem = limitEcosystemProductsByCategory(
     ecosystemCandidates,
     MAX_ECOSYSTEM_PRODUCTS_PER_CATEGORY,
-    { protectedIds: priorityIds }
+    { protectedIds: priorityIds, capAllUnprotected: true }
   );
 
   for (const product of visibleEcosystem) {

@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { App as CapacitorApp } from '@capacitor/app';
+import { Capacitor } from '@capacitor/core';
 import LegalFooter from '../components/LegalFooter.jsx';
 
 const DEFAULT_STATS = [
@@ -58,9 +60,12 @@ const LockIcon = (
 
 function PrimaryButton({ onClick, disabled, children }) {
   return (
-    <div
-      onClick={disabled ? undefined : onClick}
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
       style={{
+        width: '100%', border: 'none',
         background: disabled ? 'rgba(255,199,116,.45)' : '#FFC774',
         color: '#292524',
         textAlign: 'center',
@@ -78,15 +83,18 @@ function PrimaryButton({ onClick, disabled, children }) {
       }}
     >
       {children}
-    </div>
+    </button>
   );
 }
 
 function GoogleButton({ onClick, disabled }) {
   return (
-    <div
-      onClick={disabled ? undefined : onClick}
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
       style={{
+        width: '100%', color: '#FFFCF9',
         background: 'rgba(255,252,249,.14)',
         border: '1px solid rgba(255,255,255,.28)',
         textAlign: 'center',
@@ -110,7 +118,7 @@ function GoogleButton({ onClick, disabled }) {
         <path fill="#EA4335" d="M12 4.75c1.76 0 3.34.6 4.58 1.79l3.44-3.44C17.94 1.19 15.23 0 12 0A12 12 0 0 0 1.28 6.62l3.99 3.09C6.22 6.86 8.87 4.75 12 4.75Z" />
       </svg>
       {disabled ? 'Opening Google…' : 'Continue with Google'}
-    </div>
+    </button>
   );
 }
 
@@ -153,6 +161,7 @@ export default function SigninScreen({
   const [error, setError] = useState('');
   const [resending, setResending] = useState(false);
   const [resendMsg, setResendMsg] = useState('');
+  const [checkingConfirmation, setCheckingConfirmation] = useState(false);
 
   // Cross-tab pickup: confirming email in a different tab establishes the
   // session there via localStorage, which fires onAuthStateChange back in
@@ -169,8 +178,39 @@ export default function SigninScreen({
   const allConsented = checked.every(Boolean);
   const toggleCheck = (i) => setChecked((prev) => prev.map((v, idx) => (idx === i ? !v : v)));
 
+  const checkConfirmation = async (showError = true) => {
+    if (!email.trim() || !password || checkingConfirmation) return;
+    setCheckingConfirmation(true);
+    if (showError) setError('');
+    try {
+      await onSignIn({ email: email.trim(), password });
+      onAuthenticated(firstName.trim() || undefined);
+    } catch (e) {
+      if (showError) setError(/confirm/i.test(e?.message || '')
+        ? 'Your email is not confirmed yet. Open the link in your email, then try again.'
+        : (e?.message || 'Could not check your account yet. Please try again.'));
+    } finally {
+      setCheckingConfirmation(false);
+    }
+  };
+
+  useEffect(() => {
+    if (mode !== 'check-email' || Capacitor.getPlatform() !== 'ios') return undefined;
+    let listener;
+    let cancelled = false;
+    void CapacitorApp.addListener('appStateChange', ({ isActive }) => {
+      if (isActive && !cancelled) void checkConfirmation(false);
+    }).then((handle) => {
+      if (cancelled) void handle.remove();
+      else listener = handle;
+    });
+    return () => { cancelled = true; if (listener) void listener.remove(); };
+    // Email/password are retained in this screen only while confirmation is pending.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode, email, password, checkingConfirmation]);
+
   const handleSignUp = async () => {
-    if (!allConsented) {
+    if (mode === 'signup' && !allConsented) {
       setError('Please agree to all four statements above before creating your account.');
       return;
     }
@@ -206,14 +246,14 @@ export default function SigninScreen({
     // statements above only render in signup mode, so this is the one place
     // stopping Google from creating a real account with none of them agreed
     // to. Signing in with an existing account needs no re-consent.
-    if (!allConsented) {
+    if (mode === 'signup' && !allConsented) {
       setError('Please agree to all four statements above before continuing.');
       return;
     }
     setError('');
     setGoogleLoading(true);
     try {
-      await onGoogleSignIn({ consented: true });
+      await onGoogleSignIn({ consented: mode === 'signup' });
     } catch (e) {
       setError(e.message || 'Could not start Google sign-in.');
     } finally {
@@ -223,14 +263,14 @@ export default function SigninScreen({
 
   const handleApple = async () => {
     if (!onAppleSignIn) return;
-    if (!allConsented) {
+    if (mode === 'signup' && !allConsented) {
       setError('Please agree to all four statements above before continuing.');
       return;
     }
     setError('');
     setAppleLoading(true);
     try {
-      await onAppleSignIn({ consented: true });
+      await onAppleSignIn({ consented: mode === 'signup' });
       onAuthenticated(firstName.trim() || undefined);
     } catch (e) {
       if (!/cancel/i.test(e?.message || '')) setError(e?.message || 'Could not sign in with Apple.');
@@ -275,8 +315,12 @@ export default function SigninScreen({
             Almost there.
           </div>
           <div style={{ fontSize: 'calc(14px * var(--ayna-text-scale, 1))', lineHeight: 1.6, color: 'rgba(255,252,249,.82)', textAlign: 'center', marginBottom: 20 }}>
-            A confirmation email is on its way from ayna (puloma@aynahealth.co). Check your spam folder if you don't see it. Once confirmed, come back here — this screen updates on its own.
+            Check your email for ayna’s confirmation link. You can open it in Safari, then return here to finish signing in.
           </div>
+          {error && <div style={{ color: '#FFC9BC', fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', textAlign: 'center', marginBottom: 12 }}>{error}</div>}
+          <PrimaryButton onClick={() => checkConfirmation()} disabled={checkingConfirmation}>
+            {checkingConfirmation ? 'Checking…' : 'I confirmed my email'}
+          </PrimaryButton>
           {resendMsg && <div style={{ fontSize: 'calc(12.5px * var(--ayna-text-scale, 1))', textAlign: 'center', color: 'rgba(255,252,249,.75)', marginBottom: 14 }}>{resendMsg}</div>}
           <div
             onClick={resending ? undefined : handleResend}
@@ -323,7 +367,7 @@ export default function SigninScreen({
             <input type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} style={inputStyle} />
           </Field>
 
-          {(mode === 'signup' || mode === 'signin') && (
+          {mode === 'signup' && (
             <div style={{ marginTop: 6, marginBottom: 4, display: 'flex', flexDirection: 'column', gap: 10 }}>
               {CONSENT_ITEMS.map((text, i) => (
                 <div key={i} onClick={() => toggleCheck(i)} style={{ display: 'flex', gap: 10, cursor: 'pointer' }}>

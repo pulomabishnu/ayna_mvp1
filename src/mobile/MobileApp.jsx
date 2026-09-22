@@ -99,6 +99,7 @@ function seedEcosystemFromAnswers(quizAnswers, healthProfile = null) {
     const area = resolveEcosystemProductArea(product, REAL_ECOSYSTEM_AREAS);
     return {
       ...product,
+      intakeGenerated: true,
       areaKey: product.areaKey || area?.key || null,
     };
   });
