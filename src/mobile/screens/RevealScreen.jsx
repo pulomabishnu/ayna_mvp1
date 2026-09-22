@@ -11,7 +11,7 @@ export default function RevealScreen({
   const caption = `${productCount} products · ${readCount} reads · ${goalCount} goal${goalCount === 1 ? '' : 's'} you named`;
 
   return (
-    <div style={{ flex: 1, overflowY: 'auto', background: '#FAF6F1', color: '#1A1714', position: 'relative', fontFamily: "'DM Sans',system-ui,sans-serif", animation: 'ay-page .25s ease-out' }}>
+    <div style={{ flex: 1, overflowY: 'auto', background: 'linear-gradient(165deg,#2A1F4E 0%,#4E3866 42%,#8A4A3C 74%,#D97A2B 100%)', color: '#FFF9F2', position: 'relative', fontFamily: "'DM Sans',system-ui,sans-serif", animation: 'ay-page .25s ease-out' }}>
       <div
         style={{
           position: 'absolute',
@@ -40,7 +40,7 @@ export default function RevealScreen({
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 'max(20px, env(safe-area-inset-top))', paddingLeft: 24, paddingRight: 24, position: 'relative' }}>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 5 }}>
           <span style={{ fontFamily: "'Playfair Display',serif", fontSize: 'calc(20px * var(--ayna-text-scale, 1))' }}>ayna</span>
-          <span style={{ fontSize: 'calc(10px * var(--ayna-text-scale, 1))', color: '#8c8078' }}>beta</span>
+          <span style={{ fontSize: 'calc(10px * var(--ayna-text-scale, 1))', color: 'rgba(255,249,242,.6)' }}>beta</span>
         </div>
       </div>
 
@@ -69,7 +69,7 @@ export default function RevealScreen({
         <div style={{ fontFamily: "'Playfair Display',serif", fontWeight: 500, fontSize: 'calc(27px * var(--ayna-text-scale, 1))', lineHeight: 1.25, margin: '0 0 8px' }}>
           Your ecosystem is ready.
         </div>
-        <p style={{ margin: '0 auto', maxWidth: 280, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: '#8c8078', lineHeight: 1.5 }}>Built from your answers.</p>
+        <p style={{ margin: '0 auto', maxWidth: 280, fontSize: 'calc(14px * var(--ayna-text-scale, 1))', color: 'rgba(255,249,242,.72)', lineHeight: 1.5 }}>Built from your answers.</p>
       </div>
 
       <div style={{ position: 'relative', width: 320, height: 320, margin: '22px auto 0' }}>
@@ -81,8 +81,8 @@ export default function RevealScreen({
             width: 128,
             height: 128,
             borderRadius: '50%',
-            background: 'linear-gradient(135deg,#242A52 0%,#4E3866 55%,#A2603C 100%)',
-            boxShadow: '0 24px 50px -20px rgba(36,42,82,.55)',
+            background: 'linear-gradient(135deg,#F0A84B 0%,#E8A94F 100%)',
+            boxShadow: '0 24px 50px -20px rgba(232,169,79,.75)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -90,7 +90,7 @@ export default function RevealScreen({
             zIndex: 1,
           }}
         >
-          <span style={{ color: '#FFFFFF', fontFamily: "'Playfair Display',serif", fontSize: 'calc(16px * var(--ayna-text-scale, 1))' }}>you</span>
+          <span style={{ color: '#1A1714', fontFamily: "'Playfair Display',serif", fontSize: 'calc(16px * var(--ayna-text-scale, 1))' }}>you</span>
         </div>
         <div style={{ position: 'absolute', inset: 0, zIndex: 2, animation: 'ay-orbit 28s linear infinite' }}>
           {orbit1 && (
@@ -165,7 +165,7 @@ export default function RevealScreen({
         </div>
       </div>
 
-      <div style={{ textAlign: 'center', fontSize: 'calc(11px * var(--ayna-text-scale, 1))', color: '#8c8078', marginTop: 6, position: 'relative' }}>{caption}</div>
+      <div style={{ textAlign: 'center', fontSize: 'calc(11px * var(--ayna-text-scale, 1))', color: 'rgba(255,249,242,.72)', marginTop: 6, position: 'relative' }}>{caption}</div>
 
       <div style={{ margin: '24px 24px 34px', position: 'relative' }}>
         <button
