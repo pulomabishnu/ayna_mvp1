@@ -1,5 +1,5 @@
 import React from 'react';
-import { getVerificationLinks, toSourceChips } from '../utils/verificationLinks';
+import { getVerificationLinks, toSourceChips, hostLabel } from '../utils/verificationLinks';
 
 /**
  * The right-hand rail on the evidence layout (mockup board 1g): three small
@@ -24,14 +24,20 @@ function firstSentence(text, max = 140) {
 }
 
 export default function ProductEvidenceRail({ product, matchLabels = [], matchPercent = null, aynaReviewCount = 0 }) {
-  const clinicianNote = product.doctorOpinion || product.clinicianOpinion || null;
+  // Prefers a shorter, results-first version when a catalog entry has one —
+  // this rail card has much less width than the ayna-summary tab's
+  // full-width Clinician opinion card, which always gets the full text.
+  const clinicianNote = product.doctorOpinionShort || product.doctorOpinion || product.clinicianOpinion || null;
   // Backs the clinician-opinion claim with an actual link to check it against
   // — a stated claim with no source a reader can click isn't evidence, it's
   // just a bigger claim. Flagged live 2026-08-25.
-  const clinicianSourceChips = toSourceChips([
-    ...getVerificationLinks(product, 'doctor'),
-    ...getVerificationLinks(product, 'scientific'),
-  ]);
+  const clinicianSourceChips = [
+    ...toSourceChips([
+      ...getVerificationLinks(product, 'doctor'),
+      ...getVerificationLinks(product, 'scientific'),
+    ]),
+    ...(product.doctorOpinionCitations || []).map((c) => ({ url: c.url, label: hostLabel(c.url) || c.label, text: c.label })),
+  ];
 
   const scientificChips = toSourceChips(getVerificationLinks(product, 'scientific'));
   const clinicalChips = toSourceChips(getVerificationLinks(product, 'doctor'));
