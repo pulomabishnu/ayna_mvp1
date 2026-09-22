@@ -1484,8 +1484,10 @@ export default function HealthIntakeForm({ onComplete }) {
   };
 
   const countForStep = step.id === 'support' ? intake.supportSelections.length : step.id === 'conditions' ? intake.diagnosisSelections.length : step.id === 'allergies' ? intake.allergyItems.length : step.id === 'formats' ? intake.preferredFormats.length : step.id === 'avoidIngredients' ? intake.avoidIngredients.length : 0;
-  const ready = requiredReady(step.id, intake);
   const isLast = currentIndex === visibleSteps.length - 1;
+  // The final free-text note is optional. Keep "Finish profile" enabled when
+  // it is blank so users never have to discover a separate skip affordance.
+  const ready = (isLast && step.optional) ? true : requiredReady(step.id, intake);
 
   return (
     <div className="ayna-intake-root">
