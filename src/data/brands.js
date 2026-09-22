@@ -2453,7 +2453,7 @@ export const BRAND_PRODUCTS = [
                 links: [
                     {
                         platform: 'website',
-                        url: 'https://www.mypelvicbra.shop/products/classic-pelvic-bra%C2%AE',
+                        url: 'https://www.mypelvicbra.shop/collections/all/products/classic-pelvic-bra%C2%AE',
                         text: 'mypelvicbra.shop: Classic Pelvic Bra — customer reviews',
                         summary: 'The Classic Pelvic Bra\'s own product page, which displays customer reviews directly on the listing. Review content/ratings weren\'t independently verifiable at time of writing — read them directly on the page.',
                     },
@@ -3065,6 +3065,12 @@ export const BRAND_PRODUCTS = [
         clinicianAttribution: 'Same founder (Jeanice Mitchell, PT, MPT, WCS, BCB-PMD) and brand as the Classic Pelvic Bra; no independent clinician endorsement of this specific product has been verified by ayna.',
         doctorOpinion: 'My Pelvic Bra positions Classic Plus as its maximum-support, fuller-coverage adjustable option for external pelvic-floor and perineal support during standing, walking, lifting, exercise, pregnancy, and postpartum activity — the same fabric and design approach as the Classic Pelvic Bra, just wider coverage and a reinforced hammock for more substantial support.\n\nSee the Classic Pelvic Bra entry for the independent research on external pelvic compression garments as a category (a 2026 study found real biomechanical/perceived-support benefits; an earlier pilot study found no significant quality-of-life change from a similar product) — that research applies to the garment category generally, not this specific style, and no independent clinical study of Classic Plus itself was found.',
         doctorOpinionShort: 'Same brand, founder, and fabric approach as the Classic Pelvic Bra, with wider coverage and a reinforced hammock for more support. See the Classic Pelvic Bra entry for the mixed independent research on external compression garments as a category. No independent study of this specific style was found.',
+        // Kept out of verificationLinks so it doesn't pool with the
+        // Scientific literature tab's citation list.
+        doctorOpinionCitations: [
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/41586016/', label: 'PubMed: Pelvic compression garments alter running biomechanics, perceived support, and fear of symptoms in postpartum women with pelvic floor dysfunction' },
+            { url: 'https://doi.org/10.1007/s00192-008-0676-x', label: 'Lammers et al., Int Urogynecol J 2008: The effectiveness of supportive underwear in women with pelvic organ prolapse — a pilot study' },
+        ],
         // Rendered as a bulleted list on the Evidence view, under "Best for".
         whoItsFor: [
             'Women wanting more substantial external pelvic-floor and perineal support than the Classic style provides',
@@ -3091,6 +3097,21 @@ export const BRAND_PRODUCTS = [
         ],
         communityReview: 'No independently verified customer review data was found for this product at time of writing.',
         effectiveness: 'Positioned as external symptom-management support wear rather than a corrective device. See the Classic Pelvic Bra entry for the mixed independent research on external compression garments as a category; no independent clinical study of the Classic Plus product specifically was found.',
+        // Category-level citations shown only on the Scientific literature
+        // tab, kept out of verificationLinks so they don't also pool onto
+        // the Clinician opinion card's chip row.
+        scientificCitations: [
+            {
+                url: 'https://pubmed.ncbi.nlm.nih.gov/41586016/',
+                text: 'PubMed: Pelvic compression garments alter running biomechanics, perceived support, and fear of symptoms in postpartum women with pelvic floor dysfunction',
+                summary: '2026 exploratory, randomized crossover study, 13 postpartum runners. Found real biomechanical improvements and increased perceived pelvic floor/core support. General category evidence, not product-specific.',
+            },
+            {
+                url: 'https://doi.org/10.1007/s00192-008-0676-x',
+                text: 'Lammers et al., Int Urogynecol J 2008: The effectiveness of supportive underwear in women with pelvic organ prolapse — a pilot study',
+                summary: '13 women with prolapse. Found no significant quality-of-life improvement on validated questionnaires, though some participants subjectively felt relief. Included for balance — a real negative finding for a similar (not identical) product.',
+            },
+        ],
         verificationLinks: {
             doctor: { links: [] },
             scientific: { links: [] },
@@ -3098,9 +3119,9 @@ export const BRAND_PRODUCTS = [
                 links: [
                     {
                         platform: 'website',
-                        url: 'https://www.mypelvicbra.shop/pages/about',
-                        text: 'mypelvicbra.shop: About',
-                        summary: 'My Pelvic Bra\'s own about page with founder Jeanice Mitchell\'s story.',
+                        url: 'https://www.mypelvicbra.shop/collections/all/products/classic-pelvic-bra%C2%AE-classic-plus',
+                        text: 'mypelvicbra.shop: Classic Plus Pelvic Bra — customer reviews',
+                        summary: 'The Classic Plus Pelvic Bra\'s own product page, which displays customer reviews directly on the listing. Review content/ratings weren\'t independently verifiable at time of writing — read them directly on the page.',
                     },
                 ],
             },
