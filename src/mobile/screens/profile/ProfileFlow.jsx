@@ -1542,13 +1542,7 @@ function PrivacyDataScreen({ onBack, onOpenManageData, onOpenDeleteAccount }) {
         <div style={{ margin: '0 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Your data</div>
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
           <AccountRow
-            title="Manage my data"
-            sub="See what we hold — account details, intake answers, saved products."
             borderTop={false}
-            onClick={onOpenManageData}
-          />
-          <AccountRow title="Download my data" sub="A full export of your account and intake answers." onClick={onOpenManageData} />
-          <AccountRow
             title={<span style={{ color: '#B4402A' }}>Delete my account & data</span>}
             sub="We'll process it within a week — nothing kept after."
             onClick={onOpenDeleteAccount}
@@ -1673,8 +1667,7 @@ const HEALTH_DATA_PROCESSORS = [
 ];
 
 const HEALTH_DATA_RIGHTS = [
-  { title: 'See exactly what we hold', how: 'Settings → Privacy & data → Manage my data' },
-  { title: 'Download a copy', how: 'Same screen, in a portable format' },
+  { title: 'See or download what we hold', how: 'Email puloma@aynahealth.co — we will send it directly' },
   { title: 'Withdraw consent for analytics', how: 'Settings → Privacy & data → the analytics toggle' },
   { title: 'Delete your account and data', how: 'Email puloma@aynahealth.co — providers are directed too' },
 ];
@@ -2491,8 +2484,7 @@ function AccountInfoScreen({ onBack, authUser, name, onNameChanged, quizAnswers,
 
         <div style={{ margin: '24px 0 11px', fontFamily: "'DM Mono',monospace", fontSize: 'calc(10px * var(--ayna-text-scale, 1))', letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--ayna-accent-dark)' }}>Your data</div>
         <div style={{ background: 'var(--ayna-surface)', border: '1px solid var(--ayna-border)', borderRadius: 22, padding: '0 18px' }}>
-          <AccountRow borderTop={false} title="Manage & download my data" sub="Account details, intake answers, saved products." onClick={onOpenManageData} />
-          <AccountRow title={<span style={{ color: '#B4402A' }}>Delete account</span>} sub="Removes your profile and health answers." onClick={onOpenDeleteAccount} />
+          <AccountRow borderTop={false} title={<span style={{ color: '#B4402A' }}>Delete account</span>} sub="Removes your profile and health answers." onClick={onOpenDeleteAccount} />
         </div>
 
         <div style={{ fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-faint)', lineHeight: 1.55, marginTop: 14, padding: '0 4px' }}>

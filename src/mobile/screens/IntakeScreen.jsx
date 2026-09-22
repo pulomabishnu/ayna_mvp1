@@ -1663,9 +1663,9 @@ export default function IntakeScreen({ onBack, onComplete, initialSnapshot = nul
       { id: 'priceRange', section: 'preferences', title: 'What price range do you usually prefer for health and wellness products?', type: 'price', optional: true },
       { id: 'brandOpenness', section: 'preferences', title: 'How do you feel about trying new brands?', type: 'brand', optional: true },
       ...(intake.brandOpenness === 'I mostly stick with brands I already trust' || intake.brandOpenness === 'I prefer trusted brands but am open to something new' ? [{ id: 'trustedBrands', section: 'preferences', title: 'Which brands do you already trust?', type: 'trustedBrands', optional: true }] : []),
-      { id: 'avoidIngredients', section: 'preferences', title: 'Preferences', subtitle: 'Select any that matter to you. Allergies are handled separately.', type: 'avoidIngredients', optional: true },
+      { id: 'avoidIngredients', section: 'preferences', title: 'Any ingredients or product qualities you prefer?', subtitle: 'Things like fragrance-free, vegan, or eco-friendly. Allergies are handled separately.', type: 'avoidIngredients', optional: true },
       { id: 'fsaHsa', section: 'preferences', title: 'Do you have an FSA or HSA you would like to use?', type: 'fsa', optional: true },
-      { id: 'trust', section: 'trust', title: 'What matters most to you when deciding whether to trust a product?', subtitle: 'Drag the handle, or long-press and move. You can also skip this.', type: 'trust', optional: true },
+      { id: 'trust', section: 'trust', title: 'What matters most to you when deciding whether to trust a product?', type: 'trust', optional: false },
       { id: 'anythingElse', section: 'trust', title: 'Anything else you want Ayna to know?', subtitle: 'Share anything else that could help us personalize your recommendations.', type: 'textarea', optional: true },
     ];
     return steps;
